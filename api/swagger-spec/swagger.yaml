@@ -1,0 +1,78 @@
+consumes:
+  - application/io.goswagger.examples.todo-list.v1+json
+produces:
+  - application/io.goswagger.examples.todo-list.v1+json
+schemes:
+  - http
+swagger: '2.0'
+info:
+  description: >-
+    An open platform to package and deploy applications into multiple
+    environment such as QingCloud, AWS, Kubernetes etc.
+  title: AppHub - An open source application platform for multicloud
+  version: 0.1.0
+paths:
+  /clusters:
+    get:
+      summary: Gets some clusters
+      description: Returns a list containing all clusters.
+      parameters:
+        - name: pageSize
+          in: query
+          description: Number of persons returned
+          type: integer
+        - name: pageNumber
+          in: query
+          description: Page number
+          type: integer
+      responses:
+        '200':
+          description: A list of Cluster
+          schema:
+            $ref: '#/definitions/Clusters'
+    post:
+      summary: Creates a cluster
+      description: Adds a new cluster to the clusters list.
+      parameters:
+        - name: cluster
+          in: body
+          description: The cluster to create.
+          schema:
+            $ref: '#/definitions/Cluster'
+      responses:
+        '204':
+          description: Cluster succesfully created.
+        '400':
+          description: Cluster couldn't have been created.
+  '/clusters/{id}':
+    get:
+      summary: Gets a cluster
+      description: Returns a single cluster by its id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The cluster's id
+          type: string
+      responses:
+        '200':
+          description: A Cluster
+          schema:
+            $ref: '#/definitions/Cluster'
+        '404':
+          description: The Cluster does not exists.
+definitions:
+  Cluster:
+    required:
+      - id
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+  Clusters:
+    type: array
+    items:
+      $ref: '#/definitions/Cluster'
