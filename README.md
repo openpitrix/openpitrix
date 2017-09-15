@@ -4,7 +4,7 @@ AppHub is an open platform to package and deploy applications into multiple envi
 
 ### Motivation
 
-The project originates from [QingCloud AppCenter](https://appcenter.qingcloud.com) which helps developers to create a cloud-based enterprise application in a few days and sell it on the center. In addition, the learning curve of how to [develop such application](https://appcenter-docs.qingcloud.com/developer-guide/) is extremely low. Usually it takes a couple of hours for a developer to understand the working flow. Since QingCloud AppCenter was launched, many customers and partners have been asking us if it supports IaaS other than QingCloud such as AWS, Vmware. That is the project comes from. 
+The project originates from [QingCloud AppCenter](https://appcenter.qingcloud.com) which helps developers to create a cloud-based enterprise application in a few days and sell it on the center. In addition, the learning curve of how to [develop such application](https://appcenter-docs.qingcloud.com/developer-guide/) is extremely low. Usually it takes a couple of hours for a developer to understand the working flow. Since QingCloud AppCenter was launched, many customers and partners have been asking us if it supports IaaS other than QingCloud such as AWS, Vmware. That is where the project comes from. 
 
 ### Design
 
