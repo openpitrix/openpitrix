@@ -19,7 +19,7 @@ paths:
       parameters:
         - name: pageSize
           in: query
-          description: Number of persons returned
+          description: Number of clusters returned
           type: integer
         - name: pageNumber
           in: query
