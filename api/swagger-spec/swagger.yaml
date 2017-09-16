@@ -1,7 +1,9 @@
 consumes:
-  - application/io.goswagger.examples.todo-list.v1+json
+  - application/json
+  - application/yaml
 produces:
-  - application/io.goswagger.examples.todo-list.v1+json
+  - application/json
+  - application/yaml
 schemes:
   - http
   - https
@@ -10,7 +12,7 @@ info:
   description: >-
     An open platform to package and deploy applications into multiple
     environment such as QingCloud, AWS, Kubernetes etc.
-  title: AppHub - An open source application platform for multicloud
+  title: AppHub
   version: 0.1.0
 paths:
   /clusters:
@@ -21,12 +23,14 @@ paths:
         - $ref: '#/parameters/pageSize'
         - $ref: '#/parameters/pageNumber'
       tags:
-        - Cluster
+        - cluster
       responses:
         '200':
           description: A list of Cluster
           schema:
-            $ref: '#/definitions/Clusters'
+            allOf:
+              - $ref: '#/definitions/Clusters'
+              - $ref: '#/definitions/Paging'
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
     post:
@@ -39,7 +43,7 @@ paths:
           schema:
             $ref: '#/definitions/Cluster'
       tags:
-        - Cluster
+        - cluster
       responses:
         '204':
           description: Cluster succesfully created.
@@ -54,7 +58,7 @@ paths:
       parameters:
         - $ref: '#/parameters/id'
       tags:
-        - Cluster
+        - cluster
       responses:
         '200':
           description: A Cluster
@@ -68,7 +72,7 @@ paths:
       summary: Deletes a cluster
       description: Delete a single cluster identified via its id
       tags:
-        - Cluster
+        - cluster
       responses:
         '204':
           description: Cluster successfully deleted.
@@ -90,13 +94,27 @@ definitions:
         pattern: 'cl-[a-zA-Z0-9]{11}'
         minLength: 11
         maxLength: 11
+      createTime:
+        type: string
+        format: date-time
+        readOnly: true
   Clusters:
-    type: array
-    minItems: 10
-    maxItems: 100
-    uniqueItems: true
-    items:
-      $ref: '#/definitions/Cluster'
+    properties:
+      items:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: '#/definitions/Cluster'
+  Paging:
+    properties:
+      totalItems:
+        type: integer
+      totalPages:
+        type: integer
+      pageSize:
+        type: integer
+      currentPage:
+        type: integer
   Error:
     properties:
       code:
@@ -124,7 +142,7 @@ parameters:
     minimum: 0
     exclusiveMinimum: true
     exclusiveMaximum: false
-    multipleOf: 20
+    multipleOf: 10
     default: 20
   pageNumber:
     name: pageNumber
