@@ -4,6 +4,7 @@ produces:
   - application/io.goswagger.examples.todo-list.v1+json
 schemes:
   - http
+  - https
 swagger: '2.0'
 info:
   description: >-
@@ -17,19 +18,17 @@ paths:
       summary: Gets some clusters
       description: Returns a list containing all clusters.
       parameters:
-        - name: pageSize
-          in: query
-          description: Number of clusters returned
-          type: integer
-        - name: pageNumber
-          in: query
-          description: Page number
-          type: integer
+        - $ref: '#/parameters/pageSize'
+        - $ref: '#/parameters/pageNumber'
+      tags:
+        - Cluster
       responses:
         '200':
           description: A list of Cluster
           schema:
             $ref: '#/definitions/Clusters'
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
     post:
       summary: Creates a cluster
       description: Adds a new cluster to the clusters list.
@@ -39,28 +38,44 @@ paths:
           description: The cluster to create.
           schema:
             $ref: '#/definitions/Cluster'
+      tags:
+        - Cluster
       responses:
         '204':
           description: Cluster succesfully created.
         '400':
           description: Cluster couldn't have been created.
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
   '/clusters/{id}':
     get:
       summary: Gets a cluster
       description: Returns a single cluster by its id
       parameters:
-        - name: id
-          in: path
-          required: true
-          description: The cluster's id
-          type: string
+        - $ref: '#/parameters/id'
+      tags:
+        - Cluster
       responses:
         '200':
           description: A Cluster
           schema:
             $ref: '#/definitions/Cluster'
         '404':
-          description: The Cluster does not exists.
+          $ref: '#/responses/ClusterDoesNotExistResponse'
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
+    delete:
+      summary: Deletes a cluster
+      description: Delete a single cluster identified via its id
+      tags:
+        - Cluster
+      responses:
+        '204':
+          description: Cluster successfully deleted.
+        '404':
+          $ref: '#/responses/ClusterDoesNotExistResponse'
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
 definitions:
   Cluster:
     required:
@@ -72,7 +87,54 @@ definitions:
         type: string
       id:
         type: string
+        pattern: 'cl-[a-zA-Z0-9]{11}'
+        minLength: 11
+        maxLength: 11
   Clusters:
     type: array
+    minItems: 10
+    maxItems: 100
+    uniqueItems: true
     items:
       $ref: '#/definitions/Cluster'
+  Error:
+    properties:
+      code:
+        type: string
+        enum:
+          - DBERR
+          - NTERR
+          - UNERR
+      message:
+        type: string
+responses:
+  Standard500ErrorResponse:
+    description: An unexpected error occured.
+    schema:
+      $ref: '#/definitions/Error'
+  ClusterDoesNotExistResponse:
+    description: The cluster does not exist.
+parameters:
+  pageSize:
+    name: pageSize
+    in: query
+    description: Number of clusters returned
+    type: integer
+    format: int32
+    minimum: 0
+    exclusiveMinimum: true
+    exclusiveMaximum: false
+    multipleOf: 20
+    default: 20
+  pageNumber:
+    name: pageNumber
+    in: query
+    description: Page number
+    type: integer
+    default: 1
+  id:
+    name: id
+    in: path
+    required: true
+    description: The cluster's id
+    type: string
