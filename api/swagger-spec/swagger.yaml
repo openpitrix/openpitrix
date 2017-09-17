@@ -98,6 +98,7 @@ definitions:
         type: string
         format: date-time
         readOnly: true
+        example: 2017-09-17T12:36:58.014Z
   Clusters:
     properties:
       items:
