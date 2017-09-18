@@ -51,12 +51,12 @@ paths:
           description: Cluster couldn't have been created.
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  '/clusters/{id}':
+  '/clusters/{clusterId}':
     get:
       summary: Gets a cluster
       description: Returns a single cluster by its id
       parameters:
-        - $ref: '#/parameters/id'
+        - $ref: '#/parameters/clusterId'
       tags:
         - cluster
       responses:
@@ -80,16 +80,146 @@ paths:
           $ref: '#/responses/ClusterDoesNotExistResponse'
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
+  /repos:
+    get:
+      summary: Gets some repos
+      description: Returns a list containing all repos.
+      parameters:
+        - $ref: '#/parameters/pageSize'
+        - $ref: '#/parameters/pageNumber'
+      tags:
+        - repo
+      responses:
+        '200':
+          description: A list of repos
+          schema:
+            allOf:
+              - $ref: '#/definitions/Repos'
+              - $ref: '#/definitions/Paging'
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
+    post:
+      summary: Creates a repo
+      description: Adds a new repo to the repos list.
+      parameters:
+        - name: repo
+          in: body
+          description: The repo to create.
+          schema:
+            $ref: '#/definitions/Repo'
+      tags:
+        - repo
+      responses:
+        '204':
+          description: Repo succesfully created.
+        '400':
+          description: Repo couldn't have been created.
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
+  '/repos/{repoId}':
+    get:
+      summary: Gets a repo
+      description: Returns a single repo by its id
+      parameters:
+        - $ref: '#/parameters/repoId'
+      tags:
+        - repo
+      responses:
+        '200':
+          description: A repo
+          schema:
+            $ref: '#/definitions/Repo'
+        '404':
+          $ref: '#/responses/RepoDoesNotExistResponse'
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
+    delete:
+      summary: Deletes a repo
+      description: Delete a single repo identified via its id
+      tags:
+        - repo
+      responses:
+        '204':
+          description: Repo successfully deleted.
+        '404':
+          $ref: '#/responses/RepoDoesNotExistResponse'
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
+  /runtimes:
+    get:
+      summary: Gets some runtimes
+      description: Returns a list containing all runtimes.
+      parameters:
+        - $ref: '#/parameters/pageSize'
+        - $ref: '#/parameters/pageNumber'
+      tags:
+        - runtime
+      responses:
+        '200':
+          description: A list of runtimes
+          schema:
+            allOf:
+              - $ref: '#/definitions/Runtimes'
+              - $ref: '#/definitions/Paging'
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
+    post:
+      summary: Creates a runtime
+      description: Adds a new runtime to the runtimes list.
+      parameters:
+        - name: runtime
+          in: body
+          description: The runtime to create.
+          schema:
+            $ref: '#/definitions/Runtime'
+      tags:
+        - runtime
+      responses:
+        '204':
+          description: Runtime succesfully created.
+        '400':
+          description: Runtime couldn't have been created.
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
+  '/runtimes/{runtimeId}':
+    get:
+      summary: Gets a runtime
+      description: Returns a single runtime by its id
+      parameters:
+        - $ref: '#/parameters/runtimeId'
+      tags:
+        - runtime
+      responses:
+        '200':
+          description: A runtime
+          schema:
+            $ref: '#/definitions/Runtime'
+        '404':
+          $ref: '#/responses/RuntimeDoesNotExistResponse'
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
+    delete:
+      summary: Deletes a runtime
+      description: Delete a single runtime identified via its id
+      tags:
+        - runtime
+      responses:
+        '204':
+          description: Runtime successfully deleted.
+        '404':
+          $ref: '#/responses/RuntimeDoesNotExistResponse'
+        '500':
+          $ref: '#/responses/Standard500ErrorResponse'
 definitions:
   Cluster:
     required:
-      - id
+      - clusterId
     properties:
       name:
         type: string
       description:
         type: string
-      id:
+      clusterId:
         type: string
         pattern: 'cl-[a-zA-Z0-9]{11}'
         minLength: 11
@@ -106,6 +236,60 @@ definitions:
         uniqueItems: true
         items:
           $ref: '#/definitions/Cluster'
+  Repo:
+    required:
+      - repoId
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      url:
+        type: string
+      repoId:
+        type: string
+        pattern: 'repo-[a-zA-Z0-9]{11}'
+        minLength: 13
+        maxLength: 13
+      createTime:
+        type: string
+        format: date-time
+        readOnly: true
+        example: 2017-09-17T12:36:58.014Z
+  Repos:
+    properties:
+      items:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: '#/definitions/Repo'
+  Runtime:
+    required:
+      - runtimeId
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      url:
+        type: string
+      runtimeId:
+        type: string
+        pattern: 'rt-[a-zA-Z0-9]{11}'
+        minLength: 11
+        maxLength: 11
+      createTime:
+        type: string
+        format: date-time
+        readOnly: true
+        example: 2017-09-17T12:36:58.014Z
+  Runtimes:
+    properties:
+      items:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: '#/definitions/Runtime'
   Paging:
     properties:
       totalItems:
@@ -133,6 +317,10 @@ responses:
       $ref: '#/definitions/Error'
   ClusterDoesNotExistResponse:
     description: The cluster does not exist.
+  RepoDoesNotExistResponse:
+    description: The repo does not exist.
+  RuntimeDoesNotExistResponse:
+    description: The runtime does not exist.
 parameters:
   pageSize:
     name: pageSize
@@ -151,9 +339,21 @@ parameters:
     description: Page number
     type: integer
     default: 1
-  id:
-    name: id
+  clusterId:
+    name: clusterId
     in: path
     required: true
     description: The cluster's id
+    type: string
+  repoId:
+    name: repoId
+    in: path
+    required: true
+    description: The repo's id
+    type: string
+  runtimeId:
+    name: runtimeId
+    in: path
+    required: true
+    description: The runtime's id
     type: string
