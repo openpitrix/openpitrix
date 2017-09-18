@@ -17,3 +17,9 @@ Basic idea is to decouple application repository and runtime environment. The ru
 * Runtime interface will provide generic interface for application management such as create cluster etc. The specific runtime will implement the interface as a plugin.
 
 ![Arichitecture](docs/images/arch.png)
+
+### Contributing to the project
+
+All members of the AppHub community must abide by the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Only by respecting each other can we develop a productive, collaborative community.
+
+You can then check out how to [setup for development](docs/development.md).
