@@ -71,6 +71,8 @@ paths:
     delete:
       summary: Deletes an app
       description: Delete a single app identified via its id
+      parameters:
+        - $ref: '#/parameters/appId'
       tags:
         - app
       responses:
@@ -136,6 +138,8 @@ paths:
     delete:
       summary: Deletes a cluster
       description: Delete a single cluster identified via its id
+      parameters:
+        - $ref: '#/parameters/clusterId'
       tags:
         - cluster
       responses:
@@ -201,6 +205,8 @@ paths:
     delete:
       summary: Deletes a repo
       description: Delete a single repo identified via its id
+      parameters:
+        - $ref: '#/parameters/repoId'
       tags:
         - repo
       responses:
@@ -266,6 +272,8 @@ paths:
     delete:
       summary: Deletes a runtime
       description: Delete a single runtime identified via its id
+      parameters:
+        - $ref: '#/parameters/runtimeId'
       tags:
         - runtime
       responses:
