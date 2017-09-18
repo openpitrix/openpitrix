@@ -16,4 +16,4 @@ Basic idea is to decouple application repository and runtime environment. The ru
 * Repo indexer will scan configured repo list periodically and cache the metadata of the repos.
 * Runtime interface will provide generic interface for application management such as create cluster etc. The specific runtime will implement the interface as a plugin.
 
-![Arichitecture](./arch.png)
+![Arichitecture](docs/images/arch.png)

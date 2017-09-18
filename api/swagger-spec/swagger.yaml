@@ -6,7 +6,6 @@ produces:
   - application/yaml
 schemes:
   - http
-  - https
 swagger: '2.0'
 info:
   description: >-
@@ -216,71 +215,71 @@ paths:
           $ref: '#/responses/RepoDoesNotExistResponse'
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  /runtimes:
+  /appruntimes:
     get:
-      summary: Gets some runtimes
-      description: Returns a list containing all runtimes.
+      summary: Gets some app runtimes
+      description: Returns a list containing all app runtimes.
       parameters:
         - $ref: '#/parameters/pageSize'
         - $ref: '#/parameters/pageNumber'
       tags:
-        - runtime
+        - app-runtime
       responses:
         '200':
-          description: A list of runtimes
+          description: A list of app runtimes
           schema:
             allOf:
-              - $ref: '#/definitions/Runtimes'
+              - $ref: '#/definitions/AppRuntimes'
               - $ref: '#/definitions/Paging'
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
     post:
-      summary: Creates a runtime
-      description: Adds a new runtime to the runtimes list.
+      summary: Creates an app runtime
+      description: Adds a new app runtime to the runtimes list.
       parameters:
-        - name: runtime
+        - name: appruntime
           in: body
           description: The runtime to create.
           schema:
-            $ref: '#/definitions/Runtime'
+            $ref: '#/definitions/AppRuntime'
       tags:
-        - runtime
+        - app-runtime
       responses:
         '204':
-          description: Runtime succesfully created.
+          description: App runtime succesfully created.
         '400':
-          description: Runtime couldn't have been created.
+          description: App runtime couldn't have been created.
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  '/runtimes/{runtimeId}':
+  '/appruntimes/{appRuntimeId}':
     get:
-      summary: Gets a runtime
+      summary: Gets an app runtime
       description: Returns a single runtime by its id
       parameters:
-        - $ref: '#/parameters/runtimeId'
+        - $ref: '#/parameters/appRuntimeId'
       tags:
-        - runtime
+        - app-runtime
       responses:
         '200':
           description: A runtime
           schema:
-            $ref: '#/definitions/Runtime'
+            $ref: '#/definitions/AppRuntime'
         '404':
-          $ref: '#/responses/RuntimeDoesNotExistResponse'
+          $ref: '#/responses/AppRuntimeDoesNotExistResponse'
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
     delete:
-      summary: Deletes a runtime
-      description: Delete a single runtime identified via its id
+      summary: Deletes an app runtime
+      description: Delete a single app runtime identified via its id
       parameters:
-        - $ref: '#/parameters/runtimeId'
+        - $ref: '#/parameters/appRuntimeId'
       tags:
-        - runtime
+        - app-runtime
       responses:
         '204':
           description: Runtime successfully deleted.
         '404':
-          $ref: '#/responses/RuntimeDoesNotExistResponse'
+          $ref: '#/responses/AppRuntimeDoesNotExistResponse'
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
 definitions:
@@ -363,9 +362,9 @@ definitions:
         uniqueItems: true
         items:
           $ref: '#/definitions/Repo'
-  Runtime:
+  AppRuntime:
     required:
-      - runtimeId
+      - appRuntimeId
     properties:
       name:
         type: string
@@ -373,7 +372,7 @@ definitions:
         type: string
       url:
         type: string
-      runtimeId:
+      appRuntimeId:
         type: string
         pattern: 'rt-[a-zA-Z0-9]{11}'
         minLength: 11
@@ -383,13 +382,13 @@ definitions:
         format: date-time
         readOnly: true
         example: 2017-09-17T12:36:58.014Z
-  Runtimes:
+  AppRuntimes:
     properties:
       items:
         type: array
         uniqueItems: true
         items:
-          $ref: '#/definitions/Runtime'
+          $ref: '#/definitions/AppRuntime'
   Paging:
     properties:
       totalItems:
@@ -419,8 +418,8 @@ responses:
     description: The cluster does not exist.
   RepoDoesNotExistResponse:
     description: The repo does not exist.
-  RuntimeDoesNotExistResponse:
-    description: The runtime does not exist.
+  AppRuntimeDoesNotExistResponse:
+    description: The app runtime does not exist.
   AppDoesNotExistResponse:
     description: The app does not exist.
 parameters:
@@ -459,9 +458,9 @@ parameters:
     required: true
     description: The repo's id
     type: string
-  runtimeId:
-    name: runtimeId
+  appRuntimeId:
+    name: appRuntimeId
     in: path
     required: true
-    description: The runtime's id
+    description: The app runtime's id
     type: string
