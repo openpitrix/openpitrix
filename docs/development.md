@@ -46,7 +46,7 @@ for how to do this for your platform.
 
 AppHub is using [OpenAPI/Swagger](https://swagger.io) to develop API, so follow 
 [the instructions](https://github.com/go-swagger/go-swagger/tree/master/docs) to 
-install Swagger. If you are not familar with swagger, please read the 
+install Swagger. If you are not familar with Swagger, please read the 
 [tutorial](http://apihandyman.io/writing-openapi-swagger-specification-tutorial-part-1-introduction/#writing-openapi-fka-swagger-specification-tutorial). If you install Swagger using docker distribution, 
 please run
 
