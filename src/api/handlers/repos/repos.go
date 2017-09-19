@@ -9,7 +9,7 @@ import (
 )
 
 // GetRepos returns all the repositories
-func GetRepos(params reposapi.GetV1ReposParams) middleware.Responder {
+func GetRepos(params reposapi.GetReposParams) middleware.Responder {
         /*
 	reposCollection, err := data.GetRepos()
 	if err != nil {

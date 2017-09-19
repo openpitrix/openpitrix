@@ -31,8 +31,9 @@ func init() {
     "title": "AppHub",
     "version": "0.0.1"
   },
+  "basePath": "/v1",
   "paths": {
-    "/v1/appruntimes": {
+    "/appruntimes": {
       "get": {
         "description": "Returns a list containing all app runtimes.",
         "tags": [
@@ -63,7 +64,7 @@ func init() {
           "200": {
             "description": "A list of app runtimes",
             "schema": {
-              "$ref": "#/definitions/getV1AppruntimesOKBody"
+              "$ref": "#/definitions/getAppruntimesOKBody"
             }
           },
           "500": {
@@ -106,7 +107,7 @@ func init() {
         }
       }
     },
-    "/v1/appruntimes/{appRuntimeId}": {
+    "/appruntimes/{appRuntimeId}": {
       "get": {
         "description": "Returns a single runtime by its id",
         "tags": [
@@ -171,7 +172,7 @@ func init() {
         }
       }
     },
-    "/v1/apps": {
+    "/apps": {
       "get": {
         "description": "Returns a list containing all apps.",
         "tags": [
@@ -202,7 +203,7 @@ func init() {
           "200": {
             "description": "A list of apps",
             "schema": {
-              "$ref": "#/definitions/getV1AppsOKBody"
+              "$ref": "#/definitions/getAppsOKBody"
             }
           },
           "500": {
@@ -245,7 +246,7 @@ func init() {
         }
       }
     },
-    "/v1/apps/{appId}": {
+    "/apps/{appId}": {
       "get": {
         "description": "Returns a single app by its id",
         "tags": [
@@ -310,7 +311,7 @@ func init() {
         }
       }
     },
-    "/v1/clusters": {
+    "/clusters": {
       "get": {
         "description": "Returns a list containing all clusters.",
         "tags": [
@@ -341,7 +342,7 @@ func init() {
           "200": {
             "description": "A list of Cluster",
             "schema": {
-              "$ref": "#/definitions/getV1ClustersOKBody"
+              "$ref": "#/definitions/getClustersOKBody"
             }
           },
           "500": {
@@ -384,7 +385,7 @@ func init() {
         }
       }
     },
-    "/v1/clusters/{clusterId}": {
+    "/clusters/{clusterId}": {
       "get": {
         "description": "Returns a single cluster by its id",
         "tags": [
@@ -449,7 +450,7 @@ func init() {
         }
       }
     },
-    "/v1/repos": {
+    "/repos": {
       "get": {
         "description": "Returns a list containing all repos.",
         "tags": [
@@ -480,7 +481,7 @@ func init() {
           "200": {
             "description": "A list of repos",
             "schema": {
-              "$ref": "#/definitions/getV1ReposOKBody"
+              "$ref": "#/definitions/getReposOKBody"
             }
           },
           "500": {
@@ -523,7 +524,7 @@ func init() {
         }
       }
     },
-    "/v1/repos/{repoId}": {
+    "/repos/{repoId}": {
       "get": {
         "description": "Returns a single repo by its id",
         "tags": [
@@ -782,7 +783,7 @@ func init() {
       },
       "x-go-gen-location": "models"
     },
-    "getV1AppruntimesOKBody": {
+    "getAppruntimesOKBody": {
       "allOf": [
         {
           "$ref": "#/definitions/AppRuntimes"
@@ -793,7 +794,7 @@ func init() {
       ],
       "x-go-gen-location": "operations"
     },
-    "getV1AppsOKBody": {
+    "getAppsOKBody": {
       "allOf": [
         {
           "$ref": "#/definitions/Apps"
@@ -804,7 +805,7 @@ func init() {
       ],
       "x-go-gen-location": "operations"
     },
-    "getV1ClustersOKBody": {
+    "getClustersOKBody": {
       "allOf": [
         {
           "$ref": "#/definitions/Clusters"
@@ -815,7 +816,7 @@ func init() {
       ],
       "x-go-gen-location": "operations"
     },
-    "getV1ReposOKBody": {
+    "getReposOKBody": {
       "allOf": [
         {
           "$ref": "#/definitions/Repos"

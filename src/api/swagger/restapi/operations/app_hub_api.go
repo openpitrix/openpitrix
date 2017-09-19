@@ -43,53 +43,53 @@ func NewAppHubAPI(spec *loads.Document) *AppHubAPI {
 		YamlConsumer:        yamlpc.YAMLConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
 		YamlProducer:        yamlpc.YAMLProducer(),
-		AppRuntimesDeleteV1AppruntimesAppRuntimeIDHandler: app_runtimes.DeleteV1AppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.DeleteV1AppruntimesAppRuntimeIDParams) middleware.Responder {
-			return middleware.NotImplemented("operation AppRuntimesDeleteV1AppruntimesAppRuntimeID has not yet been implemented")
+		AppRuntimesDeleteAppruntimesAppRuntimeIDHandler: app_runtimes.DeleteAppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.DeleteAppruntimesAppRuntimeIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppRuntimesDeleteAppruntimesAppRuntimeID has not yet been implemented")
 		}),
-		AppsDeleteV1AppsAppIDHandler: apps.DeleteV1AppsAppIDHandlerFunc(func(params apps.DeleteV1AppsAppIDParams) middleware.Responder {
-			return middleware.NotImplemented("operation AppsDeleteV1AppsAppID has not yet been implemented")
+		AppsDeleteAppsAppIDHandler: apps.DeleteAppsAppIDHandlerFunc(func(params apps.DeleteAppsAppIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppsDeleteAppsAppID has not yet been implemented")
 		}),
-		ClustersDeleteV1ClustersClusterIDHandler: clusters.DeleteV1ClustersClusterIDHandlerFunc(func(params clusters.DeleteV1ClustersClusterIDParams) middleware.Responder {
-			return middleware.NotImplemented("operation ClustersDeleteV1ClustersClusterID has not yet been implemented")
+		ClustersDeleteClustersClusterIDHandler: clusters.DeleteClustersClusterIDHandlerFunc(func(params clusters.DeleteClustersClusterIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation ClustersDeleteClustersClusterID has not yet been implemented")
 		}),
-		ReposDeleteV1ReposRepoIDHandler: repos.DeleteV1ReposRepoIDHandlerFunc(func(params repos.DeleteV1ReposRepoIDParams) middleware.Responder {
-			return middleware.NotImplemented("operation ReposDeleteV1ReposRepoID has not yet been implemented")
+		ReposDeleteReposRepoIDHandler: repos.DeleteReposRepoIDHandlerFunc(func(params repos.DeleteReposRepoIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation ReposDeleteReposRepoID has not yet been implemented")
 		}),
-		AppRuntimesGetV1AppruntimesHandler: app_runtimes.GetV1AppruntimesHandlerFunc(func(params app_runtimes.GetV1AppruntimesParams) middleware.Responder {
-			return middleware.NotImplemented("operation AppRuntimesGetV1Appruntimes has not yet been implemented")
+		AppRuntimesGetAppruntimesHandler: app_runtimes.GetAppruntimesHandlerFunc(func(params app_runtimes.GetAppruntimesParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppRuntimesGetAppruntimes has not yet been implemented")
 		}),
-		AppRuntimesGetV1AppruntimesAppRuntimeIDHandler: app_runtimes.GetV1AppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.GetV1AppruntimesAppRuntimeIDParams) middleware.Responder {
-			return middleware.NotImplemented("operation AppRuntimesGetV1AppruntimesAppRuntimeID has not yet been implemented")
+		AppRuntimesGetAppruntimesAppRuntimeIDHandler: app_runtimes.GetAppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.GetAppruntimesAppRuntimeIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppRuntimesGetAppruntimesAppRuntimeID has not yet been implemented")
 		}),
-		AppsGetV1AppsHandler: apps.GetV1AppsHandlerFunc(func(params apps.GetV1AppsParams) middleware.Responder {
-			return middleware.NotImplemented("operation AppsGetV1Apps has not yet been implemented")
+		AppsGetAppsHandler: apps.GetAppsHandlerFunc(func(params apps.GetAppsParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppsGetApps has not yet been implemented")
 		}),
-		AppsGetV1AppsAppIDHandler: apps.GetV1AppsAppIDHandlerFunc(func(params apps.GetV1AppsAppIDParams) middleware.Responder {
-			return middleware.NotImplemented("operation AppsGetV1AppsAppID has not yet been implemented")
+		AppsGetAppsAppIDHandler: apps.GetAppsAppIDHandlerFunc(func(params apps.GetAppsAppIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppsGetAppsAppID has not yet been implemented")
 		}),
-		ClustersGetV1ClustersHandler: clusters.GetV1ClustersHandlerFunc(func(params clusters.GetV1ClustersParams) middleware.Responder {
-			return middleware.NotImplemented("operation ClustersGetV1Clusters has not yet been implemented")
+		ClustersGetClustersHandler: clusters.GetClustersHandlerFunc(func(params clusters.GetClustersParams) middleware.Responder {
+			return middleware.NotImplemented("operation ClustersGetClusters has not yet been implemented")
 		}),
-		ClustersGetV1ClustersClusterIDHandler: clusters.GetV1ClustersClusterIDHandlerFunc(func(params clusters.GetV1ClustersClusterIDParams) middleware.Responder {
-			return middleware.NotImplemented("operation ClustersGetV1ClustersClusterID has not yet been implemented")
+		ClustersGetClustersClusterIDHandler: clusters.GetClustersClusterIDHandlerFunc(func(params clusters.GetClustersClusterIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation ClustersGetClustersClusterID has not yet been implemented")
 		}),
-		ReposGetV1ReposHandler: repos.GetV1ReposHandlerFunc(func(params repos.GetV1ReposParams) middleware.Responder {
-			return middleware.NotImplemented("operation ReposGetV1Repos has not yet been implemented")
+		ReposGetReposHandler: repos.GetReposHandlerFunc(func(params repos.GetReposParams) middleware.Responder {
+			return middleware.NotImplemented("operation ReposGetRepos has not yet been implemented")
 		}),
-		ReposGetV1ReposRepoIDHandler: repos.GetV1ReposRepoIDHandlerFunc(func(params repos.GetV1ReposRepoIDParams) middleware.Responder {
-			return middleware.NotImplemented("operation ReposGetV1ReposRepoID has not yet been implemented")
+		ReposGetReposRepoIDHandler: repos.GetReposRepoIDHandlerFunc(func(params repos.GetReposRepoIDParams) middleware.Responder {
+			return middleware.NotImplemented("operation ReposGetReposRepoID has not yet been implemented")
 		}),
-		AppRuntimesPostV1AppruntimesHandler: app_runtimes.PostV1AppruntimesHandlerFunc(func(params app_runtimes.PostV1AppruntimesParams) middleware.Responder {
-			return middleware.NotImplemented("operation AppRuntimesPostV1Appruntimes has not yet been implemented")
+		AppRuntimesPostAppruntimesHandler: app_runtimes.PostAppruntimesHandlerFunc(func(params app_runtimes.PostAppruntimesParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppRuntimesPostAppruntimes has not yet been implemented")
 		}),
-		AppsPostV1AppsHandler: apps.PostV1AppsHandlerFunc(func(params apps.PostV1AppsParams) middleware.Responder {
-			return middleware.NotImplemented("operation AppsPostV1Apps has not yet been implemented")
+		AppsPostAppsHandler: apps.PostAppsHandlerFunc(func(params apps.PostAppsParams) middleware.Responder {
+			return middleware.NotImplemented("operation AppsPostApps has not yet been implemented")
 		}),
-		ClustersPostV1ClustersHandler: clusters.PostV1ClustersHandlerFunc(func(params clusters.PostV1ClustersParams) middleware.Responder {
-			return middleware.NotImplemented("operation ClustersPostV1Clusters has not yet been implemented")
+		ClustersPostClustersHandler: clusters.PostClustersHandlerFunc(func(params clusters.PostClustersParams) middleware.Responder {
+			return middleware.NotImplemented("operation ClustersPostClusters has not yet been implemented")
 		}),
-		ReposPostV1ReposHandler: repos.PostV1ReposHandlerFunc(func(params repos.PostV1ReposParams) middleware.Responder {
-			return middleware.NotImplemented("operation ReposPostV1Repos has not yet been implemented")
+		ReposPostReposHandler: repos.PostReposHandlerFunc(func(params repos.PostReposParams) middleware.Responder {
+			return middleware.NotImplemented("operation ReposPostRepos has not yet been implemented")
 		}),
 	}
 }
@@ -124,38 +124,38 @@ type AppHubAPI struct {
 	// YamlProducer registers a producer for a "application/yaml" mime type
 	YamlProducer runtime.Producer
 
-	// AppRuntimesDeleteV1AppruntimesAppRuntimeIDHandler sets the operation handler for the delete v1 appruntimes app runtime ID operation
-	AppRuntimesDeleteV1AppruntimesAppRuntimeIDHandler app_runtimes.DeleteV1AppruntimesAppRuntimeIDHandler
-	// AppsDeleteV1AppsAppIDHandler sets the operation handler for the delete v1 apps app ID operation
-	AppsDeleteV1AppsAppIDHandler apps.DeleteV1AppsAppIDHandler
-	// ClustersDeleteV1ClustersClusterIDHandler sets the operation handler for the delete v1 clusters cluster ID operation
-	ClustersDeleteV1ClustersClusterIDHandler clusters.DeleteV1ClustersClusterIDHandler
-	// ReposDeleteV1ReposRepoIDHandler sets the operation handler for the delete v1 repos repo ID operation
-	ReposDeleteV1ReposRepoIDHandler repos.DeleteV1ReposRepoIDHandler
-	// AppRuntimesGetV1AppruntimesHandler sets the operation handler for the get v1 appruntimes operation
-	AppRuntimesGetV1AppruntimesHandler app_runtimes.GetV1AppruntimesHandler
-	// AppRuntimesGetV1AppruntimesAppRuntimeIDHandler sets the operation handler for the get v1 appruntimes app runtime ID operation
-	AppRuntimesGetV1AppruntimesAppRuntimeIDHandler app_runtimes.GetV1AppruntimesAppRuntimeIDHandler
-	// AppsGetV1AppsHandler sets the operation handler for the get v1 apps operation
-	AppsGetV1AppsHandler apps.GetV1AppsHandler
-	// AppsGetV1AppsAppIDHandler sets the operation handler for the get v1 apps app ID operation
-	AppsGetV1AppsAppIDHandler apps.GetV1AppsAppIDHandler
-	// ClustersGetV1ClustersHandler sets the operation handler for the get v1 clusters operation
-	ClustersGetV1ClustersHandler clusters.GetV1ClustersHandler
-	// ClustersGetV1ClustersClusterIDHandler sets the operation handler for the get v1 clusters cluster ID operation
-	ClustersGetV1ClustersClusterIDHandler clusters.GetV1ClustersClusterIDHandler
-	// ReposGetV1ReposHandler sets the operation handler for the get v1 repos operation
-	ReposGetV1ReposHandler repos.GetV1ReposHandler
-	// ReposGetV1ReposRepoIDHandler sets the operation handler for the get v1 repos repo ID operation
-	ReposGetV1ReposRepoIDHandler repos.GetV1ReposRepoIDHandler
-	// AppRuntimesPostV1AppruntimesHandler sets the operation handler for the post v1 appruntimes operation
-	AppRuntimesPostV1AppruntimesHandler app_runtimes.PostV1AppruntimesHandler
-	// AppsPostV1AppsHandler sets the operation handler for the post v1 apps operation
-	AppsPostV1AppsHandler apps.PostV1AppsHandler
-	// ClustersPostV1ClustersHandler sets the operation handler for the post v1 clusters operation
-	ClustersPostV1ClustersHandler clusters.PostV1ClustersHandler
-	// ReposPostV1ReposHandler sets the operation handler for the post v1 repos operation
-	ReposPostV1ReposHandler repos.PostV1ReposHandler
+	// AppRuntimesDeleteAppruntimesAppRuntimeIDHandler sets the operation handler for the delete appruntimes app runtime ID operation
+	AppRuntimesDeleteAppruntimesAppRuntimeIDHandler app_runtimes.DeleteAppruntimesAppRuntimeIDHandler
+	// AppsDeleteAppsAppIDHandler sets the operation handler for the delete apps app ID operation
+	AppsDeleteAppsAppIDHandler apps.DeleteAppsAppIDHandler
+	// ClustersDeleteClustersClusterIDHandler sets the operation handler for the delete clusters cluster ID operation
+	ClustersDeleteClustersClusterIDHandler clusters.DeleteClustersClusterIDHandler
+	// ReposDeleteReposRepoIDHandler sets the operation handler for the delete repos repo ID operation
+	ReposDeleteReposRepoIDHandler repos.DeleteReposRepoIDHandler
+	// AppRuntimesGetAppruntimesHandler sets the operation handler for the get appruntimes operation
+	AppRuntimesGetAppruntimesHandler app_runtimes.GetAppruntimesHandler
+	// AppRuntimesGetAppruntimesAppRuntimeIDHandler sets the operation handler for the get appruntimes app runtime ID operation
+	AppRuntimesGetAppruntimesAppRuntimeIDHandler app_runtimes.GetAppruntimesAppRuntimeIDHandler
+	// AppsGetAppsHandler sets the operation handler for the get apps operation
+	AppsGetAppsHandler apps.GetAppsHandler
+	// AppsGetAppsAppIDHandler sets the operation handler for the get apps app ID operation
+	AppsGetAppsAppIDHandler apps.GetAppsAppIDHandler
+	// ClustersGetClustersHandler sets the operation handler for the get clusters operation
+	ClustersGetClustersHandler clusters.GetClustersHandler
+	// ClustersGetClustersClusterIDHandler sets the operation handler for the get clusters cluster ID operation
+	ClustersGetClustersClusterIDHandler clusters.GetClustersClusterIDHandler
+	// ReposGetReposHandler sets the operation handler for the get repos operation
+	ReposGetReposHandler repos.GetReposHandler
+	// ReposGetReposRepoIDHandler sets the operation handler for the get repos repo ID operation
+	ReposGetReposRepoIDHandler repos.GetReposRepoIDHandler
+	// AppRuntimesPostAppruntimesHandler sets the operation handler for the post appruntimes operation
+	AppRuntimesPostAppruntimesHandler app_runtimes.PostAppruntimesHandler
+	// AppsPostAppsHandler sets the operation handler for the post apps operation
+	AppsPostAppsHandler apps.PostAppsHandler
+	// ClustersPostClustersHandler sets the operation handler for the post clusters operation
+	ClustersPostClustersHandler clusters.PostClustersHandler
+	// ReposPostReposHandler sets the operation handler for the post repos operation
+	ReposPostReposHandler repos.PostReposHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -227,68 +227,68 @@ func (o *AppHubAPI) Validate() error {
 		unregistered = append(unregistered, "YamlProducer")
 	}
 
-	if o.AppRuntimesDeleteV1AppruntimesAppRuntimeIDHandler == nil {
-		unregistered = append(unregistered, "app_runtimes.DeleteV1AppruntimesAppRuntimeIDHandler")
+	if o.AppRuntimesDeleteAppruntimesAppRuntimeIDHandler == nil {
+		unregistered = append(unregistered, "app_runtimes.DeleteAppruntimesAppRuntimeIDHandler")
 	}
 
-	if o.AppsDeleteV1AppsAppIDHandler == nil {
-		unregistered = append(unregistered, "apps.DeleteV1AppsAppIDHandler")
+	if o.AppsDeleteAppsAppIDHandler == nil {
+		unregistered = append(unregistered, "apps.DeleteAppsAppIDHandler")
 	}
 
-	if o.ClustersDeleteV1ClustersClusterIDHandler == nil {
-		unregistered = append(unregistered, "clusters.DeleteV1ClustersClusterIDHandler")
+	if o.ClustersDeleteClustersClusterIDHandler == nil {
+		unregistered = append(unregistered, "clusters.DeleteClustersClusterIDHandler")
 	}
 
-	if o.ReposDeleteV1ReposRepoIDHandler == nil {
-		unregistered = append(unregistered, "repos.DeleteV1ReposRepoIDHandler")
+	if o.ReposDeleteReposRepoIDHandler == nil {
+		unregistered = append(unregistered, "repos.DeleteReposRepoIDHandler")
 	}
 
-	if o.AppRuntimesGetV1AppruntimesHandler == nil {
-		unregistered = append(unregistered, "app_runtimes.GetV1AppruntimesHandler")
+	if o.AppRuntimesGetAppruntimesHandler == nil {
+		unregistered = append(unregistered, "app_runtimes.GetAppruntimesHandler")
 	}
 
-	if o.AppRuntimesGetV1AppruntimesAppRuntimeIDHandler == nil {
-		unregistered = append(unregistered, "app_runtimes.GetV1AppruntimesAppRuntimeIDHandler")
+	if o.AppRuntimesGetAppruntimesAppRuntimeIDHandler == nil {
+		unregistered = append(unregistered, "app_runtimes.GetAppruntimesAppRuntimeIDHandler")
 	}
 
-	if o.AppsGetV1AppsHandler == nil {
-		unregistered = append(unregistered, "apps.GetV1AppsHandler")
+	if o.AppsGetAppsHandler == nil {
+		unregistered = append(unregistered, "apps.GetAppsHandler")
 	}
 
-	if o.AppsGetV1AppsAppIDHandler == nil {
-		unregistered = append(unregistered, "apps.GetV1AppsAppIDHandler")
+	if o.AppsGetAppsAppIDHandler == nil {
+		unregistered = append(unregistered, "apps.GetAppsAppIDHandler")
 	}
 
-	if o.ClustersGetV1ClustersHandler == nil {
-		unregistered = append(unregistered, "clusters.GetV1ClustersHandler")
+	if o.ClustersGetClustersHandler == nil {
+		unregistered = append(unregistered, "clusters.GetClustersHandler")
 	}
 
-	if o.ClustersGetV1ClustersClusterIDHandler == nil {
-		unregistered = append(unregistered, "clusters.GetV1ClustersClusterIDHandler")
+	if o.ClustersGetClustersClusterIDHandler == nil {
+		unregistered = append(unregistered, "clusters.GetClustersClusterIDHandler")
 	}
 
-	if o.ReposGetV1ReposHandler == nil {
-		unregistered = append(unregistered, "repos.GetV1ReposHandler")
+	if o.ReposGetReposHandler == nil {
+		unregistered = append(unregistered, "repos.GetReposHandler")
 	}
 
-	if o.ReposGetV1ReposRepoIDHandler == nil {
-		unregistered = append(unregistered, "repos.GetV1ReposRepoIDHandler")
+	if o.ReposGetReposRepoIDHandler == nil {
+		unregistered = append(unregistered, "repos.GetReposRepoIDHandler")
 	}
 
-	if o.AppRuntimesPostV1AppruntimesHandler == nil {
-		unregistered = append(unregistered, "app_runtimes.PostV1AppruntimesHandler")
+	if o.AppRuntimesPostAppruntimesHandler == nil {
+		unregistered = append(unregistered, "app_runtimes.PostAppruntimesHandler")
 	}
 
-	if o.AppsPostV1AppsHandler == nil {
-		unregistered = append(unregistered, "apps.PostV1AppsHandler")
+	if o.AppsPostAppsHandler == nil {
+		unregistered = append(unregistered, "apps.PostAppsHandler")
 	}
 
-	if o.ClustersPostV1ClustersHandler == nil {
-		unregistered = append(unregistered, "clusters.PostV1ClustersHandler")
+	if o.ClustersPostClustersHandler == nil {
+		unregistered = append(unregistered, "clusters.PostClustersHandler")
 	}
 
-	if o.ReposPostV1ReposHandler == nil {
-		unregistered = append(unregistered, "repos.PostV1ReposHandler")
+	if o.ReposPostReposHandler == nil {
+		unregistered = append(unregistered, "repos.PostReposHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -390,82 +390,82 @@ func (o *AppHubAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/v1/appruntimes/{appRuntimeId}"] = app_runtimes.NewDeleteV1AppruntimesAppRuntimeID(o.context, o.AppRuntimesDeleteV1AppruntimesAppRuntimeIDHandler)
+	o.handlers["DELETE"]["/appruntimes/{appRuntimeId}"] = app_runtimes.NewDeleteAppruntimesAppRuntimeID(o.context, o.AppRuntimesDeleteAppruntimesAppRuntimeIDHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/v1/apps/{appId}"] = apps.NewDeleteV1AppsAppID(o.context, o.AppsDeleteV1AppsAppIDHandler)
+	o.handlers["DELETE"]["/apps/{appId}"] = apps.NewDeleteAppsAppID(o.context, o.AppsDeleteAppsAppIDHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/v1/clusters/{clusterId}"] = clusters.NewDeleteV1ClustersClusterID(o.context, o.ClustersDeleteV1ClustersClusterIDHandler)
+	o.handlers["DELETE"]["/clusters/{clusterId}"] = clusters.NewDeleteClustersClusterID(o.context, o.ClustersDeleteClustersClusterIDHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
-	o.handlers["DELETE"]["/v1/repos/{repoId}"] = repos.NewDeleteV1ReposRepoID(o.context, o.ReposDeleteV1ReposRepoIDHandler)
+	o.handlers["DELETE"]["/repos/{repoId}"] = repos.NewDeleteReposRepoID(o.context, o.ReposDeleteReposRepoIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/appruntimes"] = app_runtimes.NewGetV1Appruntimes(o.context, o.AppRuntimesGetV1AppruntimesHandler)
+	o.handlers["GET"]["/appruntimes"] = app_runtimes.NewGetAppruntimes(o.context, o.AppRuntimesGetAppruntimesHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/appruntimes/{appRuntimeId}"] = app_runtimes.NewGetV1AppruntimesAppRuntimeID(o.context, o.AppRuntimesGetV1AppruntimesAppRuntimeIDHandler)
+	o.handlers["GET"]["/appruntimes/{appRuntimeId}"] = app_runtimes.NewGetAppruntimesAppRuntimeID(o.context, o.AppRuntimesGetAppruntimesAppRuntimeIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/apps"] = apps.NewGetV1Apps(o.context, o.AppsGetV1AppsHandler)
+	o.handlers["GET"]["/apps"] = apps.NewGetApps(o.context, o.AppsGetAppsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/apps/{appId}"] = apps.NewGetV1AppsAppID(o.context, o.AppsGetV1AppsAppIDHandler)
+	o.handlers["GET"]["/apps/{appId}"] = apps.NewGetAppsAppID(o.context, o.AppsGetAppsAppIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/clusters"] = clusters.NewGetV1Clusters(o.context, o.ClustersGetV1ClustersHandler)
+	o.handlers["GET"]["/clusters"] = clusters.NewGetClusters(o.context, o.ClustersGetClustersHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/clusters/{clusterId}"] = clusters.NewGetV1ClustersClusterID(o.context, o.ClustersGetV1ClustersClusterIDHandler)
+	o.handlers["GET"]["/clusters/{clusterId}"] = clusters.NewGetClustersClusterID(o.context, o.ClustersGetClustersClusterIDHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/repos"] = repos.NewGetV1Repos(o.context, o.ReposGetV1ReposHandler)
+	o.handlers["GET"]["/repos"] = repos.NewGetRepos(o.context, o.ReposGetReposHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/repos/{repoId}"] = repos.NewGetV1ReposRepoID(o.context, o.ReposGetV1ReposRepoIDHandler)
+	o.handlers["GET"]["/repos/{repoId}"] = repos.NewGetReposRepoID(o.context, o.ReposGetReposRepoIDHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/appruntimes"] = app_runtimes.NewPostV1Appruntimes(o.context, o.AppRuntimesPostV1AppruntimesHandler)
+	o.handlers["POST"]["/appruntimes"] = app_runtimes.NewPostAppruntimes(o.context, o.AppRuntimesPostAppruntimesHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/apps"] = apps.NewPostV1Apps(o.context, o.AppsPostV1AppsHandler)
+	o.handlers["POST"]["/apps"] = apps.NewPostApps(o.context, o.AppsPostAppsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/clusters"] = clusters.NewPostV1Clusters(o.context, o.ClustersPostV1ClustersHandler)
+	o.handlers["POST"]["/clusters"] = clusters.NewPostClusters(o.context, o.ClustersPostClustersHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/repos"] = repos.NewPostV1Repos(o.context, o.ReposPostV1ReposHandler)
+	o.handlers["POST"]["/repos"] = repos.NewPostRepos(o.context, o.ReposPostReposHandler)
 
 }
 

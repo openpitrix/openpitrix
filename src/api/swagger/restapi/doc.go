@@ -8,7 +8,7 @@ An open platform to package and deploy applications into multiple environment su
     Schemes:
       http
     Host: localhost
-    BasePath: /
+    BasePath: /v1
     Version: 0.0.1
 
     Consumes:

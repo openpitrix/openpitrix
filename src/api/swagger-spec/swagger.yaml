@@ -6,6 +6,7 @@ produces:
   - application/yaml
 schemes:
   - http
+basePath: /v1
 swagger: '2.0'
 info:
   description: >-
@@ -14,7 +15,7 @@ info:
   title: AppHub
   version: 0.0.1
 paths:
-  /v1/apps:
+  /apps:
     get:
       summary: Gets some apps
       description: Returns a list containing all apps.
@@ -50,7 +51,7 @@ paths:
           description: App couldn't have been created.
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  '/v1/apps/{appId}':
+  '/apps/{appId}':
     get:
       summary: Gets an app
       description: Returns a single app by its id
@@ -81,7 +82,7 @@ paths:
           $ref: '#/responses/AppDoesNotExistResponse'
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  /v1/clusters:
+  /clusters:
     get:
       summary: Gets some clusters
       description: Returns a list containing all clusters.
@@ -117,7 +118,7 @@ paths:
           description: Cluster couldn't have been created.
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  '/v1/clusters/{clusterId}':
+  '/clusters/{clusterId}':
     get:
       summary: Gets a cluster
       description: Returns a single cluster by its id
@@ -148,7 +149,7 @@ paths:
           $ref: '#/responses/ClusterDoesNotExistResponse'
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  /v1/repos:
+  /repos:
     get:
       summary: Gets some repos
       description: Returns a list containing all repos.
@@ -184,7 +185,7 @@ paths:
           description: Repo couldn't have been created.
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  '/v1/repos/{repoId}':
+  '/repos/{repoId}':
     get:
       summary: Gets a repo
       description: Returns a single repo by its id
@@ -215,7 +216,7 @@ paths:
           $ref: '#/responses/RepoDoesNotExistResponse'
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  /v1/appruntimes:
+  /appruntimes:
     get:
       summary: Gets some app runtimes
       description: Returns a list containing all app runtimes.
@@ -251,7 +252,7 @@ paths:
           description: App runtime couldn't have been created.
         '500':
           $ref: '#/responses/Standard500ErrorResponse'
-  '/v1/appruntimes/{appRuntimeId}':
+  '/appruntimes/{appRuntimeId}':
     get:
       summary: Gets an app runtime
       description: Returns a single runtime by its id

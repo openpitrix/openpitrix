@@ -23,7 +23,7 @@ import (
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
-//go:generate swagger generate server --target ../../swagger --name  --spec ../swagger.yaml
+//go:generate swagger generate server --target ../swagger --name  --spec ../swagger-spec/swagger.yaml
 
 func configureFlags(api *operations.AppHubAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -47,53 +47,53 @@ func configureAPI(api *operations.AppHubAPI) http.Handler {
 
 	api.YamlProducer = yamlpc.YAMLProducer()
 
-	api.AppRuntimesDeleteV1AppruntimesAppRuntimeIDHandler = app_runtimes.DeleteV1AppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.DeleteV1AppruntimesAppRuntimeIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation app_runtimes.DeleteV1AppruntimesAppRuntimeID has not yet been implemented")
+	api.AppRuntimesDeleteAppruntimesAppRuntimeIDHandler = app_runtimes.DeleteAppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.DeleteAppruntimesAppRuntimeIDParams) middleware.Responder {
+		return middleware.NotImplemented("operation app_runtimes.DeleteAppruntimesAppRuntimeID has not yet been implemented")
 	})
-	api.AppsDeleteV1AppsAppIDHandler = apps.DeleteV1AppsAppIDHandlerFunc(func(params apps.DeleteV1AppsAppIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation apps.DeleteV1AppsAppID has not yet been implemented")
+	api.AppsDeleteAppsAppIDHandler = apps.DeleteAppsAppIDHandlerFunc(func(params apps.DeleteAppsAppIDParams) middleware.Responder {
+		return middleware.NotImplemented("operation apps.DeleteAppsAppID has not yet been implemented")
 	})
-	api.ClustersDeleteV1ClustersClusterIDHandler = clusters.DeleteV1ClustersClusterIDHandlerFunc(func(params clusters.DeleteV1ClustersClusterIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation clusters.DeleteV1ClustersClusterID has not yet been implemented")
+	api.ClustersDeleteClustersClusterIDHandler = clusters.DeleteClustersClusterIDHandlerFunc(func(params clusters.DeleteClustersClusterIDParams) middleware.Responder {
+		return middleware.NotImplemented("operation clusters.DeleteClustersClusterID has not yet been implemented")
 	})
-	api.ReposDeleteV1ReposRepoIDHandler = repos.DeleteV1ReposRepoIDHandlerFunc(func(params repos.DeleteV1ReposRepoIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation repos.DeleteV1ReposRepoID has not yet been implemented")
+	api.ReposDeleteReposRepoIDHandler = repos.DeleteReposRepoIDHandlerFunc(func(params repos.DeleteReposRepoIDParams) middleware.Responder {
+		return middleware.NotImplemented("operation repos.DeleteReposRepoID has not yet been implemented")
 	})
-	api.AppRuntimesGetV1AppruntimesHandler = app_runtimes.GetV1AppruntimesHandlerFunc(func(params app_runtimes.GetV1AppruntimesParams) middleware.Responder {
-		return middleware.NotImplemented("operation app_runtimes.GetV1Appruntimes has not yet been implemented")
+	api.AppRuntimesGetAppruntimesHandler = app_runtimes.GetAppruntimesHandlerFunc(func(params app_runtimes.GetAppruntimesParams) middleware.Responder {
+		return middleware.NotImplemented("operation app_runtimes.GetAppruntimes has not yet been implemented")
 	})
-	api.AppRuntimesGetV1AppruntimesAppRuntimeIDHandler = app_runtimes.GetV1AppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.GetV1AppruntimesAppRuntimeIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation app_runtimes.GetV1AppruntimesAppRuntimeID has not yet been implemented")
+	api.AppRuntimesGetAppruntimesAppRuntimeIDHandler = app_runtimes.GetAppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.GetAppruntimesAppRuntimeIDParams) middleware.Responder {
+		return middleware.NotImplemented("operation app_runtimes.GetAppruntimesAppRuntimeID has not yet been implemented")
 	})
-	api.AppsGetV1AppsHandler = apps.GetV1AppsHandlerFunc(func(params apps.GetV1AppsParams) middleware.Responder {
-		return middleware.NotImplemented("operation apps.GetV1Apps has not yet been implemented")
+	api.AppsGetAppsHandler = apps.GetAppsHandlerFunc(func(params apps.GetAppsParams) middleware.Responder {
+		return middleware.NotImplemented("operation apps.GetApps has not yet been implemented")
 	})
-	api.AppsGetV1AppsAppIDHandler = apps.GetV1AppsAppIDHandlerFunc(func(params apps.GetV1AppsAppIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation apps.GetV1AppsAppID has not yet been implemented")
+	api.AppsGetAppsAppIDHandler = apps.GetAppsAppIDHandlerFunc(func(params apps.GetAppsAppIDParams) middleware.Responder {
+		return middleware.NotImplemented("operation apps.GetAppsAppID has not yet been implemented")
 	})
-	api.ClustersGetV1ClustersHandler = clusters.GetV1ClustersHandlerFunc(func(params clusters.GetV1ClustersParams) middleware.Responder {
-		return middleware.NotImplemented("operation clusters.GetV1Clusters has not yet been implemented")
+	api.ClustersGetClustersHandler = clusters.GetClustersHandlerFunc(func(params clusters.GetClustersParams) middleware.Responder {
+		return middleware.NotImplemented("operation clusters.GetClusters has not yet been implemented")
 	})
-	api.ClustersGetV1ClustersClusterIDHandler = clusters.GetV1ClustersClusterIDHandlerFunc(func(params clusters.GetV1ClustersClusterIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation clusters.GetV1ClustersClusterID has not yet been implemented")
+	api.ClustersGetClustersClusterIDHandler = clusters.GetClustersClusterIDHandlerFunc(func(params clusters.GetClustersClusterIDParams) middleware.Responder {
+		return middleware.NotImplemented("operation clusters.GetClustersClusterID has not yet been implemented")
 	})
-	api.ReposGetV1ReposHandler = repos.GetV1ReposHandlerFunc(func(params repos.GetV1ReposParams) middleware.Responder {
+	api.ReposGetReposHandler = repos.GetReposHandlerFunc(func(params repos.GetReposParams) middleware.Responder {
 		return hrepos.GetRepos(params)
 	})
-	api.ReposGetV1ReposRepoIDHandler = repos.GetV1ReposRepoIDHandlerFunc(func(params repos.GetV1ReposRepoIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation repos.GetV1ReposRepoID has not yet been implemented")
+	api.ReposGetReposRepoIDHandler = repos.GetReposRepoIDHandlerFunc(func(params repos.GetReposRepoIDParams) middleware.Responder {
+		return middleware.NotImplemented("operation repos.GetReposRepoID has not yet been implemented")
 	})
-	api.AppRuntimesPostV1AppruntimesHandler = app_runtimes.PostV1AppruntimesHandlerFunc(func(params app_runtimes.PostV1AppruntimesParams) middleware.Responder {
-		return middleware.NotImplemented("operation app_runtimes.PostV1Appruntimes has not yet been implemented")
+	api.AppRuntimesPostAppruntimesHandler = app_runtimes.PostAppruntimesHandlerFunc(func(params app_runtimes.PostAppruntimesParams) middleware.Responder {
+		return middleware.NotImplemented("operation app_runtimes.PostAppruntimes has not yet been implemented")
 	})
-	api.AppsPostV1AppsHandler = apps.PostV1AppsHandlerFunc(func(params apps.PostV1AppsParams) middleware.Responder {
-		return middleware.NotImplemented("operation apps.PostV1Apps has not yet been implemented")
+	api.AppsPostAppsHandler = apps.PostAppsHandlerFunc(func(params apps.PostAppsParams) middleware.Responder {
+		return middleware.NotImplemented("operation apps.PostApps has not yet been implemented")
 	})
-	api.ClustersPostV1ClustersHandler = clusters.PostV1ClustersHandlerFunc(func(params clusters.PostV1ClustersParams) middleware.Responder {
-		return middleware.NotImplemented("operation clusters.PostV1Clusters has not yet been implemented")
+	api.ClustersPostClustersHandler = clusters.PostClustersHandlerFunc(func(params clusters.PostClustersParams) middleware.Responder {
+		return middleware.NotImplemented("operation clusters.PostClusters has not yet been implemented")
 	})
-	api.ReposPostV1ReposHandler = repos.PostV1ReposHandlerFunc(func(params repos.PostV1ReposParams) middleware.Responder {
-		return middleware.NotImplemented("operation repos.PostV1Repos has not yet been implemented")
+	api.ReposPostReposHandler = repos.PostReposHandlerFunc(func(params repos.PostReposParams) middleware.Responder {
+		return middleware.NotImplemented("operation repos.PostRepos has not yet been implemented")
 	})
 
 	api.ServerShutdown = func() {}
