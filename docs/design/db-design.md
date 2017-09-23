@@ -3,7 +3,7 @@
 ### Key Points
 * Will use mysql as RDBM.
 * Since the project is microservice-based, we use database-per-service pattern for the backend store.
-* The throughput is expected to not high, so we will use private-tables-per-service and schema-per-service given the way is the lowest overhead.
+* The throughput is expected not too high, so we will use private-tables-per-service and schema-per-service given the way is the lowest overhead.
 
 ### Schemas
 Use GRANT to isolate tables for services
