@@ -56,7 +56,8 @@ create table cluster {
 CREATE UNIQUE INDEX cluster_name ON cluster (name);
 CREATE USER 'cluster_user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON apphub.cluster TO 'cluster_user'@'localhost';
-
+```
+```
 create table clusternode {
     nodeid varchar(50) PRIMARY KEY NOT NULL,
     instanceid varchar(50) NOT NULL,
