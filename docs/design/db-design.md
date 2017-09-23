@@ -15,6 +15,7 @@ GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'
 create database apphub;
 ```
 
+* For repo service
 ```
 use database apphub;
 create table repo {
@@ -28,6 +29,7 @@ CREATE USER 'repo_user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON apphub.repo TO 'repo_user'@'localhost';
 ```
 
+* For app service
 ```
 use database apphub;
 create table app {
@@ -42,6 +44,7 @@ CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON apphub.app TO 'app_user'@'localhost';
 ```
 
+* For cluster service
 ```
 use database apphub;
 create table cluster {
@@ -53,8 +56,20 @@ create table cluster {
 CREATE UNIQUE INDEX cluster_name ON cluster (name);
 CREATE USER 'cluster_user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON apphub.cluster TO 'cluster_user'@'localhost';
+
+create table clusternode {
+    nodeid varchar(50) PRIMARY KEY NOT NULL,
+    instanceid varchar(50) NOT NULL,
+    name varchar(50) NOT NULL,
+    description varchar(1000) DEFAULT ‘’ NOT NULL,
+    clusterid varchar(50) NOT NULL
+);
+CREATE UNIQUE INDEX clusternode_name ON clusternode (name);
+CREATE USER 'cluster_user'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON apphub.clusternode TO 'cluster_user'@'localhost';
 ```
 
+* For app runtime service
 ```
 use database apphub;
 create table appruntime {
