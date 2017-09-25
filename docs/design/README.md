@@ -12,5 +12,5 @@ Basic idea is to decouple application repository and runtime environment. The ru
 
 ### Database
 
-The project is microservice architecure oriented. The database design is different than monolithic approach. Please check the [design details](docs/design/db-design.md)
+The project is microservice architecure oriented. The database design is different than monolithic approach. Please check the [design details](db-design.md)
 
