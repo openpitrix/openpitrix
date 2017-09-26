@@ -12,18 +12,16 @@ import (
 	"github.com/go-openapi/runtime/yamlpc"
 	graceful "github.com/tylerb/graceful"
 
-	"AppHub/src/api/swagger/restapi/operations"
-	"AppHub/src/api/swagger/restapi/operations/app_runtimes"
-	"AppHub/src/api/swagger/restapi/operations/apps"
-	"AppHub/src/api/swagger/restapi/operations/clusters"
-	"AppHub/src/api/swagger/restapi/operations/repos"
-
-        hrepos "AppHub/src/api/handlers/repos"
+	"apphub/src/api/swagger/restapi/operations"
+	"apphub/src/api/swagger/restapi/operations/app_runtimes"
+	"apphub/src/api/swagger/restapi/operations/apps"
+	"apphub/src/api/swagger/restapi/operations/clusters"
+	"apphub/src/api/swagger/restapi/operations/repos"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
-//go:generate swagger generate server --target ../swagger --name  --spec ../swagger-spec/swagger.yaml
+//go:generate swagger generate server --target ../src/api/swagger --name  --spec ../src/api/swagger-spec/swagger.yaml
 
 func configureFlags(api *operations.AppHubAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -78,7 +76,7 @@ func configureAPI(api *operations.AppHubAPI) http.Handler {
 		return middleware.NotImplemented("operation clusters.GetClustersClusterID has not yet been implemented")
 	})
 	api.ReposGetReposHandler = repos.GetReposHandlerFunc(func(params repos.GetReposParams) middleware.Responder {
-		return hrepos.GetRepos(params)
+		return middleware.NotImplemented("operation repos.GetRepos has not yet been implemented")
 	})
 	api.ReposGetReposRepoIDHandler = repos.GetReposRepoIDHandlerFunc(func(params repos.GetReposRepoIDParams) middleware.Responder {
 		return middleware.NotImplemented("operation repos.GetReposRepoID has not yet been implemented")

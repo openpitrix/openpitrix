@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"AppHub/src/api/swagger/models"
+	"apphub/src/api/swagger/models"
 )
 
 // GetAppruntimesAppRuntimeIDOKCode is the HTTP code returned for type GetAppruntimesAppRuntimeIDOK

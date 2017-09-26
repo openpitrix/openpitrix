@@ -1,3 +1,5 @@
+// +build ignore
+
 package app
 
 import (
@@ -8,4 +10,3 @@ import (
 
 	middleware "github.com/go-openapi/runtime/middleware"
 )
-
