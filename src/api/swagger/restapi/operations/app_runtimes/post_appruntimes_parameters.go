@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	"AppHub/src/api/swagger/models"
+	"apphub/src/api/swagger/models"
 )
 
 // NewPostAppruntimesParams creates a new PostAppruntimesParams object

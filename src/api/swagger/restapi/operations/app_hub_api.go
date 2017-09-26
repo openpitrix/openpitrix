@@ -20,10 +20,10 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"AppHub/src/api/swagger/restapi/operations/app_runtimes"
-	"AppHub/src/api/swagger/restapi/operations/apps"
-	"AppHub/src/api/swagger/restapi/operations/clusters"
-	"AppHub/src/api/swagger/restapi/operations/repos"
+	"apphub/src/api/swagger/restapi/operations/app_runtimes"
+	"apphub/src/api/swagger/restapi/operations/apps"
+	"apphub/src/api/swagger/restapi/operations/clusters"
+	"apphub/src/api/swagger/restapi/operations/repos"
 )
 
 // NewAppHubAPI creates a new AppHub instance
