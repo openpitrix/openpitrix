@@ -13,7 +13,7 @@ import (
 )
 
 // Apps apps
-// swagger:model Apps
+// swagger:model apps
 
 type Apps struct {
 
@@ -21,7 +21,7 @@ type Apps struct {
 	Items AppsItems `json:"items"`
 }
 
-/* polymorph Apps items false */
+/* polymorph apps items false */
 
 // Validate validates this apps
 func (m *Apps) Validate(formats strfmt.Registry) error {

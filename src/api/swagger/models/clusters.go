@@ -13,7 +13,7 @@ import (
 )
 
 // Clusters clusters
-// swagger:model Clusters
+// swagger:model clusters
 
 type Clusters struct {
 
@@ -21,7 +21,7 @@ type Clusters struct {
 	Items ClustersItems `json:"items"`
 }
 
-/* polymorph Clusters items false */
+/* polymorph clusters items false */
 
 // Validate validates this clusters
 func (m *Clusters) Validate(formats strfmt.Registry) error {
