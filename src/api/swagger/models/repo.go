@@ -14,7 +14,7 @@ import (
 )
 
 // Repo repo
-// swagger:model Repo
+// swagger:model repo
 
 type Repo struct {
 
@@ -39,15 +39,15 @@ type Repo struct {
 	URL string `json:"url,omitempty"`
 }
 
-/* polymorph Repo createTime false */
+/* polymorph repo createTime false */
 
-/* polymorph Repo description false */
+/* polymorph repo description false */
 
-/* polymorph Repo name false */
+/* polymorph repo name false */
 
-/* polymorph Repo repoId false */
+/* polymorph repo repoId false */
 
-/* polymorph Repo url false */
+/* polymorph repo url false */
 
 // Validate validates this repo
 func (m *Repo) Validate(formats strfmt.Registry) error {

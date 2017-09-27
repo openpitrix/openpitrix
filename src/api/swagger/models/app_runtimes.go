@@ -13,7 +13,7 @@ import (
 )
 
 // AppRuntimes app runtimes
-// swagger:model AppRuntimes
+// swagger:model appRuntimes
 
 type AppRuntimes struct {
 
@@ -21,7 +21,7 @@ type AppRuntimes struct {
 	Items AppRuntimesItems `json:"items"`
 }
 
-/* polymorph AppRuntimes items false */
+/* polymorph appRuntimes items false */
 
 // Validate validates this app runtimes
 func (m *AppRuntimes) Validate(formats strfmt.Registry) error {

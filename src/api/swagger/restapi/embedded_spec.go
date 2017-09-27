@@ -70,7 +70,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -87,7 +87,7 @@ func init() {
             "name": "appruntime",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/AppRuntime"
+              "$ref": "#/definitions/appRuntime"
             }
           }
         ],
@@ -101,7 +101,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -127,7 +127,7 @@ func init() {
           "200": {
             "description": "An app runtime",
             "schema": {
-              "$ref": "#/definitions/AppRuntime"
+              "$ref": "#/definitions/appRuntime"
             }
           },
           "404": {
@@ -136,7 +136,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -166,7 +166,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -209,7 +209,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -226,7 +226,7 @@ func init() {
             "name": "app",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/App"
+              "$ref": "#/definitions/app"
             }
           }
         ],
@@ -240,7 +240,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -266,7 +266,7 @@ func init() {
           "200": {
             "description": "An app",
             "schema": {
-              "$ref": "#/definitions/App"
+              "$ref": "#/definitions/app"
             }
           },
           "404": {
@@ -275,7 +275,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -305,7 +305,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -348,7 +348,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -365,7 +365,7 @@ func init() {
             "name": "cluster",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/Cluster"
+              "$ref": "#/definitions/cluster"
             }
           }
         ],
@@ -379,7 +379,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -405,7 +405,7 @@ func init() {
           "200": {
             "description": "A cluster",
             "schema": {
-              "$ref": "#/definitions/Cluster"
+              "$ref": "#/definitions/cluster"
             }
           },
           "404": {
@@ -414,7 +414,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -444,7 +444,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -487,7 +487,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -504,7 +504,7 @@ func init() {
             "name": "repo",
             "in": "body",
             "schema": {
-              "$ref": "#/definitions/Repo"
+              "$ref": "#/definitions/repo"
             }
           }
         ],
@@ -518,7 +518,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -544,7 +544,7 @@ func init() {
           "200": {
             "description": "A repo",
             "schema": {
-              "$ref": "#/definitions/Repo"
+              "$ref": "#/definitions/repo"
             }
           },
           "404": {
@@ -553,7 +553,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -583,7 +583,7 @@ func init() {
           "500": {
             "description": "An unexpected error occured.",
             "schema": {
-              "$ref": "#/definitions/Error"
+              "$ref": "#/definitions/error"
             }
           }
         }
@@ -591,7 +591,7 @@ func init() {
     }
   },
   "definitions": {
-    "App": {
+    "app": {
       "required": [
         "appId"
       ],
@@ -619,7 +619,7 @@ func init() {
         }
       }
     },
-    "AppRuntime": {
+    "appRuntime": {
       "required": [
         "appRuntimeId"
       ],
@@ -647,21 +647,37 @@ func init() {
         }
       }
     },
-    "AppRuntimes": {
+    "appRuntimes": {
       "properties": {
         "items": {
           "$ref": "#/definitions/appRuntimesItems"
         }
       }
     },
-    "Apps": {
+    "appRuntimesItems": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "/Users/chai/go/src/apphub/src/api/swagger-spec/types.yaml#/AppRuntime"
+      },
+      "x-go-gen-location": "models"
+    },
+    "apps": {
       "properties": {
         "items": {
           "$ref": "#/definitions/appsItems"
         }
       }
     },
-    "Cluster": {
+    "appsItems": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "/Users/chai/go/src/apphub/src/api/swagger-spec/types.yaml#/App"
+      },
+      "x-go-gen-location": "models"
+    },
+    "cluster": {
       "required": [
         "clusterId"
       ],
@@ -686,14 +702,22 @@ func init() {
         }
       }
     },
-    "Clusters": {
+    "clusters": {
       "properties": {
         "items": {
           "$ref": "#/definitions/clustersItems"
         }
       }
     },
-    "Error": {
+    "clustersItems": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "/Users/chai/go/src/apphub/src/api/swagger-spec/types.yaml#/Cluster"
+      },
+      "x-go-gen-location": "models"
+    },
+    "error": {
       "properties": {
         "code": {
           "type": "string",
@@ -708,7 +732,51 @@ func init() {
         }
       }
     },
-    "Paging": {
+    "getAppruntimesOKBody": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/appRuntimes"
+        },
+        {
+          "$ref": "#/definitions/paging"
+        }
+      ],
+      "x-go-gen-location": "operations"
+    },
+    "getAppsOKBody": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/apps"
+        },
+        {
+          "$ref": "#/definitions/paging"
+        }
+      ],
+      "x-go-gen-location": "operations"
+    },
+    "getClustersOKBody": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/clusters"
+        },
+        {
+          "$ref": "#/definitions/paging"
+        }
+      ],
+      "x-go-gen-location": "operations"
+    },
+    "getReposOKBody": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/repos"
+        },
+        {
+          "$ref": "#/definitions/paging"
+        }
+      ],
+      "x-go-gen-location": "operations"
+    },
+    "paging": {
       "properties": {
         "currentPage": {
           "type": "integer"
@@ -724,7 +792,7 @@ func init() {
         }
       }
     },
-    "Repo": {
+    "repo": {
       "required": [
         "repoId"
       ],
@@ -752,156 +820,20 @@ func init() {
         }
       }
     },
-    "Repos": {
+    "repos": {
       "properties": {
         "items": {
           "$ref": "#/definitions/reposItems"
         }
       }
     },
-    "appRuntimesItems": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/AppRuntime"
-      },
-      "x-go-gen-location": "models"
-    },
-    "appsItems": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/App"
-      },
-      "x-go-gen-location": "models"
-    },
-    "clustersItems": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/Cluster"
-      },
-      "x-go-gen-location": "models"
-    },
-    "getAppruntimesOKBody": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/AppRuntimes"
-        },
-        {
-          "$ref": "#/definitions/Paging"
-        }
-      ],
-      "x-go-gen-location": "operations"
-    },
-    "getAppsOKBody": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/Apps"
-        },
-        {
-          "$ref": "#/definitions/Paging"
-        }
-      ],
-      "x-go-gen-location": "operations"
-    },
-    "getClustersOKBody": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/Clusters"
-        },
-        {
-          "$ref": "#/definitions/Paging"
-        }
-      ],
-      "x-go-gen-location": "operations"
-    },
-    "getReposOKBody": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/Repos"
-        },
-        {
-          "$ref": "#/definitions/Paging"
-        }
-      ],
-      "x-go-gen-location": "operations"
-    },
     "reposItems": {
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "$ref": "#/definitions/Repo"
+        "$ref": "/Users/chai/go/src/apphub/src/api/swagger-spec/types.yaml#/Repo"
       },
       "x-go-gen-location": "models"
-    }
-  },
-  "parameters": {
-    "appId": {
-      "type": "string",
-      "description": "The app's id",
-      "name": "appId",
-      "in": "path",
-      "required": true
-    },
-    "appRuntimeId": {
-      "type": "string",
-      "description": "The app runtime's id",
-      "name": "appRuntimeId",
-      "in": "path",
-      "required": true
-    },
-    "clusterId": {
-      "type": "string",
-      "description": "The cluster's id",
-      "name": "clusterId",
-      "in": "path",
-      "required": true
-    },
-    "pageNumber": {
-      "type": "integer",
-      "default": 1,
-      "description": "Page number",
-      "name": "pageNumber",
-      "in": "query"
-    },
-    "pageSize": {
-      "minimum": 0,
-      "exclusiveMinimum": true,
-      "multipleOf": 10,
-      "type": "integer",
-      "format": "int32",
-      "default": 20,
-      "description": "Number of clusters returned",
-      "name": "pageSize",
-      "in": "query"
-    },
-    "repoId": {
-      "type": "string",
-      "description": "The repo's id",
-      "name": "repoId",
-      "in": "path",
-      "required": true
-    }
-  },
-  "responses": {
-    "AppDoesNotExistResponse": {
-      "description": "The app does not exist."
-    },
-    "AppRuntimeDoesNotExistResponse": {
-      "description": "The app runtime does not exist."
-    },
-    "ClusterDoesNotExistResponse": {
-      "description": "The cluster does not exist."
-    },
-    "RepoDoesNotExistResponse": {
-      "description": "The repo does not exist."
-    },
-    "Standard500ErrorResponse": {
-      "description": "An unexpected error occured.",
-      "schema": {
-        "$ref": "#/definitions/Error"
-      }
     }
   }
 }`))
