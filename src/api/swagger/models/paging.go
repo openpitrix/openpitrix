@@ -13,7 +13,7 @@ import (
 )
 
 // Paging paging
-// swagger:model paging
+// swagger:model Paging
 
 type Paging struct {
 
@@ -30,13 +30,13 @@ type Paging struct {
 	TotalPages int64 `json:"totalPages,omitempty"`
 }
 
-/* polymorph paging currentPage false */
+/* polymorph Paging currentPage false */
 
-/* polymorph paging pageSize false */
+/* polymorph Paging pageSize false */
 
-/* polymorph paging totalItems false */
+/* polymorph Paging totalItems false */
 
-/* polymorph paging totalPages false */
+/* polymorph Paging totalPages false */
 
 // Validate validates this paging
 func (m *Paging) Validate(formats strfmt.Registry) error {

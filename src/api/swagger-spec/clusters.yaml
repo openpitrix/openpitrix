@@ -23,8 +23,8 @@ clusters:
     summary: Gets some clusters
     description: Returns a list containing all clusters.
     parameters:
-      - $ref: 'types.yaml#/parameters/pageSize'
-      - $ref: 'types.yaml#/parameters/pageNumber'
+      - $ref: '#/parameters/pageSize'
+      - $ref: '#/parameters/pageNumber'
     tags:
       - clusters
     responses:
@@ -32,10 +32,10 @@ clusters:
         description: A list of Cluster
         schema:
           allOf:
-            - $ref: 'types.yaml#/Clusters'
-            - $ref: 'types.yaml#/Paging'
+            - $ref: '#/definitions/Clusters'
+            - $ref: '#/definitions/Paging'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
   post:
     summary: Creates a cluster
     description: Adds a new cluster to the clusters list.
@@ -44,7 +44,7 @@ clusters:
         in: body
         description: The cluster to create.
         schema:
-          $ref: 'types.yaml#/Cluster'
+          $ref: '#/definitions/Cluster'
     tags:
       - clusters
     responses:
@@ -53,7 +53,7 @@ clusters:
       '400':
         description: Cluster couldn't have been created.
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
 
 # --------------------------------------------------------------------------
 # /clusters/{clusterId}
@@ -64,32 +64,32 @@ clusters-clusterId:
     summary: Gets a cluster
     description: Returns a single cluster by its id
     parameters:
-      - $ref: 'types.yaml#/parameters/clusterId'
+      - $ref: '#/parameters/clusterId'
     tags:
       - clusters
     responses:
       '200':
         description: A cluster
         schema:
-          $ref: 'types.yaml#/Cluster'
+          $ref: '#/definitions/Cluster'
       '404':
-        $ref: 'types.yaml#/responses/ClusterDoesNotExistResponse'
+        $ref: '#/responses/ClusterDoesNotExistResponse'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
   delete:
     summary: Deletes a cluster
     description: Delete a single cluster identified via its id
     parameters:
-      - $ref: 'types.yaml#/parameters/clusterId'
+      - $ref: '#/parameters/clusterId'
     tags:
       - clusters
     responses:
       '204':
         description: Cluster successfully deleted.
       '404':
-        $ref: 'types.yaml#/responses/ClusterDoesNotExistResponse'
+        $ref: '#/responses/ClusterDoesNotExistResponse'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
 
 # --------------------------------------------------------------------------
 # END

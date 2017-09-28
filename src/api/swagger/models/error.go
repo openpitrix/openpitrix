@@ -16,7 +16,7 @@ import (
 )
 
 // Error error
-// swagger:model error
+// swagger:model Error
 
 type Error struct {
 
@@ -27,9 +27,9 @@ type Error struct {
 	Message string `json:"message,omitempty"`
 }
 
-/* polymorph error code false */
+/* polymorph Error code false */
 
-/* polymorph error message false */
+/* polymorph Error message false */
 
 // Validate validates this error
 func (m *Error) Validate(formats strfmt.Registry) error {
