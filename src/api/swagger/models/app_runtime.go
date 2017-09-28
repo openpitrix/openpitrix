@@ -14,7 +14,7 @@ import (
 )
 
 // AppRuntime app runtime
-// swagger:model appRuntime
+// swagger:model AppRuntime
 
 type AppRuntime struct {
 
@@ -39,15 +39,15 @@ type AppRuntime struct {
 	URL string `json:"url,omitempty"`
 }
 
-/* polymorph appRuntime appRuntimeId false */
+/* polymorph AppRuntime appRuntimeId false */
 
-/* polymorph appRuntime createTime false */
+/* polymorph AppRuntime createTime false */
 
-/* polymorph appRuntime description false */
+/* polymorph AppRuntime description false */
 
-/* polymorph appRuntime name false */
+/* polymorph AppRuntime name false */
 
-/* polymorph appRuntime url false */
+/* polymorph AppRuntime url false */
 
 // Validate validates this app runtime
 func (m *AppRuntime) Validate(formats strfmt.Registry) error {

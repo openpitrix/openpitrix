@@ -13,7 +13,7 @@ import (
 )
 
 // Repos repos
-// swagger:model repos
+// swagger:model Repos
 
 type Repos struct {
 
@@ -21,7 +21,7 @@ type Repos struct {
 	Items ReposItems `json:"items"`
 }
 
-/* polymorph repos items false */
+/* polymorph Repos items false */
 
 // Validate validates this repos
 func (m *Repos) Validate(formats strfmt.Registry) error {

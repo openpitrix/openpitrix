@@ -14,7 +14,7 @@ import (
 )
 
 // App app
-// swagger:model app
+// swagger:model App
 
 type App struct {
 
@@ -39,15 +39,15 @@ type App struct {
 	URL string `json:"url,omitempty"`
 }
 
-/* polymorph app appId false */
+/* polymorph App appId false */
 
-/* polymorph app createTime false */
+/* polymorph App createTime false */
 
-/* polymorph app description false */
+/* polymorph App description false */
 
-/* polymorph app name false */
+/* polymorph App name false */
 
-/* polymorph app url false */
+/* polymorph App url false */
 
 // Validate validates this app
 func (m *App) Validate(formats strfmt.Registry) error {

@@ -14,7 +14,7 @@ import (
 )
 
 // Cluster cluster
-// swagger:model cluster
+// swagger:model Cluster
 
 type Cluster struct {
 
@@ -36,13 +36,13 @@ type Cluster struct {
 	Name string `json:"name,omitempty"`
 }
 
-/* polymorph cluster clusterId false */
+/* polymorph Cluster clusterId false */
 
-/* polymorph cluster createTime false */
+/* polymorph Cluster createTime false */
 
-/* polymorph cluster description false */
+/* polymorph Cluster description false */
 
-/* polymorph cluster name false */
+/* polymorph Cluster name false */
 
 // Validate validates this cluster
 func (m *Cluster) Validate(formats strfmt.Registry) error {
