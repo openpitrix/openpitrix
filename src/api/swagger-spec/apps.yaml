@@ -23,8 +23,8 @@ apps:
     summary: Gets some apps
     description: Returns a list containing all apps.
     parameters:
-      - $ref: 'types.yaml#/parameters/pageSize'
-      - $ref: 'types.yaml#/parameters/pageNumber'
+      - $ref: '#/parameters/pageSize'
+      - $ref: '#/parameters/pageNumber'
     tags:
       - apps
     responses:
@@ -32,10 +32,10 @@ apps:
         description: A list of apps
         schema:
           allOf:
-            - $ref: 'types.yaml#/Apps'
-            - $ref: 'types.yaml#/Paging'
+            - $ref: '#/definitions/Apps'
+            - $ref: '#/definitions/Paging'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
   post:
     summary: Creates an app
     description: Adds a new app to the app runtimes list.
@@ -44,7 +44,7 @@ apps:
         in: body
         description: The app to create.
         schema:
-          $ref: 'types.yaml#/App'
+          $ref: '#/definitions/App'
     tags:
       - apps
     responses:
@@ -53,7 +53,7 @@ apps:
       '400':
         description: App couldn't have been created.
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
 
 # --------------------------------------------------------------------------
 # /apps/{appId}
@@ -64,32 +64,32 @@ apps-appId:
     summary: Gets an app
     description: Returns a single app by its id
     parameters:
-      - $ref: 'types.yaml#/parameters/appId'
+      - $ref: '#/parameters/appId'
     tags:
       - apps
     responses:
       '200':
         description: An app
         schema:
-          $ref: 'types.yaml#/App'
+          $ref: '#/definitions/App'
       '404':
-        $ref: 'types.yaml#/responses/AppDoesNotExistResponse'
+        $ref: '#/responses/AppDoesNotExistResponse'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
   delete:
     summary: Deletes an app
     description: Delete a single app identified via its id
     parameters:
-      - $ref: 'types.yaml#/parameters/appId'
+      - $ref: '#/parameters/appId'
     tags:
       - apps
     responses:
       '204':
         description: App successfully deleted.
       '404':
-        $ref: 'types.yaml#/responses/AppDoesNotExistResponse'
+        $ref: '#/responses/AppDoesNotExistResponse'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
 
 # --------------------------------------------------------------------------
 # END

@@ -23,8 +23,8 @@ appruntimes:
     summary: Gets some app runtimes
     description: Returns a list containing all app runtimes.
     parameters:
-      - $ref: 'types.yaml#/parameters/pageSize'
-      - $ref: 'types.yaml#/parameters/pageNumber'
+      - $ref: '#/parameters/pageSize'
+      - $ref: '#/parameters/pageNumber'
     tags:
       - app-runtimes
     responses:
@@ -32,10 +32,10 @@ appruntimes:
         description: A list of app runtimes
         schema:
           allOf:
-            - $ref: 'types.yaml#/AppRuntimes'
-            - $ref: 'types.yaml#/Paging'
+            - $ref: '#/definitions/AppRuntimes'
+            - $ref: '#/definitions/Paging'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
   post:
     summary: Creates an app runtime
     description: Adds a new app runtime to the runtimes list.
@@ -44,7 +44,7 @@ appruntimes:
         in: body
         description: The runtime to create.
         schema:
-          $ref: 'types.yaml#/AppRuntime'
+          $ref: '#/definitions/AppRuntime'
     tags:
       - app-runtimes
     responses:
@@ -53,7 +53,7 @@ appruntimes:
       '400':
         description: App runtime couldn't have been created.
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
 
 # --------------------------------------------------------------------------
 # /appruntimes/{appRuntimeId}
@@ -64,32 +64,32 @@ appruntimes-appRuntimeId:
     summary: Gets an app runtime
     description: Returns a single runtime by its id
     parameters:
-      - $ref: 'types.yaml#/parameters/appRuntimeId'
+      - $ref: '#/parameters/appRuntimeId'
     tags:
       - app-runtimes
     responses:
       '200':
         description: An app runtime
         schema:
-          $ref: 'types.yaml#/AppRuntime'
+          $ref: '#/definitions/AppRuntime'
       '404':
-        $ref: 'types.yaml#/responses/AppRuntimeDoesNotExistResponse'
+        $ref: '#/responses/AppRuntimeDoesNotExistResponse'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
   delete:
     summary: Deletes an app runtime
     description: Delete a single app runtime identified via its id
     parameters:
-      - $ref: 'types.yaml#/parameters/appRuntimeId'
+      - $ref: '#/parameters/appRuntimeId'
     tags:
       - app-runtimes
     responses:
       '204':
         description: App runtime successfully deleted.
       '404':
-        $ref: 'types.yaml#/responses/AppRuntimeDoesNotExistResponse'
+        $ref: '#/responses/AppRuntimeDoesNotExistResponse'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
 
 # --------------------------------------------------------------------------
 # END

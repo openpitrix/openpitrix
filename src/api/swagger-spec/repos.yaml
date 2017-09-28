@@ -23,8 +23,8 @@ repos:
     summary: Gets some repos
     description: Returns a list containing all repos.
     parameters:
-      - $ref: 'types.yaml#/parameters/pageSize'
-      - $ref: 'types.yaml#/parameters/pageNumber'
+      - $ref: '#/parameters/pageSize'
+      - $ref: '#/parameters/pageNumber'
     tags:
       - repos
     responses:
@@ -32,10 +32,10 @@ repos:
         description: A list of repos
         schema:
           allOf:
-            - $ref: 'types.yaml#/Repos'
-            - $ref: 'types.yaml#/Paging'
+            - $ref: '#/definitions/Repos'
+            - $ref: '#/definitions/Paging'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
   post:
     summary: Creates a repo
     description: Adds a new repo to the repos list.
@@ -44,7 +44,7 @@ repos:
         in: body
         description: The repo to create.
         schema:
-          $ref: 'types.yaml#/Repo'
+          $ref: '#/definitions/Repo'
     tags:
       - repos
     responses:
@@ -53,7 +53,7 @@ repos:
       '400':
         description: Repo couldn't have been created.
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
 
 # --------------------------------------------------------------------------
 # /repos/{repoId}
@@ -64,32 +64,32 @@ repos-repoId:
     summary: Gets a repo
     description: Returns a single repo by its id
     parameters:
-      - $ref: 'types.yaml#/parameters/repoId'
+      - $ref: '#/parameters/repoId'
     tags:
       - repos
     responses:
       '200':
         description: A repo
         schema:
-          $ref: 'types.yaml#/Repo'
+          $ref: '#/definitions/Repo'
       '404':
-        $ref: 'types.yaml#/responses/RepoDoesNotExistResponse'
+        $ref: '#/responses/RepoDoesNotExistResponse'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
   delete:
     summary: Deletes a repo
     description: Delete a single repo identified via its id
     parameters:
-      - $ref: 'types.yaml#/parameters/repoId'
+      - $ref: '#/parameters/repoId'
     tags:
       - repos
     responses:
       '204':
         description: Repo successfully deleted.
       '404':
-        $ref: 'types.yaml#/responses/RepoDoesNotExistResponse'
+        $ref: '#/responses/RepoDoesNotExistResponse'
       '500':
-        $ref: 'types.yaml#/responses/Standard500ErrorResponse'
+        $ref: '#/responses/Standard500ErrorResponse'
 
 # --------------------------------------------------------------------------
 # END
