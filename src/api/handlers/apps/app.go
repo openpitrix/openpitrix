@@ -23,17 +23,17 @@ import (
 	"apphub/src/api/swagger/restapi/operations/apps"
 )
 
-type AppsServiceHander interface {
-	AppsGetAppsHandler(apps.GetAppsParams) middleware.Responder
-	AppsPostAppsHandler(apps.PostAppsParams) middleware.Responder
-	AppsGetAppsAppIDHandler(apps.GetAppsAppIDParams) middleware.Responder
-	AppsDeleteAppsAppIDHandler(apps.DeleteAppsAppIDParams) middleware.Responder
+type Handler interface {
+	GetApps(apps.GetAppsParams) middleware.Responder
+	PostApps(apps.PostAppsParams) middleware.Responder
+	GetAppsAppID(apps.GetAppsAppIDParams) middleware.Responder
+	DeleteAppsAppID(apps.DeleteAppsAppIDParams) middleware.Responder
 }
 
-func RegisterHanler(api *operations.AppHubAPI, hanlder AppsServiceHander) {
-	api.AppsGetAppsHandler = apps.GetAppsHandlerFunc(hanlder.AppsGetAppsHandler)
-	api.AppsPostAppsHandler = apps.PostAppsHandlerFunc(hanlder.AppsPostAppsHandler)
+func RegisterHandler(api *operations.AppHubAPI, handler Handler) {
+	api.AppsGetAppsHandler = apps.GetAppsHandlerFunc(handler.GetApps)
+	api.AppsPostAppsHandler = apps.PostAppsHandlerFunc(handler.PostApps)
 
-	api.AppsGetAppsAppIDHandler = apps.GetAppsAppIDHandlerFunc(hanlder.AppsGetAppsAppIDHandler)
-	api.AppsDeleteAppsAppIDHandler = apps.DeleteAppsAppIDHandlerFunc(hanlder.AppsDeleteAppsAppIDHandler)
+	api.AppsGetAppsAppIDHandler = apps.GetAppsAppIDHandlerFunc(handler.GetAppsAppID)
+	api.AppsDeleteAppsAppIDHandler = apps.DeleteAppsAppIDHandlerFunc(handler.DeleteAppsAppID)
 }

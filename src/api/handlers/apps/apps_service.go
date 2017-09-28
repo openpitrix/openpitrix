@@ -22,33 +22,33 @@ import (
 	"apphub/src/api/swagger/restapi/operations/apps"
 )
 
-var _ AppsServiceHander = (*AppsService)(nil)
+var _ Handler = (*AppsRestService)(nil)
 
 type Options struct {
 	// "gopkg.in/gorp.v2"
 	// *gorp.DbMap
 }
 
-type AppsService struct {
+type AppsRestService struct {
 	//
 }
 
-func DefaultAppsService(opt *Options) *AppsService {
-	return &AppsService{}
+func NewAppsRestService(opt *Options) *AppsRestService {
+	return &AppsRestService{}
 }
 
-func (p *AppsService) AppsGetAppsHandler(apps.GetAppsParams) middleware.Responder {
+func (p *AppsRestService) GetApps(apps.GetAppsParams) middleware.Responder {
 	return middleware.NotImplemented("TODO")
 }
 
-func (p *AppsService) AppsPostAppsHandler(apps.PostAppsParams) middleware.Responder {
+func (p *AppsRestService) PostApps(apps.PostAppsParams) middleware.Responder {
 	return middleware.NotImplemented("TODO")
 }
 
-func (p *AppsService) AppsGetAppsAppIDHandler(apps.GetAppsAppIDParams) middleware.Responder {
+func (p *AppsRestService) GetAppsAppID(apps.GetAppsAppIDParams) middleware.Responder {
 	return middleware.NotImplemented("TODO")
 }
 
-func (p *AppsService) AppsDeleteAppsAppIDHandler(apps.DeleteAppsAppIDParams) middleware.Responder {
+func (p *AppsRestService) DeleteAppsAppID(apps.DeleteAppsAppIDParams) middleware.Responder {
 	return middleware.NotImplemented("TODO")
 }
