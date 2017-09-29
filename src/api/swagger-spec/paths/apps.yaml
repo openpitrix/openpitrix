@@ -14,35 +14,39 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-TARG:=apphub
+get:
+  summary: Gets some apps
+  description: Returns a list containing all apps.
+  parameters:
+    - $ref: '#/parameters/pageSize'
+    - $ref: '#/parameters/pageNumber'
+  tags:
+    - apps
+  responses:
+    '200':
+      description: A list of apps
+      schema:
+        allOf:
+          - $ref: '#/definitions/Apps'
+          - $ref: '#/definitions/Paging'
+    '500':
+      $ref: '#/responses/Standard500ErrorResponse'
 
-SWAGGER:=swagger
-SWAGGER_DOCKER:=docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
-
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.yaml
-SWAGGER_OUT_DIR:=./src/api/swagger
-
-default: generate test
-
-validate:
-	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
-
-deps:
-	go get -u github.com/go-swagger/go-swagger/cmd/swagger
-	npm install -g multi-file-swagger
-
-deps-docker:
-	docker pull quay.io/goswagger/swagger
-
-generate:
-	-mkdir -p $(SWAGGER_OUT_DIR)
-	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
-
-fmt:
-	go fmt ./...
-
-test:
-	go fmt ./...
-	go test ./...
-
-clean:
+post:
+  summary: Creates an app
+  description: Adds a new app to the app runtimes list.
+  parameters:
+    - name: app
+      in: body
+      description: The app to create.
+      schema:
+        $ref: '#/definitions/App'
+  tags:
+    - apps
+  responses:
+    '204':
+      description: App succesfully created.
+    '400':
+      description: App couldn't have been created.
+    '500':
+      $ref: '#/responses/Standard500ErrorResponse'

@@ -14,35 +14,24 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-TARG:=apphub
+required:
+  - repoId
 
-SWAGGER:=swagger
-SWAGGER_DOCKER:=docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  url:
+    type: string
+  repoId:
+    type: string
+    pattern: 'repo-[a-zA-Z0-9]{11}'
+    minLength: 13
+    maxLength: 13
+  createTime:
+    type: string
+    format: date-time
+    readOnly: true
+    example: 2017-09-17T12:36:58.014Z
 
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.yaml
-SWAGGER_OUT_DIR:=./src/api/swagger
-
-default: generate test
-
-validate:
-	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
-
-deps:
-	go get -u github.com/go-swagger/go-swagger/cmd/swagger
-	npm install -g multi-file-swagger
-
-deps-docker:
-	docker pull quay.io/goswagger/swagger
-
-generate:
-	-mkdir -p $(SWAGGER_OUT_DIR)
-	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
-
-fmt:
-	go fmt ./...
-
-test:
-	go fmt ./...
-	go test ./...
-
-clean:
