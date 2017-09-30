@@ -14,35 +14,49 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-TARG:=apphub
+pageSize:
+  name: pageSize
+  in: query
+  description: Number of clusters returned
+  type: integer
+  format: int32
+  minimum: 0
+  exclusiveMinimum: true
+  exclusiveMaximum: false
+  multipleOf: 10
+  default: 20
 
-SWAGGER:=swagger
-SWAGGER_DOCKER:=docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
+pageNumber:
+  name: pageNumber
+  in: query
+  description: Page number
+  type: integer
+  default: 1
 
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.yaml
-SWAGGER_OUT_DIR:=./src/api/swagger
+appId:
+  name: appId
+  in: path
+  required: true
+  description: The app's id
+  type: string
 
-default: generate test
+clusterId:
+  name: clusterId
+  in: path
+  required: true
+  description: The cluster's id
+  type: string
 
-validate:
-	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
+repoId:
+  name: repoId
+  in: path
+  required: true
+  description: The repo's id
+  type: string
 
-deps:
-	go get -u github.com/go-swagger/go-swagger/cmd/swagger
-	npm install -g multi-file-swagger
-
-deps-docker:
-	docker pull quay.io/goswagger/swagger
-
-generate:
-	-mkdir -p $(SWAGGER_OUT_DIR)
-	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
-
-fmt:
-	go fmt ./...
-
-test:
-	go fmt ./...
-	go test ./...
-
-clean:
+appRuntimeId:
+  name: appRuntimeId
+  in: path
+  required: true
+  description: The app runtime's id
+  type: string

@@ -14,35 +14,36 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-TARG:=apphub
+swagger: '2.0'
 
-SWAGGER:=swagger
-SWAGGER_DOCKER:=docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
+info:
+  title: AppHub
+  description: >-
+    An open platform to package and deploy applications into multiple
+    environment such as QingCloud, AWS, Kubernetes etc.
+  version: 0.0.1
 
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.yaml
-SWAGGER_OUT_DIR:=./src/api/swagger
+consumes:
+  - application/json
+  - application/yaml
 
-default: generate test
+produces:
+  - application/json
+  - application/yaml
 
-validate:
-	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
+schemes:
+  - http
 
-deps:
-	go get -u github.com/go-swagger/go-swagger/cmd/swagger
-	npm install -g multi-file-swagger
+basePath: /v1
 
-deps-docker:
-	docker pull quay.io/goswagger/swagger
+paths:
+  $ref: ./paths/index.yaml
 
-generate:
-	-mkdir -p $(SWAGGER_OUT_DIR)
-	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
+definitions:
+  $ref: ./definitions/index.yaml
 
-fmt:
-	go fmt ./...
+parameters:
+  $ref: ./parameters/index.yaml
 
-test:
-	go fmt ./...
-	go test ./...
-
-clean:
+responses:
+  $ref: ./responses/index.yaml

@@ -14,35 +14,33 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-TARG:=apphub
-
-SWAGGER:=swagger
-SWAGGER_DOCKER:=docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
-
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.yaml
-SWAGGER_OUT_DIR:=./src/api/swagger
-
-default: generate test
-
-validate:
-	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
-
-deps:
-	go get -u github.com/go-swagger/go-swagger/cmd/swagger
-	npm install -g multi-file-swagger
-
-deps-docker:
-	docker pull quay.io/goswagger/swagger
-
-generate:
-	-mkdir -p $(SWAGGER_OUT_DIR)
-	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
-
-fmt:
-	go fmt ./...
-
-test:
-	go fmt ./...
-	go test ./...
-
-clean:
+get:
+  summary: Gets a repo
+  description: Returns a single repo by its id
+  parameters:
+    - $ref: '#/parameters/repoId'
+  tags:
+    - repos
+  responses:
+    '200':
+      description: A repo
+      schema:
+        $ref: '#/definitions/Repo'
+    '404':
+      $ref: '#/responses/RepoDoesNotExistResponse'
+    '500':
+      $ref: '#/responses/Standard500ErrorResponse'
+delete:
+  summary: Deletes a repo
+  description: Delete a single repo identified via its id
+  parameters:
+    - $ref: '#/parameters/repoId'
+  tags:
+    - repos
+  responses:
+    '204':
+      description: Repo successfully deleted.
+    '404':
+      $ref: '#/responses/RepoDoesNotExistResponse'
+    '500':
+      $ref: '#/responses/Standard500ErrorResponse'

@@ -14,35 +14,33 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-TARG:=apphub
+App:
+  $ref: ./App.yaml
 
-SWAGGER:=swagger
-SWAGGER_DOCKER:=docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
+Apps:
+  $ref: ./Apps.yaml
 
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.yaml
-SWAGGER_OUT_DIR:=./src/api/swagger
+Cluster:
+  $ref: ./Cluster.yaml
 
-default: generate test
+Clusters:
+  $ref: ./Clusters.yaml
 
-validate:
-	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
+Repo:
+  $ref: ./Repo.yaml
 
-deps:
-	go get -u github.com/go-swagger/go-swagger/cmd/swagger
-	npm install -g multi-file-swagger
+Repos:
+  $ref: ./Repos.yaml
 
-deps-docker:
-	docker pull quay.io/goswagger/swagger
+AppRuntime:
+  $ref: ./AppRuntime.yaml
 
-generate:
-	-mkdir -p $(SWAGGER_OUT_DIR)
-	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
+AppRuntimes:
+  $ref: ./AppRuntimes.yaml
 
-fmt:
-	go fmt ./...
+Paging:
+  $ref: ./Paging.yaml
 
-test:
-	go fmt ./...
-	go test ./...
+Error:
+  $ref: ./Error.yaml
 
-clean:

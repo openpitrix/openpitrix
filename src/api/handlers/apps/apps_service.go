@@ -19,21 +19,36 @@ package apps
 import (
 	"github.com/go-openapi/runtime/middleware"
 
-	"apphub/src/api/swagger/restapi/operations"
 	"apphub/src/api/swagger/restapi/operations/apps"
 )
 
-type Handler interface {
-	GetApps(apps.GetAppsParams) middleware.Responder
-	PostApps(apps.PostAppsParams) middleware.Responder
-	GetAppsAppID(apps.GetAppsAppIDParams) middleware.Responder
-	DeleteAppsAppID(apps.DeleteAppsAppIDParams) middleware.Responder
+var _ Handler = (*AppsRestService)(nil)
+
+type Options struct {
+	// "gopkg.in/gorp.v2"
+	// *gorp.DbMap
 }
 
-func RegisterHandler(api *operations.AppHubAPI, handler Handler) {
-	api.AppsGetAppsHandler = apps.GetAppsHandlerFunc(handler.GetApps)
-	api.AppsPostAppsHandler = apps.PostAppsHandlerFunc(handler.PostApps)
+type AppsRestService struct {
+	//
+}
 
-	api.AppsGetAppsAppIDHandler = apps.GetAppsAppIDHandlerFunc(handler.GetAppsAppID)
-	api.AppsDeleteAppsAppIDHandler = apps.DeleteAppsAppIDHandlerFunc(handler.DeleteAppsAppID)
+func NewAppsRestService(opt *Options) *AppsRestService {
+	return &AppsRestService{}
+}
+
+func (p *AppsRestService) GetApps(apps.GetAppsParams) middleware.Responder {
+	return middleware.NotImplemented("TODO")
+}
+
+func (p *AppsRestService) PostApps(apps.PostAppsParams) middleware.Responder {
+	return middleware.NotImplemented("TODO")
+}
+
+func (p *AppsRestService) GetAppsAppID(apps.GetAppsAppIDParams) middleware.Responder {
+	return middleware.NotImplemented("TODO")
+}
+
+func (p *AppsRestService) DeleteAppsAppID(apps.DeleteAppsAppIDParams) middleware.Responder {
+	return middleware.NotImplemented("TODO")
 }

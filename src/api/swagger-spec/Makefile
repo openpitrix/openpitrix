@@ -14,35 +14,17 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-TARG:=apphub
+# https://github.com/go-swagger/go-swagger
+# https://github.com/mohsen1/multi-file-swagger-example
+# http://apihandyman.io/writing-openapi-swagger-specification-tutorial-part-1-introduction/
 
-SWAGGER:=swagger
-SWAGGER_DOCKER:=docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
+default:
+	cat copyright.yaml > _all.yaml
+	multi-file-swagger -o yaml index.yaml >> _all.yaml
+	swagger validate _all.yaml
 
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.yaml
-SWAGGER_OUT_DIR:=./src/api/swagger
-
-default: generate test
-
-validate:
-	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
-
-deps:
+install-tools:
 	go get -u github.com/go-swagger/go-swagger/cmd/swagger
 	npm install -g multi-file-swagger
-
-deps-docker:
-	docker pull quay.io/goswagger/swagger
-
-generate:
-	-mkdir -p $(SWAGGER_OUT_DIR)
-	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
-
-fmt:
-	go fmt ./...
-
-test:
-	go fmt ./...
-	go test ./...
 
 clean:
