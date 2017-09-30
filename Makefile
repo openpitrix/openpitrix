@@ -16,10 +16,9 @@
 
 TARG:=apphub
 
-SWAGGER:=swagger
-SWAGGER_DOCKER:=docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
+SWAGGER:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) quay.io/goswagger/swagger
 
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.yaml
+SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.json
 SWAGGER_OUT_DIR:=./src/api/swagger
 
 default: generate test
@@ -28,13 +27,11 @@ validate:
 	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
 
 deps:
-	go get -u github.com/go-swagger/go-swagger/cmd/swagger
-	npm install -g multi-file-swagger
-
-deps-docker:
 	docker pull quay.io/goswagger/swagger
+	docker pull vidsyhq/multi-file-swagger-docker
 
 generate:
+	cd ./src/api/swagger-spec && make
 	-mkdir -p $(SWAGGER_OUT_DIR)
 	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
 

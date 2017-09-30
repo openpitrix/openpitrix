@@ -18,13 +18,20 @@
 # https://github.com/mohsen1/multi-file-swagger-example
 # http://apihandyman.io/writing-openapi-swagger-specification-tutorial-part-1-introduction/
 
+TARG:=_all.json
+
+SWAGGER_OUT_DIR:=../swagger
+
+SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` quay.io/goswagger/swagger
+MULTI_FILE_SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` vidsyhq/multi-file-swagger-docker
+
 default:
-	cat copyright.yaml > _all.yaml
-	multi-file-swagger -o yaml index.yaml >> _all.yaml
-	swagger validate _all.yaml
+	$(MULTI_FILE_SWAGGER) index.yaml > $(TARG)
+	$(SWAGGER) validate $(TARG)
 
 install-tools:
-	go get -u github.com/go-swagger/go-swagger/cmd/swagger
-	npm install -g multi-file-swagger
+	docker pull quay.io/goswagger/swagger
+	docker pull vidsyhq/multi-file-swagger-docker
 
 clean:
+	-rm $(TARG)
