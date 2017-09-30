@@ -22,12 +22,13 @@ GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'
 8. Indexes should be explicitly named and include both the table name and the column name(s) indexed. 
 
 ### Database Scripts
-```
+
+```sql
 CREATE DATABASE apphub;
 ```
 
 * For repo service
-```
+```sql
 CREATE TABLE repo {
     id varchar(50) PRIMARY KEY NOT NULL,
     name varchar(50) NOT NULL,
@@ -38,8 +39,7 @@ CREATE UNIQUE INDEX repo_ix_name ON repo (name);
 CREATE USER 'repo_user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON apphub.repo TO 'repo_user'@'localhost';
 ```
-
-```
+```sql
 CREATE TABLE repo_label {
     repo_id varchar(50) NOT NULL,
     label_key varchar(50) NOT NULL,
@@ -49,8 +49,7 @@ CREATE TABLE repo_label {
 );
 GRANT ALL PRIVILEGES ON apphub.repo_label TO 'repo_user'@'localhost';
 ```
-
-```
+```sql
 CREATE TABLE repo_selector {
     repo_id varchar(50) NOT NULL,
     selector_key varchar(50) NOT NULL,
@@ -62,7 +61,7 @@ GRANT ALL PRIVILEGES ON apphub.repo_selector TO 'repo_user'@'localhost';
 ```
 
 * For app service
-```
+```sql
 CREATE TABLE app {
     id varchar(50) PRIMARY KEY NOT NULL,
     name varchar(50) NOT NULL,
@@ -76,7 +75,7 @@ GRANT ALL PRIVILEGES ON apphub.app TO 'app_user'@'localhost';
 ```
 
 * For cluster service
-```
+```sql
 CREATE TABLE cluster {
     id varchar(50) PRIMARY KEY NOT NULL,
     name varchar(50) NOT NULL,
@@ -87,7 +86,7 @@ CREATE UNIQUE INDEX cluster_ix_name ON cluster (name);
 CREATE USER 'cluster_user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON apphub.cluster TO 'cluster_user'@'localhost';
 ```
-```
+```sql
 CREATE TABLE cluster_node {
     id varchar(50) PRIMARY KEY NOT NULL,
     instance_id varchar(50) NOT NULL,
@@ -101,7 +100,7 @@ GRANT ALL PRIVILEGES ON apphub.cluster_node TO 'cluster_user'@'localhost';
 ```
 
 * For app runtime service
-```
+```sql
 CREATE TABLE app_runtime {
     id varchar(50) PRIMARY KEY NOT NULL,
     name varchar(50) NOT NULL,
@@ -112,8 +111,7 @@ CREATE UNIQUE INDEX app_runtime_ix_name ON appruntime (name);
 CREATE USER 'appruntime_user'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON apphub.app_runtime TO 'appruntime_user'@'localhost';
 ```
-
-```
+```sql
 CREATE TABLE app_runtime_label {
     app_runtime_id varchar(50) NOT NULL,
     label_key varchar(50) NOT NULL,
