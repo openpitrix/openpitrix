@@ -19,7 +19,7 @@ TARG:=apphub
 SWAGGER:=swagger
 SWAGGER_DOCKER:=docker run --rm -it -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger
 
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.yaml
+SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.json
 SWAGGER_OUT_DIR:=./src/api/swagger
 
 default: generate test
@@ -35,6 +35,7 @@ deps-docker:
 	docker pull quay.io/goswagger/swagger
 
 generate:
+	cd ./src/api/swagger-spec && make
 	-mkdir -p $(SWAGGER_OUT_DIR)
 	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
 
