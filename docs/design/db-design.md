@@ -30,10 +30,12 @@ CREATE DATABASE apphub;
 * For repo service
 ```sql
 CREATE TABLE repo {
-    id varchar(50) PRIMARY KEY NOT NULL,
-    name varchar(50) NOT NULL,
-    description varchar(1000) DEFAULT ‘’ NOT NULL,
-    url varchar(255) NOT NULL
+    id VARCHAR(50) PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(1000) DEFAULT ‘’ NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX repo_ix_name ON repo (name);
 CREATE USER 'repo_user'@'localhost' IDENTIFIED BY 'password';
@@ -41,9 +43,9 @@ GRANT ALL PRIVILEGES ON apphub.repo TO 'repo_user'@'localhost';
 ```
 ```sql
 CREATE TABLE repo_label {
-    repo_id varchar(50) NOT NULL,
-    label_key varchar(50) NOT NULL,
-    label_value varchar(255) NOT NULL,
+    repo_id VARCHAR(50) NOT NULL,
+    label_key VARCHAR(50) NOT NULL,
+    label_value VARCHAR(255) NOT NULL,
     PRIMARY KEY(repo_id, label_key),
     FOREIGN KEY(repo_id) REFERENCES repo(id) ON DELETE CASCADE
 );
@@ -51,9 +53,9 @@ GRANT ALL PRIVILEGES ON apphub.repo_label TO 'repo_user'@'localhost';
 ```
 ```sql
 CREATE TABLE repo_selector {
-    repo_id varchar(50) NOT NULL,
-    selector_key varchar(50) NOT NULL,
-    selector_value varchar(255) NOT NULL,
+    repo_id VARCHAR(50) NOT NULL,
+    selector_key VARCHAR(50) NOT NULL,
+    selector_value VARCHAR(255) NOT NULL,
     PRIMARY KEY(repo_id, selector_key),
     FOREIGN KEY(repo_id) REFERENCES repo(id) ON DELETE CASCADE
 );
@@ -63,11 +65,13 @@ GRANT ALL PRIVILEGES ON apphub.repo_selector TO 'repo_user'@'localhost';
 * For app service
 ```sql
 CREATE TABLE app {
-    id varchar(50) PRIMARY KEY NOT NULL,
-    name varchar(50) NOT NULL,
-    description varchar(1000) DEFAULT ‘’ NOT NULL,
-    repo_id varchar(50) NOT NULL,
-    url varchar(255) NOT NULL
+    id VARCHAR(50) PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(1000) DEFAULT ‘’ NOT NULL,
+    repo_id VARCHAR(50) NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX app_ix_name ON app (name);
 CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'password';
@@ -77,10 +81,12 @@ GRANT ALL PRIVILEGES ON apphub.app TO 'app_user'@'localhost';
 * For cluster service
 ```sql
 CREATE TABLE cluster {
-    id varchar(50) PRIMARY KEY NOT NULL,
-    name varchar(50) NOT NULL,
-    description varchar(1000) DEFAULT ‘’ NOT NULL,
-    app_id varchar(50) NOT NULL
+    id VARCHAR(50) PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(1000) DEFAULT ‘’ NOT NULL,
+    app_id VARCHAR(50) NOT NULL,
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX cluster_ix_name ON cluster (name);
 CREATE USER 'cluster_user'@'localhost' IDENTIFIED BY 'password';
@@ -88,11 +94,11 @@ GRANT ALL PRIVILEGES ON apphub.cluster TO 'cluster_user'@'localhost';
 ```
 ```sql
 CREATE TABLE cluster_node {
-    id varchar(50) PRIMARY KEY NOT NULL,
-    instance_id varchar(50) NOT NULL,
-    name varchar(50) NOT NULL,
-    description varchar(1000) DEFAULT ‘’ NOT NULL,
-    cluster_id varchar(50) NOT NULL
+    id VARCHAR(50) PRIMARY KEY NOT NULL,
+    instance_id VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(1000) DEFAULT ‘’ NOT NULL,
+    cluster_id VARCHAR(50) NOT NULL
     FOREIGN KEY(cluster_id) REFERENCES cluster(id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX cluster_node_ix_name ON clusternode (name);
@@ -102,10 +108,12 @@ GRANT ALL PRIVILEGES ON apphub.cluster_node TO 'cluster_user'@'localhost';
 * For app runtime service
 ```sql
 CREATE TABLE app_runtime {
-    id varchar(50) PRIMARY KEY NOT NULL,
-    name varchar(50) NOT NULL,
-    description varchar(1000) DEFAULT ‘’ NOT NULL,
-    url varchar(255) NOT NULL
+    id VARCHAR(50) PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(1000) DEFAULT ‘’ NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX app_runtime_ix_name ON appruntime (name);
 CREATE USER 'appruntime_user'@'localhost' IDENTIFIED BY 'password';
@@ -113,9 +121,9 @@ GRANT ALL PRIVILEGES ON apphub.app_runtime TO 'appruntime_user'@'localhost';
 ```
 ```sql
 CREATE TABLE app_runtime_label {
-    app_runtime_id varchar(50) NOT NULL,
-    label_key varchar(50) NOT NULL,
-    label_value varchar(255) NOT NULL,
+    app_runtime_id VARCHAR(50) NOT NULL,
+    label_key VARCHAR(50) NOT NULL,
+    label_value VARCHAR(255) NOT NULL,
     PRIMARY KEY(app_runtime_id, label_key),
     FOREIGN KEY(app_runtime_id) REFERENCES app_runtime(id) ON DELETE CASCADE
 );
