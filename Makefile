@@ -16,6 +16,7 @@
 
 TARG:=apphub
 
+GO:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) golang:1.9-alpine go
 SWAGGER:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) quay.io/goswagger/swagger
 
 SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.json
@@ -26,7 +27,12 @@ default: generate test
 validate:
 	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
 
-deps:
+godep:
+	godep save ./src/...
+
+tools:
+	go get github.com/tools/godep
+	docker pull golang:1.9-alpine
 	docker pull quay.io/goswagger/swagger
 	docker pull vidsyhq/multi-file-swagger-docker
 
@@ -36,10 +42,10 @@ generate:
 	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
 
 fmt:
-	go fmt ./...
+	$(GO) fmt ./...
 
 test:
-	go fmt ./...
-	go test ./...
+	$(GO) fmt ./...
+	$(GO) test ./...
 
 clean:
