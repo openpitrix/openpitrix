@@ -7,7 +7,7 @@
 
 ### Schemas
 Use GRANT to isolate tables for services
-```
+```sql
 GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'localhost’;
 ```
 
@@ -85,6 +85,10 @@ CREATE TABLE cluster {
     name VARCHAR(50) NOT NULL,
     description VARCHAR(1000) DEFAULT ‘’ NOT NULL,
     app_id VARCHAR(50) NOT NULL,
+    app_version VARCHAR(50) NOT NULL,
+    app_version VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    transition_status VARCHAR(50) NOT NULL DEFAULT '',
     created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -98,7 +102,8 @@ CREATE TABLE cluster_node {
     instance_id VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL,
     description VARCHAR(1000) DEFAULT ‘’ NOT NULL,
-    cluster_id VARCHAR(50) NOT NULL
+    cluster_id VARCHAR(50) NOT NULL,
+    private_ip VARCHAR(50) DEFAULT '' NOT NULL,
     FOREIGN KEY(cluster_id) REFERENCES cluster(id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX cluster_node_ix_name ON clusternode (name);
