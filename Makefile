@@ -27,8 +27,10 @@ default: generate test
 validate:
 	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
 
-godep:
-	godep save ./src/...
+update-vendor:
+	-rm -rf vendor
+	godep save ./...
+	godep update ./...
 
 tools:
 	go get github.com/tools/godep
