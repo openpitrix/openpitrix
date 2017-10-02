@@ -27,13 +27,16 @@ default: generate test
 validate:
 	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
 
+init-vendor:
+	govendor init
+	govendor add +external
+
 update-vendor:
-	-rm -rf vendor
-	godep save ./...
-	godep update ./...
+	govendor update +external
+	govendor list
 
 tools:
-	go get github.com/tools/godep
+	go get github.com/kardianos/govendor
 	docker pull golang:1.9-alpine
 	docker pull quay.io/goswagger/swagger
 	docker pull vidsyhq/multi-file-swagger-docker
