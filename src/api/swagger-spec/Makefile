@@ -25,13 +25,23 @@ SWAGGER_OUT_DIR:=../swagger
 SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` quay.io/goswagger/swagger
 MULTI_FILE_SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` vidsyhq/multi-file-swagger-docker
 
-default:
+help:
+	@echo "Please use \`make <target>\` where <target> is one of"
+	@echo "  generate          to generate and check '$(TARG)'"
+	@echo "  tools             to install depends tools"
+	@echo "  clean             to clean the generated '$(TARG)' file"
+	@echo "  help              to show this help informatrion"
+
+generate:
 	$(MULTI_FILE_SWAGGER) index.yaml > $(TARG)
 	$(SWAGGER) validate $(TARG)
+	@echo "ok"
 
-install-tools:
+tools:
 	docker pull quay.io/goswagger/swagger
 	docker pull vidsyhq/multi-file-swagger-docker
+	@echo "ok"
 
 clean:
 	-rm $(TARG)
+	@echo "ok"
