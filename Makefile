@@ -22,35 +22,53 @@ SWAGGER:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) qu
 SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.json
 SWAGGER_OUT_DIR:=./src/api/swagger
 
-default: generate test
+help:
+	@echo "Please use \`make <target>\` where <target> is one of"
+	@echo "  all               to generate, test and release"
+	@echo "  tools             to install depends tools"
+	@echo "  init-vendor       to init vendor packages"
+	@echo "  update-vendor     to update vendor packages"
+	@echo "  generate          to generate restapi code"
+	@echo "  build             to build the service"
+	@echo "  test              to run go test ./..."
+	@echo "  release           to build and release current version"
+	@echo "  clean             to clean the temp files"
 
-validate:
-	$(SWAGGER) validate $(SWAGGER_SPEC_FILE)
+all: generate test release
 
 init-vendor:
 	govendor init
 	govendor add +external
+	@echo "ok"
 
 update-vendor:
 	govendor update +external
 	govendor list
+	@echo "ok"
 
 tools:
 	go get github.com/kardianos/govendor
 	docker pull golang:1.9-alpine
 	docker pull quay.io/goswagger/swagger
 	docker pull vidsyhq/multi-file-swagger-docker
+	@echo "ok"
 
 generate:
-	cd ./src/api/swagger-spec && make
+	cd ./src/api/swagger-spec && make generate
 	-mkdir -p $(SWAGGER_OUT_DIR)
 	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
+	@echo "ok"
 
-fmt:
-	$(GO) fmt ./...
+build:
+	@echo "TODO"
+
+release:
+	@echo "TODO"
 
 test:
 	$(GO) fmt ./...
 	$(GO) test ./...
+	@echo "ok"
 
 clean:
+	@echo "ok"
