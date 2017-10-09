@@ -17,10 +17,14 @@
 TARG:=apphub
 
 GO:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) golang:1.9-alpine go
+GO_WITH_MYSQL:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) --link apphub-mysql:mysql -p 9527:9527 golang:1.9-alpine go
 SWAGGER:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) quay.io/goswagger/swagger
 
 SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.json
 SWAGGER_OUT_DIR:=./src/api/swagger
+
+MYSQL_DATABASE:=$(TARG)
+MYSQL_ROOT_PASSWORD:=password
 
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
@@ -51,6 +55,7 @@ tools:
 	docker pull golang:1.9-alpine
 	docker pull quay.io/goswagger/swagger
 	docker pull vidsyhq/multi-file-swagger-docker
+	docker pull mysql
 	@echo "ok"
 
 generate:
@@ -58,6 +63,17 @@ generate:
 	-mkdir -p $(SWAGGER_OUT_DIR)
 	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
 	@echo "ok"
+
+mysql-start:
+	docker run --rm --name apphub-mysql -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -d mysql || docker start apphub-mysql
+	@echo "ok"
+
+mysql-stop:
+	docker stop apphub-mysql
+	@echo "ok"
+
+run: mysql-start
+	$(GO_WITH_MYSQL) run ./src/cmd/apphub-server/main.go
 
 build:
 	@echo "TODO"

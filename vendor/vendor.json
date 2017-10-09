@@ -129,6 +129,12 @@
 			"revisionTime": "2017-09-21T08:47:45Z"
 		},
 		{
+			"checksumSHA1": "HnjM0xNE7bh3cTub92/JjhAwBp8=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "7785c74297136c027fdf2fd6f8931c0e19be8aa7",
+			"revisionTime": "2017-09-21T06:28:06Z"
+		},
+		{
 			"checksumSHA1": "SQiqMYFp63MKuzJZpce0Lp5Sc/c=",
 			"path": "github.com/jessevdk/go-flags",
 			"revision": "6cf8f02b4ae8ba723ddc64dcfd403e530c06d927",
@@ -205,6 +211,12 @@
 			"path": "golang.org/x/text/width",
 			"revision": "3bd178b88a8180be2df394a1fbb81313916f0e7b",
 			"revisionTime": "2017-07-29T23:24:55Z"
+		},
+		{
+			"checksumSHA1": "HFbID3JVWwQVvBMP5PxEPlQs9Ys=",
+			"path": "gopkg.in/gorp.v2",
+			"revision": "4deece61034873cb5b5416e81abe4cea7bd0da72",
+			"revisionTime": "2016-11-13T21:10:14Z"
 		},
 		{
 			"checksumSHA1": "YsB2DChSV9HxdzHaKATllAUKWSI=",

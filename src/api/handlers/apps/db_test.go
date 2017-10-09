@@ -14,41 +14,27 @@
 // | limitations under the License.
 // +-------------------------------------------------------------------------
 
+// start mysql in docker for test
+
 package apps
 
 import (
-	"github.com/go-openapi/runtime/middleware"
-
-	"apphub/src/api/swagger/restapi/operations/apps"
+	"flag"
+	"os"
+	"testing"
 )
 
-var _ Handler = (*AppsRestService)(nil)
+var (
+	fFalgDbName = flag.String("test-db-name", "root:password@tcp(mysql:3306)/apphub", "set mysql database name")
+)
 
-type Options struct {
-	// "gopkg.in/gorp.v2"
-	// *gorp.DbMap
+func TestMain(m *testing.M) {
+	flag.Parse()
+
+	rv := m.Run()
+	os.Exit(rv)
 }
 
-type AppsRestService struct {
-	//
-}
-
-func NewAppsRestService(opt *Options) *AppsRestService {
-	return &AppsRestService{}
-}
-
-func (p *AppsRestService) GetApps(apps.GetAppsParams) middleware.Responder {
-	return middleware.NotImplemented("TODO")
-}
-
-func (p *AppsRestService) PostApps(apps.PostAppsParams) middleware.Responder {
-	return middleware.NotImplemented("TODO")
-}
-
-func (p *AppsRestService) GetAppsAppID(apps.GetAppsAppIDParams) middleware.Responder {
-	return middleware.NotImplemented("TODO")
-}
-
-func (p *AppsRestService) DeleteAppsAppID(apps.DeleteAppsAppIDParams) middleware.Responder {
-	return middleware.NotImplemented("TODO")
+func TestAppDatabase(t *testing.T) {
+	// TODO
 }
