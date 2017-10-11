@@ -14,10 +14,10 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-TARG:=apphub
+TARG:=openpitrix
 
 GO:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) golang:1.9-alpine go
-GO_WITH_MYSQL:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) --link apphub-mysql:mysql -p 9527:9527 golang:1.9-alpine go
+GO_WITH_MYSQL:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) --link openpitrix-mysql:mysql -p 9527:9527 golang:1.9-alpine go
 SWAGGER:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) quay.io/goswagger/swagger
 
 SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.json
@@ -65,15 +65,15 @@ generate:
 	@echo "ok"
 
 mysql-start:
-	docker run --rm --name apphub-mysql -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -d mysql || docker start apphub-mysql
+	docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -d mysql || docker start openpitrix-mysql
 	@echo "ok"
 
 mysql-stop:
-	docker stop apphub-mysql
+	docker stop openpitrix-mysql
 	@echo "ok"
 
 run: mysql-start
-	$(GO_WITH_MYSQL) run ./src/cmd/apphub-server/main.go
+	$(GO_WITH_MYSQL) run ./src/cmd/openpitrix-server/main.go
 
 build:
 	@echo "TODO"

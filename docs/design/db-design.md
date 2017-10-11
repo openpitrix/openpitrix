@@ -1,17 +1,20 @@
 # Database Design
 
 ### Key Points
+
 * Will use mysql as RDBM.
 * Since the project is microservice-based, we use database-per-service pattern for the backend store.
 * The throughput is expected not too high, so we will use private-tables-per-service or schema-per-service given the way is the lowest overhead. It means services access the tables data that belong to other services only by API.
 
 ### Schemas
+
 Use GRANT to isolate tables for services
 ```sql
 GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'localhost’;
 ```
 
 ### Name Conventions
+
 1. All lower case including table, column
 2. Multiple words should be separated by underscores, i.e. [snake case](https://en.wikipedia.org/wiki/Snake_case).
 3. Full words, not abbreviations; use common abbreviations for long word.
@@ -24,7 +27,7 @@ GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'
 ### Database Scripts
 
 ```sql
-CREATE DATABASE apphub;
+CREATE DATABASE openpitrix;
 ```
 
 * For repo service
@@ -39,7 +42,7 @@ CREATE TABLE repo {
 );
 CREATE UNIQUE INDEX repo_ix_name ON repo (name);
 CREATE USER 'repo_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON apphub.repo TO 'repo_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.repo TO 'repo_user'@'localhost';
 ```
 ```sql
 CREATE TABLE repo_label {
@@ -49,7 +52,7 @@ CREATE TABLE repo_label {
     PRIMARY KEY(repo_id, label_key),
     FOREIGN KEY(repo_id) REFERENCES repo(id) ON DELETE CASCADE
 );
-GRANT ALL PRIVILEGES ON apphub.repo_label TO 'repo_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.repo_label TO 'repo_user'@'localhost';
 ```
 ```sql
 CREATE TABLE repo_selector {
@@ -59,7 +62,7 @@ CREATE TABLE repo_selector {
     PRIMARY KEY(repo_id, selector_key),
     FOREIGN KEY(repo_id) REFERENCES repo(id) ON DELETE CASCADE
 );
-GRANT ALL PRIVILEGES ON apphub.repo_selector TO 'repo_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.repo_selector TO 'repo_user'@'localhost';
 ```
 
 * For app service
@@ -75,7 +78,7 @@ CREATE TABLE app {
 );
 CREATE UNIQUE INDEX app_ix_name ON app (name);
 CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON apphub.app TO 'app_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.app TO 'app_user'@'localhost';
 ```
 
 * For cluster service
@@ -94,7 +97,7 @@ CREATE TABLE cluster {
 );
 CREATE UNIQUE INDEX cluster_ix_name ON cluster (name);
 CREATE USER 'cluster_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON apphub.cluster TO 'cluster_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.cluster TO 'cluster_user'@'localhost';
 ```
 ```sql
 CREATE TABLE cluster_node {
@@ -107,7 +110,7 @@ CREATE TABLE cluster_node {
     FOREIGN KEY(cluster_id) REFERENCES cluster(id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX cluster_node_ix_name ON clusternode (name);
-GRANT ALL PRIVILEGES ON apphub.cluster_node TO 'cluster_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.cluster_node TO 'cluster_user'@'localhost';
 ```
 
 * For app runtime service
@@ -122,7 +125,7 @@ CREATE TABLE app_runtime {
 );
 CREATE UNIQUE INDEX app_runtime_ix_name ON appruntime (name);
 CREATE USER 'appruntime_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON apphub.app_runtime TO 'appruntime_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.app_runtime TO 'appruntime_user'@'localhost';
 ```
 ```sql
 CREATE TABLE app_runtime_label {
@@ -132,5 +135,5 @@ CREATE TABLE app_runtime_label {
     PRIMARY KEY(app_runtime_id, label_key),
     FOREIGN KEY(app_runtime_id) REFERENCES app_runtime(id) ON DELETE CASCADE
 );
-GRANT ALL PRIVILEGES ON apphub.app_runtime_label TO 'appruntime_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.app_runtime_label TO 'appruntime_user'@'localhost';
 ```
