@@ -1,6 +1,6 @@
 # OpenPitrix
 
-OpenPitrix is an open platform to package and deploy applications into multiple cloud environments such as QingCloud, AWS, Kubernetes etc. Pitrix _['paitriks]_ means the matrix of PaaS and IaaS which makes it easy to develop, deploy, manage applications including PaaS on various runtime environments, i.e., Pitrix = *P*aaS + *I*aaS + Ma*trix*. It also means a matrix that contains endless (PI - the Greek letter "π") applications. 
+OpenPitrix is an open platform to package and deploy applications into multiple cloud environments such as QingCloud, AWS, Kubernetes etc. Pitrix _['paitriks]_ means the matrix of PaaS and IaaS which makes it easy to develop, deploy, manage applications including PaaS on various runtime environments, i.e., Pitrix = **P**aaS + **I**aaS + Ma**trix**. It also means a matrix that contains endless (PI - the Greek letter "π") applications. 
 
 ### Motivation
 
