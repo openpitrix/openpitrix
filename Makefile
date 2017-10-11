@@ -17,9 +17,9 @@
 TARG.Name:=openpitrix
 TRAG.Gopkg:=openpitrix.io/openpitrix
 
-GO:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG.Name) golang:1.9-alpine go
-GO_WITH_MYSQL:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG.Gopkg) --link apphub-mysql:mysql -p 9527:9527 golang:1.9-alpine go
-SWAGGER:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TRAG.Gopkg) quay.io/goswagger/swagger
+GO:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/openpitrix.io/openpitrix golang:1.9-alpine go
+GO_WITH_MYSQL:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/openpitrix.io/openpitrix --link apphub-mysql:mysql -p 9527:9527 golang:1.9-alpine go
+SWAGGER:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/openpitrix.io/openpitrix quay.io/goswagger/swagger
 
 SWAGGER_SPEC_DIR:=./api
 SWAGGER_SPEC_FILE:=./api/_all.json

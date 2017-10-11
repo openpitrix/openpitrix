@@ -23,7 +23,7 @@
 
 // curl http://localhost:9527/v1/apps
 
-// apphub server
+// openpitrix server
 package main
 
 import (
@@ -33,10 +33,10 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 
-	"apphub/src/api/swagger/models"
-	"apphub/src/api/swagger/restapi"
-	"apphub/src/api/swagger/restapi/operations"
-	"apphub/src/api/swagger/restapi/operations/apps"
+	"openpitrix.io/openpitrix/pkg/swagger/models"
+	"openpitrix.io/openpitrix/pkg/swagger/restapi"
+	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations"
+	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations/apps"
 )
 
 type Server struct {

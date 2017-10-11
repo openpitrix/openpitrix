@@ -19,9 +19,9 @@ package apps
 import (
 	"time"
 
-	"apphub/src/api/swagger/models"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"openpitrix.io/openpitrix/pkg/swagger/models"
 )
 
 type AppsItem struct {

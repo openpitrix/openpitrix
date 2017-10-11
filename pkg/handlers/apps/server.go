@@ -23,8 +23,8 @@ import (
 
 	"github.com/go-openapi/loads"
 
-	"apphub/src/api/swagger/restapi"
-	"apphub/src/api/swagger/restapi/operations"
+	"openpitrix.io/openpitrix/pkg/swagger/restapi"
+	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations"
 )
 
 type AppsServer struct {

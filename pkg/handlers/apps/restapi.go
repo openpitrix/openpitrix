@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"apphub/src/api/swagger/models"
-	"apphub/src/api/swagger/restapi/operations"
-	"apphub/src/api/swagger/restapi/operations/apps"
 	"github.com/go-openapi/runtime/middleware"
+	"openpitrix.io/openpitrix/pkg/swagger/models"
+	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations"
+	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations/apps"
 )
 
 var _ AppsRestInterface = (*AppsRestService)(nil)

@@ -25,7 +25,7 @@ import (
 )
 
 var (
-	fFalgDbName = flag.String("test-db-name", "root:password@tcp(mysql:3306)/apphub", "set mysql database name")
+	fFalgDbName = flag.String("test-db-name", "root:password@tcp(mysql:3306)/openpitrix", "set mysql database name")
 )
 
 func TestMain(m *testing.M) {

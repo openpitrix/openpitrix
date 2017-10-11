@@ -5,7 +5,7 @@ import (
 	//	log "github.com/Sirupsen/logrus"
 	middleware "github.com/go-openapi/runtime/middleware"
 
-	reposapi "apphub/src/api/swagger/restapi/operations/repos"
+	reposapi "openpitrix.io/openpitrix/pkg/swagger/restapi/operations/repos"
 )
 
 // GetRepos returns all the repositories
