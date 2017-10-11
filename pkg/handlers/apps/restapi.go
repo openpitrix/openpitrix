@@ -35,7 +35,7 @@ type AppsRestInterface interface {
 	DeleteAppsAppID(apps.DeleteAppsAppIDParams) middleware.Responder
 }
 
-func RegisterHandler(api *operations.AppHubAPI, handler AppsRestInterface) {
+func RegisterHandler(api *operations.OpenPitrixAPI, handler AppsRestInterface) {
 	api.AppsGetAppsHandler = apps.GetAppsHandlerFunc(handler.GetApps)
 	api.AppsPostAppsHandler = apps.PostAppsHandlerFunc(handler.PostApps)
 

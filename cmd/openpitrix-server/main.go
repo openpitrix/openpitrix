@@ -42,7 +42,7 @@ import (
 type Server struct {
 	*restapi.Server
 	Spec *loads.Document
-	Api  *operations.AppHubAPI
+	Api  *operations.OpenPitrixAPI
 }
 
 func NewServer() *Server {
@@ -52,7 +52,7 @@ func NewServer() *Server {
 	}
 
 	p := new(Server)
-	p.Api = operations.NewAppHubAPI(swaggerSpec)
+	p.Api = operations.NewOpenPitrixAPI(swaggerSpec)
 	p.Spec = swaggerSpec
 	p.Server = restapi.NewServer(p.Api)
 

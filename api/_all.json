@@ -1,7 +1,7 @@
-^C{
+{
   "swagger": "2.0",
   "info": {
-    "title": "AppHub",
+    "title": "OpenPitrix",
     "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
     "version": "0.0.1"
   },

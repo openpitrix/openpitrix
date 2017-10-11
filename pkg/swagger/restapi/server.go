@@ -37,8 +37,8 @@ func init() {
 	}
 }
 
-// NewServer creates a new api app hub server but does not configure it
-func NewServer(api *operations.AppHubAPI) *Server {
+// NewServer creates a new api open pitrix server but does not configure it
+func NewServer(api *operations.OpenPitrixAPI) *Server {
 	s := new(Server)
 
 	s.api = api
@@ -59,13 +59,13 @@ func (s *Server) ConfigureFlags() {
 	}
 }
 
-// Server for the app hub API
+// Server for the open pitrix API
 type Server struct {
 	EnabledListeners []string         `long:"scheme" description:"the listeners to enable, this can be repeated and defaults to the schemes in the swagger spec"`
 	CleanupTimeout   time.Duration    `long:"cleanup-timeout" description:"grace period for which to wait before shutting down the server" default:"10s"`
 	MaxHeaderSize    flagext.ByteSize `long:"max-header-size" description:"controls the maximum number of bytes the server will read parsing the request header's keys and values, including the request line. It does not limit the size of the request body." default:"1MiB"`
 
-	SocketPath    flags.Filename `long:"socket-path" description:"the unix socket to listen on" default:"/var/run/app-hub.sock"`
+	SocketPath    flags.Filename `long:"socket-path" description:"the unix socket to listen on" default:"/var/run/open-pitrix.sock"`
 	domainSocketL net.Listener
 
 	Host         string        `long:"host" description:"the IP to listen on" default:"localhost" env:"HOST"`
@@ -87,7 +87,7 @@ type Server struct {
 	TLSWriteTimeout   time.Duration  `long:"tls-write-timeout" description:"maximum duration before timing out write of the response"`
 	httpsServerL      net.Listener
 
-	api          *operations.AppHubAPI
+	api          *operations.OpenPitrixAPI
 	handler      http.Handler
 	hasListeners bool
 }
@@ -113,7 +113,7 @@ func (s *Server) Fatalf(f string, args ...interface{}) {
 }
 
 // SetAPI configures the server with the specified API. Needs to be called before Serve
-func (s *Server) SetAPI(api *operations.AppHubAPI) {
+func (s *Server) SetAPI(api *operations.OpenPitrixAPI) {
 	if api == nil {
 		s.api = nil
 		s.handler = nil
@@ -170,13 +170,13 @@ func (s *Server) Serve() (err error) {
 		configureServer(domainSocket, "unix", string(s.SocketPath))
 
 		wg.Add(1)
-		s.Logf("Serving app hub at unix://%s", s.SocketPath)
+		s.Logf("Serving open pitrix at unix://%s", s.SocketPath)
 		go func(l net.Listener) {
 			defer wg.Done()
 			if err := domainSocket.Serve(l); err != nil {
 				s.Fatalf("%v", err)
 			}
-			s.Logf("Stopped serving app hub at unix://%s", s.SocketPath)
+			s.Logf("Stopped serving open pitrix at unix://%s", s.SocketPath)
 		}(s.domainSocketL)
 	}
 
@@ -201,13 +201,13 @@ func (s *Server) Serve() (err error) {
 		configureServer(httpServer, "http", s.httpServerL.Addr().String())
 
 		wg.Add(1)
-		s.Logf("Serving app hub at http://%s", s.httpServerL.Addr())
+		s.Logf("Serving open pitrix at http://%s", s.httpServerL.Addr())
 		go func(l net.Listener) {
 			defer wg.Done()
 			if err := httpServer.Serve(l); err != nil {
 				s.Fatalf("%v", err)
 			}
-			s.Logf("Stopped serving app hub at http://%s", l.Addr())
+			s.Logf("Stopped serving open pitrix at http://%s", l.Addr())
 		}(s.httpServerL)
 	}
 
@@ -286,13 +286,13 @@ func (s *Server) Serve() (err error) {
 		configureServer(httpsServer, "https", s.httpsServerL.Addr().String())
 
 		wg.Add(1)
-		s.Logf("Serving app hub at https://%s", s.httpsServerL.Addr())
+		s.Logf("Serving open pitrix at https://%s", s.httpsServerL.Addr())
 		go func(l net.Listener) {
 			defer wg.Done()
 			if err := httpsServer.Serve(l); err != nil {
 				s.Fatalf("%v", err)
 			}
-			s.Logf("Stopped serving app hub at https://%s", l.Addr())
+			s.Logf("Stopped serving open pitrix at https://%s", l.Addr())
 		}(tls.NewListener(s.httpsServerL, httpsServer.TLSConfig))
 	}
 

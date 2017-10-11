@@ -30,7 +30,7 @@ import (
 type AppsServer struct {
 	*restapi.Server
 	Spec *loads.Document
-	Api  *operations.AppHubAPI
+	Api  *operations.OpenPitrixAPI
 
 	addr    string
 	dbpath  string
@@ -44,7 +44,7 @@ func NewAppsServer(addr, dbpath string) *AppsServer {
 	}
 
 	p := new(AppsServer)
-	p.Api = operations.NewAppHubAPI(swaggerSpec)
+	p.Api = operations.NewOpenPitrixAPI(swaggerSpec)
 	p.Spec = swaggerSpec
 	p.Server = restapi.NewServer(p.Api)
 

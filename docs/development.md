@@ -1,10 +1,10 @@
-# Developing for AppHub
+# Developing for OpenPitrix
 
 This document is intended to be the canonical source of truth for things like
-supported toolchain versions for building AppHub.
+supported toolchain versions for building OpenPitrix.
 If you find a requirement that this doc does not capture, or if you find other
 docs with references to requirements that are not simply links to this doc,
-please [submit an issue](https://git.internal.yunify.com/ray/AppHub/issues/new).
+please [submit an issue](https://github.com/openpitrix/openpitrix/issues/new).
 
 This document is intended to be relative to the branch in which it is found.
 It is guaranteed that requirements will change over time for the development
@@ -17,12 +17,12 @@ branch, but release branches should not change.
 
 ## Prerequisites
 
-AppHub only has few external dependencies you need to setup before being 
+OpenPitrix only has few external dependencies you need to setup before being 
 able to build and run the code.
 
 ### Setting up Go
 
-AppHub written in the [Go](http://golang.org) programming language.
+OpenPitrix written in the [Go](http://golang.org) programming language.
 To build, you'll need a Go (version 1.8+) development environment. 
 If you haven't set up a Go development environment, please follow 
 [these instructions](https://golang.org/doc/install)
@@ -38,13 +38,13 @@ export PATH=$PATH:$GOPATH/bin
 
 ### Setting up Docker
 If you install the Swagger as follows using docker, then you need to set up docker
-environment. Also docker environment may be needed for running some of AppHub's examples 
+environment. Also docker environment may be needed for running some of OpenPitrix's examples 
 and tests. Please follow [these instructions](https://docs.docker.com/engine/installation/)
 for how to do this for your platform.
 
 ### Setting up Swagger
 
-AppHub is using [OpenAPI/Swagger](https://swagger.io) to develop API, so follow 
+OpenPitrix is using [OpenAPI/Swagger](https://swagger.io) to develop API, so follow 
 [the instructions](https://github.com/go-swagger/go-swagger/tree/master/docs) to 
 install Swagger. If you are not familar with Swagger, please read the 
 [tutorial](http://apihandyman.io/writing-openapi-swagger-specification-tutorial-part-1-introduction/#writing-openapi-fka-swagger-specification-tutorial). If you install Swagger using docker distribution, 

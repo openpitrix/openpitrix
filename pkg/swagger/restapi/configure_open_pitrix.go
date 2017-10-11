@@ -23,11 +23,11 @@ import (
 
 //go:generate swagger generate server --target ../pkg/swagger --name  --spec ../api/_all.json
 
-func configureFlags(api *operations.AppHubAPI) {
+func configureFlags(api *operations.OpenPitrixAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.AppHubAPI) http.Handler {
+func configureAPI(api *operations.OpenPitrixAPI) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 

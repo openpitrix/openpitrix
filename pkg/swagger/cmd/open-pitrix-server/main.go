@@ -23,12 +23,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	api := operations.NewAppHubAPI(swaggerSpec)
+	api := operations.NewOpenPitrixAPI(swaggerSpec)
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
 
 	parser := flags.NewParser(server, flags.Default)
-	parser.ShortDescription = "AppHub"
+	parser.ShortDescription = "OpenPitrix"
 	parser.LongDescription = "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc."
 
 	server.ConfigureFlags()

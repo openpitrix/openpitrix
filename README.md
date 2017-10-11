@@ -1,6 +1,6 @@
-# AppHub
+# OpenPitrix
 
-AppHub is an open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc. 
+OpenPitrix is an open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc. 
 
 ### Motivation
 
@@ -12,6 +12,6 @@ Basic idea is to decouple application repository and runtime environment. The ru
 
 ### Contributing to the project
 
-All [members](docs/members.md) of the AppHub community must abide by the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Only by respecting each other can we develop a productive, collaborative community.
+All [members](docs/members.md) of the OpenPitrix community must abide by the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Only by respecting each other can we develop a productive, collaborative community.
 
 You can then check out how to [setup for development](docs/development.md).

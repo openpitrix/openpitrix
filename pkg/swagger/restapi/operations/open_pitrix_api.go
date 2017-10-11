@@ -26,9 +26,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations/repos"
 )
 
-// NewAppHubAPI creates a new AppHub instance
-func NewAppHubAPI(spec *loads.Document) *AppHubAPI {
-	return &AppHubAPI{
+// NewOpenPitrixAPI creates a new OpenPitrix instance
+func NewOpenPitrixAPI(spec *loads.Document) *OpenPitrixAPI {
+	return &OpenPitrixAPI{
 		handlers:            make(map[string]map[string]http.Handler),
 		formats:             strfmt.Default,
 		defaultConsumes:     "application/json",
@@ -94,8 +94,8 @@ func NewAppHubAPI(spec *loads.Document) *AppHubAPI {
 	}
 }
 
-/*AppHubAPI An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc. */
-type AppHubAPI struct {
+/*OpenPitrixAPI An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc. */
+type OpenPitrixAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
 	handlers        map[string]map[string]http.Handler
@@ -173,42 +173,42 @@ type AppHubAPI struct {
 }
 
 // SetDefaultProduces sets the default produces media type
-func (o *AppHubAPI) SetDefaultProduces(mediaType string) {
+func (o *OpenPitrixAPI) SetDefaultProduces(mediaType string) {
 	o.defaultProduces = mediaType
 }
 
 // SetDefaultConsumes returns the default consumes media type
-func (o *AppHubAPI) SetDefaultConsumes(mediaType string) {
+func (o *OpenPitrixAPI) SetDefaultConsumes(mediaType string) {
 	o.defaultConsumes = mediaType
 }
 
 // SetSpec sets a spec that will be served for the clients.
-func (o *AppHubAPI) SetSpec(spec *loads.Document) {
+func (o *OpenPitrixAPI) SetSpec(spec *loads.Document) {
 	o.spec = spec
 }
 
 // DefaultProduces returns the default produces media type
-func (o *AppHubAPI) DefaultProduces() string {
+func (o *OpenPitrixAPI) DefaultProduces() string {
 	return o.defaultProduces
 }
 
 // DefaultConsumes returns the default consumes media type
-func (o *AppHubAPI) DefaultConsumes() string {
+func (o *OpenPitrixAPI) DefaultConsumes() string {
 	return o.defaultConsumes
 }
 
 // Formats returns the registered string formats
-func (o *AppHubAPI) Formats() strfmt.Registry {
+func (o *OpenPitrixAPI) Formats() strfmt.Registry {
 	return o.formats
 }
 
 // RegisterFormat registers a custom format validator
-func (o *AppHubAPI) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
+func (o *OpenPitrixAPI) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
 	o.formats.Add(name, format, validator)
 }
 
-// Validate validates the registrations in the AppHubAPI
-func (o *AppHubAPI) Validate() error {
+// Validate validates the registrations in the OpenPitrixAPI
+func (o *OpenPitrixAPI) Validate() error {
 	var unregistered []string
 
 	if o.JSONConsumer == nil {
@@ -299,26 +299,26 @@ func (o *AppHubAPI) Validate() error {
 }
 
 // ServeErrorFor gets a error handler for a given operation id
-func (o *AppHubAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
+func (o *OpenPitrixAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
 	return o.ServeError
 }
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
-func (o *AppHubAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
+func (o *OpenPitrixAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
 	return nil
 
 }
 
 // Authorizer returns the registered authorizer
-func (o *AppHubAPI) Authorizer() runtime.Authorizer {
+func (o *OpenPitrixAPI) Authorizer() runtime.Authorizer {
 
 	return nil
 
 }
 
 // ConsumersFor gets the consumers for the specified media types
-func (o *AppHubAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
+func (o *OpenPitrixAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
 
 	result := make(map[string]runtime.Consumer)
 	for _, mt := range mediaTypes {
@@ -337,7 +337,7 @@ func (o *AppHubAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consume
 }
 
 // ProducersFor gets the producers for the specified media types
-func (o *AppHubAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
+func (o *OpenPitrixAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
 
 	result := make(map[string]runtime.Producer)
 	for _, mt := range mediaTypes {
@@ -356,7 +356,7 @@ func (o *AppHubAPI) ProducersFor(mediaTypes []string) map[string]runtime.Produce
 }
 
 // HandlerFor gets a http.Handler for the provided operation method and path
-func (o *AppHubAPI) HandlerFor(method, path string) (http.Handler, bool) {
+func (o *OpenPitrixAPI) HandlerFor(method, path string) (http.Handler, bool) {
 	if o.handlers == nil {
 		return nil, false
 	}
@@ -371,8 +371,8 @@ func (o *AppHubAPI) HandlerFor(method, path string) (http.Handler, bool) {
 	return h, ok
 }
 
-// Context returns the middleware context for the app hub API
-func (o *AppHubAPI) Context() *middleware.Context {
+// Context returns the middleware context for the open pitrix API
+func (o *OpenPitrixAPI) Context() *middleware.Context {
 	if o.context == nil {
 		o.context = middleware.NewRoutableContext(o.spec, o, nil)
 	}
@@ -380,7 +380,7 @@ func (o *AppHubAPI) Context() *middleware.Context {
 	return o.context
 }
 
-func (o *AppHubAPI) initHandlerCache() {
+func (o *OpenPitrixAPI) initHandlerCache() {
 	o.Context() // don't care about the result, just that the initialization happened
 
 	if o.handlers == nil {
@@ -471,7 +471,7 @@ func (o *AppHubAPI) initHandlerCache() {
 
 // Serve creates a http handler to serve the API over HTTP
 // can be used directly in http.ListenAndServe(":8000", api.Serve(nil))
-func (o *AppHubAPI) Serve(builder middleware.Builder) http.Handler {
+func (o *OpenPitrixAPI) Serve(builder middleware.Builder) http.Handler {
 	o.Init()
 
 	if o.Middleware != nil {
@@ -481,7 +481,7 @@ func (o *AppHubAPI) Serve(builder middleware.Builder) http.Handler {
 }
 
 // Init allows you to just initialize the handler cache, you can then recompose the middelware as you see fit
-func (o *AppHubAPI) Init() {
+func (o *OpenPitrixAPI) Init() {
 	if len(o.handlers) == 0 {
 		o.initHandlerCache()
 	}

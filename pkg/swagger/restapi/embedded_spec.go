@@ -28,7 +28,7 @@ func init() {
   "swagger": "2.0",
   "info": {
     "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
-    "title": "AppHub",
+    "title": "OpenPitrix",
     "version": "0.0.1"
   },
   "basePath": "/v1",
