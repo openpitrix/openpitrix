@@ -14,16 +14,18 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-TARG:=apphub
+TARG.Name:=openpitrix
+TRAG.Gopkg:=openpitrix.io/openpitrix
 
-GO:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) golang:1.9-alpine go
-GO_WITH_MYSQL:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) --link apphub-mysql:mysql -p 9527:9527 golang:1.9-alpine go
-SWAGGER:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG) quay.io/goswagger/swagger
+GO:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG.Name) golang:1.9-alpine go
+GO_WITH_MYSQL:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TARG.Gopkg) --link apphub-mysql:mysql -p 9527:9527 golang:1.9-alpine go
+SWAGGER:=docker run --rm -it -v $(shell go env GOPATH):/go -w /go/src/$(TRAG.Gopkg) quay.io/goswagger/swagger
 
-SWAGGER_SPEC_FILE:=./src/api/swagger-spec/_all.json
-SWAGGER_OUT_DIR:=./src/api/swagger
+SWAGGER_SPEC_DIR:=./api
+SWAGGER_SPEC_FILE:=./api/_all.json
+SWAGGER_OUT_DIR:=./pkg/swagger
 
-MYSQL_DATABASE:=$(TARG)
+MYSQL_DATABASE:=$(TARG.Name)
 MYSQL_ROOT_PASSWORD:=password
 
 help:
@@ -59,7 +61,7 @@ tools:
 	@echo "ok"
 
 generate:
-	cd ./src/api/swagger-spec && make generate
+	cd ./api && make generate
 	-mkdir -p $(SWAGGER_OUT_DIR)
 	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
 	@echo "ok"
@@ -73,7 +75,7 @@ mysql-stop:
 	@echo "ok"
 
 run: mysql-start
-	$(GO_WITH_MYSQL) run ./src/cmd/apphub-server/main.go
+	$(GO_WITH_MYSQL) run ./cmd/apphub-server/main.go
 
 build:
 	@echo "TODO"

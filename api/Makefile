@@ -20,8 +20,6 @@
 
 TARG:=_all.json
 
-SWAGGER_OUT_DIR:=../swagger
-
 SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` quay.io/goswagger/swagger
 MULTI_FILE_SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` vidsyhq/multi-file-swagger-docker
 
