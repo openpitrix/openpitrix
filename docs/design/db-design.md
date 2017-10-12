@@ -1,19 +1,19 @@
 # Database Design
 
-### Key Points
+## Key Points
 
 * Will use mysql as RDBM.
 * Since the project is microservice-based, we use database-per-service pattern for the backend store.
 * The throughput is expected not too high, so we will use private-tables-per-service or schema-per-service given the way is the lowest overhead. It means services access the tables data that belong to other services only by API.
 
-### Schemas
+## Schemas
 
 Use GRANT to isolate tables for services
 ```sql
 GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'localhost’;
 ```
 
-### Name Conventions
+## Name Conventions
 
 1. All lower case including table, column
 2. Multiple words should be separated by underscores, i.e. [snake case](https://en.wikipedia.org/wiki/Snake_case).
@@ -24,7 +24,7 @@ GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'
 7. No prefix or suffix such as tb_
 8. Indexes should be explicitly named and include both the table name and the column name(s) indexed. 
 
-### Database Scripts
+## Database Scripts
 
 ```sql
 CREATE DATABASE openpitrix;
