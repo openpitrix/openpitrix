@@ -14,6 +14,7 @@ branch, but release branches should not change.
   - [Setting up Go](#setting-up-go)
   - [Setting up Docker](#setting-up-docker)
   - [Setting up Swagger](#setting-up-swagger)
+- [To start developing OpenPitrix](#to-start-developing-openpitrix)
 
 ## Prerequisites
 
@@ -32,11 +33,12 @@ Set up your GOPATH and add a path entry for Go binaries to your PATH. Typically
 added to your ~/.profile:
 
 ```shell
-export GOPATH=~/go
-export PATH=$PATH:$GOPATH/bin
+$ export GOPATH=~/go
+$ export PATH=$PATH:$GOPATH/bin
 ```
 
 ### Setting up Docker
+
 If you install the Swagger as follows using docker, then you need to set up docker
 environment. Also docker environment may be needed for running some of OpenPitrix's examples 
 and tests. Please follow [these instructions](https://docs.docker.com/engine/installation/)
@@ -51,8 +53,27 @@ install Swagger. If you are not familar with Swagger, please read the
 please run
 
 ```shell
-docker pull quay.io/goswagger/swagger
+$ docker pull quay.io/goswagger/swagger
+$ alias swagger="docker run --rm -it -e GOPATH=$GOPATH:/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
+$ swagger version
+```
 
-alias swagger="docker run --rm -it -e GOPATH=$GOPATH:/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
-swagger version
+## To start developing OpenPitrix
+
+There are two options to get OpenPitrix source code and build the project:
+
+**You have a working Go environment.**
+
+```shell
+$ go get -d openpitrix.io/openpitrix
+$ cd $GOPATH/src/openpitrix.io/openpitrix
+$ make
+```
+
+**You have a working Docker environment.**
+
+```shell
+$ git clone https://github.com/openpitrix/openpitrix
+$ cd openpitrix
+$ make
 ```
