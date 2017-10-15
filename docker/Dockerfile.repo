@@ -15,6 +15,5 @@
 # +-------------------------------------------------------------------------
 
 FROM alpine
-ADD openpitrix-runtime-server.linux.exe /
-ENTRYPOINT [ "/openpitrix-runtime-server.linux.exe" ]
-CMD []
+ADD repo-server /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/repo-server"]

@@ -14,7 +14,6 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-FROM alpine
-ADD openpitrix-server.linux.exe /
-ENTRYPOINT [ "/openpitrix-server.linux.exe" ]
-CMD []
+FROM alpine:latest
+COPY api-server /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/api-server"]
