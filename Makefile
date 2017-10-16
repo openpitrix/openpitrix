@@ -99,11 +99,7 @@ mysql-stop:
 build:
 	$(GO) fmt ./...
 	@for service in $(TARG.Services) ; do \
-		$(GO) build -o ./cmd/$$service/$$service-server $(TRAG.Gopkg)/cmd/$$service ; \
-		cp ./cmd/$$service/$$service-server ./docker ; \
-		cd ./docker ; \
 		docker build -t $$service:$(DOCKER_TAGS) -f Dockerfile.$$service . ; \
-		cd .. ; \
 	done
 	@echo "ok"
 
