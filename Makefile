@@ -22,7 +22,7 @@ TARG.Services+=app
 TARG.Services+=repo
 TARG.Services+=runtime
 
-DOCKER_TAGS=`whoami`_`date +%y%m%d_%H%M%S`
+DOCKER_TAGS=latest
 
 GO:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) golang:1.9-alpine go
 GO_WITH_MYSQL:=docker run --rm -it -v `pwd`:/go -w /go/src/$(TRAG.Gopkg) --link openpitrix-mysql:mysql -p 9527:9527 golang:1.9-alpine go
@@ -99,11 +99,7 @@ mysql-stop:
 build:
 	$(GO) fmt ./...
 	@for service in $(TARG.Services) ; do \
-		$(GO) build -o ./cmd/$$service/$$service-server $(TRAG.Gopkg)/cmd/$$service ; \
-		cp ./cmd/$$service/$$service-server ./docker ; \
-		cd ./docker ; \
 		docker build -t $$service:$(DOCKER_TAGS) -f Dockerfile.$$service . ; \
-		cd .. ; \
 	done
 	@echo "ok"
 

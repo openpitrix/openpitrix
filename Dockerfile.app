@@ -14,6 +14,11 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-FROM alpine
-ADD repo-server /usr/local/bin/
-ENTRYPOINT ["/usr/local/bin/repo-server"]
+FROM golang:1.9-alpine as builder
+WORKDIR /go/src/openpitrix.io/openpitrix/ 
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app-server ./cmd/app
+
+FROM alpine:latest
+COPY --from=builder /go/src/openpitrix.io/openpitrix/app-server /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/app-server"]
