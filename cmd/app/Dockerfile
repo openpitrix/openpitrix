@@ -14,11 +14,14 @@
 # | limitations under the License.
 # +-------------------------------------------------------------------------
 
-FROM golang:1.9-alpine as builder
-WORKDIR /go/src/openpitrix.io/openpitrix/ 
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o api-server ./cmd/api
+FROM golang:alpine as builder
 
-FROM alpine:latest
-COPY --from=builder /go/src/openpitrix.io/openpitrix/api-server /usr/local/bin/
-ENTRYPOINT ["/usr/local/bin/api-server"]
+RUN apk add --no-cache git
+RUN go get openpitrix.io/openpitrix/cmd/app
+
+FROM alpine
+
+COPY --from=builder /go/bin/app /usr/local/bin/
+
+ENTRYPOINT ["/usr/local/bin/app"]
+CMD []
