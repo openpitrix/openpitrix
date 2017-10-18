@@ -98,9 +98,7 @@ mysql-stop:
 .PHONY: build
 build:
 	$(GO) fmt ./...
-	@for service in $(TARG.Services) ; do \
-		docker build -t $$service:$(DOCKER_TAGS) -f Dockerfile.$$service . ; \
-	done
+	docker build -t $(TARG.Name) -f ./Dockerfile.local .
 	@echo "ok"
 
 .PHONY: run
