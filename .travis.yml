@@ -1,0 +1,13 @@
+sudo: required
+
+services:
+  - docker
+
+language: go
+
+go:
+  - 1.9
+  - tip
+
+go_import_path: openpitrix.io/openpitrix
+
