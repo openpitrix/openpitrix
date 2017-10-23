@@ -16,8 +16,9 @@
 
 FROM golang:alpine as builder
 
-RUN apk add --no-cache git
-RUN go get openpitrix.io/openpitrix/cmd/...
+WORKDIR /go/src/openpitrix.io/openpitrix/
+COPY . .
+RUN go install ./cmd/...
 
 FROM alpine
 

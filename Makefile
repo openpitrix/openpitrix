@@ -98,7 +98,8 @@ mysql-stop:
 .PHONY: build
 build:
 	$(GO) fmt ./...
-	docker build -t $(TARG.Name) -f ./Dockerfile.local .
+	docker build -t $(TARG.Name) -f ./Dockerfile .
+	@docker image prune -f 1>/dev/null 2>&1
 	@echo "ok"
 
 .PHONY: run
