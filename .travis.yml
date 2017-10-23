@@ -11,3 +11,7 @@ go:
 
 go_import_path: openpitrix.io/openpitrix
 
+script:
+  - make generate
+  - make build
+  - make test
