@@ -11,3 +11,9 @@ go:
 
 go_import_path: openpitrix.io/openpitrix
 
+before_script:
+  - docker --version
+
+script:
+  - make generate
+  - make test
