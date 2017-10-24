@@ -19,7 +19,7 @@ func yamlDecode(s []byte, v interface{}) error {
 	return yaml.Unmarshal(s, v)
 }
 
-func getHome() string {
+func GetHomePath() string {
 	home := os.Getenv("HOME")
 	if runtime.GOOS == "windows" {
 		home = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")

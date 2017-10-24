@@ -30,12 +30,15 @@ func tAssertf(tb testing.TB, condition bool, format string, a ...interface{}) {
 
 func TestConfig(t *testing.T) {
 	conf0 := &Config{
-		Database: "a",
-		Host:     "b",
-		Port:     123,
-		Protocol: "abc",
-		URI:      "/??",
-		LogLevel: "warn",
+		DbType:     "mysql",
+		DbHost:     "root:password@tcp(127.0.0.1:3306)/openpitrix",
+		DbEncoding: "utf8",
+		DbEngine:   "InnoDB",
+		Host:       "127.0.0.1",
+		Port:       8443,
+		Protocol:   "https",
+		URI:        "/openpitrix/api/v1",
+		LogLevel:   "warn",
 	}
 
 	conf1, err := Parse(conf0.String())

@@ -10,12 +10,15 @@ import (
 )
 
 type Config struct {
-	Database string `json:"database" yaml:"database"`
-	Host     string `json:"host" yaml:"host"`
-	Port     int    `json:"port" yaml:"port"`
-	Protocol string `json:"protocol" yaml:"protocol"`
-	URI      string `json:"uri" yaml:"uri"`
-	LogLevel string `json:"log_level" yaml:"log_level"`
+	DbType     string `json:"db_type" yaml:"db_type"`
+	DbHost     string `json:"db_host" yaml:"db_host"`
+	DbEncoding string `json:"db_encoding" yaml:"db_encoding"`
+	DbEngine   string `json:"db_engine" yaml:"db_engine"`
+	Host       string `json:"host" yaml:"host"`
+	Port       int    `json:"port" yaml:"port"`
+	Protocol   string `json:"protocol" yaml:"protocol"`
+	URI        string `json:"uri" yaml:"uri"`
+	LogLevel   string `json:"log_level" yaml:"log_level"`
 }
 
 func Default() *Config {
@@ -28,7 +31,7 @@ func Default() *Config {
 
 func Load(path string) (*Config, error) {
 	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
-		path = getHome() + path[1:]
+		path = GetHomePath() + path[1:]
 	}
 
 	data, err := ioutil.ReadFile(path)
@@ -60,9 +63,14 @@ func Parse(content string) (*Config, error) {
 	return p, nil
 }
 
+func (p *Config) Clone() *Config {
+	q, _ := Parse(p.String())
+	return q
+}
+
 func (p *Config) Save(path string) error {
 	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
-		path = getHome() + path[1:]
+		path = GetHomePath() + path[1:]
 	}
 
 	data, err := yamlEncode(p)
@@ -79,7 +87,7 @@ func (p *Config) Save(path string) error {
 }
 
 func (p *Config) Valid() bool {
-	if p.Database == "" {
+	if p.DbType == "" || p.DbHost == "" {
 		return false
 	}
 	if p.Host == "" {
