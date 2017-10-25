@@ -9,6 +9,8 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime/middleware"
+
+	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/swagger/models"
 	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations"
 	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations/apps"
@@ -31,15 +33,17 @@ func RegisterHandler(api *operations.OpenPitrixAPI, handler AppsRestInterface) {
 	api.AppsDeleteAppsAppIDHandler = apps.DeleteAppsAppIDHandlerFunc(handler.DeleteAppsAppID)
 }
 
-type Options struct{}
-
 type AppsRestService struct {
-	opt *Options
+	Cfg *config.Config
 	db  AppDatabaseInterface
 }
 
-func NewAppsRestService(opt *Options) *AppsRestService {
-	return &AppsRestService{opt: opt}
+func NewAppsRestService(config *config.Config, db ...AppDatabaseInterface) *AppsRestService {
+	if len(db) > 0 {
+		return &AppsRestService{Cfg: config.Clone(), db: db[0]}
+	} else {
+		return &AppsRestService{Cfg: config.Clone()}
+	}
 }
 
 func (p *AppsRestService) InitAppDatabase(db AppDatabaseInterface) {

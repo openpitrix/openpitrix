@@ -6,11 +6,10 @@ package apps
 
 import (
 	"log"
-	"net/url"
-	"strconv"
 
 	"github.com/go-openapi/loads"
 
+	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/swagger/restapi"
 	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations"
 )
@@ -19,13 +18,12 @@ type AppsServer struct {
 	*restapi.Server
 	Spec *loads.Document
 	Api  *operations.OpenPitrixAPI
+	Cfg  *config.Config
 
-	addr    string
-	dbpath  string
 	service *AppsRestService
 }
 
-func NewAppsServer(addr, dbpath string) *AppsServer {
+func NewAppsServer(config *config.Config) *AppsServer {
 	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
 	if err != nil {
 		log.Fatal(err)
@@ -35,39 +33,29 @@ func NewAppsServer(addr, dbpath string) *AppsServer {
 	p.Api = operations.NewOpenPitrixAPI(swaggerSpec)
 	p.Spec = swaggerSpec
 	p.Server = restapi.NewServer(p.Api)
+	p.Cfg = config.Clone()
 
-	p.addr = addr
-	p.dbpath = dbpath
-
-	p.service = NewAppsRestService(&Options{})
+	p.service = NewAppsRestService(config.Clone())
 
 	return p
 }
 
 func (p *AppsServer) ConfigureFlags() {
 	p.Server.ConfigureFlags()
+
+	p.Server.Host = p.Cfg.Host
+	p.Server.Port = p.Cfg.Port
 }
 
 func (p *AppsServer) ConfigureAPI() {
-	p.Server.ConfigureAPI()
-
 	RegisterHandler(p.Api, p.service)
 }
 
 func (p *AppsServer) Serve() error {
-	url, err := url.Parse(p.addr)
-	if err != nil {
-		return err
-	}
+	p.ConfigureFlags()
+	p.ConfigureAPI()
 
-	if s := url.Hostname(); s != "" {
-		p.Host = s
-	}
-	if s := url.Port(); s != "" {
-		p.Port, _ = strconv.Atoi(s)
-	}
-
-	db, err := OpenAppDatabase(p.dbpath, &DbOptions{})
+	db, err := OpenAppDatabase(p.Cfg)
 	if err != nil {
 		return err
 	}
@@ -76,12 +64,9 @@ func (p *AppsServer) Serve() error {
 	return p.Server.Serve()
 }
 
-func ListenAndServeAppsServer(addr, dbpath string) error {
-	server := NewAppsServer(addr, dbpath)
+func ListenAndServeAppsServer(config *config.Config) error {
+	server := NewAppsServer(config)
 	defer server.Shutdown()
-
-	server.ConfigureFlags()
-	server.ConfigureAPI()
 
 	if err := server.Serve(); err != nil {
 		return err

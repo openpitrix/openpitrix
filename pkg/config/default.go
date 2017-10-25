@@ -12,11 +12,14 @@ const DefaultConfigContent = `
 # OpenPitrix configuration
 # https://openpitrix.io/
 
-database: 'mysql://root:password@127.0.0.1:3306/openpitrix'
+db_type: 'mysql'
+db_host: 'root:password@tcp(127.0.0.1:3306)/openpitrix'
+db_encoding: 'utf8'
+db_engine: 'InnoDB'
 
 host: '127.0.0.1'
-port: 443
-protocol: 'https'
+port: 8080
+protocol: 'http'
 uri: '/'
 
 # Valid log levels are "debug", "info", "warn", "error", and "fatal".
