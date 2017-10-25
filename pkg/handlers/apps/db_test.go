@@ -10,14 +10,19 @@ import (
 	"flag"
 	"os"
 	"testing"
+
+	"openpitrix.io/openpitrix/pkg/config"
 )
 
 var (
-	fFalgDbName = flag.String("test-db-name", "root:password@tcp(mysql:3306)/openpitrix", "set mysql database name")
+	tConfigFile = flag.String("config-file", "~/.openpitrix/config.yaml", "set config file path")
+	tConfig     *config.Config
 )
 
 func TestMain(m *testing.M) {
 	flag.Parse()
+
+	tConfig, _ = config.Load(*tConfigFile)
 
 	rv := m.Run()
 	os.Exit(rv)

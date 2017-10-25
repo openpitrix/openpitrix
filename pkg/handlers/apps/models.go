@@ -46,6 +46,10 @@ func (p *AppsItem) To_models_App() *models.App {
 }
 
 func (p AppsItems) To_models_AppsItems(pageNumber, pageSize int) models.AppsItems {
+	if pageNumber > 0 {
+		pageNumber = pageNumber - 1 // start with 1
+	}
+
 	start := pageNumber * pageSize
 	end := start + pageSize
 

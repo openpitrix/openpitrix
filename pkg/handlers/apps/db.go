@@ -7,9 +7,13 @@ package apps
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"sync/atomic"
 
 	_ "github.com/go-sql-driver/mysql"
 	"gopkg.in/gorp.v2"
+
+	"openpitrix.io/openpitrix/pkg/config"
 )
 
 var _ AppDatabaseInterface = (*AppDatabase)(nil)
@@ -28,36 +32,36 @@ type DbOptions struct {
 }
 
 type AppDatabase struct {
+	Cfg *config.Config
+
 	db    *sql.DB
 	dbMap *gorp.DbMap
+
+	createTablesDone uint32
 }
 
-func OpenAppDatabase(dbname string, opt *DbOptions) (p *AppDatabase, err error) {
-	db, err := sql.Open("mysql", dbname)
+func OpenAppDatabase(config *config.Config) (p *AppDatabase, err error) {
+	// https://github.com/go-sql-driver/mysql/issues/9
+	db, err := sql.Open(config.DbType, config.DbHost+"?parseTime=true")
 	if err != nil {
 		return nil, err
 	}
 
 	dialect := gorp.MySQLDialect{
-		Encoding: "utf8",
-	}
-	if opt != nil && opt.MySQLDialect != nil {
-		dialect = *opt.MySQLDialect
+		Encoding: config.DbEncoding,
+		Engine:   config.DbEngine,
 	}
 
 	dbMap := &gorp.DbMap{Db: db, Dialect: dialect}
 	dbMap.AddTableWithName(AppsItem{}, APP_TABLE_NAME)
 
-	err = dbMap.CreateTablesIfNotExists()
-	if err != nil {
-		db.Close()
-		return nil, err
-	}
-
 	p = &AppDatabase{
+		Cfg:   config.Clone(),
 		db:    db,
 		dbMap: dbMap,
 	}
+
+	p.initTables()
 	return
 }
 
@@ -66,17 +70,32 @@ func (p *AppDatabase) Close() error {
 }
 
 func (p *AppDatabase) GetApps() (items AppsItems, err error) {
+	p.initTables()
 	_, err = p.dbMap.Select(&items, fmt.Sprintf("select * from %s", APP_TABLE_NAME))
 	return
 }
 func (p *AppDatabase) CreateApp(app *AppsItem) error {
+	p.initTables()
 	return p.dbMap.Insert(app)
 }
 func (p *AppDatabase) GetApp(id string) (item AppsItem, err error) {
+	p.initTables()
 	err = p.dbMap.SelectOne(&item, fmt.Sprintf("select * from %s where id=?", APP_TABLE_NAME), id)
 	return
 }
 func (p *AppDatabase) DeleteApp(id string) error {
+	p.initTables()
 	_, err := p.dbMap.Delete(&AppsItem{Id: id})
 	return err
+}
+
+func (p *AppDatabase) initTables() {
+	if atomic.LoadUint32(&p.createTablesDone) == 1 {
+		return
+	}
+	if err := p.dbMap.CreateTablesIfNotExists(); err != nil {
+		log.Printf("CreateTablesIfNotExists: %v", err)
+		return
+	}
+	atomic.StoreUint32(&p.createTablesDone, 1)
 }
