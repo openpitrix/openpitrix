@@ -63,6 +63,12 @@
 			"revisionTime": "2017-09-01T13:30:30Z"
 		},
 		{
+			"checksumSHA1": "UPzr/JUg1GA9xSSG1E37oiTx/Qo=",
+			"path": "github.com/go-openapi/runtime/client",
+			"revision": "bf2ff8f7150788b1c7256abb0805ba0410cbbabb",
+			"revisionTime": "2017-09-01T13:30:30Z"
+		},
+		{
 			"checksumSHA1": "brH2it7dhYuNiLlgI1m+Qfc9Rxg=",
 			"path": "github.com/go-openapi/runtime/flagext",
 			"revision": "bf2ff8f7150788b1c7256abb0805ba0410cbbabb",
@@ -173,6 +179,12 @@
 		{
 			"checksumSHA1": "dr5+PfIRzXeN+l1VG+s0lea9qz8=",
 			"path": "golang.org/x/net/context",
+			"revision": "f5079bd7f6f74e23c4d65efa0f4ce14cbd6a3c0f",
+			"revisionTime": "2017-07-19T21:11:51Z"
+		},
+		{
+			"checksumSHA1": "WHc3uByvGaMcnSoI21fhzYgbOgg=",
+			"path": "golang.org/x/net/context/ctxhttp",
 			"revision": "f5079bd7f6f74e23c4d65efa0f4ce14cbd6a3c0f",
 			"revisionTime": "2017-07-19T21:11:51Z"
 		},
