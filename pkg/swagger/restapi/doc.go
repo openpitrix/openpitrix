@@ -13,11 +13,9 @@ An open platform to package and deploy applications into multiple environment su
 
     Consumes:
     - application/json
-    - application/yaml
 
     Produces:
     - application/json
-    - application/yaml
 
 swagger:meta
 */

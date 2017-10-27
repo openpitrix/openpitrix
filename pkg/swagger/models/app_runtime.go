@@ -22,7 +22,7 @@ type AppRuntime struct {
 	// Required: true
 	// Max Length: 11
 	// Min Length: 11
-	// Pattern: rt-[a-zA-Z0-9]{11}
+	// Pattern: rt-[a-zA-Z0-9]{8}
 	AppRuntimeID *string `json:"appRuntimeId"`
 
 	// create time
@@ -78,7 +78,7 @@ func (m *AppRuntime) validateAppRuntimeID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("appRuntimeId", "body", string(*m.AppRuntimeID), `rt-[a-zA-Z0-9]{11}`); err != nil {
+	if err := validate.Pattern("appRuntimeId", "body", string(*m.AppRuntimeID), `rt-[a-zA-Z0-9]{8}`); err != nil {
 		return err
 	}
 

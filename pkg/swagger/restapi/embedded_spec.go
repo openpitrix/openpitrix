@@ -15,12 +15,10 @@ var SwaggerJSON json.RawMessage
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
   "consumes": [
-    "application/json",
-    "application/yaml"
+    "application/json"
   ],
   "produces": [
-    "application/json",
-    "application/yaml"
+    "application/json"
   ],
   "schemes": [
     "http"
@@ -600,7 +598,7 @@ func init() {
           "type": "string",
           "maxLength": 12,
           "minLength": 12,
-          "pattern": "app-[a-zA-Z0-9]{11}"
+          "pattern": "app-[a-zA-Z0-9]{8}"
         },
         "createTime": {
           "type": "string",
@@ -628,7 +626,7 @@ func init() {
           "type": "string",
           "maxLength": 11,
           "minLength": 11,
-          "pattern": "rt-[a-zA-Z0-9]{11}"
+          "pattern": "rt-[a-zA-Z0-9]{8}"
         },
         "createTime": {
           "type": "string",
@@ -670,7 +668,7 @@ func init() {
           "type": "string",
           "maxLength": 11,
           "minLength": 11,
-          "pattern": "cl-[a-zA-Z0-9]{11}"
+          "pattern": "cl-[a-zA-Z0-9]{8}"
         },
         "createTime": {
           "type": "string",
@@ -745,7 +743,7 @@ func init() {
           "type": "string",
           "maxLength": 13,
           "minLength": 13,
-          "pattern": "repo-[a-zA-Z0-9]{11}"
+          "pattern": "repo-[a-zA-Z0-9]{8}"
         },
         "url": {
           "type": "string"

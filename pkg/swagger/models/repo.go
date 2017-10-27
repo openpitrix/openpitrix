@@ -32,7 +32,7 @@ type Repo struct {
 	// Required: true
 	// Max Length: 13
 	// Min Length: 13
-	// Pattern: repo-[a-zA-Z0-9]{11}
+	// Pattern: repo-[a-zA-Z0-9]{8}
 	RepoID *string `json:"repoId"`
 
 	// url
@@ -78,7 +78,7 @@ func (m *Repo) validateRepoID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("repoId", "body", string(*m.RepoID), `repo-[a-zA-Z0-9]{11}`); err != nil {
+	if err := validate.Pattern("repoId", "body", string(*m.RepoID), `repo-[a-zA-Z0-9]{8}`); err != nil {
 		return err
 	}
 
