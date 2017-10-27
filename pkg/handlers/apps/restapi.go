@@ -78,7 +78,7 @@ func (p *AppsRestService) PostApps(params apps.PostAppsParams) middleware.Respon
 			Message: err.Error(),
 		})
 	}
-	return apps.NewGetAppsOK()
+	return apps.NewPostAppsNoContent()
 }
 
 func (p *AppsRestService) GetAppsAppID(params apps.GetAppsAppIDParams) middleware.Responder {
@@ -94,6 +94,10 @@ func (p *AppsRestService) GetAppsAppID(params apps.GetAppsAppIDParams) middlewar
 }
 
 func (p *AppsRestService) DeleteAppsAppID(params apps.DeleteAppsAppIDParams) middleware.Responder {
+	if _, err := p.db.GetApp(params.AppID); err != nil {
+		return apps.NewDeleteAppsAppIDNotFound()
+	}
+
 	err := p.db.DeleteApp(params.AppID)
 	if err != nil {
 		return apps.NewGetAppsInternalServerError().WithPayload(&models.Error{
@@ -101,5 +105,5 @@ func (p *AppsRestService) DeleteAppsAppID(params apps.DeleteAppsAppIDParams) mid
 			Message: err.Error(),
 		})
 	}
-	return apps.NewGetAppsOK()
+	return apps.NewDeleteAppsAppIDNoContent()
 }

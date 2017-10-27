@@ -9,7 +9,6 @@ import (
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/runtime/yamlpc"
 	graceful "github.com/tylerb/graceful"
 
 	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations"
@@ -39,11 +38,7 @@ func configureAPI(api *operations.OpenPitrixAPI) http.Handler {
 
 	api.JSONConsumer = runtime.JSONConsumer()
 
-	api.YamlConsumer = yamlpc.YAMLConsumer()
-
 	api.JSONProducer = runtime.JSONProducer()
-
-	api.YamlProducer = yamlpc.YAMLProducer()
 
 	api.AppRuntimesDeleteAppruntimesAppRuntimeIDHandler = app_runtimes.DeleteAppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.DeleteAppruntimesAppRuntimeIDParams) middleware.Responder {
 		return middleware.NotImplemented("operation app_runtimes.DeleteAppruntimesAppRuntimeID has not yet been implemented")
@@ -85,6 +80,7 @@ func configureAPI(api *operations.OpenPitrixAPI) http.Handler {
 		return middleware.NotImplemented("operation app_runtimes.PostAppruntimes has not yet been implemented")
 	})
 	api.AppsPostAppsHandler = apps.PostAppsHandlerFunc(func(params apps.PostAppsParams) middleware.Responder {
+		println("AppsPostAppsHandler ==========")
 		return middleware.NotImplemented("operation apps.PostApps has not yet been implemented")
 	})
 	api.ClustersPostClustersHandler = clusters.PostClustersHandlerFunc(func(params clusters.PostClustersParams) middleware.Responder {

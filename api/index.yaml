@@ -13,11 +13,9 @@ info:
 
 consumes:
   - application/json
-  - application/yaml
 
 produces:
   - application/json
-  - application/yaml
 
 schemes:
   - http

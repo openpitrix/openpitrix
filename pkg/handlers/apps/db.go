@@ -16,6 +16,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/config"
 )
 
+const APP_TABLE_NAME = "app"
+
 var _ AppDatabaseInterface = (*AppDatabase)(nil)
 
 type AppDatabaseInterface interface {
@@ -23,12 +25,7 @@ type AppDatabaseInterface interface {
 	CreateApp(app *AppsItem) error
 	GetApp(id string) (item AppsItem, err error)
 	DeleteApp(id string) error
-}
-
-const APP_TABLE_NAME = "app"
-
-type DbOptions struct {
-	MySQLDialect *gorp.MySQLDialect
+	TruncateTables() error
 }
 
 type AppDatabase struct {
@@ -85,7 +82,16 @@ func (p *AppDatabase) GetApp(id string) (item AppsItem, err error) {
 }
 func (p *AppDatabase) DeleteApp(id string) error {
 	p.initTables()
+	println("DeleteApp id:" + id)
 	_, err := p.dbMap.Delete(&AppsItem{Id: id})
+	if err != nil {
+		println("err:" + err.Error())
+	}
+	return err
+}
+func (p *AppDatabase) TruncateTables() error {
+	p.initTables()
+	err := p.dbMap.TruncateTables()
 	return err
 }
 

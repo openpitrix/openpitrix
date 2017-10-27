@@ -15,7 +15,6 @@ import (
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 	security "github.com/go-openapi/runtime/security"
-	"github.com/go-openapi/runtime/yamlpc"
 	spec "github.com/go-openapi/spec"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -40,9 +39,7 @@ func NewOpenPitrixAPI(spec *loads.Document) *OpenPitrixAPI {
 		APIKeyAuthenticator: security.APIKeyAuth,
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
-		YamlConsumer:        yamlpc.YAMLConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		YamlProducer:        yamlpc.YAMLProducer(),
 		AppRuntimesDeleteAppruntimesAppRuntimeIDHandler: app_runtimes.DeleteAppruntimesAppRuntimeIDHandlerFunc(func(params app_runtimes.DeleteAppruntimesAppRuntimeIDParams) middleware.Responder {
 			return middleware.NotImplemented("operation AppRuntimesDeleteAppruntimesAppRuntimeID has not yet been implemented")
 		}),
@@ -116,13 +113,9 @@ type OpenPitrixAPI struct {
 
 	// JSONConsumer registers a consumer for a "application/json" mime type
 	JSONConsumer runtime.Consumer
-	// YamlConsumer registers a consumer for a "application/yaml" mime type
-	YamlConsumer runtime.Consumer
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
-	// YamlProducer registers a producer for a "application/yaml" mime type
-	YamlProducer runtime.Producer
 
 	// AppRuntimesDeleteAppruntimesAppRuntimeIDHandler sets the operation handler for the delete appruntimes app runtime ID operation
 	AppRuntimesDeleteAppruntimesAppRuntimeIDHandler app_runtimes.DeleteAppruntimesAppRuntimeIDHandler
@@ -215,16 +208,8 @@ func (o *OpenPitrixAPI) Validate() error {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
 
-	if o.YamlConsumer == nil {
-		unregistered = append(unregistered, "YamlConsumer")
-	}
-
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
-	}
-
-	if o.YamlProducer == nil {
-		unregistered = append(unregistered, "YamlProducer")
 	}
 
 	if o.AppRuntimesDeleteAppruntimesAppRuntimeIDHandler == nil {
@@ -327,9 +312,6 @@ func (o *OpenPitrixAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Con
 		case "application/json":
 			result["application/json"] = o.JSONConsumer
 
-		case "application/yaml":
-			result["application/yaml"] = o.YamlConsumer
-
 		}
 	}
 	return result
@@ -345,9 +327,6 @@ func (o *OpenPitrixAPI) ProducersFor(mediaTypes []string) map[string]runtime.Pro
 
 		case "application/json":
 			result["application/json"] = o.JSONProducer
-
-		case "application/yaml":
-			result["application/yaml"] = o.YamlProducer
 
 		}
 	}

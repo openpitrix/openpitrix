@@ -22,7 +22,7 @@ type Cluster struct {
 	// Required: true
 	// Max Length: 11
 	// Min Length: 11
-	// Pattern: cl-[a-zA-Z0-9]{11}
+	// Pattern: cl-[a-zA-Z0-9]{8}
 	ClusterID *string `json:"clusterId"`
 
 	// create time
@@ -73,7 +73,7 @@ func (m *Cluster) validateClusterID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("clusterId", "body", string(*m.ClusterID), `cl-[a-zA-Z0-9]{11}`); err != nil {
+	if err := validate.Pattern("clusterId", "body", string(*m.ClusterID), `cl-[a-zA-Z0-9]{8}`); err != nil {
 		return err
 	}
 

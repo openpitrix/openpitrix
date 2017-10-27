@@ -22,7 +22,7 @@ type App struct {
 	// Required: true
 	// Max Length: 12
 	// Min Length: 12
-	// Pattern: app-[a-zA-Z0-9]{11}
+	// Pattern: app-[a-zA-Z0-9]{8}
 	AppID *string `json:"appId"`
 
 	// create time
@@ -78,7 +78,7 @@ func (m *App) validateAppID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("appId", "body", string(*m.AppID), `app-[a-zA-Z0-9]{11}`); err != nil {
+	if err := validate.Pattern("appId", "body", string(*m.AppID), `app-[a-zA-Z0-9]{8}`); err != nil {
 		return err
 	}
 
