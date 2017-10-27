@@ -13,13 +13,11 @@ import (
 )
 
 type AppsItem struct {
-	Id           string    `db:"id, size:50, primarykey"`
-	Name         string    `db:"name", size:50`
-	Description  string    `db:"description, size:1000"`
-	RepoId       string    `db:"repo_id"`
-	Url          string    `db:"url, size:255"`
-	Created      time.Time `db:"created"`
-	LastModified time.Time `db:"last_modified"`
+	Id          string    `db:"id, size:50, primarykey"`
+	Name        string    `db:"name", size:50`
+	Description string    `db:"description, size:1000"`
+	Url         string    `db:"url, size:255"`
+	Created     time.Time `db:"created"`
 }
 
 type AppsItems []AppsItem
@@ -30,7 +28,7 @@ func (p *AppsItem) From_models_App(app *models.App) *AppsItem {
 		Name:        app.Name,
 		Description: app.Description,
 		Url:         app.URL,
-		Created:     time.Now(),
+		Created:     time.Time(app.CreateTime),
 	}
 	return p
 }
@@ -43,6 +41,15 @@ func (p *AppsItem) To_models_App() *models.App {
 		Name:        p.Name,
 		URL:         p.Url,
 	}
+}
+
+func (p *AppsItems) From_models_AppsItems(items models.AppsItems) AppsItems {
+	q := make(AppsItems, len(items))
+	for i, v := range items {
+		q[i].From_models_App(v)
+	}
+	*p = q
+	return *p
 }
 
 func (p AppsItems) To_models_AppsItems(pageNumber, pageSize int) models.AppsItems {
