@@ -1,0 +1,90 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins
+  labels:
+    app: jenkins
+spec:
+  selector:
+    app: jenkins
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+  - name: jenkins-master
+    protocol: TCP
+    port: 50000
+    targetPort: 50000
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+# [START jenkins_deployment]
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: jenkins
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jenkins 
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+      - name: jenkins
+        image: jenkinsci/blueocean
+        env:
+        - name: TINI_SUBREAPER
+          value: ""
+        - name: DOCKER_HOST 
+          value: tcp://localhost:2375
+        ports:
+        - containerPort: 8080
+        - containerPort: 50000
+        readinessProbe:
+          httpGet:
+            path: /login
+            port: 8080
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 2
+        volumeMounts:
+        - mountPath: /var/jenkins_home
+          name: jenkins-home
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1500Mi
+          requests:
+            cpu: 500m
+            memory: 1500Mi
+      - name: dind-daemon 
+        image: docker:1.12.6-dind 
+        resources: 
+          requests: 
+            cpu: 20m 
+            memory: 512Mi 
+        securityContext: 
+          privileged: true 
+        volumeMounts: 
+        - name: docker-graph-storage 
+          mountPath: /var/lib/docker 
+      volumes:
+      - name: jenkins-home
+        persistentVolumeClaim:
+          claimName: jenkins-pv-claim
+      - name: docker-graph-storage 
+        emptyDir: {}
+# [END jenkins_deployment]
