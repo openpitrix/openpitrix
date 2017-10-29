@@ -3,13 +3,12 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t $(TARG.Name) -f ./Dockerfile .'
+        sh 'make build'
       }
     }
     stage('Test') {
       steps {
-        echo 'Hello, OpenPitrix'
-        sh 'docker images'
+        sh 'make test'
       }
     }
     stage('Deploy') {
