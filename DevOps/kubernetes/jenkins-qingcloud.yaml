@@ -78,7 +78,7 @@ spec:
             cpu: 500m
             memory: 1500Mi
       - name: dind-daemon
-        image: docker:1.12.6-dind
+        image: docker:17.06-dind
         resources:
           requests:
             cpu: 20m

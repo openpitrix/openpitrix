@@ -43,4 +43,3 @@ We are using [Kubernetes on QingCloud](https://appcenter.qingcloud.com/apps/app-
 ## Create a pipeline
   - Fork OpenPitrix from github for your development. 
   - On the Jenkins panel, click Open Blue Ocean and start to create a new pipeline. Choose GitHub, paste your access key of GitHub, select the repository you want to create a CI/CD pipeline.
-* 
