@@ -13,7 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"gopkg.in/gorp.v2"
 
-	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/config-v2"
 )
 
 const APP_TABLE_NAME = "app"
@@ -39,14 +39,15 @@ type AppDatabase struct {
 
 func OpenAppDatabase(config *config.Config) (p *AppDatabase, err error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
-	db, err := sql.Open(config.DbType, config.DbHost+"?parseTime=true")
+	dbpath := config.Database.Host + "/" + config.Database.DbName + "?parseTime=true"
+	db, err := sql.Open(config.Database.Type, dbpath)
 	if err != nil {
 		return nil, err
 	}
 
 	dialect := gorp.MySQLDialect{
-		Encoding: config.DbEncoding,
-		Engine:   config.DbEngine,
+		Encoding: config.Database.Encoding,
+		Engine:   config.Database.Engine,
 	}
 
 	dbMap := &gorp.DbMap{Db: db, Dialect: dialect}

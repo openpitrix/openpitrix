@@ -7,14 +7,20 @@ package config
 import (
 	"bytes"
 	"encoding/gob"
+	"flag"
 	"io/ioutil"
 	"os"
+	pathpkg "path"
 	"runtime"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 	"github.com/koding/multiconfig"
 )
+
+type Config struct {
+	OpenPitrix
+}
 
 type OpenPitrix struct {
 	Database Database
@@ -34,7 +40,7 @@ type Database struct {
 	DbName   string `default:"openpitrix"`
 }
 
-func Default() *OpenPitrix {
+func Default() *Config {
 	p := new(OpenPitrix)
 
 	loader := &multiconfig.TOMLLoader{
@@ -44,10 +50,10 @@ func Default() *OpenPitrix {
 		panic(err)
 	}
 
-	return p
+	return &Config{*p}
 }
 
-func Load(path string) (*OpenPitrix, error) {
+func Load(path string) (*Config, error) {
 	p := new(OpenPitrix)
 
 	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
@@ -55,21 +61,40 @@ func Load(path string) (*OpenPitrix, error) {
 	}
 
 	if err := multiconfig.NewWithPath(path).Load(p); err != nil {
+		if err == flag.ErrHelp {
+			os.Exit(0)
+		}
 		return nil, err
 	}
 
-	return p, nil
+	return &Config{*p}, nil
 }
 
-func MustLoad(path string) *OpenPitrix {
+func MustLoad(path string) *Config {
 	p, err := Load(path)
 	if err != nil {
+		if err == flag.ErrHelp {
+			os.Exit(0)
+		}
 		panic(err)
 	}
 	return p
 }
 
-func Parse(content string) (*OpenPitrix, error) {
+func MustLoadUserConfig() *Config {
+	path := DefaultConfigPath
+	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
+		path = GetHomePath() + path[1:]
+	}
+	if _, err := os.Stat(path); err != nil {
+		os.MkdirAll(pathpkg.Dir(path), 0755)
+		ioutil.WriteFile(path, []byte(DefaultConfigContent), 0644)
+	}
+
+	return MustLoad(path)
+}
+
+func Parse(content string) (*Config, error) {
 	p := new(OpenPitrix)
 
 	d := &multiconfig.DefaultLoader{}
@@ -85,16 +110,16 @@ func Parse(content string) (*OpenPitrix, error) {
 		return nil, err
 	}
 
-	return p, nil
+	return &Config{*p}, nil
 }
 
-func (p *OpenPitrix) Clone() *OpenPitrix {
+func (p *Config) Clone() *Config {
 	var buf bytes.Buffer
 	if err := gob.NewEncoder(&buf).Encode(p); err != nil {
 		panic(err)
 	}
 
-	var q OpenPitrix
+	var q Config
 	if err := gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(&q); err != nil {
 		panic(err)
 	}
@@ -102,7 +127,7 @@ func (p *OpenPitrix) Clone() *OpenPitrix {
 	return &q
 }
 
-func (p *OpenPitrix) Save(path string) error {
+func (p *Config) Save(path string) error {
 	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
 		path = GetHomePath() + path[1:]
 	}
@@ -121,7 +146,7 @@ func (p *OpenPitrix) Save(path string) error {
 	return nil
 }
 
-func (p *OpenPitrix) String() string {
+func (p *Config) String() string {
 	buf := new(bytes.Buffer)
 	if err := toml.NewEncoder(buf).Encode(p); err != nil {
 		return ""

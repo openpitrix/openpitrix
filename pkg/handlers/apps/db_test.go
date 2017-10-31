@@ -15,7 +15,7 @@ import (
 	"testing"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/config-v2"
 	"openpitrix.io/openpitrix/pkg/handlers/apps"
 )
 
