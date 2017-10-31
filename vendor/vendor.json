@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "Pc2ORQp+VY3Un/dkh4QwLC7R6lE=",
+			"path": "github.com/BurntSushi/toml",
+			"revision": "a368813c5e648fee92e5f6c30e3944ff9d5e8895",
+			"revisionTime": "2017-06-26T11:06:00Z"
+		},
+		{
 			"checksumSHA1": "eR1X+xHsTko6qQ5oAqEjRDQHdik=",
 			"path": "github.com/PuerkitoBio/purell",
 			"revision": "7cf257f0a33260797b0febf39f95fccd86aab2a3",
@@ -25,6 +31,18 @@
 			"path": "github.com/docker/go-units",
 			"revision": "0dadbb0345b35ec7ef35e228dabb8de89a65bf52",
 			"revisionTime": "2017-01-27T09:51:30Z"
+		},
+		{
+			"checksumSHA1": "kR64D1QzAOSM9LHOnTPdbigC8q0=",
+			"path": "github.com/fatih/camelcase",
+			"revision": "44e46d280b43ec1531bb25252440e34f1b800b65",
+			"revisionTime": "2017-10-27T10:42:57Z"
+		},
+		{
+			"checksumSHA1": "Z2LEpah3ZMTYNpRy7Rd+tI+T+W0=",
+			"path": "github.com/fatih/structs",
+			"revision": "f5faa72e73092639913f5833b75e1ac1d6bc7a63",
+			"revisionTime": "2017-10-20T06:48:19Z"
 		},
 		{
 			"checksumSHA1": "OwxeZNizPZT7YriySSR4haPHcRg=",
@@ -145,6 +163,12 @@
 			"path": "github.com/jessevdk/go-flags",
 			"revision": "6cf8f02b4ae8ba723ddc64dcfd403e530c06d927",
 			"revisionTime": "2017-07-22T07:29:52Z"
+		},
+		{
+			"checksumSHA1": "35LVOh0jmZMo5Sf7JLGCkKtBTBI=",
+			"path": "github.com/koding/multiconfig",
+			"revision": "7ab5923ac43fc173d0c21e5e91da559469fa04f8",
+			"revisionTime": "2017-07-01T12:15:58Z"
 		},
 		{
 			"checksumSHA1": "T8soMJArSZrYnhmdpAnq1bVxQ6Q=",

@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/config-v2"
 	"openpitrix.io/openpitrix/pkg/swagger/models"
 	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations"
 	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations/apps"
