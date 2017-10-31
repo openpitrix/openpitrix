@@ -1,0 +1,326 @@
+
+# [START OpenPitrix-api]
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-api
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    app: openpitrix
+    service: api
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: openpitrix-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        service: api 
+    spec:
+      containers:
+      - name: openpitrix-api
+        image: openpitrix/openpitrix-dev
+        command: ["openpitrix"]
+        args: ["api"]
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 2
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+# [END OpenPitrix-api]
+---
+# [START OpenPitrix-app]
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-app
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    app: openpitrix
+    service: app
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: openpitrix-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        service: app 
+    spec:
+      containers:
+      - name: openpitrix-app
+        image: openpitrix/openpitrix-dev
+        command: ["openpitrix"]
+        args: ["app"]
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 2
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+# [END OpenPitrix-app]
+---
+# [START OpenPitrix-cluster]
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-cluster
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    app: openpitrix
+    service: cluster
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: openpitrix-cluster
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        service: cluster 
+    spec:
+      containers:
+      - name: openpitrix-api
+        image: openpitrix/openpitrix-dev
+        command: ["openpitrix"]
+        args: ["cluster"]
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 2
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+# [END OpenPitrix-cluster]
+---
+# [START OpenPitrix-repo]
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-repo
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    app: openpitrix
+    service: repo
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: openpitrix-repo
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        service: repo 
+    spec:
+      containers:
+      - name: openpitrix-repo
+        image: openpitrix/openpitrix-dev
+        command: ["openpitrix"]
+        args: ["repo"]
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 2
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+# [END OpenPitrix-repo]
+---
+# [START OpenPitrix-runtime]
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-runtime
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    app: openpitrix
+    service: runtime
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: openpitrix-runtime
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        service: runtime 
+    spec:
+      containers:
+      - name: openpitrix-runtime
+        image: openpitrix/openpitrix-dev
+        command: ["openpitrix"]
+        args: ["runtime"]
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 2
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+# [END OpenPitrix-runtime]
+---
+# [START OpenPitrix-mysql]
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-mysql
+  labels:
+    app: openpitrix
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: openpitrix
+    tier: mysql
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: openpitrix
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: openpitrix-mysql
+  labels:
+    app: openpitrix
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql
+        name: mysql
+        env:
+          # $ kubectl create secret generic mysql-pass --from-file=password.txt
+          # make sure password.txt does not have a trailing newline
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password.txt
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+# [END OpenPitrix-mysql]

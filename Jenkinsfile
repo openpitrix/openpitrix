@@ -3,7 +3,12 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t openpitrix .'
+        sh './devops/scripts/build-images.sh'
+      }
+    }
+    stage('Push Images') {
+      steps {
+        sh './devops/scripts/push-images.sh'
       }
     }
     stage('Test') {
@@ -14,7 +19,19 @@ pipeline {
     }
     stage('Deploy') {
       steps {
-        sh './scripts/deliver.sh'
+        sh './devops/scripts/deploy-k8s.sh'
+      }
+    }
+    stage ('Verify') {
+      steps {
+        echo 'Verifying...'
+      }
+    }
+    stage ('Clean') {
+      steps {
+        echo 'Cleaning...'
+        sh 'docker image rm openpitrix/openpitrix:dev'
+        sh 'docker image rm openpitrix'
       }
     }
   }
