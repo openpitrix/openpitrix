@@ -46,7 +46,7 @@ func TestOpenPitrix(t *testing.T) {
 func TestOpenPitrix_default(t *testing.T) {
 	conf := Default()
 
-	tAssert(t, conf.Host == "127.0.0.1")
+	tAssert(t, conf.Host == "0.0.0.0")
 	tAssert(t, conf.Port == 8080)
 	tAssert(t, conf.LogLevel == "warn")
 
@@ -61,7 +61,7 @@ func TestOpenPitrix_Parse_default(t *testing.T) {
 	conf, err := Parse(DefaultConfigContent)
 	tAssertf(t, err == nil, "err = %v", err)
 
-	tAssert(t, conf.Host == "127.0.0.1")
+	tAssert(t, conf.Host == "0.0.0.0")
 	tAssert(t, conf.Port == 8080)
 	tAssert(t, conf.LogLevel == "warn")
 
@@ -77,7 +77,7 @@ func TestOpenPitrix_Parse_empty(t *testing.T) {
 
 	tAssertf(t, err == nil, "err = %v", err)
 
-	tAssert(t, conf.Host == "127.0.0.1")
+	tAssertf(t, conf.Host == "0.0.0.0", "host = %v", conf.Host)
 	tAssert(t, conf.Port == 8080)
 	tAssert(t, conf.LogLevel == "warn")
 

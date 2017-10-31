@@ -25,7 +25,7 @@ type Config struct {
 type OpenPitrix struct {
 	Database Database
 
-	Host string `default:"127.0.0.1"`
+	Host string `default:"0.0.0.0"`
 	Port int    `default:"8080"`
 
 	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
