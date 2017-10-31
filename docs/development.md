@@ -15,6 +15,7 @@ branch, but release branches should not change.
   - [Setting up Docker](#setting-up-docker)
   - [Setting up Swagger](#setting-up-swagger)
 - [To start developing OpenPitrix](#to-start-developing-openpitrix)
+- [DevOps](#devops)
 
 ## Prerequisites
 
@@ -77,3 +78,7 @@ $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
 $ make
 ```
+
+## DevOps
+
+Please check [How to set up DevOps environment](devops.md)

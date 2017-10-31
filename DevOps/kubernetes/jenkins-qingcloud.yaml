@@ -1,9 +1,15 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: jenkins
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: jenkins
   labels:
     app: jenkins
+  namespace: jenkins
 spec:
   selector:
     app: jenkins
@@ -21,6 +27,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: jenkins-pv-claim
+  namespace: jenkins
 spec:
   accessModes:
     - ReadWriteOnce
@@ -28,17 +35,17 @@ spec:
     requests:
       storage: 20Gi
 ---
-# [START jenkins_deployment]
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: jenkins
+  namespace: jenkins
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: jenkins 
+        app: jenkins
     spec:
       securityContext:
         fsGroup: 1000
@@ -48,7 +55,7 @@ spec:
         env:
         - name: TINI_SUBREAPER
           value: ""
-        - name: DOCKER_HOST 
+        - name: DOCKER_HOST
           value: tcp://localhost:2375
         ports:
         - containerPort: 8080
@@ -70,21 +77,20 @@ spec:
           requests:
             cpu: 500m
             memory: 1500Mi
-      - name: dind-daemon 
-        image: docker:1.12.6-dind 
-        resources: 
-          requests: 
-            cpu: 20m 
-            memory: 512Mi 
-        securityContext: 
-          privileged: true 
-        volumeMounts: 
-        - name: docker-graph-storage 
-          mountPath: /var/lib/docker 
+      - name: dind-daemon
+        image: docker:17.06-dind
+        resources:
+          requests:
+            cpu: 20m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-graph-storage
+          mountPath: /var/lib/docker
       volumes:
       - name: jenkins-home
         persistentVolumeClaim:
           claimName: jenkins-pv-claim
-      - name: docker-graph-storage 
+      - name: docker-graph-storage
         emptyDir: {}
-# [END jenkins_deployment]
