@@ -4,7 +4,8 @@ DevOps is recommended to use for this project. Please follow the instructions be
 
 - [Create Kubernetes Cluster](#create-kubernetes-cluster)
 - [Deploy Jenkins](#deploy-jenkins)
-- [Configure Jenkins](#devops)
+- [Configure Jenkins](#configure-jenkins)
+- [Create a Pipeline](#create-a-pipeline)
 
 ## Create Kubernetes Cluster
 
@@ -40,6 +41,28 @@ We are using [Kubernetes on QingCloud](https://appcenter.qingcloud.com/apps/app-
   ```
   - Go to Jenkins console, paste the password and continue. Install suggested plugins, then create the first admin user and save & finish
 
+* Configure Jenkins
+  - We will deploy OpenPitrix application into the same Kubernetes cluster as the one that the Jenkins is running on. So we need configure the Jenkins pod to access the Kubernetes cluster, and log in docker registry given that during the [Jenkins pipeline](#create-a-pipeline) we push OpenPitrix image into a registry which you can change on your own. 
+  
+  On the Kubernetes client, execute the following.
+  ```
+  # kubectl exec -it "$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')" -c jenkins -n jenkins -- /bin/bash
+  ```
+  After logging in the Jenkins container, then 
+  ```
+  bash-4.3# docker login -u xxx -p xxxx
+  bash-4.3# mkdir /root/.kube
+  bash-4.3# exit
+  ```
+  Once back again to the Kubernetes client, run the following
+  ```
+  # kubectl cp /usr/bin/kubectl jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/usr/bin/kubectl
+  # kubectl cp /root/.kube/config jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/root/.kube/config
+  ```  
+
 ## Create a pipeline
   - Fork OpenPitrix from github for your development. 
-  - On the Jenkins panel, click Open Blue Ocean and start to create a new pipeline. Choose GitHub, paste your access key of GitHub, select the repository you want to create a CI/CD pipeline.
+  - On the Jenkins panel, click Open Blue Ocean and start to create a new pipeline. Choose GitHub, paste your access key of GitHub, select the repository you want to create a CI/CD pipeline. We already created the pipeline Jenkinsfile on the upstream repository which includes compiling OpenPitrix, building images, push images, deploying the application, verifying the application and cleaning up.
+  - It is better to configure one more thing. On the Jenkins panel, go to the confuration of OpenPitrix, check 'Periodically if not otherwise run' under 'Scan Repository Triggers' and select the interval at your will. 
+
+Now it is good to go. Whenever you commit a change to your forked repository, the pipeline will work during the Jenkins trigger interval. 
