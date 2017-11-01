@@ -5,14 +5,14 @@
 package config
 
 // DefaultConfigFile is the default config file.
-const DefaultConfigPath = "~/.openpitrix/config.toml"
+const UnittestConfigPath = "~/.openpitrix/config_unittest.toml"
 
 // DefaultConfigContent is the default config file content.
-const DefaultConfigContent = `
+const UnittestConfigContent = `
 # OpenPitrix configuration
 # https://openpitrix.io/
 
-Host = "0.0.0.0"
+Host = "127.0.0.1"
 Port = 8080
 
 # Valid log levels are "debug", "info", "warn", "error", and "fatal".
@@ -26,5 +26,8 @@ Encoding     = "utf8"
 Engine       = "InnoDB"
 DbName       = "openpitrix"
 RootPassword = "password"
+
+[Unittest]
+EnableDbTest = false
 
 `
