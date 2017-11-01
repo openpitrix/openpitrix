@@ -591,16 +591,10 @@ func init() {
   "definitions": {
     "App": {
       "required": [
-        "appId"
+        "id"
       ],
       "properties": {
-        "appId": {
-          "type": "string",
-          "maxLength": 12,
-          "minLength": 12,
-          "pattern": "app-[a-zA-Z0-9]{8}"
-        },
-        "createTime": {
+        "created": {
           "type": "string",
           "format": "date-time",
           "readOnly": true,
@@ -609,7 +603,22 @@ func init() {
         "description": {
           "type": "string"
         },
+        "id": {
+          "type": "string",
+          "maxLength": 12,
+          "minLength": 12,
+          "pattern": "app-[a-zA-Z0-9]{8}"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "example": "2017-09-17T12:36:58.014Z"
+        },
         "name": {
+          "type": "string"
+        },
+        "repo_id": {
           "type": "string"
         },
         "url": {
@@ -619,16 +628,10 @@ func init() {
     },
     "AppRuntime": {
       "required": [
-        "appRuntimeId"
+        "id"
       ],
       "properties": {
-        "appRuntimeId": {
-          "type": "string",
-          "maxLength": 11,
-          "minLength": 11,
-          "pattern": "rt-[a-zA-Z0-9]{8}"
-        },
-        "createTime": {
+        "created": {
           "type": "string",
           "format": "date-time",
           "readOnly": true,
@@ -637,10 +640,38 @@ func init() {
         "description": {
           "type": "string"
         },
+        "id": {
+          "type": "string",
+          "maxLength": 12,
+          "minLength": 12,
+          "pattern": "rt-[a-zA-Z0-9]{9}"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "example": "2017-09-17T12:36:58.014Z"
+        },
         "name": {
           "type": "string"
         },
         "url": {
+          "type": "string"
+        }
+      }
+    },
+    "AppRuntimeLabel": {
+      "properties": {
+        "app_runtime_id": {
+          "type": "string",
+          "maxLength": 12,
+          "minLength": 12,
+          "pattern": "rt-[a-zA-Z0-9]{9}"
+        },
+        "label_key": {
+          "type": "string"
+        },
+        "label_value": {
           "type": "string"
         }
       }
@@ -661,16 +692,16 @@ func init() {
     },
     "Cluster": {
       "required": [
-        "clusterId"
+        "id"
       ],
       "properties": {
-        "clusterId": {
-          "type": "string",
-          "maxLength": 11,
-          "minLength": 11,
-          "pattern": "cl-[a-zA-Z0-9]{8}"
+        "app_id": {
+          "type": "string"
         },
-        "createTime": {
+        "app_version": {
+          "type": "string"
+        },
+        "created": {
           "type": "string",
           "format": "date-time",
           "readOnly": true,
@@ -679,7 +710,53 @@ func init() {
         "description": {
           "type": "string"
         },
+        "id": {
+          "type": "string",
+          "maxLength": 12,
+          "minLength": 12,
+          "pattern": "cl-[a-zA-Z0-9]{9}"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "example": "2017-09-17T12:36:58.014Z"
+        },
         "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transition_status": {
+          "type": "string"
+        }
+      }
+    },
+    "ClusterNode": {
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "maxLength": 12,
+          "minLength": 12,
+          "pattern": "cln-[a-zA-Z0-9]{8}"
+        },
+        "instance_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "private_ip": {
           "type": "string"
         }
       }
@@ -724,10 +801,10 @@ func init() {
     },
     "Repo": {
       "required": [
-        "repoId"
+        "id"
       ],
       "properties": {
-        "createTime": {
+        "created": {
           "type": "string",
           "format": "date-time",
           "readOnly": true,
@@ -736,16 +813,48 @@ func init() {
         "description": {
           "type": "string"
         },
+        "id": {
+          "type": "string",
+          "maxLength": 12,
+          "minLength": 12,
+          "pattern": "repo-[a-zA-Z0-9]{7}"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "example": "2017-09-17T12:36:58.014Z"
+        },
         "name": {
           "type": "string"
         },
-        "repoId": {
-          "type": "string",
-          "maxLength": 13,
-          "minLength": 13,
-          "pattern": "repo-[a-zA-Z0-9]{8}"
-        },
         "url": {
+          "type": "string"
+        }
+      }
+    },
+    "RepoLabel": {
+      "properties": {
+        "label_key": {
+          "type": "string"
+        },
+        "label_value": {
+          "type": "string"
+        },
+        "repo_id": {
+          "type": "string"
+        }
+      }
+    },
+    "RepoSelector": {
+      "properties": {
+        "repo_id": {
+          "type": "string"
+        },
+        "selector_key": {
+          "type": "string"
+        },
+        "selector_value": {
           "type": "string"
         }
       }

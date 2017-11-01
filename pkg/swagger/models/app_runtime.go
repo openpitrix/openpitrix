@@ -18,19 +18,23 @@ import (
 
 type AppRuntime struct {
 
-	// app runtime Id
-	// Required: true
-	// Max Length: 11
-	// Min Length: 11
-	// Pattern: rt-[a-zA-Z0-9]{8}
-	AppRuntimeID *string `json:"appRuntimeId"`
-
-	// create time
+	// created
 	// Read Only: true
-	CreateTime strfmt.DateTime `json:"createTime,omitempty"`
+	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
+
+	// id
+	// Required: true
+	// Max Length: 12
+	// Min Length: 12
+	// Pattern: rt-[a-zA-Z0-9]{9}
+	ID *string `json:"id"`
+
+	// last modified
+	// Read Only: true
+	LastModified strfmt.DateTime `json:"last_modified,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
@@ -39,11 +43,13 @@ type AppRuntime struct {
 	URL string `json:"url,omitempty"`
 }
 
-/* polymorph AppRuntime appRuntimeId false */
-
-/* polymorph AppRuntime createTime false */
+/* polymorph AppRuntime created false */
 
 /* polymorph AppRuntime description false */
+
+/* polymorph AppRuntime id false */
+
+/* polymorph AppRuntime last_modified false */
 
 /* polymorph AppRuntime name false */
 
@@ -53,7 +59,7 @@ type AppRuntime struct {
 func (m *AppRuntime) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAppRuntimeID(formats); err != nil {
+	if err := m.validateID(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -64,21 +70,21 @@ func (m *AppRuntime) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *AppRuntime) validateAppRuntimeID(formats strfmt.Registry) error {
+func (m *AppRuntime) validateID(formats strfmt.Registry) error {
 
-	if err := validate.Required("appRuntimeId", "body", m.AppRuntimeID); err != nil {
+	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("appRuntimeId", "body", string(*m.AppRuntimeID), 11); err != nil {
+	if err := validate.MinLength("id", "body", string(*m.ID), 12); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("appRuntimeId", "body", string(*m.AppRuntimeID), 11); err != nil {
+	if err := validate.MaxLength("id", "body", string(*m.ID), 12); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("appRuntimeId", "body", string(*m.AppRuntimeID), `rt-[a-zA-Z0-9]{8}`); err != nil {
+	if err := validate.Pattern("id", "body", string(*m.ID), `rt-[a-zA-Z0-9]{9}`); err != nil {
 		return err
 	}
 

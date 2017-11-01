@@ -13,20 +13,13 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// Cluster cluster
-// swagger:model Cluster
+// ClusterNode cluster node
+// swagger:model ClusterNode
 
-type Cluster struct {
+type ClusterNode struct {
 
-	// app id
-	AppID string `json:"app_id,omitempty"`
-
-	// app version
-	AppVersion string `json:"app_version,omitempty"`
-
-	// created
-	// Read Only: true
-	Created strfmt.DateTime `json:"created,omitempty"`
+	// cluster id
+	ClusterID string `json:"cluster_id,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -35,43 +28,33 @@ type Cluster struct {
 	// Required: true
 	// Max Length: 12
 	// Min Length: 12
-	// Pattern: cl-[a-zA-Z0-9]{9}
+	// Pattern: cln-[a-zA-Z0-9]{8}
 	ID *string `json:"id"`
 
-	// last modified
-	// Read Only: true
-	LastModified strfmt.DateTime `json:"last_modified,omitempty"`
+	// instance id
+	InstanceID string `json:"instance_id,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
 
-	// status
-	Status string `json:"status,omitempty"`
-
-	// transition status
-	TransitionStatus string `json:"transition_status,omitempty"`
+	// private ip
+	PrivateIP string `json:"private_ip,omitempty"`
 }
 
-/* polymorph Cluster app_id false */
+/* polymorph ClusterNode cluster_id false */
 
-/* polymorph Cluster app_version false */
+/* polymorph ClusterNode description false */
 
-/* polymorph Cluster created false */
+/* polymorph ClusterNode id false */
 
-/* polymorph Cluster description false */
+/* polymorph ClusterNode instance_id false */
 
-/* polymorph Cluster id false */
+/* polymorph ClusterNode name false */
 
-/* polymorph Cluster last_modified false */
+/* polymorph ClusterNode private_ip false */
 
-/* polymorph Cluster name false */
-
-/* polymorph Cluster status false */
-
-/* polymorph Cluster transition_status false */
-
-// Validate validates this cluster
-func (m *Cluster) Validate(formats strfmt.Registry) error {
+// Validate validates this cluster node
+func (m *ClusterNode) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateID(formats); err != nil {
@@ -85,7 +68,7 @@ func (m *Cluster) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Cluster) validateID(formats strfmt.Registry) error {
+func (m *ClusterNode) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
@@ -99,7 +82,7 @@ func (m *Cluster) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("id", "body", string(*m.ID), `cl-[a-zA-Z0-9]{9}`); err != nil {
+	if err := validate.Pattern("id", "body", string(*m.ID), `cln-[a-zA-Z0-9]{8}`); err != nil {
 		return err
 	}
 
@@ -107,7 +90,7 @@ func (m *Cluster) validateID(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *Cluster) MarshalBinary() ([]byte, error) {
+func (m *ClusterNode) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -115,8 +98,8 @@ func (m *Cluster) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *Cluster) UnmarshalBinary(b []byte) error {
-	var res Cluster
+func (m *ClusterNode) UnmarshalBinary(b []byte) error {
+	var res ClusterNode
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

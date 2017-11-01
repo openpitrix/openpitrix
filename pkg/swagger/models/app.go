@@ -18,34 +18,45 @@ import (
 
 type App struct {
 
-	// app Id
-	// Required: true
-	// Max Length: 12
-	// Min Length: 12
-	// Pattern: app-[a-zA-Z0-9]{8}
-	AppID *string `json:"appId"`
-
-	// create time
+	// created
 	// Read Only: true
-	CreateTime strfmt.DateTime `json:"createTime,omitempty"`
+	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
 
+	// id
+	// Required: true
+	// Max Length: 12
+	// Min Length: 12
+	// Pattern: app-[a-zA-Z0-9]{8}
+	ID *string `json:"id"`
+
+	// last modified
+	// Read Only: true
+	LastModified strfmt.DateTime `json:"last_modified,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
+
+	// repo id
+	RepoID string `json:"repo_id,omitempty"`
 
 	// url
 	URL string `json:"url,omitempty"`
 }
 
-/* polymorph App appId false */
-
-/* polymorph App createTime false */
+/* polymorph App created false */
 
 /* polymorph App description false */
 
+/* polymorph App id false */
+
+/* polymorph App last_modified false */
+
 /* polymorph App name false */
+
+/* polymorph App repo_id false */
 
 /* polymorph App url false */
 
@@ -53,7 +64,7 @@ type App struct {
 func (m *App) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAppID(formats); err != nil {
+	if err := m.validateID(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -64,21 +75,21 @@ func (m *App) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *App) validateAppID(formats strfmt.Registry) error {
+func (m *App) validateID(formats strfmt.Registry) error {
 
-	if err := validate.Required("appId", "body", m.AppID); err != nil {
+	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("appId", "body", string(*m.AppID), 12); err != nil {
+	if err := validate.MinLength("id", "body", string(*m.ID), 12); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("appId", "body", string(*m.AppID), 12); err != nil {
+	if err := validate.MaxLength("id", "body", string(*m.ID), 12); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("appId", "body", string(*m.AppID), `app-[a-zA-Z0-9]{8}`); err != nil {
+	if err := validate.Pattern("id", "body", string(*m.ID), `app-[a-zA-Z0-9]{8}`); err != nil {
 		return err
 	}
 
