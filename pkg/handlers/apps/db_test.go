@@ -9,7 +9,6 @@
 package apps_test
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"testing"
@@ -20,16 +19,11 @@ import (
 )
 
 var (
-	tEnableDbTest = flag.Bool("enable-db-test", false, "enable database test")
-	tConfigFile   = flag.String("config-file", "~/.openpitrix/config.yaml", "set config file path")
-	tConfig       *config.Config
+	tConfig = config.MustLoadUnittestConfig()
 )
 
 func TestMain(m *testing.M) {
-	flag.Parse()
-	tConfig, _ = config.Load(*tConfigFile)
-
-	if *tEnableDbTest {
+	if tConfig.Unittest.EnableDbTest {
 		// TODO(chai): start mysql
 
 		// start service
@@ -59,7 +53,7 @@ func tAssertf(tb testing.TB, condition bool, format string, a ...interface{}) {
 	}
 }
 func TestAppDatabase(t *testing.T) {
-	if !*tEnableDbTest {
+	if !tConfig.Unittest.EnableDbTest {
 		t.Skip()
 	}
 	tAssertf(t, tConfig != nil, "tConfig is nil")

@@ -39,7 +39,7 @@ type AppDatabase struct {
 
 func OpenAppDatabase(config *config.Config) (p *AppDatabase, err error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
-	dbpath := config.Database.Host + "/" + config.Database.DbName + "?parseTime=true"
+	dbpath := config.Database.GetUrl() + "?parseTime=true"
 	db, err := sql.Open(config.Database.Type, dbpath)
 	if err != nil {
 		return nil, err
