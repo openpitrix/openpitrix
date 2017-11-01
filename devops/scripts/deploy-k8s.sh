@@ -4,4 +4,5 @@
 cd $(dirname $0)
 cd ../..
 
+kubectl apply secret generic mysql-pass --from-file=./devops/kubernetes/password.txt
 kubectl apply -f ./devops/kubernetes/openpitrix.yaml
