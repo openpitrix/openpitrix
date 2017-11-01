@@ -6,15 +6,14 @@ pipeline {
         sh './devops/scripts/build-images.sh'
       }
     }
+    stage('Test') {
+      steps {
+        sh './devops/scripts/test.sh'
+      }
+    }
     stage('Push Images') {
       steps {
         sh './devops/scripts/push-images.sh'
-      }
-    }
-    stage('Test') {
-      steps {
-        echo 'Hello, OpenPitrix'
-        sh 'docker images'
       }
     }
     stage('Deploy') {
@@ -24,14 +23,12 @@ pipeline {
     }
     stage ('Verify') {
       steps {
-        echo 'Verifying...'
+        sh './devops/scripts/verify.sh'
       }
     }
     stage ('Clean') {
       steps {
-        echo 'Cleaning...'
-        sh 'docker image rm openpitrix/openpitrix:dev'
-        sh 'docker image rm openpitrix'
+        sh './devops/scripts/clean.sh'
       }
     }
   }
