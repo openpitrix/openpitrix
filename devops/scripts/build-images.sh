@@ -6,4 +6,4 @@ cd ../..
 
 echo "Building images..."
 docker build -t openpitrix .
-docker tag openpitrix openpitrix/openpitrix:dev
+docker tag openpitrix rayzhou/openpitrix-dev:latest
