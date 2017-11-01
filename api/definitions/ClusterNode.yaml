@@ -8,26 +8,16 @@ required:
 properties:
   id:
     type: string
-    pattern: 'app-[a-zA-Z0-9]{8}'
+    pattern: 'cln-[a-zA-Z0-9]{8}'
     minLength: 12
     maxLength: 12
+  instance_id:
+    type: string
   name:
     type: string
   description:
     type: string
-  repo_id:
+  cluster_id:
     type: string
-  url:
+  private_ip:
     type: string
-  created:
-    type: string
-    format: date-time
-    readOnly: true
-    example: 2017-09-17T12:36:58.014Z
-  last_modified:
-    type: string
-    format: date-time
-    readOnly: true
-    example: 2017-09-17T12:36:58.014Z
-
-

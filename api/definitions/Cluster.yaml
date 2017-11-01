@@ -3,20 +3,34 @@
 # that can be found in the LICENSE file.
 
 required:
-  - clusterId
+  - id
 
 properties:
+  id:
+    type: string
+    pattern: 'cl-[a-zA-Z0-9]{9}'
+    minLength: 12
+    maxLength: 12
   name:
     type: string
   description:
     type: string
-  clusterId:
+  app_id:
     type: string
-    pattern: 'cl-[a-zA-Z0-9]{8}'
-    minLength: 11
-    maxLength: 11
-  createTime:
+  app_version:
+    type: string
+  status:
+    type: string
+  transition_status:
+    type: string
+  created:
     type: string
     format: date-time
     readOnly: true
     example: 2017-09-17T12:36:58.014Z
+  last_modified:
+    type: string
+    format: date-time
+    readOnly: true
+    example: 2017-09-17T12:36:58.014Z
+
