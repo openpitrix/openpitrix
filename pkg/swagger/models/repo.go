@@ -18,34 +18,40 @@ import (
 
 type Repo struct {
 
-	// create time
+	// created
 	// Read Only: true
-	CreateTime strfmt.DateTime `json:"createTime,omitempty"`
+	Created strfmt.DateTime `json:"created,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
 
+	// id
+	// Required: true
+	// Max Length: 12
+	// Min Length: 12
+	// Pattern: repo-[a-zA-Z0-9]{7}
+	ID *string `json:"id"`
+
+	// last modified
+	// Read Only: true
+	LastModified strfmt.DateTime `json:"last_modified,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
-
-	// repo Id
-	// Required: true
-	// Max Length: 13
-	// Min Length: 13
-	// Pattern: repo-[a-zA-Z0-9]{8}
-	RepoID *string `json:"repoId"`
 
 	// url
 	URL string `json:"url,omitempty"`
 }
 
-/* polymorph Repo createTime false */
+/* polymorph Repo created false */
 
 /* polymorph Repo description false */
 
-/* polymorph Repo name false */
+/* polymorph Repo id false */
 
-/* polymorph Repo repoId false */
+/* polymorph Repo last_modified false */
+
+/* polymorph Repo name false */
 
 /* polymorph Repo url false */
 
@@ -53,7 +59,7 @@ type Repo struct {
 func (m *Repo) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateRepoID(formats); err != nil {
+	if err := m.validateID(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -64,21 +70,21 @@ func (m *Repo) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Repo) validateRepoID(formats strfmt.Registry) error {
+func (m *Repo) validateID(formats strfmt.Registry) error {
 
-	if err := validate.Required("repoId", "body", m.RepoID); err != nil {
+	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("repoId", "body", string(*m.RepoID), 13); err != nil {
+	if err := validate.MinLength("id", "body", string(*m.ID), 12); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("repoId", "body", string(*m.RepoID), 13); err != nil {
+	if err := validate.MaxLength("id", "body", string(*m.ID), 12); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("repoId", "body", string(*m.RepoID), `repo-[a-zA-Z0-9]{8}`); err != nil {
+	if err := validate.Pattern("id", "body", string(*m.ID), `repo-[a-zA-Z0-9]{7}`); err != nil {
 		return err
 	}
 

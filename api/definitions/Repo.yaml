@@ -3,23 +3,29 @@
 # that can be found in the LICENSE file.
 
 required:
-  - repoId
+  - id
 
 properties:
+  id:
+    type: string
+    pattern: 'repo-[a-zA-Z0-9]{7}'
+    minLength: 12
+    maxLength: 12
   name:
     type: string
   description:
     type: string
   url:
     type: string
-  repoId:
-    type: string
-    pattern: 'repo-[a-zA-Z0-9]{8}'
-    minLength: 13
-    maxLength: 13
-  createTime:
+  created:
     type: string
     format: date-time
     readOnly: true
     example: 2017-09-17T12:36:58.014Z
+  last_modified:
+    type: string
+    format: date-time
+    readOnly: true
+    example: 2017-09-17T12:36:58.014Z
+
 

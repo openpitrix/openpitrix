@@ -474,11 +474,17 @@
     }
   },
   "definitions": {
-    "App": {
+    "Repo": {
       "required": [
-        "appId"
+        "id"
       ],
       "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "repo-[a-zA-Z0-9]{7}",
+          "minLength": 12,
+          "maxLength": 12
+        },
         "name": {
           "type": "string"
         },
@@ -488,13 +494,87 @@
         "url": {
           "type": "string"
         },
-        "appId": {
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "example": "2017-09-17T12:36:58.014Z"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "example": "2017-09-17T12:36:58.014Z"
+        }
+      }
+    },
+    "Repos": {
+      "properties": {
+        "items": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/Repo"
+          }
+        }
+      }
+    },
+    "RepoLabel": {
+      "properties": {
+        "repo_id": {
+          "type": "string"
+        },
+        "label_key": {
+          "type": "string"
+        },
+        "label_value": {
+          "type": "string"
+        }
+      }
+    },
+    "RepoSelector": {
+      "properties": {
+        "repo_id": {
+          "type": "string"
+        },
+        "selector_key": {
+          "type": "string"
+        },
+        "selector_value": {
+          "type": "string"
+        }
+      }
+    },
+    "App": {
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
           "type": "string",
           "pattern": "app-[a-zA-Z0-9]{8}",
           "minLength": 12,
           "maxLength": 12
         },
-        "createTime": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "repo_id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "example": "2017-09-17T12:36:58.014Z"
+        },
+        "last_modified": {
           "type": "string",
           "format": "date-time",
           "readOnly": true,
@@ -515,22 +595,40 @@
     },
     "Cluster": {
       "required": [
-        "clusterId"
+        "id"
       ],
       "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "cl-[a-zA-Z0-9]{9}",
+          "minLength": 12,
+          "maxLength": 12
+        },
         "name": {
           "type": "string"
         },
         "description": {
           "type": "string"
         },
-        "clusterId": {
-          "type": "string",
-          "pattern": "cl-[a-zA-Z0-9]{8}",
-          "minLength": 11,
-          "maxLength": 11
+        "app_id": {
+          "type": "string"
         },
-        "createTime": {
+        "app_version": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transition_status": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "example": "2017-09-17T12:36:58.014Z"
+        },
+        "last_modified": {
           "type": "string",
           "format": "date-time",
           "readOnly": true,
@@ -549,50 +647,45 @@
         }
       }
     },
-    "Repo": {
+    "ClusterNode": {
       "required": [
-        "repoId"
+        "id"
       ],
       "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "cln-[a-zA-Z0-9]{8}",
+          "minLength": 12,
+          "maxLength": 12
+        },
+        "instance_id": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         },
         "description": {
           "type": "string"
         },
-        "url": {
+        "cluster_id": {
           "type": "string"
         },
-        "repoId": {
-          "type": "string",
-          "pattern": "repo-[a-zA-Z0-9]{8}",
-          "minLength": 13,
-          "maxLength": 13
-        },
-        "createTime": {
-          "type": "string",
-          "format": "date-time",
-          "readOnly": true,
-          "example": "2017-09-17T12:36:58.014Z"
-        }
-      }
-    },
-    "Repos": {
-      "properties": {
-        "items": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/definitions/Repo"
-          }
+        "private_ip": {
+          "type": "string"
         }
       }
     },
     "AppRuntime": {
       "required": [
-        "appRuntimeId"
+        "id"
       ],
       "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "rt-[a-zA-Z0-9]{9}",
+          "minLength": 12,
+          "maxLength": 12
+        },
         "name": {
           "type": "string"
         },
@@ -602,13 +695,13 @@
         "url": {
           "type": "string"
         },
-        "appRuntimeId": {
+        "created": {
           "type": "string",
-          "pattern": "rt-[a-zA-Z0-9]{8}",
-          "minLength": 11,
-          "maxLength": 11
+          "format": "date-time",
+          "readOnly": true,
+          "example": "2017-09-17T12:36:58.014Z"
         },
-        "createTime": {
+        "last_modified": {
           "type": "string",
           "format": "date-time",
           "readOnly": true,
@@ -624,6 +717,22 @@
           "items": {
             "$ref": "#/definitions/AppRuntime"
           }
+        }
+      }
+    },
+    "AppRuntimeLabel": {
+      "properties": {
+        "app_runtime_id": {
+          "type": "string",
+          "pattern": "rt-[a-zA-Z0-9]{9}",
+          "minLength": 12,
+          "maxLength": 12
+        },
+        "label_key": {
+          "type": "string"
+        },
+        "label_value": {
+          "type": "string"
         }
       }
     },

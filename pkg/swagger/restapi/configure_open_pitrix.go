@@ -80,7 +80,6 @@ func configureAPI(api *operations.OpenPitrixAPI) http.Handler {
 		return middleware.NotImplemented("operation app_runtimes.PostAppruntimes has not yet been implemented")
 	})
 	api.AppsPostAppsHandler = apps.PostAppsHandlerFunc(func(params apps.PostAppsParams) middleware.Responder {
-		println("AppsPostAppsHandler ==========")
 		return middleware.NotImplemented("operation apps.PostApps has not yet been implemented")
 	})
 	api.ClustersPostClustersHandler = clusters.PostClustersHandlerFunc(func(params clusters.PostClustersParams) middleware.Responder {

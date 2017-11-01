@@ -2,17 +2,7 @@
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
 
-App:
-  $ref: ./App.yaml
-
-Apps:
-  $ref: ./Apps.yaml
-
-Cluster:
-  $ref: ./Cluster.yaml
-
-Clusters:
-  $ref: ./Clusters.yaml
+# For repo service
 
 Repo:
   $ref: ./Repo.yaml
@@ -20,11 +10,45 @@ Repo:
 Repos:
   $ref: ./Repos.yaml
 
+RepoLabel:
+  $ref: ./RepoLabel.yaml
+
+RepoSelector:
+  $ref: ./RepoSelector.yaml
+
+# For app service
+
+App:
+  $ref: ./App.yaml
+
+Apps:
+  $ref: ./Apps.yaml
+
+# For cluster service
+
+Cluster:
+  $ref: ./Cluster.yaml
+
+Clusters:
+  $ref: ./Clusters.yaml
+
+ClusterNode:
+  $ref: ./ClusterNode.yaml
+
+
+# For app runtime service
+
 AppRuntime:
   $ref: ./AppRuntime.yaml
 
 AppRuntimes:
   $ref: ./AppRuntimes.yaml
+
+AppRuntimeLabel:
+  $ref: ./AppRuntimeLabel.yaml
+
+
+# Other
 
 Paging:
   $ref: ./Paging.yaml
