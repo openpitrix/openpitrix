@@ -5,67 +5,153 @@
 package config
 
 import (
+	"bytes"
+	"encoding/gob"
+	"flag"
+	"fmt"
 	"io/ioutil"
+	"os"
+	pathpkg "path"
+	"runtime"
 	"strings"
+
+	"github.com/BurntSushi/toml"
+	"github.com/koding/multiconfig"
 )
 
 type Config struct {
-	DbType     string `json:"db_type" yaml:"db_type"`
-	DbHost     string `json:"db_host" yaml:"db_host"`
-	DbEncoding string `json:"db_encoding" yaml:"db_encoding"`
-	DbEngine   string `json:"db_engine" yaml:"db_engine"`
-	Host       string `json:"host" yaml:"host"`
-	Port       int    `json:"port" yaml:"port"`
-	Protocol   string `json:"protocol" yaml:"protocol"`
-	URI        string `json:"uri" yaml:"uri"`
-	LogLevel   string `json:"log_level" yaml:"log_level"`
+	OpenPitrix
+}
+
+type OpenPitrix struct {
+	Host string `default:"0.0.0.0"`
+	Port int    `default:"8080"`
+
+	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
+	LogLevel string `default:"warn"`
+
+	Database Database
+	Unittest Unittest
+}
+
+type Database struct {
+	Type         string `default:"mysql"`
+	Host         string `default:"127.0.0.1"`
+	Port         int    `default:"3306"`
+	Encoding     string `default:"utf8"`
+	Engine       string `default:"InnoDB"`
+	DbName       string `default:"openpitrix"`
+	RootPassword string `default:"password"`
+}
+
+type Unittest struct {
+	EnableDbTest bool `default:"false"`
+}
+
+func (p *Database) GetUrl() string {
+	return fmt.Sprintf("root:%s@tcp(%s:%d)/%s", p.RootPassword, p.Host, p.Port, p.DbName)
 }
 
 func Default() *Config {
-	p := new(Config)
-	if err := yamlDecode([]byte(DefaultConfigContent), p); err != nil {
+	p := new(OpenPitrix)
+
+	loader := &multiconfig.TOMLLoader{
+		Reader: strings.NewReader(DefaultConfigContent),
+	}
+	if err := loader.Load(p); err != nil {
 		panic(err)
 	}
-	return p
+
+	return &Config{*p}
 }
 
 func Load(path string) (*Config, error) {
+	p := new(OpenPitrix)
+
 	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
 		path = GetHomePath() + path[1:]
 	}
 
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
+	if err := multiconfig.NewWithPath(path).Load(p); err != nil {
+		if err == flag.ErrHelp {
+			fmt.Println("See https://openpitrix.io")
+			os.Exit(0)
+		}
 		return nil, err
 	}
 
-	p := new(Config)
-	if err := yamlDecode(data, p); err != nil {
-		panic(err)
-	}
-
-	return p, nil
+	return &Config{*p}, nil
 }
 
 func MustLoad(path string) *Config {
 	p, err := Load(path)
 	if err != nil {
+		if err == flag.ErrHelp {
+			fmt.Println("See https://openpitrix.io")
+			os.Exit(0)
+		}
 		panic(err)
 	}
 	return p
 }
 
+func MustLoadUserConfig() *Config {
+	path := DefaultConfigPath
+	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
+		path = GetHomePath() + path[1:]
+	}
+	if _, err := os.Stat(path); err != nil {
+		os.MkdirAll(pathpkg.Dir(path), 0755)
+		ioutil.WriteFile(path, []byte(DefaultConfigContent), 0644)
+	}
+
+	return MustLoad(path)
+}
+
+func MustLoadUnittestConfig() *Config {
+	path := UnittestConfigPath
+	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
+		path = GetHomePath() + path[1:]
+	}
+	if _, err := os.Stat(path); err != nil {
+		os.MkdirAll(pathpkg.Dir(path), 0755)
+		ioutil.WriteFile(path, []byte(UnittestConfigContent), 0644)
+	}
+
+	return MustLoad(path)
+}
+
 func Parse(content string) (*Config, error) {
-	p := new(Config)
-	if err := yamlDecode([]byte(content), p); err != nil {
+	p := new(OpenPitrix)
+
+	d := &multiconfig.DefaultLoader{}
+	d.Loader = multiconfig.MultiLoader(
+		&multiconfig.TagLoader{},
+		&multiconfig.TOMLLoader{Reader: strings.NewReader(content)},
+		&multiconfig.EnvironmentLoader{},
+		&multiconfig.FlagLoader{},
+	)
+	d.Validator = multiconfig.MultiValidator(&multiconfig.RequiredValidator{})
+
+	if err := d.Load(p); err != nil {
 		return nil, err
 	}
-	return p, nil
+
+	return &Config{*p}, nil
 }
 
 func (p *Config) Clone() *Config {
-	q, _ := Parse(p.String())
-	return q
+	var buf bytes.Buffer
+	if err := gob.NewEncoder(&buf).Encode(p); err != nil {
+		panic(err)
+	}
+
+	var q Config
+	if err := gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(&q); err != nil {
+		panic(err)
+	}
+
+	return &q
 }
 
 func (p *Config) Save(path string) error {
@@ -73,12 +159,13 @@ func (p *Config) Save(path string) error {
 		path = GetHomePath() + path[1:]
 	}
 
-	data, err := yamlEncode(p)
+	buf := new(bytes.Buffer)
+	err := toml.NewEncoder(buf).Encode(p)
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(path, data, 0644)
+	err = ioutil.WriteFile(path, buf.Bytes(), 0644)
 	if err != nil {
 		return err
 	}
@@ -86,31 +173,25 @@ func (p *Config) Save(path string) error {
 	return nil
 }
 
-func (p *Config) Valid() bool {
-	if p.DbType == "" || p.DbHost == "" {
-		return false
+func (p *Config) String() string {
+	buf := new(bytes.Buffer)
+	if err := toml.NewEncoder(buf).Encode(p); err != nil {
+		return ""
 	}
-	if p.Host == "" {
-		return false
-	}
-	if p.Port <= 0 {
-		return false
-	}
-	if p.Protocol == "" {
-		return false
-	}
-	if p.URI == "" {
-		return false
-	}
-	if p.LogLevel == "" {
-		return false
-	}
-
-	// OK
-	return true
+	return (buf.String())
 }
 
-func (p *Config) String() string {
-	data, _ := yamlEncode(p)
-	return string(data)
+func GetHomePath() string {
+	home := os.Getenv("HOME")
+	if runtime.GOOS == "windows" {
+		home = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+		if home == "" {
+			home = os.Getenv("USERPROFILE")
+		}
+	}
+	if home == "" {
+		home = "~"
+	}
+
+	return home
 }

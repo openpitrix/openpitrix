@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-openapi/loads"
 
-	"openpitrix.io/openpitrix/pkg/config-v2"
+	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/swagger/restapi"
 	"openpitrix.io/openpitrix/pkg/swagger/restapi/operations"
 )

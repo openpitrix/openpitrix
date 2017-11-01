@@ -13,7 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"gopkg.in/gorp.v2"
 
-	"openpitrix.io/openpitrix/pkg/config-v2"
+	"openpitrix.io/openpitrix/pkg/config"
 )
 
 const APP_TABLE_NAME = "app"
