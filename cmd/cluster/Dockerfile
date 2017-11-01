@@ -4,17 +4,12 @@
 
 FROM golang:alpine as builder
 
-WORKDIR /go/src/openpitrix.io/openpitrix/
-COPY . .
-RUN go install ./cmd/...
+RUN apk add --no-cache git
+RUN go get openpitrix.io/openpitrix/cmd/cluster
 
 FROM alpine
 
-COPY --from=builder /go/bin/api /usr/local/bin/
 COPY --from=builder /go/bin/app /usr/local/bin/
-COPY --from=builder /go/bin/cluster /usr/local/cluster/
-COPY --from=builder /go/bin/repo /usr/local/bin/
-COPY --from=builder /go/bin/runtime /usr/local/bin/
 
 ENV OPENPITRIX_DATABASE_DBNAME=openpitrix
 ENV OPENPITRIX_DATABASE_ENCODING=utf8
@@ -27,4 +22,5 @@ ENV OPENPITRIX_HOST=0.0.0.0
 ENV OPENPITRIX_LOGLEVEL=warn
 ENV OPENPITRIX_PORT=8080
 
-CMD ["sh"]
+ENTRYPOINT ["/usr/local/bin/cluster"]
+CMD []
