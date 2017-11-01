@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"os"
 	pathpkg "path"
@@ -23,21 +24,32 @@ type Config struct {
 }
 
 type OpenPitrix struct {
-	Database Database
-
 	Host string `default:"0.0.0.0"`
 	Port int    `default:"8080"`
 
 	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
 	LogLevel string `default:"warn"`
+
+	Database Database
+	Unittest Unittest
 }
 
 type Database struct {
-	Type     string `default:"mysql"`
-	Host     string `default:"root:password@tcp(127.0.0.1:3306)"`
-	Encoding string `default:"utf8"`
-	Engine   string `default:"InnoDB"`
-	DbName   string `default:"openpitrix"`
+	Type         string `default:"mysql"`
+	Host         string `default:"127.0.0.1"`
+	Port         int    `default:"3306"`
+	Encoding     string `default:"utf8"`
+	Engine       string `default:"InnoDB"`
+	DbName       string `default:"openpitrix"`
+	RootPassword string `default:"password"`
+}
+
+type Unittest struct {
+	EnableDbTest bool `default:"false"`
+}
+
+func (p *Database) GetUrl() string {
+	return fmt.Sprintf("root:%s@tcp(%s:%d)/%s", p.RootPassword, p.Host, p.Port, p.DbName)
 }
 
 func Default() *Config {
@@ -62,6 +74,7 @@ func Load(path string) (*Config, error) {
 
 	if err := multiconfig.NewWithPath(path).Load(p); err != nil {
 		if err == flag.ErrHelp {
+			fmt.Println("See https://openpitrix.io")
 			os.Exit(0)
 		}
 		return nil, err
@@ -74,6 +87,7 @@ func MustLoad(path string) *Config {
 	p, err := Load(path)
 	if err != nil {
 		if err == flag.ErrHelp {
+			fmt.Println("See https://openpitrix.io")
 			os.Exit(0)
 		}
 		panic(err)
@@ -89,6 +103,19 @@ func MustLoadUserConfig() *Config {
 	if _, err := os.Stat(path); err != nil {
 		os.MkdirAll(pathpkg.Dir(path), 0755)
 		ioutil.WriteFile(path, []byte(DefaultConfigContent), 0644)
+	}
+
+	return MustLoad(path)
+}
+
+func MustLoadUnittestConfig() *Config {
+	path := UnittestConfigPath
+	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
+		path = GetHomePath() + path[1:]
+	}
+	if _, err := os.Stat(path); err != nil {
+		os.MkdirAll(pathpkg.Dir(path), 0755)
+		ioutil.WriteFile(path, []byte(UnittestConfigContent), 0644)
 	}
 
 	return MustLoad(path)

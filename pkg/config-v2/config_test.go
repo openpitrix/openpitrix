@@ -10,10 +10,14 @@ import (
 	"testing"
 )
 
-func tAssert(tb testing.TB, condition bool) {
+func tAssert(tb testing.TB, condition bool, a ...interface{}) {
 	tb.Helper()
 	if !condition {
-		tb.Fatal("Assert failed")
+		if msg := fmt.Sprint(a...); msg != "" {
+			tb.Fatal("Assert failed: " + msg)
+		} else {
+			tb.Fatal("Assert failed")
+		}
 	}
 }
 
@@ -51,7 +55,7 @@ func TestOpenPitrix_default(t *testing.T) {
 	tAssert(t, conf.LogLevel == "warn")
 
 	tAssert(t, conf.Database.Type == "mysql")
-	tAssert(t, conf.Database.Host == "root:password@tcp(127.0.0.1:3306)")
+	tAssert(t, conf.Database.Host == "127.0.0.1")
 	tAssert(t, conf.Database.Encoding == "utf8")
 	tAssert(t, conf.Database.Engine == "InnoDB")
 	tAssert(t, conf.Database.DbName == "openpitrix")
@@ -66,10 +70,12 @@ func TestOpenPitrix_Parse_default(t *testing.T) {
 	tAssert(t, conf.LogLevel == "warn")
 
 	tAssert(t, conf.Database.Type == "mysql")
-	tAssert(t, conf.Database.Host == "root:password@tcp(127.0.0.1:3306)")
+	tAssert(t, conf.Database.Host == "127.0.0.1")
 	tAssert(t, conf.Database.Encoding == "utf8")
 	tAssert(t, conf.Database.Engine == "InnoDB")
 	tAssert(t, conf.Database.DbName == "openpitrix")
+
+	tAssert(t, conf.Database.GetUrl() == "root:password@tcp(127.0.0.1:3306)/openpitrix")
 }
 
 func TestOpenPitrix_Parse_empty(t *testing.T) {
@@ -82,10 +88,12 @@ func TestOpenPitrix_Parse_empty(t *testing.T) {
 	tAssert(t, conf.LogLevel == "warn")
 
 	tAssert(t, conf.Database.Type == "mysql")
-	tAssert(t, conf.Database.Host == "root:password@tcp(127.0.0.1:3306)")
+	tAssert(t, conf.Database.Host == "127.0.0.1")
 	tAssert(t, conf.Database.Encoding == "utf8")
 	tAssert(t, conf.Database.Engine == "InnoDB")
 	tAssert(t, conf.Database.DbName == "openpitrix")
+
+	tAssert(t, conf.Database.GetUrl() == "root:password@tcp(127.0.0.1:3306)/openpitrix")
 }
 
 func TestOpenPitrix_Parse(t *testing.T) {
@@ -98,10 +106,12 @@ func TestOpenPitrix_Parse(t *testing.T) {
 		
 		[Database]
 		Type     = "pq"
-		Host     = "user:password@tcp(127.0.0.1:3306)"
+		Host     = "127.0.0.123"
+		Port     = 9527
 		Encoding = "utf8"
 		Engine   = "InnoDB"
 		DbName   = "openpitrix-dev"
+		RootPassword = "123456"
 	`)
 
 	tAssertf(t, err == nil, "err = %v", err)
@@ -111,8 +121,10 @@ func TestOpenPitrix_Parse(t *testing.T) {
 	tAssert(t, conf.LogLevel == "debug")
 
 	tAssert(t, conf.Database.Type == "pq")
-	tAssert(t, conf.Database.Host == "user:password@tcp(127.0.0.1:3306)")
+	tAssert(t, conf.Database.Host == "127.0.0.123")
 	tAssert(t, conf.Database.Encoding == "utf8")
 	tAssert(t, conf.Database.Engine == "InnoDB")
 	tAssert(t, conf.Database.DbName == "openpitrix-dev")
+
+	tAssert(t, conf.Database.GetUrl() == "root:123456@tcp(127.0.0.123:9527)/openpitrix-dev", conf.Database.GetUrl())
 }
