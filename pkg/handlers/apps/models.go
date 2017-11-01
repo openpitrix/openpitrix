@@ -13,33 +13,39 @@ import (
 )
 
 type AppsItem struct {
-	Id          string    `db:"id, size:50, primarykey"`
-	Name        string    `db:"name", size:50`
-	Description string    `db:"description, size:1000"`
-	Url         string    `db:"url, size:255"`
-	Created     time.Time `db:"created"`
+	Id           string    `db:"id, size:50, primarykey"`
+	Name         string    `db:"name", size:50`
+	Description  string    `db:"description, size:1000"`
+	RepoID       string    `db:"repo_id, size:50"`
+	Url          string    `db:"url, size:255"`
+	Created      time.Time `db:"created"`
+	LastModified time.Time `db:"last_modified"`
 }
 
 type AppsItems []AppsItem
 
 func (p *AppsItem) From_models_App(app *models.App) *AppsItem {
 	*p = AppsItem{
-		Id:          swag.StringValue(app.AppID),
-		Name:        app.Name,
-		Description: app.Description,
-		Url:         app.URL,
-		Created:     time.Time(app.CreateTime),
+		Id:           swag.StringValue(app.ID),
+		Name:         app.Name,
+		Description:  app.Description,
+		RepoID:       app.RepoID,
+		Url:          app.URL,
+		Created:      time.Time(app.Created),
+		LastModified: time.Time(app.LastModified),
 	}
 	return p
 }
 
 func (p *AppsItem) To_models_App() *models.App {
 	return &models.App{
-		AppID:       swag.String(p.Id),
-		CreateTime:  strfmt.DateTime(p.Created),
-		Description: p.Description,
-		Name:        p.Name,
-		URL:         p.Url,
+		ID:           swag.String(p.Id),
+		Name:         p.Name,
+		Description:  p.Description,
+		RepoID:       p.RepoID,
+		URL:          p.Url,
+		Created:      strfmt.DateTime(p.Created),
+		LastModified: strfmt.DateTime(p.LastModified),
 	}
 }
 
