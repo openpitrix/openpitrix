@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: openpitrix-api
-        image: rayzhou/openpitrix-dev
+        image: openpitrix/openpitrix-dev
         command: ["openpitrix"]
         args: ["api"]
         ports:
@@ -86,7 +86,7 @@ spec:
     spec:
       containers:
       - name: openpitrix-app
-        image: rayzhou/openpitrix-dev
+        image: openpitrix/openpitrix-dev
         command: ["openpitrix"]
         args: ["app"]
         ports:
@@ -139,8 +139,8 @@ spec:
         service: cluster 
     spec:
       containers:
-      - name: openpitrix-api
-        image: rayzhou/openpitrix-dev
+      - name: openpitrix-cluster
+        image: openpitrix/openpitrix-dev
         command: ["openpitrix"]
         args: ["cluster"]
         ports:
@@ -194,7 +194,7 @@ spec:
     spec:
       containers:
       - name: openpitrix-repo
-        image: rayzhou/openpitrix-dev
+        image: openpitrix/openpitrix-dev
         command: ["openpitrix"]
         args: ["repo"]
         ports:
@@ -248,7 +248,7 @@ spec:
     spec:
       containers:
       - name: openpitrix-runtime
-        image: rayzhou/openpitrix-dev
+        image: openpitrix/openpitrix-dev
         command: ["openpitrix"]
         args: ["runtime"]
         ports:

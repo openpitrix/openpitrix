@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 echo "pushing images..."
-docker push rayzhou/openpitrix-dev:latest
+docker push openpitrix/openpitrix-dev:latest
