@@ -2,6 +2,8 @@
 
 DevOps is recommended to use for this project. Please follow the instructions below to set up your environment. We use Jenkins with Blue Ocean plugin and deploy it on Kubernetes, also continuously deploy OpenPitrix on the Kubernetes cluster.  
 
+----
+
 - [Create Kubernetes Cluster](#create-kubernetes-cluster)
 - [Deploy Jenkins](#deploy-jenkins)
 - [Configure Jenkins](#configure-jenkins)
@@ -9,60 +11,68 @@ DevOps is recommended to use for this project. Please follow the instructions be
 
 ## Create Kubernetes Cluster
 
-We are using [Kubernetes on QingCloud](https://appcenter.qingcloud.com/apps/app-u0llx5j8) to create a kubernetes production environment by one click. Please follow the [instructions](https://appcenter-docs.qingcloud.com/user-guide/apps/docs/kubernetes/) to create your own cluster.
+We are using [Kubernetes on QingCloud](https://appcenter.qingcloud.com/apps/app-u0llx5j8) to create a kubernetes production environment by one click. Please follow the [instructions](https://appcenter-docs.qingcloud.com/user-guide/apps/docs/kubernetes/) to create your own cluster. Access the Kubernetes client using one of the following options.
+  - **Open VPN**<a id="openvpn"></a>: Go to the left navigation tree of the [QingCloud console](https://console.qingcloud.com), choose _Networks & CDN_, then _VPC Networks_; on the content of the VPC page, choose _Management Configuration_, _VPN Service_, then you will find _Open VPN_ service. Here is the [screenshot](images/openvpn.png) of the page.
+  - **Port Forwarding**<a id="port-forwarding"></a>: same as Open VPN, but choose _Port Forwarding_ on the content of VPC page instead of VPN Service; and add a rule to forward source port to the port of ssh port of the kubernetes client, for instance, forward 10007 to 22 of the kubernetes client with the private IP being 192.168.100.7. After that, you need to open the firewall to allow the port 10007 accessible from outside. Please click the _Security Group_ ID on the same page of the VPC, and add the downstream rule for the firewall.
+  - **VNC**: If you don't want to access the client node remotely, just go to the kubernetes cluster detailed page on the [QingCloud console](https://console.qingcloud.com), and click the windows icon aside of the client ID shown as the [screenshot](images/kubernets.png) (user/password: root/k8s). The way is not recommended, however you can check kubernetes quickly using VNC since you don't configure anything. 
 
 ## Deploy Jenkins
 
-* Access to Kubernetes client provided by the step above via one of the following options.
-  - **OpenVPN**: Go to the left navigation tree of the QingCloud console, Networks & CND, VPC Networks; on the content of the kubernetes VPC page, choose Management Configuration, VPN Service, then you will find OpenVPN service.
-  - **Port forwarding**: same as OpenVPN, but choose Port Forwarding on the kubernetes VPC page content of VPC Networks; and add a rule to forward source port to the port of ssh port of the kubernetes client, for instance, forward 10007 to 22 of the kubernetes client with the private IP being 192.168.100.7. After that, you need to open the firewall to allow the port 1007 accessible from outside. Please click the Security Group ID on the same page of the VPC, and add the downstream rule for the firewall.
-  - **VNC**: If you don't want to access the client node remotely, just go to the kubernetes cluster detailed page on the QingCloud console, and click the windows icon aside of the client ID.
-* Copy the [yaml file](../devops/kubernetes/jenkins-qingcloud.yaml) to the kubernetes client, and deploy
-  ```
-  # kubectl apply -f jenkins-qingcloud.yaml
-  ```
-* Access Jenkins by opening http://\<ip\>:8080 where ip depends on how you expose to outside.
-  - On the kubernetes client
-  ```
-  # iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 8080 -j DNAT --to-destination "$(kubectl get svc -n jenkins --selector=app=jenkins -o jsonpath='{.items..spec.clusterIP}')":8080
-  # iptables -t nat -A POSTROUTING -p tcp --dport 8080 -j MASQUERADE
-  # sysctl -w net.ipv4.conf.eth0.route_localnet=1
-  ```
-    Now access the kubernetes client port 8080 will be forwarded to the Jenkins service. 
-  - If you use OpenVPN to access the kubernetes client, then open http://\<kubernetes client private ip\>:8080 to access Jenkins. If you use Port Forwarding to access the client, then forward the VPC port 8080 to the client port 8080 as describe above. Now open http://\<VPC EIP\>:8080 to access Jenkins 
+1. Copy the [yaml file](../devops/kubernetes/jenkins-qingcloud.yaml) to the kubernetes client, and deploy
+   ```
+   # kubectl apply -f jenkins-qingcloud.yaml
+   ```
+
+2. Access Jenkins console by opening http://\<ip\>:8080 where ip depends on how you expose the Jenkins service to outside explained below. (You can find your way to access Jenkins console such as ingress, cloud LB etc.) On the kubernetes client
+   ```
+   # iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 8080 -j DNAT --to-destination "$(kubectl get svc -n jenkins --selector=app=jenkins -o jsonpath='{.items..spec.clusterIP}')":8080
+   # iptables -t nat -A POSTROUTING -p tcp --dport 8080 -j MASQUERADE
+   # sysctl -w net.ipv4.conf.eth0.route_localnet=1
+   ```
+
+3. Now the request to the kubernetes client port 8080 will be forwarded to the Jenkins service. 
+   
+   - If you use [Open VPN](#openvpn) to access the kubernetes client, then open http://\<kubernetes client private ip\>:8080 to access Jenkins console. 
+   - If you use [Port Forwarding](#port-forwarding) to access the client, then forward the VPC port 8080 to the kubernetes client port 8080. Now open http://\<VPC EIP\>:8080 to access Jenkins console.
 
 ## Configure Jenkins
-  > You can refer [jenkins.io](https://jenkins.io/doc/tutorials/using-jenkins-to-build-a-java-maven-project/) about how to configure Jenkins and creae a pipeline.
+   > You can refer [jenkins.io](https://jenkins.io/doc/tutorials/using-jenkins-to-build-a-java-maven-project/) about how to configure Jenkins and create a pipeline.
 
-* Unlock Jenkins
-  - Get the Adminstrator password from the log on the kubernetes client
-  ```
-  # kubectl logs "$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')" -c jenkins -n jenkins
-  ```
-  - Go to Jenkins console, paste the password and continue. Install suggested plugins, then create the first admin user and save & finish
+1. Unlock Jenkins
 
-* Configure Jenkins
-  - We will deploy OpenPitrix application into the same Kubernetes cluster as the one that the Jenkins is running on. So we need configure the Jenkins pod to access the Kubernetes cluster, and log in docker registry given that during the [Jenkins pipeline](#create-a-pipeline) we push OpenPitrix image into a registry which you can change on your own. 
+   - Get the Adminstrator password from the log on the kubernetes client
+     ```
+     # kubectl logs "$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')" -c jenkins -n jenkins
+     ```
+   - Go to Jenkins console, paste the password and continue. Install suggested plugins, then create the first admin user and save & finish.
+
+2. Configure Jenkins
+   
+   We will deploy OpenPitrix application into the same Kubernetes cluster as the one that the Jenkins is running on. So we need configure the Jenkins pod to access the Kubernetes cluster, and log in docker registry given that during the [Jenkins pipeline](#create-a-pipeline) we push OpenPitrix image into a registry which you can change on your own. 
   
-  On the Kubernetes client, execute the following.
-  ```
-  # kubectl exec -it "$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')" -c jenkins -n jenkins -- /bin/bash
-  ```
-  After logging in the Jenkins container, then 
-  ```
-  bash-4.3# docker login -u xxx -p xxxx
-  bash-4.3# mkdir /root/.kube
-  bash-4.3# exit
-  ```
-  Once back again to the Kubernetes client, run the following
-  ```
-  # kubectl cp /usr/bin/kubectl jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/usr/bin/kubectl
-  # kubectl cp /root/.kube/config jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/root/.kube/config
-  ```  
+   On the Kubernetes client, execute the following to log in Jenkins container.
+  
+     ```
+     # kubectl exec -it "$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')" -c jenkins -n jenkins -- /bin/bash
+     ```
+  
+     After logging in the Jenkins container, then run the following to log in docker registry and prepare folder to hold kubectl configuration.
+
+     ```
+     bash-4.3# docker login -u xxx -p xxxx
+     bash-4.3# mkdir /root/.kube
+     bash-4.3# exit
+     ```
+  
+     Once back again to the Kubernetes client, run the following to copy the tool kubectl and its configuration from the client to the Jenkins container.
+
+     ```
+     # kubectl cp /usr/bin/kubectl jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/usr/bin/kubectl
+     # kubectl cp /root/.kube/config jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/root/.kube/config
+     ```  
 
 ## Create a pipeline
-  - Fork OpenPitrix from github for your development. 
-  - On the Jenkins panel, click Open Blue Ocean and start to create a new pipeline. Choose GitHub, paste your access key of GitHub, select the repository you want to create a CI/CD pipeline. We already created the pipeline Jenkinsfile on the upstream repository which includes compiling OpenPitrix, building images, push images, deploying the application, verifying the application and cleaning up.
-  - It is better to configure one more thing. On the Jenkins panel, go to the confuration of OpenPitrix, check 'Periodically if not otherwise run' under 'Scan Repository Triggers' and select the interval at your will. 
-
-Now it is good to go. Whenever you commit a change to your forked repository, the pipeline will work during the Jenkins trigger interval. 
+  - Fork OpenPitrix from github for your development. You need to change the docker repository to yours. The related files are [openpitrix.yaml](devops/kubernetes/openpitrix.yaml), [build-images.sh](devops/scripts/build-images.sh), [push-images.sh](devops/scripts/push-images.sh) and [clean.sh](devops/scripts/clean.sh).
+  - On the Jenkins panel, click _Open Blue Ocean_ and start to create a new pipeline. Choose _GitHub_, paste your access key of GitHub, select the repository you want to create a CI/CD pipeline. We already created the pipeline Jenkinsfile on the upstream repository which includes compiling OpenPitrix, building images, push images, deploying the application, verifying the application and cleaning up.
+  - It is better to configure one more thing. On the Jenkins panel, go to the configuration of OpenPitrix, check _Periodically if not otherwise run_ under _Scan Repository Triggers_ and select the interval at your will. 
+  - Now it is good to go. Whenever you commit a change to your forked repository, the pipeline will work during the Jenkins trigger interval. 
