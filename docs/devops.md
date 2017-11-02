@@ -67,8 +67,8 @@ We are using [Kubernetes on QingCloud](https://appcenter.qingcloud.com/apps/app-
      Once back again to the Kubernetes client, run the following to copy the tool kubectl and its configuration from the client to the Jenkins container.
 
      ```
-     # kubectl cp /usr/bin/kubectl jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/usr/bin/kubectl
-     # kubectl cp /root/.kube/config jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/root/.kube/config
+     # kubectl cp /usr/bin/kubectl jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/usr/bin/kubectl -c jenkins
+     # kubectl cp /root/.kube/config jenkins/"$(kubectl get pods -n jenkins --selector=app=jenkins -o jsonpath='{.items..metadata.name}')":/root/.kube/config -c jenkins
      ```  
 
 ## Create a pipeline
