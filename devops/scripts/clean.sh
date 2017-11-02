@@ -2,7 +2,7 @@
 
 echo "clean..."
 
-docker image rm openpitrix/openpitrix-dev:latest
-docker image rm openpitrix
+docker rmi openpitrix/openpitrix-dev:latest
+docker rmi openpitrix
 
 echo "cleaned successfully"
