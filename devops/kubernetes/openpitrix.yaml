@@ -316,7 +316,7 @@ spec:
         tier: mysql
     spec:
       containers:
-      - image: mysql
+      - image: mysql:5.7.20
         name: mysql
         env:
           # $ kubectl create secret generic mysql-pass --from-file=password.txt
