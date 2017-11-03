@@ -13,10 +13,16 @@ $ go get -d openpitrix.io/openpitrix
 $ cd $GOPATH/src/openpitrix.io/openpitrix
 $ GOBIN=`pwd`/bin go install ./cmd/...
 $ docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql
-$ ./bin/api
+$ ./bin/api &
+$ ./bin/repo &
+$ ./bin/app &
+$ ./bin/runtime &
+$ ./bin/cluster &
 ```
 
-Test openpitrix/api service:
+Visit http://127.0.0.1:8080/swagger-ui in browser, the try in online.
+
+Or test openpitrix/api service in command line:
 
 ```
 $ curl http://localhost:8080/v1/apps
@@ -31,11 +37,17 @@ $ curl http://localhost:8080/v1/apps/app-12345678
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
 $ make build
-$ docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -d mysql
+$ docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql
 $ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8080:8080 openpitrix api
+$ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8081:8081 openpitrix repo
+$ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8082:8082 openpitrix app
+$ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8083:8083 openpitrix runtime
+$ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8084:8084 openpitrix cluster
 ```
 
-Test openpitrix/api service:
+Visit http://127.0.0.1:8080/swagger-ui in browser, the try in online.
+
+Or test openpitrix/api service in command line:
 
 ```
 $ curl http://localhost:8080/v1/apps

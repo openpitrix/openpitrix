@@ -9,16 +9,12 @@ TARG.Services:=api
 TARG.Services+=app
 TARG.Services+=repo
 TARG.Services+=runtime
+TARG.Services+=cluster
 
 DOCKER_TAGS=latest
 
 GO:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) golang:1.9-alpine go
 GO_WITH_MYSQL:=docker run --rm -it -v `pwd`:/go -w /go/src/$(TRAG.Gopkg) --link openpitrix-mysql:mysql -p 9527:9527 golang:1.9-alpine go
-SWAGGER:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) quay.io/goswagger/swagger
-
-SWAGGER_SPEC_DIR:=./api
-SWAGGER_SPEC_FILE:=./api/_all.json
-SWAGGER_OUT_DIR:=./pkg/swagger
 
 MYSQL_DATABASE:=$(TARG.Name)
 MYSQL_ROOT_PASSWORD:=password
@@ -60,22 +56,18 @@ update-vendor:
 .PHONY: tools
 tools:
 	docker pull golang:1.9-alpine
-	docker pull quay.io/goswagger/swagger
-	docker pull vidsyhq/multi-file-swagger-docker
+	docker pull chai2010/grpc-tools
 	docker pull mysql
 	@echo "ok"
 
 .PHONY: generate
 generate:
 	cd ./api && make generate
-	-mkdir -p $(SWAGGER_OUT_DIR)
-	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
-	$(SWAGGER) generate client -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
-	@echo "ok"
+	cd ./pkg/cmd/api && make
 
 .PHONY: mysql-start
 mysql-start:
-	@docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -d mysql || docker start openpitrix-mysql
+	@docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -p 3306:3306 -d mysql || docker start openpitrix-mysql
 	@echo "ok"
 
 .PHONY: mysql-stop
@@ -85,7 +77,7 @@ mysql-stop:
 
 
 .PHONY: build
-build:
+build: generate
 	$(GO) fmt ./...
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	@docker image prune -f 1>/dev/null 2>&1
@@ -105,6 +97,7 @@ release:
 .PHONY: test
 test:
 	$(GO) fmt ./...
+	$(GO) vet ./...
 	$(GO) test ./...
 	@echo "ok"
 

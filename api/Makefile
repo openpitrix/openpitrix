@@ -6,37 +6,27 @@
 # https://github.com/mohsen1/multi-file-swagger-example
 # http://apihandyman.io/writing-openapi-swagger-specification-tutorial-part-1-introduction/
 
-TARG:=_all.json
-
 PROTO_FILES=$(wildcard ./*.proto)
 
 PROTOC:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` chai2010/grpc-tools protoc
 
-SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` quay.io/goswagger/swagger
-MULTI_FILE_SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` vidsyhq/multi-file-swagger-docker
-
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
-	@echo "  generate          to generate and check '$(TARG)'"
+	@echo "  generate          to generate grpc/grpc-gateway/swagger code"
 	@echo "  tools             to install depends tools"
-	@echo "  clean             to clean the generated '$(TARG)' file"
 	@echo "  help              to show this help informatrion"
 
-generate:
-	$(MULTI_FILE_SWAGGER) index.yaml > $(TARG)
-	$(SWAGGER) validate $(TARG)
+generate: $(PROTO_FILES) Makefile
 	mkdir -p ../pkg/service.pb
 	$(PROTOC) --go_out=plugins=grpc:../pkg/service.pb ${PROTO_FILES}
 	$(PROTOC) --grpc-gateway_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
 	$(PROTOC) --swagger_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
+	$(PROTOC) --swagger_out=logtostderr=true:../pkg/cmd/api/spec ${PROTO_FILES}
 	@echo "ok"
 
 tools:
-	docker pull quay.io/goswagger/swagger
-	docker pull vidsyhq/multi-file-swagger-docker
 	docker pull chai2010/grpc-tools
 	@echo "ok"
 
 clean:
-	-rm $(TARG)
 	@echo "ok"
