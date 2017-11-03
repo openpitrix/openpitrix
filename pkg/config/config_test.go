@@ -35,9 +35,11 @@ func tAssertf(tb testing.TB, condition bool, format string, a ...interface{}) {
 func TestOpenPitrix(t *testing.T) {
 	conf0 := &Config{
 		OpenPitrix: OpenPitrix{
-			Host:     "localhost",
-			Port:     8443,
-			LogLevel: "warn",
+			ApiService: ApiService{
+				Host:     "localhost",
+				Port:     8443,
+				LogLevel: "warn",
+			},
 		},
 	}
 
@@ -50,9 +52,9 @@ func TestOpenPitrix(t *testing.T) {
 func TestOpenPitrix_default(t *testing.T) {
 	conf := Default()
 
-	tAssert(t, conf.Host == "0.0.0.0")
-	tAssert(t, conf.Port == 8080)
-	tAssert(t, conf.LogLevel == "warn")
+	tAssert(t, conf.ApiService.Host == "127.0.0.1")
+	tAssert(t, conf.ApiService.Port == 8080)
+	tAssert(t, conf.ApiService.LogLevel == "warn", conf.ApiService)
 
 	tAssert(t, conf.Database.Type == "mysql")
 	tAssert(t, conf.Database.Host == "127.0.0.1")
@@ -65,9 +67,9 @@ func TestOpenPitrix_Parse_default(t *testing.T) {
 	conf, err := Parse(DefaultConfigContent)
 	tAssertf(t, err == nil, "err = %v", err)
 
-	tAssert(t, conf.Host == "0.0.0.0")
-	tAssert(t, conf.Port == 8080)
-	tAssert(t, conf.LogLevel == "warn")
+	tAssert(t, conf.ApiService.Host == "127.0.0.1")
+	tAssert(t, conf.ApiService.Port == 8080)
+	tAssert(t, conf.ApiService.LogLevel == "warn")
 
 	tAssert(t, conf.Database.Type == "mysql")
 	tAssert(t, conf.Database.Host == "127.0.0.1")
@@ -83,9 +85,9 @@ func TestOpenPitrix_Parse_empty(t *testing.T) {
 
 	tAssertf(t, err == nil, "err = %v", err)
 
-	tAssertf(t, conf.Host == "0.0.0.0", "host = %v", conf.Host)
-	tAssert(t, conf.Port == 8080)
-	tAssert(t, conf.LogLevel == "warn")
+	tAssertf(t, conf.ApiService.Host == "127.0.0.1", "host = %v", conf.ApiService.Host)
+	tAssert(t, conf.ApiService.Port == 8080)
+	tAssert(t, conf.ApiService.LogLevel == "warn")
 
 	tAssert(t, conf.Database.Type == "mysql")
 	tAssert(t, conf.Database.Host == "127.0.0.1")
@@ -98,6 +100,7 @@ func TestOpenPitrix_Parse_empty(t *testing.T) {
 
 func TestOpenPitrix_Parse(t *testing.T) {
 	conf, err := Parse(`
+		[ApiService]
 		Host = "localhost"
 		Port = 9527
 		
@@ -116,9 +119,11 @@ func TestOpenPitrix_Parse(t *testing.T) {
 
 	tAssertf(t, err == nil, "err = %v", err)
 
-	tAssert(t, conf.Host == "localhost")
-	tAssert(t, conf.Port == 9527)
-	tAssert(t, conf.LogLevel == "debug")
+	tAssert(t, conf.ApiService.Host == "localhost")
+	tAssert(t, conf.ApiService.Port == 9527)
+	tAssert(t, conf.ApiService.LogLevel == "debug")
+
+	tAssert(t, conf.AppService.LogLevel == "warn")
 
 	tAssert(t, conf.Database.Type == "pq")
 	tAssert(t, conf.Database.Host == "127.0.0.123")

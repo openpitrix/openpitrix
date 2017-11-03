@@ -43,8 +43,8 @@ func NewAppsServer(config *config.Config) *AppsServer {
 func (p *AppsServer) ConfigureFlags() {
 	p.Server.ConfigureFlags()
 
-	p.Server.Host = p.Cfg.Host
-	p.Server.Port = p.Cfg.Port
+	p.Server.Host = "0.0.0.0"
+	p.Server.Port = p.Cfg.AppService.Port
 }
 
 func (p *AppsServer) ConfigureAPI() {

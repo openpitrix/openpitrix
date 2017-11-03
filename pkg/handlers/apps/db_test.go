@@ -62,7 +62,7 @@ func TestAppDatabase(t *testing.T) {
 	tAssertf(t, err == nil, "err: %v", err)
 	db.TruncateTables()
 
-	client := apps.NewAppClient(tConfig.Host, tConfig.Port)
+	client := apps.NewAppClient(tConfig.AppService.Host, tConfig.AppService.Port)
 
 	// apps is empty
 	{

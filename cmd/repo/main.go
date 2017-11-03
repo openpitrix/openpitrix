@@ -45,8 +45,8 @@ func NewRestServer(config *config.Config) *RestServer {
 func (p *RestServer) ConfigureFlags() {
 	p.Server.ConfigureFlags()
 
-	p.Server.Host = p.Cfg.Host
-	p.Server.Port = p.Cfg.Port
+	p.Server.Host = "0.0.0.0"
+	p.Server.Port = p.Cfg.RepoService.Port
 }
 
 func (p *RestServer) ConfigureAPI() {
