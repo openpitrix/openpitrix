@@ -68,6 +68,7 @@ tools:
 .PHONY: generate
 generate:
 	cd ./api && make generate
+	cd ./pkg/cmd/api && make
 	-mkdir -p $(SWAGGER_OUT_DIR)
 	$(SWAGGER) generate server -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)
 	$(SWAGGER) generate client -f $(SWAGGER_SPEC_FILE) -t $(SWAGGER_OUT_DIR)

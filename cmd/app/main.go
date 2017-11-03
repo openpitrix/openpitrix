@@ -6,11 +6,10 @@
 package main
 
 import (
+	"openpitrix.io/openpitrix/pkg/cmd/app"
 	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/handlers/apps"
 )
 
 func main() {
-	cfg := config.MustLoadUserConfig()
-	apps.ListenAndServeAppsServer(cfg)
+	app.Main(config.MustLoadUserConfig())
 }

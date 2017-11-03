@@ -29,6 +29,7 @@ generate:
 	$(PROTOC) --go_out=plugins=grpc:../pkg/service.pb ${PROTO_FILES}
 	$(PROTOC) --grpc-gateway_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
 	$(PROTOC) --swagger_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
+	$(PROTOC) --swagger_out=logtostderr=true:../pkg/cmd/api/spec ${PROTO_FILES}
 	@echo "ok"
 
 tools:
