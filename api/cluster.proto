@@ -1,0 +1,96 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// ----------------------------------------------------------------------------
+// base type
+// ----------------------------------------------------------------------------
+
+message Cluster {
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	string app_id = 4;
+	string app_version = 5;
+	string status = 6;
+	string transition_status = 7;
+	google.protobuf.Timestamp created = 8;
+	google.protobuf.Timestamp last_modified = 9;
+}
+
+message ClusterNode {
+	string id = 1;
+	string instance_id = 2;
+	string name = 3;
+	string description = 4;
+	string cluster_id = 5;
+	string private_ip = 6;
+}
+
+// ----------------------------------------------------------------------------
+// rest api type
+// ----------------------------------------------------------------------------
+
+message ClusterId {
+	string id = 1;
+}
+
+message ClusterListRequest {
+	int32 page_size = 1;
+	int32 page_number = 2;
+}
+message ClusterListResponse {
+	int32 total_items = 1;
+	int32 total_pages = 2;
+	int32 page_size = 3;
+	int32 current_page = 4;
+
+	repeated Cluster items = 5;
+}
+
+// ----------------------------------------------------------------------------
+// cluster service
+// ----------------------------------------------------------------------------
+
+service ClusterService {
+	rpc GetCluster(ClusterId) returns (Cluster) {
+		option (google.api.http) = {
+			get: "/v1/clusters/{id}"
+		};
+	}
+	rpc GetClusterList(ClusterListRequest) returns (ClusterListResponse) {
+		option (google.api.http) = {
+			get: "/v1/clusters"
+		};
+	}
+
+	rpc CreateCluster(Cluster) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc UpdateCluster(Cluster) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/clusters/{id}"
+			body: "*"
+		};
+	}
+	rpc DeleteCluster(ClusterId) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			delete: "/v1/clusters/{id}"
+		};
+	}
+}
+
+// ----------------------------------------------------------------------------
+// END
+// ----------------------------------------------------------------------------

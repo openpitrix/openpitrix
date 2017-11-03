@@ -1,0 +1,84 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// ----------------------------------------------------------------------------
+// base type
+// ----------------------------------------------------------------------------
+
+message App {
+	string id = 1;
+	string name = 2;
+	string description = 3;	
+	string repo_id = 4;
+	google.protobuf.Timestamp created = 5;
+	google.protobuf.Timestamp last_modified = 6;
+}
+
+// ----------------------------------------------------------------------------
+// rest api type
+// ----------------------------------------------------------------------------
+
+message AppId {
+	string id = 1;
+}
+
+message AppListRequest {
+	int32 page_size = 1;
+	int32 page_number = 2;
+}
+message AppListResponse {
+	int32 total_items = 1;
+	int32 total_pages = 2;
+	int32 page_size = 3;
+	int32 current_page = 4;
+
+	repeated App items = 5;
+}
+
+// ----------------------------------------------------------------------------
+// app service
+// ----------------------------------------------------------------------------
+
+service AppService {
+	rpc GetApp(AppId) returns (App) {
+		option (google.api.http) = {
+			get: "/v1/apps/{id}"
+		};
+	}
+	rpc GetAppList(AppListRequest) returns (AppListResponse) {
+		option (google.api.http) = {
+			get: "/v1/apps"
+		};
+	}
+	
+	rpc CreateApp(App) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/apps"
+			body: "*"
+		};
+	}
+	rpc UpdateApp(App) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/apps/{id}"
+			body: "*"
+		};
+	}
+	rpc DeleteApp(AppId) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			delete: "/v1/apps/{id}"
+		};
+	}
+}
+
+// ----------------------------------------------------------------------------
+// END
+// ----------------------------------------------------------------------------

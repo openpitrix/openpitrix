@@ -1,0 +1,92 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// ----------------------------------------------------------------------------
+// base type
+// ----------------------------------------------------------------------------
+
+message AppRuntime {
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	string url = 4;
+	google.protobuf.Timestamp created = 5;
+	google.protobuf.Timestamp last_modified = 6;
+}
+
+message AppRuntimeLabel {
+	string app_runtime_id = 1;
+	string label_key = 2;
+	string label_value = 3;
+}
+
+// ----------------------------------------------------------------------------
+// rest api type
+// ----------------------------------------------------------------------------
+
+message AppRuntimeId {
+	string id = 1;
+}
+
+message AppRuntimeListRequest {
+	int32 page_size = 1;
+	int32 page_number = 2;
+}
+message AppRuntimeListResponse {
+	int32 total_items = 1;
+	int32 total_pages = 2;
+	int32 page_size = 3;
+	int32 current_page = 4;
+
+	repeated AppRuntime items = 5;
+}
+
+// ----------------------------------------------------------------------------
+// app runtime service
+// ----------------------------------------------------------------------------
+
+service AppRuntimeService {
+	rpc GetAppRuntime(AppRuntimeId) returns (AppRuntime) {
+		option (google.api.http) = {
+			get: "/v1/appruntimes/{id}"
+		};
+	}
+
+	// Returns a list containing all app runtimes.
+	rpc GetAppRuntimeList(AppRuntimeListRequest) returns (AppRuntimeListResponse) {
+		option (google.api.http) = {
+			get: "/v1/appruntimes"
+		};
+	}
+
+	rpc CreateAppRuntime(AppRuntime) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/appruntimes"
+			body: "*"
+		};
+	}
+	rpc UpdateAppRuntime(AppRuntime) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/appruntimes/{id}"
+			body: "*"
+		};
+	}
+	rpc DeleteAppRuntime(AppRuntimeId) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			delete: "/v1/appruntimes/{id}"
+		};
+	}
+}
+
+// ----------------------------------------------------------------------------
+// END
+// ----------------------------------------------------------------------------
