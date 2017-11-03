@@ -24,14 +24,54 @@ type Config struct {
 }
 
 type OpenPitrix struct {
-	Host string `default:"0.0.0.0"`
+	ApiService        ApiService
+	AppService        AppService
+	AppRuntimeService AppRuntimeService
+	ClusterService    ClusterService
+	RepoService       RepoService
+
+	Database Database
+	Unittest Unittest
+}
+
+type ApiService struct {
+	Host string `default:"127.0.0.1"`
 	Port int    `default:"8080"`
 
 	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
 	LogLevel string `default:"warn"`
+}
 
-	Database Database
-	Unittest Unittest
+type RepoService struct {
+	Host string `default:"127.0.0.1"`
+	Port int    `default:"8081"`
+
+	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
+	LogLevel string `default:"warn"`
+}
+
+type AppService struct {
+	Host string `default:"127.0.0.1"`
+	Port int    `default:"8082"`
+
+	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
+	LogLevel string `default:"warn"`
+}
+
+type AppRuntimeService struct {
+	Host string `default:"127.0.0.1"`
+	Port int    `default:"8083"`
+
+	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
+	LogLevel string `default:"warn"`
+}
+
+type ClusterService struct {
+	Host string `default:"127.0.0.1"`
+	Port int    `default:"8084"`
+
+	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
+	LogLevel string `default:"warn"`
 }
 
 type Database struct {
@@ -53,16 +93,12 @@ func (p *Database) GetUrl() string {
 }
 
 func Default() *Config {
-	p := new(OpenPitrix)
-
-	loader := &multiconfig.TOMLLoader{
-		Reader: strings.NewReader(DefaultConfigContent),
-	}
-	if err := loader.Load(p); err != nil {
+	p, err := Parse(DefaultConfigContent)
+	if err != nil {
 		panic(err)
 	}
 
-	return &Config{*p}
+	return p
 }
 
 func Load(path string) (*Config, error) {

@@ -12,11 +12,25 @@ const DefaultConfigContent = `
 # OpenPitrix configuration
 # https://openpitrix.io/
 
-Host = "0.0.0.0"
+[ApiService]
+Host = "127.0.0.1"
 Port = 8080
 
-# Valid log levels are "debug", "info", "warn", "error", and "fatal".
-LogLevel = "warn"
+[AppService]
+Host = "127.0.0.1"
+Port = 8081
+
+[AppRuntimeService]
+Host = "127.0.0.1"
+Port = 8082
+
+[ClusterService]
+Host = "127.0.0.1"
+Port = 8083
+
+[RepoService]
+Host = "127.0.0.1"
+Port = 8084
 
 [Database]
 Type         = "mysql"
