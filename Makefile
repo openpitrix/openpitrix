@@ -64,11 +64,10 @@ tools:
 generate:
 	cd ./api && make generate
 	cd ./pkg/cmd/api && make
-	@echo "ok"
 
 .PHONY: mysql-start
 mysql-start:
-	@docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -d mysql || docker start openpitrix-mysql
+	@docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -p 3306:3306 -d mysql || docker start openpitrix-mysql
 	@echo "ok"
 
 .PHONY: mysql-stop
@@ -78,7 +77,7 @@ mysql-stop:
 
 
 .PHONY: build
-build:
+build: generate
 	$(GO) fmt ./...
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	@docker image prune -f 1>/dev/null 2>&1
@@ -98,6 +97,7 @@ release:
 .PHONY: test
 test:
 	$(GO) fmt ./...
+	$(GO) vet ./...
 	$(GO) test ./...
 	@echo "ok"
 
