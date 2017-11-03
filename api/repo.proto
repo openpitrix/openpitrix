@@ -1,0 +1,96 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// ----------------------------------------------------------------------------
+// base type
+// ----------------------------------------------------------------------------
+
+message Repo {
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	string url = 4;
+	google.protobuf.Timestamp created = 5;
+	google.protobuf.Timestamp last_modified = 6;
+}
+
+message RepoLabel {
+	string repo_id = 1;
+	string label_key = 2;
+	string label_value = 3;
+}
+
+message RepoSelector {
+	string repo_id = 1;
+	string selector_key = 2;
+	string selector_value = 3;
+}
+
+// ----------------------------------------------------------------------------
+// rest api type
+// ----------------------------------------------------------------------------
+
+message RepoId {
+	string id = 1;
+}
+
+message RepoListRequest {
+	int32 page_size = 1;
+	int32 page_number = 2;
+}
+message RepoListResponse {
+	int32 total_items = 1;
+	int32 total_pages = 2;
+	int32 page_size = 3;
+	int32 current_page = 4;
+
+	repeated Repo items = 5;
+}
+
+// ----------------------------------------------------------------------------
+// repo service
+// ----------------------------------------------------------------------------
+
+service RepoService {
+	rpc GetRepo(RepoId) returns (Repo) {
+		option (google.api.http) = {
+			get: "/v1/repos/{id}"
+		};
+	}
+	rpc GetRepoList(RepoListRequest) returns (RepoListResponse) {
+		option (google.api.http) = {
+			get: "/v1/repos"
+		};
+	}
+
+	rpc CreateRepo(Repo) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/repos"
+			body: "*"
+		};
+	}
+	rpc UpdateRepo(Repo) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/repos/{id}"
+			body: "*"
+		};
+	}
+	rpc DeleteRepo(RepoId) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			delete: "/v1/repos/{id}"
+		};
+	}
+}
+
+// ----------------------------------------------------------------------------
+// END
+// ----------------------------------------------------------------------------

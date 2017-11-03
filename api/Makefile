@@ -8,6 +8,10 @@
 
 TARG:=_all.json
 
+PROTO_FILES=$(wildcard ./*.proto)
+
+PROTOC:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` chai2010/grpc-tools protoc
+
 SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` quay.io/goswagger/swagger
 MULTI_FILE_SWAGGER:=docker run --rm -it -v $(HOME):$(HOME) -w `pwd` vidsyhq/multi-file-swagger-docker
 
@@ -21,11 +25,16 @@ help:
 generate:
 	$(MULTI_FILE_SWAGGER) index.yaml > $(TARG)
 	$(SWAGGER) validate $(TARG)
+	mkdir -p ../pkg/service.pb
+	$(PROTOC) --go_out=plugins=grpc:../pkg/service.pb ${PROTO_FILES}
+	$(PROTOC) --grpc-gateway_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
+	$(PROTOC) --swagger_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
 	@echo "ok"
 
 tools:
 	docker pull quay.io/goswagger/swagger
 	docker pull vidsyhq/multi-file-swagger-docker
+	docker pull chai2010/grpc-tools
 	@echo "ok"
 
 clean:
