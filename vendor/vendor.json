@@ -351,6 +351,24 @@
 			"revisionTime": "2017-07-29T23:24:55Z"
 		},
 		{
+			"checksumSHA1": "NC6sRRBg4e1wHOkOu2doF24QWh0=",
+			"path": "golang.org/x/tools/godoc/vfs",
+			"revision": "5831d16d18029819d39f99bdc2060b8eff410b6b",
+			"revisionTime": "2017-05-22T20:11:25Z"
+		},
+		{
+			"checksumSHA1": "M0+edpqV5XKITjw84PJehptYsTQ=",
+			"path": "golang.org/x/tools/godoc/vfs/httpfs",
+			"revision": "5831d16d18029819d39f99bdc2060b8eff410b6b",
+			"revisionTime": "2017-05-22T20:11:25Z"
+		},
+		{
+			"checksumSHA1": "Qwc7VecyIh84Ol8n9J9DUwZQtII=",
+			"path": "golang.org/x/tools/godoc/vfs/mapfs",
+			"revision": "5831d16d18029819d39f99bdc2060b8eff410b6b",
+			"revisionTime": "2017-05-22T20:11:25Z"
+		},
+		{
 			"checksumSHA1": "B22iMMY2vi1Q9kseWb/ZznpW8lQ=",
 			"path": "google.golang.org/genproto/googleapis/api/annotations",
 			"revision": "09f6ed296fc66555a25fe4ce95173148778dfa85",
