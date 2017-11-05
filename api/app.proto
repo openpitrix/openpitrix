@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-syntax = "proto3";
+syntax = "proto2";
 
 package openpitrix;
 
@@ -15,12 +15,12 @@ import "google/protobuf/timestamp.proto";
 // ----------------------------------------------------------------------------
 
 message App {
-	string id = 1;
-	string name = 2;
-	string description = 3;	
-	string repo_id = 4;
-	google.protobuf.Timestamp created = 5;
-	google.protobuf.Timestamp last_modified = 6;
+	required string id = 1;
+	optional string name = 2;
+	optional string description = 3;	
+	optional string repo_id = 4;
+	optional google.protobuf.Timestamp created = 5;
+	optional google.protobuf.Timestamp last_modified = 6;
 }
 
 // ----------------------------------------------------------------------------
@@ -28,18 +28,18 @@ message App {
 // ----------------------------------------------------------------------------
 
 message AppId {
-	string id = 1;
+	required string id = 1;
 }
 
 message AppListRequest {
-	int32 page_size = 1;
-	int32 page_number = 2;
+	optional int32 page_size = 1 [default = 10];
+	optional int32 page_number = 2 [default = 1];
 }
 message AppListResponse {
-	int32 total_items = 1;
-	int32 total_pages = 2;
-	int32 page_size = 3;
-	int32 current_page = 4;
+	optional int32 total_items = 1;
+	optional int32 total_pages = 2;
+	optional int32 page_size = 3;
+	optional int32 current_page = 4;
 
 	repeated App items = 5;
 }
