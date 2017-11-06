@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/golang/protobuf/proto"
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -49,7 +50,7 @@ func NewClusterServer(cfg *config.Database) *ClusterServer {
 }
 
 func (p *ClusterServer) GetCluster(ctx context.Context, args *pb.ClusterId) (reply *pb.Cluster, err error) {
-	result, err := p.db.GetCluster(ctx, args.Id)
+	result, err := p.db.GetCluster(ctx, args.GetId())
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetCluster: %v", err)
 	}
@@ -58,25 +59,18 @@ func (p *ClusterServer) GetCluster(ctx context.Context, args *pb.ClusterId) (rep
 }
 
 func (p *ClusterServer) GetClusterList(ctx context.Context, args *pb.ClusterListRequest) (reply *pb.ClusterListResponse, err error) {
-	if args.PageNumber <= 0 {
-		args.PageNumber = 1
-	}
-	if args.PageSize <= 0 {
-		args.PageSize = 10
-	}
-
 	result, err := p.db.GetClusterList(ctx)
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetClusterList: %v", err)
 	}
 
-	items := To_proto_ClusterList(result, int(args.PageNumber), int(args.PageSize))
+	items := To_proto_ClusterList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
 	reply = &pb.ClusterListResponse{
 		Items:       items,
-		TotalItems:  int32(len(result)),
-		TotalPages:  int32((len(result) + int(args.PageSize) - 1) / int(args.PageSize)),
-		PageSize:    args.PageSize,
-		CurrentPage: int32(len(result)/int(args.PageSize)) + 1,
+		TotalItems:  proto.Int32(int32(len(result))),
+		TotalPages:  proto.Int32(int32((len(result) + int(args.GetPageSize()) - 1) / int(args.GetPageSize()))),
+		PageSize:    proto.Int32(args.GetPageSize()),
+		CurrentPage: proto.Int32(int32(len(result)/int(args.GetPageSize())) + 1),
 	}
 
 	return
@@ -103,7 +97,7 @@ func (p *ClusterServer) UpdateCluster(ctx context.Context, args *pb.Cluster) (re
 }
 
 func (p *ClusterServer) DeleteCluster(ctx context.Context, args *pb.ClusterId) (reply *pbempty.Empty, err error) {
-	err = p.db.DeleteCluster(ctx, args.Id)
+	err = p.db.DeleteCluster(ctx, args.GetId())
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "DeleteCluster: %v", err)
 	}

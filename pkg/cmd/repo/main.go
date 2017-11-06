@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/golang/protobuf/proto"
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -49,7 +50,7 @@ func NewRepoServer(cfg *config.Database) *RepoServer {
 }
 
 func (p *RepoServer) GetRepo(ctx context.Context, args *pb.RepoId) (reply *pb.Repo, err error) {
-	result, err := p.db.GetRepo(ctx, args.Id)
+	result, err := p.db.GetRepo(ctx, args.GetId())
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetRepo: %v", err)
 	}
@@ -58,25 +59,18 @@ func (p *RepoServer) GetRepo(ctx context.Context, args *pb.RepoId) (reply *pb.Re
 }
 
 func (p *RepoServer) GetRepoList(ctx context.Context, args *pb.RepoListRequest) (reply *pb.RepoListResponse, err error) {
-	if args.PageNumber <= 0 {
-		args.PageNumber = 1
-	}
-	if args.PageSize <= 0 {
-		args.PageSize = 10
-	}
-
 	result, err := p.db.GetRepoList(ctx)
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetRepoList: %v", err)
 	}
 
-	items := To_proto_RepoList(result, int(args.PageNumber), int(args.PageSize))
+	items := To_proto_RepoList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
 	reply = &pb.RepoListResponse{
 		Items:       items,
-		TotalItems:  int32(len(result)),
-		TotalPages:  int32((len(result) + int(args.PageSize) - 1) / int(args.PageSize)),
-		PageSize:    args.PageSize,
-		CurrentPage: int32(len(result)/int(args.PageSize)) + 1,
+		TotalItems:  proto.Int32(int32(len(result))),
+		TotalPages:  proto.Int32(int32((len(result) + int(args.GetPageSize()) - 1) / int(args.GetPageSize()))),
+		PageSize:    proto.Int32(args.GetPageSize()),
+		CurrentPage: proto.Int32(int32(len(result)/int(args.GetPageSize())) + 1),
 	}
 
 	return
@@ -102,7 +96,7 @@ func (p *RepoServer) UpdateRepo(ctx context.Context, args *pb.Repo) (reply *pbem
 }
 
 func (p *RepoServer) DeleteRepo(ctx context.Context, args *pb.RepoId) (reply *pbempty.Empty, err error) {
-	err = p.db.DeleteRepo(ctx, args.Id)
+	err = p.db.DeleteRepo(ctx, args.GetId())
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "DeleteRepo: %v", err)
 	}
