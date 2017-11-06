@@ -7,6 +7,8 @@ syntax = "proto2";
 package openpitrix;
 
 import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -47,6 +49,26 @@ message AppListResponse {
 // ----------------------------------------------------------------------------
 // app service
 // ----------------------------------------------------------------------------
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+	info: {
+		title: "OpenPitrix App Service";
+		description: ""
+			"An open platform to package and deploy applications into multiple"
+			"environment such as QingCloud, AWS, Kubernetes etc."
+		;
+		version: "0.0.1";
+		contact: {
+			name: "OpenPireix Project";
+			url: "https://openpitrix.io";
+		};
+	};
+
+	schemes: HTTP;
+
+	consumes: "application/json";
+	produces: "application/json";
+};
 
 service AppService {
 	rpc GetApp(AppId) returns (App) {
