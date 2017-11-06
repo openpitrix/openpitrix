@@ -1,0 +1,155 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+digraph G {
+	rankdir = LR;
+
+	subgraph clusterClient {
+		WebUI [shape = doublecircle];
+		MobileApp [shape = doublecircle];
+		XClient [shape = doublecircle];
+	}
+
+	WebUI -> ApiGateway[
+		label = "rest api",
+		dir   = both,
+		style = bold,
+	];
+	MobileApp -> ApiGateway[
+		label = "rest api",
+		dir   = both,
+		style = bold,
+	];
+	XClient -> ApiGateway[
+		label = "rest api",
+		dir   = both,
+		style = bold,
+	];
+
+	subgraph clusterOpenpitrix {
+
+		// rest api gateway
+		ApiGateway [shape = Msquare];
+
+		// microservice
+		subgraph clusterServices {
+			Repo [shape = box3d];
+			App [shape = box3d];
+			Runtime [shape = box3d];
+			Cluster [shape = box3d];
+		}
+
+		// service database
+		subgraph clusterDB {
+			RepoDB [
+				shape = cylinder,
+				label = "" +
+					"id\l" +
+					"name\l" +
+					"description\l" +
+					"url\l" +
+					"created\l" +
+					"last_modified\l" +
+				""
+			];
+			AppDB [shape = cylinder,
+		
+				label = "" +
+					"id\l" +
+					"name\l" +
+					"description\l" +
+					"repo_id\l" +
+					"created\l" +
+					"last_modified\l" +
+				""
+			];
+			RuntimeDB [shape = cylinder,
+			
+				label = "" +
+					"id\l" +
+					"name\l" +
+					"description\l" +
+					"url\l" +
+					"created\l" +
+					"last_modified\l" +
+				""
+			];
+			ClusterDB [shape = cylinder,
+			
+				label = "" +
+					"id\l" +
+					"name\l" +
+					"description\l" +
+					"app_id\l" +
+					"app_version\l" +
+					"status\l" +
+					"transition_status\l" +
+					"created\l" +
+					"last_modified\l" +
+				""
+			];
+
+		}
+
+		// Plugins
+		subgraph clusterPlugin {
+			RepoPlugin [shape = component];
+			RuntimePlugin [shape = component];
+		}
+
+		// Repo hub
+		subgraph clusterRepo {
+			K8sHub [label = "k8s hub", shape = folder];
+			DockerHub [label = "docker hub", shape = folder];
+			QingCloudHub [label = "qingcloud hub", shape = folder];
+		}
+
+		// Runtime platform
+		subgraph clusterRuntime {
+			K8sRuntime [shape = house];
+			QingCloudRuntime [shape = house];
+		}
+
+		// api gateway
+		ApiGateway -> Repo [
+			label = "grpc",
+			dir   = both,
+			style = bold,
+		];
+		ApiGateway -> App [
+			label = "grpc",
+			dir   = both,
+			style = bold,
+		];
+		ApiGateway -> Runtime [
+			label = "grpc",
+			dir   = both,
+			style = bold,
+		];
+		ApiGateway -> Cluster [
+			label = "grpc",
+			dir   = both,
+			style = bold,
+		];
+
+
+		// Repo
+		Repo -> RepoPlugin;
+
+		RepoPlugin -> K8sHub;
+		RepoPlugin -> DockerHub;
+		RepoPlugin -> QingCloudHub;
+
+		// App
+		Runtime -> RuntimePlugin;
+		RuntimePlugin -> K8sRuntime;
+		RuntimePlugin -> QingCloudRuntime;
+
+		Repo -> RepoDB [label="SQL"];
+		App -> AppDB [label="SQL"];
+		Runtime -> RuntimeDB [label="SQL"];
+		Cluster -> ClusterDB [label="SQL"];
+	}
+
+}
