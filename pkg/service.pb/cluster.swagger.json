@@ -1,12 +1,15 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "cluster.proto",
-    "version": "version not set"
+    "title": "OpenPitrix Cluster Service",
+    "version": "0.0.1",
+    "contact": {
+      "name": "OpenPireix Project",
+      "url": "https://openpitrix.io"
+    }
   },
   "schemes": [
-    "http",
-    "https"
+    "http"
   ],
   "consumes": [
     "application/json"
