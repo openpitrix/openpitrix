@@ -6,6 +6,10 @@ digraph G {
 	rankdir = LR;
 
 	subgraph clusterClient {
+		node [
+			fixedsize = true,
+			width = 1, height = 1,			
+		]
 		WebUI [shape = doublecircle];
 		MobileApp [shape = doublecircle];
 		XClient [shape = doublecircle];
@@ -30,86 +34,38 @@ digraph G {
 	subgraph clusterOpenpitrix {
 
 		// rest api gateway
-		ApiGateway [shape = Msquare];
+		ApiGateway [shape = rect,
+			fixedsize = true,
+			width = 1.4, height = 6.2,
+		];
 
 		// microservice
 		subgraph clusterServices {
-			Repo [shape = box3d];
-			App [shape = box3d];
-			Runtime [shape = box3d];
-			Cluster [shape = box3d];
+			node [
+				shape=record,
+				fixedsize = true,
+				width = 2.6, height = 1.3,
+			];
+			Repo [shape = Mrecord];
+			App [shape = Mrecord];
+			Runtime [shape = Mrecord,
+				label="Runtime |{ plugin |{k8s|QingCloud|Other} }"
+			];
+			Cluster [shape = Mrecord];
 		}
 
 		// service database
 		subgraph clusterDB {
-			RepoDB [
-				shape = cylinder,
-				label = "" +
-					"id\l" +
-					"name\l" +
-					"description\l" +
-					"url\l" +
-					"created\l" +
-					"last_modified\l" +
-				""
+			node [
+				fixedsize = true,
+				width = 2.6, height = 1.3,
 			];
-			AppDB [shape = cylinder,
-		
-				label = "" +
-					"id\l" +
-					"name\l" +
-					"description\l" +
-					"repo_id\l" +
-					"created\l" +
-					"last_modified\l" +
-				""
-			];
-			RuntimeDB [shape = cylinder,
-			
-				label = "" +
-					"id\l" +
-					"name\l" +
-					"description\l" +
-					"url\l" +
-					"created\l" +
-					"last_modified\l" +
-				""
-			];
-			ClusterDB [shape = cylinder,
-			
-				label = "" +
-					"id\l" +
-					"name\l" +
-					"description\l" +
-					"app_id\l" +
-					"app_version\l" +
-					"status\l" +
-					"transition_status\l" +
-					"created\l" +
-					"last_modified\l" +
-				""
-			];
-
+			RepoDB [shape = cylinder];
+			AppDB [shape = cylinder];
+			RuntimeDB [shape = cylinder];
+			ClusterDB [shape = cylinder];
 		}
 
-		// Plugins
-		subgraph clusterPlugin {
-			RepoPlugin [shape = component];
-			RuntimePlugin [shape = component];
-		}
-
-		// Repo hub
-		subgraph clusterRepo {
-			K8sHub [label = "k8s hub", shape = folder];
-			DockerHub [label = "docker hub", shape = folder];
-			QingCloudHub [label = "qingcloud hub", shape = folder];
-		}
-
-		// Runtime platform
-		subgraph clusterRuntime {
-			K8sRuntime [shape = house];
-			QingCloudRuntime [shape = house];
-		}
 
 		// api gateway
 		ApiGateway -> Repo [
@@ -133,19 +89,6 @@ digraph G {
 			style = bold,
 		];
 
-
-		// Repo
-		Repo -> RepoPlugin;
-
-		RepoPlugin -> K8sHub;
-		RepoPlugin -> DockerHub;
-		RepoPlugin -> QingCloudHub;
-
-		// App
-		Runtime -> RuntimePlugin;
-		RuntimePlugin -> K8sRuntime;
-		RuntimePlugin -> QingCloudRuntime;
-
 		Repo -> RepoDB [label="SQL"];
 		App -> AppDB [label="SQL"];
 		Runtime -> RuntimeDB [label="SQL"];
@@ -153,3 +96,21 @@ digraph G {
 	}
 
 }
+
+/*
+
+		// Plugins
+		subgraph clusterPlugin {
+			RuntimePlugin [shape = component];
+		}
+
+		// Runtime platform
+		subgraph clusterRuntime {
+			K8sRuntime [shape = house];
+			QingCloudRuntime [shape = house];
+		}
+		// App
+		Runtime -> RuntimePlugin;
+		RuntimePlugin -> K8sRuntime;
+		RuntimePlugin -> QingCloudRuntime;
+*/
