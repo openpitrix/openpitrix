@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/golang/protobuf/proto"
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -49,7 +50,7 @@ func NewAppServer(cfg *config.Database) *AppServer {
 }
 
 func (p *AppServer) GetApp(ctx context.Context, args *pb.AppId) (reply *pb.App, err error) {
-	result, err := p.db.GetApp(ctx, args.Id)
+	result, err := p.db.GetApp(ctx, args.GetId())
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetApp: %v", err)
 	}
@@ -58,25 +59,18 @@ func (p *AppServer) GetApp(ctx context.Context, args *pb.AppId) (reply *pb.App, 
 }
 
 func (p *AppServer) GetAppList(ctx context.Context, args *pb.AppListRequest) (reply *pb.AppListResponse, err error) {
-	if args.PageNumber <= 0 {
-		args.PageNumber = 1
-	}
-	if args.PageSize <= 0 {
-		args.PageSize = 10
-	}
-
 	result, err := p.db.GetAppList(ctx)
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetAppList: %v", err)
 	}
 
-	items := To_proto_AppList(result, int(args.PageNumber), int(args.PageSize))
+	items := To_proto_AppList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
 	reply = &pb.AppListResponse{
 		Items:       items,
-		TotalItems:  int32(len(result)),
-		TotalPages:  int32((len(result) + int(args.PageSize) - 1) / int(args.PageSize)),
-		PageSize:    args.PageSize,
-		CurrentPage: int32(len(result)/int(args.PageSize)) + 1,
+		TotalItems:  proto.Int32(int32(len(result))),
+		TotalPages:  proto.Int32(int32((len(result) + int(args.GetPageSize()) - 1) / int(args.GetPageSize()))),
+		PageSize:    proto.Int32(args.GetPageSize()),
+		CurrentPage: proto.Int32(int32(len(result)/int(args.GetPageSize())) + 1),
 	}
 
 	return
@@ -103,7 +97,7 @@ func (p *AppServer) UpdateApp(ctx context.Context, args *pb.App) (reply *pbempty
 }
 
 func (p *AppServer) DeleteApp(ctx context.Context, args *pb.AppId) (reply *pbempty.Empty, err error) {
-	err = p.db.DeleteApp(ctx, args.Id)
+	err = p.db.DeleteApp(ctx, args.GetId())
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "DeleteApp: %v", err)
 	}

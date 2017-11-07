@@ -5,6 +5,7 @@
 package repo
 
 import (
+	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 
 	db "openpitrix.io/openpitrix/pkg/db/repo"
@@ -16,10 +17,10 @@ func To_database_Repo(dst *db.Repo, src *pb.Repo) *db.Repo {
 		dst = new(db.Repo)
 	}
 
-	dst.Id = src.Id
-	dst.Name = src.Name
-	dst.Description = src.Description
-	dst.Url = src.Url
+	dst.Id = src.GetId()
+	dst.Name = src.GetName()
+	dst.Description = src.GetDescription()
+	dst.Url = src.GetUrl()
 
 	dst.Created, _ = ptypes.Timestamp(src.Created)
 	dst.LastModified, _ = ptypes.Timestamp(src.LastModified)
@@ -32,10 +33,10 @@ func To_proto_Repo(dst *pb.Repo, src *db.Repo) *pb.Repo {
 		dst = new(pb.Repo)
 	}
 
-	dst.Id = src.Id
-	dst.Name = src.Name
-	dst.Description = src.Description
-	dst.Url = src.Url
+	dst.Id = proto.String(src.Id)
+	dst.Name = proto.String(src.Name)
+	dst.Description = proto.String(src.Description)
+	dst.Url = proto.String(src.Url)
 
 	dst.Created, _ = ptypes.TimestampProto(src.Created)
 	dst.LastModified, _ = ptypes.TimestampProto(src.LastModified)

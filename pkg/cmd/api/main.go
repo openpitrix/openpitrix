@@ -78,7 +78,7 @@ func run(cfg *config.Config) error {
 
 	ns := vfs.NameSpace{}
 	ns.Bind("/", mapfs.New(staticSwaggerUI.Files), "/", vfs.BindReplace)
-	ns.Bind("/", mapfs.New(staticSpec.Files), "/", vfs.BindAfter)
+	ns.Bind("/", mapfs.New(staticSpec.Files), "/", vfs.BindBefore)
 
 	mux.Handle("/", gwmux)
 	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui", http.FileServer(httpfs.New(ns))))

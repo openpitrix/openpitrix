@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/golang/protobuf/proto"
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -49,7 +50,7 @@ func NewAppRuntimeServer(cfg *config.Database) *AppRuntimeServer {
 }
 
 func (p *AppRuntimeServer) GetAppRuntime(ctx context.Context, args *pb.AppRuntimeId) (reply *pb.AppRuntime, err error) {
-	result, err := p.db.GetAppRuntime(ctx, args.Id)
+	result, err := p.db.GetAppRuntime(ctx, args.GetId())
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetAppRuntime: %v", err)
 	}
@@ -58,25 +59,18 @@ func (p *AppRuntimeServer) GetAppRuntime(ctx context.Context, args *pb.AppRuntim
 }
 
 func (p *AppRuntimeServer) GetAppRuntimeList(ctx context.Context, args *pb.AppRuntimeListRequest) (reply *pb.AppRuntimeListResponse, err error) {
-	if args.PageNumber <= 0 {
-		args.PageNumber = 1
-	}
-	if args.PageSize <= 0 {
-		args.PageSize = 10
-	}
-
 	result, err := p.db.GetAppRuntimeList(ctx)
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetAppRuntimeList: %v", err)
 	}
 
-	items := To_proto_AppRuntimeList(result, int(args.PageNumber), int(args.PageSize))
+	items := To_proto_AppRuntimeList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
 	reply = &pb.AppRuntimeListResponse{
 		Items:       items,
-		TotalItems:  int32(len(result)),
-		TotalPages:  int32((len(result) + int(args.PageSize) - 1) / int(args.PageSize)),
-		PageSize:    args.PageSize,
-		CurrentPage: int32(len(result)/int(args.PageSize)) + 1,
+		TotalItems:  proto.Int32(int32(len(result))),
+		TotalPages:  proto.Int32(int32((len(result) + int(args.GetPageSize()) - 1) / int(args.GetPageSize()))),
+		PageSize:    proto.Int32(args.GetPageSize()),
+		CurrentPage: proto.Int32(int32(len(result)/int(args.GetPageSize())) + 1),
 	}
 
 	return
@@ -103,7 +97,7 @@ func (p *AppRuntimeServer) UpdateAppRuntime(ctx context.Context, args *pb.AppRun
 }
 
 func (p *AppRuntimeServer) DeleteAppRuntime(ctx context.Context, args *pb.AppRuntimeId) (reply *pbempty.Empty, err error) {
-	err = p.db.DeleteAppRuntime(ctx, args.Id)
+	err = p.db.DeleteAppRuntime(ctx, args.GetId())
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "DeleteAppRuntime: %v", err)
 	}
