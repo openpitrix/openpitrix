@@ -44,7 +44,7 @@ func request_AppRuntimeService_GetAppRuntime_0(ctx context.Context, marshaler ru
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.Id, err = runtime.StringP(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
@@ -105,7 +105,7 @@ func request_AppRuntimeService_UpdateAppRuntime_0(ctx context.Context, marshaler
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.Id, err = runtime.StringP(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
@@ -132,7 +132,7 @@ func request_AppRuntimeService_DeleteAppRuntime_0(ctx context.Context, marshaler
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
 	}
 
-	protoReq.Id, err = runtime.String(val)
+	protoReq.Id, err = runtime.StringP(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)

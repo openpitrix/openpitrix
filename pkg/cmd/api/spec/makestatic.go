@@ -23,6 +23,7 @@ var files = []string{
 	"app_runtime.swagger.json",
 	"cluster.swagger.json",
 	"repo.swagger.json",
+	"index.html",
 }
 
 func main() {
