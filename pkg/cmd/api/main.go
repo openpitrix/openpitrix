@@ -18,6 +18,7 @@ import (
 	_ "google.golang.org/grpc/grpclog/glogger"
 
 	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/logger"
 	pb "openpitrix.io/openpitrix/pkg/service.pb"
 
 	staticSpec "openpitrix.io/openpitrix/pkg/cmd/api/spec"
@@ -26,6 +27,13 @@ import (
 
 func Main(cfg *config.Config) {
 	cfg.ActiveGlogFlags()
+
+	logger.Printf("Database %s://tcp(%s:%d)/%s\n", cfg.DB.Type, cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName)
+	logger.Printf("App service http://%s:%d\n", cfg.App.Host, cfg.App.Port)
+	logger.Printf("Runtime service http://%s:%d\n", cfg.Runtime.Host, cfg.Runtime.Port)
+	logger.Printf("Cluster service http://%s:%d\n", cfg.Cluster.Host, cfg.Cluster.Port)
+	logger.Printf("Repo service http://%s:%d\n", cfg.Repo.Host, cfg.Repo.Port)
+	logger.Printf("Api service start http://%s:%d\n", cfg.Api.Host, cfg.Api.Port)
 
 	if err := run(cfg); err != nil {
 		log.Fatal(err)

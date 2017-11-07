@@ -18,11 +18,15 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/config"
 	db "openpitrix.io/openpitrix/pkg/db/app"
+	"openpitrix.io/openpitrix/pkg/logger"
 	pb "openpitrix.io/openpitrix/pkg/service.pb"
 )
 
 func Main(cfg *config.Config) {
 	cfg.ActiveGlogFlags()
+
+	logger.Printf("Database %s://tcp(%s:%d)/%s\n", cfg.DB.Type, cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName)
+	logger.Printf("App service start http://%s:%d\n", cfg.App.Host, cfg.App.Port)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.App.Port))
 	if err != nil {
