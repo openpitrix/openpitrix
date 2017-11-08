@@ -24,54 +24,21 @@ type Config struct {
 }
 
 type OpenPitrix struct {
-	ApiService        ApiService
-	AppService        AppService
-	AppRuntimeService AppRuntimeService
-	ClusterService    ClusterService
-	RepoService       RepoService
+	Glog Glog
 
-	Database Database
+	DB      Database
+	Api     Service
+	App     Service
+	Cluster Service
+	Repo    Service
+	Runtime Service
+
 	Unittest Unittest
 }
 
-type ApiService struct {
+type Service struct {
 	Host string `default:"127.0.0.1"`
 	Port int    `default:"8080"`
-
-	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
-	LogLevel string `default:"warn"`
-}
-
-type RepoService struct {
-	Host string `default:"127.0.0.1"`
-	Port int    `default:"8081"`
-
-	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
-	LogLevel string `default:"warn"`
-}
-
-type AppService struct {
-	Host string `default:"127.0.0.1"`
-	Port int    `default:"8082"`
-
-	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
-	LogLevel string `default:"warn"`
-}
-
-type AppRuntimeService struct {
-	Host string `default:"127.0.0.1"`
-	Port int    `default:"8083"`
-
-	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
-	LogLevel string `default:"warn"`
-}
-
-type ClusterService struct {
-	Host string `default:"127.0.0.1"`
-	Port int    `default:"8084"`
-
-	// Valid log levels are "debug", "info", "warn", "error", and "fatal".
-	LogLevel string `default:"warn"`
 }
 
 type Database struct {
@@ -86,6 +53,19 @@ type Database struct {
 
 type Unittest struct {
 	EnableDbTest bool `default:"false"`
+}
+
+type Glog struct {
+	LogToStderr     bool   `default:"false"`
+	AlsoLogTostderr bool   `default:"false"`
+	StderrThreshold string `default:"ERROR"` // INFO, WARNING, ERROR, FATAL
+	LogDir          string `default:""`
+
+	LogBacktraceAt string `default:""`
+	V              int    `default:"0"`
+	VModule        string `default:""`
+
+	CopyStandardLogTo string `default:""`
 }
 
 func (p *Database) GetUrl() string {

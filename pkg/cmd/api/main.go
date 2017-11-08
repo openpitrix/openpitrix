@@ -15,8 +15,10 @@ import (
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
+	_ "google.golang.org/grpc/grpclog/glogger"
 
 	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/logger"
 	pb "openpitrix.io/openpitrix/pkg/service.pb"
 
 	staticSpec "openpitrix.io/openpitrix/pkg/cmd/api/spec"
@@ -24,6 +26,15 @@ import (
 )
 
 func Main(cfg *config.Config) {
+	cfg.ActiveGlogFlags()
+
+	logger.Printf("Database %s://tcp(%s:%d)/%s\n", cfg.DB.Type, cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName)
+	logger.Printf("App service http://%s:%d\n", cfg.App.Host, cfg.App.Port)
+	logger.Printf("Runtime service http://%s:%d\n", cfg.Runtime.Host, cfg.Runtime.Port)
+	logger.Printf("Cluster service http://%s:%d\n", cfg.Cluster.Host, cfg.Cluster.Port)
+	logger.Printf("Repo service http://%s:%d\n", cfg.Repo.Host, cfg.Repo.Port)
+	logger.Printf("Api service start http://%s:%d\n", cfg.Api.Host, cfg.Api.Port)
+
 	if err := run(cfg); err != nil {
 		log.Fatal(err)
 	}
@@ -40,7 +51,7 @@ func run(cfg *config.Config) error {
 
 	err = pb.RegisterAppServiceHandlerFromEndpoint(
 		ctx, gwmux,
-		fmt.Sprintf("%s:%d", cfg.AppService.Host, cfg.AppService.Port),
+		fmt.Sprintf("%s:%d", cfg.App.Host, cfg.App.Port),
 		opts,
 	)
 	if err != nil {
@@ -49,7 +60,7 @@ func run(cfg *config.Config) error {
 
 	err = pb.RegisterAppRuntimeServiceHandlerFromEndpoint(
 		ctx, gwmux,
-		fmt.Sprintf("%s:%d", cfg.AppRuntimeService.Host, cfg.AppRuntimeService.Port),
+		fmt.Sprintf("%s:%d", cfg.Runtime.Host, cfg.Runtime.Port),
 		opts,
 	)
 	if err != nil {
@@ -58,7 +69,7 @@ func run(cfg *config.Config) error {
 
 	err = pb.RegisterClusterServiceHandlerFromEndpoint(
 		ctx, gwmux,
-		fmt.Sprintf("%s:%d", cfg.ClusterService.Host, cfg.ClusterService.Port),
+		fmt.Sprintf("%s:%d", cfg.Cluster.Host, cfg.Cluster.Port),
 		opts,
 	)
 	if err != nil {
@@ -67,7 +78,7 @@ func run(cfg *config.Config) error {
 
 	err = pb.RegisterRepoServiceHandlerFromEndpoint(
 		ctx, gwmux,
-		fmt.Sprintf("%s:%d", cfg.RepoService.Host, cfg.RepoService.Port),
+		fmt.Sprintf("%s:%d", cfg.Repo.Host, cfg.Repo.Port),
 		opts,
 	)
 	if err != nil {
@@ -83,5 +94,5 @@ func run(cfg *config.Config) error {
 	mux.Handle("/", gwmux)
 	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui", http.FileServer(httpfs.New(ns))))
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.ApiService.Port), mux)
+	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Api.Port), mux)
 }
