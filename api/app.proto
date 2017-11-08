@@ -12,12 +12,18 @@ import "protoc-gen-swagger/options/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
+import "annotations.proto";
+
 // ----------------------------------------------------------------------------
 // base type
 // ----------------------------------------------------------------------------
 
 message App {
-	required string id = 1;
+	required string id = 1 [
+		(openapiv2_field_schema) = {
+			pattern: "app-[a-zA-Z0-9]{8}";
+		}
+	];
 	optional string name = 2;
 	optional string description = 3;	
 	optional string repo_id = 4;
@@ -30,7 +36,11 @@ message App {
 // ----------------------------------------------------------------------------
 
 message AppId {
-	required string id = 1;
+	required string id = 1 [
+		(openapiv2_field_schema) = {
+			pattern: "app-[a-zA-Z0-9]{8}";
+		}
+	];
 }
 
 message AppListRequest {
