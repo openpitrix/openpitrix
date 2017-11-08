@@ -12,12 +12,18 @@ import "protoc-gen-swagger/options/annotations.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
+import "annotations.proto";
+
 // ----------------------------------------------------------------------------
 // base type
 // ----------------------------------------------------------------------------
 
 message AppRuntime {
-	required string id = 1;
+	required string id = 1 [
+		(openapiv2_field_schema) = {
+			pattern: "rt-[a-zA-Z0-9]{9}";
+		}
+	];
 	optional string name = 2;
 	optional string description = 3;
 	optional string url = 4;
@@ -26,7 +32,11 @@ message AppRuntime {
 }
 
 message AppRuntimeLabel {
-	required string app_runtime_id = 1;
+	required string app_runtime_id = 1 [
+		(openapiv2_field_schema) = {
+			pattern: "rt-[a-zA-Z0-9]{9}";
+		}
+	];
 	required string label_key = 2;
 	required string label_value = 3;
 }
@@ -36,7 +46,11 @@ message AppRuntimeLabel {
 // ----------------------------------------------------------------------------
 
 message AppRuntimeId {
-	required string id = 1;
+	required string id = 1 [
+		(openapiv2_field_schema) = {
+			pattern: "rt-[a-zA-Z0-9]{9}";
+		}
+	];
 }
 
 message AppRuntimeListRequest {
