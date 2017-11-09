@@ -14,20 +14,27 @@ import (
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	_ "google.golang.org/grpc/grpclog/glogger"
 
 	"openpitrix.io/openpitrix/pkg/config"
 	db "openpitrix.io/openpitrix/pkg/db/cluster"
+	"openpitrix.io/openpitrix/pkg/logger"
 	pb "openpitrix.io/openpitrix/pkg/service.pb"
 )
 
 func Main(cfg *config.Config) {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.ClusterService.Port))
+	cfg.ActiveGlogFlags()
+
+	logger.Printf("Database %s://tcp(%s:%d)/%s\n", cfg.DB.Type, cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName)
+	logger.Printf("Cluster service start http://%s:%d\n", cfg.Cluster.Host, cfg.Cluster.Port)
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Cluster.Port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterClusterServiceServer(grpcServer, NewClusterServer(&cfg.Database))
+	pb.RegisterClusterServiceServer(grpcServer, NewClusterServer(&cfg.DB))
 
 	if err = grpcServer.Serve(lis); err != nil {
 		log.Fatal(err)

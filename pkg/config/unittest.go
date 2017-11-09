@@ -12,14 +12,14 @@ const UnittestConfigContent = `
 # OpenPitrix configuration
 # https://openpitrix.io/
 
-[ApiService]
+[Api]
 Host = "127.0.0.1"
 Port = 8080
 
 # Valid log levels are "debug", "info", "warn", "error", and "fatal".
 LogLevel = "warn"
 
-[Database]
+[DB]
 Type         = "mysql"
 Host         = "127.0.0.1"
 Port         = 3306

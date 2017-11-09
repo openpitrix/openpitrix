@@ -12,27 +12,19 @@ const DefaultConfigContent = `
 # OpenPitrix configuration
 # https://openpitrix.io/
 
-[ApiService]
-Host = "127.0.0.1"
-Port = 8080
+[Glog]
+LogToStderr       = false
+AlsoLogTostderr   = false
+StderrThreshold   = "ERROR" # INFO, WARNING, ERROR, FATAL
+LogDir            = ""
 
-[AppService]
-Host = "127.0.0.1"
-Port = 8081
+LogBacktraceAt    = ""
+V                 = 0
+VModule           = ""
 
-[AppRuntimeService]
-Host = "127.0.0.1"
-Port = 8082
+CopyStandardLogTo = "INFO"
 
-[ClusterService]
-Host = "127.0.0.1"
-Port = 8083
-
-[RepoService]
-Host = "127.0.0.1"
-Port = 8084
-
-[Database]
+[DB]
 Type         = "mysql"
 Host         = "127.0.0.1"
 Port         = 3306
@@ -40,5 +32,26 @@ Encoding     = "utf8"
 Engine       = "InnoDB"
 DbName       = "openpitrix"
 RootPassword = "password"
+
+[Api]
+Host = "127.0.0.1"
+Port = 8080
+
+[App]
+Host = "127.0.0.1"
+Port = 8081
+
+[Runtime]
+Host = "127.0.0.1"
+Port = 8082
+
+[Cluster]
+Host = "127.0.0.1"
+Port = 8083
+
+[Repo]
+Host = "127.0.0.1"
+Port = 8084
+
 
 `
