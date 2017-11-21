@@ -7,6 +7,7 @@ package main
 
 import (
 	"openpitrix.io/openpitrix/pkg/cmd/runtime"
+	_ "openpitrix.io/openpitrix/pkg/cmd/runtime/plugins/k8s"
 	"openpitrix.io/openpitrix/pkg/config"
 )
 
