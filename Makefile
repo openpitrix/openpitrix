@@ -56,7 +56,7 @@ update-vendor:
 .PHONY: tools
 tools:
 	docker pull golang:1.9-alpine
-	docker pull chai2010/grpc-tools
+	docker pull openpitrix/openpitrix:api-builder
 	docker pull mysql
 	@echo "ok"
 
