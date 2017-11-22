@@ -37,12 +37,28 @@ $ curl http://localhost:8080/v1/apps/app-12345678
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
 $ make build
-$ docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql
-$ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8080:8080 openpitrix api
-$ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8081:8081 openpitrix repo
-$ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8082:8082 openpitrix app
-$ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8083:8083 openpitrix runtime
-$ docker run --rm -it --link openpitrix-mysql:openpitrix-mysql -p 8084:8084 openpitrix cluster
+$ docker run --rm --name openpitrix-mysql \
+    -e MYSQL_ROOT_PASSWORD=password \
+    -e MYSQL_DATABASE=openpitrix \
+    -p 3306:3306 -d mysql
+$ docker run --rm --name openpitrix-app \
+    --link openpitrix-mysql:openpitrix-mysql \
+    -p 8081:8081 -d openpitrix app
+$ docker run --rm --name openpitrix-runtime \
+    --link openpitrix-mysql:openpitrix-mysql \
+    -p 8082:8082 -d openpitrix runtime
+$ docker run --rm --name openpitrix-cluster \
+    --link openpitrix-mysql:openpitrix-mysql \
+    -p 8083:8083 -d openpitrix cluster
+$ docker run --rm --name openpitrix-repo \
+    --link openpitrix-mysql:openpitrix-mysql \
+    -p 8084:8084 -d openpitrix repo
+$ docker run --rm --name openpitrix-api \
+    --link openpitrix-app:openpitrix-app \
+    --link openpitrix-runtime:openpitrix-runtime \
+    --link openpitrix-cluster:openpitrix-cluster \
+    --link openpitrix-repo:openpitrix-repo \
+    -p 8080:8080 -d openpitrix api
 ```
 
 Visit http://127.0.0.1:8080/swagger-ui in browser, the try in online.
