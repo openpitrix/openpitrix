@@ -12,7 +12,7 @@ FROM alpine
 
 COPY --from=builder /go/bin/api /usr/local/bin/
 COPY --from=builder /go/bin/app /usr/local/bin/
-COPY --from=builder /go/bin/cluster /usr/local/cluster/
+COPY --from=builder /go/bin/cluster /usr/local/bin/
 COPY --from=builder /go/bin/repo /usr/local/bin/
 COPY --from=builder /go/bin/runtime /usr/local/bin/
 
