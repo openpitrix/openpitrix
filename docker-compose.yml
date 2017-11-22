@@ -1,0 +1,51 @@
+# Copyright 2017 The OpenPitrix Authors. All rights reserved.
+# Use of this source code is governed by a Apache license
+# that can be found in the LICENSE file.
+
+version: '3'
+
+services:
+  openpitrix-mysql:
+    image: "mysql:5.6"
+    environment:
+      - MYSQL_DATABASE=openpitrix
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+     - "3306:3306"
+
+  openpitrix-app:
+    build: .
+    command: app
+    links:
+      - openpitrix-mysql:openpitrix-mysql
+
+  openpitrix-runtime:
+    build: .
+    command: runtime
+    links:
+      - openpitrix-mysql:openpitrix-mysql
+
+  openpitrix-cluster:
+    build: .
+    command: cluster
+    links:
+      - openpitrix-mysql:openpitrix-mysql
+
+  openpitrix-repo:
+    build: .
+    command: repo
+    links:
+      - openpitrix-mysql:openpitrix-mysql
+
+  openpitrix-api:
+    build: .
+    command: api
+    ports:
+     - "8080:8080"
+    links:
+      - openpitrix-app:openpitrix-app
+      - openpitrix-runtime:openpitrix-runtime
+      - openpitrix-cluster:openpitrix-cluster
+      - openpitrix-repo:openpitrix-repo
+
+

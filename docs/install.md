@@ -71,3 +71,16 @@ $ curl http://localhost:8080/v1/apps
 $ curl http://localhost:8080/v1/apps/app-12345678
 {"code":"500","message":"sql: no rows in result set"}
 ```
+
+##### You have a working [Docker-Compose environment].
+
+```
+$ git clone https://github.com/openpitrix/openpitrix
+$ cd openpitrix
+$ docker-compose up -d
+$ curl http://localhost:8080/v1/apps
+$ curl http://localhost:8080/v1/appruntimes
+$ curl http://localhost:8080/v1/clusters
+$ curl http://localhost:8080/v1/repos
+$ docker-compose down
+```
