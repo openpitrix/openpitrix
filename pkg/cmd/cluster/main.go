@@ -61,6 +61,9 @@ func (p *ClusterServer) GetCluster(ctx context.Context, args *pb.ClusterId) (rep
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetCluster: %v", err)
 	}
+	if result == nil {
+		return nil, grpc.Errorf(codes.NotFound, "Cluster Id %s not exist", args.GetId())
+	}
 	reply = To_proto_Cluster(nil, result)
 	return
 }

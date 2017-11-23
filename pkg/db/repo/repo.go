@@ -66,7 +66,7 @@ func (p *RepoDatabase) Close() error {
 
 func (p *RepoDatabase) GetRepo(ctx context.Context, id string) (*Repo, error) {
 	p.initTables()
-	if v, err := p.dbMap.Get(Repo{}, id); err == nil {
+	if v, err := p.dbMap.Get(Repo{}, id); err == nil && v != nil {
 		return v.(*Repo), nil
 	} else {
 		return nil, err
