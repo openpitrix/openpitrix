@@ -66,7 +66,7 @@ func (p *AppDatabase) Close() error {
 
 func (p *AppDatabase) GetApp(ctx context.Context, id string) (*App, error) {
 	p.initTables()
-	if v, err := p.dbMap.Get(App{}, id); err == nil {
+	if v, err := p.dbMap.Get(App{}, id); err == nil && v != nil {
 		return v.(*App), nil
 	} else {
 		return nil, err

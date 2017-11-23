@@ -69,7 +69,7 @@ func (p *ClusterDatabase) Close() error {
 
 func (p *ClusterDatabase) GetCluster(ctx context.Context, id string) (*Cluster, error) {
 	p.initTables()
-	if v, err := p.dbMap.Get(Cluster{}, id); err == nil {
+	if v, err := p.dbMap.Get(Cluster{}, id); err == nil && v != nil {
 		return v.(*Cluster), nil
 	} else {
 		return nil, err

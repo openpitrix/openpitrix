@@ -61,6 +61,9 @@ func (p *AppRuntimeServer) GetAppRuntime(ctx context.Context, args *pb.AppRuntim
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetAppRuntime: %v", err)
 	}
+	if result == nil {
+		return nil, grpc.Errorf(codes.NotFound, "App Runtime Id %s does not exist", args.GetId())
+	}
 	reply = To_proto_AppRuntime(nil, result)
 	return
 }

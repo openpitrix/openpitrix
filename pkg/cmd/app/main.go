@@ -61,6 +61,9 @@ func (p *AppServer) GetApp(ctx context.Context, args *pb.AppId) (reply *pb.App, 
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "GetApp: %v", err)
 	}
+	if result == nil {
+		return nil, grpc.Errorf(codes.NotFound, "App Id %s dose not exist", args.GetId())
+	}
 	reply = To_proto_App(nil, result)
 	return
 }
