@@ -14,7 +14,7 @@ If you want to build OpenPitrix right away there are three options:
 $ go get -d openpitrix.io/openpitrix
 $ cd $GOPATH/src/openpitrix.io/openpitrix
 $ GOBIN=`pwd`/bin go install ./cmd/...
-$ docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql
+$ docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql:5.6
 $ ./bin/api &
 $ ./bin/repo &
 $ ./bin/app &
@@ -31,7 +31,7 @@ $ make build
 $ docker run --rm --name openpitrix-mysql \
     -e MYSQL_ROOT_PASSWORD=password \
     -e MYSQL_DATABASE=openpitrix \
-    -p 3306:3306 -d mysql
+    -p 3306:3306 -d mysql:5.6
 $ docker run --rm --name openpitrix-app \
     --link openpitrix-mysql:openpitrix-mysql \
     -d openpitrix app
