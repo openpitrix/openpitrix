@@ -62,7 +62,7 @@ func (p *RepoServer) GetRepo(ctx context.Context, args *pb.RepoId) (reply *pb.Re
 		return nil, grpc.Errorf(codes.Internal, "GetRepo: %v", err)
 	}
 	if result == nil {
-		return nil, grpc.Errorf(codes.NotFound, "Repo Id %s not exist", args.GetId())
+		return nil, grpc.Errorf(codes.NotFound, "Repo Id %s does not exist", args.GetId())
 	}
 	reply = To_proto_Repo(nil, result)
 	return
