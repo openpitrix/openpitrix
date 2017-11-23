@@ -1,10 +1,12 @@
-## To start developing OpenPitrix
+# To start developing OpenPitrix
 
 The [community repository](https://github.com/openpitrix) hosts all information about
 building OpenPitrix from source, how to contribute code
 and documentation, who to contact about what, etc.
 
-If you want to build OpenPitrix right away there are two options:
+## Develop OpenPitrix
+
+If you want to build OpenPitrix right away there are three options:
 
 ##### You have a working [Go environment].
 
@@ -20,17 +22,6 @@ $ ./bin/runtime &
 $ ./bin/cluster &
 ```
 
-Visit http://127.0.0.1:8080/swagger-ui in browser, the try in online.
-
-Or test openpitrix/api service in command line:
-
-```
-$ curl http://localhost:8080/v1/apps
-{"items":null}
-$ curl http://localhost:8080/v1/apps/app-12345678
-{"code":"500","message":"sql: no rows in result set"}
-```
-
 ##### You have a working [Docker environment].
 
 ```
@@ -43,16 +34,16 @@ $ docker run --rm --name openpitrix-mysql \
     -p 3306:3306 -d mysql
 $ docker run --rm --name openpitrix-app \
     --link openpitrix-mysql:openpitrix-mysql \
-    -p 8081:8081 -d openpitrix app
+    -d openpitrix app
 $ docker run --rm --name openpitrix-runtime \
     --link openpitrix-mysql:openpitrix-mysql \
-    -p 8082:8082 -d openpitrix runtime
+    -d openpitrix runtime
 $ docker run --rm --name openpitrix-cluster \
     --link openpitrix-mysql:openpitrix-mysql \
-    -p 8083:8083 -d openpitrix cluster
+    -d openpitrix cluster
 $ docker run --rm --name openpitrix-repo \
     --link openpitrix-mysql:openpitrix-mysql \
-    -p 8084:8084 -d openpitrix repo
+    -d openpitrix repo
 $ docker run --rm --name openpitrix-api \
     --link openpitrix-app:openpitrix-app \
     --link openpitrix-runtime:openpitrix-runtime \
@@ -61,15 +52,9 @@ $ docker run --rm --name openpitrix-api \
     -p 8080:8080 -d openpitrix api
 ```
 
-Visit http://127.0.0.1:8080/swagger-ui in browser, the try in online.
-
-Or test openpitrix/api service in command line:
-
+Exit docker runtime environment
 ```
-$ curl http://localhost:8080/v1/apps
-{"items":null}
-$ curl http://localhost:8080/v1/apps/app-12345678
-{"code":"500","message":"sql: no rows in result set"}
+$ docker kill $(docker ps -f name=openpitrix -q -a)
 ```
 
 ##### You have a working [Docker-Compose environment].
@@ -78,9 +63,28 @@ $ curl http://localhost:8080/v1/apps/app-12345678
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
 $ docker-compose up -d
-$ curl http://localhost:8080/v1/apps
-$ curl http://localhost:8080/v1/appruntimes
-$ curl http://localhost:8080/v1/clusters
-$ curl http://localhost:8080/v1/repos
+```
+
+Exit docker runtime environment
+```
 $ docker-compose down
+```
+
+## Test OpenPitrix
+
+Visit http://127.0.0.1:8080/swagger-ui in browser, and try it online.
+
+Or test openpitrix/api service in command line:
+
+```
+$ curl http://localhost:8080/v1/apps
+{"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
+$ curl http://localhost:8080/v1/apps/app-12345678
+{"error":"App Id app-12345678 not exist","code":5}
+$ curl http://localhost:8080/v1/appruntimes
+{"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
+$ curl http://localhost:8080/v1/clusters
+{"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
+$ curl http://localhost:8080/v1/repos
+{"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
 ```
