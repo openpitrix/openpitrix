@@ -12,33 +12,43 @@ services:
       - MYSQL_ROOT_PASSWORD=password
     ports:
      - "3306:3306"
+    container_name: "openpitrix-mysql"
 
   openpitrix-app:
     build: .
+    image: "openpitrix"
     command: app
     links:
       - openpitrix-mysql:openpitrix-mysql
+    container_name: "openpitrix-app"
 
   openpitrix-runtime:
     build: .
+    image: "openpitrix"
     command: runtime
     links:
       - openpitrix-mysql:openpitrix-mysql
+    container_name: "openpitrix-runtime"
 
   openpitrix-cluster:
     build: .
+    image: "openpitrix"
     command: cluster
     links:
       - openpitrix-mysql:openpitrix-mysql
+    container_name: "openpitrix-cluster"
 
   openpitrix-repo:
     build: .
+    image: "openpitrix"
     command: repo
     links:
       - openpitrix-mysql:openpitrix-mysql
+    container_name: "openpitrix-repo"
 
   openpitrix-api:
     build: .
+    image: "openpitrix"
     command: api
     ports:
      - "8080:8080"
@@ -47,5 +57,6 @@ services:
       - openpitrix-runtime:openpitrix-runtime
       - openpitrix-cluster:openpitrix-cluster
       - openpitrix-repo:openpitrix-repo
+    container_name: "openpitrix-api"
 
 
