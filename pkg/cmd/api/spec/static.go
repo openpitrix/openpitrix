@@ -11,6 +11,7 @@ var Files = map[string]string{
   "swagger": "2.0",
   "info": {
     "title": "OpenPitrix App Service",
+    "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
     "version": "0.0.1",
     "contact": {
       "name": "OpenPireix Project",
@@ -226,6 +227,7 @@ var Files = map[string]string{
   "swagger": "2.0",
   "info": {
     "title": "OpenPitrix App Runtime Service",
+    "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
     "version": "0.0.1",
     "contact": {
       "name": "OpenPireix Project",
@@ -442,6 +444,7 @@ var Files = map[string]string{
   "swagger": "2.0",
   "info": {
     "title": "OpenPitrix Cluster Service",
+    "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
     "version": "0.0.1",
     "contact": {
       "name": "OpenPireix Project",
@@ -666,6 +669,7 @@ var Files = map[string]string{
   "swagger": "2.0",
   "info": {
     "title": "OpenPitrix Repo Service",
+    "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
     "version": "0.0.1",
     "contact": {
       "name": "OpenPireix Project",

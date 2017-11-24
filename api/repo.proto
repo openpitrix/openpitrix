@@ -4,6 +4,9 @@
 
 syntax = "proto2";
 
+// OpenPitrix Repo Service
+//
+// An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.
 package openpitrix;
 
 import "google/api/annotations.proto";
@@ -82,11 +85,6 @@ message RepoListResponse {
 
 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	info: {
-		title: "OpenPitrix Repo Service";
-		description: ""
-			"An open platform to package and deploy applications into multiple"
-			"environment such as QingCloud, AWS, Kubernetes etc."
-		;
 		version: "0.0.1";
 		contact: {
 			name: "OpenPireix Project";
