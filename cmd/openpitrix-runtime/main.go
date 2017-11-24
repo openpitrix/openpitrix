@@ -12,5 +12,9 @@ import (
 )
 
 func main() {
-	runtime.Main(config.MustLoadUserConfig())
+	if config.IsUserConfigExists() {
+		runtime.Main(config.MustLoadUserConfig())
+	} else {
+		runtime.Main(config.Default())
+	}
 }

@@ -11,5 +11,9 @@ import (
 )
 
 func main() {
-	cluster.Main(config.MustLoadUserConfig())
+	if config.IsUserConfigExists() {
+		cluster.Main(config.MustLoadUserConfig())
+	} else {
+		cluster.Main(config.Default())
+	}
 }

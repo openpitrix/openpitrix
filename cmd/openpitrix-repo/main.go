@@ -11,5 +11,9 @@ import (
 )
 
 func main() {
-	repo.Main(config.MustLoadUserConfig())
+	if config.IsUserConfigExists() {
+		repo.Main(config.MustLoadUserConfig())
+	} else {
+		repo.Main(config.Default())
+	}
 }
