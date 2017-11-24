@@ -35,7 +35,7 @@ func tAssertf(tb testing.TB, condition bool, format string, a ...interface{}) {
 func TestOpenPitrix(t *testing.T) {
 	conf0 := &Config{
 		OpenPitrix: OpenPitrix{
-			Api: Service{
+			Api: ApiService{
 				Host: "localhost",
 				Port: 8443,
 			},

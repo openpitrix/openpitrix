@@ -27,18 +27,38 @@ type OpenPitrix struct {
 	Glog Glog
 
 	DB      Database
-	Api     Service
-	App     Service
-	Cluster Service
-	Repo    Service
-	Runtime Service
+	Api     ApiService
+	App     AppService
+	Runtime RuntimeService
+	Cluster ClusterService
+	Repo    RepoService
 
 	Unittest Unittest
 }
 
-type Service struct {
+type ApiService struct {
 	Host string `default:"127.0.0.1"`
 	Port int    `default:"8080"`
+}
+
+type AppService struct {
+	Host string `default:"127.0.0.1"`
+	Port int    `default:"8081"`
+}
+
+type RuntimeService struct {
+	Host string `default:"127.0.0.1"`
+	Port int    `default:"8082"`
+}
+
+type ClusterService struct {
+	Host string `default:"127.0.0.1"`
+	Port int    `default:"8083"`
+}
+
+type RepoService struct {
+	Host string `default:"127.0.0.1"`
+	Port int    `default:"8084"`
 }
 
 type Database struct {
@@ -210,4 +230,21 @@ func GetHomePath() string {
 	}
 
 	return home
+}
+
+func IsUserConfigExists() bool {
+	cfgpath := DefaultConfigPath
+	if strings.HasPrefix(cfgpath, "~/") || strings.HasPrefix(cfgpath, `~\`) {
+		cfgpath = GetHomePath() + cfgpath[1:]
+	}
+
+	fi, err := os.Stat(cfgpath)
+	if err != nil {
+		return false
+	}
+	if fi.IsDir() {
+		return false
+	}
+
+	return true
 }

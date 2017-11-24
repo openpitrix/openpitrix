@@ -16,11 +16,11 @@ $ cd $GOPATH/src/openpitrix.io/openpitrix
 $ make generate
 $ GOBIN=`pwd`/bin go install ./cmd/...
 $ docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql
-$ ./bin/api &
-$ ./bin/repo &
-$ ./bin/app &
-$ ./bin/runtime &
-$ ./bin/cluster &
+$ ./bin/openpitrix-api &
+$ ./bin/openpitrix-repo &
+$ ./bin/openpitrix-app &
+$ ./bin/openpitrix-runtime &
+$ ./bin/openpitrix-cluster &
 ```
 
 ##### You have a working [Docker environment].
