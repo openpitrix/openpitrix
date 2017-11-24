@@ -23,6 +23,11 @@ $ ./bin/openpitrix-runtime &
 $ ./bin/openpitrix-cluster &
 ```
 
+Exit go runtime environment
+```
+$ ps aux | grep openpitrix- | grep -v grep | awk '{print $2}' | xargs kill -9
+```
+
 ##### You have a working [Docker environment].
 
 ```
