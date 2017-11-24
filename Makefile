@@ -5,16 +5,9 @@
 TARG.Name:=openpitrix
 TRAG.Gopkg:=openpitrix.io/openpitrix
 
-TARG.Services:=api
-TARG.Services+=app
-TARG.Services+=repo
-TARG.Services+=runtime
-TARG.Services+=cluster
-
 DOCKER_TAGS=latest
 
 GO:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) golang:1.9-alpine go
-GO_WITH_MYSQL:=docker run --rm -it -v `pwd`:/go -w /go/src/$(TRAG.Gopkg) --link openpitrix-mysql:mysql -p 9527:9527 golang:1.9-alpine go
 
 MYSQL_DATABASE:=$(TARG.Name)
 MYSQL_ROOT_PASSWORD:=password
@@ -23,6 +16,8 @@ MYSQL_ROOT_PASSWORD:=password
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
 	@echo "  all               to generate, test and release"
+	@echo "  start             to start service (port:8080)"
+	@echo "  stop              to stop service"
 	@echo "  tools             to install depends tools"
 	@echo "  init-vendor       to init vendor packages"
 	@echo "  update-vendor     to update vendor packages"
@@ -83,11 +78,14 @@ build: generate
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "ok"
 
-.PHONY: run
-run: mysql-start
-	@for service in $(TARG.Services) ; do \
-		docker run --rm -d $$service ; \
-	done
+.PHONY: start
+start:
+	docker-compose up -d
+	@echo "ok"
+
+.PHONY: stop
+stop:
+	docker-compose down
 	@echo "ok"
 
 .PHONY: release
@@ -99,6 +97,12 @@ test:
 	$(GO) fmt ./...
 	$(GO) vet ./...
 	$(GO) test ./...
+	docker-compose up -d
+	curl localhost:8080/v1/apps
+	curl localhost:8080/v1/appruntimes
+	curl localhost:8080/v1/clusters
+	curl localhost:8080/v1/repos
+	docker-compose down
 	@echo "ok"
 
 .PHONY: clean
