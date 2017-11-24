@@ -2,14 +2,18 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-// openpitrix cluster server
+// openpitrix repo server
 package main
 
 import (
-	"openpitrix.io/openpitrix/pkg/cmd/cluster"
+	"openpitrix.io/openpitrix/pkg/cmd/repo"
 	"openpitrix.io/openpitrix/pkg/config"
 )
 
 func main() {
-	cluster.Main(config.MustLoadUserConfig())
+	if config.IsUserConfigExists() {
+		repo.Main(config.MustLoadUserConfig())
+	} else {
+		repo.Main(config.Default())
+	}
 }

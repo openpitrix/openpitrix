@@ -20,5 +20,9 @@ import (
 )
 
 func main() {
-	api.Main(config.MustLoadUserConfig())
+	if config.IsUserConfigExists() {
+		api.Main(config.MustLoadUserConfig())
+	} else {
+		api.Main(config.Default())
+	}
 }

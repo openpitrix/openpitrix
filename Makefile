@@ -97,11 +97,15 @@ test:
 	$(GO) fmt ./...
 	$(GO) vet ./...
 	$(GO) test ./...
+
 	docker-compose up -d
+	sleep 10
+
 	curl localhost:8080/v1/apps
 	curl localhost:8080/v1/appruntimes
 	curl localhost:8080/v1/clusters
 	curl localhost:8080/v1/repos
+
 	docker-compose down
 	@echo "ok"
 
