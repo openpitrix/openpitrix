@@ -8,6 +8,12 @@ WORKDIR /go/src/openpitrix.io/openpitrix/
 COPY . .
 RUN go install ./cmd/...
 
+RUN mv /go/bin/openpitrix-api     /go/bin/api
+RUN mv /go/bin/openpitrix-app     /go/bin/app
+RUN mv /go/bin/openpitrix-cluster /go/bin/cluster
+RUN mv /go/bin/openpitrix-repo    /go/bin/repo
+RUN mv /go/bin/openpitrix-runtime /go/bin/runtime
+
 FROM alpine
 
 COPY --from=builder /go/bin/api /usr/local/bin/

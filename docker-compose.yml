@@ -11,7 +11,7 @@ services:
       - MYSQL_DATABASE=openpitrix
       - MYSQL_ROOT_PASSWORD=password
     ports:
-     - "3306:3306"
+     - "13306:3306" # only for debug
     container_name: "openpitrix-mysql"
 
   openpitrix-app:
