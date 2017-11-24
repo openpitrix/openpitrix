@@ -13,6 +13,7 @@ If you want to build OpenPitrix right away there are three options:
 ```
 $ go get -d openpitrix.io/openpitrix
 $ cd $GOPATH/src/openpitrix.io/openpitrix
+$ make generate
 $ GOBIN=`pwd`/bin go install ./cmd/...
 $ docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql:5.6
 $ ./bin/openpitrix-api &
@@ -20,6 +21,11 @@ $ ./bin/openpitrix-repo &
 $ ./bin/openpitrix-app &
 $ ./bin/openpitrix-runtime &
 $ ./bin/openpitrix-cluster &
+```
+
+Exit go runtime environment
+```
+$ ps aux | grep openpitrix- | grep -v grep | awk '{print $2}' | xargs kill -9
 ```
 
 ##### You have a working [Docker environment].
@@ -62,6 +68,7 @@ $ docker kill $(docker ps -f name=openpitrix -q -a)
 ```
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
+$ make build
 $ docker-compose up -d
 ```
 
