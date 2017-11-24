@@ -4,6 +4,9 @@
 
 syntax = "proto2";
 
+// OpenPitrix App Runtime Service
+//
+// An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.
 package openpitrix;
 
 import "google/api/annotations.proto";
@@ -72,11 +75,6 @@ message AppRuntimeListResponse {
 
 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	info: {
-		title: "OpenPitrix App Runtime Service";
-		description: ""
-			"An open platform to package and deploy applications into multiple"
-			"environment such as QingCloud, AWS, Kubernetes etc."
-		;
 		version: "0.0.1";
 		contact: {
 			name: "OpenPireix Project";
