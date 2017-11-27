@@ -20,6 +20,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/logger"
 	pb "openpitrix.io/openpitrix/pkg/service.pb"
+	"openpitrix.io/openpitrix/pkg/version"
 
 	staticSpec "openpitrix.io/openpitrix/pkg/cmd/api/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/cmd/api/swagger-ui"
@@ -27,6 +28,8 @@ import (
 
 func Main(cfg *config.Config) {
 	cfg.ActiveGlogFlags()
+
+	logger.Printf("openpitrix %s\n", version.ShortVersion)
 
 	logger.Printf("Database %s://tcp(%s:%d)/%s\n", cfg.DB.Type, cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName)
 	logger.Printf("App service http://%s:%d\n", cfg.App.Host, cfg.App.Port)

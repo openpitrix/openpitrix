@@ -15,11 +15,26 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"openpitrix.io/openpitrix/pkg/cmd/api"
 	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/version"
 )
 
 func main() {
+	if len(os.Args) == 2 {
+		if os.Args[1] == "-v" {
+			fmt.Printf("openpitrix-api %s\n", version.ShortVersion)
+			os.Exit(0)
+		}
+		if os.Args[1] == "-version" {
+			fmt.Printf("openpitrix-api %s, build date %s\n", version.GitSha1Version, version.BuildDate)
+			os.Exit(0)
+		}
+	}
+
 	if config.IsUserConfigExists() {
 		api.Main(config.MustLoadUserConfig())
 	} else {

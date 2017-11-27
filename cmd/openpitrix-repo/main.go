@@ -6,11 +6,26 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"openpitrix.io/openpitrix/pkg/cmd/repo"
 	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/version"
 )
 
 func main() {
+	if len(os.Args) == 2 {
+		if os.Args[1] == "-v" {
+			fmt.Printf("openpitrix-repo %s\n", version.ShortVersion)
+			os.Exit(0)
+		}
+		if os.Args[1] == "-version" {
+			fmt.Printf("openpitrix-repo %s, build date %s\n", version.GitSha1Version, version.BuildDate)
+			os.Exit(0)
+		}
+	}
+
 	if config.IsUserConfigExists() {
 		repo.Main(config.MustLoadUserConfig())
 	} else {

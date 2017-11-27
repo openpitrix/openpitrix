@@ -17,13 +17,16 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/koding/multiconfig"
+	"github.com/pkg/errors"
+
+	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 type Config struct {
-	OpenPitrix
+	OpenPitrix_Config
 }
 
-type OpenPitrix struct {
+type OpenPitrix_Config struct {
 	Glog Glog
 
 	DB      Database
@@ -95,14 +98,18 @@ func (p *Database) GetUrl() string {
 func Default() *Config {
 	p, err := Parse(DefaultConfigContent)
 	if err != nil {
-		panic(err)
+		if err == flag.ErrHelp {
+			fmt.Println("See https://openpitrix.io")
+			os.Exit(0)
+		}
+		logger.Fatalf("%+v", err)
 	}
 
 	return p
 }
 
 func Load(path string) (*Config, error) {
-	p := new(OpenPitrix)
+	p := new(OpenPitrix_Config)
 
 	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
 		path = GetHomePath() + path[1:]
@@ -113,6 +120,7 @@ func Load(path string) (*Config, error) {
 			fmt.Println("See https://openpitrix.io")
 			os.Exit(0)
 		}
+		err = errors.WithStack(err)
 		return nil, err
 	}
 
@@ -126,7 +134,7 @@ func MustLoad(path string) *Config {
 			fmt.Println("See https://openpitrix.io")
 			os.Exit(0)
 		}
-		panic(err)
+		logger.Fatalf("%+v", err)
 	}
 	return p
 }
@@ -150,15 +158,21 @@ func MustLoadUnittestConfig() *Config {
 		path = GetHomePath() + path[1:]
 	}
 	if _, err := os.Stat(path); err != nil {
-		os.MkdirAll(pathpkg.Dir(path), 0755)
-		ioutil.WriteFile(path, []byte(UnittestConfigContent), 0644)
+		if err := os.MkdirAll(pathpkg.Dir(path), 0755); err != nil {
+			err = errors.WithStack(err)
+			logger.Warningf("%+v", err)
+		}
+		if err := ioutil.WriteFile(path, []byte(UnittestConfigContent), 0644); err != nil {
+			err = errors.WithStack(err)
+			logger.Warningf("%+v", err)
+		}
 	}
 
 	return MustLoad(path)
 }
 
 func Parse(content string) (*Config, error) {
-	p := new(OpenPitrix)
+	p := new(OpenPitrix_Config)
 
 	d := &multiconfig.DefaultLoader{}
 	d.Loader = multiconfig.MultiLoader(
@@ -170,6 +184,11 @@ func Parse(content string) (*Config, error) {
 	d.Validator = multiconfig.MultiValidator(&multiconfig.RequiredValidator{})
 
 	if err := d.Load(p); err != nil {
+		if err == flag.ErrHelp {
+			fmt.Println("See https://openpitrix.io")
+			os.Exit(0)
+		}
+		err = errors.WithStack(err)
 		return nil, err
 	}
 
@@ -179,12 +198,14 @@ func Parse(content string) (*Config, error) {
 func (p *Config) Clone() *Config {
 	var buf bytes.Buffer
 	if err := gob.NewEncoder(&buf).Encode(p); err != nil {
-		panic(err)
+		err = errors.WithStack(err)
+		logger.Fatalf("%+v", err)
 	}
 
 	var q Config
 	if err := gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(&q); err != nil {
-		panic(err)
+		err = errors.WithStack(err)
+		logger.Fatalf("%+v", err)
 	}
 
 	return &q
@@ -198,11 +219,13 @@ func (p *Config) Save(path string) error {
 	buf := new(bytes.Buffer)
 	err := toml.NewEncoder(buf).Encode(p)
 	if err != nil {
+		err = errors.WithStack(err)
 		return err
 	}
 
 	err = ioutil.WriteFile(path, buf.Bytes(), 0644)
 	if err != nil {
+		err = errors.WithStack(err)
 		return err
 	}
 
