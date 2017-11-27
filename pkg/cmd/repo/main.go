@@ -20,10 +20,13 @@ import (
 	db "openpitrix.io/openpitrix/pkg/db/repo"
 	"openpitrix.io/openpitrix/pkg/logger"
 	pb "openpitrix.io/openpitrix/pkg/service.pb"
+	"openpitrix.io/openpitrix/pkg/version"
 )
 
 func Main(cfg *config.Config) {
 	cfg.ActiveGlogFlags()
+
+	logger.Printf("openpitrix %s\n", version.ShortVersion)
 
 	logger.Printf("Database %s://tcp(%s:%d)/%s\n", cfg.DB.Type, cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName)
 	logger.Printf("Repo service start http://%s:%d\n", cfg.Repo.Host, cfg.Repo.Port)
