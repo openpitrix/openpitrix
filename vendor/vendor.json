@@ -27,6 +27,18 @@
 			"revisionTime": "2017-09-21T06:28:06Z"
 		},
 		{
+			"checksumSHA1": "wn2shNJMwRZpvuvkf1s7h0wvqHI=",
+			"path": "github.com/gogo/protobuf/proto",
+			"revision": "971cbfd2e72b513a28c74af7462aee0800248d69",
+			"revisionTime": "2017-11-23T12:57:29Z"
+		},
+		{
+			"checksumSHA1": "F+PKpdY6PyIrxQ8b20TzsM+1JuI=",
+			"path": "github.com/gogo/protobuf/protoc-gen-gogo/descriptor",
+			"revision": "971cbfd2e72b513a28c74af7462aee0800248d69",
+			"revisionTime": "2017-11-23T12:57:29Z"
+		},
+		{
 			"checksumSHA1": "HmbftipkadrLlCfzzVQ+iFHbl6g=",
 			"path": "github.com/golang/glog",
 			"revision": "23def4e6c14b4da8ac2ed8007337bc5eb5007998",
@@ -87,6 +99,12 @@
 			"revisionTime": "2017-07-26T21:28:29Z"
 		},
 		{
+			"checksumSHA1": "SMjGT5somgZfZwJXSNv0qUREC7w=",
+			"path": "github.com/grpc-ecosystem/go-grpc-middleware/validator",
+			"revision": "0e9bafcdad94657d492d0395b9347d4af3dbdca8",
+			"revisionTime": "2017-11-23T12:37:36Z"
+		},
+		{
 			"checksumSHA1": "X3dVTe3pvf7ZQKzhUXXGUrJv4Ao=",
 			"path": "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options",
 			"revision": "8cc3a55af3bcf171a1c23a90c4df9cf591706104",
@@ -115,6 +133,12 @@
 			"path": "github.com/koding/multiconfig",
 			"revision": "7ab5923ac43fc173d0c21e5e91da559469fa04f8",
 			"revisionTime": "2017-07-01T12:15:58Z"
+		},
+		{
+			"checksumSHA1": "7nlxwSqzs0I+qetoc3LRfpNLe4g=",
+			"path": "github.com/mwitkow/go-proto-validators",
+			"revision": "a55ca57f374a8846924b030f534d8b8211508cf0",
+			"revisionTime": "2017-02-20T21:23:02Z"
 		},
 		{
 			"checksumSHA1": "dr5+PfIRzXeN+l1VG+s0lea9qz8=",
