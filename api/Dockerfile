@@ -11,6 +11,7 @@ RUN cd /tmp;wget https://github.com/google/protobuf/releases/download/v3.5.0/pro
 RUN go get github.com/golang/protobuf/protoc-gen-go
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+RUN go get github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
 
 FROM golang:1.9.2-alpine3.6
 RUN apk add --no-cache protobuf
