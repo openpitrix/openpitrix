@@ -37,13 +37,28 @@ func Warning(args ...interface{}) {
 	logger.Warning(args...)
 }
 
+// Warn same as Warning, logs to the WARNING log.
+func Warn(args ...interface{}) {
+	logger.Warning(args...)
+}
+
 // Warningf logs to the WARNING log. Arguments are handled in the manner of fmt.Printf.
 func Warningf(format string, args ...interface{}) {
 	logger.Warningf(format, args...)
 }
 
+// Warnf same as Warningf, logs to the WARNING log. Arguments are handled in the manner of fmt.Printf.
+func Warnf(format string, args ...interface{}) {
+	logger.Warningf(format, args...)
+}
+
 // Warningln logs to the WARNING log. Arguments are handled in the manner of fmt.Println.
 func Warningln(args ...interface{}) {
+	logger.Warningln(args...)
+}
+
+// Warnln same as Warningln, logs to the WARNING log. Arguments are handled in the manner of fmt.Println.
+func Warnln(args ...interface{}) {
 	logger.Warningln(args...)
 }
 
