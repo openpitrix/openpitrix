@@ -4,5 +4,3 @@
 
 // Package openpitrix provides the best Paas and Iaas platform.
 package openpitrix
-
-var VERSION = "dev"
