@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/httpfs"
@@ -39,7 +40,7 @@ func Main(cfg *config.Config) {
 	logger.Printf("Api service start http://%s:%d\n", cfg.Api.Host, cfg.Api.Port)
 
 	if err := run(cfg); err != nil {
-		log.Fatal(err)
+		log.Fatalf("%+v", err)
 	}
 }
 
@@ -58,6 +59,7 @@ func run(cfg *config.Config) error {
 		opts,
 	)
 	if err != nil {
+		err = errors.WithStack(err)
 		return err
 	}
 
@@ -67,6 +69,7 @@ func run(cfg *config.Config) error {
 		opts,
 	)
 	if err != nil {
+		err = errors.WithStack(err)
 		return err
 	}
 
@@ -76,6 +79,7 @@ func run(cfg *config.Config) error {
 		opts,
 	)
 	if err != nil {
+		err = errors.WithStack(err)
 		return err
 	}
 
@@ -85,6 +89,7 @@ func run(cfg *config.Config) error {
 		opts,
 	)
 	if err != nil {
+		err = errors.WithStack(err)
 		return err
 	}
 
