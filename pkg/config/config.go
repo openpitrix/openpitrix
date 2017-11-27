@@ -20,10 +20,10 @@ import (
 )
 
 type Config struct {
-	OpenPitrix
+	OpenPitrix_Config
 }
 
-type OpenPitrix struct {
+type OpenPitrix_Config struct {
 	Glog Glog
 
 	DB      Database
@@ -95,6 +95,10 @@ func (p *Database) GetUrl() string {
 func Default() *Config {
 	p, err := Parse(DefaultConfigContent)
 	if err != nil {
+		if err == flag.ErrHelp {
+			fmt.Println("See https://openpitrix.io")
+			os.Exit(0)
+		}
 		panic(err)
 	}
 
@@ -102,7 +106,7 @@ func Default() *Config {
 }
 
 func Load(path string) (*Config, error) {
-	p := new(OpenPitrix)
+	p := new(OpenPitrix_Config)
 
 	if strings.HasPrefix(path, "~/") || strings.HasPrefix(path, `~\`) {
 		path = GetHomePath() + path[1:]
@@ -158,7 +162,7 @@ func MustLoadUnittestConfig() *Config {
 }
 
 func Parse(content string) (*Config, error) {
-	p := new(OpenPitrix)
+	p := new(OpenPitrix_Config)
 
 	d := &multiconfig.DefaultLoader{}
 	d.Loader = multiconfig.MultiLoader(
@@ -170,6 +174,10 @@ func Parse(content string) (*Config, error) {
 	d.Validator = multiconfig.MultiValidator(&multiconfig.RequiredValidator{})
 
 	if err := d.Load(p); err != nil {
+		if err == flag.ErrHelp {
+			fmt.Println("See https://openpitrix.io")
+			os.Exit(0)
+		}
 		return nil, err
 	}
 
