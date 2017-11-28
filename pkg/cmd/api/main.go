@@ -5,13 +5,16 @@
 package api
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"net/http"
+	"time"
 
+	"github.com/ekyoung/gin-nice-recovery"
+	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/pkg/errors"
-	"golang.org/x/net/context"
+	"github.com/szuecs/gin-glog"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/mapfs"
@@ -40,15 +43,43 @@ func Main(cfg *config.Config) {
 	logger.Printf("Api service start http://%s:%d\n", cfg.Api.Host, cfg.Api.Port)
 
 	if err := run(cfg); err != nil {
-		log.Fatalf("%+v", err)
+		logger.Fatalf("%+v", err)
 	}
 }
 
 func run(cfg *config.Config) error {
+	gin.SetMode(gin.ReleaseMode)
+
+	r := gin.New()
+	r.Use(ginglog.Logger(3 * time.Second))
+	r.Use(nice.Recovery(func(c *gin.Context, err interface{}) {
+		c.JSON(500, gin.H{
+			"title": "Error",
+			"err":   err,
+		})
+	}))
+
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
+	allHandler := gin.WrapH(mainHandler(cfg, ctx))
+	r.Any("/v1/*filepath", allHandler)
+	r.Any("/swagger-ui/*filepath", allHandler)
+
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	r.GET("/panic", func(c *gin.Context) {
+		panic("this is a panic")
+	})
+
+	return r.Run(fmt.Sprintf(":%d", cfg.Api.Port))
+}
+
+func mainHandler(cfg *config.Config, ctx context.Context) http.Handler {
 	var gwmux = runtime.NewServeMux()
 	var opts = []grpc.DialOption{grpc.WithInsecure()}
 	var err error
@@ -60,7 +91,7 @@ func run(cfg *config.Config) error {
 	)
 	if err != nil {
 		err = errors.WithStack(err)
-		return err
+		logger.Fatalf("%+v", err)
 	}
 
 	err = pb.RegisterAppRuntimeServiceHandlerFromEndpoint(
@@ -70,7 +101,7 @@ func run(cfg *config.Config) error {
 	)
 	if err != nil {
 		err = errors.WithStack(err)
-		return err
+		logger.Fatalf("%+v", err)
 	}
 
 	err = pb.RegisterClusterServiceHandlerFromEndpoint(
@@ -80,7 +111,7 @@ func run(cfg *config.Config) error {
 	)
 	if err != nil {
 		err = errors.WithStack(err)
-		return err
+		logger.Fatalf("%+v", err)
 	}
 
 	err = pb.RegisterRepoServiceHandlerFromEndpoint(
@@ -90,7 +121,7 @@ func run(cfg *config.Config) error {
 	)
 	if err != nil {
 		err = errors.WithStack(err)
-		return err
+		logger.Fatalf("%+v", err)
 	}
 
 	mux := http.NewServeMux()
@@ -102,5 +133,5 @@ func run(cfg *config.Config) error {
 	mux.Handle("/", gwmux)
 	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui", http.FileServer(httpfs.New(ns))))
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", cfg.Api.Port), mux)
+	return mux
 }
