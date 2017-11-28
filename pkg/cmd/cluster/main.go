@@ -10,6 +10,8 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	pbempty "github.com/golang/protobuf/ptypes/empty"
+	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/pkg/errors"
 	context "golang.org/x/net/context"
@@ -38,8 +40,23 @@ func Main(cfg *config.Config) {
 		logger.Fatalf("failed to listen: %+v", err)
 	}
 
-	var opts = []grpc.ServerOption{grpc.UnaryInterceptor(grpc_validator.UnaryServerInterceptor())}
-	grpcServer := grpc.NewServer(opts...)
+	grpcServer := grpc.NewServer(
+		grpc_middleware.WithUnaryServerChain(
+			grpc_validator.UnaryServerInterceptor(),
+			grpc_recovery.UnaryServerInterceptor(
+				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
+					return grpc.Errorf(codes.Internal, "%+v", p)
+				}),
+			),
+		),
+		grpc_middleware.WithStreamServerChain(
+			grpc_recovery.StreamServerInterceptor(
+				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
+					return grpc.Errorf(codes.Internal, "%+v", p)
+				}),
+			),
+		),
+	)
 	pb.RegisterClusterServiceServer(grpcServer, NewClusterServer(&cfg.DB))
 
 	if err = grpcServer.Serve(lis); err != nil {
@@ -64,6 +81,10 @@ func NewClusterServer(cfg *config.Database) *ClusterServer {
 }
 
 func (p *ClusterServer) GetCluster(ctx context.Context, args *pb.ClusterId) (reply *pb.Cluster, err error) {
+	if id := args.GetId(); id == "cl-panic000" {
+		panic(id) // only for test
+	}
+
 	result, err := p.db.GetCluster(ctx, args.GetId())
 	if err != nil {
 		err = errors.WithStack(err)
