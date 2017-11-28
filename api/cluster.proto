@@ -14,6 +14,7 @@ import "protoc-gen-swagger/options/annotations.proto";
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
+import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "annotations.proto";
 
@@ -22,11 +23,7 @@ import "annotations.proto";
 // ----------------------------------------------------------------------------
 
 message Cluster {
-	required string id = 1 [
-		(openapiv2_field_schema) = {
-			pattern: "cl-[a-zA-Z0-9]{9}";
-		}
-	];
+	required string id = 1 [(validator.field) = {regex: "^cl-[a-zA-Z0-9]{8}$"}];
 	optional string name = 2;
 	optional string description = 3;
 	optional string app_id = 4;
@@ -38,11 +35,7 @@ message Cluster {
 }
 
 message ClusterNode {
-	required string id = 1 [
-		(openapiv2_field_schema) = {
-			pattern: "cln-[a-zA-Z0-9]{8}";
-		}
-	];
+	required string id = 1 [(validator.field) = {regex: "^cln-[a-zA-Z0-9]{8}$"}];
 	required string instance_id = 2;
 	optional string name = 3;
 	optional string description = 4;
@@ -55,11 +48,7 @@ message ClusterNode {
 // ----------------------------------------------------------------------------
 
 message ClusterId {
-	required string id = 1 [
-		(openapiv2_field_schema) = {
-			pattern: "cl-[a-zA-Z0-9]{9}";
-		}
-	];
+	required string id = 1 [(validator.field) = {regex: "^cl-[a-zA-Z0-9]{8}$"}];
 }
 
 message ClusterListRequest {

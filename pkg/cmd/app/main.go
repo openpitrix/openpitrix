@@ -15,6 +15,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/grpclog/glogger"
+	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
 
 	"openpitrix.io/openpitrix/pkg/config"
 	db "openpitrix.io/openpitrix/pkg/db/app"
@@ -36,7 +37,8 @@ func Main(cfg *config.Config) {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	var opts = []grpc.ServerOption{grpc.UnaryInterceptor(grpc_validator.UnaryServerInterceptor())}
+	grpcServer := grpc.NewServer(opts...)
 	pb.RegisterAppServiceServer(grpcServer, NewAppServer(&cfg.DB))
 
 	if err = grpcServer.Serve(lis); err != nil {

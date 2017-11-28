@@ -27,6 +27,18 @@
 			"revisionTime": "2017-09-21T06:28:06Z"
 		},
 		{
+			"checksumSHA1": "wn2shNJMwRZpvuvkf1s7h0wvqHI=",
+			"path": "github.com/gogo/protobuf/proto",
+			"revision": "971cbfd2e72b513a28c74af7462aee0800248d69",
+			"revisionTime": "2017-11-23T12:57:29Z"
+		},
+		{
+			"checksumSHA1": "F+PKpdY6PyIrxQ8b20TzsM+1JuI=",
+			"path": "github.com/gogo/protobuf/protoc-gen-gogo/descriptor",
+			"revision": "971cbfd2e72b513a28c74af7462aee0800248d69",
+			"revisionTime": "2017-11-23T12:57:29Z"
+		},
+		{
 			"checksumSHA1": "HmbftipkadrLlCfzzVQ+iFHbl6g=",
 			"path": "github.com/golang/glog",
 			"revision": "23def4e6c14b4da8ac2ed8007337bc5eb5007998",
@@ -85,6 +97,12 @@
 			"path": "github.com/golang/protobuf/ptypes/timestamp",
 			"revision": "748d386b5c1ea99658fd69fe9f03991ce86a90c1",
 			"revisionTime": "2017-07-26T21:28:29Z"
+		},
+		{
+			"checksumSHA1": "SMjGT5somgZfZwJXSNv0qUREC7w=",
+			"path": "github.com/grpc-ecosystem/go-grpc-middleware/validator",
+			"revision": "0e9bafcdad94657d492d0395b9347d4af3dbdca8",
+			"revisionTime": "2017-11-23T12:37:36Z"
 		},
 		{
 			"checksumSHA1": "X3dVTe3pvf7ZQKzhUXXGUrJv4Ao=",
