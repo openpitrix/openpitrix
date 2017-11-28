@@ -461,6 +461,140 @@ var Files = map[string]string{
     "application/json"
   ],
   "paths": {
+    "/v1/cluster_nodes": {
+      "get": {
+        "operationId": "GetClusterNodeList",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixClusterNodeListResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "operationId": "CreateClusterNodes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixClusterNodes"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/v1/cluster_nodes/{ids}": {
+      "get": {
+        "operationId": "GetClusterNodes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixClusterNodes"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteClusterNodes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/v1/cluster_nodes/{id}": {
+      "post": {
+        "operationId": "UpdateClusterNode",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/protobufEmpty"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixClusterNode"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
     "/v1/clusters": {
       "get": {
         "operationId": "GetClusterList",
@@ -517,20 +651,20 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/clusters/{id}": {
+    "/v1/clusters/{ids}": {
       "get": {
-        "operationId": "GetCluster",
+        "operationId": "GetClusters",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixCluster"
+              "$ref": "#/definitions/openpitrixClusters"
             }
           }
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "ids",
             "in": "path",
             "required": true,
             "type": "string"
@@ -541,7 +675,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "operationId": "DeleteCluster",
+        "operationId": "DeleteClusters",
         "responses": {
           "200": {
             "description": "",
@@ -552,7 +686,7 @@ var Files = map[string]string{
         },
         "parameters": [
           {
-            "name": "id",
+            "name": "ids",
             "in": "path",
             "required": true,
             "type": "string"
@@ -561,7 +695,9 @@ var Files = map[string]string{
         "tags": [
           "ClusterService"
         ]
-      },
+      }
+    },
+    "/v1/clusters/{id}": {
       "post": {
         "operationId": "UpdateCluster",
         "responses": {
@@ -648,6 +784,92 @@ var Files = map[string]string{
           "type": "integer",
           "format": "int32"
         },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixCluster"
+          }
+        }
+      }
+    },
+    "openpitrixClusterNode": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "instance_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "cluster_id": {
+          "type": "string"
+        },
+        "private_ip": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transition_status": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixClusterNodeListResponse": {
+      "type": "object",
+      "properties": {
+        "total_items": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "total_pages": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "current_page": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixClusterNode"
+          }
+        }
+      }
+    },
+    "openpitrixClusterNodes": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixClusterNode"
+          }
+        }
+      }
+    },
+    "openpitrixClusters": {
+      "type": "object",
+      "properties": {
         "items": {
           "type": "array",
           "items": {

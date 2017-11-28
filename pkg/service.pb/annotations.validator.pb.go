@@ -22,10 +22,17 @@ It has these top-level messages:
 	AppRuntimeListRequest
 	AppRuntimeListResponse
 	Cluster
+	Clusters
 	ClusterNode
+	ClusterNodes
 	ClusterId
+	ClusterIds
 	ClusterListRequest
 	ClusterListResponse
+	ClusterNodeId
+	ClusterNodeIds
+	ClusterNodeListRequest
+	ClusterNodeListResponse
 	Repo
 	RepoLabel
 	RepoSelector
