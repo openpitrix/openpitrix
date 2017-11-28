@@ -99,8 +99,11 @@ test:
 	$(GO) vet ./...
 	$(GO) test ./...
 
-	docker-compose up -d
+	docker-compose up --build -d
 	sleep 10
+
+	curl localhost:8080/ping
+	curl localhost:8080/panic
 
 	curl localhost:8080/v1/apps
 	curl localhost:8080/v1/appruntimes
