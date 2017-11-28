@@ -6,15 +6,16 @@ package db_app
 
 import (
 	"database/sql"
-	"log"
 	"sync/atomic"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/pkg/errors"
 	context "golang.org/x/net/context"
 	"gopkg.in/gorp.v2"
 
 	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 const (
@@ -40,6 +41,7 @@ func OpenAppDatabase(cfg *config.Database) (p *AppDatabase, err error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
 	db, err := sql.Open(cfg.Type, cfg.GetUrl()+"?parseTime=true")
 	if err != nil {
+		err = errors.WithStack(err)
 		return nil, err
 	}
 
@@ -61,7 +63,9 @@ func OpenAppDatabase(cfg *config.Database) (p *AppDatabase, err error) {
 }
 
 func (p *AppDatabase) Close() error {
-	return p.db.Close()
+	err := p.db.Close()
+	err = errors.WithStack(err)
+	return err
 }
 
 func (p *AppDatabase) GetApp(ctx context.Context, id string) (*App, error) {
@@ -69,6 +73,7 @@ func (p *AppDatabase) GetApp(ctx context.Context, id string) (*App, error) {
 	if v, err := p.dbMap.Get(App{}, id); err == nil && v != nil {
 		return v.(*App), nil
 	} else {
+		err = errors.WithStack(err)
 		return nil, err
 	}
 }
@@ -76,29 +81,35 @@ func (p *AppDatabase) GetApp(ctx context.Context, id string) (*App, error) {
 func (p *AppDatabase) GetAppList(ctx context.Context) (apps []App, err error) {
 	p.initTables()
 	_, err = p.dbMap.Select(&apps, "select * from "+AppTableName)
+	err = errors.WithStack(err)
 	return
 }
 
 func (p *AppDatabase) CreateApp(ctx context.Context, app *App) error {
 	p.initTables()
-	return p.dbMap.Insert(app)
+	err := p.dbMap.Insert(app)
+	err = errors.WithStack(err)
+	return err
 }
 
 func (p *AppDatabase) UpdateApp(ctx context.Context, app *App) error {
 	p.initTables()
 	_, err := p.dbMap.Update(app)
+	err = errors.WithStack(err)
 	return err
 }
 
 func (p *AppDatabase) DeleteApp(ctx context.Context, id string) error {
 	p.initTables()
 	_, err := p.dbMap.Delete(&App{Id: id})
+	err = errors.WithStack(err)
 	return err
 }
 
 func (p *AppDatabase) TruncateTables() error {
 	p.initTables()
 	err := p.dbMap.TruncateTables()
+	err = errors.WithStack(err)
 	return err
 }
 
@@ -107,7 +118,7 @@ func (p *AppDatabase) initTables() {
 		return
 	}
 	if err := p.dbMap.CreateTablesIfNotExists(); err != nil {
-		log.Printf("CreateTablesIfNotExists: %v", err)
+		logger.Warnf("CreateTablesIfNotExists: %+v", err)
 		return
 	}
 	atomic.StoreUint32(&p.createTablesDone, 1)

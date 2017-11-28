@@ -6,15 +6,16 @@ package db_cluster
 
 import (
 	"database/sql"
-	"log"
 	"sync/atomic"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/pkg/errors"
 	context "golang.org/x/net/context"
 	"gopkg.in/gorp.v2"
 
 	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 const (
@@ -43,6 +44,7 @@ func OpenClusterDatabase(cfg *config.Database) (p *ClusterDatabase, err error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
 	db, err := sql.Open(cfg.Type, cfg.GetUrl()+"?parseTime=true")
 	if err != nil {
+		err = errors.WithStack(err)
 		return nil, err
 	}
 
@@ -64,7 +66,9 @@ func OpenClusterDatabase(cfg *config.Database) (p *ClusterDatabase, err error) {
 }
 
 func (p *ClusterDatabase) Close() error {
-	return p.db.Close()
+	err := p.db.Close()
+	err = errors.WithStack(err)
+	return err
 }
 
 func (p *ClusterDatabase) GetCluster(ctx context.Context, id string) (*Cluster, error) {
@@ -72,6 +76,7 @@ func (p *ClusterDatabase) GetCluster(ctx context.Context, id string) (*Cluster, 
 	if v, err := p.dbMap.Get(Cluster{}, id); err == nil && v != nil {
 		return v.(*Cluster), nil
 	} else {
+		err = errors.WithStack(err)
 		return nil, err
 	}
 }
@@ -79,29 +84,35 @@ func (p *ClusterDatabase) GetCluster(ctx context.Context, id string) (*Cluster, 
 func (p *ClusterDatabase) GetClusterList(ctx context.Context) (apps []Cluster, err error) {
 	p.initTables()
 	_, err = p.dbMap.Select(&apps, "select * from "+ClusterTableName)
+	err = errors.WithStack(err)
 	return
 }
 
 func (p *ClusterDatabase) CreateCluster(ctx context.Context, app *Cluster) error {
 	p.initTables()
-	return p.dbMap.Insert(app)
+	err := p.dbMap.Insert(app)
+	err = errors.WithStack(err)
+	return err
 }
 
 func (p *ClusterDatabase) UpdateCluster(ctx context.Context, app *Cluster) error {
 	p.initTables()
 	_, err := p.dbMap.Update(app)
+	err = errors.WithStack(err)
 	return err
 }
 
 func (p *ClusterDatabase) DeleteCluster(ctx context.Context, id string) error {
 	p.initTables()
 	_, err := p.dbMap.Delete(&Cluster{Id: id})
+	err = errors.WithStack(err)
 	return err
 }
 
 func (p *ClusterDatabase) TruncateTables() error {
 	p.initTables()
 	err := p.dbMap.TruncateTables()
+	err = errors.WithStack(err)
 	return err
 }
 
@@ -110,7 +121,7 @@ func (p *ClusterDatabase) initTables() {
 		return
 	}
 	if err := p.dbMap.CreateTablesIfNotExists(); err != nil {
-		log.Printf("CreateTablesIfNotExists: %v", err)
+		logger.Warningf("CreateTablesIfNotExists: %+v", err)
 		return
 	}
 	atomic.StoreUint32(&p.createTablesDone, 1)

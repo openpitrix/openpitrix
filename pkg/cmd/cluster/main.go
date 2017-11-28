@@ -6,12 +6,12 @@ package cluster
 
 import (
 	"fmt"
-	"log"
 	"net"
 
 	"github.com/golang/protobuf/proto"
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
+	"github.com/pkg/errors"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -34,7 +34,8 @@ func Main(cfg *config.Config) {
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Cluster.Port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		err = errors.WithStack(err)
+		logger.Fatalf("failed to listen: %+v", err)
 	}
 
 	var opts = []grpc.ServerOption{grpc.UnaryInterceptor(grpc_validator.UnaryServerInterceptor())}
@@ -42,7 +43,8 @@ func Main(cfg *config.Config) {
 	pb.RegisterClusterServiceServer(grpcServer, NewClusterServer(&cfg.DB))
 
 	if err = grpcServer.Serve(lis); err != nil {
-		log.Fatal(err)
+		err = errors.WithStack(err)
+		logger.Fatalf("%+v", err)
 	}
 }
 
@@ -53,7 +55,7 @@ type ClusterServer struct {
 func NewClusterServer(cfg *config.Database) *ClusterServer {
 	db, err := db.OpenClusterDatabase(cfg)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("%+v", err)
 	}
 
 	return &ClusterServer{
@@ -64,9 +66,11 @@ func NewClusterServer(cfg *config.Database) *ClusterServer {
 func (p *ClusterServer) GetCluster(ctx context.Context, args *pb.ClusterId) (reply *pb.Cluster, err error) {
 	result, err := p.db.GetCluster(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetCluster: %v", err)
+		err = errors.WithStack(err)
+		return nil, grpc.Errorf(codes.Internal, "GetCluster: %+v", err)
 	}
 	if result == nil {
+		err = errors.WithStack(err)
 		return nil, grpc.Errorf(codes.NotFound, "Cluster Id %s does not exist", args.GetId())
 	}
 	reply = To_proto_Cluster(nil, result)
@@ -76,7 +80,7 @@ func (p *ClusterServer) GetCluster(ctx context.Context, args *pb.ClusterId) (rep
 func (p *ClusterServer) GetClusterList(ctx context.Context, args *pb.ClusterListRequest) (reply *pb.ClusterListResponse, err error) {
 	result, err := p.db.GetClusterList(ctx)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetClusterList: %v", err)
+		return nil, grpc.Errorf(codes.Internal, "GetClusterList: %+v", err)
 	}
 
 	items := To_proto_ClusterList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
@@ -94,7 +98,7 @@ func (p *ClusterServer) GetClusterList(ctx context.Context, args *pb.ClusterList
 func (p *ClusterServer) CreateCluster(ctx context.Context, args *pb.Cluster) (reply *pbempty.Empty, err error) {
 	err = p.db.CreateCluster(ctx, To_database_Cluster(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "CreateCluster: %v", err)
+		return nil, grpc.Errorf(codes.Internal, "CreateCluster: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -104,7 +108,7 @@ func (p *ClusterServer) CreateCluster(ctx context.Context, args *pb.Cluster) (re
 func (p *ClusterServer) UpdateCluster(ctx context.Context, args *pb.Cluster) (reply *pbempty.Empty, err error) {
 	err = p.db.UpdateCluster(ctx, To_database_Cluster(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "UpdateCluster: %v", err)
+		return nil, grpc.Errorf(codes.Internal, "UpdateCluster: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -114,7 +118,7 @@ func (p *ClusterServer) UpdateCluster(ctx context.Context, args *pb.Cluster) (re
 func (p *ClusterServer) DeleteCluster(ctx context.Context, args *pb.ClusterId) (reply *pbempty.Empty, err error) {
 	err = p.db.DeleteCluster(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "DeleteCluster: %v", err)
+		return nil, grpc.Errorf(codes.Internal, "DeleteCluster: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}

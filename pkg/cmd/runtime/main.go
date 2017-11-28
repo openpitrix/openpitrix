@@ -6,12 +6,12 @@ package runtime
 
 import (
 	"fmt"
-	"log"
 	"net"
 
 	"github.com/golang/protobuf/proto"
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
+	"github.com/pkg/errors"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -34,7 +34,8 @@ func Main(cfg *config.Config) {
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Runtime.Port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		err = errors.WithStack(err)
+		logger.Fatalf("failed to listen: %+v", err)
 	}
 
 	var opts = []grpc.ServerOption{grpc.UnaryInterceptor(grpc_validator.UnaryServerInterceptor())}
@@ -42,7 +43,8 @@ func Main(cfg *config.Config) {
 	pb.RegisterAppRuntimeServiceServer(grpcServer, NewAppRuntimeServer(&cfg.DB))
 
 	if err = grpcServer.Serve(lis); err != nil {
-		log.Fatal(err)
+		err = errors.WithStack(err)
+		logger.Fatalf("%+v", err)
 	}
 }
 
@@ -53,7 +55,7 @@ type AppRuntimeServer struct {
 func NewAppRuntimeServer(cfg *config.Database) *AppRuntimeServer {
 	db, err := db.OpenAppRuntimeDatabase(cfg)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatalf("%+v", err)
 	}
 
 	return &AppRuntimeServer{
@@ -64,7 +66,7 @@ func NewAppRuntimeServer(cfg *config.Database) *AppRuntimeServer {
 func (p *AppRuntimeServer) GetAppRuntime(ctx context.Context, args *pb.AppRuntimeId) (reply *pb.AppRuntime, err error) {
 	result, err := p.db.GetAppRuntime(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetAppRuntime: %v", err)
+		return nil, grpc.Errorf(codes.Internal, "GetAppRuntime: %+v", err)
 	}
 	if result == nil {
 		return nil, grpc.Errorf(codes.NotFound, "App Runtime Id %s does not exist", args.GetId())
@@ -76,7 +78,7 @@ func (p *AppRuntimeServer) GetAppRuntime(ctx context.Context, args *pb.AppRuntim
 func (p *AppRuntimeServer) GetAppRuntimeList(ctx context.Context, args *pb.AppRuntimeListRequest) (reply *pb.AppRuntimeListResponse, err error) {
 	result, err := p.db.GetAppRuntimeList(ctx)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetAppRuntimeList: %v", err)
+		return nil, grpc.Errorf(codes.Internal, "GetAppRuntimeList: %+v", err)
 	}
 
 	items := To_proto_AppRuntimeList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
@@ -94,7 +96,7 @@ func (p *AppRuntimeServer) GetAppRuntimeList(ctx context.Context, args *pb.AppRu
 func (p *AppRuntimeServer) CreateAppRuntime(ctx context.Context, args *pb.AppRuntime) (reply *pbempty.Empty, err error) {
 	err = p.db.CreateAppRuntime(ctx, To_database_AppRuntime(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "CreateAppRuntime: %v", err)
+		return nil, grpc.Errorf(codes.Internal, "CreateAppRuntime: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -104,7 +106,7 @@ func (p *AppRuntimeServer) CreateAppRuntime(ctx context.Context, args *pb.AppRun
 func (p *AppRuntimeServer) UpdateAppRuntime(ctx context.Context, args *pb.AppRuntime) (reply *pbempty.Empty, err error) {
 	err = p.db.UpdateAppRuntime(ctx, To_database_AppRuntime(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "UpdateAppRuntime: %v", err)
+		return nil, grpc.Errorf(codes.Internal, "UpdateAppRuntime: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -114,7 +116,7 @@ func (p *AppRuntimeServer) UpdateAppRuntime(ctx context.Context, args *pb.AppRun
 func (p *AppRuntimeServer) DeleteAppRuntime(ctx context.Context, args *pb.AppRuntimeId) (reply *pbempty.Empty, err error) {
 	err = p.db.DeleteAppRuntime(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "DeleteAppRuntime: %v", err)
+		return nil, grpc.Errorf(codes.Internal, "DeleteAppRuntime: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}

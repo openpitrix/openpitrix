@@ -6,15 +6,16 @@ package db_repo
 
 import (
 	"database/sql"
-	"log"
 	"sync/atomic"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/pkg/errors"
 	context "golang.org/x/net/context"
 	"gopkg.in/gorp.v2"
 
 	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 const (
@@ -40,6 +41,7 @@ func OpenRepoDatabase(cfg *config.Database) (p *RepoDatabase, err error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
 	db, err := sql.Open(cfg.Type, cfg.GetUrl()+"?parseTime=true")
 	if err != nil {
+		err = errors.WithStack(err)
 		return nil, err
 	}
 
@@ -61,7 +63,9 @@ func OpenRepoDatabase(cfg *config.Database) (p *RepoDatabase, err error) {
 }
 
 func (p *RepoDatabase) Close() error {
-	return p.db.Close()
+	err := p.db.Close()
+	err = errors.WithStack(err)
+	return err
 }
 
 func (p *RepoDatabase) GetRepo(ctx context.Context, id string) (*Repo, error) {
@@ -69,6 +73,7 @@ func (p *RepoDatabase) GetRepo(ctx context.Context, id string) (*Repo, error) {
 	if v, err := p.dbMap.Get(Repo{}, id); err == nil && v != nil {
 		return v.(*Repo), nil
 	} else {
+		err = errors.WithStack(err)
 		return nil, err
 	}
 }
@@ -76,29 +81,35 @@ func (p *RepoDatabase) GetRepo(ctx context.Context, id string) (*Repo, error) {
 func (p *RepoDatabase) GetRepoList(ctx context.Context) (apps []Repo, err error) {
 	p.initTables()
 	_, err = p.dbMap.Select(&apps, "select * from "+RepoTableName)
+	err = errors.WithStack(err)
 	return
 }
 
 func (p *RepoDatabase) CreateRepo(ctx context.Context, app *Repo) error {
 	p.initTables()
-	return p.dbMap.Insert(app)
+	err := p.dbMap.Insert(app)
+	err = errors.WithStack(err)
+	return err
 }
 
 func (p *RepoDatabase) UpdateRepo(ctx context.Context, app *Repo) error {
 	p.initTables()
 	_, err := p.dbMap.Update(app)
+	err = errors.WithStack(err)
 	return err
 }
 
 func (p *RepoDatabase) DeleteRepo(ctx context.Context, id string) error {
 	p.initTables()
 	_, err := p.dbMap.Delete(&Repo{Id: id})
+	err = errors.WithStack(err)
 	return err
 }
 
 func (p *RepoDatabase) TruncateTables() error {
 	p.initTables()
 	err := p.dbMap.TruncateTables()
+	err = errors.WithStack(err)
 	return err
 }
 
@@ -107,7 +118,7 @@ func (p *RepoDatabase) initTables() {
 		return
 	}
 	if err := p.dbMap.CreateTablesIfNotExists(); err != nil {
-		log.Printf("CreateTablesIfNotExists: %v", err)
+		logger.Warningf("CreateTablesIfNotExists: %+v", err)
 		return
 	}
 	atomic.StoreUint32(&p.createTablesDone, 1)
