@@ -11,11 +11,11 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	pbempty "github.com/golang/protobuf/ptypes/empty"
+	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/grpclog/glogger"
-	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
 
 	"openpitrix.io/openpitrix/pkg/config"
 	db "openpitrix.io/openpitrix/pkg/db/app"
