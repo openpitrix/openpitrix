@@ -63,12 +63,12 @@ generate:
 
 .PHONY: mysql-start
 mysql-start:
-	@docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -p 3306:3306 -d mysql || docker start openpitrix-mysql
+	@docker run --rm --name openpitrix-db -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -p 3306:3306 -d mysql:5.6 || docker start openpitrix-db
 	@echo "ok"
 
 .PHONY: mysql-stop
 mysql-stop:
-	@docker stop openpitrix-mysql
+	@docker stop openpitrix-db
 	@echo "ok"
 
 

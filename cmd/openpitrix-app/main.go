@@ -26,6 +26,10 @@ func main() {
 		}
 	}
 
+	if config.RunInDocker() {
+		config.UseDockerLinkedEnvironmentVariables()
+	}
+
 	if config.IsUserConfigExists() {
 		app.Main(config.MustLoadUserConfig())
 	} else {
