@@ -6,21 +6,15 @@ FROM golang:alpine as builder
 
 WORKDIR /go/src/openpitrix.io/openpitrix/
 COPY . .
-RUN go install ./cmd/...
+RUN go install ./cmd/... && \
+     mv /go/bin/openpitrix-api     /go/bin/api  && \
+     mv /go/bin/openpitrix-app     /go/bin/app  && \
+     mv /go/bin/openpitrix-cluster /go/bin/cluster && \
+     mv /go/bin/openpitrix-repo    /go/bin/repo  && \
+     mv /go/bin/openpitrix-runtime /go/bin/runtime
 
-RUN mv /go/bin/openpitrix-api     /go/bin/api
-RUN mv /go/bin/openpitrix-app     /go/bin/app
-RUN mv /go/bin/openpitrix-cluster /go/bin/cluster
-RUN mv /go/bin/openpitrix-repo    /go/bin/repo
-RUN mv /go/bin/openpitrix-runtime /go/bin/runtime
 
 FROM alpine
-
-COPY --from=builder /go/bin/api /usr/local/bin/
-COPY --from=builder /go/bin/app /usr/local/bin/
-COPY --from=builder /go/bin/cluster /usr/local/bin/
-COPY --from=builder /go/bin/repo /usr/local/bin/
-COPY --from=builder /go/bin/runtime /usr/local/bin/
 
 # Glog
 ENV OPENPITRIX_CONFIG_GLOG_LOGTOSTDERR=false
@@ -45,22 +39,24 @@ ENV OPENPITRIX_CONFIG_DB_TYPE=mysql
 
 # api service
 ENV OPENPITRIX_CONFIG_API_HOST=openpitrix-api
-ENV OPENPITRIX_CONFIG_API_PORT=8080
+ENV OPENPITRIX_CONFIG_API_PORT=9100
 
 # app service
 ENV OPENPITRIX_CONFIG_APP_HOST=openpitrix-app
-ENV OPENPITRIX_CONFIG_APP_PORT=8081
+ENV OPENPITRIX_CONFIG_APP_PORT=9101
 
 # runtime service
 ENV OPENPITRIX_CONFIG_RUNTIME_HOST=openpitrix-runtime
-ENV OPENPITRIX_CONFIG_RUNTIME_PORT=8082
+ENV OPENPITRIX_CONFIG_RUNTIME_PORT=9102
 
 # cluster service
 ENV OPENPITRIX_CONFIG_CLUSTER_HOST=openpitrix-cluster
-ENV OPENPITRIX_CONFIG_CLUSTER_PORT=8083
+ENV OPENPITRIX_CONFIG_CLUSTER_PORT=9103
 
 # repo service
 ENV OPENPITRIX_CONFIG_REPO_HOST=openpitrix-repo
-ENV OPENPITRIX_CONFIG_REPO_PORT=8084
+ENV OPENPITRIX_CONFIG_REPO_PORT=9104
+
+COPY --from=builder /go/bin/* /usr/local/bin/
 
 CMD ["sh"]

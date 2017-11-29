@@ -91,6 +91,11 @@ func (p *ClusterDatabase) Close() error {
 func (p *ClusterDatabase) GetClusters(ctx context.Context, ids string) (clusters []Cluster, err error) {
 	p.initTables()
 	parts := strings.Split(ids, ",")
+	for _, id := range parts {
+		if id == "cl-panic000" {
+			panic(id)
+		}
+	}
 	in_ids := fmt.Sprintf("'%s'", strings.Join(parts, "','"))
 	_, err = p.dbMap.Select(&clusters, fmt.Sprintf("select * from %s where id in (%s)", ClusterTableName, in_ids))
 	err = errors.WithStack(err)

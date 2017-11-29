@@ -14,8 +14,8 @@ spec:
   ports:
   - name: http
     protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: 9100
+    targetPort: 9100
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -36,11 +36,11 @@ spec:
         command: ["openpitrix"]
         args: ["api"]
         ports:
-        - containerPort: 8080
+        - containerPort: 9100
         readinessProbe:
           httpGet:
             path: /
-            port: 8080
+            port: 9100
           periodSeconds: 10
           timeoutSeconds: 5
           successThreshold: 2
@@ -68,8 +68,8 @@ spec:
   ports:
   - name: http
     protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: 9100
+    targetPort: 9100
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -90,11 +90,11 @@ spec:
         command: ["openpitrix"]
         args: ["app"]
         ports:
-        - containerPort: 8080
+        - containerPort: 9100
         readinessProbe:
           httpGet:
             path: /
-            port: 8080
+            port: 9100
           periodSeconds: 10
           timeoutSeconds: 5
           successThreshold: 2
@@ -122,8 +122,8 @@ spec:
   ports:
   - name: http
     protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: 9100
+    targetPort: 9100
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -144,11 +144,11 @@ spec:
         command: ["openpitrix"]
         args: ["cluster"]
         ports:
-        - containerPort: 8080
+        - containerPort: 9100
         readinessProbe:
           httpGet:
             path: /
-            port: 8080
+            port: 9100
           periodSeconds: 10
           timeoutSeconds: 5
           successThreshold: 2
@@ -176,8 +176,8 @@ spec:
   ports:
   - name: http
     protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: 9100
+    targetPort: 9100
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -198,11 +198,11 @@ spec:
         command: ["openpitrix"]
         args: ["repo"]
         ports:
-        - containerPort: 8080
+        - containerPort: 9100
         readinessProbe:
           httpGet:
             path: /
-            port: 8080
+            port: 9100
           periodSeconds: 10
           timeoutSeconds: 5
           successThreshold: 2
@@ -230,8 +230,8 @@ spec:
   ports:
   - name: http
     protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: 9100
+    targetPort: 9100
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -252,11 +252,11 @@ spec:
         command: ["openpitrix"]
         args: ["runtime"]
         ports:
-        - containerPort: 8080
+        - containerPort: 9100
         readinessProbe:
           httpGet:
             path: /
-            port: 8080
+            port: 9100
           periodSeconds: 10
           timeoutSeconds: 5
           successThreshold: 2

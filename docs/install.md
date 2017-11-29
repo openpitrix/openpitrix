@@ -55,7 +55,7 @@ $ docker run --rm --name openpitrix-api \
     --link openpitrix-runtime:openpitrix-runtime \
     --link openpitrix-cluster:openpitrix-cluster \
     --link openpitrix-repo:openpitrix-repo \
-    -p 8080:8080 -d openpitrix api
+    -p 9100:9100 -d openpitrix api
 ```
 
 Exit docker runtime environment
@@ -79,19 +79,19 @@ $ docker-compose down
 
 ## Test OpenPitrix
 
-Visit http://127.0.0.1:8080/swagger-ui in browser, and try it online.
+Visit http://127.0.0.1:9100/swagger-ui in browser, and try it online.
 
 Or test openpitrix/api service in command line:
 
 ```
-$ curl http://localhost:8080/v1/apps
+$ curl http://localhost:9100/v1/apps
 {"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
-$ curl http://localhost:8080/v1/apps/app-12345678
+$ curl http://localhost:9100/v1/apps/app-12345678
 {"error":"App Id app-12345678 not exist","code":5}
-$ curl http://localhost:8080/v1/appruntimes
+$ curl http://localhost:9100/v1/appruntimes
 {"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
-$ curl http://localhost:8080/v1/clusters
+$ curl http://localhost:9100/v1/clusters
 {"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
-$ curl http://localhost:8080/v1/repos
+$ curl http://localhost:9100/v1/repos
 {"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
 ```

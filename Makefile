@@ -16,7 +16,7 @@ MYSQL_ROOT_PASSWORD:=password
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
 	@echo "  all               to generate, test and release"
-	@echo "  start             to start service (port:8080)"
+	@echo "  start             to start service (port:9100)"
 	@echo "  stop              to stop service"
 	@echo "  tools             to install depends tools"
 	@echo "  init-vendor       to init vendor packages"
@@ -102,13 +102,23 @@ test:
 	docker-compose up --build -d
 	sleep 10
 
-	curl localhost:8080/ping
-	curl localhost:8080/panic
+	curl localhost:9100/ping
+	curl localhost:9100/panic
 
-	curl localhost:8080/v1/apps
-	curl localhost:8080/v1/appruntimes
-	curl localhost:8080/v1/clusters
-	curl localhost:8080/v1/repos
+	curl localhost:9100/v1/apps
+	curl localhost:9100/v1/appruntimes
+	curl localhost:9100/v1/clusters
+	curl localhost:9100/v1/repos
+
+	curl localhost:9100/v1/apps/invalid-id
+	curl localhost:9100/v1/appruntimes/invalid-id
+	curl localhost:9100/v1/clusters/invalid-id
+	curl localhost:9100/v1/repos/invalid-id
+
+	curl localhost:9100/v1/apps/app-panic000
+	curl localhost:9100/v1/appruntimes/rt-panic000
+	curl localhost:9100/v1/clusters/cl-panic000
+	curl localhost:9100/v1/repos/repo-panic000
 
 	docker-compose down
 	@echo "ok"
