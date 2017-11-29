@@ -51,7 +51,7 @@ services:
     image: "openpitrix"
     command: api
     ports:
-     - "8080:8080"
+     - "9100:9100"
     links:
       - openpitrix-app:openpitrix-app
       - openpitrix-runtime:openpitrix-runtime

@@ -14,7 +14,7 @@ const UnittestConfigContent = `
 
 [Api]
 Host = "127.0.0.1"
-Port = 8080
+Port = 9100
 
 # Valid log levels are "debug", "info", "warn", "error", and "fatal".
 LogLevel = "warn"

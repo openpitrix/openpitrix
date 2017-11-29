@@ -52,7 +52,7 @@ func TestOpenPitrix_default(t *testing.T) {
 	conf := Default()
 
 	tAssert(t, conf.Api.Host == "127.0.0.1")
-	tAssert(t, conf.Api.Port == 8080)
+	tAssert(t, conf.Api.Port == 9100)
 
 	tAssert(t, conf.DB.Type == "mysql")
 	tAssert(t, conf.DB.Host == "127.0.0.1")
@@ -66,7 +66,7 @@ func TestOpenPitrix_Parse_default(t *testing.T) {
 	tAssertf(t, err == nil, "err = %v", err)
 
 	tAssert(t, conf.Api.Host == "127.0.0.1")
-	tAssert(t, conf.Api.Port == 8080)
+	tAssert(t, conf.Api.Port == 9100)
 
 	tAssert(t, conf.DB.Type == "mysql")
 	tAssert(t, conf.DB.Host == "127.0.0.1")
@@ -83,7 +83,7 @@ func TestOpenPitrix_Parse_empty(t *testing.T) {
 	tAssertf(t, err == nil, "err = %v", err)
 
 	tAssertf(t, conf.Api.Host == "127.0.0.1", "host = %v", conf.Api.Host)
-	tAssert(t, conf.Api.Port == 8080)
+	tAssert(t, conf.Api.Port == 9100)
 
 	tAssert(t, conf.DB.Type == "mysql")
 	tAssert(t, conf.DB.Host == "127.0.0.1")
