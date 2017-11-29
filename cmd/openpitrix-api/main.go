@@ -2,15 +2,6 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-// install httpie:
-// - macOS: brew install httpie
-// - Ubuntu: apt-get install httpie
-// - CentOS: yum install httpie
-
-// http get :8080/v1/apps
-
-// curl http://localhost:8080/v1/apps
-
 // openpitrix server
 package main
 

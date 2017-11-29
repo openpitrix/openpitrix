@@ -41,27 +41,27 @@ type OpenPitrix_Config struct {
 
 type ApiService struct {
 	Host string `default:"127.0.0.1"`
-	Port int    `default:"8080"`
+	Port int    `default:"9100"`
 }
 
 type AppService struct {
 	Host string `default:"127.0.0.1"`
-	Port int    `default:"8081"`
+	Port int    `default:"9101"`
 }
 
 type RuntimeService struct {
 	Host string `default:"127.0.0.1"`
-	Port int    `default:"8082"`
+	Port int    `default:"9102"`
 }
 
 type ClusterService struct {
 	Host string `default:"127.0.0.1"`
-	Port int    `default:"8083"`
+	Port int    `default:"9103"`
 }
 
 type RepoService struct {
 	Host string `default:"127.0.0.1"`
-	Port int    `default:"8084"`
+	Port int    `default:"9104"`
 }
 
 type Database struct {

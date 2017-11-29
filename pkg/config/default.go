@@ -35,23 +35,23 @@ RootPassword = "password"
 
 [Api]
 Host = "127.0.0.1"
-Port = 8080
+Port = 9100
 
 [App]
 Host = "127.0.0.1"
-Port = 8081
+Port = 9101
 
 [Runtime]
 Host = "127.0.0.1"
-Port = 8082
+Port = 9102
 
 [Cluster]
 Host = "127.0.0.1"
-Port = 8083
+Port = 9103
 
 [Repo]
 Host = "127.0.0.1"
-Port = 8084
+Port = 9104
 
 
 `

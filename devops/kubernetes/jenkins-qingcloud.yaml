@@ -16,8 +16,8 @@ spec:
   ports:
   - name: http
     protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: 9100
+    targetPort: 9100
   - name: jenkins-master
     protocol: TCP
     port: 50000
@@ -59,12 +59,12 @@ spec:
         - name: DOCKER_HOST
           value: tcp://localhost:2375
         ports:
-        - containerPort: 8080
+        - containerPort: 9100
         - containerPort: 50000
         readinessProbe:
           httpGet:
             path: /login
-            port: 8080
+            port: 9100
           periodSeconds: 10
           timeoutSeconds: 5
           successThreshold: 2
