@@ -110,6 +110,16 @@ test:
 	curl localhost:8080/v1/clusters
 	curl localhost:8080/v1/repos
 
+	curl localhost:8080/v1/apps/invalid-id
+	curl localhost:8080/v1/appruntimes/invalid-id
+	curl localhost:8080/v1/clusters/invalid-id
+	curl localhost:8080/v1/repos/invalid-id
+
+	curl localhost:8080/v1/apps/app-panic000
+	curl localhost:8080/v1/appruntimes/rt-panic000
+	curl localhost:8080/v1/clusters/cl-panic000
+	curl localhost:8080/v1/repos/repo-panic000
+
 	docker-compose down
 	@echo "ok"
 
