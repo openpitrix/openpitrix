@@ -15,7 +15,7 @@ $ go get -d openpitrix.io/openpitrix
 $ cd $GOPATH/src/openpitrix.io/openpitrix
 $ make generate
 $ GOBIN=`pwd`/bin go install ./cmd/...
-$ docker run --rm --name openpitrix-mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql:5.6
+$ docker run --rm --name openpitrix-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql:5.6
 $ ./bin/openpitrix-api &
 $ ./bin/openpitrix-repo &
 $ ./bin/openpitrix-app &
@@ -34,21 +34,21 @@ $ ps aux | grep openpitrix- | grep -v grep | awk '{print $2}' | xargs kill -9
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
 $ make build
-$ docker run --rm --name openpitrix-mysql \
+$ docker run --rm --name openpitrix-db \
     -e MYSQL_ROOT_PASSWORD=password \
     -e MYSQL_DATABASE=openpitrix \
     -p 3306:3306 -d mysql:5.6
 $ docker run --rm --name openpitrix-app \
-    --link openpitrix-mysql:openpitrix-mysql \
+    --link openpitrix-db:openpitrix-db \
     -d openpitrix app
 $ docker run --rm --name openpitrix-runtime \
-    --link openpitrix-mysql:openpitrix-mysql \
+    --link openpitrix-db:openpitrix-db \
     -d openpitrix runtime
 $ docker run --rm --name openpitrix-cluster \
-    --link openpitrix-mysql:openpitrix-mysql \
+    --link openpitrix-db:openpitrix-db \
     -d openpitrix cluster
 $ docker run --rm --name openpitrix-repo \
-    --link openpitrix-mysql:openpitrix-mysql \
+    --link openpitrix-db:openpitrix-db \
     -d openpitrix repo
 $ docker run --rm --name openpitrix-api \
     --link openpitrix-app:openpitrix-app \
