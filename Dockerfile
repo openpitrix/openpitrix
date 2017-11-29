@@ -6,21 +6,15 @@ FROM golang:alpine as builder
 
 WORKDIR /go/src/openpitrix.io/openpitrix/
 COPY . .
-RUN go install ./cmd/...
+RUN go install ./cmd/... && \
+     mv /go/bin/openpitrix-api     /go/bin/api  && \
+     mv /go/bin/openpitrix-app     /go/bin/app  && \
+     mv /go/bin/openpitrix-cluster /go/bin/cluster && \
+     mv /go/bin/openpitrix-repo    /go/bin/repo  && \
+     mv /go/bin/openpitrix-runtime /go/bin/runtime
 
-RUN mv /go/bin/openpitrix-api     /go/bin/api
-RUN mv /go/bin/openpitrix-app     /go/bin/app
-RUN mv /go/bin/openpitrix-cluster /go/bin/cluster
-RUN mv /go/bin/openpitrix-repo    /go/bin/repo
-RUN mv /go/bin/openpitrix-runtime /go/bin/runtime
 
 FROM alpine
-
-COPY --from=builder /go/bin/api /usr/local/bin/
-COPY --from=builder /go/bin/app /usr/local/bin/
-COPY --from=builder /go/bin/cluster /usr/local/bin/
-COPY --from=builder /go/bin/repo /usr/local/bin/
-COPY --from=builder /go/bin/runtime /usr/local/bin/
 
 # Glog
 ENV OPENPITRIX_CONFIG_GLOG_LOGTOSTDERR=false
@@ -62,5 +56,7 @@ ENV OPENPITRIX_CONFIG_CLUSTER_PORT=9103
 # repo service
 ENV OPENPITRIX_CONFIG_REPO_HOST=openpitrix-repo
 ENV OPENPITRIX_CONFIG_REPO_PORT=9104
+
+COPY --from=builder /go/bin/* /usr/local/bin/
 
 CMD ["sh"]
