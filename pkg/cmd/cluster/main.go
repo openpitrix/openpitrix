@@ -5,6 +5,7 @@
 package cluster
 
 import (
+	"context"
 	"fmt"
 	"net"
 
@@ -14,7 +15,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
 	"github.com/pkg/errors"
-	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/grpclog/glogger"
@@ -74,31 +74,27 @@ type ClusterServer struct {
 }
 
 func NewClusterServer(cfg *config.Database) *ClusterServer {
-	db, err := db.OpenClusterDatabase(cfg)
+	cluster_db, err := db.OpenClusterDatabase(cfg)
 	if err != nil {
 		logger.Fatalf("%+v", err)
 	}
 
 	return &ClusterServer{
-		db: db,
+		db: cluster_db,
 	}
 }
 
-func (p *ClusterServer) GetCluster(ctx context.Context, args *pb.ClusterId) (reply *pb.Cluster, err error) {
-	if id := args.GetId(); id == "cl-panic000" {
-		panic(id) // only for test
-	}
-
-	result, err := p.db.GetCluster(ctx, args.GetId())
+func (p *ClusterServer) GetClusters(ctx context.Context, args *pb.ClusterIds) (reply *pb.Clusters, err error) {
+	result, err := p.db.GetClusters(ctx, args.GetIds())
 	if err != nil {
 		err = errors.WithStack(err)
-		return nil, grpc.Errorf(codes.Internal, "GetCluster: %+v", err)
+		return nil, grpc.Errorf(codes.Internal, "GetClusters: %+v", err)
 	}
 	if result == nil {
 		err = errors.WithStack(err)
-		return nil, grpc.Errorf(codes.NotFound, "Cluster Id %s does not exist", args.GetId())
+		return nil, grpc.Errorf(codes.NotFound, "Cluster Ids %s do not exist", args.GetIds())
 	}
-	reply = To_proto_Cluster(nil, result)
+	reply = To_proto_Clusters(result)
 	return
 }
 
@@ -140,10 +136,72 @@ func (p *ClusterServer) UpdateCluster(ctx context.Context, args *pb.Cluster) (re
 	return
 }
 
-func (p *ClusterServer) DeleteCluster(ctx context.Context, args *pb.ClusterId) (reply *pbempty.Empty, err error) {
-	err = p.db.DeleteCluster(ctx, args.GetId())
+func (p *ClusterServer) DeleteClusters(ctx context.Context, args *pb.ClusterIds) (reply *pbempty.Empty, err error) {
+	err = p.db.DeleteClusters(ctx, args.GetIds())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "DeleteCluster: %+v", err)
+		return nil, grpc.Errorf(codes.Internal, "DeleteClusters: %+v", err)
+	}
+
+	reply = &pbempty.Empty{}
+	return
+}
+
+func (p *ClusterServer) GetClusterNodes(ctx context.Context, args *pb.ClusterNodeIds) (reply *pb.ClusterNodes, err error) {
+	result, err := p.db.GetClusterNodes(ctx, args.GetIds())
+	if err != nil {
+		err = errors.WithStack(err)
+		return nil, grpc.Errorf(codes.Internal, "GetClusterNodes: %+v", err)
+	}
+	if result == nil {
+		err = errors.WithStack(err)
+		return nil, grpc.Errorf(codes.NotFound, "ClusterNode Ids %s do not exist", args.GetIds())
+	}
+	reply = To_proto_ClusterNodes(result)
+	return
+}
+
+func (p *ClusterServer) GetClusterNodeList(ctx context.Context, args *pb.ClusterNodeListRequest) (reply *pb.ClusterNodeListResponse, err error) {
+	result, err := p.db.GetClusterNodeList(ctx)
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "GetClusterNodeList: %+v", err)
+	}
+
+	items := To_proto_ClusterNodeList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
+	reply = &pb.ClusterNodeListResponse{
+		Items:       items,
+		TotalItems:  proto.Int32(int32(len(result))),
+		TotalPages:  proto.Int32(int32((len(result) + int(args.GetPageSize()) - 1) / int(args.GetPageSize()))),
+		PageSize:    proto.Int32(args.GetPageSize()),
+		CurrentPage: proto.Int32(int32(len(result)/int(args.GetPageSize())) + 1),
+	}
+
+	return
+}
+
+func (p *ClusterServer) CreateClusterNodes(ctx context.Context, args *pb.ClusterNodes) (reply *pbempty.Empty, err error) {
+	err = p.db.CreateClusterNodes(ctx, To_database_ClusterNodes(args))
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "CreateClusterNodes: %+v", err)
+	}
+
+	reply = &pbempty.Empty{}
+	return
+}
+
+func (p *ClusterServer) UpdateClusterNode(ctx context.Context, args *pb.ClusterNode) (reply *pbempty.Empty, err error) {
+	err = p.db.UpdateClusterNode(ctx, To_database_ClusterNode(nil, args))
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "UpdateClusterNode: %+v", err)
+	}
+
+	reply = &pbempty.Empty{}
+	return
+}
+
+func (p *ClusterServer) DeleteClusterNodes(ctx context.Context, args *pb.ClusterNodeIds) (reply *pbempty.Empty, err error) {
+	err = p.db.DeleteClusterNodes(ctx, args.GetIds())
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "DeleteClusterNodes: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
