@@ -34,6 +34,10 @@ message Cluster {
 	optional google.protobuf.Timestamp last_modified = 9;
 }
 
+message Clusters {
+	repeated Cluster items = 1;
+}
+
 message ClusterNode {
 	required string id = 1 [(validator.field) = {regex: "^cln-[a-zA-Z0-9]{8}$"}];
 	required string instance_id = 2;
@@ -41,6 +45,14 @@ message ClusterNode {
 	optional string description = 4;
 	optional string cluster_id = 5;
 	optional string private_ip = 6;
+	optional string status = 7;
+	optional string transition_status = 8;
+	optional google.protobuf.Timestamp created = 9;
+	optional google.protobuf.Timestamp last_modified = 10;
+}
+
+message ClusterNodes {
+	repeated ClusterNode items = 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -51,10 +63,15 @@ message ClusterId {
 	required string id = 1 [(validator.field) = {regex: "^cl-[a-zA-Z0-9]{8}$"}];
 }
 
+message ClusterIds {
+	required string ids = 1 [(validator.field) = {regex: "^(cl-[a-zA-Z0-9]{8},)*cl-[a-zA-Z0-9]{8}$"}];
+}
+
 message ClusterListRequest {
 	optional int32 page_size = 1 [default = 10];
 	optional int32 page_number = 2 [default = 1];
 }
+
 message ClusterListResponse {
 	optional int32 total_items = 1;
 	optional int32 total_pages = 2;
@@ -62,6 +79,28 @@ message ClusterListResponse {
 	optional int32 current_page = 4;
 
 	repeated Cluster items = 5;
+}
+
+message ClusterNodeId {
+	required string id = 1 [(validator.field) = {regex: "^cln-[a-zA-Z0-9]{8}$"}];
+}
+
+message ClusterNodeIds {
+	required string ids = 1 [(validator.field) = {regex: "^(cln-[a-zA-Z0-9]{8},)*cln-[a-zA-Z0-9]{8}$"}];
+}
+
+message ClusterNodeListRequest {
+	optional int32 page_size = 1 [default = 10];
+	optional int32 page_number = 2 [default = 1];
+}
+
+message ClusterNodeListResponse {
+	optional int32 total_items = 1;
+	optional int32 total_pages = 2;
+	optional int32 page_size = 3;
+	optional int32 current_page = 4;
+
+	repeated ClusterNode items = 5;
 }
 
 // ----------------------------------------------------------------------------
@@ -84,11 +123,12 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 };
 
 service ClusterService {
-	rpc GetCluster(ClusterId) returns (Cluster) {
+	rpc GetClusters(ClusterIds) returns (Clusters) {
 		option (google.api.http) = {
-			get: "/v1/clusters/{id}"
+			get: "/v1/clusters/{ids}"
 		};
 	}
+
 	rpc GetClusterList(ClusterListRequest) returns (ClusterListResponse) {
 		option (google.api.http) = {
 			get: "/v1/clusters"
@@ -101,15 +141,49 @@ service ClusterService {
 			body: "*"
 		};
 	}
+
 	rpc UpdateCluster(Cluster) returns (google.protobuf.Empty) {
 		option (google.api.http) = {
 			post: "/v1/clusters/{id}"
 			body: "*"
 		};
 	}
-	rpc DeleteCluster(ClusterId) returns (google.protobuf.Empty) {
+
+	rpc DeleteClusters(ClusterIds) returns (google.protobuf.Empty) {
 		option (google.api.http) = {
-			delete: "/v1/clusters/{id}"
+			delete: "/v1/clusters/{ids}"
+		};
+	}
+
+	rpc GetClusterNodes(ClusterNodeIds) returns (ClusterNodes) {
+		option (google.api.http) = {
+			get: "/v1/cluster_nodes/{ids}"
+		};
+	}
+
+	rpc GetClusterNodeList(ClusterNodeListRequest) returns (ClusterNodeListResponse) {
+		option (google.api.http) = {
+			get: "/v1/cluster_nodes"
+		};
+	}
+
+	rpc CreateClusterNodes(ClusterNodes) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/cluster_nodes"
+			body: "*"
+		};
+	}
+
+	rpc UpdateClusterNode(ClusterNode) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			post: "/v1/cluster_nodes/{id}"
+			body: "*"
+		};
+	}
+
+	rpc DeleteClusterNodes(ClusterNodeIds) returns (google.protobuf.Empty) {
+		option (google.api.http) = {
+			delete: "/v1/cluster_nodes/{ids}"
 		};
 	}
 }

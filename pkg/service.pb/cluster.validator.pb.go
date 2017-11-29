@@ -39,6 +39,14 @@ func (this *Cluster) Validate() error {
 	}
 	return nil
 }
+func (this *Clusters) Validate() error {
+	for _, item := range this.Items {
+		if err := go_proto_validators.CallValidatorIfExists(&(*(item))); err != nil {
+			return go_proto_validators.FieldError("Items", err)
+		}
+	}
+	return nil
+}
 
 var _regex_ClusterNode_Id = regexp.MustCompile("^cln-[a-zA-Z0-9]{8}$")
 
@@ -46,6 +54,24 @@ func (this *ClusterNode) Validate() error {
 	if this.Id != nil {
 		if !_regex_ClusterNode_Id.MatchString(*(this.Id)) {
 			return go_proto_validators.FieldError("Id", fmt.Errorf(`value '%v' must be a string conforming to regex "^cln-[a-zA-Z0-9]{8}$"`, *(this.Id)))
+		}
+	}
+	if this.Created != nil {
+		if err := go_proto_validators.CallValidatorIfExists(&(*(this.Created))); err != nil {
+			return go_proto_validators.FieldError("Created", err)
+		}
+	}
+	if this.LastModified != nil {
+		if err := go_proto_validators.CallValidatorIfExists(&(*(this.LastModified))); err != nil {
+			return go_proto_validators.FieldError("LastModified", err)
+		}
+	}
+	return nil
+}
+func (this *ClusterNodes) Validate() error {
+	for _, item := range this.Items {
+		if err := go_proto_validators.CallValidatorIfExists(&(*(item))); err != nil {
+			return go_proto_validators.FieldError("Items", err)
 		}
 	}
 	return nil
@@ -61,10 +87,54 @@ func (this *ClusterId) Validate() error {
 	}
 	return nil
 }
+
+var _regex_ClusterIds_Ids = regexp.MustCompile("^(cl-[a-zA-Z0-9]{8},)*cl-[a-zA-Z0-9]{8}$")
+
+func (this *ClusterIds) Validate() error {
+	if this.Ids != nil {
+		if !_regex_ClusterIds_Ids.MatchString(*(this.Ids)) {
+			return go_proto_validators.FieldError("Ids", fmt.Errorf(`value '%v' must be a string conforming to regex "^(cl-[a-zA-Z0-9]{8},)*cl-[a-zA-Z0-9]{8}$"`, *(this.Ids)))
+		}
+	}
+	return nil
+}
 func (this *ClusterListRequest) Validate() error {
 	return nil
 }
 func (this *ClusterListResponse) Validate() error {
+	for _, item := range this.Items {
+		if err := go_proto_validators.CallValidatorIfExists(&(*(item))); err != nil {
+			return go_proto_validators.FieldError("Items", err)
+		}
+	}
+	return nil
+}
+
+var _regex_ClusterNodeId_Id = regexp.MustCompile("^cln-[a-zA-Z0-9]{8}$")
+
+func (this *ClusterNodeId) Validate() error {
+	if this.Id != nil {
+		if !_regex_ClusterNodeId_Id.MatchString(*(this.Id)) {
+			return go_proto_validators.FieldError("Id", fmt.Errorf(`value '%v' must be a string conforming to regex "^cln-[a-zA-Z0-9]{8}$"`, *(this.Id)))
+		}
+	}
+	return nil
+}
+
+var _regex_ClusterNodeIds_Ids = regexp.MustCompile("^(cln-[a-zA-Z0-9]{8},)*cln-[a-zA-Z0-9]{8}$")
+
+func (this *ClusterNodeIds) Validate() error {
+	if this.Ids != nil {
+		if !_regex_ClusterNodeIds_Ids.MatchString(*(this.Ids)) {
+			return go_proto_validators.FieldError("Ids", fmt.Errorf(`value '%v' must be a string conforming to regex "^(cln-[a-zA-Z0-9]{8},)*cln-[a-zA-Z0-9]{8}$"`, *(this.Ids)))
+		}
+	}
+	return nil
+}
+func (this *ClusterNodeListRequest) Validate() error {
+	return nil
+}
+func (this *ClusterNodeListResponse) Validate() error {
 	for _, item := range this.Items {
 		if err := go_proto_validators.CallValidatorIfExists(&(*(item))); err != nil {
 			return go_proto_validators.FieldError("Items", err)
