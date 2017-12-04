@@ -59,7 +59,7 @@ tools:
 generate:
 	cd ./api && make generate
 	cd ./pkg/cmd/api && make
-	cd ./pkg/version && make
+	go generate ./pkg/version/
 
 .PHONY: mysql-start
 mysql-start:

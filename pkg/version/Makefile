@@ -3,8 +3,7 @@
 # that can be found in the LICENSE file.
 
 default:
-	chmod +x ./update_version.sh
-	./update_version.sh
+	go generate
 
 clean:
 	-rm z_update_version.go
