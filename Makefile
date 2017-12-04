@@ -7,7 +7,7 @@ TRAG.Gopkg:=openpitrix.io/openpitrix
 
 DOCKER_TAGS=latest
 
-GO:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) golang:1.9-alpine go
+GO:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) openpitrix/openpitrix:builder go
 
 MYSQL_DATABASE:=$(TARG.Name)
 MYSQL_ROOT_PASSWORD:=password
@@ -50,16 +50,15 @@ update-vendor:
 
 .PHONY: tools
 tools:
-	docker pull golang:1.9-alpine
-	docker pull openpitrix/openpitrix:api-builder
-	docker pull mysql
+	docker pull openpitrix/openpitrix:builder
+	docker pull mysql:5.6
 	@echo "ok"
 
 .PHONY: generate
 generate:
 	cd ./api && make generate
 	cd ./pkg/cmd/api && make
-	go generate ./pkg/version/
+	$(GO) generate ./pkg/version/
 
 .PHONY: mysql-start
 mysql-start:
@@ -125,4 +124,5 @@ test:
 
 .PHONY: clean
 clean:
+	-make -C ./pkg/version clean
 	@echo "ok"
