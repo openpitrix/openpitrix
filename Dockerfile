@@ -2,19 +2,21 @@
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
 
-FROM golang:alpine as builder
+FROM openpitrix/openpitrix:builder as builder
 
 WORKDIR /go/src/openpitrix.io/openpitrix/
 COPY . .
-RUN go install ./cmd/... && \
-     mv /go/bin/openpitrix-api     /go/bin/api  && \
-     mv /go/bin/openpitrix-app     /go/bin/app  && \
-     mv /go/bin/openpitrix-cluster /go/bin/cluster && \
-     mv /go/bin/openpitrix-repo    /go/bin/repo  && \
-     mv /go/bin/openpitrix-runtime /go/bin/runtime
+
+RUN go generate openpitrix.io/openpitrix/pkg/version && \
+	go install  openpitrix.io/openpitrix/cmd/...     && \
+	mv /go/bin/openpitrix-api     /go/bin/api        && \
+	mv /go/bin/openpitrix-app     /go/bin/app        && \
+	mv /go/bin/openpitrix-cluster /go/bin/cluster    && \
+	mv /go/bin/openpitrix-repo    /go/bin/repo       && \
+	mv /go/bin/openpitrix-runtime /go/bin/runtime
 
 
-FROM alpine
+FROM alpine:3.6
 
 # Glog
 ENV OPENPITRIX_CONFIG_GLOG_LOGTOSTDERR=false
