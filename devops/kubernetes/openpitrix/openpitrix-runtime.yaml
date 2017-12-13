@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-runtime
+  namespace: default
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    app: openpitrix
+    service: runtime
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9102
+    targetPort: 9102
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: openpitrix-runtime
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        service: runtime
+    spec:
+      containers:
+      - args:
+        - runtime
+        name: openpitrix-runtime
+        image: openpitrix/openpitrix
+        ports:
+        - containerPort: 9102
+        env:
+        - name: OPENPITRIX_CONFIG_DB_DBNAME
+          value: "openpitrix"
+        - name: OPENPITRIX_CONFIG_DB_ROOTPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password.txt
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi

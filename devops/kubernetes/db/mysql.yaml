@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-db
+  namespace: default
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    app: openpitrix
+    tier: db
+  #clusterIP: None
+  ports:
+  - name: tcp
+    protocol: TCP
+    port: 3306
+    targetPort: 3306
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pv-claim
+  namespace: default
+  labels:
+    app: openpitrix
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: openpitrix-db
+  namespace: default
+  labels:
+    app: openpitrix
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        tier: db
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+          # $ kubectl create secret generic mysql-pass --from-file=password.txt
+          # make sure password.txt does not have a trailing newline
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password.txt
+        - name: MYSQL_DATABASE
+          value: "openpitrix"
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: db-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: db-persistent-storage
+        persistentVolumeClaim:
+          claimName: db-pv-claim
