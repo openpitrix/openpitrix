@@ -52,6 +52,7 @@ update-vendor:
 tools:
 	docker pull openpitrix/openpitrix:builder
 	docker pull mysql:5.6
+	go get github.com/chai2010/godoc2ghmd
 	@echo "ok"
 
 .PHONY: generate
@@ -121,6 +122,12 @@ test:
 
 	docker-compose down
 	@echo "ok"
+
+.PHONY: gen-pkgdoc
+gen-pkgdoc:
+	@go list ./pkg/... | while IFS= read -r d; do \
+		godoc2ghmd -file=`go env GOPATH`/src/$$d/README.md $$d ; \
+	done
 
 .PHONY: clean
 clean:

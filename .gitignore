@@ -1,3 +1,7 @@
 *.exe
 .idea
 bin/
+
+# only for make gen-pkgdoc
+pkg/cmd/api/spec/README.md
+pkg/cmd/api/swagger-ui/README.md
