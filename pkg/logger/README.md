@@ -1,0 +1,157 @@
+# logger
+`import "openpitrix.io/openpitrix/pkg/logger"`
+
+* [Overview](#pkg-overview)
+* [Imported Packages](#pkg-imports)
+* [Index](#pkg-index)
+
+## <a name="pkg-overview">Overview</a>
+
+## <a name="pkg-imports">Imported Packages</a>
+
+- [github.com/golang/glog](https://godoc.org/github.com/golang/glog)
+- [google.golang.org/grpc/grpclog/glogger](https://godoc.org/google.golang.org/grpc/grpclog/glogger)
+
+## <a name="pkg-index">Index</a>
+* [func Error(args ...interface{})](#Error)
+* [func Errorf(format string, args ...interface{})](#Errorf)
+* [func Errorln(args ...interface{})](#Errorln)
+* [func Fatal(args ...interface{})](#Fatal)
+* [func Fatalf(format string, args ...interface{})](#Fatalf)
+* [func Fatalln(args ...interface{})](#Fatalln)
+* [func Info(args ...interface{})](#Info)
+* [func Infof(format string, args ...interface{})](#Infof)
+* [func Infoln(args ...interface{})](#Infoln)
+* [func Print(args ...interface{})](#Print)
+* [func Printf(format string, args ...interface{})](#Printf)
+* [func Println(args ...interface{})](#Println)
+* [func V(l int) bool](#V)
+* [func Warn(args ...interface{})](#Warn)
+* [func Warnf(format string, args ...interface{})](#Warnf)
+* [func Warning(args ...interface{})](#Warning)
+* [func Warningf(format string, args ...interface{})](#Warningf)
+* [func Warningln(args ...interface{})](#Warningln)
+* [func Warnln(args ...interface{})](#Warnln)
+
+#### <a name="pkg-files">Package files</a>
+[glogger.go](./glogger.go) [logger.go](./logger.go) 
+
+## <a name="Error">func</a> [Error](./logger.go#L66)
+``` go
+func Error(args ...interface{})
+```
+Error logs to the ERROR log.
+
+## <a name="Errorf">func</a> [Errorf](./logger.go#L71)
+``` go
+func Errorf(format string, args ...interface{})
+```
+Errorf logs to the ERROR log. Arguments are handled in the manner of fmt.Printf.
+
+## <a name="Errorln">func</a> [Errorln](./logger.go#L76)
+``` go
+func Errorln(args ...interface{})
+```
+Errorln logs to the ERROR log. Arguments are handled in the manner of fmt.Println.
+
+## <a name="Fatal">func</a> [Fatal](./logger.go#L82)
+``` go
+func Fatal(args ...interface{})
+```
+Fatal logs to the FATAL log. Arguments are handled in the manner of fmt.Print.
+It calls os.Exit() with exit code 1.
+
+## <a name="Fatalf">func</a> [Fatalf](./logger.go#L90)
+``` go
+func Fatalf(format string, args ...interface{})
+```
+Fatalf logs to the FATAL log. Arguments are handled in the manner of fmt.Printf.
+It calles os.Exit() with exit code 1.
+
+## <a name="Fatalln">func</a> [Fatalln](./logger.go#L98)
+``` go
+func Fatalln(args ...interface{})
+```
+Fatalln logs to the FATAL log. Arguments are handled in the manner of fmt.Println.
+It calle os.Exit()) with exit code 1.
+
+## <a name="Info">func</a> [Info](./logger.go#L21)
+``` go
+func Info(args ...interface{})
+```
+Info logs to the INFO log.
+
+## <a name="Infof">func</a> [Infof](./logger.go#L26)
+``` go
+func Infof(format string, args ...interface{})
+```
+Infof logs to the INFO log. Arguments are handled in the manner of fmt.Printf.
+
+## <a name="Infoln">func</a> [Infoln](./logger.go#L31)
+``` go
+func Infoln(args ...interface{})
+```
+Infoln logs to the INFO log. Arguments are handled in the manner of fmt.Println.
+
+## <a name="Print">func</a> [Print](./logger.go#L105)
+``` go
+func Print(args ...interface{})
+```
+Print prints to the standard logger.
+
+## <a name="Printf">func</a> [Printf](./logger.go#L110)
+``` go
+func Printf(format string, args ...interface{})
+```
+Printf prints to the standard logger.
+
+## <a name="Println">func</a> [Println](./logger.go#L115)
+``` go
+func Println(args ...interface{})
+```
+Println prints to the standard logger.
+
+## <a name="V">func</a> [V](./logger.go#L16)
+``` go
+func V(l int) bool
+```
+V reports whether verbosity level l is at least the requested verbose level.
+
+## <a name="Warn">func</a> [Warn](./logger.go#L41)
+``` go
+func Warn(args ...interface{})
+```
+Warn same as Warning, logs to the WARNING log.
+
+## <a name="Warnf">func</a> [Warnf](./logger.go#L51)
+``` go
+func Warnf(format string, args ...interface{})
+```
+Warnf same as Warningf, logs to the WARNING log. Arguments are handled in the manner of fmt.Printf.
+
+## <a name="Warning">func</a> [Warning](./logger.go#L36)
+``` go
+func Warning(args ...interface{})
+```
+Warning logs to the WARNING log.
+
+## <a name="Warningf">func</a> [Warningf](./logger.go#L46)
+``` go
+func Warningf(format string, args ...interface{})
+```
+Warningf logs to the WARNING log. Arguments are handled in the manner of fmt.Printf.
+
+## <a name="Warningln">func</a> [Warningln](./logger.go#L56)
+``` go
+func Warningln(args ...interface{})
+```
+Warningln logs to the WARNING log. Arguments are handled in the manner of fmt.Println.
+
+## <a name="Warnln">func</a> [Warnln](./logger.go#L61)
+``` go
+func Warnln(args ...interface{})
+```
+Warnln same as Warningln, logs to the WARNING log. Arguments are handled in the manner of fmt.Println.
+
+- - -
+Generated by [godoc2ghmd](https://github.com/GandalfUK/godoc2ghmd)
