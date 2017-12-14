@@ -19,7 +19,7 @@ RUN mkdir -p /protoc && cd /protoc \
 
 FROM golang:1.9.2-alpine3.6
 
-RUN apk add --no-cache git protobuf
+RUN apk add --no-cache git protobuf make curl openssl
 
 COPY --from=builder /protoc/include /usr/local/include
 COPY --from=builder /go/bin /go/bin
