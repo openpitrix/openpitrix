@@ -7,7 +7,7 @@ TRAG.Gopkg:=openpitrix.io/openpitrix
 
 DOCKER_TAGS=latest
 
-GO:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) openpitrix/openpitrix:builder go
+MAKE_IN_DOCKER:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) openpitrix/openpitrix-builder make
 
 MYSQL_DATABASE:=$(TARG.Name)
 MYSQL_ROOT_PASSWORD:=password
@@ -28,7 +28,7 @@ help:
 	@echo "  clean             to clean the temp files"
 
 .PHONY: all
-all: generate test release
+all: build-in-docker test release
 
 .PHONY: init-vendor
 init-vendor:
@@ -58,7 +58,7 @@ tools:
 generate:
 	cd ./api && make generate
 	cd ./pkg/cmd/api && make
-	$(GO) generate ./pkg/version/
+	go generate ./pkg/version/
 
 .PHONY: mysql-start
 mysql-start:
@@ -72,8 +72,15 @@ mysql-stop:
 
 
 .PHONY: build
-build: generate
-	$(GO) fmt ./...
+build:
+	make generate
+	docker build -t $(TARG.Name) -f ./Dockerfile .
+	@docker image prune -f 1>/dev/null 2>&1
+	@echo "ok"
+
+.PHONY: build-in-docker
+build-in-docker:
+	$(MAKE_IN_DOCKER) generate
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "ok"
@@ -94,10 +101,6 @@ release:
 
 .PHONY: test
 test:
-	$(GO) fmt ./...
-	$(GO) vet ./...
-	$(GO) test ./...
-
 	docker-compose up --build -d
 	sleep 10
 

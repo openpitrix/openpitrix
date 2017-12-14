@@ -21,5 +21,4 @@ before_script:
   - docker --version
 
 script:
-  - make generate
-  - make test
+  - make all
