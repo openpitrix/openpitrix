@@ -2,8 +2,10 @@
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
 
+GO:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) openpitrix/openpitrix:builder go
+
 default:
-	go run makestatic.go
+	$(GO) run makestatic.go
 
 clean:
 	-rm static.go
