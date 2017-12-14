@@ -8,7 +8,7 @@ GOOGLEAPIS_PATH=third_party/googleapis
 GRPC_GATEWAY_PATH=../vendor/github.com/grpc-ecosystem/grpc-gateway/
 VENDOR_PATH=../vendor/
 
-PROTOC:=docker run --rm -it -v `pwd`/../:`pwd`/../ -w `pwd` openpitrix/openpitrix:builder protoc -I. -I$(GOOGLEAPIS_PATH) -I$(GRPC_GATEWAY_PATH) -I$(PROTOC_INC_PATH) -I$(VENDOR_PATH)
+PROTOC_FLAGS:=-I. -I$(GOOGLEAPIS_PATH) -I$(GRPC_GATEWAY_PATH) -I$(PROTOC_INC_PATH) -I$(VENDOR_PATH)
 
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
@@ -18,11 +18,11 @@ help:
 
 generate: $(PROTO_FILES) Makefile
 	mkdir -p ../pkg/service.pb
-	$(PROTOC) --go_out=plugins=grpc:../pkg/service.pb ${PROTO_FILES}
-	$(PROTOC) --govalidators_out=:../pkg/service.pb ${PROTO_FILES}
-	$(PROTOC) --grpc-gateway_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
-	$(PROTOC) --swagger_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
-	$(PROTOC) --swagger_out=logtostderr=true:../pkg/cmd/api/spec ${PROTO_FILES}
+	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:../pkg/service.pb ${PROTO_FILES}
+	protoc $(PROTOC_FLAGS) --govalidators_out=:../pkg/service.pb ${PROTO_FILES}
+	protoc $(PROTOC_FLAGS) --grpc-gateway_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
+	protoc $(PROTOC_FLAGS) --swagger_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
+	protoc $(PROTOC_FLAGS) --swagger_out=logtostderr=true:../pkg/cmd/api/spec ${PROTO_FILES}
 	@echo "ok"
 
 tools:
