@@ -19,14 +19,14 @@ branch, but release branches should not change.
 
 ## Prerequisites
 
-OpenPitrix only has few external dependencies you need to setup before being 
+OpenPitrix only has few external dependencies you need to setup before being
 able to build and run the code.
 
 ### Setting up Go
 
 OpenPitrix written in the [Go](http://golang.org) programming language.
-To build, you'll need a Go (version 1.8+) development environment. 
-If you haven't set up a Go development environment, please follow 
+To build, you'll need a Go (version 1.8+) development environment.
+If you haven't set up a Go development environment, please follow
 [these instructions](https://golang.org/doc/install)
 to install the Go tools.
 
@@ -40,17 +40,22 @@ $ export PATH=$PATH:$GOPATH/bin
 
 ### Setting up Docker
 
+Project OpenPitrix is very edge, So you need update your environment edge too. Please follow this [Guide](https://docs.docker.com/engine/installation/) to install newest docker. and setting up.
+
+and you need install [docker-compose](https://docs.docker.com/compose/install) too.
+
 If you install the Swagger as follows using docker, then you need to set up docker
-environment. Also docker environment may be needed for running some of OpenPitrix's examples 
+environment. Also docker environment may be needed for running some of OpenPitrix's examples
 and tests. Please follow [these instructions](https://docs.docker.com/engine/installation/)
 for how to do this for your platform.
 
+
 ### Setting up Swagger
 
-OpenPitrix is using [OpenAPI/Swagger](https://swagger.io) to develop API, so follow 
-[the instructions](https://github.com/go-swagger/go-swagger/tree/master/docs) to 
-install Swagger. If you are not familar with Swagger, please read the 
-[tutorial](http://apihandyman.io/writing-openapi-swagger-specification-tutorial-part-1-introduction/#writing-openapi-fka-swagger-specification-tutorial). If you install Swagger using docker distribution, 
+OpenPitrix is using [OpenAPI/Swagger](https://swagger.io) to develop API, so follow
+[the instructions](https://github.com/go-swagger/go-swagger/tree/master/docs) to
+install Swagger. If you are not familar with Swagger, please read the
+[tutorial](http://apihandyman.io/writing-openapi-swagger-specification-tutorial-part-1-introduction/#writing-openapi-fka-swagger-specification-tutorial). If you install Swagger using docker distribution,
 please run
 
 ```shell
@@ -68,7 +73,7 @@ There are two options to get OpenPitrix source code and build the project:
 ```shell
 $ go get -d openpitrix.io/openpitrix
 $ cd $GOPATH/src/openpitrix.io/openpitrix
-$ make
+$ make all
 ```
 
 **You have a working Docker environment.**
