@@ -25,7 +25,7 @@ able to build and run the code.
 ### Setting up Go
 
 OpenPitrix written in the [Go](http://golang.org) programming language.
-To build, you'll need a Go (version 1.8+) development environment.
+To build, you'll need a Go (version 1.9+) development environment.
 If you haven't set up a Go development environment, please follow
 [these instructions](https://golang.org/doc/install)
 to install the Go tools.
