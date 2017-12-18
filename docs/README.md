@@ -7,7 +7,7 @@ OpenPitrix API, or to contribute directly to the OpenPitrix project.
 ## The process of developing and contributing code to the OpenPitrix project
 
 * **Welcome to OpenPitrix (New Developer Guide)**
-  ([welcome-to-OpenPitrix-new-developer-guide.md](welcome-to-kubernetes-new-developer-guide.md)):
+  ([welcome-to-OpenPitrix-new-developer-guide.md](welcome-to-OpenPitrix-new-developer-guide.md)):
   An introductory guide to contributing to OpenPitrix.
 
 * **On Collaborative Development** ([collab.md](collab.md)): Info on pull requests and code reviews.
