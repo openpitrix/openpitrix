@@ -46,7 +46,7 @@ $ docker run --rm --name openpitrix-api --network openpitrix-bridge -p 9100:9100
 
 Exit docker runtime environment
 ```
-$ docker kill $(docker ps -f name=openpitrix -q -a)
+$ docker stop $(docker ps -f name=openpitrix -q)
 ```
 
 ##### You have a working [Docker-Compose environment].
