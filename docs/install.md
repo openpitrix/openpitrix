@@ -33,34 +33,20 @@ $ ps aux | grep openpitrix- | grep -v grep | awk '{print $2}' | xargs kill -9
 ```
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
-$ make build
-$ docker run --rm --name openpitrix-db \
-    -e MYSQL_ROOT_PASSWORD=password \
-    -e MYSQL_DATABASE=openpitrix \
-    -p 3306:3306 -d mysql:5.6
-$ docker run --rm --name openpitrix-app \
-    --link openpitrix-db:openpitrix-db \
-    -d openpitrix app
-$ docker run --rm --name openpitrix-runtime \
-    --link openpitrix-db:openpitrix-db \
-    -d openpitrix runtime
-$ docker run --rm --name openpitrix-cluster \
-    --link openpitrix-db:openpitrix-db \
-    -d openpitrix cluster
-$ docker run --rm --name openpitrix-repo \
-    --link openpitrix-db:openpitrix-db \
-    -d openpitrix repo
-$ docker run --rm --name openpitrix-api \
-    --link openpitrix-app:openpitrix-app \
-    --link openpitrix-runtime:openpitrix-runtime \
-    --link openpitrix-cluster:openpitrix-cluster \
-    --link openpitrix-repo:openpitrix-repo \
-    -p 9100:9100 -d openpitrix api
+$ make build-in-docker
+$ docker network create -d bridge openpitrix-bridge
+$ docker run --rm --name openpitrix-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix \
+    --network openpitrix-bridge -p 3306:3306 -d mysql:5.6
+$ docker run --rm --name openpitrix-app --network openpitrix-bridge -d openpitrix app
+$ docker run --rm --name openpitrix-runtime --network openpitrix-bridge -d openpitrix runtime
+$ docker run --rm --name openpitrix-cluster --network openpitrix-bridge -d openpitrix cluster
+$ docker run --rm --name openpitrix-repo --network openpitrix-bridge -d openpitrix repo
+$ docker run --rm --name openpitrix-api --network openpitrix-bridge -p 9100:9100 -d openpitrix api
 ```
 
 Exit docker runtime environment
 ```
-$ docker kill $(docker ps -f name=openpitrix -q -a)
+$ docker stop $(docker ps -f name=openpitrix -q)
 ```
 
 ##### You have a working [Docker-Compose environment].

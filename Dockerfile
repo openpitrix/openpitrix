@@ -2,7 +2,7 @@
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
 
-FROM openpitrix/openpitrix:builder as builder
+FROM openpitrix/openpitrix-builder as builder
 
 WORKDIR /go/src/openpitrix.io/openpitrix/
 COPY . .
