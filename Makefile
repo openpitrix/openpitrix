@@ -12,23 +12,24 @@ MAKE_IN_DOCKER:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(
 MYSQL_DATABASE:=$(TARG.Name)
 MYSQL_ROOT_PASSWORD:=password
 
+.PHONY: all
+all: build-in-docker test release
+
 .PHONY: help
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
 	@echo "  all               to generate, test and release"
-	@echo "  start             to start service (port:9100)"
-	@echo "  stop              to stop service"
+	@echo "  start             to start services (port:9100)"
+	@echo "  stop              to stop services"
 	@echo "  tools             to install depends tools"
 	@echo "  init-vendor       to init vendor packages"
 	@echo "  update-vendor     to update vendor packages"
 	@echo "  generate          to generate restapi code"
-	@echo "  build             to build the service"
+	@echo "  build             to build the services"
+	@echo "  build-in-docker   to build the services using docker without installing any dependence"
 	@echo "  test              to run go test ./..."
 	@echo "  release           to build and release current version"
 	@echo "  clean             to clean the temp files"
-
-.PHONY: all
-all: build-in-docker test release
 
 .PHONY: init-vendor
 init-vendor:
