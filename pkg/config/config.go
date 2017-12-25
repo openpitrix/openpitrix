@@ -40,33 +40,33 @@ type OpenPitrix_Config struct {
 }
 
 type ApiService struct {
-	Host string `default:"127.0.0.1"`
+	Host string `default:"openpitrix-api"`
 	Port int    `default:"9100"`
 }
 
 type AppService struct {
-	Host string `default:"127.0.0.1"`
+	Host string `default:"openpitrix-app"`
 	Port int    `default:"9101"`
 }
 
 type RuntimeService struct {
-	Host string `default:"127.0.0.1"`
+	Host string `default:"openpitrix-runtime"`
 	Port int    `default:"9102"`
 }
 
 type ClusterService struct {
-	Host string `default:"127.0.0.1"`
+	Host string `default:"openpitrix-cluster"`
 	Port int    `default:"9103"`
 }
 
 type RepoService struct {
-	Host string `default:"127.0.0.1"`
+	Host string `default:"openpitrix-repo"`
 	Port int    `default:"9104"`
 }
 
 type Database struct {
 	Type         string `default:"mysql"`
-	Host         string `default:"127.0.0.1"`
+	Host         string `default:"openpitrix-db"`
 	Port         int    `default:"3306"`
 	Encoding     string `default:"utf8"`
 	Engine       string `default:"InnoDB"`
