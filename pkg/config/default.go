@@ -26,7 +26,7 @@ CopyStandardLogTo = "INFO"
 
 [DB]
 Type         = "mysql"
-Host         = "127.0.0.1"
+Host         = "openpitrix-db"
 Port         = 3306
 Encoding     = "utf8"
 Engine       = "InnoDB"
@@ -34,23 +34,23 @@ DbName       = "openpitrix"
 RootPassword = "password"
 
 [Api]
-Host = "127.0.0.1"
+Host = "openpitrix-api"
 Port = 9100
 
 [App]
-Host = "127.0.0.1"
+Host = "openpitrix-app"
 Port = 9101
 
 [Runtime]
-Host = "127.0.0.1"
+Host = "openpitrix-runtime"
 Port = 9102
 
 [Cluster]
-Host = "127.0.0.1"
+Host = "openpitrix-cluster"
 Port = 9103
 
 [Repo]
-Host = "127.0.0.1"
+Host = "openpitrix-repo"
 Port = 9104
 
 

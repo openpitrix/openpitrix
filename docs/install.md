@@ -10,11 +10,55 @@ If you want to build OpenPitrix right away there are three options:
 
 ##### You have a working [Go environment].
 
+Download and install protoc compiler at first:
+
+- https://github.com/google/protobuf/releases/
+- ensure `protoc --version` work well
+
+
+Install protoc plugin:
+
+```
+go get github.com/golang/protobuf/protoc-gen-go
+go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+go get github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
+```
+
+Get openpitrix source code and build service:
+
 ```
 $ go get -d openpitrix.io/openpitrix
 $ cd $GOPATH/src/openpitrix.io/openpitrix
 $ make generate
 $ GOBIN=`pwd`/bin go install ./cmd/...
+```
+
+Then add the services name to the `/etc/hosts` file:
+
+```
+127.0.0.1 openpitrix-api
+127.0.0.1 openpitrix-repo
+127.0.0.1 openpitrix-app
+127.0.0.1 openpitrix-runtime
+127.0.0.1 openpitrix-cluster
+127.0.0.1 openpitrix-db
+```
+
+Restart the OS and ping the services name:
+
+```
+ping openpitrix-api
+ping openpitrix-repo
+ping openpitrix-app
+ping openpitrix-runtime
+ping openpitrix-cluster
+ping openpitrix-db
+```
+
+Start OpenPitrix service:
+
+```
 $ docker run --rm --name openpitrix-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix -p 3306:3306 -d mysql:5.6
 $ ./bin/openpitrix-api &
 $ ./bin/openpitrix-repo &
