@@ -54,7 +54,7 @@ $ docker stop $(docker ps -f name=openpitrix -q)
 ```
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
-$ make build
+$ make build-in-docker
 $ docker-compose up -d
 ```
 
