@@ -91,6 +91,10 @@ type Glog struct {
 	CopyStandardLogTo string `default:""`
 }
 
+func (p *Database) GetServerAddr() string {
+	return fmt.Sprintf("root:%s@tcp(%s:%d)/", p.RootPassword, p.Host, p.Port)
+}
+
 func (p *Database) GetUrl() string {
 	return fmt.Sprintf("root:%s@tcp(%s:%d)/%s", p.RootPassword, p.Host, p.Port, p.DbName)
 }

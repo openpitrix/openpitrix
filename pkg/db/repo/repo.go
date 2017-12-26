@@ -6,6 +6,8 @@ package db_repo
 
 import (
 	"database/sql"
+	"fmt"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -32,9 +34,11 @@ type Repo struct {
 }
 
 type RepoDatabase struct {
-	db               *sql.DB
-	dbMap            *gorp.DbMap
-	createTablesDone uint32
+	cfg               config.Database
+	db                *sql.DB
+	dbMap             *gorp.DbMap
+	createTablesDone  uint32
+	createTablesMutex sync.Mutex
 }
 
 func OpenRepoDatabase(cfg *config.Database) (p *RepoDatabase, err error) {
@@ -54,6 +58,7 @@ func OpenRepoDatabase(cfg *config.Database) (p *RepoDatabase, err error) {
 	dbMap.AddTableWithName(Repo{}, RepoTableName)
 
 	p = &RepoDatabase{
+		cfg:   *cfg,
 		db:    db,
 		dbMap: dbMap,
 	}
@@ -117,9 +122,34 @@ func (p *RepoDatabase) initTables() {
 	if atomic.LoadUint32(&p.createTablesDone) == 1 {
 		return
 	}
+
+	// Slow-path.
+	p.createTablesMutex.Lock()
+	defer p.createTablesMutex.Unlock()
+
+	if atomic.LoadUint32(&p.createTablesDone) == 1 {
+		return
+	}
+
+	db, err := sql.Open(p.cfg.Type, p.cfg.GetServerAddr())
+	if err != nil {
+		logger.Warningf("sql.Open failed: %+v", err)
+		return
+	}
+	defer db.Close()
+
+	sqlCreateDbIfNotExists := fmt.Sprintf(
+		"CREATE DATABASE IF NOT EXISTS %s DEFAULT CHARACTER SET utf8;",
+		p.cfg.DbName,
+	)
+	if _, err = db.Exec(sqlCreateDbIfNotExists); err != nil {
+		logger.Warningf("CREATE DATABASE failed: %+v", err)
+		return
+	}
 	if err := p.dbMap.CreateTablesIfNotExists(); err != nil {
 		logger.Warningf("CreateTablesIfNotExists: %+v", err)
 		return
 	}
+
 	atomic.StoreUint32(&p.createTablesDone, 1)
 }
