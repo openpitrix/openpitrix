@@ -1,89 +1,120 @@
 # Developing for OpenPitrix
 
-This document is intended to be the canonical source of truth for things like
-supported toolchain versions for building OpenPitrix.
-If you find a requirement that this doc does not capture, or if you find other
-docs with references to requirements that are not simply links to this doc,
-please [submit an issue](https://github.com/openpitrix/openpitrix/issues/new).
+The [community repository](https://github.com/openpitrix) hosts all information about
+building OpenPitrix from source, how to contribute code and documentation, who to contact about what, etc. If you find a requirement that this doc does not capture, or if you find other docs with references to requirements that are not simply links to this doc, please [submit an issue](https://github.com/openpitrix/openpitrix/issues/new).
 
-This document is intended to be relative to the branch in which it is found.
-It is guaranteed that requirements will change over time for the development
-branch, but release branches should not change.
-
-- [Prerequisites](#prerequisites)
-  - [Setting up Go](#setting-up-go)
-  - [Setting up Docker](#setting-up-docker)
-  - [Setting up Swagger](#setting-up-swagger)
-- [To start developing OpenPitrix](#to-start-developing-openpitrix)
-- [DevOps](#devops)
-
-## Prerequisites
-
-OpenPitrix only has few external dependencies you need to setup before being
-able to build and run the code.
-
-### Setting up Go
-
-OpenPitrix written in the [Go](http://golang.org) programming language.
-To build, you'll need a Go (version 1.9+) development environment.
-If you haven't set up a Go development environment, please follow
-[these instructions](https://golang.org/doc/install)
-to install the Go tools.
-
-Set up your GOPATH and add a path entry for Go binaries to your PATH. Typically
-added to your ~/.profile:
-
-```shell
-$ export GOPATH=~/go
-$ export PATH=$PATH:$GOPATH/bin
-```
-
-### Setting up Docker
-
-Project OpenPitrix is very edge, So you need update your environment edge too. Please follow this [Guide](https://docs.docker.com/engine/installation/) to install newest docker. and setting up.
-
-and you need install [docker-compose](https://docs.docker.com/compose/install) too.
-
-If you install the Swagger as follows using docker, then you need to set up docker
-environment. Also docker environment may be needed for running some of OpenPitrix's examples
-and tests. Please follow [these instructions](https://docs.docker.com/engine/installation/)
-for how to do this for your platform.
-
-
-### Setting up Swagger
-
-OpenPitrix is using [OpenAPI/Swagger](https://swagger.io) to develop API, so follow
-[the instructions](https://github.com/go-swagger/go-swagger/tree/master/docs) to
-install Swagger. If you are not familar with Swagger, please read the
-[tutorial](http://apihandyman.io/writing-openapi-swagger-specification-tutorial-part-1-introduction/#writing-openapi-fka-swagger-specification-tutorial). If you install Swagger using docker distribution,
-please run
-
-```shell
-$ docker pull quay.io/goswagger/swagger
-$ alias swagger="docker run --rm -it -e GOPATH=$GOPATH:/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger"
-$ swagger version
-```
+----
 
 ## To start developing OpenPitrix
 
-There are two options to get OpenPitrix source code and build the project:
+There are three options to develop the project:
 
-**You have a working Go environment.**
-
-```shell
-$ go get -d openpitrix.io/openpitrix
-$ cd $GOPATH/src/openpitrix.io/openpitrix
-$ make all
-```
-
-**You have a working Docker environment.**
+### 1. You have a working [Docker Compose](https://docs.docker.com/compose/install) environment [recommend].
+>You need to install [Docker](https://docs.docker.com/engine/installation/) first.
 
 ```shell
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
-$ make
+$ make build-in-docker
+$ docker-compose up -d
 ```
+
+Exit docker runtime environment
+```shell
+$ docker-compose down
+```
+
+### 2. You have a working [Docker](https://docs.docker.com/engine/installation/) environment.
+
+```shell
+$ git clone https://github.com/openpitrix/openpitrix
+$ cd openpitrix
+$ make build-in-docker
+$ docker network create -d bridge openpitrix-bridge
+$ docker run --name openpitrix-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix \
+    --network openpitrix-bridge -p 3306:3306 -d mysql:5.6
+$ docker run --rm --name openpitrix-app --network openpitrix-bridge -d openpitrix app
+$ docker run --rm --name openpitrix-runtime --network openpitrix-bridge -d openpitrix runtime
+$ docker run --rm --name openpitrix-cluster --network openpitrix-bridge -d openpitrix cluster
+$ docker run --rm --name openpitrix-repo --network openpitrix-bridge -d openpitrix repo
+$ docker run --rm --name openpitrix-api --network openpitrix-bridge -p 9100:9100 -d openpitrix api
+```
+
+Exit docker runtime environment
+```shell
+$ docker stop $(docker ps -f name=openpitrix -q)
+```
+
+### 3. You have a working [Go](prereqs.md#setting-up-go) environment.
+
+- Install [protoc compiler](https://github.com/google/protobuf/releases/)
+- Install protoc plugin:
+
+```shell
+$ go get github.com/golang/protobuf/protoc-gen-go
+$ go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+$ go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+$ go get github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
+```
+
+- Get openpitrix source code and build service:
+
+```shell
+$ go get -d openpitrix.io/openpitrix
+$ cd $GOPATH/src/openpitrix.io/openpitrix
+$ make generate
+$ GOBIN=`pwd`/bin go install ./cmd/...
+```
+
+- Install mysql server first. Then add the services name to the `/etc/hosts` file as follows. 
+>Note: If you install mysql server remotely then configure the server IP correspondingly. You may
+need to create the database __openpitrix__ and change the user __root__ password to __password__ in advance. If the user __root__ password is different than the default one, then you need to specify the password in the command line when start OpenPitrix services.
+
+```
+127.0.0.1 openpitrix-api
+127.0.0.1 openpitrix-repo
+127.0.0.1 openpitrix-app
+127.0.0.1 openpitrix-runtime
+127.0.0.1 openpitrix-cluster
+127.0.0.1 openpitrix-db
+```
+
+- Start OpenPitrix service:
+
+```shell
+$ ./bin/openpitrix-api &
+$ ./bin/openpitrix-repo &
+$ ./bin/openpitrix-app &
+$ ./bin/openpitrix-runtime &
+$ ./bin/openpitrix-cluster &
+```
+
+- Exit go runtime environment
+```shell
+$ ps aux | grep openpitrix- | grep -v grep | awk '{print $2}' | xargs kill -9
+```
+
+----
+
+## Test OpenPitrix
+
+Visit http://127.0.0.1:9100/swagger-ui in browser, and try it online, or test openpitrix api service via command line:
+
+```shell
+$ curl http://localhost:9100/v1/apps
+{"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
+$ curl http://localhost:9100/v1/apps/app-12345678
+{"error":"App Id app-12345678 not exist","code":5}
+$ curl http://localhost:9100/v1/appruntimes
+{"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
+$ curl http://localhost:9100/v1/clusters
+{"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
+$ curl http://localhost:9100/v1/repos
+{"total_items":0,"total_pages":0,"page_size":10,"current_page":1}
+```
+
+----
 
 ## DevOps
 
-Please check [How to set up DevOps environment](devops.md)
+Please check [How to set up DevOps environment](devops.md).
