@@ -75,20 +75,20 @@ func (p *QingcloudRuntime) waitJobs(jobIds []string, timeout time.Duration, wait
 	done := make(chan error, 1)
 
 	for _, jobId := range jobIds {
-		go func() {
+		go func(waitJobId string) {
 			defer wg.Done()
-			done <- client.WaitJob(jobService, jobId, timeout, waitInterval)
+			done <- client.WaitJob(jobService, waitJobId, timeout, waitInterval)
 
 			waitErr, ok := <-done
 			if !ok {
 				return
 			}
 			if waitErr != nil {
-				logger.Errorf("Failed to wait cluster job [%s]: %v", jobId, waitErr)
+				logger.Errorf("Failed to wait cluster job [%s]: %v", waitJobId, waitErr)
 				err = waitErr
 				close(done)
 			}
-		}()
+		}(jobId)
 	}
 	wg.Wait()
 	return err

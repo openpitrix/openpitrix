@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package k8s_runtime
+package k8s
 
 import (
 	"testing"

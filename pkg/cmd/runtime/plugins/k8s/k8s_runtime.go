@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package k8s_runtime
+package k8s
 
 import (
 	"bytes"
@@ -91,8 +91,6 @@ func (p *K8sRuntime) CreateCluster(appConf string, shouldWait bool, args ...stri
 			return clusterId, fmt.Errorf("Failed to create cluster [%s] with unknow type", clusterId)
 		}
 	}
-
-	return
 }
 
 func (p *K8sRuntime) StartClusters(clusterIds string, shouldWait bool, args ...string) error {
@@ -162,8 +160,6 @@ func (p *K8sRuntime) DeleteClusters(clusterIds string, shouldWait bool, args ...
 			return fmt.Errorf("Failed to delete cluster [%s] with unknow type", clusterIds)
 		}
 	}
-
-	return err
 }
 
 func (p *K8sRuntime) StopClusters(clusterIds string, shouldWait bool, args ...string) error {
