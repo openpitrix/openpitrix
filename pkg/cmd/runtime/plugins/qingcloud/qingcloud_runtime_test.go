@@ -1,3 +1,7 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package qingcloud
 
 import (
@@ -36,7 +40,7 @@ protocol: "http"
 zone: "test"
 */
 
-const appConf = `
+const test_appConf = `
 {
   "app_id": "app-ZooKeeper81S8qik7spNTE39hAtZEmtjhUU5",
   "app_version": "1.0",
@@ -134,7 +138,7 @@ const appConf = `
 func TestQingCloudRuntime(t *testing.T) {
 	runtime := QingcloudRuntime{}
 
-	clusterId, err := runtime.CreateCluster(appConf, true)
+	clusterId, err := runtime.CreateCluster(test_appConf, true)
 	assert.Empty(t, err)
 	err = runtime.StopClusters(clusterId, true, "0")
 	assert.Empty(t, err)

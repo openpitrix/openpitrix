@@ -38,7 +38,7 @@ func (p *K8sRuntime) Run(app string, args ...string) error {
 	return errors.New("TODO")
 }
 
-func (p *K8sRuntime) GetDefaultClient() (clientset *kubernetes.Clientset, err error) {
+func (p *K8sRuntime) getDefaultClient() (clientset *kubernetes.Clientset, err error) {
 	config, err := clientcmd.BuildConfigFromFlags("", homedir.HomeDir()+"/.kube/config")
 	if err != nil {
 		return
@@ -54,9 +54,9 @@ func (p *K8sRuntime) CreateCluster(appConf string, shouldWait bool, args ...stri
 	if len(args) >= 1 {
 		clusterId = args[0]
 	} else {
-		clusterId = p.GetClusterId()
+		clusterId = p.getClusterId()
 	}
-	clientset, err := p.GetDefaultClient()
+	clientset, err := p.getDefaultClient()
 	if err != nil {
 		logger.Errorf("Failed to get client when create cluster: %v", err)
 		return
@@ -68,8 +68,7 @@ func (p *K8sRuntime) CreateCluster(appConf string, shouldWait bool, args ...stri
 		ext := apiruntime.RawExtension{}
 		if err := d.Decode(&ext); err != nil {
 			if err == io.EOF {
-				err = nil
-				return clusterId, err
+				return clusterId, nil
 			}
 			return clusterId, err
 		}
@@ -80,7 +79,7 @@ func (p *K8sRuntime) CreateCluster(appConf string, shouldWait bool, args ...stri
 		obj, _, err := decoder.Decode(ext.Raw, nil, nil)
 		switch o := obj.(type) {
 		case *v1beta1.Deployment:
-			o.SetName(p.GetName(clusterId, o.GetName()))
+			o.SetName(p.getName(clusterId, o.GetName()))
 			deploymentsClient := clientset.ExtensionsV1beta1().Deployments(v1.NamespaceDefault)
 			_, err = deploymentsClient.Create(o)
 			if err != nil {
@@ -121,7 +120,7 @@ func (p *K8sRuntime) RecoverClusters(clusterIds string, shouldWait bool, args ..
 }
 
 func (p *K8sRuntime) DeleteClusters(clusterIds string, shouldWait bool, args ...string) error {
-	clientset, err := p.GetDefaultClient()
+	clientset, err := p.getDefaultClient()
 	if err != nil {
 		logger.Errorf("Failed to get client when create cluster: %v", err)
 		return err
@@ -150,12 +149,13 @@ func (p *K8sRuntime) DeleteClusters(clusterIds string, shouldWait bool, args ...
 		obj, _, err := decoder.Decode(ext.Raw, nil, nil)
 		switch o := obj.(type) {
 		case *v1beta1.Deployment:
-			name := p.GetName(clusterIds, o.GetName())
+			name := p.getName(clusterIds, o.GetName())
 			deploymentsClient := clientset.ExtensionsV1beta1().Deployments(v1.NamespaceDefault)
 			background := metav1.DeletePropagationBackground
 			err = deploymentsClient.Delete(name, &metav1.DeleteOptions{PropagationPolicy: &background})
 			if err != nil {
 				logger.Errorf("Failed to delete cluster: %v", err)
+				return err
 			}
 		default:
 			logger.Errorf("Failed to delete cluster with unknow type")
@@ -186,17 +186,17 @@ func (p *K8sRuntime) CeaseClusters(clusterIds string, shouldWait bool, args ...s
 	return p.DeleteClusters(clusterIds, shouldWait, appConf)
 }
 
-func (p *K8sRuntime) GetName(clusterId string, oriName string) string {
-	return (clusterId + "-" + oriName)
+func (p *K8sRuntime) getName(clusterId, oriName string) string {
+	return clusterId + "-" + oriName
 }
 
-func (p *K8sRuntime) GetClusterId() string {
+func (p *K8sRuntime) getClusterId() string {
 	// todo: need to check db
 	uuid := utils.GetLowerAndNumUuid(8)
 	return "cl-" + uuid
 }
 
-func (p *K8sRuntime) GetClusterNodeId() string {
+func (p *K8sRuntime) getClusterNodeId() string {
 	// todo: need to check db
 	uuid := utils.GetLowerAndNumUuid(8)
 	return "cln-" + uuid

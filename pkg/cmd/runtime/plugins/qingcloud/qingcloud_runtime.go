@@ -28,7 +28,7 @@ func init() {
 type QingcloudRuntime struct {
 }
 
-func (p *QingcloudRuntime) InitService() (qingcloudService *service.QingCloudService, err error) {
+func (p *QingcloudRuntime) initService() (qingcloudService *service.QingCloudService, err error) {
 	userConf, err := config.NewDefault()
 	if err != nil {
 		return
@@ -44,8 +44,8 @@ func (p *QingcloudRuntime) InitService() (qingcloudService *service.QingCloudSer
 	return
 }
 
-func (p *QingcloudRuntime) InitClusterService() (clusterService *service.ClusterService, err error) {
-	qingcloudService, err := p.InitService()
+func (p *QingcloudRuntime) initClusterService() (clusterService *service.ClusterService, err error) {
+	qingcloudService, err := p.initService()
 	if err != nil {
 		logger.Errorf("Failed to init qingcloud api service: %v", err)
 		return
@@ -54,8 +54,8 @@ func (p *QingcloudRuntime) InitClusterService() (clusterService *service.Cluster
 	return
 }
 
-func (p *QingcloudRuntime) InitJobService() (jobService *service.JobService, err error) {
-	qingcloudService, err := p.InitService()
+func (p *QingcloudRuntime) initJobService() (jobService *service.JobService, err error) {
+	qingcloudService, err := p.initService()
 	if err != nil {
 		logger.Errorf("Failed to init qingcloud api service: %v", err)
 		return
@@ -64,8 +64,8 @@ func (p *QingcloudRuntime) InitJobService() (jobService *service.JobService, err
 	return
 }
 
-func (p *QingcloudRuntime) WaitJobs(jobIds []string, timeout time.Duration, waitInterval time.Duration) error {
-	jobService, err := p.InitJobService()
+func (p *QingcloudRuntime) waitJobs(jobIds []string, timeout time.Duration, waitInterval time.Duration) error {
+	jobService, err := p.initJobService()
 	if err != nil {
 		logger.Errorf("Failed to init job service when wait cluster jobs %s: %v", jobIds, err)
 		return err
@@ -94,7 +94,7 @@ func (p *QingcloudRuntime) WaitJobs(jobIds []string, timeout time.Duration, wait
 	return err
 }
 
-func (p *QingcloudRuntime) WaitClustersStatus(clusterService *service.ClusterService, clusterIds string, status string, timeout time.Duration, waitInterval time.Duration) error {
+func (p *QingcloudRuntime) waitClustersStatus(clusterService *service.ClusterService, clusterIds string, status string, timeout time.Duration, waitInterval time.Duration) error {
 	return utils.WaitForSpecificOrError(func() (bool, error) {
 		clusters := strings.Split(clusterIds, ",")
 		output, err := clusterService.DescribeClusters(&service.DescribeClustersInput{Clusters: service.StringSlice(clusters)})
@@ -102,25 +102,25 @@ func (p *QingcloudRuntime) WaitClustersStatus(clusterService *service.ClusterSer
 			//network or api error
 			return false, nil
 		}
+
 		if len(output.ClusterSet) != len(clusters) {
 			return false, fmt.Errorf("Can not find clusters [%s]", clusterIds)
-		} else {
-			for _, cluster := range output.ClusterSet {
-				if cluster.TransitionStatus == nil {
-					logger.Errorf("Cluster [%s] transition_status is nil ", clusterIds)
-					return false, nil
-				}
-				if service.StringValue(cluster.TransitionStatus) != "" {
-					return false, nil
-				}
-				if service.StringValue(cluster.Status) == status {
-					continue
-				} else {
-					return false, fmt.Errorf("Cluster [%s] status [%s]", clusterIds, status)
-				}
-			}
-			return true, nil
 		}
+
+		for _, cluster := range output.ClusterSet {
+			if cluster.TransitionStatus == nil {
+				logger.Errorf("Cluster [%s] transition_status is nil ", clusterIds)
+				return false, nil
+			}
+			if service.StringValue(cluster.TransitionStatus) != "" {
+				return false, nil
+			}
+			if service.StringValue(cluster.Status) != status {
+				return false, fmt.Errorf("Cluster [%s] status [%s]", clusterIds, status)
+			}
+		}
+		return true, nil
+
 	}, timeout, waitInterval)
 }
 
@@ -147,7 +147,7 @@ func (p *QingcloudRuntime) CreateCluster(appConf string, shouldWait bool, args .
 	logger.Infof("Creating cluster...")
 
 	// call QingCloud CreateCluster Api
-	clusterService, err := p.InitClusterService()
+	clusterService, err := p.initClusterService()
 	if err != nil {
 		logger.Errorf("Failed to init cluster service when create cluster: %v", err)
 		return
@@ -164,7 +164,7 @@ func (p *QingcloudRuntime) CreateCluster(appConf string, shouldWait bool, args .
 	if shouldWait {
 		jobId := service.StringValue(output.JobID)
 		jobIds := []string{jobId}
-		err = p.WaitJobs(jobIds, TIMEOUT_CREATE_CLUSTER, WAIT_INTERVAL)
+		err = p.waitJobs(jobIds, TIMEOUT_CREATE_CLUSTER, WAIT_INTERVAL)
 		if err != nil {
 			logger.Errorf("Failed to wait create cluster jobs %s: %v", jobIds, err)
 			return
@@ -179,7 +179,7 @@ func (p *QingcloudRuntime) StopClusters(clusterIds string, shouldWait bool, args
 	logger.Infof("Stoping cluster [%s]...", clusterIds)
 
 	// call QingCloud StopClusters Api
-	clusterService, err := p.InitClusterService()
+	clusterService, err := p.initClusterService()
 	if err != nil {
 		logger.Errorf("Failed to init cluster service when stop cluster: %v", err)
 		return err
@@ -208,7 +208,7 @@ func (p *QingcloudRuntime) StopClusters(clusterIds string, shouldWait bool, args
 		for _, jobId := range jobIdsMap {
 			jobIds = append(jobIds, jobId)
 		}
-		err = p.WaitJobs(jobIds, TIMEOUT_STOP_CLUSTER, WAIT_INTERVAL)
+		err = p.waitJobs(jobIds, TIMEOUT_STOP_CLUSTER, WAIT_INTERVAL)
 		if err != nil {
 			logger.Errorf("Failed to wait stop cluster jobs %s: %v", jobIds, err)
 			return err
@@ -223,7 +223,7 @@ func (p *QingcloudRuntime) StartClusters(clusterIds string, shouldWait bool, arg
 	logger.Infof("Starting cluster [%s]...", clusterIds)
 
 	// call QingCloud StartClusters Api
-	clusterService, err := p.InitClusterService()
+	clusterService, err := p.initClusterService()
 	if err != nil {
 		logger.Errorf("Failed to init cluster service when start cluster: %v", err)
 		return err
@@ -244,7 +244,7 @@ func (p *QingcloudRuntime) StartClusters(clusterIds string, shouldWait bool, arg
 		for _, jobId := range jobIdsMap {
 			jobIds = append(jobIds, jobId)
 		}
-		err = p.WaitJobs(jobIds, TIMEOUT_START_CLUSTER, WAIT_INTERVAL)
+		err = p.waitJobs(jobIds, TIMEOUT_START_CLUSTER, WAIT_INTERVAL)
 		if err != nil {
 			logger.Errorf("Failed to wait start cluster jobs %s: %v", jobIds, err)
 			return err
@@ -259,7 +259,7 @@ func (p *QingcloudRuntime) DeleteClusters(clusterIds string, shouldWait bool, ar
 	logger.Infof("Deleting cluster [%s]...", clusterIds)
 
 	// call QingCloud DeleteClusters Api
-	clusterService, err := p.InitClusterService()
+	clusterService, err := p.initClusterService()
 	if err != nil {
 		logger.Errorf("Failed to init cluster service when delete cluster: %v", err)
 		return err
@@ -289,7 +289,7 @@ func (p *QingcloudRuntime) DeleteClusters(clusterIds string, shouldWait bool, ar
 		for _, jobId := range jobIdsMap {
 			jobIds = append(jobIds, jobId)
 		}
-		err = p.WaitJobs(jobIds, TIMEOUT_DELETE_CLUSTER, WAIT_INTERVAL)
+		err = p.waitJobs(jobIds, TIMEOUT_DELETE_CLUSTER, WAIT_INTERVAL)
 		if err != nil {
 			logger.Errorf("Failed to wait delete cluster jobs %s: %v", jobIds, err)
 			return err
@@ -304,7 +304,7 @@ func (p *QingcloudRuntime) RecoverClusters(clusterIds string, shouldWait bool, a
 	logger.Infof("Recovering cluster [%s]...", clusterIds)
 
 	// call QingCloud RecoverClusters Api
-	clusterService, err := p.InitClusterService()
+	clusterService, err := p.initClusterService()
 	if err != nil {
 		logger.Errorf("Failed to init cluster service when recover cluster: %v", err)
 		return err
@@ -319,7 +319,7 @@ func (p *QingcloudRuntime) RecoverClusters(clusterIds string, shouldWait bool, a
 	}
 
 	if shouldWait {
-		err = p.WaitClustersStatus(clusterService, clusterIds, STATUS_ACTIVE, TIMEOUT_RECOVER_CLUSTER, WAIT_INTERVAL)
+		err = p.waitClustersStatus(clusterService, clusterIds, STATUS_ACTIVE, TIMEOUT_RECOVER_CLUSTER, WAIT_INTERVAL)
 		if err != nil {
 			logger.Errorf("Failed to wait cluster [%s] status [%s]: %v", clusterIds, STATUS_ACTIVE, err)
 			return err
@@ -334,7 +334,7 @@ func (p *QingcloudRuntime) CeaseClusters(clusterIds string, shouldWait bool, arg
 	logger.Infof("Ceasing cluster [%s]...", clusterIds)
 
 	// call QingCloud CeaseClusters Api
-	clusterService, err := p.InitClusterService()
+	clusterService, err := p.initClusterService()
 	if err != nil {
 		logger.Errorf("Failed to init cluster service when cease cluster: %v", err)
 		return err
@@ -355,7 +355,7 @@ func (p *QingcloudRuntime) CeaseClusters(clusterIds string, shouldWait bool, arg
 		for _, jobId := range jobIdsMap {
 			jobIds = append(jobIds, jobId)
 		}
-		err = p.WaitJobs(jobIds, TIMEOUT_CEASE_CLUSTER, WAIT_INTERVAL)
+		err = p.waitJobs(jobIds, TIMEOUT_CEASE_CLUSTER, WAIT_INTERVAL)
 		if err != nil {
 			logger.Errorf("Failed to wait cease cluster jobs %s: %v", jobIds, err)
 			return err
@@ -368,7 +368,7 @@ func (p *QingcloudRuntime) CeaseClusters(clusterIds string, shouldWait bool, arg
 
 func (p *QingcloudRuntime) DescribeClusters(clusterIds string, args ...string) (output *service.DescribeClustersOutput, err error) {
 	// call QingCloud DescribeClusters Api
-	clusterService, err := p.InitClusterService()
+	clusterService, err := p.initClusterService()
 	if err != nil {
 		logger.Errorf("Failed to init cluster service when cease cluster: %v", err)
 		return
@@ -389,7 +389,7 @@ func (p *QingcloudRuntime) DescribeClusters(clusterIds string, args ...string) (
 
 func (p *QingcloudRuntime) DescribeClusterNodes(clusterId string, args ...string) (output *service.DescribeClusterNodesOutput, err error) {
 	// call QingCloud DescribeClusterNodes Api
-	clusterService, err := p.InitClusterService()
+	clusterService, err := p.initClusterService()
 	if err != nil {
 		logger.Errorf("Failed to init cluster service when describe cluster nodes: %v", err)
 		return

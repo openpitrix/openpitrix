@@ -1,3 +1,7 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package k8s_runtime
 
 import (
@@ -6,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const appConf = `
+const test_appConf = `
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -67,16 +71,16 @@ spec:
 func TestK8sRuntime(t *testing.T) {
 	runtime := K8sRuntime{}
 
-	clusterId, err := runtime.CreateCluster(appConf, true)
+	clusterId, err := runtime.CreateCluster(test_appConf, true)
 	assert.Empty(t, err)
-	err = runtime.StopClusters(clusterId, true, appConf)
+	err = runtime.StopClusters(clusterId, true, test_appConf)
 	assert.Empty(t, err)
-	err = runtime.StartClusters(clusterId, true, appConf)
+	err = runtime.StartClusters(clusterId, true, test_appConf)
 	assert.Empty(t, err)
-	err = runtime.DeleteClusters(clusterId, true, appConf)
+	err = runtime.DeleteClusters(clusterId, true, test_appConf)
 	assert.Empty(t, err)
-	err = runtime.RecoverClusters(clusterId, true, appConf)
+	err = runtime.RecoverClusters(clusterId, true, test_appConf)
 	assert.Empty(t, err)
-	err = runtime.CeaseClusters(clusterId, true, appConf)
+	err = runtime.CeaseClusters(clusterId, true, test_appConf)
 	assert.Empty(t, err)
 }

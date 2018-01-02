@@ -1,3 +1,7 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package utils
 
 import (
@@ -5,17 +9,21 @@ import (
 	"time"
 )
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 func GetUuid(l int) string {
 	initByte := []byte{}
 	result := []byte{}
 
-	for i := 48; i < 123; i++ {
+	for i := '0'; i <= 'z'; i++ {
 		switch {
-		case i < 58:
+		case i < '9':
 			initByte = append(initByte, byte(i))
-		case i >= 65 && i < 91:
+		case i >= 'A' && i <= 'Z':
 			initByte = append(initByte, byte(i))
-		case i >= 97 && i < 123:
+		case i >= 'a' && i <= 'z':
 			initByte = append(initByte, byte(i))
 		}
 
@@ -29,20 +37,20 @@ func GetUuid(l int) string {
 }
 
 func GetLowerAndNumUuid(l int) string {
-	initByte := []byte{}
-	result := []byte{}
+	var (
+		initByte []byte
+		result []byte
+	)
 
-	for i := 48; i < 123; i++ {
+	for i := '0'; i <= 'z'; i++ {
 		switch {
-		case i < 58:
+		case i <= '9':
 			initByte = append(initByte, byte(i))
-		case i >= 97 && i < 123:
+		case i >= 'a' && i <= 'z':
 			initByte = append(initByte, byte(i))
 		}
-
 	}
 
-	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < l; i++ {
 		result = append(result, initByte[rand.Intn(len(initByte))])
 	}
