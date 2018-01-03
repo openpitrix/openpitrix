@@ -10,6 +10,13 @@ type RuntimeInterface interface {
 	Name() string
 
 	Run(app string, args ...string) error
+
+	CreateCluster(appConf string, shouldWait bool, args ...string) (clusterId string, err error)
+	StopClusters(clusterIds string, shouldWait bool, args ...string) error
+	StartClusters(clusterIds string, shouldWait bool, args ...string) error
+	DeleteClusters(clusterIds string, shouldWait bool, args ...string) error
+	RecoverClusters(clusterIds string, shouldWait bool, args ...string) error
+	CeaseClusters(clusterIds string, shouldWait bool, args ...string) error
 }
 
 func RegisterRuntime(runtime RuntimeInterface) {
