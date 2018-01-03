@@ -39,7 +39,7 @@ func GetUuid(l int) string {
 func GetLowerAndNumUuid(l int) string {
 	var (
 		initByte []byte
-		result []byte
+		result   []byte
 	)
 
 	for i := '0'; i <= 'z'; i++ {

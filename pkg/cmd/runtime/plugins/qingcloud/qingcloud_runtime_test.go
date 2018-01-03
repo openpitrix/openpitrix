@@ -5,6 +5,9 @@
 package qingcloud
 
 import (
+	"fmt"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -136,6 +139,13 @@ const test_appConf = `
 `
 
 func TestQingCloudRuntime(t *testing.T) {
+	clientConf := "~/.qingcloud/config.yaml"
+	_, err := os.Stat(strings.Replace(clientConf, "~/", os.Getenv("HOME")+"/", 1))
+	if err != nil {
+		fmt.Printf("QingCloud runtime test skipped because no [%s] %s", clientConf, err)
+		t.Skip()
+	}
+
 	runtime := QingcloudRuntime{}
 
 	clusterId, err := runtime.CreateCluster(test_appConf, true)
