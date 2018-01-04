@@ -7,7 +7,7 @@ building OpenPitrix from source, how to contribute code and documentation, who t
 
 ## To start developing OpenPitrix
 
-There are three options to develop the project:
+First of all, you should fork the project. Then follow one of the three options below to develop the project. Please note you should replace the official repo when using __go get__ or __git clone__ below with your own one. 
 
 ### 1. You have a working [Docker Compose](https://docs.docker.com/compose/install) environment [recommend].
 >You need to install [Docker](https://docs.docker.com/engine/installation/) first.
