@@ -43,8 +43,8 @@ type ClusterNode struct {
 	InstanceId       string    `db:"instance_id, size:50"`
 	Name             string    `db:"name, size:50"`
 	Description      string    `db:"description, size:1000"`
-	ClusterId        string    `db:"app_id, size:50"`
-	PrivateIp        string    `db:"app_version, size:50"`
+	ClusterId        string    `db:"cluster_id, size:50"`
+	PrivateIp        string    `db:"private_ip, size:50"`
 	Status           string    `db:"status, size:50"`
 	TransitionStatus string    `db:"transition_status, size:50"`
 	Created          time.Time `db:"created"`
