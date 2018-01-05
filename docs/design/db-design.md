@@ -9,8 +9,9 @@
 ## Schemas
 
 Use GRANT to isolate tables for services
+
 ```sql
-GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'localhost’;
+GRANT [type of permission] ON [database name].[table name] TO '[username]'@'%';
 ```
 
 ## Name Conventions
@@ -27,10 +28,14 @@ GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'
 ## Database Scripts
 
 ```sql
-CREATE DATABASE openpitrix;
+CREATE DATABASE IF NOT EXISTS openpitrix
+	DEFAULT CHARACTER SET utf8
+	DEFAULT COLLATE utf8_general_ci
+;
 ```
 
 * For repo service
+
 ```sql
 CREATE TABLE repo {
     id VARCHAR(50) PRIMARY KEY NOT NULL,
@@ -41,9 +46,10 @@ CREATE TABLE repo {
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX repo_ix_name ON repo (name);
-CREATE USER 'repo_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON openpitrix.repo TO 'repo_user'@'localhost';
+CREATE USER IF NOT EXISTS 'openpitrix_repo_user'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON openpitrix.repo TO 'openpitrix_repo_user'@'%';
 ```
+
 ```sql
 CREATE TABLE repo_label {
     repo_id VARCHAR(50) NOT NULL,
@@ -52,8 +58,9 @@ CREATE TABLE repo_label {
     PRIMARY KEY(repo_id, label_key),
     FOREIGN KEY(repo_id) REFERENCES repo(id) ON DELETE CASCADE
 );
-GRANT ALL PRIVILEGES ON openpitrix.repo_label TO 'repo_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.repo_label TO 'openpitrix_repo_user'@'%';
 ```
+
 ```sql
 CREATE TABLE repo_selector {
     repo_id VARCHAR(50) NOT NULL,
@@ -62,7 +69,7 @@ CREATE TABLE repo_selector {
     PRIMARY KEY(repo_id, selector_key),
     FOREIGN KEY(repo_id) REFERENCES repo(id) ON DELETE CASCADE
 );
-GRANT ALL PRIVILEGES ON openpitrix.repo_selector TO 'repo_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.repo_selector TO 'openpitrix_repo_user'@'%';
 ```
 
 * For app service
@@ -77,8 +84,8 @@ CREATE TABLE app {
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX app_ix_name ON app (name);
-CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON openpitrix.app TO 'app_user'@'localhost';
+CREATE USER IF NOT EXISTS 'openpitrix_app_user'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON openpitrix.app TO 'openpitrix_app_user'@'%';
 ```
 
 * For cluster service
@@ -96,8 +103,8 @@ CREATE TABLE cluster {
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX cluster_ix_name ON cluster (name);
-CREATE USER 'cluster_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON openpitrix.cluster TO 'cluster_user'@'localhost';
+CREATE USER IF NOT EXISTS 'openpitrix_cluster_user'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON openpitrix.cluster TO 'openpitrix_cluster_user'@'%';
 ```
 ```sql
 CREATE TABLE cluster_node {
@@ -110,7 +117,7 @@ CREATE TABLE cluster_node {
     FOREIGN KEY(cluster_id) REFERENCES cluster(id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX cluster_node_ix_name ON clusternode (name);
-GRANT ALL PRIVILEGES ON openpitrix.cluster_node TO 'cluster_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.cluster_node TO 'openpitrix_cluster_user'@'%';
 ```
 
 * For app runtime service
@@ -124,8 +131,8 @@ CREATE TABLE app_runtime {
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 CREATE UNIQUE INDEX app_runtime_ix_name ON appruntime (name);
-CREATE USER 'appruntime_user'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON openpitrix.app_runtime TO 'appruntime_user'@'localhost';
+CREATE USER IF NOT EXISTS 'openpitrix_appruntime_user'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON openpitrix.app_runtime TO 'openpitrix_appruntime_user'@'%';
 ```
 ```sql
 CREATE TABLE app_runtime_label {
@@ -135,5 +142,5 @@ CREATE TABLE app_runtime_label {
     PRIMARY KEY(app_runtime_id, label_key),
     FOREIGN KEY(app_runtime_id) REFERENCES app_runtime(id) ON DELETE CASCADE
 );
-GRANT ALL PRIVILEGES ON openpitrix.app_runtime_label TO 'appruntime_user'@'localhost';
+GRANT ALL PRIVILEGES ON openpitrix.app_runtime_label TO 'openpitrix_appruntime_user'@'%';
 ```
