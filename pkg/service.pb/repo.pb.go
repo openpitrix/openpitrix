@@ -35,7 +35,7 @@ type Repo struct {
 func (m *Repo) Reset()                    { *m = Repo{} }
 func (m *Repo) String() string            { return proto.CompactTextString(m) }
 func (*Repo) ProtoMessage()               {}
-func (*Repo) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (*Repo) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
 
 func (m *Repo) GetId() string {
 	if m != nil && m.Id != nil {
@@ -89,7 +89,7 @@ type RepoLabel struct {
 func (m *RepoLabel) Reset()                    { *m = RepoLabel{} }
 func (m *RepoLabel) String() string            { return proto.CompactTextString(m) }
 func (*RepoLabel) ProtoMessage()               {}
-func (*RepoLabel) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
+func (*RepoLabel) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
 
 func (m *RepoLabel) GetRepoId() string {
 	if m != nil && m.RepoId != nil {
@@ -122,7 +122,7 @@ type RepoSelector struct {
 func (m *RepoSelector) Reset()                    { *m = RepoSelector{} }
 func (m *RepoSelector) String() string            { return proto.CompactTextString(m) }
 func (*RepoSelector) ProtoMessage()               {}
-func (*RepoSelector) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
+func (*RepoSelector) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
 
 func (m *RepoSelector) GetRepoId() string {
 	if m != nil && m.RepoId != nil {
@@ -153,7 +153,7 @@ type RepoId struct {
 func (m *RepoId) Reset()                    { *m = RepoId{} }
 func (m *RepoId) String() string            { return proto.CompactTextString(m) }
 func (*RepoId) ProtoMessage()               {}
-func (*RepoId) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
+func (*RepoId) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{3} }
 
 func (m *RepoId) GetId() string {
 	if m != nil && m.Id != nil {
@@ -171,7 +171,7 @@ type RepoListRequest struct {
 func (m *RepoListRequest) Reset()                    { *m = RepoListRequest{} }
 func (m *RepoListRequest) String() string            { return proto.CompactTextString(m) }
 func (*RepoListRequest) ProtoMessage()               {}
-func (*RepoListRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
+func (*RepoListRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{4} }
 
 const Default_RepoListRequest_PageSize int32 = 10
 const Default_RepoListRequest_PageNumber int32 = 1
@@ -202,7 +202,7 @@ type RepoListResponse struct {
 func (m *RepoListResponse) Reset()                    { *m = RepoListResponse{} }
 func (m *RepoListResponse) String() string            { return proto.CompactTextString(m) }
 func (*RepoListResponse) ProtoMessage()               {}
-func (*RepoListResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
+func (*RepoListResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{5} }
 
 func (m *RepoListResponse) GetTotalItems() int32 {
 	if m != nil && m.TotalItems != nil {
@@ -452,9 +452,9 @@ var _RepoService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "repo.proto",
 }
 
-func init() { proto.RegisterFile("repo.proto", fileDescriptor4) }
+func init() { proto.RegisterFile("repo.proto", fileDescriptor5) }
 
-var fileDescriptor4 = []byte{
+var fileDescriptor5 = []byte{
 	// 781 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0xed, 0x8e, 0xdb, 0x44,
 	0x14, 0x95, 0x93, 0xcd, 0xb6, 0xb9, 0xde, 0x2e, 0xe9, 0x40, 0x8b, 0x49, 0x2a, 0x25, 0xb5, 0x00,

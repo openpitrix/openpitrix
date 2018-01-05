@@ -1,3 +1,6 @@
 *.exe
 .idea
 bin/
+
+/pkg/cmd/api/spec/metadata.swagger.json
+/pkg/service.pb/metadata.swagger.json
