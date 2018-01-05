@@ -1,0 +1,109 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto2";
+
+package openpitrix;
+
+import "google/protobuf/timestamp.proto";
+
+message Const {
+	optional int32 api_port      = 1 [default=9100]; // 91 is similar as Pi, Open[Pi]trix
+	optional int32 app_port      = 2 [default=9101];
+	optional int32 runtime_port  = 3 [default=9102];
+	optional int32 cluster_port  = 4 [default=9103];
+	optional int32 repo_port     = 5 [default=9104];
+
+	optional string api_host     = 11 [default="openpitrix-api"];
+	optional string app_host     = 12 [default="openpitrix-app"];
+	optional string runtime_host = 13 [default="openpitrix-runtime"];
+	optional string cluster_host = 14 [default="openpitrix-cluster"];
+	optional string repo_host    = 15 [default="openpitrix-repo"];
+
+	optional string db_type      = 21 [default="mysql"];
+	optional string db_host      = 22 [default="openpitrix-db"];
+	optional int32  db_port      = 23 [default=3306];
+	optional string db_encoding  = 24 [default="utf8"];
+	optional string db_engine    = 25 [default="InnoDB"];
+	optional string db_dbname    = 26 [default="openpitrix"];
+
+	optional string db_app_table_name          = 31 [default="app"];
+	optional string db_runtime_table_name      = 32 [default="runtime"];
+	optional string db_cluster_table_name      = 33 [default="cluster"];
+	optional string db_cluster_node_table_name = 34 [default="cluster_node"];
+	optional string db_repo_table_name         = 35 [default="repo"];
+}
+
+message Default {
+	optional string db_admin_name            = 1 [default="root"];
+	optional string db_admin_password        = 2 [default="password"];
+
+	optional string db_app_user_name         = 11 [default="openpitrix-user-app"];
+	optional string db_app_user_password     = 12 [default="openpitrix-user-app-password"];
+	optional string db_runtime_user_name     = 13 [default="openpitrix-user-runtime"];
+	optional string db_runtime_user_password = 14 [default="openpitrix-user-runtime-password"];
+	optional string db_cluster_user_name     = 15 [default="openpitrix-user-cluster"];
+	optional string db_cluster_user_password = 16 [default="openpitrix-user-cluster-password"];
+	optional string db_repo_user_name        = 17 [default="openpitrix-user-repo"];
+	optional string db_repo_user_password    = 18 [default="openpitrix-user-repo-password"];
+
+	optional bool   glog_log_to_stderr        = 21 [default=false];
+	optional bool   glog_also_log_to_stderr   = 22 [default=false];
+	optional string glog_stderr_threshold     = 23 [default="ERROR"]; // INFO, WARNING, ERROR, FATAL
+	optional string glog_log_dir              = 24 [default=""];
+	optional string glog_log_backtrace_at     = 25 [default=""];
+	optional int32  glog_v                    = 26 [default=0];
+	optional string glog_v_module             = 27 [default=""];
+	optional string glog_copy_standard_log_to = 28 [default=""]; // INFO, WARNING, ERROR, FATAL
+}
+
+message DBAppTableSchema {
+	optional string id            = 1 [default="name:id, type:string, size:50, primarykey"];
+	optional string name          = 2 [default="name:name, type:string, size:50"];
+	optional string description   = 3 [default="name:description, type:string, size:1000"];
+	optional string repo_id       = 4 [default="name:repo_id, type:string, size:50"];
+	optional string created       = 5 [default="name:created, type:datetime"];
+	optional string last_modified = 6 [default="name:last_modified, type:datetime"];
+}
+
+message DBRuntimeTableSchema {
+	optional string id            = 1 [default="name:id, type:string, size:50, primarykey"];
+	optional string name          = 2 [default="name:name, type:string, size:50"];
+	optional string description   = 3 [default="name:description, type:string, size:1000"];
+	optional string url           = 4 [default="name:url, type:string, size:255"];
+	optional string created       = 5 [default="name:created, type:datetime"];
+	optional string last_modified = 6 [default="name:last_modified, type:datetime"];
+}
+
+message DBClusterTableSchema {
+	optional string id            = 1 [default="name:id, type:string, size:50, primarykey"];
+	optional string name          = 2 [default="name:name, type:string, size:50"];
+	optional string description   = 3 [default="name:description, type:string, size:1000"];
+	optional string app_id        = 4 [default="name:app_id, type:string, size:50"];
+	optional string app_version   = 5 [default="name:app_version, type:string, size:50"];
+	optional string status        = 6 [default="name:status, type:string, size:50"];
+	optional string created       = 7 [default="name:created, type:datetime"];
+	optional string last_modified = 8 [default="name:last_modified, type:datetime"];
+}
+
+message DBClusterNodeTableSchema {
+	optional string id                = 1 [default="name:id, type:string, size:50, primarykey"];
+	optional string name              = 2 [default="name:name, type:string, size:50"];
+	optional string description       = 3 [default="name:description, type:string, size:1000"];
+	optional string cluster_id        = 4 [default="name:cluster_id, type:string, size:50"];
+	optional string private_ip        = 5 [default="name:private_ip, type:string, size:50"];
+	optional string status            = 6 [default="name:status, type:string, size:50"];
+	optional string transition_status = 7 [default="name:transition_status, type:string, size:50"];
+	optional string created           = 8 [default="name:created, type:datetime"];
+	optional string last_modified     = 9 [default="name:last_modified, type:datetime"];
+}
+
+message DBRepoTableSchema {
+	optional string id            = 1 [default="name:id, type:string, size:50, primarykey"];
+	optional string name          = 2 [default="name:name, type:string, size:50"];
+	optional string description   = 3 [default="name:description, type:string, size:1000"];
+	optional string url           = 4 [default="name:url, type:string, size:255"];
+	optional string created       = 5 [default="name:created, type:datetime"];
+	optional string last_modified = 6 [default="name:last_modified, type:datetime"];
+}
