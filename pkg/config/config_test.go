@@ -51,11 +51,11 @@ func TestOpenPitrix(t *testing.T) {
 func TestOpenPitrix_default(t *testing.T) {
 	conf := Default()
 
-	tAssert(t, conf.Api.Host == "127.0.0.1")
+	tAssert(t, conf.Api.Host == "openpitrix-api")
 	tAssert(t, conf.Api.Port == 9100)
 
 	tAssert(t, conf.DB.Type == "mysql")
-	tAssert(t, conf.DB.Host == "127.0.0.1")
+	tAssert(t, conf.DB.Host == "openpitrix-db")
 	tAssert(t, conf.DB.Encoding == "utf8")
 	tAssert(t, conf.DB.Engine == "InnoDB")
 	tAssert(t, conf.DB.DbName == "openpitrix")
@@ -65,16 +65,16 @@ func TestOpenPitrix_Parse_default(t *testing.T) {
 	conf, err := Parse(DefaultConfigContent)
 	tAssertf(t, err == nil, "err = %v", err)
 
-	tAssert(t, conf.Api.Host == "127.0.0.1")
+	tAssert(t, conf.Api.Host == "openpitrix-api")
 	tAssert(t, conf.Api.Port == 9100)
 
 	tAssert(t, conf.DB.Type == "mysql")
-	tAssert(t, conf.DB.Host == "127.0.0.1")
+	tAssert(t, conf.DB.Host == "openpitrix-db")
 	tAssert(t, conf.DB.Encoding == "utf8")
 	tAssert(t, conf.DB.Engine == "InnoDB")
 	tAssert(t, conf.DB.DbName == "openpitrix")
 
-	tAssert(t, conf.DB.GetUrl() == "root:password@tcp(127.0.0.1:3306)/openpitrix")
+	tAssert(t, conf.DB.GetUrl() == "root:password@tcp(openpitrix-db:3306)/openpitrix")
 }
 
 func TestOpenPitrix_Parse_empty(t *testing.T) {
@@ -82,16 +82,16 @@ func TestOpenPitrix_Parse_empty(t *testing.T) {
 
 	tAssertf(t, err == nil, "err = %v", err)
 
-	tAssertf(t, conf.Api.Host == "127.0.0.1", "host = %v", conf.Api.Host)
+	tAssertf(t, conf.Api.Host == "openpitrix-api", "host = %v", conf.Api.Host)
 	tAssert(t, conf.Api.Port == 9100)
 
 	tAssert(t, conf.DB.Type == "mysql")
-	tAssert(t, conf.DB.Host == "127.0.0.1")
+	tAssert(t, conf.DB.Host == "openpitrix-db")
 	tAssert(t, conf.DB.Encoding == "utf8")
 	tAssert(t, conf.DB.Engine == "InnoDB")
 	tAssert(t, conf.DB.DbName == "openpitrix")
 
-	tAssert(t, conf.DB.GetUrl() == "root:password@tcp(127.0.0.1:3306)/openpitrix")
+	tAssert(t, conf.DB.GetUrl() == "root:password@tcp(openpitrix-db:3306)/openpitrix")
 }
 
 func TestOpenPitrix_Parse(t *testing.T) {
