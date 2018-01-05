@@ -9,6 +9,7 @@ It is generated from these files:
 	app.proto
 	app_runtime.proto
 	cluster.proto
+	metadata.proto
 	repo.proto
 
 It has these top-level messages:
@@ -33,6 +34,13 @@ It has these top-level messages:
 	ClusterNodeIds
 	ClusterNodeListRequest
 	ClusterNodeListResponse
+	Const
+	Default
+	DBAppTableSchema
+	DBRuntimeTableSchema
+	DBClusterTableSchema
+	DBClusterNodeTableSchema
+	DBRepoTableSchema
 	Repo
 	RepoLabel
 	RepoSelector
