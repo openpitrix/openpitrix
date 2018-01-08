@@ -16,8 +16,8 @@ spec:
   ports:
   - name: http
     protocol: TCP
-    port: 9100
-    targetPort: 9100
+    port: 9200
+    targetPort: 8080
   - name: jenkins-master
     protocol: TCP
     port: 50000
@@ -59,12 +59,12 @@ spec:
         - name: DOCKER_HOST
           value: tcp://localhost:2375
         ports:
-        - containerPort: 9100
+        - containerPort: 8080
         - containerPort: 50000
         readinessProbe:
           httpGet:
             path: /login
-            port: 9100
+            port: 8080
           periodSeconds: 10
           timeoutSeconds: 5
           successThreshold: 2
@@ -79,7 +79,7 @@ spec:
             cpu: 500m
             memory: 1500Mi
       - name: dind-daemon
-        image: docker:17.06-dind
+        image: docker:17.09-dind
         resources:
           requests:
             cpu: 20m

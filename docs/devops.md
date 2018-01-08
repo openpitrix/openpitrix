@@ -23,17 +23,17 @@ We are using [Kubernetes on QingCloud](https://appcenter.qingcloud.com/apps/app-
    # kubectl apply -f jenkins-qingcloud.yaml
    ```
 
-2. Access Jenkins console by opening http://\<ip\>:9100 where ip depends on how you expose the Jenkins service to outside explained below. (You can find your way to access Jenkins console such as ingress, cloud LB etc.) On the kubernetes client
+2. Access Jenkins console by opening http://\<ip\>:9200 where ip depends on how you expose the Jenkins service to outside explained below. (You can find your way to access Jenkins console such as ingress, cloud LB etc.) On the kubernetes client
    ```
-   # iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 9100 -j DNAT --to-destination "$(kubectl get svc -n jenkins --selector=app=jenkins -o jsonpath='{.items..spec.clusterIP}')":9100
-   # iptables -t nat -A POSTROUTING -p tcp --dport 9100 -j MASQUERADE
+   # iptables -t nat -A PREROUTING -p tcp -i eth0 --dport 9200 -j DNAT --to-destination "$(kubectl get svc -n jenkins --selector=app=jenkins -o jsonpath='{.items..spec.clusterIP}')":9200
+   # iptables -t nat -A POSTROUTING -p tcp --dport 9200 -j MASQUERADE
    # sysctl -w net.ipv4.conf.eth0.route_localnet=1
    ```
 
-3. Now the request to the kubernetes client port 9100 will be forwarded to the Jenkins service. 
+3. Now the request to the kubernetes client port 9200 will be forwarded to the Jenkins service. 
    
-   - If you use [Open VPN](#openvpn) to access the kubernetes client, then open http://\<kubernetes client private ip\>:9100 to access Jenkins console. 
-   - If you use [Port Forwarding](#port-forwarding) to access the client, then forward the VPC port 9100 to the kubernetes client port 9100. Now open http://\<VPC EIP\>:9100 to access Jenkins console.
+   - If you use [Open VPN](#openvpn) to access the kubernetes client, then open http://\<kubernetes client private ip\>:9200 to access Jenkins console. 
+   - If you use [Port Forwarding](#port-forwarding) to access the client, then forward the VPC port 9200 to the kubernetes client port 9200. Now open http://\<VPC EIP\>:9200 to access Jenkins console.
 
 ## Configure Jenkins
    > You can refer [jenkins.io](https://jenkins.io/doc/tutorials/using-jenkins-to-build-a-java-maven-project/) about how to configure Jenkins and create a pipeline.
@@ -72,7 +72,7 @@ We are using [Kubernetes on QingCloud](https://appcenter.qingcloud.com/apps/app-
      ```  
 
 ## Create a pipeline
-  - Fork OpenPitrix from github for your development. You need to change the docker repository to yours. The related files are [openpitrix.yaml](devops/kubernetes/openpitrix.yaml), [build-images.sh](devops/scripts/build-images.sh), [push-images.sh](devops/scripts/push-images.sh) and [clean.sh](devops/scripts/clean.sh).
+  - Fork OpenPitrix from github for your development. You need to change the docker repository to your own in the files [openpitrix.yaml](devops/kubernetes/openpitrix.yaml), [build-images.sh](devops/scripts/build-images.sh), [push-images.sh](devops/scripts/push-images.sh) and [clean.sh](devops/scripts/clean.sh).
   - On the Jenkins panel, click _Open Blue Ocean_ and start to create a new pipeline. Choose _GitHub_, paste your access key of GitHub, select the repository you want to create a CI/CD pipeline. We already created the pipeline Jenkinsfile on the upstream repository which includes compiling OpenPitrix, building images, push images, deploying the application, verifying the application and cleaning up.
   - It is better to configure one more thing. On the Jenkins panel, go to the configuration of OpenPitrix, check _Periodically if not otherwise run_ under _Scan Repository Triggers_ and select the interval at your will. 
   - If your repository is an upstream, you can select _Discover pull requests from forks_ under _Behaviors_ so that the pipeline will work for PR before merged.
