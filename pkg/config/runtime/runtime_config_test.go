@@ -43,7 +43,7 @@ func TestConfig_default(t *testing.T) {
 	tAssert(t, cfg.Runtime.Port == int(pb_const.GetRuntimePort()))
 
 	tCheckDefaultGlog(t)
-	tCheckDefultDB(t)
+	tCheckDefaultDB(t)
 }
 func TestConfig_envChanged(t *testing.T) {
 	tChangeGlogConfig()
@@ -71,7 +71,7 @@ func tCheckDefaultGlog(t *testing.T) {
 	tAssert(t, cfg.Glog.CopyStandardLogTo == pb_default.GetGlogCopyStandardLogTo())
 }
 
-func tCheckDefultDB(t *testing.T) {
+func tCheckDefaultDB(t *testing.T) {
 	cfg, err := LoadConfig()
 	tAssert(t, err == nil, err)
 
