@@ -11,7 +11,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/cmd/runtime"
 	_ "openpitrix.io/openpitrix/pkg/cmd/runtime/plugins/k8s"
-	"openpitrix.io/openpitrix/pkg/config"
+	config "openpitrix.io/openpitrix/pkg/config/runtime"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -27,13 +27,5 @@ func main() {
 		}
 	}
 
-	if config.RunInDocker() {
-		config.UseDockerLinkedEnvironmentVariables()
-	}
-
-	if config.IsUserConfigExists() {
-		runtime.Main(config.MustLoadUserConfig())
-	} else {
-		runtime.Main(config.Default())
-	}
+	runtime.Main(config.MustLoadConfig())
 }

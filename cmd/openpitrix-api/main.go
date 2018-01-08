@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"openpitrix.io/openpitrix/pkg/cmd/api"
-	"openpitrix.io/openpitrix/pkg/config"
+	config "openpitrix.io/openpitrix/pkg/config/api"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -26,13 +26,5 @@ func main() {
 		}
 	}
 
-	if config.RunInDocker() {
-		config.UseDockerLinkedEnvironmentVariables()
-	}
-
-	if config.IsUserConfigExists() {
-		api.Main(config.MustLoadUserConfig())
-	} else {
-		api.Main(config.Default())
-	}
+	api.Main(config.MustLoadConfig())
 }
