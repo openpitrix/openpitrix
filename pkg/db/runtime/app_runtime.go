@@ -16,7 +16,7 @@ import (
 	context "golang.org/x/net/context"
 	"gopkg.in/gorp.v2"
 
-	"openpitrix.io/openpitrix/pkg/config"
+	config "openpitrix.io/openpitrix/pkg/config/runtime"
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
@@ -34,14 +34,14 @@ type AppRuntime struct {
 }
 
 type AppRuntimeDatabase struct {
-	cfg               config.Database
+	cfg               config.RuntimeDatabase
 	db                *sql.DB
 	dbMap             *gorp.DbMap
 	createTablesDone  uint32
 	createTablesMutex sync.Mutex
 }
 
-func OpenAppRuntimeDatabase(cfg *config.Database) (p *AppRuntimeDatabase, err error) {
+func OpenAppRuntimeDatabase(cfg *config.RuntimeDatabase) (p *AppRuntimeDatabase, err error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
 	db, err := sql.Open(cfg.Type, cfg.GetUrl()+"?parseTime=true")
 	if err != nil {
