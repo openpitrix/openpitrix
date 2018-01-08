@@ -72,7 +72,7 @@ We are using [Kubernetes on QingCloud](https://appcenter.qingcloud.com/apps/app-
      ```  
 
 ## Create a pipeline
-  - Fork OpenPitrix from github for your development. You need to change the docker repository to yours. The related files are [openpitrix.yaml](devops/kubernetes/openpitrix.yaml), [build-images.sh](devops/scripts/build-images.sh), [push-images.sh](devops/scripts/push-images.sh) and [clean.sh](devops/scripts/clean.sh).
+  - Fork OpenPitrix from github for your development. You need to change the docker repository to your own in the files [openpitrix.yaml](devops/kubernetes/openpitrix.yaml), [build-images.sh](devops/scripts/build-images.sh), [push-images.sh](devops/scripts/push-images.sh) and [clean.sh](devops/scripts/clean.sh).
   - On the Jenkins panel, click _Open Blue Ocean_ and start to create a new pipeline. Choose _GitHub_, paste your access key of GitHub, select the repository you want to create a CI/CD pipeline. We already created the pipeline Jenkinsfile on the upstream repository which includes compiling OpenPitrix, building images, push images, deploying the application, verifying the application and cleaning up.
   - It is better to configure one more thing. On the Jenkins panel, go to the configuration of OpenPitrix, check _Periodically if not otherwise run_ under _Scan Repository Triggers_ and select the interval at your will. 
   - If your repository is an upstream, you can select _Discover pull requests from forks_ under _Behaviors_ so that the pipeline will work for PR before merged.
