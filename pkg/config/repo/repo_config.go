@@ -31,16 +31,16 @@ type RepoService struct {
 }
 
 type RepoDatabase struct {
-	Type          string `default:"mysql"`
-	Host          string `default:"openpitrix-db"`
-	Port          int    `default:"3306"`
-	Encoding      string `default:"utf8"`
-	Engine        string `default:"InnoDB"`
-	DbName        string `default:"openpitrix"`
-	AdminName     string `default:"root"`
-	AdminPassword string `default:"password"`
-	UserName      string `default:"openpitrix-user-repo"`
-	UserPassword  string `default:"openpitrix-user-repo-password"`
+	Type         string `default:"mysql"`
+	Host         string `default:"openpitrix-db"`
+	Port         int    `default:"3306"`
+	Encoding     string `default:"utf8"`
+	Engine       string `default:"InnoDB"`
+	DbName       string `default:"openpitrix"`
+	RootName     string `default:"root"`
+	RootPassword string `default:"password"`
+	UserName     string `default:"openpitrix-user-repo"`
+	UserPassword string `default:"openpitrix-user-repo-password"`
 }
 
 func MustLoadConfig() *Config {
