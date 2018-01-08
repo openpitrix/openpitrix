@@ -19,7 +19,7 @@ import (
 	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/grpclog/glogger"
 
-	"openpitrix.io/openpitrix/pkg/config"
+	config "openpitrix.io/openpitrix/pkg/config/cluster"
 	db "openpitrix.io/openpitrix/pkg/db/cluster"
 	"openpitrix.io/openpitrix/pkg/logger"
 	pb "openpitrix.io/openpitrix/pkg/service.pb"
@@ -27,14 +27,9 @@ import (
 )
 
 func Main(cfg *config.Config) {
-	cfg.ActiveGlogFlags()
+	cfg.Glog.ActiveFlags()
 
-	if config.RunInDocker() {
-		logger.Printf("openpitrix %s (run in docker)\n", version.ShortVersion)
-	} else {
-		logger.Printf("openpitrix %s\n", version.ShortVersion)
-	}
-
+	logger.Printf("openpitrix %s\n", version.ShortVersion)
 	logger.Printf("Database %s://tcp(%s:%d)/%s\n", cfg.DB.Type, cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName)
 	logger.Printf("Cluster service start http://%s:%d\n", cfg.Cluster.Host, cfg.Cluster.Port)
 
@@ -73,7 +68,7 @@ type ClusterServer struct {
 	db *db.ClusterDatabase
 }
 
-func NewClusterServer(cfg *config.Database) *ClusterServer {
+func NewClusterServer(cfg *config.ClusterDatabase) *ClusterServer {
 	cluster_db, err := db.OpenClusterDatabase(cfg)
 	if err != nil {
 		logger.Fatalf("%+v", err)
