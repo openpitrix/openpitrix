@@ -14,41 +14,54 @@ import (
 	"github.com/pkg/errors"
 )
 
-type ClusterConfig struct {
-	OpenPitrix_Cluster_Config
+type Config struct {
+	OpenPitrix_Config
 }
 
-type OpenPitrix_Cluster_Config struct {
+type OpenPitrix_Config struct {
+	Glog Glog
+
+	DB      ClusterDatabase
+	Cluster ClusterService
+}
+
+type ClusterService struct {
 	Host string `default:"openpitrix-cluster"`
 	Port int    `default:"9103"`
-	DB   ClusterDatabase
-	Glog Glog
 }
 
 type ClusterDatabase struct {
-	Type          string `default:"mysql"`
-	Host          string `default:"openpitrix-db"`
-	Port          int    `default:"3306"`
-	Encoding      string `default:"utf8"`
-	Engine        string `default:"InnoDB"`
-	DbName        string `default:"openpitrix"`
-	AdminName     string `default:"root"`
-	AdminPassword string `default:"password"`
-	UserName      string `default:"openpitrix-user-cluster"`
-	UserPassword  string `default:"openpitrix-user-cluster-password"`
+	Type         string `default:"mysql"`
+	Host         string `default:"openpitrix-db"`
+	Port         int    `default:"3306"`
+	Encoding     string `default:"utf8"`
+	Engine       string `default:"InnoDB"`
+	DbName       string `default:"openpitrix"`
+	RootName     string `default:"root"`
+	RootPassword string `default:"password"`
+	UserName     string `default:"openpitrix-user-cluster"`
+	UserPassword string `default:"openpitrix-user-cluster-password"`
 }
 
-func LoadClusterConfig() (*ClusterConfig, error) {
-	p := new(OpenPitrix_Cluster_Config)
+func MustLoadConfig() *Config {
+	cfg, err := LoadConfig()
+	if err != nil {
+		panic(err)
+	}
+	return cfg
+}
+
+func LoadConfig() (*Config, error) {
+	p := new(OpenPitrix_Config)
 	if err := loadConfig(p); err != nil {
 		return nil, err
 	}
-	return &ClusterConfig{*p}, nil
+	return &Config{*p}, nil
 }
 
 type Glog struct {
 	LogToStderr     bool   `default:"false"`
-	AlsoLogTostderr bool   `default:"false"`
+	AlsoLogToStderr bool   `default:"false"`
 	StderrThreshold string `default:"ERROR"` // INFO, WARNING, ERROR, FATAL
 	LogDir          string `default:""`
 
@@ -61,7 +74,7 @@ type Glog struct {
 
 func (p *Glog) ActiveFlags() {
 	flag.CommandLine.Set("logtostderr", fmt.Sprintf("%v", p.LogToStderr))
-	flag.CommandLine.Set("alsologtostderr", fmt.Sprintf("%v", p.AlsoLogTostderr))
+	flag.CommandLine.Set("alsologtostderr", fmt.Sprintf("%v", p.AlsoLogToStderr))
 	flag.CommandLine.Set("stderrthreshold", p.StderrThreshold)
 	flag.CommandLine.Set("log_dir", p.LogDir)
 
