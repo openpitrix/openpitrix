@@ -43,6 +43,14 @@ type AppDatabase struct {
 	UserPassword string `default:"openpitrix-user-app-password"`
 }
 
+func (p *AppDatabase) GetServerAddr() string {
+	return fmt.Sprintf("root:%s@tcp(%s:%d)/", p.RootPassword, p.Host, p.Port)
+}
+
+func (p *AppDatabase) GetUrl() string {
+	return fmt.Sprintf("root:%s@tcp(%s:%d)/%s", p.RootPassword, p.Host, p.Port, p.DbName)
+}
+
 func MustLoadConfig() *Config {
 	cfg, err := LoadConfig()
 	if err != nil {

@@ -17,7 +17,7 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/gorp.v2"
 
-	"openpitrix.io/openpitrix/pkg/config"
+	config "openpitrix.io/openpitrix/pkg/config/cluster"
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
@@ -52,14 +52,14 @@ type ClusterNode struct {
 }
 
 type ClusterDatabase struct {
-	cfg               config.Database
+	cfg               config.ClusterDatabase
 	db                *sql.DB
 	dbMap             *gorp.DbMap
 	createTablesDone  uint32
 	createTablesMutex sync.Mutex
 }
 
-func OpenClusterDatabase(cfg *config.Database) (p *ClusterDatabase, err error) {
+func OpenClusterDatabase(cfg *config.ClusterDatabase) (p *ClusterDatabase, err error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
 	db, err := sql.Open(cfg.Type, cfg.GetUrl()+"?parseTime=true")
 	if err != nil {

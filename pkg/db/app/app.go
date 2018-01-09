@@ -16,7 +16,7 @@ import (
 	context "golang.org/x/net/context"
 	"gopkg.in/gorp.v2"
 
-	"openpitrix.io/openpitrix/pkg/config"
+	config "openpitrix.io/openpitrix/pkg/config/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
@@ -34,14 +34,14 @@ type App struct {
 }
 
 type AppDatabase struct {
-	cfg               config.Database
+	cfg               config.AppDatabase
 	db                *sql.DB
 	dbMap             *gorp.DbMap
 	createTablesDone  uint32
 	createTablesMutex sync.Mutex
 }
 
-func OpenAppDatabase(cfg *config.Database) (p *AppDatabase, err error) {
+func OpenAppDatabase(cfg *config.AppDatabase) (p *AppDatabase, err error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
 	db, err := sql.Open(cfg.Type, cfg.GetUrl()+"?parseTime=true")
 	if err != nil {

@@ -16,7 +16,7 @@ import (
 	context "golang.org/x/net/context"
 	"gopkg.in/gorp.v2"
 
-	"openpitrix.io/openpitrix/pkg/config"
+	config "openpitrix.io/openpitrix/pkg/config/repo"
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
@@ -34,14 +34,14 @@ type Repo struct {
 }
 
 type RepoDatabase struct {
-	cfg               config.Database
+	cfg               config.RepoDatabase
 	db                *sql.DB
 	dbMap             *gorp.DbMap
 	createTablesDone  uint32
 	createTablesMutex sync.Mutex
 }
 
-func OpenRepoDatabase(cfg *config.Database) (p *RepoDatabase, err error) {
+func OpenRepoDatabase(cfg *config.RepoDatabase) (p *RepoDatabase, err error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
 	db, err := sql.Open(cfg.Type, cfg.GetUrl()+"?parseTime=true")
 	if err != nil {

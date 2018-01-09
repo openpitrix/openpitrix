@@ -21,7 +21,7 @@ import (
 	"google.golang.org/grpc"
 	_ "google.golang.org/grpc/grpclog/glogger"
 
-	"openpitrix.io/openpitrix/pkg/config"
+	config "openpitrix.io/openpitrix/pkg/config/api"
 	"openpitrix.io/openpitrix/pkg/logger"
 	pb "openpitrix.io/openpitrix/pkg/service.pb"
 	"openpitrix.io/openpitrix/pkg/version"
@@ -31,15 +31,9 @@ import (
 )
 
 func Main(cfg *config.Config) {
-	cfg.ActiveGlogFlags()
+	cfg.Glog.ActiveFlags()
 
-	if config.RunInDocker() {
-		logger.Printf("openpitrix %s (run in docker)\n", version.ShortVersion)
-	} else {
-		logger.Printf("openpitrix %s\n", version.ShortVersion)
-	}
-
-	logger.Printf("Database %s://tcp(%s:%d)/%s\n", cfg.DB.Type, cfg.DB.Host, cfg.DB.Port, cfg.DB.DbName)
+	logger.Printf("openpitrix %s\n", version.ShortVersion)
 	logger.Printf("App service http://%s:%d\n", cfg.App.Host, cfg.App.Port)
 	logger.Printf("Runtime service http://%s:%d\n", cfg.Runtime.Host, cfg.Runtime.Port)
 	logger.Printf("Cluster service http://%s:%d\n", cfg.Cluster.Host, cfg.Cluster.Port)
