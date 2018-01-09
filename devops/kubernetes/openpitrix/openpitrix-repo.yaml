@@ -5,6 +5,7 @@ metadata:
   namespace: default
   labels:
     app: openpitrix
+    service: repo
 spec:
   selector:
     app: openpitrix

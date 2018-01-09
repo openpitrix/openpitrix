@@ -5,6 +5,7 @@ metadata:
   namespace: default
   labels:
     app: openpitrix
+    tier: db
 spec:
   selector:
     app: openpitrix
@@ -23,6 +24,7 @@ metadata:
   namespace: default
   labels:
     app: openpitrix
+    tier: db
 spec:
   accessModes:
     - ReadWriteOnce
