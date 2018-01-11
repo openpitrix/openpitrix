@@ -5,7 +5,6 @@
 package k8s
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -75,8 +74,7 @@ func TestK8sRuntime(t *testing.T) {
 	clientConf := "~/.kube/config"
 	_, err := os.Stat(strings.Replace(clientConf, "~/", os.Getenv("HOME")+"/", 1))
 	if err != nil {
-		fmt.Printf("K8s runtime test skipped because no [%s] %s", clientConf, err)
-		t.Skip()
+		t.Skipf("K8s runtime test skipped because no [%s], err: %v", clientConf, err)
 	}
 
 	runtime := K8sRuntime{}
