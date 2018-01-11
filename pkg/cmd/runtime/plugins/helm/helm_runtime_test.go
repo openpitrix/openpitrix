@@ -5,7 +5,6 @@
 package helm
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -20,8 +19,7 @@ func TestHelmRuntime(t *testing.T) {
 
 	_, err := os.Stat(strings.Replace(appConf, "~/", os.Getenv("HOME")+"/", 1))
 	if err != nil {
-		fmt.Printf("Helm runtime test skipped because no [%s] %v", appConf, err)
-		t.Skip()
+		t.Skipf("Helm runtime test skipped because no [%s], err: %v", appConf, err)
 	}
 
 	values := "{servers: 1}"

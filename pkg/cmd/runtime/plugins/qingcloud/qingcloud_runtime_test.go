@@ -5,7 +5,6 @@
 package qingcloud
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -142,8 +141,7 @@ func TestQingCloudRuntime(t *testing.T) {
 	clientConf := "~/.qingcloud/config.yaml"
 	_, err := os.Stat(strings.Replace(clientConf, "~/", os.Getenv("HOME")+"/", 1))
 	if err != nil {
-		fmt.Printf("QingCloud runtime test skipped because no [%s] %s", clientConf, err)
-		t.Skip()
+		t.Skipf("QingCloud runtime test skipped because no [%s], err: %v", clientConf, err)
 	}
 
 	runtime := QingcloudRuntime{}
