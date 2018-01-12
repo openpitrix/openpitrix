@@ -53,6 +53,10 @@ type RepoService struct {
 	Port int    `default:"9104"`
 }
 
+func PrintEnvs() {
+	new(multiconfig.EnvironmentLoader).PrintEnvs(&OpenPitrix_Config{})
+}
+
 func MustLoadConfig() *Config {
 	cfg, err := LoadConfig()
 	if err != nil {
@@ -106,7 +110,6 @@ func loadConfig(conf interface{}) error {
 	d.Loader = multiconfig.MultiLoader(
 		&multiconfig.TagLoader{},
 		&multiconfig.EnvironmentLoader{},
-		&multiconfig.FlagLoader{},
 	)
 	d.Validator = multiconfig.MultiValidator(
 		&multiconfig.RequiredValidator{},
