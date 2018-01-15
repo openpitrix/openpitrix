@@ -10,6 +10,7 @@ RUN go get github.com/golang/protobuf/protoc-gen-go
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 RUN go get github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
+RUN go get github.com/go-swagger/go-swagger/cmd/swagger
 
 # the protoc can't run on alpine,
 # we only need the protobuf's stdarnd library in the `/protoc/include`.
@@ -19,7 +20,7 @@ RUN mkdir -p /protoc && cd /protoc \
 
 FROM golang:1.9.2-alpine3.6
 
-RUN apk add --no-cache git protobuf make curl openssl
+RUN apk add --no-cache git protobuf make curl openssl jq
 
 COPY --from=builder /protoc/include /usr/local/include
 COPY --from=builder /go/bin /go/bin
