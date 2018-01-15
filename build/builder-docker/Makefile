@@ -3,15 +3,15 @@
 # that can be found in the LICENSE file.
 
 default:
-	docker build -t openpitrix/openpitrix:builder .
+	docker build -t openpitrix/openpitrix-builder .
 	@echo "ok"
 
 pull:
-	docker pull openpitrix/openpitrix:builder
+	docker pull openpitrix/openpitrix-builder
 	@echo "ok"
 
 run:
-	docker run --rm -it openpitrix/openpitrix:builder
+	docker run --rm -it openpitrix/openpitrix-builder
 
 clean:
 	@echo "ok"
