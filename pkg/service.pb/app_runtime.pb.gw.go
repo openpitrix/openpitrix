@@ -182,7 +182,7 @@ func RegisterAppRuntimeServiceHandler(ctx context.Context, mux *runtime.ServeMux
 func RegisterAppRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client AppRuntimeServiceClient) error {
 
 	mux.Handle("GET", pattern_AppRuntimeService_GetAppRuntime_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -211,7 +211,7 @@ func RegisterAppRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Se
 	})
 
 	mux.Handle("GET", pattern_AppRuntimeService_GetAppRuntimeList_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -240,7 +240,7 @@ func RegisterAppRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Se
 	})
 
 	mux.Handle("POST", pattern_AppRuntimeService_CreateAppRuntime_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -269,7 +269,7 @@ func RegisterAppRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Se
 	})
 
 	mux.Handle("POST", pattern_AppRuntimeService_UpdateAppRuntime_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -298,7 +298,7 @@ func RegisterAppRuntimeServiceHandlerClient(ctx context.Context, mux *runtime.Se
 	})
 
 	mux.Handle("DELETE", pattern_AppRuntimeService_DeleteAppRuntime_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
