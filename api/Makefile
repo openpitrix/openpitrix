@@ -23,6 +23,12 @@ generate: $(PROTO_FILES) Makefile
 	protoc $(PROTOC_FLAGS) --grpc-gateway_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
 	protoc $(PROTOC_FLAGS) --swagger_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
 	protoc $(PROTOC_FLAGS) --swagger_out=logtostderr=true:../pkg/cmd/api/spec ${PROTO_FILES}
+
+	# generate client code
+	cat ../pkg/cmd/api/spec/*.swagger.json | jq --slurp 'reduce .[] as $$item ({}; . * $$item)' > ../test/api.swagger.json
+	cd ../test/ && swagger generate client -f api.swagger.json -A openpitrix
+	rm ../test/api.swagger.json
+
 	@echo "ok"
 
 tools:
