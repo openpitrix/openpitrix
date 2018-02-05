@@ -11,7 +11,7 @@ pull:
 	@echo "ok"
 
 run:
-	docker run --rm -it openpitrix/openpitrix-builder
+	docker run --rm -it -v `pwd`:/root openpitrix/openpitrix-builder
 
 clean:
 	@echo "ok"

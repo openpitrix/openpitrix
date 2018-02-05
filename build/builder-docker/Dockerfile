@@ -10,7 +10,12 @@ RUN go get github.com/golang/protobuf/protoc-gen-go
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 RUN go get github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
-RUN go get github.com/go-swagger/go-swagger/cmd/swagger
+
+# swagger-0.13.0
+# RUN go get github.com/go-swagger/go-swagger/cmd/swagger
+RUN mkdir -p /swagger && cd /swagger \
+	&& wget https://github.com/go-swagger/go-swagger/releases/download/0.13.0/swagger_linux_amd64 \
+	&& chmod +x swagger_linux_amd64 && mv swagger_linux_amd64 /go/bin/swagger
 
 # the protoc can't run on alpine,
 # we only need the protobuf's stdarnd library in the `/protoc/include`.
