@@ -42,7 +42,11 @@ func TestApp(t *testing.T) {
 		t.Skip()
 	}
 
-	client := common.GetClient()
+	client := common.GetClient(
+		tConfig.Unittest.Rest.Host,
+		tConfig.Unittest.Rest.BasePath,
+	)
+
 	// delete old app
 	testAppId := "app-xxxxxxxy"
 	testAppName := "test1"
