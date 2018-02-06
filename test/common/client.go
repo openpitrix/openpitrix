@@ -17,10 +17,10 @@ func (IgnoreLogger) Printf(format string, args ...interface{}) {
 func (IgnoreLogger) Debugf(format string, args ...interface{}) {
 }
 
-func GetClient() *apiclient.Openpitrix {
+func GetClient(host, basePath string) *apiclient.Openpitrix {
 	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Lshortfile)
 
-	transport := httptransport.New("localhost:9100", "/", nil)
+	transport := httptransport.New(host, basePath, nil)
 	transport.SetDebug(true)
 	transport.SetLogger(IgnoreLogger{})
 	Client := apiclient.New(transport, strfmt.Default)

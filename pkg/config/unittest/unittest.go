@@ -32,7 +32,9 @@ type QingCloud struct {
 }
 
 type RestAPI struct {
-	Enabled bool `default:"false"`
+	Enabled  bool   `default:"false"`
+	Host     string `default:"localhost:9100"`
+	BasePath string `default:"/"`
 }
 
 func PrintEnvs() {
