@@ -14,6 +14,7 @@ import (
 
 // OpenpitrixCluster openpitrix cluster
 // swagger:model openpitrixCluster
+
 type OpenpitrixCluster struct {
 
 	// app id
@@ -43,6 +44,24 @@ type OpenpitrixCluster struct {
 	// transition status
 	TransitionStatus string `json:"transition_status,omitempty"`
 }
+
+/* polymorph openpitrixCluster app_id false */
+
+/* polymorph openpitrixCluster app_version false */
+
+/* polymorph openpitrixCluster created false */
+
+/* polymorph openpitrixCluster description false */
+
+/* polymorph openpitrixCluster id false */
+
+/* polymorph openpitrixCluster last_modified false */
+
+/* polymorph openpitrixCluster name false */
+
+/* polymorph openpitrixCluster status false */
+
+/* polymorph openpitrixCluster transition_status false */
 
 // Validate validates this openpitrix cluster
 func (m *OpenpitrixCluster) Validate(formats strfmt.Registry) error {

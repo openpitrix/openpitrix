@@ -14,6 +14,7 @@ import (
 
 // OpenpitrixAppRuntime openpitrix app runtime
 // swagger:model openpitrixAppRuntime
+
 type OpenpitrixAppRuntime struct {
 
 	// created
@@ -34,6 +35,18 @@ type OpenpitrixAppRuntime struct {
 	// url
 	URL string `json:"url,omitempty"`
 }
+
+/* polymorph openpitrixAppRuntime created false */
+
+/* polymorph openpitrixAppRuntime description false */
+
+/* polymorph openpitrixAppRuntime id false */
+
+/* polymorph openpitrixAppRuntime last_modified false */
+
+/* polymorph openpitrixAppRuntime name false */
+
+/* polymorph openpitrixAppRuntime url false */
 
 // Validate validates this openpitrix app runtime
 func (m *OpenpitrixAppRuntime) Validate(formats strfmt.Registry) error {

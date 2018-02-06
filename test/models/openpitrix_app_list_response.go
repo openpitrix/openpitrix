@@ -14,6 +14,7 @@ import (
 
 // OpenpitrixAppListResponse openpitrix app list response
 // swagger:model openpitrixAppListResponse
+
 type OpenpitrixAppListResponse struct {
 
 	// current page
@@ -31,6 +32,16 @@ type OpenpitrixAppListResponse struct {
 	// total pages
 	TotalPages int32 `json:"total_pages,omitempty"`
 }
+
+/* polymorph openpitrixAppListResponse current_page false */
+
+/* polymorph openpitrixAppListResponse items false */
+
+/* polymorph openpitrixAppListResponse page_size false */
+
+/* polymorph openpitrixAppListResponse total_items false */
+
+/* polymorph openpitrixAppListResponse total_pages false */
 
 // Validate validates this openpitrix app list response
 func (m *OpenpitrixAppListResponse) Validate(formats strfmt.Registry) error {

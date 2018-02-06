@@ -16,6 +16,7 @@ import (
 
 // OpenpitrixClusterNodesItems openpitrix cluster nodes items
 // swagger:model openpitrixClusterNodesItems
+
 type OpenpitrixClusterNodesItems []*OpenpitrixClusterNode
 
 // Validate validates this openpitrix cluster nodes items

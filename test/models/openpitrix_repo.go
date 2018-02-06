@@ -14,6 +14,7 @@ import (
 
 // OpenpitrixRepo openpitrix repo
 // swagger:model openpitrixRepo
+
 type OpenpitrixRepo struct {
 
 	// created
@@ -34,6 +35,18 @@ type OpenpitrixRepo struct {
 	// url
 	URL string `json:"url,omitempty"`
 }
+
+/* polymorph openpitrixRepo created false */
+
+/* polymorph openpitrixRepo description false */
+
+/* polymorph openpitrixRepo id false */
+
+/* polymorph openpitrixRepo last_modified false */
+
+/* polymorph openpitrixRepo name false */
+
+/* polymorph openpitrixRepo url false */
 
 // Validate validates this openpitrix repo
 func (m *OpenpitrixRepo) Validate(formats strfmt.Registry) error {

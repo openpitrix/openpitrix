@@ -16,6 +16,7 @@ import (
 
 // OpenpitrixClusterListResponseItems openpitrix cluster list response items
 // swagger:model openpitrixClusterListResponseItems
+
 type OpenpitrixClusterListResponseItems []*OpenpitrixCluster
 
 // Validate validates this openpitrix cluster list response items
