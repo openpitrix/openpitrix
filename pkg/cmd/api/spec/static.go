@@ -431,6 +431,21 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixAppRuntimePluginOutput": {
+      "type": "object",
+      "properties": {
+        "err_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "err_text": {
+          "type": "string"
+        },
+        "cluster_id": {
+          "type": "string"
+        }
+      }
+    },
     "protobufEmpty": {
       "type": "object",
       "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
