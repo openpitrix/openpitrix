@@ -14,11 +14,14 @@ import (
 
 // OpenpitrixClusterNodes openpitrix cluster nodes
 // swagger:model openpitrixClusterNodes
+
 type OpenpitrixClusterNodes struct {
 
 	// items
 	Items OpenpitrixClusterNodesItems `json:"items"`
 }
+
+/* polymorph openpitrixClusterNodes items false */
 
 // Validate validates this openpitrix cluster nodes
 func (m *OpenpitrixClusterNodes) Validate(formats strfmt.Registry) error {

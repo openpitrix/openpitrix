@@ -14,6 +14,7 @@ import (
 
 // OpenpitrixAppRuntimeListResponse openpitrix app runtime list response
 // swagger:model openpitrixAppRuntimeListResponse
+
 type OpenpitrixAppRuntimeListResponse struct {
 
 	// current page
@@ -31,6 +32,16 @@ type OpenpitrixAppRuntimeListResponse struct {
 	// total pages
 	TotalPages int32 `json:"total_pages,omitempty"`
 }
+
+/* polymorph openpitrixAppRuntimeListResponse current_page false */
+
+/* polymorph openpitrixAppRuntimeListResponse items false */
+
+/* polymorph openpitrixAppRuntimeListResponse page_size false */
+
+/* polymorph openpitrixAppRuntimeListResponse total_items false */
+
+/* polymorph openpitrixAppRuntimeListResponse total_pages false */
 
 // Validate validates this openpitrix app runtime list response
 func (m *OpenpitrixAppRuntimeListResponse) Validate(formats strfmt.Registry) error {

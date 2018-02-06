@@ -5,12 +5,39 @@
 package qingcloud
 
 import (
+	"flag"
+	"log"
 	"os"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	config "openpitrix.io/openpitrix/pkg/config/unittest"
 )
+
+var (
+	tShowEnvFlag = flag.Bool("show-env-flag", false, "show env flags")
+
+	tConfig *config.Config
+)
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+
+	if *tShowEnvFlag {
+		config.PrintEnvs()
+		os.Exit(0)
+	}
+
+	if conf, err := config.LoadConfig(); err == nil {
+		tConfig = conf
+	} else {
+		log.Fatal(err)
+	}
+
+	os.Exit(m.Run())
+}
 
 /*
 $ cat ~/.qingcloud/config.yaml
@@ -138,6 +165,10 @@ const test_appConf = `
 `
 
 func TestQingCloudRuntime(t *testing.T) {
+	if !tConfig.Unittest.QC.Enabled {
+		t.Skip()
+	}
+
 	clientConf := "~/.qingcloud/config.yaml"
 	_, err := os.Stat(strings.Replace(clientConf, "~/", os.Getenv("HOME")+"/", 1))
 	if err != nil {

@@ -14,6 +14,7 @@ import (
 
 // OpenpitrixApp openpitrix app
 // swagger:model openpitrixApp
+
 type OpenpitrixApp struct {
 
 	// created
@@ -34,6 +35,18 @@ type OpenpitrixApp struct {
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`
 }
+
+/* polymorph openpitrixApp created false */
+
+/* polymorph openpitrixApp description false */
+
+/* polymorph openpitrixApp id false */
+
+/* polymorph openpitrixApp last_modified false */
+
+/* polymorph openpitrixApp name false */
+
+/* polymorph openpitrixApp repo_id false */
 
 // Validate validates this openpitrix app
 func (m *OpenpitrixApp) Validate(formats strfmt.Registry) error {

@@ -16,6 +16,7 @@ import (
 
 // OpenpitrixAppRuntimeListResponseItems openpitrix app runtime list response items
 // swagger:model openpitrixAppRuntimeListResponseItems
+
 type OpenpitrixAppRuntimeListResponseItems []*OpenpitrixAppRuntime
 
 // Validate validates this openpitrix app runtime list response items

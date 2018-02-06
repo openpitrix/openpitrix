@@ -16,6 +16,7 @@ import (
 
 // OpenpitrixAppListResponseItems openpitrix app list response items
 // swagger:model openpitrixAppListResponseItems
+
 type OpenpitrixAppListResponseItems []*OpenpitrixApp
 
 // Validate validates this openpitrix app list response items

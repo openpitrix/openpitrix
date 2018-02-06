@@ -14,6 +14,7 @@ import (
 
 // OpenpitrixClusterNodeListResponse openpitrix cluster node list response
 // swagger:model openpitrixClusterNodeListResponse
+
 type OpenpitrixClusterNodeListResponse struct {
 
 	// current page
@@ -31,6 +32,16 @@ type OpenpitrixClusterNodeListResponse struct {
 	// total pages
 	TotalPages int32 `json:"total_pages,omitempty"`
 }
+
+/* polymorph openpitrixClusterNodeListResponse current_page false */
+
+/* polymorph openpitrixClusterNodeListResponse items false */
+
+/* polymorph openpitrixClusterNodeListResponse page_size false */
+
+/* polymorph openpitrixClusterNodeListResponse total_items false */
+
+/* polymorph openpitrixClusterNodeListResponse total_pages false */
 
 // Validate validates this openpitrix cluster node list response
 func (m *OpenpitrixClusterNodeListResponse) Validate(formats strfmt.Registry) error {

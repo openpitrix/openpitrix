@@ -15,4 +15,5 @@ package models
 //
 // The JSON representation for `Empty` is empty JSON object `{}`.
 // swagger:model protobufEmpty
+
 type ProtobufEmpty interface{}
