@@ -110,6 +110,45 @@ service AppRuntimeService {
 	}
 }
 
+
+// ----------------------------------------------------------------------------
+// Plugin
+// ----------------------------------------------------------------------------
+
+message AppRuntimePluginInfo {
+	required string name = 1;
+	required string description = 2;
+
+	required string host  = 3;
+	required int32 port = 4;
+}
+
+service AppRuntimePluginManagerService {
+	rpc RegisterPluginService(AppRuntimePluginInfo) returns (google.protobuf.Empty);
+}
+
+service AppRuntimePluginService {
+	rpc CreateCluster(AppRuntimePluginInput) returns (AppRuntimePluginOutput);
+	rpc StopClusters(AppRuntimePluginInput) returns (AppRuntimePluginOutput);
+	rpc StartClusters(AppRuntimePluginInput) returns (AppRuntimePluginOutput);
+	rpc DeleteClusters(AppRuntimePluginInput) returns (AppRuntimePluginOutput);
+	rpc RecoverClusters(AppRuntimePluginInput) returns (AppRuntimePluginOutput);
+	rpc CeaseClusters(AppRuntimePluginInput) returns (AppRuntimePluginOutput);
+}
+
+message AppRuntimePluginInput {
+	optional string app_conf = 1;
+	optional string cluster_ids = 2;
+	optional bool should_wait = 3;
+	repeated string args = 4;
+}
+message AppRuntimePluginOutput {
+	optional int32 err_code = 1;
+	optional string err_text = 2;
+
+	optional string cluster_id = 3;
+}
+
 // ----------------------------------------------------------------------------
 // END
 // ----------------------------------------------------------------------------

@@ -72,3 +72,12 @@ func (this *AppRuntimeListResponse) Validate() error {
 	}
 	return nil
 }
+func (this *AppRuntimePluginInfo) Validate() error {
+	return nil
+}
+func (this *AppRuntimePluginInput) Validate() error {
+	return nil
+}
+func (this *AppRuntimePluginOutput) Validate() error {
+	return nil
+}

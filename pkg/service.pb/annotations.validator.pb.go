@@ -22,6 +22,9 @@ It has these top-level messages:
 	AppRuntimeId
 	AppRuntimeListRequest
 	AppRuntimeListResponse
+	AppRuntimePluginInfo
+	AppRuntimePluginInput
+	AppRuntimePluginOutput
 	Cluster
 	Clusters
 	ClusterNode

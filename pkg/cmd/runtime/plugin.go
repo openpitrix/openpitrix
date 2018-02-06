@@ -29,5 +29,10 @@ func getRuntime(name string) RuntimeInterface {
 			return rt
 		}
 	}
+
+	if rt := grpcPluginManager.getRuntime(name); rt != nil {
+		return rt
+	}
+
 	return nil
 }

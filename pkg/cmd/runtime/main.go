@@ -58,6 +58,7 @@ func Main(cfg *config.Config) {
 		),
 	)
 	pb.RegisterAppRuntimeServiceServer(grpcServer, NewAppRuntimeServer(&cfg.DB))
+	pb.RegisterAppRuntimePluginManagerServiceServer(grpcServer, new(appPluginManagerServer))
 
 	if err = grpcServer.Serve(lis); err != nil {
 		err = errors.WithStack(err)
@@ -138,6 +139,17 @@ func (p *AppRuntimeServer) DeleteAppRuntime(ctx context.Context, args *pb.AppRun
 	err = p.db.DeleteAppRuntime(ctx, args.GetId())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "DeleteAppRuntime: %+v", err)
+	}
+
+	reply = &pbempty.Empty{}
+	return
+}
+
+type appPluginManagerServer struct{}
+
+func (p *appPluginManagerServer) RegisterPluginService(ctx context.Context, args *pb.AppRuntimePluginInfo) (reply *pbempty.Empty, err error) {
+	if err = grpcPluginManager.registerPlugin(args); err != nil {
+		return nil, status.Errorf(codes.Internal, "RegisterPluginService: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
