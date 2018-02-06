@@ -1,16 +1,47 @@
 package test
 
 import (
+	"flag"
+	"log"
+	"os"
 	"testing"
 
 	"github.com/go-openapi/runtime"
 
+	config "openpitrix.io/openpitrix/pkg/config/unittest"
 	"openpitrix.io/openpitrix/test/client/app_service"
 	"openpitrix.io/openpitrix/test/common"
 	"openpitrix.io/openpitrix/test/models"
 )
 
+var (
+	tShowEnvFlag = flag.Bool("show-env-flag", false, "show env flags")
+
+	tConfig *config.Config
+)
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+
+	if *tShowEnvFlag {
+		config.PrintEnvs()
+		os.Exit(0)
+	}
+
+	if conf, err := config.LoadConfig(); err == nil {
+		tConfig = conf
+	} else {
+		log.Fatal(err)
+	}
+
+	os.Exit(m.Run())
+}
+
 func TestApp(t *testing.T) {
+	if !tConfig.Unittest.Rest.Enabled {
+		t.Skip()
+	}
+
 	client := common.GetClient()
 	// delete old app
 	testAppId := "app-xxxxxxxy"

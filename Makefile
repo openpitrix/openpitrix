@@ -102,6 +102,8 @@ release:
 
 .PHONY: test
 test:
+	go test ./...
+
 	docker-compose up --build -d
 	sleep 10
 
