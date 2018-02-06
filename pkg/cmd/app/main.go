@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/grpclog/glogger"
+	"google.golang.org/grpc/status"
 
 	config "openpitrix.io/openpitrix/pkg/config/app"
 	db "openpitrix.io/openpitrix/pkg/db/app"
@@ -44,14 +45,14 @@ func Main(cfg *config.Config) {
 			grpc_validator.UnaryServerInterceptor(),
 			grpc_recovery.UnaryServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					return grpc.Errorf(codes.Internal, "%+v", p)
+					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
 		),
 		grpc_middleware.WithStreamServerChain(
 			grpc_recovery.StreamServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					return grpc.Errorf(codes.Internal, "%+v", p)
+					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
 		),
@@ -88,10 +89,10 @@ func (p *AppServer) GetApp(ctx context.Context, args *pb.AppId) (reply *pb.App, 
 
 	result, err := p.db.GetApp(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetApp: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetApp: %+v", err)
 	}
 	if result == nil {
-		return nil, grpc.Errorf(codes.NotFound, "App Id %s dose not exist", args.GetId())
+		return nil, status.Errorf(codes.NotFound, "App Id %s dose not exist", args.GetId())
 	}
 	reply = To_proto_App(nil, result)
 	return
@@ -100,7 +101,7 @@ func (p *AppServer) GetApp(ctx context.Context, args *pb.AppId) (reply *pb.App, 
 func (p *AppServer) GetAppList(ctx context.Context, args *pb.AppListRequest) (reply *pb.AppListResponse, err error) {
 	result, err := p.db.GetAppList(ctx)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetAppList: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetAppList: %+v", err)
 	}
 
 	items := To_proto_AppList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
@@ -118,7 +119,7 @@ func (p *AppServer) GetAppList(ctx context.Context, args *pb.AppListRequest) (re
 func (p *AppServer) CreateApp(ctx context.Context, args *pb.App) (reply *pbempty.Empty, err error) {
 	err = p.db.CreateApp(ctx, To_database_App(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "CreateApp: %+v", err)
+		return nil, status.Errorf(codes.Internal, "CreateApp: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -128,7 +129,7 @@ func (p *AppServer) CreateApp(ctx context.Context, args *pb.App) (reply *pbempty
 func (p *AppServer) UpdateApp(ctx context.Context, args *pb.App) (reply *pbempty.Empty, err error) {
 	err = p.db.UpdateApp(ctx, To_database_App(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "UpdateApp: %+v", err)
+		return nil, status.Errorf(codes.Internal, "UpdateApp: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -138,7 +139,7 @@ func (p *AppServer) UpdateApp(ctx context.Context, args *pb.App) (reply *pbempty
 func (p *AppServer) DeleteApp(ctx context.Context, args *pb.AppId) (reply *pbempty.Empty, err error) {
 	err = p.db.DeleteApp(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "DeleteApp: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DeleteApp: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}

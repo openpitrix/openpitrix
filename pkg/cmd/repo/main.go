@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/grpclog/glogger"
+	"google.golang.org/grpc/status"
 
 	config "openpitrix.io/openpitrix/pkg/config/repo"
 	db "openpitrix.io/openpitrix/pkg/db/repo"
@@ -44,14 +45,14 @@ func Main(cfg *config.Config) {
 			grpc_validator.UnaryServerInterceptor(),
 			grpc_recovery.UnaryServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					return grpc.Errorf(codes.Internal, "%+v", p)
+					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
 		),
 		grpc_middleware.WithStreamServerChain(
 			grpc_recovery.StreamServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					return grpc.Errorf(codes.Internal, "%+v", p)
+					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
 		),
@@ -86,10 +87,10 @@ func (p *RepoServer) GetRepo(ctx context.Context, args *pb.RepoId) (reply *pb.Re
 
 	result, err := p.db.GetRepo(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetRepo: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetRepo: %+v", err)
 	}
 	if result == nil {
-		return nil, grpc.Errorf(codes.NotFound, "Repo Id %s does not exist", args.GetId())
+		return nil, status.Errorf(codes.NotFound, "Repo Id %s does not exist", args.GetId())
 	}
 	reply = To_proto_Repo(nil, result)
 	return
@@ -98,7 +99,7 @@ func (p *RepoServer) GetRepo(ctx context.Context, args *pb.RepoId) (reply *pb.Re
 func (p *RepoServer) GetRepoList(ctx context.Context, args *pb.RepoListRequest) (reply *pb.RepoListResponse, err error) {
 	result, err := p.db.GetRepoList(ctx)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetRepoList: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetRepoList: %+v", err)
 	}
 
 	items := To_proto_RepoList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
@@ -115,7 +116,7 @@ func (p *RepoServer) GetRepoList(ctx context.Context, args *pb.RepoListRequest) 
 func (p *RepoServer) CreateRepo(ctx context.Context, args *pb.Repo) (reply *pbempty.Empty, err error) {
 	err = p.db.CreateRepo(ctx, To_database_Repo(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "CreateRepo: %+v", err)
+		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -125,7 +126,7 @@ func (p *RepoServer) CreateRepo(ctx context.Context, args *pb.Repo) (reply *pbem
 func (p *RepoServer) UpdateRepo(ctx context.Context, args *pb.Repo) (reply *pbempty.Empty, err error) {
 	err = p.db.UpdateRepo(ctx, To_database_Repo(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "UpdateRepo: %+v", err)
+		return nil, status.Errorf(codes.Internal, "UpdateRepo: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -135,7 +136,7 @@ func (p *RepoServer) UpdateRepo(ctx context.Context, args *pb.Repo) (reply *pbem
 func (p *RepoServer) DeleteRepo(ctx context.Context, args *pb.RepoId) (reply *pbempty.Empty, err error) {
 	err = p.db.DeleteRepo(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "DeleteRepo: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DeleteRepo: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}

@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/grpclog/glogger"
+	"google.golang.org/grpc/status"
 
 	config "openpitrix.io/openpitrix/pkg/config/runtime"
 	db "openpitrix.io/openpitrix/pkg/db/runtime"
@@ -44,14 +45,14 @@ func Main(cfg *config.Config) {
 			grpc_validator.UnaryServerInterceptor(),
 			grpc_recovery.UnaryServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					return grpc.Errorf(codes.Internal, "%+v", p)
+					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
 		),
 		grpc_middleware.WithStreamServerChain(
 			grpc_recovery.StreamServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					return grpc.Errorf(codes.Internal, "%+v", p)
+					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
 		),
@@ -86,10 +87,10 @@ func (p *AppRuntimeServer) GetAppRuntime(ctx context.Context, args *pb.AppRuntim
 
 	result, err := p.db.GetAppRuntime(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetAppRuntime: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetAppRuntime: %+v", err)
 	}
 	if result == nil {
-		return nil, grpc.Errorf(codes.NotFound, "App Runtime Id %s does not exist", args.GetId())
+		return nil, status.Errorf(codes.NotFound, "App Runtime Id %s does not exist", args.GetId())
 	}
 	reply = To_proto_AppRuntime(nil, result)
 	return
@@ -98,7 +99,7 @@ func (p *AppRuntimeServer) GetAppRuntime(ctx context.Context, args *pb.AppRuntim
 func (p *AppRuntimeServer) GetAppRuntimeList(ctx context.Context, args *pb.AppRuntimeListRequest) (reply *pb.AppRuntimeListResponse, err error) {
 	result, err := p.db.GetAppRuntimeList(ctx)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetAppRuntimeList: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetAppRuntimeList: %+v", err)
 	}
 
 	items := To_proto_AppRuntimeList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
@@ -116,7 +117,7 @@ func (p *AppRuntimeServer) GetAppRuntimeList(ctx context.Context, args *pb.AppRu
 func (p *AppRuntimeServer) CreateAppRuntime(ctx context.Context, args *pb.AppRuntime) (reply *pbempty.Empty, err error) {
 	err = p.db.CreateAppRuntime(ctx, To_database_AppRuntime(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "CreateAppRuntime: %+v", err)
+		return nil, status.Errorf(codes.Internal, "CreateAppRuntime: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -126,7 +127,7 @@ func (p *AppRuntimeServer) CreateAppRuntime(ctx context.Context, args *pb.AppRun
 func (p *AppRuntimeServer) UpdateAppRuntime(ctx context.Context, args *pb.AppRuntime) (reply *pbempty.Empty, err error) {
 	err = p.db.UpdateAppRuntime(ctx, To_database_AppRuntime(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "UpdateAppRuntime: %+v", err)
+		return nil, status.Errorf(codes.Internal, "UpdateAppRuntime: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -136,7 +137,7 @@ func (p *AppRuntimeServer) UpdateAppRuntime(ctx context.Context, args *pb.AppRun
 func (p *AppRuntimeServer) DeleteAppRuntime(ctx context.Context, args *pb.AppRuntimeId) (reply *pbempty.Empty, err error) {
 	err = p.db.DeleteAppRuntime(ctx, args.GetId())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "DeleteAppRuntime: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DeleteAppRuntime: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}

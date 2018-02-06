@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	_ "google.golang.org/grpc/grpclog/glogger"
+	"google.golang.org/grpc/status"
 
 	config "openpitrix.io/openpitrix/pkg/config/cluster"
 	db "openpitrix.io/openpitrix/pkg/db/cluster"
@@ -44,14 +45,14 @@ func Main(cfg *config.Config) {
 			grpc_validator.UnaryServerInterceptor(),
 			grpc_recovery.UnaryServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					return grpc.Errorf(codes.Internal, "%+v", p)
+					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
 		),
 		grpc_middleware.WithStreamServerChain(
 			grpc_recovery.StreamServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					return grpc.Errorf(codes.Internal, "%+v", p)
+					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
 		),
@@ -83,11 +84,11 @@ func (p *ClusterServer) GetClusters(ctx context.Context, args *pb.ClusterIds) (r
 	result, err := p.db.GetClusters(ctx, args.GetIds())
 	if err != nil {
 		err = errors.WithStack(err)
-		return nil, grpc.Errorf(codes.Internal, "GetClusters: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetClusters: %+v", err)
 	}
 	if result == nil {
 		err = errors.WithStack(err)
-		return nil, grpc.Errorf(codes.NotFound, "Cluster Ids %s do not exist", args.GetIds())
+		return nil, status.Errorf(codes.NotFound, "Cluster Ids %s do not exist", args.GetIds())
 	}
 	reply = To_proto_Clusters(result)
 	return
@@ -96,7 +97,7 @@ func (p *ClusterServer) GetClusters(ctx context.Context, args *pb.ClusterIds) (r
 func (p *ClusterServer) GetClusterList(ctx context.Context, args *pb.ClusterListRequest) (reply *pb.ClusterListResponse, err error) {
 	result, err := p.db.GetClusterList(ctx)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetClusterList: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetClusterList: %+v", err)
 	}
 
 	items := To_proto_ClusterList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
@@ -114,7 +115,7 @@ func (p *ClusterServer) GetClusterList(ctx context.Context, args *pb.ClusterList
 func (p *ClusterServer) CreateCluster(ctx context.Context, args *pb.Cluster) (reply *pbempty.Empty, err error) {
 	err = p.db.CreateCluster(ctx, To_database_Cluster(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "CreateCluster: %+v", err)
+		return nil, status.Errorf(codes.Internal, "CreateCluster: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -124,7 +125,7 @@ func (p *ClusterServer) CreateCluster(ctx context.Context, args *pb.Cluster) (re
 func (p *ClusterServer) UpdateCluster(ctx context.Context, args *pb.Cluster) (reply *pbempty.Empty, err error) {
 	err = p.db.UpdateCluster(ctx, To_database_Cluster(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "UpdateCluster: %+v", err)
+		return nil, status.Errorf(codes.Internal, "UpdateCluster: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -134,7 +135,7 @@ func (p *ClusterServer) UpdateCluster(ctx context.Context, args *pb.Cluster) (re
 func (p *ClusterServer) DeleteClusters(ctx context.Context, args *pb.ClusterIds) (reply *pbempty.Empty, err error) {
 	err = p.db.DeleteClusters(ctx, args.GetIds())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "DeleteClusters: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DeleteClusters: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -145,11 +146,11 @@ func (p *ClusterServer) GetClusterNodes(ctx context.Context, args *pb.ClusterNod
 	result, err := p.db.GetClusterNodes(ctx, args.GetIds())
 	if err != nil {
 		err = errors.WithStack(err)
-		return nil, grpc.Errorf(codes.Internal, "GetClusterNodes: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetClusterNodes: %+v", err)
 	}
 	if result == nil {
 		err = errors.WithStack(err)
-		return nil, grpc.Errorf(codes.NotFound, "ClusterNode Ids %s do not exist", args.GetIds())
+		return nil, status.Errorf(codes.NotFound, "ClusterNode Ids %s do not exist", args.GetIds())
 	}
 	reply = To_proto_ClusterNodes(result)
 	return
@@ -158,7 +159,7 @@ func (p *ClusterServer) GetClusterNodes(ctx context.Context, args *pb.ClusterNod
 func (p *ClusterServer) GetClusterNodeList(ctx context.Context, args *pb.ClusterNodeListRequest) (reply *pb.ClusterNodeListResponse, err error) {
 	result, err := p.db.GetClusterNodeList(ctx)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "GetClusterNodeList: %+v", err)
+		return nil, status.Errorf(codes.Internal, "GetClusterNodeList: %+v", err)
 	}
 
 	items := To_proto_ClusterNodeList(result, int(args.GetPageNumber()), int(args.GetPageSize()))
@@ -176,7 +177,7 @@ func (p *ClusterServer) GetClusterNodeList(ctx context.Context, args *pb.Cluster
 func (p *ClusterServer) CreateClusterNodes(ctx context.Context, args *pb.ClusterNodes) (reply *pbempty.Empty, err error) {
 	err = p.db.CreateClusterNodes(ctx, To_database_ClusterNodes(args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "CreateClusterNodes: %+v", err)
+		return nil, status.Errorf(codes.Internal, "CreateClusterNodes: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -186,7 +187,7 @@ func (p *ClusterServer) CreateClusterNodes(ctx context.Context, args *pb.Cluster
 func (p *ClusterServer) UpdateClusterNode(ctx context.Context, args *pb.ClusterNode) (reply *pbempty.Empty, err error) {
 	err = p.db.UpdateClusterNode(ctx, To_database_ClusterNode(nil, args))
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "UpdateClusterNode: %+v", err)
+		return nil, status.Errorf(codes.Internal, "UpdateClusterNode: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
@@ -196,7 +197,7 @@ func (p *ClusterServer) UpdateClusterNode(ctx context.Context, args *pb.ClusterN
 func (p *ClusterServer) DeleteClusterNodes(ctx context.Context, args *pb.ClusterNodeIds) (reply *pbempty.Empty, err error) {
 	err = p.db.DeleteClusterNodes(ctx, args.GetIds())
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "DeleteClusterNodes: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DeleteClusterNodes: %+v", err)
 	}
 
 	reply = &pbempty.Empty{}
