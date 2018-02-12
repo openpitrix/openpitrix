@@ -19,10 +19,7 @@ import (
 )
 
 var files = []string{
-	"app.swagger.json",
-	"app_runtime.swagger.json",
-	"cluster.swagger.json",
-	"repo.swagger.json",
+	"api.swagger.json",
 	"index.html",
 }
 

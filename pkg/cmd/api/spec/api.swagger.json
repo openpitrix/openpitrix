@@ -1,0 +1,343 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "OpenPireix Project",
+    "version": "0.0.1",
+    "contact": {
+      "name": "OpenPireix Project",
+      "url": "https://openpitrix.io"
+    }
+  },
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/apps": {
+      "get": {
+        "operationId": "DescribeApps",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeAppsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "repo_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteApp",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteAppResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteAppRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "post": {
+        "operationId": "CreateApp",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "patch": {
+        "operationId": "ModifyApp",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyAppResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyAppRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "openpitrixApp": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "repo_id": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
+        },
+        "chart_name": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixCreateAppRequest": {
+      "type": "object",
+      "properties": {
+        "_": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "repo_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "chart_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateAppResponse": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "$ref": "#/definitions/openpitrixApp"
+        }
+      }
+    },
+    "openpitrixDeleteAppRequest": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteAppResponse": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "$ref": "#/definitions/openpitrixApp"
+        }
+      }
+    },
+    "openpitrixDescribeAppsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "app_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixApp"
+          }
+        }
+      }
+    },
+    "openpitrixModifyAppRequest": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "repo_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "chart_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyAppResponse": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "$ref": "#/definitions/openpitrixApp"
+        }
+      }
+    },
+    "protobufStringValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The string value."
+        }
+      },
+      "description": "Wrapper message for `string`.\n\nThe JSON representation for `StringValue` is JSON string."
+    }
+  }
+}

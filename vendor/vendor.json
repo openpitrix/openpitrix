@@ -220,6 +220,18 @@
 			"revisionTime": "2017-09-21T06:28:06Z"
 		},
 		{
+			"checksumSHA1": "2LUvj5BwwIzkp94ydDrcVpLV+XY=",
+			"path": "github.com/gocraft/dbr",
+			"revision": "5d59a8b3aa915660960329efb3af5513e7a0db07",
+			"revisionTime": "2018-01-30T23:33:36Z"
+		},
+		{
+			"checksumSHA1": "55EGtYyfh4/MQq533CWJqFlBh5Q=",
+			"path": "github.com/gocraft/dbr/dialect",
+			"revision": "5d59a8b3aa915660960329efb3af5513e7a0db07",
+			"revisionTime": "2018-01-30T23:33:36Z"
+		},
+		{
 			"checksumSHA1": "wn2shNJMwRZpvuvkf1s7h0wvqHI=",
 			"path": "github.com/gogo/protobuf/proto",
 			"revision": "971cbfd2e72b513a28c74af7462aee0800248d69",
@@ -459,6 +471,12 @@
 			"path": "github.com/pmezard/go-difflib/difflib",
 			"revision": "f6abca593680b2315d2075e0f5e2a9751e3f431a",
 			"revisionTime": "2017-06-01T20:57:54Z"
+		},
+		{
+			"checksumSHA1": "qp6A3YXdKiniunyoNrXQYlDSxNA=",
+			"path": "github.com/rs/xid",
+			"revision": "390d6a8eeb3caeef8befccd1f9fae78eee5a0b34",
+			"revisionTime": "2018-01-18T21:20:07Z"
 		},
 		{
 			"checksumSHA1": "5KvHyB1CImtwZT3fwNkNUlc8R0k=",

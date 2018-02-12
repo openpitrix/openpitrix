@@ -10,51 +10,99 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // OpenpitrixApp openpitrix app
 // swagger:model openpitrixApp
-
 type OpenpitrixApp struct {
 
-	// created
-	Created strfmt.DateTime `json:"created,omitempty"`
+	// app id
+	AppID string `json:"app_id,omitempty"`
+
+	// chart name
+	ChartName string `json:"chart_name,omitempty"`
+
+	// create time
+	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
 
-	// id
-	ID string `json:"id,omitempty"`
+	// home
+	Home string `json:"home,omitempty"`
 
-	// last modified
-	LastModified strfmt.DateTime `json:"last_modified,omitempty"`
+	// icon
+	Icon string `json:"icon,omitempty"`
+
+	// maintainers
+	Maintainers string `json:"maintainers,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
 
+	// readme
+	Readme string `json:"readme,omitempty"`
+
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`
+
+	// screenshots
+	Screenshots string `json:"screenshots,omitempty"`
+
+	// sources
+	Sources string `json:"sources,omitempty"`
+
+	// status
+	Status string `json:"status,omitempty"`
+
+	// status time
+	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 }
-
-/* polymorph openpitrixApp created false */
-
-/* polymorph openpitrixApp description false */
-
-/* polymorph openpitrixApp id false */
-
-/* polymorph openpitrixApp last_modified false */
-
-/* polymorph openpitrixApp name false */
-
-/* polymorph openpitrixApp repo_id false */
 
 // Validate validates this openpitrix app
 func (m *OpenpitrixApp) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCreateTime(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateStatusTime(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixApp) validateCreateTime(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.CreateTime) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("create_time", "body", "date-time", m.CreateTime.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *OpenpitrixApp) validateStatusTime(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.StatusTime) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("status_time", "body", "date-time", m.StatusTime.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

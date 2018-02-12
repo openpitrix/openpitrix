@@ -1,117 +1,219 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
-// Use of this source code is governed by a Apache license
-// that can be found in the LICENSE file.
-
 package logger
 
 import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
+	"sync/atomic"
 )
 
-var logger = new(glogger)
+type Level uint32
 
-// V reports whether verbosity level l is at least the requested verbose level.
-func V(l int) bool {
-	return logger.V(l)
+const (
+	PanicLevel Level = iota
+	FatalLevel
+	ErrorLevel
+	WarnLevel
+	InfoLevel
+	DebugLevel
+)
+
+func (level Level) String() string {
+	switch level {
+	case DebugLevel:
+		return "debug"
+	case InfoLevel:
+		return "info"
+	case WarnLevel:
+		return "warning"
+	case ErrorLevel:
+		return "error"
+	case FatalLevel:
+		return "fatal"
+	case PanicLevel:
+		return "panic"
+	}
+
+	return "unknown"
 }
 
-// Info logs to the INFO log.
-func Info(args ...interface{}) {
-	logger.Info(args...)
+func StringToLevel(level string) Level {
+	switch level {
+	case "panic":
+		return PanicLevel
+	case "fatal":
+		return FatalLevel
+	case "error":
+		return ErrorLevel
+	case "warn", "warning":
+		return WarnLevel
+	case "debug":
+		return DebugLevel
+	case "info":
+		return InfoLevel
+	}
+	return InfoLevel
 }
 
-// Infof logs to the INFO log. Arguments are handled in the manner of fmt.Printf.
-func Infof(format string, args ...interface{}) {
-	logger.Infof(format, args...)
+var logger = NewLogger()
+
+func Info(v ...interface{}) {
+	logger.Info(v...)
 }
 
-// Infoln logs to the INFO log. Arguments are handled in the manner of fmt.Println.
-func Infoln(args ...interface{}) {
-	logger.Infoln(args...)
+func Infof(format string, v ...interface{}) {
+	logger.Infof(format, v...)
 }
 
-// Warning logs to the WARNING log.
-func Warning(args ...interface{}) {
-	logger.Warning(args...)
+func Debug(v ...interface{}) {
+	logger.Debug(v...)
 }
 
-// Warn same as Warning, logs to the WARNING log.
-func Warn(args ...interface{}) {
-	logger.Warning(args...)
+func Debugf(format string, v ...interface{}) {
+	logger.Debugf(format, v...)
 }
 
-// Warningf logs to the WARNING log. Arguments are handled in the manner of fmt.Printf.
-func Warningf(format string, args ...interface{}) {
-	logger.Warningf(format, args...)
+func Warn(v ...interface{}) {
+	logger.Warning(v...)
 }
 
-// Warnf same as Warningf, logs to the WARNING log. Arguments are handled in the manner of fmt.Printf.
-func Warnf(format string, args ...interface{}) {
-	logger.Warningf(format, args...)
+func Warnf(format string, v ...interface{}) {
+	logger.Warningf(format, v...)
 }
 
-// Warningln logs to the WARNING log. Arguments are handled in the manner of fmt.Println.
-func Warningln(args ...interface{}) {
-	logger.Warningln(args...)
+func Warning(v ...interface{}) {
+	logger.Warning(v...)
 }
 
-// Warnln same as Warningln, logs to the WARNING log. Arguments are handled in the manner of fmt.Println.
-func Warnln(args ...interface{}) {
-	logger.Warningln(args...)
+func Warningf(format string, v ...interface{}) {
+	logger.Warningf(format, v...)
 }
 
-// Error logs to the ERROR log.
-func Error(args ...interface{}) {
-	logger.Error(args...)
+func Error(v ...interface{}) {
+	logger.Error(v...)
 }
 
-// Errorf logs to the ERROR log. Arguments are handled in the manner of fmt.Printf.
-func Errorf(format string, args ...interface{}) {
-	logger.Errorf(format, args...)
+func Errorf(format string, v ...interface{}) {
+	logger.Errorf(format, v...)
 }
 
-// Errorln logs to the ERROR log. Arguments are handled in the manner of fmt.Println.
-func Errorln(args ...interface{}) {
-	logger.Errorln(args...)
+func Fatal(v ...interface{}) {
+	logger.Fatal(v...)
 }
 
-// Fatal logs to the FATAL log. Arguments are handled in the manner of fmt.Print.
-// It calls os.Exit() with exit code 1.
-func Fatal(args ...interface{}) {
-	logger.Fatal(args...)
-	// Make sure fatal logs will exit.
-	os.Exit(1)
+func Fatalf(format string, v ...interface{}) {
+	logger.Fatalf(format, v...)
 }
 
-// Fatalf logs to the FATAL log. Arguments are handled in the manner of fmt.Printf.
-// It calles os.Exit() with exit code 1.
-func Fatalf(format string, args ...interface{}) {
-	logger.Fatalf(format, args...)
-	// Make sure fatal logs will exit.
-	os.Exit(1)
+func Panic(v ...interface{}) {
+	logger.Panic(v...)
 }
 
-// Fatalln logs to the FATAL log. Arguments are handled in the manner of fmt.Println.
-// It calle os.Exit()) with exit code 1.
-func Fatalln(args ...interface{}) {
-	logger.Fatalln(args...)
-	// Make sure fatal logs will exit.
-	os.Exit(1)
+func Panicf(format string, v ...interface{}) {
+	logger.Panicf(format, v...)
 }
 
-// Print prints to the standard logger.
-func Print(args ...interface{}) {
-	log.Output(2, fmt.Sprint(args...))
+func SetLevelByString(level string) {
+	logger.SetLevelByString(level)
 }
 
-// Printf prints to the standard logger.
-func Printf(format string, args ...interface{}) {
-	log.Output(2, fmt.Sprintf(format, args...))
+func Disable() {
+	SetLevelByString("fatal")
 }
 
-// Println prints to the standard logger.
-func Println(args ...interface{}) {
-	log.Output(2, fmt.Sprintln(args...))
+func NewLogger() *Logger {
+	l := log.New(os.Stdout, "", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	return &Logger{Level: InfoLevel, Logger: l}
+}
+
+type Logger struct {
+	Level  Level
+	Logger *log.Logger
+}
+
+func (logger *Logger) level() Level {
+	return Level(atomic.LoadUint32((*uint32)(&logger.Level)))
+}
+
+func (logger *Logger) SetLevel(level Level) {
+	atomic.StoreUint32((*uint32)(&logger.Level), uint32(level))
+}
+
+func (logger *Logger) SetLevelByString(level string) {
+	logger.SetLevel(StringToLevel(level))
+}
+
+func (logger *Logger) formatOutput(level Level, output string) string {
+	return "[" + strings.ToUpper(level.String()) + "] " + output
+}
+
+func (logger *Logger) log(level Level, args ...interface{}) {
+	if logger.level() < level {
+		return
+	}
+	logger.Logger.Output(4, logger.formatOutput(level, fmt.Sprint(args...)))
+}
+
+func (logger *Logger) logf(level Level, format string, args ...interface{}) {
+	if logger.level() < level {
+		return
+	}
+	logger.Logger.Output(4, logger.formatOutput(level, fmt.Sprintf(format, args...)))
+}
+
+func (logger *Logger) Debugf(format string, args ...interface{}) {
+	logger.logf(DebugLevel, format, args...)
+}
+
+func (logger *Logger) Infof(format string, args ...interface{}) {
+	logger.logf(InfoLevel, format, args...)
+}
+
+func (logger *Logger) Warnf(format string, args ...interface{}) {
+	logger.logf(WarnLevel, format, args...)
+}
+
+func (logger *Logger) Warningf(format string, args ...interface{}) {
+	logger.logf(WarnLevel, format, args...)
+}
+
+func (logger *Logger) Errorf(format string, args ...interface{}) {
+	logger.logf(ErrorLevel, format, args...)
+}
+
+func (logger *Logger) Fatalf(format string, args ...interface{}) {
+	logger.logf(FatalLevel, format, args...)
+}
+
+func (logger *Logger) Panicf(format string, args ...interface{}) {
+	logger.logf(PanicLevel, format, args...)
+}
+
+func (logger *Logger) Debug(args ...interface{}) {
+	logger.log(DebugLevel, args...)
+}
+
+func (logger *Logger) Info(args ...interface{}) {
+	logger.log(InfoLevel, args...)
+}
+
+func (logger *Logger) Warn(args ...interface{}) {
+	logger.log(WarnLevel, args...)
+}
+
+func (logger *Logger) Warning(args ...interface{}) {
+	logger.log(WarnLevel, args...)
+}
+
+func (logger *Logger) Error(args ...interface{}) {
+	logger.log(ErrorLevel, args...)
+}
+
+func (logger *Logger) Fatal(args ...interface{}) {
+	logger.log(FatalLevel, args...)
+}
+
+func (logger *Logger) Panic(args ...interface{}) {
+	logger.log(PanicLevel, args...)
 }
