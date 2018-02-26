@@ -108,9 +108,15 @@ test:
 
 
 .PHONY: e2e-test
-e2e-test: compose-update
+e2e-test:
 	cd test && go test -v
 	@echo "e2e-test done"
+
+.PHONY: ci-test
+ci-test: compose-update
+	sleep 20
+	-make e2e-test
+	@echo "ci-test done"
 
 .PHONY: clean
 clean:

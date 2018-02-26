@@ -7,7 +7,7 @@ version: '3'
 services:
 # TODO: run make build in docker-compose, go install will use cache
   openpitrix-db:
-    image: "mysql:5.6"
+    image: "mysql:5.7"
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -39,6 +39,7 @@ services:
     build: .
     image: "openpitrix"
     command: "db-ctrl -s /schema"
+    restart: on-failure
     ports:
      - "9105:9105"
     links:
