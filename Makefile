@@ -64,6 +64,7 @@ generate-in-local:
 .PHONY: generate
 generate:
 	$(MAKE_IN_DOCKER) generate-in-local
+	echo "generate done"
 
 #.PHONY: mysql-start
 #mysql-start:
@@ -84,17 +85,17 @@ build:
 
 .PHONY: compose-update
 compose-update: build compose-up
-	@echo "ok"
+	@echo "compose-update done"
 
 .PHONY: compose-up
 compose-up:
 	docker-compose up -d
-	@echo "ok"
+	@echo "compose-up done"
 
 .PHONY: compose-down
 compose-down:
 	docker-compose down
-	@echo "ok"
+	@echo "compose-down done"
 
 .PHONY: release
 release:
@@ -103,7 +104,13 @@ release:
 .PHONY: test
 test:
 	go test ./...
-	@echo "ok"
+	@echo "test done"
+
+
+.PHONY: e2e-test
+e2e-test: compose-update
+	cd test && go test -v
+	@echo "e2e-test done"
 
 .PHONY: clean
 clean:
