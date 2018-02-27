@@ -752,12 +752,6 @@
 			"revisionTime": "2017-07-30T05:02:35Z"
 		},
 		{
-			"checksumSHA1": "HFbID3JVWwQVvBMP5PxEPlQs9Ys=",
-			"path": "gopkg.in/gorp.v2",
-			"revision": "4deece61034873cb5b5416e81abe4cea7bd0da72",
-			"revisionTime": "2016-11-13T21:10:14Z"
-		},
-		{
 			"checksumSHA1": "6f8MEU31llHM1sLM/GGH4/Qxu0A=",
 			"path": "gopkg.in/inf.v0",
 			"revision": "3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4",
