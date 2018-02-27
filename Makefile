@@ -6,8 +6,12 @@ TARG.Name:=openpitrix
 TRAG.Gopkg:=openpitrix.io/openpitrix
 
 DOCKER_TAGS=latest
-
-MAKE_IN_DOCKER:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) openpitrix/openpitrix-builder make
+RUN_IN_DOCKER:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) openpitrix/openpitrix-builder
+GO_FMT:=goimports -l -w -e -local -srcdir=/go/src/$(TRAG.Gopkg)
+GO_FILES:=./cmd ./test ./pkg
+define get_diff_files
+    $(eval DIFF_FILES=$(shell git diff --name-only | grep -E "^(test|cmd|pkg)/.+\.go"))
+endef
 
 MYSQL_DATABASE:=$(TARG.Name)
 MYSQL_ROOT_PASSWORD:=password
@@ -38,7 +42,7 @@ init-vendor:
 	fi
 	govendor init
 	govendor add +external
-	@echo "ok"
+	@echo "init-vendor done"
 
 .PHONY: update-vendor
 update-vendor:
@@ -47,7 +51,7 @@ update-vendor:
 	fi
 	govendor update +external
 	govendor list
-	@echo "ok"
+	@echo "update-vendor done"
 
 #.PHONY: tools
 #tools:
@@ -63,8 +67,8 @@ generate-in-local:
 
 .PHONY: generate
 generate:
-	$(MAKE_IN_DOCKER) generate-in-local
-	echo "generate done"
+	$(RUN_IN_DOCKER) make generate-in-local
+	@echo "generate done"
 
 #.PHONY: mysql-start
 #mysql-start:
@@ -76,9 +80,22 @@ generate:
 #	@docker stop openpitrix-db
 #	@echo "ok"
 
+.PHONY: fmt-all
+fmt-all:
+	$(RUN_IN_DOCKER) $(GO_FMT) $(GO_FILES)
+	@echo "fmt done"
+
+.PHONY: fmt
+fmt:
+	$(call get_diff_files)
+	$(if $(DIFF_FILES), \
+		$(RUN_IN_DOCKER) $(GO_FMT) ${DIFF_FILES}, \
+		$(info cannot find modified files from git) \
+	)
+	@echo "fmt done"
 
 .PHONY: build
-build:
+build: fmt
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
