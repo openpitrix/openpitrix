@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"github.com/koding/multiconfig"
+
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 

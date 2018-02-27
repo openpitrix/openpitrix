@@ -7,7 +7,7 @@ TRAG.Gopkg:=openpitrix.io/openpitrix
 
 DOCKER_TAGS=latest
 RUN_IN_DOCKER:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) openpitrix/openpitrix-builder
-GO_FMT:=goimports -l -w -e -local -srcdir=/go/src/$(TRAG.Gopkg)
+GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
 GO_FILES:=./cmd ./test ./pkg
 define get_diff_files
     $(eval DIFF_FILES=$(shell git diff --name-only | grep -E "^(test|cmd|pkg)/.+\.go"))

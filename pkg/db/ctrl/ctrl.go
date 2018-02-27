@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/gocraft/dbr"
+
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"

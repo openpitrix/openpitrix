@@ -6,6 +6,7 @@ package db
 
 import (
 	"github.com/gocraft/dbr"
+
 	"openpitrix.io/openpitrix/pkg/config"
 )
 

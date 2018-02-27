@@ -7,7 +7,6 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/test/client/app_manager"
-
 	"openpitrix.io/openpitrix/test/models"
 )
 
