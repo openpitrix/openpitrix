@@ -19,33 +19,33 @@ import (
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
-	_ "google.golang.org/grpc/grpclog/glogger"
-
-	config "openpitrix.io/openpitrix/pkg/config/api"
+	"openpitrix.io/openpitrix/pkg/config"
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
-	pb "openpitrix.io/openpitrix/pkg/service.pb"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/version"
 
 	staticSpec "openpitrix.io/openpitrix/pkg/cmd/api/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/cmd/api/swagger-ui"
 )
 
-func Main(cfg *config.Config) {
-	cfg.Glog.ActiveFlags()
+func Serve() {
+	config.LoadConf()
 
-	logger.Printf("openpitrix %s\n", version.ShortVersion)
-	logger.Printf("App service http://%s:%d\n", cfg.App.Host, cfg.App.Port)
-	logger.Printf("Runtime service http://%s:%d\n", cfg.Runtime.Host, cfg.Runtime.Port)
-	logger.Printf("Cluster service http://%s:%d\n", cfg.Cluster.Host, cfg.Cluster.Port)
-	logger.Printf("Repo service http://%s:%d\n", cfg.Repo.Host, cfg.Repo.Port)
-	logger.Printf("Api service start http://%s:%d\n", cfg.Api.Host, cfg.Api.Port)
+	logger.Infof("Openpitrix %s\n", version.ShortVersion)
+	logger.Infof("App service http://%s:%s\n", constants.AppManagerHost, constants.AppManagerPort)
+	logger.Infof("Runtime service http://%s:%s\n", constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort)
+	logger.Infof("Cluster service http://%s:%s\n", constants.ClusterManagerHost, constants.ClusterManagerPort)
+	logger.Infof("Repo service http://%s:%s\n", constants.RepoManagerHost, constants.RepoManagerPort)
+	logger.Infof("Api service start http://%s:%s\n", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
-	if err := run(cfg); err != nil {
+	if err := run(); err != nil {
 		logger.Fatalf("%+v", err)
+		panic(err)
 	}
 }
 
-func run(cfg *config.Config) error {
+func run() error {
 	gin.SetMode(gin.ReleaseMode)
 
 	r := gin.New()
@@ -61,7 +61,7 @@ func run(cfg *config.Config) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	allHandler := gin.WrapH(mainHandler(cfg, ctx))
+	allHandler := gin.WrapH(mainHandler(ctx))
 	r.Any("/v1/*filepath", allHandler)
 	r.Any("/swagger-ui/*filepath", allHandler)
 
@@ -74,47 +74,17 @@ func run(cfg *config.Config) error {
 		panic("this is a panic")
 	})
 
-	return r.Run(fmt.Sprintf(":%d", cfg.Api.Port))
+	return r.Run(":" + constants.ApiGatewayPort)
 }
 
-func mainHandler(cfg *config.Config, ctx context.Context) http.Handler {
+func mainHandler(ctx context.Context) http.Handler {
 	var gwmux = runtime.NewServeMux()
 	var opts = []grpc.DialOption{grpc.WithInsecure()}
 	var err error
 
-	err = pb.RegisterAppServiceHandlerFromEndpoint(
+	err = pb.RegisterAppManagerHandlerFromEndpoint(
 		ctx, gwmux,
-		fmt.Sprintf("%s:%d", cfg.App.Host, cfg.App.Port),
-		opts,
-	)
-	if err != nil {
-		err = errors.WithStack(err)
-		logger.Fatalf("%+v", err)
-	}
-
-	err = pb.RegisterAppRuntimeServiceHandlerFromEndpoint(
-		ctx, gwmux,
-		fmt.Sprintf("%s:%d", cfg.Runtime.Host, cfg.Runtime.Port),
-		opts,
-	)
-	if err != nil {
-		err = errors.WithStack(err)
-		logger.Fatalf("%+v", err)
-	}
-
-	err = pb.RegisterClusterServiceHandlerFromEndpoint(
-		ctx, gwmux,
-		fmt.Sprintf("%s:%d", cfg.Cluster.Host, cfg.Cluster.Port),
-		opts,
-	)
-	if err != nil {
-		err = errors.WithStack(err)
-		logger.Fatalf("%+v", err)
-	}
-
-	err = pb.RegisterRepoServiceHandlerFromEndpoint(
-		ctx, gwmux,
-		fmt.Sprintf("%s:%d", cfg.Repo.Host, cfg.Repo.Port),
+		fmt.Sprintf("%s:%s", constants.AppManagerHost, constants.AppManagerPort),
 		opts,
 	)
 	if err != nil {

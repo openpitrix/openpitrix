@@ -13,7 +13,7 @@ MYSQL_DATABASE:=$(TARG.Name)
 MYSQL_ROOT_PASSWORD:=password
 
 .PHONY: all
-all: build-in-docker test release
+all: generate build
 
 .PHONY: help
 help:
@@ -49,52 +49,53 @@ update-vendor:
 	govendor list
 	@echo "ok"
 
-.PHONY: tools
-tools:
-	docker pull openpitrix/openpitrix:builder
-	docker pull mysql:5.6
-	@echo "ok"
+#.PHONY: tools
+#tools:
+#	docker pull openpitrix/openpitrix:builder
+#	docker pull mysql:5.6
+#	@echo "ok"
 
-.PHONY: generate
-generate:
+.PHONY: generate-in-local
+generate-in-local:
 	cd ./api && make generate
 	cd ./pkg/cmd/api && make
 	go generate ./pkg/version/
 
-.PHONY: mysql-start
-mysql-start:
-	@docker run --rm --name openpitrix-db -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -p 3306:3306 -d mysql:5.6 || docker start openpitrix-db
-	@echo "ok"
+.PHONY: generate
+generate:
+	$(MAKE_IN_DOCKER) generate-in-local
+	echo "generate done"
 
-.PHONY: mysql-stop
-mysql-stop:
-	@docker stop openpitrix-db
-	@echo "ok"
+#.PHONY: mysql-start
+#mysql-start:
+#	@docker run --rm --name openpitrix-db -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -p 3306:3306 -d mysql:5.6 || docker start openpitrix-db
+#	@echo "ok"
+#
+#.PHONY: mysql-stop
+#mysql-stop:
+#	@docker stop openpitrix-db
+#	@echo "ok"
 
 
 .PHONY: build
 build:
-	make generate
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	@docker image prune -f 1>/dev/null 2>&1
-	@echo "ok"
+	@echo "build done"
 
-.PHONY: build-in-docker
-build-in-docker:
-	$(MAKE_IN_DOCKER) generate
-	docker build -t $(TARG.Name) -f ./Dockerfile .
-	@docker image prune -f 1>/dev/null 2>&1
-	@echo "ok"
+.PHONY: compose-update
+compose-update: build compose-up
+	@echo "compose-update done"
 
-.PHONY: start
-start:
+.PHONY: compose-up
+compose-up:
 	docker-compose up -d
-	@echo "ok"
+	@echo "compose-up done"
 
-.PHONY: stop
-stop:
+.PHONY: compose-down
+compose-down:
 	docker-compose down
-	@echo "ok"
+	@echo "compose-down done"
 
 .PHONY: release
 release:
@@ -103,30 +104,19 @@ release:
 .PHONY: test
 test:
 	go test ./...
+	@echo "test done"
 
-	docker-compose up --build -d
-	sleep 10
 
-	curl localhost:9100/ping
-	curl localhost:9100/panic
+.PHONY: e2e-test
+e2e-test:
+	cd test && go test -v
+	@echo "e2e-test done"
 
-	curl localhost:9100/v1/apps
-	curl localhost:9100/v1/appruntimes
-	curl localhost:9100/v1/clusters
-	curl localhost:9100/v1/repos
-
-	curl localhost:9100/v1/apps/invalid-id
-	curl localhost:9100/v1/appruntimes/invalid-id
-	curl localhost:9100/v1/clusters/invalid-id
-	curl localhost:9100/v1/repos/invalid-id
-
-	curl localhost:9100/v1/apps/app-panic000
-	curl localhost:9100/v1/appruntimes/rt-panic000
-	curl localhost:9100/v1/clusters/cl-panic000
-	curl localhost:9100/v1/repos/repo-panic000
-
-	docker-compose down
-	@echo "ok"
+.PHONY: ci-test
+ci-test: compose-update
+	sleep 20
+	-make e2e-test
+	@echo "ci-test done"
 
 .PHONY: clean
 clean:

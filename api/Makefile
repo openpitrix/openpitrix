@@ -17,18 +17,16 @@ help:
 	@echo "  help              to show this help informatrion"
 
 generate: $(PROTO_FILES) Makefile
-	mkdir -p ../pkg/service.pb
-	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:../pkg/service.pb ${PROTO_FILES}
-	protoc $(PROTOC_FLAGS) --govalidators_out=:../pkg/service.pb ${PROTO_FILES}
-	protoc $(PROTOC_FLAGS) --grpc-gateway_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
-	protoc $(PROTOC_FLAGS) --swagger_out=logtostderr=true:../pkg/service.pb ${PROTO_FILES}
-	protoc $(PROTOC_FLAGS) --swagger_out=logtostderr=true:../pkg/cmd/api/spec ${PROTO_FILES}
-
+	mkdir -p ../pkg/pb
+	rm -rf ../pkg/pb/*
+	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:../pkg/pb ${PROTO_FILES}
+	protoc $(PROTOC_FLAGS) --grpc-gateway_out=logtostderr=true,allow_delete_body=true:../pkg/pb ${PROTO_FILES}
+	protoc $(PROTOC_FLAGS) --swagger_out=logtostderr=true,allow_delete_body=true:../pkg/cmd/api/spec ${PROTO_FILES}
+	cd ../pkg/cmd/api/spec/ && cat ./*.swagger.json | jq --slurp 'reduce .[] as $$item ({}; . * $$item)' > ./api.swagger.json
+	cd ../pkg/cmd/api/spec/ && find . | grep .swagger.json | grep -v "api" | xargs rm
 	# generate client code
-	cat ../pkg/cmd/api/spec/*.swagger.json | jq --slurp 'reduce .[] as $$item ({}; . * $$item)' > ../test/api.swagger.json
-	cd ../test/ && swagger generate client -f api.swagger.json -A openpitrix
-	rm ../test/api.swagger.json
-
+	rm -rf ../test/models/* ../test/client/*
+	cd ../test/ && swagger generate client -f ../pkg/cmd/api/spec/api.swagger.json -A openpitrix
 	@echo "ok"
 
 tools:

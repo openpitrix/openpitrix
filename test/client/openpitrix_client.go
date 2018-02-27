@@ -11,10 +11,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	"openpitrix.io/openpitrix/test/client/app_runtime_service"
-	"openpitrix.io/openpitrix/test/client/app_service"
-	"openpitrix.io/openpitrix/test/client/cluster_service"
-	"openpitrix.io/openpitrix/test/client/repo_service"
+	"openpitrix.io/openpitrix/test/client/app_manager"
 )
 
 // Default openpitrix HTTP client.
@@ -58,13 +55,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 	cli := new(Openpitrix)
 	cli.Transport = transport
 
-	cli.AppRuntimeService = app_runtime_service.New(transport, formats)
-
-	cli.AppService = app_service.New(transport, formats)
-
-	cli.ClusterService = cluster_service.New(transport, formats)
-
-	cli.RepoService = repo_service.New(transport, formats)
+	cli.AppManager = app_manager.New(transport, formats)
 
 	return cli
 }
@@ -110,13 +101,7 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // Openpitrix is a client for openpitrix
 type Openpitrix struct {
-	AppRuntimeService *app_runtime_service.Client
-
-	AppService *app_service.Client
-
-	ClusterService *cluster_service.Client
-
-	RepoService *repo_service.Client
+	AppManager *app_manager.Client
 
 	Transport runtime.ClientTransport
 }
@@ -125,12 +110,6 @@ type Openpitrix struct {
 func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 
-	c.AppRuntimeService.SetTransport(transport)
-
-	c.AppService.SetTransport(transport)
-
-	c.ClusterService.SetTransport(transport)
-
-	c.RepoService.SetTransport(transport)
+	c.AppManager.SetTransport(transport)
 
 }

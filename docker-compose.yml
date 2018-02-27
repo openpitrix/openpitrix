@@ -5,58 +5,45 @@
 version: '3'
 
 services:
+# TODO: run make build in docker-compose, go install will use cache
   openpitrix-db:
-    image: "mysql:5.6"
+    image: "mysql:5.7"
     environment:
-      - MYSQL_DATABASE=openpitrix
-      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ${DATA_PATH}/mysql:/var/lib/mysql
     ports:
      - "13306:3306" # only for debug
     container_name: "openpitrix-db"
 
-  openpitrix-app:
+  openpitrix-app-manager:
     build: .
     image: "openpitrix"
-    command: app
+    command: "app-manager"
     links:
       - openpitrix-db:openpitrix-db
-    container_name: "openpitrix-app"
+    container_name: "openpitrix-app-manager"
 
-  openpitrix-runtime:
+  openpitrix-api-gateway:
     build: .
     image: "openpitrix"
-    command: runtime
-    links:
-      - openpitrix-db:openpitrix-db
-    container_name: "openpitrix-runtime"
-
-  openpitrix-cluster:
-    build: .
-    image: "openpitrix"
-    command: cluster
-    links:
-      - openpitrix-db:openpitrix-db
-    container_name: "openpitrix-cluster"
-
-  openpitrix-repo:
-    build: .
-    image: "openpitrix"
-    command: repo
-    links:
-      - openpitrix-db:openpitrix-db
-    container_name: "openpitrix-repo"
-
-  openpitrix-api:
-    build: .
-    image: "openpitrix"
-    command: api
+    command: "api-gateway"
     ports:
      - "9100:9100"
     links:
-      - openpitrix-app:openpitrix-app
-      - openpitrix-runtime:openpitrix-runtime
-      - openpitrix-cluster:openpitrix-cluster
-      - openpitrix-repo:openpitrix-repo
-    container_name: "openpitrix-api"
+      - openpitrix-app-manager:openpitrix-app-manager
+    container_name: "openpitrix-api-gateway"
+
+  openpitrix-db-ctrl:
+    build: .
+    image: "openpitrix"
+    command: "db-ctrl -s /schema"
+    restart: on-failure
+    ports:
+     - "9105:9105"
+    links:
+      - openpitrix-db:openpitrix-db
+    container_name: "openpitrix-db-ctrl"
 
 

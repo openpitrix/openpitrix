@@ -21,4 +21,4 @@ before_script:
   - docker --version
 
 script:
-  - make all
+  - make ci-test

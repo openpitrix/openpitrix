@@ -7,11 +7,10 @@
 package static
 
 var Files = map[string]string{
-	"app.swagger.json": `{
+	"api.swagger.json": `{
   "swagger": "2.0",
   "info": {
-    "title": "OpenPitrix App Service",
-    "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
+    "title": "OpenPireix Project",
     "version": "0.0.1",
     "contact": {
       "name": "OpenPireix Project",
@@ -30,81 +29,60 @@ var Files = map[string]string{
   "paths": {
     "/v1/apps": {
       "get": {
-        "operationId": "GetAppList",
+        "operationId": "DescribeApps",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixAppListResponse"
+              "$ref": "#/definitions/openpitrixDescribeAppsResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "page_size",
+            "name": "app_id",
             "in": "query",
             "required": false,
-            "type": "integer",
-            "format": "int32"
+            "type": "string"
           },
           {
-            "name": "page_number",
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "repo_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "tags": [
-          "AppService"
-        ]
-      },
-      "post": {
-        "operationId": "CreateApp",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
+            "format": "int64"
+          },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixApp"
-            }
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "tags": [
-          "AppService"
-        ]
-      }
-    },
-    "/v1/apps/{id}": {
-      "get": {
-        "operationId": "GetApp",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixApp"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "AppService"
+          "AppManager"
         ]
       },
       "delete": {
@@ -113,50 +91,70 @@ var Files = map[string]string{
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/protobufEmpty"
+              "$ref": "#/definitions/openpitrixDeleteAppResponse"
             }
           }
         },
         "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "AppService"
-        ]
-      },
-      "post": {
-        "operationId": "UpdateApp",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixApp"
+              "$ref": "#/definitions/openpitrixDeleteAppRequest"
             }
           }
         ],
         "tags": [
-          "AppService"
+          "AppManager"
+        ]
+      },
+      "post": {
+        "operationId": "CreateApp",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "patch": {
+        "operationId": "ModifyApp",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyAppResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyAppRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
         ]
       }
     }
@@ -165,48 +163,125 @@ var Files = map[string]string{
     "openpitrixApp": {
       "type": "object",
       "properties": {
-        "id": {
+        "app_id": {
           "type": "string"
         },
         "name": {
           "type": "string"
         },
-        "description": {
-          "type": "string"
-        },
         "repo_id": {
           "type": "string"
         },
-        "created": {
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
+        },
+        "chart_name": {
+          "type": "string"
+        },
+        "create_time": {
           "type": "string",
           "format": "date-time"
         },
-        "last_modified": {
+        "status_time": {
           "type": "string",
           "format": "date-time"
         }
       }
     },
-    "openpitrixAppListResponse": {
+    "openpitrixCreateAppRequest": {
       "type": "object",
       "properties": {
-        "total_items": {
-          "type": "integer",
-          "format": "int32"
+        "_": {
+          "type": "string"
         },
-        "total_pages": {
-          "type": "integer",
-          "format": "int32"
+        "name": {
+          "type": "string"
         },
-        "page_size": {
-          "type": "integer",
-          "format": "int32"
+        "repo_id": {
+          "type": "string"
         },
-        "current_page": {
-          "type": "integer",
-          "format": "int32"
+        "owner": {
+          "type": "string"
         },
-        "items": {
+        "chart_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateAppResponse": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "$ref": "#/definitions/openpitrixApp"
+        }
+      }
+    },
+    "openpitrixDeleteAppRequest": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteAppResponse": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "$ref": "#/definitions/openpitrixApp"
+        }
+      }
+    },
+    "openpitrixDescribeAppsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "app_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixApp"
@@ -214,890 +289,64 @@ var Files = map[string]string{
         }
       }
     },
-    "protobufEmpty": {
-      "type": "object",
-      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
-      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
-    }
-  }
-}
-`,
-
-	"app_runtime.swagger.json": `{
-  "swagger": "2.0",
-  "info": {
-    "title": "OpenPitrix App Runtime Service",
-    "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
-    "version": "0.0.1",
-    "contact": {
-      "name": "OpenPireix Project",
-      "url": "https://openpitrix.io"
-    }
-  },
-  "schemes": [
-    "http"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
-  "paths": {
-    "/v1/appruntimes": {
-      "get": {
-        "summary": "Returns a list containing all app runtimes.",
-        "operationId": "GetAppRuntimeList",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixAppRuntimeListResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "page_size",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "page_number",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "tags": [
-          "AppRuntimeService"
-        ]
-      },
-      "post": {
-        "operationId": "CreateAppRuntime",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixAppRuntime"
-            }
-          }
-        ],
-        "tags": [
-          "AppRuntimeService"
-        ]
-      }
-    },
-    "/v1/appruntimes/{id}": {
-      "get": {
-        "operationId": "GetAppRuntime",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixAppRuntime"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "AppRuntimeService"
-        ]
-      },
-      "delete": {
-        "operationId": "DeleteAppRuntime",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "AppRuntimeService"
-        ]
-      },
-      "post": {
-        "operationId": "UpdateAppRuntime",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixAppRuntime"
-            }
-          }
-        ],
-        "tags": [
-          "AppRuntimeService"
-        ]
-      }
-    }
-  },
-  "definitions": {
-    "openpitrixAppRuntime": {
+    "openpitrixModifyAppRequest": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "created": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "openpitrixAppRuntimeListResponse": {
-      "type": "object",
-      "properties": {
-        "total_items": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "total_pages": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "current_page": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixAppRuntime"
-          }
-        }
-      }
-    },
-    "protobufEmpty": {
-      "type": "object",
-      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
-      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
-    }
-  }
-}
-`,
-
-	"cluster.swagger.json": `{
-  "swagger": "2.0",
-  "info": {
-    "title": "OpenPitrix Cluster Service",
-    "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
-    "version": "0.0.1",
-    "contact": {
-      "name": "OpenPireix Project",
-      "url": "https://openpitrix.io"
-    }
-  },
-  "schemes": [
-    "http"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
-  "paths": {
-    "/v1/cluster_nodes": {
-      "get": {
-        "operationId": "GetClusterNodeList",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixClusterNodeListResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "page_size",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "page_number",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      },
-      "post": {
-        "operationId": "CreateClusterNodes",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixClusterNodes"
-            }
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      }
-    },
-    "/v1/cluster_nodes/{ids}": {
-      "get": {
-        "operationId": "GetClusterNodes",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixClusterNodes"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "ids",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      },
-      "delete": {
-        "operationId": "DeleteClusterNodes",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "ids",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      }
-    },
-    "/v1/cluster_nodes/{id}": {
-      "post": {
-        "operationId": "UpdateClusterNode",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixClusterNode"
-            }
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      }
-    },
-    "/v1/clusters": {
-      "get": {
-        "operationId": "GetClusterList",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixClusterListResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "page_size",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "page_number",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      },
-      "post": {
-        "operationId": "CreateCluster",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCluster"
-            }
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      }
-    },
-    "/v1/clusters/{ids}": {
-      "get": {
-        "operationId": "GetClusters",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixClusters"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "ids",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      },
-      "delete": {
-        "operationId": "DeleteClusters",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "ids",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      }
-    },
-    "/v1/clusters/{id}": {
-      "post": {
-        "operationId": "UpdateCluster",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCluster"
-            }
-          }
-        ],
-        "tags": [
-          "ClusterService"
-        ]
-      }
-    }
-  },
-  "definitions": {
-    "openpitrixCluster": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
         "app_id": {
           "type": "string"
         },
-        "app_version": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "transition_status": {
-          "type": "string"
-        },
-        "created": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "openpitrixClusterListResponse": {
-      "type": "object",
-      "properties": {
-        "total_items": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "total_pages": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "current_page": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixCluster"
-          }
-        }
-      }
-    },
-    "openpitrixClusterNode": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "instance_id": {
-          "type": "string"
-        },
         "name": {
+          "type": "string"
+        },
+        "repo_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "chart_name": {
           "type": "string"
         },
         "description": {
           "type": "string"
         },
-        "cluster_id": {
+        "home": {
           "type": "string"
         },
-        "private_ip": {
+        "icon": {
           "type": "string"
         },
-        "status": {
+        "screenshots": {
           "type": "string"
         },
-        "transition_status": {
+        "maintainers": {
           "type": "string"
         },
-        "created": {
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyAppResponse": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "$ref": "#/definitions/openpitrixApp"
+        }
+      }
+    },
+    "protobufStringValue": {
+      "type": "object",
+      "properties": {
+        "value": {
           "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
+          "description": "The string value."
         }
-      }
-    },
-    "openpitrixClusterNodeListResponse": {
-      "type": "object",
-      "properties": {
-        "total_items": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "total_pages": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "current_page": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixClusterNode"
-          }
-        }
-      }
-    },
-    "openpitrixClusterNodes": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixClusterNode"
-          }
-        }
-      }
-    },
-    "openpitrixClusters": {
-      "type": "object",
-      "properties": {
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixCluster"
-          }
-        }
-      }
-    },
-    "protobufEmpty": {
-      "type": "object",
-      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
-      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
-    }
-  }
-}
-`,
-
-	"repo.swagger.json": `{
-  "swagger": "2.0",
-  "info": {
-    "title": "OpenPitrix Repo Service",
-    "description": "An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.",
-    "version": "0.0.1",
-    "contact": {
-      "name": "OpenPireix Project",
-      "url": "https://openpitrix.io"
-    }
-  },
-  "schemes": [
-    "http"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
-  "paths": {
-    "/v1/repos": {
-      "get": {
-        "operationId": "GetRepoList",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixRepoListResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "page_size",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "page_number",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "tags": [
-          "RepoService"
-        ]
       },
-      "post": {
-        "operationId": "CreateRepo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixRepo"
-            }
-          }
-        ],
-        "tags": [
-          "RepoService"
-        ]
-      }
-    },
-    "/v1/repos/{id}": {
-      "get": {
-        "operationId": "GetRepo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixRepo"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "RepoService"
-        ]
-      },
-      "delete": {
-        "operationId": "DeleteRepo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "RepoService"
-        ]
-      },
-      "post": {
-        "operationId": "UpdateRepo",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/protobufEmpty"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixRepo"
-            }
-          }
-        ],
-        "tags": [
-          "RepoService"
-        ]
-      }
-    }
-  },
-  "definitions": {
-    "openpitrixRepo": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "created": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "last_modified": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "openpitrixRepoListResponse": {
-      "type": "object",
-      "properties": {
-        "total_items": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "total_pages": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "current_page": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixRepo"
-          }
-        }
-      }
-    },
-    "protobufEmpty": {
-      "type": "object",
-      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
-      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
+      "description": "Wrapper message for ` + "`" + `string` + "`" + `.\n\nThe JSON representation for ` + "`" + `StringValue` + "`" + ` is JSON string."
     }
   }
 }
@@ -1180,10 +429,7 @@ window.onload = function() {
   // Build a system
   const ui = SwaggerUIBundle({
     urls: [
-      { name:"App", url:"/swagger-ui/app.swagger.json" },
-      { name:"AppRuntime", url:"/swagger-ui/app_runtime.swagger.json" },
-      { name:"Cluster", url:"/swagger-ui/cluster.swagger.json" },
-      { name:"Repo", url:"/swagger-ui/repo.swagger.json" }
+      { name:"Api", url:"/swagger-ui/api.swagger.json" }
     ],
     dom_id: '#swagger-ui',
     deepLinking: true,

@@ -2,106 +2,141 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-syntax = "proto2";
-
-// OpenPitrix App Service
-//
-// An open platform to package and deploy applications into multiple environment such as QingCloud, AWS, Kubernetes etc.
+syntax = "proto3";
 package openpitrix;
 
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
-import "google/protobuf/empty.proto";
-import "google/protobuf/timestamp.proto";
-import "github.com/mwitkow/go-proto-validators/validator.proto";
-
-import "annotations.proto";
-
-// ----------------------------------------------------------------------------
-// base type
-// ----------------------------------------------------------------------------
-
-message App {
-	required string id = 1 [(validator.field) = {regex: "^app-[a-zA-Z0-9]{8}$"}];
-	optional string name = 2;
-	optional string description = 3;	
-	optional string repo_id = 4;
-	optional google.protobuf.Timestamp created = 5;
-	optional google.protobuf.Timestamp last_modified = 6;
-}
-
-// ----------------------------------------------------------------------------
-// rest api type
-// ----------------------------------------------------------------------------
-
-message AppId {
-	required string id = 1 [(validator.field) = {regex: "^app-[a-zA-Z0-9]{8}$"}];
-}
-
-message AppListRequest {
-	optional int32 page_size = 1 [default = 10];
-	optional int32 page_number = 2 [default = 1];
-}
-message AppListResponse {
-	optional int32 total_items = 1;
-	optional int32 total_pages = 2;
-	optional int32 page_size = 3;
-	optional int32 current_page = 4;
-
-	repeated App items = 5;
-}
-
-// ----------------------------------------------------------------------------
-// app service
-// ----------------------------------------------------------------------------
-
 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	info: {
+		title: "OpenPireix Project";
 		version: "0.0.1";
 		contact: {
 			name: "OpenPireix Project";
 			url: "https://openpitrix.io";
 		};
 	};
-
 	schemes: HTTP;
-
 	consumes: "application/json";
 	produces: "application/json";
 };
 
-service AppService {
-	rpc GetApp(AppId) returns (App) {
-		option (google.api.http) = {
-			get: "/v1/apps/{id}"
+
+message CreateAppRequest {
+	string _ = 1; // placeholder for app_id
+	string name = 2;
+	string repo_id = 3;
+	string owner = 4;
+	string chart_name = 5;
+	string description = 6;
+	string home = 8;
+	string icon = 9;
+	string screenshots = 10;
+	string maintainers = 11;
+	string sources = 12;
+	string readme = 13;
+}
+
+message CreateAppResponse {
+	App app = 1;
+}
+
+message ModifyAppRequest {
+	string app_id = 1;
+	string name = 2; // TODO: using google.protobuf.StringValue to handle nil param
+	string repo_id = 3;
+	string owner = 4;
+	string chart_name = 5;
+	string description = 6;
+	string home = 8;
+	string icon = 9;
+	string screenshots = 10;
+	string maintainers = 11;
+	string sources = 12;
+	string readme = 13;
+}
+
+message ModifyAppResponse {
+	App app = 1;
+}
+
+message DeleteAppRequest {
+	string app_id = 1;
+}
+
+message DeleteAppResponse {
+	App app = 1;
+}
+
+message App {
+	google.protobuf.StringValue app_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue repo_id = 3;
+	google.protobuf.StringValue description = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.StringValue home = 6;
+	google.protobuf.StringValue icon = 7;
+	google.protobuf.StringValue screenshots = 8;
+	google.protobuf.StringValue maintainers = 9;
+	google.protobuf.StringValue sources = 10;
+	google.protobuf.StringValue readme = 11;
+	google.protobuf.StringValue chart_name = 12;
+	google.protobuf.Timestamp create_time = 13;
+	google.protobuf.Timestamp status_time = 14;
+}
+message DescribeAppsRequest {
+	string app_id = 1;
+	string name = 2;
+	string repo_id = 3;
+	repeated string status = 4;
+	uint32 limit = 5; // uint64 marshal to json will convert to string
+	uint32 offset = 6;
+}
+message DescribeAppsResponse {
+	uint32 total_count = 1;
+	repeated App app_set = 2;
+}
+
+service AppManager {
+	rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create app"
 		};
-	}
-	rpc GetAppList(AppListRequest) returns (AppListResponse) {
-		option (google.api.http) = {
-			get: "/v1/apps"
-		};
-	}
-	
-	rpc CreateApp(App) returns (google.protobuf.Empty) {
 		option (google.api.http) = {
 			post: "/v1/apps"
 			body: "*"
 		};
 	}
-	rpc UpdateApp(App) returns (google.protobuf.Empty) {
+	rpc DescribeApps (DescribeAppsRequest) returns (DescribeAppsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe apps with filter"
+		};
 		option (google.api.http) = {
-			post: "/v1/apps/{id}"
+			get: "/v1/apps"
+		};
+	}
+	rpc ModifyApp (ModifyAppRequest) returns (ModifyAppResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify app"
+		};
+		option (google.api.http) = {
+			patch: "/v1/apps"
 			body: "*"
 		};
 	}
-	rpc DeleteApp(AppId) returns (google.protobuf.Empty) {
+	rpc DeleteApp (DeleteAppRequest) returns (DeleteAppResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete app"
+		};
 		option (google.api.http) = {
-			delete: "/v1/apps/{id}"
+			delete: "/v1/apps"
+			body: "*"
 		};
 	}
 }
-
-// ----------------------------------------------------------------------------
-// END
-// ----------------------------------------------------------------------------

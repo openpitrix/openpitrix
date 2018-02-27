@@ -1,92 +1,119 @@
 package test
 
 import (
-	"flag"
 	"log"
 	"os"
 	"testing"
 
-	"github.com/go-openapi/runtime"
+	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/test/client/app_manager"
 
-	config "openpitrix.io/openpitrix/pkg/config/unittest"
-	"openpitrix.io/openpitrix/test/client/app_service"
-	"openpitrix.io/openpitrix/test/common"
 	"openpitrix.io/openpitrix/test/models"
 )
 
-var (
-	tShowEnvFlag = flag.Bool("show-env-flag", false, "show env flags")
+var clientConfig = &ClientConfig{}
 
-	tConfig *config.Config
-)
+func init() {
+	clientConfig = GetClientConfig()
+	log.Printf("Got Client Config: %+v", clientConfig)
+}
 
 func TestMain(m *testing.M) {
-	flag.Parse()
-
-	if *tShowEnvFlag {
-		config.PrintEnvs()
-		os.Exit(0)
-	}
-
-	if conf, err := config.LoadConfig(); err == nil {
-		tConfig = conf
-	} else {
-		log.Fatal(err)
-	}
-
 	os.Exit(m.Run())
 }
 
 func TestApp(t *testing.T) {
-	if !tConfig.Unittest.Rest.Enabled {
-		t.Skip()
-	}
-
-	client := common.GetClient(
-		tConfig.Unittest.Rest.Host,
-		tConfig.Unittest.Rest.BasePath,
-	)
+	client := GetClient(clientConfig)
 
 	// delete old app
-	testAppId := "app-xxxxxxxy"
-	testAppName := "test1"
-	deleteAppParams := app_service.NewDeleteAppParams()
-	deleteAppParams.SetID(testAppId)
-	deleteAppRet, err := client.AppService.DeleteApp(deleteAppParams)
-	if err != nil {
-		if serr, ok := err.(*runtime.APIError); ok {
-			if resp, ok := serr.Response.(runtime.ClientResponse); ok {
-				t.Fatal(resp.Body())
-			}
-			t.Fatal(serr.Response)
-		}
-	}
-	t.Log(deleteAppRet)
-	// create new app
-	appModel := models.OpenpitrixApp{ID: testAppId, Name: testAppName}
-	createAppParams := app_service.NewCreateAppParams()
-	createAppParams.WithBody(&appModel)
-	createAppRet, err := client.AppService.CreateApp(createAppParams)
-	if err != nil {
-		if serr, ok := err.(*runtime.APIError); ok {
-			if resp, ok := serr.Response.(runtime.ClientResponse); ok {
-				t.Fatal(resp.Body())
-			}
-			t.Fatal(serr.Response)
-		}
-	}
-	t.Log(createAppRet)
-	// get new app
-	getAppParams := app_service.NewGetAppParams()
-	getAppParams.SetID(testAppId)
-	getAppRet, err := client.AppService.GetApp(getAppParams)
+	testAppName := "e2e_test_app"
+	testRepoId := "e2e_test_repo"
+	testRepoId2 := "e2e_test_repo2"
+	describeParams := app_manager.NewDescribeAppsParams()
+	describeParams.SetName(&testAppName)
+	describeParams.SetStatus([]string{constants.StatusActive})
+	describeResp, err := client.AppManager.DescribeApps(describeParams)
 	if err != nil {
 		t.Fatal(err)
 	}
-	app := getAppRet.Payload
-	if app == nil {
-		t.Fatalf("failed to get app [%s]", testAppId)
+	apps := describeResp.Payload.AppSet
+	for _, app := range apps {
+		deleteParams := app_manager.NewDeleteAppParams()
+		deleteParams.SetBody(
+			&models.OpenpitrixDeleteAppRequest{
+				AppID: app.AppID,
+			})
+		_, err := client.AppManager.DeleteApp(deleteParams)
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
-	t.Log(getAppRet)
+	// create app
+	createParams := app_manager.NewCreateAppParams()
+	createParams.SetBody(
+		&models.OpenpitrixCreateAppRequest{
+			Name:   testAppName,
+			RepoID: testRepoId,
+		})
+	createResp, err := client.AppManager.CreateApp(createParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	appId := createResp.Payload.App.AppID
+	// modify app
+	modifyParams := app_manager.NewModifyAppParams()
+	modifyParams.SetBody(
+		&models.OpenpitrixModifyAppRequest{
+			AppID:  appId,
+			RepoID: testRepoId2,
+		})
+	modifyResp, err := client.AppManager.ModifyApp(modifyParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(modifyResp)
+	// describe app
+	describeParams.WithAppID(&appId)
+	describeResp, err = client.AppManager.DescribeApps(describeParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	apps = describeResp.Payload.AppSet
+	if len(apps) != 1 {
+		t.Fatalf("failed to describe apps with params [%+v]", describeParams)
+	}
+	if apps[0].RepoID != testRepoId2 {
+		t.Fatalf("failed to modify app, app [%+v] repo is not [%s]", apps[0], testRepoId2)
+	}
+	// delete app
+	deleteParams := app_manager.NewDeleteAppParams()
+	deleteParams.WithBody(&models.OpenpitrixDeleteAppRequest{
+		AppID: appId,
+	})
+	deleteResp, err := client.AppManager.DeleteApp(deleteParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(deleteResp)
+	// describe deleted app
+	describeParams.WithAppID(&appId)
+	describeParams.WithStatus([]string{constants.StatusDeleted})
+	describeParams.WithName(nil)
+	describeResp, err = client.AppManager.DescribeApps(describeParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	apps = describeResp.Payload.AppSet
+	if len(apps) != 1 {
+		t.Fatalf("failed to describe apps with params [%+v]", describeParams)
+	}
+	app := apps[0]
+	if app.AppID != appId {
+		t.Fatalf("failed to describe app")
+	}
+	if app.Status != constants.StatusDeleted {
+		t.Fatalf("failed to delete app, got app status [%s]", app.Status)
+	}
+
 	t.Log("test app finish, all test is ok")
 }
