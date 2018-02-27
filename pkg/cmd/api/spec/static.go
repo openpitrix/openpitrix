@@ -29,6 +29,7 @@ var Files = map[string]string{
   "paths": {
     "/v1/apps": {
       "get": {
+        "summary": "describe apps with filter",
         "operationId": "DescribeApps",
         "responses": {
           "200": {
@@ -86,6 +87,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
+        "summary": "delete app",
         "operationId": "DeleteApp",
         "responses": {
           "200": {
@@ -110,6 +112,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
+        "summary": "create app",
         "operationId": "CreateApp",
         "responses": {
           "200": {
@@ -134,6 +137,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
+        "summary": "modify app",
         "operationId": "ModifyApp",
         "responses": {
           "200": {

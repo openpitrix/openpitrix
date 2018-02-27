@@ -17,7 +17,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	models "openpitrix.io/openpitrix/test/models"
+	"openpitrix.io/openpitrix/test/models"
 )
 
 // NewCreateAppParams creates a new CreateAppParams object
