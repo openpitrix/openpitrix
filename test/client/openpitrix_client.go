@@ -12,6 +12,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 
 	"openpitrix.io/openpitrix/test/client/app_manager"
+	"openpitrix.io/openpitrix/test/client/runtime_env_manager"
 )
 
 // Default openpitrix HTTP client.
@@ -56,6 +57,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 	cli.Transport = transport
 
 	cli.AppManager = app_manager.New(transport, formats)
+
+	cli.RuntimeEnvManager = runtime_env_manager.New(transport, formats)
 
 	return cli
 }
@@ -103,6 +106,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type Openpitrix struct {
 	AppManager *app_manager.Client
 
+	RuntimeEnvManager *runtime_env_manager.Client
+
 	Transport runtime.ClientTransport
 }
 
@@ -111,5 +116,7 @@ func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 
 	c.AppManager.SetTransport(transport)
+
+	c.RuntimeEnvManager.SetTransport(transport)
 
 }

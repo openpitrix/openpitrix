@@ -1,0 +1,264 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+	info: {
+		title: "OpenPireix Project";
+		version: "0.0.1";
+		contact: {
+			name: "OpenPireix Project";
+			url: "https://openpitrix.io";
+		};
+	};
+	schemes: HTTP;
+	consumes: "application/json";
+	produces: "application/json";
+};
+
+message RuntimeEnv{
+	google.protobuf.StringValue runtime_env_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue runtime_env_url = 4;
+	google.protobuf.StringValue runtime_env_credential_id = 5;
+	google.protobuf.StringValue labels = 6;
+	google.protobuf.StringValue owner = 7;
+	google.protobuf.StringValue status = 8;
+	google.protobuf.Timestamp create_time = 9;
+	google.protobuf.Timestamp status_time = 10;
+}
+
+message CreateRuntimeEnvRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue description = 2;
+	google.protobuf.StringValue labels = 3;
+	google.protobuf.StringValue runtime_env_url = 4;
+}
+
+message CreateRuntimeEnvResponse{
+	RuntimeEnv runtime_env = 1;
+}
+
+message DescribeRuntimeEnvsRequest{
+	repeated google.protobuf.StringValue runtime_env_ids = 1;
+	repeated google.protobuf.StringValue status = 2;
+	google.protobuf.StringValue search_word = 3;
+	google.protobuf.StringValue selector = 4;
+	google.protobuf.StringValue owner = 5;
+	google.protobuf.UInt32Value limit = 6;
+	google.protobuf.UInt32Value offset = 7;
+	google.protobuf.UInt32Value verbose = 8;
+}
+
+message DescribeRuntimeEnvsResponse{
+	google.protobuf.UInt32Value total_count = 1;
+	repeated RuntimeEnv runtime_env_set = 2;
+}
+
+message ModifyRuntimeEnvRequest{
+	google.protobuf.StringValue runtime_env_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue labels = 4;
+}
+
+message ModifyRuntimeEnvResponse{
+	RuntimeEnv runtime_env = 1;
+}
+
+message DeleteRuntimeEnvRequest{
+	google.protobuf.StringValue runtime_env_id = 1;
+}
+
+message DeleteRuntimeEnvResponse{
+	RuntimeEnv runtime_env = 1;
+}
+
+message RuntimeEnvCredential{
+	google.protobuf.StringValue runtime_env_credential_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	map <string, string> content = 4;
+	google.protobuf.StringValue owner = 5;
+	repeated google.protobuf.StringValue runtime_env_ids = 6;
+	google.protobuf.StringValue status = 7;
+	google.protobuf.Timestamp create_time = 9;
+	google.protobuf.Timestamp status_time = 10;
+}
+
+message CreateRuntimeEnvCredentialRequset{
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue description = 2;
+	map <string, string> content = 3;
+}
+
+message CreateRuntimeEnvCredentialResponse{
+	RuntimeEnvCredential runtime_env_credential =1 ;
+}
+
+message DescribeRuntimeEnvCredentialsRequset{
+	repeated google.protobuf.StringValue runtime_env_credential_ids = 1;
+	repeated google.protobuf.StringValue status = 2;
+	google.protobuf.StringValue search_word = 3;
+	google.protobuf.StringValue owner = 4;
+	google.protobuf.UInt32Value limit = 5;
+	google.protobuf.UInt32Value offset = 6;
+	google.protobuf.UInt32Value verbose = 7;
+}
+
+message DescribeRuntimeEnvCredentialsResponse{
+	google.protobuf.UInt32Value total_count = 1;
+	repeated RuntimeEnvCredential runtime_env_credential_set = 2;
+}
+
+message ModifyRuntimeEnvCredentialRequest{
+	google.protobuf.StringValue runtime_env_credential_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	map <string, string> content = 4;
+}
+
+message ModifyRuntimeEnvCredentialResponse{
+	RuntimeEnvCredential runtime_env_credential =1 ;
+}
+
+message DeleteRuntimeEnvCredentialRequset{
+	google.protobuf.StringValue runtime_env_credential_id = 1;
+}
+
+message DeleteRuntimeEnvCredentialResponse{
+	RuntimeEnvCredential runtime_env_credential =1 ;
+}
+
+message AttachCredentialToRuntimeEnvRequset{
+	google.protobuf.StringValue runtime_env_credential_id = 1;
+	google.protobuf.StringValue runtime_env_id = 2;
+}
+
+message AttachCredentialToRuntimeEnvResponse{
+	google.protobuf.StringValue runtime_env_credential_id = 1;
+	google.protobuf.StringValue runtime_env_id = 2;
+}
+
+message DetachCredentialFromRuntimeEnvRequset{
+	google.protobuf.StringValue runtime_env_credential_id = 1;
+	google.protobuf.StringValue runtime_env_id = 2;
+}
+
+message DetachCredentialFromRuntimeEnvResponse{
+	google.protobuf.StringValue runtime_env_credential_id = 1;
+	google.protobuf.StringValue runtime_env_id = 2;
+}
+
+service RuntimeEnvManager{
+	rpc CreateRuntimeEnv (CreateRuntimeEnvRequest) returns (CreateRuntimeEnvResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create runtime env"
+		};
+		option (google.api.http) = {
+			post: "/v1/runtime_envs"
+			body: "*"
+		};
+	}
+
+	rpc DescribeRuntimeEnvs (DescribeRuntimeEnvsRequest) returns (DescribeRuntimeEnvsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe runtime envs"
+		};
+		option (google.api.http) = {
+			get: "/v1/runtime_envs"
+		};
+	}
+
+	rpc ModifyRuntimeEnv (ModifyRuntimeEnvRequest) returns (ModifyRuntimeEnvResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify runtime env"
+		};
+		option (google.api.http) = {
+			patch: "/v1/runtime_envs"
+			body: "*"
+		};
+	}
+
+	rpc DeleteRuntimeEnv (DeleteRuntimeEnvRequest) returns (DeleteRuntimeEnvResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create runtime env"
+		};
+		option (google.api.http) = {
+			delete: "/v1/runtime_envs"
+			body: "*"
+		};
+	}
+
+	rpc CreateRuntimeEnvCredential (CreateRuntimeEnvCredentialRequset) returns (CreateRuntimeEnvCredentialResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create runtime env credential"
+		};
+		option (google.api.http) = {
+			post: "/v1/runtime_env_credentials"
+			body: "*"
+		};
+	}
+
+	rpc DescribeRuntimeEnvCredentials (DescribeRuntimeEnvCredentialsRequset) returns (DescribeRuntimeEnvCredentialsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe runtime env crendentials"
+		};
+		option (google.api.http) = {
+			get: "/v1/runtime_env_credentials"
+		};
+	}
+
+	rpc ModifyRuntimeEnvCredential (ModifyRuntimeEnvCredentialRequest) returns (ModifyRuntimeEnvCredentialResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify runtime env credential"
+		};
+		option (google.api.http) = {
+			patch: "/v1/runtime_env_credentials"
+			body: "*"
+		};
+	}
+
+	rpc DeleteRuntimeEnvCredential (DeleteRuntimeEnvCredentialRequset) returns (DeleteRuntimeEnvCredentialResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify runtime env credential"
+		};
+		option (google.api.http) = {
+			delete: "/v1/runtime_env_credentials"
+			body: "*"
+		};
+	}
+
+	rpc AttachCredentialToRuntimeEnv (AttachCredentialToRuntimeEnvRequset) returns (AttachCredentialToRuntimeEnvResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create runtime env"
+		};
+		option (google.api.http) = {
+			post: "/v1/credential_runtime_env"
+			body: "*"
+		};
+	}
+
+	rpc DetachCredentialFromRuntimeEnv (DetachCredentialFromRuntimeEnvRequset) returns (DetachCredentialFromRuntimeEnvResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "detach runtime env"
+		};
+		option (google.api.http) = {
+			delete: "/v1/credential_runtime_env"
+			body: "*"
+		};
+	}
+}
