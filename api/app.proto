@@ -87,8 +87,9 @@ message App {
 	google.protobuf.StringValue sources = 10;
 	google.protobuf.StringValue readme = 11;
 	google.protobuf.StringValue chart_name = 12;
-	google.protobuf.Timestamp create_time = 13;
-	google.protobuf.Timestamp status_time = 14;
+	google.protobuf.StringValue owner = 13;
+	google.protobuf.Timestamp create_time = 14;
+	google.protobuf.Timestamp status_time = 15;
 }
 message DescribeAppsRequest {
 	string app_id = 1;

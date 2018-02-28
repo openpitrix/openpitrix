@@ -34,13 +34,14 @@ type App struct {
 
 var AppColumns = GetColumnsFromStruct(&App{})
 
-func NewApp(name, repoId, description string) *App {
+func NewApp(name, repoId, description, owner string) *App {
 	return &App{
 		AppId:       NewAppId(),
 		Name:        name,
 		RepoId:      repoId,
 		Description: description,
 		Status:      constants.StatusActive,
+		Owner:       owner,
 		CreateTime:  time.Now(),
 		StatusTime:  time.Now(),
 	}
@@ -61,6 +62,7 @@ func AppToPb(app *App) *pb.App {
 	pbApp.Sources = utils.ToProtoString(app.Sources)
 	pbApp.Readme = utils.ToProtoString(app.Readme)
 	pbApp.ChartName = utils.ToProtoString(app.ChartName)
+	pbApp.Owner = utils.ToProtoString(app.Owner)
 	pbApp.CreateTime = utils.ToProtoTimestamp(app.CreateTime)
 	pbApp.StatusTime = utils.ToProtoTimestamp(app.StatusTime)
 	return &pbApp

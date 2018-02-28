@@ -40,6 +40,9 @@ type OpenpitrixApp struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// owner
+	Owner string `json:"owner,omitempty"`
+
 	// readme
 	Readme string `json:"readme,omitempty"`
 

@@ -20,14 +20,14 @@ import (
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
 
+	staticSpec "openpitrix.io/openpitrix/pkg/cmd/api/spec"
+	staticSwaggerUI "openpitrix.io/openpitrix/pkg/cmd/api/swagger-ui"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/utils/sender"
 	"openpitrix.io/openpitrix/pkg/version"
-
-	staticSpec "openpitrix.io/openpitrix/pkg/cmd/api/spec"
-	staticSwaggerUI "openpitrix.io/openpitrix/pkg/cmd/api/swagger-ui"
 )
 
 func Serve() {
@@ -79,7 +79,7 @@ func run() error {
 }
 
 func mainHandler(ctx context.Context) http.Handler {
-	var gwmux = runtime.NewServeMux()
+	var gwmux = runtime.NewServeMux(runtime.WithMetadata(sender.ServeMuxSetSender))
 	var opts = []grpc.DialOption{grpc.WithInsecure()}
 	var err error
 
