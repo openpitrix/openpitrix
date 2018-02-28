@@ -13,7 +13,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	models "openpitrix.io/openpitrix/test/models"
+	"openpitrix.io/openpitrix/test/models"
 )
 
 // DeleteAppReader is a Reader for the DeleteApp structure.

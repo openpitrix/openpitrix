@@ -20,6 +20,7 @@
   "paths": {
     "/v1/apps": {
       "get": {
+        "summary": "describe apps with filter",
         "operationId": "DescribeApps",
         "responses": {
           "200": {
@@ -77,6 +78,7 @@
         ]
       },
       "delete": {
+        "summary": "delete app",
         "operationId": "DeleteApp",
         "responses": {
           "200": {
@@ -101,6 +103,7 @@
         ]
       },
       "post": {
+        "summary": "create app",
         "operationId": "CreateApp",
         "responses": {
           "200": {
@@ -125,6 +128,7 @@
         ]
       },
       "patch": {
+        "summary": "modify app",
         "operationId": "ModifyApp",
         "responses": {
           "200": {

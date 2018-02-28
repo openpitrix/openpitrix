@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-CreateApp create app API
+CreateApp creates app
 */
 func (a *Client) CreateApp(params *CreateAppParams) (*CreateAppOK, error) {
 	// TODO: Validate the params before sending
@@ -53,7 +53,7 @@ func (a *Client) CreateApp(params *CreateAppParams) (*CreateAppOK, error) {
 }
 
 /*
-DeleteApp delete app API
+DeleteApp deletes app
 */
 func (a *Client) DeleteApp(params *DeleteAppParams) (*DeleteAppOK, error) {
 	// TODO: Validate the params before sending
@@ -81,7 +81,7 @@ func (a *Client) DeleteApp(params *DeleteAppParams) (*DeleteAppOK, error) {
 }
 
 /*
-DescribeApps describe apps API
+DescribeApps describes apps with filter
 */
 func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, error) {
 	// TODO: Validate the params before sending
@@ -109,7 +109,7 @@ func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, erro
 }
 
 /*
-ModifyApp modify app API
+ModifyApp modifies app
 */
 func (a *Client) ModifyApp(params *ModifyAppParams) (*ModifyAppOK, error) {
 	// TODO: Validate the params before sending
