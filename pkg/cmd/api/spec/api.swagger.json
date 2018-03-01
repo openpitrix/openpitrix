@@ -152,6 +152,366 @@
           "AppManager"
         ]
       }
+    },
+    "/v1/credential_runtime_env": {
+      "delete": {
+        "summary": "detach runtime env",
+        "operationId": "DetachCredentialFromRuntimeEnv",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDetachCredentialFromRuntimeEnvResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDetachCredentialFromRuntimeEnvRequset"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      },
+      "post": {
+        "summary": "create runtime env",
+        "operationId": "AttachCredentialToRuntimeEnv",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixAttachCredentialToRuntimeEnvResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixAttachCredentialToRuntimeEnvRequset"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      }
+    },
+    "/v1/runtime_env_credentials": {
+      "get": {
+        "summary": "describe runtime env crendentials",
+        "operationId": "DescribeRuntimeEnvCredentials",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeRuntimeEnvCredentialsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "runtime_env_credential_ids",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "statuses",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "owners",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit.value",
+            "description": "The uint32 value.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset.value",
+            "description": "The uint32 value.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "verbose.value",
+            "description": "The uint32 value.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      },
+      "delete": {
+        "summary": "modify runtime env credential",
+        "operationId": "DeleteRuntimeEnvCredential",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRuntimeEnvCredentialResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRuntimeEnvCredentialRequset"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      },
+      "post": {
+        "summary": "create runtime env credential",
+        "operationId": "CreateRuntimeEnvCredential",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRuntimeEnvCredentialResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRuntimeEnvCredentialRequset"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      },
+      "patch": {
+        "summary": "modify runtime env credential",
+        "operationId": "ModifyRuntimeEnvCredential",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRuntimeEnvCredentialResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRuntimeEnvCredentialRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      }
+    },
+    "/v1/runtime_envs": {
+      "get": {
+        "summary": "describe runtime envs",
+        "operationId": "DescribeRuntimeEnvs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeRuntimeEnvsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "runtime_env_ids",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "statuses",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "selector",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "owners",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit.value",
+            "description": "The uint32 value.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset.value",
+            "description": "The uint32 value.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "verbose.value",
+            "description": "The uint32 value.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      },
+      "delete": {
+        "summary": "create runtime env",
+        "operationId": "DeleteRuntimeEnv",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRuntimeEnvResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRuntimeEnvRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      },
+      "post": {
+        "summary": "create runtime env",
+        "operationId": "CreateRuntimeEnv",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRuntimeEnvResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRuntimeEnvRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      },
+      "patch": {
+        "summary": "modify runtime env",
+        "operationId": "ModifyRuntimeEnv",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRuntimeEnvResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRuntimeEnvRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RuntimeEnvManager"
+        ]
+      }
     }
   },
   "definitions": {
@@ -345,6 +705,301 @@
         }
       },
       "description": "Wrapper message for `string`.\n\nThe JSON representation for `StringValue` is JSON string."
+    },
+    "openpitrixAttachCredentialToRuntimeEnvRequset": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential_id": {
+          "type": "string"
+        },
+        "runtime_env_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixAttachCredentialToRuntimeEnvResponse": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential_id": {
+          "type": "string"
+        },
+        "runtime_env_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateRuntimeEnvCredentialRequset": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixCreateRuntimeEnvCredentialResponse": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential": {
+          "$ref": "#/definitions/openpitrixRuntimeEnvCredential"
+        }
+      }
+    },
+    "openpitrixCreateRuntimeEnvRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "string"
+        },
+        "runtime_env_url": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateRuntimeEnvResponse": {
+      "type": "object",
+      "properties": {
+        "runtime_env": {
+          "$ref": "#/definitions/openpitrixRuntimeEnv"
+        }
+      }
+    },
+    "openpitrixDeleteRuntimeEnvCredentialRequset": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteRuntimeEnvCredentialResponse": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential": {
+          "$ref": "#/definitions/openpitrixRuntimeEnvCredential"
+        }
+      }
+    },
+    "openpitrixDeleteRuntimeEnvRequest": {
+      "type": "object",
+      "properties": {
+        "runtime_env_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteRuntimeEnvResponse": {
+      "type": "object",
+      "properties": {
+        "runtime_env": {
+          "$ref": "#/definitions/openpitrixRuntimeEnv"
+        }
+      }
+    },
+    "openpitrixDescribeRuntimeEnvCredentialsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "runtime_env_credential_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRuntimeEnvCredential"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeRuntimeEnvsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "runtime_env_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRuntimeEnv"
+          }
+        }
+      }
+    },
+    "openpitrixDetachCredentialFromRuntimeEnvRequset": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential_id": {
+          "type": "string"
+        },
+        "runtime_env_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDetachCredentialFromRuntimeEnvResponse": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential_id": {
+          "type": "string"
+        },
+        "runtime_env_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyRuntimeEnvCredentialRequest": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixModifyRuntimeEnvCredentialResponse": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential": {
+          "$ref": "#/definitions/openpitrixRuntimeEnvCredential"
+        }
+      }
+    },
+    "openpitrixModifyRuntimeEnvRequest": {
+      "type": "object",
+      "properties": {
+        "runtime_env_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyRuntimeEnvResponse": {
+      "type": "object",
+      "properties": {
+        "runtime_env": {
+          "$ref": "#/definitions/openpitrixRuntimeEnv"
+        }
+      }
+    },
+    "openpitrixRuntimeEnv": {
+      "type": "object",
+      "properties": {
+        "runtime_env_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "runtime_env_url": {
+          "type": "string"
+        },
+        "runtime_env_credential_id": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixRuntimeEnvCredential": {
+      "type": "object",
+      "properties": {
+        "runtime_env_credential_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "content": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "owner": {
+          "type": "string"
+        },
+        "runtime_env_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "protobufUInt32Value": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The uint32 value."
+        }
+      },
+      "description": "Wrapper message for `uint32`.\n\nThe JSON representation for `UInt32Value` is JSON number."
     }
   }
 }

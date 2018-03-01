@@ -25,6 +25,14 @@ services:
       - openpitrix-db:openpitrix-db
     container_name: "openpitrix-app-manager"
 
+  openpitrix-runtime-env-manager:
+      build: .
+      image: "openpitrix"
+      command: "runtime-env-manager"
+      links:
+        - openpitrix-db:openpitrix-db
+      container_name: "openpitrix-runtime-env-manager"
+
   openpitrix-api-gateway:
     build: .
     image: "openpitrix"
@@ -33,6 +41,7 @@ services:
      - "9100:9100"
     links:
       - openpitrix-app-manager:openpitrix-app-manager
+      - openpitrix-runtime-env-manager:openpitrix-runtime-env-manager
     container_name: "openpitrix-api-gateway"
 
   openpitrix-db-ctrl:
