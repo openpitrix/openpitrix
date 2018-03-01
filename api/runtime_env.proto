@@ -54,10 +54,10 @@ message CreateRuntimeEnvResponse{
 
 message DescribeRuntimeEnvsRequest{
 	repeated google.protobuf.StringValue runtime_env_ids = 1;
-	repeated google.protobuf.StringValue status = 2;
+	repeated google.protobuf.StringValue statuses = 2;
 	google.protobuf.StringValue search_word = 3;
 	google.protobuf.StringValue selector = 4;
-	google.protobuf.StringValue owner = 5;
+	repeated google.protobuf.StringValue owners = 5;
 	google.protobuf.UInt32Value limit = 6;
 	google.protobuf.UInt32Value offset = 7;
 	google.protobuf.UInt32Value verbose = 8;
@@ -106,14 +106,14 @@ message CreateRuntimeEnvCredentialRequset{
 }
 
 message CreateRuntimeEnvCredentialResponse{
-	RuntimeEnvCredential runtime_env_credential =1 ;
+	RuntimeEnvCredential runtime_env_credential = 1 ;
 }
 
 message DescribeRuntimeEnvCredentialsRequset{
 	repeated google.protobuf.StringValue runtime_env_credential_ids = 1;
-	repeated google.protobuf.StringValue status = 2;
+	repeated google.protobuf.StringValue statuses = 2;
 	google.protobuf.StringValue search_word = 3;
-	google.protobuf.StringValue owner = 4;
+	repeated google.protobuf.StringValue owners = 4;
 	google.protobuf.UInt32Value limit = 5;
 	google.protobuf.UInt32Value offset = 6;
 	google.protobuf.UInt32Value verbose = 7;
@@ -132,7 +132,7 @@ message ModifyRuntimeEnvCredentialRequest{
 }
 
 message ModifyRuntimeEnvCredentialResponse{
-	RuntimeEnvCredential runtime_env_credential =1 ;
+	RuntimeEnvCredential runtime_env_credential = 1 ;
 }
 
 message DeleteRuntimeEnvCredentialRequset{
@@ -140,7 +140,7 @@ message DeleteRuntimeEnvCredentialRequset{
 }
 
 message DeleteRuntimeEnvCredentialResponse{
-	RuntimeEnvCredential runtime_env_credential =1 ;
+	RuntimeEnvCredential runtime_env_credential = 1 ;
 }
 
 message AttachCredentialToRuntimeEnvRequset{
