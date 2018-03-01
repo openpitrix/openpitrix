@@ -16,6 +16,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
 func (p *Server) getApp(appId string) (*models.App, error) {
@@ -32,6 +33,8 @@ func (p *Server) getApp(appId string) (*models.App, error) {
 }
 
 func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) (*pb.DescribeAppsResponse, error) {
+	s := sender.GetSenderFromContext(ctx)
+	logger.Infof("Got sender: %+v", s)
 	logger.Debugf("Got req: %+v", req)
 	var apps []*models.App
 	offset := utils.GetOffsetFromRequest(req)
@@ -71,7 +74,8 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
 	// TODO: validate CreateAppRequest
-	newApp := models.NewApp(req.GetName(), req.GetRepoId(), req.GetDescription())
+	s := sender.GetSenderFromContext(ctx)
+	newApp := models.NewApp(req.GetName(), req.GetRepoId(), req.GetDescription(), s.UserId)
 
 	_, err := p.db.
 		InsertInto(models.AppTableName).

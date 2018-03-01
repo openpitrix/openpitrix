@@ -557,6 +557,9 @@ var Files = map[string]string{
         "chart_name": {
           "type": "string"
         },
+        "owner": {
+          "type": "string"
+        },
         "create_time": {
           "type": "string",
           "format": "date-time"
