@@ -88,6 +88,11 @@ func mainHandler(ctx context.Context) http.Handler {
 		fmt.Sprintf("%s:%s", constants.AppManagerHost, constants.AppManagerPort),
 		opts,
 	)
+	err = pb.RegisterRuntimeEnvManagerHandlerFromEndpoint(
+		ctx, gwmux,
+		fmt.Sprintf("%s:%s", constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort),
+		opts,
+	)
 	if err != nil {
 		err = errors.WithStack(err)
 		logger.Fatalf("%+v", err)
