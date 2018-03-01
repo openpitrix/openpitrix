@@ -73,16 +73,16 @@ type DescribeRuntimeEnvsParams struct {
 
 	*/
 	OffsetValue *int64
-	/*Owner*/
-	Owner *string
+	/*Owners*/
+	Owners []string
 	/*RuntimeEnvIds*/
 	RuntimeEnvIds []string
 	/*SearchWord*/
 	SearchWord *string
 	/*Selector*/
 	Selector *string
-	/*Status*/
-	Status []string
+	/*Statuses*/
+	Statuses []string
 	/*VerboseValue
 	  The uint32 value.
 
@@ -149,15 +149,15 @@ func (o *DescribeRuntimeEnvsParams) SetOffsetValue(offsetValue *int64) {
 	o.OffsetValue = offsetValue
 }
 
-// WithOwner adds the owner to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) WithOwner(owner *string) *DescribeRuntimeEnvsParams {
-	o.SetOwner(owner)
+// WithOwners adds the owners to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) WithOwners(owners []string) *DescribeRuntimeEnvsParams {
+	o.SetOwners(owners)
 	return o
 }
 
-// SetOwner adds the owner to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) SetOwner(owner *string) {
-	o.Owner = owner
+// SetOwners adds the owners to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) SetOwners(owners []string) {
+	o.Owners = owners
 }
 
 // WithRuntimeEnvIds adds the runtimeEnvIds to the describe runtime envs params
@@ -193,15 +193,15 @@ func (o *DescribeRuntimeEnvsParams) SetSelector(selector *string) {
 	o.Selector = selector
 }
 
-// WithStatus adds the status to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) WithStatus(status []string) *DescribeRuntimeEnvsParams {
-	o.SetStatus(status)
+// WithStatuses adds the statuses to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) WithStatuses(statuses []string) *DescribeRuntimeEnvsParams {
+	o.SetStatuses(statuses)
 	return o
 }
 
-// SetStatus adds the status to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) SetStatus(status []string) {
-	o.Status = status
+// SetStatuses adds the statuses to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) SetStatuses(statuses []string) {
+	o.Statuses = statuses
 }
 
 // WithVerboseValue adds the verboseValue to the describe runtime envs params
@@ -255,20 +255,12 @@ func (o *DescribeRuntimeEnvsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	}
 
-	if o.Owner != nil {
+	valuesOwners := o.Owners
 
-		// query param owner
-		var qrOwner string
-		if o.Owner != nil {
-			qrOwner = *o.Owner
-		}
-		qOwner := qrOwner
-		if qOwner != "" {
-			if err := r.SetQueryParam("owner", qOwner); err != nil {
-				return err
-			}
-		}
-
+	joinedOwners := swag.JoinByFormat(valuesOwners, "")
+	// query array param owners
+	if err := r.SetQueryParam("owners", joinedOwners...); err != nil {
+		return err
 	}
 
 	valuesRuntimeEnvIds := o.RuntimeEnvIds
@@ -311,11 +303,11 @@ func (o *DescribeRuntimeEnvsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	}
 
-	valuesStatus := o.Status
+	valuesStatuses := o.Statuses
 
-	joinedStatus := swag.JoinByFormat(valuesStatus, "")
-	// query array param status
-	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
+	joinedStatuses := swag.JoinByFormat(valuesStatuses, "")
+	// query array param statuses
+	if err := r.SetQueryParam("statuses", joinedStatuses...); err != nil {
 		return err
 	}
 

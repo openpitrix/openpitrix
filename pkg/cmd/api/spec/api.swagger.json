@@ -228,7 +228,7 @@
             }
           },
           {
-            "name": "status",
+            "name": "statuses",
             "in": "query",
             "required": false,
             "type": "array",
@@ -243,10 +243,13 @@
             "type": "string"
           },
           {
-            "name": "owner",
+            "name": "owners",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "limit.value",
@@ -376,7 +379,7 @@
             }
           },
           {
-            "name": "status",
+            "name": "statuses",
             "in": "query",
             "required": false,
             "type": "array",
@@ -397,10 +400,13 @@
             "type": "string"
           },
           {
-            "name": "owner",
+            "name": "owners",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "limit.value",

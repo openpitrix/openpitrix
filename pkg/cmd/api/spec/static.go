@@ -237,7 +237,7 @@ var Files = map[string]string{
             }
           },
           {
-            "name": "status",
+            "name": "statuses",
             "in": "query",
             "required": false,
             "type": "array",
@@ -252,10 +252,13 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "owner",
+            "name": "owners",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "limit.value",
@@ -385,7 +388,7 @@ var Files = map[string]string{
             }
           },
           {
-            "name": "status",
+            "name": "statuses",
             "in": "query",
             "required": false,
             "type": "array",
@@ -406,10 +409,13 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "owner",
+            "name": "owners",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "limit.value",
