@@ -56,3 +56,7 @@ func ToProtoTimestamp(t time.Time) (tt *timestamp.Timestamp) {
 func ToProtoString(str string) *wrappers.StringValue {
 	return &wrappers.StringValue{Value: str}
 }
+
+func ToProtoUInt32(uint32 uint32) *wrappers.UInt32Value {
+	return &wrappers.UInt32Value{Value: uint32}
+}

@@ -1,0 +1,94 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+	info: {
+		title: "OpenPireix Project";
+		version: "0.0.1";
+		contact: {
+			name: "OpenPireix Project";
+			url: "https://openpitrix.io";
+		};
+	};
+	schemes: HTTP;
+	consumes: "application/json";
+	produces: "application/json";
+};
+
+
+message CreateJobRequest {
+	string _ = 1; // placeholder for job_id
+	string cluster_id = 2;
+	string app_id = 3;
+	string app_version = 4;
+	string job_action = 5;
+	string directive = 8;
+}
+
+message CreateJobResponse {
+	string job_id = 1;
+	string cluster_id = 2;
+	string app_id = 3;
+	string app_version = 4;
+}
+
+message Job {
+	google.protobuf.StringValue job_id = 1;
+	google.protobuf.StringValue cluster_id = 2;
+	google.protobuf.StringValue app_id = 3;
+	google.protobuf.StringValue app_version = 4;
+	google.protobuf.StringValue job_action = 5;
+	google.protobuf.StringValue status = 6;
+	google.protobuf.UInt32Value error_code = 7;
+	google.protobuf.StringValue directive = 8;
+	google.protobuf.StringValue executor = 9;
+	google.protobuf.UInt32Value task_count = 10;
+	google.protobuf.StringValue owner = 11;
+	google.protobuf.Timestamp create_time = 12;
+	google.protobuf.Timestamp status_time = 13;
+}
+message DescribeJobsRequest {
+	repeated string job_id = 1;
+	string cluster_id = 2;
+	string app_id = 3;
+	string app_version = 4;
+	repeated string status = 5;
+	uint32 limit = 6;
+	uint32 offset = 7;
+}
+message DescribeJobsResponse {
+	uint32 total_count = 1;
+	repeated Job job_set = 2;
+}
+
+service JobManager {
+	rpc CreateJob (CreateJobRequest) returns (CreateJobResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create job"
+		};
+		option (google.api.http) = {
+			post: "/v1/jobs"
+			body: "*"
+		};
+	}
+	rpc DescribeJobs (DescribeJobsRequest) returns (DescribeJobsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe jobs with filter"
+		};
+		option (google.api.http) = {
+			get: "/v1/jobs"
+		};
+	}
+}

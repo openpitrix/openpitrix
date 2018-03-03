@@ -35,9 +35,11 @@ func Serve() {
 
 	logger.Infof("Openpitrix %s\n", version.ShortVersion)
 	logger.Infof("App service http://%s:%s\n", constants.AppManagerHost, constants.AppManagerPort)
-	logger.Infof("Runtime service http://%s:%s\n", constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort)
+	logger.Infof("Runtime env service http://%s:%s\n", constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort)
 	logger.Infof("Cluster service http://%s:%s\n", constants.ClusterManagerHost, constants.ClusterManagerPort)
 	logger.Infof("Repo service http://%s:%s\n", constants.RepoManagerHost, constants.RepoManagerPort)
+	logger.Infof("Job service http://%s:%s\n", constants.JobManagerHost, constants.JobManagerPort)
+	logger.Infof("Task service http://%s:%s\n", constants.TaskManagerHost, constants.TaskManagerPort)
 	logger.Infof("Api service start http://%s:%s\n", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
 	if err := run(); err != nil {
@@ -91,6 +93,16 @@ func mainHandler(ctx context.Context) http.Handler {
 	err = pb.RegisterRuntimeEnvManagerHandlerFromEndpoint(
 		ctx, gwmux,
 		fmt.Sprintf("%s:%s", constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort),
+		opts,
+	)
+	err = pb.RegisterJobManagerHandlerFromEndpoint(
+		ctx, gwmux,
+		fmt.Sprintf("%s:%s", constants.JobManagerHost, constants.JobManagerPort),
+		opts,
+	)
+	err = pb.RegisterTaskManagerHandlerFromEndpoint(
+		ctx, gwmux,
+		fmt.Sprintf("%s:%s", constants.TaskManagerHost, constants.TaskManagerPort),
 		opts,
 	)
 	if err != nil {
