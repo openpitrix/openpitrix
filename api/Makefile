@@ -26,7 +26,7 @@ generate: $(PROTO_FILES) Makefile
 	cd ../pkg/cmd/api/spec/ && find . | grep .swagger.json | grep -v "api" | xargs rm
 	# generate client code
 	rm -rf ../test/models/* ../test/client/*
-	cd ../test/ && swagger generate client -f ../pkg/cmd/api/spec/api.swagger.json -A openpitrix
+	cd ../test/ && swagger generate client -f ../pkg/cmd/api/spec/api.swagger.json -A openpitrix && chown -R $${USER_ID}:$${GROUP_ID} ../pkg ../test
 	@echo "ok"
 
 tools:
