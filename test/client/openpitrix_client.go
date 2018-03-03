@@ -12,7 +12,10 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 
 	"openpitrix.io/openpitrix/test/client/app_manager"
+	"openpitrix.io/openpitrix/test/client/job_manager"
+	"openpitrix.io/openpitrix/test/client/pilot_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_env_manager"
+	"openpitrix.io/openpitrix/test/client/task_manager"
 )
 
 // Default openpitrix HTTP client.
@@ -58,7 +61,13 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 
 	cli.AppManager = app_manager.New(transport, formats)
 
+	cli.JobManager = job_manager.New(transport, formats)
+
+	cli.PilotManager = pilot_manager.New(transport, formats)
+
 	cli.RuntimeEnvManager = runtime_env_manager.New(transport, formats)
+
+	cli.TaskManager = task_manager.New(transport, formats)
 
 	return cli
 }
@@ -106,7 +115,13 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type Openpitrix struct {
 	AppManager *app_manager.Client
 
+	JobManager *job_manager.Client
+
+	PilotManager *pilot_manager.Client
+
 	RuntimeEnvManager *runtime_env_manager.Client
+
+	TaskManager *task_manager.Client
 
 	Transport runtime.ClientTransport
 }
@@ -117,6 +132,12 @@ func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 
 	c.AppManager.SetTransport(transport)
 
+	c.JobManager.SetTransport(transport)
+
+	c.PilotManager.SetTransport(transport)
+
 	c.RuntimeEnvManager.SetTransport(transport)
+
+	c.TaskManager.SetTransport(transport)
 
 }
