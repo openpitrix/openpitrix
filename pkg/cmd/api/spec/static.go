@@ -44,19 +44,28 @@ var Files = map[string]string{
             "name": "app_id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "name",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "repo_id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "status",
@@ -66,6 +75,12 @@ var Files = map[string]string{
             "items": {
               "type": "string"
             }
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           },
           {
             "name": "limit",
@@ -228,7 +243,7 @@ var Files = map[string]string{
         },
         "parameters": [
           {
-            "name": "runtime_env_credential_ids",
+            "name": "runtime_env_credential_id",
             "in": "query",
             "required": false,
             "type": "array",
@@ -237,7 +252,7 @@ var Files = map[string]string{
             }
           },
           {
-            "name": "statuses",
+            "name": "status",
             "in": "query",
             "required": false,
             "type": "array",
@@ -252,7 +267,7 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "owners",
+            "name": "owner",
             "in": "query",
             "required": false,
             "type": "array",
@@ -379,7 +394,7 @@ var Files = map[string]string{
         },
         "parameters": [
           {
-            "name": "runtime_env_ids",
+            "name": "runtime_env_id",
             "in": "query",
             "required": false,
             "type": "array",
@@ -388,7 +403,7 @@ var Files = map[string]string{
             }
           },
           {
-            "name": "statuses",
+            "name": "status",
             "in": "query",
             "required": false,
             "type": "array",
@@ -409,7 +424,7 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "owners",
+            "name": "owner",
             "in": "query",
             "required": false,
             "type": "array",

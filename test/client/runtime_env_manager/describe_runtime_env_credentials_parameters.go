@@ -73,14 +73,14 @@ type DescribeRuntimeEnvCredentialsParams struct {
 
 	*/
 	OffsetValue *int64
-	/*Owners*/
-	Owners []string
-	/*RuntimeEnvCredentialIds*/
-	RuntimeEnvCredentialIds []string
+	/*Owner*/
+	Owner []string
+	/*RuntimeEnvCredentialID*/
+	RuntimeEnvCredentialID []string
 	/*SearchWord*/
 	SearchWord *string
-	/*Statuses*/
-	Statuses []string
+	/*Status*/
+	Status []string
 	/*VerboseValue
 	  The uint32 value.
 
@@ -147,26 +147,26 @@ func (o *DescribeRuntimeEnvCredentialsParams) SetOffsetValue(offsetValue *int64)
 	o.OffsetValue = offsetValue
 }
 
-// WithOwners adds the owners to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) WithOwners(owners []string) *DescribeRuntimeEnvCredentialsParams {
-	o.SetOwners(owners)
+// WithOwner adds the owner to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) WithOwner(owner []string) *DescribeRuntimeEnvCredentialsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwners adds the owners to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) SetOwners(owners []string) {
-	o.Owners = owners
+// SetOwner adds the owner to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
-// WithRuntimeEnvCredentialIds adds the runtimeEnvCredentialIds to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) WithRuntimeEnvCredentialIds(runtimeEnvCredentialIds []string) *DescribeRuntimeEnvCredentialsParams {
-	o.SetRuntimeEnvCredentialIds(runtimeEnvCredentialIds)
+// WithRuntimeEnvCredentialID adds the runtimeEnvCredentialID to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) WithRuntimeEnvCredentialID(runtimeEnvCredentialID []string) *DescribeRuntimeEnvCredentialsParams {
+	o.SetRuntimeEnvCredentialID(runtimeEnvCredentialID)
 	return o
 }
 
-// SetRuntimeEnvCredentialIds adds the runtimeEnvCredentialIds to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) SetRuntimeEnvCredentialIds(runtimeEnvCredentialIds []string) {
-	o.RuntimeEnvCredentialIds = runtimeEnvCredentialIds
+// SetRuntimeEnvCredentialID adds the runtimeEnvCredentialId to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) SetRuntimeEnvCredentialID(runtimeEnvCredentialID []string) {
+	o.RuntimeEnvCredentialID = runtimeEnvCredentialID
 }
 
 // WithSearchWord adds the searchWord to the describe runtime env credentials params
@@ -180,15 +180,15 @@ func (o *DescribeRuntimeEnvCredentialsParams) SetSearchWord(searchWord *string) 
 	o.SearchWord = searchWord
 }
 
-// WithStatuses adds the statuses to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) WithStatuses(statuses []string) *DescribeRuntimeEnvCredentialsParams {
-	o.SetStatuses(statuses)
+// WithStatus adds the status to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) WithStatus(status []string) *DescribeRuntimeEnvCredentialsParams {
+	o.SetStatus(status)
 	return o
 }
 
-// SetStatuses adds the statuses to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) SetStatuses(statuses []string) {
-	o.Statuses = statuses
+// SetStatus adds the status to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) SetStatus(status []string) {
+	o.Status = status
 }
 
 // WithVerboseValue adds the verboseValue to the describe runtime env credentials params
@@ -242,19 +242,19 @@ func (o *DescribeRuntimeEnvCredentialsParams) WriteToRequest(r runtime.ClientReq
 
 	}
 
-	valuesOwners := o.Owners
+	valuesOwner := o.Owner
 
-	joinedOwners := swag.JoinByFormat(valuesOwners, "")
-	// query array param owners
-	if err := r.SetQueryParam("owners", joinedOwners...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 
-	valuesRuntimeEnvCredentialIds := o.RuntimeEnvCredentialIds
+	valuesRuntimeEnvCredentialID := o.RuntimeEnvCredentialID
 
-	joinedRuntimeEnvCredentialIds := swag.JoinByFormat(valuesRuntimeEnvCredentialIds, "")
-	// query array param runtime_env_credential_ids
-	if err := r.SetQueryParam("runtime_env_credential_ids", joinedRuntimeEnvCredentialIds...); err != nil {
+	joinedRuntimeEnvCredentialID := swag.JoinByFormat(valuesRuntimeEnvCredentialID, "")
+	// query array param runtime_env_credential_id
+	if err := r.SetQueryParam("runtime_env_credential_id", joinedRuntimeEnvCredentialID...); err != nil {
 		return err
 	}
 
@@ -274,11 +274,11 @@ func (o *DescribeRuntimeEnvCredentialsParams) WriteToRequest(r runtime.ClientReq
 
 	}
 
-	valuesStatuses := o.Statuses
+	valuesStatus := o.Status
 
-	joinedStatuses := swag.JoinByFormat(valuesStatuses, "")
-	// query array param statuses
-	if err := r.SetQueryParam("statuses", joinedStatuses...); err != nil {
+	joinedStatus := swag.JoinByFormat(valuesStatus, "")
+	// query array param status
+	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err
 	}
 

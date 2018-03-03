@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -13,6 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
@@ -44,30 +45,21 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 		Select(models.AppColumns...).
 		From(models.AppTableName).
 		Offset(offset).
-		Limit(limit)
-	// TODO: filter condition
-	if len(req.GetName()) > 0 {
-		query = query.Where(db.Eq("name", req.GetName()))
-	}
-	if len(req.GetRepoId()) > 0 {
-		query = query.Where(db.Eq("repo_id", req.GetRepoId()))
-	}
-	if len(req.GetAppId()) > 0 {
-		query = query.Where(db.Eq("app_id", req.GetAppId()))
-	}
-	if len(req.GetStatus()) > 0 {
-		query = query.Where(db.Eq("status", req.GetStatus()))
-	}
-
-	count, err := query.Load(&apps)
+		Limit(limit).
+		Where(manager.BuildFilterConditions(req, models.AppColumns...))
+	_, err := query.Load(&apps)
 	if err != nil {
 		// TODO: err_code should be implementation
+		return nil, status.Errorf(codes.Internal, "DescribeApps: %+v", err)
+	}
+	count, err := query.Count()
+	if err != nil {
 		return nil, status.Errorf(codes.Internal, "DescribeApps: %+v", err)
 	}
 
 	res := &pb.DescribeAppsResponse{
 		AppSet:     models.AppsToPbs(apps),
-		TotalCount: uint32(count),
+		TotalCount: count,
 	}
 	return res, nil
 }
@@ -75,7 +67,11 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
 	// TODO: validate CreateAppRequest
 	s := sender.GetSenderFromContext(ctx)
-	newApp := models.NewApp(req.GetName(), req.GetRepoId(), req.GetDescription(), s.UserId)
+	newApp := models.NewApp(
+		req.GetName().GetValue(),
+		req.GetRepoId().GetValue(),
+		req.GetDescription().GetValue(),
+		s.UserId)
 
 	_, err := p.db.
 		InsertInto(models.AppTableName).
@@ -94,48 +90,16 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 
 func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.ModifyAppResponse, error) {
 	// TODO: check resource permission
-	appId := req.GetAppId()
+	appId := req.GetAppId().GetValue()
 	app, err := p.getApp(appId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to get app [%s]", appId)
 	}
 
-	// TODO: use reflect parse attributes
-	attributes := make(map[string]interface{})
-	if len(req.Name) > 0 {
-		attributes["name"] = req.Name
-	}
-	if len(req.RepoId) > 0 {
-		attributes["repo_id"] = req.RepoId
-	}
-	if len(req.Owner) > 0 {
-		attributes["owner"] = req.Owner
-	}
-	if len(req.ChartName) > 0 {
-		attributes["chart_name"] = req.ChartName
-	}
-	if len(req.Description) > 0 {
-		attributes["description"] = req.Description
-	}
-	if len(req.Home) > 0 {
-		attributes["home"] = req.Home
-	}
-	if len(req.Icon) > 0 {
-		attributes["icon"] = req.Icon
-	}
-	if len(req.Screenshots) > 0 {
-		attributes["screenshots"] = req.Screenshots
-	}
-	if len(req.Maintainers) > 0 {
-		attributes["maintainers"] = req.Maintainers
-	}
-	if len(req.Sources) > 0 {
-		attributes["sources"] = req.Sources
-	}
-	if len(req.Readme) > 0 {
-		attributes["readme"] = req.Readme
-	}
-
+	attributes := manager.BuildUpdateAttributes(req,
+		"name", "repo_id", "owner", "chart_name",
+		"description", "home", "icon", "screenshots",
+		"maintainers", "sources", "readme")
 	_, err = p.db.
 		Update(models.AppTableName).
 		SetMap(attributes).
@@ -157,7 +121,7 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 
 func (p *Server) DeleteApp(ctx context.Context, req *pb.DeleteAppRequest) (*pb.DeleteAppResponse, error) {
 	// TODO: check resource permission
-	appId := req.GetAppId()
+	appId := req.GetAppId().GetValue()
 	_, err := p.getApp(appId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to get app [%s]", appId)
@@ -172,7 +136,6 @@ func (p *Server) DeleteApp(ctx context.Context, req *pb.DeleteAppRequest) (*pb.D
 		return nil, status.Errorf(codes.Internal, "DeleteApp: %+v", err)
 	}
 
-	appId = req.GetAppId()
 	app, err := p.getApp(appId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to get app [%s]", appId)

@@ -35,19 +35,28 @@
             "name": "app_id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "name",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "repo_id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           {
             "name": "status",
@@ -57,6 +66,12 @@
             "items": {
               "type": "string"
             }
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           },
           {
             "name": "limit",
@@ -219,7 +234,7 @@
         },
         "parameters": [
           {
-            "name": "runtime_env_credential_ids",
+            "name": "runtime_env_credential_id",
             "in": "query",
             "required": false,
             "type": "array",
@@ -228,7 +243,7 @@
             }
           },
           {
-            "name": "statuses",
+            "name": "status",
             "in": "query",
             "required": false,
             "type": "array",
@@ -243,7 +258,7 @@
             "type": "string"
           },
           {
-            "name": "owners",
+            "name": "owner",
             "in": "query",
             "required": false,
             "type": "array",
@@ -370,7 +385,7 @@
         },
         "parameters": [
           {
-            "name": "runtime_env_ids",
+            "name": "runtime_env_id",
             "in": "query",
             "required": false,
             "type": "array",
@@ -379,7 +394,7 @@
             }
           },
           {
-            "name": "statuses",
+            "name": "status",
             "in": "query",
             "required": false,
             "type": "array",
@@ -400,7 +415,7 @@
             "type": "string"
           },
           {
-            "name": "owners",
+            "name": "owner",
             "in": "query",
             "required": false,
             "type": "array",
