@@ -36,7 +36,8 @@ var TaskColumns = GetColumnsFromStruct(&Task{})
 
 func NewTask(jobId, taskAction, directive, userId string) *Task {
 	return &Task{
-		JobId:      NewJobId(),
+		TaskId:     NewTaskId(),
+		JobId:      jobId,
 		TaskAction: taskAction,
 		Directive:  directive,
 		Owner:      userId,

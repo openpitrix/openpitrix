@@ -18,32 +18,32 @@ func NewJobId() string {
 }
 
 type Job struct {
-	JobId       string
-	ClusterId   string
-	AppId       string
-	AppVersion  string
-	JobAction   string
-	Directive   string
-	Owner       string
-	Status      string
-	ErrorCode   uint32
-	Executor    string
-	TaskCount   uint32
-	CreateTime  time.Time
-	StatusTime  time.Time
+	JobId      string
+	ClusterId  string
+	AppId      string
+	AppVersion string
+	JobAction  string
+	Directive  string
+	Owner      string
+	Status     string
+	ErrorCode  uint32
+	Executor   string
+	TaskCount  uint32
+	CreateTime time.Time
+	StatusTime time.Time
 }
 
 var JobColumns = GetColumnsFromStruct(&Job{})
 
 func NewJob(clusterId, appId, appVersion, jobAction, directive, userId string) *Job {
 	return &Job{
-		JobId:       NewJobId(),
-		ClusterId:   clusterId,
-		AppId:appId,
-		AppVersion:appVersion,
-		JobAction:jobAction,
-		Directive:directive,
-		Owner:userId,
+		JobId:      NewJobId(),
+		ClusterId:  clusterId,
+		AppId:      appId,
+		AppVersion: appVersion,
+		JobAction:  jobAction,
+		Directive:  directive,
+		Owner:      userId,
 	}
 }
 

@@ -58,13 +58,14 @@ message DescribeTasksRequest {
 	repeated string task_id = 1;
 	repeated string job_id = 2;
 	repeated string status = 3;
-	uint32 limit = 4; // uint64 marshal to json will convert to string
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
 	uint32 offset = 5;
 }
 message DescribeTasksResponse {
 	uint32 total_count = 1;
-	uint32 limit = 2;
-	repeated Task task_set = 3;
+	repeated Task task_set = 2;
 }
 
 service TaskManager {
