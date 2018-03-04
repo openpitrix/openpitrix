@@ -51,6 +51,7 @@ type UpdateQuery struct {
 // SelectQuery
 // Example: Select().From().Where().Limit().Offset().OrderDir().Load()
 //          Select().From().Where().Limit().Offset().OrderDir().LoadOne()
+//          Select().From().Where().Count()
 
 func (db *Database) Select(columns ...string) *SelectQuery {
 	return &SelectQuery{db.Session.Select(columns...)}
@@ -89,6 +90,16 @@ func (b *SelectQuery) Load(value interface{}) (int, error) {
 
 func (b *SelectQuery) LoadOne(value interface{}) error {
 	return b.SelectBuilder.LoadOne(value)
+}
+
+func (b *SelectQuery) Count() (count uint32, err error) {
+	// cache SelectStmt
+	selectStmt := b.SelectBuilder.SelectStmt
+	b.SelectBuilder.SelectStmt = dbr.Select("count(*)").From(selectStmt.Table)
+	err = b.SelectBuilder.LoadOne(&count)
+	// fallback SelectStmt
+	b.SelectBuilder.SelectStmt = selectStmt
+	return
 }
 
 // InsertQuery

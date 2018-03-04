@@ -132,7 +132,7 @@ e2e-test:
 .PHONY: ci-test
 ci-test: compose-update
 	sleep 20
-	-make e2e-test
+	@make e2e-test
 	@echo "ci-test done"
 
 .PHONY: clean

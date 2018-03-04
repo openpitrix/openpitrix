@@ -29,18 +29,18 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 
 
 message CreateAppRequest {
-	string _ = 1; // placeholder for app_id
-	string name = 2;
-	string repo_id = 3;
-	string owner = 4;
-	string chart_name = 5;
-	string description = 6;
-	string home = 8;
-	string icon = 9;
-	string screenshots = 10;
-	string maintainers = 11;
-	string sources = 12;
-	string readme = 13;
+	google.protobuf.StringValue _ = 1; // placeholder for app_id
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue repo_id = 3;
+	google.protobuf.StringValue owner = 4;
+	google.protobuf.StringValue chart_name = 5;
+	google.protobuf.StringValue description = 6;
+	google.protobuf.StringValue home = 8;
+	google.protobuf.StringValue icon = 9;
+	google.protobuf.StringValue screenshots = 10;
+	google.protobuf.StringValue maintainers = 11;
+	google.protobuf.StringValue sources = 12;
+	google.protobuf.StringValue readme = 13;
 }
 
 message CreateAppResponse {
@@ -48,18 +48,18 @@ message CreateAppResponse {
 }
 
 message ModifyAppRequest {
-	string app_id = 1;
-	string name = 2; // TODO: using google.protobuf.StringValue to handle nil param
-	string repo_id = 3;
-	string owner = 4;
-	string chart_name = 5;
-	string description = 6;
-	string home = 8;
-	string icon = 9;
-	string screenshots = 10;
-	string maintainers = 11;
-	string sources = 12;
-	string readme = 13;
+	google.protobuf.StringValue app_id = 1;
+	google.protobuf.StringValue name = 2; // TODO: using google.protobuf.StringValue to handle nil param
+	google.protobuf.StringValue repo_id = 3;
+	google.protobuf.StringValue owner = 4;
+	google.protobuf.StringValue chart_name = 5;
+	google.protobuf.StringValue description = 6;
+	google.protobuf.StringValue home = 8;
+	google.protobuf.StringValue icon = 9;
+	google.protobuf.StringValue screenshots = 10;
+	google.protobuf.StringValue maintainers = 11;
+	google.protobuf.StringValue sources = 12;
+	google.protobuf.StringValue readme = 13;
 }
 
 message ModifyAppResponse {
@@ -67,7 +67,7 @@ message ModifyAppResponse {
 }
 
 message DeleteAppRequest {
-	string app_id = 1;
+	google.protobuf.StringValue app_id = 1;
 }
 
 message DeleteAppResponse {
@@ -92,12 +92,13 @@ message App {
 	google.protobuf.Timestamp status_time = 15;
 }
 message DescribeAppsRequest {
-	string app_id = 1;
-	string name = 2;
-	string repo_id = 3;
+	repeated string app_id = 1; // NOTE: grpc gateway cannot handle repeated StringValue
+	repeated string name = 2;
+	repeated string repo_id = 3;
 	repeated string status = 4;
-	uint32 limit = 5; // uint64 marshal to json will convert to string
-	uint32 offset = 6;
+	google.protobuf.StringValue search_word = 5;
+	uint32 limit = 6; // NOTE: uint64 marshal to json will convert to string
+	uint32 offset = 7;
 }
 message DescribeAppsResponse {
 	uint32 total_count = 1;

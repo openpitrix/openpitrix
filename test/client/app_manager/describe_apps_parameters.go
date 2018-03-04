@@ -64,15 +64,17 @@ for the describe apps operation typically these are written to a http.Request
 type DescribeAppsParams struct {
 
 	/*AppID*/
-	AppID *string
+	AppID []string
 	/*Limit*/
 	Limit *int64
 	/*Name*/
-	Name *string
+	Name []string
 	/*Offset*/
 	Offset *int64
 	/*RepoID*/
-	RepoID *string
+	RepoID []string
+	/*SearchWord*/
+	SearchWord *string
 	/*Status*/
 	Status []string
 
@@ -115,13 +117,13 @@ func (o *DescribeAppsParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithAppID adds the appID to the describe apps params
-func (o *DescribeAppsParams) WithAppID(appID *string) *DescribeAppsParams {
+func (o *DescribeAppsParams) WithAppID(appID []string) *DescribeAppsParams {
 	o.SetAppID(appID)
 	return o
 }
 
 // SetAppID adds the appId to the describe apps params
-func (o *DescribeAppsParams) SetAppID(appID *string) {
+func (o *DescribeAppsParams) SetAppID(appID []string) {
 	o.AppID = appID
 }
 
@@ -137,13 +139,13 @@ func (o *DescribeAppsParams) SetLimit(limit *int64) {
 }
 
 // WithName adds the name to the describe apps params
-func (o *DescribeAppsParams) WithName(name *string) *DescribeAppsParams {
+func (o *DescribeAppsParams) WithName(name []string) *DescribeAppsParams {
 	o.SetName(name)
 	return o
 }
 
 // SetName adds the name to the describe apps params
-func (o *DescribeAppsParams) SetName(name *string) {
+func (o *DescribeAppsParams) SetName(name []string) {
 	o.Name = name
 }
 
@@ -159,14 +161,25 @@ func (o *DescribeAppsParams) SetOffset(offset *int64) {
 }
 
 // WithRepoID adds the repoID to the describe apps params
-func (o *DescribeAppsParams) WithRepoID(repoID *string) *DescribeAppsParams {
+func (o *DescribeAppsParams) WithRepoID(repoID []string) *DescribeAppsParams {
 	o.SetRepoID(repoID)
 	return o
 }
 
 // SetRepoID adds the repoId to the describe apps params
-func (o *DescribeAppsParams) SetRepoID(repoID *string) {
+func (o *DescribeAppsParams) SetRepoID(repoID []string) {
 	o.RepoID = repoID
+}
+
+// WithSearchWord adds the searchWord to the describe apps params
+func (o *DescribeAppsParams) WithSearchWord(searchWord *string) *DescribeAppsParams {
+	o.SetSearchWord(searchWord)
+	return o
+}
+
+// SetSearchWord adds the searchWord to the describe apps params
+func (o *DescribeAppsParams) SetSearchWord(searchWord *string) {
+	o.SearchWord = searchWord
 }
 
 // WithStatus adds the status to the describe apps params
@@ -188,20 +201,12 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	}
 	var res []error
 
-	if o.AppID != nil {
+	valuesAppID := o.AppID
 
-		// query param app_id
-		var qrAppID string
-		if o.AppID != nil {
-			qrAppID = *o.AppID
-		}
-		qAppID := qrAppID
-		if qAppID != "" {
-			if err := r.SetQueryParam("app_id", qAppID); err != nil {
-				return err
-			}
-		}
-
+	joinedAppID := swag.JoinByFormat(valuesAppID, "")
+	// query array param app_id
+	if err := r.SetQueryParam("app_id", joinedAppID...); err != nil {
+		return err
 	}
 
 	if o.Limit != nil {
@@ -220,20 +225,12 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
-	if o.Name != nil {
+	valuesName := o.Name
 
-		// query param name
-		var qrName string
-		if o.Name != nil {
-			qrName = *o.Name
-		}
-		qName := qrName
-		if qName != "" {
-			if err := r.SetQueryParam("name", qName); err != nil {
-				return err
-			}
-		}
-
+	joinedName := swag.JoinByFormat(valuesName, "")
+	// query array param name
+	if err := r.SetQueryParam("name", joinedName...); err != nil {
+		return err
 	}
 
 	if o.Offset != nil {
@@ -252,16 +249,24 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
-	if o.RepoID != nil {
+	valuesRepoID := o.RepoID
 
-		// query param repo_id
-		var qrRepoID string
-		if o.RepoID != nil {
-			qrRepoID = *o.RepoID
+	joinedRepoID := swag.JoinByFormat(valuesRepoID, "")
+	// query array param repo_id
+	if err := r.SetQueryParam("repo_id", joinedRepoID...); err != nil {
+		return err
+	}
+
+	if o.SearchWord != nil {
+
+		// query param search_word
+		var qrSearchWord string
+		if o.SearchWord != nil {
+			qrSearchWord = *o.SearchWord
 		}
-		qRepoID := qrRepoID
-		if qRepoID != "" {
-			if err := r.SetQueryParam("repo_id", qRepoID); err != nil {
+		qSearchWord := qrSearchWord
+		if qSearchWord != "" {
+			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
 				return err
 			}
 		}
