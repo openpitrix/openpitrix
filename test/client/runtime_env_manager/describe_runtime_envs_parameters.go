@@ -73,16 +73,16 @@ type DescribeRuntimeEnvsParams struct {
 
 	*/
 	OffsetValue *int64
-	/*Owners*/
-	Owners []string
-	/*RuntimeEnvIds*/
-	RuntimeEnvIds []string
+	/*Owner*/
+	Owner []string
+	/*RuntimeEnvID*/
+	RuntimeEnvID []string
 	/*SearchWord*/
 	SearchWord *string
 	/*Selector*/
 	Selector *string
-	/*Statuses*/
-	Statuses []string
+	/*Status*/
+	Status []string
 	/*VerboseValue
 	  The uint32 value.
 
@@ -149,26 +149,26 @@ func (o *DescribeRuntimeEnvsParams) SetOffsetValue(offsetValue *int64) {
 	o.OffsetValue = offsetValue
 }
 
-// WithOwners adds the owners to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) WithOwners(owners []string) *DescribeRuntimeEnvsParams {
-	o.SetOwners(owners)
+// WithOwner adds the owner to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) WithOwner(owner []string) *DescribeRuntimeEnvsParams {
+	o.SetOwner(owner)
 	return o
 }
 
-// SetOwners adds the owners to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) SetOwners(owners []string) {
-	o.Owners = owners
+// SetOwner adds the owner to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
-// WithRuntimeEnvIds adds the runtimeEnvIds to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) WithRuntimeEnvIds(runtimeEnvIds []string) *DescribeRuntimeEnvsParams {
-	o.SetRuntimeEnvIds(runtimeEnvIds)
+// WithRuntimeEnvID adds the runtimeEnvID to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) WithRuntimeEnvID(runtimeEnvID []string) *DescribeRuntimeEnvsParams {
+	o.SetRuntimeEnvID(runtimeEnvID)
 	return o
 }
 
-// SetRuntimeEnvIds adds the runtimeEnvIds to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) SetRuntimeEnvIds(runtimeEnvIds []string) {
-	o.RuntimeEnvIds = runtimeEnvIds
+// SetRuntimeEnvID adds the runtimeEnvId to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) SetRuntimeEnvID(runtimeEnvID []string) {
+	o.RuntimeEnvID = runtimeEnvID
 }
 
 // WithSearchWord adds the searchWord to the describe runtime envs params
@@ -193,15 +193,15 @@ func (o *DescribeRuntimeEnvsParams) SetSelector(selector *string) {
 	o.Selector = selector
 }
 
-// WithStatuses adds the statuses to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) WithStatuses(statuses []string) *DescribeRuntimeEnvsParams {
-	o.SetStatuses(statuses)
+// WithStatus adds the status to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) WithStatus(status []string) *DescribeRuntimeEnvsParams {
+	o.SetStatus(status)
 	return o
 }
 
-// SetStatuses adds the statuses to the describe runtime envs params
-func (o *DescribeRuntimeEnvsParams) SetStatuses(statuses []string) {
-	o.Statuses = statuses
+// SetStatus adds the status to the describe runtime envs params
+func (o *DescribeRuntimeEnvsParams) SetStatus(status []string) {
+	o.Status = status
 }
 
 // WithVerboseValue adds the verboseValue to the describe runtime envs params
@@ -255,19 +255,19 @@ func (o *DescribeRuntimeEnvsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	}
 
-	valuesOwners := o.Owners
+	valuesOwner := o.Owner
 
-	joinedOwners := swag.JoinByFormat(valuesOwners, "")
-	// query array param owners
-	if err := r.SetQueryParam("owners", joinedOwners...); err != nil {
+	joinedOwner := swag.JoinByFormat(valuesOwner, "")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
 	}
 
-	valuesRuntimeEnvIds := o.RuntimeEnvIds
+	valuesRuntimeEnvID := o.RuntimeEnvID
 
-	joinedRuntimeEnvIds := swag.JoinByFormat(valuesRuntimeEnvIds, "")
-	// query array param runtime_env_ids
-	if err := r.SetQueryParam("runtime_env_ids", joinedRuntimeEnvIds...); err != nil {
+	joinedRuntimeEnvID := swag.JoinByFormat(valuesRuntimeEnvID, "")
+	// query array param runtime_env_id
+	if err := r.SetQueryParam("runtime_env_id", joinedRuntimeEnvID...); err != nil {
 		return err
 	}
 
@@ -303,11 +303,11 @@ func (o *DescribeRuntimeEnvsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	}
 
-	valuesStatuses := o.Statuses
+	valuesStatus := o.Status
 
-	joinedStatuses := swag.JoinByFormat(valuesStatuses, "")
-	// query array param statuses
-	if err := r.SetQueryParam("statuses", joinedStatuses...); err != nil {
+	joinedStatus := swag.JoinByFormat(valuesStatus, "")
+	// query array param status
+	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err
 	}
 

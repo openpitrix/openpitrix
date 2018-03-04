@@ -5,14 +5,15 @@
 package models
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/fatih/structs"
+
+	"openpitrix.io/openpitrix/pkg/utils"
 )
 
 func GetColumnsFromStruct(s interface{}) []string {
 	names := structs.Names(s)
 	for i, name := range names {
-		names[i] = govalidator.CamelCaseToUnderscore(name)
+		names[i] = utils.CamelCaseToUnderscore(name)
 	}
 	return names
 }

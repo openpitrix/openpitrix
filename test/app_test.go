@@ -29,7 +29,7 @@ func TestApp(t *testing.T) {
 	testRepoId := "e2e_test_repo"
 	testRepoId2 := "e2e_test_repo2"
 	describeParams := app_manager.NewDescribeAppsParams()
-	describeParams.SetName(&testAppName)
+	describeParams.SetName([]string{testAppName})
 	describeParams.SetStatus([]string{constants.StatusActive})
 	describeResp, err := client.AppManager.DescribeApps(describeParams)
 	if err != nil {
@@ -72,7 +72,7 @@ func TestApp(t *testing.T) {
 	}
 	t.Log(modifyResp)
 	// describe app
-	describeParams.WithAppID(&appId)
+	describeParams.WithAppID([]string{appId})
 	describeResp, err = client.AppManager.DescribeApps(describeParams)
 	if err != nil {
 		t.Fatal(err)
@@ -95,7 +95,7 @@ func TestApp(t *testing.T) {
 	}
 	t.Log(deleteResp)
 	// describe deleted app
-	describeParams.WithAppID(&appId)
+	describeParams.WithAppID([]string{appId})
 	describeParams.WithStatus([]string{constants.StatusDeleted})
 	describeParams.WithName(nil)
 	describeResp, err = client.AppManager.DescribeApps(describeParams)
