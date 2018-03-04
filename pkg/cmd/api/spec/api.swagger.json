@@ -985,6 +985,10 @@
           "type": "integer",
           "format": "int64"
         },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        },
         "job_set": {
           "type": "array",
           "items": {
@@ -1414,6 +1418,10 @@
       "type": "object",
       "properties": {
         "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
           "type": "integer",
           "format": "int64"
         },

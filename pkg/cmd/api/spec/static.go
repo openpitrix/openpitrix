@@ -994,6 +994,10 @@ var Files = map[string]string{
           "type": "integer",
           "format": "int64"
         },
+        "limit": {
+          "type": "integer",
+          "format": "int64"
+        },
         "job_set": {
           "type": "array",
           "items": {
@@ -1423,6 +1427,10 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "limit": {
           "type": "integer",
           "format": "int64"
         },
