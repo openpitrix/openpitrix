@@ -10,18 +10,26 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
-	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"github.com/golang/protobuf/ptypes/wrappers"
+
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
 func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb.CreateTaskResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
 	logger.Debugf("Got req: %+v", req)
-	newTask := models.NewTask(req.GetJobId(), req.GetTaskAction(), req.GetDirective(), s.UserId)
+
+	s := sender.GetSenderFromContext(ctx)
+	newTask := models.NewTask(
+		req.GetJobId().GetValue(),
+		req.GetTaskAction().GetValue(),
+		req.GetDirective().GetValue(),
+		s.UserId,
+	)
 
 	_, err := p.db.
 		InsertInto(models.TaskTableName).
@@ -35,15 +43,16 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 	//TODO: push task into taskQueue
 
 	res := &pb.CreateTaskResponse{
-		TaskId: newTask.TaskId,
-		JobId:  newTask.JobId,
+		TaskId: &wrappers.StringValue{Value: newTask.TaskId},
+		JobId:  &wrappers.StringValue{Value: newTask.JobId},
 	}
 	return res, nil
 }
 
 func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
 	logger.Debugf("Got req: %+v", req)
+
+	s := sender.GetSenderFromContext(ctx)
 	var tasks []*models.Task
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
@@ -54,6 +63,7 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		Offset(offset).
 		Limit(limit)
 	query = query.Where(db.Eq("owner", s.UserId))
+
 	// TODO: filter condition
 	if len(req.GetTaskId()) > 0 {
 		query = query.Where(db.Eq("task_id", req.GetTaskId()))
@@ -74,6 +84,7 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 	res := &pb.DescribeTasksResponse{
 		TaskSet:    models.TasksToPbs(tasks),
 		TotalCount: uint32(count),
+		Limit:      uint32(limit),
 	}
 	return res, nil
 }

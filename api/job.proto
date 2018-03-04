@@ -29,19 +29,19 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 
 
 message CreateJobRequest {
-	string _ = 1; // placeholder for job_id
-	string cluster_id = 2;
-	string app_id = 3;
-	string app_version = 4;
-	string job_action = 5;
-	string directive = 8;
+	google.protobuf.StringValue _ = 1; // placeholder for job_id
+	google.protobuf.StringValue cluster_id = 2;
+	google.protobuf.StringValue app_id = 3;
+	google.protobuf.StringValue app_version = 4;
+	google.protobuf.StringValue job_action = 5;
+	google.protobuf.StringValue directive = 6;
 }
 
 message CreateJobResponse {
-	string job_id = 1;
-	string cluster_id = 2;
-	string app_id = 3;
-	string app_version = 4;
+	google.protobuf.StringValue job_id = 1;
+	google.protobuf.StringValue cluster_id = 2;
+	google.protobuf.StringValue app_id = 3;
+	google.protobuf.StringValue app_version = 4;
 }
 
 message Job {
@@ -61,16 +61,17 @@ message Job {
 }
 message DescribeJobsRequest {
 	repeated string job_id = 1;
-	string cluster_id = 2;
-	string app_id = 3;
-	string app_version = 4;
+	google.protobuf.StringValue cluster_id = 2;
+	google.protobuf.StringValue app_id = 3;
+	google.protobuf.StringValue app_version = 4;
 	repeated string status = 5;
 	uint32 limit = 6;
 	uint32 offset = 7;
 }
 message DescribeJobsResponse {
 	uint32 total_count = 1;
-	repeated Job job_set = 2;
+	uint32 limit = 2;
+	repeated Job job_set = 3;
 }
 
 service JobManager {

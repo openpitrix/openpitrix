@@ -28,13 +28,13 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 
 
 message SendTaskRequest {
-	string task_id = 1;
-	string task_action = 2;
-	string directive = 3;
+	google.protobuf.StringValue task_id = 1;
+	google.protobuf.StringValue task_action = 2;
+	google.protobuf.StringValue directive = 3;
 }
 
 message SendTaskResponse {
-	string task_id = 1;
+	google.protobuf.StringValue task_id = 1;
 }
 
 message GetTaskStatusRequest {

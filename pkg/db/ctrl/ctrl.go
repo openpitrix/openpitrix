@@ -191,5 +191,5 @@ func HttpServe(m config.MysqlConfig, schemaPath string) {
 		Upgrade(m, schemaPath)
 		w.Write([]byte("{\"msg\":\"done\"}"))
 	})
-	log.Fatal(http.ListenAndServe(":"+constants.DbCtrlPort, nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", constants.DbCtrlPort), nil))
 }

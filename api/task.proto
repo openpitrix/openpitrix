@@ -29,15 +29,15 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 
 
 message CreateTaskRequest {
-	string _ = 1; // placeholder for task_id
-	string job_id = 2;
-	string task_action = 3;
-	string directive = 4;
+	google.protobuf.StringValue _ = 1; // placeholder for task_id
+	google.protobuf.StringValue job_id = 2;
+	google.protobuf.StringValue task_action = 3;
+	google.protobuf.StringValue directive = 4;
 }
 
 message CreateTaskResponse {
-	string task_id = 1;
-	string job_id = 2;
+	google.protobuf.StringValue task_id = 1;
+	google.protobuf.StringValue job_id = 2;
 }
 
 message Task {
@@ -63,7 +63,8 @@ message DescribeTasksRequest {
 }
 message DescribeTasksResponse {
 	uint32 total_count = 1;
-	repeated Task task_set = 2;
+	uint32 limit = 2;
+	repeated Task task_set = 3;
 }
 
 service TaskManager {
