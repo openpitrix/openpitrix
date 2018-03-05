@@ -34,11 +34,13 @@ func Serve() {
 	config.LoadConf()
 
 	logger.Infof("Openpitrix %s\n", version.ShortVersion)
-	logger.Infof("App service http://%s:%s\n", constants.AppManagerHost, constants.AppManagerPort)
-	logger.Infof("Runtime service http://%s:%s\n", constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort)
-	logger.Infof("Cluster service http://%s:%s\n", constants.ClusterManagerHost, constants.ClusterManagerPort)
-	logger.Infof("Repo service http://%s:%s\n", constants.RepoManagerHost, constants.RepoManagerPort)
-	logger.Infof("Api service start http://%s:%s\n", constants.ApiGatewayHost, constants.ApiGatewayPort)
+	logger.Infof("App service http://%s:%d\n", constants.AppManagerHost, constants.AppManagerPort)
+	logger.Infof("Runtime env service http://%s:%d\n", constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort)
+	logger.Infof("Cluster service http://%s:%d\n", constants.ClusterManagerHost, constants.ClusterManagerPort)
+	logger.Infof("Repo service http://%s:%d\n", constants.RepoManagerHost, constants.RepoManagerPort)
+	logger.Infof("Job service http://%s:%d\n", constants.JobManagerHost, constants.JobManagerPort)
+	logger.Infof("Task service http://%s:%d\n", constants.TaskManagerHost, constants.TaskManagerPort)
+	logger.Infof("Api service start http://%s:%d\n", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
 	if err := run(); err != nil {
 		logger.Fatalf("%+v", err)
@@ -75,7 +77,7 @@ func run() error {
 		panic("this is a panic")
 	})
 
-	return r.Run(":" + constants.ApiGatewayPort)
+	return r.Run(fmt.Sprintf(":%d", constants.ApiGatewayPort))
 }
 
 func mainHandler(ctx context.Context) http.Handler {
@@ -85,12 +87,22 @@ func mainHandler(ctx context.Context) http.Handler {
 
 	err = pb.RegisterAppManagerHandlerFromEndpoint(
 		ctx, gwmux,
-		fmt.Sprintf("%s:%s", constants.AppManagerHost, constants.AppManagerPort),
+		fmt.Sprintf("%s:%d", constants.AppManagerHost, constants.AppManagerPort),
 		opts,
 	)
 	err = pb.RegisterRuntimeEnvManagerHandlerFromEndpoint(
 		ctx, gwmux,
-		fmt.Sprintf("%s:%s", constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort),
+		fmt.Sprintf("%s:%d", constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort),
+		opts,
+	)
+	err = pb.RegisterJobManagerHandlerFromEndpoint(
+		ctx, gwmux,
+		fmt.Sprintf("%s:%d", constants.JobManagerHost, constants.JobManagerPort),
+		opts,
+	)
+	err = pb.RegisterTaskManagerHandlerFromEndpoint(
+		ctx, gwmux,
+		fmt.Sprintf("%s:%d", constants.TaskManagerHost, constants.TaskManagerPort),
 		opts,
 	)
 	if err != nil {

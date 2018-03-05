@@ -6,7 +6,10 @@ Package pb is a generated protocol buffer package.
 
 It is generated from these files:
 	app.proto
+	job.proto
+	pilot.proto
 	runtime_env.proto
+	task.proto
 
 It has these top-level messages:
 	CreateAppRequest
@@ -18,6 +21,16 @@ It has these top-level messages:
 	App
 	DescribeAppsRequest
 	DescribeAppsResponse
+	CreateJobRequest
+	CreateJobResponse
+	Job
+	DescribeJobsRequest
+	DescribeJobsResponse
+	SendTaskRequest
+	SendTaskResponse
+	GetTaskStatusRequest
+	TaskStatus
+	GetTaskStatusResponse
 	RuntimeEnv
 	CreateRuntimeEnvRequest
 	CreateRuntimeEnvResponse
@@ -40,6 +53,11 @@ It has these top-level messages:
 	AttachCredentialToRuntimeEnvResponse
 	DetachCredentialFromRuntimeEnvRequset
 	DetachCredentialFromRuntimeEnvResponse
+	CreateTaskRequest
+	CreateTaskResponse
+	Task
+	DescribeTasksRequest
+	DescribeTasksResponse
 */
 package pb
 

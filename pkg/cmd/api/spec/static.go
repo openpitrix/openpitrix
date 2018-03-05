@@ -177,6 +177,155 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/jobs": {
+      "get": {
+        "summary": "describe jobs with filter",
+        "operationId": "DescribeJobs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeJobsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cluster_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "app_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "JobManager"
+        ]
+      },
+      "post": {
+        "summary": "create job",
+        "operationId": "CreateJob",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateJobResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateJobRequest"
+            }
+          }
+        ],
+        "tags": [
+          "JobManager"
+        ]
+      }
+    },
+    "/v1/pilots": {
+      "get": {
+        "summary": "get task status",
+        "operationId": "GetTaskStatus",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetTaskStatusResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        ],
+        "tags": [
+          "PilotManager"
+        ]
+      },
+      "post": {
+        "summary": "send task",
+        "operationId": "SendTask",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixSendTaskResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixSendTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "PilotManager"
+        ]
+      }
+    },
     "/v1/credential_runtime_env": {
       "delete": {
         "summary": "detach runtime env",
@@ -536,6 +685,93 @@ var Files = map[string]string{
           "RuntimeEnvManager"
         ]
       }
+    },
+    "/v1/tasks": {
+      "get": {
+        "summary": "describe tasks with filter",
+        "operationId": "DescribeTasks",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeTasksResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "job_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "TaskManager"
+        ]
+      },
+      "post": {
+        "summary": "create task",
+        "operationId": "CreateTask",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateTaskResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateTaskRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TaskManager"
+        ]
+      }
     }
   },
   "definitions": {
@@ -729,6 +965,166 @@ var Files = map[string]string{
         }
       },
       "description": "Wrapper message for ` + "`" + `string` + "`" + `.\n\nThe JSON representation for ` + "`" + `StringValue` + "`" + ` is JSON string."
+    },
+    "openpitrixCreateJobRequest": {
+      "type": "object",
+      "properties": {
+        "_": {
+          "type": "string"
+        },
+        "cluster_id": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "app_version": {
+          "type": "string"
+        },
+        "job_action": {
+          "type": "string"
+        },
+        "directive": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateJobResponse": {
+      "type": "object",
+      "properties": {
+        "job_id": {
+          "type": "string"
+        },
+        "cluster_id": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "app_version": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDescribeJobsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "job_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixJob"
+          }
+        }
+      }
+    },
+    "openpitrixJob": {
+      "type": "object",
+      "properties": {
+        "job_id": {
+          "type": "string"
+        },
+        "cluster_id": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "app_version": {
+          "type": "string"
+        },
+        "job_action": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "error_code": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "directive": {
+          "type": "string"
+        },
+        "executor": {
+          "type": "string"
+        },
+        "task_count": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "protobufUInt32Value": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The uint32 value."
+        }
+      },
+      "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
+    },
+    "openpitrixGetTaskStatusResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "task_status_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixTaskStatus"
+          }
+        }
+      }
+    },
+    "openpitrixSendTaskRequest": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "task_action": {
+          "type": "string"
+        },
+        "directive": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixSendTaskResponse": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixTaskStatus": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "task_status": {
+          "type": "string"
+        }
+      }
     },
     "openpitrixAttachCredentialToRuntimeEnvRequset": {
       "type": "object",
@@ -1014,16 +1410,91 @@ var Files = map[string]string{
         }
       }
     },
-    "protobufUInt32Value": {
+    "openpitrixCreateTaskRequest": {
       "type": "object",
       "properties": {
-        "value": {
-          "type": "integer",
-          "format": "int64",
-          "description": "The uint32 value."
+        "_": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        },
+        "task_action": {
+          "type": "string"
+        },
+        "directive": {
+          "type": "string"
         }
-      },
-      "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
+      }
+    },
+    "openpitrixCreateTaskResponse": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDescribeTasksResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "task_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixTask"
+          }
+        }
+      }
+    },
+    "openpitrixTask": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        },
+        "task_action": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "error_code": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "directive": {
+          "type": "string"
+        },
+        "executor": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
     }
   }
 }

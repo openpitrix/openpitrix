@@ -25,7 +25,7 @@ import (
 
 type GrpcServer struct {
 	ServiceName string
-	Port        string
+	Port        int
 	MysqlConfig config.MysqlConfig
 }
 
@@ -43,8 +43,8 @@ func (g *GrpcServer) OpenDatabase() *db.Database {
 func (g *GrpcServer) Serve(callback RegisterCallback) {
 	dbSession := g.OpenDatabase()
 	logger.Infof("Openpitrix %s\n", version.ShortVersion)
-	logger.Infof("Service [%s] start listen at port [%s]\n", g.ServiceName, g.Port)
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", g.Port))
+	logger.Infof("Service [%s] start listen at port [%d]\n", g.ServiceName, g.Port)
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", g.Port))
 	if err != nil {
 		err = errors.WithStack(err)
 		logger.Fatalf("failed to listen: %+v", err)
