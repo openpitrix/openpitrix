@@ -228,6 +228,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -235,6 +236,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -726,6 +728,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -733,6 +736,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1006,10 +1010,6 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "limit": {
           "type": "integer",
           "format": "int64"
         },
@@ -1442,10 +1442,6 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "limit": {
           "type": "integer",
           "format": "int64"
         },

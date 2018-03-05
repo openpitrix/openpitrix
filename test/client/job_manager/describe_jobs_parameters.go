@@ -71,9 +71,15 @@ type DescribeJobsParams struct {
 	ClusterID *string
 	/*JobID*/
 	JobID []string
-	/*Limit*/
+	/*Limit
+	  default is 20, max value is 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  default is 0.
+
+	*/
 	Offset *int64
 	/*Status*/
 	Status []string

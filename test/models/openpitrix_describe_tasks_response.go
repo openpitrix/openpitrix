@@ -16,9 +16,6 @@ import (
 // swagger:model openpitrixDescribeTasksResponse
 type OpenpitrixDescribeTasksResponse struct {
 
-	// limit
-	Limit int64 `json:"limit,omitempty"`
-
 	// task set
 	TaskSet OpenpitrixDescribeTasksResponseTaskSet `json:"task_set"`
 

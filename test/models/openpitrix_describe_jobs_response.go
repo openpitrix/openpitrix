@@ -19,9 +19,6 @@ type OpenpitrixDescribeJobsResponse struct {
 	// job set
 	JobSet OpenpitrixDescribeJobsResponseJobSet `json:"job_set"`
 
-	// limit
-	Limit int64 `json:"limit,omitempty"`
-
 	// total count
 	TotalCount int64 `json:"total_count,omitempty"`
 }

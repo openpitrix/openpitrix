@@ -219,6 +219,7 @@
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -226,6 +227,7 @@
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -717,6 +719,7 @@
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -724,6 +727,7 @@
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -997,10 +1001,6 @@
       "type": "object",
       "properties": {
         "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "limit": {
           "type": "integer",
           "format": "int64"
         },
@@ -1433,10 +1433,6 @@
       "type": "object",
       "properties": {
         "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "limit": {
           "type": "integer",
           "format": "int64"
         },
