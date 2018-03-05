@@ -18,3 +18,7 @@ func FindString(array []string, str string) int {
 	}
 	return -1
 }
+
+func StringIn(str string, array []string) bool {
+	return FindString(array, str) > -1
+}
