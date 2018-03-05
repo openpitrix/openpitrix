@@ -56,3 +56,10 @@ services:
     container_name: "openpitrix-db-ctrl"
 
 
+  openpitrix-repo-manager:
+    build: .
+    image: "openpitrix"
+    command: "repo-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+    container_name: "openpitrix-repo-manager"

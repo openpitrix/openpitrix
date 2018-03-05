@@ -31,7 +31,7 @@ type CreateTaskRequest struct {
 func (m *CreateTaskRequest) Reset()                    { *m = CreateTaskRequest{} }
 func (m *CreateTaskRequest) String() string            { return proto.CompactTextString(m) }
 func (*CreateTaskRequest) ProtoMessage()               {}
-func (*CreateTaskRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (*CreateTaskRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
 
 func (m *CreateTaskRequest) GetX() *google_protobuf.StringValue {
 	if m != nil {
@@ -69,7 +69,7 @@ type CreateTaskResponse struct {
 func (m *CreateTaskResponse) Reset()                    { *m = CreateTaskResponse{} }
 func (m *CreateTaskResponse) String() string            { return proto.CompactTextString(m) }
 func (*CreateTaskResponse) ProtoMessage()               {}
-func (*CreateTaskResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
+func (*CreateTaskResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
 
 func (m *CreateTaskResponse) GetTaskId() *google_protobuf.StringValue {
 	if m != nil {
@@ -103,7 +103,7 @@ type Task struct {
 func (m *Task) Reset()                    { *m = Task{} }
 func (m *Task) String() string            { return proto.CompactTextString(m) }
 func (*Task) ProtoMessage()               {}
-func (*Task) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
+func (*Task) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
 
 func (m *Task) GetTaskId() *google_protobuf.StringValue {
 	if m != nil {
@@ -202,7 +202,7 @@ type DescribeTasksRequest struct {
 func (m *DescribeTasksRequest) Reset()                    { *m = DescribeTasksRequest{} }
 func (m *DescribeTasksRequest) String() string            { return proto.CompactTextString(m) }
 func (*DescribeTasksRequest) ProtoMessage()               {}
-func (*DescribeTasksRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
+func (*DescribeTasksRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{3} }
 
 func (m *DescribeTasksRequest) GetTaskId() []string {
 	if m != nil {
@@ -247,7 +247,7 @@ type DescribeTasksResponse struct {
 func (m *DescribeTasksResponse) Reset()                    { *m = DescribeTasksResponse{} }
 func (m *DescribeTasksResponse) String() string            { return proto.CompactTextString(m) }
 func (*DescribeTasksResponse) ProtoMessage()               {}
-func (*DescribeTasksResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
+func (*DescribeTasksResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{4} }
 
 func (m *DescribeTasksResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -376,9 +376,9 @@ var _TaskManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "task.proto",
 }
 
-func init() { proto.RegisterFile("task.proto", fileDescriptor4) }
+func init() { proto.RegisterFile("task.proto", fileDescriptor5) }
 
-var fileDescriptor4 = []byte{
+var fileDescriptor5 = []byte{
 	// 718 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x95, 0xcf, 0x4f, 0x1b, 0x47,
 	0x14, 0xc7, 0xbb, 0x06, 0x1b, 0xfc, 0xb6, 0xae, 0xe8, 0x08, 0xda, 0x95, 0x45, 0xc1, 0x5d, 0xf5,

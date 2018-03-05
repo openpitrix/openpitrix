@@ -105,6 +105,11 @@ func mainHandler(ctx context.Context) http.Handler {
 		fmt.Sprintf("%s:%d", constants.TaskManagerHost, constants.TaskManagerPort),
 		opts,
 	)
+	err = pb.RegisterRepoManagerHandlerFromEndpoint(
+		ctx, gwmux,
+		fmt.Sprintf("%s:%d", constants.RepoManagerHost, constants.RepoManagerPort),
+		opts,
+	)
 	if err != nil {
 		err = errors.WithStack(err)
 		logger.Fatalf("%+v", err)

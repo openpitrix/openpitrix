@@ -8,6 +8,7 @@ It is generated from these files:
 	app.proto
 	job.proto
 	pilot.proto
+	repo.proto
 	runtime_env.proto
 	task.proto
 
@@ -31,6 +32,15 @@ It has these top-level messages:
 	GetTaskStatusRequest
 	TaskStatus
 	GetTaskStatusResponse
+	CreateRepoRequest
+	CreateRepoResponse
+	ModifyRepoRequest
+	ModifyRepoResponse
+	DeleteRepoRequest
+	DeleteRepoResponse
+	Repo
+	DescribeReposRequest
+	DescribeReposResponse
 	RuntimeEnv
 	CreateRuntimeEnvRequest
 	CreateRuntimeEnvResponse

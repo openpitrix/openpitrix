@@ -317,6 +317,168 @@
         ]
       }
     },
+    "/v1/repos": {
+      "get": {
+        "summary": "describe repos with filter",
+        "operationId": "DescribeRepos",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeReposResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "repo_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "visibility",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "label",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "selector",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "RepoManager"
+        ]
+      },
+      "delete": {
+        "summary": "delete repo",
+        "operationId": "DeleteRepo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRepoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRepoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RepoManager"
+        ]
+      },
+      "post": {
+        "summary": "create repo",
+        "operationId": "CreateRepo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRepoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRepoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RepoManager"
+        ]
+      },
+      "patch": {
+        "summary": "modify repo",
+        "operationId": "ModifyRepo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRepoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRepoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RepoManager"
+        ]
+      }
+    },
     "/v1/credential_runtime_env": {
       "delete": {
         "summary": "detach runtime env",
@@ -1114,6 +1276,136 @@
         },
         "task_status": {
           "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateRepoRequest": {
+      "type": "object",
+      "properties": {
+        "_": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "credential": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateRepoResponse": {
+      "type": "object",
+      "properties": {
+        "repo": {
+          "$ref": "#/definitions/openpitrixRepo"
+        }
+      }
+    },
+    "openpitrixDeleteRepoRequest": {
+      "type": "object",
+      "properties": {
+        "repo_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteRepoResponse": {
+      "type": "object",
+      "properties": {
+        "repo": {
+          "$ref": "#/definitions/openpitrixRepo"
+        }
+      }
+    },
+    "openpitrixDescribeReposResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "repo_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRepo"
+          }
+        }
+      }
+    },
+    "openpitrixModifyRepoRequest": {
+      "type": "object",
+      "properties": {
+        "repo_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "credential": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyRepoResponse": {
+      "type": "object",
+      "properties": {
+        "repo": {
+          "$ref": "#/definitions/openpitrixRepo"
+        }
+      }
+    },
+    "openpitrixRepo": {
+      "type": "object",
+      "properties": {
+        "repo_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "credential": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
