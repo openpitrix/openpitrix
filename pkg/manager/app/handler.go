@@ -46,7 +46,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 		From(models.AppTableName).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.AppColumns...))
+		Where(manager.BuildFilterConditions(req, models.AppTableName))
 	_, err := query.Load(&apps)
 	if err != nil {
 		// TODO: err_code should be implementation

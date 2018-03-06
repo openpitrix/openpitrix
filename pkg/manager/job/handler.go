@@ -66,7 +66,7 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 		From(models.JobTableName).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.JobColumns...))
+		Where(manager.BuildFilterConditions(req, models.JobTableName))
 	query = query.Where(db.Eq("owner", s.UserId))
 
 	_, err := query.Load(&jobs)

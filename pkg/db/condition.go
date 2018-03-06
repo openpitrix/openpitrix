@@ -5,8 +5,26 @@
 package db
 
 import (
+	"strings"
+
 	"github.com/gocraft/dbr"
 )
+
+const (
+	placeholder = "?"
+)
+
+// Copy From vendor/github.com/gocraft/dbr/condition.go:36
+func buildCmp(d dbr.Dialect, buf dbr.Buffer, pred string, column string, value interface{}) error {
+	buf.WriteString(d.QuoteIdent(column))
+	buf.WriteString(" ")
+	buf.WriteString(pred)
+	buf.WriteString(" ")
+	buf.WriteString(placeholder)
+
+	buf.WriteValue(value)
+	return nil
+}
 
 // And creates AND from a list of conditions
 func And(cond ...dbr.Builder) dbr.Builder {
@@ -16,6 +34,23 @@ func And(cond ...dbr.Builder) dbr.Builder {
 // Or creates OR from a list of conditions
 func Or(cond ...dbr.Builder) dbr.Builder {
 	return dbr.Or(cond...)
+}
+
+func escape(str string) string {
+	return strings.Map(func(r rune) rune {
+		switch r {
+		case '%', '\'', '^', '[', ']', '!', '_':
+			return ' '
+		}
+		return r
+	}, str)
+}
+
+func Like(column string, value string) dbr.Builder {
+	value = "%" + strings.TrimSpace(escape(value)) + "%"
+	return dbr.BuildFunc(func(d dbr.Dialect, buf dbr.Buffer) error {
+		return buildCmp(d, buf, "LIKE", column, value)
+	})
 }
 
 // Eq is `=`.
