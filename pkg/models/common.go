@@ -10,11 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/utils"
 )
 
-var SearchWordColumnTable = []string{
-	AppTableName,
-}
-
-// columns that can be search through sql 'like' operator
+// columns that can be search through sql '=' operator
 var IndexedColumns = map[string][]string{
 	AppTableName: {
 		"app_id", "name", "repo_id", "description", "status",
@@ -27,6 +23,10 @@ var IndexedColumns = map[string][]string{
 	TaskTableName: {
 		"job_id", "task_id", "status",
 	},
+}
+
+var SearchWordColumnTable = []string{
+	AppTableName,
 }
 
 // columns that can be search through sql 'like' operator
