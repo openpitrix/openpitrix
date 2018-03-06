@@ -62,7 +62,7 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		From(models.TaskTableName).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.TaskColumns...))
+		Where(manager.BuildFilterConditions(req, models.TaskTableName))
 	query = query.Where(db.Eq("owner", s.UserId))
 
 	_, err := query.Load(&tasks)

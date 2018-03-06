@@ -94,11 +94,14 @@ func (b *SelectQuery) LoadOne(value interface{}) error {
 
 func (b *SelectQuery) Count() (count uint32, err error) {
 	// cache SelectStmt
-	selectStmt := b.SelectBuilder.SelectStmt
-	b.SelectBuilder.SelectStmt = dbr.Select("count(*)").From(selectStmt.Table)
-	err = b.SelectBuilder.LoadOne(&count)
+	selectStmt := b.SelectStmt
+	b.SelectStmt = dbr.Select("count(*)").From(selectStmt.Table)
+	for _, cond := range selectStmt.WhereCond {
+		b.Where(cond)
+	}
+	err = b.LoadOne(&count)
 	// fallback SelectStmt
-	b.SelectBuilder.SelectStmt = selectStmt
+	b.SelectStmt = selectStmt
 	return
 }
 
