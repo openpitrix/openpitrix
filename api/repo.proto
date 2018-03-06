@@ -1,0 +1,131 @@
+// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+	info: {
+		title: "OpenPitrix Project";
+		version: "0.0.1";
+		contact: {
+			name: "OpenPitrix Project";
+			url: "https://openpitrix.io";
+		};
+	};
+	schemes: HTTP;
+	consumes: "application/json";
+	produces: "application/json";
+};
+
+message CreateRepoRequest {
+	google.protobuf.StringValue _ = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue url = 4;
+	google.protobuf.StringValue credential = 5;
+	google.protobuf.StringValue visibility = 6;
+}
+
+message CreateRepoResponse {
+	Repo repo = 1;
+}
+
+message ModifyRepoRequest {
+	google.protobuf.StringValue repo_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue url = 4;
+	google.protobuf.StringValue credential = 5;
+	google.protobuf.StringValue visibility = 6;
+}
+
+message ModifyRepoResponse {
+	Repo repo = 1;
+}
+
+message DeleteRepoRequest {
+	google.protobuf.StringValue repo_id = 1;
+}
+
+message DeleteRepoResponse {
+	Repo repo = 1;
+}
+
+message Repo {
+	google.protobuf.StringValue repo_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue url = 4;
+	google.protobuf.StringValue credential = 5;
+	google.protobuf.StringValue visibility = 6;
+	google.protobuf.StringValue owner = 7;
+
+	google.protobuf.StringValue status = 8;
+	google.protobuf.Timestamp create_time = 9;
+	google.protobuf.Timestamp status_time = 10;
+}
+
+message DescribeReposRequest {
+	repeated string repo_id = 1; // NOTE: grpc gateway cannot handle repeated StringValue
+	repeated string name = 2;
+	repeated string visibility = 3;
+	repeated string status = 4;
+	repeated string label = 5;
+	repeated string selector = 6;
+	uint32 limit = 7; // NOTE: uint64 marshal to json will convert to string
+	uint32 offset = 8;
+}
+
+message DescribeReposResponse {
+	uint32 total_count = 1;
+	repeated Repo repo_set = 2;
+}
+
+service RepoManager {
+	rpc CreateRepo (CreateRepoRequest) returns (CreateRepoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create repo"
+		};
+		option (google.api.http) = {
+			post: "/v1/repos"
+			body: "*"
+		};
+	}
+	rpc DescribeRepos (DescribeReposRequest) returns (DescribeReposResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe repos with filter"
+		};
+		option (google.api.http) = {
+			get: "/v1/repos"
+		};
+	}
+	rpc ModifyRepo (ModifyRepoRequest) returns (ModifyRepoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify repo"
+		};
+		option (google.api.http) = {
+			patch: "/v1/repos"
+			body: "*"
+		};
+	}
+	rpc DeleteRepo (DeleteRepoRequest) returns (DeleteRepoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete repo"
+		};
+		option (google.api.http) = {
+			delete: "/v1/repos"
+			body: "*"
+		};
+	}
+}
+
