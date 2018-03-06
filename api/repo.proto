@@ -78,9 +78,12 @@ message Repo {
 message DescribeReposRequest {
 	repeated string repo_id = 1; // NOTE: grpc gateway cannot handle repeated StringValue
 	repeated string name = 2;
-	repeated string status = 3;
-	uint32 limit = 4; // NOTE: uint64 marshal to json will convert to string
-	uint32 offset = 5;
+	repeated string visibility = 3;
+	repeated string status = 4;
+	repeated string label = 5;
+	repeated string selector = 6;
+	uint32 limit = 7; // NOTE: uint64 marshal to json will convert to string
+	uint32 offset = 8;
 }
 
 message DescribeReposResponse {
