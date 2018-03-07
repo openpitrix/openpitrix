@@ -42,21 +42,7 @@ services:
     command: "runtime-env-manager"
     links:
       - openpitrix-db:openpitrix-db
-      - openpitrix-etcd:openpitrix-etcd
-    depends_on:
-      - openpitrix-db
-      - openpitrix-etcd
     container_name: "openpitrix-runtime-env-manager"
-    environment:
-      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
-
-  openpitrix-repo-manager:
-    build: .
-    image: "openpitrix"
-    command: "repo-manager"
-    links:
-      - openpitrix-db:openpitrix-db
-      - openpitrix-etcd:openpitrix-etcd
     depends_on:
       - openpitrix-db
       - openpitrix-etcd
@@ -89,17 +75,11 @@ services:
       - openpitrix-app-manager:openpitrix-app-manager
       - openpitrix-runtime-env-manager:openpitrix-runtime-env-manager
     container_name: "openpitrix-api-gateway"
-
-  openpitrix-db-ctrl:
+    
+  openpitrix-repo-manager:
     build: .
     image: "openpitrix"
-    command: "db-ctrl -s /schema"
-    restart: on-failure
-    ports:
-     - "9105:9105"
+    command: "repo-manager"
     links:
       - openpitrix-db:openpitrix-db
-    depends_on:
-      - openpitrix-db
-    container_name: "openpitrix-db-ctrl"
-
+    container_name: "openpitrix-repo-manager"
