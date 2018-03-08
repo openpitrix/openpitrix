@@ -16,6 +16,11 @@ services:
     ports:
      - "13306:3306" # only for debug
     container_name: "openpitrix-db"
+  openpitrix-etcd:
+    image: "appcelerator/etcd"
+    volumes:
+      - ${DATA_PATH}/etcd:/data
+    container_name: "openpitrix-etcd"
 
   openpitrix-app-manager:
     build: .
@@ -23,15 +28,41 @@ services:
     command: "app-manager"
     links:
       - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-db
+      - openpitrix-etcd
     container_name: "openpitrix-app-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
 
   openpitrix-runtime-env-manager:
-      build: .
-      image: "openpitrix"
-      command: "runtime-env-manager"
-      links:
-        - openpitrix-db:openpitrix-db
-      container_name: "openpitrix-runtime-env-manager"
+    build: .
+    image: "openpitrix"
+    command: "runtime-env-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-db
+      - openpitrix-etcd
+    container_name: "openpitrix-runtime-env-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+
+  openpitrix-repo-manager:
+    build: .
+    image: "openpitrix"
+    command: "repo-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-db
+      - openpitrix-etcd
+    container_name: "openpitrix-repo-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
 
   openpitrix-api-gateway:
     build: .
@@ -53,13 +84,7 @@ services:
      - "9105:9105"
     links:
       - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
     container_name: "openpitrix-db-ctrl"
 
-
-  openpitrix-repo-manager:
-    build: .
-    image: "openpitrix"
-    command: "repo-manager"
-    links:
-      - openpitrix-db:openpitrix-db
-    container_name: "openpitrix-repo-manager"

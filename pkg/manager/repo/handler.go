@@ -22,7 +22,7 @@ import (
 
 func (p *Server) getRepo(repoId string) (*models.Repo, error) {
 	repo := &models.Repo{}
-	err := p.db.
+	err := p.Db.
 		Select(models.RepoColumns...).
 		From(models.RepoTableName).
 		Where(db.Eq("repo_id", repoId)).
@@ -43,7 +43,7 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 
 	logger.Debugf("Filter condition is: %+v", manager.BuildFilterConditions(req, models.RepoTableName))
 
-	query := p.db.
+	query := p.Db.
 		Select(models.RepoColumns...).
 		From(models.RepoTableName).
 		Offset(offset).
@@ -77,7 +77,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		req.GetVisibility().GetValue(),
 		s.UserId)
 
-	_, err := p.db.
+	_, err := p.Db.
 		InsertInto(models.RepoTableName).
 		Columns(models.RepoColumns...).
 		Record(newRepo).
@@ -103,7 +103,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	attributes := manager.BuildUpdateAttributes(req,
 		"repo_id", "name", "description", "url",
 		"credential", "visibility")
-	_, err = p.db.
+	_, err = p.Db.
 		Update(models.RepoTableName).
 		SetMap(attributes).
 		Where(db.Eq("repo_id", repoId)).
@@ -130,7 +130,7 @@ func (p *Server) DeleteRepo(ctx context.Context, req *pb.DeleteRepoRequest) (*pb
 		return nil, status.Errorf(codes.Internal, "Failed to get repo [%s]", repoId)
 	}
 
-	_, err = p.db.
+	_, err = p.Db.
 		Update(models.RepoTableName).
 		Set("status", constants.StatusDeleted).
 		Where(db.Eq("repo_id", repoId)).

@@ -18,7 +18,7 @@ import (
 const senderKey = "sender"
 
 type Info struct {
-	UserId string `json="user_id"`
+	UserId string `json:"user_id"`
 }
 
 func GetSenderFromContext(ctx context.Context) *Info {

@@ -7,24 +7,21 @@ package task
 import (
 	"google.golang.org/grpc"
 
+	"openpitrix.io/openpitrix/pkg/pi"
+
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
 type Server struct {
-	db *db.Database
+	*pi.Pi
 }
 
 func Serve(cfg *config.Config) {
-	m := manager.GrpcServer{
-		ServiceName: "task",
-		Port:        constants.TaskManagerPort,
-		MysqlConfig: cfg.Mysql,
-	}
-	m.Serve(func(server *grpc.Server, db *db.Database) {
-		pb.RegisterTaskManagerServer(server, &Server{db})
+	s := Server{pi.NewPi(cfg)}
+	manager.NewGrpcServer("task", constants.TaskManagerPort).Serve(func(server *grpc.Server) {
+		pb.RegisterTaskManagerServer(server, &s)
 	})
 }

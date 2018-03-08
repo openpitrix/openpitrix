@@ -5,69 +5,114 @@
 package config
 
 import (
-	"flag"
+	"context"
 	"fmt"
-	"os"
 
-	"github.com/koding/multiconfig"
+	"github.com/coreos/etcd/mvcc/mvccpb"
+	"gopkg.in/yaml.v2"
 
+	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
-type Config struct {
-	Log   LogConfig
-	Mysql MysqlConfig
+type GlobalConfig struct {
+	Repo    RepoServiceConfig    `yaml:"repo"`
+	Cluster ClusterServiceConfig `yaml:"cluster"`
 }
 
-type LogConfig struct {
-	Level string `default:"info"` // debug, info, warn, error, fatal
-}
-type MysqlConfig struct {
-	Host     string `default:"openpitrix-db"`
-	Port     string `default:"3306"`
-	User     string `default:"root"`
-	Password string `default:"password"`
-	Database string `default:"openpitrix"`
+type RepoServiceConfig struct {
+	AutoIndex bool `yaml:"auto-index"`
 }
 
-func (m *MysqlConfig) GetUrl() string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", m.User, m.Password, m.Host, m.Port, m.Database)
+type ClusterServiceConfig struct {
+	Plugins []string `yaml:"plugins"`
 }
 
-func PrintUsage() {
-	fmt.Fprintf(os.Stdout, "Usage of %s:\n", os.Args[0])
-	flag.PrintDefaults()
-	fmt.Fprint(os.Stdout, "\nSupported environment variables:\n")
-	e := newLoader("openpitrix")
-	e.PrintEnvs(new(Config))
-	fmt.Println("")
+const InitialGlobalConfig = `
+repo:
+  auto-index: true
+cluster:
+  plugins:
+    - qingcloud
+    - kubernetes
+`
+
+const (
+	EtcdPrefix      = "openpitrix/"
+	GlobalConfigKey = "global_config"
+	DlockKey        = "dlock_" + GlobalConfigKey
+)
+
+type Watcher chan *GlobalConfig
+
+func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
+	ctx := context.Background()
+	var globalConfig GlobalConfig
+	err := etcd.Dlock(ctx, DlockKey, func() error {
+		// get value
+		get, err := etcd.Get(ctx, GlobalConfigKey)
+		if err != nil {
+			return err
+		}
+		// parse value
+		if get.Count == 0 {
+			logger.Debugf("Cannot get global config, put the initial string. [%s]", InitialGlobalConfig)
+			globalConfig = UnmarshalInitConfig()
+			_, err = etcd.Put(ctx, GlobalConfigKey, InitialGlobalConfig)
+			if err != nil {
+				return err
+			}
+		} else {
+			err = yaml.Unmarshal(get.Kvs[0].Value, &globalConfig)
+			if err != nil {
+				return err
+			}
+		}
+		logger.Debugf("Got global config [%+v]", globalConfig)
+		// send it back
+		watcher <- &globalConfig
+		return nil
+	})
+
+	// watch
+	go func() {
+		logger.Debugf("Start watch global config")
+		watchRes := etcd.Watch(ctx, GlobalConfigKey)
+		for res := range watchRes {
+			for _, ev := range res.Events {
+				if ev.Type == mvccpb.PUT {
+					logger.Debugf("Got global config from etcd")
+					err = yaml.Unmarshal(ev.Kv.Value, &globalConfig)
+					if err != nil {
+						logger.Errorf("Watch global config from etcd found error: %+v", err)
+					} else {
+						watcher <- &globalConfig
+					}
+				}
+			}
+		}
+	}()
+	return err
 }
 
-func GetFlagSet() *flag.FlagSet {
-	flag.CommandLine.Usage = PrintUsage
-	return flag.CommandLine
-}
-
-func ParseFlag() {
-	GetFlagSet().Parse(os.Args[1:])
-}
-
-// TODO: load config from etcd
-func LoadConf() *Config {
-	ParseFlag()
-
-	config := new(Config)
-	m := &multiconfig.DefaultLoader{}
-	m.Loader = multiconfig.MultiLoader(newLoader("openpitrix"))
-	m.Validator = multiconfig.MultiValidator(
-		&multiconfig.RequiredValidator{},
-	)
-	err := m.Load(config)
+func UnmarshalInitConfig() GlobalConfig {
+	var globalConfig GlobalConfig
+	err := yaml.Unmarshal([]byte(InitialGlobalConfig), &globalConfig)
 	if err != nil {
-		logger.Panicf("Failed to load config: %+v", err)
+		fmt.Print("InitialGlobalConfig is invalid, please fix it")
 		panic(err)
 	}
-	logger.SetLevelByString(config.Log.Level)
-	logger.Debugf("LoadConf: %+v", config)
-	return config
+	return globalConfig
+}
+
+func MarshalGlobalConfig(conf GlobalConfig) string {
+	out, err := yaml.Marshal(conf)
+	if err != nil {
+		panic(err)
+	}
+	return string(out)
+}
+
+func init() {
+	UnmarshalInitConfig()
 }

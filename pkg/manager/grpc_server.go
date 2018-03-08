@@ -17,8 +17,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/version"
 )
@@ -26,22 +24,15 @@ import (
 type GrpcServer struct {
 	ServiceName string
 	Port        int
-	MysqlConfig config.MysqlConfig
 }
 
-type RegisterCallback func(*grpc.Server, *db.Database)
+type RegisterCallback func(*grpc.Server)
 
-func (g *GrpcServer) OpenDatabase() *db.Database {
-	dbSession, err := db.OpenDatabase(g.MysqlConfig)
-	if err != nil {
-		err = errors.WithStack(err)
-		logger.Fatalf("failed to connect mysql: %+v", err)
-	}
-	return dbSession
+func NewGrpcServer(serviceName string, port int) *GrpcServer {
+	return &GrpcServer{serviceName, port}
 }
 
 func (g *GrpcServer) Serve(callback RegisterCallback) {
-	dbSession := g.OpenDatabase()
 	logger.Infof("Openpitrix %s\n", version.ShortVersion)
 	logger.Infof("Service [%s] start listen at port [%d]\n", g.ServiceName, g.Port)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", g.Port))
@@ -72,7 +63,7 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 		),
 	)
 
-	callback(grpcServer, dbSession)
+	callback(grpcServer)
 
 	if err = grpcServer.Serve(lis); err != nil {
 		err = errors.WithStack(err)

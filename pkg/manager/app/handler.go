@@ -22,7 +22,7 @@ import (
 
 func (p *Server) getApp(appId string) (*models.App, error) {
 	app := &models.App{}
-	err := p.db.
+	err := p.Db.
 		Select(models.AppColumns...).
 		From(models.AppTableName).
 		Where(db.Eq("app_id", appId)).
@@ -41,7 +41,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
-	query := p.db.
+	query := p.Db.
 		Select(models.AppColumns...).
 		From(models.AppTableName).
 		Offset(offset).
@@ -73,7 +73,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		req.GetDescription().GetValue(),
 		s.UserId)
 
-	_, err := p.db.
+	_, err := p.Db.
 		InsertInto(models.AppTableName).
 		Columns(models.AppColumns...).
 		Record(newApp).
@@ -100,7 +100,7 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		"name", "repo_id", "owner", "chart_name",
 		"description", "home", "icon", "screenshots",
 		"maintainers", "sources", "readme")
-	_, err = p.db.
+	_, err = p.Db.
 		Update(models.AppTableName).
 		SetMap(attributes).
 		Where(db.Eq("app_id", appId)).
@@ -127,7 +127,7 @@ func (p *Server) DeleteApp(ctx context.Context, req *pb.DeleteAppRequest) (*pb.D
 		return nil, status.Errorf(codes.Internal, "Failed to get app [%s]", appId)
 	}
 
-	_, err = p.db.
+	_, err = p.Db.
 		Update(models.AppTableName).
 		Set("status", constants.StatusDeleted).
 		Where(db.Eq("app_id", appId)).
