@@ -31,7 +31,7 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 		s.UserId,
 	)
 
-	_, err := p.db.
+	_, err := p.Db.
 		InsertInto(models.TaskTableName).
 		Columns(models.TaskColumns...).
 		Record(newTask).
@@ -57,7 +57,7 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
-	query := p.db.
+	query := p.Db.
 		Select(models.TaskColumns...).
 		From(models.TaskTableName).
 		Offset(offset).

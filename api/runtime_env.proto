@@ -16,10 +16,10 @@ import "protoc-gen-swagger/options/annotations.proto";
 
 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	info: {
-		title: "OpenPireix Project";
+		title: "OpenPitrix Project";
 		version: "0.0.1";
 		contact: {
-			name: "OpenPireix Project";
+			name: "OpenPitrix Project";
 			url: "https://openpitrix.io";
 		};
 	};

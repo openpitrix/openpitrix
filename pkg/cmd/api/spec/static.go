@@ -10,10 +10,10 @@ var Files = map[string]string{
 	"api.swagger.json": `{
   "swagger": "2.0",
   "info": {
-    "title": "OpenPireix Project",
+    "title": "OpenPitrix Project",
     "version": "0.0.1",
     "contact": {
-      "name": "OpenPireix Project",
+      "name": "OpenPitrix Project",
       "url": "https://openpitrix.io"
     }
   },

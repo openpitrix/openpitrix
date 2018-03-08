@@ -9,22 +9,18 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 )
 
 type Server struct {
-	db *db.Database
+	*pi.Pi
 }
 
 func Serve(cfg *config.Config) {
-	m := manager.GrpcServer{
-		ServiceName: "job",
-		Port:        constants.JobManagerPort,
-		MysqlConfig: cfg.Mysql,
-	}
-	m.Serve(func(server *grpc.Server, db *db.Database) {
-		pb.RegisterJobManagerServer(server, &Server{db})
+	s := Server{pi.NewPi(cfg)}
+	manager.NewGrpcServer("job", constants.JobManagerPort).Serve(func(server *grpc.Server) {
+		pb.RegisterJobManagerServer(server, &s)
 	})
 }
