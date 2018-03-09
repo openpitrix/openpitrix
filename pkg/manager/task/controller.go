@@ -6,6 +6,7 @@ package task
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -20,23 +21,25 @@ import (
 )
 
 type Controller struct {
+	*pi.Pi
 	runningTasks chan string
-	pi           *pi.Pi
+	runningCount uint32
 	hostname     string
 	queue        *etcd.Queue
 }
 
 func NewController(pi *pi.Pi, hostname string) *Controller {
 	return &Controller{
-		runningTasks: make(chan string, constants.TaskLength),
-		pi:           pi,
+		Pi:           pi,
+		runningTasks: make(chan string),
+		runningCount: 0,
 		hostname:     hostname,
 		queue:        pi.Etcd.NewQueue("task"),
 	}
 }
 
 func (c *Controller) updateTaskAttributes(taskId string, attributes map[string]interface{}) error {
-	_, err := c.pi.Db.
+	_, err := c.Db.
 		Update(models.TaskTableName).
 		SetMap(attributes).
 		Where(db.Eq("task_id", taskId)).
@@ -47,8 +50,27 @@ func (c *Controller) updateTaskAttributes(taskId string, attributes map[string]i
 	return err
 }
 
+var mutex sync.Mutex
+
+func (c *Controller) GetTaskLength() uint32 {
+	// TODO: from global config
+	return constants.TaskLength
+}
+
+func (c *Controller) IsRunningExceed() bool {
+	mutex.Lock()
+	defer mutex.Unlock()
+	count := c.runningCount
+	return count > c.GetTaskLength()
+}
+
 func (c *Controller) ExtractTasks() {
 	for {
+		if c.IsRunningExceed() {
+			logger.Errorf("Sleep 10s, running task count exceed [%d/%d]", c.runningCount, c.GetTaskLength())
+			time.Sleep(10 * time.Second)
+			continue
+		}
 		taskId, err := c.queue.Dequeue()
 		if err != nil {
 			logger.Errorf("Failed to dequeue task from etcd queue: %+v", err)
@@ -60,7 +82,9 @@ func (c *Controller) ExtractTasks() {
 	}
 }
 
-func (c *Controller) HandleTask(taskId string) error {
+func (c *Controller) HandleTask(taskId string, cb func()) error {
+	defer cb()
+	// TODO: get task from db
 	task := &models.Task{
 		TaskId: taskId,
 		Status: constants.StatusWorking,
@@ -117,13 +141,16 @@ func (c *Controller) HandleTask(taskId string) error {
 }
 
 func (c *Controller) HandleTasks() {
-	for {
-		taskId, ok := <-c.runningTasks
-		if !ok {
-			logger.Errorf("Channel controller runningTasks is closed")
-			return
-		}
-		go c.HandleTask(taskId)
+	for taskId := range c.runningTasks {
+		mutex.Lock()
+		c.runningCount++
+		mutex.Unlock()
+
+		go c.HandleTask(taskId, func() {
+			mutex.Lock()
+			c.runningCount--
+			mutex.Unlock()
+		})
 	}
 }
 

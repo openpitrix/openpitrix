@@ -18,7 +18,7 @@ import (
 )
 
 type Server struct {
-	pi         *pi.Pi
+	*pi.Pi
 	controller *Controller
 }
 
@@ -30,8 +30,8 @@ func Serve(cfg *config.Config) {
 	}
 
 	p := pi.NewPi(cfg)
-	s := Server{pi: p}
-	taskController := NewController(s.pi, hostname)
+	taskController := NewController(p, hostname)
+	s := Server{Pi: p, controller: taskController}
 	go taskController.Serve()
 
 	manager.NewGrpcServer("task", constants.TaskManagerPort).Serve(func(server *grpc.Server) {
