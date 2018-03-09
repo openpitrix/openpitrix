@@ -47,19 +47,20 @@ func (c *Controller) updateTaskAttributes(taskId string, attributes map[string]i
 	return err
 }
 
-func (c *Controller) ExtractTask() {
-	taskId, err := c.queue.Dequeue()
-	if err != nil {
-		logger.Errorf("Failed to dequeue task from etcd: %+v", err)
-		time.Sleep(3 * time.Second)
-		return
+func (c *Controller) ExtractTasks() {
+	for {
+		taskId, err := c.queue.Dequeue()
+		if err != nil {
+			logger.Errorf("Failed to dequeue task from etcd queue: %+v", err)
+			time.Sleep(3 * time.Second)
+			continue
+		}
+		logger.Debugf("Dequeue task [%s] from etcd queue success", taskId)
+		c.runningTasks <- taskId
 	}
-	c.runningTasks <- taskId
 }
 
-func (c *Controller) HandleTask() error {
-	taskId := <-c.runningTasks
-
+func (c *Controller) HandleTask(taskId string) error {
 	task := &models.Task{
 		TaskId: taskId,
 		Status: constants.StatusWorking,
@@ -115,7 +116,18 @@ func (c *Controller) HandleTask() error {
 	return nil
 }
 
+func (c *Controller) HandleTasks() {
+	for {
+		taskId, ok := <-c.runningTasks
+		if !ok {
+			logger.Errorf("Channel controller runningTasks is closed")
+			return
+		}
+		go c.HandleTask(taskId)
+	}
+}
+
 func (c *Controller) Serve() {
-	go c.ExtractTask()
-	go c.HandleTask()
+	go c.ExtractTasks()
+	go c.HandleTasks()
 }

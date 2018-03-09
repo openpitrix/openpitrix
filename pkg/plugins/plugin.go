@@ -13,7 +13,7 @@ import (
 var runtimePlugins map[string]RuntimeInterface
 
 type RuntimeInterface interface {
-	SplitJobIntoTasks(job *models.Job) (*models.Module, error)
+	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
 	WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error
 }

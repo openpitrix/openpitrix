@@ -70,29 +70,28 @@ func TasksToPbs(tasks []*Task) (pbTasks []*pb.Task) {
 	return
 }
 
-type Module struct {
-	Task     *Task
-	Children []*Module
+type TaskLayer struct {
+	Tasks []*Task
+	Child *TaskLayer
 }
 
-// WalkFunc is a callback type for use with Module.WalkTree
-type WalkFunc func(parent *Module, current *Module) error
+// WalkFunc is a callback type for use with TaskLayer.WalkTree
+type WalkFunc func(parent *TaskLayer, current *TaskLayer) error
 
-func (m *Module) WalkTree(cb WalkFunc) error {
-	return walkModuleTree(nil, m, cb)
+func (m *TaskLayer) WalkTree(cb WalkFunc) error {
+	return walkTaskLayerTree(nil, m, cb)
 }
 
-func walkModuleTree(parent *Module, current *Module, cb WalkFunc) error {
+func walkTaskLayerTree(parent *TaskLayer, current *TaskLayer, cb WalkFunc) error {
 	err := cb(parent, current)
 	if err != nil {
 		return err
 	}
 
-	for _, child := range current.Children {
-		err := walkModuleTree(current, child, cb)
-		if err != nil {
-			return err
-		}
+	if current.Child == nil {
+		return nil
+	} else {
+		err = walkTaskLayerTree(current, current.Child, cb)
+		return err
 	}
-	return nil
 }

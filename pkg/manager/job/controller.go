@@ -46,18 +46,20 @@ func (c *Controller) updateJobAttributes(jobId string, attributes map[string]int
 	return err
 }
 
-func (c *Controller) ExtractJob() {
-	jobId, err := c.queue.Dequeue()
-	if err != nil {
-		logger.Errorf("Failed to dequeue job from etcd: %+v", err)
-		time.Sleep(3 * time.Second)
-		return
+func (c *Controller) ExtractJobs() {
+	for {
+		jobId, err := c.queue.Dequeue()
+		if err != nil {
+			logger.Errorf("Failed to dequeue job from etcd queue: %+v", err)
+			time.Sleep(3 * time.Second)
+			continue
+		}
+		logger.Debugf("Dequeue job [%s] from etcd queue success", jobId)
+		c.runningJobs <- jobId
 	}
-	c.runningJobs <- jobId
 }
 
-func (c *Controller) HandleJob() error {
-	jobId := <-c.runningJobs
+func (c *Controller) HandleJob(jobId string) error {
 	job := &models.Job{
 		JobId:  jobId,
 		Status: constants.StatusWorking,
@@ -79,6 +81,7 @@ func (c *Controller) HandleJob() error {
 
 	err := query.LoadOne(&job)
 	if err != nil {
+		logger.Errorf("Failed to get job [%s]: %+v", job.JobId, err)
 		return err
 	}
 
@@ -94,18 +97,21 @@ func (c *Controller) HandleJob() error {
 		return err
 	}
 
-	err = module.WalkTree(func(parent *models.Module, current *models.Module) error {
+	err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
 		if parent != nil {
-			err = task.WaitTask(parent.Task.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
-			if err != nil {
-				logger.Errorf("Failed to wait task [%s]: %+v", parent.Task.TaskId, err)
-				return err
+			for _, parentTask := range parent.Tasks {
+				err = task.WaitTask(parentTask.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+				if err != nil {
+					logger.Errorf("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
+					return err
+				}
 			}
 		}
-		if current != nil {
-			err = task.SendTask(current.Task)
+
+		for _, currentTask := range current.Tasks {
+			err = task.SendTask(currentTask)
 			if err != nil {
-				logger.Errorf("Failed to send task [%s]: %+v", current.Task.TaskId, err)
+				logger.Errorf("Failed to send task [%s]: %+v", currentTask.TaskId, err)
 				return err
 			}
 		}
@@ -115,11 +121,21 @@ func (c *Controller) HandleJob() error {
 	if err == nil {
 		job.Status = constants.StatusSuccessful
 	}
-
 	return err
 }
 
+func (c *Controller) HandleJobs() {
+	for {
+		jobId, ok := <-c.runningJobs
+		if !ok {
+			logger.Errorf("Channel controller runningJobs is closed")
+			return
+		}
+		go c.HandleJob(jobId)
+	}
+}
+
 func (c *Controller) Serve() {
-	go c.ExtractJob()
-	go c.HandleJob()
+	go c.ExtractJobs()
+	go c.HandleJobs()
 }

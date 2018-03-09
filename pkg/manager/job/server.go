@@ -28,13 +28,13 @@ func Serve(cfg *config.Config) {
 		logger.Panicf("Failed to get os hostname: %+v", err)
 		return
 	}
+
 	p := pi.NewPi(cfg)
-	s := Server{
-		pi:         p,
-		controller: NewController(p, hostname),
-	}
+	s := Server{pi: p}
+	jobController := NewController(s.pi, hostname)
+	go jobController.Serve()
+
 	manager.NewGrpcServer("job", constants.JobManagerPort).Serve(func(server *grpc.Server) {
 		pb.RegisterJobManagerServer(server, &s)
-		s.controller.Serve()
 	})
 }
