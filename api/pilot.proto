@@ -27,43 +27,43 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 };
 
 
-message SendTaskRequest {
-	google.protobuf.StringValue task_id = 1;
-	google.protobuf.StringValue task_action = 2;
+message HandleSubtaskRequest {
+	google.protobuf.StringValue subtask_id = 1;
+	google.protobuf.StringValue subtask_action = 2;
 	google.protobuf.StringValue directive = 3;
 }
 
-message SendTaskResponse {
-	google.protobuf.StringValue task_id = 1;
+message HandleSubtaskResponse {
+	google.protobuf.StringValue subtask_id = 1;
 }
 
-message GetTaskStatusRequest {
-	repeated string task_id = 1;
+message GetSubtaskStatusRequest {
+	repeated string subtask_id = 1;
 }
 
-message TaskStatus {
-	google.protobuf.StringValue task_id = 1;
-	google.protobuf.StringValue task_status = 2;
+message SubtaskStatus {
+	google.protobuf.StringValue subtask_id = 1;
+	google.protobuf.StringValue status = 2;
 }
 
-message GetTaskStatusResponse {
+message GetSubtaskStatusResponse {
 	uint32 total_count = 1;
-	repeated TaskStatus task_status_set = 2;
+	repeated SubtaskStatus subtask_status_set = 2;
 }
 
 service PilotManager {
-	rpc SendTask (SendTaskRequest) returns (SendTaskResponse) {
+	rpc HandleSubtask (HandleSubtaskRequest) returns (HandleSubtaskResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "send task"
+			summary: "handle subtask"
 		};
 		option (google.api.http) = {
 			post: "/v1/pilots"
 			body: "*"
 		};
 	}
-	rpc GetTaskStatus (GetTaskStatusRequest) returns (GetTaskStatusResponse) {
+	rpc GetSubtaskStatus (GetSubtaskStatusRequest) returns (GetSubtaskStatusResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get task status"
+			summary: "get subtask status"
 		};
 		option (google.api.http) = {
 			get: "/v1/pilots"
