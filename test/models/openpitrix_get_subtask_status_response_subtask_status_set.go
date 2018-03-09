@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixGetTaskStatusResponseTaskStatusSet openpitrix get task status response task status set
-// swagger:model openpitrixGetTaskStatusResponseTaskStatusSet
-type OpenpitrixGetTaskStatusResponseTaskStatusSet []*OpenpitrixTaskStatus
+// OpenpitrixGetSubtaskStatusResponseSubtaskStatusSet openpitrix get subtask status response subtask status set
+// swagger:model openpitrixGetSubtaskStatusResponseSubtaskStatusSet
+type OpenpitrixGetSubtaskStatusResponseSubtaskStatusSet []*OpenpitrixSubtaskStatus
 
-// Validate validates this openpitrix get task status response task status set
-func (m OpenpitrixGetTaskStatusResponseTaskStatusSet) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix get subtask status response subtask status set
+func (m OpenpitrixGetSubtaskStatusResponseSubtaskStatusSet) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {

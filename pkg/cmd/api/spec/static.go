@@ -218,6 +218,18 @@ var Files = map[string]string{
             "type": "string"
           },
           {
+            "name": "executor",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "runtime",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "status",
             "in": "query",
             "required": false,
@@ -275,19 +287,19 @@ var Files = map[string]string{
     },
     "/v1/pilots": {
       "get": {
-        "summary": "get task status",
-        "operationId": "GetTaskStatus",
+        "summary": "get subtask status",
+        "operationId": "GetSubtaskStatus",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixGetTaskStatusResponse"
+              "$ref": "#/definitions/openpitrixGetSubtaskStatusResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "task_id",
+            "name": "subtask_id",
             "in": "query",
             "required": false,
             "type": "array",
@@ -301,13 +313,13 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "send task",
-        "operationId": "SendTask",
+        "summary": "handle subtask",
+        "operationId": "HandleSubtask",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixSendTaskResponse"
+              "$ref": "#/definitions/openpitrixHandleSubtaskResponse"
             }
           }
         },
@@ -317,7 +329,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixSendTaskRequest"
+              "$ref": "#/definitions/openpitrixHandleSubtaskRequest"
             }
           }
         ],
@@ -880,6 +892,12 @@ var Files = map[string]string{
             }
           },
           {
+            "name": "executor",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "status",
             "in": "query",
             "required": false,
@@ -1146,6 +1164,9 @@ var Files = map[string]string{
         "job_action": {
           "type": "string"
         },
+        "runtime": {
+          "type": "string"
+        },
         "directive": {
           "type": "string"
         }
@@ -1219,6 +1240,9 @@ var Files = map[string]string{
         "owner": {
           "type": "string"
         },
+        "runtime": {
+          "type": "string"
+        },
         "create_time": {
           "type": "string",
           "format": "date-time"
@@ -1240,28 +1264,28 @@ var Files = map[string]string{
       },
       "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
     },
-    "openpitrixGetTaskStatusResponse": {
+    "openpitrixGetSubtaskStatusResponse": {
       "type": "object",
       "properties": {
         "total_count": {
           "type": "integer",
           "format": "int64"
         },
-        "task_status_set": {
+        "subtask_status_set": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixTaskStatus"
+            "$ref": "#/definitions/openpitrixSubtaskStatus"
           }
         }
       }
     },
-    "openpitrixSendTaskRequest": {
+    "openpitrixHandleSubtaskRequest": {
       "type": "object",
       "properties": {
-        "task_id": {
+        "subtask_id": {
           "type": "string"
         },
-        "task_action": {
+        "subtask_action": {
           "type": "string"
         },
         "directive": {
@@ -1269,21 +1293,21 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixSendTaskResponse": {
+    "openpitrixHandleSubtaskResponse": {
       "type": "object",
       "properties": {
-        "task_id": {
+        "subtask_id": {
           "type": "string"
         }
       }
     },
-    "openpitrixTaskStatus": {
+    "openpitrixSubtaskStatus": {
       "type": "object",
       "properties": {
-        "task_id": {
+        "subtask_id": {
           "type": "string"
         },
-        "task_status": {
+        "status": {
           "type": "string"
         }
       }

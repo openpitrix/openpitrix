@@ -12,22 +12,22 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixSendTaskRequest openpitrix send task request
-// swagger:model openpitrixSendTaskRequest
-type OpenpitrixSendTaskRequest struct {
+// OpenpitrixHandleSubtaskRequest openpitrix handle subtask request
+// swagger:model openpitrixHandleSubtaskRequest
+type OpenpitrixHandleSubtaskRequest struct {
 
 	// directive
 	Directive string `json:"directive,omitempty"`
 
-	// task action
-	TaskAction string `json:"task_action,omitempty"`
+	// subtask action
+	SubtaskAction string `json:"subtask_action,omitempty"`
 
-	// task id
-	TaskID string `json:"task_id,omitempty"`
+	// subtask id
+	SubtaskID string `json:"subtask_id,omitempty"`
 }
 
-// Validate validates this openpitrix send task request
-func (m *OpenpitrixSendTaskRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix handle subtask request
+func (m *OpenpitrixHandleSubtaskRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -37,7 +37,7 @@ func (m *OpenpitrixSendTaskRequest) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixSendTaskRequest) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixHandleSubtaskRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -45,8 +45,8 @@ func (m *OpenpitrixSendTaskRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixSendTaskRequest) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixSendTaskRequest
+func (m *OpenpitrixHandleSubtaskRequest) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixHandleSubtaskRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

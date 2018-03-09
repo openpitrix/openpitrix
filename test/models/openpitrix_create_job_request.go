@@ -33,6 +33,9 @@ type OpenpitrixCreateJobRequest struct {
 
 	// job action
 	JobAction string `json:"job_action,omitempty"`
+
+	// runtime
+	Runtime string `json:"runtime,omitempty"`
 }
 
 // Validate validates this openpitrix create job request

@@ -27,11 +27,11 @@ It has these top-level messages:
 	Job
 	DescribeJobsRequest
 	DescribeJobsResponse
-	SendTaskRequest
-	SendTaskResponse
-	GetTaskStatusRequest
-	TaskStatus
-	GetTaskStatusResponse
+	HandleSubtaskRequest
+	HandleSubtaskResponse
+	GetSubtaskStatusRequest
+	SubtaskStatus
+	GetSubtaskStatusResponse
 	CreateRepoRequest
 	CreateRepoResponse
 	ModifyRepoRequest

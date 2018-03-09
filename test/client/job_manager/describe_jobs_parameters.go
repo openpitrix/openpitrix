@@ -69,6 +69,8 @@ type DescribeJobsParams struct {
 	AppVersion *string
 	/*ClusterID*/
 	ClusterID *string
+	/*Executor*/
+	Executor *string
 	/*JobID*/
 	JobID []string
 	/*Limit
@@ -81,6 +83,8 @@ type DescribeJobsParams struct {
 
 	*/
 	Offset *int64
+	/*Runtime*/
+	Runtime *string
 	/*Status*/
 	Status []string
 
@@ -155,6 +159,17 @@ func (o *DescribeJobsParams) SetClusterID(clusterID *string) {
 	o.ClusterID = clusterID
 }
 
+// WithExecutor adds the executor to the describe jobs params
+func (o *DescribeJobsParams) WithExecutor(executor *string) *DescribeJobsParams {
+	o.SetExecutor(executor)
+	return o
+}
+
+// SetExecutor adds the executor to the describe jobs params
+func (o *DescribeJobsParams) SetExecutor(executor *string) {
+	o.Executor = executor
+}
+
 // WithJobID adds the jobID to the describe jobs params
 func (o *DescribeJobsParams) WithJobID(jobID []string) *DescribeJobsParams {
 	o.SetJobID(jobID)
@@ -186,6 +201,17 @@ func (o *DescribeJobsParams) WithOffset(offset *int64) *DescribeJobsParams {
 // SetOffset adds the offset to the describe jobs params
 func (o *DescribeJobsParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithRuntime adds the runtime to the describe jobs params
+func (o *DescribeJobsParams) WithRuntime(runtime *string) *DescribeJobsParams {
+	o.SetRuntime(runtime)
+	return o
+}
+
+// SetRuntime adds the runtime to the describe jobs params
+func (o *DescribeJobsParams) SetRuntime(runtime *string) {
+	o.Runtime = runtime
 }
 
 // WithStatus adds the status to the describe jobs params
@@ -255,6 +281,22 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
+	if o.Executor != nil {
+
+		// query param executor
+		var qrExecutor string
+		if o.Executor != nil {
+			qrExecutor = *o.Executor
+		}
+		qExecutor := qrExecutor
+		if qExecutor != "" {
+			if err := r.SetQueryParam("executor", qExecutor); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	valuesJobID := o.JobID
 
 	joinedJobID := swag.JoinByFormat(valuesJobID, "")
@@ -289,6 +331,22 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.Runtime != nil {
+
+		// query param runtime
+		var qrRuntime string
+		if o.Runtime != nil {
+			qrRuntime = *o.Runtime
+		}
+		qRuntime := qrRuntime
+		if qRuntime != "" {
+			if err := r.SetQueryParam("runtime", qRuntime); err != nil {
 				return err
 			}
 		}
