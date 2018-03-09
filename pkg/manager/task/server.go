@@ -5,23 +5,36 @@
 package task
 
 import (
-	"google.golang.org/grpc"
+	"os"
 
-	"openpitrix.io/openpitrix/pkg/pi"
+	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 )
 
 type Server struct {
-	*pi.Pi
+	pi         *pi.Pi
+	controller *Controller
 }
 
 func Serve(cfg *config.Config) {
-	s := Server{pi.NewPi(cfg)}
+	hostname, err := os.Hostname()
+	if err != nil {
+		logger.Panicf("Failed to get os hostname: %+v", err)
+		return
+	}
+	p := pi.NewPi(cfg)
+	s := Server{
+		pi:         p,
+		controller: NewController(p, hostname),
+	}
 	manager.NewGrpcServer("task", constants.TaskManagerPort).Serve(func(server *grpc.Server) {
 		pb.RegisterTaskManagerServer(server, &s)
+		s.controller.Serve()
 	})
 }

@@ -30,19 +30,23 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 		req.GetAppVersion().GetValue(),
 		req.GetJobAction().GetValue(),
 		req.GetDirective().GetValue(),
+		req.GetRuntime().GetValue(),
 		s.UserId,
 	)
 
-	_, err := p.Db.
+	_, err := p.pi.Db.
 		InsertInto(models.JobTableName).
 		Columns(models.JobColumns...).
 		Record(newJob).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateJob: %+v", err)
+		return nil, status.Errorf(codes.Internal, "CreateJob [%s] failed: %+v", newJob.JobId, err)
 	}
 
-	//TODO: push job into jobQueue
+	err = p.controller.queue.Enqueue(newJob.JobId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Enqueue job [%s] failed: %+v", newJob.JobId, err)
+	}
 
 	res := &pb.CreateJobResponse{
 		JobId:      &wrappers.StringValue{Value: newJob.JobId},
@@ -61,7 +65,7 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := p.pi.Db.
 		Select(models.JobColumns...).
 		From(models.JobTableName).
 		Offset(offset).

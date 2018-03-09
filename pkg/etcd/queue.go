@@ -10,8 +10,8 @@ type Queue struct {
 	*recipe.Queue
 }
 
-func (etcd *Etcd) NewQueue(key string) *Queue {
-	return &Queue{recipe.NewQueue(etcd.Client, key)}
+func (etcd *Etcd) NewQueue(topic string) *Queue {
+	return &Queue{recipe.NewQueue(etcd.Client, topic)}
 }
 
 func (q *Queue) Enqueue(val string) error {

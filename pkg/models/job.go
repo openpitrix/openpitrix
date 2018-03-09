@@ -7,6 +7,7 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
@@ -24,6 +25,7 @@ type Job struct {
 	AppVersion string
 	JobAction  string
 	Directive  string
+	Runtime    string
 	Owner      string
 	Status     string
 	ErrorCode  uint32
@@ -35,7 +37,7 @@ type Job struct {
 
 var JobColumns = GetColumnsFromStruct(&Job{})
 
-func NewJob(clusterId, appId, appVersion, jobAction, directive, userId string) *Job {
+func NewJob(clusterId, appId, appVersion, jobAction, directive, runtime, userId string) *Job {
 	return &Job{
 		JobId:      NewJobId(),
 		ClusterId:  clusterId,
@@ -43,7 +45,9 @@ func NewJob(clusterId, appId, appVersion, jobAction, directive, userId string) *
 		AppVersion: appVersion,
 		JobAction:  jobAction,
 		Directive:  directive,
+		Runtime:    runtime,
 		Owner:      userId,
+		Status:     constants.StatusPending,
 	}
 }
 
@@ -55,6 +59,7 @@ func JobToPb(job *Job) *pb.Job {
 	pbJob.AppVersion = utils.ToProtoString(job.AppVersion)
 	pbJob.JobAction = utils.ToProtoString(job.JobAction)
 	pbJob.Directive = utils.ToProtoString(job.Directive)
+	pbJob.Runtime = utils.ToProtoString(job.Runtime)
 	pbJob.Owner = utils.ToProtoString(job.Owner)
 	pbJob.Status = utils.ToProtoString(job.Status)
 	pbJob.ErrorCode = utils.ToProtoUInt32(job.ErrorCode)

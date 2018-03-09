@@ -7,6 +7,7 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
@@ -41,6 +42,7 @@ func NewTask(jobId, taskAction, directive, userId string) *Task {
 		TaskAction: taskAction,
 		Directive:  directive,
 		Owner:      userId,
+		Status:     constants.StatusPending,
 	}
 }
 
@@ -66,4 +68,31 @@ func TasksToPbs(tasks []*Task) (pbTasks []*pb.Task) {
 		pbTasks = append(pbTasks, TaskToPb(task))
 	}
 	return
+}
+
+type Module struct {
+	Task     *Task
+	Children []*Module
+}
+
+// WalkFunc is a callback type for use with Module.WalkTree
+type WalkFunc func(parent *Module, current *Module) error
+
+func (m *Module) WalkTree(cb WalkFunc) error {
+	return walkModuleTree(nil, m, cb)
+}
+
+func walkModuleTree(parent *Module, current *Module, cb WalkFunc) error {
+	err := cb(parent, current)
+	if err != nil {
+		return err
+	}
+
+	for _, child := range current.Children {
+		err := walkModuleTree(current, child, cb)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
