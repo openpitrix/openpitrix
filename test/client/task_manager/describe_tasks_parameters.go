@@ -63,6 +63,8 @@ for the describe tasks operation typically these are written to a http.Request
 */
 type DescribeTasksParams struct {
 
+	/*Executor*/
+	Executor *string
 	/*JobID*/
 	JobID []string
 	/*Limit
@@ -116,6 +118,17 @@ func (o *DescribeTasksParams) WithHTTPClient(client *http.Client) *DescribeTasks
 // SetHTTPClient adds the HTTPClient to the describe tasks params
 func (o *DescribeTasksParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithExecutor adds the executor to the describe tasks params
+func (o *DescribeTasksParams) WithExecutor(executor *string) *DescribeTasksParams {
+	o.SetExecutor(executor)
+	return o
+}
+
+// SetExecutor adds the executor to the describe tasks params
+func (o *DescribeTasksParams) SetExecutor(executor *string) {
+	o.Executor = executor
 }
 
 // WithJobID adds the jobID to the describe tasks params
@@ -180,6 +193,22 @@ func (o *DescribeTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	if o.Executor != nil {
+
+		// query param executor
+		var qrExecutor string
+		if o.Executor != nil {
+			qrExecutor = *o.Executor
+		}
+		qExecutor := qrExecutor
+		if qExecutor != "" {
+			if err := r.SetQueryParam("executor", qExecutor); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	valuesJobID := o.JobID
 

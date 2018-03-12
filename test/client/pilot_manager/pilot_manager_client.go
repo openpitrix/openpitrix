@@ -25,58 +25,58 @@ type Client struct {
 }
 
 /*
-GetTaskStatus gets task status
+GetSubtaskStatus gets subtask status
 */
-func (a *Client) GetTaskStatus(params *GetTaskStatusParams) (*GetTaskStatusOK, error) {
+func (a *Client) GetSubtaskStatus(params *GetSubtaskStatusParams) (*GetSubtaskStatusOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetTaskStatusParams()
+		params = NewGetSubtaskStatusParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "GetTaskStatus",
+		ID:                 "GetSubtaskStatus",
 		Method:             "GET",
 		PathPattern:        "/v1/pilots",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &GetTaskStatusReader{formats: a.formats},
+		Reader:             &GetSubtaskStatusReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*GetTaskStatusOK), nil
+	return result.(*GetSubtaskStatusOK), nil
 
 }
 
 /*
-SendTask sends task
+HandleSubtask handles subtask
 */
-func (a *Client) SendTask(params *SendTaskParams) (*SendTaskOK, error) {
+func (a *Client) HandleSubtask(params *HandleSubtaskParams) (*HandleSubtaskOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewSendTaskParams()
+		params = NewHandleSubtaskParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "SendTask",
+		ID:                 "HandleSubtask",
 		Method:             "POST",
 		PathPattern:        "/v1/pilots",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &SendTaskReader{formats: a.formats},
+		Reader:             &HandleSubtaskReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*SendTaskOK), nil
+	return result.(*HandleSubtaskOK), nil
 
 }
 

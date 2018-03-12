@@ -12,19 +12,19 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixTaskStatus openpitrix task status
-// swagger:model openpitrixTaskStatus
-type OpenpitrixTaskStatus struct {
+// OpenpitrixSubtaskStatus openpitrix subtask status
+// swagger:model openpitrixSubtaskStatus
+type OpenpitrixSubtaskStatus struct {
 
-	// task id
-	TaskID string `json:"task_id,omitempty"`
+	// status
+	Status string `json:"status,omitempty"`
 
-	// task status
-	TaskStatus string `json:"task_status,omitempty"`
+	// subtask id
+	SubtaskID string `json:"subtask_id,omitempty"`
 }
 
-// Validate validates this openpitrix task status
-func (m *OpenpitrixTaskStatus) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix subtask status
+func (m *OpenpitrixSubtaskStatus) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -34,7 +34,7 @@ func (m *OpenpitrixTaskStatus) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixTaskStatus) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixSubtaskStatus) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -42,8 +42,8 @@ func (m *OpenpitrixTaskStatus) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixTaskStatus) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixTaskStatus
+func (m *OpenpitrixSubtaskStatus) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixSubtaskStatus
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

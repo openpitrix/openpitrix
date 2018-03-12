@@ -31,7 +31,7 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 		s.UserId,
 	)
 
-	_, err := p.Db.
+	_, err := p.pi.Db.
 		InsertInto(models.TaskTableName).
 		Columns(models.TaskColumns...).
 		Record(newTask).
@@ -40,7 +40,10 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 		return nil, status.Errorf(codes.Internal, "CreateTask: %+v", err)
 	}
 
-	//TODO: push task into taskQueue
+	err = p.controller.queue.Enqueue(newTask.TaskId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Enqueue task [%s] failed: %+v", newTask.TaskId, err)
+	}
 
 	res := &pb.CreateTaskResponse{
 		TaskId: &wrappers.StringValue{Value: newTask.TaskId},
@@ -57,7 +60,7 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := p.pi.Db.
 		Select(models.TaskColumns...).
 		From(models.TaskTableName).
 		Offset(offset).
