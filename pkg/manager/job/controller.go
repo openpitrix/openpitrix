@@ -6,6 +6,7 @@ package job
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -19,23 +20,25 @@ import (
 )
 
 type Controller struct {
-	runningJobs chan string
-	pi          *pi.Pi
-	hostname    string
-	queue       *etcd.Queue
+	*pi.Pi
+	runningJobs  chan string
+	runningCount uint32
+	hostname     string
+	queue        *etcd.Queue
 }
 
 func NewController(pi *pi.Pi, hostname string) *Controller {
 	return &Controller{
-		runningJobs: make(chan string, constants.JobLength),
-		pi:          pi,
-		hostname:    hostname,
-		queue:       pi.Etcd.NewQueue("job"),
+		Pi:           pi,
+		runningJobs:  make(chan string),
+		runningCount: 0,
+		hostname:     hostname,
+		queue:        pi.Etcd.NewQueue("job"),
 	}
 }
 
 func (c *Controller) updateJobAttributes(jobId string, attributes map[string]interface{}) error {
-	_, err := c.pi.Db.
+	_, err := c.Db.
 		Update(models.JobTableName).
 		SetMap(attributes).
 		Where(db.Eq("job_id", jobId)).
@@ -46,8 +49,27 @@ func (c *Controller) updateJobAttributes(jobId string, attributes map[string]int
 	return err
 }
 
+var mutex sync.Mutex
+
+func (c *Controller) GetJobLength() uint32 {
+	// TODO: from global config
+	return constants.JobLength
+}
+
+func (c *Controller) IsRunningExceed() bool {
+	mutex.Lock()
+	defer mutex.Unlock()
+	count := c.runningCount
+	return count > c.GetJobLength()
+}
+
 func (c *Controller) ExtractJobs() {
 	for {
+		if c.IsRunningExceed() {
+			logger.Errorf("Sleep 10s, running job count exceed [%d/%d]", c.runningCount, c.GetJobLength())
+			time.Sleep(10 * time.Second)
+			continue
+		}
 		jobId, err := c.queue.Dequeue()
 		if err != nil {
 			logger.Errorf("Failed to dequeue job from etcd queue: %+v", err)
@@ -59,7 +81,9 @@ func (c *Controller) ExtractJobs() {
 	}
 }
 
-func (c *Controller) HandleJob(jobId string) error {
+func (c *Controller) HandleJob(jobId string, cb func()) error {
+	defer cb()
+
 	job := &models.Job{
 		JobId:  jobId,
 		Status: constants.StatusWorking,
@@ -74,7 +98,7 @@ func (c *Controller) HandleJob(jobId string) error {
 		"status": job.Status,
 	})
 
-	query := c.pi.Db.
+	query := c.Db.
 		Select(models.JobColumns...).
 		From(models.JobTableName).
 		Where(db.Eq("job_id", jobId))
@@ -125,13 +149,15 @@ func (c *Controller) HandleJob(jobId string) error {
 }
 
 func (c *Controller) HandleJobs() {
-	for {
-		jobId, ok := <-c.runningJobs
-		if !ok {
-			logger.Errorf("Channel controller runningJobs is closed")
-			return
-		}
-		go c.HandleJob(jobId)
+	for jobId := range c.runningJobs {
+		mutex.Lock()
+		c.runningCount++
+		mutex.Unlock()
+		go c.HandleJob(jobId, func() {
+			mutex.Lock()
+			c.runningCount--
+			mutex.Unlock()
+		})
 	}
 }
 

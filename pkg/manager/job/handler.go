@@ -34,7 +34,7 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 		s.UserId,
 	)
 
-	_, err := p.pi.Db.
+	_, err := p.Db.
 		InsertInto(models.JobTableName).
 		Columns(models.JobColumns...).
 		Record(newJob).
@@ -65,7 +65,7 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
-	query := p.pi.Db.
+	query := p.Db.
 		Select(models.JobColumns...).
 		From(models.JobTableName).
 		Offset(offset).
