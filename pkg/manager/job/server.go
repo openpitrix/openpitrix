@@ -19,7 +19,6 @@ import (
 
 type Server struct {
 	*pi.Pi
-	controller *Controller
 }
 
 func Serve(cfg *config.Config) {
@@ -31,7 +30,7 @@ func Serve(cfg *config.Config) {
 
 	p := pi.NewPi(cfg)
 	jobController := NewController(p, hostname)
-	s := Server{Pi: p, controller: jobController}
+	s := Server{Pi: p}
 	go jobController.Serve()
 
 	manager.NewGrpcServer("job", constants.JobManagerPort).Serve(func(server *grpc.Server) {
