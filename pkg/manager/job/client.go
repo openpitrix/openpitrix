@@ -25,17 +25,18 @@ func NewJobManagerClient(ctx context.Context) (pb.JobManagerClient, error) {
 	return pb.NewJobManagerClient(conn), err
 }
 
-func CreateJob(jobRequest *pb.CreateJobRequest) error {
+func CreateJob(jobRequest *pb.CreateJobRequest) (jobId string, err error) {
 	ctx := context.Background()
 	client, err := NewJobManagerClient(ctx)
 	if err != nil {
-		return err
+		return
 	}
-	_, err = client.CreateJob(ctx, jobRequest)
+	jobResponse, err := client.CreateJob(ctx, jobRequest)
 	if err != nil {
-		return err
+		return
 	}
-	return nil
+	jobId = jobResponse.GetJobId().GetValue()
+	return
 }
 
 func DescribeJobs(jobRequest *pb.DescribeJobsRequest) (*pb.DescribeJobsResponse, error) {
@@ -84,7 +85,7 @@ func WaitJob(jobId string, timeout time.Duration, waitInterval time.Duration) er
 	}, timeout, waitInterval)
 }
 
-func SendJob(job *models.Job) error {
+func SendJob(job *models.Job) (jobId string, err error) {
 	pbJob := models.JobToPb(job)
 	jobRequest := &pb.CreateJobRequest{
 		ClusterId:  pbJob.ClusterId,
@@ -94,10 +95,9 @@ func SendJob(job *models.Job) error {
 		Runtime:    pbJob.Runtime,
 		Directive:  pbJob.Directive,
 	}
-	err := CreateJob(jobRequest)
+	jobId, err = CreateJob(jobRequest)
 	if err != nil {
-		logger.Errorf("Failed to create job: %+v", err)
-		return err
+		logger.Errorf("Failed to create job [%s]: %+v", jobId, err)
 	}
-	return nil
+	return
 }

@@ -133,11 +133,12 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		}
 
 		for _, currentTask := range current.Tasks {
-			err = task.SendTask(currentTask)
+			taskId, err := task.SendTask(currentTask)
 			if err != nil {
 				logger.Errorf("Failed to send task [%s]: %+v", currentTask.TaskId, err)
 				return err
 			}
+			currentTask.TaskId = taskId
 		}
 		return nil
 	})
