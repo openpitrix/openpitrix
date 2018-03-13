@@ -11,16 +11,28 @@ import (
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/logger"
-
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/utils"
-
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
 func (p *Server) IndexRepo(ctx context.Context, req *pb.IndexRepoRequest) (*pb.IndexRepoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "")
+	s := sender.GetSenderFromContext(ctx)
+	repoId := req.GetRepoId().GetValue()
+	if repoId == "" {
+		// TODO: api gateway params validate
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument: [repo_id]")
+	}
+	repoTask, err := p.indexer.NewRepoTask(repoId, s.UserId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "IndexRepo error: %+v", err)
+	}
+	ret := pb.IndexRepoResponse{
+		RepoTask: models.RepoTaskToPb(repoTask),
+	}
+	return &ret, nil
 }
 
 func (p *Server) DescribeRepoTasks(ctx context.Context, req *pb.DescribeRepoTasksRequest) (*pb.DescribeRepoTasksResponse, error) {
