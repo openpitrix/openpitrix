@@ -41,6 +41,24 @@ It has these top-level messages:
 	Repo
 	DescribeReposRequest
 	DescribeReposResponse
+	RepoLabel
+	CreateRepoLabelRequest
+	CreateRepoLabelResponse
+	ModifyRepoLabelRequest
+	ModifyRepoLabelResponse
+	DeleteRepoLabelRequest
+	DeleteRepoLabelResponse
+	DescribeRepoLabelsRequest
+	DescribeRepoLabelsResponse
+	RepoSelector
+	CreateRepoSelectorRequest
+	CreateRepoSelectorResponse
+	ModifyRepoSelectorRequest
+	ModifyRepoSelectorResponse
+	DeleteRepoSelectorRequest
+	DeleteRepoSelectorResponse
+	DescribeRepoSelectorsRequest
+	DescribeRepoSelectorsResponse
 	RuntimeEnv
 	CreateRuntimeEnvRequest
 	CreateRuntimeEnvResponse

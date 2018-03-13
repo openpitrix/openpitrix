@@ -26,6 +26,12 @@ var IndexedColumns = map[string][]string{
 	RepoTableName: {
 		"repo_id", "name", "visibility", "status",
 	},
+	RepoLabelTableName: {
+		"repo_id", "repo_label_id", "status",
+	},
+	RepoSelectorTableName: {
+		"repo_id", "repo_selector_id", "status",
+	},
 }
 
 var SearchWordColumnTable = []string{
