@@ -25,17 +25,18 @@ func NewTaskManagerClient(ctx context.Context) (pb.TaskManagerClient, error) {
 	return pb.NewTaskManagerClient(conn), err
 }
 
-func CreateTask(taskRequest *pb.CreateTaskRequest) error {
+func CreateTask(taskRequest *pb.CreateTaskRequest) (taskId string, err error) {
 	ctx := context.Background()
 	client, err := NewTaskManagerClient(ctx)
 	if err != nil {
-		return err
+		return
 	}
-	_, err = client.CreateTask(ctx, taskRequest)
+	taskResponse, err := client.CreateTask(ctx, taskRequest)
 	if err != nil {
-		return err
+		return
 	}
-	return nil
+	taskId = taskResponse.GetTaskId().GetValue()
+	return
 }
 
 func DescribeTasks(taskRequest *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
@@ -84,17 +85,16 @@ func WaitTask(taskId string, timeout time.Duration, waitInterval time.Duration) 
 	}, timeout, waitInterval)
 }
 
-func SendTask(task *models.Task) error {
+func SendTask(task *models.Task) (taskId string, err error) {
 	pbTask := models.TaskToPb(task)
 	taskRequest := &pb.CreateTaskRequest{
 		JobId:      pbTask.JobId,
 		TaskAction: pbTask.TaskAction,
 		Directive:  pbTask.Directive,
 	}
-	err := CreateTask(taskRequest)
+	taskId, err = CreateTask(taskRequest)
 	if err != nil {
-		logger.Errorf("Failed to create task: %+v", err)
-		return err
+		logger.Errorf("Failed to create task [%s]: %+v", taskId, err)
 	}
-	return nil
+	return
 }
