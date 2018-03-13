@@ -106,7 +106,7 @@ compose-update: build compose-up
 
 .PHONY: compose-up
 compose-up:
-	docker-compose up -d openpitrix-db && sleep 20 && docker-compose up -d 
+	docker-compose up -d 
 	@echo "compose-up done"
 
 .PHONY: compose-down

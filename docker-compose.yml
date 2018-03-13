@@ -42,7 +42,7 @@ services:
     command: "runtime-env-manager"
     links:
       - openpitrix-db:openpitrix-db
-    container_name: "openpitrix-runtime-env-manager"
+      - openpitrix-etcd:openpitrix-etcd
     depends_on:
       - openpitrix-db
       - openpitrix-etcd
