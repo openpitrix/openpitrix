@@ -25,18 +25,20 @@ message IndexRepoResponse {
 message RepoTask {
 	google.protobuf.StringValue repo_task_id = 1;
 	google.protobuf.StringValue repo_id = 2;
-	google.protobuf.StringValue status = 3;
-	google.protobuf.StringValue result = 4;
-	google.protobuf.Timestamp create_time = 5;
-	google.protobuf.Timestamp status_time = 6;
+	google.protobuf.StringValue owner = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.StringValue result = 5;
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.Timestamp status_time = 7;
 }
 
 message DescribeRepoTasksRequest {
 	repeated string repo_task_id = 1;
 	repeated string repo_id = 2;
-	repeated string status = 3;
-	uint32 limit = 4;
-	uint32 offset = 5;
+	repeated string owner = 3;
+	repeated string status = 4;
+	uint32 limit = 5;
+	uint32 offset = 6;
 }
 
 message DescribeRepoTasksResponse {

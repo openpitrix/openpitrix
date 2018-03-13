@@ -67,6 +67,8 @@ type DescribeRepoTasksParams struct {
 	Limit *int64
 	/*Offset*/
 	Offset *int64
+	/*Owner*/
+	Owner []string
 	/*RepoID*/
 	RepoID []string
 	/*RepoTaskID*/
@@ -132,6 +134,17 @@ func (o *DescribeRepoTasksParams) WithOffset(offset *int64) *DescribeRepoTasksPa
 // SetOffset adds the offset to the describe repo tasks params
 func (o *DescribeRepoTasksParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwner adds the owner to the describe repo tasks params
+func (o *DescribeRepoTasksParams) WithOwner(owner []string) *DescribeRepoTasksParams {
+	o.SetOwner(owner)
+	return o
+}
+
+// SetOwner adds the owner to the describe repo tasks params
+func (o *DescribeRepoTasksParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithRepoID adds the repoID to the describe repo tasks params
@@ -205,6 +218,14 @@ func (o *DescribeRepoTasksParams) WriteToRequest(r runtime.ClientRequest, reg st
 			}
 		}
 
+	}
+
+	valuesOwner := o.Owner
+
+	joinedOwner := swag.JoinByFormat(valuesOwner, "")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	valuesRepoID := o.RepoID

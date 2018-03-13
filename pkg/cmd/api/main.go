@@ -111,7 +111,7 @@ func mainHandler(ctx context.Context) http.Handler {
 		fmt.Sprintf("%s:%d", constants.RepoManagerHost, constants.RepoManagerPort),
 		opts,
 	)
-	err = pb.RegisterRepoManagerHandlerFromEndpoint(
+	err = pb.RegisterRepoIndexerHandlerFromEndpoint(
 		ctx, gwmux,
 		fmt.Sprintf("%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort),
 		opts,

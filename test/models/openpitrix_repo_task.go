@@ -19,6 +19,9 @@ type OpenpitrixRepoTask struct {
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
+	// owner
+	Owner string `json:"owner,omitempty"`
+
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`
 

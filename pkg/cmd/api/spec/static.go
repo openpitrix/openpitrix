@@ -532,6 +532,15 @@ var Files = map[string]string{
             }
           },
           {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
             "name": "status",
             "in": "query",
             "required": false,
@@ -1567,6 +1576,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "repo_id": {
+          "type": "string"
+        },
+        "owner": {
           "type": "string"
         },
         "status": {
