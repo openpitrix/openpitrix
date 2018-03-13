@@ -17,6 +17,7 @@ const (
 	TaskManagerHost       = prefix + "task-manager"
 	PilotManagerHost      = prefix + "pilot-manager"
 	DbCtrlHost            = prefix + "db-ctrl"
+	RepoIndexerHost       = prefix + "repo-indexer"
 )
 
 const (
@@ -28,6 +29,7 @@ const (
 	DbCtrlPort            = 9105
 	JobManagerPort        = 9106
 	TaskManagerPort       = 9107
+	RepoIndexerPort       = 9108
 	PilotManagerPort      = 9110
 )
 

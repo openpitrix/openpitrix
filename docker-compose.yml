@@ -64,6 +64,20 @@ services:
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
 
+  openpitrix-repo-manager:
+    build: .
+    image: "openpitrix"
+    command: "repo-indexer"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-db
+      - openpitrix-etcd
+    container_name: "openpitrix-repo-indexer"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+
   openpitrix-api-gateway:
     build: .
     image: "openpitrix"

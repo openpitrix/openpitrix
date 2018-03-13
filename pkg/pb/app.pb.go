@@ -9,6 +9,7 @@ It is generated from these files:
 	job.proto
 	pilot.proto
 	repo.proto
+	repo_indexer.proto
 	runtime_env.proto
 	task.proto
 
@@ -41,6 +42,11 @@ It has these top-level messages:
 	Repo
 	DescribeReposRequest
 	DescribeReposResponse
+	IndexRepoRequest
+	IndexRepoResponse
+	RepoTask
+	DescribeRepoTasksRequest
+	DescribeRepoTasksResponse
 	RuntimeEnv
 	CreateRuntimeEnvRequest
 	CreateRuntimeEnvResponse

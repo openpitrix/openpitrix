@@ -40,6 +40,7 @@ func Serve() {
 	logger.Infof("Repo service http://%s:%d\n", constants.RepoManagerHost, constants.RepoManagerPort)
 	logger.Infof("Job service http://%s:%d\n", constants.JobManagerHost, constants.JobManagerPort)
 	logger.Infof("Task service http://%s:%d\n", constants.TaskManagerHost, constants.TaskManagerPort)
+	logger.Infof("Repo indexer service http://%s:%d\n", constants.RepoIndexerHost, constants.RepoIndexerPort)
 	logger.Infof("Api service start http://%s:%d\n", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
 	if err := run(); err != nil {
@@ -108,6 +109,11 @@ func mainHandler(ctx context.Context) http.Handler {
 	err = pb.RegisterRepoManagerHandlerFromEndpoint(
 		ctx, gwmux,
 		fmt.Sprintf("%s:%d", constants.RepoManagerHost, constants.RepoManagerPort),
+		opts,
+	)
+	err = pb.RegisterRepoManagerHandlerFromEndpoint(
+		ctx, gwmux,
+		fmt.Sprintf("%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort),
 		opts,
 	)
 	if err != nil {

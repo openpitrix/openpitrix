@@ -1,0 +1,97 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+
+message IndexRepoRequest {
+	google.protobuf.StringValue repo_id = 1;
+}
+
+message IndexRepoResponse {
+	RepoTask repo_task = 1;
+}
+
+message RepoTask {
+	google.protobuf.StringValue repo_task_id = 1;
+	google.protobuf.StringValue repo_id = 2;
+	google.protobuf.StringValue status = 3;
+	google.protobuf.StringValue result = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
+}
+
+message DescribeRepoTasksRequest {
+	repeated string repo_task_id = 1;
+	repeated string repo_id = 2;
+	repeated string status = 3;
+	uint32 limit = 4;
+	uint32 offset = 5;
+}
+
+message DescribeRepoTasksResponse {
+	uint32 total_count = 1;
+	repeated RepoTask repo_task_set = 2;
+}
+
+//message RepoTaskLog {
+//	google.protobuf.StringValue repo_task_log_id = 1;
+//	google.protobuf.StringValue repo_task_id = 2;
+//	google.protobuf.StringValue repo_id = 3;
+//	google.protobuf.StringValue status = 4;
+//	google.protobuf.StringValue result = 5;
+//	google.protobuf.Timestamp create_time = 6;
+//	google.protobuf.Timestamp status_time = 7;
+//}
+//
+//message DescribeRepoTaskLogsRequest {
+//	repeated string repo_task_log_id = 1;
+//	repeated string repo_task_id = 2;
+//	repeated string repo_id = 3;
+//	repeated string status = 4;
+//	uint32 limit = 5;
+//	uint32 offset = 6;
+//}
+//
+//message DescribeRepoTaskLogsResponse {
+//	uint32 total_count = 1;
+//	repeated RepoTaskLog repo_task_log_set = 2;
+//}
+
+service RepoIndexer {
+	rpc IndexRepo (IndexRepoRequest) returns (IndexRepoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "start a index repo task"
+		};
+		option (google.api.http) = {
+			post: "/v1/repos/index"
+			body: "*"
+		};
+	}
+	rpc DescribeRepoTasks (DescribeRepoTasksRequest) returns (DescribeRepoTasksResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe repo tasks"
+		};
+		option (google.api.http) = {
+			get: "/v1/repo_tasks"
+		};
+	}
+//	rpc DescribeRepoTaskLogs (DescribeRepoTaskLogsRequest) returns (DescribeRepoTaskLogsResponse) {
+//		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+//			summary: "describe repo task logs"
+//		};
+//		option (google.api.http) = {
+//			get: "/v1/repo_task_logs"
+//		};
+//	}
+}
