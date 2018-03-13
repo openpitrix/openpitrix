@@ -7,13 +7,20 @@ package repo_indexer
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 	"time"
+
+	"k8s.io/helm/pkg/proto/hapi/chart"
+
+	"openpitrix.io/openpitrix/pkg/utils/sender"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/manager/repo"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
@@ -76,17 +83,66 @@ func (i *Indexer) NewRepoTask(repoId, owner string) (*models.RepoTask, error) {
 	return &repoTask, nil
 }
 
+func (i *Indexer) updateRepoTaskStatus(repoTaskId, status, result string) error {
+	_, err := i.Db.
+		Update(models.RepoTaskTableName).
+		Set("status", status).
+		Set("result", result).
+		Where(db.Eq("repo_task_id", repoTaskId)).
+		Exec()
+	if err != nil {
+		logger.Panicf("Failed to set repo task [&s] status to [%s] result to [%s], %+v", repoTaskId, status, result, err)
+	}
+	return err
+}
+
 func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
 	defer cb()
 	logger.Infof("Got repo task: %+v", repoTask)
-	// TODO: get index.yaml from repo
-	_, err := i.Db.
-		Update(models.RepoTaskTableName).
-		Set("status", constants.StatusSuccessful).
-		Where(db.Eq("repo_task_id", repoTask.RepoTaskId)).
-		Exec()
+	err := func() (err error) {
+		ctx := sender.NewContext(context.Background(), sender.Info{UserId: "system"})
+		repoManagerClient, err := repo.NewRepoManagerClient(ctx)
+		if err != nil {
+			return
+		}
+		repoId := repoTask.RepoId
+		req := pb.DescribeReposRequest{
+			RepoId: []string{repoId},
+		}
+		res, err := repoManagerClient.DescribeRepos(ctx, &req)
+		if err != nil {
+			return
+		}
+		if res.TotalCount == 0 {
+			err = fmt.Errorf("failed to get repo [%s]", repoId)
+			return
+		}
+		repoUrl := res.RepoSet[0].Url.GetValue()
+		indexFile, err := GetIndexFile(repoUrl)
+		if err != nil {
+			return
+		}
+		for entry, chartVersions := range indexFile.Entries {
+			logger.Debugf("Start index chart [%s]", entry)
+			for _, chartVersion := range chartVersions {
+				var pkg *chart.Chart
+				pkg, err = GetPackageFile(chartVersion, repoUrl)
+				if err != nil {
+					return
+				}
+				logger.Debugf("Got pkg [%+v]", pkg)
+				// TODO: create app && create app version
+			}
+		}
+		return
+	}()
 	if err != nil {
-		logger.Panicf("Cannot set repo task [&s] status to [success]", repoTask.RepoTaskId)
+		// FIXME: remove panic log
+		logger.Panicf("Failed to execute repo task: %+v", err)
+		logger.Panic(string(debug.Stack()))
+		i.updateRepoTaskStatus(repoTask.RepoTaskId, constants.StatusFailed, fmt.Sprintf("%+v", err))
+	} else {
+		i.updateRepoTaskStatus(repoTask.RepoTaskId, constants.StatusSuccessful, "")
 	}
 }
 
