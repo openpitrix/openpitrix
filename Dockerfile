@@ -14,5 +14,7 @@ FROM alpine:3.6
 RUN apk add --update ca-certificates && update-ca-certificates
 COPY --from=builder /go/bin/* /usr/local/bin/
 COPY ./pkg/db/schema /schema
+COPY ./pkg/db/ddl /ddl
+
 
 CMD ["sh"]

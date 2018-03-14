@@ -9,10 +9,10 @@ services:
   openpitrix-db:
     image: "mysql:5.7"
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ${DATA_PATH}/mysql:/var/lib/mysql
+      - ./pkg/db/ddl:/docker-entrypoint-initdb.d
     ports:
      - "13306:3306" # only for debug
     container_name: "openpitrix-db"
