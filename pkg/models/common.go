@@ -26,8 +26,16 @@ var IndexedColumns = map[string][]string{
 	RepoTableName: {
 		"repo_id", "name", "visibility", "status",
 	},
+<<<<<<< HEAD
+	RepoLabelTableName: {
+		"repo_id", "repo_label_id", "status",
+	},
+	RepoSelectorTableName: {
+		"repo_id", "repo_selector_id", "status",
+=======
 	RepoTaskTableName: {
 		"repo_task_id", "repo_id", "status",
+>>>>>>> origin/master
 	},
 }
 

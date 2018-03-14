@@ -91,6 +91,120 @@ message DescribeReposResponse {
 	repeated Repo repo_set = 2;
 }
 
+
+
+message RepoLabel {
+	google.protobuf.StringValue repo_id = 1;
+	google.protobuf.StringValue repo_label_id = 2;
+	google.protobuf.StringValue label_key = 3;
+	google.protobuf.StringValue label_value = 4;
+
+	google.protobuf.StringValue status = 5;
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.Timestamp status_time = 7;
+}
+
+message CreateRepoLabelRequest {
+	google.protobuf.StringValue repo_id = 1;
+	google.protobuf.StringValue _ = 2;
+	google.protobuf.StringValue label_key = 3;
+	google.protobuf.StringValue label_value = 4;
+}
+
+message CreateRepoLabelResponse {
+	RepoLabel repo_label = 1;
+}
+
+message ModifyRepoLabelRequest {
+	google.protobuf.StringValue _ = 1;
+	google.protobuf.StringValue repo_label_id = 2;
+	google.protobuf.StringValue label_key = 3;
+	google.protobuf.StringValue label_value = 4;
+}
+
+message ModifyRepoLabelResponse {
+	RepoLabel repo_label = 1;
+}
+
+message DeleteRepoLabelRequest {
+	google.protobuf.StringValue repo_label_id = 1;
+}
+
+message DeleteRepoLabelResponse {
+	RepoLabel repo_label = 1;
+}
+
+message DescribeRepoLabelsRequest {
+	repeated string repo_id = 1; // NOTE: grpc gateway cannot handle repeated StringValue
+	repeated string repo_label_id = 2;
+	repeated string status = 3;
+	uint32 limit = 4; // NOTE: uint64 marshal to json will convert to string
+	uint32 offset = 5;
+}
+
+message DescribeRepoLabelsResponse {
+	uint32 total_count = 1;
+	repeated RepoLabel repo_label_set = 2;
+}
+
+
+
+message RepoSelector {
+	google.protobuf.StringValue repo_id = 1;
+	google.protobuf.StringValue repo_selector_id = 2;
+	google.protobuf.StringValue selector_key = 3;
+	google.protobuf.StringValue selector_value = 4;
+
+	google.protobuf.StringValue status = 5;
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.Timestamp status_time = 7;
+}
+
+message CreateRepoSelectorRequest {
+	google.protobuf.StringValue repo_id = 1;
+	google.protobuf.StringValue _ = 2;
+	google.protobuf.StringValue selector_key = 3;
+	google.protobuf.StringValue selector_value = 4;
+}
+
+message CreateRepoSelectorResponse {
+	RepoSelector repo_selector = 1;
+}
+
+message ModifyRepoSelectorRequest {
+	google.protobuf.StringValue _ = 1;
+	google.protobuf.StringValue repo_selector_id = 2;
+	google.protobuf.StringValue selector_key = 3;
+	google.protobuf.StringValue selector_value = 4;
+}
+
+message ModifyRepoSelectorResponse {
+	RepoSelector repo_selector = 1;
+}
+
+message DeleteRepoSelectorRequest {
+	google.protobuf.StringValue repo_selector_id = 1;
+}
+
+message DeleteRepoSelectorResponse {
+	RepoSelector repo_selector = 1;
+}
+
+message DescribeRepoSelectorsRequest {
+	repeated string repo_id = 1; // NOTE: grpc gateway cannot handle repeated StringValue
+	repeated string repo_selector_id = 2;
+	repeated string status = 3;
+	uint32 limit = 4; // NOTE: uint64 marshal to json will convert to string
+	uint32 offset = 5;
+}
+
+message DescribeRepoSelectorsResponse {
+	uint32 total_count = 1;
+	repeated RepoSelector repo_selector_set = 2;
+}
+
+
+
 service RepoManager {
 	rpc CreateRepo (CreateRepoRequest) returns (CreateRepoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -124,6 +238,81 @@ service RepoManager {
 		};
 		option (google.api.http) = {
 			delete: "/v1/repos"
+			body: "*"
+		};
+	}
+
+
+
+	rpc CreateRepoLabel (CreateRepoLabelRequest) returns (CreateRepoLabelResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create repo label"
+		};
+		option (google.api.http) = {
+			post: "/v1/repos/labels"
+			body: "*"
+		};
+	}
+	rpc DescribeRepoLabels (DescribeRepoLabelsRequest) returns (DescribeRepoLabelsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe repo labels with filter"
+		};
+		option (google.api.http) = {
+			get: "/v1/repos/labels"
+		};
+	}
+	rpc ModifyRepoLabel (ModifyRepoLabelRequest) returns (ModifyRepoLabelResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify repo label"
+		};
+		option (google.api.http) = {
+			patch: "/v1/repos/labels"
+			body: "*"
+		};
+	}
+	rpc DeleteRepoLabel (DeleteRepoLabelRequest) returns (DeleteRepoLabelResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete repo label"
+		};
+		option (google.api.http) = {
+			delete: "/v1/repos/labels"
+			body: "*"
+		};
+	}
+
+
+	rpc CreateRepoSelector (CreateRepoSelectorRequest) returns (CreateRepoSelectorResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create repo selector"
+		};
+		option (google.api.http) = {
+			post: "/v1/repos/selectors"
+			body: "*"
+		};
+	}
+	rpc DescribeRepoSelectors (DescribeRepoSelectorsRequest) returns (DescribeRepoSelectorsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe repo selectors with filter"
+		};
+		option (google.api.http) = {
+			get: "/v1/repos/selectors"
+		};
+	}
+	rpc ModifyRepoSelector (ModifyRepoSelectorRequest) returns (ModifyRepoSelectorResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify repo selectors"
+		};
+		option (google.api.http) = {
+			patch: "/v1/repos/selectors"
+			body: "*"
+		};
+	}
+	rpc DeleteRepoSelector (DeleteRepoSelectorRequest) returns (DeleteRepoSelectorResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete repo selectors"
+		};
+		option (google.api.http) = {
+			delete: "/v1/repos/selectors"
 			body: "*"
 		};
 	}
