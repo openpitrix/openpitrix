@@ -11,7 +11,7 @@ RUN go generate openpitrix.io/openpitrix/pkg/version && \
 	go install  openpitrix.io/openpitrix/cmd/...
 
 FROM alpine:3.6
-
+RUN apk add --update ca-certificates && update-ca-certificates
 COPY --from=builder /go/bin/* /usr/local/bin/
 COPY ./pkg/db/schema /schema
 

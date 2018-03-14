@@ -71,7 +71,14 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		req.GetName().GetValue(),
 		req.GetRepoId().GetValue(),
 		req.GetDescription().GetValue(),
-		s.UserId)
+		s.UserId,
+		req.GetChartName().GetValue())
+
+	newApp.Home = req.GetHome().GetValue()
+	newApp.Icon = req.GetIcon().GetValue()
+	newApp.Screenshots = req.GetScreenshots().GetValue()
+	newApp.Sources = req.GetSources().GetValue()
+	newApp.Readme = req.GetReadme().GetValue()
 
 	_, err := p.Db.
 		InsertInto(models.AppTableName).

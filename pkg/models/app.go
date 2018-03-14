@@ -38,7 +38,7 @@ type App struct {
 
 var AppColumns = GetColumnsFromStruct(&App{})
 
-func NewApp(name, repoId, description, owner string) *App {
+func NewApp(name, repoId, description, owner, chartName string) *App {
 	return &App{
 		AppId:       NewAppId(),
 		Name:        name,
@@ -46,6 +46,7 @@ func NewApp(name, repoId, description, owner string) *App {
 		Description: description,
 		Status:      constants.StatusActive,
 		Owner:       owner,
+		ChartName:   chartName,
 		CreateTime:  time.Now(),
 		StatusTime:  time.Now(),
 	}

@@ -60,3 +60,14 @@ CREATE TABLE repo_selector (
 	create_time       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	status_time       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
+
+
+CREATE TABLE repo_task (
+	repo_task_id VARCHAR(50) PRIMARY KEY             NOT NULL,
+	repo_id      VARCHAR(50)                         NOT NULL,
+	owner        VARCHAR(50)                         NOT NULL,
+	status       VARCHAR(50)                         NOT NULL,
+	result       TEXT                                NOT NULL,
+	create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	status_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);

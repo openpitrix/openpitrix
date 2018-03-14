@@ -77,6 +77,24 @@ var Files = map[string]string{
             }
           },
           {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "chart_name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
             "name": "search_word",
             "in": "query",
             "required": false,
@@ -767,6 +785,102 @@ var Files = map[string]string{
         ],
         "tags": [
           "RepoManager"
+        ]
+      }
+    },
+    "/v1/repo_tasks": {
+      "get": {
+        "summary": "describe repo tasks",
+        "operationId": "DescribeRepoTasks",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeRepoTasksResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "repo_task_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "repo_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "RepoIndexer"
+        ]
+      }
+    },
+    "/v1/repos/index": {
+      "post": {
+        "summary": "start a index repo task",
+        "operationId": "IndexRepo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixIndexRepoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixIndexRepoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RepoIndexer"
         ]
       }
     },
@@ -1918,6 +2032,65 @@ var Files = map[string]string{
           "type": "string"
         },
         "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixDescribeRepoTasksResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "repo_task_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRepoTask"
+          }
+        }
+      }
+    },
+    "openpitrixIndexRepoRequest": {
+      "type": "object",
+      "properties": {
+        "repo_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixIndexRepoResponse": {
+      "type": "object",
+      "properties": {
+        "repo_task": {
+          "$ref": "#/definitions/openpitrixRepoTask"
+        }
+      }
+    },
+    "openpitrixRepoTask": {
+      "type": "object",
+      "properties": {
+        "repo_task_id": {
+          "type": "string"
+        },
+        "repo_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "result": {
           "type": "string"
         },
         "create_time": {

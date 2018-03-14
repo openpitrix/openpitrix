@@ -65,12 +65,16 @@ type DescribeAppsParams struct {
 
 	/*AppID*/
 	AppID []string
+	/*ChartName*/
+	ChartName []string
 	/*Limit*/
 	Limit *int64
 	/*Name*/
 	Name []string
 	/*Offset*/
 	Offset *int64
+	/*Owner*/
+	Owner []string
 	/*RepoID*/
 	RepoID []string
 	/*SearchWord*/
@@ -127,6 +131,17 @@ func (o *DescribeAppsParams) SetAppID(appID []string) {
 	o.AppID = appID
 }
 
+// WithChartName adds the chartName to the describe apps params
+func (o *DescribeAppsParams) WithChartName(chartName []string) *DescribeAppsParams {
+	o.SetChartName(chartName)
+	return o
+}
+
+// SetChartName adds the chartName to the describe apps params
+func (o *DescribeAppsParams) SetChartName(chartName []string) {
+	o.ChartName = chartName
+}
+
 // WithLimit adds the limit to the describe apps params
 func (o *DescribeAppsParams) WithLimit(limit *int64) *DescribeAppsParams {
 	o.SetLimit(limit)
@@ -158,6 +173,17 @@ func (o *DescribeAppsParams) WithOffset(offset *int64) *DescribeAppsParams {
 // SetOffset adds the offset to the describe apps params
 func (o *DescribeAppsParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwner adds the owner to the describe apps params
+func (o *DescribeAppsParams) WithOwner(owner []string) *DescribeAppsParams {
+	o.SetOwner(owner)
+	return o
+}
+
+// SetOwner adds the owner to the describe apps params
+func (o *DescribeAppsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithRepoID adds the repoID to the describe apps params
@@ -209,6 +235,14 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		return err
 	}
 
+	valuesChartName := o.ChartName
+
+	joinedChartName := swag.JoinByFormat(valuesChartName, "")
+	// query array param chart_name
+	if err := r.SetQueryParam("chart_name", joinedChartName...); err != nil {
+		return err
+	}
+
 	if o.Limit != nil {
 
 		// query param limit
@@ -247,6 +281,14 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 			}
 		}
 
+	}
+
+	valuesOwner := o.Owner
+
+	joinedOwner := swag.JoinByFormat(valuesOwner, "")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	valuesRepoID := o.RepoID
