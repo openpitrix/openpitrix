@@ -10,10 +10,6 @@ import (
 	"runtime/debug"
 	"time"
 
-	"k8s.io/helm/pkg/proto/hapi/chart"
-
-	"openpitrix.io/openpitrix/pkg/utils/sender"
-
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
@@ -23,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
 type taskChannel chan *models.RepoTask
@@ -100,12 +97,13 @@ func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
 	defer cb()
 	logger.Infof("Got repo task: %+v", repoTask)
 	err := func() (err error) {
-		ctx := sender.NewContext(context.Background(), sender.Info{UserId: "system"})
+		ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
 		repoManagerClient, err := repo.NewRepoManagerClient(ctx)
 		if err != nil {
 			return
 		}
 		repoId := repoTask.RepoId
+		owner := repoTask.Owner
 		req := pb.DescribeReposRequest{
 			RepoId: []string{repoId},
 		}
@@ -122,15 +120,23 @@ func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
 		if err != nil {
 			return
 		}
-		for entry, chartVersions := range indexFile.Entries {
-			logger.Debugf("Start index chart [%s]", entry)
+		for chartName, chartVersions := range indexFile.Entries {
+			var appId string
+			logger.Debugf("Start index chart [%s]", chartName)
+			appId, err = SyncAppInfo(repoId, owner, chartName, &chartVersions)
+			if err != nil {
+				logger.Errorf("Failed to sync chart [%s] to app info", chartName)
+				return
+			}
+			logger.Infof("Sync chart [%s] to app [%s] success", chartName, appId)
 			for _, chartVersion := range chartVersions {
-				var pkg *chart.Chart
-				pkg, err = GetPackageFile(chartVersion, repoUrl)
-				if err != nil {
-					return
-				}
-				logger.Debugf("Got pkg [%+v]", pkg)
+				logger.Debugf("Got chart [%s] urls [%v]", chartName, chartVersion.URLs)
+				//var pkg *chart.Chart
+				//pkg, err = GetPackageFile(chartVersion, repoUrl)
+				//if err != nil {
+				//	return
+				//}
+				//logger.Debugf("Got pkg [%+v]", pkg)
 				// TODO: create app && create app version
 			}
 		}

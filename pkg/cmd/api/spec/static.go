@@ -77,6 +77,24 @@ var Files = map[string]string{
             }
           },
           {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "chart_name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
             "name": "search_word",
             "in": "query",
             "required": false,

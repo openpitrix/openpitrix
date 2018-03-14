@@ -5,6 +5,7 @@
 package repo_indexer
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/url"
@@ -15,7 +16,11 @@ import (
 	"k8s.io/helm/pkg/proto/hapi/chart"
 	"k8s.io/helm/pkg/repo"
 
+	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/manager/app"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
 // Reference: https://sourcegraph.com/github.com/kubernetes/helm@fe9d365/-/blob/pkg/repo/chartrepo.go#L117:2
@@ -70,4 +75,46 @@ func GetPackageFile(chartVersion *repo.ChartVersion, repoUrl string) (*chart.Cha
 		return nil, err
 	}
 	return chartutil.LoadArchive(resp.Body)
+}
+
+func SyncAppInfo(repoId, owner, chartName string, chartVersions *repo.ChartVersions) (string, error) {
+	var appId string
+	logger.Debugf("chart [%s] has [%d] versions", chartName, chartVersions.Len())
+	ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
+	appManagerClient, err := app.NewAppManagerClient(ctx)
+	if err != nil {
+		return appId, err
+	}
+	req := pb.DescribeAppsRequest{}
+	req.RepoId = []string{repoId}
+	req.Owner = []string{owner}
+	req.ChartName = []string{chartName}
+	res, err := appManagerClient.DescribeApps(ctx, &req)
+	if err != nil {
+		return appId, err
+	}
+	if res.TotalCount == 0 {
+		createReq := pb.CreateAppRequest{}
+		createReq.RepoId = utils.ToProtoString(repoId)
+		createReq.ChartName = utils.ToProtoString(chartName)
+		createReq.Name = utils.ToProtoString(chartName)
+		createRes, err := appManagerClient.CreateApp(ctx, &createReq)
+		if err != nil {
+			return appId, err
+		}
+		appId = createRes.GetApp().GetAppId().GetValue()
+		return appId, err
+
+	} else {
+		modifyReq := pb.ModifyAppRequest{}
+		modifyReq.AppId = res.AppSet[0].AppId
+		modifyReq.Name = utils.ToProtoString(chartName)
+		modifyReq.ChartName = utils.ToProtoString(chartName)
+		modifyRes, err := appManagerClient.ModifyApp(ctx, &modifyReq)
+		if err != nil {
+			return appId, err
+		}
+		appId = modifyRes.GetApp().GetAppId().GetValue()
+		return appId, err
+	}
 }
