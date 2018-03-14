@@ -52,9 +52,16 @@ type UpdateQuery struct {
 // Example: Select().From().Where().Limit().Offset().OrderDir().Load()
 //          Select().From().Where().Limit().Offset().OrderDir().LoadOne()
 //          Select().From().Where().Count()
+//          SelectAll().From().Where().Limit().Offset().OrderDir().Load()
+//          SelectAll().From().Where().Limit().Offset().OrderDir().LoadOne()
+//          SelectAll().From().Where().Count()
 
 func (db *Database) Select(columns ...string) *SelectQuery {
 	return &SelectQuery{db.Session.Select(columns...)}
+}
+
+func (db *Database) SelectAll(columns ...string) *SelectQuery {
+	return &SelectQuery{db.Session.Select("*")}
 }
 
 func (b *SelectQuery) From(table string) *SelectQuery {

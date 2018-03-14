@@ -15,7 +15,7 @@ import (
 
 func NewClient(ctx context.Context, host string, port int) (*grpc.ClientConn, error) {
 	endpoint := fmt.Sprintf("%s:%d", host, port)
-	conn, err := grpc.Dial(endpoint)
+	conn, err := grpc.Dial(endpoint, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}

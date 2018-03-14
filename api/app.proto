@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -96,9 +96,11 @@ message DescribeAppsRequest {
 	repeated string name = 2;
 	repeated string repo_id = 3;
 	repeated string status = 4;
-	google.protobuf.StringValue search_word = 5;
-	uint32 limit = 6; // NOTE: uint64 marshal to json will convert to string
-	uint32 offset = 7;
+	repeated string owner = 5;
+	repeated string chart_name = 6;
+	google.protobuf.StringValue search_word = 7;
+	uint32 limit = 8; // NOTE: uint64 marshal to json will convert to string
+	uint32 offset = 9;
 }
 message DescribeAppsResponse {
 	uint32 total_count = 1;

@@ -588,6 +588,54 @@
 			"revisionTime": "2017-12-28T16:00:23Z"
 		},
 		{
+			"checksumSHA1": "TT1rac6kpQp2vz24m5yDGUNQ/QQ=",
+			"path": "golang.org/x/crypto/cast5",
+			"revision": "182114d582623c1caa54f73de9c7224e23a48487",
+			"revisionTime": "2018-03-12T18:51:34Z"
+		},
+		{
+			"checksumSHA1": "YMc1Q83Sft4S1dxzOWJLDFxi+hM=",
+			"path": "golang.org/x/crypto/openpgp",
+			"revision": "182114d582623c1caa54f73de9c7224e23a48487",
+			"revisionTime": "2018-03-12T18:51:34Z"
+		},
+		{
+			"checksumSHA1": "olOKkhrdkYQHZ0lf1orrFQPQrv4=",
+			"path": "golang.org/x/crypto/openpgp/armor",
+			"revision": "182114d582623c1caa54f73de9c7224e23a48487",
+			"revisionTime": "2018-03-12T18:51:34Z"
+		},
+		{
+			"checksumSHA1": "KsxFyUbL2BqNvs3h80/XtnpFlTo=",
+			"path": "golang.org/x/crypto/openpgp/clearsign",
+			"revision": "182114d582623c1caa54f73de9c7224e23a48487",
+			"revisionTime": "2018-03-12T18:51:34Z"
+		},
+		{
+			"checksumSHA1": "eo/KtdjieJQXH7Qy+faXFcF70ME=",
+			"path": "golang.org/x/crypto/openpgp/elgamal",
+			"revision": "182114d582623c1caa54f73de9c7224e23a48487",
+			"revisionTime": "2018-03-12T18:51:34Z"
+		},
+		{
+			"checksumSHA1": "rlxVSaGgqdAgwblsErxTxIfuGfg=",
+			"path": "golang.org/x/crypto/openpgp/errors",
+			"revision": "182114d582623c1caa54f73de9c7224e23a48487",
+			"revisionTime": "2018-03-12T18:51:34Z"
+		},
+		{
+			"checksumSHA1": "Pq88+Dgh04UdXWZN6P+bLgYnbRc=",
+			"path": "golang.org/x/crypto/openpgp/packet",
+			"revision": "182114d582623c1caa54f73de9c7224e23a48487",
+			"revisionTime": "2018-03-12T18:51:34Z"
+		},
+		{
+			"checksumSHA1": "s2qT4UwvzBSkzXuiuMkowif1Olw=",
+			"path": "golang.org/x/crypto/openpgp/s2k",
+			"revision": "182114d582623c1caa54f73de9c7224e23a48487",
+			"revisionTime": "2018-03-12T18:51:34Z"
+		},
+		{
 			"checksumSHA1": "1MGpGDQqnUoRpv7VEcQrXOBydXE=",
 			"path": "golang.org/x/crypto/pbkdf2",
 			"revision": ""
@@ -1829,10 +1877,28 @@
 			"revisionTime": "2017-11-16T01:04:27Z"
 		},
 		{
+			"checksumSHA1": "1aAvQAYwunMS0SEwqEhewMR4MYI=",
+			"path": "k8s.io/helm/pkg/getter",
+			"revision": "fe9d36533901b71923c49142f5cf007f93fa926f",
+			"revisionTime": "2018-03-13T02:17:26Z"
+		},
+		{
 			"checksumSHA1": "Qrl29vmvGVL9qHXZlkWwxZvXc3U=",
 			"path": "k8s.io/helm/pkg/helm",
 			"revision": "8478fb4fc723885b155c924d1c8c410b7a9444e6",
 			"revisionTime": "2017-11-16T01:04:27Z"
+		},
+		{
+			"checksumSHA1": "SZOT69pp/LW2CDe1P1PJne/qNUY=",
+			"path": "k8s.io/helm/pkg/helm/environment",
+			"revision": "fe9d36533901b71923c49142f5cf007f93fa926f",
+			"revisionTime": "2018-03-13T02:17:26Z"
+		},
+		{
+			"checksumSHA1": "mqaba3356llh1hmZrnZfRv6jyu0=",
+			"path": "k8s.io/helm/pkg/helm/helmpath",
+			"revision": "fe9d36533901b71923c49142f5cf007f93fa926f",
+			"revisionTime": "2018-03-13T02:17:26Z"
 		},
 		{
 			"checksumSHA1": "Noq8aE/XEjtKBsFlWCL2ddNs5n4=",
@@ -1851,6 +1917,12 @@
 			"path": "k8s.io/helm/pkg/kube",
 			"revision": "8478fb4fc723885b155c924d1c8c410b7a9444e6",
 			"revisionTime": "2017-11-16T01:04:27Z"
+		},
+		{
+			"checksumSHA1": "hz98VjP4zPi93KS2JjtcpxFFv1U=",
+			"path": "k8s.io/helm/pkg/plugin",
+			"revision": "fe9d36533901b71923c49142f5cf007f93fa926f",
+			"revisionTime": "2018-03-13T02:17:26Z"
 		},
 		{
 			"checksumSHA1": "US0t9LvBi8IKrMCUtMylxACEA/8=",
@@ -1877,10 +1949,22 @@
 			"revisionTime": "2017-11-16T01:04:27Z"
 		},
 		{
+			"checksumSHA1": "a9TdezPle3pbFiuFA6iynS63bbI=",
+			"path": "k8s.io/helm/pkg/provenance",
+			"revision": "fe9d36533901b71923c49142f5cf007f93fa926f",
+			"revisionTime": "2018-03-13T02:17:26Z"
+		},
+		{
 			"checksumSHA1": "62373cRdwzaB5WUPv+SQrr3TMCU=",
 			"path": "k8s.io/helm/pkg/releaseutil",
 			"revision": "8478fb4fc723885b155c924d1c8c410b7a9444e6",
 			"revisionTime": "2017-11-16T01:04:27Z"
+		},
+		{
+			"checksumSHA1": "M7uiSB3sK1q2rixRH1OSsYS9u6Y=",
+			"path": "k8s.io/helm/pkg/repo",
+			"revision": "fe9d36533901b71923c49142f5cf007f93fa926f",
+			"revisionTime": "2018-03-13T02:17:26Z"
 		},
 		{
 			"checksumSHA1": "qMgX80FBfocOQ4GXEolB0PN0QeY=",
@@ -1895,10 +1979,28 @@
 			"revisionTime": "2017-11-16T01:04:27Z"
 		},
 		{
+			"checksumSHA1": "pm3ovbT3vJSb+l3v27aOe4Wosy8=",
+			"path": "k8s.io/helm/pkg/sympath",
+			"revision": "fe9d36533901b71923c49142f5cf007f93fa926f",
+			"revisionTime": "2018-03-13T02:17:26Z"
+		},
+		{
 			"checksumSHA1": "DeTlWOonlGkN6VOMU03XQquLwi0=",
 			"path": "k8s.io/helm/pkg/tiller/environment",
 			"revision": "8478fb4fc723885b155c924d1c8c410b7a9444e6",
 			"revisionTime": "2017-11-16T01:04:27Z"
+		},
+		{
+			"checksumSHA1": "T8AePsVCWkqqlD1hD3D9nWqnUDo=",
+			"path": "k8s.io/helm/pkg/tlsutil",
+			"revision": "fe9d36533901b71923c49142f5cf007f93fa926f",
+			"revisionTime": "2018-03-13T02:17:26Z"
+		},
+		{
+			"checksumSHA1": "p02rTOPtQnRvtRDkIA31dfKRZuc=",
+			"path": "k8s.io/helm/pkg/urlutil",
+			"revision": "fe9d36533901b71923c49142f5cf007f93fa926f",
+			"revisionTime": "2018-03-13T02:17:26Z"
 		},
 		{
 			"checksumSHA1": "x9IXFUVWRDpopLQ6eVj0YUCbR4o=",
