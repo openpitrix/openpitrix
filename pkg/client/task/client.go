@@ -89,6 +89,8 @@ func SendTask(task *models.Task) (taskId string, err error) {
 	pbTask := models.TaskToPb(task)
 	taskRequest := &pb.CreateTaskRequest{
 		JobId:      pbTask.JobId,
+		NodeId:     pbTask.NodeId,
+		Target:     pbTask.Target,
 		TaskAction: pbTask.TaskAction,
 		Directive:  pbTask.Directive,
 	}
