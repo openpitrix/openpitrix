@@ -27,6 +27,183 @@ var Files = map[string]string{
     "application/json"
   ],
   "paths": {
+    "/v1/app_versions": {
+      "get": {
+        "summary": "describe app versions with filter",
+        "operationId": "DescribeAppVersions",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeAppVersionsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "package_name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "delete": {
+        "summary": "delete app version",
+        "operationId": "DeleteAppVersion",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "post": {
+        "summary": "create app version",
+        "operationId": "CreateAppVersion",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "patch": {
+        "summary": "modify app version",
+        "operationId": "ModifyAppVersion",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/apps": {
       "get": {
         "summary": "describe apps with filter",
@@ -1121,6 +1298,40 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixAppVersion": {
+      "type": "object",
+      "properties": {
+        "version_id": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "package_name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "openpitrixCreateAppRequest": {
       "type": "object",
       "properties": {
@@ -1170,6 +1381,37 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixCreateAppVersionRequest": {
+      "type": "object",
+      "properties": {
+        "_": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "package_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateAppVersionResponse": {
+      "type": "object",
+      "properties": {
+        "app_version": {
+          "$ref": "#/definitions/openpitrixAppVersion"
+        }
+      }
+    },
     "openpitrixDeleteAppRequest": {
       "type": "object",
       "properties": {
@@ -1183,6 +1425,37 @@ var Files = map[string]string{
       "properties": {
         "app": {
           "$ref": "#/definitions/openpitrixApp"
+        }
+      }
+    },
+    "openpitrixDeleteAppVersionRequest": {
+      "type": "object",
+      "properties": {
+        "version_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteAppVersionResponse": {
+      "type": "object",
+      "properties": {
+        "app_version": {
+          "$ref": "#/definitions/openpitrixAppVersion"
+        }
+      }
+    },
+    "openpitrixDescribeAppVersionsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "app_version_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixAppVersion"
+          }
         }
       }
     },
@@ -1247,6 +1520,34 @@ var Files = map[string]string{
       "properties": {
         "app": {
           "$ref": "#/definitions/openpitrixApp"
+        }
+      }
+    },
+    "openpitrixModifyAppVersionRequest": {
+      "type": "object",
+      "properties": {
+        "version_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "package_name": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyAppVersionResponse": {
+      "type": "object",
+      "properties": {
+        "app_version": {
+          "$ref": "#/definitions/openpitrixAppVersion"
         }
       }
     },

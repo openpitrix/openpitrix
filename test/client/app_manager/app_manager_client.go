@@ -53,6 +53,34 @@ func (a *Client) CreateApp(params *CreateAppParams) (*CreateAppOK, error) {
 }
 
 /*
+CreateAppVersion creates app version
+*/
+func (a *Client) CreateAppVersion(params *CreateAppVersionParams) (*CreateAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CreateAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_versions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &CreateAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CreateAppVersionOK), nil
+
+}
+
+/*
 DeleteApp deletes app
 */
 func (a *Client) DeleteApp(params *DeleteAppParams) (*DeleteAppOK, error) {
@@ -77,6 +105,62 @@ func (a *Client) DeleteApp(params *DeleteAppParams) (*DeleteAppOK, error) {
 		return nil, err
 	}
 	return result.(*DeleteAppOK), nil
+
+}
+
+/*
+DeleteAppVersion deletes app version
+*/
+func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams) (*DeleteAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteAppVersion",
+		Method:             "DELETE",
+		PathPattern:        "/v1/app_versions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteAppVersionOK), nil
+
+}
+
+/*
+DescribeAppVersions describes app versions with filter
+*/
+func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams) (*DescribeAppVersionsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeAppVersionsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeAppVersions",
+		Method:             "GET",
+		PathPattern:        "/v1/app_versions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DescribeAppVersionsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeAppVersionsOK), nil
 
 }
 
@@ -133,6 +217,34 @@ func (a *Client) ModifyApp(params *ModifyAppParams) (*ModifyAppOK, error) {
 		return nil, err
 	}
 	return result.(*ModifyAppOK), nil
+
+}
+
+/*
+ModifyAppVersion modifies app version
+*/
+func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams) (*ModifyAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewModifyAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ModifyAppVersion",
+		Method:             "PATCH",
+		PathPattern:        "/v1/app_versions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ModifyAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ModifyAppVersionOK), nil
 
 }
 

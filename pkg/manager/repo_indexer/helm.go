@@ -44,6 +44,7 @@ func GetIndexFile(repoUrl string) (indexFile repo.IndexFile, err error) {
 	if err != nil {
 		return
 	}
+	// TODO: SortEntries will panic, fix this bug
 	//indexFile.SortEntries()
 	return
 }

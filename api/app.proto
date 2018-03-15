@@ -107,6 +107,67 @@ message DescribeAppsResponse {
 	repeated App app_set = 2;
 }
 
+message CreateAppVersionRequest {
+	google.protobuf.StringValue _ = 1; // placeholder for version_id
+	google.protobuf.StringValue app_id = 2;
+	google.protobuf.StringValue owner = 3;
+	google.protobuf.StringValue name = 4;
+	google.protobuf.StringValue package_name = 5;
+	google.protobuf.StringValue description = 6;
+}
+
+message CreateAppVersionResponse {
+	AppVersion app_version = 1;
+}
+
+message ModifyAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue package_name = 3;
+	google.protobuf.StringValue owner = 4;
+	google.protobuf.StringValue description = 5;
+}
+
+message ModifyAppVersionResponse {
+	AppVersion app_version = 1;
+}
+
+message DeleteAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+
+message DeleteAppVersionResponse {
+	AppVersion app_version = 1;
+}
+
+message AppVersion {
+	google.protobuf.StringValue version_id = 1;
+	google.protobuf.StringValue app_id = 2;
+	google.protobuf.StringValue owner = 3;
+	google.protobuf.StringValue name = 4;
+	google.protobuf.StringValue description = 5;
+	google.protobuf.StringValue package_name = 6;
+	google.protobuf.StringValue status = 7;
+	google.protobuf.Timestamp create_time = 8;
+	google.protobuf.Timestamp status_time = 9;
+}
+message DescribeAppVersionsRequest {
+	repeated string version_id = 1;
+	repeated string app_id = 2;
+	repeated string name = 3;
+	repeated string owner = 4;
+	repeated string description = 5;
+	repeated string package_name = 6;
+	repeated string status = 7;
+	google.protobuf.StringValue search_word = 8;
+	uint32 limit = 9; // NOTE: uint64 marshal to json will convert to string
+	uint32 offset = 10;
+}
+message DescribeAppVersionsResponse {
+	uint32 total_count = 1;
+	repeated AppVersion app_version_set = 2;
+}
+
 service AppManager {
 	rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -142,5 +203,41 @@ service AppManager {
 			delete: "/v1/apps"
 			body: "*"
 		};
+	}
+
+	rpc CreateAppVersion (CreateAppVersionRequest) returns (CreateAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "create app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_versions"
+            body: "*"
+        };
+	}
+	rpc DescribeAppVersions (DescribeAppVersionsRequest) returns (DescribeAppVersionsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "describe app versions with filter"
+        };
+		option (google.api.http) = {
+            get: "/v1/app_versions"
+        };
+	}
+	rpc ModifyAppVersion (ModifyAppVersionRequest) returns (ModifyAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "modify app version"
+        };
+		option (google.api.http) = {
+            patch: "/v1/app_versions"
+            body: "*"
+        };
+	}
+	rpc DeleteAppVersion (DeleteAppVersionRequest) returns (DeleteAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "delete app version"
+        };
+		option (google.api.http) = {
+            delete: "/v1/app_versions"
+            body: "*"
+        };
 	}
 }

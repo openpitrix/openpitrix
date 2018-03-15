@@ -17,6 +17,10 @@ var IndexedColumns = map[string][]string{
 		"home", "icon", "screenshots", "maintainers", "sources",
 		"readme", "owner", "chart_name",
 	},
+	AppVersionTableName: {
+		"version_id", "app_id", "name", "owner", "description",
+		"package_name", "status",
+	},
 	JobTableName: {
 		"job_id", "cluster_id", "app_id", "app_version", "status",
 	},
@@ -32,13 +36,16 @@ var IndexedColumns = map[string][]string{
 }
 
 var SearchWordColumnTable = []string{
-	AppTableName,
+	AppTableName, AppVersionTableName,
 }
 
 // columns that can be search through sql 'like' operator
 var SearchColumns = map[string][]string{
 	AppTableName: {
 		"app_id", "name", "repo_id", "owner", "chart_name",
+	},
+	AppVersionTableName: {
+		"version_id", "app_id", "name", "description", "owner", "package_name",
 	},
 	JobTableName: {
 		"job_id", "cluster_id", "app_id", "app_version", "status",
