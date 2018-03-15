@@ -95,6 +95,12 @@ func (i *Indexer) updateRepoTaskStatus(repoTaskId, status, result string) error 
 
 func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
 	defer cb()
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Panic(err)
+			i.updateRepoTaskStatus(repoTask.RepoTaskId, constants.StatusFailed, fmt.Sprintf("%+v", err))
+		}
+	}()
 	logger.Infof("Got repo task: %+v", repoTask)
 	err := func() (err error) {
 		ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
@@ -130,14 +136,13 @@ func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
 			}
 			logger.Infof("Sync chart [%s] to app [%s] success", chartName, appId)
 			for _, chartVersion := range chartVersions {
-				logger.Debugf("Got chart [%s] urls [%v]", chartName, chartVersion.URLs)
-				//var pkg *chart.Chart
-				//pkg, err = GetPackageFile(chartVersion, repoUrl)
-				//if err != nil {
-				//	return
-				//}
-				//logger.Debugf("Got pkg [%+v]", pkg)
-				// TODO: create app && create app version
+				var versionId string
+				versionId, err = SyncAppVersionInfo(appId, owner, chartVersion)
+				if err != nil {
+					logger.Errorf("Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
+					return
+				}
+				logger.Debugf("Chart version [%s] sync to app version [%s]", chartVersion.GetVersion(), versionId)
 			}
 		}
 		return
