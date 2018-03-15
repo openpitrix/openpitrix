@@ -9,11 +9,11 @@ import (
 	"sync"
 	"time"
 
+	taskClient "openpitrix.io/openpitrix/pkg/client/task"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/manager/task"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
@@ -109,6 +109,8 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		return err
 	}
 
+	defer NewProcessor(job).Post()
+
 	runtimeInterface := plugins.GetRuntimePlugin(job.Runtime)
 	if runtimeInterface == nil {
 		logger.Errorf("No such runtime [%s]. ", job.Runtime)
@@ -124,7 +126,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 	err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
 		if parent != nil {
 			for _, parentTask := range parent.Tasks {
-				err = task.WaitTask(parentTask.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+				err = taskClient.WaitTask(parentTask.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
 				if err != nil {
 					logger.Errorf("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 					return err
@@ -133,7 +135,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		}
 
 		for _, currentTask := range current.Tasks {
-			taskId, err := task.SendTask(currentTask)
+			taskId, err := taskClient.SendTask(currentTask)
 			if err != nil {
 				logger.Errorf("Failed to send task [%s]: %+v", currentTask.TaskId, err)
 				return err
