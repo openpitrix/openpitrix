@@ -53,11 +53,11 @@ message CreateRuntimeEnvResponse{
 }
 
 message DescribeRuntimeEnvsRequest{
-	repeated google.protobuf.StringValue runtime_env_id = 1;
-	repeated google.protobuf.StringValue status = 2;
+	repeated string runtime_env_id = 1;
+	repeated string status = 2;
 	google.protobuf.StringValue search_word = 3;
 	google.protobuf.StringValue selector = 4;
-	repeated google.protobuf.StringValue owner = 5;
+	repeated string owner = 5;
 	google.protobuf.UInt32Value limit = 6;
 	google.protobuf.UInt32Value offset = 7;
 	google.protobuf.UInt32Value verbose = 8;
@@ -93,7 +93,7 @@ message RuntimeEnvCredential{
 	google.protobuf.StringValue description = 3;
 	map <string, string> content = 4;
 	google.protobuf.StringValue owner = 5;
-	repeated google.protobuf.StringValue runtime_env_ids = 6;
+	repeated string runtime_env_id = 6;
 	google.protobuf.StringValue status = 7;
 	google.protobuf.Timestamp create_time = 9;
 	google.protobuf.Timestamp status_time = 10;
@@ -110,10 +110,10 @@ message CreateRuntimeEnvCredentialResponse{
 }
 
 message DescribeRuntimeEnvCredentialsRequset{
-	repeated google.protobuf.StringValue runtime_env_credential_id = 1;
-	repeated google.protobuf.StringValue status = 2;
+	repeated string runtime_env_credential_id = 1;
+	repeated string status = 2;
 	google.protobuf.StringValue search_word = 3;
-	repeated google.protobuf.StringValue owner = 4;
+	repeated string owner = 4;
 	google.protobuf.UInt32Value limit = 5;
 	google.protobuf.UInt32Value offset = 6;
 	google.protobuf.UInt32Value verbose = 7;
