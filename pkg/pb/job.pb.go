@@ -34,7 +34,7 @@ type CreateJobRequest struct {
 func (m *CreateJobRequest) Reset()                    { *m = CreateJobRequest{} }
 func (m *CreateJobRequest) String() string            { return proto.CompactTextString(m) }
 func (*CreateJobRequest) ProtoMessage()               {}
-func (*CreateJobRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (*CreateJobRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
 
 func (m *CreateJobRequest) GetX() *google_protobuf.StringValue {
 	if m != nil {
@@ -95,7 +95,7 @@ type CreateJobResponse struct {
 func (m *CreateJobResponse) Reset()                    { *m = CreateJobResponse{} }
 func (m *CreateJobResponse) String() string            { return proto.CompactTextString(m) }
 func (*CreateJobResponse) ProtoMessage()               {}
-func (*CreateJobResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (*CreateJobResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
 
 func (m *CreateJobResponse) GetJobId() *google_protobuf.StringValue {
 	if m != nil {
@@ -145,7 +145,7 @@ type Job struct {
 func (m *Job) Reset()                    { *m = Job{} }
 func (m *Job) String() string            { return proto.CompactTextString(m) }
 func (*Job) ProtoMessage()               {}
-func (*Job) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+func (*Job) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
 
 func (m *Job) GetJobId() *google_protobuf.StringValue {
 	if m != nil {
@@ -262,7 +262,7 @@ type DescribeJobsRequest struct {
 func (m *DescribeJobsRequest) Reset()                    { *m = DescribeJobsRequest{} }
 func (m *DescribeJobsRequest) String() string            { return proto.CompactTextString(m) }
 func (*DescribeJobsRequest) ProtoMessage()               {}
-func (*DescribeJobsRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
+func (*DescribeJobsRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{3} }
 
 func (m *DescribeJobsRequest) GetJobId() []string {
 	if m != nil {
@@ -335,7 +335,7 @@ type DescribeJobsResponse struct {
 func (m *DescribeJobsResponse) Reset()                    { *m = DescribeJobsResponse{} }
 func (m *DescribeJobsResponse) String() string            { return proto.CompactTextString(m) }
 func (*DescribeJobsResponse) ProtoMessage()               {}
-func (*DescribeJobsResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
+func (*DescribeJobsResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{4} }
 
 func (m *DescribeJobsResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -464,9 +464,9 @@ var _JobManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "job.proto",
 }
 
-func init() { proto.RegisterFile("job.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("job.proto", fileDescriptor2) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor2 = []byte{
 	// 759 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x96, 0x4f, 0x6f, 0xd3, 0x3e,
 	0x18, 0xc7, 0x7f, 0x69, 0x7f, 0x6d, 0x57, 0x77, 0x85, 0x61, 0x36, 0x14, 0xca, 0x60, 0x55, 0x4e,
