@@ -50,6 +50,8 @@ func NewTask(taskId, jobId, nodeId, target, taskAction, directive, userId string
 		Directive:  directive,
 		Owner:      userId,
 		Status:     constants.StatusPending,
+		CreateTime: time.Now(),
+		StatusTime: time.Now(),
 	}
 }
 

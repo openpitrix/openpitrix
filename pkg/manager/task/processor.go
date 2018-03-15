@@ -23,6 +23,9 @@ func NewProcessor(task *models.Task) *Processor {
 func (t *Processor) Post() {
 	var err error
 	switch t.Task.TaskAction {
+	// TODO: case TaskAction
+	default:
+		logger.Errorf("Unknown job action [%s]", t.Task.TaskAction)
 	}
 	if err != nil {
 		logger.Errorf("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)

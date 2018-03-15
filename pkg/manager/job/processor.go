@@ -99,6 +99,8 @@ func (j *Processor) Post() {
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),
 		})
+	default:
+		logger.Errorf("Unknown job action [%s]", j.Job.JobAction)
 	}
 
 	if err != nil {

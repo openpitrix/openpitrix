@@ -53,6 +53,8 @@ func NewJob(jobId, clusterId, appId, appVersion, jobAction, directive, runtime, 
 		Runtime:    runtime,
 		Owner:      userId,
 		Status:     constants.StatusPending,
+		CreateTime: time.Now(),
+		StatusTime: time.Now(),
 	}
 }
 
