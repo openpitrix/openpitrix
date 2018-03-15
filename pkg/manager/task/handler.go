@@ -7,7 +7,6 @@ package task
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -25,7 +24,10 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 
 	s := sender.GetSenderFromContext(ctx)
 	newTask := models.NewTask(
+		"",
 		req.GetJobId().GetValue(),
+		req.GetNodeId().GetValue(),
+		req.GetTarget().GetValue(),
 		req.GetTaskAction().GetValue(),
 		req.GetDirective().GetValue(),
 		s.UserId,
@@ -46,8 +48,8 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 	}
 
 	res := &pb.CreateTaskResponse{
-		TaskId: &wrappers.StringValue{Value: newTask.TaskId},
-		JobId:  &wrappers.StringValue{Value: newTask.JobId},
+		TaskId: utils.ToProtoString(newTask.TaskId),
+		JobId:  utils.ToProtoString(newTask.JobId),
 	}
 	return res, nil
 }
@@ -65,8 +67,8 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		From(models.TaskTableName).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.TaskTableName))
-	query = query.Where(db.Eq("owner", s.UserId))
+		Where(manager.BuildFilterConditions(req, models.TaskTableName)).
+		Where(db.Eq("owner", s.UserId))
 
 	_, err := query.Load(&tasks)
 	if err != nil {

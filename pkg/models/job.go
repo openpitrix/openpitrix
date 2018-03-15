@@ -37,9 +37,14 @@ type Job struct {
 
 var JobColumns = GetColumnsFromStruct(&Job{})
 
-func NewJob(clusterId, appId, appVersion, jobAction, directive, runtime, userId string) *Job {
+func NewJob(jobId, clusterId, appId, appVersion, jobAction, directive, runtime, userId string) *Job {
+	if jobId == "" {
+		jobId = NewJobId()
+	} else if jobId == constants.PlaceHolder {
+		jobId = ""
+	}
 	return &Job{
-		JobId:      NewJobId(),
+		JobId:      jobId,
 		ClusterId:  clusterId,
 		AppId:      appId,
 		AppVersion: appVersion,
