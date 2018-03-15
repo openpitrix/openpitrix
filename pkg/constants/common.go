@@ -34,12 +34,25 @@ const (
 )
 
 const (
-	StatusActive     = "active"
-	StatusDeleted    = "deleted"
-	StatusWorking    = "working"
-	StatusPending    = "pending"
-	StatusSuccessful = "successful"
-	StatusFailed     = "failed"
+	StatusActive      = "active"
+	StatusCreating    = "creating"
+	StatusDeleted     = "deleted"
+	StatusDeleting    = "deleting"
+	StatusUpgrading   = "upgrading"
+	StatusUpdating    = "updating"
+	StatusRollbacking = "rollbacking"
+	StatusStopped     = "stopped"
+	StatusStopping    = "stopping"
+	StatusStarting    = "starting"
+	StatusRecovering  = "recovering"
+	StatusCeased      = "ceased"
+	StatusCeasing     = "ceasing"
+	StatusResizing    = "resizing"
+	StatusScaling     = "scaling"
+	StatusWorking     = "working"
+	StatusPending     = "pending"
+	StatusSuccessful  = "successful"
+	StatusFailed      = "failed"
 )
 
 const (
@@ -51,4 +64,28 @@ const (
 const (
 	WaitTaskTimeout  = 600 * time.Second
 	WaitTaskInterval = 10 * time.Second
+)
+
+const (
+	ActionCreateCluster      = "CreateCluster"
+	ActionUpgradeCluster     = "UpgradeCluster"
+	ActionRollbackCluster    = "RollbackCluster"
+	ActionResizeCluster      = "ResizeCluster"
+	ActionAddClusterNodes    = "AddClusterNodes"
+	ActionDeleteClusterNodes = "DeleteClusterNodes"
+	ActionStopClusters       = "StopClusters"
+	ActionStartClusters      = "StartClusters"
+	ActionDeleteClusters     = "DeleteClusters"
+	ActionRecoverClusters    = "RecoverClusters"
+	ActionCeaseClusters      = "CeaseClusters"
+	ActionUpdateClusterEnv   = "UpdateClusterEnv"
+)
+
+const (
+	RuntimeQingCloud  = "qingcloud"
+	RuntimeKubernetes = "kubernetes"
+)
+
+const (
+	PlaceHolder = "*"
 )

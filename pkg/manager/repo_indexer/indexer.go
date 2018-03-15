@@ -10,11 +10,11 @@ import (
 	"runtime/debug"
 	"time"
 
+	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/manager/repo"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -98,7 +98,7 @@ func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
 	logger.Infof("Got repo task: %+v", repoTask)
 	err := func() (err error) {
 		ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
-		repoManagerClient, err := repo.NewRepoManagerClient(ctx)
+		repoManagerClient, err := repoClient.NewRepoManagerClient(ctx)
 		if err != nil {
 			return
 		}

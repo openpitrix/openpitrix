@@ -195,6 +195,140 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/clusters": {
+      "get": {
+        "summary": "describe cluster nodes",
+        "operationId": "DescribeClusterNodes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeClusterNodesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cluster_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "node_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      },
+      "delete": {
+        "summary": "cease clusters",
+        "operationId": "CeaseClusters",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCeaseClustersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCeaseClustersRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      },
+      "post": {
+        "summary": "recover clusters",
+        "operationId": "RecoverClusters",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRecoverClustersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRecoverClustersRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      },
+      "patch": {
+        "summary": "update cluster env",
+        "operationId": "UpdateClusterEnv",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixUpdateClusterEnvResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixUpdateClusterEnvRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
     "/v1/jobs": {
       "get": {
         "summary": "describe jobs with filter",
@@ -1530,6 +1664,701 @@ var Files = map[string]string{
       },
       "description": "Wrapper message for ` + "`" + `string` + "`" + `.\n\nThe JSON representation for ` + "`" + `StringValue` + "`" + ` is JSON string."
     },
+    "openpitrixAddClusterNodesRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "node_count": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixAddClusterNodesResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCeaseClustersRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixCeaseClustersResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "job_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixCluster": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "global_uuid": {
+          "type": "string"
+        },
+        "frontgate_id": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "app_version": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transition_status": {
+          "type": "string"
+        },
+        "runtime_env_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "node_count": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "endpoints": {
+          "type": "string"
+        },
+        "metadata_root_access": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "links": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "roles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "advanced_actions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "upgrade_status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "cluster_node_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixClusterNode"
+          }
+        }
+      }
+    },
+    "openpitrixClusterNode": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "instance_id": {
+          "type": "string"
+        },
+        "vxnet_id": {
+          "type": "string"
+        },
+        "private_ip": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transition_status": {
+          "type": "string"
+        },
+        "server_id": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "server_id_upper_bound": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "global_server_id": {
+          "$ref": "#/definitions/protobufUInt64Value"
+        },
+        "health_status": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "cpu": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "gpu": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "memory": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "storage_size": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "env": {
+          "type": "string"
+        },
+        "passphraseless": {
+          "type": "string"
+        },
+        "advanced_actions": {
+          "type": "string"
+        },
+        "image_id": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixCreateClusterRequest": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "app_version": {
+          "type": "string"
+        },
+        "runtime_env_id": {
+          "type": "string"
+        },
+        "conf": {
+          "type": "string"
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixCreateClusterResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteClusterNodesRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteClusterNodesResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteClustersRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteClustersResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "job_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeClusterNodesResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cluster_node_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixClusterNode"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeClustersResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "cluster_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixCluster"
+          }
+        }
+      }
+    },
+    "openpitrixModifyClusterNodeRequest": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "instance_id": {
+          "type": "string"
+        },
+        "volume_id": {
+          "type": "string"
+        },
+        "vxnet_id": {
+          "type": "string"
+        },
+        "private_ip": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transition_status": {
+          "type": "string"
+        },
+        "health_status": {
+          "type": "string"
+        },
+        "pub_key": {
+          "type": "string"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixModifyClusterNodeResponse": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyClusterRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transition_status": {
+          "type": "string"
+        },
+        "upgrade_status": {
+          "type": "string"
+        },
+        "upgrade_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixModifyClusterResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixRecoverClustersRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixRecoverClustersResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "job_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixResizeClusterRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "cpu": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "memory": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixResizeClusterResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixRollbackClusterRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixRollbackClusterResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixStartClustersRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixStartClustersResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "job_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixStopClustersRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixStopClustersResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "job_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixUpdateClusterEnvRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "env": {
+          "type": "string"
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixUpdateClusterEnvResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixUpgradeClusterRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "app_version": {
+          "type": "string"
+        },
+        "advanced_param": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixUpgradeClusterResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufBoolValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "The bool value."
+        }
+      },
+      "description": "Wrapper message for ` + "`" + `bool` + "`" + `.\n\nThe JSON representation for ` + "`" + `BoolValue` + "`" + ` is JSON ` + "`" + `true` + "`" + ` and ` + "`" + `false` + "`" + `."
+    },
+    "protobufUInt32Value": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The uint32 value."
+        }
+      },
+      "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
+    },
+    "protobufUInt64Value": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "format": "uint64",
+          "description": "The uint64 value."
+        }
+      },
+      "description": "Wrapper message for ` + "`" + `uint64` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt64Value` + "`" + ` is JSON string."
+    },
     "openpitrixCreateJobRequest": {
       "type": "object",
       "properties": {
@@ -1636,17 +2465,6 @@ var Files = map[string]string{
           "format": "date-time"
         }
       }
-    },
-    "protobufUInt32Value": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer",
-          "format": "int64",
-          "description": "The uint32 value."
-        }
-      },
-      "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
     },
     "openpitrixGetSubtaskStatusResponse": {
       "type": "object",
@@ -2368,7 +3186,7 @@ var Files = map[string]string{
         "owner": {
           "type": "string"
         },
-        "runtime_env_ids": {
+        "runtime_env_id": {
           "type": "array",
           "items": {
             "type": "string"
@@ -2394,6 +3212,12 @@ var Files = map[string]string{
           "type": "string"
         },
         "job_id": {
+          "type": "string"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "target": {
           "type": "string"
         },
         "task_action": {

@@ -9,11 +9,11 @@ import (
 	"sync"
 	"time"
 
+	pilotClient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/manager/pilot"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -99,9 +99,22 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		"status": task.Status,
 	})
 
+	query := c.Db.
+		Select(models.TaskColumns...).
+		From(models.TaskTableName).
+		Where(db.Eq("task_id", taskId))
+
+	err := query.LoadOne(&task)
+	if err != nil {
+		logger.Errorf("Failed to get task [%s]: %+v", task.TaskId, err)
+		return err
+	}
+
+	defer NewProcessor(task).Post()
+
 	pbTask := models.TaskToPb(task)
 	if task.Target == constants.PilotManagerHost {
-		err := pilot.HandleSubtask(
+		err := pilotClient.HandleSubtask(
 			&pb.HandleSubtaskRequest{
 				SubtaskId:     pbTask.TaskId,
 				SubtaskAction: pbTask.TaskAction,
@@ -111,7 +124,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			logger.Errorf("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
 			return err
 		}
-		err = pilot.WaitSubtask(task.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+		err = pilotClient.WaitSubtask(task.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
 		if err != nil {
 			logger.Errorf("Failed to wait task [%s]: %+v", task.TaskId, err)
 			return err

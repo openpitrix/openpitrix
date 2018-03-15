@@ -1,0 +1,422 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+	info: {
+		title: "OpenPitrix Project";
+        version: "0.0.1";
+        contact: {
+			name: "OpenPitrix Project";
+			url: "https://openpitrix.io";
+        };
+	};
+	schemes: HTTP;
+	consumes: "application/json";
+	produces: "application/json";
+};
+
+
+message CreateClusterRequest {
+	google.protobuf.StringValue app_id = 1;
+	google.protobuf.StringValue app_version = 2;
+	google.protobuf.StringValue runtime_env_id = 3;
+	google.protobuf.StringValue conf = 4;
+	repeated string advanced_param = 5;
+}
+
+message CreateClusterResponse {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue job_id = 2;
+}
+
+message ModifyClusterRequest {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.StringValue transition_status = 5;
+	google.protobuf.StringValue upgrade_status = 6;
+	google.protobuf.Timestamp upgrade_time = 7;
+	google.protobuf.Timestamp status_time = 8;
+}
+
+message ModifyClusterResponse {
+	google.protobuf.StringValue cluster_id = 1;
+}
+
+message ModifyClusterNodeRequest {
+	google.protobuf.StringValue node_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue instance_id = 3;
+	google.protobuf.StringValue volume_id = 4;
+	google.protobuf.StringValue vxnet_id = 5;
+	google.protobuf.StringValue private_ip = 6;
+	google.protobuf.StringValue status = 7;
+	google.protobuf.StringValue transition_status = 8;
+	google.protobuf.StringValue health_status = 9;
+	google.protobuf.StringValue pub_key = 10;
+	google.protobuf.Timestamp status_time = 11;
+}
+
+message ModifyClusterNodeResponse {
+	google.protobuf.StringValue node_id = 1;
+}
+
+message DeleteClustersRequest {
+	repeated string cluster_id = 1;
+	repeated string advanced_param = 2;
+}
+
+message DeleteClustersResponse {
+	repeated string cluster_id = 1;
+	repeated string job_id = 2;
+}
+
+message UpgradeClusterRequest {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue app_version = 2;
+	repeated string advanced_param = 3;
+}
+
+message UpgradeClusterResponse {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue job_id = 2;
+}
+
+message RollbackClusterRequest {
+	google.protobuf.StringValue cluster_id = 1;
+	repeated string advanced_param = 2;
+}
+
+message RollbackClusterResponse {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue job_id = 2;
+}
+
+message ResizeClusterRequest {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue role = 2;
+	google.protobuf.UInt32Value cpu = 3;
+	google.protobuf.UInt32Value memory = 4;
+	repeated string advanced_param = 5;
+}
+
+message ResizeClusterResponse {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue job_id = 2;
+}
+
+message AddClusterNodesRequest {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue role = 2;
+	google.protobuf.UInt32Value node_count = 3;
+	repeated string advanced_param = 4;
+}
+
+message AddClusterNodesResponse {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue job_id = 2;
+}
+
+message DeleteClusterNodesRequest {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue role = 2;
+	repeated string node_id = 3;
+	repeated string advanced_param = 4;
+}
+
+message DeleteClusterNodesResponse {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue job_id = 2;
+}
+
+message UpdateClusterEnvRequest {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue env = 2;
+	repeated string advanced_param = 3;
+}
+
+message UpdateClusterEnvResponse {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue job_id = 2;
+}
+
+message ClusterNode {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue node_id = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue instance_id = 4;
+	google.protobuf.StringValue vxnet_id = 5;
+	google.protobuf.StringValue private_ip = 6;
+	google.protobuf.StringValue status = 7;
+	google.protobuf.StringValue transition_status = 8;
+	google.protobuf.UInt32Value server_id = 9;
+	google.protobuf.UInt32Value server_id_upper_bound = 10;
+	google.protobuf.UInt64Value global_server_id = 11;
+	google.protobuf.StringValue health_status = 12;
+	google.protobuf.StringValue role = 13;
+	google.protobuf.StringValue owner = 14;
+	google.protobuf.UInt32Value cpu = 15;
+	google.protobuf.UInt32Value gpu = 16;
+	google.protobuf.UInt32Value memory = 17;
+	google.protobuf.UInt32Value storage_size = 18;
+	google.protobuf.StringValue env = 19;
+	google.protobuf.StringValue passphraseless = 20;
+	google.protobuf.StringValue advanced_actions = 21;
+	google.protobuf.StringValue image_id = 22;
+	google.protobuf.Timestamp create_time = 23;
+	google.protobuf.Timestamp status_time = 24;
+}
+
+message Cluster {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue global_uuid = 2;
+	google.protobuf.StringValue frontgate_id = 3;
+	google.protobuf.StringValue app_id = 4;
+	google.protobuf.StringValue app_version = 5;
+	google.protobuf.StringValue status = 6;
+	google.protobuf.StringValue transition_status = 7;
+	google.protobuf.StringValue runtime_env_id = 8;
+	google.protobuf.StringValue owner = 9;
+	google.protobuf.StringValue name = 10;
+	google.protobuf.StringValue description = 11;
+	google.protobuf.UInt32Value node_count = 12;
+	google.protobuf.StringValue endpoints = 13;
+	google.protobuf.BoolValue metadata_root_access = 14;
+	map<string, string> links = 15;
+	map<string, string> roles = 16;
+	map<string, string> advanced_actions = 17;
+	google.protobuf.StringValue upgrade_status = 18;
+	google.protobuf.Timestamp create_time = 19;
+	google.protobuf.Timestamp status_time = 20;
+	repeated ClusterNode cluster_node_set = 21;
+}
+
+message DescribeClustersRequest {
+	repeated string cluster_id = 1;
+	repeated string app_id = 2;
+	repeated string app_version = 3;
+	repeated string status = 4;
+	repeated string runtime_env_id = 5;
+	repeated string frontgate_id = 6;
+	google.protobuf.StringValue external_cluster_id = 7;
+	// default is 20, max value is 200
+	uint32 limit = 8;
+	// default is 0
+	uint32 offset = 9;
+}
+message DescribeClustersResponse {
+	uint32 total_count = 1;
+	repeated Cluster cluster_set = 2;
+}
+
+message DescribeClusterNodesRequest {
+	google.protobuf.StringValue cluster_id = 1;
+	repeated string node_id = 2;
+	repeated string status = 3;
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
+	uint32 offset = 5;
+}
+message DescribeClusterNodesResponse {
+	uint32 total_count = 1;
+	repeated ClusterNode cluster_node_set = 2;
+}
+
+message StopClustersRequest {
+	repeated string cluster_id = 1;
+	repeated string advanced_param = 2;
+}
+
+message StopClustersResponse {
+	repeated string cluster_id = 1;
+	repeated string job_id = 2;
+}
+
+message StartClustersRequest {
+	repeated string cluster_id = 1;
+	repeated string advanced_param = 2;
+}
+
+message StartClustersResponse {
+	repeated string cluster_id = 1;
+	repeated string job_id = 2;
+}
+
+message RecoverClustersRequest {
+	repeated string cluster_id = 1;
+	repeated string advanced_param = 2;
+}
+
+message RecoverClustersResponse {
+	repeated string cluster_id = 1;
+	repeated string job_id = 2;
+}
+
+message CeaseClustersRequest {
+	repeated string cluster_id = 1;
+	repeated string advanced_param = 2;
+}
+
+message CeaseClustersResponse {
+	repeated string cluster_id = 1;
+	repeated string job_id = 2;
+}
+
+service ClusterManager {
+	rpc CreateCluster (CreateClusterRequest) returns (CreateClusterResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create cluster"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc ModifyCluster (ModifyClusterRequest) returns (ModifyClusterResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify cluster"
+		};
+		option (google.api.http) = {
+			patch: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc ModifyClusterNode (ModifyClusterNodeRequest) returns (ModifyClusterNodeResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify cluster node"
+		};
+		option (google.api.http) = {
+			patch: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc DeleteClusters (DeleteClustersRequest) returns (DeleteClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete clusters"
+		};
+		option (google.api.http) = {
+			delete: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc UpgradeCluster (UpgradeClusterRequest) returns (UpgradeClusterResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "upgrade cluster"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc RollbackCluster (RollbackClusterRequest) returns (RollbackClusterResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "rollback cluster"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc ResizeCluster (ResizeClusterRequest) returns (ResizeClusterResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "resize cluster"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc AddClusterNodes (AddClusterNodesRequest) returns (AddClusterNodesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "add cluster nodes"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc DeleteClusterNodes (DeleteClusterNodesRequest) returns (DeleteClusterNodesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete cluster nodes"
+		};
+		option (google.api.http) = {
+			delete: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc UpdateClusterEnv (UpdateClusterEnvRequest) returns (UpdateClusterEnvResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "update cluster env"
+		};
+		option (google.api.http) = {
+			patch: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc DescribeClusters (DescribeClustersRequest) returns (DescribeClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe clusters"
+		};
+		option (google.api.http) = {
+			get: "/v1/clusters"
+		};
+	}
+	rpc DescribeClusterNodes (DescribeClusterNodesRequest) returns (DescribeClusterNodesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe cluster nodes"
+		};
+		option (google.api.http) = {
+			get: "/v1/clusters"
+		};
+	}
+	rpc StopClusters (StopClustersRequest) returns (StopClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "stop clusters"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc StartClusters (StartClustersRequest) returns (StartClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "start clusters"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc RecoverClusters (RecoverClustersRequest) returns (RecoverClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "recover clusters"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters"
+			body: "*"
+		};
+	}
+	rpc CeaseClusters (CeaseClustersRequest) returns (CeaseClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "cease clusters"
+		};
+		option (google.api.http) = {
+			delete: "/v1/clusters"
+			body: "*"
+		};
+	}
+}
