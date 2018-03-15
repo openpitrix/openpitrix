@@ -25,6 +25,12 @@ type OpenpitrixCreateTaskRequest struct {
 	// job id
 	JobID string `json:"job_id,omitempty"`
 
+	// node id
+	NodeID string `json:"node_id,omitempty"`
+
+	// target
+	Target string `json:"target,omitempty"`
+
 	// task action
 	TaskAction string `json:"task_action,omitempty"`
 }

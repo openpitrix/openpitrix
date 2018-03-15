@@ -7,7 +7,6 @@ package job
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -25,6 +24,7 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 
 	s := sender.GetSenderFromContext(ctx)
 	newJob := models.NewJob(
+		"",
 		req.GetClusterId().GetValue(),
 		req.GetAppId().GetValue(),
 		req.GetAppVersion().GetValue(),
@@ -49,10 +49,10 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 	}
 
 	res := &pb.CreateJobResponse{
-		JobId:      &wrappers.StringValue{Value: newJob.JobId},
-		ClusterId:  &wrappers.StringValue{Value: newJob.ClusterId},
-		AppId:      &wrappers.StringValue{Value: newJob.AppId},
-		AppVersion: &wrappers.StringValue{Value: newJob.AppVersion},
+		JobId:      utils.ToProtoString(newJob.JobId),
+		ClusterId:  utils.ToProtoString(newJob.ClusterId),
+		AppId:      utils.ToProtoString(newJob.AppId),
+		AppVersion: utils.ToProtoString(newJob.AppVersion),
 	}
 	return res, nil
 }
@@ -70,8 +70,8 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 		From(models.JobTableName).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.JobTableName))
-	query = query.Where(db.Eq("owner", s.UserId))
+		Where(manager.BuildFilterConditions(req, models.JobTableName)).
+		Where(db.Eq("owner", s.UserId))
 
 	_, err := query.Load(&jobs)
 	if err != nil {

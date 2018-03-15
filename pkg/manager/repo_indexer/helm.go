@@ -16,8 +16,8 @@ import (
 	"k8s.io/helm/pkg/proto/hapi/chart"
 	"k8s.io/helm/pkg/repo"
 
+	appClient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/manager/app"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
 	"openpitrix.io/openpitrix/pkg/utils/sender"
@@ -83,7 +83,7 @@ func SyncAppInfo(repoId, owner, chartName string, chartVersions *repo.ChartVersi
 	var appId string
 	logger.Debugf("chart [%s] has [%d] versions", chartName, chartVersions.Len())
 	ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
-	appManagerClient, err := app.NewAppManagerClient(ctx)
+	appManagerClient, err := appClient.NewAppManagerClient(ctx)
 	if err != nil {
 		return appId, err
 	}

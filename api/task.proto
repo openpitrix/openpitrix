@@ -31,8 +31,10 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 message CreateTaskRequest {
 	google.protobuf.StringValue _ = 1; // placeholder for task_id
 	google.protobuf.StringValue job_id = 2;
-	google.protobuf.StringValue task_action = 3;
-	google.protobuf.StringValue directive = 4;
+	google.protobuf.StringValue node_id = 3;
+	google.protobuf.StringValue target = 4;
+	google.protobuf.StringValue task_action = 5;
+	google.protobuf.StringValue directive = 6;
 }
 
 message CreateTaskResponse {

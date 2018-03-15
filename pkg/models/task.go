@@ -35,14 +35,23 @@ type Task struct {
 
 var TaskColumns = GetColumnsFromStruct(&Task{})
 
-func NewTask(jobId, taskAction, directive, userId string) *Task {
+func NewTask(taskId, jobId, nodeId, target, taskAction, directive, userId string) *Task {
+	if taskId == "" {
+		taskId = NewTaskId()
+	} else if taskId == constants.PlaceHolder {
+		taskId = ""
+	}
 	return &Task{
-		TaskId:     NewTaskId(),
+		TaskId:     taskId,
 		JobId:      jobId,
+		NodeId:     nodeId,
+		Target:     target,
 		TaskAction: taskAction,
 		Directive:  directive,
 		Owner:      userId,
 		Status:     constants.StatusPending,
+		CreateTime: time.Now(),
+		StatusTime: time.Now(),
 	}
 }
 

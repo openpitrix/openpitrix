@@ -6,6 +6,7 @@ Package pb is a generated protocol buffer package.
 
 It is generated from these files:
 	app.proto
+	cluster.proto
 	job.proto
 	pilot.proto
 	repo.proto
@@ -32,6 +33,40 @@ It has these top-level messages:
 	AppVersion
 	DescribeAppVersionsRequest
 	DescribeAppVersionsResponse
+	CreateClusterRequest
+	CreateClusterResponse
+	ModifyClusterRequest
+	ModifyClusterResponse
+	ModifyClusterNodeRequest
+	ModifyClusterNodeResponse
+	DeleteClustersRequest
+	DeleteClustersResponse
+	UpgradeClusterRequest
+	UpgradeClusterResponse
+	RollbackClusterRequest
+	RollbackClusterResponse
+	ResizeClusterRequest
+	ResizeClusterResponse
+	AddClusterNodesRequest
+	AddClusterNodesResponse
+	DeleteClusterNodesRequest
+	DeleteClusterNodesResponse
+	UpdateClusterEnvRequest
+	UpdateClusterEnvResponse
+	ClusterNode
+	Cluster
+	DescribeClustersRequest
+	DescribeClustersResponse
+	DescribeClusterNodesRequest
+	DescribeClusterNodesResponse
+	StopClustersRequest
+	StopClustersResponse
+	StartClustersRequest
+	StartClustersResponse
+	RecoverClustersRequest
+	RecoverClustersResponse
+	CeaseClustersRequest
+	CeaseClustersResponse
 	CreateJobRequest
 	CreateJobResponse
 	Job
@@ -51,6 +86,24 @@ It has these top-level messages:
 	Repo
 	DescribeReposRequest
 	DescribeReposResponse
+	RepoLabel
+	CreateRepoLabelRequest
+	CreateRepoLabelResponse
+	ModifyRepoLabelRequest
+	ModifyRepoLabelResponse
+	DeleteRepoLabelRequest
+	DeleteRepoLabelResponse
+	DescribeRepoLabelsRequest
+	DescribeRepoLabelsResponse
+	RepoSelector
+	CreateRepoSelectorRequest
+	CreateRepoSelectorResponse
+	ModifyRepoSelectorRequest
+	ModifyRepoSelectorResponse
+	DeleteRepoSelectorRequest
+	DeleteRepoSelectorResponse
+	DescribeRepoSelectorsRequest
+	DescribeRepoSelectorsResponse
 	IndexRepoRequest
 	IndexRepoResponse
 	RepoTask

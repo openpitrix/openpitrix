@@ -33,7 +33,7 @@ type CreateRepoRequest struct {
 func (m *CreateRepoRequest) Reset()                    { *m = CreateRepoRequest{} }
 func (m *CreateRepoRequest) String() string            { return proto.CompactTextString(m) }
 func (*CreateRepoRequest) ProtoMessage()               {}
-func (*CreateRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
+func (*CreateRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
 
 func (m *CreateRepoRequest) GetX() *google_protobuf.StringValue {
 	if m != nil {
@@ -84,7 +84,7 @@ type CreateRepoResponse struct {
 func (m *CreateRepoResponse) Reset()                    { *m = CreateRepoResponse{} }
 func (m *CreateRepoResponse) String() string            { return proto.CompactTextString(m) }
 func (*CreateRepoResponse) ProtoMessage()               {}
-func (*CreateRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
+func (*CreateRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
 
 func (m *CreateRepoResponse) GetRepo() *Repo {
 	if m != nil {
@@ -105,7 +105,7 @@ type ModifyRepoRequest struct {
 func (m *ModifyRepoRequest) Reset()                    { *m = ModifyRepoRequest{} }
 func (m *ModifyRepoRequest) String() string            { return proto.CompactTextString(m) }
 func (*ModifyRepoRequest) ProtoMessage()               {}
-func (*ModifyRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
+func (*ModifyRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
 
 func (m *ModifyRepoRequest) GetRepoId() *google_protobuf.StringValue {
 	if m != nil {
@@ -156,7 +156,7 @@ type ModifyRepoResponse struct {
 func (m *ModifyRepoResponse) Reset()                    { *m = ModifyRepoResponse{} }
 func (m *ModifyRepoResponse) String() string            { return proto.CompactTextString(m) }
 func (*ModifyRepoResponse) ProtoMessage()               {}
-func (*ModifyRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{3} }
+func (*ModifyRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
 
 func (m *ModifyRepoResponse) GetRepo() *Repo {
 	if m != nil {
@@ -172,7 +172,7 @@ type DeleteRepoRequest struct {
 func (m *DeleteRepoRequest) Reset()                    { *m = DeleteRepoRequest{} }
 func (m *DeleteRepoRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteRepoRequest) ProtoMessage()               {}
-func (*DeleteRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{4} }
+func (*DeleteRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
 
 func (m *DeleteRepoRequest) GetRepoId() *google_protobuf.StringValue {
 	if m != nil {
@@ -188,7 +188,7 @@ type DeleteRepoResponse struct {
 func (m *DeleteRepoResponse) Reset()                    { *m = DeleteRepoResponse{} }
 func (m *DeleteRepoResponse) String() string            { return proto.CompactTextString(m) }
 func (*DeleteRepoResponse) ProtoMessage()               {}
-func (*DeleteRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{5} }
+func (*DeleteRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
 
 func (m *DeleteRepoResponse) GetRepo() *Repo {
 	if m != nil {
@@ -213,7 +213,7 @@ type Repo struct {
 func (m *Repo) Reset()                    { *m = Repo{} }
 func (m *Repo) String() string            { return proto.CompactTextString(m) }
 func (*Repo) ProtoMessage()               {}
-func (*Repo) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{6} }
+func (*Repo) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{6} }
 
 func (m *Repo) GetRepoId() *google_protobuf.StringValue {
 	if m != nil {
@@ -299,7 +299,7 @@ type DescribeReposRequest struct {
 func (m *DescribeReposRequest) Reset()                    { *m = DescribeReposRequest{} }
 func (m *DescribeReposRequest) String() string            { return proto.CompactTextString(m) }
 func (*DescribeReposRequest) ProtoMessage()               {}
-func (*DescribeReposRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{7} }
+func (*DescribeReposRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{7} }
 
 func (m *DescribeReposRequest) GetRepoId() []string {
 	if m != nil {
@@ -365,7 +365,7 @@ type DescribeReposResponse struct {
 func (m *DescribeReposResponse) Reset()                    { *m = DescribeReposResponse{} }
 func (m *DescribeReposResponse) String() string            { return proto.CompactTextString(m) }
 func (*DescribeReposResponse) ProtoMessage()               {}
-func (*DescribeReposResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{8} }
+func (*DescribeReposResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{8} }
 
 func (m *DescribeReposResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -381,6 +381,566 @@ func (m *DescribeReposResponse) GetRepoSet() []*Repo {
 	return nil
 }
 
+type RepoLabel struct {
+	RepoId      *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoLabelId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
+	LabelKey    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
+	LabelValue  *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+	Status      *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=status" json:"status,omitempty"`
+	CreateTime  *google_protobuf1.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime  *google_protobuf1.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+}
+
+func (m *RepoLabel) Reset()                    { *m = RepoLabel{} }
+func (m *RepoLabel) String() string            { return proto.CompactTextString(m) }
+func (*RepoLabel) ProtoMessage()               {}
+func (*RepoLabel) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{9} }
+
+func (m *RepoLabel) GetRepoId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoId
+	}
+	return nil
+}
+
+func (m *RepoLabel) GetRepoLabelId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoLabelId
+	}
+	return nil
+}
+
+func (m *RepoLabel) GetLabelKey() *google_protobuf.StringValue {
+	if m != nil {
+		return m.LabelKey
+	}
+	return nil
+}
+
+func (m *RepoLabel) GetLabelValue() *google_protobuf.StringValue {
+	if m != nil {
+		return m.LabelValue
+	}
+	return nil
+}
+
+func (m *RepoLabel) GetStatus() *google_protobuf.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *RepoLabel) GetCreateTime() *google_protobuf1.Timestamp {
+	if m != nil {
+		return m.CreateTime
+	}
+	return nil
+}
+
+func (m *RepoLabel) GetStatusTime() *google_protobuf1.Timestamp {
+	if m != nil {
+		return m.StatusTime
+	}
+	return nil
+}
+
+type CreateRepoLabelRequest struct {
+	RepoId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	X          *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=_" json:"_,omitempty"`
+	LabelKey   *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
+	LabelValue *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+}
+
+func (m *CreateRepoLabelRequest) Reset()                    { *m = CreateRepoLabelRequest{} }
+func (m *CreateRepoLabelRequest) String() string            { return proto.CompactTextString(m) }
+func (*CreateRepoLabelRequest) ProtoMessage()               {}
+func (*CreateRepoLabelRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{10} }
+
+func (m *CreateRepoLabelRequest) GetRepoId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoId
+	}
+	return nil
+}
+
+func (m *CreateRepoLabelRequest) GetX() *google_protobuf.StringValue {
+	if m != nil {
+		return m.X
+	}
+	return nil
+}
+
+func (m *CreateRepoLabelRequest) GetLabelKey() *google_protobuf.StringValue {
+	if m != nil {
+		return m.LabelKey
+	}
+	return nil
+}
+
+func (m *CreateRepoLabelRequest) GetLabelValue() *google_protobuf.StringValue {
+	if m != nil {
+		return m.LabelValue
+	}
+	return nil
+}
+
+type CreateRepoLabelResponse struct {
+	RepoLabel *RepoLabel `protobuf:"bytes,1,opt,name=repo_label,json=repoLabel" json:"repo_label,omitempty"`
+}
+
+func (m *CreateRepoLabelResponse) Reset()                    { *m = CreateRepoLabelResponse{} }
+func (m *CreateRepoLabelResponse) String() string            { return proto.CompactTextString(m) }
+func (*CreateRepoLabelResponse) ProtoMessage()               {}
+func (*CreateRepoLabelResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{11} }
+
+func (m *CreateRepoLabelResponse) GetRepoLabel() *RepoLabel {
+	if m != nil {
+		return m.RepoLabel
+	}
+	return nil
+}
+
+type ModifyRepoLabelRequest struct {
+	X           *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
+	RepoLabelId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
+	LabelKey    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
+	LabelValue  *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+}
+
+func (m *ModifyRepoLabelRequest) Reset()                    { *m = ModifyRepoLabelRequest{} }
+func (m *ModifyRepoLabelRequest) String() string            { return proto.CompactTextString(m) }
+func (*ModifyRepoLabelRequest) ProtoMessage()               {}
+func (*ModifyRepoLabelRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{12} }
+
+func (m *ModifyRepoLabelRequest) GetX() *google_protobuf.StringValue {
+	if m != nil {
+		return m.X
+	}
+	return nil
+}
+
+func (m *ModifyRepoLabelRequest) GetRepoLabelId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoLabelId
+	}
+	return nil
+}
+
+func (m *ModifyRepoLabelRequest) GetLabelKey() *google_protobuf.StringValue {
+	if m != nil {
+		return m.LabelKey
+	}
+	return nil
+}
+
+func (m *ModifyRepoLabelRequest) GetLabelValue() *google_protobuf.StringValue {
+	if m != nil {
+		return m.LabelValue
+	}
+	return nil
+}
+
+type ModifyRepoLabelResponse struct {
+	RepoLabel *RepoLabel `protobuf:"bytes,1,opt,name=repo_label,json=repoLabel" json:"repo_label,omitempty"`
+}
+
+func (m *ModifyRepoLabelResponse) Reset()                    { *m = ModifyRepoLabelResponse{} }
+func (m *ModifyRepoLabelResponse) String() string            { return proto.CompactTextString(m) }
+func (*ModifyRepoLabelResponse) ProtoMessage()               {}
+func (*ModifyRepoLabelResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{13} }
+
+func (m *ModifyRepoLabelResponse) GetRepoLabel() *RepoLabel {
+	if m != nil {
+		return m.RepoLabel
+	}
+	return nil
+}
+
+type DeleteRepoLabelRequest struct {
+	RepoLabelId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
+}
+
+func (m *DeleteRepoLabelRequest) Reset()                    { *m = DeleteRepoLabelRequest{} }
+func (m *DeleteRepoLabelRequest) String() string            { return proto.CompactTextString(m) }
+func (*DeleteRepoLabelRequest) ProtoMessage()               {}
+func (*DeleteRepoLabelRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{14} }
+
+func (m *DeleteRepoLabelRequest) GetRepoLabelId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoLabelId
+	}
+	return nil
+}
+
+type DeleteRepoLabelResponse struct {
+	RepoLabel *RepoLabel `protobuf:"bytes,1,opt,name=repo_label,json=repoLabel" json:"repo_label,omitempty"`
+}
+
+func (m *DeleteRepoLabelResponse) Reset()                    { *m = DeleteRepoLabelResponse{} }
+func (m *DeleteRepoLabelResponse) String() string            { return proto.CompactTextString(m) }
+func (*DeleteRepoLabelResponse) ProtoMessage()               {}
+func (*DeleteRepoLabelResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{15} }
+
+func (m *DeleteRepoLabelResponse) GetRepoLabel() *RepoLabel {
+	if m != nil {
+		return m.RepoLabel
+	}
+	return nil
+}
+
+type DescribeRepoLabelsRequest struct {
+	RepoId      []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoLabelId []string `protobuf:"bytes,2,rep,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
+	Status      []string `protobuf:"bytes,3,rep,name=status" json:"status,omitempty"`
+	Limit       uint32   `protobuf:"varint,4,opt,name=limit" json:"limit,omitempty"`
+	Offset      uint32   `protobuf:"varint,5,opt,name=offset" json:"offset,omitempty"`
+}
+
+func (m *DescribeRepoLabelsRequest) Reset()                    { *m = DescribeRepoLabelsRequest{} }
+func (m *DescribeRepoLabelsRequest) String() string            { return proto.CompactTextString(m) }
+func (*DescribeRepoLabelsRequest) ProtoMessage()               {}
+func (*DescribeRepoLabelsRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{16} }
+
+func (m *DescribeRepoLabelsRequest) GetRepoId() []string {
+	if m != nil {
+		return m.RepoId
+	}
+	return nil
+}
+
+func (m *DescribeRepoLabelsRequest) GetRepoLabelId() []string {
+	if m != nil {
+		return m.RepoLabelId
+	}
+	return nil
+}
+
+func (m *DescribeRepoLabelsRequest) GetStatus() []string {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *DescribeRepoLabelsRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+func (m *DescribeRepoLabelsRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+type DescribeRepoLabelsResponse struct {
+	TotalCount   uint32       `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	RepoLabelSet []*RepoLabel `protobuf:"bytes,2,rep,name=repo_label_set,json=repoLabelSet" json:"repo_label_set,omitempty"`
+}
+
+func (m *DescribeRepoLabelsResponse) Reset()                    { *m = DescribeRepoLabelsResponse{} }
+func (m *DescribeRepoLabelsResponse) String() string            { return proto.CompactTextString(m) }
+func (*DescribeRepoLabelsResponse) ProtoMessage()               {}
+func (*DescribeRepoLabelsResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{17} }
+
+func (m *DescribeRepoLabelsResponse) GetTotalCount() uint32 {
+	if m != nil {
+		return m.TotalCount
+	}
+	return 0
+}
+
+func (m *DescribeRepoLabelsResponse) GetRepoLabelSet() []*RepoLabel {
+	if m != nil {
+		return m.RepoLabelSet
+	}
+	return nil
+}
+
+type RepoSelector struct {
+	RepoId         *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoSelectorId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
+	SelectorKey    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
+	SelectorValue  *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+	Status         *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=status" json:"status,omitempty"`
+	CreateTime     *google_protobuf1.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime     *google_protobuf1.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+}
+
+func (m *RepoSelector) Reset()                    { *m = RepoSelector{} }
+func (m *RepoSelector) String() string            { return proto.CompactTextString(m) }
+func (*RepoSelector) ProtoMessage()               {}
+func (*RepoSelector) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{18} }
+
+func (m *RepoSelector) GetRepoId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoId
+	}
+	return nil
+}
+
+func (m *RepoSelector) GetRepoSelectorId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoSelectorId
+	}
+	return nil
+}
+
+func (m *RepoSelector) GetSelectorKey() *google_protobuf.StringValue {
+	if m != nil {
+		return m.SelectorKey
+	}
+	return nil
+}
+
+func (m *RepoSelector) GetSelectorValue() *google_protobuf.StringValue {
+	if m != nil {
+		return m.SelectorValue
+	}
+	return nil
+}
+
+func (m *RepoSelector) GetStatus() *google_protobuf.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *RepoSelector) GetCreateTime() *google_protobuf1.Timestamp {
+	if m != nil {
+		return m.CreateTime
+	}
+	return nil
+}
+
+func (m *RepoSelector) GetStatusTime() *google_protobuf1.Timestamp {
+	if m != nil {
+		return m.StatusTime
+	}
+	return nil
+}
+
+type CreateRepoSelectorRequest struct {
+	RepoId        *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	X             *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=_" json:"_,omitempty"`
+	SelectorKey   *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
+	SelectorValue *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+}
+
+func (m *CreateRepoSelectorRequest) Reset()                    { *m = CreateRepoSelectorRequest{} }
+func (m *CreateRepoSelectorRequest) String() string            { return proto.CompactTextString(m) }
+func (*CreateRepoSelectorRequest) ProtoMessage()               {}
+func (*CreateRepoSelectorRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{19} }
+
+func (m *CreateRepoSelectorRequest) GetRepoId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoId
+	}
+	return nil
+}
+
+func (m *CreateRepoSelectorRequest) GetX() *google_protobuf.StringValue {
+	if m != nil {
+		return m.X
+	}
+	return nil
+}
+
+func (m *CreateRepoSelectorRequest) GetSelectorKey() *google_protobuf.StringValue {
+	if m != nil {
+		return m.SelectorKey
+	}
+	return nil
+}
+
+func (m *CreateRepoSelectorRequest) GetSelectorValue() *google_protobuf.StringValue {
+	if m != nil {
+		return m.SelectorValue
+	}
+	return nil
+}
+
+type CreateRepoSelectorResponse struct {
+	RepoSelector *RepoSelector `protobuf:"bytes,1,opt,name=repo_selector,json=repoSelector" json:"repo_selector,omitempty"`
+}
+
+func (m *CreateRepoSelectorResponse) Reset()                    { *m = CreateRepoSelectorResponse{} }
+func (m *CreateRepoSelectorResponse) String() string            { return proto.CompactTextString(m) }
+func (*CreateRepoSelectorResponse) ProtoMessage()               {}
+func (*CreateRepoSelectorResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{20} }
+
+func (m *CreateRepoSelectorResponse) GetRepoSelector() *RepoSelector {
+	if m != nil {
+		return m.RepoSelector
+	}
+	return nil
+}
+
+type ModifyRepoSelectorRequest struct {
+	X              *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
+	RepoSelectorId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
+	SelectorKey    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
+	SelectorValue  *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+}
+
+func (m *ModifyRepoSelectorRequest) Reset()                    { *m = ModifyRepoSelectorRequest{} }
+func (m *ModifyRepoSelectorRequest) String() string            { return proto.CompactTextString(m) }
+func (*ModifyRepoSelectorRequest) ProtoMessage()               {}
+func (*ModifyRepoSelectorRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{21} }
+
+func (m *ModifyRepoSelectorRequest) GetX() *google_protobuf.StringValue {
+	if m != nil {
+		return m.X
+	}
+	return nil
+}
+
+func (m *ModifyRepoSelectorRequest) GetRepoSelectorId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoSelectorId
+	}
+	return nil
+}
+
+func (m *ModifyRepoSelectorRequest) GetSelectorKey() *google_protobuf.StringValue {
+	if m != nil {
+		return m.SelectorKey
+	}
+	return nil
+}
+
+func (m *ModifyRepoSelectorRequest) GetSelectorValue() *google_protobuf.StringValue {
+	if m != nil {
+		return m.SelectorValue
+	}
+	return nil
+}
+
+type ModifyRepoSelectorResponse struct {
+	RepoSelector *RepoSelector `protobuf:"bytes,1,opt,name=repo_selector,json=repoSelector" json:"repo_selector,omitempty"`
+}
+
+func (m *ModifyRepoSelectorResponse) Reset()                    { *m = ModifyRepoSelectorResponse{} }
+func (m *ModifyRepoSelectorResponse) String() string            { return proto.CompactTextString(m) }
+func (*ModifyRepoSelectorResponse) ProtoMessage()               {}
+func (*ModifyRepoSelectorResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{22} }
+
+func (m *ModifyRepoSelectorResponse) GetRepoSelector() *RepoSelector {
+	if m != nil {
+		return m.RepoSelector
+	}
+	return nil
+}
+
+type DeleteRepoSelectorRequest struct {
+	RepoSelectorId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
+}
+
+func (m *DeleteRepoSelectorRequest) Reset()                    { *m = DeleteRepoSelectorRequest{} }
+func (m *DeleteRepoSelectorRequest) String() string            { return proto.CompactTextString(m) }
+func (*DeleteRepoSelectorRequest) ProtoMessage()               {}
+func (*DeleteRepoSelectorRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{23} }
+
+func (m *DeleteRepoSelectorRequest) GetRepoSelectorId() *google_protobuf.StringValue {
+	if m != nil {
+		return m.RepoSelectorId
+	}
+	return nil
+}
+
+type DeleteRepoSelectorResponse struct {
+	RepoSelector *RepoSelector `protobuf:"bytes,1,opt,name=repo_selector,json=repoSelector" json:"repo_selector,omitempty"`
+}
+
+func (m *DeleteRepoSelectorResponse) Reset()                    { *m = DeleteRepoSelectorResponse{} }
+func (m *DeleteRepoSelectorResponse) String() string            { return proto.CompactTextString(m) }
+func (*DeleteRepoSelectorResponse) ProtoMessage()               {}
+func (*DeleteRepoSelectorResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{24} }
+
+func (m *DeleteRepoSelectorResponse) GetRepoSelector() *RepoSelector {
+	if m != nil {
+		return m.RepoSelector
+	}
+	return nil
+}
+
+type DescribeRepoSelectorsRequest struct {
+	RepoId         []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoSelectorId []string `protobuf:"bytes,2,rep,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
+	Status         []string `protobuf:"bytes,3,rep,name=status" json:"status,omitempty"`
+	Limit          uint32   `protobuf:"varint,4,opt,name=limit" json:"limit,omitempty"`
+	Offset         uint32   `protobuf:"varint,5,opt,name=offset" json:"offset,omitempty"`
+}
+
+func (m *DescribeRepoSelectorsRequest) Reset()                    { *m = DescribeRepoSelectorsRequest{} }
+func (m *DescribeRepoSelectorsRequest) String() string            { return proto.CompactTextString(m) }
+func (*DescribeRepoSelectorsRequest) ProtoMessage()               {}
+func (*DescribeRepoSelectorsRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{25} }
+
+func (m *DescribeRepoSelectorsRequest) GetRepoId() []string {
+	if m != nil {
+		return m.RepoId
+	}
+	return nil
+}
+
+func (m *DescribeRepoSelectorsRequest) GetRepoSelectorId() []string {
+	if m != nil {
+		return m.RepoSelectorId
+	}
+	return nil
+}
+
+func (m *DescribeRepoSelectorsRequest) GetStatus() []string {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *DescribeRepoSelectorsRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+func (m *DescribeRepoSelectorsRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+type DescribeRepoSelectorsResponse struct {
+	TotalCount      uint32          `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	RepoSelectorSet []*RepoSelector `protobuf:"bytes,2,rep,name=repo_selector_set,json=repoSelectorSet" json:"repo_selector_set,omitempty"`
+}
+
+func (m *DescribeRepoSelectorsResponse) Reset()                    { *m = DescribeRepoSelectorsResponse{} }
+func (m *DescribeRepoSelectorsResponse) String() string            { return proto.CompactTextString(m) }
+func (*DescribeRepoSelectorsResponse) ProtoMessage()               {}
+func (*DescribeRepoSelectorsResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{26} }
+
+func (m *DescribeRepoSelectorsResponse) GetTotalCount() uint32 {
+	if m != nil {
+		return m.TotalCount
+	}
+	return 0
+}
+
+func (m *DescribeRepoSelectorsResponse) GetRepoSelectorSet() []*RepoSelector {
+	if m != nil {
+		return m.RepoSelectorSet
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*CreateRepoRequest)(nil), "openpitrix.CreateRepoRequest")
 	proto.RegisterType((*CreateRepoResponse)(nil), "openpitrix.CreateRepoResponse")
@@ -391,6 +951,24 @@ func init() {
 	proto.RegisterType((*Repo)(nil), "openpitrix.Repo")
 	proto.RegisterType((*DescribeReposRequest)(nil), "openpitrix.DescribeReposRequest")
 	proto.RegisterType((*DescribeReposResponse)(nil), "openpitrix.DescribeReposResponse")
+	proto.RegisterType((*RepoLabel)(nil), "openpitrix.RepoLabel")
+	proto.RegisterType((*CreateRepoLabelRequest)(nil), "openpitrix.CreateRepoLabelRequest")
+	proto.RegisterType((*CreateRepoLabelResponse)(nil), "openpitrix.CreateRepoLabelResponse")
+	proto.RegisterType((*ModifyRepoLabelRequest)(nil), "openpitrix.ModifyRepoLabelRequest")
+	proto.RegisterType((*ModifyRepoLabelResponse)(nil), "openpitrix.ModifyRepoLabelResponse")
+	proto.RegisterType((*DeleteRepoLabelRequest)(nil), "openpitrix.DeleteRepoLabelRequest")
+	proto.RegisterType((*DeleteRepoLabelResponse)(nil), "openpitrix.DeleteRepoLabelResponse")
+	proto.RegisterType((*DescribeRepoLabelsRequest)(nil), "openpitrix.DescribeRepoLabelsRequest")
+	proto.RegisterType((*DescribeRepoLabelsResponse)(nil), "openpitrix.DescribeRepoLabelsResponse")
+	proto.RegisterType((*RepoSelector)(nil), "openpitrix.RepoSelector")
+	proto.RegisterType((*CreateRepoSelectorRequest)(nil), "openpitrix.CreateRepoSelectorRequest")
+	proto.RegisterType((*CreateRepoSelectorResponse)(nil), "openpitrix.CreateRepoSelectorResponse")
+	proto.RegisterType((*ModifyRepoSelectorRequest)(nil), "openpitrix.ModifyRepoSelectorRequest")
+	proto.RegisterType((*ModifyRepoSelectorResponse)(nil), "openpitrix.ModifyRepoSelectorResponse")
+	proto.RegisterType((*DeleteRepoSelectorRequest)(nil), "openpitrix.DeleteRepoSelectorRequest")
+	proto.RegisterType((*DeleteRepoSelectorResponse)(nil), "openpitrix.DeleteRepoSelectorResponse")
+	proto.RegisterType((*DescribeRepoSelectorsRequest)(nil), "openpitrix.DescribeRepoSelectorsRequest")
+	proto.RegisterType((*DescribeRepoSelectorsResponse)(nil), "openpitrix.DescribeRepoSelectorsResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -408,6 +986,14 @@ type RepoManagerClient interface {
 	DescribeRepos(ctx context.Context, in *DescribeReposRequest, opts ...grpc.CallOption) (*DescribeReposResponse, error)
 	ModifyRepo(ctx context.Context, in *ModifyRepoRequest, opts ...grpc.CallOption) (*ModifyRepoResponse, error)
 	DeleteRepo(ctx context.Context, in *DeleteRepoRequest, opts ...grpc.CallOption) (*DeleteRepoResponse, error)
+	CreateRepoLabel(ctx context.Context, in *CreateRepoLabelRequest, opts ...grpc.CallOption) (*CreateRepoLabelResponse, error)
+	DescribeRepoLabels(ctx context.Context, in *DescribeRepoLabelsRequest, opts ...grpc.CallOption) (*DescribeRepoLabelsResponse, error)
+	ModifyRepoLabel(ctx context.Context, in *ModifyRepoLabelRequest, opts ...grpc.CallOption) (*ModifyRepoLabelResponse, error)
+	DeleteRepoLabel(ctx context.Context, in *DeleteRepoLabelRequest, opts ...grpc.CallOption) (*DeleteRepoLabelResponse, error)
+	CreateRepoSelector(ctx context.Context, in *CreateRepoSelectorRequest, opts ...grpc.CallOption) (*CreateRepoSelectorResponse, error)
+	DescribeRepoSelectors(ctx context.Context, in *DescribeRepoSelectorsRequest, opts ...grpc.CallOption) (*DescribeRepoSelectorsResponse, error)
+	ModifyRepoSelector(ctx context.Context, in *ModifyRepoSelectorRequest, opts ...grpc.CallOption) (*ModifyRepoSelectorResponse, error)
+	DeleteRepoSelector(ctx context.Context, in *DeleteRepoSelectorRequest, opts ...grpc.CallOption) (*DeleteRepoSelectorResponse, error)
 }
 
 type repoManagerClient struct {
@@ -454,6 +1040,78 @@ func (c *repoManagerClient) DeleteRepo(ctx context.Context, in *DeleteRepoReques
 	return out, nil
 }
 
+func (c *repoManagerClient) CreateRepoLabel(ctx context.Context, in *CreateRepoLabelRequest, opts ...grpc.CallOption) (*CreateRepoLabelResponse, error) {
+	out := new(CreateRepoLabelResponse)
+	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/CreateRepoLabel", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *repoManagerClient) DescribeRepoLabels(ctx context.Context, in *DescribeRepoLabelsRequest, opts ...grpc.CallOption) (*DescribeRepoLabelsResponse, error) {
+	out := new(DescribeRepoLabelsResponse)
+	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DescribeRepoLabels", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *repoManagerClient) ModifyRepoLabel(ctx context.Context, in *ModifyRepoLabelRequest, opts ...grpc.CallOption) (*ModifyRepoLabelResponse, error) {
+	out := new(ModifyRepoLabelResponse)
+	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/ModifyRepoLabel", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *repoManagerClient) DeleteRepoLabel(ctx context.Context, in *DeleteRepoLabelRequest, opts ...grpc.CallOption) (*DeleteRepoLabelResponse, error) {
+	out := new(DeleteRepoLabelResponse)
+	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DeleteRepoLabel", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *repoManagerClient) CreateRepoSelector(ctx context.Context, in *CreateRepoSelectorRequest, opts ...grpc.CallOption) (*CreateRepoSelectorResponse, error) {
+	out := new(CreateRepoSelectorResponse)
+	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/CreateRepoSelector", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *repoManagerClient) DescribeRepoSelectors(ctx context.Context, in *DescribeRepoSelectorsRequest, opts ...grpc.CallOption) (*DescribeRepoSelectorsResponse, error) {
+	out := new(DescribeRepoSelectorsResponse)
+	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DescribeRepoSelectors", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *repoManagerClient) ModifyRepoSelector(ctx context.Context, in *ModifyRepoSelectorRequest, opts ...grpc.CallOption) (*ModifyRepoSelectorResponse, error) {
+	out := new(ModifyRepoSelectorResponse)
+	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/ModifyRepoSelector", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *repoManagerClient) DeleteRepoSelector(ctx context.Context, in *DeleteRepoSelectorRequest, opts ...grpc.CallOption) (*DeleteRepoSelectorResponse, error) {
+	out := new(DeleteRepoSelectorResponse)
+	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DeleteRepoSelector", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for RepoManager service
 
 type RepoManagerServer interface {
@@ -461,6 +1119,14 @@ type RepoManagerServer interface {
 	DescribeRepos(context.Context, *DescribeReposRequest) (*DescribeReposResponse, error)
 	ModifyRepo(context.Context, *ModifyRepoRequest) (*ModifyRepoResponse, error)
 	DeleteRepo(context.Context, *DeleteRepoRequest) (*DeleteRepoResponse, error)
+	CreateRepoLabel(context.Context, *CreateRepoLabelRequest) (*CreateRepoLabelResponse, error)
+	DescribeRepoLabels(context.Context, *DescribeRepoLabelsRequest) (*DescribeRepoLabelsResponse, error)
+	ModifyRepoLabel(context.Context, *ModifyRepoLabelRequest) (*ModifyRepoLabelResponse, error)
+	DeleteRepoLabel(context.Context, *DeleteRepoLabelRequest) (*DeleteRepoLabelResponse, error)
+	CreateRepoSelector(context.Context, *CreateRepoSelectorRequest) (*CreateRepoSelectorResponse, error)
+	DescribeRepoSelectors(context.Context, *DescribeRepoSelectorsRequest) (*DescribeRepoSelectorsResponse, error)
+	ModifyRepoSelector(context.Context, *ModifyRepoSelectorRequest) (*ModifyRepoSelectorResponse, error)
+	DeleteRepoSelector(context.Context, *DeleteRepoSelectorRequest) (*DeleteRepoSelectorResponse, error)
 }
 
 func RegisterRepoManagerServer(s *grpc.Server, srv RepoManagerServer) {
@@ -539,6 +1205,150 @@ func _RepoManager_DeleteRepo_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RepoManager_CreateRepoLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRepoLabelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RepoManagerServer).CreateRepoLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.RepoManager/CreateRepoLabel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RepoManagerServer).CreateRepoLabel(ctx, req.(*CreateRepoLabelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RepoManager_DescribeRepoLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeRepoLabelsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RepoManagerServer).DescribeRepoLabels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.RepoManager/DescribeRepoLabels",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RepoManagerServer).DescribeRepoLabels(ctx, req.(*DescribeRepoLabelsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RepoManager_ModifyRepoLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyRepoLabelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RepoManagerServer).ModifyRepoLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.RepoManager/ModifyRepoLabel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RepoManagerServer).ModifyRepoLabel(ctx, req.(*ModifyRepoLabelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RepoManager_DeleteRepoLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRepoLabelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RepoManagerServer).DeleteRepoLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.RepoManager/DeleteRepoLabel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RepoManagerServer).DeleteRepoLabel(ctx, req.(*DeleteRepoLabelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RepoManager_CreateRepoSelector_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRepoSelectorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RepoManagerServer).CreateRepoSelector(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.RepoManager/CreateRepoSelector",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RepoManagerServer).CreateRepoSelector(ctx, req.(*CreateRepoSelectorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RepoManager_DescribeRepoSelectors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeRepoSelectorsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RepoManagerServer).DescribeRepoSelectors(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.RepoManager/DescribeRepoSelectors",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RepoManagerServer).DescribeRepoSelectors(ctx, req.(*DescribeRepoSelectorsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RepoManager_ModifyRepoSelector_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyRepoSelectorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RepoManagerServer).ModifyRepoSelector(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.RepoManager/ModifyRepoSelector",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RepoManagerServer).ModifyRepoSelector(ctx, req.(*ModifyRepoSelectorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RepoManager_DeleteRepoSelector_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRepoSelectorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RepoManagerServer).DeleteRepoSelector(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.RepoManager/DeleteRepoSelector",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RepoManagerServer).DeleteRepoSelector(ctx, req.(*DeleteRepoSelectorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _RepoManager_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "openpitrix.RepoManager",
 	HandlerType: (*RepoManagerServer)(nil),
@@ -559,62 +1369,137 @@ var _RepoManager_serviceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteRepo",
 			Handler:    _RepoManager_DeleteRepo_Handler,
 		},
+		{
+			MethodName: "CreateRepoLabel",
+			Handler:    _RepoManager_CreateRepoLabel_Handler,
+		},
+		{
+			MethodName: "DescribeRepoLabels",
+			Handler:    _RepoManager_DescribeRepoLabels_Handler,
+		},
+		{
+			MethodName: "ModifyRepoLabel",
+			Handler:    _RepoManager_ModifyRepoLabel_Handler,
+		},
+		{
+			MethodName: "DeleteRepoLabel",
+			Handler:    _RepoManager_DeleteRepoLabel_Handler,
+		},
+		{
+			MethodName: "CreateRepoSelector",
+			Handler:    _RepoManager_CreateRepoSelector_Handler,
+		},
+		{
+			MethodName: "DescribeRepoSelectors",
+			Handler:    _RepoManager_DescribeRepoSelectors_Handler,
+		},
+		{
+			MethodName: "ModifyRepoSelector",
+			Handler:    _RepoManager_ModifyRepoSelector_Handler,
+		},
+		{
+			MethodName: "DeleteRepoSelector",
+			Handler:    _RepoManager_DeleteRepoSelector_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "repo.proto",
 }
 
-func init() { proto.RegisterFile("repo.proto", fileDescriptor3) }
+func init() { proto.RegisterFile("repo.proto", fileDescriptor4) }
 
-var fileDescriptor3 = []byte{
-	// 784 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x56, 0x4f, 0x6f, 0xe3, 0x44,
-	0x14, 0xc7, 0xf9, 0xb7, 0xed, 0x8b, 0x82, 0xb6, 0xa3, 0x5d, 0xb0, 0xa2, 0xd2, 0x0d, 0xd6, 0x1e,
-	0x96, 0x2e, 0x6b, 0xa7, 0x01, 0x2e, 0x01, 0x21, 0x95, 0xf6, 0x00, 0x48, 0x15, 0x55, 0x8a, 0x38,
-	0x70, 0x89, 0x26, 0xce, 0x4b, 0x3a, 0x95, 0xe3, 0x99, 0xcc, 0x4c, 0x9a, 0xf6, 0xca, 0x81, 0x0f,
-	0x50, 0x3e, 0x10, 0x1f, 0x82, 0x23, 0x1c, 0x39, 0x70, 0xe3, 0x2b, 0xa0, 0x19, 0x3b, 0x89, 0x5d,
-	0x17, 0xea, 0x22, 0xed, 0xad, 0xa7, 0xe8, 0xbd, 0xf7, 0xfb, 0xbd, 0xff, 0xf3, 0x1c, 0x00, 0x89,
-	0x82, 0xfb, 0x42, 0x72, 0xcd, 0x09, 0x70, 0x81, 0xb1, 0x60, 0x5a, 0xb2, 0xab, 0xf6, 0xde, 0x94,
-	0xf3, 0x69, 0x84, 0x81, 0xb5, 0x8c, 0x16, 0x93, 0x60, 0x29, 0xa9, 0x10, 0x28, 0x55, 0x82, 0x6d,
-	0xbf, 0xb8, 0x6d, 0xd7, 0x6c, 0x86, 0x4a, 0xd3, 0x99, 0x48, 0x01, 0xbb, 0x29, 0x80, 0x0a, 0x16,
-	0xd0, 0x38, 0xe6, 0x9a, 0x6a, 0xc6, 0xe3, 0x15, 0xfd, 0x63, 0xfb, 0x13, 0xbe, 0x99, 0x62, 0xfc,
-	0x46, 0x2d, 0xe9, 0x74, 0x8a, 0x32, 0xe0, 0xc2, 0x22, 0x8a, 0x68, 0xef, 0x8f, 0x0a, 0xec, 0x1c,
-	0x49, 0xa4, 0x1a, 0x07, 0x28, 0xf8, 0x00, 0xe7, 0x0b, 0x54, 0x9a, 0x7c, 0x04, 0xce, 0xd0, 0x75,
-	0x3a, 0xce, 0xab, 0x66, 0x6f, 0xd7, 0x4f, 0xa2, 0xf9, 0xab, 0x74, 0xfc, 0x33, 0x2d, 0x59, 0x3c,
-	0xfd, 0x81, 0x46, 0x0b, 0x1c, 0xbc, 0x43, 0xba, 0x50, 0x8b, 0xe9, 0x0c, 0xdd, 0x4a, 0x09, 0xb4,
-	0x45, 0x92, 0x2f, 0xa1, 0x39, 0x46, 0x15, 0x4a, 0x66, 0x93, 0x72, 0xab, 0x25, 0x88, 0x59, 0x02,
-	0xf1, 0xa1, 0xba, 0x90, 0x91, 0x5b, 0x2b, 0xc1, 0x33, 0x40, 0xf2, 0x05, 0x40, 0x28, 0x71, 0x8c,
-	0xb1, 0x66, 0x34, 0x72, 0xeb, 0x25, 0x68, 0x19, 0xbc, 0x61, 0x5f, 0x32, 0xc5, 0x46, 0x2c, 0x62,
-	0xfa, 0xda, 0x6d, 0x94, 0x61, 0x6f, 0xf0, 0x5e, 0x1f, 0x48, 0xb6, 0xbb, 0x4a, 0xf0, 0x58, 0x21,
-	0x79, 0x09, 0x35, 0xb3, 0x1b, 0x69, 0x87, 0x9f, 0xfa, 0x9b, 0xe5, 0xf0, 0x2d, 0xce, 0x5a, 0xbd,
-	0xbf, 0x2a, 0xb0, 0x73, 0xc2, 0xc7, 0x6c, 0x72, 0x9d, 0x1d, 0xcd, 0x67, 0xf0, 0xc4, 0x58, 0x87,
-	0x6c, 0x5c, 0x6a, 0x40, 0x0d, 0x03, 0xfe, 0x66, 0xfc, 0x38, 0xa6, 0xfb, 0xc6, 0x94, 0xed, 0xf4,
-	0x83, 0xc6, 0xf4, 0x2d, 0xec, 0x1c, 0x63, 0x84, 0xf9, 0x07, 0xf4, 0xff, 0xa6, 0x64, 0xf2, 0xc8,
-	0xfa, 0x7a, 0x50, 0x1e, 0xbf, 0xd6, 0xa0, 0x66, 0xc4, 0xc7, 0x0d, 0x79, 0x0b, 0x1b, 0x42, 0x7a,
-	0x50, 0xe7, 0xcb, 0x18, 0xa5, 0xfb, 0xa4, 0x04, 0x31, 0x81, 0x92, 0x4f, 0xa1, 0xa1, 0x34, 0xd5,
-	0x0b, 0xe5, 0x6e, 0x95, 0x99, 0x43, 0x82, 0x25, 0x9f, 0x43, 0x33, 0xb4, 0x27, 0x63, 0x68, 0xee,
-	0xbe, 0xbb, 0x6d, 0xa9, 0xed, 0x02, 0xf5, 0xfb, 0xd5, 0x47, 0xc1, 0x16, 0x49, 0x35, 0x1a, 0x85,
-	0x21, 0x27, 0x6e, 0x12, 0x32, 0xdc, 0x4f, 0x4e, 0xe0, 0x46, 0xe1, 0xfd, 0xee, 0xc0, 0xb3, 0x63,
-	0x3b, 0x9f, 0x91, 0x5d, 0x40, 0xb5, 0xda, 0xe6, 0xf7, 0xb3, 0x1b, 0x55, 0x7d, 0xb5, 0xbd, 0xde,
-	0x19, 0xb2, 0xde, 0x19, 0xa3, 0x4d, 0xb6, 0x62, 0x2f, 0xd7, 0xe7, 0xaa, 0xb5, 0x64, 0x3b, 0xf9,
-	0xde, 0xba, 0x2b, 0xb5, 0xc4, 0x57, 0x5a, 0xf7, 0x33, 0xa8, 0x47, 0x74, 0x84, 0x66, 0xb0, 0x46,
-	0x9d, 0x08, 0xa4, 0x0d, 0x5b, 0x0a, 0x23, 0x0c, 0x35, 0x97, 0x6e, 0xc3, 0x1a, 0xd6, 0xb2, 0x65,
-	0xb0, 0x19, 0xd3, 0x76, 0x26, 0xad, 0x41, 0x22, 0x18, 0xff, 0x7c, 0x32, 0x51, 0xa8, 0x6d, 0xd7,
-	0x5b, 0x83, 0x54, 0xf2, 0x10, 0x9e, 0xdf, 0x2a, 0x2e, 0x7d, 0x5e, 0x2f, 0xa0, 0xa9, 0xb9, 0xa6,
-	0xd1, 0x30, 0xe4, 0x8b, 0x58, 0xdb, 0x37, 0xd3, 0x1a, 0x80, 0x55, 0x1d, 0x19, 0x0d, 0x79, 0x0d,
-	0x5b, 0xb6, 0x7c, 0xe3, 0xd3, 0x54, 0x7a, 0xd7, 0x1b, 0xb4, 0x0d, 0x3a, 0x43, 0xdd, 0xfb, 0xbb,
-	0x0a, 0x4d, 0xa3, 0x39, 0xa1, 0x31, 0x9d, 0xa2, 0x24, 0x73, 0x80, 0xcd, 0x17, 0x80, 0x7c, 0x90,
-	0x25, 0x16, 0xbe, 0xbb, 0xed, 0xbd, 0x7f, 0x33, 0x27, 0xa9, 0x7a, 0x2f, 0x6f, 0x0e, 0x5b, 0x24,
-	0x5d, 0x8f, 0x8e, 0x89, 0xf8, 0xd3, 0x6f, 0x7f, 0xfe, 0x52, 0x79, 0xd7, 0xdb, 0x0e, 0x2e, 0x0f,
-	0x02, 0x23, 0xab, 0xbe, 0xb3, 0x4f, 0x7e, 0x76, 0xa0, 0x95, 0x2b, 0x95, 0x74, 0xb2, 0x7e, 0xef,
-	0x1a, 0x71, 0xfb, 0xc3, 0xff, 0x40, 0xa4, 0xc1, 0xbb, 0x37, 0x87, 0xbb, 0xa4, 0x3d, 0x4e, 0x6d,
-	0x36, 0xbc, 0xea, 0x2c, 0x99, 0x3e, 0xef, 0x4c, 0x58, 0xa4, 0x51, 0xda, 0x5c, 0x9a, 0x64, 0x93,
-	0x8b, 0xa9, 0x7d, 0x73, 0x56, 0xf3, 0xb5, 0x17, 0x3e, 0x6c, 0xf9, 0xda, 0x8b, 0xd7, 0x38, 0xad,
-	0x7d, 0x66, 0x0d, 0x99, 0xda, 0x7b, 0xf9, 0xda, 0xe7, 0x00, 0x9b, 0x0b, 0x9a, 0x0f, 0x59, 0xb8,
-	0xd2, 0xf9, 0x90, 0xc5, 0xc3, 0x9b, 0x86, 0x1c, 0x5b, 0x43, 0x26, 0xe4, 0x7e, 0x2e, 0xe4, 0x57,
-	0x57, 0x37, 0x87, 0x73, 0xf2, 0x35, 0x90, 0xef, 0x04, 0xc6, 0xa7, 0xd6, 0x57, 0xe7, 0x54, 0xf2,
-	0x0b, 0x0c, 0xb5, 0xf7, 0xfa, 0x2e, 0x2d, 0x79, 0x7e, 0xae, 0xb5, 0x50, 0xfd, 0x20, 0xc8, 0x44,
-	0x67, 0xbc, 0x57, 0xef, 0xfa, 0x5d, 0xff, 0x60, 0xdf, 0x71, 0x7a, 0x4f, 0xa9, 0x10, 0x11, 0x0b,
-	0xed, 0x1f, 0xb5, 0xe0, 0x42, 0xf1, 0xb8, 0x5f, 0xd0, 0xfc, 0x58, 0x11, 0xa3, 0x51, 0xc3, 0x3e,
-	0xe8, 0x4f, 0xfe, 0x09, 0x00, 0x00, 0xff, 0xff, 0xea, 0x42, 0xe8, 0x4e, 0x6a, 0x0a, 0x00, 0x00,
+var fileDescriptor4 = []byte{
+	// 1465 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x59, 0x4d, 0x73, 0x1b, 0x45,
+	0x13, 0x7e, 0x57, 0x5f, 0xb1, 0x5a, 0x96, 0x63, 0x4f, 0x22, 0x67, 0xb3, 0xe5, 0x24, 0x7a, 0x37,
+	0x09, 0xe5, 0x38, 0x44, 0x72, 0x44, 0x28, 0xc0, 0x21, 0x80, 0xb0, 0x8b, 0xc2, 0x40, 0x2a, 0x29,
+	0x99, 0xe2, 0x10, 0x0e, 0xae, 0x95, 0x34, 0x56, 0x36, 0xc8, 0xbb, 0xeb, 0xdd, 0x91, 0x1d, 0x73,
+	0x84, 0xaa, 0xdc, 0xb8, 0x08, 0x8e, 0x84, 0x03, 0x17, 0x6e, 0x54, 0xf1, 0x0b, 0x38, 0xf0, 0x13,
+	0x38, 0x70, 0x80, 0x23, 0x07, 0x7e, 0x00, 0x77, 0xa8, 0x99, 0xfd, 0x9a, 0xd9, 0x8f, 0x78, 0x65,
+	0x9b, 0x8f, 0x50, 0x39, 0x25, 0x3b, 0xd3, 0x3d, 0xf3, 0xcc, 0xd3, 0x4f, 0x4f, 0xb7, 0xc6, 0x00,
+	0x36, 0xb6, 0xcc, 0x86, 0x65, 0x9b, 0xc4, 0x44, 0x60, 0x5a, 0xd8, 0xb0, 0x74, 0x62, 0xeb, 0x0f,
+	0x95, 0xf3, 0x03, 0xd3, 0x1c, 0x0c, 0x71, 0x93, 0xcd, 0x74, 0x47, 0x5b, 0xcd, 0x3d, 0x5b, 0xb3,
+	0x2c, 0x6c, 0x3b, 0xae, 0xad, 0x72, 0x21, 0x3a, 0x4f, 0xf4, 0x6d, 0xec, 0x10, 0x6d, 0xdb, 0xf2,
+	0x0c, 0x16, 0x3c, 0x03, 0xcd, 0xd2, 0x9b, 0x9a, 0x61, 0x98, 0x44, 0x23, 0xba, 0x69, 0xf8, 0xee,
+	0xcf, 0xb3, 0x7f, 0x7a, 0xd7, 0x06, 0xd8, 0xb8, 0xe6, 0xec, 0x69, 0x83, 0x01, 0xb6, 0x9b, 0xa6,
+	0xc5, 0x2c, 0xe2, 0xd6, 0xea, 0x2f, 0x39, 0x98, 0x5b, 0xb5, 0xb1, 0x46, 0x70, 0x07, 0x5b, 0x66,
+	0x07, 0xef, 0x8c, 0xb0, 0x43, 0xd0, 0x15, 0x90, 0x36, 0x65, 0xa9, 0x2e, 0x2d, 0x56, 0x5a, 0x0b,
+	0x0d, 0x77, 0xb7, 0x86, 0x0f, 0xa7, 0xb1, 0x41, 0x6c, 0xdd, 0x18, 0x7c, 0xa0, 0x0d, 0x47, 0xb8,
+	0xf3, 0x3f, 0xb4, 0x0c, 0x05, 0x43, 0xdb, 0xc6, 0x72, 0x2e, 0x83, 0x35, 0xb3, 0x44, 0xaf, 0x41,
+	0xa5, 0x8f, 0x9d, 0x9e, 0xad, 0x33, 0x50, 0x72, 0x3e, 0x83, 0x23, 0xef, 0x80, 0x1a, 0x90, 0x1f,
+	0xd9, 0x43, 0xb9, 0x90, 0xc1, 0x8f, 0x1a, 0xa2, 0x57, 0x01, 0x7a, 0x36, 0xee, 0x63, 0x83, 0xe8,
+	0xda, 0x50, 0x2e, 0x66, 0x70, 0xe3, 0xec, 0xa9, 0xf7, 0xae, 0xee, 0xe8, 0x5d, 0x7d, 0xa8, 0x93,
+	0x7d, 0xb9, 0x94, 0xc5, 0x3b, 0xb4, 0x57, 0x57, 0x00, 0xf1, 0xec, 0x3a, 0x96, 0x69, 0x38, 0x18,
+	0x5d, 0x82, 0x02, 0xd5, 0x86, 0xc7, 0xf0, 0x6c, 0x23, 0x14, 0x47, 0x83, 0xd9, 0xb1, 0x59, 0xf5,
+	0xb7, 0x1c, 0xcc, 0xdd, 0x36, 0xfb, 0xfa, 0xd6, 0x3e, 0x1f, 0x9a, 0x17, 0xe1, 0x04, 0x9d, 0xdd,
+	0xd4, 0xfb, 0x99, 0x02, 0x54, 0xa2, 0xc6, 0xeb, 0xfd, 0x67, 0x61, 0x3a, 0x28, 0x4c, 0x3c, 0xd3,
+	0x13, 0x85, 0xe9, 0x1d, 0x98, 0x5b, 0xc3, 0x43, 0x2c, 0x26, 0xd0, 0xe1, 0xa2, 0x44, 0x71, 0xf0,
+	0x6b, 0x4d, 0x84, 0xe3, 0xfb, 0x02, 0x14, 0xe8, 0xe7, 0x33, 0x85, 0xfc, 0x05, 0x0a, 0x41, 0x2d,
+	0x28, 0x9a, 0x7b, 0x06, 0xb6, 0xe5, 0x13, 0x19, 0x1c, 0x5d, 0x53, 0x74, 0x03, 0x4a, 0x0e, 0xd1,
+	0xc8, 0xc8, 0x91, 0xa7, 0xb2, 0xc4, 0xc1, 0xb5, 0x45, 0x37, 0xa1, 0xd2, 0x63, 0x57, 0xc6, 0x26,
+	0xbd, 0xf7, 0xe5, 0x32, 0x73, 0x55, 0x62, 0xae, 0xef, 0xfb, 0x45, 0x81, 0x1d, 0x52, 0x23, 0x98,
+	0x0e, 0x50, 0x67, 0x77, 0x19, 0xd7, 0x19, 0x0e, 0x76, 0x76, 0xcd, 0xe9, 0x80, 0xfa, 0xb3, 0x04,
+	0xa7, 0xd7, 0x58, 0x7c, 0xba, 0x4c, 0x80, 0x8e, 0xaf, 0xe6, 0x33, 0xbc, 0xa2, 0xf2, 0x8b, 0xe5,
+	0x40, 0x33, 0x28, 0xd0, 0x0c, 0x1d, 0x75, 0x55, 0x71, 0x5e, 0xe0, 0x39, 0xcf, 0x66, 0x78, 0x26,
+	0xe7, 0x03, 0x56, 0x0a, 0xee, 0x5a, 0xde, 0xb9, 0x4f, 0x43, 0x71, 0xa8, 0x75, 0x31, 0x0d, 0x2c,
+	0x1d, 0x76, 0x3f, 0x90, 0x02, 0x53, 0x0e, 0x1e, 0xe2, 0x1e, 0x31, 0x6d, 0xb9, 0xc4, 0x26, 0x82,
+	0x6f, 0xe6, 0xa1, 0x6f, 0xeb, 0x84, 0xc5, 0xa4, 0xda, 0x71, 0x3f, 0xe8, 0xfa, 0xe6, 0xd6, 0x96,
+	0x83, 0x09, 0x63, 0xbd, 0xda, 0xf1, 0xbe, 0x54, 0x0c, 0xb5, 0xc8, 0xe1, 0xbc, 0xf4, 0xba, 0x00,
+	0x15, 0x62, 0x12, 0x6d, 0xb8, 0xd9, 0x33, 0x47, 0x06, 0x61, 0x39, 0x53, 0xed, 0x00, 0x1b, 0x5a,
+	0xa5, 0x23, 0xe8, 0x2a, 0x4c, 0xb1, 0xe3, 0xd3, 0x35, 0xe9, 0x49, 0x93, 0x72, 0x90, 0x11, 0xb4,
+	0x81, 0x89, 0xfa, 0x6d, 0x1e, 0xca, 0x74, 0xe4, 0x3d, 0x06, 0xff, 0x90, 0xb9, 0xf8, 0x06, 0x54,
+	0x99, 0x1b, 0xe3, 0x80, 0x3a, 0x67, 0x49, 0xca, 0x8a, 0xed, 0x6f, 0xbb, 0xde, 0x47, 0xaf, 0x40,
+	0xd9, 0x75, 0xfe, 0x08, 0xef, 0x67, 0xca, 0xcc, 0x29, 0x66, 0xfe, 0x2e, 0xde, 0x47, 0xb7, 0xa0,
+	0xe2, 0xba, 0xee, 0xd2, 0x89, 0x4c, 0xe9, 0x09, 0xcc, 0x81, 0xfd, 0x9f, 0x53, 0x7d, 0xf1, 0xf0,
+	0xaa, 0x2f, 0x1d, 0x45, 0xf5, 0x27, 0x26, 0x52, 0xfd, 0xef, 0x12, 0xcc, 0x87, 0x35, 0x9a, 0xf1,
+	0x77, 0xc4, 0x5a, 0xcb, 0xba, 0xa7, 0x5c, 0xa6, 0xee, 0xe9, 0x1f, 0x0b, 0x93, 0x7a, 0x07, 0xce,
+	0xc4, 0x4e, 0xed, 0x25, 0xc4, 0x0d, 0xb7, 0x75, 0x75, 0xd5, 0xe7, 0x9d, 0xbc, 0x16, 0x55, 0xbc,
+	0xeb, 0x52, 0x0e, 0x34, 0xa7, 0xfe, 0x21, 0xc1, 0x7c, 0x58, 0x44, 0x05, 0x1e, 0x27, 0x68, 0x27,
+	0x9f, 0x62, 0xe5, 0x53, 0x4a, 0x63, 0x04, 0x1c, 0x89, 0xd2, 0x7b, 0x30, 0x1f, 0xb6, 0x03, 0x02,
+	0xa3, 0x31, 0x9a, 0xa4, 0x09, 0x69, 0xa2, 0x60, 0x63, 0x6b, 0x1f, 0x09, 0xec, 0x57, 0x12, 0x9c,
+	0xe5, 0x2f, 0x58, 0x36, 0x7a, 0x70, 0x09, 0x51, 0xe3, 0x01, 0xa7, 0xd3, 0x42, 0x48, 0xc3, 0x92,
+	0x91, 0x8f, 0x95, 0x0c, 0x56, 0x00, 0x0a, 0xc9, 0x05, 0xa0, 0x28, 0x14, 0x80, 0x8f, 0x41, 0x49,
+	0xc2, 0x97, 0xb5, 0x0a, 0xdc, 0x84, 0x19, 0x0e, 0x68, 0x58, 0x0b, 0x52, 0x98, 0x99, 0x0e, 0x0e,
+	0x40, 0xab, 0xc2, 0x0f, 0x79, 0x98, 0xee, 0xb0, 0x0a, 0xe1, 0xd5, 0xae, 0x43, 0x5e, 0x2d, 0x6f,
+	0xc1, 0xac, 0x57, 0x8a, 0xdc, 0x75, 0xb2, 0x66, 0xc8, 0x8c, 0xcd, 0x6d, 0xbe, 0xde, 0x47, 0xaf,
+	0xc3, 0x74, 0xb0, 0x44, 0xd6, 0x3c, 0xa9, 0xf8, 0x1e, 0x34, 0x55, 0x56, 0x61, 0x26, 0x58, 0x20,
+	0x7b, 0xb6, 0x54, 0x7d, 0x9f, 0xa7, 0xb3, 0x54, 0x7c, 0x9a, 0x83, 0xb3, 0xe1, 0xa5, 0xe9, 0xd3,
+	0xf9, 0xf7, 0x55, 0x8b, 0x7f, 0x45, 0xd4, 0xd4, 0x0f, 0x41, 0x49, 0x22, 0xc1, 0xcb, 0xa3, 0x5b,
+	0x5e, 0x3e, 0x07, 0x5d, 0x9b, 0xcb, 0x85, 0x1c, 0xcd, 0x92, 0xc0, 0x71, 0x9a, 0x97, 0xa6, 0xfa,
+	0x45, 0x0e, 0xce, 0x86, 0x97, 0x68, 0x94, 0xe2, 0x09, 0x0a, 0xc9, 0x7f, 0x2a, 0x53, 0x28, 0xe7,
+	0x49, 0xac, 0x1c, 0x0f, 0xe7, 0x3d, 0x7a, 0x71, 0xfb, 0xa5, 0x20, 0x4a, 0x79, 0x12, 0x8f, 0xd2,
+	0xe4, 0x3c, 0xd2, 0x13, 0x24, 0x6d, 0x72, 0x3c, 0x27, 0xf8, 0x46, 0x82, 0x05, 0xfe, 0x6e, 0xf7,
+	0x27, 0x0e, 0x2e, 0x3f, 0x8b, 0x89, 0x32, 0xa1, 0x16, 0x51, 0x21, 0x1c, 0x4f, 0x11, 0x7a, 0x24,
+	0xc1, 0xb9, 0x14, 0xa4, 0x59, 0x0b, 0xd1, 0x1a, 0xcc, 0x89, 0x90, 0xc3, 0x5a, 0x94, 0xce, 0xd7,
+	0x49, 0xfe, 0x34, 0x1b, 0x98, 0xb4, 0x7e, 0xaa, 0x42, 0x85, 0x5a, 0xdc, 0xd6, 0x0c, 0x6d, 0x80,
+	0x6d, 0xb4, 0x03, 0x10, 0x66, 0x35, 0x3a, 0xc7, 0x2f, 0x14, 0x7b, 0x1f, 0x54, 0xce, 0xa7, 0x4d,
+	0xbb, 0x67, 0x50, 0x2f, 0x8d, 0xdb, 0x55, 0xe4, 0xdd, 0xd2, 0x75, 0xba, 0xf3, 0x27, 0x3f, 0xfe,
+	0xfa, 0x79, 0x6e, 0x46, 0x2d, 0x37, 0x77, 0xaf, 0x37, 0xe9, 0xb7, 0xb3, 0x22, 0x2d, 0xa1, 0x47,
+	0x12, 0x54, 0x85, 0x9f, 0x64, 0xa8, 0xce, 0xaf, 0x9b, 0xf4, 0x53, 0x54, 0xf9, 0xff, 0x13, 0x2c,
+	0xbc, 0xcd, 0x97, 0xc7, 0xed, 0x05, 0xa4, 0xf4, 0xbd, 0x39, 0xb6, 0xbd, 0x53, 0xdf, 0xd3, 0xc9,
+	0xfd, 0xfa, 0x96, 0x3e, 0x24, 0xd8, 0x66, 0x58, 0x2a, 0x28, 0xc4, 0x42, 0xcf, 0x1e, 0x66, 0x97,
+	0x78, 0xf6, 0xd8, 0x03, 0x9c, 0x78, 0xf6, 0xf8, 0xab, 0x91, 0x77, 0xf6, 0x6d, 0x36, 0xc1, 0x9d,
+	0xbd, 0x25, 0x9e, 0x7d, 0x07, 0x20, 0x4c, 0x07, 0x71, 0xcb, 0xd8, 0x6b, 0x92, 0xb8, 0x65, 0xfc,
+	0x81, 0xc8, 0xdb, 0xb2, 0xcf, 0x26, 0xb8, 0x2d, 0x97, 0xc4, 0x2d, 0x3f, 0x93, 0xe0, 0x64, 0xa4,
+	0xe5, 0x47, 0x6a, 0x72, 0x20, 0xf9, 0x5e, 0x53, 0xb9, 0xf8, 0x44, 0x1b, 0x0f, 0xc2, 0xf5, 0x71,
+	0xfb, 0x14, 0x9a, 0xe3, 0x22, 0x5e, 0x67, 0x7d, 0x12, 0x03, 0x52, 0x53, 0x67, 0x03, 0x20, 0x4d,
+	0x36, 0xcc, 0xf0, 0x7c, 0x2d, 0x01, 0x8a, 0x37, 0x64, 0xe8, 0x72, 0x5a, 0x84, 0x85, 0x86, 0x52,
+	0x79, 0xee, 0x20, 0x33, 0x0f, 0xd8, 0xad, 0x71, 0x5b, 0x45, 0x75, 0x41, 0x0d, 0x2e, 0xb4, 0xb8,
+	0x26, 0x10, 0x8a, 0xe1, 0x64, 0xa4, 0x45, 0x9a, 0x7a, 0x91, 0xb4, 0xe4, 0x9f, 0x3c, 0x22, 0x69,
+	0x29, 0xbf, 0x0a, 0x3c, 0xd2, 0x38, 0xa9, 0xf0, 0xa4, 0xb5, 0x12, 0x49, 0xa3, 0x78, 0x22, 0x7d,
+	0xbb, 0x88, 0x27, 0xf9, 0x07, 0x83, 0x88, 0x27, 0xa5, 0xf1, 0xf7, 0xf0, 0x70, 0x3a, 0xe2, 0xf1,
+	0x2c, 0x25, 0xe2, 0xf9, 0x52, 0xe2, 0x5f, 0xb8, 0x83, 0xf6, 0xf6, 0x72, 0xb2, 0x66, 0x22, 0xc5,
+	0x45, 0x0c, 0x62, 0x7a, 0x53, 0xa1, 0xbe, 0x34, 0x6e, 0xcf, 0xa3, 0xd3, 0xbc, 0xba, 0xfc, 0xcb,
+	0x8f, 0x61, 0x93, 0xd5, 0x53, 0x21, 0x36, 0x7f, 0x86, 0xc1, 0xfb, 0x4e, 0x12, 0x5f, 0x7d, 0x82,
+	0xeb, 0x16, 0x2d, 0xa6, 0xe9, 0x27, 0x5a, 0x3b, 0x94, 0x2b, 0x19, 0x2c, 0x3d, 0x9c, 0xab, 0xe3,
+	0xf6, 0x65, 0x74, 0x51, 0x14, 0x5b, 0x80, 0x27, 0xa6, 0xb7, 0x1a, 0x4a, 0x82, 0x8d, 0x1e, 0x4b,
+	0xfc, 0x6b, 0x74, 0x32, 0xa5, 0xa9, 0x2d, 0x92, 0x48, 0x69, 0x7a, 0xcf, 0xa0, 0xbe, 0x3c, 0x6e,
+	0x9f, 0x41, 0x35, 0x5e, 0x7b, 0x01, 0x02, 0x97, 0xd3, 0x56, 0x1a, 0xa7, 0x8f, 0x25, 0xfe, 0x95,
+	0x3a, 0x19, 0x5f, 0x6a, 0x3f, 0x11, 0xcd, 0xdb, 0xb4, 0x8e, 0xc0, 0xc3, 0xc7, 0x6b, 0x31, 0x82,
+	0x6f, 0x29, 0x05, 0xdf, 0x9b, 0x0f, 0xc7, 0xed, 0x1d, 0xf4, 0x36, 0xa0, 0x3b, 0x16, 0x36, 0xee,
+	0xb2, 0x7d, 0xea, 0x77, 0x6d, 0xf3, 0x01, 0xee, 0x11, 0xf5, 0x6a, 0xd2, 0x28, 0xaa, 0xdd, 0x27,
+	0xc4, 0x72, 0x56, 0x9a, 0x4d, 0x0e, 0x99, 0x6e, 0xb6, 0x8a, 0xcb, 0x8d, 0xe5, 0xc6, 0xf5, 0x25,
+	0x49, 0x6a, 0xcd, 0x6a, 0x96, 0x35, 0xd4, 0x7b, 0xec, 0x0f, 0x67, 0xcd, 0x07, 0x8e, 0x69, 0xac,
+	0xc4, 0x46, 0xee, 0xe5, 0xac, 0x6e, 0xb7, 0xc4, 0x3a, 0xa1, 0x17, 0xfe, 0x0c, 0x00, 0x00, 0xff,
+	0xff, 0xfc, 0x46, 0x41, 0xfa, 0xfa, 0x1b, 0x00, 0x00,
 }

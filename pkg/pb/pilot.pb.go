@@ -29,7 +29,7 @@ type HandleSubtaskRequest struct {
 func (m *HandleSubtaskRequest) Reset()                    { *m = HandleSubtaskRequest{} }
 func (m *HandleSubtaskRequest) String() string            { return proto.CompactTextString(m) }
 func (*HandleSubtaskRequest) ProtoMessage()               {}
-func (*HandleSubtaskRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
+func (*HandleSubtaskRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
 
 func (m *HandleSubtaskRequest) GetSubtaskId() *google_protobuf.StringValue {
 	if m != nil {
@@ -59,7 +59,7 @@ type HandleSubtaskResponse struct {
 func (m *HandleSubtaskResponse) Reset()                    { *m = HandleSubtaskResponse{} }
 func (m *HandleSubtaskResponse) String() string            { return proto.CompactTextString(m) }
 func (*HandleSubtaskResponse) ProtoMessage()               {}
-func (*HandleSubtaskResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
+func (*HandleSubtaskResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
 
 func (m *HandleSubtaskResponse) GetSubtaskId() *google_protobuf.StringValue {
 	if m != nil {
@@ -75,7 +75,7 @@ type GetSubtaskStatusRequest struct {
 func (m *GetSubtaskStatusRequest) Reset()                    { *m = GetSubtaskStatusRequest{} }
 func (m *GetSubtaskStatusRequest) String() string            { return proto.CompactTextString(m) }
 func (*GetSubtaskStatusRequest) ProtoMessage()               {}
-func (*GetSubtaskStatusRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
+func (*GetSubtaskStatusRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
 
 func (m *GetSubtaskStatusRequest) GetSubtaskId() []string {
 	if m != nil {
@@ -92,7 +92,7 @@ type SubtaskStatus struct {
 func (m *SubtaskStatus) Reset()                    { *m = SubtaskStatus{} }
 func (m *SubtaskStatus) String() string            { return proto.CompactTextString(m) }
 func (*SubtaskStatus) ProtoMessage()               {}
-func (*SubtaskStatus) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{3} }
+func (*SubtaskStatus) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{3} }
 
 func (m *SubtaskStatus) GetSubtaskId() *google_protobuf.StringValue {
 	if m != nil {
@@ -116,7 +116,7 @@ type GetSubtaskStatusResponse struct {
 func (m *GetSubtaskStatusResponse) Reset()                    { *m = GetSubtaskStatusResponse{} }
 func (m *GetSubtaskStatusResponse) String() string            { return proto.CompactTextString(m) }
 func (*GetSubtaskStatusResponse) ProtoMessage()               {}
-func (*GetSubtaskStatusResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{4} }
+func (*GetSubtaskStatusResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{4} }
 
 func (m *GetSubtaskStatusResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -245,9 +245,9 @@ var _PilotManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "pilot.proto",
 }
 
-func init() { proto.RegisterFile("pilot.proto", fileDescriptor2) }
+func init() { proto.RegisterFile("pilot.proto", fileDescriptor3) }
 
-var fileDescriptor2 = []byte{
+var fileDescriptor3 = []byte{
 	// 513 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x93, 0xc1, 0x6e, 0xd3, 0x40,
 	0x10, 0x86, 0x65, 0x47, 0x54, 0xca, 0xa4, 0x29, 0xd1, 0xaa, 0x15, 0x26, 0x2a, 0x60, 0x0c, 0x87,

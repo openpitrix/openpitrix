@@ -34,8 +34,8 @@ type OpenpitrixRuntimeEnvCredential struct {
 	// runtime env credential id
 	RuntimeEnvCredentialID string `json:"runtime_env_credential_id,omitempty"`
 
-	// runtime env ids
-	RuntimeEnvIds []string `json:"runtime_env_ids"`
+	// runtime env id
+	RuntimeEnvID []string `json:"runtime_env_id"`
 
 	// status
 	Status string `json:"status,omitempty"`
@@ -48,7 +48,7 @@ type OpenpitrixRuntimeEnvCredential struct {
 func (m *OpenpitrixRuntimeEnvCredential) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateRuntimeEnvIds(formats); err != nil {
+	if err := m.validateRuntimeEnvID(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -59,9 +59,9 @@ func (m *OpenpitrixRuntimeEnvCredential) Validate(formats strfmt.Registry) error
 	return nil
 }
 
-func (m *OpenpitrixRuntimeEnvCredential) validateRuntimeEnvIds(formats strfmt.Registry) error {
+func (m *OpenpitrixRuntimeEnvCredential) validateRuntimeEnvID(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.RuntimeEnvIds) { // not required
+	if swag.IsZero(m.RuntimeEnvID) { // not required
 		return nil
 	}
 
