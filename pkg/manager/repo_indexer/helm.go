@@ -42,7 +42,7 @@ func GetIndexFile(repoUrl string) (indexFile *repo.IndexFile, err error) {
 	if err != nil {
 		return
 	}
-	err = yaml.Unmarshal(content, indexFile)
+	err = yaml.Decode(content, indexFile)
 	if err != nil {
 		return
 	}
