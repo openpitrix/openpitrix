@@ -541,7 +541,7 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "app_version",
+            "name": "version_id",
             "in": "query",
             "required": false,
             "type": "string"
@@ -2045,7 +2045,7 @@ var Files = map[string]string{
         "app_id": {
           "type": "string"
         },
-        "app_version": {
+        "version_id": {
           "type": "string"
         },
         "status": {
@@ -2198,7 +2198,7 @@ var Files = map[string]string{
         "app_id": {
           "type": "string"
         },
-        "app_version": {
+        "version_id": {
           "type": "string"
         },
         "runtime_env_id": {
@@ -2605,7 +2605,7 @@ var Files = map[string]string{
         "cluster_id": {
           "type": "string"
         },
-        "app_version": {
+        "version_id": {
           "type": "string"
         },
         "advanced_param": {
@@ -2672,7 +2672,7 @@ var Files = map[string]string{
         "app_id": {
           "type": "string"
         },
-        "app_version": {
+        "version_id": {
           "type": "string"
         },
         "job_action": {
@@ -2698,7 +2698,7 @@ var Files = map[string]string{
         "app_id": {
           "type": "string"
         },
-        "app_version": {
+        "version_id": {
           "type": "string"
         }
       }
@@ -2730,7 +2730,7 @@ var Files = map[string]string{
         "app_id": {
           "type": "string"
         },
-        "app_version": {
+        "version_id": {
           "type": "string"
         },
         "job_action": {

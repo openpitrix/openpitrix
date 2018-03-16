@@ -19,14 +19,14 @@ type OpenpitrixCreateJobResponse struct {
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
-	// app version
-	AppVersion string `json:"app_version,omitempty"`
-
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// job id
 	JobID string `json:"job_id,omitempty"`
+
+	// version id
+	VersionID string `json:"version_id,omitempty"`
 }
 
 // Validate validates this openpitrix create job response

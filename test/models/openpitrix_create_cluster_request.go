@@ -22,14 +22,14 @@ type OpenpitrixCreateClusterRequest struct {
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
-	// app version
-	AppVersion string `json:"app_version,omitempty"`
-
 	// conf
 	Conf string `json:"conf,omitempty"`
 
 	// runtime env id
 	RuntimeEnvID string `json:"runtime_env_id,omitempty"`
+
+	// version id
+	VersionID string `json:"version_id,omitempty"`
 }
 
 // Validate validates this openpitrix create cluster request

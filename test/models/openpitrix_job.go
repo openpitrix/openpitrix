@@ -19,9 +19,6 @@ type OpenpitrixJob struct {
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
-	// app version
-	AppVersion string `json:"app_version,omitempty"`
-
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
@@ -57,6 +54,9 @@ type OpenpitrixJob struct {
 
 	// task count
 	TaskCount *ProtobufUint32Value `json:"task_count,omitempty"`
+
+	// version id
+	VersionID string `json:"version_id,omitempty"`
 }
 
 // Validate validates this openpitrix job

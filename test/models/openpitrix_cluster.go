@@ -22,9 +22,6 @@ type OpenpitrixCluster struct {
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
-	// app version
-	AppVersion string `json:"app_version,omitempty"`
-
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
@@ -78,6 +75,9 @@ type OpenpitrixCluster struct {
 
 	// upgrade status
 	UpgradeStatus string `json:"upgrade_status,omitempty"`
+
+	// version id
+	VersionID string `json:"version_id,omitempty"`
 }
 
 // Validate validates this openpitrix cluster

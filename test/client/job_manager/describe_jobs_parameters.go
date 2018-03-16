@@ -65,8 +65,6 @@ type DescribeJobsParams struct {
 
 	/*AppID*/
 	AppID *string
-	/*AppVersion*/
-	AppVersion *string
 	/*ClusterID*/
 	ClusterID *string
 	/*Executor*/
@@ -87,6 +85,8 @@ type DescribeJobsParams struct {
 	Runtime *string
 	/*Status*/
 	Status []string
+	/*VersionID*/
+	VersionID *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -135,17 +135,6 @@ func (o *DescribeJobsParams) WithAppID(appID *string) *DescribeJobsParams {
 // SetAppID adds the appId to the describe jobs params
 func (o *DescribeJobsParams) SetAppID(appID *string) {
 	o.AppID = appID
-}
-
-// WithAppVersion adds the appVersion to the describe jobs params
-func (o *DescribeJobsParams) WithAppVersion(appVersion *string) *DescribeJobsParams {
-	o.SetAppVersion(appVersion)
-	return o
-}
-
-// SetAppVersion adds the appVersion to the describe jobs params
-func (o *DescribeJobsParams) SetAppVersion(appVersion *string) {
-	o.AppVersion = appVersion
 }
 
 // WithClusterID adds the clusterID to the describe jobs params
@@ -225,6 +214,17 @@ func (o *DescribeJobsParams) SetStatus(status []string) {
 	o.Status = status
 }
 
+// WithVersionID adds the versionID to the describe jobs params
+func (o *DescribeJobsParams) WithVersionID(versionID *string) *DescribeJobsParams {
+	o.SetVersionID(versionID)
+	return o
+}
+
+// SetVersionID adds the versionId to the describe jobs params
+func (o *DescribeJobsParams) SetVersionID(versionID *string) {
+	o.VersionID = versionID
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -243,22 +243,6 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		qAppID := qrAppID
 		if qAppID != "" {
 			if err := r.SetQueryParam("app_id", qAppID); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.AppVersion != nil {
-
-		// query param app_version
-		var qrAppVersion string
-		if o.AppVersion != nil {
-			qrAppVersion = *o.AppVersion
-		}
-		qAppVersion := qrAppVersion
-		if qAppVersion != "" {
-			if err := r.SetQueryParam("app_version", qAppVersion); err != nil {
 				return err
 			}
 		}
@@ -359,6 +343,22 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err
+	}
+
+	if o.VersionID != nil {
+
+		// query param version_id
+		var qrVersionID string
+		if o.VersionID != nil {
+			qrVersionID = *o.VersionID
+		}
+		qVersionID := qrVersionID
+		if qVersionID != "" {
+			if err := r.SetQueryParam("version_id", qVersionID); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {
