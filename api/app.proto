@@ -168,6 +168,13 @@ message DescribeAppVersionsResponse {
 	repeated AppVersion app_version_set = 2;
 }
 
+message GetAppVersionPackageRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message GetAppVersionPackageResponse {
+	bytes package = 1;
+}
+
 service AppManager {
 	rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -238,6 +245,14 @@ service AppManager {
 		option (google.api.http) = {
             delete: "/v1/app_versions"
             body: "*"
+        };
+	}
+	rpc GetAppVersionPackage (GetAppVersionPackageRequest) returns (GetAppVersionPackageResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "get the package content of app version"
+        };
+		option (google.api.http) = {
+            get: "/v1/app_version/package"
         };
 	}
 }

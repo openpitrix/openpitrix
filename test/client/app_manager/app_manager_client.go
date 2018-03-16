@@ -193,6 +193,34 @@ func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, erro
 }
 
 /*
+GetAppVersionPackage gets the package content of app version
+*/
+func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams) (*GetAppVersionPackageOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAppVersionPackageParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetAppVersionPackage",
+		Method:             "GET",
+		PathPattern:        "/v1/app_version/package",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetAppVersionPackageReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetAppVersionPackageOK), nil
+
+}
+
+/*
 ModifyApp modifies app
 */
 func (a *Client) ModifyApp(params *ModifyAppParams) (*ModifyAppOK, error) {

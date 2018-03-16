@@ -276,3 +276,17 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 		AppVersion: models.AppVersionToPb(version),
 	}, nil
 }
+
+func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersionPackageRequest) (*pb.GetAppVersionPackageResponse, error) {
+	// TODO: check resource permission
+	versionId := req.GetVersionId().GetValue()
+	version, err := p.getAppVersion(versionId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+	}
+	logger.Debugf("Got app version: [%+v]", version)
+	return &pb.GetAppVersionPackageResponse{
+		// TODO: read content from version.PackageName
+		Package: []byte("package file content"),
+	}, nil
+}

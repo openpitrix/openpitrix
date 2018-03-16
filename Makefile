@@ -10,7 +10,7 @@ RUN_IN_DOCKER:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(T
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
 GO_FILES:=./cmd ./test ./pkg
 define get_diff_files
-    $(eval DIFF_FILES=$(shell git diff --name-only | grep -E "^(test|cmd|pkg)/.+\.go"))
+    $(eval DIFF_FILES=$(shell git diff --name-only --diff-filter=ad | grep -E "^(test|cmd|pkg)/.+\.go"))
 endef
 
 COMPOSE_APP_SERVICES=openpitrix-runtime-env-manager openpitrix-app-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager
