@@ -14,8 +14,7 @@ define get_diff_files
 endef
 
 COMPOSE_APP_SERVICES=openpitrix-runtime-env-manager openpitrix-app-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager
-MYSQL_ROOT_PASSWORD:=password
-DATA_PATH=/tmp
+COMPOSE_DB_CTRL=openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl
 
 .PHONY: all
 all: generate build
@@ -54,11 +53,10 @@ update-vendor:
 	govendor list
 	@echo "update-vendor done"
 
-#.PHONY: tools
-#tools:
-#	docker pull openpitrix/openpitrix:builder
-#	docker pull mysql:5.6
-#	@echo "ok"
+.PHONY: update-builder
+update-builder:
+	docker pull openpitrix/openpitrix-builder
+	@echo "update-builder done"
 
 .PHONY: generate-in-local
 generate-in-local:
@@ -70,16 +68,6 @@ generate-in-local:
 generate:
 	$(RUN_IN_DOCKER) make generate-in-local
 	@echo "generate done"
-
-#.PHONY: mysql-start
-#mysql-start:
-#	@docker run --rm --name openpitrix-db -e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) -e MYSQL_DATABASE=$(MYSQL_DATABASE) -p 3306:3306 -d mysql:5.6 || docker start openpitrix-db
-#	@echo "ok"
-#
-#.PHONY: mysql-stop
-#mysql-stop:
-#	@docker stop openpitrix-db
-#	@echo "ok"
 
 .PHONY: fmt-all
 fmt-all:
@@ -105,18 +93,26 @@ build: fmt
 compose-update: build compose-up
 	@echo "compose-update done"
 
+.PHONY: compose-update-service-without-deps
 compose-update-service-without-deps: build
 	docker-compose up -d --no-dep $(COMPOSE_APP_SERVICES)
 	@echo "compose-update-service-without-deps done"
 
+.PHONY: compose-logs-f
+compose-logs-f:
+	docker-compose logs -f $(COMPOSE_APP_SERVICES)
+
+.PHONY: compose-migrate-db
+compose-migrate-db:
+	docker-compose up $(COMPOSE_DB_CTRL)
 
 compose-update-%:
-	docker-compose up -d --no-deps $* 
+	docker-compose up -d --no-deps $*
 	@echo "compose-update done"
 
 .PHONY: compose-up
 compose-up:
-	docker-compose up -d openpitrix-db && sleep 20 && docker-compose up -d 
+	docker-compose up -d openpitrix-db && sleep 20 && docker-compose up -d
 	@echo "compose-up done"
 
 .PHONY: compose-down
