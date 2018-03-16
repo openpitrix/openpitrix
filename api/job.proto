@@ -32,7 +32,7 @@ message CreateJobRequest {
 	google.protobuf.StringValue _ = 1; // placeholder for job_id
 	google.protobuf.StringValue cluster_id = 2;
 	google.protobuf.StringValue app_id = 3;
-	google.protobuf.StringValue app_version = 4;
+	google.protobuf.StringValue version_id = 4;
 	google.protobuf.StringValue job_action = 5;
 	google.protobuf.StringValue runtime = 6;
 	google.protobuf.StringValue directive = 7;
@@ -42,14 +42,14 @@ message CreateJobResponse {
 	google.protobuf.StringValue job_id = 1;
 	google.protobuf.StringValue cluster_id = 2;
 	google.protobuf.StringValue app_id = 3;
-	google.protobuf.StringValue app_version = 4;
+	google.protobuf.StringValue version_id = 4;
 }
 
 message Job {
 	google.protobuf.StringValue job_id = 1;
 	google.protobuf.StringValue cluster_id = 2;
 	google.protobuf.StringValue app_id = 3;
-	google.protobuf.StringValue app_version = 4;
+	google.protobuf.StringValue version_id = 4;
 	google.protobuf.StringValue job_action = 5;
 	google.protobuf.StringValue status = 6;
 	google.protobuf.UInt32Value error_code = 7;
@@ -65,7 +65,7 @@ message DescribeJobsRequest {
 	repeated string job_id = 1;
 	google.protobuf.StringValue cluster_id = 2;
 	google.protobuf.StringValue app_id = 3;
-	google.protobuf.StringValue app_version = 4;
+	google.protobuf.StringValue version_id = 4;
 	google.protobuf.StringValue executor = 5;
 	google.protobuf.StringValue runtime = 6;
 	repeated string status = 7;

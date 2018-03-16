@@ -30,7 +30,7 @@ It has these top-level messages:
 	ModifyAppVersionResponse
 	DeleteAppVersionRequest
 	DeleteAppVersionResponse
-	AppVersion
+	VersionId
 	DescribeAppVersionsRequest
 	DescribeAppVersionsResponse
 	CreateClusterRequest
@@ -1043,7 +1043,7 @@ func init() {
 	proto.RegisterType((*ModifyAppVersionResponse)(nil), "openpitrix.ModifyAppVersionResponse")
 	proto.RegisterType((*DeleteAppVersionRequest)(nil), "openpitrix.DeleteAppVersionRequest")
 	proto.RegisterType((*DeleteAppVersionResponse)(nil), "openpitrix.DeleteAppVersionResponse")
-	proto.RegisterType((*AppVersion)(nil), "openpitrix.AppVersion")
+	proto.RegisterType((*AppVersion)(nil), "openpitrix.VersionId")
 	proto.RegisterType((*DescribeAppVersionsRequest)(nil), "openpitrix.DescribeAppVersionsRequest")
 	proto.RegisterType((*DescribeAppVersionsResponse)(nil), "openpitrix.DescribeAppVersionsResponse")
 }

@@ -88,12 +88,12 @@ func WaitJob(jobId string, timeout time.Duration, waitInterval time.Duration) er
 func SendJob(job *models.Job) (jobId string, err error) {
 	pbJob := models.JobToPb(job)
 	jobRequest := &pb.CreateJobRequest{
-		ClusterId:  pbJob.ClusterId,
-		AppId:      pbJob.AppId,
-		AppVersion: pbJob.AppVersion,
-		JobAction:  pbJob.JobAction,
-		Runtime:    pbJob.Runtime,
-		Directive:  pbJob.Directive,
+		ClusterId: pbJob.ClusterId,
+		AppId:     pbJob.AppId,
+		VersionId: pbJob.VersionId,
+		JobAction: pbJob.JobAction,
+		Runtime:   pbJob.Runtime,
+		Directive: pbJob.Directive,
 	}
 	jobId, err = CreateJob(jobRequest)
 	if err != nil {

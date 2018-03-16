@@ -27,7 +27,7 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 		"",
 		req.GetClusterId().GetValue(),
 		req.GetAppId().GetValue(),
-		req.GetAppVersion().GetValue(),
+		req.GetVersionId().GetValue(),
 		req.GetJobAction().GetValue(),
 		req.GetDirective().GetValue(),
 		req.GetRuntime().GetValue(),
@@ -49,10 +49,10 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 	}
 
 	res := &pb.CreateJobResponse{
-		JobId:      utils.ToProtoString(newJob.JobId),
-		ClusterId:  utils.ToProtoString(newJob.ClusterId),
-		AppId:      utils.ToProtoString(newJob.AppId),
-		AppVersion: utils.ToProtoString(newJob.AppVersion),
+		JobId:     utils.ToProtoString(newJob.JobId),
+		ClusterId: utils.ToProtoString(newJob.ClusterId),
+		AppId:     utils.ToProtoString(newJob.AppId),
+		VersionId: utils.ToProtoString(newJob.VersionId),
 	}
 	return res, nil
 }

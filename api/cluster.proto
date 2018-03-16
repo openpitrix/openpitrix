@@ -30,7 +30,7 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 
 message CreateClusterRequest {
 	google.protobuf.StringValue app_id = 1;
-	google.protobuf.StringValue app_version = 2;
+	google.protobuf.StringValue version_id = 2;
 	google.protobuf.StringValue runtime_env_id = 3;
 	google.protobuf.StringValue conf = 4;
 	repeated string advanced_param = 5;
@@ -86,7 +86,7 @@ message DeleteClustersResponse {
 
 message UpgradeClusterRequest {
 	google.protobuf.StringValue cluster_id = 1;
-	google.protobuf.StringValue app_version = 2;
+	google.protobuf.StringValue version_id = 2;
 	repeated string advanced_param = 3;
 }
 
@@ -185,7 +185,7 @@ message Cluster {
 	google.protobuf.StringValue global_uuid = 2;
 	google.protobuf.StringValue frontgate_id = 3;
 	google.protobuf.StringValue app_id = 4;
-	google.protobuf.StringValue app_version = 5;
+	google.protobuf.StringValue version_id = 5;
 	google.protobuf.StringValue status = 6;
 	google.protobuf.StringValue transition_status = 7;
 	google.protobuf.StringValue runtime_env_id = 8;
@@ -207,7 +207,7 @@ message Cluster {
 message DescribeClustersRequest {
 	repeated string cluster_id = 1;
 	repeated string app_id = 2;
-	repeated string app_version = 3;
+	repeated string version_id = 3;
 	repeated string status = 4;
 	repeated string runtime_env_id = 5;
 	repeated string frontgate_id = 6;
