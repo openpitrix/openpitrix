@@ -11,21 +11,23 @@ import (
 	"net/url"
 	"strings"
 
-	"gopkg.in/yaml.v2"
+	"github.com/golang/protobuf/ptypes/wrappers"
 	"k8s.io/helm/pkg/chartutil"
 	"k8s.io/helm/pkg/proto/hapi/chart"
 	"k8s.io/helm/pkg/repo"
 
-	appClient "openpitrix.io/openpitrix/pkg/client/app"
+	"openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
 	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/utils/yaml"
 )
 
-// Reference: https://sourcegraph.com/github.com/kubernetes/helm@fe9d365/-/blob/pkg/repo/chartrepo.go#L117:2
-func GetIndexFile(repoUrl string) (indexFile repo.IndexFile, err error) {
+// Reference: https://sourcegraph.com/github.com/kubernetes/helm@fe9d365/-/blob/pkg/repo/chartrepo.go#L111:27
+func GetIndexFile(repoUrl string) (indexFile *repo.IndexFile, err error) {
 	var indexURL string
+	indexFile = &repo.IndexFile{}
 	parsedURL, err := url.Parse(repoUrl)
 	if err != nil {
 		return
@@ -40,11 +42,11 @@ func GetIndexFile(repoUrl string) (indexFile repo.IndexFile, err error) {
 	if err != nil {
 		return
 	}
-	err = yaml.Unmarshal(content, &indexFile)
+	err = yaml.Decode(content, indexFile)
 	if err != nil {
 		return
 	}
-	//indexFile.SortEntries()
+	indexFile.SortEntries()
 	return
 }
 
@@ -81,7 +83,7 @@ func SyncAppInfo(repoId, owner, chartName string, chartVersions *repo.ChartVersi
 	var appId string
 	logger.Debugf("chart [%s] has [%d] versions", chartName, chartVersions.Len())
 	ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
-	appManagerClient, err := appClient.NewAppManagerClient(ctx)
+	appManagerClient, err := app.NewAppManagerClient(ctx)
 	if err != nil {
 		return appId, err
 	}
@@ -93,11 +95,24 @@ func SyncAppInfo(repoId, owner, chartName string, chartVersions *repo.ChartVersi
 	if err != nil {
 		return appId, err
 	}
+	var description, icon, home, sources *wrappers.StringValue
+	if chartVersions.Len() > 0 {
+		chartVersion := (*chartVersions)[0]
+		description = utils.ToProtoString(chartVersion.GetDescription())
+		icon = utils.ToProtoString(chartVersion.GetIcon())
+		home = utils.ToProtoString(chartVersion.GetHome())
+		sources = utils.ToProtoString(strings.Join(chartVersion.Sources, ","))
+	}
 	if res.TotalCount == 0 {
 		createReq := pb.CreateAppRequest{}
 		createReq.RepoId = utils.ToProtoString(repoId)
 		createReq.ChartName = utils.ToProtoString(chartName)
 		createReq.Name = utils.ToProtoString(chartName)
+		createReq.Description = description
+		createReq.Icon = icon
+		createReq.Home = home
+		createReq.Sources = sources
+
 		createRes, err := appManagerClient.CreateApp(ctx, &createReq)
 		if err != nil {
 			return appId, err
@@ -110,11 +125,66 @@ func SyncAppInfo(repoId, owner, chartName string, chartVersions *repo.ChartVersi
 		modifyReq.AppId = res.AppSet[0].AppId
 		modifyReq.Name = utils.ToProtoString(chartName)
 		modifyReq.ChartName = utils.ToProtoString(chartName)
+		modifyReq.Description = description
+		modifyReq.Icon = icon
+		modifyReq.Home = home
+		modifyReq.Sources = sources
+
 		modifyRes, err := appManagerClient.ModifyApp(ctx, &modifyReq)
 		if err != nil {
 			return appId, err
 		}
 		appId = modifyRes.GetApp().GetAppId().GetValue()
 		return appId, err
+	}
+}
+
+func SyncAppVersionInfo(appId, owner string, chartVersion *repo.ChartVersion) (string, error) {
+	var versionId string
+	ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
+	appManagerClient, err := app.NewAppManagerClient(ctx)
+	if err != nil {
+		return versionId, err
+	}
+	appVersionName := chartVersion.GetVersion()
+	if chartVersion.GetAppVersion() != "" {
+		appVersionName += fmt.Sprintf(" [%s]", chartVersion.GetAppVersion())
+	}
+	packageName := chartVersion.URLs[0]
+	description := chartVersion.GetDescription()
+	req := pb.DescribeAppVersionsRequest{}
+	req.AppId = []string{appId}
+	req.Owner = []string{owner}
+	req.Name = []string{appVersionName}
+	res, err := appManagerClient.DescribeAppVersions(ctx, &req)
+	if err != nil {
+		return versionId, err
+	}
+	if res.TotalCount == 0 {
+		createReq := pb.CreateAppVersionRequest{}
+		createReq.AppId = utils.ToProtoString(appId)
+		createReq.Owner = utils.ToProtoString(owner)
+		createReq.Name = utils.ToProtoString(appVersionName)
+		createReq.PackageName = utils.ToProtoString(packageName)
+		createReq.Description = utils.ToProtoString(description)
+
+		createRes, err := appManagerClient.CreateAppVersion(ctx, &createReq)
+		if err != nil {
+			return versionId, err
+		}
+		versionId = createRes.GetAppVersion().GetVersionId().GetValue()
+		return versionId, err
+	} else {
+		modifyReq := pb.ModifyAppVersionRequest{}
+		modifyReq.VersionId = res.AppVersionSet[0].VersionId
+		modifyReq.PackageName = utils.ToProtoString(packageName)
+		modifyReq.Description = utils.ToProtoString(description)
+
+		modifyRes, err := appManagerClient.ModifyAppVersion(ctx, &modifyReq)
+		if err != nil {
+			return versionId, err
+		}
+		versionId = modifyRes.GetAppVersion().GetVersionId().GetValue()
+		return versionId, err
 	}
 }

@@ -33,7 +33,7 @@ func (info *Info) ToJson() string {
 func GetSenderFromContext(ctx context.Context) *Info {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if ok {
-		logger.Debugf("%+v", md[senderKey])
+		//logger.Debugf("%+v", md[senderKey])
 		sender := Info{}
 		err := json.Unmarshal([]byte(md[senderKey][0]), &sender)
 		if err != nil {
