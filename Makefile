@@ -13,6 +13,7 @@ define get_diff_files
     $(eval DIFF_FILES=$(shell git diff --name-only | grep -E "^(test|cmd|pkg)/.+\.go"))
 endef
 
+COMPOSE_APP_SERVICES=openpitrix-runtime-env-manager openpitrix-app-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager
 MYSQL_ROOT_PASSWORD:=password
 DATA_PATH=/tmp
 
@@ -104,9 +105,15 @@ build: fmt
 compose-update: build compose-up
 	@echo "compose-update done"
 
+compose-update-service-without-deps: build
+	docker-compose up -d --no-dep $(COMPOSE_APP_SERVICES)
+	@echo "compose-update-service-without-deps done"
+
+
 compose-update-%:
 	docker-compose up -d --no-deps $* 
-	
+	@echo "compose-update done"
+
 .PHONY: compose-up
 compose-up:
 	docker-compose up -d openpitrix-db && sleep 20 && docker-compose up -d 
