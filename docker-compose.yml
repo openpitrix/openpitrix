@@ -30,11 +30,22 @@ services:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
     depends_on:
-      - openpitrix-db
+      - openpitrix-app-db-ctrl
       - openpitrix-etcd
     container_name: "openpitrix-app-manager"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_MYSQL_DATABASE=application
+  openpitrix-app-db-ctrl:
+    image: boxfuse/flyway:latest-alpine
+    command: -url=jdbc:mysql://openpitrix-db/application -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/application:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-app-db-ctrl"
 
   openpitrix-runtime-env-manager:
     build: .
@@ -44,11 +55,22 @@ services:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
     depends_on:
-      - openpitrix-db
+      - openpitrix-runtime-db-ctrl
       - openpitrix-etcd
-    container_name: "openpitrix-repo-manager"
+    container_name: "openpitrix-runtime-manager"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_MYSQL_DATABASE=runtime
+  openpitrix-runtime-db-ctrl:
+    image: boxfuse/flyway:latest-alpine
+    command: -url=jdbc:mysql://openpitrix-db/runtime -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/runtime:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-runtime-db-ctrl"
 
   openpitrix-repo-indexer:
     build: .
@@ -59,11 +81,12 @@ services:
       - openpitrix-etcd:openpitrix-etcd
       - openpitrix-repo-manager:openpitrix-repo-manager
     depends_on:
-      - openpitrix-db
+      - openpitrix-repository-db-ctrl
       - openpitrix-etcd
     container_name: "openpitrix-repo-indexer"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_MYSQL_DATABASE=repository
 
   openpitrix-api-gateway:
     build: .
@@ -75,11 +98,23 @@ services:
       - openpitrix-app-manager:openpitrix-app-manager
       - openpitrix-runtime-env-manager:openpitrix-runtime-env-manager
     container_name: "openpitrix-api-gateway"
-    
   openpitrix-repo-manager:
     build: .
     image: "openpitrix"
     command: "repo-manager"
     links:
       - openpitrix-db:openpitrix-db
-    container_name: "openpitrix-repo-manager"
+    depends_on:
+      - openpitrix-repository-db-ctrl
+    environment:
+      - OPENPITRIX_MYSQL_DATABASE=repository
+
+  openpitrix-repository-db-ctrl:
+    image: boxfuse/flyway:latest-alpine
+    command: -url=jdbc:mysql://openpitrix-db/repository -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/repository:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db

@@ -13,8 +13,8 @@ define get_diff_files
     $(eval DIFF_FILES=$(shell git diff --name-only | grep -E "^(test|cmd|pkg)/.+\.go"))
 endef
 
-MYSQL_DATABASE:=$(TARG.Name)
 MYSQL_ROOT_PASSWORD:=password
+DATA_PATH=/tmp
 
 .PHONY: all
 all: generate build
@@ -106,7 +106,7 @@ compose-update: build compose-up
 
 .PHONY: compose-up
 compose-up:
-	docker-compose up -d 
+	docker-compose up -d openpitrix-db && sleep 20 && docker-compose up -d 
 	@echo "compose-up done"
 
 .PHONY: compose-down
