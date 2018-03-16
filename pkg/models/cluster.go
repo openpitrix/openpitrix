@@ -22,7 +22,7 @@ type Cluster struct {
 	Name               string
 	Description        string
 	AppId              string
-	AppVersion         string
+	VersionId          string
 	FrontgateId        string
 	ClusterType        int32
 	Endpoints          string

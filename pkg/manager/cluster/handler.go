@@ -95,7 +95,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	}
 
 	clusterId := models.NewClusterId()
-	versionId := req.GetAppVersion().GetValue()
+	versionId := req.GetVersionId().GetValue()
 	conf := req.GetConf().GetValue()
 	clusterWrapper, err := runtimeInterface.ParseClusterConf(versionId, conf)
 	if err != nil {
@@ -123,7 +123,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		constants.PlaceHolder,
 		clusterId,
 		req.GetAppId().GetValue(),
-		req.GetAppVersion().GetValue(),
+		req.GetVersionId().GetValue(),
 		constants.ActionCreateCluster,
 		"", // TODO: need to generate
 		runtime,
@@ -223,7 +223,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			constants.PlaceHolder,
 			clusterId,
 			cluster.AppId,
-			cluster.AppVersion,
+			cluster.VersionId,
 			constants.ActionDeleteClusters,
 			"", // TODO: need to generate
 			p.getRuntime(runtimeEnv),
@@ -271,7 +271,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		constants.PlaceHolder,
 		clusterId,
 		cluster.AppId,
-		cluster.AppVersion,
+		cluster.VersionId,
 		constants.ActionUpgradeCluster,
 		"", // TODO: need to generate
 		p.getRuntime(runtimeEnv),
@@ -317,7 +317,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		constants.PlaceHolder,
 		clusterId,
 		cluster.AppId,
-		cluster.AppVersion,
+		cluster.VersionId,
 		constants.ActionRollbackCluster,
 		"", // TODO: need to generate
 		p.getRuntime(runtimeEnv),
@@ -363,7 +363,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		constants.PlaceHolder,
 		clusterId,
 		cluster.AppId,
-		cluster.AppVersion,
+		cluster.VersionId,
 		constants.ActionResizeCluster,
 		"", // TODO: need to generate
 		p.getRuntime(runtimeEnv),
@@ -409,7 +409,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		constants.PlaceHolder,
 		clusterId,
 		cluster.AppId,
-		cluster.AppVersion,
+		cluster.VersionId,
 		constants.ActionAddClusterNodes,
 		"", // TODO: need to generate
 		p.getRuntime(runtimeEnv),
@@ -455,7 +455,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		constants.PlaceHolder,
 		clusterId,
 		cluster.AppId,
-		cluster.AppVersion,
+		cluster.VersionId,
 		constants.ActionDeleteClusterNodes,
 		"", // TODO: need to generate
 		p.getRuntime(runtimeEnv),
@@ -501,7 +501,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		constants.PlaceHolder,
 		clusterId,
 		cluster.AppId,
-		cluster.AppVersion,
+		cluster.VersionId,
 		constants.ActionUpdateClusterEnv,
 		"", // TODO: need to generate
 		p.getRuntime(runtimeEnv),
@@ -611,7 +611,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			constants.PlaceHolder,
 			clusterId,
 			cluster.AppId,
-			cluster.AppVersion,
+			cluster.VersionId,
 			constants.ActionStopClusters,
 			"", // TODO: need to generate
 			p.getRuntime(runtimeEnv),
@@ -659,7 +659,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			constants.PlaceHolder,
 			clusterId,
 			cluster.AppId,
-			cluster.AppVersion,
+			cluster.VersionId,
 			constants.ActionStartClusters,
 			"", // TODO: need to generate
 			p.getRuntime(runtimeEnv),
@@ -707,7 +707,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			constants.PlaceHolder,
 			clusterId,
 			cluster.AppId,
-			cluster.AppVersion,
+			cluster.VersionId,
 			constants.ActionRecoverClusters,
 			"", // TODO: need to generate
 			p.getRuntime(runtimeEnv),
@@ -755,7 +755,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			constants.PlaceHolder,
 			clusterId,
 			cluster.AppId,
-			cluster.AppVersion,
+			cluster.VersionId,
 			constants.ActionCeaseClusters,
 			"", // TODO: need to generate
 			p.getRuntime(runtimeEnv),
