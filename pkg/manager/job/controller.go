@@ -5,7 +5,6 @@
 package job
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -111,10 +110,10 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 
 	defer NewProcessor(job).Post()
 
-	runtimeInterface := plugins.GetRuntimePlugin(job.Runtime)
-	if runtimeInterface == nil {
+	runtimeInterface, err := plugins.GetRuntimePlugin(job.Runtime)
+	if err != nil {
 		logger.Errorf("No such runtime [%s]. ", job.Runtime)
-		return fmt.Errorf("No such runtime [%s]. ", job.Runtime)
+		return err
 	}
 	module, err := runtimeInterface.SplitJobIntoTasks(job)
 	if err != nil {
