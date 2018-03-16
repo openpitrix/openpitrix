@@ -69,7 +69,7 @@ func (p *Runtime) getHelmClient() (helmClient *helm.Client, err error) {
 	return
 }
 
-func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.Cluster, error) {
+func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
 	return nil, nil
 }
 

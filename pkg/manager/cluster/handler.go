@@ -97,14 +97,14 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	clusterId := models.NewClusterId()
 	versionId := req.GetAppVersion().GetValue()
 	conf := req.GetConf().GetValue()
-	cluster, err := runtimeInterface.ParseClusterConf(versionId, conf)
+	clusterWrapper, err := runtimeInterface.ParseClusterConf(versionId, conf)
 	if err != nil {
 		logger.Errorf("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
 		return nil, err
 	}
 
 	store := &Store{Pi: p.Pi}
-	err = store.RegisterCluster(cluster)
+	err = store.RegisterClusterWrapper(clusterWrapper)
 	if err != nil {
 		return nil, err
 	}

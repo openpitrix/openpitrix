@@ -15,7 +15,7 @@ var runtimePlugins map[string]RuntimeInterface
 
 type RuntimeInterface interface {
 	// Parse package and conf into cluster which clusterManager will register into db.
-	ParseClusterConf(versionId, conf string) (*models.Cluster, error)
+	ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error)
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
 	WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error

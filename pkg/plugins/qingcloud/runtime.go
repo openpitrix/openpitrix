@@ -49,7 +49,7 @@ func (p *Runtime) initJobService() (jobService *service.JobService, err error) {
 	return
 }
 
-func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.Cluster, error) {
+func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
 	return nil, nil
 }
 
