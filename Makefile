@@ -104,6 +104,9 @@ build: fmt
 compose-update: build compose-up
 	@echo "compose-update done"
 
+compose-update-%:
+	docker-compose up -d --no-deps $* 
+	
 .PHONY: compose-up
 compose-up:
 	docker-compose up -d openpitrix-db && sleep 20 && docker-compose up -d 
