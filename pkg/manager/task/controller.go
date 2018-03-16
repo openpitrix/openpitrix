@@ -5,7 +5,6 @@
 package task
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -130,12 +129,12 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			return err
 		}
 	} else {
-		runtimeInterface := plugins.GetRuntimePlugin(task.Target)
-		if runtimeInterface == nil {
+		runtimeInterface, err := plugins.GetRuntimePlugin(task.Target)
+		if err != nil {
 			logger.Errorf("No such runtime [%s]. ", task.Target)
-			return fmt.Errorf("No such runtime [%s]. ", task.Target)
+			return err
 		}
-		err := runtimeInterface.HandleSubtask(task)
+		err = runtimeInterface.HandleSubtask(task)
 		if err != nil {
 			logger.Errorf("Failed to handle subtask [%s] in runtime [%s]: %+v",
 				task.TaskId, task.Target, err)

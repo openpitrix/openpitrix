@@ -15,9 +15,11 @@ import (
 	runtimeEnvClient "openpitrix.io/openpitrix/pkg/client/runtime_env"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/utils"
 	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
@@ -28,12 +30,15 @@ func (p *Server) getRuntimeEnv(runtimeEnvId string) (*pb.RuntimeEnv, error) {
 		RuntimeEnvId: runtimeEnvIds,
 	})
 	if err != nil {
+		logger.Errorf("Describe runtime env [%s] failed: %+v",
+			strings.Join(runtimeEnvIds, ","), err)
 		return nil, status.Errorf(codes.Internal, "Describe runtime env [%s] failed: %+v",
 			strings.Join(runtimeEnvIds, ","), err)
 	}
 
 	if response.GetTotalCount().GetValue() == 0 {
-		return nil, status.Errorf(codes.PermissionDenied, "Describe runtime env [%s] failed: %+v",
+		logger.Errorf("Runtime env [%s] not found", strings.Join(runtimeEnvIds, ","))
+		return nil, status.Errorf(codes.PermissionDenied, "Runtime env [%s] not found",
 			strings.Join(runtimeEnvIds, ","), err)
 	}
 
@@ -77,10 +82,29 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	s := sender.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
-	clusterId := models.NewClusterId()
-	// TODO: parse cluster from conf
-
 	runtimeEnv, err := p.getRuntimeEnv(req.GetRuntimeEnvId().GetValue())
+	if err != nil {
+		return nil, err
+	}
+
+	runtime := p.getRuntime(runtimeEnv)
+	runtimeInterface, err := plugins.GetRuntimePlugin(runtime)
+	if err != nil {
+		logger.Errorf("No such runtime [%s]. ", runtime)
+		return nil, err
+	}
+
+	clusterId := models.NewClusterId()
+	versionId := req.GetAppVersion().GetValue()
+	conf := req.GetConf().GetValue()
+	clusterWrapper, err := runtimeInterface.ParseClusterConf(versionId, conf)
+	if err != nil {
+		logger.Errorf("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
+		return nil, err
+	}
+
+	store := &Store{Pi: p.Pi}
+	err = store.RegisterClusterWrapper(clusterWrapper)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +126,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		req.GetAppVersion().GetValue(),
 		constants.ActionCreateCluster,
 		"", // TODO: need to generate
-		p.getRuntime(runtimeEnv),
+		runtime,
 		s.UserId,
 	)
 
