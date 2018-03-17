@@ -27,6 +27,31 @@ var Files = map[string]string{
     "application/json"
   ],
   "paths": {
+    "/v1/app_version/package": {
+      "get": {
+        "summary": "get the package content of app version",
+        "operationId": "GetAppVersionPackage",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetAppVersionPackageResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/app_versions": {
       "get": {
         "summary": "describe app versions with filter",
@@ -1878,6 +1903,15 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixGetAppVersionPackageResponse": {
+      "type": "object",
+      "properties": {
+        "package": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
     "openpitrixModifyAppRequest": {
       "type": "object",
       "properties": {
@@ -1954,16 +1988,6 @@ var Files = map[string]string{
           "$ref": "#/definitions/openpitrixAppVersion"
         }
       }
-    },
-    "protobufStringValue": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "string",
-          "description": "The string value."
-        }
-      },
-      "description": "Wrapper message for ` + "`" + `string` + "`" + `.\n\nThe JSON representation for ` + "`" + `StringValue` + "`" + ` is JSON string."
     },
     "openpitrixAddClusterNodesRequest": {
       "type": "object",
@@ -2626,17 +2650,6 @@ var Files = map[string]string{
           "type": "string"
         }
       }
-    },
-    "protobufBoolValue": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "boolean",
-          "format": "boolean",
-          "description": "The bool value."
-        }
-      },
-      "description": "Wrapper message for ` + "`" + `bool` + "`" + `.\n\nThe JSON representation for ` + "`" + `BoolValue` + "`" + ` is JSON ` + "`" + `true` + "`" + ` and ` + "`" + `false` + "`" + `."
     },
     "protobufUInt32Value": {
       "type": "object",

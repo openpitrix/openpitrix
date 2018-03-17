@@ -12,18 +12,16 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// ProtobufBoolValue Wrapper message for `bool`.
-//
-// The JSON representation for `BoolValue` is JSON `true` and `false`.
-// swagger:model protobufBoolValue
-type ProtobufBoolValue struct {
+// OpenpitrixGetAppVersionPackageResponse openpitrix get app version package response
+// swagger:model openpitrixGetAppVersionPackageResponse
+type OpenpitrixGetAppVersionPackageResponse struct {
 
-	// The bool value.
-	Value bool `json:"value,omitempty"`
+	// package
+	Package strfmt.Base64 `json:"package,omitempty"`
 }
 
-// Validate validates this protobuf bool value
-func (m *ProtobufBoolValue) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix get app version package response
+func (m *OpenpitrixGetAppVersionPackageResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -33,7 +31,7 @@ func (m *ProtobufBoolValue) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *ProtobufBoolValue) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixGetAppVersionPackageResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -41,8 +39,8 @@ func (m *ProtobufBoolValue) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ProtobufBoolValue) UnmarshalBinary(b []byte) error {
-	var res ProtobufBoolValue
+func (m *OpenpitrixGetAppVersionPackageResponse) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixGetAppVersionPackageResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
