@@ -60,6 +60,11 @@ func (db *Database) Select(columns ...string) *SelectQuery {
 	return &SelectQuery{db.Session.Select(columns...)}
 }
 
+
+func (db *Database) SelectBySql(query string, value ...interface{}) *SelectQuery {
+	return &SelectQuery{db.Session.SelectBySql(query, value...)}
+}
+
 func (db *Database) SelectAll(columns ...string) *SelectQuery {
 	return &SelectQuery{db.Session.Select("*")}
 }
