@@ -30,6 +30,10 @@ services:
     links:
       - openpitrix-app-manager:openpitrix-app-manager
       - openpitrix-runtime-env-manager:openpitrix-runtime-env-manager
+      - openpitrix-repo-manager:openpitrix-repo-manager
+      - openpitrix-job-manager:openpitrix-job-manager
+      - openpitrix-task-manager:openpitrix-task-manager
+      - openpitrix-cluster-manager:openpitrix-cluster-manager
     container_name: "openpitrix-api-gateway"
 
   # repo service
@@ -125,3 +129,80 @@ services:
       - openpitrix-db
     container_name: "openpitrix-runtime-db-ctrl"
 
+  # job service
+  openpitrix-job-manager:
+    build: .
+    image: "openpitrix"
+    command: "job-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-job-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-job-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_MYSQL_DATABASE=cluster
+  openpitrix-job-db-ctrl:
+    image: boxfuse/flyway:5.0.7-alpine
+    command: -url=jdbc:mysql://openpitrix-db/cluster -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/job:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-job-db-ctrl"
+
+  # task service
+  openpitrix-task-manager:
+    build: .
+    image: "openpitrix"
+    command: "task-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-task-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-task-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_MYSQL_DATABASE=cluster
+  openpitrix-task-db-ctrl:
+    image: boxfuse/flyway:5.0.7-alpine
+    command: -url=jdbc:mysql://openpitrix-db/cluster -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/task:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-task-db-ctrl"
+
+  # cluster service
+  openpitrix-cluster-manager:
+    build: .
+    image: "openpitrix"
+    command: "cluster-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-cluster-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-cluster-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_MYSQL_DATABASE=cluster
+  openpitrix-cluster-db-ctrl:
+    image: boxfuse/flyway:5.0.7-alpine
+    command: -url=jdbc:mysql://openpitrix-db/cluster -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/cluster:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-cluster-db-ctrl"

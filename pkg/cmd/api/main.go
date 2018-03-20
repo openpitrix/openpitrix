@@ -116,6 +116,11 @@ func mainHandler(ctx context.Context) http.Handler {
 		fmt.Sprintf("%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort),
 		opts,
 	)
+	err = pb.RegisterClusterManagerHandlerFromEndpoint(
+		ctx, gwmux,
+		fmt.Sprintf("%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort),
+		opts,
+	)
 	if err != nil {
 		err = errors.WithStack(err)
 		logger.Fatalf("%+v", err)
