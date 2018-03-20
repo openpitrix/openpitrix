@@ -63,16 +63,10 @@ for the describe runtime env credentials operation typically these are written t
 */
 type DescribeRuntimeEnvCredentialsParams struct {
 
-	/*LimitValue
-	  The uint32 value.
-
-	*/
-	LimitValue *int64
-	/*OffsetValue
-	  The uint32 value.
-
-	*/
-	OffsetValue *int64
+	/*Limit*/
+	Limit *int64
+	/*Offset*/
+	Offset *int64
 	/*Owner*/
 	Owner []string
 	/*RuntimeEnvCredentialID*/
@@ -81,11 +75,6 @@ type DescribeRuntimeEnvCredentialsParams struct {
 	SearchWord *string
 	/*Status*/
 	Status []string
-	/*VerboseValue
-	  The uint32 value.
-
-	*/
-	VerboseValue *int64
 
 	timeout    time.Duration
 	Context    context.Context
@@ -125,26 +114,26 @@ func (o *DescribeRuntimeEnvCredentialsParams) SetHTTPClient(client *http.Client)
 	o.HTTPClient = client
 }
 
-// WithLimitValue adds the limitValue to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) WithLimitValue(limitValue *int64) *DescribeRuntimeEnvCredentialsParams {
-	o.SetLimitValue(limitValue)
+// WithLimit adds the limit to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) WithLimit(limit *int64) *DescribeRuntimeEnvCredentialsParams {
+	o.SetLimit(limit)
 	return o
 }
 
-// SetLimitValue adds the limitValue to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) SetLimitValue(limitValue *int64) {
-	o.LimitValue = limitValue
+// SetLimit adds the limit to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) SetLimit(limit *int64) {
+	o.Limit = limit
 }
 
-// WithOffsetValue adds the offsetValue to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) WithOffsetValue(offsetValue *int64) *DescribeRuntimeEnvCredentialsParams {
-	o.SetOffsetValue(offsetValue)
+// WithOffset adds the offset to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) WithOffset(offset *int64) *DescribeRuntimeEnvCredentialsParams {
+	o.SetOffset(offset)
 	return o
 }
 
-// SetOffsetValue adds the offsetValue to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) SetOffsetValue(offsetValue *int64) {
-	o.OffsetValue = offsetValue
+// SetOffset adds the offset to the describe runtime env credentials params
+func (o *DescribeRuntimeEnvCredentialsParams) SetOffset(offset *int64) {
+	o.Offset = offset
 }
 
 // WithOwner adds the owner to the describe runtime env credentials params
@@ -191,17 +180,6 @@ func (o *DescribeRuntimeEnvCredentialsParams) SetStatus(status []string) {
 	o.Status = status
 }
 
-// WithVerboseValue adds the verboseValue to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) WithVerboseValue(verboseValue *int64) *DescribeRuntimeEnvCredentialsParams {
-	o.SetVerboseValue(verboseValue)
-	return o
-}
-
-// SetVerboseValue adds the verboseValue to the describe runtime env credentials params
-func (o *DescribeRuntimeEnvCredentialsParams) SetVerboseValue(verboseValue *int64) {
-	o.VerboseValue = verboseValue
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *DescribeRuntimeEnvCredentialsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -210,32 +188,32 @@ func (o *DescribeRuntimeEnvCredentialsParams) WriteToRequest(r runtime.ClientReq
 	}
 	var res []error
 
-	if o.LimitValue != nil {
+	if o.Limit != nil {
 
-		// query param limit.value
-		var qrLimitValue int64
-		if o.LimitValue != nil {
-			qrLimitValue = *o.LimitValue
+		// query param limit
+		var qrLimit int64
+		if o.Limit != nil {
+			qrLimit = *o.Limit
 		}
-		qLimitValue := swag.FormatInt64(qrLimitValue)
-		if qLimitValue != "" {
-			if err := r.SetQueryParam("limit.value", qLimitValue); err != nil {
+		qLimit := swag.FormatInt64(qrLimit)
+		if qLimit != "" {
+			if err := r.SetQueryParam("limit", qLimit); err != nil {
 				return err
 			}
 		}
 
 	}
 
-	if o.OffsetValue != nil {
+	if o.Offset != nil {
 
-		// query param offset.value
-		var qrOffsetValue int64
-		if o.OffsetValue != nil {
-			qrOffsetValue = *o.OffsetValue
+		// query param offset
+		var qrOffset int64
+		if o.Offset != nil {
+			qrOffset = *o.Offset
 		}
-		qOffsetValue := swag.FormatInt64(qrOffsetValue)
-		if qOffsetValue != "" {
-			if err := r.SetQueryParam("offset.value", qOffsetValue); err != nil {
+		qOffset := swag.FormatInt64(qrOffset)
+		if qOffset != "" {
+			if err := r.SetQueryParam("offset", qOffset); err != nil {
 				return err
 			}
 		}
@@ -280,22 +258,6 @@ func (o *DescribeRuntimeEnvCredentialsParams) WriteToRequest(r runtime.ClientReq
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err
-	}
-
-	if o.VerboseValue != nil {
-
-		// query param verbose.value
-		var qrVerboseValue int64
-		if o.VerboseValue != nil {
-			qrVerboseValue = *o.VerboseValue
-		}
-		qVerboseValue := swag.FormatInt64(qrVerboseValue)
-		if qVerboseValue != "" {
-			if err := r.SetQueryParam("verbose.value", qVerboseValue); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	if len(res) > 0 {

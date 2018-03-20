@@ -20,40 +20,16 @@ type OpenpitrixDescribeRuntimeEnvCredentialsResponse struct {
 	RuntimeEnvCredentialSet OpenpitrixDescribeRuntimeEnvCredentialsResponseRuntimeEnvCredentialSet `json:"runtime_env_credential_set"`
 
 	// total count
-	TotalCount *ProtobufUint32Value `json:"total_count,omitempty"`
+	TotalCount int64 `json:"total_count,omitempty"`
 }
 
 // Validate validates this openpitrix describe runtime env credentials response
 func (m *OpenpitrixDescribeRuntimeEnvCredentialsResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateTotalCount(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixDescribeRuntimeEnvCredentialsResponse) validateTotalCount(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.TotalCount) { // not required
-		return nil
-	}
-
-	if m.TotalCount != nil {
-
-		if err := m.TotalCount.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("total_count")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
