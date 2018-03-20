@@ -26,6 +26,7 @@ type ClusterNode struct {
 	VxnetId          string
 	PrivateIp        string
 	ServerId         int32
+	Role             string
 	Status           string
 	TransitionStatus string
 	GroupId          int32

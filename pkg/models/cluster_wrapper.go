@@ -5,9 +5,10 @@
 package models
 
 type ClusterWrapper struct {
-	Cluster        *Cluster
-	ClusterNodes   []ClusterNode
-	ClusterCommons []ClusterCommon
-	ClusterLinks   []ClusterLink
-	ClusterRoles   []ClusterRole
+	Cluster              *Cluster
+	ClusterNodes         []*ClusterNode
+	ClusterCommons       []*ClusterCommon
+	ClusterLinks         []*ClusterLink
+	ClusterRoles         []*ClusterRole
+	ClusterLoadbalancers []*ClusterLoadbalancer
 }

@@ -57,6 +57,7 @@ const (
 	JobLength      = 20
 	TaskLength     = 20
 	RepoTaskLength = 20
+	InstanceSize   = 20
 )
 
 const (
@@ -85,5 +86,32 @@ const (
 )
 
 const (
-	PlaceHolder = "*"
+	PlaceHolder       = "*"
+	ReplicaRoleSuffix = "-replica"
 )
+
+const (
+	NodesToExecuteOnName    = "nodes_to_execute_on"
+	PostStartServiceName    = "post_start_service"
+	PostStopServiceName     = "post_stop_service"
+	ScalingPolicyParallel   = "parallel"
+	ScalingPolicySequential = "sequential"
+
+	ServiceInit           = "init"
+	ServiceStart          = "start"
+	ServiceStop           = "stop"
+	ServiceScaleIn        = "scale_in"
+	ServiceScaleOut       = "scale_out"
+	ServiceCustom         = "custom_service"
+	ServiceRestart        = "restart"
+	ServiceDestroy        = "destroy"
+	ServiceBackup         = "backup"
+	ServiceRestore        = "restore"
+	ServiceDeleteSnapshot = "delete_snapshot"
+	ServiceUpgrade        = "upgrade"
+)
+
+var ServiceNames = []string{
+	ServiceInit, ServiceStart, ServiceStop, ServiceScaleIn, ServiceScaleOut, ServiceRestart,
+	ServiceDestroy, ServiceBackup, ServiceRestore, ServiceDeleteSnapshot, ServiceUpgrade,
+}

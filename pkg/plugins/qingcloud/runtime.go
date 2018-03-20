@@ -1,19 +1,23 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
 package qingcloud
 
 import (
+	"context"
 	"time"
 
 	"github.com/yunify/qingcloud-sdk-go/config"
 	"github.com/yunify/qingcloud-sdk-go/service"
 
+	appClient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/utils"
 )
 
 func init() {
@@ -50,7 +54,31 @@ func (p *Runtime) initJobService() (jobService *service.JobService, err error) {
 }
 
 func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
-	return nil, nil
+	ctx := context.Background()
+	appManagerClient, err := appClient.NewAppManagerClient(ctx)
+	if err != nil {
+		logger.Errorf("Connect to app manager failed: %v", err)
+		return nil, err
+	}
+
+	req := &pb.GetAppVersionPackageRequest{
+		VersionId: utils.ToProtoString(versionId),
+	}
+
+	_, err = appManagerClient.GetAppVersionPackage(ctx, req)
+	if err != nil {
+		logger.Errorf("Get app version [%s] package failed: %v", versionId, err)
+		return nil, err
+	}
+
+	// TODO after rendered, got the final conf
+	var finalConf []byte
+	parser := Parser{}
+	clusterWrapper, err := parser.Parse(finalConf)
+	if err != nil {
+		return nil, err
+	}
+	return clusterWrapper, nil
 }
 
 func (p *Runtime) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
