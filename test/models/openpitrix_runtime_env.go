@@ -23,7 +23,7 @@ type OpenpitrixRuntimeEnv struct {
 	Description string `json:"description,omitempty"`
 
 	// labels
-	Labels string `json:"labels,omitempty"`
+	Labels OpenpitrixRuntimeEnvLabels `json:"labels"`
 
 	// name
 	Name string `json:"name,omitempty"`

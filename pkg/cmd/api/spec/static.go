@@ -1319,24 +1319,14 @@ var Files = map[string]string{
             }
           },
           {
-            "name": "limit.value",
-            "description": "The uint32 value.",
+            "name": "limit",
             "in": "query",
             "required": false,
             "type": "integer",
             "format": "int64"
           },
           {
-            "name": "offset.value",
-            "description": "The uint32 value.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "verbose.value",
-            "description": "The uint32 value.",
+            "name": "offset",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1476,24 +1466,14 @@ var Files = map[string]string{
             }
           },
           {
-            "name": "limit.value",
-            "description": "The uint32 value.",
+            "name": "limit",
             "in": "query",
             "required": false,
             "type": "integer",
             "format": "int64"
           },
           {
-            "name": "offset.value",
-            "description": "The uint32 value.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "verbose.value",
-            "description": "The uint32 value.",
+            "name": "offset",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3343,7 +3323,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "total_count": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "runtime_env_credential_set": {
           "type": "array",
@@ -3357,7 +3338,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "total_count": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "runtime_env_set": {
           "type": "array",
@@ -3461,7 +3443,10 @@ var Files = map[string]string{
           "type": "string"
         },
         "labels": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRuntimeEnvLabel"
+          }
         },
         "owner": {
           "type": "string"
@@ -3608,6 +3593,23 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "openpitrixRuntimeEnvLabel": {
+      "type": "object",
+      "properties": {
+        "runtime_env_label_id": {
+          "type": "string"
+        },
+        "runtime_env_id": {
+          "type": "string"
+        },
+        "label_key": {
+          "type": "string"
+        },
+        "label_value": {
+          "type": "string"
         }
       }
     }
