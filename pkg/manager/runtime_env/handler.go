@@ -12,10 +12,41 @@ import (
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 func (p *Server) CreateRuntimeEnv(ctx context.Context, req *pb.CreateRuntimeEnvRequest) (*pb.CreateRuntimeEnvResponse, error) {
-	return nil, status.Errorf(codes.Internal, "CreateRuntimeEnv: %+v", fmt.Errorf("hello world"))
+	//TODO: validation request
+	s := sender.GetSenderFromContext(ctx)
+	logger.Infof("Got sender: %+v", s)
+	logger.Debugf("Got req: %+v", req)
+
+	//create runtime env
+	runtimeEnvId, err := p.createRuntimeEnv(
+		req.GetName().GetValue(),
+		req.GetDescription().GetValue(),
+		req.GetRuntimeEnvUrl().GetValue(),
+		s.UserId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "CreateRuntimeEnv: %+v", err)
+	}
+
+	//create labels
+	err = p.createRuntimeEnvLabels(runtimeEnvId, req.Labels.GetValue())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "CreateRuntimeEnv: %+v", err)
+	}
+
+	//get response
+	pbRuntimeEnv, err := p.getRuntimeEnvPbWithLabel(runtimeEnvId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "CreateRuntimeEnv: %+v", err)
+	}
+	res := &pb.CreateRuntimeEnvResponse{
+		RuntimeEnv: pbRuntimeEnv,
+	}
+	return res, nil
 }
 
 func (p *Server) DescribeRuntimeEnvs(ctx context.Context, req *pb.DescribeRuntimeEnvsRequest) (*pb.DescribeRuntimeEnvsResponse, error) {
