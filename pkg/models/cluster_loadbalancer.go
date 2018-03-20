@@ -10,7 +10,7 @@ type ClusterLoadbalancer struct {
 	ClusterId              string
 	Role                   string
 	LoadbalancerListenerId string
-	LoadbalancerPort       string
+	LoadbalancerPort       int32
 	LoadbalancerPolicyId   string
 }
 

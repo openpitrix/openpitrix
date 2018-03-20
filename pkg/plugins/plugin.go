@@ -13,6 +13,10 @@ import (
 
 var runtimePlugins map[string]RuntimeInterface
 
+func init() {
+	runtimePlugins = map[string]RuntimeInterface{}
+}
+
 type RuntimeInterface interface {
 	// Parse package and conf into cluster which clusterManager will register into db.
 	ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error)

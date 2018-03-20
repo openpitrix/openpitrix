@@ -82,7 +82,8 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	s := sender.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
-	runtimeEnv, err := p.getRuntimeEnv(req.GetRuntimeEnvId().GetValue())
+	runtimeEnvId := req.GetRuntimeEnvId().GetValue()
+	runtimeEnv, err := p.getRuntimeEnv(runtimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -103,8 +104,11 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, err
 	}
 
-	store := &Store{Pi: p.Pi}
-	err = store.RegisterClusterWrapper(clusterWrapper)
+	// TODO: need to create or check frontgateId
+	frontgateId := ""
+
+	register := &Register{Pi: p.Pi}
+	err = register.RegisterClusterWrapper(clusterId, runtimeEnvId, frontgateId, s.UserId, clusterWrapper)
 	if err != nil {
 		return nil, err
 	}

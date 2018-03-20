@@ -20,6 +20,9 @@ type ClusterCommon struct {
 	DestroyService             string
 	UpgradeService             string
 	CustomService              string
+	BackupService              string
+	RestoreService             string
+	DeleteSnapshotService      string
 	HealthCheck                string
 	Monitor                    string
 	Passphraseless             string
@@ -27,10 +30,7 @@ type ClusterCommon struct {
 	AgentInstalled             bool
 	CustomMetadataScript       string
 	ImageId                    string
-	BackupService              string
 	BackupPolicy               string
-	RestoreService             string
-	DeleteSnapshotService      string
 	IncrementalBackupSupported bool
 	Hypervisor                 string
 }

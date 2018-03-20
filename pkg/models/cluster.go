@@ -23,12 +23,13 @@ type Cluster struct {
 	Description        string
 	AppId              string
 	VersionId          string
+	VxnetId            string
 	FrontgateId        string
 	ClusterType        int32
 	Endpoints          string
 	Status             string
 	TransitionStatus   string
-	MetadataRootAccess int32
+	MetadataRootAccess bool
 	Owner              string
 	GlobalUuid         string
 	UpgradeStatus      string
