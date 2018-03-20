@@ -36,7 +36,7 @@ func (p *Server) getRuntimeEnv(runtimeEnvId string) (*pb.RuntimeEnv, error) {
 			strings.Join(runtimeEnvIds, ","), err)
 	}
 
-	if response.GetTotalCount().GetValue() == 0 {
+	if response.GetTotalCount() == 0 {
 		logger.Errorf("Runtime env [%s] not found", strings.Join(runtimeEnvIds, ","))
 		return nil, status.Errorf(codes.PermissionDenied, "Runtime env [%s] not found",
 			strings.Join(runtimeEnvIds, ","), err)
@@ -47,7 +47,7 @@ func (p *Server) getRuntimeEnv(runtimeEnvId string) (*pb.RuntimeEnv, error) {
 
 func (p *Server) getRuntime(runtimeEnv *pb.RuntimeEnv) string {
 	// TODO: need to parse runtime
-	return runtimeEnv.GetLabels().GetValue()
+	return constants.RuntimeQingCloud
 }
 
 func (p *Server) getCluster(clusterId, userId string) (*models.Cluster, error) {
