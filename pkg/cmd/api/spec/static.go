@@ -1969,6 +1969,16 @@ var Files = map[string]string{
         }
       }
     },
+    "protobufStringValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The string value."
+        }
+      },
+      "description": "Wrapper message for ` + "`" + `string` + "`" + `.\n\nThe JSON representation for ` + "`" + `StringValue` + "`" + ` is JSON string."
+    },
     "openpitrixAddClusterNodesRequest": {
       "type": "object",
       "properties": {
@@ -2630,6 +2640,17 @@ var Files = map[string]string{
           "type": "string"
         }
       }
+    },
+    "protobufBoolValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "The bool value."
+        }
+      },
+      "description": "Wrapper message for ` + "`" + `bool` + "`" + `.\n\nThe JSON representation for ` + "`" + `BoolValue` + "`" + ` is JSON ` + "`" + `true` + "`" + ` and ` + "`" + `false` + "`" + `."
     },
     "protobufUInt32Value": {
       "type": "object",
@@ -3504,6 +3525,23 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixRuntimeEnvLabel": {
+      "type": "object",
+      "properties": {
+        "runtime_env_label_id": {
+          "type": "string"
+        },
+        "runtime_env_id": {
+          "type": "string"
+        },
+        "label_key": {
+          "type": "string"
+        },
+        "label_value": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixCreateTaskRequest": {
       "type": "object",
       "properties": {
@@ -3593,23 +3631,6 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
-        }
-      }
-    },
-    "openpitrixRuntimeEnvLabel": {
-      "type": "object",
-      "properties": {
-        "runtime_env_label_id": {
-          "type": "string"
-        },
-        "runtime_env_id": {
-          "type": "string"
-        },
-        "label_key": {
-          "type": "string"
-        },
-        "label_value": {
-          "type": "string"
         }
       }
     }
