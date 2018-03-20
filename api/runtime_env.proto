@@ -28,13 +28,21 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	produces: "application/json";
 };
 
+
+message RuntimeEnvLabel{
+	google.protobuf.StringValue runtime_env_label_id = 1;
+	google.protobuf.StringValue runtime_env_id = 2;
+	google.protobuf.StringValue label_key = 3;
+	google.protobuf.StringValue label_value = 4;
+}
+
 message RuntimeEnv{
 	google.protobuf.StringValue runtime_env_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue runtime_env_url = 4;
 	google.protobuf.StringValue runtime_env_credential_id = 5;
-	google.protobuf.StringValue labels = 6;
+	repeated RuntimeEnvLabel labels = 6;
 	google.protobuf.StringValue owner = 7;
 	google.protobuf.StringValue status = 8;
 	google.protobuf.Timestamp create_time = 9;
@@ -58,13 +66,12 @@ message DescribeRuntimeEnvsRequest{
 	google.protobuf.StringValue search_word = 3;
 	google.protobuf.StringValue selector = 4;
 	repeated string owner = 5;
-	google.protobuf.UInt32Value limit = 6;
-	google.protobuf.UInt32Value offset = 7;
-	google.protobuf.UInt32Value verbose = 8;
+	uint32 limit = 6;
+	uint32 offset = 7;
 }
 
 message DescribeRuntimeEnvsResponse{
-	google.protobuf.UInt32Value total_count = 1;
+	uint32 total_count = 1;
 	repeated RuntimeEnv runtime_env_set = 2;
 }
 
@@ -114,13 +121,12 @@ message DescribeRuntimeEnvCredentialsRequset{
 	repeated string status = 2;
 	google.protobuf.StringValue search_word = 3;
 	repeated string owner = 4;
-	google.protobuf.UInt32Value limit = 5;
-	google.protobuf.UInt32Value offset = 6;
-	google.protobuf.UInt32Value verbose = 7;
+	uint32 limit = 5;
+	uint32 offset = 6;
 }
 
 message DescribeRuntimeEnvCredentialsResponse{
-	google.protobuf.UInt32Value total_count = 1;
+	uint32 total_count = 1;
 	repeated RuntimeEnvCredential runtime_env_credential_set = 2;
 }
 
