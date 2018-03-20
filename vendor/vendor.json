@@ -540,6 +540,12 @@
 			"revisionTime": "2017-06-01T20:57:54Z"
 		},
 		{
+			"checksumSHA1": "bOUCnFlRuGN/E633R/lFuiWVrkk=",
+			"path": "github.com/robfig/cron",
+			"revision": "2315d5715e36303a941d907f038da7f7c44c773b",
+			"revisionTime": "2017-11-01T20:10:47Z"
+		},
+		{
 			"checksumSHA1": "qp6A3YXdKiniunyoNrXQYlDSxNA=",
 			"path": "github.com/rs/xid",
 			"revision": "390d6a8eeb3caeef8befccd1f9fae78eee5a0b34",

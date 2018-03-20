@@ -21,7 +21,7 @@ type GlobalConfig struct {
 }
 
 type RepoServiceConfig struct {
-	AutoIndex bool `json:"auto-index"`
+	Cron string `json:"cron"`
 }
 
 type ClusterServiceConfig struct {
@@ -30,7 +30,22 @@ type ClusterServiceConfig struct {
 
 const InitialGlobalConfig = `
 repo:
-  auto-index: true
+  # cron usage: https://godoc.org/github.com/robfig/cron#hdr-Usage
+  #
+  #   "@every 1h30m" means Every hour thirty
+  #   "@hourly" means Every hour
+  #   "0 30 * * * *" means Every hour on the half hour
+  #
+  #	  Field name   | Mandatory? | Allowed values  | Allowed special characters
+  #	  ----------   | ---------- | --------------  | --------------------------
+  #	  Seconds      | Yes        | 0-59            | * / , -
+  #	  Minutes      | Yes        | 0-59            | * / , -
+  #	  Hours        | Yes        | 0-23            | * / , -
+  #	  Day of month | Yes        | 1-31            | * / , - ?
+  #	  Month        | Yes        | 1-12 or JAN-DEC | * / , -
+  #	  Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?
+  #
+  cron: "0 30 4 * * *"
 cluster:
   plugins:
     - qingcloud
@@ -68,7 +83,7 @@ func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 				return err
 			}
 		}
-		logger.Debugf("Got global config [%+v]", globalConfig)
+		logger.Debugf("Global config update to [%+v]", globalConfig)
 		// send it back
 		watcher <- &globalConfig
 		return nil
@@ -81,7 +96,8 @@ func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 		for res := range watchRes {
 			for _, ev := range res.Events {
 				if ev.Type == mvccpb.PUT {
-					logger.Debugf("Got global config from etcd")
+					globalConfig = GlobalConfig{}
+					//logger.Debugf("Got updated global config from etcd, try to decode with yaml")
 					err = yaml.Decode(ev.Kv.Value, &globalConfig)
 					if err != nil {
 						logger.Errorf("Watch global config from etcd found error: %+v", err)

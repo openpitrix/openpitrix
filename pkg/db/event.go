@@ -40,5 +40,5 @@ func (n *EventReceiver) Timing(eventName string, nanoseconds int64) {
 // TimingKv receives the time an event took to happen along with optional key/value data
 func (n *EventReceiver) TimingKv(eventName string, nanoseconds int64, kvs map[string]string) {
 	// TODO: Change logger level to debug
-	logger.Infof("%s spend %.2fms: %+v", eventName, float32(nanoseconds)/1000000, kvs)
+	logger.Debugf("%s spend %.2fms: %+v", eventName, float32(nanoseconds)/1000000, kvs)
 }
