@@ -12,7 +12,6 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -34,15 +33,9 @@ func (p *Server) getRepo(repoId string) (*models.Repo, error) {
 }
 
 func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest) (*pb.DescribeReposResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
-	logger.Infof("Got sender: %+v", s)
-	logger.Debugf("Got req: %+v", req)
 	var repos []*models.Repo
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
-
-	logger.Debugf("Filter condition is: %+v", manager.BuildFilterConditions(req, models.RepoTableName))
-
 	query := p.Db.
 		Select(models.RepoColumns...).
 		From(models.RepoTableName).
@@ -163,15 +156,9 @@ func (p *Server) getRepoLabel(repoLabelId string) (*models.RepoLabel, error) {
 }
 
 func (p *Server) DescribeRepoLabels(ctx context.Context, req *pb.DescribeRepoLabelsRequest) (*pb.DescribeRepoLabelsResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
-	logger.Infof("Got sender: %+v", s)
-	logger.Debugf("Got req: %+v", req)
 	var repoLabels []*models.RepoLabel
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
-
-	logger.Debugf("Filter condition is: %+v", manager.BuildFilterConditions(req, models.RepoLabelTableName))
-
 	query := p.Db.
 		Select(models.RepoLabelColumns...).
 		From(models.RepoLabelTableName).
@@ -293,14 +280,9 @@ func (p *Server) getRepoSelector(repoSelectorId string) (*models.RepoSelector, e
 }
 
 func (p *Server) DescribeRepoSelectors(ctx context.Context, req *pb.DescribeRepoSelectorsRequest) (*pb.DescribeRepoSelectorsResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
-	logger.Infof("Got sender: %+v", s)
-	logger.Debugf("Got req: %+v", req)
 	var repoSelectors []*models.RepoSelector
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
-
-	logger.Debugf("Filter condition is: %+v", manager.BuildFilterConditions(req, models.RepoSelectorTableName))
 
 	query := p.Db.
 		Select(models.RepoSelectorColumns...).

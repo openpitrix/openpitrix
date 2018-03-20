@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"net/url"
+
 	"openpitrix.io/openpitrix/pkg/models"
 )
 

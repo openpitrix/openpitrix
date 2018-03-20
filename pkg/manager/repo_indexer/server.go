@@ -24,6 +24,7 @@ func Serve(cfg *config.Config) {
 	indexer := NewIndexer(p)
 	s := Server{Pi: p, indexer: indexer}
 	go indexer.Serve()
+	go s.Cron()
 	manager.NewGrpcServer("repo-indexer", constants.RepoIndexerPort).Serve(func(server *grpc.Server) {
 		pb.RegisterRepoIndexerServer(server, &s)
 	})

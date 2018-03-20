@@ -14,11 +14,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
+type globalCfgWatcher func(*config.GlobalConfig)
+
 type Pi struct {
-	cfg       *config.Config
-	globalCfg *config.GlobalConfig
-	Db        *db.Database
-	Etcd      *etcd.Etcd
+	cfg              *config.Config
+	globalCfg        *config.GlobalConfig
+	globalCfgWatcher []globalCfgWatcher
+	Db               *db.Database
+	Etcd             *etcd.Etcd
 }
 
 func NewPi(cfg *config.Config) *Pi {
@@ -41,7 +44,14 @@ func (p *Pi) GlobalConfig() (globalCfg *config.GlobalConfig) {
 func (p *Pi) setGlobalCfg(globalCfg *config.GlobalConfig) {
 	mutex.Lock()
 	p.globalCfg = globalCfg
+	for _, cb := range p.globalCfgWatcher {
+		go cb(globalCfg)
+	}
 	mutex.Unlock()
+}
+
+func (p *Pi) ThreadWatchGlobalConfig(cb globalCfgWatcher) {
+	p.globalCfgWatcher = append(p.globalCfgWatcher, cb)
 }
 
 func (p *Pi) watchGlobalCfg() *Pi {
@@ -62,7 +72,7 @@ func (p *Pi) watchGlobalCfg() *Pi {
 	go func() {
 		for globalCfg := range watcher {
 			p.setGlobalCfg(globalCfg)
-			logger.Debugf("Got global config [%+v]", globalCfg)
+			logger.Debugf("Global config update to [%+v]", globalCfg)
 		}
 	}()
 
