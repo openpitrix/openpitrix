@@ -12,9 +12,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils/sender"
-	"openpitrix.io/openpitrix/pkg/models"
 )
 
 func (p *Server) CreateRuntimeEnv(ctx context.Context, req *pb.CreateRuntimeEnvRequest) (*pb.CreateRuntimeEnvResponse, error) {
@@ -77,7 +77,6 @@ func (p *Server) DetachCredentialFromRuntimeEnv(ctx context.Context, req *pb.Det
 	return nil, status.Errorf(codes.Internal, "DetachCredentialFromRuntimeEnv: %+v", fmt.Errorf("hello world"))
 }
 
-
 func (p *Server) getRuntimeEnvPbWithLabel(runtimeEnvId string) (*pb.RuntimeEnv, error) {
 	runtimeEnv, err := p.getRuntimeEnv(runtimeEnvId)
 	if err != nil {
@@ -112,6 +111,9 @@ func (p *Server) createRuntimeEnvLabels(runtimeEnvId, labelString string) error 
 		return err
 	}
 	err = p.insertRuntimeEnvLabels(runtimeEnvId, labelMap)
+	if err != nil {
+		logger.Errorf("failed to insert runtime_env_labels [%v]", err)
+		return fmt.Errorf("failed to insert runtime_env_labels [%v]", err)
+	}
 	return err
 }
-
