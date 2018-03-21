@@ -1,8 +1,6 @@
 package runtime_env
 
 import (
-	"fmt"
-
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
 )
@@ -20,7 +18,7 @@ func (p *Server) getRuntimeEnv(runtimeEnvId string) (*models.RuntimeEnv, error) 
 	return runtimeEnv, nil
 }
 
-func (p *Server) getRuntimeEnvLabelsByEnvId(runtimeEnvId string) ([]*models.RuntimeEnvLabel, error) {
+func (p *Server) getRuntimeEnvLabelsByEnvId(runtimeEnvId ...string) ([]*models.RuntimeEnvLabel, error) {
 	var runtimeEnvLabels []*models.RuntimeEnvLabel
 	query := p.Db.
 		Select(models.RuntimeEnvLabelColumns...).
@@ -29,7 +27,7 @@ func (p *Server) getRuntimeEnvLabelsByEnvId(runtimeEnvId string) ([]*models.Runt
 
 	_, err := query.Load(&runtimeEnvLabels)
 	if err != nil {
-		return nil, fmt.Errorf("get runtime_env_labels error %+v", err)
+		return nil, err
 	}
 	return runtimeEnvLabels, nil
 }
