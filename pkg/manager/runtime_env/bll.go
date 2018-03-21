@@ -3,9 +3,9 @@ package runtime_env
 import (
 	"fmt"
 
-	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
 )
 
 func (p *Server) getRuntimeEnvPbWithLabel(runtimeEnvId string) (*pb.RuntimeEnv, error) {

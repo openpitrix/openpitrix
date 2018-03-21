@@ -29,7 +29,7 @@ func (p *Server) getRuntimeEnvLabelsByEnvId(runtimeEnvId string) ([]*models.Runt
 
 	_, err := query.Load(&runtimeEnvLabels)
 	if err != nil {
-		return nil, fmt.Errorf( "get runtime_env_labels error %+v", err)
+		return nil, fmt.Errorf("get runtime_env_labels error %+v", err)
 	}
 	return runtimeEnvLabels, nil
 }
