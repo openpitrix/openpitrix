@@ -17,9 +17,8 @@ import (
 )
 
 func (p *Server) CreateRuntimeEnv(ctx context.Context, req *pb.CreateRuntimeEnvRequest) (*pb.CreateRuntimeEnvResponse, error) {
-	//TODO: validation request
 	s := sender.GetSenderFromContext(ctx)
-	logger.Infof("Got sender: %+v", s)
+	logger.Debugf("Got sender: %+v", s)
 	logger.Debugf("Got req: %+v", req)
 
 	//create runtime env
