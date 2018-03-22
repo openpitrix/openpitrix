@@ -21,11 +21,11 @@ func NewRepoId() string {
 }
 
 func NewRepoLabelId() string {
-	return utils.GetUuid("repolabel-")
+	return utils.GetUuid("repol-")
 }
 
 func NewRepoSelectorId() string {
-	return utils.GetUuid("reposelector-")
+	return utils.GetUuid("repos-")
 }
 
 type RepoLabel struct {
@@ -41,12 +41,12 @@ type RepoLabel struct {
 
 var RepoLabelColumns = GetColumnsFromStruct(&RepoLabel{})
 
-func NewRepoLabel(repo_id, label_key, label_value string) *RepoLabel {
+func NewRepoLabel(repoId, labelKey, labelValue string) *RepoLabel {
 	return &RepoLabel{
 		RepoLabelId: NewRepoLabelId(),
-		RepoId:      repo_id,
-		LabelKey:    label_key,
-		LabelValue:  label_value,
+		RepoId:      repoId,
+		LabelKey:    labelKey,
+		LabelValue:  labelValue,
 
 		Status:     constants.StatusActive,
 		CreateTime: time.Now(),
@@ -87,12 +87,12 @@ type RepoSelector struct {
 
 var RepoSelectorColumns = GetColumnsFromStruct(&RepoSelector{})
 
-func NewRepoSelector(repo_id, selector_key, selector_value string) *RepoSelector {
+func NewRepoSelector(repoId, selectorKey, selectorValue string) *RepoSelector {
 	return &RepoSelector{
 		RepoSelectorId: NewRepoSelectorId(),
-		RepoId:         repo_id,
-		SelectorKey:    selector_key,
-		SelectorValue:  selector_value,
+		RepoId:         repoId,
+		SelectorKey:    selectorKey,
+		SelectorValue:  selectorValue,
 
 		Status:     constants.StatusActive,
 		CreateTime: time.Now(),
