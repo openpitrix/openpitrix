@@ -2,7 +2,6 @@ package repo
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	neturl "net/url"
@@ -30,7 +29,7 @@ func validateVisibility(visibility string) error {
 	case "public":
 	case "private":
 	default:
-		return errors.New("Visibility must be one of [public, private]")
+		return fmt.Errorf("visibility must be one of [public, private]")
 	}
 
 	return nil
@@ -44,7 +43,7 @@ func validate(repoType, url, credential, visibility string) error {
 
 	u, err := neturl.ParseRequestURI(url)
 	if err != nil {
-		return fmt.Errorf("Url parse failed, %s", err)
+		return fmt.Errorf("url parse failed, %s", err)
 	}
 
 	switch repoType {
@@ -62,7 +61,7 @@ func validate(repoType, url, credential, visibility string) error {
 			var qc QingStorCredential
 			err = json.Unmarshal([]byte(credential), &qc)
 			if err != nil {
-				return fmt.Errorf("Json decode failed on credential, %+v", err)
+				return fmt.Errorf("json decode failed on credential, %+v", err)
 			}
 
 			if qc.AccessKeyId == "" || qc.SecretAccessKey == "" {
@@ -71,29 +70,29 @@ func validate(repoType, url, credential, visibility string) error {
 
 			err = ValidateS3(host, qc.AccessKeyId, qc.SecretAccessKey, bucket, zone)
 			if err != nil {
-				return fmt.Errorf("Validate qingstor failed, %+v", err)
+				return fmt.Errorf("validate qingstor failed, %+v", err)
 			}
 		} else {
-			return errors.New("Url is not a bucket url of qingstor")
+			return fmt.Errorf("url is not a bucket url of qingstor")
 		}
 	case "http":
 		if u.Scheme != "http" {
-			return errors.New("Scheme is not http")
+			return fmt.Errorf("scheme is not http")
 		}
 		err := ValidateHTTP(url)
 		if err != nil {
-			return fmt.Errorf("Validate http failed, %+v", err)
+			return fmt.Errorf("validate http failed, %+v", err)
 		}
 	case "https":
 		if u.Scheme != "https" {
-			return errors.New("Scheme is not https")
+			return fmt.Errorf("scheme is not https")
 		}
 		err := ValidateHTTP(url)
 		if err != nil {
-			return fmt.Errorf("Validate https failed, %+v", err)
+			return fmt.Errorf("validate https failed, %+v", err)
 		}
 	default:
-		return fmt.Errorf("Type must be one of [s3, http, https]")
+		return fmt.Errorf("type must be one of [s3, http, https]")
 	}
 
 	return nil
@@ -107,8 +106,8 @@ func ValidateHTTP(url string) error {
 	return nil
 }
 
-func ValidateS3(host, access_key_id, secret_access_key, bucket, zone string) error {
-	creds := credentials.NewStaticCredentials(access_key_id, secret_access_key, "")
+func ValidateS3(host, accessKeyId, secretAccessKey, bucket, zone string) error {
+	creds := credentials.NewStaticCredentials(accessKeyId, secretAccessKey, "")
 	config := &aws.Config{
 		Region:      aws.String(zone),
 		Endpoint:    aws.String(fmt.Sprintf("http://s3.%s.%s/%s/", zone, host, bucket)),
