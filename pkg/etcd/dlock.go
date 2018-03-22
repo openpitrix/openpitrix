@@ -6,6 +6,7 @@ package etcd
 
 import (
 	"context"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 )
@@ -14,13 +15,23 @@ type callback func() error
 
 func (etcd *Etcd) Dlock(ctx context.Context, key string, cb callback) error {
 	logger.Debugf("Create dlock with key [%s]", key)
-	mutex := etcd.NewMutex(key)
-	err := mutex.Lock(ctx)
+	mutex, err := etcd.NewMutex(key)
 	if err != nil {
-		logger.Fatalf("Dlock lock error: %+v", err)
+		logger.Fatalf("Dlock lock error, failed to create mutex: %+v", err)
+		return err
+	}
+	err = mutex.Lock(ctx)
+	if err != nil {
+		logger.Fatalf("Dlock lock error, failed to lock mutex: %+v", err)
 		return err
 	}
 	defer mutex.Unlock(ctx)
 	err = cb()
 	return err
+}
+
+func (etcd *Etcd) DlockWithTimeout(key string, timeout time.Duration, cb callback) error {
+	ctxWithTimeout, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	return etcd.Dlock(ctxWithTimeout, key, cb)
 }

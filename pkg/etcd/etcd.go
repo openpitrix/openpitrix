@@ -8,13 +8,11 @@ import (
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
-	"github.com/coreos/etcd/clientv3/concurrency"
 	"github.com/coreos/etcd/clientv3/namespace"
 )
 
 type Etcd struct {
 	*clientv3.Client
-	session *concurrency.Session
 }
 
 func Connect(endpoints []string, prefix string) (*Etcd, error) {
@@ -28,9 +26,5 @@ func Connect(endpoints []string, prefix string) (*Etcd, error) {
 	cli.KV = namespace.NewKV(cli.KV, prefix)
 	cli.Watcher = namespace.NewWatcher(cli.Watcher, prefix)
 	cli.Lease = namespace.NewLease(cli.Lease, prefix)
-	session, err := concurrency.NewSession(cli)
-	if err != nil {
-		return nil, err
-	}
-	return &Etcd{cli, session}, err
+	return &Etcd{cli}, err
 }
