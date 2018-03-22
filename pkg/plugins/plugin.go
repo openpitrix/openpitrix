@@ -23,6 +23,8 @@ type RuntimeInterface interface {
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
 	WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error
+	DescribeSubnet(subnetId string) (*models.Subnet, error)
+	DescribeVpc(vpcId string) (*models.Vpc, error)
 }
 
 func RegisterRuntimePlugin(runtime string, runtimeInterface RuntimeInterface) {

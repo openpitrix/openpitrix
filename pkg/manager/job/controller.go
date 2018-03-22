@@ -108,7 +108,9 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		return err
 	}
 
-	defer NewProcessor(job).Post()
+	processor := NewProcessor(job)
+	processor.Pre()
+	defer processor.Post()
 
 	runtimeInterface, err := plugins.GetRuntimePlugin(job.Runtime)
 	if err != nil {

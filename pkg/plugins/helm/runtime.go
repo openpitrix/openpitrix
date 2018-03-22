@@ -82,3 +82,9 @@ func (p *Runtime) HandleSubtask(task *models.Task) error {
 func (p *Runtime) WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
 	return nil
 }
+func (p *Runtime) DescribeSubnet(subnetId string) (*models.Subnet, error) {
+	return nil, nil
+}
+func (p *Runtime) DescribeVpc(vpcId string) (*models.Vpc, error) {
+	return nil, nil
+}

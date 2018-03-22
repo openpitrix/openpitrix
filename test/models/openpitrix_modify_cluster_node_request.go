@@ -40,14 +40,14 @@ type OpenpitrixModifyClusterNodeRequest struct {
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
+	// subnet id
+	SubnetID string `json:"subnet_id,omitempty"`
+
 	// transition status
 	TransitionStatus string `json:"transition_status,omitempty"`
 
 	// volume id
 	VolumeID string `json:"volume_id,omitempty"`
-
-	// vxnet id
-	VxnetID string `json:"vxnet_id,omitempty"`
 }
 
 // Validate validates this openpitrix modify cluster node request

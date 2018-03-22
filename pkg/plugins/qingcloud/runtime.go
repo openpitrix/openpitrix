@@ -54,27 +54,30 @@ func (p *Runtime) initJobService() (jobService *service.JobService, err error) {
 }
 
 func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
-	ctx := context.Background()
-	appManagerClient, err := appClient.NewAppManagerClient(ctx)
-	if err != nil {
-		logger.Errorf("Connect to app manager failed: %v", err)
-		return nil, err
+	// Normal cluster need package to generate final conf
+	if versionId != constants.FrontgateVersionId {
+		ctx := context.Background()
+		appManagerClient, err := appClient.NewAppManagerClient(ctx)
+		if err != nil {
+			logger.Errorf("Connect to app manager failed: %v", err)
+			return nil, err
+		}
+
+		req := &pb.GetAppVersionPackageRequest{
+			VersionId: utils.ToProtoString(versionId),
+		}
+
+		_, err = appManagerClient.GetAppVersionPackage(ctx, req)
+		if err != nil {
+			logger.Errorf("Get app version [%s] package failed: %v", versionId, err)
+			return nil, err
+		}
+
+		// TODO after rendered, got the final conf
 	}
 
-	req := &pb.GetAppVersionPackageRequest{
-		VersionId: utils.ToProtoString(versionId),
-	}
-
-	_, err = appManagerClient.GetAppVersionPackage(ctx, req)
-	if err != nil {
-		logger.Errorf("Get app version [%s] package failed: %v", versionId, err)
-		return nil, err
-	}
-
-	// TODO after rendered, got the final conf
-	var finalConf []byte
 	parser := Parser{}
-	clusterWrapper, err := parser.Parse(finalConf)
+	clusterWrapper, err := parser.Parse([]byte(conf))
 	if err != nil {
 		return nil, err
 	}
@@ -89,4 +92,11 @@ func (p *Runtime) HandleSubtask(task *models.Task) error {
 }
 func (p *Runtime) WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
 	return nil
+}
+
+func (p *Runtime) DescribeSubnet(subnetId string) (*models.Subnet, error) {
+	return nil, nil
+}
+func (p *Runtime) DescribeVpc(vpcId string) (*models.Vpc, error) {
+	return nil, nil
 }

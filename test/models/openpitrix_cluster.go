@@ -78,6 +78,9 @@ type OpenpitrixCluster struct {
 
 	// version id
 	VersionID string `json:"version_id,omitempty"`
+
+	// vpc id
+	VpcID string `json:"vpc_id,omitempty"`
 }
 
 // Validate validates this openpitrix cluster

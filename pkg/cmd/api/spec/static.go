@@ -2127,6 +2127,9 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixClusterNode"
           }
+        },
+        "vpc_id": {
+          "type": "string"
         }
       }
     },
@@ -2145,7 +2148,7 @@ var Files = map[string]string{
         "instance_id": {
           "type": "string"
         },
-        "vxnet_id": {
+        "subnet_id": {
           "type": "string"
         },
         "private_ip": {
@@ -2356,7 +2359,7 @@ var Files = map[string]string{
         "volume_id": {
           "type": "string"
         },
-        "vxnet_id": {
+        "subnet_id": {
           "type": "string"
         },
         "private_ip": {
