@@ -724,6 +724,15 @@ var Files = map[string]string{
             }
           },
           {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
             "name": "visibility",
             "in": "query",
             "required": false,
@@ -745,19 +754,13 @@ var Files = map[string]string{
             "name": "label",
             "in": "query",
             "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "type": "string"
           },
           {
             "name": "selector",
             "in": "query",
             "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "type": "string"
           },
           {
             "name": "limit",
@@ -2866,6 +2869,9 @@ var Files = map[string]string{
         "description": {
           "type": "string"
         },
+        "type": {
+          "type": "string"
+        },
         "url": {
           "type": "string"
         },
@@ -3040,6 +3046,9 @@ var Files = map[string]string{
         "description": {
           "type": "string"
         },
+        "type": {
+          "type": "string"
+        },
         "url": {
           "type": "string"
         },
@@ -3094,6 +3103,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "description": {
+          "type": "string"
+        },
+        "type": {
           "type": "string"
         },
         "url": {

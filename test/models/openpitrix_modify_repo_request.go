@@ -28,6 +28,9 @@ type OpenpitrixModifyRepoRequest struct {
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`
 
+	// type
+	Type string `json:"type,omitempty"`
+
 	// url
 	URL string `json:"url,omitempty"`
 

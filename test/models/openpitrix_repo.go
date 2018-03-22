@@ -40,6 +40,9 @@ type OpenpitrixRepo struct {
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
+	// type
+	Type string `json:"type,omitempty"`
+
 	// url
 	URL string `json:"url,omitempty"`
 

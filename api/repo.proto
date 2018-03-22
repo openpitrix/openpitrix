@@ -31,9 +31,10 @@ message CreateRepoRequest {
 	google.protobuf.StringValue _ = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
-	google.protobuf.StringValue url = 4;
-	google.protobuf.StringValue credential = 5;
-	google.protobuf.StringValue visibility = 6;
+	google.protobuf.StringValue type = 4;
+	google.protobuf.StringValue url = 5;
+	google.protobuf.StringValue credential = 6;
+	google.protobuf.StringValue visibility = 7;
 }
 
 message CreateRepoResponse {
@@ -44,9 +45,10 @@ message ModifyRepoRequest {
 	google.protobuf.StringValue repo_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
-	google.protobuf.StringValue url = 4;
-	google.protobuf.StringValue credential = 5;
-	google.protobuf.StringValue visibility = 6;
+	google.protobuf.StringValue type = 4;
+	google.protobuf.StringValue url = 5;
+	google.protobuf.StringValue credential = 6;
+	google.protobuf.StringValue visibility = 7;
 }
 
 message ModifyRepoResponse {
@@ -65,33 +67,33 @@ message Repo {
 	google.protobuf.StringValue repo_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
-	google.protobuf.StringValue url = 4;
-	google.protobuf.StringValue credential = 5;
-	google.protobuf.StringValue visibility = 6;
-	google.protobuf.StringValue owner = 7;
+	google.protobuf.StringValue type = 4;
+	google.protobuf.StringValue url = 5;
+	google.protobuf.StringValue credential = 6;
+	google.protobuf.StringValue visibility = 7;
+	google.protobuf.StringValue owner = 8;
 
-	google.protobuf.StringValue status = 8;
-	google.protobuf.Timestamp create_time = 9;
-	google.protobuf.Timestamp status_time = 10;
+	google.protobuf.StringValue status = 9;
+	google.protobuf.Timestamp create_time = 10;
+	google.protobuf.Timestamp status_time = 11;
 }
 
 message DescribeReposRequest {
 	repeated string repo_id = 1; // NOTE: grpc gateway cannot handle repeated StringValue
 	repeated string name = 2;
-	repeated string visibility = 3;
-	repeated string status = 4;
-	repeated string label = 5;
-	repeated string selector = 6;
-	uint32 limit = 7; // NOTE: uint64 marshal to json will convert to string
-	uint32 offset = 8;
+	repeated string type = 3;
+	repeated string visibility = 4;
+	repeated string status = 5;
+	google.protobuf.StringValue label = 6;
+	google.protobuf.StringValue selector = 7;
+	uint32 limit = 8; // NOTE: uint64 marshal to json will convert to string
+	uint32 offset = 9;
 }
 
 message DescribeReposResponse {
 	uint32 total_count = 1;
 	repeated Repo repo_set = 2;
 }
-
-
 
 message RepoLabel {
 	google.protobuf.StringValue repo_id = 1;
