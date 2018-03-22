@@ -23,7 +23,7 @@ type ClusterNode struct {
 	Name             string
 	InstanceId       string
 	VolumeId         string
-	VxnetId          string
+	SubnetId         string
 	PrivateIp        string
 	ServerId         int32
 	Role             string

@@ -23,7 +23,8 @@ type Cluster struct {
 	Description        string
 	AppId              string
 	VersionId          string
-	VxnetId            string
+	SubnetId           string
+	VpcId              string
 	FrontgateId        string
 	ClusterType        int32
 	Endpoints          string

@@ -61,7 +61,7 @@ message ModifyClusterNodeRequest {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue instance_id = 3;
 	google.protobuf.StringValue volume_id = 4;
-	google.protobuf.StringValue vxnet_id = 5;
+	google.protobuf.StringValue subnet_id = 5;
 	google.protobuf.StringValue private_ip = 6;
 	google.protobuf.StringValue status = 7;
 	google.protobuf.StringValue transition_status = 8;
@@ -158,7 +158,7 @@ message ClusterNode {
 	google.protobuf.StringValue node_id = 2;
 	google.protobuf.StringValue name = 3;
 	google.protobuf.StringValue instance_id = 4;
-	google.protobuf.StringValue vxnet_id = 5;
+	google.protobuf.StringValue subnet_id = 5;
 	google.protobuf.StringValue private_ip = 6;
 	google.protobuf.StringValue status = 7;
 	google.protobuf.StringValue transition_status = 8;
@@ -202,6 +202,7 @@ message Cluster {
 	google.protobuf.Timestamp create_time = 19;
 	google.protobuf.Timestamp status_time = 20;
 	repeated ClusterNode cluster_node_set = 21;
+	google.protobuf.StringValue vpc_id = 22;
 }
 
 message DescribeClustersRequest {

@@ -77,7 +77,7 @@ func (p *Parser) ParseClusterRole(mustache *models.ClusterJsonMustache, node *mo
 	return clusterRole, nil
 }
 
-func (p *Parser) ParseClusterNode(node *models.Node, vxnet string) ([]*models.ClusterNode, error) {
+func (p *Parser) ParseClusterNode(node *models.Node, subnetId string) ([]*models.ClusterNode, error) {
 	count := int(node.Count)
 	serverIdUpperBound := node.ServerIDUpperBound
 	replicaRole := node.Role + constants.ReplicaRoleSuffix
@@ -101,7 +101,7 @@ func (p *Parser) ParseClusterNode(node *models.Node, vxnet string) ([]*models.Cl
 		clusterNode := &models.ClusterNode{
 			Name:     "",
 			Role:     node.Role,
-			VxnetId:  vxnet,
+			SubnetId: subnetId,
 			ServerId: int32(serverId),
 			Status:   constants.StatusPending,
 			GroupId:  int32(groupId),
@@ -120,7 +120,7 @@ func (p *Parser) ParseClusterNode(node *models.Node, vxnet string) ([]*models.Cl
 			clusterNode := &models.ClusterNode{
 				Name:     "",
 				Role:     replicaRole,
-				VxnetId:  vxnet,
+				SubnetId: subnetId,
 				ServerId: int32(serverId),
 				Status:   constants.StatusPending,
 				GroupId:  int32(groupId),
@@ -176,7 +176,7 @@ func (p *Parser) ParseCluster(mustache *models.ClusterJsonMustache) (*models.Clu
 		Description:        mustache.Description,
 		AppId:              mustache.AppId,
 		VersionId:          mustache.VersionId,
-		VxnetId:            mustache.Vxnet,
+		SubnetId:           mustache.Subnet,
 		Endpoints:          string(endpoints),
 		Status:             constants.StatusPending,
 		MetadataRootAccess: metadataRootAccess,
@@ -356,7 +356,7 @@ func (p *Parser) Parse(conf []byte) (*models.ClusterWrapper, error) {
 			clusterRoles = append(clusterRoles, clusterRole)
 
 			// Parse cluster node
-			addClusterNodes, err := p.ParseClusterNode(&node, mustache.Vxnet)
+			addClusterNodes, err := p.ParseClusterNode(&node, mustache.Subnet)
 			if err != nil {
 				return nil, err
 			}

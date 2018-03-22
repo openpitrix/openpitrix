@@ -76,7 +76,7 @@ type ClusterJsonMustache struct {
 	GlobalUuid                 string                 `json:"global_uuid"`
 	Name                       string                 `json:"name"`
 	Description                string                 `json:"description"`
-	Vxnet                      string                 `json:"vxnet"`
+	Subnet                     string                 `json:"subnet"`
 	Links                      map[string]string      `json:"links"`
 	BackupPolicy               string                 `json:"backup_policy"`
 	IncrementalBackupSupported *bool                  `json:"incremental_backup_supported"`
