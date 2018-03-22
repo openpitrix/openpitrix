@@ -68,6 +68,16 @@ func (db *Database) SelectAll(columns ...string) *SelectQuery {
 	return &SelectQuery{db.Session.Select("*")}
 }
 
+func (b *SelectQuery) Join(table, on interface{}) *SelectQuery {
+	b.SelectBuilder.Join(table, on)
+	return b
+}
+
+func (b *SelectQuery) JoinAs(table string, alias string, on interface{}) *SelectQuery {
+	b.SelectBuilder.Join(dbr.I(table).As(alias), on)
+	return b
+}
+
 func (b *SelectQuery) From(table string) *SelectQuery {
 	b.SelectBuilder.From(table)
 	return b

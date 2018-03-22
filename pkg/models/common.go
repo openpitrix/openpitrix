@@ -28,7 +28,7 @@ var IndexedColumns = map[string][]string{
 		"job_id", "task_id", "status",
 	},
 	RepoTableName: {
-		"repo_id", "name", "visibility", "status",
+		"repo_id", "name", "type", "visibility", "status",
 	},
 	RuntimeEnvTableName: {
 		"runtime_env_id", "status", "owner",
@@ -79,6 +79,14 @@ func GetColumnsFromStruct(s interface{}) []string {
 	names := structs.Names(s)
 	for i, name := range names {
 		names[i] = utils.CamelCaseToUnderscore(name)
+	}
+	return names
+}
+
+func GetColumnsFromStructWithPrefix(prefix string, s interface{}) []string {
+	names := structs.Names(s)
+	for i, name := range names {
+		names[i] = prefix + "." + utils.CamelCaseToUnderscore(name)
 	}
 	return names
 }

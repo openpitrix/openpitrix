@@ -64,7 +64,7 @@ for the describe repos operation typically these are written to a http.Request
 type DescribeReposParams struct {
 
 	/*Label*/
-	Label []string
+	Label *string
 	/*Limit*/
 	Limit *int64
 	/*Name*/
@@ -74,9 +74,11 @@ type DescribeReposParams struct {
 	/*RepoID*/
 	RepoID []string
 	/*Selector*/
-	Selector []string
+	Selector *string
 	/*Status*/
 	Status []string
+	/*Type*/
+	Type []string
 	/*Visibility*/
 	Visibility []string
 
@@ -119,13 +121,13 @@ func (o *DescribeReposParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithLabel adds the label to the describe repos params
-func (o *DescribeReposParams) WithLabel(label []string) *DescribeReposParams {
+func (o *DescribeReposParams) WithLabel(label *string) *DescribeReposParams {
 	o.SetLabel(label)
 	return o
 }
 
 // SetLabel adds the label to the describe repos params
-func (o *DescribeReposParams) SetLabel(label []string) {
+func (o *DescribeReposParams) SetLabel(label *string) {
 	o.Label = label
 }
 
@@ -174,13 +176,13 @@ func (o *DescribeReposParams) SetRepoID(repoID []string) {
 }
 
 // WithSelector adds the selector to the describe repos params
-func (o *DescribeReposParams) WithSelector(selector []string) *DescribeReposParams {
+func (o *DescribeReposParams) WithSelector(selector *string) *DescribeReposParams {
 	o.SetSelector(selector)
 	return o
 }
 
 // SetSelector adds the selector to the describe repos params
-func (o *DescribeReposParams) SetSelector(selector []string) {
+func (o *DescribeReposParams) SetSelector(selector *string) {
 	o.Selector = selector
 }
 
@@ -193,6 +195,17 @@ func (o *DescribeReposParams) WithStatus(status []string) *DescribeReposParams {
 // SetStatus adds the status to the describe repos params
 func (o *DescribeReposParams) SetStatus(status []string) {
 	o.Status = status
+}
+
+// WithType adds the typeVar to the describe repos params
+func (o *DescribeReposParams) WithType(typeVar []string) *DescribeReposParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the describe repos params
+func (o *DescribeReposParams) SetType(typeVar []string) {
+	o.Type = typeVar
 }
 
 // WithVisibility adds the visibility to the describe repos params
@@ -214,12 +227,20 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	}
 	var res []error
 
-	valuesLabel := o.Label
+	if o.Label != nil {
 
-	joinedLabel := swag.JoinByFormat(valuesLabel, "")
-	// query array param label
-	if err := r.SetQueryParam("label", joinedLabel...); err != nil {
-		return err
+		// query param label
+		var qrLabel string
+		if o.Label != nil {
+			qrLabel = *o.Label
+		}
+		qLabel := qrLabel
+		if qLabel != "" {
+			if err := r.SetQueryParam("label", qLabel); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if o.Limit != nil {
@@ -270,12 +291,20 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 
-	valuesSelector := o.Selector
+	if o.Selector != nil {
 
-	joinedSelector := swag.JoinByFormat(valuesSelector, "")
-	// query array param selector
-	if err := r.SetQueryParam("selector", joinedSelector...); err != nil {
-		return err
+		// query param selector
+		var qrSelector string
+		if o.Selector != nil {
+			qrSelector = *o.Selector
+		}
+		qSelector := qrSelector
+		if qSelector != "" {
+			if err := r.SetQueryParam("selector", qSelector); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	valuesStatus := o.Status
@@ -283,6 +312,14 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	joinedStatus := swag.JoinByFormat(valuesStatus, "")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
+		return err
+	}
+
+	valuesType := o.Type
+
+	joinedType := swag.JoinByFormat(valuesType, "")
+	// query array param type
+	if err := r.SetQueryParam("type", joinedType...); err != nil {
 		return err
 	}
 

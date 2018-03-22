@@ -28,6 +28,9 @@ type OpenpitrixCreateRepoRequest struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// type
+	Type string `json:"type,omitempty"`
+
 	// url
 	URL string `json:"url,omitempty"`
 

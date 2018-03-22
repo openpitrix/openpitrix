@@ -49,8 +49,9 @@ func TestRepo(t *testing.T) {
 		&models.OpenpitrixCreateRepoRequest{
 			Name:        testRepoName,
 			Description: "description",
-			URL:         "http://q.io",
-			Credential:  `{"accesskey": "ds", "secretkey": "ds"}`,
+			Type:        "https",
+			URL:         "https://github.com/",
+			Credential:  `{}`,
 			Visibility:  "public",
 		})
 	createResp, err := client.RepoManager.CreateRepo(createParams)
@@ -64,9 +65,10 @@ func TestRepo(t *testing.T) {
 		&models.OpenpitrixModifyRepoRequest{
 			RepoID:      repoId,
 			Description: "cc",
-			URL:         "http://q.q",
-			Credential:  `{"accesskey": "cc", "secretkey": "cc"}`,
-			Visibility:  "labeled",
+			Type:        "https",
+			URL:         "https://github.com/",
+			Credential:  `{}`,
+			Visibility:  "private",
 		})
 	modifyResp, err := client.RepoManager.ModifyRepo(modifyParams)
 	if err != nil {
@@ -83,7 +85,7 @@ func TestRepo(t *testing.T) {
 	if len(repos) != 1 {
 		t.Fatalf("failed to describe repos with params [%+v]", describeParams)
 	}
-	if repos[0].Name != testRepoName || repos[0].Description != "cc" || repos[0].URL != "http://q.q" {
+	if repos[0].Name != testRepoName || repos[0].Description != "cc" || repos[0].URL != "https://github.com/" {
 		t.Fatalf("failed to modify repo [%+v]", repos[0])
 	}
 	// delete repo
@@ -129,8 +131,9 @@ func TestRepoLabel(t *testing.T) {
 		&models.OpenpitrixCreateRepoRequest{
 			Name:        testRepoName,
 			Description: "description",
-			URL:         "http://q.io",
-			Credential:  `{"accesskey": "ds", "secretkey": "ds"}`,
+			Type:        "https",
+			URL:         "https://github.com/",
+			Credential:  `{}`,
 			Visibility:  "public",
 		})
 	createResp, err := client.RepoManager.CreateRepo(createParams)
@@ -236,8 +239,9 @@ func TestRepoSelector(t *testing.T) {
 		&models.OpenpitrixCreateRepoRequest{
 			Name:        testRepoName,
 			Description: "description",
-			URL:         "http://q.io",
-			Credential:  `{"accesskey": "ds", "secretkey": "ds"}`,
+			Type:        "https",
+			URL:         "https://github.com/",
+			Credential:  `{}`,
 			Visibility:  "public",
 		})
 	createResp, err := client.RepoManager.CreateRepo(createParams)

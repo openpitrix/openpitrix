@@ -36,17 +36,41 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 	var repos []*models.Repo
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
+
+	labelMap, err := GetLabelMapFromRequest(req)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "DescribeRepos: GetLabelMapFromRequest: %+v", err)
+	}
+
+	selectorMap, err := GetSelectorMapFromRequest(req)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "DescribeRepos: GetSelectorMapFromRequest: %+v", err)
+	}
+
 	query := p.Db.
-		Select(models.RepoColumns...).
+		Select(models.RepoColumnsWithTablePrefix...).
 		From(models.RepoTableName).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.RepoTableName))
-	_, err := query.Load(&repos)
+		Where(manager.BuildFilterConditionsWithPrefix(req, models.RepoTableName))
+
+	query = GenerateSelectQuery(query, models.RepoTableName, models.RepoLabelTableName,
+		"label_key", "label_value", labelMap)
+	query = GenerateSelectQuery(query, models.RepoTableName, models.RepoSelectorTableName,
+		"selector_key", "selector_value", selectorMap)
+
+	_, err = query.Load(&repos)
 	if err != nil {
 		// TODO: err_code should be implementation
 		return nil, status.Errorf(codes.Internal, "DescribeRepos: %+v", err)
 	}
+
+	query = p.Db.
+		Select(models.RepoColumnsWithTablePrefix...).
+		From(models.RepoTableName).
+		Offset(offset).
+		Limit(limit).
+		Where(manager.BuildFilterConditionsWithPrefix(req, models.RepoTableName))
 	count, err := query.Count()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "DescribeRepos: %+v", err)
@@ -60,17 +84,27 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 }
 
 func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb.CreateRepoResponse, error) {
-	// TODO: validate CreateRepoRequest
+	repoType := req.GetType().GetValue()
+	url := req.GetUrl().GetValue()
+	credential := req.GetCredential().GetValue()
+	visibility := req.GetVisibility().GetValue()
+
+	err := validate(repoType, url, credential, visibility)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "CreateRepo: Validate failed, %+v", err)
+	}
+
 	s := sender.GetSenderFromContext(ctx)
 	newRepo := models.NewRepo(
 		req.GetName().GetValue(),
 		req.GetDescription().GetValue(),
-		req.GetUrl().GetValue(),
-		req.GetCredential().GetValue(),
-		req.GetVisibility().GetValue(),
+		repoType,
+		url,
+		credential,
+		visibility,
 		s.UserId)
 
-	_, err := p.Db.
+	_, err = p.Db.
 		InsertInto(models.RepoTableName).
 		Columns(models.RepoColumns...).
 		Record(newRepo).
@@ -86,6 +120,16 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 }
 
 func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb.ModifyRepoResponse, error) {
+	repoType := req.GetType().GetValue()
+	url := req.GetUrl().GetValue()
+	credential := req.GetCredential().GetValue()
+	visibility := req.GetVisibility().GetValue()
+
+	err := validate(repoType, url, credential, visibility)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "ModifyRepo: Validate failed, %+v", err)
+	}
+
 	// TODO: check resource permission
 	repoId := req.GetRepoId().GetValue()
 	repo, err := p.getRepo(repoId)
@@ -94,7 +138,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
-		"name", "description", "url",
+		"name", "description", "type", "url",
 		"credential", "visibility")
 	_, err = p.Db.
 		Update(models.RepoTableName).

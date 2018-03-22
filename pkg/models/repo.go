@@ -124,6 +124,7 @@ type Repo struct {
 	RepoId      string
 	Name        string
 	Description string
+	Type        string
 	Url         string
 	Credential  string
 	Visibility  string
@@ -135,12 +136,14 @@ type Repo struct {
 }
 
 var RepoColumns = GetColumnsFromStruct(&Repo{})
+var RepoColumnsWithTablePrefix = GetColumnsFromStructWithPrefix(RepoTableName, &Repo{})
 
-func NewRepo(name, description, url, credential, visibility, owner string) *Repo {
+func NewRepo(name, description, typ, url, credential, visibility, owner string) *Repo {
 	return &Repo{
 		RepoId:      NewRepoId(),
 		Name:        name,
 		Description: description,
+		Type:        typ,
 		Url:         url,
 		Credential:  credential,
 		Visibility:  visibility,
@@ -156,6 +159,7 @@ func RepoToPb(repo *Repo) *pb.Repo {
 	pbRepo.RepoId = utils.ToProtoString(repo.RepoId)
 	pbRepo.Name = utils.ToProtoString(repo.Name)
 	pbRepo.Description = utils.ToProtoString(repo.Description)
+	pbRepo.Type = utils.ToProtoString(repo.Type)
 	pbRepo.Url = utils.ToProtoString(repo.Url)
 	pbRepo.Credential = utils.ToProtoString(repo.Credential)
 	pbRepo.Visibility = utils.ToProtoString(repo.Visibility)
