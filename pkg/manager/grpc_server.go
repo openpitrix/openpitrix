@@ -5,10 +5,15 @@
 package manager
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"runtime/debug"
+	"strings"
+	"time"
 
+	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"github.com/grpc-ecosystem/go-grpc-middleware/validator"
@@ -18,6 +23,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/utils/sender"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -44,6 +50,7 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 	grpcServer := grpc.NewServer(
 		grpc_middleware.WithUnaryServerChain(
 			grpc_validator.UnaryServerInterceptor(),
+			UnaryServerLogInterceptor(),
 			grpc_recovery.UnaryServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
 					logger.Panic(p)
@@ -68,5 +75,30 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 	if err = grpcServer.Serve(lis); err != nil {
 		err = errors.WithStack(err)
 		logger.Fatalf("%+v", err)
+	}
+}
+
+var (
+	jsonPbMarshaller = &jsonpb.Marshaler{}
+)
+
+func UnaryServerLogInterceptor() grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		s := sender.GetSenderFromContext(ctx)
+		method := strings.Split(info.FullMethod, "/")
+		action := method[len(method)-1]
+		if p, ok := req.(proto.Message); ok {
+			if content, err := jsonPbMarshaller.MarshalToString(p); err != nil {
+				logger.Errorf("Failed to marshal proto message to string [%s] [%+v] [%+v]", action, s, err)
+			} else {
+				logger.Infof("Request received [%s] [%+v] [%s]", action, s, content)
+			}
+
+		}
+		start := time.Now()
+		resp, err := handler(ctx, req)
+		elapsed := time.Since(start)
+		logger.Infof("Handled request [%s] [%+v] exec_time is [%s]", action, s, elapsed)
+		return resp, err
 	}
 }
