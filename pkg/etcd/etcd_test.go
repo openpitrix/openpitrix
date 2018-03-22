@@ -8,11 +8,12 @@ import (
 	"fmt"
 	"math/rand"
 	"testing"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/etcd"
 )
 
-func TestEtcd(t *testing.T) {
+func TestEtcdQueue(t *testing.T) {
 	e, err := etcd.Connect([]string{"localhost:2379"}, "test")
 	if err != nil {
 		t.Fatal(err)
@@ -35,4 +36,38 @@ func TestEtcd(t *testing.T) {
 		}
 		t.Logf("Got message [%s] from queue, worker number [%d]", n, i)
 	}
+}
+
+func TestDlockWithTimeout(t *testing.T) {
+	e, err := etcd.Connect([]string{"localhost:2379"}, "test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dlockKey := "test-dlock"
+
+	t.Logf("start first dlock [%s]", time.Now())
+	err = e.DlockWithTimeout(dlockKey, 100*time.Second, func() error {
+
+		go func() {
+			t.Logf("start second dlock [%s]", time.Now())
+			err := e.DlockWithTimeout(dlockKey, 3*time.Second, func() error {
+				time.Sleep(2 * time.Second)
+				t.Logf("sleep 2 second finish [%s]", time.Now())
+				return nil
+			})
+			if err == nil {
+				t.Fatalf("second dlock should fail [%s]", time.Now())
+			} else {
+				t.Logf("second dlock fail as except [%s]", time.Now())
+			}
+		}()
+
+		time.Sleep(10 * time.Second)
+		t.Logf("sleep 10 second finish [%s]", time.Now())
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
 }
