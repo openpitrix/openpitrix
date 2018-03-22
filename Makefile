@@ -72,8 +72,15 @@ fmt:
 	)
 	@echo "fmt done"
 
+.PHONY: fmt-check
+fmt-check: fmt-all
+	$(call get_diff_files)
+	$(if $(DIFF_FILES), \
+		exit 2 \
+	)
+
 .PHONY: build
-build: fmt
+build: fmt-check
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"

@@ -15,7 +15,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
-
 )
 
 func (p *Server) getRuntimeEnvCredential(runtimeEnvCredentialId string) (*models.RuntimeEnvCredential, error) {
