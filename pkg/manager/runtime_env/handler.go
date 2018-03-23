@@ -23,6 +23,12 @@ import (
 
 func (p *Server) CreateRuntimeEnv(ctx context.Context, req *pb.CreateRuntimeEnvRequest) (*pb.CreateRuntimeEnvResponse, error) {
 	s := sender.GetSenderFromContext(ctx)
+	//validate req
+	err := validateCreateRuntimeEnvRequest(req)
+	if err != nil {
+		logger.Errorf("CreateRuntimeEnv: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "CreateRuntimeEnv: %+v", err)
+	}
 
 	//create runtime env
 	runtimeEnvId, err := p.createRuntimeEnv(
@@ -55,8 +61,13 @@ func (p *Server) CreateRuntimeEnv(ctx context.Context, req *pb.CreateRuntimeEnvR
 }
 
 func (p *Server) DescribeRuntimeEnvs(ctx context.Context, req *pb.DescribeRuntimeEnvsRequest) (*pb.DescribeRuntimeEnvsResponse, error) {
+	//validate req
+	err := validateDescribeRuntimeEnvRequest(req)
+	if err != nil {
+		logger.Errorf("DescribeRuntimeEnvs: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "DescribeRuntimeEnvs: %+v", err)
+	}
 	var runtimeEnvIds []string
-	var err error
 	// get runtime env ids by selector
 	if req.Selector != nil {
 		runtimeEnvIds, err = p.getRuntimeEnvIdsBySelectorString(req.Selector.GetValue())
@@ -91,6 +102,12 @@ func (p *Server) DescribeRuntimeEnvs(ctx context.Context, req *pb.DescribeRuntim
 }
 
 func (p *Server) ModifyRuntimeEnv(ctx context.Context, req *pb.ModifyRuntimeEnvRequest) (*pb.ModifyRuntimeEnvResponse, error) {
+	//validate req
+	err := validateModifyRuntimeEnvRequest(req)
+	if err != nil {
+		logger.Errorf("ModifyRuntimeEnv: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "ModifyRuntimeEnv: %+v", err)
+	}
 	//check runtime env can be modified
 	runtimeEnvId := req.GetRuntimeEnvId().GetValue()
 	deleted, err := p.checkRuntimeEnvDeleted(runtimeEnvId)
@@ -133,6 +150,12 @@ func (p *Server) ModifyRuntimeEnv(ctx context.Context, req *pb.ModifyRuntimeEnvR
 }
 
 func (p *Server) DeleteRuntimeEnv(ctx context.Context, req *pb.DeleteRuntimeEnvRequest) (*pb.DeleteRuntimeEnvResponse, error) {
+	//validate req
+	err := validateDeleteRuntimeEnvRequest(req)
+	if err != nil {
+		logger.Errorf("DeleteRuntimeEnvCredential: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "DeleteRuntimeEnvCredential: %+v", err)
+	}
 
 	//check runtime env can be deleted
 	runtimeEnvId := req.GetRuntimeEnvId().GetValue()
@@ -178,6 +201,12 @@ func (p *Server) DeleteRuntimeEnv(ctx context.Context, req *pb.DeleteRuntimeEnvR
 
 func (p *Server) CreateRuntimeEnvCredential(ctx context.Context, req *pb.CreateRuntimeEnvCredentialRequset) (*pb.CreateRuntimeEnvCredentialResponse, error) {
 	s := sender.GetSenderFromContext(ctx)
+	//validate req
+	err := validateCreateRuntimeEnvCredential(req)
+	if err != nil {
+		logger.Errorf("CreateRuntimeEnvCredential: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "CreateRuntimeEnvCredential: %+v", err)
+	}
 	// create runtime env credential
 	runtimeEnvCredentialId, err := p.createRuntimeEnvCredential(
 		req.Name.GetValue(),
@@ -202,7 +231,11 @@ func (p *Server) CreateRuntimeEnvCredential(ctx context.Context, req *pb.CreateR
 }
 
 func (p *Server) DescribeRuntimeEnvCredentials(ctx context.Context, req *pb.DescribeRuntimeEnvCredentialsRequset) (*pb.DescribeRuntimeEnvCredentialsResponse, error) {
-
+	err := validateDescribeRuntimeEnvCredential(req)
+	if err != nil {
+		logger.Errorf("DescribeRuntimeEnvCredentials: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "DescribeRuntimeEnvCredentials: %+v", err)
+	}
 	pbRuntimeEnvCredential, count, err := p.getRuntimeEnvCredentialPbsByReq(req)
 	if err != nil {
 		logger.Errorf("DescribeRuntimeEnvCredentials: %+v", err)
@@ -223,6 +256,12 @@ func (p *Server) DescribeRuntimeEnvCredentials(ctx context.Context, req *pb.Desc
 }
 
 func (p *Server) ModifyRuntimeEnvCredential(ctx context.Context, req *pb.ModifyRuntimeEnvCredentialRequest) (*pb.ModifyRuntimeEnvCredentialResponse, error) {
+	//validate req
+	err := validateModifyRuntimeEnvCredential(req)
+	if err != nil {
+		logger.Errorf("ModifyRuntimeEnvCredential: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "ModifyRuntimeEnvCredential: %+v", err)
+	}
 
 	//check runtime env credential status
 	runtimeEnvCredentialId := req.GetRuntimeEnvCredentialId().GetValue()
@@ -256,6 +295,12 @@ func (p *Server) ModifyRuntimeEnvCredential(ctx context.Context, req *pb.ModifyR
 }
 
 func (p *Server) DeleteRuntimeEnvCredential(ctx context.Context, req *pb.DeleteRuntimeEnvCredentialRequset) (*pb.DeleteRuntimeEnvCredentialResponse, error) {
+	//validate req
+	err := validateDeleteRuntimeEnvCredential(req)
+	if err != nil {
+		logger.Errorf("DeleteRuntimeEnvCredential: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "DeleteRuntimeEnvCredential: %+v", err)
+	}
 
 	//check runtime env credential status
 	runtimeEnvCredentialId := req.GetRuntimeEnvCredentialId().GetValue()
@@ -300,6 +345,12 @@ func (p *Server) DeleteRuntimeEnvCredential(ctx context.Context, req *pb.DeleteR
 }
 
 func (p *Server) AttachCredentialToRuntimeEnv(ctx context.Context, req *pb.AttachCredentialToRuntimeEnvRequset) (*pb.AttachCredentialToRuntimeEnvResponse, error) {
+	//validate req
+	err := validateAttachCredentialToRuntimeEnv(req)
+	if err != nil {
+		logger.Errorf("AttachCredentialToRuntimeEnv: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "AttachCredentialToRuntimeEnv	: %+v", err)
+	}
 
 	//check runtime env status
 	runtimeEnvId := req.RuntimeEnvId.GetValue()
@@ -362,6 +413,12 @@ func (p *Server) AttachCredentialToRuntimeEnv(ctx context.Context, req *pb.Attac
 }
 
 func (p *Server) DetachCredentialFromRuntimeEnv(ctx context.Context, req *pb.DetachCredentialFromRuntimeEnvRequset) (*pb.DetachCredentialFromRuntimeEnvResponse, error) {
+	//validate req
+	err := validateDetachCredentialFromRuntimeEnv(req)
+	if err != nil {
+		logger.Errorf("DetachCredentialFromRuntimeEnv: %+v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "DetachCredentialFromRuntimeEnv	: %+v", err)
+	}
 
 	runtimeEnvId := req.RuntimeEnvId.GetValue()
 	attachment, err := p.getAttachmentByRuntimeEnvId(runtimeEnvId)

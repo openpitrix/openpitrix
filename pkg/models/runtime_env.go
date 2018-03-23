@@ -13,9 +13,10 @@ import (
 )
 
 const RuntimeEnvTableName = "runtime_env"
+const RuntimeEnvIdPrifix = "re-"
 
 func NewRuntimeEnvId() string {
-	return utils.GetUuid("re-")
+	return utils.GetUuid(RuntimeEnvIdPrifix)
 }
 
 type RuntimeEnv struct {

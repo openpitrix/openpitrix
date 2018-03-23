@@ -15,6 +15,7 @@ import (
 )
 
 const RuntimeEnvCredentialTableName = "runtime_env_credential"
+const RuntimeEnvCredentialPrifix = "rec-"
 
 type RuntimeEnvCredential struct {
 	RuntimeEnvCredentialId string
@@ -28,7 +29,7 @@ type RuntimeEnvCredential struct {
 }
 
 func NewRuntimeEnvCrentialId() string {
-	return utils.GetUuid("rec-")
+	return utils.GetUuid(RuntimeEnvCredentialPrifix)
 }
 
 var RuntimeEnvCredentialColumns = GetColumnsFromStruct(&RuntimeEnvCredential{})
