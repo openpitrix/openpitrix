@@ -1972,16 +1972,6 @@ var Files = map[string]string{
         }
       }
     },
-    "protobufStringValue": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "string",
-          "description": "The string value."
-        }
-      },
-      "description": "Wrapper message for ` + "`" + `string` + "`" + `.\n\nThe JSON representation for ` + "`" + `StringValue` + "`" + ` is JSON string."
-    },
     "openpitrixAddClusterNodesRequest": {
       "type": "object",
       "properties": {
@@ -2647,17 +2637,6 @@ var Files = map[string]string{
         }
       }
     },
-    "protobufBoolValue": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "boolean",
-          "format": "boolean",
-          "description": "The bool value."
-        }
-      },
-      "description": "Wrapper message for ` + "`" + `bool` + "`" + `.\n\nThe JSON representation for ` + "`" + `BoolValue` + "`" + ` is JSON ` + "`" + `true` + "`" + ` and ` + "`" + `false` + "`" + `."
-    },
     "protobufUInt32Value": {
       "type": "object",
       "properties": {
@@ -2834,6 +2813,17 @@ var Files = map[string]string{
           "type": "string"
         }
       }
+    },
+    "protobufBytesValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "format": "byte",
+          "description": "The bytes value."
+        }
+      },
+      "description": "Wrapper message for ` + "`" + `bytes` + "`" + `.\n\nThe JSON representation for ` + "`" + `BytesValue` + "`" + ` is JSON string."
     },
     "openpitrixCreateRepoLabelRequest": {
       "type": "object",
