@@ -7,11 +7,9 @@ package runtime_env
 const (
 	RuntimeEnvCredentialIdColumn      = "runtime_env_credential_id"
 	RuntimeEnvCredentialContentColumn = "content"
-
-	RuntimeEnvIdColumn = "runtime_env_id"
-
-	RuntimeEnvLabelValueColumn = "label_value"
-	RuntimeEnvLabelKeyColumn   = "label_key"
+	RuntimeEnvIdColumn                = "runtime_env_id"
+	RuntimeEnvLabelValueColumn        = "label_value"
+	RuntimeEnvLabelKeyColumn          = "label_key"
 )
 
 const (
@@ -22,3 +20,21 @@ const (
 	LabelKeyColumn    = "label_key"
 	LabelValueColumn  = "label_value"
 )
+
+const (
+	NameMinLength       = "1"
+	NameMaxLength       = "255"
+	LabelKeyMinLength   = "1"
+	LabelKeyMaxLength   = "50"
+	LabelValueMinLength = "1"
+	LabelValueMaxLength = "255"
+	LabelKeyFmt         = "^[a-zA-Z]([-_a-zA-Z0-9]*[a-zA-Z0-9])?$"
+)
+
+const (
+	LabelRuntime = "runtime"
+	LabelZone    = "zone"
+)
+
+var VmBaseRuntime = []string{"qingcloud"}
+var CmBaseRuntime = []string{"kubernetes"}
