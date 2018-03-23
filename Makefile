@@ -80,7 +80,7 @@ fmt-check: fmt-all
 	)
 
 .PHONY: build
-build: fmt-check
+build: fmt
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
