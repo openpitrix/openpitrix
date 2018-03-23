@@ -12,18 +12,18 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// ProtobufBoolValue Wrapper message for `bool`.
+// ProtobufBytesValue Wrapper message for `bytes`.
 //
-// The JSON representation for `BoolValue` is JSON `true` and `false`.
-// swagger:model protobufBoolValue
-type ProtobufBoolValue struct {
+// The JSON representation for `BytesValue` is JSON string.
+// swagger:model protobufBytesValue
+type ProtobufBytesValue struct {
 
-	// The bool value.
-	Value bool `json:"value,omitempty"`
+	// The bytes value.
+	Value strfmt.Base64 `json:"value,omitempty"`
 }
 
-// Validate validates this protobuf bool value
-func (m *ProtobufBoolValue) Validate(formats strfmt.Registry) error {
+// Validate validates this protobuf bytes value
+func (m *ProtobufBytesValue) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -33,7 +33,7 @@ func (m *ProtobufBoolValue) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *ProtobufBoolValue) MarshalBinary() ([]byte, error) {
+func (m *ProtobufBytesValue) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -41,8 +41,8 @@ func (m *ProtobufBoolValue) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *ProtobufBoolValue) UnmarshalBinary(b []byte) error {
-	var res ProtobufBoolValue
+func (m *ProtobufBytesValue) UnmarshalBinary(b []byte) error {
+	var res ProtobufBytesValue
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
