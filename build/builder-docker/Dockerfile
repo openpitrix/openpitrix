@@ -9,6 +9,7 @@ RUN apk add --no-cache git curl openssl
 RUN go get github.com/golang/protobuf/protoc-gen-go
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+RUN go get github.com/chai2010/protorpc/protoc-gen-stdrpc
 RUN go get golang.org/x/tools/cmd/goimports
 
 # swagger-0.13.0
