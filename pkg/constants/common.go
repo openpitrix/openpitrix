@@ -97,6 +97,9 @@ const (
 	ScalingPolicyParallel   = "parallel"
 	ScalingPolicySequential = "sequential"
 
+	NormalClusterType    = 0
+	FrontgateClusterType = 1
+
 	ServiceInit           = "init"
 	ServiceStart          = "start"
 	ServiceStop           = "stop"

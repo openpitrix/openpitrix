@@ -82,11 +82,11 @@ type OpenpitrixClusterNode struct {
 	// storage size
 	StorageSize *ProtobufUint32Value `json:"storage_size,omitempty"`
 
+	// subnet id
+	SubnetID string `json:"subnet_id,omitempty"`
+
 	// transition status
 	TransitionStatus string `json:"transition_status,omitempty"`
-
-	// vxnet id
-	VxnetID string `json:"vxnet_id,omitempty"`
 }
 
 // Validate validates this openpitrix cluster node

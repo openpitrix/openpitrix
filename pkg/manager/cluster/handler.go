@@ -6,49 +6,20 @@ package cluster
 
 import (
 	"context"
-	"strings"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	jobClient "openpitrix.io/openpitrix/pkg/client/job"
-	runtimeEnvClient "openpitrix.io/openpitrix/pkg/client/runtime_env"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/utils"
 	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
-
-func (p *Server) getRuntimeEnv(runtimeEnvId string) (*pb.RuntimeEnv, error) {
-	runtimeEnvIds := []string{runtimeEnvId}
-	response, err := runtimeEnvClient.DescribeRuntimeEnvs(&pb.DescribeRuntimeEnvsRequest{
-		RuntimeEnvId: runtimeEnvIds,
-	})
-	if err != nil {
-		logger.Errorf("Describe runtime env [%s] failed: %+v",
-			strings.Join(runtimeEnvIds, ","), err)
-		return nil, status.Errorf(codes.Internal, "Describe runtime env [%s] failed: %+v",
-			strings.Join(runtimeEnvIds, ","), err)
-	}
-
-	if response.GetTotalCount() == 0 {
-		logger.Errorf("Runtime env [%s] not found", strings.Join(runtimeEnvIds, ","))
-		return nil, status.Errorf(codes.PermissionDenied, "Runtime env [%s] not found",
-			strings.Join(runtimeEnvIds, ","), err)
-	}
-
-	return response.RuntimeEnvSet[0], nil
-}
-
-func (p *Server) getRuntime(runtimeEnv *pb.RuntimeEnv) string {
-	// TODO: need to parse runtime
-	return constants.RuntimeQingCloud
-}
 
 func (p *Server) getCluster(clusterId, userId string) (*models.Cluster, error) {
 	cluster := &models.Cluster{}
@@ -83,54 +54,65 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	// TODO: check resource permission
 
 	runtimeEnvId := req.GetRuntimeEnvId().GetValue()
-	runtimeEnv, err := p.getRuntimeEnv(runtimeEnvId)
+	runtime, err := NewRuntime(runtimeEnvId)
 	if err != nil {
 		return nil, err
 	}
 
-	runtime := p.getRuntime(runtimeEnv)
-	runtimeInterface, err := plugins.GetRuntimePlugin(runtime)
-	if err != nil {
-		logger.Errorf("No such runtime [%s]. ", runtime)
-		return nil, err
-	}
-
-	clusterId := models.NewClusterId()
+	appId := req.GetAppId().GetValue()
 	versionId := req.GetVersionId().GetValue()
 	conf := req.GetConf().GetValue()
-	clusterWrapper, err := runtimeInterface.ParseClusterConf(versionId, conf)
+
+	clusterId := models.NewClusterId()
+
+	clusterWrapper, err := runtime.RuntimeInterface.ParseClusterConf(versionId, conf)
 	if err != nil {
 		logger.Errorf("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
 		return nil, err
 	}
 
-	// TODO: need to create or check frontgateId
-	frontgateId := ""
-
-	register := &Register{Pi: p.Pi}
-	err = register.RegisterClusterWrapper(clusterId, runtimeEnvId, frontgateId, s.UserId, clusterWrapper)
+	subnet, err := runtime.RuntimeInterface.DescribeSubnet(clusterWrapper.Cluster.SubnetId)
 	if err != nil {
+		logger.Errorf("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
+		return nil, err
+	}
+	vpcId := subnet.VpcId
+
+	register := &Register{
+		Pi:       p.Pi,
+		SubnetId: clusterWrapper.Cluster.SubnetId,
+		VpcId:    vpcId,
+		Runtime:  runtime,
+		Owner:    s.UserId,
+	}
+	fg := &Frontgate{
+		Pi:      p.Pi,
+		Runtime: runtime,
+	}
+	frontgate, err := fg.GetActiveFrontgate(vpcId, s.UserId, register)
+	if err != nil {
+		logger.Errorf("Get frontgate in vpc [%s] user [%s] failed. ", vpcId, s.UserId)
 		return nil, err
 	}
 
-	_, err = p.Db.
-		Update(models.ClusterTableName).
-		Set("transition_status", constants.StatusCreating).
-		Where(db.Eq("cluster_id", clusterId)).
-		Exec()
+	register.ClusterId = clusterId
+	register.FrontgateId = frontgate.ClusterId
+	register.ClusterType = constants.NormalClusterType
+	register.ClusterWrapper = clusterWrapper
+
+	err = register.RegisterClusterWrapper()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-			clusterId, constants.StatusCreating, err)
+		return nil, err
 	}
 
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		clusterId,
-		req.GetAppId().GetValue(),
-		req.GetVersionId().GetValue(),
+		appId,
+		versionId,
 		constants.ActionCreateCluster,
 		"", // TODO: need to generate
-		runtime,
+		runtime.Runtime,
 		s.UserId,
 	)
 
@@ -182,7 +164,7 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
-		"name", "instance_id", "volume_id", "vxnet_id", "private_ip",
+		"name", "instance_id", "volume_id", "subnet_id", "private_ip",
 		"status", "transition_status", "health_status", "pub_key", "status_time")
 	_, err = p.Db.
 		Update(models.ClusterNodeTableName).
@@ -209,17 +191,8 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 		if err != nil {
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
-		_, err = p.Db.
-			Update(models.ClusterTableName).
-			Set("transition_status", constants.StatusDeleting).
-			Where(db.Eq("cluster_id", clusterId)).
-			Exec()
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-				clusterId, constants.StatusDeleting, err)
-		}
 
-		runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+		runtime, err := NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
@@ -230,7 +203,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			cluster.VersionId,
 			constants.ActionDeleteClusters,
 			"", // TODO: need to generate
-			p.getRuntime(runtimeEnv),
+			runtime.Runtime,
 			s.UserId,
 		)
 
@@ -256,17 +229,8 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
-	_, err = p.Db.
-		Update(models.ClusterTableName).
-		Set("transition_status", constants.StatusUpgrading).
-		Where(db.Eq("cluster_id", clusterId)).
-		Exec()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-			clusterId, constants.StatusUpgrading, err)
-	}
 
-	runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+	runtime, err := NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +242,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		cluster.VersionId,
 		constants.ActionUpgradeCluster,
 		"", // TODO: need to generate
-		p.getRuntime(runtimeEnv),
+		runtime.Runtime,
 		s.UserId,
 	)
 
@@ -302,17 +266,8 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
-	_, err = p.Db.
-		Update(models.ClusterTableName).
-		Set("transition_status", constants.StatusRollbacking).
-		Where(db.Eq("cluster_id", clusterId)).
-		Exec()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-			clusterId, constants.StatusRollbacking, err)
-	}
 
-	runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+	runtime, err := NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -324,7 +279,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		cluster.VersionId,
 		constants.ActionRollbackCluster,
 		"", // TODO: need to generate
-		p.getRuntime(runtimeEnv),
+		runtime.Runtime,
 		s.UserId,
 	)
 
@@ -348,17 +303,8 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
-	_, err = p.Db.
-		Update(models.ClusterTableName).
-		Set("transition_status", constants.StatusResizing).
-		Where(db.Eq("cluster_id", clusterId)).
-		Exec()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-			clusterId, constants.StatusResizing, err)
-	}
 
-	runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+	runtime, err := NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -370,7 +316,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		cluster.VersionId,
 		constants.ActionResizeCluster,
 		"", // TODO: need to generate
-		p.getRuntime(runtimeEnv),
+		runtime.Runtime,
 		s.UserId,
 	)
 
@@ -394,17 +340,8 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
-	_, err = p.Db.
-		Update(models.ClusterTableName).
-		Set("transition_status", constants.StatusScaling).
-		Where(db.Eq("cluster_id", clusterId)).
-		Exec()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-			clusterId, constants.StatusScaling, err)
-	}
 
-	runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+	runtime, err := NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -416,7 +353,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		cluster.VersionId,
 		constants.ActionAddClusterNodes,
 		"", // TODO: need to generate
-		p.getRuntime(runtimeEnv),
+		runtime.Runtime,
 		s.UserId,
 	)
 
@@ -440,17 +377,8 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
-	_, err = p.Db.
-		Update(models.ClusterTableName).
-		Set("transition_status", constants.StatusScaling).
-		Where(db.Eq("cluster_id", clusterId)).
-		Exec()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-			clusterId, constants.StatusScaling, err)
-	}
 
-	runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+	runtime, err := NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -462,7 +390,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		cluster.VersionId,
 		constants.ActionDeleteClusterNodes,
 		"", // TODO: need to generate
-		p.getRuntime(runtimeEnv),
+		runtime.Runtime,
 		s.UserId,
 	)
 
@@ -486,17 +414,8 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
-	_, err = p.Db.
-		Update(models.ClusterTableName).
-		Set("transition_status", constants.StatusUpdating).
-		Where(db.Eq("cluster_id", clusterId)).
-		Exec()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-			clusterId, constants.StatusUpdating, err)
-	}
 
-	runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+	runtime, err := NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -508,7 +427,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		cluster.VersionId,
 		constants.ActionUpdateClusterEnv,
 		"", // TODO: need to generate
-		p.getRuntime(runtimeEnv),
+		runtime.Runtime,
 		s.UserId,
 	)
 
@@ -597,20 +516,12 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 		if err != nil {
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
-		_, err = p.Db.
-			Update(models.ClusterTableName).
-			Set("transition_status", constants.StatusStopping).
-			Where(db.Eq("cluster_id", clusterId)).
-			Exec()
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-				clusterId, constants.StatusStopping, err)
-		}
 
-		runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+		runtime, err := NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
+
 		newJob := models.NewJob(
 			constants.PlaceHolder,
 			clusterId,
@@ -618,7 +529,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			cluster.VersionId,
 			constants.ActionStopClusters,
 			"", // TODO: need to generate
-			p.getRuntime(runtimeEnv),
+			runtime.Runtime,
 			s.UserId,
 		)
 
@@ -645,20 +556,22 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 		if err != nil {
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
-		_, err = p.Db.
-			Update(models.ClusterTableName).
-			Set("transition_status", constants.StatusStarting).
-			Where(db.Eq("cluster_id", clusterId)).
-			Exec()
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-				clusterId, constants.StatusStarting, err)
-		}
 
-		runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+		runtime, err := NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
+
+		fg := &Frontgate{
+			Pi:      p.Pi,
+			Runtime: runtime,
+		}
+		err = fg.ActivateFrontgate(cluster.FrontgateId)
+		if err != nil {
+			logger.Errorf("Activate frontgate [%s] failed. ", cluster.FrontgateId)
+			return nil, err
+		}
+
 		newJob := models.NewJob(
 			constants.PlaceHolder,
 			clusterId,
@@ -666,7 +579,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			cluster.VersionId,
 			constants.ActionStartClusters,
 			"", // TODO: need to generate
-			p.getRuntime(runtimeEnv),
+			runtime.Runtime,
 			s.UserId,
 		)
 
@@ -693,20 +606,22 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 		if err != nil {
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
-		_, err = p.Db.
-			Update(models.ClusterTableName).
-			Set("transition_status", constants.StatusRecovering).
-			Where(db.Eq("cluster_id", clusterId)).
-			Exec()
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-				clusterId, constants.StatusRecovering, err)
-		}
 
-		runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+		runtime, err := NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
+
+		fg := &Frontgate{
+			Pi:      p.Pi,
+			Runtime: runtime,
+		}
+		err = fg.ActivateFrontgate(cluster.FrontgateId)
+		if err != nil {
+			logger.Errorf("Activate frontgate [%s] failed. ", cluster.FrontgateId)
+			return nil, err
+		}
+
 		newJob := models.NewJob(
 			constants.PlaceHolder,
 			clusterId,
@@ -714,7 +629,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			cluster.VersionId,
 			constants.ActionRecoverClusters,
 			"", // TODO: need to generate
-			p.getRuntime(runtimeEnv),
+			runtime.Runtime,
 			s.UserId,
 		)
 
@@ -741,20 +656,12 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 		if err != nil {
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
-		_, err = p.Db.
-			Update(models.ClusterTableName).
-			Set("transition_status", constants.StatusCeasing).
-			Where(db.Eq("cluster_id", clusterId)).
-			Exec()
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "Update cluster [%s] transition_status [%s] failed: %+v",
-				clusterId, constants.StatusCeasing, err)
-		}
 
-		runtimeEnv, err := p.getRuntimeEnv(cluster.RuntimeEnvId)
+		runtime, err := NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
+
 		newJob := models.NewJob(
 			constants.PlaceHolder,
 			clusterId,
@@ -762,7 +669,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			cluster.VersionId,
 			constants.ActionCeaseClusters,
 			"", // TODO: need to generate
-			p.getRuntime(runtimeEnv),
+			runtime.Runtime,
 			s.UserId,
 		)
 

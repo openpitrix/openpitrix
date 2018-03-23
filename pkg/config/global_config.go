@@ -25,7 +25,8 @@ type RepoServiceConfig struct {
 }
 
 type ClusterServiceConfig struct {
-	Plugins []string `json:"plugins"`
+	Plugins       []string `json:"plugins"`
+	FrontgateConf string   `json:"frontgate_conf"`
 }
 
 const InitialGlobalConfig = `

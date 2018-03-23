@@ -2118,6 +2118,9 @@
           "items": {
             "$ref": "#/definitions/openpitrixClusterNode"
           }
+        },
+        "vpc_id": {
+          "type": "string"
         }
       }
     },
@@ -2136,7 +2139,7 @@
         "instance_id": {
           "type": "string"
         },
-        "vxnet_id": {
+        "subnet_id": {
           "type": "string"
         },
         "private_ip": {
@@ -2347,7 +2350,7 @@
         "volume_id": {
           "type": "string"
         },
-        "vxnet_id": {
+        "subnet_id": {
           "type": "string"
         },
         "private_ip": {
