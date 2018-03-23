@@ -27,6 +27,9 @@ generate: $(PROTO_FILES) Makefile
 	# generate client code
 	rm -rf ../test/models/* ../test/client/*
 	cd ../test/ && swagger generate client -f ../pkg/cmd/api/spec/api.swagger.json -A openpitrix && chown -R $${USER_ID}:$${GROUP_ID} ../pkg ../test
+	# generate frontgate/drone code
+	cd frontgate && make generate
+	cd drone && make generate
 	@echo "ok"
 
 tools:
