@@ -1,0 +1,30 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix.drone;
+
+service DroneService {
+	rpc StartConfd (Task) returns (Empty);
+}
+
+message Task {
+	string id = 1;
+	string action = 2;
+	string target = 3;
+
+	TaskDirective directive = 4;
+}
+
+message TaskDirective {
+	string drone_ip = 1;
+	string frontgate_id = 2;
+
+	string command = 3;
+	string command_retry_times = 4;
+	string command_timeout_seconds = 5;
+}
+
+message Empty {}

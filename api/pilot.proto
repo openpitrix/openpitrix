@@ -69,4 +69,6 @@ service PilotManager {
 			get: "/v1/pilots"
 		};
 	}
+
+	rpc FrontgateChannel(stream google.protobuf.BytesValue) returns (stream google.protobuf.BytesValue);
 }
