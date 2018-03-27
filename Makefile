@@ -134,6 +134,7 @@ e2e-test:
 .PHONY: ci-test
 ci-test: compose-update
 	sleep 20
+	@make unit-test
 	@make e2e-test
 	@echo "ci-test done"
 
@@ -141,3 +142,14 @@ ci-test: compose-update
 clean:
 	-make -C ./pkg/version clean
 	@echo "ok"
+
+.PHONY: unit-test
+unit-test:
+	export OP_DB_UNIT_TEST=1 && \
+	export OPENPITRIX_MYSQL_HOST=127.0.0.1 && \
+	export OPENPITRIX_MYSQL_PORT=13306 && \
+	cd ./pkg/manager/runtime_env/ && go test -v ./...
+	export OP_ETCD_UNIT_TEST=1 && \
+	export OPENPITRIX_ETCD_ENDPOINTS=127.0.0.1:12379 && \
+	cd ./pkg/etcd/ && go test -v ./...
+	cd ./pkg/db/ && go test -v ./...
