@@ -7,24 +7,23 @@ syntax = "proto3";
 package openpitrix.drone;
 
 service DroneService {
-	rpc StartConfd (Task) returns (Empty);
+	rpc GetInfo(Empty) returns (Info);
+	rpc StartConfd (Empty) returns (Empty);
+	rpc StopConfd (Empty) returns (Empty);
+	rpc RegisterMetadata (Empty) returns (Empty);
+	rpc DeRegisterMetadata (Empty) returns (Empty);
+	rpc RegisterCmd (Empty) returns (Empty);
+	rpc DeRegisterCmd (Empty) returns (Empty);
+	rpc GetConfdStatus(Empty) returns (ConfdStatus)
 }
 
-message Task {
-	string id = 1;
-	string action = 2;
-	string target = 3;
-
-	TaskDirective directive = 4;
-}
-
-message TaskDirective {
+message Info {
 	string drone_ip = 1;
-	string frontgate_id = 2;
-
-	string command = 3;
-	string command_retry_times = 4;
-	string command_timeout_seconds = 5;
 }
-
+message ConfdConfig {
+	// libconfd.Config
+}
+message ConfdStatus {
+	string status = 1;
+}
 message Empty {}
