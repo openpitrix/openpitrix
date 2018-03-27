@@ -137,14 +137,16 @@ func (p *Server) insertRuntimeEnvLabels(runtimeEnvId string, labelMap map[string
 }
 
 func (p *Server) deleteRuntimeEnvLabels(runtimeEnvId string, labelMap map[string]string) error {
+	var conditions []dbr.Builder
 	for labelKey, labelValue := range labelMap {
-		_, err := p.Db.
-			DeleteFrom(models.RuntimeEnvLabelTableName).
-			Where(BuildDeleteLabelFilterConditions(runtimeEnvId, labelKey, labelValue)).
-			Exec()
-		if err != nil {
-			return err
-		}
+		conditions = append(conditions, BuildDeleteLabelFilterCondition(runtimeEnvId, labelKey, labelValue))
+	}
+	_, err := p.Db.
+		DeleteFrom(models.RuntimeEnvLabelTableName).
+		Where(db.Or(conditions...)).
+		Exec()
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -265,7 +267,7 @@ func (p *Server) updateRuntimeEnvCredentialByMap(runtimeEnvCredentialId string, 
 	return err
 }
 
-func BuildDeleteLabelFilterConditions(runtimeEnvId, labelKey, labelValue string) dbr.Builder {
+func BuildDeleteLabelFilterCondition(runtimeEnvId, labelKey, labelValue string) dbr.Builder {
 	var conditions []dbr.Builder
 	conditions = append(conditions, db.Eq(RuntimeEnvIdColumn, runtimeEnvId))
 	conditions = append(conditions, db.Eq(LabelKeyColumn, labelKey))
