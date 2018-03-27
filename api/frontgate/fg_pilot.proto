@@ -21,10 +21,6 @@ service FrontgateServiceForPilot {
 	rpc DeregisterCmd (DeRegisterCmdRequest) returns (Empty);
 }
 
-service FrontgateServiceForDrone {
-	rpc PublicCmdResult(CommandResult) returns (Empty);
-}
-
 message Info {
 	string frontgate_id = 1;
 	string frontgate_service_id = 2;
@@ -36,10 +32,6 @@ message ConfdInfo {
 	string status = 2;
 }
 
-message CommandResult {
-	string drone_ip = 1;
-	string cmd = 2;
-}
 
 message StartConfdRequest {
 	string drone_ip = 1;
