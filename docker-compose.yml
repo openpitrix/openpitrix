@@ -14,12 +14,14 @@ services:
       - ${DATA_PATH}/mysql:/var/lib/mysql
       - ./pkg/db/ddl:/docker-entrypoint-initdb.d
     ports:
-     - "13306:3306" # only for debug
+     - "13306:3306" # for unit-test & debug
     container_name: "openpitrix-db"
   openpitrix-etcd:
     image: "appcelerator/etcd"
     volumes:
       - ${DATA_PATH}/etcd:/data
+    ports:
+     - "12379:2379" # for unit-test & debug
     container_name: "openpitrix-etcd"
   openpitrix-api-gateway:
     build: .
