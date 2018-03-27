@@ -11,18 +11,18 @@ service FrontgateServiceForPilot {
 	rpc CloseChannel (Empty) returns (Empty);
 
 	rpc GetConfdInfo(Empty) returns (ConfdInfo);
-	rpc StartConfd (StartConfdRequest) returns (Result);
-	rpc StopConfd (StopConfdRequest) returns (Result);
+	rpc StartConfd (StartConfdRequest) returns (Empty);
+	rpc StopConfd (StopConfdRequest) returns (Empty);
 
-	rpc RegisterMetadata (RegisterMetadataRequest) returns (Result);
-	rpc DeregisterMetadata (DeRegisterMetadataRequest) returns (Result);
+	rpc RegisterMetadata (RegisterMetadataRequest) returns (Empty);
+	rpc DeregisterMetadata (DeRegisterMetadataRequest) returns (Empty);
 
-	rpc RegisterCmd (RegisterCmdRequest) returns (Result);
-	rpc DeregisterCmd (DeRegisterCmdRequest) returns (Result);
+	rpc RegisterCmd (RegisterCmdRequest) returns (Empty);
+	rpc DeregisterCmd (DeRegisterCmdRequest) returns (Empty);
 }
 
 service FrontgateServiceForDrone {
-	rpc PublicCmdResult(CommandResult) returns (Result);
+	rpc PublicCmdResult(CommandResult) returns (Empty);
 }
 
 message Info {
@@ -86,8 +86,4 @@ message DeRegisterCmdRequest {
 	int32 retry = 6;
 }
 
-message Result {
-	int32 ret_code = 1;
-	string err_msg = 2;
-}
 message Empty {}
