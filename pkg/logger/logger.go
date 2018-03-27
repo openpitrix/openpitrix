@@ -6,10 +6,10 @@ package logger
 
 import (
 	"fmt"
-	"log"
-	"os"
+	"runtime"
 	"strings"
 	"sync/atomic"
+	"time"
 )
 
 type Level uint32
@@ -127,13 +127,11 @@ func Disable() {
 }
 
 func NewLogger() *Logger {
-	l := log.New(os.Stdout, "", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
-	return &Logger{Level: InfoLevel, Logger: l}
+	return &Logger{Level: InfoLevel}
 }
 
 type Logger struct {
-	Level  Level
-	Logger *log.Logger
+	Level Level
 }
 
 func (logger *Logger) level() Level {
@@ -149,21 +147,35 @@ func (logger *Logger) SetLevelByString(level string) {
 }
 
 func (logger *Logger) formatOutput(level Level, output string) string {
-	return "[" + strings.ToUpper(level.String()) + "] " + output
+	now := time.Now().Format("2006-01-02 15:04:05.99999")
+	_, file, line, ok := runtime.Caller(4)
+	if !ok {
+		file = "???"
+		line = 0
+	}
+	// short file name
+	for i := len(file) - 1; i > 0; i-- {
+		if file[i] == '/' {
+			file = file[i+1:]
+			break
+		}
+	}
+	// 2018-03-27 02:08:44.93894 -INFO- Api service start http://openpitrix-api-gateway:9100 (main.go:44)
+	return fmt.Sprintf("%s -%s- %s (%s:%d)", now, strings.ToUpper(level.String()), output, file, line)
 }
 
 func (logger *Logger) log(level Level, args ...interface{}) {
 	if logger.level() < level {
 		return
 	}
-	logger.Logger.Output(4, logger.formatOutput(level, fmt.Sprint(args...)))
+	fmt.Println(logger.formatOutput(level, fmt.Sprint(args...)))
 }
 
 func (logger *Logger) logf(level Level, format string, args ...interface{}) {
 	if logger.level() < level {
 		return
 	}
-	logger.Logger.Output(4, logger.formatOutput(level, fmt.Sprintf(format, args...)))
+	fmt.Println(logger.formatOutput(level, fmt.Sprintf(format, args...)))
 }
 
 func (logger *Logger) Debugf(format string, args ...interface{}) {

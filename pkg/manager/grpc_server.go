@@ -39,8 +39,8 @@ func NewGrpcServer(serviceName string, port int) *GrpcServer {
 }
 
 func (g *GrpcServer) Serve(callback RegisterCallback) {
-	logger.Infof("Openpitrix %s\n", version.ShortVersion)
-	logger.Infof("Service [%s] start listen at port [%d]\n", g.ServiceName, g.Port)
+	logger.Infof("Openpitrix %s", version.ShortVersion)
+	logger.Infof("Service [%s] start listen at port [%d]", g.ServiceName, g.Port)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", g.Port))
 	if err != nil {
 		err = errors.WithStack(err)
