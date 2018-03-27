@@ -1,10 +1,7 @@
 package runtime_env
 
 import (
-	"fmt"
 	"testing"
-
-	"github.com/koding/multiconfig"
 
 	"openpitrix.io/openpitrix/pkg/config/test_config"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -15,40 +12,20 @@ import (
 
 var p = &Server{&pi.Pi{}}
 
-var dbSessionSuccess = false
-var testConfig *test_config.OpTestConfig
-
 func init() {
-	testConfig = test_config.LoadConf()
-	if testConfig.DbTest {
-		db, err := test_config.OpenDatabase(testConfig.Db)
-		if err != nil {
-			logger.Fatalf("failed to open database %+v", testConfig.Db)
-		}
-		err = db.Ping()
-		if err != nil {
-			logger.Fatalf("failed to ping database %+v", testConfig.Db)
-		}
-		dbSessionSuccess = true
-		p.Db = db
+	dbConfig := test_config.NewTestDbConfig("runtime")
+	d, err := db.OpenDatabase(dbConfig)
+	if err != nil {
+		logger.Fatalf("failed to open database %+v", dbConfig)
 	}
-}
-
-func checkDbTest(t *testing.T) {
-	if !testConfig.DbTest {
-		fmt.Println("run db unit tests by set environment variables:")
-		loader := &multiconfig.EnvironmentLoader{}
-		loader.PrintEnvs(new(test_config.OpTestConfig))
-		t.Skip()
+	err = d.Ping()
+	if err != nil {
+		logger.Fatalf("failed to ping database %+v", dbConfig)
 	}
+	p.Db = d
 }
 
 func TestInsertRuntimeEnvLabels_byCount(t *testing.T) {
-	checkDbTest(t)
-	if !dbSessionSuccess {
-		t.Fatalf("failed to open database")
-	}
-
 	testRuntimeEnv := models.NewRuntimeEnv("test", "test", "http://openpitrix.io", "system")
 	_, err := p.Db.InsertInto(models.RuntimeEnvTableName).
 		Columns(models.RuntimeEnvColumns...).
