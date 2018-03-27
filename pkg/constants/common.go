@@ -29,6 +29,7 @@ const (
 	TaskManagerPort       = 9107
 	RepoIndexerPort       = 9108
 	PilotManagerPort      = 9110
+	DroneServicePort      = 9111
 )
 
 const (

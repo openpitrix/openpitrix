@@ -30,6 +30,8 @@ var (
 )
 
 type FrontgateService interface {
+	GetInfo(in *Empty, out *Info) error
+	CloseChannel(in *Empty, out *Empty) error
 	StartConfd(in *Task, out *Empty) error
 	RegisterMetadata(in *Task, out *Empty) error
 	DeregisterMetadata(in *Task, out *Empty) error
@@ -113,6 +115,84 @@ type FrontgateServiceClient struct {
 func NewFrontgateServiceClient(conn io.ReadWriteCloser) *FrontgateServiceClient {
 	c := rpc.NewClient(conn)
 	return &FrontgateServiceClient{c}
+}
+
+func (c *FrontgateServiceClient) GetInfo(in *Empty) (out *Info, err error) {
+	if in == nil {
+		in = new(Empty)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Info)
+	if err = c.Call("FrontgateService.GetInfo", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceClient) AsyncGetInfo(in *Empty, out *Info, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(Empty)
+	}
+	return c.Go(
+		"FrontgateService.GetInfo",
+		in, out,
+		done,
+	)
+}
+
+func (c *FrontgateServiceClient) CloseChannel(in *Empty) (out *Empty, err error) {
+	if in == nil {
+		in = new(Empty)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Empty)
+	if err = c.Call("FrontgateService.CloseChannel", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceClient) AsyncCloseChannel(in *Empty, out *Empty, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(Empty)
+	}
+	return c.Go(
+		"FrontgateService.CloseChannel",
+		in, out,
+		done,
+	)
 }
 
 func (c *FrontgateServiceClient) StartConfd(in *Task) (out *Empty, err error) {

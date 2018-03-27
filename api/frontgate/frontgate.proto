@@ -7,6 +7,9 @@ syntax = "proto3";
 package openpitrix.frontgate;
 
 service FrontgateService {
+	rpc GetInfo (Empty) returns (Info);
+	rpc CloseChannel (Empty) returns (Empty);
+
 	rpc StartConfd (Task) returns (Empty);
 
 	rpc RegisterMetadata (Task) returns (Empty);
@@ -14,6 +17,11 @@ service FrontgateService {
 
 	rpc RegisterCmd (Task) returns (Empty);
 	rpc DeregisterCmd (Task) returns (Empty);
+}
+
+message Info {
+	string frontgate_id = 1;
+	string frontgate_service_id = 2;
 }
 
 message Task {
