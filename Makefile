@@ -134,6 +134,7 @@ e2e-test:
 .PHONY: ci-test
 ci-test: compose-update
 	sleep 20
+	@make unit-test
 	@make e2e-test
 	@echo "ci-test done"
 
@@ -141,3 +142,9 @@ ci-test: compose-update
 clean:
 	-make -C ./pkg/version clean
 	@echo "ok"
+
+.PHONY: unit-test
+unit-test:
+	cd ./pkg/manager/runtime_env/ && go test -v ./...
+	cd ./pkg/etcd/ && go test -v ./...
+	cd ./pkg/db/ && go test -v ./...

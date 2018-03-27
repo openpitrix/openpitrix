@@ -10,11 +10,12 @@ import (
 	"testing"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/config/test_config"
 	"openpitrix.io/openpitrix/pkg/etcd"
 )
 
 func TestEtcdQueue(t *testing.T) {
-	e, err := etcd.Connect([]string{"localhost:2379"}, "test")
+	e, err := etcd.Connect(test_config.NewTestEtcdEndpoints(), "test")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -39,7 +40,7 @@ func TestEtcdQueue(t *testing.T) {
 }
 
 func TestDlockWithTimeout(t *testing.T) {
-	e, err := etcd.Connect([]string{"localhost:2379"}, "test")
+	e, err := etcd.Connect(test_config.NewTestEtcdEndpoints(), "test")
 	if err != nil {
 		t.Fatal(err)
 	}
