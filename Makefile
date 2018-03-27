@@ -135,9 +135,25 @@ e2e-test:
 ci-test: compose-update
 	sleep 20
 	@make e2e-test
+	@make ci-unit-test
 	@echo "ci-test done"
 
 .PHONY: clean
 clean:
 	-make -C ./pkg/version clean
 	@echo "ok"
+
+.PHONY: test-db-up
+test-db-up:
+	docker-compose -p openpitrix-test-db -f ./docker-compose.test.yml up -d openpitrix-db && \
+	sleep 20 && \
+	docker-compose -p openpitrix-test-db -f ./docker-compose.test.yml up -d
+
+.PHONY: test-db-down
+test-db-down:
+	docker-compose -p openpitrix-test-db down
+
+.PHONY: ci-unit-test
+ci-unit-test: test-db-up
+	cd ./pkg/manager/runtime_env/ && OPTESTCONFIG_DBTEST=true OPTESTCONFIG_DB_DATABASE="runtime" go test -v ./...
+	make test-db-down
