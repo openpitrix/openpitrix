@@ -7,24 +7,56 @@ syntax = "proto3";
 package openpitrix.drone;
 
 service DroneService {
-	rpc StartConfd (Task) returns (Empty);
+	rpc GetInfo(Empty) returns (Info);
+	rpc GetConfdConfig(Empty) returns (ConfdConfig);
+	rpc GetBackendConfig(Empty) returns (BackendConfig);
+	rpc StartConfd (Empty) returns (Empty);
+	rpc StopConfd (Empty) returns (Empty);
+	rpc GetConfdStatus(Empty) returns (ConfdStatus)
 }
 
-message Task {
-	string id = 1;
-	string action = 2;
-	string target = 3;
-
-	TaskDirective directive = 4;
+service DroneServiceForFrontGate {
+	rpc GetRegisterCmdStatus (RegisterCmd) returns (ConfdStatus);
 }
 
-message TaskDirective {
+message Info {
 	string drone_ip = 1;
-	string frontgate_id = 2;
+	repeated string cmds = 2;
+}
 
-	string command = 3;
-	string command_retry_times = 4;
-	string command_timeout_seconds = 5;
+message ConfdConfig {
+	// libconfd.Config
+	google.protobuf.StringValue conf_dir = 1;
+	google.protobuf.Int32Value interval = 2;
+	google.protobuf.BoolValue noop =3;
+	google.protobuf.StringValue prefix = 4;
+	google.protobuf.BoolValue sync_only = 5;
+	google.protobuf.StringValue log_level = 6;
+}
+
+message BackendConfig {
+	google.protobuf.StringValue type = 1;
+	repeated string hosts = 2;
+	google.protobuf.StringValue username = 3;
+	google.protobuf.StringValue password = 4;
+	google.protobuf.StringValue client_ca_keys = 5;
+	google.protobuf.StringValue client_cert = 6;
+	google.protobuf.StringValue client_key = 7;
+
+}
+
+message ConfdStatus {
+	string status = 1;
+}
+
+message RegisterCmd {
+	string fg_id = 1;
+	string subtask_id = 2;
+	string cmd = 3;
+}
+
+message ConfdStatus {
+	string status = 2;
 }
 
 message Empty {}

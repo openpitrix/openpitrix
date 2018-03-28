@@ -51,7 +51,7 @@ message GetSubtaskStatusResponse {
 	repeated SubtaskStatus subtask_status_set = 2;
 }
 
-service PilotManager {
+service PilotService {
 	rpc HandleSubtask (HandleSubtaskRequest) returns (HandleSubtaskResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "handle subtask"
@@ -69,6 +69,8 @@ service PilotManager {
 			get: "/v1/pilots"
 		};
 	}
+}
 
-	rpc FrontgateChannel(stream google.protobuf.BytesValue) returns (stream google.protobuf.BytesValue);
+service PilotServiceForFrontgate {
+	rpc Channel(stream google.protobuf.BytesValue) returns (stream google.protobuf.BytesValue);
 }

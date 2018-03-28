@@ -8,9 +8,15 @@ It is generated from these files:
 	frontgate.proto
 
 It has these top-level messages:
+	CommandResult
 	Info
-	Task
-	TaskDirective
+	ConfdInfo
+	StartConfdRequest
+	StopConfdRequest
+	RegisterMetadataRequest
+	DeRegisterMetadataRequest
+	RegisterCmdRequest
+	DeRegisterCmdRequest
 	Empty
 */
 package openpitrix_frontgate
@@ -30,15 +36,40 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type CommandResult struct {
+	DroneIp string `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	Cmd     string `protobuf:"bytes,2,opt,name=cmd" json:"cmd,omitempty"`
+}
+
+func (m *CommandResult) Reset()                    { *m = CommandResult{} }
+func (m *CommandResult) String() string            { return proto.CompactTextString(m) }
+func (*CommandResult) ProtoMessage()               {}
+func (*CommandResult) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+
+func (m *CommandResult) GetDroneIp() string {
+	if m != nil {
+		return m.DroneIp
+	}
+	return ""
+}
+
+func (m *CommandResult) GetCmd() string {
+	if m != nil {
+		return m.Cmd
+	}
+	return ""
+}
+
 type Info struct {
-	FrontgateId        string `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
-	FrontgateServiceId string `protobuf:"bytes,2,opt,name=frontgate_service_id,json=frontgateServiceId" json:"frontgate_service_id,omitempty"`
+	FrontgateId        string   `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	FrontgateServiceId string   `protobuf:"bytes,2,opt,name=frontgate_service_id,json=frontgateServiceId" json:"frontgate_service_id,omitempty"`
+	DroneIps           []string `protobuf:"bytes,3,rep,name=drone_ips,json=droneIps" json:"drone_ips,omitempty"`
 }
 
 func (m *Info) Reset()                    { *m = Info{} }
 func (m *Info) String() string            { return proto.CompactTextString(m) }
 func (*Info) ProtoMessage()               {}
-func (*Info) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*Info) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
 func (m *Info) GetFrontgateId() string {
 	if m != nil {
@@ -54,92 +85,307 @@ func (m *Info) GetFrontgateServiceId() string {
 	return ""
 }
 
-type Task struct {
-	Id        string         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Action    string         `protobuf:"bytes,2,opt,name=action" json:"action,omitempty"`
-	Target    string         `protobuf:"bytes,3,opt,name=target" json:"target,omitempty"`
-	Directive *TaskDirective `protobuf:"bytes,4,opt,name=directive" json:"directive,omitempty"`
-}
-
-func (m *Task) Reset()                    { *m = Task{} }
-func (m *Task) String() string            { return proto.CompactTextString(m) }
-func (*Task) ProtoMessage()               {}
-func (*Task) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
-
-func (m *Task) GetId() string {
+func (m *Info) GetDroneIps() []string {
 	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *Task) GetAction() string {
-	if m != nil {
-		return m.Action
-	}
-	return ""
-}
-
-func (m *Task) GetTarget() string {
-	if m != nil {
-		return m.Target
-	}
-	return ""
-}
-
-func (m *Task) GetDirective() *TaskDirective {
-	if m != nil {
-		return m.Directive
+		return m.DroneIps
 	}
 	return nil
 }
 
-type TaskDirective struct {
-	DroneIp               string `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
-	FrontgateId           string `protobuf:"bytes,2,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
-	Command               string `protobuf:"bytes,3,opt,name=command" json:"command,omitempty"`
-	CommandRetryTimes     string `protobuf:"bytes,4,opt,name=command_retry_times,json=commandRetryTimes" json:"command_retry_times,omitempty"`
-	CommandTimeoutSeconds string `protobuf:"bytes,5,opt,name=command_timeout_seconds,json=commandTimeoutSeconds" json:"command_timeout_seconds,omitempty"`
+type ConfdInfo struct {
+	DroneIp string `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	Status  string `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
 }
 
-func (m *TaskDirective) Reset()                    { *m = TaskDirective{} }
-func (m *TaskDirective) String() string            { return proto.CompactTextString(m) }
-func (*TaskDirective) ProtoMessage()               {}
-func (*TaskDirective) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (m *ConfdInfo) Reset()                    { *m = ConfdInfo{} }
+func (m *ConfdInfo) String() string            { return proto.CompactTextString(m) }
+func (*ConfdInfo) ProtoMessage()               {}
+func (*ConfdInfo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
-func (m *TaskDirective) GetDroneIp() string {
+func (m *ConfdInfo) GetDroneIp() string {
 	if m != nil {
 		return m.DroneIp
 	}
 	return ""
 }
 
-func (m *TaskDirective) GetFrontgateId() string {
+func (m *ConfdInfo) GetStatus() string {
 	if m != nil {
-		return m.FrontgateId
+		return m.Status
 	}
 	return ""
 }
 
-func (m *TaskDirective) GetCommand() string {
+type StartConfdRequest struct {
+	DroneIp        string   `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	FrontgateIps   []string `protobuf:"bytes,2,rep,name=frontgate_ips,json=frontgateIps" json:"frontgate_ips,omitempty"`
+	TimeoutSeccond int32    `protobuf:"varint,3,opt,name=timeout_seccond,json=timeoutSeccond" json:"timeout_seccond,omitempty"`
+}
+
+func (m *StartConfdRequest) Reset()                    { *m = StartConfdRequest{} }
+func (m *StartConfdRequest) String() string            { return proto.CompactTextString(m) }
+func (*StartConfdRequest) ProtoMessage()               {}
+func (*StartConfdRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+
+func (m *StartConfdRequest) GetDroneIp() string {
 	if m != nil {
-		return m.Command
+		return m.DroneIp
 	}
 	return ""
 }
 
-func (m *TaskDirective) GetCommandRetryTimes() string {
+func (m *StartConfdRequest) GetFrontgateIps() []string {
 	if m != nil {
-		return m.CommandRetryTimes
+		return m.FrontgateIps
+	}
+	return nil
+}
+
+func (m *StartConfdRequest) GetTimeoutSeccond() int32 {
+	if m != nil {
+		return m.TimeoutSeccond
+	}
+	return 0
+}
+
+type StopConfdRequest struct {
+	DroneIp        string `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	TimeoutSeccond int32  `protobuf:"varint,3,opt,name=timeout_seccond,json=timeoutSeccond" json:"timeout_seccond,omitempty"`
+}
+
+func (m *StopConfdRequest) Reset()                    { *m = StopConfdRequest{} }
+func (m *StopConfdRequest) String() string            { return proto.CompactTextString(m) }
+func (*StopConfdRequest) ProtoMessage()               {}
+func (*StopConfdRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+
+func (m *StopConfdRequest) GetDroneIp() string {
+	if m != nil {
+		return m.DroneIp
 	}
 	return ""
 }
 
-func (m *TaskDirective) GetCommandTimeoutSeconds() string {
+func (m *StopConfdRequest) GetTimeoutSeccond() int32 {
 	if m != nil {
-		return m.CommandTimeoutSeconds
+		return m.TimeoutSeccond
+	}
+	return 0
+}
+
+type RegisterMetadataRequest struct {
+	DroneIp        string `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	FgId           string `protobuf:"bytes,2,opt,name=fg_id,json=fgId" json:"fg_id,omitempty"`
+	Cmd            string `protobuf:"bytes,3,opt,name=cmd" json:"cmd,omitempty"`
+	TimeoutSeccond int32  `protobuf:"varint,4,opt,name=timeout_seccond,json=timeoutSeccond" json:"timeout_seccond,omitempty"`
+	Retry          int32  `protobuf:"varint,5,opt,name=retry" json:"retry,omitempty"`
+}
+
+func (m *RegisterMetadataRequest) Reset()                    { *m = RegisterMetadataRequest{} }
+func (m *RegisterMetadataRequest) String() string            { return proto.CompactTextString(m) }
+func (*RegisterMetadataRequest) ProtoMessage()               {}
+func (*RegisterMetadataRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+
+func (m *RegisterMetadataRequest) GetDroneIp() string {
+	if m != nil {
+		return m.DroneIp
 	}
 	return ""
+}
+
+func (m *RegisterMetadataRequest) GetFgId() string {
+	if m != nil {
+		return m.FgId
+	}
+	return ""
+}
+
+func (m *RegisterMetadataRequest) GetCmd() string {
+	if m != nil {
+		return m.Cmd
+	}
+	return ""
+}
+
+func (m *RegisterMetadataRequest) GetTimeoutSeccond() int32 {
+	if m != nil {
+		return m.TimeoutSeccond
+	}
+	return 0
+}
+
+func (m *RegisterMetadataRequest) GetRetry() int32 {
+	if m != nil {
+		return m.Retry
+	}
+	return 0
+}
+
+type DeRegisterMetadataRequest struct {
+	DroneIp        string `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	FgId           string `protobuf:"bytes,2,opt,name=fg_id,json=fgId" json:"fg_id,omitempty"`
+	FgIp           string `protobuf:"bytes,3,opt,name=fg_ip,json=fgIp" json:"fg_ip,omitempty"`
+	Cmd            string `protobuf:"bytes,4,opt,name=cmd" json:"cmd,omitempty"`
+	TimeoutSeccond int32  `protobuf:"varint,5,opt,name=timeout_seccond,json=timeoutSeccond" json:"timeout_seccond,omitempty"`
+	Retry          int32  `protobuf:"varint,6,opt,name=retry" json:"retry,omitempty"`
+}
+
+func (m *DeRegisterMetadataRequest) Reset()                    { *m = DeRegisterMetadataRequest{} }
+func (m *DeRegisterMetadataRequest) String() string            { return proto.CompactTextString(m) }
+func (*DeRegisterMetadataRequest) ProtoMessage()               {}
+func (*DeRegisterMetadataRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+
+func (m *DeRegisterMetadataRequest) GetDroneIp() string {
+	if m != nil {
+		return m.DroneIp
+	}
+	return ""
+}
+
+func (m *DeRegisterMetadataRequest) GetFgId() string {
+	if m != nil {
+		return m.FgId
+	}
+	return ""
+}
+
+func (m *DeRegisterMetadataRequest) GetFgIp() string {
+	if m != nil {
+		return m.FgIp
+	}
+	return ""
+}
+
+func (m *DeRegisterMetadataRequest) GetCmd() string {
+	if m != nil {
+		return m.Cmd
+	}
+	return ""
+}
+
+func (m *DeRegisterMetadataRequest) GetTimeoutSeccond() int32 {
+	if m != nil {
+		return m.TimeoutSeccond
+	}
+	return 0
+}
+
+func (m *DeRegisterMetadataRequest) GetRetry() int32 {
+	if m != nil {
+		return m.Retry
+	}
+	return 0
+}
+
+type RegisterCmdRequest struct {
+	DroneIp        string `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	FgId           string `protobuf:"bytes,2,opt,name=fg_id,json=fgId" json:"fg_id,omitempty"`
+	FgIp           string `protobuf:"bytes,3,opt,name=fg_ip,json=fgIp" json:"fg_ip,omitempty"`
+	Cmd            string `protobuf:"bytes,4,opt,name=cmd" json:"cmd,omitempty"`
+	TimeoutSeccond int32  `protobuf:"varint,5,opt,name=timeout_seccond,json=timeoutSeccond" json:"timeout_seccond,omitempty"`
+	Retry          int32  `protobuf:"varint,6,opt,name=retry" json:"retry,omitempty"`
+}
+
+func (m *RegisterCmdRequest) Reset()                    { *m = RegisterCmdRequest{} }
+func (m *RegisterCmdRequest) String() string            { return proto.CompactTextString(m) }
+func (*RegisterCmdRequest) ProtoMessage()               {}
+func (*RegisterCmdRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
+
+func (m *RegisterCmdRequest) GetDroneIp() string {
+	if m != nil {
+		return m.DroneIp
+	}
+	return ""
+}
+
+func (m *RegisterCmdRequest) GetFgId() string {
+	if m != nil {
+		return m.FgId
+	}
+	return ""
+}
+
+func (m *RegisterCmdRequest) GetFgIp() string {
+	if m != nil {
+		return m.FgIp
+	}
+	return ""
+}
+
+func (m *RegisterCmdRequest) GetCmd() string {
+	if m != nil {
+		return m.Cmd
+	}
+	return ""
+}
+
+func (m *RegisterCmdRequest) GetTimeoutSeccond() int32 {
+	if m != nil {
+		return m.TimeoutSeccond
+	}
+	return 0
+}
+
+func (m *RegisterCmdRequest) GetRetry() int32 {
+	if m != nil {
+		return m.Retry
+	}
+	return 0
+}
+
+type DeRegisterCmdRequest struct {
+	DroneIp        string `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	FgId           string `protobuf:"bytes,2,opt,name=fg_id,json=fgId" json:"fg_id,omitempty"`
+	FgIp           string `protobuf:"bytes,3,opt,name=fg_ip,json=fgIp" json:"fg_ip,omitempty"`
+	Cmd            string `protobuf:"bytes,4,opt,name=cmd" json:"cmd,omitempty"`
+	TimeoutSeccond int32  `protobuf:"varint,5,opt,name=timeout_seccond,json=timeoutSeccond" json:"timeout_seccond,omitempty"`
+	Retry          int32  `protobuf:"varint,6,opt,name=retry" json:"retry,omitempty"`
+}
+
+func (m *DeRegisterCmdRequest) Reset()                    { *m = DeRegisterCmdRequest{} }
+func (m *DeRegisterCmdRequest) String() string            { return proto.CompactTextString(m) }
+func (*DeRegisterCmdRequest) ProtoMessage()               {}
+func (*DeRegisterCmdRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
+
+func (m *DeRegisterCmdRequest) GetDroneIp() string {
+	if m != nil {
+		return m.DroneIp
+	}
+	return ""
+}
+
+func (m *DeRegisterCmdRequest) GetFgId() string {
+	if m != nil {
+		return m.FgId
+	}
+	return ""
+}
+
+func (m *DeRegisterCmdRequest) GetFgIp() string {
+	if m != nil {
+		return m.FgIp
+	}
+	return ""
+}
+
+func (m *DeRegisterCmdRequest) GetCmd() string {
+	if m != nil {
+		return m.Cmd
+	}
+	return ""
+}
+
+func (m *DeRegisterCmdRequest) GetTimeoutSeccond() int32 {
+	if m != nil {
+		return m.TimeoutSeccond
+	}
+	return 0
+}
+
+func (m *DeRegisterCmdRequest) GetRetry() int32 {
+	if m != nil {
+		return m.Retry
+	}
+	return 0
 }
 
 type Empty struct {
@@ -148,43 +394,59 @@ type Empty struct {
 func (m *Empty) Reset()                    { *m = Empty{} }
 func (m *Empty) String() string            { return proto.CompactTextString(m) }
 func (*Empty) ProtoMessage()               {}
-func (*Empty) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+func (*Empty) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
 
 func init() {
+	proto.RegisterType((*CommandResult)(nil), "openpitrix.frontgate.CommandResult")
 	proto.RegisterType((*Info)(nil), "openpitrix.frontgate.Info")
-	proto.RegisterType((*Task)(nil), "openpitrix.frontgate.Task")
-	proto.RegisterType((*TaskDirective)(nil), "openpitrix.frontgate.TaskDirective")
+	proto.RegisterType((*ConfdInfo)(nil), "openpitrix.frontgate.ConfdInfo")
+	proto.RegisterType((*StartConfdRequest)(nil), "openpitrix.frontgate.StartConfdRequest")
+	proto.RegisterType((*StopConfdRequest)(nil), "openpitrix.frontgate.StopConfdRequest")
+	proto.RegisterType((*RegisterMetadataRequest)(nil), "openpitrix.frontgate.RegisterMetadataRequest")
+	proto.RegisterType((*DeRegisterMetadataRequest)(nil), "openpitrix.frontgate.DeRegisterMetadataRequest")
+	proto.RegisterType((*RegisterCmdRequest)(nil), "openpitrix.frontgate.RegisterCmdRequest")
+	proto.RegisterType((*DeRegisterCmdRequest)(nil), "openpitrix.frontgate.DeRegisterCmdRequest")
 	proto.RegisterType((*Empty)(nil), "openpitrix.frontgate.Empty")
 }
 
 func init() { proto.RegisterFile("frontgate.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 404 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0xcf, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0x65, 0xe3, 0xd6, 0x64, 0xd2, 0x42, 0x59, 0x0a, 0x98, 0x70, 0x29, 0xe6, 0xd2, 0x93,
-	0x85, 0x8a, 0xc4, 0x1d, 0xdc, 0x96, 0x58, 0x28, 0x17, 0x27, 0x37, 0x0e, 0xd6, 0xe2, 0x9d, 0x84,
-	0x15, 0xf1, 0xae, 0xb5, 0x1e, 0x22, 0xf2, 0x08, 0x3c, 0x00, 0xcf, 0xc5, 0x2b, 0x21, 0xaf, 0xff,
-	0x44, 0x90, 0x90, 0x03, 0xe9, 0xcd, 0x33, 0xbf, 0x6f, 0x3e, 0x7f, 0x3b, 0xab, 0x85, 0x87, 0x73,
-	0xa3, 0x15, 0x2d, 0x38, 0x61, 0x54, 0x1a, 0x4d, 0x9a, 0x9d, 0xeb, 0x12, 0x55, 0x29, 0xc9, 0xc8,
-	0xef, 0x51, 0xcf, 0xc2, 0x4f, 0xe0, 0x25, 0x6a, 0xae, 0xd9, 0x4b, 0x38, 0xe9, 0x9b, 0x99, 0x14,
-	0x81, 0x73, 0xe1, 0x5c, 0x0e, 0xd2, 0x61, 0xdf, 0x4b, 0x04, 0x7b, 0x0d, 0xe7, 0x1b, 0x49, 0x85,
-	0x66, 0x25, 0x73, 0x2b, 0x75, 0xad, 0x94, 0xf5, 0x6c, 0xda, 0xa0, 0x44, 0x84, 0x3f, 0x1c, 0xf0,
-	0x66, 0xbc, 0xfa, 0xca, 0x1e, 0x80, 0xdb, 0x7b, 0xba, 0x52, 0xb0, 0xa7, 0x70, 0xcc, 0x73, 0x92,
-	0x5a, 0xb5, 0xc3, 0x6d, 0x55, 0xf7, 0x89, 0x9b, 0x05, 0x52, 0x70, 0xaf, 0xe9, 0x37, 0x15, 0x7b,
-	0x07, 0x03, 0x21, 0x0d, 0xe6, 0x24, 0x57, 0x18, 0x78, 0x17, 0xce, 0xe5, 0xf0, 0xea, 0x55, 0xb4,
-	0xeb, 0x3c, 0x51, 0xfd, 0xbb, 0xeb, 0x4e, 0x9a, 0x6e, 0xa6, 0xc2, 0x5f, 0x0e, 0x9c, 0xfe, 0x01,
-	0xd9, 0x73, 0xb8, 0x2f, 0x8c, 0x56, 0x98, 0xc9, 0xb2, 0x8d, 0xe6, 0xdb, 0x3a, 0x29, 0xb7, 0xb6,
-	0xe1, 0x6e, 0x6f, 0x23, 0x00, 0x3f, 0xd7, 0x45, 0xc1, 0x95, 0x68, 0xb3, 0x76, 0x25, 0x8b, 0xe0,
-	0x71, 0xfb, 0x99, 0x19, 0x24, 0xb3, 0xce, 0x48, 0x16, 0x58, 0xd9, 0xd8, 0x83, 0xf4, 0x51, 0x8b,
-	0xd2, 0x9a, 0xcc, 0x6a, 0xc0, 0xde, 0xc2, 0xb3, 0x4e, 0x5f, 0x2b, 0xf5, 0x37, 0xca, 0x2a, 0xcc,
-	0xb5, 0x12, 0x55, 0x70, 0x64, 0x67, 0x9e, 0xb4, 0x78, 0xd6, 0xd0, 0x69, 0x03, 0x43, 0x1f, 0x8e,
-	0x6e, 0x8a, 0x92, 0xd6, 0x57, 0x3f, 0x3d, 0x38, 0xbb, 0xfd, 0x6b, 0xfb, 0xec, 0x3d, 0xf8, 0x1f,
-	0x90, 0xec, 0xdd, 0xbe, 0xd8, 0xbd, 0x2a, 0x3b, 0x3c, 0x1a, 0xed, 0x86, 0x76, 0x70, 0x0c, 0x27,
-	0xf1, 0x52, 0x57, 0x18, 0x7f, 0xe1, 0x4a, 0xe1, 0x72, 0xbf, 0xd1, 0x3e, 0xc8, 0x6e, 0x00, 0xa6,
-	0xc4, 0x0d, 0xc5, 0x5a, 0xcd, 0x05, 0x1b, 0xfd, 0xfb, 0xee, 0xf6, 0xdb, 0x7c, 0x84, 0xb3, 0x14,
-	0x17, 0xb2, 0x22, 0x34, 0x13, 0x24, 0x2e, 0x38, 0xf1, 0xff, 0x37, 0x9b, 0x00, 0xbb, 0x46, 0x73,
-	0x67, 0x76, 0xb7, 0x30, 0xec, 0xb2, 0xc5, 0xc5, 0x01, 0x67, 0x1c, 0xc3, 0xe9, 0x26, 0xd6, 0x21,
-	0x4e, 0x9f, 0x8f, 0xed, 0xc3, 0x7f, 0xf3, 0x3b, 0x00, 0x00, 0xff, 0xff, 0x9c, 0x64, 0x76, 0x5e,
-	0x0b, 0x04, 0x00, 0x00,
+	// 574 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x96, 0x41, 0x8f, 0xd2, 0x40,
+	0x14, 0xc7, 0x53, 0xa1, 0xb0, 0xbc, 0x05, 0xc1, 0x91, 0x68, 0x77, 0xf7, 0x20, 0x76, 0x13, 0x97,
+	0x98, 0x88, 0x66, 0xbd, 0x1a, 0x0f, 0x82, 0xbb, 0x36, 0xd1, 0x84, 0x14, 0x63, 0x3c, 0x49, 0x0a,
+	0x33, 0x60, 0x13, 0xda, 0xa9, 0x33, 0xaf, 0x66, 0x37, 0xf1, 0x43, 0x78, 0xf6, 0x23, 0x18, 0x2f,
+	0xc6, 0x2f, 0x68, 0x3a, 0x94, 0x16, 0xb1, 0xcc, 0x72, 0xd8, 0xc3, 0xde, 0x98, 0xf7, 0xe6, 0xfd,
+	0xdf, 0x6f, 0x98, 0xfe, 0x5f, 0x0b, 0xcd, 0x99, 0xe0, 0x21, 0xce, 0x3d, 0x64, 0xbd, 0x48, 0x70,
+	0xe4, 0xa4, 0xcd, 0x23, 0x16, 0x46, 0x3e, 0x0a, 0xff, 0xa2, 0x97, 0xe5, 0xec, 0x17, 0xd0, 0xe8,
+	0xf3, 0x20, 0xf0, 0x42, 0xea, 0x32, 0x19, 0x2f, 0x90, 0x1c, 0xc0, 0x1e, 0x15, 0x3c, 0x64, 0x63,
+	0x3f, 0xb2, 0x8c, 0x8e, 0xd1, 0xad, 0xb9, 0x55, 0xb5, 0x76, 0x22, 0xd2, 0x82, 0xd2, 0x34, 0xa0,
+	0xd6, 0x2d, 0x15, 0x4d, 0x7e, 0xda, 0x17, 0x50, 0x76, 0xc2, 0x19, 0x27, 0x0f, 0xa1, 0x9e, 0x49,
+	0x8e, 0x7d, 0x9a, 0x16, 0xee, 0x67, 0x31, 0x87, 0x92, 0x67, 0xd0, 0xce, 0xb7, 0x48, 0x26, 0xbe,
+	0xfa, 0x53, 0xb5, 0x75, 0xa9, 0x46, 0xb2, 0xdc, 0x68, 0x99, 0x72, 0x28, 0x39, 0x82, 0xda, 0x8a,
+	0x44, 0x5a, 0xa5, 0x4e, 0xa9, 0x5b, 0x73, 0xf7, 0x52, 0x14, 0x69, 0xbf, 0x84, 0x5a, 0x9f, 0x87,
+	0x33, 0xaa, 0xda, 0x6b, 0x98, 0xef, 0x41, 0x45, 0xa2, 0x87, 0xb1, 0x4c, 0x1b, 0xa5, 0x2b, 0xfb,
+	0x1b, 0xdc, 0x19, 0xa1, 0x27, 0x50, 0x89, 0xb8, 0xec, 0x4b, 0xcc, 0xa4, 0xf6, 0xec, 0xc7, 0xd0,
+	0x58, 0x3b, 0x61, 0x94, 0xc8, 0x25, 0x40, 0xf9, 0xb1, 0x9d, 0x48, 0x92, 0x13, 0x68, 0xa2, 0x1f,
+	0x30, 0x1e, 0xe3, 0x58, 0xb2, 0xe9, 0x94, 0x87, 0xd4, 0x2a, 0x75, 0x8c, 0xae, 0xe9, 0xde, 0x4e,
+	0xc3, 0xa3, 0x65, 0xd4, 0xfe, 0x00, 0xad, 0x11, 0xf2, 0x68, 0xd7, 0xe6, 0x3b, 0xeb, 0xfe, 0x30,
+	0xe0, 0xbe, 0xcb, 0xe6, 0xbe, 0x44, 0x26, 0xde, 0x31, 0xf4, 0xa8, 0x87, 0xde, 0x0e, 0xfa, 0x77,
+	0xc1, 0x9c, 0xcd, 0xf3, 0xcb, 0x28, 0xcf, 0xe6, 0x0e, 0x5d, 0xdd, 0x76, 0x29, 0xbb, 0xed, 0x22,
+	0x8c, 0x72, 0x11, 0x06, 0x69, 0x83, 0x29, 0x18, 0x8a, 0x4b, 0xcb, 0x54, 0xe9, 0xe5, 0xc2, 0xfe,
+	0x6d, 0xc0, 0xc1, 0x80, 0x5d, 0x17, 0x5e, 0x1a, 0x8c, 0x52, 0xc0, 0x24, 0x98, 0x3d, 0xa1, 0x65,
+	0x2d, 0xb3, 0xa9, 0x67, 0xae, 0xac, 0x33, 0xff, 0x34, 0x80, 0xac, 0x88, 0xfb, 0x01, 0xbd, 0xd9,
+	0xb0, 0xbf, 0x0c, 0x68, 0xe7, 0x7f, 0xf0, 0x8d, 0xc7, 0xad, 0x82, 0xf9, 0x3a, 0x88, 0xf0, 0xf2,
+	0xf4, 0x7b, 0x05, 0xac, 0xb3, 0x0d, 0xff, 0x9f, 0x71, 0x31, 0xf4, 0x17, 0x1c, 0xc9, 0x2b, 0xa8,
+	0x9e, 0x33, 0x54, 0x36, 0x3f, 0xea, 0x15, 0x8d, 0xb0, 0x9e, 0x12, 0x39, 0x3c, 0x2c, 0x4e, 0xaa,
+	0xc2, 0x37, 0x50, 0xef, 0x2f, 0xb8, 0x64, 0xfd, 0xcf, 0x5e, 0x18, 0xb2, 0x85, 0x5e, 0x48, 0x97,
+	0x24, 0x6f, 0xa1, 0x7e, 0xce, 0x30, 0x9f, 0x3c, 0x5a, 0xa5, 0x07, 0xc5, 0xc9, 0xbc, 0xda, 0x05,
+	0xc8, 0x87, 0x10, 0x39, 0x29, 0xde, 0xfe, 0xdf, 0x98, 0xd2, 0x13, 0x0e, 0xa1, 0x96, 0x8d, 0x16,
+	0xf2, 0x68, 0x9b, 0xe4, 0xbf, 0xb3, 0x47, 0xaf, 0xf8, 0x09, 0x5a, 0x9b, 0xa6, 0x25, 0x4f, 0x8a,
+	0x0b, 0xb6, 0x98, 0x5b, 0xaf, 0x3f, 0x01, 0x32, 0x60, 0x62, 0xb3, 0xc3, 0xd3, 0xe2, 0x92, 0xad,
+	0x03, 0x44, 0xdf, 0xe3, 0x3d, 0xec, 0xaf, 0xf9, 0x82, 0x74, 0xf5, 0xf8, 0xb9, 0x75, 0xf4, 0xaa,
+	0x1f, 0xa1, 0x91, 0x93, 0x27, 0xba, 0x8f, 0xaf, 0x82, 0xde, 0x51, 0xf9, 0xf4, 0x8f, 0x51, 0x68,
+	0x89, 0x41, 0xe2, 0xda, 0x6b, 0xb1, 0xc4, 0x08, 0x9a, 0xc3, 0x78, 0xb2, 0xf0, 0xa7, 0x8a, 0x48,
+	0xbd, 0xf9, 0x8f, 0xb7, 0x3d, 0xae, 0x6b, 0x9f, 0x07, 0x5a, 0xea, 0x49, 0x45, 0x7d, 0x69, 0x3c,
+	0xff, 0x1b, 0x00, 0x00, 0xff, 0xff, 0x9c, 0x8f, 0xa8, 0xcd, 0x7c, 0x08, 0x00, 0x00,
 }

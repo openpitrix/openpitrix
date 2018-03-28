@@ -29,22 +29,24 @@ var (
 	_ = proto.String
 )
 
-type FrontgateService interface {
+type FrontgateServiceForPilot interface {
 	GetInfo(in *Empty, out *Info) error
 	CloseChannel(in *Empty, out *Empty) error
-	StartConfd(in *Task, out *Empty) error
-	RegisterMetadata(in *Task, out *Empty) error
-	DeregisterMetadata(in *Task, out *Empty) error
-	RegisterCmd(in *Task, out *Empty) error
-	DeregisterCmd(in *Task, out *Empty) error
+	GetConfdInfo(in *Empty, out *ConfdInfo) error
+	StartConfd(in *StartConfdRequest, out *Empty) error
+	StopConfd(in *StopConfdRequest, out *Empty) error
+	RegisterMetadata(in *RegisterMetadataRequest, out *Empty) error
+	DeregisterMetadata(in *DeRegisterMetadataRequest, out *Empty) error
+	RegisterCmd(in *RegisterCmdRequest, out *Empty) error
+	DeregisterCmd(in *DeRegisterCmdRequest, out *Empty) error
 }
 
-// AcceptFrontgateServiceClient accepts connections on the listener and serves requests
+// AcceptFrontgateServiceForPilotClient accepts connections on the listener and serves requests
 // for each incoming connection.  Accept blocks; the caller typically
 // invokes it in a go statement.
-func AcceptFrontgateServiceClient(lis net.Listener, x FrontgateService) {
+func AcceptFrontgateServiceForPilotClient(lis net.Listener, x FrontgateServiceForPilot) {
 	srv := rpc.NewServer()
-	if err := srv.RegisterName("FrontgateService", x); err != nil {
+	if err := srv.RegisterName("FrontgateServiceForPilot", x); err != nil {
 		log.Fatal(err)
 	}
 
@@ -57,26 +59,26 @@ func AcceptFrontgateServiceClient(lis net.Listener, x FrontgateService) {
 	}
 }
 
-// RegisterFrontgateService publish the given FrontgateService implementation on the server.
-func RegisterFrontgateService(srv *rpc.Server, x FrontgateService) error {
-	if err := srv.RegisterName("FrontgateService", x); err != nil {
+// RegisterFrontgateServiceForPilot publish the given FrontgateServiceForPilot implementation on the server.
+func RegisterFrontgateServiceForPilot(srv *rpc.Server, x FrontgateServiceForPilot) error {
+	if err := srv.RegisterName("FrontgateServiceForPilot", x); err != nil {
 		return err
 	}
 	return nil
 }
 
-// NewFrontgateServiceServer returns a new FrontgateService Server.
-func NewFrontgateServiceServer(x FrontgateService) *rpc.Server {
+// NewFrontgateServiceForPilotServer returns a new FrontgateServiceForPilot Server.
+func NewFrontgateServiceForPilotServer(x FrontgateServiceForPilot) *rpc.Server {
 	srv := rpc.NewServer()
-	if err := srv.RegisterName("FrontgateService", x); err != nil {
+	if err := srv.RegisterName("FrontgateServiceForPilot", x); err != nil {
 		log.Fatal(err)
 	}
 	return srv
 }
 
-// ListenAndServeFrontgateService listen announces on the local network address laddr
-// and serves the given FrontgateService implementation.
-func ListenAndServeFrontgateService(network, addr string, x FrontgateService) error {
+// ListenAndServeFrontgateServiceForPilot listen announces on the local network address laddr
+// and serves the given FrontgateServiceForPilot implementation.
+func ListenAndServeFrontgateServiceForPilot(network, addr string, x FrontgateServiceForPilot) error {
 	lis, err := net.Listen(network, addr)
 	if err != nil {
 		return err
@@ -84,7 +86,7 @@ func ListenAndServeFrontgateService(network, addr string, x FrontgateService) er
 	defer lis.Close()
 
 	srv := rpc.NewServer()
-	if err := srv.RegisterName("FrontgateService", x); err != nil {
+	if err := srv.RegisterName("FrontgateServiceForPilot", x); err != nil {
 		return err
 	}
 
@@ -97,27 +99,27 @@ func ListenAndServeFrontgateService(network, addr string, x FrontgateService) er
 	}
 }
 
-// ServeFrontgateService serves the given FrontgateService implementation.
-func ServeFrontgateService(conn io.ReadWriteCloser, x FrontgateService) {
+// ServeFrontgateServiceForPilot serves the given FrontgateServiceForPilot implementation.
+func ServeFrontgateServiceForPilot(conn io.ReadWriteCloser, x FrontgateServiceForPilot) {
 	srv := rpc.NewServer()
-	if err := srv.RegisterName("FrontgateService", x); err != nil {
+	if err := srv.RegisterName("FrontgateServiceForPilot", x); err != nil {
 		log.Fatal(err)
 	}
 	srv.ServeConn(conn)
 }
 
-type FrontgateServiceClient struct {
+type FrontgateServiceForPilotClient struct {
 	*rpc.Client
 }
 
-// NewFrontgateServiceClient returns a FrontgateService stub to handle
-// requests to the set of FrontgateService at the other end of the connection.
-func NewFrontgateServiceClient(conn io.ReadWriteCloser) *FrontgateServiceClient {
+// NewFrontgateServiceForPilotClient returns a FrontgateServiceForPilot stub to handle
+// requests to the set of FrontgateServiceForPilot at the other end of the connection.
+func NewFrontgateServiceForPilotClient(conn io.ReadWriteCloser) *FrontgateServiceForPilotClient {
 	c := rpc.NewClient(conn)
-	return &FrontgateServiceClient{c}
+	return &FrontgateServiceForPilotClient{c}
 }
 
-func (c *FrontgateServiceClient) GetInfo(in *Empty) (out *Info, err error) {
+func (c *FrontgateServiceForPilotClient) GetInfo(in *Empty) (out *Info, err error) {
 	if in == nil {
 		in = new(Empty)
 	}
@@ -132,7 +134,7 @@ func (c *FrontgateServiceClient) GetInfo(in *Empty) (out *Info, err error) {
 	}
 
 	out = new(Info)
-	if err = c.Call("FrontgateService.GetInfo", in, out); err != nil {
+	if err = c.Call("FrontgateServiceForPilot.GetInfo", in, out); err != nil {
 		return nil, err
 	}
 
@@ -145,18 +147,18 @@ func (c *FrontgateServiceClient) GetInfo(in *Empty) (out *Info, err error) {
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncGetInfo(in *Empty, out *Info, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceForPilotClient) AsyncGetInfo(in *Empty, out *Info, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
 		in = new(Empty)
 	}
 	return c.Go(
-		"FrontgateService.GetInfo",
+		"FrontgateServiceForPilot.GetInfo",
 		in, out,
 		done,
 	)
 }
 
-func (c *FrontgateServiceClient) CloseChannel(in *Empty) (out *Empty, err error) {
+func (c *FrontgateServiceForPilotClient) CloseChannel(in *Empty) (out *Empty, err error) {
 	if in == nil {
 		in = new(Empty)
 	}
@@ -171,7 +173,7 @@ func (c *FrontgateServiceClient) CloseChannel(in *Empty) (out *Empty, err error)
 	}
 
 	out = new(Empty)
-	if err = c.Call("FrontgateService.CloseChannel", in, out); err != nil {
+	if err = c.Call("FrontgateServiceForPilot.CloseChannel", in, out); err != nil {
 		return nil, err
 	}
 
@@ -184,20 +186,20 @@ func (c *FrontgateServiceClient) CloseChannel(in *Empty) (out *Empty, err error)
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncCloseChannel(in *Empty, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceForPilotClient) AsyncCloseChannel(in *Empty, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
 		in = new(Empty)
 	}
 	return c.Go(
-		"FrontgateService.CloseChannel",
+		"FrontgateServiceForPilot.CloseChannel",
 		in, out,
 		done,
 	)
 }
 
-func (c *FrontgateServiceClient) StartConfd(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceForPilotClient) GetConfdInfo(in *Empty) (out *ConfdInfo, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(Empty)
 	}
 
 	type Validator interface {
@@ -209,8 +211,8 @@ func (c *FrontgateServiceClient) StartConfd(in *Task) (out *Empty, err error) {
 		}
 	}
 
-	out = new(Empty)
-	if err = c.Call("FrontgateService.StartConfd", in, out); err != nil {
+	out = new(ConfdInfo)
+	if err = c.Call("FrontgateServiceForPilot.GetConfdInfo", in, out); err != nil {
 		return nil, err
 	}
 
@@ -223,20 +225,20 @@ func (c *FrontgateServiceClient) StartConfd(in *Task) (out *Empty, err error) {
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncStartConfd(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceForPilotClient) AsyncGetConfdInfo(in *Empty, out *ConfdInfo, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(Empty)
 	}
 	return c.Go(
-		"FrontgateService.StartConfd",
+		"FrontgateServiceForPilot.GetConfdInfo",
 		in, out,
 		done,
 	)
 }
 
-func (c *FrontgateServiceClient) RegisterMetadata(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceForPilotClient) StartConfd(in *StartConfdRequest) (out *Empty, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(StartConfdRequest)
 	}
 
 	type Validator interface {
@@ -249,7 +251,7 @@ func (c *FrontgateServiceClient) RegisterMetadata(in *Task) (out *Empty, err err
 	}
 
 	out = new(Empty)
-	if err = c.Call("FrontgateService.RegisterMetadata", in, out); err != nil {
+	if err = c.Call("FrontgateServiceForPilot.StartConfd", in, out); err != nil {
 		return nil, err
 	}
 
@@ -262,20 +264,20 @@ func (c *FrontgateServiceClient) RegisterMetadata(in *Task) (out *Empty, err err
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncRegisterMetadata(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceForPilotClient) AsyncStartConfd(in *StartConfdRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(StartConfdRequest)
 	}
 	return c.Go(
-		"FrontgateService.RegisterMetadata",
+		"FrontgateServiceForPilot.StartConfd",
 		in, out,
 		done,
 	)
 }
 
-func (c *FrontgateServiceClient) DeregisterMetadata(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceForPilotClient) StopConfd(in *StopConfdRequest) (out *Empty, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(StopConfdRequest)
 	}
 
 	type Validator interface {
@@ -288,7 +290,7 @@ func (c *FrontgateServiceClient) DeregisterMetadata(in *Task) (out *Empty, err e
 	}
 
 	out = new(Empty)
-	if err = c.Call("FrontgateService.DeregisterMetadata", in, out); err != nil {
+	if err = c.Call("FrontgateServiceForPilot.StopConfd", in, out); err != nil {
 		return nil, err
 	}
 
@@ -301,20 +303,20 @@ func (c *FrontgateServiceClient) DeregisterMetadata(in *Task) (out *Empty, err e
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncDeregisterMetadata(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceForPilotClient) AsyncStopConfd(in *StopConfdRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(StopConfdRequest)
 	}
 	return c.Go(
-		"FrontgateService.DeregisterMetadata",
+		"FrontgateServiceForPilot.StopConfd",
 		in, out,
 		done,
 	)
 }
 
-func (c *FrontgateServiceClient) RegisterCmd(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceForPilotClient) RegisterMetadata(in *RegisterMetadataRequest) (out *Empty, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(RegisterMetadataRequest)
 	}
 
 	type Validator interface {
@@ -327,7 +329,7 @@ func (c *FrontgateServiceClient) RegisterCmd(in *Task) (out *Empty, err error) {
 	}
 
 	out = new(Empty)
-	if err = c.Call("FrontgateService.RegisterCmd", in, out); err != nil {
+	if err = c.Call("FrontgateServiceForPilot.RegisterMetadata", in, out); err != nil {
 		return nil, err
 	}
 
@@ -340,20 +342,20 @@ func (c *FrontgateServiceClient) RegisterCmd(in *Task) (out *Empty, err error) {
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncRegisterCmd(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceForPilotClient) AsyncRegisterMetadata(in *RegisterMetadataRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(RegisterMetadataRequest)
 	}
 	return c.Go(
-		"FrontgateService.RegisterCmd",
+		"FrontgateServiceForPilot.RegisterMetadata",
 		in, out,
 		done,
 	)
 }
 
-func (c *FrontgateServiceClient) DeregisterCmd(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceForPilotClient) DeregisterMetadata(in *DeRegisterMetadataRequest) (out *Empty, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(DeRegisterMetadataRequest)
 	}
 
 	type Validator interface {
@@ -366,7 +368,7 @@ func (c *FrontgateServiceClient) DeregisterCmd(in *Task) (out *Empty, err error)
 	}
 
 	out = new(Empty)
-	if err = c.Call("FrontgateService.DeregisterCmd", in, out); err != nil {
+	if err = c.Call("FrontgateServiceForPilot.DeregisterMetadata", in, out); err != nil {
 		return nil, err
 	}
 
@@ -379,31 +381,288 @@ func (c *FrontgateServiceClient) DeregisterCmd(in *Task) (out *Empty, err error)
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncDeregisterCmd(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceForPilotClient) AsyncDeregisterMetadata(in *DeRegisterMetadataRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(DeRegisterMetadataRequest)
 	}
 	return c.Go(
-		"FrontgateService.DeregisterCmd",
+		"FrontgateServiceForPilot.DeregisterMetadata",
 		in, out,
 		done,
 	)
 }
 
-// DialFrontgateService connects to an FrontgateService at the specified network address.
-func DialFrontgateService(network, addr string) (*FrontgateServiceClient, error) {
+func (c *FrontgateServiceForPilotClient) RegisterCmd(in *RegisterCmdRequest) (out *Empty, err error) {
+	if in == nil {
+		in = new(RegisterCmdRequest)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Empty)
+	if err = c.Call("FrontgateServiceForPilot.RegisterCmd", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceForPilotClient) AsyncRegisterCmd(in *RegisterCmdRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(RegisterCmdRequest)
+	}
+	return c.Go(
+		"FrontgateServiceForPilot.RegisterCmd",
+		in, out,
+		done,
+	)
+}
+
+func (c *FrontgateServiceForPilotClient) DeregisterCmd(in *DeRegisterCmdRequest) (out *Empty, err error) {
+	if in == nil {
+		in = new(DeRegisterCmdRequest)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Empty)
+	if err = c.Call("FrontgateServiceForPilot.DeregisterCmd", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceForPilotClient) AsyncDeregisterCmd(in *DeRegisterCmdRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(DeRegisterCmdRequest)
+	}
+	return c.Go(
+		"FrontgateServiceForPilot.DeregisterCmd",
+		in, out,
+		done,
+	)
+}
+
+// DialFrontgateServiceForPilot connects to an FrontgateServiceForPilot at the specified network address.
+func DialFrontgateServiceForPilot(network, addr string) (*FrontgateServiceForPilotClient, error) {
 	c, err := rpc.Dial(network, addr)
 	if err != nil {
 		return nil, err
 	}
-	return &FrontgateServiceClient{c}, nil
+	return &FrontgateServiceForPilotClient{c}, nil
 }
 
-// DialFrontgateServiceTimeout connects to an FrontgateService at the specified network address.
-func DialFrontgateServiceTimeout(network, addr string, timeout time.Duration) (*FrontgateServiceClient, error) {
+// DialFrontgateServiceForPilotTimeout connects to an FrontgateServiceForPilot at the specified network address.
+func DialFrontgateServiceForPilotTimeout(network, addr string, timeout time.Duration) (*FrontgateServiceForPilotClient, error) {
 	conn, err := net.DialTimeout(network, addr, timeout)
 	if err != nil {
 		return nil, err
 	}
-	return &FrontgateServiceClient{rpc.NewClient(conn)}, nil
+	return &FrontgateServiceForPilotClient{rpc.NewClient(conn)}, nil
+}
+
+type FrontgateServiceForDrone interface {
+	GetInfo(in *Empty, out *Info) error
+	PublicCmdResult(in *CommandResult, out *Empty) error
+}
+
+// AcceptFrontgateServiceForDroneClient accepts connections on the listener and serves requests
+// for each incoming connection.  Accept blocks; the caller typically
+// invokes it in a go statement.
+func AcceptFrontgateServiceForDroneClient(lis net.Listener, x FrontgateServiceForDrone) {
+	srv := rpc.NewServer()
+	if err := srv.RegisterName("FrontgateServiceForDrone", x); err != nil {
+		log.Fatal(err)
+	}
+
+	for {
+		conn, err := lis.Accept()
+		if err != nil {
+			log.Fatalf("lis.Accept(): %v\n", err)
+		}
+		go srv.ServeConn(conn)
+	}
+}
+
+// RegisterFrontgateServiceForDrone publish the given FrontgateServiceForDrone implementation on the server.
+func RegisterFrontgateServiceForDrone(srv *rpc.Server, x FrontgateServiceForDrone) error {
+	if err := srv.RegisterName("FrontgateServiceForDrone", x); err != nil {
+		return err
+	}
+	return nil
+}
+
+// NewFrontgateServiceForDroneServer returns a new FrontgateServiceForDrone Server.
+func NewFrontgateServiceForDroneServer(x FrontgateServiceForDrone) *rpc.Server {
+	srv := rpc.NewServer()
+	if err := srv.RegisterName("FrontgateServiceForDrone", x); err != nil {
+		log.Fatal(err)
+	}
+	return srv
+}
+
+// ListenAndServeFrontgateServiceForDrone listen announces on the local network address laddr
+// and serves the given FrontgateServiceForDrone implementation.
+func ListenAndServeFrontgateServiceForDrone(network, addr string, x FrontgateServiceForDrone) error {
+	lis, err := net.Listen(network, addr)
+	if err != nil {
+		return err
+	}
+	defer lis.Close()
+
+	srv := rpc.NewServer()
+	if err := srv.RegisterName("FrontgateServiceForDrone", x); err != nil {
+		return err
+	}
+
+	for {
+		conn, err := lis.Accept()
+		if err != nil {
+			log.Fatalf("lis.Accept(): %v\n", err)
+		}
+		go srv.ServeConn(conn)
+	}
+}
+
+// ServeFrontgateServiceForDrone serves the given FrontgateServiceForDrone implementation.
+func ServeFrontgateServiceForDrone(conn io.ReadWriteCloser, x FrontgateServiceForDrone) {
+	srv := rpc.NewServer()
+	if err := srv.RegisterName("FrontgateServiceForDrone", x); err != nil {
+		log.Fatal(err)
+	}
+	srv.ServeConn(conn)
+}
+
+type FrontgateServiceForDroneClient struct {
+	*rpc.Client
+}
+
+// NewFrontgateServiceForDroneClient returns a FrontgateServiceForDrone stub to handle
+// requests to the set of FrontgateServiceForDrone at the other end of the connection.
+func NewFrontgateServiceForDroneClient(conn io.ReadWriteCloser) *FrontgateServiceForDroneClient {
+	c := rpc.NewClient(conn)
+	return &FrontgateServiceForDroneClient{c}
+}
+
+func (c *FrontgateServiceForDroneClient) GetInfo(in *Empty) (out *Info, err error) {
+	if in == nil {
+		in = new(Empty)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Info)
+	if err = c.Call("FrontgateServiceForDrone.GetInfo", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceForDroneClient) AsyncGetInfo(in *Empty, out *Info, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(Empty)
+	}
+	return c.Go(
+		"FrontgateServiceForDrone.GetInfo",
+		in, out,
+		done,
+	)
+}
+
+func (c *FrontgateServiceForDroneClient) PublicCmdResult(in *CommandResult) (out *Empty, err error) {
+	if in == nil {
+		in = new(CommandResult)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Empty)
+	if err = c.Call("FrontgateServiceForDrone.PublicCmdResult", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceForDroneClient) AsyncPublicCmdResult(in *CommandResult, out *Empty, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(CommandResult)
+	}
+	return c.Go(
+		"FrontgateServiceForDrone.PublicCmdResult",
+		in, out,
+		done,
+	)
+}
+
+// DialFrontgateServiceForDrone connects to an FrontgateServiceForDrone at the specified network address.
+func DialFrontgateServiceForDrone(network, addr string) (*FrontgateServiceForDroneClient, error) {
+	c, err := rpc.Dial(network, addr)
+	if err != nil {
+		return nil, err
+	}
+	return &FrontgateServiceForDroneClient{c}, nil
+}
+
+// DialFrontgateServiceForDroneTimeout connects to an FrontgateServiceForDrone at the specified network address.
+func DialFrontgateServiceForDroneTimeout(network, addr string, timeout time.Duration) (*FrontgateServiceForDroneClient, error) {
+	conn, err := net.DialTimeout(network, addr, timeout)
+	if err != nil {
+		return nil, err
+	}
+	return &FrontgateServiceForDroneClient{rpc.NewClient(conn)}, nil
 }
