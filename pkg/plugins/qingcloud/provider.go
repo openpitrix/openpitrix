@@ -167,6 +167,10 @@ func (p *Provider) ValidateCredential(url, credential string) error {
 	return nil
 }
 
+func (p *Provider) UpdateClusterStatus(job *models.Job) error {
+	return nil
+}
+
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) []string {
 	return nil
 }
