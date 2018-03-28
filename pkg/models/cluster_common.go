@@ -4,6 +4,10 @@
 
 package models
 
+import (
+	"reflect"
+)
+
 const ClusterCommonTableName = "cluster_common"
 
 type ClusterCommon struct {
@@ -36,3 +40,9 @@ type ClusterCommon struct {
 }
 
 var ClusterCommonColumns = GetColumnsFromStruct(&ClusterCommon{})
+
+func (c ClusterCommon) GetAttribute(attributeName string) interface{} {
+	common := reflect.ValueOf(c)
+	service := common.FieldByName(attributeName).Interface()
+	return service
+}

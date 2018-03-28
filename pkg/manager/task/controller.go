@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	pilotClient "openpitrix.io/openpitrix/pkg/client/pilot"
+	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
@@ -113,7 +113,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 	pbTask := models.TaskToPb(task)
 	if task.Target == constants.PilotManagerHost {
-		err := pilotClient.HandleSubtask(
+		err := pilotclient.HandleSubtask(
 			&pb.HandleSubtaskRequest{
 				SubtaskId:     pbTask.TaskId,
 				SubtaskAction: pbTask.TaskAction,
@@ -123,7 +123,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			logger.Errorf("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
 			return err
 		}
-		err = pilotClient.WaitSubtask(task.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+		err = pilotclient.WaitSubtask(task.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
 		if err != nil {
 			logger.Errorf("Failed to wait task [%s]: %+v", task.TaskId, err)
 			return err

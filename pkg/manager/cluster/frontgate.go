@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -17,7 +18,7 @@ import (
 
 type Frontgate struct {
 	*pi.Pi
-	Runtime *Runtime
+	Runtime *runtimeenvclient.Runtime
 }
 
 func (f *Frontgate) getFrontgateFromDb(vpcId, userId string) ([]*models.Cluster, error) {
@@ -104,7 +105,8 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 			return err
 		}
 		if len(frontgates) == 0 {
-			err = f.CreateCluster(register)
+			frontgateId, err := f.CreateCluster(register)
+			frontgate = &models.Cluster{ClusterId: frontgateId}
 			return err
 		} else if len(frontgates) == 1 {
 			frontgate = frontgates[0]

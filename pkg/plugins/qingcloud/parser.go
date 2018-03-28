@@ -54,7 +54,23 @@ func (p *Parser) ParseClusterRole(mustache *models.ClusterJsonMustache, node *mo
 		Memory:       node.Memory,
 		InstanceSize: node.Volume.InstanceSize,
 		StorageSize:  node.Volume.Size,
+		MountOptions: node.Volume.MountOptions,
 	}
+
+	mountPoint := node.Volume.MountPoint
+	switch v := mountPoint.(type) {
+	case []string:
+		clusterRole.MountPoint = strings.Join(v, ",")
+	case string:
+		if v == "" {
+			clusterRole.MountPoint = "/data"
+		} else {
+			clusterRole.MountPoint = v
+		}
+	default:
+		clusterRole.MountPoint = "/data"
+	}
+
 	if len(node.Env) > 0 {
 		env, err := json.Marshal(node.Env)
 		if err != nil {
@@ -77,12 +93,12 @@ func (p *Parser) ParseClusterRole(mustache *models.ClusterJsonMustache, node *mo
 	return clusterRole, nil
 }
 
-func (p *Parser) ParseClusterNode(node *models.Node, subnetId string) ([]*models.ClusterNode, error) {
+func (p *Parser) ParseClusterNode(node *models.Node, subnetId string) (map[string]*models.ClusterNode, error) {
 	count := int(node.Count)
 	serverIdUpperBound := node.ServerIDUpperBound
 	replicaRole := node.Role + constants.ReplicaRoleSuffix
 	var serverIds, groupIds []int
-	var clusterNodes []*models.ClusterNode
+	clusterNodes := make(map[string]*models.ClusterNode)
 	for i := 1; i <= count; i++ {
 		serverId, err := p.generateServerId(int(serverIdUpperBound), serverIds)
 		if err != nil {
@@ -106,7 +122,8 @@ func (p *Parser) ParseClusterNode(node *models.Node, subnetId string) ([]*models
 			Status:   constants.StatusPending,
 			GroupId:  int32(groupId),
 		}
-		clusterNodes = append(clusterNodes, clusterNode)
+		// NodeId has not been generated yet.
+		clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNode
 
 		replica := int(node.Replica)
 		for j := 1; j <= replica; j++ {
@@ -125,7 +142,7 @@ func (p *Parser) ParseClusterNode(node *models.Node, subnetId string) ([]*models
 				Status:   constants.StatusPending,
 				GroupId:  int32(groupId),
 			}
-			clusterNodes = append(clusterNodes, clusterNode)
+			clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNode
 		}
 	}
 	return clusterNodes, nil
@@ -146,14 +163,14 @@ func (p *Parser) ParseClusterLoadbalancer(node *models.Node) []*models.ClusterLo
 	return clusterLoadbalancers
 }
 
-func (p *Parser) ParseClusterLinks(mustache *models.ClusterJsonMustache) []*models.ClusterLink {
-	var clusterLinks []*models.ClusterLink
+func (p *Parser) ParseClusterLinks(mustache *models.ClusterJsonMustache) map[string]*models.ClusterLink {
+	clusterLinks := make(map[string]*models.ClusterLink)
 	for name, link := range mustache.Links {
 		clusterLink := &models.ClusterLink{
 			Name:              name,
 			ExternalClusterId: link,
 		}
-		clusterLinks = append(clusterLinks, clusterLink)
+		clusterLinks[name] = clusterLink
 	}
 
 	return clusterLinks
@@ -321,11 +338,11 @@ func (p *Parser) ParseClusterCommon(mustache *models.ClusterJsonMustache,
 
 func (p *Parser) Parse(conf []byte) (*models.ClusterWrapper, error) {
 	var cluster *models.Cluster
-	var clusterNodes []*models.ClusterNode
-	var clusterCommons []*models.ClusterCommon
-	var clusterLinks []*models.ClusterLink
-	var clusterRoles []*models.ClusterRole
-	var clusterLoadbalancers []*models.ClusterLoadbalancer
+	clusterNodes := make(map[string]*models.ClusterNode)
+	clusterCommons := make(map[string]*models.ClusterCommon)
+	clusterLinks := make(map[string]*models.ClusterLink)
+	clusterRoles := make(map[string]*models.ClusterRole)
+	clusterLoadbalancers := make(map[string][]*models.ClusterLoadbalancer)
 
 	var mustache models.ClusterJsonMustache
 	if err := yaml.Decode(conf, &mustache); err != nil {
@@ -346,25 +363,29 @@ func (p *Parser) Parse(conf []byte) (*models.ClusterWrapper, error) {
 		for _, node := range mustache.Nodes {
 			// Parse cluster common
 			clusterCommon, err := p.ParseClusterCommon(&mustache, &node)
-			clusterCommons = append(clusterCommons, clusterCommon)
+			clusterCommons[clusterCommon.Role] = clusterCommon
 
 			// Parse cluster role
 			clusterRole, err := p.ParseClusterRole(&mustache, &node)
 			if err != nil {
 				return nil, err
 			}
-			clusterRoles = append(clusterRoles, clusterRole)
+			clusterRoles[clusterRole.Role] = clusterRole
 
 			// Parse cluster node
 			addClusterNodes, err := p.ParseClusterNode(&node, mustache.Subnet)
 			if err != nil {
 				return nil, err
 			}
-			clusterNodes = append(clusterNodes, addClusterNodes...)
+			for key, value := range addClusterNodes {
+				clusterNodes[key] = value
+			}
 
 			// Parse cluster loadbalancer
 			addClusterLoadblancers := p.ParseClusterLoadbalancer(&node)
-			clusterLoadbalancers = append(clusterLoadbalancers, addClusterLoadblancers...)
+			if len(addClusterLoadblancers) > 0 {
+				clusterLoadbalancers[addClusterLoadblancers[0].Role] = addClusterLoadblancers
+			}
 		}
 	}
 

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package cluster
+package runtimeenv
 
 import (
 	"strings"
@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"openpitrix.io/openpitrix/pkg/client/runtime_env"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -20,7 +19,9 @@ import (
 type Runtime struct {
 	RuntimeEnvId     string
 	Runtime          string
+	Zone             string
 	RuntimeInterface plugins.RuntimeInterface
+	// TODO: need credential here
 }
 
 func NewRuntime(runtimeEnvId string) (*Runtime, error) {
@@ -29,6 +30,7 @@ func NewRuntime(runtimeEnvId string) (*Runtime, error) {
 		return nil, err
 	}
 	runtime := getRuntime(runtimeEnv)
+	zone := getZone(runtimeEnv)
 	runtimeInterface, err := plugins.GetRuntimePlugin(runtime)
 	if err != nil {
 		logger.Errorf("No such runtime [%s]. ", runtime)
@@ -38,6 +40,7 @@ func NewRuntime(runtimeEnvId string) (*Runtime, error) {
 	result := &Runtime{
 		RuntimeEnvId:     runtimeEnvId,
 		Runtime:          runtime,
+		Zone:             zone,
 		RuntimeInterface: runtimeInterface,
 	}
 	return result, nil
@@ -45,7 +48,7 @@ func NewRuntime(runtimeEnvId string) (*Runtime, error) {
 
 func getRuntimeEnv(runtimeEnvId string) (*pb.RuntimeEnv, error) {
 	runtimeEnvIds := []string{runtimeEnvId}
-	response, err := runtime_env.DescribeRuntimeEnvs(&pb.DescribeRuntimeEnvsRequest{
+	response, err := DescribeRuntimeEnvs(&pb.DescribeRuntimeEnvsRequest{
 		RuntimeEnvId: runtimeEnvIds,
 	})
 	if err != nil {
@@ -67,4 +70,9 @@ func getRuntimeEnv(runtimeEnvId string) (*pb.RuntimeEnv, error) {
 func getRuntime(runtimeEnv *pb.RuntimeEnv) string {
 	// TODO: need to parse runtime
 	return constants.RuntimeQingCloud
+}
+
+func getZone(runtimeEnv *pb.RuntimeEnv) string {
+	// TODO: need to parse runtime
+	return "testing"
 }

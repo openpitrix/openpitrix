@@ -64,6 +64,8 @@ const (
 const (
 	WaitTaskTimeout  = 600 * time.Second
 	WaitTaskInterval = 10 * time.Second
+
+	DefaultServiceTimeout = 600
 )
 
 const (
@@ -84,6 +86,7 @@ const (
 const (
 	RuntimeQingCloud  = "qingcloud"
 	RuntimeKubernetes = "kubernetes"
+	TargetPilot       = "pilot"
 )
 
 const (
@@ -95,6 +98,10 @@ const (
 	NodesToExecuteOnName    = "nodes_to_execute_on"
 	PostStartServiceName    = "post_start_service"
 	PostStopServiceName     = "post_stop_service"
+	AgentInstalledName      = "agent_installed"
+	ServiceOrderName        = "order"
+	ServiceTimeoutName      = "timeout"
+	ServiceCmdName          = "cmd"
 	ScalingPolicyParallel   = "parallel"
 	ScalingPolicySequential = "sequential"
 

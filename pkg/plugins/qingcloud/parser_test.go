@@ -1,3 +1,7 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package qingcloud
 
 import (
@@ -392,8 +396,8 @@ var hbaseCluster = models.Cluster{
 	RuntimeEnvId:       "",
 }
 
-var hbaseClusterCommons = []models.ClusterCommon{
-	{
+var hbaseClusterCommons = map[string]models.ClusterCommon{
+	"hbase-master": {
 		ClusterId:                  "",
 		Role:                       "hbase-master",
 		ServerIdUpperBound:         0,
@@ -421,7 +425,7 @@ var hbaseClusterCommons = []models.ClusterCommon{
 		IncrementalBackupSupported: false,
 		Hypervisor:                 "docker",
 	},
-	{
+	"hbase-hdfs-master": {
 		ClusterId:                  "",
 		Role:                       "hbase-hdfs-master",
 		ServerIdUpperBound:         0,
@@ -448,7 +452,8 @@ var hbaseClusterCommons = []models.ClusterCommon{
 		BackupPolicy:               "",
 		IncrementalBackupSupported: false,
 		Hypervisor:                 "docker",
-	}, {
+	},
+	"hbase-slave": {
 		ClusterId:                  "",
 		Role:                       "hbase-slave",
 		ServerIdUpperBound:         0,
@@ -478,8 +483,8 @@ var hbaseClusterCommons = []models.ClusterCommon{
 	},
 }
 
-var hbaseClusterRoles = []models.ClusterRole{
-	{
+var hbaseClusterRoles = map[string]models.ClusterRole{
+	"hbase-master": {
 		ClusterId:    "",
 		Role:         "hbase-master",
 		Cpu:          1,
@@ -488,7 +493,8 @@ var hbaseClusterRoles = []models.ClusterRole{
 		InstanceSize: 20,
 		StorageSize:  10,
 		Env:          "{\"dfs.datanode.handler.count\":10,\"dfs.namenode.handler.count\":10,\"dfs.replication\":2,\"fs.trash.interval\":1440,\"hbase.balancer.period\":300000,\"hbase.column.max.version\":1,\"hbase.hregion.majorcompaction\":0,\"hbase.hregion.max.filesize\":10737418240,\"hbase.hstore.blockingStoreFiles\":1000000,\"hbase.ipc.server.callqueue.handler.factor\":0.1,\"hbase.ipc.server.callqueue.read.ratio\":0,\"hbase.ipc.server.callqueue.scan.ratio\":0,\"hbase.master.handler.count\":25,\"hbase.master.logcleaner.ttl\":600000,\"hbase.regions.slop\":0.001,\"hbase.regionserver.global.memstore.size\":0.4,\"hbase.regionserver.handler.count\":30,\"hbase.regionserver.logroll.period\":3600000,\"hbase.regionserver.msginterval\":3000,\"hbase.regionserver.optionalcacheflushinterval\":0,\"hbase.regionserver.regionSplitLimit\":1000,\"hbase.rpc.timeout\":60000,\"hbase.security.authorization\":\"true\",\"hfile.block.cache.size\":0.4,\"hfile.index.block.max.size\":131072,\"io.storefile.bloom.block.size\":131072,\"phoenix.functions.allowUserDefinedFunctions\":\"false\",\"phoenix.transactions.enabled\":\"false\",\"qingcloud.hbase.major.compact.hour\":3,\"qingcloud.phoenix.on.hbase.enable\":\"false\",\"zookeeper.session.timeout\":60000}",
-	}, {
+	},
+	"hbase-hdfs-master": {
 		ClusterId:    "",
 		Role:         "hbase-hdfs-master",
 		Cpu:          1,
@@ -497,7 +503,8 @@ var hbaseClusterRoles = []models.ClusterRole{
 		InstanceSize: 20,
 		StorageSize:  10,
 		Env:          "{\"dfs.datanode.handler.count\":10,\"dfs.namenode.handler.count\":10,\"dfs.replication\":2,\"fs.trash.interval\":1440,\"hbase.balancer.period\":300000,\"hbase.column.max.version\":1,\"hbase.hregion.majorcompaction\":0,\"hbase.hregion.max.filesize\":10737418240,\"hbase.hstore.blockingStoreFiles\":1000000,\"hbase.ipc.server.callqueue.handler.factor\":0.1,\"hbase.ipc.server.callqueue.read.ratio\":0,\"hbase.ipc.server.callqueue.scan.ratio\":0,\"hbase.master.handler.count\":25,\"hbase.master.logcleaner.ttl\":600000,\"hbase.regions.slop\":0.001,\"hbase.regionserver.global.memstore.size\":0.4,\"hbase.regionserver.handler.count\":30,\"hbase.regionserver.logroll.period\":3600000,\"hbase.regionserver.msginterval\":3000,\"hbase.regionserver.optionalcacheflushinterval\":0,\"hbase.regionserver.regionSplitLimit\":1000,\"hbase.rpc.timeout\":60000,\"hbase.security.authorization\":\"true\",\"hfile.block.cache.size\":0.4,\"hfile.index.block.max.size\":131072,\"io.storefile.bloom.block.size\":131072,\"phoenix.functions.allowUserDefinedFunctions\":\"false\",\"phoenix.transactions.enabled\":\"false\",\"qingcloud.hbase.major.compact.hour\":3,\"qingcloud.phoenix.on.hbase.enable\":\"false\",\"zookeeper.session.timeout\":60000}",
-	}, {
+	},
+	"hbase-slave": {
 		ClusterId:    "",
 		Role:         "hbase-slave",
 		Cpu:          1,
@@ -509,8 +516,8 @@ var hbaseClusterRoles = []models.ClusterRole{
 	},
 }
 
-var hbaseClusterNodes = []models.ClusterNode{
-	{
+var hbaseClusterNodes = map[string]models.ClusterNode{
+	"hbase-master1": {
 		NodeId:           "",
 		ClusterId:        "",
 		Name:             "",
@@ -530,7 +537,8 @@ var hbaseClusterNodes = []models.ClusterNode{
 		HealthStatus:     "",
 		IsBackup:         false,
 		AutoBackup:       false,
-	}, {
+	},
+	"hbase-hdfs-master1": {
 		NodeId:           "",
 		ClusterId:        "",
 		Name:             "",
@@ -550,7 +558,8 @@ var hbaseClusterNodes = []models.ClusterNode{
 		HealthStatus:     "",
 		IsBackup:         false,
 		AutoBackup:       false,
-	}, {
+	},
+	"hbase-slave1": {
 		NodeId:           "",
 		ClusterId:        "",
 		Name:             "",
@@ -570,7 +579,8 @@ var hbaseClusterNodes = []models.ClusterNode{
 		HealthStatus:     "",
 		IsBackup:         false,
 		AutoBackup:       false,
-	}, {
+	},
+	"hbase-slave2": {
 		NodeId:           "",
 		ClusterId:        "",
 		Name:             "",
@@ -590,7 +600,8 @@ var hbaseClusterNodes = []models.ClusterNode{
 		HealthStatus:     "",
 		IsBackup:         false,
 		AutoBackup:       false,
-	}, {
+	},
+	"hbase-slave3": {
 		NodeId:           "",
 		ClusterId:        "",
 		Name:             "",
@@ -613,8 +624,8 @@ var hbaseClusterNodes = []models.ClusterNode{
 	},
 }
 
-var hbaseClusterLinks = []models.ClusterLink{
-	{
+var hbaseClusterLinks = map[string]models.ClusterLink{
+	"zk_service": {
 		ClusterId:         "",
 		Name:              "zk_service",
 		ExternalClusterId: "cl-w8qh5hf6",
@@ -643,7 +654,7 @@ func TestParse(t *testing.T) {
 	}
 	for index := range clusterWrapper.ClusterCommons {
 		if hbaseClusterCommons[index] != *clusterWrapper.ClusterCommons[index] {
-			t.Errorf("Cluster common not equal")
+			t.Errorf("Cluster common [%s] not equal.", index)
 			t.Logf("ori: %s", hbaseClusterCommons[index])
 			t.Logf("dst: %s", *clusterWrapper.ClusterCommons[index])
 		}
@@ -656,7 +667,7 @@ func TestParse(t *testing.T) {
 	}
 	for index := range clusterWrapper.ClusterRoles {
 		if hbaseClusterRoles[index] != *clusterWrapper.ClusterRoles[index] {
-			t.Errorf("Cluster role not equal")
+			t.Errorf("Cluster role [%s] not equal.", index)
 			t.Logf("ori: %s", hbaseClusterRoles[index])
 			t.Logf("dst: %s", *clusterWrapper.ClusterRoles[index])
 		}
@@ -669,8 +680,8 @@ func TestParse(t *testing.T) {
 	}
 	for index := range clusterWrapper.ClusterNodes {
 		if hbaseClusterNodes[index] != *clusterWrapper.ClusterNodes[index] {
-			t.Errorf("Cluster node not equal")
-			t.Logf("ori: %s", hbaseClusterNodes[index])
+			t.Errorf("Cluster node [%s] not equal.", index)
+			t.Logf("ori: %s", hbaseClusterNodes[index].Role)
 			t.Logf("dst: %s", *clusterWrapper.ClusterNodes[index])
 		}
 	}
@@ -682,7 +693,7 @@ func TestParse(t *testing.T) {
 	}
 	for index := range clusterWrapper.ClusterLinks {
 		if hbaseClusterLinks[index] != *clusterWrapper.ClusterLinks[index] {
-			t.Errorf("Cluster link not equal")
+			t.Errorf("Cluster link [%s] not equal", index)
 			t.Logf("ori: %s", hbaseClusterLinks[index])
 			t.Logf("dst: %s", *clusterWrapper.ClusterLinks[index])
 		}

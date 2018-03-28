@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	taskClient "openpitrix.io/openpitrix/pkg/client/task"
+	taskclient "openpitrix.io/openpitrix/pkg/client/task"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
@@ -127,7 +127,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 	err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
 		if parent != nil {
 			for _, parentTask := range parent.Tasks {
-				err = taskClient.WaitTask(parentTask.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+				err = taskclient.WaitTask(parentTask.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
 				if err != nil {
 					logger.Errorf("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 					return err
@@ -136,7 +136,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		}
 
 		for _, currentTask := range current.Tasks {
-			taskId, err := taskClient.SendTask(currentTask)
+			taskId, err := taskclient.SendTask(currentTask)
 			if err != nil {
 				logger.Errorf("Failed to send task [%s]: %+v", currentTask.TaskId, err)
 				return err

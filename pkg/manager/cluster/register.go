@@ -5,6 +5,7 @@
 package cluster
 
 import (
+	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -19,7 +20,7 @@ type Register struct {
 	Owner          string
 	ClusterType    int32
 	ClusterWrapper *models.ClusterWrapper
-	Runtime        *Runtime
+	Runtime        *runtimeenvclient.Runtime
 }
 
 func (r *Register) RegisterClusterWrapper() error {
@@ -44,6 +45,7 @@ func (r *Register) RegisterClusterWrapper() error {
 	}
 
 	// register cluster node
+	newClusterNodes := make(map[string]*models.ClusterNode)
 	for _, clusterNode := range r.ClusterWrapper.ClusterNodes {
 		clusterNode.ClusterId = r.ClusterId
 		clusterNode.NodeId = models.NewClusterNodeId()
@@ -58,7 +60,10 @@ func (r *Register) RegisterClusterWrapper() error {
 				models.ClusterNodeTableName, r.ClusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
+		newClusterNodes[clusterNode.NodeId] = clusterNode
 	}
+
+	r.ClusterWrapper.ClusterNodes = newClusterNodes
 
 	// register cluster common
 	for _, clusterCommon := range r.ClusterWrapper.ClusterCommons {
@@ -107,17 +112,19 @@ func (r *Register) RegisterClusterWrapper() error {
 	}
 
 	// register cluster loadbalancer
-	for _, clusterLoadbalancer := range r.ClusterWrapper.ClusterLoadbalancers {
-		clusterLoadbalancer.ClusterId = r.ClusterId
-		_, err := r.Db.
-			InsertInto(models.ClusterLoadbalancerTableName).
-			Columns(models.ClusterLoadbalancerColumns...).
-			Record(clusterLoadbalancer).
-			Exec()
-		if err != nil {
-			logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterLoadbalancerTableName, r.ClusterWrapper.Cluster.ClusterId, err)
-			return err
+	for _, clusterLoadbalancers := range r.ClusterWrapper.ClusterLoadbalancers {
+		for _, clusterLoadbalancer := range clusterLoadbalancers {
+			clusterLoadbalancer.ClusterId = r.ClusterId
+			_, err := r.Db.
+				InsertInto(models.ClusterLoadbalancerTableName).
+				Columns(models.ClusterLoadbalancerColumns...).
+				Record(clusterLoadbalancer).
+				Exec()
+			if err != nil {
+				logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
+					models.ClusterLoadbalancerTableName, r.ClusterWrapper.Cluster.ClusterId, err)
+				return err
+			}
 		}
 	}
 

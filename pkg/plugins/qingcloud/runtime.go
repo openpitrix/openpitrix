@@ -11,12 +11,14 @@ import (
 	"github.com/yunify/qingcloud-sdk-go/config"
 	"github.com/yunify/qingcloud-sdk-go/service"
 
-	appClient "openpitrix.io/openpitrix/pkg/client/app"
+	appclient "openpitrix.io/openpitrix/pkg/client/app"
+	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
 
@@ -57,7 +59,7 @@ func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.ClusterWrapp
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
 		ctx := context.Background()
-		appManagerClient, err := appClient.NewAppManagerClient(ctx)
+		appManagerClient, err := appclient.NewAppManagerClient(ctx)
 		if err != nil {
 			logger.Errorf("Connect to app manager failed: %v", err)
 			return nil, err
@@ -85,6 +87,56 @@ func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.ClusterWrapp
 }
 
 func (p *Runtime) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
+
+	switch job.JobAction {
+	case constants.ActionCreateCluster:
+		// TODO: vpc, eip, vxnet
+
+		clusterWrapper, err := models.NewClusterWrapper(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+
+		runtimeEnvId := clusterWrapper.Cluster.RuntimeEnvId
+		runtime, err := runtimeenvclient.NewRuntime(runtimeEnvId)
+		if err != nil {
+			return nil, err
+		}
+
+		frame := vmbased.Frame{
+			Job:            job,
+			ClusterWrapper: clusterWrapper,
+			Runtime:        runtime,
+		}
+
+		return frame.CreateClusterLayer(), nil
+
+	case constants.ActionUpgradeCluster:
+
+	case constants.ActionRollbackCluster:
+
+	case constants.ActionResizeCluster:
+
+	case constants.ActionAddClusterNodes:
+
+	case constants.ActionDeleteClusterNodes:
+
+	case constants.ActionStopClusters:
+
+	case constants.ActionStartClusters:
+
+	case constants.ActionDeleteClusters:
+
+	case constants.ActionRecoverClusters:
+
+	case constants.ActionCeaseClusters:
+
+	case constants.ActionUpdateClusterEnv:
+
+	default:
+		logger.Errorf("Unknown job action [%s]", job.JobAction)
+	}
+
 	return nil, nil
 }
 func (p *Runtime) HandleSubtask(task *models.Task) error {
@@ -99,4 +151,8 @@ func (p *Runtime) DescribeSubnet(subnetId string) (*models.Subnet, error) {
 }
 func (p *Runtime) DescribeVpc(vpcId string) (*models.Vpc, error) {
 	return nil, nil
+}
+
+func (p *Runtime) RunInstance() error {
+	return nil
 }

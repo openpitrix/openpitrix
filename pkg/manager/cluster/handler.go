@@ -10,7 +10,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	jobClient "openpitrix.io/openpitrix/pkg/client/job"
+	jobclient "openpitrix.io/openpitrix/pkg/client/job"
+	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -54,7 +55,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	// TODO: check resource permission
 
 	runtimeEnvId := req.GetRuntimeEnvId().GetValue()
-	runtime, err := NewRuntime(runtimeEnvId)
+	runtime, err := runtimeenvclient.NewRuntime(runtimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -105,18 +106,23 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, err
 	}
 
+	directive, err := clusterWrapper.ToString()
+	if err != nil {
+		return nil, err
+	}
+
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		clusterId,
 		appId,
 		versionId,
 		constants.ActionCreateCluster,
-		"", // TODO: need to generate
+		directive,
 		runtime.Runtime,
 		s.UserId,
 	)
 
-	jobId, err := jobClient.SendJob(newJob)
+	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
@@ -192,7 +198,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
@@ -207,7 +213,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			s.UserId,
 		)
 
-		jobId, err := jobClient.SendJob(newJob)
+		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
@@ -230,7 +236,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +252,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		s.UserId,
 	)
 
-	jobId, err := jobClient.SendJob(newJob)
+	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
@@ -267,7 +273,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -283,7 +289,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		s.UserId,
 	)
 
-	jobId, err := jobClient.SendJob(newJob)
+	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
@@ -304,7 +310,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +326,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		s.UserId,
 	)
 
-	jobId, err := jobClient.SendJob(newJob)
+	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
@@ -341,7 +347,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -357,7 +363,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		s.UserId,
 	)
 
-	jobId, err := jobClient.SendJob(newJob)
+	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
@@ -378,7 +384,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -394,7 +400,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		s.UserId,
 	)
 
-	jobId, err := jobClient.SendJob(newJob)
+	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
@@ -415,7 +421,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 	if err != nil {
 		return nil, err
 	}
@@ -431,7 +437,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		s.UserId,
 	)
 
-	jobId, err := jobClient.SendJob(newJob)
+	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
@@ -517,7 +523,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
@@ -533,7 +539,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			s.UserId,
 		)
 
-		jobId, err := jobClient.SendJob(newJob)
+		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
@@ -557,7 +563,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
@@ -583,7 +589,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			s.UserId,
 		)
 
-		jobId, err := jobClient.SendJob(newJob)
+		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
@@ -607,7 +613,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
@@ -633,7 +639,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			s.UserId,
 		)
 
-		jobId, err := jobClient.SendJob(newJob)
+		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
@@ -657,7 +663,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
 		if err != nil {
 			return nil, err
 		}
@@ -673,7 +679,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			s.UserId,
 		)
 
-		jobId, err := jobClient.SendJob(newJob)
+		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
