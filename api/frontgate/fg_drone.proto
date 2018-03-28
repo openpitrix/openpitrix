@@ -4,15 +4,22 @@
 
 syntax = "proto3";
 
-package openpitrix.frontgate;
+package openpitrix.frontgate.fg_drone;
 
 service FrontgateServiceForDrone {
+	rpc GetInfo (Empty) returns (Info);
 	rpc PublicCmdResult(CommandResult) returns (Empty);
 }
 
 message CommandResult {
 	string drone_ip = 1;
 	string cmd = 2;
+}
+
+message Info {
+	string frontgate_id = 1;
+	string frontgate_service_id = 2;
+	repeated string drone_ips = 3;
 }
 
 message Empty {}
