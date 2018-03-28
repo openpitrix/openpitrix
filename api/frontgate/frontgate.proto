@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package openpitrix.frontgate.fg_pilot;
+package openpitrix.frontgate;
 
 service FrontgateServiceForPilot {
 	rpc GetInfo (Empty) returns (Info);
@@ -19,6 +19,16 @@ service FrontgateServiceForPilot {
 
 	rpc RegisterCmd (RegisterCmdRequest) returns (Empty);
 	rpc DeregisterCmd (DeRegisterCmdRequest) returns (Empty);
+}
+
+service FrontgateServiceForDrone {
+	rpc GetInfo (Empty) returns (Info);
+	rpc PublicCmdResult(CommandResult) returns (Empty);
+}
+
+message CommandResult {
+	string drone_ip = 1;
+	string cmd = 2;
 }
 
 message Info {
@@ -64,9 +74,10 @@ message DeRegisterMetadataRequest {
 message RegisterCmdRequest {
 	string drone_ip = 1;
 	string fg_id = 2;
-	string cmd = 3;
-	int32 timeout_seccond = 4;
-	int32 retry = 5;
+	string fg_ip = 3;
+	string cmd = 4;
+	int32 timeout_seccond = 5;
+	int32 retry = 6;
 }
 
 message DeRegisterCmdRequest {
