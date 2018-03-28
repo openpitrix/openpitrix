@@ -201,6 +201,10 @@ func (p *Provider) ValidateCredential(url, credential string) error {
 	return err
 }
 
+func (p *Provider) UpdateClusterStatus(job *models.Job) error {
+	return nil
+}
+
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) []string {
 	handler := new(ProviderHandler)
 	zones, _ := handler.DescribeZones(url, credential)

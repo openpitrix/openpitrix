@@ -12,6 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/plugins"
 )
 
 type Processor struct {
@@ -140,6 +141,17 @@ func (j *Processor) Post() error {
 	}
 	switch j.Job.JobAction {
 	case constants.ActionCreateCluster:
+		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider)
+		if err != nil {
+			logger.Errorf("No such provider [%s]. ", j.Job.Provider)
+			return err
+		}
+		err = providerInterface.UpdateClusterStatus(j.Job)
+		if err != nil {
+			logger.Errorf("Executing job [%s] post processor failed: %+v", j.Job.JobId, err)
+			return err
+		}
+
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			Cluster: models.ClusterToPb(&models.Cluster{
 				ClusterId: j.Job.ClusterId,
@@ -147,6 +159,17 @@ func (j *Processor) Post() error {
 			}),
 		})
 	case constants.ActionUpgradeCluster:
+		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider)
+		if err != nil {
+			logger.Errorf("No such provider [%s]. ", j.Job.Provider)
+			return err
+		}
+		err = providerInterface.UpdateClusterStatus(j.Job)
+		if err != nil {
+			logger.Errorf("Executing job [%s] post processor failed: %+v", j.Job.JobId, err)
+			return err
+		}
+
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			Cluster: models.ClusterToPb(&models.Cluster{
 				ClusterId: j.Job.ClusterId,
@@ -154,6 +177,17 @@ func (j *Processor) Post() error {
 			}),
 		})
 	case constants.ActionRollbackCluster:
+		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider)
+		if err != nil {
+			logger.Errorf("No such provider [%s]. ", j.Job.Provider)
+			return err
+		}
+		err = providerInterface.UpdateClusterStatus(j.Job)
+		if err != nil {
+			logger.Errorf("Executing job [%s] post processor failed: %+v", j.Job.JobId, err)
+			return err
+		}
+
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			Cluster: models.ClusterToPb(&models.Cluster{
 				ClusterId: j.Job.ClusterId,
