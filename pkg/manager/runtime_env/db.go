@@ -121,6 +121,9 @@ func (p *Server) getRuntimeEnvCredentialsByFilterCondition(filterCondition dbr.B
 }
 
 func (p *Server) insertRuntimeEnvLabels(runtimeEnvId string, labelMap map[string]string) error {
+	if labelMap == nil {
+		return nil
+	}
 	insertQuery := p.Db.
 		InsertInto(models.RuntimeEnvLabelTableName).
 		Columns(models.RuntimeEnvLabelColumns...)
@@ -136,7 +139,11 @@ func (p *Server) insertRuntimeEnvLabels(runtimeEnvId string, labelMap map[string
 	return nil
 }
 
+// deleteRuntimeEnvLabels by runtimeEnvId and labelMap.if labelMap = nil, record are not deleted.
 func (p *Server) deleteRuntimeEnvLabels(runtimeEnvId string, labelMap map[string]string) error {
+	if labelMap == nil {
+		return nil
+	}
 	var conditions []dbr.Builder
 	for labelKey, labelValue := range labelMap {
 		conditions = append(conditions, BuildDeleteLabelFilterCondition(runtimeEnvId, labelKey, labelValue))
