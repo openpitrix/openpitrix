@@ -16,7 +16,7 @@ service DroneService {
 }
 
 service DroneServiceForFrontGate {
-	rpc GetRegisterCmdStatus (Empty) returns (Empty);
+	rpc GetRegisterCmdStatus (RegisterCmd) returns (ConfdStatus);
 }
 
 message Info {
@@ -44,7 +44,19 @@ message BackendConfig {
 	google.protobuf.StringValue client_key = 7;
 
 }
+
 message ConfdStatus {
 	string status = 1;
 }
+
+message RegisterCmd {
+	string fg_id = 1;
+	string subtask_id = 2;
+	string cmd = 3;
+}
+
+message ConfdStatus {
+	string status = 2;
+}
+
 message Empty {}
