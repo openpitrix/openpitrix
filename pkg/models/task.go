@@ -87,8 +87,19 @@ type TaskLayer struct {
 // WalkFunc is a callback type for use with TaskLayer.WalkTree
 type WalkFunc func(parent *TaskLayer, current *TaskLayer) error
 
-func (m *TaskLayer) WalkTree(cb WalkFunc) error {
-	return walkTaskLayerTree(nil, m, cb)
+func (t *TaskLayer) WalkTree(cb WalkFunc) error {
+	return walkTaskLayerTree(nil, t, cb)
+}
+
+func (t *TaskLayer) Leaf() *TaskLayer {
+	current := t
+	for {
+		if current.Child == nil {
+			return current
+		} else {
+			current = current.Child
+		}
+	}
 }
 
 func walkTaskLayerTree(parent *TaskLayer, current *TaskLayer, cb WalkFunc) error {

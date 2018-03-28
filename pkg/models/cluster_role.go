@@ -14,6 +14,8 @@ type ClusterRole struct {
 	Memory       int32
 	InstanceSize int32
 	StorageSize  int32
+	MountPoint   string
+	MountOptions string
 	Env          string
 }
 

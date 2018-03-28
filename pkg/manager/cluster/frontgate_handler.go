@@ -7,14 +7,14 @@ package cluster
 import (
 	"encoding/json"
 
-	jobClient "openpitrix.io/openpitrix/pkg/client/job"
+	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 )
 
 func (f *Frontgate) parseConf(subnetId, conf string) (string, error) {
-	var decodeConf map[string]interface{}
+	decodeConf := make(map[string]interface{})
 	err := json.Unmarshal([]byte(conf), &decodeConf)
 	if err != nil {
 		return "", err
@@ -36,18 +36,18 @@ func (f *Frontgate) getConf(subnetId string) (string, error) {
 	return f.parseConf(subnetId, conf)
 }
 
-func (f *Frontgate) CreateCluster(register *Register) error {
+func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 	clusterId := models.NewClusterId()
 
 	conf, err := f.getConf(register.SubnetId)
 	if err != nil {
 		logger.Errorf("Get frontgate cluster conf failed. ")
-		return err
+		return clusterId, err
 	}
 	clusterWrapper, err := f.Runtime.RuntimeInterface.ParseClusterConf(constants.FrontgateVersionId, conf)
 	if err != nil {
 		logger.Errorf("Parse frontgate cluster conf failed. ")
-		return err
+		return clusterId, err
 	}
 
 	register.ClusterId = clusterId
@@ -57,7 +57,7 @@ func (f *Frontgate) CreateCluster(register *Register) error {
 
 	err = register.RegisterClusterWrapper()
 	if err != nil {
-		return err
+		return clusterId, err
 	}
 
 	newJob := models.NewJob(
@@ -71,8 +71,8 @@ func (f *Frontgate) CreateCluster(register *Register) error {
 		register.Owner,
 	)
 
-	_, err = jobClient.SendJob(newJob)
-	return err
+	_, err = jobclient.SendJob(newJob)
+	return clusterId, err
 }
 
 func (f *Frontgate) StartCluster(frontgate *models.Cluster) error {
@@ -87,7 +87,7 @@ func (f *Frontgate) StartCluster(frontgate *models.Cluster) error {
 		frontgate.Owner,
 	)
 
-	_, err := jobClient.SendJob(newJob)
+	_, err := jobclient.SendJob(newJob)
 	return err
 }
 
@@ -103,6 +103,6 @@ func (f *Frontgate) RecoverCluster(frontgate *models.Cluster) error {
 		frontgate.Owner,
 	)
 
-	_, err := jobClient.SendJob(newJob)
+	_, err := jobclient.SendJob(newJob)
 	return err
 }

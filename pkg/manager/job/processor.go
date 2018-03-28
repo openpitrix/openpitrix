@@ -5,7 +5,7 @@
 package job
 
 import (
-	clusterClient "openpitrix.io/openpitrix/pkg/client/cluster"
+	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -28,62 +28,62 @@ func (j *Processor) Pre() {
 	var err error
 	switch j.Job.JobAction {
 	case constants.ActionCreateCluster:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusCreating),
 		})
 	case constants.ActionUpgradeCluster:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusUpgrading),
 		})
 	case constants.ActionRollbackCluster:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusRollbacking),
 		})
 	case constants.ActionResizeCluster:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusResizing),
 		})
 	case constants.ActionAddClusterNodes:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusScaling),
 		})
 	case constants.ActionDeleteClusterNodes:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusScaling),
 		})
 	case constants.ActionStopClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusStopping),
 		})
 	case constants.ActionStartClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusStarting),
 		})
 	case constants.ActionDeleteClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusDeleting),
 		})
 	case constants.ActionRecoverClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusRecovering),
 		})
 	case constants.ActionCeaseClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusCeasing),
 		})
 	case constants.ActionUpdateClusterEnv:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusUpdating),
 		})
@@ -101,73 +101,73 @@ func (j *Processor) Post() {
 	var err error
 	switch j.Job.JobAction {
 	case constants.ActionCreateCluster:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionUpgradeCluster:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionRollbackCluster:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionResizeCluster:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionAddClusterNodes:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionDeleteClusterNodes:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionStopClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusStopped),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionStartClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionDeleteClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusDeleted),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionRecoverClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionCeaseClusters:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusCeased),
 			TransitionStatus: utils.ToProtoString(""),
 		})
 	case constants.ActionUpdateClusterEnv:
-		err = clusterClient.ModifyCluster(&pb.ModifyClusterRequest{
+		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			Status:           utils.ToProtoString(constants.StatusActive),
 			TransitionStatus: utils.ToProtoString(""),

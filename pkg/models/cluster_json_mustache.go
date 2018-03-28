@@ -70,6 +70,17 @@ type Node struct {
 	Monitor               *Monitor               `json:"monitor"`
 }
 
+type Service struct {
+	NodesToExecuteOn *int                   `json:"nodes_to_execute_on"`
+	PostStartService *bool                  `json:"post_start_service"`
+	PostStopService  *bool                  `json:"post_stop_service"`
+	Timeout          *int                   `json:"timeout"`
+	ServiceParams    map[string]interface{} `json:"service_params"`
+	PreCheck         string                 `json:"pre_check"`
+	Cmd              string                 `json:"cmd"`
+	Order            *int                   `json:"order"`
+}
+
 type ClusterJsonMustache struct {
 	AppId                      string                 `json:"app_id"`
 	VersionId                  string                 `json:"version_id"`
