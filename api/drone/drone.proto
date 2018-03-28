@@ -19,6 +19,7 @@ service DroneService {
 
 message Info {
 	string drone_ip = 1;
+	repeated string cmds = 2;
 }
 message ConfdConfig {
 	// libconfd.Config
