@@ -100,6 +100,7 @@ compose-logs-f:
 
 .PHONY: compose-migrate-db
 compose-migrate-db:
+	docker-compose exec openpitrix-db bash -c "cat /docker-entrypoint-initdb.d/*.sql | mysql -uroot -ppassword"
 	docker-compose up $(COMPOSE_DB_CTRL)
 
 compose-update-%:
