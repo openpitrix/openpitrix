@@ -31,7 +31,7 @@ func (p *Server) checkRuntimeEnvCredentialDeleted(runtimeEnvCredentialId string)
 }
 
 func (p *Server) checkRuntimeEnvCredentialAttached(runtimeEnvCredentialId string) (bool, error) {
-	count, err := p.getAttachmentCountByRuntimeEnvCredentialId(runtimeEnvCredentialId)
+	count, err := p.countAttachedCredentialByCredentialId(runtimeEnvCredentialId)
 	if err != nil {
 		return true, err
 	}
@@ -42,7 +42,7 @@ func (p *Server) checkRuntimeEnvCredentialAttached(runtimeEnvCredentialId string
 }
 
 func (p *Server) checkRuntimeEnvAttached(runtimeEnvId string) (bool, error) {
-	count, err := p.getAttachmentCountByRuntimeEnvId(runtimeEnvId)
+	count, err := p.countAttachedCredentialByEnvId(runtimeEnvId)
 	if err != nil {
 		return true, err
 	}
