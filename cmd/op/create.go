@@ -46,7 +46,7 @@ func (c *createCmd) run() error {
 	appName := filepath.Base(c.name)
 	cfile := &app.Metadata{
 		Name:        appName,
-		Description: "A OpenPitrix app",
+		Description: "An OpenPitrix app",
 		Version:     "0.1.0",
 		AppVersion:  "1.0",
 		ApiVersion:  devkit.ApiVersionV1,

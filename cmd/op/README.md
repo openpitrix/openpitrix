@@ -1,6 +1,6 @@
 # `op`
 
-`op` is a command line tool for easy to create OpenPitrix Application.
+`op` is a command line tool for easy to create OpenPitrix VM-Based Application.
 
 ## How to Use?
 

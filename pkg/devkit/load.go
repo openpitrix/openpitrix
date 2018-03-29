@@ -157,7 +157,7 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 				return c, err
 			}
 			c.Metadata = m
-		} else if f.Name == ClusterJsonTemplate {
+		} else if f.Name == ClusterJsonTmpl {
 			c.ClusterTemplate = &app.ClusterTemplate{Value: string(f.Data), Raw: string(f.Data)}
 		} else if f.Name == ConfigJson {
 			m, err := UnmarshalConfigJson(f.Data)

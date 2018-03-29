@@ -89,7 +89,7 @@ func writeTarContents(out *tar.Writer, c *app.App, prefix string) error {
 		}
 	}
 	if c.ClusterTemplate != nil && len(c.ClusterTemplate.Raw) > 0 {
-		if err := writeToTar(out, base+"/"+ClusterJsonTemplate, []byte(c.ClusterTemplate.Raw)); err != nil {
+		if err := writeToTar(out, base+"/"+ClusterJsonTmpl, []byte(c.ClusterTemplate.Raw)); err != nil {
 			return err
 		}
 	}

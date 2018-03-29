@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 )
 
-const defaultClusterJsonMustache = `
+const defaultClusterJsonTmpl = `
 {}
 `
 
@@ -56,8 +56,8 @@ func Create(metadata *app.Metadata, dir string) (string, error) {
 	}{
 		{
 			// cluster.json.mustache
-			path:    filepath.Join(cdir, ClusterJsonTemplate),
-			content: strings.Replace(defaultClusterJsonMustache, "<APPNAME>", metadata.Name, -1),
+			path:    filepath.Join(cdir, ClusterJsonTmpl),
+			content: strings.Replace(defaultClusterJsonTmpl, "<APPNAME>", metadata.Name, -1),
 		},
 		{
 			// config.json

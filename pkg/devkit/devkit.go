@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	ApiVersionV1        = "v1"
-	PackageJson         = "package.json"
-	ClusterJsonTemplate = "cluster.json.tmpl"
-	ConfigJson          = "config.json"
+	ApiVersionV1    = "v1"
+	PackageJson     = "package.json"
+	ClusterJsonTmpl = "cluster.json.tmpl"
+	ConfigJson      = "config.json"
 )
 
 // IsAppDir validate a app directory.
