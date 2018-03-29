@@ -14,7 +14,7 @@ service DroneService {
 	rpc StopConfd (Empty) returns (Empty);
 	rpc GetConfdStatus (Empty) returns (ConfdStatus)
 }
-// this service is just for testing 
+// this service is just for testing
 service DroneServiceForFrontgate {
 	rpc GetRegisterCmdStatus (GetRegisterCmdStatusRequest) returns (GetRegisterCmdStatusResponse);
 }
