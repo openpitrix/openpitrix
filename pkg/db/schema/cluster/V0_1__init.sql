@@ -85,15 +85,15 @@ CREATE TABLE IF NOT EXISTS cluster_common (
 );
 
 CREATE TABLE IF NOT EXISTS cluster_snapshot (
-	snapshot_id        INT         NOT NULL,
-	role               VARCHAR(50) NOT NULL,
-	server_id          TEXT        NOT NULL,
-	count              INT(11)     NOT NULL,
-	app_id             VARCHAR(50) NOT NULL,
-	app_version        VARCHAR(50) NOT NULL,
-	child_snapshot_ids TEXT        NOT NULL,
-	size               INT(11)     NOT NULL,
-	PRIMARY KEY (snapshot_id, role, server_id)
+	snapshot_id        INT          NOT NULL,
+	role               VARCHAR(50)  NOT NULL,
+	server_ids         VARCHAR(255) NOT NULL,
+	count              INT(11)      NOT NULL,
+	app_id             VARCHAR(50)  NOT NULL,
+	app_version        VARCHAR(50)  NOT NULL,
+	child_snapshot_ids TEXT         NOT NULL,
+	size               INT(11)      NOT NULL,
+	PRIMARY KEY (snapshot_id, role, server_ids)
 );
 
 CREATE TABLE IF NOT EXISTS cluster_upgrade_audit (
