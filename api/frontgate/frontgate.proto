@@ -7,38 +7,77 @@ syntax = "proto3";
 package openpitrix.frontgate;
 
 service FrontgateService {
-	rpc GetInfo (Empty) returns (Info);
 	rpc CloseChannel (Empty) returns (Empty);
 
-	rpc StartConfd (Task) returns (Empty);
+	rpc GetConfdInfo(GetConfdInfoRequest) returns (ConfdInfo);
+	rpc StartConfd (StartConfdRequest) returns (Empty);
+	rpc StopConfd (StopConfdRequest) returns (Empty);
 
-	rpc RegisterMetadata (Task) returns (Empty);
-	rpc DeregisterMetadata (Task) returns (Empty);
+	rpc RegisterMetadata (RegisterMetadataRequest) returns (Empty);
+	rpc DeregisterMetadata (DeregisterMetadataRequest) returns (Empty);
 
-	rpc RegisterCmd (Task) returns (Empty);
-	rpc DeregisterCmd (Task) returns (Empty);
+	rpc RegisterCmd (RegisterCmdRequest) returns (Empty);
+	rpc DeregisterCmd (DeregisterCmdRequest) returns (Empty);
+
+	rpc ReportSubTaskResult (SubTaskResult) returns (Empty);
 }
 
-message Info {
-	string frontgate_id = 1;
-	string frontgate_service_id = 2;
+message SubTaskResult {
+	string drone_ip = 1;
+	string subtask_id = 2;
+	string status = 3;
 }
 
-message Task {
-	string id = 1;
-	string action = 2;
-	string target = 3;
-
-	TaskDirective directive = 4;
+message GetConfdInfoRequest {
+	string drone_ip = 1;
 }
 
-message TaskDirective {
+message ConfdInfo {
+	string drone_ip = 1;
+	string status = 2;
+}
+
+
+message StartConfdRequest {
+	string drone_ip = 1;
+	int32 timeout_second = 2;
+}
+
+message StopConfdRequest {
+	string drone_ip = 1;
+	int32 timeout_second = 2;
+}
+
+message RegisterMetadataRequest {
 	string drone_ip = 1;
 	string frontgate_id = 2;
+	string subtask_id = 3;
+	int32 timeout_second = 4;
+	int32 retry = 5;
+}
 
-	string command = 3;
-	string command_retry_times = 4;
-	string command_timeout_seconds = 5;
+message DeregisterMetadataRequest {
+	string drone_ip = 1;
+	string frontgate_id = 2;
+	string subtask_id = 3;
+	int32 timeout_second = 4;
+	int32 retry = 5;
+}
+
+message RegisterCmdRequest {
+	string drone_ip = 1;
+	string frontgate_id = 2;
+	string subtask_id = 3;
+	int32 timeout_second = 4;
+	int32 retry = 5;
+}
+
+message DeregisterCmdRequest {
+	string drone_ip = 1;
+	string frontgate_id = 2;
+	string subtask_id = 3;
+	int32 timeout_second = 4;
+	int32 retry = 5;
 }
 
 message Empty {}
