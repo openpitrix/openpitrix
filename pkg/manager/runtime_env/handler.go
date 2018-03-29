@@ -380,17 +380,17 @@ func (p *Server) AttachCredentialToRuntimeEnv(ctx context.Context, req *pb.Attac
 			runtimeEnvCredentialId)
 	}
 
-	// check runtime env attachment
-	attachment, err := p.getAttachmentByRuntimeEnvId(runtimeEnvId)
+	// check runtime env attached
+	runtimeEnvAttachedCredential, err := p.getAttachedCredentialByEnvId(runtimeEnvId)
 	if err != nil && err != dbr.ErrNotFound {
 		logger.Errorf("AttachCredentialToRuntimeEnv: %+v", err)
 		return nil, status.Errorf(codes.Internal, "AttachCredentialToRuntimeEnv: %+v", err)
 	}
-	if attachment != nil {
-		logger.Errorf("AttachCredentialToRuntimeEnv: runtime_env has been attached to %s", attachment.RuntimeEnvCredentialId)
+	if runtimeEnvAttachedCredential != nil {
+		logger.Errorf("AttachCredentialToRuntimeEnv: runtime_env has been attached to %s", runtimeEnvAttachedCredential.RuntimeEnvCredentialId)
 		return nil, status.Errorf(codes.Internal,
 			"AttachCredentialToRuntimeEnv: runtime_env has been attached to %s",
-			attachment.RuntimeEnvCredentialId)
+			runtimeEnvAttachedCredential.RuntimeEnvCredentialId)
 	}
 
 	err = p.attachCredentialToRuntimeEnv(runtimeEnvId, runtimeEnvCredentialId)
@@ -399,14 +399,14 @@ func (p *Server) AttachCredentialToRuntimeEnv(ctx context.Context, req *pb.Attac
 		return nil, status.Errorf(codes.Internal, "AttachCredentialToRuntimeEnv: %+v", err)
 	}
 
-	runtimeEnvAttachment, err := p.getAttachmentByRuntimeEnvId(runtimeEnvId)
+	envAttachedCredential, err := p.getAttachedCredentialByEnvId(runtimeEnvId)
 	if err != nil {
 		logger.Errorf("AttachCredentialToRuntimeEnv: %+v", err)
-		return nil, status.Errorf(codes.Internal, "AttachCredentialToRuntimeEnv: failed to get attachment [%+v]", err)
+		return nil, status.Errorf(codes.Internal, "AttachCredentialToRuntimeEnv: failed to get runtimeEnvAttachedCredential [%+v]", err)
 	}
 	res := &pb.AttachCredentialToRuntimeEnvResponse{
-		RuntimeEnvId:           &wrappers.StringValue{Value: runtimeEnvAttachment.RuntimeEnvId},
-		RuntimeEnvCredentialId: &wrappers.StringValue{Value: runtimeEnvAttachment.RuntimeEnvCredentialId},
+		RuntimeEnvId:           &wrappers.StringValue{Value: envAttachedCredential.RuntimeEnvId},
+		RuntimeEnvCredentialId: &wrappers.StringValue{Value: envAttachedCredential.RuntimeEnvCredentialId},
 	}
 
 	return res, nil
@@ -420,16 +420,16 @@ func (p *Server) DetachCredentialFromRuntimeEnv(ctx context.Context, req *pb.Det
 		return nil, status.Errorf(codes.InvalidArgument, "DetachCredentialFromRuntimeEnv	: %+v", err)
 	}
 
-	// get attachment to validate
+	// get runtimeEnvAttachedCredential to validate
 	runtimeEnvId := req.RuntimeEnvId.GetValue()
-	attachment, err := p.getAttachmentByRuntimeEnvId(runtimeEnvId)
+	runtimeEnvAttachedCredential, err := p.getAttachedCredentialByEnvId(runtimeEnvId)
 	if err != nil {
 		logger.Errorf("DetachCredentialFromRuntimeEnv: %+v", err)
 		return nil, status.Errorf(codes.Internal,
 			"DetachCredentialFromRuntimeEnv: [%+v]", err)
 	}
 	runtimeEnvCredentialId := req.RuntimeEnvCredentialId.GetValue()
-	if attachment.RuntimeEnvCredentialId != runtimeEnvCredentialId {
+	if runtimeEnvAttachedCredential.RuntimeEnvCredentialId != runtimeEnvCredentialId {
 		logger.Errorf("DetachCredentialFromRuntimeEnv: runtime_env_credential value not match")
 		return nil, status.Errorf(codes.Internal,
 			"DetachCredentialFromRuntimeEnv: runtime_env_credential value not match")
@@ -519,14 +519,14 @@ func (p *Server) getRuntimeEnvPbsRuntimeCredentialId(pbRuntimeEnvs []*pb.Runtime
 	for _, pbRuntimeEnv := range pbRuntimeEnvs {
 		runtimeEnvIds = append(runtimeEnvIds, pbRuntimeEnv.RuntimeEnvId.GetValue())
 	}
-	runtimeEnvAttachments, err := p.getAttachmentsByRuntimeEnvIds(runtimeEnvIds)
+	runtimeEnvAttachedCredentials, err := p.getAttachedCredentialsByEnvIds(runtimeEnvIds)
 	if err != nil {
 		return nil, err
 	}
 	for _, pbRuntimeEnv := range pbRuntimeEnvs {
-		for _, runtimeEnvAttachment := range runtimeEnvAttachments {
-			if pbRuntimeEnv.RuntimeEnvId.GetValue() == runtimeEnvAttachment.RuntimeEnvId {
-				pbRuntimeEnv.RuntimeEnvCredentialId = utils.ToProtoString(runtimeEnvAttachment.RuntimeEnvCredentialId)
+		for _, runtimeEnvAttachedCredential := range runtimeEnvAttachedCredentials {
+			if pbRuntimeEnv.RuntimeEnvId.GetValue() == runtimeEnvAttachedCredential.RuntimeEnvId {
+				pbRuntimeEnv.RuntimeEnvCredentialId = utils.ToProtoString(runtimeEnvAttachedCredential.RuntimeEnvCredentialId)
 				break
 			}
 		}
@@ -539,14 +539,14 @@ func (p *Server) getRuntimeEnvCredentialPbsRuntimeEnvIds(pbrRuntimeEnvCredential
 	for _, pbrRuntimeEnvCredential := range pbrRuntimeEnvCredentials {
 		runtimeEnvCredentialIds = append(runtimeEnvCredentialIds, pbrRuntimeEnvCredential.RuntimeEnvCredentialId.GetValue())
 	}
-	runtimeEnvAttachments, err := p.getAttachmentsByRuntimeEnvCredentialIds(runtimeEnvCredentialIds)
+	runtimeEnvAttachedCredentials, err := p.getAttachedCredentialsByCredentialIds(runtimeEnvCredentialIds)
 	if err != nil {
 		return nil, err
 	}
 	for _, pbrRuntimeEnvCredential := range pbrRuntimeEnvCredentials {
-		for _, runtimeEnvAttachment := range runtimeEnvAttachments {
-			if pbrRuntimeEnvCredential.RuntimeEnvCredentialId.GetValue() == runtimeEnvAttachment.RuntimeEnvCredentialId {
-				pbrRuntimeEnvCredential.RuntimeEnvId = append(pbrRuntimeEnvCredential.RuntimeEnvId, runtimeEnvAttachment.RuntimeEnvId)
+		for _, runtimeEnvAttachedCredential := range runtimeEnvAttachedCredentials {
+			if pbrRuntimeEnvCredential.RuntimeEnvCredentialId.GetValue() == runtimeEnvAttachedCredential.RuntimeEnvCredentialId {
+				pbrRuntimeEnvCredential.RuntimeEnvId = append(pbrRuntimeEnvCredential.RuntimeEnvId, runtimeEnvAttachedCredential.RuntimeEnvId)
 			}
 		}
 	}
@@ -657,8 +657,8 @@ func (p *Server) createRuntimeEnvCredential(name, description, userId string, co
 }
 
 func (p *Server) attachCredentialToRuntimeEnv(runtimeEnvId, runtimeEnvCredentialId string) error {
-	newRuntimeEnvAttachment := models.NewRuntimeEnvAttachedCredential(runtimeEnvId, runtimeEnvCredentialId)
-	err := p.insertRuntimeEnvAttachedCredential(*newRuntimeEnvAttachment)
+	newRuntimeEnvAttachedCredential := models.NewRuntimeEnvAttachedCredential(runtimeEnvId, runtimeEnvCredentialId)
+	err := p.insertRuntimeEnvAttachedCredential(*newRuntimeEnvAttachedCredential)
 	if err != nil {
 		return err
 	}

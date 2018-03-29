@@ -30,7 +30,7 @@ func (p *Server) getRuntimeEnvCredential(runtimeEnvCredentialId string) (*models
 	return runtimeEnvCredential, nil
 }
 
-func (p *Server) getAttachmentsByRuntimeEnvIds(runtimeEnvIds []string) ([]*models.RuntimeEnvAttachedCredential, error) {
+func (p *Server) getAttachedCredentialsByEnvIds(runtimeEnvIds []string) ([]*models.RuntimeEnvAttachedCredential, error) {
 	var runtimeEnvAttachedCredentials []*models.RuntimeEnvAttachedCredential
 	_, err := p.Db.
 		Select(models.RuntimeEnvAttachedCredentialColumns...).
@@ -43,7 +43,7 @@ func (p *Server) getAttachmentsByRuntimeEnvIds(runtimeEnvIds []string) ([]*model
 	return runtimeEnvAttachedCredentials, nil
 }
 
-func (p *Server) getAttachmentsByRuntimeEnvCredentialIds(runtimeEnvCredentialIds []string) ([]*models.RuntimeEnvAttachedCredential, error) {
+func (p *Server) getAttachedCredentialsByCredentialIds(runtimeEnvCredentialIds []string) ([]*models.RuntimeEnvAttachedCredential, error) {
 	var runtimeEnvAttachedCredentials []*models.RuntimeEnvAttachedCredential
 	_, err := p.Db.
 		Select(models.RuntimeEnvAttachedCredentialColumns...).
@@ -170,7 +170,7 @@ func (p *Server) getRuntimeEnvIdsBySelectorMap(selectorMap map[string][]string) 
 	return runtimeEnvIds, nil
 }
 
-func (p *Server) getAttachmentByRuntimeEnvId(runtimeEnvId string) (*models.RuntimeEnvAttachedCredential, error) {
+func (p *Server) getAttachedCredentialByEnvId(runtimeEnvId string) (*models.RuntimeEnvAttachedCredential, error) {
 	runtimeEnvAttachedCredential := &models.RuntimeEnvAttachedCredential{}
 	err := p.Db.
 		Select(models.RuntimeEnvAttachedCredentialColumns...).
@@ -183,7 +183,7 @@ func (p *Server) getAttachmentByRuntimeEnvId(runtimeEnvId string) (*models.Runti
 	return runtimeEnvAttachedCredential, nil
 }
 
-func (p *Server) getAttachmentCountByRuntimeEnvCredentialId(runtimeEnvCredentialId string) (count uint32, err error) {
+func (p *Server) countAttachedCredentialByCredentialId(runtimeEnvCredentialId string) (count uint32, err error) {
 	count, err = p.Db.
 		Select("*").
 		From(models.RuntimeEnvAttachedCredentialTableName).
@@ -192,7 +192,7 @@ func (p *Server) getAttachmentCountByRuntimeEnvCredentialId(runtimeEnvCredential
 	return count, err
 }
 
-func (p *Server) getAttachmentCountByRuntimeEnvId(runtimeEnvId string) (count uint32, err error) {
+func (p *Server) countAttachedCredentialByEnvId(runtimeEnvId string) (count uint32, err error) {
 	count, err = p.Db.
 		Select("*").
 		From(models.RuntimeEnvAttachedCredentialTableName).
@@ -257,6 +257,9 @@ func (p *Server) insertRuntimeEnvCredential(runtimeEnvCredential models.RuntimeE
 }
 
 func (p *Server) updateRuntimeEnvByMap(runtimeEnvId string, attributes map[string]interface{}) error {
+	if attributes == nil {
+		return nil
+	}
 	_, err := p.Db.
 		Update(models.RuntimeEnvTableName).
 		SetMap(attributes).
@@ -266,6 +269,9 @@ func (p *Server) updateRuntimeEnvByMap(runtimeEnvId string, attributes map[strin
 }
 
 func (p *Server) updateRuntimeEnvCredentialByMap(runtimeEnvCredentialId string, attributes map[string]interface{}) error {
+	if attributes == nil {
+		return nil
+	}
 	_, err := p.Db.
 		Update(models.RuntimeEnvCredentialTableName).
 		SetMap(attributes).

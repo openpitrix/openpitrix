@@ -5,6 +5,7 @@
 package runtime_env
 
 import (
+	"reflect"
 	"testing"
 
 	"openpitrix.io/openpitrix/pkg/config/test_config"
@@ -347,4 +348,257 @@ func TestServer_deleteRuntimeEnvLabels_byCount(t *testing.T) {
 		t.Fatal(err)
 	}
 
+}
+
+func TestServer_getAttachedCredentialsByEnvIds(t *testing.T) {
+	runtimeEnvAttachedCredentials, err := p.getAttachedCredentialsByEnvIds([]string{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runtimeEnvAttachedCredentials) != 0 {
+		t.Fatalf("runtimeEnvAttachedCredentials count should be 0")
+	}
+
+	runtimeEnvAttachedCredentials, err = p.getAttachedCredentialsByEnvIds([]string{""})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runtimeEnvAttachedCredentials) != 0 {
+		t.Fatalf("runtimeEnvAttachedCredentials count should be 0")
+	}
+
+	testRuntimeEnv1 := models.NewRuntimeEnv("test1", "test1", "http://openpitrix.io", "system")
+	testRuntimeEnv2 := models.NewRuntimeEnv("test2", "test2", "http://openpitrix.io", "system")
+	_, err = p.Db.InsertInto(models.RuntimeEnvTableName).
+		Columns(models.RuntimeEnvColumns...).
+		Record(testRuntimeEnv1).
+		Record(testRuntimeEnv2).
+		Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testRuntimeEnvCredential := models.NewRuntimeEnvCredential("test", "test", "system", map[string]string{})
+	_, err = p.Db.
+		InsertInto(models.RuntimeEnvCredentialTableName).
+		Columns(models.RuntimeEnvCredentialColumns...).
+		Record(testRuntimeEnvCredential).
+		Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+	runtimeEnvAttachedCredential1 := models.RuntimeEnvAttachedCredential{
+		RuntimeEnvId:           testRuntimeEnv1.RuntimeEnvId,
+		RuntimeEnvCredentialId: testRuntimeEnvCredential.RuntimeEnvCredentialId,
+	}
+
+	_, err = p.Db.InsertInto(models.RuntimeEnvAttachedCredentialTableName).
+		Columns(models.RuntimeEnvAttachedCredentialColumns...).
+		Record(runtimeEnvAttachedCredential1).Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runtimeEnvAttachedCredentials, err = p.getAttachedCredentialsByEnvIds([]string{testRuntimeEnv1.RuntimeEnvId})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runtimeEnvAttachedCredentials) != 1 {
+		t.Fatalf("runtimeEnvAttachedCredentials count should be 1")
+	}
+	if !reflect.DeepEqual(runtimeEnvAttachedCredentials[0], &runtimeEnvAttachedCredential1) {
+		t.Fatalf("runtimeEnvAttachedCredentials not equal [%+v] [%+v]", runtimeEnvAttachedCredentials[0], runtimeEnvAttachedCredential1)
+	}
+
+	runtimeEnvAttachedCredential2 := models.RuntimeEnvAttachedCredential{
+		RuntimeEnvId:           testRuntimeEnv2.RuntimeEnvId,
+		RuntimeEnvCredentialId: testRuntimeEnvCredential.RuntimeEnvCredentialId,
+	}
+
+	_, err = p.Db.InsertInto(models.RuntimeEnvAttachedCredentialTableName).
+		Columns(models.RuntimeEnvAttachedCredentialColumns...).
+		Record(runtimeEnvAttachedCredential2).Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runtimeEnvAttachedCredentials, err = p.getAttachedCredentialsByEnvIds([]string{testRuntimeEnv1.RuntimeEnvId})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runtimeEnvAttachedCredentials) != 1 {
+		t.Fatalf("runtimeEnvAttachedCredentials count should be 1")
+	}
+	if !reflect.DeepEqual(runtimeEnvAttachedCredentials[0], &runtimeEnvAttachedCredential1) {
+		t.Fatalf("runtimeEnvAttachedCredentials not equal [%+v] [%+v]", runtimeEnvAttachedCredentials[0], runtimeEnvAttachedCredential1)
+	}
+
+	runtimeEnvAttachedCredentials, err = p.getAttachedCredentialsByEnvIds([]string{testRuntimeEnv1.RuntimeEnvId, testRuntimeEnv2.RuntimeEnvId})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runtimeEnvAttachedCredentials) != 2 {
+		t.Fatalf("runtimeEnvAttachedCredentials count should be 2")
+	}
+	if !reflect.DeepEqual(runtimeEnvAttachedCredentials, []*models.RuntimeEnvAttachedCredential{&runtimeEnvAttachedCredential1, &runtimeEnvAttachedCredential2}) {
+		t.Fatalf("runtimeEnvAttachedCredentials not equal [%+v] [%+v]", runtimeEnvAttachedCredentials,
+			[]*models.RuntimeEnvAttachedCredential{&runtimeEnvAttachedCredential1, &runtimeEnvAttachedCredential2})
+	}
+
+	_, err = p.Db.
+		DeleteFrom(models.RuntimeEnvAttachedCredentialTableName).
+		Where(db.Eq(RuntimeEnvCredentialIdColumn, testRuntimeEnvCredential.RuntimeEnvCredentialId)).
+		Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = p.Db.
+		DeleteFrom(models.RuntimeEnvTableName).
+		Where(db.Eq(RuntimeEnvIdColumn, []string{testRuntimeEnv1.RuntimeEnvId, testRuntimeEnv2.RuntimeEnvId})).
+		Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = p.Db.
+		DeleteFrom(models.RuntimeEnvCredentialTableName).
+		Where(db.Eq(RuntimeEnvCredentialIdColumn, testRuntimeEnvCredential.RuntimeEnvCredentialId)).
+		Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+}
+
+func TestServer_getAttachedCredentialsByCredentialIds(t *testing.T) {
+	runtimeEnvAttachedCredentials, err := p.getAttachedCredentialsByCredentialIds([]string{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runtimeEnvAttachedCredentials) != 0 {
+		t.Fatalf("runtimeEnvAttachedCredentials count should be 0")
+	}
+
+	runtimeEnvAttachedCredentials, err = p.getAttachedCredentialsByCredentialIds([]string{""})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runtimeEnvAttachedCredentials) != 0 {
+		t.Fatalf("runtimeEnvAttachedCredentials count should be 0")
+	}
+
+	testRuntimeEnv1 := models.NewRuntimeEnv("test1", "test1", "http://openpitrix.io", "system")
+	testRuntimeEnv2 := models.NewRuntimeEnv("test2", "test2", "http://openpitrix.io", "system")
+	testRuntimeEnv3 := models.NewRuntimeEnv("test3", "test3", "http://openpitrix.io", "system")
+
+	_, err = p.Db.InsertInto(models.RuntimeEnvTableName).
+		Columns(models.RuntimeEnvColumns...).
+		Record(testRuntimeEnv1).
+		Record(testRuntimeEnv2).
+		Record(testRuntimeEnv3).
+		Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testRuntimeEnvCredential1 := models.NewRuntimeEnvCredential("test", "test", "system", map[string]string{})
+	testRuntimeEnvCredential2 := models.NewRuntimeEnvCredential("test", "test", "system", map[string]string{})
+	_, err = p.Db.
+		InsertInto(models.RuntimeEnvCredentialTableName).
+		Columns(models.RuntimeEnvCredentialColumns...).
+		Record(testRuntimeEnvCredential1).
+		Record(testRuntimeEnvCredential2).
+		Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runtimeEnvAttachedCredential1 := models.RuntimeEnvAttachedCredential{
+		RuntimeEnvId:           testRuntimeEnv1.RuntimeEnvId,
+		RuntimeEnvCredentialId: testRuntimeEnvCredential1.RuntimeEnvCredentialId,
+	}
+	runtimeEnvAttachedCredential2 := models.RuntimeEnvAttachedCredential{
+		RuntimeEnvId:           testRuntimeEnv2.RuntimeEnvId,
+		RuntimeEnvCredentialId: testRuntimeEnvCredential1.RuntimeEnvCredentialId,
+	}
+
+	_, err = p.Db.InsertInto(models.RuntimeEnvAttachedCredentialTableName).
+		Columns(models.RuntimeEnvAttachedCredentialColumns...).
+		Record(runtimeEnvAttachedCredential1).
+		Record(runtimeEnvAttachedCredential2).
+		Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runtimeEnvAttachedCredentials, err = p.getAttachedCredentialsByCredentialIds([]string{testRuntimeEnvCredential1.RuntimeEnvCredentialId})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runtimeEnvAttachedCredentials) != 2 {
+		t.Fatalf("runtimeEnvAttachedCredentials count should be 2")
+	}
+	if !reflect.DeepEqual(runtimeEnvAttachedCredentials, []*models.RuntimeEnvAttachedCredential{&runtimeEnvAttachedCredential1, &runtimeEnvAttachedCredential2}) {
+		t.Fatalf("runtimeEnvAttachedCredentials not equal [%+v] [%+v]", runtimeEnvAttachedCredentials,
+			[]*models.RuntimeEnvAttachedCredential{&runtimeEnvAttachedCredential1, &runtimeEnvAttachedCredential2})
+	}
+
+	runtimeEnvAttachedCredentia3 := models.RuntimeEnvAttachedCredential{
+		RuntimeEnvId:           testRuntimeEnv3.RuntimeEnvId,
+		RuntimeEnvCredentialId: testRuntimeEnvCredential2.RuntimeEnvCredentialId,
+	}
+	_, err = p.Db.InsertInto(models.RuntimeEnvAttachedCredentialTableName).
+		Columns(models.RuntimeEnvAttachedCredentialColumns...).
+		Record(runtimeEnvAttachedCredentia3).
+		Exec()
+
+	runtimeEnvAttachedCredentials, err = p.getAttachedCredentialsByCredentialIds([]string{testRuntimeEnvCredential2.RuntimeEnvCredentialId})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(runtimeEnvAttachedCredentials) != 1 {
+		t.Fatalf("runtimeEnvAttachedCredentials count should be 1")
+	}
+	if !reflect.DeepEqual(runtimeEnvAttachedCredentials, []*models.RuntimeEnvAttachedCredential{&runtimeEnvAttachedCredentia3}) {
+		t.Fatalf("runtimeEnvAttachedCredentials not equal [%+v] [%+v]", runtimeEnvAttachedCredentials,
+			[]*models.RuntimeEnvAttachedCredential{&runtimeEnvAttachedCredential1, &runtimeEnvAttachedCredential2})
+	}
+}
+
+func TestServer_updateRuntimeEnvByMap(t *testing.T) {
+	testRuntimeEnv := models.NewRuntimeEnv("test", "test", "http://openpitrix.io", "system")
+	_, err := p.Db.InsertInto(models.RuntimeEnvTableName).
+		Columns(models.RuntimeEnvColumns...).
+		Record(testRuntimeEnv).
+		Exec()
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = p.updateRuntimeEnvByMap(testRuntimeEnv.RuntimeEnvId, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = p.updateRuntimeEnvByMap(testRuntimeEnv.RuntimeEnvId, map[string]interface{}{
+		"name":        "test1",
+		"description": "test1",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runtimeEnv := &models.RuntimeEnv{}
+	err = p.Db.
+		Select(models.RuntimeEnvColumns...).
+		From(models.RuntimeEnvTableName).
+		Where(db.Eq(RuntimeEnvIdColumn, testRuntimeEnv.RuntimeEnvId)).
+		LoadOne(runtimeEnv)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if runtimeEnv.Name != "test1" || runtimeEnv.Description != "test1" {
+		t.Fatalf("runtime env name&description should be test1")
+	}
 }
