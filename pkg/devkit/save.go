@@ -1,0 +1,122 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+package devkit
+
+import (
+	"archive/tar"
+	"compress/gzip"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
+
+	"openpitrix.io/openpitrix/pkg/devkit/app"
+)
+
+// Reference: vendor/k8s.io/helm/pkg/chartutil/save.go:97
+
+func Save(c *app.App, outDir string) (string, error) {
+	// Create archive
+	if fi, err := os.Stat(outDir); err != nil {
+		return "", err
+	} else if !fi.IsDir() {
+		return "", fmt.Errorf("location [%s] is not a directory", outDir)
+	}
+
+	if c.Metadata == nil {
+		return "", fmt.Errorf("no %s data", PackageJson)
+	}
+
+	cfile := c.Metadata
+	if cfile.Name == "" {
+		return "", fmt.Errorf("no package name specified (%s)", PackageJson)
+	} else if cfile.Version == "" {
+		return "", fmt.Errorf("no app version specified (%s)", PackageJson)
+	}
+
+	filename := fmt.Sprintf("%s-%s.tgz", cfile.Name, cfile.Version)
+	filename = filepath.Join(outDir, filename)
+	if stat, err := os.Stat(filepath.Dir(filename)); os.IsNotExist(err) {
+		if err := os.MkdirAll(filepath.Dir(filename), 0755); !os.IsExist(err) {
+			return "", err
+		}
+	} else if !stat.IsDir() {
+		return "", fmt.Errorf("[%s] is not a directory", filepath.Dir(filename))
+	}
+
+	f, err := os.Create(filename)
+	if err != nil {
+		return "", err
+	}
+
+	// Wrap in gzip writer
+	zipper := gzip.NewWriter(f)
+
+	// Wrap in tar writer
+	twriter := tar.NewWriter(zipper)
+	rollback := false
+	defer func() {
+		twriter.Close()
+		zipper.Close()
+		f.Close()
+		if rollback {
+			os.Remove(filename)
+		}
+	}()
+
+	if err := writeTarContents(twriter, c, ""); err != nil {
+		rollback = true
+	}
+	return filename, err
+}
+
+func writeTarContents(out *tar.Writer, c *app.App, prefix string) error {
+	base := filepath.Join(prefix, c.Metadata.Name)
+
+	cdata, err := json.Marshal(c.Metadata)
+	if err != nil {
+		return err
+	}
+	if err := writeToTar(out, base+"/"+PackageJson, cdata); err != nil {
+		return err
+	}
+
+	if c.Config != nil && len(c.Config.Raw) > 0 {
+		if err := writeToTar(out, base+"/"+ConfigJson, []byte(c.Config.Raw)); err != nil {
+			return err
+		}
+	}
+	if c.ClusterTemplate != nil && len(c.ClusterTemplate.Raw) > 0 {
+		if err := writeToTar(out, base+"/"+ClusterJsonTmpl, []byte(c.ClusterTemplate.Raw)); err != nil {
+			return err
+		}
+	}
+
+	// Save files
+	for _, f := range c.Files {
+		n := filepath.Join(base, f.Name)
+		if err := writeToTar(out, n, f.Data); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// writeToTar writes a single file to a tar archive.
+func writeToTar(out *tar.Writer, name string, body []byte) error {
+	h := &tar.Header{
+		Name: name,
+		Mode: 0755,
+		Size: int64(len(body)),
+	}
+	if err := out.WriteHeader(h); err != nil {
+		return err
+	}
+	if _, err := out.Write(body); err != nil {
+		return err
+	}
+	return nil
+}
