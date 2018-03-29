@@ -7,7 +7,7 @@ building OpenPitrix from source, how to contribute code and documentation, who t
 
 ## To start developing OpenPitrix
 
-First of all, you should fork the project. Then follow one of the three options below to develop the project. Please note you should replace the official repo when using __go get__ or __git clone__ below with your own one. 
+First of all, you should fork the project. Then follow one of the three options below to develop the project. Please note you should replace the official repo when using __go get__ or __git clone__ below with your own one.
 
 ### 1. You have a working [Docker Compose](https://docs.docker.com/compose/install) environment [recommend].
 >You need to install [Docker](https://docs.docker.com/engine/installation/) first.
@@ -15,13 +15,13 @@ First of all, you should fork the project. Then follow one of the three options 
 ```shell
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
-$ make build-in-docker
-$ docker-compose up -d
+$ make build
+$ make compose-up
 ```
 
 Exit docker runtime environment
 ```shell
-$ docker-compose down
+$ make compose-up
 ```
 
 ### 2. You have a working [Docker](https://docs.docker.com/engine/installation/) environment.
@@ -29,15 +29,44 @@ $ docker-compose down
 ```shell
 $ git clone https://github.com/openpitrix/openpitrix
 $ cd openpitrix
-$ make build-in-docker
+$ make build
 $ docker network create -d bridge openpitrix-bridge
-$ docker run --name openpitrix-db -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=openpitrix \
-    --network openpitrix-bridge -p 3306:3306 -d mysql:5.6
-$ docker run --rm --name openpitrix-app --network openpitrix-bridge -d openpitrix app
-$ docker run --rm --name openpitrix-runtime --network openpitrix-bridge -d openpitrix runtime
-$ docker run --rm --name openpitrix-cluster --network openpitrix-bridge -d openpitrix cluster
-$ docker run --rm --name openpitrix-repo --network openpitrix-bridge -d openpitrix repo
-$ docker run --rm --name openpitrix-api --network openpitrix-bridge -p 9100:9100 -d openpitrix api
+$ docker run --rm --name openpitrix-db -e MYSQL_ROOT_PASSWORD=password -v `pwd`/pkg/db/ddl:/docker-entrypoint-initdb.d  \
+	--network openpitrix-bridge -p 13306:3306 -d mysql:5.7
+$ docker run --rm --name openpitrix-etcd --network openpitrix-bridge -p 12379:2379 -d appcelerator/etcd
+$ docker run --rm --name openpitrix-repo-db-ctrl -v `pwd`/pkg/db/schema/repo:/flyway/sql \
+	--network openpitrix-bridge boxfuse/flyway:5.0.7-alpine \
+	-url=jdbc:mysql://openpitrix-db/repo -user=root -password=password -validateOnMigrate=false migrate
+$ docker run --rm --name openpitrix-app-db-ctrl -v `pwd`/pkg/db/schema/app:/flyway/sql \
+	--network openpitrix-bridge boxfuse/flyway:5.0.7-alpine \
+	-url=jdbc:mysql://openpitrix-db/app -user=root -password=password -validateOnMigrate=false migrate
+$ docker run --rm --name openpitrix-runtime-db-ctrl -v `pwd`/pkg/db/schema/runtime:/flyway/sql \
+	--network openpitrix-bridge boxfuse/flyway:5.0.7-alpine \
+	-url=jdbc:mysql://openpitrix-db/runtime -user=root -password=password -validateOnMigrate=false migrate
+$ docker run --rm --name openpitrix-job-db-ctrl -v `pwd`/pkg/db/schema/job:/flyway/sql \
+	--network openpitrix-bridge boxfuse/flyway:5.0.7-alpine \
+	-url=jdbc:mysql://openpitrix-db/cluster -user=root -password=password -validateOnMigrate=false migrate
+$ docker run --rm --name openpitrix-task-db-ctrl -v `pwd`/pkg/db/schema/task:/flyway/sql \
+	--network openpitrix-bridge boxfuse/flyway:5.0.7-alpine \
+	-url=jdbc:mysql://openpitrix-db/cluster -user=root -password=password -validateOnMigrate=false migrate
+$ docker run --rm --name openpitrix-cluster-db-ctrl -v `pwd`/pkg/db/schema/cluster:/flyway/sql \
+	--network openpitrix-bridge boxfuse/flyway:5.0.7-alpine \
+	-url=jdbc:mysql://openpitrix-db/cluster -user=root -password=password -validateOnMigrate=false migrate
+$ docker run --rm --name openpitrix-app-manager -e OPENPITRIX_MYSQL_DATABASE=app \
+	--network openpitrix-bridge -d openpitrix app-manager
+$ docker run --rm --name openpitrix-runtime-env-manager -e OPENPITRIX_MYSQL_DATABASE=runtime \
+	--network openpitrix-bridge -d openpitrix runtime-env-manager
+$ docker run --rm --name openpitrix-repo-indexer -e OPENPITRIX_MYSQL_DATABASE=repo \
+	--network openpitrix-bridge -d openpitrix repo-indexer
+$ docker run --rm --name openpitrix-repo-manager -e OPENPITRIX_MYSQL_DATABASE=repo \
+	--network openpitrix-bridge -d openpitrix repo-manager
+$ docker run --rm --name openpitrix-job-manager -e OPENPITRIX_MYSQL_DATABASE=cluster  \
+	--network openpitrix-bridge -d openpitrix job-manager
+$ docker run --rm --name openpitrix-task-manager -e OPENPITRIX_MYSQL_DATABASE=cluster \
+	--network openpitrix-bridge -d openpitrix task-manager
+$ docker run --rm --name openpitrix-cluster-manager -e OPENPITRIX_MYSQL_DATABASE=cluster \
+	--network openpitrix-bridge -d openpitrix cluster-manager
+$ docker run --rm --name openpitrix-api-gateway --network openpitrix-bridge -p 9100:9100 -d openpitrix api-gateway
 ```
 
 Exit docker runtime environment
@@ -66,7 +95,7 @@ $ make generate
 $ GOBIN=`pwd`/bin go install ./cmd/...
 ```
 
-- Install mysql server first. Then add the services name to the `/etc/hosts` file as follows. 
+- Install mysql server first. Then add the services name to the `/etc/hosts` file as follows.
 >Note: If you install mysql server remotely then configure the server IP correspondingly. You may
 need to create the database __openpitrix__ and change the user __root__ password to __password__ in advance. If the user __root__ password is different than the default one, then you need to specify the password in the command line when start OpenPitrix services.
 
