@@ -21,7 +21,7 @@ $ make compose-up
 
 Exit docker runtime environment
 ```shell
-$ make compose-up
+$ make compose-down
 ```
 
 ### 2. You have a working [Docker](https://docs.docker.com/engine/installation/) environment.
