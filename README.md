@@ -20,7 +20,7 @@ The project originates from [QingCloud AppCenter](https://appcenter.qingcloud.co
 
 ## Design
 
-Basic idea is to decouple application repository and runtime environment. The runtime environment that an application can run is by matching the labels of runtime environment and the selector of the repository where the application is from. Please check out how to [design the project](docs/design/README.md).
+Basic idea is to decouple application repository and runtime environment. The runtime environment that an application can run is by matching the labels of runtime environment and the selectors of the repository where the application is from besides the provider. Please check out how to [design the project](docs/design/README.md).
 
 ## Contributing to the project
 
