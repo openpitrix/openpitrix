@@ -80,7 +80,7 @@ fmt-check: fmt-all
 	)
 
 .PHONY: build
-build: fmt 
+build: fmt
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
@@ -123,7 +123,8 @@ release:
 
 .PHONY: test
 test:
-	go test ./...
+	@make unit-test
+	@make e2e-test
 	@echo "test done"
 
 
@@ -151,3 +152,4 @@ unit-test:
 	OP_ETCD_UNIT_TEST=1 OPENPITRIX_ETCD_ENDPOINTS=127.0.0.1:12379 \
 	go test -v ./pkg/etcd/...
 	go test -v ./pkg/db/...
+	@echo "unit-test done"

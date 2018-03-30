@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -13,21 +13,6 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
-
-option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
-	info: {
-		title: "OpenPitrix Project";
-		version: "0.0.1";
-		contact: {
-			name: "OpenPitrix Project";
-			url: "https://openpitrix.io";
-		};
-	};
-	schemes: HTTP;
-	consumes: "application/json";
-	produces: "application/json";
-};
-
 
 message RuntimeEnvLabel{
 	google.protobuf.StringValue runtime_env_label_id = 1;
