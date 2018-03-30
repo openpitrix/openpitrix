@@ -51,7 +51,7 @@ func DialFrontgateChannel(
 		return
 	}
 
-	channel, err := pb.NewPilotManagerClient(conn).FrontgateChannel(ctx)
+	channel, err := pb.NewPilotServiceForFrontgateClient(conn).Channel(ctx)
 	if err != nil {
 		conn.Close()
 		conn = nil
@@ -62,7 +62,7 @@ func DialFrontgateChannel(
 	return
 }
 
-func NewFrontgateChannelFromServer(ch pb.PilotManager_FrontgateChannelServer) *FrameChannel {
+func NewFrontgateChannelFromServer(ch pb.PilotServiceForFrontgate_ChannelServer) *FrameChannel {
 	return &FrameChannel{
 		RecvMsgFunc: func() ([]byte, error) {
 			msg, err := ch.Recv()
@@ -80,7 +80,7 @@ func NewFrontgateChannelFromServer(ch pb.PilotManager_FrontgateChannelServer) *F
 	}
 }
 
-func NewFrontgateChannelFromClient(ch pb.PilotManager_FrontgateChannelClient) *FrameChannel {
+func NewFrontgateChannelFromClient(ch pb.PilotServiceForFrontgate_ChannelClient) *FrameChannel {
 	return &FrameChannel{
 		RecvMsgFunc: func() ([]byte, error) {
 			msg, err := ch.Recv()
