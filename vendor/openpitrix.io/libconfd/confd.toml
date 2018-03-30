@@ -1,0 +1,40 @@
+# Copyright 2018 The OpenPitrix Authors. All rights reserved.
+# Use of this source code is governed by a Apache license
+# that can be found in the LICENSE file.
+
+# The path to confd configs.
+# If the confdir is rel path, must convert to abs path.
+#
+# abspath = filepath.Join(ConfigPath, Config.ConfDir)
+#
+confdir = "./confd"
+
+# The backend polling interval in seconds. (10)
+interval = 10
+
+# Enable noop mode. Process all template resources; skip target update.
+noop = false
+
+# The string to prefix to keys. ("/")
+prefix = "/"
+
+# sync without check_cmd and reload_cmd.
+sync-only = true
+
+# level which confd should log messages ("DEBUG")
+log-level = "DEBUG"
+
+# run once and exit
+onetime = true
+
+# enable watch support
+watch = false
+
+# the TOML backend file to watch for changes
+file = "./confd/backend-file.toml"
+
+# keep staged files
+keep-stage-file = false
+
+# PGP secret keyring (for use with crypt functions)
+pgp-private-key = ""
