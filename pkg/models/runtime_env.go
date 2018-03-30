@@ -12,7 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/utils"
 )
 
-const RuntimeEnvTableName = "runtime_env"
+const RuntimeEnvTableName = "runtime"
 const RuntimeEnvIdPrifix = "re-"
 
 func NewRuntimeEnvId() string {
