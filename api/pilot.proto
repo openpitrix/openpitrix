@@ -12,21 +12,6 @@ import "google/protobuf/wrappers.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
-option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
-	info: {
-		title: "OpenPitrix Project";
-		version: "0.0.1";
-		contact: {
-			name: "OpenPitrix Project";
-			url: "https://openpitrix.io";
-		};
-	};
-	schemes: HTTP;
-	consumes: "application/json";
-	produces: "application/json";
-};
-
-
 message HandleSubtaskRequest {
 	google.protobuf.StringValue subtask_id = 1;
 	google.protobuf.StringValue subtask_action = 2;

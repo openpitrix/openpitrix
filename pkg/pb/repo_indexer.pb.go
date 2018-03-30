@@ -28,7 +28,7 @@ type IndexRepoRequest struct {
 func (m *IndexRepoRequest) Reset()                    { *m = IndexRepoRequest{} }
 func (m *IndexRepoRequest) String() string            { return proto.CompactTextString(m) }
 func (*IndexRepoRequest) ProtoMessage()               {}
-func (*IndexRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (*IndexRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
 
 func (m *IndexRepoRequest) GetRepoId() *google_protobuf.StringValue {
 	if m != nil {
@@ -44,7 +44,7 @@ type IndexRepoResponse struct {
 func (m *IndexRepoResponse) Reset()                    { *m = IndexRepoResponse{} }
 func (m *IndexRepoResponse) String() string            { return proto.CompactTextString(m) }
 func (*IndexRepoResponse) ProtoMessage()               {}
-func (*IndexRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
+func (*IndexRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
 
 func (m *IndexRepoResponse) GetRepoTask() *RepoTask {
 	if m != nil {
@@ -66,7 +66,7 @@ type RepoTask struct {
 func (m *RepoTask) Reset()                    { *m = RepoTask{} }
 func (m *RepoTask) String() string            { return proto.CompactTextString(m) }
 func (*RepoTask) ProtoMessage()               {}
-func (*RepoTask) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
+func (*RepoTask) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{2} }
 
 func (m *RepoTask) GetRepoTaskId() *google_protobuf.StringValue {
 	if m != nil {
@@ -129,7 +129,7 @@ type DescribeRepoTasksRequest struct {
 func (m *DescribeRepoTasksRequest) Reset()                    { *m = DescribeRepoTasksRequest{} }
 func (m *DescribeRepoTasksRequest) String() string            { return proto.CompactTextString(m) }
 func (*DescribeRepoTasksRequest) ProtoMessage()               {}
-func (*DescribeRepoTasksRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{3} }
+func (*DescribeRepoTasksRequest) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{3} }
 
 func (m *DescribeRepoTasksRequest) GetRepoTaskId() []string {
 	if m != nil {
@@ -181,7 +181,7 @@ type DescribeRepoTasksResponse struct {
 func (m *DescribeRepoTasksResponse) Reset()                    { *m = DescribeRepoTasksResponse{} }
 func (m *DescribeRepoTasksResponse) String() string            { return proto.CompactTextString(m) }
 func (*DescribeRepoTasksResponse) ProtoMessage()               {}
-func (*DescribeRepoTasksResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{4} }
+func (*DescribeRepoTasksResponse) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{4} }
 
 func (m *DescribeRepoTasksResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -310,9 +310,9 @@ var _RepoIndexer_serviceDesc = grpc.ServiceDesc{
 	Metadata: "repo_indexer.proto",
 }
 
-func init() { proto.RegisterFile("repo_indexer.proto", fileDescriptor5) }
+func init() { proto.RegisterFile("repo_indexer.proto", fileDescriptor6) }
 
-var fileDescriptor5 = []byte{
+var fileDescriptor6 = []byte{
 	// 577 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0xcf, 0x6e, 0xd3, 0x4e,
 	0x10, 0x96, 0x93, 0x26, 0x6d, 0x26, 0xbf, 0xfc, 0x68, 0x97, 0x40, 0xdd, 0x28, 0x50, 0xcb, 0x02,
