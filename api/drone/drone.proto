@@ -19,6 +19,7 @@ service DroneService {
 }
 
 service DroneServiceForFrontgate {
+	rpc SubscribeCmdStatus (SubscribeCmdStatusRequest) returns (stream SubscribeCmdStatusResponse);
 	rpc GetRegisterCmdStatus (GetRegisterCmdStatusRequest) returns (GetRegisterCmdStatusResponse);
 }
 
@@ -47,7 +48,6 @@ message BackendConfig {
 	google.protobuf.StringValue client_ca_keys = 5;
 	google.protobuf.StringValue client_cert = 6;
 	google.protobuf.StringValue client_key = 7;
-
 }
 
 message StartConfdRequest {
@@ -59,6 +59,13 @@ message ConfdStatus {
 	string process_id = 1;
 	string status = 2;
 	google.protobuf.Timestamp up_time = 3;
+}
+
+message SubscribeCmdStatusRequest {
+	string subtask_id = 1;
+}
+message SubscribeCmdStatusResponse {
+	string status = 1;
 }
 
 message GetRegisterCmdStatusRequest {
