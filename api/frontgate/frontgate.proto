@@ -37,7 +37,6 @@ message ConfdInfo {
 	string status = 2;
 }
 
-
 message StartConfdRequest {
 	string drone_ip = 1;
 	int32 timeout_second = 2;

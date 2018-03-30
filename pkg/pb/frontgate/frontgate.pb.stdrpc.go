@@ -30,13 +30,15 @@ var (
 )
 
 type FrontgateService interface {
-	GetInfo(in *Empty, out *Info) error
 	CloseChannel(in *Empty, out *Empty) error
-	StartConfd(in *Task, out *Empty) error
-	RegisterMetadata(in *Task, out *Empty) error
-	DeregisterMetadata(in *Task, out *Empty) error
-	RegisterCmd(in *Task, out *Empty) error
-	DeregisterCmd(in *Task, out *Empty) error
+	GetConfdInfo(in *GetConfdInfoRequest, out *ConfdInfo) error
+	StartConfd(in *StartConfdRequest, out *Empty) error
+	StopConfd(in *StopConfdRequest, out *Empty) error
+	RegisterMetadata(in *RegisterMetadataRequest, out *Empty) error
+	DeregisterMetadata(in *DeregisterMetadataRequest, out *Empty) error
+	RegisterCmd(in *RegisterCmdRequest, out *Empty) error
+	DeregisterCmd(in *DeregisterCmdRequest, out *Empty) error
+	ReportSubTaskResult(in *SubTaskResult, out *Empty) error
 }
 
 // AcceptFrontgateServiceClient accepts connections on the listener and serves requests
@@ -117,45 +119,6 @@ func NewFrontgateServiceClient(conn io.ReadWriteCloser) *FrontgateServiceClient 
 	return &FrontgateServiceClient{c}
 }
 
-func (c *FrontgateServiceClient) GetInfo(in *Empty) (out *Info, err error) {
-	if in == nil {
-		in = new(Empty)
-	}
-
-	type Validator interface {
-		Validate() error
-	}
-	if x, ok := proto.Message(in).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return nil, err
-		}
-	}
-
-	out = new(Info)
-	if err = c.Call("FrontgateService.GetInfo", in, out); err != nil {
-		return nil, err
-	}
-
-	if x, ok := proto.Message(out).(Validator); ok {
-		if err := x.Validate(); err != nil {
-			return out, err
-		}
-	}
-
-	return out, nil
-}
-
-func (c *FrontgateServiceClient) AsyncGetInfo(in *Empty, out *Info, done chan *rpc.Call) *rpc.Call {
-	if in == nil {
-		in = new(Empty)
-	}
-	return c.Go(
-		"FrontgateService.GetInfo",
-		in, out,
-		done,
-	)
-}
-
 func (c *FrontgateServiceClient) CloseChannel(in *Empty) (out *Empty, err error) {
 	if in == nil {
 		in = new(Empty)
@@ -195,9 +158,48 @@ func (c *FrontgateServiceClient) AsyncCloseChannel(in *Empty, out *Empty, done c
 	)
 }
 
-func (c *FrontgateServiceClient) StartConfd(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceClient) GetConfdInfo(in *GetConfdInfoRequest) (out *ConfdInfo, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(GetConfdInfoRequest)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(ConfdInfo)
+	if err = c.Call("FrontgateService.GetConfdInfo", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceClient) AsyncGetConfdInfo(in *GetConfdInfoRequest, out *ConfdInfo, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(GetConfdInfoRequest)
+	}
+	return c.Go(
+		"FrontgateService.GetConfdInfo",
+		in, out,
+		done,
+	)
+}
+
+func (c *FrontgateServiceClient) StartConfd(in *StartConfdRequest) (out *Empty, err error) {
+	if in == nil {
+		in = new(StartConfdRequest)
 	}
 
 	type Validator interface {
@@ -223,9 +225,9 @@ func (c *FrontgateServiceClient) StartConfd(in *Task) (out *Empty, err error) {
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncStartConfd(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceClient) AsyncStartConfd(in *StartConfdRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(StartConfdRequest)
 	}
 	return c.Go(
 		"FrontgateService.StartConfd",
@@ -234,9 +236,48 @@ func (c *FrontgateServiceClient) AsyncStartConfd(in *Task, out *Empty, done chan
 	)
 }
 
-func (c *FrontgateServiceClient) RegisterMetadata(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceClient) StopConfd(in *StopConfdRequest) (out *Empty, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(StopConfdRequest)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Empty)
+	if err = c.Call("FrontgateService.StopConfd", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceClient) AsyncStopConfd(in *StopConfdRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(StopConfdRequest)
+	}
+	return c.Go(
+		"FrontgateService.StopConfd",
+		in, out,
+		done,
+	)
+}
+
+func (c *FrontgateServiceClient) RegisterMetadata(in *RegisterMetadataRequest) (out *Empty, err error) {
+	if in == nil {
+		in = new(RegisterMetadataRequest)
 	}
 
 	type Validator interface {
@@ -262,9 +303,9 @@ func (c *FrontgateServiceClient) RegisterMetadata(in *Task) (out *Empty, err err
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncRegisterMetadata(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceClient) AsyncRegisterMetadata(in *RegisterMetadataRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(RegisterMetadataRequest)
 	}
 	return c.Go(
 		"FrontgateService.RegisterMetadata",
@@ -273,9 +314,9 @@ func (c *FrontgateServiceClient) AsyncRegisterMetadata(in *Task, out *Empty, don
 	)
 }
 
-func (c *FrontgateServiceClient) DeregisterMetadata(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceClient) DeregisterMetadata(in *DeregisterMetadataRequest) (out *Empty, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(DeregisterMetadataRequest)
 	}
 
 	type Validator interface {
@@ -301,9 +342,9 @@ func (c *FrontgateServiceClient) DeregisterMetadata(in *Task) (out *Empty, err e
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncDeregisterMetadata(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceClient) AsyncDeregisterMetadata(in *DeregisterMetadataRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(DeregisterMetadataRequest)
 	}
 	return c.Go(
 		"FrontgateService.DeregisterMetadata",
@@ -312,9 +353,9 @@ func (c *FrontgateServiceClient) AsyncDeregisterMetadata(in *Task, out *Empty, d
 	)
 }
 
-func (c *FrontgateServiceClient) RegisterCmd(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceClient) RegisterCmd(in *RegisterCmdRequest) (out *Empty, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(RegisterCmdRequest)
 	}
 
 	type Validator interface {
@@ -340,9 +381,9 @@ func (c *FrontgateServiceClient) RegisterCmd(in *Task) (out *Empty, err error) {
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncRegisterCmd(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceClient) AsyncRegisterCmd(in *RegisterCmdRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(RegisterCmdRequest)
 	}
 	return c.Go(
 		"FrontgateService.RegisterCmd",
@@ -351,9 +392,9 @@ func (c *FrontgateServiceClient) AsyncRegisterCmd(in *Task, out *Empty, done cha
 	)
 }
 
-func (c *FrontgateServiceClient) DeregisterCmd(in *Task) (out *Empty, err error) {
+func (c *FrontgateServiceClient) DeregisterCmd(in *DeregisterCmdRequest) (out *Empty, err error) {
 	if in == nil {
-		in = new(Task)
+		in = new(DeregisterCmdRequest)
 	}
 
 	type Validator interface {
@@ -379,12 +420,51 @@ func (c *FrontgateServiceClient) DeregisterCmd(in *Task) (out *Empty, err error)
 	return out, nil
 }
 
-func (c *FrontgateServiceClient) AsyncDeregisterCmd(in *Task, out *Empty, done chan *rpc.Call) *rpc.Call {
+func (c *FrontgateServiceClient) AsyncDeregisterCmd(in *DeregisterCmdRequest, out *Empty, done chan *rpc.Call) *rpc.Call {
 	if in == nil {
-		in = new(Task)
+		in = new(DeregisterCmdRequest)
 	}
 	return c.Go(
 		"FrontgateService.DeregisterCmd",
+		in, out,
+		done,
+	)
+}
+
+func (c *FrontgateServiceClient) ReportSubTaskResult(in *SubTaskResult) (out *Empty, err error) {
+	if in == nil {
+		in = new(SubTaskResult)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Empty)
+	if err = c.Call("FrontgateService.ReportSubTaskResult", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceClient) AsyncReportSubTaskResult(in *SubTaskResult, out *Empty, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(SubTaskResult)
+	}
+	return c.Go(
+		"FrontgateService.ReportSubTaskResult",
 		in, out,
 		done,
 	)

@@ -16,12 +16,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/utils"
 )
 
-func NewPilotManagerClient(ctx context.Context) (pb.PilotManagerClient, error) {
+func NewPilotManagerClient(ctx context.Context) (pb.PilotServiceClient, error) {
 	conn, err := manager.NewClient(ctx, constants.PilotManagerHost, constants.PilotManagerPort)
 	if err != nil {
 		return nil, err
 	}
-	return pb.NewPilotManagerClient(conn), err
+	return pb.NewPilotServiceClient(conn), err
 }
 
 func HandleSubtask(subtaskRequest *pb.HandleSubtaskRequest) error {

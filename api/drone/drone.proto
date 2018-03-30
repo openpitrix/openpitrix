@@ -6,16 +6,20 @@ syntax = "proto3";
 
 package openpitrix.drone;
 
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
 service DroneService {
 	rpc GetInfo (Empty) returns (Info);
 	rpc GetConfdConfig (Empty) returns (ConfdConfig);
 	rpc GetBackendConfig (Empty) returns (BackendConfig);
 	rpc StartConfd (StartConfdRequest) returns (Empty);
 	rpc StopConfd (Empty) returns (Empty);
-	rpc GetConfdStatus (Empty) returns (ConfdStatus)
+	rpc GetConfdStatus (Empty) returns (ConfdStatus);
 }
-// this service is just for testing
+
 service DroneServiceForFrontgate {
+	rpc SubscribeCmdStatus (SubscribeCmdStatusRequest) returns (stream SubscribeCmdStatusResponse);
 	rpc GetRegisterCmdStatus (GetRegisterCmdStatusRequest) returns (GetRegisterCmdStatusResponse);
 }
 
@@ -25,8 +29,8 @@ message Info {
 	BackendConfig backend_config = 3;
 }
 
+// See https://godoc.org/openpitrix.io/libconfd#Config
 message ConfdConfig {
-	// libconfd.Config
 	google.protobuf.StringValue conf_dir = 1;
 	google.protobuf.Int32Value interval = 2;
 	google.protobuf.BoolValue noop =3;
@@ -35,6 +39,7 @@ message ConfdConfig {
 	google.protobuf.StringValue log_level = 6;
 }
 
+// See https://godoc.org/openpitrix.io/libconfd#BackendConfig
 message BackendConfig {
 	google.protobuf.StringValue type = 1;
 	repeated string host = 2;
@@ -43,7 +48,6 @@ message BackendConfig {
 	google.protobuf.StringValue client_ca_keys = 5;
 	google.protobuf.StringValue client_cert = 6;
 	google.protobuf.StringValue client_key = 7;
-
 }
 
 message StartConfdRequest {
@@ -51,17 +55,22 @@ message StartConfdRequest {
 	BackendConfig backend_config = 2;
 }
 
-
 message ConfdStatus {
 	string process_id = 1;
 	string status = 2;
 	google.protobuf.Timestamp up_time = 3;
 }
 
+message SubscribeCmdStatusRequest {
+	string subtask_id = 1;
+}
+message SubscribeCmdStatusResponse {
+	string status = 1;
+}
+
 message GetRegisterCmdStatusRequest {
 	string subtask_id = 1;
 }
-
 message GetRegisterCmdStatusResponse {
 	string status = 1;
 }
