@@ -30,6 +30,7 @@ func Serve(cfg *config.Config) {
 		clientMap: make(map[string][]*pb_frontgate.FrontgateServiceClient),
 	}
 	manager.NewGrpcServer("pilot-manager", constants.PilotManagerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterPilotManagerServer(server, &s)
+		pb.RegisterPilotServiceServer(server, &s)
+		pb.RegisterPilotServiceForFrontgateServer(server, &s)
 	})
 }

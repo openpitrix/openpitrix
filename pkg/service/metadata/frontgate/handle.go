@@ -16,37 +16,28 @@ import (
 
 var _ pb_frontgate.FrontgateService = (*Server)(nil)
 
-func (p *Server) GetInfo(in *pb_frontgate.Empty, out *pb_frontgate.Info) error {
-	panic("todo")
-}
-
 func (p *Server) CloseChannel(in *pb_frontgate.Empty, out *pb_frontgate.Empty) error {
 	return p.conn.Close()
 }
 
-func (p *Server) StartConfd(in *pb_frontgate.Task, out *pb_frontgate.Empty) error {
+func (p *Server) GetConfdInfo(in *pb_frontgate.GetConfdInfoRequest, out *pb_frontgate.ConfdInfo) error {
+	panic("todo")
+}
+
+func (p *Server) StartConfd(in *pb_frontgate.StartConfdRequest, out *pb_frontgate.Empty) error {
 	ctx := context.Background()
 
 	conn, err := manager.NewClient(ctx,
-		in.GetDirective().GetDroneIp(),
-		constants.DroneServicePort,
+		in.GetDroneIp(), constants.DroneServicePort,
 	)
 	if err != nil {
 		return err
 	}
 
 	client := pb_drone.NewDroneServiceClient(conn)
-	_, err = client.StartConfd(ctx, &pb_drone.Task{
-		Id:     in.GetId(),
-		Action: in.GetAction(),
-		Target: in.GetTarget(),
-		Directive: &pb_drone.TaskDirective{
-			DroneIp:               in.GetDirective().GetDroneIp(),
-			FrontgateId:           in.GetDirective().GetFrontgateId(),
-			Command:               in.GetDirective().GetCommand(),
-			CommandRetryTimes:     in.GetDirective().GetCommandRetryTimes(),
-			CommandTimeoutSeconds: in.GetDirective().GetCommandTimeoutSeconds(),
-		},
+	_, err = client.StartConfd(ctx, &pb_drone.StartConfdRequest{
+		ConfdConfig:   &pb_drone.ConfdConfig{},   // todo
+		BackendConfig: &pb_drone.BackendConfig{}, // todo
 	})
 	if err != nil {
 		return err
@@ -55,16 +46,24 @@ func (p *Server) StartConfd(in *pb_frontgate.Task, out *pb_frontgate.Empty) erro
 	return nil
 }
 
-func (p *Server) RegisterMetadata(in *pb_frontgate.Task, out *pb_frontgate.Empty) error {
-	panic("todo")
-}
-func (p *Server) DeregisterMetadata(in *pb_frontgate.Task, out *pb_frontgate.Empty) error {
+func (p *Server) StopConfd(in *pb_frontgate.StopConfdRequest, out *pb_frontgate.Empty) error {
 	panic("todo")
 }
 
-func (p *Server) RegisterCmd(in *pb_frontgate.Task, out *pb_frontgate.Empty) error {
+func (p *Server) RegisterMetadata(in *pb_frontgate.RegisterMetadataRequest, out *pb_frontgate.Empty) error {
 	panic("todo")
 }
-func (p *Server) DeregisterCmd(in *pb_frontgate.Task, out *pb_frontgate.Empty) error {
+func (p *Server) DeregisterMetadata(in *pb_frontgate.DeregisterMetadataRequest, out *pb_frontgate.Empty) error {
+	panic("todo")
+}
+
+func (p *Server) RegisterCmd(in *pb_frontgate.RegisterCmdRequest, out *pb_frontgate.Empty) error {
+	panic("todo")
+}
+func (p *Server) DeregisterCmd(in *pb_frontgate.DeregisterCmdRequest, out *pb_frontgate.Empty) error {
+	panic("todo")
+}
+
+func (p *Server) ReportSubTaskResult(in *pb_frontgate.SubTaskResult, out *pb_frontgate.Empty) error {
 	panic("todo")
 }

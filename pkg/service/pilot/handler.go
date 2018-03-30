@@ -22,21 +22,27 @@ func (p *Server) GetSubtaskStatus(context.Context, *pb.GetSubtaskStatusRequest) 
 	panic("todo")
 }
 
-func (p *Server) FrontgateChannel(ch pb.PilotManager_FrontgateChannelServer) error {
-	logger.Debug("Pilot.FrontgateChannel begin")
-	defer logger.Debug("Pilot.FrontgateChannel end")
+func (p *Server) Channel(ch pb.PilotServiceForFrontgate_ChannelServer) error {
+	logger.Debug("Pilot.Channel begin")
+	defer logger.Debug("Pilot.Channel end")
 
 	c := pb_frontgate.NewFrontgateServiceClient(
 		NewFrontgateChannelFromServer(ch),
 	)
-	info, err := c.GetInfo(&pb_frontgate.Empty{})
-	if err != nil {
-		c.CloseChannel(&pb_frontgate.Empty{})
-		logger.Debug(err)
-		return err
-	}
 
-	p.putFrontgateClient(info.FrontgateId, c)
+	_ = c
+
+	/*
+		info, err := c.GetInfo(&pb_frontgate.Empty{})
+		if err != nil {
+			c.CloseChannel(&pb_frontgate.Empty{})
+			logger.Debug(err)
+			return err
+		}
+
+		p.putFrontgateClient(info.FrontgateId, c)
+	*/
+
 	return nil
 }
 
