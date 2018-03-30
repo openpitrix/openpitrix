@@ -54,7 +54,7 @@ generate-in-local:
 	go generate ./pkg/version/
 
 .PHONY: generate
-generate: update-builder
+generate:
 	$(RUN_IN_DOCKER) make generate-in-local
 	@echo "generate done"
 
@@ -80,7 +80,7 @@ fmt-check: fmt-all
 	)
 
 .PHONY: build
-build: fmt update-builder
+build: fmt 
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
