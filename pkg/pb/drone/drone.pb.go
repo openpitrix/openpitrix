@@ -8,8 +8,15 @@ It is generated from these files:
 	drone.proto
 
 It has these top-level messages:
-	Task
-	TaskDirective
+	Info
+	ConfdConfig
+	BackendConfig
+	StartConfdRequest
+	ConfdStatus
+	SubscribeCmdStatusRequest
+	SubscribeCmdStatusResponse
+	GetRegisterCmdStatusRequest
+	GetRegisterCmdStatusResponse
 	Empty
 */
 package openpitrix_drone
@@ -17,6 +24,8 @@ package openpitrix_drone
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
+import google_protobuf "github.com/golang/protobuf/ptypes/timestamp"
+import google_protobuf1 "github.com/golang/protobuf/ptypes/wrappers"
 
 import (
 	context "golang.org/x/net/context"
@@ -34,90 +43,276 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type Task struct {
-	Id        string         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Action    string         `protobuf:"bytes,2,opt,name=action" json:"action,omitempty"`
-	Target    string         `protobuf:"bytes,3,opt,name=target" json:"target,omitempty"`
-	Directive *TaskDirective `protobuf:"bytes,4,opt,name=directive" json:"directive,omitempty"`
+type Info struct {
+	DroneIp       string         `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	ConfdConfig   *ConfdConfig   `protobuf:"bytes,2,opt,name=confd_config,json=confdConfig" json:"confd_config,omitempty"`
+	BackendConfig *BackendConfig `protobuf:"bytes,3,opt,name=backend_config,json=backendConfig" json:"backend_config,omitempty"`
 }
 
-func (m *Task) Reset()                    { *m = Task{} }
-func (m *Task) String() string            { return proto.CompactTextString(m) }
-func (*Task) ProtoMessage()               {}
-func (*Task) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (m *Info) Reset()                    { *m = Info{} }
+func (m *Info) String() string            { return proto.CompactTextString(m) }
+func (*Info) ProtoMessage()               {}
+func (*Info) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
-func (m *Task) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *Task) GetAction() string {
-	if m != nil {
-		return m.Action
-	}
-	return ""
-}
-
-func (m *Task) GetTarget() string {
-	if m != nil {
-		return m.Target
-	}
-	return ""
-}
-
-func (m *Task) GetDirective() *TaskDirective {
-	if m != nil {
-		return m.Directive
-	}
-	return nil
-}
-
-type TaskDirective struct {
-	DroneIp               string `protobuf:"bytes,1,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
-	FrontgateId           string `protobuf:"bytes,2,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
-	Command               string `protobuf:"bytes,3,opt,name=command" json:"command,omitempty"`
-	CommandRetryTimes     string `protobuf:"bytes,4,opt,name=command_retry_times,json=commandRetryTimes" json:"command_retry_times,omitempty"`
-	CommandTimeoutSeconds string `protobuf:"bytes,5,opt,name=command_timeout_seconds,json=commandTimeoutSeconds" json:"command_timeout_seconds,omitempty"`
-}
-
-func (m *TaskDirective) Reset()                    { *m = TaskDirective{} }
-func (m *TaskDirective) String() string            { return proto.CompactTextString(m) }
-func (*TaskDirective) ProtoMessage()               {}
-func (*TaskDirective) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
-
-func (m *TaskDirective) GetDroneIp() string {
+func (m *Info) GetDroneIp() string {
 	if m != nil {
 		return m.DroneIp
 	}
 	return ""
 }
 
-func (m *TaskDirective) GetFrontgateId() string {
+func (m *Info) GetConfdConfig() *ConfdConfig {
 	if m != nil {
-		return m.FrontgateId
+		return m.ConfdConfig
+	}
+	return nil
+}
+
+func (m *Info) GetBackendConfig() *BackendConfig {
+	if m != nil {
+		return m.BackendConfig
+	}
+	return nil
+}
+
+// See https://godoc.org/openpitrix.io/libconfd#Config
+type ConfdConfig struct {
+	ConfDir  *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=conf_dir,json=confDir" json:"conf_dir,omitempty"`
+	Interval *google_protobuf1.Int32Value  `protobuf:"bytes,2,opt,name=interval" json:"interval,omitempty"`
+	Noop     *google_protobuf1.BoolValue   `protobuf:"bytes,3,opt,name=noop" json:"noop,omitempty"`
+	Prefix   *google_protobuf1.StringValue `protobuf:"bytes,4,opt,name=prefix" json:"prefix,omitempty"`
+	SyncOnly *google_protobuf1.BoolValue   `protobuf:"bytes,5,opt,name=sync_only,json=syncOnly" json:"sync_only,omitempty"`
+	LogLevel *google_protobuf1.StringValue `protobuf:"bytes,6,opt,name=log_level,json=logLevel" json:"log_level,omitempty"`
+}
+
+func (m *ConfdConfig) Reset()                    { *m = ConfdConfig{} }
+func (m *ConfdConfig) String() string            { return proto.CompactTextString(m) }
+func (*ConfdConfig) ProtoMessage()               {}
+func (*ConfdConfig) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+
+func (m *ConfdConfig) GetConfDir() *google_protobuf1.StringValue {
+	if m != nil {
+		return m.ConfDir
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetInterval() *google_protobuf1.Int32Value {
+	if m != nil {
+		return m.Interval
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetNoop() *google_protobuf1.BoolValue {
+	if m != nil {
+		return m.Noop
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetPrefix() *google_protobuf1.StringValue {
+	if m != nil {
+		return m.Prefix
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetSyncOnly() *google_protobuf1.BoolValue {
+	if m != nil {
+		return m.SyncOnly
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetLogLevel() *google_protobuf1.StringValue {
+	if m != nil {
+		return m.LogLevel
+	}
+	return nil
+}
+
+// See https://godoc.org/openpitrix.io/libconfd#BackendConfig
+type BackendConfig struct {
+	Type         *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
+	Host         []string                      `protobuf:"bytes,2,rep,name=host" json:"host,omitempty"`
+	Username     *google_protobuf1.StringValue `protobuf:"bytes,3,opt,name=username" json:"username,omitempty"`
+	Password     *google_protobuf1.StringValue `protobuf:"bytes,4,opt,name=password" json:"password,omitempty"`
+	ClientCaKeys *google_protobuf1.StringValue `protobuf:"bytes,5,opt,name=client_ca_keys,json=clientCaKeys" json:"client_ca_keys,omitempty"`
+	ClientCert   *google_protobuf1.StringValue `protobuf:"bytes,6,opt,name=client_cert,json=clientCert" json:"client_cert,omitempty"`
+	ClientKey    *google_protobuf1.StringValue `protobuf:"bytes,7,opt,name=client_key,json=clientKey" json:"client_key,omitempty"`
+}
+
+func (m *BackendConfig) Reset()                    { *m = BackendConfig{} }
+func (m *BackendConfig) String() string            { return proto.CompactTextString(m) }
+func (*BackendConfig) ProtoMessage()               {}
+func (*BackendConfig) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+
+func (m *BackendConfig) GetType() *google_protobuf1.StringValue {
+	if m != nil {
+		return m.Type
+	}
+	return nil
+}
+
+func (m *BackendConfig) GetHost() []string {
+	if m != nil {
+		return m.Host
+	}
+	return nil
+}
+
+func (m *BackendConfig) GetUsername() *google_protobuf1.StringValue {
+	if m != nil {
+		return m.Username
+	}
+	return nil
+}
+
+func (m *BackendConfig) GetPassword() *google_protobuf1.StringValue {
+	if m != nil {
+		return m.Password
+	}
+	return nil
+}
+
+func (m *BackendConfig) GetClientCaKeys() *google_protobuf1.StringValue {
+	if m != nil {
+		return m.ClientCaKeys
+	}
+	return nil
+}
+
+func (m *BackendConfig) GetClientCert() *google_protobuf1.StringValue {
+	if m != nil {
+		return m.ClientCert
+	}
+	return nil
+}
+
+func (m *BackendConfig) GetClientKey() *google_protobuf1.StringValue {
+	if m != nil {
+		return m.ClientKey
+	}
+	return nil
+}
+
+type StartConfdRequest struct {
+	ConfdConfig   *ConfdConfig   `protobuf:"bytes,1,opt,name=confd_config,json=confdConfig" json:"confd_config,omitempty"`
+	BackendConfig *BackendConfig `protobuf:"bytes,2,opt,name=backend_config,json=backendConfig" json:"backend_config,omitempty"`
+}
+
+func (m *StartConfdRequest) Reset()                    { *m = StartConfdRequest{} }
+func (m *StartConfdRequest) String() string            { return proto.CompactTextString(m) }
+func (*StartConfdRequest) ProtoMessage()               {}
+func (*StartConfdRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+
+func (m *StartConfdRequest) GetConfdConfig() *ConfdConfig {
+	if m != nil {
+		return m.ConfdConfig
+	}
+	return nil
+}
+
+func (m *StartConfdRequest) GetBackendConfig() *BackendConfig {
+	if m != nil {
+		return m.BackendConfig
+	}
+	return nil
+}
+
+type ConfdStatus struct {
+	ProcessId string                     `protobuf:"bytes,1,opt,name=process_id,json=processId" json:"process_id,omitempty"`
+	Status    string                     `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
+	UpTime    *google_protobuf.Timestamp `protobuf:"bytes,3,opt,name=up_time,json=upTime" json:"up_time,omitempty"`
+}
+
+func (m *ConfdStatus) Reset()                    { *m = ConfdStatus{} }
+func (m *ConfdStatus) String() string            { return proto.CompactTextString(m) }
+func (*ConfdStatus) ProtoMessage()               {}
+func (*ConfdStatus) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+
+func (m *ConfdStatus) GetProcessId() string {
+	if m != nil {
+		return m.ProcessId
 	}
 	return ""
 }
 
-func (m *TaskDirective) GetCommand() string {
+func (m *ConfdStatus) GetStatus() string {
 	if m != nil {
-		return m.Command
+		return m.Status
 	}
 	return ""
 }
 
-func (m *TaskDirective) GetCommandRetryTimes() string {
+func (m *ConfdStatus) GetUpTime() *google_protobuf.Timestamp {
 	if m != nil {
-		return m.CommandRetryTimes
+		return m.UpTime
+	}
+	return nil
+}
+
+type SubscribeCmdStatusRequest struct {
+	SubtaskId string `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
+}
+
+func (m *SubscribeCmdStatusRequest) Reset()                    { *m = SubscribeCmdStatusRequest{} }
+func (m *SubscribeCmdStatusRequest) String() string            { return proto.CompactTextString(m) }
+func (*SubscribeCmdStatusRequest) ProtoMessage()               {}
+func (*SubscribeCmdStatusRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+
+func (m *SubscribeCmdStatusRequest) GetSubtaskId() string {
+	if m != nil {
+		return m.SubtaskId
 	}
 	return ""
 }
 
-func (m *TaskDirective) GetCommandTimeoutSeconds() string {
+type SubscribeCmdStatusResponse struct {
+	Status string `protobuf:"bytes,1,opt,name=status" json:"status,omitempty"`
+}
+
+func (m *SubscribeCmdStatusResponse) Reset()                    { *m = SubscribeCmdStatusResponse{} }
+func (m *SubscribeCmdStatusResponse) String() string            { return proto.CompactTextString(m) }
+func (*SubscribeCmdStatusResponse) ProtoMessage()               {}
+func (*SubscribeCmdStatusResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+
+func (m *SubscribeCmdStatusResponse) GetStatus() string {
 	if m != nil {
-		return m.CommandTimeoutSeconds
+		return m.Status
+	}
+	return ""
+}
+
+type GetRegisterCmdStatusRequest struct {
+	SubtaskId string `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
+}
+
+func (m *GetRegisterCmdStatusRequest) Reset()                    { *m = GetRegisterCmdStatusRequest{} }
+func (m *GetRegisterCmdStatusRequest) String() string            { return proto.CompactTextString(m) }
+func (*GetRegisterCmdStatusRequest) ProtoMessage()               {}
+func (*GetRegisterCmdStatusRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
+
+func (m *GetRegisterCmdStatusRequest) GetSubtaskId() string {
+	if m != nil {
+		return m.SubtaskId
+	}
+	return ""
+}
+
+type GetRegisterCmdStatusResponse struct {
+	Status string `protobuf:"bytes,1,opt,name=status" json:"status,omitempty"`
+}
+
+func (m *GetRegisterCmdStatusResponse) Reset()                    { *m = GetRegisterCmdStatusResponse{} }
+func (m *GetRegisterCmdStatusResponse) String() string            { return proto.CompactTextString(m) }
+func (*GetRegisterCmdStatusResponse) ProtoMessage()               {}
+func (*GetRegisterCmdStatusResponse) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
+
+func (m *GetRegisterCmdStatusResponse) GetStatus() string {
+	if m != nil {
+		return m.Status
 	}
 	return ""
 }
@@ -128,11 +323,18 @@ type Empty struct {
 func (m *Empty) Reset()                    { *m = Empty{} }
 func (m *Empty) String() string            { return proto.CompactTextString(m) }
 func (*Empty) ProtoMessage()               {}
-func (*Empty) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (*Empty) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
 
 func init() {
-	proto.RegisterType((*Task)(nil), "openpitrix.drone.Task")
-	proto.RegisterType((*TaskDirective)(nil), "openpitrix.drone.TaskDirective")
+	proto.RegisterType((*Info)(nil), "openpitrix.drone.Info")
+	proto.RegisterType((*ConfdConfig)(nil), "openpitrix.drone.ConfdConfig")
+	proto.RegisterType((*BackendConfig)(nil), "openpitrix.drone.BackendConfig")
+	proto.RegisterType((*StartConfdRequest)(nil), "openpitrix.drone.StartConfdRequest")
+	proto.RegisterType((*ConfdStatus)(nil), "openpitrix.drone.ConfdStatus")
+	proto.RegisterType((*SubscribeCmdStatusRequest)(nil), "openpitrix.drone.SubscribeCmdStatusRequest")
+	proto.RegisterType((*SubscribeCmdStatusResponse)(nil), "openpitrix.drone.SubscribeCmdStatusResponse")
+	proto.RegisterType((*GetRegisterCmdStatusRequest)(nil), "openpitrix.drone.GetRegisterCmdStatusRequest")
+	proto.RegisterType((*GetRegisterCmdStatusResponse)(nil), "openpitrix.drone.GetRegisterCmdStatusResponse")
 	proto.RegisterType((*Empty)(nil), "openpitrix.drone.Empty")
 }
 
@@ -147,7 +349,12 @@ const _ = grpc.SupportPackageIsVersion4
 // Client API for DroneService service
 
 type DroneServiceClient interface {
-	StartConfd(ctx context.Context, in *Task, opts ...grpc.CallOption) (*Empty, error)
+	GetInfo(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Info, error)
+	GetConfdConfig(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ConfdConfig, error)
+	GetBackendConfig(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*BackendConfig, error)
+	StartConfd(ctx context.Context, in *StartConfdRequest, opts ...grpc.CallOption) (*Empty, error)
+	StopConfd(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	GetConfdStatus(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ConfdStatus, error)
 }
 
 type droneServiceClient struct {
@@ -158,9 +365,54 @@ func NewDroneServiceClient(cc *grpc.ClientConn) DroneServiceClient {
 	return &droneServiceClient{cc}
 }
 
-func (c *droneServiceClient) StartConfd(ctx context.Context, in *Task, opts ...grpc.CallOption) (*Empty, error) {
+func (c *droneServiceClient) GetInfo(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Info, error) {
+	out := new(Info)
+	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/GetInfo", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *droneServiceClient) GetConfdConfig(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ConfdConfig, error) {
+	out := new(ConfdConfig)
+	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/GetConfdConfig", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *droneServiceClient) GetBackendConfig(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*BackendConfig, error) {
+	out := new(BackendConfig)
+	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/GetBackendConfig", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *droneServiceClient) StartConfd(ctx context.Context, in *StartConfdRequest, opts ...grpc.CallOption) (*Empty, error) {
 	out := new(Empty)
 	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/StartConfd", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *droneServiceClient) StopConfd(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/StopConfd", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *droneServiceClient) GetConfdStatus(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ConfdStatus, error) {
+	out := new(ConfdStatus)
+	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/GetConfdStatus", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -170,15 +422,74 @@ func (c *droneServiceClient) StartConfd(ctx context.Context, in *Task, opts ...g
 // Server API for DroneService service
 
 type DroneServiceServer interface {
-	StartConfd(context.Context, *Task) (*Empty, error)
+	GetInfo(context.Context, *Empty) (*Info, error)
+	GetConfdConfig(context.Context, *Empty) (*ConfdConfig, error)
+	GetBackendConfig(context.Context, *Empty) (*BackendConfig, error)
+	StartConfd(context.Context, *StartConfdRequest) (*Empty, error)
+	StopConfd(context.Context, *Empty) (*Empty, error)
+	GetConfdStatus(context.Context, *Empty) (*ConfdStatus, error)
 }
 
 func RegisterDroneServiceServer(s *grpc.Server, srv DroneServiceServer) {
 	s.RegisterService(&_DroneService_serviceDesc, srv)
 }
 
+func _DroneService_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DroneServiceServer).GetInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.drone.DroneService/GetInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DroneServiceServer).GetInfo(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DroneService_GetConfdConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DroneServiceServer).GetConfdConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.drone.DroneService/GetConfdConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DroneServiceServer).GetConfdConfig(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DroneService_GetBackendConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DroneServiceServer).GetBackendConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.drone.DroneService/GetBackendConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DroneServiceServer).GetBackendConfig(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DroneService_StartConfd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Task)
+	in := new(StartConfdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -190,7 +501,43 @@ func _DroneService_StartConfd_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: "/openpitrix.drone.DroneService/StartConfd",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DroneServiceServer).StartConfd(ctx, req.(*Task))
+		return srv.(DroneServiceServer).StartConfd(ctx, req.(*StartConfdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DroneService_StopConfd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DroneServiceServer).StopConfd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.drone.DroneService/StopConfd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DroneServiceServer).StopConfd(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DroneService_GetConfdStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DroneServiceServer).GetConfdStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.drone.DroneService/GetConfdStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DroneServiceServer).GetConfdStatus(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -200,35 +547,209 @@ var _DroneService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*DroneServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "GetInfo",
+			Handler:    _DroneService_GetInfo_Handler,
+		},
+		{
+			MethodName: "GetConfdConfig",
+			Handler:    _DroneService_GetConfdConfig_Handler,
+		},
+		{
+			MethodName: "GetBackendConfig",
+			Handler:    _DroneService_GetBackendConfig_Handler,
+		},
+		{
 			MethodName: "StartConfd",
 			Handler:    _DroneService_StartConfd_Handler,
+		},
+		{
+			MethodName: "StopConfd",
+			Handler:    _DroneService_StopConfd_Handler,
+		},
+		{
+			MethodName: "GetConfdStatus",
+			Handler:    _DroneService_GetConfdStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "drone.proto",
 }
 
+// Client API for DroneServiceForFrontgate service
+
+type DroneServiceForFrontgateClient interface {
+	SubscribeCmdStatus(ctx context.Context, in *SubscribeCmdStatusRequest, opts ...grpc.CallOption) (DroneServiceForFrontgate_SubscribeCmdStatusClient, error)
+	GetRegisterCmdStatus(ctx context.Context, in *GetRegisterCmdStatusRequest, opts ...grpc.CallOption) (*GetRegisterCmdStatusResponse, error)
+}
+
+type droneServiceForFrontgateClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewDroneServiceForFrontgateClient(cc *grpc.ClientConn) DroneServiceForFrontgateClient {
+	return &droneServiceForFrontgateClient{cc}
+}
+
+func (c *droneServiceForFrontgateClient) SubscribeCmdStatus(ctx context.Context, in *SubscribeCmdStatusRequest, opts ...grpc.CallOption) (DroneServiceForFrontgate_SubscribeCmdStatusClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_DroneServiceForFrontgate_serviceDesc.Streams[0], c.cc, "/openpitrix.drone.DroneServiceForFrontgate/SubscribeCmdStatus", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &droneServiceForFrontgateSubscribeCmdStatusClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type DroneServiceForFrontgate_SubscribeCmdStatusClient interface {
+	Recv() (*SubscribeCmdStatusResponse, error)
+	grpc.ClientStream
+}
+
+type droneServiceForFrontgateSubscribeCmdStatusClient struct {
+	grpc.ClientStream
+}
+
+func (x *droneServiceForFrontgateSubscribeCmdStatusClient) Recv() (*SubscribeCmdStatusResponse, error) {
+	m := new(SubscribeCmdStatusResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *droneServiceForFrontgateClient) GetRegisterCmdStatus(ctx context.Context, in *GetRegisterCmdStatusRequest, opts ...grpc.CallOption) (*GetRegisterCmdStatusResponse, error) {
+	out := new(GetRegisterCmdStatusResponse)
+	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneServiceForFrontgate/GetRegisterCmdStatus", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for DroneServiceForFrontgate service
+
+type DroneServiceForFrontgateServer interface {
+	SubscribeCmdStatus(*SubscribeCmdStatusRequest, DroneServiceForFrontgate_SubscribeCmdStatusServer) error
+	GetRegisterCmdStatus(context.Context, *GetRegisterCmdStatusRequest) (*GetRegisterCmdStatusResponse, error)
+}
+
+func RegisterDroneServiceForFrontgateServer(s *grpc.Server, srv DroneServiceForFrontgateServer) {
+	s.RegisterService(&_DroneServiceForFrontgate_serviceDesc, srv)
+}
+
+func _DroneServiceForFrontgate_SubscribeCmdStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SubscribeCmdStatusRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(DroneServiceForFrontgateServer).SubscribeCmdStatus(m, &droneServiceForFrontgateSubscribeCmdStatusServer{stream})
+}
+
+type DroneServiceForFrontgate_SubscribeCmdStatusServer interface {
+	Send(*SubscribeCmdStatusResponse) error
+	grpc.ServerStream
+}
+
+type droneServiceForFrontgateSubscribeCmdStatusServer struct {
+	grpc.ServerStream
+}
+
+func (x *droneServiceForFrontgateSubscribeCmdStatusServer) Send(m *SubscribeCmdStatusResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _DroneServiceForFrontgate_GetRegisterCmdStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRegisterCmdStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DroneServiceForFrontgateServer).GetRegisterCmdStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.drone.DroneServiceForFrontgate/GetRegisterCmdStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DroneServiceForFrontgateServer).GetRegisterCmdStatus(ctx, req.(*GetRegisterCmdStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _DroneServiceForFrontgate_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "openpitrix.drone.DroneServiceForFrontgate",
+	HandlerType: (*DroneServiceForFrontgateServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetRegisterCmdStatus",
+			Handler:    _DroneServiceForFrontgate_GetRegisterCmdStatus_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "SubscribeCmdStatus",
+			Handler:       _DroneServiceForFrontgate_SubscribeCmdStatus_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "drone.proto",
+}
+
 func init() { proto.RegisterFile("drone.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 297 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x91, 0xbd, 0x4e, 0xc3, 0x30,
-	0x14, 0x85, 0x95, 0xd2, 0x1f, 0x7a, 0x53, 0x10, 0x18, 0xd1, 0x1a, 0x16, 0x4a, 0xa6, 0x4e, 0x19,
-	0x8a, 0xc4, 0xd6, 0x89, 0x32, 0x74, 0x60, 0x49, 0xb2, 0x47, 0x26, 0x76, 0x2b, 0x0b, 0xc5, 0xb6,
-	0x9c, 0x4b, 0x45, 0x1f, 0x80, 0xe7, 0xe3, 0x95, 0x90, 0x1d, 0x07, 0xc4, 0xcf, 0xe6, 0x73, 0xbe,
-	0x7b, 0x7c, 0x8f, 0x6c, 0x88, 0xb9, 0xd5, 0x4a, 0xa4, 0xc6, 0x6a, 0xd4, 0xe4, 0x4c, 0x1b, 0xa1,
-	0x8c, 0x44, 0x2b, 0xdf, 0x52, 0xef, 0x27, 0xef, 0x11, 0xf4, 0x0b, 0xd6, 0xbc, 0x90, 0x53, 0xe8,
-	0x49, 0x4e, 0xa3, 0x79, 0xb4, 0x18, 0x67, 0x3d, 0xc9, 0xc9, 0x14, 0x86, 0xac, 0x42, 0xa9, 0x15,
-	0xed, 0x79, 0x2f, 0x28, 0xe7, 0x23, 0xb3, 0x3b, 0x81, 0xf4, 0xa8, 0xf5, 0x5b, 0x45, 0x56, 0x30,
-	0xe6, 0xd2, 0x8a, 0x0a, 0xe5, 0x5e, 0xd0, 0xfe, 0x3c, 0x5a, 0xc4, 0xcb, 0x9b, 0xf4, 0xf7, 0xba,
-	0xd4, 0xad, 0x5a, 0x77, 0x63, 0xd9, 0x77, 0x22, 0xf9, 0x88, 0xe0, 0xe4, 0x07, 0x24, 0x57, 0x70,
-	0xec, 0x33, 0xa5, 0x34, 0xa1, 0xd6, 0xc8, 0xeb, 0x8d, 0x21, 0xb7, 0x30, 0xd9, 0x5a, 0xad, 0x70,
-	0xc7, 0x50, 0x94, 0x92, 0x87, 0x86, 0xf1, 0x97, 0xb7, 0xe1, 0x84, 0xc2, 0xa8, 0xd2, 0x75, 0xcd,
-	0x14, 0x0f, 0x3d, 0x3b, 0x49, 0x52, 0xb8, 0x08, 0xc7, 0xd2, 0x0a, 0xb4, 0x87, 0x12, 0x65, 0x2d,
-	0x1a, 0x5f, 0x79, 0x9c, 0x9d, 0x07, 0x94, 0x39, 0x52, 0x38, 0x40, 0xee, 0x61, 0xd6, 0xcd, 0xbb,
-	0x49, 0xfd, 0x8a, 0x65, 0x23, 0x2a, 0xad, 0x78, 0x43, 0x07, 0x3e, 0x73, 0x19, 0x70, 0xd1, 0xd2,
-	0xbc, 0x85, 0xc9, 0x08, 0x06, 0x8f, 0xb5, 0xc1, 0xc3, 0xf2, 0x09, 0x26, 0x6b, 0x57, 0x3c, 0x17,
-	0x76, 0x2f, 0x2b, 0x41, 0x56, 0x00, 0x39, 0x32, 0x8b, 0x0f, 0x5a, 0x6d, 0x39, 0x99, 0xfe, 0xff,
-	0x48, 0xd7, 0xb3, 0xbf, 0xbe, 0xbf, 0xee, 0x79, 0xe8, 0xbf, 0xf2, 0xee, 0x33, 0x00, 0x00, 0xff,
-	0xff, 0xfd, 0x83, 0xcb, 0xe9, 0xd9, 0x01, 0x00, 0x00,
+	// 761 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xd1, 0x6e, 0xe3, 0x44,
+	0x14, 0x95, 0x93, 0x6c, 0x12, 0xdf, 0x74, 0xab, 0x65, 0x84, 0x16, 0xaf, 0x77, 0xcb, 0x56, 0xe1,
+	0xa5, 0x12, 0xe0, 0x5d, 0xa5, 0x2b, 0x0a, 0x85, 0x4a, 0xa8, 0x29, 0x0d, 0xa1, 0x95, 0x90, 0x1c,
+	0xc4, 0xab, 0xe5, 0x38, 0x37, 0xc6, 0xaa, 0x33, 0x33, 0x9d, 0x19, 0xb7, 0xf5, 0x3b, 0x2f, 0x7c,
+	0x04, 0x5f, 0xc0, 0x07, 0xf0, 0x2d, 0xfc, 0x0d, 0xf2, 0xd8, 0x69, 0xdd, 0x3a, 0x69, 0x5c, 0xc4,
+	0x4b, 0x94, 0xeb, 0x39, 0xe7, 0xdc, 0x3b, 0x77, 0xce, 0xbd, 0xd0, 0x9b, 0x09, 0x46, 0xd1, 0xe1,
+	0x82, 0x29, 0x46, 0x5e, 0x30, 0x8e, 0x94, 0x47, 0x4a, 0x44, 0x37, 0x8e, 0xfe, 0x6e, 0xbf, 0x0d,
+	0x19, 0x0b, 0x63, 0x7c, 0xa7, 0xcf, 0xa7, 0xc9, 0xfc, 0x9d, 0x8a, 0x16, 0x28, 0x95, 0xbf, 0xe0,
+	0x39, 0xc5, 0xfe, 0xf4, 0x21, 0xe0, 0x5a, 0xf8, 0x9c, 0xa3, 0x90, 0xf9, 0x79, 0xff, 0x2f, 0x03,
+	0x5a, 0x63, 0x3a, 0x67, 0xe4, 0x15, 0x74, 0xb5, 0xa4, 0x17, 0x71, 0xcb, 0xd8, 0x35, 0xf6, 0x4c,
+	0xb7, 0xa3, 0xe3, 0x31, 0x27, 0xdf, 0xc3, 0x56, 0xc0, 0xe8, 0x7c, 0xe6, 0x65, 0xbf, 0x51, 0x68,
+	0x35, 0x76, 0x8d, 0xbd, 0xde, 0x60, 0xc7, 0x79, 0x58, 0x8d, 0x33, 0xcc, 0x50, 0x43, 0x0d, 0x72,
+	0x7b, 0xc1, 0x5d, 0x40, 0x4e, 0x61, 0x7b, 0xea, 0x07, 0x17, 0x48, 0x6f, 0x35, 0x9a, 0x5a, 0xe3,
+	0x6d, 0x55, 0xe3, 0x38, 0xc7, 0x15, 0x2a, 0xcf, 0xa7, 0xe5, 0xb0, 0xff, 0x4f, 0x03, 0x7a, 0xa5,
+	0x24, 0xe4, 0x00, 0xba, 0x99, 0x9e, 0x37, 0x8b, 0x84, 0x2e, 0xba, 0x37, 0x78, 0xe3, 0xe4, 0x17,
+	0x76, 0x96, 0x17, 0x76, 0x26, 0x4a, 0x44, 0x34, 0xfc, 0xd5, 0x8f, 0x13, 0x74, 0x3b, 0x19, 0xfa,
+	0x24, 0x12, 0x19, 0x31, 0xa2, 0x0a, 0xc5, 0x95, 0x1f, 0x17, 0xd7, 0x79, 0x5d, 0x21, 0x8e, 0xa9,
+	0xda, 0x1f, 0xe4, 0xbc, 0x5b, 0x30, 0x71, 0xa0, 0x45, 0x19, 0xe3, 0x45, 0xfd, 0x76, 0x85, 0x74,
+	0xcc, 0x58, 0x9c, 0x73, 0x34, 0x8e, 0x7c, 0x80, 0x36, 0x17, 0x38, 0x8f, 0x6e, 0xac, 0x56, 0x8d,
+	0xfa, 0x0a, 0x2c, 0x39, 0x00, 0x53, 0xa6, 0x34, 0xf0, 0x18, 0x8d, 0x53, 0xeb, 0xd9, 0xc6, 0x54,
+	0xdd, 0x0c, 0xfc, 0x33, 0x8d, 0x53, 0xf2, 0x0d, 0x98, 0x31, 0x0b, 0xbd, 0x18, 0xaf, 0x30, 0xb6,
+	0xda, 0x35, 0x32, 0x76, 0x63, 0x16, 0x9e, 0x67, 0xe8, 0xfe, 0x1f, 0x4d, 0x78, 0x7e, 0xaf, 0xf9,
+	0xe4, 0x3d, 0xb4, 0x54, 0xca, 0xb1, 0x56, 0x67, 0x35, 0x92, 0x10, 0x68, 0xfd, 0xc6, 0xa4, 0xb2,
+	0x1a, 0xbb, 0xcd, 0x3d, 0xd3, 0xd5, 0xff, 0xc9, 0xd7, 0xd0, 0x4d, 0x24, 0x0a, 0xea, 0x2f, 0xb0,
+	0xe8, 0xda, 0x86, 0x8a, 0x96, 0xe8, 0x8c, 0xc9, 0x7d, 0x29, 0xaf, 0x99, 0x98, 0xd5, 0xea, 0xde,
+	0x2d, 0x9a, 0x1c, 0xc3, 0x76, 0x10, 0x47, 0x48, 0x95, 0x17, 0xf8, 0xde, 0x05, 0xa6, 0xb2, 0x68,
+	0xe2, 0xe3, 0xfc, 0xad, 0x9c, 0x33, 0xf4, 0xcf, 0x30, 0x95, 0xe4, 0x08, 0x7a, 0x4b, 0x0d, 0x14,
+	0xaa, 0x56, 0x33, 0xa1, 0x10, 0x40, 0xa1, 0xc8, 0xb7, 0x50, 0x44, 0x59, 0x7e, 0xab, 0x53, 0x83,
+	0x6d, 0xe6, 0xf8, 0x33, 0x4c, 0xfb, 0x7f, 0x1a, 0xf0, 0xd1, 0x44, 0xf9, 0x42, 0x69, 0xb3, 0xbb,
+	0x78, 0x99, 0xa0, 0x54, 0x95, 0x39, 0x34, 0xfe, 0x87, 0x39, 0x6c, 0xfc, 0xa7, 0x39, 0x4c, 0x8b,
+	0x31, 0x9c, 0x28, 0x5f, 0x25, 0x92, 0xec, 0x00, 0x70, 0xc1, 0x02, 0x94, 0xd2, 0x8b, 0x66, 0xc5,
+	0xf6, 0x30, 0x8b, 0x2f, 0xe3, 0x19, 0x79, 0x09, 0x6d, 0xa9, 0x81, 0x3a, 0x9b, 0xe9, 0x16, 0x11,
+	0xd9, 0x87, 0x4e, 0xc2, 0xbd, 0x6c, 0x63, 0xad, 0x1d, 0xa7, 0x5f, 0x96, 0xeb, 0xcc, 0x6d, 0x27,
+	0x3c, 0x0b, 0xfa, 0x87, 0xf0, 0x6a, 0x92, 0x4c, 0x65, 0x20, 0xa2, 0x29, 0x0e, 0x17, 0x45, 0x05,
+	0xcb, 0x0e, 0xed, 0x00, 0xc8, 0x64, 0xaa, 0x7c, 0x79, 0x51, 0x2a, 0xa4, 0xf8, 0x32, 0x9e, 0xf5,
+	0x3f, 0x80, 0xbd, 0x8a, 0x2b, 0x39, 0xa3, 0x12, 0x4b, 0x65, 0x1a, 0xe5, 0x32, 0xfb, 0xdf, 0xc1,
+	0xeb, 0x11, 0x2a, 0x17, 0xc3, 0x48, 0x2a, 0x14, 0x4f, 0xcd, 0xf9, 0x15, 0xbc, 0x59, 0xcd, 0xde,
+	0x90, 0xb5, 0x03, 0xcf, 0x7e, 0x58, 0x70, 0x95, 0x0e, 0xfe, 0x6e, 0xc2, 0xd6, 0x49, 0xf6, 0x24,
+	0x13, 0x14, 0x57, 0x51, 0x80, 0xe4, 0x10, 0x3a, 0x23, 0x54, 0x7a, 0x69, 0x7f, 0x52, 0x7d, 0x37,
+	0x4d, 0xb2, 0x5f, 0x56, 0x0f, 0x34, 0xe1, 0x47, 0xd8, 0x1e, 0xa1, 0x2a, 0xaf, 0xd0, 0xb5, 0x12,
+	0x8f, 0xfb, 0x8a, 0x9c, 0xc3, 0x8b, 0x11, 0xaa, 0xfb, 0x0b, 0x63, 0xad, 0xd6, 0x26, 0x7f, 0x91,
+	0x9f, 0x00, 0xee, 0xfc, 0x4e, 0x3e, 0xab, 0xc2, 0x2b, 0xd3, 0x60, 0xaf, 0x4b, 0x46, 0x8e, 0xc0,
+	0x9c, 0x28, 0xc6, 0x73, 0xa9, 0xb5, 0x25, 0xad, 0xa5, 0x97, 0x5a, 0x54, 0xd8, 0xfb, 0xc9, 0x2d,
+	0xca, 0x79, 0x83, 0xdf, 0x1b, 0x60, 0x95, 0x5f, 0xee, 0x94, 0x89, 0x53, 0xc1, 0xa8, 0x0a, 0x7d,
+	0x85, 0xe4, 0x12, 0x48, 0xd5, 0x8b, 0xe4, 0xf3, 0x15, 0x37, 0x5f, 0xe7, 0x76, 0xfb, 0x8b, 0x7a,
+	0xe0, 0xdc, 0x68, 0xef, 0x0d, 0x92, 0xc0, 0xc7, 0xab, 0xac, 0x48, 0xbe, 0xac, 0xea, 0x3c, 0x62,
+	0x78, 0xdb, 0xa9, 0x0b, 0xcf, 0x13, 0x4f, 0xdb, 0x7a, 0x9a, 0xf7, 0xff, 0x0d, 0x00, 0x00, 0xff,
+	0xff, 0x33, 0x2c, 0x0a, 0x81, 0xcb, 0x08, 0x00, 0x00,
 }

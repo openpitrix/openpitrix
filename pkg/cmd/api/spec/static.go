@@ -663,32 +663,7 @@ var Files = map[string]string{
           }
         ],
         "tags": [
-          "PilotManager"
-        ]
-      },
-      "post": {
-        "summary": "handle subtask",
-        "operationId": "HandleSubtask",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixHandleSubtaskResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixHandleSubtaskRequest"
-            }
-          }
-        ],
-        "tags": [
-          "PilotManager"
+          "PilotService"
         ]
       }
     },
@@ -2778,20 +2753,6 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixSubtaskStatus"
           }
-        }
-      }
-    },
-    "openpitrixHandleSubtaskRequest": {
-      "type": "object",
-      "properties": {
-        "subtask_id": {
-          "type": "string"
-        },
-        "subtask_action": {
-          "type": "string"
-        },
-        "directive": {
-          "type": "string"
         }
       }
     },

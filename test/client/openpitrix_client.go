@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
 	"openpitrix.io/openpitrix/test/client/job_manager"
-	"openpitrix.io/openpitrix/test/client/pilot_manager"
+	"openpitrix.io/openpitrix/test/client/pilot_service"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_env_manager"
@@ -68,7 +68,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 
 	cli.JobManager = job_manager.New(transport, formats)
 
-	cli.PilotManager = pilot_manager.New(transport, formats)
+	cli.PilotService = pilot_service.New(transport, formats)
 
 	cli.RepoIndexer = repo_indexer.New(transport, formats)
 
@@ -128,7 +128,7 @@ type Openpitrix struct {
 
 	JobManager *job_manager.Client
 
-	PilotManager *pilot_manager.Client
+	PilotService *pilot_service.Client
 
 	RepoIndexer *repo_indexer.Client
 
@@ -151,7 +151,7 @@ func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 
 	c.JobManager.SetTransport(transport)
 
-	c.PilotManager.SetTransport(transport)
+	c.PilotService.SetTransport(transport)
 
 	c.RepoIndexer.SetTransport(transport)
 
