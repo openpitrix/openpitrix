@@ -30,12 +30,6 @@ type OpenpitrixRepoLabel struct {
 
 	// repo label id
 	RepoLabelID string `json:"repo_label_id,omitempty"`
-
-	// status
-	Status string `json:"status,omitempty"`
-
-	// status time
-	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 }
 
 // Validate validates this openpitrix repo label

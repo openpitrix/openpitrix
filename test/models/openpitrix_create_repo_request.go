@@ -25,8 +25,17 @@ type OpenpitrixCreateRepoRequest struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// label
+	Label string `json:"label,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
+
+	// provider
+	Provider []string `json:"provider"`
+
+	// selector
+	Selector string `json:"selector,omitempty"`
 
 	// type
 	Type string `json:"type,omitempty"`
@@ -42,9 +51,23 @@ type OpenpitrixCreateRepoRequest struct {
 func (m *OpenpitrixCreateRepoRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateProvider(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixCreateRepoRequest) validateProvider(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Provider) { // not required
+		return nil
+	}
+
 	return nil
 }
 

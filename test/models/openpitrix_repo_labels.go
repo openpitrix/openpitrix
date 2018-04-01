@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeRepoLabelsResponseRepoLabelSet openpitrix describe repo labels response repo label set
-// swagger:model openpitrixDescribeRepoLabelsResponseRepoLabelSet
-type OpenpitrixDescribeRepoLabelsResponseRepoLabelSet []*OpenpitrixRepoLabel
+// OpenpitrixRepoLabels openpitrix repo labels
+// swagger:model openpitrixRepoLabels
+type OpenpitrixRepoLabels []*OpenpitrixRepoLabel
 
-// Validate validates this openpitrix describe repo labels response repo label set
-func (m OpenpitrixDescribeRepoLabelsResponseRepoLabelSet) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix repo labels
+func (m OpenpitrixRepoLabels) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {

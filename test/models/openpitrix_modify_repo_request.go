@@ -22,11 +22,17 @@ type OpenpitrixModifyRepoRequest struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// label
+	Label string `json:"label,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`
+
+	// selector
+	Selector string `json:"selector,omitempty"`
 
 	// type
 	Type string `json:"type,omitempty"`

@@ -25,14 +25,23 @@ type OpenpitrixRepo struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// labels
+	Labels OpenpitrixRepoLabels `json:"labels"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
 	// owner
 	Owner string `json:"owner,omitempty"`
 
+	// providers
+	Providers []string `json:"providers"`
+
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`
+
+	// selectors
+	Selectors OpenpitrixRepoSelectors `json:"selectors"`
 
 	// status
 	Status string `json:"status,omitempty"`
@@ -54,9 +63,23 @@ type OpenpitrixRepo struct {
 func (m *OpenpitrixRepo) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateProviders(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixRepo) validateProviders(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Providers) { // not required
+		return nil
+	}
+
 	return nil
 }
 
