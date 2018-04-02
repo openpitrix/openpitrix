@@ -6,8 +6,8 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/timestamp"
+import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf3 "github.com/golang/protobuf/ptypes/timestamp"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
 
@@ -22,13 +22,13 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type CreateRepoRequest struct {
-	X           *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
-	Name        *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type        *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url         *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential  *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility  *google_protobuf.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
+	X           *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
+	Name        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Type        *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
+	Url         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
+	Credential  *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
+	Visibility  *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
 }
 
 func (m *CreateRepoRequest) Reset()                    { *m = CreateRepoRequest{} }
@@ -36,49 +36,49 @@ func (m *CreateRepoRequest) String() string            { return proto.CompactTex
 func (*CreateRepoRequest) ProtoMessage()               {}
 func (*CreateRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
 
-func (m *CreateRepoRequest) GetX() *google_protobuf.StringValue {
+func (m *CreateRepoRequest) GetX() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.X
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetName() *google_protobuf.StringValue {
+func (m *CreateRepoRequest) GetName() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetDescription() *google_protobuf.StringValue {
+func (m *CreateRepoRequest) GetDescription() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetType() *google_protobuf.StringValue {
+func (m *CreateRepoRequest) GetType() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Type
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetUrl() *google_protobuf.StringValue {
+func (m *CreateRepoRequest) GetUrl() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Url
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetCredential() *google_protobuf.StringValue {
+func (m *CreateRepoRequest) GetCredential() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Credential
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetVisibility() *google_protobuf.StringValue {
+func (m *CreateRepoRequest) GetVisibility() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Visibility
 	}
@@ -102,13 +102,13 @@ func (m *CreateRepoResponse) GetRepo() *Repo {
 }
 
 type ModifyRepoRequest struct {
-	RepoId      *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name        *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type        *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url         *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential  *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility  *google_protobuf.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
+	RepoId      *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Name        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Type        *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
+	Url         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
+	Credential  *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
+	Visibility  *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
 }
 
 func (m *ModifyRepoRequest) Reset()                    { *m = ModifyRepoRequest{} }
@@ -116,49 +116,49 @@ func (m *ModifyRepoRequest) String() string            { return proto.CompactTex
 func (*ModifyRepoRequest) ProtoMessage()               {}
 func (*ModifyRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
 
-func (m *ModifyRepoRequest) GetRepoId() *google_protobuf.StringValue {
+func (m *ModifyRepoRequest) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetName() *google_protobuf.StringValue {
+func (m *ModifyRepoRequest) GetName() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetDescription() *google_protobuf.StringValue {
+func (m *ModifyRepoRequest) GetDescription() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetType() *google_protobuf.StringValue {
+func (m *ModifyRepoRequest) GetType() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Type
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetUrl() *google_protobuf.StringValue {
+func (m *ModifyRepoRequest) GetUrl() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Url
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetCredential() *google_protobuf.StringValue {
+func (m *ModifyRepoRequest) GetCredential() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Credential
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetVisibility() *google_protobuf.StringValue {
+func (m *ModifyRepoRequest) GetVisibility() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Visibility
 	}
@@ -182,7 +182,7 @@ func (m *ModifyRepoResponse) GetRepo() *Repo {
 }
 
 type DeleteRepoRequest struct {
-	RepoId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
 }
 
 func (m *DeleteRepoRequest) Reset()                    { *m = DeleteRepoRequest{} }
@@ -190,7 +190,7 @@ func (m *DeleteRepoRequest) String() string            { return proto.CompactTex
 func (*DeleteRepoRequest) ProtoMessage()               {}
 func (*DeleteRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{4} }
 
-func (m *DeleteRepoRequest) GetRepoId() *google_protobuf.StringValue {
+func (m *DeleteRepoRequest) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
@@ -214,17 +214,17 @@ func (m *DeleteRepoResponse) GetRepo() *Repo {
 }
 
 type Repo struct {
-	RepoId      *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name        *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type        *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url         *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential  *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility  *google_protobuf.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
-	Owner       *google_protobuf.StringValue `protobuf:"bytes,8,opt,name=owner" json:"owner,omitempty"`
-	Status      *google_protobuf.StringValue `protobuf:"bytes,9,opt,name=status" json:"status,omitempty"`
-	CreateTime  *google_protobuf1.Timestamp  `protobuf:"bytes,10,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime  *google_protobuf1.Timestamp  `protobuf:"bytes,11,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	RepoId      *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Name        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Type        *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
+	Url         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
+	Credential  *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
+	Visibility  *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
+	Owner       *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=owner" json:"owner,omitempty"`
+	Status      *google_protobuf2.StringValue `protobuf:"bytes,9,opt,name=status" json:"status,omitempty"`
+	CreateTime  *google_protobuf3.Timestamp   `protobuf:"bytes,10,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime  *google_protobuf3.Timestamp   `protobuf:"bytes,11,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 }
 
 func (m *Repo) Reset()                    { *m = Repo{} }
@@ -232,77 +232,77 @@ func (m *Repo) String() string            { return proto.CompactTextString(m) }
 func (*Repo) ProtoMessage()               {}
 func (*Repo) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{6} }
 
-func (m *Repo) GetRepoId() *google_protobuf.StringValue {
+func (m *Repo) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *Repo) GetName() *google_protobuf.StringValue {
+func (m *Repo) GetName() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *Repo) GetDescription() *google_protobuf.StringValue {
+func (m *Repo) GetDescription() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *Repo) GetType() *google_protobuf.StringValue {
+func (m *Repo) GetType() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Type
 	}
 	return nil
 }
 
-func (m *Repo) GetUrl() *google_protobuf.StringValue {
+func (m *Repo) GetUrl() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Url
 	}
 	return nil
 }
 
-func (m *Repo) GetCredential() *google_protobuf.StringValue {
+func (m *Repo) GetCredential() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Credential
 	}
 	return nil
 }
 
-func (m *Repo) GetVisibility() *google_protobuf.StringValue {
+func (m *Repo) GetVisibility() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Visibility
 	}
 	return nil
 }
 
-func (m *Repo) GetOwner() *google_protobuf.StringValue {
+func (m *Repo) GetOwner() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *Repo) GetStatus() *google_protobuf.StringValue {
+func (m *Repo) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *Repo) GetCreateTime() *google_protobuf1.Timestamp {
+func (m *Repo) GetCreateTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *Repo) GetStatusTime() *google_protobuf1.Timestamp {
+func (m *Repo) GetStatusTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -310,15 +310,15 @@ func (m *Repo) GetStatusTime() *google_protobuf1.Timestamp {
 }
 
 type DescribeReposRequest struct {
-	RepoId     []string                     `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name       []string                     `protobuf:"bytes,2,rep,name=name" json:"name,omitempty"`
-	Type       []string                     `protobuf:"bytes,3,rep,name=type" json:"type,omitempty"`
-	Visibility []string                     `protobuf:"bytes,4,rep,name=visibility" json:"visibility,omitempty"`
-	Status     []string                     `protobuf:"bytes,5,rep,name=status" json:"status,omitempty"`
-	Label      *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=label" json:"label,omitempty"`
-	Selector   *google_protobuf.StringValue `protobuf:"bytes,7,opt,name=selector" json:"selector,omitempty"`
-	Limit      uint32                       `protobuf:"varint,8,opt,name=limit" json:"limit,omitempty"`
-	Offset     uint32                       `protobuf:"varint,9,opt,name=offset" json:"offset,omitempty"`
+	RepoId     []string                      `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Name       []string                      `protobuf:"bytes,2,rep,name=name" json:"name,omitempty"`
+	Type       []string                      `protobuf:"bytes,3,rep,name=type" json:"type,omitempty"`
+	Visibility []string                      `protobuf:"bytes,4,rep,name=visibility" json:"visibility,omitempty"`
+	Status     []string                      `protobuf:"bytes,5,rep,name=status" json:"status,omitempty"`
+	Label      *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=label" json:"label,omitempty"`
+	Selector   *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=selector" json:"selector,omitempty"`
+	Limit      uint32                        `protobuf:"varint,8,opt,name=limit" json:"limit,omitempty"`
+	Offset     uint32                        `protobuf:"varint,9,opt,name=offset" json:"offset,omitempty"`
 }
 
 func (m *DescribeReposRequest) Reset()                    { *m = DescribeReposRequest{} }
@@ -361,14 +361,14 @@ func (m *DescribeReposRequest) GetStatus() []string {
 	return nil
 }
 
-func (m *DescribeReposRequest) GetLabel() *google_protobuf.StringValue {
+func (m *DescribeReposRequest) GetLabel() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Label
 	}
 	return nil
 }
 
-func (m *DescribeReposRequest) GetSelector() *google_protobuf.StringValue {
+func (m *DescribeReposRequest) GetSelector() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Selector
 	}
@@ -414,13 +414,13 @@ func (m *DescribeReposResponse) GetRepoSet() []*Repo {
 }
 
 type RepoLabel struct {
-	RepoId      *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	RepoLabelId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
-	LabelKey    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
-	LabelValue  *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
-	Status      *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=status" json:"status,omitempty"`
-	CreateTime  *google_protobuf1.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime  *google_protobuf1.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	RepoId      *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoLabelId *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
+	LabelKey    *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
+	LabelValue  *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+	Status      *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=status" json:"status,omitempty"`
+	CreateTime  *google_protobuf3.Timestamp   `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime  *google_protobuf3.Timestamp   `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 }
 
 func (m *RepoLabel) Reset()                    { *m = RepoLabel{} }
@@ -428,49 +428,49 @@ func (m *RepoLabel) String() string            { return proto.CompactTextString(
 func (*RepoLabel) ProtoMessage()               {}
 func (*RepoLabel) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{9} }
 
-func (m *RepoLabel) GetRepoId() *google_protobuf.StringValue {
+func (m *RepoLabel) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *RepoLabel) GetRepoLabelId() *google_protobuf.StringValue {
+func (m *RepoLabel) GetRepoLabelId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoLabelId
 	}
 	return nil
 }
 
-func (m *RepoLabel) GetLabelKey() *google_protobuf.StringValue {
+func (m *RepoLabel) GetLabelKey() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.LabelKey
 	}
 	return nil
 }
 
-func (m *RepoLabel) GetLabelValue() *google_protobuf.StringValue {
+func (m *RepoLabel) GetLabelValue() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.LabelValue
 	}
 	return nil
 }
 
-func (m *RepoLabel) GetStatus() *google_protobuf.StringValue {
+func (m *RepoLabel) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *RepoLabel) GetCreateTime() *google_protobuf1.Timestamp {
+func (m *RepoLabel) GetCreateTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *RepoLabel) GetStatusTime() *google_protobuf1.Timestamp {
+func (m *RepoLabel) GetStatusTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -478,10 +478,10 @@ func (m *RepoLabel) GetStatusTime() *google_protobuf1.Timestamp {
 }
 
 type CreateRepoLabelRequest struct {
-	RepoId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	X          *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=_" json:"_,omitempty"`
-	LabelKey   *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
-	LabelValue *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+	RepoId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	X          *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=_" json:"_,omitempty"`
+	LabelKey   *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
+	LabelValue *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
 }
 
 func (m *CreateRepoLabelRequest) Reset()                    { *m = CreateRepoLabelRequest{} }
@@ -489,28 +489,28 @@ func (m *CreateRepoLabelRequest) String() string            { return proto.Compa
 func (*CreateRepoLabelRequest) ProtoMessage()               {}
 func (*CreateRepoLabelRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{10} }
 
-func (m *CreateRepoLabelRequest) GetRepoId() *google_protobuf.StringValue {
+func (m *CreateRepoLabelRequest) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *CreateRepoLabelRequest) GetX() *google_protobuf.StringValue {
+func (m *CreateRepoLabelRequest) GetX() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.X
 	}
 	return nil
 }
 
-func (m *CreateRepoLabelRequest) GetLabelKey() *google_protobuf.StringValue {
+func (m *CreateRepoLabelRequest) GetLabelKey() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.LabelKey
 	}
 	return nil
 }
 
-func (m *CreateRepoLabelRequest) GetLabelValue() *google_protobuf.StringValue {
+func (m *CreateRepoLabelRequest) GetLabelValue() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.LabelValue
 	}
@@ -534,10 +534,10 @@ func (m *CreateRepoLabelResponse) GetRepoLabel() *RepoLabel {
 }
 
 type ModifyRepoLabelRequest struct {
-	X           *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
-	RepoLabelId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
-	LabelKey    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
-	LabelValue  *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+	X           *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
+	RepoLabelId *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
+	LabelKey    *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
+	LabelValue  *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
 }
 
 func (m *ModifyRepoLabelRequest) Reset()                    { *m = ModifyRepoLabelRequest{} }
@@ -545,28 +545,28 @@ func (m *ModifyRepoLabelRequest) String() string            { return proto.Compa
 func (*ModifyRepoLabelRequest) ProtoMessage()               {}
 func (*ModifyRepoLabelRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{12} }
 
-func (m *ModifyRepoLabelRequest) GetX() *google_protobuf.StringValue {
+func (m *ModifyRepoLabelRequest) GetX() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.X
 	}
 	return nil
 }
 
-func (m *ModifyRepoLabelRequest) GetRepoLabelId() *google_protobuf.StringValue {
+func (m *ModifyRepoLabelRequest) GetRepoLabelId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoLabelId
 	}
 	return nil
 }
 
-func (m *ModifyRepoLabelRequest) GetLabelKey() *google_protobuf.StringValue {
+func (m *ModifyRepoLabelRequest) GetLabelKey() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.LabelKey
 	}
 	return nil
 }
 
-func (m *ModifyRepoLabelRequest) GetLabelValue() *google_protobuf.StringValue {
+func (m *ModifyRepoLabelRequest) GetLabelValue() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.LabelValue
 	}
@@ -590,7 +590,7 @@ func (m *ModifyRepoLabelResponse) GetRepoLabel() *RepoLabel {
 }
 
 type DeleteRepoLabelRequest struct {
-	RepoLabelId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
+	RepoLabelId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_label_id,json=repoLabelId" json:"repo_label_id,omitempty"`
 }
 
 func (m *DeleteRepoLabelRequest) Reset()                    { *m = DeleteRepoLabelRequest{} }
@@ -598,7 +598,7 @@ func (m *DeleteRepoLabelRequest) String() string            { return proto.Compa
 func (*DeleteRepoLabelRequest) ProtoMessage()               {}
 func (*DeleteRepoLabelRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{14} }
 
-func (m *DeleteRepoLabelRequest) GetRepoLabelId() *google_protobuf.StringValue {
+func (m *DeleteRepoLabelRequest) GetRepoLabelId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoLabelId
 	}
@@ -694,13 +694,13 @@ func (m *DescribeRepoLabelsResponse) GetRepoLabelSet() []*RepoLabel {
 }
 
 type RepoSelector struct {
-	RepoId         *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	RepoSelectorId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
-	SelectorKey    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
-	SelectorValue  *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
-	Status         *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=status" json:"status,omitempty"`
-	CreateTime     *google_protobuf1.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime     *google_protobuf1.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	RepoId         *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoSelectorId *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
+	SelectorKey    *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
+	SelectorValue  *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+	Status         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=status" json:"status,omitempty"`
+	CreateTime     *google_protobuf3.Timestamp   `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime     *google_protobuf3.Timestamp   `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 }
 
 func (m *RepoSelector) Reset()                    { *m = RepoSelector{} }
@@ -708,49 +708,49 @@ func (m *RepoSelector) String() string            { return proto.CompactTextStri
 func (*RepoSelector) ProtoMessage()               {}
 func (*RepoSelector) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{18} }
 
-func (m *RepoSelector) GetRepoId() *google_protobuf.StringValue {
+func (m *RepoSelector) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *RepoSelector) GetRepoSelectorId() *google_protobuf.StringValue {
+func (m *RepoSelector) GetRepoSelectorId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoSelectorId
 	}
 	return nil
 }
 
-func (m *RepoSelector) GetSelectorKey() *google_protobuf.StringValue {
+func (m *RepoSelector) GetSelectorKey() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SelectorKey
 	}
 	return nil
 }
 
-func (m *RepoSelector) GetSelectorValue() *google_protobuf.StringValue {
+func (m *RepoSelector) GetSelectorValue() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SelectorValue
 	}
 	return nil
 }
 
-func (m *RepoSelector) GetStatus() *google_protobuf.StringValue {
+func (m *RepoSelector) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *RepoSelector) GetCreateTime() *google_protobuf1.Timestamp {
+func (m *RepoSelector) GetCreateTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *RepoSelector) GetStatusTime() *google_protobuf1.Timestamp {
+func (m *RepoSelector) GetStatusTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -758,10 +758,10 @@ func (m *RepoSelector) GetStatusTime() *google_protobuf1.Timestamp {
 }
 
 type CreateRepoSelectorRequest struct {
-	RepoId        *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	X             *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=_" json:"_,omitempty"`
-	SelectorKey   *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
-	SelectorValue *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+	RepoId        *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	X             *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=_" json:"_,omitempty"`
+	SelectorKey   *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
+	SelectorValue *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
 }
 
 func (m *CreateRepoSelectorRequest) Reset()                    { *m = CreateRepoSelectorRequest{} }
@@ -769,28 +769,28 @@ func (m *CreateRepoSelectorRequest) String() string            { return proto.Co
 func (*CreateRepoSelectorRequest) ProtoMessage()               {}
 func (*CreateRepoSelectorRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{19} }
 
-func (m *CreateRepoSelectorRequest) GetRepoId() *google_protobuf.StringValue {
+func (m *CreateRepoSelectorRequest) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *CreateRepoSelectorRequest) GetX() *google_protobuf.StringValue {
+func (m *CreateRepoSelectorRequest) GetX() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.X
 	}
 	return nil
 }
 
-func (m *CreateRepoSelectorRequest) GetSelectorKey() *google_protobuf.StringValue {
+func (m *CreateRepoSelectorRequest) GetSelectorKey() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SelectorKey
 	}
 	return nil
 }
 
-func (m *CreateRepoSelectorRequest) GetSelectorValue() *google_protobuf.StringValue {
+func (m *CreateRepoSelectorRequest) GetSelectorValue() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SelectorValue
 	}
@@ -814,10 +814,10 @@ func (m *CreateRepoSelectorResponse) GetRepoSelector() *RepoSelector {
 }
 
 type ModifyRepoSelectorRequest struct {
-	X              *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
-	RepoSelectorId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
-	SelectorKey    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
-	SelectorValue  *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+	X              *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
+	RepoSelectorId *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
+	SelectorKey    *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
+	SelectorValue  *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
 }
 
 func (m *ModifyRepoSelectorRequest) Reset()                    { *m = ModifyRepoSelectorRequest{} }
@@ -825,28 +825,28 @@ func (m *ModifyRepoSelectorRequest) String() string            { return proto.Co
 func (*ModifyRepoSelectorRequest) ProtoMessage()               {}
 func (*ModifyRepoSelectorRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{21} }
 
-func (m *ModifyRepoSelectorRequest) GetX() *google_protobuf.StringValue {
+func (m *ModifyRepoSelectorRequest) GetX() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.X
 	}
 	return nil
 }
 
-func (m *ModifyRepoSelectorRequest) GetRepoSelectorId() *google_protobuf.StringValue {
+func (m *ModifyRepoSelectorRequest) GetRepoSelectorId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoSelectorId
 	}
 	return nil
 }
 
-func (m *ModifyRepoSelectorRequest) GetSelectorKey() *google_protobuf.StringValue {
+func (m *ModifyRepoSelectorRequest) GetSelectorKey() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SelectorKey
 	}
 	return nil
 }
 
-func (m *ModifyRepoSelectorRequest) GetSelectorValue() *google_protobuf.StringValue {
+func (m *ModifyRepoSelectorRequest) GetSelectorValue() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SelectorValue
 	}
@@ -870,7 +870,7 @@ func (m *ModifyRepoSelectorResponse) GetRepoSelector() *RepoSelector {
 }
 
 type DeleteRepoSelectorRequest struct {
-	RepoSelectorId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
+	RepoSelectorId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_selector_id,json=repoSelectorId" json:"repo_selector_id,omitempty"`
 }
 
 func (m *DeleteRepoSelectorRequest) Reset()                    { *m = DeleteRepoSelectorRequest{} }
@@ -878,7 +878,7 @@ func (m *DeleteRepoSelectorRequest) String() string            { return proto.Co
 func (*DeleteRepoSelectorRequest) ProtoMessage()               {}
 func (*DeleteRepoSelectorRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{23} }
 
-func (m *DeleteRepoSelectorRequest) GetRepoSelectorId() *google_protobuf.StringValue {
+func (m *DeleteRepoSelectorRequest) GetRepoSelectorId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoSelectorId
 	}

@@ -11,7 +11,7 @@ option go_package = "pb";
 import "protoc-gen-swagger/options/annotations.proto";
 
 
-// π.pb.go define the swagger project metadata
+// 0.pb.go define the swagger project metadata
 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	info: {
 		title: "OpenPitrix Project";

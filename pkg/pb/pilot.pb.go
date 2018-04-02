@@ -6,7 +6,7 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
 
@@ -21,9 +21,9 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type HandleSubtaskRequest struct {
-	SubtaskId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
-	SubtaskAction *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=subtask_action,json=subtaskAction" json:"subtask_action,omitempty"`
-	Directive     *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=directive" json:"directive,omitempty"`
+	SubtaskId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
+	SubtaskAction *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=subtask_action,json=subtaskAction" json:"subtask_action,omitempty"`
+	Directive     *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=directive" json:"directive,omitempty"`
 }
 
 func (m *HandleSubtaskRequest) Reset()                    { *m = HandleSubtaskRequest{} }
@@ -31,21 +31,21 @@ func (m *HandleSubtaskRequest) String() string            { return proto.Compact
 func (*HandleSubtaskRequest) ProtoMessage()               {}
 func (*HandleSubtaskRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
 
-func (m *HandleSubtaskRequest) GetSubtaskId() *google_protobuf.StringValue {
+func (m *HandleSubtaskRequest) GetSubtaskId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SubtaskId
 	}
 	return nil
 }
 
-func (m *HandleSubtaskRequest) GetSubtaskAction() *google_protobuf.StringValue {
+func (m *HandleSubtaskRequest) GetSubtaskAction() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SubtaskAction
 	}
 	return nil
 }
 
-func (m *HandleSubtaskRequest) GetDirective() *google_protobuf.StringValue {
+func (m *HandleSubtaskRequest) GetDirective() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Directive
 	}
@@ -53,7 +53,7 @@ func (m *HandleSubtaskRequest) GetDirective() *google_protobuf.StringValue {
 }
 
 type HandleSubtaskResponse struct {
-	SubtaskId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
+	SubtaskId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
 }
 
 func (m *HandleSubtaskResponse) Reset()                    { *m = HandleSubtaskResponse{} }
@@ -61,7 +61,7 @@ func (m *HandleSubtaskResponse) String() string            { return proto.Compac
 func (*HandleSubtaskResponse) ProtoMessage()               {}
 func (*HandleSubtaskResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
 
-func (m *HandleSubtaskResponse) GetSubtaskId() *google_protobuf.StringValue {
+func (m *HandleSubtaskResponse) GetSubtaskId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SubtaskId
 	}
@@ -85,8 +85,8 @@ func (m *GetSubtaskStatusRequest) GetSubtaskId() []string {
 }
 
 type SubtaskStatus struct {
-	SubtaskId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
-	Status    *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
+	SubtaskId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
+	Status    *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=status" json:"status,omitempty"`
 }
 
 func (m *SubtaskStatus) Reset()                    { *m = SubtaskStatus{} }
@@ -94,14 +94,14 @@ func (m *SubtaskStatus) String() string            { return proto.CompactTextStr
 func (*SubtaskStatus) ProtoMessage()               {}
 func (*SubtaskStatus) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
 
-func (m *SubtaskStatus) GetSubtaskId() *google_protobuf.StringValue {
+func (m *SubtaskStatus) GetSubtaskId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SubtaskId
 	}
 	return nil
 }
 
-func (m *SubtaskStatus) GetStatus() *google_protobuf.StringValue {
+func (m *SubtaskStatus) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
@@ -269,8 +269,8 @@ func (c *pilotServiceForFrontgateClient) Channel(ctx context.Context, opts ...gr
 }
 
 type PilotServiceForFrontgate_ChannelClient interface {
-	Send(*google_protobuf.BytesValue) error
-	Recv() (*google_protobuf.BytesValue, error)
+	Send(*google_protobuf2.BytesValue) error
+	Recv() (*google_protobuf2.BytesValue, error)
 	grpc.ClientStream
 }
 
@@ -278,12 +278,12 @@ type pilotServiceForFrontgateChannelClient struct {
 	grpc.ClientStream
 }
 
-func (x *pilotServiceForFrontgateChannelClient) Send(m *google_protobuf.BytesValue) error {
+func (x *pilotServiceForFrontgateChannelClient) Send(m *google_protobuf2.BytesValue) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *pilotServiceForFrontgateChannelClient) Recv() (*google_protobuf.BytesValue, error) {
-	m := new(google_protobuf.BytesValue)
+func (x *pilotServiceForFrontgateChannelClient) Recv() (*google_protobuf2.BytesValue, error) {
+	m := new(google_protobuf2.BytesValue)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -305,8 +305,8 @@ func _PilotServiceForFrontgate_Channel_Handler(srv interface{}, stream grpc.Serv
 }
 
 type PilotServiceForFrontgate_ChannelServer interface {
-	Send(*google_protobuf.BytesValue) error
-	Recv() (*google_protobuf.BytesValue, error)
+	Send(*google_protobuf2.BytesValue) error
+	Recv() (*google_protobuf2.BytesValue, error)
 	grpc.ServerStream
 }
 
@@ -314,12 +314,12 @@ type pilotServiceForFrontgateChannelServer struct {
 	grpc.ServerStream
 }
 
-func (x *pilotServiceForFrontgateChannelServer) Send(m *google_protobuf.BytesValue) error {
+func (x *pilotServiceForFrontgateChannelServer) Send(m *google_protobuf2.BytesValue) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *pilotServiceForFrontgateChannelServer) Recv() (*google_protobuf.BytesValue, error) {
-	m := new(google_protobuf.BytesValue)
+func (x *pilotServiceForFrontgateChannelServer) Recv() (*google_protobuf2.BytesValue, error) {
+	m := new(google_protobuf2.BytesValue)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}

@@ -6,8 +6,8 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/timestamp"
+import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf3 "github.com/golang/protobuf/ptypes/timestamp"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
 
@@ -22,13 +22,13 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type CreateJobRequest struct {
-	X         *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId     *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	JobAction *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=job_action,json=jobAction" json:"job_action,omitempty"`
-	Runtime   *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=runtime" json:"runtime,omitempty"`
-	Directive *google_protobuf.StringValue `protobuf:"bytes,7,opt,name=directive" json:"directive,omitempty"`
+	X         *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AppId     *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	JobAction *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=job_action,json=jobAction" json:"job_action,omitempty"`
+	Runtime   *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=runtime" json:"runtime,omitempty"`
+	Directive *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=directive" json:"directive,omitempty"`
 }
 
 func (m *CreateJobRequest) Reset()                    { *m = CreateJobRequest{} }
@@ -36,49 +36,49 @@ func (m *CreateJobRequest) String() string            { return proto.CompactText
 func (*CreateJobRequest) ProtoMessage()               {}
 func (*CreateJobRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
 
-func (m *CreateJobRequest) GetX() *google_protobuf.StringValue {
+func (m *CreateJobRequest) GetX() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.X
 	}
 	return nil
 }
 
-func (m *CreateJobRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *CreateJobRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *CreateJobRequest) GetAppId() *google_protobuf.StringValue {
+func (m *CreateJobRequest) GetAppId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *CreateJobRequest) GetVersionId() *google_protobuf.StringValue {
+func (m *CreateJobRequest) GetVersionId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
 	return nil
 }
 
-func (m *CreateJobRequest) GetJobAction() *google_protobuf.StringValue {
+func (m *CreateJobRequest) GetJobAction() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobAction
 	}
 	return nil
 }
 
-func (m *CreateJobRequest) GetRuntime() *google_protobuf.StringValue {
+func (m *CreateJobRequest) GetRuntime() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Runtime
 	}
 	return nil
 }
 
-func (m *CreateJobRequest) GetDirective() *google_protobuf.StringValue {
+func (m *CreateJobRequest) GetDirective() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Directive
 	}
@@ -86,10 +86,10 @@ func (m *CreateJobRequest) GetDirective() *google_protobuf.StringValue {
 }
 
 type CreateJobResponse struct {
-	JobId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId     *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	JobId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AppId     *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
 }
 
 func (m *CreateJobResponse) Reset()                    { *m = CreateJobResponse{} }
@@ -97,28 +97,28 @@ func (m *CreateJobResponse) String() string            { return proto.CompactTex
 func (*CreateJobResponse) ProtoMessage()               {}
 func (*CreateJobResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
 
-func (m *CreateJobResponse) GetJobId() *google_protobuf.StringValue {
+func (m *CreateJobResponse) GetJobId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobId
 	}
 	return nil
 }
 
-func (m *CreateJobResponse) GetClusterId() *google_protobuf.StringValue {
+func (m *CreateJobResponse) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *CreateJobResponse) GetAppId() *google_protobuf.StringValue {
+func (m *CreateJobResponse) GetAppId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *CreateJobResponse) GetVersionId() *google_protobuf.StringValue {
+func (m *CreateJobResponse) GetVersionId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
@@ -126,20 +126,20 @@ func (m *CreateJobResponse) GetVersionId() *google_protobuf.StringValue {
 }
 
 type Job struct {
-	JobId      *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
-	ClusterId  *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId      *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId  *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	JobAction  *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=job_action,json=jobAction" json:"job_action,omitempty"`
-	Status     *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=status" json:"status,omitempty"`
-	ErrorCode  *google_protobuf.UInt32Value `protobuf:"bytes,7,opt,name=error_code,json=errorCode" json:"error_code,omitempty"`
-	Directive  *google_protobuf.StringValue `protobuf:"bytes,8,opt,name=directive" json:"directive,omitempty"`
-	Executor   *google_protobuf.StringValue `protobuf:"bytes,9,opt,name=executor" json:"executor,omitempty"`
-	TaskCount  *google_protobuf.UInt32Value `protobuf:"bytes,10,opt,name=task_count,json=taskCount" json:"task_count,omitempty"`
-	Owner      *google_protobuf.StringValue `protobuf:"bytes,11,opt,name=owner" json:"owner,omitempty"`
-	Runtime    *google_protobuf.StringValue `protobuf:"bytes,12,opt,name=runtime" json:"runtime,omitempty"`
-	CreateTime *google_protobuf1.Timestamp  `protobuf:"bytes,13,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime *google_protobuf1.Timestamp  `protobuf:"bytes,14,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	JobId      *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId  *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AppId      *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId  *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	JobAction  *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=job_action,json=jobAction" json:"job_action,omitempty"`
+	Status     *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=status" json:"status,omitempty"`
+	ErrorCode  *google_protobuf2.UInt32Value `protobuf:"bytes,7,opt,name=error_code,json=errorCode" json:"error_code,omitempty"`
+	Directive  *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=directive" json:"directive,omitempty"`
+	Executor   *google_protobuf2.StringValue `protobuf:"bytes,9,opt,name=executor" json:"executor,omitempty"`
+	TaskCount  *google_protobuf2.UInt32Value `protobuf:"bytes,10,opt,name=task_count,json=taskCount" json:"task_count,omitempty"`
+	Owner      *google_protobuf2.StringValue `protobuf:"bytes,11,opt,name=owner" json:"owner,omitempty"`
+	Runtime    *google_protobuf2.StringValue `protobuf:"bytes,12,opt,name=runtime" json:"runtime,omitempty"`
+	CreateTime *google_protobuf3.Timestamp   `protobuf:"bytes,13,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime *google_protobuf3.Timestamp   `protobuf:"bytes,14,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 }
 
 func (m *Job) Reset()                    { *m = Job{} }
@@ -147,98 +147,98 @@ func (m *Job) String() string            { return proto.CompactTextString(m) }
 func (*Job) ProtoMessage()               {}
 func (*Job) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{2} }
 
-func (m *Job) GetJobId() *google_protobuf.StringValue {
+func (m *Job) GetJobId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobId
 	}
 	return nil
 }
 
-func (m *Job) GetClusterId() *google_protobuf.StringValue {
+func (m *Job) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *Job) GetAppId() *google_protobuf.StringValue {
+func (m *Job) GetAppId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *Job) GetVersionId() *google_protobuf.StringValue {
+func (m *Job) GetVersionId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
 	return nil
 }
 
-func (m *Job) GetJobAction() *google_protobuf.StringValue {
+func (m *Job) GetJobAction() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobAction
 	}
 	return nil
 }
 
-func (m *Job) GetStatus() *google_protobuf.StringValue {
+func (m *Job) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *Job) GetErrorCode() *google_protobuf.UInt32Value {
+func (m *Job) GetErrorCode() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.ErrorCode
 	}
 	return nil
 }
 
-func (m *Job) GetDirective() *google_protobuf.StringValue {
+func (m *Job) GetDirective() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Directive
 	}
 	return nil
 }
 
-func (m *Job) GetExecutor() *google_protobuf.StringValue {
+func (m *Job) GetExecutor() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Executor
 	}
 	return nil
 }
 
-func (m *Job) GetTaskCount() *google_protobuf.UInt32Value {
+func (m *Job) GetTaskCount() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.TaskCount
 	}
 	return nil
 }
 
-func (m *Job) GetOwner() *google_protobuf.StringValue {
+func (m *Job) GetOwner() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *Job) GetRuntime() *google_protobuf.StringValue {
+func (m *Job) GetRuntime() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Runtime
 	}
 	return nil
 }
 
-func (m *Job) GetCreateTime() *google_protobuf1.Timestamp {
+func (m *Job) GetCreateTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *Job) GetStatusTime() *google_protobuf1.Timestamp {
+func (m *Job) GetStatusTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -246,13 +246,13 @@ func (m *Job) GetStatusTime() *google_protobuf1.Timestamp {
 }
 
 type DescribeJobsRequest struct {
-	JobId     []string                     `protobuf:"bytes,1,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId     *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	Executor  *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=executor" json:"executor,omitempty"`
-	Runtime   *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=runtime" json:"runtime,omitempty"`
-	Status    []string                     `protobuf:"bytes,7,rep,name=status" json:"status,omitempty"`
+	JobId     []string                      `protobuf:"bytes,1,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AppId     *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	Executor  *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=executor" json:"executor,omitempty"`
+	Runtime   *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=runtime" json:"runtime,omitempty"`
+	Status    []string                      `protobuf:"bytes,7,rep,name=status" json:"status,omitempty"`
 	// default is 20, max value is 200
 	Limit uint32 `protobuf:"varint,8,opt,name=limit" json:"limit,omitempty"`
 	// default is 0
@@ -271,35 +271,35 @@ func (m *DescribeJobsRequest) GetJobId() []string {
 	return nil
 }
 
-func (m *DescribeJobsRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *DescribeJobsRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *DescribeJobsRequest) GetAppId() *google_protobuf.StringValue {
+func (m *DescribeJobsRequest) GetAppId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *DescribeJobsRequest) GetVersionId() *google_protobuf.StringValue {
+func (m *DescribeJobsRequest) GetVersionId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
 	return nil
 }
 
-func (m *DescribeJobsRequest) GetExecutor() *google_protobuf.StringValue {
+func (m *DescribeJobsRequest) GetExecutor() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Executor
 	}
 	return nil
 }
 
-func (m *DescribeJobsRequest) GetRuntime() *google_protobuf.StringValue {
+func (m *DescribeJobsRequest) GetRuntime() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Runtime
 	}
