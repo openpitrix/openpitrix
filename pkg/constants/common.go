@@ -7,16 +7,16 @@ package constants
 import "time"
 
 const (
-	prefix                = "openpitrix-"
-	ApiGatewayHost        = prefix + "api-gateway"
-	RepoManagerHost       = prefix + "repo-manager"
-	AppManagerHost        = prefix + "app-manager"
-	RuntimeEnvManagerHost = prefix + "runtime-env-manager"
-	ClusterManagerHost    = prefix + "cluster-manager"
-	JobManagerHost        = prefix + "job-manager"
-	TaskManagerHost       = prefix + "task-manager"
-	PilotManagerHost      = prefix + "pilot-manager"
-	RepoIndexerHost       = prefix + "repo-indexer"
+	prefix             = "openpitrix-"
+	ApiGatewayHost     = prefix + "api-gateway"
+	RepoManagerHost    = prefix + "repo-manager"
+	AppManagerHost     = prefix + "app-manager"
+	RuntimeManagerHost = prefix + "runtime-manager"
+	ClusterManagerHost = prefix + "cluster-manager"
+	JobManagerHost     = prefix + "job-manager"
+	TaskManagerHost    = prefix + "task-manager"
+	PilotManagerHost   = prefix + "pilot-manager"
+	RepoIndexerHost    = prefix + "repo-indexer"
 )
 
 const (

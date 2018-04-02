@@ -2,14 +2,14 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package runtime_env
+package runtime
 
 const (
-	RuntimeEnvCredentialIdColumn      = "runtime_env_credential_id"
-	RuntimeEnvCredentialContentColumn = "content"
-	RuntimeEnvIdColumn                = "runtime_env_id"
-	RuntimeEnvLabelValueColumn        = "label_value"
-	RuntimeEnvLabelKeyColumn          = "label_key"
+	RuntimeCredentialIdColumn      = "runtime_credential_id"
+	RuntimeCredentialContentColumn = "content"
+	RuntimeIdColumn                = "runtime_id"
+	RuntimeLabelValueColumn        = "label_value"
+	RuntimeLabelKeyColumn          = "label_key"
 )
 
 const (

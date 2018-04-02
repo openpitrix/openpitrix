@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package runtime_env
+package runtime
 
 import (
 	"google.golang.org/grpc"
@@ -20,7 +20,7 @@ type Server struct {
 
 func Serve(cfg *config.Config) {
 	s := Server{pi.NewPi(cfg)}
-	manager.NewGrpcServer("runtime-env-manager", constants.RuntimeEnvManagerPort).Serve(func(server *grpc.Server) {
+	manager.NewGrpcServer("runtime-manager", constants.RuntimeEnvManagerPort).Serve(func(server *grpc.Server) {
 		pb.RegisterRuntimeEnvManagerServer(server, &s)
 	})
 }

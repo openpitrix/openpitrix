@@ -31,7 +31,7 @@ services:
      - "9100:9100"
     links:
       - openpitrix-app-manager:openpitrix-app-manager
-      - openpitrix-runtime-env-manager:openpitrix-runtime-env-manager
+      - openpitrix-runtime-manager:openpitrix-runtime-manager
       - openpitrix-repo-manager:openpitrix-repo-manager
       - openpitrix-job-manager:openpitrix-job-manager
       - openpitrix-task-manager:openpitrix-task-manager
@@ -106,17 +106,17 @@ services:
     container_name: "openpitrix-app-db-ctrl"
 
   # runtime service
-  openpitrix-runtime-env-manager:
+  openpitrix-runtime-manager:
     build: .
     image: "openpitrix"
-    command: "runtime-env-manager"
+    command: "runtime-manager"
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
     depends_on:
       - openpitrix-runtime-db-ctrl
       - openpitrix-etcd
-    container_name: "openpitrix-runtime-env-manager"
+    container_name: "openpitrix-runtime-manager"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_MYSQL_DATABASE=runtime
