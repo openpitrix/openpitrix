@@ -2549,16 +2549,16 @@ var Files = map[string]string{
         "visibility": {
           "type": "string"
         },
-        "provider": {
+        "providers": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "label": {
+        "labels": {
           "type": "string"
         },
-        "selector": {
+        "selectors": {
           "type": "string"
         }
       }
@@ -2626,10 +2626,16 @@ var Files = map[string]string{
         "visibility": {
           "type": "string"
         },
-        "label": {
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
           "type": "string"
         },
-        "selector": {
+        "selectors": {
           "type": "string"
         }
       }

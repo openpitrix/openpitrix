@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
 	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/utils/stringutil"
 )
 
 func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest) (*pb.DescribeReposResponse, error) {
@@ -76,11 +77,12 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 }
 
 func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb.CreateRepoResponse, error) {
+	// TODO: common validate
 	repoType := req.GetType().GetValue()
 	url := req.GetUrl().GetValue()
 	credential := req.GetCredential().GetValue()
 	visibility := req.GetVisibility().GetValue()
-	provider := req.GetProvider()
+	providers := req.GetProviders()
 
 	err := validate(repoType, url, credential, visibility)
 	if err != nil {
@@ -106,7 +108,15 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
 	}
 
-	err = p.createProvider(newRepo.RepoId, provider)
+	err = p.createProviders(newRepo.RepoId, providers)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+	}
+	err = p.createLabels(newRepo.RepoId, req.GetLabels().GetValue())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+	}
+	err = p.createSelectors(newRepo.RepoId, req.GetSelectors().GetValue())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
 	}
@@ -124,20 +134,34 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 
 func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb.ModifyRepoResponse, error) {
 	repoType := req.GetType().GetValue()
-	url := req.GetUrl().GetValue()
-	credential := req.GetCredential().GetValue()
-	visibility := req.GetVisibility().GetValue()
-
-	err := validate(repoType, url, credential, visibility)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ModifyRepo: Validate failed, %+v", err)
-	}
-
+	providers := req.GetProviders()
 	// TODO: check resource permission
 	repoId := req.GetRepoId().GetValue()
 	repo, err := p.getRepo(repoId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to get repo [%s]", repoId)
+	}
+	url := repo.Url
+	credential := repo.Credential
+	visibility := repo.Visibility
+	needValidate := false
+	if req.GetUrl() != nil {
+		url = req.GetUrl().GetValue()
+		needValidate = true
+	}
+	if req.GetCredential() != nil {
+		credential = req.GetCredential().GetValue()
+		needValidate = true
+	}
+	if req.GetVisibility() != nil {
+		visibility = req.GetVisibility().GetValue()
+		needValidate = true
+	}
+	if needValidate {
+		err = validate(repoType, url, credential, visibility)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyRepo: Validate failed, %+v", err)
+		}
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
@@ -151,6 +175,30 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
 	}
+
+	if len(providers) > 0 {
+		providers = stringutil.Unique(providers)
+
+		providersMap, err := p.getProvidersMap([]string{repoId})
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
+		}
+		var currentProviders []string
+		for _, repoProvider := range providersMap[repoId] {
+			currentProviders = append(currentProviders, repoProvider.Provider)
+		}
+		deleteProviders := stringutil.Diff(currentProviders, providers)
+		addProviders := stringutil.Diff(providers, currentProviders)
+		err = p.createProviders(repoId, addProviders)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
+		}
+		err = p.deleteProviders(repoId, deleteProviders)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
+		}
+	}
+
 	repo, err = p.getRepo(repoId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to get repo [%s]", repoId)

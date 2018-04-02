@@ -22,17 +22,20 @@ type OpenpitrixModifyRepoRequest struct {
 	// description
 	Description string `json:"description,omitempty"`
 
-	// label
-	Label string `json:"label,omitempty"`
+	// labels
+	Labels string `json:"labels,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
 
+	// providers
+	Providers []string `json:"providers"`
+
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`
 
-	// selector
-	Selector string `json:"selector,omitempty"`
+	// selectors
+	Selectors string `json:"selectors,omitempty"`
 
 	// type
 	Type string `json:"type,omitempty"`
@@ -48,9 +51,23 @@ type OpenpitrixModifyRepoRequest struct {
 func (m *OpenpitrixModifyRepoRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateProviders(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixModifyRepoRequest) validateProviders(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Providers) { // not required
+		return nil
+	}
+
 	return nil
 }
 

@@ -21,9 +21,9 @@ message CreateRepoRequest {
 	google.protobuf.StringValue url = 5;
 	google.protobuf.StringValue credential = 6;
 	google.protobuf.StringValue visibility = 7;
-	repeated string provider = 8;
-	google.protobuf.StringValue label = 9;
-	google.protobuf.StringValue selector = 10;
+	repeated string providers = 8;
+	google.protobuf.StringValue labels = 9;
+	google.protobuf.StringValue selectors = 10;
 }
 
 message CreateRepoResponse {
@@ -38,8 +38,9 @@ message ModifyRepoRequest {
 	google.protobuf.StringValue url = 5;
 	google.protobuf.StringValue credential = 6;
 	google.protobuf.StringValue visibility = 7;
-	google.protobuf.StringValue label = 8;
-	google.protobuf.StringValue selector = 9;
+	repeated string providers = 8;
+	google.protobuf.StringValue labels = 9;
+	google.protobuf.StringValue selectors = 10;
 }
 
 message ModifyRepoResponse {

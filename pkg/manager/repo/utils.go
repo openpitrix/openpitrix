@@ -11,7 +11,6 @@ import (
 
 func GetLabelMapFromRequest(req *pb.DescribeReposRequest) (map[string][]string, error) {
 	lbs := req.GetLabel().GetValue()
-	//lbs = strings.Replace(lbs, ",", "&", -1)
 	lbm, err := url.ParseQuery(lbs)
 	if err != nil {
 		return nil, err
@@ -22,7 +21,6 @@ func GetLabelMapFromRequest(req *pb.DescribeReposRequest) (map[string][]string, 
 
 func GetSelectorMapFromRequest(req *pb.DescribeReposRequest) (map[string][]string, error) {
 	sls := req.GetSelector().GetValue()
-	//sls = strings.Replace(sls, ",", "&", -1)
 	slm, err := url.ParseQuery(sls)
 	if err != nil {
 		return nil, err
