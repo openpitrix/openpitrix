@@ -93,7 +93,6 @@ func UnaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 			} else {
 				logger.Infof("Request received [%s] [%+v] [%s]", action, s, content)
 			}
-
 		}
 		start := time.Now()
 		resp, err := handler(ctx, req)

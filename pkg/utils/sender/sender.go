@@ -34,6 +34,9 @@ func GetSenderFromContext(ctx context.Context) *Info {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if ok {
 		//logger.Debugf("%+v", md[senderKey])
+		if len(md[senderKey]) == 0 {
+			return nil
+		}
 		sender := Info{}
 		err := json.Unmarshal([]byte(md[senderKey][0]), &sender)
 		if err != nil {
