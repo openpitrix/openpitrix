@@ -6,8 +6,8 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/timestamp"
+import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf3 "github.com/golang/protobuf/ptypes/timestamp"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
 
@@ -22,7 +22,7 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type IndexRepoRequest struct {
-	RepoId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
 }
 
 func (m *IndexRepoRequest) Reset()                    { *m = IndexRepoRequest{} }
@@ -30,7 +30,7 @@ func (m *IndexRepoRequest) String() string            { return proto.CompactText
 func (*IndexRepoRequest) ProtoMessage()               {}
 func (*IndexRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
 
-func (m *IndexRepoRequest) GetRepoId() *google_protobuf.StringValue {
+func (m *IndexRepoRequest) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
@@ -54,13 +54,13 @@ func (m *IndexRepoResponse) GetRepoTask() *RepoTask {
 }
 
 type RepoTask struct {
-	RepoTaskId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=repo_task_id,json=repoTaskId" json:"repo_task_id,omitempty"`
-	RepoId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Owner      *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
-	Status     *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
-	Result     *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=result" json:"result,omitempty"`
-	CreateTime *google_protobuf1.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime *google_protobuf1.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	RepoTaskId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_task_id,json=repoTaskId" json:"repo_task_id,omitempty"`
+	RepoId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Owner      *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
+	Status     *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
+	Result     *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=result" json:"result,omitempty"`
+	CreateTime *google_protobuf3.Timestamp   `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime *google_protobuf3.Timestamp   `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 }
 
 func (m *RepoTask) Reset()                    { *m = RepoTask{} }
@@ -68,49 +68,49 @@ func (m *RepoTask) String() string            { return proto.CompactTextString(m
 func (*RepoTask) ProtoMessage()               {}
 func (*RepoTask) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{2} }
 
-func (m *RepoTask) GetRepoTaskId() *google_protobuf.StringValue {
+func (m *RepoTask) GetRepoTaskId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoTaskId
 	}
 	return nil
 }
 
-func (m *RepoTask) GetRepoId() *google_protobuf.StringValue {
+func (m *RepoTask) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *RepoTask) GetOwner() *google_protobuf.StringValue {
+func (m *RepoTask) GetOwner() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *RepoTask) GetStatus() *google_protobuf.StringValue {
+func (m *RepoTask) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *RepoTask) GetResult() *google_protobuf.StringValue {
+func (m *RepoTask) GetResult() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Result
 	}
 	return nil
 }
 
-func (m *RepoTask) GetCreateTime() *google_protobuf1.Timestamp {
+func (m *RepoTask) GetCreateTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *RepoTask) GetStatusTime() *google_protobuf1.Timestamp {
+func (m *RepoTask) GetStatusTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}

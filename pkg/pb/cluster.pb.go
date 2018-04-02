@@ -6,8 +6,8 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/timestamp"
+import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf3 "github.com/golang/protobuf/ptypes/timestamp"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
 
@@ -22,11 +22,11 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type CreateClusterRequest struct {
-	AppId         *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	RuntimeEnvId  *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=runtime_env_id,json=runtimeEnvId" json:"runtime_env_id,omitempty"`
-	Conf          *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=conf" json:"conf,omitempty"`
-	AdvancedParam []string                     `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	AppId         *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	RuntimeEnvId  *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=runtime_env_id,json=runtimeEnvId" json:"runtime_env_id,omitempty"`
+	Conf          *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=conf" json:"conf,omitempty"`
+	AdvancedParam []string                      `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
 }
 
 func (m *CreateClusterRequest) Reset()                    { *m = CreateClusterRequest{} }
@@ -34,28 +34,28 @@ func (m *CreateClusterRequest) String() string            { return proto.Compact
 func (*CreateClusterRequest) ProtoMessage()               {}
 func (*CreateClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
 
-func (m *CreateClusterRequest) GetAppId() *google_protobuf.StringValue {
+func (m *CreateClusterRequest) GetAppId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *CreateClusterRequest) GetVersionId() *google_protobuf.StringValue {
+func (m *CreateClusterRequest) GetVersionId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
 	return nil
 }
 
-func (m *CreateClusterRequest) GetRuntimeEnvId() *google_protobuf.StringValue {
+func (m *CreateClusterRequest) GetRuntimeEnvId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RuntimeEnvId
 	}
 	return nil
 }
 
-func (m *CreateClusterRequest) GetConf() *google_protobuf.StringValue {
+func (m *CreateClusterRequest) GetConf() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Conf
 	}
@@ -70,8 +70,8 @@ func (m *CreateClusterRequest) GetAdvancedParam() []string {
 }
 
 type CreateClusterResponse struct {
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
 }
 
 func (m *CreateClusterResponse) Reset()                    { *m = CreateClusterResponse{} }
@@ -79,14 +79,14 @@ func (m *CreateClusterResponse) String() string            { return proto.Compac
 func (*CreateClusterResponse) ProtoMessage()               {}
 func (*CreateClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
 
-func (m *CreateClusterResponse) GetClusterId() *google_protobuf.StringValue {
+func (m *CreateClusterResponse) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *CreateClusterResponse) GetJobId() *google_protobuf.StringValue {
+func (m *CreateClusterResponse) GetJobId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -94,14 +94,14 @@ func (m *CreateClusterResponse) GetJobId() *google_protobuf.StringValue {
 }
 
 type ModifyClusterRequest struct {
-	ClusterId        *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Name             *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description      *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Status           *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
-	TransitionStatus *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
-	UpgradeStatus    *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=upgrade_status,json=upgradeStatus" json:"upgrade_status,omitempty"`
-	UpgradeTime      *google_protobuf1.Timestamp  `protobuf:"bytes,7,opt,name=upgrade_time,json=upgradeTime" json:"upgrade_time,omitempty"`
-	StatusTime       *google_protobuf1.Timestamp  `protobuf:"bytes,8,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	ClusterId        *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Name             *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description      *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Status           *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
+	TransitionStatus *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
+	UpgradeStatus    *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=upgrade_status,json=upgradeStatus" json:"upgrade_status,omitempty"`
+	UpgradeTime      *google_protobuf3.Timestamp   `protobuf:"bytes,7,opt,name=upgrade_time,json=upgradeTime" json:"upgrade_time,omitempty"`
+	StatusTime       *google_protobuf3.Timestamp   `protobuf:"bytes,8,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 }
 
 func (m *ModifyClusterRequest) Reset()                    { *m = ModifyClusterRequest{} }
@@ -109,56 +109,56 @@ func (m *ModifyClusterRequest) String() string            { return proto.Compact
 func (*ModifyClusterRequest) ProtoMessage()               {}
 func (*ModifyClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
 
-func (m *ModifyClusterRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *ModifyClusterRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ModifyClusterRequest) GetName() *google_protobuf.StringValue {
+func (m *ModifyClusterRequest) GetName() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ModifyClusterRequest) GetDescription() *google_protobuf.StringValue {
+func (m *ModifyClusterRequest) GetDescription() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *ModifyClusterRequest) GetStatus() *google_protobuf.StringValue {
+func (m *ModifyClusterRequest) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *ModifyClusterRequest) GetTransitionStatus() *google_protobuf.StringValue {
+func (m *ModifyClusterRequest) GetTransitionStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.TransitionStatus
 	}
 	return nil
 }
 
-func (m *ModifyClusterRequest) GetUpgradeStatus() *google_protobuf.StringValue {
+func (m *ModifyClusterRequest) GetUpgradeStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.UpgradeStatus
 	}
 	return nil
 }
 
-func (m *ModifyClusterRequest) GetUpgradeTime() *google_protobuf1.Timestamp {
+func (m *ModifyClusterRequest) GetUpgradeTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.UpgradeTime
 	}
 	return nil
 }
 
-func (m *ModifyClusterRequest) GetStatusTime() *google_protobuf1.Timestamp {
+func (m *ModifyClusterRequest) GetStatusTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -166,7 +166,7 @@ func (m *ModifyClusterRequest) GetStatusTime() *google_protobuf1.Timestamp {
 }
 
 type ModifyClusterResponse struct {
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
 }
 
 func (m *ModifyClusterResponse) Reset()                    { *m = ModifyClusterResponse{} }
@@ -174,7 +174,7 @@ func (m *ModifyClusterResponse) String() string            { return proto.Compac
 func (*ModifyClusterResponse) ProtoMessage()               {}
 func (*ModifyClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{3} }
 
-func (m *ModifyClusterResponse) GetClusterId() *google_protobuf.StringValue {
+func (m *ModifyClusterResponse) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
@@ -182,17 +182,17 @@ func (m *ModifyClusterResponse) GetClusterId() *google_protobuf.StringValue {
 }
 
 type ModifyClusterNodeRequest struct {
-	NodeId           *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	Name             *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	InstanceId       *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=instance_id,json=instanceId" json:"instance_id,omitempty"`
-	VolumeId         *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=volume_id,json=volumeId" json:"volume_id,omitempty"`
-	SubnetId         *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
-	PrivateIp        *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=private_ip,json=privateIp" json:"private_ip,omitempty"`
-	Status           *google_protobuf.StringValue `protobuf:"bytes,7,opt,name=status" json:"status,omitempty"`
-	TransitionStatus *google_protobuf.StringValue `protobuf:"bytes,8,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
-	HealthStatus     *google_protobuf.StringValue `protobuf:"bytes,9,opt,name=health_status,json=healthStatus" json:"health_status,omitempty"`
-	PubKey           *google_protobuf.StringValue `protobuf:"bytes,10,opt,name=pub_key,json=pubKey" json:"pub_key,omitempty"`
-	StatusTime       *google_protobuf1.Timestamp  `protobuf:"bytes,11,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	NodeId           *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	Name             *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	InstanceId       *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=instance_id,json=instanceId" json:"instance_id,omitempty"`
+	VolumeId         *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=volume_id,json=volumeId" json:"volume_id,omitempty"`
+	SubnetId         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
+	PrivateIp        *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=private_ip,json=privateIp" json:"private_ip,omitempty"`
+	Status           *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=status" json:"status,omitempty"`
+	TransitionStatus *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
+	HealthStatus     *google_protobuf2.StringValue `protobuf:"bytes,9,opt,name=health_status,json=healthStatus" json:"health_status,omitempty"`
+	PubKey           *google_protobuf2.StringValue `protobuf:"bytes,10,opt,name=pub_key,json=pubKey" json:"pub_key,omitempty"`
+	StatusTime       *google_protobuf3.Timestamp   `protobuf:"bytes,11,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 }
 
 func (m *ModifyClusterNodeRequest) Reset()                    { *m = ModifyClusterNodeRequest{} }
@@ -200,77 +200,77 @@ func (m *ModifyClusterNodeRequest) String() string            { return proto.Com
 func (*ModifyClusterNodeRequest) ProtoMessage()               {}
 func (*ModifyClusterNodeRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{4} }
 
-func (m *ModifyClusterNodeRequest) GetNodeId() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetNodeId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.NodeId
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetName() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetName() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetInstanceId() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetInstanceId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.InstanceId
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetVolumeId() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetVolumeId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.VolumeId
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetSubnetId() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetSubnetId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SubnetId
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetPrivateIp() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetPrivateIp() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.PrivateIp
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetStatus() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetTransitionStatus() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetTransitionStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.TransitionStatus
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetHealthStatus() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetHealthStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.HealthStatus
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetPubKey() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeRequest) GetPubKey() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.PubKey
 	}
 	return nil
 }
 
-func (m *ModifyClusterNodeRequest) GetStatusTime() *google_protobuf1.Timestamp {
+func (m *ModifyClusterNodeRequest) GetStatusTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -278,7 +278,7 @@ func (m *ModifyClusterNodeRequest) GetStatusTime() *google_protobuf1.Timestamp {
 }
 
 type ModifyClusterNodeResponse struct {
-	NodeId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	NodeId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
 }
 
 func (m *ModifyClusterNodeResponse) Reset()                    { *m = ModifyClusterNodeResponse{} }
@@ -286,7 +286,7 @@ func (m *ModifyClusterNodeResponse) String() string            { return proto.Co
 func (*ModifyClusterNodeResponse) ProtoMessage()               {}
 func (*ModifyClusterNodeResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{5} }
 
-func (m *ModifyClusterNodeResponse) GetNodeId() *google_protobuf.StringValue {
+func (m *ModifyClusterNodeResponse) GetNodeId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.NodeId
 	}
@@ -342,9 +342,9 @@ func (m *DeleteClustersResponse) GetJobId() []string {
 }
 
 type UpgradeClusterRequest struct {
-	ClusterId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	VersionId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	AdvancedParam []string                     `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	VersionId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	AdvancedParam []string                      `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
 }
 
 func (m *UpgradeClusterRequest) Reset()                    { *m = UpgradeClusterRequest{} }
@@ -352,14 +352,14 @@ func (m *UpgradeClusterRequest) String() string            { return proto.Compac
 func (*UpgradeClusterRequest) ProtoMessage()               {}
 func (*UpgradeClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{8} }
 
-func (m *UpgradeClusterRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *UpgradeClusterRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *UpgradeClusterRequest) GetVersionId() *google_protobuf.StringValue {
+func (m *UpgradeClusterRequest) GetVersionId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
@@ -374,8 +374,8 @@ func (m *UpgradeClusterRequest) GetAdvancedParam() []string {
 }
 
 type UpgradeClusterResponse struct {
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
 }
 
 func (m *UpgradeClusterResponse) Reset()                    { *m = UpgradeClusterResponse{} }
@@ -383,14 +383,14 @@ func (m *UpgradeClusterResponse) String() string            { return proto.Compa
 func (*UpgradeClusterResponse) ProtoMessage()               {}
 func (*UpgradeClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{9} }
 
-func (m *UpgradeClusterResponse) GetClusterId() *google_protobuf.StringValue {
+func (m *UpgradeClusterResponse) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *UpgradeClusterResponse) GetJobId() *google_protobuf.StringValue {
+func (m *UpgradeClusterResponse) GetJobId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -398,8 +398,8 @@ func (m *UpgradeClusterResponse) GetJobId() *google_protobuf.StringValue {
 }
 
 type RollbackClusterRequest struct {
-	ClusterId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam []string                     `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AdvancedParam []string                      `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
 }
 
 func (m *RollbackClusterRequest) Reset()                    { *m = RollbackClusterRequest{} }
@@ -407,7 +407,7 @@ func (m *RollbackClusterRequest) String() string            { return proto.Compa
 func (*RollbackClusterRequest) ProtoMessage()               {}
 func (*RollbackClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{10} }
 
-func (m *RollbackClusterRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *RollbackClusterRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
@@ -422,8 +422,8 @@ func (m *RollbackClusterRequest) GetAdvancedParam() []string {
 }
 
 type RollbackClusterResponse struct {
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
 }
 
 func (m *RollbackClusterResponse) Reset()                    { *m = RollbackClusterResponse{} }
@@ -431,14 +431,14 @@ func (m *RollbackClusterResponse) String() string            { return proto.Comp
 func (*RollbackClusterResponse) ProtoMessage()               {}
 func (*RollbackClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{11} }
 
-func (m *RollbackClusterResponse) GetClusterId() *google_protobuf.StringValue {
+func (m *RollbackClusterResponse) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *RollbackClusterResponse) GetJobId() *google_protobuf.StringValue {
+func (m *RollbackClusterResponse) GetJobId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -446,11 +446,11 @@ func (m *RollbackClusterResponse) GetJobId() *google_protobuf.StringValue {
 }
 
 type ResizeClusterRequest struct {
-	ClusterId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role          *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	Cpu           *google_protobuf.UInt32Value `protobuf:"bytes,3,opt,name=cpu" json:"cpu,omitempty"`
-	Memory        *google_protobuf.UInt32Value `protobuf:"bytes,4,opt,name=memory" json:"memory,omitempty"`
-	AdvancedParam []string                     `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Role          *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	Cpu           *google_protobuf2.UInt32Value `protobuf:"bytes,3,opt,name=cpu" json:"cpu,omitempty"`
+	Memory        *google_protobuf2.UInt32Value `protobuf:"bytes,4,opt,name=memory" json:"memory,omitempty"`
+	AdvancedParam []string                      `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
 }
 
 func (m *ResizeClusterRequest) Reset()                    { *m = ResizeClusterRequest{} }
@@ -458,28 +458,28 @@ func (m *ResizeClusterRequest) String() string            { return proto.Compact
 func (*ResizeClusterRequest) ProtoMessage()               {}
 func (*ResizeClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{12} }
 
-func (m *ResizeClusterRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *ResizeClusterRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ResizeClusterRequest) GetRole() *google_protobuf.StringValue {
+func (m *ResizeClusterRequest) GetRole() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Role
 	}
 	return nil
 }
 
-func (m *ResizeClusterRequest) GetCpu() *google_protobuf.UInt32Value {
+func (m *ResizeClusterRequest) GetCpu() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.Cpu
 	}
 	return nil
 }
 
-func (m *ResizeClusterRequest) GetMemory() *google_protobuf.UInt32Value {
+func (m *ResizeClusterRequest) GetMemory() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.Memory
 	}
@@ -494,8 +494,8 @@ func (m *ResizeClusterRequest) GetAdvancedParam() []string {
 }
 
 type ResizeClusterResponse struct {
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
 }
 
 func (m *ResizeClusterResponse) Reset()                    { *m = ResizeClusterResponse{} }
@@ -503,14 +503,14 @@ func (m *ResizeClusterResponse) String() string            { return proto.Compac
 func (*ResizeClusterResponse) ProtoMessage()               {}
 func (*ResizeClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{13} }
 
-func (m *ResizeClusterResponse) GetClusterId() *google_protobuf.StringValue {
+func (m *ResizeClusterResponse) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ResizeClusterResponse) GetJobId() *google_protobuf.StringValue {
+func (m *ResizeClusterResponse) GetJobId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -518,10 +518,10 @@ func (m *ResizeClusterResponse) GetJobId() *google_protobuf.StringValue {
 }
 
 type AddClusterNodesRequest struct {
-	ClusterId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role          *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	NodeCount     *google_protobuf.UInt32Value `protobuf:"bytes,3,opt,name=node_count,json=nodeCount" json:"node_count,omitempty"`
-	AdvancedParam []string                     `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Role          *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	NodeCount     *google_protobuf2.UInt32Value `protobuf:"bytes,3,opt,name=node_count,json=nodeCount" json:"node_count,omitempty"`
+	AdvancedParam []string                      `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
 }
 
 func (m *AddClusterNodesRequest) Reset()                    { *m = AddClusterNodesRequest{} }
@@ -529,21 +529,21 @@ func (m *AddClusterNodesRequest) String() string            { return proto.Compa
 func (*AddClusterNodesRequest) ProtoMessage()               {}
 func (*AddClusterNodesRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{14} }
 
-func (m *AddClusterNodesRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *AddClusterNodesRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *AddClusterNodesRequest) GetRole() *google_protobuf.StringValue {
+func (m *AddClusterNodesRequest) GetRole() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Role
 	}
 	return nil
 }
 
-func (m *AddClusterNodesRequest) GetNodeCount() *google_protobuf.UInt32Value {
+func (m *AddClusterNodesRequest) GetNodeCount() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.NodeCount
 	}
@@ -558,8 +558,8 @@ func (m *AddClusterNodesRequest) GetAdvancedParam() []string {
 }
 
 type AddClusterNodesResponse struct {
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
 }
 
 func (m *AddClusterNodesResponse) Reset()                    { *m = AddClusterNodesResponse{} }
@@ -567,14 +567,14 @@ func (m *AddClusterNodesResponse) String() string            { return proto.Comp
 func (*AddClusterNodesResponse) ProtoMessage()               {}
 func (*AddClusterNodesResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{15} }
 
-func (m *AddClusterNodesResponse) GetClusterId() *google_protobuf.StringValue {
+func (m *AddClusterNodesResponse) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *AddClusterNodesResponse) GetJobId() *google_protobuf.StringValue {
+func (m *AddClusterNodesResponse) GetJobId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -582,10 +582,10 @@ func (m *AddClusterNodesResponse) GetJobId() *google_protobuf.StringValue {
 }
 
 type DeleteClusterNodesRequest struct {
-	ClusterId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role          *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	NodeId        []string                     `protobuf:"bytes,3,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	AdvancedParam []string                     `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Role          *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	NodeId        []string                      `protobuf:"bytes,3,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	AdvancedParam []string                      `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
 }
 
 func (m *DeleteClusterNodesRequest) Reset()                    { *m = DeleteClusterNodesRequest{} }
@@ -593,14 +593,14 @@ func (m *DeleteClusterNodesRequest) String() string            { return proto.Co
 func (*DeleteClusterNodesRequest) ProtoMessage()               {}
 func (*DeleteClusterNodesRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{16} }
 
-func (m *DeleteClusterNodesRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *DeleteClusterNodesRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *DeleteClusterNodesRequest) GetRole() *google_protobuf.StringValue {
+func (m *DeleteClusterNodesRequest) GetRole() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Role
 	}
@@ -622,8 +622,8 @@ func (m *DeleteClusterNodesRequest) GetAdvancedParam() []string {
 }
 
 type DeleteClusterNodesResponse struct {
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
 }
 
 func (m *DeleteClusterNodesResponse) Reset()                    { *m = DeleteClusterNodesResponse{} }
@@ -631,14 +631,14 @@ func (m *DeleteClusterNodesResponse) String() string            { return proto.C
 func (*DeleteClusterNodesResponse) ProtoMessage()               {}
 func (*DeleteClusterNodesResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{17} }
 
-func (m *DeleteClusterNodesResponse) GetClusterId() *google_protobuf.StringValue {
+func (m *DeleteClusterNodesResponse) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *DeleteClusterNodesResponse) GetJobId() *google_protobuf.StringValue {
+func (m *DeleteClusterNodesResponse) GetJobId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -646,9 +646,9 @@ func (m *DeleteClusterNodesResponse) GetJobId() *google_protobuf.StringValue {
 }
 
 type UpdateClusterEnvRequest struct {
-	ClusterId     *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Env           *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=env" json:"env,omitempty"`
-	AdvancedParam []string                     `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Env           *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=env" json:"env,omitempty"`
+	AdvancedParam []string                      `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
 }
 
 func (m *UpdateClusterEnvRequest) Reset()                    { *m = UpdateClusterEnvRequest{} }
@@ -656,14 +656,14 @@ func (m *UpdateClusterEnvRequest) String() string            { return proto.Comp
 func (*UpdateClusterEnvRequest) ProtoMessage()               {}
 func (*UpdateClusterEnvRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{18} }
 
-func (m *UpdateClusterEnvRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *UpdateClusterEnvRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *UpdateClusterEnvRequest) GetEnv() *google_protobuf.StringValue {
+func (m *UpdateClusterEnvRequest) GetEnv() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Env
 	}
@@ -678,8 +678,8 @@ func (m *UpdateClusterEnvRequest) GetAdvancedParam() []string {
 }
 
 type UpdateClusterEnvResponse struct {
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
 }
 
 func (m *UpdateClusterEnvResponse) Reset()                    { *m = UpdateClusterEnvResponse{} }
@@ -687,14 +687,14 @@ func (m *UpdateClusterEnvResponse) String() string            { return proto.Com
 func (*UpdateClusterEnvResponse) ProtoMessage()               {}
 func (*UpdateClusterEnvResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{19} }
 
-func (m *UpdateClusterEnvResponse) GetClusterId() *google_protobuf.StringValue {
+func (m *UpdateClusterEnvResponse) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *UpdateClusterEnvResponse) GetJobId() *google_protobuf.StringValue {
+func (m *UpdateClusterEnvResponse) GetJobId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -702,30 +702,30 @@ func (m *UpdateClusterEnvResponse) GetJobId() *google_protobuf.StringValue {
 }
 
 type ClusterNode struct {
-	ClusterId          *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	NodeId             *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	Name               *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	InstanceId         *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=instance_id,json=instanceId" json:"instance_id,omitempty"`
-	SubnetId           *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
-	PrivateIp          *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=private_ip,json=privateIp" json:"private_ip,omitempty"`
-	Status             *google_protobuf.StringValue `protobuf:"bytes,7,opt,name=status" json:"status,omitempty"`
-	TransitionStatus   *google_protobuf.StringValue `protobuf:"bytes,8,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
-	ServerId           *google_protobuf.UInt32Value `protobuf:"bytes,9,opt,name=server_id,json=serverId" json:"server_id,omitempty"`
-	ServerIdUpperBound *google_protobuf.UInt32Value `protobuf:"bytes,10,opt,name=server_id_upper_bound,json=serverIdUpperBound" json:"server_id_upper_bound,omitempty"`
-	GlobalServerId     *google_protobuf.UInt64Value `protobuf:"bytes,11,opt,name=global_server_id,json=globalServerId" json:"global_server_id,omitempty"`
-	HealthStatus       *google_protobuf.StringValue `protobuf:"bytes,12,opt,name=health_status,json=healthStatus" json:"health_status,omitempty"`
-	Role               *google_protobuf.StringValue `protobuf:"bytes,13,opt,name=role" json:"role,omitempty"`
-	Owner              *google_protobuf.StringValue `protobuf:"bytes,14,opt,name=owner" json:"owner,omitempty"`
-	Cpu                *google_protobuf.UInt32Value `protobuf:"bytes,15,opt,name=cpu" json:"cpu,omitempty"`
-	Gpu                *google_protobuf.UInt32Value `protobuf:"bytes,16,opt,name=gpu" json:"gpu,omitempty"`
-	Memory             *google_protobuf.UInt32Value `protobuf:"bytes,17,opt,name=memory" json:"memory,omitempty"`
-	StorageSize        *google_protobuf.UInt32Value `protobuf:"bytes,18,opt,name=storage_size,json=storageSize" json:"storage_size,omitempty"`
-	Env                *google_protobuf.StringValue `protobuf:"bytes,19,opt,name=env" json:"env,omitempty"`
-	Passphraseless     *google_protobuf.StringValue `protobuf:"bytes,20,opt,name=passphraseless" json:"passphraseless,omitempty"`
-	AdvancedActions    *google_protobuf.StringValue `protobuf:"bytes,21,opt,name=advanced_actions,json=advancedActions" json:"advanced_actions,omitempty"`
-	ImageId            *google_protobuf.StringValue `protobuf:"bytes,22,opt,name=image_id,json=imageId" json:"image_id,omitempty"`
-	CreateTime         *google_protobuf1.Timestamp  `protobuf:"bytes,23,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime         *google_protobuf1.Timestamp  `protobuf:"bytes,24,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	ClusterId          *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	NodeId             *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	Name               *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
+	InstanceId         *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=instance_id,json=instanceId" json:"instance_id,omitempty"`
+	SubnetId           *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
+	PrivateIp          *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=private_ip,json=privateIp" json:"private_ip,omitempty"`
+	Status             *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=status" json:"status,omitempty"`
+	TransitionStatus   *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
+	ServerId           *google_protobuf2.UInt32Value `protobuf:"bytes,9,opt,name=server_id,json=serverId" json:"server_id,omitempty"`
+	ServerIdUpperBound *google_protobuf2.UInt32Value `protobuf:"bytes,10,opt,name=server_id_upper_bound,json=serverIdUpperBound" json:"server_id_upper_bound,omitempty"`
+	GlobalServerId     *google_protobuf2.UInt64Value `protobuf:"bytes,11,opt,name=global_server_id,json=globalServerId" json:"global_server_id,omitempty"`
+	HealthStatus       *google_protobuf2.StringValue `protobuf:"bytes,12,opt,name=health_status,json=healthStatus" json:"health_status,omitempty"`
+	Role               *google_protobuf2.StringValue `protobuf:"bytes,13,opt,name=role" json:"role,omitempty"`
+	Owner              *google_protobuf2.StringValue `protobuf:"bytes,14,opt,name=owner" json:"owner,omitempty"`
+	Cpu                *google_protobuf2.UInt32Value `protobuf:"bytes,15,opt,name=cpu" json:"cpu,omitempty"`
+	Gpu                *google_protobuf2.UInt32Value `protobuf:"bytes,16,opt,name=gpu" json:"gpu,omitempty"`
+	Memory             *google_protobuf2.UInt32Value `protobuf:"bytes,17,opt,name=memory" json:"memory,omitempty"`
+	StorageSize        *google_protobuf2.UInt32Value `protobuf:"bytes,18,opt,name=storage_size,json=storageSize" json:"storage_size,omitempty"`
+	Env                *google_protobuf2.StringValue `protobuf:"bytes,19,opt,name=env" json:"env,omitempty"`
+	Passphraseless     *google_protobuf2.StringValue `protobuf:"bytes,20,opt,name=passphraseless" json:"passphraseless,omitempty"`
+	AdvancedActions    *google_protobuf2.StringValue `protobuf:"bytes,21,opt,name=advanced_actions,json=advancedActions" json:"advanced_actions,omitempty"`
+	ImageId            *google_protobuf2.StringValue `protobuf:"bytes,22,opt,name=image_id,json=imageId" json:"image_id,omitempty"`
+	CreateTime         *google_protobuf3.Timestamp   `protobuf:"bytes,23,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime         *google_protobuf3.Timestamp   `protobuf:"bytes,24,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 }
 
 func (m *ClusterNode) Reset()                    { *m = ClusterNode{} }
@@ -733,168 +733,168 @@ func (m *ClusterNode) String() string            { return proto.CompactTextStrin
 func (*ClusterNode) ProtoMessage()               {}
 func (*ClusterNode) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{20} }
 
-func (m *ClusterNode) GetClusterId() *google_protobuf.StringValue {
+func (m *ClusterNode) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetNodeId() *google_protobuf.StringValue {
+func (m *ClusterNode) GetNodeId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.NodeId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetName() *google_protobuf.StringValue {
+func (m *ClusterNode) GetName() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetInstanceId() *google_protobuf.StringValue {
+func (m *ClusterNode) GetInstanceId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.InstanceId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetSubnetId() *google_protobuf.StringValue {
+func (m *ClusterNode) GetSubnetId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.SubnetId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetPrivateIp() *google_protobuf.StringValue {
+func (m *ClusterNode) GetPrivateIp() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.PrivateIp
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetStatus() *google_protobuf.StringValue {
+func (m *ClusterNode) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetTransitionStatus() *google_protobuf.StringValue {
+func (m *ClusterNode) GetTransitionStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.TransitionStatus
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetServerId() *google_protobuf.UInt32Value {
+func (m *ClusterNode) GetServerId() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.ServerId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetServerIdUpperBound() *google_protobuf.UInt32Value {
+func (m *ClusterNode) GetServerIdUpperBound() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.ServerIdUpperBound
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetGlobalServerId() *google_protobuf.UInt64Value {
+func (m *ClusterNode) GetGlobalServerId() *google_protobuf2.UInt64Value {
 	if m != nil {
 		return m.GlobalServerId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetHealthStatus() *google_protobuf.StringValue {
+func (m *ClusterNode) GetHealthStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.HealthStatus
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetRole() *google_protobuf.StringValue {
+func (m *ClusterNode) GetRole() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Role
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetOwner() *google_protobuf.StringValue {
+func (m *ClusterNode) GetOwner() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetCpu() *google_protobuf.UInt32Value {
+func (m *ClusterNode) GetCpu() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.Cpu
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetGpu() *google_protobuf.UInt32Value {
+func (m *ClusterNode) GetGpu() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.Gpu
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetMemory() *google_protobuf.UInt32Value {
+func (m *ClusterNode) GetMemory() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.Memory
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetStorageSize() *google_protobuf.UInt32Value {
+func (m *ClusterNode) GetStorageSize() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.StorageSize
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetEnv() *google_protobuf.StringValue {
+func (m *ClusterNode) GetEnv() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Env
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetPassphraseless() *google_protobuf.StringValue {
+func (m *ClusterNode) GetPassphraseless() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Passphraseless
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetAdvancedActions() *google_protobuf.StringValue {
+func (m *ClusterNode) GetAdvancedActions() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.AdvancedActions
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetImageId() *google_protobuf.StringValue {
+func (m *ClusterNode) GetImageId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ImageId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetCreateTime() *google_protobuf1.Timestamp {
+func (m *ClusterNode) GetCreateTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetStatusTime() *google_protobuf1.Timestamp {
+func (m *ClusterNode) GetStatusTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -902,28 +902,28 @@ func (m *ClusterNode) GetStatusTime() *google_protobuf1.Timestamp {
 }
 
 type Cluster struct {
-	ClusterId          *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	GlobalUuid         *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=global_uuid,json=globalUuid" json:"global_uuid,omitempty"`
-	FrontgateId        *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
-	AppId              *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId          *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	Status             *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=status" json:"status,omitempty"`
-	TransitionStatus   *google_protobuf.StringValue `protobuf:"bytes,7,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
-	RuntimeEnvId       *google_protobuf.StringValue `protobuf:"bytes,8,opt,name=runtime_env_id,json=runtimeEnvId" json:"runtime_env_id,omitempty"`
-	Owner              *google_protobuf.StringValue `protobuf:"bytes,9,opt,name=owner" json:"owner,omitempty"`
-	Name               *google_protobuf.StringValue `protobuf:"bytes,10,opt,name=name" json:"name,omitempty"`
-	Description        *google_protobuf.StringValue `protobuf:"bytes,11,opt,name=description" json:"description,omitempty"`
-	NodeCount          *google_protobuf.UInt32Value `protobuf:"bytes,12,opt,name=node_count,json=nodeCount" json:"node_count,omitempty"`
-	Endpoints          *google_protobuf.StringValue `protobuf:"bytes,13,opt,name=endpoints" json:"endpoints,omitempty"`
-	MetadataRootAccess *google_protobuf.BoolValue   `protobuf:"bytes,14,opt,name=metadata_root_access,json=metadataRootAccess" json:"metadata_root_access,omitempty"`
-	Links              map[string]string            `protobuf:"bytes,15,rep,name=links" json:"links,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Roles              map[string]string            `protobuf:"bytes,16,rep,name=roles" json:"roles,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	AdvancedActions    map[string]string            `protobuf:"bytes,17,rep,name=advanced_actions,json=advancedActions" json:"advanced_actions,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	UpgradeStatus      *google_protobuf.StringValue `protobuf:"bytes,18,opt,name=upgrade_status,json=upgradeStatus" json:"upgrade_status,omitempty"`
-	CreateTime         *google_protobuf1.Timestamp  `protobuf:"bytes,19,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime         *google_protobuf1.Timestamp  `protobuf:"bytes,20,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
-	ClusterNodeSet     []*ClusterNode               `protobuf:"bytes,21,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
-	VpcId              *google_protobuf.StringValue `protobuf:"bytes,22,opt,name=vpc_id,json=vpcId" json:"vpc_id,omitempty"`
+	ClusterId          *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	GlobalUuid         *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=global_uuid,json=globalUuid" json:"global_uuid,omitempty"`
+	FrontgateId        *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	AppId              *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId          *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	Status             *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=status" json:"status,omitempty"`
+	TransitionStatus   *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
+	RuntimeEnvId       *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=runtime_env_id,json=runtimeEnvId" json:"runtime_env_id,omitempty"`
+	Owner              *google_protobuf2.StringValue `protobuf:"bytes,9,opt,name=owner" json:"owner,omitempty"`
+	Name               *google_protobuf2.StringValue `protobuf:"bytes,10,opt,name=name" json:"name,omitempty"`
+	Description        *google_protobuf2.StringValue `protobuf:"bytes,11,opt,name=description" json:"description,omitempty"`
+	NodeCount          *google_protobuf2.UInt32Value `protobuf:"bytes,12,opt,name=node_count,json=nodeCount" json:"node_count,omitempty"`
+	Endpoints          *google_protobuf2.StringValue `protobuf:"bytes,13,opt,name=endpoints" json:"endpoints,omitempty"`
+	MetadataRootAccess *google_protobuf2.BoolValue   `protobuf:"bytes,14,opt,name=metadata_root_access,json=metadataRootAccess" json:"metadata_root_access,omitempty"`
+	Links              map[string]string             `protobuf:"bytes,15,rep,name=links" json:"links,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Roles              map[string]string             `protobuf:"bytes,16,rep,name=roles" json:"roles,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	AdvancedActions    map[string]string             `protobuf:"bytes,17,rep,name=advanced_actions,json=advancedActions" json:"advanced_actions,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	UpgradeStatus      *google_protobuf2.StringValue `protobuf:"bytes,18,opt,name=upgrade_status,json=upgradeStatus" json:"upgrade_status,omitempty"`
+	CreateTime         *google_protobuf3.Timestamp   `protobuf:"bytes,19,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime         *google_protobuf3.Timestamp   `protobuf:"bytes,20,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	ClusterNodeSet     []*ClusterNode                `protobuf:"bytes,21,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
+	VpcId              *google_protobuf2.StringValue `protobuf:"bytes,22,opt,name=vpc_id,json=vpcId" json:"vpc_id,omitempty"`
 }
 
 func (m *Cluster) Reset()                    { *m = Cluster{} }
@@ -931,98 +931,98 @@ func (m *Cluster) String() string            { return proto.CompactTextString(m)
 func (*Cluster) ProtoMessage()               {}
 func (*Cluster) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{21} }
 
-func (m *Cluster) GetClusterId() *google_protobuf.StringValue {
+func (m *Cluster) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *Cluster) GetGlobalUuid() *google_protobuf.StringValue {
+func (m *Cluster) GetGlobalUuid() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.GlobalUuid
 	}
 	return nil
 }
 
-func (m *Cluster) GetFrontgateId() *google_protobuf.StringValue {
+func (m *Cluster) GetFrontgateId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.FrontgateId
 	}
 	return nil
 }
 
-func (m *Cluster) GetAppId() *google_protobuf.StringValue {
+func (m *Cluster) GetAppId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *Cluster) GetVersionId() *google_protobuf.StringValue {
+func (m *Cluster) GetVersionId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
 	return nil
 }
 
-func (m *Cluster) GetStatus() *google_protobuf.StringValue {
+func (m *Cluster) GetStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *Cluster) GetTransitionStatus() *google_protobuf.StringValue {
+func (m *Cluster) GetTransitionStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.TransitionStatus
 	}
 	return nil
 }
 
-func (m *Cluster) GetRuntimeEnvId() *google_protobuf.StringValue {
+func (m *Cluster) GetRuntimeEnvId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.RuntimeEnvId
 	}
 	return nil
 }
 
-func (m *Cluster) GetOwner() *google_protobuf.StringValue {
+func (m *Cluster) GetOwner() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *Cluster) GetName() *google_protobuf.StringValue {
+func (m *Cluster) GetName() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *Cluster) GetDescription() *google_protobuf.StringValue {
+func (m *Cluster) GetDescription() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *Cluster) GetNodeCount() *google_protobuf.UInt32Value {
+func (m *Cluster) GetNodeCount() *google_protobuf2.UInt32Value {
 	if m != nil {
 		return m.NodeCount
 	}
 	return nil
 }
 
-func (m *Cluster) GetEndpoints() *google_protobuf.StringValue {
+func (m *Cluster) GetEndpoints() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.Endpoints
 	}
 	return nil
 }
 
-func (m *Cluster) GetMetadataRootAccess() *google_protobuf.BoolValue {
+func (m *Cluster) GetMetadataRootAccess() *google_protobuf2.BoolValue {
 	if m != nil {
 		return m.MetadataRootAccess
 	}
@@ -1050,21 +1050,21 @@ func (m *Cluster) GetAdvancedActions() map[string]string {
 	return nil
 }
 
-func (m *Cluster) GetUpgradeStatus() *google_protobuf.StringValue {
+func (m *Cluster) GetUpgradeStatus() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.UpgradeStatus
 	}
 	return nil
 }
 
-func (m *Cluster) GetCreateTime() *google_protobuf1.Timestamp {
+func (m *Cluster) GetCreateTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *Cluster) GetStatusTime() *google_protobuf1.Timestamp {
+func (m *Cluster) GetStatusTime() *google_protobuf3.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -1078,7 +1078,7 @@ func (m *Cluster) GetClusterNodeSet() []*ClusterNode {
 	return nil
 }
 
-func (m *Cluster) GetVpcId() *google_protobuf.StringValue {
+func (m *Cluster) GetVpcId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.VpcId
 	}
@@ -1086,13 +1086,13 @@ func (m *Cluster) GetVpcId() *google_protobuf.StringValue {
 }
 
 type DescribeClustersRequest struct {
-	ClusterId         []string                     `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId             []string                     `protobuf:"bytes,2,rep,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId         []string                     `protobuf:"bytes,3,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
-	Status            []string                     `protobuf:"bytes,4,rep,name=status" json:"status,omitempty"`
-	RuntimeEnvId      []string                     `protobuf:"bytes,5,rep,name=runtime_env_id,json=runtimeEnvId" json:"runtime_env_id,omitempty"`
-	FrontgateId       []string                     `protobuf:"bytes,6,rep,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
-	ExternalClusterId *google_protobuf.StringValue `protobuf:"bytes,7,opt,name=external_cluster_id,json=externalClusterId" json:"external_cluster_id,omitempty"`
+	ClusterId         []string                      `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AppId             []string                      `protobuf:"bytes,2,rep,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId         []string                      `protobuf:"bytes,3,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
+	Status            []string                      `protobuf:"bytes,4,rep,name=status" json:"status,omitempty"`
+	RuntimeEnvId      []string                      `protobuf:"bytes,5,rep,name=runtime_env_id,json=runtimeEnvId" json:"runtime_env_id,omitempty"`
+	FrontgateId       []string                      `protobuf:"bytes,6,rep,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	ExternalClusterId *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=external_cluster_id,json=externalClusterId" json:"external_cluster_id,omitempty"`
 	// default is 20, max value is 200
 	Limit uint32 `protobuf:"varint,8,opt,name=limit" json:"limit,omitempty"`
 	// default is 0
@@ -1146,7 +1146,7 @@ func (m *DescribeClustersRequest) GetFrontgateId() []string {
 	return nil
 }
 
-func (m *DescribeClustersRequest) GetExternalClusterId() *google_protobuf.StringValue {
+func (m *DescribeClustersRequest) GetExternalClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ExternalClusterId
 	}
@@ -1192,9 +1192,9 @@ func (m *DescribeClustersResponse) GetClusterSet() []*Cluster {
 }
 
 type DescribeClusterNodesRequest struct {
-	ClusterId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	NodeId    []string                     `protobuf:"bytes,2,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	Status    []string                     `protobuf:"bytes,3,rep,name=status" json:"status,omitempty"`
+	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	NodeId    []string                      `protobuf:"bytes,2,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	Status    []string                      `protobuf:"bytes,3,rep,name=status" json:"status,omitempty"`
 	// default is 20, max value is 200
 	Limit uint32 `protobuf:"varint,4,opt,name=limit" json:"limit,omitempty"`
 	// default is 0
@@ -1206,7 +1206,7 @@ func (m *DescribeClusterNodesRequest) String() string            { return proto.
 func (*DescribeClusterNodesRequest) ProtoMessage()               {}
 func (*DescribeClusterNodesRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{24} }
 
-func (m *DescribeClusterNodesRequest) GetClusterId() *google_protobuf.StringValue {
+func (m *DescribeClusterNodesRequest) GetClusterId() *google_protobuf2.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
