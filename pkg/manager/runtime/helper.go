@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package runtime_env
+package runtime
 
 import (
 	"fmt"
@@ -61,7 +61,7 @@ func LabelMapDiff(oldLabelMap, newLabelMap map[string]string) (additions, deleti
 	return additions, deletions
 }
 
-func LabelStructToMap(labelStructs []*models.RuntimeEnvLabel) map[string]string {
+func LabelStructToMap(labelStructs []*models.RuntimeLabel) map[string]string {
 	mapLabel := make(map[string]string)
 	for _, labelStruct := range labelStructs {
 		mapLabel[labelStruct.LabelKey] = labelStruct.LabelValue

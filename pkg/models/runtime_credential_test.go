@@ -26,8 +26,8 @@ func TestRuntimeEnvCredentialContentConvert(t *testing.T) {
 		},
 	}
 	for n, testMap := range testMaps {
-		stringContent := RuntimeEnvCredentialContentMapToString(testMap)
-		mapContent := RuntimeEnvCredentialContentStringToMap(stringContent)
+		stringContent := RuntimeCredentialContentMapToString(testMap)
+		mapContent := RuntimeCredentialContentStringToMap(stringContent)
 		assert.Equal(t, testMaps[n], mapContent)
 	}
 

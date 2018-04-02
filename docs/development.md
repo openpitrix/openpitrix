@@ -54,8 +54,8 @@ $ docker run --rm --name openpitrix-cluster-db-ctrl -v `pwd`/pkg/db/schema/clust
 	-url=jdbc:mysql://openpitrix-db/cluster -user=root -password=password -validateOnMigrate=false migrate
 $ docker run --rm --name openpitrix-app-manager -e OPENPITRIX_MYSQL_DATABASE=app \
 	--network openpitrix-bridge -d openpitrix app-manager
-$ docker run --rm --name openpitrix-runtime-env-manager -e OPENPITRIX_MYSQL_DATABASE=runtime \
-	--network openpitrix-bridge -d openpitrix runtime-env-manager
+$ docker run --rm --name openpitrix-runtime-manager -e OPENPITRIX_MYSQL_DATABASE=runtime \
+	--network openpitrix-bridge -d openpitrix runtime-manager
 $ docker run --rm --name openpitrix-repo-indexer -e OPENPITRIX_MYSQL_DATABASE=repo \
 	--network openpitrix-bridge -d openpitrix repo-indexer
 $ docker run --rm --name openpitrix-repo-manager -e OPENPITRIX_MYSQL_DATABASE=repo \

@@ -13,7 +13,7 @@ import (
 )
 
 func NewRuntimeEnvManagerClient(ctx context.Context) (pb.RuntimeEnvManagerClient, error) {
-	conn, err := manager.NewClient(ctx, constants.RuntimeEnvManagerHost, constants.RuntimeEnvManagerPort)
+	conn, err := manager.NewClient(ctx, constants.RuntimeManagerHost, constants.RuntimeEnvManagerPort)
 	if err != nil {
 		return nil, err
 	}

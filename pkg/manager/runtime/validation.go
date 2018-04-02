@@ -1,4 +1,4 @@
-package runtime_env
+package runtime
 
 import (
 	"fmt"
@@ -124,7 +124,7 @@ func ValidateLabelValue(labelValue string) error {
 	return nil
 }
 
-func validateCreateRuntimeEnvRequest(req *pb.CreateRuntimeEnvRequest) error {
+func validateCreateRuntimeRequest(req *pb.CreateRuntimeEnvRequest) error {
 	err := ValidateName(req.Name.GetValue())
 	if err != nil {
 		return err
@@ -161,37 +161,5 @@ func validateDescribeRuntimeEnvRequest(req *pb.DescribeRuntimeEnvsRequest) error
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-func validateCreateRuntimeEnvCredential(req *pb.CreateRuntimeEnvCredentialRequset) error {
-	err := ValidateName(req.Name.GetValue())
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func validateModifyRuntimeEnvCredential(req *pb.ModifyRuntimeEnvCredentialRequest) error {
-	err := ValidateName(req.Name.GetValue())
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func validateDescribeRuntimeEnvCredential(req *pb.DescribeRuntimeEnvCredentialsRequset) error {
-	return nil
-}
-
-func validateDeleteRuntimeEnvCredential(req *pb.DeleteRuntimeEnvCredentialRequset) error {
-	return nil
-}
-
-func validateAttachCredentialToRuntimeEnv(req *pb.AttachCredentialToRuntimeEnvRequset) error {
-	return nil
-}
-
-func validateDetachCredentialFromRuntimeEnv(req *pb.DetachCredentialFromRuntimeEnvRequset) error {
 	return nil
 }
