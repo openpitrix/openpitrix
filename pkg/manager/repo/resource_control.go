@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/utils/stringutil"
 )
 
 func (p *Server) getRepo(repoId string) (*models.Repo, error) {
@@ -17,7 +18,7 @@ func (p *Server) getRepo(repoId string) (*models.Repo, error) {
 	err := p.Db.
 		Select(models.RepoColumns...).
 		From(models.RepoTableName).
-		Where(db.Eq("repo_id", repoId)).
+		Where(db.Eq(models.ColumnRepoId, repoId)).
 		LoadOne(&repo)
 	if err != nil {
 		return nil, err
@@ -26,7 +27,7 @@ func (p *Server) getRepo(repoId string) (*models.Repo, error) {
 }
 
 func (p *Server) createProviders(repoId string, providers []string) error {
-	if providers == nil {
+	if len(providers) == 0 {
 		return nil
 	}
 	insert := p.Db.InsertInto(models.RepoProviderTableName).Columns(models.RepoProviderColumns...)
@@ -42,21 +43,51 @@ func (p *Server) createProviders(repoId string, providers []string) error {
 }
 
 func (p *Server) deleteProviders(repoId string, providers []string) error {
-	if providers == nil {
+	if len(providers) == 0 {
 		return nil
 	}
 	_, err := p.Db.
 		DeleteFrom(models.RepoProviderTableName).
-		Where(db.Eq("repo_id", repoId)).
-		Where(db.Eq("provider", providers)).
+		Where(db.Eq(models.ColumnRepoId, repoId)).
+		Where(db.Eq(models.ColumnProvider, providers)).
 		Exec()
 	return err
+}
+
+func (p *Server) modifyProviders(repoId string, providers []string) error {
+	providersMap, err := p.getProvidersMap([]string{repoId})
+
+	var currentProviders []string
+	for _, repoProvider := range providersMap[repoId] {
+		currentProviders = append(currentProviders, repoProvider.Provider)
+	}
+	deleteProviders := stringutil.Diff(currentProviders, providers)
+	addProviders := stringutil.Diff(providers, currentProviders)
+	err = p.createProviders(repoId, addProviders)
+	if err != nil {
+		return err
+	}
+	err = p.deleteProviders(repoId, deleteProviders)
+	return err
+}
+
+func (p *Server) modifyLabels(repoId string, labels string) error {
+	//labelsMap, err := p.getLabelsMap([]string{repoId})
+	//if err !=nil {
+	//	return err
+	//}
+	//currentLabels := labelsMap[repoId]
+	// TODO
+	return nil
 }
 
 func (p *Server) createLabels(repoId string, labels string) error {
 	labelsValue, err := url.ParseQuery(labels)
 	if err != nil {
 		return err
+	}
+	if len(labelsValue) == 0 {
+		return nil
 	}
 	insert := p.Db.InsertInto(models.RepoLabelTableName).Columns(models.RepoLabelColumns...)
 	for key, values := range labelsValue {
@@ -69,10 +100,18 @@ func (p *Server) createLabels(repoId string, labels string) error {
 	return err
 }
 
+func (p *Server) modifySelectors(repoId string, labels string) error {
+	// TODO
+	return nil
+}
+
 func (p *Server) createSelectors(repoId string, selectors string) error {
 	selectorsValue, err := url.ParseQuery(selectors)
 	if err != nil {
 		return err
+	}
+	if len(selectorsValue) == 0 {
+		return nil
 	}
 	insert := p.Db.InsertInto(models.RepoSelectorTableName).Columns(models.RepoSelectorColumns...)
 	for key, values := range selectorsValue {
@@ -90,7 +129,7 @@ func (p *Server) getProvidersMap(repoIds []string) (providersMap map[string][]*m
 	_, err = p.Db.
 		Select(models.RepoProviderColumns...).
 		From(models.RepoProviderTableName).
-		Where(db.Eq("repo_id", repoIds)).
+		Where(db.Eq(models.ColumnRepoId, repoIds)).
 		Load(&repoProviders)
 	if err != nil {
 		return
@@ -104,7 +143,7 @@ func (p *Server) getSelectorsMap(repoIds []string) (selectorsMap map[string][]*m
 	_, err = p.Db.
 		Select(models.RepoSelectorColumns...).
 		From(models.RepoSelectorTableName).
-		Where(db.Eq("repo_id", repoIds)).
+		Where(db.Eq(models.ColumnRepoId, repoIds)).
 		Load(&repoSelectors)
 	if err != nil {
 		return
@@ -118,7 +157,7 @@ func (p *Server) getLabelsMap(repoIds []string) (labelsMap map[string][]*models.
 	_, err = p.Db.
 		Select(models.RepoLabelColumns...).
 		From(models.RepoLabelTableName).
-		Where(db.Eq("repo_id", repoIds)).
+		Where(db.Eq(models.ColumnRepoId, repoIds)).
 		Load(&repoLabels)
 	if err != nil {
 		return

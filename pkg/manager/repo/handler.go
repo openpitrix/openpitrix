@@ -43,9 +43,9 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		Where(manager.BuildFilterConditionsWithPrefix(req, models.RepoTableName))
 
 	query = GenerateSelectQuery(query, models.RepoTableName, models.RepoLabelTableName,
-		"label_key", "label_value", labelMap)
+		models.ColumnLabelKey, models.ColumnLabelValue, labelMap)
 	query = GenerateSelectQuery(query, models.RepoTableName, models.RepoSelectorTableName,
-		"selector_key", "selector_value", selectorMap)
+		models.ColumnSelectorKey, models.ColumnSelectorValue, selectorMap)
 
 	_, err = query.Load(&repos)
 	if err != nil {
@@ -165,12 +165,12 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
-		"name", "description", "type", "url",
-		"credential", "visibility")
+		models.ColumnName, models.ColumnDescription, models.ColumnType, models.ColumnUrl,
+		models.ColumnCredential, models.ColumnVisibility)
 	_, err = p.Db.
 		Update(models.RepoTableName).
 		SetMap(attributes).
-		Where(db.Eq("repo_id", repoId)).
+		Where(db.Eq(models.ColumnRepoId, repoId)).
 		Exec()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
@@ -178,22 +178,19 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 
 	if len(providers) > 0 {
 		providers = stringutil.Unique(providers)
-
-		providersMap, err := p.getProvidersMap([]string{repoId})
+		err = p.modifyProviders(repoId, providers)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
 		}
-		var currentProviders []string
-		for _, repoProvider := range providersMap[repoId] {
-			currentProviders = append(currentProviders, repoProvider.Provider)
-		}
-		deleteProviders := stringutil.Diff(currentProviders, providers)
-		addProviders := stringutil.Diff(providers, currentProviders)
-		err = p.createProviders(repoId, addProviders)
+	}
+	if req.GetLabels() != nil {
+		err = p.modifyLabels(repoId, req.GetLabels().GetValue())
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
 		}
-		err = p.deleteProviders(repoId, deleteProviders)
+	}
+	if req.GetSelectors() != nil {
+		err = p.modifySelectors(repoId, req.GetSelectors().GetValue())
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
 		}
@@ -224,8 +221,8 @@ func (p *Server) DeleteRepo(ctx context.Context, req *pb.DeleteRepoRequest) (*pb
 
 	_, err = p.Db.
 		Update(models.RepoTableName).
-		Set("status", constants.StatusDeleted).
-		Where(db.Eq("repo_id", repoId)).
+		Set(models.ColumnStatus, constants.StatusDeleted).
+		Where(db.Eq(models.ColumnRepoId, repoId)).
 		Exec()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "DeleteRepo: %+v", err)
