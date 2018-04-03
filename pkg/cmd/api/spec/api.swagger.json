@@ -2276,6 +2276,93 @@
         }
       }
     },
+    "openpitrixConfdBackendConfig": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "host": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "client_ca_keys": {
+          "type": "string"
+        },
+        "client_cert": {
+          "type": "string"
+        },
+        "client_key": {
+          "type": "string"
+        }
+      },
+      "title": "See https://godoc.org/openpitrix.io/libconfd#BackendConfig"
+    },
+    "openpitrixConfdConfig": {
+      "type": "object",
+      "properties": {
+        "conf_dir": {
+          "type": "string"
+        },
+        "interval": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "noop": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "sync_only": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "log_level": {
+          "type": "string"
+        }
+      },
+      "title": "See https://godoc.org/openpitrix.io/libconfd#Config"
+    },
+    "openpitrixConfdInfo": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "$ref": "#/definitions/openpitrixConfdConfig"
+        },
+        "backend_config": {
+          "$ref": "#/definitions/openpitrixConfdBackendConfig"
+        }
+      }
+    },
+    "openpitrixDroneInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "ip": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixFrontgateInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixGetSubtaskStatusResponse": {
       "type": "object",
       "properties": {
@@ -2295,6 +2382,14 @@
       "type": "object",
       "properties": {
         "subtask_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixPilotInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
           "type": "string"
         }
       }
@@ -2320,6 +2415,11 @@
         }
       },
       "description": "Wrapper message for `bytes`.\n\nThe JSON representation for `BytesValue` is JSON string."
+    },
+    "protobufEmpty": {
+      "type": "object",
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
     },
     "openpitrixCreateRepoRequest": {
       "type": "object",

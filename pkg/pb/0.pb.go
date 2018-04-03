@@ -80,6 +80,19 @@ It has these top-level messages:
 	GetSubtaskStatusRequest
 	SubtaskStatus
 	GetSubtaskStatusResponse
+	PilotInfo
+	FrontgateInfo
+	DroneInfo
+	ConfdInfo
+	ConfdConfig
+	ConfdBackendConfig
+	GetConfdInfoRequest
+	StartConfdRequest
+	StopConfdRequest
+	RegisterMetadataRequest
+	DeregisterMetadataRequest
+	RegisterCmdRequest
+	DeregisterCmdRequest
 	CreateRepoRequest
 	CreateRepoResponse
 	ModifyRepoRequest

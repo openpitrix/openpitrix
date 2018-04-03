@@ -31,6 +31,7 @@ var (
 
 type FrontgateService interface {
 	CloseChannel(in *Empty, out *Empty) error
+	GetInfo(in *Empty, out *Info) error
 	GetConfdInfo(in *GetConfdInfoRequest, out *ConfdInfo) error
 	StartConfd(in *StartConfdRequest, out *Empty) error
 	StopConfd(in *StopConfdRequest, out *Empty) error
@@ -38,6 +39,7 @@ type FrontgateService interface {
 	DeregisterMetadata(in *DeregisterMetadataRequest, out *Empty) error
 	RegisterCmd(in *RegisterCmdRequest, out *Empty) error
 	DeregisterCmd(in *DeregisterCmdRequest, out *Empty) error
+	GetSubTaskResult(in *GetSubTaskResultRequest, out *SubTaskResult) error
 	ReportSubTaskResult(in *SubTaskResult, out *Empty) error
 }
 
@@ -153,6 +155,45 @@ func (c *FrontgateServiceClient) AsyncCloseChannel(in *Empty, out *Empty, done c
 	}
 	return c.Go(
 		"FrontgateService.CloseChannel",
+		in, out,
+		done,
+	)
+}
+
+func (c *FrontgateServiceClient) GetInfo(in *Empty) (out *Info, err error) {
+	if in == nil {
+		in = new(Empty)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(Info)
+	if err = c.Call("FrontgateService.GetInfo", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceClient) AsyncGetInfo(in *Empty, out *Info, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(Empty)
+	}
+	return c.Go(
+		"FrontgateService.GetInfo",
 		in, out,
 		done,
 	)
@@ -426,6 +467,45 @@ func (c *FrontgateServiceClient) AsyncDeregisterCmd(in *DeregisterCmdRequest, ou
 	}
 	return c.Go(
 		"FrontgateService.DeregisterCmd",
+		in, out,
+		done,
+	)
+}
+
+func (c *FrontgateServiceClient) GetSubTaskResult(in *GetSubTaskResultRequest) (out *SubTaskResult, err error) {
+	if in == nil {
+		in = new(GetSubTaskResultRequest)
+	}
+
+	type Validator interface {
+		Validate() error
+	}
+	if x, ok := proto.Message(in).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return nil, err
+		}
+	}
+
+	out = new(SubTaskResult)
+	if err = c.Call("FrontgateService.GetSubTaskResult", in, out); err != nil {
+		return nil, err
+	}
+
+	if x, ok := proto.Message(out).(Validator); ok {
+		if err := x.Validate(); err != nil {
+			return out, err
+		}
+	}
+
+	return out, nil
+}
+
+func (c *FrontgateServiceClient) AsyncGetSubTaskResult(in *GetSubTaskResultRequest, out *SubTaskResult, done chan *rpc.Call) *rpc.Call {
+	if in == nil {
+		in = new(GetSubTaskResultRequest)
+	}
+	return c.Go(
+		"FrontgateService.GetSubTaskResult",
 		in, out,
 		done,
 	)
