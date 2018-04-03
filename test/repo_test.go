@@ -1,9 +1,11 @@
 package test
 
 import (
+	"net/url"
 	"testing"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/utils"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
@@ -121,11 +123,23 @@ func TestRepo(t *testing.T) {
 	t.Log("test repo finish, all test is ok")
 }
 
+func generateLabels() string {
+	v := url.Values{}
+	v.Add("key1", utils.GetUuid(""))
+	v.Add("key1", utils.GetUuid(""))
+	v.Add("key1", utils.GetUuid(""))
+	v.Add("key3", utils.GetUuid(""))
+	v.Add("key4", utils.GetUuid(""))
+	v.Add("key5", utils.GetUuid(""))
+	v.Add("key6", utils.GetUuid(""))
+	return v.Encode()
+}
+
 func TestRepoLabel(t *testing.T) {
 	client := GetClient(clientConfig)
-
 	// Create a test repo that can attach label on it
 	testRepoName := "e2e_test_repo"
+	labels := generateLabels()
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRepoRequest{
@@ -135,12 +149,24 @@ func TestRepoLabel(t *testing.T) {
 			URL:         "https://github.com/",
 			Credential:  `{}`,
 			Visibility:  "public",
+			Labels:      labels,
 		})
 	createResp, err := client.RepoManager.CreateRepo(createParams)
 	if err != nil {
 		t.Fatal(err)
 	}
 	repoId := createResp.Payload.Repo.RepoID
+
+	describeParams := repo_manager.NewDescribeReposParams()
+	describeParams.Label = &labels
+	describeParams.Status = []string{constants.StatusActive}
+	describeResp, err := client.RepoManager.DescribeRepos(describeParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if describeResp.Payload.RepoSet[0].RepoID != repoId {
+		t.Fatalf("describe repo with filter failed")
+	}
 
 	// delete repo
 	deleteParams := repo_manager.NewDeleteRepoParams()
@@ -161,6 +187,7 @@ func TestRepoSelector(t *testing.T) {
 
 	// Create a test repo that can attach selector on it
 	testRepoName := "e2e_test_repo"
+	labels := generateLabels()
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRepoRequest{
@@ -170,12 +197,24 @@ func TestRepoSelector(t *testing.T) {
 			URL:         "https://github.com/",
 			Credential:  `{}`,
 			Visibility:  "public",
+			Selectors:   labels,
 		})
 	createResp, err := client.RepoManager.CreateRepo(createParams)
 	if err != nil {
 		t.Fatal(err)
 	}
 	repoId := createResp.Payload.Repo.RepoID
+
+	describeParams := repo_manager.NewDescribeReposParams()
+	describeParams.Selector = &labels
+	describeParams.Status = []string{constants.StatusActive}
+	describeResp, err := client.RepoManager.DescribeRepos(describeParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if describeResp.Payload.RepoSet[0].RepoID != repoId {
+		t.Fatalf("describe repo with filter failed")
+	}
 
 	// delete repo
 	deleteParams := repo_manager.NewDeleteRepoParams()

@@ -6,6 +6,7 @@ package repo
 
 import (
 	"context"
+	neturl "net/url"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -21,18 +22,19 @@ import (
 )
 
 func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest) (*pb.DescribeReposResponse, error) {
+	// TODO: validate params
 	var repos []*models.Repo
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
-	labelMap, err := GetLabelMapFromRequest(req)
+	labelMap, err := neturl.ParseQuery(req.GetLabel().GetValue())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeRepos: GetLabelMapFromRequest: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DescribeRepos: GetLabelMapFromRequest %+v", err)
 	}
 
-	selectorMap, err := GetSelectorMapFromRequest(req)
+	selectorMap, err := neturl.ParseQuery(req.GetSelector().GetValue())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeRepos: GetSelectorMapFromRequest: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DescribeRepos: GetSelectorMapFromRequest %+v", err)
 	}
 
 	query := p.Db.
@@ -42,10 +44,11 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		Limit(limit).
 		Where(manager.BuildFilterConditionsWithPrefix(req, models.RepoTableName))
 
-	query = GenerateSelectQuery(query, models.RepoTableName, models.RepoLabelTableName,
+	query = db.AddJoinFilterWithMap(query, models.RepoTableName, models.RepoLabelTableName, models.ColumnRepoId,
 		models.ColumnLabelKey, models.ColumnLabelValue, labelMap)
-	query = GenerateSelectQuery(query, models.RepoTableName, models.RepoSelectorTableName,
+	query = db.AddJoinFilterWithMap(query, models.RepoTableName, models.RepoSelectorTableName, models.ColumnRepoId,
 		models.ColumnSelectorKey, models.ColumnSelectorValue, selectorMap)
+	query = query.Distinct()
 
 	_, err = query.Load(&repos)
 	if err != nil {
@@ -53,12 +56,6 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		return nil, status.Errorf(codes.Internal, "DescribeRepos: %+v", err)
 	}
 
-	query = p.Db.
-		Select(models.RepoColumnsWithTablePrefix...).
-		From(models.RepoTableName).
-		Offset(offset).
-		Limit(limit).
-		Where(manager.BuildFilterConditionsWithPrefix(req, models.RepoTableName))
 	count, err := query.Count()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "DescribeRepos: %+v", err)
