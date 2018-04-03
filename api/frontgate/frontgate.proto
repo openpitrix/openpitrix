@@ -6,8 +6,13 @@ syntax = "proto3";
 
 package openpitrix.frontgate;
 
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
 service FrontgateService {
 	rpc CloseChannel (Empty) returns (Empty);
+
+	rpc GetInfo(Empty) returns (Info);
 
 	rpc GetConfdInfo(GetConfdInfoRequest) returns (ConfdInfo);
 	rpc StartConfd (StartConfdRequest) returns (Empty);
@@ -19,13 +24,41 @@ service FrontgateService {
 	rpc RegisterCmd (RegisterCmdRequest) returns (Empty);
 	rpc DeregisterCmd (DeregisterCmdRequest) returns (Empty);
 
+	rpc GetSubTaskResult (GetSubTaskResultRequest) returns (SubTaskResult);
 	rpc ReportSubTaskResult (SubTaskResult) returns (Empty);
+}
+
+message Info {
+	string frontgate_id = 1;
+	string frontgate_node_id = 2;
+	string frontgate_node_ip = 3;
 }
 
 message SubTaskResult {
 	string drone_ip = 1;
 	string subtask_id = 2;
 	string status = 3;
+}
+
+// See https://godoc.org/openpitrix.io/libconfd#Config
+message ConfdConfig {
+	google.protobuf.StringValue conf_dir = 1;
+	google.protobuf.Int32Value interval = 2;
+	google.protobuf.BoolValue noop = 3;
+	google.protobuf.StringValue prefix = 4;
+	google.protobuf.BoolValue sync_only = 5;
+	google.protobuf.StringValue log_level = 6;
+}
+
+// See https://godoc.org/openpitrix.io/libconfd#BackendConfig
+message ConfdBackendConfig {
+	google.protobuf.StringValue type = 1;
+	repeated string host = 2;
+	google.protobuf.StringValue username = 3;
+	google.protobuf.StringValue password = 4;
+	google.protobuf.StringValue client_ca_keys = 5;
+	google.protobuf.StringValue client_cert = 6;
+	google.protobuf.StringValue client_key = 7;
 }
 
 message GetConfdInfoRequest {
@@ -40,6 +73,9 @@ message ConfdInfo {
 message StartConfdRequest {
 	string drone_ip = 1;
 	int32 timeout_second = 2;
+
+	ConfdConfig confd_config = 3;
+	ConfdBackendConfig confd_backend_config = 4;
 }
 
 message StopConfdRequest {
@@ -77,6 +113,11 @@ message DeregisterCmdRequest {
 	string subtask_id = 3;
 	int32 timeout_second = 4;
 	int32 retry = 5;
+}
+
+message GetSubTaskResultRequest {
+	string drone_ip = 1;
+	string subtask_id = 2;
 }
 
 message Empty {}
