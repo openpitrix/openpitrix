@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -18,7 +18,7 @@ import (
 type Frame struct {
 	Job            *models.Job
 	ClusterWrapper *models.ClusterWrapper
-	Runtime        *runtimeenvclient.Runtime
+	Runtime        *runtimeclient.Runtime
 }
 
 func NewFrame(job *models.Job) (*Frame, error) {
@@ -27,8 +27,8 @@ func NewFrame(job *models.Job) (*Frame, error) {
 		return nil, err
 	}
 
-	runtimeEnvId := clusterWrapper.Cluster.RuntimeEnvId
-	runtime, err := runtimeenvclient.NewRuntime(runtimeEnvId)
+	runtimeId := clusterWrapper.Cluster.RuntimeId
+	runtime, err := runtimeclient.NewRuntime(runtimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -315,7 +315,7 @@ func (f *Frame) createVolumesLayer() *models.TaskLayer {
 				Name:      clusterNode.ClusterId + "_" + nodeId,
 				Size:      eachSize,
 				Zone:      f.Runtime.Zone,
-				RuntimeId: f.Runtime.RuntimeEnvId,
+				RuntimeId: f.Runtime.RuntimeId,
 			}
 			volumeTaskDirective, err := volume.ToString()
 			if err != nil {
@@ -326,7 +326,7 @@ func (f *Frame) createVolumesLayer() *models.TaskLayer {
 				JobId:      f.Job.JobId,
 				Owner:      f.Job.Owner,
 				TaskAction: ActionCreateVolumes,
-				Target:     f.Runtime.Runtime,
+				Target:     f.Runtime.Provider,
 				NodeId:     nodeId,
 				Directive:  volumeTaskDirective,
 			}
@@ -367,7 +367,7 @@ func (f *Frame) runInstancesLayer() *models.TaskLayer {
 			Memory:    int(clusterRole.Memory),
 			Gpu:       int(clusterRole.Gpu),
 			Subnet:    clusterNode.SubnetId,
-			RuntimeId: f.Runtime.RuntimeEnvId,
+			RuntimeId: f.Runtime.RuntimeId,
 			Zone:      f.Runtime.Zone,
 		}
 		instanceTaskDirective, err := instance.ToString()
@@ -378,7 +378,7 @@ func (f *Frame) runInstancesLayer() *models.TaskLayer {
 			JobId:      f.Job.JobId,
 			Owner:      f.Job.Owner,
 			TaskAction: ActionRunInstances,
-			Target:     f.Runtime.Runtime,
+			Target:     f.Runtime.Provider,
 			NodeId:     nodeId,
 			Directive:  instanceTaskDirective,
 		}
@@ -402,7 +402,7 @@ func (f *Frame) waitFrontgateLayer() *models.TaskLayer {
 		JobId:      f.Job.JobId,
 		Owner:      f.Job.Owner,
 		TaskAction: ActionWaitFrontgateAvailable,
-		Target:     f.Runtime.Runtime,
+		Target:     f.Runtime.Provider,
 		NodeId:     f.ClusterWrapper.Cluster.ClusterId,
 		Directive:  string(directive),
 	}

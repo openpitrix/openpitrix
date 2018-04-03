@@ -124,7 +124,7 @@ func ValidateLabelValue(labelValue string) error {
 	return nil
 }
 
-func validateCreateRuntimeRequest(req *pb.CreateRuntimeEnvRequest) error {
+func validateCreateRuntimeRequest(req *pb.CreateRuntimeRequest) error {
 	err := ValidateName(req.Name.GetValue())
 	if err != nil {
 		return err
@@ -133,14 +133,14 @@ func validateCreateRuntimeRequest(req *pb.CreateRuntimeEnvRequest) error {
 	if err != nil {
 		return err
 	}
-	err = ValidateURL(req.RuntimeEnvUrl.GetValue())
+	err = ValidateURL(req.RuntimeUrl.GetValue())
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func validateModifyRuntimeEnvRequest(req *pb.ModifyRuntimeEnvRequest) error {
+func validateModifyRuntimeRequest(req *pb.ModifyRuntimeRequest) error {
 	err := ValidateName(req.Name.GetValue())
 	if err != nil {
 		return err
@@ -152,11 +152,11 @@ func validateModifyRuntimeEnvRequest(req *pb.ModifyRuntimeEnvRequest) error {
 	return nil
 }
 
-func validateDeleteRuntimeEnvRequest(req *pb.DeleteRuntimeEnvRequest) error {
+func validateDeleteRuntimeRequest(req *pb.DeleteRuntimeRequest) error {
 	return nil
 }
 
-func validateDescribeRuntimeEnvRequest(req *pb.DescribeRuntimeEnvsRequest) error {
+func validateDescribeRuntimeRequest(req *pb.DescribeRuntimesRequest) error {
 	err := ValidateSelectorString(req.Selector.GetValue())
 	if err != nil {
 		return err

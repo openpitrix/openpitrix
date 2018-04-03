@@ -8,23 +8,23 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 )
 
-func (p *Server) checkRuntimeDeleted(runtimeEnvId string) (bool, error) {
-	runtimeEnv, err := p.getRuntime(runtimeEnvId)
+func (p *Server) checkRuntimeDeleted(runtimeId string) (bool, error) {
+	runtime, err := p.getRuntime(runtimeId)
 	if err != nil {
 		return true, err
 	}
-	if runtimeEnv.Status == constants.StatusDeleted {
+	if runtime.Status == constants.StatusDeleted {
 		return true, nil
 	}
 	return false, nil
 }
 
-func (p *Server) checkRuntimeCredentialDeleted(runtimeEnvCredentialId string) (bool, error) {
-	runtimeEnvCredential, err := p.getRuntimeCredential(runtimeEnvCredentialId)
+func (p *Server) checkRuntimeCredentialDeleted(runtimeCredentialId string) (bool, error) {
+	runtimeCredential, err := p.getRuntimeCredential(runtimeCredentialId)
 	if err != nil {
 		return true, err
 	}
-	if runtimeEnvCredential.Status == constants.StatusDeleted {
+	if runtimeCredential.Status == constants.StatusDeleted {
 		return true, nil
 	}
 	return false, nil

@@ -115,15 +115,15 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 	}
 	defer processor.Final()
 
-	runtimeInterface, err := plugins.GetRuntimePlugin(job.Runtime)
+	providerInterface, err := plugins.GetProviderPlugin(job.Provider)
 	if err != nil {
-		logger.Errorf("No such runtime [%s]. ", job.Runtime)
+		logger.Errorf("No such provider [%s]. ", job.Provider)
 		return err
 	}
-	module, err := runtimeInterface.SplitJobIntoTasks(job)
+	module, err := providerInterface.SplitJobIntoTasks(job)
 	if err != nil {
-		logger.Errorf("Failed to split job [%s] into tasks with runtime [%s]: %+v",
-			job.JobId, job.Runtime, err)
+		logger.Errorf("Failed to split job [%s] into tasks with provider [%s]: %+v",
+			job.JobId, job.Provider, err)
 		return err
 	}
 

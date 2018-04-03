@@ -7,7 +7,7 @@ package qingcloud
 import (
 	"testing"
 
-	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
@@ -67,9 +67,9 @@ func TestSplitJobIntoTasks(t *testing.T) {
 		JobAction: constants.ActionCreateCluster,
 	}
 
-	runtime := &runtimeenvclient.Runtime{
-		RuntimeEnvId:      "rt-1234",
-		Runtime:           constants.ProviderQingCloud,
+	runtime := &runtimeclient.Runtime{
+		RuntimeId:         "rt-1234",
+		Provider:          constants.ProviderQingCloud,
 		Zone:              "testing",
 		ProviderInterface: &Provider{},
 	}

@@ -12,7 +12,7 @@ import (
 	qcconfig "github.com/yunify/qingcloud-sdk-go/config"
 	qcservice "github.com/yunify/qingcloud-sdk-go/service"
 
-	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -30,7 +30,7 @@ func init() {
 }
 
 func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudService, error) {
-	runtime, err := runtimeenvclient.NewRuntime(runtimeId)
+	runtime, err := runtimeclient.NewRuntime(runtimeId)
 	if err != nil {
 		return nil, err
 	}

@@ -12,7 +12,7 @@ It is generated from these files:
 	pilot.proto
 	repo.proto
 	repo_indexer.proto
-	runtime_env.proto
+	runtime.proto
 	task.proto
 
 It has these top-level messages:
@@ -112,29 +112,25 @@ It has these top-level messages:
 	RepoTask
 	DescribeRepoTasksRequest
 	DescribeRepoTasksResponse
-	RuntimeEnvLabel
-	RuntimeEnv
-	CreateRuntimeEnvRequest
-	CreateRuntimeEnvResponse
-	DescribeRuntimeEnvsRequest
-	DescribeRuntimeEnvsResponse
-	ModifyRuntimeEnvRequest
-	ModifyRuntimeEnvResponse
-	DeleteRuntimeEnvRequest
-	DeleteRuntimeEnvResponse
-	RuntimeEnvCredential
-	CreateRuntimeEnvCredentialRequset
-	CreateRuntimeEnvCredentialResponse
-	DescribeRuntimeEnvCredentialsRequset
-	DescribeRuntimeEnvCredentialsResponse
-	ModifyRuntimeEnvCredentialRequest
-	ModifyRuntimeEnvCredentialResponse
-	DeleteRuntimeEnvCredentialRequset
-	DeleteRuntimeEnvCredentialResponse
-	AttachCredentialToRuntimeEnvRequset
-	AttachCredentialToRuntimeEnvResponse
-	DetachCredentialFromRuntimeEnvRequset
-	DetachCredentialFromRuntimeEnvResponse
+	RuntimeLabel
+	Runtime
+	CreateRuntimeRequest
+	CreateRuntimeResponse
+	DescribeRuntimesRequest
+	DescribeRuntimesResponse
+	ModifyRuntimeRequest
+	ModifyRuntimeResponse
+	DeleteRuntimeRequest
+	DeleteRuntimeResponse
+	RuntimeCredential
+	CreateRuntimeCredentialRequset
+	CreateRuntimeCredentialResponse
+	DescribeRuntimeCredentialsRequset
+	DescribeRuntimeCredentialsResponse
+	ModifyRuntimeCredentialRequest
+	ModifyRuntimeCredentialResponse
+	DeleteRuntimeCredentialRequset
+	DeleteRuntimeCredentialResponse
 	CreateTaskRequest
 	CreateTaskResponse
 	Task

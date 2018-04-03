@@ -578,7 +578,7 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "runtime",
+            "name": "provider",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1198,73 +1198,21 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/credential_runtime_env": {
-      "delete": {
-        "summary": "detach runtime env",
-        "operationId": "DetachCredentialFromRuntimeEnv",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDetachCredentialFromRuntimeEnvResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDetachCredentialFromRuntimeEnvRequset"
-            }
-          }
-        ],
-        "tags": [
-          "RuntimeEnvManager"
-        ]
-      },
-      "post": {
-        "summary": "create runtime env",
-        "operationId": "AttachCredentialToRuntimeEnv",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixAttachCredentialToRuntimeEnvResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixAttachCredentialToRuntimeEnvRequset"
-            }
-          }
-        ],
-        "tags": [
-          "RuntimeEnvManager"
-        ]
-      }
-    },
-    "/v1/runtime_env_credentials": {
+    "/v1/runtime_credentials": {
       "get": {
-        "summary": "describe runtime env crendentials",
-        "operationId": "DescribeRuntimeEnvCredentials",
+        "summary": "describe runtime crendentials",
+        "operationId": "DescribeRuntimeCredentials",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDescribeRuntimeEnvCredentialsResponse"
+              "$ref": "#/definitions/openpitrixDescribeRuntimeCredentialsResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "runtime_env_credential_id",
+            "name": "runtime_credential_id",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1312,17 +1260,17 @@ var Files = map[string]string{
           }
         ],
         "tags": [
-          "RuntimeEnvManager"
+          "RuntimeManager"
         ]
       },
       "delete": {
-        "summary": "modify runtime env credential",
-        "operationId": "DeleteRuntimeEnvCredential",
+        "summary": "modify runtime credential",
+        "operationId": "DeleteRuntimeCredential",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRuntimeEnvCredentialResponse"
+              "$ref": "#/definitions/openpitrixDeleteRuntimeCredentialResponse"
             }
           }
         },
@@ -1332,22 +1280,22 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRuntimeEnvCredentialRequset"
+              "$ref": "#/definitions/openpitrixDeleteRuntimeCredentialRequset"
             }
           }
         ],
         "tags": [
-          "RuntimeEnvManager"
+          "RuntimeManager"
         ]
       },
       "post": {
-        "summary": "create runtime env credential",
-        "operationId": "CreateRuntimeEnvCredential",
+        "summary": "create runtime credential",
+        "operationId": "CreateRuntimeCredential",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixCreateRuntimeEnvCredentialResponse"
+              "$ref": "#/definitions/openpitrixCreateRuntimeCredentialResponse"
             }
           }
         },
@@ -1357,22 +1305,22 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixCreateRuntimeEnvCredentialRequset"
+              "$ref": "#/definitions/openpitrixCreateRuntimeCredentialRequset"
             }
           }
         ],
         "tags": [
-          "RuntimeEnvManager"
+          "RuntimeManager"
         ]
       },
       "patch": {
-        "summary": "modify runtime env credential",
-        "operationId": "ModifyRuntimeEnvCredential",
+        "summary": "modify runtime credential",
+        "operationId": "ModifyRuntimeCredential",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixModifyRuntimeEnvCredentialResponse"
+              "$ref": "#/definitions/openpitrixModifyRuntimeCredentialResponse"
             }
           }
         },
@@ -1382,30 +1330,30 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixModifyRuntimeEnvCredentialRequest"
+              "$ref": "#/definitions/openpitrixModifyRuntimeCredentialRequest"
             }
           }
         ],
         "tags": [
-          "RuntimeEnvManager"
+          "RuntimeManager"
         ]
       }
     },
-    "/v1/runtime_envs": {
+    "/v1/runtimes": {
       "get": {
-        "summary": "describe runtime envs",
-        "operationId": "DescribeRuntimeEnvs",
+        "summary": "describe runtimes",
+        "operationId": "DescribeRuntimes",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDescribeRuntimeEnvsResponse"
+              "$ref": "#/definitions/openpitrixDescribeRuntimesResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "runtime_env_id",
+            "name": "runtime_id",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1459,17 +1407,17 @@ var Files = map[string]string{
           }
         ],
         "tags": [
-          "RuntimeEnvManager"
+          "RuntimeManager"
         ]
       },
       "delete": {
-        "summary": "create runtime env",
-        "operationId": "DeleteRuntimeEnv",
+        "summary": "delete runtime",
+        "operationId": "DeleteRuntime",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRuntimeEnvResponse"
+              "$ref": "#/definitions/openpitrixDeleteRuntimeResponse"
             }
           }
         },
@@ -1479,22 +1427,22 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRuntimeEnvRequest"
+              "$ref": "#/definitions/openpitrixDeleteRuntimeRequest"
             }
           }
         ],
         "tags": [
-          "RuntimeEnvManager"
+          "RuntimeManager"
         ]
       },
       "post": {
-        "summary": "create runtime env",
-        "operationId": "CreateRuntimeEnv",
+        "summary": "create runtime",
+        "operationId": "CreateRuntime",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixCreateRuntimeEnvResponse"
+              "$ref": "#/definitions/openpitrixCreateRuntimeResponse"
             }
           }
         },
@@ -1504,22 +1452,22 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixCreateRuntimeEnvRequest"
+              "$ref": "#/definitions/openpitrixCreateRuntimeRequest"
             }
           }
         ],
         "tags": [
-          "RuntimeEnvManager"
+          "RuntimeManager"
         ]
       },
       "patch": {
-        "summary": "modify runtime env",
-        "operationId": "ModifyRuntimeEnv",
+        "summary": "modify runtime",
+        "operationId": "ModifyRuntime",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixModifyRuntimeEnvResponse"
+              "$ref": "#/definitions/openpitrixModifyRuntimeResponse"
             }
           }
         },
@@ -1529,12 +1477,12 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixModifyRuntimeEnvRequest"
+              "$ref": "#/definitions/openpitrixModifyRuntimeRequest"
             }
           }
         ],
         "tags": [
-          "RuntimeEnvManager"
+          "RuntimeManager"
         ]
       }
     },
@@ -2036,7 +1984,7 @@ var Files = map[string]string{
         "transition_status": {
           "type": "string"
         },
-        "runtime_env_id": {
+        "runtime_id": {
           "type": "string"
         },
         "owner": {
@@ -2189,7 +2137,7 @@ var Files = map[string]string{
         "version_id": {
           "type": "string"
         },
-        "runtime_env_id": {
+        "runtime_id": {
           "type": "string"
         },
         "conf": {
@@ -2655,7 +2603,7 @@ var Files = map[string]string{
         "job_action": {
           "type": "string"
         },
-        "runtime": {
+        "provider": {
           "type": "string"
         },
         "directive": {
@@ -2731,7 +2679,7 @@ var Files = map[string]string{
         "owner": {
           "type": "string"
         },
-        "runtime": {
+        "provider": {
           "type": "string"
         },
         "create_time": {
@@ -3205,29 +3153,7 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixAttachCredentialToRuntimeEnvRequset": {
-      "type": "object",
-      "properties": {
-        "runtime_env_credential_id": {
-          "type": "string"
-        },
-        "runtime_env_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixAttachCredentialToRuntimeEnvResponse": {
-      "type": "object",
-      "properties": {
-        "runtime_env_credential_id": {
-          "type": "string"
-        },
-        "runtime_env_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateRuntimeEnvCredentialRequset": {
+    "openpitrixCreateRuntimeCredentialRequset": {
       "type": "object",
       "properties": {
         "name": {
@@ -3244,15 +3170,15 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixCreateRuntimeEnvCredentialResponse": {
+    "openpitrixCreateRuntimeCredentialResponse": {
       "type": "object",
       "properties": {
-        "runtime_env_credential": {
-          "$ref": "#/definitions/openpitrixRuntimeEnvCredential"
+        "runtime_credential": {
+          "$ref": "#/definitions/openpitrixRuntimeCredential"
         }
       }
     },
-    "openpitrixCreateRuntimeEnvRequest": {
+    "openpitrixCreateRuntimeRequest": {
       "type": "object",
       "properties": {
         "name": {
@@ -3264,107 +3190,85 @@ var Files = map[string]string{
         "labels": {
           "type": "string"
         },
-        "runtime_env_url": {
+        "runtime_url": {
           "type": "string"
         }
       }
     },
-    "openpitrixCreateRuntimeEnvResponse": {
+    "openpitrixCreateRuntimeResponse": {
       "type": "object",
       "properties": {
-        "runtime_env": {
-          "$ref": "#/definitions/openpitrixRuntimeEnv"
+        "runtime": {
+          "$ref": "#/definitions/openpitrixRuntime"
         }
       }
     },
-    "openpitrixDeleteRuntimeEnvCredentialRequset": {
+    "openpitrixDeleteRuntimeCredentialRequset": {
       "type": "object",
       "properties": {
-        "runtime_env_credential_id": {
+        "runtime_credential_id": {
           "type": "string"
         }
       }
     },
-    "openpitrixDeleteRuntimeEnvCredentialResponse": {
+    "openpitrixDeleteRuntimeCredentialResponse": {
       "type": "object",
       "properties": {
-        "runtime_env_credential": {
-          "$ref": "#/definitions/openpitrixRuntimeEnvCredential"
+        "runtime_credential": {
+          "$ref": "#/definitions/openpitrixRuntimeCredential"
         }
       }
     },
-    "openpitrixDeleteRuntimeEnvRequest": {
+    "openpitrixDeleteRuntimeRequest": {
       "type": "object",
       "properties": {
-        "runtime_env_id": {
+        "runtime_id": {
           "type": "string"
         }
       }
     },
-    "openpitrixDeleteRuntimeEnvResponse": {
+    "openpitrixDeleteRuntimeResponse": {
       "type": "object",
       "properties": {
-        "runtime_env": {
-          "$ref": "#/definitions/openpitrixRuntimeEnv"
+        "runtime": {
+          "$ref": "#/definitions/openpitrixRuntime"
         }
       }
     },
-    "openpitrixDescribeRuntimeEnvCredentialsResponse": {
+    "openpitrixDescribeRuntimeCredentialsResponse": {
       "type": "object",
       "properties": {
         "total_count": {
           "type": "integer",
           "format": "int64"
         },
-        "runtime_env_credential_set": {
+        "runtime_credential_set": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixRuntimeEnvCredential"
+            "$ref": "#/definitions/openpitrixRuntimeCredential"
           }
         }
       }
     },
-    "openpitrixDescribeRuntimeEnvsResponse": {
+    "openpitrixDescribeRuntimesResponse": {
       "type": "object",
       "properties": {
         "total_count": {
           "type": "integer",
           "format": "int64"
         },
-        "runtime_env_set": {
+        "runtime_set": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixRuntimeEnv"
+            "$ref": "#/definitions/openpitrixRuntime"
           }
         }
       }
     },
-    "openpitrixDetachCredentialFromRuntimeEnvRequset": {
+    "openpitrixModifyRuntimeCredentialRequest": {
       "type": "object",
       "properties": {
-        "runtime_env_credential_id": {
-          "type": "string"
-        },
-        "runtime_env_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixDetachCredentialFromRuntimeEnvResponse": {
-      "type": "object",
-      "properties": {
-        "runtime_env_credential_id": {
-          "type": "string"
-        },
-        "runtime_env_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixModifyRuntimeEnvCredentialRequest": {
-      "type": "object",
-      "properties": {
-        "runtime_env_credential_id": {
+        "runtime_credential_id": {
           "type": "string"
         },
         "name": {
@@ -3381,18 +3285,18 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixModifyRuntimeEnvCredentialResponse": {
+    "openpitrixModifyRuntimeCredentialResponse": {
       "type": "object",
       "properties": {
-        "runtime_env_credential": {
-          "$ref": "#/definitions/openpitrixRuntimeEnvCredential"
+        "runtime_credential": {
+          "$ref": "#/definitions/openpitrixRuntimeCredential"
         }
       }
     },
-    "openpitrixModifyRuntimeEnvRequest": {
+    "openpitrixModifyRuntimeRequest": {
       "type": "object",
       "properties": {
-        "runtime_env_id": {
+        "runtime_id": {
           "type": "string"
         },
         "name": {
@@ -3406,18 +3310,18 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixModifyRuntimeEnvResponse": {
+    "openpitrixModifyRuntimeResponse": {
       "type": "object",
       "properties": {
-        "runtime_env": {
-          "$ref": "#/definitions/openpitrixRuntimeEnv"
+        "runtime": {
+          "$ref": "#/definitions/openpitrixRuntime"
         }
       }
     },
-    "openpitrixRuntimeEnv": {
+    "openpitrixRuntime": {
       "type": "object",
       "properties": {
-        "runtime_env_id": {
+        "runtime_id": {
           "type": "string"
         },
         "name": {
@@ -3426,16 +3330,16 @@ var Files = map[string]string{
         "description": {
           "type": "string"
         },
-        "runtime_env_url": {
+        "runtime_url": {
           "type": "string"
         },
-        "runtime_env_credential_id": {
+        "runtime_credential_id": {
           "type": "string"
         },
         "labels": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixRuntimeEnvLabel"
+            "$ref": "#/definitions/openpitrixRuntimeLabel"
           }
         },
         "owner": {
@@ -3454,10 +3358,10 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixRuntimeEnvCredential": {
+    "openpitrixRuntimeCredential": {
       "type": "object",
       "properties": {
-        "runtime_env_credential_id": {
+        "runtime_credential_id": {
           "type": "string"
         },
         "name": {
@@ -3475,7 +3379,7 @@ var Files = map[string]string{
         "owner": {
           "type": "string"
         },
-        "runtime_env_id": {
+        "runtime_id": {
           "type": "array",
           "items": {
             "type": "string"
@@ -3494,13 +3398,13 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixRuntimeEnvLabel": {
+    "openpitrixRuntimeLabel": {
       "type": "object",
       "properties": {
-        "runtime_env_label_id": {
+        "runtime_label_id": {
           "type": "string"
         },
-        "runtime_env_id": {
+        "runtime_id": {
           "type": "string"
         },
         "label_key": {

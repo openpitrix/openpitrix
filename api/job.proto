@@ -19,7 +19,7 @@ message CreateJobRequest {
 	google.protobuf.StringValue app_id = 3;
 	google.protobuf.StringValue version_id = 4;
 	google.protobuf.StringValue job_action = 5;
-	google.protobuf.StringValue runtime = 6;
+	google.protobuf.StringValue provider = 6;
 	google.protobuf.StringValue directive = 7;
 }
 
@@ -42,7 +42,7 @@ message Job {
 	google.protobuf.StringValue executor = 9;
 	google.protobuf.UInt32Value task_count = 10;
 	google.protobuf.StringValue owner = 11;
-	google.protobuf.StringValue runtime = 12;
+	google.protobuf.StringValue provider = 12;
 	google.protobuf.Timestamp create_time = 13;
 	google.protobuf.Timestamp status_time = 14;
 }
@@ -52,7 +52,7 @@ message DescribeJobsRequest {
 	google.protobuf.StringValue app_id = 3;
 	google.protobuf.StringValue version_id = 4;
 	google.protobuf.StringValue executor = 5;
-	google.protobuf.StringValue runtime = 6;
+	google.protobuf.StringValue provider = 6;
 	repeated string status = 7;
 	// default is 20, max value is 200
 	uint32 limit = 8;

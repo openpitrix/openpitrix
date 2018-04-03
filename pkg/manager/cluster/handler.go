@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
-	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -54,8 +54,8 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	s := sender.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
-	runtimeEnvId := req.GetRuntimeEnvId().GetValue()
-	runtime, err := runtimeenvclient.NewRuntime(runtimeEnvId)
+	runtimeId := req.GetRuntimeId().GetValue()
+	runtime, err := runtimeclient.NewRuntime(runtimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		versionId,
 		constants.ActionCreateCluster,
 		directive,
-		runtime.Runtime,
+		runtime.Provider,
 		s.UserId,
 	)
 
@@ -198,7 +198,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 		if err != nil {
 			return nil, err
 		}
@@ -209,7 +209,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			cluster.VersionId,
 			constants.ActionDeleteClusters,
 			"", // TODO: need to generate
-			runtime.Runtime,
+			runtime.Provider,
 			s.UserId,
 		)
 
@@ -236,7 +236,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +248,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		cluster.VersionId,
 		constants.ActionUpgradeCluster,
 		"", // TODO: need to generate
-		runtime.Runtime,
+		runtime.Provider,
 		s.UserId,
 	)
 
@@ -273,7 +273,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -285,7 +285,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		cluster.VersionId,
 		constants.ActionRollbackCluster,
 		"", // TODO: need to generate
-		runtime.Runtime,
+		runtime.Provider,
 		s.UserId,
 	)
 
@@ -310,7 +310,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +322,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		cluster.VersionId,
 		constants.ActionResizeCluster,
 		"", // TODO: need to generate
-		runtime.Runtime,
+		runtime.Provider,
 		s.UserId,
 	)
 
@@ -347,7 +347,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -359,7 +359,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		cluster.VersionId,
 		constants.ActionAddClusterNodes,
 		"", // TODO: need to generate
-		runtime.Runtime,
+		runtime.Provider,
 		s.UserId,
 	)
 
@@ -384,7 +384,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -396,7 +396,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		cluster.VersionId,
 		constants.ActionDeleteClusterNodes,
 		"", // TODO: need to generate
-		runtime.Runtime,
+		runtime.Provider,
 		s.UserId,
 	)
 
@@ -421,7 +421,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+	runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -433,7 +433,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		cluster.VersionId,
 		constants.ActionUpdateClusterEnv,
 		"", // TODO: need to generate
-		runtime.Runtime,
+		runtime.Provider,
 		s.UserId,
 	)
 
@@ -523,7 +523,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 		if err != nil {
 			return nil, err
 		}
@@ -535,7 +535,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			cluster.VersionId,
 			constants.ActionStopClusters,
 			"", // TODO: need to generate
-			runtime.Runtime,
+			runtime.Provider,
 			s.UserId,
 		)
 
@@ -563,7 +563,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 		if err != nil {
 			return nil, err
 		}
@@ -585,7 +585,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			cluster.VersionId,
 			constants.ActionStartClusters,
 			"", // TODO: need to generate
-			runtime.Runtime,
+			runtime.Provider,
 			s.UserId,
 		)
 
@@ -613,7 +613,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 		if err != nil {
 			return nil, err
 		}
@@ -635,7 +635,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			cluster.VersionId,
 			constants.ActionRecoverClusters,
 			"", // TODO: need to generate
-			runtime.Runtime,
+			runtime.Provider,
 			s.UserId,
 		)
 
@@ -663,7 +663,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		runtime, err := runtimeenvclient.NewRuntime(cluster.RuntimeEnvId)
+		runtime, err := runtimeclient.NewRuntime(cluster.RuntimeId)
 		if err != nil {
 			return nil, err
 		}
@@ -675,7 +675,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			cluster.VersionId,
 			constants.ActionCeaseClusters,
 			"", // TODO: need to generate
-			runtime.Runtime,
+			runtime.Provider,
 			s.UserId,
 		)
 

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -18,7 +18,7 @@ import (
 
 type Frontgate struct {
 	*pi.Pi
-	Runtime *runtimeenvclient.Runtime
+	Runtime *runtimeclient.Runtime
 }
 
 func (f *Frontgate) getFrontgateFromDb(vpcId, userId string) ([]*models.Cluster, error) {

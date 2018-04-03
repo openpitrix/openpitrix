@@ -31,8 +31,8 @@ type OpenpitrixCreateJobRequest struct {
 	// job action
 	JobAction string `json:"job_action,omitempty"`
 
-	// runtime
-	Runtime string `json:"runtime,omitempty"`
+	// provider
+	Provider string `json:"provider,omitempty"`
 
 	// version id
 	VersionID string `json:"version_id,omitempty"`

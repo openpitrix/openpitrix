@@ -20,16 +20,16 @@ const (
 )
 
 const (
-	ApiGatewayPort        = 9100 // 91 is similar as Pi, Open[Pi]trix
-	RepoManagerPort       = 9101
-	AppManagerPort        = 9102
-	RuntimeEnvManagerPort = 9103
-	ClusterManagerPort    = 9104
-	JobManagerPort        = 9106
-	TaskManagerPort       = 9107
-	RepoIndexerPort       = 9108
-	PilotManagerPort      = 9110
-	DroneServicePort      = 9111
+	ApiGatewayPort     = 9100 // 91 is similar as Pi, Open[Pi]trix
+	RepoManagerPort    = 9101
+	AppManagerPort     = 9102
+	RuntimeManagerPort = 9103
+	ClusterManagerPort = 9104
+	JobManagerPort     = 9106
+	TaskManagerPort    = 9107
+	RepoIndexerPort    = 9108
+	PilotManagerPort   = 9110
+	DroneServicePort   = 9111
 )
 
 const (

@@ -33,18 +33,18 @@ func NewRuntimeLabel(runtimeId, labelKey, labelValue string) *RuntimeLabel {
 	}
 }
 
-func RuntimeLabelToPb(runtimeLabel *RuntimeLabel) *pb.RuntimeEnvLabel {
-	return &pb.RuntimeEnvLabel{
-		RuntimeEnvLabelId: utils.ToProtoString(runtimeLabel.RuntimeLabelId),
-		RuntimeEnvId:      utils.ToProtoString(runtimeLabel.RuntimeId),
-		LabelKey:          utils.ToProtoString(runtimeLabel.LabelKey),
-		LabelValue:        utils.ToProtoString(runtimeLabel.LabelValue),
+func RuntimeLabelToPb(runtimeLabel *RuntimeLabel) *pb.RuntimeLabel {
+	return &pb.RuntimeLabel{
+		RuntimeLabelId: utils.ToProtoString(runtimeLabel.RuntimeLabelId),
+		RuntimeId:      utils.ToProtoString(runtimeLabel.RuntimeId),
+		LabelKey:       utils.ToProtoString(runtimeLabel.LabelKey),
+		LabelValue:     utils.ToProtoString(runtimeLabel.LabelValue),
 	}
 }
 
-func RuntimeLabelsToPbs(runtimeLabels []*RuntimeLabel) (pbRuntimeEnvLabels []*pb.RuntimeEnvLabel) {
+func RuntimeLabelsToPbs(runtimeLabels []*RuntimeLabel) (pbRuntimeLabels []*pb.RuntimeLabel) {
 	for _, runtimeLabel := range runtimeLabels {
-		pbRuntimeEnvLabels = append(pbRuntimeEnvLabels, RuntimeLabelToPb(runtimeLabel))
+		pbRuntimeLabels = append(pbRuntimeLabels, RuntimeLabelToPb(runtimeLabel))
 	}
-	return pbRuntimeEnvLabels
+	return pbRuntimeLabels
 }

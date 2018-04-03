@@ -35,7 +35,7 @@ type Cluster struct {
 	GlobalUuid         string
 	UpgradeStatus      string
 	UpgradeTime        time.Time
-	RuntimeEnvId       string
+	RuntimeId          string
 	CreateTime         time.Time
 	StatusTime         time.Time
 }

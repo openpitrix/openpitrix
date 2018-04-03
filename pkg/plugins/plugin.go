@@ -31,7 +31,7 @@ func RegisterProviderPlugin(provider string, providerInterface ProviderInterface
 	providerPlugins[provider] = providerInterface
 }
 
-func GetRuntimePlugin(provider string) (ProviderInterface, error) {
+func GetProviderPlugin(provider string) (ProviderInterface, error) {
 	providerInterface, exists := providerPlugins[provider]
 	if exists {
 		return providerInterface, nil

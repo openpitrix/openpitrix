@@ -67,7 +67,7 @@ func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 		clusterWrapper.Cluster.VersionId,
 		constants.ActionCreateCluster,
 		"", // TODO: need to generate
-		f.Runtime.Runtime,
+		f.Runtime.Provider,
 		register.Owner,
 	)
 
@@ -83,7 +83,7 @@ func (f *Frontgate) StartCluster(frontgate *models.Cluster) error {
 		frontgate.VersionId,
 		constants.ActionRecoverClusters,
 		"", // TODO: need to generate
-		f.Runtime.Runtime,
+		f.Runtime.Provider,
 		frontgate.Owner,
 	)
 
@@ -99,7 +99,7 @@ func (f *Frontgate) RecoverCluster(frontgate *models.Cluster) error {
 		frontgate.VersionId,
 		constants.ActionRecoverClusters,
 		"", // TODO: need to generate
-		f.Runtime.Runtime,
+		f.Runtime.Provider,
 		frontgate.Owner,
 	)
 

@@ -134,18 +134,18 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			return err
 		}
 	} else {
-		runtimeInterface, err := plugins.GetRuntimePlugin(task.Target)
+		providerInterface, err := plugins.GetProviderPlugin(task.Target)
 		if err != nil {
 			logger.Errorf("No such runtime [%s]. ", task.Target)
 			return err
 		}
-		err = runtimeInterface.HandleSubtask(task)
+		err = providerInterface.HandleSubtask(task)
 		if err != nil {
 			logger.Errorf("Failed to handle subtask [%s] in runtime [%s]: %+v",
 				task.TaskId, task.Target, err)
 			return err
 		}
-		err = runtimeInterface.WaitSubtask(task, task.GetTimeout(constants.WaitTaskTimeout)*time.Second,
+		err = providerInterface.WaitSubtask(task, task.GetTimeout(constants.WaitTaskTimeout)*time.Second,
 			constants.WaitTaskInterval)
 		if err != nil {
 			logger.Errorf("Failed to wait subtask [%s] in runtime [%s]: %+v",

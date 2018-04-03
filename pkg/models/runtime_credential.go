@@ -47,22 +47,22 @@ func NewRuntimeCredential(name, description, owner string, content map[string]st
 	}
 }
 
-func RuntimeCredentialToPb(runtimeCredential *RuntimeCredential) *pb.RuntimeEnvCredential {
-	pbRuntimeEnvCredential := pb.RuntimeEnvCredential{}
-	pbRuntimeEnvCredential.RuntimeEnvCredentialId = utils.ToProtoString(runtimeCredential.RuntimeCredentialId)
-	pbRuntimeEnvCredential.Name = utils.ToProtoString(runtimeCredential.Name)
-	pbRuntimeEnvCredential.Description = utils.ToProtoString(runtimeCredential.Description)
-	pbRuntimeEnvCredential.Owner = utils.ToProtoString(runtimeCredential.Owner)
-	pbRuntimeEnvCredential.Status = utils.ToProtoString(runtimeCredential.Status)
-	pbRuntimeEnvCredential.CreateTime = utils.ToProtoTimestamp(runtimeCredential.CreateTime)
-	pbRuntimeEnvCredential.StatusTime = utils.ToProtoTimestamp(runtimeCredential.StatusTime)
-	pbRuntimeEnvCredential.Content = RuntimeCredentialContentStringToMap(runtimeCredential.Content)
-	return &pbRuntimeEnvCredential
+func RuntimeCredentialToPb(runtimeCredential *RuntimeCredential) *pb.RuntimeCredential {
+	pbRuntimeCredential := pb.RuntimeCredential{}
+	pbRuntimeCredential.RuntimeCredentialId = utils.ToProtoString(runtimeCredential.RuntimeCredentialId)
+	pbRuntimeCredential.Name = utils.ToProtoString(runtimeCredential.Name)
+	pbRuntimeCredential.Description = utils.ToProtoString(runtimeCredential.Description)
+	pbRuntimeCredential.Owner = utils.ToProtoString(runtimeCredential.Owner)
+	pbRuntimeCredential.Status = utils.ToProtoString(runtimeCredential.Status)
+	pbRuntimeCredential.CreateTime = utils.ToProtoTimestamp(runtimeCredential.CreateTime)
+	pbRuntimeCredential.StatusTime = utils.ToProtoTimestamp(runtimeCredential.StatusTime)
+	pbRuntimeCredential.Content = RuntimeCredentialContentStringToMap(runtimeCredential.Content)
+	return &pbRuntimeCredential
 }
 
-func RuntimeEnvCredentialToPbs(runtimeEnvCredentials []*RuntimeCredential) (pbRuntimeEnvCredentials []*pb.RuntimeEnvCredential) {
-	for _, runtimeEnvCredential := range runtimeEnvCredentials {
-		pbRuntimeEnvCredentials = append(pbRuntimeEnvCredentials, RuntimeCredentialToPb(runtimeEnvCredential))
+func RuntimeCredentialToPbs(runtimeCredentials []*RuntimeCredential) (pbRuntimeCredentials []*pb.RuntimeCredential) {
+	for _, runtimeCredential := range runtimeCredentials {
+		pbRuntimeCredentials = append(pbRuntimeCredentials, RuntimeCredentialToPb(runtimeCredential))
 	}
 	return
 }
