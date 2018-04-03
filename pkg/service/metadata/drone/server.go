@@ -5,24 +5,71 @@
 package drone
 
 import (
+	"context"
+	"fmt"
+
 	"google.golang.org/grpc"
 
-	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
-	pb_drone "openpitrix.io/openpitrix/pkg/pb/drone"
-	"openpitrix.io/openpitrix/pkg/pi"
+	pbdrone "openpitrix.io/openpitrix/pkg/pb/drone"
 )
 
-type Server struct {
-	*pi.Pi
+type DroneServiceClient interface {
+	pbdrone.DroneServiceClient
+	pbdrone.DroneServiceForFrontgateClient
 }
 
-func Serve(cfg *config.Config) {
-	s := Server{
-		Pi: pi.NewPi(cfg),
+type Server struct {
+	opt   *Options
+	confd *ConfdServer
+}
+
+func NewServer(opt *Options, opts ...func(opt *Options)) *Server {
+	if opt == nil {
+		opt = NewDefaultOptions()
+	} else {
+		opt = opt.Clone()
 	}
-	manager.NewGrpcServer("drone-service", constants.DroneServicePort).Serve(func(server *grpc.Server) {
-		pb_drone.RegisterDroneServiceServer(server, &s)
+
+	for _, fn := range opts {
+		fn(opt)
+	}
+
+	p := &Server{
+		opt:   opt,
+		confd: NewConfdServer(),
+	}
+
+	return p
+}
+
+func Serve(opt *Options, opts ...func(opt *Options)) {
+	s := NewServer(opt, opts...)
+
+	manager.NewGrpcServer("drone-service", s.opt.Port).Serve(func(server *grpc.Server) {
+		pbdrone.RegisterDroneServiceServer(server, s)
+		pbdrone.RegisterDroneServiceForFrontgateServer(server, s)
 	})
+}
+
+func DialDroneService(ctx context.Context, host string, port int) (
+	client DroneServiceClient,
+	conn *grpc.ClientConn,
+	err error,
+) {
+	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", host, port), grpc.WithInsecure())
+	if err != nil {
+		return
+	}
+
+	type _DroneServiceClient struct {
+		pbdrone.DroneServiceClient
+		pbdrone.DroneServiceForFrontgateClient
+	}
+
+	client = &_DroneServiceClient{
+		DroneServiceClient:             pbdrone.NewDroneServiceClient(conn),
+		DroneServiceForFrontgateClient: pbdrone.NewDroneServiceForFrontgateClient(conn),
+	}
+	return
 }
