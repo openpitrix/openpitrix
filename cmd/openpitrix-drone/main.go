@@ -7,15 +7,20 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/urfave/cli"
 
+	"openpitrix.io/libconfd"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
+	pbdrone "openpitrix.io/openpitrix/pkg/pb/drone"
+	"openpitrix.io/openpitrix/pkg/service/metadata/drone"
 )
 
 func main() {
@@ -40,12 +45,6 @@ EXAMPLE:
 			Value:  "", // drone@ip/suffix
 			Usage:  "drone id suffix",
 			EnvVar: "OPENPITRIX_DRONE_ID_SUFFIX",
-		},
-		cli.StringFlag{
-			Name:   "dbpath",
-			Value:  "drone.db",
-			Usage:  "drone database path",
-			EnvVar: "OPENPITRIX_DRONE_DBPATH",
 		},
 		cli.StringFlag{
 			Name:   "host",
@@ -79,7 +78,21 @@ EXAMPLE:
 			Usage: "show drone service info",
 
 			Action: func(c *cli.Context) {
-				fmt.Println("TODO")
+				host := c.GlobalString("host")
+				port := c.GlobalInt("port")
+
+				client, conn, err := drone.DialDroneService(context.Background(), host, port)
+				if err != nil {
+					logger.Fatal(err)
+				}
+				defer conn.Close()
+
+				info, err := client.GetInfo(context.Background(), &pbdrone.Empty{})
+				if err != nil {
+					logger.Fatal(err)
+				}
+
+				fmt.Println(jsonEncode(info))
 				return
 			},
 		},
@@ -89,7 +102,25 @@ EXAMPLE:
 			ArgsUsage: "[regexp]",
 
 			Action: func(c *cli.Context) {
-				fmt.Println("TODO")
+				host := c.GlobalString("host")
+				port := c.GlobalInt("port")
+
+				client, conn, err := drone.DialDroneService(context.Background(), host, port)
+				if err != nil {
+					logger.Fatal(err)
+				}
+				defer conn.Close()
+
+				reply, err := client.GetTemplateFiles(context.Background(), &pbdrone.GetTemplateFilesRequest{
+					Regexp: c.Args().First(),
+				})
+				if err != nil {
+					logger.Fatal(err)
+				}
+
+				for _, file := range reply.Files {
+					fmt.Println(file)
+				}
 				return
 			},
 		},
@@ -100,7 +131,33 @@ EXAMPLE:
 			ArgsUsage: "key",
 
 			Action: func(c *cli.Context) {
-				fmt.Println("TODO")
+				host := c.GlobalString("host")
+				port := c.GlobalInt("port")
+
+				client, conn, err := drone.DialDroneService(context.Background(), host, port)
+				if err != nil {
+					logger.Fatal(err)
+				}
+				defer conn.Close()
+
+				reply, err := client.GetValues(context.Background(), &pbdrone.GetValuesRequest{
+					Keys: c.Args(),
+				})
+				if err != nil {
+					logger.Fatal(err)
+				}
+
+				var maxLen = 1
+				for _, k := range c.Args() {
+					if len(k) > maxLen {
+						maxLen = len(k)
+					}
+				}
+
+				for _, k := range c.Args() {
+					fmt.Printf("%-*s => %s\n", maxLen, k, reply.Values[k])
+				}
+
 				return
 			},
 		},
@@ -124,24 +181,82 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				fmt.Println("TODO")
-				return
+				host := c.GlobalString("host")
+				port := c.GlobalInt("port")
+
+				cfg := libconfd.MustLoadConfig(c.String("config"))
+				bcfg := libconfd.MustLoadBackendConfig(c.String("backend-config"))
+
+				client, conn, err := drone.DialDroneService(context.Background(), host, port)
+				if err != nil {
+					logger.Fatal(err)
+				}
+				defer conn.Close()
+
+				_, err = client.StartConfd(context.Background(), &pbdrone.StartConfdRequest{
+					ConfdConfig: &pbdrone.ConfdConfig{
+						ConfDir:  &wrappers.StringValue{Value: cfg.ConfDir},
+						Interval: &wrappers.Int32Value{Value: int32(cfg.Interval)},
+						Prefix:   &wrappers.StringValue{Value: cfg.Prefix},
+						SyncOnly: &wrappers.BoolValue{Value: cfg.SyncOnly},
+						LogLevel: &wrappers.StringValue{Value: cfg.LogLevel},
+					},
+					ConfdBackendConfig: &pbdrone.ConfdBackendConfig{
+						Type:         &wrappers.StringValue{Value: bcfg.Type},
+						Host:         append([]string{}, bcfg.Host...),
+						Username:     &wrappers.StringValue{Value: bcfg.UserName},
+						Password:     &wrappers.StringValue{Value: bcfg.Password},
+						ClientCaKeys: &wrappers.StringValue{Value: bcfg.ClientCAKeys},
+						ClientCert:   &wrappers.StringValue{Value: bcfg.ClientCert},
+						ClientKey:    &wrappers.StringValue{Value: bcfg.ClientKey},
+					},
+				})
+				if err != nil {
+					logger.Fatal(err)
+				}
+
+				fmt.Println("Done")
 			},
 		},
 		{
 			Name:  "confd-stop",
 			Usage: "stop confd service",
 			Action: func(c *cli.Context) {
-				fmt.Println("TODO")
-				return
+				host := c.GlobalString("host")
+				port := c.GlobalInt("port")
+
+				client, conn, err := drone.DialDroneService(context.Background(), host, port)
+				if err != nil {
+					logger.Fatal(err)
+				}
+				defer conn.Close()
+
+				_, err = client.StopConfd(context.Background(), &pbdrone.Empty{})
+				if err != nil {
+					logger.Fatal(err)
+				}
+
+				fmt.Println("Done")
 			},
 		},
 		{
 			Name:  "confd-status",
 			Usage: "get confd status",
 			Action: func(c *cli.Context) {
-				fmt.Println("TODO")
-				return
+				host := c.GlobalString("host")
+				port := c.GlobalInt("port")
+
+				client, conn, err := drone.DialDroneService(context.Background(), host, port)
+				if err != nil {
+					logger.Fatal(err)
+				}
+				defer conn.Close()
+
+				reply, err := client.GetConfdStatus(context.Background(), &pbdrone.Empty{})
+				if err != nil {
+					logger.Fatal(err)
+				}
+				fmt.Println(jsonEncode(reply))
 			},
 		},
 
@@ -149,7 +264,14 @@ EXAMPLE:
 			Name:  "serve",
 			Usage: "run as drone service",
 			Action: func(c *cli.Context) {
-				fmt.Println("TODO")
+				id := drone.MakeDroneId(c.GlobalString("id-suffix"))
+				port := c.GlobalInt("port")
+
+				drone.Serve(
+					drone.NewDefaultOptions(),
+					drone.WithDrondId(id),
+					drone.WithListenPort(port),
+				)
 				return
 			},
 		},
