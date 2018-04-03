@@ -14,12 +14,17 @@ import (
 	pb_frontgate "openpitrix.io/openpitrix/pkg/pb/frontgate"
 )
 
-var _ pb_frontgate.FrontgateService = (*Server)(nil)
+var (
+	_ pb_frontgate.FrontgateService = (*Server)(nil)
+)
 
 func (p *Server) CloseChannel(in *pb_frontgate.Empty, out *pb_frontgate.Empty) error {
 	return p.conn.Close()
 }
 
+func (p *Server) GetInfo(in *pb_frontgate.Empty, out *pb_frontgate.Info) error {
+	panic("todo")
+}
 func (p *Server) GetConfdInfo(in *pb_frontgate.GetConfdInfoRequest, out *pb_frontgate.ConfdInfo) error {
 	panic("todo")
 }
@@ -36,8 +41,8 @@ func (p *Server) StartConfd(in *pb_frontgate.StartConfdRequest, out *pb_frontgat
 
 	client := pb_drone.NewDroneServiceClient(conn)
 	_, err = client.StartConfd(ctx, &pb_drone.StartConfdRequest{
-		ConfdConfig:   &pb_drone.ConfdConfig{},   // todo
-		BackendConfig: &pb_drone.BackendConfig{}, // todo
+		ConfdConfig:        &pb_drone.ConfdConfig{},        // todo
+		ConfdBackendConfig: &pb_drone.ConfdBackendConfig{}, // todo
 	})
 	if err != nil {
 		return err
@@ -64,6 +69,9 @@ func (p *Server) DeregisterCmd(in *pb_frontgate.DeregisterCmdRequest, out *pb_fr
 	panic("todo")
 }
 
+func (p *Server) GetSubTaskResult(in *pb_frontgate.GetSubTaskResultRequest, out *pb_frontgate.SubTaskResult) error {
+	panic("todo")
+}
 func (p *Server) ReportSubTaskResult(in *pb_frontgate.SubTaskResult, out *pb_frontgate.Empty) error {
 	panic("todo")
 }

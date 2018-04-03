@@ -12,10 +12,13 @@ import "google/protobuf/wrappers.proto";
 service DroneService {
 	rpc GetInfo (Empty) returns (Info);
 	rpc GetConfdConfig (Empty) returns (ConfdConfig);
-	rpc GetBackendConfig (Empty) returns (BackendConfig);
+	rpc GetBackendConfig (Empty) returns (ConfdBackendConfig);
 	rpc StartConfd (StartConfdRequest) returns (Empty);
 	rpc StopConfd (Empty) returns (Empty);
 	rpc GetConfdStatus (Empty) returns (ConfdStatus);
+
+	rpc GetTemplateFiles (GetTemplateFilesRequest) returns (GetTemplateFilesResponse);
+	rpc GetValues (GetValuesRequest) returns (GetValuesResponse);
 }
 
 service DroneServiceForFrontgate {
@@ -26,21 +29,21 @@ service DroneServiceForFrontgate {
 message Info {
 	string drone_ip = 1;
 	ConfdConfig confd_config = 2;
-	BackendConfig backend_config = 3;
+	ConfdBackendConfig confd_backend_config = 3;
 }
 
 // See https://godoc.org/openpitrix.io/libconfd#Config
 message ConfdConfig {
 	google.protobuf.StringValue conf_dir = 1;
 	google.protobuf.Int32Value interval = 2;
-	google.protobuf.BoolValue noop =3;
+	google.protobuf.BoolValue noop = 3;
 	google.protobuf.StringValue prefix = 4;
 	google.protobuf.BoolValue sync_only = 5;
 	google.protobuf.StringValue log_level = 6;
 }
 
 // See https://godoc.org/openpitrix.io/libconfd#BackendConfig
-message BackendConfig {
+message ConfdBackendConfig {
 	google.protobuf.StringValue type = 1;
 	repeated string host = 2;
 	google.protobuf.StringValue username = 3;
@@ -52,7 +55,7 @@ message BackendConfig {
 
 message StartConfdRequest {
 	ConfdConfig confd_config = 1;
-	BackendConfig backend_config = 2;
+	ConfdBackendConfig confd_backend_config = 2;
 }
 
 message ConfdStatus {
@@ -73,6 +76,20 @@ message GetRegisterCmdStatusRequest {
 }
 message GetRegisterCmdStatusResponse {
 	string status = 1;
+}
+
+message GetTemplateFilesRequest {
+	string regexp = 1;
+}
+message GetTemplateFilesResponse {
+	repeated string files = 1;
+}
+
+message GetValuesRequest {
+	repeated string keys = 1;
+}
+message GetValuesResponse {
+	map<string,string> values = 1;
 }
 
 message Empty {}

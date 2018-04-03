@@ -6,6 +6,7 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
+import google_protobuf4 "github.com/golang/protobuf/ptypes/empty"
 import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
@@ -132,12 +133,451 @@ func (m *GetSubtaskStatusResponse) GetSubtaskStatusSet() []*SubtaskStatus {
 	return nil
 }
 
+type PilotInfo struct {
+	Id string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+}
+
+func (m *PilotInfo) Reset()                    { *m = PilotInfo{} }
+func (m *PilotInfo) String() string            { return proto.CompactTextString(m) }
+func (*PilotInfo) ProtoMessage()               {}
+func (*PilotInfo) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
+
+func (m *PilotInfo) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+type FrontgateInfo struct {
+	Id string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+}
+
+func (m *FrontgateInfo) Reset()                    { *m = FrontgateInfo{} }
+func (m *FrontgateInfo) String() string            { return proto.CompactTextString(m) }
+func (*FrontgateInfo) ProtoMessage()               {}
+func (*FrontgateInfo) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{6} }
+
+func (m *FrontgateInfo) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+type DroneInfo struct {
+	Id string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Ip string `protobuf:"bytes,2,opt,name=ip" json:"ip,omitempty"`
+}
+
+func (m *DroneInfo) Reset()                    { *m = DroneInfo{} }
+func (m *DroneInfo) String() string            { return proto.CompactTextString(m) }
+func (*DroneInfo) ProtoMessage()               {}
+func (*DroneInfo) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{7} }
+
+func (m *DroneInfo) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *DroneInfo) GetIp() string {
+	if m != nil {
+		return m.Ip
+	}
+	return ""
+}
+
+type ConfdInfo struct {
+	Config        *ConfdConfig        `protobuf:"bytes,1,opt,name=config" json:"config,omitempty"`
+	BackendConfig *ConfdBackendConfig `protobuf:"bytes,2,opt,name=backend_config,json=backendConfig" json:"backend_config,omitempty"`
+}
+
+func (m *ConfdInfo) Reset()                    { *m = ConfdInfo{} }
+func (m *ConfdInfo) String() string            { return proto.CompactTextString(m) }
+func (*ConfdInfo) ProtoMessage()               {}
+func (*ConfdInfo) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{8} }
+
+func (m *ConfdInfo) GetConfig() *ConfdConfig {
+	if m != nil {
+		return m.Config
+	}
+	return nil
+}
+
+func (m *ConfdInfo) GetBackendConfig() *ConfdBackendConfig {
+	if m != nil {
+		return m.BackendConfig
+	}
+	return nil
+}
+
+// See https://godoc.org/openpitrix.io/libconfd#Config
+type ConfdConfig struct {
+	ConfDir  *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=conf_dir,json=confDir" json:"conf_dir,omitempty"`
+	Interval *google_protobuf2.Int32Value  `protobuf:"bytes,2,opt,name=interval" json:"interval,omitempty"`
+	Noop     *google_protobuf2.BoolValue   `protobuf:"bytes,3,opt,name=noop" json:"noop,omitempty"`
+	Prefix   *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=prefix" json:"prefix,omitempty"`
+	SyncOnly *google_protobuf2.BoolValue   `protobuf:"bytes,5,opt,name=sync_only,json=syncOnly" json:"sync_only,omitempty"`
+	LogLevel *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=log_level,json=logLevel" json:"log_level,omitempty"`
+}
+
+func (m *ConfdConfig) Reset()                    { *m = ConfdConfig{} }
+func (m *ConfdConfig) String() string            { return proto.CompactTextString(m) }
+func (*ConfdConfig) ProtoMessage()               {}
+func (*ConfdConfig) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{9} }
+
+func (m *ConfdConfig) GetConfDir() *google_protobuf2.StringValue {
+	if m != nil {
+		return m.ConfDir
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetInterval() *google_protobuf2.Int32Value {
+	if m != nil {
+		return m.Interval
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetNoop() *google_protobuf2.BoolValue {
+	if m != nil {
+		return m.Noop
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetPrefix() *google_protobuf2.StringValue {
+	if m != nil {
+		return m.Prefix
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetSyncOnly() *google_protobuf2.BoolValue {
+	if m != nil {
+		return m.SyncOnly
+	}
+	return nil
+}
+
+func (m *ConfdConfig) GetLogLevel() *google_protobuf2.StringValue {
+	if m != nil {
+		return m.LogLevel
+	}
+	return nil
+}
+
+// See https://godoc.org/openpitrix.io/libconfd#BackendConfig
+type ConfdBackendConfig struct {
+	Type         *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
+	Host         []string                      `protobuf:"bytes,2,rep,name=host" json:"host,omitempty"`
+	Username     *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=username" json:"username,omitempty"`
+	Password     *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=password" json:"password,omitempty"`
+	ClientCaKeys *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=client_ca_keys,json=clientCaKeys" json:"client_ca_keys,omitempty"`
+	ClientCert   *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=client_cert,json=clientCert" json:"client_cert,omitempty"`
+	ClientKey    *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=client_key,json=clientKey" json:"client_key,omitempty"`
+}
+
+func (m *ConfdBackendConfig) Reset()                    { *m = ConfdBackendConfig{} }
+func (m *ConfdBackendConfig) String() string            { return proto.CompactTextString(m) }
+func (*ConfdBackendConfig) ProtoMessage()               {}
+func (*ConfdBackendConfig) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{10} }
+
+func (m *ConfdBackendConfig) GetType() *google_protobuf2.StringValue {
+	if m != nil {
+		return m.Type
+	}
+	return nil
+}
+
+func (m *ConfdBackendConfig) GetHost() []string {
+	if m != nil {
+		return m.Host
+	}
+	return nil
+}
+
+func (m *ConfdBackendConfig) GetUsername() *google_protobuf2.StringValue {
+	if m != nil {
+		return m.Username
+	}
+	return nil
+}
+
+func (m *ConfdBackendConfig) GetPassword() *google_protobuf2.StringValue {
+	if m != nil {
+		return m.Password
+	}
+	return nil
+}
+
+func (m *ConfdBackendConfig) GetClientCaKeys() *google_protobuf2.StringValue {
+	if m != nil {
+		return m.ClientCaKeys
+	}
+	return nil
+}
+
+func (m *ConfdBackendConfig) GetClientCert() *google_protobuf2.StringValue {
+	if m != nil {
+		return m.ClientCert
+	}
+	return nil
+}
+
+func (m *ConfdBackendConfig) GetClientKey() *google_protobuf2.StringValue {
+	if m != nil {
+		return m.ClientKey
+	}
+	return nil
+}
+
+type GetConfdInfoRequest struct {
+	FrontgateId string `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	DroneId     string `protobuf:"bytes,2,opt,name=drone_id,json=droneId" json:"drone_id,omitempty"`
+	DroneIp     string `protobuf:"bytes,3,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+}
+
+func (m *GetConfdInfoRequest) Reset()                    { *m = GetConfdInfoRequest{} }
+func (m *GetConfdInfoRequest) String() string            { return proto.CompactTextString(m) }
+func (*GetConfdInfoRequest) ProtoMessage()               {}
+func (*GetConfdInfoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{11} }
+
+func (m *GetConfdInfoRequest) GetFrontgateId() string {
+	if m != nil {
+		return m.FrontgateId
+	}
+	return ""
+}
+
+func (m *GetConfdInfoRequest) GetDroneId() string {
+	if m != nil {
+		return m.DroneId
+	}
+	return ""
+}
+
+func (m *GetConfdInfoRequest) GetDroneIp() string {
+	if m != nil {
+		return m.DroneIp
+	}
+	return ""
+}
+
+type StartConfdRequest struct {
+	FrontgateId        string              `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	DroneId            string              `protobuf:"bytes,2,opt,name=drone_id,json=droneId" json:"drone_id,omitempty"`
+	DroneIp            string              `protobuf:"bytes,3,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+	ConfdConfig        *ConfdConfig        `protobuf:"bytes,4,opt,name=confd_config,json=confdConfig" json:"confd_config,omitempty"`
+	ConfdBackendConfig *ConfdBackendConfig `protobuf:"bytes,5,opt,name=confd_backend_config,json=confdBackendConfig" json:"confd_backend_config,omitempty"`
+}
+
+func (m *StartConfdRequest) Reset()                    { *m = StartConfdRequest{} }
+func (m *StartConfdRequest) String() string            { return proto.CompactTextString(m) }
+func (*StartConfdRequest) ProtoMessage()               {}
+func (*StartConfdRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{12} }
+
+func (m *StartConfdRequest) GetFrontgateId() string {
+	if m != nil {
+		return m.FrontgateId
+	}
+	return ""
+}
+
+func (m *StartConfdRequest) GetDroneId() string {
+	if m != nil {
+		return m.DroneId
+	}
+	return ""
+}
+
+func (m *StartConfdRequest) GetDroneIp() string {
+	if m != nil {
+		return m.DroneIp
+	}
+	return ""
+}
+
+func (m *StartConfdRequest) GetConfdConfig() *ConfdConfig {
+	if m != nil {
+		return m.ConfdConfig
+	}
+	return nil
+}
+
+func (m *StartConfdRequest) GetConfdBackendConfig() *ConfdBackendConfig {
+	if m != nil {
+		return m.ConfdBackendConfig
+	}
+	return nil
+}
+
+type StopConfdRequest struct {
+	FrontgateId string `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	DroneId     string `protobuf:"bytes,2,opt,name=drone_id,json=droneId" json:"drone_id,omitempty"`
+	DroneIp     string `protobuf:"bytes,3,opt,name=drone_ip,json=droneIp" json:"drone_ip,omitempty"`
+}
+
+func (m *StopConfdRequest) Reset()                    { *m = StopConfdRequest{} }
+func (m *StopConfdRequest) String() string            { return proto.CompactTextString(m) }
+func (*StopConfdRequest) ProtoMessage()               {}
+func (*StopConfdRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{13} }
+
+func (m *StopConfdRequest) GetFrontgateId() string {
+	if m != nil {
+		return m.FrontgateId
+	}
+	return ""
+}
+
+func (m *StopConfdRequest) GetDroneId() string {
+	if m != nil {
+		return m.DroneId
+	}
+	return ""
+}
+
+func (m *StopConfdRequest) GetDroneIp() string {
+	if m != nil {
+		return m.DroneIp
+	}
+	return ""
+}
+
+type RegisterMetadataRequest struct {
+	SubtaskId   string            `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
+	FrontgateId string            `protobuf:"bytes,2,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	Values      map[string]string `protobuf:"bytes,3,rep,name=values" json:"values,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+}
+
+func (m *RegisterMetadataRequest) Reset()                    { *m = RegisterMetadataRequest{} }
+func (m *RegisterMetadataRequest) String() string            { return proto.CompactTextString(m) }
+func (*RegisterMetadataRequest) ProtoMessage()               {}
+func (*RegisterMetadataRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{14} }
+
+func (m *RegisterMetadataRequest) GetSubtaskId() string {
+	if m != nil {
+		return m.SubtaskId
+	}
+	return ""
+}
+
+func (m *RegisterMetadataRequest) GetFrontgateId() string {
+	if m != nil {
+		return m.FrontgateId
+	}
+	return ""
+}
+
+func (m *RegisterMetadataRequest) GetValues() map[string]string {
+	if m != nil {
+		return m.Values
+	}
+	return nil
+}
+
+type DeregisterMetadataRequest struct {
+	SubtaskId   string   `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
+	FrontgateId string   `protobuf:"bytes,2,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	Keys        []string `protobuf:"bytes,3,rep,name=keys" json:"keys,omitempty"`
+}
+
+func (m *DeregisterMetadataRequest) Reset()                    { *m = DeregisterMetadataRequest{} }
+func (m *DeregisterMetadataRequest) String() string            { return proto.CompactTextString(m) }
+func (*DeregisterMetadataRequest) ProtoMessage()               {}
+func (*DeregisterMetadataRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{15} }
+
+func (m *DeregisterMetadataRequest) GetSubtaskId() string {
+	if m != nil {
+		return m.SubtaskId
+	}
+	return ""
+}
+
+func (m *DeregisterMetadataRequest) GetFrontgateId() string {
+	if m != nil {
+		return m.FrontgateId
+	}
+	return ""
+}
+
+func (m *DeregisterMetadataRequest) GetKeys() []string {
+	if m != nil {
+		return m.Keys
+	}
+	return nil
+}
+
+type RegisterCmdRequest struct {
+	SubtaskId   string `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
+	FrontgateId string `protobuf:"bytes,2,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+}
+
+func (m *RegisterCmdRequest) Reset()                    { *m = RegisterCmdRequest{} }
+func (m *RegisterCmdRequest) String() string            { return proto.CompactTextString(m) }
+func (*RegisterCmdRequest) ProtoMessage()               {}
+func (*RegisterCmdRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{16} }
+
+func (m *RegisterCmdRequest) GetSubtaskId() string {
+	if m != nil {
+		return m.SubtaskId
+	}
+	return ""
+}
+
+func (m *RegisterCmdRequest) GetFrontgateId() string {
+	if m != nil {
+		return m.FrontgateId
+	}
+	return ""
+}
+
+type DeregisterCmdRequest struct {
+	SubtaskId   string `protobuf:"bytes,1,opt,name=subtask_id,json=subtaskId" json:"subtask_id,omitempty"`
+	FrontgateId string `protobuf:"bytes,2,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+}
+
+func (m *DeregisterCmdRequest) Reset()                    { *m = DeregisterCmdRequest{} }
+func (m *DeregisterCmdRequest) String() string            { return proto.CompactTextString(m) }
+func (*DeregisterCmdRequest) ProtoMessage()               {}
+func (*DeregisterCmdRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{17} }
+
+func (m *DeregisterCmdRequest) GetSubtaskId() string {
+	if m != nil {
+		return m.SubtaskId
+	}
+	return ""
+}
+
+func (m *DeregisterCmdRequest) GetFrontgateId() string {
+	if m != nil {
+		return m.FrontgateId
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*HandleSubtaskRequest)(nil), "openpitrix.HandleSubtaskRequest")
 	proto.RegisterType((*HandleSubtaskResponse)(nil), "openpitrix.HandleSubtaskResponse")
 	proto.RegisterType((*GetSubtaskStatusRequest)(nil), "openpitrix.GetSubtaskStatusRequest")
 	proto.RegisterType((*SubtaskStatus)(nil), "openpitrix.SubtaskStatus")
 	proto.RegisterType((*GetSubtaskStatusResponse)(nil), "openpitrix.GetSubtaskStatusResponse")
+	proto.RegisterType((*PilotInfo)(nil), "openpitrix.PilotInfo")
+	proto.RegisterType((*FrontgateInfo)(nil), "openpitrix.FrontgateInfo")
+	proto.RegisterType((*DroneInfo)(nil), "openpitrix.DroneInfo")
+	proto.RegisterType((*ConfdInfo)(nil), "openpitrix.ConfdInfo")
+	proto.RegisterType((*ConfdConfig)(nil), "openpitrix.ConfdConfig")
+	proto.RegisterType((*ConfdBackendConfig)(nil), "openpitrix.ConfdBackendConfig")
+	proto.RegisterType((*GetConfdInfoRequest)(nil), "openpitrix.GetConfdInfoRequest")
+	proto.RegisterType((*StartConfdRequest)(nil), "openpitrix.StartConfdRequest")
+	proto.RegisterType((*StopConfdRequest)(nil), "openpitrix.StopConfdRequest")
+	proto.RegisterType((*RegisterMetadataRequest)(nil), "openpitrix.RegisterMetadataRequest")
+	proto.RegisterType((*DeregisterMetadataRequest)(nil), "openpitrix.DeregisterMetadataRequest")
+	proto.RegisterType((*RegisterCmdRequest)(nil), "openpitrix.RegisterCmdRequest")
+	proto.RegisterType((*DeregisterCmdRequest)(nil), "openpitrix.DeregisterCmdRequest")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -248,7 +688,18 @@ var _PilotService_serviceDesc = grpc.ServiceDesc{
 // Client API for PilotServiceForFrontgate service
 
 type PilotServiceForFrontgateClient interface {
+	CloseChannel(ctx context.Context, in *google_protobuf4.Empty, opts ...grpc.CallOption) (*google_protobuf4.Empty, error)
 	Channel(ctx context.Context, opts ...grpc.CallOption) (PilotServiceForFrontgate_ChannelClient, error)
+	GetPilotInfo(ctx context.Context, in *google_protobuf4.Empty, opts ...grpc.CallOption) (*PilotInfo, error)
+	GetFrontgateInfo(ctx context.Context, in *google_protobuf4.Empty, opts ...grpc.CallOption) (*FrontgateInfo, error)
+	GetDroneInfo(ctx context.Context, in *google_protobuf4.Empty, opts ...grpc.CallOption) (*DroneInfo, error)
+	GetConfdInfo(ctx context.Context, in *GetConfdInfoRequest, opts ...grpc.CallOption) (*ConfdInfo, error)
+	StartConfd(ctx context.Context, in *StartConfdRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error)
+	StopConfd(ctx context.Context, in *StopConfdRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error)
+	RegisterMetadata(ctx context.Context, in *RegisterMetadataRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error)
+	DeregisterMetadata(ctx context.Context, in *DeregisterMetadataRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error)
+	RegisterCmd(ctx context.Context, in *RegisterCmdRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error)
+	DeregisterCmd(ctx context.Context, in *DeregisterCmdRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error)
 }
 
 type pilotServiceForFrontgateClient struct {
@@ -257,6 +708,15 @@ type pilotServiceForFrontgateClient struct {
 
 func NewPilotServiceForFrontgateClient(cc *grpc.ClientConn) PilotServiceForFrontgateClient {
 	return &pilotServiceForFrontgateClient{cc}
+}
+
+func (c *pilotServiceForFrontgateClient) CloseChannel(ctx context.Context, in *google_protobuf4.Empty, opts ...grpc.CallOption) (*google_protobuf4.Empty, error) {
+	out := new(google_protobuf4.Empty)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/CloseChannel", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *pilotServiceForFrontgateClient) Channel(ctx context.Context, opts ...grpc.CallOption) (PilotServiceForFrontgate_ChannelClient, error) {
@@ -290,14 +750,133 @@ func (x *pilotServiceForFrontgateChannelClient) Recv() (*google_protobuf2.BytesV
 	return m, nil
 }
 
+func (c *pilotServiceForFrontgateClient) GetPilotInfo(ctx context.Context, in *google_protobuf4.Empty, opts ...grpc.CallOption) (*PilotInfo, error) {
+	out := new(PilotInfo)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/GetPilotInfo", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pilotServiceForFrontgateClient) GetFrontgateInfo(ctx context.Context, in *google_protobuf4.Empty, opts ...grpc.CallOption) (*FrontgateInfo, error) {
+	out := new(FrontgateInfo)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/GetFrontgateInfo", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pilotServiceForFrontgateClient) GetDroneInfo(ctx context.Context, in *google_protobuf4.Empty, opts ...grpc.CallOption) (*DroneInfo, error) {
+	out := new(DroneInfo)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/GetDroneInfo", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pilotServiceForFrontgateClient) GetConfdInfo(ctx context.Context, in *GetConfdInfoRequest, opts ...grpc.CallOption) (*ConfdInfo, error) {
+	out := new(ConfdInfo)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/GetConfdInfo", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pilotServiceForFrontgateClient) StartConfd(ctx context.Context, in *StartConfdRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error) {
+	out := new(google_protobuf4.Empty)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/StartConfd", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pilotServiceForFrontgateClient) StopConfd(ctx context.Context, in *StopConfdRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error) {
+	out := new(google_protobuf4.Empty)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/StopConfd", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pilotServiceForFrontgateClient) RegisterMetadata(ctx context.Context, in *RegisterMetadataRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error) {
+	out := new(google_protobuf4.Empty)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/RegisterMetadata", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pilotServiceForFrontgateClient) DeregisterMetadata(ctx context.Context, in *DeregisterMetadataRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error) {
+	out := new(google_protobuf4.Empty)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/DeregisterMetadata", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pilotServiceForFrontgateClient) RegisterCmd(ctx context.Context, in *RegisterCmdRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error) {
+	out := new(google_protobuf4.Empty)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/RegisterCmd", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pilotServiceForFrontgateClient) DeregisterCmd(ctx context.Context, in *DeregisterCmdRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error) {
+	out := new(google_protobuf4.Empty)
+	err := grpc.Invoke(ctx, "/openpitrix.PilotServiceForFrontgate/DeregisterCmd", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for PilotServiceForFrontgate service
 
 type PilotServiceForFrontgateServer interface {
+	CloseChannel(context.Context, *google_protobuf4.Empty) (*google_protobuf4.Empty, error)
 	Channel(PilotServiceForFrontgate_ChannelServer) error
+	GetPilotInfo(context.Context, *google_protobuf4.Empty) (*PilotInfo, error)
+	GetFrontgateInfo(context.Context, *google_protobuf4.Empty) (*FrontgateInfo, error)
+	GetDroneInfo(context.Context, *google_protobuf4.Empty) (*DroneInfo, error)
+	GetConfdInfo(context.Context, *GetConfdInfoRequest) (*ConfdInfo, error)
+	StartConfd(context.Context, *StartConfdRequest) (*google_protobuf4.Empty, error)
+	StopConfd(context.Context, *StopConfdRequest) (*google_protobuf4.Empty, error)
+	RegisterMetadata(context.Context, *RegisterMetadataRequest) (*google_protobuf4.Empty, error)
+	DeregisterMetadata(context.Context, *DeregisterMetadataRequest) (*google_protobuf4.Empty, error)
+	RegisterCmd(context.Context, *RegisterCmdRequest) (*google_protobuf4.Empty, error)
+	DeregisterCmd(context.Context, *DeregisterCmdRequest) (*google_protobuf4.Empty, error)
 }
 
 func RegisterPilotServiceForFrontgateServer(s *grpc.Server, srv PilotServiceForFrontgateServer) {
 	s.RegisterService(&_PilotServiceForFrontgate_serviceDesc, srv)
+}
+
+func _PilotServiceForFrontgate_CloseChannel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(google_protobuf4.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).CloseChannel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/CloseChannel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).CloseChannel(ctx, req.(*google_protobuf4.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _PilotServiceForFrontgate_Channel_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -326,10 +905,235 @@ func (x *pilotServiceForFrontgateChannelServer) Recv() (*google_protobuf2.BytesV
 	return m, nil
 }
 
+func _PilotServiceForFrontgate_GetPilotInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(google_protobuf4.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).GetPilotInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/GetPilotInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).GetPilotInfo(ctx, req.(*google_protobuf4.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PilotServiceForFrontgate_GetFrontgateInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(google_protobuf4.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).GetFrontgateInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/GetFrontgateInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).GetFrontgateInfo(ctx, req.(*google_protobuf4.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PilotServiceForFrontgate_GetDroneInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(google_protobuf4.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).GetDroneInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/GetDroneInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).GetDroneInfo(ctx, req.(*google_protobuf4.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PilotServiceForFrontgate_GetConfdInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetConfdInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).GetConfdInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/GetConfdInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).GetConfdInfo(ctx, req.(*GetConfdInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PilotServiceForFrontgate_StartConfd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartConfdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).StartConfd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/StartConfd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).StartConfd(ctx, req.(*StartConfdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PilotServiceForFrontgate_StopConfd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StopConfdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).StopConfd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/StopConfd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).StopConfd(ctx, req.(*StopConfdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PilotServiceForFrontgate_RegisterMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterMetadataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).RegisterMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/RegisterMetadata",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).RegisterMetadata(ctx, req.(*RegisterMetadataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PilotServiceForFrontgate_DeregisterMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeregisterMetadataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).DeregisterMetadata(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/DeregisterMetadata",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).DeregisterMetadata(ctx, req.(*DeregisterMetadataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PilotServiceForFrontgate_RegisterCmd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterCmdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).RegisterCmd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/RegisterCmd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).RegisterCmd(ctx, req.(*RegisterCmdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PilotServiceForFrontgate_DeregisterCmd_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeregisterCmdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PilotServiceForFrontgateServer).DeregisterCmd(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PilotServiceForFrontgate/DeregisterCmd",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PilotServiceForFrontgateServer).DeregisterCmd(ctx, req.(*DeregisterCmdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _PilotServiceForFrontgate_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "openpitrix.PilotServiceForFrontgate",
 	HandlerType: (*PilotServiceForFrontgateServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CloseChannel",
+			Handler:    _PilotServiceForFrontgate_CloseChannel_Handler,
+		},
+		{
+			MethodName: "GetPilotInfo",
+			Handler:    _PilotServiceForFrontgate_GetPilotInfo_Handler,
+		},
+		{
+			MethodName: "GetFrontgateInfo",
+			Handler:    _PilotServiceForFrontgate_GetFrontgateInfo_Handler,
+		},
+		{
+			MethodName: "GetDroneInfo",
+			Handler:    _PilotServiceForFrontgate_GetDroneInfo_Handler,
+		},
+		{
+			MethodName: "GetConfdInfo",
+			Handler:    _PilotServiceForFrontgate_GetConfdInfo_Handler,
+		},
+		{
+			MethodName: "StartConfd",
+			Handler:    _PilotServiceForFrontgate_StartConfd_Handler,
+		},
+		{
+			MethodName: "StopConfd",
+			Handler:    _PilotServiceForFrontgate_StopConfd_Handler,
+		},
+		{
+			MethodName: "RegisterMetadata",
+			Handler:    _PilotServiceForFrontgate_RegisterMetadata_Handler,
+		},
+		{
+			MethodName: "DeregisterMetadata",
+			Handler:    _PilotServiceForFrontgate_DeregisterMetadata_Handler,
+		},
+		{
+			MethodName: "RegisterCmd",
+			Handler:    _PilotServiceForFrontgate_RegisterCmd_Handler,
+		},
+		{
+			MethodName: "DeregisterCmd",
+			Handler:    _PilotServiceForFrontgate_DeregisterCmd_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Channel",
@@ -344,35 +1148,79 @@ var _PilotServiceForFrontgate_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("pilot.proto", fileDescriptor4) }
 
 var fileDescriptor4 = []byte{
-	// 472 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x53, 0xc1, 0x6e, 0xd3, 0x40,
-	0x10, 0x95, 0x13, 0x54, 0x94, 0x49, 0x83, 0xaa, 0x55, 0x11, 0x26, 0x14, 0x08, 0x86, 0x43, 0x90,
-	0xa8, 0x0d, 0x81, 0x03, 0x82, 0x53, 0x1b, 0xa9, 0x81, 0x1b, 0x8a, 0x2b, 0x0e, 0x5c, 0xa2, 0x8d,
-	0x33, 0x98, 0x15, 0xd6, 0xee, 0xb2, 0x3b, 0x4e, 0xe1, 0x5a, 0x71, 0xe0, 0x0c, 0x9f, 0x06, 0x9f,
-	0xc0, 0x9d, 0x5f, 0x40, 0x59, 0xdb, 0xe0, 0x24, 0x10, 0x45, 0xea, 0x29, 0xca, 0xcc, 0x7b, 0x6f,
-	0xe7, 0xbd, 0x19, 0x43, 0x5b, 0x8b, 0x4c, 0x51, 0xa8, 0x8d, 0x22, 0xc5, 0x40, 0x69, 0x94, 0x5a,
-	0x90, 0x11, 0x1f, 0xbb, 0xb7, 0x52, 0xa5, 0xd2, 0x0c, 0x23, 0xd7, 0x99, 0xe6, 0x6f, 0xa3, 0x33,
-	0xc3, 0xb5, 0x46, 0x63, 0x0b, 0x6c, 0xf7, 0xa0, 0xec, 0x73, 0x2d, 0x22, 0x2e, 0xa5, 0x22, 0x4e,
-	0x42, 0xc9, 0xaa, 0xfb, 0xc0, 0xfd, 0x24, 0x87, 0x29, 0xca, 0x43, 0x7b, 0xc6, 0xd3, 0x14, 0x4d,
-	0xa4, 0xb4, 0x43, 0xac, 0xa3, 0x83, 0x1f, 0x1e, 0xec, 0xbf, 0xe0, 0x72, 0x96, 0x61, 0x9c, 0x4f,
-	0x89, 0xdb, 0xf7, 0x63, 0xfc, 0x90, 0xa3, 0x25, 0xf6, 0x1c, 0xc0, 0x16, 0x95, 0x89, 0x98, 0xf9,
-	0x5e, 0xcf, 0xeb, 0xb7, 0x07, 0x07, 0x61, 0xf1, 0x72, 0x58, 0x4d, 0x16, 0xc6, 0x64, 0x84, 0x4c,
-	0x5f, 0xf3, 0x2c, 0xc7, 0x71, 0xab, 0xc4, 0xbf, 0x9c, 0xb1, 0x21, 0x5c, 0xa9, 0xc8, 0x3c, 0x59,
-	0x3c, 0xe7, 0x37, 0xb6, 0x10, 0xe8, 0x94, 0x9c, 0x23, 0x47, 0x61, 0xcf, 0xa0, 0x35, 0x13, 0x06,
-	0x13, 0x12, 0x73, 0xf4, 0x9b, 0xdb, 0x0c, 0xf0, 0x07, 0x1e, 0x9c, 0xc2, 0xd5, 0x15, 0x57, 0x56,
-	0x2b, 0x69, 0xf1, 0x42, 0xb6, 0x82, 0xa7, 0x70, 0x6d, 0x84, 0x54, 0x4a, 0xc6, 0xc4, 0x29, 0xb7,
-	0x55, 0x5c, 0x37, 0x57, 0x74, 0x9b, 0xfd, 0x56, 0x9d, 0x79, 0xee, 0x41, 0x67, 0x89, 0x77, 0xb1,
-	0x7c, 0x9f, 0xc0, 0x8e, 0x75, 0x32, 0x5b, 0xe5, 0x5a, 0x62, 0x83, 0xcf, 0x1e, 0xf8, 0xeb, 0xf3,
-	0x97, 0xc1, 0xdc, 0x86, 0x36, 0x29, 0xe2, 0xd9, 0x24, 0x51, 0xb9, 0x24, 0x37, 0x50, 0x67, 0x0c,
-	0xae, 0x34, 0x5c, 0x54, 0xd8, 0x08, 0x58, 0x35, 0x70, 0xa1, 0x37, 0xb1, 0x48, 0x7e, 0xa3, 0xd7,
-	0xec, 0xb7, 0x07, 0xd7, 0xc3, 0xbf, 0xe7, 0x1b, 0x2e, 0xeb, 0xef, 0xd9, 0xfa, 0xdf, 0x18, 0x69,
-	0xf0, 0xcb, 0x83, 0xdd, 0x57, 0x8b, 0xd3, 0x8f, 0xd1, 0xcc, 0x45, 0x82, 0xec, 0x14, 0x3a, 0x4b,
-	0xcb, 0x62, 0xbd, 0xba, 0xdc, 0xbf, 0xae, 0xb3, 0x7b, 0x67, 0x03, 0xa2, 0x34, 0xf4, 0xc5, 0x83,
-	0xbd, 0x55, 0xb7, 0xec, 0x6e, 0x9d, 0xf7, 0x9f, 0x5d, 0x76, 0xef, 0x6d, 0x06, 0x15, 0xfa, 0xc1,
-	0xfd, 0xaf, 0x47, 0xfb, 0x8c, 0xa5, 0x48, 0xbd, 0xd2, 0x61, 0xaf, 0x88, 0xe5, 0xfc, 0xfb, 0xcf,
-	0x6f, 0x8d, 0x5d, 0x06, 0xd1, 0xfc, 0x51, 0xe4, 0xbe, 0x70, 0x3b, 0x48, 0xc0, 0xaf, 0x1b, 0x3e,
-	0x51, 0xe6, 0xc4, 0x28, 0x49, 0x29, 0x27, 0x64, 0x23, 0xb8, 0x3c, 0x7c, 0xc7, 0xa5, 0xc4, 0x8c,
-	0xdd, 0x58, 0xdb, 0xe2, 0xf1, 0x27, 0x42, 0xeb, 0x96, 0xd8, 0xdd, 0xd4, 0xec, 0x7b, 0x0f, 0xbd,
-	0xe3, 0x4b, 0x6f, 0x1a, 0x7a, 0x3a, 0xdd, 0x71, 0xed, 0xc7, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff,
-	0xe2, 0xaa, 0xad, 0x86, 0x5d, 0x04, 0x00, 0x00,
+	// 1174 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0xc1, 0x6f, 0xdb, 0xb6,
+	0x17, 0x86, 0x6c, 0xd7, 0x89, 0x9f, 0xed, 0x20, 0x3f, 0xfe, 0xd2, 0xd5, 0x71, 0xd2, 0x24, 0xd5,
+	0x36, 0x20, 0xc3, 0x56, 0xbb, 0x4b, 0x07, 0x34, 0xcd, 0xd0, 0x01, 0x89, 0x93, 0x78, 0x41, 0x37,
+	0xb4, 0xb0, 0x8b, 0x62, 0xd8, 0xc5, 0xa0, 0x25, 0x5a, 0x15, 0xa2, 0x90, 0x2a, 0x49, 0x3b, 0xf5,
+	0xb5, 0xdb, 0x61, 0xa7, 0x1d, 0xb6, 0x3f, 0x6d, 0xbb, 0xec, 0xb4, 0xcb, 0xee, 0xdb, 0x79, 0xa7,
+	0x41, 0xa4, 0x2c, 0x4b, 0x56, 0x94, 0x09, 0x68, 0xbb, 0x93, 0x4d, 0xbe, 0xef, 0xfb, 0xf8, 0xf8,
+	0x44, 0x7e, 0x7c, 0x50, 0xf5, 0x5d, 0x8f, 0xc9, 0x96, 0xcf, 0x99, 0x64, 0x08, 0x98, 0x4f, 0xa8,
+	0xef, 0x4a, 0xee, 0xbe, 0x6a, 0x6e, 0x38, 0x8c, 0x39, 0x1e, 0x69, 0xab, 0xc8, 0x70, 0x3c, 0x6a,
+	0x93, 0x0b, 0x5f, 0x4e, 0x35, 0xb0, 0xb9, 0xb5, 0x18, 0xbc, 0xe4, 0xd8, 0xf7, 0x09, 0x17, 0x61,
+	0x7c, 0x33, 0x8c, 0x63, 0xdf, 0x6d, 0x63, 0x4a, 0x99, 0xc4, 0xd2, 0x65, 0x74, 0x16, 0xfd, 0x44,
+	0xfd, 0x58, 0x77, 0x1d, 0x42, 0xef, 0x8a, 0x4b, 0xec, 0x38, 0x84, 0xb7, 0x99, 0xaf, 0x10, 0x69,
+	0xb4, 0xf9, 0xab, 0x01, 0x6b, 0x5f, 0x62, 0x6a, 0x7b, 0xa4, 0x3f, 0x1e, 0x4a, 0x2c, 0xce, 0x7b,
+	0xe4, 0xe5, 0x98, 0x08, 0x89, 0x3e, 0x07, 0x10, 0x7a, 0x66, 0xe0, 0xda, 0x0d, 0x63, 0xc7, 0xd8,
+	0xad, 0xee, 0x6d, 0xb6, 0xf4, 0xca, 0xad, 0x59, 0x66, 0xad, 0xbe, 0xe4, 0x2e, 0x75, 0x9e, 0x63,
+	0x6f, 0x4c, 0x7a, 0x95, 0x10, 0x7f, 0x66, 0xa3, 0x0e, 0xac, 0xcc, 0xc8, 0xd8, 0x0a, 0x96, 0x6b,
+	0x14, 0x72, 0x08, 0xd4, 0x43, 0xce, 0xa1, 0xa2, 0xa0, 0x03, 0xa8, 0xd8, 0x2e, 0x27, 0x96, 0x74,
+	0x27, 0xa4, 0x51, 0xcc, 0x93, 0x40, 0x04, 0x37, 0x9f, 0xc1, 0xcd, 0x85, 0x5d, 0x09, 0x9f, 0x51,
+	0x41, 0xde, 0x68, 0x5b, 0xe6, 0x3e, 0xdc, 0xea, 0x12, 0x19, 0x4a, 0xf6, 0x25, 0x96, 0x63, 0x31,
+	0x2b, 0xd7, 0xed, 0x05, 0xdd, 0xe2, 0x6e, 0x25, 0xce, 0x7c, 0x6d, 0x40, 0x3d, 0xc1, 0x7b, 0xb3,
+	0xfa, 0x7e, 0x06, 0x65, 0xa1, 0x64, 0x72, 0xd5, 0x35, 0xc4, 0x9a, 0xdf, 0x1b, 0xd0, 0x48, 0xe7,
+	0x1f, 0x16, 0x66, 0x1b, 0xaa, 0x92, 0x49, 0xec, 0x0d, 0x2c, 0x36, 0xa6, 0x52, 0x25, 0x54, 0xef,
+	0x81, 0x9a, 0xea, 0x04, 0x33, 0xa8, 0x0b, 0x68, 0x96, 0xb0, 0xd6, 0x1b, 0x08, 0x22, 0x1b, 0x85,
+	0x9d, 0xe2, 0x6e, 0x75, 0x6f, 0xbd, 0x35, 0x3f, 0xdb, 0xad, 0xa4, 0xfe, 0xaa, 0x88, 0x0f, 0xfb,
+	0x44, 0x9a, 0x1b, 0x50, 0x79, 0x1a, 0x5c, 0x8b, 0x33, 0x3a, 0x62, 0x68, 0x05, 0x0a, 0xe1, 0xf6,
+	0x2b, 0xbd, 0x82, 0x6b, 0x9b, 0xdb, 0x50, 0x3f, 0xe5, 0x8c, 0x4a, 0x07, 0x4b, 0x72, 0x25, 0xe0,
+	0x63, 0xa8, 0x1c, 0x73, 0x46, 0xaf, 0x0c, 0xaa, 0xb1, 0xaf, 0x6a, 0x12, 0x8c, 0x7d, 0xf3, 0x3b,
+	0x03, 0x2a, 0x1d, 0x46, 0x47, 0xb6, 0x42, 0xb7, 0xa1, 0x6c, 0x31, 0x3a, 0x72, 0x9d, 0xb0, 0xdc,
+	0xb7, 0xe2, 0x59, 0x2b, 0x58, 0x47, 0x85, 0x7b, 0x21, 0x0c, 0x9d, 0xc0, 0xca, 0x10, 0x5b, 0xe7,
+	0x84, 0xda, 0x83, 0x90, 0xa8, 0xcb, 0xbd, 0x95, 0x22, 0x1e, 0x69, 0x58, 0xc8, 0xaf, 0x0f, 0xe3,
+	0x43, 0xf3, 0xb7, 0x02, 0x54, 0x63, 0xf2, 0xe8, 0x01, 0x2c, 0x07, 0x72, 0x03, 0xdb, 0xe5, 0xb9,
+	0x3e, 0xfc, 0x52, 0x80, 0x3e, 0x76, 0x79, 0x40, 0x74, 0xa9, 0x24, 0x7c, 0x82, 0xbd, 0x30, 0x93,
+	0x8d, 0x14, 0xf1, 0x8c, 0xca, 0xfb, 0x7b, 0x9a, 0x17, 0x81, 0x51, 0x0b, 0x4a, 0x94, 0x31, 0x3f,
+	0xbc, 0x45, 0xcd, 0x14, 0xe9, 0x88, 0x31, 0x4f, 0x73, 0x14, 0x2e, 0x38, 0x5f, 0x3e, 0x27, 0x23,
+	0xf7, 0x55, 0xa3, 0x94, 0xe7, 0x7c, 0x69, 0x2c, 0x7a, 0x00, 0x15, 0x31, 0xa5, 0xd6, 0x80, 0x51,
+	0x6f, 0xda, 0xb8, 0xf1, 0xaf, 0x4b, 0x2d, 0x07, 0xe0, 0x27, 0xd4, 0x9b, 0xa2, 0x87, 0x50, 0xf1,
+	0x98, 0x33, 0xf0, 0xc8, 0x84, 0x78, 0x8d, 0x72, 0x8e, 0x15, 0x97, 0x3d, 0xe6, 0x7c, 0x15, 0xa0,
+	0xcd, 0x1f, 0x8b, 0x80, 0xd2, 0x5f, 0x00, 0xdd, 0x83, 0x92, 0x9c, 0xfa, 0x24, 0x57, 0x79, 0x15,
+	0x12, 0x21, 0x28, 0xbd, 0x60, 0x42, 0x1f, 0xe8, 0x4a, 0x4f, 0xfd, 0x47, 0xfb, 0xb0, 0x3c, 0x16,
+	0x84, 0x53, 0x7c, 0x91, 0xcf, 0x80, 0x22, 0x74, 0xc0, 0xf4, 0xb1, 0x10, 0x97, 0x8c, 0xdb, 0xb9,
+	0x4a, 0x18, 0xa1, 0xd1, 0x11, 0xac, 0x58, 0x9e, 0x4b, 0xa8, 0x1c, 0x58, 0x78, 0x70, 0x4e, 0xa6,
+	0x22, 0xac, 0xe4, 0xf5, 0xfc, 0x9a, 0xe6, 0x74, 0xf0, 0x63, 0x32, 0x15, 0xe8, 0x11, 0x54, 0x67,
+	0x1a, 0x84, 0xcb, 0x5c, 0x15, 0x85, 0x50, 0x80, 0x70, 0x65, 0xfd, 0x21, 0xfd, 0x9c, 0x4c, 0x1b,
+	0x4b, 0x79, 0xac, 0x49, 0xe3, 0x1f, 0x93, 0xa9, 0x49, 0xe1, 0xff, 0x5d, 0x22, 0xa3, 0x4b, 0x37,
+	0xf3, 0xc7, 0x3b, 0x50, 0x1b, 0xcd, 0xee, 0xf5, 0x20, 0xba, 0xb3, 0xd5, 0x68, 0xee, 0xcc, 0x46,
+	0xeb, 0xb0, 0x6c, 0x07, 0x37, 0x3b, 0x08, 0xeb, 0x2b, 0xbc, 0xa4, 0xc6, 0x89, 0x90, 0x3e, 0xc3,
+	0x51, 0xc8, 0x37, 0xff, 0x36, 0xe0, 0x7f, 0x7d, 0x89, 0xb9, 0x5e, 0xf2, 0x5d, 0x2f, 0x87, 0x0e,
+	0xa0, 0x16, 0xdc, 0xc6, 0xc8, 0x10, 0x4a, 0xd7, 0x3b, 0x49, 0xd5, 0x8a, 0xdd, 0xfb, 0xa7, 0xb0,
+	0xa6, 0xb9, 0x0b, 0xa6, 0x72, 0x23, 0x97, 0xa9, 0x20, 0x2b, 0x35, 0x67, 0x9e, 0xc3, 0x6a, 0x5f,
+	0x32, 0xff, 0x3f, 0xd9, 0xba, 0xf9, 0xbb, 0x01, 0xb7, 0x7a, 0xc4, 0x71, 0x85, 0x24, 0xfc, 0x6b,
+	0x22, 0xb1, 0x8d, 0x25, 0xce, 0x7a, 0xfe, 0x8c, 0xc4, 0xf3, 0x97, 0xca, 0xa9, 0x90, 0xce, 0xa9,
+	0x0b, 0xe5, 0x49, 0x70, 0x96, 0x44, 0xa3, 0xa8, 0x9e, 0x94, 0x76, 0xbc, 0x1c, 0x19, 0xcb, 0xb6,
+	0xd4, 0xe9, 0x13, 0x27, 0x54, 0xf2, 0x69, 0x2f, 0xa4, 0x37, 0x1f, 0x42, 0x35, 0x36, 0x8d, 0x56,
+	0xa1, 0x18, 0x9c, 0x62, 0x9d, 0x52, 0xf0, 0x17, 0xad, 0xc1, 0x0d, 0x05, 0x0d, 0xb3, 0xd0, 0x83,
+	0x83, 0xc2, 0xbe, 0x61, 0xbe, 0x84, 0xf5, 0x63, 0xc2, 0xdf, 0xd9, 0x16, 0x11, 0x94, 0xd4, 0x85,
+	0x2e, 0x6a, 0x8b, 0x09, 0xfe, 0x9b, 0xcf, 0x01, 0xcd, 0x36, 0xd7, 0xb9, 0xb0, 0xdf, 0xda, 0x5a,
+	0xe6, 0x37, 0xb0, 0x36, 0xdf, 0xca, 0xdb, 0x54, 0xde, 0xfb, 0xd3, 0x80, 0x9a, 0x7a, 0xbf, 0xfb,
+	0x84, 0x4f, 0x5c, 0x8b, 0xa0, 0x67, 0x50, 0x4f, 0xf4, 0x5a, 0x68, 0x27, 0xfe, 0xe9, 0xae, 0x6a,
+	0x2e, 0x9b, 0x77, 0xae, 0x41, 0x84, 0xfd, 0xc8, 0x0f, 0x06, 0xac, 0x2e, 0x36, 0x2b, 0xe8, 0xfd,
+	0x38, 0x2f, 0xa3, 0x15, 0x6b, 0x7e, 0x70, 0x3d, 0x48, 0xeb, 0x9b, 0x1f, 0xfd, 0x74, 0xb8, 0x86,
+	0x90, 0x43, 0xe4, 0x4e, 0xb8, 0xfb, 0x1d, 0xdd, 0xd5, 0xbc, 0xfe, 0xe5, 0x8f, 0x9f, 0x0b, 0x35,
+	0x04, 0xed, 0xc9, 0xa7, 0x6d, 0xd5, 0xbd, 0x8b, 0xbd, 0xbf, 0xca, 0xd0, 0x88, 0xef, 0xf8, 0x94,
+	0xf1, 0xa8, 0x47, 0x41, 0x5f, 0x40, 0xad, 0xe3, 0x31, 0x41, 0x3a, 0x2f, 0x30, 0xa5, 0xc4, 0x43,
+	0xef, 0xa5, 0x8c, 0xf2, 0x24, 0x68, 0xed, 0x9b, 0x19, 0xf3, 0xa8, 0x0b, 0x4b, 0x33, 0x6a, 0xfa,
+	0x31, 0x3f, 0x9a, 0x4a, 0x22, 0xd4, 0x69, 0x6e, 0x5e, 0x17, 0xdc, 0x35, 0xee, 0x19, 0xe8, 0x11,
+	0xd4, 0xba, 0x44, 0xce, 0x3b, 0xab, 0xac, 0x44, 0x6e, 0xc6, 0xcb, 0x33, 0x87, 0x9f, 0xa8, 0x72,
+	0x27, 0x7b, 0xaf, 0x2c, 0x89, 0x44, 0xbb, 0x97, 0xa4, 0xe8, 0x2c, 0xe6, 0x1d, 0x5a, 0xae, 0x2c,
+	0xe6, 0xf0, 0x53, 0x45, 0x9f, 0xb7, 0x6c, 0xdb, 0x0b, 0xdf, 0x72, 0xf1, 0x5d, 0x49, 0xea, 0xcc,
+	0x79, 0x1d, 0x80, 0xf9, 0xa3, 0x80, 0x6e, 0x27, 0xda, 0xd3, 0xc5, 0xc7, 0x22, 0xf3, 0xd3, 0x1c,
+	0x42, 0x25, 0x72, 0x57, 0xb4, 0x99, 0xd4, 0x48, 0x9a, 0x6e, 0xa6, 0xc4, 0x13, 0x58, 0x5d, 0xf4,
+	0xae, 0xe4, 0x21, 0xce, 0x70, 0xb6, 0x4c, 0xc1, 0x3e, 0xa0, 0xb4, 0x45, 0xa1, 0x0f, 0x13, 0xd5,
+	0xcc, 0xb2, 0xb0, 0x4c, 0xd1, 0x13, 0xa8, 0xc6, 0x4c, 0x08, 0x6d, 0x5d, 0x95, 0xe0, 0xdc, 0x43,
+	0x32, 0x65, 0xce, 0xa0, 0x9e, 0xf0, 0x9c, 0xa4, 0x11, 0x5c, 0x65, 0x47, 0x59, 0x52, 0x47, 0xa5,
+	0x6f, 0x0b, 0xfe, 0x70, 0x58, 0x56, 0xb3, 0xf7, 0xff, 0x09, 0x00, 0x00, 0xff, 0xff, 0xed, 0x65,
+	0xf2, 0x10, 0x47, 0x0f, 0x00, 0x00,
 }

@@ -8,6 +8,7 @@ package openpitrix;
 // set go package name to pb
 option go_package = "pb";
 
+import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
@@ -49,5 +50,95 @@ service PilotService {
 }
 
 service PilotServiceForFrontgate {
+	rpc CloseChannel (google.protobuf.Empty) returns (google.protobuf.Empty);
 	rpc Channel (stream google.protobuf.BytesValue) returns (stream google.protobuf.BytesValue);
+
+	rpc GetPilotInfo(google.protobuf.Empty) returns (PilotInfo);
+	rpc GetFrontgateInfo(google.protobuf.Empty) returns (FrontgateInfo);
+	rpc GetDroneInfo(google.protobuf.Empty) returns (DroneInfo);
+
+	rpc GetConfdInfo(GetConfdInfoRequest) returns (ConfdInfo);
+	rpc StartConfd (StartConfdRequest) returns (google.protobuf.Empty);
+	rpc StopConfd (StopConfdRequest) returns (google.protobuf.Empty);
+
+	rpc RegisterMetadata (RegisterMetadataRequest) returns (google.protobuf.Empty);
+	rpc DeregisterMetadata (DeregisterMetadataRequest) returns (google.protobuf.Empty);
+
+	rpc RegisterCmd (RegisterCmdRequest) returns (google.protobuf.Empty);
+	rpc DeregisterCmd (DeregisterCmdRequest) returns (google.protobuf.Empty);
+}
+
+message PilotInfo{
+	string id = 1;
+}
+message FrontgateInfo {
+	string id = 1;
+}
+message DroneInfo {
+	string id = 1;
+	string ip = 2;
+}
+message ConfdInfo {
+	ConfdConfig config = 1;
+	ConfdBackendConfig backend_config = 2;
+}
+
+// See https://godoc.org/openpitrix.io/libconfd#Config
+message ConfdConfig {
+	google.protobuf.StringValue conf_dir = 1;
+	google.protobuf.Int32Value interval = 2;
+	google.protobuf.BoolValue noop = 3;
+	google.protobuf.StringValue prefix = 4;
+	google.protobuf.BoolValue sync_only = 5;
+	google.protobuf.StringValue log_level = 6;
+}
+
+// See https://godoc.org/openpitrix.io/libconfd#BackendConfig
+message ConfdBackendConfig {
+	google.protobuf.StringValue type = 1;
+	repeated string host = 2;
+	google.protobuf.StringValue username = 3;
+	google.protobuf.StringValue password = 4;
+	google.protobuf.StringValue client_ca_keys = 5;
+	google.protobuf.StringValue client_cert = 6;
+	google.protobuf.StringValue client_key = 7;
+}
+
+message GetConfdInfoRequest {
+	string frontgate_id = 1;
+	string drone_id = 2;
+	string drone_ip = 3;
+}
+message StartConfdRequest {
+	string frontgate_id = 1;
+	string drone_id = 2;
+	string drone_ip = 3;
+
+	ConfdConfig confd_config = 4;
+	ConfdBackendConfig confd_backend_config = 5;
+}
+message StopConfdRequest {
+	string frontgate_id = 1;
+	string drone_id = 2;
+	string drone_ip = 3;
+}
+
+message RegisterMetadataRequest {
+	string subtask_id = 1;
+	string frontgate_id = 2;
+	map<string,string> values = 3;
+}
+message DeregisterMetadataRequest {
+	string subtask_id = 1;
+	string frontgate_id = 2;
+	repeated string keys = 3;
+}
+
+message RegisterCmdRequest {
+	string subtask_id = 1;
+	string frontgate_id = 2;
+}
+message DeregisterCmdRequest {
+	string subtask_id = 1;
+	string frontgate_id = 2;
 }
