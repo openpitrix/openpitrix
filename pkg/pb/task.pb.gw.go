@@ -28,21 +28,6 @@ var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
 
-func request_TaskManager_CreateTask_0(ctx context.Context, marshaler runtime.Marshaler, client TaskManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateTaskRequest
-	var metadata runtime.ServerMetadata
-
-	if req.ContentLength > 0 {
-		if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
-			return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-		}
-	}
-
-	msg, err := client.CreateTask(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
 var (
 	filter_TaskManager_DescribeTasks_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
@@ -98,35 +83,6 @@ func RegisterTaskManagerHandler(ctx context.Context, mux *runtime.ServeMux, conn
 // "TaskManagerClient" to call the correct interceptors.
 func RegisterTaskManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux, client TaskManagerClient) error {
 
-	mux.Handle("POST", pattern_TaskManager_CreateTask_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		if cn, ok := w.(http.CloseNotifier); ok {
-			go func(done <-chan struct{}, closed <-chan bool) {
-				select {
-				case <-done:
-				case <-closed:
-					cancel()
-				}
-			}(ctx.Done(), cn.CloseNotify())
-		}
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_TaskManager_CreateTask_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_TaskManager_CreateTask_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
 	mux.Handle("GET", pattern_TaskManager_DescribeTasks_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -160,13 +116,9 @@ func RegisterTaskManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux
 }
 
 var (
-	pattern_TaskManager_CreateTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "tasks"}, ""))
-
 	pattern_TaskManager_DescribeTasks_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "tasks"}, ""))
 )
 
 var (
-	forward_TaskManager_CreateTask_0 = runtime.ForwardResponseMessage
-
 	forward_TaskManager_DescribeTasks_0 = runtime.ForwardResponseMessage
 )

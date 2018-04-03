@@ -273,24 +273,8 @@ service ClusterManager {
 			body: "*"
 		};
 	}
-	rpc ModifyCluster (ModifyClusterRequest) returns (ModifyClusterResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify cluster"
-		};
-		option (google.api.http) = {
-			patch: "/v1/clusters"
-			body: "*"
-		};
-	}
-	rpc ModifyClusterNode (ModifyClusterNodeRequest) returns (ModifyClusterNodeResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify cluster node"
-		};
-		option (google.api.http) = {
-			patch: "/v1/clusters"
-			body: "*"
-		};
-	}
+	rpc ModifyCluster (ModifyClusterRequest) returns (ModifyClusterResponse);
+	rpc ModifyClusterNode (ModifyClusterNodeRequest) returns (ModifyClusterNodeResponse);
 	rpc DeleteClusters (DeleteClustersRequest) returns (DeleteClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "delete clusters"

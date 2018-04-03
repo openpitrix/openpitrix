@@ -58,15 +58,7 @@ message DescribeTasksResponse {
 }
 
 service TaskManager {
-	rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create task"
-		};
-		option (google.api.http) = {
-			post: "/v1/tasks"
-			body: "*"
-		};
-	}
+	rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse);
 	rpc DescribeTasks (DescribeTasksRequest) returns (DescribeTasksResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "describe tasks with filter"

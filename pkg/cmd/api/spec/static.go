@@ -612,31 +612,6 @@ var Files = map[string]string{
         "tags": [
           "JobManager"
         ]
-      },
-      "post": {
-        "summary": "create job",
-        "operationId": "CreateJob",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateJobResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateJobRequest"
-            }
-          }
-        ],
-        "tags": [
-          "JobManager"
-        ]
       }
     },
     "/v1/pilots": {
@@ -1552,31 +1527,6 @@ var Files = map[string]string{
         "tags": [
           "TaskManager"
         ]
-      },
-      "post": {
-        "summary": "create task",
-        "operationId": "CreateTask",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateTaskResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateTaskRequest"
-            }
-          }
-        ],
-        "tags": [
-          "TaskManager"
-        ]
       }
     }
   },
@@ -2260,81 +2210,11 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixModifyClusterNodeRequest": {
-      "type": "object",
-      "properties": {
-        "node_id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "instance_id": {
-          "type": "string"
-        },
-        "volume_id": {
-          "type": "string"
-        },
-        "subnet_id": {
-          "type": "string"
-        },
-        "private_ip": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "transition_status": {
-          "type": "string"
-        },
-        "health_status": {
-          "type": "string"
-        },
-        "pub_key": {
-          "type": "string"
-        },
-        "status_time": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
     "openpitrixModifyClusterNodeResponse": {
       "type": "object",
       "properties": {
         "node_id": {
           "type": "string"
-        }
-      }
-    },
-    "openpitrixModifyClusterRequest": {
-      "type": "object",
-      "properties": {
-        "cluster_id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "transition_status": {
-          "type": "string"
-        },
-        "upgrade_status": {
-          "type": "string"
-        },
-        "upgrade_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "status_time": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -2584,32 +2464,6 @@ var Files = map[string]string{
         }
       },
       "description": "Wrapper message for ` + "`" + `uint64` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt64Value` + "`" + ` is JSON string."
-    },
-    "openpitrixCreateJobRequest": {
-      "type": "object",
-      "properties": {
-        "_": {
-          "type": "string"
-        },
-        "cluster_id": {
-          "type": "string"
-        },
-        "app_id": {
-          "type": "string"
-        },
-        "version_id": {
-          "type": "string"
-        },
-        "job_action": {
-          "type": "string"
-        },
-        "provider": {
-          "type": "string"
-        },
-        "directive": {
-          "type": "string"
-        }
-      }
     },
     "openpitrixCreateJobResponse": {
       "type": "object",
@@ -3411,29 +3265,6 @@ var Files = map[string]string{
           "type": "string"
         },
         "label_value": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateTaskRequest": {
-      "type": "object",
-      "properties": {
-        "_": {
-          "type": "string"
-        },
-        "job_id": {
-          "type": "string"
-        },
-        "node_id": {
-          "type": "string"
-        },
-        "target": {
-          "type": "string"
-        },
-        "task_action": {
-          "type": "string"
-        },
-        "directive": {
           "type": "string"
         }
       }

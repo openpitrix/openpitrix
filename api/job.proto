@@ -65,15 +65,7 @@ message DescribeJobsResponse {
 }
 
 service JobManager {
-	rpc CreateJob (CreateJobRequest) returns (CreateJobResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create job"
-		};
-		option (google.api.http) = {
-			post: "/v1/jobs"
-			body: "*"
-		};
-	}
+	rpc CreateJob (CreateJobRequest) returns (CreateJobResponse);
 	rpc DescribeJobs (DescribeJobsRequest) returns (DescribeJobsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "describe jobs with filter"

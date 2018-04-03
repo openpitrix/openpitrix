@@ -25,34 +25,6 @@ type Client struct {
 }
 
 /*
-CreateTask creates task
-*/
-func (a *Client) CreateTask(params *CreateTaskParams) (*CreateTaskOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewCreateTaskParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "CreateTask",
-		Method:             "POST",
-		PathPattern:        "/v1/tasks",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &CreateTaskReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*CreateTaskOK), nil
-
-}
-
-/*
 DescribeTasks describes tasks with filter
 */
 func (a *Client) DescribeTasks(params *DescribeTasksParams) (*DescribeTasksOK, error) {
