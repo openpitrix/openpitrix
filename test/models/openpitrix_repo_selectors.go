@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeRepoSelectorsResponseRepoSelectorSet openpitrix describe repo selectors response repo selector set
-// swagger:model openpitrixDescribeRepoSelectorsResponseRepoSelectorSet
-type OpenpitrixDescribeRepoSelectorsResponseRepoSelectorSet []*OpenpitrixRepoSelector
+// OpenpitrixRepoSelectors openpitrix repo selectors
+// swagger:model openpitrixRepoSelectors
+type OpenpitrixRepoSelectors []*OpenpitrixRepoSelector
 
-// Validate validates this openpitrix describe repo selectors response repo selector set
-func (m OpenpitrixDescribeRepoSelectorsResponseRepoSelectorSet) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix repo selectors
+func (m OpenpitrixRepoSelectors) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {

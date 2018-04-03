@@ -76,34 +76,14 @@ func getStringValue(param interface{}) interface{} {
 }
 
 func BuildFilterConditions(req Request, tableName string, exclude ...string) dbr.Builder {
-	var conditions []dbr.Builder
-	for _, field := range structs.Fields(req) {
-		tag := field.Tag(TagName)
-		prop := proto.Properties{}
-		prop.Parse(tag)
-		column := prop.OrigName
-		param := field.Value()
-		if utils.StringIn(column, models.IndexedColumns[tableName]) {
-			value := getStringValue(param)
-			if value != nil {
-				conditions = append(conditions, db.Eq(column, value))
-			}
-		}
-		if column == SearchWordColumnName && utils.StringIn(tableName, models.SearchWordColumnTable) {
-			value := getStringValue(param)
-			condition := getSearchFilter(tableName, value, exclude...)
-			if condition != nil {
-				conditions = append(conditions, condition)
-			}
-		}
-	}
-	if len(conditions) == 0 {
-		return nil
-	}
-	return db.And(conditions...)
+	return buildFilterConditions(false, req, tableName, exclude...)
 }
 
 func BuildFilterConditionsWithPrefix(req Request, tableName string, exclude ...string) dbr.Builder {
+	return buildFilterConditions(true, req, tableName, exclude...)
+}
+
+func buildFilterConditions(withPrefix bool, req Request, tableName string, exclude ...string) dbr.Builder {
 	var conditions []dbr.Builder
 	for _, field := range structs.Fields(req) {
 		tag := field.Tag(TagName)
@@ -114,7 +94,11 @@ func BuildFilterConditionsWithPrefix(req Request, tableName string, exclude ...s
 		if utils.StringIn(column, models.IndexedColumns[tableName]) {
 			value := getStringValue(param)
 			if value != nil {
-				conditions = append(conditions, db.Eq(tableName+"."+column, value))
+				key := column
+				if withPrefix {
+					key = tableName + "." + key
+				}
+				conditions = append(conditions, db.Eq(key, value))
 			}
 		}
 		if column == SearchWordColumnName && utils.StringIn(tableName, models.SearchWordColumnTable) {

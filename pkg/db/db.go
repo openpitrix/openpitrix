@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gocraft/dbr"
@@ -88,6 +90,11 @@ func (b *SelectQuery) Where(query interface{}, value ...interface{}) *SelectQuer
 	return b
 }
 
+func (b *SelectQuery) Distinct() *SelectQuery {
+	b.SelectBuilder.Distinct()
+	return b
+}
+
 func (b *SelectQuery) Limit(n uint64) *SelectQuery {
 	n = GetLimit(n)
 	b.SelectBuilder.Limit(n)
@@ -113,15 +120,40 @@ func (b *SelectQuery) LoadOne(value interface{}) error {
 	return b.SelectBuilder.LoadOne(value)
 }
 
+func getColumns(dbrColumns []interface{}) string {
+	var columns []string
+	for _, column := range dbrColumns {
+		if c, ok := column.(string); ok {
+			columns = append(columns, c)
+		}
+	}
+	return strings.Join(columns, ", ")
+}
+
 func (b *SelectQuery) Count() (count uint32, err error) {
 	// cache SelectStmt
 	selectStmt := b.SelectStmt
-	b.SelectStmt = dbr.Select("count(*)").From(selectStmt.Table)
-	for _, cond := range selectStmt.WhereCond {
-		b.Where(cond)
+
+	limit := selectStmt.LimitCount
+	offset := selectStmt.OffsetCount
+	column := selectStmt.Column
+	isDistinct := selectStmt.IsDistinct
+
+	b.SelectStmt.LimitCount = -1
+	b.SelectStmt.OffsetCount = -1
+	b.SelectStmt.Column = []interface{}{"COUNT(*)"}
+
+	if isDistinct {
+		b.SelectStmt.Column = []interface{}{fmt.Sprintf("COUNT(DISTINCT %s)", getColumns(column))}
+		b.SelectStmt.IsDistinct = false
 	}
+
 	err = b.LoadOne(&count)
 	// fallback SelectStmt
+	selectStmt.LimitCount = limit
+	selectStmt.OffsetCount = offset
+	selectStmt.Column = column
+	selectStmt.IsDistinct = isDistinct
 	b.SelectStmt = selectStmt
 	return
 }

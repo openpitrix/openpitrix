@@ -86,27 +86,11 @@ It has these top-level messages:
 	ModifyRepoResponse
 	DeleteRepoRequest
 	DeleteRepoResponse
+	RepoLabel
+	RepoSelector
 	Repo
 	DescribeReposRequest
 	DescribeReposResponse
-	RepoLabel
-	CreateRepoLabelRequest
-	CreateRepoLabelResponse
-	ModifyRepoLabelRequest
-	ModifyRepoLabelResponse
-	DeleteRepoLabelRequest
-	DeleteRepoLabelResponse
-	DescribeRepoLabelsRequest
-	DescribeRepoLabelsResponse
-	RepoSelector
-	CreateRepoSelectorRequest
-	CreateRepoSelectorResponse
-	ModifyRepoSelectorRequest
-	ModifyRepoSelectorResponse
-	DeleteRepoSelectorRequest
-	DeleteRepoSelectorResponse
-	DescribeRepoSelectorsRequest
-	DescribeRepoSelectorsResponse
 	IndexRepoRequest
 	IndexRepoResponse
 	RepoTask

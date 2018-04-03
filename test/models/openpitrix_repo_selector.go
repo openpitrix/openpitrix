@@ -30,12 +30,6 @@ type OpenpitrixRepoSelector struct {
 
 	// selector value
 	SelectorValue string `json:"selector_value,omitempty"`
-
-	// status
-	Status string `json:"status,omitempty"`
-
-	// status time
-	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 }
 
 // Validate validates this openpitrix repo selector

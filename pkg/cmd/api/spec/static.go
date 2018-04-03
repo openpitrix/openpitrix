@@ -701,6 +701,15 @@ var Files = map[string]string{
             }
           },
           {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
             "name": "label",
             "in": "query",
             "required": false,
@@ -799,276 +808,6 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixModifyRepoRequest"
-            }
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      }
-    },
-    "/v1/repos/labels": {
-      "get": {
-        "summary": "describe repo labels with filter",
-        "operationId": "DescribeRepoLabels",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDescribeRepoLabelsResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "repo_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "repo_label_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      },
-      "delete": {
-        "summary": "delete repo label",
-        "operationId": "DeleteRepoLabel",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRepoLabelResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRepoLabelRequest"
-            }
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      },
-      "post": {
-        "summary": "create repo label",
-        "operationId": "CreateRepoLabel",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateRepoLabelResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateRepoLabelRequest"
-            }
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      },
-      "patch": {
-        "summary": "modify repo label",
-        "operationId": "ModifyRepoLabel",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyRepoLabelResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyRepoLabelRequest"
-            }
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      }
-    },
-    "/v1/repos/selectors": {
-      "get": {
-        "summary": "describe repo selectors with filter",
-        "operationId": "DescribeRepoSelectors",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDescribeRepoSelectorsResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "repo_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "repo_selector_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      },
-      "delete": {
-        "summary": "delete repo selectors",
-        "operationId": "DeleteRepoSelector",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRepoSelectorResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRepoSelectorRequest"
-            }
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      },
-      "post": {
-        "summary": "create repo selector",
-        "operationId": "CreateRepoSelector",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateRepoSelectorResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateRepoSelectorRequest"
-            }
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      },
-      "patch": {
-        "summary": "modify repo selectors",
-        "operationId": "ModifyRepoSelector",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyRepoSelectorResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyRepoSelectorRequest"
             }
           }
         ],
@@ -2591,31 +2330,6 @@ var Files = map[string]string{
       },
       "description": "Wrapper message for ` + "`" + `bytes` + "`" + `.\n\nThe JSON representation for ` + "`" + `BytesValue` + "`" + ` is JSON string."
     },
-    "openpitrixCreateRepoLabelRequest": {
-      "type": "object",
-      "properties": {
-        "repo_id": {
-          "type": "string"
-        },
-        "_": {
-          "type": "string"
-        },
-        "label_key": {
-          "type": "string"
-        },
-        "label_value": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateRepoLabelResponse": {
-      "type": "object",
-      "properties": {
-        "repo_label": {
-          "$ref": "#/definitions/openpitrixRepoLabel"
-        }
-      }
-    },
     "openpitrixCreateRepoRequest": {
       "type": "object",
       "properties": {
@@ -2639,6 +2353,18 @@ var Files = map[string]string{
         },
         "visibility": {
           "type": "string"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "string"
+        },
+        "selectors": {
+          "type": "string"
         }
       }
     },
@@ -2647,47 +2373,6 @@ var Files = map[string]string{
       "properties": {
         "repo": {
           "$ref": "#/definitions/openpitrixRepo"
-        }
-      }
-    },
-    "openpitrixCreateRepoSelectorRequest": {
-      "type": "object",
-      "properties": {
-        "repo_id": {
-          "type": "string"
-        },
-        "_": {
-          "type": "string"
-        },
-        "selector_key": {
-          "type": "string"
-        },
-        "selector_value": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateRepoSelectorResponse": {
-      "type": "object",
-      "properties": {
-        "repo_selector": {
-          "$ref": "#/definitions/openpitrixRepoSelector"
-        }
-      }
-    },
-    "openpitrixDeleteRepoLabelRequest": {
-      "type": "object",
-      "properties": {
-        "repo_label_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixDeleteRepoLabelResponse": {
-      "type": "object",
-      "properties": {
-        "repo_label": {
-          "$ref": "#/definitions/openpitrixRepoLabel"
         }
       }
     },
@@ -2707,52 +2392,6 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixDeleteRepoSelectorRequest": {
-      "type": "object",
-      "properties": {
-        "repo_selector_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixDeleteRepoSelectorResponse": {
-      "type": "object",
-      "properties": {
-        "repo_selector": {
-          "$ref": "#/definitions/openpitrixRepoSelector"
-        }
-      }
-    },
-    "openpitrixDescribeRepoLabelsResponse": {
-      "type": "object",
-      "properties": {
-        "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "repo_label_set": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixRepoLabel"
-          }
-        }
-      }
-    },
-    "openpitrixDescribeRepoSelectorsResponse": {
-      "type": "object",
-      "properties": {
-        "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "repo_selector_set": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixRepoSelector"
-          }
-        }
-      }
-    },
     "openpitrixDescribeReposResponse": {
       "type": "object",
       "properties": {
@@ -2765,31 +2404,6 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixRepo"
           }
-        }
-      }
-    },
-    "openpitrixModifyRepoLabelRequest": {
-      "type": "object",
-      "properties": {
-        "_": {
-          "type": "string"
-        },
-        "repo_label_id": {
-          "type": "string"
-        },
-        "label_key": {
-          "type": "string"
-        },
-        "label_value": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixModifyRepoLabelResponse": {
-      "type": "object",
-      "properties": {
-        "repo_label": {
-          "$ref": "#/definitions/openpitrixRepoLabel"
         }
       }
     },
@@ -2816,6 +2430,18 @@ var Files = map[string]string{
         },
         "visibility": {
           "type": "string"
+        },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "string"
+        },
+        "selectors": {
+          "type": "string"
         }
       }
     },
@@ -2824,31 +2450,6 @@ var Files = map[string]string{
       "properties": {
         "repo": {
           "$ref": "#/definitions/openpitrixRepo"
-        }
-      }
-    },
-    "openpitrixModifyRepoSelectorRequest": {
-      "type": "object",
-      "properties": {
-        "_": {
-          "type": "string"
-        },
-        "repo_selector_id": {
-          "type": "string"
-        },
-        "selector_key": {
-          "type": "string"
-        },
-        "selector_value": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixModifyRepoSelectorResponse": {
-      "type": "object",
-      "properties": {
-        "repo_selector": {
-          "$ref": "#/definitions/openpitrixRepoSelector"
         }
       }
     },
@@ -2879,6 +2480,24 @@ var Files = map[string]string{
         "owner": {
           "type": "string"
         },
+        "providers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRepoLabel"
+          }
+        },
+        "selectors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRepoSelector"
+          }
+        },
         "status": {
           "type": "string"
         },
@@ -2895,10 +2514,10 @@ var Files = map[string]string{
     "openpitrixRepoLabel": {
       "type": "object",
       "properties": {
-        "repo_id": {
+        "repo_label_id": {
           "type": "string"
         },
-        "repo_label_id": {
+        "repo_id": {
           "type": "string"
         },
         "label_key": {
@@ -2907,14 +2526,7 @@ var Files = map[string]string{
         "label_value": {
           "type": "string"
         },
-        "status": {
-          "type": "string"
-        },
         "create_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "status_time": {
           "type": "string",
           "format": "date-time"
         }
@@ -2923,10 +2535,10 @@ var Files = map[string]string{
     "openpitrixRepoSelector": {
       "type": "object",
       "properties": {
-        "repo_id": {
+        "repo_selector_id": {
           "type": "string"
         },
-        "repo_selector_id": {
+        "repo_id": {
           "type": "string"
         },
         "selector_key": {
@@ -2935,14 +2547,7 @@ var Files = map[string]string{
         "selector_value": {
           "type": "string"
         },
-        "status": {
-          "type": "string"
-        },
         "create_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "status_time": {
           "type": "string",
           "format": "date-time"
         }
