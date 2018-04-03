@@ -752,6 +752,12 @@
 			"revisionTime": "2017-11-22T10:28:28Z"
 		},
 		{
+			"checksumSHA1": "9/2bmiVZTtVxrBcK+zb/VBQ2Eh0=",
+			"path": "github.com/urfave/cli",
+			"revision": "119bb6564841921ce6f1401e0f5d75317bdd9f4d",
+			"revisionTime": "2017-12-03T21:42:37Z"
+		},
+		{
 			"checksumSHA1": "q8dEHwY+KdMisjYnM44nNfI9vvw=",
 			"path": "github.com/yunify/qingcloud-sdk-go",
 			"revision": "efb555f6a4e9e5841f162d37bd0684fbf9cc4984",
