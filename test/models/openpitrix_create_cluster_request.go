@@ -25,8 +25,8 @@ type OpenpitrixCreateClusterRequest struct {
 	// conf
 	Conf string `json:"conf,omitempty"`
 
-	// runtime env id
-	RuntimeEnvID string `json:"runtime_env_id,omitempty"`
+	// runtime id
+	RuntimeID string `json:"runtime_id,omitempty"`
 
 	// version id
 	VersionID string `json:"version_id,omitempty"`

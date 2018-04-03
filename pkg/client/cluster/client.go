@@ -6,8 +6,10 @@ package cluster
 
 import (
 	"context"
+	"fmt"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
@@ -20,28 +22,17 @@ func NewClusterManagerClient(ctx context.Context) (pb.ClusterManagerClient, erro
 	return pb.NewClusterManagerClient(conn), err
 }
 
-func ModifyCluster(request *pb.ModifyClusterRequest) error {
-	ctx := context.Background()
-	client, err := NewClusterManagerClient(ctx)
+func GetClusterNodes(ctx context.Context, client pb.ClusterManagerClient, nodeIds []string) ([]*pb.ClusterNode, error) {
+	response, err := client.DescribeClusterNodes(ctx, &pb.DescribeClusterNodesRequest{
+		NodeId: nodeIds,
+	})
 	if err != nil {
-		return err
+		logger.Errorf("Describe cluster nodes %s failed: %+v", nodeIds, err)
+		return nil, err
 	}
-	_, err = client.ModifyCluster(ctx, request)
-	if err != nil {
-		return err
+	if len(response.ClusterNodeSet) != len(nodeIds) {
+		logger.Errorf("Describe cluster nodes %s with return count [%d]", nodeIds, len(response.ClusterNodeSet))
+		return nil, fmt.Errorf("describe cluster nodes %s with return count [%d]", nodeIds, len(response.ClusterNodeSet))
 	}
-	return nil
-}
-
-func ModifyClusterNode(request *pb.ModifyClusterNodeRequest) error {
-	ctx := context.Background()
-	client, err := NewClusterManagerClient(ctx)
-	if err != nil {
-		return err
-	}
-	_, err = client.ModifyClusterNode(ctx, request)
-	if err != nil {
-		return err
-	}
-	return nil
+	return response.ClusterNodeSet, nil
 }

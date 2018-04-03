@@ -7,7 +7,10 @@ package models
 import (
 	"time"
 
+	"encoding/json"
+
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
@@ -79,39 +82,21 @@ func TasksToPbs(tasks []*Task) (pbTasks []*pb.Task) {
 	return
 }
 
-type TaskLayer struct {
-	Tasks []*Task
-	Child *TaskLayer
-}
-
-// WalkFunc is a callback type for use with TaskLayer.WalkTree
-type WalkFunc func(parent *TaskLayer, current *TaskLayer) error
-
-func (t *TaskLayer) WalkTree(cb WalkFunc) error {
-	return walkTaskLayerTree(nil, t, cb)
-}
-
-func (t *TaskLayer) Leaf() *TaskLayer {
-	current := t
-	for {
-		if current.Child == nil {
-			return current
-		} else {
-			current = current.Child
-		}
+func (t *Task) GetTimeout(defaultTimeout time.Duration) time.Duration {
+	if t.Directive == "" {
+		return defaultTimeout
 	}
-}
 
-func walkTaskLayerTree(parent *TaskLayer, current *TaskLayer, cb WalkFunc) error {
-	err := cb(parent, current)
+	directive := make(map[string]interface{})
+	err := json.Unmarshal([]byte(t.Directive), &directive)
 	if err != nil {
-		return err
+		logger.Errorf("Unmarshal task [%s] directive failed: %+v.", t.TaskId, err)
+		return defaultTimeout
 	}
 
-	if current.Child == nil {
-		return nil
-	} else {
-		err = walkTaskLayerTree(current, current.Child, cb)
-		return err
+	timeout, exist := directive[constants.TimeoutName]
+	if !exist {
+		return defaultTimeout
 	}
+	return time.Duration(timeout.(float64)) * time.Second
 }

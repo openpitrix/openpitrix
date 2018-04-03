@@ -43,8 +43,8 @@ type OpenpitrixJob struct {
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// runtime
-	Runtime string `json:"runtime,omitempty"`
+	// provider
+	Provider string `json:"provider,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`

@@ -30,7 +30,7 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 		req.GetVersionId().GetValue(),
 		req.GetJobAction().GetValue(),
 		req.GetDirective().GetValue(),
-		req.GetRuntime().GetValue(),
+		req.GetProvider().GetValue(),
 		s.UserId,
 	)
 

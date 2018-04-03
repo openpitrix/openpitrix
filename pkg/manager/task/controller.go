@@ -109,7 +109,11 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		return err
 	}
 
-	defer NewProcessor(task).Post()
+	processor := NewProcessor(task)
+	err = processor.Pre()
+	if err != nil {
+		return err
+	}
 
 	pbTask := models.TaskToPb(task)
 	if task.Target == constants.PilotManagerHost {
@@ -123,24 +127,26 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			logger.Errorf("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
 			return err
 		}
-		err = pilotclient.WaitSubtask(task.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+		err = pilotclient.WaitSubtask(task.TaskId, task.GetTimeout(constants.WaitTaskTimeout)*time.Second,
+			constants.WaitTaskInterval)
 		if err != nil {
 			logger.Errorf("Failed to wait task [%s]: %+v", task.TaskId, err)
 			return err
 		}
 	} else {
-		runtimeInterface, err := plugins.GetRuntimePlugin(task.Target)
+		providerInterface, err := plugins.GetProviderPlugin(task.Target)
 		if err != nil {
 			logger.Errorf("No such runtime [%s]. ", task.Target)
 			return err
 		}
-		err = runtimeInterface.HandleSubtask(task)
+		err = providerInterface.HandleSubtask(task)
 		if err != nil {
 			logger.Errorf("Failed to handle subtask [%s] in runtime [%s]: %+v",
 				task.TaskId, task.Target, err)
 			return err
 		}
-		err = runtimeInterface.WaitSubtask(task.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+		err = providerInterface.WaitSubtask(task, task.GetTimeout(constants.WaitTaskTimeout)*time.Second,
+			constants.WaitTaskInterval)
 		if err != nil {
 			logger.Errorf("Failed to wait subtask [%s] in runtime [%s]: %+v",
 				task.TaskId, task.Target, err)
@@ -148,8 +154,12 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		}
 	}
 
+	if err != nil {
+		return err
+	}
+
 	task.Status = constants.StatusSuccessful
-	return nil
+	return processor.Post()
 }
 
 func (c *Controller) HandleTasks() {

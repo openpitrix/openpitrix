@@ -25,34 +25,6 @@ type Client struct {
 }
 
 /*
-CreateJob creates job
-*/
-func (a *Client) CreateJob(params *CreateJobParams) (*CreateJobOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewCreateJobParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "CreateJob",
-		Method:             "POST",
-		PathPattern:        "/v1/jobs",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &CreateJobReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*CreateJobOK), nil
-
-}
-
-/*
 DescribeJobs describes jobs with filter
 */
 func (a *Client) DescribeJobs(params *DescribeJobsParams) (*DescribeJobsOK, error) {

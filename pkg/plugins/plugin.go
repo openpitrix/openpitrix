@@ -11,31 +11,31 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 )
 
-var runtimePlugins map[string]RuntimeInterface
+var providerPlugins map[string]ProviderInterface
 
 func init() {
-	runtimePlugins = map[string]RuntimeInterface{}
+	providerPlugins = map[string]ProviderInterface{}
 }
 
-type RuntimeInterface interface {
+type ProviderInterface interface {
 	// Parse package and conf into cluster which clusterManager will register into db.
 	ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error)
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
-	WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error
+	WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error
 	DescribeSubnet(subnetId string) (*models.Subnet, error)
 	DescribeVpc(vpcId string) (*models.Vpc, error)
 }
 
-func RegisterRuntimePlugin(runtime string, runtimeInterface RuntimeInterface) {
-	runtimePlugins[runtime] = runtimeInterface
+func RegisterProviderPlugin(provider string, providerInterface ProviderInterface) {
+	providerPlugins[provider] = providerInterface
 }
 
-func GetRuntimePlugin(runtime string) (RuntimeInterface, error) {
-	runtimeInterface, exists := runtimePlugins[runtime]
+func GetProviderPlugin(provider string) (ProviderInterface, error) {
+	providerInterface, exists := providerPlugins[provider]
 	if exists {
-		return runtimeInterface, nil
+		return providerInterface, nil
 	} else {
-		return nil, fmt.Errorf("No such runtime [%s]. ", runtime)
+		return nil, fmt.Errorf("No such provider [%s]. ", provider)
 	}
 }

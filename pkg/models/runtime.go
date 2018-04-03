@@ -45,22 +45,22 @@ func NewRuntime(name, description, runtimeUrl, owner string) *Runtime {
 	}
 }
 
-func RuntimeToPb(runtime *Runtime) *pb.RuntimeEnv {
-	pbRuntimeEnv := pb.RuntimeEnv{}
-	pbRuntimeEnv.RuntimeEnvId = utils.ToProtoString(runtime.RuntimeId)
-	pbRuntimeEnv.Name = utils.ToProtoString(runtime.Name)
-	pbRuntimeEnv.Description = utils.ToProtoString(runtime.Description)
-	pbRuntimeEnv.RuntimeEnvUrl = utils.ToProtoString(runtime.RuntimeUrl)
-	pbRuntimeEnv.Owner = utils.ToProtoString(runtime.Owner)
-	pbRuntimeEnv.Status = utils.ToProtoString(runtime.Status)
-	pbRuntimeEnv.CreateTime = utils.ToProtoTimestamp(runtime.CreateTime)
-	pbRuntimeEnv.StatusTime = utils.ToProtoTimestamp(runtime.StatusTime)
-	return &pbRuntimeEnv
+func RuntimeToPb(runtime *Runtime) *pb.Runtime {
+	pbRuntime := pb.Runtime{}
+	pbRuntime.RuntimeId = utils.ToProtoString(runtime.RuntimeId)
+	pbRuntime.Name = utils.ToProtoString(runtime.Name)
+	pbRuntime.Description = utils.ToProtoString(runtime.Description)
+	pbRuntime.RuntimeUrl = utils.ToProtoString(runtime.RuntimeUrl)
+	pbRuntime.Owner = utils.ToProtoString(runtime.Owner)
+	pbRuntime.Status = utils.ToProtoString(runtime.Status)
+	pbRuntime.CreateTime = utils.ToProtoTimestamp(runtime.CreateTime)
+	pbRuntime.StatusTime = utils.ToProtoTimestamp(runtime.StatusTime)
+	return &pbRuntime
 }
 
-func RuntimeEnvToPbs(runtimeEnvs []*Runtime) (pbRuntimeEnvs []*pb.RuntimeEnv) {
-	for _, runtimeEnv := range runtimeEnvs {
-		pbRuntimeEnvs = append(pbRuntimeEnvs, RuntimeToPb(runtimeEnv))
+func RuntimeToPbs(runtimes []*Runtime) (pbRuntimes []*pb.Runtime) {
+	for _, runtime := range runtimes {
+		pbRuntimes = append(pbRuntimes, RuntimeToPb(runtime))
 	}
 	return
 }

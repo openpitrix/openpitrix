@@ -16,7 +16,7 @@ import "protoc-gen-swagger/options/annotations.proto";
 message CreateClusterRequest {
 	google.protobuf.StringValue app_id = 1;
 	google.protobuf.StringValue version_id = 2;
-	google.protobuf.StringValue runtime_env_id = 3;
+	google.protobuf.StringValue runtime_id = 3;
 	google.protobuf.StringValue conf = 4;
 	repeated string advanced_param = 5;
 }
@@ -161,8 +161,9 @@ message ClusterNode {
 	google.protobuf.StringValue passphraseless = 20;
 	google.protobuf.StringValue advanced_actions = 21;
 	google.protobuf.StringValue image_id = 22;
-	google.protobuf.Timestamp create_time = 23;
-	google.protobuf.Timestamp status_time = 24;
+	google.protobuf.StringValue volume_id = 23;
+	google.protobuf.Timestamp create_time = 24;
+	google.protobuf.Timestamp status_time = 25;
 }
 
 message Cluster {
@@ -173,7 +174,7 @@ message Cluster {
 	google.protobuf.StringValue version_id = 5;
 	google.protobuf.StringValue status = 6;
 	google.protobuf.StringValue transition_status = 7;
-	google.protobuf.StringValue runtime_env_id = 8;
+	google.protobuf.StringValue runtime_id = 8;
 	google.protobuf.StringValue owner = 9;
 	google.protobuf.StringValue name = 10;
 	google.protobuf.StringValue description = 11;
@@ -195,7 +196,7 @@ message DescribeClustersRequest {
 	repeated string app_id = 2;
 	repeated string version_id = 3;
 	repeated string status = 4;
-	repeated string runtime_env_id = 5;
+	repeated string runtime_id = 5;
 	repeated string frontgate_id = 6;
 	google.protobuf.StringValue external_cluster_id = 7;
 	// default is 20, max value is 200
@@ -272,24 +273,8 @@ service ClusterManager {
 			body: "*"
 		};
 	}
-	rpc ModifyCluster (ModifyClusterRequest) returns (ModifyClusterResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify cluster"
-		};
-		option (google.api.http) = {
-			patch: "/v1/clusters"
-			body: "*"
-		};
-	}
-	rpc ModifyClusterNode (ModifyClusterNodeRequest) returns (ModifyClusterNodeResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify cluster node"
-		};
-		option (google.api.http) = {
-			patch: "/v1/clusters"
-			body: "*"
-		};
-	}
+	rpc ModifyCluster (ModifyClusterRequest) returns (ModifyClusterResponse);
+	rpc ModifyClusterNode (ModifyClusterNodeRequest) returns (ModifyClusterNodeResponse);
 	rpc DeleteClusters (DeleteClustersRequest) returns (DeleteClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "delete clusters"

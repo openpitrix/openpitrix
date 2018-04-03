@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -18,7 +18,7 @@ import (
 
 type Frontgate struct {
 	*pi.Pi
-	Runtime *runtimeenvclient.Runtime
+	Runtime *runtimeclient.Runtime
 }
 
 func (f *Frontgate) getFrontgateFromDb(vpcId, userId string) ([]*models.Cluster, error) {
@@ -84,7 +84,7 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 	var frontgate *models.Cluster
 	err := f.Etcd.DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
-		vpc, err := f.Runtime.RuntimeInterface.DescribeVpc(vpcId)
+		vpc, err := f.Runtime.ProviderInterface.DescribeVpc(vpcId)
 		if err != nil {
 			return err
 		}

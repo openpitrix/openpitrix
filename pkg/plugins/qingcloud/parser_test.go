@@ -393,7 +393,7 @@ var hbaseCluster = models.Cluster{
 	Owner:              "",
 	GlobalUuid:         "",
 	UpgradeStatus:      "",
-	RuntimeEnvId:       "",
+	RuntimeId:          "",
 }
 
 var hbaseClusterCommons = map[string]models.ClusterCommon{

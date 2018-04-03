@@ -25,7 +25,7 @@ type Job struct {
 	VersionId  string
 	JobAction  string
 	Directive  string
-	Runtime    string
+	Provider   string
 	Owner      string
 	Status     string
 	ErrorCode  uint32
@@ -37,7 +37,7 @@ type Job struct {
 
 var JobColumns = GetColumnsFromStruct(&Job{})
 
-func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, runtime, userId string) *Job {
+func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, provider, userId string) *Job {
 	if jobId == "" {
 		jobId = NewJobId()
 	} else if jobId == constants.PlaceHolder {
@@ -50,7 +50,7 @@ func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, runtime, u
 		VersionId:  versionId,
 		JobAction:  jobAction,
 		Directive:  directive,
-		Runtime:    runtime,
+		Provider:   provider,
 		Owner:      userId,
 		Status:     constants.StatusPending,
 		CreateTime: time.Now(),
@@ -66,7 +66,7 @@ func JobToPb(job *Job) *pb.Job {
 	pbJob.VersionId = utils.ToProtoString(job.VersionId)
 	pbJob.JobAction = utils.ToProtoString(job.JobAction)
 	pbJob.Directive = utils.ToProtoString(job.Directive)
-	pbJob.Runtime = utils.ToProtoString(job.Runtime)
+	pbJob.Provider = utils.ToProtoString(job.Provider)
 	pbJob.Owner = utils.ToProtoString(job.Owner)
 	pbJob.Status = utils.ToProtoString(job.Status)
 	pbJob.ErrorCode = utils.ToProtoUInt32(job.ErrorCode)

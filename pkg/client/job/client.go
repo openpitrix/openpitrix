@@ -92,7 +92,7 @@ func SendJob(job *models.Job) (jobId string, err error) {
 		AppId:     pbJob.AppId,
 		VersionId: pbJob.VersionId,
 		JobAction: pbJob.JobAction,
-		Runtime:   pbJob.Runtime,
+		Provider:  pbJob.Provider,
 		Directive: pbJob.Directive,
 	}
 	jobId, err = CreateJob(jobRequest)

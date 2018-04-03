@@ -35,7 +35,7 @@ func Serve() {
 
 	logger.Infof("Openpitrix %s", version.ShortVersion)
 	logger.Infof("App service http://%s:%d", constants.AppManagerHost, constants.AppManagerPort)
-	logger.Infof("Runtime service http://%s:%d", constants.RuntimeManagerHost, constants.RuntimeEnvManagerPort)
+	logger.Infof("Runtime service http://%s:%d", constants.RuntimeManagerHost, constants.RuntimeManagerPort)
 	logger.Infof("Cluster service http://%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort)
 	logger.Infof("Repo service http://%s:%d", constants.RepoManagerHost, constants.RepoManagerPort)
 	logger.Infof("Job service http://%s:%d", constants.JobManagerHost, constants.JobManagerPort)
@@ -91,9 +91,9 @@ func mainHandler(ctx context.Context) http.Handler {
 		fmt.Sprintf("%s:%d", constants.AppManagerHost, constants.AppManagerPort),
 		opts,
 	)
-	err = pb.RegisterRuntimeEnvManagerHandlerFromEndpoint(
+	err = pb.RegisterRuntimeManagerHandlerFromEndpoint(
 		ctx, gwmux,
-		fmt.Sprintf("%s:%d", constants.RuntimeManagerHost, constants.RuntimeEnvManagerPort),
+		fmt.Sprintf("%s:%d", constants.RuntimeManagerHost, constants.RuntimeManagerPort),
 		opts,
 	)
 	err = pb.RegisterJobManagerHandlerFromEndpoint(

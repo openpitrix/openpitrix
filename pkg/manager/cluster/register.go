@@ -5,7 +5,7 @@
 package cluster
 
 import (
-	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -20,14 +20,14 @@ type Register struct {
 	Owner          string
 	ClusterType    int32
 	ClusterWrapper *models.ClusterWrapper
-	Runtime        *runtimeenvclient.Runtime
+	Runtime        *runtimeclient.Runtime
 }
 
 func (r *Register) RegisterClusterWrapper() error {
 	// register cluster
 	if r.ClusterWrapper.Cluster != nil {
 		r.ClusterWrapper.Cluster.ClusterId = r.ClusterId
-		r.ClusterWrapper.Cluster.RuntimeEnvId = r.Runtime.RuntimeEnvId
+		r.ClusterWrapper.Cluster.RuntimeId = r.Runtime.RuntimeId
 		r.ClusterWrapper.Cluster.FrontgateId = r.FrontgateId
 		r.ClusterWrapper.Cluster.VpcId = r.VpcId
 		r.ClusterWrapper.Cluster.Owner = r.Owner

@@ -61,8 +61,8 @@ type OpenpitrixCluster struct {
 	// roles
 	Roles map[string]string `json:"roles,omitempty"`
 
-	// runtime env id
-	RuntimeEnvID string `json:"runtime_env_id,omitempty"`
+	// runtime id
+	RuntimeID string `json:"runtime_id,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`

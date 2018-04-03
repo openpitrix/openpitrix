@@ -20,7 +20,7 @@ type Server struct {
 
 func Serve(cfg *config.Config) {
 	s := Server{pi.NewPi(cfg)}
-	manager.NewGrpcServer("runtime-manager", constants.RuntimeEnvManagerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterRuntimeEnvManagerServer(server, &s)
+	manager.NewGrpcServer("runtime-manager", constants.RuntimeManagerPort).Serve(func(server *grpc.Server) {
+		pb.RegisterRuntimeManagerServer(server, &s)
 	})
 }

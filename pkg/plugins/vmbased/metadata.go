@@ -9,7 +9,7 @@ import (
 
 	"encoding/json"
 
-	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -17,7 +17,7 @@ import (
 
 type Metadata struct {
 	ClusterWrapper *models.ClusterWrapper
-	Runtime        *runtimeenvclient.Runtime
+	Runtime        *runtimeclient.Runtime
 }
 
 /*

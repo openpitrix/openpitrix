@@ -6,7 +6,6 @@ package models
 
 import (
 	"encoding/json"
-	"time"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 )
@@ -15,12 +14,12 @@ type Instance struct {
 	InstanceId       string
 	NodeId           string
 	Name             string
-	Discription      string
 	ImageId          string
 	Cpu              int
 	Memory           int
 	Gpu              int
-	VolumeIds        string
+	PrivateIp        string
+	VolumeId         string
 	LoginPasswd      string
 	Subnet           string
 	UserDataValue    string
@@ -28,7 +27,9 @@ type Instance struct {
 	Zone             string
 	Status           string
 	TransitionStatus string
-	Timeout          time.Time
+	RuntimeId        string
+	TargetJobId      string // target cloud job id
+	Timeout          int
 }
 
 func NewInstance(data string) (*Instance, error) {

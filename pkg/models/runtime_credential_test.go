@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRuntimeEnvCredentialContentConvert(t *testing.T) {
+func TestRuntimeCredentialContentConvert(t *testing.T) {
 	testMaps := []map[string]string{
 		{
 			"11": "22",

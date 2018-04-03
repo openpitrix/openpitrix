@@ -109,25 +109,28 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 	}
 
 	processor := NewProcessor(job)
-	processor.Pre()
-	defer processor.Post()
-
-	runtimeInterface, err := plugins.GetRuntimePlugin(job.Runtime)
+	err = processor.Pre()
 	if err != nil {
-		logger.Errorf("No such runtime [%s]. ", job.Runtime)
 		return err
 	}
-	module, err := runtimeInterface.SplitJobIntoTasks(job)
+	defer processor.Final()
+
+	providerInterface, err := plugins.GetProviderPlugin(job.Provider)
 	if err != nil {
-		logger.Errorf("Failed to split job [%s] into tasks with runtime [%s]: %+v",
-			job.JobId, job.Runtime, err)
+		logger.Errorf("No such provider [%s]. ", job.Provider)
+		return err
+	}
+	module, err := providerInterface.SplitJobIntoTasks(job)
+	if err != nil {
+		logger.Errorf("Failed to split job [%s] into tasks with provider [%s]: %+v",
+			job.JobId, job.Provider, err)
 		return err
 	}
 
 	err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
 		if parent != nil {
 			for _, parentTask := range parent.Tasks {
-				err = taskclient.WaitTask(parentTask.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+				err = taskclient.WaitTask(parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout)*time.Second, constants.WaitTaskInterval)
 				if err != nil {
 					logger.Errorf("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 					return err
@@ -146,10 +149,12 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		return nil
 	})
 
-	if err == nil {
-		job.Status = constants.StatusSuccessful
+	if err != nil {
+		return err
 	}
-	return err
+
+	job.Status = constants.StatusSuccessful
+	return processor.Post()
 }
 
 func (c *Controller) HandleJobs() {

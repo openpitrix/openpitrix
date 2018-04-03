@@ -5,6 +5,8 @@
 package job
 
 import (
+	"context"
+
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -24,66 +26,72 @@ func NewProcessor(job *models.Job) *Processor {
 }
 
 // Pre process when job is start
-func (j *Processor) Pre() {
+func (j *Processor) Pre() error {
 	var err error
+	ctx := context.Background()
+	client, err := clusterclient.NewClusterManagerClient(ctx)
+	if err != nil {
+		logger.Errorf("Executing job [%s] pre processor failed: %+v", j.Job.JobId, err)
+		return err
+	}
 	switch j.Job.JobAction {
 	case constants.ActionCreateCluster:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusCreating),
 		})
 	case constants.ActionUpgradeCluster:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusUpgrading),
 		})
 	case constants.ActionRollbackCluster:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusRollbacking),
 		})
 	case constants.ActionResizeCluster:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusResizing),
 		})
 	case constants.ActionAddClusterNodes:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusScaling),
 		})
 	case constants.ActionDeleteClusterNodes:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusScaling),
 		})
 	case constants.ActionStopClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusStopping),
 		})
 	case constants.ActionStartClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusStarting),
 		})
 	case constants.ActionDeleteClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusDeleting),
 		})
 	case constants.ActionRecoverClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusRecovering),
 		})
 	case constants.ActionCeaseClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusCeasing),
 		})
 	case constants.ActionUpdateClusterEnv:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
 			TransitionStatus: utils.ToProtoString(constants.StatusUpdating),
 		})
@@ -94,89 +102,101 @@ func (j *Processor) Pre() {
 	if err != nil {
 		logger.Panicf("Executing job [%s] pre processor failed: %+v", j.Job.JobId, err)
 	}
+	return err
 }
 
 // Post process when job is done
-func (j *Processor) Post() {
+func (j *Processor) Post() error {
 	var err error
+	ctx := context.Background()
+	client, err := clusterclient.NewClusterManagerClient(ctx)
+	if err != nil {
+		logger.Errorf("Executing job [%s] post processor failed: %+v", j.Job.JobId, err)
+		return err
+	}
 	switch j.Job.JobAction {
 	case constants.ActionCreateCluster:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusActive),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusActive),
 		})
 	case constants.ActionUpgradeCluster:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusActive),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusActive),
 		})
 	case constants.ActionRollbackCluster:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusActive),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusActive),
 		})
 	case constants.ActionResizeCluster:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusActive),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusActive),
 		})
 	case constants.ActionAddClusterNodes:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusActive),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusActive),
 		})
 	case constants.ActionDeleteClusterNodes:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusActive),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusActive),
 		})
 	case constants.ActionStopClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusStopped),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusStopped),
 		})
 	case constants.ActionStartClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusActive),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusActive),
 		})
 	case constants.ActionDeleteClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusDeleted),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusDeleted),
 		})
 	case constants.ActionRecoverClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusActive),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusActive),
 		})
 	case constants.ActionCeaseClusters:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusCeased),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusCeased),
 		})
 	case constants.ActionUpdateClusterEnv:
-		err = clusterclient.ModifyCluster(&pb.ModifyClusterRequest{
-			ClusterId:        utils.ToProtoString(j.Job.ClusterId),
-			Status:           utils.ToProtoString(constants.StatusActive),
-			TransitionStatus: utils.ToProtoString(""),
+		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+			ClusterId: utils.ToProtoString(j.Job.ClusterId),
+			Status:    utils.ToProtoString(constants.StatusActive),
 		})
 	default:
 		logger.Errorf("Unknown job action [%s]", j.Job.JobAction)
 	}
 
 	if err != nil {
-		logger.Panicf("Executing job [%s] post processor failed: %+v", j.Job.JobId, err)
+		logger.Errorf("Executing job [%s] post processor failed: %+v", j.Job.JobId, err)
+	}
+	return err
+}
+
+func (j *Processor) Final() {
+	ctx := context.Background()
+	client, err := clusterclient.NewClusterManagerClient(ctx)
+	if err != nil {
+		logger.Errorf("Executing job [%s] final processor failed: %+v", j.Job.JobId, err)
+		return
+	}
+	_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+		ClusterId:        utils.ToProtoString(j.Job.ClusterId),
+		TransitionStatus: utils.ToProtoString(""),
+	})
+	if err != nil {
+		logger.Errorf("Executing job [%s] final processor failed: %+v", j.Job.JobId, err)
 	}
 }

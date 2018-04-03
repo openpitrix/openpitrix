@@ -81,8 +81,8 @@ type DescribeJobsParams struct {
 
 	*/
 	Offset *int64
-	/*Runtime*/
-	Runtime *string
+	/*Provider*/
+	Provider *string
 	/*Status*/
 	Status []string
 	/*VersionID*/
@@ -192,15 +192,15 @@ func (o *DescribeJobsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithRuntime adds the runtime to the describe jobs params
-func (o *DescribeJobsParams) WithRuntime(runtime *string) *DescribeJobsParams {
-	o.SetRuntime(runtime)
+// WithProvider adds the provider to the describe jobs params
+func (o *DescribeJobsParams) WithProvider(provider *string) *DescribeJobsParams {
+	o.SetProvider(provider)
 	return o
 }
 
-// SetRuntime adds the runtime to the describe jobs params
-func (o *DescribeJobsParams) SetRuntime(runtime *string) {
-	o.Runtime = runtime
+// SetProvider adds the provider to the describe jobs params
+func (o *DescribeJobsParams) SetProvider(provider *string) {
+	o.Provider = provider
 }
 
 // WithStatus adds the status to the describe jobs params
@@ -321,16 +321,16 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
-	if o.Runtime != nil {
+	if o.Provider != nil {
 
-		// query param runtime
-		var qrRuntime string
-		if o.Runtime != nil {
-			qrRuntime = *o.Runtime
+		// query param provider
+		var qrProvider string
+		if o.Provider != nil {
+			qrProvider = *o.Provider
 		}
-		qRuntime := qrRuntime
-		if qRuntime != "" {
-			if err := r.SetQueryParam("runtime", qRuntime); err != nil {
+		qProvider := qrProvider
+		if qProvider != "" {
+			if err := r.SetQueryParam("provider", qProvider); err != nil {
 				return err
 			}
 		}

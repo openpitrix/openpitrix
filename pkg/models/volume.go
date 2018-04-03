@@ -6,7 +6,6 @@ package models
 
 import (
 	"encoding/json"
-	"time"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 )
@@ -19,7 +18,9 @@ type Volume struct {
 	Status           string
 	TransitionStatus string
 	Zone             string
-	Timeout          time.Time
+	RuntimeId        string
+	TargetJobId      string // target cloud job id
+	Timeout          int
 }
 
 func NewVolume(data string) (*Volume, error) {
