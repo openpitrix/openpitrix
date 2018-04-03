@@ -53,6 +53,62 @@ func (a *Client) CreateRepo(params *CreateRepoParams) (*CreateRepoOK, error) {
 }
 
 /*
+CreateRepoLabel creates repo label
+*/
+func (a *Client) CreateRepoLabel(params *CreateRepoLabelParams) (*CreateRepoLabelOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateRepoLabelParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CreateRepoLabel",
+		Method:             "POST",
+		PathPattern:        "/v1/repo_labels",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &CreateRepoLabelReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CreateRepoLabelOK), nil
+
+}
+
+/*
+CreateRepoSelector creates repo selector
+*/
+func (a *Client) CreateRepoSelector(params *CreateRepoSelectorParams) (*CreateRepoSelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateRepoSelectorParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CreateRepoSelector",
+		Method:             "POST",
+		PathPattern:        "/v1/repo_selectors",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &CreateRepoSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CreateRepoSelectorOK), nil
+
+}
+
+/*
 DeleteRepo deletes repo
 */
 func (a *Client) DeleteRepo(params *DeleteRepoParams) (*DeleteRepoOK, error) {
@@ -77,6 +133,62 @@ func (a *Client) DeleteRepo(params *DeleteRepoParams) (*DeleteRepoOK, error) {
 		return nil, err
 	}
 	return result.(*DeleteRepoOK), nil
+
+}
+
+/*
+DeleteRepoLabel deletes repo label
+*/
+func (a *Client) DeleteRepoLabel(params *DeleteRepoLabelParams) (*DeleteRepoLabelOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteRepoLabelParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteRepoLabel",
+		Method:             "DELETE",
+		PathPattern:        "/v1/repo_labels",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteRepoLabelReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteRepoLabelOK), nil
+
+}
+
+/*
+DeleteRepoSelector deletes repo selector
+*/
+func (a *Client) DeleteRepoSelector(params *DeleteRepoSelectorParams) (*DeleteRepoSelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteRepoSelectorParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteRepoSelector",
+		Method:             "DELETE",
+		PathPattern:        "/v1/repo_selectors",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteRepoSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteRepoSelectorOK), nil
 
 }
 
@@ -133,6 +245,62 @@ func (a *Client) ModifyRepo(params *ModifyRepoParams) (*ModifyRepoOK, error) {
 		return nil, err
 	}
 	return result.(*ModifyRepoOK), nil
+
+}
+
+/*
+ModifyRepoLabel modifies repo label
+*/
+func (a *Client) ModifyRepoLabel(params *ModifyRepoLabelParams) (*ModifyRepoLabelOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewModifyRepoLabelParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ModifyRepoLabel",
+		Method:             "PATCH",
+		PathPattern:        "/v1/repo_labels",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ModifyRepoLabelReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ModifyRepoLabelOK), nil
+
+}
+
+/*
+ModifyRepoSelector modifies repo selector
+*/
+func (a *Client) ModifyRepoSelector(params *ModifyRepoSelectorParams) (*ModifyRepoSelectorOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewModifyRepoSelectorParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ModifyRepoSelector",
+		Method:             "PATCH",
+		PathPattern:        "/v1/repo_selectors",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ModifyRepoSelectorReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ModifyRepoSelectorOK), nil
 
 }
 

@@ -168,6 +168,45 @@ func TestRepoLabel(t *testing.T) {
 		t.Fatalf("describe repo with filter failed")
 	}
 
+	// create repo label on the repo just created
+	createRepoLabelParams := repo_manager.NewCreateRepoLabelParams()
+	createRepoLabelParams.SetBody(
+		&models.OpenpitrixCreateRepoLabelRequest{
+			RepoID:     repoId,
+			LabelKey:   "department",
+			LabelValue: "marketing",
+		})
+	createRepoLabelResp, err := client.RepoManager.CreateRepoLabel(createRepoLabelParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	repoLabelId := createRepoLabelResp.Payload.RepoLabel.RepoLabelID
+
+	// modify repo label
+	modifyRepoLabelParams := repo_manager.NewModifyRepoLabelParams()
+	modifyRepoLabelParams.SetBody(
+		&models.OpenpitrixModifyRepoLabelRequest{
+			RepoLabelID: repoLabelId,
+			LabelKey:    "department",
+			LabelValue:  "develop",
+		})
+	modifyRepoLabelResp, err := client.RepoManager.ModifyRepoLabel(modifyRepoLabelParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(modifyRepoLabelResp)
+
+	// delete repo label
+	deleteRepoLabelParams := repo_manager.NewDeleteRepoLabelParams()
+	deleteRepoLabelParams.WithBody(&models.OpenpitrixDeleteRepoLabelRequest{
+		RepoLabelID: repoLabelId,
+	})
+	deleteRepoLabelResp, err := client.RepoManager.DeleteRepoLabel(deleteRepoLabelParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(deleteRepoLabelResp)
+
 	// delete repo
 	deleteParams := repo_manager.NewDeleteRepoParams()
 	deleteParams.WithBody(&models.OpenpitrixDeleteRepoRequest{
@@ -215,6 +254,45 @@ func TestRepoSelector(t *testing.T) {
 	if describeResp.Payload.RepoSet[0].RepoID != repoId {
 		t.Fatalf("describe repo with filter failed")
 	}
+
+	// create repo selector on the repo just created
+	createRepoSelectorParams := repo_manager.NewCreateRepoSelectorParams()
+	createRepoSelectorParams.SetBody(
+		&models.OpenpitrixCreateRepoSelectorRequest{
+			RepoID:        repoId,
+			SelectorKey:   "runtime",
+			SelectorValue: "aws",
+		})
+	createRepoSelectorResp, err := client.RepoManager.CreateRepoSelector(createRepoSelectorParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	repoSelectorId := createRepoSelectorResp.Payload.RepoSelector.RepoSelectorID
+
+	// modify repo selector
+	modifyRepoSelectorParams := repo_manager.NewModifyRepoSelectorParams()
+	modifyRepoSelectorParams.SetBody(
+		&models.OpenpitrixModifyRepoSelectorRequest{
+			RepoSelectorID: repoSelectorId,
+			SelectorKey:    "runtime",
+			SelectorValue:  "qingcloud",
+		})
+	modifyRepoSelectorResp, err := client.RepoManager.ModifyRepoSelector(modifyRepoSelectorParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(modifyRepoSelectorResp)
+
+	// delete repo selector
+	deleteRepoSelectorParams := repo_manager.NewDeleteRepoSelectorParams()
+	deleteRepoSelectorParams.WithBody(&models.OpenpitrixDeleteRepoSelectorRequest{
+		RepoSelectorID: repoSelectorId,
+	})
+	deleteRepoSelectorResp, err := client.RepoManager.DeleteRepoSelector(deleteRepoSelectorParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(deleteRepoSelectorResp)
 
 	// delete repo
 	deleteParams := repo_manager.NewDeleteRepoParams()

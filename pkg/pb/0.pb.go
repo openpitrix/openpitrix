@@ -104,6 +104,18 @@ It has these top-level messages:
 	Repo
 	DescribeReposRequest
 	DescribeReposResponse
+	CreateRepoLabelRequest
+	CreateRepoLabelResponse
+	ModifyRepoLabelRequest
+	ModifyRepoLabelResponse
+	DeleteRepoLabelRequest
+	DeleteRepoLabelResponse
+	CreateRepoSelectorRequest
+	CreateRepoSelectorResponse
+	ModifyRepoSelectorRequest
+	ModifyRepoSelectorResponse
+	DeleteRepoSelectorRequest
+	DeleteRepoSelectorResponse
 	IndexRepoRequest
 	IndexRepoResponse
 	RepoTask
