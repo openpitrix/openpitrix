@@ -21,10 +21,10 @@ func Diff(base, exclude []string) (result []string) {
 func Unique(ss []string) (result []string) {
 	smap := make(map[string]bool)
 	for _, s := range ss {
+		if !smap[s] {
+			result = append(result, s)
+		}
 		smap[s] = true
-	}
-	for s := range smap {
-		result = append(result, s)
 	}
 	return result
 }

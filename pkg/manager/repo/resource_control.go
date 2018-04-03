@@ -26,6 +26,32 @@ func (p *Server) getRepo(repoId string) (*models.Repo, error) {
 	return repo, nil
 }
 
+func (p *Server) getRepoLabel(repoLabelId string) (*models.RepoLabel, error) {
+	repoLabel := &models.RepoLabel{}
+	err := p.Db.
+		Select(models.RepoLabelColumns...).
+		From(models.RepoLabelTableName).
+		Where(db.Eq(models.ColumnRepoLabelId, repoLabelId)).
+		LoadOne(&repoLabel)
+	if err != nil {
+		return nil, err
+	}
+	return repoLabel, nil
+}
+
+func (p *Server) getRepoSelector(repoSelectorId string) (*models.RepoSelector, error) {
+	repoSelector := &models.RepoSelector{}
+	err := p.Db.
+		Select(models.RepoSelectorColumns...).
+		From(models.RepoSelectorTableName).
+		Where(db.Eq(models.ColumnRepoSelectorId, repoSelectorId)).
+		LoadOne(&repoSelector)
+	if err != nil {
+		return nil, err
+	}
+	return repoSelector, nil
+}
+
 func (p *Server) createProviders(repoId string, providers []string) error {
 	if len(providers) == 0 {
 		return nil

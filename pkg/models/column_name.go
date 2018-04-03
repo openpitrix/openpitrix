@@ -27,4 +27,7 @@ const (
 	ColumnVisibility = "visibility"
 
 	ColumnProvider = "provider"
+
+	ColumnRepoLabelId    = "repo_label_id"
+	ColumnRepoSelectorId = "repo_selector_id"
 )
