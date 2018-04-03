@@ -2167,6 +2167,9 @@ var Files = map[string]string{
         "image_id": {
           "type": "string"
         },
+        "volume_id": {
+          "type": "string"
+        },
         "create_time": {
           "type": "string",
           "format": "date-time"

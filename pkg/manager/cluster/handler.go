@@ -66,13 +66,13 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 
 	clusterId := models.NewClusterId()
 
-	clusterWrapper, err := runtime.RuntimeInterface.ParseClusterConf(versionId, conf)
+	clusterWrapper, err := runtime.ProviderInterface.ParseClusterConf(versionId, conf)
 	if err != nil {
 		logger.Errorf("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
 		return nil, err
 	}
 
-	subnet, err := runtime.RuntimeInterface.DescribeSubnet(clusterWrapper.Cluster.SubnetId)
+	subnet, err := runtime.ProviderInterface.DescribeSubnet(clusterWrapper.Cluster.SubnetId)
 	if err != nil {
 		logger.Errorf("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
 		return nil, err

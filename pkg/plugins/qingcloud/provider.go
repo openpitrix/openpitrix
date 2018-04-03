@@ -6,13 +6,10 @@ package qingcloud
 
 import (
 	"context"
+	"fmt"
 	"time"
 
-	"github.com/yunify/qingcloud-sdk-go/config"
-	"github.com/yunify/qingcloud-sdk-go/service"
-
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
-	runtimeenvclient "openpitrix.io/openpitrix/pkg/client/runtimeenv"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -23,39 +20,13 @@ import (
 )
 
 func init() {
-	plugins.RegisterRuntimePlugin(constants.RuntimeQingCloud, new(Runtime))
+	plugins.RegisterProviderPlugin(constants.ProviderQingCloud, new(Provider))
 }
 
-type Runtime struct {
+type Provider struct {
 }
 
-func (p *Runtime) initService() (qingCloudService *service.QingCloudService, err error) {
-	userConf, err := config.NewDefault()
-	if err != nil {
-		return
-	}
-	err = userConf.LoadUserConfig()
-	if err != nil {
-		return
-	}
-	qingCloudService, err = service.Init(userConf)
-	if err != nil {
-		return
-	}
-	return
-}
-
-func (p *Runtime) initJobService() (jobService *service.JobService, err error) {
-	qingcloudService, err := p.initService()
-	if err != nil {
-		logger.Errorf("Failed to init qingcloud api service: %v", err)
-		return
-	}
-	jobService, err = qingcloudService.Job(qingcloudService.Config.Zone)
-	return
-}
-
-func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
+func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
 		ctx := context.Background()
@@ -86,28 +57,15 @@ func (p *Runtime) ParseClusterConf(versionId, conf string) (*models.ClusterWrapp
 	return clusterWrapper, nil
 }
 
-func (p *Runtime) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
+func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
+	frame, err := vmbased.NewFrame(job)
+	if err != nil {
+		return nil, err
+	}
 
 	switch job.JobAction {
 	case constants.ActionCreateCluster:
 		// TODO: vpc, eip, vxnet
-
-		clusterWrapper, err := models.NewClusterWrapper(job.Directive)
-		if err != nil {
-			return nil, err
-		}
-
-		runtimeEnvId := clusterWrapper.Cluster.RuntimeEnvId
-		runtime, err := runtimeenvclient.NewRuntime(runtimeEnvId)
-		if err != nil {
-			return nil, err
-		}
-
-		frame := vmbased.Frame{
-			Job:            job,
-			ClusterWrapper: clusterWrapper,
-			Runtime:        runtime,
-		}
 
 		return frame.CreateClusterLayer(), nil
 
@@ -135,24 +93,56 @@ func (p *Runtime) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) 
 
 	default:
 		logger.Errorf("Unknown job action [%s]", job.JobAction)
+		return nil, fmt.Errorf("unknown job action [%s]", job.JobAction)
+	}
+	return nil, nil
+}
+
+func (p *Provider) HandleSubtask(task *models.Task) error {
+	handler, err := vmbased.NewProviderHandler(task.Target)
+	if err != nil {
+		return err
 	}
 
-	return nil, nil
+	switch task.TaskAction {
+	case vmbased.ActionRunInstances:
+		return handler.RunInstances(task)
+	case vmbased.ActionCreateVolumes:
+		return handler.CreateVolumes(task)
+	case vmbased.ActionWaitFrontgateAvailable:
+		// do nothing
+		return nil
+	default:
+		logger.Errorf("Unknown tas action [%s]", task.TaskAction)
+		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
+	}
 }
-func (p *Runtime) HandleSubtask(task *models.Task) error {
-	return nil
-}
-func (p *Runtime) WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
-	return nil
+func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error {
+	handler, err := vmbased.NewProviderHandler(task.Target)
+	if err != nil {
+		return err
+	}
+
+	switch task.TaskAction {
+	case vmbased.ActionRunInstances:
+		return handler.WaitInstances(task)
+	case vmbased.ActionCreateVolumes:
+		return handler.WaitVolumes(task)
+	case vmbased.ActionWaitFrontgateAvailable:
+		return handler.WaitFrontgateAvailable(task)
+	default:
+		logger.Errorf("Unknown tas action [%s]", task.TaskAction)
+		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
+	}
 }
 
-func (p *Runtime) DescribeSubnet(subnetId string) (*models.Subnet, error) {
+func (p *Provider) DescribeSubnet(subnetId string) (*models.Subnet, error) {
 	return nil, nil
 }
-func (p *Runtime) DescribeVpc(vpcId string) (*models.Vpc, error) {
+func (p *Provider) DescribeVpc(vpcId string) (*models.Vpc, error) {
 	return nil, nil
 }
 
-func (p *Runtime) RunInstance() error {
+func (p *Provider) RunInstance() error {
 	return nil
 }

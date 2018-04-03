@@ -68,10 +68,10 @@ func TestSplitJobIntoTasks(t *testing.T) {
 	}
 
 	runtime := &runtimeenvclient.Runtime{
-		RuntimeEnvId:     "rt-1234",
-		Runtime:          constants.RuntimeQingCloud,
-		Zone:             "testing",
-		RuntimeInterface: &Runtime{},
+		RuntimeEnvId:      "rt-1234",
+		Runtime:           constants.ProviderQingCloud,
+		Zone:              "testing",
+		ProviderInterface: &Provider{},
 	}
 
 	frame := &vmbased.Frame{

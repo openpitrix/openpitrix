@@ -21,6 +21,25 @@ type Frame struct {
 	Runtime        *runtimeenvclient.Runtime
 }
 
+func NewFrame(job *models.Job) (*Frame, error) {
+	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
+	if err != nil {
+		return nil, err
+	}
+
+	runtimeEnvId := clusterWrapper.Cluster.RuntimeEnvId
+	runtime, err := runtimeenvclient.NewRuntime(runtimeEnvId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Frame{
+		Job:            job,
+		ClusterWrapper: clusterWrapper,
+		Runtime:        runtime,
+	}, nil
+}
+
 func (f *Frame) startConfdServiceLayer() *models.TaskLayer {
 	startConfdTaskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
@@ -293,9 +312,10 @@ func (f *Frame) createVolumesLayer() *models.TaskLayer {
 			eachSize := int(size) / len(mountPoints)
 
 			volume := &models.Volume{
-				Name: clusterNode.ClusterId + "_" + nodeId,
-				Size: eachSize,
-				Zone: f.Runtime.Zone,
+				Name:      clusterNode.ClusterId + "_" + nodeId,
+				Size:      eachSize,
+				Zone:      f.Runtime.Zone,
+				RuntimeId: f.Runtime.RuntimeEnvId,
 			}
 			volumeTaskDirective, err := volume.ToString()
 			if err != nil {
@@ -340,14 +360,15 @@ func (f *Frame) runInstancesLayer() *models.TaskLayer {
 		}
 
 		instance := &models.Instance{
-			Name:    clusterNode.ClusterId + "_" + nodeId,
-			NodeId:  nodeId,
-			ImageId: clusterCommon.ImageId,
-			Cpu:     int(clusterRole.Cpu),
-			Memory:  int(clusterRole.Memory),
-			Gpu:     int(clusterRole.Gpu),
-			Subnet:  clusterNode.SubnetId,
-			Zone:    f.Runtime.Zone,
+			Name:      clusterNode.ClusterId + "_" + nodeId,
+			NodeId:    nodeId,
+			ImageId:   clusterCommon.ImageId,
+			Cpu:       int(clusterRole.Cpu),
+			Memory:    int(clusterRole.Memory),
+			Gpu:       int(clusterRole.Gpu),
+			Subnet:    clusterNode.SubnetId,
+			RuntimeId: f.Runtime.RuntimeEnvId,
+			Zone:      f.Runtime.Zone,
 		}
 		instanceTaskDirective, err := instance.ToString()
 		if err != nil {

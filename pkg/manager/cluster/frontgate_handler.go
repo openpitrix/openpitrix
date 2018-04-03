@@ -44,7 +44,7 @@ func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 		logger.Errorf("Get frontgate cluster conf failed. ")
 		return clusterId, err
 	}
-	clusterWrapper, err := f.Runtime.RuntimeInterface.ParseClusterConf(constants.FrontgateVersionId, conf)
+	clusterWrapper, err := f.Runtime.ProviderInterface.ParseClusterConf(constants.FrontgateVersionId, conf)
 	if err != nil {
 		logger.Errorf("Parse frontgate cluster conf failed. ")
 		return clusterId, err

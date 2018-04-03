@@ -161,8 +161,9 @@ message ClusterNode {
 	google.protobuf.StringValue passphraseless = 20;
 	google.protobuf.StringValue advanced_actions = 21;
 	google.protobuf.StringValue image_id = 22;
-	google.protobuf.Timestamp create_time = 23;
-	google.protobuf.Timestamp status_time = 24;
+	google.protobuf.StringValue volume_id = 23;
+	google.protobuf.Timestamp create_time = 24;
+	google.protobuf.Timestamp status_time = 25;
 }
 
 message Cluster {

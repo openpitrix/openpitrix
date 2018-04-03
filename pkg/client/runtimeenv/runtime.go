@@ -17,11 +17,12 @@ import (
 )
 
 type Runtime struct {
-	RuntimeEnvId     string
-	Runtime          string
-	Zone             string
-	RuntimeInterface plugins.RuntimeInterface
-	// TODO: need credential here
+	RuntimeEnvId      string
+	Runtime           string
+	Zone              string
+	ProviderInterface plugins.ProviderInterface
+	Credential        map[string]string
+	Url               string
 }
 
 func NewRuntime(runtimeEnvId string) (*Runtime, error) {
@@ -38,10 +39,10 @@ func NewRuntime(runtimeEnvId string) (*Runtime, error) {
 	}
 
 	result := &Runtime{
-		RuntimeEnvId:     runtimeEnvId,
-		Runtime:          runtime,
-		Zone:             zone,
-		RuntimeInterface: runtimeInterface,
+		RuntimeEnvId:      runtimeEnvId,
+		Runtime:           runtime,
+		Zone:              zone,
+		ProviderInterface: runtimeInterface,
 	}
 	return result, nil
 }
@@ -69,7 +70,7 @@ func getRuntimeEnv(runtimeEnvId string) (*pb.RuntimeEnv, error) {
 
 func getRuntime(runtimeEnv *pb.RuntimeEnv) string {
 	// TODO: need to parse runtime
-	return constants.RuntimeQingCloud
+	return constants.ProviderQingCloud
 }
 
 func getZone(runtimeEnv *pb.RuntimeEnv) string {

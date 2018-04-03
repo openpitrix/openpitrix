@@ -2,10 +2,12 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package vmbased
+package qingcloud
 
-import "openpitrix.io/openpitrix/pkg/models"
+const (
+	DefaultInstanceClass = 1
+	DefaultVolumeClass   = 3
 
-type VmBasedInterface interface {
-	RunInstance(instance *models.Instance) error
-}
+	DefaultLoginMode     = "passwd"
+	DefaultLoginPassword = "p12cHANgepwD"
+)

@@ -87,6 +87,9 @@ type OpenpitrixClusterNode struct {
 
 	// transition status
 	TransitionStatus string `json:"transition_status,omitempty"`
+
+	// volume id
+	VolumeID string `json:"volume_id,omitempty"`
 }
 
 // Validate validates this openpitrix cluster node

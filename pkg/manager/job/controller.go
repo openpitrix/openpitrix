@@ -109,8 +109,11 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 	}
 
 	processor := NewProcessor(job)
-	processor.Pre()
-	defer processor.Post()
+	err = processor.Pre()
+	if err != nil {
+		return err
+	}
+	defer processor.Final()
 
 	runtimeInterface, err := plugins.GetRuntimePlugin(job.Runtime)
 	if err != nil {
@@ -127,7 +130,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 	err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
 		if parent != nil {
 			for _, parentTask := range parent.Tasks {
-				err = taskclient.WaitTask(parentTask.TaskId, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+				err = taskclient.WaitTask(parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout)*time.Second, constants.WaitTaskInterval)
 				if err != nil {
 					logger.Errorf("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 					return err
@@ -146,10 +149,12 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		return nil
 	})
 
-	if err == nil {
-		job.Status = constants.StatusSuccessful
+	if err != nil {
+		return err
 	}
-	return err
+
+	job.Status = constants.StatusSuccessful
+	return processor.Post()
 }
 
 func (c *Controller) HandleJobs() {
