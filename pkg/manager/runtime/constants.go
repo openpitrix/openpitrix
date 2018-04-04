@@ -24,6 +24,11 @@ const (
 const (
 	NameMinLength       = "1"
 	NameMaxLength       = "255"
+	ProviderMinLength   = "1"
+	ProviderMaxLength   = "255"
+	ZoneMinLength       = "1"
+	ZoneMaxLength       = "255"
+	CredentialMinLength = 1
 	LabelKeyMinLength   = "1"
 	LabelKeyMaxLength   = "50"
 	LabelValueMinLength = "1"
@@ -31,10 +36,6 @@ const (
 	LabelKeyFmt         = "^[a-zA-Z]([-_a-zA-Z0-9]*[a-zA-Z0-9])?$"
 )
 
-const (
-	LabelRuntime = "runtime"
-	LabelZone    = "zone"
-)
+var VmBaseProviders = []string{"qingcloud"}
 
-var VmBaseRuntime = []string{"qingcloud"}
-var CmBaseRuntime = []string{"kubernetes"}
+const KubernetesProvider = "kubernetes"

@@ -6,10 +6,12 @@ package runtime
 
 import (
 	"fmt"
-
 	"net/url"
 
+	"github.com/ghodss/yaml"
+
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/utils"
 )
 
 func LabelStringToMap(labelString string) (map[string]string, error) {
@@ -67,4 +69,32 @@ func LabelStructToMap(labelStructs []*models.RuntimeLabel) map[string]string {
 		mapLabel[labelStruct.LabelKey] = labelStruct.LabelValue
 	}
 	return mapLabel
+}
+
+func RuntimeCredentialStringToJsonString(provider, content string) string {
+	if i := utils.FindString(VmBaseProviders, provider); i != -1 {
+		return content
+	}
+	if KubernetesProvider == provider {
+		content, err := yaml.YAMLToJSON([]byte(content))
+		if err != nil {
+			panic(err)
+		}
+		return string(content)
+	}
+	panic("unsupport provider")
+}
+
+func RuntimeCredentialJsonStringToString(provider, content string) string {
+	if i := utils.FindString(VmBaseProviders, provider); i != -1 {
+		return content
+	}
+	if KubernetesProvider == provider {
+		content, err := yaml.JSONToYAML([]byte(content))
+		if err != nil {
+			panic(err)
+		}
+		return string(content)
+	}
+	panic("unsupport provider")
 }

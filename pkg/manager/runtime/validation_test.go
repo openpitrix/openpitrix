@@ -152,56 +152,13 @@ func TestValidateLabelMapFmt(t *testing.T) {
 	}
 }
 
-func TestValidateLabelMapContent(t *testing.T) {
-	validLabelMaps := []map[string][]string{
-		{
-			"a-b":     {"adsf"},
-			"runtime": {"kubernetes"},
-		},
-		{
-			"test-test_test": {"validatename!2313"},
-			"Aest---_test":   {"2131"},
-			"runtime":        {"qingcloud"},
-			"zone":           {"test"},
-		},
-	}
-	invalidLabelMaps := []map[string][]string{
-		{
-			"a-b": {"adsf"},
-		},
-		{
-			"a-b":     {"adsf"},
-			"runtime": {"kubernetess"},
-		},
-		{
-			"test-test_test": {"validatename!2313"},
-			"Aest---_test":   {"2131"},
-			"runtime":        {"qingcloud"},
-		},
-	}
-	for _, validLabelMap := range validLabelMaps {
-		err := ValidateLabelMapContent(validLabelMap)
-		if err != nil {
-			t.Fatalf("%+v should be invalidLabelMaps", validLabelMap)
-		}
-	}
-	for _, invalidLabelMap := range invalidLabelMaps {
-		err := ValidateLabelMapContent(invalidLabelMap)
-		if err == nil {
-			t.Fatalf("%+v should be invalidLabelMap", invalidLabelMap)
-		}
-	}
-}
-
 func TestValidateLabelString(t *testing.T) {
 	validLabelStrings := []string{
 		"runtime=qingcloud&zone=test&test-test_test=314134",
 		"runtime=kubernetes&Aest---_test=3242",
 	}
 	invalidLabelStrings := []string{
-		"zone=peka",
-		"a=b",
-		"runtime=qingcloud&zone=pkea&zone=111,",
+		"a!=b",
 		"runtime=kubernetes&__=1",
 	}
 	for _, validLabelString := range validLabelStrings {

@@ -63,6 +63,8 @@ for the describe runtimes operation typically these are written to a http.Reques
 */
 type DescribeRuntimesParams struct {
 
+	/*Label*/
+	Label *string
 	/*Limit*/
 	Limit *int64
 	/*Offset*/
@@ -73,8 +75,6 @@ type DescribeRuntimesParams struct {
 	RuntimeID []string
 	/*SearchWord*/
 	SearchWord *string
-	/*Selector*/
-	Selector *string
 	/*Status*/
 	Status []string
 
@@ -114,6 +114,17 @@ func (o *DescribeRuntimesParams) WithHTTPClient(client *http.Client) *DescribeRu
 // SetHTTPClient adds the HTTPClient to the describe runtimes params
 func (o *DescribeRuntimesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithLabel adds the label to the describe runtimes params
+func (o *DescribeRuntimesParams) WithLabel(label *string) *DescribeRuntimesParams {
+	o.SetLabel(label)
+	return o
+}
+
+// SetLabel adds the label to the describe runtimes params
+func (o *DescribeRuntimesParams) SetLabel(label *string) {
+	o.Label = label
 }
 
 // WithLimit adds the limit to the describe runtimes params
@@ -171,17 +182,6 @@ func (o *DescribeRuntimesParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
 }
 
-// WithSelector adds the selector to the describe runtimes params
-func (o *DescribeRuntimesParams) WithSelector(selector *string) *DescribeRuntimesParams {
-	o.SetSelector(selector)
-	return o
-}
-
-// SetSelector adds the selector to the describe runtimes params
-func (o *DescribeRuntimesParams) SetSelector(selector *string) {
-	o.Selector = selector
-}
-
 // WithStatus adds the status to the describe runtimes params
 func (o *DescribeRuntimesParams) WithStatus(status []string) *DescribeRuntimesParams {
 	o.SetStatus(status)
@@ -200,6 +200,22 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 		return err
 	}
 	var res []error
+
+	if o.Label != nil {
+
+		// query param label
+		var qrLabel string
+		if o.Label != nil {
+			qrLabel = *o.Label
+		}
+		qLabel := qrLabel
+		if qLabel != "" {
+			if err := r.SetQueryParam("label", qLabel); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.Limit != nil {
 
@@ -259,22 +275,6 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.Selector != nil {
-
-		// query param selector
-		var qrSelector string
-		if o.Selector != nil {
-			qrSelector = *o.Selector
-		}
-		qSelector := qrSelector
-		if qSelector != "" {
-			if err := r.SetQueryParam("selector", qSelector); err != nil {
 				return err
 			}
 		}

@@ -31,10 +31,7 @@ var IndexedColumns = map[string][]string{
 		"repo_id", "name", "type", "visibility", "status",
 	},
 	RuntimeTableName: {
-		"runtime_env_id", "status", "owner",
-	},
-	RuntimeCredentialTableName: {
-		"runtime_env_credential_id", "status", "owner",
+		"runtime_id", "provider", "zone", "status", "owner",
 	},
 	RepoLabelTableName: {
 		"repo_id", "repo_label_id", "status",
@@ -49,7 +46,6 @@ var IndexedColumns = map[string][]string{
 
 var SearchWordColumnTable = []string{
 	RuntimeTableName,
-	RuntimeCredentialTableName,
 	AppTableName, AppVersionTableName,
 }
 
@@ -68,10 +64,7 @@ var SearchColumns = map[string][]string{
 		"job_id", "task_id", "status",
 	},
 	RuntimeTableName: {
-		"runtime_env_id", "name",
-	},
-	RuntimeCredentialTableName: {
-		"runtime_env_credential_id", "name",
+		"runtime_id", "name",
 	},
 }
 

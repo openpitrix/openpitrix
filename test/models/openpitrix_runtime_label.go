@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixRuntimeLabel
 type OpenpitrixRuntimeLabel struct {
 
+	// create time
+	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
+
 	// label key
 	LabelKey string `json:"label_key,omitempty"`
 

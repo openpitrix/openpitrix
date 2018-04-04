@@ -117,15 +117,8 @@ It has these top-level messages:
 	ModifyRuntimeResponse
 	DeleteRuntimeRequest
 	DeleteRuntimeResponse
-	RuntimeCredential
-	CreateRuntimeCredentialRequset
-	CreateRuntimeCredentialResponse
-	DescribeRuntimeCredentialsRequset
-	DescribeRuntimeCredentialsResponse
-	ModifyRuntimeCredentialRequest
-	ModifyRuntimeCredentialResponse
-	DeleteRuntimeCredentialRequset
-	DeleteRuntimeCredentialResponse
+	DescribeRuntimeProviderZonesRequest
+	DescribeRuntimeProviderZonesResponse
 	CreateTaskRequest
 	CreateTaskResponse
 	Task
