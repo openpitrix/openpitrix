@@ -3295,12 +3295,6 @@
 			"revisionTime": "2017-11-16T01:04:27Z"
 		},
 		{
-			"checksumSHA1": "6qWBaWDXKAgSeT8yJKPVmonhyso=",
-			"path": "openpitrix.io/libconfd",
-			"revision": "5d189e62e1221a8894dc35bb94535f180364b70b",
-			"revisionTime": "2018-03-21T23:02:15Z"
-		},
-		{
 			"checksumSHA1": "xRKxbmjgtGOLl2cHeVgr35ONhVg=",
 			"path": "vbom.ml/util/sortorder",
 			"revision": "256737ac55c46798123f754ab7d2c784e2c71783",
