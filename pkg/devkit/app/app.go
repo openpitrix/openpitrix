@@ -13,7 +13,7 @@ type BufferedFile struct {
 type App struct {
 	Metadata *Metadata `json:"metadata,omitempty"`
 
-	Config *Config `json:"config,omitempty"`
+	ConfigTemplate *ConfigTemplate `json:"config,omitempty"`
 
 	ClusterTemplate *ClusterTemplate `json:"cluster_template,omitempty"`
 

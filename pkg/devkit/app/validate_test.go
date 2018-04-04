@@ -2,43 +2,14 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package devkit
+package app
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"strings"
-
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"encoding/json"
+	"testing"
 )
 
-const defaultClusterJsonTmpl = `
-{
-    "name": "{{.cluster.name}}",
-    "description": "{{.cluster.description}}",
-    "vxnet": "{{.cluster.vxnet}}",
-    "nodes": [{
-        "role": "role_name1",
-        "container": {
-            "type": "docker",
-            "image": "nginx"
-        },
-        "instance_class": "{{.cluster.role_name1.instance_class}}",
-        "count": "{{.cluster.role_name1.count}}",
-        "cpu": "{{.cluster.role_name1.cpu}}",
-        "memory": "{{.cluster.role_name1.memory}}",
-        "volume": {
-            "size": "{{.cluster.role_name1.volume_size}}",
-            "mount_point": "/test_data",
-            "filesystem": "ext4"
-        }
-    }]
-}
-`
-
-const defaultConfigJson = `
+var testConfigJson = `
 {
     "type": "array",
     "properties": [{
@@ -123,58 +94,80 @@ const defaultConfigJson = `
 }
 `
 
-func Create(metadata *app.Metadata, dir string) (string, error) {
-	path, err := filepath.Abs(dir)
+var testErrorClusterTmpl = `
+{
+    "name": "{{.cluster.name}}",
+    "description": "{{.cluster.description}}",
+    "vxnet": "{{.cluster.vxnet}}",
+    "nodes": [{
+        "role": "role_name1",
+        "role2": "role_name1",
+        "container": {
+            "type": "kvm",
+            "zone": "pek3a",
+            "image": "img-hlhql5ea"
+        },
+        "instance_class": "{{.cluster.role_name1.instance_class}}",
+        "count": "{{.cluster.role_name1.count}}"9999,
+        "cpu": "{{.cluster.role_name1.cpu}}",
+        "memory": "{{.cluster.role_name1.memory}}",
+        "volume": {
+            "size": "{{.cluster.role_name1.volume_size}}",
+            "mount_point": "/test_data",
+            "filesystem": "ext4"
+        }
+    }]
+}
+`
+
+var testClusterTmpl = `
+{
+    "name": "{{.cluster.name}}",
+    "description": "{{.cluster.description}}",
+    "vxnet": "{{.cluster.vxnet}}",
+    "nodes": [{
+        "role": "role_name1",
+        "container": {
+            "type": "kvm",
+            "zone": "pek3a",
+            "image": "img-hlhql5ea"
+        },
+        "instance_class": "{{.cluster.role_name1.instance_class}}",
+        "count": "{{.cluster.role_name1.count}}",
+        "cpu": "{{.cluster.role_name1.cpu}}",
+        "memory": "{{.cluster.role_name1.memory}}",
+        "volume": {
+            "size": "{{.cluster.role_name1.volume_size}}",
+            "mount_point": "/test_data",
+            "filesystem": "ext4"
+        }
+    }]
+}
+`
+
+func TestValidateClusterTmpl(t *testing.T) {
+	// normal tmpl
+	clusterTmpl := &ClusterTemplate{Raw: testClusterTmpl}
+	configJson, err := UnmarshalConfigTemplate([]byte(testConfigJson))
 	if err != nil {
-		return path, err
+		t.Fatal(err)
+	}
+	config := configJson.GetDefaultConfig()
+	j, err := json.Marshal(&config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(j))
+	err = ValidateClusterTmpl(clusterTmpl, &config)
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	if fi, err := os.Stat(path); err != nil {
-		return path, err
-	} else if !fi.IsDir() {
-		return path, fmt.Errorf("no such directory [%s]", path)
+	// error tmpl
+	clusterTmpl = &ClusterTemplate{Raw: testErrorClusterTmpl}
+	err = ValidateClusterTmpl(clusterTmpl, &config)
+	if err == nil {
+		t.Fatal("error cluster tmpl must failed")
 	}
-
-	n := metadata.Name
-	cdir := filepath.Join(path, n)
-	if fi, err := os.Stat(cdir); err == nil && !fi.IsDir() {
-		return cdir, fmt.Errorf("file [%s] already exists and is not a directory", cdir)
-	}
-	if err := os.MkdirAll(cdir, 0755); err != nil {
-		return cdir, err
-	}
-
-	cf := filepath.Join(cdir, PackageJson)
-	if _, err := os.Stat(cf); err != nil {
-		if err := savePackageJson(cf, metadata); err != nil {
-			return cdir, err
-		}
-	}
-
-	files := []struct {
-		path    string
-		content string
-	}{
-		{
-			// cluster.json.mustache
-			path:    filepath.Join(cdir, ClusterJsonTmpl),
-			content: strings.Replace(defaultClusterJsonTmpl, "<APPNAME>", metadata.Name, -1),
-		},
-		{
-			// config.json
-			path:    filepath.Join(cdir, ConfigJson),
-			content: strings.Replace(defaultConfigJson, "<APPNAME>", metadata.Name, -1),
-		},
-	}
-
-	for _, file := range files {
-		if _, err := os.Stat(file.path); err == nil {
-			// File exists and is okay. Skip it.
-			continue
-		}
-		if err := ioutil.WriteFile(file.path, []byte(file.content), 0644); err != nil {
-			return cdir, err
-		}
-	}
-	return cdir, nil
+	t.Log(err)
 }
