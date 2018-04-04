@@ -12,9 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixConfdConfig See https://godoc.org/openpitrix.io/libconfd#Config
-// swagger:model openpitrixConfdConfig
-type OpenpitrixConfdConfig struct {
+// DroneConfdConfig See https://godoc.org/openpitrix.io/libconfd#Config
+// swagger:model droneConfdConfig
+type DroneConfdConfig struct {
 
 	// conf dir
 	ConfDir string `json:"conf_dir,omitempty"`
@@ -35,8 +35,8 @@ type OpenpitrixConfdConfig struct {
 	SyncOnly bool `json:"sync_only,omitempty"`
 }
 
-// Validate validates this openpitrix confd config
-func (m *OpenpitrixConfdConfig) Validate(formats strfmt.Registry) error {
+// Validate validates this drone confd config
+func (m *DroneConfdConfig) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -46,7 +46,7 @@ func (m *OpenpitrixConfdConfig) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixConfdConfig) MarshalBinary() ([]byte, error) {
+func (m *DroneConfdConfig) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -54,8 +54,8 @@ func (m *OpenpitrixConfdConfig) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixConfdConfig) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixConfdConfig
+func (m *DroneConfdConfig) UnmarshalBinary(b []byte) error {
+	var res DroneConfdConfig
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

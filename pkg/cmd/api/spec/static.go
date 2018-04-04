@@ -2285,7 +2285,7 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixConfdBackendConfig": {
+    "droneConfdBackendConfig": {
       "type": "object",
       "properties": {
         "type": {
@@ -2315,7 +2315,7 @@ var Files = map[string]string{
       },
       "title": "See https://godoc.org/openpitrix.io/libconfd#BackendConfig"
     },
-    "openpitrixConfdConfig": {
+    "droneConfdConfig": {
       "type": "object",
       "properties": {
         "conf_dir": {
@@ -2342,14 +2342,19 @@ var Files = map[string]string{
       },
       "title": "See https://godoc.org/openpitrix.io/libconfd#Config"
     },
+    "googleprotobufEmpty": {
+      "type": "object",
+      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
+      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
+    },
     "openpitrixConfdInfo": {
       "type": "object",
       "properties": {
         "config": {
-          "$ref": "#/definitions/openpitrixConfdConfig"
+          "$ref": "#/definitions/droneConfdConfig"
         },
         "backend_config": {
-          "$ref": "#/definitions/openpitrixConfdBackendConfig"
+          "$ref": "#/definitions/droneConfdBackendConfig"
         }
       }
     },
@@ -2424,11 +2429,6 @@ var Files = map[string]string{
         }
       },
       "description": "Wrapper message for ` + "`" + `bytes` + "`" + `.\n\nThe JSON representation for ` + "`" + `BytesValue` + "`" + ` is JSON string."
-    },
-    "protobufEmpty": {
-      "type": "object",
-      "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
-      "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
     },
     "openpitrixCreateRepoRequest": {
       "type": "object",

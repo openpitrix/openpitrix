@@ -17,10 +17,10 @@ import (
 type OpenpitrixConfdInfo struct {
 
 	// backend config
-	BackendConfig *OpenpitrixConfdBackendConfig `json:"backend_config,omitempty"`
+	BackendConfig *DroneConfdBackendConfig `json:"backend_config,omitempty"`
 
 	// config
-	Config *OpenpitrixConfdConfig `json:"config,omitempty"`
+	Config *DroneConfdConfig `json:"config,omitempty"`
 }
 
 // Validate validates this openpitrix confd info
