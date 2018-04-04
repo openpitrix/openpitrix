@@ -12,9 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixConfdBackendConfig See https://godoc.org/openpitrix.io/libconfd#BackendConfig
-// swagger:model openpitrixConfdBackendConfig
-type OpenpitrixConfdBackendConfig struct {
+// DroneConfdBackendConfig See https://godoc.org/openpitrix.io/libconfd#BackendConfig
+// swagger:model droneConfdBackendConfig
+type DroneConfdBackendConfig struct {
 
 	// client ca keys
 	ClientCaKeys string `json:"client_ca_keys,omitempty"`
@@ -38,8 +38,8 @@ type OpenpitrixConfdBackendConfig struct {
 	Username string `json:"username,omitempty"`
 }
 
-// Validate validates this openpitrix confd backend config
-func (m *OpenpitrixConfdBackendConfig) Validate(formats strfmt.Registry) error {
+// Validate validates this drone confd backend config
+func (m *DroneConfdBackendConfig) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateHost(formats); err != nil {
@@ -53,7 +53,7 @@ func (m *OpenpitrixConfdBackendConfig) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *OpenpitrixConfdBackendConfig) validateHost(formats strfmt.Registry) error {
+func (m *DroneConfdBackendConfig) validateHost(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Host) { // not required
 		return nil
@@ -63,7 +63,7 @@ func (m *OpenpitrixConfdBackendConfig) validateHost(formats strfmt.Registry) err
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixConfdBackendConfig) MarshalBinary() ([]byte, error) {
+func (m *DroneConfdBackendConfig) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -71,8 +71,8 @@ func (m *OpenpitrixConfdBackendConfig) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixConfdBackendConfig) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixConfdBackendConfig
+func (m *DroneConfdBackendConfig) UnmarshalBinary(b []byte) error {
+	var res DroneConfdBackendConfig
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -84,8 +84,6 @@ It has these top-level messages:
 	FrontgateInfo
 	DroneInfo
 	ConfdInfo
-	ConfdConfig
-	ConfdBackendConfig
 	GetConfdInfoRequest
 	StartConfdRequest
 	StopConfdRequest
