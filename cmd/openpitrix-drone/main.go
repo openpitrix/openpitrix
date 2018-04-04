@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/urfave/cli"
 
 	"openpitrix.io/libconfd"
@@ -195,20 +194,20 @@ EXAMPLE:
 
 				_, err = client.StartConfd(context.Background(), &pbdrone.StartConfdRequest{
 					ConfdConfig: &pbdrone.ConfdConfig{
-						ConfDir:  &wrappers.StringValue{Value: cfg.ConfDir},
-						Interval: &wrappers.Int32Value{Value: int32(cfg.Interval)},
-						Prefix:   &wrappers.StringValue{Value: cfg.Prefix},
-						SyncOnly: &wrappers.BoolValue{Value: cfg.SyncOnly},
-						LogLevel: &wrappers.StringValue{Value: cfg.LogLevel},
+						ConfDir:  cfg.ConfDir,
+						Interval: int32(cfg.Interval),
+						Prefix:   cfg.Prefix,
+						SyncOnly: cfg.SyncOnly,
+						LogLevel: cfg.LogLevel,
 					},
 					ConfdBackendConfig: &pbdrone.ConfdBackendConfig{
-						Type:         &wrappers.StringValue{Value: bcfg.Type},
+						Type:         bcfg.Type,
 						Host:         append([]string{}, bcfg.Host...),
-						Username:     &wrappers.StringValue{Value: bcfg.UserName},
-						Password:     &wrappers.StringValue{Value: bcfg.Password},
-						ClientCaKeys: &wrappers.StringValue{Value: bcfg.ClientCAKeys},
-						ClientCert:   &wrappers.StringValue{Value: bcfg.ClientCert},
-						ClientKey:    &wrappers.StringValue{Value: bcfg.ClientKey},
+						Username:     bcfg.UserName,
+						Password:     bcfg.Password,
+						ClientCaKeys: bcfg.ClientCAKeys,
+						ClientCert:   bcfg.ClientCert,
+						ClientKey:    bcfg.ClientKey,
 					},
 				})
 				if err != nil {
