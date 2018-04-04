@@ -60,7 +60,7 @@ message StartConfdRequest {
 }
 
 message ConfdStatus {
-	string process_id = 1;
+	int32 process_id = 1;
 	string status = 2;
 	google.protobuf.Timestamp up_time = 3;
 }

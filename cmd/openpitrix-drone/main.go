@@ -193,22 +193,8 @@ EXAMPLE:
 				defer conn.Close()
 
 				_, err = client.StartConfd(context.Background(), &pbdrone.StartConfdRequest{
-					ConfdConfig: &pbdrone.ConfdConfig{
-						ConfDir:  cfg.ConfDir,
-						Interval: int32(cfg.Interval),
-						Prefix:   cfg.Prefix,
-						SyncOnly: cfg.SyncOnly,
-						LogLevel: cfg.LogLevel,
-					},
-					ConfdBackendConfig: &pbdrone.ConfdBackendConfig{
-						Type:         bcfg.Type,
-						Host:         append([]string{}, bcfg.Host...),
-						Username:     bcfg.UserName,
-						Password:     bcfg.Password,
-						ClientCaKeys: bcfg.ClientCAKeys,
-						ClientCert:   bcfg.ClientCert,
-						ClientKey:    bcfg.ClientKey,
-					},
+					ConfdConfig:        drone.To_pbdrone_ConfdConfig(cfg),
+					ConfdBackendConfig: drone.To_pbdrone_ConfdBackendConfig(bcfg),
 				})
 				if err != nil {
 					logger.Fatal(err)

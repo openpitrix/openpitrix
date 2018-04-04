@@ -8,6 +8,9 @@ import (
 	"fmt"
 	"net"
 	"strings"
+
+	"openpitrix.io/libconfd"
+	pbdrone "openpitrix.io/openpitrix/pkg/pb/drone"
 )
 
 func MakeDroneId(suffix string) string {
@@ -27,4 +30,48 @@ func getLocalIP() string {
 		}
 	}
 	return "127.0.0.1"
+}
+
+func To_pbdrone_ConfdConfig(cfg *libconfd.Config) *pbdrone.ConfdConfig {
+	return &pbdrone.ConfdConfig{
+		ConfDir:  cfg.ConfDir,
+		Interval: int32(cfg.Interval),
+		Prefix:   cfg.Prefix,
+		SyncOnly: cfg.SyncOnly,
+		LogLevel: cfg.LogLevel,
+	}
+}
+
+func To_libconfd_Config(cfg *pbdrone.ConfdConfig) *libconfd.Config {
+	return &libconfd.Config{
+		ConfDir:  cfg.ConfDir,
+		Interval: int(cfg.Interval),
+		Prefix:   cfg.Prefix,
+		SyncOnly: cfg.SyncOnly,
+		LogLevel: cfg.LogLevel,
+	}
+}
+
+func To_pbdrone_ConfdBackendConfig(bcfg *libconfd.BackendConfig) *pbdrone.ConfdBackendConfig {
+	return &pbdrone.ConfdBackendConfig{
+		Type:         bcfg.Type,
+		Host:         append([]string{}, bcfg.Host...),
+		Username:     bcfg.UserName,
+		Password:     bcfg.Password,
+		ClientCaKeys: bcfg.ClientCAKeys,
+		ClientCert:   bcfg.ClientCert,
+		ClientKey:    bcfg.ClientKey,
+	}
+}
+
+func To_libconfd_BackendConfig(bcfg *pbdrone.ConfdBackendConfig) *libconfd.BackendConfig {
+	return &libconfd.BackendConfig{
+		Type:         bcfg.Type,
+		Host:         append([]string{}, bcfg.Host...),
+		UserName:     bcfg.Username,
+		Password:     bcfg.Password,
+		ClientCAKeys: bcfg.ClientCaKeys,
+		ClientCert:   bcfg.ClientCert,
+		ClientKey:    bcfg.ClientKey,
+	}
 }
