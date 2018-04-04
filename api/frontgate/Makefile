@@ -9,7 +9,7 @@ GOOGLEAPIS_PATH=../third_party/googleapis
 GRPC_GATEWAY_PATH=../../vendor/github.com/grpc-ecosystem/grpc-gateway/
 VENDOR_PATH=../../vendor/
 
-PROTOC_FLAGS:=-I. -I$(GOOGLEAPIS_PATH) -I$(GRPC_GATEWAY_PATH) -I$(PROTOC_INC_PATH) -I$(VENDOR_PATH)
+PROTOC_FLAGS:=-I. -I.. -I$(GOOGLEAPIS_PATH) -I$(GRPC_GATEWAY_PATH) -I$(PROTOC_INC_PATH) -I$(VENDOR_PATH)
 
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"

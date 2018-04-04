@@ -13,6 +13,8 @@ import "google/protobuf/wrappers.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
+import "drone/drone.proto";
+
 message HandleSubtaskRequest {
 	google.protobuf.StringValue subtask_id = 1;
 	google.protobuf.StringValue subtask_action = 2;
@@ -79,29 +81,8 @@ message DroneInfo {
 	string ip = 2;
 }
 message ConfdInfo {
-	ConfdConfig config = 1;
-	ConfdBackendConfig backend_config = 2;
-}
-
-// See https://godoc.org/openpitrix.io/libconfd#Config
-message ConfdConfig {
-	google.protobuf.StringValue conf_dir = 1;
-	google.protobuf.Int32Value interval = 2;
-	google.protobuf.BoolValue noop = 3;
-	google.protobuf.StringValue prefix = 4;
-	google.protobuf.BoolValue sync_only = 5;
-	google.protobuf.StringValue log_level = 6;
-}
-
-// See https://godoc.org/openpitrix.io/libconfd#BackendConfig
-message ConfdBackendConfig {
-	google.protobuf.StringValue type = 1;
-	repeated string host = 2;
-	google.protobuf.StringValue username = 3;
-	google.protobuf.StringValue password = 4;
-	google.protobuf.StringValue client_ca_keys = 5;
-	google.protobuf.StringValue client_cert = 6;
-	google.protobuf.StringValue client_key = 7;
+	openpitrix.drone.ConfdConfig config = 1;
+	openpitrix.drone.ConfdBackendConfig backend_config = 2;
 }
 
 message GetConfdInfoRequest {
@@ -114,8 +95,8 @@ message StartConfdRequest {
 	string drone_id = 2;
 	string drone_ip = 3;
 
-	ConfdConfig confd_config = 4;
-	ConfdBackendConfig confd_backend_config = 5;
+	openpitrix.drone.ConfdConfig confd_config = 4;
+	openpitrix.drone.ConfdBackendConfig confd_backend_config = 5;
 }
 message StopConfdRequest {
 	string frontgate_id = 1;

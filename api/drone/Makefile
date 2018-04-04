@@ -9,7 +9,7 @@ GOOGLEAPIS_PATH=../third_party/googleapis
 GRPC_GATEWAY_PATH=../../vendor/github.com/grpc-ecosystem/grpc-gateway/
 VENDOR_PATH=../../vendor/
 
-PROTOC_FLAGS:=-I. -I$(GOOGLEAPIS_PATH) -I$(GRPC_GATEWAY_PATH) -I$(PROTOC_INC_PATH) -I$(VENDOR_PATH)
+PROTOC_FLAGS:=-I. -I.. -I$(GOOGLEAPIS_PATH) -I$(GRPC_GATEWAY_PATH) -I$(PROTOC_INC_PATH) -I$(VENDOR_PATH)
 
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
@@ -20,7 +20,7 @@ help:
 generate: $(PROTO_FILES) Makefile
 	mkdir -p ../../pkg/pb/drone
 	rm -rf ../../pkg/pb/drone/*
-	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:../../pkg/pb/drone ${PROTO_FILES}
+	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:$(shell go env GOPATH)/src ${PROTO_FILES}
 	@echo "ok"
 
 tools:

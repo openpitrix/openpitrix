@@ -6,8 +6,9 @@ syntax = "proto3";
 
 package openpitrix.drone;
 
+option go_package = "openpitrix.io/openpitrix/pkg/pb/drone;openpitrix_drone";
+
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
 
 service DroneService {
 	rpc GetInfo (Empty) returns (Info);
@@ -34,23 +35,23 @@ message Info {
 
 // See https://godoc.org/openpitrix.io/libconfd#Config
 message ConfdConfig {
-	google.protobuf.StringValue conf_dir = 1;
-	google.protobuf.Int32Value interval = 2;
-	google.protobuf.BoolValue noop = 3;
-	google.protobuf.StringValue prefix = 4;
-	google.protobuf.BoolValue sync_only = 5;
-	google.protobuf.StringValue log_level = 6;
+	string conf_dir = 1;
+	int32 interval = 2;
+	bool noop = 3;
+	string prefix = 4;
+	bool sync_only = 5;
+	string log_level = 6;
 }
 
 // See https://godoc.org/openpitrix.io/libconfd#BackendConfig
 message ConfdBackendConfig {
-	google.protobuf.StringValue type = 1;
+	string type = 1;
 	repeated string host = 2;
-	google.protobuf.StringValue username = 3;
-	google.protobuf.StringValue password = 4;
-	google.protobuf.StringValue client_ca_keys = 5;
-	google.protobuf.StringValue client_cert = 6;
-	google.protobuf.StringValue client_key = 7;
+	string username = 3;
+	string password = 4;
+	string client_ca_keys = 5;
+	string client_cert = 6;
+	string client_key = 7;
 }
 
 message StartConfdRequest {
