@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/ghodss/yaml"
 
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
@@ -13,14 +14,54 @@ import (
 
 func ValidateName(name string) error {
 	if !govalidator.StringLength(name, NameMinLength, NameMaxLength) {
-		return fmt.Errorf("the length of the name should be 1 to 255")
+		return fmt.Errorf("the length of name should be 1 to 255")
 	}
 	return nil
+}
+
+func ValidateProvider(provider string) error {
+	if !govalidator.StringLength(provider, ProviderMinLength, ProviderMaxLength) {
+		return fmt.Errorf("the length of provider should be 1 to 255")
+	}
+	if i := utils.FindString(VmBaseProviders, provider); i != -1 {
+		return nil
+	}
+	if KubernetesProvider == provider {
+		return nil
+	}
+	return fmt.Errorf("unsupport provider")
 }
 
 func ValidateURL(url string) error {
 	if !govalidator.IsURL(url) {
 		return fmt.Errorf("url format error")
+	}
+	return nil
+}
+
+func ValidateCredential(provider, url, credential string) error {
+	if len(credential) < CredentialMinLength {
+		return fmt.Errorf("the length of credential should > 0")
+	}
+	if i := utils.FindString(VmBaseProviders, provider); i != -1 {
+		_, err := yaml.JSONToYAML([]byte(credential))
+		if err != nil {
+			return err
+		}
+	}
+	if KubernetesProvider == provider {
+		_, err := yaml.YAMLToJSON([]byte(credential))
+		if err != nil {
+			return err
+		}
+	}
+	// TODO : validate credential by provider
+	return nil
+}
+
+func ValidateZone(zone string) error {
+	if !govalidator.StringLength(zone, ZoneMinLength, ZoneMaxLength) {
+		return fmt.Errorf("the length of zone should be 1 to 255")
 	}
 	return nil
 }
@@ -31,10 +72,6 @@ func ValidateLabelString(labelString string) error {
 		return err
 	}
 	err = ValidateLabelMapFmt(mapLabel)
-	if err != nil {
-		return err
-	}
-	err = ValidateLabelMapContent(mapLabel)
 	if err != nil {
 		return err
 	}
@@ -86,25 +123,6 @@ func ValidateLabelMapFmt(labelMap map[string][]string) error {
 	return nil
 }
 
-func ValidateLabelMapContent(labelMap map[string][]string) error {
-	runtimeValue, ok := labelMap[LabelRuntime]
-	if !ok {
-		return fmt.Errorf("label [runtime] is required")
-	}
-
-	if i := utils.FindString(VmBaseRuntime, runtimeValue[0]); i != -1 {
-		if _, ok := labelMap[LabelZone]; !ok {
-			return fmt.Errorf("vm-based runtime need label [zone]")
-		}
-		return nil
-	}
-
-	if i := utils.FindString(CmBaseRuntime, runtimeValue[0]); i != -1 {
-		return nil
-	}
-	return fmt.Errorf("runtime not support")
-}
-
 var LabelNameRegexp = regexp.MustCompile(LabelKeyFmt)
 
 func ValidateLabelKey(labelName string) error {
@@ -137,15 +155,24 @@ func validateCreateRuntimeRequest(req *pb.CreateRuntimeRequest) error {
 	if err != nil {
 		return err
 	}
+	err = ValidateProvider(req.Provider.GetValue())
+	if err != nil {
+		return err
+	}
+	err = ValidateCredential(req.Provider.GetValue(),
+		req.RuntimeUrl.GetValue(), req.RuntimeCredential.GetValue())
+	if err != nil {
+		return err
+	}
+	err = ValidateZone(req.Zone.GetValue())
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func validateModifyRuntimeRequest(req *pb.ModifyRuntimeRequest) error {
-	err := ValidateName(req.Name.GetValue())
-	if err != nil {
-		return err
-	}
-	err = ValidateLabelString(req.Labels.GetValue())
+	err := ValidateLabelString(req.Labels.GetValue())
 	if err != nil {
 		return err
 	}
@@ -156,8 +183,8 @@ func validateDeleteRuntimeRequest(req *pb.DeleteRuntimeRequest) error {
 	return nil
 }
 
-func validateDescribeRuntimeRequest(req *pb.DescribeRuntimesRequest) error {
-	err := ValidateSelectorString(req.Selector.GetValue())
+func validateDescribeRuntimesRequest(req *pb.DescribeRuntimesRequest) error {
+	err := ValidateSelectorString(req.Label.GetValue())
 	if err != nil {
 		return err
 	}

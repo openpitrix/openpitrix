@@ -14,127 +14,92 @@ import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
-message RuntimeLabel{
+message RuntimeLabel {
 	google.protobuf.StringValue runtime_label_id = 1;
 	google.protobuf.StringValue runtime_id = 2;
 	google.protobuf.StringValue label_key = 3;
 	google.protobuf.StringValue label_value = 4;
+	google.protobuf.Timestamp   create_time = 5;
 }
 
-message Runtime{
+message Runtime {
 	google.protobuf.StringValue runtime_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
-	google.protobuf.StringValue runtime_url = 4;
-	google.protobuf.StringValue runtime_credential_id = 5;
-	repeated RuntimeLabel labels = 6;
-	google.protobuf.StringValue owner = 7;
-	google.protobuf.StringValue status = 8;
-	google.protobuf.Timestamp create_time = 9;
-	google.protobuf.Timestamp status_time = 10;
+	google.protobuf.StringValue provider = 4;
+	google.protobuf.StringValue runtime_url = 5;
+	google.protobuf.StringValue zone = 6;
+	google.protobuf.StringValue runtime_credential = 7;
+	repeated RuntimeLabel labels = 8;
+	google.protobuf.StringValue owner = 9;
+	google.protobuf.StringValue status = 10;
+	google.protobuf.Timestamp create_time = 11;
+	google.protobuf.Timestamp status_time = 12;
 }
+
 
 message CreateRuntimeRequest {
 	google.protobuf.StringValue name = 1;
 	google.protobuf.StringValue description = 2;
-	google.protobuf.StringValue labels = 3;
-	google.protobuf.StringValue runtime_url = 4;
+	google.protobuf.StringValue provider = 4;
+	google.protobuf.StringValue runtime_url = 5;
+	google.protobuf.StringValue zone = 6;
+	google.protobuf.StringValue runtime_credential = 7;
+	google.protobuf.StringValue labels = 8;
 }
 
-message CreateRuntimeResponse{
+message CreateRuntimeResponse {
 	Runtime runtime = 1;
 }
 
-message DescribeRuntimesRequest{
+message DescribeRuntimesRequest {
 	repeated string runtime_id = 1;
 	repeated string status = 2;
 	google.protobuf.StringValue search_word = 3;
-	google.protobuf.StringValue selector = 4;
+	google.protobuf.StringValue label = 4;
 	repeated string owner = 5;
 	uint32 limit = 6;
 	uint32 offset = 7;
 }
 
-message DescribeRuntimesResponse{
+message DescribeRuntimesResponse {
 	uint32 total_count = 1;
 	repeated Runtime runtime_set = 2;
 }
 
-message ModifyRuntimeRequest{
+message ModifyRuntimeRequest {
 	google.protobuf.StringValue runtime_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue labels = 4;
 }
 
-message ModifyRuntimeResponse{
+message ModifyRuntimeResponse {
 	Runtime runtime = 1;
 }
 
-message DeleteRuntimeRequest{
+message DeleteRuntimeRequest {
 	google.protobuf.StringValue runtime_id = 1;
 }
 
-message DeleteRuntimeResponse{
+message DeleteRuntimeResponse {
 	Runtime runtime = 1;
 }
 
-message RuntimeCredential{
-	google.protobuf.StringValue runtime_credential_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue description = 3;
-	map <string, string> content = 4;
-	google.protobuf.StringValue owner = 5;
-	repeated string runtime_id = 6;
-	google.protobuf.StringValue status = 7;
-	google.protobuf.Timestamp create_time = 9;
-	google.protobuf.Timestamp status_time = 10;
+message DescribeRuntimeProviderZonesRequest {
+	google.protobuf.StringValue provider = 1;
+	google.protobuf.StringValue runtime_url = 2;
+	google.protobuf.StringValue runtime_credential = 3;
 }
 
-message CreateRuntimeCredentialRequset{
-	google.protobuf.StringValue name = 1;
-	google.protobuf.StringValue description = 2;
-	map <string, string> content = 3;
+message DescribeRuntimeProviderZonesResponse {
+	google.protobuf.StringValue provider = 1;
+	repeated string zone = 2;
 }
 
-message CreateRuntimeCredentialResponse{
-	RuntimeCredential runtime_credential = 1 ;
-}
 
-message DescribeRuntimeCredentialsRequset{
-	repeated string runtime_credential_id = 1;
-	repeated string status = 2;
-	google.protobuf.StringValue search_word = 3;
-	repeated string owner = 4;
-	uint32 limit = 5;
-	uint32 offset = 6;
-}
 
-message DescribeRuntimeCredentialsResponse{
-	uint32 total_count = 1;
-	repeated RuntimeCredential runtime_credential_set = 2;
-}
-
-message ModifyRuntimeCredentialRequest{
-	google.protobuf.StringValue runtime_credential_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue description = 3;
-	map <string, string> content = 4;
-}
-
-message ModifyRuntimeCredentialResponse{
-	RuntimeCredential runtime_credential = 1 ;
-}
-
-message DeleteRuntimeCredentialRequset{
-	google.protobuf.StringValue runtime_credential_id = 1;
-}
-
-message DeleteRuntimeCredentialResponse{
-	RuntimeCredential runtime_credential = 1 ;
-}
-
-service RuntimeManager{
+service RuntimeManager {
 	rpc CreateRuntime (CreateRuntimeRequest) returns (CreateRuntimeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create runtime"
@@ -147,7 +112,7 @@ service RuntimeManager{
 
 	rpc DescribeRuntimes (DescribeRuntimesRequest) returns (DescribeRuntimesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe runtimes"
+			summary: "describe runtime"
 		};
 		option (google.api.http) = {
 			get: "/v1/runtimes"
@@ -174,42 +139,14 @@ service RuntimeManager{
 		};
 	}
 
-	rpc CreateRuntimeCredential (CreateRuntimeCredentialRequset) returns (CreateRuntimeCredentialResponse) {
+	rpc DescribeRuntimeProviderZones (DescribeRuntimeProviderZonesRequest) returns (DescribeRuntimeProviderZonesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create runtime credential"
+			summary: "describe runtime provider zones"
 		};
 		option (google.api.http) = {
-			post: "/v1/runtime_credentials"
-			body: "*"
+			get: "/v1/runtime_provider_zones"
 		};
 	}
 
-	rpc DescribeRuntimeCredentials (DescribeRuntimeCredentialsRequset) returns (DescribeRuntimeCredentialsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe runtime crendentials"
-		};
-		option (google.api.http) = {
-			get: "/v1/runtime_credentials"
-		};
-	}
 
-	rpc ModifyRuntimeCredential (ModifyRuntimeCredentialRequest) returns (ModifyRuntimeCredentialResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify runtime credential"
-		};
-		option (google.api.http) = {
-			patch: "/v1/runtime_credentials"
-			body: "*"
-		};
-	}
-
-	rpc DeleteRuntimeCredential (DeleteRuntimeCredentialRequset) returns (DeleteRuntimeCredentialResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify runtime credential"
-		};
-		option (google.api.http) = {
-			delete: "/v1/runtime_credentials"
-			body: "*"
-		};
-	}
 }

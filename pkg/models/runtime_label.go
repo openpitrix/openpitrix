@@ -5,6 +5,8 @@
 package models
 
 import (
+	"time"
+
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
@@ -20,6 +22,7 @@ type RuntimeLabel struct {
 	RuntimeId      string
 	LabelKey       string
 	LabelValue     string
+	CreateTime     time.Time
 }
 
 var RuntimeLabelColumns = GetColumnsFromStruct(&RuntimeLabel{})
@@ -30,6 +33,7 @@ func NewRuntimeLabel(runtimeId, labelKey, labelValue string) *RuntimeLabel {
 		RuntimeId:      runtimeId,
 		LabelKey:       labelKey,
 		LabelValue:     labelValue,
+		CreateTime:     time.Now(),
 	}
 }
 
@@ -39,6 +43,7 @@ func RuntimeLabelToPb(runtimeLabel *RuntimeLabel) *pb.RuntimeLabel {
 		RuntimeId:      utils.ToProtoString(runtimeLabel.RuntimeId),
 		LabelKey:       utils.ToProtoString(runtimeLabel.LabelKey),
 		LabelValue:     utils.ToProtoString(runtimeLabel.LabelValue),
+		CreateTime:     utils.ToProtoTimestamp(runtimeLabel.CreateTime),
 	}
 }
 
@@ -47,4 +52,13 @@ func RuntimeLabelsToPbs(runtimeLabels []*RuntimeLabel) (pbRuntimeLabels []*pb.Ru
 		pbRuntimeLabels = append(pbRuntimeLabels, RuntimeLabelToPb(runtimeLabel))
 	}
 	return pbRuntimeLabels
+}
+
+func RuntimeLabelsMap(runtimeLabels []*RuntimeLabel) map[string][]*RuntimeLabel {
+	labelsMap := make(map[string][]*RuntimeLabel)
+	for _, l := range runtimeLabels {
+		runtimeId := l.RuntimeId
+		labelsMap[runtimeId] = append(labelsMap[runtimeId], l)
+	}
+	return labelsMap
 }

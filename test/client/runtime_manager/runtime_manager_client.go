@@ -53,34 +53,6 @@ func (a *Client) CreateRuntime(params *CreateRuntimeParams) (*CreateRuntimeOK, e
 }
 
 /*
-CreateRuntimeCredential creates runtime credential
-*/
-func (a *Client) CreateRuntimeCredential(params *CreateRuntimeCredentialParams) (*CreateRuntimeCredentialOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewCreateRuntimeCredentialParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "CreateRuntimeCredential",
-		Method:             "POST",
-		PathPattern:        "/v1/runtime_credentials",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &CreateRuntimeCredentialReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*CreateRuntimeCredentialOK), nil
-
-}
-
-/*
 DeleteRuntime deletes runtime
 */
 func (a *Client) DeleteRuntime(params *DeleteRuntimeParams) (*DeleteRuntimeOK, error) {
@@ -109,63 +81,35 @@ func (a *Client) DeleteRuntime(params *DeleteRuntimeParams) (*DeleteRuntimeOK, e
 }
 
 /*
-DeleteRuntimeCredential modifies runtime credential
+DescribeRuntimeProviderZones describes runtime provider zones
 */
-func (a *Client) DeleteRuntimeCredential(params *DeleteRuntimeCredentialParams) (*DeleteRuntimeCredentialOK, error) {
+func (a *Client) DescribeRuntimeProviderZones(params *DescribeRuntimeProviderZonesParams) (*DescribeRuntimeProviderZonesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteRuntimeCredentialParams()
+		params = NewDescribeRuntimeProviderZonesParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DeleteRuntimeCredential",
-		Method:             "DELETE",
-		PathPattern:        "/v1/runtime_credentials",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &DeleteRuntimeCredentialReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*DeleteRuntimeCredentialOK), nil
-
-}
-
-/*
-DescribeRuntimeCredentials describes runtime crendentials
-*/
-func (a *Client) DescribeRuntimeCredentials(params *DescribeRuntimeCredentialsParams) (*DescribeRuntimeCredentialsOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewDescribeRuntimeCredentialsParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DescribeRuntimeCredentials",
+		ID:                 "DescribeRuntimeProviderZones",
 		Method:             "GET",
-		PathPattern:        "/v1/runtime_credentials",
+		PathPattern:        "/v1/runtime_provider_zones",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &DescribeRuntimeCredentialsReader{formats: a.formats},
+		Reader:             &DescribeRuntimeProviderZonesReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DescribeRuntimeCredentialsOK), nil
+	return result.(*DescribeRuntimeProviderZonesOK), nil
 
 }
 
 /*
-DescribeRuntimes describes runtimes
+DescribeRuntimes describes runtime
 */
 func (a *Client) DescribeRuntimes(params *DescribeRuntimesParams) (*DescribeRuntimesOK, error) {
 	// TODO: Validate the params before sending
@@ -217,34 +161,6 @@ func (a *Client) ModifyRuntime(params *ModifyRuntimeParams) (*ModifyRuntimeOK, e
 		return nil, err
 	}
 	return result.(*ModifyRuntimeOK), nil
-
-}
-
-/*
-ModifyRuntimeCredential modifies runtime credential
-*/
-func (a *Client) ModifyRuntimeCredential(params *ModifyRuntimeCredentialParams) (*ModifyRuntimeCredentialOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewModifyRuntimeCredentialParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "ModifyRuntimeCredential",
-		Method:             "PATCH",
-		PathPattern:        "/v1/runtime_credentials",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &ModifyRuntimeCredentialReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ModifyRuntimeCredentialOK), nil
 
 }
 

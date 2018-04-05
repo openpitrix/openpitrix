@@ -25,8 +25,17 @@ type OpenpitrixCreateRuntimeRequest struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// provider
+	Provider string `json:"provider,omitempty"`
+
+	// runtime credential
+	RuntimeCredential string `json:"runtime_credential,omitempty"`
+
 	// runtime url
 	RuntimeURL string `json:"runtime_url,omitempty"`
+
+	// zone
+	Zone string `json:"zone,omitempty"`
 }
 
 // Validate validates this openpitrix create runtime request

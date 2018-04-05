@@ -31,8 +31,11 @@ type OpenpitrixRuntime struct {
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// runtime credential id
-	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
+	// provider
+	Provider string `json:"provider,omitempty"`
+
+	// runtime credential
+	RuntimeCredential string `json:"runtime_credential,omitempty"`
 
 	// runtime id
 	RuntimeID string `json:"runtime_id,omitempty"`
@@ -45,6 +48,9 @@ type OpenpitrixRuntime struct {
 
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
+
+	// zone
+	Zone string `json:"zone,omitempty"`
 }
 
 // Validate validates this openpitrix runtime

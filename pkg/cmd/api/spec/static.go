@@ -912,140 +912,36 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/runtime_credentials": {
+    "/v1/runtime_provider_zones": {
       "get": {
-        "summary": "describe runtime crendentials",
-        "operationId": "DescribeRuntimeCredentials",
+        "summary": "describe runtime provider zones",
+        "operationId": "DescribeRuntimeProviderZones",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDescribeRuntimeCredentialsResponse"
+              "$ref": "#/definitions/openpitrixDescribeRuntimeProviderZonesResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "runtime_credential_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "search_word",
+            "name": "provider",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
-            "name": "owner",
+            "name": "runtime_url",
             "in": "query",
             "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+            "type": "string"
           },
           {
-            "name": "limit",
+            "name": "runtime_credential",
             "in": "query",
             "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "RuntimeManager"
-        ]
-      },
-      "delete": {
-        "summary": "modify runtime credential",
-        "operationId": "DeleteRuntimeCredential",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRuntimeCredentialResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRuntimeCredentialRequset"
-            }
-          }
-        ],
-        "tags": [
-          "RuntimeManager"
-        ]
-      },
-      "post": {
-        "summary": "create runtime credential",
-        "operationId": "CreateRuntimeCredential",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateRuntimeCredentialResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateRuntimeCredentialRequset"
-            }
-          }
-        ],
-        "tags": [
-          "RuntimeManager"
-        ]
-      },
-      "patch": {
-        "summary": "modify runtime credential",
-        "operationId": "ModifyRuntimeCredential",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyRuntimeCredentialResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyRuntimeCredentialRequest"
-            }
+            "type": "string"
           }
         ],
         "tags": [
@@ -1055,7 +951,7 @@ var Files = map[string]string{
     },
     "/v1/runtimes": {
       "get": {
-        "summary": "describe runtimes",
+        "summary": "describe runtime",
         "operationId": "DescribeRuntimes",
         "responses": {
           "200": {
@@ -1091,7 +987,7 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "selector",
+            "name": "label",
             "in": "query",
             "required": false,
             "type": "string"
@@ -2712,31 +2608,6 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixCreateRuntimeCredentialRequset": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "content": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixCreateRuntimeCredentialResponse": {
-      "type": "object",
-      "properties": {
-        "runtime_credential": {
-          "$ref": "#/definitions/openpitrixRuntimeCredential"
-        }
-      }
-    },
     "openpitrixCreateRuntimeRequest": {
       "type": "object",
       "properties": {
@@ -2746,10 +2617,19 @@ var Files = map[string]string{
         "description": {
           "type": "string"
         },
-        "labels": {
+        "provider": {
           "type": "string"
         },
         "runtime_url": {
+          "type": "string"
+        },
+        "zone": {
+          "type": "string"
+        },
+        "runtime_credential": {
+          "type": "string"
+        },
+        "labels": {
           "type": "string"
         }
       }
@@ -2759,22 +2639,6 @@ var Files = map[string]string{
       "properties": {
         "runtime": {
           "$ref": "#/definitions/openpitrixRuntime"
-        }
-      }
-    },
-    "openpitrixDeleteRuntimeCredentialRequset": {
-      "type": "object",
-      "properties": {
-        "runtime_credential_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixDeleteRuntimeCredentialResponse": {
-      "type": "object",
-      "properties": {
-        "runtime_credential": {
-          "$ref": "#/definitions/openpitrixRuntimeCredential"
         }
       }
     },
@@ -2794,17 +2658,16 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixDescribeRuntimeCredentialsResponse": {
+    "openpitrixDescribeRuntimeProviderZonesResponse": {
       "type": "object",
       "properties": {
-        "total_count": {
-          "type": "integer",
-          "format": "int64"
+        "provider": {
+          "type": "string"
         },
-        "runtime_credential_set": {
+        "zone": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixRuntimeCredential"
+            "type": "string"
           }
         }
       }
@@ -2821,34 +2684,6 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixRuntime"
           }
-        }
-      }
-    },
-    "openpitrixModifyRuntimeCredentialRequest": {
-      "type": "object",
-      "properties": {
-        "runtime_credential_id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "content": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixModifyRuntimeCredentialResponse": {
-      "type": "object",
-      "properties": {
-        "runtime_credential": {
-          "$ref": "#/definitions/openpitrixRuntimeCredential"
         }
       }
     },
@@ -2889,10 +2724,16 @@ var Files = map[string]string{
         "description": {
           "type": "string"
         },
+        "provider": {
+          "type": "string"
+        },
         "runtime_url": {
           "type": "string"
         },
-        "runtime_credential_id": {
+        "zone": {
+          "type": "string"
+        },
+        "runtime_credential": {
           "type": "string"
         },
         "labels": {
@@ -2903,46 +2744,6 @@ var Files = map[string]string{
         },
         "owner": {
           "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "status_time": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "openpitrixRuntimeCredential": {
-      "type": "object",
-      "properties": {
-        "runtime_credential_id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "content": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "owner": {
-          "type": "string"
-        },
-        "runtime_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
         },
         "status": {
           "type": "string"
@@ -2971,6 +2772,10 @@ var Files = map[string]string{
         },
         "label_value": {
           "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
