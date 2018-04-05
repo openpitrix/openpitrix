@@ -11,15 +11,16 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/pb"
 )
 
 type ClusterWrapper struct {
 	Cluster              *Cluster
-	ClusterNodes         map[string]*ClusterNode
-	ClusterCommons       map[string]*ClusterCommon
-	ClusterLinks         map[string]*ClusterLink
-	ClusterRoles         map[string]*ClusterRole
-	ClusterLoadbalancers map[string][]*ClusterLoadbalancer
+	ClusterNodes         map[string]*ClusterNode           // key=nodeId
+	ClusterCommons       map[string]*ClusterCommon         // key=role
+	ClusterLinks         map[string]*ClusterLink           // key=name
+	ClusterRoles         map[string]*ClusterRole           // key=role
+	ClusterLoadbalancers map[string][]*ClusterLoadbalancer // key=role
 }
 
 func NewClusterWrapper(data string) (*ClusterWrapper, error) {
@@ -29,6 +30,47 @@ func NewClusterWrapper(data string) (*ClusterWrapper, error) {
 		logger.Errorf("Unmarshal into cluster wrapper failed: %+v", err)
 	}
 	return clusterWrapper, err
+}
+
+func ClusterWrapperToPb(
+	cluster *Cluster,
+	clusterCommons []*ClusterCommon,
+	clusterNodes []*ClusterNode,
+	clusterRoles []*ClusterRole,
+	clusterLinks []*ClusterLink,
+	clusterLoadbalancers []*ClusterLoadbalancer) *pb.Cluster {
+
+	pbCluster := ClusterToPb(cluster)
+	pbCluster.ClusterCommonSet = ClusterCommonsToPbs(clusterCommons)
+	pbCluster.ClusterNodeSet = ClusterNodesToPbs(clusterNodes)
+	pbCluster.ClusterRoleSet = ClusterRolesToPbs(clusterRoles)
+	pbCluster.ClusterLinkSet = ClusterLinksToPbs(clusterLinks)
+	pbCluster.ClusterLoadbalancerSet = ClusterLoadbalancersToPbs(clusterLoadbalancers)
+
+	return pbCluster
+}
+
+func PbToClusterWrapper(pbCluster *pb.Cluster) *ClusterWrapper {
+	clusterWrapper := new(ClusterWrapper)
+	clusterWrapper.Cluster = PbToCluster(pbCluster)
+	for _, pbClusterCommon := range pbCluster.ClusterCommonSet {
+		clusterWrapper.ClusterCommons[pbClusterCommon.GetRole().GetValue()] = PbToClusterCommon(pbClusterCommon)
+	}
+	for _, pbClusterNode := range pbCluster.ClusterNodeSet {
+		clusterWrapper.ClusterNodes[pbClusterNode.GetNodeId().GetValue()] = PbToClusterNode(pbClusterNode)
+	}
+	for _, pbClusterRole := range pbCluster.ClusterRoleSet {
+		clusterWrapper.ClusterRoles[pbClusterRole.GetRole().GetValue()] = PbToClusterRole(pbClusterRole)
+	}
+	for _, pbClusterLink := range pbCluster.ClusterLinkSet {
+		clusterWrapper.ClusterLinks[pbClusterLink.GetName().GetValue()] = PbToClusterLink(pbClusterLink)
+	}
+	for _, pbClusterLoadbalancer := range pbCluster.ClusterLoadbalancerSet {
+		clusterWrapper.ClusterLoadbalancers[pbClusterLoadbalancer.GetRole().GetValue()] =
+			append(clusterWrapper.ClusterLoadbalancers[pbClusterLoadbalancer.GetRole().GetValue()],
+				PbToClusterLoadbalancer(pbClusterLoadbalancer))
+	}
+	return clusterWrapper
 }
 
 func (c *ClusterWrapper) ToString() (string, error) {

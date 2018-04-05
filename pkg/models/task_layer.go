@@ -16,10 +16,18 @@ func (t *TaskLayer) WalkTree(cb WalkFunc) error {
 	return walkTaskLayerTree(nil, t, cb)
 }
 
+func (t *TaskLayer) IsLeaf() bool {
+	if t.Child == nil {
+		return true
+	} else {
+		return false
+	}
+}
+
 func (t *TaskLayer) Leaf() *TaskLayer {
 	current := t
 	for {
-		if current.Child == nil {
+		if current.IsLeaf() {
 			return current
 		} else {
 			current = current.Child

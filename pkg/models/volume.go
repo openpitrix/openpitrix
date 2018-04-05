@@ -13,6 +13,7 @@ import (
 type Volume struct {
 	VolumeId         string
 	NodeId           string
+	InstanceId       string
 	Name             string
 	Size             int
 	Status           string

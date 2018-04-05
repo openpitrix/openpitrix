@@ -19,9 +19,17 @@ func init() {
 
 type ProviderHandlerInterface interface {
 	RunInstances(task *models.Task) error
-	WaitInstances(task *models.Task) error
+	WaitRunInstances(task *models.Task) error
+
+	StopInstances(task *models.Task) error
+	WaitStopInstances(task *models.Task) error
+
 	CreateVolumes(task *models.Task) error
-	WaitVolumes(task *models.Task) error
+	WaitCreateVolumes(task *models.Task) error
+
+	DetachVolumes(task *models.Task) error
+	WaitDetachVolumes(task *models.Task) error
+
 	WaitFrontgateAvailable(task *models.Task) error
 }
 

@@ -80,6 +80,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionDeleteClusterNodes:
 
 	case constants.ActionStopClusters:
+		return frame.StopClusterLayer(), nil
 
 	case constants.ActionStartClusters:
 
@@ -107,13 +108,17 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 	switch task.TaskAction {
 	case vmbased.ActionRunInstances:
 		return handler.RunInstances(task)
+	case vmbased.ActionStopInstances:
+		return handler.StopInstances(task)
 	case vmbased.ActionCreateVolumes:
 		return handler.CreateVolumes(task)
+	case vmbased.ActionDetachVolumes:
+		return handler.DetachVolumes(task)
 	case vmbased.ActionWaitFrontgateAvailable:
 		// do nothing
 		return nil
 	default:
-		logger.Errorf("Unknown tas action [%s]", task.TaskAction)
+		logger.Errorf("Unknown task action [%s]", task.TaskAction)
 		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }
@@ -125,9 +130,13 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 
 	switch task.TaskAction {
 	case vmbased.ActionRunInstances:
-		return handler.WaitInstances(task)
+		return handler.WaitRunInstances(task)
+	case vmbased.ActionStopInstances:
+		return handler.WaitStopInstances(task)
 	case vmbased.ActionCreateVolumes:
-		return handler.WaitVolumes(task)
+		return handler.WaitCreateVolumes(task)
+	case vmbased.ActionDetachVolumes:
+		return handler.WaitDetachVolumes(task)
 	case vmbased.ActionWaitFrontgateAvailable:
 		return handler.WaitFrontgateAvailable(task)
 	default:

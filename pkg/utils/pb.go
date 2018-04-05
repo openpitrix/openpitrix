@@ -44,6 +44,15 @@ func GetLimitFromRequest(req RequestHadLimit) uint64 {
 	return db.GetLimit(uint64(n))
 }
 
+func FromProtoTimestamp(t *timestamp.Timestamp) (tt time.Time) {
+	tt, err := ptypes.Timestamp(t)
+	if err != nil {
+		logger.Fatalf("Cannot convert timestamp [T] to time.Time [%+v]: %+v", t, err)
+		panic(err)
+	}
+	return
+}
+
 func ToProtoTimestamp(t time.Time) (tt *timestamp.Timestamp) {
 	tt, err := ptypes.TimestampProto(t)
 	if err != nil {
@@ -59,4 +68,8 @@ func ToProtoString(str string) *wrappers.StringValue {
 
 func ToProtoUInt32(uint32 uint32) *wrappers.UInt32Value {
 	return &wrappers.UInt32Value{Value: uint32}
+}
+
+func ToProtoBool(bool bool) *wrappers.BoolValue {
+	return &wrappers.BoolValue{Value: bool}
 }

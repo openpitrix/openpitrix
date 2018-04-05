@@ -4,8 +4,6 @@
 
 package vmbased
 
-import "time"
-
 const (
 	ActionRunInstances       = "RunInstances"
 	ActionStartInstances     = "StartInstances"
@@ -41,6 +39,9 @@ const (
 )
 
 const (
-	TimeoutStartConfd    = 600 * time.Second
-	TimeoutDeregisterCmd = 60
+	// second
+	TimeoutStartConfd = 600
+	TimeoutStopConfd  = 600
+	TimeoutDeregister = 60
+	TimeoutRegister   = 60
 )

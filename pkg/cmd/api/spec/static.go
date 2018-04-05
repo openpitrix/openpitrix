@@ -1134,6 +1134,12 @@ var Files = map[string]string{
             "type": "string"
           },
           {
+            "name": "target",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "status",
             "in": "query",
             "required": false,
@@ -1551,10 +1557,10 @@ var Files = map[string]string{
         "cluster_id": {
           "type": "string"
         },
-        "global_uuid": {
+        "name": {
           "type": "string"
         },
-        "frontgate_id": {
+        "description": {
           "type": "string"
         },
         "app_id": {
@@ -1563,53 +1569,45 @@ var Files = map[string]string{
         "version_id": {
           "type": "string"
         },
+        "subnet_id": {
+          "type": "string"
+        },
+        "vpc_id": {
+          "type": "string"
+        },
+        "frontgate_id": {
+          "type": "string"
+        },
+        "cluster_type": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "endpoints": {
+          "type": "string"
+        },
         "status": {
           "type": "string"
         },
         "transition_status": {
           "type": "string"
         },
-        "runtime_id": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "node_count": {
-          "$ref": "#/definitions/protobufUInt32Value"
-        },
-        "endpoints": {
-          "type": "string"
-        },
         "metadata_root_access": {
           "type": "boolean",
           "format": "boolean"
         },
-        "links": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+        "owner": {
+          "type": "string"
         },
-        "roles": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "advanced_actions": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+        "global_uuid": {
+          "type": "string"
         },
         "upgrade_status": {
+          "type": "string"
+        },
+        "upgrade_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "runtime_id": {
           "type": "string"
         },
         "create_time": {
@@ -1626,7 +1624,150 @@ var Files = map[string]string{
             "$ref": "#/definitions/openpitrixClusterNode"
           }
         },
-        "vpc_id": {
+        "cluster_role_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixClusterRole"
+          }
+        },
+        "cluster_link_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixClusterLink"
+          }
+        },
+        "cluster_common_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixClusterCommon"
+          }
+        },
+        "cluster_loadbalancer_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixClusterLoadbalancer"
+          }
+        }
+      }
+    },
+    "openpitrixClusterCommon": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "server_id_upper_bound": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "advanced_actions": {
+          "type": "string"
+        },
+        "init_service": {
+          "type": "string"
+        },
+        "start_service": {
+          "type": "string"
+        },
+        "stop_service": {
+          "type": "string"
+        },
+        "scale_out_service": {
+          "type": "string"
+        },
+        "scale_in_service": {
+          "type": "string"
+        },
+        "restart_service": {
+          "type": "string"
+        },
+        "destroy_service": {
+          "type": "string"
+        },
+        "upgrade_service": {
+          "type": "string"
+        },
+        "custom_service": {
+          "type": "string"
+        },
+        "backup_service": {
+          "type": "string"
+        },
+        "restore_service": {
+          "type": "string"
+        },
+        "delete_snapshot_service": {
+          "type": "string"
+        },
+        "health_check": {
+          "type": "string"
+        },
+        "monitor": {
+          "type": "string"
+        },
+        "passphraseless": {
+          "type": "string"
+        },
+        "vertical_scaling_policy": {
+          "type": "string"
+        },
+        "agent_installed": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "custom_metadata_script": {
+          "type": "string"
+        },
+        "image_id": {
+          "type": "string"
+        },
+        "backup_policy": {
+          "type": "string"
+        },
+        "incremental_backup_supported": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "hypervisor": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixClusterLink": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "external_cluster_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixClusterLoadbalancer": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "loadbalancer_listener_id": {
+          "type": "string"
+        },
+        "loadbalancer_port": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "loadbalancer_policy_id": {
           "type": "string"
         }
       }
@@ -1634,10 +1775,10 @@ var Files = map[string]string{
     "openpitrixClusterNode": {
       "type": "object",
       "properties": {
-        "cluster_id": {
+        "node_id": {
           "type": "string"
         },
-        "node_id": {
+        "cluster_id": {
           "type": "string"
         },
         "name": {
@@ -1646,10 +1787,19 @@ var Files = map[string]string{
         "instance_id": {
           "type": "string"
         },
+        "volume_id": {
+          "type": "string"
+        },
         "subnet_id": {
           "type": "string"
         },
         "private_ip": {
+          "type": "string"
+        },
+        "server_id": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
+        "role": {
           "type": "string"
         },
         "status": {
@@ -1658,22 +1808,49 @@ var Files = map[string]string{
         "transition_status": {
           "type": "string"
         },
-        "server_id": {
+        "group_id": {
           "$ref": "#/definitions/protobufUInt32Value"
         },
-        "server_id_upper_bound": {
-          "$ref": "#/definitions/protobufUInt32Value"
+        "owner": {
+          "type": "string"
         },
         "global_server_id": {
-          "$ref": "#/definitions/protobufUInt64Value"
+          "type": "string"
+        },
+        "custom_metadata": {
+          "type": "string"
+        },
+        "pub_key": {
+          "type": "string"
         },
         "health_status": {
           "type": "string"
         },
-        "role": {
+        "is_backup": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "auto_backup": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixClusterRole": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
           "type": "string"
         },
-        "owner": {
+        "role": {
           "type": "string"
         },
         "cpu": {
@@ -1685,31 +1862,20 @@ var Files = map[string]string{
         "memory": {
           "$ref": "#/definitions/protobufUInt32Value"
         },
+        "instance_size": {
+          "$ref": "#/definitions/protobufUInt32Value"
+        },
         "storage_size": {
           "$ref": "#/definitions/protobufUInt32Value"
         },
+        "mount_point": {
+          "type": "string"
+        },
+        "mount_options": {
+          "type": "string"
+        },
         "env": {
           "type": "string"
-        },
-        "passphraseless": {
-          "type": "string"
-        },
-        "advanced_actions": {
-          "type": "string"
-        },
-        "image_id": {
-          "type": "string"
-        },
-        "volume_id": {
-          "type": "string"
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "status_time": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -2088,17 +2254,6 @@ var Files = map[string]string{
         }
       },
       "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
-    },
-    "protobufUInt64Value": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "string",
-          "format": "uint64",
-          "description": "The uint64 value."
-        }
-      },
-      "description": "Wrapper message for ` + "`" + `uint64` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt64Value` + "`" + ` is JSON string."
     },
     "openpitrixCreateJobResponse": {
       "type": "object",

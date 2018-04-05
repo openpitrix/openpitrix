@@ -16,17 +16,29 @@ import (
 // swagger:model openpitrixCluster
 type OpenpitrixCluster struct {
 
-	// advanced actions
-	AdvancedActions map[string]string `json:"advanced_actions,omitempty"`
-
 	// app id
 	AppID string `json:"app_id,omitempty"`
+
+	// cluster common set
+	ClusterCommonSet OpenpitrixClusterClusterCommonSet `json:"cluster_common_set"`
 
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
+	// cluster link set
+	ClusterLinkSet OpenpitrixClusterClusterLinkSet `json:"cluster_link_set"`
+
+	// cluster loadbalancer set
+	ClusterLoadbalancerSet OpenpitrixClusterClusterLoadbalancerSet `json:"cluster_loadbalancer_set"`
+
 	// cluster node set
 	ClusterNodeSet OpenpitrixClusterClusterNodeSet `json:"cluster_node_set"`
+
+	// cluster role set
+	ClusterRoleSet OpenpitrixClusterClusterRoleSet `json:"cluster_role_set"`
+
+	// cluster type
+	ClusterType *ProtobufUint32Value `json:"cluster_type,omitempty"`
 
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
@@ -43,23 +55,14 @@ type OpenpitrixCluster struct {
 	// global uuid
 	GlobalUUID string `json:"global_uuid,omitempty"`
 
-	// links
-	Links map[string]string `json:"links,omitempty"`
-
 	// metadata root access
 	MetadataRootAccess bool `json:"metadata_root_access,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
 
-	// node count
-	NodeCount *ProtobufUint32Value `json:"node_count,omitempty"`
-
 	// owner
 	Owner string `json:"owner,omitempty"`
-
-	// roles
-	Roles map[string]string `json:"roles,omitempty"`
 
 	// runtime id
 	RuntimeID string `json:"runtime_id,omitempty"`
@@ -70,11 +73,17 @@ type OpenpitrixCluster struct {
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
+	// subnet id
+	SubnetID string `json:"subnet_id,omitempty"`
+
 	// transition status
 	TransitionStatus string `json:"transition_status,omitempty"`
 
 	// upgrade status
 	UpgradeStatus string `json:"upgrade_status,omitempty"`
+
+	// upgrade time
+	UpgradeTime strfmt.DateTime `json:"upgrade_time,omitempty"`
 
 	// version id
 	VersionID string `json:"version_id,omitempty"`
@@ -87,7 +96,7 @@ type OpenpitrixCluster struct {
 func (m *OpenpitrixCluster) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateNodeCount(formats); err != nil {
+	if err := m.validateClusterType(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -98,17 +107,17 @@ func (m *OpenpitrixCluster) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *OpenpitrixCluster) validateNodeCount(formats strfmt.Registry) error {
+func (m *OpenpitrixCluster) validateClusterType(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.NodeCount) { // not required
+	if swag.IsZero(m.ClusterType) { // not required
 		return nil
 	}
 
-	if m.NodeCount != nil {
+	if m.ClusterType != nil {
 
-		if err := m.NodeCount.Validate(formats); err != nil {
+		if err := m.ClusterType.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("node_count")
+				return ve.ValidateName("cluster_type")
 			}
 			return err
 		}

@@ -27,14 +27,12 @@ message CreateClusterResponse {
 }
 
 message ModifyClusterRequest {
-	google.protobuf.StringValue cluster_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue description = 3;
-	google.protobuf.StringValue status = 4;
-	google.protobuf.StringValue transition_status = 5;
-	google.protobuf.StringValue upgrade_status = 6;
-	google.protobuf.Timestamp upgrade_time = 7;
-	google.protobuf.Timestamp status_time = 8;
+	Cluster cluster = 1;
+	repeated ClusterNode cluster_node_set = 2;
+	repeated ClusterRole cluster_role_set = 3;
+	repeated ClusterLink cluster_link_set = 4;
+	repeated ClusterCommon cluster_common_set = 5;
+	repeated ClusterLoadbalancer cluster_loadbalancer_set = 6;
 }
 
 message ModifyClusterResponse {
@@ -42,17 +40,7 @@ message ModifyClusterResponse {
 }
 
 message ModifyClusterNodeRequest {
-	google.protobuf.StringValue node_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue instance_id = 3;
-	google.protobuf.StringValue volume_id = 4;
-	google.protobuf.StringValue subnet_id = 5;
-	google.protobuf.StringValue private_ip = 6;
-	google.protobuf.StringValue status = 7;
-	google.protobuf.StringValue transition_status = 8;
-	google.protobuf.StringValue health_status = 9;
-	google.protobuf.StringValue pub_key = 10;
-	google.protobuf.Timestamp status_time = 11;
+	ClusterNode cluster_node = 1;
 }
 
 message ModifyClusterNodeResponse {
@@ -138,57 +126,113 @@ message UpdateClusterEnvResponse {
 	google.protobuf.StringValue job_id = 2;
 }
 
-message ClusterNode {
+message ClusterCommon {
 	google.protobuf.StringValue cluster_id = 1;
-	google.protobuf.StringValue node_id = 2;
+	google.protobuf.StringValue role = 2;
+	google.protobuf.UInt32Value server_id_upper_bound = 3;
+	google.protobuf.StringValue advanced_actions = 4;
+	google.protobuf.StringValue init_service = 5;
+	google.protobuf.StringValue start_service = 6;
+	google.protobuf.StringValue stop_service = 7;
+	google.protobuf.StringValue scale_out_service = 8;
+	google.protobuf.StringValue scale_in_service = 9;
+	google.protobuf.StringValue restart_service = 10;
+	google.protobuf.StringValue destroy_service = 11;
+	google.protobuf.StringValue upgrade_service = 12;
+	google.protobuf.StringValue custom_service = 13;
+	google.protobuf.StringValue backup_service = 14;
+	google.protobuf.StringValue restore_service = 15;
+	google.protobuf.StringValue delete_snapshot_service = 16;
+	google.protobuf.StringValue health_check = 17;
+	google.protobuf.StringValue monitor = 18;
+	google.protobuf.StringValue passphraseless = 19;
+	google.protobuf.StringValue vertical_scaling_policy = 20;
+	google.protobuf.BoolValue agent_installed = 21;
+	google.protobuf.StringValue custom_metadata_script = 22;
+	google.protobuf.StringValue image_id = 23;
+	google.protobuf.StringValue backup_policy = 24;
+	google.protobuf.BoolValue incremental_backup_supported = 25;
+	google.protobuf.StringValue hypervisor = 26;
+}
+
+message ClusterNode {
+	google.protobuf.StringValue node_id = 1;
+	google.protobuf.StringValue cluster_id = 2;
 	google.protobuf.StringValue name = 3;
 	google.protobuf.StringValue instance_id = 4;
-	google.protobuf.StringValue subnet_id = 5;
-	google.protobuf.StringValue private_ip = 6;
-	google.protobuf.StringValue status = 7;
-	google.protobuf.StringValue transition_status = 8;
-	google.protobuf.UInt32Value server_id = 9;
-	google.protobuf.UInt32Value server_id_upper_bound = 10;
-	google.protobuf.UInt64Value global_server_id = 11;
-	google.protobuf.StringValue health_status = 12;
-	google.protobuf.StringValue role = 13;
-	google.protobuf.StringValue owner = 14;
-	google.protobuf.UInt32Value cpu = 15;
-	google.protobuf.UInt32Value gpu = 16;
-	google.protobuf.UInt32Value memory = 17;
-	google.protobuf.UInt32Value storage_size = 18;
-	google.protobuf.StringValue env = 19;
-	google.protobuf.StringValue passphraseless = 20;
-	google.protobuf.StringValue advanced_actions = 21;
-	google.protobuf.StringValue image_id = 22;
-	google.protobuf.StringValue volume_id = 23;
-	google.protobuf.Timestamp create_time = 24;
-	google.protobuf.Timestamp status_time = 25;
+	google.protobuf.StringValue volume_id = 5;
+	google.protobuf.StringValue subnet_id = 6;
+	google.protobuf.StringValue private_ip = 7;
+	google.protobuf.UInt32Value server_id = 8;
+	google.protobuf.StringValue role = 9;
+	google.protobuf.StringValue status = 10;
+	google.protobuf.StringValue transition_status = 11;
+	google.protobuf.UInt32Value group_id = 12;
+	google.protobuf.StringValue owner = 13;
+	google.protobuf.StringValue global_server_id = 14;
+	google.protobuf.StringValue custom_metadata = 15;
+	google.protobuf.StringValue pub_key = 16;
+	google.protobuf.StringValue health_status = 17;
+	google.protobuf.BoolValue is_backup = 18;
+	google.protobuf.BoolValue auto_backup = 19;
+	google.protobuf.Timestamp create_time = 20;
+	google.protobuf.Timestamp status_time = 21;
+}
+
+message ClusterRole {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue role = 2;
+	google.protobuf.UInt32Value cpu = 3;
+	google.protobuf.UInt32Value gpu = 4;
+	google.protobuf.UInt32Value memory = 5;
+	google.protobuf.UInt32Value instance_size = 6;
+	google.protobuf.UInt32Value storage_size = 7;
+	google.protobuf.StringValue mount_point = 8;
+	google.protobuf.StringValue mount_options = 9;
+	google.protobuf.StringValue env = 10;
+}
+
+message ClusterLoadbalancer {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue role = 2;
+	google.protobuf.StringValue loadbalancer_listener_id = 3;
+	google.protobuf.UInt32Value loadbalancer_port = 4;
+	google.protobuf.StringValue loadbalancer_policy_id = 5;
+}
+
+message ClusterLink {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue external_cluster_id = 3;
+	google.protobuf.StringValue owner = 4;
 }
 
 message Cluster {
 	google.protobuf.StringValue cluster_id = 1;
-	google.protobuf.StringValue global_uuid = 2;
-	google.protobuf.StringValue frontgate_id = 3;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue app_id = 4;
 	google.protobuf.StringValue version_id = 5;
-	google.protobuf.StringValue status = 6;
-	google.protobuf.StringValue transition_status = 7;
-	google.protobuf.StringValue runtime_id = 8;
-	google.protobuf.StringValue owner = 9;
-	google.protobuf.StringValue name = 10;
-	google.protobuf.StringValue description = 11;
-	google.protobuf.UInt32Value node_count = 12;
-	google.protobuf.StringValue endpoints = 13;
-	google.protobuf.BoolValue metadata_root_access = 14;
-	map<string, string> links = 15;
-	map<string, string> roles = 16;
-	map<string, string> advanced_actions = 17;
-	google.protobuf.StringValue upgrade_status = 18;
+	google.protobuf.StringValue subnet_id = 6;
+	google.protobuf.StringValue vpc_id = 7;
+	google.protobuf.StringValue frontgate_id = 8;
+	google.protobuf.UInt32Value cluster_type = 9;
+	google.protobuf.StringValue endpoints = 10;
+	google.protobuf.StringValue status = 11;
+	google.protobuf.StringValue transition_status = 12;
+	google.protobuf.BoolValue metadata_root_access = 13;
+	google.protobuf.StringValue owner = 14;
+	google.protobuf.StringValue global_uuid = 15;
+	google.protobuf.StringValue upgrade_status = 16;
+	google.protobuf.Timestamp upgrade_time = 17;
+	google.protobuf.StringValue runtime_id = 18;
 	google.protobuf.Timestamp create_time = 19;
 	google.protobuf.Timestamp status_time = 20;
 	repeated ClusterNode cluster_node_set = 21;
-	google.protobuf.StringValue vpc_id = 22;
+	repeated ClusterRole cluster_role_set = 22;
+	repeated ClusterLink cluster_link_set = 23;
+	repeated ClusterCommon cluster_common_set = 24;
+	repeated ClusterLoadbalancer cluster_loadbalancer_set = 25;
 }
 
 message DescribeClustersRequest {

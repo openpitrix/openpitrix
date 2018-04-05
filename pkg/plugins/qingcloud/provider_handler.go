@@ -112,7 +112,7 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	return nil
 }
 
-func (p *ProviderHandler) WaitInstances(task *models.Task) error {
+func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	if task.Directive == "" {
 		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
 		return nil
@@ -182,6 +182,37 @@ func (p *ProviderHandler) WaitInstances(task *models.Task) error {
 	return nil
 }
 
+func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
+	if task.Directive == "" {
+		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		return nil
+	}
+	instance, err := models.NewInstance(task.Directive)
+	if err != nil {
+		return err
+	}
+	qingcloudService, err := p.initService(instance.RuntimeId)
+	if err != nil {
+		logger.Errorf("Init %s api service failed: %v", provider, err)
+		return err
+	}
+
+	jobService, err := qingcloudService.Job(qingcloudService.Config.Zone)
+	if err != nil {
+		logger.Errorf("Init %s job api service failed: %v", provider, err)
+		return err
+	}
+
+	err = qcclient.WaitJob(jobService, instance.TargetJobId, task.GetTimeout(constants.WaitTaskTimeout)*time.Second,
+		constants.WaitTaskInterval)
+	if err != nil {
+		logger.Errorf("Wait %s job [%s] failed: %v", provider, instance.TargetJobId, err)
+		return err
+	}
+
+	return nil
+}
+
 func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	if task.Directive == "" {
 		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
@@ -235,7 +266,7 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	return nil
 }
 
-func (p *ProviderHandler) WaitVolumes(task *models.Task) error {
+func (p *ProviderHandler) WaitVolumeTask(task *models.Task) error {
 	if task.Directive == "" {
 		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
 		return nil
@@ -263,29 +294,112 @@ func (p *ProviderHandler) WaitVolumes(task *models.Task) error {
 		return err
 	}
 
+	return nil
+}
+
+func (p *ProviderHandler) WaitCreateVolumes(task *models.Task) error {
+	return p.WaitVolumeTask(task)
+}
+
+func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
+	if task.Directive == "" {
+		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		return nil
+	}
+
+	volume, err := models.NewVolume(task.Directive)
+	if err != nil {
+		return err
+	}
+
+	qingcloudService, err := p.initService(volume.RuntimeId)
+	if err != nil {
+		logger.Errorf("Init %s api service failed: %v", provider, err)
+		return err
+	}
+
 	volumeService, err := qingcloudService.Volume(qingcloudService.Config.Zone)
 	if err != nil {
 		logger.Errorf("Init %s volume api service failed: %v", provider, err)
 		return err
 	}
 
-	output, err := volumeService.DescribeVolumes(
-		&qcservice.DescribeVolumesInput{
-			Volumes: qcservice.StringSlice([]string{volume.VolumeId}),
+	output, err := volumeService.DetachVolumes(
+		&qcservice.DetachVolumesInput{
+			Instance: qcservice.String(volume.InstanceId),
+			Volumes:  qcservice.StringSlice([]string{volume.VolumeId}),
 		},
 	)
 	if err != nil {
-		logger.Errorf("Send DescribeVolumes to %s failed: %v", provider, err)
+		logger.Errorf("Send DetachVolumes to %s failed: %v", provider, err)
 		return err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send DescribeVolumes to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send DetachVolumes to %s failed with return code [%d], message [%p]",
 			provider, retCode, message)
-		return fmt.Errorf("send DescribeVolumes to %s failed: %p", provider, message)
+		return fmt.Errorf("send DetachVolumes to %s failed: %p", provider, message)
+	}
+	volume.TargetJobId = qcservice.StringValue(output.JobID)
+
+	// write back
+	directive, err := volume.ToString()
+	if err != nil {
+		return err
+	}
+	task.Directive = string(directive)
+
+	return nil
+}
+
+func (p *ProviderHandler) WaitDetachVolumes(task *models.Task) error {
+	return p.WaitVolumeTask(task)
+}
+
+func (p *ProviderHandler) StopInstances(task *models.Task) error {
+	if task.Directive == "" {
+		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		return nil
+	}
+	instance, err := models.NewInstance(task.Directive)
+	if err != nil {
+		return err
+	}
+	qingcloudService, err := p.initService(instance.RuntimeId)
+	if err != nil {
+		logger.Errorf("Init %s api service failed: %v", provider, err)
+		return err
+	}
+
+	instanceService, err := qingcloudService.Instance(qingcloudService.Config.Zone)
+	if err != nil {
+		logger.Errorf("Init %s instance api service failed: %v", provider, err)
+		return err
+	}
+
+	output, err := instanceService.StopInstances(
+		&qcservice.StopInstancesInput{
+			Instances: qcservice.StringSlice([]string{instance.InstanceId}),
+		},
+	)
+	if err != nil {
+		logger.Errorf("Send StopInstances to %s failed: %v", provider, err)
+		return err
+	}
+
+	retCode := qcservice.IntValue(output.RetCode)
+	if retCode != 0 {
+		message := qcservice.StringValue(output.Message)
+		logger.Errorf("Send RunInstances to %s failed with return code [%d], message [%p]",
+			provider, retCode, message)
+		return fmt.Errorf("send RunInstances to %s failed: %p", provider, message)
 	}
 
 	return nil
+}
+
+func (p *ProviderHandler) WaitStopInstances(task *models.Task) error {
+	return p.WaitInstanceTask(task)
 }

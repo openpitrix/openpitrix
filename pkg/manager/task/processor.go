@@ -27,6 +27,10 @@ func NewProcessor(task *models.Task) *Processor {
 
 // Post process when task is start
 func (t *Processor) Pre() error {
+	if t.Task.Directive == "" {
+		logger.Warnf("Skip empty task [%p] directive", t.Task.TaskId)
+		return nil
+	}
 	var err error
 	ctx := context.Background()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
@@ -37,15 +41,55 @@ func (t *Processor) Pre() error {
 	switch t.Task.TaskAction {
 	case vmbased.ActionRunInstances:
 		// volume created before instance, so need to change RunInstances task directive
-		if t.Task.Directive == "" {
-			logger.Warnf("Skip empty task [%p] directive", t.Task.TaskId)
-		}
 		instance, err := models.NewInstance(t.Task.Directive)
 		if err == nil {
 			clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{instance.NodeId})
 			if err == nil {
 				instance.VolumeId = clusterNodes[0].GetVolumeId().GetValue()
+				// write back
 				t.Task.Directive, err = instance.ToString()
+			}
+		}
+	case vmbased.ActionRegisterMetadata:
+		meta, err := models.NewMeta(t.Task.Directive)
+		if err == nil {
+			pbClusterWrappers, err := clusterclient.GetClusterWrappers(ctx, client, []string{meta.ClusterId})
+			if err == nil {
+				metadata := &vmbased.Metadata{
+					ClusterWrapper: pbClusterWrappers[0],
+				}
+				meta.Cmd = vmbased.GetRegisterExec(metadata.GetClusterCnodesString())
+
+				// write back
+				t.Task.Directive, err = meta.ToString()
+			}
+		}
+	case vmbased.ActionRegisterCmd:
+		// when CreateCluster need to reload ip
+		meta, err := models.NewMeta(t.Task.Directive)
+		if err == nil {
+			if meta.Ip == "" {
+				clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{meta.NodeId})
+				if err == nil {
+					meta.Ip = clusterNodes[0].GetPrivateIp().GetValue()
+
+					// write back
+					t.Task.Directive, err = meta.ToString()
+				}
+			}
+		}
+	case vmbased.ActionStartConfd:
+		// when CreateCluster need to reload ip
+		meta, err := models.NewMeta(t.Task.Directive)
+		if err == nil {
+			if meta.Ip == "" {
+				clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{meta.NodeId})
+				if err == nil {
+					meta.Ip = clusterNodes[0].GetPrivateIp().GetValue()
+
+					// write back
+					t.Task.Directive, err = meta.ToString()
+				}
 			}
 		}
 	case vmbased.ActionCreateVolumes:
@@ -77,8 +121,10 @@ func (t *Processor) Post() error {
 		instance, err := models.NewInstance(t.Task.Directive)
 		if err != nil {
 			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
-				NodeId:    utils.ToProtoString(instance.NodeId),
-				PrivateIp: utils.ToProtoString(instance.PrivateIp),
+				ClusterNode: &pb.ClusterNode{
+					NodeId:    utils.ToProtoString(instance.NodeId),
+					PrivateIp: utils.ToProtoString(instance.PrivateIp),
+				},
 			})
 		}
 	case vmbased.ActionCreateVolumes:
@@ -88,8 +134,10 @@ func (t *Processor) Post() error {
 		volume, err := models.NewVolume(t.Task.Directive)
 		if err != nil {
 			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
-				NodeId:   utils.ToProtoString(volume.NodeId),
-				VolumeId: utils.ToProtoString(volume.VolumeId),
+				ClusterNode: &pb.ClusterNode{
+					NodeId:   utils.ToProtoString(volume.NodeId),
+					VolumeId: utils.ToProtoString(volume.VolumeId),
+				},
 			})
 		}
 	default:
