@@ -10,6 +10,7 @@ import (
 
 	"github.com/ghodss/yaml"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
@@ -72,10 +73,10 @@ func LabelStructToMap(labelStructs []*models.RuntimeLabel) map[string]string {
 }
 
 func RuntimeCredentialStringToJsonString(provider, content string) string {
-	if i := utils.FindString(VmBaseProviders, provider); i != -1 {
+	if i := utils.FindString(constants.VmBaseProviders, provider); i != -1 {
 		return content
 	}
-	if KubernetesProvider == provider {
+	if constants.ProviderKubernetes == provider {
 		content, err := yaml.YAMLToJSON([]byte(content))
 		if err != nil {
 			panic(err)
@@ -86,10 +87,10 @@ func RuntimeCredentialStringToJsonString(provider, content string) string {
 }
 
 func RuntimeCredentialJsonStringToString(provider, content string) string {
-	if i := utils.FindString(VmBaseProviders, provider); i != -1 {
+	if i := utils.FindString(constants.VmBaseProviders, provider); i != -1 {
 		return content
 	}
-	if KubernetesProvider == provider {
+	if constants.ProviderKubernetes == provider {
 		content, err := yaml.JSONToYAML([]byte(content))
 		if err != nil {
 			panic(err)

@@ -35,7 +35,3 @@ const (
 	LabelValueMaxLength = "255"
 	LabelKeyFmt         = "^[a-zA-Z]([-_a-zA-Z0-9]*[a-zA-Z0-9])?$"
 )
-
-var VmBaseProviders = []string{"qingcloud"}
-
-const KubernetesProvider = "kubernetes"

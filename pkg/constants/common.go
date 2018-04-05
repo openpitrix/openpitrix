@@ -91,6 +91,8 @@ const (
 	TargetPilot        = "pilot"
 )
 
+var VmBaseProviders = []string{ProviderQingCloud}
+
 const (
 	PlaceHolder       = "*"
 	ReplicaRoleSuffix = "-replica"
