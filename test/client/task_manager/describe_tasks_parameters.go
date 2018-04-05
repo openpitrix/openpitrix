@@ -79,6 +79,8 @@ type DescribeTasksParams struct {
 	Offset *int64
 	/*Status*/
 	Status []string
+	/*Target*/
+	Target *string
 	/*TaskID*/
 	TaskID []string
 
@@ -175,6 +177,17 @@ func (o *DescribeTasksParams) SetStatus(status []string) {
 	o.Status = status
 }
 
+// WithTarget adds the target to the describe tasks params
+func (o *DescribeTasksParams) WithTarget(target *string) *DescribeTasksParams {
+	o.SetTarget(target)
+	return o
+}
+
+// SetTarget adds the target to the describe tasks params
+func (o *DescribeTasksParams) SetTarget(target *string) {
+	o.Target = target
+}
+
 // WithTaskID adds the taskID to the describe tasks params
 func (o *DescribeTasksParams) WithTaskID(taskID []string) *DescribeTasksParams {
 	o.SetTaskID(taskID)
@@ -256,6 +269,22 @@ func (o *DescribeTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err
+	}
+
+	if o.Target != nil {
+
+		// query param target
+		var qrTarget string
+		if o.Target != nil {
+			qrTarget = *o.Target
+		}
+		qTarget := qrTarget
+		if qTarget != "" {
+			if err := r.SetQueryParam("target", qTarget); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	valuesTaskID := o.TaskID

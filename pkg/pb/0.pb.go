@@ -56,7 +56,11 @@ It has these top-level messages:
 	DeleteClusterNodesResponse
 	UpdateClusterEnvRequest
 	UpdateClusterEnvResponse
+	ClusterCommon
 	ClusterNode
+	ClusterRole
+	ClusterLoadbalancer
+	ClusterLink
 	Cluster
 	DescribeClustersRequest
 	DescribeClustersResponse

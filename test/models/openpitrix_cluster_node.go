@@ -16,38 +16,32 @@ import (
 // swagger:model openpitrixClusterNode
 type OpenpitrixClusterNode struct {
 
-	// advanced actions
-	AdvancedActions string `json:"advanced_actions,omitempty"`
+	// auto backup
+	AutoBackup bool `json:"auto_backup,omitempty"`
 
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// cpu
-	CPU *ProtobufUint32Value `json:"cpu,omitempty"`
-
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
-	// env
-	Env string `json:"env,omitempty"`
+	// custom metadata
+	CustomMetadata string `json:"custom_metadata,omitempty"`
 
 	// global server id
-	GlobalServerID *ProtobufUint64Value `json:"global_server_id,omitempty"`
+	GlobalServerID string `json:"global_server_id,omitempty"`
 
-	// gpu
-	Gpu *ProtobufUint32Value `json:"gpu,omitempty"`
+	// group id
+	GroupID *ProtobufUint32Value `json:"group_id,omitempty"`
 
 	// health status
 	HealthStatus string `json:"health_status,omitempty"`
 
-	// image id
-	ImageID string `json:"image_id,omitempty"`
-
 	// instance id
 	InstanceID string `json:"instance_id,omitempty"`
 
-	// memory
-	Memory *ProtobufUint32Value `json:"memory,omitempty"`
+	// is backup
+	IsBackup bool `json:"is_backup,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
@@ -58,11 +52,11 @@ type OpenpitrixClusterNode struct {
 	// owner
 	Owner string `json:"owner,omitempty"`
 
-	// passphraseless
-	Passphraseless string `json:"passphraseless,omitempty"`
-
 	// private ip
 	PrivateIP string `json:"private_ip,omitempty"`
+
+	// pub key
+	PubKey string `json:"pub_key,omitempty"`
 
 	// role
 	Role string `json:"role,omitempty"`
@@ -70,17 +64,11 @@ type OpenpitrixClusterNode struct {
 	// server id
 	ServerID *ProtobufUint32Value `json:"server_id,omitempty"`
 
-	// server id upper bound
-	ServerIDUpperBound *ProtobufUint32Value `json:"server_id_upper_bound,omitempty"`
-
 	// status
 	Status string `json:"status,omitempty"`
 
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
-
-	// storage size
-	StorageSize *ProtobufUint32Value `json:"storage_size,omitempty"`
 
 	// subnet id
 	SubnetID string `json:"subnet_id,omitempty"`
@@ -96,37 +84,12 @@ type OpenpitrixClusterNode struct {
 func (m *OpenpitrixClusterNode) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateCPU(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateGlobalServerID(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateGpu(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateMemory(formats); err != nil {
+	if err := m.validateGroupID(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateServerID(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateServerIDUpperBound(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateStorageSize(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -137,74 +100,17 @@ func (m *OpenpitrixClusterNode) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *OpenpitrixClusterNode) validateCPU(formats strfmt.Registry) error {
+func (m *OpenpitrixClusterNode) validateGroupID(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.CPU) { // not required
+	if swag.IsZero(m.GroupID) { // not required
 		return nil
 	}
 
-	if m.CPU != nil {
+	if m.GroupID != nil {
 
-		if err := m.CPU.Validate(formats); err != nil {
+		if err := m.GroupID.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("cpu")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterNode) validateGlobalServerID(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.GlobalServerID) { // not required
-		return nil
-	}
-
-	if m.GlobalServerID != nil {
-
-		if err := m.GlobalServerID.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("global_server_id")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterNode) validateGpu(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Gpu) { // not required
-		return nil
-	}
-
-	if m.Gpu != nil {
-
-		if err := m.Gpu.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("gpu")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterNode) validateMemory(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Memory) { // not required
-		return nil
-	}
-
-	if m.Memory != nil {
-
-		if err := m.Memory.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("memory")
+				return ve.ValidateName("group_id")
 			}
 			return err
 		}
@@ -224,44 +130,6 @@ func (m *OpenpitrixClusterNode) validateServerID(formats strfmt.Registry) error 
 		if err := m.ServerID.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("server_id")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterNode) validateServerIDUpperBound(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ServerIDUpperBound) { // not required
-		return nil
-	}
-
-	if m.ServerIDUpperBound != nil {
-
-		if err := m.ServerIDUpperBound.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("server_id_upper_bound")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterNode) validateStorageSize(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.StorageSize) { // not required
-		return nil
-	}
-
-	if m.StorageSize != nil {
-
-		if err := m.StorageSize.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("storage_size")
 			}
 			return err
 		}
