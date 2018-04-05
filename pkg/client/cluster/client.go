@@ -11,6 +11,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
+	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
@@ -35,4 +36,31 @@ func GetClusterNodes(ctx context.Context, client pb.ClusterManagerClient, nodeId
 		return nil, fmt.Errorf("describe cluster nodes %s with return count [%d]", nodeIds, len(response.ClusterNodeSet))
 	}
 	return response.ClusterNodeSet, nil
+}
+
+func GetClusters(ctx context.Context, client pb.ClusterManagerClient, clusterIds []string) ([]*pb.Cluster, error) {
+	response, err := client.DescribeClusters(ctx, &pb.DescribeClustersRequest{
+		ClusterId: clusterIds,
+	})
+	if err != nil {
+		logger.Errorf("Describe clusters %s failed: %+v", clusterIds, err)
+		return nil, err
+	}
+	if len(response.ClusterSet) != len(clusterIds) {
+		logger.Errorf("Describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
+		return nil, fmt.Errorf("describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
+	}
+	return response.ClusterSet, nil
+}
+
+func GetClusterWrappers(ctx context.Context, client pb.ClusterManagerClient, clusterIds []string) ([]*models.ClusterWrapper, error) {
+	pbClusterSet, err := GetClusters(ctx, client, clusterIds)
+	if err != nil {
+		return nil, err
+	}
+	var clusterWrappers []*models.ClusterWrapper
+	for _, pbCluster := range pbClusterSet {
+		clusterWrappers = append(clusterWrappers, models.PbToClusterWrapper(pbCluster))
+	}
+	return clusterWrappers, nil
 }

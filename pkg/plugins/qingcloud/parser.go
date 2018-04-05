@@ -46,7 +46,7 @@ func (p *Parser) generateServerId(upperBound int, excludeServerIds []int) (int, 
 	return result, nil
 }
 
-func (p *Parser) ParseClusterRole(mustache *models.ClusterJsonMustache, node *models.Node) (*models.ClusterRole, error) {
+func (p *Parser) ParseClusterRole(tmpl *models.ClusterJsonTmpl, node *models.Node) (*models.ClusterRole, error) {
 	clusterRole := &models.ClusterRole{
 		Role:         node.Role,
 		Cpu:          node.CPU,
@@ -78,8 +78,8 @@ func (p *Parser) ParseClusterRole(mustache *models.ClusterJsonMustache, node *mo
 			return nil, err
 		}
 		clusterRole.Env = string(env)
-	} else if len(mustache.Env) > 0 {
-		env, err := json.Marshal(mustache.Env)
+	} else if len(tmpl.Env) > 0 {
+		env, err := json.Marshal(tmpl.Env)
 		if err != nil {
 			logger.Errorf("Encode env of cluster to json failed: %v", err)
 			return nil, err
@@ -118,9 +118,9 @@ func (p *Parser) ParseClusterNode(node *models.Node, subnetId string) (map[strin
 			Name:     "",
 			Role:     node.Role,
 			SubnetId: subnetId,
-			ServerId: int32(serverId),
+			ServerId: uint32(serverId),
 			Status:   constants.StatusPending,
-			GroupId:  int32(groupId),
+			GroupId:  uint32(groupId),
 		}
 		// NodeId has not been generated yet.
 		clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNode
@@ -138,9 +138,9 @@ func (p *Parser) ParseClusterNode(node *models.Node, subnetId string) (map[strin
 				Name:     "",
 				Role:     replicaRole,
 				SubnetId: subnetId,
-				ServerId: int32(serverId),
+				ServerId: uint32(serverId),
 				Status:   constants.StatusPending,
-				GroupId:  int32(groupId),
+				GroupId:  uint32(groupId),
 			}
 			clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNode
 		}
@@ -163,9 +163,9 @@ func (p *Parser) ParseClusterLoadbalancer(node *models.Node) []*models.ClusterLo
 	return clusterLoadbalancers
 }
 
-func (p *Parser) ParseClusterLinks(mustache *models.ClusterJsonMustache) map[string]*models.ClusterLink {
+func (p *Parser) ParseClusterLinks(tmpl *models.ClusterJsonTmpl) map[string]*models.ClusterLink {
 	clusterLinks := make(map[string]*models.ClusterLink)
-	for name, link := range mustache.Links {
+	for name, link := range tmpl.Links {
 		clusterLink := &models.ClusterLink{
 			Name:              name,
 			ExternalClusterId: link,
@@ -176,33 +176,33 @@ func (p *Parser) ParseClusterLinks(mustache *models.ClusterJsonMustache) map[str
 	return clusterLinks
 }
 
-func (p *Parser) ParseCluster(mustache *models.ClusterJsonMustache) (*models.Cluster, error) {
-	endpoints, err := json.Marshal(mustache.Endpoints)
+func (p *Parser) ParseCluster(tmpl *models.ClusterJsonTmpl) (*models.Cluster, error) {
+	endpoints, err := json.Marshal(tmpl.Endpoints)
 	if err != nil {
 		logger.Errorf("Encode endpoint to json failed: %v", err)
 		return nil, err
 	}
 
 	metadataRootAccess := false
-	if mustache.MetadataRootAccess != nil {
-		metadataRootAccess = *mustache.MetadataRootAccess
+	if tmpl.MetadataRootAccess != nil {
+		metadataRootAccess = *tmpl.MetadataRootAccess
 	}
 
 	cluster := &models.Cluster{
-		Name:               mustache.Name,
-		Description:        mustache.Description,
-		AppId:              mustache.AppId,
-		VersionId:          mustache.VersionId,
-		SubnetId:           mustache.Subnet,
+		Name:               tmpl.Name,
+		Description:        tmpl.Description,
+		AppId:              tmpl.AppId,
+		VersionId:          tmpl.VersionId,
+		SubnetId:           tmpl.Subnet,
 		Endpoints:          string(endpoints),
 		Status:             constants.StatusPending,
 		MetadataRootAccess: metadataRootAccess,
-		GlobalUuid:         mustache.GlobalUuid,
+		GlobalUuid:         tmpl.GlobalUuid,
 	}
 	return cluster, nil
 }
 
-func (p *Parser) ParseClusterCommon(mustache *models.ClusterJsonMustache,
+func (p *Parser) ParseClusterCommon(tmpl *models.ClusterJsonTmpl,
 	node *models.Node) (*models.ClusterCommon, error) {
 
 	customMetadata := ""
@@ -216,8 +216,8 @@ func (p *Parser) ParseClusterCommon(mustache *models.ClusterJsonMustache,
 	}
 
 	incrementalBackupSupported := false
-	if mustache.IncrementalBackupSupported != nil {
-		incrementalBackupSupported = *mustache.IncrementalBackupSupported
+	if tmpl.IncrementalBackupSupported != nil {
+		incrementalBackupSupported = *tmpl.IncrementalBackupSupported
 	}
 
 	agentInstalled := true
@@ -229,7 +229,7 @@ func (p *Parser) ParseClusterCommon(mustache *models.ClusterJsonMustache,
 		Role:                       node.Role,
 		ServerIdUpperBound:         node.ServerIDUpperBound,
 		AdvancedActions:            strings.Join(node.AdvancedActions, ","),
-		BackupPolicy:               mustache.BackupPolicy,
+		BackupPolicy:               tmpl.BackupPolicy,
 		IncrementalBackupSupported: incrementalBackupSupported,
 		Passphraseless:             node.Passphraseless,
 		CustomMetadataScript:       customMetadata,
@@ -250,8 +250,8 @@ func (p *Parser) ParseClusterCommon(mustache *models.ClusterJsonMustache,
 			return nil, err
 		}
 		clusterCommon.HealthCheck = string(healthCheck)
-	} else if mustache.HealthCheck != nil {
-		healthCheck, err := json.Marshal(*mustache.HealthCheck)
+	} else if tmpl.HealthCheck != nil {
+		healthCheck, err := json.Marshal(*tmpl.HealthCheck)
 		if err != nil {
 			logger.Errorf("Encode cluster health check to json failed: %v", err)
 			return nil, err
@@ -268,8 +268,8 @@ func (p *Parser) ParseClusterCommon(mustache *models.ClusterJsonMustache,
 			return nil, err
 		}
 		clusterCommon.Monitor = string(monitor)
-	} else if mustache.Monitor != nil {
-		monitor, err := json.Marshal(*mustache.Monitor)
+	} else if tmpl.Monitor != nil {
+		monitor, err := json.Marshal(*tmpl.Monitor)
 		if err != nil {
 			logger.Errorf("Encode cluster Monitor to json failed: %v", err)
 			return nil, err
@@ -344,36 +344,36 @@ func (p *Parser) Parse(conf []byte) (*models.ClusterWrapper, error) {
 	clusterRoles := make(map[string]*models.ClusterRole)
 	clusterLoadbalancers := make(map[string][]*models.ClusterLoadbalancer)
 
-	var mustache models.ClusterJsonMustache
-	if err := yaml.Decode(conf, &mustache); err != nil {
-		logger.Errorf("Decode conf to mustache struct failed: %v", err)
+	var tmpl models.ClusterJsonTmpl
+	if err := yaml.Decode(conf, &tmpl); err != nil {
+		logger.Errorf("Decode conf to tmpl struct failed: %v", err)
 		return nil, err
 	}
 
 	// Parse cluster
-	cluster, err := p.ParseCluster(&mustache)
+	cluster, err := p.ParseCluster(&tmpl)
 	if err != nil {
 		return nil, err
 	}
 
 	// Parse cluster link
-	clusterLinks = p.ParseClusterLinks(&mustache)
+	clusterLinks = p.ParseClusterLinks(&tmpl)
 
-	if mustache.Nodes != nil {
-		for _, node := range mustache.Nodes {
+	if tmpl.Nodes != nil {
+		for _, node := range tmpl.Nodes {
 			// Parse cluster common
-			clusterCommon, err := p.ParseClusterCommon(&mustache, &node)
+			clusterCommon, err := p.ParseClusterCommon(&tmpl, &node)
 			clusterCommons[clusterCommon.Role] = clusterCommon
 
 			// Parse cluster role
-			clusterRole, err := p.ParseClusterRole(&mustache, &node)
+			clusterRole, err := p.ParseClusterRole(&tmpl, &node)
 			if err != nil {
 				return nil, err
 			}
 			clusterRoles[clusterRole.Role] = clusterRole
 
 			// Parse cluster node
-			addClusterNodes, err := p.ParseClusterNode(&node, mustache.Subnet)
+			addClusterNodes, err := p.ParseClusterNode(&node, tmpl.Subnet)
 			if err != nil {
 				return nil, err
 			}

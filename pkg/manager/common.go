@@ -126,10 +126,16 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 		v := reflect.ValueOf(f)
 		if utils.FindString(columns, column) > -1 && !v.IsNil() {
 			switch v := f.(type) {
-			case string:
-				attributes[column] = v
 			case *wrappers.StringValue:
 				attributes[column] = v.GetValue()
+			case *wrappers.BoolValue:
+				attributes[column] = v.GetValue()
+			case *wrappers.Int32Value:
+				attributes[column] = v.GetValue()
+			case *wrappers.UInt32Value:
+				attributes[column] = v.GetValue()
+			default:
+				attributes[column] = v
 			}
 		}
 	}

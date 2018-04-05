@@ -22,10 +22,10 @@ var IndexedColumns = map[string][]string{
 		"package_name", "status",
 	},
 	JobTableName: {
-		"job_id", "cluster_id", "app_id", "app_version", "status",
+		"job_id", "cluster_id", "app_id", "version_id", "executor", "provider", "status", "owner",
 	},
 	TaskTableName: {
-		"job_id", "task_id", "status",
+		"job_id", "task_id", "executor", "status", "owner",
 	},
 	RepoTableName: {
 		"repo_id", "name", "type", "visibility", "status",
@@ -41,6 +41,12 @@ var IndexedColumns = map[string][]string{
 	},
 	RepoTaskTableName: {
 		"repo_task_id", "repo_id", "status",
+	},
+	ClusterTableName: {
+		"cluster_id", "app_id", "version_id", "status", "runtime_id", "frontgate_id", "owner",
+	},
+	ClusterNodeTableName: {
+		"cluster_id", "node_id", "status", "owner",
 	},
 }
 
@@ -58,13 +64,19 @@ var SearchColumns = map[string][]string{
 		"version_id", "app_id", "name", "description", "owner", "package_name",
 	},
 	JobTableName: {
-		"job_id", "cluster_id", "app_id", "app_version", "status",
+		"executor", "provider",
 	},
 	TaskTableName: {
 		"job_id", "task_id", "status",
 	},
 	RuntimeTableName: {
 		"runtime_id", "name",
+	},
+	ClusterTableName: {
+		"name", "description",
+	},
+	ClusterNodeTableName: {
+		"name",
 	},
 }
 

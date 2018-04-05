@@ -492,6 +492,7 @@ var hbaseClusterRoles = map[string]models.ClusterRole{
 		Memory:       1024,
 		InstanceSize: 20,
 		StorageSize:  10,
+		MountPoint:   "/data",
 		Env:          "{\"dfs.datanode.handler.count\":10,\"dfs.namenode.handler.count\":10,\"dfs.replication\":2,\"fs.trash.interval\":1440,\"hbase.balancer.period\":300000,\"hbase.column.max.version\":1,\"hbase.hregion.majorcompaction\":0,\"hbase.hregion.max.filesize\":10737418240,\"hbase.hstore.blockingStoreFiles\":1000000,\"hbase.ipc.server.callqueue.handler.factor\":0.1,\"hbase.ipc.server.callqueue.read.ratio\":0,\"hbase.ipc.server.callqueue.scan.ratio\":0,\"hbase.master.handler.count\":25,\"hbase.master.logcleaner.ttl\":600000,\"hbase.regions.slop\":0.001,\"hbase.regionserver.global.memstore.size\":0.4,\"hbase.regionserver.handler.count\":30,\"hbase.regionserver.logroll.period\":3600000,\"hbase.regionserver.msginterval\":3000,\"hbase.regionserver.optionalcacheflushinterval\":0,\"hbase.regionserver.regionSplitLimit\":1000,\"hbase.rpc.timeout\":60000,\"hbase.security.authorization\":\"true\",\"hfile.block.cache.size\":0.4,\"hfile.index.block.max.size\":131072,\"io.storefile.bloom.block.size\":131072,\"phoenix.functions.allowUserDefinedFunctions\":\"false\",\"phoenix.transactions.enabled\":\"false\",\"qingcloud.hbase.major.compact.hour\":3,\"qingcloud.phoenix.on.hbase.enable\":\"false\",\"zookeeper.session.timeout\":60000}",
 	},
 	"hbase-hdfs-master": {
@@ -502,6 +503,7 @@ var hbaseClusterRoles = map[string]models.ClusterRole{
 		Memory:       1024,
 		InstanceSize: 20,
 		StorageSize:  10,
+		MountPoint:   "/data",
 		Env:          "{\"dfs.datanode.handler.count\":10,\"dfs.namenode.handler.count\":10,\"dfs.replication\":2,\"fs.trash.interval\":1440,\"hbase.balancer.period\":300000,\"hbase.column.max.version\":1,\"hbase.hregion.majorcompaction\":0,\"hbase.hregion.max.filesize\":10737418240,\"hbase.hstore.blockingStoreFiles\":1000000,\"hbase.ipc.server.callqueue.handler.factor\":0.1,\"hbase.ipc.server.callqueue.read.ratio\":0,\"hbase.ipc.server.callqueue.scan.ratio\":0,\"hbase.master.handler.count\":25,\"hbase.master.logcleaner.ttl\":600000,\"hbase.regions.slop\":0.001,\"hbase.regionserver.global.memstore.size\":0.4,\"hbase.regionserver.handler.count\":30,\"hbase.regionserver.logroll.period\":3600000,\"hbase.regionserver.msginterval\":3000,\"hbase.regionserver.optionalcacheflushinterval\":0,\"hbase.regionserver.regionSplitLimit\":1000,\"hbase.rpc.timeout\":60000,\"hbase.security.authorization\":\"true\",\"hfile.block.cache.size\":0.4,\"hfile.index.block.max.size\":131072,\"io.storefile.bloom.block.size\":131072,\"phoenix.functions.allowUserDefinedFunctions\":\"false\",\"phoenix.transactions.enabled\":\"false\",\"qingcloud.hbase.major.compact.hour\":3,\"qingcloud.phoenix.on.hbase.enable\":\"false\",\"zookeeper.session.timeout\":60000}",
 	},
 	"hbase-slave": {
@@ -512,6 +514,7 @@ var hbaseClusterRoles = map[string]models.ClusterRole{
 		Memory:       2048,
 		InstanceSize: 20,
 		StorageSize:  30,
+		MountPoint:   "/data",
 		Env:          "{\"dfs.datanode.handler.count\":10,\"dfs.namenode.handler.count\":10,\"dfs.replication\":2,\"fs.trash.interval\":1440,\"hbase.balancer.period\":300000,\"hbase.column.max.version\":1,\"hbase.hregion.majorcompaction\":0,\"hbase.hregion.max.filesize\":10737418240,\"hbase.hstore.blockingStoreFiles\":1000000,\"hbase.ipc.server.callqueue.handler.factor\":0.1,\"hbase.ipc.server.callqueue.read.ratio\":0,\"hbase.ipc.server.callqueue.scan.ratio\":0,\"hbase.master.handler.count\":25,\"hbase.master.logcleaner.ttl\":600000,\"hbase.regions.slop\":0.001,\"hbase.regionserver.global.memstore.size\":0.4,\"hbase.regionserver.handler.count\":30,\"hbase.regionserver.logroll.period\":3600000,\"hbase.regionserver.msginterval\":3000,\"hbase.regionserver.optionalcacheflushinterval\":0,\"hbase.regionserver.regionSplitLimit\":1000,\"hbase.rpc.timeout\":60000,\"hbase.security.authorization\":\"true\",\"hfile.block.cache.size\":0.4,\"hfile.index.block.max.size\":131072,\"io.storefile.bloom.block.size\":131072,\"phoenix.functions.allowUserDefinedFunctions\":\"false\",\"phoenix.transactions.enabled\":\"false\",\"qingcloud.hbase.major.compact.hour\":3,\"qingcloud.phoenix.on.hbase.enable\":\"false\",\"zookeeper.session.timeout\":60000}",
 	},
 }

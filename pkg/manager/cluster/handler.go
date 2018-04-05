@@ -136,22 +136,79 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest) (*pb.ModifyClusterResponse, error) {
 	s := sender.GetSenderFromContext(ctx)
 
-	clusterId := req.GetClusterId().GetValue()
+	clusterId := req.GetCluster().GetClusterId().GetValue()
 	_, err := p.getCluster(clusterId, s.UserId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get cluster [%s]", clusterId)
+		return nil, status.Errorf(codes.Internal, "Get cluster [%s] failed", clusterId)
 	}
 
-	attributes := manager.BuildUpdateAttributes(req,
-		"name", "description", "status", "transition_status", "upgrade_status",
-		"upgrade_time", "status_time")
+	attributes := manager.BuildUpdateAttributes(req.Cluster, models.ClusterColumns...)
 	_, err = p.Db.
 		Update(models.ClusterTableName).
 		SetMap(attributes).
 		Where(db.Eq("cluster_id", clusterId)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ModifyCluster [%s]: %+v", clusterId, err)
+		return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] failed: %+v", clusterId, err)
+	}
+
+	for _, clusterRole := range req.ClusterRoleSet {
+		role := clusterRole.GetRole().GetValue()
+		roleAttributes := manager.BuildUpdateAttributes(clusterRole, models.ClusterRoleColumns...)
+		_, err = p.Db.
+			Update(models.ClusterRoleTableName).
+			SetMap(roleAttributes).
+			Where(db.Eq("cluster_id", clusterId)).
+			Where(db.Eq("role", role)).
+			Exec()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] failed: %+v", clusterId, role, err)
+		}
+	}
+
+	for _, clusterCommon := range req.ClusterCommonSet {
+		role := clusterCommon.GetRole().GetValue()
+		commonAttributes := manager.BuildUpdateAttributes(clusterCommon, models.ClusterCommonColumns...)
+		_, err = p.Db.
+			Update(models.ClusterCommonTableName).
+			SetMap(commonAttributes).
+			Where(db.Eq("cluster_id", clusterId)).
+			Where(db.Eq("role", role)).
+			Exec()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] common failed: %+v", clusterId, role, err)
+		}
+	}
+
+	for _, clusterLink := range req.ClusterLinkSet {
+		name := clusterLink.GetName().GetValue()
+		linkAttributes := manager.BuildUpdateAttributes(clusterLink, models.ClusterLinkColumns...)
+		_, err = p.Db.
+			Update(models.ClusterLinkTableName).
+			SetMap(linkAttributes).
+			Where(db.Eq("cluster_id", clusterId)).
+			Where(db.Eq("name", name)).
+			Exec()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] name [%s] link failed: %+v", clusterId, name, err)
+		}
+	}
+
+	for _, clusterLoadbalancer := range req.ClusterLoadbalancerSet {
+		role := clusterLoadbalancer.GetRole().GetValue()
+		listenerId := clusterLoadbalancer.GetLoadbalancerListenerId().GetValue()
+		loadbalancerAttributes := manager.BuildUpdateAttributes(clusterLoadbalancer, models.ClusterLoadbalancerColumns...)
+		_, err = p.Db.
+			Update(models.ClusterLoadbalancerTableName).
+			SetMap(loadbalancerAttributes).
+			Where(db.Eq("cluster_id", clusterId)).
+			Where(db.Eq("role", role)).
+			Where(db.Eq("loadbalancer_listener_id", listenerId)).
+			Exec()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] loadbalancer listener id [%s] failed: %+v",
+				clusterId, role, listenerId, err)
+		}
 	}
 
 	res := &pb.ModifyClusterResponse{
@@ -163,22 +220,20 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNodeRequest) (*pb.ModifyClusterNodeResponse, error) {
 	s := sender.GetSenderFromContext(ctx)
 
-	nodeId := req.GetNodeId().GetValue()
+	nodeId := req.GetClusterNode().GetNodeId().GetValue()
 	_, err := p.getClusterNode(nodeId, s.UserId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get cluster node [%s]", nodeId)
+		return nil, status.Errorf(codes.Internal, "Get cluster node [%s] failed", nodeId)
 	}
 
-	attributes := manager.BuildUpdateAttributes(req,
-		"name", "instance_id", "volume_id", "subnet_id", "private_ip",
-		"status", "transition_status", "health_status", "pub_key", "status_time")
+	attributes := manager.BuildUpdateAttributes(req.ClusterNode, models.ClusterNodeColumns...)
 	_, err = p.Db.
 		Update(models.ClusterNodeTableName).
 		SetMap(attributes).
 		Where(db.Eq("node_id", nodeId)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ModifyClusterNode [%s]: %+v", nodeId, err)
+		return nil, status.Errorf(codes.Internal, "ModifyClusterNode [%s] failed: %+v", nodeId, err)
 	}
 
 	res := &pb.ModifyClusterNodeResponse{
@@ -449,9 +504,6 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 }
 
 func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersRequest) (*pb.DescribeClustersResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
-	// TODO: check resource permission
-
 	var clusters []*models.Cluster
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
@@ -461,29 +513,90 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		From(models.ClusterTableName).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.ClusterTableName)).
-		Where(db.Eq("owner", s.UserId))
+		Where(manager.BuildFilterConditions(req, models.ClusterTableName))
 	_, err := query.Load(&clusters)
 	if err != nil {
 		// TODO: err_code should be implementation
-		return nil, status.Errorf(codes.Internal, "DescribeClusters: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DescribeClusters failed: %+v", err)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeClusters: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DescribeClusters failed: %+v", err)
+	}
+
+	var pbClusters []*pb.Cluster
+	for _, cluster := range clusters {
+		clusterId := cluster.ClusterId
+		var clusterCommons []*models.ClusterCommon
+		var clusterNodes []*models.ClusterNode
+		var clusterRoles []*models.ClusterRole
+		var clusterLinks []*models.ClusterLink
+		var clusterLoadbalancers []*models.ClusterLoadbalancer
+
+		_, err = p.Db.
+			Select(models.ClusterCommonColumns...).
+			From(models.ClusterCommonTableName).
+			Where(db.Eq("cluster_id", clusterId)).
+			Load(&clusterCommons)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "DescribeClusters [%s] commons failed: %+v", clusterId, err)
+		}
+
+		_, err = p.Db.
+			Select(models.ClusterNodeColumns...).
+			From(models.ClusterNodeTableName).
+			Where(db.Eq("cluster_id", clusterId)).
+			Load(&clusterNodes)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "DescribeClusters [%s] nodes failed: %+v", clusterId, err)
+		}
+
+		_, err = p.Db.
+			Select(models.ClusterRoleColumns...).
+			From(models.ClusterRoleTableName).
+			Where(db.Eq("cluster_id", clusterId)).
+			Load(&clusterRoles)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "DescribeClusters [%s] roles failed: %+v", clusterId, err)
+		}
+
+		_, err = p.Db.
+			Select(models.ClusterLinkColumns...).
+			From(models.ClusterLinkTableName).
+			Where(db.Eq("cluster_id", clusterId)).
+			Load(&clusterLinks)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "DescribeClusters [%s] links failed: %+v", clusterId, err)
+		}
+
+		_, err = p.Db.
+			Select(models.ClusterLoadbalancerColumns...).
+			From(models.ClusterLoadbalancerTableName).
+			Where(db.Eq("cluster_id", clusterId)).
+			Load(&clusterLoadbalancers)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "DescribeClusters [%s] loadbalancers failed: %+v", clusterId, err)
+		}
+
+		pbClusters = append(pbClusters,
+			models.ClusterWrapperToPb(
+				cluster,
+				clusterCommons,
+				clusterNodes,
+				clusterRoles,
+				clusterLinks,
+				clusterLoadbalancers,
+			))
 	}
 
 	res := &pb.DescribeClustersResponse{
-		ClusterSet: models.ClustersToPbs(clusters),
+		ClusterSet: pbClusters,
 		TotalCount: count,
 	}
 	return res, nil
 }
 
 func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClusterNodesRequest) (*pb.DescribeClusterNodesResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
-	// TODO: check resource permission
-
 	var clusterNodes []*models.ClusterNode
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
@@ -493,8 +606,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		From(models.ClusterNodeTableName).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.ClusterNodeTableName)).
-		Where(db.Eq("owner", s.UserId))
+		Where(manager.BuildFilterConditions(req, models.ClusterNodeTableName))
 	_, err := query.Load(&clusterNodes)
 	if err != nil {
 		// TODO: err_code should be implementation

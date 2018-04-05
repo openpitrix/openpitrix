@@ -10,14 +10,10 @@ import (
 )
 
 func TestWalkTree(t *testing.T) {
-	var taskLayer0, taskLayer1, taskLayer2, taskLayer3 TaskLayer
-	taskLayer0 = TaskLayer{
-		Tasks: nil,
-		Child: nil,
-	}
+	var taskLayer1, taskLayer2, taskLayer3 TaskLayer
 	taskLayer1 = TaskLayer{
 		Tasks: []*Task{{TaskId: "0"}},
-		Child: &taskLayer0,
+		Child: nil,
 	}
 	taskLayer2 = TaskLayer{
 		Tasks: []*Task{{TaskId: "1"}, {TaskId: "2"}},
@@ -43,6 +39,11 @@ func TestWalkTree(t *testing.T) {
 			for _, task := range current.Tasks {
 				execTasks = append(execTasks, task.TaskId)
 			}
+			if current.IsLeaf() {
+				for _, task := range current.Tasks {
+					waitTasks = append(waitTasks, task.TaskId)
+				}
+			}
 		}
 		return nil
 	})
@@ -54,5 +55,17 @@ func TestWalkTree(t *testing.T) {
 	if strings.Join(waitTasks, ",") != strings.Join(expectTasks, ",") ||
 		strings.Join(execTasks, ",") != strings.Join(expectTasks, ",") {
 		t.Errorf("Wrong task order")
+	}
+}
+
+func TestIsLeaf(t *testing.T) {
+	var taskLayer1 TaskLayer
+	taskLayer1 = TaskLayer{
+		Tasks: []*Task{{TaskId: "0"}},
+		Child: nil,
+	}
+
+	if !taskLayer1.IsLeaf() {
+		t.Errorf("Wrong task layer leaf")
 	}
 }

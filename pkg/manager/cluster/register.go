@@ -18,7 +18,7 @@ type Register struct {
 	VpcId          string
 	FrontgateId    string
 	Owner          string
-	ClusterType    int32
+	ClusterType    uint32
 	ClusterWrapper *models.ClusterWrapper
 	Runtime        *runtimeclient.Runtime
 }

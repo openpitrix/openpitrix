@@ -138,14 +138,26 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 			}
 		}
 
-		for _, currentTask := range current.Tasks {
-			taskId, err := taskclient.SendTask(currentTask)
-			if err != nil {
-				logger.Errorf("Failed to send task [%s]: %+v", currentTask.TaskId, err)
-				return err
+		if current != nil {
+			for _, currentTask := range current.Tasks {
+				taskId, err := taskclient.SendTask(currentTask)
+				if err != nil {
+					logger.Errorf("Failed to send task [%s]: %+v", currentTask.TaskId, err)
+					return err
+				}
+				currentTask.TaskId = taskId
 			}
-			currentTask.TaskId = taskId
+			if current.IsLeaf() {
+				for _, currentTask := range current.Tasks {
+					err = taskclient.WaitTask(currentTask.TaskId, currentTask.GetTimeout(constants.WaitTaskTimeout)*time.Second, constants.WaitTaskInterval)
+					if err != nil {
+						logger.Errorf("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
+						return err
+					}
+				}
+			}
 		}
+
 		return nil
 	})
 

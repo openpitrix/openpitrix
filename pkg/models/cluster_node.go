@@ -25,11 +25,11 @@ type ClusterNode struct {
 	VolumeId         string
 	SubnetId         string
 	PrivateIp        string
-	ServerId         int32
+	ServerId         uint32
 	Role             string
 	Status           string
 	TransitionStatus string
-	GroupId          int32
+	GroupId          uint32
 	Owner            string
 	GlobalServerId   string
 	CustomMetadata   string
@@ -51,8 +51,55 @@ func NewClusterNode() *ClusterNode {
 }
 
 func ClusterNodeToPb(clusterNode *ClusterNode) *pb.ClusterNode {
-	pbClusterNode := pb.ClusterNode{}
-	return &pbClusterNode
+	return &pb.ClusterNode{
+		NodeId:           utils.ToProtoString(clusterNode.NodeId),
+		ClusterId:        utils.ToProtoString(clusterNode.ClusterId),
+		Name:             utils.ToProtoString(clusterNode.Name),
+		InstanceId:       utils.ToProtoString(clusterNode.InstanceId),
+		VolumeId:         utils.ToProtoString(clusterNode.VolumeId),
+		SubnetId:         utils.ToProtoString(clusterNode.SubnetId),
+		PrivateIp:        utils.ToProtoString(clusterNode.PrivateIp),
+		ServerId:         utils.ToProtoUInt32(clusterNode.ServerId),
+		Role:             utils.ToProtoString(clusterNode.Role),
+		Status:           utils.ToProtoString(clusterNode.Status),
+		TransitionStatus: utils.ToProtoString(clusterNode.TransitionStatus),
+		GroupId:          utils.ToProtoUInt32(clusterNode.GroupId),
+		Owner:            utils.ToProtoString(clusterNode.Owner),
+		GlobalServerId:   utils.ToProtoString(clusterNode.GlobalServerId),
+		CustomMetadata:   utils.ToProtoString(clusterNode.CustomMetadata),
+		PubKey:           utils.ToProtoString(clusterNode.PubKey),
+		HealthStatus:     utils.ToProtoString(clusterNode.HealthStatus),
+		IsBackup:         utils.ToProtoBool(clusterNode.IsBackup),
+		AutoBackup:       utils.ToProtoBool(clusterNode.AutoBackup),
+		CreateTime:       utils.ToProtoTimestamp(clusterNode.CreateTime),
+		StatusTime:       utils.ToProtoTimestamp(clusterNode.StatusTime),
+	}
+}
+
+func PbToClusterNode(pbClusterNode *pb.ClusterNode) *ClusterNode {
+	return &ClusterNode{
+		NodeId:           pbClusterNode.GetNodeId().GetValue(),
+		ClusterId:        pbClusterNode.GetClusterId().GetValue(),
+		Name:             pbClusterNode.GetName().GetValue(),
+		InstanceId:       pbClusterNode.GetInstanceId().GetValue(),
+		VolumeId:         pbClusterNode.GetVolumeId().GetValue(),
+		SubnetId:         pbClusterNode.GetSubnetId().GetValue(),
+		PrivateIp:        pbClusterNode.GetPrivateIp().GetValue(),
+		ServerId:         pbClusterNode.GetServerId().GetValue(),
+		Role:             pbClusterNode.GetRole().GetValue(),
+		Status:           pbClusterNode.GetStatus().GetValue(),
+		TransitionStatus: pbClusterNode.GetTransitionStatus().GetValue(),
+		GroupId:          pbClusterNode.GetGroupId().GetValue(),
+		Owner:            pbClusterNode.GetOwner().GetValue(),
+		GlobalServerId:   pbClusterNode.GetGlobalServerId().GetValue(),
+		CustomMetadata:   pbClusterNode.GetCustomMetadata().GetValue(),
+		PubKey:           pbClusterNode.GetPubKey().GetValue(),
+		HealthStatus:     pbClusterNode.GetHealthStatus().GetValue(),
+		IsBackup:         pbClusterNode.GetIsBackup().GetValue(),
+		AutoBackup:       pbClusterNode.GetAutoBackup().GetValue(),
+		CreateTime:       utils.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
+		StatusTime:       utils.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
+	}
 }
 
 func ClusterNodesToPbs(clusterNodes []*ClusterNode) (pbClusterNodes []*pb.ClusterNode) {

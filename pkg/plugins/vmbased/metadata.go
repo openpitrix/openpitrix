@@ -5,11 +5,9 @@
 package vmbased
 
 import (
+	"encoding/json"
 	"strings"
 
-	"encoding/json"
-
-	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -17,7 +15,15 @@ import (
 
 type Metadata struct {
 	ClusterWrapper *models.ClusterWrapper
-	Runtime        *runtimeclient.Runtime
+}
+
+func (m *Metadata) GetClusterCnodesString() string {
+	cnodes, err := json.Marshal(m.GetClusterCnodes())
+	if err != nil {
+		logger.Errorf("Marshal cluster [%s] metadata cnodes failed: %+v",
+			m.ClusterWrapper.Cluster.ClusterId, err)
+	}
+	return string(cnodes)
 }
 
 /*
@@ -166,7 +172,7 @@ func (m *Metadata) GetClusterMetadataCnodes() map[string]interface{} {
 		"app_id":      m.ClusterWrapper.Cluster.AppId,
 		"vxnet":       m.ClusterWrapper.Cluster.SubnetId,
 		"user_id":     m.ClusterWrapper.Cluster.Owner,
-		"zone":        m.Runtime.Zone,
+		"runtime_id":  m.ClusterWrapper.Cluster.RuntimeId,
 		"global_uuid": m.ClusterWrapper.Cluster.GlobalUuid,
 	}
 	// TODO: api_server in runtime is needed
@@ -208,4 +214,16 @@ func (m *Metadata) GetEnvCnodes() map[string]interface{} {
 		}
 	}
 	return result
+}
+
+func GetRegisterExec(cnodes string) string {
+	// TODO: need real cmd
+	cmd := "/opt/metad/register-data.sh "
+	return cmd + cnodes
+}
+
+func GetDeregisterExec(cnodes string) string {
+	// TODO: need real cmd
+	cmd := "curl -X DELETE http://127.0.0.1:9611/v1/data/clusters?subs="
+	return cmd + cnodes
 }
