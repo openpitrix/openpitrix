@@ -9,6 +9,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"openpitrix.io/openpitrix/pkg/devkit/app"
 )
 
 const (
@@ -38,7 +40,7 @@ func IsAppDir(dirName string) (bool, error) {
 		return false, fmt.Errorf("cannot read %s in directory [%s]", PackageJson, dirName)
 	}
 
-	packageContent, err := UnmarshalPackageJson(packageJsonContent)
+	packageContent, err := app.UnmarshalMetadata(packageJsonContent)
 	if err != nil {
 		return false, err
 	}

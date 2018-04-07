@@ -758,6 +758,24 @@
 			"revisionTime": "2017-12-03T21:42:37Z"
 		},
 		{
+			"checksumSHA1": "+SLRfCdnZzt59tTsNUp6ie39zjo=",
+			"path": "github.com/xeipuuv/gojsonpointer",
+			"revision": "4e3ac2762d5f479393488629ee9370b50873b3a6",
+			"revisionTime": "2018-01-27T04:07:02Z"
+		},
+		{
+			"checksumSHA1": "cjCjdAbLpKV1bxMpMRzC5Fn4R34=",
+			"path": "github.com/xeipuuv/gojsonreference",
+			"revision": "bd5ef7bd5415a7ac448318e64f11a24cd21e594b",
+			"revisionTime": "2018-01-27T04:06:03Z"
+		},
+		{
+			"checksumSHA1": "I1ZKWcukrLK/+qxZdzBjbowmz1c=",
+			"path": "github.com/xeipuuv/gojsonschema",
+			"revision": "8bcffc811467a5f691810420385be6e66b35a317",
+			"revisionTime": "2018-02-07T21:43:16Z"
+		},
+		{
 			"checksumSHA1": "q8dEHwY+KdMisjYnM44nNfI9vvw=",
 			"path": "github.com/yunify/qingcloud-sdk-go",
 			"revision": "efb555f6a4e9e5841f162d37bd0684fbf9cc4984",

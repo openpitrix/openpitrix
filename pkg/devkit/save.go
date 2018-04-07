@@ -9,6 +9,7 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -83,8 +84,8 @@ func writeTarContents(out *tar.Writer, c *app.App, prefix string) error {
 		return err
 	}
 
-	if c.Config != nil && len(c.Config.Raw) > 0 {
-		if err := writeToTar(out, base+"/"+ConfigJson, []byte(c.Config.Raw)); err != nil {
+	if c.ConfigTemplate != nil && len(c.ConfigTemplate.Raw) > 0 {
+		if err := writeToTar(out, base+"/"+ConfigJson, []byte(c.ConfigTemplate.Raw)); err != nil {
 			return err
 		}
 	}
@@ -119,4 +120,12 @@ func writeToTar(out *tar.Writer, name string, body []byte) error {
 		return err
 	}
 	return nil
+}
+
+func savePackageJson(filename string, metadata *app.Metadata) error {
+	out, err := json.MarshalIndent(metadata, "", "    ")
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(filename, out, 0644)
 }

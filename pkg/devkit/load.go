@@ -152,19 +152,19 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 
 	for _, f := range files {
 		if f.Name == PackageJson {
-			m, err := UnmarshalPackageJson(f.Data)
+			m, err := app.UnmarshalMetadata(f.Data)
 			if err != nil {
 				return c, err
 			}
 			c.Metadata = m
 		} else if f.Name == ClusterJsonTmpl {
-			c.ClusterTemplate = &app.ClusterTemplate{Value: string(f.Data), Raw: string(f.Data)}
+			c.ClusterTemplate = &app.ClusterTemplate{Raw: string(f.Data)}
 		} else if f.Name == ConfigJson {
-			m, err := UnmarshalConfigJson(f.Data)
+			m, err := app.UnmarshalConfigTemplate(f.Data)
 			if err != nil {
 				return c, err
 			}
-			c.Config = m
+			c.ConfigTemplate = m
 		} else {
 			c.Files = append(c.Files, f)
 		}
@@ -176,6 +176,8 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 	if c.Metadata.Name == "" {
 		return c, fmt.Errorf("invalid version (package): name must not be empty")
 	}
-
-	return c, nil
+	// Validate default config
+	config := c.ConfigTemplate.GetDefaultConfig()
+	err := app.ValidateClusterTmpl(c.ClusterTemplate, &config)
+	return c, err
 }
