@@ -5,6 +5,7 @@
 package qingcloud
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -34,12 +35,19 @@ func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudSer
 	if err != nil {
 		return nil, err
 	}
-	conf, err := qcconfig.New(runtime.Credential["access_key_id"], runtime.Credential["secret_access_key"])
+
+	credential := new(Credential)
+	err = json.Unmarshal([]byte(runtime.Credential), credential)
+	if err != nil {
+		logger.Errorf("Parse [%s] credential failed: %v", provider, err)
+		return nil, err
+	}
+	conf, err := qcconfig.New(credential.AccessKeyId, credential.SecretAccessKey)
 	if err != nil {
 		return nil, err
 	}
 	conf.Zone = runtime.Zone
-	conf.URI = runtime.Url
+	conf.URI = runtime.RuntimeUrl
 	return qcservice.Init(conf)
 }
 

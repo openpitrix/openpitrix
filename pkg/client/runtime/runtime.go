@@ -11,19 +11,16 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
 )
 
 type Runtime struct {
-	RuntimeId         string
-	Provider          string
-	Zone              string
+	models.Runtime
 	ProviderInterface plugins.ProviderInterface
-	Credential        map[string]string
-	Url               string
+	Credential        string
 }
 
 func NewRuntime(runtimeId string) (*Runtime, error) {
@@ -31,20 +28,20 @@ func NewRuntime(runtimeId string) (*Runtime, error) {
 	if err != nil {
 		return nil, err
 	}
-	provider := getProvider(runtime)
-	zone := getZone(runtime)
+	provider := runtime.GetProvider().GetValue()
+	zone := runtime.GetZone().GetValue()
 	providerInterface, err := plugins.GetProviderPlugin(provider)
 	if err != nil {
 		logger.Errorf("No such provider [%s]. ", provider)
 		return nil, err
 	}
-
 	result := &Runtime{
-		RuntimeId:         runtimeId,
-		Provider:          provider,
-		Zone:              zone,
 		ProviderInterface: providerInterface,
+		Credential:        runtime.GetRuntimeCredential().GetValue(),
 	}
+	result.RuntimeId = runtimeId
+	result.Provider = provider
+	result.Zone = zone
 	return result, nil
 }
 
@@ -72,14 +69,4 @@ func getRuntime(runtimeId string) (*pb.Runtime, error) {
 	}
 
 	return response.RuntimeSet[0], nil
-}
-
-func getProvider(runtime *pb.Runtime) string {
-	// TODO: need to parse runtime
-	return constants.ProviderQingCloud
-}
-
-func getZone(runtime *pb.Runtime) string {
-	// TODO: need to parse runtime
-	return "testing"
 }

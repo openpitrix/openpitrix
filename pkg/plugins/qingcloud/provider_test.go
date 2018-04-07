@@ -68,11 +68,11 @@ func TestSplitJobIntoTasks(t *testing.T) {
 	}
 
 	runtime := &runtimeclient.Runtime{
-		RuntimeId:         "rt-1234",
-		Provider:          constants.ProviderQingCloud,
-		Zone:              "testing",
 		ProviderInterface: &Provider{},
 	}
+	runtime.RuntimeId = "rt-1234"
+	runtime.Provider = constants.ProviderQingCloud
+	runtime.Zone = "testing"
 
 	frame := &vmbased.Frame{
 		Job:            mockJob,
