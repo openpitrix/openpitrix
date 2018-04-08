@@ -56,7 +56,7 @@ func (p *Server) autoIndex() error {
 	}
 	logger.Infof("Got repos [%+v]", repos)
 	for repoId, owner := range repos {
-		repoTask, err := p.indexer.NewRepoTask(repoId, owner)
+		repoTask, err := p.controller.NewRepoTask(repoId, owner)
 		if err != nil {
 			return err
 		}

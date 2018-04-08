@@ -43,19 +43,19 @@ const defaultConfigJson = `
     "type": "array",
     "properties": [{
         "key": "cluster",
-        "description": "Sample cluster properties",
+        "description": "<APPNAME> cluster properties",
         "type": "array",
         "properties": [{
             "key": "name",
             "label": "name",
-            "description": "The name of the Sample service",
+            "description": "The name of the <APPNAME> service",
             "type": "string",
-            "default": "Sample",
+            "default": "<APPNAME>",
             "required": false
         }, {
             "key": "description",
             "label": "description",
-            "description": "The description of the Sample service",
+            "description": "The description of the <APPNAME> service",
             "type": "string",
             "default": "",
             "required": false

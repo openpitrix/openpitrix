@@ -16,14 +16,14 @@ import (
 
 type Server struct {
 	*pi.Pi
-	indexer *Indexer
+	controller *TaskController
 }
 
 func Serve(cfg *config.Config) {
 	p := pi.NewPi(cfg)
-	indexer := NewIndexer(p)
-	s := Server{Pi: p, indexer: indexer}
-	go indexer.Serve()
+	controller := NewTaskController(p)
+	s := Server{Pi: p, controller: controller}
+	go controller.Serve()
 	go s.Cron()
 	manager.NewGrpcServer("repo-indexer", constants.RepoIndexerPort).Serve(func(server *grpc.Server) {
 		pb.RegisterRepoIndexerServer(server, &s)
