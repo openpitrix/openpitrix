@@ -1781,6 +1781,9 @@
         "volume_id": {
           "type": "string"
         },
+        "device": {
+          "type": "string"
+        },
         "subnet_id": {
           "type": "string"
         },
@@ -1832,6 +1835,12 @@
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "cluster_role": {
+          "$ref": "#/definitions/openpitrixClusterRole"
+        },
+        "cluster_common": {
+          "$ref": "#/definitions/openpitrixClusterCommon"
         }
       }
     },
@@ -1863,6 +1872,9 @@
           "type": "string"
         },
         "mount_options": {
+          "type": "string"
+        },
+        "file_system": {
           "type": "string"
         },
         "env": {

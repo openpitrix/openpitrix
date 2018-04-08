@@ -13,16 +13,15 @@ func TestWalkTree(t *testing.T) {
 	var taskLayer1, taskLayer2, taskLayer3 TaskLayer
 	taskLayer1 = TaskLayer{
 		Tasks: []*Task{{TaskId: "0"}},
-		Child: nil,
 	}
 	taskLayer2 = TaskLayer{
 		Tasks: []*Task{{TaskId: "1"}, {TaskId: "2"}},
-		Child: &taskLayer1,
 	}
 	taskLayer3 = TaskLayer{
 		Tasks: []*Task{{TaskId: "3"}},
-		Child: &taskLayer2,
 	}
+
+	taskLayer3.Append(&taskLayer2).Append(&taskLayer1)
 
 	expectTasks := []string{"3", "1", "2", "0"}
 

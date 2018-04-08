@@ -25,6 +25,9 @@ type OpenpitrixClusterRole struct {
 	// env
 	Env string `json:"env,omitempty"`
 
+	// file system
+	FileSystem string `json:"file_system,omitempty"`
+
 	// gpu
 	Gpu *ProtobufUint32Value `json:"gpu,omitempty"`
 

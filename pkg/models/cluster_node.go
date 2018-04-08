@@ -23,6 +23,7 @@ type ClusterNode struct {
 	Name             string
 	InstanceId       string
 	VolumeId         string
+	Device           string
 	SubnetId         string
 	PrivateIp        string
 	ServerId         uint32
@@ -57,6 +58,7 @@ func ClusterNodeToPb(clusterNode *ClusterNode) *pb.ClusterNode {
 		Name:             utils.ToProtoString(clusterNode.Name),
 		InstanceId:       utils.ToProtoString(clusterNode.InstanceId),
 		VolumeId:         utils.ToProtoString(clusterNode.VolumeId),
+		Device:           utils.ToProtoString(clusterNode.Device),
 		SubnetId:         utils.ToProtoString(clusterNode.SubnetId),
 		PrivateIp:        utils.ToProtoString(clusterNode.PrivateIp),
 		ServerId:         utils.ToProtoUInt32(clusterNode.ServerId),
@@ -83,6 +85,7 @@ func PbToClusterNode(pbClusterNode *pb.ClusterNode) *ClusterNode {
 		Name:             pbClusterNode.GetName().GetValue(),
 		InstanceId:       pbClusterNode.GetInstanceId().GetValue(),
 		VolumeId:         pbClusterNode.GetVolumeId().GetValue(),
+		Device:           pbClusterNode.GetDevice().GetValue(),
 		SubnetId:         pbClusterNode.GetSubnetId().GetValue(),
 		PrivateIp:        pbClusterNode.GetPrivateIp().GetValue(),
 		ServerId:         pbClusterNode.GetServerId().GetValue(),

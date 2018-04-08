@@ -1790,6 +1790,9 @@ var Files = map[string]string{
         "volume_id": {
           "type": "string"
         },
+        "device": {
+          "type": "string"
+        },
         "subnet_id": {
           "type": "string"
         },
@@ -1841,6 +1844,12 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "cluster_role": {
+          "$ref": "#/definitions/openpitrixClusterRole"
+        },
+        "cluster_common": {
+          "$ref": "#/definitions/openpitrixClusterCommon"
         }
       }
     },
@@ -1872,6 +1881,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "mount_options": {
+          "type": "string"
+        },
+        "file_system": {
           "type": "string"
         },
         "env": {

@@ -50,6 +50,16 @@ func ClusterWrapperToPb(
 	return pbCluster
 }
 
+func ClusterNodeWrapperToPb(clusterNode *ClusterNode, clusterCommon *ClusterCommon,
+	clusterRole *ClusterRole) *pb.ClusterNode {
+
+	pbClusterNode := ClusterNodeToPb(clusterNode)
+	pbClusterNode.ClusterCommon = ClusterCommonToPb(clusterCommon)
+	pbClusterNode.ClusterRole = ClusterRoleToPb(clusterRole)
+
+	return pbClusterNode
+}
+
 func PbToClusterWrapper(pbCluster *pb.Cluster) *ClusterWrapper {
 	clusterWrapper := new(ClusterWrapper)
 	clusterWrapper.Cluster = PbToCluster(pbCluster)

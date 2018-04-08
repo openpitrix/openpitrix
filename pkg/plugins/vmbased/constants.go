@@ -15,6 +15,8 @@ const (
 	ActionDetachVolumes = "DetachVolumes"
 	ActionResizeVolumes = "ResizeVolumes"
 
+	ActionFormatAndMountVolume = "FormatAndMountVolume"
+
 	ActionWaitFrontgateAvailable = "WaitFrontgateAvailable"
 	ActionRegisterMetadata       = "RegisterMetadata"
 	ActionDeregisterMetadata     = "DeregisterMetadata"
@@ -40,8 +42,10 @@ const (
 
 const (
 	// second
-	TimeoutStartConfd = 600
-	TimeoutStopConfd  = 600
-	TimeoutDeregister = 60
-	TimeoutRegister   = 60
+	TimeoutStartConfd           = 600
+	TimeoutStopConfd            = 600
+	TimeoutDeregister           = 60
+	TimeoutRegister             = 60
+	TimeoutFormatAndMountVolume = 600
+	TimeoutUmountVolume         = 120
 )

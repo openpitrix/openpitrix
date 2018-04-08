@@ -609,16 +609,47 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		Where(manager.BuildFilterConditions(req, models.ClusterNodeTableName))
 	_, err := query.Load(&clusterNodes)
 	if err != nil {
-		// TODO: err_code should be implementation
 		return nil, status.Errorf(codes.Internal, "DescribeClusterNodes: %+v", err)
 	}
+
+	var pbClusterNodes []*pb.ClusterNode
+	for _, clusterNode := range clusterNodes {
+		var clusterCommon *models.ClusterCommon
+		var clusterRole *models.ClusterRole
+		nodeId := clusterNode.NodeId
+		role := clusterNode.Role
+		clusterId := clusterNode.ClusterId
+		err = p.Db.
+			Select(models.ClusterCommonColumns...).
+			From(models.ClusterCommonTableName).
+			Where(db.Eq("cluster_id", clusterId)).
+			Where(db.Eq("role", role)).
+			LoadOne(&clusterCommon)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "DescribeClusterNodes [%s] common failed: %+v", nodeId, err)
+		}
+
+		err = p.Db.
+			Select(models.ClusterRoleColumns...).
+			From(models.ClusterRoleTableName).
+			Where(db.Eq("cluster_id", clusterId)).
+			Where(db.Eq("role", role)).
+			LoadOne(&clusterRole)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "DescribeClusterNodes [%s] role failed: %+v", nodeId, err)
+		}
+
+		pbClusterNodes = append(pbClusterNodes,
+			models.ClusterNodeWrapperToPb(clusterNode, clusterCommon, clusterRole))
+	}
+
 	count, err := query.Count()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "DescribeClusterNodes: %+v", err)
 	}
 
 	res := &pb.DescribeClusterNodesResponse{
-		ClusterNodeSet: models.ClusterNodesToPbs(clusterNodes),
+		ClusterNodeSet: pbClusterNodes,
 		TotalCount:     count,
 	}
 	return res, nil

@@ -407,6 +407,72 @@ func (f *Frame) detachVolumesLayer() *models.TaskLayer {
 	return detachVolumesTaskLayer
 }
 
+func (f *Frame) formatAndMountVolumeLayer() *models.TaskLayer {
+	formatAndMountVolumeTaskLayer := new(models.TaskLayer)
+
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+		// cmd will be assigned when the task is handling
+		meta := &models.Meta{
+			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+			Timeout:     TimeoutFormatAndMountVolume,
+			NodeId:      clusterNode.NodeId,
+			Ip:          clusterNode.PrivateIp,
+		}
+		directive, err := meta.ToString()
+		if err != nil {
+			return nil
+		}
+		formatVolumeTask := &models.Task{
+			JobId:      f.Job.JobId,
+			Owner:      f.Job.Owner,
+			TaskAction: ActionFormatAndMountVolume,
+			Target:     f.Runtime.Provider,
+			NodeId:     nodeId,
+			Directive:  string(directive),
+		}
+		formatAndMountVolumeTaskLayer.Tasks = append(formatAndMountVolumeTaskLayer.Tasks, formatVolumeTask)
+	}
+	if len(formatAndMountVolumeTaskLayer.Tasks) > 0 {
+		return formatAndMountVolumeTaskLayer
+	} else {
+		return nil
+	}
+}
+
+func (f *Frame) UmountVolumeLayer() *models.TaskLayer {
+	UmountVolumeTaskLayer := new(models.TaskLayer)
+
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
+		cmd := UmountVolumeCmd(clusterRole.MountPoint)
+		meta := &models.Meta{
+			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+			Timeout:     TimeoutUmountVolume,
+			NodeId:      clusterNode.NodeId,
+			Ip:          clusterNode.PrivateIp,
+			Cmd:         cmd,
+		}
+		directive, err := meta.ToString()
+		if err != nil {
+			return nil
+		}
+		umountVolumeTask := &models.Task{
+			JobId:      f.Job.JobId,
+			Owner:      f.Job.Owner,
+			TaskAction: ActionRegisterCmd,
+			Target:     constants.TargetPilot,
+			NodeId:     nodeId,
+			Directive:  string(directive),
+		}
+		UmountVolumeTaskLayer.Tasks = append(UmountVolumeTaskLayer.Tasks, umountVolumeTask)
+	}
+	if len(UmountVolumeTaskLayer.Tasks) > 0 {
+		return UmountVolumeTaskLayer
+	} else {
+		return nil
+	}
+}
+
 func (f *Frame) runInstancesLayer() *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
@@ -565,49 +631,40 @@ func (f *Frame) deregisterMetadataLayer() *models.TaskLayer {
 }
 
 func (f *Frame) CreateClusterLayer() *models.TaskLayer {
-	headTaskLayer := new(models.TaskLayer)
-	// create volume
-	headTaskLayer.Leaf().Child = f.createVolumesLayer()
-	// run instance and attach volume to instance
-	headTaskLayer.Leaf().Child = f.runInstancesLayer()
-	// TODO: mount volume in instance
-
-	// wait frontgate cluster to be active
-	headTaskLayer.Leaf().Child = f.waitFrontgateLayer()
-	// register cluster metadata
-	headTaskLayer.Leaf().Child = f.registerMetadataLayer()
-	// start confd service
-	headTaskLayer.Leaf().Child = f.startConfdServiceLayer()
 	var nodeIds []string
 	for nodeId := range f.ClusterWrapper.ClusterNodes {
 		nodeIds = append(nodeIds, nodeId)
 	}
-	// register init and start cmd to exec
-	headTaskLayer.Leaf().Child = f.initAndStartServiceLayer(nodeIds)
-	// deregister cmd
-	headTaskLayer.Leaf().Child = f.deregisterCmd(nodeIds)
+	headTaskLayer := new(models.TaskLayer)
+
+	headTaskLayer.
+		Append(f.createVolumesLayer()).              // create volume
+		Append(f.runInstancesLayer()).               // run instance and attach volume to instance
+		Append(f.formatAndMountVolumeLayer()).       // format and mount volume to instance
+		Append(f.waitFrontgateLayer()).              // wait frontgate cluster to be active
+		Append(f.registerMetadataLayer()).           // register cluster metadata
+		Append(f.startConfdServiceLayer()).          // start confd service
+		Append(f.initAndStartServiceLayer(nodeIds)). // register init and start cmd to exec
+		Append(f.deregisterCmd(nodeIds))             // deregister cmd
+
 	return headTaskLayer.Child
 }
 
 func (f *Frame) StopClusterLayer() *models.TaskLayer {
-	headTaskLayer := new(models.TaskLayer)
-	// wait frontgate cluster to be active
-	headTaskLayer.Leaf().Child = f.waitFrontgateLayer()
 	var nodeIds []string
 	for nodeId := range f.ClusterWrapper.ClusterNodes {
 		nodeIds = append(nodeIds, nodeId)
 	}
-	// register stop cmd to exec
-	headTaskLayer.Leaf().Child = f.stopService(nodeIds)
-	// stop confd service
-	headTaskLayer.Leaf().Child = f.stopConfdServiceLayer()
-	// TODO: umount volume in instance
-	// detach volume from instance
-	headTaskLayer.Leaf().Child = f.detachVolumesLayer()
-	// stop instance
-	headTaskLayer.Leaf().Child = f.stopInstancesLayer()
-	// deregister cluster
-	headTaskLayer.Leaf().Child = f.deregisterMetadataLayer()
+	headTaskLayer := new(models.TaskLayer)
+
+	headTaskLayer.
+		Append(f.waitFrontgateLayer()).     // wait frontgate cluster to be active
+		Append(f.stopService(nodeIds)).     // register stop cmd to exec
+		Append(f.stopConfdServiceLayer()).  // stop confd service
+		Append(f.UmountVolumeLayer()).      // umount volume from instance
+		Append(f.detachVolumesLayer()).     // detach volume from instance
+		Append(f.stopInstancesLayer()).     // stop instance
+		Append(f.deregisterMetadataLayer()) // deregister cluster
 
 	return headTaskLayer.Child
 }

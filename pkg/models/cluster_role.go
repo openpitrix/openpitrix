@@ -21,6 +21,7 @@ type ClusterRole struct {
 	StorageSize  uint32
 	MountPoint   string
 	MountOptions string
+	FileSystem   string
 	Env          string
 }
 
@@ -37,6 +38,7 @@ func ClusterRoleToPb(clusterRole *ClusterRole) *pb.ClusterRole {
 		StorageSize:  utils.ToProtoUInt32(clusterRole.StorageSize),
 		MountPoint:   utils.ToProtoString(clusterRole.MountPoint),
 		MountOptions: utils.ToProtoString(clusterRole.MountOptions),
+		FileSystem:   utils.ToProtoString(clusterRole.FileSystem),
 		Env:          utils.ToProtoString(clusterRole.Env),
 	}
 }
@@ -52,6 +54,7 @@ func PbToClusterRole(pbClusterRole *pb.ClusterRole) *ClusterRole {
 		StorageSize:  pbClusterRole.GetStorageSize().GetValue(),
 		MountPoint:   pbClusterRole.GetMountPoint().GetValue(),
 		MountOptions: pbClusterRole.GetMountOptions().GetValue(),
+		FileSystem:   pbClusterRole.GetFileSystem().GetValue(),
 		Env:          pbClusterRole.GetEnv().GetValue(),
 	}
 }

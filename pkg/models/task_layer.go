@@ -48,3 +48,13 @@ func walkTaskLayerTree(parent *TaskLayer, current *TaskLayer, cb WalkFunc) error
 		return err
 	}
 }
+
+func (t *TaskLayer) Append(target *TaskLayer) *TaskLayer {
+	current := t.Leaf()
+	if target == nil {
+		return current
+	} else {
+		current.Child = target
+		return current.Leaf()
+	}
+}

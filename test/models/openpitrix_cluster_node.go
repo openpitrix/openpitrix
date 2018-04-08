@@ -19,14 +19,23 @@ type OpenpitrixClusterNode struct {
 	// auto backup
 	AutoBackup bool `json:"auto_backup,omitempty"`
 
+	// cluster common
+	ClusterCommon *OpenpitrixClusterCommon `json:"cluster_common,omitempty"`
+
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
+
+	// cluster role
+	ClusterRole *OpenpitrixClusterRole `json:"cluster_role,omitempty"`
 
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
 	// custom metadata
 	CustomMetadata string `json:"custom_metadata,omitempty"`
+
+	// device
+	Device string `json:"device,omitempty"`
 
 	// global server id
 	GlobalServerID string `json:"global_server_id,omitempty"`
@@ -84,6 +93,16 @@ type OpenpitrixClusterNode struct {
 func (m *OpenpitrixClusterNode) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateClusterCommon(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateClusterRole(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if err := m.validateGroupID(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -97,6 +116,44 @@ func (m *OpenpitrixClusterNode) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixClusterNode) validateClusterCommon(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ClusterCommon) { // not required
+		return nil
+	}
+
+	if m.ClusterCommon != nil {
+
+		if err := m.ClusterCommon.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cluster_common")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OpenpitrixClusterNode) validateClusterRole(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ClusterRole) { // not required
+		return nil
+	}
+
+	if m.ClusterRole != nil {
+
+		if err := m.ClusterRole.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cluster_role")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
