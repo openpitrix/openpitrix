@@ -8,6 +8,7 @@ import (
 	"context"
 
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -48,6 +49,25 @@ func (t *Processor) Pre() error {
 				instance.VolumeId = clusterNodes[0].GetVolumeId().GetValue()
 				// write back
 				t.Task.Directive, err = instance.ToString()
+			}
+		}
+	case vmbased.ActionFormatAndMountVolume:
+		meta, err := models.NewMeta(t.Task.Directive)
+		if err == nil {
+			clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{meta.NodeId})
+			if err == nil {
+				clusterNode := clusterNodes[0]
+				clusterRole := clusterNode.GetClusterRole()
+				meta.Cmd = vmbased.FormatAndMountVolumeCmd(
+					clusterNode.GetDevice().GetValue(),
+					clusterRole.GetMountPoint().GetValue(),
+					clusterRole.GetFileSystem().GetValue(),
+					clusterRole.GetMountOptions().GetValue())
+
+				t.Task.TaskAction = vmbased.ActionRegisterCmd
+				t.Task.Target = constants.TargetPilot
+				// write back
+				t.Task.Directive, err = meta.ToString()
 			}
 		}
 	case vmbased.ActionRegisterMetadata:
@@ -122,8 +142,10 @@ func (t *Processor) Post() error {
 		if err != nil {
 			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
-					NodeId:    utils.ToProtoString(instance.NodeId),
-					PrivateIp: utils.ToProtoString(instance.PrivateIp),
+					NodeId:     utils.ToProtoString(instance.NodeId),
+					InstanceId: utils.ToProtoString(instance.InstanceId),
+					Device:     utils.ToProtoString(instance.Device),
+					PrivateIp:  utils.ToProtoString(instance.PrivateIp),
 				},
 			})
 		}

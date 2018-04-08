@@ -24,6 +24,7 @@ func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
 	expectResult := []ActionNum{
 		{vmbased.ActionCreateVolumes, 5},
 		{vmbased.ActionRunInstances, 5},
+		{vmbased.ActionFormatAndMountVolume, 5},
 		{vmbased.ActionWaitFrontgateAvailable, 1},
 		{vmbased.ActionRegisterMetadata, 1},
 		{vmbased.ActionStartConfd, 5},

@@ -55,6 +55,7 @@ func (p *Parser) ParseClusterRole(tmpl *models.ClusterJsonTmpl, node *models.Nod
 		InstanceSize: node.Volume.InstanceSize,
 		StorageSize:  node.Volume.Size,
 		MountOptions: node.Volume.MountOptions,
+		FileSystem:   node.Volume.Filesystem,
 	}
 
 	mountPoint := node.Volume.MountPoint
@@ -63,12 +64,24 @@ func (p *Parser) ParseClusterRole(tmpl *models.ClusterJsonTmpl, node *models.Nod
 		clusterRole.MountPoint = strings.Join(v, ",")
 	case string:
 		if v == "" {
-			clusterRole.MountPoint = "/data"
+			clusterRole.MountPoint = constants.DefaultMountPoint
 		} else {
 			clusterRole.MountPoint = v
 		}
 	default:
-		clusterRole.MountPoint = "/data"
+		clusterRole.MountPoint = constants.DefaultMountPoint
+	}
+
+	if clusterRole.FileSystem == "" {
+		clusterRole.FileSystem = constants.Ext4FileSystem
+	}
+
+	if clusterRole.MountOptions == "" {
+		if clusterRole.FileSystem == constants.Ext4FileSystem {
+			clusterRole.MountOptions = constants.DefaultExt4MountOption
+		} else if clusterRole.FileSystem == constants.XfsFileSystem {
+			clusterRole.MountOptions = constants.DefaultXfsMountOption
+		}
 	}
 
 	if len(node.Env) > 0 {

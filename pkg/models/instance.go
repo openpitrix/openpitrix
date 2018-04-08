@@ -20,6 +20,7 @@ type Instance struct {
 	Gpu              int
 	PrivateIp        string
 	VolumeId         string
+	Device           string
 	LoginPasswd      string
 	Subnet           string
 	UserDataValue    string

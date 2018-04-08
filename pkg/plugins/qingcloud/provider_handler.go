@@ -110,6 +110,38 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	instance.InstanceId = qcservice.StringValue(output.Instances[0])
 	instance.TargetJobId = qcservice.StringValue(output.JobID)
 
+	volumeService, err := qingcloudService.Volume(qingcloudService.Config.Zone)
+	if err != nil {
+		logger.Errorf("Init %s volume api service failed: %v", provider, err)
+		return err
+	}
+
+	volumeOutput, err := volumeService.DescribeVolumes(
+		&qcservice.DescribeVolumesInput{
+			Volumes: qcservice.StringSlice([]string{instance.VolumeId}),
+		},
+	)
+	if err != nil {
+		logger.Errorf("Send DescribeVolumes to %s failed: %v", provider, err)
+		return err
+	}
+
+	volumeRetCode := qcservice.IntValue(volumeOutput.RetCode)
+	if volumeRetCode != 0 {
+		volumeMessage := qcservice.StringValue(volumeOutput.Message)
+		logger.Errorf("Send DescribeVolumes to %s failed with return code [%d], message [%p]",
+			provider, volumeRetCode, volumeMessage)
+		return fmt.Errorf("send DescribeVolumes to %s failed: %p", provider, volumeMessage)
+	}
+
+	if len(volumeOutput.VolumeSet) == 0 {
+		logger.Errorf("Send DescribeVolumes to %s failed with 0 output volumes", provider)
+		return fmt.Errorf("send DescribeVolumes to %s failed with 0 output volumes", provider)
+	}
+
+	// Such as /dev/sdc
+	instance.Device = qcservice.StringValue(volumeOutput.VolumeSet[0].Device)
+
 	// write back
 	directive, err := instance.ToString()
 	if err != nil {

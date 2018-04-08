@@ -14,6 +14,10 @@ type Volume struct {
 	VolumeId         string
 	NodeId           string
 	InstanceId       string
+	Device           string
+	MountPoint       string
+	MountOptions     string
+	FileSystem       string
 	Name             string
 	Size             int
 	Status           string
