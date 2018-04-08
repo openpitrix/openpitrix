@@ -62,10 +62,10 @@ func (i *helmIndexer) IndexRepo() error {
 			v := helmVersionWrapper{ChartVersion: chartVersion}
 			versionId, err = i.syncAppVersionInfo(appId, v)
 			if err != nil {
-				logger.Errorf("Failed to sync chart version [%s] to app versionInterface", chartVersion.GetAppVersion())
+				logger.Errorf("Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
 				return err
 			}
-			logger.Debugf("Chart version [%s] sync to app versionInterface [%s]", chartVersion.GetVersion(), versionId)
+			logger.Debugf("Chart version [%s] sync to app version [%s]", chartVersion.GetVersion(), versionId)
 		}
 	}
 	return err

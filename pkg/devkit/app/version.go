@@ -42,3 +42,5 @@ type Version struct {
 	Removed bool      `json:"removed,omitempty"`
 	Digest  string    `json:"digest,omitempty"`
 }
+
+func (h Version) GetUrls() []string { return h.URLs }
