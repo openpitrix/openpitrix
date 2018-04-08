@@ -25,7 +25,7 @@ func (p *Server) IndexRepo(ctx context.Context, req *pb.IndexRepoRequest) (*pb.I
 		// TODO: api gateway params validate
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument: [repo_id]")
 	}
-	repoTask, err := p.indexer.NewRepoTask(repoId, s.UserId)
+	repoTask, err := p.controller.NewRepoTask(repoId, s.UserId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "IndexRepo error: %+v", err)
 	}

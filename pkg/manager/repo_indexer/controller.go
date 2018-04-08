@@ -15,6 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/manager/repo_indexer/indexer"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -24,15 +25,15 @@ import (
 
 type taskChannel chan *models.RepoTask
 
-type Indexer struct {
+type TaskController struct {
 	*pi.Pi
 	queue        *etcd.Queue
 	channel      taskChannel
 	runningCount utils.Counter
 }
 
-func NewIndexer(pi *pi.Pi) *Indexer {
-	return &Indexer{
+func NewTaskController(pi *pi.Pi) *TaskController {
+	return &TaskController{
 		Pi:           pi,
 		queue:        pi.Etcd.NewQueue("repo-indexer-task"),
 		channel:      make(taskChannel),
@@ -40,7 +41,7 @@ func NewIndexer(pi *pi.Pi) *Indexer {
 	}
 }
 
-func (i *Indexer) NewRepoTask(repoId, owner string) (*models.RepoTask, error) {
+func (i *TaskController) NewRepoTask(repoId, owner string) (*models.RepoTask, error) {
 	var repoTaskId string
 	err := i.Etcd.Dlock(context.Background(), constants.RepoIndexPrefix+repoId, func() error {
 		count, err := i.Db.Select(models.RepoTaskColumns...).
@@ -80,7 +81,7 @@ func (i *Indexer) NewRepoTask(repoId, owner string) (*models.RepoTask, error) {
 	return &repoTask, nil
 }
 
-func (i *Indexer) updateRepoTaskStatus(repoTaskId, status, result string) error {
+func (i *TaskController) updateRepoTaskStatus(repoTaskId, status, result string) error {
 	_, err := i.Db.
 		Update(models.RepoTaskTableName).
 		Set("status", status).
@@ -93,7 +94,7 @@ func (i *Indexer) updateRepoTaskStatus(repoTaskId, status, result string) error 
 	return err
 }
 
-func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
+func (i *TaskController) ExecuteTask(repoTask *models.RepoTask, cb func()) {
 	defer cb()
 	defer func() {
 		if err := recover(); err != nil {
@@ -109,7 +110,6 @@ func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
 			return
 		}
 		repoId := repoTask.RepoId
-		owner := repoTask.Owner
 		req := pb.DescribeReposRequest{
 			RepoId: []string{repoId},
 		}
@@ -121,29 +121,10 @@ func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
 			err = fmt.Errorf("failed to get repo [%s]", repoId)
 			return
 		}
-		repoUrl := res.RepoSet[0].Url.GetValue()
-		indexFile, err := GetIndexFile(repoUrl)
+		repo := res.RepoSet[0]
+		err = indexer.GetIndexer(repo).IndexRepo()
 		if err != nil {
-			return
-		}
-		for chartName, chartVersions := range indexFile.Entries {
-			var appId string
-			logger.Debugf("Start index chart [%s]", chartName)
-			appId, err = SyncAppInfo(repoId, owner, chartName, &chartVersions)
-			if err != nil {
-				logger.Errorf("Failed to sync chart [%s] to app info", chartName)
-				return
-			}
-			logger.Infof("Sync chart [%s] to app [%s] success", chartName, appId)
-			for _, chartVersion := range chartVersions {
-				var versionId string
-				versionId, err = SyncAppVersionInfo(appId, owner, chartVersion)
-				if err != nil {
-					logger.Errorf("Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
-					return
-				}
-				logger.Debugf("Chart version [%s] sync to app version [%s]", chartVersion.GetVersion(), versionId)
-			}
+			logger.Errorf("Failed to index repo [%s]", repoId)
 		}
 		return
 	}()
@@ -157,7 +138,7 @@ func (i *Indexer) IndexRepo(repoTask *models.RepoTask, cb func()) {
 	}
 }
 
-func (i *Indexer) getRepoTask(repoTaskId string) (repoTask models.RepoTask, err error) {
+func (i *TaskController) getRepoTask(repoTaskId string) (repoTask models.RepoTask, err error) {
 	err = i.Db.
 		Select(models.RepoTaskColumns...).
 		From(models.RepoTaskTableName).
@@ -166,7 +147,7 @@ func (i *Indexer) getRepoTask(repoTaskId string) (repoTask models.RepoTask, err 
 	return
 }
 
-func (i *Indexer) getRepoTaskFromQueue() (repoTask models.RepoTask, err error) {
+func (i *TaskController) getRepoTaskFromQueue() (repoTask models.RepoTask, err error) {
 	repoTaskId, err := i.queue.Dequeue()
 	if err != nil {
 		return
@@ -175,11 +156,11 @@ func (i *Indexer) getRepoTaskFromQueue() (repoTask models.RepoTask, err error) {
 	return
 }
 
-func (i *Indexer) GetTaskLength() int32 {
+func (i *TaskController) GetTaskLength() int32 {
 	return constants.RepoTaskLength
 }
 
-func (i *Indexer) Dequeue() {
+func (i *TaskController) Dequeue() {
 	for {
 		if i.runningCount.Get() > i.GetTaskLength() {
 			logger.Errorf("Sleep 10s, running task count exceed [%d/%d]", i.runningCount.Get(), i.GetTaskLength())
@@ -196,11 +177,11 @@ func (i *Indexer) Dequeue() {
 	}
 }
 
-func (i *Indexer) Serve() {
+func (i *TaskController) Serve() {
 	go i.Dequeue()
 	for task := range i.channel {
 		i.runningCount.Add(1)
-		go i.IndexRepo(task, func() {
+		go i.ExecuteTask(task, func() {
 			i.runningCount.Add(-1)
 		})
 	}
