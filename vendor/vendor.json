@@ -782,6 +782,21 @@
 			"revisionTime": "2018-03-12T18:51:34Z"
 		},
 		{
+			"checksumSHA1": "h+pFYiRHBogczS8/F1NoN3Ata44=",
+			"path": "golang.org/x/crypto/curve25519",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "wGb//LjBPNxYHqk+dcLo7BjPXK8=",
+			"path": "golang.org/x/crypto/ed25519",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "LXFcVx8I587SnWmKycSDEq9yvK8=",
+			"path": "golang.org/x/crypto/ed25519/internal/edwards25519",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "YMc1Q83Sft4S1dxzOWJLDFxi+hM=",
 			"path": "golang.org/x/crypto/openpgp",
 			"revision": "182114d582623c1caa54f73de9c7224e23a48487",
@@ -831,6 +846,11 @@
 		{
 			"checksumSHA1": "edxT+Mb+lwGCasYeIZ46a2B+4k8=",
 			"path": "golang.org/x/crypto/scrypt",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "pXOcpeiBjX3zbVKeg0pvYnEmtqU=",
+			"path": "golang.org/x/crypto/ssh",
 			"revision": ""
 		},
 		{
