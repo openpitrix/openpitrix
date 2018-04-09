@@ -8,7 +8,6 @@ import (
 	"context"
 
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -65,7 +64,6 @@ func (t *Processor) Pre() error {
 					clusterRole.GetMountOptions().GetValue())
 
 				t.Task.TaskAction = vmbased.ActionRegisterCmd
-				t.Task.Target = constants.TargetPilot
 				// write back
 				t.Task.Directive, err = meta.ToString()
 			}
@@ -88,10 +86,10 @@ func (t *Processor) Pre() error {
 		// when CreateCluster need to reload ip
 		meta, err := models.NewMeta(t.Task.Directive)
 		if err == nil {
-			if meta.Ip == "" {
+			if meta.DroneIp == "" {
 				clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{meta.NodeId})
 				if err == nil {
-					meta.Ip = clusterNodes[0].GetPrivateIp().GetValue()
+					meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
 
 					// write back
 					t.Task.Directive, err = meta.ToString()
@@ -102,10 +100,10 @@ func (t *Processor) Pre() error {
 		// when CreateCluster need to reload ip
 		meta, err := models.NewMeta(t.Task.Directive)
 		if err == nil {
-			if meta.Ip == "" {
+			if meta.DroneIp == "" {
 				clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{meta.NodeId})
 				if err == nil {
-					meta.Ip = clusterNodes[0].GetPrivateIp().GetValue()
+					meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
 
 					// write back
 					t.Task.Directive, err = meta.ToString()

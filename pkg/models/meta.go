@@ -14,7 +14,7 @@ type Meta struct {
 	FrontgateId string
 	Timeout     int
 	Cmd         string
-	Ip          string
+	DroneIp     string
 	NodeId      string
 	ClusterId   string
 }

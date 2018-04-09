@@ -48,4 +48,5 @@ const (
 	TimeoutRegister             = 60
 	TimeoutFormatAndMountVolume = 600
 	TimeoutUmountVolume         = 120
+	TimeoutSshKeygen            = 120
 )
