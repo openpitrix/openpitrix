@@ -11,14 +11,13 @@ import (
 )
 
 func AddJoinFilterWithMap(q *SelectQuery, table, joinTable, primaryKey, keyField, valueField string, filterMap map[string][]string) *SelectQuery {
-	i := 0
 	var whereCondition []dbr.Builder
 	for key, values := range filterMap {
-		aliasTableName := fmt.Sprintf("table_label_%d", i)
+		aliasTableName := fmt.Sprintf("table_label_%d", q.joinCount)
 		onCondition := fmt.Sprintf("%s.%s = %s.%s", aliasTableName, primaryKey, table, primaryKey)
 		q = q.Join(dbr.I(joinTable).As(aliasTableName), onCondition)
 		whereCondition = append(whereCondition, And(Eq(aliasTableName+"."+keyField, key), Eq(aliasTableName+"."+valueField, values)))
-		i++
+		q.joinCount++
 	}
 	if len(whereCondition) > 0 {
 		q = q.Where(And(whereCondition...))

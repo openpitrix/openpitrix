@@ -23,7 +23,7 @@ type OpenpitrixModifyRepoRequest struct {
 	Description string `json:"description,omitempty"`
 
 	// labels
-	Labels string `json:"labels,omitempty"`
+	Labels OpenpitrixModifyRepoRequestLabels `json:"labels"`
 
 	// name
 	Name string `json:"name,omitempty"`
@@ -35,7 +35,7 @@ type OpenpitrixModifyRepoRequest struct {
 	RepoID string `json:"repo_id,omitempty"`
 
 	// selectors
-	Selectors string `json:"selectors,omitempty"`
+	Selectors OpenpitrixModifyRepoRequestSelectors `json:"selectors"`
 
 	// type
 	Type string `json:"type,omitempty"`

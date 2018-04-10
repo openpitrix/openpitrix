@@ -109,13 +109,17 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
 	}
-	err = p.createLabels(newRepo.RepoId, req.GetLabels().GetValue())
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+	if len(req.GetLabels()) > 0 {
+		err = p.createLabels(newRepo.RepoId, req.GetLabels())
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+		}
 	}
-	err = p.createSelectors(newRepo.RepoId, req.GetSelectors().GetValue())
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+	if len(req.GetSelectors()) > 0 {
+		err = p.createSelectors(newRepo.RepoId, req.GetSelectors())
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+		}
 	}
 
 	repo, err := p.formatRepo(newRepo)
@@ -164,13 +168,15 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	attributes := manager.BuildUpdateAttributes(req,
 		models.ColumnName, models.ColumnDescription, models.ColumnType, models.ColumnUrl,
 		models.ColumnCredential, models.ColumnVisibility)
-	_, err = p.Db.
-		Update(models.RepoTableName).
-		SetMap(attributes).
-		Where(db.Eq(models.ColumnRepoId, repoId)).
-		Exec()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
+	if len(attributes) > 0 {
+		_, err = p.Db.
+			Update(models.RepoTableName).
+			SetMap(attributes).
+			Where(db.Eq(models.ColumnRepoId, repoId)).
+			Exec()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
+		}
 	}
 
 	if len(providers) > 0 {
@@ -180,14 +186,14 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
 		}
 	}
-	if req.GetLabels() != nil {
-		err = p.modifyLabels(repoId, req.GetLabels().GetValue())
+	if len(req.GetLabels()) > 0 {
+		err = p.modifyLabels(repoId, req.GetLabels())
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
 		}
 	}
-	if req.GetSelectors() != nil {
-		err = p.modifySelectors(repoId, req.GetSelectors().GetValue())
+	if len(req.GetSelectors()) > 0 {
+		err = p.modifySelectors(repoId, req.GetSelectors())
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
 		}

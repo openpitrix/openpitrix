@@ -16,20 +16,11 @@ import (
 // swagger:model openpitrixRepoLabel
 type OpenpitrixRepoLabel struct {
 
-	// create time
-	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
-
 	// label key
 	LabelKey string `json:"label_key,omitempty"`
 
 	// label value
 	LabelValue string `json:"label_value,omitempty"`
-
-	// repo id
-	RepoID string `json:"repo_id,omitempty"`
-
-	// repo label id
-	RepoLabelID string `json:"repo_label_id,omitempty"`
 }
 
 // Validate validates this openpitrix repo label

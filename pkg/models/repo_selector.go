@@ -41,12 +41,8 @@ func NewRepoSelector(repoId, selectorKey, selectorValue string) *RepoSelector {
 
 func RepoSelectorToPb(repoSelector *RepoSelector) *pb.RepoSelector {
 	pbRepoSelector := pb.RepoSelector{}
-	pbRepoSelector.RepoId = utils.ToProtoString(repoSelector.RepoId)
-	pbRepoSelector.RepoSelectorId = utils.ToProtoString(repoSelector.RepoSelectorId)
 	pbRepoSelector.SelectorKey = utils.ToProtoString(repoSelector.SelectorKey)
 	pbRepoSelector.SelectorValue = utils.ToProtoString(repoSelector.SelectorValue)
-
-	pbRepoSelector.CreateTime = utils.ToProtoTimestamp(repoSelector.CreateTime)
 	return &pbRepoSelector
 }
 
