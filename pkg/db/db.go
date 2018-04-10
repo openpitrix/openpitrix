@@ -36,6 +36,7 @@ type Database struct {
 
 type SelectQuery struct {
 	*dbr.SelectBuilder
+	joinCount int // for join filter
 }
 
 type InsertQuery struct {
@@ -59,15 +60,15 @@ type UpdateQuery struct {
 //          SelectAll().From().Where().Count()
 
 func (db *Database) Select(columns ...string) *SelectQuery {
-	return &SelectQuery{db.Session.Select(columns...)}
+	return &SelectQuery{db.Session.Select(columns...), 0}
 }
 
 func (db *Database) SelectBySql(query string, value ...interface{}) *SelectQuery {
-	return &SelectQuery{db.Session.SelectBySql(query, value...)}
+	return &SelectQuery{db.Session.SelectBySql(query, value...), 0}
 }
 
 func (db *Database) SelectAll(columns ...string) *SelectQuery {
-	return &SelectQuery{db.Session.Select("*")}
+	return &SelectQuery{db.Session.Select("*"), 0}
 }
 
 func (b *SelectQuery) Join(table, on interface{}) *SelectQuery {

@@ -2524,10 +2524,16 @@ var Files = map[string]string{
           }
         },
         "labels": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRepoLabel"
+          }
         },
         "selectors": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRepoSelector"
+          }
         }
       }
     },
@@ -2601,10 +2607,16 @@ var Files = map[string]string{
           }
         },
         "labels": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRepoLabel"
+          }
         },
         "selectors": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRepoSelector"
+          }
         }
       }
     },
@@ -2677,42 +2689,22 @@ var Files = map[string]string{
     "openpitrixRepoLabel": {
       "type": "object",
       "properties": {
-        "repo_label_id": {
-          "type": "string"
-        },
-        "repo_id": {
-          "type": "string"
-        },
         "label_key": {
           "type": "string"
         },
         "label_value": {
           "type": "string"
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
     "openpitrixRepoSelector": {
       "type": "object",
       "properties": {
-        "repo_selector_id": {
-          "type": "string"
-        },
-        "repo_id": {
-          "type": "string"
-        },
         "selector_key": {
           "type": "string"
         },
         "selector_value": {
           "type": "string"
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },

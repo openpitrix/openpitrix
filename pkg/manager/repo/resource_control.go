@@ -5,8 +5,6 @@
 package repo
 
 import (
-	"net/url"
-
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -71,56 +69,113 @@ func (p *Server) modifyProviders(repoId string, providers []string) error {
 	return err
 }
 
-func (p *Server) modifyLabels(repoId string, labels string) error {
-	//labelsMap, err := p.getLabelsMap([]string{repoId})
-	//if err !=nil {
-	//	return err
-	//}
-	//currentLabels := labelsMap[repoId]
-	// TODO
-	return nil
-}
-
-func (p *Server) createLabels(repoId string, labels string) error {
-	labelsValue, err := url.ParseQuery(labels)
+func (p *Server) modifyLabels(repoId string, labels []*pb.RepoLabel) error {
+	labelsMap, err := p.getLabelsMap([]string{repoId})
 	if err != nil {
 		return err
 	}
-	if len(labelsValue) == 0 {
+	currentLabels := labelsMap[repoId]
+	currentLabelsLength := len(currentLabels)
+	labelsLength := len(labels)
+	// create new labels
+	if labelsLength > currentLabelsLength {
+		err = p.createLabels(repoId, labels[currentLabelsLength:])
+		if err != nil {
+			return err
+		}
+	}
+	// update current labels
+	for i, currentLabel := range currentLabels {
+		var err error
+		whereCondition := db.Eq(models.ColumnRepoLabelId, currentLabel.RepoLabelId)
+		if i+1 <= labelsLength {
+			// if current label exist, update it to new key/value
+			targetLabel := labels[i]
+			_, err = p.Db.
+				Update(models.RepoLabelTableName).
+				Set(models.ColumnLabelKey, targetLabel.GetLabelKey().GetValue()).
+				Set(models.ColumnLabelValue, targetLabel.GetLabelValue().GetValue()).
+				Where(whereCondition).
+				Exec()
+		} else {
+			// if current label more than arguments, delete it
+			_, err = p.Db.
+				DeleteFrom(models.RepoLabelTableName).
+				Where(whereCondition).
+				Exec()
+		}
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (p *Server) createLabels(repoId string, labels []*pb.RepoLabel) error {
+	if len(labels) == 0 {
 		return nil
 	}
 	insert := p.Db.InsertInto(models.RepoLabelTableName).Columns(models.RepoLabelColumns...)
-	for key, values := range labelsValue {
-		for _, value := range values {
-			repoLabel := models.NewRepoLabel(repoId, key, value)
-			insert = insert.Record(repoLabel)
-		}
+	for _, label := range labels {
+		repoLabel := models.NewRepoLabel(repoId, label.GetLabelKey().GetValue(), label.GetLabelValue().GetValue())
+		insert = insert.Record(repoLabel)
 	}
-	_, err = insert.Exec()
+	_, err := insert.Exec()
 	return err
 }
 
-func (p *Server) modifySelectors(repoId string, labels string) error {
-	// TODO
-	return nil
-}
-
-func (p *Server) createSelectors(repoId string, selectors string) error {
-	selectorsValue, err := url.ParseQuery(selectors)
+func (p *Server) modifySelectors(repoId string, selectors []*pb.RepoSelector) error {
+	selectorsMap, err := p.getSelectorsMap([]string{repoId})
 	if err != nil {
 		return err
 	}
-	if len(selectorsValue) == 0 {
+	currentSelectors := selectorsMap[repoId]
+	currentSelectorsLength := len(currentSelectors)
+	selectorsLength := len(selectors)
+	// create new selectors
+	if selectorsLength > currentSelectorsLength {
+		err = p.createSelectors(repoId, selectors[currentSelectorsLength:])
+		if err != nil {
+			return err
+		}
+	}
+	// update current selectors
+	for i, currentSelector := range currentSelectors {
+		var err error
+		whereCondition := db.Eq(models.ColumnRepoSelectorId, currentSelector.RepoSelectorId)
+		if i+1 <= selectorsLength {
+			// if current selectors exist, update it to new key/value
+			targetSelector := selectors[i]
+			_, err = p.Db.
+				Update(models.RepoSelectorTableName).
+				Set(models.ColumnSelectorKey, targetSelector.GetSelectorKey().GetValue()).
+				Set(models.ColumnSelectorValue, targetSelector.GetSelectorValue().GetValue()).
+				Where(whereCondition).
+				Exec()
+		} else {
+			// if current selectors more than arguments, delete it
+			_, err = p.Db.
+				DeleteFrom(models.RepoSelectorTableName).
+				Where(whereCondition).
+				Exec()
+		}
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (p *Server) createSelectors(repoId string, selectors []*pb.RepoSelector) error {
+	if len(selectors) == 0 {
 		return nil
 	}
 	insert := p.Db.InsertInto(models.RepoSelectorTableName).Columns(models.RepoSelectorColumns...)
-	for key, values := range selectorsValue {
-		for _, value := range values {
-			repoSelector := models.NewRepoSelector(repoId, key, value)
-			insert = insert.Record(repoSelector)
-		}
+	for _, selector := range selectors {
+		repoSelector := models.NewRepoSelector(repoId, selector.GetSelectorKey().GetValue(), selector.GetSelectorValue().GetValue())
+		insert = insert.Record(repoSelector)
 	}
-	_, err = insert.Exec()
+	_, err := insert.Exec()
 	return err
 }
 

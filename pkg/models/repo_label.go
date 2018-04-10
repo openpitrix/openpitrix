@@ -41,12 +41,8 @@ func NewRepoLabel(repoId, labelKey, labelValue string) *RepoLabel {
 
 func RepoLabelToPb(repoLabel *RepoLabel) *pb.RepoLabel {
 	pbRepoLabel := pb.RepoLabel{}
-	pbRepoLabel.RepoLabelId = utils.ToProtoString(repoLabel.RepoLabelId)
-	pbRepoLabel.RepoId = utils.ToProtoString(repoLabel.RepoId)
 	pbRepoLabel.LabelKey = utils.ToProtoString(repoLabel.LabelKey)
 	pbRepoLabel.LabelValue = utils.ToProtoString(repoLabel.LabelValue)
-
-	pbRepoLabel.CreateTime = utils.ToProtoTimestamp(repoLabel.CreateTime)
 	return &pbRepoLabel
 }
 

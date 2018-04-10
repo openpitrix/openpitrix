@@ -22,8 +22,8 @@ message CreateRepoRequest {
 	google.protobuf.StringValue credential = 6;
 	google.protobuf.StringValue visibility = 7;
 	repeated string providers = 8;
-	google.protobuf.StringValue labels = 9;
-	google.protobuf.StringValue selectors = 10;
+	repeated RepoLabel labels = 9;
+	repeated RepoSelector selectors = 10;
 }
 
 message CreateRepoResponse {
@@ -39,8 +39,8 @@ message ModifyRepoRequest {
 	google.protobuf.StringValue credential = 6;
 	google.protobuf.StringValue visibility = 7;
 	repeated string providers = 8;
-	google.protobuf.StringValue labels = 9;
-	google.protobuf.StringValue selectors = 10;
+	repeated RepoLabel labels = 9;
+	repeated RepoSelector selectors = 10;
 }
 
 message ModifyRepoResponse {
@@ -56,21 +56,13 @@ message DeleteRepoResponse {
 }
 
 message RepoLabel {
-	google.protobuf.StringValue repo_label_id = 1;
-	google.protobuf.StringValue repo_id = 2;
 	google.protobuf.StringValue label_key = 3;
 	google.protobuf.StringValue label_value = 4;
-
-	google.protobuf.Timestamp create_time = 5;
 }
 
 message RepoSelector {
-	google.protobuf.StringValue repo_selector_id = 1;
-	google.protobuf.StringValue repo_id = 2;
 	google.protobuf.StringValue selector_key = 3;
 	google.protobuf.StringValue selector_value = 4;
-
-	google.protobuf.Timestamp create_time = 5;
 }
 
 message Repo {

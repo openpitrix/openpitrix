@@ -16,11 +16,13 @@ const (
 	ColumnCreateTime = "create_time"
 	ColumnStatusTime = "status_time"
 
-	ColumnLabelKey   = "label_key"
-	ColumnLabelValue = "label_value"
+	ColumnRepoLabelId = "repo_label_id"
+	ColumnLabelKey    = "label_key"
+	ColumnLabelValue  = "label_value"
 
-	ColumnSelectorKey   = "selector_key"
-	ColumnSelectorValue = "selector_value"
+	ColumnRepoSelectorId = "repo_selector_id"
+	ColumnSelectorKey    = "selector_key"
+	ColumnSelectorValue  = "selector_value"
 
 	ColumnCredential = "credential"
 

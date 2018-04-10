@@ -26,7 +26,7 @@ type OpenpitrixCreateRepoRequest struct {
 	Description string `json:"description,omitempty"`
 
 	// labels
-	Labels string `json:"labels,omitempty"`
+	Labels OpenpitrixCreateRepoRequestLabels `json:"labels"`
 
 	// name
 	Name string `json:"name,omitempty"`
@@ -35,7 +35,7 @@ type OpenpitrixCreateRepoRequest struct {
 	Providers []string `json:"providers"`
 
 	// selectors
-	Selectors string `json:"selectors,omitempty"`
+	Selectors OpenpitrixCreateRepoRequestSelectors `json:"selectors"`
 
 	// type
 	Type string `json:"type,omitempty"`
