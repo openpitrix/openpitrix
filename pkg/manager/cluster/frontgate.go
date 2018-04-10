@@ -84,7 +84,7 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 	var frontgate *models.Cluster
 	err := f.Etcd.DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
-		vpc, err := f.Runtime.ProviderInterface.DescribeVpc(vpcId)
+		vpc, err := f.Runtime.ProviderInterface.DescribeVpc(register.Runtime.RuntimeId, vpcId)
 		if err != nil {
 			return err
 		}

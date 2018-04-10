@@ -5,12 +5,11 @@
 package vmbased
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
-
-	"context"
 
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
@@ -47,7 +46,7 @@ func NewFrame(job *models.Job) (*Frame, error) {
 }
 
 func (f *Frame) startConfdServiceLayer() *models.TaskLayer {
-	startConfdTaskLayer := new(models.TaskLayer)
+	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
@@ -67,17 +66,17 @@ func (f *Frame) startConfdServiceLayer() *models.TaskLayer {
 			NodeId:     nodeId,
 			Directive:  string(directive),
 		}
-		startConfdTaskLayer.Tasks = append(startConfdTaskLayer.Tasks, startConfdTask)
+		taskLayer.Tasks = append(taskLayer.Tasks, startConfdTask)
 	}
-	if len(startConfdTaskLayer.Tasks) > 0 {
-		return startConfdTaskLayer
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
 	} else {
 		return nil
 	}
 }
 
 func (f *Frame) stopConfdServiceLayer() *models.TaskLayer {
-	stopConfdTaskLayer := new(models.TaskLayer)
+	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
@@ -97,17 +96,17 @@ func (f *Frame) stopConfdServiceLayer() *models.TaskLayer {
 			NodeId:     nodeId,
 			Directive:  string(directive),
 		}
-		stopConfdTaskLayer.Tasks = append(stopConfdTaskLayer.Tasks, stopConfdTask)
+		taskLayer.Tasks = append(taskLayer.Tasks, stopConfdTask)
 	}
-	if len(stopConfdTaskLayer.Tasks) > 0 {
-		return stopConfdTaskLayer
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
 	} else {
 		return nil
 	}
 }
 
 // Put the nodes into two groups
-func (f *Frame) getPreAndPostInitGroupNodes(nodeIds []string) ([]string, []string) {
+func (f *Frame) getPreAndPostStartGroupNodes(nodeIds []string) ([]string, []string) {
 	var preGroupNodes, postGroupNodes []string
 	for _, nodeId := range nodeIds {
 		role := f.ClusterWrapper.ClusterNodes[nodeId].Role
@@ -125,6 +124,34 @@ func (f *Frame) getPreAndPostInitGroupNodes(nodeIds []string) ([]string, []strin
 				postStartService = *service.PostStartService
 			}
 			if postStartService {
+				postGroupNodes = append(postGroupNodes, nodeId)
+			} else {
+				preGroupNodes = append(preGroupNodes, nodeId)
+			}
+		}
+	}
+	return preGroupNodes, postGroupNodes
+}
+
+// Put the nodes into two groups
+func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []string) {
+	var preGroupNodes, postGroupNodes []string
+	for _, nodeId := range nodeIds {
+		role := f.ClusterWrapper.ClusterNodes[nodeId].Role
+		serviceStr := f.ClusterWrapper.ClusterCommons[role].DestroyService
+		if serviceStr != "" {
+			service := models.Service{}
+			err := json.Unmarshal([]byte(serviceStr), &service)
+			if err != nil {
+				logger.Errorf("Unmarshal cluster [%s] init service failed: %+v",
+					f.ClusterWrapper.Cluster.ClusterId, err)
+				return nil, nil
+			}
+			postStopService := false
+			if service.PostStopService != nil {
+				postStopService = *service.PostStopService
+			}
+			if postStopService {
 				postGroupNodes = append(postGroupNodes, nodeId)
 			} else {
 				preGroupNodes = append(preGroupNodes, nodeId)
@@ -311,37 +338,57 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 	return headTaskLayer.Child
 }
 
-func (f *Frame) initService(nodeIds []string) *models.TaskLayer {
+func (f *Frame) initServiceLayer(nodeIds []string) *models.TaskLayer {
 	return f.constructServiceTasks("InitService", constants.ServiceCmdName, nodeIds, nil)
 }
 
-func (f *Frame) startService(nodeIds []string) *models.TaskLayer {
+func (f *Frame) startServiceLayer(nodeIds []string) *models.TaskLayer {
 	return f.constructServiceTasks("StartService", constants.ServiceCmdName, nodeIds, nil)
 }
 
-func (f *Frame) stopService(nodeIds []string) *models.TaskLayer {
+func (f *Frame) stopServiceLayer(nodeIds []string) *models.TaskLayer {
 	return f.constructServiceTasks("StopService", constants.ServiceCmdName, nodeIds, nil)
+}
+
+func (f *Frame) destroyServiceLayer(nodeIds []string) *models.TaskLayer {
+	return f.constructServiceTasks("DestroyService", constants.ServiceCmdName, nodeIds, nil)
 }
 
 func (f *Frame) initAndStartServiceLayer(nodeIds []string) *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
-	preInitNodes, postInitNodes := f.getPreAndPostInitGroupNodes(nodeIds)
+	preStartNodes, postStartNodes := f.getPreAndPostStartGroupNodes(nodeIds)
 
 	// Init service before start service
-	headTaskLayer.Leaf().Child = f.initService(preInitNodes)
+	headTaskLayer.Leaf().Child = f.initServiceLayer(preStartNodes)
 
 	// TODO: custom metadata
-	headTaskLayer.Leaf().Child = f.startService(nodeIds)
+	headTaskLayer.Leaf().Child = f.startServiceLayer(nodeIds)
 
 	// Init service after start service
-	headTaskLayer.Leaf().Child = f.initService(postInitNodes)
+	headTaskLayer.Leaf().Child = f.initServiceLayer(postStartNodes)
+
+	return headTaskLayer.Child
+}
+
+func (f *Frame) destroyAndStopServiceLayer(nodeIds []string) *models.TaskLayer {
+	headTaskLayer := new(models.TaskLayer)
+
+	preStopNodes, postStopNodes := f.getPreAndPostStopGroupNodes(nodeIds)
+
+	// Destroy service before stop service
+	headTaskLayer.Leaf().Child = f.destroyServiceLayer(preStopNodes)
+
+	headTaskLayer.Leaf().Child = f.stopServiceLayer(nodeIds)
+
+	// Destroy service after stop service
+	headTaskLayer.Leaf().Child = f.destroyServiceLayer(postStopNodes)
 
 	return headTaskLayer.Child
 }
 
 func (f *Frame) createVolumesLayer() *models.TaskLayer {
-	createVolumesTaskLayer := new(models.TaskLayer)
+	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		role := clusterNode.Role
 		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
@@ -379,15 +426,15 @@ func (f *Frame) createVolumesLayer() *models.TaskLayer {
 				Directive:  volumeTaskDirective,
 			}
 			for range mountPoints {
-				createVolumesTaskLayer.Tasks = append(createVolumesTaskLayer.Tasks, createVolumesTask)
+				taskLayer.Tasks = append(taskLayer.Tasks, createVolumesTask)
 			}
 		}
 	}
-	return createVolumesTaskLayer
+	return taskLayer
 }
 
 func (f *Frame) detachVolumesLayer() *models.TaskLayer {
-	detachVolumesTaskLayer := new(models.TaskLayer)
+	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
@@ -408,13 +455,67 @@ func (f *Frame) detachVolumesLayer() *models.TaskLayer {
 			NodeId:     nodeId,
 			Directive:  directive,
 		}
-		detachVolumesTaskLayer.Tasks = append(detachVolumesTaskLayer.Tasks, detachVolumesTask)
+		taskLayer.Tasks = append(taskLayer.Tasks, detachVolumesTask)
 	}
-	return detachVolumesTaskLayer
+	return taskLayer
+}
+
+func (f *Frame) attachVolumesLayer() *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+		volume := &models.Volume{
+			Name:       clusterNode.ClusterId + "_" + nodeId,
+			Zone:       f.Runtime.Zone,
+			RuntimeId:  f.Runtime.RuntimeId,
+			VolumeId:   clusterNode.VolumeId,
+			InstanceId: clusterNode.InstanceId,
+		}
+		directive, err := volume.ToString()
+		if err != nil {
+			return nil
+		}
+		attachVolumesTask := &models.Task{
+			JobId:      f.Job.JobId,
+			Owner:      f.Job.Owner,
+			TaskAction: ActionAttachVolumes,
+			Target:     f.Runtime.Provider,
+			NodeId:     nodeId,
+			Directive:  directive,
+		}
+		taskLayer.Tasks = append(taskLayer.Tasks, attachVolumesTask)
+	}
+	return taskLayer
+}
+
+func (f *Frame) deleteVolumesLayer() *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+		volume := &models.Volume{
+			Name:       clusterNode.ClusterId + "_" + nodeId,
+			Zone:       f.Runtime.Zone,
+			RuntimeId:  f.Runtime.RuntimeId,
+			VolumeId:   clusterNode.VolumeId,
+			InstanceId: clusterNode.InstanceId,
+		}
+		directive, err := volume.ToString()
+		if err != nil {
+			return nil
+		}
+		deleteVolumesTask := &models.Task{
+			JobId:      f.Job.JobId,
+			Owner:      f.Job.Owner,
+			TaskAction: ActionDeleteVolumes,
+			Target:     f.Runtime.Provider,
+			NodeId:     nodeId,
+			Directive:  directive,
+		}
+		taskLayer.Tasks = append(taskLayer.Tasks, deleteVolumesTask)
+	}
+	return taskLayer
 }
 
 func (f *Frame) formatAndMountVolumeLayer() *models.TaskLayer {
-	formatAndMountVolumeTaskLayer := new(models.TaskLayer)
+	taskLayer := new(models.TaskLayer)
 
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		// cmd will be assigned when the task is handling
@@ -436,17 +537,17 @@ func (f *Frame) formatAndMountVolumeLayer() *models.TaskLayer {
 			NodeId:     nodeId,
 			Directive:  string(directive),
 		}
-		formatAndMountVolumeTaskLayer.Tasks = append(formatAndMountVolumeTaskLayer.Tasks, formatVolumeTask)
+		taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 	}
-	if len(formatAndMountVolumeTaskLayer.Tasks) > 0 {
-		return formatAndMountVolumeTaskLayer
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
 	} else {
 		return nil
 	}
 }
 
 func (f *Frame) sshKeygenLayer() *models.TaskLayer {
-	sshKeygenTaskLayer := new(models.TaskLayer)
+	taskLayer := new(models.TaskLayer)
 	ctx := context.Background()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
@@ -495,18 +596,18 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 				NodeId:     nodeId,
 				Directive:  string(directive),
 			}
-			sshKeygenTaskLayer.Tasks = append(sshKeygenTaskLayer.Tasks, formatVolumeTask)
+			taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 		}
 	}
-	if len(sshKeygenTaskLayer.Tasks) > 0 {
-		return sshKeygenTaskLayer
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
 	} else {
 		return nil
 	}
 }
 
-func (f *Frame) UmountVolumeLayer() *models.TaskLayer {
-	UmountVolumeTaskLayer := new(models.TaskLayer)
+func (f *Frame) umountVolumeLayer() *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
 
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
@@ -530,10 +631,10 @@ func (f *Frame) UmountVolumeLayer() *models.TaskLayer {
 			NodeId:     nodeId,
 			Directive:  string(directive),
 		}
-		UmountVolumeTaskLayer.Tasks = append(UmountVolumeTaskLayer.Tasks, umountVolumeTask)
+		taskLayer.Tasks = append(taskLayer.Tasks, umountVolumeTask)
 	}
-	if len(UmountVolumeTaskLayer.Tasks) > 0 {
-		return UmountVolumeTaskLayer
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
 	} else {
 		return nil
 	}
@@ -616,6 +717,70 @@ func (f *Frame) stopInstancesLayer() *models.TaskLayer {
 			Directive:  instanceTaskDirective,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, stopInstanceTask)
+	}
+
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
+func (f *Frame) deleteInstancesLayer() *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+		instance := &models.Instance{
+			Name:       clusterNode.ClusterId + "_" + nodeId,
+			NodeId:     nodeId,
+			InstanceId: clusterNode.InstanceId,
+			RuntimeId:  f.Runtime.RuntimeId,
+			Zone:       f.Runtime.Zone,
+		}
+		instanceTaskDirective, err := instance.ToString()
+		if err != nil {
+			return nil
+		}
+		deleteInstanceTask := &models.Task{
+			JobId:      f.Job.JobId,
+			Owner:      f.Job.Owner,
+			TaskAction: ActionTerminateInstances,
+			Target:     f.Runtime.Provider,
+			NodeId:     nodeId,
+			Directive:  instanceTaskDirective,
+		}
+		taskLayer.Tasks = append(taskLayer.Tasks, deleteInstanceTask)
+	}
+
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
+func (f *Frame) startInstancesLayer() *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+		instance := &models.Instance{
+			Name:       clusterNode.ClusterId + "_" + nodeId,
+			NodeId:     nodeId,
+			InstanceId: clusterNode.InstanceId,
+			RuntimeId:  f.Runtime.RuntimeId,
+			Zone:       f.Runtime.Zone,
+		}
+		instanceTaskDirective, err := instance.ToString()
+		if err != nil {
+			return nil
+		}
+		startInstanceTask := &models.Task{
+			JobId:      f.Job.JobId,
+			Owner:      f.Job.Owner,
+			TaskAction: ActionStartInstances,
+			Target:     f.Runtime.Provider,
+			NodeId:     nodeId,
+			Directive:  instanceTaskDirective,
+		}
+		taskLayer.Tasks = append(taskLayer.Tasks, startInstanceTask)
 	}
 
 	if len(taskLayer.Tasks) > 0 {
@@ -725,13 +890,51 @@ func (f *Frame) StopClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.waitFrontgateLayer()).     // wait frontgate cluster to be active
-		Append(f.stopService(nodeIds)).     // register stop cmd to exec
-		Append(f.stopConfdServiceLayer()).  // stop confd service
-		Append(f.UmountVolumeLayer()).      // umount volume from instance
-		Append(f.detachVolumesLayer()).     // detach volume from instance
-		Append(f.stopInstancesLayer()).     // stop instance
-		Append(f.deregisterMetadataLayer()) // deregister cluster
+		Append(f.waitFrontgateLayer()).      // wait frontgate cluster to be active
+		Append(f.stopServiceLayer(nodeIds)). // register stop cmd to exec
+		Append(f.stopConfdServiceLayer()).   // stop confd service
+		Append(f.umountVolumeLayer()).       // umount volume from instance
+		Append(f.detachVolumesLayer()).      // detach volume from instance
+		Append(f.stopInstancesLayer()).      // stop instance
+		Append(f.deregisterMetadataLayer())  // deregister cluster
+
+	return headTaskLayer.Child
+}
+
+func (f *Frame) StartClusterLayer() *models.TaskLayer {
+	var nodeIds []string
+	for nodeId := range f.ClusterWrapper.ClusterNodes {
+		nodeIds = append(nodeIds, nodeId)
+	}
+	headTaskLayer := new(models.TaskLayer)
+
+	headTaskLayer.
+		Append(f.startInstancesLayer()).      // start instance
+		Append(f.attachVolumesLayer()).       // attach volume to instance, will auto mount
+		Append(f.waitFrontgateLayer()).       // wait frontgate cluster to be active
+		Append(f.registerMetadataLayer()).    // register cluster metadata
+		Append(f.startConfdServiceLayer()).   // start confd service
+		Append(f.startServiceLayer(nodeIds)). // register start cmd to exec
+		Append(f.deregisterCmd(nodeIds))      // deregister cmd
+
+	return headTaskLayer.Child
+}
+
+func (f *Frame) DeleteClusterLayer() *models.TaskLayer {
+	var nodeIds []string
+	for nodeId := range f.ClusterWrapper.ClusterNodes {
+		nodeIds = append(nodeIds, nodeId)
+	}
+	headTaskLayer := new(models.TaskLayer)
+
+	headTaskLayer.
+		Append(f.destroyAndStopServiceLayer(nodeIds)). // register destroy and stop cmd to exec
+		Append(f.stopConfdServiceLayer()).             // stop confd service
+		Append(f.umountVolumeLayer()).                 // umount volume from instance
+		Append(f.detachVolumesLayer()).                // detach volume from instance
+		Append(f.deleteInstancesLayer()).              // delete instance
+		Append(f.deleteVolumesLayer()).                // delete volume
+		Append(f.deregisterMetadataLayer())            // deregister cluster
 
 	return headTaskLayer.Child
 }

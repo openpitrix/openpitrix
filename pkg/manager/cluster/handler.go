@@ -72,7 +72,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, err
 	}
 
-	subnet, err := runtime.ProviderInterface.DescribeSubnet(clusterWrapper.Cluster.SubnetId)
+	subnet, err := runtime.ProviderInterface.DescribeSubnet(runtimeId, clusterWrapper.Cluster.SubnetId)
 	if err != nil {
 		logger.Errorf("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
 		return nil, err

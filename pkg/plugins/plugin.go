@@ -23,8 +23,8 @@ type ProviderInterface interface {
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
 	WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error
-	DescribeSubnet(subnetId string) (*models.Subnet, error)
-	DescribeVpc(vpcId string) (*models.Vpc, error)
+	DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error)
+	DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error)
 }
 
 func RegisterProviderPlugin(provider string, providerInterface ProviderInterface) {

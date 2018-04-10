@@ -82,9 +82,9 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error {
 	return nil
 }
-func (p *Provider) DescribeSubnet(subnetId string) (*models.Subnet, error) {
+func (p *Provider) DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error) {
 	return nil, nil
 }
-func (p *Provider) DescribeVpc(vpcId string) (*models.Vpc, error) {
+func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 	return nil, nil
 }
