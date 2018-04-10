@@ -13,6 +13,7 @@ const (
 	ActionCreateVolumes = "CreateVolumes"
 	ActionAttachVolumes = "AttachVolumes"
 	ActionDetachVolumes = "DetachVolumes"
+	ActionDeleteVolumes = "DeleteVolumes"
 	ActionResizeVolumes = "ResizeVolumes"
 
 	ActionFormatAndMountVolume = "FormatAndMountVolume"

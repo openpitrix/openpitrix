@@ -21,7 +21,7 @@ func updateTabCmd(device, mountPoint, fileSystem, mountOptions string) string {
 	return fmt.Sprintf("%s;%s", uuid, fstab)
 }
 
-func MountVolumeCmd(device, mountPoint, fileSystem, mountOptions string) string {
+func mountVolumeCmd(device, mountPoint, fileSystem, mountOptions string) string {
 	if fileSystem != "" {
 		fileSystem = fmt.Sprintf("-t %s", fileSystem)
 	}
@@ -39,7 +39,7 @@ func MountVolumeCmd(device, mountPoint, fileSystem, mountOptions string) string 
 
 func FormatAndMountVolumeCmd(device, mountPoint, fileSystem, mountOptions string) string {
 	formatCmd := formatVolumeCmd(device, fileSystem)
-	mountCmd := MountVolumeCmd(device, mountPoint, fileSystem, mountOptions)
+	mountCmd := mountVolumeCmd(device, mountPoint, fileSystem, mountOptions)
 	return fmt.Sprintf("%s;%s", formatCmd, mountCmd)
 }
 

@@ -68,11 +68,12 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		// TODO: vpc, eip, vxnet
 
 		return frame.CreateClusterLayer(), nil
-
 	case constants.ActionUpgradeCluster:
-
+		// not supported yet
+		return nil, nil
 	case constants.ActionRollbackCluster:
-
+		// not supported yet
+		return nil, nil
 	case constants.ActionResizeCluster:
 
 	case constants.ActionAddClusterNodes:
@@ -81,15 +82,16 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 	case constants.ActionStopClusters:
 		return frame.StopClusterLayer(), nil
-
 	case constants.ActionStartClusters:
-
+		return frame.StartClusterLayer(), nil
 	case constants.ActionDeleteClusters:
-
+		return frame.DeleteClusterLayer(), nil
 	case constants.ActionRecoverClusters:
-
+		// not supported yet
+		return nil, nil
 	case constants.ActionCeaseClusters:
-
+		// not supported yet
+		return nil, nil
 	case constants.ActionUpdateClusterEnv:
 
 	default:
@@ -110,10 +112,19 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		return handler.RunInstances(task)
 	case vmbased.ActionStopInstances:
 		return handler.StopInstances(task)
+	case vmbased.ActionStartInstances:
+		return handler.StartInstances(task)
+	case vmbased.ActionTerminateInstances:
+		return handler.DeleteInstances(task)
 	case vmbased.ActionCreateVolumes:
 		return handler.CreateVolumes(task)
 	case vmbased.ActionDetachVolumes:
 		return handler.DetachVolumes(task)
+	case vmbased.ActionAttachVolumes:
+		return handler.AttachVolumes(task)
+	case vmbased.ActionDeleteVolumes:
+		return handler.DeleteVolumes(task)
+
 	case vmbased.ActionWaitFrontgateAvailable:
 		// do nothing
 		return nil
@@ -133,10 +144,18 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 		return handler.WaitRunInstances(task)
 	case vmbased.ActionStopInstances:
 		return handler.WaitStopInstances(task)
+	case vmbased.ActionStartInstances:
+		return handler.WaitStartInstances(task)
+	case vmbased.ActionTerminateInstances:
+		return handler.WaitDeleteInstances(task)
 	case vmbased.ActionCreateVolumes:
 		return handler.WaitCreateVolumes(task)
 	case vmbased.ActionDetachVolumes:
 		return handler.WaitDetachVolumes(task)
+	case vmbased.ActionAttachVolumes:
+		return handler.WaitAttachVolumes(task)
+	case vmbased.ActionDeleteVolumes:
+		return handler.WaitDeleteVolumes(task)
 	case vmbased.ActionWaitFrontgateAvailable:
 		return handler.WaitFrontgateAvailable(task)
 	default:
@@ -145,13 +164,20 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 	}
 }
 
-func (p *Provider) DescribeSubnet(subnetId string) (*models.Subnet, error) {
-	return nil, nil
-}
-func (p *Provider) DescribeVpc(vpcId string) (*models.Vpc, error) {
-	return nil, nil
+func (p *Provider) DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error) {
+	handler, err := vmbased.NewProviderHandler(MyProvider)
+	if err != nil {
+		return nil, err
+	}
+
+	return handler.DescribeSubnet(runtimeId, subnetId)
 }
 
-func (p *Provider) RunInstance() error {
-	return nil
+func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
+	handler, err := vmbased.NewProviderHandler(MyProvider)
+	if err != nil {
+		return nil, err
+	}
+
+	return handler.DescribeVpc(runtimeId, vpcId)
 }

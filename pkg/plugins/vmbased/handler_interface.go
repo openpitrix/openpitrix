@@ -24,13 +24,28 @@ type ProviderHandlerInterface interface {
 	StopInstances(task *models.Task) error
 	WaitStopInstances(task *models.Task) error
 
+	StartInstances(task *models.Task) error
+	WaitStartInstances(task *models.Task) error
+
+	DeleteInstances(task *models.Task) error
+	WaitDeleteInstances(task *models.Task) error
+
 	CreateVolumes(task *models.Task) error
 	WaitCreateVolumes(task *models.Task) error
 
 	DetachVolumes(task *models.Task) error
 	WaitDetachVolumes(task *models.Task) error
 
+	AttachVolumes(task *models.Task) error
+	WaitAttachVolumes(task *models.Task) error
+
+	DeleteVolumes(task *models.Task) error
+	WaitDeleteVolumes(task *models.Task) error
+
 	WaitFrontgateAvailable(task *models.Task) error
+
+	DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error)
+	DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error)
 }
 
 func RegisterProviderHandler(target string, providerHandler ProviderHandlerInterface) {
