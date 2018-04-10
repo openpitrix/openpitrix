@@ -125,7 +125,7 @@ func TestRepo(t *testing.T) {
 	t.Log("test repo finish, all test is ok")
 }
 
-func generateLabels(length int) (labels []*models.OpenpitrixRepoLabel) {
+func generateRepoLabels(length int) (labels []*models.OpenpitrixRepoLabel) {
 	i := 0
 	for i < length {
 		labels = append(labels, &models.OpenpitrixRepoLabel{LabelKey: getRandomKey(), LabelValue: utils.GetUuid("")})
@@ -142,7 +142,7 @@ func getRandomKey() string {
 	return fmt.Sprintf("key%d", getRandomNumber())
 }
 
-func getLabel(labels []*models.OpenpitrixRepoLabel) *string {
+func getRepoLabel(labels []*models.OpenpitrixRepoLabel) *string {
 	v := url.Values{}
 	for _, label := range labels {
 		v.Add(label.LabelKey, label.LabelValue)
@@ -151,7 +151,7 @@ func getLabel(labels []*models.OpenpitrixRepoLabel) *string {
 	return &label
 }
 
-func generateSelectors(length int) (labels []*models.OpenpitrixRepoSelector) {
+func generateRepoSelectors(length int) (labels []*models.OpenpitrixRepoSelector) {
 	i := 0
 	for i < length {
 		labels = append(labels, &models.OpenpitrixRepoSelector{SelectorKey: getRandomKey(), SelectorValue: utils.GetUuid("")})
@@ -160,7 +160,7 @@ func generateSelectors(length int) (labels []*models.OpenpitrixRepoSelector) {
 	return labels
 }
 
-func getSelector(labels []*models.OpenpitrixRepoSelector) *string {
+func getRepoSelector(labels []*models.OpenpitrixRepoSelector) *string {
 	v := url.Values{}
 	for _, label := range labels {
 		v.Add(label.SelectorKey, label.SelectorValue)
@@ -169,15 +169,15 @@ func getSelector(labels []*models.OpenpitrixRepoSelector) *string {
 	return &label
 }
 
-func testDescribeWithLabelSelector(t *testing.T,
+func testDescribeReposWithLabelSelector(t *testing.T,
 	repoId string,
 	labels []*models.OpenpitrixRepoLabel,
 	selectors []*models.OpenpitrixRepoSelector) {
 	client := GetClient(clientConfig)
 
 	describeParams := repo_manager.NewDescribeReposParams()
-	describeParams.SetLabel(getLabel(labels))
-	describeParams.SetSelector(getSelector(selectors))
+	describeParams.SetLabel(getRepoLabel(labels))
+	describeParams.SetSelector(getRepoSelector(selectors))
 	describeParams.SetStatus([]string{constants.StatusActive})
 	describeResp, err := client.RepoManager.DescribeRepos(describeParams)
 	if err != nil {
@@ -209,8 +209,8 @@ func TestRepoLabelSelector(t *testing.T) {
 	client := GetClient(clientConfig)
 	// Create a test repo that can attach label and selector on it
 	testRepoName := "e2e_test_repo"
-	labels := generateLabels(6)
-	selectors := generateSelectors(6)
+	labels := generateRepoLabels(6)
+	selectors := generateRepoSelectors(6)
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRepoRequest{
@@ -228,13 +228,13 @@ func TestRepoLabelSelector(t *testing.T) {
 		t.Fatal(err)
 	}
 	repoId := createResp.Payload.Repo.RepoID
-	testDescribeWithLabelSelector(t, repoId, labels, selectors)
+	testDescribeReposWithLabelSelector(t, repoId, labels, selectors)
 
 	i := 0
 	for i < 10 {
 		i++
-		newLabels := generateLabels(getRandomNumber())
-		newSelectors := generateSelectors(getRandomNumber())
+		newLabels := generateRepoLabels(getRandomNumber())
+		newSelectors := generateRepoSelectors(getRandomNumber())
 		modifyParams := repo_manager.NewModifyRepoParams()
 		modifyParams.SetBody(
 			&models.OpenpitrixModifyRepoRequest{
@@ -247,7 +247,7 @@ func TestRepoLabelSelector(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		testDescribeWithLabelSelector(t, repoId, newLabels, newSelectors)
+		testDescribeReposWithLabelSelector(t, repoId, newLabels, newSelectors)
 	}
 
 	// delete repo
