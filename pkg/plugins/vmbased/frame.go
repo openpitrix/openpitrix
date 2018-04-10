@@ -6,13 +6,19 @@ package vmbased
 
 import (
 	"encoding/json"
+	"fmt"
 	"sort"
 	"strings"
 
+	"context"
+
+	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/utils"
 )
 
 type Frame struct {
@@ -47,7 +53,7 @@ func (f *Frame) startConfdServiceLayer() *models.TaskLayer {
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			Timeout:     TimeoutStartConfd,
 			NodeId:      clusterNode.NodeId,
-			Ip:          clusterNode.PrivateIp,
+			DroneIp:     clusterNode.PrivateIp,
 		}
 		directive, err := meta.ToString()
 		if err != nil {
@@ -77,7 +83,7 @@ func (f *Frame) stopConfdServiceLayer() *models.TaskLayer {
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			Timeout:     TimeoutStopConfd,
 			NodeId:      clusterNode.NodeId,
-			Ip:          clusterNode.PrivateIp,
+			DroneIp:     clusterNode.PrivateIp,
 		}
 		directive, err := meta.ToString()
 		if err != nil {
@@ -134,7 +140,7 @@ func (f *Frame) deregisterCmd(nodeIds []string) *models.TaskLayer {
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			NodeId:      nodeId,
-			Ip:          f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp,
+			DroneIp:     f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp,
 			Timeout:     TimeoutDeregister,
 			Cmd:         GetDeregisterExec("cmd"),
 		}
@@ -183,7 +189,7 @@ func (f *Frame) registerCmd(nodeIds []string, serviceName string) *models.TaskLa
 			meta := &models.Meta{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 				NodeId:      nodeId,
-				Ip:          f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp,
+				DroneIp:     f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp,
 				Timeout:     timeout,
 				Cmd:         GetRegisterExec(service.Cmd),
 			}
@@ -416,7 +422,7 @@ func (f *Frame) formatAndMountVolumeLayer() *models.TaskLayer {
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			Timeout:     TimeoutFormatAndMountVolume,
 			NodeId:      clusterNode.NodeId,
-			Ip:          clusterNode.PrivateIp,
+			DroneIp:     clusterNode.PrivateIp,
 		}
 		directive, err := meta.ToString()
 		if err != nil {
@@ -426,7 +432,7 @@ func (f *Frame) formatAndMountVolumeLayer() *models.TaskLayer {
 			JobId:      f.Job.JobId,
 			Owner:      f.Job.Owner,
 			TaskAction: ActionFormatAndMountVolume,
-			Target:     f.Runtime.Provider,
+			Target:     constants.TargetPilot,
 			NodeId:     nodeId,
 			Directive:  string(directive),
 		}
@@ -434,6 +440,66 @@ func (f *Frame) formatAndMountVolumeLayer() *models.TaskLayer {
 	}
 	if len(formatAndMountVolumeTaskLayer.Tasks) > 0 {
 		return formatAndMountVolumeTaskLayer
+	} else {
+		return nil
+	}
+}
+
+func (f *Frame) sshKeygenLayer() *models.TaskLayer {
+	sshKeygenTaskLayer := new(models.TaskLayer)
+	ctx := context.Background()
+	client, err := clusterclient.NewClusterManagerClient(ctx)
+	if err != nil {
+		logger.Errorf("New ssh key gen task layer failed: %+v", err)
+		return nil
+	}
+
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+		role := clusterNode.Role
+		clusterCommon := f.ClusterWrapper.ClusterCommons[role]
+		keyType := clusterCommon.Passphraseless
+		if keyType != "" {
+			private, public, err := utils.MakeSSHKeyPair(keyType)
+			if err != nil {
+				logger.Errorf("Generate ssh key [%s] in cluster node [%s] failed",
+					clusterCommon.Passphraseless, nodeId)
+				return nil
+			}
+			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
+				ClusterNode: &pb.ClusterNode{
+					NodeId: utils.ToProtoString(nodeId),
+					PubKey: utils.ToProtoString(public),
+				},
+			})
+			cmd := fmt.Sprintf("mkdir -p /root/.ssh/;chmod 700 /root/.ssh/;"+
+				"echo \"%s\" > /root/.ssh/id_%s;echo \"%s\" > /root/.ssh/id_%s.pub;"+
+				"chown 600 /root/.ssh/id_%s;chown 644 /root/.ssh/id_%s.pub",
+				private, keyType, public, keyType, keyType, keyType)
+
+			meta := &models.Meta{
+				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+				Timeout:     TimeoutSshKeygen,
+				NodeId:      clusterNode.NodeId,
+				DroneIp:     clusterNode.PrivateIp,
+				Cmd:         cmd,
+			}
+			directive, err := meta.ToString()
+			if err != nil {
+				return nil
+			}
+			formatVolumeTask := &models.Task{
+				JobId:      f.Job.JobId,
+				Owner:      f.Job.Owner,
+				TaskAction: ActionRegisterCmd,
+				Target:     constants.TargetPilot,
+				NodeId:     nodeId,
+				Directive:  string(directive),
+			}
+			sshKeygenTaskLayer.Tasks = append(sshKeygenTaskLayer.Tasks, formatVolumeTask)
+		}
+	}
+	if len(sshKeygenTaskLayer.Tasks) > 0 {
+		return sshKeygenTaskLayer
 	} else {
 		return nil
 	}
@@ -449,7 +515,7 @@ func (f *Frame) UmountVolumeLayer() *models.TaskLayer {
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			Timeout:     TimeoutUmountVolume,
 			NodeId:      clusterNode.NodeId,
-			Ip:          clusterNode.PrivateIp,
+			DroneIp:     clusterNode.PrivateIp,
 			Cmd:         cmd,
 		}
 		directive, err := meta.ToString()
@@ -642,6 +708,7 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 		Append(f.runInstancesLayer()).               // run instance and attach volume to instance
 		Append(f.formatAndMountVolumeLayer()).       // format and mount volume to instance
 		Append(f.waitFrontgateLayer()).              // wait frontgate cluster to be active
+		Append(f.sshKeygenLayer()).                  // generate ssh key
 		Append(f.registerMetadataLayer()).           // register cluster metadata
 		Append(f.startConfdServiceLayer()).          // start confd service
 		Append(f.initAndStartServiceLayer(nodeIds)). // register init and start cmd to exec
