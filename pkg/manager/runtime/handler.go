@@ -15,6 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/utils"
 	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
@@ -218,11 +219,23 @@ func (p *Server) DeleteRuntime(ctx context.Context, req *pb.DeleteRuntimeRequest
 }
 
 func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.DescribeRuntimeProviderZonesRequest) (*pb.DescribeRuntimeProviderZonesResponse, error) {
-	err := ValidateCredential(req.Provider.GetValue(), req.RuntimeUrl.GetValue(), req.RuntimeCredential.GetValue())
+	provider := req.Provider.GetValue()
+	url := req.RuntimeUrl.GetValue()
+	credential := req.RuntimeCredential.GetValue()
+	err := ValidateCredential(provider, url, credential)
 	if err != nil {
 		logger.Errorf("DescribeRuntimeProviderZones: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeRuntimeProviderZones: %+v", err)
 	}
-	// TODO : DescribeRuntimeProviderZones by provider
-	return nil, nil
+
+	providerInterface, err := plugins.GetProviderPlugin(provider)
+	if err != nil {
+		logger.Errorf("No such provider [%s]. ", provider)
+		return nil, err
+	}
+	zones := providerInterface.DescribeRuntimeProviderZones(url, credential)
+	return &pb.DescribeRuntimeProviderZonesResponse{
+		Provider: req.Provider,
+		Zone:     zones,
+	}, nil
 }

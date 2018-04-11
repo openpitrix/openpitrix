@@ -9,7 +9,9 @@ import (
 	"github.com/ghodss/yaml"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
 
@@ -56,8 +58,13 @@ func ValidateCredential(provider, url, credential string) error {
 			return err
 		}
 	}
-	// TODO : validate credential by provider
-	return nil
+
+	providerInterface, err := plugins.GetProviderPlugin(provider)
+	if err != nil {
+		logger.Errorf("No such provider [%s]. ", provider)
+		return err
+	}
+	return providerInterface.ValidateCredential(url, credential)
 }
 
 func ValidateZone(zone string) error {

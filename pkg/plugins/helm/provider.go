@@ -17,14 +17,8 @@ import (
 	"k8s.io/helm/pkg/kube"
 	"k8s.io/helm/pkg/tiller/environment"
 
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/plugins"
 )
-
-func init() {
-	plugins.RegisterProviderPlugin(constants.ProviderKubernetes, new(Provider))
-}
 
 type Provider struct {
 }
@@ -87,4 +81,12 @@ func (p *Provider) DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, e
 }
 func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 	return nil, nil
+}
+
+func (p *Provider) ValidateCredential(url, credential string) error {
+	return nil
+}
+
+func (p *Provider) DescribeRuntimeProviderZones(url, credential string) []string {
+	return nil
 }

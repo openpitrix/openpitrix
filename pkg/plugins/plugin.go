@@ -8,13 +8,17 @@ import (
 	"fmt"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/plugins/helm"
+	"openpitrix.io/openpitrix/pkg/plugins/qingcloud"
 )
 
-var providerPlugins map[string]ProviderInterface
+var providerPlugins = make(map[string]ProviderInterface)
 
 func init() {
-	providerPlugins = map[string]ProviderInterface{}
+	RegisterProviderPlugin(constants.ProviderQingCloud, new(qingcloud.Provider))
+	RegisterProviderPlugin(constants.ProviderKubernetes, new(helm.Provider))
 }
 
 type ProviderInterface interface {
@@ -25,6 +29,8 @@ type ProviderInterface interface {
 	WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error
 	DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error)
 	DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error)
+	ValidateCredential(url, credential string) error
+	DescribeRuntimeProviderZones(url, credential string) []string
 }
 
 func RegisterProviderPlugin(provider string, providerInterface ProviderInterface) {
