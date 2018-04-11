@@ -24,6 +24,10 @@ type Pi struct {
 	Etcd             *etcd.Etcd
 }
 
+var global *Pi
+var mutex sync.RWMutex
+var globalMutex sync.RWMutex
+
 func NewPi(cfg *config.Config) *Pi {
 	p := &Pi{cfg: cfg}
 	p.openDatabase()
@@ -32,7 +36,17 @@ func NewPi(cfg *config.Config) *Pi {
 	return p
 }
 
-var mutex sync.RWMutex
+func SetGlobalPi(cfg *config.Config) {
+	globalMutex.Lock()
+	global = NewPi(cfg)
+	globalMutex.Unlock()
+}
+
+func Global() *Pi {
+	globalMutex.RLock()
+	defer globalMutex.RUnlock()
+	return global
+}
 
 func (p *Pi) GlobalConfig() (globalCfg *config.GlobalConfig) {
 	mutex.RLock()

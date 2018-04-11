@@ -28,8 +28,8 @@ func Serve(cfg *config.Config) {
 		logger.Panicf("Failed to get os hostname: %+v", err)
 		return
 	}
-
-	p := pi.NewPi(cfg)
+	pi.SetGlobalPi(cfg)
+	p := pi.Global()
 	taskController := NewController(p, hostname)
 	s := Server{Pi: p, controller: taskController}
 	go taskController.Serve()
