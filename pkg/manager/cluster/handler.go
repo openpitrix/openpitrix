@@ -18,6 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/utils"
 	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
@@ -66,13 +67,18 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 
 	clusterId := models.NewClusterId()
 
-	clusterWrapper, err := runtime.ProviderInterface.ParseClusterConf(versionId, conf)
+	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider)
+	if err != nil {
+		logger.Errorf("No such provider [%s]. ", runtime.Provider)
+		return nil, err
+	}
+	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, conf)
 	if err != nil {
 		logger.Errorf("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
 		return nil, err
 	}
 
-	subnet, err := runtime.ProviderInterface.DescribeSubnet(runtimeId, clusterWrapper.Cluster.SubnetId)
+	subnet, err := providerInterface.DescribeSubnet(runtimeId, clusterWrapper.Cluster.SubnetId)
 	if err != nil {
 		logger.Errorf("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
 		return nil, err

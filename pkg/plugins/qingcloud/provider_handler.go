@@ -26,10 +26,6 @@ type ProviderHandler struct {
 	vmbased.FrameHandler
 }
 
-func init() {
-	vmbased.RegisterProviderHandler(constants.ProviderQingCloud, new(ProviderHandler))
-}
-
 func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudService, error) {
 	runtime, err := runtimeclient.NewRuntime(runtimeId)
 	if err != nil {

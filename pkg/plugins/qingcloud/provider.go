@@ -14,14 +14,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
-
-func init() {
-	plugins.RegisterProviderPlugin(constants.ProviderQingCloud, new(Provider))
-}
 
 type Provider struct {
 }
@@ -102,10 +97,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 }
 
 func (p *Provider) HandleSubtask(task *models.Task) error {
-	handler, err := vmbased.NewProviderHandler(task.Target)
-	if err != nil {
-		return err
-	}
+	handler := new(ProviderHandler)
 
 	switch task.TaskAction {
 	case vmbased.ActionRunInstances:
@@ -134,10 +126,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 	}
 }
 func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error {
-	handler, err := vmbased.NewProviderHandler(task.Target)
-	if err != nil {
-		return err
-	}
+	handler := new(ProviderHandler)
 
 	switch task.TaskAction {
 	case vmbased.ActionRunInstances:
@@ -165,19 +154,19 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 }
 
 func (p *Provider) DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error) {
-	handler, err := vmbased.NewProviderHandler(MyProvider)
-	if err != nil {
-		return nil, err
-	}
-
+	handler := new(ProviderHandler)
 	return handler.DescribeSubnet(runtimeId, subnetId)
 }
 
 func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
-	handler, err := vmbased.NewProviderHandler(MyProvider)
-	if err != nil {
-		return nil, err
-	}
-
+	handler := new(ProviderHandler)
 	return handler.DescribeVpc(runtimeId, vpcId)
+}
+
+func (p *Provider) ValidateCredential(url, credential string) error {
+	return nil
+}
+
+func (p *Provider) DescribeRuntimeProviderZones(url, credential string) []string {
+	return nil
 }

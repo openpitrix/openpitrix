@@ -69,9 +69,7 @@ func TestSplitJobIntoTasks(t *testing.T) {
 		JobAction: constants.ActionCreateCluster,
 	}
 
-	runtime := &runtimeclient.Runtime{
-		ProviderInterface: &Provider{},
-	}
+	runtime := new(runtimeclient.Runtime)
 	runtime.RuntimeId = "rt-1234"
 	runtime.Provider = constants.ProviderQingCloud
 	runtime.Zone = "testing"

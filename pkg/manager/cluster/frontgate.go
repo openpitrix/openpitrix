@@ -14,6 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/plugins"
 )
 
 type Frontgate struct {
@@ -84,7 +85,12 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 	var frontgate *models.Cluster
 	err := f.Etcd.DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
-		vpc, err := f.Runtime.ProviderInterface.DescribeVpc(register.Runtime.RuntimeId, vpcId)
+		providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider)
+		if err != nil {
+			logger.Errorf("No such provider [%s]. ", f.Runtime.Provider)
+			return err
+		}
+		vpc, err := providerInterface.DescribeVpc(register.Runtime.RuntimeId, vpcId)
 		if err != nil {
 			return err
 		}

@@ -11,6 +11,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/plugins"
 )
 
 func (f *Frontgate) parseConf(subnetId, conf string) (string, error) {
@@ -44,7 +45,12 @@ func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 		logger.Errorf("Get frontgate cluster conf failed. ")
 		return clusterId, err
 	}
-	clusterWrapper, err := f.Runtime.ProviderInterface.ParseClusterConf(constants.FrontgateVersionId, conf)
+	providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider)
+	if err != nil {
+		logger.Errorf("No such provider [%s]. ", f.Runtime.Provider)
+		return clusterId, err
+	}
+	clusterWrapper, err := providerInterface.ParseClusterConf(constants.FrontgateVersionId, conf)
 	if err != nil {
 		logger.Errorf("Parse frontgate cluster conf failed. ")
 		return clusterId, err
