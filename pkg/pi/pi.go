@@ -14,6 +14,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
+var GlobalContext *Pi
+
+func Instance() *Pi {
+	return GlobalContext
+}
+
 type globalCfgWatcher func(*config.GlobalConfig)
 
 type Pi struct {

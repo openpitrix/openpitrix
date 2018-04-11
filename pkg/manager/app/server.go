@@ -15,12 +15,12 @@ import (
 )
 
 type Server struct {
-	*pi.Pi
 }
 
 func Serve(cfg *config.Config) {
-	s := Server{pi.NewPi(cfg)}
+	pi.GlobalContext = pi.NewPi(cfg)
+	s := new(Server)
 	manager.NewGrpcServer("app-manager", constants.AppManagerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterAppManagerServer(server, &s)
+		pb.RegisterAppManagerServer(server, s)
 	})
 }
