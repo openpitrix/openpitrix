@@ -16,13 +16,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/utils"
 	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
 func (p *Server) getApp(appId string) (*models.App, error) {
 	app := &models.App{}
-	err := p.Db.
+	err := pi.Instance().Db.
 		Select(models.AppColumns...).
 		From(models.AppTableName).
 		Where(db.Eq("app_id", appId)).
@@ -35,7 +36,7 @@ func (p *Server) getApp(appId string) (*models.App, error) {
 
 func (p *Server) getAppVersion(versionId string) (*models.AppVersion, error) {
 	version := &models.AppVersion{}
-	err := p.Db.
+	err := pi.Instance().Db.
 		Select(models.AppVersionColumns...).
 		From(models.AppVersionTableName).
 		Where(db.Eq("version_id", versionId)).
@@ -54,7 +55,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := pi.Instance().Db.
 		Select(models.AppColumns...).
 		From(models.AppTableName).
 		Offset(offset).
@@ -93,7 +94,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	newApp.Sources = req.GetSources().GetValue()
 	newApp.Readme = req.GetReadme().GetValue()
 
-	_, err := p.Db.
+	_, err := pi.Instance().Db.
 		InsertInto(models.AppTableName).
 		Columns(models.AppColumns...).
 		Record(newApp).
@@ -120,7 +121,7 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		"name", "repo_id", "owner", "chart_name",
 		"description", "home", "icon", "screenshots",
 		"maintainers", "sources", "readme")
-	_, err = p.Db.
+	_, err = pi.Instance().Db.
 		Update(models.AppTableName).
 		SetMap(attributes).
 		Where(db.Eq("app_id", appId)).
@@ -147,7 +148,7 @@ func (p *Server) DeleteApp(ctx context.Context, req *pb.DeleteAppRequest) (*pb.D
 		return nil, status.Errorf(codes.Internal, "Failed to get app [%s]", appId)
 	}
 
-	_, err = p.Db.
+	_, err = pi.Instance().Db.
 		Update(models.AppTableName).
 		Set("status", constants.StatusDeleted).
 		Where(db.Eq("app_id", appId)).
@@ -176,7 +177,7 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		s.UserId,
 		req.GetPackageName().GetValue())
 
-	_, err := p.Db.
+	_, err := pi.Instance().Db.
 		InsertInto(models.AppVersionTableName).
 		Columns(models.AppVersionColumns...).
 		Record(newAppVersion).
@@ -196,8 +197,7 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 	var versions []*models.AppVersion
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
-
-	query := p.Db.
+	query := pi.Instance().Db.
 		Select(models.AppVersionColumns...).
 		From(models.AppVersionTableName).
 		Offset(offset).
@@ -230,7 +230,7 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	}
 
 	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name")
-	_, err = p.Db.
+	_, err = pi.Instance().Db.
 		Update(models.AppVersionTableName).
 		SetMap(attributes).
 		Where(db.Eq("version_id", versionId)).
@@ -258,7 +258,7 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
 	}
 
-	_, err = p.Db.
+	_, err = pi.Instance().Db.
 		Update(models.AppVersionTableName).
 		Set("status", constants.StatusDeleted).
 		Where(db.Eq("version_id", versionId)).
