@@ -20,7 +20,8 @@ type Server struct {
 }
 
 func Serve(cfg *config.Config) {
-	p := pi.NewPi(cfg)
+	pi.SetGlobalPi(cfg)
+	p := pi.Global()
 	controller := NewTaskController(p)
 	s := Server{Pi: p, controller: controller}
 	go controller.Serve()
