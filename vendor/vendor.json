@@ -728,10 +728,10 @@
 			"revisionTime": "2018-01-18T21:20:07Z"
 		},
 		{
-			"checksumSHA1": "5KvHyB1CImtwZT3fwNkNUlc8R0k=",
+			"checksumSHA1": "tfKmT8uovT9Ch2YyDJtti3egAB4=",
 			"path": "github.com/spf13/pflag",
-			"revision": "9ff6c6923cfffbcd502984b8e0c80539a94968b7",
-			"revisionTime": "2017-01-30T21:42:45Z"
+			"revision": "ee5fd03fd6acfd43e44aea0b4135958546ed8e73",
+			"revisionTime": "2018-02-20T14:32:36Z"
 		},
 		{
 			"checksumSHA1": "5NBHAe3S15q3L9hOLThnMZjIZRE=",
