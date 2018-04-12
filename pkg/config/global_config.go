@@ -16,9 +16,9 @@ import (
 )
 
 type GlobalConfig struct {
-	Repo    RepoServiceConfig    `json:"repo"`
-	Cluster ClusterServiceConfig `json:"cluster"`
-	Runtime RuntimeServiceConfig `json:"runtime"`
+	Repo    RepoServiceConfig      `json:"repo"`
+	Cluster ClusterServiceConfig   `json:"cluster"`
+	Runtime map[string]ImageConfig `json:"runtime"`
 }
 
 type RepoServiceConfig struct {
@@ -37,17 +37,13 @@ type ImageConfig struct {
 }
 
 func (g *GlobalConfig) GetRuntimeImageId(apiServer, zone string) (string, error) {
-	for _, imageConfig := range g.Runtime.ImageConfigs {
+	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == zone {
 			return imageConfig.ImageId, nil
 		}
 	}
 	logger.Errorf("No such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 	return "", fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
-}
-
-type RuntimeServiceConfig struct {
-	ImageConfigs []ImageConfig
 }
 
 const InitialGlobalConfig = `
@@ -73,8 +69,14 @@ cluster:
     - qingcloud
     - kubernetes
 runtime:
-  - {api_server: https://api.qingcloud.com, zone: pek3a, image_id: img-abcdefgh}
-  - {api_server: https://api.qingcloud.com, zone: sh1a, image_id: img-abcdefgh}
+  qingcloud_pek3a:
+    api_server: https://api.qingcloud.com
+    zone: pek3a
+    image_id: img-abcdefgh
+  qingcloud_sh1a:
+    api_server: https://api.qingcloud.com
+    zone: sh1a
+    image_id: img-abcdefgh
 `
 
 const (
