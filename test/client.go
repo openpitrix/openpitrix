@@ -21,11 +21,12 @@ func (IgnoreLogger) Debugf(format string, args ...interface{}) {
 type ClientConfig struct {
 	Host     string
 	BasePath string
+	Debug    bool
 }
 
 func GetClient(conf *ClientConfig) *apiclient.Openpitrix {
 	transport := httptransport.New(conf.Host, conf.BasePath, []string{"http"})
-	transport.SetDebug(true)
+	transport.SetDebug(conf.Debug)
 	//transport.SetLogger(IgnoreLogger{})
 	Client := apiclient.New(transport, strfmt.Default)
 	return Client
@@ -43,5 +44,6 @@ func GetClientConfig() *ClientConfig {
 	return &ClientConfig{
 		Host:     host,
 		BasePath: basePath,
+		Debug:    true,
 	}
 }
