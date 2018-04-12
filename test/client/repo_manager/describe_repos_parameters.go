@@ -274,7 +274,7 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	valuesName := o.Name
 
-	joinedName := swag.JoinByFormat(valuesName, "")
+	joinedName := swag.JoinByFormat(valuesName, "multi")
 	// query array param name
 	if err := r.SetQueryParam("name", joinedName...); err != nil {
 		return err
@@ -298,7 +298,7 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	valuesProvider := o.Provider
 
-	joinedProvider := swag.JoinByFormat(valuesProvider, "")
+	joinedProvider := swag.JoinByFormat(valuesProvider, "multi")
 	// query array param provider
 	if err := r.SetQueryParam("provider", joinedProvider...); err != nil {
 		return err
@@ -306,7 +306,7 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	valuesRepoID := o.RepoID
 
-	joinedRepoID := swag.JoinByFormat(valuesRepoID, "")
+	joinedRepoID := swag.JoinByFormat(valuesRepoID, "multi")
 	// query array param repo_id
 	if err := r.SetQueryParam("repo_id", joinedRepoID...); err != nil {
 		return err
@@ -330,7 +330,7 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	valuesStatus := o.Status
 
-	joinedStatus := swag.JoinByFormat(valuesStatus, "")
+	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err
@@ -338,7 +338,7 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	valuesType := o.Type
 
-	joinedType := swag.JoinByFormat(valuesType, "")
+	joinedType := swag.JoinByFormat(valuesType, "multi")
 	// query array param type
 	if err := r.SetQueryParam("type", joinedType...); err != nil {
 		return err
@@ -346,7 +346,7 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	valuesVisibility := o.Visibility
 
-	joinedVisibility := swag.JoinByFormat(valuesVisibility, "")
+	joinedVisibility := swag.JoinByFormat(valuesVisibility, "multi")
 	// query array param visibility
 	if err := r.SetQueryParam("visibility", joinedVisibility...); err != nil {
 		return err

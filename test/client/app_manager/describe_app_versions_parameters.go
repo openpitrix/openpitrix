@@ -242,7 +242,7 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	valuesAppID := o.AppID
 
-	joinedAppID := swag.JoinByFormat(valuesAppID, "")
+	joinedAppID := swag.JoinByFormat(valuesAppID, "multi")
 	// query array param app_id
 	if err := r.SetQueryParam("app_id", joinedAppID...); err != nil {
 		return err
@@ -250,7 +250,7 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	valuesDescription := o.Description
 
-	joinedDescription := swag.JoinByFormat(valuesDescription, "")
+	joinedDescription := swag.JoinByFormat(valuesDescription, "multi")
 	// query array param description
 	if err := r.SetQueryParam("description", joinedDescription...); err != nil {
 		return err
@@ -274,7 +274,7 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	valuesName := o.Name
 
-	joinedName := swag.JoinByFormat(valuesName, "")
+	joinedName := swag.JoinByFormat(valuesName, "multi")
 	// query array param name
 	if err := r.SetQueryParam("name", joinedName...); err != nil {
 		return err
@@ -298,7 +298,7 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	valuesOwner := o.Owner
 
-	joinedOwner := swag.JoinByFormat(valuesOwner, "")
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
 	// query array param owner
 	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
@@ -306,7 +306,7 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	valuesPackageName := o.PackageName
 
-	joinedPackageName := swag.JoinByFormat(valuesPackageName, "")
+	joinedPackageName := swag.JoinByFormat(valuesPackageName, "multi")
 	// query array param package_name
 	if err := r.SetQueryParam("package_name", joinedPackageName...); err != nil {
 		return err
@@ -330,7 +330,7 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	valuesStatus := o.Status
 
-	joinedStatus := swag.JoinByFormat(valuesStatus, "")
+	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err
@@ -338,7 +338,7 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	valuesVersionID := o.VersionID
 
-	joinedVersionID := swag.JoinByFormat(valuesVersionID, "")
+	joinedVersionID := swag.JoinByFormat(valuesVersionID, "multi")
 	// query array param version_id
 	if err := r.SetQueryParam("version_id", joinedVersionID...); err != nil {
 		return err

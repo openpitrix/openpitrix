@@ -63,7 +63,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "app_id",
@@ -72,7 +73,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "name",
@@ -81,7 +83,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "owner",
@@ -90,7 +93,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "description",
@@ -99,7 +103,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "package_name",
@@ -108,7 +113,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -117,7 +123,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "search_word",
@@ -240,7 +247,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "name",
@@ -249,7 +257,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "repo_id",
@@ -258,7 +267,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -267,7 +277,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "owner",
@@ -276,7 +287,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "chart_name",
@@ -285,7 +297,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "search_word",
@@ -414,7 +427,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -423,7 +437,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",
@@ -542,7 +557,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "cluster_id",
@@ -581,7 +597,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",
@@ -625,7 +642,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -653,7 +671,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "name",
@@ -662,7 +681,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "type",
@@ -671,7 +691,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "visibility",
@@ -680,7 +701,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -689,7 +711,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "provider",
@@ -698,7 +721,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "label",
@@ -827,7 +851,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "repo_id",
@@ -836,7 +861,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "owner",
@@ -845,7 +871,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -854,7 +881,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",
@@ -960,7 +988,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -969,7 +998,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "search_word",
@@ -990,7 +1020,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",
@@ -1107,7 +1138,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "job_id",
@@ -1116,7 +1148,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "executor",
@@ -1137,7 +1170,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",

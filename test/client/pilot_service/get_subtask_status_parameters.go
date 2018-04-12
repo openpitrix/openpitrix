@@ -125,7 +125,7 @@ func (o *GetSubtaskStatusParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	valuesSubtaskID := o.SubtaskID
 
-	joinedSubtaskID := swag.JoinByFormat(valuesSubtaskID, "")
+	joinedSubtaskID := swag.JoinByFormat(valuesSubtaskID, "multi")
 	// query array param subtask_id
 	if err := r.SetQueryParam("subtask_id", joinedSubtaskID...); err != nil {
 		return err
