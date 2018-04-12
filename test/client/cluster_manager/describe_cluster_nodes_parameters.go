@@ -215,7 +215,7 @@ func (o *DescribeClusterNodesParams) WriteToRequest(r runtime.ClientRequest, reg
 
 	valuesNodeID := o.NodeID
 
-	joinedNodeID := swag.JoinByFormat(valuesNodeID, "")
+	joinedNodeID := swag.JoinByFormat(valuesNodeID, "multi")
 	// query array param node_id
 	if err := r.SetQueryParam("node_id", joinedNodeID...); err != nil {
 		return err
@@ -239,7 +239,7 @@ func (o *DescribeClusterNodesParams) WriteToRequest(r runtime.ClientRequest, reg
 
 	valuesStatus := o.Status
 
-	joinedStatus := swag.JoinByFormat(valuesStatus, "")
+	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err

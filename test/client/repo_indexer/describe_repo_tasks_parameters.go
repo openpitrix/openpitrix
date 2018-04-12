@@ -222,7 +222,7 @@ func (o *DescribeRepoTasksParams) WriteToRequest(r runtime.ClientRequest, reg st
 
 	valuesOwner := o.Owner
 
-	joinedOwner := swag.JoinByFormat(valuesOwner, "")
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
 	// query array param owner
 	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
@@ -230,7 +230,7 @@ func (o *DescribeRepoTasksParams) WriteToRequest(r runtime.ClientRequest, reg st
 
 	valuesRepoID := o.RepoID
 
-	joinedRepoID := swag.JoinByFormat(valuesRepoID, "")
+	joinedRepoID := swag.JoinByFormat(valuesRepoID, "multi")
 	// query array param repo_id
 	if err := r.SetQueryParam("repo_id", joinedRepoID...); err != nil {
 		return err
@@ -238,7 +238,7 @@ func (o *DescribeRepoTasksParams) WriteToRequest(r runtime.ClientRequest, reg st
 
 	valuesRepoTaskID := o.RepoTaskID
 
-	joinedRepoTaskID := swag.JoinByFormat(valuesRepoTaskID, "")
+	joinedRepoTaskID := swag.JoinByFormat(valuesRepoTaskID, "multi")
 	// query array param repo_task_id
 	if err := r.SetQueryParam("repo_task_id", joinedRepoTaskID...); err != nil {
 		return err
@@ -246,7 +246,7 @@ func (o *DescribeRepoTasksParams) WriteToRequest(r runtime.ClientRequest, reg st
 
 	valuesStatus := o.Status
 
-	joinedStatus := swag.JoinByFormat(valuesStatus, "")
+	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err

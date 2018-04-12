@@ -283,7 +283,7 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	valuesJobID := o.JobID
 
-	joinedJobID := swag.JoinByFormat(valuesJobID, "")
+	joinedJobID := swag.JoinByFormat(valuesJobID, "multi")
 	// query array param job_id
 	if err := r.SetQueryParam("job_id", joinedJobID...); err != nil {
 		return err
@@ -339,7 +339,7 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	valuesStatus := o.Status
 
-	joinedStatus := swag.JoinByFormat(valuesStatus, "")
+	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err

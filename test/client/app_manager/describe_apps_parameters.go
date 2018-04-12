@@ -229,7 +229,7 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	valuesAppID := o.AppID
 
-	joinedAppID := swag.JoinByFormat(valuesAppID, "")
+	joinedAppID := swag.JoinByFormat(valuesAppID, "multi")
 	// query array param app_id
 	if err := r.SetQueryParam("app_id", joinedAppID...); err != nil {
 		return err
@@ -237,7 +237,7 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	valuesChartName := o.ChartName
 
-	joinedChartName := swag.JoinByFormat(valuesChartName, "")
+	joinedChartName := swag.JoinByFormat(valuesChartName, "multi")
 	// query array param chart_name
 	if err := r.SetQueryParam("chart_name", joinedChartName...); err != nil {
 		return err
@@ -261,7 +261,7 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	valuesName := o.Name
 
-	joinedName := swag.JoinByFormat(valuesName, "")
+	joinedName := swag.JoinByFormat(valuesName, "multi")
 	// query array param name
 	if err := r.SetQueryParam("name", joinedName...); err != nil {
 		return err
@@ -285,7 +285,7 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	valuesOwner := o.Owner
 
-	joinedOwner := swag.JoinByFormat(valuesOwner, "")
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
 	// query array param owner
 	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
@@ -293,7 +293,7 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	valuesRepoID := o.RepoID
 
-	joinedRepoID := swag.JoinByFormat(valuesRepoID, "")
+	joinedRepoID := swag.JoinByFormat(valuesRepoID, "multi")
 	// query array param repo_id
 	if err := r.SetQueryParam("repo_id", joinedRepoID...); err != nil {
 		return err
@@ -317,7 +317,7 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	valuesStatus := o.Status
 
-	joinedStatus := swag.JoinByFormat(valuesStatus, "")
+	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err

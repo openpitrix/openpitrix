@@ -251,7 +251,7 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	valuesOwner := o.Owner
 
-	joinedOwner := swag.JoinByFormat(valuesOwner, "")
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
 	// query array param owner
 	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
 		return err
@@ -259,7 +259,7 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	valuesRuntimeID := o.RuntimeID
 
-	joinedRuntimeID := swag.JoinByFormat(valuesRuntimeID, "")
+	joinedRuntimeID := swag.JoinByFormat(valuesRuntimeID, "multi")
 	// query array param runtime_id
 	if err := r.SetQueryParam("runtime_id", joinedRuntimeID...); err != nil {
 		return err
@@ -283,7 +283,7 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	valuesStatus := o.Status
 
-	joinedStatus := swag.JoinByFormat(valuesStatus, "")
+	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
 		return err

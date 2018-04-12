@@ -72,7 +72,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "app_id",
@@ -81,7 +82,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "name",
@@ -90,7 +92,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "owner",
@@ -99,7 +102,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "description",
@@ -108,7 +112,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "package_name",
@@ -117,7 +122,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -126,7 +132,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "search_word",
@@ -249,7 +256,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "name",
@@ -258,7 +266,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "repo_id",
@@ -267,7 +276,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -276,7 +286,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "owner",
@@ -285,7 +296,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "chart_name",
@@ -294,7 +306,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "search_word",
@@ -423,7 +436,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -432,7 +446,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",
@@ -551,7 +566,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "cluster_id",
@@ -590,7 +606,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",
@@ -634,7 +651,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -662,7 +680,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "name",
@@ -671,7 +690,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "type",
@@ -680,7 +700,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "visibility",
@@ -689,7 +710,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -698,7 +720,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "provider",
@@ -707,7 +730,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "label",
@@ -836,7 +860,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "repo_id",
@@ -845,7 +870,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "owner",
@@ -854,7 +880,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -863,7 +890,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",
@@ -969,7 +997,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -978,7 +1007,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "search_word",
@@ -999,7 +1029,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",
@@ -1116,7 +1147,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "job_id",
@@ -1125,7 +1157,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "executor",
@@ -1146,7 +1179,8 @@ var Files = map[string]string{
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "limit",
