@@ -10,12 +10,13 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const JobTableName = "job"
 
 func NewJobId() string {
-	return utils.GetUuid("j-")
+	return idtool.GetUuid("j-")
 }
 
 type Job struct {

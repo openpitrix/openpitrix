@@ -10,13 +10,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const RuntimeTableName = "runtime"
 const RuntimeIdPrefix = "runtime-"
 
 func NewRuntimeId() string {
-	return utils.GetUuid(RuntimeIdPrefix)
+	return idtool.GetUuid(RuntimeIdPrefix)
 }
 
 type Runtime struct {

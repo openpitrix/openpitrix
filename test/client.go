@@ -44,6 +44,6 @@ func GetClientConfig() *ClientConfig {
 	return &ClientConfig{
 		Host:     host,
 		BasePath: basePath,
-		Debug:    true,
+		Debug:    false,
 	}
 }

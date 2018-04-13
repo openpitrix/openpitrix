@@ -10,12 +10,13 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const AppTableName = "app"
 
 func NewAppId() string {
-	return utils.GetUuid("app-")
+	return idtool.GetUuid("app-")
 }
 
 type App struct {

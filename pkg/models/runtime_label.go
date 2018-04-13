@@ -9,12 +9,13 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const RuntimeLabelTableName = "runtime_label"
 
 func NewRuntimeLabelId() string {
-	return utils.GetUuid("runtimel-")
+	return idtool.GetUuid("runtimel-")
 }
 
 type RuntimeLabel struct {

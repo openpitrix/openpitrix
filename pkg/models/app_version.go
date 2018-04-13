@@ -10,12 +10,13 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const AppVersionTableName = "app_version"
 
 func NewAppVersionId() string {
-	return utils.GetUuid("appv-")
+	return idtool.GetUuid("appv-")
 }
 
 type AppVersion struct {

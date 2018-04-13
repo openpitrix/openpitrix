@@ -9,12 +9,13 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const RepoSelectorTableName = "repo_selector"
 
 func NewRepoSelectorId() string {
-	return utils.GetUuid("repos-")
+	return idtool.GetUuid("repos-")
 }
 
 type RepoSelector struct {

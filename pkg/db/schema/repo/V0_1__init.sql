@@ -34,11 +34,11 @@ CREATE TABLE repo_provider (
 );
 
 CREATE TABLE repo_label (
-	repo_label_id VARCHAR(50) PRIMARY KEY             NOT NULL,
-	repo_id       VARCHAR(50)                         NOT NULL,
-	label_key     VARCHAR(50)                         NOT NULL,
-	label_value   VARCHAR(255)                        NOT NULL,
-	create_time   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+	repo_label_id VARCHAR(50) PRIMARY KEY                   NOT NULL,
+	repo_id       VARCHAR(50)                               NOT NULL,
+	label_key     VARCHAR(50)                               NOT NULL,
+	label_value   VARCHAR(255)                              NOT NULL,
+	create_time   TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL
 );
 
 CREATE INDEX repo_label_repo_id_idx
@@ -51,11 +51,11 @@ CREATE INDEX repo_label_create_time_idx
 	ON repo_label (create_time);
 
 CREATE TABLE repo_selector (
-	repo_selector_id VARCHAR(50) PRIMARY KEY             NOT NULL,
-	repo_id          VARCHAR(50)                         NOT NULL,
-	selector_key     VARCHAR(50)                         NOT NULL,
-	selector_value   VARCHAR(255)                        NOT NULL,
-	create_time      TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+	repo_selector_id VARCHAR(50) PRIMARY KEY                   NOT NULL,
+	repo_id          VARCHAR(50)                               NOT NULL,
+	selector_key     VARCHAR(50)                               NOT NULL,
+	selector_value   VARCHAR(255)                              NOT NULL,
+	create_time      TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL
 );
 
 CREATE INDEX repo_selector_repo_id_idx

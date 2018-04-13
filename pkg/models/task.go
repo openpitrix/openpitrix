@@ -13,12 +13,13 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const TaskTableName = "task"
 
 func NewTaskId() string {
-	return utils.GetUuid("t-")
+	return idtool.GetUuid("t-")
 }
 
 type Task struct {

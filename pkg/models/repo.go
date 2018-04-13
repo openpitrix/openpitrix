@@ -10,12 +10,13 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const RepoTableName = "repo"
 
 func NewRepoId() string {
-	return utils.GetUuid("repo-")
+	return idtool.GetUuid("repo-")
 }
 
 type Repo struct {
