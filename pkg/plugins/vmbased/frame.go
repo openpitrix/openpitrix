@@ -27,25 +27,6 @@ type Frame struct {
 	Runtime        *runtimeclient.Runtime
 }
 
-func NewFrame(job *models.Job) (*Frame, error) {
-	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
-	if err != nil {
-		return nil, err
-	}
-
-	runtimeId := clusterWrapper.Cluster.RuntimeId
-	runtime, err := runtimeclient.NewRuntime(runtimeId)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Frame{
-		Job:            job,
-		ClusterWrapper: clusterWrapper,
-		Runtime:        runtime,
-	}, nil
-}
-
 func (f *Frame) startConfdServiceLayer() *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
@@ -645,9 +626,14 @@ func (f *Frame) runInstancesLayer() *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	apiServer := f.Runtime.RuntimeUrl
 	zone := f.Runtime.Zone
-	imageId, err := pi.Global().GlobalConfig().GetRuntimeImageId(apiServer, zone)
-	if err != nil {
-		return nil
+	globalPi := pi.Global()
+	imageId := ""
+	var err error
+	if globalPi != nil {
+		imageId, err = globalPi.GlobalConfig().GetRuntimeImageId(apiServer, zone)
+		if err != nil {
+			return nil
+		}
 	}
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		role := clusterNode.Role

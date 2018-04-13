@@ -18,7 +18,6 @@ import (
 )
 
 type Frontgate struct {
-	*pi.Pi
 	Runtime *runtimeclient.Runtime
 }
 
@@ -26,7 +25,7 @@ func (f *Frontgate) getFrontgateFromDb(vpcId, userId string) ([]*models.Cluster,
 	var frontgates []*models.Cluster
 	statuses := []string{constants.StatusActive, constants.StatusPending,
 		constants.StatusDeleted, constants.StatusStopped}
-	_, err := f.Db.
+	_, err := pi.Global().Db.
 		Select(models.ClusterColumns...).
 		From(models.ClusterTableName).
 		Where(db.Eq("vpc_id", vpcId)).
@@ -61,7 +60,7 @@ func (f *Frontgate) activate(frontgate *models.Cluster) error {
 
 func (f *Frontgate) GetFrontgate(frontgateId string) (*models.Cluster, error) {
 	var frontgate *models.Cluster
-	err := f.Db.
+	err := pi.Global().Db.
 		Select(models.ClusterColumns...).
 		From(models.ClusterTableName).
 		Where(db.Eq("cluster_id", frontgateId)).
@@ -83,7 +82,7 @@ func (f *Frontgate) ActivateFrontgate(frontgateId string) error {
 
 func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register) (*models.Cluster, error) {
 	var frontgate *models.Cluster
-	err := f.Etcd.DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
+	err := pi.Global().Etcd.DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
 		providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider)
 		if err != nil {

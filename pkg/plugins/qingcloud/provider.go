@@ -53,7 +53,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	frame, err := vmbased.NewFrame(job)
+	frameInterface, err := vmbased.NewFrameInterface(job)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionCreateCluster:
 		// TODO: vpc, eip, vxnet
 
-		return frame.CreateClusterLayer(), nil
+		return frameInterface.CreateClusterLayer(), nil
 	case constants.ActionUpgradeCluster:
 		// not supported yet
 		return nil, nil
@@ -76,11 +76,11 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionDeleteClusterNodes:
 
 	case constants.ActionStopClusters:
-		return frame.StopClusterLayer(), nil
+		return frameInterface.StopClusterLayer(), nil
 	case constants.ActionStartClusters:
-		return frame.StartClusterLayer(), nil
+		return frameInterface.StartClusterLayer(), nil
 	case constants.ActionDeleteClusters:
-		return frame.DeleteClusterLayer(), nil
+		return frameInterface.DeleteClusterLayer(), nil
 	case constants.ActionRecoverClusters:
 		// not supported yet
 		return nil, nil

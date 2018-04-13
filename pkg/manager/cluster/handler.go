@@ -181,14 +181,12 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	vpcId := subnet.VpcId
 
 	register := &Register{
-		Pi:       p.Pi,
 		SubnetId: clusterWrapper.Cluster.SubnetId,
 		VpcId:    vpcId,
 		Runtime:  runtime,
 		Owner:    s.UserId,
 	}
 	fg := &Frontgate{
-		Pi:      p.Pi,
 		Runtime: runtime,
 	}
 	frontgate, err := fg.GetActiveFrontgate(vpcId, s.UserId, register)
@@ -244,7 +242,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	}
 
 	attributes := manager.BuildUpdateAttributes(req.Cluster, models.ClusterColumns...)
-	_, err = p.Db.
+	_, err = pi.Global().Db.
 		Update(models.ClusterTableName).
 		SetMap(attributes).
 		Where(db.Eq("cluster_id", clusterId)).
@@ -256,7 +254,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	for _, clusterRole := range req.ClusterRoleSet {
 		role := clusterRole.GetRole().GetValue()
 		roleAttributes := manager.BuildUpdateAttributes(clusterRole, models.ClusterRoleColumns...)
-		_, err = p.Db.
+		_, err = pi.Global().Db.
 			Update(models.ClusterRoleTableName).
 			SetMap(roleAttributes).
 			Where(db.Eq("cluster_id", clusterId)).
@@ -270,7 +268,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	for _, clusterCommon := range req.ClusterCommonSet {
 		role := clusterCommon.GetRole().GetValue()
 		commonAttributes := manager.BuildUpdateAttributes(clusterCommon, models.ClusterCommonColumns...)
-		_, err = p.Db.
+		_, err = pi.Global().Db.
 			Update(models.ClusterCommonTableName).
 			SetMap(commonAttributes).
 			Where(db.Eq("cluster_id", clusterId)).
@@ -284,7 +282,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	for _, clusterLink := range req.ClusterLinkSet {
 		name := clusterLink.GetName().GetValue()
 		linkAttributes := manager.BuildUpdateAttributes(clusterLink, models.ClusterLinkColumns...)
-		_, err = p.Db.
+		_, err = pi.Global().Db.
 			Update(models.ClusterLinkTableName).
 			SetMap(linkAttributes).
 			Where(db.Eq("cluster_id", clusterId)).
@@ -299,7 +297,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		role := clusterLoadbalancer.GetRole().GetValue()
 		listenerId := clusterLoadbalancer.GetLoadbalancerListenerId().GetValue()
 		loadbalancerAttributes := manager.BuildUpdateAttributes(clusterLoadbalancer, models.ClusterLoadbalancerColumns...)
-		_, err = p.Db.
+		_, err = pi.Global().Db.
 			Update(models.ClusterLoadbalancerTableName).
 			SetMap(loadbalancerAttributes).
 			Where(db.Eq("cluster_id", clusterId)).
@@ -328,7 +326,7 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 	}
 
 	attributes := manager.BuildUpdateAttributes(req.ClusterNode, models.ClusterNodeColumns...)
-	_, err = p.Db.
+	_, err = pi.Global().Db.
 		Update(models.ClusterNodeTableName).
 		SetMap(attributes).
 		Where(db.Eq("node_id", nodeId)).
@@ -644,7 +642,7 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := pi.Global().Db.
 		Select(models.ClusterColumns...).
 		From(models.ClusterTableName).
 		Offset(offset).
@@ -682,7 +680,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := pi.Global().Db.
 		Select(models.ClusterColumns...).
 		From(models.ClusterNodeTableName).
 		Offset(offset).
@@ -700,7 +698,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		nodeId := clusterNode.NodeId
 		role := clusterNode.Role
 		clusterId := clusterNode.ClusterId
-		err = p.Db.
+		err = pi.Global().Db.
 			Select(models.ClusterCommonColumns...).
 			From(models.ClusterCommonTableName).
 			Where(db.Eq("cluster_id", clusterId)).
@@ -710,7 +708,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 			return nil, status.Errorf(codes.Internal, "DescribeClusterNodes [%s] common failed: %+v", nodeId, err)
 		}
 
-		err = p.Db.
+		err = pi.Global().Db.
 			Select(models.ClusterRoleColumns...).
 			From(models.ClusterRoleTableName).
 			Where(db.Eq("cluster_id", clusterId)).
@@ -803,7 +801,6 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 		}
 
 		fg := &Frontgate{
-			Pi:      p.Pi,
 			Runtime: runtime,
 		}
 		err = fg.ActivateFrontgate(clusterWrapper.Cluster.FrontgateId)
@@ -858,7 +855,6 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 		}
 
 		fg := &Frontgate{
-			Pi:      p.Pi,
 			Runtime: runtime,
 		}
 		err = fg.ActivateFrontgate(clusterWrapper.Cluster.FrontgateId)

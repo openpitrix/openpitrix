@@ -11,6 +11,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 )
 
@@ -31,8 +32,8 @@ func (f *Frontgate) parseConf(subnetId, conf string) (string, error) {
 
 func (f *Frontgate) getConf(subnetId string) (string, error) {
 	conf := constants.FrontgateDefaultConf
-	if f.GlobalConfig().Cluster.FrontgateConf != "" {
-		conf = f.GlobalConfig().Cluster.FrontgateConf
+	if pi.Global().GlobalConfig().Cluster.FrontgateConf != "" {
+		conf = pi.Global().GlobalConfig().Cluster.FrontgateConf
 	}
 	return f.parseConf(subnetId, conf)
 }
@@ -66,13 +67,18 @@ func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 		return clusterId, err
 	}
 
+	directive, err := clusterWrapper.ToString()
+	if err != nil {
+		return clusterId, err
+	}
+
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		clusterId,
 		clusterWrapper.Cluster.AppId,
 		clusterWrapper.Cluster.VersionId,
 		constants.ActionCreateCluster,
-		"", // TODO: need to generate
+		directive,
 		f.Runtime.Provider,
 		register.Owner,
 	)
@@ -82,33 +88,51 @@ func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 }
 
 func (f *Frontgate) StartCluster(frontgate *models.Cluster) error {
+	clusterWrapper, err := getClusterWrapper(frontgate.ClusterId)
+	if err != nil {
+		return err
+	}
+
+	directive, err := clusterWrapper.ToString()
+	if err != nil {
+		return err
+	}
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		frontgate.ClusterId,
 		frontgate.AppId,
 		frontgate.VersionId,
 		constants.ActionRecoverClusters,
-		"", // TODO: need to generate
+		directive,
 		f.Runtime.Provider,
 		frontgate.Owner,
 	)
 
-	_, err := jobclient.SendJob(newJob)
+	_, err = jobclient.SendJob(newJob)
 	return err
 }
 
 func (f *Frontgate) RecoverCluster(frontgate *models.Cluster) error {
+	clusterWrapper, err := getClusterWrapper(frontgate.ClusterId)
+	if err != nil {
+		return err
+	}
+
+	directive, err := clusterWrapper.ToString()
+	if err != nil {
+		return err
+	}
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		frontgate.ClusterId,
 		frontgate.AppId,
 		frontgate.VersionId,
 		constants.ActionRecoverClusters,
-		"", // TODO: need to generate
+		directive,
 		f.Runtime.Provider,
 		frontgate.Owner,
 	)
 
-	_, err := jobclient.SendJob(newJob)
+	_, err = jobclient.SendJob(newJob)
 	return err
 }
