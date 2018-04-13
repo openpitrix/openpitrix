@@ -25,35 +25,35 @@ type Client struct {
 }
 
 /*
-DescribeRepoTasks describes repo tasks
+DescribeRepoEvents describes repo events
 */
-func (a *Client) DescribeRepoTasks(params *DescribeRepoTasksParams) (*DescribeRepoTasksOK, error) {
+func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams) (*DescribeRepoEventsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDescribeRepoTasksParams()
+		params = NewDescribeRepoEventsParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DescribeRepoTasks",
+		ID:                 "DescribeRepoEvents",
 		Method:             "GET",
-		PathPattern:        "/v1/repo_tasks",
+		PathPattern:        "/v1/repo_events",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &DescribeRepoTasksReader{formats: a.formats},
+		Reader:             &DescribeRepoEventsReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DescribeRepoTasksOK), nil
+	return result.(*DescribeRepoEventsOK), nil
 
 }
 
 /*
-IndexRepo starts a index repo task
+IndexRepo starts a index repo event
 */
 func (a *Client) IndexRepo(params *IndexRepoParams) (*IndexRepoOK, error) {
 	// TODO: Validate the params before sending

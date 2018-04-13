@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeRepoTasksResponseRepoTaskSet openpitrix describe repo tasks response repo task set
-// swagger:model openpitrixDescribeRepoTasksResponseRepoTaskSet
-type OpenpitrixDescribeRepoTasksResponseRepoTaskSet []*OpenpitrixRepoTask
+// OpenpitrixDescribeRepoEventsResponseRepoEventSet openpitrix describe repo events response repo event set
+// swagger:model openpitrixDescribeRepoEventsResponseRepoEventSet
+type OpenpitrixDescribeRepoEventsResponseRepoEventSet []*OpenpitrixRepoEvent
 
-// Validate validates this openpitrix describe repo tasks response repo task set
-func (m OpenpitrixDescribeRepoTasksResponseRepoTaskSet) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix describe repo events response repo event set
+func (m OpenpitrixDescribeRepoEventsResponseRepoEventSet) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {

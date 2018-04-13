@@ -39,8 +39,8 @@ var IndexedColumns = map[string][]string{
 	RepoSelectorTableName: {
 		"repo_id", "repo_selector_id", "status",
 	},
-	RepoTaskTableName: {
-		"repo_task_id", "repo_id", "status",
+	RepoEventTableName: {
+		"repo_event_id", "repo_id", "status",
 	},
 	ClusterTableName: {
 		"cluster_id", "app_id", "version_id", "status", "runtime_id", "frontgate_id", "owner",

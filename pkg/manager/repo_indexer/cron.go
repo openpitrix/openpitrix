@@ -56,11 +56,11 @@ func (p *Server) autoIndex() error {
 	}
 	logger.Infof("Got repos [%+v]", repos)
 	for repoId, owner := range repos {
-		repoTask, err := p.controller.NewRepoTask(repoId, owner)
+		repoEvent, err := p.controller.NewRepoEvent(repoId, owner)
 		if err != nil {
 			return err
 		}
-		logger.Infof("Repo [%s] submit repo task [%+v] success", repoId, repoTask)
+		logger.Infof("Repo [%s] submit repo event [%+v] success", repoId, repoEvent)
 	}
 	return nil
 }

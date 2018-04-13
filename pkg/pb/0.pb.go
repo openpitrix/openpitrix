@@ -108,9 +108,9 @@ It has these top-level messages:
 	DescribeReposResponse
 	IndexRepoRequest
 	IndexRepoResponse
-	RepoTask
-	DescribeRepoTasksRequest
-	DescribeRepoTasksResponse
+	RepoEvent
+	DescribeRepoEventsRequest
+	DescribeRepoEventsResponse
 	RuntimeLabel
 	Runtime
 	CreateRuntimeRequest

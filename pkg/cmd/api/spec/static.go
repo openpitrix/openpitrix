@@ -840,21 +840,21 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/repo_tasks": {
+    "/v1/repo_events": {
       "get": {
-        "summary": "describe repo tasks",
-        "operationId": "DescribeRepoTasks",
+        "summary": "describe repo events",
+        "operationId": "DescribeRepoEvents",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDescribeRepoTasksResponse"
+              "$ref": "#/definitions/openpitrixDescribeRepoEventsResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "repo_task_id",
+            "name": "repo_event_id",
             "in": "query",
             "required": false,
             "type": "array",
@@ -915,7 +915,7 @@ var Files = map[string]string{
     },
     "/v1/repos/index": {
       "post": {
-        "summary": "start a index repo task",
+        "summary": "start a index repo event",
         "operationId": "IndexRepo",
         "responses": {
           "200": {
@@ -2742,17 +2742,17 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixDescribeRepoTasksResponse": {
+    "openpitrixDescribeRepoEventsResponse": {
       "type": "object",
       "properties": {
         "total_count": {
           "type": "integer",
           "format": "int64"
         },
-        "repo_task_set": {
+        "repo_event_set": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixRepoTask"
+            "$ref": "#/definitions/openpitrixRepoEvent"
           }
         }
       }
@@ -2768,15 +2768,15 @@ var Files = map[string]string{
     "openpitrixIndexRepoResponse": {
       "type": "object",
       "properties": {
-        "repo_task": {
-          "$ref": "#/definitions/openpitrixRepoTask"
+        "repo_event": {
+          "$ref": "#/definitions/openpitrixRepoEvent"
         }
       }
     },
-    "openpitrixRepoTask": {
+    "openpitrixRepoEvent": {
       "type": "object",
       "properties": {
-        "repo_task_id": {
+        "repo_event_id": {
           "type": "string"
         },
         "repo_id": {

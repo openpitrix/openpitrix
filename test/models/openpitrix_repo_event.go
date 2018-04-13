@@ -12,9 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRepoTask openpitrix repo task
-// swagger:model openpitrixRepoTask
-type OpenpitrixRepoTask struct {
+// OpenpitrixRepoEvent openpitrix repo event
+// swagger:model openpitrixRepoEvent
+type OpenpitrixRepoEvent struct {
 
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
@@ -22,11 +22,11 @@ type OpenpitrixRepoTask struct {
 	// owner
 	Owner string `json:"owner,omitempty"`
 
+	// repo event id
+	RepoEventID string `json:"repo_event_id,omitempty"`
+
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`
-
-	// repo task id
-	RepoTaskID string `json:"repo_task_id,omitempty"`
 
 	// result
 	Result string `json:"result,omitempty"`
@@ -38,8 +38,8 @@ type OpenpitrixRepoTask struct {
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 }
 
-// Validate validates this openpitrix repo task
-func (m *OpenpitrixRepoTask) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix repo event
+func (m *OpenpitrixRepoEvent) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -49,7 +49,7 @@ func (m *OpenpitrixRepoTask) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixRepoTask) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixRepoEvent) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -57,8 +57,8 @@ func (m *OpenpitrixRepoTask) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixRepoTask) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixRepoTask
+func (m *OpenpitrixRepoEvent) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixRepoEvent
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

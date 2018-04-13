@@ -19,11 +19,11 @@ message IndexRepoRequest {
 }
 
 message IndexRepoResponse {
-	RepoTask repo_task = 1;
+	RepoEvent repo_event = 1;
 }
 
-message RepoTask {
-	google.protobuf.StringValue repo_task_id = 1;
+message RepoEvent {
+	google.protobuf.StringValue repo_event_id = 1;
 	google.protobuf.StringValue repo_id = 2;
 	google.protobuf.StringValue owner = 3;
 	google.protobuf.StringValue status = 4;
@@ -32,8 +32,8 @@ message RepoTask {
 	google.protobuf.Timestamp status_time = 7;
 }
 
-message DescribeRepoTasksRequest {
-	repeated string repo_task_id = 1;
+message DescribeRepoEventsRequest {
+	repeated string repo_event_id = 1;
 	repeated string repo_id = 2;
 	repeated string owner = 3;
 	repeated string status = 4;
@@ -41,14 +41,14 @@ message DescribeRepoTasksRequest {
 	uint32 offset = 6;
 }
 
-message DescribeRepoTasksResponse {
+message DescribeRepoEventsResponse {
 	uint32 total_count = 1;
-	repeated RepoTask repo_task_set = 2;
+	repeated RepoEvent repo_event_set = 2;
 }
 
-//message RepoTaskLog {
-//	google.protobuf.StringValue repo_task_log_id = 1;
-//	google.protobuf.StringValue repo_task_id = 2;
+//message RepoEventLog {
+//	google.protobuf.StringValue repo_event_log_id = 1;
+//	google.protobuf.StringValue repo_event_id = 2;
 //	google.protobuf.StringValue repo_id = 3;
 //	google.protobuf.StringValue status = 4;
 //	google.protobuf.StringValue result = 5;
@@ -56,44 +56,44 @@ message DescribeRepoTasksResponse {
 //	google.protobuf.Timestamp status_time = 7;
 //}
 //
-//message DescribeRepoTaskLogsRequest {
-//	repeated string repo_task_log_id = 1;
-//	repeated string repo_task_id = 2;
+//message DescribeRepoEventLogsRequest {
+//	repeated string repo_event_log_id = 1;
+//	repeated string repo_event_id = 2;
 //	repeated string repo_id = 3;
 //	repeated string status = 4;
 //	uint32 limit = 5;
 //	uint32 offset = 6;
 //}
 //
-//message DescribeRepoTaskLogsResponse {
+//message DescribeRepoEventLogsResponse {
 //	uint32 total_count = 1;
-//	repeated RepoTaskLog repo_task_log_set = 2;
+//	repeated RepoEventLog repo_event_log_set = 2;
 //}
 
 service RepoIndexer {
 	rpc IndexRepo (IndexRepoRequest) returns (IndexRepoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "start a index repo task"
+			summary: "start a index repo event"
 		};
 		option (google.api.http) = {
 			post: "/v1/repos/index"
 			body: "*"
 		};
 	}
-	rpc DescribeRepoTasks (DescribeRepoTasksRequest) returns (DescribeRepoTasksResponse) {
+	rpc DescribeRepoEvents (DescribeRepoEventsRequest) returns (DescribeRepoEventsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe repo tasks"
+			summary: "describe repo events"
 		};
 		option (google.api.http) = {
-			get: "/v1/repo_tasks"
+			get: "/v1/repo_events"
 		};
 	}
-//	rpc DescribeRepoTaskLogs (DescribeRepoTaskLogsRequest) returns (DescribeRepoTaskLogsResponse) {
+//	rpc DescribeRepoEventLogs (DescribeRepoEventLogsRequest) returns (DescribeRepoEventLogsResponse) {
 //		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-//			summary: "describe repo task logs"
+//			summary: "describe repo event logs"
 //		};
 //		option (google.api.http) = {
-//			get: "/v1/repo_task_logs"
+//			get: "/v1/repo_event_logs"
 //		};
 //	}
 }

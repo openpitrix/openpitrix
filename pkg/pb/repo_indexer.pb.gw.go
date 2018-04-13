@@ -44,18 +44,18 @@ func request_RepoIndexer_IndexRepo_0(ctx context.Context, marshaler runtime.Mars
 }
 
 var (
-	filter_RepoIndexer_DescribeRepoTasks_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_RepoIndexer_DescribeRepoEvents_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_RepoIndexer_DescribeRepoTasks_0(ctx context.Context, marshaler runtime.Marshaler, client RepoIndexerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DescribeRepoTasksRequest
+func request_RepoIndexer_DescribeRepoEvents_0(ctx context.Context, marshaler runtime.Marshaler, client RepoIndexerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DescribeRepoEventsRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_RepoIndexer_DescribeRepoTasks_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_RepoIndexer_DescribeRepoEvents_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.DescribeRepoTasks(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.DescribeRepoEvents(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -127,7 +127,7 @@ func RegisterRepoIndexerHandlerClient(ctx context.Context, mux *runtime.ServeMux
 
 	})
 
-	mux.Handle("GET", pattern_RepoIndexer_DescribeRepoTasks_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_RepoIndexer_DescribeRepoEvents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -145,14 +145,14 @@ func RegisterRepoIndexerHandlerClient(ctx context.Context, mux *runtime.ServeMux
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_RepoIndexer_DescribeRepoTasks_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_RepoIndexer_DescribeRepoEvents_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_RepoIndexer_DescribeRepoTasks_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_RepoIndexer_DescribeRepoEvents_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -162,11 +162,11 @@ func RegisterRepoIndexerHandlerClient(ctx context.Context, mux *runtime.ServeMux
 var (
 	pattern_RepoIndexer_IndexRepo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "repos", "index"}, ""))
 
-	pattern_RepoIndexer_DescribeRepoTasks_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "repo_tasks"}, ""))
+	pattern_RepoIndexer_DescribeRepoEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "repo_events"}, ""))
 )
 
 var (
 	forward_RepoIndexer_IndexRepo_0 = runtime.ForwardResponseMessage
 
-	forward_RepoIndexer_DescribeRepoTasks_0 = runtime.ForwardResponseMessage
+	forward_RepoIndexer_DescribeRepoEvents_0 = runtime.ForwardResponseMessage
 )
