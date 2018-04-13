@@ -26,14 +26,9 @@ type ProviderHandler struct {
 	vmbased.FrameHandler
 }
 
-func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudService, error) {
-	runtime, err := runtimeclient.NewRuntime(runtimeId)
-	if err != nil {
-		return nil, err
-	}
-
+func (p *ProviderHandler) initQingCloudService(runtimeUrl, runtimeCredential, zone string) (*qcservice.QingCloudService, error) {
 	credential := new(Credential)
-	err = json.Unmarshal([]byte(runtime.Credential), credential)
+	err := json.Unmarshal([]byte(runtimeCredential), credential)
 	if err != nil {
 		logger.Errorf("Parse [%s] credential failed: %v", MyProvider, err)
 		return nil, err
@@ -42,9 +37,18 @@ func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudSer
 	if err != nil {
 		return nil, err
 	}
-	conf.Zone = runtime.Zone
-	conf.URI = runtime.RuntimeUrl
+	conf.Zone = zone
+	conf.URI = runtimeUrl
 	return qcservice.Init(conf)
+}
+
+func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudService, error) {
+	runtime, err := runtimeclient.NewRuntime(runtimeId)
+	if err != nil {
+		return nil, err
+	}
+
+	return p.initQingCloudService(runtime.RuntimeUrl, runtime.Credential, runtime.Zone)
 }
 
 func (p *ProviderHandler) RunInstances(task *models.Task) error {
@@ -773,4 +777,36 @@ func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, err
 			Addr:  qcservice.StringValue(vpc.EIP.EIPAddr),
 		},
 	}, nil
+}
+
+func (p *ProviderHandler) DescribeZones(url, credential string) ([]string, error) {
+	qingcloudService, err := p.initQingCloudService(url, credential, "")
+	if err != nil {
+		logger.Errorf("Init %s api service failed: %v", MyProvider, err)
+		return nil, err
+	}
+
+	output, err := qingcloudService.DescribeZones(
+		&qcservice.DescribeZonesInput{
+			Status: qcservice.StringSlice([]string{"active"}),
+		},
+	)
+	if err != nil {
+		logger.Errorf("DescribeZones to %s failed: %v", MyProvider, err)
+		return nil, err
+	}
+
+	retCode := qcservice.IntValue(output.RetCode)
+	if retCode != 0 {
+		message := qcservice.StringValue(output.Message)
+		logger.Errorf("Send DescribeZones to %s failed with return code [%d], message [%p]",
+			MyProvider, retCode, message)
+		return nil, fmt.Errorf("send DescribeZones to %s failed: %p", MyProvider, message)
+	}
+
+	var zones []string
+	for _, zone := range output.ZoneSet {
+		zones = append(zones, qcservice.StringValue(zone.ZoneID))
+	}
+	return zones, nil
 }

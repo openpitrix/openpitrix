@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
 
@@ -642,6 +643,12 @@ func (f *Frame) umountVolumeLayer() *models.TaskLayer {
 
 func (f *Frame) runInstancesLayer() *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
+	apiServer := f.Runtime.RuntimeUrl
+	zone := f.Runtime.Zone
+	imageId, err := pi.Global().GlobalConfig().GetRuntimeImageId(apiServer, zone)
+	if err != nil {
+		return nil
+	}
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		role := clusterNode.Role
 		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
@@ -653,18 +660,10 @@ func (f *Frame) runInstancesLayer() *models.TaskLayer {
 				role, f.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
-
-		clusterCommon, exist := f.ClusterWrapper.ClusterCommons[role]
-		if !exist {
-			logger.Errorf("No such role [%s] in cluster common [%s]. ",
-				role, f.ClusterWrapper.Cluster.ClusterId)
-			return nil
-		}
-
 		instance := &models.Instance{
 			Name:      clusterNode.ClusterId + "_" + nodeId,
 			NodeId:    nodeId,
-			ImageId:   clusterCommon.ImageId,
+			ImageId:   imageId,
 			Cpu:       int(clusterRole.Cpu),
 			Memory:    int(clusterRole.Memory),
 			Gpu:       int(clusterRole.Gpu),
@@ -921,6 +920,25 @@ func (f *Frame) StartClusterLayer() *models.TaskLayer {
 }
 
 func (f *Frame) DeleteClusterLayer() *models.TaskLayer {
+	var nodeIds []string
+	for nodeId := range f.ClusterWrapper.ClusterNodes {
+		nodeIds = append(nodeIds, nodeId)
+	}
+	headTaskLayer := new(models.TaskLayer)
+
+	headTaskLayer.
+		Append(f.destroyAndStopServiceLayer(nodeIds)). // register destroy and stop cmd to exec
+		Append(f.stopConfdServiceLayer()).             // stop confd service
+		Append(f.umountVolumeLayer()).                 // umount volume from instance
+		Append(f.detachVolumesLayer()).                // detach volume from instance
+		Append(f.deleteInstancesLayer()).              // delete instance
+		Append(f.deleteVolumesLayer()).                // delete volume
+		Append(f.deregisterMetadataLayer())            // deregister cluster
+
+	return headTaskLayer.Child
+}
+
+func (f *Frame) AddClusterNodesLayer() *models.TaskLayer {
 	var nodeIds []string
 	for nodeId := range f.ClusterWrapper.ClusterNodes {
 		nodeIds = append(nodeIds, nodeId)

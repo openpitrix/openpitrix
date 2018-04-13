@@ -32,19 +32,39 @@ func NewClusterWrapper(data string) (*ClusterWrapper, error) {
 	return clusterWrapper, err
 }
 
-func ClusterWrapperToPb(
-	cluster *Cluster,
-	clusterCommons []*ClusterCommon,
-	clusterNodes []*ClusterNode,
-	clusterRoles []*ClusterRole,
-	clusterLinks []*ClusterLink,
-	clusterLoadbalancers []*ClusterLoadbalancer) *pb.Cluster {
+func ClusterWrapperToPb(clusterWrapper *ClusterWrapper) *pb.Cluster {
 
-	pbCluster := ClusterToPb(cluster)
+	pbCluster := ClusterToPb(clusterWrapper.Cluster)
+
+	var clusterCommons []*ClusterCommon
+	var clusterNodes []*ClusterNode
+	var clusterRoles []*ClusterRole
+	var clusterLinks []*ClusterLink
+	var clusterLoadbalancers []*ClusterLoadbalancer
+
+	for _, clusterCommon := range clusterWrapper.ClusterCommons {
+		clusterCommons = append(clusterCommons, clusterCommon)
+	}
 	pbCluster.ClusterCommonSet = ClusterCommonsToPbs(clusterCommons)
+
+	for _, clusterNode := range clusterWrapper.ClusterNodes {
+		clusterNodes = append(clusterNodes, clusterNode)
+	}
 	pbCluster.ClusterNodeSet = ClusterNodesToPbs(clusterNodes)
+
+	for _, clusterRole := range clusterWrapper.ClusterRoles {
+		clusterRoles = append(clusterRoles, clusterRole)
+	}
 	pbCluster.ClusterRoleSet = ClusterRolesToPbs(clusterRoles)
+
+	for _, clusterLink := range clusterWrapper.ClusterLinks {
+		clusterLinks = append(clusterLinks, clusterLink)
+	}
 	pbCluster.ClusterLinkSet = ClusterLinksToPbs(clusterLinks)
+
+	for _, clusterLoadbalancer := range clusterWrapper.ClusterLoadbalancers {
+		clusterLoadbalancers = append(clusterLoadbalancers, clusterLoadbalancer...)
+	}
 	pbCluster.ClusterLoadbalancerSet = ClusterLoadbalancersToPbs(clusterLoadbalancers)
 
 	return pbCluster

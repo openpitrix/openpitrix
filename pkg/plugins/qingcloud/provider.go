@@ -164,9 +164,13 @@ func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 }
 
 func (p *Provider) ValidateCredential(url, credential string) error {
-	return nil
+	handler := new(ProviderHandler)
+	_, err := handler.DescribeZones(url, credential)
+	return err
 }
 
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) []string {
-	return nil
+	handler := new(ProviderHandler)
+	zones, _ := handler.DescribeZones(url, credential)
+	return zones
 }
