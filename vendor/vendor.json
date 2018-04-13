@@ -722,12 +722,6 @@
 			"revisionTime": "2017-11-01T20:10:47Z"
 		},
 		{
-			"checksumSHA1": "qp6A3YXdKiniunyoNrXQYlDSxNA=",
-			"path": "github.com/rs/xid",
-			"revision": "390d6a8eeb3caeef8befccd1f9fae78eee5a0b34",
-			"revisionTime": "2018-01-18T21:20:07Z"
-		},
-		{
 			"checksumSHA1": "ooEfaKEeZt34ebW5YibKTvFip8Y=",
 			"path": "github.com/sony/sonyflake",
 			"revision": "fa881fb1052b152e977c41023052c2f2a1c475e9",
