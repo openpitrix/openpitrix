@@ -16,15 +16,15 @@ import (
 // swagger:model openpitrixIndexRepoResponse
 type OpenpitrixIndexRepoResponse struct {
 
-	// repo task
-	RepoTask *OpenpitrixRepoTask `json:"repo_task,omitempty"`
+	// repo event
+	RepoEvent *OpenpitrixRepoEvent `json:"repo_event,omitempty"`
 }
 
 // Validate validates this openpitrix index repo response
 func (m *OpenpitrixIndexRepoResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateRepoTask(formats); err != nil {
+	if err := m.validateRepoEvent(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -35,17 +35,17 @@ func (m *OpenpitrixIndexRepoResponse) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *OpenpitrixIndexRepoResponse) validateRepoTask(formats strfmt.Registry) error {
+func (m *OpenpitrixIndexRepoResponse) validateRepoEvent(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.RepoTask) { // not required
+	if swag.IsZero(m.RepoEvent) { // not required
 		return nil
 	}
 
-	if m.RepoTask != nil {
+	if m.RepoEvent != nil {
 
-		if err := m.RepoTask.Validate(formats); err != nil {
+		if err := m.RepoEvent.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("repo_task")
+				return ve.ValidateName("repo_event")
 			}
 			return err
 		}

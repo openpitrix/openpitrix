@@ -25,40 +25,40 @@ func (p *Server) IndexRepo(ctx context.Context, req *pb.IndexRepoRequest) (*pb.I
 		// TODO: api gateway params validate
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument: [repo_id]")
 	}
-	repoTask, err := p.controller.NewRepoTask(repoId, s.UserId)
+	repoEvent, err := p.controller.NewRepoEvent(repoId, s.UserId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "IndexRepo error: %+v", err)
 	}
 	ret := pb.IndexRepoResponse{
-		RepoTask: models.RepoTaskToPb(repoTask),
+		RepoEvent: models.RepoEventToPb(repoEvent),
 	}
 	return &ret, nil
 }
 
-func (p *Server) DescribeRepoTasks(ctx context.Context, req *pb.DescribeRepoTasksRequest) (*pb.DescribeRepoTasksResponse, error) {
-	var repoTasks []*models.RepoTask
+func (p *Server) DescribeRepoEvents(ctx context.Context, req *pb.DescribeRepoEventsRequest) (*pb.DescribeRepoEventsResponse, error) {
+	var repoEvents []*models.RepoEvent
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 
 	query := p.Db.
-		Select(models.RepoTaskColumns...).
-		From(models.RepoTaskTableName).
+		Select(models.RepoEventColumns...).
+		From(models.RepoEventTableName).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.RepoTaskTableName))
-	_, err := query.Load(&repoTasks)
+		Where(manager.BuildFilterConditions(req, models.RepoEventTableName))
+	_, err := query.Load(&repoEvents)
 	if err != nil {
-		logger.Errorf("DescribeRepoTasks error: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeRepoTasks: %+v", err)
+		logger.Errorf("DescribeRepoEvents error: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DescribeRepoEvents: %+v", err)
 	}
 	count, err := query.Count()
 	if err != nil {
-		logger.Errorf("DescribeRepoTasks error: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeRepoTasks: %+v", err)
+		logger.Errorf("DescribeRepoEvents error: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DescribeRepoEvents: %+v", err)
 	}
-	res := &pb.DescribeRepoTasksResponse{
-		RepoTaskSet: models.RepoTasksToPbs(repoTasks),
-		TotalCount:  count,
+	res := &pb.DescribeRepoEventsResponse{
+		RepoEventSet: models.RepoEventsToPbs(repoEvents),
+		TotalCount:   count,
 	}
 	return res, nil
 }

@@ -12,19 +12,19 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeRepoTasksResponse openpitrix describe repo tasks response
-// swagger:model openpitrixDescribeRepoTasksResponse
-type OpenpitrixDescribeRepoTasksResponse struct {
+// OpenpitrixDescribeRepoEventsResponse openpitrix describe repo events response
+// swagger:model openpitrixDescribeRepoEventsResponse
+type OpenpitrixDescribeRepoEventsResponse struct {
 
-	// repo task set
-	RepoTaskSet OpenpitrixDescribeRepoTasksResponseRepoTaskSet `json:"repo_task_set"`
+	// repo event set
+	RepoEventSet OpenpitrixDescribeRepoEventsResponseRepoEventSet `json:"repo_event_set"`
 
 	// total count
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 
-// Validate validates this openpitrix describe repo tasks response
-func (m *OpenpitrixDescribeRepoTasksResponse) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix describe repo events response
+func (m *OpenpitrixDescribeRepoEventsResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -34,7 +34,7 @@ func (m *OpenpitrixDescribeRepoTasksResponse) Validate(formats strfmt.Registry) 
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixDescribeRepoTasksResponse) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixDescribeRepoEventsResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -42,8 +42,8 @@ func (m *OpenpitrixDescribeRepoTasksResponse) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixDescribeRepoTasksResponse) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixDescribeRepoTasksResponse
+func (m *OpenpitrixDescribeRepoEventsResponse) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixDescribeRepoEventsResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

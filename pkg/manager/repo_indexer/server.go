@@ -16,13 +16,13 @@ import (
 
 type Server struct {
 	*pi.Pi
-	controller *TaskController
+	controller *EventController
 }
 
 func Serve(cfg *config.Config) {
 	pi.SetGlobalPi(cfg)
 	p := pi.Global()
-	controller := NewTaskController(p)
+	controller := NewEventController(p)
 	s := Server{Pi: p, controller: controller}
 	go controller.Serve()
 	go s.Cron()

@@ -23,29 +23,29 @@ import (
 	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
-type taskChannel chan *models.RepoTask
+type eventChannel chan *models.RepoEvent
 
-type TaskController struct {
+type EventController struct {
 	*pi.Pi
 	queue        *etcd.Queue
-	channel      taskChannel
+	channel      eventChannel
 	runningCount utils.Counter
 }
 
-func NewTaskController(pi *pi.Pi) *TaskController {
-	return &TaskController{
+func NewEventController(pi *pi.Pi) *EventController {
+	return &EventController{
 		Pi:           pi,
-		queue:        pi.Etcd.NewQueue("repo-indexer-task"),
-		channel:      make(taskChannel),
+		queue:        pi.Etcd.NewQueue("repo-indexer-event"),
+		channel:      make(eventChannel),
 		runningCount: utils.Counter(0),
 	}
 }
 
-func (i *TaskController) NewRepoTask(repoId, owner string) (*models.RepoTask, error) {
-	var repoTaskId string
+func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent, error) {
+	var repoEventId string
 	err := i.Etcd.Dlock(context.Background(), constants.RepoIndexPrefix+repoId, func() error {
-		count, err := i.Db.Select(models.RepoTaskColumns...).
-			From(models.RepoTaskTableName).
+		count, err := i.Db.Select(models.RepoEventColumns...).
+			From(models.RepoEventTableName).
 			Where(db.Eq("repo_id", repoId)).
 			Where(db.Eq("status", []string{constants.StatusWorking, constants.StatusPending})).
 			Count()
@@ -53,63 +53,63 @@ func (i *TaskController) NewRepoTask(repoId, owner string) (*models.RepoTask, er
 			return err
 		}
 		if count > 0 {
-			return fmt.Errorf("repo [%s] had running index task", repoId)
+			return fmt.Errorf("repo [%s] had running index event", repoId)
 		}
-		repoTask := models.NewRepoTask(repoId, owner)
-		_, err = i.Db.InsertInto(models.RepoTaskTableName).
-			Columns(models.RepoTaskColumns...).
-			Record(repoTask).
+		repoEvent := models.NewRepoEvent(repoId, owner)
+		_, err = i.Db.InsertInto(models.RepoEventTableName).
+			Columns(models.RepoEventColumns...).
+			Record(repoEvent).
 			Exec()
 		if err != nil {
 			return err
 		}
-		repoTaskId = repoTask.RepoTaskId
-		err = i.queue.Enqueue(repoTaskId)
+		repoEventId = repoEvent.RepoEventId
+		err = i.queue.Enqueue(repoEventId)
 		return err
 	})
 	if err != nil {
 		return nil, err
 	}
-	var repoTask models.RepoTask
-	err = i.Db.Select(models.RepoTaskColumns...).
-		From(models.RepoTaskTableName).
-		Where(db.Eq("repo_task_id", repoTaskId)).
-		LoadOne(&repoTask)
+	var repoEvent models.RepoEvent
+	err = i.Db.Select(models.RepoEventColumns...).
+		From(models.RepoEventTableName).
+		Where(db.Eq("repo_event_id", repoEventId)).
+		LoadOne(&repoEvent)
 	if err != nil {
 		return nil, err
 	}
-	return &repoTask, nil
+	return &repoEvent, nil
 }
 
-func (i *TaskController) updateRepoTaskStatus(repoTaskId, status, result string) error {
+func (i *EventController) updateRepoEventStatus(repoEventId, status, result string) error {
 	_, err := i.Db.
-		Update(models.RepoTaskTableName).
+		Update(models.RepoEventTableName).
 		Set("status", status).
 		Set("result", result).
-		Where(db.Eq("repo_task_id", repoTaskId)).
+		Where(db.Eq("repo_event_id", repoEventId)).
 		Exec()
 	if err != nil {
-		logger.Panicf("Failed to set repo task [&s] status to [%s] result to [%s], %+v", repoTaskId, status, result, err)
+		logger.Panicf("Failed to set repo event [&s] status to [%s] result to [%s], %+v", repoEventId, status, result, err)
 	}
 	return err
 }
 
-func (i *TaskController) ExecuteTask(repoTask *models.RepoTask, cb func()) {
+func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 	defer cb()
 	defer func() {
 		if err := recover(); err != nil {
 			logger.Panic(err)
-			i.updateRepoTaskStatus(repoTask.RepoTaskId, constants.StatusFailed, fmt.Sprintf("%+v", err))
+			i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusFailed, fmt.Sprintf("%+v", err))
 		}
 	}()
-	logger.Infof("Got repo task: %+v", repoTask)
+	logger.Infof("Got repo event: %+v", repoEvent)
 	err := func() (err error) {
 		ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
 		repoManagerClient, err := repoClient.NewRepoManagerClient(ctx)
 		if err != nil {
 			return
 		}
-		repoId := repoTask.RepoId
+		repoId := repoEvent.RepoId
 		req := pb.DescribeReposRequest{
 			RepoId: []string{repoId},
 		}
@@ -130,58 +130,58 @@ func (i *TaskController) ExecuteTask(repoTask *models.RepoTask, cb func()) {
 	}()
 	if err != nil {
 		// FIXME: remove panic log
-		logger.Panicf("Failed to execute repo task: %+v", err)
+		logger.Panicf("Failed to execute repo event: %+v", err)
 		logger.Panic(string(debug.Stack()))
-		i.updateRepoTaskStatus(repoTask.RepoTaskId, constants.StatusFailed, fmt.Sprintf("%+v", err))
+		i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusFailed, fmt.Sprintf("%+v", err))
 	} else {
-		i.updateRepoTaskStatus(repoTask.RepoTaskId, constants.StatusSuccessful, "")
+		i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusSuccessful, "")
 	}
 }
 
-func (i *TaskController) getRepoTask(repoTaskId string) (repoTask models.RepoTask, err error) {
+func (i *EventController) getRepoEvent(repoEventId string) (repoEvent models.RepoEvent, err error) {
 	err = i.Db.
-		Select(models.RepoTaskColumns...).
-		From(models.RepoTaskTableName).
-		Where(db.Eq("repo_task_id", repoTaskId)).
-		LoadOne(&repoTask)
+		Select(models.RepoEventColumns...).
+		From(models.RepoEventTableName).
+		Where(db.Eq("repo_event_id", repoEventId)).
+		LoadOne(&repoEvent)
 	return
 }
 
-func (i *TaskController) getRepoTaskFromQueue() (repoTask models.RepoTask, err error) {
-	repoTaskId, err := i.queue.Dequeue()
+func (i *EventController) getRepoEventFromQueue() (repoEvent models.RepoEvent, err error) {
+	repoEventId, err := i.queue.Dequeue()
 	if err != nil {
 		return
 	}
-	repoTask, err = i.getRepoTask(repoTaskId)
+	repoEvent, err = i.getRepoEvent(repoEventId)
 	return
 }
 
-func (i *TaskController) GetTaskLength() int32 {
-	return constants.RepoTaskLength
+func (i *EventController) GetEventLength() int32 {
+	return constants.RepoEventLength
 }
 
-func (i *TaskController) Dequeue() {
+func (i *EventController) Dequeue() {
 	for {
-		if i.runningCount.Get() > i.GetTaskLength() {
-			logger.Errorf("Sleep 10s, running task count exceed [%d/%d]", i.runningCount.Get(), i.GetTaskLength())
+		if i.runningCount.Get() > i.GetEventLength() {
+			logger.Errorf("Sleep 10s, running event count exceed [%d/%d]", i.runningCount.Get(), i.GetEventLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
-		repoTask, err := i.getRepoTaskFromQueue()
+		repoEvent, err := i.getRepoEventFromQueue()
 		if err != nil {
-			logger.Errorf("Failed to get repo task from etcd: %+v", err)
+			logger.Errorf("Failed to get repo event from etcd: %+v", err)
 			time.Sleep(10 * time.Second)
 			continue
 		}
-		i.channel <- &repoTask
+		i.channel <- &repoEvent
 	}
 }
 
-func (i *TaskController) Serve() {
+func (i *EventController) Serve() {
 	go i.Dequeue()
-	for task := range i.channel {
+	for event := range i.channel {
 		i.runningCount.Add(1)
-		go i.ExecuteTask(task, func() {
+		go i.ExecuteEvent(event, func() {
 			i.runningCount.Add(-1)
 		})
 	}

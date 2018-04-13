@@ -67,23 +67,23 @@ CREATE INDEX repo_selector_selector_value_idx
 CREATE INDEX repo_selector_create_time_idx
 	ON repo_selector (create_time);
 
-CREATE TABLE repo_task (
-	repo_task_id VARCHAR(50) PRIMARY KEY             NOT NULL,
-	repo_id      VARCHAR(50)                         NOT NULL,
-	owner        VARCHAR(50)                         NOT NULL,
-	status       VARCHAR(50)                         NOT NULL,
-	result       TEXT                                NOT NULL,
-	create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	status_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+CREATE TABLE repo_event (
+	repo_event_id VARCHAR(50) PRIMARY KEY             NOT NULL,
+	repo_id       VARCHAR(50)                         NOT NULL,
+	owner         VARCHAR(50)                         NOT NULL,
+	status        VARCHAR(50)                         NOT NULL,
+	result        TEXT                                NOT NULL,
+	create_time   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	status_time   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE INDEX repo_task_repo_id_idx
-	ON repo_task (repo_id);
-CREATE INDEX repo_task_owner_idx
-	ON repo_task (owner);
-CREATE INDEX repo_task_status_idx
-	ON repo_task (status);
-CREATE INDEX repo_task_create_time_idx
-	ON repo_task (create_time);
-CREATE INDEX repo_task_status_time_idx
-	ON repo_task (status_time);
+CREATE INDEX repo_event_repo_id_idx
+	ON repo_event (repo_id);
+CREATE INDEX repo_event_owner_idx
+	ON repo_event (owner);
+CREATE INDEX repo_event_status_idx
+	ON repo_event (status);
+CREATE INDEX repo_event_create_time_idx
+	ON repo_event (create_time);
+CREATE INDEX repo_event_status_time_idx
+	ON repo_event (status_time);

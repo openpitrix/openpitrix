@@ -56,10 +56,10 @@ const (
 )
 
 const (
-	JobLength      = 20
-	TaskLength     = 20
-	RepoTaskLength = 20
-	InstanceSize   = 20
+	JobLength       = 20
+	TaskLength      = 20
+	RepoEventLength = 20
+	InstanceSize    = 20
 
 	DefaultMountPoint = "/data"
 
