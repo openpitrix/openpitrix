@@ -15,7 +15,7 @@ import (
 const ClusterTableName = "cluster"
 
 func NewClusterId() string {
-	return idtool.GetUuid("cl-")
+	return idtool.GetUuid36("cl-")
 }
 
 type Cluster struct {

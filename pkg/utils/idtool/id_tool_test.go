@@ -12,3 +12,7 @@ import (
 func TestGetUuid(t *testing.T) {
 	fmt.Println(GetUuid(""))
 }
+
+func TestGetUuid36(t *testing.T) {
+	fmt.Println(GetUuid36(""))
+}
