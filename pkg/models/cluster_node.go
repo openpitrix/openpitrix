@@ -9,12 +9,13 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const ClusterNodeTableName = "cluster_node"
 
 func NewClusterNodeId() string {
-	return utils.GetUuid("cln-")
+	return idtool.GetUuid("cln-")
 }
 
 type ClusterNode struct {

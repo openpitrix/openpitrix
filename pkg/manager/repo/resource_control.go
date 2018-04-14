@@ -199,6 +199,7 @@ func (p *Server) getSelectorsMap(repoIds []string) (selectorsMap map[string][]*m
 		Select(models.RepoSelectorColumns...).
 		From(models.RepoSelectorTableName).
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
+		OrderDir(models.ColumnCreateTime, true).
 		Load(&repoSelectors)
 	if err != nil {
 		return
@@ -213,6 +214,7 @@ func (p *Server) getLabelsMap(repoIds []string) (labelsMap map[string][]*models.
 		Select(models.RepoLabelColumns...).
 		From(models.RepoLabelTableName).
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
+		OrderDir(models.ColumnCreateTime, true).
 		Load(&repoLabels)
 	if err != nil {
 		return

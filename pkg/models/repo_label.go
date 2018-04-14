@@ -9,12 +9,13 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/idtool"
 )
 
 const RepoLabelTableName = "repo_label"
 
 func NewRepoLabelId() string {
-	return utils.GetUuid("repol-")
+	return idtool.GetUuid("repol-")
 }
 
 type RepoLabel struct {
