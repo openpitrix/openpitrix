@@ -4,13 +4,22 @@
 
 TARG.Name:=openpitrix
 TRAG.Gopkg:=openpitrix.io/openpitrix
+TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 
 DOCKER_TAGS=latest
-RUN_IN_DOCKER:=docker run --rm -it -v `pwd`:/go/src/$(TRAG.Gopkg) -w /go/src/$(TRAG.Gopkg) -e USER_ID=`id -u` -e GROUP_ID=`id -g` openpitrix/openpitrix-builder
+RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/pkg:/go/pkg  -w /go/src/$(TRAG.Gopkg) -e USER_ID=`id -u` -e GROUP_ID=`id -g` openpitrix/openpitrix-builder
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
 GO_FILES:=./cmd ./test ./pkg
 define get_diff_files
     $(eval DIFF_FILES=$(shell git diff --name-only --diff-filter=ad | grep -E "^(test|cmd|pkg)/.+\.go"))
+endef
+define get_build_flags
+    $(eval SHORT_VERSION=$(shell git describe --tags --always --dirty="-dev"))
+    $(eval SHA1_VERSION=$(shell git show --quiet --pretty=format:%H))
+	$(eval DATE=$(shell date +'%Y-%m-%dT%H:%M:%S'))
+	$(eval BUILD_FLAG= -X $(TRAG.Version).ShortVersion="$(SHORT_VERSION)" \
+		-X $(TRAG.Version).GitSha1Version="$(SHA1_VERSION)" \
+		-X $(TRAG.Version).BuildDate="$(DATE)")
 endef
 
 COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager
@@ -81,7 +90,12 @@ fmt-check: fmt-all
 
 .PHONY: build
 build: fmt
-	docker build -t $(TARG.Name) -f ./Dockerfile .
+	mkdir -p ./tmp/bin
+	$(call get_build_flags)
+	docker-compose up -d openpitrix-builder
+	docker-compose exec openpitrix-builder time go install -ldflags '$(BUILD_FLAG)' $(TRAG.Gopkg)/cmd/...
+	docker-compose exec openpitrix-builder time rsync -rvtpD /go/bin/ /go/src/openpitrix.io/openpitrix/tmp/bin/
+	@docker build -t $(TARG.Name) -f ./Dockerfile.dev ./tmp/bin
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
 
@@ -134,7 +148,10 @@ e2e-test:
 	@echo "e2e-test done"
 
 .PHONY: ci-test
-ci-test: compose-update
+ci-test:
+	# build with production Dockerfile, not dev version
+	@docker build -t $(TARG.Name) -f ./Dockerfile .
+	@make compose-up
 	sleep 20
 	@make unit-test
 	@make e2e-test
