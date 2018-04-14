@@ -15,12 +15,11 @@ import (
 )
 
 type Server struct {
-	*pi.Pi
 }
 
 func Serve(cfg *config.Config) {
 	pi.SetGlobalPi(cfg)
-	s := Server{pi.Global()}
+	s := Server{}
 	manager.NewGrpcServer("cluster-manager", constants.ClusterManagerPort).Serve(func(server *grpc.Server) {
 		pb.RegisterClusterManagerServer(server, &s)
 	})

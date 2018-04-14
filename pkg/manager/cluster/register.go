@@ -12,7 +12,6 @@ import (
 )
 
 type Register struct {
-	*pi.Pi
 	ClusterId      string
 	SubnetId       string
 	VpcId          string
@@ -32,7 +31,7 @@ func (r *Register) RegisterClusterWrapper() error {
 		r.ClusterWrapper.Cluster.VpcId = r.VpcId
 		r.ClusterWrapper.Cluster.Owner = r.Owner
 		r.ClusterWrapper.Cluster.ClusterType = r.ClusterType
-		_, err := r.Db.
+		_, err := pi.Global().Db.
 			InsertInto(models.ClusterTableName).
 			Columns(models.ClusterColumns...).
 			Record(r.ClusterWrapper.Cluster).
@@ -50,7 +49,7 @@ func (r *Register) RegisterClusterWrapper() error {
 		clusterNode.ClusterId = r.ClusterId
 		clusterNode.NodeId = models.NewClusterNodeId()
 		clusterNode.Owner = r.Owner
-		_, err := r.Db.
+		_, err := pi.Global().Db.
 			InsertInto(models.ClusterNodeTableName).
 			Columns(models.ClusterNodeColumns...).
 			Record(clusterNode).
@@ -68,7 +67,7 @@ func (r *Register) RegisterClusterWrapper() error {
 	// register cluster common
 	for _, clusterCommon := range r.ClusterWrapper.ClusterCommons {
 		clusterCommon.ClusterId = r.ClusterId
-		_, err := r.Db.
+		_, err := pi.Global().Db.
 			InsertInto(models.ClusterCommonTableName).
 			Columns(models.ClusterCommonColumns...).
 			Record(clusterCommon).
@@ -84,7 +83,7 @@ func (r *Register) RegisterClusterWrapper() error {
 	for _, clusterLink := range r.ClusterWrapper.ClusterLinks {
 		clusterLink.ClusterId = r.ClusterId
 		clusterLink.Owner = r.Owner
-		_, err := r.Db.
+		_, err := pi.Global().Db.
 			InsertInto(models.ClusterLinkTableName).
 			Columns(models.ClusterLinkColumns...).
 			Record(clusterLink).
@@ -99,7 +98,7 @@ func (r *Register) RegisterClusterWrapper() error {
 	// register cluster role
 	for _, clusterRole := range r.ClusterWrapper.ClusterRoles {
 		clusterRole.ClusterId = r.ClusterId
-		_, err := r.Db.
+		_, err := pi.Global().Db.
 			InsertInto(models.ClusterRoleTableName).
 			Columns(models.ClusterRoleColumns...).
 			Record(clusterRole).
@@ -115,7 +114,7 @@ func (r *Register) RegisterClusterWrapper() error {
 	for _, clusterLoadbalancers := range r.ClusterWrapper.ClusterLoadbalancers {
 		for _, clusterLoadbalancer := range clusterLoadbalancers {
 			clusterLoadbalancer.ClusterId = r.ClusterId
-			_, err := r.Db.
+			_, err := pi.Global().Db.
 				InsertInto(models.ClusterLoadbalancerTableName).
 				Columns(models.ClusterLoadbalancerColumns...).
 				Record(clusterLoadbalancer).
