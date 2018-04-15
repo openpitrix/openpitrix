@@ -5,12 +5,6 @@
 version: '3'
 
 services:
-  openpitrix-builder:
-    image: "openpitrix/openpitrix-builder"
-    command: "sh -c 'while true; do sleep 300; done'"
-    volumes:
-      - ./:/go/src/openpitrix.io/openpitrix
-    container_name: "openpitrix-builder"
   openpitrix-db:
     image: "mysql:5.7"
     environment:

@@ -7,7 +7,7 @@ TRAG.Gopkg:=openpitrix.io/openpitrix
 TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 
 DOCKER_TAGS=latest
-RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/pkg:/go/pkg  -w /go/src/$(TRAG.Gopkg) -e USER_ID=`id -u` -e GROUP_ID=`id -g` openpitrix/openpitrix-builder
+RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` openpitrix/openpitrix-builder
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
 GO_FILES:=./cmd ./test ./pkg
 define get_diff_files
@@ -92,9 +92,7 @@ fmt-check: fmt-all
 build: fmt
 	mkdir -p ./tmp/bin
 	$(call get_build_flags)
-	docker-compose up -d openpitrix-builder
-	docker-compose exec openpitrix-builder time go install -ldflags '$(BUILD_FLAG)' $(TRAG.Gopkg)/cmd/...
-	docker-compose exec openpitrix-builder time rsync -rvtpD /go/bin/ /go/src/openpitrix.io/openpitrix/tmp/bin/
+	$(RUN_IN_DOCKER) time go install -ldflags '$(BUILD_FLAG)' $(TRAG.Gopkg)/cmd/...
 	@docker build -t $(TARG.Name) -f ./Dockerfile.dev ./tmp/bin
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
