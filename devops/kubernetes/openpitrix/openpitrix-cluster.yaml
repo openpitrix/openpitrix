@@ -1,44 +1,114 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: openpitrix-cluster
+  name: openpitrix-cluster-manager
   namespace: default
   labels:
     app: openpitrix
-    service: cluster
+    service: openpitrix-cluster-manager
 spec:
   selector:
     app: openpitrix
-    service: cluster
+    service: openpitrix-cluster-manager
   ports:
-  - name: http
+  - name:  openpitrix-cluster-manager
     protocol: TCP
-    port: 9103
-    targetPort: 9103
+    port: 9104
+    targetPort: 9104
 ---
-apiVersion: extensions/v1beta1
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-job-manager
+  namespace: default
+  labels:
+    app: openpitrix
+    service: openpitrix-job-manager
+spec:
+  selector:
+    app: openpitrix
+    service: openpitrix-job-manager
+  ports:
+  - name:  openpitrix-job-manager
+    protocol: TCP
+    port: 9106
+    targetPort: 9106
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-task-manager
+  namespace: default
+  labels:
+    app: openpitrix
+    service: openpitrix-task-manager
+spec:
+  selector:
+    app: openpitrix
+    service: openpitrix-task-manager
+  ports:
+  - name:  openpitrix-task-manager
+    protocol: TCP
+    port: 9107
+    targetPort: 9107
+---
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: openpitrix-cluster
   namespace: default
+  labels:
+    app: openpitrix
 spec:
+  selector:
+    matchLabels:
+      app: openpitrix
   replicas: 1
   template:
     metadata:
       labels:
         app: openpitrix
-        service: cluster
+        service: openpitrix-cluster-manager
     spec:
       containers:
-      - args:
-        - cluster
-        name: openpitrix-cluster
-        image: openpitrix/openpitrix
+      - name: cluster-manager
+        image: openpitrix/openpitrix-dev:latest
+        imagePullPolicy: IfNotPresent
+        command:
+          - cluster-manager
         ports:
-        - containerPort: 9103
+        - containerPort: 9104
+          name: cluster-manager
         env:
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
+        - name: OPENPITRIX_MYSQL_DATABASE
+          value: "cluster"
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password.txt
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+      - name: job-manager
+        image: openpitrix/openpitrix-dev:latest
+        imagePullPolicy: IfNotPresent
+        command:
+          - job-manager
+        ports:
+        - containerPort: 9106
+          name: job-manager
+        env:
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
         - name: OPENPITRIX_CONFIG_DB_DBNAME
-          value: "openpitrix"
+          value: "cluster"
         - name: OPENPITRIX_CONFIG_DB_ROOTPASSWORD
           valueFrom:
             secretKeyRef:
@@ -51,3 +121,26 @@ spec:
           requests:
             cpu: 500m
             memory: 500Mi
+      - name: task-manager
+        image: openpitrix/openpitrix-dev:latest
+        imagePullPolicy: IfNotPresent
+        command:
+          - task-manager
+        ports:
+        - containerPort: 9107
+          name: task-manager
+        env:
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
+        - name: OPENPITRIX_CONFIG_DB_DBNAME
+          value: "cluster"
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          value: "password"
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+

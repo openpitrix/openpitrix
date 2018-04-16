@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+  labels:
+    app: openpitrix-runtime-db-ctrl
+  name: openpitrix-runtime-db-ctrl
+  namespace: default
+spec:
+  activeDeadlineSeconds: 600
+  backoffLimit: 6
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        job-name: openpitrix-runtime-db-ctrl
+      name: runtime-db-ctrl
+    spec:
+      containers:
+      - command: ["flyway", "-X", "-url=jdbc:mysql://openpitrix-db.default.svc.cluster.local/runtime", "-user=root", "-password=password","-validateOnMigrate=false", "migrate"]
+        env:
+        - name: FLYWAY_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password.txt
+              name: mysql-pass
+        image: boxfuse/flyway:5.0.7-alpine
+        imagePullPolicy: IfNotPresent
+        name: runtime-db-ctrl
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /flyway/sql
+          name: flyway
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+        role: master
+      restartPolicy: OnFailure
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+      volumes:
+      - hostPath:
+          path: /opt/openpitrix/pkg/db/schema/runtime
+          type: ""
+        name: flyway
