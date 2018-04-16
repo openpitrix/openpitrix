@@ -644,18 +644,29 @@ var hbaseClusterLinks = map[string]models.ClusterLink{
 	},
 }
 
-func TestParse(t *testing.T) {
+func getTestClusterWrapper(t *testing.T) *models.ClusterWrapper {
 	cluster := app.Cluster{}
 	err := json.Unmarshal([]byte(hbaseMustache), &cluster)
 	if err != nil {
-		t.Errorf("Parse mustache failed: %+v", err)
+		t.Fatalf("Parse mustache failed: %+v", err)
 	}
+	// TODO: add validate to test
+	//cluster.RenderJson = hbaseMustache
+	//err = cluster.Validate()
+	//if err != nil {
+	//	t.Fatalf("Validate cluster failed: %+v", err)
+	//}
 
 	parser := Parser{}
 	clusterWrapper, err := parser.Parse(cluster)
 	if err != nil {
-		t.Errorf("Parse mustache failed: %+v", err)
+		t.Fatalf("Parse mustache failed: %+v", err)
 	}
+	return clusterWrapper
+}
+
+func TestParse(t *testing.T) {
+	clusterWrapper := getTestClusterWrapper(t)
 
 	// check cluster
 	if hbaseCluster != *clusterWrapper.Cluster {

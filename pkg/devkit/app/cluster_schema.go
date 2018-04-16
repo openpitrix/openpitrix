@@ -11,7 +11,7 @@ const ClusterSchema = `
   "required": [
     "name", 
     "description", 
-    "vxnet", 
+    "subnet", 
     "nodes"
   ], 
   "type": "object", 
@@ -35,7 +35,7 @@ const ClusterSchema = `
     "name": {
       "type": "string"
     }, 
-    "vxnet": {
+    "subnet": {
       "type": "string"
     }, 
     "env": {

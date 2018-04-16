@@ -5,12 +5,10 @@
 package qingcloud
 
 import (
-	"encoding/json"
 	"testing"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 )
@@ -56,17 +54,7 @@ func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
 }
 
 func TestSplitJobIntoTasks(t *testing.T) {
-	cluster := app.Cluster{}
-	err := json.Unmarshal([]byte(hbaseMustache), &cluster)
-	if err != nil {
-		t.Errorf("Parse mustache failed: %+v", err)
-	}
-
-	parser := Parser{}
-	clusterWrapper, err := parser.Parse(cluster)
-	if err != nil {
-		t.Errorf("Parse mustache failed: %+v", err)
-	}
+	clusterWrapper := getTestClusterWrapper(t)
 	directive, _ := clusterWrapper.ToString()
 
 	mockJob := &models.Job{
