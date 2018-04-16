@@ -147,7 +147,7 @@ var testClusterTmpl = `
 
 func TestValidateClusterTmpl(t *testing.T) {
 	// normal tmpl
-	clusterTmpl := &ClusterTemplate{Raw: testClusterTmpl}
+	clusterTmpl := &ClusterConfTemplate{Raw: testClusterTmpl}
 	configJson, err := UnmarshalConfigTemplate([]byte(testConfigJson))
 	if err != nil {
 		t.Fatal(err)
@@ -158,14 +158,14 @@ func TestValidateClusterTmpl(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(string(j))
-	err = ValidateClusterTmpl(clusterTmpl, &config)
+	err = ValidateClusterConfTmpl(clusterTmpl, &config)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// error tmpl
-	clusterTmpl = &ClusterTemplate{Raw: testErrorClusterTmpl}
-	err = ValidateClusterTmpl(clusterTmpl, &config)
+	clusterTmpl = &ClusterConfTemplate{Raw: testErrorClusterTmpl}
+	err = ValidateClusterConfTmpl(clusterTmpl, &config)
 	if err == nil {
 		t.Fatal("error cluster tmpl must failed")
 	}

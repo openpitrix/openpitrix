@@ -48,7 +48,7 @@ func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
 
 	for index := range result {
 		if result[index] != expectResult[index] {
-			t.Errorf("Index [%d] expect [%v], while get [%v]", index, expectResult[index], result[index])
+			t.Errorf("Index [%d] expect [%+v], while get [%+v]", index, expectResult[index], result[index])
 		}
 	}
 }

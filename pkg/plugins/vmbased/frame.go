@@ -238,7 +238,7 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 	for _, nodeId := range nodeIds {
 		clusterNode, exist := f.ClusterWrapper.ClusterNodes[nodeId]
 		if !exist {
-			logger.Errorf("Cluster [%s] node [%s] not exist", f.ClusterWrapper.Cluster.ClusterId, nodeId)
+			logger.Errorf("ClusterConf [%s] node [%s] not exist", f.ClusterWrapper.Cluster.ClusterId, nodeId)
 			continue
 		}
 		role := clusterNode.Role

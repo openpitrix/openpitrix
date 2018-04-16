@@ -158,7 +158,7 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 			}
 			c.Metadata = m
 		} else if f.Name == ClusterJsonTmpl {
-			c.ClusterTemplate = &app.ClusterTemplate{Raw: string(f.Data)}
+			c.ClusterConfTemplate = &app.ClusterConfTemplate{Raw: string(f.Data)}
 		} else if f.Name == ConfigJson {
 			m, err := app.UnmarshalConfigTemplate(f.Data)
 			if err != nil {
@@ -178,6 +178,6 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 	}
 	// Validate default config
 	config := c.ConfigTemplate.GetDefaultConfig()
-	err := app.ValidateClusterTmpl(c.ClusterTemplate, &config)
+	err := app.ValidateClusterConfTmpl(c.ClusterConfTemplate, &config)
 	return c, err
 }

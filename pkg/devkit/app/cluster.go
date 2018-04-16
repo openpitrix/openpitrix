@@ -12,7 +12,7 @@ import (
 	"regexp"
 )
 
-type ClusterTemplate struct {
+type ClusterConfTemplate struct {
 	Raw string
 }
 
@@ -34,7 +34,7 @@ func getv(input interface{}) interface{} {
 	}
 }
 
-func (c *ClusterTemplate) Render(input ClusterConfig) (cluster Cluster, err error) {
+func (c *ClusterConfTemplate) Render(input ClusterUserConfig) (cluster ClusterConf, err error) {
 	var tmpl *template.Template
 	raw := replaceTemplateExpression(c.Raw)
 	tmpl, err = template.New("render_cluster_config").Funcs(template.FuncMap{
@@ -53,7 +53,7 @@ func (c *ClusterTemplate) Render(input ClusterConfig) (cluster Cluster, err erro
 	return
 }
 
-type Cluster struct {
+type ClusterConf struct {
 	RenderJson string `json:"-"`
 
 	AppId                      string                 `json:"app_id"`
