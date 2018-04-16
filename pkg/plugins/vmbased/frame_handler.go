@@ -26,7 +26,7 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 	waitFrontgateDirective := make(map[string]interface{})
 
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	err := json.Unmarshal([]byte(task.Directive), waitFrontgateDirective)

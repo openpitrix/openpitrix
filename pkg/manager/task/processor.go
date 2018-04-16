@@ -28,7 +28,7 @@ func NewProcessor(task *models.Task) *Processor {
 // Post process when task is start
 func (t *Processor) Pre() error {
 	if t.Task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", t.Task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", t.Task.TaskId)
 		return nil
 	}
 	var err error
@@ -134,7 +134,7 @@ func (t *Processor) Post() error {
 	switch t.Task.TaskAction {
 	case vmbased.ActionRunInstances:
 		if t.Task.Directive == "" {
-			logger.Warnf("Skip empty task [%p] directive", t.Task.TaskId)
+			logger.Warnf("Skip empty task [%s] directive", t.Task.TaskId)
 		}
 		instance, err := models.NewInstance(t.Task.Directive)
 		if err != nil {
@@ -149,7 +149,7 @@ func (t *Processor) Post() error {
 		}
 	case vmbased.ActionCreateVolumes:
 		if t.Task.Directive == "" {
-			logger.Warnf("Skip empty task [%p] directive", t.Task.TaskId)
+			logger.Warnf("Skip empty task [%s] directive", t.Task.TaskId)
 		}
 		volume, err := models.NewVolume(t.Task.Directive)
 		if err != nil {
