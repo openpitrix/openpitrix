@@ -1,49 +1,56 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: openpitrix-runtime
+  name: openpitrix-runtime-manager
   namespace: default
   labels:
     app: openpitrix
-    service: runtime
+    service: openpitrix-runtime-manager
 spec:
   selector:
     app: openpitrix
-    service: runtime
+    service: openpitrix-runtime-manager
   ports:
-  - name: http
+  - name: openpitrix-runtime-manager
     protocol: TCP
-    port: 9102
-    targetPort: 9102
+    port: 9103
+    targetPort: 9103
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: openpitrix-runtime
+  name: openpitrix-runtime-manager
   namespace: default
+  labels:
+    app: openpitrix
 spec:
+  selector:
+    matchLabels:
+      app: openpitrix
   replicas: 1
   template:
     metadata:
       labels:
         app: openpitrix
-        service: runtime
+        service: openpitrix-runtime-manager
     spec:
       containers:
-      - args:
-        - runtime
-        name: openpitrix-runtime
-        image: openpitrix/openpitrix
+      - name: runtime-manager
+        image: openpitrix/openpitrix-dev:latest
+        imagePullPolicy: IfNotPresent
+        command:
+          - runtime-manager
         ports:
-        - containerPort: 9102
+        - containerPort: 9103
+          name: runtime-manager
         env:
-        - name: OPENPITRIX_CONFIG_DB_DBNAME
-          value: "openpitrix"
-        - name: OPENPITRIX_CONFIG_DB_ROOTPASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-pass
-              key: password.txt
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
+        - name: OPENPITRIX_MYSQL_DATABASE
+          value: "runtime"
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          value: "password"
+
         resources:
           limits:
             cpu: 500m
@@ -51,3 +58,4 @@ spec:
           requests:
             cpu: 500m
             memory: 500Mi
+

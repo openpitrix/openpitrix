@@ -32,7 +32,7 @@ spec:
     requests:
       storage: 20Gi
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: openpitrix-db
@@ -40,6 +40,9 @@ metadata:
   labels:
     app: openpitrix
 spec:
+  selector:
+    matchLabels:
+      app: openpitrix
   strategy:
     type: Recreate
   template:
@@ -48,26 +51,37 @@ spec:
         app: openpitrix
         tier: db
     spec:
+      nodeSelector:
+        role: master
       containers:
-      - image: mysql:5.6
-        name: mysql
+      - name: openpitrix-db
+        image: mysql:5.7.21
+        imagePullPolicy: IfNotPresent
+        args:
+          - "--ignore-db-dir=lost+found"
         env:
           # $ kubectl create secret generic mysql-pass --from-file=password.txt
           # make sure password.txt does not have a trailing newline
         - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-pass
-              key: password.txt
-        - name: MYSQL_DATABASE
-          value: "openpitrix"
+          value: "password"
+        - name: MYSQL_ROOT_HOST
+          value: "%"
         ports:
         - containerPort: 3306
           name: mysql
         volumeMounts:
         - name: db-persistent-storage
           mountPath: /var/lib/mysql
+        - name: db-init
+          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: db-persistent-storage
         persistentVolumeClaim:
           claimName: db-pv-claim
+      - hostPath:
+          path: /opt/openpitrix/pkg/db/ddl
+        name: db-init
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule

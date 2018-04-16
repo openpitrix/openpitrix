@@ -1,49 +1,119 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: openpitrix-repo
+  name: openpitrix-repo-manager
   namespace: default
   labels:
     app: openpitrix
-    service: repo
+    service: openpitrix-repo-manager
 spec:
   selector:
     app: openpitrix
-    service: repo
+    service: openpitrix-repo-manager
   ports:
-  - name: http
+  - name: openpitrix-repo-manager
     protocol: TCP
-    port: 9104
-    targetPort: 9104
+    port: 9101
+    targetPort: 9101
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: openpitrix-repo
+  name: openpitrix-repo-manager
   namespace: default
+  labels:
+    app: openpitrix
 spec:
+  selector:
+    matchLabels:
+      app: openpitrix
   replicas: 1
   template:
     metadata:
       labels:
         app: openpitrix
-        service: repo
+        service: openpitrix-repo-manager
     spec:
       containers:
-      - args:
-        - repo
-        name: openpitrix-repo
-        image: openpitrix/openpitrix
+      - name: repo-manager
+        image: openpitrix/openpitrix-dev:latest
+        imagePullPolicy: IfNotPresent
+        command:
+          - repo-manager
         ports:
-        - containerPort: 9104
+        - containerPort: 9101
+          name: repo-manager
         env:
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
         - name: OPENPITRIX_CONFIG_DB_DBNAME
-          value: "openpitrix"
+          value: "repo"
         - name: OPENPITRIX_CONFIG_DB_ROOTPASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-pass
               key: password.txt
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-repo-indexer
+  namespace: default
+  labels:
+    app: openpitrix
+    service: openpitrix-repo-indexer
+spec:
+  selector:
+    app: openpitrix
+    service: openpitrix-repo-indexer
+  ports:
+  - name: openpitrix-repo-indexer
+    protocol: TCP
+    port: 9108
+    targetPort: 9108
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: openpitrix-repo-indexer
+  namespace: default
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    matchLabels:
+      app: openpitrix
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        service: openpitrix-repo-indexer
+    spec:
+      containers:
+      - name: repo-indexer
+        image: openpitrix/openpitrix-dev:latest
+        imagePullPolicy: IfNotPresent
+        command:
+          - repo-indexer
+        ports:
+        - containerPort: 9108
+          name: repo-indexer
+        env:
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
+        - name: OPENPITRIX_MYSQL_DATABASE
+          value: "repo"
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          value: "password"
+
         resources:
           limits:
             cpu: 500m

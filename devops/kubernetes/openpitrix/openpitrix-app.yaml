@@ -1,49 +1,55 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: openpitrix-app
+  name: openpitrix-app-manager
   namespace: default
   labels:
     app: openpitrix
-    service: app
+    service: openpitrix-app-manager
 spec:
   selector:
     app: openpitrix
-    service: app
+    service: openpitrix-app-manager
   ports:
-  - name: http
+  - name: openpitrix-app-manager
     protocol: TCP
-    port: 9101
-    targetPort: 9101
+    port: 9102
+    targetPort: 9102
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: openpitrix-app
+  name: openpitrix-app-manager
   namespace: default
+  labels:
+    app: openpitrix
 spec:
+  selector:
+    matchLabels:
+      app: openpitrix
   replicas: 1
   template:
     metadata:
       labels:
         app: openpitrix
-        service: app 
+        service: openpitrix-app-manager
     spec:
       containers:
-      - args:
-        - app
-        name: openpitrix-app
-        image: openpitrix/openpitrix
+      - name: app-manager
+        image: openpitrix/openpitrix-dev:latest
+        imagePullPolicy: IfNotPresent
+        command:
+          - app-manager
         ports:
-        - containerPort: 9101
+        - containerPort: 9102
+          name: app-manager
         env:
-        - name: OPENPITRIX_CONFIG_DB_DBNAME
-          value: "openpitrix"
-        - name: OPENPITRIX_CONFIG_DB_ROOTPASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-pass
-              key: password.txt
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
+        - name: OPENPITRIX_MYSQL_DATABASE
+          value: "app"
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          value: "password"
         resources:
           limits:
             cpu: 500m

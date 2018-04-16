@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-etcd
+  namespace: default
+  labels:
+    app: openpitrix
+    tier: etcd
+spec:
+  selector:
+    app: openpitrix
+    tier: etcd
+  #clusterIP: None
+  ports:
+  - name: tcp
+    protocol: TCP
+    port: 2379
+    targetPort: 2379
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: etcd-pv-claim
+  namespace: default
+  labels:
+    app: openpitrix
+    tier: etcd
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: openpitrix-etcd
+  namespace: default
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    matchLabels:
+      app: openpitrix
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        tier: etcd
+    spec:
+      containers:
+      - name: openpitrix-etcd
+        image: appcelerator/etcd
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 2379
+          name: etcd
+        volumeMounts:
+        - name: etcd-persistent-storage
+          mountPath: /data
+      volumes:
+      - name: etcd-persistent-storage
+        persistentVolumeClaim:
+          claimName: etcd-pv-claim
