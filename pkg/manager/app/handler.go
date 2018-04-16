@@ -6,6 +6,7 @@ package app
 
 import (
 	"context"
+	"io/ioutil"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -285,8 +286,18 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
 	}
 	logger.Debugf("Got app version: [%+v]", version)
+	packageUrl := version.PackageName
+	resp, err := utils.HttpGet(packageUrl)
+	if err != nil {
+		logger.Errorf("Failed to http get [%s], error: %+v", packageUrl, err)
+		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+	}
+	content, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logger.Errorf("Failed to read http response [%s], error: %+v", packageUrl, err)
+		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+	}
 	return &pb.GetAppVersionPackageResponse{
-		// TODO: read content from version.PackageName
-		Package: []byte("package file content"),
+		Package: content,
 	}, nil
 }

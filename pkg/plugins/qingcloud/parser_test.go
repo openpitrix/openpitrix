@@ -5,8 +5,10 @@
 package qingcloud
 
 import (
+	"encoding/json"
 	"testing"
 
+	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/models"
 )
 
@@ -643,8 +645,14 @@ var hbaseClusterLinks = map[string]models.ClusterLink{
 }
 
 func TestParse(t *testing.T) {
+	cluster := app.Cluster{}
+	err := json.Unmarshal([]byte(hbaseMustache), &cluster)
+	if err != nil {
+		t.Errorf("Parse mustache failed: %+v", err)
+	}
+
 	parser := Parser{}
-	clusterWrapper, err := parser.Parse([]byte(hbaseMustache))
+	clusterWrapper, err := parser.Parse(cluster)
 	if err != nil {
 		t.Errorf("Parse mustache failed: %+v", err)
 	}
@@ -652,8 +660,8 @@ func TestParse(t *testing.T) {
 	// check cluster
 	if hbaseCluster != *clusterWrapper.Cluster {
 		t.Errorf("Cluster not equal")
-		t.Logf("ori: %s", hbaseCluster)
-		t.Logf("dst: %s", *clusterWrapper.Cluster)
+		t.Logf("ori: %+v", hbaseCluster)
+		t.Logf("dst: %+v", *clusterWrapper.Cluster)
 	}
 
 	// check cluster common
@@ -664,8 +672,8 @@ func TestParse(t *testing.T) {
 	for index := range clusterWrapper.ClusterCommons {
 		if hbaseClusterCommons[index] != *clusterWrapper.ClusterCommons[index] {
 			t.Errorf("Cluster common [%s] not equal.", index)
-			t.Logf("ori: %s", hbaseClusterCommons[index])
-			t.Logf("dst: %s", *clusterWrapper.ClusterCommons[index])
+			t.Logf("ori: %+v", hbaseClusterCommons[index])
+			t.Logf("dst: %+v", *clusterWrapper.ClusterCommons[index])
 		}
 	}
 
@@ -677,8 +685,8 @@ func TestParse(t *testing.T) {
 	for index := range clusterWrapper.ClusterRoles {
 		if hbaseClusterRoles[index] != *clusterWrapper.ClusterRoles[index] {
 			t.Errorf("Cluster role [%s] not equal.", index)
-			t.Logf("ori: %s", hbaseClusterRoles[index])
-			t.Logf("dst: %s", *clusterWrapper.ClusterRoles[index])
+			t.Logf("ori: %+v", hbaseClusterRoles[index])
+			t.Logf("dst: %+v", *clusterWrapper.ClusterRoles[index])
 		}
 	}
 
@@ -691,7 +699,7 @@ func TestParse(t *testing.T) {
 		if hbaseClusterNodes[index] != *clusterWrapper.ClusterNodes[index] {
 			t.Errorf("Cluster node [%s] not equal.", index)
 			t.Logf("ori: %s", hbaseClusterNodes[index].Role)
-			t.Logf("dst: %s", *clusterWrapper.ClusterNodes[index])
+			t.Logf("dst: %+v", *clusterWrapper.ClusterNodes[index])
 		}
 	}
 

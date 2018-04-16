@@ -5,12 +5,16 @@
 package qingcloud
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/devkit"
+	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -22,6 +26,7 @@ type Provider struct {
 }
 
 func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
+	cluster := app.Cluster{}
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
 		ctx := context.Background()
@@ -35,17 +40,38 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 			VersionId: utils.ToProtoString(versionId),
 		}
 
-		_, err = appManagerClient.GetAppVersionPackage(ctx, req)
+		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
 		if err != nil {
 			logger.Errorf("Get app version [%s] package failed: %v", versionId, err)
 			return nil, err
 		}
 
-		// TODO after rendered, got the final conf
+		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
+		if err != nil {
+			logger.Errorf("Load app version [%s] package failed: %v", versionId, err)
+			return nil, err
+		}
+		var confJson app.ClusterConfig
+		err = json.Unmarshal([]byte(conf), &confJson)
+		if err != nil {
+			logger.Errorf("Parse conf [%s] failed: %v", conf, err)
+			return nil, err
+		}
+		cluster, err = appPackage.ClusterTemplate.Render(confJson)
+		if err != nil {
+			logger.Errorf("Render app version [%s] cluster template failed: %v", versionId, err)
+			return nil, err
+		}
+	} else {
+		err := json.Unmarshal([]byte(conf), &cluster)
+		if err != nil {
+			logger.Errorf("Parse conf [%s] to cluster failed: %v", conf, err)
+			return nil, err
+		}
 	}
 
 	parser := Parser{}
-	clusterWrapper, err := parser.Parse([]byte(conf))
+	clusterWrapper, err := parser.Parse(cluster)
 	if err != nil {
 		return nil, err
 	}
