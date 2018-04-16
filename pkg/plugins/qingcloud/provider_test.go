@@ -5,10 +5,12 @@
 package qingcloud
 
 import (
+	"encoding/json"
 	"testing"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 )
@@ -43,19 +45,25 @@ func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
 	}
 
 	if len(result) != len(expectResult) {
-		t.Errorf("Expect [%d] task layer, while get [%s] task layer", len(expectResult), len(result))
+		t.Errorf("Expect [%d] task layer, while get [%d] task layer", len(expectResult), len(result))
 	}
 
 	for index := range result {
 		if result[index] != expectResult[index] {
-			t.Errorf("Index [%d] expect [%s], while get [%s]", index, expectResult[index], result[index])
+			t.Errorf("Index [%d] expect [%v], while get [%v]", index, expectResult[index], result[index])
 		}
 	}
 }
 
 func TestSplitJobIntoTasks(t *testing.T) {
+	cluster := app.Cluster{}
+	err := json.Unmarshal([]byte(hbaseMustache), &cluster)
+	if err != nil {
+		t.Errorf("Parse mustache failed: %+v", err)
+	}
+
 	parser := Parser{}
-	clusterWrapper, err := parser.Parse([]byte(hbaseMustache))
+	clusterWrapper, err := parser.Parse(cluster)
 	if err != nil {
 		t.Errorf("Parse mustache failed: %+v", err)
 	}

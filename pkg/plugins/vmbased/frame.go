@@ -14,6 +14,7 @@ import (
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -94,7 +95,7 @@ func (f *Frame) getPreAndPostStartGroupNodes(nodeIds []string) ([]string, []stri
 		role := f.ClusterWrapper.ClusterNodes[nodeId].Role
 		serviceStr := f.ClusterWrapper.ClusterCommons[role].InitService
 		if serviceStr != "" {
-			service := models.Service{}
+			service := app.Service{}
 			err := json.Unmarshal([]byte(serviceStr), &service)
 			if err != nil {
 				logger.Errorf("Unmarshal cluster [%s] init service failed: %+v",
@@ -122,7 +123,7 @@ func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []strin
 		role := f.ClusterWrapper.ClusterNodes[nodeId].Role
 		serviceStr := f.ClusterWrapper.ClusterCommons[role].DestroyService
 		if serviceStr != "" {
-			service := models.Service{}
+			service := app.Service{}
 			err := json.Unmarshal([]byte(serviceStr), &service)
 			if err != nil {
 				logger.Errorf("Unmarshal cluster [%s] init service failed: %+v",
@@ -181,7 +182,7 @@ func (f *Frame) registerCmd(nodeIds []string, serviceName string) *models.TaskLa
 		role := f.ClusterWrapper.ClusterNodes[nodeId].Role
 		serviceStr := f.ClusterWrapper.GetCommonAttribute(role, serviceName)
 		if serviceStr != nil {
-			service := models.Service{}
+			service := app.Service{}
 			err := json.Unmarshal([]byte(serviceStr.(string)), &service)
 			if err != nil {
 				logger.Errorf("Unmarshal cluster [%s] service [%s] failed: %+v",
@@ -259,13 +260,13 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 	}
 
 	filterNodes := make(map[string]string)
-	roleService := make(map[string]models.Service)
+	roleService := make(map[string]app.Service)
 	for role, nodes := range roleNodeIds {
 		serviceStr := f.ClusterWrapper.GetCommonAttribute(role, serviceName)
 		if serviceStr == nil {
 			return nil
 		}
-		service := models.Service{}
+		service := app.Service{}
 		err := json.Unmarshal([]byte(serviceStr.(string)), &service)
 		if err != nil {
 			logger.Errorf("Unmarshal cluster [%s] service [%s] failed: %+v",
