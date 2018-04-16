@@ -62,6 +62,12 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 			logger.Errorf("Render app version [%s] cluster template failed: %v", versionId, err)
 			return nil, err
 		}
+		err = cluster.Validate()
+		if err != nil {
+			logger.Errorf("Validate app version [%s] conf [%s] failed: %v", versionId, conf, err)
+			return nil, err
+		}
+
 	} else {
 		err := json.Unmarshal([]byte(conf), &cluster)
 		if err != nil {
