@@ -54,7 +54,7 @@ func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudSer
 func (p *ProviderHandler) RunInstances(task *models.Task) error {
 
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -97,9 +97,9 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send RunInstances to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send RunInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return fmt.Errorf("send RunInstances to %s failed: %p", MyProvider, message)
+		return fmt.Errorf("send RunInstances to %s failed: %s", MyProvider, message)
 	}
 
 	if len(output.Instances) == 0 {
@@ -129,9 +129,9 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	volumeRetCode := qcservice.IntValue(volumeOutput.RetCode)
 	if volumeRetCode != 0 {
 		volumeMessage := qcservice.StringValue(volumeOutput.Message)
-		logger.Errorf("Send DescribeVolumes to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send DescribeVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, volumeRetCode, volumeMessage)
-		return fmt.Errorf("send DescribeVolumes to %s failed: %p", MyProvider, volumeMessage)
+		return fmt.Errorf("send DescribeVolumes to %s failed: %s", MyProvider, volumeMessage)
 	}
 
 	if len(volumeOutput.VolumeSet) == 0 {
@@ -154,7 +154,7 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 
 func (p *ProviderHandler) StopInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -186,9 +186,9 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send StopInstances to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send StopInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return fmt.Errorf("send StopInstances to %s failed: %p", MyProvider, message)
+		return fmt.Errorf("send StopInstances to %s failed: %s", MyProvider, message)
 	}
 	instance.TargetJobId = qcservice.StringValue(output.JobID)
 
@@ -204,7 +204,7 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 
 func (p *ProviderHandler) StartInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -236,9 +236,9 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send StartInstances to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send StartInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return fmt.Errorf("send StartInstances to %s failed: %p", MyProvider, message)
+		return fmt.Errorf("send StartInstances to %s failed: %s", MyProvider, message)
 	}
 	instance.TargetJobId = qcservice.StringValue(output.JobID)
 
@@ -254,7 +254,7 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 
 func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -286,9 +286,9 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send TerminateInstances to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send TerminateInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return fmt.Errorf("send TerminateInstances to %s failed: %p", MyProvider, message)
+		return fmt.Errorf("send TerminateInstances to %s failed: %s", MyProvider, message)
 	}
 	instance.TargetJobId = qcservice.StringValue(output.JobID)
 
@@ -304,7 +304,7 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 
 func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -338,9 +338,9 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send CreateVolumes to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send CreateVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return fmt.Errorf("send CreateVolumes to %s failed: %p", MyProvider, message)
+		return fmt.Errorf("send CreateVolumes to %s failed: %s", MyProvider, message)
 	}
 	volume.VolumeId = qcservice.StringValue(output.Volumes[0])
 	volume.TargetJobId = qcservice.StringValue(output.JobID)
@@ -357,7 +357,7 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 
@@ -392,9 +392,9 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send DetachVolumes to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send DetachVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return fmt.Errorf("send DetachVolumes to %s failed: %p", MyProvider, message)
+		return fmt.Errorf("send DetachVolumes to %s failed: %s", MyProvider, message)
 	}
 	volume.TargetJobId = qcservice.StringValue(output.JobID)
 
@@ -410,7 +410,7 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 
@@ -445,9 +445,9 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send AttachVolumes to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send AttachVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return fmt.Errorf("send AttachVolumes to %s failed: %p", MyProvider, message)
+		return fmt.Errorf("send AttachVolumes to %s failed: %s", MyProvider, message)
 	}
 	volume.TargetJobId = qcservice.StringValue(output.JobID)
 
@@ -463,7 +463,7 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 
@@ -497,9 +497,9 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send DeleteVolumes to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send DeleteVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return fmt.Errorf("send DeleteVolumes to %s failed: %p", MyProvider, message)
+		return fmt.Errorf("send DeleteVolumes to %s failed: %s", MyProvider, message)
 	}
 	volume.TargetJobId = qcservice.StringValue(output.JobID)
 
@@ -515,7 +515,7 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -560,9 +560,9 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send DescribeInstances to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send DescribeInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return fmt.Errorf("send DescribeInstances to %s failed: %p", MyProvider, message)
+		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
 	}
 
 	if len(output.InstanceSet) == 0 {
@@ -585,7 +585,7 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 
 func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -616,7 +616,7 @@ func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
 
 func (p *ProviderHandler) WaitVolumeTask(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warnf("Skip empty task [%p] directive", task.TaskId)
+		logger.Warnf("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -699,9 +699,9 @@ func (p *ProviderHandler) DescribeSubnet(runtimeId, subnetId string) (*models.Su
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send DescribeVxNets to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send DescribeVxNets to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return nil, fmt.Errorf("send DescribeVxNets to %s failed: %p", MyProvider, message)
+		return nil, fmt.Errorf("send DescribeVxNets to %s failed: %s", MyProvider, message)
 	}
 
 	if len(output.VxNetSet) == 0 {
@@ -746,9 +746,9 @@ func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, err
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send DescribeRouters to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send DescribeRouters to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return nil, fmt.Errorf("send DescribeRouters to %s failed: %p", MyProvider, message)
+		return nil, fmt.Errorf("send DescribeRouters to %s failed: %s", MyProvider, message)
 	}
 
 	if len(output.RouterSet) == 0 {
@@ -799,9 +799,9 @@ func (p *ProviderHandler) DescribeZones(url, credential string) ([]string, error
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Errorf("Send DescribeZones to %s failed with return code [%d], message [%p]",
+		logger.Errorf("Send DescribeZones to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
-		return nil, fmt.Errorf("send DescribeZones to %s failed: %p", MyProvider, message)
+		return nil, fmt.Errorf("send DescribeZones to %s failed: %s", MyProvider, message)
 	}
 
 	var zones []string
