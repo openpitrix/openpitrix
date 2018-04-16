@@ -15,7 +15,7 @@ type App struct {
 
 	ConfigTemplate *ConfigTemplate `json:"config,omitempty"`
 
-	ClusterTemplate *ClusterTemplate `json:"cluster_template,omitempty"`
+	ClusterConfTemplate *ClusterConfTemplate `json:"cluster_template,omitempty"`
 
 	Files []BufferedFile `json:"files,omitempty"`
 }

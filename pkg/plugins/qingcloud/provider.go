@@ -26,13 +26,13 @@ type Provider struct {
 }
 
 func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
-	cluster := app.Cluster{}
+	clusterConf := app.ClusterConf{}
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
 		ctx := context.Background()
 		appManagerClient, err := appclient.NewAppManagerClient(ctx)
 		if err != nil {
-			logger.Errorf("Connect to app manager failed: %v", err)
+			logger.Errorf("Connect to app manager failed: %+v", err)
 			return nil, err
 		}
 
@@ -42,42 +42,42 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 
 		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
 		if err != nil {
-			logger.Errorf("Get app version [%s] package failed: %v", versionId, err)
+			logger.Errorf("Get app version [%s] package failed: %+v", versionId, err)
 			return nil, err
 		}
 
 		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
 		if err != nil {
-			logger.Errorf("Load app version [%s] package failed: %v", versionId, err)
+			logger.Errorf("Load app version [%s] package failed: %+v", versionId, err)
 			return nil, err
 		}
-		var confJson app.ClusterConfig
+		var confJson app.ClusterUserConfig
 		err = json.Unmarshal([]byte(conf), &confJson)
 		if err != nil {
-			logger.Errorf("Parse conf [%s] failed: %v", conf, err)
+			logger.Errorf("Parse conf [%s] failed: %+v", conf, err)
 			return nil, err
 		}
-		cluster, err = appPackage.ClusterTemplate.Render(confJson)
+		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
 		if err != nil {
-			logger.Errorf("Render app version [%s] cluster template failed: %v", versionId, err)
+			logger.Errorf("Render app version [%s] cluster template failed: %+v", versionId, err)
 			return nil, err
 		}
-		err = cluster.Validate()
+		err = clusterConf.Validate()
 		if err != nil {
-			logger.Errorf("Validate app version [%s] conf [%s] failed: %v", versionId, conf, err)
+			logger.Errorf("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
 			return nil, err
 		}
 
 	} else {
-		err := json.Unmarshal([]byte(conf), &cluster)
+		err := json.Unmarshal([]byte(conf), &clusterConf)
 		if err != nil {
-			logger.Errorf("Parse conf [%s] to cluster failed: %v", conf, err)
+			logger.Errorf("Parse conf [%s] to cluster failed: %+v", conf, err)
 			return nil, err
 		}
 	}
 
 	parser := Parser{}
-	clusterWrapper, err := parser.Parse(cluster)
+	clusterWrapper, err := parser.Parse(clusterConf)
 	if err != nil {
 		return nil, err
 	}

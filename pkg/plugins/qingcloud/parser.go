@@ -46,7 +46,7 @@ func (p *Parser) generateServerId(upperBound int, excludeServerIds []int) (int, 
 	return result, nil
 }
 
-func (p *Parser) ParseClusterRole(clusterConf app.Cluster, node app.Node) (*models.ClusterRole, error) {
+func (p *Parser) ParseClusterRole(clusterConf app.ClusterConf, node app.Node) (*models.ClusterRole, error) {
 	clusterRole := &models.ClusterRole{
 		Role:         node.Role,
 		Cpu:          node.CPU,
@@ -176,7 +176,7 @@ func (p *Parser) ParseClusterLoadbalancer(node app.Node) []*models.ClusterLoadba
 	return clusterLoadbalancers
 }
 
-func (p *Parser) ParseClusterLinks(clusterConf app.Cluster) map[string]*models.ClusterLink {
+func (p *Parser) ParseClusterLinks(clusterConf app.ClusterConf) map[string]*models.ClusterLink {
 	clusterLinks := make(map[string]*models.ClusterLink)
 	for name, link := range clusterConf.Links {
 		clusterLink := &models.ClusterLink{
@@ -189,7 +189,7 @@ func (p *Parser) ParseClusterLinks(clusterConf app.Cluster) map[string]*models.C
 	return clusterLinks
 }
 
-func (p *Parser) ParseCluster(clusterConf app.Cluster) (*models.Cluster, error) {
+func (p *Parser) ParseCluster(clusterConf app.ClusterConf) (*models.Cluster, error) {
 	endpoints, err := json.Marshal(clusterConf.Endpoints)
 	if err != nil {
 		logger.Errorf("Encode endpoint to json failed: %v", err)
@@ -215,7 +215,7 @@ func (p *Parser) ParseCluster(clusterConf app.Cluster) (*models.Cluster, error) 
 	return cluster, nil
 }
 
-func (p *Parser) ParseClusterCommon(clusterConf app.Cluster, node app.Node) (*models.ClusterCommon, error) {
+func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) (*models.ClusterCommon, error) {
 
 	customMetadata := ""
 	if len(node.CustomMetadata) != 0 {
@@ -348,7 +348,7 @@ func (p *Parser) ParseClusterCommon(clusterConf app.Cluster, node app.Node) (*mo
 	return clusterCommon, nil
 }
 
-func (p *Parser) Parse(clusterConf app.Cluster) (*models.ClusterWrapper, error) {
+func (p *Parser) Parse(clusterConf app.ClusterConf) (*models.ClusterWrapper, error) {
 	var cluster *models.Cluster
 	clusterNodes := make(map[string]*models.ClusterNode)
 	clusterCommons := make(map[string]*models.ClusterCommon)

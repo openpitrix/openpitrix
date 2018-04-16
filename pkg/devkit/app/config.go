@@ -39,11 +39,11 @@ type ConfigTemplate struct {
 	Multichoice bool   `json:"multichoice,omitempty"`
 }
 
-type ClusterConfig interface{}
+type ClusterUserConfig interface{}
 
-func (c *ConfigTemplate) GetDefaultConfig() ClusterConfig {
+func (c *ConfigTemplate) GetDefaultConfig() ClusterUserConfig {
 	if c.Type == TypeArray {
-		defaultConfig := make(map[string]ClusterConfig)
+		defaultConfig := make(map[string]ClusterUserConfig)
 		for _, p := range c.Properties {
 			defaultConfig[p.Key] = p.GetDefaultConfig()
 		}
