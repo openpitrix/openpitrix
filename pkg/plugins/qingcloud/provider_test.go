@@ -43,22 +43,18 @@ func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
 	}
 
 	if len(result) != len(expectResult) {
-		t.Errorf("Expect [%d] task layer, while get [%s] task layer", len(expectResult), len(result))
+		t.Errorf("Expect [%d] task layer, while get [%d] task layer", len(expectResult), len(result))
 	}
 
 	for index := range result {
 		if result[index] != expectResult[index] {
-			t.Errorf("Index [%d] expect [%s], while get [%s]", index, expectResult[index], result[index])
+			t.Errorf("Index [%d] expect [%+v], while get [%+v]", index, expectResult[index], result[index])
 		}
 	}
 }
 
 func TestSplitJobIntoTasks(t *testing.T) {
-	parser := Parser{}
-	clusterWrapper, err := parser.Parse([]byte(hbaseMustache))
-	if err != nil {
-		t.Errorf("Parse mustache failed: %+v", err)
-	}
+	clusterWrapper := getTestClusterWrapper(t)
 	directive, _ := clusterWrapper.ToString()
 
 	mockJob := &models.Job{

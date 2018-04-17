@@ -21,12 +21,8 @@ func getError(result *gojsonschema.Result) error {
 	return fmt.Errorf(strings.Join(errs, "; "))
 }
 
-func ValidateClusterTmpl(clusterTmpl *ClusterTemplate, input *ClusterConfig) error {
-	cluster, err := clusterTmpl.Render(input)
-	if err != nil {
-		return err
-	}
-	documentLoader := gojsonschema.NewStringLoader(cluster.RenderJson)
+func (c ClusterConf) Validate() error {
+	documentLoader := gojsonschema.NewStringLoader(c.RenderJson)
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
 		return err
@@ -35,4 +31,12 @@ func ValidateClusterTmpl(clusterTmpl *ClusterTemplate, input *ClusterConfig) err
 		return getError(result)
 	}
 	return nil
+}
+
+func ValidateClusterConfTmpl(clusterTmpl *ClusterConfTemplate, input *ClusterUserConfig) error {
+	cluster, err := clusterTmpl.Render(input)
+	if err != nil {
+		return err
+	}
+	return cluster.Validate()
 }

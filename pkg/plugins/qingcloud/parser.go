@@ -11,10 +11,10 @@ import (
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/yaml"
 )
 
 type Parser struct {
@@ -46,7 +46,7 @@ func (p *Parser) generateServerId(upperBound int, excludeServerIds []int) (int, 
 	return result, nil
 }
 
-func (p *Parser) ParseClusterRole(tmpl *models.ClusterJsonTmpl, node *models.Node) (*models.ClusterRole, error) {
+func (p *Parser) ParseClusterRole(clusterConf app.ClusterConf, node app.Node) (*models.ClusterRole, error) {
 	clusterRole := &models.ClusterRole{
 		Role:         node.Role,
 		Cpu:          node.CPU,
@@ -91,8 +91,8 @@ func (p *Parser) ParseClusterRole(tmpl *models.ClusterJsonTmpl, node *models.Nod
 			return nil, err
 		}
 		clusterRole.Env = string(env)
-	} else if len(tmpl.Env) > 0 {
-		env, err := json.Marshal(tmpl.Env)
+	} else if len(clusterConf.Env) > 0 {
+		env, err := json.Marshal(clusterConf.Env)
 		if err != nil {
 			logger.Errorf("Encode env of cluster to json failed: %v", err)
 			return nil, err
@@ -106,7 +106,7 @@ func (p *Parser) ParseClusterRole(tmpl *models.ClusterJsonTmpl, node *models.Nod
 	return clusterRole, nil
 }
 
-func (p *Parser) ParseClusterNode(node *models.Node, subnetId string) (map[string]*models.ClusterNode, error) {
+func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*models.ClusterNode, error) {
 	count := int(node.Count)
 	serverIdUpperBound := node.ServerIDUpperBound
 	replicaRole := node.Role + constants.ReplicaRoleSuffix
@@ -161,7 +161,7 @@ func (p *Parser) ParseClusterNode(node *models.Node, subnetId string) (map[strin
 	return clusterNodes, nil
 }
 
-func (p *Parser) ParseClusterLoadbalancer(node *models.Node) []*models.ClusterLoadbalancer {
+func (p *Parser) ParseClusterLoadbalancer(node app.Node) []*models.ClusterLoadbalancer {
 	var clusterLoadbalancers []*models.ClusterLoadbalancer
 	for _, loadbalancer := range node.Loadbalancer {
 		clusterLoadbalancer := &models.ClusterLoadbalancer{
@@ -176,9 +176,9 @@ func (p *Parser) ParseClusterLoadbalancer(node *models.Node) []*models.ClusterLo
 	return clusterLoadbalancers
 }
 
-func (p *Parser) ParseClusterLinks(tmpl *models.ClusterJsonTmpl) map[string]*models.ClusterLink {
+func (p *Parser) ParseClusterLinks(clusterConf app.ClusterConf) map[string]*models.ClusterLink {
 	clusterLinks := make(map[string]*models.ClusterLink)
-	for name, link := range tmpl.Links {
+	for name, link := range clusterConf.Links {
 		clusterLink := &models.ClusterLink{
 			Name:              name,
 			ExternalClusterId: link,
@@ -189,34 +189,33 @@ func (p *Parser) ParseClusterLinks(tmpl *models.ClusterJsonTmpl) map[string]*mod
 	return clusterLinks
 }
 
-func (p *Parser) ParseCluster(tmpl *models.ClusterJsonTmpl) (*models.Cluster, error) {
-	endpoints, err := json.Marshal(tmpl.Endpoints)
+func (p *Parser) ParseCluster(clusterConf app.ClusterConf) (*models.Cluster, error) {
+	endpoints, err := json.Marshal(clusterConf.Endpoints)
 	if err != nil {
 		logger.Errorf("Encode endpoint to json failed: %v", err)
 		return nil, err
 	}
 
 	metadataRootAccess := false
-	if tmpl.MetadataRootAccess != nil {
-		metadataRootAccess = *tmpl.MetadataRootAccess
+	if clusterConf.MetadataRootAccess != nil {
+		metadataRootAccess = *clusterConf.MetadataRootAccess
 	}
 
 	cluster := &models.Cluster{
-		Name:               tmpl.Name,
-		Description:        tmpl.Description,
-		AppId:              tmpl.AppId,
-		VersionId:          tmpl.VersionId,
-		SubnetId:           tmpl.Subnet,
+		Name:               clusterConf.Name,
+		Description:        clusterConf.Description,
+		AppId:              clusterConf.AppId,
+		VersionId:          clusterConf.VersionId,
+		SubnetId:           clusterConf.Subnet,
 		Endpoints:          string(endpoints),
 		Status:             constants.StatusPending,
 		MetadataRootAccess: metadataRootAccess,
-		GlobalUuid:         tmpl.GlobalUuid,
+		GlobalUuid:         clusterConf.GlobalUuid,
 	}
 	return cluster, nil
 }
 
-func (p *Parser) ParseClusterCommon(tmpl *models.ClusterJsonTmpl,
-	node *models.Node) (*models.ClusterCommon, error) {
+func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) (*models.ClusterCommon, error) {
 
 	customMetadata := ""
 	if len(node.CustomMetadata) != 0 {
@@ -229,8 +228,8 @@ func (p *Parser) ParseClusterCommon(tmpl *models.ClusterJsonTmpl,
 	}
 
 	incrementalBackupSupported := false
-	if tmpl.IncrementalBackupSupported != nil {
-		incrementalBackupSupported = *tmpl.IncrementalBackupSupported
+	if clusterConf.IncrementalBackupSupported != nil {
+		incrementalBackupSupported = *clusterConf.IncrementalBackupSupported
 	}
 
 	agentInstalled := true
@@ -242,7 +241,7 @@ func (p *Parser) ParseClusterCommon(tmpl *models.ClusterJsonTmpl,
 		Role:                       node.Role,
 		ServerIdUpperBound:         node.ServerIDUpperBound,
 		AdvancedActions:            strings.Join(node.AdvancedActions, ","),
-		BackupPolicy:               tmpl.BackupPolicy,
+		BackupPolicy:               clusterConf.BackupPolicy,
 		IncrementalBackupSupported: incrementalBackupSupported,
 		Passphraseless:             node.Passphraseless,
 		CustomMetadataScript:       customMetadata,
@@ -263,8 +262,8 @@ func (p *Parser) ParseClusterCommon(tmpl *models.ClusterJsonTmpl,
 			return nil, err
 		}
 		clusterCommon.HealthCheck = string(healthCheck)
-	} else if tmpl.HealthCheck != nil {
-		healthCheck, err := json.Marshal(*tmpl.HealthCheck)
+	} else if clusterConf.HealthCheck != nil {
+		healthCheck, err := json.Marshal(*clusterConf.HealthCheck)
 		if err != nil {
 			logger.Errorf("Encode cluster health check to json failed: %v", err)
 			return nil, err
@@ -281,8 +280,8 @@ func (p *Parser) ParseClusterCommon(tmpl *models.ClusterJsonTmpl,
 			return nil, err
 		}
 		clusterCommon.Monitor = string(monitor)
-	} else if tmpl.Monitor != nil {
-		monitor, err := json.Marshal(*tmpl.Monitor)
+	} else if clusterConf.Monitor != nil {
+		monitor, err := json.Marshal(*clusterConf.Monitor)
 		if err != nil {
 			logger.Errorf("Encode cluster Monitor to json failed: %v", err)
 			return nil, err
@@ -349,7 +348,7 @@ func (p *Parser) ParseClusterCommon(tmpl *models.ClusterJsonTmpl,
 	return clusterCommon, nil
 }
 
-func (p *Parser) Parse(conf []byte) (*models.ClusterWrapper, error) {
+func (p *Parser) Parse(clusterConf app.ClusterConf) (*models.ClusterWrapper, error) {
 	var cluster *models.Cluster
 	clusterNodes := make(map[string]*models.ClusterNode)
 	clusterCommons := make(map[string]*models.ClusterCommon)
@@ -357,36 +356,30 @@ func (p *Parser) Parse(conf []byte) (*models.ClusterWrapper, error) {
 	clusterRoles := make(map[string]*models.ClusterRole)
 	clusterLoadbalancers := make(map[string][]*models.ClusterLoadbalancer)
 
-	var tmpl models.ClusterJsonTmpl
-	if err := yaml.Decode(conf, &tmpl); err != nil {
-		logger.Errorf("Decode conf to tmpl struct failed: %v", err)
-		return nil, err
-	}
-
 	// Parse cluster
-	cluster, err := p.ParseCluster(&tmpl)
+	cluster, err := p.ParseCluster(clusterConf)
 	if err != nil {
 		return nil, err
 	}
 
 	// Parse cluster link
-	clusterLinks = p.ParseClusterLinks(&tmpl)
+	clusterLinks = p.ParseClusterLinks(clusterConf)
 
-	if tmpl.Nodes != nil {
-		for _, node := range tmpl.Nodes {
+	if clusterConf.Nodes != nil {
+		for _, node := range clusterConf.Nodes {
 			// Parse cluster common
-			clusterCommon, err := p.ParseClusterCommon(&tmpl, &node)
+			clusterCommon, err := p.ParseClusterCommon(clusterConf, node)
 			clusterCommons[clusterCommon.Role] = clusterCommon
 
 			// Parse cluster role
-			clusterRole, err := p.ParseClusterRole(&tmpl, &node)
+			clusterRole, err := p.ParseClusterRole(clusterConf, node)
 			if err != nil {
 				return nil, err
 			}
 			clusterRoles[clusterRole.Role] = clusterRole
 
 			// Parse cluster node
-			addClusterNodes, err := p.ParseClusterNode(&node, tmpl.Subnet)
+			addClusterNodes, err := p.ParseClusterNode(node, clusterConf.Subnet)
 			if err != nil {
 				return nil, err
 			}
@@ -395,7 +388,7 @@ func (p *Parser) Parse(conf []byte) (*models.ClusterWrapper, error) {
 			}
 
 			// Parse cluster loadbalancer
-			addClusterLoadblancers := p.ParseClusterLoadbalancer(&node)
+			addClusterLoadblancers := p.ParseClusterLoadbalancer(node)
 			if len(addClusterLoadblancers) > 0 {
 				clusterLoadbalancers[addClusterLoadblancers[0].Role] = addClusterLoadblancers
 			}

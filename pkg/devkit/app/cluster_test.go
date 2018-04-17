@@ -15,7 +15,7 @@ func TestCluster_Render(t *testing.T) {
 	"name": "{{.cluster.name}}"
 }
 `
-	clusterTmpl := ClusterTemplate{
+	clusterTmpl := ClusterConfTemplate{
 		Raw: tmpl,
 	}
 	configJson := ConfigTemplate{

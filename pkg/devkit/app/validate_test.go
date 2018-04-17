@@ -31,9 +31,9 @@ var testConfigJson = `
             "default": "",
             "required": false
         }, {
-            "key": "vxnet",
-            "label": "VxNet",
-            "description": "Choose a vxnet to join",
+            "key": "subnet",
+            "label": "Subnet",
+            "description": "Choose a subnet to join",
             "type": "string",
             "default": "",
             "required": true
@@ -98,7 +98,7 @@ var testErrorClusterTmpl = `
 {
     "name": "{{.cluster.name}}",
     "description": "{{.cluster.description}}",
-    "vxnet": "{{.cluster.vxnet}}",
+    "subnet": "{{.cluster.subnet}}",
     "nodes": [{
         "role": "role_name1",
         "role2": "role_name1",
@@ -124,7 +124,7 @@ var testClusterTmpl = `
 {
     "name": "{{.cluster.name}}",
     "description": "{{.cluster.description}}",
-    "vxnet": "{{.cluster.vxnet}}",
+    "subnet": "{{.cluster.subnet}}",
     "nodes": [{
         "role": "role_name1",
         "container": {
@@ -147,7 +147,7 @@ var testClusterTmpl = `
 
 func TestValidateClusterTmpl(t *testing.T) {
 	// normal tmpl
-	clusterTmpl := &ClusterTemplate{Raw: testClusterTmpl}
+	clusterTmpl := &ClusterConfTemplate{Raw: testClusterTmpl}
 	configJson, err := UnmarshalConfigTemplate([]byte(testConfigJson))
 	if err != nil {
 		t.Fatal(err)
@@ -158,14 +158,14 @@ func TestValidateClusterTmpl(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(string(j))
-	err = ValidateClusterTmpl(clusterTmpl, &config)
+	err = ValidateClusterConfTmpl(clusterTmpl, &config)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// error tmpl
-	clusterTmpl = &ClusterTemplate{Raw: testErrorClusterTmpl}
-	err = ValidateClusterTmpl(clusterTmpl, &config)
+	clusterTmpl = &ClusterConfTemplate{Raw: testErrorClusterTmpl}
+	err = ValidateClusterConfTmpl(clusterTmpl, &config)
 	if err == nil {
 		t.Fatal("error cluster tmpl must failed")
 	}

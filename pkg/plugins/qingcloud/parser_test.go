@@ -5,8 +5,10 @@
 package qingcloud
 
 import (
+	"encoding/json"
 	"testing"
 
+	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/models"
 )
 
@@ -642,75 +644,92 @@ var hbaseClusterLinks = map[string]models.ClusterLink{
 	},
 }
 
-func TestParse(t *testing.T) {
-	parser := Parser{}
-	clusterWrapper, err := parser.Parse([]byte(hbaseMustache))
+func getTestClusterWrapper(t *testing.T) *models.ClusterWrapper {
+	cluster := app.ClusterConf{}
+	err := json.Unmarshal([]byte(hbaseMustache), &cluster)
 	if err != nil {
-		t.Errorf("Parse mustache failed: %+v", err)
+		t.Fatalf("Parse mustache failed: %+v", err)
 	}
+	// TODO: add validate to test
+	//cluster.RenderJson = hbaseMustache
+	//err = cluster.Validate()
+	//if err != nil {
+	//	t.Fatalf("Validate cluster failed: %+v", err)
+	//}
+
+	parser := Parser{}
+	clusterWrapper, err := parser.Parse(cluster)
+	if err != nil {
+		t.Fatalf("Parse mustache failed: %+v", err)
+	}
+	return clusterWrapper
+}
+
+func TestParse(t *testing.T) {
+	clusterWrapper := getTestClusterWrapper(t)
 
 	// check cluster
 	if hbaseCluster != *clusterWrapper.Cluster {
-		t.Errorf("Cluster not equal")
-		t.Logf("ori: %s", hbaseCluster)
-		t.Logf("dst: %s", *clusterWrapper.Cluster)
+		t.Errorf("ClusterConf not equal")
+		t.Logf("ori: %+v", hbaseCluster)
+		t.Logf("dst: %+v", *clusterWrapper.Cluster)
 	}
 
 	// check cluster common
 	if len(hbaseClusterCommons) != len(clusterWrapper.ClusterCommons) {
-		t.Errorf("Cluster common length not equal, ori: %d, dst: %d",
+		t.Errorf("ClusterConf common length not equal, ori: %d, dst: %d",
 			len(hbaseClusterCommons), len(clusterWrapper.ClusterCommons))
 	}
 	for index := range clusterWrapper.ClusterCommons {
 		if hbaseClusterCommons[index] != *clusterWrapper.ClusterCommons[index] {
-			t.Errorf("Cluster common [%s] not equal.", index)
-			t.Logf("ori: %s", hbaseClusterCommons[index])
-			t.Logf("dst: %s", *clusterWrapper.ClusterCommons[index])
+			t.Errorf("ClusterConf common [%s] not equal.", index)
+			t.Logf("ori: %+v", hbaseClusterCommons[index])
+			t.Logf("dst: %+v", *clusterWrapper.ClusterCommons[index])
 		}
 	}
 
 	// check cluser role
 	if len(hbaseClusterRoles) != len(clusterWrapper.ClusterRoles) {
-		t.Errorf("Cluster role length not equal, ori: %d, dst: %d",
+		t.Errorf("ClusterConf role length not equal, ori: %d, dst: %d",
 			len(hbaseClusterRoles), len(clusterWrapper.ClusterRoles))
 	}
 	for index := range clusterWrapper.ClusterRoles {
 		if hbaseClusterRoles[index] != *clusterWrapper.ClusterRoles[index] {
-			t.Errorf("Cluster role [%s] not equal.", index)
-			t.Logf("ori: %s", hbaseClusterRoles[index])
-			t.Logf("dst: %s", *clusterWrapper.ClusterRoles[index])
+			t.Errorf("ClusterConf role [%s] not equal.", index)
+			t.Logf("ori: %+v", hbaseClusterRoles[index])
+			t.Logf("dst: %+v", *clusterWrapper.ClusterRoles[index])
 		}
 	}
 
 	// check cluser node
 	if len(hbaseClusterNodes) != len(clusterWrapper.ClusterNodes) {
-		t.Errorf("Cluster node length not equal, ori: %d, dst: %d",
+		t.Errorf("ClusterConf node length not equal, ori: %d, dst: %d",
 			len(hbaseClusterNodes), len(clusterWrapper.ClusterNodes))
 	}
 	for index := range clusterWrapper.ClusterNodes {
 		if hbaseClusterNodes[index] != *clusterWrapper.ClusterNodes[index] {
-			t.Errorf("Cluster node [%s] not equal.", index)
-			t.Logf("ori: %s", hbaseClusterNodes[index].Role)
-			t.Logf("dst: %s", *clusterWrapper.ClusterNodes[index])
+			t.Errorf("ClusterConf node [%s] not equal.", index)
+			t.Logf("ori: %+v", hbaseClusterNodes[index].Role)
+			t.Logf("dst: %+v", *clusterWrapper.ClusterNodes[index])
 		}
 	}
 
 	// check cluser link
 	if len(hbaseClusterLinks) != len(clusterWrapper.ClusterLinks) {
-		t.Errorf("Cluster link length not equal, ori: %d, dst: %d",
+		t.Errorf("ClusterConf link length not equal, ori: %d, dst: %d",
 			len(hbaseClusterLinks), len(clusterWrapper.ClusterLinks))
 	}
 	for index := range clusterWrapper.ClusterLinks {
 		if hbaseClusterLinks[index] != *clusterWrapper.ClusterLinks[index] {
-			t.Errorf("Cluster link [%s] not equal", index)
-			t.Logf("ori: %s", hbaseClusterLinks[index])
-			t.Logf("dst: %s", *clusterWrapper.ClusterLinks[index])
+			t.Errorf("ClusterConf link [%s] not equal", index)
+			t.Logf("ori: %+v", hbaseClusterLinks[index])
+			t.Logf("dst: %+v", *clusterWrapper.ClusterLinks[index])
 		}
 	}
 
 	// check cluser loadbalancer
 	if 0 != len(clusterWrapper.ClusterLoadbalancers) {
-		t.Errorf("Cluster loadbalancer length not equal, ori: %d, dst: %d",
+		t.Errorf("ClusterConf loadbalancer length not equal, ori: %d, dst: %d",
 			0, len(clusterWrapper.ClusterLoadbalancers))
 	}
 }
