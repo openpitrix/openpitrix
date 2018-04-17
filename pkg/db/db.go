@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gocraft/dbr"
+	"github.com/gocraft/dbr/dialect"
 )
 
 const (
@@ -49,6 +50,13 @@ type DeleteQuery struct {
 
 type UpdateQuery struct {
 	*dbr.UpdateBuilder
+}
+
+type UpsertQuery struct {
+	table string
+	*dbr.Session
+	whereConds   map[string]string
+	upsertValues map[string]interface{}
 }
 
 // SelectQuery
@@ -230,4 +238,81 @@ func (b *UpdateQuery) Where(query interface{}, value ...interface{}) *UpdateQuer
 func (b *UpdateQuery) Limit(n uint64) *UpdateQuery {
 	b.UpdateBuilder.Limit(n)
 	return b
+}
+
+// UpsertQuery
+// Example: Upsert().Where().Set().Exec()
+//          Upsert().WhereMap().SetMap().Exec()
+
+func (db *Database) Upsert(table string) *UpsertQuery {
+	return &UpsertQuery{
+		table:        table,
+		Session:      db.Session,
+		whereConds:   make(map[string]string),
+		upsertValues: make(map[string]interface{}),
+	}
+}
+
+func (b *UpsertQuery) Where(column, value string) *UpsertQuery {
+	b.whereConds[column] = value
+	return b
+}
+
+func (b *UpsertQuery) WhereMap(m map[string]string) *UpsertQuery {
+	for column, value := range m {
+		b.Where(column, value)
+	}
+	return b
+}
+
+func (b *UpsertQuery) Set(column string, value interface{}) *UpsertQuery {
+	b.upsertValues[column] = value
+	return b
+}
+
+func (b *UpsertQuery) SetMap(m map[string]interface{}) *UpsertQuery {
+	for column, value := range m {
+		b.Set(column, value)
+	}
+	return b
+}
+
+func (b *UpsertQuery) Exec() (sql.Result, error) {
+	var columns []string
+	var values []interface{}
+	for column, value := range b.whereConds {
+		columns = append(columns, column)
+		values = append(values, value)
+	}
+	for column, value := range b.upsertValues {
+		columns = append(columns, column)
+		values = append(values, value)
+	}
+	d := dialect.MySQL
+	buf := dbr.NewBuffer()
+	stmt := dbr.InsertInto(b.table).Columns(columns...).Values(values...)
+	stmt.Build(d, buf)
+
+	if len(b.upsertValues) > 0 {
+		buf.WriteString(" ON DUPLICATE KEY UPDATE ")
+
+		i := 0
+		for col, v := range b.upsertValues {
+			if i > 0 {
+				buf.WriteString(", ")
+			}
+			buf.WriteString(d.QuoteIdent(col))
+			buf.WriteString(" = ")
+			buf.WriteString("?")
+
+			buf.WriteValue(v)
+			i++
+		}
+	}
+	query, err := dbr.InterpolateForDialect(buf.String(), buf.Value(), d)
+	if err != nil {
+		return nil, err
+	}
+
+	return b.InsertBySql(query).Exec()
 }
