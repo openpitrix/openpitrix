@@ -31,6 +31,7 @@ type ProviderInterface interface {
 	DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error)
 	ValidateCredential(url, credential string) error
 	DescribeRuntimeProviderZones(url, credential string) []string
+	UpdateClusterStatus(job *models.Job) error
 }
 
 func RegisterProviderPlugin(provider string, providerInterface ProviderInterface) {
