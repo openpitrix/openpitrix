@@ -12,5 +12,4 @@ func ExampleLogger() {
 	logger.Infof("format [%d]", 111)
 	logger.SetLevelByString("debug")
 	logger.Debug("debug log, now it becomes visible")
-	// Output:
 }

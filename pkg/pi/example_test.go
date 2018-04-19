@@ -20,5 +20,4 @@ func ExampleNewPi() {
 	cfg.Etcd.Endpoints = "localhost:2379"
 	p := pi.NewPi(cfg)
 	fmt.Println(p.GlobalConfig())
-	// Output: &{{true} {[qingcloud kubernetes]}}
 }
