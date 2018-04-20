@@ -34,7 +34,7 @@ func newServeCmd(out io.Writer) *cobra.Command {
 
 	f := cmd.Flags()
 	f.StringVar(&srv.repoPath, "repo-path", "", "local directory path from which to serve apps")
-	f.StringVar(&srv.address, "address", "127.0.0.1:8879", "address to listen on")
+	f.StringVar(&srv.address, "address", devkit.DefaultServeAddr, "address to listen on")
 	f.StringVar(&srv.url, "url", "", "external URL of app repository")
 
 	return cmd

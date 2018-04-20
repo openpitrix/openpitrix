@@ -24,15 +24,18 @@ import (
 	"openpitrix.io/openpitrix/test/models"
 )
 
-var testRepoDir = path.Join("/tmp/openpitrix-test", idtool.GetUuid(""))
+const testExportPort = 8879
+const testDockerPath = "/tmp/openpitrix-test"
+
+var testRepoDir = path.Join(testDockerPath, idtool.GetUuid(""))
 
 func TestDevkit(t *testing.T) {
 	t.Logf("start create repo at [%s]", testRepoDir)
 
 	d := NewDocker(t, "test-op", "openpitrix")
-	d.Port = 8879
-	d.WorkDir = "/tmp/openpitrix-test"
-	d.Volume[testRepoDir] = "/tmp/openpitrix-test"
+	d.Port = testExportPort
+	d.WorkDir = testDockerPath
+	d.Volume[testRepoDir] = testDockerPath
 
 	t.Log(d.Setup())
 
@@ -50,11 +53,15 @@ func TestDevkit(t *testing.T) {
 
 	ip := strings.TrimSpace(d.Exec("hostname -i"))
 	localIp := iptool.GetLocalIP()
-	t.Log(d.ExecD(fmt.Sprintf("op serve --address %s:8879 --url http://%s:8879/", ip, localIp)))
+	t.Log(d.ExecD(fmt.Sprintf("op serve --address %s:%d --url http://%s:%d/", ip, testExportPort, localIp, testExportPort)))
 
 	t.Run("create repo", func(t *testing.T) {
 		time.Sleep(5 * time.Second)
 		testCreateRepo(t, "test-devkit-repo-name", constants.ProviderQingCloud, fmt.Sprintf("http://%s:8879/", iptool.GetLocalIP()))
+	})
+
+	t.Run("create cluster", func(t *testing.T) {
+		t.Log("TODO")
 	})
 
 	// cleanup

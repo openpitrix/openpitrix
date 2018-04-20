@@ -14,6 +14,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 )
 
+const DefaultServeAddr = "127.0.0.1:8879"
+
 const indexHTMLTemplate = `
 <html>
 <head>
@@ -56,7 +58,7 @@ func (s *RepositoryServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // StartLocalRepo starts a web server and serves files from the given path
 func StartLocalRepo(path, address string) error {
 	if address == "" {
-		address = "127.0.0.1:8879"
+		address = DefaultServeAddr
 	}
 	s := &RepositoryServer{RepoPath: path}
 	return http.ListenAndServe(address, s)
