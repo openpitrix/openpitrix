@@ -11,6 +11,7 @@ import (
 
 	"openpitrix.io/libconfd"
 	pbdrone "openpitrix.io/openpitrix/pkg/pb/drone"
+	"openpitrix.io/openpitrix/pkg/utils/iptool"
 )
 
 var (
@@ -31,7 +32,7 @@ func (p *Server) GetInfo(context.Context, *pbdrone.Empty) (*pbdrone.Info, error)
 	bcfg := p.confd.GetBackendConfig()
 
 	reply := &pbdrone.Info{
-		DroneIp: getLocalIP(),
+		DroneIp: iptool.GetLocalIP(),
 		ConfdConfig: &pbdrone.ConfdConfig{
 			ConfDir:  cfg.ConfDir,
 			Interval: int32(cfg.Interval),

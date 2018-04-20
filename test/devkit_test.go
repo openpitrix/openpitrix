@@ -8,7 +8,6 @@ package test
 
 import (
 	"fmt"
-	"net"
 	"os/exec"
 	"path"
 	"strings"
@@ -19,6 +18,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/utils/iptool"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
@@ -65,7 +65,7 @@ func TestDevkit(t *testing.T) {
 	t.Log(execOnTestRepo(t, "cat index.yaml"))
 
 	ip := strings.TrimSpace(execOnTestRepo(t, "hostname -i"))
-	localIp := GetLocalIP()
+	localIp := iptool.GetLocalIP()
 	t.Log(execOnTestRepoD(t, fmt.Sprintf("op serve --address %s:8879 --url http://%s:8879/", ip, localIp)))
 
 	t.Run("create repo", func(t *testing.T) {
@@ -102,23 +102,6 @@ func waitRepoEventSuccess(t *testing.T, repoEventId string) {
 	}
 }
 
-// GetLocalIP returns the non loopback local IP of the host
-func GetLocalIP() string {
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		return ""
-	}
-	for _, address := range addrs {
-		// check the address type and if it is not a loopback the display it
-		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
-				return ipnet.IP.String()
-			}
-		}
-	}
-	return ""
-}
-
 func testCreateRepo(t *testing.T) {
 	client := GetClient(clientConfig)
 	testRepoName := "test-devkit-repo-name"
@@ -128,7 +111,7 @@ func testCreateRepo(t *testing.T) {
 			Name:        testRepoName,
 			Description: "description",
 			Type:        "http",
-			URL:         fmt.Sprintf("http://%s:8879/", GetLocalIP()),
+			URL:         fmt.Sprintf("http://%s:8879/", iptool.GetLocalIP()),
 			Providers:   []string{"qingcloud"},
 			Credential:  `{}`,
 			Visibility:  "public",
