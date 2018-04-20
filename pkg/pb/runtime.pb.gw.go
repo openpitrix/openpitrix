@@ -302,7 +302,7 @@ var (
 
 	pattern_RuntimeManager_DeleteRuntime_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "runtimes"}, ""))
 
-	pattern_RuntimeManager_DescribeRuntimeProviderZones_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "runtime_provider_zones"}, ""))
+	pattern_RuntimeManager_DescribeRuntimeProviderZones_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "runtimes", "zones"}, ""))
 )
 
 var (

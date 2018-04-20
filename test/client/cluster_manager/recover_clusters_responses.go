@@ -51,7 +51,7 @@ type RecoverClustersOK struct {
 }
 
 func (o *RecoverClustersOK) Error() string {
-	return fmt.Sprintf("[POST /v1/clusters][%d] recoverClustersOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/clusters/recover][%d] recoverClustersOK  %+v", 200, o.Payload)
 }
 
 func (o *RecoverClustersOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

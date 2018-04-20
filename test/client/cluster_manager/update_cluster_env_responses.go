@@ -51,7 +51,7 @@ type UpdateClusterEnvOK struct {
 }
 
 func (o *UpdateClusterEnvOK) Error() string {
-	return fmt.Sprintf("[PATCH /v1/clusters][%d] updateClusterEnvOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PATCH /v1/clusters/update_env][%d] updateClusterEnvOK  %+v", 200, o.Payload)
 }
 
 func (o *UpdateClusterEnvOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
