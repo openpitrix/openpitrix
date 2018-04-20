@@ -30,7 +30,7 @@ func getJobDirective(data string) (*JobDirective, error) {
 	namespace := runtime.Zone
 	clusterRole, ok := clusterWrapper.ClusterRoles[""]
 	if !ok {
-		return nil, fmt.Errorf("Env is missing")
+		return nil, fmt.Errorf("env is missing")
 	}
 
 	j := &JobDirective{

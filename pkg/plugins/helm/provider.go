@@ -65,7 +65,7 @@ func (p *Provider) getKubeClient(runtimeId string) (clientset *kubernetes.Client
 func (p *Provider) setupTillerConnection(client kubernetes.Interface, restClientConfig *rest.Config, namespace string) (*kube.Tunnel, error) {
 	tunnel, err := portforwarder.New(namespace, client, restClientConfig)
 	if err != nil {
-		return nil, fmt.Errorf("Could not get a connection to tiller: %+v. ", err)
+		return nil, fmt.Errorf("could not get a connection to tiller: %+v. ", err)
 	}
 
 	return tunnel, err
@@ -83,7 +83,7 @@ func (p *Provider) setupHelm(kubeClient *kubernetes.Clientset, restClientConfig 
 func (p *Provider) getHelmClient(runtimeId string) (helmClient *helm.Client, err error) {
 	client, clientConfig, err := p.getKubeClient(runtimeId)
 	if err != nil {
-		return nil, fmt.Errorf("Could not get a kube client: %+v. ", err)
+		return nil, fmt.Errorf("could not get a kube client: %+v. ", err)
 	}
 
 	helmClient, err = p.setupHelm(client, clientConfig, environment.DefaultTillerNamespace)
