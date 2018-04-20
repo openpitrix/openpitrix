@@ -51,7 +51,7 @@ type DescribeClusterNodesOK struct {
 }
 
 func (o *DescribeClusterNodesOK) Error() string {
-	return fmt.Sprintf("[GET /v1/clusters][%d] describeClusterNodesOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/clusters/nodes][%d] describeClusterNodesOK  %+v", 200, o.Payload)
 }
 
 func (o *DescribeClusterNodesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

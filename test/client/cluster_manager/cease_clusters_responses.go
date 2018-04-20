@@ -51,7 +51,7 @@ type CeaseClustersOK struct {
 }
 
 func (o *CeaseClustersOK) Error() string {
-	return fmt.Sprintf("[DELETE /v1/clusters][%d] ceaseClustersOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/clusters/cease][%d] ceaseClustersOK  %+v", 200, o.Payload)
 }
 
 func (o *CeaseClustersOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

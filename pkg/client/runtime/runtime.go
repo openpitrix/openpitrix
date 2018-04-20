@@ -34,6 +34,7 @@ func NewRuntime(runtimeId string) (*Runtime, error) {
 	result.RuntimeId = runtimeId
 	result.Provider = provider
 	result.Zone = zone
+	result.RuntimeUrl = runtime.GetRuntimeUrl().GetValue()
 	return result, nil
 }
 

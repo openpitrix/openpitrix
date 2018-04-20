@@ -7,6 +7,7 @@ package config
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/coreos/etcd/mvcc/mvccpb"
 
@@ -37,6 +38,9 @@ type ImageConfig struct {
 }
 
 func (g *GlobalConfig) GetRuntimeImageId(apiServer, zone string) (string, error) {
+	if strings.HasPrefix(apiServer, "https://") {
+		apiServer = strings.Split(apiServer, "https://")[1]
+	}
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == zone {
 			return imageConfig.ImageId, nil
@@ -70,11 +74,11 @@ cluster:
     - kubernetes
 runtime:
   qingcloud_pek3a:
-    api_server: https://api.qingcloud.com
+    api_server: api.qingcloud.com
     zone: pek3a
     image_id: img-abcdefgh
   qingcloud_sh1a:
-    api_server: https://api.qingcloud.com
+    api_server: api.qingcloud.com
     zone: sh1a
     image_id: img-abcdefgh
 `

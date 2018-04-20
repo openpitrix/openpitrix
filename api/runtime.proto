@@ -144,7 +144,7 @@ service RuntimeManager {
 			summary: "describe runtime provider zones"
 		};
 		option (google.api.http) = {
-			get: "/v1/runtime_provider_zones"
+			get: "/v1/runtimes/zones"
 		};
 	}
 
