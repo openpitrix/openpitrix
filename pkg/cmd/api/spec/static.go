@@ -412,6 +412,242 @@ var Files = map[string]string{
     },
     "/v1/clusters": {
       "get": {
+        "summary": "describe clusters",
+        "operationId": "DescribeClusters",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeClustersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cluster_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "runtime_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "frontgate_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "external_cluster_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/add_nodes": {
+      "post": {
+        "summary": "add cluster nodes",
+        "operationId": "AddClusterNodes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixAddClusterNodesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixAddClusterNodesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/cease": {
+      "post": {
+        "summary": "cease clusters",
+        "operationId": "CeaseClusters",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCeaseClustersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCeaseClustersRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/create": {
+      "post": {
+        "summary": "create cluster",
+        "operationId": "CreateCluster",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateClusterResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateClusterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/delete": {
+      "post": {
+        "summary": "delete clusters",
+        "operationId": "DeleteClusters",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteClustersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteClustersRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/delete_nodes": {
+      "post": {
+        "summary": "delete cluster nodes",
+        "operationId": "DeleteClusterNodes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteClusterNodesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteClusterNodesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/nodes": {
+      "get": {
         "summary": "describe cluster nodes",
         "operationId": "DescribeClusterNodes",
         "responses": {
@@ -469,32 +705,9 @@ var Files = map[string]string{
         "tags": [
           "ClusterManager"
         ]
-      },
-      "delete": {
-        "summary": "cease clusters",
-        "operationId": "CeaseClusters",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCeaseClustersResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCeaseClustersRequest"
-            }
-          }
-        ],
-        "tags": [
-          "ClusterManager"
-        ]
-      },
+      }
+    },
+    "/v1/clusters/recover": {
       "post": {
         "summary": "recover clusters",
         "operationId": "RecoverClusters",
@@ -519,7 +732,117 @@ var Files = map[string]string{
         "tags": [
           "ClusterManager"
         ]
-      },
+      }
+    },
+    "/v1/clusters/resize": {
+      "post": {
+        "summary": "resize cluster",
+        "operationId": "ResizeCluster",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixResizeClusterResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixResizeClusterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/rollback": {
+      "post": {
+        "summary": "rollback cluster",
+        "operationId": "RollbackCluster",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRollbackClusterResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRollbackClusterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/start": {
+      "post": {
+        "summary": "start clusters",
+        "operationId": "StartClusters",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixStartClustersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixStartClustersRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/stop": {
+      "post": {
+        "summary": "stop clusters",
+        "operationId": "StopClusters",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixStopClustersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixStopClustersRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/update_env": {
       "patch": {
         "summary": "update cluster env",
         "operationId": "UpdateClusterEnv",
@@ -538,6 +861,33 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixUpdateClusterEnvRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/upgrade": {
+      "post": {
+        "summary": "upgrade cluster",
+        "operationId": "UpgradeCluster",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixUpgradeClusterResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixUpgradeClusterRequest"
             }
           }
         ],
@@ -940,43 +1290,6 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/runtime_provider_zones": {
-      "get": {
-        "summary": "describe runtime provider zones",
-        "operationId": "DescribeRuntimeProviderZones",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDescribeRuntimeProviderZonesResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "provider",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "runtime_url",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "runtime_credential",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "RuntimeManager"
-        ]
-      }
-    },
     "/v1/runtimes": {
       "get": {
         "summary": "describe runtime",
@@ -1120,6 +1433,43 @@ var Files = map[string]string{
             "schema": {
               "$ref": "#/definitions/openpitrixModifyRuntimeRequest"
             }
+          }
+        ],
+        "tags": [
+          "RuntimeManager"
+        ]
+      }
+    },
+    "/v1/runtimes/zones": {
+      "get": {
+        "summary": "describe runtime provider zones",
+        "operationId": "DescribeRuntimeProviderZones",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeRuntimeProviderZonesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "runtime_url",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "runtime_credential",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [

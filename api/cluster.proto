@@ -317,7 +317,7 @@ service ClusterManager {
 			summary: "create cluster"
 		};
 		option (google.api.http) = {
-			post: "/v1/clusters"
+			post: "/v1/clusters/create"
 			body: "*"
 		};
 	}
@@ -328,7 +328,7 @@ service ClusterManager {
 			summary: "delete clusters"
 		};
 		option (google.api.http) = {
-			delete: "/v1/clusters"
+			post: "/v1/clusters/delete"
 			body: "*"
 		};
 	}
@@ -337,7 +337,7 @@ service ClusterManager {
 			summary: "upgrade cluster"
 		};
 		option (google.api.http) = {
-			post: "/v1/clusters"
+			post: "/v1/clusters/upgrade"
 			body: "*"
 		};
 	}
@@ -346,7 +346,7 @@ service ClusterManager {
 			summary: "rollback cluster"
 		};
 		option (google.api.http) = {
-			post: "/v1/clusters"
+			post: "/v1/clusters/rollback"
 			body: "*"
 		};
 	}
@@ -355,7 +355,7 @@ service ClusterManager {
 			summary: "resize cluster"
 		};
 		option (google.api.http) = {
-			post: "/v1/clusters"
+			post: "/v1/clusters/resize"
 			body: "*"
 		};
 	}
@@ -364,7 +364,7 @@ service ClusterManager {
 			summary: "add cluster nodes"
 		};
 		option (google.api.http) = {
-			post: "/v1/clusters"
+			post: "/v1/clusters/add_nodes"
 			body: "*"
 		};
 	}
@@ -373,7 +373,7 @@ service ClusterManager {
 			summary: "delete cluster nodes"
 		};
 		option (google.api.http) = {
-			delete: "/v1/clusters"
+			post: "/v1/clusters/delete_nodes"
 			body: "*"
 		};
 	}
@@ -382,7 +382,7 @@ service ClusterManager {
 			summary: "update cluster env"
 		};
 		option (google.api.http) = {
-			patch: "/v1/clusters"
+			patch: "/v1/clusters/update_env"
 			body: "*"
 		};
 	}
@@ -399,7 +399,7 @@ service ClusterManager {
 			summary: "describe cluster nodes"
 		};
 		option (google.api.http) = {
-			get: "/v1/clusters"
+			get: "/v1/clusters/nodes"
 		};
 	}
 	rpc StopClusters (StopClustersRequest) returns (StopClustersResponse) {
@@ -407,7 +407,7 @@ service ClusterManager {
 			summary: "stop clusters"
 		};
 		option (google.api.http) = {
-			post: "/v1/clusters"
+			post: "/v1/clusters/stop"
 			body: "*"
 		};
 	}
@@ -416,7 +416,7 @@ service ClusterManager {
 			summary: "start clusters"
 		};
 		option (google.api.http) = {
-			post: "/v1/clusters"
+			post: "/v1/clusters/start"
 			body: "*"
 		};
 	}
@@ -425,7 +425,7 @@ service ClusterManager {
 			summary: "recover clusters"
 		};
 		option (google.api.http) = {
-			post: "/v1/clusters"
+			post: "/v1/clusters/recover"
 			body: "*"
 		};
 	}
@@ -434,7 +434,7 @@ service ClusterManager {
 			summary: "cease clusters"
 		};
 		option (google.api.http) = {
-			delete: "/v1/clusters"
+			post: "/v1/clusters/cease"
 			body: "*"
 		};
 	}

@@ -92,7 +92,7 @@ func (a *Client) DescribeRuntimeProviderZones(params *DescribeRuntimeProviderZon
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeRuntimeProviderZones",
 		Method:             "GET",
-		PathPattern:        "/v1/runtime_provider_zones",
+		PathPattern:        "/v1/runtimes/zones",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},

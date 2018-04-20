@@ -25,6 +25,34 @@ type Client struct {
 }
 
 /*
+AddClusterNodes adds cluster nodes
+*/
+func (a *Client) AddClusterNodes(params *AddClusterNodesParams) (*AddClusterNodesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewAddClusterNodesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "AddClusterNodes",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/add_nodes",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &AddClusterNodesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*AddClusterNodesOK), nil
+
+}
+
+/*
 CeaseClusters ceases clusters
 */
 func (a *Client) CeaseClusters(params *CeaseClustersParams) (*CeaseClustersOK, error) {
@@ -35,8 +63,8 @@ func (a *Client) CeaseClusters(params *CeaseClustersParams) (*CeaseClustersOK, e
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "CeaseClusters",
-		Method:             "DELETE",
-		PathPattern:        "/v1/clusters",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/cease",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
@@ -53,6 +81,90 @@ func (a *Client) CeaseClusters(params *CeaseClustersParams) (*CeaseClustersOK, e
 }
 
 /*
+CreateCluster creates cluster
+*/
+func (a *Client) CreateCluster(params *CreateClusterParams) (*CreateClusterOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateClusterParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CreateCluster",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/create",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &CreateClusterReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CreateClusterOK), nil
+
+}
+
+/*
+DeleteClusterNodes deletes cluster nodes
+*/
+func (a *Client) DeleteClusterNodes(params *DeleteClusterNodesParams) (*DeleteClusterNodesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteClusterNodesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteClusterNodes",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/delete_nodes",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteClusterNodesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteClusterNodesOK), nil
+
+}
+
+/*
+DeleteClusters deletes clusters
+*/
+func (a *Client) DeleteClusters(params *DeleteClustersParams) (*DeleteClustersOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteClustersParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteClusters",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/delete",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteClustersReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteClustersOK), nil
+
+}
+
+/*
 DescribeClusterNodes describes cluster nodes
 */
 func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams) (*DescribeClusterNodesOK, error) {
@@ -64,7 +176,7 @@ func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams) (*Desc
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeClusterNodes",
 		Method:             "GET",
-		PathPattern:        "/v1/clusters",
+		PathPattern:        "/v1/clusters/nodes",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
@@ -81,6 +193,34 @@ func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams) (*Desc
 }
 
 /*
+DescribeClusters describes clusters
+*/
+func (a *Client) DescribeClusters(params *DescribeClustersParams) (*DescribeClustersOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeClustersParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeClusters",
+		Method:             "GET",
+		PathPattern:        "/v1/clusters",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DescribeClustersReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeClustersOK), nil
+
+}
+
+/*
 RecoverClusters recovers clusters
 */
 func (a *Client) RecoverClusters(params *RecoverClustersParams) (*RecoverClustersOK, error) {
@@ -92,7 +232,7 @@ func (a *Client) RecoverClusters(params *RecoverClustersParams) (*RecoverCluster
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "RecoverClusters",
 		Method:             "POST",
-		PathPattern:        "/v1/clusters",
+		PathPattern:        "/v1/clusters/recover",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
@@ -109,6 +249,118 @@ func (a *Client) RecoverClusters(params *RecoverClustersParams) (*RecoverCluster
 }
 
 /*
+ResizeCluster resizes cluster
+*/
+func (a *Client) ResizeCluster(params *ResizeClusterParams) (*ResizeClusterOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewResizeClusterParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ResizeCluster",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/resize",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ResizeClusterReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ResizeClusterOK), nil
+
+}
+
+/*
+RollbackCluster rollbacks cluster
+*/
+func (a *Client) RollbackCluster(params *RollbackClusterParams) (*RollbackClusterOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewRollbackClusterParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "RollbackCluster",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/rollback",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &RollbackClusterReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*RollbackClusterOK), nil
+
+}
+
+/*
+StartClusters starts clusters
+*/
+func (a *Client) StartClusters(params *StartClustersParams) (*StartClustersOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewStartClustersParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "StartClusters",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/start",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &StartClustersReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*StartClustersOK), nil
+
+}
+
+/*
+StopClusters stops clusters
+*/
+func (a *Client) StopClusters(params *StopClustersParams) (*StopClustersOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewStopClustersParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "StopClusters",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/stop",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &StopClustersReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*StopClustersOK), nil
+
+}
+
+/*
 UpdateClusterEnv updates cluster env
 */
 func (a *Client) UpdateClusterEnv(params *UpdateClusterEnvParams) (*UpdateClusterEnvOK, error) {
@@ -120,7 +372,7 @@ func (a *Client) UpdateClusterEnv(params *UpdateClusterEnvParams) (*UpdateCluste
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "UpdateClusterEnv",
 		Method:             "PATCH",
-		PathPattern:        "/v1/clusters",
+		PathPattern:        "/v1/clusters/update_env",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
@@ -133,6 +385,34 @@ func (a *Client) UpdateClusterEnv(params *UpdateClusterEnvParams) (*UpdateCluste
 		return nil, err
 	}
 	return result.(*UpdateClusterEnvOK), nil
+
+}
+
+/*
+UpgradeCluster upgrades cluster
+*/
+func (a *Client) UpgradeCluster(params *UpgradeClusterParams) (*UpgradeClusterOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUpgradeClusterParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "UpgradeCluster",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/upgrade",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &UpgradeClusterReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*UpgradeClusterOK), nil
 
 }
 

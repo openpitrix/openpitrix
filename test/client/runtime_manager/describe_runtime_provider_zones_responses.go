@@ -51,7 +51,7 @@ type DescribeRuntimeProviderZonesOK struct {
 }
 
 func (o *DescribeRuntimeProviderZonesOK) Error() string {
-	return fmt.Sprintf("[GET /v1/runtime_provider_zones][%d] describeRuntimeProviderZonesOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/runtimes/zones][%d] describeRuntimeProviderZonesOK  %+v", 200, o.Payload)
 }
 
 func (o *DescribeRuntimeProviderZonesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
