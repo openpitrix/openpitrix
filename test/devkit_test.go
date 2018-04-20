@@ -8,7 +8,6 @@ package test
 
 import (
 	"fmt"
-	"os/exec"
 	"path"
 	"strings"
 	"testing"
@@ -27,55 +26,40 @@ import (
 
 var testRepoDir = path.Join("/tmp/openpitrix-test", idtool.GetUuid(""))
 
-func execOnTestRepo(t *testing.T, cmd string) string {
-	fullCmd := fmt.Sprintf("docker run --rm -i --name='test-op' -p 8879:8879 -v %s:/tmp/openpitrix-test -w /tmp/openpitrix-test openpitrix %s", testRepoDir, cmd)
-	t.Logf("run command [%s]", fullCmd)
-	c := exec.Command("/bin/sh", "-c", fullCmd)
-	output, err := c.CombinedOutput()
-	assert.NoError(t, err)
-	return string(output)
-}
-
-func execOnTestRepoD(t *testing.T, cmd string) string {
-	fullCmd := fmt.Sprintf("docker run --rm -i -d --name='test-op' -p 8879:8879 -v %s:/tmp/openpitrix-test -w /tmp/openpitrix-test openpitrix %s", testRepoDir, cmd)
-	t.Logf("run command [%s]", fullCmd)
-	c := exec.Command("/bin/sh", "-c", fullCmd)
-	output, err := c.CombinedOutput()
-	assert.NoError(t, err)
-	return string(output)
-}
-
-func cleanupTestRepoDocker(t *testing.T) string {
-	output, err := exec.Command("/bin/sh", "-c", "docker rm -f test-op").CombinedOutput()
-	assert.NoError(t, err)
-	return string(output)
-}
-
 func TestDevkit(t *testing.T) {
 	t.Logf("start create repo at [%s]", testRepoDir)
 
-	t.Log(execOnTestRepo(t, "op create nginx"))
+	d := NewDocker(t, "test-op", "openpitrix")
+	d.Port = 8879
+	d.WorkDir = "/tmp/openpitrix-test"
+	d.Volume[testRepoDir] = "/tmp/openpitrix-test"
 
-	t.Log(execOnTestRepo(t, "ls nginx"))
+	t.Log(d.Setup())
 
-	t.Log(execOnTestRepo(t, "op package nginx"))
+	t.Log(d.Exec("op create nginx"))
 
-	t.Log(execOnTestRepo(t, "op index ./"))
+	t.Log(d.Exec("ls nginx"))
 
-	t.Log(execOnTestRepo(t, "cat index.yaml"))
+	// TODO: write file content to testRepoDir, so that we can test create cluster
 
-	ip := strings.TrimSpace(execOnTestRepo(t, "hostname -i"))
+	t.Log(d.Exec("op package nginx"))
+
+	t.Log(d.Exec("op index ./"))
+
+	t.Log(d.Exec("cat index.yaml"))
+
+	ip := strings.TrimSpace(d.Exec("hostname -i"))
 	localIp := iptool.GetLocalIP()
-	t.Log(execOnTestRepoD(t, fmt.Sprintf("op serve --address %s:8879 --url http://%s:8879/", ip, localIp)))
+	t.Log(d.ExecD(fmt.Sprintf("op serve --address %s:8879 --url http://%s:8879/", ip, localIp)))
 
 	t.Run("create repo", func(t *testing.T) {
 		time.Sleep(5 * time.Second)
-		testCreateRepo(t)
+		testCreateRepo(t, "test-devkit-repo-name", constants.ProviderQingCloud, fmt.Sprintf("http://%s:8879/", iptool.GetLocalIP()))
 	})
 
 	// cleanup
-	t.Log(cleanupTestRepoDocker(t))
-	t.Log(execOnTestRepo(t, "find . -mindepth 1 -delete"))
+	t.Log(d.Exec("find . -mindepth 1 -delete"))
+	t.Log(d.Teardown())
 }
 
 func waitRepoEventSuccess(t *testing.T, repoEventId string) {
@@ -102,17 +86,16 @@ func waitRepoEventSuccess(t *testing.T, repoEventId string) {
 	}
 }
 
-func testCreateRepo(t *testing.T) {
+func testCreateRepo(t *testing.T, name, provider, url string) {
 	client := GetClient(clientConfig)
-	testRepoName := "test-devkit-repo-name"
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRepoRequest{
-			Name:        testRepoName,
+			Name:        name,
 			Description: "description",
 			Type:        "http",
-			URL:         fmt.Sprintf("http://%s:8879/", iptool.GetLocalIP()),
-			Providers:   []string{"qingcloud"},
+			URL:         url,
+			Providers:   []string{provider},
 			Credential:  `{}`,
 			Visibility:  "public",
 		})
