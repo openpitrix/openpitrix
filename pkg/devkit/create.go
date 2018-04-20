@@ -18,7 +18,7 @@ const defaultClusterJsonTmpl = `
 {
     "name": "{{.cluster.name}}",
     "description": "{{.cluster.description}}",
-    "vxnet": "{{.cluster.vxnet}}",
+    "subnet": "{{.cluster.subnet}}",
     "nodes": [{
         "role": "role_name1",
         "container": {
@@ -60,9 +60,9 @@ const defaultConfigJson = `
             "default": "",
             "required": false
         }, {
-            "key": "vxnet",
-            "label": "VxNet",
-            "description": "Choose a vxnet to join",
+            "key": "subnet",
+            "label": "Subnet",
+            "description": "Choose a subnet to join",
             "type": "string",
             "default": "",
             "required": true
