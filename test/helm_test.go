@@ -20,9 +20,9 @@ func TestHelm(t *testing.T) {
 	t.Logf("start create repo at [%s]", testRepoDir)
 
 	d := NewDocker(t, "test-helm", "lachlanevenson/k8s-helm:v2.8.2")
-	d.Port = 8879
-	d.WorkDir = "/tmp/openpitrix-test"
-	d.Volume[testRepoDir] = "/tmp/openpitrix-test"
+	d.Port = testExportPort
+	d.WorkDir = testDockerPath
+	d.Volume[testRepoDir] = testDockerPath
 
 	t.Log(d.Setup())
 
@@ -42,11 +42,15 @@ func TestHelm(t *testing.T) {
 
 	ip := strings.TrimSpace(d.Exec("hostname -i"))
 	localIp := iptool.GetLocalIP()
-	t.Log(d.ExecD(fmt.Sprintf("helm serve --address %s:8879 --url http://%s:8879/", ip, localIp)))
+	t.Log(d.ExecD(fmt.Sprintf("helm serve --address %s:%d --url http://%s:%d/", ip, testExportPort, localIp, testExportPort)))
 
 	t.Run("create repo", func(t *testing.T) {
 		time.Sleep(5 * time.Second)
 		testCreateRepo(t, "test-helm-repo-name", constants.ProviderKubernetes, fmt.Sprintf("http://%s:8879/", iptool.GetLocalIP()))
+	})
+
+	t.Run("create cluster", func(t *testing.T) {
+		t.Log("TODO")
 	})
 
 	// cleanup
