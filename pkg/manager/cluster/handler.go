@@ -243,22 +243,36 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 
 	attributes := manager.BuildUpdateAttributes(req.Cluster, models.ClusterColumns...)
 	_, err = pi.Global().Db.
-		Update(models.ClusterTableName).
+		Upsert(models.ClusterTableName).
 		SetMap(attributes).
-		Where(db.Eq("cluster_id", clusterId)).
+		Where("cluster_id", clusterId).
 		Exec()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] failed: %+v", clusterId, err)
+	}
+
+	for _, clusterNode := range req.ClusterNodeSet {
+		nodeId := clusterNode.GetNodeId().GetValue()
+		nodeAttributes := manager.BuildUpdateAttributes(clusterNode, models.ClusterNodeColumns...)
+		_, err = pi.Global().Db.
+			Upsert(models.ClusterNodeTableName).
+			SetMap(nodeAttributes).
+			Where("cluster_id", clusterId).
+			Where("node_id", nodeId).
+			Exec()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] node [%s] failed: %+v", clusterId, nodeId, err)
+		}
 	}
 
 	for _, clusterRole := range req.ClusterRoleSet {
 		role := clusterRole.GetRole().GetValue()
 		roleAttributes := manager.BuildUpdateAttributes(clusterRole, models.ClusterRoleColumns...)
 		_, err = pi.Global().Db.
-			Update(models.ClusterRoleTableName).
+			Upsert(models.ClusterRoleTableName).
 			SetMap(roleAttributes).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("role", role)).
+			Where("cluster_id", clusterId).
+			Where("role", role).
 			Exec()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] failed: %+v", clusterId, role, err)
@@ -269,10 +283,10 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		role := clusterCommon.GetRole().GetValue()
 		commonAttributes := manager.BuildUpdateAttributes(clusterCommon, models.ClusterCommonColumns...)
 		_, err = pi.Global().Db.
-			Update(models.ClusterCommonTableName).
+			Upsert(models.ClusterCommonTableName).
 			SetMap(commonAttributes).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("role", role)).
+			Where("cluster_id", clusterId).
+			Where("role", role).
 			Exec()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] common failed: %+v", clusterId, role, err)
@@ -283,10 +297,10 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		name := clusterLink.GetName().GetValue()
 		linkAttributes := manager.BuildUpdateAttributes(clusterLink, models.ClusterLinkColumns...)
 		_, err = pi.Global().Db.
-			Update(models.ClusterLinkTableName).
+			Upsert(models.ClusterLinkTableName).
 			SetMap(linkAttributes).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("name", name)).
+			Where("cluster_id", clusterId).
+			Where("name", name).
 			Exec()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] name [%s] link failed: %+v", clusterId, name, err)
@@ -298,11 +312,11 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		listenerId := clusterLoadbalancer.GetLoadbalancerListenerId().GetValue()
 		loadbalancerAttributes := manager.BuildUpdateAttributes(clusterLoadbalancer, models.ClusterLoadbalancerColumns...)
 		_, err = pi.Global().Db.
-			Update(models.ClusterLoadbalancerTableName).
+			Upsert(models.ClusterLoadbalancerTableName).
 			SetMap(loadbalancerAttributes).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("role", role)).
-			Where(db.Eq("loadbalancer_listener_id", listenerId)).
+			Where("cluster_id", clusterId).
+			Where("role", role).
+			Where("loadbalancer_listener_id", listenerId).
 			Exec()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] loadbalancer listener id [%s] failed: %+v",
@@ -327,9 +341,9 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 
 	attributes := manager.BuildUpdateAttributes(req.ClusterNode, models.ClusterNodeColumns...)
 	_, err = pi.Global().Db.
-		Update(models.ClusterNodeTableName).
+		Upsert(models.ClusterNodeTableName).
 		SetMap(attributes).
-		Where(db.Eq("node_id", nodeId)).
+		Where("node_id", nodeId).
 		Exec()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "ModifyClusterNode [%s] failed: %+v", nodeId, err)

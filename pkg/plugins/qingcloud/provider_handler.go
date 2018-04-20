@@ -7,6 +7,8 @@ package qingcloud
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	qcclient "github.com/yunify/qingcloud-sdk-go/client"
@@ -38,7 +40,18 @@ func (p *ProviderHandler) initQingCloudService(runtimeUrl, runtimeCredential, zo
 		return nil, err
 	}
 	conf.Zone = zone
-	conf.URI = runtimeUrl
+	if strings.HasPrefix(runtimeUrl, "https://") {
+		runtimeUrl = strings.Split(runtimeUrl, "https://")[1]
+	}
+	urlAndPort := strings.Split(runtimeUrl, ":")
+	if len(urlAndPort) == 2 {
+		conf.Port, err = strconv.Atoi(urlAndPort[1])
+	}
+	conf.Host = urlAndPort[0]
+	if err != nil {
+		logger.Errorf("Parse [%s] runtimeUrl [%s] failed: %+v", MyProvider, runtimeUrl, err)
+		return nil, err
+	}
 	return qcservice.Init(conf)
 }
 
