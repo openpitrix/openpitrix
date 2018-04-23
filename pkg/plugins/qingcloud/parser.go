@@ -201,7 +201,7 @@ func (p *Parser) ParseCluster(clusterConf app.ClusterConf) (*models.Cluster, err
 		metadataRootAccess = *clusterConf.MetadataRootAccess
 	}
 
-	cluster := &models.Cluster{
+	cluster := (&models.Cluster{
 		Name:               clusterConf.Name,
 		Description:        clusterConf.Description,
 		AppId:              clusterConf.AppId,
@@ -211,7 +211,7 @@ func (p *Parser) ParseCluster(clusterConf app.ClusterConf) (*models.Cluster, err
 		Status:             constants.StatusPending,
 		MetadataRootAccess: metadataRootAccess,
 		GlobalUuid:         clusterConf.GlobalUuid,
-	}
+	}).New()
 	return cluster, nil
 }
 

@@ -25,7 +25,7 @@ import (
 )
 
 func getCluster(clusterId, userId string) (*models.Cluster, error) {
-	cluster := &models.Cluster{}
+	cluster := new(models.Cluster).New()
 	err := pi.Global().Db.
 		Select(models.ClusterColumns...).
 		From(models.ClusterTableName).

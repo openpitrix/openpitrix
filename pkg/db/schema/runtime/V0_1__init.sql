@@ -9,7 +9,7 @@ CREATE TABLE runtime (
 	status                VARCHAR(50)                         NOT NULL,
 	runtime_credential_id VARCHAR(50)                         NOT NULL,
 	create_time           TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	status_time           TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+	status_time           TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE INDEX runtime_name_idx

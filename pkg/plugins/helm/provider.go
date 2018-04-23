@@ -437,9 +437,9 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	}
 
 	req2 := &pb.ModifyClusterRequest{
-		Cluster: models.ClusterToPb(&models.Cluster{
+		Cluster: models.ClusterToPb((&models.Cluster{
 			ClusterId: job.ClusterId,
-		}),
+		}).New()),
 
 		ClusterNodeSet: pbClusterNodes,
 	}
