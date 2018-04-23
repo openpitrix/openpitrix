@@ -7,6 +7,7 @@ package app
 import (
 	"context"
 	"io/ioutil"
+	"time"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -121,6 +122,7 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		"name", "repo_id", "owner", "chart_name",
 		"description", "home", "icon", "screenshots",
 		"maintainers", "sources", "readme")
+	attributes["update_time"] = time.Now()
 	_, err = p.Db.
 		Update(models.AppTableName).
 		SetMap(attributes).
@@ -236,6 +238,7 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		SetMap(attributes).
 		Where(db.Eq("version_id", versionId)).
 		Exec()
+	attributes["update_time"] = time.Now()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "ModifyAppVersion: %+v", err)
 	}

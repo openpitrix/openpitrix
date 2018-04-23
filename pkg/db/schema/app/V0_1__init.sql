@@ -13,7 +13,8 @@ CREATE TABLE app (
 	owner       VARCHAR(50)                         NOT NULL,
 	status      VARCHAR(50)                         NOT NULL,
 	create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	status_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+	status_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	update_time TIMESTAMP                           NULL
 );
 
 CREATE TABLE app_version (
@@ -25,5 +26,6 @@ CREATE TABLE app_version (
 	owner        VARCHAR(50)                         NOT NULL,
 	status       VARCHAR(50)                         NOT NULL,
 	create_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	status_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+	status_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	update_time  TIMESTAMP                           NULL
 );
