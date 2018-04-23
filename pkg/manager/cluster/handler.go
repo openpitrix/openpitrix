@@ -25,7 +25,7 @@ import (
 )
 
 func getCluster(clusterId, userId string) (*models.Cluster, error) {
-	cluster := &models.Cluster{}
+	cluster := new(models.Cluster).New()
 	err := pi.Global().Db.
 		Select(models.ClusterColumns...).
 		From(models.ClusterTableName).
@@ -151,9 +151,11 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	}
 
 	// check image
-	_, err = pi.Global().GlobalConfig().GetRuntimeImageId(runtime.RuntimeUrl, runtime.Zone)
-	if err != nil {
-		return nil, err
+	if utils.In(runtime.Provider, constants.VmBaseProviders) {
+		_, err = pi.Global().GlobalConfig().GetRuntimeImageId(runtime.RuntimeUrl, runtime.Zone)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	appId := req.GetAppId().GetValue()

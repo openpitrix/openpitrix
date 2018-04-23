@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
-	"time"
 
 	"github.com/ghodss/yaml"
 	"k8s.io/api/apps/v1beta1"
@@ -71,7 +70,7 @@ func (p *Parser) ParseCluster(vals map[string]interface{}, versionId string) (*m
 		return nil, fmt.Errorf("RuntimeId must be set and type is string")
 	}
 
-	cluster := &models.Cluster{
+	cluster := (&models.Cluster{
 		ClusterId:   clusterId,
 		Name:        name,
 		Description: desc,
@@ -79,9 +78,7 @@ func (p *Parser) ParseCluster(vals map[string]interface{}, versionId string) (*m
 		VersionId:   versionId,
 		Owner:       appVersion.Owner.GetValue(),
 		RuntimeId:   runtimeId,
-		CreateTime:  time.Now(),
-		StatusTime:  time.Now(),
-	}
+	}).New()
 
 	return cluster, nil
 }

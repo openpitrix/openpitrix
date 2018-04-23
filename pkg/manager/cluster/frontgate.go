@@ -111,7 +111,7 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 		}
 		if len(frontgates) == 0 {
 			frontgateId, err := f.CreateCluster(register)
-			frontgate = &models.Cluster{ClusterId: frontgateId}
+			frontgate = (&models.Cluster{ClusterId: frontgateId}).New()
 			return err
 		} else if len(frontgates) == 1 {
 			frontgate = frontgates[0]

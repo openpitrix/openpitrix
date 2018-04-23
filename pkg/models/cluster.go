@@ -43,13 +43,6 @@ type Cluster struct {
 
 var ClusterColumns = GetColumnsFromStruct(&Cluster{})
 
-func NewCluster() *Cluster {
-	return &Cluster{
-		CreateTime: time.Now(),
-		StatusTime: time.Now(),
-	}
-}
-
 func ClusterToPb(cluster *Cluster) *pb.Cluster {
 	return &pb.Cluster{
 		ClusterId:          utils.ToProtoString(cluster.ClusterId),
@@ -98,4 +91,17 @@ func PbToCluster(pbCluster *pb.Cluster) *Cluster {
 		CreateTime:         utils.FromProtoTimestamp(pbCluster.GetCreateTime()),
 		StatusTime:         utils.FromProtoTimestamp(pbCluster.GetStatusTime()),
 	}
+}
+
+func (c *Cluster) New() *Cluster {
+	if c.UpgradeTime.IsZero() {
+		c.UpgradeTime = time.Now()
+	}
+	if c.CreateTime.IsZero() {
+		c.CreateTime = time.Now()
+	}
+	if c.StatusTime.IsZero() {
+		c.StatusTime = time.Now()
+	}
+	return c
 }

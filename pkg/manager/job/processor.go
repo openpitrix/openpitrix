@@ -37,88 +37,88 @@ func (j *Processor) Pre() error {
 	switch j.Job.JobAction {
 	case constants.ActionCreateCluster:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusCreating,
-			}),
+			}).New()),
 		})
 	case constants.ActionUpgradeCluster:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusUpgrading,
-			}),
+			}).New()),
 		})
 	case constants.ActionRollbackCluster:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusRollbacking,
-			}),
+			}).New()),
 		})
 	case constants.ActionResizeCluster:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusResizing,
-			}),
+			}).New()),
 		})
 	case constants.ActionAddClusterNodes:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusScaling,
-			}),
+			}).New()),
 		})
 	case constants.ActionDeleteClusterNodes:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusScaling,
-			}),
+			}).New()),
 		})
 	case constants.ActionStopClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusStopping,
-			}),
+			}).New()),
 		})
 	case constants.ActionStartClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusStarting,
-			}),
+			}).New()),
 		})
 	case constants.ActionDeleteClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusDeleting,
-			}),
+			}).New()),
 		})
 	case constants.ActionRecoverClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusRecovering,
-			}),
+			}).New()),
 		})
 	case constants.ActionCeaseClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusCeasing,
-			}),
+			}).New()),
 		})
 	case constants.ActionUpdateClusterEnv:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId:        j.Job.ClusterId,
 				TransitionStatus: constants.StatusUpdating,
-			}),
+			}).New()),
 		})
 	default:
 		logger.Errorf("Unknown job action [%s]", j.Job.JobAction)
@@ -153,10 +153,10 @@ func (j *Processor) Post() error {
 		}
 
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusActive,
-			}),
+			}).New()),
 		})
 	case constants.ActionUpgradeCluster:
 		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider)
@@ -171,10 +171,10 @@ func (j *Processor) Post() error {
 		}
 
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusActive,
-			}),
+			}).New()),
 		})
 	case constants.ActionRollbackCluster:
 		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider)
@@ -189,73 +189,73 @@ func (j *Processor) Post() error {
 		}
 
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusActive,
-			}),
+			}).New()),
 		})
 	case constants.ActionResizeCluster:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusActive,
-			}),
+			}).New()),
 		})
 	case constants.ActionAddClusterNodes:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusActive,
-			}),
+			}).New()),
 		})
 	case constants.ActionDeleteClusterNodes:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusActive,
-			}),
+			}).New()),
 		})
 	case constants.ActionStopClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusStopped,
-			}),
+			}).New()),
 		})
 	case constants.ActionStartClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusActive,
-			}),
+			}).New()),
 		})
 	case constants.ActionDeleteClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusDeleted,
-			}),
+			}).New()),
 		})
 	case constants.ActionRecoverClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusActive,
-			}),
+			}).New()),
 		})
 	case constants.ActionCeaseClusters:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusCeased,
-			}),
+			}).New()),
 		})
 	case constants.ActionUpdateClusterEnv:
 		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
+			Cluster: models.ClusterToPb((&models.Cluster{
 				ClusterId: j.Job.ClusterId,
 				Status:    constants.StatusActive,
-			}),
+			}).New()),
 		})
 	default:
 		logger.Errorf("Unknown job action [%s]", j.Job.JobAction)
@@ -275,10 +275,10 @@ func (j *Processor) Final() {
 		return
 	}
 	_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-		Cluster: models.ClusterToPb(&models.Cluster{
+		Cluster: models.ClusterToPb((&models.Cluster{
 			ClusterId:        j.Job.ClusterId,
 			TransitionStatus: "",
-		}),
+		}).New()),
 	})
 	if err != nil {
 		logger.Errorf("Executing job [%s] final processor failed: %+v", j.Job.JobId, err)
