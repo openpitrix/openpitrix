@@ -1596,6 +1596,10 @@
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -1628,6 +1632,10 @@
           "format": "date-time"
         },
         "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "update_time": {
           "type": "string",
           "format": "date-time"
         }

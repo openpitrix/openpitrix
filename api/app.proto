@@ -76,6 +76,7 @@ message App {
 	google.protobuf.StringValue owner = 13;
 	google.protobuf.Timestamp create_time = 14;
 	google.protobuf.Timestamp status_time = 15;
+	google.protobuf.Timestamp update_time = 16;
 }
 message DescribeAppsRequest {
 	repeated string app_id = 1; // NOTE: grpc gateway cannot handle repeated StringValue
@@ -136,6 +137,7 @@ message AppVersion {
 	google.protobuf.StringValue status = 7;
 	google.protobuf.Timestamp create_time = 8;
 	google.protobuf.Timestamp status_time = 9;
+	google.protobuf.Timestamp update_time = 10;
 }
 message DescribeAppVersionsRequest {
 	repeated string version_id = 1;
