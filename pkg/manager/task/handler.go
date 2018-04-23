@@ -11,7 +11,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -20,8 +19,6 @@ import (
 )
 
 func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb.CreateTaskResponse, error) {
-	logger.Debugf("Got req: %+v", req)
-
 	s := sender.GetSenderFromContext(ctx)
 	newTask := models.NewTask(
 		"",
@@ -55,8 +52,6 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 }
 
 func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
-	logger.Debugf("Got req: %+v", req)
-
 	s := sender.GetSenderFromContext(ctx)
 	var tasks []*models.Task
 	offset := utils.GetOffsetFromRequest(req)

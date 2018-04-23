@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -25,13 +26,12 @@ func NewJobManagerClient(ctx context.Context) (pb.JobManagerClient, error) {
 	return pb.NewJobManagerClient(conn), err
 }
 
-func CreateJob(jobRequest *pb.CreateJobRequest) (jobId string, err error) {
-	ctx := context.Background()
-	client, err := NewJobManagerClient(ctx)
+func CreateJob(ctx context.Context, jobRequest *pb.CreateJobRequest) (jobId string, err error) {
+	jobManagerClient, err := NewJobManagerClient(ctx)
 	if err != nil {
 		return
 	}
-	jobResponse, err := client.CreateJob(ctx, jobRequest)
+	jobResponse, err := jobManagerClient.CreateJob(ctx, jobRequest)
 	if err != nil {
 		return
 	}
@@ -39,13 +39,12 @@ func CreateJob(jobRequest *pb.CreateJobRequest) (jobId string, err error) {
 	return
 }
 
-func DescribeJobs(jobRequest *pb.DescribeJobsRequest) (*pb.DescribeJobsResponse, error) {
-	ctx := context.Background()
-	client, err := NewJobManagerClient(ctx)
+func DescribeJobs(ctx context.Context, jobRequest *pb.DescribeJobsRequest) (*pb.DescribeJobsResponse, error) {
+	jobManagerClient, err := NewJobManagerClient(ctx)
 	if err != nil {
 		return nil, err
 	}
-	JobResponse, err := client.DescribeJobs(ctx, jobRequest)
+	JobResponse, err := jobManagerClient.DescribeJobs(ctx, jobRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +57,7 @@ func WaitJob(jobId string, timeout time.Duration, waitInterval time.Duration) er
 		jobRequest := &pb.DescribeJobsRequest{
 			JobId: []string{jobId},
 		}
-		jobResponse, err := DescribeJobs(jobRequest)
+		jobResponse, err := DescribeJobs(client.GetSystemUserContext(), jobRequest)
 		if err != nil {
 			//network or api error, not considered job fail.
 			return false, nil
@@ -95,7 +94,7 @@ func SendJob(job *models.Job) (jobId string, err error) {
 		Provider:  pbJob.Provider,
 		Directive: pbJob.Directive,
 	}
-	jobId, err = CreateJob(jobRequest)
+	jobId, err = CreateJob(client.GetSystemUserContext(), jobRequest)
 	if err != nil {
 		logger.Errorf("Failed to create job [%s]: %+v", jobId, err)
 	}

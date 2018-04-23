@@ -12,7 +12,7 @@ const FrontgateDefaultConf = `
   "app_id": "app-ABCDEFGHIJKLMNOPQRST",
   "version_id": "appv-ABCDEFGHIJKLMNOPQRST",
   "name": "frontgate",
-  "description": "OpenPitrix built-in frontgate service"
+  "description": "OpenPitrix built-in frontgate service",
   "subnet": "",
   "nodes": [{
      "container": {

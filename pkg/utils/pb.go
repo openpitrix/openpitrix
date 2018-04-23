@@ -54,6 +54,9 @@ func FromProtoTimestamp(t *timestamp.Timestamp) (tt time.Time) {
 }
 
 func ToProtoTimestamp(t time.Time) (tt *timestamp.Timestamp) {
+	if t.IsZero() {
+		return nil
+	}
 	tt, err := ptypes.TimestampProto(t)
 	if err != nil {
 		logger.Fatalf("Cannot convert time.Time [%+v] to ToProtoTimestamp[T]: %+v", t, err)

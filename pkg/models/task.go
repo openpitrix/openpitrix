@@ -99,5 +99,9 @@ func (t *Task) GetTimeout(defaultTimeout time.Duration) time.Duration {
 	if !exist {
 		return defaultTimeout
 	}
-	return time.Duration(timeout.(float64)) * time.Second
+	tm := timeout.(float64)
+	if tm <= 0 {
+		return defaultTimeout
+	}
+	return time.Duration(tm) * time.Second
 }

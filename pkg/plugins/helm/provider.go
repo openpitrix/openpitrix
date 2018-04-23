@@ -397,14 +397,14 @@ func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, ow
 	for _, v := range list.Items {
 
 		clusterNode := &models.ClusterNode{
-			NodeId:         models.NewClusterNodeId(),
-			ClusterId:      clusterId,
-			Name:           v.GetName(),
-			InstanceId:     string(v.GetUID()),
-			PrivateIp:      v.Status.PodIP,
-			Status:         string(v.Status.Phase),
-			Owner:          owner,
-			GlobalServerId: v.Spec.NodeName,
+			NodeId:     models.NewClusterNodeId(),
+			ClusterId:  clusterId,
+			Name:       v.GetName(),
+			InstanceId: string(v.GetUID()),
+			PrivateIp:  v.Status.PodIP,
+			Status:     string(v.Status.Phase),
+			Owner:      owner,
+			//GlobalServerId: v.Spec.NodeName,
 			CustomMetadata: getLabelString(v.GetObjectMeta().GetLabels()),
 			CreateTime:     v.GetObjectMeta().GetCreationTimestamp().Time,
 			StatusTime:     v.GetObjectMeta().GetCreationTimestamp().Time,

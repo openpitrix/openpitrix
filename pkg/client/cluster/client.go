@@ -13,6 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/utils"
 )
 
 func NewClusterManagerClient(ctx context.Context) (pb.ClusterManagerClient, error) {
@@ -63,4 +64,14 @@ func GetClusterWrappers(ctx context.Context, client pb.ClusterManagerClient, clu
 		clusterWrappers = append(clusterWrappers, models.PbToClusterWrapper(pbCluster))
 	}
 	return clusterWrappers, nil
+}
+
+func ModifyClusterTransitionStatus(ctx context.Context, client pb.ClusterManagerClient, clusterId string, transitionStatus string) error {
+	_, err := client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+		Cluster: &pb.Cluster{
+			ClusterId:        utils.ToProtoString(clusterId),
+			TransitionStatus: utils.ToProtoString(transitionStatus),
+		},
+	})
+	return err
 }

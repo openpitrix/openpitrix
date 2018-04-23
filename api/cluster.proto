@@ -170,7 +170,7 @@ message ClusterNode {
 	google.protobuf.StringValue transition_status = 12;
 	google.protobuf.UInt32Value group_id = 13;
 	google.protobuf.StringValue owner = 14;
-	google.protobuf.StringValue global_server_id = 15;
+	google.protobuf.UInt32Value global_server_id = 15;
 	google.protobuf.StringValue custom_metadata = 16;
 	google.protobuf.StringValue pub_key = 17;
 	google.protobuf.StringValue health_status = 18;

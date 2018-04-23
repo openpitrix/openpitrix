@@ -5,22 +5,20 @@
 package repo_indexer
 
 import (
-	"context"
-
 	"github.com/robfig/cron"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
 type repoInfos map[string]string // repoId & owner
 
 func getRepos() (repoInfos, error) {
-	ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
+	ctx := client.GetSystemUserContext()
 	repoManagerClient, err := repoClient.NewRepoManagerClient(ctx)
 	if err != nil {
 		return nil, err

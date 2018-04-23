@@ -2210,7 +2210,7 @@ var Files = map[string]string{
           "type": "string"
         },
         "global_server_id": {
-          "type": "string"
+          "$ref": "#/definitions/protobufUInt32Value"
         },
         "custom_metadata": {
           "type": "string"

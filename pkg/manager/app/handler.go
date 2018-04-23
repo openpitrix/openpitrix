@@ -49,9 +49,6 @@ func (p *Server) getAppVersion(versionId string) (*models.AppVersion, error) {
 }
 
 func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) (*pb.DescribeAppsResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
-	logger.Infof("Got sender: %+v", s)
-	logger.Debugf("Got req: %+v", req)
 	var apps []*models.App
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)

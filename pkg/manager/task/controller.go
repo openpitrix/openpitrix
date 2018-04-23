@@ -92,74 +92,79 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		"status":   task.Status,
 		"executor": c.hostname,
 	})
+	err := func() error {
+		query := c.Db.
+			Select(models.TaskColumns...).
+			From(models.TaskTableName).
+			Where(db.Eq("task_id", taskId))
 
-	task.Status = constants.StatusFailed
-	defer c.updateTaskAttributes(task.TaskId, map[string]interface{}{
-		"status": task.Status,
-	})
-
-	query := c.Db.
-		Select(models.TaskColumns...).
-		From(models.TaskTableName).
-		Where(db.Eq("task_id", taskId))
-
-	err := query.LoadOne(&task)
-	if err != nil {
-		logger.Errorf("Failed to get task [%s]: %+v", task.TaskId, err)
-		return err
-	}
-
-	processor := NewProcessor(task)
-	err = processor.Pre()
-	if err != nil {
-		return err
-	}
-
-	pbTask := models.TaskToPb(task)
-	if task.Target == constants.PilotManagerHost {
-		err := pilotclient.HandleSubtask(
-			&pb.HandleSubtaskRequest{
-				SubtaskId:     pbTask.TaskId,
-				SubtaskAction: pbTask.TaskAction,
-				Directive:     pbTask.Directive,
-			})
+		err := query.LoadOne(&task)
 		if err != nil {
-			logger.Errorf("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+			logger.Errorf("Failed to get task [%s]: %+v", task.TaskId, err)
 			return err
 		}
-		err = pilotclient.WaitSubtask(task.TaskId, task.GetTimeout(constants.WaitTaskTimeout)*time.Second,
-			constants.WaitTaskInterval)
+
+		processor := NewProcessor(task)
+		err = processor.Pre()
 		if err != nil {
-			logger.Errorf("Failed to wait task [%s]: %+v", task.TaskId, err)
 			return err
 		}
+
+		if task.Target == constants.PilotManagerHost {
+			pbTask := models.TaskToPb(task)
+			err := pilotclient.HandleSubtask(
+				&pb.HandleSubtaskRequest{
+					SubtaskId:     pbTask.TaskId,
+					SubtaskAction: pbTask.TaskAction,
+					Directive:     pbTask.Directive,
+				})
+			if err != nil {
+				logger.Errorf("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+				return err
+			}
+			err = pilotclient.WaitSubtask(
+				task.TaskId, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+			if err != nil {
+				logger.Errorf("Failed to wait task [%s]: %+v", task.TaskId, err)
+				return err
+			}
+		} else {
+			providerInterface, err := plugins.GetProviderPlugin(task.Target)
+			if err != nil {
+				logger.Errorf("No such runtime [%s]. ", task.Target)
+				return err
+			}
+			err = providerInterface.HandleSubtask(task)
+			if err != nil {
+				logger.Errorf("Failed to handle subtask [%s] in runtime [%s]: %+v",
+					task.TaskId, task.Target, err)
+				return err
+			}
+			err = providerInterface.WaitSubtask(
+				task, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+			if err != nil {
+				logger.Errorf("Failed to wait subtask [%s] in runtime [%s]: %+v",
+					task.TaskId, task.Target, err)
+				return err
+			}
+		}
+
+		if err != nil {
+			return err
+		}
+
+		return processor.Post()
+	}()
+	var status string
+	if err != nil {
+		status = constants.StatusFailed
 	} else {
-		providerInterface, err := plugins.GetProviderPlugin(task.Target)
-		if err != nil {
-			logger.Errorf("No such runtime [%s]. ", task.Target)
-			return err
-		}
-		err = providerInterface.HandleSubtask(task)
-		if err != nil {
-			logger.Errorf("Failed to handle subtask [%s] in runtime [%s]: %+v",
-				task.TaskId, task.Target, err)
-			return err
-		}
-		err = providerInterface.WaitSubtask(task, task.GetTimeout(constants.WaitTaskTimeout)*time.Second,
-			constants.WaitTaskInterval)
-		if err != nil {
-			logger.Errorf("Failed to wait subtask [%s] in runtime [%s]: %+v",
-				task.TaskId, task.Target, err)
-			return err
-		}
+		status = constants.StatusSuccessful
 	}
-
-	if err != nil {
-		return err
-	}
-
-	task.Status = constants.StatusSuccessful
-	return processor.Post()
+	c.updateTaskAttributes(task.TaskId, map[string]interface{}{
+		"status": status,
+	})
+	return err
 }
 
 func (c *Controller) HandleTasks() {

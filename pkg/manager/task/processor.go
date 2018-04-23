@@ -5,8 +5,7 @@
 package task
 
 import (
-	"context"
-
+	clientutil "openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -32,7 +31,7 @@ func (t *Processor) Pre() error {
 		return nil
 	}
 	var err error
-	ctx := context.Background()
+	ctx := clientutil.GetSystemUserContext()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
 		logger.Errorf("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
@@ -125,7 +124,7 @@ func (t *Processor) Pre() error {
 // Post process when task is done
 func (t *Processor) Post() error {
 	var err error
-	ctx := context.Background()
+	ctx := clientutil.GetSystemUserContext()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
 		logger.Errorf("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)

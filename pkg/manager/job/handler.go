@@ -11,7 +11,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -20,8 +19,6 @@ import (
 )
 
 func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.CreateJobResponse, error) {
-	logger.Debugf("Got req: %+v", req)
-
 	s := sender.GetSenderFromContext(ctx)
 	newJob := models.NewJob(
 		"",
@@ -58,8 +55,6 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 }
 
 func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) (*pb.DescribeJobsResponse, error) {
-	logger.Debugf("Got req: %+v", req)
-
 	s := sender.GetSenderFromContext(ctx)
 	var jobs []*models.Job
 	offset := utils.GetOffsetFromRequest(req)

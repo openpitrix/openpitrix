@@ -158,6 +158,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 	}
 }
 func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error {
+	logger.Debugf("Wait sub task [%s] timeout [%s] interval [%s]", task.TaskId, timeout, waitInterval)
 	handler := new(ProviderHandler)
 
 	switch task.TaskAction {
@@ -180,7 +181,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 	case vmbased.ActionWaitFrontgateAvailable:
 		return handler.WaitFrontgateAvailable(task)
 	default:
-		logger.Errorf("Unknown tas action [%s]", task.TaskAction)
+		logger.Errorf("Unknown task action [%s]", task.TaskAction)
 		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }

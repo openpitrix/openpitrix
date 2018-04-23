@@ -144,10 +144,10 @@ services:
     container_name: "openpitrix-job-manager"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
-      - OPENPITRIX_MYSQL_DATABASE=cluster
+      - OPENPITRIX_MYSQL_DATABASE=job
   openpitrix-job-db-ctrl:
     image: boxfuse/flyway:5.0.7-alpine
-    command: -url=jdbc:mysql://openpitrix-db/cluster -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    command: -url=jdbc:mysql://openpitrix-db/job -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
       - ./pkg/db/schema/job:/flyway/sql
     links:
@@ -170,10 +170,10 @@ services:
     container_name: "openpitrix-task-manager"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
-      - OPENPITRIX_MYSQL_DATABASE=cluster
+      - OPENPITRIX_MYSQL_DATABASE=task
   openpitrix-task-db-ctrl:
     image: boxfuse/flyway:5.0.7-alpine
-    command: -url=jdbc:mysql://openpitrix-db/cluster -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    command: -url=jdbc:mysql://openpitrix-db/task -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
       - ./pkg/db/schema/task:/flyway/sql
     links:

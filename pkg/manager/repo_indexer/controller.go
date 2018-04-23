@@ -10,6 +10,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -20,7 +21,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
 type eventChannel chan *models.RepoEvent
@@ -104,7 +104,7 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 	}()
 	logger.Infof("Got repo event: %+v", repoEvent)
 	err := func() (err error) {
-		ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
+		ctx := client.GetSystemUserContext()
 		repoManagerClient, err := repoClient.NewRepoManagerClient(ctx)
 		if err != nil {
 			return

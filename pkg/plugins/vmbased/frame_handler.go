@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -70,5 +69,5 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 		} else {
 			return false, fmt.Errorf("Frontgate status is [%s]. ", status)
 		}
-	}, task.GetTimeout(constants.WaitTaskTimeout)*time.Second, constants.WaitTaskInterval)
+	}, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 }

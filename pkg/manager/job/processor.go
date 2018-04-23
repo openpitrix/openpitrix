@@ -5,13 +5,11 @@
 package job
 
 import (
-	"context"
-
+	clientutil "openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
 )
 
@@ -28,7 +26,7 @@ func NewProcessor(job *models.Job) *Processor {
 // Pre process when job is start
 func (j *Processor) Pre() error {
 	var err error
-	ctx := context.Background()
+	ctx := clientutil.GetSystemUserContext()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
 		logger.Errorf("Executing job [%s] pre processor failed: %+v", j.Job.JobId, err)
@@ -36,90 +34,29 @@ func (j *Processor) Pre() error {
 	}
 	switch j.Job.JobAction {
 	case constants.ActionCreateCluster:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusCreating,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusCreating)
 	case constants.ActionUpgradeCluster:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusUpgrading,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusUpgrading)
 	case constants.ActionRollbackCluster:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusRollbacking,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusRollbacking)
 	case constants.ActionResizeCluster:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusResizing,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusResizing)
 	case constants.ActionAddClusterNodes:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusScaling,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusScaling)
 	case constants.ActionDeleteClusterNodes:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusScaling,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusScaling)
 	case constants.ActionStopClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusStopping,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusStopping)
 	case constants.ActionStartClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusStarting,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusStarting)
 	case constants.ActionDeleteClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusDeleting,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusDeleting)
 	case constants.ActionRecoverClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusRecovering,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusRecovering)
 	case constants.ActionCeaseClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusCeasing,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusCeasing)
 	case constants.ActionUpdateClusterEnv:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId:        j.Job.ClusterId,
-				TransitionStatus: constants.StatusUpdating,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusUpdating)
 	default:
 		logger.Errorf("Unknown job action [%s]", j.Job.JobAction)
 	}
@@ -133,7 +70,7 @@ func (j *Processor) Pre() error {
 // Post process when job is done
 func (j *Processor) Post() error {
 	var err error
-	ctx := context.Background()
+	ctx := clientutil.GetSystemUserContext()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
 		logger.Errorf("Executing job [%s] post processor failed: %+v", j.Job.JobId, err)
@@ -152,12 +89,7 @@ func (j *Processor) Post() error {
 			return err
 		}
 
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusActive,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionUpgradeCluster:
 		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider)
 		if err != nil {
@@ -170,12 +102,7 @@ func (j *Processor) Post() error {
 			return err
 		}
 
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusActive,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionRollbackCluster:
 		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider)
 		if err != nil {
@@ -188,75 +115,25 @@ func (j *Processor) Post() error {
 			return err
 		}
 
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusActive,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionResizeCluster:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusActive,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionAddClusterNodes:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusActive,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionDeleteClusterNodes:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusActive,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionStopClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusStopped,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusStopped)
 	case constants.ActionStartClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusActive,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionDeleteClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusDeleted,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusDeleted)
 	case constants.ActionRecoverClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusActive,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionCeaseClusters:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusCeased,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusCeased)
 	case constants.ActionUpdateClusterEnv:
-		_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-			Cluster: models.ClusterToPb(&models.Cluster{
-				ClusterId: j.Job.ClusterId,
-				Status:    constants.StatusActive,
-			}),
-		})
+		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	default:
 		logger.Errorf("Unknown job action [%s]", j.Job.JobAction)
 	}
@@ -268,18 +145,14 @@ func (j *Processor) Post() error {
 }
 
 func (j *Processor) Final() {
-	ctx := context.Background()
+	ctx := clientutil.GetSystemUserContext()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
 		logger.Errorf("Executing job [%s] final processor failed: %+v", j.Job.JobId, err)
 		return
 	}
-	_, err = client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
-		Cluster: models.ClusterToPb(&models.Cluster{
-			ClusterId:        j.Job.ClusterId,
-			TransitionStatus: "",
-		}),
-	})
+	// TODO: modify cluster status to `active or deleted`
+	err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, "")
 	if err != nil {
 		logger.Errorf("Executing job [%s] final processor failed: %+v", j.Job.JobId, err)
 	}

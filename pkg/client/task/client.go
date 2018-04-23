@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -25,13 +26,12 @@ func NewTaskManagerClient(ctx context.Context) (pb.TaskManagerClient, error) {
 	return pb.NewTaskManagerClient(conn), err
 }
 
-func CreateTask(taskRequest *pb.CreateTaskRequest) (taskId string, err error) {
-	ctx := context.Background()
-	client, err := NewTaskManagerClient(ctx)
+func CreateTask(ctx context.Context, taskRequest *pb.CreateTaskRequest) (taskId string, err error) {
+	taskManagerClient, err := NewTaskManagerClient(ctx)
 	if err != nil {
 		return
 	}
-	taskResponse, err := client.CreateTask(ctx, taskRequest)
+	taskResponse, err := taskManagerClient.CreateTask(ctx, taskRequest)
 	if err != nil {
 		return
 	}
@@ -39,13 +39,12 @@ func CreateTask(taskRequest *pb.CreateTaskRequest) (taskId string, err error) {
 	return
 }
 
-func DescribeTasks(taskRequest *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
-	ctx := context.Background()
-	client, err := NewTaskManagerClient(ctx)
+func DescribeTasks(ctx context.Context, taskRequest *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
+	taskManagerClient, err := NewTaskManagerClient(ctx)
 	if err != nil {
 		return nil, err
 	}
-	taskResponse, err := client.DescribeTasks(ctx, taskRequest)
+	taskResponse, err := taskManagerClient.DescribeTasks(ctx, taskRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -53,12 +52,12 @@ func DescribeTasks(taskRequest *pb.DescribeTasksRequest) (*pb.DescribeTasksRespo
 }
 
 func WaitTask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
-	logger.Debug("Waiting for task [%s] finished", taskId)
+	logger.Debugf("Waiting for task [%s] finished", taskId)
 	return utils.WaitForSpecificOrError(func() (bool, error) {
 		taskRequest := &pb.DescribeTasksRequest{
 			TaskId: []string{taskId},
 		}
-		taskResponse, err := DescribeTasks(taskRequest)
+		taskResponse, err := DescribeTasks(client.GetSystemUserContext(), taskRequest)
 		if err != nil {
 			//network or api error, not considered task fail.
 			return false, nil
@@ -94,7 +93,7 @@ func SendTask(task *models.Task) (taskId string, err error) {
 		TaskAction: pbTask.TaskAction,
 		Directive:  pbTask.Directive,
 	}
-	taskId, err = CreateTask(taskRequest)
+	taskId, err = CreateTask(client.GetSystemUserContext(), taskRequest)
 	if err != nil {
 		logger.Errorf("Failed to create task [%s]: %+v", taskId, err)
 	}
