@@ -126,6 +126,11 @@ compose-up:
 	docker-compose up -d openpitrix-db && sleep 20 && docker-compose up -d
 	@echo "compose-up done"
 
+.PHONY: compose-up-app
+compose-up-app:
+	docker-compose up -d openpitrix-db && sleep 20 && docker-compose -f docker-compose-app.yml up -d
+	@echo "compose-up app service done"
+
 .PHONY: compose-down
 compose-down:
 	docker-compose down
