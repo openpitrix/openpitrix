@@ -29,6 +29,7 @@ type AppVersion struct {
 	Status      string
 	CreateTime  time.Time
 	StatusTime  time.Time
+	UpdateTime  *time.Time
 }
 
 var AppVersionColumns = GetColumnsFromStruct(&AppVersion{})
@@ -58,6 +59,9 @@ func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
 	pbAppVersion.Owner = utils.ToProtoString(appVersion.Owner)
 	pbAppVersion.CreateTime = utils.ToProtoTimestamp(appVersion.CreateTime)
 	pbAppVersion.StatusTime = utils.ToProtoTimestamp(appVersion.StatusTime)
+	if appVersion.UpdateTime != nil {
+		pbAppVersion.UpdateTime = utils.ToProtoTimestamp(*appVersion.UpdateTime)
+	}
 	return &pbAppVersion
 }
 

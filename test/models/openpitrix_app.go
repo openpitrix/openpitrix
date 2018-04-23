@@ -60,6 +60,9 @@ type OpenpitrixApp struct {
 
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
+
+	// update time
+	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`
 }
 
 // Validate validates this openpitrix app

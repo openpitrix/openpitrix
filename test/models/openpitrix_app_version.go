@@ -40,6 +40,9 @@ type OpenpitrixAppVersion struct {
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
+	// update time
+	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`
+
 	// version id
 	VersionID string `json:"version_id,omitempty"`
 }

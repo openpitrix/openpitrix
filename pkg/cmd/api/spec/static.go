@@ -1605,6 +1605,10 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -1637,6 +1641,10 @@ var Files = map[string]string{
           "format": "date-time"
         },
         "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "update_time": {
           "type": "string",
           "format": "date-time"
         }

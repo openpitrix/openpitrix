@@ -35,6 +35,7 @@ type App struct {
 	ChartName   string
 	CreateTime  time.Time
 	StatusTime  time.Time
+	UpdateTime  *time.Time
 }
 
 var AppColumns = GetColumnsFromStruct(&App{})
@@ -71,6 +72,9 @@ func AppToPb(app *App) *pb.App {
 	pbApp.Owner = utils.ToProtoString(app.Owner)
 	pbApp.CreateTime = utils.ToProtoTimestamp(app.CreateTime)
 	pbApp.StatusTime = utils.ToProtoTimestamp(app.StatusTime)
+	if app.UpdateTime != nil {
+		pbApp.UpdateTime = utils.ToProtoTimestamp(*app.UpdateTime)
+	}
 	return &pbApp
 }
 
