@@ -10,6 +10,7 @@ import (
 	"github.com/fatih/structs"
 	"github.com/gocraft/dbr"
 	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	"openpitrix.io/openpitrix/pkg/db"
@@ -42,7 +43,7 @@ func getSearchFilter(tableName string, value interface{}, exclude ...string) dbr
 			return nil
 		}
 		return db.Or(ops...)
-	} else {
+	} else if value != nil {
 		logger.Warnf("search_word [%+v] is not string", value)
 	}
 	return nil
@@ -134,6 +135,9 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 				attributes[column] = v.GetValue()
 			case *wrappers.UInt32Value:
 				attributes[column] = v.GetValue()
+			case *timestamp.Timestamp:
+				attributes[column] = utils.FromProtoTimestamp(v)
+
 			default:
 				attributes[column] = v
 			}

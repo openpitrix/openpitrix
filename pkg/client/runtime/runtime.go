@@ -5,12 +5,12 @@
 package runtime
 
 import (
-	"context"
 	"strings"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -40,7 +40,7 @@ func NewRuntime(runtimeId string) (*Runtime, error) {
 
 func getRuntime(runtimeId string) (*pb.Runtime, error) {
 	runtimeIds := []string{runtimeId}
-	ctx := context.Background()
+	ctx := clientutil.GetSystemUserContext()
 	client, err := NewRuntimeManagerClient(ctx)
 	if err != nil {
 		return nil, err

@@ -33,7 +33,7 @@ type ClusterNode struct {
 	TransitionStatus string
 	GroupId          uint32
 	Owner            string
-	GlobalServerId   string
+	GlobalServerId   uint32
 	CustomMetadata   string
 	PubKey           string
 	HealthStatus     string
@@ -68,7 +68,7 @@ func ClusterNodeToPb(clusterNode *ClusterNode) *pb.ClusterNode {
 		TransitionStatus: utils.ToProtoString(clusterNode.TransitionStatus),
 		GroupId:          utils.ToProtoUInt32(clusterNode.GroupId),
 		Owner:            utils.ToProtoString(clusterNode.Owner),
-		GlobalServerId:   utils.ToProtoString(clusterNode.GlobalServerId),
+		GlobalServerId:   utils.ToProtoUInt32(clusterNode.GlobalServerId),
 		CustomMetadata:   utils.ToProtoString(clusterNode.CustomMetadata),
 		PubKey:           utils.ToProtoString(clusterNode.PubKey),
 		HealthStatus:     utils.ToProtoString(clusterNode.HealthStatus),

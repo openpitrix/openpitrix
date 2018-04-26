@@ -5,6 +5,8 @@
 package cluster
 
 import (
+	"time"
+
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -31,6 +33,8 @@ func (r *Register) RegisterClusterWrapper() error {
 		r.ClusterWrapper.Cluster.VpcId = r.VpcId
 		r.ClusterWrapper.Cluster.Owner = r.Owner
 		r.ClusterWrapper.Cluster.ClusterType = r.ClusterType
+		r.ClusterWrapper.Cluster.CreateTime = time.Now()
+		r.ClusterWrapper.Cluster.StatusTime = time.Now()
 		_, err := pi.Global().Db.
 			InsertInto(models.ClusterTableName).
 			Columns(models.ClusterColumns...).
@@ -49,6 +53,8 @@ func (r *Register) RegisterClusterWrapper() error {
 		clusterNode.ClusterId = r.ClusterId
 		clusterNode.NodeId = models.NewClusterNodeId()
 		clusterNode.Owner = r.Owner
+		clusterNode.CreateTime = time.Now()
+		clusterNode.StatusTime = time.Now()
 		_, err := pi.Global().Db.
 			InsertInto(models.ClusterNodeTableName).
 			Columns(models.ClusterNodeColumns...).

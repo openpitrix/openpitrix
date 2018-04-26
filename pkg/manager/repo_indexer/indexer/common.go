@@ -1,17 +1,16 @@
 package indexer
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
 )
 
 type Indexer interface {
@@ -52,7 +51,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	owner := i.repo.GetOwner().GetValue()
 
 	var appId string
-	ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
+	ctx := client.GetSystemUserContext()
 	appManagerClient, err := appclient.NewAppManagerClient(ctx)
 	if err != nil {
 		return appId, err
@@ -110,7 +109,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface) (st
 	owner := i.repo.GetOwner().GetValue()
 
 	var versionId string
-	ctx := sender.NewContext(context.Background(), sender.GetSystemUser())
+	ctx := client.GetSystemUserContext()
 	appManagerClient, err := appclient.NewAppManagerClient(ctx)
 	if err != nil {
 		return versionId, err

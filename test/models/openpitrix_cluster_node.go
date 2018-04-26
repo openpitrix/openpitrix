@@ -38,7 +38,7 @@ type OpenpitrixClusterNode struct {
 	Device string `json:"device,omitempty"`
 
 	// global server id
-	GlobalServerID string `json:"global_server_id,omitempty"`
+	GlobalServerID *ProtobufUint32Value `json:"global_server_id,omitempty"`
 
 	// group id
 	GroupID *ProtobufUint32Value `json:"group_id,omitempty"`
@@ -103,6 +103,11 @@ func (m *OpenpitrixClusterNode) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateGlobalServerID(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if err := m.validateGroupID(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -149,6 +154,25 @@ func (m *OpenpitrixClusterNode) validateClusterRole(formats strfmt.Registry) err
 		if err := m.ClusterRole.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cluster_role")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OpenpitrixClusterNode) validateGlobalServerID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.GlobalServerID) { // not required
+		return nil
+	}
+
+	if m.GlobalServerID != nil {
+
+		if err := m.GlobalServerID.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("global_server_id")
 			}
 			return err
 		}

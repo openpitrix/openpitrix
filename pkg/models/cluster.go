@@ -35,7 +35,7 @@ type Cluster struct {
 	Owner              string
 	GlobalUuid         string
 	UpgradeStatus      string
-	UpgradeTime        time.Time
+	UpgradeTime        *time.Time
 	RuntimeId          string
 	CreateTime         time.Time
 	StatusTime         time.Time
@@ -51,7 +51,7 @@ func NewCluster() *Cluster {
 }
 
 func ClusterToPb(cluster *Cluster) *pb.Cluster {
-	return &pb.Cluster{
+	c := &pb.Cluster{
 		ClusterId:          utils.ToProtoString(cluster.ClusterId),
 		Name:               utils.ToProtoString(cluster.Name),
 		Description:        utils.ToProtoString(cluster.Description),
@@ -68,15 +68,18 @@ func ClusterToPb(cluster *Cluster) *pb.Cluster {
 		Owner:              utils.ToProtoString(cluster.Owner),
 		GlobalUuid:         utils.ToProtoString(cluster.GlobalUuid),
 		UpgradeStatus:      utils.ToProtoString(cluster.UpgradeStatus),
-		UpgradeTime:        utils.ToProtoTimestamp(cluster.UpgradeTime),
 		RuntimeId:          utils.ToProtoString(cluster.RuntimeId),
 		CreateTime:         utils.ToProtoTimestamp(cluster.CreateTime),
 		StatusTime:         utils.ToProtoTimestamp(cluster.StatusTime),
 	}
+	if cluster.UpgradeTime != nil {
+		c.UpgradeTime = utils.ToProtoTimestamp(*cluster.UpgradeTime)
+	}
+	return c
 }
 
 func PbToCluster(pbCluster *pb.Cluster) *Cluster {
-	return &Cluster{
+	c := &Cluster{
 		ClusterId:          pbCluster.GetClusterId().GetValue(),
 		Name:               pbCluster.GetName().GetValue(),
 		Description:        pbCluster.GetDescription().GetValue(),
@@ -93,9 +96,11 @@ func PbToCluster(pbCluster *pb.Cluster) *Cluster {
 		Owner:              pbCluster.GetOwner().GetValue(),
 		GlobalUuid:         pbCluster.GetGlobalUuid().GetValue(),
 		UpgradeStatus:      pbCluster.GetUpgradeStatus().GetValue(),
-		UpgradeTime:        utils.FromProtoTimestamp(pbCluster.GetUpgradeTime()),
 		RuntimeId:          pbCluster.GetRuntimeId().GetValue(),
 		CreateTime:         utils.FromProtoTimestamp(pbCluster.GetCreateTime()),
 		StatusTime:         utils.FromProtoTimestamp(pbCluster.GetStatusTime()),
 	}
+	upgradeTime := utils.FromProtoTimestamp(pbCluster.GetUpgradeTime())
+	c.UpgradeTime = &upgradeTime
+	return c
 }

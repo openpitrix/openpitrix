@@ -130,7 +130,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 	err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
 		if parent != nil {
 			for _, parentTask := range parent.Tasks {
-				err = taskclient.WaitTask(parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout)*time.Second, constants.WaitTaskInterval)
+				err = taskclient.WaitTask(parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 				if err != nil {
 					logger.Errorf("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 					return err
@@ -149,7 +149,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 			}
 			if current.IsLeaf() {
 				for _, currentTask := range current.Tasks {
-					err = taskclient.WaitTask(currentTask.TaskId, currentTask.GetTimeout(constants.WaitTaskTimeout)*time.Second, constants.WaitTaskInterval)
+					err = taskclient.WaitTask(currentTask.TaskId, currentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 					if err != nil {
 						logger.Errorf("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
 						return err

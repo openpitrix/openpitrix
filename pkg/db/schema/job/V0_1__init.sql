@@ -12,13 +12,13 @@ CREATE TABLE IF NOT EXISTS job (
 	directive   TEXT        NOT NULL,
 	executor    VARCHAR(50) NOT NULL,
 	task_count  INT(11)     NOT NULL,
-	runtime     VARCHAR(50) NOT NULL,
+	provider    VARCHAR(50) NOT NULL,
 	PRIMARY KEY (job_id),
 	INDEX job_create_time_index (create_time ASC),
 	INDEX job_job_action_index (job_action ASC),
 	INDEX job_cluster_id_index (cluster_id ASC),
 	INDEX job_owner_index (owner ASC),
 	INDEX job_executor_index (executor ASC),
-	INDEX job_runtime_index (runtime ASC),
+	INDEX job_provider_index (provider ASC),
 	INDEX job_status_index (status ASC)
 );
