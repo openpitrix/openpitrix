@@ -136,7 +136,7 @@ func (t *Processor) Post() error {
 			logger.Warnf("Skip empty task [%s] directive", t.Task.TaskId)
 		}
 		instance, err := models.NewInstance(t.Task.Directive)
-		if err != nil {
+		if err == nil {
 			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
 					NodeId:     utils.ToProtoString(instance.NodeId),
@@ -151,10 +151,10 @@ func (t *Processor) Post() error {
 			logger.Warnf("Skip empty task [%s] directive", t.Task.TaskId)
 		}
 		volume, err := models.NewVolume(t.Task.Directive)
-		if err != nil {
+		if err == nil {
 			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
-					NodeId:   utils.ToProtoString(volume.NodeId),
+					NodeId:   utils.ToProtoString(t.Task.NodeId),
 					VolumeId: utils.ToProtoString(volume.VolumeId),
 				},
 			})

@@ -155,11 +155,9 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 		return processor.Post()
 	}()
-	var status string
+	var status = constants.StatusSuccessful
 	if err != nil {
 		status = constants.StatusFailed
-	} else {
-		status = constants.StatusSuccessful
 	}
 	c.updateTaskAttributes(task.TaskId, map[string]interface{}{
 		"status": status,
