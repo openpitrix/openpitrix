@@ -75,3 +75,13 @@ func ModifyClusterTransitionStatus(ctx context.Context, client pb.ClusterManager
 	})
 	return err
 }
+
+func ModifyClusterStatus(ctx context.Context, client pb.ClusterManagerClient, clusterId string, status string) error {
+	_, err := client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+		Cluster: &pb.Cluster{
+			ClusterId: utils.ToProtoString(clusterId),
+			Status:    utils.ToProtoString(status),
+		},
+	})
+	return err
+}

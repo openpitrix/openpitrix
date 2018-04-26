@@ -89,7 +89,7 @@ func (j *Processor) Post() error {
 			return err
 		}
 
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionUpgradeCluster:
 		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider)
 		if err != nil {
@@ -102,7 +102,7 @@ func (j *Processor) Post() error {
 			return err
 		}
 
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionRollbackCluster:
 		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider)
 		if err != nil {
@@ -115,25 +115,25 @@ func (j *Processor) Post() error {
 			return err
 		}
 
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionResizeCluster:
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionAddClusterNodes:
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionDeleteClusterNodes:
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionStopClusters:
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusStopped)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusStopped)
 	case constants.ActionStartClusters:
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionDeleteClusters:
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusDeleted)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusDeleted)
 	case constants.ActionRecoverClusters:
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionCeaseClusters:
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusCeased)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusCeased)
 	case constants.ActionUpdateClusterEnv:
-		err = clusterclient.ModifyClusterTransitionStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
+		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	default:
 		logger.Errorf("Unknown job action [%s]", j.Job.JobAction)
 	}
