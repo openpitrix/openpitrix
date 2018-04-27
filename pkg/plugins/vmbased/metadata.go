@@ -215,15 +215,3 @@ func (m *Metadata) GetEnvCnodes() map[string]interface{} {
 	}
 	return result
 }
-
-func GetRegisterExec(cnodes string) string {
-	// TODO: need real cmd
-	cmd := "/opt/metad/register-data.sh "
-	return cmd + cnodes
-}
-
-func GetDeregisterExec(cnodes string) string {
-	// TODO: need real cmd
-	cmd := "curl -X DELETE http://127.0.0.1:9611/v1/data/clusters?subs="
-	return cmd + cnodes
-}
