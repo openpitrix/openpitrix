@@ -13,7 +13,7 @@ import (
 type Meta struct {
 	FrontgateId string
 	Timeout     int
-	Cmd         string
+	Cnodes      string
 	DroneIp     string
 	NodeId      string
 	ClusterId   string

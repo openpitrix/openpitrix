@@ -8,9 +8,12 @@ import (
 	"encoding/json"
 	"strings"
 
+	"fmt"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/utils/jsontool"
 )
 
 type Metadata struct {
@@ -216,14 +219,20 @@ func (m *Metadata) GetEnvCnodes() map[string]interface{} {
 	return result
 }
 
-func GetRegisterExec(cnodes string) string {
-	// TODO: need real cmd
-	cmd := "/opt/metad/register-data.sh "
-	return cmd + cnodes
+func getCmdKey(clusterId, instanceId string) string {
+	return fmt.Sprintf("/%s/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeCmd, instanceId)
 }
 
-func GetDeregisterExec(cnodes string) string {
-	// TODO: need real cmd
-	cmd := "curl -X DELETE http://127.0.0.1:9611/v1/data/clusters?subs="
-	return cmd + cnodes
+func GetCmdCnodes(clusterId, instanceId, cmd string) string {
+	cnodes := map[string]interface{}{getCmdKey(clusterId, instanceId): cmd}
+	return jsontool.ToString(cnodes)
+}
+
+func getClusterKey(clusterId string) string {
+	return fmt.Sprintf("/%s/%s", RegisterClustersRootPath, clusterId)
+}
+
+func GetClusterCnodes(clusterId, cmd string) string {
+	cnodes := map[string]interface{}{getClusterKey(clusterId): cmd}
+	return jsontool.ToString(cnodes)
 }

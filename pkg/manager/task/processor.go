@@ -56,11 +56,17 @@ func (t *Processor) Pre() error {
 			if err == nil {
 				clusterNode := clusterNodes[0]
 				clusterRole := clusterNode.GetClusterRole()
-				meta.Cmd = vmbased.FormatAndMountVolumeCmd(
+				cmd := vmbased.FormatAndMountVolumeCmd(
 					clusterNode.GetDevice().GetValue(),
 					clusterRole.GetMountPoint().GetValue(),
 					clusterRole.GetFileSystem().GetValue(),
-					clusterRole.GetMountOptions().GetValue())
+					clusterRole.GetMountOptions().GetValue(),
+				)
+				meta.Cnodes = vmbased.GetCmdCnodes(
+					clusterNode.GetClusterId().GetValue(),
+					clusterNode.GetInstanceId().GetValue(),
+					cmd,
+				)
 
 				t.Task.TaskAction = vmbased.ActionRegisterCmd
 				// write back
@@ -75,7 +81,7 @@ func (t *Processor) Pre() error {
 				metadata := &vmbased.Metadata{
 					ClusterWrapper: pbClusterWrappers[0],
 				}
-				meta.Cmd = vmbased.GetRegisterExec(metadata.GetClusterCnodesString())
+				meta.Cnodes = metadata.GetClusterCnodesString()
 
 				// write back
 				t.Task.Directive, err = meta.ToString()

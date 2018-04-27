@@ -144,15 +144,20 @@ func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []strin
 	return preGroupNodes, postGroupNodes
 }
 
-func (f *Frame) deregisterCmd(nodeIds []string) *models.TaskLayer {
+func (f *Frame) deregisterCmdLayer(nodeIds []string) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
+		cnodes := GetCmdCnodes(
+			f.ClusterWrapper.Cluster.ClusterId,
+			f.ClusterWrapper.ClusterNodes[nodeId].InstanceId,
+			"",
+		)
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			NodeId:      nodeId,
 			DroneIp:     f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp,
 			Timeout:     TimeoutDeregister,
-			Cmd:         GetDeregisterExec("cmd"),
+			Cnodes:      cnodes,
 		}
 		directive, err := meta.ToString()
 		if err != nil {
@@ -176,7 +181,7 @@ func (f *Frame) deregisterCmd(nodeIds []string) *models.TaskLayer {
 	}
 }
 
-func (f *Frame) registerCmd(nodeIds []string, serviceName string) *models.TaskLayer {
+func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		role := f.ClusterWrapper.ClusterNodes[nodeId].Role
@@ -196,12 +201,17 @@ func (f *Frame) registerCmd(nodeIds []string, serviceName string) *models.TaskLa
 			if service.Cmd == "" {
 				continue
 			}
+			cnodes := GetCmdCnodes(
+				f.ClusterWrapper.Cluster.ClusterId,
+				f.ClusterWrapper.ClusterNodes[nodeId].InstanceId,
+				service.Cmd,
+			)
 			meta := &models.Meta{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 				NodeId:      nodeId,
 				DroneIp:     f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp,
 				Timeout:     timeout,
-				Cmd:         GetRegisterExec(service.Cmd),
+				Cnodes:      cnodes,
 			}
 			directive, err := meta.ToString()
 			if err != nil {
@@ -315,7 +325,7 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 
 	for _, order := range orders {
 		nodeIds := orderNodeIds[order]
-		taskLayer := f.registerCmd(nodeIds, serviceName)
+		taskLayer := f.registerCmdLayer(nodeIds, serviceName)
 		headTaskLayer.Leaf().Child = taskLayer
 	}
 	return headTaskLayer.Child
@@ -559,13 +569,17 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 				"echo \"%s\" > /root/.ssh/id_%s;echo \"%s\" > /root/.ssh/id_%s.pub;"+
 				"chown 600 /root/.ssh/id_%s;chown 644 /root/.ssh/id_%s.pub",
 				private, keyType, public, keyType, keyType, keyType)
-
+			cnodes := GetCmdCnodes(
+				f.ClusterWrapper.Cluster.ClusterId,
+				f.ClusterWrapper.ClusterNodes[nodeId].InstanceId,
+				cmd,
+			)
 			meta := &models.Meta{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 				Timeout:     TimeoutSshKeygen,
 				NodeId:      clusterNode.NodeId,
 				DroneIp:     clusterNode.PrivateIp,
-				Cmd:         cmd,
+				Cnodes:      cnodes,
 			}
 			directive, err := meta.ToString()
 			if err != nil {
@@ -595,12 +609,17 @@ func (f *Frame) umountVolumeLayer() *models.TaskLayer {
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
 		cmd := UmountVolumeCmd(clusterRole.MountPoint)
+		cnodes := GetCmdCnodes(
+			f.ClusterWrapper.Cluster.ClusterId,
+			f.ClusterWrapper.ClusterNodes[nodeId].InstanceId,
+			cmd,
+		)
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			Timeout:     TimeoutUmountVolume,
 			NodeId:      clusterNode.NodeId,
 			DroneIp:     clusterNode.PrivateIp,
-			Cmd:         cmd,
+			Cnodes:      cnodes,
 		}
 		directive, err := meta.ToString()
 		if err != nil {
@@ -799,12 +818,12 @@ func (f *Frame) waitFrontgateLayer() *models.TaskLayer {
 }
 
 func (f *Frame) registerMetadataLayer() *models.TaskLayer {
-	// When the task is handled by task controller, the cmd will be filled in,
+	// When the task is handled by task controller, the cnodes will be filled in,
 	meta := &models.Meta{
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 		Timeout:     TimeoutRegister,
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
-		Cmd:         "",
+		Cnodes:      "",
 	}
 	directive, err := meta.ToString()
 	if err != nil {
@@ -824,11 +843,12 @@ func (f *Frame) registerMetadataLayer() *models.TaskLayer {
 }
 
 func (f *Frame) deregisterMetadataLayer() *models.TaskLayer {
+	cnodes := GetClusterCnodes(f.ClusterWrapper.Cluster.ClusterId, "")
 	meta := &models.Meta{
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 		Timeout:     TimeoutDeregister,
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
-		Cmd:         GetDeregisterExec(f.ClusterWrapper.Cluster.ClusterId),
+		Cnodes:      cnodes,
 	}
 	directive, err := meta.ToString()
 	if err != nil {
@@ -863,7 +883,7 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 		Append(f.registerMetadataLayer()).           // register cluster metadata
 		Append(f.startConfdServiceLayer()).          // start confd service
 		Append(f.initAndStartServiceLayer(nodeIds)). // register init and start cmd to exec
-		Append(f.deregisterCmd(nodeIds))             // deregister cmd
+		Append(f.deregisterCmdLayer(nodeIds))        // deregister cmd
 
 	return headTaskLayer.Child
 }
@@ -901,7 +921,7 @@ func (f *Frame) StartClusterLayer() *models.TaskLayer {
 		Append(f.registerMetadataLayer()).    // register cluster metadata
 		Append(f.startConfdServiceLayer()).   // start confd service
 		Append(f.startServiceLayer(nodeIds)). // register start cmd to exec
-		Append(f.deregisterCmd(nodeIds))      // deregister cmd
+		Append(f.deregisterCmdLayer(nodeIds)) // deregister cmd
 
 	return headTaskLayer.Child
 }
