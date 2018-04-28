@@ -81,6 +81,34 @@ func (a *Client) CreateAppVersion(params *CreateAppVersionParams) (*CreateAppVer
 }
 
 /*
+CreateCategory creates category
+*/
+func (a *Client) CreateCategory(params *CreateCategoryParams) (*CreateCategoryOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateCategoryParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CreateCategory",
+		Method:             "POST",
+		PathPattern:        "/v1/categories",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &CreateCategoryReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CreateCategoryOK), nil
+
+}
+
+/*
 DeleteApp deletes app
 */
 func (a *Client) DeleteApp(params *DeleteAppParams) (*DeleteAppOK, error) {
@@ -137,6 +165,34 @@ func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams) (*DeleteAppVer
 }
 
 /*
+DeleteCategory deletes category
+*/
+func (a *Client) DeleteCategory(params *DeleteCategoryParams) (*DeleteCategoryOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteCategoryParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteCategory",
+		Method:             "DELETE",
+		PathPattern:        "/v1/categories",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteCategoryReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteCategoryOK), nil
+
+}
+
+/*
 DescribeAppVersions describes app versions with filter
 */
 func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams) (*DescribeAppVersionsOK, error) {
@@ -189,6 +245,34 @@ func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, erro
 		return nil, err
 	}
 	return result.(*DescribeAppsOK), nil
+
+}
+
+/*
+DescribeCategory describes categories with filter
+*/
+func (a *Client) DescribeCategory(params *DescribeCategoryParams) (*DescribeCategoryOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeCategoryParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeCategory",
+		Method:             "GET",
+		PathPattern:        "/v1/categories",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DescribeCategoryReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeCategoryOK), nil
 
 }
 
@@ -273,6 +357,34 @@ func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams) (*ModifyAppVer
 		return nil, err
 	}
 	return result.(*ModifyAppVersionOK), nil
+
+}
+
+/*
+ModifyCategory modifies category
+*/
+func (a *Client) ModifyCategory(params *ModifyCategoryParams) (*ModifyCategoryOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewModifyCategoryParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ModifyCategory",
+		Method:             "PATCH",
+		PathPattern:        "/v1/categories",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ModifyCategoryReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ModifyCategoryOK), nil
 
 }
 

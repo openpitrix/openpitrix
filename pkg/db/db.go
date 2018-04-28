@@ -37,7 +37,7 @@ type Database struct {
 
 type SelectQuery struct {
 	*dbr.SelectBuilder
-	joinCount int // for join filter
+	JoinCount int // for join filter
 }
 
 type InsertQuery struct {
@@ -147,10 +147,12 @@ func (b *SelectQuery) Count() (count uint32, err error) {
 	offset := selectStmt.OffsetCount
 	column := selectStmt.Column
 	isDistinct := selectStmt.IsDistinct
+	order := selectStmt.Order
 
 	b.SelectStmt.LimitCount = -1
 	b.SelectStmt.OffsetCount = -1
 	b.SelectStmt.Column = []interface{}{"COUNT(*)"}
+	b.SelectStmt.Order = []dbr.Builder{}
 
 	if isDistinct {
 		b.SelectStmt.Column = []interface{}{fmt.Sprintf("COUNT(DISTINCT %s)", getColumns(column))}
@@ -163,6 +165,7 @@ func (b *SelectQuery) Count() (count uint32, err error) {
 	selectStmt.OffsetCount = offset
 	selectStmt.Column = column
 	selectStmt.IsDistinct = isDistinct
+	selectStmt.Order = order
 	b.SelectStmt = selectStmt
 	return
 }

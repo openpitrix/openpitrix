@@ -65,6 +65,10 @@ type DescribeAppsParams struct {
 
 	/*AppID*/
 	AppID []string
+	/*CategoryID*/
+	CategoryID []string
+	/*CategoryName*/
+	CategoryName []string
 	/*ChartName*/
 	ChartName []string
 	/*Limit*/
@@ -77,8 +81,12 @@ type DescribeAppsParams struct {
 	Owner []string
 	/*RepoID*/
 	RepoID []string
+	/*Reverse*/
+	Reverse *bool
 	/*SearchWord*/
 	SearchWord *string
+	/*SortKey*/
+	SortKey *string
 	/*Status*/
 	Status []string
 
@@ -129,6 +137,28 @@ func (o *DescribeAppsParams) WithAppID(appID []string) *DescribeAppsParams {
 // SetAppID adds the appId to the describe apps params
 func (o *DescribeAppsParams) SetAppID(appID []string) {
 	o.AppID = appID
+}
+
+// WithCategoryID adds the categoryID to the describe apps params
+func (o *DescribeAppsParams) WithCategoryID(categoryID []string) *DescribeAppsParams {
+	o.SetCategoryID(categoryID)
+	return o
+}
+
+// SetCategoryID adds the categoryId to the describe apps params
+func (o *DescribeAppsParams) SetCategoryID(categoryID []string) {
+	o.CategoryID = categoryID
+}
+
+// WithCategoryName adds the categoryName to the describe apps params
+func (o *DescribeAppsParams) WithCategoryName(categoryName []string) *DescribeAppsParams {
+	o.SetCategoryName(categoryName)
+	return o
+}
+
+// SetCategoryName adds the categoryName to the describe apps params
+func (o *DescribeAppsParams) SetCategoryName(categoryName []string) {
+	o.CategoryName = categoryName
 }
 
 // WithChartName adds the chartName to the describe apps params
@@ -197,6 +227,17 @@ func (o *DescribeAppsParams) SetRepoID(repoID []string) {
 	o.RepoID = repoID
 }
 
+// WithReverse adds the reverse to the describe apps params
+func (o *DescribeAppsParams) WithReverse(reverse *bool) *DescribeAppsParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe apps params
+func (o *DescribeAppsParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
 // WithSearchWord adds the searchWord to the describe apps params
 func (o *DescribeAppsParams) WithSearchWord(searchWord *string) *DescribeAppsParams {
 	o.SetSearchWord(searchWord)
@@ -206,6 +247,17 @@ func (o *DescribeAppsParams) WithSearchWord(searchWord *string) *DescribeAppsPar
 // SetSearchWord adds the searchWord to the describe apps params
 func (o *DescribeAppsParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe apps params
+func (o *DescribeAppsParams) WithSortKey(sortKey *string) *DescribeAppsParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe apps params
+func (o *DescribeAppsParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WithStatus adds the status to the describe apps params
@@ -232,6 +284,22 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	joinedAppID := swag.JoinByFormat(valuesAppID, "multi")
 	// query array param app_id
 	if err := r.SetQueryParam("app_id", joinedAppID...); err != nil {
+		return err
+	}
+
+	valuesCategoryID := o.CategoryID
+
+	joinedCategoryID := swag.JoinByFormat(valuesCategoryID, "multi")
+	// query array param category_id
+	if err := r.SetQueryParam("category_id", joinedCategoryID...); err != nil {
+		return err
+	}
+
+	valuesCategoryName := o.CategoryName
+
+	joinedCategoryName := swag.JoinByFormat(valuesCategoryName, "multi")
+	// query array param category_name
+	if err := r.SetQueryParam("category_name", joinedCategoryName...); err != nil {
 		return err
 	}
 
@@ -299,6 +367,22 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		return err
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.SearchWord != nil {
 
 		// query param search_word
@@ -309,6 +393,22 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}

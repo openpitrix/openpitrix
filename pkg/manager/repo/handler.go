@@ -44,9 +44,9 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		Limit(limit).
 		Where(manager.BuildFilterConditionsWithPrefix(req, models.RepoTableName))
 
-	query = db.AddJoinFilterWithMap(query, models.RepoTableName, models.RepoLabelTableName, models.ColumnRepoId,
+	query = manager.AddQueryJoinWithMap(query, models.RepoTableName, models.RepoLabelTableName, models.ColumnRepoId,
 		models.ColumnLabelKey, models.ColumnLabelValue, labelMap)
-	query = db.AddJoinFilterWithMap(query, models.RepoTableName, models.RepoSelectorTableName, models.ColumnRepoId,
+	query = manager.AddQueryJoinWithMap(query, models.RepoTableName, models.RepoSelectorTableName, models.ColumnRepoId,
 		models.ColumnSelectorKey, models.ColumnSelectorValue, selectorMap)
 	query = query.Distinct()
 

@@ -27,6 +27,7 @@ message CreateAppRequest {
 	google.protobuf.StringValue maintainers = 11;
 	google.protobuf.StringValue sources = 12;
 	google.protobuf.StringValue readme = 13;
+	google.protobuf.StringValue category_id = 14;
 }
 
 message CreateAppResponse {
@@ -46,6 +47,7 @@ message ModifyAppRequest {
 	google.protobuf.StringValue maintainers = 11;
 	google.protobuf.StringValue sources = 12;
 	google.protobuf.StringValue readme = 13;
+	google.protobuf.StringValue category_id = 14;
 }
 
 message ModifyAppResponse {
@@ -77,17 +79,41 @@ message App {
 	google.protobuf.Timestamp create_time = 14;
 	google.protobuf.Timestamp status_time = 15;
 	google.protobuf.Timestamp update_time = 16;
+	repeated AppCategory app_category_set = 17;
 }
+
+message AppCategory {
+	google.protobuf.StringValue category_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue locale = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
+}
+
+message Category {
+	google.protobuf.StringValue category_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue locale = 3;
+	google.protobuf.StringValue owner = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp update_time = 6;
+}
+
 message DescribeAppsRequest {
-	repeated string app_id = 1; // NOTE: grpc gateway cannot handle repeated StringValue
-	repeated string name = 2;
-	repeated string repo_id = 3;
-	repeated string status = 4;
-	repeated string owner = 5;
-	repeated string chart_name = 6;
-	google.protobuf.StringValue search_word = 7;
-	uint32 limit = 8; // NOTE: uint64 marshal to json will convert to string
-	uint32 offset = 9;
+	google.protobuf.StringValue search_word = 1;
+	uint32 limit = 2; // NOTE: uint64 marshal to json will convert to string
+	uint32 offset = 3;
+	google.protobuf.StringValue sort_key = 5;
+	google.protobuf.BoolValue reverse = 6;
+	repeated string app_id = 7; // NOTE: grpc gateway cannot handle repeated StringValue
+	repeated string name = 8;
+	repeated string repo_id = 9;
+	repeated string status = 10;
+	repeated string owner = 11;
+	repeated string chart_name = 12;
+	repeated string category_id = 13;
+	repeated string category_name = 14;
 }
 message DescribeAppsResponse {
 	uint32 total_count = 1;
@@ -139,6 +165,7 @@ message AppVersion {
 	google.protobuf.Timestamp status_time = 9;
 	google.protobuf.Timestamp update_time = 10;
 }
+
 message DescribeAppVersionsRequest {
 	repeated string version_id = 1;
 	repeated string app_id = 2;
@@ -151,6 +178,7 @@ message DescribeAppVersionsRequest {
 	uint32 limit = 9; // NOTE: uint64 marshal to json will convert to string
 	uint32 offset = 10;
 }
+
 message DescribeAppVersionsResponse {
 	uint32 total_count = 1;
 	repeated AppVersion app_version_set = 2;
@@ -159,8 +187,50 @@ message DescribeAppVersionsResponse {
 message GetAppVersionPackageRequest {
 	google.protobuf.StringValue version_id = 1;
 }
+
 message GetAppVersionPackageResponse {
 	bytes package = 1;
+}
+
+message DescribeCategoryRequest {
+	google.protobuf.StringValue search_word = 1;
+	uint32 limit = 2;
+	uint32 offset = 3;
+	repeated string category_id = 4;
+	repeated string name = 5;
+	repeated string owner = 6;
+}
+
+message DescribeCategoryResponse {
+	uint32 total_count = 1;
+	repeated Category category_set = 2;
+}
+
+message CreateCategoryRequest {
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue locale = 3;
+}
+
+message CreateCategoryResponse {
+	Category category = 1;
+}
+
+message ModifyCategoryRequest {
+	google.protobuf.StringValue category_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue locale = 3;
+}
+
+message ModifyCategoryResponse {
+	Category category = 1;
+}
+
+message DeleteCategoryRequest {
+	google.protobuf.StringValue category_id = 1;
+}
+
+message DeleteCategoryResponse {
+	Category category = 1;
 }
 
 service AppManager {
@@ -242,5 +312,40 @@ service AppManager {
 		option (google.api.http) = {
             get: "/v1/app_version/package"
         };
+	}
+	rpc DescribeCategory (DescribeCategoryRequest) returns (DescribeCategoryResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe categories with filter"
+		};
+		option (google.api.http) = {
+			get: "/v1/categories"
+		};
+	}
+	rpc CreateCategory (CreateCategoryRequest) returns (CreateCategoryResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create category"
+		};
+		option (google.api.http) = {
+			post: "/v1/categories"
+			body: "*"
+		};
+	}
+	rpc ModifyCategory (ModifyCategoryRequest) returns (ModifyCategoryResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify category"
+		};
+		option (google.api.http) = {
+			patch: "/v1/categories"
+			body: "*"
+		};
+	}
+	rpc DeleteCategory (DeleteCategoryRequest) returns (DeleteCategoryResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete category"
+		};
+		option (google.api.http) = {
+			delete: "/v1/categories"
+			body: "*"
+		};
 	}
 }

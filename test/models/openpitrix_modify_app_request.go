@@ -19,6 +19,9 @@ type OpenpitrixModifyAppRequest struct {
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
+	// category id
+	CategoryID string `json:"category_id,omitempty"`
+
 	// chart name
 	ChartName string `json:"chart_name,omitempty"`
 

@@ -5,6 +5,7 @@
 package manager
 
 import (
+	"fmt"
 	"reflect"
 
 	"github.com/fatih/structs"
@@ -24,6 +25,14 @@ type Request interface {
 	String() string
 	ProtoMessage()
 	Descriptor() ([]byte, []int)
+}
+type RequestWithSortKey interface {
+	Request
+	GetSortKey() *wrappers.StringValue
+}
+type RequestWithReverse interface {
+	RequestWithSortKey
+	GetReverse() *wrappers.BoolValue
 }
 
 const (
@@ -144,4 +153,37 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 		}
 	}
 	return attributes
+}
+
+func AddQueryOrderDir(query *db.SelectQuery, req Request, column string) *db.SelectQuery {
+	isAsc := false
+	if r, ok := req.(RequestWithReverse); ok {
+		reverse := r.GetReverse()
+		if reverse != nil {
+			isAsc = reverse.GetValue()
+		}
+	}
+	if r, ok := req.(RequestWithSortKey); ok {
+		s := r.GetSortKey()
+		if s != nil {
+			column = s.GetValue()
+		}
+	}
+	query = query.OrderDir(column, isAsc)
+	return query
+}
+
+func AddQueryJoinWithMap(query *db.SelectQuery, table, joinTable, primaryKey, keyField, valueField string, filterMap map[string][]string) *db.SelectQuery {
+	var whereCondition []dbr.Builder
+	for key, values := range filterMap {
+		aliasTableName := fmt.Sprintf("table_label_%d", query.JoinCount)
+		onCondition := fmt.Sprintf("%s.%s = %s.%s", aliasTableName, primaryKey, table, primaryKey)
+		query = query.Join(dbr.I(joinTable).As(aliasTableName), onCondition)
+		whereCondition = append(whereCondition, db.And(db.Eq(aliasTableName+"."+keyField, key), db.Eq(aliasTableName+"."+valueField, values)))
+		query.JoinCount++
+	}
+	if len(whereCondition) > 0 {
+		query = query.Where(db.And(whereCondition...))
+	}
+	return query
 }
