@@ -250,6 +250,39 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
             "name": "app_id",
             "in": "query",
             "required": false,
@@ -310,24 +343,24 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "search_word",
+            "name": "category_id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           },
           {
-            "name": "limit",
+            "name": "category_name",
             "in": "query",
             "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -402,6 +435,150 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixModifyAppRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/categories": {
+      "get": {
+        "summary": "describe categories with filter",
+        "operationId": "DescribeCategory",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeCategoryResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "delete": {
+        "summary": "delete category",
+        "operationId": "DeleteCategory",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteCategoryResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteCategoryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "post": {
+        "summary": "create category",
+        "operationId": "CreateCategory",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateCategoryResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateCategoryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      },
+      "patch": {
+        "summary": "modify category",
+        "operationId": "ModifyCategory",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyCategoryResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyCategoryRequest"
             }
           }
         ],
@@ -1580,6 +1757,37 @@ var Files = map[string]string{
         "update_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "app_category_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixAppCategory"
+          }
+        }
+      }
+    },
+    "openpitrixAppCategory": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -1612,6 +1820,31 @@ var Files = map[string]string{
           "format": "date-time"
         },
         "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixCategory": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "create_time": {
           "type": "string",
           "format": "date-time"
         },
@@ -1659,6 +1892,9 @@ var Files = map[string]string{
         },
         "readme": {
           "type": "string"
+        },
+        "category_id": {
+          "type": "string"
         }
       }
     },
@@ -1701,6 +1937,25 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixCreateCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "$ref": "#/definitions/openpitrixCategory"
+        }
+      }
+    },
     "openpitrixDeleteAppRequest": {
       "type": "object",
       "properties": {
@@ -1733,6 +1988,22 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixDeleteCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "$ref": "#/definitions/openpitrixCategory"
+        }
+      }
+    },
     "openpitrixDescribeAppVersionsResponse": {
       "type": "object",
       "properties": {
@@ -1759,6 +2030,21 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixApp"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "category_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixCategory"
           }
         }
       }
@@ -1810,6 +2096,9 @@ var Files = map[string]string{
         },
         "readme": {
           "type": "string"
+        },
+        "category_id": {
+          "type": "string"
         }
       }
     },
@@ -1846,6 +2135,28 @@ var Files = map[string]string{
       "properties": {
         "app_version": {
           "$ref": "#/definitions/openpitrixAppVersion"
+        }
+      }
+    },
+    "openpitrixModifyCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "$ref": "#/definitions/openpitrixCategory"
         }
       }
     },

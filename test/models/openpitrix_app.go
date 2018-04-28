@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixApp
 type OpenpitrixApp struct {
 
+	// app category set
+	AppCategorySet OpenpitrixAppAppCategorySet `json:"app_category_set"`
+
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
