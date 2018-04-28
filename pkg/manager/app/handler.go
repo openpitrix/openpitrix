@@ -59,6 +59,9 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.AppTableName))
+	// TODO: validate sort_key
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	// TODO: add category_id join query
 	_, err := query.Load(&apps)
 	if err != nil {
 		// TODO: err_code should be implementation
@@ -203,6 +206,7 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.AppVersionTableName))
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err := query.Load(&versions)
 	if err != nil {
 		// TODO: err_code should be implementation
@@ -300,4 +304,20 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 	return &pb.GetAppVersionPackageResponse{
 		Package: content,
 	}, nil
+}
+
+func (p *Server) DescribeCategory(context.Context, *pb.DescribeCategoryRequest) (*pb.DescribeCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "DescribeCategory unimplemented")
+}
+
+func (p *Server) CreateCategory(context.Context, *pb.CreateCategoryRequest) (*pb.CreateCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "CreateCategory unimplemented")
+}
+
+func (p *Server) ModifyCategory(context.Context, *pb.ModifyCategoryRequest) (*pb.ModifyCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "ModifyCategory unimplemented")
+}
+
+func (p *Server) DeleteCategory(context.Context, *pb.DeleteCategoryRequest) (*pb.DeleteCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "DeleteCategory unimplemented")
 }

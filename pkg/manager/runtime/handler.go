@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -97,7 +96,7 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 		Limit(limit).
 		Where(manager.BuildFilterConditionsWithPrefix(req, models.RuntimeTableName))
 
-	query = db.AddJoinFilterWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, RuntimeIdColumn,
+	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, RuntimeIdColumn,
 		models.ColumnLabelKey, models.ColumnLabelValue, selectorMap)
 
 	_, err = query.Load(&runtimes)
