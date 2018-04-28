@@ -6,70 +6,49 @@ package drone
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/gogo/protobuf/proto"
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/manager"
-	pbdrone "openpitrix.io/openpitrix/pkg/pb/drone"
+	"openpitrix.io/openpitrix/pkg/pb/drone"
+	"openpitrix.io/openpitrix/pkg/pb/types"
 )
 
-type DroneServiceClient interface {
-	pbdrone.DroneServiceClient
-	pbdrone.DroneServiceForFrontgateClient
-}
-
 type Server struct {
-	opt   *Options
+	cfg   *pbtypes.DroneConfig
 	confd *ConfdServer
+	fg    *FrontgateController
 }
 
-func NewServer(opt *Options, opts ...func(opt *Options)) *Server {
-	if opt == nil {
-		opt = NewDefaultOptions()
+func NewServer(cfg *pbtypes.DroneConfig, cfgConfd *pbtypes.ConfdConfig, opts ...Options) *Server {
+	if cfg != nil {
+		cfg = proto.Clone(cfg).(*pbtypes.DroneConfig)
 	} else {
-		opt = opt.Clone()
+		cfg = NewDefaultConfig()
 	}
 
 	for _, fn := range opts {
-		fn(opt)
+		fn(cfg)
 	}
 
 	p := &Server{
-		opt:   opt,
+		cfg:   cfg,
 		confd: NewConfdServer(),
+		fg:    NewFrontgateController(),
+	}
+
+	if cfgConfd != nil {
+		p.SetConfdConfig(context.Background(), cfgConfd)
 	}
 
 	return p
 }
 
-func Serve(opt *Options, opts ...func(opt *Options)) {
-	s := NewServer(opt, opts...)
+func Serve(cfg *pbtypes.DroneConfig, cfgConfd *pbtypes.ConfdConfig, opts ...Options) {
+	s := NewServer(cfg, cfgConfd, opts...)
 
-	manager.NewGrpcServer("drone-service", s.opt.Port).Serve(func(server *grpc.Server) {
+	manager.NewGrpcServer("drone-service", int(s.cfg.ListenPort)).Serve(func(server *grpc.Server) {
 		pbdrone.RegisterDroneServiceServer(server, s)
-		pbdrone.RegisterDroneServiceForFrontgateServer(server, s)
 	})
-}
-
-func DialDroneService(ctx context.Context, host string, port int) (
-	client DroneServiceClient,
-	conn *grpc.ClientConn,
-	err error,
-) {
-	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", host, port), grpc.WithInsecure())
-	if err != nil {
-		return
-	}
-
-	type _DroneServiceClient struct {
-		pbdrone.DroneServiceClient
-		pbdrone.DroneServiceForFrontgateClient
-	}
-
-	client = &_DroneServiceClient{
-		DroneServiceClient:             pbdrone.NewDroneServiceClient(conn),
-		DroneServiceForFrontgateClient: pbdrone.NewDroneServiceForFrontgateClient(conn),
-	}
-	return
 }

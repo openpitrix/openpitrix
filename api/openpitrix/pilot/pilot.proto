@@ -1,0 +1,46 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix.pilot;
+
+option go_package = "openpitrix.io/openpitrix/pkg/pb/pilot;pbpilot";
+
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+import "openpitrix/types/types.proto";
+import "openpitrix/types/drone.proto";
+import "openpitrix/types/frontgate.proto";
+import "openpitrix/types/pilot.proto";
+import "openpitrix/types/task.proto";
+
+service PilotService {
+	rpc GetPilotConfig (openpitrix.types.Empty) returns (openpitrix.types.PilotConfig);
+
+	rpc GetFrontdateList (openpitrix.types.Empty) returns (openpitrix.types.FrontgateIdList);
+	rpc GetFrontgateConfig (openpitrix.types.FrontgateId) returns (openpitrix.types.FrontgateConfig);
+
+	rpc FrontgateChannel (stream openpitrix.types.Bytes) returns (stream openpitrix.types.Bytes);
+
+	rpc IsConfdRunning (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Bool);
+	rpc StartConfd (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
+	rpc StopConfd (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
+
+	rpc RegisterMetadata (openpitrix.types.SubTask_RegisterMetadata) returns (openpitrix.types.Empty);
+	rpc DeregisterMetadata (openpitrix.types.SubTask_DeregisterMetadata) returns (openpitrix.types.Empty);
+
+	rpc RegisterCmd (openpitrix.types.SubTask_RegisterCmd) returns (openpitrix.types.Empty);
+	rpc DeregisterCmd (openpitrix.types.SubTask_DeregisterCmd) returns (openpitrix.types.Empty);
+
+	rpc ReportSubTaskStatus (openpitrix.types.SubTaskStatus) returns (openpitrix.types.Empty);
+	rpc GetSubtaskStatus (openpitrix.types.SubTaskId) returns (openpitrix.types.SubTaskStatus);
+
+	rpc HandleSubtask (openpitrix.types.SubTaskMessage) returns (openpitrix.types.Empty);
+
+	rpc PingPilot (openpitrix.types.Empty) returns (openpitrix.types.Empty);
+	rpc PingFrontgate (openpitrix.types.FrontgateId) returns (openpitrix.types.Empty);
+	rpc PingDrone (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
+}

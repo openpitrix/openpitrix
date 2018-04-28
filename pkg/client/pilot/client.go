@@ -12,19 +12,20 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
-	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pb/pilot"
+	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/utils"
 )
 
-func NewPilotManagerClient(ctx context.Context) (pb.PilotServiceClient, error) {
+func NewPilotManagerClient(ctx context.Context) (pbpilot.PilotServiceClient, error) {
 	conn, err := manager.NewClient(ctx, constants.PilotManagerHost, constants.PilotManagerPort)
 	if err != nil {
 		return nil, err
 	}
-	return pb.NewPilotServiceClient(conn), err
+	return pbpilot.NewPilotServiceClient(conn), err
 }
 
-func HandleSubtask(subtaskRequest *pb.HandleSubtaskRequest) error {
+func HandleSubtask(subtaskRequest *pbtypes.SubTaskMessage) error {
 	ctx := context.Background()
 	client, err := NewPilotManagerClient(ctx)
 	if err != nil {
@@ -37,7 +38,7 @@ func HandleSubtask(subtaskRequest *pb.HandleSubtaskRequest) error {
 	return nil
 }
 
-func GetSubtaskStatus(subtaskStatusRequest *pb.GetSubtaskStatusRequest) (*pb.GetSubtaskStatusResponse, error) {
+func GetSubtaskStatus(subtaskStatusRequest *pbtypes.SubTaskId) (*pbtypes.SubTaskStatus, error) {
 	ctx := context.Background()
 	client, err := NewPilotManagerClient(ctx)
 	if err != nil {
@@ -53,32 +54,26 @@ func GetSubtaskStatus(subtaskStatusRequest *pb.GetSubtaskStatusRequest) (*pb.Get
 func WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
 	logger.Debug("Waiting for task [%s] finished", taskId)
 	return utils.WaitForSpecificOrError(func() (bool, error) {
-		taskStatusRequest := &pb.GetSubtaskStatusRequest{
-			SubtaskId: []string{taskId},
+		taskStatusRequest := &pbtypes.SubTaskId{
+			TaskId: taskId,
 		}
 		taskStatusResponse, err := GetSubtaskStatus(taskStatusRequest)
 		if err != nil {
 			//network or api error, not considered task fail.
 			return false, nil
 		}
-		if len(taskStatusResponse.SubtaskStatusSet) == 0 {
-			return false, fmt.Errorf("Can not find task [%s]. ", taskId)
-		}
-		t := taskStatusResponse.SubtaskStatusSet[0]
-		if t.Status == nil {
-			logger.Errorf("Task [%s] status is nil", taskId)
+
+		t := taskStatusResponse
+		if t.Status == constants.StatusWorking || t.Status == constants.StatusPending {
 			return false, nil
 		}
-		if t.Status.GetValue() == constants.StatusWorking || t.Status.GetValue() == constants.StatusPending {
-			return false, nil
-		}
-		if t.Status.GetValue() == constants.StatusSuccessful {
+		if t.Status == constants.StatusSuccessful {
 			return true, nil
 		}
-		if t.Status.GetValue() == constants.StatusFailed {
+		if t.Status == constants.StatusFailed {
 			return false, fmt.Errorf("Task [%s] failed. ", taskId)
 		}
-		logger.Errorf("Unknown status [%s] for task [%s]. ", t.Status.GetValue(), taskId)
+		logger.Errorf("Unknown status [%s] for task [%s]. ", t.Status, taskId)
 		return false, nil
 	}, timeout, waitInterval)
 }

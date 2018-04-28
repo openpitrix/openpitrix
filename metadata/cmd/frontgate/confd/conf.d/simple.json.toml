@@ -1,0 +1,23 @@
+# Copyright 2018 The OpenPitrix Authors. All rights reserved.
+# Use of this source code is governed by a Apache license
+# that can be found in the LICENSE file.
+
+# +build !windows
+
+[template]
+src = "simple.json.tmpl"
+dest = "${LIBCONFD_CONFDIR}/apps/simple/config.json"
+
+prefix = ""
+keys = [
+	"listen_port",
+	"key"
+]
+
+check_cmd = """
+	make -C ${LIBCONFD_CONFDIR}/apps/simple check-config
+"""
+
+reload_cmd = """
+	make -C ${LIBCONFD_CONFDIR}/apps/simple restart
+"""

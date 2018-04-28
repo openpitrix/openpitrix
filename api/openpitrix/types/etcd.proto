@@ -1,0 +1,21 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix.types;
+
+option go_package = "openpitrix.io/openpitrix/pkg/pb/types;pbtypes";
+
+message EtcdConfig {
+	string user = 1;
+	string password = 2;
+
+	repeated EtcdEndpoint node_list = 3;
+}
+
+message EtcdEndpoint {
+	string host = 1;
+	int32 port = 2;
+}

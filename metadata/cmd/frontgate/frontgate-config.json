@@ -1,0 +1,50 @@
+{
+	"id": "openpitrix-frontgate-001",
+	"node_id": "openpitrix-frontgate-001-node-01",
+	"host": "localhost",
+	"listen_port": 9111,
+	"pilot_host": "localhost",
+	"pilot_port": 9110,
+	"node_list": [
+		{
+			"frontgate_id": "openpitrix-frontgate-001",
+			"frontgate_ip": "localhost",
+			"frontgate_port": 9111
+		}
+	],
+	"etcd_config": {
+		"user": "",
+		"password": "",
+		"node_list": [
+			{
+				"host": "localhost",
+				"port": 2379
+			}
+		]
+	},
+	"confd_config": {
+		"processor_config": {
+			"confdir": "${PWD}/confd",
+			"interval": 10,
+			"noop": false,
+			"prefix": "",
+			"sync_only": false,
+			"log_level": "DEBUG",
+			"onetime": false,
+			"watch": true,
+			"keep_stage_file": false
+		},
+		"backend_config": {
+			"type": "libconfd-backend-etcdv3",
+			"host": [
+				"localhost:2379"
+			],
+			"user": "",
+			"password": "",
+			"client_ca_keys": "",
+			"client_cert": "",
+			"client_key": ""
+		}
+	},
+	"log_level": "debug"
+}
