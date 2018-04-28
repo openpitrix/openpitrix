@@ -20,7 +20,6 @@ import (
 	_ "k8s.io/kubernetes/pkg/apis/extensions/install"
 
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
-	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -30,11 +29,6 @@ type Parser struct {
 }
 
 func (p *Parser) ParseCluster(vals map[string]interface{}, versionId string) (*models.Cluster, error) {
-	clusterId, ok := p.getStringFromValues(vals, "ClusterId")
-	if !ok {
-		return nil, fmt.Errorf("ClusterId must be set and type is string")
-	}
-
 	name, ok := p.getStringFromValues(vals, "Name")
 	if !ok {
 		name = ""
@@ -61,24 +55,16 @@ func (p *Parser) ParseCluster(vals map[string]interface{}, versionId string) (*m
 	}
 
 	if len(resp.AppVersionSet) == 0 {
-		return nil, fmt.Errorf("App version [%s] not found", versionId)
+		return nil, fmt.Errorf("app version [%s] not found", versionId)
 	}
 
 	appVersion := resp.AppVersionSet[0]
 
-	runtimeId, ok := p.getStringFromValues(vals, "RuntimeId")
-	if !ok {
-		return nil, fmt.Errorf("RuntimeId must be set and type is string")
-	}
-
 	cluster := &models.Cluster{
-		ClusterId:   clusterId,
 		Name:        name,
 		Description: desc,
 		AppId:       appVersion.AppId.GetValue(),
 		VersionId:   versionId,
-		Owner:       appVersion.Owner.GetValue(),
-		RuntimeId:   runtimeId,
 		CreateTime:  time.Now(),
 		StatusTime:  time.Now(),
 	}
@@ -87,11 +73,6 @@ func (p *Parser) ParseCluster(vals map[string]interface{}, versionId string) (*m
 }
 
 func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) (map[string]*models.ClusterRole, error) {
-	clusterId, ok := p.getStringFromValues(vals, "ClusterId")
-	if !ok {
-		return nil, fmt.Errorf("ClusterId must be set and type is string")
-	}
-
 	env, err := json.Marshal(vals)
 	if err != nil {
 		return nil, err
@@ -124,8 +105,7 @@ func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) 
 		switch o := obj.(type) {
 		case *v1beta2.Deployment:
 			clusterRole := &models.ClusterRole{
-				ClusterId:    clusterId,
-				Role:         o.GetObjectMeta().GetName(),
+				Role:         fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
 				InstanceSize: uint32(*o.Spec.Replicas),
 				Env:          string(env),
 			}
@@ -140,8 +120,7 @@ func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) 
 			clusterRoles[o.GetObjectMeta().GetName()] = clusterRole
 		case *v1beta1.Deployment:
 			clusterRole := &models.ClusterRole{
-				ClusterId:    clusterId,
-				Role:         o.GetObjectMeta().GetName(),
+				Role:         fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
 				InstanceSize: uint32(*o.Spec.Replicas),
 				Env:          string(env),
 			}
@@ -156,8 +135,7 @@ func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) 
 			clusterRoles[o.GetObjectMeta().GetName()] = clusterRole
 		case *exv1beta1.Deployment:
 			clusterRole := &models.ClusterRole{
-				ClusterId:    clusterId,
-				Role:         o.GetObjectMeta().GetName(),
+				Role:         fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
 				InstanceSize: uint32(*o.Spec.Replicas),
 				Env:          string(env),
 			}
@@ -172,8 +150,7 @@ func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) 
 			clusterRoles[o.GetObjectMeta().GetName()] = clusterRole
 		case *v1beta2.StatefulSet:
 			clusterRole := &models.ClusterRole{
-				ClusterId:    clusterId,
-				Role:         o.GetObjectMeta().GetName(),
+				Role:         fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
 				InstanceSize: uint32(*o.Spec.Replicas),
 				Env:          string(env),
 			}
@@ -186,8 +163,7 @@ func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) 
 			}
 		case *v1beta1.StatefulSet:
 			clusterRole := &models.ClusterRole{
-				ClusterId:    clusterId,
-				Role:         o.GetObjectMeta().GetName(),
+				Role:         fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
 				InstanceSize: uint32(*o.Spec.Replicas),
 				Env:          string(env),
 			}
@@ -200,8 +176,7 @@ func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) 
 			}
 		case *v1beta2.DaemonSet:
 			clusterRole := &models.ClusterRole{
-				ClusterId:    clusterId,
-				Role:         o.GetObjectMeta().GetName(),
+				Role:         fmt.Sprintf("%s-DaemonSet", o.GetObjectMeta().GetName()),
 				InstanceSize: uint32(1),
 				Env:          string(env),
 			}
@@ -214,8 +189,7 @@ func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) 
 			}
 		case *exv1beta1.DaemonSet:
 			clusterRole := &models.ClusterRole{
-				ClusterId:    clusterId,
-				Role:         o.GetObjectMeta().GetName(),
+				Role:         fmt.Sprintf("%s-DaemonSet", o.GetObjectMeta().GetName()),
 				InstanceSize: uint32(1),
 				Env:          string(env),
 			}
@@ -232,12 +206,11 @@ func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) 
 		}
 	}
 
-	_, ok = clusterRoles[""]
+	_, ok := clusterRoles[""]
 	if !ok {
 		clusterRoles[""] = &models.ClusterRole{
-			ClusterId: clusterId,
-			Role:      "",
-			Env:       string(env),
+			Role: "",
+			Env:  string(env),
 		}
 	}
 
@@ -288,26 +261,9 @@ func (p *Parser) parseValues(c *chart.Chart, rawConf []byte) (map[string]interfa
 	config := &chart.Config{Raw: string(rawVals), Values: map[string]*chart.Value{}}
 
 	// Get release option
-	clusterId, ok := p.getStringFromValues(customVals, "ClusterId")
-	if !ok {
-		return nil, fmt.Errorf("ClusterId must be set and type is string")
-	}
-
-	runtimeId, ok := p.getStringFromValues(customVals, "RuntimeId")
-	if !ok {
-		return nil, fmt.Errorf("RuntimeId must be set and type is string")
-	}
-
-	runtime, err := runtimeclient.NewRuntime(runtimeId)
-	if err != nil {
-		return nil, err
-	}
-
-	namespace := runtime.Zone
-
 	options := chartutil.ReleaseOptions{
-		Name:      clusterId,
-		Namespace: namespace,
+		Name:      "",
+		Namespace: "",
 	}
 
 	vals, err := chartutil.ToRenderValues(c, config, options)
