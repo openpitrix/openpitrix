@@ -51,6 +51,8 @@ It has these top-level messages:
 	ModifyClusterResponse
 	ModifyClusterNodeRequest
 	ModifyClusterNodeResponse
+	AddTableClusterNodesRequest
+	DeleteTableClusterNodesRequest
 	DeleteClustersRequest
 	DeleteClustersResponse
 	UpgradeClusterRequest
