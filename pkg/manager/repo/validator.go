@@ -3,14 +3,17 @@ package repo
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	neturl "net/url"
+	"path"
 	"regexp"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"gopkg.in/yaml.v2"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 )
@@ -79,7 +82,7 @@ func validate(repoType, url, credential, visibility string) error {
 		if u.Scheme != "http" {
 			return fmt.Errorf("scheme is not http")
 		}
-		err := ValidateHTTP(url)
+		err := ValidateHTTP(u)
 		if err != nil {
 			return fmt.Errorf("validate http failed, %+v", err)
 		}
@@ -87,7 +90,7 @@ func validate(repoType, url, credential, visibility string) error {
 		if u.Scheme != "https" {
 			return fmt.Errorf("scheme is not https")
 		}
-		err := ValidateHTTP(url)
+		err := ValidateHTTP(u)
 		if err != nil {
 			return fmt.Errorf("validate https failed, %+v", err)
 		}
@@ -98,8 +101,21 @@ func validate(repoType, url, credential, visibility string) error {
 	return nil
 }
 
-func ValidateHTTP(url string) error {
-	_, err := http.Get(url)
+func ValidateHTTP(u *neturl.URL) error {
+	u.Path = path.Join(u.Path, "index.yaml")
+
+	resp, err := http.Get(u.String())
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	var vals map[string]interface{}
+	err = yaml.Unmarshal(body, &vals)
 	if err != nil {
 		return err
 	}

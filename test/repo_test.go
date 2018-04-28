@@ -29,6 +29,10 @@ import (
 //	os.Exit(m.Run())
 //}
 
+var (
+	REPO_URL = "https://kubernetes-charts.storage.googleapis.com"
+)
+
 func TestRepo(t *testing.T) {
 	client := GetClient(clientConfig)
 
@@ -60,7 +64,7 @@ func TestRepo(t *testing.T) {
 			Name:        testRepoName,
 			Description: "description",
 			Type:        "https",
-			URL:         "https://github.com/",
+			URL:         REPO_URL,
 			Credential:  `{}`,
 			Visibility:  "public",
 		})
@@ -76,7 +80,7 @@ func TestRepo(t *testing.T) {
 			RepoID:      repoId,
 			Description: "cc",
 			Type:        "https",
-			URL:         "https://github.com/",
+			URL:         REPO_URL,
 			Credential:  `{}`,
 			Visibility:  "private",
 		})
@@ -95,7 +99,7 @@ func TestRepo(t *testing.T) {
 	if len(repos) != 1 {
 		t.Fatalf("failed to describe repos with params [%+v]", describeParams)
 	}
-	if repos[0].Name != testRepoName || repos[0].Description != "cc" || repos[0].URL != "https://github.com/" {
+	if repos[0].Name != testRepoName || repos[0].Description != "cc" || repos[0].URL != REPO_URL {
 		t.Fatalf("failed to modify repo [%+v]", repos[0])
 	}
 	// delete repo
@@ -223,7 +227,7 @@ func TestRepoLabelSelector(t *testing.T) {
 			Name:        testRepoName,
 			Description: "description",
 			Type:        "https",
-			URL:         "https://github.com/",
+			URL:         REPO_URL,
 			Credential:  `{}`,
 			Visibility:  "public",
 			Labels:      labels,
