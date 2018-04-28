@@ -16,6 +16,7 @@ type FrameInterface interface {
 	StartClusterLayer() *models.TaskLayer
 	DeleteClusterLayer() *models.TaskLayer
 	AddClusterNodesLayer() *models.TaskLayer
+	DeleteClusterNodesLayer() *models.TaskLayer
 }
 
 func NewFrameInterface(job *models.Job) (FrameInterface, error) {

@@ -114,6 +114,7 @@ const (
 	ServiceOrderName        = "order"
 	ServiceTimeoutName      = "timeout"
 	ServiceCmdName          = "cmd"
+	ServicePreCheckName     = "pre_check"
 	ScalingPolicyParallel   = "parallel"
 	ScalingPolicySequential = "sequential"
 

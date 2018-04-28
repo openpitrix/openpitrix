@@ -20,15 +20,6 @@ type Metadata struct {
 	ClusterWrapper *models.ClusterWrapper
 }
 
-func (m *Metadata) GetClusterCnodesString() string {
-	cnodes, err := json.Marshal(m.GetClusterCnodes())
-	if err != nil {
-		logger.Errorf("Marshal cluster [%s] metadata cnodes failed: %+v",
-			m.ClusterWrapper.Cluster.ClusterId, err)
-	}
-	return string(cnodes)
-}
-
 /*
 Compose cluster info into the following format,
 in order to register cluster to configuration management service.
@@ -56,8 +47,12 @@ func (m *Metadata) GetClusterCnodes() map[string]interface{} {
 
 	data := make(map[string]interface{})
 
+	var nodeIds []string
+	for nodeId := range m.ClusterWrapper.ClusterNodes {
+		nodeIds = append(nodeIds, nodeId)
+	}
 	// hosts
-	hosts := m.GetHostsCnodes()
+	hosts := m.GetHostsCnodes(nodeIds)
 	data[RegisterNodeHosts] = hosts
 
 	// cluster
@@ -76,6 +71,44 @@ func (m *Metadata) GetClusterCnodes() map[string]interface{} {
 		},
 	}
 	logger.Infof("Composed cluster %s cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+
+	return cnodes
+}
+
+func (m *Metadata) GetClusterNodeCnodes(nodeIds []string) map[string]interface{} {
+	logger.Infof("Composing cluster %s nodes", m.ClusterWrapper.Cluster.ClusterId)
+
+	data := make(map[string]interface{})
+
+	// hosts
+	hosts := m.GetHostsCnodes(nodeIds)
+	data[RegisterNodeHosts] = hosts
+
+	cnodes := map[string]interface{}{
+		RegisterClustersRootPath: map[string]interface{}{
+			m.ClusterWrapper.Cluster.ClusterId: data,
+		},
+	}
+	logger.Infof("Composed cluster %s nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+
+	return cnodes
+}
+
+func (m *Metadata) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]interface{} {
+	logger.Infof("Composing cluster %s empty nodes", m.ClusterWrapper.Cluster.ClusterId)
+
+	data := make(map[string]interface{})
+
+	// hosts
+	hosts := m.GetEmptyHostsCnodes(nodeIds)
+	data[RegisterNodeHosts] = hosts
+
+	cnodes := map[string]interface{}{
+		RegisterClustersRootPath: map[string]interface{}{
+			m.ClusterWrapper.Cluster.ClusterId: data,
+		},
+	}
+	logger.Infof("Composed cluster %s empty nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
 
 	return cnodes
 }
@@ -107,9 +140,10 @@ or (without role)
   }
 }
 */
-func (m *Metadata) GetHostsCnodes() map[string]interface{} {
+func (m *Metadata) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 	hosts := make(map[string]interface{})
-	for _, clusterNode := range m.ClusterWrapper.ClusterNodes {
+	for _, nodeId := range nodeIds {
+		clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
 		instanceId := clusterNode.InstanceId
 		role := clusterNode.Role
 		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
@@ -164,6 +198,24 @@ func (m *Metadata) GetHostsCnodes() map[string]interface{} {
 			} else {
 				hosts[role] = map[string]interface{}{instanceId: host}
 			}
+		}
+	}
+	return hosts
+}
+
+func (m *Metadata) GetEmptyHostsCnodes(nodeIds []string) map[string]interface{} {
+	hosts := make(map[string]interface{})
+	for _, nodeId := range nodeIds {
+		clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+		instanceId := clusterNode.InstanceId
+		role := clusterNode.Role
+		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
+			role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
+		}
+		if role == "" {
+			hosts[instanceId] = ""
+		} else {
+			hosts[role] = map[string]interface{}{instanceId: ""}
 		}
 	}
 	return hosts
@@ -232,7 +284,7 @@ func getClusterKey(clusterId string) string {
 	return fmt.Sprintf("/%s/%s", RegisterClustersRootPath, clusterId)
 }
 
-func GetClusterCnodes(clusterId, cmd string) string {
-	cnodes := map[string]interface{}{getClusterKey(clusterId): cmd}
+func GetEmptyClusterCnodes(clusterId string) string {
+	cnodes := map[string]interface{}{getClusterKey(clusterId): ""}
 	return jsontool.ToString(cnodes)
 }
