@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
 )
 
@@ -119,6 +120,26 @@ func (j *Processor) Post() error {
 	case constants.ActionResizeCluster:
 		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionAddClusterNodes:
+		// delete node record from db when pre check is failed
+		if j.Job.Status == constants.StatusFailed {
+			clusterWrappers, err := clusterclient.GetClusterWrappers(ctx, client, []string{j.Job.ClusterId})
+			if err != nil {
+				logger.Errorf("No such cluster [%s], %+v ", j.Job.ClusterId, err)
+				return err
+			}
+			clusterWrapper := clusterWrappers[0]
+			var deleteNodeIds []string
+			for _, clusterNode := range clusterWrapper.ClusterNodes {
+				if clusterNode.Status == constants.StatusPending && clusterNode.TransitionStatus == "" {
+					deleteNodeIds = append(deleteNodeIds, clusterNode.NodeId)
+				}
+			}
+			if len(deleteNodeIds) > 0 {
+				client.DeleteTableClusterNodes(ctx, &pb.DeleteTableClusterNodesRequest{
+					NodeId: deleteNodeIds,
+				})
+			}
+		}
 		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionDeleteClusterNodes:
 		err = clusterclient.ModifyClusterStatus(ctx, client, j.Job.ClusterId, constants.StatusActive)

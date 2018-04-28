@@ -7,6 +7,7 @@ package cluster
 import (
 	"context"
 
+	pb_empty "github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -180,7 +181,11 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		logger.Errorf("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
 		return nil, err
 	}
-	vpcId := subnet.VpcId
+
+	vpcId := ""
+	if subnet != nil {
+		vpcId = subnet.VpcId
+	}
 
 	register := &Register{
 		SubnetId: clusterWrapper.Cluster.SubnetId,
@@ -368,6 +373,38 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 		NodeId: utils.ToProtoString(nodeId),
 	}
 	return res, nil
+}
+
+func (p *Server) AddTableClusterNodes(ctx context.Context, req *pb.AddTableClusterNodesRequest) (*pb_empty.Empty, error) {
+	s := sender.GetSenderFromContext(ctx)
+
+	for _, clusterNode := range req.ClusterNodeSet {
+		node := models.PbToClusterNode(clusterNode)
+		register := &Register{
+			ClusterId: node.ClusterId,
+			Owner:     s.UserId,
+		}
+		err := register.RegisterClusterNode(node)
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "AddTableClusterNodes: %+v", err)
+		}
+	}
+
+	return nil, nil
+}
+
+func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTableClusterNodesRequest) (*pb_empty.Empty, error) {
+	for _, nodeId := range req.NodeId {
+		_, err := pi.Global().Db.
+			DeleteFrom(models.ClusterNodeTableName).
+			Where(db.Eq("node_id", nodeId)).
+			Exec()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "DeleteTableClusterNodes: %+v", err)
+		}
+	}
+
+	return nil, nil
 }
 
 func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersRequest) (*pb.DeleteClustersResponse, error) {

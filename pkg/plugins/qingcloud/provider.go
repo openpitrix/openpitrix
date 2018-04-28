@@ -104,9 +104,9 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionResizeCluster:
 
 	case constants.ActionAddClusterNodes:
-
+		return frameInterface.AddClusterNodesLayer(), nil
 	case constants.ActionDeleteClusterNodes:
-
+		return frameInterface.DeleteClusterNodesLayer(), nil
 	case constants.ActionStopClusters:
 		return frameInterface.StopClusterLayer(), nil
 	case constants.ActionStartClusters:

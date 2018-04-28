@@ -18,9 +18,9 @@ func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.createVolumesLayer()).       // create volume
-		Append(f.runInstancesLayer()).        // run instance and attach volume to instance
-		Append(f.formatAndMountVolumeLayer()) // format and mount volume to instance
+		Append(f.createVolumesLayer(nodeIds)).       // create volume
+		Append(f.runInstancesLayer(nodeIds)).        // run instance and attach volume to instance
+		Append(f.formatAndMountVolumeLayer(nodeIds)) // format and mount volume to instance
 
 	return headTaskLayer.Child
 }

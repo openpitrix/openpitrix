@@ -8,6 +8,7 @@ package openpitrix;
 // set go package name to pb
 option go_package = "pb";
 
+import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
@@ -45,6 +46,14 @@ message ModifyClusterNodeRequest {
 
 message ModifyClusterNodeResponse {
 	google.protobuf.StringValue node_id = 1;
+}
+
+message AddTableClusterNodesRequest {
+	repeated ClusterNode cluster_node_set = 1;
+}
+
+message DeleteTableClusterNodesRequest {
+	repeated string node_id = 1;
 }
 
 message DeleteClustersRequest {
@@ -323,6 +332,8 @@ service ClusterManager {
 	}
 	rpc ModifyCluster (ModifyClusterRequest) returns (ModifyClusterResponse);
 	rpc ModifyClusterNode (ModifyClusterNodeRequest) returns (ModifyClusterNodeResponse);
+	rpc AddTableClusterNodes (AddTableClusterNodesRequest) returns (google.protobuf.Empty);
+	rpc DeleteTableClusterNodes (DeleteTableClusterNodesRequest) returns (google.protobuf.Empty);
 	rpc DeleteClusters (DeleteClustersRequest) returns (DeleteClustersResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "delete clusters"

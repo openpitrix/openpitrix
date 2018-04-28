@@ -12,6 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/utils/jsontool"
 )
 
 type Processor struct {
@@ -81,7 +82,7 @@ func (t *Processor) Pre() error {
 				metadata := &vmbased.Metadata{
 					ClusterWrapper: pbClusterWrappers[0],
 				}
-				meta.Cnodes = metadata.GetClusterCnodesString()
+				meta.Cnodes = jsontool.ToString(metadata.GetClusterCnodes())
 
 				// write back
 				t.Task.Directive, err = meta.ToString()

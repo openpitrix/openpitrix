@@ -24,6 +24,25 @@ type Register struct {
 	Runtime        *runtimeclient.Runtime
 }
 
+func (r *Register) RegisterClusterNode(clusterNode *models.ClusterNode) error {
+	clusterNode.ClusterId = r.ClusterId
+	clusterNode.NodeId = models.NewClusterNodeId()
+	clusterNode.Owner = r.Owner
+	clusterNode.CreateTime = time.Now()
+	clusterNode.StatusTime = time.Now()
+	_, err := pi.Global().Db.
+		InsertInto(models.ClusterNodeTableName).
+		Columns(models.ClusterNodeColumns...).
+		Record(clusterNode).
+		Exec()
+	if err != nil {
+		logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
+			models.ClusterNodeTableName, r.ClusterWrapper.Cluster.ClusterId, err)
+		return err
+	}
+	return nil
+}
+
 func (r *Register) RegisterClusterWrapper() error {
 	// register cluster
 	if r.ClusterWrapper.Cluster != nil {
@@ -50,19 +69,8 @@ func (r *Register) RegisterClusterWrapper() error {
 	// register cluster node
 	newClusterNodes := make(map[string]*models.ClusterNode)
 	for _, clusterNode := range r.ClusterWrapper.ClusterNodes {
-		clusterNode.ClusterId = r.ClusterId
-		clusterNode.NodeId = models.NewClusterNodeId()
-		clusterNode.Owner = r.Owner
-		clusterNode.CreateTime = time.Now()
-		clusterNode.StatusTime = time.Now()
-		_, err := pi.Global().Db.
-			InsertInto(models.ClusterNodeTableName).
-			Columns(models.ClusterNodeColumns...).
-			Record(clusterNode).
-			Exec()
+		err := r.RegisterClusterNode(clusterNode)
 		if err != nil {
-			logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterNodeTableName, r.ClusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
 		newClusterNodes[clusterNode.NodeId] = clusterNode
