@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package pilot
+package pilotutil
 
 import (
 	"bytes"
@@ -10,10 +10,10 @@ import (
 	"io"
 	"sync"
 
-	google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 	grpc "google.golang.org/grpc"
 
-	pb "openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pb/pilot"
+	"openpitrix.io/openpitrix/pkg/pb/types"
 )
 
 var (
@@ -51,7 +51,7 @@ func DialFrontgateChannel(
 		return
 	}
 
-	channel, err := pb.NewPilotServiceForFrontgateClient(conn).Channel(ctx)
+	channel, err := pbpilot.NewPilotServiceClient(conn).FrontgateChannel(ctx)
 	if err != nil {
 		conn.Close()
 		conn = nil
@@ -62,7 +62,7 @@ func DialFrontgateChannel(
 	return
 }
 
-func NewFrontgateChannelFromServer(ch pb.PilotServiceForFrontgate_ChannelServer) *FrameChannel {
+func NewFrontgateChannelFromServer(ch pbpilot.PilotService_FrontgateChannelServer) *FrameChannel {
 	return &FrameChannel{
 		RecvMsgFunc: func() ([]byte, error) {
 			msg, err := ch.Recv()
@@ -72,7 +72,7 @@ func NewFrontgateChannelFromServer(ch pb.PilotServiceForFrontgate_ChannelServer)
 			return msg.GetValue(), nil
 		},
 		SendMsgFunc: func(data []byte) error {
-			return ch.Send(&google_protobuf.BytesValue{Value: data})
+			return ch.Send(&pbtypes.Bytes{Value: data})
 		},
 		CloseFunc: func() error {
 			return nil
@@ -80,7 +80,7 @@ func NewFrontgateChannelFromServer(ch pb.PilotServiceForFrontgate_ChannelServer)
 	}
 }
 
-func NewFrontgateChannelFromClient(ch pb.PilotServiceForFrontgate_ChannelClient) *FrameChannel {
+func NewFrontgateChannelFromClient(ch pbpilot.PilotService_FrontgateChannelClient) *FrameChannel {
 	return &FrameChannel{
 		RecvMsgFunc: func() ([]byte, error) {
 			msg, err := ch.Recv()
@@ -90,7 +90,7 @@ func NewFrontgateChannelFromClient(ch pb.PilotServiceForFrontgate_ChannelClient)
 			return msg.GetValue(), nil
 		},
 		SendMsgFunc: func(data []byte) error {
-			return ch.Send(&google_protobuf.BytesValue{Value: data})
+			return ch.Send(&pbtypes.Bytes{Value: data})
 		},
 		CloseFunc: func() error {
 			return ch.CloseSend()

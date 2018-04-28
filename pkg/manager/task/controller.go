@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 )
@@ -113,10 +113,10 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		if task.Target == constants.PilotManagerHost {
 			pbTask := models.TaskToPb(task)
 			err := pilotclient.HandleSubtask(
-				&pb.HandleSubtaskRequest{
-					SubtaskId:     pbTask.TaskId,
-					SubtaskAction: pbTask.TaskAction,
-					Directive:     pbTask.Directive,
+				&pbtypes.SubTaskMessage{
+					TaskId:    pbTask.TaskId.GetValue(),
+					Action:    pbTask.TaskAction.GetValue(),
+					Directive: pbTask.Directive.GetValue(),
 				})
 			if err != nil {
 				logger.Errorf("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)

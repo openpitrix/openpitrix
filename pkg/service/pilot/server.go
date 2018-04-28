@@ -5,32 +5,47 @@
 package pilot
 
 import (
-	"sync"
+	"time"
 
+	"github.com/gogo/protobuf/proto"
 	"google.golang.org/grpc"
 
-	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
-	"openpitrix.io/openpitrix/pkg/pb"
-	pb_frontgate "openpitrix.io/openpitrix/pkg/pb/frontgate"
-	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/pb/pilot"
+	"openpitrix.io/openpitrix/pkg/pb/types"
 )
 
 type Server struct {
-	*pi.Pi
-
-	clientMap map[string][]*pb_frontgate.FrontgateServiceClient
-	mu        sync.Mutex
+	cfg           *pbtypes.PilotConfig
+	fgClientMgr   *FrontgateClientManager
+	taskStatusMgr *TaskStatusManager
 }
 
-func Serve(cfg *config.Config) {
-	s := Server{
-		Pi:        pi.NewPi(cfg),
-		clientMap: make(map[string][]*pb_frontgate.FrontgateServiceClient),
+func Serve(cfg *pbtypes.PilotConfig, opts ...Options) {
+	if cfg != nil {
+		cfg = proto.Clone(cfg).(*pbtypes.PilotConfig)
+	} else {
+		cfg = NewDefaultConfig()
 	}
-	manager.NewGrpcServer("pilot-manager", constants.PilotManagerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterPilotServiceServer(server, &s)
-		pb.RegisterPilotServiceForFrontgateServer(server, &s)
+
+	for _, fn := range opts {
+		fn(cfg)
+	}
+
+	p := &Server{
+		cfg:           cfg,
+		fgClientMgr:   NewFrontgateClientManager(),
+		taskStatusMgr: NewTaskStatusManager(),
+	}
+
+	go func() {
+		for {
+			p.fgClientMgr.CheckAllClient()
+			time.Sleep(time.Second * 10)
+		}
+	}()
+
+	manager.NewGrpcServer("pilot-service", int(p.cfg.ListenPort)).Serve(func(server *grpc.Server) {
+		pbpilot.RegisterPilotServiceServer(server, p)
 	})
 }

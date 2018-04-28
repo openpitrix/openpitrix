@@ -5,40 +5,59 @@
 package drone
 
 import (
+	"bytes"
+	"encoding/json"
+
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/pb/types"
 )
 
-type Options struct {
-	DbPath string
-	Id     string
-	Port   int
+type Options func(opt *pbtypes.DroneConfig)
+
+func NewDefaultConfigString() string {
+	p := &pbtypes.DroneConfig{
+		Id:             "openpitrix-drone-001",
+		Host:           "localhost",
+		ListenPort:     constants.DroneServicePort,
+		CmdInfoLogPath: "${HOME}/.openpitrix/drone/log/cmd.info",
+		ConfdSelfHost:  "127.0.0.1",
+		LogLevel:       logger.DebugLevel.String(),
+	}
+
+	data, err := json.MarshalIndent(p, "", "\t")
+	if err != nil {
+		panic(err) // unreachable
+	}
+
+	data = bytes.Replace(data, []byte("\n"), []byte("\r\n"), -1)
+	return string(data)
 }
 
-func NewDefaultOptions() *Options {
-	return &Options{
-		Id:   MakeDroneId(""),
-		Port: constants.DroneServicePort,
+func NewDefaultConfig() *pbtypes.DroneConfig {
+	s := NewDefaultConfigString()
+
+	p := new(pbtypes.DroneConfig)
+	if err := json.Unmarshal([]byte(s), p); err != nil {
+		panic(err) // unreachable
 	}
+	return p
 }
 
-func WithDbPath(path string) func(opt *Options) {
-	return func(opt *Options) {
-		opt.DbPath = path
-	}
-}
-func WithDrondId(id string) func(opt *Options) {
-	return func(opt *Options) {
+func WithDrondId(id string) func(opt *pbtypes.DroneConfig) {
+	return func(opt *pbtypes.DroneConfig) {
 		opt.Id = id
 	}
 }
 
-func WithListenPort(port int) func(opt *Options) {
-	return func(opt *Options) {
-		opt.Port = port
+func WithListenPort(port int) func(opt *pbtypes.DroneConfig) {
+	return func(opt *pbtypes.DroneConfig) {
+		opt.ListenPort = int32(port)
 	}
 }
 
-func (p *Options) Clone() *Options {
-	var q = *p
-	return &q
+func WithCmdInfoLogPath(path string) func(opt *pbtypes.DroneConfig) {
+	return func(opt *pbtypes.DroneConfig) {
+		opt.CmdInfoLogPath = path
+	}
 }
