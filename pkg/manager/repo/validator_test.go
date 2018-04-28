@@ -29,20 +29,20 @@ func TestValidate1(t *testing.T) {
 
 func TestValidate2(t *testing.T) {
 	repoType := "http"
-	url := "http://www.qingcloud.com"
+	url := "https://kubernetes-charts.storage.googleapis.com"
 	credential := ``
 	visibility := "public"
 
 	err := validate(repoType, url, credential, visibility)
 
-	if err != nil {
-		t.Error(err)
+	if err == nil {
+		t.Errorf("expect error, because type is not matched")
 	}
 }
 
 func TestValidate3(t *testing.T) {
 	repoType := "https"
-	url := "https://www.qingcloud.com"
+	url := "https://kubernetes-charts.storage.googleapis.com"
 	credential := ``
 	visibility := "public"
 
