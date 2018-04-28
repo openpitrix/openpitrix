@@ -1,0 +1,43 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix.types;
+
+option go_package = "openpitrix.io/openpitrix/pkg/pb/types;pbtypes";
+
+import "openpitrix/types/etcd.proto";
+import "openpitrix/types/confd.proto";
+
+message FrontgateId {
+	string id = 1;
+}
+
+message FrontgateIdList {
+	repeated string id_list = 1;
+}
+
+message FrontgateConfig {
+	string id = 1;
+	string node_id = 2;
+
+	string host = 3;
+	int32 listen_port = 4;
+
+	string pilot_host = 5;
+	int32 pilot_port = 6;
+
+	repeated openpitrix.types.FrontgateEndpoint node_list = 7;
+	openpitrix.types.EtcdConfig etcd_config = 8;
+	openpitrix.types.ConfdConfig confd_config = 9;
+
+	string log_level = 10;
+}
+
+message FrontgateEndpoint {
+	string frontgate_id = 1;
+	string frontgate_ip = 2;  // hide for pilot
+	int32 frontgate_port = 3; // hide for pilot
+}
