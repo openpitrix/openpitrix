@@ -397,7 +397,6 @@ func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, ow
 	for _, v := range list.Items {
 
 		clusterNode := &models.ClusterNode{
-			NodeId:     models.NewClusterNodeId(),
 			ClusterId:  clusterId,
 			Name:       v.GetName(),
 			InstanceId: string(v.GetUID()),
@@ -436,20 +435,39 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 		return err
 	}
 
-	req2 := &pb.ModifyClusterRequest{
-		Cluster: models.ClusterToPb(&models.Cluster{
-			ClusterId: job.ClusterId,
-		}),
-
-		ClusterNodeSet: pbClusterNodes,
-	}
-
 	ctx := context.Background()
 	clusterClient, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
 		return err
 	}
-	_, err = clusterClient.ModifyCluster(ctx, req2)
+
+	// get all old node ids
+	describeNodesRequest := &pb.DescribeClusterNodesRequest{
+		ClusterId: utils.ToProtoString(job.ClusterId),
+	}
+	describeNodesResponse, err := clusterClient.DescribeClusterNodes(ctx, describeNodesRequest)
+	if err != nil {
+		return err
+	}
+	var nodeIds []string
+	for _, clusterNode := range describeNodesResponse.ClusterNodeSet {
+		nodeIds = append(nodeIds, clusterNode.GetNodeId().GetValue())
+	}
+
+	// delete old nodes
+	deleteNodesRequest := &pb.DeleteTableClusterNodesRequest{
+		NodeId: nodeIds,
+	}
+	_, err = clusterClient.DeleteTableClusterNodes(ctx, deleteNodesRequest)
+	if err != nil {
+		return err
+	}
+
+	// add new nodes
+	addNodesRequest := &pb.AddTableClusterNodesRequest{
+		ClusterNodeSet: pbClusterNodes,
+	}
+	_, err = clusterClient.AddTableClusterNodes(ctx, addNodesRequest)
 	if err != nil {
 		return err
 	}

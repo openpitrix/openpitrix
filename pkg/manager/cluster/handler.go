@@ -181,7 +181,11 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		logger.Errorf("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
 		return nil, err
 	}
-	vpcId := subnet.VpcId
+
+	vpcId := ""
+	if subnet != nil {
+		vpcId = subnet.VpcId
+	}
 
 	register := &Register{
 		SubnetId: clusterWrapper.Cluster.SubnetId,
