@@ -37,7 +37,7 @@ type CreateRepoRequest struct {
 func (m *CreateRepoRequest) Reset()                    { *m = CreateRepoRequest{} }
 func (m *CreateRepoRequest) String() string            { return proto.CompactTextString(m) }
 func (*CreateRepoRequest) ProtoMessage()               {}
-func (*CreateRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (*CreateRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
 
 func (m *CreateRepoRequest) GetX() *google_protobuf2.StringValue {
 	if m != nil {
@@ -116,7 +116,7 @@ type CreateRepoResponse struct {
 func (m *CreateRepoResponse) Reset()                    { *m = CreateRepoResponse{} }
 func (m *CreateRepoResponse) String() string            { return proto.CompactTextString(m) }
 func (*CreateRepoResponse) ProtoMessage()               {}
-func (*CreateRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
+func (*CreateRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
 
 func (m *CreateRepoResponse) GetRepo() *Repo {
 	if m != nil {
@@ -141,7 +141,7 @@ type ModifyRepoRequest struct {
 func (m *ModifyRepoRequest) Reset()                    { *m = ModifyRepoRequest{} }
 func (m *ModifyRepoRequest) String() string            { return proto.CompactTextString(m) }
 func (*ModifyRepoRequest) ProtoMessage()               {}
-func (*ModifyRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
+func (*ModifyRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
 
 func (m *ModifyRepoRequest) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
@@ -220,7 +220,7 @@ type ModifyRepoResponse struct {
 func (m *ModifyRepoResponse) Reset()                    { *m = ModifyRepoResponse{} }
 func (m *ModifyRepoResponse) String() string            { return proto.CompactTextString(m) }
 func (*ModifyRepoResponse) ProtoMessage()               {}
-func (*ModifyRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{3} }
+func (*ModifyRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
 
 func (m *ModifyRepoResponse) GetRepo() *Repo {
 	if m != nil {
@@ -236,7 +236,7 @@ type DeleteRepoRequest struct {
 func (m *DeleteRepoRequest) Reset()                    { *m = DeleteRepoRequest{} }
 func (m *DeleteRepoRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteRepoRequest) ProtoMessage()               {}
-func (*DeleteRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{4} }
+func (*DeleteRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
 
 func (m *DeleteRepoRequest) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
@@ -252,7 +252,7 @@ type DeleteRepoResponse struct {
 func (m *DeleteRepoResponse) Reset()                    { *m = DeleteRepoResponse{} }
 func (m *DeleteRepoResponse) String() string            { return proto.CompactTextString(m) }
 func (*DeleteRepoResponse) ProtoMessage()               {}
-func (*DeleteRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{5} }
+func (*DeleteRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
 
 func (m *DeleteRepoResponse) GetRepo() *Repo {
 	if m != nil {
@@ -269,7 +269,7 @@ type RepoLabel struct {
 func (m *RepoLabel) Reset()                    { *m = RepoLabel{} }
 func (m *RepoLabel) String() string            { return proto.CompactTextString(m) }
 func (*RepoLabel) ProtoMessage()               {}
-func (*RepoLabel) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{6} }
+func (*RepoLabel) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{6} }
 
 func (m *RepoLabel) GetLabelKey() *google_protobuf2.StringValue {
 	if m != nil {
@@ -293,7 +293,7 @@ type RepoSelector struct {
 func (m *RepoSelector) Reset()                    { *m = RepoSelector{} }
 func (m *RepoSelector) String() string            { return proto.CompactTextString(m) }
 func (*RepoSelector) ProtoMessage()               {}
-func (*RepoSelector) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{7} }
+func (*RepoSelector) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{7} }
 
 func (m *RepoSelector) GetSelectorKey() *google_protobuf2.StringValue {
 	if m != nil {
@@ -329,7 +329,7 @@ type Repo struct {
 func (m *Repo) Reset()                    { *m = Repo{} }
 func (m *Repo) String() string            { return proto.CompactTextString(m) }
 func (*Repo) ProtoMessage()               {}
-func (*Repo) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{8} }
+func (*Repo) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{8} }
 
 func (m *Repo) GetRepoId() *google_protobuf2.StringValue {
 	if m != nil {
@@ -445,7 +445,7 @@ type DescribeReposRequest struct {
 func (m *DescribeReposRequest) Reset()                    { *m = DescribeReposRequest{} }
 func (m *DescribeReposRequest) String() string            { return proto.CompactTextString(m) }
 func (*DescribeReposRequest) ProtoMessage()               {}
-func (*DescribeReposRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{9} }
+func (*DescribeReposRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{9} }
 
 func (m *DescribeReposRequest) GetRepoId() []string {
 	if m != nil {
@@ -525,7 +525,7 @@ type DescribeReposResponse struct {
 func (m *DescribeReposResponse) Reset()                    { *m = DescribeReposResponse{} }
 func (m *DescribeReposResponse) String() string            { return proto.CompactTextString(m) }
 func (*DescribeReposResponse) ProtoMessage()               {}
-func (*DescribeReposResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{10} }
+func (*DescribeReposResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{10} }
 
 func (m *DescribeReposResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -726,9 +726,9 @@ var _RepoManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "repo.proto",
 }
 
-func init() { proto.RegisterFile("repo.proto", fileDescriptor5) }
+func init() { proto.RegisterFile("repo.proto", fileDescriptor4) }
 
-var fileDescriptor5 = []byte{
+var fileDescriptor4 = []byte{
 	// 896 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x56, 0xcb, 0x92, 0x1b, 0x35,
 	0x14, 0xc5, 0xcf, 0xb8, 0x6f, 0x8f, 0xa7, 0x18, 0x55, 0x02, 0x2a, 0xd7, 0x30, 0x31, 0xae, 0x2c,

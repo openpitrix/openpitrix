@@ -9,7 +9,6 @@ It is generated from these files:
 	app.proto
 	cluster.proto
 	job.proto
-	pilot.proto
 	repo.proto
 	repo_indexer.proto
 	runtime.proto
@@ -79,22 +78,6 @@ It has these top-level messages:
 	Job
 	DescribeJobsRequest
 	DescribeJobsResponse
-	HandleSubtaskRequest
-	HandleSubtaskResponse
-	GetSubtaskStatusRequest
-	SubtaskStatus
-	GetSubtaskStatusResponse
-	PilotInfo
-	FrontgateInfo
-	DroneInfo
-	ConfdInfo
-	GetConfdInfoRequest
-	StartConfdRequest
-	StopConfdRequest
-	RegisterMetadataRequest
-	DeregisterMetadataRequest
-	RegisterCmdRequest
-	DeregisterCmdRequest
 	CreateRepoRequest
 	CreateRepoResponse
 	ModifyRepoRequest
