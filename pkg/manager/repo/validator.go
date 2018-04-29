@@ -54,7 +54,7 @@ func validate(repoType, url, credential, visibility string) error {
 		//fmt.Printf("%#v\n", u)
 		m := compRegEx.FindStringSubmatch(u.Host + u.Path)
 		//fmt.Printf("%#v\n", m)
-		logger.Debugf("Regexp result: %+v", m)
+		logger.Debug("Regexp result: %+v", m)
 
 		if len(m) != 0 && len(m) == 4 {
 			zone := m[1]

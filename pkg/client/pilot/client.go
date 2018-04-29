@@ -73,7 +73,7 @@ func WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duratio
 		if t.Status == constants.StatusFailed {
 			return false, fmt.Errorf("Task [%s] failed. ", taskId)
 		}
-		logger.Errorf("Unknown status [%s] for task [%s]. ", t.Status, taskId)
+		logger.Error("Unknown status [%s] for task [%s]. ", t.Status, taskId)
 		return false, nil
 	}, timeout, waitInterval)
 }

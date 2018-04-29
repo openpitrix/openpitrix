@@ -29,11 +29,11 @@ func GetClusterNodes(ctx context.Context, client pb.ClusterManagerClient, nodeId
 		NodeId: nodeIds,
 	})
 	if err != nil {
-		logger.Errorf("Describe cluster nodes %s failed: %+v", nodeIds, err)
+		logger.Error("Describe cluster nodes %s failed: %+v", nodeIds, err)
 		return nil, err
 	}
 	if len(response.ClusterNodeSet) != len(nodeIds) {
-		logger.Errorf("Describe cluster nodes %s with return count [%d]", nodeIds, len(response.ClusterNodeSet))
+		logger.Error("Describe cluster nodes %s with return count [%d]", nodeIds, len(response.ClusterNodeSet))
 		return nil, fmt.Errorf("describe cluster nodes %s with return count [%d]", nodeIds, len(response.ClusterNodeSet))
 	}
 	return response.ClusterNodeSet, nil
@@ -44,11 +44,11 @@ func GetClusters(ctx context.Context, client pb.ClusterManagerClient, clusterIds
 		ClusterId: clusterIds,
 	})
 	if err != nil {
-		logger.Errorf("Describe clusters %s failed: %+v", clusterIds, err)
+		logger.Error("Describe clusters %s failed: %+v", clusterIds, err)
 		return nil, err
 	}
 	if len(response.ClusterSet) != len(clusterIds) {
-		logger.Errorf("Describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
+		logger.Error("Describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
 		return nil, fmt.Errorf("describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
 	}
 	return response.ClusterSet, nil

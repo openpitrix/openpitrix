@@ -46,26 +46,26 @@ func (i *helmIndexer) IndexRepo() error {
 	}
 	for chartName, chartVersions := range indexFile.Entries {
 		var appId string
-		logger.Debugf("Start index chart [%s]", chartName)
-		logger.Debugf("Chart [%s] has [%d] versions", chartName, chartVersions.Len())
+		logger.Debug("Start index chart [%s]", chartName)
+		logger.Debug("Chart [%s] has [%d] versions", chartName, chartVersions.Len())
 		if len(chartVersions) == 0 {
 			return fmt.Errorf("failed to sync chart [%s], no versions", chartName)
 		}
 		appId, err = i.syncAppInfo(chartVersions[0])
 		if err != nil {
-			logger.Errorf("Failed to sync chart [%s] to app info", chartName)
+			logger.Error("Failed to sync chart [%s] to app info", chartName)
 			return err
 		}
-		logger.Infof("Sync chart [%s] to app [%s] success", chartName, appId)
+		logger.Info("Sync chart [%s] to app [%s] success", chartName, appId)
 		for _, chartVersion := range chartVersions {
 			var versionId string
 			v := helmVersionWrapper{ChartVersion: chartVersion}
 			versionId, err = i.syncAppVersionInfo(appId, v)
 			if err != nil {
-				logger.Errorf("Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
+				logger.Error("Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
 				return err
 			}
-			logger.Debugf("Chart version [%s] sync to app version [%s]", chartVersion.GetVersion(), versionId)
+			logger.Debug("Chart version [%s] sync to app version [%s]", chartVersion.GetVersion(), versionId)
 		}
 	}
 	return err

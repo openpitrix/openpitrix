@@ -27,7 +27,7 @@ func NewClusterWrapper(data string) (*ClusterWrapper, error) {
 	clusterWrapper := &ClusterWrapper{}
 	err := json.Unmarshal([]byte(data), clusterWrapper)
 	if err != nil {
-		logger.Errorf("Unmarshal into cluster wrapper failed: %+v", err)
+		logger.Error("Unmarshal into cluster wrapper failed: %+v", err)
 	}
 	return clusterWrapper, err
 }
@@ -106,7 +106,7 @@ func PbToClusterWrapper(pbCluster *pb.Cluster) *ClusterWrapper {
 func (c *ClusterWrapper) ToString() (string, error) {
 	result, err := json.Marshal(c)
 	if err != nil {
-		logger.Errorf("Marshal cluster wrapper with cluster id [%s] failed: %+v",
+		logger.Error("Marshal cluster wrapper with cluster id [%s] failed: %+v",
 			c.Cluster.ClusterId, err)
 	}
 	return string(result), err
@@ -119,7 +119,7 @@ func (c *ClusterWrapper) GetCommonAttribute(role, attributeName string) interfac
 
 	clusterCommon, exist := c.ClusterCommons[role]
 	if !exist {
-		logger.Errorf("No such role [%s] in cluster [%s]. ",
+		logger.Error("No such role [%s] in cluster [%s]. ",
 			role, c.Cluster.ClusterId)
 		return nil
 	}
@@ -151,7 +151,7 @@ func (c *ClusterWrapper) GetEndpoints() (map[string]map[string]interface{}, erro
 		endpoints := make(map[string]map[string]interface{})
 		err := json.Unmarshal([]byte(c.Cluster.Endpoints), &endpoints)
 		if err != nil {
-			logger.Errorf("Unmarshal cluster [%s] endpoints failed: %+v", c.Cluster.ClusterId, err)
+			logger.Error("Unmarshal cluster [%s] endpoints failed: %+v", c.Cluster.ClusterId, err)
 			return nil, err
 		}
 		for _, service := range endpoints {
@@ -179,18 +179,18 @@ func (c *ClusterWrapper) GetEndpoints() (map[string]map[string]interface{}, erro
 							cRole = c.ClusterRoles[role]
 						}
 					} else {
-						logger.Errorf("Link [%s] in endpoints must be in env.x or <role name>.env.x for the cluster [%s]",
+						logger.Error("Link [%s] in endpoints must be in env.x or <role name>.env.x for the cluster [%s]",
 							port, c.Cluster.ClusterId)
 						return nil, fmt.Errorf("Cluster [%s] endpoints link error. ", c.Cluster.ClusterId)
 					}
 					if cRole == nil {
-						logger.Errorf("Can't find the node of the cluster [%s] for the endpoints", c.Cluster.ClusterId)
+						logger.Error("Can't find the node of the cluster [%s] for the endpoints", c.Cluster.ClusterId)
 						return nil, fmt.Errorf("Cluster [%s] endpoints parse failed. ", c.Cluster.ClusterId)
 					}
 					env := make(map[string]interface{})
 					err = json.Unmarshal([]byte(cRole.Env), &env)
 					if err != nil {
-						logger.Errorf("Unmarshal cluster [%s] env failed: %+v", c.Cluster.ClusterId, err)
+						logger.Error("Unmarshal cluster [%s] env failed: %+v", c.Cluster.ClusterId, err)
 						return nil, err
 					}
 					value, exist := env[param]

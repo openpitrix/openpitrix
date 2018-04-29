@@ -87,14 +87,14 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
 
 				info, err := client.GetDroneConfig(context.Background(), &pbtypes.Empty{})
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 
@@ -114,14 +114,14 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
 
 				reply, err := client.GetTemplateFiles(context.Background(), &pbtypes.Empty{})
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 
@@ -133,7 +133,7 @@ EXAMPLE:
 					}
 					matched, err := regexp.MatchString(re, file)
 					if err != nil {
-						logger.Fatal(err)
+						logger.Critical("%+v", err)
 						os.Exit(1)
 					}
 					if matched {
@@ -179,7 +179,7 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
@@ -191,7 +191,7 @@ EXAMPLE:
 						FrontgatePort: int32(c.Int("frontgate-port")),
 					})
 					if err != nil {
-						logger.Fatal(err)
+						logger.Critical("%+v", err)
 						os.Exit(1)
 					}
 
@@ -204,7 +204,7 @@ EXAMPLE:
 						FrontgatePort: int32(c.Int("frontgate-port")),
 					})
 					if err != nil {
-						logger.Fatal(err)
+						logger.Critical("%+v", err)
 						os.Exit(1)
 					}
 
@@ -214,7 +214,7 @@ EXAMPLE:
 				case "drone":
 					_, err = client.PingDrone(context.Background(), &pbtypes.Empty{})
 					if err != nil {
-						logger.Fatal(err)
+						logger.Critical("%+v", err)
 						os.Exit(1)
 					}
 
@@ -242,7 +242,7 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
@@ -251,7 +251,7 @@ EXAMPLE:
 					ValueList: c.Args(),
 				})
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 
@@ -280,14 +280,14 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
 
 				reply, err := client.IsConfdRunning(context.Background(), &pbtypes.Empty{})
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 
@@ -323,14 +323,14 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
 
 				_, err = client.StartConfd(context.Background(), &pbtypes.Empty{})
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 
@@ -347,14 +347,14 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
 
 				_, err = client.StopConfd(context.Background(), &pbtypes.Empty{})
 				if err != nil {
-					logger.Fatal(err)
+					logger.Critical("%+v", err)
 					os.Exit(1)
 				}
 

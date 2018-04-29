@@ -23,7 +23,7 @@ func NewMeta(data string) (*Meta, error) {
 	meta := &Meta{}
 	err := json.Unmarshal([]byte(data), meta)
 	if err != nil {
-		logger.Errorf("Unmarshal into meta failed: %+v", err)
+		logger.Error("Unmarshal into meta failed: %+v", err)
 	}
 	return meta, err
 }
@@ -31,7 +31,7 @@ func NewMeta(data string) (*Meta, error) {
 func (m *Meta) ToString() (string, error) {
 	result, err := json.Marshal(m)
 	if err != nil {
-		logger.Errorf("Marshal meta with frontgate id [%s] failed: %+v",
+		logger.Error("Marshal meta with frontgate id [%s] failed: %+v",
 			m.FrontgateId, err)
 	}
 	return string(result), err

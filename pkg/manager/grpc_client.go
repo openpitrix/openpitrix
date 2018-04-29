@@ -22,14 +22,14 @@ func NewClient(ctx context.Context, host string, port int) (*grpc.ClientConn, er
 	defer func() {
 		if err != nil {
 			if cerr := conn.Close(); cerr != nil {
-				logger.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
+				logger.Error("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 			return
 		}
 		go func() {
 			<-ctx.Done()
 			if cerr := conn.Close(); cerr != nil {
-				logger.Errorf("Failed to close conn to %s: %v", endpoint, cerr)
+				logger.Error("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 		}()
 	}()

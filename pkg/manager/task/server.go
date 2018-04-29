@@ -25,7 +25,7 @@ type Server struct {
 func Serve(cfg *config.Config) {
 	hostname, err := os.Hostname()
 	if err != nil {
-		logger.Panicf("Failed to get os hostname: %+v", err)
+		logger.Critical("Failed to get os hostname: %+v", err)
 		return
 	}
 	pi.SetGlobalPi(cfg)

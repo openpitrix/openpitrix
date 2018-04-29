@@ -60,25 +60,25 @@ func (i *devkitIndexer) IndexRepo() error {
 	}
 	for appName, appVersions := range indexFile.Entries {
 		var appId string
-		logger.Debugf("Start index app [%s]", appName)
-		logger.Debugf("App [%s] has [%d] versions", appName, appVersions.Len())
+		logger.Debug("Start index app [%s]", appName)
+		logger.Debug("App [%s] has [%d] versions", appName, appVersions.Len())
 		if len(appVersions) == 0 {
 			return fmt.Errorf("failed to sync app [%s], no versions", appName)
 		}
 		appId, err = i.syncAppInfo(appVersions[0])
 		if err != nil {
-			logger.Errorf("Failed to sync app [%s] to app info", appName)
+			logger.Error("Failed to sync app [%s] to app info", appName)
 			return err
 		}
-		logger.Infof("Sync chart [%s] to app [%s] success", appName, appId)
+		logger.Info("Sync chart [%s] to app [%s] success", appName, appId)
 		for _, appVersion := range appVersions {
 			var versionId string
 			versionId, err = i.syncAppVersionInfo(appId, appVersion)
 			if err != nil {
-				logger.Errorf("Failed to sync app version [%s] to app version", appVersion.GetAppVersion())
+				logger.Error("Failed to sync app version [%s] to app version", appVersion.GetAppVersion())
 				return err
 			}
-			logger.Debugf("App version [%s] sync to app version [%s]", appVersion.GetVersion(), versionId)
+			logger.Debug("App version [%s] sync to app version [%s]", appVersion.GetVersion(), versionId)
 		}
 	}
 	return err

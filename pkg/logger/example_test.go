@@ -9,7 +9,7 @@ import "openpitrix.io/openpitrix/pkg/logger"
 func ExampleLogger() {
 	logger.Debug("debug log, should ignore by default")
 	logger.Info("info log, should visable")
-	logger.Infof("format [%d]", 111)
+	logger.Info("format [%d]", 111)
 	logger.SetLevelByString("debug")
 	logger.Debug("debug log, now it becomes visible")
 }

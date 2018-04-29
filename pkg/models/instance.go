@@ -37,7 +37,7 @@ func NewInstance(data string) (*Instance, error) {
 	instance := &Instance{}
 	err := json.Unmarshal([]byte(data), instance)
 	if err != nil {
-		logger.Errorf("Unmarshal into instance failed: %+v", err)
+		logger.Error("Unmarshal into instance failed: %+v", err)
 	}
 	return instance, err
 }
@@ -45,7 +45,7 @@ func NewInstance(data string) (*Instance, error) {
 func (i *Instance) ToString() (string, error) {
 	result, err := json.Marshal(i)
 	if err != nil {
-		logger.Errorf("Marshal instance with instance id [%s] failed: %+v",
+		logger.Error("Marshal instance with instance id [%s] failed: %+v",
 			i.InstanceId, err)
 	}
 	return string(result), err

@@ -61,7 +61,7 @@ func ValidateCredential(provider, url, credential string) error {
 
 	providerInterface, err := plugins.GetProviderPlugin(provider)
 	if err != nil {
-		logger.Errorf("No such provider [%s]. ", provider)
+		logger.Error("No such provider [%s]. ", provider)
 		return err
 	}
 	return providerInterface.ValidateCredential(url, credential)

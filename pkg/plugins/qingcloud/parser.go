@@ -87,14 +87,14 @@ func (p *Parser) ParseClusterRole(clusterConf app.ClusterConf, node app.Node) (*
 	if len(node.Env) > 0 {
 		env, err := json.Marshal(node.Env)
 		if err != nil {
-			logger.Errorf("Encode env of nodes to json failed: %v", err)
+			logger.Error("Encode env of nodes to json failed: %v", err)
 			return nil, err
 		}
 		clusterRole.Env = string(env)
 	} else if len(clusterConf.Env) > 0 {
 		env, err := json.Marshal(clusterConf.Env)
 		if err != nil {
-			logger.Errorf("Encode env of cluster to json failed: %v", err)
+			logger.Error("Encode env of cluster to json failed: %v", err)
 			return nil, err
 		}
 		clusterRole.Env = string(env)
@@ -115,14 +115,14 @@ func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*m
 	for i := 1; i <= count; i++ {
 		serverId, err := p.generateServerId(int(serverIdUpperBound), serverIds)
 		if err != nil {
-			logger.Errorf("Generate server id failed: %v", err)
+			logger.Error("Generate server id failed: %v", err)
 			return nil, err
 		}
 		serverIds = append(serverIds, serverId)
 
 		groupId, err := p.generateServerId(int(serverIdUpperBound), groupIds)
 		if err != nil {
-			logger.Errorf("Generate group id failed: %v", err)
+			logger.Error("Generate group id failed: %v", err)
 			return nil, err
 		}
 		groupIds = append(groupIds, groupId)
@@ -142,7 +142,7 @@ func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*m
 		for j := 1; j <= replica; j++ {
 			serverId, err = p.generateServerId(int(serverIdUpperBound), serverIds)
 			if err != nil {
-				logger.Errorf("Generate server id failed: %v", err)
+				logger.Error("Generate server id failed: %v", err)
 				return nil, err
 			}
 			serverIds = append(serverIds, serverId)
@@ -192,7 +192,7 @@ func (p *Parser) ParseClusterLinks(clusterConf app.ClusterConf) map[string]*mode
 func (p *Parser) ParseCluster(clusterConf app.ClusterConf) (*models.Cluster, error) {
 	endpoints, err := json.Marshal(clusterConf.Endpoints)
 	if err != nil {
-		logger.Errorf("Encode endpoint to json failed: %v", err)
+		logger.Error("Encode endpoint to json failed: %v", err)
 		return nil, err
 	}
 
@@ -221,7 +221,7 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 	if len(node.CustomMetadata) != 0 {
 		customMetadataByte, err := json.Marshal(node.CustomMetadata)
 		if err != nil {
-			logger.Errorf("Encode custom metadata to json failed: %v", err)
+			logger.Error("Encode custom metadata to json failed: %v", err)
 			return nil, err
 		}
 		customMetadata = string(customMetadataByte)
@@ -258,14 +258,14 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 	if node.HealthCheck != nil {
 		healthCheck, err := json.Marshal(*node.HealthCheck)
 		if err != nil {
-			logger.Errorf("Encode node health check to json failed: %v", err)
+			logger.Error("Encode node health check to json failed: %v", err)
 			return nil, err
 		}
 		clusterCommon.HealthCheck = string(healthCheck)
 	} else if clusterConf.HealthCheck != nil {
 		healthCheck, err := json.Marshal(*clusterConf.HealthCheck)
 		if err != nil {
-			logger.Errorf("Encode cluster health check to json failed: %v", err)
+			logger.Error("Encode cluster health check to json failed: %v", err)
 			return nil, err
 		}
 		clusterCommon.HealthCheck = string(healthCheck)
@@ -276,14 +276,14 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 	if node.Monitor != nil {
 		monitor, err := json.Marshal(*node.Monitor)
 		if err != nil {
-			logger.Errorf("Encode node monitor to json failed: %v", err)
+			logger.Error("Encode node monitor to json failed: %v", err)
 			return nil, err
 		}
 		clusterCommon.Monitor = string(monitor)
 	} else if clusterConf.Monitor != nil {
 		monitor, err := json.Marshal(*clusterConf.Monitor)
 		if err != nil {
-			logger.Errorf("Encode cluster Monitor to json failed: %v", err)
+			logger.Error("Encode cluster Monitor to json failed: %v", err)
 			return nil, err
 		}
 		clusterCommon.Monitor = string(monitor)
@@ -303,12 +303,12 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 				}
 			}
 		default:
-			logger.Errorf("Unknown type of service [%s] ", serviceName)
+			logger.Error("Unknown type of service [%s] ", serviceName)
 			return nil, fmt.Errorf("Unknown type of service [%s] ", serviceName)
 		}
 		serviceByte, err := json.Marshal(serviceValue)
 		if err != nil {
-			logger.Errorf("Encode service [%s] to json failed: %v", serviceName, err)
+			logger.Error("Encode service [%s] to json failed: %v", serviceName, err)
 			return nil, err
 		}
 		switch serviceName {
@@ -338,7 +338,7 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 			customService := map[string]interface{}{constants.ServiceCustom: service}
 			customServiceByte, err := json.Marshal(customService)
 			if err != nil {
-				logger.Errorf("Encode custom service [%s] to json failed: %v", serviceName, err)
+				logger.Error("Encode custom service [%s] to json failed: %v", serviceName, err)
 				return nil, err
 			}
 			clusterCommon.CustomService = string(customServiceByte)

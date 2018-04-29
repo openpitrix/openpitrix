@@ -14,7 +14,7 @@ func checkPermissionAndTransition(clusterId, userId string) error {
 		return err
 	}
 	if cluster.TransitionStatus != "" {
-		logger.Errorf("Cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
+		logger.Error("Cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
 		return fmt.Errorf("cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
 	}
 	return nil
@@ -27,7 +27,7 @@ func isActionSupported(clusterId, role, action string) bool {
 	}
 	clusterCommon, exist := clusterWrapper.ClusterCommons[role]
 	if !exist {
-		logger.Errorf("Cluster [%s] has no role [%s]", clusterId, role)
+		logger.Error("Cluster [%s] has no role [%s]", clusterId, role)
 		return false
 	}
 	advanceActions := clusterCommon.AdvancedActions

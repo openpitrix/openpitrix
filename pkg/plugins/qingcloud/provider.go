@@ -32,7 +32,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 		ctx := context.Background()
 		appManagerClient, err := appclient.NewAppManagerClient(ctx)
 		if err != nil {
-			logger.Errorf("Connect to app manager failed: %+v", err)
+			logger.Error("Connect to app manager failed: %+v", err)
 			return nil, err
 		}
 
@@ -42,36 +42,36 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 
 		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
 		if err != nil {
-			logger.Errorf("Get app version [%s] package failed: %+v", versionId, err)
+			logger.Error("Get app version [%s] package failed: %+v", versionId, err)
 			return nil, err
 		}
 
 		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
 		if err != nil {
-			logger.Errorf("Load app version [%s] package failed: %+v", versionId, err)
+			logger.Error("Load app version [%s] package failed: %+v", versionId, err)
 			return nil, err
 		}
 		var confJson app.ClusterUserConfig
 		err = json.Unmarshal([]byte(conf), &confJson)
 		if err != nil {
-			logger.Errorf("Parse conf [%s] failed: %+v", conf, err)
+			logger.Error("Parse conf [%s] failed: %+v", conf, err)
 			return nil, err
 		}
 		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
 		if err != nil {
-			logger.Errorf("Render app version [%s] cluster template failed: %+v", versionId, err)
+			logger.Error("Render app version [%s] cluster template failed: %+v", versionId, err)
 			return nil, err
 		}
 		err = clusterConf.Validate()
 		if err != nil {
-			logger.Errorf("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
+			logger.Error("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
 			return nil, err
 		}
 
 	} else {
 		err := json.Unmarshal([]byte(conf), &clusterConf)
 		if err != nil {
-			logger.Errorf("Parse conf [%s] to cluster failed: %+v", conf, err)
+			logger.Error("Parse conf [%s] to cluster failed: %+v", conf, err)
 			return nil, err
 		}
 	}
@@ -122,7 +122,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionUpdateClusterEnv:
 
 	default:
-		logger.Errorf("Unknown job action [%s]", job.JobAction)
+		logger.Error("Unknown job action [%s]", job.JobAction)
 		return nil, fmt.Errorf("unknown job action [%s]", job.JobAction)
 	}
 	return nil, nil
@@ -153,12 +153,12 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		// do nothing
 		return nil
 	default:
-		logger.Errorf("Unknown task action [%s]", task.TaskAction)
+		logger.Error("Unknown task action [%s]", task.TaskAction)
 		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }
 func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error {
-	logger.Debugf("Wait sub task [%s] timeout [%s] interval [%s]", task.TaskId, timeout, waitInterval)
+	logger.Debug("Wait sub task [%s] timeout [%s] interval [%s]", task.TaskId, timeout, waitInterval)
 	handler := new(ProviderHandler)
 
 	switch task.TaskAction {
@@ -181,7 +181,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 	case vmbased.ActionWaitFrontgateAvailable:
 		return handler.WaitFrontgateAvailable(task)
 	default:
-		logger.Errorf("Unknown task action [%s]", task.TaskAction)
+		logger.Error("Unknown task action [%s]", task.TaskAction)
 		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }

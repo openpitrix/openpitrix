@@ -43,17 +43,17 @@ func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 
 	conf, err := f.getConf(register.SubnetId)
 	if err != nil {
-		logger.Errorf("Get frontgate cluster conf failed. ")
+		logger.Error("Get frontgate cluster conf failed. ")
 		return clusterId, err
 	}
 	providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider)
 	if err != nil {
-		logger.Errorf("No such provider [%s]. ", f.Runtime.Provider)
+		logger.Error("No such provider [%s]. ", f.Runtime.Provider)
 		return clusterId, err
 	}
 	clusterWrapper, err := providerInterface.ParseClusterConf(constants.FrontgateVersionId, conf)
 	if err != nil {
-		logger.Errorf("Parse frontgate cluster conf failed. ")
+		logger.Error("Parse frontgate cluster conf failed. ")
 		return clusterId, err
 	}
 

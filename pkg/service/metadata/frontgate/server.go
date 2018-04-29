@@ -45,7 +45,7 @@ func Serve(cfg *pbtypes.FrontgateConfig, opts ...Options) {
 
 	etcd, err := NewEtcdClient(cfg.GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Critical("%+v", err)
 		os.Exit(1)
 	}
 
@@ -85,7 +85,7 @@ func ServeReverseRpcServerForPilot(
 			}
 
 			if gerr.Code() != codes.Unavailable || gerr.Code() != lastErrCode {
-				logger.Errorf("did not connect: %v", gerr.Err())
+				logger.Error("did not connect: %v", gerr.Err())
 			}
 
 			lastErrCode = gerr.Code()

@@ -94,7 +94,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 	ctx := context.Background()
 	appManagerClient, err := appclient.NewAppManagerClient(ctx)
 	if err != nil {
-		logger.Errorf("Connect to app manager failed: %+v", err)
+		logger.Error("Connect to app manager failed: %+v", err)
 		return nil, err
 	}
 
@@ -104,7 +104,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 
 	resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
 	if err != nil {
-		logger.Errorf("Get app version [%s] package failed: %+v", versionId, err)
+		logger.Error("Get app version [%s] package failed: %+v", versionId, err)
 		return nil, err
 	}
 

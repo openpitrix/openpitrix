@@ -91,7 +91,7 @@ func (t *Task) GetTimeout(defaultTimeout time.Duration) time.Duration {
 	directive := make(map[string]interface{})
 	err := json.Unmarshal([]byte(t.Directive), &directive)
 	if err != nil {
-		logger.Errorf("Unmarshal task [%s] directive failed: %+v.", t.TaskId, err)
+		logger.Error("Unmarshal task [%s] directive failed: %+v.", t.TaskId, err)
 		return defaultTimeout
 	}
 

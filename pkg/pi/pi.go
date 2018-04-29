@@ -81,12 +81,12 @@ func (p *Pi) watchGlobalCfg() *Pi {
 
 	globalCfg := <-watcher
 	p.setGlobalCfg(globalCfg)
-	logger.Debugf("Pi got global config: [%+v]", p.globalCfg)
+	logger.Debug("Pi got global config: [%+v]", p.globalCfg)
 
 	go func() {
 		for globalCfg := range watcher {
 			p.setGlobalCfg(globalCfg)
-			logger.Debugf("Global config update to [%+v]", globalCfg)
+			logger.Debug("Global config update to [%+v]", globalCfg)
 		}
 	}()
 

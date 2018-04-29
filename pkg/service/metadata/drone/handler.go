@@ -68,7 +68,7 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 		}
 		opt.HookOnCheckCmdDone = func(trName, cmd string, err error) {
 			if err != nil {
-				logger.Warning(err)
+				logger.Warn("%+v", err)
 				return
 			}
 			if trName == "cmd.info" {
@@ -85,7 +85,7 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 		}
 		opt.HookOnReloadCmdDone = func(trName, cmd string, err error) {
 			if err != nil {
-				logger.Warning(err)
+				logger.Warn("%+v", err)
 				return
 			}
 			if trName == "cmd.info" {
@@ -102,7 +102,7 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 		}
 		opt.HookOnUpdateDone = func(trName string, err error) {
 			if err != nil {
-				logger.Warning(err)
+				logger.Warn("%+v", err)
 				return
 			}
 		}
@@ -125,7 +125,7 @@ func (p *Server) StopConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Em
 
 func (p *Server) GetTemplateFiles(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.StringList, error) {
 	if !p.confd.IsRunning() {
-		return nil, fmt.Errorf("drone: confd is not started!")
+		return nil, fmt.Errorf("drone: confd is not started")
 	}
 
 	cfg := p.confd.GetConfig()
@@ -149,12 +149,12 @@ func (p *Server) GetTemplateFiles(ctx context.Context, arg *pbtypes.Empty) (*pbt
 
 func (p *Server) GetValues(ctx context.Context, arg *pbtypes.StringList) (*pbtypes.StringMap, error) {
 	if !p.confd.IsRunning() {
-		return nil, fmt.Errorf("drone: confd is not started!")
+		return nil, fmt.Errorf("drone: confd is not started")
 	}
 
 	client := p.confd.GetBackendClient()
 	if client == nil {
-		return nil, fmt.Errorf("drone: confd is not started!")
+		return nil, fmt.Errorf("drone: confd is not started")
 	}
 
 	keys := arg.GetValueList()
@@ -203,6 +203,6 @@ func (p *Server) PingFrontgate(ctx context.Context, arg *pbtypes.FrontgateEndpoi
 }
 
 func (p *Server) PingDrone(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Empty, error) {
-	logger.Infof("PingDrone: ok\n")
+	logger.Info("PingDrone: ok")
 	return &pbtypes.Empty{}, nil
 }

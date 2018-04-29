@@ -55,13 +55,13 @@ func (p *FrontgateController) SetConfig(cfg *pbtypes.FrontgateConfig) error {
 func (p *FrontgateController) ReportSubTaskStatus(in *pbtypes.SubTaskStatus) error {
 	client, err := p.getClient()
 	if err != nil {
-		logger.Warning(err)
+		logger.Warn("%+v", err)
 		return err
 	}
 
 	_, err = client.ReportSubTaskStatus(in)
 	if err != nil {
-		logger.Warning(err)
+		logger.Warn("%+v", err)
 		return err
 	}
 

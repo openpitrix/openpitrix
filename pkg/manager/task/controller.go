@@ -44,7 +44,7 @@ func (c *Controller) updateTaskAttributes(taskId string, attributes map[string]i
 		Where(db.Eq("task_id", taskId)).
 		Exec()
 	if err != nil {
-		logger.Errorf("Failed to update task [%s]: %+v", taskId, err)
+		logger.Error("Failed to update task [%s]: %+v", taskId, err)
 	}
 	return err
 }
@@ -66,17 +66,17 @@ func (c *Controller) IsRunningExceed() bool {
 func (c *Controller) ExtractTasks() {
 	for {
 		if c.IsRunningExceed() {
-			logger.Errorf("Sleep 10s, running task count exceed [%d/%d]", c.runningCount, c.GetTaskLength())
+			logger.Error("Sleep 10s, running task count exceed [%d/%d]", c.runningCount, c.GetTaskLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		taskId, err := c.queue.Dequeue()
 		if err != nil {
-			logger.Errorf("Failed to dequeue task from etcd queue: %+v", err)
+			logger.Error("Failed to dequeue task from etcd queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		logger.Debugf("Dequeue task [%s] from etcd queue success", taskId)
+		logger.Debug("Dequeue task [%s] from etcd queue success", taskId)
 		c.runningTasks <- taskId
 	}
 }
@@ -100,7 +100,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 		err := query.LoadOne(&task)
 		if err != nil {
-			logger.Errorf("Failed to get task [%s]: %+v", task.TaskId, err)
+			logger.Error("Failed to get task [%s]: %+v", task.TaskId, err)
 			return err
 		}
 
@@ -119,31 +119,31 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					Directive: pbTask.Directive.GetValue(),
 				})
 			if err != nil {
-				logger.Errorf("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+				logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
 				return err
 			}
 			err = pilotclient.WaitSubtask(
 				task.TaskId, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 			if err != nil {
-				logger.Errorf("Failed to wait task [%s]: %+v", task.TaskId, err)
+				logger.Error("Failed to wait task [%s]: %+v", task.TaskId, err)
 				return err
 			}
 		} else {
 			providerInterface, err := plugins.GetProviderPlugin(task.Target)
 			if err != nil {
-				logger.Errorf("No such runtime [%s]. ", task.Target)
+				logger.Error("No such runtime [%s]. ", task.Target)
 				return err
 			}
 			err = providerInterface.HandleSubtask(task)
 			if err != nil {
-				logger.Errorf("Failed to handle subtask [%s] in runtime [%s]: %+v",
+				logger.Error("Failed to handle subtask [%s] in runtime [%s]: %+v",
 					task.TaskId, task.Target, err)
 				return err
 			}
 			err = providerInterface.WaitSubtask(
 				task, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 			if err != nil {
-				logger.Errorf("Failed to wait subtask [%s] in runtime [%s]: %+v",
+				logger.Error("Failed to wait subtask [%s] in runtime [%s]: %+v",
 					task.TaskId, task.Target, err)
 				return err
 			}

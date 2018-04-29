@@ -43,7 +43,7 @@ in order to register cluster to configuration management service.
 }
 */
 func (m *Metadata) GetClusterCnodes() map[string]interface{} {
-	logger.Infof("Composing cluster %s", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composing cluster %s", m.ClusterWrapper.Cluster.ClusterId)
 
 	data := make(map[string]interface{})
 
@@ -70,13 +70,13 @@ func (m *Metadata) GetClusterCnodes() map[string]interface{} {
 			m.ClusterWrapper.Cluster.ClusterId: data,
 		},
 	}
-	logger.Infof("Composed cluster %s cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composed cluster %s cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
 
 	return cnodes
 }
 
 func (m *Metadata) GetClusterNodeCnodes(nodeIds []string) map[string]interface{} {
-	logger.Infof("Composing cluster %s nodes", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composing cluster %s nodes", m.ClusterWrapper.Cluster.ClusterId)
 
 	data := make(map[string]interface{})
 
@@ -89,13 +89,13 @@ func (m *Metadata) GetClusterNodeCnodes(nodeIds []string) map[string]interface{}
 			m.ClusterWrapper.Cluster.ClusterId: data,
 		},
 	}
-	logger.Infof("Composed cluster %s nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composed cluster %s nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
 
 	return cnodes
 }
 
 func (m *Metadata) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]interface{} {
-	logger.Infof("Composing cluster %s empty nodes", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composing cluster %s empty nodes", m.ClusterWrapper.Cluster.ClusterId)
 
 	data := make(map[string]interface{})
 
@@ -108,7 +108,7 @@ func (m *Metadata) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]interf
 			m.ClusterWrapper.Cluster.ClusterId: data,
 		},
 	}
-	logger.Infof("Composed cluster %s empty nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composed cluster %s empty nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
 
 	return cnodes
 }
@@ -151,13 +151,13 @@ func (m *Metadata) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 		}
 		clusterRole, exist := m.ClusterWrapper.ClusterRoles[role]
 		if !exist {
-			logger.Errorf("No such role [%s] in cluster role [%s]. ",
+			logger.Error("No such role [%s] in cluster role [%s]. ",
 				role, m.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
 		clusterCommon, exist := m.ClusterWrapper.ClusterCommons[role]
 		if !exist {
-			logger.Errorf("No such role [%s] in cluster common [%s]. ",
+			logger.Error("No such role [%s] in cluster common [%s]. ",
 				role, m.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
@@ -192,7 +192,7 @@ func (m *Metadata) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 				case map[string]interface{}:
 					v[instanceId] = host
 				default:
-					logger.Errorf("Cnodes [%s] should be a map. ", clusterNode.NodeId)
+					logger.Error("Cnodes [%s] should be a map. ", clusterNode.NodeId)
 					return nil
 				}
 			} else {
@@ -258,7 +258,7 @@ func (m *Metadata) GetEnvCnodes() map[string]interface{} {
 			envMap := make(map[string]interface{})
 			err := json.Unmarshal([]byte(env), &envMap)
 			if err != nil {
-				logger.Errorf("Unmarshal cluster [%s] env failed:%+v", m.ClusterWrapper.Cluster.ClusterId, err)
+				logger.Error("Unmarshal cluster [%s] env failed:%+v", m.ClusterWrapper.Cluster.ClusterId, err)
 				return nil
 			}
 			if clusterRole.Role == "" {

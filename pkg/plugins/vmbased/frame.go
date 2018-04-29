@@ -101,7 +101,7 @@ func (f *Frame) getPreAndPostStartGroupNodes(nodeIds []string) ([]string, []stri
 			service := app.Service{}
 			err := json.Unmarshal([]byte(serviceStr), &service)
 			if err != nil {
-				logger.Errorf("Unmarshal cluster [%s] init service failed: %+v",
+				logger.Error("Unmarshal cluster [%s] init service failed: %+v",
 					f.ClusterWrapper.Cluster.ClusterId, err)
 				return nil, nil
 			}
@@ -129,7 +129,7 @@ func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []strin
 			service := app.Service{}
 			err := json.Unmarshal([]byte(serviceStr), &service)
 			if err != nil {
-				logger.Errorf("Unmarshal cluster [%s] init service failed: %+v",
+				logger.Error("Unmarshal cluster [%s] init service failed: %+v",
 					f.ClusterWrapper.Cluster.ClusterId, err)
 				return nil, nil
 			}
@@ -193,7 +193,7 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string) *models.T
 			service := app.Service{}
 			err := json.Unmarshal([]byte(serviceStr.(string)), &service)
 			if err != nil {
-				logger.Errorf("Unmarshal cluster [%s] service [%s] failed: %+v",
+				logger.Error("Unmarshal cluster [%s] service [%s] failed: %+v",
 					f.ClusterWrapper.Cluster.ClusterId, serviceName, err)
 				return nil
 			}
@@ -251,7 +251,7 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 	for _, nodeId := range nodeIds {
 		clusterNode, exist := f.ClusterWrapper.ClusterNodes[nodeId]
 		if !exist {
-			logger.Errorf("ClusterConf [%s] node [%s] not exist", f.ClusterWrapper.Cluster.ClusterId, nodeId)
+			logger.Error("ClusterConf [%s] node [%s] not exist", f.ClusterWrapper.Cluster.ClusterId, nodeId)
 			continue
 		}
 		role := clusterNode.Role
@@ -282,7 +282,7 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 		service := app.Service{}
 		err := json.Unmarshal([]byte(serviceStr.(string)), &service)
 		if err != nil {
-			logger.Errorf("Unmarshal cluster [%s] service [%s] failed: %+v",
+			logger.Error("Unmarshal cluster [%s] service [%s] failed: %+v",
 				f.ClusterWrapper.Cluster.ClusterId, serviceName, err)
 			return nil
 		}
@@ -413,7 +413,7 @@ func (f *Frame) createVolumesLayer(nodeIds []string) *models.TaskLayer {
 		}
 		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
 		if !exist {
-			logger.Errorf("No such role [%s] in cluster role [%s]. ",
+			logger.Error("No such role [%s] in cluster role [%s]. ",
 				role, f.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
@@ -571,7 +571,7 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 	ctx := context.Background()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
-		logger.Errorf("New ssh key gen task layer failed: %+v", err)
+		logger.Error("New ssh key gen task layer failed: %+v", err)
 		return nil
 	}
 
@@ -582,7 +582,7 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 		if keyType != "" {
 			private, public, err := utils.MakeSSHKeyPair(keyType)
 			if err != nil {
-				logger.Errorf("Generate ssh key [%s] in cluster node [%s] failed",
+				logger.Error("Generate ssh key [%s] in cluster node [%s] failed",
 					clusterCommon.Passphraseless, nodeId)
 				return nil
 			}
@@ -691,7 +691,7 @@ func (f *Frame) runInstancesLayer(nodeIds []string) *models.TaskLayer {
 		}
 		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
 		if !exist {
-			logger.Errorf("No such role [%s] in cluster role [%s]. ",
+			logger.Error("No such role [%s] in cluster role [%s]. ",
 				role, f.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
@@ -908,7 +908,7 @@ func (f *Frame) registerScalingNodesMetadataLayer(nodeIds []string, path string)
 	}
 	hosts := metadata.GetHostsCnodes(nodeIds)
 	if len(hosts) == 0 {
-		logger.Infof("No new nodes for cluster [%s] is registered", clusterId)
+		logger.Info("No new nodes for cluster [%s] is registered", clusterId)
 		return nil
 	}
 	cnodes := map[string]interface{}{

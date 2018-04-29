@@ -49,14 +49,14 @@ func getRuntime(runtimeId string) (*pb.Runtime, error) {
 		RuntimeId: runtimeIds,
 	})
 	if err != nil {
-		logger.Errorf("Describe runtime [%s] failed: %+v",
+		logger.Error("Describe runtime [%s] failed: %+v",
 			strings.Join(runtimeIds, ","), err)
 		return nil, status.Errorf(codes.Internal, "Describe runtime [%s] failed: %+v",
 			strings.Join(runtimeIds, ","), err)
 	}
 
 	if response.GetTotalCount() == 0 {
-		logger.Errorf("Runtime [%s] not found", strings.Join(runtimeIds, ","))
+		logger.Error("Runtime [%s] not found", strings.Join(runtimeIds, ","))
 		return nil, status.Errorf(codes.PermissionDenied, "Runtime [%s] not found",
 			strings.Join(runtimeIds, ","), err)
 	}

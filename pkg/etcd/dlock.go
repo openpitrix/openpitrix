@@ -14,7 +14,7 @@ import (
 type callback func() error
 
 func (etcd *Etcd) Dlock(ctx context.Context, key string, cb callback) error {
-	logger.Debugf("Create dlock with key [%s]", key)
+	logger.Debug("Create dlock with key [%s]", key)
 	mutex, err := etcd.NewMutex(key)
 	if err != nil {
 		logger.Fatalf("Dlock lock error, failed to create mutex: %+v", err)

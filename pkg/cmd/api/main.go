@@ -33,15 +33,15 @@ import (
 func Serve() {
 	config.LoadConf()
 
-	logger.Infof("Openpitrix %s", version.ShortVersion)
-	logger.Infof("App service http://%s:%d", constants.AppManagerHost, constants.AppManagerPort)
-	logger.Infof("Runtime service http://%s:%d", constants.RuntimeManagerHost, constants.RuntimeManagerPort)
-	logger.Infof("Cluster service http://%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort)
-	logger.Infof("Repo service http://%s:%d", constants.RepoManagerHost, constants.RepoManagerPort)
-	logger.Infof("Job service http://%s:%d", constants.JobManagerHost, constants.JobManagerPort)
-	logger.Infof("Task service http://%s:%d", constants.TaskManagerHost, constants.TaskManagerPort)
-	logger.Infof("Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
-	logger.Infof("Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
+	logger.Info("Openpitrix %s", version.ShortVersion)
+	logger.Info("App service http://%s:%d", constants.AppManagerHost, constants.AppManagerPort)
+	logger.Info("Runtime service http://%s:%d", constants.RuntimeManagerHost, constants.RuntimeManagerPort)
+	logger.Info("Cluster service http://%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort)
+	logger.Info("Repo service http://%s:%d", constants.RepoManagerHost, constants.RepoManagerPort)
+	logger.Info("Job service http://%s:%d", constants.JobManagerHost, constants.JobManagerPort)
+	logger.Info("Task service http://%s:%d", constants.TaskManagerHost, constants.TaskManagerPort)
+	logger.Info("Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
+	logger.Info("Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
 	if err := run(); err != nil {
 		logger.Fatalf("%+v", err)

@@ -67,7 +67,7 @@ func WaitJob(jobId string, timeout time.Duration, waitInterval time.Duration) er
 		}
 		j := jobResponse.JobSet[0]
 		if j.Status == nil {
-			logger.Errorf("Job [%s] status is nil", jobId)
+			logger.Error("Job [%s] status is nil", jobId)
 			return false, nil
 		}
 		if j.Status.GetValue() == constants.StatusWorking || j.Status.GetValue() == constants.StatusPending {
@@ -79,7 +79,7 @@ func WaitJob(jobId string, timeout time.Duration, waitInterval time.Duration) er
 		if j.Status.GetValue() == constants.StatusFailed {
 			return false, fmt.Errorf("Job [%s] failed. ", jobId)
 		}
-		logger.Errorf("Unknown status [%s] for job [%s]. ", j.Status.GetValue(), jobId)
+		logger.Error("Unknown status [%s] for job [%s]. ", j.Status.GetValue(), jobId)
 		return false, nil
 	}, timeout, waitInterval)
 }
@@ -96,7 +96,7 @@ func SendJob(job *models.Job) (jobId string, err error) {
 	}
 	jobId, err = CreateJob(client.GetSystemUserContext(), jobRequest)
 	if err != nil {
-		logger.Errorf("Failed to create job [%s]: %+v", jobId, err)
+		logger.Error("Failed to create job [%s]: %+v", jobId, err)
 	}
 	return
 }

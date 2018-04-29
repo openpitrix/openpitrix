@@ -41,7 +41,7 @@ func (f *Frontgate) getFrontgateFromDb(vpcId, userId string) ([]*models.Cluster,
 
 func (f *Frontgate) activate(frontgate *models.Cluster) error {
 	if frontgate.TransitionStatus != "" {
-		logger.Warnf("Frontgate cluster [%s] is in [%s] transition status, please try laster",
+		logger.Warn("Frontgate cluster [%s] is in [%s] transition status, please try laster",
 			frontgate.ClusterId, frontgate.TransitionStatus)
 		return fmt.Errorf("Frontgate service is [%s], please try later. ", frontgate.TransitionStatus)
 	}
@@ -53,7 +53,7 @@ func (f *Frontgate) activate(frontgate *models.Cluster) error {
 	} else if frontgate.Status == constants.StatusDeleted {
 		return f.RecoverCluster(frontgate)
 	} else {
-		logger.Panicf("Frontgate cluster [%s] is in wrong status [%s]", frontgate.ClusterId, frontgate.Status)
+		logger.Critical("Frontgate cluster [%s] is in wrong status [%s]", frontgate.ClusterId, frontgate.Status)
 		return fmt.Errorf("Frontgate cluster is in wrong status [%s]. ", frontgate.Status)
 	}
 }
@@ -86,7 +86,7 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 		// Check vpc status
 		providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider)
 		if err != nil {
-			logger.Errorf("No such provider [%s]. ", f.Runtime.Provider)
+			logger.Error("No such provider [%s]. ", f.Runtime.Provider)
 			return err
 		}
 		vpc, err := providerInterface.DescribeVpc(register.Runtime.RuntimeId, vpcId)
@@ -97,11 +97,11 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 			return fmt.Errorf("Describe vpc [%s] failed. ", vpcId)
 		}
 		if vpc.Status != constants.StatusActive {
-			logger.Warnf("Vpc [%s] is not active. ", vpcId)
+			logger.Warn("Vpc [%s] is not active. ", vpcId)
 			return fmt.Errorf("Vpc [%s] is not active. ", vpcId)
 		}
 		if vpc.TransitionStatus != "" {
-			logger.Warnf("Vpc [%s] is now updating. ", vpcId)
+			logger.Warn("Vpc [%s] is now updating. ", vpcId)
 			return fmt.Errorf("Vpc [%s] is now updating. ", vpcId)
 		}
 
@@ -118,7 +118,7 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 			err = f.activate(frontgate)
 			return err
 		} else {
-			logger.Panicf("More than one frontgate non-ceased cluster in the vpc [%s] for user [%s]", vpcId, userId)
+			logger.Critical("More than one frontgate non-ceased cluster in the vpc [%s] for user [%s]", vpcId, userId)
 			return fmt.Errorf("More than one frontgate non-ceased cluster. ")
 		}
 	})

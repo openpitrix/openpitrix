@@ -89,7 +89,7 @@ func (i *EventController) updateRepoEventStatus(repoEventId, status, result stri
 		Where(db.Eq("repo_event_id", repoEventId)).
 		Exec()
 	if err != nil {
-		logger.Panicf("Failed to set repo event [&s] status to [%s] result to [%s], %+v", repoEventId, status, result, err)
+		logger.Critical("Failed to set repo event [&s] status to [%s] result to [%s], %+v", repoEventId, status, result, err)
 	}
 	return err
 }
@@ -98,11 +98,11 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 	defer cb()
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Panic(err)
+			logger.Critical("ExecuteEvent [%s] recover with error: %+v", repoEvent.RepoEventId, err)
 			i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusFailed, fmt.Sprintf("%+v", err))
 		}
 	}()
-	logger.Infof("Got repo event: %+v", repoEvent)
+	logger.Info("Got repo event: %+v", repoEvent)
 	err := func() (err error) {
 		ctx := client.GetSystemUserContext()
 		repoManagerClient, err := repoClient.NewRepoManagerClient(ctx)
@@ -124,14 +124,14 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 		repo := res.RepoSet[0]
 		err = indexer.GetIndexer(repo).IndexRepo()
 		if err != nil {
-			logger.Errorf("Failed to index repo [%s]", repoId)
+			logger.Error("Failed to index repo [%s]", repoId)
 		}
 		return
 	}()
 	if err != nil {
 		// FIXME: remove panic log
-		logger.Panicf("Failed to execute repo event: %+v", err)
-		logger.Panic(string(debug.Stack()))
+		logger.Critical("Failed to execute repo event: %+v", err)
+		logger.Critical(string(debug.Stack()))
 		i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusFailed, fmt.Sprintf("%+v", err))
 	} else {
 		i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusSuccessful, "")
@@ -163,13 +163,13 @@ func (i *EventController) GetEventLength() int32 {
 func (i *EventController) Dequeue() {
 	for {
 		if i.runningCount.Get() > i.GetEventLength() {
-			logger.Errorf("Sleep 10s, running event count exceed [%d/%d]", i.runningCount.Get(), i.GetEventLength())
+			logger.Error("Sleep 10s, running event count exceed [%d/%d]", i.runningCount.Get(), i.GetEventLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		repoEvent, err := i.getRepoEventFromQueue()
 		if err != nil {
-			logger.Errorf("Failed to get repo event from etcd: %+v", err)
+			logger.Error("Failed to get repo event from etcd: %+v", err)
 			time.Sleep(10 * time.Second)
 			continue
 		}
