@@ -23,7 +23,7 @@ import (
 func MustLoadConfdConfig(path string) *pbtypes.ConfdConfig {
 	p, err := LoadConfdConfig(path)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Critical("%+v", err)
 		os.Exit(1)
 	}
 	return p
@@ -32,7 +32,7 @@ func MustLoadConfdConfig(path string) *pbtypes.ConfdConfig {
 func MustLoadDroneConfig(path string) *pbtypes.DroneConfig {
 	p, err := LoadDroneConfig(path)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Critical("%+v", err)
 		os.Exit(1)
 	}
 	return p

@@ -45,7 +45,7 @@ func Serve(cfg *pbtypes.FrontgateConfig, opts ...Options) {
 
 	etcd, err := NewEtcdClient(cfg.GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Critical("%+v", err)
 		os.Exit(1)
 	}
 

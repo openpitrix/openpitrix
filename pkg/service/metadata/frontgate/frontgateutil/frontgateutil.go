@@ -20,7 +20,7 @@ import (
 func MustLoadFrontgateConfig(path string) *pbtypes.FrontgateConfig {
 	p, err := LoadFrontgateConfig(path)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Critical("%+v", err)
 		os.Exit(1)
 	}
 	return p
