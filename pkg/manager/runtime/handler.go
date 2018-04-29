@@ -24,14 +24,14 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	// validate req
 	err := validateCreateRuntimeRequest(req)
 	if err != nil {
-		logger.Errorf("CreateRuntime: %+v", err)
+		logger.Error("CreateRuntime: %+v", err)
 		return nil, status.Errorf(codes.InvalidArgument, "CreateRuntime: %+v", err)
 	}
 
 	// create runtime credential
 	runtimeCredentialId, err := p.createRuntimeCredential(req.Provider.GetValue(), req.RuntimeCredential.GetValue())
 	if err != nil {
-		logger.Errorf("CreateRuntime: %+v", err)
+		logger.Error("CreateRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal, "CreateRuntime: %+v", err)
 	}
 
@@ -45,14 +45,14 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		req.Zone.GetValue(),
 		s.UserId)
 	if err != nil {
-		logger.Errorf("CreateRuntime: %+v", err)
+		logger.Error("CreateRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal, "CreateRuntime: %+v", err)
 	}
 
 	// create labels
 	err = p.createRuntimeLabels(runtimeId, req.Labels.GetValue())
 	if err != nil {
-		logger.Errorf("CreateRuntime: %+v", err)
+		logger.Error("CreateRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal, "CreateRuntime: %+v", err)
 	}
 
@@ -63,7 +63,7 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	}
 	pbRuntime, err := p.formatRuntime(runtime)
 	if err != nil {
-		logger.Errorf("CreateRuntime: %+v", err)
+		logger.Error("CreateRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal, "CreateRuntime: %+v", err)
 	}
 	res := &pb.CreateRuntimeResponse{
@@ -78,12 +78,12 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 	offset := utils.GetOffsetFromRequest(req)
 	limit := utils.GetLimitFromRequest(req)
 	if err != nil {
-		logger.Errorf("DescribeRuntimes: %+v", err)
+		logger.Error("DescribeRuntimes: %+v", err)
 		return nil, status.Errorf(codes.InvalidArgument, "DescribeRuntimes: %+v", err)
 	}
 	selectorMap, err := SelectorStringToMap(req.Label.GetValue())
 	if err != nil {
-		logger.Errorf("DescribeRuntimes: %+v", err)
+		logger.Error("DescribeRuntimes: %+v", err)
 		return nil, status.Errorf(codes.InvalidArgument, "DescribeRuntimes: %+v", err)
 	}
 
@@ -101,7 +101,7 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 
 	_, err = query.Load(&runtimes)
 	if err != nil {
-		logger.Errorf("DescribeRuntimes: %+v", err)
+		logger.Error("DescribeRuntimes: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeRuntimes: %+v", err)
 	}
 
@@ -111,7 +111,7 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 	}
 	pbRuntime, err := p.formatRuntimeSet(runtimes)
 	if err != nil {
-		logger.Errorf("DescribeRuntimes: %+v", err)
+		logger.Error("DescribeRuntimes: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeRuntimes %+v", err)
 	}
 	res := &pb.DescribeRuntimesResponse{
@@ -125,25 +125,25 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	// validate req
 	err := validateModifyRuntimeRequest(req)
 	if err != nil {
-		logger.Errorf("ModifyRuntime: %+v", err)
+		logger.Error("ModifyRuntime: %+v", err)
 		return nil, status.Errorf(codes.InvalidArgument, "ModifyRuntime: %+v", err)
 	}
 	// check runtime can be modified
 	runtimeId := req.GetRuntimeId().GetValue()
 	deleted, err := p.checkRuntimeDeleted(runtimeId)
 	if err != nil {
-		logger.Errorf("ModifyRuntime: %+v", err)
+		logger.Error("ModifyRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal, "ModifyRuntime: %+v", err)
 	}
 	if deleted {
-		logger.Errorf("ModifyRuntime: runtime has been deleted [%+v]", runtimeId)
+		logger.Error("ModifyRuntime: runtime has been deleted [%+v]", runtimeId)
 		return nil, status.Errorf(codes.Internal,
 			"ModifyRuntime: runtime has been deleted [%+v]", runtimeId)
 	}
 	// update runtime
 	err = p.updateRuntime(req)
 	if err != nil {
-		logger.Errorf("ModifyRuntime: %+v", err)
+		logger.Error("ModifyRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal, "ModifyRuntime: %+v", err)
 	}
 
@@ -151,7 +151,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	if req.Labels != nil {
 		err := p.updateRuntimeLabels(runtimeId, req.Labels.GetValue())
 		if err != nil {
-			logger.Errorf("ModifyRuntime: %+v", err)
+			logger.Error("ModifyRuntime: %+v", err)
 			return nil, status.Errorf(codes.Internal, "ModifyRuntime: %+v", err)
 		}
 	}
@@ -163,7 +163,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	}
 	pbRuntime, err := p.formatRuntime(runtime)
 	if err != nil {
-		logger.Errorf("ModifyRuntime: %+v", err)
+		logger.Error("ModifyRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal, "ModifyRuntime: %+v", err)
 	}
 	res := &pb.ModifyRuntimeResponse{
@@ -177,7 +177,7 @@ func (p *Server) DeleteRuntime(ctx context.Context, req *pb.DeleteRuntimeRequest
 	// validate req
 	err := validateDeleteRuntimeRequest(req)
 	if err != nil {
-		logger.Errorf("DeleteRuntime: %+v", err)
+		logger.Error("DeleteRuntime: %+v", err)
 		return nil, status.Errorf(codes.InvalidArgument, "DeleteRuntime: %+v", err)
 	}
 
@@ -185,19 +185,19 @@ func (p *Server) DeleteRuntime(ctx context.Context, req *pb.DeleteRuntimeRequest
 	runtimeId := req.GetRuntimeId().GetValue()
 	deleted, err := p.checkRuntimeDeleted(runtimeId)
 	if err != nil {
-		logger.Errorf("DeleteRuntime: %+v", err)
+		logger.Error("DeleteRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal,
 			"DeleteRuntime: %+v", err)
 	}
 	if deleted {
-		logger.Errorf("DeleteRuntime: runtime has been deleted [%+v]", runtimeId)
+		logger.Error("DeleteRuntime: runtime has been deleted [%+v]", runtimeId)
 		return nil, status.Errorf(codes.Internal,
 			"DeleteRuntime: runtime has been deleted [%+v]", runtimeId)
 	}
 	// deleted runtime
 	err = p.deleteRuntime(runtimeId)
 	if err != nil {
-		logger.Errorf("DeleteRuntime: %+v", err)
+		logger.Error("DeleteRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DeleteRuntime: %+v", err)
 	}
 
@@ -208,7 +208,7 @@ func (p *Server) DeleteRuntime(ctx context.Context, req *pb.DeleteRuntimeRequest
 	}
 	pbRuntime, err := p.formatRuntime(runtime)
 	if err != nil {
-		logger.Errorf("DeleteRuntime: %+v", err)
+		logger.Error("DeleteRuntime: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DeleteRuntime: %+v", err)
 	}
 	res := &pb.DeleteRuntimeResponse{
@@ -223,13 +223,13 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	credential := req.RuntimeCredential.GetValue()
 	err := ValidateCredential(provider, url, credential)
 	if err != nil {
-		logger.Errorf("DescribeRuntimeProviderZones: %+v", err)
+		logger.Error("DescribeRuntimeProviderZones: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeRuntimeProviderZones: %+v", err)
 	}
 
 	providerInterface, err := plugins.GetProviderPlugin(provider)
 	if err != nil {
-		logger.Errorf("No such provider [%s]. ", provider)
+		logger.Error("No such provider [%s]. ", provider)
 		return nil, err
 	}
 	zones := providerInterface.DescribeRuntimeProviderZones(url, credential)

@@ -48,12 +48,12 @@ func (p *Server) DescribeRepoEvents(ctx context.Context, req *pb.DescribeRepoEve
 		Where(manager.BuildFilterConditions(req, models.RepoEventTableName))
 	_, err := query.Load(&repoEvents)
 	if err != nil {
-		logger.Errorf("DescribeRepoEvents error: %+v", err)
+		logger.Error("DescribeRepoEvents error: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeRepoEvents: %+v", err)
 	}
 	count, err := query.Count()
 	if err != nil {
-		logger.Errorf("DescribeRepoEvents error: %+v", err)
+		logger.Error("DescribeRepoEvents error: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeRepoEvents: %+v", err)
 	}
 	res := &pb.DescribeRepoEventsResponse{

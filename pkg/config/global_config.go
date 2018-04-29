@@ -46,7 +46,7 @@ func (g *GlobalConfig) GetRuntimeImageId(apiServer, zone string) (string, error)
 			return imageConfig.ImageId, nil
 		}
 	}
-	logger.Errorf("No such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
+	logger.Error("No such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 	return "", fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 }
 
@@ -102,7 +102,7 @@ func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 		}
 		// parse value
 		if get.Count == 0 {
-			logger.Debugf("Cannot get global config, put the initial string. [%s]", InitialGlobalConfig)
+			logger.Debug("Cannot get global config, put the initial string. [%s]", InitialGlobalConfig)
 			globalConfig = DecodeInitConfig()
 			_, err = etcd.Put(ctx, GlobalConfigKey, InitialGlobalConfig)
 			if err != nil {
@@ -114,7 +114,7 @@ func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 				return err
 			}
 		}
-		logger.Debugf("Global config update to [%+v]", globalConfig)
+		logger.Debug("Global config update to [%+v]", globalConfig)
 		// send it back
 		watcher <- &globalConfig
 		return nil
@@ -122,16 +122,16 @@ func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 
 	// watch
 	go func() {
-		logger.Debugf("Start watch global config")
+		logger.Debug("Start watch global config")
 		watchRes := etcd.Watch(ctx, GlobalConfigKey)
 		for res := range watchRes {
 			for _, ev := range res.Events {
 				if ev.Type == mvccpb.PUT {
 					globalConfig = GlobalConfig{}
-					//logger.Debugf("Got updated global config from etcd, try to decode with yaml")
+					//logger.Debug("Got updated global config from etcd, try to decode with yaml")
 					err = yaml.Decode(ev.Kv.Value, &globalConfig)
 					if err != nil {
-						logger.Errorf("Watch global config from etcd found error: %+v", err)
+						logger.Error("Watch global config from etcd found error: %+v", err)
 					} else {
 						watcher <- &globalConfig
 					}

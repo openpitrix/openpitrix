@@ -52,13 +52,13 @@ func (p *Server) autoIndex() error {
 	if err != nil {
 		return err
 	}
-	logger.Infof("Got repos [%+v]", repos)
+	logger.Info("Got repos [%+v]", repos)
 	for repoId, owner := range repos {
 		repoEvent, err := p.controller.NewRepoEvent(repoId, owner)
 		if err != nil {
 			return err
 		}
-		logger.Infof("Repo [%s] submit repo event [%+v] success", repoId, repoEvent)
+		logger.Info("Repo [%s] submit repo event [%+v] success", repoId, repoEvent)
 	}
 	return nil
 }
@@ -67,15 +67,15 @@ func (p *Server) startCron(repoCron string) *cron.Cron {
 	c := cron.New()
 	if repoCron != "" {
 		c.AddFunc(repoCron, func() {
-			logger.Debugf("Start auto index, current cron is [%s]", repoCron)
+			logger.Debug("Start auto index, current cron is [%s]", repoCron)
 			err := p.autoIndex()
 			if err != nil {
-				logger.Panicf("failed to auto index repos, [%+v]", err)
+				logger.Critical("failed to auto index repos, [%+v]", err)
 			}
 		})
 	}
 	c.Start()
-	logger.Debugf("Repo cron had started")
+	logger.Debug("Repo cron had started")
 	return c
 }
 
@@ -85,7 +85,7 @@ func (p *Server) Cron() {
 	p.ThreadWatchGlobalConfig(func(globalConfig *config.GlobalConfig) {
 		currentRepoCron := globalConfig.Repo.Cron
 		if currentRepoCron != repoCron {
-			logger.Debugf("Repo cron had update to [%s], stop old cron job [%s]", currentRepoCron, repoCron)
+			logger.Debug("Repo cron had update to [%s], stop old cron job [%s]", currentRepoCron, repoCron)
 			c.Stop()
 			repoCron = currentRepoCron
 			c = p.startCron(repoCron)

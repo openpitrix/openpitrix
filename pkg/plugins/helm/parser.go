@@ -98,7 +98,7 @@ func (p *Parser) ParseClusterRoles(c *chart.Chart, vals map[string]interface{}) 
 
 		obj, _, err := decode([]byte(v), nil, nil)
 		if err != nil {
-			logger.Warnf("Decode file [%s] in chart failed, %+v", k, err)
+			logger.Warn("Decode file [%s] in chart failed, %+v", k, err)
 			continue
 		}
 

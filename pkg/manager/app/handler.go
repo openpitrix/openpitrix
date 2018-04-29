@@ -289,16 +289,16 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
 	}
-	logger.Debugf("Got app version: [%+v]", version)
+	logger.Debug("Got app version: [%+v]", version)
 	packageUrl := version.PackageName
 	resp, err := utils.HttpGet(packageUrl)
 	if err != nil {
-		logger.Errorf("Failed to http get [%s], error: %+v", packageUrl, err)
+		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
 		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
 	}
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logger.Errorf("Failed to read http response [%s], error: %+v", packageUrl, err)
+		logger.Error("Failed to read http response [%s], error: %+v", packageUrl, err)
 		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
 	}
 	return &pb.GetAppVersionPackageResponse{

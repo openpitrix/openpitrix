@@ -203,6 +203,6 @@ func (p *Server) PingFrontgate(ctx context.Context, arg *pbtypes.FrontgateEndpoi
 }
 
 func (p *Server) PingDrone(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Empty, error) {
-	logger.Infof("PingDrone: ok\n")
+	logger.Info("PingDrone: ok")
 	return &pbtypes.Empty{}, nil
 }

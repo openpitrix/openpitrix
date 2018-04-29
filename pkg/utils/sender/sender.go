@@ -33,7 +33,7 @@ func (info *Info) ToJson() string {
 func GetSenderFromContext(ctx context.Context) *Info {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if ok {
-		//logger.Debugf("%+v", md[senderKey])
+		//logger.Debug("%+v", md[senderKey])
 		if len(md[senderKey]) == 0 {
 			return nil
 		}
@@ -48,7 +48,7 @@ func GetSenderFromContext(ctx context.Context) *Info {
 }
 
 func AuthUserInfo(authKey string) *Info {
-	logger.Debugf("got auth key: %+v", authKey)
+	logger.Debug("got auth key: %+v", authKey)
 	// TODO: validate auth key && get user info from db
 	return GetSystemUser()
 }

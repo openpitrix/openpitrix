@@ -32,7 +32,7 @@ func NewVolume(data string) (*Volume, error) {
 	volume := &Volume{}
 	err := json.Unmarshal([]byte(data), volume)
 	if err != nil {
-		logger.Errorf("Unmarshal into volume failed: %+v", err)
+		logger.Error("Unmarshal into volume failed: %+v", err)
 	}
 	return volume, err
 }
@@ -40,7 +40,7 @@ func NewVolume(data string) (*Volume, error) {
 func (v *Volume) ToString() (string, error) {
 	result, err := json.Marshal(v)
 	if err != nil {
-		logger.Errorf("Marshal volume with volume id [%s] failed: %+v",
+		logger.Error("Marshal volume with volume id [%s] failed: %+v",
 			v.VolumeId, err)
 	}
 	return string(result), err

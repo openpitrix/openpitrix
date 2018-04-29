@@ -43,7 +43,7 @@ func (c *Controller) updateJobAttributes(jobId string, attributes map[string]int
 		Where(db.Eq("job_id", jobId)).
 		Exec()
 	if err != nil {
-		logger.Errorf("Failed to update job [%s]: %+v", jobId, err)
+		logger.Error("Failed to update job [%s]: %+v", jobId, err)
 	}
 	return err
 }
@@ -65,17 +65,17 @@ func (c *Controller) IsRunningExceed() bool {
 func (c *Controller) ExtractJobs() {
 	for {
 		if c.IsRunningExceed() {
-			logger.Errorf("Sleep 10s, running job count exceed [%d/%d]", c.runningCount, c.GetJobLength())
+			logger.Error("Sleep 10s, running job count exceed [%d/%d]", c.runningCount, c.GetJobLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		jobId, err := c.queue.Dequeue()
 		if err != nil {
-			logger.Errorf("Failed to dequeue job from etcd queue: %+v", err)
+			logger.Error("Failed to dequeue job from etcd queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		logger.Debugf("Dequeue job [%s] from etcd queue success", jobId)
+		logger.Debug("Dequeue job [%s] from etcd queue success", jobId)
 		c.runningJobs <- jobId
 	}
 }
@@ -104,7 +104,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 
 	err := query.LoadOne(&job)
 	if err != nil {
-		logger.Errorf("Failed to get job [%s]: %+v", job.JobId, err)
+		logger.Error("Failed to get job [%s]: %+v", job.JobId, err)
 		return err
 	}
 
@@ -117,12 +117,12 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 
 	providerInterface, err := plugins.GetProviderPlugin(job.Provider)
 	if err != nil {
-		logger.Errorf("No such provider [%s]. ", job.Provider)
+		logger.Error("No such provider [%s]. ", job.Provider)
 		return err
 	}
 	module, err := providerInterface.SplitJobIntoTasks(job)
 	if err != nil {
-		logger.Errorf("Failed to split job [%s] into tasks with provider [%s]: %+v",
+		logger.Error("Failed to split job [%s] into tasks with provider [%s]: %+v",
 			job.JobId, job.Provider, err)
 		return err
 	}
@@ -132,7 +132,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 			for _, parentTask := range parent.Tasks {
 				err = taskclient.WaitTask(parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 				if err != nil {
-					logger.Errorf("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
+					logger.Error("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 					return err
 				}
 			}
@@ -142,7 +142,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 			for _, currentTask := range current.Tasks {
 				taskId, err := taskclient.SendTask(currentTask)
 				if err != nil {
-					logger.Errorf("Failed to send task [%s]: %+v", currentTask.TaskId, err)
+					logger.Error("Failed to send task [%s]: %+v", currentTask.TaskId, err)
 					return err
 				}
 				currentTask.TaskId = taskId
@@ -151,7 +151,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 				for _, currentTask := range current.Tasks {
 					err = taskclient.WaitTask(currentTask.TaskId, currentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 					if err != nil {
-						logger.Errorf("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
+						logger.Error("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
 						return err
 					}
 				}

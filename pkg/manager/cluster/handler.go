@@ -167,18 +167,18 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 
 	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider)
 	if err != nil {
-		logger.Errorf("No such provider [%s]. ", runtime.Provider)
+		logger.Error("No such provider [%s]. ", runtime.Provider)
 		return nil, err
 	}
 	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, conf)
 	if err != nil {
-		logger.Errorf("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
+		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
 		return nil, err
 	}
 
 	subnet, err := providerInterface.DescribeSubnet(runtimeId, clusterWrapper.Cluster.SubnetId)
 	if err != nil {
-		logger.Errorf("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
+		logger.Error("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
 		return nil, err
 	}
 
@@ -198,7 +198,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	}
 	frontgate, err := fg.GetActiveFrontgate(vpcId, s.UserId, register)
 	if err != nil {
-		logger.Errorf("Get frontgate in vpc [%s] user [%s] failed. ", vpcId, s.UserId)
+		logger.Error("Get frontgate in vpc [%s] user [%s] failed. ", vpcId, s.UserId)
 		return nil, err
 	}
 
@@ -249,7 +249,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	}
 
 	attributes := manager.BuildUpdateAttributes(req.Cluster, models.ClusterColumns...)
-	logger.Debugf("ModifyCluster got attributes: [%+v]", attributes)
+	logger.Debug("ModifyCluster got attributes: [%+v]", attributes)
 	delete(attributes, "cluster_id")
 	_, err = pi.Global().Db.
 		Update(models.ClusterTableName).
@@ -871,7 +871,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 		}
 		err = fg.ActivateFrontgate(clusterWrapper.Cluster.FrontgateId)
 		if err != nil {
-			logger.Errorf("Activate frontgate [%s] failed. ", clusterWrapper.Cluster.FrontgateId)
+			logger.Error("Activate frontgate [%s] failed. ", clusterWrapper.Cluster.FrontgateId)
 			return nil, err
 		}
 
@@ -925,7 +925,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 		}
 		err = fg.ActivateFrontgate(clusterWrapper.Cluster.FrontgateId)
 		if err != nil {
-			logger.Errorf("Activate frontgate [%s] failed. ", clusterWrapper.Cluster.FrontgateId)
+			logger.Error("Activate frontgate [%s] failed. ", clusterWrapper.Cluster.FrontgateId)
 			return nil, err
 		}
 

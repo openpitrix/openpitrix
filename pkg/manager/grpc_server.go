@@ -39,8 +39,8 @@ func NewGrpcServer(serviceName string, port int) *GrpcServer {
 }
 
 func (g *GrpcServer) Serve(callback RegisterCallback) {
-	logger.Infof("Openpitrix %s", version.ShortVersion)
-	logger.Infof("Service [%s] start listen at port [%d]", g.ServiceName, g.Port)
+	logger.Info("Openpitrix %s", version.ShortVersion)
+	logger.Info("Service [%s] start listen at port [%d]", g.ServiceName, g.Port)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", g.Port))
 	if err != nil {
 		err = errors.WithStack(err)
@@ -53,8 +53,8 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 			UnaryServerLogInterceptor(),
 			grpc_recovery.UnaryServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					logger.Panic(p)
-					logger.Panic(string(debug.Stack()))
+					logger.Critical("GRPC server recovery with error: %+v", p)
+					logger.Critical(string(debug.Stack()))
 					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
@@ -62,8 +62,8 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 		grpc_middleware.WithStreamServerChain(
 			grpc_recovery.StreamServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
-					logger.Panic(p)
-					logger.Panic(string(debug.Stack()))
+					logger.Critical("GRPC server recovery with error: %+v", p)
+					logger.Critical(string(debug.Stack()))
 					return status.Errorf(codes.Internal, "%+v", p)
 				}),
 			),
@@ -89,15 +89,15 @@ func UnaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 		action := method[len(method)-1]
 		if p, ok := req.(proto.Message); ok {
 			if content, err := jsonPbMarshaller.MarshalToString(p); err != nil {
-				logger.Errorf("Failed to marshal proto message to string [%s] [%+v] [%+v]", action, s, err)
+				logger.Error("Failed to marshal proto message to string [%s] [%+v] [%+v]", action, s, err)
 			} else {
-				logger.Infof("Request received [%s] [%+v] [%s]", action, s, content)
+				logger.Info("Request received [%s] [%+v] [%s]", action, s, content)
 			}
 		}
 		start := time.Now()
 		resp, err := handler(ctx, req)
 		elapsed := time.Since(start)
-		logger.Infof("Handled request [%s] [%+v] exec_time is [%s]", action, s, elapsed)
+		logger.Info("Handled request [%s] [%+v] exec_time is [%s]", action, s, elapsed)
 		return resp, err
 	}
 }

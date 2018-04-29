@@ -69,10 +69,10 @@ func LoadConf() *Config {
 	)
 	err := m.Load(config)
 	if err != nil {
-		logger.Panicf("Failed to load config: %+v", err)
+		logger.Critical("Failed to load config: %+v", err)
 		panic(err)
 	}
 	logger.SetLevelByString(config.Log.Level)
-	logger.Debugf("LoadConf: %+v", config)
+	logger.Debug("LoadConf: %+v", config)
 	return config
 }

@@ -28,14 +28,14 @@ func NewProcessor(task *models.Task) *Processor {
 // Post process when task is start
 func (t *Processor) Pre() error {
 	if t.Task.Directive == "" {
-		logger.Warnf("Skip empty task [%s] directive", t.Task.TaskId)
+		logger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
 		return nil
 	}
 	var err error
 	ctx := clientutil.GetSystemUserContext()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
-		logger.Errorf("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
+		logger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
 		return err
 	}
 	switch t.Task.TaskAction {
@@ -120,10 +120,10 @@ func (t *Processor) Pre() error {
 
 	case vmbased.ActionWaitFrontgateAvailable:
 	default:
-		logger.Infof("Nothing to do with task [%s] pre processor", t.Task.TaskId)
+		logger.Info("Nothing to do with task [%s] pre processor", t.Task.TaskId)
 	}
 	if err != nil {
-		logger.Errorf("Executing task [%s] pre processor failed: %+v", t.Task.TaskId, err)
+		logger.Error("Executing task [%s] pre processor failed: %+v", t.Task.TaskId, err)
 	}
 	return err
 }
@@ -134,13 +134,13 @@ func (t *Processor) Post() error {
 	ctx := clientutil.GetSystemUserContext()
 	client, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
-		logger.Errorf("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
+		logger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
 		return err
 	}
 	switch t.Task.TaskAction {
 	case vmbased.ActionRunInstances:
 		if t.Task.Directive == "" {
-			logger.Warnf("Skip empty task [%s] directive", t.Task.TaskId)
+			logger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
 		}
 		instance, err := models.NewInstance(t.Task.Directive)
 		if err == nil {
@@ -155,7 +155,7 @@ func (t *Processor) Post() error {
 		}
 	case vmbased.ActionCreateVolumes:
 		if t.Task.Directive == "" {
-			logger.Warnf("Skip empty task [%s] directive", t.Task.TaskId)
+			logger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
 		}
 		volume, err := models.NewVolume(t.Task.Directive)
 		if err == nil {
@@ -167,10 +167,10 @@ func (t *Processor) Post() error {
 			})
 		}
 	default:
-		logger.Infof("Nothing to do with task [%s] post processor", t.Task.TaskId)
+		logger.Info("Nothing to do with task [%s] post processor", t.Task.TaskId)
 	}
 	if err != nil {
-		logger.Errorf("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
+		logger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
 	}
 	return err
 }

@@ -11,6 +11,6 @@ import (
 
 func ExampleUnmarshalInitConfig() {
 	globalConfig := config.DecodeInitConfig()
-	logger.Infof("Got global config: \n%+v\n", globalConfig)
-	logger.Infof("Get global config string: \n%s\n", config.EncodeGlobalConfig(globalConfig))
+	logger.Info("Got global config: \n%+v\n", globalConfig)
+	logger.Info("Get global config string: \n%s\n", config.EncodeGlobalConfig(globalConfig))
 }

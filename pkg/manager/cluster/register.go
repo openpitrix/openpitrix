@@ -36,7 +36,7 @@ func (r *Register) RegisterClusterNode(clusterNode *models.ClusterNode) error {
 		Record(clusterNode).
 		Exec()
 	if err != nil {
-		logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
+		logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
 			models.ClusterNodeTableName, r.ClusterWrapper.Cluster.ClusterId, err)
 		return err
 	}
@@ -60,7 +60,7 @@ func (r *Register) RegisterClusterWrapper() error {
 			Record(r.ClusterWrapper.Cluster).
 			Exec()
 		if err != nil {
-			logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
+			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
 				models.ClusterTableName, r.ClusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
@@ -87,7 +87,7 @@ func (r *Register) RegisterClusterWrapper() error {
 			Record(clusterCommon).
 			Exec()
 		if err != nil {
-			logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
+			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
 				models.ClusterCommonTableName, r.ClusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
@@ -103,7 +103,7 @@ func (r *Register) RegisterClusterWrapper() error {
 			Record(clusterLink).
 			Exec()
 		if err != nil {
-			logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
+			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
 				models.ClusterLinkTableName, r.ClusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
@@ -118,7 +118,7 @@ func (r *Register) RegisterClusterWrapper() error {
 			Record(clusterRole).
 			Exec()
 		if err != nil {
-			logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
+			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
 				models.ClusterRoleTableName, r.ClusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
@@ -134,7 +134,7 @@ func (r *Register) RegisterClusterWrapper() error {
 				Record(clusterLoadbalancer).
 				Exec()
 			if err != nil {
-				logger.Errorf("Failed to insert table [%s] with cluster id [%s]: %+v",
+				logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
 					models.ClusterLoadbalancerTableName, r.ClusterWrapper.Cluster.ClusterId, err)
 				return err
 			}

@@ -256,7 +256,7 @@ func (p *Server) PingPilot(in *pbtypes.Empty, out *pbtypes.Empty) error {
 }
 
 func (p *Server) PingFrontgate(in *pbtypes.Empty, out *pbtypes.Empty) error {
-	logger.Infof("PingFrontgate: ok\n")
+	logger.Info("PingFrontgate: ok")
 	return nil // OK
 }
 

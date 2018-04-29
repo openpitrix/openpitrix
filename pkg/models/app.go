@@ -55,7 +55,7 @@ func NewApp(name, repoId, description, owner, chartName string) *App {
 }
 
 func AppToPb(app *App) *pb.App {
-	//logger.Infof("%+v", app.Home)
+	//logger.Info("%+v", app.Home)
 	pbApp := pb.App{}
 	pbApp.AppId = utils.ToProtoString(app.AppId)
 	pbApp.Name = utils.ToProtoString(app.Name)

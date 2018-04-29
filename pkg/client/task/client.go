@@ -52,7 +52,7 @@ func DescribeTasks(ctx context.Context, taskRequest *pb.DescribeTasksRequest) (*
 }
 
 func WaitTask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
-	logger.Debugf("Waiting for task [%s] finished", taskId)
+	logger.Debug("Waiting for task [%s] finished", taskId)
 	return utils.WaitForSpecificOrError(func() (bool, error) {
 		taskRequest := &pb.DescribeTasksRequest{
 			TaskId: []string{taskId},
@@ -67,7 +67,7 @@ func WaitTask(taskId string, timeout time.Duration, waitInterval time.Duration) 
 		}
 		t := taskResponse.TaskSet[0]
 		if t.Status == nil {
-			logger.Errorf("Task [%s] status is nil", taskId)
+			logger.Error("Task [%s] status is nil", taskId)
 			return false, nil
 		}
 		if t.Status.GetValue() == constants.StatusWorking || t.Status.GetValue() == constants.StatusPending {
@@ -79,7 +79,7 @@ func WaitTask(taskId string, timeout time.Duration, waitInterval time.Duration) 
 		if t.Status.GetValue() == constants.StatusFailed {
 			return false, fmt.Errorf("Task [%s] failed. ", taskId)
 		}
-		logger.Errorf("Unknown status [%s] for task [%s]. ", t.Status.GetValue(), taskId)
+		logger.Error("Unknown status [%s] for task [%s]. ", t.Status.GetValue(), taskId)
 		return false, nil
 	}, timeout, waitInterval)
 }
@@ -95,7 +95,7 @@ func SendTask(task *models.Task) (taskId string, err error) {
 	}
 	taskId, err = CreateTask(client.GetSystemUserContext(), taskRequest)
 	if err != nil {
-		logger.Errorf("Failed to create task [%s]: %+v", taskId, err)
+		logger.Error("Failed to create task [%s]: %+v", taskId, err)
 	}
 	return
 }
