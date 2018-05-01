@@ -7,7 +7,7 @@ package main
 
 import (
 	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/manager/job"
+	"openpitrix.io/openpitrix/pkg/service/job"
 )
 
 func main() {

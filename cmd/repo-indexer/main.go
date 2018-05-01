@@ -7,7 +7,7 @@ package main
 
 import (
 	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/manager/repo_indexer"
+	"openpitrix.io/openpitrix/pkg/service/repo_indexer"
 )
 
 func main() {
