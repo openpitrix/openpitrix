@@ -7,7 +7,7 @@ package main
 
 import (
 	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/manager/cluster"
+	"openpitrix.io/openpitrix/pkg/service/cluster"
 )
 
 func main() {

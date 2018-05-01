@@ -7,7 +7,7 @@ package main
 
 import (
 	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/manager/task"
+	"openpitrix.io/openpitrix/pkg/service/task"
 )
 
 func main() {

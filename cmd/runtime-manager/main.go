@@ -7,7 +7,7 @@ package main
 
 import (
 	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/manager/runtime"
+	"openpitrix.io/openpitrix/pkg/service/runtime"
 )
 
 func main() {
