@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb/pilot"
 	"openpitrix.io/openpitrix/pkg/pb/types"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
 func NewPilotManagerClient(ctx context.Context) (pbpilot.PilotServiceClient, error) {
@@ -53,7 +53,7 @@ func GetSubtaskStatus(subtaskStatusRequest *pbtypes.SubTaskId) (*pbtypes.SubTask
 
 func WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
 	logger.Debug("Waiting for task [%s] finished", taskId)
-	return utils.WaitForSpecificOrError(func() (bool, error) {
+	return funcutil.WaitForSpecificOrError(func() (bool, error) {
 		taskStatusRequest := &pbtypes.SubTaskId{
 			TaskId: taskId,
 		}

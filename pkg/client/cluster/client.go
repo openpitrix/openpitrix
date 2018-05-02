@@ -13,7 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 func NewClusterManagerClient(ctx context.Context) (pb.ClusterManagerClient, error) {
@@ -69,8 +69,8 @@ func GetClusterWrappers(ctx context.Context, client pb.ClusterManagerClient, clu
 func ModifyClusterTransitionStatus(ctx context.Context, client pb.ClusterManagerClient, clusterId string, transitionStatus string) error {
 	_, err := client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 		Cluster: &pb.Cluster{
-			ClusterId:        utils.ToProtoString(clusterId),
-			TransitionStatus: utils.ToProtoString(transitionStatus),
+			ClusterId:        pbutil.ToProtoString(clusterId),
+			TransitionStatus: pbutil.ToProtoString(transitionStatus),
 		},
 	})
 	return err
@@ -79,8 +79,8 @@ func ModifyClusterTransitionStatus(ctx context.Context, client pb.ClusterManager
 func ModifyClusterStatus(ctx context.Context, client pb.ClusterManagerClient, clusterId string, status string) error {
 	_, err := client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 		Cluster: &pb.Cluster{
-			ClusterId: utils.ToProtoString(clusterId),
-			Status:    utils.ToProtoString(status),
+			ClusterId: pbutil.ToProtoString(clusterId),
+			Status:    pbutil.ToProtoString(status),
 		},
 	})
 	return err

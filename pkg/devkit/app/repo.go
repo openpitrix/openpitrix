@@ -15,7 +15,7 @@ import (
 	"github.com/Masterminds/semver"
 	"k8s.io/helm/pkg/urlutil"
 
-	"openpitrix.io/openpitrix/pkg/utils/yaml"
+	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
 const APIVersionV1 = "v1"
@@ -41,7 +41,7 @@ func NewIndexFile() *IndexFile {
 // This will fail if API Version is not set (ErrNoAPIVersion) or if the unmarshal fails.
 func loadIndex(data []byte) (*IndexFile, error) {
 	i := &IndexFile{}
-	if err := yaml.Decode(data, i); err != nil {
+	if err := yamlutil.Decode(data, i); err != nil {
 		return i, err
 	}
 	i.SortEntries()
@@ -140,7 +140,7 @@ func (i IndexFile) Get(name, version string) (*Version, error) {
 //
 // The mode on the file is set to 'mode'.
 func (i IndexFile) WriteFile(dest string, mode os.FileMode) error {
-	b, err := yaml.Encode(i)
+	b, err := yamlutil.Encode(i)
 	if err != nil {
 		return err
 	}

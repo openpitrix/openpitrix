@@ -12,7 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 func ValidateName(name string) error {
@@ -26,7 +26,7 @@ func ValidateProvider(provider string) error {
 	if !govalidator.StringLength(provider, ProviderMinLength, ProviderMaxLength) {
 		return fmt.Errorf("the length of provider should be 1 to 255")
 	}
-	if i := utils.FindString(constants.VmBaseProviders, provider); i != -1 {
+	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
 		return nil
 	}
 	if constants.ProviderKubernetes == provider {
@@ -46,7 +46,7 @@ func ValidateCredential(provider, url, credential string) error {
 	if len(credential) < CredentialMinLength {
 		return fmt.Errorf("the length of credential should > 0")
 	}
-	if i := utils.FindString(constants.VmBaseProviders, provider); i != -1 {
+	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
 		_, err := yaml.JSONToYAML([]byte(credential))
 		if err != nil {
 			return err

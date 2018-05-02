@@ -15,12 +15,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest) (*pb.CreateRuntimeResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// validate req
 	err := validateCreateRuntimeRequest(req)
 	if err != nil {
@@ -75,8 +75,8 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesRequest) (*pb.DescribeRuntimesResponse, error) {
 	// validate req
 	err := validateDescribeRuntimesRequest(req)
-	offset := utils.GetOffsetFromRequest(req)
-	limit := utils.GetLimitFromRequest(req)
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
 	if err != nil {
 		logger.Error("DescribeRuntimes: %+v", err)
 		return nil, status.Errorf(codes.InvalidArgument, "DescribeRuntimes: %+v", err)

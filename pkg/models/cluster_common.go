@@ -8,7 +8,7 @@ import (
 	"reflect"
 
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const ClusterCommonTableName = "cluster_common"
@@ -52,32 +52,32 @@ func (c ClusterCommon) GetAttribute(attributeName string) interface{} {
 
 func ClusterCommonToPb(clusterCommon *ClusterCommon) *pb.ClusterCommon {
 	return &pb.ClusterCommon{
-		ClusterId:                  utils.ToProtoString(clusterCommon.ClusterId),
-		Role:                       utils.ToProtoString(clusterCommon.Role),
-		ServerIdUpperBound:         utils.ToProtoUInt32(clusterCommon.ServerIdUpperBound),
-		AdvancedActions:            utils.ToProtoString(clusterCommon.AdvancedActions),
-		InitService:                utils.ToProtoString(clusterCommon.InitService),
-		StartService:               utils.ToProtoString(clusterCommon.StartService),
-		StopService:                utils.ToProtoString(clusterCommon.StopService),
-		ScaleOutService:            utils.ToProtoString(clusterCommon.ScaleOutService),
-		ScaleInService:             utils.ToProtoString(clusterCommon.ScaleInService),
-		RestartService:             utils.ToProtoString(clusterCommon.RestartService),
-		DestroyService:             utils.ToProtoString(clusterCommon.DestroyService),
-		UpgradeService:             utils.ToProtoString(clusterCommon.UpgradeService),
-		CustomService:              utils.ToProtoString(clusterCommon.CustomService),
-		BackupService:              utils.ToProtoString(clusterCommon.BackupService),
-		RestoreService:             utils.ToProtoString(clusterCommon.RestoreService),
-		DeleteSnapshotService:      utils.ToProtoString(clusterCommon.DeleteSnapshotService),
-		HealthCheck:                utils.ToProtoString(clusterCommon.HealthCheck),
-		Monitor:                    utils.ToProtoString(clusterCommon.Monitor),
-		Passphraseless:             utils.ToProtoString(clusterCommon.Passphraseless),
-		VerticalScalingPolicy:      utils.ToProtoString(clusterCommon.VerticalScalingPolicy),
-		AgentInstalled:             utils.ToProtoBool(clusterCommon.AgentInstalled),
-		CustomMetadataScript:       utils.ToProtoString(clusterCommon.CustomMetadataScript),
-		ImageId:                    utils.ToProtoString(clusterCommon.ImageId),
-		BackupPolicy:               utils.ToProtoString(clusterCommon.BackupPolicy),
-		IncrementalBackupSupported: utils.ToProtoBool(clusterCommon.IncrementalBackupSupported),
-		Hypervisor:                 utils.ToProtoString(clusterCommon.Hypervisor),
+		ClusterId:                  pbutil.ToProtoString(clusterCommon.ClusterId),
+		Role:                       pbutil.ToProtoString(clusterCommon.Role),
+		ServerIdUpperBound:         pbutil.ToProtoUInt32(clusterCommon.ServerIdUpperBound),
+		AdvancedActions:            pbutil.ToProtoString(clusterCommon.AdvancedActions),
+		InitService:                pbutil.ToProtoString(clusterCommon.InitService),
+		StartService:               pbutil.ToProtoString(clusterCommon.StartService),
+		StopService:                pbutil.ToProtoString(clusterCommon.StopService),
+		ScaleOutService:            pbutil.ToProtoString(clusterCommon.ScaleOutService),
+		ScaleInService:             pbutil.ToProtoString(clusterCommon.ScaleInService),
+		RestartService:             pbutil.ToProtoString(clusterCommon.RestartService),
+		DestroyService:             pbutil.ToProtoString(clusterCommon.DestroyService),
+		UpgradeService:             pbutil.ToProtoString(clusterCommon.UpgradeService),
+		CustomService:              pbutil.ToProtoString(clusterCommon.CustomService),
+		BackupService:              pbutil.ToProtoString(clusterCommon.BackupService),
+		RestoreService:             pbutil.ToProtoString(clusterCommon.RestoreService),
+		DeleteSnapshotService:      pbutil.ToProtoString(clusterCommon.DeleteSnapshotService),
+		HealthCheck:                pbutil.ToProtoString(clusterCommon.HealthCheck),
+		Monitor:                    pbutil.ToProtoString(clusterCommon.Monitor),
+		Passphraseless:             pbutil.ToProtoString(clusterCommon.Passphraseless),
+		VerticalScalingPolicy:      pbutil.ToProtoString(clusterCommon.VerticalScalingPolicy),
+		AgentInstalled:             pbutil.ToProtoBool(clusterCommon.AgentInstalled),
+		CustomMetadataScript:       pbutil.ToProtoString(clusterCommon.CustomMetadataScript),
+		ImageId:                    pbutil.ToProtoString(clusterCommon.ImageId),
+		BackupPolicy:               pbutil.ToProtoString(clusterCommon.BackupPolicy),
+		IncrementalBackupSupported: pbutil.ToProtoBool(clusterCommon.IncrementalBackupSupported),
+		Hypervisor:                 pbutil.ToProtoString(clusterCommon.Hypervisor),
 	}
 }
 

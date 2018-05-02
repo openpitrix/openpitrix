@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/utils/iptool"
+	"openpitrix.io/openpitrix/pkg/util/iputil"
 )
 
 func TestHelm(t *testing.T) {
@@ -41,12 +41,12 @@ func TestHelm(t *testing.T) {
 	t.Log(d.Exec("cat index.yaml"))
 
 	ip := strings.TrimSpace(d.Exec("hostname -i"))
-	localIp := iptool.GetLocalIP()
+	localIp := iputil.GetLocalIP()
 	t.Log(d.ExecD(fmt.Sprintf("helm serve --address %s:%d --url http://%s:%d/", ip, testExportPort, localIp, testExportPort)))
 
 	t.Run("create repo", func(t *testing.T) {
 		time.Sleep(5 * time.Second)
-		testCreateRepo(t, "test-helm-repo-name", constants.ProviderKubernetes, fmt.Sprintf("http://%s:8879/", iptool.GetLocalIP()))
+		testCreateRepo(t, "test-helm-repo-name", constants.ProviderKubernetes, fmt.Sprintf("http://%s:8879/", iputil.GetLocalIP()))
 	})
 
 	t.Run("create cluster", func(t *testing.T) {

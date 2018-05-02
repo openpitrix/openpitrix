@@ -13,7 +13,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/utils/yaml"
+	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
 type GlobalConfig struct {
@@ -109,7 +109,7 @@ func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 				return err
 			}
 		} else {
-			err = yaml.Decode(get.Kvs[0].Value, &globalConfig)
+			err = yamlutil.Decode(get.Kvs[0].Value, &globalConfig)
 			if err != nil {
 				return err
 			}
@@ -129,7 +129,7 @@ func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 				if ev.Type == mvccpb.PUT {
 					globalConfig = GlobalConfig{}
 					//logger.Debug("Got updated global config from etcd, try to decode with yaml")
-					err = yaml.Decode(ev.Kv.Value, &globalConfig)
+					err = yamlutil.Decode(ev.Kv.Value, &globalConfig)
 					if err != nil {
 						logger.Error("Watch global config from etcd found error: %+v", err)
 					} else {
@@ -144,7 +144,7 @@ func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 
 func DecodeInitConfig() GlobalConfig {
 	var globalConfig GlobalConfig
-	err := yaml.Decode([]byte(InitialGlobalConfig), &globalConfig)
+	err := yamlutil.Decode([]byte(InitialGlobalConfig), &globalConfig)
 	if err != nil {
 		fmt.Print("InitialGlobalConfig is invalid, please fix it")
 		panic(err)
@@ -153,7 +153,7 @@ func DecodeInitConfig() GlobalConfig {
 }
 
 func EncodeGlobalConfig(conf GlobalConfig) string {
-	out, err := yaml.Encode(conf)
+	out, err := yamlutil.Encode(conf)
 	if err != nil {
 		panic(err)
 	}

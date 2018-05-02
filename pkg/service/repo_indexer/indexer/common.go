@@ -10,7 +10,8 @@ import (
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type Indexer interface {
@@ -20,7 +21,7 @@ type Indexer interface {
 func GetIndexer(repo *pb.Repo) Indexer {
 	var i Indexer
 	providers := repo.GetProviders()
-	if utils.StringIn(constants.ProviderKubernetes, providers) {
+	if stringutil.StringIn(constants.ProviderKubernetes, providers) {
 		i = NewHelmIndexer(repo)
 	} else {
 		i = NewDevkitIndexer(repo)
@@ -65,15 +66,15 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		return appId, err
 	}
 	var description, icon, home, sources *wrappers.StringValue
-	description = utils.ToProtoString(app.GetDescription())
-	icon = utils.ToProtoString(app.GetIcon())
-	home = utils.ToProtoString(app.GetHome())
-	sources = utils.ToProtoString(strings.Join(app.GetSources(), ","))
+	description = pbutil.ToProtoString(app.GetDescription())
+	icon = pbutil.ToProtoString(app.GetIcon())
+	home = pbutil.ToProtoString(app.GetHome())
+	sources = pbutil.ToProtoString(strings.Join(app.GetSources(), ","))
 	if res.TotalCount == 0 {
 		createReq := pb.CreateAppRequest{}
-		createReq.RepoId = utils.ToProtoString(repoId)
-		createReq.ChartName = utils.ToProtoString(chartName)
-		createReq.Name = utils.ToProtoString(chartName)
+		createReq.RepoId = pbutil.ToProtoString(repoId)
+		createReq.ChartName = pbutil.ToProtoString(chartName)
+		createReq.Name = pbutil.ToProtoString(chartName)
 		createReq.Description = description
 		createReq.Icon = icon
 		createReq.Home = home
@@ -89,8 +90,8 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	} else {
 		modifyReq := pb.ModifyAppRequest{}
 		modifyReq.AppId = res.AppSet[0].AppId
-		modifyReq.Name = utils.ToProtoString(chartName)
-		modifyReq.ChartName = utils.ToProtoString(chartName)
+		modifyReq.Name = pbutil.ToProtoString(chartName)
+		modifyReq.ChartName = pbutil.ToProtoString(chartName)
 		modifyReq.Description = description
 		modifyReq.Icon = icon
 		modifyReq.Home = home
@@ -130,11 +131,11 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface) (st
 	}
 	if res.TotalCount == 0 {
 		createReq := pb.CreateAppVersionRequest{}
-		createReq.AppId = utils.ToProtoString(appId)
-		createReq.Owner = utils.ToProtoString(owner)
-		createReq.Name = utils.ToProtoString(appVersionName)
-		createReq.PackageName = utils.ToProtoString(packageName)
-		createReq.Description = utils.ToProtoString(description)
+		createReq.AppId = pbutil.ToProtoString(appId)
+		createReq.Owner = pbutil.ToProtoString(owner)
+		createReq.Name = pbutil.ToProtoString(appVersionName)
+		createReq.PackageName = pbutil.ToProtoString(packageName)
+		createReq.Description = pbutil.ToProtoString(description)
 
 		createRes, err := appManagerClient.CreateAppVersion(ctx, &createReq)
 		if err != nil {
@@ -145,8 +146,8 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface) (st
 	} else {
 		modifyReq := pb.ModifyAppVersionRequest{}
 		modifyReq.VersionId = res.AppVersionSet[0].VersionId
-		modifyReq.PackageName = utils.ToProtoString(packageName)
-		modifyReq.Description = utils.ToProtoString(description)
+		modifyReq.PackageName = pbutil.ToProtoString(packageName)
+		modifyReq.Description = pbutil.ToProtoString(description)
 
 		modifyRes, err := appManagerClient.ModifyAppVersion(ctx, &modifyReq)
 		if err != nil {

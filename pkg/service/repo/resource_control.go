@@ -8,7 +8,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils/stringutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 func (p *Server) getRepo(repoId string) (*models.Repo, error) {

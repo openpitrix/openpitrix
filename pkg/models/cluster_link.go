@@ -6,7 +6,7 @@ package models
 
 import (
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const ClusterLinkTableName = "cluster_link"
@@ -22,10 +22,10 @@ var ClusterLinkColumns = GetColumnsFromStruct(&ClusterLink{})
 
 func ClusterLinkToPb(clusterLink *ClusterLink) *pb.ClusterLink {
 	return &pb.ClusterLink{
-		ClusterId:         utils.ToProtoString(clusterLink.ClusterId),
-		Name:              utils.ToProtoString(clusterLink.Name),
-		ExternalClusterId: utils.ToProtoString(clusterLink.ExternalClusterId),
-		Owner:             utils.ToProtoString(clusterLink.Owner),
+		ClusterId:         pbutil.ToProtoString(clusterLink.ClusterId),
+		Name:              pbutil.ToProtoString(clusterLink.Name),
+		ExternalClusterId: pbutil.ToProtoString(clusterLink.ExternalClusterId),
+		Owner:             pbutil.ToProtoString(clusterLink.Owner),
 	}
 }
 

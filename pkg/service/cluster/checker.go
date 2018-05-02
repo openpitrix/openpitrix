@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
 func checkPermissionAndTransition(clusterId, userId string) error {
@@ -35,7 +35,7 @@ func isActionSupported(clusterId, role, action string) bool {
 		return false
 	}
 	actions := strings.Split(advanceActions, ",")
-	if utils.In(action, actions) {
+	if reflectutil.In(action, actions) {
 		return true
 	} else {
 		return false

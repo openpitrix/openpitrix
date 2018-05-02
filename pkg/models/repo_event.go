@@ -9,14 +9,14 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const RepoEventTableName = "repo_event"
 
 func NewRepoEventId() string {
-	return idtool.GetUuid("repoe-")
+	return idutil.GetUuid("repoe-")
 }
 
 type RepoEvent struct {
@@ -45,13 +45,13 @@ func NewRepoEvent(repoId, owner string) *RepoEvent {
 
 func RepoEventToPb(repoTask *RepoEvent) *pb.RepoEvent {
 	pbRepoTask := pb.RepoEvent{}
-	pbRepoTask.RepoEventId = utils.ToProtoString(repoTask.RepoEventId)
-	pbRepoTask.RepoId = utils.ToProtoString(repoTask.RepoId)
-	pbRepoTask.Status = utils.ToProtoString(repoTask.Status)
-	pbRepoTask.Result = utils.ToProtoString(repoTask.Result)
-	pbRepoTask.Owner = utils.ToProtoString(repoTask.Owner)
-	pbRepoTask.CreateTime = utils.ToProtoTimestamp(repoTask.CreateTime)
-	pbRepoTask.StatusTime = utils.ToProtoTimestamp(repoTask.StatusTime)
+	pbRepoTask.RepoEventId = pbutil.ToProtoString(repoTask.RepoEventId)
+	pbRepoTask.RepoId = pbutil.ToProtoString(repoTask.RepoId)
+	pbRepoTask.Status = pbutil.ToProtoString(repoTask.Status)
+	pbRepoTask.Result = pbutil.ToProtoString(repoTask.Result)
+	pbRepoTask.Owner = pbutil.ToProtoString(repoTask.Owner)
+	pbRepoTask.CreateTime = pbutil.ToProtoTimestamp(repoTask.CreateTime)
+	pbRepoTask.StatusTime = pbutil.ToProtoTimestamp(repoTask.StatusTime)
 	return &pbRepoTask
 }
 

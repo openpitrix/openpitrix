@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
 type Parser struct {
@@ -38,7 +38,7 @@ func (p *Parser) generateServerId(upperBound int, excludeServerIds []int) (int, 
 				return 0, fmt.Errorf("Find server id failed. ")
 			}
 			result -= 1
-			if !utils.In(result, excludeServerIds) {
+			if !reflectutil.In(result, excludeServerIds) {
 				break
 			}
 		}
@@ -296,7 +296,7 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 		switch reflect.TypeOf(service).Kind() {
 		case reflect.Map:
 			serviceValue = service.(map[string]interface{})
-			if utils.In(serviceName, constants.ServiceNames) {
+			if reflectutil.In(serviceName, constants.ServiceNames) {
 				_, exist := serviceValue["order"]
 				if !exist {
 					serviceValue["order"] = 0

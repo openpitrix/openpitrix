@@ -19,8 +19,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/jsontool"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/sshutil"
 )
 
 type Frame struct {
@@ -580,7 +581,7 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 		clusterCommon := f.ClusterWrapper.ClusterCommons[role]
 		keyType := clusterCommon.Passphraseless
 		if keyType != "" {
-			private, public, err := utils.MakeSSHKeyPair(keyType)
+			private, public, err := sshutil.MakeSSHKeyPair(keyType)
 			if err != nil {
 				logger.Error("Generate ssh key [%s] in cluster node [%s] failed",
 					clusterCommon.Passphraseless, nodeId)
@@ -588,8 +589,8 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 			}
 			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
-					NodeId: utils.ToProtoString(nodeId),
-					PubKey: utils.ToProtoString(public),
+					NodeId: pbutil.ToProtoString(nodeId),
+					PubKey: pbutil.ToProtoString(public),
 				},
 			})
 			cmd := fmt.Sprintf("mkdir -p /root/.ssh/;chmod 700 /root/.ssh/;"+
@@ -877,7 +878,7 @@ func (f *Frame) registerNodesMetadataLayer(nodeIds []string) *models.TaskLayer {
 	metadata := &Metadata{
 		ClusterWrapper: f.ClusterWrapper,
 	}
-	cnodes := jsontool.ToString(metadata.GetClusterNodeCnodes(nodeIds))
+	cnodes := jsonutil.ToString(metadata.GetClusterNodeCnodes(nodeIds))
 	meta := &models.Meta{
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 		Timeout:     TimeoutRegister,
@@ -922,7 +923,7 @@ func (f *Frame) registerScalingNodesMetadataLayer(nodeIds []string, path string)
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 		Timeout:     TimeoutRegister,
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
-		Cnodes:      jsontool.ToString(cnodes),
+		Cnodes:      jsonutil.ToString(cnodes),
 	}
 	directive, err := meta.ToString()
 	if err != nil {
@@ -945,7 +946,7 @@ func (f *Frame) deregisterNodesMetadataLayer(nodeIds []string) *models.TaskLayer
 	metadata := &Metadata{
 		ClusterWrapper: f.ClusterWrapper,
 	}
-	cnodes := jsontool.ToString(metadata.GetEmptyClusterNodeCnodes(nodeIds))
+	cnodes := jsonutil.ToString(metadata.GetEmptyClusterNodeCnodes(nodeIds))
 	meta := &models.Meta{
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 		Timeout:     TimeoutDeregister,
@@ -982,7 +983,7 @@ func (f *Frame) deregisterScalingNodesMetadataLayer(path string) *models.TaskLay
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 		Timeout:     TimeoutDeregister,
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
-		Cnodes:      jsontool.ToString(cnodes),
+		Cnodes:      jsonutil.ToString(cnodes),
 	}
 	directive, err := meta.ToString()
 	if err != nil {

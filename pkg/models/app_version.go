@@ -9,14 +9,14 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const AppVersionTableName = "app_version"
 
 func NewAppVersionId() string {
-	return idtool.GetUuid("appv-")
+	return idutil.GetUuid("appv-")
 }
 
 type AppVersion struct {
@@ -50,17 +50,17 @@ func NewAppVersion(appId, name, description, owner, packageName string) *AppVers
 
 func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
 	pbAppVersion := pb.AppVersion{}
-	pbAppVersion.VersionId = utils.ToProtoString(appVersion.VersionId)
-	pbAppVersion.AppId = utils.ToProtoString(appVersion.AppId)
-	pbAppVersion.Name = utils.ToProtoString(appVersion.Name)
-	pbAppVersion.Description = utils.ToProtoString(appVersion.Description)
-	pbAppVersion.Status = utils.ToProtoString(appVersion.Status)
-	pbAppVersion.PackageName = utils.ToProtoString(appVersion.PackageName)
-	pbAppVersion.Owner = utils.ToProtoString(appVersion.Owner)
-	pbAppVersion.CreateTime = utils.ToProtoTimestamp(appVersion.CreateTime)
-	pbAppVersion.StatusTime = utils.ToProtoTimestamp(appVersion.StatusTime)
+	pbAppVersion.VersionId = pbutil.ToProtoString(appVersion.VersionId)
+	pbAppVersion.AppId = pbutil.ToProtoString(appVersion.AppId)
+	pbAppVersion.Name = pbutil.ToProtoString(appVersion.Name)
+	pbAppVersion.Description = pbutil.ToProtoString(appVersion.Description)
+	pbAppVersion.Status = pbutil.ToProtoString(appVersion.Status)
+	pbAppVersion.PackageName = pbutil.ToProtoString(appVersion.PackageName)
+	pbAppVersion.Owner = pbutil.ToProtoString(appVersion.Owner)
+	pbAppVersion.CreateTime = pbutil.ToProtoTimestamp(appVersion.CreateTime)
+	pbAppVersion.StatusTime = pbutil.ToProtoTimestamp(appVersion.StatusTime)
 	if appVersion.UpdateTime != nil {
-		pbAppVersion.UpdateTime = utils.ToProtoTimestamp(*appVersion.UpdateTime)
+		pbAppVersion.UpdateTime = pbutil.ToProtoTimestamp(*appVersion.UpdateTime)
 	}
 	return &pbAppVersion
 }

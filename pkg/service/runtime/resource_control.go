@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 func (p *Server) getLabelsMap(runtimeIds []string) (labelsMap map[string][]*models.RuntimeLabel, err error) {
@@ -248,7 +248,7 @@ func (p *Server) formatRuntimeSet(runtimes []*models.Runtime) (pbRuntimes []*pb.
 		runtimeId := pbRuntime.GetRuntimeId().GetValue()
 		credentialId := runtimeCredentialMap[runtimeId]
 		pbRuntime.Labels = models.RuntimeLabelsToPbs(labelsMap[runtimeId])
-		pbRuntime.RuntimeCredential = utils.ToProtoString(
+		pbRuntime.RuntimeCredential = pbutil.ToProtoString(
 			RuntimeCredentialJsonStringToString(
 				pbRuntime.Provider.GetValue(), runtimeCredentials[credentialId].Content))
 	}

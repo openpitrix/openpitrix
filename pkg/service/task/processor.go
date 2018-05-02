@@ -11,8 +11,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/jsontool"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 type Processor struct {
@@ -82,7 +82,7 @@ func (t *Processor) Pre() error {
 				metadata := &vmbased.Metadata{
 					ClusterWrapper: pbClusterWrappers[0],
 				}
-				meta.Cnodes = jsontool.ToString(metadata.GetClusterCnodes())
+				meta.Cnodes = jsonutil.ToString(metadata.GetClusterCnodes())
 
 				// write back
 				t.Task.Directive, err = meta.ToString()
@@ -146,10 +146,10 @@ func (t *Processor) Post() error {
 		if err == nil {
 			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
-					NodeId:     utils.ToProtoString(instance.NodeId),
-					InstanceId: utils.ToProtoString(instance.InstanceId),
-					Device:     utils.ToProtoString(instance.Device),
-					PrivateIp:  utils.ToProtoString(instance.PrivateIp),
+					NodeId:     pbutil.ToProtoString(instance.NodeId),
+					InstanceId: pbutil.ToProtoString(instance.InstanceId),
+					Device:     pbutil.ToProtoString(instance.Device),
+					PrivateIp:  pbutil.ToProtoString(instance.PrivateIp),
 				},
 			})
 		}
@@ -161,8 +161,8 @@ func (t *Processor) Post() error {
 		if err == nil {
 			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
-					NodeId:   utils.ToProtoString(t.Task.NodeId),
-					VolumeId: utils.ToProtoString(volume.VolumeId),
+					NodeId:   pbutil.ToProtoString(t.Task.NodeId),
+					VolumeId: pbutil.ToProtoString(volume.VolumeId),
 				},
 			})
 		}

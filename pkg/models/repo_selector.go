@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const RepoSelectorTableName = "repo_selector"
 
 func NewRepoSelectorId() string {
-	return idtool.GetUuid("repos-")
+	return idutil.GetUuid("repos-")
 }
 
 type RepoSelector struct {
@@ -42,8 +42,8 @@ func NewRepoSelector(repoId, selectorKey, selectorValue string) *RepoSelector {
 
 func RepoSelectorToPb(repoSelector *RepoSelector) *pb.RepoSelector {
 	pbRepoSelector := pb.RepoSelector{}
-	pbRepoSelector.SelectorKey = utils.ToProtoString(repoSelector.SelectorKey)
-	pbRepoSelector.SelectorValue = utils.ToProtoString(repoSelector.SelectorValue)
+	pbRepoSelector.SelectorKey = pbutil.ToProtoString(repoSelector.SelectorKey)
+	pbRepoSelector.SelectorValue = pbutil.ToProtoString(repoSelector.SelectorValue)
 	return &pbRepoSelector
 }
 

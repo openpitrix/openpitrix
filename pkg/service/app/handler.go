@@ -18,8 +18,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/util/httputil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func (p *Server) getApp(appId string) (*models.App, error) {
@@ -50,8 +51,8 @@ func (p *Server) getAppVersion(versionId string) (*models.AppVersion, error) {
 
 func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) (*pb.DescribeAppsResponse, error) {
 	var apps []*models.App
-	offset := utils.GetOffsetFromRequest(req)
-	limit := utils.GetLimitFromRequest(req)
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
 
 	query := p.Db.
 		Select(models.AppColumns...).
@@ -81,7 +82,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
 	// TODO: validate CreateAppRequest
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	newApp := models.NewApp(
 		req.GetName().GetValue(),
 		req.GetRepoId().GetValue(),
@@ -171,7 +172,7 @@ func (p *Server) DeleteApp(ctx context.Context, req *pb.DeleteAppRequest) (*pb.D
 
 func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionRequest) (*pb.CreateAppVersionResponse, error) {
 	// TODO: validate CreateAppVersionRequest
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	newAppVersion := models.NewAppVersion(
 		req.GetAppId().GetValue(),
 		req.GetName().GetValue(),
@@ -197,8 +198,8 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 
 func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVersionsRequest) (*pb.DescribeAppVersionsResponse, error) {
 	var versions []*models.AppVersion
-	offset := utils.GetOffsetFromRequest(req)
-	limit := utils.GetLimitFromRequest(req)
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
 
 	query := p.Db.
 		Select(models.AppVersionColumns...).
@@ -291,7 +292,7 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 	}
 	logger.Debug("Got app version: [%+v]", version)
 	packageUrl := version.PackageName
-	resp, err := utils.HttpGet(packageUrl)
+	resp, err := httputil.HttpGet(packageUrl)
 	if err != nil {
 		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
 		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)

@@ -16,16 +16,16 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
-	"openpitrix.io/openpitrix/pkg/utils/stringutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest) (*pb.DescribeReposResponse, error) {
 	// TODO: validate params
 	var repos []*models.Repo
-	offset := utils.GetOffsetFromRequest(req)
-	limit := utils.GetLimitFromRequest(req)
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
 
 	labelMap, err := neturl.ParseQuery(req.GetLabel().GetValue())
 	if err != nil {
@@ -86,7 +86,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		return nil, status.Errorf(codes.Internal, "CreateRepo: Validate failed, %+v", err)
 	}
 
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	newRepo := models.NewRepo(
 		req.GetName().GetValue(),
 		req.GetDescription().GetValue(),

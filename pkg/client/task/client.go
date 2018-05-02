@@ -15,7 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
 func NewTaskManagerClient(ctx context.Context) (pb.TaskManagerClient, error) {
@@ -53,7 +53,7 @@ func DescribeTasks(ctx context.Context, taskRequest *pb.DescribeTasksRequest) (*
 
 func WaitTask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
 	logger.Debug("Waiting for task [%s] finished", taskId)
-	return utils.WaitForSpecificOrError(func() (bool, error) {
+	return funcutil.WaitForSpecificOrError(func() (bool, error) {
 		taskRequest := &pb.DescribeTasksRequest{
 			TaskId: []string{taskId},
 		}

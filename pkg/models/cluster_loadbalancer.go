@@ -6,7 +6,7 @@ package models
 
 import (
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const ClusterLoadbalancerTableName = "cluster_loadbalancer"
@@ -23,11 +23,11 @@ var ClusterLoadbalancerColumns = GetColumnsFromStruct(&ClusterLoadbalancer{})
 
 func ClusterLoadbalancerToPb(clusterLoadbalancer *ClusterLoadbalancer) *pb.ClusterLoadbalancer {
 	return &pb.ClusterLoadbalancer{
-		ClusterId: utils.ToProtoString(clusterLoadbalancer.ClusterId),
-		Role:      utils.ToProtoString(clusterLoadbalancer.Role),
-		LoadbalancerListenerId: utils.ToProtoString(clusterLoadbalancer.LoadbalancerListenerId),
-		LoadbalancerPort:       utils.ToProtoUInt32(clusterLoadbalancer.LoadbalancerPort),
-		LoadbalancerPolicyId:   utils.ToProtoString(clusterLoadbalancer.LoadbalancerPolicyId),
+		ClusterId: pbutil.ToProtoString(clusterLoadbalancer.ClusterId),
+		Role:      pbutil.ToProtoString(clusterLoadbalancer.Role),
+		LoadbalancerListenerId: pbutil.ToProtoString(clusterLoadbalancer.LoadbalancerListenerId),
+		LoadbalancerPort:       pbutil.ToProtoUInt32(clusterLoadbalancer.LoadbalancerPort),
+		LoadbalancerPolicyId:   pbutil.ToProtoString(clusterLoadbalancer.LoadbalancerPolicyId),
 	}
 }
 

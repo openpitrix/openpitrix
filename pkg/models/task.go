@@ -12,14 +12,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const TaskTableName = "task"
 
 func NewTaskId() string {
-	return idtool.GetUuid("t-")
+	return idutil.GetUuid("t-")
 }
 
 type Task struct {
@@ -61,18 +61,18 @@ func NewTask(taskId, jobId, nodeId, target, taskAction, directive, userId string
 
 func TaskToPb(task *Task) *pb.Task {
 	pbTask := pb.Task{}
-	pbTask.TaskId = utils.ToProtoString(task.TaskId)
-	pbTask.JobId = utils.ToProtoString(task.JobId)
-	pbTask.TaskAction = utils.ToProtoString(task.TaskAction)
-	pbTask.Directive = utils.ToProtoString(task.Directive)
-	pbTask.Owner = utils.ToProtoString(task.Owner)
-	pbTask.Status = utils.ToProtoString(task.Status)
-	pbTask.ErrorCode = utils.ToProtoUInt32(task.ErrorCode)
-	pbTask.Executor = utils.ToProtoString(task.Executor)
-	pbTask.Target = utils.ToProtoString(task.Target)
-	pbTask.NodeId = utils.ToProtoString(task.NodeId)
-	pbTask.CreateTime = utils.ToProtoTimestamp(task.CreateTime)
-	pbTask.StatusTime = utils.ToProtoTimestamp(task.StatusTime)
+	pbTask.TaskId = pbutil.ToProtoString(task.TaskId)
+	pbTask.JobId = pbutil.ToProtoString(task.JobId)
+	pbTask.TaskAction = pbutil.ToProtoString(task.TaskAction)
+	pbTask.Directive = pbutil.ToProtoString(task.Directive)
+	pbTask.Owner = pbutil.ToProtoString(task.Owner)
+	pbTask.Status = pbutil.ToProtoString(task.Status)
+	pbTask.ErrorCode = pbutil.ToProtoUInt32(task.ErrorCode)
+	pbTask.Executor = pbutil.ToProtoString(task.Executor)
+	pbTask.Target = pbutil.ToProtoString(task.Target)
+	pbTask.NodeId = pbutil.ToProtoString(task.NodeId)
+	pbTask.CreateTime = pbutil.ToProtoTimestamp(task.CreateTime)
+	pbTask.StatusTime = pbutil.ToProtoTimestamp(task.StatusTime)
 	return &pbTask
 }
 

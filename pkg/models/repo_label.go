@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const RepoLabelTableName = "repo_label"
 
 func NewRepoLabelId() string {
-	return idtool.GetUuid("repol-")
+	return idutil.GetUuid("repol-")
 }
 
 type RepoLabel struct {
@@ -42,8 +42,8 @@ func NewRepoLabel(repoId, labelKey, labelValue string) *RepoLabel {
 
 func RepoLabelToPb(repoLabel *RepoLabel) *pb.RepoLabel {
 	pbRepoLabel := pb.RepoLabel{}
-	pbRepoLabel.LabelKey = utils.ToProtoString(repoLabel.LabelKey)
-	pbRepoLabel.LabelValue = utils.ToProtoString(repoLabel.LabelValue)
+	pbRepoLabel.LabelKey = pbutil.ToProtoString(repoLabel.LabelKey)
+	pbRepoLabel.LabelValue = pbutil.ToProtoString(repoLabel.LabelValue)
 	return &pbRepoLabel
 }
 

@@ -16,8 +16,8 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/yaml"
+	"openpitrix.io/openpitrix/pkg/util/httputil"
+	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
 type helmIndexer struct {
@@ -82,7 +82,7 @@ func (i *helmIndexer) getIndexFile() (indexFile *repo.IndexFile, err error) {
 	}
 	parsedURL.Path = strings.TrimSuffix(parsedURL.Path, "/") + "/index.yaml"
 	indexURL = parsedURL.String()
-	resp, err := utils.HttpGet(indexURL)
+	resp, err := httputil.HttpGet(indexURL)
 	if err != nil {
 		return
 	}
@@ -90,7 +90,7 @@ func (i *helmIndexer) getIndexFile() (indexFile *repo.IndexFile, err error) {
 	if err != nil {
 		return
 	}
-	err = yaml.Decode(content, indexFile)
+	err = yamlutil.Decode(content, indexFile)
 	if err != nil {
 		return
 	}
@@ -120,7 +120,7 @@ func GetPackageFile(chartVersion *repo.ChartVersion, repoUrl string) (*chart.Cha
 		u = repoURL.ResolveReference(u)
 		u.RawQuery = q.Encode()
 	}
-	resp, err := utils.HttpGet(u.String())
+	resp, err := httputil.HttpGet(u.String())
 	if err != nil {
 		return nil, err
 	}

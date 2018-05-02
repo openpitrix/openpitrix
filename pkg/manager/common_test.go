@@ -11,19 +11,18 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"openpitrix.io/openpitrix/pkg/models"
-
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 func TestBuildUpdateAttributes(t *testing.T) {
 	clusterId := "cl-xxxx"
 	req := &pb.Cluster{
-		ClusterId:          utils.ToProtoString(clusterId),
-		TransitionStatus:   utils.ToProtoString("creating"),
-		MetadataRootAccess: utils.ToProtoBool(false),
-		CreateTime:         utils.ToProtoTimestamp(time.Now()),
-		StatusTime:         utils.ToProtoTimestamp(time.Now()),
+		ClusterId:          pbutil.ToProtoString(clusterId),
+		TransitionStatus:   pbutil.ToProtoString("creating"),
+		MetadataRootAccess: pbutil.ToProtoBool(false),
+		CreateTime:         pbutil.ToProtoTimestamp(time.Now()),
+		StatusTime:         pbutil.ToProtoTimestamp(time.Now()),
 	}
 	attributes := BuildUpdateAttributes(req, models.ClusterColumns...)
 	t.Log(attributes)
