@@ -48,6 +48,6 @@ spec:
         operator: Exists
       volumes:
       - hostPath:
-          path: /opt/openpitrix/pkg/db/schema/app
+          path: /opt/openpitrix/pkg/db/schema/cluster
           type: ""
         name: flyway
