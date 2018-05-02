@@ -2,12 +2,12 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package utils
+package sshutil
 
 import (
 	"fmt"
 
-	"openpitrix.io/openpitrix/pkg/utils/passphraseless"
+	"openpitrix.io/openpitrix/pkg/util/passphraseless"
 )
 
 func MakeSSHKeyPair(keyType string) (string, string, error) {

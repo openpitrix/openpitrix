@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 	"openpitrix.io/openpitrix/test"
 )
 
@@ -49,7 +49,7 @@ func newRootCmd(c string, args []string) *cobra.Command {
 func getCobraCmds(cmds []Cmd) (cobraCmds []*cobra.Command) {
 	for _, cmd := range cmds {
 		action := cmd.GetActionName()
-		underscoreAction := utils.CamelCaseToUnderscore(action)
+		underscoreAction := stringutil.CamelCaseToUnderscore(action)
 		run := cmd.Run
 		c := &cobra.Command{
 			Use:   fmt.Sprintf("%s [flags]", underscoreAction),

@@ -7,7 +7,7 @@ package models
 import (
 	"github.com/fatih/structs"
 
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 // columns that can be search through sql '=' operator
@@ -83,7 +83,7 @@ var SearchColumns = map[string][]string{
 func GetColumnsFromStruct(s interface{}) []string {
 	names := structs.Names(s)
 	for i, name := range names {
-		names[i] = utils.CamelCaseToUnderscore(name)
+		names[i] = stringutil.CamelCaseToUnderscore(name)
 	}
 	return names
 }
@@ -91,7 +91,7 @@ func GetColumnsFromStruct(s interface{}) []string {
 func GetColumnsFromStructWithPrefix(prefix string, s interface{}) []string {
 	names := structs.Names(s)
 	for i, name := range names {
-		names[i] = prefix + "." + utils.CamelCaseToUnderscore(name)
+		names[i] = prefix + "." + stringutil.CamelCaseToUnderscore(name)
 	}
 	return names
 }

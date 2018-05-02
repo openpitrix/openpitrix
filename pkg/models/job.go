@@ -9,14 +9,14 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const JobTableName = "job"
 
 func NewJobId() string {
-	return idtool.GetUuid("j-")
+	return idutil.GetUuid("j-")
 }
 
 type Job struct {
@@ -61,20 +61,20 @@ func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, provider, 
 
 func JobToPb(job *Job) *pb.Job {
 	pbJob := pb.Job{}
-	pbJob.JobId = utils.ToProtoString(job.JobId)
-	pbJob.ClusterId = utils.ToProtoString(job.ClusterId)
-	pbJob.AppId = utils.ToProtoString(job.AppId)
-	pbJob.VersionId = utils.ToProtoString(job.VersionId)
-	pbJob.JobAction = utils.ToProtoString(job.JobAction)
-	pbJob.Directive = utils.ToProtoString(job.Directive)
-	pbJob.Provider = utils.ToProtoString(job.Provider)
-	pbJob.Owner = utils.ToProtoString(job.Owner)
-	pbJob.Status = utils.ToProtoString(job.Status)
-	pbJob.ErrorCode = utils.ToProtoUInt32(job.ErrorCode)
-	pbJob.Executor = utils.ToProtoString(job.Executor)
-	pbJob.TaskCount = utils.ToProtoUInt32(job.TaskCount)
-	pbJob.CreateTime = utils.ToProtoTimestamp(job.CreateTime)
-	pbJob.StatusTime = utils.ToProtoTimestamp(job.StatusTime)
+	pbJob.JobId = pbutil.ToProtoString(job.JobId)
+	pbJob.ClusterId = pbutil.ToProtoString(job.ClusterId)
+	pbJob.AppId = pbutil.ToProtoString(job.AppId)
+	pbJob.VersionId = pbutil.ToProtoString(job.VersionId)
+	pbJob.JobAction = pbutil.ToProtoString(job.JobAction)
+	pbJob.Directive = pbutil.ToProtoString(job.Directive)
+	pbJob.Provider = pbutil.ToProtoString(job.Provider)
+	pbJob.Owner = pbutil.ToProtoString(job.Owner)
+	pbJob.Status = pbutil.ToProtoString(job.Status)
+	pbJob.ErrorCode = pbutil.ToProtoUInt32(job.ErrorCode)
+	pbJob.Executor = pbutil.ToProtoString(job.Executor)
+	pbJob.TaskCount = pbutil.ToProtoUInt32(job.TaskCount)
+	pbJob.CreateTime = pbutil.ToProtoTimestamp(job.CreateTime)
+	pbJob.StatusTime = pbutil.ToProtoTimestamp(job.StatusTime)
 	return &pbJob
 }
 

@@ -6,7 +6,7 @@ package models
 
 import (
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const ClusterRoleTableName = "cluster_role"
@@ -29,17 +29,17 @@ var ClusterRoleColumns = GetColumnsFromStruct(&ClusterRole{})
 
 func ClusterRoleToPb(clusterRole *ClusterRole) *pb.ClusterRole {
 	return &pb.ClusterRole{
-		ClusterId:    utils.ToProtoString(clusterRole.ClusterId),
-		Role:         utils.ToProtoString(clusterRole.Role),
-		Cpu:          utils.ToProtoUInt32(clusterRole.Cpu),
-		Gpu:          utils.ToProtoUInt32(clusterRole.Gpu),
-		Memory:       utils.ToProtoUInt32(clusterRole.Memory),
-		InstanceSize: utils.ToProtoUInt32(clusterRole.InstanceSize),
-		StorageSize:  utils.ToProtoUInt32(clusterRole.StorageSize),
-		MountPoint:   utils.ToProtoString(clusterRole.MountPoint),
-		MountOptions: utils.ToProtoString(clusterRole.MountOptions),
-		FileSystem:   utils.ToProtoString(clusterRole.FileSystem),
-		Env:          utils.ToProtoString(clusterRole.Env),
+		ClusterId:    pbutil.ToProtoString(clusterRole.ClusterId),
+		Role:         pbutil.ToProtoString(clusterRole.Role),
+		Cpu:          pbutil.ToProtoUInt32(clusterRole.Cpu),
+		Gpu:          pbutil.ToProtoUInt32(clusterRole.Gpu),
+		Memory:       pbutil.ToProtoUInt32(clusterRole.Memory),
+		InstanceSize: pbutil.ToProtoUInt32(clusterRole.InstanceSize),
+		StorageSize:  pbutil.ToProtoUInt32(clusterRole.StorageSize),
+		MountPoint:   pbutil.ToProtoString(clusterRole.MountPoint),
+		MountOptions: pbutil.ToProtoString(clusterRole.MountOptions),
+		FileSystem:   pbutil.ToProtoString(clusterRole.FileSystem),
+		Env:          pbutil.ToProtoString(clusterRole.Env),
 	}
 }
 

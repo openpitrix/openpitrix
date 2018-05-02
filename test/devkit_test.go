@@ -16,8 +16,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
-	"openpitrix.io/openpitrix/pkg/utils/iptool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/iputil"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
@@ -27,7 +27,7 @@ import (
 const testExportPort = 8879
 const testDockerPath = "/tmp/openpitrix-test"
 
-var testRepoDir = path.Join(testDockerPath, idtool.GetUuid(""))
+var testRepoDir = path.Join(testDockerPath, idutil.GetUuid(""))
 
 func TestDevkit(t *testing.T) {
 	t.Logf("start create repo at [%s]", testRepoDir)
@@ -52,12 +52,12 @@ func TestDevkit(t *testing.T) {
 	t.Log(d.Exec("cat index.yaml"))
 
 	ip := strings.TrimSpace(d.Exec("hostname -i"))
-	localIp := iptool.GetLocalIP()
+	localIp := iputil.GetLocalIP()
 	t.Log(d.ExecD(fmt.Sprintf("op serve --address %s:%d --url http://%s:%d/", ip, testExportPort, localIp, testExportPort)))
 
 	t.Run("create repo", func(t *testing.T) {
 		time.Sleep(5 * time.Second)
-		testCreateRepo(t, "test-devkit-repo-name", constants.ProviderQingCloud, fmt.Sprintf("http://%s:8879/", iptool.GetLocalIP()))
+		testCreateRepo(t, "test-devkit-repo-name", constants.ProviderQingCloud, fmt.Sprintf("http://%s:8879/", iputil.GetLocalIP()))
 	})
 
 	t.Run("create cluster", func(t *testing.T) {

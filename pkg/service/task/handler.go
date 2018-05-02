@@ -14,12 +14,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb.CreateTaskResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	newTask := models.NewTask(
 		"",
 		req.GetJobId().GetValue(),
@@ -45,17 +45,17 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 	}
 
 	res := &pb.CreateTaskResponse{
-		TaskId: utils.ToProtoString(newTask.TaskId),
-		JobId:  utils.ToProtoString(newTask.JobId),
+		TaskId: pbutil.ToProtoString(newTask.TaskId),
+		JobId:  pbutil.ToProtoString(newTask.JobId),
 	}
 	return res, nil
 }
 
 func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	var tasks []*models.Task
-	offset := utils.GetOffsetFromRequest(req)
-	limit := utils.GetLimitFromRequest(req)
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
 
 	query := p.Db.
 		Select(models.TaskColumns...).

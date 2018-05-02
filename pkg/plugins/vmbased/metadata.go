@@ -13,7 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/utils/jsontool"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type Metadata struct {
@@ -277,7 +277,7 @@ func getCmdKey(clusterId, instanceId string) string {
 
 func GetCmdCnodes(clusterId, instanceId, cmd string) string {
 	cnodes := map[string]interface{}{getCmdKey(clusterId, instanceId): cmd}
-	return jsontool.ToString(cnodes)
+	return jsonutil.ToString(cnodes)
 }
 
 func getClusterKey(clusterId string) string {
@@ -286,5 +286,5 @@ func getClusterKey(clusterId string) string {
 
 func GetEmptyClusterCnodes(clusterId string) string {
 	cnodes := map[string]interface{}{getClusterKey(clusterId): ""}
-	return jsontool.ToString(cnodes)
+	return jsonutil.ToString(cnodes)
 }

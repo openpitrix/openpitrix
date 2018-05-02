@@ -12,7 +12,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 func LabelStringToMap(labelString string) (map[string]string, error) {
@@ -73,7 +73,7 @@ func LabelStructToMap(labelStructs []*models.RuntimeLabel) map[string]string {
 }
 
 func RuntimeCredentialStringToJsonString(provider, content string) string {
-	if i := utils.FindString(constants.VmBaseProviders, provider); i != -1 {
+	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
 		return content
 	}
 	if constants.ProviderKubernetes == provider {
@@ -87,7 +87,7 @@ func RuntimeCredentialStringToJsonString(provider, content string) string {
 }
 
 func RuntimeCredentialJsonStringToString(provider, content string) string {
-	if i := utils.FindString(constants.VmBaseProviders, provider); i != -1 {
+	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
 		return content
 	}
 	if constants.ProviderKubernetes == provider {

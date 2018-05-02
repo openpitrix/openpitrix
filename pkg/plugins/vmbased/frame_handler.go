@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
 type FrameHandler struct {
@@ -42,7 +42,7 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 		return err
 	}
 
-	return utils.WaitForSpecificOrError(func() (bool, error) {
+	return funcutil.WaitForSpecificOrError(func() (bool, error) {
 		response, err := client.DescribeClusters(ctx, &pb.DescribeClustersRequest{
 			ClusterId: []string{frontgateId},
 		})

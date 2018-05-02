@@ -23,7 +23,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -84,7 +84,7 @@ var (
 
 func UnaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		s := sender.GetSenderFromContext(ctx)
+		s := senderutil.GetSenderFromContext(ctx)
 		method := strings.Split(info.FullMethod, "/")
 		action := method[len(method)-1]
 		if p, ok := req.(proto.Message); ok {

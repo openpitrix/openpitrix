@@ -19,7 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
-	"openpitrix.io/openpitrix/pkg/utils/jsontool"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 var MyProvider = constants.ProviderQingCloud
@@ -106,7 +106,7 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	if instance.UserDataValue != "" {
 		input.UserdataValue = qcservice.String(instance.UserDataValue)
 	}
-	logger.Debug("RunInstances with input: %s", jsontool.ToString(input))
+	logger.Debug("RunInstances with input: %s", jsonutil.ToString(input))
 	output, err := instanceService.RunInstances(input)
 	if err != nil {
 		logger.Error("Send RunInstances to %s failed: %v", MyProvider, err)

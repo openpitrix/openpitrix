@@ -13,7 +13,7 @@ import (
 	"testing"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
@@ -138,7 +138,7 @@ func TestRepo(t *testing.T) {
 func generateRepoLabels(length int) (labels []*models.OpenpitrixRepoLabel) {
 	i := 0
 	for i < length {
-		labels = append(labels, &models.OpenpitrixRepoLabel{LabelKey: getRandomKey(), LabelValue: idtool.GetUuid("")})
+		labels = append(labels, &models.OpenpitrixRepoLabel{LabelKey: getRandomKey(), LabelValue: idutil.GetUuid("")})
 		i++
 	}
 	return labels
@@ -164,7 +164,7 @@ func getRepoLabel(labels []*models.OpenpitrixRepoLabel) *string {
 func generateRepoSelectors(length int) (labels []*models.OpenpitrixRepoSelector) {
 	i := 0
 	for i < length {
-		labels = append(labels, &models.OpenpitrixRepoSelector{SelectorKey: getRandomKey(), SelectorValue: idtool.GetUuid("")})
+		labels = append(labels, &models.OpenpitrixRepoSelector{SelectorKey: getRandomKey(), SelectorValue: idutil.GetUuid("")})
 		i++
 	}
 	return labels

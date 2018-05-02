@@ -19,7 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 type Provider struct {
@@ -37,7 +37,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 		}
 
 		req := &pb.GetAppVersionPackageRequest{
-			VersionId: utils.ToProtoString(versionId),
+			VersionId: pbutil.ToProtoString(versionId),
 		}
 
 		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)

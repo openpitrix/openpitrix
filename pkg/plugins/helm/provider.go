@@ -32,7 +32,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 type Provider struct {
@@ -99,7 +100,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 	}
 
 	req := &pb.GetAppVersionPackageRequest{
-		VersionId: utils.ToProtoString(versionId),
+		VersionId: pbutil.ToProtoString(versionId),
 	}
 
 	resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
@@ -239,7 +240,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		}
 
 		req := pb.GetAppVersionPackageRequest{
-			VersionId: utils.ToProtoString(taskDirective.VersionId),
+			VersionId: pbutil.ToProtoString(taskDirective.VersionId),
 		}
 
 		resp, err := appc.GetAppVersionPackage(ctx, &req)
@@ -280,7 +281,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		}
 
 		req := pb.GetAppVersionPackageRequest{
-			VersionId: utils.ToProtoString(taskDirective.VersionId),
+			VersionId: pbutil.ToProtoString(taskDirective.VersionId),
 		}
 
 		resp, err := appc.GetAppVersionPackage(ctx, &req)
@@ -333,7 +334,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 		return err
 	}
 
-	utils.WaitForSpecificOrError(func() (bool, error) {
+	funcutil.WaitForSpecificOrError(func() (bool, error) {
 		switch task.TaskAction {
 		case constants.ActionCreateCluster:
 			fallthrough
@@ -443,7 +444,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 
 	// get all old node ids
 	describeNodesRequest := &pb.DescribeClusterNodesRequest{
-		ClusterId: utils.ToProtoString(job.ClusterId),
+		ClusterId: pbutil.ToProtoString(job.ClusterId),
 	}
 	describeNodesResponse, err := clusterClient.DescribeClusterNodes(ctx, describeNodesRequest)
 	if err != nil {

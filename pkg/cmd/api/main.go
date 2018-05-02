@@ -26,7 +26,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -82,7 +82,7 @@ func run() error {
 }
 
 func mainHandler(ctx context.Context) http.Handler {
-	var gwmux = runtime.NewServeMux(runtime.WithMetadata(sender.ServeMuxSetSender))
+	var gwmux = runtime.NewServeMux(runtime.WithMetadata(senderutil.ServeMuxSetSender))
 	var opts = []grpc.DialOption{grpc.WithInsecure()}
 	var err error
 

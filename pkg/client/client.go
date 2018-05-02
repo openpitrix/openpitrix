@@ -7,9 +7,9 @@ package client
 import (
 	"context"
 
-	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func GetSystemUserContext() context.Context {
-	return sender.NewContext(context.Background(), sender.GetSystemUser())
+	return senderutil.NewContext(context.Background(), senderutil.GetSystemUser())
 }

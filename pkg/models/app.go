@@ -9,14 +9,14 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const AppTableName = "app"
 
 func NewAppId() string {
-	return idtool.GetUuid("app-")
+	return idutil.GetUuid("app-")
 }
 
 type App struct {
@@ -57,23 +57,23 @@ func NewApp(name, repoId, description, owner, chartName string) *App {
 func AppToPb(app *App) *pb.App {
 	//logger.Info("%+v", app.Home)
 	pbApp := pb.App{}
-	pbApp.AppId = utils.ToProtoString(app.AppId)
-	pbApp.Name = utils.ToProtoString(app.Name)
-	pbApp.RepoId = utils.ToProtoString(app.RepoId)
-	pbApp.Description = utils.ToProtoString(app.Description)
-	pbApp.Status = utils.ToProtoString(app.Status)
-	pbApp.Home = utils.ToProtoString(app.Home)
-	pbApp.Icon = utils.ToProtoString(app.Icon)
-	pbApp.Screenshots = utils.ToProtoString(app.Screenshots)
-	pbApp.Maintainers = utils.ToProtoString(app.Maintainers)
-	pbApp.Sources = utils.ToProtoString(app.Sources)
-	pbApp.Readme = utils.ToProtoString(app.Readme)
-	pbApp.ChartName = utils.ToProtoString(app.ChartName)
-	pbApp.Owner = utils.ToProtoString(app.Owner)
-	pbApp.CreateTime = utils.ToProtoTimestamp(app.CreateTime)
-	pbApp.StatusTime = utils.ToProtoTimestamp(app.StatusTime)
+	pbApp.AppId = pbutil.ToProtoString(app.AppId)
+	pbApp.Name = pbutil.ToProtoString(app.Name)
+	pbApp.RepoId = pbutil.ToProtoString(app.RepoId)
+	pbApp.Description = pbutil.ToProtoString(app.Description)
+	pbApp.Status = pbutil.ToProtoString(app.Status)
+	pbApp.Home = pbutil.ToProtoString(app.Home)
+	pbApp.Icon = pbutil.ToProtoString(app.Icon)
+	pbApp.Screenshots = pbutil.ToProtoString(app.Screenshots)
+	pbApp.Maintainers = pbutil.ToProtoString(app.Maintainers)
+	pbApp.Sources = pbutil.ToProtoString(app.Sources)
+	pbApp.Readme = pbutil.ToProtoString(app.Readme)
+	pbApp.ChartName = pbutil.ToProtoString(app.ChartName)
+	pbApp.Owner = pbutil.ToProtoString(app.Owner)
+	pbApp.CreateTime = pbutil.ToProtoTimestamp(app.CreateTime)
+	pbApp.StatusTime = pbutil.ToProtoTimestamp(app.StatusTime)
 	if app.UpdateTime != nil {
-		pbApp.UpdateTime = utils.ToProtoTimestamp(*app.UpdateTime)
+		pbApp.UpdateTime = pbutil.ToProtoTimestamp(*app.UpdateTime)
 	}
 	return &pbApp
 }

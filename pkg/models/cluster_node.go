@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const ClusterNodeTableName = "cluster_node"
 
 func NewClusterNodeId() string {
-	return idtool.GetUuid("cln-")
+	return idutil.GetUuid("cln-")
 }
 
 type ClusterNode struct {
@@ -54,28 +54,28 @@ func NewClusterNode() *ClusterNode {
 
 func ClusterNodeToPb(clusterNode *ClusterNode) *pb.ClusterNode {
 	return &pb.ClusterNode{
-		NodeId:           utils.ToProtoString(clusterNode.NodeId),
-		ClusterId:        utils.ToProtoString(clusterNode.ClusterId),
-		Name:             utils.ToProtoString(clusterNode.Name),
-		InstanceId:       utils.ToProtoString(clusterNode.InstanceId),
-		VolumeId:         utils.ToProtoString(clusterNode.VolumeId),
-		Device:           utils.ToProtoString(clusterNode.Device),
-		SubnetId:         utils.ToProtoString(clusterNode.SubnetId),
-		PrivateIp:        utils.ToProtoString(clusterNode.PrivateIp),
-		ServerId:         utils.ToProtoUInt32(clusterNode.ServerId),
-		Role:             utils.ToProtoString(clusterNode.Role),
-		Status:           utils.ToProtoString(clusterNode.Status),
-		TransitionStatus: utils.ToProtoString(clusterNode.TransitionStatus),
-		GroupId:          utils.ToProtoUInt32(clusterNode.GroupId),
-		Owner:            utils.ToProtoString(clusterNode.Owner),
-		GlobalServerId:   utils.ToProtoUInt32(clusterNode.GlobalServerId),
-		CustomMetadata:   utils.ToProtoString(clusterNode.CustomMetadata),
-		PubKey:           utils.ToProtoString(clusterNode.PubKey),
-		HealthStatus:     utils.ToProtoString(clusterNode.HealthStatus),
-		IsBackup:         utils.ToProtoBool(clusterNode.IsBackup),
-		AutoBackup:       utils.ToProtoBool(clusterNode.AutoBackup),
-		CreateTime:       utils.ToProtoTimestamp(clusterNode.CreateTime),
-		StatusTime:       utils.ToProtoTimestamp(clusterNode.StatusTime),
+		NodeId:           pbutil.ToProtoString(clusterNode.NodeId),
+		ClusterId:        pbutil.ToProtoString(clusterNode.ClusterId),
+		Name:             pbutil.ToProtoString(clusterNode.Name),
+		InstanceId:       pbutil.ToProtoString(clusterNode.InstanceId),
+		VolumeId:         pbutil.ToProtoString(clusterNode.VolumeId),
+		Device:           pbutil.ToProtoString(clusterNode.Device),
+		SubnetId:         pbutil.ToProtoString(clusterNode.SubnetId),
+		PrivateIp:        pbutil.ToProtoString(clusterNode.PrivateIp),
+		ServerId:         pbutil.ToProtoUInt32(clusterNode.ServerId),
+		Role:             pbutil.ToProtoString(clusterNode.Role),
+		Status:           pbutil.ToProtoString(clusterNode.Status),
+		TransitionStatus: pbutil.ToProtoString(clusterNode.TransitionStatus),
+		GroupId:          pbutil.ToProtoUInt32(clusterNode.GroupId),
+		Owner:            pbutil.ToProtoString(clusterNode.Owner),
+		GlobalServerId:   pbutil.ToProtoUInt32(clusterNode.GlobalServerId),
+		CustomMetadata:   pbutil.ToProtoString(clusterNode.CustomMetadata),
+		PubKey:           pbutil.ToProtoString(clusterNode.PubKey),
+		HealthStatus:     pbutil.ToProtoString(clusterNode.HealthStatus),
+		IsBackup:         pbutil.ToProtoBool(clusterNode.IsBackup),
+		AutoBackup:       pbutil.ToProtoBool(clusterNode.AutoBackup),
+		CreateTime:       pbutil.ToProtoTimestamp(clusterNode.CreateTime),
+		StatusTime:       pbutil.ToProtoTimestamp(clusterNode.StatusTime),
 	}
 }
 
@@ -101,8 +101,8 @@ func PbToClusterNode(pbClusterNode *pb.ClusterNode) *ClusterNode {
 		HealthStatus:     pbClusterNode.GetHealthStatus().GetValue(),
 		IsBackup:         pbClusterNode.GetIsBackup().GetValue(),
 		AutoBackup:       pbClusterNode.GetAutoBackup().GetValue(),
-		CreateTime:       utils.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
-		StatusTime:       utils.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
+		CreateTime:       pbutil.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
+		StatusTime:       pbutil.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
 	}
 }
 

@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const RuntimeLabelTableName = "runtime_label"
 
 func NewRuntimeLabelId() string {
-	return idtool.GetUuid("runtimel-")
+	return idutil.GetUuid("runtimel-")
 }
 
 type RuntimeLabel struct {
@@ -40,11 +40,11 @@ func NewRuntimeLabel(runtimeId, labelKey, labelValue string) *RuntimeLabel {
 
 func RuntimeLabelToPb(runtimeLabel *RuntimeLabel) *pb.RuntimeLabel {
 	return &pb.RuntimeLabel{
-		RuntimeLabelId: utils.ToProtoString(runtimeLabel.RuntimeLabelId),
-		RuntimeId:      utils.ToProtoString(runtimeLabel.RuntimeId),
-		LabelKey:       utils.ToProtoString(runtimeLabel.LabelKey),
-		LabelValue:     utils.ToProtoString(runtimeLabel.LabelValue),
-		CreateTime:     utils.ToProtoTimestamp(runtimeLabel.CreateTime),
+		RuntimeLabelId: pbutil.ToProtoString(runtimeLabel.RuntimeLabelId),
+		RuntimeId:      pbutil.ToProtoString(runtimeLabel.RuntimeId),
+		LabelKey:       pbutil.ToProtoString(runtimeLabel.LabelKey),
+		LabelValue:     pbutil.ToProtoString(runtimeLabel.LabelValue),
+		CreateTime:     pbutil.ToProtoTimestamp(runtimeLabel.CreateTime),
 	}
 }
 

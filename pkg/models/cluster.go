@@ -8,14 +8,14 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const ClusterTableName = "cluster"
 
 func NewClusterId() string {
-	return idtool.GetUuid36("cl-")
+	return idutil.GetUuid36("cl-")
 }
 
 type Cluster struct {
@@ -52,28 +52,28 @@ func NewCluster() *Cluster {
 
 func ClusterToPb(cluster *Cluster) *pb.Cluster {
 	c := &pb.Cluster{
-		ClusterId:          utils.ToProtoString(cluster.ClusterId),
-		Name:               utils.ToProtoString(cluster.Name),
-		Description:        utils.ToProtoString(cluster.Description),
-		AppId:              utils.ToProtoString(cluster.AppId),
-		VersionId:          utils.ToProtoString(cluster.VersionId),
-		SubnetId:           utils.ToProtoString(cluster.SubnetId),
-		VpcId:              utils.ToProtoString(cluster.VpcId),
-		FrontgateId:        utils.ToProtoString(cluster.FrontgateId),
-		ClusterType:        utils.ToProtoUInt32(cluster.ClusterType),
-		Endpoints:          utils.ToProtoString(cluster.Endpoints),
-		Status:             utils.ToProtoString(cluster.Status),
-		TransitionStatus:   utils.ToProtoString(cluster.TransitionStatus),
-		MetadataRootAccess: utils.ToProtoBool(cluster.MetadataRootAccess),
-		Owner:              utils.ToProtoString(cluster.Owner),
-		GlobalUuid:         utils.ToProtoString(cluster.GlobalUuid),
-		UpgradeStatus:      utils.ToProtoString(cluster.UpgradeStatus),
-		RuntimeId:          utils.ToProtoString(cluster.RuntimeId),
-		CreateTime:         utils.ToProtoTimestamp(cluster.CreateTime),
-		StatusTime:         utils.ToProtoTimestamp(cluster.StatusTime),
+		ClusterId:          pbutil.ToProtoString(cluster.ClusterId),
+		Name:               pbutil.ToProtoString(cluster.Name),
+		Description:        pbutil.ToProtoString(cluster.Description),
+		AppId:              pbutil.ToProtoString(cluster.AppId),
+		VersionId:          pbutil.ToProtoString(cluster.VersionId),
+		SubnetId:           pbutil.ToProtoString(cluster.SubnetId),
+		VpcId:              pbutil.ToProtoString(cluster.VpcId),
+		FrontgateId:        pbutil.ToProtoString(cluster.FrontgateId),
+		ClusterType:        pbutil.ToProtoUInt32(cluster.ClusterType),
+		Endpoints:          pbutil.ToProtoString(cluster.Endpoints),
+		Status:             pbutil.ToProtoString(cluster.Status),
+		TransitionStatus:   pbutil.ToProtoString(cluster.TransitionStatus),
+		MetadataRootAccess: pbutil.ToProtoBool(cluster.MetadataRootAccess),
+		Owner:              pbutil.ToProtoString(cluster.Owner),
+		GlobalUuid:         pbutil.ToProtoString(cluster.GlobalUuid),
+		UpgradeStatus:      pbutil.ToProtoString(cluster.UpgradeStatus),
+		RuntimeId:          pbutil.ToProtoString(cluster.RuntimeId),
+		CreateTime:         pbutil.ToProtoTimestamp(cluster.CreateTime),
+		StatusTime:         pbutil.ToProtoTimestamp(cluster.StatusTime),
 	}
 	if cluster.UpgradeTime != nil {
-		c.UpgradeTime = utils.ToProtoTimestamp(*cluster.UpgradeTime)
+		c.UpgradeTime = pbutil.ToProtoTimestamp(*cluster.UpgradeTime)
 	}
 	return c
 }
@@ -97,10 +97,10 @@ func PbToCluster(pbCluster *pb.Cluster) *Cluster {
 		GlobalUuid:         pbCluster.GetGlobalUuid().GetValue(),
 		UpgradeStatus:      pbCluster.GetUpgradeStatus().GetValue(),
 		RuntimeId:          pbCluster.GetRuntimeId().GetValue(),
-		CreateTime:         utils.FromProtoTimestamp(pbCluster.GetCreateTime()),
-		StatusTime:         utils.FromProtoTimestamp(pbCluster.GetStatusTime()),
+		CreateTime:         pbutil.FromProtoTimestamp(pbCluster.GetCreateTime()),
+		StatusTime:         pbutil.FromProtoTimestamp(pbCluster.GetStatusTime()),
 	}
-	upgradeTime := utils.FromProtoTimestamp(pbCluster.GetUpgradeTime())
+	upgradeTime := pbutil.FromProtoTimestamp(pbCluster.GetUpgradeTime())
 	c.UpgradeTime = &upgradeTime
 	return c
 }

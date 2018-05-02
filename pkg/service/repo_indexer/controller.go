@@ -20,7 +20,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/repo_indexer/indexer"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/atomicutil"
 )
 
 type eventChannel chan *models.RepoEvent
@@ -29,7 +29,7 @@ type EventController struct {
 	*pi.Pi
 	queue        *etcd.Queue
 	channel      eventChannel
-	runningCount utils.Counter
+	runningCount atomicutil.Counter
 }
 
 func NewEventController(pi *pi.Pi) *EventController {
@@ -37,7 +37,7 @@ func NewEventController(pi *pi.Pi) *EventController {
 		Pi:           pi,
 		queue:        pi.Etcd.NewQueue("repo-indexer-event"),
 		channel:      make(eventChannel),
-		runningCount: utils.Counter(0),
+		runningCount: atomicutil.Counter(0),
 	}
 }
 

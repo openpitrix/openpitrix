@@ -11,7 +11,7 @@ import (
 	"testing"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
@@ -117,11 +117,11 @@ func TestRuntime(t *testing.T) {
 
 func generateRuntimeLabels() string {
 	v := url.Values{}
-	v.Add("key1", idtool.GetUuid(""))
-	v.Add("key2", idtool.GetUuid(""))
-	v.Add("key3", idtool.GetUuid(""))
-	v.Add("key4", idtool.GetUuid(""))
-	v.Add("key5", idtool.GetUuid(""))
+	v.Add("key1", idutil.GetUuid(""))
+	v.Add("key2", idutil.GetUuid(""))
+	v.Add("key3", idutil.GetUuid(""))
+	v.Add("key4", idutil.GetUuid(""))
+	v.Add("key5", idutil.GetUuid(""))
 	return v.Encode()
 }
 

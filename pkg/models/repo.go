@@ -9,14 +9,14 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/idtool"
+	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 const RepoTableName = "repo"
 
 func NewRepoId() string {
-	return idtool.GetUuid("repo-")
+	return idutil.GetUuid("repo-")
 }
 
 type Repo struct {
@@ -55,17 +55,17 @@ func NewRepo(name, description, typ, url, credential, visibility, owner string) 
 
 func RepoToPb(repo *Repo) *pb.Repo {
 	pbRepo := pb.Repo{}
-	pbRepo.RepoId = utils.ToProtoString(repo.RepoId)
-	pbRepo.Name = utils.ToProtoString(repo.Name)
-	pbRepo.Description = utils.ToProtoString(repo.Description)
-	pbRepo.Type = utils.ToProtoString(repo.Type)
-	pbRepo.Url = utils.ToProtoString(repo.Url)
-	pbRepo.Credential = utils.ToProtoString(repo.Credential)
-	pbRepo.Visibility = utils.ToProtoString(repo.Visibility)
-	pbRepo.Owner = utils.ToProtoString(repo.Owner)
-	pbRepo.Status = utils.ToProtoString(repo.Status)
-	pbRepo.CreateTime = utils.ToProtoTimestamp(repo.CreateTime)
-	pbRepo.StatusTime = utils.ToProtoTimestamp(repo.StatusTime)
+	pbRepo.RepoId = pbutil.ToProtoString(repo.RepoId)
+	pbRepo.Name = pbutil.ToProtoString(repo.Name)
+	pbRepo.Description = pbutil.ToProtoString(repo.Description)
+	pbRepo.Type = pbutil.ToProtoString(repo.Type)
+	pbRepo.Url = pbutil.ToProtoString(repo.Url)
+	pbRepo.Credential = pbutil.ToProtoString(repo.Credential)
+	pbRepo.Visibility = pbutil.ToProtoString(repo.Visibility)
+	pbRepo.Owner = pbutil.ToProtoString(repo.Owner)
+	pbRepo.Status = pbutil.ToProtoString(repo.Status)
+	pbRepo.CreateTime = pbutil.ToProtoTimestamp(repo.CreateTime)
+	pbRepo.StatusTime = pbutil.ToProtoTimestamp(repo.StatusTime)
 	return &pbRepo
 }
 

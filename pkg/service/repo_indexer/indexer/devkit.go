@@ -13,8 +13,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/yaml"
+	"openpitrix.io/openpitrix/pkg/util/httputil"
+	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
 type devkitIndexer struct {
@@ -37,7 +37,7 @@ func (i *devkitIndexer) getIndexFile() (indexFile *app.IndexFile, err error) {
 	}
 	parsedURL.Path = strings.TrimSuffix(parsedURL.Path, "/") + "/index.yaml"
 	indexURL = parsedURL.String()
-	resp, err := utils.HttpGet(indexURL)
+	resp, err := httputil.HttpGet(indexURL)
 	if err != nil {
 		return
 	}
@@ -45,7 +45,7 @@ func (i *devkitIndexer) getIndexFile() (indexFile *app.IndexFile, err error) {
 	if err != nil {
 		return
 	}
-	err = yaml.Decode(content, indexFile)
+	err = yamlutil.Decode(content, indexFile)
 	if err != nil {
 		return
 	}

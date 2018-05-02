@@ -14,12 +14,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.CreateJobResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	newJob := models.NewJob(
 		"",
 		req.GetClusterId().GetValue(),
@@ -46,19 +46,19 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 	}
 
 	res := &pb.CreateJobResponse{
-		JobId:     utils.ToProtoString(newJob.JobId),
-		ClusterId: utils.ToProtoString(newJob.ClusterId),
-		AppId:     utils.ToProtoString(newJob.AppId),
-		VersionId: utils.ToProtoString(newJob.VersionId),
+		JobId:     pbutil.ToProtoString(newJob.JobId),
+		ClusterId: pbutil.ToProtoString(newJob.ClusterId),
+		AppId:     pbutil.ToProtoString(newJob.AppId),
+		VersionId: pbutil.ToProtoString(newJob.VersionId),
 	}
 	return res, nil
 }
 
 func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) (*pb.DescribeJobsResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	var jobs []*models.Job
-	offset := utils.GetOffsetFromRequest(req)
-	limit := utils.GetLimitFromRequest(req)
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
 
 	query := p.Db.
 		Select(models.JobColumns...).

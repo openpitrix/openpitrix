@@ -17,7 +17,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type Request interface {
@@ -44,7 +45,7 @@ func getSearchFilter(tableName string, value interface{}, exclude ...string) dbr
 	if v, ok := value.(string); ok {
 		var ops []dbr.Builder
 		for _, column := range models.SearchColumns[tableName] {
-			if !utils.StringIn(column, exclude) {
+			if !stringutil.StringIn(column, exclude) {
 				ops = append(ops, db.Like(column, v))
 			}
 		}
@@ -101,7 +102,7 @@ func buildFilterConditions(withPrefix bool, req Request, tableName string, exclu
 		prop.Parse(tag)
 		column := prop.OrigName
 		param := field.Value()
-		if utils.StringIn(column, models.IndexedColumns[tableName]) {
+		if stringutil.StringIn(column, models.IndexedColumns[tableName]) {
 			value := getStringValue(param)
 			if value != nil {
 				key := column
@@ -111,7 +112,7 @@ func buildFilterConditions(withPrefix bool, req Request, tableName string, exclu
 				conditions = append(conditions, db.Eq(key, value))
 			}
 		}
-		if column == SearchWordColumnName && utils.StringIn(tableName, models.SearchWordColumnTable) {
+		if column == SearchWordColumnName && stringutil.StringIn(tableName, models.SearchWordColumnTable) {
 			value := getStringValue(param)
 			condition := getSearchFilter(tableName, value, exclude...)
 			if condition != nil {
@@ -134,7 +135,7 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 		column := prop.OrigName
 		f := field.Value()
 		v := reflect.ValueOf(f)
-		if utils.FindString(columns, column) > -1 && !v.IsNil() {
+		if stringutil.FindString(columns, column) > -1 && !v.IsNil() {
 			switch v := f.(type) {
 			case *wrappers.StringValue:
 				attributes[column] = v.GetValue()
@@ -145,7 +146,7 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 			case *wrappers.UInt32Value:
 				attributes[column] = v.GetValue()
 			case *timestamp.Timestamp:
-				attributes[column] = utils.FromProtoTimestamp(v)
+				attributes[column] = pbutil.FromProtoTimestamp(v)
 
 			default:
 				attributes[column] = v

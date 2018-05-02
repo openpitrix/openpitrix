@@ -15,7 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/utils"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
 func NewJobManagerClient(ctx context.Context) (pb.JobManagerClient, error) {
@@ -53,7 +53,7 @@ func DescribeJobs(ctx context.Context, jobRequest *pb.DescribeJobsRequest) (*pb.
 
 func WaitJob(jobId string, timeout time.Duration, waitInterval time.Duration) error {
 	logger.Debug("Waiting for job [%s] finished", jobId)
-	return utils.WaitForSpecificOrError(func() (bool, error) {
+	return funcutil.WaitForSpecificOrError(func() (bool, error) {
 		jobRequest := &pb.DescribeJobsRequest{
 			JobId: []string{jobId},
 		}

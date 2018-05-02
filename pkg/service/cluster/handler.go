@@ -21,8 +21,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
-	"openpitrix.io/openpitrix/pkg/utils"
-	"openpitrix.io/openpitrix/pkg/utils/sender"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/reflectutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func getCluster(clusterId, userId string) (*models.Cluster, error) {
@@ -142,7 +143,7 @@ func getClusterNode(nodeId, userId string) (*models.ClusterNode, error) {
 }
 
 func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest) (*pb.CreateClusterResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	runtimeId := req.GetRuntimeId().GetValue()
@@ -152,7 +153,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	}
 
 	// check image
-	if utils.In(runtime.Provider, constants.VmBaseProviders) {
+	if reflectutil.In(runtime.Provider, constants.VmBaseProviders) {
 		_, err = pi.Global().GlobalConfig().GetRuntimeImageId(runtime.RuntimeUrl, runtime.Zone)
 		if err != nil {
 			return nil, err
@@ -233,14 +234,14 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
 	res := &pb.CreateClusterResponse{
-		ClusterId: utils.ToProtoString(clusterId),
-		JobId:     utils.ToProtoString(jobId),
+		ClusterId: pbutil.ToProtoString(clusterId),
+		JobId:     pbutil.ToProtoString(jobId),
 	}
 	return res, nil
 }
 
 func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest) (*pb.ModifyClusterResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetCluster().GetClusterId().GetValue()
 	_, err := getCluster(clusterId, s.UserId)
@@ -345,13 +346,13 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	}
 
 	res := &pb.ModifyClusterResponse{
-		ClusterId: utils.ToProtoString(clusterId),
+		ClusterId: pbutil.ToProtoString(clusterId),
 	}
 	return res, nil
 }
 
 func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNodeRequest) (*pb.ModifyClusterNodeResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 
 	nodeId := req.GetClusterNode().GetNodeId().GetValue()
 	_, err := getClusterNode(nodeId, s.UserId)
@@ -370,13 +371,13 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 	}
 
 	res := &pb.ModifyClusterNodeResponse{
-		NodeId: utils.ToProtoString(nodeId),
+		NodeId: pbutil.ToProtoString(nodeId),
 	}
 	return res, nil
 }
 
 func (p *Server) AddTableClusterNodes(ctx context.Context, req *pb.AddTableClusterNodesRequest) (*pb_empty.Empty, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 
 	for _, clusterNode := range req.ClusterNodeSet {
 		node := models.PbToClusterNode(clusterNode)
@@ -408,7 +409,7 @@ func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTabl
 }
 
 func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersRequest) (*pb.DeleteClustersResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	var jobIds []string
@@ -452,7 +453,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 }
 
 func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterRequest) (*pb.UpgradeClusterResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
@@ -488,13 +489,13 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 	}
 
 	return &pb.UpgradeClusterResponse{
-		ClusterId: utils.ToProtoString(clusterId),
-		JobId:     utils.ToProtoString(jobId),
+		ClusterId: pbutil.ToProtoString(clusterId),
+		JobId:     pbutil.ToProtoString(jobId),
 	}, nil
 }
 
 func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterRequest) (*pb.RollbackClusterResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
@@ -530,13 +531,13 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 	}
 
 	return &pb.RollbackClusterResponse{
-		ClusterId: utils.ToProtoString(clusterId),
-		JobId:     utils.ToProtoString(jobId),
+		ClusterId: pbutil.ToProtoString(clusterId),
+		JobId:     pbutil.ToProtoString(jobId),
 	}, nil
 }
 
 func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest) (*pb.ResizeClusterResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
@@ -572,13 +573,13 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 	}
 
 	return &pb.ResizeClusterResponse{
-		ClusterId: utils.ToProtoString(clusterId),
-		JobId:     utils.ToProtoString(jobId),
+		ClusterId: pbutil.ToProtoString(clusterId),
+		JobId:     pbutil.ToProtoString(jobId),
 	}, nil
 }
 
 func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesRequest) (*pb.AddClusterNodesResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
@@ -614,13 +615,13 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	}
 
 	return &pb.AddClusterNodesResponse{
-		ClusterId: utils.ToProtoString(clusterId),
-		JobId:     utils.ToProtoString(jobId),
+		ClusterId: pbutil.ToProtoString(clusterId),
+		JobId:     pbutil.ToProtoString(jobId),
 	}, nil
 }
 
 func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNodesRequest) (*pb.DeleteClusterNodesResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
@@ -656,13 +657,13 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 	}
 
 	return &pb.DeleteClusterNodesResponse{
-		ClusterId: utils.ToProtoString(clusterId),
-		JobId:     utils.ToProtoString(jobId),
+		ClusterId: pbutil.ToProtoString(clusterId),
+		JobId:     pbutil.ToProtoString(jobId),
 	}, nil
 }
 
 func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvRequest) (*pb.UpdateClusterEnvResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
@@ -698,15 +699,15 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	}
 
 	return &pb.UpdateClusterEnvResponse{
-		ClusterId: utils.ToProtoString(clusterId),
-		JobId:     utils.ToProtoString(jobId),
+		ClusterId: pbutil.ToProtoString(clusterId),
+		JobId:     pbutil.ToProtoString(jobId),
 	}, nil
 }
 
 func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersRequest) (*pb.DescribeClustersResponse, error) {
 	var clusters []*models.Cluster
-	offset := utils.GetOffsetFromRequest(req)
-	limit := utils.GetLimitFromRequest(req)
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
 
 	query := pi.Global().Db.
 		Select(models.ClusterColumns...).
@@ -743,8 +744,8 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 
 func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClusterNodesRequest) (*pb.DescribeClusterNodesResponse, error) {
 	var clusterNodes []*models.ClusterNode
-	offset := utils.GetOffsetFromRequest(req)
-	limit := utils.GetLimitFromRequest(req)
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
 
 	query := pi.Global().Db.
 		Select(models.ClusterNodeColumns...).
@@ -801,7 +802,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 }
 
 func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) (*pb.StopClustersResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	var jobIds []string
@@ -846,7 +847,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 }
 
 func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest) (*pb.StartClustersResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	var jobIds []string
@@ -900,7 +901,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 }
 
 func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersRequest) (*pb.RecoverClustersResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	var jobIds []string
@@ -954,7 +955,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 }
 
 func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest) (*pb.CeaseClustersResponse, error) {
-	s := sender.GetSenderFromContext(ctx)
+	s := senderutil.GetSenderFromContext(ctx)
 	// TODO: check resource permission
 
 	var jobIds []string
