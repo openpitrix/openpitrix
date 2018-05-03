@@ -7,7 +7,6 @@
 package test
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"testing"
@@ -16,10 +15,9 @@ import (
 	"k8s.io/client-go/util/homedir"
 
 	"openpitrix.io/openpitrix/test/client/app_manager"
+	"openpitrix.io/openpitrix/test/client/cluster_manager"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
-	//"openpitrix.io/openpitrix/test/client/job_manager"
-	"openpitrix.io/openpitrix/test/client/cluster_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
@@ -32,11 +30,14 @@ var (
 
 	RepoNameForTest    = "incubator"
 	RuntimeNameForTest = "k8s runtime"
+	RepoUrlForTest     = "http://192.168.0.11:8879/"
 
 	KubeConfig string
 )
 
 func TestK8s(t *testing.T) {
+	log.SetPrefix("[ K8S TEST ] ")
+
 	b, err := ioutil.ReadFile(homedir.HomeDir() + "/.kube/config")
 	if err != nil {
 		t.Fatal(err)
@@ -65,8 +66,8 @@ func TestK8s(t *testing.T) {
 				&models.OpenpitrixCreateRepoRequest{
 					Name:        RepoNameForTest,
 					Description: "incubator charts",
-					Type:        "https",
-					URL:         "https://kubernetes-charts-incubator.storage.googleapis.com/",
+					Type:        "http",
+					URL:         RepoUrlForTest,
 					Credential:  `{}`,
 					Visibility:  "public",
 				})
@@ -92,6 +93,8 @@ func TestK8s(t *testing.T) {
 		}
 	}
 
+	time.Sleep(2 * time.Second)
+
 	// waiting for apps indexed by repo indexer
 	var app *models.OpenpitrixApp
 	{
@@ -108,12 +111,13 @@ func TestK8s(t *testing.T) {
 				break
 			}
 			log.Printf("Waiting for app ...")
-			time.Sleep(10 * time.Second)
+			time.Sleep(5 * time.Second)
 		}
 	}
 	log.Printf("Got app [%s]\n", app.Name)
 
-	var appVersion *models.OpenpitrixAppVersion
+	var appVersion1 *models.OpenpitrixAppVersion
+	var appVersion2 *models.OpenpitrixAppVersion
 	{
 		describeParams := app_manager.NewDescribeAppVersionsParams()
 		describeParams.SetAppID([]string{app.AppID})
@@ -126,9 +130,14 @@ func TestK8s(t *testing.T) {
 			t.Fatal("App has no version released")
 		}
 
-		appVersion = appVersions[0]
+		if len(appVersions) != 2 {
+			t.Fatal("We need two version to test upgrade")
+		}
+
+		appVersion1 = appVersions[0]
+		appVersion2 = appVersions[1]
 	}
-	log.Printf("Got app version [%s]\n", appVersion.Name)
+	log.Printf("Got app version [%s] [%s]\n", appVersion1.Name, appVersion2.Name)
 
 	// create runtime
 	var runtime *models.OpenpitrixRuntime
@@ -162,15 +171,13 @@ func TestK8s(t *testing.T) {
 	}
 	log.Printf("Got runtime [%s]\n", runtime.Name)
 
-	// create cluster
-	var jobId string
 	var clusterId string
+	log.Printf("Creating cluster...\n")
 	{
-		conf := fmt.Sprintf(`ClusterId: "cl-duak9an3f7cjfru"
+		conf := `
 Description: "test cluster"
 Name: "cluster test"
-RuntimeId: "%s"
-`, runtime.RuntimeID)
+`
 
 		createParams := cluster_manager.NewCreateClusterParams()
 		createParams.SetBody(&models.OpenpitrixCreateClusterRequest{
@@ -178,7 +185,7 @@ RuntimeId: "%s"
 			AppID:         app.AppID,
 			Conf:          conf,
 			RuntimeID:     runtime.RuntimeID,
-			VersionID:     appVersion.VersionID,
+			VersionID:     appVersion1.VersionID,
 		})
 
 		createResp, err := client.ClusterManager.CreateCluster(createParams)
@@ -186,36 +193,76 @@ RuntimeId: "%s"
 			t.Fatal(err)
 		}
 
-		jobId = createResp.Payload.JobID
 		clusterId = createResp.Payload.ClusterID
 	}
-	log.Printf("Got job id [%s]\n", jobId)
-	log.Printf("Got cluster id [%s]\n", clusterId)
+	log.Printf("Cluster [%s] created \n", clusterId)
 
-	//// check job finish
-	//{
-	//	describeParams := job_manager.NewDescribeJobsParams()
-	//	describeParams.SetJobID([]string{jobId})
-	//	job_manager.
-	//}
+	time.Sleep(4 * time.Minute)
 
-	// check cluster status
+	log.Printf("Upgrading cluster [%s]...\n", clusterId)
 	{
-		describeParams := cluster_manager.NewDescribeClustersParams()
-		describeParams.SetClusterID([]string{clusterId})
-		describeResp, err := client.ClusterManager.DescribeClusters(describeParams)
+		upgradeParams := cluster_manager.NewUpgradeClusterParams()
+		upgradeParams.SetBody(&models.OpenpitrixUpgradeClusterRequest{
+			AdvancedParam: []string{},
+			ClusterID:     clusterId,
+			VersionID:     appVersion2.VersionID,
+		})
+
+		_, err := client.ClusterManager.UpgradeCluster(upgradeParams)
 		if err != nil {
 			t.Fatal(err)
 		}
-		clusters := describeResp.Payload.ClusterSet
-		if len(clusters) == 0 {
-			t.Fatalf("Cluster [%s] not here", clusterId)
-		}
-
-		cluster := clusters[0]
-		if cluster.Status != "active" {
-			t.Fatal("Cluster status must be active when job finished")
-		}
-
 	}
+	log.Printf("Cluster [%s] upgraded \n", clusterId)
+
+	time.Sleep(4 * time.Minute)
+
+	log.Printf("Rolling back cluster [%s]...\n", clusterId)
+	{
+		rollbackParams := cluster_manager.NewRollbackClusterParams()
+		rollbackParams.SetBody(&models.OpenpitrixRollbackClusterRequest{
+			AdvancedParam: []string{},
+			ClusterID:     clusterId,
+		})
+
+		_, err := client.ClusterManager.RollbackCluster(rollbackParams)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	log.Printf("Cluster [%s] roll back \n", clusterId)
+
+	time.Sleep(4 * time.Minute)
+
+	log.Printf("Deleting cluster [%s]...\n", clusterId)
+	{
+		deleteParams := cluster_manager.NewDeleteClustersParams()
+		deleteParams.SetBody(&models.OpenpitrixDeleteClustersRequest{
+			AdvancedParam: []string{},
+			ClusterID:     []string{clusterId},
+		})
+
+		_, err := client.ClusterManager.DeleteClusters(deleteParams)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	log.Printf("Cluster [%s] deleted \n", clusterId)
+
+	time.Sleep(4 * time.Minute)
+
+	log.Printf("Purging cluster [%s]...\n", clusterId)
+	{
+		ceaseParams := cluster_manager.NewCeaseClustersParams()
+		ceaseParams.SetBody(&models.OpenpitrixCeaseClustersRequest{
+			AdvancedParam: []string{},
+			ClusterID:     []string{clusterId},
+		})
+
+		_, err := client.ClusterManager.CeaseClusters(ceaseParams)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	log.Printf("Cluster [%s] purged \n", clusterId)
 }

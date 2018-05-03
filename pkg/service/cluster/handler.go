@@ -68,6 +68,7 @@ func getClusterWrapper(clusterId string) (*models.ClusterWrapper, error) {
 		return nil, err
 	}
 
+	clusterWrapper.ClusterCommons = map[string]*models.ClusterCommon{}
 	for _, clusterCommon := range clusterCommons {
 		clusterWrapper.ClusterCommons[clusterCommon.Role] = clusterCommon
 	}
@@ -81,6 +82,7 @@ func getClusterWrapper(clusterId string) (*models.ClusterWrapper, error) {
 		return nil, err
 	}
 
+	clusterWrapper.ClusterNodes = map[string]*models.ClusterNode{}
 	for _, clusterNode := range clusterNodes {
 		clusterWrapper.ClusterNodes[clusterNode.NodeId] = clusterNode
 	}
@@ -94,6 +96,7 @@ func getClusterWrapper(clusterId string) (*models.ClusterWrapper, error) {
 		return nil, err
 	}
 
+	clusterWrapper.ClusterRoles = map[string]*models.ClusterRole{}
 	for _, clusterRole := range clusterRoles {
 		clusterWrapper.ClusterRoles[clusterRole.Role] = clusterRole
 	}
@@ -107,6 +110,7 @@ func getClusterWrapper(clusterId string) (*models.ClusterWrapper, error) {
 		return nil, err
 	}
 
+	clusterWrapper.ClusterLinks = map[string]*models.ClusterLink{}
 	for _, clusterLink := range clusterLinks {
 		clusterWrapper.ClusterLinks[clusterLink.Name] = clusterLink
 	}
@@ -120,6 +124,7 @@ func getClusterWrapper(clusterId string) (*models.ClusterWrapper, error) {
 		return nil, err
 	}
 
+	clusterWrapper.ClusterLoadbalancers = map[string][]*models.ClusterLoadbalancer{}
 	for _, clusterLoadbalancer := range clusterLoadbalancers {
 		clusterWrapper.ClusterLoadbalancers[clusterLoadbalancer.Role] =
 			append(clusterWrapper.ClusterLoadbalancers[clusterLoadbalancer.Role], clusterLoadbalancer)
@@ -173,7 +178,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	}
 	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, conf)
 	if err != nil {
-		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
+		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed, %+v", versionId, runtime, err)
 		return nil, err
 	}
 
@@ -194,17 +199,21 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		Runtime:  runtime,
 		Owner:    s.UserId,
 	}
-	fg := &Frontgate{
-		Runtime: runtime,
-	}
-	frontgate, err := fg.GetActiveFrontgate(vpcId, s.UserId, register)
-	if err != nil {
-		logger.Error("Get frontgate in vpc [%s] user [%s] failed. ", vpcId, s.UserId)
-		return nil, err
+
+	if reflectutil.In(runtime.Provider, constants.VmBaseProviders) {
+		fg := &Frontgate{
+			Runtime: runtime,
+		}
+		frontgate, err := fg.GetActiveFrontgate(vpcId, s.UserId, register)
+		if err != nil {
+			logger.Error("Get frontgate in vpc [%s] user [%s] failed. ", vpcId, s.UserId)
+			return nil, err
+		}
+
+		register.FrontgateId = frontgate.ClusterId
 	}
 
 	register.ClusterId = clusterId
-	register.FrontgateId = frontgate.ClusterId
 	register.ClusterType = constants.NormalClusterType
 	register.ClusterWrapper = clusterWrapper
 
@@ -457,6 +466,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
+	versionId := req.GetVersionId().GetValue()
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
@@ -476,7 +486,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		constants.PlaceHolder,
 		clusterId,
 		clusterWrapper.Cluster.AppId,
-		clusterWrapper.Cluster.VersionId,
+		versionId,
 		constants.ActionUpgradeCluster,
 		directive,
 		runtime.Provider,
