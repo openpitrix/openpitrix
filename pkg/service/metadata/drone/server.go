@@ -6,6 +6,7 @@ package drone
 
 import (
 	"context"
+	"sync"
 
 	"github.com/gogo/protobuf/proto"
 	"google.golang.org/grpc"
@@ -16,7 +17,9 @@ import (
 )
 
 type Server struct {
-	cfg   *pbtypes.DroneConfig
+	mu  sync.Mutex
+	cfg *pbtypes.DroneConfig
+
 	confd *ConfdServer
 	fg    *FrontgateController
 }
