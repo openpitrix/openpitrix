@@ -44,6 +44,17 @@ func (p *Server) GetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateI
 	return reply, nil
 }
 
+func (p *Server) SetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateConfig) (*pbtypes.Empty, error) {
+	panic("TODO")
+}
+
+func (p *Server) GetDroneConfig(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.DroneConfig, error) {
+	panic("TODO")
+}
+func (p *Server) SetDroneConfig(ctx context.Context, arg *pbtypes.SetDroneConfigRequest) (*pbtypes.Empty, error) {
+	panic("TODO")
+}
+
 func (p *Server) FrontgateChannel(ch pbpilot.PilotService_FrontgateChannelServer) error {
 	c := pbfrontgate.NewFrontgateServiceClient(
 		pilotutil.NewFrontgateChannelFromServer(ch),

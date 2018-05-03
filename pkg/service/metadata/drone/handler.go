@@ -8,8 +8,10 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"reflect"
 	"strings"
 
+	"github.com/gogo/protobuf/proto"
 	"openpitrix.io/openpitrix/pkg/libconfd"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/drone"
@@ -21,7 +23,30 @@ var (
 )
 
 func (p *Server) GetDroneConfig(context.Context, *pbtypes.Empty) (*pbtypes.DroneConfig, error) {
-	return p.cfg, nil
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	cfg := proto.Clone(p.cfg).(*pbtypes.DroneConfig)
+	return cfg, nil
+}
+func (p *Server) SetDroneConfig(ctx context.Context, cfg *pbtypes.DroneConfig) (*pbtypes.Empty, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	if reflect.DeepEqual(cfg, p.cfg) {
+		return &pbtypes.Empty{}, nil
+	}
+
+	if cfg.Id != p.cfg.Id {
+		return nil, fmt.Errorf("drone: invalid cfg.Id: %v", cfg)
+	}
+	if cfg.ListenPort != p.cfg.ListenPort {
+		return nil, fmt.Errorf("drone: invalid cfg.ListenPort: %v", cfg)
+	}
+
+	// save config: path?
+
+	panic("TODO")
 }
 
 func (p *Server) GetConfdConfig(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.ConfdConfig, error) {
