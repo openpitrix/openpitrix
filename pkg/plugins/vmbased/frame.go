@@ -151,17 +151,17 @@ func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []strin
 func (f *Frame) deregisterCmdLayer(nodeIds []string) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
+		ip := f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp
 		cnodes := GetCmdCnodes(
-			f.ClusterWrapper.Cluster.ClusterId,
-			f.ClusterWrapper.ClusterNodes[nodeId].InstanceId,
+			ip,
 			"",
 		)
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			NodeId:      nodeId,
-			DroneIp:     f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp,
+			DroneIp:     ip,
 			Timeout:     TimeoutDeregister,
-			Cnodes:      cnodes,
+			Cnodes:      jsonutil.ToString(cnodes),
 		}
 		directive, err := meta.ToString()
 		if err != nil {
@@ -205,17 +205,17 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string) *models.T
 			if service.Cmd == "" {
 				continue
 			}
+			ip := f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp
 			cnodes := GetCmdCnodes(
-				f.ClusterWrapper.Cluster.ClusterId,
-				f.ClusterWrapper.ClusterNodes[nodeId].InstanceId,
+				ip,
 				service.Cmd,
 			)
 			meta := &models.Meta{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 				NodeId:      nodeId,
-				DroneIp:     f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp,
+				DroneIp:     ip,
 				Timeout:     timeout,
-				Cnodes:      cnodes,
+				Cnodes:      jsonutil.ToString(cnodes),
 			}
 			directive, err := meta.ToString()
 			if err != nil {
@@ -597,17 +597,17 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 				"echo \"%s\" > /root/.ssh/id_%s;echo \"%s\" > /root/.ssh/id_%s.pub;"+
 				"chown 600 /root/.ssh/id_%s;chown 644 /root/.ssh/id_%s.pub",
 				private, keyType, public, keyType, keyType, keyType)
+			ip := clusterNode.PrivateIp
 			cnodes := GetCmdCnodes(
-				f.ClusterWrapper.Cluster.ClusterId,
-				f.ClusterWrapper.ClusterNodes[nodeId].InstanceId,
+				ip,
 				cmd,
 			)
 			meta := &models.Meta{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 				Timeout:     TimeoutSshKeygen,
 				NodeId:      clusterNode.NodeId,
-				DroneIp:     clusterNode.PrivateIp,
-				Cnodes:      cnodes,
+				DroneIp:     ip,
+				Cnodes:      jsonutil.ToString(cnodes),
 			}
 			directive, err := meta.ToString()
 			if err != nil {
@@ -638,17 +638,17 @@ func (f *Frame) umountVolumeLayer(nodeIds []string) *models.TaskLayer {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
 		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
 		cmd := UmountVolumeCmd(clusterRole.MountPoint)
+		ip := clusterNode.PrivateIp
 		cnodes := GetCmdCnodes(
-			f.ClusterWrapper.Cluster.ClusterId,
-			f.ClusterWrapper.ClusterNodes[nodeId].InstanceId,
+			ip,
 			cmd,
 		)
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			Timeout:     TimeoutUmountVolume,
 			NodeId:      clusterNode.NodeId,
-			DroneIp:     clusterNode.PrivateIp,
-			Cnodes:      cnodes,
+			DroneIp:     ip,
+			Cnodes:      jsonutil.ToString(cnodes),
 		}
 		directive, err := meta.ToString()
 		if err != nil {
@@ -875,7 +875,7 @@ func (f *Frame) registerMetadataLayer() *models.TaskLayer {
 }
 
 func (f *Frame) registerNodesMetadataLayer(nodeIds []string) *models.TaskLayer {
-	metadata := &Metadata{
+	metadata := &MetadataV1{
 		ClusterWrapper: f.ClusterWrapper,
 	}
 	cnodes := jsonutil.ToString(metadata.GetClusterNodeCnodes(nodeIds))
@@ -904,26 +904,19 @@ func (f *Frame) registerNodesMetadataLayer(nodeIds []string) *models.TaskLayer {
 
 func (f *Frame) registerScalingNodesMetadataLayer(nodeIds []string, path string) *models.TaskLayer {
 	clusterId := f.ClusterWrapper.Cluster.ClusterId
-	metadata := &Metadata{
+	metadata := &MetadataV1{
 		ClusterWrapper: f.ClusterWrapper,
 	}
-	hosts := metadata.GetHostsCnodes(nodeIds)
-	if len(hosts) == 0 {
+	scalingCnodes := metadata.GetScalingCnodes(nodeIds, path)
+	if scalingCnodes == nil {
 		logger.Info("No new nodes for cluster [%s] is registered", clusterId)
 		return nil
-	}
-	cnodes := map[string]interface{}{
-		RegisterClustersRootPath: map[string]interface{}{
-			clusterId: map[string]interface{}{
-				path: hosts,
-			},
-		},
 	}
 	meta := &models.Meta{
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 		Timeout:     TimeoutRegister,
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
-		Cnodes:      jsonutil.ToString(cnodes),
+		Cnodes:      jsonutil.ToString(scalingCnodes),
 	}
 	directive, err := meta.ToString()
 	if err != nil {
@@ -943,7 +936,7 @@ func (f *Frame) registerScalingNodesMetadataLayer(nodeIds []string, path string)
 }
 
 func (f *Frame) deregisterNodesMetadataLayer(nodeIds []string) *models.TaskLayer {
-	metadata := &Metadata{
+	metadata := &MetadataV1{
 		ClusterWrapper: f.ClusterWrapper,
 	}
 	cnodes := jsonutil.ToString(metadata.GetEmptyClusterNodeCnodes(nodeIds))
@@ -1003,12 +996,15 @@ func (f *Frame) deregisterScalingNodesMetadataLayer(path string) *models.TaskLay
 }
 
 func (f *Frame) deregisterMetadataLayer() *models.TaskLayer {
-	cnodes := GetEmptyClusterCnodes(f.ClusterWrapper.Cluster.ClusterId)
+	metadata := &MetadataV1{
+		ClusterWrapper: f.ClusterWrapper,
+	}
+	cnodes := metadata.GetEmptyClusterCnodes()
 	meta := &models.Meta{
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 		Timeout:     TimeoutDeregister,
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
-		Cnodes:      cnodes,
+		Cnodes:      jsonutil.ToString(cnodes),
 	}
 	directive, err := meta.ToString()
 	if err != nil {

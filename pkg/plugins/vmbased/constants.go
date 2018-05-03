@@ -31,6 +31,7 @@ const (
 const (
 	RegisterClustersRootPath         = "clusters"
 	RegisterNodeHosts                = "hosts"
+	RegisterNodeHost                 = "host"
 	RegisterNodeCluster              = "cluster"
 	RegisterNodeEnv                  = "env"
 	RegisterNodeLoadbalancer         = "loadbalancer"

@@ -63,11 +63,10 @@ func (t *Processor) Pre() error {
 					clusterRole.GetFileSystem().GetValue(),
 					clusterRole.GetMountOptions().GetValue(),
 				)
-				meta.Cnodes = vmbased.GetCmdCnodes(
-					clusterNode.GetClusterId().GetValue(),
-					clusterNode.GetInstanceId().GetValue(),
+				meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(
+					clusterNode.GetPrivateIp().GetValue(),
 					cmd,
-				)
+				))
 
 				t.Task.TaskAction = vmbased.ActionRegisterCmd
 				// write back
@@ -79,7 +78,7 @@ func (t *Processor) Pre() error {
 		if err == nil {
 			pbClusterWrappers, err := clusterclient.GetClusterWrappers(ctx, client, []string{meta.ClusterId})
 			if err == nil {
-				metadata := &vmbased.Metadata{
+				metadata := &vmbased.MetadataV1{
 					ClusterWrapper: pbClusterWrappers[0],
 				}
 				meta.Cnodes = jsonutil.ToString(metadata.GetClusterCnodes())
