@@ -15,6 +15,7 @@ import "openpitrix/types/frontgate.proto";
 
 service DroneService {
 	rpc GetDroneConfig (openpitrix.types.Empty) returns (openpitrix.types.DroneConfig);
+	rpc SetDroneConfig (openpitrix.types.DroneConfig) returns (openpitrix.types.Empty);
 
 	rpc GetConfdConfig (openpitrix.types.Empty) returns (openpitrix.types.ConfdConfig);
 	rpc SetConfdConfig (openpitrix.types.ConfdConfig) returns (openpitrix.types.Empty);
