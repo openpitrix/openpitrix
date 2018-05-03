@@ -52,3 +52,10 @@ const (
 	TimeoutUmountVolume         = 120
 	TimeoutSshKeygen            = 120
 )
+
+const (
+	MetadataConfPath   = "/opt/openpitrix/conf/"
+	OpenPitrixConfFile = "openpitrix.conf"
+	DroneConfFile      = "drone.conf"
+	FrontgateConfFile  = "frontgate.conf"
+)
