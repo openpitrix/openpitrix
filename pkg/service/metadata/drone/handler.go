@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/gogo/protobuf/proto"
+
 	"openpitrix.io/openpitrix/pkg/libconfd"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/drone"
