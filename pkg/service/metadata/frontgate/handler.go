@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/frontgate"
@@ -44,6 +44,10 @@ func (p *Server) GetFrontgateConfig(in *pbtypes.Empty, out *pbtypes.FrontgateCon
 	return nil
 }
 
+func (p *Server) SetFrontgateConfig(in *pbtypes.FrontgateConfig, out *pbtypes.Empty) error {
+	panic("TODO")
+}
+
 func (p *Server) GetDroneList(in *pbtypes.Empty, out *pbtypes.DroneIdList) error {
 	return fmt.Errorf("TODO")
 }
@@ -66,6 +70,17 @@ func (p *Server) GetDroneConfig(in *pbtypes.DroneEndpoint, out *pbtypes.DroneCon
 	}
 
 	return nil
+}
+
+func (p *Server) SetDroneConfig(in *pbtypes.SetDroneConfigRequest, out *pbtypes.Empty) error {
+	panic("TODO")
+}
+
+func (p *Server) GetConfdConfig(in *pbtypes.ConfdEndpoint, out *pbtypes.ConfdConfig) error {
+	panic("TODO")
+}
+func (p *Server) SetConfdConfig(in *pbtypes.SetConfdConfigRequest, out *pbtypes.Empty) error {
+	panic("TODO")
 }
 
 func (p *Server) IsConfdRunning(in *pbtypes.ConfdEndpoint, out *pbtypes.Bool) error {

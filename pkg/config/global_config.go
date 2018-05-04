@@ -20,6 +20,7 @@ type GlobalConfig struct {
 	Repo    RepoServiceConfig      `json:"repo"`
 	Cluster ClusterServiceConfig   `json:"cluster"`
 	Runtime map[string]ImageConfig `json:"runtime"`
+	Pilot   PilotServiceConfig     `json:"pilot"`
 }
 
 type RepoServiceConfig struct {
@@ -29,6 +30,10 @@ type RepoServiceConfig struct {
 type ClusterServiceConfig struct {
 	Plugins       []string `json:"plugins"`
 	FrontgateConf string   `json:"frontgate_conf"`
+}
+
+type PilotServiceConfig struct {
+	Ip string `json:"ip"`
 }
 
 type ImageConfig struct {
@@ -72,6 +77,8 @@ cluster:
   plugins:
     - qingcloud
     - kubernetes
+pilot:
+  ip: 127.0.0.1
 runtime:
   qingcloud_pek3a:
     api_server: api.qingcloud.com

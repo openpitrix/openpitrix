@@ -22,8 +22,10 @@ service PilotService {
 
 	rpc GetFrontdateList (openpitrix.types.Empty) returns (openpitrix.types.FrontgateIdList);
 	rpc GetFrontgateConfig (openpitrix.types.FrontgateId) returns (openpitrix.types.FrontgateConfig);
+	rpc SetFrontgateConfig (openpitrix.types.FrontgateConfig) returns (openpitrix.types.Empty);
 
-	rpc FrontgateChannel (stream openpitrix.types.Bytes) returns (stream openpitrix.types.Bytes);
+	rpc GetDroneConfig (openpitrix.types.Empty) returns (openpitrix.types.DroneConfig);
+	rpc SetDroneConfig (openpitrix.types.SetDroneConfigRequest) returns (openpitrix.types.Empty);
 
 	rpc IsConfdRunning (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Bool);
 	rpc StartConfd (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
@@ -43,4 +45,6 @@ service PilotService {
 	rpc PingPilot (openpitrix.types.Empty) returns (openpitrix.types.Empty);
 	rpc PingFrontgate (openpitrix.types.FrontgateId) returns (openpitrix.types.Empty);
 	rpc PingDrone (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
+
+	rpc FrontgateChannel (stream openpitrix.types.Bytes) returns (stream openpitrix.types.Bytes);
 }

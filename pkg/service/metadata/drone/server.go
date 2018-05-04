@@ -6,8 +6,9 @@ package drone
 
 import (
 	"context"
+	"sync"
 
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -16,7 +17,9 @@ import (
 )
 
 type Server struct {
-	cfg   *pbtypes.DroneConfig
+	mu  sync.Mutex
+	cfg *pbtypes.DroneConfig
+
 	confd *ConfdServer
 	fg    *FrontgateController
 }

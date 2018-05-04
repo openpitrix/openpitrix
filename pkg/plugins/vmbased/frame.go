@@ -671,6 +671,46 @@ func (f *Frame) umountVolumeLayer(nodeIds []string) *models.TaskLayer {
 	}
 }
 
+/*
+cat /opt/openpitrix/conf/drone.conf
+IMAGE="mysql:5.7"
+MOUNT_POINT="/data"
+FILE_NAME="drone.conf"
+FILE_CONF={\\"id\\":\\"cln-abcdefgh\\",\\"listen_port\\":9112}
+*/
+func (f *Frame) getUserDataValue(nodeId string) string {
+	var result string
+	clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+	role := clusterNode.Role
+	if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
+		role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
+	}
+	clusterRole, _ := f.ClusterWrapper.ClusterRoles[role]
+	clusterCommon, _ := f.ClusterWrapper.ClusterCommons[role]
+	mountPoint := clusterRole.MountPoint
+	// Empty string can not be a parameter
+	if len(mountPoint) == 0 {
+		mountPoint = "#"
+	}
+	imageId := clusterCommon.ImageId
+
+	droneConf := make(map[string]interface{})
+	droneConf["id"] = nodeId
+	droneConf["listen_port"] = constants.DroneServicePort
+	droneConfStr := strings.Replace(jsonutil.ToString(droneConf), "\"", "\\\\\"", -1)
+
+	result += fmt.Sprintf("IMAGE=\"%s\"\n", imageId)
+	result += fmt.Sprintf("MOUNT_POINT=\"%s\"\n", mountPoint)
+	result += fmt.Sprintf("FILE_NAME=\"%s\"\n", DroneConfFile)
+	result += fmt.Sprintf("FILE_CONF=%s\n", droneConfStr)
+
+	return result
+}
+
+func (f *Frame) getUserDataPath() string {
+	return MetadataConfPath + OpenPitrixConfFile
+}
+
 func (f *Frame) runInstancesLayer(nodeIds []string) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	apiServer := f.Runtime.RuntimeUrl
@@ -697,15 +737,17 @@ func (f *Frame) runInstancesLayer(nodeIds []string) *models.TaskLayer {
 			return nil
 		}
 		instance := &models.Instance{
-			Name:      clusterNode.ClusterId + "_" + nodeId,
-			NodeId:    nodeId,
-			ImageId:   imageId,
-			Cpu:       int(clusterRole.Cpu),
-			Memory:    int(clusterRole.Memory),
-			Gpu:       int(clusterRole.Gpu),
-			Subnet:    clusterNode.SubnetId,
-			RuntimeId: f.Runtime.RuntimeId,
-			Zone:      f.Runtime.Zone,
+			Name:          clusterNode.ClusterId + "_" + nodeId,
+			NodeId:        nodeId,
+			ImageId:       imageId,
+			Cpu:           int(clusterRole.Cpu),
+			Memory:        int(clusterRole.Memory),
+			Gpu:           int(clusterRole.Gpu),
+			Subnet:        clusterNode.SubnetId,
+			RuntimeId:     f.Runtime.RuntimeId,
+			Zone:          f.Runtime.Zone,
+			UserdataPath:  f.getUserDataPath(),
+			UserDataValue: f.getUserDataValue(nodeId),
 		}
 		instanceTaskDirective, err := instance.ToString()
 		if err != nil {

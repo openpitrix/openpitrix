@@ -4,10 +4,56 @@
 
 package vmbased
 
-import "openpitrix.io/openpitrix/pkg/models"
+import (
+	"fmt"
+	"strings"
+
+	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+)
 
 type Frontgate struct {
 	*Frame
+}
+
+/*
+cat /opt/openpitrix/conf/drone.conf
+IMAGE="mysql:5.7"
+MOUNT_POINT="/data"
+FILE_NAME="frontgate.conf"
+FILE_CONF={\\"id\\":\\"cln-abcdefgh\\",\\"listen_port\\":9111,\\"pilot_host\\":192.168.0.1,\\"pilot_port\\":9110}
+*/
+func (f *Frontgate) getUserDataValue(nodeId string) string {
+	var result string
+	clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+	role := clusterNode.Role
+	if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
+		role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
+	}
+	clusterRole, _ := f.ClusterWrapper.ClusterRoles[role]
+	clusterCommon, _ := f.ClusterWrapper.ClusterCommons[role]
+	mountPoint := clusterRole.MountPoint
+	// Empty string can not be a parameter
+	if len(mountPoint) == 0 {
+		mountPoint = "#"
+	}
+	imageId := clusterCommon.ImageId
+
+	frontgateConf := make(map[string]interface{})
+	frontgateConf["id"] = nodeId
+	frontgateConf["listen_port"] = constants.FrontgateServicePort
+	frontgateConf["pilot_host"] = pi.Global().GlobalConfig().Pilot.Ip
+	frontgateConf["pilot_port"] = constants.PilotManagerPort
+	frontgateConfStr := strings.Replace(jsonutil.ToString(frontgateConf), "\"", "\\\\\"", -1)
+
+	result += fmt.Sprintf("IMAGE=\"%s\"\n", imageId)
+	result += fmt.Sprintf("MOUNT_POINT=\"%s\"\n", mountPoint)
+	result += fmt.Sprintf("FILE_NAME=\"%s\"\n", FrontgateConfFile)
+	result += fmt.Sprintf("FILE_CONF=%s\n", frontgateConfStr)
+
+	return result
 }
 
 func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {

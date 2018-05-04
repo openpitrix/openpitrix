@@ -11,13 +11,14 @@ option go_package = "openpitrix.io/openpitrix/pkg/pb/types;pbtypes";
 import "google/protobuf/timestamp.proto";
 
 message ConfdConfig {
-	ConfdProcessorConfig processor_config = 2;
-	ConfdBackendConfig backend_config = 3;
+	ConfdProcessorConfig processor_config = 1;
+	ConfdBackendConfig backend_config = 2;
 }
 
 message ConfdEndpoint {
-	string drone_ip = 1;
-	int32 drone_port = 2;
+	string frontgate_id = 1;
+	string drone_ip = 2;
+	int32 drone_port = 3;
 }
 
 // Keep same as libconfd.Config
@@ -50,4 +51,9 @@ message ConfdStatus {
 	int32 process_id = 1;
 	google.protobuf.Timestamp up_time = 2;
 	string status = 3;
+}
+
+message SetConfdConfigRequest {
+	ConfdEndpoint endpoint = 1;
+	ConfdConfig config = 2;
 }

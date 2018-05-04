@@ -32,3 +32,8 @@ message DroneEndpoint {
 	string drone_ip = 2;
 	int32 drone_port = 3;
 }
+
+message SetDroneConfigRequest {
+	DroneEndpoint endpoint = 1;
+	DroneConfig config = 2;
+}
