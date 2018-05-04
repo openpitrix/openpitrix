@@ -6,11 +6,11 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf4 "github.com/golang/protobuf/ptypes/empty"
-import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
-import google_protobuf3 "github.com/golang/protobuf/ptypes/timestamp"
-import _ "google.golang.org/genproto/googleapis/api/annotations"
+import empty "github.com/golang/protobuf/ptypes/empty"
+import timestamp "github.com/golang/protobuf/ptypes/timestamp"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+import _ "google.golang.org/genproto/googleapis/api/annotations"
 
 import (
 	context "golang.org/x/net/context"
@@ -22,41 +22,69 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CreateClusterRequest struct {
-	AppId         *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	RuntimeId     *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
-	Conf          *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=conf" json:"conf,omitempty"`
-	AdvancedParam []string                      `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	RuntimeId            *wrappers.StringValue `protobuf:"bytes,3,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
+	Conf                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=conf" json:"conf,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateClusterRequest) Reset()                    { *m = CreateClusterRequest{} }
-func (m *CreateClusterRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateClusterRequest) ProtoMessage()               {}
-func (*CreateClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
+func (m *CreateClusterRequest) Reset()         { *m = CreateClusterRequest{} }
+func (m *CreateClusterRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateClusterRequest) ProtoMessage()    {}
+func (*CreateClusterRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{0}
+}
+func (m *CreateClusterRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateClusterRequest.Unmarshal(m, b)
+}
+func (m *CreateClusterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateClusterRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateClusterRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateClusterRequest.Merge(dst, src)
+}
+func (m *CreateClusterRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateClusterRequest.Size(m)
+}
+func (m *CreateClusterRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateClusterRequest.DiscardUnknown(m)
+}
 
-func (m *CreateClusterRequest) GetAppId() *google_protobuf2.StringValue {
+var xxx_messageInfo_CreateClusterRequest proto.InternalMessageInfo
+
+func (m *CreateClusterRequest) GetAppId() *wrappers.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *CreateClusterRequest) GetVersionId() *google_protobuf2.StringValue {
+func (m *CreateClusterRequest) GetVersionId() *wrappers.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
 	return nil
 }
 
-func (m *CreateClusterRequest) GetRuntimeId() *google_protobuf2.StringValue {
+func (m *CreateClusterRequest) GetRuntimeId() *wrappers.StringValue {
 	if m != nil {
 		return m.RuntimeId
 	}
 	return nil
 }
 
-func (m *CreateClusterRequest) GetConf() *google_protobuf2.StringValue {
+func (m *CreateClusterRequest) GetConf() *wrappers.StringValue {
 	if m != nil {
 		return m.Conf
 	}
@@ -71,23 +99,45 @@ func (m *CreateClusterRequest) GetAdvancedParam() []string {
 }
 
 type CreateClusterResponse struct {
-	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateClusterResponse) Reset()                    { *m = CreateClusterResponse{} }
-func (m *CreateClusterResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateClusterResponse) ProtoMessage()               {}
-func (*CreateClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
+func (m *CreateClusterResponse) Reset()         { *m = CreateClusterResponse{} }
+func (m *CreateClusterResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateClusterResponse) ProtoMessage()    {}
+func (*CreateClusterResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{1}
+}
+func (m *CreateClusterResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateClusterResponse.Unmarshal(m, b)
+}
+func (m *CreateClusterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateClusterResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateClusterResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateClusterResponse.Merge(dst, src)
+}
+func (m *CreateClusterResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateClusterResponse.Size(m)
+}
+func (m *CreateClusterResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateClusterResponse.DiscardUnknown(m)
+}
 
-func (m *CreateClusterResponse) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_CreateClusterResponse proto.InternalMessageInfo
+
+func (m *CreateClusterResponse) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *CreateClusterResponse) GetJobId() *google_protobuf2.StringValue {
+func (m *CreateClusterResponse) GetJobId() *wrappers.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -101,12 +151,34 @@ type ModifyClusterRequest struct {
 	ClusterLinkSet         []*ClusterLink         `protobuf:"bytes,4,rep,name=cluster_link_set,json=clusterLinkSet" json:"cluster_link_set,omitempty"`
 	ClusterCommonSet       []*ClusterCommon       `protobuf:"bytes,5,rep,name=cluster_common_set,json=clusterCommonSet" json:"cluster_common_set,omitempty"`
 	ClusterLoadbalancerSet []*ClusterLoadbalancer `protobuf:"bytes,6,rep,name=cluster_loadbalancer_set,json=clusterLoadbalancerSet" json:"cluster_loadbalancer_set,omitempty"`
+	XXX_NoUnkeyedLiteral   struct{}               `json:"-"`
+	XXX_unrecognized       []byte                 `json:"-"`
+	XXX_sizecache          int32                  `json:"-"`
 }
 
-func (m *ModifyClusterRequest) Reset()                    { *m = ModifyClusterRequest{} }
-func (m *ModifyClusterRequest) String() string            { return proto.CompactTextString(m) }
-func (*ModifyClusterRequest) ProtoMessage()               {}
-func (*ModifyClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{2} }
+func (m *ModifyClusterRequest) Reset()         { *m = ModifyClusterRequest{} }
+func (m *ModifyClusterRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyClusterRequest) ProtoMessage()    {}
+func (*ModifyClusterRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{2}
+}
+func (m *ModifyClusterRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyClusterRequest.Unmarshal(m, b)
+}
+func (m *ModifyClusterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyClusterRequest.Marshal(b, m, deterministic)
+}
+func (dst *ModifyClusterRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyClusterRequest.Merge(dst, src)
+}
+func (m *ModifyClusterRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyClusterRequest.Size(m)
+}
+func (m *ModifyClusterRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyClusterRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyClusterRequest proto.InternalMessageInfo
 
 func (m *ModifyClusterRequest) GetCluster() *Cluster {
 	if m != nil {
@@ -151,15 +223,37 @@ func (m *ModifyClusterRequest) GetClusterLoadbalancerSet() []*ClusterLoadbalance
 }
 
 type ModifyClusterResponse struct {
-	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ModifyClusterResponse) Reset()                    { *m = ModifyClusterResponse{} }
-func (m *ModifyClusterResponse) String() string            { return proto.CompactTextString(m) }
-func (*ModifyClusterResponse) ProtoMessage()               {}
-func (*ModifyClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{3} }
+func (m *ModifyClusterResponse) Reset()         { *m = ModifyClusterResponse{} }
+func (m *ModifyClusterResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyClusterResponse) ProtoMessage()    {}
+func (*ModifyClusterResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{3}
+}
+func (m *ModifyClusterResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyClusterResponse.Unmarshal(m, b)
+}
+func (m *ModifyClusterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyClusterResponse.Marshal(b, m, deterministic)
+}
+func (dst *ModifyClusterResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyClusterResponse.Merge(dst, src)
+}
+func (m *ModifyClusterResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyClusterResponse.Size(m)
+}
+func (m *ModifyClusterResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyClusterResponse.DiscardUnknown(m)
+}
 
-func (m *ModifyClusterResponse) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ModifyClusterResponse proto.InternalMessageInfo
+
+func (m *ModifyClusterResponse) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
@@ -167,13 +261,35 @@ func (m *ModifyClusterResponse) GetClusterId() *google_protobuf2.StringValue {
 }
 
 type ModifyClusterNodeRequest struct {
-	ClusterNode *ClusterNode `protobuf:"bytes,1,opt,name=cluster_node,json=clusterNode" json:"cluster_node,omitempty"`
+	ClusterNode          *ClusterNode `protobuf:"bytes,1,opt,name=cluster_node,json=clusterNode" json:"cluster_node,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
-func (m *ModifyClusterNodeRequest) Reset()                    { *m = ModifyClusterNodeRequest{} }
-func (m *ModifyClusterNodeRequest) String() string            { return proto.CompactTextString(m) }
-func (*ModifyClusterNodeRequest) ProtoMessage()               {}
-func (*ModifyClusterNodeRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{4} }
+func (m *ModifyClusterNodeRequest) Reset()         { *m = ModifyClusterNodeRequest{} }
+func (m *ModifyClusterNodeRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyClusterNodeRequest) ProtoMessage()    {}
+func (*ModifyClusterNodeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{4}
+}
+func (m *ModifyClusterNodeRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyClusterNodeRequest.Unmarshal(m, b)
+}
+func (m *ModifyClusterNodeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyClusterNodeRequest.Marshal(b, m, deterministic)
+}
+func (dst *ModifyClusterNodeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyClusterNodeRequest.Merge(dst, src)
+}
+func (m *ModifyClusterNodeRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyClusterNodeRequest.Size(m)
+}
+func (m *ModifyClusterNodeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyClusterNodeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyClusterNodeRequest proto.InternalMessageInfo
 
 func (m *ModifyClusterNodeRequest) GetClusterNode() *ClusterNode {
 	if m != nil {
@@ -183,15 +299,37 @@ func (m *ModifyClusterNodeRequest) GetClusterNode() *ClusterNode {
 }
 
 type ModifyClusterNodeResponse struct {
-	NodeId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	NodeId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ModifyClusterNodeResponse) Reset()                    { *m = ModifyClusterNodeResponse{} }
-func (m *ModifyClusterNodeResponse) String() string            { return proto.CompactTextString(m) }
-func (*ModifyClusterNodeResponse) ProtoMessage()               {}
-func (*ModifyClusterNodeResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{5} }
+func (m *ModifyClusterNodeResponse) Reset()         { *m = ModifyClusterNodeResponse{} }
+func (m *ModifyClusterNodeResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyClusterNodeResponse) ProtoMessage()    {}
+func (*ModifyClusterNodeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{5}
+}
+func (m *ModifyClusterNodeResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyClusterNodeResponse.Unmarshal(m, b)
+}
+func (m *ModifyClusterNodeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyClusterNodeResponse.Marshal(b, m, deterministic)
+}
+func (dst *ModifyClusterNodeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyClusterNodeResponse.Merge(dst, src)
+}
+func (m *ModifyClusterNodeResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyClusterNodeResponse.Size(m)
+}
+func (m *ModifyClusterNodeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyClusterNodeResponse.DiscardUnknown(m)
+}
 
-func (m *ModifyClusterNodeResponse) GetNodeId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ModifyClusterNodeResponse proto.InternalMessageInfo
+
+func (m *ModifyClusterNodeResponse) GetNodeId() *wrappers.StringValue {
 	if m != nil {
 		return m.NodeId
 	}
@@ -199,13 +337,35 @@ func (m *ModifyClusterNodeResponse) GetNodeId() *google_protobuf2.StringValue {
 }
 
 type AddTableClusterNodesRequest struct {
-	ClusterNodeSet []*ClusterNode `protobuf:"bytes,1,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
+	ClusterNodeSet       []*ClusterNode `protobuf:"bytes,1,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *AddTableClusterNodesRequest) Reset()                    { *m = AddTableClusterNodesRequest{} }
-func (m *AddTableClusterNodesRequest) String() string            { return proto.CompactTextString(m) }
-func (*AddTableClusterNodesRequest) ProtoMessage()               {}
-func (*AddTableClusterNodesRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{6} }
+func (m *AddTableClusterNodesRequest) Reset()         { *m = AddTableClusterNodesRequest{} }
+func (m *AddTableClusterNodesRequest) String() string { return proto.CompactTextString(m) }
+func (*AddTableClusterNodesRequest) ProtoMessage()    {}
+func (*AddTableClusterNodesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{6}
+}
+func (m *AddTableClusterNodesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddTableClusterNodesRequest.Unmarshal(m, b)
+}
+func (m *AddTableClusterNodesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddTableClusterNodesRequest.Marshal(b, m, deterministic)
+}
+func (dst *AddTableClusterNodesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddTableClusterNodesRequest.Merge(dst, src)
+}
+func (m *AddTableClusterNodesRequest) XXX_Size() int {
+	return xxx_messageInfo_AddTableClusterNodesRequest.Size(m)
+}
+func (m *AddTableClusterNodesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddTableClusterNodesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddTableClusterNodesRequest proto.InternalMessageInfo
 
 func (m *AddTableClusterNodesRequest) GetClusterNodeSet() []*ClusterNode {
 	if m != nil {
@@ -215,13 +375,35 @@ func (m *AddTableClusterNodesRequest) GetClusterNodeSet() []*ClusterNode {
 }
 
 type DeleteTableClusterNodesRequest struct {
-	NodeId []string `protobuf:"bytes,1,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	NodeId               []string `protobuf:"bytes,1,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DeleteTableClusterNodesRequest) Reset()                    { *m = DeleteTableClusterNodesRequest{} }
-func (m *DeleteTableClusterNodesRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteTableClusterNodesRequest) ProtoMessage()               {}
-func (*DeleteTableClusterNodesRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{7} }
+func (m *DeleteTableClusterNodesRequest) Reset()         { *m = DeleteTableClusterNodesRequest{} }
+func (m *DeleteTableClusterNodesRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteTableClusterNodesRequest) ProtoMessage()    {}
+func (*DeleteTableClusterNodesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{7}
+}
+func (m *DeleteTableClusterNodesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteTableClusterNodesRequest.Unmarshal(m, b)
+}
+func (m *DeleteTableClusterNodesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteTableClusterNodesRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteTableClusterNodesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteTableClusterNodesRequest.Merge(dst, src)
+}
+func (m *DeleteTableClusterNodesRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteTableClusterNodesRequest.Size(m)
+}
+func (m *DeleteTableClusterNodesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteTableClusterNodesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteTableClusterNodesRequest proto.InternalMessageInfo
 
 func (m *DeleteTableClusterNodesRequest) GetNodeId() []string {
 	if m != nil {
@@ -231,14 +413,36 @@ func (m *DeleteTableClusterNodesRequest) GetNodeId() []string {
 }
 
 type DeleteClustersRequest struct {
-	ClusterId     []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DeleteClustersRequest) Reset()                    { *m = DeleteClustersRequest{} }
-func (m *DeleteClustersRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteClustersRequest) ProtoMessage()               {}
-func (*DeleteClustersRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{8} }
+func (m *DeleteClustersRequest) Reset()         { *m = DeleteClustersRequest{} }
+func (m *DeleteClustersRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteClustersRequest) ProtoMessage()    {}
+func (*DeleteClustersRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{8}
+}
+func (m *DeleteClustersRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteClustersRequest.Unmarshal(m, b)
+}
+func (m *DeleteClustersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteClustersRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteClustersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteClustersRequest.Merge(dst, src)
+}
+func (m *DeleteClustersRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteClustersRequest.Size(m)
+}
+func (m *DeleteClustersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteClustersRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteClustersRequest proto.InternalMessageInfo
 
 func (m *DeleteClustersRequest) GetClusterId() []string {
 	if m != nil {
@@ -255,14 +459,36 @@ func (m *DeleteClustersRequest) GetAdvancedParam() []string {
 }
 
 type DeleteClustersResponse struct {
-	ClusterId []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DeleteClustersResponse) Reset()                    { *m = DeleteClustersResponse{} }
-func (m *DeleteClustersResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteClustersResponse) ProtoMessage()               {}
-func (*DeleteClustersResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{9} }
+func (m *DeleteClustersResponse) Reset()         { *m = DeleteClustersResponse{} }
+func (m *DeleteClustersResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteClustersResponse) ProtoMessage()    {}
+func (*DeleteClustersResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{9}
+}
+func (m *DeleteClustersResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteClustersResponse.Unmarshal(m, b)
+}
+func (m *DeleteClustersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteClustersResponse.Marshal(b, m, deterministic)
+}
+func (dst *DeleteClustersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteClustersResponse.Merge(dst, src)
+}
+func (m *DeleteClustersResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteClustersResponse.Size(m)
+}
+func (m *DeleteClustersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteClustersResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteClustersResponse proto.InternalMessageInfo
 
 func (m *DeleteClustersResponse) GetClusterId() []string {
 	if m != nil {
@@ -279,24 +505,46 @@ func (m *DeleteClustersResponse) GetJobId() []string {
 }
 
 type UpgradeClusterRequest struct {
-	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	VersionId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	AdvancedParam []string                      `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *UpgradeClusterRequest) Reset()                    { *m = UpgradeClusterRequest{} }
-func (m *UpgradeClusterRequest) String() string            { return proto.CompactTextString(m) }
-func (*UpgradeClusterRequest) ProtoMessage()               {}
-func (*UpgradeClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{10} }
+func (m *UpgradeClusterRequest) Reset()         { *m = UpgradeClusterRequest{} }
+func (m *UpgradeClusterRequest) String() string { return proto.CompactTextString(m) }
+func (*UpgradeClusterRequest) ProtoMessage()    {}
+func (*UpgradeClusterRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{10}
+}
+func (m *UpgradeClusterRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpgradeClusterRequest.Unmarshal(m, b)
+}
+func (m *UpgradeClusterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpgradeClusterRequest.Marshal(b, m, deterministic)
+}
+func (dst *UpgradeClusterRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpgradeClusterRequest.Merge(dst, src)
+}
+func (m *UpgradeClusterRequest) XXX_Size() int {
+	return xxx_messageInfo_UpgradeClusterRequest.Size(m)
+}
+func (m *UpgradeClusterRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpgradeClusterRequest.DiscardUnknown(m)
+}
 
-func (m *UpgradeClusterRequest) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_UpgradeClusterRequest proto.InternalMessageInfo
+
+func (m *UpgradeClusterRequest) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *UpgradeClusterRequest) GetVersionId() *google_protobuf2.StringValue {
+func (m *UpgradeClusterRequest) GetVersionId() *wrappers.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
@@ -311,23 +559,45 @@ func (m *UpgradeClusterRequest) GetAdvancedParam() []string {
 }
 
 type UpgradeClusterResponse struct {
-	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *UpgradeClusterResponse) Reset()                    { *m = UpgradeClusterResponse{} }
-func (m *UpgradeClusterResponse) String() string            { return proto.CompactTextString(m) }
-func (*UpgradeClusterResponse) ProtoMessage()               {}
-func (*UpgradeClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{11} }
+func (m *UpgradeClusterResponse) Reset()         { *m = UpgradeClusterResponse{} }
+func (m *UpgradeClusterResponse) String() string { return proto.CompactTextString(m) }
+func (*UpgradeClusterResponse) ProtoMessage()    {}
+func (*UpgradeClusterResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{11}
+}
+func (m *UpgradeClusterResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpgradeClusterResponse.Unmarshal(m, b)
+}
+func (m *UpgradeClusterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpgradeClusterResponse.Marshal(b, m, deterministic)
+}
+func (dst *UpgradeClusterResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpgradeClusterResponse.Merge(dst, src)
+}
+func (m *UpgradeClusterResponse) XXX_Size() int {
+	return xxx_messageInfo_UpgradeClusterResponse.Size(m)
+}
+func (m *UpgradeClusterResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpgradeClusterResponse.DiscardUnknown(m)
+}
 
-func (m *UpgradeClusterResponse) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_UpgradeClusterResponse proto.InternalMessageInfo
+
+func (m *UpgradeClusterResponse) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *UpgradeClusterResponse) GetJobId() *google_protobuf2.StringValue {
+func (m *UpgradeClusterResponse) GetJobId() *wrappers.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -335,16 +605,38 @@ func (m *UpgradeClusterResponse) GetJobId() *google_protobuf2.StringValue {
 }
 
 type RollbackClusterRequest struct {
-	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam []string                      `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *RollbackClusterRequest) Reset()                    { *m = RollbackClusterRequest{} }
-func (m *RollbackClusterRequest) String() string            { return proto.CompactTextString(m) }
-func (*RollbackClusterRequest) ProtoMessage()               {}
-func (*RollbackClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{12} }
+func (m *RollbackClusterRequest) Reset()         { *m = RollbackClusterRequest{} }
+func (m *RollbackClusterRequest) String() string { return proto.CompactTextString(m) }
+func (*RollbackClusterRequest) ProtoMessage()    {}
+func (*RollbackClusterRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{12}
+}
+func (m *RollbackClusterRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RollbackClusterRequest.Unmarshal(m, b)
+}
+func (m *RollbackClusterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RollbackClusterRequest.Marshal(b, m, deterministic)
+}
+func (dst *RollbackClusterRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RollbackClusterRequest.Merge(dst, src)
+}
+func (m *RollbackClusterRequest) XXX_Size() int {
+	return xxx_messageInfo_RollbackClusterRequest.Size(m)
+}
+func (m *RollbackClusterRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RollbackClusterRequest.DiscardUnknown(m)
+}
 
-func (m *RollbackClusterRequest) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_RollbackClusterRequest proto.InternalMessageInfo
+
+func (m *RollbackClusterRequest) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
@@ -359,23 +651,45 @@ func (m *RollbackClusterRequest) GetAdvancedParam() []string {
 }
 
 type RollbackClusterResponse struct {
-	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *RollbackClusterResponse) Reset()                    { *m = RollbackClusterResponse{} }
-func (m *RollbackClusterResponse) String() string            { return proto.CompactTextString(m) }
-func (*RollbackClusterResponse) ProtoMessage()               {}
-func (*RollbackClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{13} }
+func (m *RollbackClusterResponse) Reset()         { *m = RollbackClusterResponse{} }
+func (m *RollbackClusterResponse) String() string { return proto.CompactTextString(m) }
+func (*RollbackClusterResponse) ProtoMessage()    {}
+func (*RollbackClusterResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{13}
+}
+func (m *RollbackClusterResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RollbackClusterResponse.Unmarshal(m, b)
+}
+func (m *RollbackClusterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RollbackClusterResponse.Marshal(b, m, deterministic)
+}
+func (dst *RollbackClusterResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RollbackClusterResponse.Merge(dst, src)
+}
+func (m *RollbackClusterResponse) XXX_Size() int {
+	return xxx_messageInfo_RollbackClusterResponse.Size(m)
+}
+func (m *RollbackClusterResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RollbackClusterResponse.DiscardUnknown(m)
+}
 
-func (m *RollbackClusterResponse) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_RollbackClusterResponse proto.InternalMessageInfo
+
+func (m *RollbackClusterResponse) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *RollbackClusterResponse) GetJobId() *google_protobuf2.StringValue {
+func (m *RollbackClusterResponse) GetJobId() *wrappers.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -383,40 +697,62 @@ func (m *RollbackClusterResponse) GetJobId() *google_protobuf2.StringValue {
 }
 
 type ResizeClusterRequest struct {
-	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role          *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	Cpu           *google_protobuf2.UInt32Value `protobuf:"bytes,3,opt,name=cpu" json:"cpu,omitempty"`
-	Memory        *google_protobuf2.UInt32Value `protobuf:"bytes,4,opt,name=memory" json:"memory,omitempty"`
-	AdvancedParam []string                      `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	Cpu                  *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=cpu" json:"cpu,omitempty"`
+	Memory               *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=memory" json:"memory,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ResizeClusterRequest) Reset()                    { *m = ResizeClusterRequest{} }
-func (m *ResizeClusterRequest) String() string            { return proto.CompactTextString(m) }
-func (*ResizeClusterRequest) ProtoMessage()               {}
-func (*ResizeClusterRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{14} }
+func (m *ResizeClusterRequest) Reset()         { *m = ResizeClusterRequest{} }
+func (m *ResizeClusterRequest) String() string { return proto.CompactTextString(m) }
+func (*ResizeClusterRequest) ProtoMessage()    {}
+func (*ResizeClusterRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{14}
+}
+func (m *ResizeClusterRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ResizeClusterRequest.Unmarshal(m, b)
+}
+func (m *ResizeClusterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ResizeClusterRequest.Marshal(b, m, deterministic)
+}
+func (dst *ResizeClusterRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResizeClusterRequest.Merge(dst, src)
+}
+func (m *ResizeClusterRequest) XXX_Size() int {
+	return xxx_messageInfo_ResizeClusterRequest.Size(m)
+}
+func (m *ResizeClusterRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResizeClusterRequest.DiscardUnknown(m)
+}
 
-func (m *ResizeClusterRequest) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ResizeClusterRequest proto.InternalMessageInfo
+
+func (m *ResizeClusterRequest) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ResizeClusterRequest) GetRole() *google_protobuf2.StringValue {
+func (m *ResizeClusterRequest) GetRole() *wrappers.StringValue {
 	if m != nil {
 		return m.Role
 	}
 	return nil
 }
 
-func (m *ResizeClusterRequest) GetCpu() *google_protobuf2.UInt32Value {
+func (m *ResizeClusterRequest) GetCpu() *wrappers.UInt32Value {
 	if m != nil {
 		return m.Cpu
 	}
 	return nil
 }
 
-func (m *ResizeClusterRequest) GetMemory() *google_protobuf2.UInt32Value {
+func (m *ResizeClusterRequest) GetMemory() *wrappers.UInt32Value {
 	if m != nil {
 		return m.Memory
 	}
@@ -431,23 +767,45 @@ func (m *ResizeClusterRequest) GetAdvancedParam() []string {
 }
 
 type ResizeClusterResponse struct {
-	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ResizeClusterResponse) Reset()                    { *m = ResizeClusterResponse{} }
-func (m *ResizeClusterResponse) String() string            { return proto.CompactTextString(m) }
-func (*ResizeClusterResponse) ProtoMessage()               {}
-func (*ResizeClusterResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{15} }
+func (m *ResizeClusterResponse) Reset()         { *m = ResizeClusterResponse{} }
+func (m *ResizeClusterResponse) String() string { return proto.CompactTextString(m) }
+func (*ResizeClusterResponse) ProtoMessage()    {}
+func (*ResizeClusterResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{15}
+}
+func (m *ResizeClusterResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ResizeClusterResponse.Unmarshal(m, b)
+}
+func (m *ResizeClusterResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ResizeClusterResponse.Marshal(b, m, deterministic)
+}
+func (dst *ResizeClusterResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResizeClusterResponse.Merge(dst, src)
+}
+func (m *ResizeClusterResponse) XXX_Size() int {
+	return xxx_messageInfo_ResizeClusterResponse.Size(m)
+}
+func (m *ResizeClusterResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResizeClusterResponse.DiscardUnknown(m)
+}
 
-func (m *ResizeClusterResponse) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ResizeClusterResponse proto.InternalMessageInfo
+
+func (m *ResizeClusterResponse) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ResizeClusterResponse) GetJobId() *google_protobuf2.StringValue {
+func (m *ResizeClusterResponse) GetJobId() *wrappers.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -455,32 +813,54 @@ func (m *ResizeClusterResponse) GetJobId() *google_protobuf2.StringValue {
 }
 
 type AddClusterNodesRequest struct {
-	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role          *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	NodeCount     *google_protobuf2.UInt32Value `protobuf:"bytes,3,opt,name=node_count,json=nodeCount" json:"node_count,omitempty"`
-	AdvancedParam []string                      `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	NodeCount            *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=node_count,json=nodeCount" json:"node_count,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *AddClusterNodesRequest) Reset()                    { *m = AddClusterNodesRequest{} }
-func (m *AddClusterNodesRequest) String() string            { return proto.CompactTextString(m) }
-func (*AddClusterNodesRequest) ProtoMessage()               {}
-func (*AddClusterNodesRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{16} }
+func (m *AddClusterNodesRequest) Reset()         { *m = AddClusterNodesRequest{} }
+func (m *AddClusterNodesRequest) String() string { return proto.CompactTextString(m) }
+func (*AddClusterNodesRequest) ProtoMessage()    {}
+func (*AddClusterNodesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{16}
+}
+func (m *AddClusterNodesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddClusterNodesRequest.Unmarshal(m, b)
+}
+func (m *AddClusterNodesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddClusterNodesRequest.Marshal(b, m, deterministic)
+}
+func (dst *AddClusterNodesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddClusterNodesRequest.Merge(dst, src)
+}
+func (m *AddClusterNodesRequest) XXX_Size() int {
+	return xxx_messageInfo_AddClusterNodesRequest.Size(m)
+}
+func (m *AddClusterNodesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddClusterNodesRequest.DiscardUnknown(m)
+}
 
-func (m *AddClusterNodesRequest) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_AddClusterNodesRequest proto.InternalMessageInfo
+
+func (m *AddClusterNodesRequest) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *AddClusterNodesRequest) GetRole() *google_protobuf2.StringValue {
+func (m *AddClusterNodesRequest) GetRole() *wrappers.StringValue {
 	if m != nil {
 		return m.Role
 	}
 	return nil
 }
 
-func (m *AddClusterNodesRequest) GetNodeCount() *google_protobuf2.UInt32Value {
+func (m *AddClusterNodesRequest) GetNodeCount() *wrappers.UInt32Value {
 	if m != nil {
 		return m.NodeCount
 	}
@@ -495,23 +875,45 @@ func (m *AddClusterNodesRequest) GetAdvancedParam() []string {
 }
 
 type AddClusterNodesResponse struct {
-	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *AddClusterNodesResponse) Reset()                    { *m = AddClusterNodesResponse{} }
-func (m *AddClusterNodesResponse) String() string            { return proto.CompactTextString(m) }
-func (*AddClusterNodesResponse) ProtoMessage()               {}
-func (*AddClusterNodesResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{17} }
+func (m *AddClusterNodesResponse) Reset()         { *m = AddClusterNodesResponse{} }
+func (m *AddClusterNodesResponse) String() string { return proto.CompactTextString(m) }
+func (*AddClusterNodesResponse) ProtoMessage()    {}
+func (*AddClusterNodesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{17}
+}
+func (m *AddClusterNodesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddClusterNodesResponse.Unmarshal(m, b)
+}
+func (m *AddClusterNodesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddClusterNodesResponse.Marshal(b, m, deterministic)
+}
+func (dst *AddClusterNodesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddClusterNodesResponse.Merge(dst, src)
+}
+func (m *AddClusterNodesResponse) XXX_Size() int {
+	return xxx_messageInfo_AddClusterNodesResponse.Size(m)
+}
+func (m *AddClusterNodesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddClusterNodesResponse.DiscardUnknown(m)
+}
 
-func (m *AddClusterNodesResponse) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_AddClusterNodesResponse proto.InternalMessageInfo
+
+func (m *AddClusterNodesResponse) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *AddClusterNodesResponse) GetJobId() *google_protobuf2.StringValue {
+func (m *AddClusterNodesResponse) GetJobId() *wrappers.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -519,25 +921,47 @@ func (m *AddClusterNodesResponse) GetJobId() *google_protobuf2.StringValue {
 }
 
 type DeleteClusterNodesRequest struct {
-	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role          *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	NodeId        []string                      `protobuf:"bytes,3,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	AdvancedParam []string                      `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	NodeId               []string              `protobuf:"bytes,3,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteClusterNodesRequest) Reset()                    { *m = DeleteClusterNodesRequest{} }
-func (m *DeleteClusterNodesRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteClusterNodesRequest) ProtoMessage()               {}
-func (*DeleteClusterNodesRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{18} }
+func (m *DeleteClusterNodesRequest) Reset()         { *m = DeleteClusterNodesRequest{} }
+func (m *DeleteClusterNodesRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteClusterNodesRequest) ProtoMessage()    {}
+func (*DeleteClusterNodesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{18}
+}
+func (m *DeleteClusterNodesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteClusterNodesRequest.Unmarshal(m, b)
+}
+func (m *DeleteClusterNodesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteClusterNodesRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteClusterNodesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteClusterNodesRequest.Merge(dst, src)
+}
+func (m *DeleteClusterNodesRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteClusterNodesRequest.Size(m)
+}
+func (m *DeleteClusterNodesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteClusterNodesRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteClusterNodesRequest) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_DeleteClusterNodesRequest proto.InternalMessageInfo
+
+func (m *DeleteClusterNodesRequest) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *DeleteClusterNodesRequest) GetRole() *google_protobuf2.StringValue {
+func (m *DeleteClusterNodesRequest) GetRole() *wrappers.StringValue {
 	if m != nil {
 		return m.Role
 	}
@@ -559,23 +983,45 @@ func (m *DeleteClusterNodesRequest) GetAdvancedParam() []string {
 }
 
 type DeleteClusterNodesResponse struct {
-	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteClusterNodesResponse) Reset()                    { *m = DeleteClusterNodesResponse{} }
-func (m *DeleteClusterNodesResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteClusterNodesResponse) ProtoMessage()               {}
-func (*DeleteClusterNodesResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{19} }
+func (m *DeleteClusterNodesResponse) Reset()         { *m = DeleteClusterNodesResponse{} }
+func (m *DeleteClusterNodesResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteClusterNodesResponse) ProtoMessage()    {}
+func (*DeleteClusterNodesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{19}
+}
+func (m *DeleteClusterNodesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteClusterNodesResponse.Unmarshal(m, b)
+}
+func (m *DeleteClusterNodesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteClusterNodesResponse.Marshal(b, m, deterministic)
+}
+func (dst *DeleteClusterNodesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteClusterNodesResponse.Merge(dst, src)
+}
+func (m *DeleteClusterNodesResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteClusterNodesResponse.Size(m)
+}
+func (m *DeleteClusterNodesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteClusterNodesResponse.DiscardUnknown(m)
+}
 
-func (m *DeleteClusterNodesResponse) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_DeleteClusterNodesResponse proto.InternalMessageInfo
+
+func (m *DeleteClusterNodesResponse) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *DeleteClusterNodesResponse) GetJobId() *google_protobuf2.StringValue {
+func (m *DeleteClusterNodesResponse) GetJobId() *wrappers.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -583,24 +1029,46 @@ func (m *DeleteClusterNodesResponse) GetJobId() *google_protobuf2.StringValue {
 }
 
 type UpdateClusterEnvRequest struct {
-	ClusterId     *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Env           *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=env" json:"env,omitempty"`
-	AdvancedParam []string                      `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Env                  *wrappers.StringValue `protobuf:"bytes,2,opt,name=env" json:"env,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *UpdateClusterEnvRequest) Reset()                    { *m = UpdateClusterEnvRequest{} }
-func (m *UpdateClusterEnvRequest) String() string            { return proto.CompactTextString(m) }
-func (*UpdateClusterEnvRequest) ProtoMessage()               {}
-func (*UpdateClusterEnvRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{20} }
+func (m *UpdateClusterEnvRequest) Reset()         { *m = UpdateClusterEnvRequest{} }
+func (m *UpdateClusterEnvRequest) String() string { return proto.CompactTextString(m) }
+func (*UpdateClusterEnvRequest) ProtoMessage()    {}
+func (*UpdateClusterEnvRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{20}
+}
+func (m *UpdateClusterEnvRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateClusterEnvRequest.Unmarshal(m, b)
+}
+func (m *UpdateClusterEnvRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateClusterEnvRequest.Marshal(b, m, deterministic)
+}
+func (dst *UpdateClusterEnvRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateClusterEnvRequest.Merge(dst, src)
+}
+func (m *UpdateClusterEnvRequest) XXX_Size() int {
+	return xxx_messageInfo_UpdateClusterEnvRequest.Size(m)
+}
+func (m *UpdateClusterEnvRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateClusterEnvRequest.DiscardUnknown(m)
+}
 
-func (m *UpdateClusterEnvRequest) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_UpdateClusterEnvRequest proto.InternalMessageInfo
+
+func (m *UpdateClusterEnvRequest) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *UpdateClusterEnvRequest) GetEnv() *google_protobuf2.StringValue {
+func (m *UpdateClusterEnvRequest) GetEnv() *wrappers.StringValue {
 	if m != nil {
 		return m.Env
 	}
@@ -615,23 +1083,45 @@ func (m *UpdateClusterEnvRequest) GetAdvancedParam() []string {
 }
 
 type UpdateClusterEnvResponse struct {
-	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *UpdateClusterEnvResponse) Reset()                    { *m = UpdateClusterEnvResponse{} }
-func (m *UpdateClusterEnvResponse) String() string            { return proto.CompactTextString(m) }
-func (*UpdateClusterEnvResponse) ProtoMessage()               {}
-func (*UpdateClusterEnvResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{21} }
+func (m *UpdateClusterEnvResponse) Reset()         { *m = UpdateClusterEnvResponse{} }
+func (m *UpdateClusterEnvResponse) String() string { return proto.CompactTextString(m) }
+func (*UpdateClusterEnvResponse) ProtoMessage()    {}
+func (*UpdateClusterEnvResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{21}
+}
+func (m *UpdateClusterEnvResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateClusterEnvResponse.Unmarshal(m, b)
+}
+func (m *UpdateClusterEnvResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateClusterEnvResponse.Marshal(b, m, deterministic)
+}
+func (dst *UpdateClusterEnvResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateClusterEnvResponse.Merge(dst, src)
+}
+func (m *UpdateClusterEnvResponse) XXX_Size() int {
+	return xxx_messageInfo_UpdateClusterEnvResponse.Size(m)
+}
+func (m *UpdateClusterEnvResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateClusterEnvResponse.DiscardUnknown(m)
+}
 
-func (m *UpdateClusterEnvResponse) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_UpdateClusterEnvResponse proto.InternalMessageInfo
+
+func (m *UpdateClusterEnvResponse) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *UpdateClusterEnvResponse) GetJobId() *google_protobuf2.StringValue {
+func (m *UpdateClusterEnvResponse) GetJobId() *wrappers.StringValue {
 	if m != nil {
 		return m.JobId
 	}
@@ -639,215 +1129,237 @@ func (m *UpdateClusterEnvResponse) GetJobId() *google_protobuf2.StringValue {
 }
 
 type ClusterCommon struct {
-	ClusterId                  *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role                       *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	ServerIdUpperBound         *google_protobuf2.UInt32Value `protobuf:"bytes,3,opt,name=server_id_upper_bound,json=serverIdUpperBound" json:"server_id_upper_bound,omitempty"`
-	AdvancedActions            *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=advanced_actions,json=advancedActions" json:"advanced_actions,omitempty"`
-	InitService                *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=init_service,json=initService" json:"init_service,omitempty"`
-	StartService               *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=start_service,json=startService" json:"start_service,omitempty"`
-	StopService                *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=stop_service,json=stopService" json:"stop_service,omitempty"`
-	ScaleOutService            *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=scale_out_service,json=scaleOutService" json:"scale_out_service,omitempty"`
-	ScaleInService             *google_protobuf2.StringValue `protobuf:"bytes,9,opt,name=scale_in_service,json=scaleInService" json:"scale_in_service,omitempty"`
-	RestartService             *google_protobuf2.StringValue `protobuf:"bytes,10,opt,name=restart_service,json=restartService" json:"restart_service,omitempty"`
-	DestroyService             *google_protobuf2.StringValue `protobuf:"bytes,11,opt,name=destroy_service,json=destroyService" json:"destroy_service,omitempty"`
-	UpgradeService             *google_protobuf2.StringValue `protobuf:"bytes,12,opt,name=upgrade_service,json=upgradeService" json:"upgrade_service,omitempty"`
-	CustomService              *google_protobuf2.StringValue `protobuf:"bytes,13,opt,name=custom_service,json=customService" json:"custom_service,omitempty"`
-	BackupService              *google_protobuf2.StringValue `protobuf:"bytes,14,opt,name=backup_service,json=backupService" json:"backup_service,omitempty"`
-	RestoreService             *google_protobuf2.StringValue `protobuf:"bytes,15,opt,name=restore_service,json=restoreService" json:"restore_service,omitempty"`
-	DeleteSnapshotService      *google_protobuf2.StringValue `protobuf:"bytes,16,opt,name=delete_snapshot_service,json=deleteSnapshotService" json:"delete_snapshot_service,omitempty"`
-	HealthCheck                *google_protobuf2.StringValue `protobuf:"bytes,17,opt,name=health_check,json=healthCheck" json:"health_check,omitempty"`
-	Monitor                    *google_protobuf2.StringValue `protobuf:"bytes,18,opt,name=monitor" json:"monitor,omitempty"`
-	Passphraseless             *google_protobuf2.StringValue `protobuf:"bytes,19,opt,name=passphraseless" json:"passphraseless,omitempty"`
-	VerticalScalingPolicy      *google_protobuf2.StringValue `protobuf:"bytes,20,opt,name=vertical_scaling_policy,json=verticalScalingPolicy" json:"vertical_scaling_policy,omitempty"`
-	AgentInstalled             *google_protobuf2.BoolValue   `protobuf:"bytes,21,opt,name=agent_installed,json=agentInstalled" json:"agent_installed,omitempty"`
-	CustomMetadataScript       *google_protobuf2.StringValue `protobuf:"bytes,22,opt,name=custom_metadata_script,json=customMetadataScript" json:"custom_metadata_script,omitempty"`
-	ImageId                    *google_protobuf2.StringValue `protobuf:"bytes,23,opt,name=image_id,json=imageId" json:"image_id,omitempty"`
-	BackupPolicy               *google_protobuf2.StringValue `protobuf:"bytes,24,opt,name=backup_policy,json=backupPolicy" json:"backup_policy,omitempty"`
-	IncrementalBackupSupported *google_protobuf2.BoolValue   `protobuf:"bytes,25,opt,name=incremental_backup_supported,json=incrementalBackupSupported" json:"incremental_backup_supported,omitempty"`
-	Hypervisor                 *google_protobuf2.StringValue `protobuf:"bytes,26,opt,name=hypervisor" json:"hypervisor,omitempty"`
+	ClusterId                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Role                       *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	ServerIdUpperBound         *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=server_id_upper_bound,json=serverIdUpperBound" json:"server_id_upper_bound,omitempty"`
+	AdvancedActions            *wrappers.StringValue `protobuf:"bytes,4,opt,name=advanced_actions,json=advancedActions" json:"advanced_actions,omitempty"`
+	InitService                *wrappers.StringValue `protobuf:"bytes,5,opt,name=init_service,json=initService" json:"init_service,omitempty"`
+	StartService               *wrappers.StringValue `protobuf:"bytes,6,opt,name=start_service,json=startService" json:"start_service,omitempty"`
+	StopService                *wrappers.StringValue `protobuf:"bytes,7,opt,name=stop_service,json=stopService" json:"stop_service,omitempty"`
+	ScaleOutService            *wrappers.StringValue `protobuf:"bytes,8,opt,name=scale_out_service,json=scaleOutService" json:"scale_out_service,omitempty"`
+	ScaleInService             *wrappers.StringValue `protobuf:"bytes,9,opt,name=scale_in_service,json=scaleInService" json:"scale_in_service,omitempty"`
+	RestartService             *wrappers.StringValue `protobuf:"bytes,10,opt,name=restart_service,json=restartService" json:"restart_service,omitempty"`
+	DestroyService             *wrappers.StringValue `protobuf:"bytes,11,opt,name=destroy_service,json=destroyService" json:"destroy_service,omitempty"`
+	UpgradeService             *wrappers.StringValue `protobuf:"bytes,12,opt,name=upgrade_service,json=upgradeService" json:"upgrade_service,omitempty"`
+	CustomService              *wrappers.StringValue `protobuf:"bytes,13,opt,name=custom_service,json=customService" json:"custom_service,omitempty"`
+	BackupService              *wrappers.StringValue `protobuf:"bytes,14,opt,name=backup_service,json=backupService" json:"backup_service,omitempty"`
+	RestoreService             *wrappers.StringValue `protobuf:"bytes,15,opt,name=restore_service,json=restoreService" json:"restore_service,omitempty"`
+	DeleteSnapshotService      *wrappers.StringValue `protobuf:"bytes,16,opt,name=delete_snapshot_service,json=deleteSnapshotService" json:"delete_snapshot_service,omitempty"`
+	HealthCheck                *wrappers.StringValue `protobuf:"bytes,17,opt,name=health_check,json=healthCheck" json:"health_check,omitempty"`
+	Monitor                    *wrappers.StringValue `protobuf:"bytes,18,opt,name=monitor" json:"monitor,omitempty"`
+	Passphraseless             *wrappers.StringValue `protobuf:"bytes,19,opt,name=passphraseless" json:"passphraseless,omitempty"`
+	VerticalScalingPolicy      *wrappers.StringValue `protobuf:"bytes,20,opt,name=vertical_scaling_policy,json=verticalScalingPolicy" json:"vertical_scaling_policy,omitempty"`
+	AgentInstalled             *wrappers.BoolValue   `protobuf:"bytes,21,opt,name=agent_installed,json=agentInstalled" json:"agent_installed,omitempty"`
+	CustomMetadataScript       *wrappers.StringValue `protobuf:"bytes,22,opt,name=custom_metadata_script,json=customMetadataScript" json:"custom_metadata_script,omitempty"`
+	ImageId                    *wrappers.StringValue `protobuf:"bytes,23,opt,name=image_id,json=imageId" json:"image_id,omitempty"`
+	BackupPolicy               *wrappers.StringValue `protobuf:"bytes,24,opt,name=backup_policy,json=backupPolicy" json:"backup_policy,omitempty"`
+	IncrementalBackupSupported *wrappers.BoolValue   `protobuf:"bytes,25,opt,name=incremental_backup_supported,json=incrementalBackupSupported" json:"incremental_backup_supported,omitempty"`
+	Hypervisor                 *wrappers.StringValue `protobuf:"bytes,26,opt,name=hypervisor" json:"hypervisor,omitempty"`
+	XXX_NoUnkeyedLiteral       struct{}              `json:"-"`
+	XXX_unrecognized           []byte                `json:"-"`
+	XXX_sizecache              int32                 `json:"-"`
 }
 
-func (m *ClusterCommon) Reset()                    { *m = ClusterCommon{} }
-func (m *ClusterCommon) String() string            { return proto.CompactTextString(m) }
-func (*ClusterCommon) ProtoMessage()               {}
-func (*ClusterCommon) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{22} }
+func (m *ClusterCommon) Reset()         { *m = ClusterCommon{} }
+func (m *ClusterCommon) String() string { return proto.CompactTextString(m) }
+func (*ClusterCommon) ProtoMessage()    {}
+func (*ClusterCommon) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{22}
+}
+func (m *ClusterCommon) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ClusterCommon.Unmarshal(m, b)
+}
+func (m *ClusterCommon) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ClusterCommon.Marshal(b, m, deterministic)
+}
+func (dst *ClusterCommon) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClusterCommon.Merge(dst, src)
+}
+func (m *ClusterCommon) XXX_Size() int {
+	return xxx_messageInfo_ClusterCommon.Size(m)
+}
+func (m *ClusterCommon) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClusterCommon.DiscardUnknown(m)
+}
 
-func (m *ClusterCommon) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ClusterCommon proto.InternalMessageInfo
+
+func (m *ClusterCommon) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetRole() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetRole() *wrappers.StringValue {
 	if m != nil {
 		return m.Role
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetServerIdUpperBound() *google_protobuf2.UInt32Value {
+func (m *ClusterCommon) GetServerIdUpperBound() *wrappers.UInt32Value {
 	if m != nil {
 		return m.ServerIdUpperBound
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetAdvancedActions() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetAdvancedActions() *wrappers.StringValue {
 	if m != nil {
 		return m.AdvancedActions
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetInitService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetInitService() *wrappers.StringValue {
 	if m != nil {
 		return m.InitService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetStartService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetStartService() *wrappers.StringValue {
 	if m != nil {
 		return m.StartService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetStopService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetStopService() *wrappers.StringValue {
 	if m != nil {
 		return m.StopService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetScaleOutService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetScaleOutService() *wrappers.StringValue {
 	if m != nil {
 		return m.ScaleOutService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetScaleInService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetScaleInService() *wrappers.StringValue {
 	if m != nil {
 		return m.ScaleInService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetRestartService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetRestartService() *wrappers.StringValue {
 	if m != nil {
 		return m.RestartService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetDestroyService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetDestroyService() *wrappers.StringValue {
 	if m != nil {
 		return m.DestroyService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetUpgradeService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetUpgradeService() *wrappers.StringValue {
 	if m != nil {
 		return m.UpgradeService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetCustomService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetCustomService() *wrappers.StringValue {
 	if m != nil {
 		return m.CustomService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetBackupService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetBackupService() *wrappers.StringValue {
 	if m != nil {
 		return m.BackupService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetRestoreService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetRestoreService() *wrappers.StringValue {
 	if m != nil {
 		return m.RestoreService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetDeleteSnapshotService() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetDeleteSnapshotService() *wrappers.StringValue {
 	if m != nil {
 		return m.DeleteSnapshotService
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetHealthCheck() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetHealthCheck() *wrappers.StringValue {
 	if m != nil {
 		return m.HealthCheck
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetMonitor() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetMonitor() *wrappers.StringValue {
 	if m != nil {
 		return m.Monitor
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetPassphraseless() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetPassphraseless() *wrappers.StringValue {
 	if m != nil {
 		return m.Passphraseless
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetVerticalScalingPolicy() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetVerticalScalingPolicy() *wrappers.StringValue {
 	if m != nil {
 		return m.VerticalScalingPolicy
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetAgentInstalled() *google_protobuf2.BoolValue {
+func (m *ClusterCommon) GetAgentInstalled() *wrappers.BoolValue {
 	if m != nil {
 		return m.AgentInstalled
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetCustomMetadataScript() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetCustomMetadataScript() *wrappers.StringValue {
 	if m != nil {
 		return m.CustomMetadataScript
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetImageId() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetImageId() *wrappers.StringValue {
 	if m != nil {
 		return m.ImageId
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetBackupPolicy() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetBackupPolicy() *wrappers.StringValue {
 	if m != nil {
 		return m.BackupPolicy
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetIncrementalBackupSupported() *google_protobuf2.BoolValue {
+func (m *ClusterCommon) GetIncrementalBackupSupported() *wrappers.BoolValue {
 	if m != nil {
 		return m.IncrementalBackupSupported
 	}
 	return nil
 }
 
-func (m *ClusterCommon) GetHypervisor() *google_protobuf2.StringValue {
+func (m *ClusterCommon) GetHypervisor() *wrappers.StringValue {
 	if m != nil {
 		return m.Hypervisor
 	}
@@ -855,185 +1367,207 @@ func (m *ClusterCommon) GetHypervisor() *google_protobuf2.StringValue {
 }
 
 type ClusterNode struct {
-	NodeId           *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	ClusterId        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Name             *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	InstanceId       *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=instance_id,json=instanceId" json:"instance_id,omitempty"`
-	VolumeId         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=volume_id,json=volumeId" json:"volume_id,omitempty"`
-	Device           *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=device" json:"device,omitempty"`
-	SubnetId         *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
-	PrivateIp        *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=private_ip,json=privateIp" json:"private_ip,omitempty"`
-	ServerId         *google_protobuf2.UInt32Value `protobuf:"bytes,9,opt,name=server_id,json=serverId" json:"server_id,omitempty"`
-	Role             *google_protobuf2.StringValue `protobuf:"bytes,10,opt,name=role" json:"role,omitempty"`
-	Status           *google_protobuf2.StringValue `protobuf:"bytes,11,opt,name=status" json:"status,omitempty"`
-	TransitionStatus *google_protobuf2.StringValue `protobuf:"bytes,12,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
-	GroupId          *google_protobuf2.UInt32Value `protobuf:"bytes,13,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
-	Owner            *google_protobuf2.StringValue `protobuf:"bytes,14,opt,name=owner" json:"owner,omitempty"`
-	GlobalServerId   *google_protobuf2.UInt32Value `protobuf:"bytes,15,opt,name=global_server_id,json=globalServerId" json:"global_server_id,omitempty"`
-	CustomMetadata   *google_protobuf2.StringValue `protobuf:"bytes,16,opt,name=custom_metadata,json=customMetadata" json:"custom_metadata,omitempty"`
-	PubKey           *google_protobuf2.StringValue `protobuf:"bytes,17,opt,name=pub_key,json=pubKey" json:"pub_key,omitempty"`
-	HealthStatus     *google_protobuf2.StringValue `protobuf:"bytes,18,opt,name=health_status,json=healthStatus" json:"health_status,omitempty"`
-	IsBackup         *google_protobuf2.BoolValue   `protobuf:"bytes,19,opt,name=is_backup,json=isBackup" json:"is_backup,omitempty"`
-	AutoBackup       *google_protobuf2.BoolValue   `protobuf:"bytes,20,opt,name=auto_backup,json=autoBackup" json:"auto_backup,omitempty"`
-	CreateTime       *google_protobuf3.Timestamp   `protobuf:"bytes,21,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime       *google_protobuf3.Timestamp   `protobuf:"bytes,22,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
-	ClusterRole      *ClusterRole                  `protobuf:"bytes,23,opt,name=cluster_role,json=clusterRole" json:"cluster_role,omitempty"`
-	ClusterCommon    *ClusterCommon                `protobuf:"bytes,24,opt,name=cluster_common,json=clusterCommon" json:"cluster_common,omitempty"`
+	NodeId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
+	InstanceId           *wrappers.StringValue `protobuf:"bytes,4,opt,name=instance_id,json=instanceId" json:"instance_id,omitempty"`
+	VolumeId             *wrappers.StringValue `protobuf:"bytes,5,opt,name=volume_id,json=volumeId" json:"volume_id,omitempty"`
+	Device               *wrappers.StringValue `protobuf:"bytes,6,opt,name=device" json:"device,omitempty"`
+	SubnetId             *wrappers.StringValue `protobuf:"bytes,7,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
+	PrivateIp            *wrappers.StringValue `protobuf:"bytes,8,opt,name=private_ip,json=privateIp" json:"private_ip,omitempty"`
+	ServerId             *wrappers.UInt32Value `protobuf:"bytes,9,opt,name=server_id,json=serverId" json:"server_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,10,opt,name=role" json:"role,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,11,opt,name=status" json:"status,omitempty"`
+	TransitionStatus     *wrappers.StringValue `protobuf:"bytes,12,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
+	GroupId              *wrappers.UInt32Value `protobuf:"bytes,13,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,14,opt,name=owner" json:"owner,omitempty"`
+	GlobalServerId       *wrappers.UInt32Value `protobuf:"bytes,15,opt,name=global_server_id,json=globalServerId" json:"global_server_id,omitempty"`
+	CustomMetadata       *wrappers.StringValue `protobuf:"bytes,16,opt,name=custom_metadata,json=customMetadata" json:"custom_metadata,omitempty"`
+	PubKey               *wrappers.StringValue `protobuf:"bytes,17,opt,name=pub_key,json=pubKey" json:"pub_key,omitempty"`
+	HealthStatus         *wrappers.StringValue `protobuf:"bytes,18,opt,name=health_status,json=healthStatus" json:"health_status,omitempty"`
+	IsBackup             *wrappers.BoolValue   `protobuf:"bytes,19,opt,name=is_backup,json=isBackup" json:"is_backup,omitempty"`
+	AutoBackup           *wrappers.BoolValue   `protobuf:"bytes,20,opt,name=auto_backup,json=autoBackup" json:"auto_backup,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,21,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,22,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	ClusterRole          *ClusterRole          `protobuf:"bytes,23,opt,name=cluster_role,json=clusterRole" json:"cluster_role,omitempty"`
+	ClusterCommon        *ClusterCommon        `protobuf:"bytes,24,opt,name=cluster_common,json=clusterCommon" json:"cluster_common,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ClusterNode) Reset()                    { *m = ClusterNode{} }
-func (m *ClusterNode) String() string            { return proto.CompactTextString(m) }
-func (*ClusterNode) ProtoMessage()               {}
-func (*ClusterNode) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{23} }
+func (m *ClusterNode) Reset()         { *m = ClusterNode{} }
+func (m *ClusterNode) String() string { return proto.CompactTextString(m) }
+func (*ClusterNode) ProtoMessage()    {}
+func (*ClusterNode) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{23}
+}
+func (m *ClusterNode) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ClusterNode.Unmarshal(m, b)
+}
+func (m *ClusterNode) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ClusterNode.Marshal(b, m, deterministic)
+}
+func (dst *ClusterNode) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClusterNode.Merge(dst, src)
+}
+func (m *ClusterNode) XXX_Size() int {
+	return xxx_messageInfo_ClusterNode.Size(m)
+}
+func (m *ClusterNode) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClusterNode.DiscardUnknown(m)
+}
 
-func (m *ClusterNode) GetNodeId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ClusterNode proto.InternalMessageInfo
+
+func (m *ClusterNode) GetNodeId() *wrappers.StringValue {
 	if m != nil {
 		return m.NodeId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetClusterId() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetName() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetInstanceId() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetInstanceId() *wrappers.StringValue {
 	if m != nil {
 		return m.InstanceId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetVolumeId() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetVolumeId() *wrappers.StringValue {
 	if m != nil {
 		return m.VolumeId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetDevice() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetDevice() *wrappers.StringValue {
 	if m != nil {
 		return m.Device
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetSubnetId() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetSubnetId() *wrappers.StringValue {
 	if m != nil {
 		return m.SubnetId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetPrivateIp() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetPrivateIp() *wrappers.StringValue {
 	if m != nil {
 		return m.PrivateIp
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetServerId() *google_protobuf2.UInt32Value {
+func (m *ClusterNode) GetServerId() *wrappers.UInt32Value {
 	if m != nil {
 		return m.ServerId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetRole() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetRole() *wrappers.StringValue {
 	if m != nil {
 		return m.Role
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetStatus() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetTransitionStatus() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetTransitionStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.TransitionStatus
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetGroupId() *google_protobuf2.UInt32Value {
+func (m *ClusterNode) GetGroupId() *wrappers.UInt32Value {
 	if m != nil {
 		return m.GroupId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetOwner() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetGlobalServerId() *google_protobuf2.UInt32Value {
+func (m *ClusterNode) GetGlobalServerId() *wrappers.UInt32Value {
 	if m != nil {
 		return m.GlobalServerId
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetCustomMetadata() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetCustomMetadata() *wrappers.StringValue {
 	if m != nil {
 		return m.CustomMetadata
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetPubKey() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetPubKey() *wrappers.StringValue {
 	if m != nil {
 		return m.PubKey
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetHealthStatus() *google_protobuf2.StringValue {
+func (m *ClusterNode) GetHealthStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.HealthStatus
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetIsBackup() *google_protobuf2.BoolValue {
+func (m *ClusterNode) GetIsBackup() *wrappers.BoolValue {
 	if m != nil {
 		return m.IsBackup
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetAutoBackup() *google_protobuf2.BoolValue {
+func (m *ClusterNode) GetAutoBackup() *wrappers.BoolValue {
 	if m != nil {
 		return m.AutoBackup
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetCreateTime() *google_protobuf3.Timestamp {
+func (m *ClusterNode) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *ClusterNode) GetStatusTime() *google_protobuf3.Timestamp {
+func (m *ClusterNode) GetStatusTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -1055,95 +1589,117 @@ func (m *ClusterNode) GetClusterCommon() *ClusterCommon {
 }
 
 type ClusterRole struct {
-	ClusterId    *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role         *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	Cpu          *google_protobuf2.UInt32Value `protobuf:"bytes,3,opt,name=cpu" json:"cpu,omitempty"`
-	Gpu          *google_protobuf2.UInt32Value `protobuf:"bytes,4,opt,name=gpu" json:"gpu,omitempty"`
-	Memory       *google_protobuf2.UInt32Value `protobuf:"bytes,5,opt,name=memory" json:"memory,omitempty"`
-	InstanceSize *google_protobuf2.UInt32Value `protobuf:"bytes,6,opt,name=instance_size,json=instanceSize" json:"instance_size,omitempty"`
-	StorageSize  *google_protobuf2.UInt32Value `protobuf:"bytes,7,opt,name=storage_size,json=storageSize" json:"storage_size,omitempty"`
-	MountPoint   *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=mount_point,json=mountPoint" json:"mount_point,omitempty"`
-	MountOptions *google_protobuf2.StringValue `protobuf:"bytes,9,opt,name=mount_options,json=mountOptions" json:"mount_options,omitempty"`
-	FileSystem   *google_protobuf2.StringValue `protobuf:"bytes,10,opt,name=file_system,json=fileSystem" json:"file_system,omitempty"`
-	Env          *google_protobuf2.StringValue `protobuf:"bytes,11,opt,name=env" json:"env,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	Cpu                  *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=cpu" json:"cpu,omitempty"`
+	Gpu                  *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=gpu" json:"gpu,omitempty"`
+	Memory               *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=memory" json:"memory,omitempty"`
+	InstanceSize         *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=instance_size,json=instanceSize" json:"instance_size,omitempty"`
+	StorageSize          *wrappers.UInt32Value `protobuf:"bytes,7,opt,name=storage_size,json=storageSize" json:"storage_size,omitempty"`
+	MountPoint           *wrappers.StringValue `protobuf:"bytes,8,opt,name=mount_point,json=mountPoint" json:"mount_point,omitempty"`
+	MountOptions         *wrappers.StringValue `protobuf:"bytes,9,opt,name=mount_options,json=mountOptions" json:"mount_options,omitempty"`
+	FileSystem           *wrappers.StringValue `protobuf:"bytes,10,opt,name=file_system,json=fileSystem" json:"file_system,omitempty"`
+	Env                  *wrappers.StringValue `protobuf:"bytes,11,opt,name=env" json:"env,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ClusterRole) Reset()                    { *m = ClusterRole{} }
-func (m *ClusterRole) String() string            { return proto.CompactTextString(m) }
-func (*ClusterRole) ProtoMessage()               {}
-func (*ClusterRole) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{24} }
+func (m *ClusterRole) Reset()         { *m = ClusterRole{} }
+func (m *ClusterRole) String() string { return proto.CompactTextString(m) }
+func (*ClusterRole) ProtoMessage()    {}
+func (*ClusterRole) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{24}
+}
+func (m *ClusterRole) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ClusterRole.Unmarshal(m, b)
+}
+func (m *ClusterRole) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ClusterRole.Marshal(b, m, deterministic)
+}
+func (dst *ClusterRole) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClusterRole.Merge(dst, src)
+}
+func (m *ClusterRole) XXX_Size() int {
+	return xxx_messageInfo_ClusterRole.Size(m)
+}
+func (m *ClusterRole) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClusterRole.DiscardUnknown(m)
+}
 
-func (m *ClusterRole) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ClusterRole proto.InternalMessageInfo
+
+func (m *ClusterRole) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetRole() *google_protobuf2.StringValue {
+func (m *ClusterRole) GetRole() *wrappers.StringValue {
 	if m != nil {
 		return m.Role
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetCpu() *google_protobuf2.UInt32Value {
+func (m *ClusterRole) GetCpu() *wrappers.UInt32Value {
 	if m != nil {
 		return m.Cpu
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetGpu() *google_protobuf2.UInt32Value {
+func (m *ClusterRole) GetGpu() *wrappers.UInt32Value {
 	if m != nil {
 		return m.Gpu
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetMemory() *google_protobuf2.UInt32Value {
+func (m *ClusterRole) GetMemory() *wrappers.UInt32Value {
 	if m != nil {
 		return m.Memory
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetInstanceSize() *google_protobuf2.UInt32Value {
+func (m *ClusterRole) GetInstanceSize() *wrappers.UInt32Value {
 	if m != nil {
 		return m.InstanceSize
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetStorageSize() *google_protobuf2.UInt32Value {
+func (m *ClusterRole) GetStorageSize() *wrappers.UInt32Value {
 	if m != nil {
 		return m.StorageSize
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetMountPoint() *google_protobuf2.StringValue {
+func (m *ClusterRole) GetMountPoint() *wrappers.StringValue {
 	if m != nil {
 		return m.MountPoint
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetMountOptions() *google_protobuf2.StringValue {
+func (m *ClusterRole) GetMountOptions() *wrappers.StringValue {
 	if m != nil {
 		return m.MountOptions
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetFileSystem() *google_protobuf2.StringValue {
+func (m *ClusterRole) GetFileSystem() *wrappers.StringValue {
 	if m != nil {
 		return m.FileSystem
 	}
 	return nil
 }
 
-func (m *ClusterRole) GetEnv() *google_protobuf2.StringValue {
+func (m *ClusterRole) GetEnv() *wrappers.StringValue {
 	if m != nil {
 		return m.Env
 	}
@@ -1151,47 +1707,69 @@ func (m *ClusterRole) GetEnv() *google_protobuf2.StringValue {
 }
 
 type ClusterLoadbalancer struct {
-	ClusterId              *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role                   *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	LoadbalancerListenerId *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=loadbalancer_listener_id,json=loadbalancerListenerId" json:"loadbalancer_listener_id,omitempty"`
-	LoadbalancerPort       *google_protobuf2.UInt32Value `protobuf:"bytes,4,opt,name=loadbalancer_port,json=loadbalancerPort" json:"loadbalancer_port,omitempty"`
-	LoadbalancerPolicyId   *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=loadbalancer_policy_id,json=loadbalancerPolicyId" json:"loadbalancer_policy_id,omitempty"`
+	ClusterId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Role                   *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	LoadbalancerListenerId *wrappers.StringValue `protobuf:"bytes,3,opt,name=loadbalancer_listener_id,json=loadbalancerListenerId" json:"loadbalancer_listener_id,omitempty"`
+	LoadbalancerPort       *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=loadbalancer_port,json=loadbalancerPort" json:"loadbalancer_port,omitempty"`
+	LoadbalancerPolicyId   *wrappers.StringValue `protobuf:"bytes,5,opt,name=loadbalancer_policy_id,json=loadbalancerPolicyId" json:"loadbalancer_policy_id,omitempty"`
+	XXX_NoUnkeyedLiteral   struct{}              `json:"-"`
+	XXX_unrecognized       []byte                `json:"-"`
+	XXX_sizecache          int32                 `json:"-"`
 }
 
-func (m *ClusterLoadbalancer) Reset()                    { *m = ClusterLoadbalancer{} }
-func (m *ClusterLoadbalancer) String() string            { return proto.CompactTextString(m) }
-func (*ClusterLoadbalancer) ProtoMessage()               {}
-func (*ClusterLoadbalancer) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{25} }
+func (m *ClusterLoadbalancer) Reset()         { *m = ClusterLoadbalancer{} }
+func (m *ClusterLoadbalancer) String() string { return proto.CompactTextString(m) }
+func (*ClusterLoadbalancer) ProtoMessage()    {}
+func (*ClusterLoadbalancer) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{25}
+}
+func (m *ClusterLoadbalancer) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ClusterLoadbalancer.Unmarshal(m, b)
+}
+func (m *ClusterLoadbalancer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ClusterLoadbalancer.Marshal(b, m, deterministic)
+}
+func (dst *ClusterLoadbalancer) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClusterLoadbalancer.Merge(dst, src)
+}
+func (m *ClusterLoadbalancer) XXX_Size() int {
+	return xxx_messageInfo_ClusterLoadbalancer.Size(m)
+}
+func (m *ClusterLoadbalancer) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClusterLoadbalancer.DiscardUnknown(m)
+}
 
-func (m *ClusterLoadbalancer) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ClusterLoadbalancer proto.InternalMessageInfo
+
+func (m *ClusterLoadbalancer) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ClusterLoadbalancer) GetRole() *google_protobuf2.StringValue {
+func (m *ClusterLoadbalancer) GetRole() *wrappers.StringValue {
 	if m != nil {
 		return m.Role
 	}
 	return nil
 }
 
-func (m *ClusterLoadbalancer) GetLoadbalancerListenerId() *google_protobuf2.StringValue {
+func (m *ClusterLoadbalancer) GetLoadbalancerListenerId() *wrappers.StringValue {
 	if m != nil {
 		return m.LoadbalancerListenerId
 	}
 	return nil
 }
 
-func (m *ClusterLoadbalancer) GetLoadbalancerPort() *google_protobuf2.UInt32Value {
+func (m *ClusterLoadbalancer) GetLoadbalancerPort() *wrappers.UInt32Value {
 	if m != nil {
 		return m.LoadbalancerPort
 	}
 	return nil
 }
 
-func (m *ClusterLoadbalancer) GetLoadbalancerPolicyId() *google_protobuf2.StringValue {
+func (m *ClusterLoadbalancer) GetLoadbalancerPolicyId() *wrappers.StringValue {
 	if m != nil {
 		return m.LoadbalancerPolicyId
 	}
@@ -1199,39 +1777,61 @@ func (m *ClusterLoadbalancer) GetLoadbalancerPolicyId() *google_protobuf2.String
 }
 
 type ClusterLink struct {
-	ClusterId         *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Name              *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	ExternalClusterId *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=external_cluster_id,json=externalClusterId" json:"external_cluster_id,omitempty"`
-	Owner             *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	ExternalClusterId    *wrappers.StringValue `protobuf:"bytes,3,opt,name=external_cluster_id,json=externalClusterId" json:"external_cluster_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ClusterLink) Reset()                    { *m = ClusterLink{} }
-func (m *ClusterLink) String() string            { return proto.CompactTextString(m) }
-func (*ClusterLink) ProtoMessage()               {}
-func (*ClusterLink) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{26} }
+func (m *ClusterLink) Reset()         { *m = ClusterLink{} }
+func (m *ClusterLink) String() string { return proto.CompactTextString(m) }
+func (*ClusterLink) ProtoMessage()    {}
+func (*ClusterLink) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{26}
+}
+func (m *ClusterLink) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ClusterLink.Unmarshal(m, b)
+}
+func (m *ClusterLink) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ClusterLink.Marshal(b, m, deterministic)
+}
+func (dst *ClusterLink) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClusterLink.Merge(dst, src)
+}
+func (m *ClusterLink) XXX_Size() int {
+	return xxx_messageInfo_ClusterLink.Size(m)
+}
+func (m *ClusterLink) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClusterLink.DiscardUnknown(m)
+}
 
-func (m *ClusterLink) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ClusterLink proto.InternalMessageInfo
+
+func (m *ClusterLink) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *ClusterLink) GetName() *google_protobuf2.StringValue {
+func (m *ClusterLink) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ClusterLink) GetExternalClusterId() *google_protobuf2.StringValue {
+func (m *ClusterLink) GetExternalClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ExternalClusterId
 	}
 	return nil
 }
 
-func (m *ClusterLink) GetOwner() *google_protobuf2.StringValue {
+func (m *ClusterLink) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
@@ -1239,172 +1839,194 @@ func (m *ClusterLink) GetOwner() *google_protobuf2.StringValue {
 }
 
 type Cluster struct {
-	ClusterId              *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Name                   *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description            *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	AppId                  *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId              *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	SubnetId               *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
-	VpcId                  *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=vpc_id,json=vpcId" json:"vpc_id,omitempty"`
-	FrontgateId            *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
-	ClusterType            *google_protobuf2.UInt32Value `protobuf:"bytes,9,opt,name=cluster_type,json=clusterType" json:"cluster_type,omitempty"`
-	Endpoints              *google_protobuf2.StringValue `protobuf:"bytes,10,opt,name=endpoints" json:"endpoints,omitempty"`
-	Status                 *google_protobuf2.StringValue `protobuf:"bytes,11,opt,name=status" json:"status,omitempty"`
-	TransitionStatus       *google_protobuf2.StringValue `protobuf:"bytes,12,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
-	MetadataRootAccess     *google_protobuf2.BoolValue   `protobuf:"bytes,13,opt,name=metadata_root_access,json=metadataRootAccess" json:"metadata_root_access,omitempty"`
-	Owner                  *google_protobuf2.StringValue `protobuf:"bytes,14,opt,name=owner" json:"owner,omitempty"`
-	GlobalUuid             *google_protobuf2.StringValue `protobuf:"bytes,15,opt,name=global_uuid,json=globalUuid" json:"global_uuid,omitempty"`
-	UpgradeStatus          *google_protobuf2.StringValue `protobuf:"bytes,16,opt,name=upgrade_status,json=upgradeStatus" json:"upgrade_status,omitempty"`
-	UpgradeTime            *google_protobuf3.Timestamp   `protobuf:"bytes,17,opt,name=upgrade_time,json=upgradeTime" json:"upgrade_time,omitempty"`
-	RuntimeId              *google_protobuf2.StringValue `protobuf:"bytes,18,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
-	CreateTime             *google_protobuf3.Timestamp   `protobuf:"bytes,19,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime             *google_protobuf3.Timestamp   `protobuf:"bytes,20,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
-	ClusterNodeSet         []*ClusterNode                `protobuf:"bytes,21,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
-	ClusterRoleSet         []*ClusterRole                `protobuf:"bytes,22,rep,name=cluster_role_set,json=clusterRoleSet" json:"cluster_role_set,omitempty"`
-	ClusterLinkSet         []*ClusterLink                `protobuf:"bytes,23,rep,name=cluster_link_set,json=clusterLinkSet" json:"cluster_link_set,omitempty"`
-	ClusterCommonSet       []*ClusterCommon              `protobuf:"bytes,24,rep,name=cluster_common_set,json=clusterCommonSet" json:"cluster_common_set,omitempty"`
-	ClusterLoadbalancerSet []*ClusterLoadbalancer        `protobuf:"bytes,25,rep,name=cluster_loadbalancer_set,json=clusterLoadbalancerSet" json:"cluster_loadbalancer_set,omitempty"`
+	ClusterId              *wrappers.StringValue  `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	Name                   *wrappers.StringValue  `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description            *wrappers.StringValue  `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	AppId                  *wrappers.StringValue  `protobuf:"bytes,4,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId              *wrappers.StringValue  `protobuf:"bytes,5,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	SubnetId               *wrappers.StringValue  `protobuf:"bytes,6,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
+	VpcId                  *wrappers.StringValue  `protobuf:"bytes,7,opt,name=vpc_id,json=vpcId" json:"vpc_id,omitempty"`
+	FrontgateId            *wrappers.StringValue  `protobuf:"bytes,8,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	ClusterType            *wrappers.UInt32Value  `protobuf:"bytes,9,opt,name=cluster_type,json=clusterType" json:"cluster_type,omitempty"`
+	Endpoints              *wrappers.StringValue  `protobuf:"bytes,10,opt,name=endpoints" json:"endpoints,omitempty"`
+	Status                 *wrappers.StringValue  `protobuf:"bytes,11,opt,name=status" json:"status,omitempty"`
+	TransitionStatus       *wrappers.StringValue  `protobuf:"bytes,12,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
+	MetadataRootAccess     *wrappers.BoolValue    `protobuf:"bytes,13,opt,name=metadata_root_access,json=metadataRootAccess" json:"metadata_root_access,omitempty"`
+	Owner                  *wrappers.StringValue  `protobuf:"bytes,14,opt,name=owner" json:"owner,omitempty"`
+	GlobalUuid             *wrappers.StringValue  `protobuf:"bytes,15,opt,name=global_uuid,json=globalUuid" json:"global_uuid,omitempty"`
+	UpgradeStatus          *wrappers.StringValue  `protobuf:"bytes,16,opt,name=upgrade_status,json=upgradeStatus" json:"upgrade_status,omitempty"`
+	UpgradeTime            *timestamp.Timestamp   `protobuf:"bytes,17,opt,name=upgrade_time,json=upgradeTime" json:"upgrade_time,omitempty"`
+	RuntimeId              *wrappers.StringValue  `protobuf:"bytes,18,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
+	CreateTime             *timestamp.Timestamp   `protobuf:"bytes,19,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime             *timestamp.Timestamp   `protobuf:"bytes,20,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	ClusterNodeSet         []*ClusterNode         `protobuf:"bytes,21,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
+	ClusterRoleSet         []*ClusterRole         `protobuf:"bytes,22,rep,name=cluster_role_set,json=clusterRoleSet" json:"cluster_role_set,omitempty"`
+	ClusterLinkSet         []*ClusterLink         `protobuf:"bytes,23,rep,name=cluster_link_set,json=clusterLinkSet" json:"cluster_link_set,omitempty"`
+	ClusterCommonSet       []*ClusterCommon       `protobuf:"bytes,24,rep,name=cluster_common_set,json=clusterCommonSet" json:"cluster_common_set,omitempty"`
+	ClusterLoadbalancerSet []*ClusterLoadbalancer `protobuf:"bytes,25,rep,name=cluster_loadbalancer_set,json=clusterLoadbalancerSet" json:"cluster_loadbalancer_set,omitempty"`
+	XXX_NoUnkeyedLiteral   struct{}               `json:"-"`
+	XXX_unrecognized       []byte                 `json:"-"`
+	XXX_sizecache          int32                  `json:"-"`
 }
 
-func (m *Cluster) Reset()                    { *m = Cluster{} }
-func (m *Cluster) String() string            { return proto.CompactTextString(m) }
-func (*Cluster) ProtoMessage()               {}
-func (*Cluster) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{27} }
+func (m *Cluster) Reset()         { *m = Cluster{} }
+func (m *Cluster) String() string { return proto.CompactTextString(m) }
+func (*Cluster) ProtoMessage()    {}
+func (*Cluster) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{27}
+}
+func (m *Cluster) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Cluster.Unmarshal(m, b)
+}
+func (m *Cluster) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Cluster.Marshal(b, m, deterministic)
+}
+func (dst *Cluster) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Cluster.Merge(dst, src)
+}
+func (m *Cluster) XXX_Size() int {
+	return xxx_messageInfo_Cluster.Size(m)
+}
+func (m *Cluster) XXX_DiscardUnknown() {
+	xxx_messageInfo_Cluster.DiscardUnknown(m)
+}
 
-func (m *Cluster) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_Cluster proto.InternalMessageInfo
+
+func (m *Cluster) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
 	return nil
 }
 
-func (m *Cluster) GetName() *google_protobuf2.StringValue {
+func (m *Cluster) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *Cluster) GetDescription() *google_protobuf2.StringValue {
+func (m *Cluster) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *Cluster) GetAppId() *google_protobuf2.StringValue {
+func (m *Cluster) GetAppId() *wrappers.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *Cluster) GetVersionId() *google_protobuf2.StringValue {
+func (m *Cluster) GetVersionId() *wrappers.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
 	return nil
 }
 
-func (m *Cluster) GetSubnetId() *google_protobuf2.StringValue {
+func (m *Cluster) GetSubnetId() *wrappers.StringValue {
 	if m != nil {
 		return m.SubnetId
 	}
 	return nil
 }
 
-func (m *Cluster) GetVpcId() *google_protobuf2.StringValue {
+func (m *Cluster) GetVpcId() *wrappers.StringValue {
 	if m != nil {
 		return m.VpcId
 	}
 	return nil
 }
 
-func (m *Cluster) GetFrontgateId() *google_protobuf2.StringValue {
+func (m *Cluster) GetFrontgateId() *wrappers.StringValue {
 	if m != nil {
 		return m.FrontgateId
 	}
 	return nil
 }
 
-func (m *Cluster) GetClusterType() *google_protobuf2.UInt32Value {
+func (m *Cluster) GetClusterType() *wrappers.UInt32Value {
 	if m != nil {
 		return m.ClusterType
 	}
 	return nil
 }
 
-func (m *Cluster) GetEndpoints() *google_protobuf2.StringValue {
+func (m *Cluster) GetEndpoints() *wrappers.StringValue {
 	if m != nil {
 		return m.Endpoints
 	}
 	return nil
 }
 
-func (m *Cluster) GetStatus() *google_protobuf2.StringValue {
+func (m *Cluster) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *Cluster) GetTransitionStatus() *google_protobuf2.StringValue {
+func (m *Cluster) GetTransitionStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.TransitionStatus
 	}
 	return nil
 }
 
-func (m *Cluster) GetMetadataRootAccess() *google_protobuf2.BoolValue {
+func (m *Cluster) GetMetadataRootAccess() *wrappers.BoolValue {
 	if m != nil {
 		return m.MetadataRootAccess
 	}
 	return nil
 }
 
-func (m *Cluster) GetOwner() *google_protobuf2.StringValue {
+func (m *Cluster) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *Cluster) GetGlobalUuid() *google_protobuf2.StringValue {
+func (m *Cluster) GetGlobalUuid() *wrappers.StringValue {
 	if m != nil {
 		return m.GlobalUuid
 	}
 	return nil
 }
 
-func (m *Cluster) GetUpgradeStatus() *google_protobuf2.StringValue {
+func (m *Cluster) GetUpgradeStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.UpgradeStatus
 	}
 	return nil
 }
 
-func (m *Cluster) GetUpgradeTime() *google_protobuf3.Timestamp {
+func (m *Cluster) GetUpgradeTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.UpgradeTime
 	}
 	return nil
 }
 
-func (m *Cluster) GetRuntimeId() *google_protobuf2.StringValue {
+func (m *Cluster) GetRuntimeId() *wrappers.StringValue {
 	if m != nil {
 		return m.RuntimeId
 	}
 	return nil
 }
 
-func (m *Cluster) GetCreateTime() *google_protobuf3.Timestamp {
+func (m *Cluster) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *Cluster) GetStatusTime() *google_protobuf3.Timestamp {
+func (m *Cluster) GetStatusTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -1447,23 +2069,45 @@ func (m *Cluster) GetClusterLoadbalancerSet() []*ClusterLoadbalancer {
 }
 
 type DescribeClustersRequest struct {
-	ClusterId         []string                      `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId             []string                      `protobuf:"bytes,2,rep,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId         []string                      `protobuf:"bytes,3,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
-	Status            []string                      `protobuf:"bytes,4,rep,name=status" json:"status,omitempty"`
-	RuntimeId         []string                      `protobuf:"bytes,5,rep,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
-	FrontgateId       []string                      `protobuf:"bytes,6,rep,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
-	ExternalClusterId *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=external_cluster_id,json=externalClusterId" json:"external_cluster_id,omitempty"`
+	ClusterId         []string              `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AppId             []string              `protobuf:"bytes,2,rep,name=app_id,json=appId" json:"app_id,omitempty"`
+	VersionId         []string              `protobuf:"bytes,3,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
+	Status            []string              `protobuf:"bytes,4,rep,name=status" json:"status,omitempty"`
+	RuntimeId         []string              `protobuf:"bytes,5,rep,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
+	FrontgateId       []string              `protobuf:"bytes,6,rep,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
+	ExternalClusterId *wrappers.StringValue `protobuf:"bytes,7,opt,name=external_cluster_id,json=externalClusterId" json:"external_cluster_id,omitempty"`
 	// default is 20, max value is 200
 	Limit uint32 `protobuf:"varint,8,opt,name=limit" json:"limit,omitempty"`
 	// default is 0
-	Offset uint32 `protobuf:"varint,9,opt,name=offset" json:"offset,omitempty"`
+	Offset               uint32   `protobuf:"varint,9,opt,name=offset" json:"offset,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DescribeClustersRequest) Reset()                    { *m = DescribeClustersRequest{} }
-func (m *DescribeClustersRequest) String() string            { return proto.CompactTextString(m) }
-func (*DescribeClustersRequest) ProtoMessage()               {}
-func (*DescribeClustersRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{28} }
+func (m *DescribeClustersRequest) Reset()         { *m = DescribeClustersRequest{} }
+func (m *DescribeClustersRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeClustersRequest) ProtoMessage()    {}
+func (*DescribeClustersRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{28}
+}
+func (m *DescribeClustersRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeClustersRequest.Unmarshal(m, b)
+}
+func (m *DescribeClustersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeClustersRequest.Marshal(b, m, deterministic)
+}
+func (dst *DescribeClustersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeClustersRequest.Merge(dst, src)
+}
+func (m *DescribeClustersRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeClustersRequest.Size(m)
+}
+func (m *DescribeClustersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeClustersRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeClustersRequest proto.InternalMessageInfo
 
 func (m *DescribeClustersRequest) GetClusterId() []string {
 	if m != nil {
@@ -1507,7 +2151,7 @@ func (m *DescribeClustersRequest) GetFrontgateId() []string {
 	return nil
 }
 
-func (m *DescribeClustersRequest) GetExternalClusterId() *google_protobuf2.StringValue {
+func (m *DescribeClustersRequest) GetExternalClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ExternalClusterId
 	}
@@ -1529,14 +2173,36 @@ func (m *DescribeClustersRequest) GetOffset() uint32 {
 }
 
 type DescribeClustersResponse struct {
-	TotalCount uint32     `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	ClusterSet []*Cluster `protobuf:"bytes,2,rep,name=cluster_set,json=clusterSet" json:"cluster_set,omitempty"`
+	TotalCount           uint32     `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	ClusterSet           []*Cluster `protobuf:"bytes,2,rep,name=cluster_set,json=clusterSet" json:"cluster_set,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
-func (m *DescribeClustersResponse) Reset()                    { *m = DescribeClustersResponse{} }
-func (m *DescribeClustersResponse) String() string            { return proto.CompactTextString(m) }
-func (*DescribeClustersResponse) ProtoMessage()               {}
-func (*DescribeClustersResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{29} }
+func (m *DescribeClustersResponse) Reset()         { *m = DescribeClustersResponse{} }
+func (m *DescribeClustersResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeClustersResponse) ProtoMessage()    {}
+func (*DescribeClustersResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{29}
+}
+func (m *DescribeClustersResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeClustersResponse.Unmarshal(m, b)
+}
+func (m *DescribeClustersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeClustersResponse.Marshal(b, m, deterministic)
+}
+func (dst *DescribeClustersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeClustersResponse.Merge(dst, src)
+}
+func (m *DescribeClustersResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeClustersResponse.Size(m)
+}
+func (m *DescribeClustersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeClustersResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeClustersResponse proto.InternalMessageInfo
 
 func (m *DescribeClustersResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -1553,21 +2219,43 @@ func (m *DescribeClustersResponse) GetClusterSet() []*Cluster {
 }
 
 type DescribeClusterNodesRequest struct {
-	ClusterId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	NodeId    []string                      `protobuf:"bytes,2,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	Status    []string                      `protobuf:"bytes,3,rep,name=status" json:"status,omitempty"`
+	ClusterId *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	NodeId    []string              `protobuf:"bytes,2,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	Status    []string              `protobuf:"bytes,3,rep,name=status" json:"status,omitempty"`
 	// default is 20, max value is 200
 	Limit uint32 `protobuf:"varint,4,opt,name=limit" json:"limit,omitempty"`
 	// default is 0
-	Offset uint32 `protobuf:"varint,5,opt,name=offset" json:"offset,omitempty"`
+	Offset               uint32   `protobuf:"varint,5,opt,name=offset" json:"offset,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DescribeClusterNodesRequest) Reset()                    { *m = DescribeClusterNodesRequest{} }
-func (m *DescribeClusterNodesRequest) String() string            { return proto.CompactTextString(m) }
-func (*DescribeClusterNodesRequest) ProtoMessage()               {}
-func (*DescribeClusterNodesRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{30} }
+func (m *DescribeClusterNodesRequest) Reset()         { *m = DescribeClusterNodesRequest{} }
+func (m *DescribeClusterNodesRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeClusterNodesRequest) ProtoMessage()    {}
+func (*DescribeClusterNodesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{30}
+}
+func (m *DescribeClusterNodesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeClusterNodesRequest.Unmarshal(m, b)
+}
+func (m *DescribeClusterNodesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeClusterNodesRequest.Marshal(b, m, deterministic)
+}
+func (dst *DescribeClusterNodesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeClusterNodesRequest.Merge(dst, src)
+}
+func (m *DescribeClusterNodesRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeClusterNodesRequest.Size(m)
+}
+func (m *DescribeClusterNodesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeClusterNodesRequest.DiscardUnknown(m)
+}
 
-func (m *DescribeClusterNodesRequest) GetClusterId() *google_protobuf2.StringValue {
+var xxx_messageInfo_DescribeClusterNodesRequest proto.InternalMessageInfo
+
+func (m *DescribeClusterNodesRequest) GetClusterId() *wrappers.StringValue {
 	if m != nil {
 		return m.ClusterId
 	}
@@ -1603,14 +2291,36 @@ func (m *DescribeClusterNodesRequest) GetOffset() uint32 {
 }
 
 type DescribeClusterNodesResponse struct {
-	TotalCount     uint32         `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	ClusterNodeSet []*ClusterNode `protobuf:"bytes,2,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
+	TotalCount           uint32         `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	ClusterNodeSet       []*ClusterNode `protobuf:"bytes,2,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *DescribeClusterNodesResponse) Reset()                    { *m = DescribeClusterNodesResponse{} }
-func (m *DescribeClusterNodesResponse) String() string            { return proto.CompactTextString(m) }
-func (*DescribeClusterNodesResponse) ProtoMessage()               {}
-func (*DescribeClusterNodesResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{31} }
+func (m *DescribeClusterNodesResponse) Reset()         { *m = DescribeClusterNodesResponse{} }
+func (m *DescribeClusterNodesResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeClusterNodesResponse) ProtoMessage()    {}
+func (*DescribeClusterNodesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{31}
+}
+func (m *DescribeClusterNodesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeClusterNodesResponse.Unmarshal(m, b)
+}
+func (m *DescribeClusterNodesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeClusterNodesResponse.Marshal(b, m, deterministic)
+}
+func (dst *DescribeClusterNodesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeClusterNodesResponse.Merge(dst, src)
+}
+func (m *DescribeClusterNodesResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeClusterNodesResponse.Size(m)
+}
+func (m *DescribeClusterNodesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeClusterNodesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeClusterNodesResponse proto.InternalMessageInfo
 
 func (m *DescribeClusterNodesResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -1627,14 +2337,36 @@ func (m *DescribeClusterNodesResponse) GetClusterNodeSet() []*ClusterNode {
 }
 
 type StopClustersRequest struct {
-	ClusterId     []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *StopClustersRequest) Reset()                    { *m = StopClustersRequest{} }
-func (m *StopClustersRequest) String() string            { return proto.CompactTextString(m) }
-func (*StopClustersRequest) ProtoMessage()               {}
-func (*StopClustersRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{32} }
+func (m *StopClustersRequest) Reset()         { *m = StopClustersRequest{} }
+func (m *StopClustersRequest) String() string { return proto.CompactTextString(m) }
+func (*StopClustersRequest) ProtoMessage()    {}
+func (*StopClustersRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{32}
+}
+func (m *StopClustersRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StopClustersRequest.Unmarshal(m, b)
+}
+func (m *StopClustersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StopClustersRequest.Marshal(b, m, deterministic)
+}
+func (dst *StopClustersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StopClustersRequest.Merge(dst, src)
+}
+func (m *StopClustersRequest) XXX_Size() int {
+	return xxx_messageInfo_StopClustersRequest.Size(m)
+}
+func (m *StopClustersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StopClustersRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StopClustersRequest proto.InternalMessageInfo
 
 func (m *StopClustersRequest) GetClusterId() []string {
 	if m != nil {
@@ -1651,14 +2383,36 @@ func (m *StopClustersRequest) GetAdvancedParam() []string {
 }
 
 type StopClustersResponse struct {
-	ClusterId []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *StopClustersResponse) Reset()                    { *m = StopClustersResponse{} }
-func (m *StopClustersResponse) String() string            { return proto.CompactTextString(m) }
-func (*StopClustersResponse) ProtoMessage()               {}
-func (*StopClustersResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{33} }
+func (m *StopClustersResponse) Reset()         { *m = StopClustersResponse{} }
+func (m *StopClustersResponse) String() string { return proto.CompactTextString(m) }
+func (*StopClustersResponse) ProtoMessage()    {}
+func (*StopClustersResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{33}
+}
+func (m *StopClustersResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StopClustersResponse.Unmarshal(m, b)
+}
+func (m *StopClustersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StopClustersResponse.Marshal(b, m, deterministic)
+}
+func (dst *StopClustersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StopClustersResponse.Merge(dst, src)
+}
+func (m *StopClustersResponse) XXX_Size() int {
+	return xxx_messageInfo_StopClustersResponse.Size(m)
+}
+func (m *StopClustersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StopClustersResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StopClustersResponse proto.InternalMessageInfo
 
 func (m *StopClustersResponse) GetClusterId() []string {
 	if m != nil {
@@ -1675,14 +2429,36 @@ func (m *StopClustersResponse) GetJobId() []string {
 }
 
 type StartClustersRequest struct {
-	ClusterId     []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *StartClustersRequest) Reset()                    { *m = StartClustersRequest{} }
-func (m *StartClustersRequest) String() string            { return proto.CompactTextString(m) }
-func (*StartClustersRequest) ProtoMessage()               {}
-func (*StartClustersRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{34} }
+func (m *StartClustersRequest) Reset()         { *m = StartClustersRequest{} }
+func (m *StartClustersRequest) String() string { return proto.CompactTextString(m) }
+func (*StartClustersRequest) ProtoMessage()    {}
+func (*StartClustersRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{34}
+}
+func (m *StartClustersRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StartClustersRequest.Unmarshal(m, b)
+}
+func (m *StartClustersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StartClustersRequest.Marshal(b, m, deterministic)
+}
+func (dst *StartClustersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartClustersRequest.Merge(dst, src)
+}
+func (m *StartClustersRequest) XXX_Size() int {
+	return xxx_messageInfo_StartClustersRequest.Size(m)
+}
+func (m *StartClustersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StartClustersRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StartClustersRequest proto.InternalMessageInfo
 
 func (m *StartClustersRequest) GetClusterId() []string {
 	if m != nil {
@@ -1699,14 +2475,36 @@ func (m *StartClustersRequest) GetAdvancedParam() []string {
 }
 
 type StartClustersResponse struct {
-	ClusterId []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *StartClustersResponse) Reset()                    { *m = StartClustersResponse{} }
-func (m *StartClustersResponse) String() string            { return proto.CompactTextString(m) }
-func (*StartClustersResponse) ProtoMessage()               {}
-func (*StartClustersResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{35} }
+func (m *StartClustersResponse) Reset()         { *m = StartClustersResponse{} }
+func (m *StartClustersResponse) String() string { return proto.CompactTextString(m) }
+func (*StartClustersResponse) ProtoMessage()    {}
+func (*StartClustersResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{35}
+}
+func (m *StartClustersResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StartClustersResponse.Unmarshal(m, b)
+}
+func (m *StartClustersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StartClustersResponse.Marshal(b, m, deterministic)
+}
+func (dst *StartClustersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartClustersResponse.Merge(dst, src)
+}
+func (m *StartClustersResponse) XXX_Size() int {
+	return xxx_messageInfo_StartClustersResponse.Size(m)
+}
+func (m *StartClustersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StartClustersResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StartClustersResponse proto.InternalMessageInfo
 
 func (m *StartClustersResponse) GetClusterId() []string {
 	if m != nil {
@@ -1723,14 +2521,36 @@ func (m *StartClustersResponse) GetJobId() []string {
 }
 
 type RecoverClustersRequest struct {
-	ClusterId     []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *RecoverClustersRequest) Reset()                    { *m = RecoverClustersRequest{} }
-func (m *RecoverClustersRequest) String() string            { return proto.CompactTextString(m) }
-func (*RecoverClustersRequest) ProtoMessage()               {}
-func (*RecoverClustersRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{36} }
+func (m *RecoverClustersRequest) Reset()         { *m = RecoverClustersRequest{} }
+func (m *RecoverClustersRequest) String() string { return proto.CompactTextString(m) }
+func (*RecoverClustersRequest) ProtoMessage()    {}
+func (*RecoverClustersRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{36}
+}
+func (m *RecoverClustersRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RecoverClustersRequest.Unmarshal(m, b)
+}
+func (m *RecoverClustersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RecoverClustersRequest.Marshal(b, m, deterministic)
+}
+func (dst *RecoverClustersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RecoverClustersRequest.Merge(dst, src)
+}
+func (m *RecoverClustersRequest) XXX_Size() int {
+	return xxx_messageInfo_RecoverClustersRequest.Size(m)
+}
+func (m *RecoverClustersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RecoverClustersRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RecoverClustersRequest proto.InternalMessageInfo
 
 func (m *RecoverClustersRequest) GetClusterId() []string {
 	if m != nil {
@@ -1747,14 +2567,36 @@ func (m *RecoverClustersRequest) GetAdvancedParam() []string {
 }
 
 type RecoverClustersResponse struct {
-	ClusterId []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *RecoverClustersResponse) Reset()                    { *m = RecoverClustersResponse{} }
-func (m *RecoverClustersResponse) String() string            { return proto.CompactTextString(m) }
-func (*RecoverClustersResponse) ProtoMessage()               {}
-func (*RecoverClustersResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{37} }
+func (m *RecoverClustersResponse) Reset()         { *m = RecoverClustersResponse{} }
+func (m *RecoverClustersResponse) String() string { return proto.CompactTextString(m) }
+func (*RecoverClustersResponse) ProtoMessage()    {}
+func (*RecoverClustersResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{37}
+}
+func (m *RecoverClustersResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RecoverClustersResponse.Unmarshal(m, b)
+}
+func (m *RecoverClustersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RecoverClustersResponse.Marshal(b, m, deterministic)
+}
+func (dst *RecoverClustersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RecoverClustersResponse.Merge(dst, src)
+}
+func (m *RecoverClustersResponse) XXX_Size() int {
+	return xxx_messageInfo_RecoverClustersResponse.Size(m)
+}
+func (m *RecoverClustersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RecoverClustersResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RecoverClustersResponse proto.InternalMessageInfo
 
 func (m *RecoverClustersResponse) GetClusterId() []string {
 	if m != nil {
@@ -1771,14 +2613,36 @@ func (m *RecoverClustersResponse) GetJobId() []string {
 }
 
 type CeaseClustersRequest struct {
-	ClusterId     []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CeaseClustersRequest) Reset()                    { *m = CeaseClustersRequest{} }
-func (m *CeaseClustersRequest) String() string            { return proto.CompactTextString(m) }
-func (*CeaseClustersRequest) ProtoMessage()               {}
-func (*CeaseClustersRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{38} }
+func (m *CeaseClustersRequest) Reset()         { *m = CeaseClustersRequest{} }
+func (m *CeaseClustersRequest) String() string { return proto.CompactTextString(m) }
+func (*CeaseClustersRequest) ProtoMessage()    {}
+func (*CeaseClustersRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{38}
+}
+func (m *CeaseClustersRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CeaseClustersRequest.Unmarshal(m, b)
+}
+func (m *CeaseClustersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CeaseClustersRequest.Marshal(b, m, deterministic)
+}
+func (dst *CeaseClustersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CeaseClustersRequest.Merge(dst, src)
+}
+func (m *CeaseClustersRequest) XXX_Size() int {
+	return xxx_messageInfo_CeaseClustersRequest.Size(m)
+}
+func (m *CeaseClustersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CeaseClustersRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CeaseClustersRequest proto.InternalMessageInfo
 
 func (m *CeaseClustersRequest) GetClusterId() []string {
 	if m != nil {
@@ -1795,14 +2659,36 @@ func (m *CeaseClustersRequest) GetAdvancedParam() []string {
 }
 
 type CeaseClustersResponse struct {
-	ClusterId []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId     []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CeaseClustersResponse) Reset()                    { *m = CeaseClustersResponse{} }
-func (m *CeaseClustersResponse) String() string            { return proto.CompactTextString(m) }
-func (*CeaseClustersResponse) ProtoMessage()               {}
-func (*CeaseClustersResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{39} }
+func (m *CeaseClustersResponse) Reset()         { *m = CeaseClustersResponse{} }
+func (m *CeaseClustersResponse) String() string { return proto.CompactTextString(m) }
+func (*CeaseClustersResponse) ProtoMessage()    {}
+func (*CeaseClustersResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_cluster_f34d3845dbaa4252, []int{39}
+}
+func (m *CeaseClustersResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CeaseClustersResponse.Unmarshal(m, b)
+}
+func (m *CeaseClustersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CeaseClustersResponse.Marshal(b, m, deterministic)
+}
+func (dst *CeaseClustersResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CeaseClustersResponse.Merge(dst, src)
+}
+func (m *CeaseClustersResponse) XXX_Size() int {
+	return xxx_messageInfo_CeaseClustersResponse.Size(m)
+}
+func (m *CeaseClustersResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CeaseClustersResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CeaseClustersResponse proto.InternalMessageInfo
 
 func (m *CeaseClustersResponse) GetClusterId() []string {
 	if m != nil {
@@ -1875,8 +2761,8 @@ type ClusterManagerClient interface {
 	CreateCluster(ctx context.Context, in *CreateClusterRequest, opts ...grpc.CallOption) (*CreateClusterResponse, error)
 	ModifyCluster(ctx context.Context, in *ModifyClusterRequest, opts ...grpc.CallOption) (*ModifyClusterResponse, error)
 	ModifyClusterNode(ctx context.Context, in *ModifyClusterNodeRequest, opts ...grpc.CallOption) (*ModifyClusterNodeResponse, error)
-	AddTableClusterNodes(ctx context.Context, in *AddTableClusterNodesRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error)
-	DeleteTableClusterNodes(ctx context.Context, in *DeleteTableClusterNodesRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error)
+	AddTableClusterNodes(ctx context.Context, in *AddTableClusterNodesRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	DeleteTableClusterNodes(ctx context.Context, in *DeleteTableClusterNodesRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	DeleteClusters(ctx context.Context, in *DeleteClustersRequest, opts ...grpc.CallOption) (*DeleteClustersResponse, error)
 	UpgradeCluster(ctx context.Context, in *UpgradeClusterRequest, opts ...grpc.CallOption) (*UpgradeClusterResponse, error)
 	RollbackCluster(ctx context.Context, in *RollbackClusterRequest, opts ...grpc.CallOption) (*RollbackClusterResponse, error)
@@ -1927,8 +2813,8 @@ func (c *clusterManagerClient) ModifyClusterNode(ctx context.Context, in *Modify
 	return out, nil
 }
 
-func (c *clusterManagerClient) AddTableClusterNodes(ctx context.Context, in *AddTableClusterNodesRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error) {
-	out := new(google_protobuf4.Empty)
+func (c *clusterManagerClient) AddTableClusterNodes(ctx context.Context, in *AddTableClusterNodesRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/AddTableClusterNodes", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -1936,8 +2822,8 @@ func (c *clusterManagerClient) AddTableClusterNodes(ctx context.Context, in *Add
 	return out, nil
 }
 
-func (c *clusterManagerClient) DeleteTableClusterNodes(ctx context.Context, in *DeleteTableClusterNodesRequest, opts ...grpc.CallOption) (*google_protobuf4.Empty, error) {
-	out := new(google_protobuf4.Empty)
+func (c *clusterManagerClient) DeleteTableClusterNodes(ctx context.Context, in *DeleteTableClusterNodesRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteTableClusterNodes", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -2068,8 +2954,8 @@ type ClusterManagerServer interface {
 	CreateCluster(context.Context, *CreateClusterRequest) (*CreateClusterResponse, error)
 	ModifyCluster(context.Context, *ModifyClusterRequest) (*ModifyClusterResponse, error)
 	ModifyClusterNode(context.Context, *ModifyClusterNodeRequest) (*ModifyClusterNodeResponse, error)
-	AddTableClusterNodes(context.Context, *AddTableClusterNodesRequest) (*google_protobuf4.Empty, error)
-	DeleteTableClusterNodes(context.Context, *DeleteTableClusterNodesRequest) (*google_protobuf4.Empty, error)
+	AddTableClusterNodes(context.Context, *AddTableClusterNodesRequest) (*empty.Empty, error)
+	DeleteTableClusterNodes(context.Context, *DeleteTableClusterNodesRequest) (*empty.Empty, error)
 	DeleteClusters(context.Context, *DeleteClustersRequest) (*DeleteClustersResponse, error)
 	UpgradeCluster(context.Context, *UpgradeClusterRequest) (*UpgradeClusterResponse, error)
 	RollbackCluster(context.Context, *RollbackClusterRequest) (*RollbackClusterResponse, error)
@@ -2494,9 +3380,9 @@ var _ClusterManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "cluster.proto",
 }
 
-func init() { proto.RegisterFile("cluster.proto", fileDescriptor2) }
+func init() { proto.RegisterFile("cluster.proto", fileDescriptor_cluster_f34d3845dbaa4252) }
 
-var fileDescriptor2 = []byte{
+var fileDescriptor_cluster_f34d3845dbaa4252 = []byte{
 	// 2902 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x5a, 0xcf, 0x73, 0xdb, 0xc6,
 	0xf5, 0x1f, 0xe8, 0xb7, 0x1e, 0x45, 0x4a, 0x5a, 0x51, 0x14, 0x45, 0x3b, 0x89, 0x82, 0x24, 0xdf,

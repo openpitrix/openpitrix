@@ -6,10 +6,10 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
-import google_protobuf3 "github.com/golang/protobuf/ptypes/timestamp"
-import _ "google.golang.org/genproto/googleapis/api/annotations"
+import timestamp "github.com/golang/protobuf/ptypes/timestamp"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+import _ "google.golang.org/genproto/googleapis/api/annotations"
 
 import (
 	context "golang.org/x/net/context"
@@ -21,112 +21,140 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CreateAppRequest struct {
-	X           *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
-	Name        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	RepoId      *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Owner       *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
-	ChartName   *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=chart_name,json=chartName" json:"chart_name,omitempty"`
-	Description *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=description" json:"description,omitempty"`
-	Home        *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=home" json:"home,omitempty"`
-	Icon        *google_protobuf2.StringValue `protobuf:"bytes,9,opt,name=icon" json:"icon,omitempty"`
-	Screenshots *google_protobuf2.StringValue `protobuf:"bytes,10,opt,name=screenshots" json:"screenshots,omitempty"`
-	Maintainers *google_protobuf2.StringValue `protobuf:"bytes,11,opt,name=maintainers" json:"maintainers,omitempty"`
-	Sources     *google_protobuf2.StringValue `protobuf:"bytes,12,opt,name=sources" json:"sources,omitempty"`
-	Readme      *google_protobuf2.StringValue `protobuf:"bytes,13,opt,name=readme" json:"readme,omitempty"`
-	CategoryId  *google_protobuf2.StringValue `protobuf:"bytes,14,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	X                    *wrappers.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	ChartName            *wrappers.StringValue `protobuf:"bytes,5,opt,name=chart_name,json=chartName" json:"chart_name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,6,opt,name=description" json:"description,omitempty"`
+	Home                 *wrappers.StringValue `protobuf:"bytes,8,opt,name=home" json:"home,omitempty"`
+	Icon                 *wrappers.StringValue `protobuf:"bytes,9,opt,name=icon" json:"icon,omitempty"`
+	Screenshots          *wrappers.StringValue `protobuf:"bytes,10,opt,name=screenshots" json:"screenshots,omitempty"`
+	Maintainers          *wrappers.StringValue `protobuf:"bytes,11,opt,name=maintainers" json:"maintainers,omitempty"`
+	Sources              *wrappers.StringValue `protobuf:"bytes,12,opt,name=sources" json:"sources,omitempty"`
+	Readme               *wrappers.StringValue `protobuf:"bytes,13,opt,name=readme" json:"readme,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,14,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateAppRequest) Reset()                    { *m = CreateAppRequest{} }
-func (m *CreateAppRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateAppRequest) ProtoMessage()               {}
-func (*CreateAppRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (m *CreateAppRequest) Reset()         { *m = CreateAppRequest{} }
+func (m *CreateAppRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateAppRequest) ProtoMessage()    {}
+func (*CreateAppRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{0}
+}
+func (m *CreateAppRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateAppRequest.Unmarshal(m, b)
+}
+func (m *CreateAppRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateAppRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateAppRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateAppRequest.Merge(dst, src)
+}
+func (m *CreateAppRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateAppRequest.Size(m)
+}
+func (m *CreateAppRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateAppRequest.DiscardUnknown(m)
+}
 
-func (m *CreateAppRequest) GetX() *google_protobuf2.StringValue {
+var xxx_messageInfo_CreateAppRequest proto.InternalMessageInfo
+
+func (m *CreateAppRequest) GetX() *wrappers.StringValue {
 	if m != nil {
 		return m.X
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetName() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetRepoId() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetRepoId() *wrappers.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetOwner() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetChartName() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetChartName() *wrappers.StringValue {
 	if m != nil {
 		return m.ChartName
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetDescription() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetHome() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetHome() *wrappers.StringValue {
 	if m != nil {
 		return m.Home
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetIcon() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetIcon() *wrappers.StringValue {
 	if m != nil {
 		return m.Icon
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetScreenshots() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetScreenshots() *wrappers.StringValue {
 	if m != nil {
 		return m.Screenshots
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetMaintainers() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetMaintainers() *wrappers.StringValue {
 	if m != nil {
 		return m.Maintainers
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetSources() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetSources() *wrappers.StringValue {
 	if m != nil {
 		return m.Sources
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetReadme() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetReadme() *wrappers.StringValue {
 	if m != nil {
 		return m.Readme
 	}
 	return nil
 }
 
-func (m *CreateAppRequest) GetCategoryId() *google_protobuf2.StringValue {
+func (m *CreateAppRequest) GetCategoryId() *wrappers.StringValue {
 	if m != nil {
 		return m.CategoryId
 	}
@@ -134,13 +162,35 @@ func (m *CreateAppRequest) GetCategoryId() *google_protobuf2.StringValue {
 }
 
 type CreateAppResponse struct {
-	App *App `protobuf:"bytes,1,opt,name=app" json:"app,omitempty"`
+	App                  *App     `protobuf:"bytes,1,opt,name=app" json:"app,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CreateAppResponse) Reset()                    { *m = CreateAppResponse{} }
-func (m *CreateAppResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateAppResponse) ProtoMessage()               {}
-func (*CreateAppResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (m *CreateAppResponse) Reset()         { *m = CreateAppResponse{} }
+func (m *CreateAppResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateAppResponse) ProtoMessage()    {}
+func (*CreateAppResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{1}
+}
+func (m *CreateAppResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateAppResponse.Unmarshal(m, b)
+}
+func (m *CreateAppResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateAppResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateAppResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateAppResponse.Merge(dst, src)
+}
+func (m *CreateAppResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateAppResponse.Size(m)
+}
+func (m *CreateAppResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateAppResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateAppResponse proto.InternalMessageInfo
 
 func (m *CreateAppResponse) GetApp() *App {
 	if m != nil {
@@ -150,111 +200,133 @@ func (m *CreateAppResponse) GetApp() *App {
 }
 
 type ModifyAppRequest struct {
-	AppId       *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	Name        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	RepoId      *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Owner       *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
-	ChartName   *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=chart_name,json=chartName" json:"chart_name,omitempty"`
-	Description *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=description" json:"description,omitempty"`
-	Home        *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=home" json:"home,omitempty"`
-	Icon        *google_protobuf2.StringValue `protobuf:"bytes,9,opt,name=icon" json:"icon,omitempty"`
-	Screenshots *google_protobuf2.StringValue `protobuf:"bytes,10,opt,name=screenshots" json:"screenshots,omitempty"`
-	Maintainers *google_protobuf2.StringValue `protobuf:"bytes,11,opt,name=maintainers" json:"maintainers,omitempty"`
-	Sources     *google_protobuf2.StringValue `protobuf:"bytes,12,opt,name=sources" json:"sources,omitempty"`
-	Readme      *google_protobuf2.StringValue `protobuf:"bytes,13,opt,name=readme" json:"readme,omitempty"`
-	CategoryId  *google_protobuf2.StringValue `protobuf:"bytes,14,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	ChartName            *wrappers.StringValue `protobuf:"bytes,5,opt,name=chart_name,json=chartName" json:"chart_name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,6,opt,name=description" json:"description,omitempty"`
+	Home                 *wrappers.StringValue `protobuf:"bytes,8,opt,name=home" json:"home,omitempty"`
+	Icon                 *wrappers.StringValue `protobuf:"bytes,9,opt,name=icon" json:"icon,omitempty"`
+	Screenshots          *wrappers.StringValue `protobuf:"bytes,10,opt,name=screenshots" json:"screenshots,omitempty"`
+	Maintainers          *wrappers.StringValue `protobuf:"bytes,11,opt,name=maintainers" json:"maintainers,omitempty"`
+	Sources              *wrappers.StringValue `protobuf:"bytes,12,opt,name=sources" json:"sources,omitempty"`
+	Readme               *wrappers.StringValue `protobuf:"bytes,13,opt,name=readme" json:"readme,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,14,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ModifyAppRequest) Reset()                    { *m = ModifyAppRequest{} }
-func (m *ModifyAppRequest) String() string            { return proto.CompactTextString(m) }
-func (*ModifyAppRequest) ProtoMessage()               {}
-func (*ModifyAppRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{2} }
+func (m *ModifyAppRequest) Reset()         { *m = ModifyAppRequest{} }
+func (m *ModifyAppRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyAppRequest) ProtoMessage()    {}
+func (*ModifyAppRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{2}
+}
+func (m *ModifyAppRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyAppRequest.Unmarshal(m, b)
+}
+func (m *ModifyAppRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyAppRequest.Marshal(b, m, deterministic)
+}
+func (dst *ModifyAppRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyAppRequest.Merge(dst, src)
+}
+func (m *ModifyAppRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyAppRequest.Size(m)
+}
+func (m *ModifyAppRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyAppRequest.DiscardUnknown(m)
+}
 
-func (m *ModifyAppRequest) GetAppId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ModifyAppRequest proto.InternalMessageInfo
+
+func (m *ModifyAppRequest) GetAppId() *wrappers.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetName() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetRepoId() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetRepoId() *wrappers.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetOwner() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetChartName() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetChartName() *wrappers.StringValue {
 	if m != nil {
 		return m.ChartName
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetDescription() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetHome() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetHome() *wrappers.StringValue {
 	if m != nil {
 		return m.Home
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetIcon() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetIcon() *wrappers.StringValue {
 	if m != nil {
 		return m.Icon
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetScreenshots() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetScreenshots() *wrappers.StringValue {
 	if m != nil {
 		return m.Screenshots
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetMaintainers() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetMaintainers() *wrappers.StringValue {
 	if m != nil {
 		return m.Maintainers
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetSources() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetSources() *wrappers.StringValue {
 	if m != nil {
 		return m.Sources
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetReadme() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetReadme() *wrappers.StringValue {
 	if m != nil {
 		return m.Readme
 	}
 	return nil
 }
 
-func (m *ModifyAppRequest) GetCategoryId() *google_protobuf2.StringValue {
+func (m *ModifyAppRequest) GetCategoryId() *wrappers.StringValue {
 	if m != nil {
 		return m.CategoryId
 	}
@@ -262,13 +334,35 @@ func (m *ModifyAppRequest) GetCategoryId() *google_protobuf2.StringValue {
 }
 
 type ModifyAppResponse struct {
-	App *App `protobuf:"bytes,1,opt,name=app" json:"app,omitempty"`
+	App                  *App     `protobuf:"bytes,1,opt,name=app" json:"app,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ModifyAppResponse) Reset()                    { *m = ModifyAppResponse{} }
-func (m *ModifyAppResponse) String() string            { return proto.CompactTextString(m) }
-func (*ModifyAppResponse) ProtoMessage()               {}
-func (*ModifyAppResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{3} }
+func (m *ModifyAppResponse) Reset()         { *m = ModifyAppResponse{} }
+func (m *ModifyAppResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyAppResponse) ProtoMessage()    {}
+func (*ModifyAppResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{3}
+}
+func (m *ModifyAppResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyAppResponse.Unmarshal(m, b)
+}
+func (m *ModifyAppResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyAppResponse.Marshal(b, m, deterministic)
+}
+func (dst *ModifyAppResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyAppResponse.Merge(dst, src)
+}
+func (m *ModifyAppResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyAppResponse.Size(m)
+}
+func (m *ModifyAppResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyAppResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyAppResponse proto.InternalMessageInfo
 
 func (m *ModifyAppResponse) GetApp() *App {
 	if m != nil {
@@ -278,15 +372,37 @@ func (m *ModifyAppResponse) GetApp() *App {
 }
 
 type DeleteAppRequest struct {
-	AppId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteAppRequest) Reset()                    { *m = DeleteAppRequest{} }
-func (m *DeleteAppRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAppRequest) ProtoMessage()               {}
-func (*DeleteAppRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{4} }
+func (m *DeleteAppRequest) Reset()         { *m = DeleteAppRequest{} }
+func (m *DeleteAppRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteAppRequest) ProtoMessage()    {}
+func (*DeleteAppRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{4}
+}
+func (m *DeleteAppRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteAppRequest.Unmarshal(m, b)
+}
+func (m *DeleteAppRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteAppRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteAppRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteAppRequest.Merge(dst, src)
+}
+func (m *DeleteAppRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteAppRequest.Size(m)
+}
+func (m *DeleteAppRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteAppRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteAppRequest) GetAppId() *google_protobuf2.StringValue {
+var xxx_messageInfo_DeleteAppRequest proto.InternalMessageInfo
+
+func (m *DeleteAppRequest) GetAppId() *wrappers.StringValue {
 	if m != nil {
 		return m.AppId
 	}
@@ -294,13 +410,35 @@ func (m *DeleteAppRequest) GetAppId() *google_protobuf2.StringValue {
 }
 
 type DeleteAppResponse struct {
-	App *App `protobuf:"bytes,1,opt,name=app" json:"app,omitempty"`
+	App                  *App     `protobuf:"bytes,1,opt,name=app" json:"app,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DeleteAppResponse) Reset()                    { *m = DeleteAppResponse{} }
-func (m *DeleteAppResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAppResponse) ProtoMessage()               {}
-func (*DeleteAppResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{5} }
+func (m *DeleteAppResponse) Reset()         { *m = DeleteAppResponse{} }
+func (m *DeleteAppResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteAppResponse) ProtoMessage()    {}
+func (*DeleteAppResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{5}
+}
+func (m *DeleteAppResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteAppResponse.Unmarshal(m, b)
+}
+func (m *DeleteAppResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteAppResponse.Marshal(b, m, deterministic)
+}
+func (dst *DeleteAppResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteAppResponse.Merge(dst, src)
+}
+func (m *DeleteAppResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteAppResponse.Size(m)
+}
+func (m *DeleteAppResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteAppResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteAppResponse proto.InternalMessageInfo
 
 func (m *DeleteAppResponse) GetApp() *App {
 	if m != nil {
@@ -310,136 +448,158 @@ func (m *DeleteAppResponse) GetApp() *App {
 }
 
 type App struct {
-	AppId          *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	Name           *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	RepoId         *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Description    *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
-	Status         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=status" json:"status,omitempty"`
-	Home           *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=home" json:"home,omitempty"`
-	Icon           *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=icon" json:"icon,omitempty"`
-	Screenshots    *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=screenshots" json:"screenshots,omitempty"`
-	Maintainers    *google_protobuf2.StringValue `protobuf:"bytes,9,opt,name=maintainers" json:"maintainers,omitempty"`
-	Sources        *google_protobuf2.StringValue `protobuf:"bytes,10,opt,name=sources" json:"sources,omitempty"`
-	Readme         *google_protobuf2.StringValue `protobuf:"bytes,11,opt,name=readme" json:"readme,omitempty"`
-	ChartName      *google_protobuf2.StringValue `protobuf:"bytes,12,opt,name=chart_name,json=chartName" json:"chart_name,omitempty"`
-	Owner          *google_protobuf2.StringValue `protobuf:"bytes,13,opt,name=owner" json:"owner,omitempty"`
-	CreateTime     *google_protobuf3.Timestamp   `protobuf:"bytes,14,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime     *google_protobuf3.Timestamp   `protobuf:"bytes,15,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
-	UpdateTime     *google_protobuf3.Timestamp   `protobuf:"bytes,16,opt,name=update_time,json=updateTime" json:"update_time,omitempty"`
-	AppCategorySet []*AppCategory                `protobuf:"bytes,17,rep,name=app_category_set,json=appCategorySet" json:"app_category_set,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,5,opt,name=status" json:"status,omitempty"`
+	Home                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=home" json:"home,omitempty"`
+	Icon                 *wrappers.StringValue `protobuf:"bytes,7,opt,name=icon" json:"icon,omitempty"`
+	Screenshots          *wrappers.StringValue `protobuf:"bytes,8,opt,name=screenshots" json:"screenshots,omitempty"`
+	Maintainers          *wrappers.StringValue `protobuf:"bytes,9,opt,name=maintainers" json:"maintainers,omitempty"`
+	Sources              *wrappers.StringValue `protobuf:"bytes,10,opt,name=sources" json:"sources,omitempty"`
+	Readme               *wrappers.StringValue `protobuf:"bytes,11,opt,name=readme" json:"readme,omitempty"`
+	ChartName            *wrappers.StringValue `protobuf:"bytes,12,opt,name=chart_name,json=chartName" json:"chart_name,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,13,opt,name=owner" json:"owner,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,14,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,15,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,16,opt,name=update_time,json=updateTime" json:"update_time,omitempty"`
+	AppCategorySet       []*AppCategory        `protobuf:"bytes,17,rep,name=app_category_set,json=appCategorySet" json:"app_category_set,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *App) Reset()                    { *m = App{} }
-func (m *App) String() string            { return proto.CompactTextString(m) }
-func (*App) ProtoMessage()               {}
-func (*App) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{6} }
+func (m *App) Reset()         { *m = App{} }
+func (m *App) String() string { return proto.CompactTextString(m) }
+func (*App) ProtoMessage()    {}
+func (*App) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{6}
+}
+func (m *App) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_App.Unmarshal(m, b)
+}
+func (m *App) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_App.Marshal(b, m, deterministic)
+}
+func (dst *App) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_App.Merge(dst, src)
+}
+func (m *App) XXX_Size() int {
+	return xxx_messageInfo_App.Size(m)
+}
+func (m *App) XXX_DiscardUnknown() {
+	xxx_messageInfo_App.DiscardUnknown(m)
+}
 
-func (m *App) GetAppId() *google_protobuf2.StringValue {
+var xxx_messageInfo_App proto.InternalMessageInfo
+
+func (m *App) GetAppId() *wrappers.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *App) GetName() *google_protobuf2.StringValue {
+func (m *App) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *App) GetRepoId() *google_protobuf2.StringValue {
+func (m *App) GetRepoId() *wrappers.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *App) GetDescription() *google_protobuf2.StringValue {
+func (m *App) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *App) GetStatus() *google_protobuf2.StringValue {
+func (m *App) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *App) GetHome() *google_protobuf2.StringValue {
+func (m *App) GetHome() *wrappers.StringValue {
 	if m != nil {
 		return m.Home
 	}
 	return nil
 }
 
-func (m *App) GetIcon() *google_protobuf2.StringValue {
+func (m *App) GetIcon() *wrappers.StringValue {
 	if m != nil {
 		return m.Icon
 	}
 	return nil
 }
 
-func (m *App) GetScreenshots() *google_protobuf2.StringValue {
+func (m *App) GetScreenshots() *wrappers.StringValue {
 	if m != nil {
 		return m.Screenshots
 	}
 	return nil
 }
 
-func (m *App) GetMaintainers() *google_protobuf2.StringValue {
+func (m *App) GetMaintainers() *wrappers.StringValue {
 	if m != nil {
 		return m.Maintainers
 	}
 	return nil
 }
 
-func (m *App) GetSources() *google_protobuf2.StringValue {
+func (m *App) GetSources() *wrappers.StringValue {
 	if m != nil {
 		return m.Sources
 	}
 	return nil
 }
 
-func (m *App) GetReadme() *google_protobuf2.StringValue {
+func (m *App) GetReadme() *wrappers.StringValue {
 	if m != nil {
 		return m.Readme
 	}
 	return nil
 }
 
-func (m *App) GetChartName() *google_protobuf2.StringValue {
+func (m *App) GetChartName() *wrappers.StringValue {
 	if m != nil {
 		return m.ChartName
 	}
 	return nil
 }
 
-func (m *App) GetOwner() *google_protobuf2.StringValue {
+func (m *App) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *App) GetCreateTime() *google_protobuf3.Timestamp {
+func (m *App) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *App) GetStatusTime() *google_protobuf3.Timestamp {
+func (m *App) GetStatusTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
 	return nil
 }
 
-func (m *App) GetUpdateTime() *google_protobuf3.Timestamp {
+func (m *App) GetUpdateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.UpdateTime
 	}
@@ -454,55 +614,77 @@ func (m *App) GetAppCategorySet() []*AppCategory {
 }
 
 type AppCategory struct {
-	CategoryId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
-	Name       *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Locale     *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
-	Status     *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
-	CreateTime *google_protobuf3.Timestamp   `protobuf:"bytes,5,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime *google_protobuf3.Timestamp   `protobuf:"bytes,6,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *AppCategory) Reset()                    { *m = AppCategory{} }
-func (m *AppCategory) String() string            { return proto.CompactTextString(m) }
-func (*AppCategory) ProtoMessage()               {}
-func (*AppCategory) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{7} }
+func (m *AppCategory) Reset()         { *m = AppCategory{} }
+func (m *AppCategory) String() string { return proto.CompactTextString(m) }
+func (*AppCategory) ProtoMessage()    {}
+func (*AppCategory) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{7}
+}
+func (m *AppCategory) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AppCategory.Unmarshal(m, b)
+}
+func (m *AppCategory) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AppCategory.Marshal(b, m, deterministic)
+}
+func (dst *AppCategory) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AppCategory.Merge(dst, src)
+}
+func (m *AppCategory) XXX_Size() int {
+	return xxx_messageInfo_AppCategory.Size(m)
+}
+func (m *AppCategory) XXX_DiscardUnknown() {
+	xxx_messageInfo_AppCategory.DiscardUnknown(m)
+}
 
-func (m *AppCategory) GetCategoryId() *google_protobuf2.StringValue {
+var xxx_messageInfo_AppCategory proto.InternalMessageInfo
+
+func (m *AppCategory) GetCategoryId() *wrappers.StringValue {
 	if m != nil {
 		return m.CategoryId
 	}
 	return nil
 }
 
-func (m *AppCategory) GetName() *google_protobuf2.StringValue {
+func (m *AppCategory) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *AppCategory) GetLocale() *google_protobuf2.StringValue {
+func (m *AppCategory) GetLocale() *wrappers.StringValue {
 	if m != nil {
 		return m.Locale
 	}
 	return nil
 }
 
-func (m *AppCategory) GetStatus() *google_protobuf2.StringValue {
+func (m *AppCategory) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *AppCategory) GetCreateTime() *google_protobuf3.Timestamp {
+func (m *AppCategory) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *AppCategory) GetStatusTime() *google_protobuf3.Timestamp {
+func (m *AppCategory) GetStatusTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -510,55 +692,77 @@ func (m *AppCategory) GetStatusTime() *google_protobuf3.Timestamp {
 }
 
 type Category struct {
-	CategoryId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
-	Name       *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Locale     *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
-	Owner      *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
-	CreateTime *google_protobuf3.Timestamp   `protobuf:"bytes,5,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	UpdateTime *google_protobuf3.Timestamp   `protobuf:"bytes,6,opt,name=update_time,json=updateTime" json:"update_time,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=update_time,json=updateTime" json:"update_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *Category) Reset()                    { *m = Category{} }
-func (m *Category) String() string            { return proto.CompactTextString(m) }
-func (*Category) ProtoMessage()               {}
-func (*Category) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{8} }
+func (m *Category) Reset()         { *m = Category{} }
+func (m *Category) String() string { return proto.CompactTextString(m) }
+func (*Category) ProtoMessage()    {}
+func (*Category) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{8}
+}
+func (m *Category) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Category.Unmarshal(m, b)
+}
+func (m *Category) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Category.Marshal(b, m, deterministic)
+}
+func (dst *Category) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Category.Merge(dst, src)
+}
+func (m *Category) XXX_Size() int {
+	return xxx_messageInfo_Category.Size(m)
+}
+func (m *Category) XXX_DiscardUnknown() {
+	xxx_messageInfo_Category.DiscardUnknown(m)
+}
 
-func (m *Category) GetCategoryId() *google_protobuf2.StringValue {
+var xxx_messageInfo_Category proto.InternalMessageInfo
+
+func (m *Category) GetCategoryId() *wrappers.StringValue {
 	if m != nil {
 		return m.CategoryId
 	}
 	return nil
 }
 
-func (m *Category) GetName() *google_protobuf2.StringValue {
+func (m *Category) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *Category) GetLocale() *google_protobuf2.StringValue {
+func (m *Category) GetLocale() *wrappers.StringValue {
 	if m != nil {
 		return m.Locale
 	}
 	return nil
 }
 
-func (m *Category) GetOwner() *google_protobuf2.StringValue {
+func (m *Category) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *Category) GetCreateTime() *google_protobuf3.Timestamp {
+func (m *Category) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *Category) GetUpdateTime() *google_protobuf3.Timestamp {
+func (m *Category) GetUpdateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.UpdateTime
 	}
@@ -566,27 +770,49 @@ func (m *Category) GetUpdateTime() *google_protobuf3.Timestamp {
 }
 
 type DescribeAppsRequest struct {
-	SearchWord   *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
-	Limit        uint32                        `protobuf:"varint,2,opt,name=limit" json:"limit,omitempty"`
-	Offset       uint32                        `protobuf:"varint,3,opt,name=offset" json:"offset,omitempty"`
-	SortKey      *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey" json:"sort_key,omitempty"`
-	Reverse      *google_protobuf2.BoolValue   `protobuf:"bytes,6,opt,name=reverse" json:"reverse,omitempty"`
-	AppId        []string                      `protobuf:"bytes,7,rep,name=app_id,json=appId" json:"app_id,omitempty"`
-	Name         []string                      `protobuf:"bytes,8,rep,name=name" json:"name,omitempty"`
-	RepoId       []string                      `protobuf:"bytes,9,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Status       []string                      `protobuf:"bytes,10,rep,name=status" json:"status,omitempty"`
-	Owner        []string                      `protobuf:"bytes,11,rep,name=owner" json:"owner,omitempty"`
-	ChartName    []string                      `protobuf:"bytes,12,rep,name=chart_name,json=chartName" json:"chart_name,omitempty"`
-	CategoryId   []string                      `protobuf:"bytes,13,rep,name=category_id,json=categoryId" json:"category_id,omitempty"`
-	CategoryName []string                      `protobuf:"bytes,14,rep,name=category_name,json=categoryName" json:"category_name,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
+	Limit                uint32                `protobuf:"varint,2,opt,name=limit" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,3,opt,name=offset" json:"offset,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=reverse" json:"reverse,omitempty"`
+	AppId                []string              `protobuf:"bytes,7,rep,name=app_id,json=appId" json:"app_id,omitempty"`
+	Name                 []string              `protobuf:"bytes,8,rep,name=name" json:"name,omitempty"`
+	RepoId               []string              `protobuf:"bytes,9,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Status               []string              `protobuf:"bytes,10,rep,name=status" json:"status,omitempty"`
+	Owner                []string              `protobuf:"bytes,11,rep,name=owner" json:"owner,omitempty"`
+	ChartName            []string              `protobuf:"bytes,12,rep,name=chart_name,json=chartName" json:"chart_name,omitempty"`
+	CategoryId           []string              `protobuf:"bytes,13,rep,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	CategoryName         []string              `protobuf:"bytes,14,rep,name=category_name,json=categoryName" json:"category_name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DescribeAppsRequest) Reset()                    { *m = DescribeAppsRequest{} }
-func (m *DescribeAppsRequest) String() string            { return proto.CompactTextString(m) }
-func (*DescribeAppsRequest) ProtoMessage()               {}
-func (*DescribeAppsRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{9} }
+func (m *DescribeAppsRequest) Reset()         { *m = DescribeAppsRequest{} }
+func (m *DescribeAppsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeAppsRequest) ProtoMessage()    {}
+func (*DescribeAppsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{9}
+}
+func (m *DescribeAppsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeAppsRequest.Unmarshal(m, b)
+}
+func (m *DescribeAppsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeAppsRequest.Marshal(b, m, deterministic)
+}
+func (dst *DescribeAppsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeAppsRequest.Merge(dst, src)
+}
+func (m *DescribeAppsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeAppsRequest.Size(m)
+}
+func (m *DescribeAppsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeAppsRequest.DiscardUnknown(m)
+}
 
-func (m *DescribeAppsRequest) GetSearchWord() *google_protobuf2.StringValue {
+var xxx_messageInfo_DescribeAppsRequest proto.InternalMessageInfo
+
+func (m *DescribeAppsRequest) GetSearchWord() *wrappers.StringValue {
 	if m != nil {
 		return m.SearchWord
 	}
@@ -607,14 +833,14 @@ func (m *DescribeAppsRequest) GetOffset() uint32 {
 	return 0
 }
 
-func (m *DescribeAppsRequest) GetSortKey() *google_protobuf2.StringValue {
+func (m *DescribeAppsRequest) GetSortKey() *wrappers.StringValue {
 	if m != nil {
 		return m.SortKey
 	}
 	return nil
 }
 
-func (m *DescribeAppsRequest) GetReverse() *google_protobuf2.BoolValue {
+func (m *DescribeAppsRequest) GetReverse() *wrappers.BoolValue {
 	if m != nil {
 		return m.Reverse
 	}
@@ -678,14 +904,36 @@ func (m *DescribeAppsRequest) GetCategoryName() []string {
 }
 
 type DescribeAppsResponse struct {
-	TotalCount uint32 `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	AppSet     []*App `protobuf:"bytes,2,rep,name=app_set,json=appSet" json:"app_set,omitempty"`
+	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	AppSet               []*App   `protobuf:"bytes,2,rep,name=app_set,json=appSet" json:"app_set,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DescribeAppsResponse) Reset()                    { *m = DescribeAppsResponse{} }
-func (m *DescribeAppsResponse) String() string            { return proto.CompactTextString(m) }
-func (*DescribeAppsResponse) ProtoMessage()               {}
-func (*DescribeAppsResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{10} }
+func (m *DescribeAppsResponse) Reset()         { *m = DescribeAppsResponse{} }
+func (m *DescribeAppsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeAppsResponse) ProtoMessage()    {}
+func (*DescribeAppsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{10}
+}
+func (m *DescribeAppsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeAppsResponse.Unmarshal(m, b)
+}
+func (m *DescribeAppsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeAppsResponse.Marshal(b, m, deterministic)
+}
+func (dst *DescribeAppsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeAppsResponse.Merge(dst, src)
+}
+func (m *DescribeAppsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeAppsResponse.Size(m)
+}
+func (m *DescribeAppsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeAppsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeAppsResponse proto.InternalMessageInfo
 
 func (m *DescribeAppsResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -702,55 +950,77 @@ func (m *DescribeAppsResponse) GetAppSet() []*App {
 }
 
 type CreateAppVersionRequest struct {
-	X           *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
-	AppId       *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	Owner       *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
-	Name        *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
-	PackageName *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=package_name,json=packageName" json:"package_name,omitempty"`
-	Description *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=description" json:"description,omitempty"`
+	X                    *wrappers.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
+	PackageName          *wrappers.StringValue `protobuf:"bytes,5,opt,name=package_name,json=packageName" json:"package_name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,6,opt,name=description" json:"description,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateAppVersionRequest) Reset()                    { *m = CreateAppVersionRequest{} }
-func (m *CreateAppVersionRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateAppVersionRequest) ProtoMessage()               {}
-func (*CreateAppVersionRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{11} }
+func (m *CreateAppVersionRequest) Reset()         { *m = CreateAppVersionRequest{} }
+func (m *CreateAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateAppVersionRequest) ProtoMessage()    {}
+func (*CreateAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{11}
+}
+func (m *CreateAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateAppVersionRequest.Unmarshal(m, b)
+}
+func (m *CreateAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateAppVersionRequest.Merge(dst, src)
+}
+func (m *CreateAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateAppVersionRequest.Size(m)
+}
+func (m *CreateAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateAppVersionRequest.DiscardUnknown(m)
+}
 
-func (m *CreateAppVersionRequest) GetX() *google_protobuf2.StringValue {
+var xxx_messageInfo_CreateAppVersionRequest proto.InternalMessageInfo
+
+func (m *CreateAppVersionRequest) GetX() *wrappers.StringValue {
 	if m != nil {
 		return m.X
 	}
 	return nil
 }
 
-func (m *CreateAppVersionRequest) GetAppId() *google_protobuf2.StringValue {
+func (m *CreateAppVersionRequest) GetAppId() *wrappers.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *CreateAppVersionRequest) GetOwner() *google_protobuf2.StringValue {
+func (m *CreateAppVersionRequest) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *CreateAppVersionRequest) GetName() *google_protobuf2.StringValue {
+func (m *CreateAppVersionRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateAppVersionRequest) GetPackageName() *google_protobuf2.StringValue {
+func (m *CreateAppVersionRequest) GetPackageName() *wrappers.StringValue {
 	if m != nil {
 		return m.PackageName
 	}
 	return nil
 }
 
-func (m *CreateAppVersionRequest) GetDescription() *google_protobuf2.StringValue {
+func (m *CreateAppVersionRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
@@ -758,13 +1028,35 @@ func (m *CreateAppVersionRequest) GetDescription() *google_protobuf2.StringValue
 }
 
 type CreateAppVersionResponse struct {
-	AppVersion *AppVersion `protobuf:"bytes,1,opt,name=app_version,json=appVersion" json:"app_version,omitempty"`
+	AppVersion           *AppVersion `protobuf:"bytes,1,opt,name=app_version,json=appVersion" json:"app_version,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
 }
 
-func (m *CreateAppVersionResponse) Reset()                    { *m = CreateAppVersionResponse{} }
-func (m *CreateAppVersionResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateAppVersionResponse) ProtoMessage()               {}
-func (*CreateAppVersionResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{12} }
+func (m *CreateAppVersionResponse) Reset()         { *m = CreateAppVersionResponse{} }
+func (m *CreateAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateAppVersionResponse) ProtoMessage()    {}
+func (*CreateAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{12}
+}
+func (m *CreateAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateAppVersionResponse.Unmarshal(m, b)
+}
+func (m *CreateAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateAppVersionResponse.Merge(dst, src)
+}
+func (m *CreateAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateAppVersionResponse.Size(m)
+}
+func (m *CreateAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateAppVersionResponse proto.InternalMessageInfo
 
 func (m *CreateAppVersionResponse) GetAppVersion() *AppVersion {
 	if m != nil {
@@ -774,47 +1066,69 @@ func (m *CreateAppVersionResponse) GetAppVersion() *AppVersion {
 }
 
 type ModifyAppVersionRequest struct {
-	VersionId   *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	Name        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	PackageName *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=package_name,json=packageName" json:"package_name,omitempty"`
-	Owner       *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
-	Description *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	PackageName          *wrappers.StringValue `protobuf:"bytes,3,opt,name=package_name,json=packageName" json:"package_name,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ModifyAppVersionRequest) Reset()                    { *m = ModifyAppVersionRequest{} }
-func (m *ModifyAppVersionRequest) String() string            { return proto.CompactTextString(m) }
-func (*ModifyAppVersionRequest) ProtoMessage()               {}
-func (*ModifyAppVersionRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{13} }
+func (m *ModifyAppVersionRequest) Reset()         { *m = ModifyAppVersionRequest{} }
+func (m *ModifyAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyAppVersionRequest) ProtoMessage()    {}
+func (*ModifyAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{13}
+}
+func (m *ModifyAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyAppVersionRequest.Unmarshal(m, b)
+}
+func (m *ModifyAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *ModifyAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyAppVersionRequest.Merge(dst, src)
+}
+func (m *ModifyAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyAppVersionRequest.Size(m)
+}
+func (m *ModifyAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyAppVersionRequest.DiscardUnknown(m)
+}
 
-func (m *ModifyAppVersionRequest) GetVersionId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ModifyAppVersionRequest proto.InternalMessageInfo
+
+func (m *ModifyAppVersionRequest) GetVersionId() *wrappers.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
 	return nil
 }
 
-func (m *ModifyAppVersionRequest) GetName() *google_protobuf2.StringValue {
+func (m *ModifyAppVersionRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ModifyAppVersionRequest) GetPackageName() *google_protobuf2.StringValue {
+func (m *ModifyAppVersionRequest) GetPackageName() *wrappers.StringValue {
 	if m != nil {
 		return m.PackageName
 	}
 	return nil
 }
 
-func (m *ModifyAppVersionRequest) GetOwner() *google_protobuf2.StringValue {
+func (m *ModifyAppVersionRequest) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *ModifyAppVersionRequest) GetDescription() *google_protobuf2.StringValue {
+func (m *ModifyAppVersionRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
@@ -822,13 +1136,35 @@ func (m *ModifyAppVersionRequest) GetDescription() *google_protobuf2.StringValue
 }
 
 type ModifyAppVersionResponse struct {
-	AppVersion *AppVersion `protobuf:"bytes,1,opt,name=app_version,json=appVersion" json:"app_version,omitempty"`
+	AppVersion           *AppVersion `protobuf:"bytes,1,opt,name=app_version,json=appVersion" json:"app_version,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
 }
 
-func (m *ModifyAppVersionResponse) Reset()                    { *m = ModifyAppVersionResponse{} }
-func (m *ModifyAppVersionResponse) String() string            { return proto.CompactTextString(m) }
-func (*ModifyAppVersionResponse) ProtoMessage()               {}
-func (*ModifyAppVersionResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{14} }
+func (m *ModifyAppVersionResponse) Reset()         { *m = ModifyAppVersionResponse{} }
+func (m *ModifyAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyAppVersionResponse) ProtoMessage()    {}
+func (*ModifyAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{14}
+}
+func (m *ModifyAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyAppVersionResponse.Unmarshal(m, b)
+}
+func (m *ModifyAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *ModifyAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyAppVersionResponse.Merge(dst, src)
+}
+func (m *ModifyAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyAppVersionResponse.Size(m)
+}
+func (m *ModifyAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyAppVersionResponse proto.InternalMessageInfo
 
 func (m *ModifyAppVersionResponse) GetAppVersion() *AppVersion {
 	if m != nil {
@@ -838,15 +1174,37 @@ func (m *ModifyAppVersionResponse) GetAppVersion() *AppVersion {
 }
 
 type DeleteAppVersionRequest struct {
-	VersionId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteAppVersionRequest) Reset()                    { *m = DeleteAppVersionRequest{} }
-func (m *DeleteAppVersionRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAppVersionRequest) ProtoMessage()               {}
-func (*DeleteAppVersionRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{15} }
+func (m *DeleteAppVersionRequest) Reset()         { *m = DeleteAppVersionRequest{} }
+func (m *DeleteAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteAppVersionRequest) ProtoMessage()    {}
+func (*DeleteAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{15}
+}
+func (m *DeleteAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteAppVersionRequest.Unmarshal(m, b)
+}
+func (m *DeleteAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteAppVersionRequest.Merge(dst, src)
+}
+func (m *DeleteAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteAppVersionRequest.Size(m)
+}
+func (m *DeleteAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteAppVersionRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteAppVersionRequest) GetVersionId() *google_protobuf2.StringValue {
+var xxx_messageInfo_DeleteAppVersionRequest proto.InternalMessageInfo
+
+func (m *DeleteAppVersionRequest) GetVersionId() *wrappers.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
@@ -854,13 +1212,35 @@ func (m *DeleteAppVersionRequest) GetVersionId() *google_protobuf2.StringValue {
 }
 
 type DeleteAppVersionResponse struct {
-	AppVersion *AppVersion `protobuf:"bytes,1,opt,name=app_version,json=appVersion" json:"app_version,omitempty"`
+	AppVersion           *AppVersion `protobuf:"bytes,1,opt,name=app_version,json=appVersion" json:"app_version,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
 }
 
-func (m *DeleteAppVersionResponse) Reset()                    { *m = DeleteAppVersionResponse{} }
-func (m *DeleteAppVersionResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteAppVersionResponse) ProtoMessage()               {}
-func (*DeleteAppVersionResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{16} }
+func (m *DeleteAppVersionResponse) Reset()         { *m = DeleteAppVersionResponse{} }
+func (m *DeleteAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteAppVersionResponse) ProtoMessage()    {}
+func (*DeleteAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{16}
+}
+func (m *DeleteAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteAppVersionResponse.Unmarshal(m, b)
+}
+func (m *DeleteAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *DeleteAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteAppVersionResponse.Merge(dst, src)
+}
+func (m *DeleteAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteAppVersionResponse.Size(m)
+}
+func (m *DeleteAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteAppVersionResponse proto.InternalMessageInfo
 
 func (m *DeleteAppVersionResponse) GetAppVersion() *AppVersion {
 	if m != nil {
@@ -870,87 +1250,109 @@ func (m *DeleteAppVersionResponse) GetAppVersion() *AppVersion {
 }
 
 type AppVersion struct {
-	VersionId   *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	AppId       *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	Owner       *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
-	Name        *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
-	PackageName *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=package_name,json=packageName" json:"package_name,omitempty"`
-	Status      *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=status" json:"status,omitempty"`
-	CreateTime  *google_protobuf3.Timestamp   `protobuf:"bytes,8,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime  *google_protobuf3.Timestamp   `protobuf:"bytes,9,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
-	UpdateTime  *google_protobuf3.Timestamp   `protobuf:"bytes,10,opt,name=update_time,json=updateTime" json:"update_time,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
+	PackageName          *wrappers.StringValue `protobuf:"bytes,6,opt,name=package_name,json=packageName" json:"package_name,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=status" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=update_time,json=updateTime" json:"update_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *AppVersion) Reset()                    { *m = AppVersion{} }
-func (m *AppVersion) String() string            { return proto.CompactTextString(m) }
-func (*AppVersion) ProtoMessage()               {}
-func (*AppVersion) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{17} }
+func (m *AppVersion) Reset()         { *m = AppVersion{} }
+func (m *AppVersion) String() string { return proto.CompactTextString(m) }
+func (*AppVersion) ProtoMessage()    {}
+func (*AppVersion) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{17}
+}
+func (m *AppVersion) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AppVersion.Unmarshal(m, b)
+}
+func (m *AppVersion) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AppVersion.Marshal(b, m, deterministic)
+}
+func (dst *AppVersion) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AppVersion.Merge(dst, src)
+}
+func (m *AppVersion) XXX_Size() int {
+	return xxx_messageInfo_AppVersion.Size(m)
+}
+func (m *AppVersion) XXX_DiscardUnknown() {
+	xxx_messageInfo_AppVersion.DiscardUnknown(m)
+}
 
-func (m *AppVersion) GetVersionId() *google_protobuf2.StringValue {
+var xxx_messageInfo_AppVersion proto.InternalMessageInfo
+
+func (m *AppVersion) GetVersionId() *wrappers.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
 	return nil
 }
 
-func (m *AppVersion) GetAppId() *google_protobuf2.StringValue {
+func (m *AppVersion) GetAppId() *wrappers.StringValue {
 	if m != nil {
 		return m.AppId
 	}
 	return nil
 }
 
-func (m *AppVersion) GetOwner() *google_protobuf2.StringValue {
+func (m *AppVersion) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *AppVersion) GetName() *google_protobuf2.StringValue {
+func (m *AppVersion) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *AppVersion) GetDescription() *google_protobuf2.StringValue {
+func (m *AppVersion) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *AppVersion) GetPackageName() *google_protobuf2.StringValue {
+func (m *AppVersion) GetPackageName() *wrappers.StringValue {
 	if m != nil {
 		return m.PackageName
 	}
 	return nil
 }
 
-func (m *AppVersion) GetStatus() *google_protobuf2.StringValue {
+func (m *AppVersion) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *AppVersion) GetCreateTime() *google_protobuf3.Timestamp {
+func (m *AppVersion) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *AppVersion) GetStatusTime() *google_protobuf3.Timestamp {
+func (m *AppVersion) GetStatusTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
 	return nil
 }
 
-func (m *AppVersion) GetUpdateTime() *google_protobuf3.Timestamp {
+func (m *AppVersion) GetUpdateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.UpdateTime
 	}
@@ -958,22 +1360,44 @@ func (m *AppVersion) GetUpdateTime() *google_protobuf3.Timestamp {
 }
 
 type DescribeAppVersionsRequest struct {
-	VersionId   []string                      `protobuf:"bytes,1,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
-	AppId       []string                      `protobuf:"bytes,2,rep,name=app_id,json=appId" json:"app_id,omitempty"`
-	Name        []string                      `protobuf:"bytes,3,rep,name=name" json:"name,omitempty"`
-	Owner       []string                      `protobuf:"bytes,4,rep,name=owner" json:"owner,omitempty"`
-	Description []string                      `protobuf:"bytes,5,rep,name=description" json:"description,omitempty"`
-	PackageName []string                      `protobuf:"bytes,6,rep,name=package_name,json=packageName" json:"package_name,omitempty"`
-	Status      []string                      `protobuf:"bytes,7,rep,name=status" json:"status,omitempty"`
-	SearchWord  *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
-	Limit       uint32                        `protobuf:"varint,9,opt,name=limit" json:"limit,omitempty"`
-	Offset      uint32                        `protobuf:"varint,10,opt,name=offset" json:"offset,omitempty"`
+	VersionId            []string              `protobuf:"bytes,1,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
+	AppId                []string              `protobuf:"bytes,2,rep,name=app_id,json=appId" json:"app_id,omitempty"`
+	Name                 []string              `protobuf:"bytes,3,rep,name=name" json:"name,omitempty"`
+	Owner                []string              `protobuf:"bytes,4,rep,name=owner" json:"owner,omitempty"`
+	Description          []string              `protobuf:"bytes,5,rep,name=description" json:"description,omitempty"`
+	PackageName          []string              `protobuf:"bytes,6,rep,name=package_name,json=packageName" json:"package_name,omitempty"`
+	Status               []string              `protobuf:"bytes,7,rep,name=status" json:"status,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,8,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
+	Limit                uint32                `protobuf:"varint,9,opt,name=limit" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,10,opt,name=offset" json:"offset,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DescribeAppVersionsRequest) Reset()                    { *m = DescribeAppVersionsRequest{} }
-func (m *DescribeAppVersionsRequest) String() string            { return proto.CompactTextString(m) }
-func (*DescribeAppVersionsRequest) ProtoMessage()               {}
-func (*DescribeAppVersionsRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{18} }
+func (m *DescribeAppVersionsRequest) Reset()         { *m = DescribeAppVersionsRequest{} }
+func (m *DescribeAppVersionsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeAppVersionsRequest) ProtoMessage()    {}
+func (*DescribeAppVersionsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{18}
+}
+func (m *DescribeAppVersionsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeAppVersionsRequest.Unmarshal(m, b)
+}
+func (m *DescribeAppVersionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeAppVersionsRequest.Marshal(b, m, deterministic)
+}
+func (dst *DescribeAppVersionsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeAppVersionsRequest.Merge(dst, src)
+}
+func (m *DescribeAppVersionsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeAppVersionsRequest.Size(m)
+}
+func (m *DescribeAppVersionsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeAppVersionsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeAppVersionsRequest proto.InternalMessageInfo
 
 func (m *DescribeAppVersionsRequest) GetVersionId() []string {
 	if m != nil {
@@ -1024,7 +1448,7 @@ func (m *DescribeAppVersionsRequest) GetStatus() []string {
 	return nil
 }
 
-func (m *DescribeAppVersionsRequest) GetSearchWord() *google_protobuf2.StringValue {
+func (m *DescribeAppVersionsRequest) GetSearchWord() *wrappers.StringValue {
 	if m != nil {
 		return m.SearchWord
 	}
@@ -1046,14 +1470,36 @@ func (m *DescribeAppVersionsRequest) GetOffset() uint32 {
 }
 
 type DescribeAppVersionsResponse struct {
-	TotalCount    uint32        `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	AppVersionSet []*AppVersion `protobuf:"bytes,2,rep,name=app_version_set,json=appVersionSet" json:"app_version_set,omitempty"`
+	TotalCount           uint32        `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	AppVersionSet        []*AppVersion `protobuf:"bytes,2,rep,name=app_version_set,json=appVersionSet" json:"app_version_set,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
 }
 
-func (m *DescribeAppVersionsResponse) Reset()                    { *m = DescribeAppVersionsResponse{} }
-func (m *DescribeAppVersionsResponse) String() string            { return proto.CompactTextString(m) }
-func (*DescribeAppVersionsResponse) ProtoMessage()               {}
-func (*DescribeAppVersionsResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{19} }
+func (m *DescribeAppVersionsResponse) Reset()         { *m = DescribeAppVersionsResponse{} }
+func (m *DescribeAppVersionsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeAppVersionsResponse) ProtoMessage()    {}
+func (*DescribeAppVersionsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{19}
+}
+func (m *DescribeAppVersionsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeAppVersionsResponse.Unmarshal(m, b)
+}
+func (m *DescribeAppVersionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeAppVersionsResponse.Marshal(b, m, deterministic)
+}
+func (dst *DescribeAppVersionsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeAppVersionsResponse.Merge(dst, src)
+}
+func (m *DescribeAppVersionsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeAppVersionsResponse.Size(m)
+}
+func (m *DescribeAppVersionsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeAppVersionsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeAppVersionsResponse proto.InternalMessageInfo
 
 func (m *DescribeAppVersionsResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -1070,15 +1516,37 @@ func (m *DescribeAppVersionsResponse) GetAppVersionSet() []*AppVersion {
 }
 
 type GetAppVersionPackageRequest struct {
-	VersionId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *GetAppVersionPackageRequest) Reset()                    { *m = GetAppVersionPackageRequest{} }
-func (m *GetAppVersionPackageRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetAppVersionPackageRequest) ProtoMessage()               {}
-func (*GetAppVersionPackageRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{20} }
+func (m *GetAppVersionPackageRequest) Reset()         { *m = GetAppVersionPackageRequest{} }
+func (m *GetAppVersionPackageRequest) String() string { return proto.CompactTextString(m) }
+func (*GetAppVersionPackageRequest) ProtoMessage()    {}
+func (*GetAppVersionPackageRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{20}
+}
+func (m *GetAppVersionPackageRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetAppVersionPackageRequest.Unmarshal(m, b)
+}
+func (m *GetAppVersionPackageRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetAppVersionPackageRequest.Marshal(b, m, deterministic)
+}
+func (dst *GetAppVersionPackageRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetAppVersionPackageRequest.Merge(dst, src)
+}
+func (m *GetAppVersionPackageRequest) XXX_Size() int {
+	return xxx_messageInfo_GetAppVersionPackageRequest.Size(m)
+}
+func (m *GetAppVersionPackageRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetAppVersionPackageRequest.DiscardUnknown(m)
+}
 
-func (m *GetAppVersionPackageRequest) GetVersionId() *google_protobuf2.StringValue {
+var xxx_messageInfo_GetAppVersionPackageRequest proto.InternalMessageInfo
+
+func (m *GetAppVersionPackageRequest) GetVersionId() *wrappers.StringValue {
 	if m != nil {
 		return m.VersionId
 	}
@@ -1086,13 +1554,35 @@ func (m *GetAppVersionPackageRequest) GetVersionId() *google_protobuf2.StringVal
 }
 
 type GetAppVersionPackageResponse struct {
-	Package []byte `protobuf:"bytes,1,opt,name=package,proto3" json:"package,omitempty"`
+	Package              []byte   `protobuf:"bytes,1,opt,name=package,proto3" json:"package,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetAppVersionPackageResponse) Reset()                    { *m = GetAppVersionPackageResponse{} }
-func (m *GetAppVersionPackageResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetAppVersionPackageResponse) ProtoMessage()               {}
-func (*GetAppVersionPackageResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{21} }
+func (m *GetAppVersionPackageResponse) Reset()         { *m = GetAppVersionPackageResponse{} }
+func (m *GetAppVersionPackageResponse) String() string { return proto.CompactTextString(m) }
+func (*GetAppVersionPackageResponse) ProtoMessage()    {}
+func (*GetAppVersionPackageResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{21}
+}
+func (m *GetAppVersionPackageResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetAppVersionPackageResponse.Unmarshal(m, b)
+}
+func (m *GetAppVersionPackageResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetAppVersionPackageResponse.Marshal(b, m, deterministic)
+}
+func (dst *GetAppVersionPackageResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetAppVersionPackageResponse.Merge(dst, src)
+}
+func (m *GetAppVersionPackageResponse) XXX_Size() int {
+	return xxx_messageInfo_GetAppVersionPackageResponse.Size(m)
+}
+func (m *GetAppVersionPackageResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetAppVersionPackageResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetAppVersionPackageResponse proto.InternalMessageInfo
 
 func (m *GetAppVersionPackageResponse) GetPackage() []byte {
 	if m != nil {
@@ -1102,20 +1592,42 @@ func (m *GetAppVersionPackageResponse) GetPackage() []byte {
 }
 
 type DescribeCategoryRequest struct {
-	SearchWord *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
-	Limit      uint32                        `protobuf:"varint,2,opt,name=limit" json:"limit,omitempty"`
-	Offset     uint32                        `protobuf:"varint,3,opt,name=offset" json:"offset,omitempty"`
-	CategoryId []string                      `protobuf:"bytes,4,rep,name=category_id,json=categoryId" json:"category_id,omitempty"`
-	Name       []string                      `protobuf:"bytes,5,rep,name=name" json:"name,omitempty"`
-	Owner      []string                      `protobuf:"bytes,6,rep,name=owner" json:"owner,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
+	Limit                uint32                `protobuf:"varint,2,opt,name=limit" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,3,opt,name=offset" json:"offset,omitempty"`
+	CategoryId           []string              `protobuf:"bytes,4,rep,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Name                 []string              `protobuf:"bytes,5,rep,name=name" json:"name,omitempty"`
+	Owner                []string              `protobuf:"bytes,6,rep,name=owner" json:"owner,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DescribeCategoryRequest) Reset()                    { *m = DescribeCategoryRequest{} }
-func (m *DescribeCategoryRequest) String() string            { return proto.CompactTextString(m) }
-func (*DescribeCategoryRequest) ProtoMessage()               {}
-func (*DescribeCategoryRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{22} }
+func (m *DescribeCategoryRequest) Reset()         { *m = DescribeCategoryRequest{} }
+func (m *DescribeCategoryRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeCategoryRequest) ProtoMessage()    {}
+func (*DescribeCategoryRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{22}
+}
+func (m *DescribeCategoryRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCategoryRequest.Unmarshal(m, b)
+}
+func (m *DescribeCategoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCategoryRequest.Marshal(b, m, deterministic)
+}
+func (dst *DescribeCategoryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCategoryRequest.Merge(dst, src)
+}
+func (m *DescribeCategoryRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeCategoryRequest.Size(m)
+}
+func (m *DescribeCategoryRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCategoryRequest.DiscardUnknown(m)
+}
 
-func (m *DescribeCategoryRequest) GetSearchWord() *google_protobuf2.StringValue {
+var xxx_messageInfo_DescribeCategoryRequest proto.InternalMessageInfo
+
+func (m *DescribeCategoryRequest) GetSearchWord() *wrappers.StringValue {
 	if m != nil {
 		return m.SearchWord
 	}
@@ -1158,14 +1670,36 @@ func (m *DescribeCategoryRequest) GetOwner() []string {
 }
 
 type DescribeCategoryResponse struct {
-	TotalCount  uint32      `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	CategorySet []*Category `protobuf:"bytes,2,rep,name=category_set,json=categorySet" json:"category_set,omitempty"`
+	TotalCount           uint32      `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	CategorySet          []*Category `protobuf:"bytes,2,rep,name=category_set,json=categorySet" json:"category_set,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
 }
 
-func (m *DescribeCategoryResponse) Reset()                    { *m = DescribeCategoryResponse{} }
-func (m *DescribeCategoryResponse) String() string            { return proto.CompactTextString(m) }
-func (*DescribeCategoryResponse) ProtoMessage()               {}
-func (*DescribeCategoryResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{23} }
+func (m *DescribeCategoryResponse) Reset()         { *m = DescribeCategoryResponse{} }
+func (m *DescribeCategoryResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeCategoryResponse) ProtoMessage()    {}
+func (*DescribeCategoryResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{23}
+}
+func (m *DescribeCategoryResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCategoryResponse.Unmarshal(m, b)
+}
+func (m *DescribeCategoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCategoryResponse.Marshal(b, m, deterministic)
+}
+func (dst *DescribeCategoryResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCategoryResponse.Merge(dst, src)
+}
+func (m *DescribeCategoryResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeCategoryResponse.Size(m)
+}
+func (m *DescribeCategoryResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCategoryResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeCategoryResponse proto.InternalMessageInfo
 
 func (m *DescribeCategoryResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -1182,23 +1716,45 @@ func (m *DescribeCategoryResponse) GetCategorySet() []*Category {
 }
 
 type CreateCategoryRequest struct {
-	Name   *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Locale *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateCategoryRequest) Reset()                    { *m = CreateCategoryRequest{} }
-func (m *CreateCategoryRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateCategoryRequest) ProtoMessage()               {}
-func (*CreateCategoryRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{24} }
+func (m *CreateCategoryRequest) Reset()         { *m = CreateCategoryRequest{} }
+func (m *CreateCategoryRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateCategoryRequest) ProtoMessage()    {}
+func (*CreateCategoryRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{24}
+}
+func (m *CreateCategoryRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCategoryRequest.Unmarshal(m, b)
+}
+func (m *CreateCategoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCategoryRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateCategoryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCategoryRequest.Merge(dst, src)
+}
+func (m *CreateCategoryRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateCategoryRequest.Size(m)
+}
+func (m *CreateCategoryRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCategoryRequest.DiscardUnknown(m)
+}
 
-func (m *CreateCategoryRequest) GetName() *google_protobuf2.StringValue {
+var xxx_messageInfo_CreateCategoryRequest proto.InternalMessageInfo
+
+func (m *CreateCategoryRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateCategoryRequest) GetLocale() *google_protobuf2.StringValue {
+func (m *CreateCategoryRequest) GetLocale() *wrappers.StringValue {
 	if m != nil {
 		return m.Locale
 	}
@@ -1206,13 +1762,35 @@ func (m *CreateCategoryRequest) GetLocale() *google_protobuf2.StringValue {
 }
 
 type CreateCategoryResponse struct {
-	Category *Category `protobuf:"bytes,1,opt,name=category" json:"category,omitempty"`
+	Category             *Category `protobuf:"bytes,1,opt,name=category" json:"category,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
-func (m *CreateCategoryResponse) Reset()                    { *m = CreateCategoryResponse{} }
-func (m *CreateCategoryResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateCategoryResponse) ProtoMessage()               {}
-func (*CreateCategoryResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{25} }
+func (m *CreateCategoryResponse) Reset()         { *m = CreateCategoryResponse{} }
+func (m *CreateCategoryResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateCategoryResponse) ProtoMessage()    {}
+func (*CreateCategoryResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{25}
+}
+func (m *CreateCategoryResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCategoryResponse.Unmarshal(m, b)
+}
+func (m *CreateCategoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCategoryResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateCategoryResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCategoryResponse.Merge(dst, src)
+}
+func (m *CreateCategoryResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateCategoryResponse.Size(m)
+}
+func (m *CreateCategoryResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCategoryResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateCategoryResponse proto.InternalMessageInfo
 
 func (m *CreateCategoryResponse) GetCategory() *Category {
 	if m != nil {
@@ -1222,31 +1800,53 @@ func (m *CreateCategoryResponse) GetCategory() *Category {
 }
 
 type ModifyCategoryRequest struct {
-	CategoryId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
-	Name       *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Locale     *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ModifyCategoryRequest) Reset()                    { *m = ModifyCategoryRequest{} }
-func (m *ModifyCategoryRequest) String() string            { return proto.CompactTextString(m) }
-func (*ModifyCategoryRequest) ProtoMessage()               {}
-func (*ModifyCategoryRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{26} }
+func (m *ModifyCategoryRequest) Reset()         { *m = ModifyCategoryRequest{} }
+func (m *ModifyCategoryRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyCategoryRequest) ProtoMessage()    {}
+func (*ModifyCategoryRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{26}
+}
+func (m *ModifyCategoryRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCategoryRequest.Unmarshal(m, b)
+}
+func (m *ModifyCategoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCategoryRequest.Marshal(b, m, deterministic)
+}
+func (dst *ModifyCategoryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCategoryRequest.Merge(dst, src)
+}
+func (m *ModifyCategoryRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyCategoryRequest.Size(m)
+}
+func (m *ModifyCategoryRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCategoryRequest.DiscardUnknown(m)
+}
 
-func (m *ModifyCategoryRequest) GetCategoryId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ModifyCategoryRequest proto.InternalMessageInfo
+
+func (m *ModifyCategoryRequest) GetCategoryId() *wrappers.StringValue {
 	if m != nil {
 		return m.CategoryId
 	}
 	return nil
 }
 
-func (m *ModifyCategoryRequest) GetName() *google_protobuf2.StringValue {
+func (m *ModifyCategoryRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ModifyCategoryRequest) GetLocale() *google_protobuf2.StringValue {
+func (m *ModifyCategoryRequest) GetLocale() *wrappers.StringValue {
 	if m != nil {
 		return m.Locale
 	}
@@ -1254,13 +1854,35 @@ func (m *ModifyCategoryRequest) GetLocale() *google_protobuf2.StringValue {
 }
 
 type ModifyCategoryResponse struct {
-	Category *Category `protobuf:"bytes,1,opt,name=category" json:"category,omitempty"`
+	Category             *Category `protobuf:"bytes,1,opt,name=category" json:"category,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
-func (m *ModifyCategoryResponse) Reset()                    { *m = ModifyCategoryResponse{} }
-func (m *ModifyCategoryResponse) String() string            { return proto.CompactTextString(m) }
-func (*ModifyCategoryResponse) ProtoMessage()               {}
-func (*ModifyCategoryResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{27} }
+func (m *ModifyCategoryResponse) Reset()         { *m = ModifyCategoryResponse{} }
+func (m *ModifyCategoryResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyCategoryResponse) ProtoMessage()    {}
+func (*ModifyCategoryResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{27}
+}
+func (m *ModifyCategoryResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCategoryResponse.Unmarshal(m, b)
+}
+func (m *ModifyCategoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCategoryResponse.Marshal(b, m, deterministic)
+}
+func (dst *ModifyCategoryResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCategoryResponse.Merge(dst, src)
+}
+func (m *ModifyCategoryResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyCategoryResponse.Size(m)
+}
+func (m *ModifyCategoryResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCategoryResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyCategoryResponse proto.InternalMessageInfo
 
 func (m *ModifyCategoryResponse) GetCategory() *Category {
 	if m != nil {
@@ -1270,15 +1892,37 @@ func (m *ModifyCategoryResponse) GetCategory() *Category {
 }
 
 type DeleteCategoryRequest struct {
-	CategoryId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteCategoryRequest) Reset()                    { *m = DeleteCategoryRequest{} }
-func (m *DeleteCategoryRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteCategoryRequest) ProtoMessage()               {}
-func (*DeleteCategoryRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{28} }
+func (m *DeleteCategoryRequest) Reset()         { *m = DeleteCategoryRequest{} }
+func (m *DeleteCategoryRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteCategoryRequest) ProtoMessage()    {}
+func (*DeleteCategoryRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{28}
+}
+func (m *DeleteCategoryRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCategoryRequest.Unmarshal(m, b)
+}
+func (m *DeleteCategoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCategoryRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteCategoryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCategoryRequest.Merge(dst, src)
+}
+func (m *DeleteCategoryRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteCategoryRequest.Size(m)
+}
+func (m *DeleteCategoryRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCategoryRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteCategoryRequest) GetCategoryId() *google_protobuf2.StringValue {
+var xxx_messageInfo_DeleteCategoryRequest proto.InternalMessageInfo
+
+func (m *DeleteCategoryRequest) GetCategoryId() *wrappers.StringValue {
 	if m != nil {
 		return m.CategoryId
 	}
@@ -1286,13 +1930,35 @@ func (m *DeleteCategoryRequest) GetCategoryId() *google_protobuf2.StringValue {
 }
 
 type DeleteCategoryResponse struct {
-	Category *Category `protobuf:"bytes,1,opt,name=category" json:"category,omitempty"`
+	Category             *Category `protobuf:"bytes,1,opt,name=category" json:"category,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
-func (m *DeleteCategoryResponse) Reset()                    { *m = DeleteCategoryResponse{} }
-func (m *DeleteCategoryResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteCategoryResponse) ProtoMessage()               {}
-func (*DeleteCategoryResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{29} }
+func (m *DeleteCategoryResponse) Reset()         { *m = DeleteCategoryResponse{} }
+func (m *DeleteCategoryResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteCategoryResponse) ProtoMessage()    {}
+func (*DeleteCategoryResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_d66188b8f06f10a2, []int{29}
+}
+func (m *DeleteCategoryResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCategoryResponse.Unmarshal(m, b)
+}
+func (m *DeleteCategoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCategoryResponse.Marshal(b, m, deterministic)
+}
+func (dst *DeleteCategoryResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCategoryResponse.Merge(dst, src)
+}
+func (m *DeleteCategoryResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteCategoryResponse.Size(m)
+}
+func (m *DeleteCategoryResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCategoryResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCategoryResponse proto.InternalMessageInfo
 
 func (m *DeleteCategoryResponse) GetCategory() *Category {
 	if m != nil {
@@ -1802,9 +2468,9 @@ var _AppManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "app.proto",
 }
 
-func init() { proto.RegisterFile("app.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("app.proto", fileDescriptor_app_d66188b8f06f10a2) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor_app_d66188b8f06f10a2 = []byte{
 	// 1760 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x59, 0x4b, 0x6f, 0x1b, 0x47,
 	0x12, 0x5e, 0xbe, 0xc9, 0x22, 0x29, 0xc9, 0x6d, 0x3d, 0x68, 0x5a, 0x5e, 0x51, 0xe3, 0x85, 0x57,

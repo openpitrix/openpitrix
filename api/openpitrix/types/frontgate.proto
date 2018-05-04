@@ -38,6 +38,6 @@ message FrontgateConfig {
 
 message FrontgateEndpoint {
 	string frontgate_id = 1;
-	string frontgate_ip = 2;  // hide for pilot
-	int32 frontgate_port = 3; // hide for pilot
+	string node_ip = 2;  // hide for pilot
+	int32 node_port = 3; // hide for pilot
 }

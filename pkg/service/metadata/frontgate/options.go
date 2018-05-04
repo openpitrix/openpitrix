@@ -32,9 +32,9 @@ func NewDefaultConfigString() string {
 		PilotPort: constants.PilotManagerPort,
 		NodeList: []*pbtypes.FrontgateEndpoint{
 			{
-				FrontgateId:   id,
-				FrontgateIp:   localIp,
-				FrontgatePort: constants.FrontgateServicePort,
+				FrontgateId: id,
+				NodeIp:      localIp,
+				NodePort:    constants.FrontgateServicePort,
 			},
 		},
 
