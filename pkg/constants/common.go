@@ -31,6 +31,7 @@ const (
 	PilotManagerPort     = 9110
 	FrontgateServicePort = 9111
 	DroneServicePort     = 9112
+	EtcdServicePort      = 2379
 )
 
 const (

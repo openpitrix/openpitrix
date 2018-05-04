@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -17,6 +18,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type Controller struct {
@@ -110,23 +113,57 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			return err
 		}
 
+		ctx := client.GetSystemUserContext()
+		pilotClient, err := pilotclient.NewClient(ctx)
+		if err != nil {
+			logger.Error("Connect to pilot service failed: %+v", err)
+			return err
+		}
+
 		if task.Target == constants.PilotManagerHost {
-			pbTask := models.TaskToPb(task)
-			err := pilotclient.HandleSubtask(
-				&pbtypes.SubTaskMessage{
-					TaskId:    pbTask.TaskId.GetValue(),
-					Action:    pbTask.TaskAction.GetValue(),
-					Directive: pbTask.Directive.GetValue(),
-				})
-			if err != nil {
-				logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
-				return err
-			}
-			err = pilotclient.WaitSubtask(
-				task.TaskId, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
-			if err != nil {
-				logger.Error("Failed to wait task [%s]: %+v", task.TaskId, err)
-				return err
+			switch task.TaskAction {
+			case vmbased.ActionSetDroneConfig:
+				config := new(pbtypes.SetDroneConfigRequest)
+				err = jsonutil.Decode([]byte(task.Directive), config)
+				if err != nil {
+					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					return err
+				}
+				_, err = pilotClient.SetDroneConfig(ctx, config)
+				if err != nil {
+					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					return err
+				}
+			case vmbased.ActionSetFrontgateConfig:
+				config := new(pbtypes.FrontgateConfig)
+				err = jsonutil.Decode([]byte(task.Directive), config)
+				if err != nil {
+					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					return err
+				}
+				_, err = pilotClient.SetFrontgateConfig(ctx, config)
+				if err != nil {
+					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					return err
+				}
+			default:
+				pbTask := models.TaskToPb(task)
+				_, err := pilotClient.HandleSubtask(ctx,
+					&pbtypes.SubTaskMessage{
+						TaskId:    pbTask.TaskId.GetValue(),
+						Action:    pbTask.TaskAction.GetValue(),
+						Directive: pbTask.Directive.GetValue(),
+					})
+				if err != nil {
+					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+					return err
+				}
+				err = pilotClient.WaitSubtask(
+					ctx, task.TaskId, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+				if err != nil {
+					logger.Error("Failed to wait task [%s]: %+v", task.TaskId, err)
+					return err
+				}
 			}
 		} else {
 			providerInterface, err := plugins.GetProviderPlugin(task.Target)

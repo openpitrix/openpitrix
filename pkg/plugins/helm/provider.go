@@ -430,7 +430,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	}
 
 	ctx := clientutil.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClusterManagerClient(ctx)
+	clusterClient, err := clusterclient.NewClient(ctx)
 	if err != nil {
 		return err
 	}

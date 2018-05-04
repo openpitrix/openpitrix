@@ -5,12 +5,12 @@
 package vmbased
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -18,6 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -569,8 +570,8 @@ func (f *Frame) formatAndMountVolumeLayer(nodeIds []string) *models.TaskLayer {
 
 func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
-	ctx := context.Background()
-	client, err := clusterclient.NewClusterManagerClient(ctx)
+	ctx := client.GetSystemUserContext()
+	clusterClient, err := clusterclient.NewClient(ctx)
 	if err != nil {
 		logger.Error("New ssh key gen task layer failed: %+v", err)
 		return nil
@@ -587,7 +588,7 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 					clusterCommon.Passphraseless, nodeId)
 				return nil
 			}
-			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
+			_, err = clusterClient.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
 					NodeId: pbutil.ToProtoString(nodeId),
 					PubKey: pbutil.ToProtoString(public),
@@ -709,6 +710,47 @@ func (f *Frame) getUserDataValue(nodeId string) string {
 
 func (f *Frame) getUserDataPath() string {
 	return MetadataConfPath + OpenPitrixConfFile
+}
+
+func (f *Frame) getConfig(nodeId string) string {
+	clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+
+	droneEndpoint := &pbtypes.DroneEndpoint{
+		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+		DroneIp:     clusterNode.PrivateIp,
+		DronePort:   constants.DroneServicePort,
+	}
+	droneConfig := &pbtypes.DroneConfig{
+		Id:             nodeId,
+		Host:           clusterNode.PrivateIp,
+		ListenPort:     constants.DroneServicePort,
+		CmdInfoLogPath: ConfdCmdLogPath,
+		ConfdSelfHost:  clusterNode.PrivateIp,
+		LogLevel:       MetadataLogLevel,
+	}
+	config := &pbtypes.SetDroneConfigRequest{
+		Endpoint: droneEndpoint,
+		Config:   droneConfig,
+	}
+	return jsonutil.ToString(config)
+}
+
+func (f *Frame) setDroneConfigLayer(nodeIds []string) *models.TaskLayer {
+	var tasks []*models.Task
+	for _, nodeId := range nodeIds {
+		task := &models.Task{
+			JobId:      f.Job.JobId,
+			Owner:      f.Job.Owner,
+			TaskAction: ActionSetDroneConfig,
+			Target:     constants.TargetPilot,
+			NodeId:     nodeId,
+			Directive:  f.getConfig(nodeId),
+		}
+		tasks = append(tasks, task)
+	}
+	return &models.TaskLayer{
+		Tasks: tasks,
+	}
 }
 
 func (f *Frame) runInstancesLayer(nodeIds []string) *models.TaskLayer {
@@ -1079,6 +1121,7 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 		Append(f.waitFrontgateLayer()).               // wait frontgate cluster to be active
 		Append(f.sshKeygenLayer()).                   // generate ssh key
 		Append(f.registerMetadataLayer()).            // register cluster metadata
+		Append(f.setDroneConfigLayer(nodeIds)).       // set drone config
 		Append(f.startConfdServiceLayer(nodeIds)).    // start confd service
 		Append(f.initAndStartServiceLayer(nodeIds)).  // register init and start cmd to exec
 		Append(f.deregisterCmdLayer(nodeIds))         // deregister cmd

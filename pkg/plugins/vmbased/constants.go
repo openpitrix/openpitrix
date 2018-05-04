@@ -25,7 +25,8 @@ const (
 	ActionDeregesterCmd          = "DeregisterCmd"
 	ActionStartConfd             = "StartConfd"
 	ActionStopConfd              = "StopConfd"
-	ActionGetTaskStatus          = "GetTaskStatus"
+	ActionSetFrontgateConfig     = "SetFrontgateConfig"
+	ActionSetDroneConfig         = "SetDroneConfig"
 )
 
 const (
@@ -58,4 +59,8 @@ const (
 	OpenPitrixConfFile = "openpitrix.conf"
 	DroneConfFile      = "drone.conf"
 	FrontgateConfFile  = "frontgate.conf"
+	ConfdPath          = "/etc/confd/"
+	MetadataLogLevel   = "debug"
+	ConfdBackendType   = "libconfd-backend-etcdv3"
+	ConfdCmdLogPath    = "/opt/openpitrix/logs/cmd.log"
 )

@@ -13,4 +13,4 @@ fi
 
 echo $FILE_CONF > /opt/openpitrix/conf/$FILE_NAME
 if ! service docker status|grep running ; then service docker start; fi
-if docker ps -a | grep default; then docker start -a default; else docker kill $(docker ps -q); docker run $mount -v /opt/openpitrix/conf/:/opt/openpitrix/conf/ --name default --network host --privileged $IMAGE ; fi
+if docker ps -a | grep default; then docker start -a default; else docker kill $(docker ps -q); docker run $mount -v /opt/openpitrix/:/opt/openpitrix/ --name default --network host --privileged $IMAGE ; fi

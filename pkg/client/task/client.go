@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -18,46 +17,27 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
-func NewTaskManagerClient(ctx context.Context) (pb.TaskManagerClient, error) {
+type Client struct {
+	pb.TaskManagerClient
+}
+
+func NewClient(ctx context.Context) (*Client, error) {
 	conn, err := manager.NewClient(ctx, constants.TaskManagerHost, constants.TaskManagerPort)
 	if err != nil {
 		return nil, err
 	}
-	return pb.NewTaskManagerClient(conn), err
+	return &Client{
+		TaskManagerClient: pb.NewTaskManagerClient(conn),
+	}, nil
 }
 
-func CreateTask(ctx context.Context, taskRequest *pb.CreateTaskRequest) (taskId string, err error) {
-	taskManagerClient, err := NewTaskManagerClient(ctx)
-	if err != nil {
-		return
-	}
-	taskResponse, err := taskManagerClient.CreateTask(ctx, taskRequest)
-	if err != nil {
-		return
-	}
-	taskId = taskResponse.GetTaskId().GetValue()
-	return
-}
-
-func DescribeTasks(ctx context.Context, taskRequest *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
-	taskManagerClient, err := NewTaskManagerClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-	taskResponse, err := taskManagerClient.DescribeTasks(ctx, taskRequest)
-	if err != nil {
-		return nil, err
-	}
-	return taskResponse, err
-}
-
-func WaitTask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
+func (c *Client) WaitTask(ctx context.Context, taskId string, timeout time.Duration, waitInterval time.Duration) error {
 	logger.Debug("Waiting for task [%s] finished", taskId)
 	return funcutil.WaitForSpecificOrError(func() (bool, error) {
 		taskRequest := &pb.DescribeTasksRequest{
 			TaskId: []string{taskId},
 		}
-		taskResponse, err := DescribeTasks(client.GetSystemUserContext(), taskRequest)
+		taskResponse, err := c.DescribeTasks(ctx, taskRequest)
 		if err != nil {
 			//network or api error, not considered task fail.
 			return false, nil
@@ -84,7 +64,7 @@ func WaitTask(taskId string, timeout time.Duration, waitInterval time.Duration) 
 	}, timeout, waitInterval)
 }
 
-func SendTask(task *models.Task) (taskId string, err error) {
+func (c *Client) SendTask(ctx context.Context, task *models.Task) (string, error) {
 	pbTask := models.TaskToPb(task)
 	taskRequest := &pb.CreateTaskRequest{
 		JobId:      pbTask.JobId,
@@ -93,9 +73,11 @@ func SendTask(task *models.Task) (taskId string, err error) {
 		TaskAction: pbTask.TaskAction,
 		Directive:  pbTask.Directive,
 	}
-	taskId, err = CreateTask(client.GetSystemUserContext(), taskRequest)
+	response, err := c.CreateTask(ctx, taskRequest)
+	taskId := response.GetTaskId().GetValue()
 	if err != nil {
 		logger.Error("Failed to create task [%s]: %+v", taskId, err)
+		return "", err
 	}
-	return
+	return taskId, nil
 }

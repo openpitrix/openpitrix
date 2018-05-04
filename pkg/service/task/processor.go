@@ -5,7 +5,7 @@
 package task
 
 import (
-	clientutil "openpitrix.io/openpitrix/pkg/client"
+	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -32,8 +32,8 @@ func (t *Processor) Pre() error {
 		return nil
 	}
 	var err error
-	ctx := clientutil.GetSystemUserContext()
-	client, err := clusterclient.NewClusterManagerClient(ctx)
+	ctx := client.GetSystemUserContext()
+	clusterClient, err := clusterclient.NewClient(ctx)
 	if err != nil {
 		logger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
 		return err
@@ -43,7 +43,7 @@ func (t *Processor) Pre() error {
 		// volume created before instance, so need to change RunInstances task directive
 		instance, err := models.NewInstance(t.Task.Directive)
 		if err == nil {
-			clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{instance.NodeId})
+			clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{instance.NodeId})
 			if err == nil {
 				instance.VolumeId = clusterNodes[0].GetVolumeId().GetValue()
 				// write back
@@ -53,7 +53,7 @@ func (t *Processor) Pre() error {
 	case vmbased.ActionFormatAndMountVolume:
 		meta, err := models.NewMeta(t.Task.Directive)
 		if err == nil {
-			clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{meta.NodeId})
+			clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{meta.NodeId})
 			if err == nil {
 				clusterNode := clusterNodes[0]
 				clusterRole := clusterNode.GetClusterRole()
@@ -76,7 +76,7 @@ func (t *Processor) Pre() error {
 	case vmbased.ActionRegisterMetadata:
 		meta, err := models.NewMeta(t.Task.Directive)
 		if err == nil {
-			pbClusterWrappers, err := clusterclient.GetClusterWrappers(ctx, client, []string{meta.ClusterId})
+			pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{meta.ClusterId})
 			if err == nil {
 				metadata := &vmbased.MetadataV1{
 					ClusterWrapper: pbClusterWrappers[0],
@@ -92,7 +92,7 @@ func (t *Processor) Pre() error {
 		meta, err := models.NewMeta(t.Task.Directive)
 		if err == nil {
 			if meta.DroneIp == "" {
-				clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{meta.NodeId})
+				clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{meta.NodeId})
 				if err == nil {
 					meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
 
@@ -106,7 +106,7 @@ func (t *Processor) Pre() error {
 		meta, err := models.NewMeta(t.Task.Directive)
 		if err == nil {
 			if meta.DroneIp == "" {
-				clusterNodes, err := clusterclient.GetClusterNodes(ctx, client, []string{meta.NodeId})
+				clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{meta.NodeId})
 				if err == nil {
 					meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
 
@@ -130,8 +130,8 @@ func (t *Processor) Pre() error {
 // Post process when task is done
 func (t *Processor) Post() error {
 	var err error
-	ctx := clientutil.GetSystemUserContext()
-	client, err := clusterclient.NewClusterManagerClient(ctx)
+	ctx := client.GetSystemUserContext()
+	clusterClient, err := clusterclient.NewClient(ctx)
 	if err != nil {
 		logger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
 		return err
@@ -143,7 +143,7 @@ func (t *Processor) Post() error {
 		}
 		instance, err := models.NewInstance(t.Task.Directive)
 		if err == nil {
-			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
+			_, err = clusterClient.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
 					NodeId:     pbutil.ToProtoString(instance.NodeId),
 					InstanceId: pbutil.ToProtoString(instance.InstanceId),
@@ -158,7 +158,7 @@ func (t *Processor) Post() error {
 		}
 		volume, err := models.NewVolume(t.Task.Directive)
 		if err == nil {
-			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
+			_, err = clusterClient.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
 					NodeId:   pbutil.ToProtoString(t.Task.NodeId),
 					VolumeId: pbutil.ToProtoString(volume.VolumeId),
