@@ -6,9 +6,9 @@ package helm
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/ghodss/yaml"
@@ -25,6 +25,7 @@ import (
 	"k8s.io/helm/pkg/proto/hapi/release"
 	"k8s.io/helm/pkg/tiller/environment"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
@@ -92,7 +93,7 @@ func (p *Provider) getHelmClient(runtimeId string) (helmClient *helm.Client, err
 }
 
 func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
-	ctx := context.Background()
+	ctx := clientutil.GetSystemUserContext()
 	appManagerClient, err := appclient.NewAppManagerClient(ctx)
 	if err != nil {
 		logger.Error("Connect to app manager failed: %+v", err)
@@ -114,12 +115,14 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 
 	c, err := chartutil.LoadArchive(r)
 	if err != nil {
+		logger.Error("Load helm chart from app version [%s] failed: %+v", versionId, err)
 		return nil, err
 	}
 
 	parser := Parser{}
 	clusterWrapper, err := parser.Parse(c, []byte(conf), versionId)
 	if err != nil {
+		logger.Error("Parse app version [%s] failed: %+v", versionId, err)
 		return nil, err
 	}
 	return clusterWrapper, nil
@@ -133,8 +136,6 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 	switch job.JobAction {
 	case constants.ActionCreateCluster:
-		tasks := make([]*models.Task, 1)
-
 		td := TaskDirective{
 			VersionId: job.VersionId,
 			Namespace: jodDirective.Namespace,
@@ -144,17 +145,14 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask("", job.JobId, "", constants.ProviderKubernetes, constants.ActionCreateCluster, tdj, job.Owner)
-		tasks = append(tasks, task)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCreateCluster, tdj, job.Owner)
 		tl := models.TaskLayer{
-			Tasks: tasks,
+			Tasks: []*models.Task{task},
 			Child: nil,
 		}
 
 		return &tl, nil
 	case constants.ActionUpgradeCluster:
-		tasks := make([]*models.Task, 1)
-
 		td := TaskDirective{
 			VersionId: job.VersionId,
 			ClusterId: job.ClusterId,
@@ -163,52 +161,42 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask("", job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, job.Owner)
-		tasks = append(tasks, task)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, job.Owner)
 		tl := models.TaskLayer{
-			Tasks: tasks,
+			Tasks: []*models.Task{task},
 			Child: nil,
 		}
 
 		return &tl, nil
 	case constants.ActionRollbackCluster:
-		tasks := make([]*models.Task, 1)
-
 		td := TaskDirective{ClusterId: job.ClusterId, RuntimeId: jodDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask("", job.JobId, "", constants.ProviderKubernetes, constants.ActionRollbackCluster, tdj, job.Owner)
-		tasks = append(tasks, task)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionRollbackCluster, tdj, job.Owner)
 		tl := models.TaskLayer{
-			Tasks: tasks,
+			Tasks: []*models.Task{task},
 			Child: nil,
 		}
 
 		return &tl, nil
 	case constants.ActionDeleteClusters:
-		tasks := make([]*models.Task, 1)
-
 		td := TaskDirective{ClusterId: job.ClusterId, RuntimeId: jodDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask("", job.JobId, "", constants.ProviderKubernetes, constants.ActionDeleteClusters, tdj, job.Owner)
-		tasks = append(tasks, task)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionDeleteClusters, tdj, job.Owner)
 		tl := models.TaskLayer{
-			Tasks: tasks,
+			Tasks: []*models.Task{task},
 			Child: nil,
 		}
 
 		return &tl, nil
 	case constants.ActionCeaseClusters:
-		tasks := make([]*models.Task, 1)
-
 		td := TaskDirective{ClusterId: job.ClusterId, RuntimeId: jodDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask("", job.JobId, "", constants.ProviderKubernetes, constants.ActionCeaseClusters, tdj, job.Owner)
-		tasks = append(tasks, task)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCeaseClusters, tdj, job.Owner)
 		tl := models.TaskLayer{
-			Tasks: tasks,
+			Tasks: []*models.Task{task},
 			Child: nil,
 		}
 
@@ -230,7 +218,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		return err
 	}
 
-	ctx := context.Background()
+	ctx := clientutil.GetSystemUserContext()
 
 	switch task.TaskAction {
 	case constants.ActionCreateCluster:
@@ -270,7 +258,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		_, err = hc.InstallReleaseFromChart(c, taskDirective.Namespace,
 			helm.ValueOverrides(rawVals),
 			helm.ReleaseName(taskDirective.ClusterId),
-			helm.InstallWait(false))
+			helm.InstallWait(true))
 		if err != nil {
 			return err
 		}
@@ -297,12 +285,12 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 			return err
 		}
 
-		_, err = hc.UpdateReleaseFromChart(taskDirective.ClusterId, chart, helm.UpgradeWait(false))
+		_, err = hc.UpdateReleaseFromChart(taskDirective.ClusterId, chart, helm.UpgradeWait(true))
 		if err != nil {
 			return err
 		}
 	case constants.ActionRollbackCluster:
-		_, err = hc.RollbackRelease(taskDirective.ClusterId, helm.RollbackWait(false))
+		_, err = hc.RollbackRelease(taskDirective.ClusterId, helm.RollbackWait(true))
 		if err != nil {
 			return err
 		}
@@ -395,19 +383,23 @@ func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, ow
 	}
 
 	var pbClusterNodes []*pb.ClusterNode
-	for _, v := range list.Items {
+	for _, pod := range list.Items {
 
 		clusterNode := &models.ClusterNode{
 			ClusterId:  clusterId,
-			Name:       v.GetName(),
-			InstanceId: string(v.GetUID()),
-			PrivateIp:  v.Status.PodIP,
-			Status:     string(v.Status.Phase),
+			Name:       pod.GetName(),
+			InstanceId: string(pod.GetUID()),
+			PrivateIp:  pod.Status.PodIP,
+			Status:     string(pod.Status.Phase),
 			Owner:      owner,
-			//GlobalServerId: v.Spec.NodeName,
-			CustomMetadata: getLabelString(v.GetObjectMeta().GetLabels()),
-			CreateTime:     v.GetObjectMeta().GetCreationTimestamp().Time,
-			StatusTime:     v.GetObjectMeta().GetCreationTimestamp().Time,
+			//GlobalServerId: pod.Spec.NodeName,
+			CustomMetadata: getLabelString(pod.GetObjectMeta().GetLabels()),
+			CreateTime:     pod.GetObjectMeta().GetCreationTimestamp().Time,
+			StatusTime:     pod.GetObjectMeta().GetCreationTimestamp().Time,
+		}
+
+		if len(pod.OwnerReferences) != 0 {
+			clusterNode.Role = fmt.Sprintf("%s-%s", strings.Replace(pod.OwnerReferences[0].Name, clusterId, "$", -1), pod.OwnerReferences[0].Kind)
 		}
 
 		pbClusterNode := models.ClusterNodeToPb(clusterNode)
@@ -433,10 +425,11 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 
 	pbClusterNodes, err := p.getKubePodsAsClusterNodes(runtimeId, namespace, job.ClusterId, job.Owner)
 	if err != nil {
+		logger.Error("Get kubernetes pods failed, %+v", err)
 		return err
 	}
 
-	ctx := context.Background()
+	ctx := clientutil.GetSystemUserContext()
 	clusterClient, err := clusterclient.NewClusterManagerClient(ctx)
 	if err != nil {
 		return err
@@ -448,6 +441,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	}
 	describeNodesResponse, err := clusterClient.DescribeClusterNodes(ctx, describeNodesRequest)
 	if err != nil {
+		logger.Error("Get old nodes failed, %+v", err)
 		return err
 	}
 	var nodeIds []string
@@ -455,23 +449,17 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 		nodeIds = append(nodeIds, clusterNode.GetNodeId().GetValue())
 	}
 
-	// delete old nodes
+	// delete old nodes from table
 	deleteNodesRequest := &pb.DeleteTableClusterNodesRequest{
 		NodeId: nodeIds,
 	}
-	_, err = clusterClient.DeleteTableClusterNodes(ctx, deleteNodesRequest)
-	if err != nil {
-		return err
-	}
+	clusterClient.DeleteTableClusterNodes(ctx, deleteNodesRequest)
 
-	// add new nodes
+	// add new nodes into table
 	addNodesRequest := &pb.AddTableClusterNodesRequest{
 		ClusterNodeSet: pbClusterNodes,
 	}
-	_, err = clusterClient.AddTableClusterNodes(ctx, addNodesRequest)
-	if err != nil {
-		return err
-	}
+	clusterClient.AddTableClusterNodes(ctx, addNodesRequest)
 
 	return nil
 }
