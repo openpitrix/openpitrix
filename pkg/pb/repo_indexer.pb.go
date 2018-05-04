@@ -6,10 +6,10 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
-import google_protobuf3 "github.com/golang/protobuf/ptypes/timestamp"
-import _ "google.golang.org/genproto/googleapis/api/annotations"
+import timestamp "github.com/golang/protobuf/ptypes/timestamp"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+import _ "google.golang.org/genproto/googleapis/api/annotations"
 
 import (
 	context "golang.org/x/net/context"
@@ -21,16 +21,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type IndexRepoRequest struct {
-	RepoId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *IndexRepoRequest) Reset()                    { *m = IndexRepoRequest{} }
-func (m *IndexRepoRequest) String() string            { return proto.CompactTextString(m) }
-func (*IndexRepoRequest) ProtoMessage()               {}
-func (*IndexRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (m *IndexRepoRequest) Reset()         { *m = IndexRepoRequest{} }
+func (m *IndexRepoRequest) String() string { return proto.CompactTextString(m) }
+func (*IndexRepoRequest) ProtoMessage()    {}
+func (*IndexRepoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_indexer_8af9a84cf8f297df, []int{0}
+}
+func (m *IndexRepoRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IndexRepoRequest.Unmarshal(m, b)
+}
+func (m *IndexRepoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IndexRepoRequest.Marshal(b, m, deterministic)
+}
+func (dst *IndexRepoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IndexRepoRequest.Merge(dst, src)
+}
+func (m *IndexRepoRequest) XXX_Size() int {
+	return xxx_messageInfo_IndexRepoRequest.Size(m)
+}
+func (m *IndexRepoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IndexRepoRequest.DiscardUnknown(m)
+}
 
-func (m *IndexRepoRequest) GetRepoId() *google_protobuf2.StringValue {
+var xxx_messageInfo_IndexRepoRequest proto.InternalMessageInfo
+
+func (m *IndexRepoRequest) GetRepoId() *wrappers.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
@@ -38,13 +66,35 @@ func (m *IndexRepoRequest) GetRepoId() *google_protobuf2.StringValue {
 }
 
 type IndexRepoResponse struct {
-	RepoEvent *RepoEvent `protobuf:"bytes,1,opt,name=repo_event,json=repoEvent" json:"repo_event,omitempty"`
+	RepoEvent            *RepoEvent `protobuf:"bytes,1,opt,name=repo_event,json=repoEvent" json:"repo_event,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
-func (m *IndexRepoResponse) Reset()                    { *m = IndexRepoResponse{} }
-func (m *IndexRepoResponse) String() string            { return proto.CompactTextString(m) }
-func (*IndexRepoResponse) ProtoMessage()               {}
-func (*IndexRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
+func (m *IndexRepoResponse) Reset()         { *m = IndexRepoResponse{} }
+func (m *IndexRepoResponse) String() string { return proto.CompactTextString(m) }
+func (*IndexRepoResponse) ProtoMessage()    {}
+func (*IndexRepoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_indexer_8af9a84cf8f297df, []int{1}
+}
+func (m *IndexRepoResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IndexRepoResponse.Unmarshal(m, b)
+}
+func (m *IndexRepoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IndexRepoResponse.Marshal(b, m, deterministic)
+}
+func (dst *IndexRepoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IndexRepoResponse.Merge(dst, src)
+}
+func (m *IndexRepoResponse) XXX_Size() int {
+	return xxx_messageInfo_IndexRepoResponse.Size(m)
+}
+func (m *IndexRepoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_IndexRepoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IndexRepoResponse proto.InternalMessageInfo
 
 func (m *IndexRepoResponse) GetRepoEvent() *RepoEvent {
 	if m != nil {
@@ -54,63 +104,85 @@ func (m *IndexRepoResponse) GetRepoEvent() *RepoEvent {
 }
 
 type RepoEvent struct {
-	RepoEventId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_event_id,json=repoEventId" json:"repo_event_id,omitempty"`
-	RepoId      *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Owner       *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
-	Status      *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
-	Result      *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=result" json:"result,omitempty"`
-	CreateTime  *google_protobuf3.Timestamp   `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime  *google_protobuf3.Timestamp   `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	RepoEventId          *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_event_id,json=repoEventId" json:"repo_event_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
+	Result               *wrappers.StringValue `protobuf:"bytes,5,opt,name=result" json:"result,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *RepoEvent) Reset()                    { *m = RepoEvent{} }
-func (m *RepoEvent) String() string            { return proto.CompactTextString(m) }
-func (*RepoEvent) ProtoMessage()               {}
-func (*RepoEvent) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{2} }
+func (m *RepoEvent) Reset()         { *m = RepoEvent{} }
+func (m *RepoEvent) String() string { return proto.CompactTextString(m) }
+func (*RepoEvent) ProtoMessage()    {}
+func (*RepoEvent) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_indexer_8af9a84cf8f297df, []int{2}
+}
+func (m *RepoEvent) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RepoEvent.Unmarshal(m, b)
+}
+func (m *RepoEvent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RepoEvent.Marshal(b, m, deterministic)
+}
+func (dst *RepoEvent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepoEvent.Merge(dst, src)
+}
+func (m *RepoEvent) XXX_Size() int {
+	return xxx_messageInfo_RepoEvent.Size(m)
+}
+func (m *RepoEvent) XXX_DiscardUnknown() {
+	xxx_messageInfo_RepoEvent.DiscardUnknown(m)
+}
 
-func (m *RepoEvent) GetRepoEventId() *google_protobuf2.StringValue {
+var xxx_messageInfo_RepoEvent proto.InternalMessageInfo
+
+func (m *RepoEvent) GetRepoEventId() *wrappers.StringValue {
 	if m != nil {
 		return m.RepoEventId
 	}
 	return nil
 }
 
-func (m *RepoEvent) GetRepoId() *google_protobuf2.StringValue {
+func (m *RepoEvent) GetRepoId() *wrappers.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *RepoEvent) GetOwner() *google_protobuf2.StringValue {
+func (m *RepoEvent) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *RepoEvent) GetStatus() *google_protobuf2.StringValue {
+func (m *RepoEvent) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *RepoEvent) GetResult() *google_protobuf2.StringValue {
+func (m *RepoEvent) GetResult() *wrappers.StringValue {
 	if m != nil {
 		return m.Result
 	}
 	return nil
 }
 
-func (m *RepoEvent) GetCreateTime() *google_protobuf3.Timestamp {
+func (m *RepoEvent) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *RepoEvent) GetStatusTime() *google_protobuf3.Timestamp {
+func (m *RepoEvent) GetStatusTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -118,18 +190,40 @@ func (m *RepoEvent) GetStatusTime() *google_protobuf3.Timestamp {
 }
 
 type DescribeRepoEventsRequest struct {
-	RepoEventId []string `protobuf:"bytes,1,rep,name=repo_event_id,json=repoEventId" json:"repo_event_id,omitempty"`
-	RepoId      []string `protobuf:"bytes,2,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Owner       []string `protobuf:"bytes,3,rep,name=owner" json:"owner,omitempty"`
-	Status      []string `protobuf:"bytes,4,rep,name=status" json:"status,omitempty"`
-	Limit       uint32   `protobuf:"varint,5,opt,name=limit" json:"limit,omitempty"`
-	Offset      uint32   `protobuf:"varint,6,opt,name=offset" json:"offset,omitempty"`
+	RepoEventId          []string `protobuf:"bytes,1,rep,name=repo_event_id,json=repoEventId" json:"repo_event_id,omitempty"`
+	RepoId               []string `protobuf:"bytes,2,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Owner                []string `protobuf:"bytes,3,rep,name=owner" json:"owner,omitempty"`
+	Status               []string `protobuf:"bytes,4,rep,name=status" json:"status,omitempty"`
+	Limit                uint32   `protobuf:"varint,5,opt,name=limit" json:"limit,omitempty"`
+	Offset               uint32   `protobuf:"varint,6,opt,name=offset" json:"offset,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DescribeRepoEventsRequest) Reset()                    { *m = DescribeRepoEventsRequest{} }
-func (m *DescribeRepoEventsRequest) String() string            { return proto.CompactTextString(m) }
-func (*DescribeRepoEventsRequest) ProtoMessage()               {}
-func (*DescribeRepoEventsRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{3} }
+func (m *DescribeRepoEventsRequest) Reset()         { *m = DescribeRepoEventsRequest{} }
+func (m *DescribeRepoEventsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeRepoEventsRequest) ProtoMessage()    {}
+func (*DescribeRepoEventsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_indexer_8af9a84cf8f297df, []int{3}
+}
+func (m *DescribeRepoEventsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeRepoEventsRequest.Unmarshal(m, b)
+}
+func (m *DescribeRepoEventsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeRepoEventsRequest.Marshal(b, m, deterministic)
+}
+func (dst *DescribeRepoEventsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeRepoEventsRequest.Merge(dst, src)
+}
+func (m *DescribeRepoEventsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeRepoEventsRequest.Size(m)
+}
+func (m *DescribeRepoEventsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeRepoEventsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeRepoEventsRequest proto.InternalMessageInfo
 
 func (m *DescribeRepoEventsRequest) GetRepoEventId() []string {
 	if m != nil {
@@ -174,14 +268,36 @@ func (m *DescribeRepoEventsRequest) GetOffset() uint32 {
 }
 
 type DescribeRepoEventsResponse struct {
-	TotalCount   uint32       `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	RepoEventSet []*RepoEvent `protobuf:"bytes,2,rep,name=repo_event_set,json=repoEventSet" json:"repo_event_set,omitempty"`
+	TotalCount           uint32       `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	RepoEventSet         []*RepoEvent `protobuf:"bytes,2,rep,name=repo_event_set,json=repoEventSet" json:"repo_event_set,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
-func (m *DescribeRepoEventsResponse) Reset()                    { *m = DescribeRepoEventsResponse{} }
-func (m *DescribeRepoEventsResponse) String() string            { return proto.CompactTextString(m) }
-func (*DescribeRepoEventsResponse) ProtoMessage()               {}
-func (*DescribeRepoEventsResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{4} }
+func (m *DescribeRepoEventsResponse) Reset()         { *m = DescribeRepoEventsResponse{} }
+func (m *DescribeRepoEventsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeRepoEventsResponse) ProtoMessage()    {}
+func (*DescribeRepoEventsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_indexer_8af9a84cf8f297df, []int{4}
+}
+func (m *DescribeRepoEventsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeRepoEventsResponse.Unmarshal(m, b)
+}
+func (m *DescribeRepoEventsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeRepoEventsResponse.Marshal(b, m, deterministic)
+}
+func (dst *DescribeRepoEventsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeRepoEventsResponse.Merge(dst, src)
+}
+func (m *DescribeRepoEventsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeRepoEventsResponse.Size(m)
+}
+func (m *DescribeRepoEventsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeRepoEventsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeRepoEventsResponse proto.InternalMessageInfo
 
 func (m *DescribeRepoEventsResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -310,9 +426,9 @@ var _RepoIndexer_serviceDesc = grpc.ServiceDesc{
 	Metadata: "repo_indexer.proto",
 }
 
-func init() { proto.RegisterFile("repo_indexer.proto", fileDescriptor5) }
+func init() { proto.RegisterFile("repo_indexer.proto", fileDescriptor_repo_indexer_8af9a84cf8f297df) }
 
-var fileDescriptor5 = []byte{
+var fileDescriptor_repo_indexer_8af9a84cf8f297df = []byte{
 	// 573 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0xcf, 0x6e, 0xd3, 0x4e,
 	0x10, 0x96, 0xd3, 0x36, 0x55, 0x26, 0xbf, 0xfc, 0xa0, 0xab, 0x50, 0x8c, 0x15, 0x68, 0x64, 0x09,

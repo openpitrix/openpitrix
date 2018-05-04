@@ -85,7 +85,7 @@ func (p *FrontgateController) getClient() (
 	}
 
 	i := rand.Intn(len(nodes))
-	addr := fmt.Sprintf("%s:%d", nodes[i].FrontgateIp, nodes[i].FrontgatePort)
+	addr := fmt.Sprintf("%s:%d", nodes[i].NodeIp, nodes[i].NodePort)
 	if x, ok := p.clientMap[addr]; ok {
 		return x, nil
 	}

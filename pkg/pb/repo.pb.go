@@ -6,10 +6,10 @@ package pb
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf2 "github.com/golang/protobuf/ptypes/wrappers"
-import google_protobuf3 "github.com/golang/protobuf/ptypes/timestamp"
-import _ "google.golang.org/genproto/googleapis/api/annotations"
+import timestamp "github.com/golang/protobuf/ptypes/timestamp"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+import _ "google.golang.org/genproto/googleapis/api/annotations"
 
 import (
 	context "golang.org/x/net/context"
@@ -21,67 +21,95 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CreateRepoRequest struct {
-	X           *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
-	Name        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type        *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential  *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility  *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
-	Providers   []string                      `protobuf:"bytes,8,rep,name=providers" json:"providers,omitempty"`
-	Labels      []*RepoLabel                  `protobuf:"bytes,9,rep,name=labels" json:"labels,omitempty"`
-	Selectors   []*RepoSelector               `protobuf:"bytes,10,rep,name=selectors" json:"selectors,omitempty"`
+	X                    *wrappers.StringValue `protobuf:"bytes,1,opt,name=_" json:"_,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
+	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
+	Providers            []string              `protobuf:"bytes,8,rep,name=providers" json:"providers,omitempty"`
+	Labels               []*RepoLabel          `protobuf:"bytes,9,rep,name=labels" json:"labels,omitempty"`
+	Selectors            []*RepoSelector       `protobuf:"bytes,10,rep,name=selectors" json:"selectors,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateRepoRequest) Reset()                    { *m = CreateRepoRequest{} }
-func (m *CreateRepoRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateRepoRequest) ProtoMessage()               {}
-func (*CreateRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (m *CreateRepoRequest) Reset()         { *m = CreateRepoRequest{} }
+func (m *CreateRepoRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateRepoRequest) ProtoMessage()    {}
+func (*CreateRepoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{0}
+}
+func (m *CreateRepoRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateRepoRequest.Unmarshal(m, b)
+}
+func (m *CreateRepoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateRepoRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateRepoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateRepoRequest.Merge(dst, src)
+}
+func (m *CreateRepoRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateRepoRequest.Size(m)
+}
+func (m *CreateRepoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateRepoRequest.DiscardUnknown(m)
+}
 
-func (m *CreateRepoRequest) GetX() *google_protobuf2.StringValue {
+var xxx_messageInfo_CreateRepoRequest proto.InternalMessageInfo
+
+func (m *CreateRepoRequest) GetX() *wrappers.StringValue {
 	if m != nil {
 		return m.X
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetName() *google_protobuf2.StringValue {
+func (m *CreateRepoRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetDescription() *google_protobuf2.StringValue {
+func (m *CreateRepoRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetType() *google_protobuf2.StringValue {
+func (m *CreateRepoRequest) GetType() *wrappers.StringValue {
 	if m != nil {
 		return m.Type
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetUrl() *google_protobuf2.StringValue {
+func (m *CreateRepoRequest) GetUrl() *wrappers.StringValue {
 	if m != nil {
 		return m.Url
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetCredential() *google_protobuf2.StringValue {
+func (m *CreateRepoRequest) GetCredential() *wrappers.StringValue {
 	if m != nil {
 		return m.Credential
 	}
 	return nil
 }
 
-func (m *CreateRepoRequest) GetVisibility() *google_protobuf2.StringValue {
+func (m *CreateRepoRequest) GetVisibility() *wrappers.StringValue {
 	if m != nil {
 		return m.Visibility
 	}
@@ -110,13 +138,35 @@ func (m *CreateRepoRequest) GetSelectors() []*RepoSelector {
 }
 
 type CreateRepoResponse struct {
-	Repo *Repo `protobuf:"bytes,1,opt,name=repo" json:"repo,omitempty"`
+	Repo                 *Repo    `protobuf:"bytes,1,opt,name=repo" json:"repo,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CreateRepoResponse) Reset()                    { *m = CreateRepoResponse{} }
-func (m *CreateRepoResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateRepoResponse) ProtoMessage()               {}
-func (*CreateRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{1} }
+func (m *CreateRepoResponse) Reset()         { *m = CreateRepoResponse{} }
+func (m *CreateRepoResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateRepoResponse) ProtoMessage()    {}
+func (*CreateRepoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{1}
+}
+func (m *CreateRepoResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateRepoResponse.Unmarshal(m, b)
+}
+func (m *CreateRepoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateRepoResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateRepoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateRepoResponse.Merge(dst, src)
+}
+func (m *CreateRepoResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateRepoResponse.Size(m)
+}
+func (m *CreateRepoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateRepoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateRepoResponse proto.InternalMessageInfo
 
 func (m *CreateRepoResponse) GetRepo() *Repo {
 	if m != nil {
@@ -126,66 +176,88 @@ func (m *CreateRepoResponse) GetRepo() *Repo {
 }
 
 type ModifyRepoRequest struct {
-	RepoId      *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type        *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential  *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility  *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
-	Providers   []string                      `protobuf:"bytes,8,rep,name=providers" json:"providers,omitempty"`
-	Labels      []*RepoLabel                  `protobuf:"bytes,9,rep,name=labels" json:"labels,omitempty"`
-	Selectors   []*RepoSelector               `protobuf:"bytes,10,rep,name=selectors" json:"selectors,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
+	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
+	Providers            []string              `protobuf:"bytes,8,rep,name=providers" json:"providers,omitempty"`
+	Labels               []*RepoLabel          `protobuf:"bytes,9,rep,name=labels" json:"labels,omitempty"`
+	Selectors            []*RepoSelector       `protobuf:"bytes,10,rep,name=selectors" json:"selectors,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ModifyRepoRequest) Reset()                    { *m = ModifyRepoRequest{} }
-func (m *ModifyRepoRequest) String() string            { return proto.CompactTextString(m) }
-func (*ModifyRepoRequest) ProtoMessage()               {}
-func (*ModifyRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{2} }
+func (m *ModifyRepoRequest) Reset()         { *m = ModifyRepoRequest{} }
+func (m *ModifyRepoRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyRepoRequest) ProtoMessage()    {}
+func (*ModifyRepoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{2}
+}
+func (m *ModifyRepoRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyRepoRequest.Unmarshal(m, b)
+}
+func (m *ModifyRepoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyRepoRequest.Marshal(b, m, deterministic)
+}
+func (dst *ModifyRepoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyRepoRequest.Merge(dst, src)
+}
+func (m *ModifyRepoRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyRepoRequest.Size(m)
+}
+func (m *ModifyRepoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyRepoRequest.DiscardUnknown(m)
+}
 
-func (m *ModifyRepoRequest) GetRepoId() *google_protobuf2.StringValue {
+var xxx_messageInfo_ModifyRepoRequest proto.InternalMessageInfo
+
+func (m *ModifyRepoRequest) GetRepoId() *wrappers.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetName() *google_protobuf2.StringValue {
+func (m *ModifyRepoRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetDescription() *google_protobuf2.StringValue {
+func (m *ModifyRepoRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetType() *google_protobuf2.StringValue {
+func (m *ModifyRepoRequest) GetType() *wrappers.StringValue {
 	if m != nil {
 		return m.Type
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetUrl() *google_protobuf2.StringValue {
+func (m *ModifyRepoRequest) GetUrl() *wrappers.StringValue {
 	if m != nil {
 		return m.Url
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetCredential() *google_protobuf2.StringValue {
+func (m *ModifyRepoRequest) GetCredential() *wrappers.StringValue {
 	if m != nil {
 		return m.Credential
 	}
 	return nil
 }
 
-func (m *ModifyRepoRequest) GetVisibility() *google_protobuf2.StringValue {
+func (m *ModifyRepoRequest) GetVisibility() *wrappers.StringValue {
 	if m != nil {
 		return m.Visibility
 	}
@@ -214,13 +286,35 @@ func (m *ModifyRepoRequest) GetSelectors() []*RepoSelector {
 }
 
 type ModifyRepoResponse struct {
-	Repo *Repo `protobuf:"bytes,1,opt,name=repo" json:"repo,omitempty"`
+	Repo                 *Repo    `protobuf:"bytes,1,opt,name=repo" json:"repo,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ModifyRepoResponse) Reset()                    { *m = ModifyRepoResponse{} }
-func (m *ModifyRepoResponse) String() string            { return proto.CompactTextString(m) }
-func (*ModifyRepoResponse) ProtoMessage()               {}
-func (*ModifyRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{3} }
+func (m *ModifyRepoResponse) Reset()         { *m = ModifyRepoResponse{} }
+func (m *ModifyRepoResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyRepoResponse) ProtoMessage()    {}
+func (*ModifyRepoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{3}
+}
+func (m *ModifyRepoResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyRepoResponse.Unmarshal(m, b)
+}
+func (m *ModifyRepoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyRepoResponse.Marshal(b, m, deterministic)
+}
+func (dst *ModifyRepoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyRepoResponse.Merge(dst, src)
+}
+func (m *ModifyRepoResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyRepoResponse.Size(m)
+}
+func (m *ModifyRepoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyRepoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyRepoResponse proto.InternalMessageInfo
 
 func (m *ModifyRepoResponse) GetRepo() *Repo {
 	if m != nil {
@@ -230,15 +324,37 @@ func (m *ModifyRepoResponse) GetRepo() *Repo {
 }
 
 type DeleteRepoRequest struct {
-	RepoId *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteRepoRequest) Reset()                    { *m = DeleteRepoRequest{} }
-func (m *DeleteRepoRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteRepoRequest) ProtoMessage()               {}
-func (*DeleteRepoRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{4} }
+func (m *DeleteRepoRequest) Reset()         { *m = DeleteRepoRequest{} }
+func (m *DeleteRepoRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteRepoRequest) ProtoMessage()    {}
+func (*DeleteRepoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{4}
+}
+func (m *DeleteRepoRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteRepoRequest.Unmarshal(m, b)
+}
+func (m *DeleteRepoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteRepoRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteRepoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteRepoRequest.Merge(dst, src)
+}
+func (m *DeleteRepoRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteRepoRequest.Size(m)
+}
+func (m *DeleteRepoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteRepoRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteRepoRequest) GetRepoId() *google_protobuf2.StringValue {
+var xxx_messageInfo_DeleteRepoRequest proto.InternalMessageInfo
+
+func (m *DeleteRepoRequest) GetRepoId() *wrappers.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
@@ -246,13 +362,35 @@ func (m *DeleteRepoRequest) GetRepoId() *google_protobuf2.StringValue {
 }
 
 type DeleteRepoResponse struct {
-	Repo *Repo `protobuf:"bytes,1,opt,name=repo" json:"repo,omitempty"`
+	Repo                 *Repo    `protobuf:"bytes,1,opt,name=repo" json:"repo,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DeleteRepoResponse) Reset()                    { *m = DeleteRepoResponse{} }
-func (m *DeleteRepoResponse) String() string            { return proto.CompactTextString(m) }
-func (*DeleteRepoResponse) ProtoMessage()               {}
-func (*DeleteRepoResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{5} }
+func (m *DeleteRepoResponse) Reset()         { *m = DeleteRepoResponse{} }
+func (m *DeleteRepoResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteRepoResponse) ProtoMessage()    {}
+func (*DeleteRepoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{5}
+}
+func (m *DeleteRepoResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteRepoResponse.Unmarshal(m, b)
+}
+func (m *DeleteRepoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteRepoResponse.Marshal(b, m, deterministic)
+}
+func (dst *DeleteRepoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteRepoResponse.Merge(dst, src)
+}
+func (m *DeleteRepoResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteRepoResponse.Size(m)
+}
+func (m *DeleteRepoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteRepoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteRepoResponse proto.InternalMessageInfo
 
 func (m *DeleteRepoResponse) GetRepo() *Repo {
 	if m != nil {
@@ -262,23 +400,45 @@ func (m *DeleteRepoResponse) GetRepo() *Repo {
 }
 
 type RepoLabel struct {
-	LabelKey   *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
-	LabelValue *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+	LabelKey             *wrappers.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
+	LabelValue           *wrappers.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *RepoLabel) Reset()                    { *m = RepoLabel{} }
-func (m *RepoLabel) String() string            { return proto.CompactTextString(m) }
-func (*RepoLabel) ProtoMessage()               {}
-func (*RepoLabel) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{6} }
+func (m *RepoLabel) Reset()         { *m = RepoLabel{} }
+func (m *RepoLabel) String() string { return proto.CompactTextString(m) }
+func (*RepoLabel) ProtoMessage()    {}
+func (*RepoLabel) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{6}
+}
+func (m *RepoLabel) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RepoLabel.Unmarshal(m, b)
+}
+func (m *RepoLabel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RepoLabel.Marshal(b, m, deterministic)
+}
+func (dst *RepoLabel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepoLabel.Merge(dst, src)
+}
+func (m *RepoLabel) XXX_Size() int {
+	return xxx_messageInfo_RepoLabel.Size(m)
+}
+func (m *RepoLabel) XXX_DiscardUnknown() {
+	xxx_messageInfo_RepoLabel.DiscardUnknown(m)
+}
 
-func (m *RepoLabel) GetLabelKey() *google_protobuf2.StringValue {
+var xxx_messageInfo_RepoLabel proto.InternalMessageInfo
+
+func (m *RepoLabel) GetLabelKey() *wrappers.StringValue {
 	if m != nil {
 		return m.LabelKey
 	}
 	return nil
 }
 
-func (m *RepoLabel) GetLabelValue() *google_protobuf2.StringValue {
+func (m *RepoLabel) GetLabelValue() *wrappers.StringValue {
 	if m != nil {
 		return m.LabelValue
 	}
@@ -286,23 +446,45 @@ func (m *RepoLabel) GetLabelValue() *google_protobuf2.StringValue {
 }
 
 type RepoSelector struct {
-	SelectorKey   *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
-	SelectorValue *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+	SelectorKey          *wrappers.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
+	SelectorValue        *wrappers.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *RepoSelector) Reset()                    { *m = RepoSelector{} }
-func (m *RepoSelector) String() string            { return proto.CompactTextString(m) }
-func (*RepoSelector) ProtoMessage()               {}
-func (*RepoSelector) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{7} }
+func (m *RepoSelector) Reset()         { *m = RepoSelector{} }
+func (m *RepoSelector) String() string { return proto.CompactTextString(m) }
+func (*RepoSelector) ProtoMessage()    {}
+func (*RepoSelector) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{7}
+}
+func (m *RepoSelector) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RepoSelector.Unmarshal(m, b)
+}
+func (m *RepoSelector) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RepoSelector.Marshal(b, m, deterministic)
+}
+func (dst *RepoSelector) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepoSelector.Merge(dst, src)
+}
+func (m *RepoSelector) XXX_Size() int {
+	return xxx_messageInfo_RepoSelector.Size(m)
+}
+func (m *RepoSelector) XXX_DiscardUnknown() {
+	xxx_messageInfo_RepoSelector.DiscardUnknown(m)
+}
 
-func (m *RepoSelector) GetSelectorKey() *google_protobuf2.StringValue {
+var xxx_messageInfo_RepoSelector proto.InternalMessageInfo
+
+func (m *RepoSelector) GetSelectorKey() *wrappers.StringValue {
 	if m != nil {
 		return m.SelectorKey
 	}
 	return nil
 }
 
-func (m *RepoSelector) GetSelectorValue() *google_protobuf2.StringValue {
+func (m *RepoSelector) GetSelectorValue() *wrappers.StringValue {
 	if m != nil {
 		return m.SelectorValue
 	}
@@ -310,77 +492,99 @@ func (m *RepoSelector) GetSelectorValue() *google_protobuf2.StringValue {
 }
 
 type Repo struct {
-	RepoId      *google_protobuf2.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name        *google_protobuf2.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf2.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type        *google_protobuf2.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url         *google_protobuf2.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential  *google_protobuf2.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility  *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
-	Owner       *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=owner" json:"owner,omitempty"`
-	Providers   []string                      `protobuf:"bytes,9,rep,name=providers" json:"providers,omitempty"`
-	Labels      []*RepoLabel                  `protobuf:"bytes,10,rep,name=labels" json:"labels,omitempty"`
-	Selectors   []*RepoSelector               `protobuf:"bytes,11,rep,name=selectors" json:"selectors,omitempty"`
-	Status      *google_protobuf2.StringValue `protobuf:"bytes,12,opt,name=status" json:"status,omitempty"`
-	CreateTime  *google_protobuf3.Timestamp   `protobuf:"bytes,13,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime  *google_protobuf3.Timestamp   `protobuf:"bytes,14,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
+	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,8,opt,name=owner" json:"owner,omitempty"`
+	Providers            []string              `protobuf:"bytes,9,rep,name=providers" json:"providers,omitempty"`
+	Labels               []*RepoLabel          `protobuf:"bytes,10,rep,name=labels" json:"labels,omitempty"`
+	Selectors            []*RepoSelector       `protobuf:"bytes,11,rep,name=selectors" json:"selectors,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,12,opt,name=status" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,13,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,14,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *Repo) Reset()                    { *m = Repo{} }
-func (m *Repo) String() string            { return proto.CompactTextString(m) }
-func (*Repo) ProtoMessage()               {}
-func (*Repo) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{8} }
+func (m *Repo) Reset()         { *m = Repo{} }
+func (m *Repo) String() string { return proto.CompactTextString(m) }
+func (*Repo) ProtoMessage()    {}
+func (*Repo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{8}
+}
+func (m *Repo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Repo.Unmarshal(m, b)
+}
+func (m *Repo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Repo.Marshal(b, m, deterministic)
+}
+func (dst *Repo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Repo.Merge(dst, src)
+}
+func (m *Repo) XXX_Size() int {
+	return xxx_messageInfo_Repo.Size(m)
+}
+func (m *Repo) XXX_DiscardUnknown() {
+	xxx_messageInfo_Repo.DiscardUnknown(m)
+}
 
-func (m *Repo) GetRepoId() *google_protobuf2.StringValue {
+var xxx_messageInfo_Repo proto.InternalMessageInfo
+
+func (m *Repo) GetRepoId() *wrappers.StringValue {
 	if m != nil {
 		return m.RepoId
 	}
 	return nil
 }
 
-func (m *Repo) GetName() *google_protobuf2.StringValue {
+func (m *Repo) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *Repo) GetDescription() *google_protobuf2.StringValue {
+func (m *Repo) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *Repo) GetType() *google_protobuf2.StringValue {
+func (m *Repo) GetType() *wrappers.StringValue {
 	if m != nil {
 		return m.Type
 	}
 	return nil
 }
 
-func (m *Repo) GetUrl() *google_protobuf2.StringValue {
+func (m *Repo) GetUrl() *wrappers.StringValue {
 	if m != nil {
 		return m.Url
 	}
 	return nil
 }
 
-func (m *Repo) GetCredential() *google_protobuf2.StringValue {
+func (m *Repo) GetCredential() *wrappers.StringValue {
 	if m != nil {
 		return m.Credential
 	}
 	return nil
 }
 
-func (m *Repo) GetVisibility() *google_protobuf2.StringValue {
+func (m *Repo) GetVisibility() *wrappers.StringValue {
 	if m != nil {
 		return m.Visibility
 	}
 	return nil
 }
 
-func (m *Repo) GetOwner() *google_protobuf2.StringValue {
+func (m *Repo) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
@@ -408,21 +612,21 @@ func (m *Repo) GetSelectors() []*RepoSelector {
 	return nil
 }
 
-func (m *Repo) GetStatus() *google_protobuf2.StringValue {
+func (m *Repo) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *Repo) GetCreateTime() *google_protobuf3.Timestamp {
+func (m *Repo) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *Repo) GetStatusTime() *google_protobuf3.Timestamp {
+func (m *Repo) GetStatusTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
@@ -430,22 +634,44 @@ func (m *Repo) GetStatusTime() *google_protobuf3.Timestamp {
 }
 
 type DescribeReposRequest struct {
-	RepoId     []string                      `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name       []string                      `protobuf:"bytes,2,rep,name=name" json:"name,omitempty"`
-	Type       []string                      `protobuf:"bytes,3,rep,name=type" json:"type,omitempty"`
-	Visibility []string                      `protobuf:"bytes,4,rep,name=visibility" json:"visibility,omitempty"`
-	Status     []string                      `protobuf:"bytes,5,rep,name=status" json:"status,omitempty"`
-	Provider   []string                      `protobuf:"bytes,6,rep,name=provider" json:"provider,omitempty"`
-	Label      *google_protobuf2.StringValue `protobuf:"bytes,7,opt,name=label" json:"label,omitempty"`
-	Selector   *google_protobuf2.StringValue `protobuf:"bytes,8,opt,name=selector" json:"selector,omitempty"`
-	Limit      uint32                        `protobuf:"varint,9,opt,name=limit" json:"limit,omitempty"`
-	Offset     uint32                        `protobuf:"varint,10,opt,name=offset" json:"offset,omitempty"`
+	RepoId               []string              `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Name                 []string              `protobuf:"bytes,2,rep,name=name" json:"name,omitempty"`
+	Type                 []string              `protobuf:"bytes,3,rep,name=type" json:"type,omitempty"`
+	Visibility           []string              `protobuf:"bytes,4,rep,name=visibility" json:"visibility,omitempty"`
+	Status               []string              `protobuf:"bytes,5,rep,name=status" json:"status,omitempty"`
+	Provider             []string              `protobuf:"bytes,6,rep,name=provider" json:"provider,omitempty"`
+	Label                *wrappers.StringValue `protobuf:"bytes,7,opt,name=label" json:"label,omitempty"`
+	Selector             *wrappers.StringValue `protobuf:"bytes,8,opt,name=selector" json:"selector,omitempty"`
+	Limit                uint32                `protobuf:"varint,9,opt,name=limit" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,10,opt,name=offset" json:"offset,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DescribeReposRequest) Reset()                    { *m = DescribeReposRequest{} }
-func (m *DescribeReposRequest) String() string            { return proto.CompactTextString(m) }
-func (*DescribeReposRequest) ProtoMessage()               {}
-func (*DescribeReposRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{9} }
+func (m *DescribeReposRequest) Reset()         { *m = DescribeReposRequest{} }
+func (m *DescribeReposRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeReposRequest) ProtoMessage()    {}
+func (*DescribeReposRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{9}
+}
+func (m *DescribeReposRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeReposRequest.Unmarshal(m, b)
+}
+func (m *DescribeReposRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeReposRequest.Marshal(b, m, deterministic)
+}
+func (dst *DescribeReposRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeReposRequest.Merge(dst, src)
+}
+func (m *DescribeReposRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeReposRequest.Size(m)
+}
+func (m *DescribeReposRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeReposRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeReposRequest proto.InternalMessageInfo
 
 func (m *DescribeReposRequest) GetRepoId() []string {
 	if m != nil {
@@ -489,14 +715,14 @@ func (m *DescribeReposRequest) GetProvider() []string {
 	return nil
 }
 
-func (m *DescribeReposRequest) GetLabel() *google_protobuf2.StringValue {
+func (m *DescribeReposRequest) GetLabel() *wrappers.StringValue {
 	if m != nil {
 		return m.Label
 	}
 	return nil
 }
 
-func (m *DescribeReposRequest) GetSelector() *google_protobuf2.StringValue {
+func (m *DescribeReposRequest) GetSelector() *wrappers.StringValue {
 	if m != nil {
 		return m.Selector
 	}
@@ -518,14 +744,36 @@ func (m *DescribeReposRequest) GetOffset() uint32 {
 }
 
 type DescribeReposResponse struct {
-	TotalCount uint32  `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	RepoSet    []*Repo `protobuf:"bytes,2,rep,name=repo_set,json=repoSet" json:"repo_set,omitempty"`
+	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	RepoSet              []*Repo  `protobuf:"bytes,2,rep,name=repo_set,json=repoSet" json:"repo_set,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *DescribeReposResponse) Reset()                    { *m = DescribeReposResponse{} }
-func (m *DescribeReposResponse) String() string            { return proto.CompactTextString(m) }
-func (*DescribeReposResponse) ProtoMessage()               {}
-func (*DescribeReposResponse) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{10} }
+func (m *DescribeReposResponse) Reset()         { *m = DescribeReposResponse{} }
+func (m *DescribeReposResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeReposResponse) ProtoMessage()    {}
+func (*DescribeReposResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8a3c865be19a611b, []int{10}
+}
+func (m *DescribeReposResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeReposResponse.Unmarshal(m, b)
+}
+func (m *DescribeReposResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeReposResponse.Marshal(b, m, deterministic)
+}
+func (dst *DescribeReposResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeReposResponse.Merge(dst, src)
+}
+func (m *DescribeReposResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeReposResponse.Size(m)
+}
+func (m *DescribeReposResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeReposResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeReposResponse proto.InternalMessageInfo
 
 func (m *DescribeReposResponse) GetTotalCount() uint32 {
 	if m != nil {
@@ -726,9 +974,9 @@ var _RepoManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "repo.proto",
 }
 
-func init() { proto.RegisterFile("repo.proto", fileDescriptor4) }
+func init() { proto.RegisterFile("repo.proto", fileDescriptor_repo_8a3c865be19a611b) }
 
-var fileDescriptor4 = []byte{
+var fileDescriptor_repo_8a3c865be19a611b = []byte{
 	// 896 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x56, 0xcb, 0x92, 0x1b, 0x35,
 	0x14, 0xc5, 0xcf, 0xb8, 0x6f, 0x8f, 0xa7, 0x18, 0x55, 0x02, 0x2a, 0xd7, 0x30, 0x31, 0xae, 0x2c,

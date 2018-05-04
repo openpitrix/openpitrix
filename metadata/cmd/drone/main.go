@@ -187,8 +187,8 @@ EXAMPLE:
 				switch s := c.String("endpoint-type"); s {
 				case "pilot":
 					_, err = client.PingPilot(context.Background(), &pbtypes.FrontgateEndpoint{
-						FrontgateIp:   c.String("frontgate-host"),
-						FrontgatePort: int32(c.Int("frontgate-port")),
+						NodeIp:   c.String("frontgate-host"),
+						NodePort: int32(c.Int("frontgate-port")),
 					})
 					if err != nil {
 						logger.Critical("%+v", err)
@@ -200,8 +200,8 @@ EXAMPLE:
 
 				case "frontgate":
 					_, err = client.PingFrontgate(context.Background(), &pbtypes.FrontgateEndpoint{
-						FrontgateIp:   c.String("frontgate-host"),
-						FrontgatePort: int32(c.Int("frontgate-port")),
+						NodeIp:   c.String("frontgate-host"),
+						NodePort: int32(c.Int("frontgate-port")),
 					})
 					if err != nil {
 						logger.Critical("%+v", err)
