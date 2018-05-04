@@ -18,6 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -711,6 +712,47 @@ func (f *Frame) getUserDataPath() string {
 	return MetadataConfPath + OpenPitrixConfFile
 }
 
+func (f *Frame) getConfig(nodeId string) string {
+	clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+
+	droneEndpoint := &pbtypes.DroneEndpoint{
+		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+		DroneIp:     clusterNode.PrivateIp,
+		DronePort:   constants.DroneServicePort,
+	}
+	droneConfig := &pbtypes.DroneConfig{
+		Id:             nodeId,
+		Host:           clusterNode.PrivateIp,
+		ListenPort:     constants.DroneServicePort,
+		CmdInfoLogPath: ConfdCmdLogPath,
+		ConfdSelfHost:  clusterNode.PrivateIp,
+		LogLevel:       MetadataLogLevel,
+	}
+	config := &pbtypes.SetDroneConfigRequest{
+		Endpoint: droneEndpoint,
+		Config:   droneConfig,
+	}
+	return jsonutil.ToString(config)
+}
+
+func (f *Frame) setDroneConfigLayer(nodeIds []string) *models.TaskLayer {
+	var tasks []*models.Task
+	for _, nodeId := range nodeIds {
+		task := &models.Task{
+			JobId:      f.Job.JobId,
+			Owner:      f.Job.Owner,
+			TaskAction: ActionSetDroneConfig,
+			Target:     constants.TargetPilot,
+			NodeId:     nodeId,
+			Directive:  f.getConfig(nodeId),
+		}
+		tasks = append(tasks, task)
+	}
+	return &models.TaskLayer{
+		Tasks: tasks,
+	}
+}
+
 func (f *Frame) runInstancesLayer(nodeIds []string) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	apiServer := f.Runtime.RuntimeUrl
@@ -1079,6 +1121,7 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 		Append(f.waitFrontgateLayer()).               // wait frontgate cluster to be active
 		Append(f.sshKeygenLayer()).                   // generate ssh key
 		Append(f.registerMetadataLayer()).            // register cluster metadata
+		Append(f.setDroneConfigLayer(nodeIds)).       // set drone config
 		Append(f.startConfdServiceLayer(nodeIds)).    // start confd service
 		Append(f.initAndStartServiceLayer(nodeIds)).  // register init and start cmd to exec
 		Append(f.deregisterCmdLayer(nodeIds))         // deregister cmd
