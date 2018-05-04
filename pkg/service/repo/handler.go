@@ -245,3 +245,22 @@ func (p *Server) DeleteRepo(ctx context.Context, req *pb.DeleteRepoRequest) (*pb
 		Repo: pbRepo,
 	}, nil
 }
+
+func (p *Server) ValidateRepo(ctx context.Context, req *pb.ValidateRepoRequest) (*pb.ValidateRepoResponse, error) {
+	// TODO: check resource permission
+	repoType := req.GetType().GetValue()
+	url := req.GetUrl().GetValue()
+	credential := req.GetCredential().GetValue()
+	visibility := "public"
+
+	err := validate(repoType, url, credential, visibility)
+	if err != nil {
+		return &pb.ValidateRepoResponse{
+			Ok: pbutil.ToProtoBool(false),
+		}, nil
+	}
+
+	return &pb.ValidateRepoResponse{
+		Ok: pbutil.ToProtoBool(true),
+	}, nil
+}

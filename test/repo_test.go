@@ -36,6 +36,21 @@ var (
 func TestRepo(t *testing.T) {
 	client := GetClient(clientConfig)
 
+	// test validate repo
+	repoType := "https"
+	credential := "{}"
+	validateParams := repo_manager.NewValidateRepoParams()
+	validateParams.SetType(&repoType)
+	validateParams.SetURL(&REPO_URL)
+	validateParams.SetCredential(&credential)
+	validateResp, err := client.RepoManager.ValidateRepo(validateParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if validateResp.Payload.Ok != true {
+		t.Fatal("validate repo failed")
+	}
+
 	// delete old repo
 	testRepoName := "e2e_test_repo"
 	describeParams := repo_manager.NewDescribeReposParams()

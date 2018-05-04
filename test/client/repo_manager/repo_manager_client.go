@@ -136,6 +136,34 @@ func (a *Client) ModifyRepo(params *ModifyRepoParams) (*ModifyRepoOK, error) {
 
 }
 
+/*
+ValidateRepo validates repo
+*/
+func (a *Client) ValidateRepo(params *ValidateRepoParams) (*ValidateRepoOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewValidateRepoParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ValidateRepo",
+		Method:             "GET",
+		PathPattern:        "/v1/repos/validate",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ValidateRepoReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ValidateRepoOK), nil
+
+}
+
 // SetTransport changes the transport on the client
 func (a *Client) SetTransport(transport runtime.ClientTransport) {
 	a.transport = transport

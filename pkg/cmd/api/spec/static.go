@@ -1373,6 +1373,43 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/repos/validate": {
+      "get": {
+        "summary": "validate repo",
+        "operationId": "ValidateRepo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixValidateRepoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "url",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "credential",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RepoManager"
+        ]
+      }
+    },
     "/v1/repo_events": {
       "get": {
         "summary": "describe repo events",
@@ -3286,6 +3323,15 @@ var Files = map[string]string{
         },
         "selector_value": {
           "type": "string"
+        }
+      }
+    },
+    "openpitrixValidateRepoResponse": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
