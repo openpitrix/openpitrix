@@ -10,7 +10,7 @@ import (
 
 	"github.com/fatih/structs"
 	"github.com/gocraft/dbr"
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
 

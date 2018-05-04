@@ -8,7 +8,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/manager"
