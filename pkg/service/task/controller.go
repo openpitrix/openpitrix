@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -110,9 +111,16 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			return err
 		}
 
+		ctx := client.GetSystemUserContext()
+		pilotClient, err := pilotclient.NewClient(ctx)
+		if err != nil {
+			logger.Error("Connect to pilot service failed: %+v", err)
+			return err
+		}
+
 		if task.Target == constants.PilotManagerHost {
 			pbTask := models.TaskToPb(task)
-			err := pilotclient.HandleSubtask(
+			_, err := pilotClient.HandleSubtask(ctx,
 				&pbtypes.SubTaskMessage{
 					TaskId:    pbTask.TaskId.GetValue(),
 					Action:    pbTask.TaskAction.GetValue(),
@@ -122,8 +130,8 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 				logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
 				return err
 			}
-			err = pilotclient.WaitSubtask(
-				task.TaskId, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+			err = pilotClient.WaitSubtask(
+				ctx, task.TaskId, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 			if err != nil {
 				logger.Error("Failed to wait task [%s]: %+v", task.TaskId, err)
 				return err

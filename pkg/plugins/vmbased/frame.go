@@ -5,12 +5,12 @@
 package vmbased
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -569,8 +569,8 @@ func (f *Frame) formatAndMountVolumeLayer(nodeIds []string) *models.TaskLayer {
 
 func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
-	ctx := context.Background()
-	client, err := clusterclient.NewClusterManagerClient(ctx)
+	ctx := client.GetSystemUserContext()
+	clusterClient, err := clusterclient.NewClient(ctx)
 	if err != nil {
 		logger.Error("New ssh key gen task layer failed: %+v", err)
 		return nil
@@ -587,7 +587,7 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 					clusterCommon.Passphraseless, nodeId)
 				return nil
 			}
-			_, err = client.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
+			_, err = clusterClient.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
 					NodeId: pbutil.ToProtoString(nodeId),
 					PubKey: pbutil.ToProtoString(public),

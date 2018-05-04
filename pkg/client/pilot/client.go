@@ -17,47 +17,27 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
-func NewPilotManagerClient(ctx context.Context) (pbpilot.PilotServiceClient, error) {
+type Client struct {
+	pbpilot.PilotServiceClient
+}
+
+func NewClient(ctx context.Context) (*Client, error) {
 	conn, err := manager.NewClient(ctx, constants.PilotManagerHost, constants.PilotManagerPort)
 	if err != nil {
 		return nil, err
 	}
-	return pbpilot.NewPilotServiceClient(conn), err
+	return &Client{
+		PilotServiceClient: pbpilot.NewPilotServiceClient(conn),
+	}, nil
 }
 
-func HandleSubtask(subtaskRequest *pbtypes.SubTaskMessage) error {
-	ctx := context.Background()
-	client, err := NewPilotManagerClient(ctx)
-	if err != nil {
-		return err
-	}
-	_, err = client.HandleSubtask(ctx, subtaskRequest)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func GetSubtaskStatus(subtaskStatusRequest *pbtypes.SubTaskId) (*pbtypes.SubTaskStatus, error) {
-	ctx := context.Background()
-	client, err := NewPilotManagerClient(ctx)
-	if err != nil {
-		return nil, err
-	}
-	subtaskStatusResponse, err := client.GetSubtaskStatus(ctx, subtaskStatusRequest)
-	if err != nil {
-		return nil, err
-	}
-	return subtaskStatusResponse, err
-}
-
-func WaitSubtask(taskId string, timeout time.Duration, waitInterval time.Duration) error {
+func (c *Client) WaitSubtask(ctx context.Context, taskId string, timeout time.Duration, waitInterval time.Duration) error {
 	logger.Debug("Waiting for task [%s] finished", taskId)
 	return funcutil.WaitForSpecificOrError(func() (bool, error) {
 		taskStatusRequest := &pbtypes.SubTaskId{
 			TaskId: taskId,
 		}
-		taskStatusResponse, err := GetSubtaskStatus(taskStatusRequest)
+		taskStatusResponse, err := c.GetSubtaskStatus(ctx, taskStatusRequest)
 		if err != nil {
 			//network or api error, not considered task fail.
 			return false, nil

@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	taskclient "openpitrix.io/openpitrix/pkg/client/task"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -127,10 +128,17 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		return err
 	}
 
+	ctx := client.GetSystemUserContext()
+	taskClient, err := taskclient.NewClient(ctx)
+	if err != nil {
+		logger.Error("Connect to task service failed: %+v", err)
+		return err
+	}
+
 	err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
 		if parent != nil {
 			for _, parentTask := range parent.Tasks {
-				err = taskclient.WaitTask(parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+				err = taskClient.WaitTask(ctx, parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 				if err != nil {
 					logger.Error("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 					return err
@@ -140,7 +148,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 
 		if current != nil {
 			for _, currentTask := range current.Tasks {
-				taskId, err := taskclient.SendTask(currentTask)
+				taskId, err := taskClient.SendTask(ctx, currentTask)
 				if err != nil {
 					logger.Error("Failed to send task [%s]: %+v", currentTask.TaskId, err)
 					return err
@@ -149,7 +157,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 			}
 			if current.IsLeaf() {
 				for _, currentTask := range current.Tasks {
-					err = taskclient.WaitTask(currentTask.TaskId, currentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+					err = taskClient.WaitTask(ctx, currentTask.TaskId, currentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 					if err != nil {
 						logger.Error("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
 						return err

@@ -16,16 +16,22 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-func NewClusterManagerClient(ctx context.Context) (pb.ClusterManagerClient, error) {
+type Client struct {
+	pb.ClusterManagerClient
+}
+
+func NewClient(ctx context.Context) (*Client, error) {
 	conn, err := manager.NewClient(ctx, constants.ClusterManagerHost, constants.ClusterManagerPort)
 	if err != nil {
 		return nil, err
 	}
-	return pb.NewClusterManagerClient(conn), err
+	return &Client{
+		ClusterManagerClient: pb.NewClusterManagerClient(conn),
+	}, nil
 }
 
-func GetClusterNodes(ctx context.Context, client pb.ClusterManagerClient, nodeIds []string) ([]*pb.ClusterNode, error) {
-	response, err := client.DescribeClusterNodes(ctx, &pb.DescribeClusterNodesRequest{
+func (c *Client) GetClusterNodes(ctx context.Context, nodeIds []string) ([]*pb.ClusterNode, error) {
+	response, err := c.DescribeClusterNodes(ctx, &pb.DescribeClusterNodesRequest{
 		NodeId: nodeIds,
 	})
 	if err != nil {
@@ -39,8 +45,8 @@ func GetClusterNodes(ctx context.Context, client pb.ClusterManagerClient, nodeId
 	return response.ClusterNodeSet, nil
 }
 
-func GetClusters(ctx context.Context, client pb.ClusterManagerClient, clusterIds []string) ([]*pb.Cluster, error) {
-	response, err := client.DescribeClusters(ctx, &pb.DescribeClustersRequest{
+func (c *Client) GetClusters(ctx context.Context, clusterIds []string) ([]*pb.Cluster, error) {
+	response, err := c.DescribeClusters(ctx, &pb.DescribeClustersRequest{
 		ClusterId: clusterIds,
 	})
 	if err != nil {
@@ -54,8 +60,8 @@ func GetClusters(ctx context.Context, client pb.ClusterManagerClient, clusterIds
 	return response.ClusterSet, nil
 }
 
-func GetClusterWrappers(ctx context.Context, client pb.ClusterManagerClient, clusterIds []string) ([]*models.ClusterWrapper, error) {
-	pbClusterSet, err := GetClusters(ctx, client, clusterIds)
+func (c *Client) GetClusterWrappers(ctx context.Context, clusterIds []string) ([]*models.ClusterWrapper, error) {
+	pbClusterSet, err := c.GetClusters(ctx, clusterIds)
 	if err != nil {
 		return nil, err
 	}
@@ -66,8 +72,8 @@ func GetClusterWrappers(ctx context.Context, client pb.ClusterManagerClient, clu
 	return clusterWrappers, nil
 }
 
-func ModifyClusterTransitionStatus(ctx context.Context, client pb.ClusterManagerClient, clusterId string, transitionStatus string) error {
-	_, err := client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+func (c *Client) ModifyClusterTransitionStatus(ctx context.Context, clusterId string, transitionStatus string) error {
+	_, err := c.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 		Cluster: &pb.Cluster{
 			ClusterId:        pbutil.ToProtoString(clusterId),
 			TransitionStatus: pbutil.ToProtoString(transitionStatus),
@@ -76,8 +82,8 @@ func ModifyClusterTransitionStatus(ctx context.Context, client pb.ClusterManager
 	return err
 }
 
-func ModifyClusterStatus(ctx context.Context, client pb.ClusterManagerClient, clusterId string, status string) error {
-	_, err := client.ModifyCluster(ctx, &pb.ModifyClusterRequest{
+func (c *Client) ModifyClusterStatus(ctx context.Context, clusterId string, status string) error {
+	_, err := c.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 		Cluster: &pb.Cluster{
 			ClusterId: pbutil.ToProtoString(clusterId),
 			Status:    pbutil.ToProtoString(status),

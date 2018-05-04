@@ -5,10 +5,10 @@
 package vmbased
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 
+	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -36,14 +36,14 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 
 	frontgateId := waitFrontgateDirective["frontgate_id"].(string)
 
-	ctx := context.Background()
-	client, err := clusterclient.NewClusterManagerClient(ctx)
+	ctx := client.GetSystemUserContext()
+	clusterClient, err := clusterclient.NewClient(ctx)
 	if err != nil {
 		return err
 	}
 
 	return funcutil.WaitForSpecificOrError(func() (bool, error) {
-		response, err := client.DescribeClusters(ctx, &pb.DescribeClustersRequest{
+		response, err := clusterClient.DescribeClusters(ctx, &pb.DescribeClustersRequest{
 			ClusterId: []string{frontgateId},
 		})
 		if err != nil {
