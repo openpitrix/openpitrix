@@ -192,6 +192,15 @@ message GetAppVersionPackageResponse {
 	bytes package = 1;
 }
 
+message GetAppVersionPackageFilesRequest {
+	google.protobuf.StringValue version_id = 1;
+	repeated string files = 2;
+}
+
+message GetAppVersionPackageFilesResponse {
+	map<string, bytes> files = 1;
+}
+
 message DescribeCategoryRequest {
 	google.protobuf.StringValue search_word = 1;
 	uint32 limit = 2;
@@ -311,6 +320,14 @@ service AppManager {
         };
 		option (google.api.http) = {
             get: "/v1/app_version/package"
+        };
+	}
+	rpc GetAppVersionPackageFiles (GetAppVersionPackageFilesRequest) returns (GetAppVersionPackageFilesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "get the package files content of app version"
+        };
+		option (google.api.http) = {
+            get: "/v1/app_version/package/files"
         };
 	}
 	rpc DescribeCategory (DescribeCategoryRequest) returns (DescribeCategoryResponse) {
