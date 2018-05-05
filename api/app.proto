@@ -281,54 +281,54 @@ service AppManager {
 
 	rpc CreateAppVersion (CreateAppVersionRequest) returns (CreateAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create app version"
-        };
+			summary: "create app version"
+		};
 		option (google.api.http) = {
-            post: "/v1/app_versions"
-            body: "*"
-        };
+			post: "/v1/app_versions"
+			body: "*"
+		};
 	}
 	rpc DescribeAppVersions (DescribeAppVersionsRequest) returns (DescribeAppVersionsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "describe app versions with filter"
-        };
+			summary: "describe app versions with filter"
+		};
 		option (google.api.http) = {
-            get: "/v1/app_versions"
-        };
+			get: "/v1/app_versions"
+		};
 	}
 	rpc ModifyAppVersion (ModifyAppVersionRequest) returns (ModifyAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "modify app version"
-        };
+			summary: "modify app version"
+		};
 		option (google.api.http) = {
-            patch: "/v1/app_versions"
-            body: "*"
-        };
+			patch: "/v1/app_versions"
+			body: "*"
+		};
 	}
 	rpc DeleteAppVersion (DeleteAppVersionRequest) returns (DeleteAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "delete app version"
-        };
+			summary: "delete app version"
+		};
 		option (google.api.http) = {
-            delete: "/v1/app_versions"
-            body: "*"
-        };
+			delete: "/v1/app_versions"
+			body: "*"
+		};
 	}
 	rpc GetAppVersionPackage (GetAppVersionPackageRequest) returns (GetAppVersionPackageResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "get the package content of app version"
-        };
+			summary: "get the package content of app version"
+		};
 		option (google.api.http) = {
-            get: "/v1/app_version/package"
-        };
+			get: "/v1/app_version/package"
+		};
 	}
 	rpc GetAppVersionPackageFiles (GetAppVersionPackageFilesRequest) returns (GetAppVersionPackageFilesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "get the package files content of app version"
-        };
+			summary: "get the package files content of app version"
+		};
 		option (google.api.http) = {
-            get: "/v1/app_version/package/files"
-        };
+			get: "/v1/app_version/package/files"
+		};
 	}
 	rpc DescribeCategory (DescribeCategoryRequest) returns (DescribeCategoryResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {

@@ -50,7 +50,7 @@ func (m *CreateAppRequest) Reset()         { *m = CreateAppRequest{} }
 func (m *CreateAppRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateAppRequest) ProtoMessage()    {}
 func (*CreateAppRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{0}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{0}
 }
 func (m *CreateAppRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateAppRequest.Unmarshal(m, b)
@@ -172,7 +172,7 @@ func (m *CreateAppResponse) Reset()         { *m = CreateAppResponse{} }
 func (m *CreateAppResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateAppResponse) ProtoMessage()    {}
 func (*CreateAppResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{1}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{1}
 }
 func (m *CreateAppResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateAppResponse.Unmarshal(m, b)
@@ -222,7 +222,7 @@ func (m *ModifyAppRequest) Reset()         { *m = ModifyAppRequest{} }
 func (m *ModifyAppRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyAppRequest) ProtoMessage()    {}
 func (*ModifyAppRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{2}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{2}
 }
 func (m *ModifyAppRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyAppRequest.Unmarshal(m, b)
@@ -344,7 +344,7 @@ func (m *ModifyAppResponse) Reset()         { *m = ModifyAppResponse{} }
 func (m *ModifyAppResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyAppResponse) ProtoMessage()    {}
 func (*ModifyAppResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{3}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{3}
 }
 func (m *ModifyAppResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyAppResponse.Unmarshal(m, b)
@@ -382,7 +382,7 @@ func (m *DeleteAppRequest) Reset()         { *m = DeleteAppRequest{} }
 func (m *DeleteAppRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteAppRequest) ProtoMessage()    {}
 func (*DeleteAppRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{4}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{4}
 }
 func (m *DeleteAppRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteAppRequest.Unmarshal(m, b)
@@ -420,7 +420,7 @@ func (m *DeleteAppResponse) Reset()         { *m = DeleteAppResponse{} }
 func (m *DeleteAppResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteAppResponse) ProtoMessage()    {}
 func (*DeleteAppResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{5}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{5}
 }
 func (m *DeleteAppResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteAppResponse.Unmarshal(m, b)
@@ -474,7 +474,7 @@ func (m *App) Reset()         { *m = App{} }
 func (m *App) String() string { return proto.CompactTextString(m) }
 func (*App) ProtoMessage()    {}
 func (*App) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{6}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{6}
 }
 func (m *App) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_App.Unmarshal(m, b)
@@ -629,7 +629,7 @@ func (m *AppCategory) Reset()         { *m = AppCategory{} }
 func (m *AppCategory) String() string { return proto.CompactTextString(m) }
 func (*AppCategory) ProtoMessage()    {}
 func (*AppCategory) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{7}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{7}
 }
 func (m *AppCategory) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AppCategory.Unmarshal(m, b)
@@ -707,7 +707,7 @@ func (m *Category) Reset()         { *m = Category{} }
 func (m *Category) String() string { return proto.CompactTextString(m) }
 func (*Category) ProtoMessage()    {}
 func (*Category) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{8}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{8}
 }
 func (m *Category) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Category.Unmarshal(m, b)
@@ -792,7 +792,7 @@ func (m *DescribeAppsRequest) Reset()         { *m = DescribeAppsRequest{} }
 func (m *DescribeAppsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeAppsRequest) ProtoMessage()    {}
 func (*DescribeAppsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{9}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{9}
 }
 func (m *DescribeAppsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeAppsRequest.Unmarshal(m, b)
@@ -915,7 +915,7 @@ func (m *DescribeAppsResponse) Reset()         { *m = DescribeAppsResponse{} }
 func (m *DescribeAppsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeAppsResponse) ProtoMessage()    {}
 func (*DescribeAppsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{10}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{10}
 }
 func (m *DescribeAppsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeAppsResponse.Unmarshal(m, b)
@@ -965,7 +965,7 @@ func (m *CreateAppVersionRequest) Reset()         { *m = CreateAppVersionRequest
 func (m *CreateAppVersionRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateAppVersionRequest) ProtoMessage()    {}
 func (*CreateAppVersionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{11}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{11}
 }
 func (m *CreateAppVersionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateAppVersionRequest.Unmarshal(m, b)
@@ -1038,7 +1038,7 @@ func (m *CreateAppVersionResponse) Reset()         { *m = CreateAppVersionRespon
 func (m *CreateAppVersionResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateAppVersionResponse) ProtoMessage()    {}
 func (*CreateAppVersionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{12}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{12}
 }
 func (m *CreateAppVersionResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateAppVersionResponse.Unmarshal(m, b)
@@ -1080,7 +1080,7 @@ func (m *ModifyAppVersionRequest) Reset()         { *m = ModifyAppVersionRequest
 func (m *ModifyAppVersionRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyAppVersionRequest) ProtoMessage()    {}
 func (*ModifyAppVersionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{13}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{13}
 }
 func (m *ModifyAppVersionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyAppVersionRequest.Unmarshal(m, b)
@@ -1146,7 +1146,7 @@ func (m *ModifyAppVersionResponse) Reset()         { *m = ModifyAppVersionRespon
 func (m *ModifyAppVersionResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyAppVersionResponse) ProtoMessage()    {}
 func (*ModifyAppVersionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{14}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{14}
 }
 func (m *ModifyAppVersionResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyAppVersionResponse.Unmarshal(m, b)
@@ -1184,7 +1184,7 @@ func (m *DeleteAppVersionRequest) Reset()         { *m = DeleteAppVersionRequest
 func (m *DeleteAppVersionRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteAppVersionRequest) ProtoMessage()    {}
 func (*DeleteAppVersionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{15}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{15}
 }
 func (m *DeleteAppVersionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteAppVersionRequest.Unmarshal(m, b)
@@ -1222,7 +1222,7 @@ func (m *DeleteAppVersionResponse) Reset()         { *m = DeleteAppVersionRespon
 func (m *DeleteAppVersionResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteAppVersionResponse) ProtoMessage()    {}
 func (*DeleteAppVersionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{16}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{16}
 }
 func (m *DeleteAppVersionResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteAppVersionResponse.Unmarshal(m, b)
@@ -1269,7 +1269,7 @@ func (m *AppVersion) Reset()         { *m = AppVersion{} }
 func (m *AppVersion) String() string { return proto.CompactTextString(m) }
 func (*AppVersion) ProtoMessage()    {}
 func (*AppVersion) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{17}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{17}
 }
 func (m *AppVersion) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AppVersion.Unmarshal(m, b)
@@ -1379,7 +1379,7 @@ func (m *DescribeAppVersionsRequest) Reset()         { *m = DescribeAppVersionsR
 func (m *DescribeAppVersionsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeAppVersionsRequest) ProtoMessage()    {}
 func (*DescribeAppVersionsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{18}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{18}
 }
 func (m *DescribeAppVersionsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeAppVersionsRequest.Unmarshal(m, b)
@@ -1481,7 +1481,7 @@ func (m *DescribeAppVersionsResponse) Reset()         { *m = DescribeAppVersions
 func (m *DescribeAppVersionsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeAppVersionsResponse) ProtoMessage()    {}
 func (*DescribeAppVersionsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{19}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{19}
 }
 func (m *DescribeAppVersionsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeAppVersionsResponse.Unmarshal(m, b)
@@ -1526,7 +1526,7 @@ func (m *GetAppVersionPackageRequest) Reset()         { *m = GetAppVersionPackag
 func (m *GetAppVersionPackageRequest) String() string { return proto.CompactTextString(m) }
 func (*GetAppVersionPackageRequest) ProtoMessage()    {}
 func (*GetAppVersionPackageRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{20}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{20}
 }
 func (m *GetAppVersionPackageRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppVersionPackageRequest.Unmarshal(m, b)
@@ -1564,7 +1564,7 @@ func (m *GetAppVersionPackageResponse) Reset()         { *m = GetAppVersionPacka
 func (m *GetAppVersionPackageResponse) String() string { return proto.CompactTextString(m) }
 func (*GetAppVersionPackageResponse) ProtoMessage()    {}
 func (*GetAppVersionPackageResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{21}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{21}
 }
 func (m *GetAppVersionPackageResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppVersionPackageResponse.Unmarshal(m, b)
@@ -1603,7 +1603,7 @@ func (m *GetAppVersionPackageFilesRequest) Reset()         { *m = GetAppVersionP
 func (m *GetAppVersionPackageFilesRequest) String() string { return proto.CompactTextString(m) }
 func (*GetAppVersionPackageFilesRequest) ProtoMessage()    {}
 func (*GetAppVersionPackageFilesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{22}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{22}
 }
 func (m *GetAppVersionPackageFilesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppVersionPackageFilesRequest.Unmarshal(m, b)
@@ -1648,7 +1648,7 @@ func (m *GetAppVersionPackageFilesResponse) Reset()         { *m = GetAppVersion
 func (m *GetAppVersionPackageFilesResponse) String() string { return proto.CompactTextString(m) }
 func (*GetAppVersionPackageFilesResponse) ProtoMessage()    {}
 func (*GetAppVersionPackageFilesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{23}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{23}
 }
 func (m *GetAppVersionPackageFilesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppVersionPackageFilesResponse.Unmarshal(m, b)
@@ -1691,7 +1691,7 @@ func (m *DescribeCategoryRequest) Reset()         { *m = DescribeCategoryRequest
 func (m *DescribeCategoryRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeCategoryRequest) ProtoMessage()    {}
 func (*DescribeCategoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{24}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{24}
 }
 func (m *DescribeCategoryRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeCategoryRequest.Unmarshal(m, b)
@@ -1765,7 +1765,7 @@ func (m *DescribeCategoryResponse) Reset()         { *m = DescribeCategoryRespon
 func (m *DescribeCategoryResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeCategoryResponse) ProtoMessage()    {}
 func (*DescribeCategoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{25}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{25}
 }
 func (m *DescribeCategoryResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeCategoryResponse.Unmarshal(m, b)
@@ -1811,7 +1811,7 @@ func (m *CreateCategoryRequest) Reset()         { *m = CreateCategoryRequest{} }
 func (m *CreateCategoryRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCategoryRequest) ProtoMessage()    {}
 func (*CreateCategoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{26}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{26}
 }
 func (m *CreateCategoryRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateCategoryRequest.Unmarshal(m, b)
@@ -1856,7 +1856,7 @@ func (m *CreateCategoryResponse) Reset()         { *m = CreateCategoryResponse{}
 func (m *CreateCategoryResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCategoryResponse) ProtoMessage()    {}
 func (*CreateCategoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{27}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{27}
 }
 func (m *CreateCategoryResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateCategoryResponse.Unmarshal(m, b)
@@ -1896,7 +1896,7 @@ func (m *ModifyCategoryRequest) Reset()         { *m = ModifyCategoryRequest{} }
 func (m *ModifyCategoryRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyCategoryRequest) ProtoMessage()    {}
 func (*ModifyCategoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{28}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{28}
 }
 func (m *ModifyCategoryRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyCategoryRequest.Unmarshal(m, b)
@@ -1948,7 +1948,7 @@ func (m *ModifyCategoryResponse) Reset()         { *m = ModifyCategoryResponse{}
 func (m *ModifyCategoryResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyCategoryResponse) ProtoMessage()    {}
 func (*ModifyCategoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{29}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{29}
 }
 func (m *ModifyCategoryResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyCategoryResponse.Unmarshal(m, b)
@@ -1986,7 +1986,7 @@ func (m *DeleteCategoryRequest) Reset()         { *m = DeleteCategoryRequest{} }
 func (m *DeleteCategoryRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteCategoryRequest) ProtoMessage()    {}
 func (*DeleteCategoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{30}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{30}
 }
 func (m *DeleteCategoryRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteCategoryRequest.Unmarshal(m, b)
@@ -2024,7 +2024,7 @@ func (m *DeleteCategoryResponse) Reset()         { *m = DeleteCategoryResponse{}
 func (m *DeleteCategoryResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteCategoryResponse) ProtoMessage()    {}
 func (*DeleteCategoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_eceaaee26d35e48a, []int{31}
+	return fileDescriptor_app_48f86c2d217a4f0c, []int{31}
 }
 func (m *DeleteCategoryResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteCategoryResponse.Unmarshal(m, b)
@@ -2588,9 +2588,9 @@ var _AppManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "app.proto",
 }
 
-func init() { proto.RegisterFile("app.proto", fileDescriptor_app_eceaaee26d35e48a) }
+func init() { proto.RegisterFile("app.proto", fileDescriptor_app_48f86c2d217a4f0c) }
 
-var fileDescriptor_app_eceaaee26d35e48a = []byte{
+var fileDescriptor_app_48f86c2d217a4f0c = []byte{
 	// 1882 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x59, 0xcd, 0x6f, 0xdb, 0xc8,
 	0x15, 0x2f, 0xf5, 0xad, 0x27, 0xc9, 0x56, 0x26, 0xb2, 0xad, 0x28, 0x76, 0x2d, 0x33, 0x45, 0xe2,
