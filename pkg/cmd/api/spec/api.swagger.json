@@ -43,6 +43,41 @@
         ]
       }
     },
+    "/v1/app_version/package/files": {
+      "get": {
+        "summary": "get the package files content of app version",
+        "operationId": "GetAppVersionPackageFiles",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetAppVersionPackageFilesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "files",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/app_versions": {
       "get": {
         "summary": "describe app versions with filter",
@@ -2036,6 +2071,18 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixCategory"
+          }
+        }
+      }
+    },
+    "openpitrixGetAppVersionPackageFilesResponse": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
           }
         }
       }

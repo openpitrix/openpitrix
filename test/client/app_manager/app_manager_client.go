@@ -305,6 +305,34 @@ func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams) (*GetA
 }
 
 /*
+GetAppVersionPackageFiles gets the package files content of app version
+*/
+func (a *Client) GetAppVersionPackageFiles(params *GetAppVersionPackageFilesParams) (*GetAppVersionPackageFilesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAppVersionPackageFilesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetAppVersionPackageFiles",
+		Method:             "GET",
+		PathPattern:        "/v1/app_version/package/files",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetAppVersionPackageFilesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetAppVersionPackageFilesOK), nil
+
+}
+
+/*
 ModifyApp modifies app
 */
 func (a *Client) ModifyApp(params *ModifyAppParams) (*ModifyAppOK, error) {

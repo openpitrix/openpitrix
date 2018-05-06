@@ -18,6 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/gziputil"
 	"openpitrix.io/openpitrix/pkg/util/httputil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
@@ -304,6 +305,30 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 	}
 	return &pb.GetAppVersionPackageResponse{
 		Package: content,
+	}, nil
+}
+
+func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVersionPackageFilesRequest) (*pb.GetAppVersionPackageFilesResponse, error) {
+	// TODO: check resource permission
+	versionId := req.GetVersionId().GetValue()
+	includeFiles := req.Files
+	version, err := p.getAppVersion(versionId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+	}
+	packageUrl := version.PackageName
+	resp, err := httputil.HttpGet(packageUrl)
+	if err != nil {
+		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
+		return nil, status.Errorf(codes.Internal, "Failed to http get [%s]", versionId)
+	}
+	archiveFiles, err := gziputil.LoadArchive(resp.Body, includeFiles...)
+	if err != nil {
+		logger.Error("Failed to load package [%s] archive, error: %+v", packageUrl, err)
+		return nil, status.Errorf(codes.Internal, "Failed to load package [%s] archiv", versionId)
+	}
+	return &pb.GetAppVersionPackageFilesResponse{
+		Files: archiveFiles,
 	}, nil
 }
 
