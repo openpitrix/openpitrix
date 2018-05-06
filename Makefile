@@ -26,6 +26,11 @@ endef
 
 COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager
 COMPOSE_DB_CTRL=openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl
+CMD?=...
+comma:= ,
+empty:=
+space:= $(empty) $(empty)
+CMDS=$(subst $(comma),$(space),$(CMD))
 
 .PHONY: all
 all: generate build
@@ -94,7 +99,7 @@ fmt-check: fmt-all
 build: fmt
 	mkdir -p ./tmp/bin
 	$(call get_build_flags)
-	$(RUN_IN_DOCKER) time go install -ldflags '$(BUILD_FLAG)' $(TRAG.Gopkg)/cmd/...
+	$(RUN_IN_DOCKER) time go install -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
 	@docker build -t $(TARG.Name) -f ./Dockerfile.dev ./tmp/bin
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
@@ -118,7 +123,8 @@ compose-migrate-db:
 	docker-compose up $(COMPOSE_DB_CTRL)
 
 compose-update-%:
-	docker-compose up -d --no-deps $*
+	CMD=$* make build
+	docker-compose up -d --no-deps openpitrix-$*
 	@echo "compose-update done"
 
 .PHONY: compose-up
