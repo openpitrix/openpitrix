@@ -5,7 +5,7 @@ After=syslog.target network.target docker.target
 [Service]
 User=root
 EnvironmentFile=/opt/openpitrix/conf/openpitrix.conf
-ExecStart=/opt/openpitrix/bin/start.sh $MOUNT_POINT $FILE_NAME $FILE_CONF $IMAGE
+ExecStart=/opt/openpitrix/sbin/start.sh $MOUNT_POINT $FILE_NAME $FILE_CONF $IMAGE
 ExecStop=docker stop default
 
 [Install]

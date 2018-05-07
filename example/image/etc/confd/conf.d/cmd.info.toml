@@ -1,0 +1,7 @@
+[template]
+src = "cmd.info.tmpl"
+dest = "/opt/openpitrix/log/cmd.info"
+  keys = [
+    "/",
+]
+reload_cmd = "/opt/openpitrix/sbin/exec.sh"

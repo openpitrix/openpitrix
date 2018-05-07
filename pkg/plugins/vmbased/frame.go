@@ -155,7 +155,7 @@ func (f *Frame) deregisterCmdLayer(nodeIds []string) *models.TaskLayer {
 		ip := f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp
 		cnodes := GetCmdCnodes(
 			ip,
-			"",
+			nil,
 		)
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
@@ -207,10 +207,10 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string) *models.T
 				continue
 			}
 			ip := f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp
-			cnodes := GetCmdCnodes(
-				ip,
-				service.Cmd,
-			)
+			cnodes := &models.Cmd{
+				Cmd:     service.Cmd,
+				Timeout: timeout,
+			}
 			meta := &models.Meta{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 				NodeId:      nodeId,
@@ -599,10 +599,10 @@ func (f *Frame) sshKeygenLayer() *models.TaskLayer {
 				"chown 600 /root/.ssh/id_%s;chown 644 /root/.ssh/id_%s.pub",
 				private, keyType, public, keyType, keyType, keyType)
 			ip := clusterNode.PrivateIp
-			cnodes := GetCmdCnodes(
-				ip,
-				cmd,
-			)
+			cnodes := &models.Cmd{
+				Cmd:     cmd,
+				Timeout: TimeoutSshKeygen,
+			}
 			meta := &models.Meta{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 				Timeout:     TimeoutSshKeygen,
@@ -640,10 +640,10 @@ func (f *Frame) umountVolumeLayer(nodeIds []string) *models.TaskLayer {
 		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
 		cmd := UmountVolumeCmd(clusterRole.MountPoint)
 		ip := clusterNode.PrivateIp
-		cnodes := GetCmdCnodes(
-			ip,
-			cmd,
-		)
+		cnodes := &models.Cmd{
+			Cmd:     cmd,
+			Timeout: TimeoutUmountVolume,
+		}
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			Timeout:     TimeoutUmountVolume,

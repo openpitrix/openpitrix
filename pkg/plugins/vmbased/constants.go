@@ -37,6 +37,8 @@ const (
 	RegisterNodeEnv                  = "env"
 	RegisterNodeLoadbalancer         = "loadbalancer"
 	RegisterNodeCmd                  = "cmd"
+	RegisterNodeCmdId                = "id"
+	RegisterNodeCmdTimeout           = "timeout"
 	RegisterNodeEndpoint             = "endpoints"
 	RegisterNodeAdding               = "adding-hosts"
 	RegisterNodeDeleting             = "deleting-hosts"
