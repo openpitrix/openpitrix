@@ -53,7 +53,7 @@ func LoadArchive(in io.Reader, include ...string) (ArchiveFiles, error) {
 		// Normalize the path to the / delimiter
 		n = strings.Replace(n, delimiter, "/", -1)
 
-		if !stringutil.StringIn(n, include) {
+		if len(include) > 0 && !stringutil.StringIn(n, include) {
 			continue
 		}
 
