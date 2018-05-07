@@ -101,6 +101,16 @@ message DescribeReposResponse {
 	repeated Repo repo_set = 2;
 }
 
+message ValidateRepoRequest {
+	google.protobuf.StringValue type = 1;
+	google.protobuf.StringValue url = 2;
+	google.protobuf.StringValue credential = 3;
+}
+
+message ValidateRepoResponse {
+	google.protobuf.BoolValue ok = 1;
+}
+
 service RepoManager {
 	rpc CreateRepo (CreateRepoRequest) returns (CreateRepoResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -135,6 +145,14 @@ service RepoManager {
 		option (google.api.http) = {
 			delete: "/v1/repos"
 			body: "*"
+		};
+	}
+	rpc ValidateRepo (ValidateRepoRequest) returns (ValidateRepoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "validate repo"
+		};
+		option (google.api.http) = {
+			get: "/v1/repos/validate"
 		};
 	}
 }
