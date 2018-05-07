@@ -105,7 +105,7 @@ build: fmt
 	@echo "build done"
 
 .PHONY: compose-update
-compose-update: build compose-up
+compose-update: compose-migrate-db build compose-up
 	@echo "compose-update done"
 
 .PHONY: compose-update-service-without-deps
