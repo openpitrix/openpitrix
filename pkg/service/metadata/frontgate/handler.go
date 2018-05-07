@@ -7,8 +7,7 @@ package frontgate
 import (
 	"context"
 	"fmt"
-
-	"github.com/golang/protobuf/proto"
+	"reflect"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/frontgate"
@@ -24,7 +23,8 @@ var (
 func (p *Server) GetPilotConfig(in *pbtypes.Empty, out *pbtypes.PilotConfig) error {
 	ctx := context.Background()
 
-	client, conn, err := pilotutil.DialPilotService(ctx, p.cfg.PilotHost, int(p.cfg.PilotPort))
+	cfg := p.cfg.Get()
+	client, conn, err := pilotutil.DialPilotService(ctx, cfg.PilotHost, int(cfg.PilotPort))
 	if err != nil {
 		return err
 	}
@@ -40,12 +40,24 @@ func (p *Server) GetPilotConfig(in *pbtypes.Empty, out *pbtypes.PilotConfig) err
 }
 
 func (p *Server) GetFrontgateConfig(in *pbtypes.Empty, out *pbtypes.FrontgateConfig) error {
-	*out = *proto.Clone(p.cfg).(*pbtypes.FrontgateConfig)
+	*out = *p.cfg.Get()
 	return nil
 }
 
-func (p *Server) SetFrontgateConfig(in *pbtypes.FrontgateConfig, out *pbtypes.Empty) error {
-	panic("TODO")
+func (p *Server) SetFrontgateConfig(cfg *pbtypes.FrontgateConfig, out *pbtypes.Empty) error {
+	if reflect.DeepEqual(cfg, p.cfg.Get()) {
+		return nil
+	}
+
+	if err := p.cfg.Set(cfg); err != nil {
+		return err
+	}
+
+	if err := p.cfg.Save(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Server) GetDroneList(in *pbtypes.Empty, out *pbtypes.DroneIdList) error {
@@ -73,14 +85,54 @@ func (p *Server) GetDroneConfig(in *pbtypes.DroneEndpoint, out *pbtypes.DroneCon
 }
 
 func (p *Server) SetDroneConfig(in *pbtypes.SetDroneConfigRequest, out *pbtypes.Empty) error {
-	panic("TODO")
+	ctx := context.Background()
+
+	client, conn, err := droneutil.DialDroneService(ctx,
+		in.Endpoint.GetDroneIp(),
+		int(in.Endpoint.GetDronePort()),
+	)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	// 1. set drone config
+	_, err = client.SetDroneConfig(ctx, in.GetConfig())
+	if err != nil {
+		return err
+	}
+
+	// 2. set confd config
+	_, err = client.SetConfdConfig(ctx, p.cfg.Get().GetConfdConfig())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Server) GetConfdConfig(in *pbtypes.ConfdEndpoint, out *pbtypes.ConfdConfig) error {
-	panic("TODO")
+	*out = *p.cfg.Get().GetConfdConfig()
+	return nil
 }
 func (p *Server) SetConfdConfig(in *pbtypes.SetConfdConfigRequest, out *pbtypes.Empty) error {
-	panic("TODO")
+	ctx := context.Background()
+
+	client, conn, err := droneutil.DialDroneService(ctx,
+		in.Endpoint.GetDroneIp(),
+		int(in.Endpoint.GetDronePort()),
+	)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = client.SetConfdConfig(ctx, in.GetConfig())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Server) IsConfdRunning(in *pbtypes.ConfdEndpoint, out *pbtypes.Bool) error {
@@ -116,7 +168,7 @@ func (p *Server) StartConfd(in *pbtypes.ConfdEndpoint, out *pbtypes.Empty) error
 	}
 	defer conn.Close()
 
-	_, err = client.SetConfdConfig(ctx, p.cfg.GetConfdConfig())
+	_, err = client.SetConfdConfig(ctx, p.cfg.Get().GetConfdConfig())
 	if err != nil {
 		return err
 	}
@@ -211,7 +263,8 @@ func (p *EtcdClient) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd) error {
 func (p *Server) ReportSubTaskStatus(in *pbtypes.SubTaskStatus, out *pbtypes.Empty) error {
 	ctx := context.Background()
 
-	client, conn, err := pilotutil.DialPilotService(ctx, p.cfg.PilotHost, int(p.cfg.PilotPort))
+	cfg := p.cfg.Get()
+	client, conn, err := pilotutil.DialPilotService(ctx, cfg.PilotHost, int(cfg.PilotPort))
 	if err != nil {
 		return err
 	}
@@ -256,7 +309,8 @@ func (p *Server) SetEtcdValues(in *pbtypes.StringMap, out *pbtypes.Empty) error 
 func (p *Server) PingPilot(in *pbtypes.Empty, out *pbtypes.Empty) error {
 	ctx := context.Background()
 
-	client, conn, err := pilotutil.DialPilotService(ctx, p.cfg.PilotHost, int(p.cfg.PilotPort))
+	cfg := p.cfg.Get()
+	client, conn, err := pilotutil.DialPilotService(ctx, cfg.PilotHost, int(cfg.PilotPort))
 	if err != nil {
 		return err
 	}

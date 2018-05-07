@@ -10,7 +10,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,8 +22,7 @@ import (
 )
 
 type Server struct {
-	cfg      *pbtypes.FrontgateConfig
-	cfgPilot *pbtypes.PilotConfig
+	cfg *ConfigManager
 
 	ch   *pilotutil.FrameChannel
 	conn *grpc.ClientConn
@@ -32,18 +30,8 @@ type Server struct {
 	err  error
 }
 
-func Serve(cfg *pbtypes.FrontgateConfig, opts ...Options) {
-	if cfg != nil {
-		cfg = proto.Clone(cfg).(*pbtypes.FrontgateConfig)
-	} else {
-		cfg = NewDefaultConfig()
-	}
-
-	for _, fn := range opts {
-		fn(cfg)
-	}
-
-	etcd, err := NewEtcdClient(cfg.GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+func Serve(cfg *ConfigManager) {
+	etcd, err := NewEtcdClient(cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
 	if err != nil {
 		logger.Critical("%+v", err)
 		os.Exit(1)
@@ -54,7 +42,7 @@ func Serve(cfg *pbtypes.FrontgateConfig, opts ...Options) {
 		etcd: etcd,
 	}
 
-	go ServeReverseRpcServerForPilot(cfg, p)
+	go ServeReverseRpcServerForPilot(cfg.Get(), p)
 	go pbfrontgate.ListenAndServeFrontgateService("tcp",
 		fmt.Sprintf(":%d", constants.FrontgateServicePort),
 		p,

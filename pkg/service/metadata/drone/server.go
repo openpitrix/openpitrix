@@ -6,9 +6,7 @@ package drone
 
 import (
 	"context"
-	"sync"
 
-	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -17,24 +15,12 @@ import (
 )
 
 type Server struct {
-	mu  sync.Mutex
-	cfg *pbtypes.DroneConfig
-
+	cfg   *ConfigManager
 	confd *ConfdServer
 	fg    *FrontgateController
 }
 
-func NewServer(cfg *pbtypes.DroneConfig, cfgConfd *pbtypes.ConfdConfig, opts ...Options) *Server {
-	if cfg != nil {
-		cfg = proto.Clone(cfg).(*pbtypes.DroneConfig)
-	} else {
-		cfg = NewDefaultConfig()
-	}
-
-	for _, fn := range opts {
-		fn(cfg)
-	}
-
+func NewServer(cfg *ConfigManager, cfgConfd *pbtypes.ConfdConfig) *Server {
 	p := &Server{
 		cfg:   cfg,
 		confd: NewConfdServer(),
@@ -48,10 +34,10 @@ func NewServer(cfg *pbtypes.DroneConfig, cfgConfd *pbtypes.ConfdConfig, opts ...
 	return p
 }
 
-func Serve(cfg *pbtypes.DroneConfig, cfgConfd *pbtypes.ConfdConfig, opts ...Options) {
-	s := NewServer(cfg, cfgConfd, opts...)
+func Serve(cfg *ConfigManager, cfgConfd *pbtypes.ConfdConfig) {
+	s := NewServer(cfg, cfgConfd)
 
-	manager.NewGrpcServer("drone-service", int(s.cfg.ListenPort)).Serve(func(server *grpc.Server) {
+	manager.NewGrpcServer("drone-service", int(s.cfg.Get().ListenPort)).Serve(func(server *grpc.Server) {
 		pbdrone.RegisterDroneServiceServer(server, s)
 	})
 }

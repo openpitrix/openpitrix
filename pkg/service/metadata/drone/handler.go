@@ -11,8 +11,6 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/golang/protobuf/proto"
-
 	"openpitrix.io/openpitrix/pkg/libconfd"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/drone"
@@ -24,30 +22,22 @@ var (
 )
 
 func (p *Server) GetDroneConfig(context.Context, *pbtypes.Empty) (*pbtypes.DroneConfig, error) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
-	cfg := proto.Clone(p.cfg).(*pbtypes.DroneConfig)
-	return cfg, nil
+	return p.cfg.Get(), nil
 }
 func (p *Server) SetDroneConfig(ctx context.Context, cfg *pbtypes.DroneConfig) (*pbtypes.Empty, error) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
-	if reflect.DeepEqual(cfg, p.cfg) {
+	if reflect.DeepEqual(cfg, p.cfg.Get()) {
 		return &pbtypes.Empty{}, nil
 	}
 
-	if cfg.Id != p.cfg.Id {
-		return nil, fmt.Errorf("drone: invalid cfg.Id: %v", cfg)
-	}
-	if cfg.ListenPort != p.cfg.ListenPort {
-		return nil, fmt.Errorf("drone: invalid cfg.ListenPort: %v", cfg)
+	if err := p.cfg.Set(cfg); err != nil {
+		return &pbtypes.Empty{}, err
 	}
 
-	// save config: path?
+	if err := p.cfg.Save(); err != nil {
+		return &pbtypes.Empty{}, err
+	}
 
-	panic("TODO")
+	return &pbtypes.Empty{}, nil
 }
 
 func (p *Server) GetConfdConfig(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.ConfdConfig, error) {
@@ -83,12 +73,13 @@ func (p *Server) IsConfdRunning(ctx context.Context, arg *pbtypes.Empty) (*pbtyp
 
 func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Empty, error) {
 	err := p.confd.Start(func(opt *libconfd.Config) {
+		cfg := p.cfg.Get()
 		opt.HookAbsKeyAdjuster = func(absKey string) (realKey string) {
 			if absKey == "/self" {
-				return "/" + p.cfg.ConfdSelfHost
+				return "/" + cfg.ConfdSelfHost
 			}
 			if strings.HasPrefix(absKey, "/self/") {
-				return "/" + p.cfg.ConfdSelfHost + absKey[len("/self/")-1:]
+				return "/" + cfg.ConfdSelfHost + absKey[len("/self/")-1:]
 			}
 			return absKey
 		}
@@ -99,7 +90,7 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 			}
 			if trName == "cmd.info" {
 				go func() {
-					status, err := LoadLastCmdStatus(p.cfg.CmdInfoLogPath)
+					status, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
 					if err == nil {
 						p.fg.ReportSubTaskStatus(&pbtypes.SubTaskStatus{
 							TaskId: status.SubtaskId,
@@ -116,7 +107,7 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 			}
 			if trName == "cmd.info" {
 				go func() {
-					status, err := LoadLastCmdStatus(p.cfg.CmdInfoLogPath)
+					status, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
 					if err == nil {
 						p.fg.ReportSubTaskStatus(&pbtypes.SubTaskStatus{
 							TaskId: status.SubtaskId,
