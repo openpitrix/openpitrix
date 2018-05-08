@@ -163,6 +163,7 @@ e2e-test:
 ci-test:
 	# build with production Dockerfile, not dev version
 	@docker build -t $(TARG.Name) -f ./Dockerfile .
+	@docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .
 	@make compose-up
 	sleep 20
 	@make unit-test
