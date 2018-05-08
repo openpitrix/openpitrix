@@ -7,10 +7,10 @@ package manager
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/fatih/structs"
 	"github.com/gocraft/dbr"
-	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
 
@@ -37,7 +37,7 @@ type RequestWithReverse interface {
 }
 
 const (
-	TagName              = "protobuf"
+	TagName              = "json"
 	SearchWordColumnName = "search_word"
 )
 
@@ -94,13 +94,19 @@ func BuildFilterConditionsWithPrefix(req Request, tableName string, exclude ...s
 	return buildFilterConditions(true, req, tableName, exclude...)
 }
 
+func getFieldName(field *structs.Field) string {
+	tag := field.Tag(TagName)
+	t := strings.Split(tag, ",")
+	if len(t) == 0 {
+		return "-"
+	}
+	return t[0]
+}
+
 func buildFilterConditions(withPrefix bool, req Request, tableName string, exclude ...string) dbr.Builder {
 	var conditions []dbr.Builder
 	for _, field := range structs.Fields(req) {
-		tag := field.Tag(TagName)
-		prop := proto.Properties{}
-		prop.Parse(tag)
-		column := prop.OrigName
+		column := getFieldName(field)
 		param := field.Value()
 		if stringutil.StringIn(column, models.IndexedColumns[tableName]) {
 			value := getStringValue(param)
@@ -129,10 +135,7 @@ func buildFilterConditions(withPrefix bool, req Request, tableName string, exclu
 func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{} {
 	attributes := make(map[string]interface{})
 	for _, field := range structs.Fields(req) {
-		tag := field.Tag(TagName)
-		prop := proto.Properties{}
-		prop.Parse(tag)
-		column := prop.OrigName
+		column := getFieldName(field)
 		f := field.Value()
 		v := reflect.ValueOf(f)
 		if stringutil.FindString(columns, column) > -1 && !v.IsNil() {
