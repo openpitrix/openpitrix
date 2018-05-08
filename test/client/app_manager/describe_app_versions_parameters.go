@@ -77,8 +77,12 @@ type DescribeAppVersionsParams struct {
 	Owner []string
 	/*PackageName*/
 	PackageName []string
+	/*Reverse*/
+	Reverse *bool
 	/*SearchWord*/
 	SearchWord *string
+	/*SortKey*/
+	SortKey *string
 	/*Status*/
 	Status []string
 	/*VersionID*/
@@ -199,6 +203,17 @@ func (o *DescribeAppVersionsParams) SetPackageName(packageName []string) {
 	o.PackageName = packageName
 }
 
+// WithReverse adds the reverse to the describe app versions params
+func (o *DescribeAppVersionsParams) WithReverse(reverse *bool) *DescribeAppVersionsParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe app versions params
+func (o *DescribeAppVersionsParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
 // WithSearchWord adds the searchWord to the describe app versions params
 func (o *DescribeAppVersionsParams) WithSearchWord(searchWord *string) *DescribeAppVersionsParams {
 	o.SetSearchWord(searchWord)
@@ -208,6 +223,17 @@ func (o *DescribeAppVersionsParams) WithSearchWord(searchWord *string) *Describe
 // SetSearchWord adds the searchWord to the describe app versions params
 func (o *DescribeAppVersionsParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe app versions params
+func (o *DescribeAppVersionsParams) WithSortKey(sortKey *string) *DescribeAppVersionsParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe app versions params
+func (o *DescribeAppVersionsParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WithStatus adds the status to the describe app versions params
@@ -312,6 +338,22 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		return err
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.SearchWord != nil {
 
 		// query param search_word
@@ -322,6 +364,22 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}

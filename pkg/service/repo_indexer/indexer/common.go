@@ -106,7 +106,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	}
 }
 
-func (i *indexer) syncAppVersionInfo(appId string, version versionInterface) (string, error) {
+func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, index int) (string, error) {
 	owner := i.repo.GetOwner().GetValue()
 
 	var versionId string
@@ -136,6 +136,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface) (st
 		createReq.Name = pbutil.ToProtoString(appVersionName)
 		createReq.PackageName = pbutil.ToProtoString(packageName)
 		createReq.Description = pbutil.ToProtoString(description)
+		createReq.Sequence = pbutil.ToProtoUInt32(uint32(index))
 
 		createRes, err := appManagerClient.CreateAppVersion(ctx, &createReq)
 		if err != nil {
@@ -148,6 +149,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface) (st
 		modifyReq.VersionId = res.AppVersionSet[0].VersionId
 		modifyReq.PackageName = pbutil.ToProtoString(packageName)
 		modifyReq.Description = pbutil.ToProtoString(description)
+		modifyReq.Sequence = pbutil.ToProtoUInt32(uint32(index))
 
 		modifyRes, err := appManagerClient.ModifyAppVersion(ctx, &modifyReq)
 		if err != nil {

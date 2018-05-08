@@ -24,19 +24,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
-func (p *Server) getApp(appId string) (*models.App, error) {
-	app := &models.App{}
-	err := p.Db.
-		Select(models.AppColumns...).
-		From(models.AppTableName).
-		Where(db.Eq("app_id", appId)).
-		LoadOne(&app)
-	if err != nil {
-		return nil, err
-	}
-	return app, nil
-}
-
 func (p *Server) getAppVersion(versionId string) (*models.AppVersion, error) {
 	version := &models.AppVersion{}
 	err := p.Db.
@@ -74,8 +61,13 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 		return nil, status.Errorf(codes.Internal, "DescribeApps: %+v", err)
 	}
 
+	appSet, err := p.formatAppSet(apps)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "DescribeApps: %+v", err)
+	}
+
 	res := &pb.DescribeAppsResponse{
-		AppSet:     models.AppsToPbs(apps),
+		AppSet:     appSet,
 		TotalCount: count,
 	}
 	return res, nil
@@ -181,6 +173,10 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		s.UserId,
 		req.GetPackageName().GetValue())
 
+	if req.Sequence != nil {
+		newAppVersion.Sequence = req.Sequence.GetValue()
+	}
+
 	_, err := p.Db.
 		InsertInto(models.AppVersionTableName).
 		Columns(models.AppVersionColumns...).
@@ -208,7 +204,7 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.AppVersionTableName))
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	query = manager.AddQueryOrderDir(query, req, models.ColumnSequence)
 	_, err := query.Load(&versions)
 	if err != nil {
 		// TODO: err_code should be implementation
@@ -235,7 +231,7 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
 	}
 
-	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name")
+	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name", "sequence")
 	_, err = p.Db.
 		Update(models.AppVersionTableName).
 		SetMap(attributes).

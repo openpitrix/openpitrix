@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/url"
+	"sort"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/devkit/app"
@@ -71,9 +72,10 @@ func (i *devkitIndexer) IndexRepo() error {
 			return err
 		}
 		logger.Info("Sync chart [%s] to app [%s] success", appName, appId)
-		for _, appVersion := range appVersions {
+		sort.Sort(appVersions)
+		for index, appVersion := range appVersions {
 			var versionId string
-			versionId, err = i.syncAppVersionInfo(appId, appVersion)
+			versionId, err = i.syncAppVersionInfo(appId, appVersion, index)
 			if err != nil {
 				logger.Error("Failed to sync app version [%s] to app version", appVersion.GetAppVersion())
 				return err

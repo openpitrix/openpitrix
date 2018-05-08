@@ -27,6 +27,7 @@ type AppVersion struct {
 	Description string
 	PackageName string
 	Status      string
+	Sequence    uint32
 	CreateTime  time.Time
 	StatusTime  time.Time
 	UpdateTime  *time.Time
@@ -49,6 +50,9 @@ func NewAppVersion(appId, name, description, owner, packageName string) *AppVers
 }
 
 func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
+	if appVersion == nil {
+		return nil
+	}
 	pbAppVersion := pb.AppVersion{}
 	pbAppVersion.VersionId = pbutil.ToProtoString(appVersion.VersionId)
 	pbAppVersion.AppId = pbutil.ToProtoString(appVersion.AppId)
@@ -59,6 +63,7 @@ func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
 	pbAppVersion.Owner = pbutil.ToProtoString(appVersion.Owner)
 	pbAppVersion.CreateTime = pbutil.ToProtoTimestamp(appVersion.CreateTime)
 	pbAppVersion.StatusTime = pbutil.ToProtoTimestamp(appVersion.StatusTime)
+	pbAppVersion.Sequence = pbutil.ToProtoUInt32(appVersion.Sequence)
 	if appVersion.UpdateTime != nil {
 		pbAppVersion.UpdateTime = pbutil.ToProtoTimestamp(*appVersion.UpdateTime)
 	}

@@ -189,6 +189,19 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [
@@ -1835,6 +1848,9 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixAppCategory"
           }
+        },
+        "latest_app_version": {
+          "$ref": "#/definitions/openpitrixAppVersion"
         }
       }
     },
@@ -1898,6 +1914,9 @@ var Files = map[string]string{
         "update_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "sequence": {
+          "$ref": "#/definitions/protobufUInt32Value"
         }
       }
     },
@@ -1998,6 +2017,9 @@ var Files = map[string]string{
         },
         "description": {
           "type": "string"
+        },
+        "sequence": {
+          "$ref": "#/definitions/protobufUInt32Value"
         }
       }
     },
@@ -2211,6 +2233,9 @@ var Files = map[string]string{
         },
         "description": {
           "type": "string"
+        },
+        "sequence": {
+          "$ref": "#/definitions/protobufUInt32Value"
         }
       }
     },
@@ -2243,6 +2268,17 @@ var Files = map[string]string{
           "$ref": "#/definitions/openpitrixCategory"
         }
       }
+    },
+    "protobufUInt32Value": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The uint32 value."
+        }
+      },
+      "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
     },
     "openpitrixAddClusterNodesRequest": {
       "type": "object",
@@ -3018,17 +3054,6 @@ var Files = map[string]string{
       "type": "object",
       "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
       "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
-    },
-    "protobufUInt32Value": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer",
-          "format": "int64",
-          "description": "The uint32 value."
-        }
-      },
-      "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
     },
     "openpitrixCreateJobResponse": {
       "type": "object",
