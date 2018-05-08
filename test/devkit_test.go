@@ -111,14 +111,17 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 
 	repoId := createResp.Payload.Repo.RepoID
 
-	indexParams := repo_indexer.NewIndexRepoParams()
-	indexParams.SetBody(
-		&models.OpenpitrixIndexRepoRequest{
-			RepoID: repoId,
-		})
-	indexResp, err := client.RepoIndexer.IndexRepo(indexParams)
+	describeParams := repo_indexer.NewDescribeRepoEventsParams()
+	describeParams.SetRepoID([]string{repoId})
+	describeParams.SetStatus([]string{constants.StatusPending, constants.StatusWorking})
+	describeResp, err := client.RepoIndexer.DescribeRepoEvents(describeParams)
 	assert.NoError(t, err)
-	repoEventId := indexResp.Payload.RepoEvent.RepoEventID
+
+	if len(describeResp.Payload.RepoEventSet) != 1 {
+		t.Fatal("repo indexer need to working when repo created")
+	}
+
+	repoEventId := describeResp.Payload.RepoEventSet[0].RepoEventID
 	waitRepoEventSuccess(t, repoEventId)
 
 	describeAppParams := app_manager.NewDescribeAppsParams()
