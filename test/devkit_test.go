@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
@@ -76,15 +76,16 @@ func waitRepoEventSuccess(t *testing.T, repoEventId string) {
 		describeEventParams := repo_indexer.NewDescribeRepoEventsParams()
 		describeEventParams.RepoEventID = []string{repoEventId}
 		describeEventResp, err := client.RepoIndexer.DescribeRepoEvents(describeEventParams)
-		assert.NoError(t, err)
-		assert.Equal(t, int64(1), describeEventResp.Payload.TotalCount, "count should be 1")
-		assert.Equal(t, repoEventId, describeEventResp.Payload.RepoEventSet[0].RepoEventID, "error repo event id")
+		require.NoError(t, err)
+		require.Equal(t, int64(1), describeEventResp.Payload.TotalCount, "count should be 1")
+		require.Equal(t, repoEventId, describeEventResp.Payload.RepoEventSet[0].RepoEventID, "error repo event id")
 
 		status := describeEventResp.Payload.RepoEventSet[0].Status
-		assert.NotEqual(t, constants.StatusFailed, status, "status should not be failed")
+		require.NotEqual(t, constants.StatusFailed, status, "status should not be failed")
 
 		switch status {
 		case constants.StatusSuccessful:
+			t.Logf("event [%s] finish with successful", repoEventId)
 			return
 		case constants.StatusPending, constants.StatusWorking:
 			time.Sleep(5 * time.Second)
@@ -107,7 +108,7 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 			Visibility:  "public",
 		})
 	createResp, err := client.RepoManager.CreateRepo(createParams)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	repoId := createResp.Payload.Repo.RepoID
 
@@ -115,9 +116,9 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 	describeParams.SetRepoID([]string{repoId})
 	describeParams.SetStatus([]string{constants.StatusPending, constants.StatusWorking})
 	describeResp, err := client.RepoIndexer.DescribeRepoEvents(describeParams)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
-	if len(describeResp.Payload.RepoEventSet) != 1 {
+	if len(describeResp.Payload.RepoEventSet) < 1 {
 		t.Fatal("repo indexer need to working when repo created")
 	}
 
@@ -128,13 +129,13 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 	describeAppParams.WithRepoID([]string{repoId})
 
 	describeAppResp, err := client.AppManager.DescribeApps(describeAppParams)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	t.Logf("success got [%d] apps", describeAppResp.Payload.TotalCount)
-	assert.Equal(t, int64(1), describeAppResp.Payload.TotalCount, "auto create app more than 1")
+	require.Equal(t, int64(1), describeAppResp.Payload.TotalCount, "auto create app more than 1")
 	app := describeAppResp.Payload.AppSet[0]
 
-	assert.Equal(t, "nginx", app.Name, "app_name not equal nginx")
+	require.Equal(t, "nginx", app.Name, "app_name not equal nginx")
 
 	t.Logf("got app [%+v]", app)
 }

@@ -167,7 +167,7 @@ message AppVersion {
 	google.protobuf.Timestamp create_time = 8;
 	google.protobuf.Timestamp status_time = 9;
 	google.protobuf.Timestamp update_time = 10;
-	google.protobuf.UInt32Value sequence = 11;
+	uint32 sequence = 11;
 }
 
 message DescribeAppVersionsRequest {

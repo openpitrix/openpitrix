@@ -1916,7 +1916,8 @@ var Files = map[string]string{
           "format": "date-time"
         },
         "sequence": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

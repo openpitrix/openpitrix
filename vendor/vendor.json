@@ -788,6 +788,12 @@
 			"revisionTime": "2017-06-01T20:57:54Z"
 		},
 		{
+			"checksumSHA1": "KqYmXUcuGwsvBL6XVsQnXsFb3LI=",
+			"path": "github.com/stretchr/testify/require",
+			"revision": "c679ae2cc0cb27ec3293fea7e254e47386f05d69",
+			"revisionTime": "2018-03-14T08:05:35Z"
+		},
+		{
 			"checksumSHA1": "FdCoXujHIVFbxS7lIYx0U3YTuNQ=",
 			"path": "github.com/szuecs/gin-glog",
 			"revision": "da59244bde84149ae00db0c2b8e62b9d899e6993",

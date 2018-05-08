@@ -8,13 +8,13 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func execCmd(t *testing.T, cmd string) string {
 	t.Logf("run command [%s]", cmd)
 	c := exec.Command("/bin/sh", "-c", cmd)
 	output, err := c.CombinedOutput()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	return string(output)
 }
