@@ -28,6 +28,9 @@ type OpenpitrixTask struct {
 	// executor
 	Executor string `json:"executor,omitempty"`
 
+	// failure allowed
+	FailureAllowed bool `json:"failure_allowed,omitempty"`
+
 	// job id
 	JobID string `json:"job_id,omitempty"`
 

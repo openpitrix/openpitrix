@@ -145,7 +145,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCreateCluster, tdj, job.Owner)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCreateCluster, tdj, job.Owner, false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,
@@ -161,7 +161,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, job.Owner)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, job.Owner, false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,
@@ -172,7 +172,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		td := TaskDirective{ClusterId: job.ClusterId, RuntimeId: jodDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionRollbackCluster, tdj, job.Owner)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionRollbackCluster, tdj, job.Owner, false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,
@@ -183,7 +183,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		td := TaskDirective{ClusterId: job.ClusterId, RuntimeId: jodDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionDeleteClusters, tdj, job.Owner)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionDeleteClusters, tdj, job.Owner, false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,
@@ -194,7 +194,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		td := TaskDirective{ClusterId: job.ClusterId, RuntimeId: jodDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCeaseClusters, tdj, job.Owner)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCeaseClusters, tdj, job.Owner, false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,

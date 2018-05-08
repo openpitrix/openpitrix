@@ -24,7 +24,7 @@ define get_build_flags
 		-X $(TRAG.Version).BuildDate="$(DATE)")
 endef
 
-COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager
+COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-pilot-service
 COMPOSE_DB_CTRL=openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl
 CMD?=...
 comma:= ,
@@ -101,6 +101,7 @@ build: fmt
 	$(call get_build_flags)
 	$(RUN_IN_DOCKER) time go install -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
 	@docker build -t $(TARG.Name) -f ./Dockerfile.dev ./tmp/bin
+	@docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .
 	@docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
 
@@ -162,6 +163,7 @@ e2e-test:
 ci-test:
 	# build with production Dockerfile, not dev version
 	@docker build -t $(TARG.Name) -f ./Dockerfile .
+	@docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .
 	@make compose-up
 	sleep 20
 	@make unit-test

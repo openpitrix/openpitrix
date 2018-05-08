@@ -67,11 +67,12 @@ func (c *Client) WaitTask(ctx context.Context, taskId string, timeout time.Durat
 func (c *Client) SendTask(ctx context.Context, task *models.Task) (string, error) {
 	pbTask := models.TaskToPb(task)
 	taskRequest := &pb.CreateTaskRequest{
-		JobId:      pbTask.JobId,
-		NodeId:     pbTask.NodeId,
-		Target:     pbTask.Target,
-		TaskAction: pbTask.TaskAction,
-		Directive:  pbTask.Directive,
+		JobId:          pbTask.JobId,
+		NodeId:         pbTask.NodeId,
+		Target:         pbTask.Target,
+		TaskAction:     pbTask.TaskAction,
+		Directive:      pbTask.Directive,
+		FailureAllowed: pbTask.FailureAllowed,
 	}
 	response, err := c.CreateTask(ctx, taskRequest)
 	taskId := response.GetTaskId().GetValue()

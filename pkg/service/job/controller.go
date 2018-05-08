@@ -141,7 +141,9 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 				err = taskClient.WaitTask(ctx, parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 				if err != nil {
 					logger.Error("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
-					return err
+					if !parentTask.FailureAllowed {
+						return err
+					}
 				}
 			}
 		}
@@ -160,7 +162,9 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 					err = taskClient.WaitTask(ctx, currentTask.TaskId, currentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 					if err != nil {
 						logger.Error("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
-						return err
+						if !currentTask.FailureAllowed {
+							return err
+						}
 					}
 				}
 			}

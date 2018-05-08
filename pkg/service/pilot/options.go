@@ -19,7 +19,7 @@ func NewDefaultConfigString() string {
 	p := &pbtypes.PilotConfig{
 		Id:         "openpitrix-pilot-001",
 		Host:       "localhost",
-		ListenPort: constants.PilotManagerPort,
+		ListenPort: constants.PilotServicePort,
 		LogLevel:   logger.DebugLevel.String(),
 	}
 

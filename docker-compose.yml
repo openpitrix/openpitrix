@@ -35,6 +35,7 @@ services:
       - openpitrix-job-manager:openpitrix-job-manager
       - openpitrix-task-manager:openpitrix-task-manager
       - openpitrix-cluster-manager:openpitrix-cluster-manager
+      - openpitrix-pilot-service:openpitrix-pilot-service
     container_name: "openpitrix-api-gateway"
 
   # repo service
@@ -207,3 +208,14 @@ services:
     depends_on:
       - openpitrix-db
     container_name: "openpitrix-cluster-db-ctrl"
+
+  # pilot service
+  openpitrix-pilot-service:
+    build: .
+    image: "openpitrix/openpitrix:metadata"
+    command: "pilot -config=/opt/openpitrix/conf/pilot-config.json serve"
+    volumes:
+      - ./metadata/cmd/pilot/pilot-config.json:/opt/openpitrix/conf/pilot-config.json
+    container_name: "openpitrix-pilot-service"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}

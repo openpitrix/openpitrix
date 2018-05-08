@@ -104,7 +104,7 @@ EXAMPLE:
 				}
 				defer conn.Close()
 
-				list, err := client.GetFrontdateList(context.Background(), &pbtypes.Empty{})
+				list, err := client.GetFrontgateList(context.Background(), &pbtypes.Empty{})
 				if err != nil {
 					logger.Critical("%+v", err)
 					os.Exit(1)

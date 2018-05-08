@@ -26,7 +26,7 @@ func (p *Server) GetPilotConfig(context.Context, *pbtypes.Empty) (*pbtypes.Pilot
 	return proto.Clone(p.cfg).(*pbtypes.PilotConfig), nil
 }
 
-func (p *Server) GetFrontdateList(context.Context, *pbtypes.Empty) (*pbtypes.FrontgateIdList, error) {
+func (p *Server) GetFrontgateList(context.Context, *pbtypes.Empty) (*pbtypes.FrontgateIdList, error) {
 	return nil, fmt.Errorf("TODO")
 }
 
@@ -58,22 +58,18 @@ func (p *Server) SetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateC
 	return reply, nil
 }
 
-func (p *Server) GetDroneConfig(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.DroneConfig, error) {
-	/*
-		client, err := p.fgClientMgr.GetClient(arg.Endpoint.FrontgateId)
-		if err != nil {
-			return nil, err
-		}
+func (p *Server) GetDroneConfig(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pbtypes.DroneConfig, error) {
+	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
+	if err != nil {
+		return nil, err
+	}
 
-		reply, err := client.GetDroneConfig(arg.Endpoint)
-		if err != nil {
-			return nil, err
-		}
+	reply, err := client.GetDroneConfig(arg)
+	if err != nil {
+		return nil, err
+	}
 
-		return reply, nil
-	*/
-
-	panic("TODO")
+	return reply, nil
 }
 func (p *Server) SetDroneConfig(ctx context.Context, arg *pbtypes.SetDroneConfigRequest) (*pbtypes.Empty, error) {
 	client, err := p.fgClientMgr.GetClient(arg.Endpoint.FrontgateId)
@@ -238,6 +234,21 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		x.TaskId = msg.TaskId
 
 		return p.StartConfd(ctx, &pbtypes.DroneEndpoint{
+			FrontgateId: x.FrontgateId,
+			DroneIp:     x.DroneIp,
+		})
+
+	case pbtypes.SubTaskAction_StopConfd.String():
+		var x pbtypes.SubTask_StopConfd
+		err := json.Unmarshal([]byte(msg.Directive), &x)
+		if err != nil {
+			return nil, err
+		}
+
+		x.Action = msg.Action
+		x.TaskId = msg.TaskId
+
+		return p.StopConfd(ctx, &pbtypes.DroneEndpoint{
 			FrontgateId: x.FrontgateId,
 			DroneIp:     x.DroneIp,
 		})

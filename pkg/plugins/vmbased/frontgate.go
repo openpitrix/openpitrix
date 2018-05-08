@@ -46,7 +46,7 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 	frontgateConf["id"] = nodeId
 	frontgateConf["listen_port"] = constants.FrontgateServicePort
 	frontgateConf["pilot_host"] = pi.Global().GlobalConfig().Pilot.Ip
-	frontgateConf["pilot_port"] = constants.PilotManagerPort
+	frontgateConf["pilot_port"] = constants.PilotServicePort
 	frontgateConfStr := strings.Replace(jsonutil.ToString(frontgateConf), "\"", "\\\\\"", -1)
 
 	result += fmt.Sprintf("IMAGE=\"%s\"\n", imageId)
@@ -108,7 +108,7 @@ func (f *Frontgate) getConfig(nodeId string) string {
 		Host:        clusterNode.PrivateIp,
 		ListenPort:  constants.FrontgateServicePort,
 		PilotHost:   pi.Global().GlobalConfig().Pilot.Ip,
-		PilotPort:   constants.PilotManagerPort,
+		PilotPort:   constants.PilotServicePort,
 		NodeList:    frontgateEndpoints,
 		EtcdConfig:  etcdConfig,
 		ConfdConfig: confdConfig,
@@ -118,16 +118,17 @@ func (f *Frontgate) getConfig(nodeId string) string {
 	return jsonutil.ToString(config)
 }
 
-func (f *Frontgate) setFrontgateConfigLayer(nodeIds []string) *models.TaskLayer {
+func (f *Frontgate) setFrontgateConfigLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	var tasks []*models.Task
 	for _, nodeId := range nodeIds {
 		task := &models.Task{
-			JobId:      f.Job.JobId,
-			Owner:      f.Job.Owner,
-			TaskAction: ActionSetFrontgateConfig,
-			Target:     constants.TargetPilot,
-			NodeId:     nodeId,
-			Directive:  f.getConfig(nodeId),
+			JobId:          f.Job.JobId,
+			Owner:          f.Job.Owner,
+			TaskAction:     ActionSetFrontgateConfig,
+			Target:         constants.TargetPilot,
+			NodeId:         nodeId,
+			Directive:      f.getConfig(nodeId),
+			FailureAllowed: failureAllowed,
 		}
 		tasks = append(tasks, task)
 	}
@@ -144,10 +145,10 @@ func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.createVolumesLayer(nodeIds)).        // create volume
-		Append(f.runInstancesLayer(nodeIds)).         // run instance and attach volume to instance
-		Append(f.formatAndMountVolumeLayer(nodeIds)). // format and mount volume to instance
-		Append(f.setFrontgateConfigLayer(nodeIds))    // set frontgate config
+		Append(f.createVolumesLayer(nodeIds, false)).        // create volume
+		Append(f.runInstancesLayer(nodeIds, false)).         // run instance and attach volume to instance
+		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance
+		Append(f.setFrontgateConfigLayer(nodeIds, false))    // set frontgate config
 
 	return headTaskLayer.Child
 }
