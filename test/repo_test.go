@@ -82,6 +82,7 @@ func TestRepo(t *testing.T) {
 			URL:         REPO_URL,
 			Credential:  `{}`,
 			Visibility:  "public",
+			Providers:   []string{constants.ProviderKubernetes},
 		})
 	createResp, err := client.RepoManager.CreateRepo(createParams)
 	if err != nil {

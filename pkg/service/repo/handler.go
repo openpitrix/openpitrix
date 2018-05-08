@@ -11,8 +11,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
+	indexerclient "openpitrix.io/openpitrix/pkg/client/repo_indexer"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -130,6 +133,22 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	res := &pb.CreateRepoResponse{
 		Repo: repo,
 	}
+
+	ctx = clientutil.GetSystemUserContext()
+	repoIndexerClient, err := indexerclient.NewRepoIndexerClient(ctx)
+	if err != nil {
+		logger.Warn("Could not get repo indexer client, %+v", err)
+		return res, nil
+	}
+
+	indexRequest := pb.IndexRepoRequest{
+		RepoId: pbutil.ToProtoString(newRepo.RepoId),
+	}
+	_, err = repoIndexerClient.IndexRepo(ctx, &indexRequest)
+	if err != nil {
+		logger.Warn("Call index repo service failed, %+v", err)
+	}
+
 	return res, nil
 }
 

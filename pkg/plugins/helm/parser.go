@@ -106,9 +106,14 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 		switch o := obj.(type) {
 		case *v1beta2.Deployment:
 			clusterRole := &models.ClusterRole{
-				Role:         fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
-				InstanceSize: uint32(*o.Spec.Replicas),
-				Env:          string(env),
+				Role: fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
+				Env:  string(env),
+			}
+
+			if o.Spec.Replicas == nil {
+				clusterRole.InstanceSize = 1
+			} else {
+				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
 			}
 
 			if len(o.Spec.Template.Spec.Containers) > 0 {
@@ -127,9 +132,14 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 			clusterCommons[clusterRole.Role] = clusterCommon
 		case *v1beta1.Deployment:
 			clusterRole := &models.ClusterRole{
-				Role:         fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
-				InstanceSize: uint32(*o.Spec.Replicas),
-				Env:          string(env),
+				Role: fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
+				Env:  string(env),
+			}
+
+			if o.Spec.Replicas == nil {
+				clusterRole.InstanceSize = 1
+			} else {
+				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
 			}
 
 			if len(o.Spec.Template.Spec.Containers) > 0 {
@@ -148,9 +158,14 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 			clusterCommons[clusterRole.Role] = clusterCommon
 		case *exv1beta1.Deployment:
 			clusterRole := &models.ClusterRole{
-				Role:         fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
-				InstanceSize: uint32(*o.Spec.Replicas),
-				Env:          string(env),
+				Role: fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
+				Env:  string(env),
+			}
+
+			if o.Spec.Replicas == nil {
+				clusterRole.InstanceSize = 1
+			} else {
+				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
 			}
 
 			if len(o.Spec.Template.Spec.Containers) > 0 {
@@ -169,9 +184,14 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 			clusterCommons[clusterRole.Role] = clusterCommon
 		case *v1beta2.StatefulSet:
 			clusterRole := &models.ClusterRole{
-				Role:         fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
-				InstanceSize: uint32(*o.Spec.Replicas),
-				Env:          string(env),
+				Role: fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
+				Env:  string(env),
+			}
+
+			if o.Spec.Replicas == nil {
+				clusterRole.InstanceSize = 1
+			} else {
+				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
 			}
 
 			if len(o.Spec.Template.Spec.Containers) > 0 {
@@ -190,9 +210,14 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 			clusterCommons[clusterRole.Role] = clusterCommon
 		case *v1beta1.StatefulSet:
 			clusterRole := &models.ClusterRole{
-				Role:         fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
-				InstanceSize: uint32(*o.Spec.Replicas),
-				Env:          string(env),
+				Role: fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
+				Env:  string(env),
+			}
+
+			if o.Spec.Replicas == nil {
+				clusterRole.InstanceSize = 1
+			} else {
+				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
 			}
 
 			if len(o.Spec.Template.Spec.Containers) > 0 {
