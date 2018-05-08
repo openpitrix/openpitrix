@@ -10,8 +10,6 @@ import (
 	"net/url"
 	"strings"
 
-	"k8s.io/helm/pkg/chartutil"
-	"k8s.io/helm/pkg/proto/hapi/chart"
 	"k8s.io/helm/pkg/repo"
 
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -96,33 +94,4 @@ func (i *helmIndexer) getIndexFile() (indexFile *repo.IndexFile, err error) {
 	}
 	indexFile.SortEntries()
 	return
-}
-
-// Reference: https://sourcegraph.com/github.com/kubernetes/helm@fe9d365/-/blob/pkg/downloader/chart_downloader.go#L225:35
-func GetPackageFile(chartVersion *repo.ChartVersion, repoUrl string) (*chart.Chart, error) {
-	if len(chartVersion.URLs) == 0 {
-		return nil, fmt.Errorf("chart [%s] has no downloadable URLs", chartVersion.Name)
-	}
-	u, err := url.Parse(chartVersion.URLs[0])
-	if err != nil {
-		return nil, fmt.Errorf("invalid chart URL format: %v", chartVersion.URLs)
-	}
-
-	// If the URL is relative (no scheme), prepend the chart repo's base URL
-	if !u.IsAbs() {
-		repoURL, err := url.Parse(repoUrl)
-		if err != nil {
-			return nil, err
-		}
-		q := repoURL.Query()
-		// We need a trailing slash for ResolveReference to work, but make sure there isn't already one
-		repoURL.Path = strings.TrimSuffix(repoURL.Path, "/") + "/"
-		u = repoURL.ResolveReference(u)
-		u.RawQuery = q.Encode()
-	}
-	resp, err := httputil.HttpGet(u.String())
-	if err != nil {
-		return nil, err
-	}
-	return chartutil.LoadArchive(resp.Body)
 }
