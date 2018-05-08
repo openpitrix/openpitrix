@@ -5,6 +5,8 @@
 package db
 
 import (
+	"time"
+
 	"github.com/gocraft/dbr"
 
 	"openpitrix.io/openpitrix/pkg/config"
@@ -18,5 +20,8 @@ func OpenDatabase(cfg config.MysqlConfig) (*Database, error) {
 	if err != nil {
 		return nil, err
 	}
+	conn.SetMaxIdleConns(100)
+	conn.SetMaxOpenConns(100)
+	conn.SetConnMaxLifetime(10 * time.Second)
 	return &Database{conn.NewSession(nil)}, nil
 }
