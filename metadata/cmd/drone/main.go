@@ -366,9 +366,14 @@ EXAMPLE:
 			Name:  "serve",
 			Usage: "run as drone service",
 			Action: func(c *cli.Context) {
-				cfg := droneutil.MustLoadDroneConfig(c.GlobalString("config"))
+				cfgpath := c.GlobalString("config")
+				cfg := droneutil.MustLoadDroneConfig(cfgpath)
 				cfgConfd, _ := droneutil.LoadConfdConfig(c.GlobalString("config-confd"))
-				drone.Serve(cfg, cfgConfd)
+
+				drone.Serve(
+					drone.NewConfigManager(cfgpath, cfg),
+					cfgConfd,
+				)
 				return
 			},
 		},

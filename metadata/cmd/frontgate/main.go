@@ -485,8 +485,11 @@ EXAMPLE:
 			Name:  "serve",
 			Usage: "run as frontgate service",
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
-				frontgate.Serve(cfg)
+				cfgpath := c.GlobalString("config")
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
+				frontgate.Serve(
+					frontgate.NewConfigManager(cfgpath, cfg),
+				)
 				return
 			},
 		},
