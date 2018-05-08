@@ -45,14 +45,48 @@ func (p *Server) GetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateI
 }
 
 func (p *Server) SetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateConfig) (*pbtypes.Empty, error) {
-	panic("TODO")
+	client, err := p.fgClientMgr.GetClient(arg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	reply, err := client.SetFrontgateConfig(arg)
+	if err != nil {
+		return nil, err
+	}
+
+	return reply, nil
 }
 
 func (p *Server) GetDroneConfig(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.DroneConfig, error) {
+	/*
+		client, err := p.fgClientMgr.GetClient(arg.Endpoint.FrontgateId)
+		if err != nil {
+			return nil, err
+		}
+
+		reply, err := client.GetDroneConfig(arg.Endpoint)
+		if err != nil {
+			return nil, err
+		}
+
+		return reply, nil
+	*/
+
 	panic("TODO")
 }
 func (p *Server) SetDroneConfig(ctx context.Context, arg *pbtypes.SetDroneConfigRequest) (*pbtypes.Empty, error) {
-	panic("TODO")
+	client, err := p.fgClientMgr.GetClient(arg.Endpoint.FrontgateId)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = client.SetDroneConfig(arg)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pbtypes.Empty{}, nil
 }
 
 func (p *Server) FrontgateChannel(ch pbpilot.PilotService_FrontgateChannelServer) error {
