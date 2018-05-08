@@ -17,7 +17,7 @@ const FrontgateDefaultConf = `
   "nodes": [{
      "container": {
         "type": "docker",
-        "image": "metadata"
+        "image": "openpitrix/openpitrix:metadata"
      },
      "count": 3,
      "cpu": 1,

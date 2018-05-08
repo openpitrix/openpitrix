@@ -15,7 +15,7 @@ const (
 	ClusterManagerHost = prefix + "cluster-manager"
 	JobManagerHost     = prefix + "job-manager"
 	TaskManagerHost    = prefix + "task-manager"
-	PilotManagerHost   = prefix + "pilot-manager"
+	PilotServiceHost   = prefix + "pilot-service"
 	RepoIndexerHost    = prefix + "repo-indexer"
 )
 
@@ -28,7 +28,7 @@ const (
 	JobManagerPort       = 9106
 	TaskManagerPort      = 9107
 	RepoIndexerPort      = 9108
-	PilotManagerPort     = 9110
+	PilotServicePort     = 9110
 	FrontgateServicePort = 9111
 	DroneServicePort     = 9112
 	EtcdServicePort      = 2379
@@ -73,7 +73,7 @@ const (
 
 const (
 	WaitTaskTimeout  = 600 * time.Second
-	WaitTaskInterval = 10 * time.Second
+	WaitTaskInterval = 3 * time.Second
 
 	TimeoutName           = "Timeout"
 	DefaultServiceTimeout = 600

@@ -20,11 +20,11 @@ import "openpitrix/types/task.proto";
 service PilotService {
 	rpc GetPilotConfig (openpitrix.types.Empty) returns (openpitrix.types.PilotConfig);
 
-	rpc GetFrontdateList (openpitrix.types.Empty) returns (openpitrix.types.FrontgateIdList);
+	rpc GetFrontgateList (openpitrix.types.Empty) returns (openpitrix.types.FrontgateIdList);
 	rpc GetFrontgateConfig (openpitrix.types.FrontgateId) returns (openpitrix.types.FrontgateConfig);
 	rpc SetFrontgateConfig (openpitrix.types.FrontgateConfig) returns (openpitrix.types.Empty);
 
-	rpc GetDroneConfig (openpitrix.types.Empty) returns (openpitrix.types.DroneConfig);
+	rpc GetDroneConfig (openpitrix.types.DroneEndpoint) returns (openpitrix.types.DroneConfig);
 	rpc SetDroneConfig (openpitrix.types.SetDroneConfigRequest) returns (openpitrix.types.Empty);
 
 	rpc IsConfdRunning (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Bool);

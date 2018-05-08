@@ -36,6 +36,7 @@ enum SubTaskAction {
 	RegisterCmd        = 4;
 	DeregisterCmd      = 5;
 	GetTaskStatus      = 6;
+	StopConfd          = 7;
 }
 
 // ----------------------------------------------------------------------------
@@ -50,6 +51,26 @@ enum SubTaskAction {
 }
 */
 message SubTask_StartConfd {
+	string action = 1;
+	string task_id = 2;
+
+	string frontgate_id = 3;
+	string drone_ip = 4;
+	int32 timeout = 5; // seconds
+}
+
+// ----------------------------------------------------------------------------
+// StopConfd
+// ----------------------------------------------------------------------------
+
+/*
+{
+	"action": "StopConfd",
+	"taskId": "t-abcdefgh",
+	"directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", "timeout": 600}
+}
+*/
+message SubTask_StopConfd {
 	string action = 1;
 	string task_id = 2;
 

@@ -66,6 +66,8 @@ $ docker run --rm --name openpitrix-task-manager -e OPENPITRIX_MYSQL_DATABASE=cl
 	--network openpitrix-bridge -d openpitrix task-manager
 $ docker run --rm --name openpitrix-cluster-manager -e OPENPITRIX_MYSQL_DATABASE=cluster \
 	--network openpitrix-bridge -d openpitrix cluster-manager
+$ docker run --rm --name openpitrix-pilot-service \
+	--network openpitrix-bridge -d openpitrix pilot-service
 $ docker run --rm --name openpitrix-api-gateway --network openpitrix-bridge -p 9100:9100 -d openpitrix api-gateway
 ```
 

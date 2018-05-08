@@ -3631,6 +3631,10 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "failure_allowed": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     }

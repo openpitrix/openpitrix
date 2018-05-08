@@ -120,7 +120,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			return err
 		}
 
-		if task.Target == constants.PilotManagerHost {
+		if task.Target == constants.TargetPilot {
 			switch task.TaskAction {
 			case vmbased.ActionSetDroneConfig:
 				config := new(pbtypes.SetDroneConfigRequest)

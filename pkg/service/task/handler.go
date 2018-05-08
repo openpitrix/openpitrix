@@ -28,6 +28,7 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 		req.GetTaskAction().GetValue(),
 		req.GetDirective().GetValue(),
 		s.UserId,
+		req.GetFailureAllowed().GetValue(),
 	)
 
 	_, err := p.Db.

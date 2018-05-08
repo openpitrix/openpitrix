@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS task (
 	executor    VARCHAR(50) NOT NULL,
 	node_id     VARCHAR(50) NOT NULL,
 	target      VARCHAR(50) NOT NULL,
+	failure_allowed BOOL NOT NULL DEFAULT FALSE,
 	PRIMARY KEY (task_id),
 	INDEX task_job_id_index (job_id ASC),
 	INDEX task_create_time_index (create_time ASC),

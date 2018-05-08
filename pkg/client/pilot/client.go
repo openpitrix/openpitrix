@@ -22,7 +22,7 @@ type Client struct {
 }
 
 func NewClient(ctx context.Context) (*Client, error) {
-	conn, err := manager.NewClient(ctx, constants.PilotManagerHost, constants.PilotManagerPort)
+	conn, err := manager.NewClient(ctx, constants.PilotServiceHost, constants.PilotServicePort)
 	if err != nil {
 		return nil, err
 	}

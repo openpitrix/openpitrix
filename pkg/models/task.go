@@ -23,39 +23,41 @@ func NewTaskId() string {
 }
 
 type Task struct {
-	TaskId     string
-	JobId      string
-	TaskAction string
-	Directive  string
-	Owner      string
-	Status     string
-	ErrorCode  uint32
-	Executor   string
-	Target     string
-	NodeId     string
-	CreateTime time.Time
-	StatusTime time.Time
+	TaskId         string
+	JobId          string
+	TaskAction     string
+	Directive      string
+	Owner          string
+	Status         string
+	ErrorCode      uint32
+	Executor       string
+	Target         string
+	NodeId         string
+	FailureAllowed bool
+	CreateTime     time.Time
+	StatusTime     time.Time
 }
 
 var TaskColumns = GetColumnsFromStruct(&Task{})
 
-func NewTask(taskId, jobId, nodeId, target, taskAction, directive, userId string) *Task {
+func NewTask(taskId, jobId, nodeId, target, taskAction, directive, userId string, failureAllowed bool) *Task {
 	if taskId == "" {
 		taskId = NewTaskId()
 	} else if taskId == constants.PlaceHolder {
 		taskId = ""
 	}
 	return &Task{
-		TaskId:     taskId,
-		JobId:      jobId,
-		NodeId:     nodeId,
-		Target:     target,
-		TaskAction: taskAction,
-		Directive:  directive,
-		Owner:      userId,
-		Status:     constants.StatusPending,
-		CreateTime: time.Now(),
-		StatusTime: time.Now(),
+		TaskId:         taskId,
+		JobId:          jobId,
+		NodeId:         nodeId,
+		Target:         target,
+		TaskAction:     taskAction,
+		Directive:      directive,
+		Owner:          userId,
+		Status:         constants.StatusPending,
+		CreateTime:     time.Now(),
+		StatusTime:     time.Now(),
+		FailureAllowed: failureAllowed,
 	}
 }
 
@@ -73,6 +75,7 @@ func TaskToPb(task *Task) *pb.Task {
 	pbTask.NodeId = pbutil.ToProtoString(task.NodeId)
 	pbTask.CreateTime = pbutil.ToProtoTimestamp(task.CreateTime)
 	pbTask.StatusTime = pbutil.ToProtoTimestamp(task.StatusTime)
+	pbTask.FailureAllowed = pbutil.ToProtoBool(task.FailureAllowed)
 	return &pbTask
 }
 

@@ -21,6 +21,7 @@ message CreateTaskRequest {
 	google.protobuf.StringValue target = 4;
 	google.protobuf.StringValue task_action = 5;
 	google.protobuf.StringValue directive = 6;
+	google.protobuf.BoolValue failure_allowed = 7;
 }
 
 message CreateTaskResponse {
@@ -41,6 +42,7 @@ message Task {
 	google.protobuf.StringValue node_id = 10;
 	google.protobuf.Timestamp create_time = 11;
 	google.protobuf.Timestamp status_time = 12;
+	google.protobuf.BoolValue failure_allowed = 13;
 }
 message DescribeTasksRequest {
 	repeated string task_id = 1;
