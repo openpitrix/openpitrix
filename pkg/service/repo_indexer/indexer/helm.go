@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/url"
+	"sort"
 	"strings"
 
 	"k8s.io/helm/pkg/repo"
@@ -55,10 +56,11 @@ func (i *helmIndexer) IndexRepo() error {
 			return err
 		}
 		logger.Info("Sync chart [%s] to app [%s] success", chartName, appId)
-		for _, chartVersion := range chartVersions {
+		sort.Sort(chartVersions)
+		for index, chartVersion := range chartVersions {
 			var versionId string
 			v := helmVersionWrapper{ChartVersion: chartVersion}
-			versionId, err = i.syncAppVersionInfo(appId, v)
+			versionId, err = i.syncAppVersionInfo(appId, v, index)
 			if err != nil {
 				logger.Error("Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
 				return err

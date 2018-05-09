@@ -80,6 +80,7 @@ message App {
 	google.protobuf.Timestamp status_time = 15;
 	google.protobuf.Timestamp update_time = 16;
 	repeated AppCategory app_category_set = 17;
+	AppVersion latest_app_version = 18;
 }
 
 message AppCategory {
@@ -127,6 +128,7 @@ message CreateAppVersionRequest {
 	google.protobuf.StringValue name = 4;
 	google.protobuf.StringValue package_name = 5;
 	google.protobuf.StringValue description = 6;
+	google.protobuf.UInt32Value sequence = 7;
 }
 
 message CreateAppVersionResponse {
@@ -139,6 +141,7 @@ message ModifyAppVersionRequest {
 	google.protobuf.StringValue package_name = 3;
 	google.protobuf.StringValue owner = 4;
 	google.protobuf.StringValue description = 5;
+	google.protobuf.UInt32Value sequence = 6;
 }
 
 message ModifyAppVersionResponse {
@@ -164,6 +167,7 @@ message AppVersion {
 	google.protobuf.Timestamp create_time = 8;
 	google.protobuf.Timestamp status_time = 9;
 	google.protobuf.Timestamp update_time = 10;
+	uint32 sequence = 11;
 }
 
 message DescribeAppVersionsRequest {
@@ -177,6 +181,8 @@ message DescribeAppVersionsRequest {
 	google.protobuf.StringValue search_word = 8;
 	uint32 limit = 9; // NOTE: uint64 marshal to json will convert to string
 	uint32 offset = 10;
+	google.protobuf.StringValue sort_key = 11;
+	google.protobuf.BoolValue reverse = 12;
 }
 
 message DescribeAppVersionsResponse {

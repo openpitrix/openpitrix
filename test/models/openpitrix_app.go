@@ -37,6 +37,9 @@ type OpenpitrixApp struct {
 	// icon
 	Icon string `json:"icon,omitempty"`
 
+	// latest app version
+	LatestAppVersion *OpenpitrixAppVersion `json:"latest_app_version,omitempty"`
+
 	// maintainers
 	Maintainers string `json:"maintainers,omitempty"`
 
@@ -72,9 +75,33 @@ type OpenpitrixApp struct {
 func (m *OpenpitrixApp) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateLatestAppVersion(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixApp) validateLatestAppVersion(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.LatestAppVersion) { // not required
+		return nil
+	}
+
+	if m.LatestAppVersion != nil {
+
+		if err := m.LatestAppVersion.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("latest_app_version")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

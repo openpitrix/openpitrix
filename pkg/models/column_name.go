@@ -15,6 +15,7 @@ const (
 
 	ColumnCreateTime = "create_time"
 	ColumnStatusTime = "status_time"
+	ColumnSequence   = "sequence"
 
 	ColumnRepoLabelId = "repo_label_id"
 	ColumnLabelKey    = "label_key"

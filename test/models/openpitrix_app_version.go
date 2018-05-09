@@ -34,6 +34,9 @@ type OpenpitrixAppVersion struct {
 	// package name
 	PackageName string `json:"package_name,omitempty"`
 
+	// sequence
+	Sequence int64 `json:"sequence,omitempty"`
+
 	// status
 	Status string `json:"status,omitempty"`
 
