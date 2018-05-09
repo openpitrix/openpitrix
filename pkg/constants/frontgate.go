@@ -21,12 +21,7 @@ const FrontgateDefaultConf = `
      },
      "count": 3,
      "cpu": 1,
-     "memory": 1024,
-     "volume": {
-         "size": 10,
-         "mount_point": "/data",
-         "filesystem": "ext4"
-     }
+     "memory": 1024
   }]
 }
 `

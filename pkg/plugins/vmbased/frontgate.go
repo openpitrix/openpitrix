@@ -145,9 +145,7 @@ func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.createVolumesLayer(nodeIds, false)).        // create volume
 		Append(f.runInstancesLayer(nodeIds, false)).         // run instance and attach volume to instance
-		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance
 		Append(f.setFrontgateConfigLayer(nodeIds, false))    // set frontgate config
 
 	return headTaskLayer.Child
@@ -161,10 +159,7 @@ func (f *Frontgate) DeleteClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.umountVolumeLayer(nodeIds, true)).     // umount volume from instance
-		Append(f.detachVolumesLayer(nodeIds, false)).   // detach volume from instance
-		Append(f.deleteInstancesLayer(nodeIds, false)). // delete instance
-		Append(f.deleteVolumesLayer(nodeIds, false))    // delete volume
+		Append(f.deleteInstancesLayer(nodeIds, false)) // delete instance
 
 	return headTaskLayer.Child
 }
