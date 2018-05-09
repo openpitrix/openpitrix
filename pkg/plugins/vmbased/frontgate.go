@@ -152,3 +152,19 @@ func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 
 	return headTaskLayer.Child
 }
+
+func (f *Frontgate) DeleteClusterLayer() *models.TaskLayer {
+	var nodeIds []string
+	for nodeId := range f.ClusterWrapper.ClusterNodes {
+		nodeIds = append(nodeIds, nodeId)
+	}
+	headTaskLayer := new(models.TaskLayer)
+
+	headTaskLayer.
+		Append(f.umountVolumeLayer(nodeIds, true)).     // umount volume from instance
+		Append(f.detachVolumesLayer(nodeIds, false)).   // detach volume from instance
+		Append(f.deleteInstancesLayer(nodeIds, false)). // delete instance
+		Append(f.deleteVolumesLayer(nodeIds, false))    // delete volume
+
+	return headTaskLayer.Child
+}

@@ -23,8 +23,7 @@ type Frontgate struct {
 
 func (f *Frontgate) getFrontgateFromDb(vpcId, userId string) ([]*models.Cluster, error) {
 	var frontgates []*models.Cluster
-	statuses := []string{constants.StatusActive, constants.StatusPending,
-		constants.StatusDeleted, constants.StatusStopped}
+	statuses := []string{constants.StatusActive, constants.StatusPending, constants.StatusStopped}
 	_, err := pi.Global().Db.
 		Select(models.ClusterColumns...).
 		From(models.ClusterTableName).
@@ -50,8 +49,6 @@ func (f *Frontgate) activate(frontgate *models.Cluster) error {
 		return nil
 	} else if frontgate.Status == constants.StatusStopped {
 		return f.StartCluster(frontgate)
-	} else if frontgate.Status == constants.StatusDeleted {
-		return f.RecoverCluster(frontgate)
 	} else {
 		logger.Critical("Frontgate cluster [%s] is in wrong status [%s]", frontgate.ClusterId, frontgate.Status)
 		return fmt.Errorf("Frontgate cluster is in wrong status [%s]. ", frontgate.Status)
