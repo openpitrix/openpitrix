@@ -98,6 +98,11 @@ func UnaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 		resp, err := handler(ctx, req)
 		elapsed := time.Since(start)
 		logger.Info("Handled request [%s] [%+v] exec_time is [%s]", action, s, elapsed)
+		if e, ok := status.FromError(err); ok {
+			if e.Code() != codes.OK {
+				logger.Debug("Response is error: %s, %s", e.Code().String(), e.Message())
+			}
+		}
 		return resp, err
 	}
 }
