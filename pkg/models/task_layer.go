@@ -41,7 +41,7 @@ func walkTaskLayerTree(parent *TaskLayer, current *TaskLayer, cb WalkFunc) error
 		return err
 	}
 
-	if current.Child == nil {
+	if current == nil || current.Child == nil {
 		return nil
 	} else {
 		err = walkTaskLayerTree(current, current.Child, cb)

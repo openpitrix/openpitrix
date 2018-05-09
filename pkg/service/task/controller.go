@@ -86,7 +86,6 @@ func (c *Controller) ExtractTasks() {
 
 func (c *Controller) HandleTask(taskId string, cb func()) error {
 	defer cb()
-	// TODO: get task from db
 	task := &models.Task{
 		TaskId: taskId,
 		Status: constants.StatusWorking,
@@ -184,6 +183,8 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					task.TaskId, task.Target, err)
 				return err
 			}
+
+			logger.Debug("After wait subtask [%s] directive: %s", task.TaskId, task.Directive)
 		}
 
 		if err != nil {

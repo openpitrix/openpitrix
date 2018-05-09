@@ -48,6 +48,7 @@ func (t *Processor) Pre() error {
 				instance.VolumeId = clusterNodes[0].GetVolumeId().GetValue()
 				// write back
 				t.Task.Directive, err = instance.ToString()
+				logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
 			}
 		}
 	case vmbased.ActionFormatAndMountVolume:
@@ -71,10 +72,13 @@ func (t *Processor) Pre() error {
 						Id:      t.Task.TaskId,
 					},
 				))
+				meta.DroneIp = clusterNode.GetPrivateIp().GetValue()
 
 				t.Task.TaskAction = vmbased.ActionRegisterCmd
 				// write back
 				t.Task.Directive, err = meta.ToString()
+
+				logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
 			}
 		}
 	case vmbased.ActionRegisterMetadata:
@@ -89,6 +93,8 @@ func (t *Processor) Pre() error {
 
 				// write back
 				t.Task.Directive, err = meta.ToString()
+
+				logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
 			}
 		}
 	case vmbased.ActionRegisterCmd:
@@ -105,6 +111,8 @@ func (t *Processor) Pre() error {
 						meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(meta.DroneIp, cnodes))
 						// write back
 						t.Task.Directive, err = meta.ToString()
+
+						logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
 					}
 				}
 			}
@@ -120,6 +128,8 @@ func (t *Processor) Pre() error {
 
 					// write back
 					t.Task.Directive, err = meta.ToString()
+
+					logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
 				}
 			}
 		}
