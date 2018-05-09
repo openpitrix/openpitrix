@@ -6,8 +6,11 @@ package frontgate
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"reflect"
+
+	"github.com/chai2010/jsonmap"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/frontgate"
@@ -203,7 +206,13 @@ func (p *Server) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata, out *pbt
 }
 
 func (p *EtcdClient) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata) error {
-	err := p.SetValues(in.Cnodes)
+	var m = map[string]interface{}{}
+	err := json.Unmarshal([]byte(in.Cnodes), &m)
+	if err != nil {
+		return err
+	}
+
+	err = p.SetValues(jsonmap.JsonMap(m).ToMapString("/"))
 	if err != nil {
 		return err
 	}
@@ -216,12 +225,18 @@ func (p *Server) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata, out 
 }
 
 func (p *EtcdClient) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata) error {
+	var m = map[string]interface{}{}
+	err := json.Unmarshal([]byte(in.Cnodes), &m)
+	if err != nil {
+		return err
+	}
+
 	var keyPrefixs []string
-	for key, _ := range in.Cnodes {
+	for key, _ := range m {
 		keyPrefixs = append(keyPrefixs, key)
 	}
 
-	err := p.DelValuesWithPrefix(keyPrefixs...)
+	err = p.DelValuesWithPrefix(keyPrefixs...)
 	if err != nil {
 		return err
 	}
@@ -234,7 +249,13 @@ func (p *Server) RegisterCmd(in *pbtypes.SubTask_RegisterCmd, out *pbtypes.Empty
 }
 
 func (p *EtcdClient) RegisterCmd(in *pbtypes.SubTask_RegisterCmd) error {
-	err := p.SetValues(in.Cnodes)
+	var m = map[string]interface{}{}
+	err := json.Unmarshal([]byte(in.Cnodes), &m)
+	if err != nil {
+		return err
+	}
+
+	err = p.SetValues(jsonmap.JsonMap(m).ToMapString("/"))
 	if err != nil {
 		return err
 	}
@@ -247,12 +268,18 @@ func (p *Server) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd, out *pbtypes.E
 }
 
 func (p *EtcdClient) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd) error {
+	var m = map[string]interface{}{}
+	err := json.Unmarshal([]byte(in.Cnodes), &m)
+	if err != nil {
+		return err
+	}
+
 	var keyPrefixs []string
-	for key, _ := range in.Cnodes {
+	for key, _ := range m {
 		keyPrefixs = append(keyPrefixs, key)
 	}
 
-	err := p.DelValuesWithPrefix(keyPrefixs...)
+	err = p.DelValuesWithPrefix(keyPrefixs...)
 	if err != nil {
 		return err
 	}

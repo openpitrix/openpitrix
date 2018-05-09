@@ -95,7 +95,7 @@ message SubTask_RegisterMetadata {
 	string task_id = 2;
 
 	string frontgate_id = 3;
-	map<string,string> cnodes = 4;
+	string cnodes = 4; // json map encoded string
 	int32 timeout = 5; // seconds
 	int32 retry = 6;
 }
@@ -113,7 +113,7 @@ message SubTask_DeregisterMetadata {
 
 	string frontgate_id = 3;
 	string drone_ip = 4;
-	map<string,string> cnodes = 5;
+	string cnodes = 5; // json map encoded string
 	int32 timeout = 6; // seconds
 	int32 retry = 7;
 }
@@ -135,7 +135,7 @@ message SubTask_RegisterCmd {
 
 	string frontgate_id = 3;
 	string drone_ip = 4;
-	map<string,string> cnodes = 5;
+	string cnodes = 5; // json map encoded string
 	int32 timeout = 6; // seconds
 	int32 retry = 7;
 }
@@ -153,7 +153,7 @@ message SubTask_DeregisterCmd {
 
 	string frontgate_id = 3;
 	string drone_ip = 4;
-	map<string,string> cnodes = 5;
+	string cnodes = 5; // json map encoded string
 	int32 timeout = 6; // seconds
 	int32 retry = 7;
 }

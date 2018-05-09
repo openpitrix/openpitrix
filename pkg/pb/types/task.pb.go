@@ -56,7 +56,7 @@ func (x SubTaskAction) String() string {
 	return proto.EnumName(SubTaskAction_name, int32(x))
 }
 func (SubTaskAction) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{0}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{0}
 }
 
 type SubTaskId struct {
@@ -70,7 +70,7 @@ func (m *SubTaskId) Reset()         { *m = SubTaskId{} }
 func (m *SubTaskId) String() string { return proto.CompactTextString(m) }
 func (*SubTaskId) ProtoMessage()    {}
 func (*SubTaskId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{0}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{0}
 }
 func (m *SubTaskId) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTaskId.Unmarshal(m, b)
@@ -110,7 +110,7 @@ func (m *SubTaskMessage) Reset()         { *m = SubTaskMessage{} }
 func (m *SubTaskMessage) String() string { return proto.CompactTextString(m) }
 func (*SubTaskMessage) ProtoMessage()    {}
 func (*SubTaskMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{1}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{1}
 }
 func (m *SubTaskMessage) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTaskMessage.Unmarshal(m, b)
@@ -163,7 +163,7 @@ func (m *SubTaskStatus) Reset()         { *m = SubTaskStatus{} }
 func (m *SubTaskStatus) String() string { return proto.CompactTextString(m) }
 func (*SubTaskStatus) ProtoMessage()    {}
 func (*SubTaskStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{2}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{2}
 }
 func (m *SubTaskStatus) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTaskStatus.Unmarshal(m, b)
@@ -218,7 +218,7 @@ func (m *SubTask_StartConfd) Reset()         { *m = SubTask_StartConfd{} }
 func (m *SubTask_StartConfd) String() string { return proto.CompactTextString(m) }
 func (*SubTask_StartConfd) ProtoMessage()    {}
 func (*SubTask_StartConfd) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{3}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{3}
 }
 func (m *SubTask_StartConfd) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTask_StartConfd.Unmarshal(m, b)
@@ -294,7 +294,7 @@ func (m *SubTask_StopConfd) Reset()         { *m = SubTask_StopConfd{} }
 func (m *SubTask_StopConfd) String() string { return proto.CompactTextString(m) }
 func (*SubTask_StopConfd) ProtoMessage()    {}
 func (*SubTask_StopConfd) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{4}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{4}
 }
 func (m *SubTask_StopConfd) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTask_StopConfd.Unmarshal(m, b)
@@ -356,22 +356,22 @@ func (m *SubTask_StopConfd) GetTimeout() int32 {
 // "directive": {"frontgateId": "cl-abcdefgh", "cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
 // }
 type SubTask_RegisterMetadata struct {
-	Action               string            `protobuf:"bytes,1,opt,name=action" json:"action"`
-	TaskId               string            `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
-	FrontgateId          string            `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
-	Cnodes               map[string]string `protobuf:"bytes,4,rep,name=cnodes" json:"cnodes" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Timeout              int32             `protobuf:"varint,5,opt,name=timeout" json:"timeout"`
-	Retry                int32             `protobuf:"varint,6,opt,name=retry" json:"retry"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	Cnodes               string   `protobuf:"bytes,4,opt,name=cnodes" json:"cnodes"`
+	Timeout              int32    `protobuf:"varint,5,opt,name=timeout" json:"timeout"`
+	Retry                int32    `protobuf:"varint,6,opt,name=retry" json:"retry"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *SubTask_RegisterMetadata) Reset()         { *m = SubTask_RegisterMetadata{} }
 func (m *SubTask_RegisterMetadata) String() string { return proto.CompactTextString(m) }
 func (*SubTask_RegisterMetadata) ProtoMessage()    {}
 func (*SubTask_RegisterMetadata) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{5}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{5}
 }
 func (m *SubTask_RegisterMetadata) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTask_RegisterMetadata.Unmarshal(m, b)
@@ -412,11 +412,11 @@ func (m *SubTask_RegisterMetadata) GetFrontgateId() string {
 	return ""
 }
 
-func (m *SubTask_RegisterMetadata) GetCnodes() map[string]string {
+func (m *SubTask_RegisterMetadata) GetCnodes() string {
 	if m != nil {
 		return m.Cnodes
 	}
-	return nil
+	return ""
 }
 
 func (m *SubTask_RegisterMetadata) GetTimeout() int32 {
@@ -440,23 +440,23 @@ func (m *SubTask_RegisterMetadata) GetRetry() int32 {
 // "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
 // }
 type SubTask_DeregisterMetadata struct {
-	Action               string            `protobuf:"bytes,1,opt,name=action" json:"action"`
-	TaskId               string            `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
-	FrontgateId          string            `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
-	DroneIp              string            `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
-	Cnodes               map[string]string `protobuf:"bytes,5,rep,name=cnodes" json:"cnodes" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Timeout              int32             `protobuf:"varint,6,opt,name=timeout" json:"timeout"`
-	Retry                int32             `protobuf:"varint,7,opt,name=retry" json:"retry"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
+	Cnodes               string   `protobuf:"bytes,5,opt,name=cnodes" json:"cnodes"`
+	Timeout              int32    `protobuf:"varint,6,opt,name=timeout" json:"timeout"`
+	Retry                int32    `protobuf:"varint,7,opt,name=retry" json:"retry"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *SubTask_DeregisterMetadata) Reset()         { *m = SubTask_DeregisterMetadata{} }
 func (m *SubTask_DeregisterMetadata) String() string { return proto.CompactTextString(m) }
 func (*SubTask_DeregisterMetadata) ProtoMessage()    {}
 func (*SubTask_DeregisterMetadata) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{6}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{6}
 }
 func (m *SubTask_DeregisterMetadata) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTask_DeregisterMetadata.Unmarshal(m, b)
@@ -504,11 +504,11 @@ func (m *SubTask_DeregisterMetadata) GetDroneIp() string {
 	return ""
 }
 
-func (m *SubTask_DeregisterMetadata) GetCnodes() map[string]string {
+func (m *SubTask_DeregisterMetadata) GetCnodes() string {
 	if m != nil {
 		return m.Cnodes
 	}
-	return nil
+	return ""
 }
 
 func (m *SubTask_DeregisterMetadata) GetTimeout() int32 {
@@ -532,23 +532,23 @@ func (m *SubTask_DeregisterMetadata) GetRetry() int32 {
 // "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
 // }
 type SubTask_RegisterCmd struct {
-	Action               string            `protobuf:"bytes,1,opt,name=action" json:"action"`
-	TaskId               string            `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
-	FrontgateId          string            `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
-	DroneIp              string            `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
-	Cnodes               map[string]string `protobuf:"bytes,5,rep,name=cnodes" json:"cnodes" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Timeout              int32             `protobuf:"varint,6,opt,name=timeout" json:"timeout"`
-	Retry                int32             `protobuf:"varint,7,opt,name=retry" json:"retry"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
+	Cnodes               string   `protobuf:"bytes,5,opt,name=cnodes" json:"cnodes"`
+	Timeout              int32    `protobuf:"varint,6,opt,name=timeout" json:"timeout"`
+	Retry                int32    `protobuf:"varint,7,opt,name=retry" json:"retry"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *SubTask_RegisterCmd) Reset()         { *m = SubTask_RegisterCmd{} }
 func (m *SubTask_RegisterCmd) String() string { return proto.CompactTextString(m) }
 func (*SubTask_RegisterCmd) ProtoMessage()    {}
 func (*SubTask_RegisterCmd) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{7}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{7}
 }
 func (m *SubTask_RegisterCmd) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTask_RegisterCmd.Unmarshal(m, b)
@@ -596,11 +596,11 @@ func (m *SubTask_RegisterCmd) GetDroneIp() string {
 	return ""
 }
 
-func (m *SubTask_RegisterCmd) GetCnodes() map[string]string {
+func (m *SubTask_RegisterCmd) GetCnodes() string {
 	if m != nil {
 		return m.Cnodes
 	}
-	return nil
+	return ""
 }
 
 func (m *SubTask_RegisterCmd) GetTimeout() int32 {
@@ -624,23 +624,23 @@ func (m *SubTask_RegisterCmd) GetRetry() int32 {
 // "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
 // }
 type SubTask_DeregisterCmd struct {
-	Action               string            `protobuf:"bytes,1,opt,name=action" json:"action"`
-	TaskId               string            `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
-	FrontgateId          string            `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
-	DroneIp              string            `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
-	Cnodes               map[string]string `protobuf:"bytes,5,rep,name=cnodes" json:"cnodes" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Timeout              int32             `protobuf:"varint,6,opt,name=timeout" json:"timeout"`
-	Retry                int32             `protobuf:"varint,7,opt,name=retry" json:"retry"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
+	Cnodes               string   `protobuf:"bytes,5,opt,name=cnodes" json:"cnodes"`
+	Timeout              int32    `protobuf:"varint,6,opt,name=timeout" json:"timeout"`
+	Retry                int32    `protobuf:"varint,7,opt,name=retry" json:"retry"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *SubTask_DeregisterCmd) Reset()         { *m = SubTask_DeregisterCmd{} }
 func (m *SubTask_DeregisterCmd) String() string { return proto.CompactTextString(m) }
 func (*SubTask_DeregisterCmd) ProtoMessage()    {}
 func (*SubTask_DeregisterCmd) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{8}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{8}
 }
 func (m *SubTask_DeregisterCmd) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTask_DeregisterCmd.Unmarshal(m, b)
@@ -688,11 +688,11 @@ func (m *SubTask_DeregisterCmd) GetDroneIp() string {
 	return ""
 }
 
-func (m *SubTask_DeregisterCmd) GetCnodes() map[string]string {
+func (m *SubTask_DeregisterCmd) GetCnodes() string {
 	if m != nil {
 		return m.Cnodes
 	}
-	return nil
+	return ""
 }
 
 func (m *SubTask_DeregisterCmd) GetTimeout() int32 {
@@ -726,7 +726,7 @@ func (m *SubTask_GetTaskStatus) Reset()         { *m = SubTask_GetTaskStatus{} }
 func (m *SubTask_GetTaskStatus) String() string { return proto.CompactTextString(m) }
 func (*SubTask_GetTaskStatus) ProtoMessage()    {}
 func (*SubTask_GetTaskStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8d2593940b776fcb, []int{9}
+	return fileDescriptor_task_6b14c83cf07ae126, []int{9}
 }
 func (m *SubTask_GetTaskStatus) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubTask_GetTaskStatus.Unmarshal(m, b)
@@ -767,54 +767,45 @@ func init() {
 	proto.RegisterType((*SubTask_StartConfd)(nil), "openpitrix.types.SubTask_StartConfd")
 	proto.RegisterType((*SubTask_StopConfd)(nil), "openpitrix.types.SubTask_StopConfd")
 	proto.RegisterType((*SubTask_RegisterMetadata)(nil), "openpitrix.types.SubTask_RegisterMetadata")
-	proto.RegisterMapType((map[string]string)(nil), "openpitrix.types.SubTask_RegisterMetadata.CnodesEntry")
 	proto.RegisterType((*SubTask_DeregisterMetadata)(nil), "openpitrix.types.SubTask_DeregisterMetadata")
-	proto.RegisterMapType((map[string]string)(nil), "openpitrix.types.SubTask_DeregisterMetadata.CnodesEntry")
 	proto.RegisterType((*SubTask_RegisterCmd)(nil), "openpitrix.types.SubTask_RegisterCmd")
-	proto.RegisterMapType((map[string]string)(nil), "openpitrix.types.SubTask_RegisterCmd.CnodesEntry")
 	proto.RegisterType((*SubTask_DeregisterCmd)(nil), "openpitrix.types.SubTask_DeregisterCmd")
-	proto.RegisterMapType((map[string]string)(nil), "openpitrix.types.SubTask_DeregisterCmd.CnodesEntry")
 	proto.RegisterType((*SubTask_GetTaskStatus)(nil), "openpitrix.types.SubTask_GetTaskStatus")
 	proto.RegisterEnum("openpitrix.types.SubTaskAction", SubTaskAction_name, SubTaskAction_value)
 }
 
-func init() { proto.RegisterFile("openpitrix/types/task.proto", fileDescriptor_task_8d2593940b776fcb) }
+func init() { proto.RegisterFile("openpitrix/types/task.proto", fileDescriptor_task_6b14c83cf07ae126) }
 
-var fileDescriptor_task_8d2593940b776fcb = []byte{
-	// 552 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x96, 0xcd, 0x6e, 0xd3, 0x40,
-	0x10, 0xc7, 0xb1, 0x93, 0x38, 0xcd, 0x84, 0x94, 0xed, 0x52, 0x8a, 0x29, 0x1c, 0x82, 0xc5, 0x21,
-	0x42, 0x22, 0x11, 0x54, 0x42, 0x05, 0x2e, 0x40, 0x40, 0x10, 0xd1, 0x56, 0x28, 0x81, 0x0b, 0x97,
-	0x68, 0x13, 0x6f, 0xa3, 0x55, 0x88, 0x77, 0xb5, 0x9e, 0x54, 0xe4, 0x5d, 0xe8, 0x03, 0xf0, 0x0a,
-	0x1c, 0x38, 0xf3, 0x58, 0xc8, 0x6b, 0x27, 0x71, 0x1d, 0x99, 0x52, 0x89, 0x7e, 0x9c, 0x92, 0xd9,
-	0x19, 0x8f, 0xff, 0xfb, 0x9b, 0x59, 0xcf, 0xc2, 0x5d, 0xa9, 0x78, 0xa0, 0x04, 0x6a, 0xf1, 0xad,
-	0x85, 0x33, 0xc5, 0xc3, 0x16, 0xb2, 0x70, 0xdc, 0x54, 0x5a, 0xa2, 0xa4, 0x64, 0xe9, 0x6c, 0x1a,
-	0xa7, 0xf7, 0x00, 0x2a, 0xbd, 0xe9, 0xe0, 0x13, 0x0b, 0xc7, 0x1d, 0x9f, 0xde, 0x86, 0x72, 0x14,
-	0xdc, 0x17, 0xbe, 0x6b, 0xd5, 0xad, 0x46, 0xa5, 0xeb, 0xa0, 0x71, 0x78, 0x7d, 0x58, 0x4f, 0xa2,
-	0xf6, 0x79, 0x18, 0xb2, 0x11, 0xa7, 0x5b, 0xe0, 0xb0, 0x21, 0x0a, 0x19, 0xcc, 0x23, 0x63, 0x2b,
-	0x9d, 0xc2, 0x4e, 0xa7, 0xa0, 0xf7, 0xa0, 0xe2, 0x0b, 0xcd, 0x87, 0x28, 0x8e, 0xb8, 0x5b, 0x30,
-	0xae, 0xe5, 0x82, 0xf7, 0x12, 0x6a, 0xc9, 0x0b, 0x7a, 0xc8, 0x70, 0x1a, 0xe6, 0x4a, 0x89, 0x5e,
-	0x1c, 0x9a, 0x90, 0x79, 0xfe, 0xd8, 0xf2, 0x8e, 0x2d, 0xa0, 0x49, 0x8a, 0x7e, 0x0f, 0x99, 0xc6,
-	0xb6, 0x0c, 0x0e, 0xfd, 0xb3, 0xeb, 0xbc, 0x0f, 0xd7, 0x0f, 0xb5, 0x0c, 0x70, 0xc4, 0x90, 0x47,
-	0xde, 0x58, 0x6a, 0x75, 0xb1, 0xd6, 0xf1, 0xe9, 0x1d, 0x58, 0xf3, 0xb5, 0x0c, 0x78, 0x5f, 0x28,
-	0xb7, 0x68, 0xdc, 0x65, 0x63, 0x77, 0x14, 0x75, 0xa1, 0x8c, 0x62, 0xc2, 0xe5, 0x14, 0xdd, 0x52,
-	0xdd, 0x6a, 0x94, 0xba, 0x73, 0xd3, 0xfb, 0x6e, 0xc1, 0xc6, 0x52, 0x9f, 0x54, 0x57, 0x4c, 0xde,
-	0x0f, 0x1b, 0xdc, 0xb9, 0xbc, 0x2e, 0x1f, 0x89, 0x10, 0xb9, 0xde, 0xe7, 0xc8, 0x7c, 0x86, 0xec,
-	0x5c, 0x54, 0x1e, 0x80, 0x33, 0x0c, 0xa4, 0xcf, 0x43, 0xb7, 0x58, 0x2f, 0x34, 0xaa, 0x4f, 0x9e,
-	0x36, 0xb3, 0xbd, 0xd9, 0xcc, 0xd3, 0xd3, 0x6c, 0x9b, 0x07, 0xdf, 0x06, 0xa8, 0x67, 0xdd, 0x24,
-	0x4b, 0xfe, 0xd6, 0xe8, 0x26, 0x94, 0x34, 0x47, 0x3d, 0x73, 0x1d, 0xb3, 0x1e, 0x1b, 0xdb, 0xcf,
-	0xa0, 0x9a, 0x4a, 0x43, 0x09, 0x14, 0xc6, 0x7c, 0x96, 0xec, 0x2f, 0xfa, 0x1b, 0x3d, 0x76, 0xc4,
-	0xbe, 0x4e, 0x79, 0xb2, 0xb5, 0xd8, 0x78, 0x6e, 0xef, 0x5a, 0xde, 0x6f, 0x1b, 0xb6, 0xe7, 0xda,
-	0xde, 0x70, 0x7d, 0x11, 0xb4, 0xfe, 0x52, 0xd3, 0x8f, 0x0b, 0x90, 0x25, 0x03, 0x72, 0x37, 0x1f,
-	0xe4, 0xaa, 0xd8, 0xd3, 0x50, 0x3a, 0x39, 0x28, 0xcb, 0xff, 0x09, 0xe5, 0x4f, 0x1b, 0x6e, 0x66,
-	0xcb, 0xdc, 0x9e, 0x5c, 0xf8, 0xb9, 0xe8, 0x64, 0x18, 0x3e, 0x3e, 0xbd, 0x19, 0xdb, 0x13, 0xff,
-	0xb2, 0xe1, 0xfd, 0xb2, 0xe1, 0xd6, 0x6a, 0x69, 0x2f, 0x01, 0xdf, 0x87, 0x0c, 0xbe, 0x9d, 0x7f,
-	0x69, 0xc1, 0x2b, 0x00, 0xf0, 0xfd, 0x92, 0xdf, 0x3b, 0x8e, 0xa9, 0xe9, 0x73, 0x56, 0x7e, 0x0f,
-	0x8f, 0xad, 0xc5, 0x00, 0x7b, 0x15, 0x87, 0xae, 0x41, 0xf1, 0xe0, 0xf3, 0xde, 0x1e, 0xb9, 0x46,
-	0xd7, 0x01, 0x96, 0x03, 0x89, 0x58, 0x74, 0x13, 0x48, 0xf6, 0x8b, 0x46, 0x6c, 0xba, 0x05, 0x74,
-	0xf5, 0x78, 0x92, 0x02, 0xbd, 0x01, 0xd5, 0x54, 0xcb, 0x91, 0x22, 0xdd, 0x80, 0xda, 0x09, 0x88,
-	0xa4, 0x14, 0x2d, 0x9d, 0xd0, 0x4f, 0x1c, 0x5a, 0x83, 0xca, 0x62, 0xca, 0x90, 0xf2, 0xeb, 0xd6,
-	0x97, 0x47, 0xa9, 0x92, 0x08, 0xd9, 0x4a, 0xdd, 0x12, 0xd4, 0x78, 0xd4, 0x52, 0x83, 0xf8, 0xb2,
-	0xf0, 0x42, 0x0d, 0xcc, 0xef, 0xc0, 0x31, 0x17, 0x86, 0x9d, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff,
-	0x86, 0xc2, 0x66, 0x7b, 0x4f, 0x08, 0x00, 0x00,
+var fileDescriptor_task_6b14c83cf07ae126 = []byte{
+	// 465 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x95, 0xcf, 0x6e, 0xd3, 0x40,
+	0x10, 0xc6, 0xd9, 0x36, 0xb6, 0x9b, 0x29, 0x29, 0xdb, 0xa5, 0x04, 0xf3, 0xe7, 0x50, 0x2c, 0x0e,
+	0x15, 0x12, 0xf5, 0x81, 0x23, 0x17, 0xa0, 0x48, 0x10, 0xa9, 0xe5, 0x90, 0xc0, 0x85, 0x4b, 0xb4,
+	0xc9, 0x6e, 0xad, 0x55, 0x54, 0xef, 0x6a, 0x77, 0x82, 0xe8, 0xbb, 0xd0, 0xd7, 0xe0, 0x29, 0x10,
+	0x17, 0x5e, 0x08, 0x79, 0x6d, 0xc7, 0x6e, 0x2b, 0x23, 0xf5, 0x00, 0x22, 0xa7, 0x68, 0xe6, 0x1b,
+	0x8d, 0x7f, 0xdf, 0xee, 0x66, 0x06, 0x1e, 0x69, 0x23, 0x73, 0xa3, 0xd0, 0xaa, 0xaf, 0x29, 0x9e,
+	0x1b, 0xe9, 0x52, 0xe4, 0x6e, 0x71, 0x68, 0xac, 0x46, 0xcd, 0x68, 0x23, 0x1e, 0x7a, 0x31, 0x79,
+	0x0a, 0xfd, 0xc9, 0x72, 0xf6, 0x91, 0xbb, 0xc5, 0x48, 0xb0, 0xfb, 0x10, 0x15, 0xc5, 0x53, 0x25,
+	0x62, 0xb2, 0x4f, 0x0e, 0xfa, 0xe3, 0x10, 0xbd, 0x90, 0x4c, 0x61, 0xa7, 0xaa, 0x3a, 0x91, 0xce,
+	0xf1, 0x4c, 0xb2, 0x21, 0x84, 0x7c, 0x8e, 0x4a, 0xe7, 0x75, 0x65, 0x19, 0xb5, 0x5b, 0x6c, 0xb4,
+	0x5b, 0xb0, 0xc7, 0xd0, 0x17, 0xca, 0xca, 0x39, 0xaa, 0x2f, 0x32, 0xde, 0xf4, 0x52, 0x93, 0x48,
+	0x5e, 0xc1, 0xa0, 0xfa, 0xc0, 0x04, 0x39, 0x2e, 0x5d, 0x27, 0x4a, 0xf1, 0x61, 0xe7, 0x4b, 0xea,
+	0xfe, 0x65, 0x94, 0x5c, 0x10, 0x60, 0x55, 0x8b, 0xe9, 0x04, 0xb9, 0xc5, 0x23, 0x9d, 0x9f, 0x8a,
+	0x9b, 0x73, 0x3e, 0x81, 0xdb, 0xa7, 0x56, 0xe7, 0x98, 0x71, 0x94, 0x85, 0x5a, 0xa2, 0x6e, 0xaf,
+	0x72, 0x23, 0xc1, 0x1e, 0xc0, 0x96, 0xb0, 0x3a, 0x97, 0x53, 0x65, 0xe2, 0x9e, 0x97, 0x23, 0x1f,
+	0x8f, 0x0c, 0x8b, 0x21, 0x42, 0x75, 0x26, 0xf5, 0x12, 0xe3, 0x60, 0x9f, 0x1c, 0x04, 0xe3, 0x3a,
+	0x4c, 0xbe, 0x11, 0xd8, 0x6d, 0xf8, 0xb4, 0xf9, 0xcf, 0xf0, 0xbe, 0x13, 0x88, 0x6b, 0xbc, 0xb1,
+	0xcc, 0x94, 0x43, 0x69, 0x4f, 0x24, 0x72, 0xc1, 0x91, 0xff, 0x15, 0xca, 0x21, 0x84, 0xf3, 0x5c,
+	0x0b, 0xe9, 0x2a, 0xc6, 0x2a, 0xea, 0x46, 0x64, 0x7b, 0x10, 0x58, 0x89, 0xf6, 0x3c, 0x0e, 0x7d,
+	0xbe, 0x0c, 0x92, 0x5f, 0x04, 0x1e, 0xd6, 0xe0, 0x6f, 0xa5, 0xfd, 0x17, 0xe8, 0x7f, 0x38, 0xe0,
+	0xc6, 0x55, 0xd0, 0xe5, 0x2a, 0xec, 0x70, 0x15, 0xb5, 0x5d, 0xfd, 0x20, 0x70, 0xf7, 0xea, 0x75,
+	0x1c, 0x9d, 0x89, 0x75, 0xb5, 0xf3, 0x93, 0xc0, 0xbd, 0xeb, 0x97, 0xb4, 0xc6, 0x86, 0xde, 0x37,
+	0x7e, 0xde, 0x49, 0x6c, 0xcd, 0xad, 0x9b, 0xfa, 0x79, 0x76, 0x41, 0x56, 0xa3, 0xef, 0x75, 0x59,
+	0xba, 0x05, 0xbd, 0x0f, 0x9f, 0x8e, 0x8f, 0xe9, 0x2d, 0xb6, 0x03, 0xd0, 0x8c, 0x32, 0x4a, 0xd8,
+	0x1e, 0xd0, 0xab, 0xff, 0x4d, 0xba, 0xc1, 0x86, 0xc0, 0xae, 0x3f, 0x7c, 0xba, 0xc9, 0xee, 0xc0,
+	0x76, 0xeb, 0xe9, 0xd0, 0x1e, 0xdb, 0x85, 0xc1, 0xa5, 0xc3, 0xa7, 0x41, 0x91, 0xba, 0xc4, 0x4f,
+	0x43, 0x36, 0x80, 0xfe, 0x6a, 0x3e, 0xd1, 0xe8, 0x4d, 0xfa, 0xf9, 0x79, 0x6b, 0x69, 0x28, 0x9d,
+	0xb6, 0xf6, 0x8b, 0x59, 0x64, 0xa9, 0x99, 0x95, 0x6b, 0xe6, 0xa5, 0x99, 0xf9, 0xdf, 0x59, 0xe8,
+	0x57, 0xcd, 0x8b, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x41, 0x8b, 0x45, 0x46, 0x89, 0x06, 0x00,
+	0x00,
 }
