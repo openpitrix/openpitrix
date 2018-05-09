@@ -161,11 +161,11 @@ func TestEtcdClient_metadata(t *testing.T) {
 	Assert(t, err == nil, err)
 
 	err = c.RegisterMetadata(&pbtypes.SubTask_RegisterMetadata{
-		Cnodes: map[string]string{
+		Cnodes: `{
 			"/abc":   "abc-value",
 			"/123/a": "123-a-value",
-			"/123/b": "123-b-value",
-		},
+			"/123/b": "123-b-value"
+		}`,
 	})
 	Assert(t, err == nil, err)
 
@@ -174,10 +174,10 @@ func TestEtcdClient_metadata(t *testing.T) {
 	Assert(t, len(m0) == 3)
 
 	err = c.DeregisterMetadata(&pbtypes.SubTask_DeregisterMetadata{
-		Cnodes: map[string]string{
+		Cnodes: `{
 			"/abc":  "",
-			"/123/": "", // remove /123/a,/123/b
-		},
+			"/123/": ""
+		}`, // remove /123/a,/123/b
 	})
 	Assert(t, err == nil, err)
 
@@ -199,11 +199,11 @@ func TestEtcdClient_cmd(t *testing.T) {
 	Assert(t, err == nil, err)
 
 	err = c.RegisterMetadata(&pbtypes.SubTask_RegisterMetadata{
-		Cnodes: map[string]string{
+		Cnodes: `{
 			"/cmd/abc":   "abc-value",
 			"/cmd/123/a": "123-a-value",
-			"/cmd/123/b": "123-b-value",
-		},
+			"/cmd/123/b": "123-b-value"
+		}`,
 	})
 	Assert(t, err == nil, err)
 
@@ -212,9 +212,9 @@ func TestEtcdClient_cmd(t *testing.T) {
 	Assert(t, len(m0) == 3)
 
 	err = c.DeregisterCmd(&pbtypes.SubTask_DeregisterCmd{
-		Cnodes: map[string]string{
-			"/cmd": "",
-		},
+		Cnodes: `{
+			"/cmd": ""
+		}`,
 	})
 	Assert(t, err == nil, err)
 
