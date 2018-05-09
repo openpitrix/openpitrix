@@ -109,6 +109,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		processor := NewProcessor(task)
 		err = processor.Pre()
 		if err != nil {
+			logger.Error("Executing task [%s] pre processor failed: %+v", task.TaskId, err)
 			return err
 		}
 
@@ -191,11 +192,16 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			return err
 		}
 
-		return processor.Post()
+		err = processor.Post()
+		if err != nil {
+			logger.Error("Executing task [%s] post processor failed: %+v", task.TaskId, err)
+		}
+		return err
 	}()
 	var status = constants.StatusSuccessful
 	if err != nil {
 		status = constants.StatusFailed
+
 	}
 	c.updateTaskAttributes(task.TaskId, map[string]interface{}{
 		"status": status,
