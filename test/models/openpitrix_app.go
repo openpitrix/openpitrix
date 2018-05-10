@@ -37,6 +37,9 @@ type OpenpitrixApp struct {
 	// icon
 	Icon string `json:"icon,omitempty"`
 
+	// keywords
+	Keywords string `json:"keywords,omitempty"`
+
 	// latest app version
 	LatestAppVersion *OpenpitrixAppVersion `json:"latest_app_version,omitempty"`
 

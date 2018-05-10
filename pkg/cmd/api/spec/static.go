@@ -1819,6 +1819,9 @@ var Files = map[string]string{
         "maintainers": {
           "type": "string"
         },
+        "keywords": {
+          "type": "string"
+        },
         "sources": {
           "type": "string"
         },
@@ -1986,6 +1989,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "category_id": {
+          "type": "string"
+        },
+        "keywords": {
           "type": "string"
         }
       }
@@ -2205,6 +2211,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "category_id": {
+          "type": "string"
+        },
+        "keywords": {
           "type": "string"
         }
       }

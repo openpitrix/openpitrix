@@ -37,6 +37,7 @@ func (h helmVersionWrapper) GetVersion() string     { return h.ChartVersion.GetV
 func (h helmVersionWrapper) GetAppVersion() string  { return h.ChartVersion.GetAppVersion() }
 func (h helmVersionWrapper) GetDescription() string { return h.ChartVersion.GetDescription() }
 func (h helmVersionWrapper) GetUrls() []string      { return h.ChartVersion.URLs }
+func (h helmVersionWrapper) GetKeywords() []string  { return h.ChartVersion.GetKeywords() }
 
 func (i *helmIndexer) IndexRepo() error {
 	indexFile, err := i.getIndexFile()

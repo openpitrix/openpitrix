@@ -71,6 +71,13 @@ func (m *Metadata) GetSources() []string {
 	return nil
 }
 
+func (m *Metadata) GetKeywords() []string {
+	if m != nil {
+		return m.Keywords
+	}
+	return nil
+}
+
 func (m *Metadata) GetVersion() string {
 	if m != nil {
 		return m.Version

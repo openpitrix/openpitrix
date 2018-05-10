@@ -28,6 +28,7 @@ message CreateAppRequest {
 	google.protobuf.StringValue sources = 12;
 	google.protobuf.StringValue readme = 13;
 	google.protobuf.StringValue category_id = 14;
+	google.protobuf.StringValue keywords = 15;
 }
 
 message CreateAppResponse {
@@ -48,6 +49,7 @@ message ModifyAppRequest {
 	google.protobuf.StringValue sources = 12;
 	google.protobuf.StringValue readme = 13;
 	google.protobuf.StringValue category_id = 14;
+	google.protobuf.StringValue keywords = 15;
 }
 
 message ModifyAppResponse {
@@ -72,15 +74,16 @@ message App {
 	google.protobuf.StringValue icon = 7;
 	google.protobuf.StringValue screenshots = 8;
 	google.protobuf.StringValue maintainers = 9;
-	google.protobuf.StringValue sources = 10;
-	google.protobuf.StringValue readme = 11;
-	google.protobuf.StringValue chart_name = 12;
-	google.protobuf.StringValue owner = 13;
-	google.protobuf.Timestamp create_time = 14;
-	google.protobuf.Timestamp status_time = 15;
-	google.protobuf.Timestamp update_time = 16;
-	repeated AppCategory app_category_set = 17;
-	AppVersion latest_app_version = 18;
+	google.protobuf.StringValue keywords = 10;
+	google.protobuf.StringValue sources = 11;
+	google.protobuf.StringValue readme = 12;
+	google.protobuf.StringValue chart_name = 13;
+	google.protobuf.StringValue owner = 14;
+	google.protobuf.Timestamp create_time = 15;
+	google.protobuf.Timestamp status_time = 16;
+	google.protobuf.Timestamp update_time = 17;
+	repeated AppCategory app_category_set = 18;
+	AppVersion latest_app_version = 19;
 }
 
 message AppCategory {
