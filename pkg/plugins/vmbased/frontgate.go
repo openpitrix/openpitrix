@@ -5,6 +5,7 @@
 package vmbased
 
 import (
+	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -54,7 +55,7 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 	result += fmt.Sprintf("FILE_NAME=\"%s\"\n", FrontgateConfFile)
 	result += fmt.Sprintf("FILE_CONF=%s\n", frontgateConfStr)
 
-	return result
+	return base64.StdEncoding.EncodeToString([]byte(result))
 }
 
 func (f *Frontgate) getConfig(nodeId string) string {
@@ -145,8 +146,8 @@ func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.runInstancesLayer(nodeIds, false)).         // run instance and attach volume to instance
-		Append(f.setFrontgateConfigLayer(nodeIds, false))    // set frontgate config
+		Append(f.runInstancesLayer(nodeIds, false)).      // run instance and attach volume to instance
+		Append(f.setFrontgateConfigLayer(nodeIds, false)) // set frontgate config
 
 	return headTaskLayer.Child
 }
