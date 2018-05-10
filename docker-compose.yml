@@ -212,7 +212,7 @@ services:
   # pilot service
   openpitrix-pilot-service:
     build: .
-    image: "openpitrix/openpitrix:metadata"
+    image: "openpitrix:metadata"
     command: "pilot -config=/opt/openpitrix/conf/pilot-config.json serve"
     volumes:
       - ./metadata/cmd/pilot/pilot-config.json:/opt/openpitrix/conf/pilot-config.json
