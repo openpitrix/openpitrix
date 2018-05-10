@@ -159,6 +159,37 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 	return attributes
 }
 
+func CheckParamsRequired(req Request, columns ...string) error {
+	for _, field := range structs.Fields(req) {
+		column := getFieldName(field)
+		param := field.Value()
+		err := fmt.Errorf("missing parameter [%s]", column)
+		if stringutil.StringIn(column, columns) {
+			switch value := param.(type) {
+			case string:
+				if value == "" {
+					return err
+				}
+			case *wrappers.StringValue:
+				if value == nil || value.GetValue() == "" {
+					return err
+				}
+			case []string:
+				var values []string
+				for _, v := range value {
+					if v != "" {
+						values = append(values, v)
+					}
+				}
+				if len(values) == 0 {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
 func AddQueryOrderDir(query *db.SelectQuery, req Request, column string) *db.SelectQuery {
 	isAsc := false
 	if r, ok := req.(RequestWithReverse); ok {

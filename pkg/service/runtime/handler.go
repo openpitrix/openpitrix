@@ -173,46 +173,25 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	return res, nil
 }
 
-func (p *Server) DeleteRuntime(ctx context.Context, req *pb.DeleteRuntimeRequest) (*pb.DeleteRuntimeResponse, error) {
+func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesRequest) (*pb.DeleteRuntimesResponse, error) {
 	// validate req
-	err := validateDeleteRuntimeRequest(req)
+	err := manager.CheckParamsRequired(req, "runtime_id")
 	if err != nil {
-		logger.Error("DeleteRuntime: %+v", err)
-		return nil, status.Errorf(codes.InvalidArgument, "DeleteRuntime: %+v", err)
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	// check runtime can be deleted
-	runtimeId := req.GetRuntimeId().GetValue()
-	deleted, err := p.checkRuntimeDeleted(runtimeId)
-	if err != nil {
-		logger.Error("DeleteRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal,
-			"DeleteRuntime: %+v", err)
-	}
-	if deleted {
-		logger.Error("DeleteRuntime: runtime has been deleted [%+v]", runtimeId)
-		return nil, status.Errorf(codes.Internal,
-			"DeleteRuntime: runtime has been deleted [%+v]", runtimeId)
-	}
+	runtimeIds := req.GetRuntimeId()
+
 	// deleted runtime
-	err = p.deleteRuntime(runtimeId)
+	err = p.deleteRuntimes(runtimeIds)
 	if err != nil {
-		logger.Error("DeleteRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DeleteRuntime: %+v", err)
+		logger.Error("DeleteRuntimes: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DeleteRuntimes: %+v", err)
 	}
 
-	// get runtime
-	runtime, err := p.getRuntime(runtimeId)
-	if err != nil {
-		return nil, err
-	}
-	pbRuntime, err := p.formatRuntime(runtime)
-	if err != nil {
-		logger.Error("DeleteRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DeleteRuntime: %+v", err)
-	}
-	res := &pb.DeleteRuntimeResponse{
-		Runtime: pbRuntime,
+	res := &pb.DeleteRuntimesResponse{
+		RuntimeId: runtimeIds,
 	}
 	return res, nil
 }

@@ -47,12 +47,12 @@ message ModifyRepoResponse {
 	Repo repo = 1;
 }
 
-message DeleteRepoRequest {
-	google.protobuf.StringValue repo_id = 1;
+message DeleteReposRequest {
+	repeated string repo_id = 1;
 }
 
-message DeleteRepoResponse {
-	Repo repo = 1;
+message DeleteReposResponse {
+	repeated string repo_id = 1;
 }
 
 message RepoLabel {
@@ -138,9 +138,9 @@ service RepoManager {
 			body: "*"
 		};
 	}
-	rpc DeleteRepo (DeleteRepoRequest) returns (DeleteRepoResponse) {
+	rpc DeleteRepos (DeleteReposRequest) returns (DeleteReposResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete repo"
+			summary: "delete repos"
 		};
 		option (google.api.http) = {
 			delete: "/v1/repos"

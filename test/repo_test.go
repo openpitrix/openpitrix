@@ -30,7 +30,7 @@ import (
 //}
 
 var (
-	REPO_URL = "https://kubernetes-charts.storage.googleapis.com"
+	repoUrl = "https://kubernetes-charts.storage.googleapis.com"
 )
 
 func TestRepo(t *testing.T) {
@@ -41,7 +41,7 @@ func TestRepo(t *testing.T) {
 	credential := "{}"
 	validateParams := repo_manager.NewValidateRepoParams()
 	validateParams.SetType(&repoType)
-	validateParams.SetURL(&REPO_URL)
+	validateParams.SetURL(&repoUrl)
 	validateParams.SetCredential(&credential)
 	validateResp, err := client.RepoManager.ValidateRepo(validateParams)
 	if err != nil {
@@ -62,12 +62,12 @@ func TestRepo(t *testing.T) {
 	}
 	repos := describeResp.Payload.RepoSet
 	for _, repo := range repos {
-		deleteParams := repo_manager.NewDeleteRepoParams()
+		deleteParams := repo_manager.NewDeleteReposParams()
 		deleteParams.SetBody(
-			&models.OpenpitrixDeleteRepoRequest{
-				RepoID: repo.RepoID,
+			&models.OpenpitrixDeleteReposRequest{
+				RepoID: []string{repo.RepoID},
 			})
-		_, err := client.RepoManager.DeleteRepo(deleteParams)
+		_, err := client.RepoManager.DeleteRepos(deleteParams)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -79,7 +79,7 @@ func TestRepo(t *testing.T) {
 			Name:        testRepoName,
 			Description: "description",
 			Type:        "https",
-			URL:         REPO_URL,
+			URL:         repoUrl,
 			Credential:  `{}`,
 			Visibility:  "public",
 			Providers:   []string{constants.ProviderKubernetes},
@@ -96,7 +96,7 @@ func TestRepo(t *testing.T) {
 			RepoID:      repoId,
 			Description: "cc",
 			Type:        "https",
-			URL:         REPO_URL,
+			URL:         repoUrl,
 			Credential:  `{}`,
 			Visibility:  "private",
 		})
@@ -115,15 +115,15 @@ func TestRepo(t *testing.T) {
 	if len(repos) != 1 {
 		t.Fatalf("failed to describe repos with params [%+v]", describeParams)
 	}
-	if repos[0].Name != testRepoName || repos[0].Description != "cc" || repos[0].URL != REPO_URL {
+	if repos[0].Name != testRepoName || repos[0].Description != "cc" || repos[0].URL != repoUrl {
 		t.Fatalf("failed to modify repo [%+v]", repos[0])
 	}
 	// delete repo
-	deleteParams := repo_manager.NewDeleteRepoParams()
-	deleteParams.WithBody(&models.OpenpitrixDeleteRepoRequest{
-		RepoID: repoId,
+	deleteParams := repo_manager.NewDeleteReposParams()
+	deleteParams.WithBody(&models.OpenpitrixDeleteReposRequest{
+		RepoID: []string{repoId},
 	})
-	deleteResp, err := client.RepoManager.DeleteRepo(deleteParams)
+	deleteResp, err := client.RepoManager.DeleteRepos(deleteParams)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -243,7 +243,7 @@ func TestRepoLabelSelector(t *testing.T) {
 			Name:        testRepoName,
 			Description: "description",
 			Type:        "https",
-			URL:         REPO_URL,
+			URL:         repoUrl,
 			Credential:  `{}`,
 			Visibility:  "public",
 			Labels:      labels,
@@ -277,11 +277,11 @@ func TestRepoLabelSelector(t *testing.T) {
 	}
 
 	// delete repo
-	deleteParams := repo_manager.NewDeleteRepoParams()
-	deleteParams.WithBody(&models.OpenpitrixDeleteRepoRequest{
-		RepoID: repoId,
+	deleteParams := repo_manager.NewDeleteReposParams()
+	deleteParams.WithBody(&models.OpenpitrixDeleteReposRequest{
+		RepoID: []string{repoId},
 	})
-	deleteResp, err := client.RepoManager.DeleteRepo(deleteParams)
+	deleteResp, err := client.RepoManager.DeleteRepos(deleteParams)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -78,12 +78,12 @@ message ModifyRuntimeResponse {
 	Runtime runtime = 1;
 }
 
-message DeleteRuntimeRequest {
-	google.protobuf.StringValue runtime_id = 1;
+message DeleteRuntimesRequest {
+	repeated string runtime_id = 1;
 }
 
-message DeleteRuntimeResponse {
-	Runtime runtime = 1;
+message DeleteRuntimesResponse {
+	repeated string runtime_id = 1;
 }
 
 message DescribeRuntimeProviderZonesRequest {
@@ -129,9 +129,9 @@ service RuntimeManager {
 		};
 	}
 
-	rpc DeleteRuntime (DeleteRuntimeRequest) returns (DeleteRuntimeResponse) {
+	rpc DeleteRuntimes (DeleteRuntimesRequest) returns (DeleteRuntimesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete runtime"
+			summary: "delete runtimes"
 		};
 		option (google.api.http) = {
 			delete: "/v1/runtimes"

@@ -148,12 +148,12 @@ func (p *Server) deleteRuntimeLabels(runtimeId string, labelMap map[string]strin
 	return nil
 }
 
-func (p *Server) deleteRuntime(runtimeId string) error {
+func (p *Server) deleteRuntimes(runtimeIds []string) error {
 	_, err := p.Db.
 		Update(models.RuntimeTableName).
 		Set(StatusColumn, constants.StatusDeleted).
 		Set(StatusTimeColumn, time.Now()).
-		Where(db.Eq(RuntimeIdColumn, runtimeId)).
+		Where(db.Eq(RuntimeIdColumn, runtimeIds)).
 		Exec()
 	return err
 }

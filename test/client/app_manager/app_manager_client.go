@@ -109,86 +109,86 @@ func (a *Client) CreateCategory(params *CreateCategoryParams) (*CreateCategoryOK
 }
 
 /*
-DeleteApp deletes app
+DeleteAppVersions deletes app versions
 */
-func (a *Client) DeleteApp(params *DeleteAppParams) (*DeleteAppOK, error) {
+func (a *Client) DeleteAppVersions(params *DeleteAppVersionsParams) (*DeleteAppVersionsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteAppParams()
+		params = NewDeleteAppVersionsParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DeleteApp",
-		Method:             "DELETE",
-		PathPattern:        "/v1/apps",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &DeleteAppReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*DeleteAppOK), nil
-
-}
-
-/*
-DeleteAppVersion deletes app version
-*/
-func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams) (*DeleteAppVersionOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewDeleteAppVersionParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DeleteAppVersion",
+		ID:                 "DeleteAppVersions",
 		Method:             "DELETE",
 		PathPattern:        "/v1/app_versions",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &DeleteAppVersionReader{formats: a.formats},
+		Reader:             &DeleteAppVersionsReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DeleteAppVersionOK), nil
+	return result.(*DeleteAppVersionsOK), nil
 
 }
 
 /*
-DeleteCategory deletes category
+DeleteApps deletes apps
 */
-func (a *Client) DeleteCategory(params *DeleteCategoryParams) (*DeleteCategoryOK, error) {
+func (a *Client) DeleteApps(params *DeleteAppsParams) (*DeleteAppsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteCategoryParams()
+		params = NewDeleteAppsParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DeleteCategory",
+		ID:                 "DeleteApps",
+		Method:             "DELETE",
+		PathPattern:        "/v1/apps",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteAppsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteAppsOK), nil
+
+}
+
+/*
+DeleteCategories deletes categories
+*/
+func (a *Client) DeleteCategories(params *DeleteCategoriesParams) (*DeleteCategoriesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteCategoriesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteCategories",
 		Method:             "DELETE",
 		PathPattern:        "/v1/categories",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &DeleteCategoryReader{formats: a.formats},
+		Reader:             &DeleteCategoriesReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DeleteCategoryOK), nil
+	return result.(*DeleteCategoriesOK), nil
 
 }
 
@@ -249,30 +249,30 @@ func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, erro
 }
 
 /*
-DescribeCategory describes categories with filter
+DescribeCategories describes categories with filter
 */
-func (a *Client) DescribeCategory(params *DescribeCategoryParams) (*DescribeCategoryOK, error) {
+func (a *Client) DescribeCategories(params *DescribeCategoriesParams) (*DescribeCategoriesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDescribeCategoryParams()
+		params = NewDescribeCategoriesParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DescribeCategory",
+		ID:                 "DescribeCategories",
 		Method:             "GET",
 		PathPattern:        "/v1/categories",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &DescribeCategoryReader{formats: a.formats},
+		Reader:             &DescribeCategoriesReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DescribeCategoryOK), nil
+	return result.(*DescribeCategoriesOK), nil
 
 }
 

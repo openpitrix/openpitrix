@@ -53,30 +53,30 @@ func (a *Client) CreateRepo(params *CreateRepoParams) (*CreateRepoOK, error) {
 }
 
 /*
-DeleteRepo deletes repo
+DeleteRepos deletes repos
 */
-func (a *Client) DeleteRepo(params *DeleteRepoParams) (*DeleteRepoOK, error) {
+func (a *Client) DeleteRepos(params *DeleteReposParams) (*DeleteReposOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteRepoParams()
+		params = NewDeleteReposParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DeleteRepo",
+		ID:                 "DeleteRepos",
 		Method:             "DELETE",
 		PathPattern:        "/v1/repos",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &DeleteRepoReader{formats: a.formats},
+		Reader:             &DeleteReposReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DeleteRepoOK), nil
+	return result.(*DeleteReposOK), nil
 
 }
 

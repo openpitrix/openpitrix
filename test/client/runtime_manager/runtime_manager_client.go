@@ -53,30 +53,30 @@ func (a *Client) CreateRuntime(params *CreateRuntimeParams) (*CreateRuntimeOK, e
 }
 
 /*
-DeleteRuntime deletes runtime
+DeleteRuntimes deletes runtimes
 */
-func (a *Client) DeleteRuntime(params *DeleteRuntimeParams) (*DeleteRuntimeOK, error) {
+func (a *Client) DeleteRuntimes(params *DeleteRuntimesParams) (*DeleteRuntimesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteRuntimeParams()
+		params = NewDeleteRuntimesParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DeleteRuntime",
+		ID:                 "DeleteRuntimes",
 		Method:             "DELETE",
 		PathPattern:        "/v1/runtimes",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http"},
 		Params:             params,
-		Reader:             &DeleteRuntimeReader{formats: a.formats},
+		Reader:             &DeleteRuntimesReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DeleteRuntimeOK), nil
+	return result.(*DeleteRuntimesOK), nil
 
 }
 

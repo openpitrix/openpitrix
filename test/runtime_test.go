@@ -29,12 +29,12 @@ func TestRuntime(t *testing.T) {
 	}
 	runtimes := describeResp.Payload.RuntimeSet
 	for _, runtime := range runtimes {
-		deleteParams := runtime_manager.NewDeleteRuntimeParams()
+		deleteParams := runtime_manager.NewDeleteRuntimesParams()
 		deleteParams.SetBody(
-			&models.OpenpitrixDeleteRuntimeRequest{
-				RuntimeID: runtime.RuntimeID,
+			&models.OpenpitrixDeleteRuntimesRequest{
+				RuntimeID: []string{runtime.RuntimeID},
 			})
-		_, err := client.RuntimeManager.DeleteRuntime(deleteParams)
+		_, err := client.RuntimeManager.DeleteRuntimes(deleteParams)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -82,11 +82,11 @@ func TestRuntime(t *testing.T) {
 		t.Fatalf("failed to modify runtime [%+v]", runtimes[0])
 	}
 	// delete runtime
-	deleteParams := runtime_manager.NewDeleteRuntimeParams()
-	deleteParams.WithBody(&models.OpenpitrixDeleteRuntimeRequest{
-		RuntimeID: runtimeId,
+	deleteParams := runtime_manager.NewDeleteRuntimesParams()
+	deleteParams.WithBody(&models.OpenpitrixDeleteRuntimesRequest{
+		RuntimeID: []string{runtimeId},
 	})
-	deleteResp, err := client.RuntimeManager.DeleteRuntime(deleteParams)
+	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -163,11 +163,11 @@ func TestRuntimeLabel(t *testing.T) {
 	}
 
 	// delete runtime
-	deleteParams := runtime_manager.NewDeleteRuntimeParams()
-	deleteParams.WithBody(&models.OpenpitrixDeleteRuntimeRequest{
-		RuntimeID: runtimeId,
+	deleteParams := runtime_manager.NewDeleteRuntimesParams()
+	deleteParams.WithBody(&models.OpenpitrixDeleteRuntimesRequest{
+		RuntimeID: []string{runtimeId},
 	})
-	deleteResp, err := client.RuntimeManager.DeleteRuntime(deleteParams)
+	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams)
 	if err != nil {
 		t.Fatal(err)
 	}
