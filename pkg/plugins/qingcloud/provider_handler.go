@@ -95,16 +95,18 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 		VxNets:        qcservice.StringSlice([]string{instance.Subnet}),
 		LoginMode:     qcservice.String(DefaultLoginMode),
 		LoginPasswd:   qcservice.String(DefaultLoginPassword),
+		NeedUserdata:  qcservice.Int(instance.NeedUserData),
 		// GPU:     qcservice.Int(instance.Gpu),
 	}
 	if instance.VolumeId != "" {
 		input.Volumes = qcservice.StringSlice([]string{instance.VolumeId})
 	}
-	if instance.UserdataPath != "" {
-		input.UserdataPath = qcservice.String(instance.UserdataPath)
+	if instance.UserdataFile != "" {
+		input.UserdataFile = qcservice.String(instance.UserdataFile)
 	}
 	if instance.UserDataValue != "" {
 		input.UserdataValue = qcservice.String(instance.UserDataValue)
+		input.UserdataType = qcservice.String(DefaultUserDataType)
 	}
 	logger.Debug("RunInstances with input: %s", jsonutil.ToString(input))
 	output, err := instanceService.RunInstances(input)
@@ -542,7 +544,9 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	}
 
 	instance.PrivateIp = qcservice.StringValue(output.VxNets[0].PrivateIP)
-	instance.Device = qcservice.StringValue(output.Volumes[0].Device)
+	if len(output.Volumes) > 0 {
+		instance.Device = qcservice.StringValue(output.Volumes[0].Device)
+	}
 
 	// write back
 	directive, err := instance.ToString()

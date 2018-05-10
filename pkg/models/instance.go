@@ -23,8 +23,9 @@ type Instance struct {
 	Device           string
 	LoginPasswd      string
 	Subnet           string
+	NeedUserData     int
 	UserDataValue    string
-	UserdataPath     string
+	UserdataFile     string
 	Zone             string
 	Status           string
 	TransitionStatus string

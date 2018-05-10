@@ -105,8 +105,8 @@ func (c *Client) ModifyClusterNodeTransitionStatus(ctx context.Context, nodeId s
 func (c *Client) ModifyClusterNodeStatus(ctx context.Context, nodeId string, status string) error {
 	_, err := c.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 		ClusterNode: &pb.ClusterNode{
-			ClusterId: pbutil.ToProtoString(nodeId),
-			Status:    pbutil.ToProtoString(status),
+			NodeId: pbutil.ToProtoString(nodeId),
+			Status: pbutil.ToProtoString(status),
 		},
 	})
 	return err

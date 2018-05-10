@@ -66,7 +66,3 @@ const (
 	ConfdBackendType   = "libconfd-backend-etcdv3"
 	ConfdCmdLogPath    = "/opt/openpitrix/logs/cmd.log"
 )
-
-const (
-	DefaultLoginPasswd = "Password"
-)

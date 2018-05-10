@@ -5,6 +5,7 @@
 package vmbased
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"sort"
@@ -716,10 +717,10 @@ func (f *Frame) getUserDataValue(nodeId string) string {
 	result += fmt.Sprintf("FILE_NAME=\"%s\"\n", DroneConfFile)
 	result += fmt.Sprintf("FILE_CONF=%s\n", droneConfStr)
 
-	return result
+	return base64.StdEncoding.EncodeToString([]byte(result))
 }
 
-func (f *Frame) getUserDataPath() string {
+func (f *Frame) getUserDataFile() string {
 	return MetadataConfPath + OpenPitrixConfFile
 }
 
@@ -791,18 +792,23 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 			return nil
 		}
 		instance := &models.Instance{
-			Name:          clusterNode.ClusterId + "_" + nodeId,
-			NodeId:        nodeId,
-			ImageId:       imageId,
-			Cpu:           int(clusterRole.Cpu),
-			Memory:        int(clusterRole.Memory),
-			Gpu:           int(clusterRole.Gpu),
-			Subnet:        clusterNode.SubnetId,
-			RuntimeId:     f.Runtime.RuntimeId,
-			Zone:          f.Runtime.Zone,
-			LoginPasswd:   DefaultLoginPasswd,
-			UserdataPath:  f.getUserDataPath(),
-			UserDataValue: f.getUserDataValue(nodeId),
+			Name:         clusterNode.ClusterId + "_" + nodeId,
+			NodeId:       nodeId,
+			ImageId:      imageId,
+			Cpu:          int(clusterRole.Cpu),
+			Memory:       int(clusterRole.Memory),
+			Gpu:          int(clusterRole.Gpu),
+			Subnet:       clusterNode.SubnetId,
+			RuntimeId:    f.Runtime.RuntimeId,
+			Zone:         f.Runtime.Zone,
+			NeedUserData: 1,
+			UserdataFile: f.getUserDataFile(),
+		}
+		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
+			frontgate := &Frontgate{f}
+			instance.UserDataValue = frontgate.getUserDataValue(nodeId)
+		} else {
+			instance.UserDataValue = f.getUserDataValue(nodeId)
 		}
 		instanceTaskDirective, err := instance.ToString()
 		if err != nil {

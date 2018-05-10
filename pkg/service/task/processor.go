@@ -203,6 +203,7 @@ func (t *Processor) Pre() error {
 
 // Post process when task is done
 func (t *Processor) Post() error {
+	logger.Debug("Post task [%s] directive: %s", t.Task.TaskId, t.Task.Directive)
 	var err error
 	ctx := client.GetSystemUserContext()
 	clusterClient, err := clusterclient.NewClient(ctx)
