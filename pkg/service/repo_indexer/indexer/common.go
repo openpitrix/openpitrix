@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/golang/protobuf/ptypes/wrappers"
-
 	"openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -38,6 +36,7 @@ type appInterface interface {
 	GetIcon() string
 	GetHome() string
 	GetSources() []string
+	GetKeywords() []string
 }
 type versionInterface interface {
 	GetVersion() string
@@ -65,11 +64,11 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	if err != nil {
 		return appId, err
 	}
-	var description, icon, home, sources *wrappers.StringValue
-	description = pbutil.ToProtoString(app.GetDescription())
-	icon = pbutil.ToProtoString(app.GetIcon())
-	home = pbutil.ToProtoString(app.GetHome())
-	sources = pbutil.ToProtoString(strings.Join(app.GetSources(), ","))
+	description := pbutil.ToProtoString(app.GetDescription())
+	icon := pbutil.ToProtoString(app.GetIcon())
+	home := pbutil.ToProtoString(app.GetHome())
+	sources := pbutil.ToProtoString(strings.Join(app.GetSources(), ","))
+	keywords := pbutil.ToProtoString(strings.Join(app.GetKeywords(), ","))
 	if res.TotalCount == 0 {
 		createReq := pb.CreateAppRequest{}
 		createReq.RepoId = pbutil.ToProtoString(repoId)
@@ -79,6 +78,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		createReq.Icon = icon
 		createReq.Home = home
 		createReq.Sources = sources
+		createReq.Keywords = keywords
 
 		createRes, err := appManagerClient.CreateApp(ctx, &createReq)
 		if err != nil {
@@ -96,6 +96,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		modifyReq.Icon = icon
 		modifyReq.Home = home
 		modifyReq.Sources = sources
+		modifyReq.Keywords = keywords
 
 		modifyRes, err := appManagerClient.ModifyApp(ctx, &modifyReq)
 		if err != nil {

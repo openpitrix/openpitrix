@@ -34,6 +34,9 @@ type OpenpitrixModifyAppRequest struct {
 	// icon
 	Icon string `json:"icon,omitempty"`
 
+	// keywords
+	Keywords string `json:"keywords,omitempty"`
+
 	// maintainers
 	Maintainers string `json:"maintainers,omitempty"`
 

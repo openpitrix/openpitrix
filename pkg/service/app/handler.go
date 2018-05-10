@@ -88,6 +88,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	newApp.Screenshots = req.GetScreenshots().GetValue()
 	newApp.Sources = req.GetSources().GetValue()
 	newApp.Readme = req.GetReadme().GetValue()
+	newApp.Keywords = req.GetKeywords().GetValue()
 
 	_, err := p.Db.
 		InsertInto(models.AppTableName).
@@ -115,7 +116,7 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 	attributes := manager.BuildUpdateAttributes(req,
 		"name", "repo_id", "owner", "chart_name",
 		"description", "home", "icon", "screenshots",
-		"maintainers", "sources", "readme")
+		"maintainers", "sources", "readme", "keywords")
 	attributes["update_time"] = time.Now()
 	_, err = p.Db.
 		Update(models.AppTableName).

@@ -58,7 +58,7 @@ var SearchWordColumnTable = []string{
 // columns that can be search through sql 'like' operator
 var SearchColumns = map[string][]string{
 	AppTableName: {
-		"app_id", "name", "repo_id", "owner", "chart_name",
+		"app_id", "name", "repo_id", "owner", "chart_name", "keywords",
 	},
 	AppVersionTableName: {
 		"version_id", "app_id", "name", "description", "owner", "package_name",
