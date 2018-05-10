@@ -100,9 +100,9 @@ build: fmt
 	mkdir -p ./tmp/bin
 	$(call get_build_flags)
 	$(RUN_IN_DOCKER) time go install -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
-	@docker build -t $(TARG.Name) -f ./Dockerfile.dev ./tmp/bin
-	@docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .
-	@docker image prune -f 1>/dev/null 2>&1
+	$(RUN_IN_DOCKER) time go install -v -ldflags '$(BUILD_FLAG)' $(TRAG.Gopkg)/metadata/cmd/...
+	docker build -t $(TARG.Name) -t $(TARG.Name):metadata -f ./Dockerfile.dev ./tmp/bin
+	docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
 
 .PHONY: compose-update
@@ -149,8 +149,8 @@ release:
 
 .PHONY: test
 test:
-	@make unit-test
-	@make e2e-test
+	make unit-test
+	make e2e-test
 	@echo "test done"
 
 
@@ -162,12 +162,12 @@ e2e-test:
 .PHONY: ci-test
 ci-test:
 	# build with production Dockerfile, not dev version
-	@docker build -t $(TARG.Name) -f ./Dockerfile .
-	@docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .
-	@make compose-up
+	docker build -t $(TARG.Name) -f ./Dockerfile .
+	docker build -t $(TARG.Name):metadata -f ./Dockerfile.metadata .
+	make compose-up
 	sleep 20
-	@make unit-test
-	@make e2e-test
+	make unit-test
+	make e2e-test
 	@echo "ci-test done"
 
 .PHONY: clean
