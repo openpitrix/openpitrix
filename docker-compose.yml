@@ -214,6 +214,8 @@ services:
     build: .
     image: "openpitrix:metadata"
     command: "pilot -config=/opt/openpitrix/conf/pilot-config.json serve"
+    ports:
+      - "9110:9110"
     volumes:
       - ./metadata/cmd/pilot/pilot-config.json:/opt/openpitrix/conf/pilot-config.json
     container_name: "openpitrix-pilot-service"
