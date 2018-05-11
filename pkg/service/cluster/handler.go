@@ -423,9 +423,9 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
-		err := checkPermissionAndTransition(clusterId, s.UserId)
+		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive, constants.StatusStopped, constants.StatusPending})
 		if err != nil {
-			return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+			return nil, err
 		}
 
 		clusterWrapper, err := getClusterWrapper(clusterId)
@@ -472,9 +472,9 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 
 	clusterId := req.GetClusterId().GetValue()
 	versionId := req.GetVersionId().GetValue()
-	err := checkPermissionAndTransition(clusterId, s.UserId)
+	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusStopped})
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
@@ -518,9 +518,9 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
-	err := checkPermissionAndTransition(clusterId, s.UserId)
+	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
@@ -564,9 +564,9 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
-	err := checkPermissionAndTransition(clusterId, s.UserId)
+	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
@@ -610,9 +610,9 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
-	err := checkPermissionAndTransition(clusterId, s.UserId)
+	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
@@ -656,9 +656,9 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
-	err := checkPermissionAndTransition(clusterId, s.UserId)
+	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
@@ -702,9 +702,9 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
-	err := checkPermissionAndTransition(clusterId, s.UserId)
+	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
@@ -846,9 +846,9 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
-		err := checkPermissionAndTransition(clusterId, s.UserId)
+		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 		if err != nil {
-			return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+			return nil, err
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
@@ -895,9 +895,9 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
-		err := checkPermissionAndTransition(clusterId, s.UserId)
+		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusStopped})
 		if err != nil {
-			return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+			return nil, err
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
@@ -953,9 +953,9 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
-		err := checkPermissionAndTransition(clusterId, s.UserId)
+		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusDeleted})
 		if err != nil {
-			return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+			return nil, err
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
@@ -1011,9 +1011,9 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
-		err := checkPermissionAndTransition(clusterId, s.UserId)
+		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusDeleted})
 		if err != nil {
-			return nil, status.Errorf(codes.PermissionDenied, "Cluster [%s] is in transition status, please try later. ", clusterId)
+			return nil, err
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {

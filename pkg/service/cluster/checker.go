@@ -8,7 +8,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
-func checkPermissionAndTransition(clusterId, userId string) error {
+func checkPermissionAndTransition(clusterId, userId string, status []string) error {
 	cluster, err := getCluster(clusterId, userId)
 	if err != nil {
 		return err
@@ -16,6 +16,10 @@ func checkPermissionAndTransition(clusterId, userId string) error {
 	if cluster.TransitionStatus != "" {
 		logger.Error("Cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
 		return fmt.Errorf("cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
+	}
+	if status != nil && !reflectutil.In(cluster.Status, status) {
+		logger.Error("Cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
+		return fmt.Errorf("cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
 	}
 	return nil
 }

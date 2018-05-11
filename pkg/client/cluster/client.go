@@ -111,3 +111,23 @@ func (c *Client) ModifyClusterNodeStatus(ctx context.Context, nodeId string, sta
 	})
 	return err
 }
+
+func (c *Client) DescribeClustersWithFrontgateId(ctx context.Context, frontgateId string, status []string) ([]*pb.Cluster, error) {
+	var request *pb.DescribeClustersRequest
+	if status == nil {
+		request = &pb.DescribeClustersRequest{
+			FrontgateId: []string{frontgateId},
+		}
+	} else {
+		request = &pb.DescribeClustersRequest{
+			FrontgateId: []string{frontgateId},
+			Status:      status,
+		}
+	}
+	response, err := c.DescribeClusters(ctx, request)
+	if err != nil {
+		logger.Error("Describe clusters with frontgate [%s] failed: %+v", frontgateId, err)
+		return nil, err
+	}
+	return response.ClusterSet, nil
+}
