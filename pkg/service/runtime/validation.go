@@ -187,10 +187,6 @@ func validateModifyRuntimeRequest(req *pb.ModifyRuntimeRequest) error {
 	return nil
 }
 
-func validateDeleteRuntimeRequest(req *pb.DeleteRuntimeRequest) error {
-	return nil
-}
-
 func validateDescribeRuntimesRequest(req *pb.DescribeRuntimesRequest) error {
 	err := ValidateSelectorString(req.Label.GetValue())
 	if err != nil {

@@ -23,6 +23,19 @@ func (p *Server) getApp(appId string) (*models.App, error) {
 	return app, nil
 }
 
+func (p *Server) getApps(appIds []string) ([]*models.App, error) {
+	var apps []*models.App
+	_, err := p.Db.
+		Select(models.AppColumns...).
+		From(models.AppTableName).
+		Where(db.Eq("app_id", appIds)).
+		Load(&apps)
+	if err != nil {
+		return nil, err
+	}
+	return apps, nil
+}
+
 func (p *Server) getLatestAppVersion(appId string) (*models.AppVersion, error) {
 	appVersion := &models.AppVersion{}
 	err := p.Db.

@@ -233,35 +233,25 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	return res, nil
 }
 
-func (p *Server) DeleteRepo(ctx context.Context, req *pb.DeleteRepoRequest) (*pb.DeleteRepoResponse, error) {
+func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*pb.DeleteReposResponse, error) {
 	// TODO: check resource permission
-	repoId := req.GetRepoId().GetValue()
-	_, err := p.getRepo(repoId)
+	err := manager.CheckParamsRequired(req, "repo_id")
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get repo [%s]", repoId)
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+	repoIds := req.GetRepoId()
 
 	_, err = p.Db.
 		Update(models.RepoTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
-		Where(db.Eq(models.ColumnRepoId, repoId)).
+		Where(db.Eq(models.ColumnRepoId, repoIds)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DeleteRepo: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DeleteRepos: %+v", err)
 	}
 
-	repo, err := p.getRepo(repoId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get repo [%s]", repoId)
-	}
-
-	pbRepo, err := p.formatRepo(repo)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DeleteRepo: %+v", repoId)
-	}
-
-	return &pb.DeleteRepoResponse{
-		Repo: pbRepo,
+	return &pb.DeleteReposResponse{
+		RepoId: repoIds,
 	}, nil
 }
 

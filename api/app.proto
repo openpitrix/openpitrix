@@ -56,12 +56,12 @@ message ModifyAppResponse {
 	App app = 1;
 }
 
-message DeleteAppRequest {
-	google.protobuf.StringValue app_id = 1;
+message DeleteAppsRequest {
+	repeated string app_id = 1;
 }
 
-message DeleteAppResponse {
-	App app = 1;
+message DeleteAppsResponse {
+	repeated string app_id = 1;
 }
 
 message App {
@@ -151,12 +151,12 @@ message ModifyAppVersionResponse {
 	AppVersion app_version = 1;
 }
 
-message DeleteAppVersionRequest {
-	google.protobuf.StringValue version_id = 1;
+message DeleteAppVersionsRequest {
+	repeated string version_id = 1;
 }
 
-message DeleteAppVersionResponse {
-	AppVersion app_version = 1;
+message DeleteAppVersionsResponse {
+	repeated string version_id = 1;
 }
 
 message AppVersion {
@@ -210,7 +210,7 @@ message GetAppVersionPackageFilesResponse {
 	map<string, bytes> files = 1;
 }
 
-message DescribeCategoryRequest {
+message DescribeCategoriesRequest {
 	google.protobuf.StringValue search_word = 1;
 	uint32 limit = 2;
 	uint32 offset = 3;
@@ -219,7 +219,7 @@ message DescribeCategoryRequest {
 	repeated string owner = 6;
 }
 
-message DescribeCategoryResponse {
+message DescribeCategoriesResponse {
 	uint32 total_count = 1;
 	repeated Category category_set = 2;
 }
@@ -243,12 +243,12 @@ message ModifyCategoryResponse {
 	Category category = 1;
 }
 
-message DeleteCategoryRequest {
-	google.protobuf.StringValue category_id = 1;
+message DeleteCategoriesRequest {
+	repeated string category_id = 1;
 }
 
-message DeleteCategoryResponse {
-	Category category = 1;
+message DeleteCategoriesResponse {
+	repeated string category_id = 1;
 }
 
 service AppManager {
@@ -278,9 +278,9 @@ service AppManager {
 			body: "*"
 		};
 	}
-	rpc DeleteApp (DeleteAppRequest) returns (DeleteAppResponse) {
+	rpc DeleteApps (DeleteAppsRequest) returns (DeleteAppsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete app"
+			summary: "delete apps"
 		};
 		option (google.api.http) = {
 			delete: "/v1/apps"
@@ -314,9 +314,9 @@ service AppManager {
 			body: "*"
 		};
 	}
-	rpc DeleteAppVersion (DeleteAppVersionRequest) returns (DeleteAppVersionResponse) {
+	rpc DeleteAppVersions (DeleteAppVersionsRequest) returns (DeleteAppVersionsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete app version"
+			summary: "delete app versions"
 		};
 		option (google.api.http) = {
 			delete: "/v1/app_versions"
@@ -339,7 +339,7 @@ service AppManager {
 			get: "/v1/app_version/package/files"
 		};
 	}
-	rpc DescribeCategory (DescribeCategoryRequest) returns (DescribeCategoryResponse) {
+	rpc DescribeCategories (DescribeCategoriesRequest) returns (DescribeCategoriesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "describe categories with filter"
 		};
@@ -365,9 +365,9 @@ service AppManager {
 			body: "*"
 		};
 	}
-	rpc DeleteCategory (DeleteCategoryRequest) returns (DeleteCategoryResponse) {
+	rpc DeleteCategories (DeleteCategoriesRequest) returns (DeleteCategoriesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete category"
+			summary: "delete categories"
 		};
 		option (google.api.http) = {
 			delete: "/v1/categories"

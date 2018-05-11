@@ -43,12 +43,12 @@ func TestApp(t *testing.T) {
 	}
 	apps := describeResp.Payload.AppSet
 	for _, app := range apps {
-		deleteParams := app_manager.NewDeleteAppParams()
+		deleteParams := app_manager.NewDeleteAppsParams()
 		deleteParams.SetBody(
-			&models.OpenpitrixDeleteAppRequest{
-				AppID: app.AppID,
+			&models.OpenpitrixDeleteAppsRequest{
+				AppID: []string{app.AppID},
 			})
-		_, err := client.AppManager.DeleteApp(deleteParams)
+		_, err := client.AppManager.DeleteApps(deleteParams)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -91,11 +91,11 @@ func TestApp(t *testing.T) {
 		t.Fatalf("failed to modify app, app [%+v] repo is not [%s]", apps[0], testRepoId2)
 	}
 	// delete app
-	deleteParams := app_manager.NewDeleteAppParams()
-	deleteParams.WithBody(&models.OpenpitrixDeleteAppRequest{
-		AppID: appId,
+	deleteParams := app_manager.NewDeleteAppsParams()
+	deleteParams.WithBody(&models.OpenpitrixDeleteAppsRequest{
+		AppID: []string{appId},
 	})
-	deleteResp, err := client.AppManager.DeleteApp(deleteParams)
+	deleteResp, err := client.AppManager.DeleteApps(deleteParams)
 	if err != nil {
 		t.Fatal(err)
 	}

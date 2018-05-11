@@ -209,13 +209,13 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete app version",
-        "operationId": "DeleteAppVersion",
+        "summary": "delete app versions",
+        "operationId": "DeleteAppVersions",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppVersionResponse"
+              "$ref": "#/definitions/openpitrixDeleteAppVersionsResponse"
             }
           }
         },
@@ -225,7 +225,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppVersionRequest"
+              "$ref": "#/definitions/openpitrixDeleteAppVersionsRequest"
             }
           }
         ],
@@ -416,13 +416,13 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete app",
-        "operationId": "DeleteApp",
+        "summary": "delete apps",
+        "operationId": "DeleteApps",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppResponse"
+              "$ref": "#/definitions/openpitrixDeleteAppsResponse"
             }
           }
         },
@@ -432,7 +432,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppRequest"
+              "$ref": "#/definitions/openpitrixDeleteAppsRequest"
             }
           }
         ],
@@ -494,12 +494,12 @@ var Files = map[string]string{
     "/v1/categories": {
       "get": {
         "summary": "describe categories with filter",
-        "operationId": "DescribeCategory",
+        "operationId": "DescribeCategories",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDescribeCategoryResponse"
+              "$ref": "#/definitions/openpitrixDescribeCategoriesResponse"
             }
           }
         },
@@ -560,13 +560,13 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete category",
-        "operationId": "DeleteCategory",
+        "summary": "delete categories",
+        "operationId": "DeleteCategories",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteCategoryResponse"
+              "$ref": "#/definitions/openpitrixDeleteCategoriesResponse"
             }
           }
         },
@@ -576,7 +576,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteCategoryRequest"
+              "$ref": "#/definitions/openpitrixDeleteCategoriesRequest"
             }
           }
         ],
@@ -1311,13 +1311,13 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete repo",
-        "operationId": "DeleteRepo",
+        "summary": "delete repos",
+        "operationId": "DeleteRepos",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRepoResponse"
+              "$ref": "#/definitions/openpitrixDeleteReposResponse"
             }
           }
         },
@@ -1327,7 +1327,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRepoRequest"
+              "$ref": "#/definitions/openpitrixDeleteReposRequest"
             }
           }
         ],
@@ -1598,13 +1598,13 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete runtime",
-        "operationId": "DeleteRuntime",
+        "summary": "delete runtimes",
+        "operationId": "DeleteRuntimes",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRuntimeResponse"
+              "$ref": "#/definitions/openpitrixDeleteRuntimesResponse"
             }
           }
         },
@@ -1614,7 +1614,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteRuntimeRequest"
+              "$ref": "#/definitions/openpitrixDeleteRuntimesRequest"
             }
           }
         ],
@@ -2057,51 +2057,69 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixDeleteAppRequest": {
-      "type": "object",
-      "properties": {
-        "app_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixDeleteAppResponse": {
-      "type": "object",
-      "properties": {
-        "app": {
-          "$ref": "#/definitions/openpitrixApp"
-        }
-      }
-    },
-    "openpitrixDeleteAppVersionRequest": {
+    "openpitrixDeleteAppVersionsRequest": {
       "type": "object",
       "properties": {
         "version_id": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
-    "openpitrixDeleteAppVersionResponse": {
+    "openpitrixDeleteAppVersionsResponse": {
       "type": "object",
       "properties": {
-        "app_version": {
-          "$ref": "#/definitions/openpitrixAppVersion"
+        "version_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
-    "openpitrixDeleteCategoryRequest": {
+    "openpitrixDeleteAppsRequest": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteAppsResponse": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteCategoriesRequest": {
       "type": "object",
       "properties": {
         "category_id": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
-    "openpitrixDeleteCategoryResponse": {
+    "openpitrixDeleteCategoriesResponse": {
       "type": "object",
       "properties": {
-        "category": {
-          "$ref": "#/definitions/openpitrixCategory"
+        "category_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -2135,7 +2153,7 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixDescribeCategoryResponse": {
+    "openpitrixDescribeCategoriesResponse": {
       "type": "object",
       "properties": {
         "total_count": {
@@ -3198,19 +3216,25 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixDeleteRepoRequest": {
+    "openpitrixDeleteReposRequest": {
       "type": "object",
       "properties": {
         "repo_id": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
-    "openpitrixDeleteRepoResponse": {
+    "openpitrixDeleteReposResponse": {
       "type": "object",
       "properties": {
-        "repo": {
-          "$ref": "#/definitions/openpitrixRepo"
+        "repo_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -3463,19 +3487,25 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixDeleteRuntimeRequest": {
+    "openpitrixDeleteRuntimesRequest": {
       "type": "object",
       "properties": {
         "runtime_id": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
-    "openpitrixDeleteRuntimeResponse": {
+    "openpitrixDeleteRuntimesResponse": {
       "type": "object",
       "properties": {
-        "runtime": {
-          "$ref": "#/definitions/openpitrixRuntime"
+        "runtime_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

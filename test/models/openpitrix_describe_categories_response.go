@@ -12,19 +12,19 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeCategoryResponse openpitrix describe category response
-// swagger:model openpitrixDescribeCategoryResponse
-type OpenpitrixDescribeCategoryResponse struct {
+// OpenpitrixDescribeCategoriesResponse openpitrix describe categories response
+// swagger:model openpitrixDescribeCategoriesResponse
+type OpenpitrixDescribeCategoriesResponse struct {
 
 	// category set
-	CategorySet OpenpitrixDescribeCategoryResponseCategorySet `json:"category_set"`
+	CategorySet OpenpitrixDescribeCategoriesResponseCategorySet `json:"category_set"`
 
 	// total count
 	TotalCount int64 `json:"total_count,omitempty"`
 }
 
-// Validate validates this openpitrix describe category response
-func (m *OpenpitrixDescribeCategoryResponse) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix describe categories response
+func (m *OpenpitrixDescribeCategoriesResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -34,7 +34,7 @@ func (m *OpenpitrixDescribeCategoryResponse) Validate(formats strfmt.Registry) e
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixDescribeCategoryResponse) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixDescribeCategoriesResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -42,8 +42,8 @@ func (m *OpenpitrixDescribeCategoryResponse) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixDescribeCategoryResponse) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixDescribeCategoryResponse
+func (m *OpenpitrixDescribeCategoriesResponse) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixDescribeCategoriesResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

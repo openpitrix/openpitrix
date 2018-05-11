@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixDescribeCategoryResponseCategorySet openpitrix describe category response category set
-// swagger:model openpitrixDescribeCategoryResponseCategorySet
-type OpenpitrixDescribeCategoryResponseCategorySet []*OpenpitrixCategory
+// OpenpitrixDescribeCategoriesResponseCategorySet openpitrix describe categories response category set
+// swagger:model openpitrixDescribeCategoriesResponseCategorySet
+type OpenpitrixDescribeCategoriesResponseCategorySet []*OpenpitrixCategory
 
-// Validate validates this openpitrix describe category response category set
-func (m OpenpitrixDescribeCategoryResponseCategorySet) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix describe categories response category set
+func (m OpenpitrixDescribeCategoriesResponseCategorySet) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {

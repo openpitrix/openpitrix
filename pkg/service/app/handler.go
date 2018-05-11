@@ -37,6 +37,19 @@ func (p *Server) getAppVersion(versionId string) (*models.AppVersion, error) {
 	return version, nil
 }
 
+func (p *Server) getAppVersions(versionIds []string) ([]*models.AppVersion, error) {
+	var versions []*models.AppVersion
+	_, err := p.Db.
+		Select(models.AppVersionColumns...).
+		From(models.AppVersionTableName).
+		Where(db.Eq("version_id", versionIds)).
+		Load(&versions)
+	if err != nil {
+		return nil, err
+	}
+	return versions, nil
+}
+
 func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) (*pb.DescribeAppsResponse, error) {
 	var apps []*models.App
 	offset := pbutil.GetOffsetFromRequest(req)
@@ -137,30 +150,25 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 	return res, nil
 }
 
-func (p *Server) DeleteApp(ctx context.Context, req *pb.DeleteAppRequest) (*pb.DeleteAppResponse, error) {
+func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb.DeleteAppsResponse, error) {
 	// TODO: check resource permission
-	appId := req.GetAppId().GetValue()
-	_, err := p.getApp(appId)
+	err := manager.CheckParamsRequired(req, "app_id")
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app [%s]", appId)
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+	appIds := req.GetAppId()
 
 	_, err = p.Db.
 		Update(models.AppTableName).
 		Set("status", constants.StatusDeleted).
-		Where(db.Eq("app_id", appId)).
+		Where(db.Eq("app_id", appIds)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DeleteApp: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DeleteApps: %+v", err)
 	}
 
-	app, err := p.getApp(appId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app [%s]", appId)
-	}
-
-	return &pb.DeleteAppResponse{
-		App: models.AppToPb(app),
+	return &pb.DeleteAppsResponse{
+		AppId: appIds,
 	}, nil
 }
 
@@ -254,30 +262,26 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 
 }
 
-func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionRequest) (*pb.DeleteAppVersionResponse, error) {
+func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersionsRequest) (*pb.DeleteAppVersionsResponse, error) {
 	// TODO: check resource permission
-	versionId := req.GetVersionId().GetValue()
-	_, err := p.getAppVersion(versionId)
+	err := manager.CheckParamsRequired(req, "version_id")
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
+
+	versionIds := req.GetVersionId()
 
 	_, err = p.Db.
 		Update(models.AppVersionTableName).
 		Set("status", constants.StatusDeleted).
-		Where(db.Eq("version_id", versionId)).
+		Where(db.Eq("version_id", versionIds)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DeleteAppVersion: %+v", err)
+		return nil, status.Errorf(codes.Internal, "DeleteAppVersions: %+v", err)
 	}
 
-	version, err := p.getAppVersion(versionId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
-	}
-
-	return &pb.DeleteAppVersionResponse{
-		AppVersion: models.AppVersionToPb(version),
+	return &pb.DeleteAppVersionsResponse{
+		VersionId: versionIds,
 	}, nil
 }
 
@@ -329,7 +333,7 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 	}, nil
 }
 
-func (p *Server) DescribeCategory(context.Context, *pb.DescribeCategoryRequest) (*pb.DescribeCategoryResponse, error) {
+func (p *Server) DescribeCategories(context.Context, *pb.DescribeCategoriesRequest) (*pb.DescribeCategoriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "DescribeCategory unimplemented")
 }
 
@@ -341,6 +345,6 @@ func (p *Server) ModifyCategory(context.Context, *pb.ModifyCategoryRequest) (*pb
 	return nil, status.Errorf(codes.Unimplemented, "ModifyCategory unimplemented")
 }
 
-func (p *Server) DeleteCategory(context.Context, *pb.DeleteCategoryRequest) (*pb.DeleteCategoryResponse, error) {
+func (p *Server) DeleteCategories(context.Context, *pb.DeleteCategoriesRequest) (*pb.DeleteCategoriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "DeleteCategory unimplemented")
 }
