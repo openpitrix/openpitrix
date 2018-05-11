@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"time"
 
 	"github.com/chai2010/jsonmap"
 
@@ -202,7 +203,12 @@ func (p *Server) StopConfd(in *pbtypes.ConfdEndpoint, out *pbtypes.Empty) error 
 }
 
 func (p *Server) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata, out *pbtypes.Empty) error {
-	return p.etcd.RegisterMetadata(in)
+	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	if err != nil {
+		return err
+	}
+
+	return etcdClient.RegisterMetadata(in)
 }
 
 func (p *EtcdClient) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata) error {
@@ -221,7 +227,11 @@ func (p *EtcdClient) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata) erro
 }
 
 func (p *Server) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata, out *pbtypes.Empty) error {
-	return p.etcd.DeregisterMetadata(in)
+	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	if err != nil {
+		return err
+	}
+	return etcdClient.DeregisterMetadata(in)
 }
 
 func (p *EtcdClient) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata) error {
@@ -245,7 +255,11 @@ func (p *EtcdClient) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata) 
 }
 
 func (p *Server) RegisterCmd(in *pbtypes.SubTask_RegisterCmd, out *pbtypes.Empty) error {
-	return p.etcd.RegisterCmd(in)
+	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	if err != nil {
+		return err
+	}
+	return etcdClient.RegisterCmd(in)
 }
 
 func (p *EtcdClient) RegisterCmd(in *pbtypes.SubTask_RegisterCmd) error {
@@ -264,7 +278,11 @@ func (p *EtcdClient) RegisterCmd(in *pbtypes.SubTask_RegisterCmd) error {
 }
 
 func (p *Server) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd, out *pbtypes.Empty) error {
-	return p.etcd.DeregisterCmd(in)
+	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	if err != nil {
+		return err
+	}
+	return etcdClient.DeregisterCmd(in)
 }
 
 func (p *EtcdClient) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd) error {
@@ -310,7 +328,12 @@ func (p *Server) ClosePilotChannel(in *pbtypes.Empty, out *pbtypes.Empty) error 
 }
 
 func (p *Server) GetEtcdValuesByPrefix(in *pbtypes.String, out *pbtypes.StringMap) error {
-	m, err := p.etcd.GetValuesByPrefix(in.Value)
+	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	if err != nil {
+		return err
+	}
+
+	m, err := etcdClient.GetValuesByPrefix(in.Value)
 	if err != nil {
 		return err
 	}
@@ -320,7 +343,12 @@ func (p *Server) GetEtcdValuesByPrefix(in *pbtypes.String, out *pbtypes.StringMa
 }
 
 func (p *Server) GetEtcdValues(in *pbtypes.StringList, out *pbtypes.StringMap) error {
-	m, err := p.etcd.GetValues(in.ValueList...)
+	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	if err != nil {
+		return err
+	}
+
+	m, err := etcdClient.GetValues(in.ValueList...)
 	if err != nil {
 		return err
 	}
@@ -330,7 +358,11 @@ func (p *Server) GetEtcdValues(in *pbtypes.StringList, out *pbtypes.StringMap) e
 }
 
 func (p *Server) SetEtcdValues(in *pbtypes.StringMap, out *pbtypes.Empty) error {
-	return p.etcd.SetValues(in.GetValueMap())
+	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	if err != nil {
+		return err
+	}
+	return etcdClient.SetValues(in.GetValueMap())
 }
 
 func (p *Server) PingPilot(in *pbtypes.Empty, out *pbtypes.Empty) error {
