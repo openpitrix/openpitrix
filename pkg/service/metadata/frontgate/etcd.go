@@ -9,15 +9,68 @@ package frontgate
 
 import (
 	"context"
+	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/chai2010/jsonmap"
 	"github.com/coreos/etcd/clientv3"
 )
 
+type EtcdClientManager struct {
+	clientMap map[string]*EtcdClient
+	mu        sync.Mutex
+}
+
 type EtcdClient struct {
 	*clientv3.Client
+}
+
+func NewEtcdClientManager() *EtcdClientManager {
+	return &EtcdClientManager{
+		clientMap: make(map[string]*EtcdClient),
+	}
+}
+
+func (p *EtcdClientManager) Get() (*EtcdClient, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	for _, c := range p.clientMap {
+		return c, nil
+	}
+
+	return nil, fmt.Errorf("frontgate: no valid etcd client")
+}
+
+func (p *EtcdClientManager) GetClient(endpoints []string, timeout time.Duration) (*EtcdClient, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	key := fmt.Sprintf("%v:%v", endpoints, timeout)
+	if c, ok := p.clientMap[key]; ok {
+		return c, nil
+	}
+
+	c, err := NewEtcdClient(endpoints, timeout)
+	if err != nil {
+		return nil, err
+	}
+
+	p.clientMap[key] = c
+	return c, nil
+}
+
+func (p *EtcdClientManager) Clear() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	for _, c := range p.clientMap {
+		c.Close()
+	}
+
+	p.clientMap = make(map[string]*EtcdClient)
 }
 
 func NewEtcdClient(endpoints []string, timeout time.Duration) (*EtcdClient, error) {

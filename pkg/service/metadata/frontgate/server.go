@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -22,24 +21,18 @@ import (
 )
 
 type Server struct {
-	cfg *ConfigManager
+	cfg  *ConfigManager
+	etcd *EtcdClientManager
 
 	ch   *pilotutil.FrameChannel
 	conn *grpc.ClientConn
-	etcd *EtcdClient
 	err  error
 }
 
 func Serve(cfg *ConfigManager) {
-	etcd, err := NewEtcdClient(cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
-	if err != nil {
-		logger.Critical("%+v", err)
-		os.Exit(1)
-	}
-
 	p := &Server{
 		cfg:  cfg,
-		etcd: etcd,
+		etcd: NewEtcdClientManager(),
 	}
 
 	go ServeReverseRpcServerForPilot(cfg.Get(), p)
