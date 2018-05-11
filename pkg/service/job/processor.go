@@ -7,6 +7,7 @@ package job
 import (
 	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
+	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -145,10 +146,88 @@ func (j *Processor) Post() error {
 		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionStopClusters:
 		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusStopped)
+		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{j.Job.ClusterId})
+		if err != nil {
+			return err
+		}
+		clusterWrapper := clusterWrappers[0]
+		frontgateId := clusterWrapper.Cluster.FrontgateId
+		pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
+			[]string{constants.StatusActive})
+		if err != nil {
+			return err
+		}
+		if len(pbClusters) == 0 {
+			// need to delete frontgate cluster
+			frontgates, err := clusterClient.GetClusterWrappers(ctx, []string{frontgateId})
+			if err != nil {
+				return err
+			}
+			frontgate := frontgates[0]
+			directive, err := frontgate.ToString()
+			if err != nil {
+				return err
+			}
+
+			newJob := models.NewJob(
+				constants.PlaceHolder,
+				frontgate.Cluster.ClusterId,
+				frontgate.Cluster.AppId,
+				frontgate.Cluster.VersionId,
+				constants.ActionStopClusters,
+				directive,
+				j.Job.Provider,
+				j.Job.Owner,
+			)
+
+			_, err = jobclient.SendJob(newJob)
+			if err != nil {
+				return err
+			}
+		}
 	case constants.ActionStartClusters:
 		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionDeleteClusters:
 		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusDeleted)
+		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{j.Job.ClusterId})
+		if err != nil {
+			return err
+		}
+		clusterWrapper := clusterWrappers[0]
+		frontgateId := clusterWrapper.Cluster.FrontgateId
+		pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
+			[]string{constants.StatusStopped, constants.StatusActive})
+		if err != nil {
+			return err
+		}
+		if len(pbClusters) == 0 {
+			// need to delete frontgate cluster
+			frontgates, err := clusterClient.GetClusterWrappers(ctx, []string{frontgateId})
+			if err != nil {
+				return err
+			}
+			frontgate := frontgates[0]
+			directive, err := frontgate.ToString()
+			if err != nil {
+				return err
+			}
+
+			newJob := models.NewJob(
+				constants.PlaceHolder,
+				frontgate.Cluster.ClusterId,
+				frontgate.Cluster.AppId,
+				frontgate.Cluster.VersionId,
+				constants.ActionDeleteClusters,
+				directive,
+				j.Job.Provider,
+				j.Job.Owner,
+			)
+
+			_, err = jobclient.SendJob(newJob)
+			if err != nil {
+				return err
+			}
+		}
 	case constants.ActionRecoverClusters:
 		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionCeaseClusters:

@@ -83,18 +83,28 @@ func ClusterNodeWrapperToPb(clusterNode *ClusterNode, clusterCommon *ClusterComm
 func PbToClusterWrapper(pbCluster *pb.Cluster) *ClusterWrapper {
 	clusterWrapper := new(ClusterWrapper)
 	clusterWrapper.Cluster = PbToCluster(pbCluster)
+
+	clusterWrapper.ClusterCommons = make(map[string]*ClusterCommon)
 	for _, pbClusterCommon := range pbCluster.ClusterCommonSet {
 		clusterWrapper.ClusterCommons[pbClusterCommon.GetRole().GetValue()] = PbToClusterCommon(pbClusterCommon)
 	}
+
+	clusterWrapper.ClusterNodes = make(map[string]*ClusterNode)
 	for _, pbClusterNode := range pbCluster.ClusterNodeSet {
 		clusterWrapper.ClusterNodes[pbClusterNode.GetNodeId().GetValue()] = PbToClusterNode(pbClusterNode)
 	}
+
+	clusterWrapper.ClusterRoles = make(map[string]*ClusterRole)
 	for _, pbClusterRole := range pbCluster.ClusterRoleSet {
 		clusterWrapper.ClusterRoles[pbClusterRole.GetRole().GetValue()] = PbToClusterRole(pbClusterRole)
 	}
+
+	clusterWrapper.ClusterLinks = make(map[string]*ClusterLink)
 	for _, pbClusterLink := range pbCluster.ClusterLinkSet {
 		clusterWrapper.ClusterLinks[pbClusterLink.GetName().GetValue()] = PbToClusterLink(pbClusterLink)
 	}
+
+	clusterWrapper.ClusterLoadbalancers = make(map[string][]*ClusterLoadbalancer)
 	for _, pbClusterLoadbalancer := range pbCluster.ClusterLoadbalancerSet {
 		clusterWrapper.ClusterLoadbalancers[pbClusterLoadbalancer.GetRole().GetValue()] =
 			append(clusterWrapper.ClusterLoadbalancers[pbClusterLoadbalancer.GetRole().GetValue()],
