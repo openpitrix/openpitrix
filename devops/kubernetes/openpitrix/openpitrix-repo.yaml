@@ -36,8 +36,8 @@ spec:
     spec:
       containers:
       - name: repo-manager
-        image: openpitrix/openpitrix-dev:latest
-        imagePullPolicy: IfNotPresent
+        image: openpitrix/openpitrix:latest
+        imagePullPolicy: Always
         command:
           - repo-manager
         ports:
@@ -46,13 +46,10 @@ spec:
         env:
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
-        - name: OPENPITRIX_CONFIG_DB_DBNAME
+        - name: OPENPITRIX_MYSQL_DATABASE
           value: "repo"
-        - name: OPENPITRIX_CONFIG_DB_ROOTPASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-pass
-              key: password.txt
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          value: "password"
         resources:
           limits:
             cpu: 500m
@@ -99,8 +96,8 @@ spec:
     spec:
       containers:
       - name: repo-indexer
-        image: openpitrix/openpitrix-dev:latest
-        imagePullPolicy: IfNotPresent
+        image: openpitrix/openpitrix:latest
+        imagePullPolicy: Always
         command:
           - repo-indexer
         ports:
