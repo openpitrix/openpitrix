@@ -11,7 +11,6 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
@@ -58,77 +57,37 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 	return base64.StdEncoding.EncodeToString([]byte(result))
 }
 
-func (f *Frontgate) getConfig(nodeId string) string {
-	clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+func (f *Frame) pingFrontgateLayer(failureAllowed bool) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
 
-	var frontgateEndpoints []*pbtypes.FrontgateEndpoint
-	var etcdEndpoints []*pbtypes.EtcdEndpoint
-	var backendHosts []string
-	for _, node := range f.ClusterWrapper.ClusterNodes {
-		frontgateNode := &pbtypes.FrontgateEndpoint{
-			FrontgateId: f.ClusterWrapper.Cluster.ClusterId,
-			NodeIp:      node.PrivateIp,
-			NodePort:    constants.FrontgateServicePort,
-		}
-		frontgateEndpoints = append(frontgateEndpoints, frontgateNode)
-
-		etcdNode := &pbtypes.EtcdEndpoint{
-			Host: node.PrivateIp,
-			Port: constants.EtcdServicePort,
-		}
-		etcdEndpoints = append(etcdEndpoints, etcdNode)
-
-		backendHosts = append(backendHosts, fmt.Sprintf("%s:%d", etcdNode.Host, etcdNode.Port))
+	task := &models.Task{
+		JobId:          f.Job.JobId,
+		Owner:          f.Job.Owner,
+		TaskAction:     ActionPingFrontgate,
+		Target:         constants.TargetPilot,
+		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
+		Directive:      f.ClusterWrapper.Cluster.FrontgateId,
+		FailureAllowed: failureAllowed,
 	}
-
-	etcdConfig := &pbtypes.EtcdConfig{
-		NodeList: etcdEndpoints,
+	taskLayer.Tasks = append(taskLayer.Tasks, task)
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
 	}
-
-	confdConfig := &pbtypes.ConfdConfig{
-		ProcessorConfig: &pbtypes.ConfdProcessorConfig{
-			Confdir:       ConfdPath,
-			Interval:      10,
-			Noop:          false,
-			Prefix:        "",
-			SyncOnly:      false,
-			LogLevel:      MetadataLogLevel,
-			Onetime:       false,
-			Watch:         true,
-			KeepStageFile: false,
-		},
-		BackendConfig: &pbtypes.ConfdBackendConfig{
-			Type: ConfdBackendType,
-			Host: backendHosts,
-		},
-	}
-
-	config := &pbtypes.FrontgateConfig{
-		Id:          f.ClusterWrapper.Cluster.ClusterId,
-		NodeId:      nodeId,
-		Host:        clusterNode.PrivateIp,
-		ListenPort:  constants.FrontgateServicePort,
-		PilotHost:   pi.Global().GlobalConfig().Pilot.Ip,
-		PilotPort:   constants.PilotServicePort,
-		NodeList:    frontgateEndpoints,
-		EtcdConfig:  etcdConfig,
-		ConfdConfig: confdConfig,
-		LogLevel:    MetadataLogLevel,
-	}
-
-	return jsonutil.ToString(config)
 }
 
 func (f *Frontgate) setFrontgateConfigLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	var tasks []*models.Task
 	for _, nodeId := range nodeIds {
+		// get frontgate config when pre task
 		task := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionSetFrontgateConfig,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      f.getConfig(nodeId),
+			Directive:      f.ClusterWrapper.Cluster.ClusterId,
 			FailureAllowed: failureAllowed,
 		}
 		tasks = append(tasks, task)
@@ -147,6 +106,7 @@ func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 
 	headTaskLayer.
 		Append(f.runInstancesLayer(nodeIds, false)).      // run instance and attach volume to instance
+		Append(f.pingFrontgateLayer(false)).              // ping frontgate
 		Append(f.setFrontgateConfigLayer(nodeIds, false)) // set frontgate config
 
 	return headTaskLayer.Child

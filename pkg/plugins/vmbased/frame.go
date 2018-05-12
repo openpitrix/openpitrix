@@ -724,39 +724,17 @@ func (f *Frame) getUserDataFile() string {
 	return MetadataConfPath + OpenPitrixConfFile
 }
 
-func (f *Frame) getConfig(nodeId string) string {
-	clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
-
-	droneEndpoint := &pbtypes.DroneEndpoint{
-		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
-		DroneIp:     clusterNode.PrivateIp,
-		DronePort:   constants.DroneServicePort,
-	}
-	droneConfig := &pbtypes.DroneConfig{
-		Id:             nodeId,
-		Host:           clusterNode.PrivateIp,
-		ListenPort:     constants.DroneServicePort,
-		CmdInfoLogPath: ConfdCmdLogPath,
-		ConfdSelfHost:  clusterNode.PrivateIp,
-		LogLevel:       MetadataLogLevel,
-	}
-	config := &pbtypes.SetDroneConfigRequest{
-		Endpoint: droneEndpoint,
-		Config:   droneConfig,
-	}
-	return jsonutil.ToString(config)
-}
-
 func (f *Frame) setDroneConfigLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	var tasks []*models.Task
 	for _, nodeId := range nodeIds {
+		// get drone config when pre task
 		task := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionSetDroneConfig,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      f.getConfig(nodeId),
+			Directive:      f.ClusterWrapper.Cluster.ClusterId,
 			FailureAllowed: failureAllowed,
 		}
 		tasks = append(tasks, task)
@@ -957,6 +935,33 @@ func (f *Frame) waitFrontgateLayer(failureAllowed bool) *models.TaskLayer {
 	}
 }
 
+func (f *Frame) pingDroneLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	for _, nodeId := range nodeIds {
+		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		droneEndpoint := &pbtypes.DroneEndpoint{
+			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+			DroneIp:     clusterNode.PrivateIp,
+			DronePort:   constants.DroneServicePort,
+		}
+		task := &models.Task{
+			JobId:          f.Job.JobId,
+			Owner:          f.Job.Owner,
+			TaskAction:     ActionPingDrone,
+			Target:         constants.TargetPilot,
+			NodeId:         nodeId,
+			Directive:      jsonutil.ToString(droneEndpoint),
+			FailureAllowed: failureAllowed,
+		}
+		taskLayer.Tasks = append(taskLayer.Tasks, task)
+	}
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
 func (f *Frame) registerMetadataLayer(failureAllowed bool) *models.TaskLayer {
 	// When the task is handled by task controller, the cnodes will be filled in,
 	meta := &models.Meta{
@@ -1147,11 +1152,12 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 	headTaskLayer.
 		Append(f.createVolumesLayer(nodeIds, false)).        // create volume
 		Append(f.runInstancesLayer(nodeIds, false)).         // run instance and attach volume to instance
-		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance
 		Append(f.waitFrontgateLayer(false)).                 // wait frontgate cluster to be active
+		Append(f.pingDroneLayer(nodeIds, false)).            // ping drone
+		Append(f.setDroneConfigLayer(nodeIds, false)).       // set drone config
+		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance
 		Append(f.sshKeygenLayer(false)).                     // generate ssh key
 		Append(f.registerMetadataLayer(false)).              // register cluster metadata
-		Append(f.setDroneConfigLayer(nodeIds, false)).       // set drone config
 		Append(f.startConfdServiceLayer(nodeIds, false)).    // start confd service
 		Append(f.initAndStartServiceLayer(nodeIds, false)).  // register init and start cmd to exec
 		Append(f.deregisterCmdLayer(nodeIds, true))          // deregister cmd
@@ -1190,6 +1196,8 @@ func (f *Frame) StartClusterLayer() *models.TaskLayer {
 		Append(f.attachVolumesLayer(false)).              // attach volume to instance, will auto mount
 		Append(f.waitFrontgateLayer(false)).              // wait frontgate cluster to be active
 		Append(f.registerMetadataLayer(false)).           // register cluster metadata
+		Append(f.pingDroneLayer(nodeIds, false)).         // ping drone
+		Append(f.setDroneConfigLayer(nodeIds, false)).    // set drone config
 		Append(f.startConfdServiceLayer(nodeIds, false)). // start confd service
 		Append(f.startServiceLayer(nodeIds, false)).      // register start cmd to exec
 		Append(f.deregisterCmdLayer(nodeIds, true))       // deregister cmd
@@ -1231,6 +1239,8 @@ func (f *Frame) AddClusterNodesLayer() *models.TaskLayer {
 		Append(f.scaleOutPreCheckServiceLayer(nonAddNodeIds, false)).                       // register scale out pre check to exec
 		Append(f.createVolumesLayer(addNodeIds, false)).                                    // create volume
 		Append(f.runInstancesLayer(addNodeIds, false)).                                     // run instance and attach volume to instance
+		Append(f.pingDroneLayer(addNodeIds, false)).                                        // ping drone
+		Append(f.setDroneConfigLayer(addNodeIds, false)).                                   // set drone config
 		Append(f.formatAndMountVolumeLayer(addNodeIds, false)).                             // format and mount volume to instance
 		Append(f.registerNodesMetadataLayer(addNodeIds, false)).                            // register cluster nodes metadata
 		Append(f.registerScalingNodesMetadataLayer(addNodeIds, RegisterNodeAdding, false)). // register adding hosts metadata

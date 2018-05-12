@@ -22,7 +22,7 @@ type FrameHandler struct {
 
 func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 
-	waitFrontgateDirective := make(map[string]interface{})
+	waitFrontgateDirective := new(models.Meta)
 
 	if task.Directive == "" {
 		logger.Warn("Skip empty task [%s] directive", task.TaskId)
@@ -34,7 +34,7 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 		return err
 	}
 
-	frontgateId := waitFrontgateDirective["frontgate_id"].(string)
+	frontgateId := waitFrontgateDirective.FrontgateId
 
 	ctx := client.GetSystemUserContext()
 	clusterClient, err := clusterclient.NewClient(ctx)
@@ -69,5 +69,5 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 		} else {
 			return false, fmt.Errorf("Frontgate status is [%s]. ", status)
 		}
-	}, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+	}, task.GetTimeout(constants.WaitFrontgateServiceTimeout), constants.WaitFrontgateServiceInterval)
 }

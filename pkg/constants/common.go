@@ -72,8 +72,12 @@ const (
 )
 
 const (
-	WaitTaskTimeout  = 600 * time.Second
-	WaitTaskInterval = 3 * time.Second
+	WaitTaskTimeout              = 600 * time.Second
+	WaitFrontgateServiceTimeout  = 1800 * time.Second
+	WaitDroneServiceTimeout      = 1800 * time.Second
+	WaitTaskInterval             = 3 * time.Second
+	WaitFrontgateServiceInterval = 10 * time.Second
+	WaitDroneServiceInterval     = 10 * time.Second
 
 	TimeoutName           = "Timeout"
 	DefaultServiceTimeout = 600

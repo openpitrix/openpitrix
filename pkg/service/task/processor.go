@@ -8,9 +8,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pb/types"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -39,6 +42,8 @@ func (t *Processor) Pre() error {
 		logger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
 		return err
 	}
+
+	oldDirective := t.Task.Directive
 	switch t.Task.TaskAction {
 	case vmbased.ActionRunInstances:
 		// volume created before instance, so need to change RunInstances task directive
@@ -57,7 +62,6 @@ func (t *Processor) Pre() error {
 		instance.VolumeId = clusterNodes[0].GetVolumeId().GetValue()
 		// write back
 		t.Task.Directive, err = instance.ToString()
-		logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
 
 	case vmbased.ActionStartInstances:
 		instance, err := models.NewInstance(t.Task.Directive)
@@ -123,8 +127,6 @@ func (t *Processor) Pre() error {
 			return err
 		}
 
-		logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
-
 	case vmbased.ActionRegisterMetadata:
 		meta, err := models.NewMeta(t.Task.Directive)
 		if err != nil {
@@ -144,8 +146,6 @@ func (t *Processor) Pre() error {
 		if err != nil {
 			return err
 		}
-
-		logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
 
 	case vmbased.ActionRegisterCmd:
 		// when CreateCluster need to reload ip
@@ -170,8 +170,6 @@ func (t *Processor) Pre() error {
 			if err != nil {
 				return err
 			}
-
-			logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
 		}
 
 	case vmbased.ActionStartConfd:
@@ -192,11 +190,65 @@ func (t *Processor) Pre() error {
 			if err != nil {
 				return err
 			}
-
-			logger.Debug("Task [%s] new directive: %s", t.Task.TaskId, t.Task.Directive)
 		}
+
+	case vmbased.ActionPingDrone:
+		droneEndpoint := new(pbtypes.DroneEndpoint)
+		err := jsonutil.Decode([]byte(t.Task.Directive), droneEndpoint)
+		if err != nil {
+			return err
+		}
+		if droneEndpoint.DroneIp == "" {
+			clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{t.Task.NodeId})
+			if err != nil {
+				return err
+			}
+			droneEndpoint.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
+
+			// write back
+			t.Task.Directive = jsonutil.ToString(droneEndpoint)
+		}
+
+	case vmbased.ActionSetFrontgateConfig:
+		clusterId := t.Task.Directive
+		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
+		if err != nil {
+			return err
+		}
+		metadataConfig := &vmbased.MetadataConfig{
+			ClusterWrapper: pbClusterWrappers[0],
+		}
+		t.Task.Directive = metadataConfig.GetFrontgateConfig(t.Task.NodeId)
+
+	case vmbased.ActionSetDroneConfig:
+		clusterId := t.Task.Directive
+		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
+		if err != nil {
+			return err
+		}
+		metadataConfig := &vmbased.MetadataConfig{
+			ClusterWrapper: pbClusterWrappers[0],
+		}
+		t.Task.Directive = metadataConfig.GetDroneConfig(t.Task.NodeId)
+
 	default:
-		logger.Info("Nothing to do with task [%s] pre processor", t.Task.TaskId)
+		logger.Debug("Nothing to do with task [%s] pre processor", t.Task.TaskId)
+	}
+
+	// update directive when changed
+	if oldDirective != t.Task.Directive {
+		attributes := map[string]interface{}{
+			"directive": t.Task.Directive,
+		}
+		_, err := pi.Global().Db.
+			Update(models.TaskTableName).
+			SetMap(attributes).
+			Where(db.Eq("task_id", t.Task.TaskId)).
+			Exec()
+		if err != nil {
+			logger.Error("Failed to update task [%s]: %+v", t.Task.TaskId, err)
+			return err
+		}
 	}
 	return err
 }
