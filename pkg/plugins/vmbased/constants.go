@@ -27,6 +27,8 @@ const (
 	ActionStopConfd              = "StopConfd"
 	ActionSetFrontgateConfig     = "SetFrontgateConfig"
 	ActionSetDroneConfig         = "SetDroneConfig"
+	ActionPingDrone              = "PingDrone"
+	ActionPingFrontgate          = "PingFrontgate"
 )
 
 const (

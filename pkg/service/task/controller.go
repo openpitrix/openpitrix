@@ -19,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
@@ -146,6 +147,45 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
 					return err
 				}
+			case vmbased.ActionPingDrone:
+				droneEndpoint := new(pbtypes.DroneEndpoint)
+				err = jsonutil.Decode([]byte(task.Directive), droneEndpoint)
+				if err != nil {
+					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					return err
+				}
+				err = funcutil.WaitForSpecificOrError(func() (bool, error) {
+					_, err := pilotClient.PingDrone(ctx, droneEndpoint)
+					if err != nil {
+						logger.Warn("Send task [%s] to pilot failed, will retry: %+v", taskId, err)
+						return false, nil
+					} else {
+						return true, nil
+					}
+				}, task.GetTimeout(constants.WaitDroneServiceTimeout), constants.WaitDroneServiceInterval)
+				if err != nil {
+					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					return err
+				}
+
+			case vmbased.ActionPingFrontgate:
+				frontgateId := task.Directive
+				err = funcutil.WaitForSpecificOrError(func() (bool, error) {
+					_, err := pilotClient.PingFrontgate(ctx, &pbtypes.FrontgateId{
+						Id: frontgateId,
+					})
+					if err != nil {
+						logger.Warn("Send task [%s] to pilot failed, will retry: %+v", taskId, err)
+						return false, nil
+					} else {
+						return true, nil
+					}
+				}, task.GetTimeout(constants.WaitFrontgateServiceTimeout), constants.WaitFrontgateServiceInterval)
+				if err != nil {
+					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					return err
+				}
+
 			default:
 				pbTask := models.TaskToPb(task)
 				_, err := pilotClient.HandleSubtask(ctx,
