@@ -28,17 +28,7 @@ import (
 type Parser struct {
 }
 
-func (p *Parser) ParseCluster(vals map[string]interface{}, versionId string) (*models.Cluster, error) {
-	name, ok := p.getStringFromValues(vals, "Name")
-	if !ok {
-		name = ""
-	}
-
-	desc, ok := p.getStringFromValues(vals, "Description")
-	if !ok {
-		desc = ""
-	}
-
+func (p *Parser) ParseCluster(name string, description string, versionId string) (*models.Cluster, error) {
 	ctx := clientutil.GetSystemUserContext()
 	appManagerClient, err := appclient.NewAppManagerClient(ctx)
 	if err != nil {
@@ -62,7 +52,7 @@ func (p *Parser) ParseCluster(vals map[string]interface{}, versionId string) (*m
 
 	cluster := &models.Cluster{
 		Name:        name,
-		Description: desc,
+		Description: description,
 		AppId:       appVersion.AppId.GetValue(),
 		VersionId:   versionId,
 		CreateTime:  time.Now(),
@@ -72,8 +62,8 @@ func (p *Parser) ParseCluster(vals map[string]interface{}, versionId string) (*m
 	return cluster, nil
 }
 
-func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[string]interface{}) (map[string]*models.ClusterRole, map[string]*models.ClusterCommon, error) {
-	env, err := json.Marshal(vals)
+func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[string]interface{}, customVals map[string]interface{}) (map[string]*models.ClusterRole, map[string]*models.ClusterCommon, error) {
+	env, err := json.Marshal(customVals)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -293,17 +283,22 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 }
 
 func (p *Parser) Parse(c *chart.Chart, conf []byte, versionId string) (*models.ClusterWrapper, error) {
-	vals, err := p.parseValues(c, conf)
+	customVals, name, description, err := p.ParseCustomValues(conf)
 	if err != nil {
 		return nil, err
 	}
 
-	cluster, err := p.ParseCluster(vals, versionId)
+	vals, err := p.parseValues(c, customVals, name)
 	if err != nil {
 		return nil, err
 	}
 
-	clusterRoles, clusterCommons, err := p.ParseClusterRolesAndClusterCommons(c, vals)
+	cluster, err := p.ParseCluster(name, description, versionId)
+	if err != nil {
+		return nil, err
+	}
+
+	clusterRoles, clusterCommons, err := p.ParseClusterRolesAndClusterCommons(c, vals, customVals)
 	if err != nil {
 		return nil, err
 	}
@@ -316,29 +311,42 @@ func (p *Parser) Parse(c *chart.Chart, conf []byte, versionId string) (*models.C
 	return clusterWrapper, nil
 }
 
-func (p *Parser) parseValues(c *chart.Chart, rawConf []byte) (map[string]interface{}, error) {
+func (p *Parser) ParseCustomValues(conf []byte) (map[string]interface{}, string, string, error) {
+	customVals, err := chartutil.ReadValues(conf)
+	if err != nil {
+		return nil, "", "", err
+	}
+	name, ok := p.getStringFromValues(customVals, "Name")
+	if !ok {
+		return nil, "", "", fmt.Errorf("config [Name] is missing")
+	}
+	desc, _ := p.getStringFromValues(customVals, "Description")
+
+	delete(customVals, "Name")
+	delete(customVals, "Description")
+
+	return customVals, name, desc, nil
+}
+
+func (p *Parser) parseValues(c *chart.Chart, customVals map[string]interface{}, name string) (map[string]interface{}, error) {
 	// Get and merge values
 	chartVals, err := chartutil.ReadValues([]byte(c.Values.GetRaw()))
 	if err != nil {
 		return nil, err
 	}
 
-	customVals, err := chartutil.ReadValues(rawConf)
-	if err != nil {
-		return nil, err
-	}
-
 	mergedVals := p.mergeValues(chartVals, customVals)
 
-	rawVals, err := yaml.Marshal(mergedVals)
+	rawMergedVals, err := yaml.Marshal(mergedVals)
 	if err != nil {
 		return nil, err
 	}
-	config := &chart.Config{Raw: string(rawVals), Values: map[string]*chart.Value{}}
+
+	config := &chart.Config{Raw: string(rawMergedVals), Values: map[string]*chart.Value{}}
 
 	// Get release option
 	options := chartutil.ReleaseOptions{
-		Name:      "$",
+		Name:      name,
 		Namespace: "",
 	}
 

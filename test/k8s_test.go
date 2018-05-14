@@ -16,7 +16,6 @@ import (
 
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
-	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/models"
@@ -79,21 +78,6 @@ func TestK8s(t *testing.T) {
 		}
 	}
 	log.Printf("Got repo [%s]\n", repo.Name)
-
-	// index repo
-	{
-		indexRepoParams := repo_indexer.NewIndexRepoParams()
-		indexRepoParams.SetBody(
-			&models.OpenpitrixIndexRepoRequest{
-				RepoID: repo.RepoID,
-			})
-		_, err := client.RepoIndexer.IndexRepo(indexRepoParams)
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	time.Sleep(2 * time.Second)
 
 	// waiting for apps indexed by repo indexer
 	var app *models.OpenpitrixApp
@@ -174,10 +158,8 @@ func TestK8s(t *testing.T) {
 	var clusterId string
 	log.Printf("Creating cluster...\n")
 	{
-		conf := `
-Description: "test cluster"
-Name: "cluster test"
-`
+		conf := `Description: test
+Name: test`
 
 		createParams := cluster_manager.NewCreateClusterParams()
 		createParams.SetBody(&models.OpenpitrixCreateClusterRequest{
