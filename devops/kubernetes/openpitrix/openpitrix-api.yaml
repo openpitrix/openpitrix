@@ -36,8 +36,8 @@ spec:
     spec:
       containers:
       - name: api-gateway
-        image: openpitrix/openpitrix-dev:latest
-        imagePullPolicy: IfNotPresent
+        image: openpitrix/openpitrix:latest
+        imagePullPolicy: Always
         command:
           - api-gateway
         ports:

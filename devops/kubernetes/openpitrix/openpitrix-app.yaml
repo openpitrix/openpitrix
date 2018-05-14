@@ -36,8 +36,8 @@ spec:
     spec:
       containers:
       - name: app-manager
-        image: openpitrix/openpitrix-dev:latest
-        imagePullPolicy: IfNotPresent
+        image: openpitrix/openpitrix:latest
+        imagePullPolicy: Always
         command:
           - app-manager
         ports:
