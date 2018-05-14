@@ -43,7 +43,8 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 	imageId := clusterCommon.ImageId
 
 	frontgateConf := make(map[string]interface{})
-	frontgateConf["id"] = nodeId
+	frontgateConf["id"] = f.ClusterWrapper.Cluster.ClusterId
+	frontgateConf["node_id"] = nodeId
 	frontgateConf["listen_port"] = constants.FrontgateServicePort
 	frontgateConf["pilot_host"] = pi.Global().GlobalConfig().Pilot.Ip
 	frontgateConf["pilot_port"] = constants.PilotServicePort
@@ -66,7 +67,7 @@ func (f *Frame) pingFrontgateLayer(failureAllowed bool) *models.TaskLayer {
 		TaskAction:     ActionPingFrontgate,
 		Target:         constants.TargetPilot,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
-		Directive:      f.ClusterWrapper.Cluster.FrontgateId,
+		Directive:      f.ClusterWrapper.Cluster.ClusterId,
 		FailureAllowed: failureAllowed,
 	}
 	taskLayer.Tasks = append(taskLayer.Tasks, task)

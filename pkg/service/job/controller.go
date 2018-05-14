@@ -177,7 +177,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		return err
 	}
 
-	job.Status = constants.StatusSuccessful
+	processor.Job.Status = constants.StatusSuccessful
 	return processor.Post()
 }
 

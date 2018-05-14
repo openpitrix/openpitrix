@@ -7,3 +7,4 @@ systemctl enable openpitrix.service
 mkdir -p /opt/openpitrix/conf
 mkdir -p /opt/openpitrix/log
 mkdir -p /opt/openpitrix/sbin
+docker pull openpitrix/openpitrix:metadata
