@@ -72,8 +72,10 @@ func (p *Server) IsConfdRunning(ctx context.Context, arg *pbtypes.Empty) (*pbtyp
 }
 
 func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Empty, error) {
+	cfg := p.cfg.Get()
+	logger.Info("StartConfd:", cfg)
+
 	err := p.confd.Start(func(opt *libconfd.Config) {
-		cfg := p.cfg.Get()
 		opt.HookAbsKeyAdjuster = func(absKey string) (realKey string) {
 			if absKey == "/self" {
 				return "/" + cfg.ConfdSelfHost
@@ -133,7 +135,10 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 }
 
 func (p *Server) StopConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Empty, error) {
+	logger.Info("StopConfd")
+
 	if err := p.confd.Stop(); err != nil {
+		logger.Error("StopConfd:", err)
 		return nil, err
 	}
 
