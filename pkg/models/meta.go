@@ -11,12 +11,12 @@ import (
 )
 
 type Meta struct {
-	FrontgateId string
-	Timeout     int
-	Cnodes      string
-	DroneIp     string
-	NodeId      string
-	ClusterId   string
+	FrontgateId string `json:"frontgate_id"`
+	Timeout     int    `json:"timeout"`
+	Cnodes      string `json:"cnodes"`
+	DroneIp     string `json:"drone_ip"`
+	NodeId      string `json:"node_id"`
+	ClusterId   string `json:"cluster_id"`
 }
 
 func NewMeta(data string) (*Meta, error) {

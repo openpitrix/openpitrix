@@ -236,6 +236,7 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		return p.StartConfd(ctx, &pbtypes.DroneEndpoint{
 			FrontgateId: x.FrontgateId,
 			DroneIp:     x.DroneIp,
+			DronePort:   9112,
 		})
 
 	case pbtypes.SubTaskAction_StopConfd.String():
@@ -251,6 +252,7 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		return p.StopConfd(ctx, &pbtypes.DroneEndpoint{
 			FrontgateId: x.FrontgateId,
 			DroneIp:     x.DroneIp,
+			DronePort:   9112,
 		})
 
 	case pbtypes.SubTaskAction_RegisterMetadata.String():

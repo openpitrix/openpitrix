@@ -1155,10 +1155,10 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 		Append(f.waitFrontgateLayer(false)).                 // wait frontgate cluster to be active
 		Append(f.pingDroneLayer(nodeIds, false)).            // ping drone
 		Append(f.setDroneConfigLayer(nodeIds, false)).       // set drone config
+		Append(f.startConfdServiceLayer(nodeIds, false)).    // start confd service
 		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance
 		Append(f.sshKeygenLayer(false)).                     // generate ssh key
 		Append(f.registerMetadataLayer(false)).              // register cluster metadata
-		Append(f.startConfdServiceLayer(nodeIds, false)).    // start confd service
 		Append(f.initAndStartServiceLayer(nodeIds, false)).  // register init and start cmd to exec
 		Append(f.deregisterCmdLayer(nodeIds, true))          // deregister cmd
 
