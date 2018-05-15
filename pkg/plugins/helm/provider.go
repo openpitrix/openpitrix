@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/ghodss/yaml"
@@ -137,11 +136,11 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	switch job.JobAction {
 	case constants.ActionCreateCluster:
 		td := TaskDirective{
-			VersionId: job.VersionId,
-			Namespace: jodDirective.Namespace,
-			ClusterId: job.ClusterId,
-			RuntimeId: jodDirective.RuntimeId,
-			Values:    jodDirective.Values,
+			VersionId:   job.VersionId,
+			Namespace:   jodDirective.Namespace,
+			RuntimeId:   jodDirective.RuntimeId,
+			Values:      jodDirective.Values,
+			ClusterName: jodDirective.ClusterName,
 		}
 		tdj := getTaskDirectiveJson(td)
 
@@ -154,10 +153,10 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		return &tl, nil
 	case constants.ActionUpgradeCluster:
 		td := TaskDirective{
-			VersionId: job.VersionId,
-			ClusterId: job.ClusterId,
-			RuntimeId: jodDirective.RuntimeId,
-			Values:    jodDirective.Values,
+			VersionId:   job.VersionId,
+			RuntimeId:   jodDirective.RuntimeId,
+			Values:      jodDirective.Values,
+			ClusterName: jodDirective.ClusterName,
 		}
 		tdj := getTaskDirectiveJson(td)
 
@@ -169,7 +168,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 		return &tl, nil
 	case constants.ActionRollbackCluster:
-		td := TaskDirective{ClusterId: job.ClusterId, RuntimeId: jodDirective.RuntimeId}
+		td := TaskDirective{ClusterName: jodDirective.ClusterName, RuntimeId: jodDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
 		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionRollbackCluster, tdj, job.Owner, false)
@@ -180,7 +179,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 		return &tl, nil
 	case constants.ActionDeleteClusters:
-		td := TaskDirective{ClusterId: job.ClusterId, RuntimeId: jodDirective.RuntimeId}
+		td := TaskDirective{ClusterName: jodDirective.ClusterName, RuntimeId: jodDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
 		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionDeleteClusters, tdj, job.Owner, false)
@@ -191,7 +190,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 		return &tl, nil
 	case constants.ActionCeaseClusters:
-		td := TaskDirective{ClusterId: job.ClusterId, RuntimeId: jodDirective.RuntimeId}
+		td := TaskDirective{ClusterName: jodDirective.ClusterName, RuntimeId: jodDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
 		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCeaseClusters, tdj, job.Owner, false)
@@ -257,7 +256,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 
 		_, err = hc.InstallReleaseFromChart(c, taskDirective.Namespace,
 			helm.ValueOverrides(rawVals),
-			helm.ReleaseName(taskDirective.ClusterId),
+			helm.ReleaseName(taskDirective.ClusterName),
 			helm.InstallWait(true))
 		if err != nil {
 			return err
@@ -285,22 +284,35 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 			return err
 		}
 
-		_, err = hc.UpdateReleaseFromChart(taskDirective.ClusterId, chart, helm.UpgradeWait(true))
+		var v map[string]interface{}
+		err = json.Unmarshal([]byte(taskDirective.Values), &v)
+		if err != nil {
+			return err
+		}
+
+		rawVals, err := yaml.Marshal(v)
+		if err != nil {
+			return err
+		}
+
+		_, err = hc.UpdateReleaseFromChart(taskDirective.ClusterName, chart,
+			helm.UpdateValueOverrides(rawVals),
+			helm.UpgradeWait(true))
 		if err != nil {
 			return err
 		}
 	case constants.ActionRollbackCluster:
-		_, err = hc.RollbackRelease(taskDirective.ClusterId, helm.RollbackWait(true))
+		_, err = hc.RollbackRelease(taskDirective.ClusterName, helm.RollbackWait(true))
 		if err != nil {
 			return err
 		}
 	case constants.ActionDeleteClusters:
-		_, err = hc.DeleteRelease(taskDirective.ClusterId)
+		_, err = hc.DeleteRelease(taskDirective.ClusterName)
 		if err != nil {
 			return err
 		}
 	case constants.ActionCeaseClusters:
-		_, err = hc.DeleteRelease(taskDirective.ClusterId, helm.DeletePurge(true))
+		_, err = hc.DeleteRelease(taskDirective.ClusterName, helm.DeletePurge(true))
 		if err != nil {
 			return err
 		}
@@ -329,7 +341,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 		case constants.ActionUpgradeCluster:
 			fallthrough
 		case constants.ActionRollbackCluster:
-			resp, err := hc.ReleaseStatus(taskDirective.ClusterId)
+			resp, err := hc.ReleaseStatus(taskDirective.ClusterName)
 			if err != nil {
 				//network or api error, not considered task fail.
 				return false, nil
@@ -339,7 +351,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 				return true, nil
 			}
 		case constants.ActionDeleteClusters:
-			resp, err := hc.ReleaseStatus(taskDirective.ClusterId)
+			resp, err := hc.ReleaseStatus(taskDirective.ClusterName)
 			if err != nil {
 				//network or api error, not considered task fail.
 				return false, nil
@@ -349,7 +361,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 				return true, nil
 			}
 		case constants.ActionCeaseClusters:
-			_, err := hc.ReleaseStatus(taskDirective.ClusterId)
+			_, err := hc.ReleaseStatus(taskDirective.ClusterName)
 			if err != nil {
 				if _, ok := err.(transport.ConnectionError); ok {
 					return false, nil
@@ -370,14 +382,14 @@ func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 	return nil, nil
 }
 
-func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, owner string) ([]*pb.ClusterNode, error) {
+func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, clusterName, owner string) ([]*pb.ClusterNode, error) {
 	kubeClient, _, err := p.getKubeClient(runtimeId)
 	if err != nil {
 		return nil, err
 	}
 
 	podsClient := kubeClient.CoreV1().Pods(namespace)
-	list, err := podsClient.List(metav1.ListOptions{LabelSelector: fmt.Sprintf("release=%s", clusterId)})
+	list, err := podsClient.List(metav1.ListOptions{LabelSelector: fmt.Sprintf("release=%s", clusterName)})
 	if err != nil {
 		return nil, err
 	}
@@ -399,7 +411,7 @@ func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, ow
 		}
 
 		if len(pod.OwnerReferences) != 0 {
-			clusterNode.Role = fmt.Sprintf("%s-%s", strings.Replace(pod.OwnerReferences[0].Name, clusterId, "$", -1), pod.OwnerReferences[0].Kind)
+			clusterNode.Role = fmt.Sprintf("%s-%s", pod.OwnerReferences[0].Name, pod.OwnerReferences[0].Kind)
 		}
 
 		pbClusterNode := models.ClusterNodeToPb(clusterNode)
@@ -415,6 +427,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 		return err
 	}
 
+	clusterName := clusterWrapper.Cluster.Name
 	runtimeId := clusterWrapper.Cluster.RuntimeId
 
 	runtime, err := runtimeclient.NewRuntime(runtimeId)
@@ -423,7 +436,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	}
 	namespace := runtime.Zone
 
-	pbClusterNodes, err := p.getKubePodsAsClusterNodes(runtimeId, namespace, job.ClusterId, job.Owner)
+	pbClusterNodes, err := p.getKubePodsAsClusterNodes(runtimeId, namespace, job.ClusterId, clusterName, job.Owner)
 	if err != nil {
 		logger.Error("Get kubernetes pods failed, %+v", err)
 		return err

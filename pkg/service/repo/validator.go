@@ -71,7 +71,7 @@ func validate(repoType, url, credential, visibility string) error {
 				return fmt.Errorf("access_key_id or secret_access_key not exist in credential")
 			}
 
-			err = ValidateS3(host, qc.AccessKeyId, qc.SecretAccessKey, bucket, zone)
+			err = ValidateS3(u.Scheme, host, qc.AccessKeyId, qc.SecretAccessKey, bucket, zone)
 			if err != nil {
 				return fmt.Errorf("validate qingstor failed, %+v", err)
 			}
@@ -122,11 +122,11 @@ func ValidateHTTP(u *neturl.URL) error {
 	return nil
 }
 
-func ValidateS3(host, accessKeyId, secretAccessKey, bucket, zone string) error {
+func ValidateS3(scheme, host, accessKeyId, secretAccessKey, bucket, zone string) error {
 	creds := credentials.NewStaticCredentials(accessKeyId, secretAccessKey, "")
 	config := &aws.Config{
 		Region:      aws.String(zone),
-		Endpoint:    aws.String(fmt.Sprintf("http://s3.%s.%s/%s/", zone, host, bucket)),
+		Endpoint:    aws.String(fmt.Sprintf("%s://s3.%s.%s/%s/", scheme, zone, host, bucket)),
 		Credentials: creds,
 	}
 

@@ -9,9 +9,10 @@ import (
 )
 
 type JobDirective struct {
-	Namespace string
-	RuntimeId string
-	Values    string
+	Namespace   string
+	RuntimeId   string
+	Values      string
+	ClusterName string
 }
 
 func getJobDirective(data string) (*JobDirective, error) {
@@ -34,20 +35,21 @@ func getJobDirective(data string) (*JobDirective, error) {
 	}
 
 	j := &JobDirective{
-		Namespace: namespace,
-		RuntimeId: runtimeId,
-		Values:    clusterRole.Env,
+		Namespace:   namespace,
+		RuntimeId:   runtimeId,
+		Values:      clusterRole.Env,
+		ClusterName: clusterWrapper.Cluster.Name,
 	}
 
 	return j, nil
 }
 
 type TaskDirective struct {
-	VersionId string
-	Namespace string
-	ClusterId string
-	RuntimeId string
-	Values    string
+	VersionId   string
+	Namespace   string
+	RuntimeId   string
+	Values      string
+	ClusterName string
 }
 
 func getTaskDirectiveJson(v interface{}) string {
