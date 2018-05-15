@@ -16,6 +16,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/httputil"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
@@ -38,6 +39,9 @@ func (h helmVersionWrapper) GetAppVersion() string  { return h.ChartVersion.GetA
 func (h helmVersionWrapper) GetDescription() string { return h.ChartVersion.GetDescription() }
 func (h helmVersionWrapper) GetUrls() []string      { return h.ChartVersion.URLs }
 func (h helmVersionWrapper) GetKeywords() []string  { return h.ChartVersion.GetKeywords() }
+func (h helmVersionWrapper) GetMaintainers() string {
+	return jsonutil.ToString(h.ChartVersion.GetMaintainers())
+}
 
 func (i *helmIndexer) IndexRepo() error {
 	indexFile, err := i.getIndexFile()
@@ -51,7 +55,7 @@ func (i *helmIndexer) IndexRepo() error {
 		if len(chartVersions) == 0 {
 			return fmt.Errorf("failed to sync chart [%s], no versions", chartName)
 		}
-		appId, err = i.syncAppInfo(chartVersions[0])
+		appId, err = i.syncAppInfo(helmVersionWrapper{chartVersions[0]})
 		if err != nil {
 			logger.Error("Failed to sync chart [%s] to app info", chartName)
 			return err
