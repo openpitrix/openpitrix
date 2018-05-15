@@ -13,6 +13,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/libconfd"
 	"openpitrix.io/openpitrix/pkg/libconfd/backends"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/types"
 )
 
@@ -74,6 +75,8 @@ func (p *ConfdServer) GetBackendClient() libconfd.BackendClient {
 }
 
 func (p *ConfdServer) Start(opts ...libconfd.Options) error {
+	logger.Info("ConfdServer: Start")
+
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -81,19 +84,23 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 		p.processor = libconfd.NewProcessor()
 	}
 	if p.running {
+		logger.Error("ConfdServer: confd is running")
 		return fmt.Errorf("drone: confd is running")
 	}
 
 	if p.cfg == nil {
+		logger.Error("ConfdServer: config is nil")
 		return fmt.Errorf("drone: config is nil")
 	}
 
 	if s := p.backendConfig.Type; s != backends.Etcdv3BackendType {
+		logger.Error("ConfdServer: unsupport confd backend: " + s)
 		return fmt.Errorf("drone: unsupport confd backend: %s", s)
 	}
 
 	backendClient, err := libconfd.NewBackendClient(p.backendConfig)
 	if err != nil {
+		logger.Error("ConfdServer: NewBackendClient: %v", err)
 		return err
 	}
 
@@ -101,6 +108,8 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 	p.running = true
 
 	go func() {
+		logger.Info("ConfdServer: run...")
+
 		var err = p.processor.Run(p.config, backendClient) // blocked
 
 		p.mu.Lock()
@@ -108,12 +117,16 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 		p.client = nil
 		p.err = err
 		p.mu.Unlock()
+
+		logger.Info("ConfdServer: stoped")
 	}()
 
 	return nil
 }
 
 func (p *ConfdServer) Stop() error {
+	logger.Info("ConfdServer: Stop")
+
 	p.mu.Lock()
 	var processer = p.processor
 	p.processor = nil
