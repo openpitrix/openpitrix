@@ -3391,6 +3391,10 @@ var Files = map[string]string{
         "ok": {
           "type": "boolean",
           "format": "boolean"
+        },
+        "errorCode": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

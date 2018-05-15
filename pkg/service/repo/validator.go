@@ -15,7 +15,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"gopkg.in/yaml.v2"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type QingStorCredential struct {
@@ -38,19 +40,42 @@ func validateVisibility(visibility string) error {
 	return nil
 }
 
-func validate(repoType, url, credential, visibility string) error {
+func validateProviders(providers []string) error {
+	if len(providers) == 0 {
+		return fmt.Errorf("providers must be provided")
+	}
+
+	for _, provider := range providers {
+		if !stringutil.StringIn(provider, []string{constants.ProviderKubernetes, constants.ProviderQingCloud}) {
+			return fmt.Errorf("provider must be in range [kubernetes, qingcloud]")
+		}
+	}
+
+	return nil
+}
+
+func validate(repoType, url, credential, visibility string, providers []string) error {
 	err := validateVisibility(visibility)
 	if err != nil {
-		return err
+		return newErrorWithCode(ErrVisibility, err)
+	}
+
+	err = validateProviders(providers)
+	if err != nil {
+		return newErrorWithCode(ErrProviders, err)
 	}
 
 	u, err := neturl.ParseRequestURI(url)
 	if err != nil {
-		return fmt.Errorf("url parse failed, %s", err)
+		return newErrorWithCode(ErrNotUrl, fmt.Errorf("url parse failed, %s", err))
 	}
 
 	switch repoType {
 	case "s3":
+		if u.Scheme != "s3" {
+			return newErrorWithCode(ErrSchemeNotS3, fmt.Errorf("scheme is not s3"))
+		}
+
 		//fmt.Printf("%#v\n", u)
 		m := compRegEx.FindStringSubmatch(u.Host + u.Path)
 		//fmt.Printf("%#v\n", m)
@@ -64,38 +89,42 @@ func validate(repoType, url, credential, visibility string) error {
 			var qc QingStorCredential
 			err = json.Unmarshal([]byte(credential), &qc)
 			if err != nil {
-				return fmt.Errorf("json decode failed on credential, %+v", err)
+				return newErrorWithCode(ErrCredentialNotJson, fmt.Errorf("json decode failed on credential, %+v", err))
 			}
 
-			if qc.AccessKeyId == "" || qc.SecretAccessKey == "" {
-				return fmt.Errorf("access_key_id or secret_access_key not exist in credential")
+			if qc.AccessKeyId == "" {
+				return newErrorWithCode(ErrNoAccessKeyId, fmt.Errorf("access_key_id not exist in credential"))
 			}
 
-			err = ValidateS3(u.Scheme, host, qc.AccessKeyId, qc.SecretAccessKey, bucket, zone)
+			if qc.SecretAccessKey == "" {
+				return newErrorWithCode(ErrNoSecretAccessKey, fmt.Errorf("secret_access_key not exist in credential"))
+			}
+
+			err = ValidateS3("https", host, qc.AccessKeyId, qc.SecretAccessKey, bucket, zone)
 			if err != nil {
-				return fmt.Errorf("validate qingstor failed, %+v", err)
+				return newErrorWithCode(ErrS3AccessDeny, fmt.Errorf("validate s3 failed, %+v", err))
 			}
 		} else {
-			return fmt.Errorf("url is not a bucket url of qingstor")
+			return newErrorWithCode(ErrUrlFormat, fmt.Errorf("url format error"))
 		}
 	case "http":
 		if u.Scheme != "http" {
-			return fmt.Errorf("scheme is not http")
+			return newErrorWithCode(ErrSchemeNotHttp, fmt.Errorf("scheme is not http"))
 		}
 		err := ValidateHTTP(u)
 		if err != nil {
-			return fmt.Errorf("validate http failed, %+v", err)
+			return err
 		}
 	case "https":
 		if u.Scheme != "https" {
-			return fmt.Errorf("scheme is not https")
+			return newErrorWithCode(ErrSchemeNotHttps, fmt.Errorf("scheme is not https"))
 		}
 		err := ValidateHTTP(u)
 		if err != nil {
-			return fmt.Errorf("validate https failed, %+v", err)
+			return err
 		}
 	default:
-		return fmt.Errorf("type must be one of [s3, http, https]")
+		return newErrorWithCode(ErrType, fmt.Errorf("type must be one of [s3, http, https]"))
 	}
 
 	return nil
@@ -106,18 +135,18 @@ func ValidateHTTP(u *neturl.URL) error {
 
 	resp, err := http.Get(u.String())
 	if err != nil {
-		return err
+		return newErrorWithCode(ErrHttpAccessDeny, fmt.Errorf("validate http failed, %+v", err))
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return newErrorWithCode(ErrHttpAccessDeny, fmt.Errorf("validate http failed, %+v", err))
 	}
 
 	var vals map[string]interface{}
 	err = yaml.Unmarshal(body, &vals)
 	if err != nil {
-		return err
+		return newErrorWithCode(ErrNotRepoUrl, fmt.Errorf("validate http failed, %+v", err))
 	}
 	return nil
 }

@@ -109,6 +109,7 @@ message ValidateRepoRequest {
 
 message ValidateRepoResponse {
 	google.protobuf.BoolValue ok = 1;
+	uint32 errorCode = 2;
 }
 
 service RepoManager {
@@ -156,4 +157,3 @@ service RepoManager {
 		};
 	}
 }
-
