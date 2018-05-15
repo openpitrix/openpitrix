@@ -13,6 +13,12 @@ import "openpitrix/types/confd.proto";
 
 message FrontgateId {
 	string id = 1;
+	string payload = 2;
+}
+message FrontgateNodeId {
+	string id = 1;
+	string node_id = 2;
+	string payload = 3;
 }
 
 message FrontgateIdList {

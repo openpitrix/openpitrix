@@ -12,6 +12,7 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 import "openpitrix/types/types.proto";
+import "openpitrix/types/confd.proto";
 import "openpitrix/types/drone.proto";
 import "openpitrix/types/frontgate.proto";
 import "openpitrix/types/pilot.proto";
@@ -26,6 +27,8 @@ service PilotService {
 
 	rpc GetDroneConfig (openpitrix.types.DroneEndpoint) returns (openpitrix.types.DroneConfig);
 	rpc SetDroneConfig (openpitrix.types.SetDroneConfigRequest) returns (openpitrix.types.Empty);
+
+	rpc GetConfdConfig (openpitrix.types.ConfdEndpoint) returns (openpitrix.types.ConfdConfig);
 
 	rpc IsConfdRunning (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Bool);
 	rpc StartConfd (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
@@ -44,7 +47,11 @@ service PilotService {
 
 	rpc PingPilot (openpitrix.types.Empty) returns (openpitrix.types.Empty);
 	rpc PingFrontgate (openpitrix.types.FrontgateId) returns (openpitrix.types.Empty);
+	rpc PingFrontgateNode (openpitrix.types.FrontgateNodeId) returns (openpitrix.types.Empty);
 	rpc PingDrone (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
+
+	rpc RunCommandOnFrontgateNode (openpitrix.types.FrontgateNodeId) returns (openpitrix.types.String);
+	rpc RunCommandOnDrone (openpitrix.types.DroneEndpoint) returns (openpitrix.types.String);
 
 	rpc FrontgateChannel (stream openpitrix.types.Bytes) returns (stream openpitrix.types.Bytes);
 }
