@@ -10,9 +10,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/urfave/cli"
 
@@ -36,9 +38,12 @@ EXAMPLE:
    openpitrix-pilot info
    openpitrix-pilot list
    openpitrix-pilot ping
+   openpitrix-pilot exec
    openpitrix-pilot getv key
+   openpitrix-pilot confd-info
    openpitrix-pilot confd-start
    openpitrix-pilot serve
+   openpitrix-pilot send-task
    openpitrix-pilot tour`
 
 	app.Flags = []cli.Flag{
@@ -212,6 +217,96 @@ EXAMPLE:
 		},
 
 		{
+			Name:  "exec",
+			Usage: "exec command on pilot/frontgate/drone service",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "endpoint-type",
+					Value: "frontgate",
+					Usage: "set endpoint type (frontgate/drone)",
+				},
+
+				cli.StringFlag{
+					Name:  "frontgate-id",
+					Value: "openpitrix-frontgate-001",
+				},
+				cli.StringFlag{
+					Name:  "frontgate-node-id",
+					Value: "openpitrix-frontgate-node-001",
+				},
+				cli.StringFlag{
+					Name:  "drone-host",
+					Value: "localhost",
+				},
+				cli.IntFlag{
+					Name:  "drone-port",
+					Value: constants.DroneServicePort,
+				},
+				cli.IntFlag{
+					Name:  "timeout",
+					Value: 3,
+				},
+			},
+
+			Action: func(c *cli.Context) {
+				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+
+				client, conn, err := pilotutil.DialPilotService(
+					context.Background(), cfg.Host, int(cfg.ListenPort),
+				)
+				if err != nil {
+					logger.Critical("%+v", err)
+					os.Exit(1)
+				}
+				defer conn.Close()
+
+				switch s := c.String("endpoint-type"); s {
+				case "frontgate":
+					_, err = client.RunCommandOnFrontgateNode(context.Background(), &pbtypes.RunCommandOnFrontgateRequest{
+						Endpoint: &pbtypes.FrontgateEndpoint{
+							FrontgateId:     c.String("frontgate-id"),
+							FrontgateNodeId: c.String("frontgate-node-id"),
+						},
+						Command:        strings.Join(c.Args(), " "),
+						TimeoutSeconds: int32(c.Int("timeout")),
+					})
+					if err != nil {
+						logger.Critical("%+v", err)
+						os.Exit(1)
+					}
+					fmt.Println("OK")
+					return
+
+				case "drone":
+					_, err = client.RunCommandOnDrone(
+						context.Background(),
+						&pbtypes.RunCommandOnDroneRequest{
+							Endpoint: &pbtypes.DroneEndpoint{
+								FrontgateId: c.String("frontgate-id"),
+								DroneIp:     c.String("drone-host"),
+								DronePort:   int32(c.Int("drone-port")),
+							},
+							Command:        strings.Join(c.Args(), " "),
+							TimeoutSeconds: int32(c.Int("timeout")),
+						},
+					)
+					if err != nil {
+						logger.Critical("%+v", err)
+						os.Exit(1)
+					}
+					fmt.Println("OK")
+					return
+
+				default:
+					logger.Fatalf("unknown endpoint type: %s\n", s)
+					os.Exit(1)
+				}
+
+				return
+			},
+		},
+
+		{
 			Name:  "confd-status",
 			Usage: "get confd service status",
 			Flags: []cli.Flag{
@@ -264,6 +359,51 @@ EXAMPLE:
 				return
 			},
 		},
+
+		{
+			Name:  "confd-info",
+			Usage: "get confd service config",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "frontgate-id",
+					Value: "openpitrix-frontgate-001",
+				},
+				cli.StringFlag{
+					Name:  "drone-host",
+					Value: "",
+				},
+				cli.IntFlag{
+					Name:  "drone-port",
+					Value: constants.DroneServicePort,
+				},
+			},
+
+			Action: func(c *cli.Context) {
+				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+
+				client, conn, err := pilotutil.DialPilotService(
+					context.Background(), cfg.Host, int(cfg.ListenPort),
+				)
+				if err != nil {
+					logger.Critical("%+v", err)
+					os.Exit(1)
+				}
+				defer conn.Close()
+
+				reply, err := client.GetConfdConfig(context.Background(), &pbtypes.ConfdEndpoint{
+					FrontgateId: c.String("frontgate-id"),
+					DroneIp:     c.String("drone-host"),
+					DronePort:   int32(c.Int("drone-port")),
+				})
+				if err != nil {
+					logger.Critical("%+v", err)
+					os.Exit(1)
+				}
+				fmt.Println(JSONString(reply))
+				return
+			},
+		},
+
 		{
 			Name:  "confd-start",
 			Usage: "start confd service",
@@ -387,6 +527,53 @@ EXAMPLE:
 				return
 			},
 		},
+		{
+			Name:  "send-task",
+			Usage: "send task to pilot service",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "task-file",
+					Value: "task.json",
+				},
+			},
+
+			Action: func(c *cli.Context) {
+				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+
+				// load task json
+				task := func() *pbtypes.SubTaskMessage {
+					data, err := ioutil.ReadFile(c.String("task-file"))
+					if err != nil {
+						logger.Critical("%+v", err)
+						os.Exit(1)
+					}
+					p := new(pbtypes.SubTaskMessage)
+					if err := json.Unmarshal(data, p); err != nil {
+						logger.Critical("%+v", err)
+						os.Exit(1)
+					}
+					return p
+				}()
+
+				client, conn, err := pilotutil.DialPilotService(
+					context.Background(), cfg.Host, int(cfg.ListenPort),
+				)
+				if err != nil {
+					logger.Critical("%+v", err)
+					os.Exit(1)
+				}
+				defer conn.Close()
+
+				_, err = client.HandleSubtask(context.Background(), task)
+				if err != nil {
+					logger.Critical("%+v", err)
+					os.Exit(1)
+				}
+
+				fmt.Println("Done")
+				return
+			},
+		},
 
 		{
 			Name:  "serve",
@@ -397,6 +584,7 @@ EXAMPLE:
 				return
 			},
 		},
+
 		{
 			Name:  "tour",
 			Usage: "show more examples",

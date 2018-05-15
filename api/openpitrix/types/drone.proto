@@ -37,3 +37,9 @@ message SetDroneConfigRequest {
 	DroneEndpoint endpoint = 1;
 	DroneConfig config = 2;
 }
+
+message RunCommandOnDroneRequest {
+	DroneEndpoint endpoint = 1;
+	string command = 2;
+	int32 timeout_seconds = 3;
+}

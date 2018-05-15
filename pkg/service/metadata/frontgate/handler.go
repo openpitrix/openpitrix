@@ -5,10 +5,14 @@
 package frontgate
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"os/exec"
 	"reflect"
+	"runtime"
 	"time"
 
 	"github.com/chai2010/jsonmap"
@@ -17,6 +21,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/frontgate"
 	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/droneutil"
+	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate/frontgateutil"
 	"openpitrix.io/openpitrix/pkg/service/pilot/pilotutil"
 )
 
@@ -49,6 +54,40 @@ func (p *Server) GetFrontgateConfig(in *pbtypes.Empty, out *pbtypes.FrontgateCon
 }
 
 func (p *Server) SetFrontgateConfig(cfg *pbtypes.FrontgateConfig, out *pbtypes.Empty) error {
+	if reflect.DeepEqual(cfg, p.cfg.Get()) {
+		return nil
+	}
+
+	if len(cfg.GetNodeList()) == 0 {
+		return fmt.Errorf("frontgate.SetFrontgateConfig: node list is empty")
+	}
+
+	var lastErr error
+	for _, node := range cfg.GetNodeList() {
+		func() {
+			client, err := frontgateutil.DialFrontgateService(
+				node.NodeIp, int(node.NodePort),
+			)
+			if err != nil {
+				logger.Critical("%+v", err)
+				os.Exit(1)
+			}
+			defer client.Close()
+
+			_, err = client.SetFrontgateNodeConfig(cfg)
+			if err != nil {
+				lastErr = err
+			}
+		}()
+	}
+	if lastErr != nil {
+		return lastErr
+	}
+
+	return nil
+}
+
+func (p *Server) SetFrontgateNodeConfig(cfg *pbtypes.FrontgateConfig, out *pbtypes.Empty) error {
 	if reflect.DeepEqual(cfg, p.cfg.Get()) {
 		return nil
 	}
@@ -117,25 +156,6 @@ func (p *Server) SetDroneConfig(in *pbtypes.SetDroneConfigRequest, out *pbtypes.
 
 func (p *Server) GetConfdConfig(in *pbtypes.ConfdEndpoint, out *pbtypes.ConfdConfig) error {
 	*out = *p.cfg.Get().GetConfdConfig()
-	return nil
-}
-func (p *Server) SetConfdConfig(in *pbtypes.SetConfdConfigRequest, out *pbtypes.Empty) error {
-	ctx := context.Background()
-
-	client, conn, err := droneutil.DialDroneService(ctx,
-		in.Endpoint.GetDroneIp(),
-		int(in.Endpoint.GetDronePort()),
-	)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-
-	_, err = client.SetConfdConfig(ctx, in.GetConfig())
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -384,7 +404,42 @@ func (p *Server) PingPilot(in *pbtypes.Empty, out *pbtypes.Empty) error {
 }
 
 func (p *Server) PingFrontgate(in *pbtypes.Empty, out *pbtypes.Empty) error {
-	logger.Info("PingFrontgate: ok")
+	cfg := p.cfg.Get()
+	if len(cfg.GetNodeList()) == 0 {
+		logger.Info("PingFrontgate: ok")
+		return nil // OK
+	}
+
+	var lastErr error
+	for _, node := range cfg.GetNodeList() {
+		func() {
+			client, err := frontgateutil.DialFrontgateService(
+				node.NodeIp, int(node.NodePort),
+			)
+			if err != nil {
+				logger.Critical("%+v", err)
+				os.Exit(1)
+			}
+			defer client.Close()
+
+			_, err = client.PingFrontgateNode(&pbtypes.Empty{})
+			if err != nil {
+				lastErr = err
+			}
+		}()
+	}
+	if lastErr != nil {
+		return lastErr
+	}
+
+	logger.Info("PingFrontgate: all nodes ok")
+	return nil // OK
+}
+
+func (p *Server) PingFrontgateNode(in *pbtypes.Empty, out *pbtypes.Empty) error {
+	logger.Info("PingFrontgateNode: ok")
+
+	//*pbtypes.FrontgateEndpoint,
 	return nil // OK
 }
 
@@ -401,6 +456,61 @@ func (p *Server) PingDrone(in *pbtypes.DroneEndpoint, out *pbtypes.Empty) error 
 	defer conn.Close()
 
 	_, err = client.PingDrone(ctx, &pbtypes.Empty{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *Server) RunCommand(arg *pbtypes.RunCommandOnFrontgateRequest, out *pbtypes.String) error {
+	var c *exec.Cmd
+	if runtime.GOOS == "windows" {
+		c = exec.Command("cmd", "/C", arg.GetCommand())
+	} else {
+		c = exec.Command("/bin/sh", "-c", arg.GetCommand())
+	}
+
+	var b bytes.Buffer
+	c.Stdout = &b
+	c.Stderr = &b
+
+	if err := c.Start(); err != nil {
+		return err
+	}
+
+	var timeout = time.Second * 3
+	if x := arg.GetTimeoutSeconds(); x > 0 {
+		timeout = time.Duration(x) * time.Second
+	}
+
+	timer := time.AfterFunc(timeout, func() {
+		c.Process.Kill()
+	})
+
+	err := c.Wait()
+	timer.Stop()
+
+	if err != nil {
+		return err
+	}
+
+	out.Value = string(b.Bytes())
+	return nil // OK
+}
+func (p *Server) RunCommandOnDrone(in *pbtypes.RunCommandOnDroneRequest, out *pbtypes.String) error {
+	ctx := context.Background()
+
+	client, conn, err := droneutil.DialDroneService(ctx,
+		in.GetEndpoint().GetDroneIp(),
+		int(in.GetEndpoint().GetDronePort()),
+	)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = client.RunCommand(ctx, in)
 	if err != nil {
 		return err
 	}

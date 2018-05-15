@@ -33,13 +33,13 @@ service FrontgateService {
 
 	rpc GetFrontgateConfig (openpitrix.types.Empty) returns (openpitrix.types.FrontgateConfig);
 	rpc SetFrontgateConfig (openpitrix.types.FrontgateConfig) returns (openpitrix.types.Empty);
+	rpc SetFrontgateNodeConfig (openpitrix.types.FrontgateConfig) returns (openpitrix.types.Empty);
 
 	rpc GetDroneList (openpitrix.types.Empty) returns (openpitrix.types.DroneIdList);
 	rpc GetDroneConfig (openpitrix.types.DroneEndpoint) returns (openpitrix.types.DroneConfig);
 	rpc SetDroneConfig (openpitrix.types.SetDroneConfigRequest) returns (openpitrix.types.Empty);
 
 	rpc GetConfdConfig (openpitrix.types.ConfdEndpoint) returns (openpitrix.types.ConfdConfig);
-	rpc SetConfdConfig (openpitrix.types.SetConfdConfigRequest) returns (openpitrix.types.Empty);
 
 	rpc IsConfdRunning (openpitrix.types.ConfdEndpoint) returns (openpitrix.types.Bool);
 	rpc StartConfd (openpitrix.types.ConfdEndpoint) returns (openpitrix.types.Empty);
@@ -59,7 +59,11 @@ service FrontgateService {
 
 	rpc PingPilot (openpitrix.types.Empty) returns (openpitrix.types.Empty);
 	rpc PingFrontgate (openpitrix.types.Empty) returns (openpitrix.types.Empty);
+	rpc PingFrontgateNode (openpitrix.types.Empty) returns (openpitrix.types.Empty);
 	rpc PingDrone (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
+
+	rpc RunCommand (openpitrix.types.RunCommandOnFrontgateRequest) returns (openpitrix.types.String);
+	rpc RunCommandOnDrone (openpitrix.types.RunCommandOnDroneRequest) returns (openpitrix.types.String);
 
 	rpc HeartBeat(openpitrix.types.Empty) returns (openpitrix.types.Empty);
 }
