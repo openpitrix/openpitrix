@@ -7,8 +7,10 @@ package drone
 import (
 	"context"
 	"fmt"
+	"os/exec"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/libconfd"
@@ -222,4 +224,20 @@ func (p *Server) PingFrontgate(ctx context.Context, arg *pbtypes.FrontgateEndpoi
 func (p *Server) PingDrone(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Empty, error) {
 	logger.Info("PingDrone: ok")
 	return &pbtypes.Empty{}, nil
+}
+
+func (p *Server) RunCommand(ctx context.Context, arg *pbtypes.String) (*pbtypes.String, error) {
+	var c *exec.Cmd
+	if runtime.GOOS == "windows" {
+		c = exec.Command("cmd", "/C", arg.Value)
+	} else {
+		c = exec.Command("/bin/sh", "-c", arg.Value)
+	}
+
+	output, err := c.CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pbtypes.String{Value: string(output)}, nil
 }

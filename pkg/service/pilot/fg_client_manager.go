@@ -82,6 +82,19 @@ func (p *FrontgateClientManager) GetClient(id string) (*pbfrontgate.FrontgateSer
 	return nil, fmt.Errorf("not found")
 }
 
+func (p *FrontgateClientManager) GetNodeClient(id, nodeId string) (*pbfrontgate.FrontgateServiceClient, error) {
+	p.Lock()
+	defer p.Unlock()
+
+	for _, cs := range p.clientMap[id] {
+		if cs.info.GetNodeId() == nodeId {
+			return cs.client, nil
+		}
+	}
+
+	return nil, fmt.Errorf("not found")
+}
+
 func (p *FrontgateClientManager) PutClient(c *pbfrontgate.FrontgateServiceClient, info *pbtypes.FrontgateConfig) (closed chan bool) {
 	p.Lock()
 	defer p.Unlock()

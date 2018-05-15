@@ -68,6 +68,7 @@ func (p *ConfigManager) Set(cfg *pbtypes.FrontgateConfig) error {
 	}
 
 	cfg.Id = p.cfg.Id
+	cfg.NodeId = p.cfg.NodeId
 	cfg.ListenPort = p.cfg.ListenPort
 
 	cfg.PilotHost = p.cfg.PilotHost
