@@ -37,6 +37,7 @@ type appInterface interface {
 	GetHome() string
 	GetSources() []string
 	GetKeywords() []string
+	GetMaintainers() string
 }
 type versionInterface interface {
 	GetVersion() string
@@ -69,6 +70,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	home := pbutil.ToProtoString(app.GetHome())
 	sources := pbutil.ToProtoString(strings.Join(app.GetSources(), ","))
 	keywords := pbutil.ToProtoString(strings.Join(app.GetKeywords(), ","))
+	maintainers := pbutil.ToProtoString(app.GetMaintainers())
 	if res.TotalCount == 0 {
 		createReq := pb.CreateAppRequest{}
 		createReq.RepoId = pbutil.ToProtoString(repoId)
@@ -79,6 +81,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		createReq.Home = home
 		createReq.Sources = sources
 		createReq.Keywords = keywords
+		createReq.Maintainers = maintainers
 
 		createRes, err := appManagerClient.CreateApp(ctx, &createReq)
 		if err != nil {
@@ -97,6 +100,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		modifyReq.Home = home
 		modifyReq.Sources = sources
 		modifyReq.Keywords = keywords
+		modifyReq.Maintainers = maintainers
 
 		modifyRes, err := appManagerClient.ModifyApp(ctx, &modifyReq)
 		if err != nil {
