@@ -242,6 +242,10 @@ EXAMPLE:
 					Name:  "drone-port",
 					Value: constants.DroneServicePort,
 				},
+				cli.IntFlag{
+					Name:  "timeout",
+					Value: 3,
+				},
 			},
 
 			Action: func(c *cli.Context) {
@@ -258,10 +262,13 @@ EXAMPLE:
 
 				switch s := c.String("endpoint-type"); s {
 				case "frontgate":
-					_, err = client.RunCommandOnFrontgateNode(context.Background(), &pbtypes.FrontgateNodeId{
-						Id:      c.String("frontgate-id"),
-						NodeId:  c.String("frontgate-node-id"),
-						Payload: strings.Join(c.Args(), " "),
+					_, err = client.RunCommandOnFrontgateNode(context.Background(), &pbtypes.RunCommandOnFrontgateRequest{
+						Endpoint: &pbtypes.FrontgateEndpoint{
+							FrontgateId:     c.String("frontgate-id"),
+							FrontgateNodeId: c.String("frontgate-node-id"),
+						},
+						Command:        strings.Join(c.Args(), " "),
+						TimeoutSeconds: int32(c.Int("timeout")),
 					})
 					if err != nil {
 						logger.Critical("%+v", err)
@@ -273,11 +280,14 @@ EXAMPLE:
 				case "drone":
 					_, err = client.RunCommandOnDrone(
 						context.Background(),
-						&pbtypes.DroneEndpoint{
-							FrontgateId: c.String("frontgate-id"),
-							DroneIp:     c.String("drone-host"),
-							DronePort:   int32(c.Int("drone-port")),
-							Payload:     strings.Join(c.Args(), " "),
+						&pbtypes.RunCommandOnDroneRequest{
+							Endpoint: &pbtypes.DroneEndpoint{
+								FrontgateId: c.String("frontgate-id"),
+								DroneIp:     c.String("drone-host"),
+								DronePort:   int32(c.Int("drone-port")),
+							},
+							Command:        strings.Join(c.Args(), " "),
+							TimeoutSeconds: int32(c.Int("timeout")),
 						},
 					)
 					if err != nil {

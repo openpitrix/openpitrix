@@ -34,5 +34,5 @@ service DroneService {
 	rpc PingFrontgate (openpitrix.types.FrontgateEndpoint) returns (openpitrix.types.Empty);
 	rpc PingDrone (openpitrix.types.Empty) returns (openpitrix.types.Empty);
 
-	rpc RunCommand (openpitrix.types.String) returns (openpitrix.types.String);
+	rpc RunCommand (openpitrix.types.RunCommandOnDroneRequest) returns (openpitrix.types.String);
 }

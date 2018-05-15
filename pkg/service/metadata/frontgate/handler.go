@@ -5,6 +5,7 @@
 package frontgate
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -462,35 +463,54 @@ func (p *Server) PingDrone(in *pbtypes.DroneEndpoint, out *pbtypes.Empty) error 
 	return nil
 }
 
-func (p *Server) RunCommand(in *pbtypes.String, out *pbtypes.String) error {
+func (p *Server) RunCommand(arg *pbtypes.RunCommandOnFrontgateRequest, out *pbtypes.String) error {
 	var c *exec.Cmd
 	if runtime.GOOS == "windows" {
-		c = exec.Command("cmd", "/C", in.Value)
+		c = exec.Command("cmd", "/C", arg.GetCommand())
 	} else {
-		c = exec.Command("/bin/sh", "-c", in.Value)
+		c = exec.Command("/bin/sh", "-c", arg.GetCommand())
 	}
 
-	output, err := c.CombinedOutput()
+	var b bytes.Buffer
+	c.Stdout = &b
+	c.Stderr = &b
+
+	if err := c.Start(); err != nil {
+		return err
+	}
+
+	var timeout = time.Second * 3
+	if x := arg.GetTimeoutSeconds(); x > 0 {
+		timeout = time.Duration(x) * time.Second
+	}
+
+	timer := time.AfterFunc(timeout, func() {
+		c.Process.Kill()
+	})
+
+	err := c.Wait()
+	timer.Stop()
+
 	if err != nil {
 		return err
 	}
 
-	out.Value = string(output)
+	out.Value = string(b.Bytes())
 	return nil // OK
 }
-func (p *Server) RunCommandOnDrone(in *pbtypes.DroneEndpoint, out *pbtypes.String) error {
+func (p *Server) RunCommandOnDrone(in *pbtypes.RunCommandOnDroneRequest, out *pbtypes.String) error {
 	ctx := context.Background()
 
 	client, conn, err := droneutil.DialDroneService(ctx,
-		in.GetDroneIp(),
-		int(in.GetDronePort()),
+		in.GetEndpoint().GetDroneIp(),
+		int(in.GetEndpoint().GetDronePort()),
 	)
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 
-	_, err = client.RunCommand(ctx, &pbtypes.String{Value: in.Payload})
+	_, err = client.RunCommand(ctx, in)
 	if err != nil {
 		return err
 	}

@@ -31,10 +31,15 @@ message DroneEndpoint {
 	string frontgate_id = 1;
 	string drone_ip = 2;
 	int32 drone_port = 3;
-	string payload = 4;
 }
 
 message SetDroneConfigRequest {
 	DroneEndpoint endpoint = 1;
 	DroneConfig config = 2;
+}
+
+message RunCommandOnDroneRequest {
+	DroneEndpoint endpoint = 1;
+	string command = 2;
+	int32 timeout_seconds = 3;
 }

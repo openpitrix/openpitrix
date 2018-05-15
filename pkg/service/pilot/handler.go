@@ -395,15 +395,16 @@ func (p *Server) PingDrone(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pb
 	return &pbtypes.Empty{}, nil
 }
 
-func (p *Server) RunCommandOnFrontgateNode(ctx context.Context, arg *pbtypes.FrontgateNodeId) (*pbtypes.String, error) {
-	client, err := p.fgClientMgr.GetNodeClient(arg.Id, arg.NodeId)
+func (p *Server) RunCommandOnFrontgateNode(ctx context.Context, arg *pbtypes.RunCommandOnFrontgateRequest) (*pbtypes.String, error) {
+	client, err := p.fgClientMgr.GetNodeClient(
+		arg.GetEndpoint().GetFrontgateId(),
+		arg.GetEndpoint().GetFrontgateNodeId(),
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	reply, err := client.RunCommand(&pbtypes.String{
-		Value: arg.GetPayload(),
-	})
+	reply, err := client.RunCommand(arg)
 	if err != nil {
 		return nil, err
 	}
@@ -411,18 +412,13 @@ func (p *Server) RunCommandOnFrontgateNode(ctx context.Context, arg *pbtypes.Fro
 	return reply, nil
 }
 
-func (p *Server) RunCommandOnDrone(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pbtypes.String, error) {
-	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
+func (p *Server) RunCommandOnDrone(ctx context.Context, arg *pbtypes.RunCommandOnDroneRequest) (*pbtypes.String, error) {
+	client, err := p.fgClientMgr.GetClient(arg.GetEndpoint().GetFrontgateId())
 	if err != nil {
 		return nil, err
 	}
 
-	reply, err := client.RunCommandOnDrone(&pbtypes.DroneEndpoint{
-		FrontgateId: arg.FrontgateId,
-		DroneIp:     arg.DroneIp,
-		DronePort:   arg.DronePort,
-		Payload:     arg.Payload,
-	})
+	reply, err := client.RunCommandOnDrone(arg)
 	if err != nil {
 		return nil, err
 	}

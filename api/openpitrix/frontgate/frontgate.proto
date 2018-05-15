@@ -62,8 +62,8 @@ service FrontgateService {
 	rpc PingFrontgateNode (openpitrix.types.Empty) returns (openpitrix.types.Empty);
 	rpc PingDrone (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
 
-	rpc RunCommand (openpitrix.types.String) returns (openpitrix.types.String);
-	rpc RunCommandOnDrone (openpitrix.types.DroneEndpoint) returns (openpitrix.types.String);
+	rpc RunCommand (openpitrix.types.RunCommandOnFrontgateRequest) returns (openpitrix.types.String);
+	rpc RunCommandOnDrone (openpitrix.types.RunCommandOnDroneRequest) returns (openpitrix.types.String);
 
 	rpc HeartBeat(openpitrix.types.Empty) returns (openpitrix.types.Empty);
 }

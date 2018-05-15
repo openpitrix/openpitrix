@@ -50,8 +50,8 @@ service PilotService {
 	rpc PingFrontgateNode (openpitrix.types.FrontgateNodeId) returns (openpitrix.types.Empty);
 	rpc PingDrone (openpitrix.types.DroneEndpoint) returns (openpitrix.types.Empty);
 
-	rpc RunCommandOnFrontgateNode (openpitrix.types.FrontgateNodeId) returns (openpitrix.types.String);
-	rpc RunCommandOnDrone (openpitrix.types.DroneEndpoint) returns (openpitrix.types.String);
+	rpc RunCommandOnFrontgateNode (openpitrix.types.RunCommandOnFrontgateRequest) returns (openpitrix.types.String);
+	rpc RunCommandOnDrone (openpitrix.types.RunCommandOnDroneRequest) returns (openpitrix.types.String);
 
 	rpc FrontgateChannel (stream openpitrix.types.Bytes) returns (stream openpitrix.types.Bytes);
 }

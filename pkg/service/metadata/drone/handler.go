@@ -5,6 +5,7 @@
 package drone
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os/exec"
@@ -12,6 +13,7 @@ import (
 	"reflect"
 	"runtime"
 	"strings"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/libconfd"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -226,18 +228,37 @@ func (p *Server) PingDrone(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Em
 	return &pbtypes.Empty{}, nil
 }
 
-func (p *Server) RunCommand(ctx context.Context, arg *pbtypes.String) (*pbtypes.String, error) {
+func (p *Server) RunCommand(ctx context.Context, arg *pbtypes.RunCommandOnDroneRequest) (*pbtypes.String, error) {
 	var c *exec.Cmd
 	if runtime.GOOS == "windows" {
-		c = exec.Command("cmd", "/C", arg.Value)
+		c = exec.Command("cmd", "/C", arg.GetCommand())
 	} else {
-		c = exec.Command("/bin/sh", "-c", arg.Value)
+		c = exec.Command("/bin/sh", "-c", arg.GetCommand())
 	}
 
-	output, err := c.CombinedOutput()
+	var b bytes.Buffer
+	c.Stdout = &b
+	c.Stderr = &b
+
+	if err := c.Start(); err != nil {
+		return nil, err
+	}
+
+	var timeout = time.Second * 3
+	if x := arg.GetTimeoutSeconds(); x > 0 {
+		timeout = time.Duration(x) * time.Second
+	}
+
+	timer := time.AfterFunc(timeout, func() {
+		c.Process.Kill()
+	})
+
+	err := c.Wait()
+	timer.Stop()
+
 	if err != nil {
 		return nil, err
 	}
 
-	return &pbtypes.String{Value: string(output)}, nil
+	return &pbtypes.String{Value: string(b.Bytes())}, nil
 }

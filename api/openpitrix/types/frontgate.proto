@@ -44,6 +44,13 @@ message FrontgateConfig {
 
 message FrontgateEndpoint {
 	string frontgate_id = 1;
-	string node_ip = 2;  // hide for pilot
-	int32 node_port = 3; // hide for pilot
+	string frontgate_node_id = 2;
+	string node_ip = 3;  // hide for pilot
+	int32 node_port = 4; // hide for pilot
+}
+
+message RunCommandOnFrontgateRequest {
+	FrontgateEndpoint endpoint = 1;
+	string command = 2;
+	int32 timeout_seconds = 3;
 }
