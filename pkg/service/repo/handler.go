@@ -84,7 +84,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	visibility := req.GetVisibility().GetValue()
 	providers := req.GetProviders()
 
-	err := validate(repoType, url, credential, visibility)
+	err := validate(repoType, url, credential, visibility, providers)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "CreateRepo: Validate failed, %+v", err)
 	}
@@ -178,7 +178,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		needValidate = true
 	}
 	if needValidate {
-		err = validate(repoType, url, credential, visibility)
+		err = validate(repoType, url, credential, visibility, providers)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ModifyRepo: Validate failed, %+v", err)
 		}
@@ -261,15 +261,26 @@ func (p *Server) ValidateRepo(ctx context.Context, req *pb.ValidateRepoRequest) 
 	url := req.GetUrl().GetValue()
 	credential := req.GetCredential().GetValue()
 	visibility := "public"
+	providers := []string{"qingcloud"}
 
-	err := validate(repoType, url, credential, visibility)
+	err := validate(repoType, url, credential, visibility, providers)
 	if err != nil {
+		e, ok := err.(*ErrorWithCode)
+		if !ok {
+			return &pb.ValidateRepoResponse{
+				Ok:        pbutil.ToProtoBool(false),
+				ErrorCode: ErrNotExpect,
+			}, nil
+		}
+
 		return &pb.ValidateRepoResponse{
-			Ok: pbutil.ToProtoBool(false),
+			Ok:        pbutil.ToProtoBool(false),
+			ErrorCode: e.Code(),
 		}, nil
 	}
 
 	return &pb.ValidateRepoResponse{
-		Ok: pbutil.ToProtoBool(true),
+		Ok:        pbutil.ToProtoBool(true),
+		ErrorCode: 0,
 	}, nil
 }

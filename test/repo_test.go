@@ -99,6 +99,7 @@ func TestRepo(t *testing.T) {
 			URL:         repoUrl,
 			Credential:  `{}`,
 			Visibility:  "private",
+			Providers:   []string{constants.ProviderKubernetes},
 		})
 	modifyResp, err := client.RepoManager.ModifyRepo(modifyParams)
 	if err != nil {
@@ -246,6 +247,7 @@ func TestRepoLabelSelector(t *testing.T) {
 			URL:         repoUrl,
 			Credential:  `{}`,
 			Visibility:  "public",
+			Providers:   []string{constants.ProviderKubernetes},
 			Labels:      labels,
 			Selectors:   selectors,
 		})
@@ -265,6 +267,7 @@ func TestRepoLabelSelector(t *testing.T) {
 		modifyParams.SetBody(
 			&models.OpenpitrixModifyRepoRequest{
 				RepoID:    repoId,
+				Providers: []string{constants.ProviderKubernetes},
 				Labels:    newLabels,
 				Selectors: newSelectors,
 			},
