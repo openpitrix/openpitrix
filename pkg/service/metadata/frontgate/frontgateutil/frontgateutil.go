@@ -29,11 +29,13 @@ func MustLoadFrontgateConfig(path string) *pbtypes.FrontgateConfig {
 func LoadFrontgateConfig(path string) (*pbtypes.FrontgateConfig, error) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
+		logger.Warn("%+v", err)
 		return nil, err
 	}
 
 	p := new(pbtypes.FrontgateConfig)
 	if err := json.Unmarshal(data, p); err != nil {
+		logger.Warn("%+v", err)
 		return nil, err
 	}
 
@@ -59,9 +61,15 @@ func DialFrontgateService(host string, port int) (
 	client *pbfrontgate.FrontgateServiceClient,
 	err error,
 ) {
-	return pbfrontgate.DialFrontgateService(
+	c, err := pbfrontgate.DialFrontgateService(
 		"tcp", fmt.Sprintf("%s:%d", host, port),
 	)
+	if err != nil {
+		logger.Warn("%+v", err)
+		return nil, err
+	}
+
+	return c, nil
 }
 
 func strExtractingEnvValue(s string) string {

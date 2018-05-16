@@ -89,6 +89,7 @@ func NewDefaultConfig() *pbtypes.FrontgateConfig {
 
 	p := new(pbtypes.FrontgateConfig)
 	if err := json.Unmarshal([]byte(s), p); err != nil {
+		logger.Error("%+v", err)
 		panic(err) // unreachable
 	}
 	return p

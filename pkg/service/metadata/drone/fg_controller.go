@@ -32,7 +32,9 @@ func (p *FrontgateController) GetConfig() (*pbtypes.FrontgateConfig, error) {
 	defer p.mu.Unlock()
 
 	if p.cfg == nil {
-		return nil, fmt.Errorf("drone: Frontgate config is empty")
+		err := fmt.Errorf("drone: Frontgate config is empty")
+		logger.Warn("%+v", err)
+		return nil, err
 	}
 
 	cfg := proto.Clone(p.cfg).(*pbtypes.FrontgateConfig)
@@ -44,6 +46,7 @@ func (p *FrontgateController) SetConfig(cfg *pbtypes.FrontgateConfig) error {
 	defer p.mu.Unlock()
 
 	if reflect.DeepEqual(p.cfg, cfg) {
+		logger.Info("SetConfig: not changed")
 		return nil // not changed
 	}
 
@@ -76,12 +79,16 @@ func (p *FrontgateController) getClient() (
 	defer p.mu.Unlock()
 
 	if p.cfg == nil {
-		return nil, fmt.Errorf("drone: Frontgate config is empty")
+		err := fmt.Errorf("drone: Frontgate config is empty")
+		logger.Warn("%+v", err)
+		return nil, err
 	}
 
 	nodes := p.cfg.GetNodeList()
 	if len(nodes) == 0 {
-		return nil, fmt.Errorf("drone: no frontgate node")
+		err := fmt.Errorf("drone: no frontgate node")
+		logger.Warn("%+v", err)
+		return nil, err
 	}
 
 	i := rand.Intn(len(nodes))
@@ -92,6 +99,7 @@ func (p *FrontgateController) getClient() (
 
 	client, err := pbfrontgate.DialFrontgateService("tcp", addr)
 	if err != nil {
+		logger.Warn("%+v", err)
 		return nil, err
 	}
 	p.clientMap[addr] = client
