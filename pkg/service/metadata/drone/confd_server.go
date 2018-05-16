@@ -57,6 +57,7 @@ func (p *ConfdServer) SetConfig(cfg *pbtypes.ConfdConfig) error {
 
 	config, backendConfig, err := p.parseConfig(cfg)
 	if err != nil {
+		logger.Warn("%+v", err)
 		return err
 	}
 
@@ -111,6 +112,9 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 		logger.Info("ConfdServer: run...")
 
 		var err = p.processor.Run(p.config, backendClient) // blocked
+		if err != nil {
+			logger.Warn("%+v", err)
+		}
 
 		p.mu.Lock()
 		p.running = false
@@ -135,7 +139,10 @@ func (p *ConfdServer) Stop() error {
 	p.mu.Unlock()
 
 	if processer != nil {
-		return processer.Close()
+		if err := processer.Close(); err != nil {
+			logger.Warn("%+v", err)
+			return err
+		}
 	}
 	return nil
 }
@@ -150,21 +157,25 @@ func (p *ConfdServer) Err() error {
 func (p *ConfdServer) parseConfig(pbcfg *pbtypes.ConfdConfig) (*libconfd.Config, *libconfd.BackendConfig, error) {
 	sCfg, err := json.Marshal(pbcfg.GetProcessorConfig())
 	if err != nil {
+		logger.Warn("%+v", err)
 		return nil, nil, err
 	}
 
 	sCfgBackend, err := json.Marshal(pbcfg.GetBackendConfig())
 	if err != nil {
+		logger.Warn("%+v", err)
 		return nil, nil, err
 	}
 
 	cfg, err := libconfd.LoadConfigFromJsonString(string(sCfg))
 	if err != nil {
+		logger.Warn("%+v", err)
 		return nil, nil, err
 	}
 
 	cfgBackend, err := libconfd.LoadBackendConfigFromJsonString(string(sCfgBackend))
 	if err != nil {
+		logger.Warn("%+v", err)
 		return nil, nil, err
 	}
 

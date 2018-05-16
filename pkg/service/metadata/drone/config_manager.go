@@ -15,6 +15,7 @@ import (
 
 	"github.com/golang/protobuf/proto"
 
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/types"
 )
 
@@ -54,10 +55,14 @@ func (p *ConfigManager) Set(cfg *pbtypes.DroneConfig) error {
 	defer p.mu.Unlock()
 
 	if cfg.Id != "" && cfg.Id != p.cfg.Id {
-		return fmt.Errorf("drone: config.Id is read only")
+		err := fmt.Errorf("drone: config.Id is read only")
+		logger.Warn("%+v", err)
+		return err
 	}
 	if cfg.ListenPort > 0 && cfg.ListenPort != p.cfg.ListenPort {
-		return fmt.Errorf("drone: config.ListenPort is read only")
+		err := fmt.Errorf("drone: config.ListenPort is read only")
+		logger.Warn("%+v", err)
+		return err
 	}
 
 	cfg.Id = p.cfg.Id
@@ -73,12 +78,14 @@ func (p *ConfigManager) Save() error {
 
 	data, err := json.MarshalIndent(p.cfg, "", "\t")
 	if err != nil {
+		logger.Warn("%+v", err)
 		return err
 	}
 
 	// backup old config
 	bakpath := p.path + time.Now().Format(".20060102.bak")
 	if err := os.Rename(p.path, bakpath); err != nil {
+		logger.Warn("%+v", err)
 		return err
 	}
 
@@ -86,6 +93,7 @@ func (p *ConfigManager) Save() error {
 	err = ioutil.WriteFile(p.path, data, 0666)
 	if err != nil {
 		os.Rename(bakpath, p.path) // revert
+		logger.Warn("%+v", err)
 		return err
 	}
 
