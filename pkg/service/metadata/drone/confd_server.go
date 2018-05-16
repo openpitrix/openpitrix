@@ -5,9 +5,13 @@
 package drone
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"sync"
+	"time"
 
 	"github.com/golang/protobuf/proto"
 
@@ -18,6 +22,8 @@ import (
 )
 
 type ConfdServer struct {
+	cfgpath string
+
 	mu            sync.Mutex
 	cfg           *pbtypes.ConfdConfig
 	config        *libconfd.Config
@@ -29,8 +35,10 @@ type ConfdServer struct {
 	err       error
 }
 
-func NewConfdServer() *ConfdServer {
-	return &ConfdServer{}
+func NewConfdServer(cfgpath string) *ConfdServer {
+	return &ConfdServer{
+		cfgpath: cfgpath,
+	}
 }
 
 func (p *ConfdServer) IsRunning() bool {
@@ -180,4 +188,32 @@ func (p *ConfdServer) parseConfig(pbcfg *pbtypes.ConfdConfig) (*libconfd.Config,
 	}
 
 	return cfg, cfgBackend, nil
+}
+
+func (p *ConfdServer) Save() error {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	data, err := json.MarshalIndent(p.cfg, "", "\t")
+	if err != nil {
+		logger.Warn("%+v", err)
+		return err
+	}
+
+	// backup old config
+	bakpath := p.cfgpath + time.Now().Format(".20060102.bak")
+	if err := os.Rename(p.cfgpath, bakpath); err != nil {
+		logger.Warn("%+v", err)
+		return err
+	}
+
+	data = bytes.Replace(data, []byte("\n"), []byte("\r\n"), -1)
+	err = ioutil.WriteFile(p.cfgpath, data, 0666)
+	if err != nil {
+		os.Rename(bakpath, p.cfgpath) // revert
+		logger.Warn("%+v", err)
+		return err
+	}
+
+	return nil
 }

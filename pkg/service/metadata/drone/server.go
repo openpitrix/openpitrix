@@ -5,13 +5,10 @@
 package drone
 
 import (
-	"context"
-
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb/drone"
-	"openpitrix.io/openpitrix/pkg/pb/types"
 )
 
 type Server struct {
@@ -20,22 +17,18 @@ type Server struct {
 	fg    *FrontgateController
 }
 
-func NewServer(cfg *ConfigManager, cfgConfd *pbtypes.ConfdConfig) *Server {
+func NewServer(cfg *ConfigManager, confd *ConfdServer) *Server {
 	p := &Server{
 		cfg:   cfg,
-		confd: NewConfdServer(),
+		confd: confd,
 		fg:    NewFrontgateController(),
-	}
-
-	if cfgConfd != nil {
-		p.SetConfdConfig(context.Background(), cfgConfd)
 	}
 
 	return p
 }
 
-func Serve(cfg *ConfigManager, cfgConfd *pbtypes.ConfdConfig) {
-	s := NewServer(cfg, cfgConfd)
+func Serve(cfg *ConfigManager, confd *ConfdServer) {
+	s := NewServer(cfg, confd)
 
 	manager.NewGrpcServer("drone-service", int(s.cfg.Get().ListenPort)).Serve(func(server *grpc.Server) {
 		pbdrone.RegisterDroneServiceServer(server, s)
