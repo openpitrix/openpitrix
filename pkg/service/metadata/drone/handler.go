@@ -64,6 +64,11 @@ func (p *Server) SetConfdConfig(ctx context.Context, arg *pbtypes.ConfdConfig) (
 		logger.Warn("%+v", err)
 		return nil, err
 	}
+	if err := p.confd.Save(); err != nil {
+		logger.Warn("%+v", err)
+		return nil, err
+	}
+
 	return &pbtypes.Empty{}, nil
 }
 
