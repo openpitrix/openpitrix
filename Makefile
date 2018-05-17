@@ -95,8 +95,12 @@ fmt-check: fmt-all
 		exit 2 \
 	)
 
+.PHONY: buildflyway
+buildflyway:
+	docker build -t $(TARG.Name):flyway -f ./Dockerfile.flyway .
+
 .PHONY: build
-build: fmt
+build: fmt buildflyway
 	mkdir -p ./tmp/bin
 	$(call get_build_flags)
 	$(RUN_IN_DOCKER) time go install -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
