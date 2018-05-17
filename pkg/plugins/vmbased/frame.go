@@ -604,30 +604,26 @@ func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 					PubKey: pbutil.ToProtoString(public),
 				},
 			})
-			cmd := fmt.Sprintf("mkdir -p /root/.ssh/;chmod 700 /root/.ssh/;"+
-				"echo \"%s\" > /root/.ssh/id_%s;echo \"%s\" > /root/.ssh/id_%s.pub;"+
-				"chown 600 /root/.ssh/id_%s;chown 644 /root/.ssh/id_%s.pub",
+			cmd := fmt.Sprintf("mkdir -p /root/.ssh/ && chmod 700 /root/.ssh/ && "+
+				"echo \"%s\" > /root/.ssh/id_%s && echo \"%s\" > /root/.ssh/id_%s.pub && "+
+				"chown 600 /root/.ssh/id_%s && chown 644 /root/.ssh/id_%s.pub",
 				private, keyType, public, keyType, keyType, keyType)
 			ip := clusterNode.PrivateIp
-			cnodes := &models.Cmd{
-				Cmd:     cmd,
-				Timeout: TimeoutSshKeygen,
+
+			request := &pbtypes.RunCommandOnDroneRequest{
+				Endpoint: &pbtypes.DroneEndpoint{
+					FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+					DroneIp:     ip,
+					DronePort:   constants.DroneServicePort,
+				},
+				Command:        cmd,
+				TimeoutSeconds: TimeoutSshKeygen,
 			}
-			meta := &models.Meta{
-				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
-				Timeout:     TimeoutSshKeygen,
-				NodeId:      clusterNode.NodeId,
-				DroneIp:     ip,
-				Cnodes:      jsonutil.ToString(cnodes),
-			}
-			directive, err := meta.ToString()
-			if err != nil {
-				return nil
-			}
+			directive := jsonutil.ToString(request)
 			formatVolumeTask := &models.Task{
 				JobId:          f.Job.JobId,
 				Owner:          f.Job.Owner,
-				TaskAction:     ActionRegisterCmd,
+				TaskAction:     ActionRunCommandOnDrone,
 				Target:         constants.TargetPilot,
 				NodeId:         nodeId,
 				Directive:      string(directive),
@@ -651,25 +647,21 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
 		cmd := UmountVolumeCmd(clusterRole.MountPoint)
 		ip := clusterNode.PrivateIp
-		cnodes := &models.Cmd{
-			Cmd:     cmd,
-			Timeout: TimeoutUmountVolume,
+
+		request := &pbtypes.RunCommandOnDroneRequest{
+			Endpoint: &pbtypes.DroneEndpoint{
+				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+				DroneIp:     ip,
+				DronePort:   constants.DroneServicePort,
+			},
+			Command:        cmd,
+			TimeoutSeconds: TimeoutUmountVolume,
 		}
-		meta := &models.Meta{
-			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
-			Timeout:     TimeoutUmountVolume,
-			NodeId:      clusterNode.NodeId,
-			DroneIp:     ip,
-			Cnodes:      jsonutil.ToString(cnodes),
-		}
-		directive, err := meta.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(request)
 		umountVolumeTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
-			TaskAction:     ActionRegisterCmd,
+			TaskAction:     ActionRunCommandOnDrone,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
 			Directive:      string(directive),
@@ -968,7 +960,6 @@ func (f *Frame) registerMetadataLayer(failureAllowed bool) *models.TaskLayer {
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 		Timeout:     TimeoutRegister,
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
-		Cnodes:      "",
 	}
 	directive, err := meta.ToString()
 	if err != nil {
@@ -1155,10 +1146,10 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 		Append(f.waitFrontgateLayer(false)).                 // wait frontgate cluster to be active
 		Append(f.pingDroneLayer(nodeIds, false)).            // ping drone
 		Append(f.setDroneConfigLayer(nodeIds, false)).       // set drone config
-		Append(f.startConfdServiceLayer(nodeIds, false)).    // start confd service
 		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance
 		Append(f.sshKeygenLayer(false)).                     // generate ssh key
 		Append(f.registerMetadataLayer(false)).              // register cluster metadata
+		Append(f.startConfdServiceLayer(nodeIds, false)).    // start confd service
 		Append(f.initAndStartServiceLayer(nodeIds, false)).  // register init and start cmd to exec
 		Append(f.deregisterCmdLayer(nodeIds, true))          // deregister cmd
 

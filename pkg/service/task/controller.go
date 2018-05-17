@@ -186,6 +186,64 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				}
 
+			case vmbased.ActionStartConfd:
+				pbTask := models.TaskToPb(task)
+				_, err := pilotClient.HandleSubtask(ctx,
+					&pbtypes.SubTaskMessage{
+						TaskId:    pbTask.TaskId.GetValue(),
+						Action:    pbTask.TaskAction.GetValue(),
+						Directive: pbTask.Directive.GetValue(),
+					})
+				if err != nil {
+					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+					return err
+				}
+
+				time.Sleep(1 * time.Second)
+
+			case vmbased.ActionStopConfd:
+				pbTask := models.TaskToPb(task)
+				_, err := pilotClient.HandleSubtask(ctx,
+					&pbtypes.SubTaskMessage{
+						TaskId:    pbTask.TaskId.GetValue(),
+						Action:    pbTask.TaskAction.GetValue(),
+						Directive: pbTask.Directive.GetValue(),
+					})
+				if err != nil {
+					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+					return err
+				}
+
+				logger.Debug("Finish subtask [%s]", task.TaskId)
+
+				time.Sleep(1 * time.Second)
+
+			case vmbased.ActionRunCommandOnDrone:
+				request := new(pbtypes.RunCommandOnDroneRequest)
+				err = jsonutil.Decode([]byte(task.Directive), request)
+				if err != nil {
+					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					return err
+				}
+				_, err = pilotClient.RunCommandOnDrone(ctx, request)
+				if err != nil {
+					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					return err
+				}
+
+			case vmbased.ActionRunCommandOnFrontgateNode:
+				request := new(pbtypes.RunCommandOnFrontgateRequest)
+				err = jsonutil.Decode([]byte(task.Directive), request)
+				if err != nil {
+					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					return err
+				}
+				_, err = pilotClient.RunCommandOnFrontgateNode(ctx, request)
+				if err != nil {
+					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					return err
+				}
+
 			default:
 				pbTask := models.TaskToPb(task)
 				_, err := pilotClient.HandleSubtask(ctx,

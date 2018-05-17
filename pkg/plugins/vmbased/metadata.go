@@ -75,7 +75,7 @@ func (m *Metadata) GetClusterCnodes() map[string]interface{} {
 			m.ClusterWrapper.Cluster.ClusterId: data,
 		},
 	}
-	logger.Info("Composed cluster %s cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composed cluster %s cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
 
 	return cnodes
 }
@@ -94,7 +94,7 @@ func (m *Metadata) GetClusterNodeCnodes(nodeIds []string) map[string]interface{}
 			m.ClusterWrapper.Cluster.ClusterId: data,
 		},
 	}
-	logger.Info("Composed cluster %s nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composed cluster %s nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
 
 	return cnodes
 }
@@ -113,7 +113,7 @@ func (m *Metadata) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]interf
 			m.ClusterWrapper.Cluster.ClusterId: data,
 		},
 	}
-	logger.Info("Composed cluster %s empty nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composed cluster %s empty nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
 
 	return cnodes
 }

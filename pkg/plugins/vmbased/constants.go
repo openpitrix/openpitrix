@@ -16,19 +16,20 @@ const (
 	ActionDeleteVolumes = "DeleteVolumes"
 	ActionResizeVolumes = "ResizeVolumes"
 
-	ActionFormatAndMountVolume = "FormatAndMountVolume"
-
-	ActionWaitFrontgateAvailable = "WaitFrontgateAvailable"
-	ActionRegisterMetadata       = "RegisterMetadata"
-	ActionDeregisterMetadata     = "DeregisterMetadata"
-	ActionRegisterCmd            = "RegisterCmd"
-	ActionDeregesterCmd          = "DeregisterCmd"
-	ActionStartConfd             = "StartConfd"
-	ActionStopConfd              = "StopConfd"
-	ActionSetFrontgateConfig     = "SetFrontgateConfig"
-	ActionSetDroneConfig         = "SetDroneConfig"
-	ActionPingDrone              = "PingDrone"
-	ActionPingFrontgate          = "PingFrontgate"
+	ActionFormatAndMountVolume      = "FormatAndMountVolume"
+	ActionWaitFrontgateAvailable    = "WaitFrontgateAvailable"
+	ActionRegisterMetadata          = "RegisterMetadata"
+	ActionDeregisterMetadata        = "DeregisterMetadata"
+	ActionRegisterCmd               = "RegisterCmd"
+	ActionDeregesterCmd             = "DeregisterCmd"
+	ActionStartConfd                = "StartConfd"
+	ActionStopConfd                 = "StopConfd"
+	ActionSetFrontgateConfig        = "SetFrontgateConfig"
+	ActionSetDroneConfig            = "SetDroneConfig"
+	ActionPingDrone                 = "PingDrone"
+	ActionPingFrontgate             = "PingFrontgate"
+	ActionRunCommandOnDrone         = "RunCommandOnDrone"
+	ActionRunCommandOnFrontgateNode = "RunCommandOnFrontgateNode"
 )
 
 const (
@@ -49,8 +50,8 @@ const (
 
 const (
 	// second
-	TimeoutStartConfd           = 600
-	TimeoutStopConfd            = 600
+	TimeoutStartConfd           = 60
+	TimeoutStopConfd            = 60
 	TimeoutDeregister           = 60
 	TimeoutRegister             = 60
 	TimeoutFormatAndMountVolume = 600
