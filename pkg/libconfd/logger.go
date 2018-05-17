@@ -11,6 +11,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"sync/atomic"
 )
 
@@ -88,7 +89,7 @@ func (level logLevelType) Valid() bool {
 }
 
 func newLogLevel(name string) logLevelType {
-	switch name {
+	switch strings.ToUpper(name) {
 	case "DEBUG", "":
 		return logDebugLevel
 	case "INFO":
