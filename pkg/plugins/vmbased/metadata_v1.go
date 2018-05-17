@@ -80,14 +80,9 @@ func (m *MetadataV1) GetClusterCnodes() map[string]interface{} {
 		data[ip] = selfCnodes
 	}
 
-	cnodes := map[string]interface{}{
-		RegisterClustersRootPath: map[string]interface{}{
-			m.ClusterWrapper.Cluster.ClusterId: data,
-		},
-	}
-	logger.Info("Composed cluster %s cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composed cluster %s cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, data)
 
-	return cnodes
+	return data
 }
 
 func (m *MetadataV1) GetClusterNodeCnodes(nodeIds []string) map[string]interface{} {
@@ -102,20 +97,15 @@ func (m *MetadataV1) GetClusterNodeCnodes(nodeIds []string) map[string]interface
 	for nodeId, clusterNode := range m.ClusterWrapper.ClusterNodes {
 		ip := clusterNode.PrivateIp
 		if reflectutil.In(nodeId, nodeIds) {
-			data[ip] = clusterCnodes
+			data[ip] = clusterCnodes[ip]
 		} else {
 			data[ip] = hosts
 		}
 	}
 
-	cnodes := map[string]interface{}{
-		RegisterClustersRootPath: map[string]interface{}{
-			m.ClusterWrapper.Cluster.ClusterId: data,
-		},
-	}
-	logger.Info("Composed cluster %s nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composed cluster %s nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, data)
 
-	return cnodes
+	return data
 }
 
 func (m *MetadataV1) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]interface{} {
@@ -133,7 +123,7 @@ func (m *MetadataV1) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]inte
 			data[ip] = hosts
 		}
 	}
-	logger.Info("Composed cluster %s empty nodes cnodes %s successful", m.ClusterWrapper.Cluster.ClusterId)
+	logger.Info("Composed cluster %s empty nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, data)
 
 	return data
 }

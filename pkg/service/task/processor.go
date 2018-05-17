@@ -110,22 +110,36 @@ func (t *Processor) Pre() error {
 			clusterRole.GetFileSystem().GetValue(),
 			clusterRole.GetMountOptions().GetValue(),
 		)
-		meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(
-			clusterNode.GetPrivateIp().GetValue(),
-			&models.Cmd{
-				Cmd:     cmd,
-				Timeout: meta.Timeout,
-				Id:      t.Task.TaskId,
-			},
-		))
-		meta.DroneIp = clusterNode.GetPrivateIp().GetValue()
 
-		t.Task.TaskAction = vmbased.ActionRegisterCmd
+		t.Task.TaskAction = vmbased.ActionRunCommandOnDrone
+
+		request := &pbtypes.RunCommandOnDroneRequest{
+			Endpoint: &pbtypes.DroneEndpoint{
+				FrontgateId: meta.FrontgateId,
+				DroneIp:     clusterNode.GetPrivateIp().GetValue(),
+				DronePort:   constants.DroneServicePort,
+			},
+			Command:        cmd,
+			TimeoutSeconds: int32(meta.Timeout),
+		}
 		// write back
-		t.Task.Directive, err = meta.ToString()
+		t.Task.Directive = jsonutil.ToString(request)
+
+	case vmbased.ActionRunCommandOnDrone:
+		request := new(pbtypes.RunCommandOnDroneRequest)
+		err := jsonutil.Decode([]byte(t.Task.Directive), request)
 		if err != nil {
 			return err
 		}
+		clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{t.Task.NodeId})
+		if err != nil {
+			return err
+		}
+		clusterNode := clusterNodes[0]
+		request.Endpoint.DroneIp = clusterNode.GetPrivateIp().GetValue()
+
+		// write back
+		t.Task.Directive = jsonutil.ToString(request)
 
 	case vmbased.ActionRegisterMetadata:
 		meta, err := models.NewMeta(t.Task.Directive)
