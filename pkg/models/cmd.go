@@ -11,9 +11,9 @@ import (
 )
 
 type Cmd struct {
-	Id      string
-	Cmd     string
-	Timeout int
+	Id      string `json:"id"`
+	Cmd     string `json:"cmd"`
+	Timeout int    `json:"timeout"`
 }
 
 func NewCmd(data string) (*Cmd, error) {
