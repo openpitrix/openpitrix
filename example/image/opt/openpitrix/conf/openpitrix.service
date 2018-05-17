@@ -1,12 +1,12 @@
 [Unit]
-Description=openpitrix_frontgate_drone
-After=syslog.target network.target docker.target
+Description=default
+After=syslog.target network.target etcd.target
 
 [Service]
 User=root
 EnvironmentFile=/opt/openpitrix/conf/openpitrix.conf
-ExecStart=/opt/openpitrix/sbin/start.sh $MOUNT_POINT $FILE_NAME $FILE_CONF $IMAGE
-ExecStop=docker stop default
+ExecStart=/opt/openpitrix/sbin/start_openpitrix.sh $FILE_NAME $FILE_CONF
+ExecStop=kill -9 `ps aux | grep openpitrix | grep -v grep | awk '{print $2}'`
 Restart=always
 RestartSec=30
 
