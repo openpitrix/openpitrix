@@ -5,13 +5,13 @@
 package models
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type ClusterWrapper struct {
@@ -25,9 +25,9 @@ type ClusterWrapper struct {
 
 func NewClusterWrapper(data string) (*ClusterWrapper, error) {
 	clusterWrapper := &ClusterWrapper{}
-	err := json.Unmarshal([]byte(data), clusterWrapper)
+	err := jsonutil.Decode([]byte(data), clusterWrapper)
 	if err != nil {
-		logger.Error("Unmarshal into cluster wrapper failed: %+v", err)
+		logger.Error("Decode [%s] into cluster wrapper failed: %+v", data, err)
 	}
 	return clusterWrapper, err
 }
@@ -113,15 +113,6 @@ func PbToClusterWrapper(pbCluster *pb.Cluster) *ClusterWrapper {
 	return clusterWrapper
 }
 
-func (c *ClusterWrapper) ToString() (string, error) {
-	result, err := json.Marshal(c)
-	if err != nil {
-		logger.Error("Marshal cluster wrapper with cluster id [%s] failed: %+v",
-			c.Cluster.ClusterId, err)
-	}
-	return string(result), err
-}
-
 func (c *ClusterWrapper) GetCommonAttribute(role, attributeName string) interface{} {
 	if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
 		role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
@@ -159,7 +150,7 @@ to an env variable such as env.<port> or env.<role>.<port>. It may have multiple
 func (c *ClusterWrapper) GetEndpoints() (map[string]map[string]interface{}, error) {
 	if c.Cluster.Endpoints != "" {
 		endpoints := make(map[string]map[string]interface{})
-		err := json.Unmarshal([]byte(c.Cluster.Endpoints), &endpoints)
+		err := jsonutil.Decode([]byte(c.Cluster.Endpoints), &endpoints)
 		if err != nil {
 			logger.Error("Unmarshal cluster [%s] endpoints failed: %+v", c.Cluster.ClusterId, err)
 			return nil, err
@@ -198,7 +189,7 @@ func (c *ClusterWrapper) GetEndpoints() (map[string]map[string]interface{}, erro
 						return nil, fmt.Errorf("Cluster [%s] endpoints parse failed. ", c.Cluster.ClusterId)
 					}
 					env := make(map[string]interface{})
-					err = json.Unmarshal([]byte(cRole.Env), &env)
+					err = jsonutil.Decode([]byte(cRole.Env), &env)
 					if err != nil {
 						logger.Error("Unmarshal cluster [%s] env failed: %+v", c.Cluster.ClusterId, err)
 						return nil, err

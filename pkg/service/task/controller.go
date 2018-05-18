@@ -169,11 +169,14 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 				}
 
 			case vmbased.ActionPingFrontgate:
-				frontgateId := task.Directive
+				request := new(pbtypes.FrontgateId)
+				err = jsonutil.Decode([]byte(task.Directive), request)
+				if err != nil {
+					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					return err
+				}
 				err = funcutil.WaitForSpecificOrError(func() (bool, error) {
-					_, err := pilotClient.PingFrontgate(ctx, &pbtypes.FrontgateId{
-						Id: frontgateId,
-					})
+					_, err := pilotClient.PingFrontgate(ctx, request)
 					if err != nil {
 						logger.Warn("Send task [%s] to pilot failed, will retry: %+v", taskId, err)
 						return false, nil

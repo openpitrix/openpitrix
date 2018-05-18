@@ -1,11 +1,11 @@
 package helm
 
 import (
-	"encoding/json"
 	"fmt"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type JobDirective struct {
@@ -53,13 +53,12 @@ type TaskDirective struct {
 }
 
 func getTaskDirectiveJson(v interface{}) string {
-	r, _ := json.Marshal(v)
-	return string(r)
+	return jsonutil.ToString(v)
 }
 
 func getTaskDirective(data string) (*TaskDirective, error) {
 	var v TaskDirective
-	err := json.Unmarshal([]byte(data), &v)
+	err := jsonutil.Decode([]byte(data), &v)
 	if err != nil {
 		return nil, err
 	}

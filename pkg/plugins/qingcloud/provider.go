@@ -7,7 +7,6 @@ package qingcloud
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -19,6 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -52,7 +52,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 			return nil, err
 		}
 		var confJson app.ClusterUserConfig
-		err = json.Unmarshal([]byte(conf), &confJson)
+		err = jsonutil.Decode([]byte(conf), &confJson)
 		if err != nil {
 			logger.Error("Parse conf [%s] failed: %+v", conf, err)
 			return nil, err
@@ -69,7 +69,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 		}
 
 	} else {
-		err := json.Unmarshal([]byte(conf), &clusterConf)
+		err := jsonutil.Decode([]byte(conf), &clusterConf)
 		if err != nil {
 			logger.Error("Parse conf [%s] to cluster failed: %+v", conf, err)
 			return nil, err

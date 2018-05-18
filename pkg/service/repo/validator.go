@@ -1,7 +1,6 @@
 package repo
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -17,6 +16,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -87,7 +87,7 @@ func validate(repoType, url, credential, visibility string, providers []string) 
 			bucket := m[3]
 
 			var qc QingStorCredential
-			err = json.Unmarshal([]byte(credential), &qc)
+			err = jsonutil.Decode([]byte(credential), &qc)
 			if err != nil {
 				return newErrorWithCode(ErrCredentialNotJson, fmt.Errorf("json decode failed on credential, %+v", err))
 			}

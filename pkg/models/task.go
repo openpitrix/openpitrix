@@ -7,12 +7,11 @@ package models
 import (
 	"time"
 
-	"encoding/json"
-
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -92,9 +91,9 @@ func (t *Task) GetTimeout(defaultTimeout time.Duration) time.Duration {
 	}
 
 	directive := make(map[string]interface{})
-	err := json.Unmarshal([]byte(t.Directive), &directive)
+	err := jsonutil.Decode([]byte(t.Directive), &directive)
 	if err != nil {
-		logger.Error("Unmarshal task [%s] directive [%s] failed: %+v.", t.TaskId, t.Directive, err)
+		logger.Error("Decode task [%s] directive [%s] failed: %+v.", t.TaskId, t.Directive, err)
 		return defaultTimeout
 	}
 

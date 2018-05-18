@@ -93,92 +93,97 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		"executor": c.hostname,
 	})
 
-	job.Status = constants.StatusFailed
-	defer c.updateJobAttributes(job.JobId, map[string]interface{}{
-		"status": job.Status,
-	})
+	err := func() error {
+		query := c.Db.
+			Select(models.JobColumns...).
+			From(models.JobTableName).
+			Where(db.Eq("job_id", jobId))
 
-	query := c.Db.
-		Select(models.JobColumns...).
-		From(models.JobTableName).
-		Where(db.Eq("job_id", jobId))
-
-	err := query.LoadOne(&job)
-	if err != nil {
-		logger.Error("Failed to get job [%s]: %+v", job.JobId, err)
-		return err
-	}
-
-	processor := NewProcessor(job)
-	err = processor.Pre()
-	if err != nil {
-		return err
-	}
-	defer processor.Final()
-
-	providerInterface, err := plugins.GetProviderPlugin(job.Provider)
-	if err != nil {
-		logger.Error("No such provider [%s]. ", job.Provider)
-		return err
-	}
-	module, err := providerInterface.SplitJobIntoTasks(job)
-	if err != nil {
-		logger.Error("Failed to split job [%s] into tasks with provider [%s]: %+v",
-			job.JobId, job.Provider, err)
-		return err
-	}
-
-	ctx := client.GetSystemUserContext()
-	taskClient, err := taskclient.NewClient(ctx)
-	if err != nil {
-		logger.Error("Connect to task service failed: %+v", err)
-		return err
-	}
-
-	err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
-		if parent != nil {
-			for _, parentTask := range parent.Tasks {
-				err = taskClient.WaitTask(ctx, parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
-				if err != nil {
-					logger.Error("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
-					if !parentTask.FailureAllowed {
-						return err
-					}
-				}
-			}
+		err := query.LoadOne(&job)
+		if err != nil {
+			logger.Error("Failed to get job [%s]: %+v", job.JobId, err)
+			return err
 		}
 
-		if current != nil {
-			for _, currentTask := range current.Tasks {
-				taskId, err := taskClient.SendTask(ctx, currentTask)
-				if err != nil {
-					logger.Error("Failed to send task [%s]: %+v", currentTask.TaskId, err)
-					return err
-				}
-				currentTask.TaskId = taskId
-			}
-			if current.IsLeaf() {
-				for _, currentTask := range current.Tasks {
-					err = taskClient.WaitTask(ctx, currentTask.TaskId, currentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+		processor := NewProcessor(job)
+		err = processor.Pre()
+		if err != nil {
+			return err
+		}
+		defer processor.Final()
+
+		providerInterface, err := plugins.GetProviderPlugin(job.Provider)
+		if err != nil {
+			logger.Error("No such provider [%s]. ", job.Provider)
+			return err
+		}
+		module, err := providerInterface.SplitJobIntoTasks(job)
+		if err != nil {
+			logger.Error("Failed to split job [%s] into tasks with provider [%s]: %+v",
+				job.JobId, job.Provider, err)
+			return err
+		}
+
+		ctx := client.GetSystemUserContext()
+		taskClient, err := taskclient.NewClient(ctx)
+		if err != nil {
+			logger.Error("Connect to task service failed: %+v", err)
+			return err
+		}
+
+		err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
+			if parent != nil {
+				for _, parentTask := range parent.Tasks {
+					err = taskClient.WaitTask(ctx, parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 					if err != nil {
-						logger.Error("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
-						if !currentTask.FailureAllowed {
+						logger.Error("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
+						if !parentTask.FailureAllowed {
 							return err
 						}
 					}
 				}
 			}
+
+			if current != nil {
+				for _, currentTask := range current.Tasks {
+					taskId, err := taskClient.SendTask(ctx, currentTask)
+					if err != nil {
+						logger.Error("Failed to send task [%s]: %+v", currentTask.TaskId, err)
+						return err
+					}
+					currentTask.TaskId = taskId
+				}
+				if current.IsLeaf() {
+					for _, currentTask := range current.Tasks {
+						err = taskClient.WaitTask(ctx, currentTask.TaskId, currentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+						if err != nil {
+							logger.Error("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
+							if !currentTask.FailureAllowed {
+								return err
+							}
+						}
+					}
+				}
+			}
+
+			return nil
+		})
+		if err != nil {
+			return err
 		}
 
-		return nil
-	})
+		processor.Job.Status = constants.StatusSuccessful
+		return processor.Post()
+	}()
 
+	var status = constants.StatusSuccessful
 	if err != nil {
-		return err
+		status = constants.StatusFailed
 	}
-
-	processor.Job.Status = constants.StatusSuccessful
-	return processor.Post()
+	c.updateJobAttributes(jobId, map[string]interface{}{
+		"status": status,
+	})
+	return err
 }
 
 func (c *Controller) HandleJobs() {

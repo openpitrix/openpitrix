@@ -61,7 +61,7 @@ func (t *Processor) Pre() error {
 		}
 		instance.VolumeId = clusterNodes[0].GetVolumeId().GetValue()
 		// write back
-		t.Task.Directive, err = instance.ToString()
+		t.Task.Directive = jsonutil.ToString(instance)
 
 	case vmbased.ActionStartInstances:
 		instance, err := models.NewInstance(t.Task.Directive)
@@ -156,10 +156,7 @@ func (t *Processor) Pre() error {
 		meta.Cnodes = jsonutil.ToString(metadata.GetClusterCnodes())
 
 		// write back
-		t.Task.Directive, err = meta.ToString()
-		if err != nil {
-			return err
-		}
+		t.Task.Directive = jsonutil.ToString(meta)
 
 	case vmbased.ActionRegisterCmd:
 		// when CreateCluster need to reload ip
@@ -180,10 +177,7 @@ func (t *Processor) Pre() error {
 			cnodes.Id = t.Task.TaskId
 			meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(meta.DroneIp, cnodes))
 			// write back
-			t.Task.Directive, err = meta.ToString()
-			if err != nil {
-				return err
-			}
+			t.Task.Directive = jsonutil.ToString(meta)
 		}
 
 	case vmbased.ActionStartConfd:
@@ -200,10 +194,7 @@ func (t *Processor) Pre() error {
 			meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
 
 			// write back
-			t.Task.Directive, err = meta.ToString()
-			if err != nil {
-				return err
-			}
+			t.Task.Directive = jsonutil.ToString(meta)
 		}
 
 	case vmbased.ActionPingDrone:
@@ -223,8 +214,22 @@ func (t *Processor) Pre() error {
 			t.Task.Directive = jsonutil.ToString(droneEndpoint)
 		}
 
+	case vmbased.ActionPingFrontgate:
+		meta, err := models.NewMeta(t.Task.Directive)
+		if err != nil {
+			return err
+		}
+		directive := &pbtypes.FrontgateId{
+			Id: meta.ClusterId,
+		}
+		t.Task.Directive = jsonutil.ToString(directive)
+
 	case vmbased.ActionSetFrontgateConfig:
-		clusterId := t.Task.Directive
+		meta, err := models.NewMeta(t.Task.Directive)
+		if err != nil {
+			return err
+		}
+		clusterId := meta.ClusterId
 		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
 		if err != nil {
 			return err
@@ -235,7 +240,11 @@ func (t *Processor) Pre() error {
 		t.Task.Directive = metadataConfig.GetFrontgateConfig(t.Task.NodeId)
 
 	case vmbased.ActionSetDroneConfig:
-		clusterId := t.Task.Directive
+		meta, err := models.NewMeta(t.Task.Directive)
+		if err != nil {
+			return err
+		}
+		clusterId := meta.ClusterId
 		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
 		if err != nil {
 			return err

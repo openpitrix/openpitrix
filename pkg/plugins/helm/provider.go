@@ -6,7 +6,6 @@ package helm
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -33,6 +32,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -244,7 +244,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		}
 
 		var v map[string]interface{}
-		err = json.Unmarshal([]byte(taskDirective.Values), &v)
+		err = jsonutil.Decode([]byte(taskDirective.Values), &v)
 		if err != nil {
 			return err
 		}
@@ -285,7 +285,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		}
 
 		var v map[string]interface{}
-		err = json.Unmarshal([]byte(taskDirective.Values), &v)
+		err = jsonutil.Decode([]byte(taskDirective.Values), &v)
 		if err != nil {
 			return err
 		}

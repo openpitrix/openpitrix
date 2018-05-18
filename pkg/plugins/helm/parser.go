@@ -1,7 +1,6 @@
 package helm
 
 import (
-	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"time"
@@ -23,6 +22,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type Parser struct {
@@ -63,10 +63,7 @@ func (p *Parser) ParseCluster(name string, description string, versionId string)
 }
 
 func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[string]interface{}, customVals map[string]interface{}) (map[string]*models.ClusterRole, map[string]*models.ClusterCommon, error) {
-	env, err := json.Marshal(customVals)
-	if err != nil {
-		return nil, nil, err
-	}
+	env := jsonutil.ToString(customVals)
 
 	renderer := engine.New()
 	out, err := renderer.Render(c, vals)

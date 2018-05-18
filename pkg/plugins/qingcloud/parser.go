@@ -5,7 +5,6 @@
 package qingcloud
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -14,6 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
@@ -85,19 +85,9 @@ func (p *Parser) ParseClusterRole(clusterConf app.ClusterConf, node app.Node) (*
 	}
 
 	if len(node.Env) > 0 {
-		env, err := json.Marshal(node.Env)
-		if err != nil {
-			logger.Error("Encode env of nodes to json failed: %v", err)
-			return nil, err
-		}
-		clusterRole.Env = string(env)
+		clusterRole.Env = jsonutil.ToString(node.Env)
 	} else if len(clusterConf.Env) > 0 {
-		env, err := json.Marshal(clusterConf.Env)
-		if err != nil {
-			logger.Error("Encode env of cluster to json failed: %v", err)
-			return nil, err
-		}
-		clusterRole.Env = string(env)
+		clusterRole.Env = jsonutil.ToString(clusterConf.Env)
 	}
 
 	if clusterRole.InstanceSize == 0 {
@@ -190,11 +180,7 @@ func (p *Parser) ParseClusterLinks(clusterConf app.ClusterConf) map[string]*mode
 }
 
 func (p *Parser) ParseCluster(clusterConf app.ClusterConf) (*models.Cluster, error) {
-	endpoints, err := json.Marshal(clusterConf.Endpoints)
-	if err != nil {
-		logger.Error("Encode endpoint to json failed: %v", err)
-		return nil, err
-	}
+	endpoints := jsonutil.ToString(clusterConf.Endpoints)
 
 	metadataRootAccess := false
 	if clusterConf.MetadataRootAccess != nil {
@@ -207,7 +193,7 @@ func (p *Parser) ParseCluster(clusterConf app.ClusterConf) (*models.Cluster, err
 		AppId:              clusterConf.AppId,
 		VersionId:          clusterConf.VersionId,
 		SubnetId:           clusterConf.Subnet,
-		Endpoints:          string(endpoints),
+		Endpoints:          endpoints,
 		Status:             constants.StatusPending,
 		MetadataRootAccess: metadataRootAccess,
 		GlobalUuid:         clusterConf.GlobalUuid,
@@ -219,12 +205,7 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 
 	customMetadata := ""
 	if len(node.CustomMetadata) != 0 {
-		customMetadataByte, err := json.Marshal(node.CustomMetadata)
-		if err != nil {
-			logger.Error("Encode custom metadata to json failed: %v", err)
-			return nil, err
-		}
-		customMetadata = string(customMetadataByte)
+		customMetadata = jsonutil.ToString(node.CustomMetadata)
 	}
 
 	incrementalBackupSupported := false
@@ -256,37 +237,17 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 	}
 
 	if node.HealthCheck != nil {
-		healthCheck, err := json.Marshal(*node.HealthCheck)
-		if err != nil {
-			logger.Error("Encode node health check to json failed: %v", err)
-			return nil, err
-		}
-		clusterCommon.HealthCheck = string(healthCheck)
+		clusterCommon.HealthCheck = jsonutil.ToString(node.HealthCheck)
 	} else if clusterConf.HealthCheck != nil {
-		healthCheck, err := json.Marshal(*clusterConf.HealthCheck)
-		if err != nil {
-			logger.Error("Encode cluster health check to json failed: %v", err)
-			return nil, err
-		}
-		clusterCommon.HealthCheck = string(healthCheck)
+		clusterCommon.HealthCheck = jsonutil.ToString(clusterConf.HealthCheck)
 	} else {
 		clusterCommon.HealthCheck = ""
 	}
 
 	if node.Monitor != nil {
-		monitor, err := json.Marshal(*node.Monitor)
-		if err != nil {
-			logger.Error("Encode node monitor to json failed: %v", err)
-			return nil, err
-		}
-		clusterCommon.Monitor = string(monitor)
+		clusterCommon.Monitor = jsonutil.ToString(node.Monitor)
 	} else if clusterConf.Monitor != nil {
-		monitor, err := json.Marshal(*clusterConf.Monitor)
-		if err != nil {
-			logger.Error("Encode cluster Monitor to json failed: %v", err)
-			return nil, err
-		}
-		clusterCommon.Monitor = string(monitor)
+		clusterCommon.Monitor = jsonutil.ToString(clusterConf.Monitor)
 	} else {
 		clusterCommon.Monitor = ""
 	}
@@ -306,42 +267,33 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 			logger.Error("Unknown type of service [%s] ", serviceName)
 			return nil, fmt.Errorf("Unknown type of service [%s] ", serviceName)
 		}
-		serviceByte, err := json.Marshal(serviceValue)
-		if err != nil {
-			logger.Error("Encode service [%s] to json failed: %v", serviceName, err)
-			return nil, err
-		}
+		serviceStr := jsonutil.ToString(serviceValue)
 		switch serviceName {
 		case constants.ServiceInit:
-			clusterCommon.InitService = string(serviceByte)
+			clusterCommon.InitService = serviceStr
 		case constants.ServiceStart:
-			clusterCommon.StartService = string(serviceByte)
+			clusterCommon.StartService = serviceStr
 		case constants.ServiceStop:
-			clusterCommon.StopService = string(serviceByte)
+			clusterCommon.StopService = serviceStr
 		case constants.ServiceScaleIn:
-			clusterCommon.ScaleInService = string(serviceByte)
+			clusterCommon.ScaleInService = serviceStr
 		case constants.ServiceScaleOut:
-			clusterCommon.ScaleOutService = string(serviceByte)
+			clusterCommon.ScaleOutService = serviceStr
 		case constants.ServiceRestart:
-			clusterCommon.RestartService = string(serviceByte)
+			clusterCommon.RestartService = serviceStr
 		case constants.ServiceDestroy:
-			clusterCommon.DestroyService = string(serviceByte)
+			clusterCommon.DestroyService = serviceStr
 		case constants.ServiceBackup:
-			clusterCommon.BackupService = string(serviceByte)
+			clusterCommon.BackupService = serviceStr
 		case constants.ServiceRestore:
-			clusterCommon.RestoreService = string(serviceByte)
+			clusterCommon.RestoreService = serviceStr
 		case constants.ServiceDeleteSnapshot:
-			clusterCommon.DeleteSnapshotService = string(serviceByte)
+			clusterCommon.DeleteSnapshotService = serviceStr
 		case constants.ServiceUpgrade:
-			clusterCommon.UpgradeService = string(serviceByte)
+			clusterCommon.UpgradeService = serviceStr
 		default:
 			customService := map[string]interface{}{constants.ServiceCustom: service}
-			customServiceByte, err := json.Marshal(customService)
-			if err != nil {
-				logger.Error("Encode custom service [%s] to json failed: %v", serviceName, err)
-				return nil, err
-			}
-			clusterCommon.CustomService = string(customServiceByte)
+			clusterCommon.CustomService = jsonutil.ToString(customService)
 		}
 	}
 

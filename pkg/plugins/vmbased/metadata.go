@@ -5,14 +5,13 @@
 package vmbased
 
 import (
-	"encoding/json"
-	"strings"
-
 	"fmt"
+	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type Metadata struct {
@@ -261,7 +260,7 @@ func (m *Metadata) GetEnvCnodes() map[string]interface{} {
 		env := clusterRole.Env
 		if env != "" {
 			envMap := make(map[string]interface{})
-			err := json.Unmarshal([]byte(env), &envMap)
+			err := jsonutil.Decode([]byte(env), &envMap)
 			if err != nil {
 				logger.Error("Unmarshal cluster [%s] env failed:%+v", m.ClusterWrapper.Cluster.ClusterId, err)
 				return nil

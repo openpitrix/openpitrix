@@ -5,9 +5,8 @@
 package models
 
 import (
-	"encoding/json"
-
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type Meta struct {
@@ -21,18 +20,9 @@ type Meta struct {
 
 func NewMeta(data string) (*Meta, error) {
 	meta := &Meta{}
-	err := json.Unmarshal([]byte(data), meta)
+	err := jsonutil.Decode([]byte(data), meta)
 	if err != nil {
-		logger.Error("Unmarshal into meta failed: %+v", err)
+		logger.Error("Decode [%s] into meta failed: %+v", data, err)
 	}
 	return meta, err
-}
-
-func (m *Meta) ToString() (string, error) {
-	result, err := json.Marshal(m)
-	if err != nil {
-		logger.Error("Marshal meta with frontgate id [%s] failed: %+v",
-			m.FrontgateId, err)
-	}
-	return string(result), err
 }

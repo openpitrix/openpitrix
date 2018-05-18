@@ -61,13 +61,17 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 func (f *Frame) pingFrontgateLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 
+	directive := jsonutil.ToString(&models.Meta{
+		ClusterId: f.ClusterWrapper.Cluster.ClusterId,
+	})
+
 	task := &models.Task{
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,
 		TaskAction:     ActionPingFrontgate,
 		Target:         constants.TargetPilot,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
-		Directive:      f.ClusterWrapper.Cluster.ClusterId,
+		Directive:      directive,
 		FailureAllowed: failureAllowed,
 	}
 	taskLayer.Tasks = append(taskLayer.Tasks, task)
@@ -80,6 +84,10 @@ func (f *Frame) pingFrontgateLayer(failureAllowed bool) *models.TaskLayer {
 
 func (f *Frontgate) setFrontgateConfigLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	var tasks []*models.Task
+	directive := jsonutil.ToString(&models.Meta{
+		ClusterId: f.ClusterWrapper.Cluster.ClusterId,
+	})
+
 	for _, nodeId := range nodeIds {
 		// get frontgate config when pre task
 		task := &models.Task{
@@ -88,7 +96,7 @@ func (f *Frontgate) setFrontgateConfigLayer(nodeIds []string, failureAllowed boo
 			TaskAction:     ActionSetFrontgateConfig,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      f.ClusterWrapper.Cluster.ClusterId,
+			Directive:      directive,
 			FailureAllowed: failureAllowed,
 		}
 		tasks = append(tasks, task)
