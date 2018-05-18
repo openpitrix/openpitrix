@@ -113,6 +113,8 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 			}
 			if strings.HasPrefix(absKey, "/self/") {
 				return "/" + cfg.ConfdSelfHost + absKey[len("/self/")-1:]
+			} else {
+				return "/" + cfg.ConfdSelfHost + absKey
 			}
 			return absKey
 		}

@@ -264,11 +264,19 @@ func (p *Processor) monitorPrefix(
 ) {
 	keys := t.getAbsKeys()
 
+	// hook keys
+	if fn := call.Config.HookAbsKeyAdjuster; fn != nil {
+		for i, k := range keys {
+			keys[i] = fn(k)
+		}
+	}
+
 	for {
 		if p.isClosing() {
 			return
 		}
 
+		// watch some key changed
 		index, err := t.client.WatchPrefix(t.Prefix, keys, t.lastIndex, stopChan)
 		if err != nil {
 			GetLogger().Error(err)
