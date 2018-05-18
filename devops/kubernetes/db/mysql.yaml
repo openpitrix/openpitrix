@@ -51,8 +51,6 @@ spec:
         app: openpitrix
         tier: db
     spec:
-      nodeSelector:
-        role: master
       containers:
       - name: openpitrix-db
         image: mysql:5.7.21
@@ -78,10 +76,36 @@ spec:
       - name: db-persistent-storage
         persistentVolumeClaim:
           claimName: db-pv-claim
-      - hostPath:
-          path: /opt/openpitrix/pkg/db/ddl
+      - configMap:
+          name: openpitrix-ddl
         name: db-init
       tolerations:
       - key: node-role.kubernetes.io/master
         operator: Exists
         effect: NoSchedule
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openpitrix-ddl
+  namespace: default
+  labels:
+    app: openpitrix
+data:
+  app.sql: |-
+    CREATE DATABASE IF NOT EXISTS app DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+
+  cluster.sql: |-
+    CREATE DATABASE IF NOT EXISTS cluster DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+
+  job.sql: |-
+    CREATE DATABASE IF NOT EXISTS job DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+
+  repo.sql: |-
+    CREATE DATABASE IF NOT EXISTS repo DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+
+  runtime.sql: |-
+    CREATE DATABASE IF NOT EXISTS runtime DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+
+  task.sql: |-
+    CREATE DATABASE IF NOT EXISTS task DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
