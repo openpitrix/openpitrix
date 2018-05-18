@@ -203,7 +203,6 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	default:
 		return nil, fmt.Errorf("the job action [%s] is not supported", job.JobAction)
 	}
-	return nil, nil
 }
 
 func (p *Provider) HandleSubtask(task *models.Task) error {

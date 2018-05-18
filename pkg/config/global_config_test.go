@@ -9,7 +9,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
-func ExampleUnmarshalInitConfig() {
+func Example_unmarshalInitConfig() {
 	globalConfig := config.DecodeInitConfig()
 	logger.Info("Got global config: \n%+v\n", globalConfig)
 	logger.Info("Get global config string: \n%s\n", config.EncodeGlobalConfig(globalConfig))

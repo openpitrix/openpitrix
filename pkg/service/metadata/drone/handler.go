@@ -116,7 +116,6 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 			} else {
 				return "/" + cfg.ConfdSelfHost + absKey
 			}
-			return absKey
 		}
 		opt.HookOnCheckCmdDone = func(trName, cmd string, err error) {
 			if err != nil {
