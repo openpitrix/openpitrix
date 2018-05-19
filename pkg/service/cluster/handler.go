@@ -21,6 +21,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
@@ -222,10 +223,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, err
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return nil, err
-	}
+	directive := jsonutil.ToString(clusterWrapper)
 
 	newJob := models.NewJob(
 		constants.PlaceHolder,
@@ -433,10 +431,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		directive, err := clusterWrapper.ToString()
-		if err != nil {
-			return nil, err
-		}
+		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
@@ -481,10 +476,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return nil, err
-	}
+	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
@@ -527,10 +519,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return nil, err
-	}
+	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
@@ -573,10 +562,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return nil, err
-	}
+	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
@@ -619,10 +605,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return nil, err
-	}
+	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
@@ -665,10 +648,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return nil, err
-	}
+	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
@@ -711,10 +691,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return nil, err
-	}
+	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
@@ -855,10 +832,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		directive, err := clusterWrapper.ToString()
-		if err != nil {
-			return nil, err
-		}
+		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
@@ -904,10 +878,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		directive, err := clusterWrapper.ToString()
-		if err != nil {
-			return nil, err
-		}
+		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
@@ -962,10 +933,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		directive, err := clusterWrapper.ToString()
-		if err != nil {
-			return nil, err
-		}
+		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
@@ -1020,10 +988,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
-		directive, err := clusterWrapper.ToString()
-		if err != nil {
-			return nil, err
-		}
+		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {

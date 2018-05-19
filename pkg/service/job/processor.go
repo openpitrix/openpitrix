@@ -13,6 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type Processor struct {
@@ -164,10 +165,7 @@ func (j *Processor) Post() error {
 				return err
 			}
 			frontgate := frontgates[0]
-			directive, err := frontgate.ToString()
-			if err != nil {
-				return err
-			}
+			directive := jsonutil.ToString(frontgate)
 
 			newJob := models.NewJob(
 				constants.PlaceHolder,
@@ -207,10 +205,7 @@ func (j *Processor) Post() error {
 				return err
 			}
 			frontgate := frontgates[0]
-			directive, err := frontgate.ToString()
-			if err != nil {
-				return err
-			}
+			directive := jsonutil.ToString(frontgate)
 
 			newJob := models.NewJob(
 				constants.PlaceHolder,

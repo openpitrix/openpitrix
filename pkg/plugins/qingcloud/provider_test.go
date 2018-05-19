@@ -11,6 +11,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type ActionNum struct {
@@ -57,7 +58,7 @@ func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
 
 func TestSplitJobIntoTasks(t *testing.T) {
 	clusterWrapper := getTestClusterWrapper(t)
-	directive, _ := clusterWrapper.ToString()
+	directive := jsonutil.ToString(clusterWrapper)
 
 	mockJob := &models.Job{
 		JobId:     "j-1234",

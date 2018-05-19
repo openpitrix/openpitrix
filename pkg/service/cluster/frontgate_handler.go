@@ -5,29 +5,25 @@
 package cluster
 
 import (
-	"encoding/json"
-
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 func (f *Frontgate) parseConf(subnetId, conf string) (string, error) {
 	decodeConf := make(map[string]interface{})
-	err := json.Unmarshal([]byte(conf), &decodeConf)
+	err := jsonutil.Decode([]byte(conf), &decodeConf)
 	if err != nil {
 		return "", err
 	}
 	decodeConf["version_id"] = constants.FrontgateVersionId
 	decodeConf["subnet"] = subnetId
-	resConf, err := json.Marshal(&decodeConf)
-	if err != nil {
-		return "", err
-	}
-	return string(resConf), nil
+	resConf := jsonutil.ToString(&decodeConf)
+	return resConf, nil
 }
 
 func (f *Frontgate) getConf(subnetId string) (string, error) {
@@ -67,11 +63,7 @@ func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 		return clusterId, err
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return clusterId, err
-	}
-
+	directive := jsonutil.ToString(clusterWrapper)
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		clusterId,
@@ -93,10 +85,7 @@ func (f *Frontgate) StartCluster(frontgate *models.Cluster) error {
 		return err
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return err
-	}
+	directive := jsonutil.ToString(clusterWrapper)
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		frontgate.ClusterId,
@@ -118,10 +107,7 @@ func (f *Frontgate) RecoverCluster(frontgate *models.Cluster) error {
 		return err
 	}
 
-	directive, err := clusterWrapper.ToString()
-	if err != nil {
-		return err
-	}
+	directive := jsonutil.ToString(clusterWrapper)
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		frontgate.ClusterId,

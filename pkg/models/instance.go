@@ -5,9 +5,8 @@
 package models
 
 import (
-	"encoding/json"
-
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type Instance struct {
@@ -36,18 +35,9 @@ type Instance struct {
 
 func NewInstance(data string) (*Instance, error) {
 	instance := &Instance{}
-	err := json.Unmarshal([]byte(data), instance)
+	err := jsonutil.Decode([]byte(data), instance)
 	if err != nil {
-		logger.Error("Unmarshal into instance failed: %+v", err)
+		logger.Error("Decode [%s] into instance failed: %+v", data, err)
 	}
 	return instance, err
-}
-
-func (i *Instance) ToString() (string, error) {
-	result, err := json.Marshal(i)
-	if err != nil {
-		logger.Error("Marshal instance with instance id [%s] failed: %+v",
-			i.InstanceId, err)
-	}
-	return string(result), err
 }

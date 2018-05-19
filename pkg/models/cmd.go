@@ -5,9 +5,8 @@
 package models
 
 import (
-	"encoding/json"
-
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type Cmd struct {
@@ -18,17 +17,9 @@ type Cmd struct {
 
 func NewCmd(data string) (*Cmd, error) {
 	cmd := new(Cmd)
-	err := json.Unmarshal([]byte(data), cmd)
+	err := jsonutil.Decode([]byte(data), cmd)
 	if err != nil {
-		logger.Error("Unmarshal into cmd failed: %+v", err)
+		logger.Error("Decode [%s] into cmd failed: %+v", data, err)
 	}
 	return cmd, err
-}
-
-func (c *Cmd) ToString() (string, error) {
-	result, err := json.Marshal(c)
-	if err != nil {
-		logger.Error("Marshal cmd with cmd id [%s] failed: %+v", c.Id, err)
-	}
-	return string(result), err
 }

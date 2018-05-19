@@ -6,7 +6,6 @@ package vmbased
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
@@ -42,17 +41,14 @@ func (f *Frame) startConfdServiceLayer(nodeIds []string, failureAllowed bool) *m
 			NodeId:      clusterNode.NodeId,
 			DroneIp:     clusterNode.PrivateIp,
 		}
-		directive, err := meta.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(meta)
 		startConfdTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionStartConfd,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      string(directive),
+			Directive:      directive,
 			FailureAllowed: failureAllowed,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, startConfdTask)
@@ -74,17 +70,14 @@ func (f *Frame) stopConfdServiceLayer(nodeIds []string, failtureAllowed bool) *m
 			NodeId:      clusterNode.NodeId,
 			DroneIp:     clusterNode.PrivateIp,
 		}
-		directive, err := meta.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(meta)
 		stopConfdTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionStopConfd,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      string(directive),
+			Directive:      directive,
 			FailureAllowed: failtureAllowed,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, stopConfdTask)
@@ -104,7 +97,7 @@ func (f *Frame) getPreAndPostStartGroupNodes(nodeIds []string) ([]string, []stri
 		serviceStr := f.ClusterWrapper.ClusterCommons[role].InitService
 		if serviceStr != "" {
 			service := app.Service{}
-			err := json.Unmarshal([]byte(serviceStr), &service)
+			err := jsonutil.Decode([]byte(serviceStr), &service)
 			if err != nil {
 				logger.Error("Unmarshal cluster [%s] init service failed: %+v",
 					f.ClusterWrapper.Cluster.ClusterId, err)
@@ -132,7 +125,7 @@ func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []strin
 		serviceStr := f.ClusterWrapper.ClusterCommons[role].DestroyService
 		if serviceStr != "" {
 			service := app.Service{}
-			err := json.Unmarshal([]byte(serviceStr), &service)
+			err := jsonutil.Decode([]byte(serviceStr), &service)
 			if err != nil {
 				logger.Error("Unmarshal cluster [%s] init service failed: %+v",
 					f.ClusterWrapper.Cluster.ClusterId, err)
@@ -167,17 +160,14 @@ func (f *Frame) deregisterCmdLayer(nodeIds []string, failureAllowed bool) *model
 			Timeout:     TimeoutDeregister,
 			Cnodes:      jsonutil.ToString(cnodes),
 		}
-		directive, err := meta.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(meta)
 		deregisterCmdTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionDeregesterCmd,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      string(directive),
+			Directive:      directive,
 			FailureAllowed: failureAllowed,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, deregisterCmdTask)
@@ -197,7 +187,7 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string, failureAl
 		serviceStr := f.ClusterWrapper.GetCommonAttribute(role, serviceName)
 		if serviceStr != nil {
 			service := app.Service{}
-			err := json.Unmarshal([]byte(serviceStr.(string)), &service)
+			err := jsonutil.Decode([]byte(serviceStr.(string)), &service)
 			if err != nil {
 				logger.Error("Unmarshal cluster [%s] service [%s] failed: %+v",
 					f.ClusterWrapper.Cluster.ClusterId, serviceName, err)
@@ -222,17 +212,14 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string, failureAl
 				Timeout:     timeout,
 				Cnodes:      jsonutil.ToString(cnodes),
 			}
-			directive, err := meta.ToString()
-			if err != nil {
-				return nil
-			}
+			directive := jsonutil.ToString(meta)
 			registerCmdTask := &models.Task{
 				JobId:          f.Job.JobId,
 				Owner:          f.Job.Owner,
 				TaskAction:     ActionRegisterCmd,
 				Target:         constants.TargetPilot,
 				NodeId:         nodeId,
-				Directive:      string(directive),
+				Directive:      directive,
 				FailureAllowed: failureAllowed,
 			}
 			taskLayer.Tasks = append(taskLayer.Tasks, registerCmdTask)
@@ -287,7 +274,7 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 			return nil
 		}
 		service := app.Service{}
-		err := json.Unmarshal([]byte(serviceStr.(string)), &service)
+		err := jsonutil.Decode([]byte(serviceStr.(string)), &service)
 		if err != nil {
 			logger.Error("Unmarshal cluster [%s] service [%s] failed: %+v",
 				f.ClusterWrapper.Cluster.ClusterId, serviceName, err)
@@ -436,18 +423,14 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 				Zone:      f.Runtime.Zone,
 				RuntimeId: f.Runtime.RuntimeId,
 			}
-			volumeTaskDirective, err := volume.ToString()
-			if err != nil {
-				return nil
-			}
-
+			directive := jsonutil.ToString(volume)
 			createVolumesTask := &models.Task{
 				JobId:          f.Job.JobId,
 				Owner:          f.Job.Owner,
 				TaskAction:     ActionCreateVolumes,
 				Target:         f.Runtime.Provider,
 				NodeId:         nodeId,
-				Directive:      volumeTaskDirective,
+				Directive:      directive,
 				FailureAllowed: failureAllowed,
 			}
 			for range mountPoints {
@@ -469,10 +452,7 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
 		}
-		directive, err := volume.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(volume)
 		detachVolumesTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
@@ -497,10 +477,7 @@ func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
 		}
-		directive, err := volume.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(volume)
 		attachVolumesTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
@@ -526,10 +503,7 @@ func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *model
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
 		}
-		directive, err := volume.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(volume)
 		deleteVolumesTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
@@ -556,17 +530,14 @@ func (f *Frame) formatAndMountVolumeLayer(nodeIds []string, failureAllowed bool)
 			NodeId:      clusterNode.NodeId,
 			DroneIp:     clusterNode.PrivateIp,
 		}
-		directive, err := meta.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(meta)
 		formatVolumeTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionFormatAndMountVolume,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      string(directive),
+			Directive:      directive,
 			FailureAllowed: failureAllowed,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
@@ -626,7 +597,7 @@ func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 				TaskAction:     ActionRunCommandOnDrone,
 				Target:         constants.TargetPilot,
 				NodeId:         nodeId,
-				Directive:      string(directive),
+				Directive:      directive,
 				FailureAllowed: failureAllowed,
 			}
 			taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
@@ -664,7 +635,7 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 			TaskAction:     ActionRunCommandOnDrone,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      string(directive),
+			Directive:      directive,
 			FailureAllowed: failureAllowed,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, umountVolumeTask)
@@ -718,6 +689,10 @@ func (f *Frame) getUserDataFile() string {
 
 func (f *Frame) setDroneConfigLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	var tasks []*models.Task
+	directive := jsonutil.ToString(&models.Meta{
+		ClusterId: f.ClusterWrapper.Cluster.ClusterId,
+	})
+
 	for _, nodeId := range nodeIds {
 		// get drone config when pre task
 		task := &models.Task{
@@ -726,7 +701,7 @@ func (f *Frame) setDroneConfigLayer(nodeIds []string, failureAllowed bool) *mode
 			TaskAction:     ActionSetDroneConfig,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      f.ClusterWrapper.Cluster.ClusterId,
+			Directive:      directive,
 			FailureAllowed: failureAllowed,
 		}
 		tasks = append(tasks, task)
@@ -780,7 +755,7 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 		} else {
 			instance.UserDataValue = f.getUserDataValue(nodeId)
 		}
-		instanceTaskDirective, err := instance.ToString()
+		directive := jsonutil.ToString(instance)
 		if err != nil {
 			return nil
 		}
@@ -790,7 +765,7 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 			TaskAction:     ActionRunInstances,
 			Target:         f.Runtime.Provider,
 			NodeId:         nodeId,
-			Directive:      instanceTaskDirective,
+			Directive:      directive,
 			FailureAllowed: failureAllowed,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, runInstanceTask)
@@ -814,17 +789,14 @@ func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *model
 			RuntimeId:  f.Runtime.RuntimeId,
 			Zone:       f.Runtime.Zone,
 		}
-		instanceTaskDirective, err := instance.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(instance)
 		stopInstanceTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionStopInstances,
 			Target:         f.Runtime.Provider,
 			NodeId:         nodeId,
-			Directive:      instanceTaskDirective,
+			Directive:      directive,
 			FailureAllowed: failureAllowed,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, stopInstanceTask)
@@ -848,17 +820,14 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 			RuntimeId:  f.Runtime.RuntimeId,
 			Zone:       f.Runtime.Zone,
 		}
-		instanceTaskDirective, err := instance.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(instance)
 		deleteInstanceTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionTerminateInstances,
 			Target:         f.Runtime.Provider,
 			NodeId:         nodeId,
-			Directive:      instanceTaskDirective,
+			Directive:      directive,
 			FailureAllowed: false,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, deleteInstanceTask)
@@ -881,17 +850,14 @@ func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
 			RuntimeId:  f.Runtime.RuntimeId,
 			Zone:       f.Runtime.Zone,
 		}
-		instanceTaskDirective, err := instance.ToString()
-		if err != nil {
-			return nil
-		}
+		directive := jsonutil.ToString(instance)
 		startInstanceTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionStartInstances,
 			Target:         f.Runtime.Provider,
 			NodeId:         nodeId,
-			Directive:      instanceTaskDirective,
+			Directive:      directive,
 			FailureAllowed: failureAllowed,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, startInstanceTask)
@@ -908,10 +874,7 @@ func (f *Frame) waitFrontgateLayer(failureAllowed bool) *models.TaskLayer {
 	meta := &models.Meta{
 		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 	}
-	directive, err := meta.ToString()
-	if err != nil {
-		return nil
-	}
+	directive := jsonutil.ToString(meta)
 	// Wait frontgate available
 	waitFrontgateTask := &models.Task{
 		JobId:          f.Job.JobId,
@@ -919,7 +882,7 @@ func (f *Frame) waitFrontgateLayer(failureAllowed bool) *models.TaskLayer {
 		TaskAction:     ActionWaitFrontgateAvailable,
 		Target:         f.Runtime.Provider,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
-		Directive:      string(directive),
+		Directive:      directive,
 		FailureAllowed: failureAllowed,
 	}
 	return &models.TaskLayer{
@@ -961,17 +924,14 @@ func (f *Frame) registerMetadataLayer(failureAllowed bool) *models.TaskLayer {
 		Timeout:     TimeoutRegister,
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
 	}
-	directive, err := meta.ToString()
-	if err != nil {
-		return nil
-	}
+	directive := jsonutil.ToString(meta)
 	registerMetadataTask := &models.Task{
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,
 		TaskAction:     ActionRegisterMetadata,
 		Target:         constants.TargetPilot,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
-		Directive:      string(directive),
+		Directive:      directive,
 		FailureAllowed: failureAllowed,
 	}
 	return &models.TaskLayer{
@@ -990,17 +950,14 @@ func (f *Frame) registerNodesMetadataLayer(nodeIds []string, failureAllowed bool
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
 		Cnodes:      cnodes,
 	}
-	directive, err := meta.ToString()
-	if err != nil {
-		return nil
-	}
+	directive := jsonutil.ToString(meta)
 	task := &models.Task{
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,
 		TaskAction:     ActionRegisterMetadata,
 		Target:         constants.TargetPilot,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
-		Directive:      string(directive),
+		Directive:      directive,
 		FailureAllowed: failureAllowed,
 	}
 	return &models.TaskLayer{
@@ -1024,17 +981,14 @@ func (f *Frame) registerScalingNodesMetadataLayer(nodeIds []string, path string,
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
 		Cnodes:      jsonutil.ToString(scalingCnodes),
 	}
-	directive, err := meta.ToString()
-	if err != nil {
-		return nil
-	}
+	directive := jsonutil.ToString(meta)
 	task := &models.Task{
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,
 		TaskAction:     ActionRegisterMetadata,
 		Target:         constants.TargetPilot,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
-		Directive:      string(directive),
+		Directive:      directive,
 		FailureAllowed: failureAllowed,
 	}
 	return &models.TaskLayer{
@@ -1053,17 +1007,14 @@ func (f *Frame) deregisterNodesMetadataLayer(nodeIds []string, failureAllowed bo
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
 		Cnodes:      cnodes,
 	}
-	directive, err := meta.ToString()
-	if err != nil {
-		return nil
-	}
+	directive := jsonutil.ToString(meta)
 	task := &models.Task{
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,
 		TaskAction:     ActionDeregisterMetadata,
 		Target:         constants.TargetPilot,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
-		Directive:      string(directive),
+		Directive:      directive,
 		FailureAllowed: failureAllowed,
 	}
 	return &models.TaskLayer{
@@ -1086,17 +1037,14 @@ func (f *Frame) deregisterScalingNodesMetadataLayer(path string, failureAllowed 
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
 		Cnodes:      jsonutil.ToString(cnodes),
 	}
-	directive, err := meta.ToString()
-	if err != nil {
-		return nil
-	}
+	directive := jsonutil.ToString(meta)
 	task := &models.Task{
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,
 		TaskAction:     ActionDeregisterMetadata,
 		Target:         constants.TargetPilot,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
-		Directive:      string(directive),
+		Directive:      directive,
 		FailureAllowed: failureAllowed,
 	}
 	return &models.TaskLayer{
@@ -1115,10 +1063,7 @@ func (f *Frame) deregisterMetadataLayer(failureAllowed bool) *models.TaskLayer {
 		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
 		Cnodes:      jsonutil.ToString(cnodes),
 	}
-	directive, err := meta.ToString()
-	if err != nil {
-		return nil
-	}
+	directive := jsonutil.ToString(meta)
 	deregisterMetadataTask := &models.Task{
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,

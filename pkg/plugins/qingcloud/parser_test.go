@@ -5,11 +5,11 @@
 package qingcloud
 
 import (
-	"encoding/json"
 	"testing"
 
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 const hbaseMustache = `
@@ -646,7 +646,7 @@ var hbaseClusterLinks = map[string]models.ClusterLink{
 
 func getTestClusterWrapper(t *testing.T) *models.ClusterWrapper {
 	cluster := app.ClusterConf{}
-	err := json.Unmarshal([]byte(hbaseMustache), &cluster)
+	err := jsonutil.Decode([]byte(hbaseMustache), &cluster)
 	if err != nil {
 		t.Fatalf("Parse mustache failed: %+v", err)
 	}

@@ -5,7 +5,6 @@
 package vmbased
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"openpitrix.io/openpitrix/pkg/client"
@@ -15,6 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type FrameHandler struct {
@@ -28,7 +28,7 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 		logger.Warn("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
-	err := json.Unmarshal([]byte(task.Directive), waitFrontgateDirective)
+	err := jsonutil.Decode([]byte(task.Directive), waitFrontgateDirective)
 	if err != nil {
 		logger.Error("Unmarshal into map failed: %+v", err)
 		return err

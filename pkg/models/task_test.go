@@ -7,6 +7,8 @@ package models
 import (
 	"testing"
 	"time"
+
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 func TestGetTimeout(t *testing.T) {
@@ -14,10 +16,7 @@ func TestGetTimeout(t *testing.T) {
 	instance := &Instance{
 		Timeout: int(timeout / time.Second),
 	}
-	directive, err := instance.ToString()
-	if err != nil {
-		t.Errorf("Error: %+v", err)
-	}
+	directive := jsonutil.ToString(instance)
 
 	task := &Task{
 		Directive: directive,

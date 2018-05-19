@@ -5,7 +5,6 @@
 package qingcloud
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -30,7 +29,7 @@ type ProviderHandler struct {
 
 func (p *ProviderHandler) initQingCloudService(runtimeUrl, runtimeCredential, zone string) (*qcservice.QingCloudService, error) {
 	credential := new(Credential)
-	err := json.Unmarshal([]byte(runtimeCredential), credential)
+	err := jsonutil.Decode([]byte(runtimeCredential), credential)
 	if err != nil {
 		logger.Error("Parse [%s] credential failed: %+v", MyProvider, err)
 		return nil, err
@@ -132,11 +131,7 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	instance.TargetJobId = qcservice.StringValue(output.JobID)
 
 	// write back
-	directive, err := instance.ToString()
-	if err != nil {
-		return err
-	}
-	task.Directive = directive
+	task.Directive = jsonutil.ToString(instance)
 
 	return nil
 }
@@ -182,11 +177,7 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 	instance.TargetJobId = qcservice.StringValue(output.JobID)
 
 	// write back
-	directive, err := instance.ToString()
-	if err != nil {
-		return err
-	}
-	task.Directive = string(directive)
+	task.Directive = jsonutil.ToString(instance)
 
 	return nil
 }
@@ -232,11 +223,7 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 	instance.TargetJobId = qcservice.StringValue(output.JobID)
 
 	// write back
-	directive, err := instance.ToString()
-	if err != nil {
-		return err
-	}
-	task.Directive = string(directive)
+	task.Directive = jsonutil.ToString(instance)
 
 	return nil
 }
@@ -282,12 +269,7 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 	instance.TargetJobId = qcservice.StringValue(output.JobID)
 
 	// write back
-	directive, err := instance.ToString()
-	if err != nil {
-		return err
-	}
-	task.Directive = string(directive)
-
+	task.Directive = jsonutil.ToString(instance)
 	return nil
 }
 
@@ -335,11 +317,7 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	volume.TargetJobId = qcservice.StringValue(output.JobID)
 
 	// write back
-	directive, err := volume.ToString()
-	if err != nil {
-		return err
-	}
-	task.Directive = directive
+	task.Directive = jsonutil.ToString(volume)
 
 	return nil
 }
@@ -388,11 +366,7 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 	volume.TargetJobId = qcservice.StringValue(output.JobID)
 
 	// write back
-	directive, err := volume.ToString()
-	if err != nil {
-		return err
-	}
-	task.Directive = string(directive)
+	task.Directive = jsonutil.ToString(volume)
 
 	return nil
 }
@@ -441,11 +415,7 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 	volume.TargetJobId = qcservice.StringValue(output.JobID)
 
 	// write back
-	directive, err := volume.ToString()
-	if err != nil {
-		return err
-	}
-	task.Directive = string(directive)
+	task.Directive = jsonutil.ToString(volume)
 
 	return nil
 }
@@ -493,11 +463,7 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	volume.TargetJobId = qcservice.StringValue(output.JobID)
 
 	// write back
-	directive, err := volume.ToString()
-	if err != nil {
-		return err
-	}
-	task.Directive = string(directive)
+	task.Directive = jsonutil.ToString(volume)
 
 	return nil
 }
@@ -549,11 +515,7 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	}
 
 	// write back
-	directive, err := instance.ToString()
-	if err != nil {
-		return err
-	}
-	task.Directive = directive
+	task.Directive = jsonutil.ToString(instance)
 
 	logger.Debug("WaitRunInstances task [%s] directive: %s", task.TaskId, task.Directive)
 

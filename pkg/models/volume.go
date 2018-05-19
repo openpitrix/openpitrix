@@ -5,9 +5,8 @@
 package models
 
 import (
-	"encoding/json"
-
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type Volume struct {
@@ -30,18 +29,9 @@ type Volume struct {
 
 func NewVolume(data string) (*Volume, error) {
 	volume := &Volume{}
-	err := json.Unmarshal([]byte(data), volume)
+	err := jsonutil.Decode([]byte(data), volume)
 	if err != nil {
-		logger.Error("Unmarshal into volume failed: %+v", err)
+		logger.Error("Decode [%s] into volume failed: %+v", data, err)
 	}
 	return volume, err
-}
-
-func (v *Volume) ToString() (string, error) {
-	result, err := json.Marshal(v)
-	if err != nil {
-		logger.Error("Marshal volume with volume id [%s] failed: %+v",
-			v.VolumeId, err)
-	}
-	return string(result), err
 }
