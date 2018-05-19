@@ -6,15 +6,14 @@ package indexer
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/url"
 	"sort"
-	"strings"
+
+	"github.com/pkg/errors"
 
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/util/httputil"
+	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
@@ -23,36 +22,25 @@ type devkitIndexer struct {
 	indexer
 }
 
-func NewDevkitIndexer(repo *pb.Repo) *devkitIndexer {
+func NewDevkitIndexer(repo *pb.Repo, reader reporeader.Reader) *devkitIndexer {
 	return &devkitIndexer{
-		indexer: indexer{repo: repo},
+		indexer: indexer{repo: repo, reader: reader},
 	}
 }
 
-func (i *devkitIndexer) getIndexFile() (indexFile *app.IndexFile, err error) {
-	repoUrl := i.repo.GetUrl().GetValue()
-	var indexURL string
-	indexFile = &app.IndexFile{}
-	parsedURL, err := url.Parse(repoUrl)
+func (i *devkitIndexer) getIndexFile() (*app.IndexFile, error) {
+	var indexFile = new(app.IndexFile)
+	content, err := i.reader.GetIndexYaml()
 	if err != nil {
-		return
-	}
-	parsedURL.Path = strings.TrimSuffix(parsedURL.Path, "/") + "/index.yaml"
-	indexURL = parsedURL.String()
-	resp, err := httputil.HttpGet(indexURL)
-	if err != nil {
-		return
-	}
-	content, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
+		return nil, errors.Wrap(err, "get index yaml failed")
 	}
 	err = yamlutil.Decode(content, indexFile)
 	if err != nil {
-		return
+		logger.Debug("%s", string(content))
+		return nil, errors.Wrap(err, "decode yaml failed")
 	}
 	indexFile.SortEntries()
-	return
+	return indexFile, nil
 }
 
 type appVersionWrapper struct {

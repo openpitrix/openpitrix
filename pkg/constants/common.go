@@ -144,3 +144,9 @@ var ServiceNames = []string{
 	ServiceInit, ServiceStart, ServiceStop, ServiceScaleIn, ServiceScaleOut, ServiceRestart,
 	ServiceDestroy, ServiceBackup, ServiceRestore, ServiceDeleteSnapshot, ServiceUpgrade,
 }
+
+const (
+	TypeS3    = "s3"
+	TypeHttp  = "http"
+	TypeHttps = "https"
+)
