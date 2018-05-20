@@ -8,6 +8,7 @@ import (
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -19,16 +20,21 @@ type Indexer interface {
 func GetIndexer(repo *pb.Repo) Indexer {
 	var i Indexer
 	providers := repo.GetProviders()
+	reader, err := reporeader.New(repo.Type.GetValue(), repo.Url.GetValue(), repo.Credential.GetValue())
+	if err != nil {
+		panic(fmt.Sprintf("failed to get repo reader from repo [%s]", repo.RepoId.GetValue()))
+	}
 	if stringutil.StringIn(constants.ProviderKubernetes, providers) {
-		i = NewHelmIndexer(repo)
+		i = NewHelmIndexer(repo, reader)
 	} else {
-		i = NewDevkitIndexer(repo)
+		i = NewDevkitIndexer(repo, reader)
 	}
 	return i
 }
 
 type indexer struct {
-	repo *pb.Repo
+	repo   *pb.Repo
+	reader reporeader.Reader
 }
 type appInterface interface {
 	GetName() string

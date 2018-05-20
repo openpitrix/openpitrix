@@ -2,21 +2,10 @@ package repo
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	neturl "net/url"
-	"path"
 	"regexp"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"gopkg.in/yaml.v2"
-
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -65,111 +54,46 @@ func validate(repoType, url, credential, visibility string, providers []string) 
 		return newErrorWithCode(ErrProviders, err)
 	}
 
-	u, err := neturl.ParseRequestURI(url)
+	var errCode uint32
+	reader, err := reporeader.New(repoType, url, credential)
 	if err != nil {
-		return newErrorWithCode(ErrNotUrl, fmt.Errorf("url parse failed, %s", err))
+		switch err {
+		case reporeader.ErrParseUrlFailed:
+			errCode = ErrUrlFormat
+		case reporeader.ErrDecodeJsonFailed:
+			errCode = ErrCredentialNotJson
+		case reporeader.ErrEmptyAccessKeyId:
+			errCode = ErrNoAccessKeyId
+		case reporeader.ErrEmptySecretAccessKey:
+			errCode = ErrNoSecretAccessKey
+		case reporeader.ErrInvalidType:
+			errCode = ErrType
+		case reporeader.ErrSchemeNotMatched:
+			switch repoType {
+			case constants.TypeHttp:
+				errCode = ErrSchemeNotHttp
+			case constants.TypeHttps:
+				errCode = ErrSchemeNotHttps
+			case constants.TypeS3:
+				errCode = ErrSchemeNotS3
+			}
+		}
+		return newErrorWithCode(errCode, err)
 	}
 
-	switch repoType {
-	case "s3":
-		if u.Scheme != "s3" {
-			return newErrorWithCode(ErrSchemeNotS3, fmt.Errorf("scheme is not s3"))
-		}
-
-		//fmt.Printf("%#v\n", u)
-		m := compRegEx.FindStringSubmatch(u.Host + u.Path)
-		//fmt.Printf("%#v\n", m)
-		logger.Debug("Regexp result: %+v", m)
-
-		if len(m) != 0 && len(m) == 4 {
-			zone := m[1]
-			host := m[2]
-			bucket := m[3]
-
-			var qc QingStorCredential
-			err = jsonutil.Decode([]byte(credential), &qc)
-			if err != nil {
-				return newErrorWithCode(ErrCredentialNotJson, fmt.Errorf("json decode failed on credential, %+v", err))
+	_, err = reader.GetIndexYaml()
+	if err != nil {
+		switch err {
+		case reporeader.ErrGetIndexYamlFailed:
+			switch repoType {
+			case constants.TypeHttp, constants.TypeHttps:
+				errCode = ErrHttpAccessDeny
+			case constants.TypeS3:
+				errCode = ErrS3AccessDeny
 			}
 
-			if qc.AccessKeyId == "" {
-				return newErrorWithCode(ErrNoAccessKeyId, fmt.Errorf("access_key_id not exist in credential"))
-			}
-
-			if qc.SecretAccessKey == "" {
-				return newErrorWithCode(ErrNoSecretAccessKey, fmt.Errorf("secret_access_key not exist in credential"))
-			}
-
-			err = ValidateS3("https", host, qc.AccessKeyId, qc.SecretAccessKey, bucket, zone)
-			if err != nil {
-				return newErrorWithCode(ErrS3AccessDeny, fmt.Errorf("validate s3 failed, %+v", err))
-			}
-		} else {
-			return newErrorWithCode(ErrUrlFormat, fmt.Errorf("url format error"))
 		}
-	case "http":
-		if u.Scheme != "http" {
-			return newErrorWithCode(ErrSchemeNotHttp, fmt.Errorf("scheme is not http"))
-		}
-		err := ValidateHTTP(u)
-		if err != nil {
-			return err
-		}
-	case "https":
-		if u.Scheme != "https" {
-			return newErrorWithCode(ErrSchemeNotHttps, fmt.Errorf("scheme is not https"))
-		}
-		err := ValidateHTTP(u)
-		if err != nil {
-			return err
-		}
-	default:
-		return newErrorWithCode(ErrType, fmt.Errorf("type must be one of [s3, http, https]"))
+		return newErrorWithCode(errCode, err)
 	}
-
-	return nil
-}
-
-func ValidateHTTP(u *neturl.URL) error {
-	u.Path = path.Join(u.Path, "index.yaml")
-
-	resp, err := http.Get(u.String())
-	if err != nil {
-		return newErrorWithCode(ErrHttpAccessDeny, fmt.Errorf("validate http failed, %+v", err))
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return newErrorWithCode(ErrHttpAccessDeny, fmt.Errorf("validate http failed, %+v", err))
-	}
-
-	var vals map[string]interface{}
-	err = yaml.Unmarshal(body, &vals)
-	if err != nil {
-		return newErrorWithCode(ErrNotRepoUrl, fmt.Errorf("validate http failed, %+v", err))
-	}
-	return nil
-}
-
-func ValidateS3(scheme, host, accessKeyId, secretAccessKey, bucket, zone string) error {
-	creds := credentials.NewStaticCredentials(accessKeyId, secretAccessKey, "")
-	config := &aws.Config{
-		Region:      aws.String(zone),
-		Endpoint:    aws.String(fmt.Sprintf("%s://s3.%s.%s/%s/", scheme, zone, host, bucket)),
-		Credentials: creds,
-	}
-
-	sess, err := session.NewSession(config)
-	if err != nil {
-		return err
-	}
-
-	svc := s3.New(sess)
-	_, err = svc.ListBuckets(nil)
-	if err != nil {
-		return err
-	}
-
-	//fmt.Println(resp)
 	return nil
 }

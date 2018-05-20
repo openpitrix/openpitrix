@@ -7,7 +7,6 @@ package repo_indexer
 import (
 	"context"
 	"fmt"
-	"runtime/debug"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/client"
@@ -19,7 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/service/repo_indexer/indexer"
+	"openpitrix.io/openpitrix/pkg/reporeader/indexer"
 	"openpitrix.io/openpitrix/pkg/util/atomicutil"
 )
 
@@ -129,10 +128,8 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 		return
 	}()
 	if err != nil {
-		// FIXME: remove panic log
 		logger.Critical("Failed to execute repo event: %+v", err)
-		logger.Critical(string(debug.Stack()))
-		i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusFailed, fmt.Sprintf("%+v", err))
+		i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusFailed, err.Error())
 	} else {
 		i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusSuccessful, "")
 	}

@@ -6,16 +6,14 @@ package indexer
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/url"
 	"sort"
-	"strings"
 
+	"github.com/pkg/errors"
 	"k8s.io/helm/pkg/repo"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/util/httputil"
+	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
@@ -24,9 +22,9 @@ type helmIndexer struct {
 	indexer
 }
 
-func NewHelmIndexer(repo *pb.Repo) *helmIndexer {
+func NewHelmIndexer(repo *pb.Repo, reader reporeader.Reader) *helmIndexer {
 	return &helmIndexer{
-		indexer: indexer{repo: repo},
+		indexer: indexer{repo: repo, reader: reader},
 	}
 }
 
@@ -77,28 +75,16 @@ func (i *helmIndexer) IndexRepo() error {
 }
 
 // Reference: https://sourcegraph.com/github.com/kubernetes/helm@fe9d365/-/blob/pkg/repo/chartrepo.go#L111:27
-func (i *helmIndexer) getIndexFile() (indexFile *repo.IndexFile, err error) {
-	repoUrl := i.repo.GetUrl().GetValue()
-	var indexURL string
-	indexFile = &repo.IndexFile{}
-	parsedURL, err := url.Parse(repoUrl)
+func (i *helmIndexer) getIndexFile() (*repo.IndexFile, error) {
+	var indexFile = new(repo.IndexFile)
+	content, err := i.reader.GetIndexYaml()
 	if err != nil {
-		return
-	}
-	parsedURL.Path = strings.TrimSuffix(parsedURL.Path, "/") + "/index.yaml"
-	indexURL = parsedURL.String()
-	resp, err := httputil.HttpGet(indexURL)
-	if err != nil {
-		return
-	}
-	content, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
+		return nil, errors.Wrap(err, "get index yaml failed")
 	}
 	err = yamlutil.Decode(content, indexFile)
 	if err != nil {
-		return
+		return nil, errors.Wrap(err, "decode yaml failed")
 	}
 	indexFile.SortEntries()
-	return
+	return indexFile, nil
 }
