@@ -64,5 +64,5 @@ func ServeMuxSetSender(_ context2.Context, request *http.Request) metadata.MD {
 func NewContext(ctx context.Context, user *Info) context.Context {
 	md := metadata.MD{}
 	md["sender"] = []string{user.ToJson()}
-	return metadata.NewContext(ctx, md)
+	return metadata.NewOutgoingContext(ctx, md)
 }
