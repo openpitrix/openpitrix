@@ -1152,6 +1152,7 @@ func (f *Frame) DeleteClusterLayer() *models.TaskLayer {
 		Append(f.destroyAndStopServiceLayer(nodeIds, nil, true)). // register destroy and stop cmd to exec
 		Append(f.stopConfdServiceLayer(nodeIds, true)).           // stop confd service
 		Append(f.umountVolumeLayer(nodeIds, true)).               // umount volume from instance
+		Append(f.stopInstancesLayer(nodeIds, true)).              // stop instance
 		Append(f.detachVolumesLayer(nodeIds, false)).             // detach volume from instance
 		Append(f.deleteInstancesLayer(nodeIds, false)).           // delete instance
 		Append(f.deleteVolumesLayer(nodeIds, false)).             // delete volume
