@@ -192,35 +192,37 @@ func (j *Processor) Post() error {
 			return err
 		}
 		clusterWrapper := clusterWrappers[0]
-		frontgateId := clusterWrapper.Cluster.FrontgateId
-		pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
-			[]string{constants.StatusStopped, constants.StatusActive})
-		if err != nil {
-			return err
-		}
-		if len(pbClusters) == 0 {
-			// need to delete frontgate cluster
-			frontgates, err := clusterClient.GetClusterWrappers(ctx, []string{frontgateId})
+		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType {
+			frontgateId := clusterWrapper.Cluster.FrontgateId
+			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
+				[]string{constants.StatusStopped, constants.StatusActive})
 			if err != nil {
 				return err
 			}
-			frontgate := frontgates[0]
-			directive := jsonutil.ToString(frontgate)
+			if len(pbClusters) == 0 {
+				// need to delete frontgate cluster
+				frontgates, err := clusterClient.GetClusterWrappers(ctx, []string{frontgateId})
+				if err != nil {
+					return err
+				}
+				frontgate := frontgates[0]
+				directive := jsonutil.ToString(frontgate)
 
-			newJob := models.NewJob(
-				constants.PlaceHolder,
-				frontgate.Cluster.ClusterId,
-				frontgate.Cluster.AppId,
-				frontgate.Cluster.VersionId,
-				constants.ActionDeleteClusters,
-				directive,
-				j.Job.Provider,
-				j.Job.Owner,
-			)
+				newJob := models.NewJob(
+					constants.PlaceHolder,
+					frontgate.Cluster.ClusterId,
+					frontgate.Cluster.AppId,
+					frontgate.Cluster.VersionId,
+					constants.ActionDeleteClusters,
+					directive,
+					j.Job.Provider,
+					j.Job.Owner,
+				)
 
-			_, err = jobclient.SendJob(newJob)
-			if err != nil {
-				return err
+				_, err = jobclient.SendJob(newJob)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	case constants.ActionRecoverClusters:
