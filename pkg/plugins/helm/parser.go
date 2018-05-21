@@ -12,8 +12,7 @@ import (
 	"k8s.io/helm/pkg/chartutil"
 	"k8s.io/helm/pkg/engine"
 	"k8s.io/helm/pkg/proto/hapi/chart"
-	"k8s.io/kubernetes/pkg/api"
-	_ "k8s.io/kubernetes/pkg/api/install"
+	"k8s.io/kubernetes/pkg/api/legacyscheme"
 	_ "k8s.io/kubernetes/pkg/apis/apps/install"
 	_ "k8s.io/kubernetes/pkg/apis/extensions/install"
 
@@ -71,7 +70,7 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 		return nil, nil, err
 	}
 
-	decode := api.Codecs.UniversalDeserializer().Decode
+	decode := legacyscheme.Codecs.UniversalDeserializer().Decode
 
 	clusterRoles := map[string]*models.ClusterRole{}
 	clusterCommons := map[string]*models.ClusterCommon{}

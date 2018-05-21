@@ -178,6 +178,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 
 	var status = constants.StatusSuccessful
 	if err != nil {
+		logger.Error("Job [%s] failed: %+v", jobId, err)
 		status = constants.StatusFailed
 	}
 	c.updateJobAttributes(jobId, map[string]interface{}{
