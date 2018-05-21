@@ -33,12 +33,17 @@ func tGetEtcdEndpoints() []string {
 	return strings.Split(*tEtcdHost, ",")
 }
 
+func _TestDefaultEtcdMaxOpsPerTxn(t *testing.T) {
+	// import "github.com/coreos/etcd/embed"
+	// Assert(t, embed.DefaultMaxTxnOps == DefaultEtcdMaxOpsPerTxn)
+}
+
 func TestEtcdClient(t *testing.T) {
 	if !*tEtcdEnabled {
 		t.Skip("etcd disabled")
 	}
 
-	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10)
+	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10, 0)
 	Assert(t, err == nil, err)
 	Assert(t, c != nil)
 
@@ -88,7 +93,7 @@ func TestEtcdClient_SetStructValue(t *testing.T) {
 		t.Skip("etcd disabled")
 	}
 
-	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10)
+	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10, 0)
 	Assert(t, err == nil, err)
 	Assert(t, c != nil)
 
@@ -118,7 +123,7 @@ func TestEtcdClient_GetValuesByPrefix(t *testing.T) {
 		t.Skip("etcd disabled")
 	}
 
-	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10)
+	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10, 0)
 	Assert(t, err == nil, err)
 	Assert(t, c != nil)
 
@@ -153,7 +158,7 @@ func TestEtcdClient_metadata(t *testing.T) {
 		t.Skip("etcd disabled")
 	}
 
-	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10)
+	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10, 0)
 	Assert(t, err == nil, err)
 	Assert(t, c != nil)
 
@@ -191,7 +196,7 @@ func TestEtcdClient_cmd(t *testing.T) {
 		t.Skip("etcd disabled")
 	}
 
-	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10)
+	c, err := NewEtcdClient(tGetEtcdEndpoints(), time.Second/10, 0)
 	Assert(t, err == nil, err)
 	Assert(t, c != nil)
 
