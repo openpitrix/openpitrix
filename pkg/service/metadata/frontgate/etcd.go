@@ -18,6 +18,8 @@ import (
 	"github.com/coreos/etcd/clientv3"
 )
 
+const DefaultEtcdMaxOpsPerTxn = 128
+
 type EtcdClientManager struct {
 	clientMap map[string]*EtcdClient
 	mu        sync.Mutex
@@ -25,6 +27,7 @@ type EtcdClientManager struct {
 
 type EtcdClient struct {
 	*clientv3.Client
+	maxTxnOps int
 }
 
 func NewEtcdClientManager() *EtcdClientManager {
@@ -44,7 +47,7 @@ func (p *EtcdClientManager) Get() (*EtcdClient, error) {
 	return nil, fmt.Errorf("frontgate: no valid etcd client")
 }
 
-func (p *EtcdClientManager) GetClient(endpoints []string, timeout time.Duration) (*EtcdClient, error) {
+func (p *EtcdClientManager) GetClient(endpoints []string, timeout time.Duration, maxTxnOps int) (*EtcdClient, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -53,7 +56,7 @@ func (p *EtcdClientManager) GetClient(endpoints []string, timeout time.Duration)
 		return c, nil
 	}
 
-	c, err := NewEtcdClient(endpoints, timeout)
+	c, err := NewEtcdClient(endpoints, timeout, maxTxnOps)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +76,14 @@ func (p *EtcdClientManager) Clear() {
 	p.clientMap = make(map[string]*EtcdClient)
 }
 
-func NewEtcdClient(endpoints []string, timeout time.Duration) (*EtcdClient, error) {
+func NewEtcdClient(endpoints []string, timeout time.Duration, maxTxnOps int) (*EtcdClient, error) {
+	if timeout == 0 {
+		timeout = time.Second
+	}
+	if maxTxnOps == 0 {
+		maxTxnOps = DefaultEtcdMaxOpsPerTxn
+	}
+
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: timeout,
@@ -82,15 +92,29 @@ func NewEtcdClient(endpoints []string, timeout time.Duration) (*EtcdClient, erro
 		return nil, err
 	}
 
-	return &EtcdClient{Client: cli}, nil
+	p := &EtcdClient{
+		Client:    cli,
+		maxTxnOps: maxTxnOps,
+	}
+
+	return p, nil
 }
-func NewEtcdClientWithConfig(cfg clientv3.Config) (*EtcdClient, error) {
+func NewEtcdClientWithConfig(cfg clientv3.Config, maxTxnOps int) (*EtcdClient, error) {
+	if maxTxnOps == 0 {
+		maxTxnOps = DefaultEtcdMaxOpsPerTxn
+	}
+
 	cli, err := clientv3.New(cfg)
 	if err != nil {
 		return nil, err
 	}
 
-	return &EtcdClient{Client: cli}, nil
+	p := &EtcdClient{
+		Client:    cli,
+		maxTxnOps: maxTxnOps,
+	}
+
+	return p, nil
 }
 
 func (p *EtcdClient) Close() error {
@@ -131,16 +155,23 @@ func (p *EtcdClient) GetValues(keys ...string) (map[string]string, error) {
 		opts = append(opts, clientv3.OpGet(k))
 	}
 
-	resp, err := kvc.Txn(context.Background()).Then(opts...).Commit()
-	if err != nil {
-		return nil, err
-	}
-
 	m := make(map[string]string)
-	for _, resp_i := range resp.Responses {
-		if respRange := resp_i.GetResponseRange(); respRange != nil {
-			for _, kv := range respRange.Kvs {
-				m[string(kv.Key)] = string(kv.Value)
+	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+		endIdx := startIdx + p.maxTxnOps
+		if endIdx > len(opts) {
+			endIdx = len(opts)
+		}
+
+		resp, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, resp_i := range resp.Responses {
+			if respRange := resp_i.GetResponseRange(); respRange != nil {
+				for _, kv := range respRange.Kvs {
+					m[string(kv.Key)] = string(kv.Value)
+				}
 			}
 		}
 	}
@@ -172,9 +203,16 @@ func (p *EtcdClient) SetValues(m map[string]string) error {
 		opts = append(opts, clientv3.OpPut(k, v))
 	}
 
-	_, err := kvc.Txn(context.Background()).Then(opts...).Commit()
-	if err != nil {
-		return err
+	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+		endIdx := startIdx + p.maxTxnOps
+		if endIdx > len(opts) {
+			endIdx = len(opts)
+		}
+
+		_, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -212,9 +250,16 @@ func (p *EtcdClient) SetStructValue(keyPrefix string, val interface{}) error {
 		opts = append(opts, clientv3.OpPut(k, v))
 	}
 
-	_, err := kvc.Txn(context.Background()).Then(opts...).Commit()
-	if err != nil {
-		return err
+	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+		endIdx := startIdx + p.maxTxnOps
+		if endIdx > len(opts) {
+			endIdx = len(opts)
+		}
+
+		_, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -228,9 +273,16 @@ func (p *EtcdClient) DelValues(keys ...string) error {
 		opts = append(opts, clientv3.OpDelete(k))
 	}
 
-	_, err := kvc.Txn(context.Background()).Then(opts...).Commit()
-	if err != nil {
-		return err
+	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+		endIdx := startIdx + p.maxTxnOps
+		if endIdx > len(opts) {
+			endIdx = len(opts)
+		}
+
+		_, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -244,9 +296,16 @@ func (p *EtcdClient) DelValuesWithPrefix(keyPrefixs ...string) error {
 		opts = append(opts, clientv3.OpDelete(k, clientv3.WithPrefix()))
 	}
 
-	_, err := kvc.Txn(context.Background()).Then(opts...).Commit()
-	if err != nil {
-		return err
+	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+		endIdx := startIdx + p.maxTxnOps
+		if endIdx > len(opts) {
+			endIdx = len(opts)
+		}
+
+		_, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

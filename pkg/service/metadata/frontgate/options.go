@@ -7,6 +7,7 @@ package frontgate
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/libconfd/backends"
@@ -117,4 +118,13 @@ func WithFrontgateNodeList(node ...*pbtypes.FrontgateEndpoint) func(opt *pbtypes
 	return func(opt *pbtypes.FrontgateConfig) {
 		opt.NodeList = append([]*pbtypes.FrontgateEndpoint{}, node...)
 	}
+}
+
+func pkgGetEtcdEndpointsFromConfig(cfg *pbtypes.EtcdConfig) (endpoints []string) {
+	for _, node := range cfg.GetNodeList() {
+		endpoints = append(endpoints,
+			fmt.Sprintf("%s:%d", node.GetHost(), node.GetPort()),
+		)
+	}
+	return endpoints
 }

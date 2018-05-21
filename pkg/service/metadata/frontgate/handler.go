@@ -269,7 +269,12 @@ func (p *Server) StopConfd(in *pbtypes.ConfdEndpoint, out *pbtypes.Empty) error 
 func (p *Server) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata, out *pbtypes.Empty) error {
 	logger.Info(funcutil.CallerName(1))
 
-	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err
@@ -300,7 +305,12 @@ func (p *EtcdClient) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata) erro
 func (p *Server) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata, out *pbtypes.Empty) error {
 	logger.Info(funcutil.CallerName(1))
 
-	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err
@@ -342,7 +352,12 @@ func (p *EtcdClient) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata) 
 func (p *Server) RegisterCmd(in *pbtypes.SubTask_RegisterCmd, out *pbtypes.Empty) error {
 	logger.Info(funcutil.CallerName(1))
 
-	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err
@@ -379,7 +394,12 @@ func (p *EtcdClient) RegisterCmd(in *pbtypes.SubTask_RegisterCmd) error {
 func (p *Server) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd, out *pbtypes.Empty) error {
 	logger.Info(funcutil.CallerName(1))
 
-	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err
@@ -455,7 +475,12 @@ func (p *Server) ClosePilotChannel(in *pbtypes.Empty, out *pbtypes.Empty) error 
 func (p *Server) GetEtcdValuesByPrefix(in *pbtypes.String, out *pbtypes.StringMap) error {
 	logger.Info(funcutil.CallerName(1))
 
-	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err
@@ -474,7 +499,12 @@ func (p *Server) GetEtcdValuesByPrefix(in *pbtypes.String, out *pbtypes.StringMa
 func (p *Server) GetEtcdValues(in *pbtypes.StringList, out *pbtypes.StringMap) error {
 	logger.Info(funcutil.CallerName(1))
 
-	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err
@@ -493,7 +523,12 @@ func (p *Server) GetEtcdValues(in *pbtypes.StringList, out *pbtypes.StringMap) e
 func (p *Server) SetEtcdValues(in *pbtypes.StringMap, out *pbtypes.Empty) error {
 	logger.Info(funcutil.CallerName(1))
 
-	etcdClient, err := p.etcd.GetClient(p.cfg.Get().GetConfdConfig().GetBackendConfig().GetHost(), time.Second)
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err
