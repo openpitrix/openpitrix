@@ -61,7 +61,10 @@ spec:
           # $ kubectl create secret generic mysql-pass --from-file=password.txt
           # make sure password.txt does not have a trailing newline
         - name: MYSQL_ROOT_PASSWORD
-          value: "password"
+          valueFrom:
+            secretKeyRef:
+              key: password.txt
+              name: mysql-pass
         - name: MYSQL_ROOT_HOST
           value: "%"
         ports:
@@ -70,42 +73,7 @@ spec:
         volumeMounts:
         - name: db-persistent-storage
           mountPath: /var/lib/mysql
-        - name: db-init
-          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: db-persistent-storage
         persistentVolumeClaim:
           claimName: db-pv-claim
-      - configMap:
-          name: openpitrix-ddl
-        name: db-init
-      tolerations:
-      - key: node-role.kubernetes.io/master
-        operator: Exists
-        effect: NoSchedule
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: openpitrix-ddl
-  namespace: default
-  labels:
-    app: openpitrix
-data:
-  app.sql: |-
-    CREATE DATABASE IF NOT EXISTS app DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
-
-  cluster.sql: |-
-    CREATE DATABASE IF NOT EXISTS cluster DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
-
-  job.sql: |-
-    CREATE DATABASE IF NOT EXISTS job DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
-
-  repo.sql: |-
-    CREATE DATABASE IF NOT EXISTS repo DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
-
-  runtime.sql: |-
-    CREATE DATABASE IF NOT EXISTS runtime DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
-
-  task.sql: |-
-    CREATE DATABASE IF NOT EXISTS task DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;

@@ -17,8 +17,13 @@ spec:
         job-name: openpitrix-job-db-ctrl
       name: job-db-ctrl
     spec:
+      initContainers:
+      - name: wait-mysql
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z openpitrix-db.default.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
       containers:
-      - command: ["flyway", "-X", "-url=jdbc:mysql://openpitrix-db.default.svc.cluster.local/job", "-user=root", "-password=password","-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/job", "migrate"]
+      - command: ["flyway", "-X", "-url=jdbc:mysql://openpitrix-db.default.svc.cluster.local/job", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/job", "migrate"]
         env:
         - name: FLYWAY_PASSWORD
           valueFrom:
@@ -26,19 +31,14 @@ spec:
               key: password.txt
               name: mysql-pass
         image: openpitrix/openpitrix:flyway
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         name: job-db-ctrl
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
-      nodeSelector:
-        role: master
       restartPolicy: OnFailure
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
-      tolerations:
-      - effect: NoSchedule
-        key: node-role.kubernetes.io/master
-        operator: Exists
+

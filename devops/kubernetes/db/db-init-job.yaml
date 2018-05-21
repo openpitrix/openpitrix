@@ -3,8 +3,8 @@ kind: Job
 metadata:
   annotations:
   labels:
-    app: openpitrix-task-db-ctrl
-  name: openpitrix-task-db-ctrl
+    app: openpitrix
+  name: openpitrix-db-init
   namespace: default
 spec:
   activeDeadlineSeconds: 600
@@ -14,8 +14,8 @@ spec:
   template:
     metadata:
       labels:
-        job-name: openpitrix-task-db-ctrl
-      name: task-db-ctrl
+        job-name: openpitrix-db-init
+      name: db-init
     spec:
       initContainers:
       - name: wait-mysql
@@ -23,16 +23,16 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'until nc -z openpitrix-db.default.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
       containers:
-      - command: ["flyway", "-X", "-url=jdbc:mysql://openpitrix-db.default.svc.cluster.local/task", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/task", "migrate"]
+      - command: ["/flyway/sql/ddl/ddl_init.sh", "-hopenpitrix-db.default.svc.cluster.local", "-uroot", "--connect-timeout=5"]
         env:
-        - name: FLYWAY_PASSWORD
+        - name: PASSWORD
           valueFrom:
             secretKeyRef:
               key: password.txt
               name: mysql-pass
         image: openpitrix/openpitrix:flyway
         imagePullPolicy: Always
-        name: task-db-ctrl
+        name: db-init
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
