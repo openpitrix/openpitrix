@@ -150,19 +150,19 @@ func (p *EtcdClient) Set(key, val string) error {
 func (p *EtcdClient) GetValues(keys ...string) (map[string]string, error) {
 	kvc := clientv3.NewKV(p.Client)
 
-	var opts []clientv3.Op
+	var ops []clientv3.Op
 	for _, k := range keys {
-		opts = append(opts, clientv3.OpGet(k))
+		ops = append(ops, clientv3.OpGet(k))
 	}
 
 	m := make(map[string]string)
-	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+	for startIdx := 0; startIdx < len(ops); startIdx += p.maxTxnOps {
 		endIdx := startIdx + p.maxTxnOps
-		if endIdx > len(opts) {
-			endIdx = len(opts)
+		if endIdx > len(ops) {
+			endIdx = len(ops)
 		}
 
-		resp, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		resp, err := kvc.Txn(context.Background()).Then(ops[startIdx:endIdx]...).Commit()
 		if err != nil {
 			return nil, err
 		}
@@ -198,18 +198,18 @@ func (p *EtcdClient) GetValuesByPrefix(keyPrefix string) (map[string]string, err
 func (p *EtcdClient) SetValues(m map[string]string) error {
 	kvc := clientv3.NewKV(p.Client)
 
-	var opts []clientv3.Op
+	var ops []clientv3.Op
 	for k, v := range m {
-		opts = append(opts, clientv3.OpPut(k, v))
+		ops = append(ops, clientv3.OpPut(k, v))
 	}
 
-	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+	for startIdx := 0; startIdx < len(ops); startIdx += p.maxTxnOps {
 		endIdx := startIdx + p.maxTxnOps
-		if endIdx > len(opts) {
-			endIdx = len(opts)
+		if endIdx > len(ops) {
+			endIdx = len(ops)
 		}
 
-		_, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		_, err := kvc.Txn(context.Background()).Then(ops[startIdx:endIdx]...).Commit()
 		if err != nil {
 			return err
 		}
@@ -245,18 +245,18 @@ func (p *EtcdClient) SetStructValue(keyPrefix string, val interface{}) error {
 		m[keyPrefix+k] = v
 	}
 
-	var opts []clientv3.Op
+	var ops []clientv3.Op
 	for k, v := range m {
-		opts = append(opts, clientv3.OpPut(k, v))
+		ops = append(ops, clientv3.OpPut(k, v))
 	}
 
-	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+	for startIdx := 0; startIdx < len(ops); startIdx += p.maxTxnOps {
 		endIdx := startIdx + p.maxTxnOps
-		if endIdx > len(opts) {
-			endIdx = len(opts)
+		if endIdx > len(ops) {
+			endIdx = len(ops)
 		}
 
-		_, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		_, err := kvc.Txn(context.Background()).Then(ops[startIdx:endIdx]...).Commit()
 		if err != nil {
 			return err
 		}
@@ -268,18 +268,18 @@ func (p *EtcdClient) SetStructValue(keyPrefix string, val interface{}) error {
 func (p *EtcdClient) DelValues(keys ...string) error {
 	kvc := clientv3.NewKV(p.Client)
 
-	var opts []clientv3.Op
+	var ops []clientv3.Op
 	for _, k := range keys {
-		opts = append(opts, clientv3.OpDelete(k))
+		ops = append(ops, clientv3.OpDelete(k))
 	}
 
-	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+	for startIdx := 0; startIdx < len(ops); startIdx += p.maxTxnOps {
 		endIdx := startIdx + p.maxTxnOps
-		if endIdx > len(opts) {
-			endIdx = len(opts)
+		if endIdx > len(ops) {
+			endIdx = len(ops)
 		}
 
-		_, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		_, err := kvc.Txn(context.Background()).Then(ops[startIdx:endIdx]...).Commit()
 		if err != nil {
 			return err
 		}
@@ -291,18 +291,18 @@ func (p *EtcdClient) DelValues(keys ...string) error {
 func (p *EtcdClient) DelValuesWithPrefix(keyPrefixs ...string) error {
 	kvc := clientv3.NewKV(p.Client)
 
-	var opts []clientv3.Op
+	var ops []clientv3.Op
 	for _, k := range keyPrefixs {
-		opts = append(opts, clientv3.OpDelete(k, clientv3.WithPrefix()))
+		ops = append(ops, clientv3.OpDelete(k, clientv3.WithPrefix()))
 	}
 
-	for startIdx := 0; startIdx < len(opts); startIdx += p.maxTxnOps {
+	for startIdx := 0; startIdx < len(ops); startIdx += p.maxTxnOps {
 		endIdx := startIdx + p.maxTxnOps
-		if endIdx > len(opts) {
-			endIdx = len(opts)
+		if endIdx > len(ops) {
+			endIdx = len(ops)
 		}
 
-		_, err := kvc.Txn(context.Background()).Then(opts[startIdx:endIdx]...).Commit()
+		_, err := kvc.Txn(context.Background()).Then(ops[startIdx:endIdx]...).Commit()
 		if err != nil {
 			return err
 		}
