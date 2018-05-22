@@ -207,15 +207,19 @@ func (p *ConfdServer) Save() error {
 
 	// backup old config
 	bakpath := p.cfgpath + time.Now().Format(".20060102.bak")
-	if err := os.Rename(p.cfgpath, bakpath); err != nil && !os.IsNotExist(err) {
-		logger.Warn("%+v", err)
-		return err
+	if false {
+		if err := os.Rename(p.cfgpath, bakpath); err != nil && !os.IsNotExist(err) {
+			logger.Warn("%+v", err)
+			return err
+		}
 	}
 
 	data = bytes.Replace(data, []byte("\n"), []byte("\r\n"), -1)
 	err = ioutil.WriteFile(p.cfgpath, data, 0666)
 	if err != nil {
-		os.Rename(bakpath, p.cfgpath) // revert
+		if false {
+			os.Rename(bakpath, p.cfgpath) // revert
+		}
 		logger.Warn("%+v", err)
 		return err
 	}
