@@ -22,11 +22,20 @@ message CreateTaskRequest {
 	google.protobuf.StringValue task_action = 5;
 	google.protobuf.StringValue directive = 6;
 	google.protobuf.BoolValue failure_allowed = 7;
+	google.protobuf.StringValue status = 8;
 }
 
 message CreateTaskResponse {
 	google.protobuf.StringValue task_id = 1;
 	google.protobuf.StringValue job_id = 2;
+}
+
+message RetryTasksRequest {
+	repeated string task_id = 1;
+}
+
+message RetryTasksResponse {
+	repeated Task task_set = 1;
 }
 
 message Task {
@@ -68,6 +77,15 @@ service TaskManager {
 		};
 		option (google.api.http) = {
 			get: "/v1/tasks"
+		};
+	}
+	rpc RetryTasks (RetryTasksRequest) returns (RetryTasksResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "retry tasks"
+		};
+		option (google.api.http) = {
+			post: "/v1/tasks/retry"
+			body: "*"
 		};
 	}
 }

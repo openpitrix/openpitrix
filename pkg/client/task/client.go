@@ -73,6 +73,7 @@ func (c *Client) SendTask(ctx context.Context, task *models.Task) (string, error
 		TaskAction:     pbTask.TaskAction,
 		Directive:      pbTask.Directive,
 		FailureAllowed: pbTask.FailureAllowed,
+		Status:         pbTask.Status,
 	}
 	response, err := c.CreateTask(ctx, taskRequest)
 	taskId := response.GetTaskId().GetValue()
