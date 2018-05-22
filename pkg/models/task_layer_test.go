@@ -27,7 +27,7 @@ func TestWalkTree(t *testing.T) {
 
 	var waitTasks, execTasks []string
 
-	err := taskLayer3.WalkTree(func(parent *TaskLayer, current *TaskLayer) error {
+	taskLayer3.WalkTree(func(parent *TaskLayer, current *TaskLayer) {
 		if parent != nil {
 			for _, parentTask := range parent.Tasks {
 				waitTasks = append(waitTasks, parentTask.TaskId)
@@ -44,12 +44,7 @@ func TestWalkTree(t *testing.T) {
 				}
 			}
 		}
-		return nil
 	})
-
-	if err != nil {
-		t.Errorf("Error is %+v", err)
-	}
 
 	if strings.Join(waitTasks, ",") != strings.Join(expectTasks, ",") ||
 		strings.Join(execTasks, ",") != strings.Join(expectTasks, ",") {

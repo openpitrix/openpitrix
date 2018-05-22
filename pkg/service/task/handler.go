@@ -75,7 +75,8 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.TaskTableName)).
-		Where(db.Eq("owner", s.UserId))
+		Where(db.Eq("owner", s.UserId)).
+		OrderDir("create_time", true)
 
 	_, err := query.Load(&tasks)
 	if err != nil {

@@ -131,9 +131,8 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 			return err
 		}
 
-		err = module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) error {
-			successful := true
-			var internalError error
+		successful := true
+		module.WalkTree(func(parent *models.TaskLayer, current *models.TaskLayer) {
 			if parent != nil {
 				for _, parentTask := range parent.Tasks {
 					err = taskClient.WaitTask(ctx, parentTask.TaskId, parentTask.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
@@ -141,7 +140,6 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 						logger.Error("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 						if !parentTask.FailureAllowed {
 							successful = false
-							internalError = err
 						}
 					}
 				}
@@ -156,7 +154,6 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 					if err != nil {
 						logger.Error("Failed to send task [%s]: %+v", currentTask.TaskId, err)
 						successful = false
-						internalError = err
 					}
 				}
 				if current.IsLeaf() {
@@ -166,16 +163,13 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 							logger.Error("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
 							if !currentTask.FailureAllowed {
 								successful = false
-								internalError = err
 							}
 						}
 					}
 				}
 			}
-
-			return internalError
 		})
-		if err != nil {
+		if !successful {
 			return err
 		}
 
