@@ -183,7 +183,8 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		status = constants.StatusFailed
 	}
 	c.updateJobAttributes(jobId, map[string]interface{}{
-		"status": status,
+		"status":      status,
+		"status_time": time.Now(),
 	})
 	return err
 }

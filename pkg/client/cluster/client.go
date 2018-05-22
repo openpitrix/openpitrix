@@ -7,6 +7,7 @@ package cluster
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -77,6 +78,7 @@ func (c *Client) ModifyClusterTransitionStatus(ctx context.Context, clusterId st
 		Cluster: &pb.Cluster{
 			ClusterId:        pbutil.ToProtoString(clusterId),
 			TransitionStatus: pbutil.ToProtoString(transitionStatus),
+			StatusTime:       pbutil.ToProtoTimestamp(time.Now()),
 		},
 	})
 	return err
@@ -85,8 +87,9 @@ func (c *Client) ModifyClusterTransitionStatus(ctx context.Context, clusterId st
 func (c *Client) ModifyClusterStatus(ctx context.Context, clusterId string, status string) error {
 	_, err := c.ModifyCluster(ctx, &pb.ModifyClusterRequest{
 		Cluster: &pb.Cluster{
-			ClusterId: pbutil.ToProtoString(clusterId),
-			Status:    pbutil.ToProtoString(status),
+			ClusterId:  pbutil.ToProtoString(clusterId),
+			Status:     pbutil.ToProtoString(status),
+			StatusTime: pbutil.ToProtoTimestamp(time.Now()),
 		},
 	})
 	return err
