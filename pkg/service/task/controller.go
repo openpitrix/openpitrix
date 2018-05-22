@@ -305,7 +305,8 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 	}
 	c.updateTaskAttributes(task.TaskId, map[string]interface{}{
-		"status": status,
+		"status":      status,
+		"status_time": time.Now(),
 	})
 	return err
 }
