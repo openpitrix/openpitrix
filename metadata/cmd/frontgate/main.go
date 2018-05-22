@@ -22,6 +22,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate"
 	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate/frontgateutil"
+	"openpitrix.io/openpitrix/pkg/util/pathutil"
 )
 
 func main() {
@@ -68,7 +69,8 @@ EXAMPLE:
 			Usage: "show frontgate service info",
 
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				client, err := frontgateutil.DialFrontgateService(
 					cfg.Host, int(cfg.ListenPort),
@@ -95,7 +97,8 @@ EXAMPLE:
 			ArgsUsage: "[regexp]",
 
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				client, err := frontgateutil.DialFrontgateService(
 					cfg.Host, int(cfg.ListenPort),
@@ -151,7 +154,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				client, err := frontgateutil.DialFrontgateService(
 					cfg.Host, int(cfg.ListenPort),
@@ -211,7 +215,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				if c.NArg() == 0 {
 					logger.Critical("missing value")
@@ -267,7 +272,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				client, err := frontgateutil.DialFrontgateService(
 					cfg.Host, int(cfg.ListenPort),
@@ -332,7 +338,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				client, err := frontgateutil.DialFrontgateService(
 					cfg.Host, int(cfg.ListenPort),
@@ -380,7 +387,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				client, err := frontgateutil.DialFrontgateService(
 					cfg.Host, int(cfg.ListenPort),
@@ -418,7 +426,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				client, err := frontgateutil.DialFrontgateService(
 					cfg.Host, int(cfg.ListenPort),
@@ -457,7 +466,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := frontgateutil.MustLoadFrontgateConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				client, err := frontgateutil.DialFrontgateService(
 					cfg.Host, int(cfg.ListenPort),
@@ -485,8 +495,9 @@ EXAMPLE:
 			Name:  "serve",
 			Usage: "run as frontgate service",
 			Action: func(c *cli.Context) {
-				cfgpath := c.GlobalString("config")
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
 				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
+
 				frontgate.Serve(
 					frontgate.NewConfigManager(cfgpath, cfg),
 				)

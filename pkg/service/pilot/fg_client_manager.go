@@ -7,8 +7,12 @@ package pilot
 import (
 	"fmt"
 	"math/rand"
+	"net/rpc"
 	"sort"
 	"sync"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/frontgate"
@@ -16,41 +20,41 @@ import (
 )
 
 type FrontgateClientManager struct {
-	clientMap map[string][]*fgClient
+	clientMap map[string][]*FrontgateClient
 	sync.Mutex
 }
 
-type fgClient struct {
-	info   *pbtypes.FrontgateConfig
-	client *pbfrontgate.FrontgateServiceClient
+type FrontgateClient struct {
+	info *pbtypes.FrontgateConfig
+	*pbfrontgate.FrontgateServiceClient
 	closed chan bool
 }
 
 func NewFrontgateClientManager() *FrontgateClientManager {
 	return &FrontgateClientManager{
-		clientMap: make(map[string][]*fgClient),
+		clientMap: make(map[string][]*FrontgateClient),
 	}
 }
 
 func (p *FrontgateClientManager) CheckAllClient() {
 	// copy client map
 	p.Lock()
-	clientMap := make(map[string][]*fgClient)
+	clientMap := make(map[string][]*FrontgateClient)
 	for id, cs := range p.clientMap {
-		clientMap[id] = append([]*fgClient{}, cs...)
+		clientMap[id] = append([]*FrontgateClient{}, cs...)
 	}
 	p.Unlock()
 
 	var (
-		validClinetMap    = map[string]*fgClient{}
-		invalidClientMap  = map[string]*fgClient{}
+		validClinetMap    = map[string]*FrontgateClient{}
+		invalidClientMap  = map[string]*FrontgateClient{}
 		invalidClientKeys []string
 	)
 
 	// ping frontgate
 	for id, cs := range clientMap {
 		for _, c := range cs {
-			if _, err := c.client.HeartBeat(&pbtypes.Empty{}); err != nil {
+			if _, err := c.HeartBeat(&pbtypes.Empty{}); err != nil {
 				invalidClientKeys = append(invalidClientKeys, c.info.Id+c.info.NodeId)
 				invalidClientMap[c.info.Id+c.info.NodeId] = c
 				p.CloseClient(id, c.info.NodeId)
@@ -71,24 +75,24 @@ func (p *FrontgateClientManager) CheckAllClient() {
 	}
 }
 
-func (p *FrontgateClientManager) GetClient(id string) (*pbfrontgate.FrontgateServiceClient, error) {
+func (p *FrontgateClientManager) GetClient(id string) (*FrontgateClient, error) {
 	p.Lock()
 	defer p.Unlock()
 
 	if cs := p.clientMap[id]; len(cs) > 0 {
-		return cs[rand.Intn(len(cs))].client, nil
+		return cs[rand.Intn(len(cs))], nil
 	}
 
 	return nil, fmt.Errorf("not found")
 }
 
-func (p *FrontgateClientManager) GetNodeClient(id, nodeId string) (*pbfrontgate.FrontgateServiceClient, error) {
+func (p *FrontgateClientManager) GetNodeClient(id, nodeId string) (*FrontgateClient, error) {
 	p.Lock()
 	defer p.Unlock()
 
 	for _, cs := range p.clientMap[id] {
 		if cs.info.GetNodeId() == nodeId {
-			return cs.client, nil
+			return cs, nil
 		}
 	}
 
@@ -101,8 +105,8 @@ func (p *FrontgateClientManager) PutClient(c *pbfrontgate.FrontgateServiceClient
 
 	logger.Info("frontgate (%s/%s) online", info.Id, info.NodeId)
 
-	client := &fgClient{
-		client: c,
+	client := &FrontgateClient{
+		FrontgateServiceClient: c,
 		info:   info,
 		closed: make(chan bool),
 	}
@@ -120,6 +124,16 @@ func (p *FrontgateClientManager) CloseClient(id, nodeId string) {
 		return
 	}
 
+	if nodeId == "" {
+		for _, t := range cs {
+			if t.info.Id == id {
+				close(t.closed)
+			}
+		}
+		delete(p.clientMap, id)
+		return
+	}
+
 	for i, t := range cs {
 		if t.info.Id == id && t.info.NodeId == nodeId {
 			close(t.closed)
@@ -128,4 +142,12 @@ func (p *FrontgateClientManager) CloseClient(id, nodeId string) {
 			return
 		}
 	}
+}
+
+func (_ *FrontgateClientManager) IsFrontgateShutdownError(err error) bool {
+	if err == nil || status.Code(err) != codes.Unknown {
+		return false
+	}
+
+	return err.Error() == rpc.ErrShutdown.Error()
 }

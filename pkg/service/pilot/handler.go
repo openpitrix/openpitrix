@@ -44,6 +44,12 @@ func (p *Server) GetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateI
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
 	reply, err := client.GetFrontgateConfig(&pbtypes.Empty{})
 	if err != nil {
 		logger.Warn("%+v", err)
@@ -61,6 +67,12 @@ func (p *Server) SetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateC
 		logger.Warn("%+v", err)
 		return nil, err
 	}
+
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
 
 	reply, err := client.SetFrontgateConfig(arg)
 	if err != nil {
@@ -80,6 +92,12 @@ func (p *Server) GetDroneConfig(ctx context.Context, arg *pbtypes.DroneEndpoint)
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
 	reply, err := client.GetDroneConfig(arg)
 	if err != nil {
 		logger.Warn("%+v", err)
@@ -96,6 +114,12 @@ func (p *Server) SetDroneConfig(ctx context.Context, arg *pbtypes.SetDroneConfig
 		logger.Warn("%+v", err)
 		return nil, err
 	}
+
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
 
 	_, err = client.SetDroneConfig(arg)
 	if err != nil {
@@ -133,6 +157,12 @@ func (p *Server) GetConfdConfig(ctx context.Context, arg *pbtypes.ConfdEndpoint)
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
 	reply, err := client.GetConfdConfig(&pbtypes.ConfdEndpoint{
 		DroneIp:   arg.DroneIp,
 		DronePort: arg.DronePort,
@@ -153,6 +183,12 @@ func (p *Server) IsConfdRunning(ctx context.Context, arg *pbtypes.DroneEndpoint)
 		logger.Warn("%+v", err)
 		return nil, err
 	}
+
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
 
 	reply, err := client.IsConfdRunning(&pbtypes.ConfdEndpoint{
 		DroneIp:   arg.DroneIp,
@@ -175,6 +211,12 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.DroneEndpoint) (*p
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
 	_, err = client.StartConfd(&pbtypes.ConfdEndpoint{
 		DroneIp:   arg.DroneIp,
 		DronePort: arg.DronePort,
@@ -195,6 +237,12 @@ func (p *Server) StopConfd(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pb
 		logger.Warn("%+v", err)
 		return nil, err
 	}
+
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
 
 	_, err = client.StopConfd(&pbtypes.ConfdEndpoint{
 		DroneIp:   arg.DroneIp,
@@ -217,6 +265,12 @@ func (p *Server) RegisterMetadata(ctx context.Context, arg *pbtypes.SubTask_Regi
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
 	_, err = client.RegisterMetadata(arg)
 	if err != nil {
 		logger.Warn("%+v", err)
@@ -234,6 +288,12 @@ func (p *Server) DeregisterMetadata(ctx context.Context, arg *pbtypes.SubTask_De
 		logger.Warn("%+v", err)
 		return nil, err
 	}
+
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
 
 	_, err = client.DeregisterMetadata(arg)
 	if err != nil {
@@ -253,6 +313,12 @@ func (p *Server) RegisterCmd(ctx context.Context, arg *pbtypes.SubTask_RegisterC
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
 	_, err = client.RegisterCmd(arg)
 	if err != nil {
 		logger.Warn("%+v", err)
@@ -270,6 +336,12 @@ func (p *Server) DeregisterCmd(ctx context.Context, arg *pbtypes.SubTask_Deregis
 		logger.Warn("%+v", err)
 		return nil, err
 	}
+
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
 
 	_, err = client.DeregisterCmd(arg)
 	if err != nil {
@@ -435,6 +507,12 @@ func (p *Server) PingFrontgate(ctx context.Context, arg *pbtypes.FrontgateId) (*
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
 	_, err = client.PingFrontgate(&pbtypes.Empty{})
 	if err != nil {
 		logger.Warn("%+v", err)
@@ -453,6 +531,12 @@ func (p *Server) PingFrontgateNode(ctx context.Context, arg *pbtypes.FrontgateNo
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
 	_, err = client.PingFrontgateNode(&pbtypes.Empty{})
 	if err != nil {
 		logger.Warn("%+v", err)
@@ -470,6 +554,12 @@ func (p *Server) PingDrone(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pb
 		logger.Warn("%+v", err)
 		return nil, err
 	}
+
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
 
 	_, err = client.PingDrone(&pbtypes.DroneEndpoint{
 		FrontgateId: arg.FrontgateId,
@@ -496,6 +586,12 @@ func (p *Server) RunCommandOnFrontgateNode(ctx context.Context, arg *pbtypes.Run
 		return nil, err
 	}
 
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
 	reply, err := client.RunCommand(arg)
 	if err != nil {
 		logger.Warn("%+v", err)
@@ -513,6 +609,12 @@ func (p *Server) RunCommandOnDrone(ctx context.Context, arg *pbtypes.RunCommandO
 		logger.Warn("%+v", err)
 		return nil, err
 	}
+
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
 
 	reply, err := client.RunCommandOnDrone(arg)
 	if err != nil {

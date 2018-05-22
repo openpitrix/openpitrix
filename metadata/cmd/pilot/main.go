@@ -23,6 +23,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/service/pilot"
 	"openpitrix.io/openpitrix/pkg/service/pilot/pilotutil"
+	"openpitrix.io/openpitrix/pkg/util/pathutil"
 )
 
 func main() {
@@ -71,7 +72,8 @@ EXAMPLE:
 			Usage: "show pilot service info",
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				client, conn, err := pilotutil.DialPilotService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -98,7 +100,8 @@ EXAMPLE:
 			ArgsUsage: "[regexp]",
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				client, conn, err := pilotutil.DialPilotService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -159,7 +162,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				client, conn, err := pilotutil.DialPilotService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -249,7 +253,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				client, conn, err := pilotutil.DialPilotService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -325,7 +330,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				client, conn, err := pilotutil.DialPilotService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -379,7 +385,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				client, conn, err := pilotutil.DialPilotService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -423,7 +430,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				client, conn, err := pilotutil.DialPilotService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -467,7 +475,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				client, conn, err := pilotutil.DialPilotService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -504,7 +513,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				client, conn, err := pilotutil.DialPilotService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -538,7 +548,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
 				// load task json
 				task := func() *pbtypes.SubTaskMessage {
@@ -579,7 +590,9 @@ EXAMPLE:
 			Name:  "serve",
 			Usage: "run as pilot service",
 			Action: func(c *cli.Context) {
-				cfg := pilotutil.MustLoadPilotConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
+
 				pilot.Serve(cfg)
 				return
 			},

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -26,6 +27,10 @@ type ConfigManager struct {
 }
 
 func NewConfigManager(path string, cfg *pbtypes.FrontgateConfig, opts ...Options) *ConfigManager {
+	if !filepath.IsAbs(path) {
+		logger.Error("NewConfigManager: path is not abs path", path)
+	}
+
 	if cfg != nil {
 		cfg = proto.Clone(cfg).(*pbtypes.FrontgateConfig)
 	} else {
@@ -99,7 +104,7 @@ func (p *ConfigManager) Save() error {
 
 	// backup old config
 	bakpath := p.path + time.Now().Format(".20060102.bak")
-	if err := os.Rename(p.path, bakpath); err != nil {
+	if err := os.Rename(p.path, bakpath); err != nil && !os.IsNotExist(err) {
 		logger.Warn("%+v", err)
 		return err
 	}

@@ -20,6 +20,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/droneutil"
+	"openpitrix.io/openpitrix/pkg/util/pathutil"
 )
 
 func main() {
@@ -81,7 +82,8 @@ EXAMPLE:
 			Usage: "show drone service info",
 
 			Action: func(c *cli.Context) {
-				cfg := droneutil.MustLoadDroneConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := droneutil.MustLoadDroneConfig(cfgpath)
 
 				client, conn, err := droneutil.DialDroneService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -108,7 +110,8 @@ EXAMPLE:
 			ArgsUsage: "[regexp]",
 
 			Action: func(c *cli.Context) {
-				cfg := droneutil.MustLoadDroneConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := droneutil.MustLoadDroneConfig(cfgpath)
 
 				client, conn, err := droneutil.DialDroneService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -173,7 +176,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := droneutil.MustLoadDroneConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := droneutil.MustLoadDroneConfig(cfgpath)
 
 				client, conn, err := droneutil.DialDroneService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -236,7 +240,8 @@ EXAMPLE:
 			ArgsUsage: "key",
 
 			Action: func(c *cli.Context) {
-				cfg := droneutil.MustLoadDroneConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := droneutil.MustLoadDroneConfig(cfgpath)
 
 				client, conn, err := droneutil.DialDroneService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -274,7 +279,8 @@ EXAMPLE:
 			Name:  "confd-status",
 			Usage: "get confd service status",
 			Action: func(c *cli.Context) {
-				cfg := droneutil.MustLoadDroneConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := droneutil.MustLoadDroneConfig(cfgpath)
 
 				client, conn, err := droneutil.DialDroneService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -317,7 +323,8 @@ EXAMPLE:
 			},
 
 			Action: func(c *cli.Context) {
-				cfg := droneutil.MustLoadDroneConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := droneutil.MustLoadDroneConfig(cfgpath)
 
 				client, conn, err := droneutil.DialDroneService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -341,7 +348,8 @@ EXAMPLE:
 			Name:  "confd-stop",
 			Usage: "stop confd service",
 			Action: func(c *cli.Context) {
-				cfg := droneutil.MustLoadDroneConfig(c.GlobalString("config"))
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := droneutil.MustLoadDroneConfig(cfgpath)
 
 				client, conn, err := droneutil.DialDroneService(
 					context.Background(), cfg.Host, int(cfg.ListenPort),
@@ -366,8 +374,8 @@ EXAMPLE:
 			Name:  "serve",
 			Usage: "run as drone service",
 			Action: func(c *cli.Context) {
-				cfgpath := c.GlobalString("config")
-				cfgConfdPath := c.GlobalString("config-confd")
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfgConfdPath := pathutil.MakeAbsPath(c.GlobalString("config-confd"))
 
 				cfg := droneutil.MustLoadDroneConfig(cfgpath)
 				cfgManager := drone.NewConfigManager(cfgpath, cfg)

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -36,6 +37,10 @@ type ConfdServer struct {
 }
 
 func NewConfdServer(cfgpath string) *ConfdServer {
+	if !filepath.IsAbs(cfgpath) {
+		logger.Error("NewConfdServer: cfgpath is not abs path", cfgpath)
+	}
+
 	return &ConfdServer{
 		cfgpath: cfgpath,
 	}
@@ -202,7 +207,7 @@ func (p *ConfdServer) Save() error {
 
 	// backup old config
 	bakpath := p.cfgpath + time.Now().Format(".20060102.bak")
-	if err := os.Rename(p.cfgpath, bakpath); err != nil {
+	if err := os.Rename(p.cfgpath, bakpath); err != nil && !os.IsNotExist(err) {
 		logger.Warn("%+v", err)
 		return err
 	}
