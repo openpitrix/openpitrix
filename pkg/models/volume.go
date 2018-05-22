@@ -24,7 +24,7 @@ type Volume struct {
 	Zone             string
 	RuntimeId        string
 	TargetJobId      string // target cloud job id
-	Timeout          int
+	Timeout          int    `json:"timeout"`
 }
 
 func NewVolume(data string) (*Volume, error) {

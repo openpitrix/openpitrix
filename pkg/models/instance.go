@@ -30,7 +30,7 @@ type Instance struct {
 	TransitionStatus string
 	RuntimeId        string
 	TargetJobId      string // target cloud job id
-	Timeout          int
+	Timeout          int    `json:"timeout"`
 }
 
 func NewInstance(data string) (*Instance, error) {

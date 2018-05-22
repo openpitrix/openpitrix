@@ -79,7 +79,7 @@ const (
 	WaitFrontgateServiceInterval = 10 * time.Second
 	WaitDroneServiceInterval     = 10 * time.Second
 
-	TimeoutName           = "Timeout"
+	TimeoutName           = "timeout"
 	DefaultServiceTimeout = 600
 )
 
