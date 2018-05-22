@@ -21,5 +21,4 @@ before_script:
   - docker --version
 
 script:
-  - make fmt-check
   - make ci-test

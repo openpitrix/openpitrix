@@ -165,6 +165,7 @@ e2e-test:
 
 .PHONY: ci-test
 ci-test:
+	make fmt-check
 	# build with production Dockerfile, not dev version
 	docker build -t $(TARG.Name) -f ./Dockerfile .
 	docker build -t $(TARG.Name):metadata -f ./Dockerfile.metadata .
