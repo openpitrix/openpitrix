@@ -52,6 +52,34 @@ func (a *Client) DescribeTasks(params *DescribeTasksParams) (*DescribeTasksOK, e
 
 }
 
+/*
+RetryTasks retries tasks
+*/
+func (a *Client) RetryTasks(params *RetryTasksParams) (*RetryTasksOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewRetryTasksParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "RetryTasks",
+		Method:             "POST",
+		PathPattern:        "/v1/tasks/retry",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &RetryTasksReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*RetryTasksOK), nil
+
+}
+
 // SetTransport changes the transport on the client
 func (a *Client) SetTransport(transport runtime.ClientTransport) {
 	a.transport = transport

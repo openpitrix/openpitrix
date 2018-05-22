@@ -155,6 +155,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := runtimeclient.NewRuntime(runtimeId)
 	if err != nil {
+		logger.Error("CreateCluster failed: %+v", err)
 		return nil, err
 	}
 
@@ -162,6 +163,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	if reflectutil.In(runtime.Provider, constants.VmBaseProviders) {
 		_, err = pi.Global().GlobalConfig().GetRuntimeImageId(runtime.RuntimeUrl, runtime.Zone)
 		if err != nil {
+			logger.Error("CreateCluster failed: %+v", err)
 			return nil, err
 		}
 	}
@@ -220,6 +222,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 
 	err = register.RegisterClusterWrapper()
 	if err != nil {
+		logger.Error("CreateCluster failed: %+v", err)
 		return nil, err
 	}
 
@@ -238,6 +241,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
+		logger.Error("Send job [%s] failed: %+v", jobId, err)
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
 	res := &pb.CreateClusterResponse{
@@ -253,6 +257,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	clusterId := req.GetCluster().GetClusterId().GetValue()
 	_, err := getCluster(clusterId, s.UserId)
 	if err != nil {
+		logger.Error("ModifyCluster [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.Internal, "Get cluster [%s] failed", clusterId)
 	}
 
@@ -265,6 +270,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		Where(db.Eq("cluster_id", clusterId)).
 		Exec()
 	if err != nil {
+		logger.Error("ModifyCluster [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] failed: %+v", clusterId, err)
 	}
 
@@ -280,6 +286,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("node_id", nodeId)).
 			Exec()
 		if err != nil {
+			logger.Error("ModifyCluster [%s] node [%s] failed: %+v", clusterId, nodeId, err)
 			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] node [%s] failed: %+v", clusterId, nodeId, err)
 		}
 	}
@@ -296,6 +303,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("role", role)).
 			Exec()
 		if err != nil {
+			logger.Error("ModifyCluster [%s] role [%s] failed: %+v", clusterId, role, err)
 			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] failed: %+v", clusterId, role, err)
 		}
 	}
@@ -312,6 +320,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("role", role)).
 			Exec()
 		if err != nil {
+			logger.Error("ModifyCluster [%s] role [%s] common failed: %+v", clusterId, role, err)
 			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] common failed: %+v", clusterId, role, err)
 		}
 	}
@@ -328,6 +337,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("name", name)).
 			Exec()
 		if err != nil {
+			logger.Error("ModifyCluster [%s] name [%s] link failed: %+v", clusterId, name, err)
 			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] name [%s] link failed: %+v", clusterId, name, err)
 		}
 	}
@@ -347,6 +357,8 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("loadbalancer_listener_id", listenerId)).
 			Exec()
 		if err != nil {
+			logger.Error("ModifyCluster [%s] role [%s] loadbalancer listener id [%s] failed: %+v",
+				clusterId, role, listenerId, err)
 			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] loadbalancer listener id [%s] failed: %+v",
 				clusterId, role, listenerId, err)
 		}
@@ -364,6 +376,7 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 	nodeId := req.GetClusterNode().GetNodeId().GetValue()
 	_, err := getClusterNode(nodeId, s.UserId)
 	if err != nil {
+		logger.Error("Get cluster node [%s] failed", nodeId)
 		return nil, status.Errorf(codes.Internal, "Get cluster node [%s] failed", nodeId)
 	}
 
@@ -374,6 +387,7 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 		Where(db.Eq("node_id", nodeId)).
 		Exec()
 	if err != nil {
+		logger.Error("ModifyClusterNode [%s] failed: %+v", nodeId, err)
 		return nil, status.Errorf(codes.Internal, "ModifyClusterNode [%s] failed: %+v", nodeId, err)
 	}
 
@@ -394,6 +408,7 @@ func (p *Server) AddTableClusterNodes(ctx context.Context, req *pb.AddTableClust
 		}
 		err := register.RegisterClusterNode(node)
 		if err != nil {
+			logger.Error("AddTableClusterNodes: %+v", err)
 			return nil, status.Errorf(codes.Internal, "AddTableClusterNodes: %+v", err)
 		}
 	}
@@ -408,6 +423,7 @@ func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTabl
 			Where(db.Eq("node_id", nodeId)).
 			Exec()
 		if err != nil {
+			logger.Error("DeleteTableClusterNodes: %+v", err)
 			return nil, status.Errorf(codes.Internal, "DeleteTableClusterNodes: %+v", err)
 		}
 	}
@@ -423,18 +439,21 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive, constants.StatusStopped, constants.StatusPending})
 		if err != nil {
+			logger.Error("DeleteClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
-			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+			logger.Error("Get cluster [%s] failed: %+v", clusterId, err)
+			return nil, status.Errorf(codes.PermissionDenied, "Get cluster [%s] failed: %+v", clusterId, err)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
+			logger.Error("DeleteClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 		newJob := models.NewJob(
@@ -450,6 +469,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
+			logger.Error("Send job [%s] failed: %+v", jobId, err)
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
 		jobIds = append(jobIds, jobId)
@@ -469,10 +489,12 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 	versionId := req.GetVersionId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusStopped})
 	if err != nil {
+		logger.Error("UpgradeCluster [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
+		logger.Error("UpgradeCluster [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
@@ -480,6 +502,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
+		logger.Error("UpgradeCluster [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 
@@ -496,6 +519,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
+		logger.Error("UpgradeCluster [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
 
@@ -516,6 +540,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
+		logger.Error("RollbackCluster [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
@@ -523,6 +548,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
+		logger.Error("RollbackCluster [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 
@@ -539,6 +565,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
+		logger.Error("RollbackCluster [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
 
@@ -555,10 +582,12 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 	clusterId := req.GetClusterId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
+		logger.Error("ResizeCluster [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
+		logger.Error("ResizeCluster [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
@@ -566,6 +595,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
+		logger.Error("ResizeCluster [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 
@@ -582,6 +612,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
+		logger.Error("ResizeCluster [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
 
@@ -598,10 +629,12 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	clusterId := req.GetClusterId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
+		logger.Error("AddClusterNodes [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
+		logger.Error("AddClusterNodes [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
@@ -609,6 +642,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
+		logger.Error("AddClusterNodes [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 
@@ -625,6 +659,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
+		logger.Error("AddClusterNodes [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
 
@@ -641,10 +676,12 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 	clusterId := req.GetClusterId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
+		logger.Error("DeleteClusterNodes [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
+		logger.Error("DeleteClusterNodes [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
@@ -652,6 +689,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
+		logger.Error("DeleteClusterNodes [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 
@@ -668,6 +706,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
+		logger.Error("DeleteClusterNodes [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
 
@@ -684,10 +723,12 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	clusterId := req.GetClusterId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
+		logger.Error("UpdateClusterEnv [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
+		logger.Error("UpdateClusterEnv [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 	}
 
@@ -695,6 +736,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
+		logger.Error("UpdateClusterEnv [%s] failed: %+v", clusterId, err)
 		return nil, err
 	}
 
@@ -711,6 +753,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
+		logger.Error("UpdateClusterEnv [%s] failed: %+v", clusterId, err)
 		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 	}
 
@@ -734,10 +777,12 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 	_, err := query.Load(&clusters)
 	if err != nil {
 		// TODO: err_code should be implementation
+		logger.Error("DescribeClusters failed: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeClusters failed: %+v", err)
 	}
 	count, err := query.Count()
 	if err != nil {
+		logger.Error("DescribeClusters failed: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeClusters failed: %+v", err)
 	}
 
@@ -746,6 +791,7 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		clusterId := cluster.ClusterId
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
+			logger.Error("DescribeClusters failed: %+v", err)
 			return nil, status.Errorf(codes.Internal, "DescribeClusters failed: %+v", err)
 		}
 		pbClusters = append(pbClusters, models.ClusterWrapperToPb(clusterWrapper))
@@ -771,6 +817,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		Where(manager.BuildFilterConditions(req, models.ClusterNodeTableName))
 	_, err := query.Load(&clusterNodes)
 	if err != nil {
+		logger.Error("DescribeClusterNodes failed: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeClusterNodes: %+v", err)
 	}
 
@@ -788,6 +835,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 			Where(db.Eq("role", role)).
 			LoadOne(&clusterCommon)
 		if err != nil {
+			logger.Error("DescribeClusterNodes failed: %+v", err)
 			return nil, status.Errorf(codes.Internal, "DescribeClusterNodes [%s] common failed: %+v", nodeId, err)
 		}
 
@@ -798,6 +846,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 			Where(db.Eq("role", role)).
 			LoadOne(&clusterRole)
 		if err != nil {
+			logger.Error("DescribeClusterNodes failed: %+v", err)
 			return nil, status.Errorf(codes.Internal, "DescribeClusterNodes [%s] role failed: %+v", nodeId, err)
 		}
 
@@ -807,6 +856,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 
 	count, err := query.Count()
 	if err != nil {
+		logger.Error("DescribeClusterNodes failed: %+v", err)
 		return nil, status.Errorf(codes.Internal, "DescribeClusterNodes: %+v", err)
 	}
 
@@ -825,10 +875,12 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 		if err != nil {
+			logger.Error("StopClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
+			logger.Error("StopClusters [%s] failed: %+v", clusterId, err)
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
@@ -836,6 +888,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
+			logger.Error("StopClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 
@@ -852,6 +905,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
+			logger.Error("StopClusters [%s] failed: %+v", clusterId, err)
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
 		jobIds = append(jobIds, jobId)
@@ -871,10 +925,12 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusStopped})
 		if err != nil {
+			logger.Error("StartClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
+			logger.Error("StartClusters [%s] failed: %+v", clusterId, err)
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
@@ -882,6 +938,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
+			logger.Error("StartClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 
@@ -907,6 +964,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
+			logger.Error("StartClusters [%s] failed: %+v", clusterId, err)
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
 		jobIds = append(jobIds, jobId)
@@ -926,10 +984,12 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusDeleted})
 		if err != nil {
+			logger.Error("RecoverClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
+			logger.Error("RecoverClusters [%s] failed: %+v", clusterId, err)
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
@@ -937,6 +997,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
+			logger.Error("RecoverClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 
@@ -962,6 +1023,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
+			logger.Error("RecoverClusters [%s] failed: %+v", clusterId, err)
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
 		jobIds = append(jobIds, jobId)
@@ -981,10 +1043,12 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusDeleted})
 		if err != nil {
+			logger.Error("CeaseClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
+			logger.Error("CeaseClusters [%s] failed: %+v", clusterId, err)
 			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
 		}
 
@@ -992,6 +1056,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
+			logger.Error("CeaseClusters [%s] failed: %+v", clusterId, err)
 			return nil, err
 		}
 
@@ -1008,6 +1073,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
+			logger.Error("CeaseClusters [%s] failed: %+v", clusterId, err)
 			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
 		}
 		jobIds = append(jobIds, jobId)

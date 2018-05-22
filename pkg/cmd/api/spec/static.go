@@ -1786,6 +1786,33 @@ var Files = map[string]string{
           "TaskManager"
         ]
       }
+    },
+    "/v1/tasks/retry": {
+      "post": {
+        "summary": "retry tasks",
+        "operationId": "RetryTasks",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRetryTasksResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRetryTasksRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TaskManager"
+        ]
+      }
     }
   },
   "definitions": {
@@ -3652,6 +3679,28 @@ var Files = map[string]string{
           "type": "integer",
           "format": "int64"
         },
+        "task_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixTask"
+          }
+        }
+      }
+    },
+    "openpitrixRetryTasksRequest": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixRetryTasksResponse": {
+      "type": "object",
+      "properties": {
         "task_set": {
           "type": "array",
           "items": {
