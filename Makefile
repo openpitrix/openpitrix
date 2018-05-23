@@ -32,16 +32,15 @@ empty:=
 space:= $(empty) $(empty)
 CMDS=$(subst $(comma),$(space),$(CMD))
 
-.PHONY: all
-all: generate build
-
 .PHONY: help
-help:
-# TODO: update help info to last version
-	@echo "TODO"
+help: ## This help
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_%-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+.PHONY: all
+all: generate build ## Run generate and build
 
 .PHONY: init-vendor
-init-vendor:
+init-vendor: ## Initialize vendor and add dependence
 	@if [[ ! -f "$$(which govendor)" ]]; then \
 		go get -u github.com/kardianos/govendor; \
 	fi
@@ -50,7 +49,7 @@ init-vendor:
 	@echo "init-vendor done"
 
 .PHONY: update-vendor
-update-vendor:
+update-vendor: ## Update dependence
 	@if [[ ! -f "$$(which govendor)" ]]; then \
 		go get -u github.com/kardianos/govendor; \
 	fi
@@ -59,28 +58,28 @@ update-vendor:
 	@echo "update-vendor done"
 
 .PHONY: update-builder
-update-builder:
+update-builder: ## Pull openpitrix-builder image
 	docker pull openpitrix/openpitrix-builder
 	@echo "update-builder done"
 
 .PHONY: generate-in-local
-generate-in-local:
+generate-in-local: ## Generate code from protobuf file in local
 	cd ./api && make generate
 	cd ./pkg/cmd/api && make
 	go generate ./pkg/version/
 
 .PHONY: generate
-generate:
+generate: ## Generate code from protobuf file in docker
 	$(RUN_IN_DOCKER) make generate-in-local
 	@echo "generate done"
 
 .PHONY: fmt-all
-fmt-all:
+fmt-all: ## Format all code
 	$(RUN_IN_DOCKER) $(GO_FMT) $(GO_FILES)
 	@echo "fmt done"
 
 .PHONY: fmt
-fmt:
+fmt: ## Format changed files
 	$(call get_diff_files)
 	$(if $(DIFF_FILES), \
 		$(RUN_IN_DOCKER) $(GO_FMT) ${DIFF_FILES}, \
@@ -89,18 +88,18 @@ fmt:
 	@echo "fmt done"
 
 .PHONY: fmt-check
-fmt-check: fmt-all
+fmt-check: fmt-all ## Check whether all files be formatted
 	$(call get_diff_files)
 	$(if $(DIFF_FILES), \
 		exit 2 \
 	)
 
-.PHONY: buildflyway
-buildflyway:
+.PHONY: build-flyway
+build-flyway: ## Build custom flyway image
 	docker build -t $(TARG.Name):flyway -f ./Dockerfile.flyway .
 
 .PHONY: build
-build: fmt buildflyway
+build: fmt build-flyway ## Build all openpitrix images
 	mkdir -p ./tmp/bin
 	$(call get_build_flags)
 	$(RUN_IN_DOCKER) time go install -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
@@ -110,40 +109,35 @@ build: fmt buildflyway
 	@echo "build done"
 
 .PHONY: compose-update
-compose-update: build compose-up compose-migrate-db
+compose-update: build compose-up compose-migrate-db ## Update service in docker compose
 	@echo "compose-update done"
 
 .PHONY: compose-update-service-without-deps
-compose-update-service-without-deps: build
+compose-update-service-without-deps: build ## Update service in docker compose without dependence
 	docker-compose up -d --no-dep $(COMPOSE_APP_SERVICES)
 	@echo "compose-update-service-without-deps done"
 
 .PHONY: compose-logs-f
-compose-logs-f:
+compose-logs-f: ## Follow openpitrix log in docker compose
 	docker-compose logs -f $(COMPOSE_APP_SERVICES)
 
 .PHONY: compose-migrate-db
-compose-migrate-db:
+compose-migrate-db: ## Migrate db in docker compose
 	docker-compose exec openpitrix-db bash -c "cat /docker-entrypoint-initdb.d/*.sql | mysql -uroot -ppassword"
 	docker-compose up $(COMPOSE_DB_CTRL)
 
-compose-update-%:
+compose-update-%: ## Update "openpitrix-%" service in docker compose
 	CMD=$* make build
 	docker-compose up -d --no-deps openpitrix-$*
 	@echo "compose-update done"
 
 .PHONY: compose-up
-compose-up:
+compose-up: ## Launch openpitrix in docker compose
 	docker-compose up -d openpitrix-db && sleep 20 && docker-compose up -d
 	@echo "compose-up done"
 
-.PHONY: compose-up-app
-compose-up-app:
-	docker-compose -f docker-compose-app.yml up -d openpitrix-db && sleep 20 && docker-compose -f docker-compose-app.yml up -d
-	@echo "compose-up app service done"
-
 .PHONY: compose-down
-compose-down:
+compose-down: ## Shutdown docker compose
 	docker-compose down
 	@echo "compose-down done"
 
@@ -152,19 +146,19 @@ release:
 	@echo "TODO"
 
 .PHONY: test
-test:
+test: ## Run all tests
 	make unit-test
 	make e2e-test
 	@echo "test done"
 
 
 .PHONY: e2e-test
-e2e-test:
+e2e-test: ## Run integration tests
 	go test -v -a -tags="integration" ./test/...
 	@echo "e2e-test done"
 
 .PHONY: ci-test
-ci-test:
+ci-test: ## Run CI tests
 	make fmt-check
 	# build with production Dockerfile, not dev version
 	docker build -t $(TARG.Name) -f ./Dockerfile .
@@ -176,11 +170,11 @@ ci-test:
 	@echo "ci-test done"
 
 .PHONY: clean
-clean:
+clean: ## Clean generated version file
 	-make -C ./pkg/version clean
 	@echo "ok"
 
 .PHONY: unit-test
-unit-test:
+unit-test: ## Run unit tests
 	$(DB_TEST) $(ETCD_TEST) go test -v -a -tags="etcd db" ./...
 	@echo "unit-test done"
