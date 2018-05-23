@@ -150,6 +150,7 @@ func (p *Processor) Go(cfg *Config, client BackendClient, opts ...Options) *Call
 
 func (p *Processor) Run(cfg *Config, client BackendClient, opts ...Options) error {
 	if err := cfg.Valid(); err != nil {
+		GetLogger().Error(err)
 		return err
 	}
 	if client == nil {
@@ -157,7 +158,12 @@ func (p *Processor) Run(cfg *Config, client BackendClient, opts ...Options) erro
 	}
 
 	call := <-p.Go(cfg, client, opts...).Done
-	return call.Error
+	if err := call.Error; err != nil {
+		GetLogger().Error(err)
+		return err
+	}
+
+	return nil
 }
 
 func (p *Processor) Close() error {

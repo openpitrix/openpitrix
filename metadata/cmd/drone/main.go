@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/urfave/cli"
 
@@ -382,7 +383,18 @@ EXAMPLE:
 
 				confdServer := drone.NewConfdServer(cfgConfdPath)
 				if cfgConfd, _ := droneutil.LoadConfdConfig(cfgConfdPath); cfgConfd != nil {
-					confdServer.SetConfig(cfgConfd)
+					cfg := cfgManager.Get()
+					fnHookKeyAdjuster := func(absKey string) (realKey string) {
+						if absKey == "/self" {
+							return "/" + cfg.ConfdSelfHost
+						}
+						if strings.HasPrefix(absKey, "/self/") {
+							return "/" + cfg.ConfdSelfHost + absKey[len("/self/")-1:]
+						}
+						return absKey
+					}
+
+					confdServer.SetConfig(cfgConfd, fnHookKeyAdjuster)
 				}
 
 				drone.Serve(cfgManager, confdServer)

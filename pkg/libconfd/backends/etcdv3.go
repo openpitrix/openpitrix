@@ -35,6 +35,8 @@ func init() {
 
 type _EtcdClient struct {
 	cfg clientv3.Config
+
+	hookKeyAdjuster func(key string) (realKey string)
 }
 
 func NewEtcdClient(cfg *libconfd.BackendConfig) (libconfd.BackendClient, error) {
@@ -81,7 +83,12 @@ func NewEtcdClient(cfg *libconfd.BackendConfig) (libconfd.BackendClient, error) 
 		etcdConfig.TLS = tlsConfig
 	}
 
-	return &_EtcdClient{etcdConfig}, nil
+	p := &_EtcdClient{
+		cfg:             etcdConfig,
+		hookKeyAdjuster: cfg.HookKeyAdjuster,
+	}
+
+	return p, nil
 }
 
 func (c *_EtcdClient) Type() string {
@@ -94,6 +101,10 @@ func (c *_EtcdClient) WatchEnabled() bool {
 
 // GetValues queries etcd for keys prefixed by prefix.
 func (c *_EtcdClient) GetValues(keys []string) (map[string]string, error) {
+	if c.hookKeyAdjuster != nil {
+		return c.getValues_hookKeyAdjuster(keys)
+	}
+
 	vars := make(map[string]string)
 
 	client, err := clientv3.New(c.cfg)
@@ -111,6 +122,35 @@ func (c *_EtcdClient) GetValues(keys []string) (map[string]string, error) {
 		}
 		for _, ev := range resp.Kvs {
 			vars[string(ev.Key)] = string(ev.Value)
+		}
+	}
+	return vars, nil
+}
+
+func (c *_EtcdClient) getValues_hookKeyAdjuster(_keys []string) (map[string]string, error) {
+	var realKeysMap = map[string]string{}
+	for _, key := range _keys {
+		readKey := c.hookKeyAdjuster(key)
+		realKeysMap[readKey] = key
+	}
+
+	vars := make(map[string]string)
+
+	client, err := clientv3.New(c.cfg)
+	if err != nil {
+		return vars, err
+	}
+	defer client.Close()
+
+	for key := range realKeysMap {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(3)*time.Second)
+		resp, err := client.Get(ctx, key, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+		cancel()
+		if err != nil {
+			return vars, err
+		}
+		for _, ev := range resp.Kvs {
+			vars[realKeysMap[string(ev.Key)]] = string(ev.Value)
 		}
 	}
 	return vars, nil

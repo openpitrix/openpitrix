@@ -21,6 +21,8 @@ type BackendConfig struct {
 	ClientCAKeys string `toml:"client_ca_keys" json:"client_ca_keys"`
 	ClientCert   string `toml:"client_cert" json:"client_cert"`
 	ClientKey    string `toml:"client_key" json:"client_key"`
+
+	HookKeyAdjuster func(key string) (realKey string) `toml:"-" json:"-"`
 }
 
 func (p *BackendConfig) Clone() *BackendConfig {
