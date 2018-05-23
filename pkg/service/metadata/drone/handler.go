@@ -60,7 +60,18 @@ func (p *Server) GetConfdConfig(ctx context.Context, arg *pbtypes.Empty) (*pbtyp
 func (p *Server) SetConfdConfig(ctx context.Context, arg *pbtypes.ConfdConfig) (*pbtypes.Empty, error) {
 	logger.Info(funcutil.CallerName(1))
 
-	if err := p.confd.SetConfig(arg); err != nil {
+	cfg := p.cfg.Get()
+	fnHookKeyAdjuster := func(absKey string) (realKey string) {
+		if absKey == "/self" {
+			return "/" + cfg.ConfdSelfHost
+		}
+		if strings.HasPrefix(absKey, "/self/") {
+			return "/" + cfg.ConfdSelfHost + absKey[len("/self/")-1:]
+		}
+		return absKey
+	}
+
+	if err := p.confd.SetConfig(arg, fnHookKeyAdjuster); err != nil {
 		logger.Warn("%+v", err)
 		return nil, err
 	}

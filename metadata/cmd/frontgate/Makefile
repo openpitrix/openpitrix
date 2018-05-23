@@ -86,11 +86,19 @@ confd-stop: $(TARG).out
 
 .PHONY: etcd-play
 etcd-play:
+	ETCDCTL_API=3 etcdctl get --prefix ""
+
 	ETCDCTL_API=3 etcdctl put abc abc-value
 	ETCDCTL_API=3 etcdctl put abc/aaa abc/aaa-value
 
 	ETCDCTL_API=3 etcdctl get abc
 	ETCDCTL_API=3 etcdctl get --prefix abc
+	ETCDCTL_API=3 etcdctl get --prefix ""
+
+	ETCDCTL_API=3 etcdctl put /127.0.0.1/msg localhost-msg
+	ETCDCTL_API=3 etcdctl get --prefix ""
+	ETCDCTL_API=3 etcdctl get /127.0.0.1/msg
+
 
 .PHONY: clean
 clean: stop

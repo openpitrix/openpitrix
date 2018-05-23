@@ -64,7 +64,7 @@ func (p *ConfdServer) GetConfig() *pbtypes.ConfdConfig {
 	return &pbtypes.ConfdConfig{}
 }
 
-func (p *ConfdServer) SetConfig(cfg *pbtypes.ConfdConfig) error {
+func (p *ConfdServer) SetConfig(cfg *pbtypes.ConfdConfig, fnHookKeyAdjuster func(key string) (realKey string)) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -77,6 +77,7 @@ func (p *ConfdServer) SetConfig(cfg *pbtypes.ConfdConfig) error {
 	p.cfg = proto.Clone(cfg).(*pbtypes.ConfdConfig)
 	p.config = config
 	p.backendConfig = backendConfig
+	p.backendConfig.HookKeyAdjuster = fnHookKeyAdjuster
 
 	return nil
 }
@@ -110,6 +111,11 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 	if s := p.backendConfig.Type; s != backends.Etcdv3BackendType {
 		logger.Error("ConfdServer: unsupport confd backend: " + s)
 		return fmt.Errorf("drone: unsupport confd backend: %s", s)
+	}
+
+	// apply opts
+	for _, fn := range opts {
+		fn(p.config)
 	}
 
 	backendClient, err := libconfd.NewBackendClient(p.backendConfig)

@@ -67,6 +67,14 @@ confd-stop: $(TARG).out
 	-./$(TARG).out confd-stop
 
 
+etcd-play:
+	ETCDCTL_API=3 etcdctl get /127.0.0.1/msg
+
+	-./$(TARG).out getv /127.0.0.1/msg
+	-./$(TARG).out getv /self/msg
+	-./$(TARG).out getv /msg
+
+
 .PHONY: clean
 clean: stop
 	-rm $(TARG).out
