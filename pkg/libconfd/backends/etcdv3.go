@@ -10,6 +10,7 @@ import (
 	"crypto/x509"
 	"io/ioutil"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/coreos/etcd/clientv3"
@@ -35,6 +36,9 @@ func init() {
 
 type _EtcdClient struct {
 	cfg clientv3.Config
+
+	clientPoolMutex sync.Mutex
+	clientPool      []*clientv3.Client
 
 	hookKeyAdjuster func(key string) (realKey string)
 }
@@ -91,6 +95,56 @@ func NewEtcdClient(cfg *libconfd.BackendConfig) (libconfd.BackendClient, error) 
 	return p, nil
 }
 
+func (c *_EtcdClient) Close() error {
+	c.clientPoolMutex.Lock()
+	defer c.clientPoolMutex.Unlock()
+
+	var lastErr error
+	for _, client := range c.clientPool {
+		if err := client.Close(); err != nil {
+			lastErr = err
+		}
+	}
+	c.clientPool = c.clientPool[:0]
+
+	if lastErr != nil {
+		return lastErr
+	}
+	return nil
+}
+
+func (c *_EtcdClient) getEtcdClient() (*clientv3.Client, error) {
+	c.clientPoolMutex.Lock()
+	defer c.clientPoolMutex.Unlock()
+
+	if n := len(c.clientPool); n > 0 {
+		x := c.clientPool[n-1]
+		c.clientPool = c.clientPool[:n-1]
+		return x, nil
+	}
+
+	client, err := clientv3.New(c.cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	return client, nil
+}
+
+func (c *_EtcdClient) putEtcdClient(x *clientv3.Client) {
+	c.clientPoolMutex.Lock()
+	defer c.clientPoolMutex.Unlock()
+
+	// close client
+	if len(c.clientPool) > 8 {
+		x.Close()
+		return
+	}
+
+	// cache client
+	c.clientPool = append(c.clientPool, x)
+}
+
 func (c *_EtcdClient) Type() string {
 	return Etcdv3BackendType
 }
@@ -107,11 +161,11 @@ func (c *_EtcdClient) GetValues(keys []string) (map[string]string, error) {
 
 	vars := make(map[string]string)
 
-	client, err := clientv3.New(c.cfg)
+	client, err := c.getEtcdClient()
 	if err != nil {
 		return vars, err
 	}
-	defer client.Close()
+	defer c.putEtcdClient(client)
 
 	for _, key := range keys {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(3)*time.Second)
@@ -136,11 +190,11 @@ func (c *_EtcdClient) getValues_hookKeyAdjuster(_keys []string) (map[string]stri
 
 	vars := make(map[string]string)
 
-	client, err := clientv3.New(c.cfg)
+	client, err := c.getEtcdClient()
 	if err != nil {
 		return vars, err
 	}
-	defer client.Close()
+	defer c.putEtcdClient(client)
 
 	for key := range realKeysMap {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(3)*time.Second)

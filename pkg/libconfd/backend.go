@@ -36,6 +36,7 @@ type BackendClient interface {
 	GetValues(keys []string) (map[string]string, error)
 	WatchPrefix(prefix string, keys []string, waitIndex uint64, stopChan chan bool) (uint64, error)
 	WatchEnabled() bool
+	Close() error
 }
 
 func MustNewBackendClient(cfg *BackendConfig, opts ...func(*BackendConfig)) BackendClient {
