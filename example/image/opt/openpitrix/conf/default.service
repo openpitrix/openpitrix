@@ -1,11 +1,11 @@
 [Unit]
 Description=default
-After=syslog.target network.target etcd.target openpitrix.target
+After=syslog.target network.target docker.target etcd.target
 
 [Service]
 User=root
 EnvironmentFile=/opt/openpitrix/conf/openpitrix.conf
-ExecStart=/opt/openpitrix/sbin/start_default.sh $MOUNT_POINT $FILE_NAME $IMAGE
+ExecStart=/opt/openpitrix/sbin/start_default.sh $MOUNT_POINT $FILE_NAME $FILE_CONF $IMAGE
 ExecStop=docker stop default
 Restart=always
 RestartSec=30

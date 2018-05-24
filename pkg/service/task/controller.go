@@ -247,7 +247,20 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				}
 
-			default:
+			case vmbased.ActionRegisterMetadata, vmbased.ActionDeregesterCmd, vmbased.ActionDeregisterMetadata:
+				pbTask := models.TaskToPb(task)
+				_, err := pilotClient.HandleSubtask(ctx,
+					&pbtypes.SubTaskMessage{
+						TaskId:    pbTask.TaskId.GetValue(),
+						Action:    pbTask.TaskAction.GetValue(),
+						Directive: pbTask.Directive.GetValue(),
+					})
+				if err != nil {
+					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+					return err
+				}
+
+			case vmbased.ActionRegisterCmd:
 				pbTask := models.TaskToPb(task)
 				_, err := pilotClient.HandleSubtask(ctx,
 					&pbtypes.SubTaskMessage{
@@ -265,6 +278,9 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Failed to wait task [%s]: %+v", task.TaskId, err)
 					return err
 				}
+
+			default:
+				logger.Error("Unknown task [%s] action [%s]", task.TaskId, task.TaskAction)
 			}
 		} else {
 			providerInterface, err := plugins.GetProviderPlugin(task.Target)
