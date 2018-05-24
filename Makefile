@@ -96,7 +96,7 @@ fmt-check: fmt-all ## Check whether all files be formatted
 
 .PHONY: build-flyway
 build-flyway: ## Build custom flyway image
-	docker build -t $(TARG.Name):flyway -f ./Dockerfile.flyway .
+	cd ./pkg/db/ && docker build -t $(TARG.Name):flyway -f ./Dockerfile .
 
 .PHONY: build
 build: fmt build-flyway ## Build all openpitrix images
@@ -133,7 +133,10 @@ compose-update-%: ## Update "openpitrix-%" service in docker compose
 
 .PHONY: compose-up
 compose-up: ## Launch openpitrix in docker compose
-	docker-compose up -d openpitrix-db && sleep 20 && docker-compose up -d
+	docker-compose up -d openpitrix-db
+	until docker-compose exec openpitrix-db bash -c "echo 'SELECT VERSION();' | mysql -uroot -ppassword"; do echo "waiting for mysql"; sleep 2; done;
+	# make compose-migrate-db
+	docker-compose up -d
 	@echo "compose-up done"
 
 .PHONY: compose-down

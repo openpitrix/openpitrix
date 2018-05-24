@@ -6,6 +6,6 @@ FROM boxfuse/flyway:5.0.7-alpine
 
 RUN apk add --no-cache mysql-client
 
-COPY ./pkg/db/schema /flyway/sql
-COPY ./pkg/db/ddl /flyway/sql/ddl
-COPY ./pkg/db/scripts /flyway/sql/ddl
+COPY ./schema /flyway/sql
+COPY ./ddl /flyway/sql/ddl
+COPY ./scripts /flyway/sql/ddl
