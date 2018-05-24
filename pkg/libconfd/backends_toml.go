@@ -34,6 +34,10 @@ func NewTomlBackendClient(cfg *BackendConfig) *TomlBackend {
 	return &TomlBackend{TOMLFile: cfg.Host[0]}
 }
 
+func (_ *TomlBackend) Close() error {
+	return nil
+}
+
 func (_ *TomlBackend) Type() string {
 	return TomlBackendType
 }
