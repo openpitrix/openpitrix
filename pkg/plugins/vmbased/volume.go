@@ -14,9 +14,9 @@ func formatVolumeCmd(device, fileSystem string) string {
 func updateTabCmd(device, mountPoint, fileSystem, mountOptions string) string {
 	// `blkid /dev/vdc` outputs like
 	// /dev/vdc: UUID="b73ab0cd-f976-4559-b9f6-a6fbf013570d" TYPE="ext4"
-	uuid := fmt.Sprintf("uuid=`blkid %s | awk -F '\"' '{print $2}'`", device)
+	uuid := fmt.Sprintf("uuid=`blkid %s | awk -F '\\\"' '{print $2}'`", device)
 	content := fmt.Sprintf("UUID=$uuid %s %s %s 0 2", mountPoint, fileSystem, mountOptions)
-	fstab := fmt.Sprintf("sed -i \"s/^UUID=$uuid .*//g\" /etc/fstab && echo \"%s\" >> /etc/fstab", content)
+	fstab := fmt.Sprintf("sed -i \\\"s/^UUID=$uuid .*//g\\\" /etc/fstab && echo \\\"%s\\\" >> /etc/fstab", content)
 	return fmt.Sprintf("%s && %s", uuid, fstab)
 }
 
@@ -41,10 +41,10 @@ func mountVolumeCmd(device, mountPoint, fileSystem, mountOptions string) string 
 func FormatAndMountVolumeCmd(device, mountPoint, fileSystem, mountOptions string) string {
 	formatCmd := formatVolumeCmd(device, fileSystem)
 	mountCmd := mountVolumeCmd(device, mountPoint, fileSystem, mountOptions)
-	return fmt.Sprintf("%s && %s", formatCmd, mountCmd)
+	return fmt.Sprintf("%s \"%s && %s\"", HostCmdPrefix, formatCmd, mountCmd)
 }
 
 func UmountVolumeCmd(mountPoint string) string {
-	umount := fmt.Sprintf("fuser -ck %s; umount %s", mountPoint, mountPoint)
+	umount := fmt.Sprintf("%s \"fuser -ck %s; umount %s\"", HostCmdPrefix, mountPoint, mountPoint)
 	return umount
 }

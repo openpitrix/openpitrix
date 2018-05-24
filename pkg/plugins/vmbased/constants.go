@@ -68,4 +68,5 @@ const (
 	MetadataLogLevel   = "debug"
 	ConfdBackendType   = "libconfd-backend-etcdv3"
 	ConfdCmdLogPath    = "/opt/openpitrix/logs/cmd.log"
+	HostCmdPrefix      = "nsenter -t 1 -m -u -n -i sh -c"
 )
