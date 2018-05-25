@@ -6,6 +6,8 @@ package logger
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"runtime"
 	"strings"
 	"sync/atomic"
@@ -81,16 +83,31 @@ func Fatalf(format string, v ...interface{}) {
 	logger.Critical(format, v...)
 }
 
+func SetOutput(output io.Writer) {
+	logger.SetOutput(output)
+}
+
+var globalLogLevel = InfoLevel
+
 func SetLevelByString(level string) {
 	logger.SetLevelByString(level)
+	globalLogLevel = StringToLevel(level)
 }
 
 func NewLogger() *Logger {
-	return &Logger{Level: InfoLevel}
+	return &Logger{
+		Level:  globalLogLevel,
+		output: os.Stdout,
+		suffix: "",
+		prefix: "",
+	}
 }
 
 type Logger struct {
-	Level Level
+	Level  Level
+	suffix string
+	prefix string
+	output io.Writer
 }
 
 func (logger *Logger) level() Level {
@@ -120,14 +137,15 @@ func (logger *Logger) formatOutput(level Level, output string) string {
 		}
 	}
 	// 2018-03-27 02:08:44.93894 -INFO- Api service start http://openpitrix-api-gateway:9100 (main.go:44)
-	return fmt.Sprintf("%s -%s- %s (%s:%d)", now, strings.ToUpper(level.String()), output, file, line)
+	return fmt.Sprintf("%s -%s- %s%s (%s:%d)%s",
+		now, strings.ToUpper(level.String()), logger.prefix, output, file, line, logger.suffix)
 }
 
 func (logger *Logger) logf(level Level, format string, args ...interface{}) {
 	if logger.level() < level {
 		return
 	}
-	fmt.Println(logger.formatOutput(level, fmt.Sprintf(format, args...)))
+	fmt.Fprintln(logger.output, logger.formatOutput(level, fmt.Sprintf(format, args...)))
 }
 
 func (logger *Logger) Debug(format string, args ...interface{}) {
@@ -148,4 +166,21 @@ func (logger *Logger) Error(format string, args ...interface{}) {
 
 func (logger *Logger) Critical(format string, args ...interface{}) {
 	logger.logf(CriticalLevel, format, args...)
+}
+
+func (logger *Logger) SetPrefix(prefix string) *Logger {
+	// NOTE: not thread safe
+	logger.prefix = prefix
+	return logger
+}
+
+func (logger *Logger) SetSuffix(suffix string) *Logger {
+	// NOTE: not thread safe
+	logger.suffix = suffix
+	return logger
+}
+
+func (logger *Logger) SetOutput(output io.Writer) *Logger {
+	logger.output = output
+	return logger
 }

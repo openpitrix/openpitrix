@@ -11,9 +11,6 @@ import (
 	"github.com/pkg/errors"
 
 	"openpitrix.io/openpitrix/pkg/devkit/app"
-	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
@@ -22,9 +19,9 @@ type devkitIndexer struct {
 	indexer
 }
 
-func NewDevkitIndexer(repo *pb.Repo, reader reporeader.Reader) *devkitIndexer {
+func NewDevkitIndexer(i indexer) *devkitIndexer {
 	return &devkitIndexer{
-		indexer: indexer{repo: repo, reader: reader},
+		indexer: i,
 	}
 }
 
@@ -36,7 +33,7 @@ func (i *devkitIndexer) getIndexFile() (*app.IndexFile, error) {
 	}
 	err = yamlutil.Decode(content, indexFile)
 	if err != nil {
-		logger.Debug("%s", string(content))
+		i.log.Debug("%s", string(content))
 		return nil, errors.Wrap(err, "decode yaml failed")
 	}
 	indexFile.SortEntries()
@@ -63,26 +60,26 @@ func (i *devkitIndexer) IndexRepo() error {
 	}
 	for appName, appVersions := range indexFile.Entries {
 		var appId string
-		logger.Debug("Start index app [%s]", appName)
-		logger.Debug("App [%s] has [%d] versions", appName, appVersions.Len())
+		i.log.Debug("Start index app [%s]", appName)
+		i.log.Debug("App [%s] has [%d] versions", appName, appVersions.Len())
 		if len(appVersions) == 0 {
 			return fmt.Errorf("failed to sync app [%s], no versions", appName)
 		}
 		appId, err = i.syncAppInfo(appVersionWrapper{appVersions[0]})
 		if err != nil {
-			logger.Error("Failed to sync app [%s] to app info", appName)
+			i.log.Error("Failed to sync app [%s] to app info", appName)
 			return err
 		}
-		logger.Info("Sync chart [%s] to app [%s] success", appName, appId)
+		i.log.Info("Sync chart [%s] to app [%s] success", appName, appId)
 		sort.Sort(appVersions)
 		for index, appVersion := range appVersions {
 			var versionId string
 			versionId, err = i.syncAppVersionInfo(appId, appVersion, index)
 			if err != nil {
-				logger.Error("Failed to sync app version [%s] to app version", appVersion.GetAppVersion())
+				i.log.Error("Failed to sync app version [%s] to app version", appVersion.GetAppVersion())
 				return err
 			}
-			logger.Debug("App version [%s] sync to app version [%s]", appVersion.GetVersion(), versionId)
+			i.log.Debug("App version [%s] sync to app version [%s]", appVersion.GetVersion(), versionId)
 		}
 	}
 	return err

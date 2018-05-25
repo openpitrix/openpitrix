@@ -11,9 +11,6 @@ import (
 	"github.com/pkg/errors"
 	"k8s.io/helm/pkg/repo"
 
-	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
@@ -22,9 +19,9 @@ type helmIndexer struct {
 	indexer
 }
 
-func NewHelmIndexer(repo *pb.Repo, reader reporeader.Reader) *helmIndexer {
+func NewHelmIndexer(i indexer) *helmIndexer {
 	return &helmIndexer{
-		indexer: indexer{repo: repo, reader: reader},
+		indexer: i,
 	}
 }
 
@@ -48,27 +45,27 @@ func (i *helmIndexer) IndexRepo() error {
 	}
 	for chartName, chartVersions := range indexFile.Entries {
 		var appId string
-		logger.Debug("Start index chart [%s]", chartName)
-		logger.Debug("Chart [%s] has [%d] versions", chartName, chartVersions.Len())
+		i.log.Debug("Start index chart [%s]", chartName)
+		i.log.Debug("Chart [%s] has [%d] versions", chartName, chartVersions.Len())
 		if len(chartVersions) == 0 {
 			return fmt.Errorf("failed to sync chart [%s], no versions", chartName)
 		}
 		appId, err = i.syncAppInfo(helmVersionWrapper{chartVersions[0]})
 		if err != nil {
-			logger.Error("Failed to sync chart [%s] to app info", chartName)
+			i.log.Error("Failed to sync chart [%s] to app info", chartName)
 			return err
 		}
-		logger.Info("Sync chart [%s] to app [%s] success", chartName, appId)
+		i.log.Info("Sync chart [%s] to app [%s] success", chartName, appId)
 		sort.Sort(chartVersions)
 		for index, chartVersion := range chartVersions {
 			var versionId string
 			v := helmVersionWrapper{ChartVersion: chartVersion}
 			versionId, err = i.syncAppVersionInfo(appId, v, index)
 			if err != nil {
-				logger.Error("Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
+				i.log.Error("Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
 				return err
 			}
-			logger.Debug("Chart version [%s] sync to app version [%s]", chartVersion.GetVersion(), versionId)
+			i.log.Debug("Chart version [%s] sync to app version [%s]", chartVersion.GetVersion(), versionId)
 		}
 	}
 	return err
