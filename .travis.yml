@@ -6,8 +6,8 @@ services:
 language: go
 
 go:
-  - 1.9
-  - tip
+  - "1.9"
+  - "1.10"
 
 go_import_path: openpitrix.io/openpitrix
 
