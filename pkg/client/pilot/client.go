@@ -37,7 +37,9 @@ func (c *Client) WaitSubtask(ctx context.Context, taskId string, timeout time.Du
 		taskStatusRequest := &pbtypes.SubTaskId{
 			TaskId: taskId,
 		}
-		taskStatusResponse, err := c.GetSubtaskStatus(ctx, taskStatusRequest)
+		withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+		defer cancel()
+		taskStatusResponse, err := c.GetSubtaskStatus(withTimeoutCtx, taskStatusRequest)
 		if err != nil {
 			//network or api error, not considered task fail.
 			return false, nil
