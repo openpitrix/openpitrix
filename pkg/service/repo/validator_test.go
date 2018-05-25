@@ -5,7 +5,6 @@
 package repo
 
 import (
-	"strings"
 	"testing"
 )
 
@@ -20,11 +19,6 @@ func TestValidate1(t *testing.T) {
 
 	if err == nil {
 		t.Errorf("expect error, because access_key_id and secret_access_key is wrong")
-	}
-
-	ok := strings.Contains(err.Error(), "get index.yaml failed")
-	if !ok {
-		t.Error(err)
 	}
 }
 
