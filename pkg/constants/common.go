@@ -79,6 +79,8 @@ const (
 	WaitFrontgateServiceInterval = 10 * time.Second
 	WaitDroneServiceInterval     = 10 * time.Second
 
+	GrpcToPilotTimeout = 10 * time.Second
+
 	TimeoutName           = "timeout"
 	DefaultServiceTimeout = 600
 )

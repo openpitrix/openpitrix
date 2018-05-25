@@ -8,6 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"context"
+
 	"openpitrix.io/openpitrix/pkg/client"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -122,6 +124,8 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		}
 
 		if task.Target == constants.TargetPilot {
+			withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+			defer cancel()
 			switch task.TaskAction {
 			case vmbased.ActionSetDroneConfig:
 				config := new(pbtypes.SetDroneConfigRequest)
@@ -130,7 +134,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
 					return err
 				}
-				_, err = pilotClient.SetDroneConfig(ctx, config)
+				_, err = pilotClient.SetDroneConfig(withTimeoutCtx, config)
 				if err != nil {
 					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
 					return err
@@ -142,7 +146,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
 					return err
 				}
-				_, err = pilotClient.SetFrontgateConfig(ctx, config)
+				_, err = pilotClient.SetFrontgateConfig(withTimeoutCtx, config)
 				if err != nil {
 					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
 					return err
@@ -155,7 +159,9 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				}
 				err = funcutil.WaitForSpecificOrError(func() (bool, error) {
-					_, err := pilotClient.PingDrone(ctx, droneEndpoint)
+					withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+					defer cancel()
+					_, err := pilotClient.PingDrone(withTimeoutCtx, droneEndpoint)
 					if err != nil {
 						logger.Warn("Send task [%s] to pilot failed, will retry: %+v", taskId, err)
 						return false, nil
@@ -176,7 +182,9 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				}
 				err = funcutil.WaitForSpecificOrError(func() (bool, error) {
-					_, err := pilotClient.PingFrontgate(ctx, request)
+					withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+					defer cancel()
+					_, err := pilotClient.PingFrontgate(withTimeoutCtx, request)
 					if err != nil {
 						logger.Warn("Send task [%s] to pilot failed, will retry: %+v", taskId, err)
 						return false, nil
@@ -191,7 +199,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 			case vmbased.ActionStartConfd:
 				pbTask := models.TaskToPb(task)
-				_, err := pilotClient.HandleSubtask(ctx,
+				_, err := pilotClient.HandleSubtask(withTimeoutCtx,
 					&pbtypes.SubTaskMessage{
 						TaskId:    pbTask.TaskId.GetValue(),
 						Action:    pbTask.TaskAction.GetValue(),
@@ -206,7 +214,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 			case vmbased.ActionStopConfd:
 				pbTask := models.TaskToPb(task)
-				_, err := pilotClient.HandleSubtask(ctx,
+				_, err := pilotClient.HandleSubtask(withTimeoutCtx,
 					&pbtypes.SubTaskMessage{
 						TaskId:    pbTask.TaskId.GetValue(),
 						Action:    pbTask.TaskAction.GetValue(),
@@ -228,7 +236,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
 					return err
 				}
-				_, err = pilotClient.RunCommandOnDrone(ctx, request)
+				_, err = pilotClient.RunCommandOnDrone(withTimeoutCtx, request)
 				if err != nil {
 					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
 					return err
@@ -241,7 +249,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
 					return err
 				}
-				_, err = pilotClient.RunCommandOnFrontgateNode(ctx, request)
+				_, err = pilotClient.RunCommandOnFrontgateNode(withTimeoutCtx, request)
 				if err != nil {
 					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
 					return err
@@ -249,7 +257,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 			case vmbased.ActionRegisterMetadata, vmbased.ActionDeregesterCmd, vmbased.ActionDeregisterMetadata:
 				pbTask := models.TaskToPb(task)
-				_, err := pilotClient.HandleSubtask(ctx,
+				_, err := pilotClient.HandleSubtask(withTimeoutCtx,
 					&pbtypes.SubTaskMessage{
 						TaskId:    pbTask.TaskId.GetValue(),
 						Action:    pbTask.TaskAction.GetValue(),
@@ -262,7 +270,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 			case vmbased.ActionRegisterCmd:
 				pbTask := models.TaskToPb(task)
-				_, err := pilotClient.HandleSubtask(ctx,
+				_, err := pilotClient.HandleSubtask(withTimeoutCtx,
 					&pbtypes.SubTaskMessage{
 						TaskId:    pbTask.TaskId.GetValue(),
 						Action:    pbTask.TaskAction.GetValue(),
