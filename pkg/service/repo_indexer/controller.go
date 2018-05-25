@@ -121,7 +121,7 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 			return
 		}
 		repo := res.RepoSet[0]
-		err = indexer.GetIndexer(repo).IndexRepo()
+		err = indexer.GetIndexer(repo, repoEvent.RepoEventId).IndexRepo()
 		if err != nil {
 			logger.Error("Failed to index repo [%s]", repoId)
 		}

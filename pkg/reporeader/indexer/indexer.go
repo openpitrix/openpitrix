@@ -7,6 +7,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -17,25 +18,38 @@ type Indexer interface {
 	IndexRepo() error
 }
 
-func GetIndexer(repo *pb.Repo) Indexer {
+func GetIndexer(repo *pb.Repo, eventId string) Indexer {
 	var i Indexer
 	providers := repo.GetProviders()
 	reader, err := reporeader.New(repo.Type.GetValue(), repo.Url.GetValue(), repo.Credential.GetValue())
 	if err != nil {
 		panic(fmt.Sprintf("failed to get repo reader from repo [%s]", repo.RepoId.GetValue()))
 	}
+
 	if stringutil.StringIn(constants.ProviderKubernetes, providers) {
-		i = NewHelmIndexer(repo, reader)
+		i = NewHelmIndexer(newIndexer(repo, reader, eventId))
 	} else {
-		i = NewDevkitIndexer(repo, reader)
+		i = NewDevkitIndexer(newIndexer(repo, reader, eventId))
 	}
 	return i
 }
 
 type indexer struct {
 	repo   *pb.Repo
+	log    *logger.Logger
 	reader reporeader.Reader
 }
+
+func newIndexer(repo *pb.Repo, reader reporeader.Reader, eventId string) indexer {
+	log := logger.NewLogger()
+	log.SetSuffix(fmt.Sprintf("(%s:%s)", repo.GetRepoId().Value, eventId))
+	return indexer{
+		repo:   repo,
+		reader: reader,
+		log:    log,
+	}
+}
+
 type appInterface interface {
 	GetName() string
 	GetDescription() string
