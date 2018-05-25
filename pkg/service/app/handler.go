@@ -333,18 +333,100 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 	}, nil
 }
 
-func (p *Server) DescribeCategories(context.Context, *pb.DescribeCategoriesRequest) (*pb.DescribeCategoriesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "DescribeCategory unimplemented")
+func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategoriesRequest) (*pb.DescribeCategoriesResponse, error) {
+	var categories []*models.Category
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
+
+	query := p.Db.
+		Select(models.CategoryColumns...).
+		From(models.CategoryTableName).
+		Offset(offset).
+		Limit(limit).
+		Where(manager.BuildFilterConditions(req, models.CategoryTableName))
+	// TODO: validate sort_key
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	_, err := query.Load(&categories)
+	if err != nil {
+		// TODO: err_code should be implementation
+		return nil, status.Errorf(codes.Internal, "DescribeCategories: %+v", err)
+	}
+	count, err := query.Count()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "DescribeCategories: %+v", err)
+	}
+
+	res := &pb.DescribeCategoriesResponse{
+		CategorySet: models.CategoriesToPbs(categories),
+		TotalCount:  count,
+	}
+	return res, nil
 }
 
-func (p *Server) CreateCategory(context.Context, *pb.CreateCategoryRequest) (*pb.CreateCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "CreateCategory unimplemented")
+func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryRequest) (*pb.CreateCategoryResponse, error) {
+	s := senderutil.GetSenderFromContext(ctx)
+	category := models.NewCategory(req.GetName().GetValue(), req.GetLocale().GetValue(), s.UserId)
+
+	_, err := p.Db.
+		InsertInto(models.CategoryTableName).
+		Columns(models.CategoryColumns...).
+		Record(category).
+		Exec()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "CreateCategory: %+v", err)
+	}
+
+	res := &pb.CreateCategoryResponse{
+		Category: models.CategoryToPb(category),
+	}
+	return res, nil
 }
 
-func (p *Server) ModifyCategory(context.Context, *pb.ModifyCategoryRequest) (*pb.ModifyCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "ModifyCategory unimplemented")
+func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryRequest) (*pb.ModifyCategoryResponse, error) {
+	// TODO: check resource permission
+	categoryId := req.GetCategoryId().GetValue()
+	category, err := p.getCategory(categoryId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to get category [%s]", categoryId)
+	}
+
+	attributes := manager.BuildUpdateAttributes(req, "name", "locale")
+	attributes["update_time"] = time.Now()
+	_, err = p.Db.
+		Update(models.CategoryTableName).
+		SetMap(attributes).
+		Where(db.Eq("category_id", categoryId)).
+		Exec()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "ModifyCategory: %+v", err)
+	}
+	category, err = p.getCategory(categoryId)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "Failed to get category [%s]", categoryId)
+	}
+
+	res := &pb.ModifyCategoryResponse{
+		Category: models.CategoryToPb(category),
+	}
+	return res, nil
 }
 
-func (p *Server) DeleteCategories(context.Context, *pb.DeleteCategoriesRequest) (*pb.DeleteCategoriesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "DeleteCategory unimplemented")
+func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesRequest) (*pb.DeleteCategoriesResponse, error) {
+	err := manager.CheckParamsRequired(req, "category_id")
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	categoryIds := req.GetCategoryId()
+
+	_, err = p.Db.
+		DeleteFrom(models.CategoryTableName).
+		Where(db.Eq("category_id", categoryIds)).
+		Exec()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "DeleteCategories: %+v", err)
+	}
+
+	return &pb.DeleteCategoriesResponse{
+		CategoryId: categoryIds,
+	}, nil
 }
