@@ -26,6 +26,10 @@ var (
 type Config struct {
 	ListenPort int    `json:"listen_port"`
 	Key        string `json:"key"`
+
+	Msg0 string `json:"msg0"`
+	Msg1 string `json:"msg1"`
+	Msg2 string `json:"msg2"`
 }
 
 func init() {
