@@ -36,6 +36,19 @@ func (p *Server) getApps(appIds []string) ([]*models.App, error) {
 	return apps, nil
 }
 
+func (p *Server) getCategory(categoryId string) (*models.Category, error) {
+	category := &models.Category{}
+	err := p.Db.
+		Select(models.CategoryColumns...).
+		From(models.CategoryTableName).
+		Where(db.Eq("category_id", categoryId)).
+		LoadOne(&category)
+	if err != nil {
+		return nil, err
+	}
+	return category, nil
+}
+
 func (p *Server) getLatestAppVersion(appId string) (*models.AppVersion, error) {
 	appVersion := &models.AppVersion{}
 	err := p.Db.
