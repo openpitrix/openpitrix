@@ -204,7 +204,7 @@ func (c *_EtcdClient) getValues_hookKeyAdjuster(_keys []string) (map[string]stri
 			return vars, err
 		}
 		for _, ev := range resp.Kvs {
-			vars[realKeysMap[string(ev.Key)]] = string(ev.Value)
+			vars[string(ev.Key)] = string(ev.Value)
 		}
 	}
 	return vars, nil

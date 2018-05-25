@@ -11,7 +11,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -112,7 +111,7 @@ func NewTemplateResourceProcessor(
 		tr.Gid = os.Getegid()
 	}
 
-	tr.templateFunc = NewTemplateFunc(tr.store, tr.PGPPrivateKey)
+	tr.templateFunc = NewTemplateFunc(tr.store, tr.PGPPrivateKey, config.HookAbsKeyAdjuster)
 	tr.funcMap = tr.templateFunc.FuncMap
 
 	if !filepath.IsAbs(tr.Src) {
@@ -185,11 +184,15 @@ func (p *TemplateResourceProcessor) setVars(call *Call) error {
 	absKeys := p.getAbsKeys()
 	GetLogger().Debugf("absKeys: %#v\n", absKeys)
 
+	GetLogger().Debugf("GetValues: absKeys0 = %#v\n", absKeys)
+
 	if fn := call.Config.HookAbsKeyAdjuster; fn != nil {
 		for i, key := range absKeys {
 			absKeys[i] = fn(key)
 		}
 	}
+
+	GetLogger().Debugf("GetValues: absKeys1 = %#v\n", absKeys)
 
 	values, err := p.client.GetValues(absKeys)
 	if err != nil {
@@ -200,7 +203,8 @@ func (p *TemplateResourceProcessor) setVars(call *Call) error {
 
 	p.store.Purge()
 	for k, v := range values {
-		p.store.Set(path.Join("/", strings.TrimPrefix(k, p.Prefix)), v)
+		//p.store.Set(path.Join("/", strings.TrimPrefix(k, p.Prefix)), v)
+		p.store.Set(k, v)
 	}
 
 	return nil
