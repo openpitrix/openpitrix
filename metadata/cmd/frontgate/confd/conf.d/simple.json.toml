@@ -10,8 +10,7 @@ dest = "${LIBCONFD_CONFDIR}/apps/simple/config.json"
 
 prefix = ""
 keys = [
-	"listen_port",
-	"key"
+	"/"
 ]
 
 check_cmd = """

@@ -115,10 +115,14 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 	logger.Info(funcutil.CallerName(1))
 
 	cfg := p.cfg.Get()
-	logger.Info("StartConfd:", cfg)
+	logger.Info("StartConfd: %v", cfg)
 
 	err := p.confd.Start(func(opt *libconfd.Config) {
 		opt.HookAbsKeyAdjuster = func(absKey string) (realKey string) {
+			if absKey == "/"+cfg.ConfdSelfHost || strings.HasPrefix(absKey, "/"+cfg.ConfdSelfHost+"/") {
+				return absKey
+			}
+
 			if absKey == "/self" {
 				return "/" + cfg.ConfdSelfHost
 			}

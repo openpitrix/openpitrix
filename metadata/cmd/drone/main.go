@@ -385,6 +385,10 @@ EXAMPLE:
 				if cfgConfd, _ := droneutil.LoadConfdConfig(cfgConfdPath); cfgConfd != nil {
 					cfg := cfgManager.Get()
 					fnHookKeyAdjuster := func(absKey string) (realKey string) {
+						if absKey == "/"+cfg.ConfdSelfHost || strings.HasPrefix(absKey, "/"+cfg.ConfdSelfHost+"/") {
+							return absKey
+						}
+
 						if absKey == "/self" {
 							return "/" + cfg.ConfdSelfHost
 						}

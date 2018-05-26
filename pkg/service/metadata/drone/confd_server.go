@@ -130,6 +130,9 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 	go func() {
 		logger.Info("ConfdServer: run...")
 
+		// set log level
+		libconfd.GetLogger().SetLevel(p.config.LogLevel)
+
 		var err = p.processor.Run(p.config, backendClient) // blocked
 		if err != nil {
 			logger.Warn("%+v", err)

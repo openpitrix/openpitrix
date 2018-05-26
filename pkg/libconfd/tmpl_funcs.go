@@ -25,15 +25,21 @@ type TemplateFunc struct {
 	FuncMap       map[string]interface{}
 	Store         *KVStore
 	PGPPrivateKey []byte
+
+	HookKeyAdjuster func(key string) (realKey string)
 }
 
 var _TemplateFunc_initFuncMap func(p *TemplateFunc) = nil
 
-func NewTemplateFunc(store *KVStore, pgpPrivateKey []byte) *TemplateFunc {
+func NewTemplateFunc(
+	store *KVStore, pgpPrivateKey []byte,
+	hookKeyAdjuster func(key string) (realKey string),
+) *TemplateFunc {
 	p := &TemplateFunc{
-		FuncMap:       map[string]interface{}{},
-		Store:         store,
-		PGPPrivateKey: pgpPrivateKey,
+		FuncMap:         map[string]interface{}{},
+		Store:           store,
+		PGPPrivateKey:   pgpPrivateKey,
+		HookKeyAdjuster: hookKeyAdjuster,
 	}
 
 	if _TemplateFunc_initFuncMap == nil {
@@ -49,18 +55,30 @@ func NewTemplateFunc(store *KVStore, pgpPrivateKey []byte) *TemplateFunc {
 // ----------------------------------------------------------------------------
 
 func (p TemplateFunc) Exists(key string) bool {
+	if p.HookKeyAdjuster != nil {
+		key = p.HookKeyAdjuster(key)
+	}
 	return p.Store.Exists(key)
 }
 
 func (p TemplateFunc) Ls(filepath string) []string {
+	if p.HookKeyAdjuster != nil {
+		filepath = p.HookKeyAdjuster(filepath)
+	}
 	return p.Store.List(filepath)
 }
 
 func (p TemplateFunc) Lsdir(filepath string) []string {
+	if p.HookKeyAdjuster != nil {
+		filepath = p.HookKeyAdjuster(filepath)
+	}
 	return p.Store.ListDir(filepath)
 }
 
 func (p TemplateFunc) Get(key string) KVPair {
+	if p.HookKeyAdjuster != nil {
+		key = p.HookKeyAdjuster(key)
+	}
 	v, ok := p.Store.Get(key)
 	if !ok {
 		GetLogger().Error("key not exits:", key)
@@ -70,6 +88,9 @@ func (p TemplateFunc) Get(key string) KVPair {
 }
 
 func (p TemplateFunc) Gets(pattern string) []KVPair {
+	if p.HookKeyAdjuster != nil {
+		pattern = p.HookKeyAdjuster(pattern)
+	}
 	v, err := p.Store.GetAll(pattern)
 	if err != nil {
 		GetLogger().Error(err)
@@ -79,6 +100,10 @@ func (p TemplateFunc) Gets(pattern string) []KVPair {
 }
 
 func (p TemplateFunc) Getv(key string, v ...string) string {
+	if p.HookKeyAdjuster != nil {
+		key = p.HookKeyAdjuster(key)
+	}
+
 	value, ok := p.Store.GetValue(key, v...)
 	if !ok {
 		GetLogger().Error("key not exits:", key)
@@ -88,6 +113,9 @@ func (p TemplateFunc) Getv(key string, v ...string) string {
 }
 
 func (p TemplateFunc) Getvs(pattern string) []string {
+	if p.HookKeyAdjuster != nil {
+		pattern = p.HookKeyAdjuster(pattern)
+	}
 	v, err := p.Store.GetAllValues(pattern)
 	if err != nil {
 		GetLogger().Error(err)
@@ -107,6 +135,9 @@ func (p TemplateFunc) Cget(key string) KVPair {
 		return KVPair{}
 	}
 
+	if p.HookKeyAdjuster != nil {
+		key = p.HookKeyAdjuster(key)
+	}
 	kv, ok := p.Store.Get(key)
 	if !ok {
 		return KVPair{}
@@ -130,6 +161,9 @@ func (p TemplateFunc) Cgets(pattern string) []KVPair {
 		return nil
 	}
 
+	if p.HookKeyAdjuster != nil {
+		pattern = p.HookKeyAdjuster(pattern)
+	}
 	kvs, err := p.Store.GetAll(pattern)
 	if err != nil {
 		GetLogger().Error(err)
@@ -154,6 +188,9 @@ func (p TemplateFunc) Cgetv(key string) string {
 		return ""
 	}
 
+	if p.HookKeyAdjuster != nil {
+		key = p.HookKeyAdjuster(key)
+	}
 	v, ok := p.Store.GetValue(key)
 	if !ok {
 		return ""
@@ -176,6 +213,9 @@ func (p TemplateFunc) Cgetvs(pattern string) []string {
 		return nil
 	}
 
+	if p.HookKeyAdjuster != nil {
+		pattern = p.HookKeyAdjuster(pattern)
+	}
 	vs, err := p.Store.GetAllValues(pattern)
 	if err != nil {
 		GetLogger().Error(err)

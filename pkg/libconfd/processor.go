@@ -72,7 +72,9 @@ func (p *Processor) clearPendingCall() {
 	defer p.pendingMutex.Unlock()
 
 	for _, call := range p.pending {
-		call.Error = errors.New("libconfd: processor is shut down")
+		err := errors.New("libconfd: processor is shut down")
+		GetLogger().Error(err)
+		call.Error = err
 		call.done()
 	}
 
@@ -81,7 +83,11 @@ func (p *Processor) clearPendingCall() {
 
 func (p *Processor) checkBackendClient(client BackendClient) error {
 	_, err := client.GetValues([]string{"/"})
-	return err
+	if err != nil {
+		GetLogger().Error(err)
+		return err
+	}
+	return nil
 }
 
 func NewProcessor() *Processor {
@@ -133,12 +139,14 @@ func (p *Processor) Go(cfg *Config, client BackendClient, opts ...Options) *Call
 	call.Done = make(chan *Call, 10) // buffered.
 
 	if err := cfg.Valid(); err != nil {
+		GetLogger().Error(err)
 		call.Error = err
 		call.done()
 		return call
 	}
 
 	if err := p.checkBackendClient(client); err != nil {
+		GetLogger().Error(err)
 		call.Error = err
 		call.done()
 		return call
