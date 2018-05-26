@@ -180,6 +180,13 @@ func (p *Server) SetDroneConfig(in *pbtypes.SetDroneConfigRequest, out *pbtypes.
 		return err
 	}
 
+	// 3. set frontgate config
+	_, err = client.SetFrontgateConfig(ctx, p.cfg.Get())
+	if err != nil {
+		logger.Warn("%+v", err)
+		return err
+	}
+
 	return nil
 }
 
@@ -233,7 +240,13 @@ func (p *Server) StartConfd(in *pbtypes.ConfdEndpoint, out *pbtypes.Empty) error
 	_, err = client.SetConfdConfig(ctx, p.cfg.Get().GetConfdConfig())
 	if err != nil {
 		logger.Warn("%+v", err)
-		return err
+		// donot return
+	}
+
+	_, err = client.SetFrontgateConfig(ctx, p.cfg.Get())
+	if err != nil {
+		logger.Warn("%+v", err)
+		// donot return
 	}
 
 	_, err = client.StartConfd(ctx, &pbtypes.Empty{})
