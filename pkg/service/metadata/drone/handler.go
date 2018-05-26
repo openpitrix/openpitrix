@@ -137,7 +137,7 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 				logger.Warn("%+v", err)
 				return
 			}
-			if trName == "cmd.info" {
+			if trName == "/etc/confd/conf.d/cmd.info.toml" {
 				go func() {
 					status, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
 					if err != nil {
@@ -156,7 +156,7 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 				logger.Warn("%+v", err)
 				return
 			}
-			if trName == "cmd.info" {
+			if trName == "/etc/confd/conf.d/cmd.info.toml" {
 				go func() {
 					status, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
 					if err != nil {
