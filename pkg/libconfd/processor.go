@@ -145,11 +145,10 @@ func (p *Processor) Go(cfg *Config, client BackendClient, opts ...Options) *Call
 		return call
 	}
 
+	// just print the when check failed
 	if err := p.checkBackendClient(client); err != nil {
-		GetLogger().Error(err)
-		call.Error = err
-		call.done()
-		return call
+		GetLogger().Warning(err)
+		// donot return
 	}
 
 	p.addPendingCall(call)
