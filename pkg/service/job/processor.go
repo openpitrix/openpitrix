@@ -195,7 +195,7 @@ func (j *Processor) Post() error {
 		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType {
 			frontgateId := clusterWrapper.Cluster.FrontgateId
 			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
-				[]string{constants.StatusStopped, constants.StatusActive})
+				[]string{constants.StatusStopped, constants.StatusActive, constants.StatusPending})
 			if err != nil {
 				return err
 			}

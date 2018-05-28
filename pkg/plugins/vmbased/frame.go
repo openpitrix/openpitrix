@@ -549,6 +549,40 @@ func (f *Frame) formatAndMountVolumeLayer(nodeIds []string, failureAllowed bool)
 	}
 }
 
+func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+		ip := clusterNode.PrivateIp
+		cmd := "sleep 2 && docker rm -f default &"
+		request := &pbtypes.RunCommandOnDroneRequest{
+			Endpoint: &pbtypes.DroneEndpoint{
+				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+				DroneIp:     ip,
+				DronePort:   constants.DroneServicePort,
+			},
+			Command:        cmd,
+			TimeoutSeconds: TimeoutSshKeygen,
+		}
+		directive := jsonutil.ToString(request)
+		formatVolumeTask := &models.Task{
+			JobId:          f.Job.JobId,
+			Owner:          f.Job.Owner,
+			TaskAction:     ActionRunCommandOnDrone,
+			Target:         constants.TargetPilot,
+			NodeId:         nodeId,
+			Directive:      directive,
+			FailureAllowed: failureAllowed,
+		}
+		taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
+	}
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
 func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	ctx := client.GetSystemUserContext()
@@ -684,7 +718,7 @@ func (f *Frame) getUserDataValue(nodeId string) string {
 }
 
 func (f *Frame) getUserDataFile() string {
-	return MetadataConfPath + OpenPitrixConfFile
+	return OpenPitrixConfPath + OpenPitrixConfFile
 }
 
 func (f *Frame) setDroneConfigLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
@@ -1092,6 +1126,9 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 		Append(f.pingDroneLayer(nodeIds, false)).            // ping drone
 		Append(f.setDroneConfigLayer(nodeIds, false)).       // set drone config
 		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance
+		Append(f.removeContainerLayer(nodeIds, false)).      // remove default container
+		Append(f.pingDroneLayer(nodeIds, false)).            // ping drone
+		Append(f.setDroneConfigLayer(nodeIds, false)).       // set drone config
 		Append(f.sshKeygenLayer(false)).                     // generate ssh key
 		Append(f.registerMetadataLayer(false)).              // register cluster metadata
 		Append(f.startConfdServiceLayer(nodeIds, false)).    // start confd service

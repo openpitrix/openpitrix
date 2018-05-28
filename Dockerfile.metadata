@@ -12,5 +12,5 @@ RUN go generate openpitrix.io/openpitrix/pkg/version && \
 
 FROM alpine:3.6
 COPY --from=builder /go/bin/* /usr/local/bin/
-
+RUN apk add --no-cache docker util-linux
 CMD ["sh"]

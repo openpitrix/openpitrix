@@ -60,10 +60,13 @@ const (
 )
 
 const (
-	MetadataConfPath   = "/opt/openpitrix/conf/"
+	OpenPitrixBasePath = "/opt/openpitrix/"
+	OpenPitrixConfPath = OpenPitrixBasePath + "conf/"
+	OpenPitrixSbinPath = OpenPitrixBasePath + "sbin/"
 	OpenPitrixConfFile = "openpitrix.conf"
 	DroneConfFile      = "drone.conf"
 	FrontgateConfFile  = "frontgate.conf"
+	UpdateFstabFile    = "update_fstab.sh"
 	ConfdPath          = "/etc/confd/"
 	MetadataLogLevel   = "debug"
 	ConfdBackendType   = "libconfd-backend-etcdv3"
