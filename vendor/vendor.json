@@ -309,12 +309,6 @@
 			"revisionTime": "2018-04-26T12:17:57Z"
 		},
 		{
-			"checksumSHA1": "3wRegCkENozpluaFqP2oPpdfFiQ=",
-			"path": "github.com/ekyoung/gin-nice-recovery",
-			"revision": "1654dca486db940bf0c76b0562328f40a898504e",
-			"revisionTime": "2016-05-10T02:25:53Z"
-		},
-		{
 			"checksumSHA1": "kR64D1QzAOSM9LHOnTPdbigC8q0=",
 			"path": "github.com/fatih/camelcase",
 			"revision": "44e46d280b43ec1531bb25252440e34f1b800b65",
@@ -836,12 +830,6 @@
 			"path": "github.com/stretchr/testify/require",
 			"revision": "c679ae2cc0cb27ec3293fea7e254e47386f05d69",
 			"revisionTime": "2018-03-14T08:05:35Z"
-		},
-		{
-			"checksumSHA1": "FdCoXujHIVFbxS7lIYx0U3YTuNQ=",
-			"path": "github.com/szuecs/gin-glog",
-			"revision": "da59244bde84149ae00db0c2b8e62b9d899e6993",
-			"revisionTime": "2017-09-05T21:23:50Z"
 		},
 		{
 			"checksumSHA1": "2yyXRvz9xOzGmwMn04ztgVy5fI4=",
