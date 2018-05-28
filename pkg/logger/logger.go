@@ -79,10 +79,6 @@ func Critical(format string, v ...interface{}) {
 	logger.Critical(format, v...)
 }
 
-func Fatalf(format string, v ...interface{}) {
-	logger.Critical(format, v...)
-}
-
 func SetOutput(output io.Writer) {
 	logger.SetOutput(output)
 }
@@ -104,10 +100,11 @@ func NewLogger() *Logger {
 }
 
 type Logger struct {
-	Level  Level
-	suffix string
-	prefix string
-	output io.Writer
+	Level         Level
+	suffix        string
+	prefix        string
+	output        io.Writer
+	hideCallstack bool
 }
 
 func (logger *Logger) level() Level {
@@ -124,21 +121,26 @@ func (logger *Logger) SetLevelByString(level string) {
 
 func (logger *Logger) formatOutput(level Level, output string) string {
 	now := time.Now().Format("2006-01-02 15:04:05.99999")
-	_, file, line, ok := runtime.Caller(4)
-	if !ok {
-		file = "???"
-		line = 0
-	}
-	// short file name
-	for i := len(file) - 1; i > 0; i-- {
-		if file[i] == '/' {
-			file = file[i+1:]
-			break
+	if logger.hideCallstack {
+		return fmt.Sprintf("%-25s -%s- %s%s%s",
+			now, strings.ToUpper(level.String()), logger.prefix, output, logger.suffix)
+	} else {
+		_, file, line, ok := runtime.Caller(4)
+		if !ok {
+			file = "???"
+			line = 0
 		}
+		// short file name
+		for i := len(file) - 1; i > 0; i-- {
+			if file[i] == '/' {
+				file = file[i+1:]
+				break
+			}
+		}
+		// 2018-03-27 02:08:44.93894 -INFO- Api service start http://openpitrix-api-gateway:9100 (main.go:44)
+		return fmt.Sprintf("%-25s -%s- %s%s (%s:%d)%s",
+			now, strings.ToUpper(level.String()), logger.prefix, output, file, line, logger.suffix)
 	}
-	// 2018-03-27 02:08:44.93894 -INFO- Api service start http://openpitrix-api-gateway:9100 (main.go:44)
-	return fmt.Sprintf("%s -%s- %s%s (%s:%d)%s",
-		now, strings.ToUpper(level.String()), logger.prefix, output, file, line, logger.suffix)
 }
 
 func (logger *Logger) logf(level Level, format string, args ...interface{}) {
@@ -182,5 +184,10 @@ func (logger *Logger) SetSuffix(suffix string) *Logger {
 
 func (logger *Logger) SetOutput(output io.Writer) *Logger {
 	logger.output = output
+	return logger
+}
+
+func (logger *Logger) HideCallstack() *Logger {
+	logger.hideCallstack = true
 	return logger
 }

@@ -74,7 +74,7 @@ func (p *Pi) watchGlobalCfg() *Pi {
 	go func() {
 		err := config.WatchGlobalConfig(p.Etcd, watcher)
 		if err != nil {
-			logger.Fatalf("failed to watch global config")
+			logger.Critical("failed to watch global config")
 			panic(err)
 		}
 	}()
@@ -96,7 +96,7 @@ func (p *Pi) watchGlobalCfg() *Pi {
 func (p *Pi) openDatabase() *Pi {
 	dbSession, err := db.OpenDatabase(p.cfg.Mysql)
 	if err != nil {
-		logger.Fatalf("failed to connect mysql")
+		logger.Critical("failed to connect mysql")
 		panic(err)
 	}
 	p.Db = dbSession
@@ -107,7 +107,7 @@ func (p *Pi) openEtcd() *Pi {
 	endpoints := strings.Split(p.cfg.Etcd.Endpoints, ",")
 	e, err := etcd.Connect(endpoints, config.EtcdPrefix)
 	if err != nil {
-		logger.Fatalf("failed to connect etcd")
+		logger.Critical("failed to connect etcd")
 		panic(err)
 	}
 	p.Etcd = e
