@@ -8,13 +8,12 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 	"time"
 
-	"github.com/ekyoung/gin-nice-recovery"
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/pkg/errors"
-	"github.com/szuecs/gin-glog"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/mapfs"
@@ -44,8 +43,58 @@ func Serve() {
 	logger.Info("Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
 	if err := run(); err != nil {
-		logger.Fatalf("%+v", err)
+		logger.Critical("%+v", err)
 		panic(err)
+	}
+}
+
+func log() gin.HandlerFunc {
+	l := logger.NewLogger()
+	l.HideCallstack()
+	return func(c *gin.Context) {
+		t := time.Now()
+
+		// process request
+		c.Next()
+
+		latency := time.Since(t)
+		clientIP := c.ClientIP()
+		method := c.Request.Method
+		statusCode := c.Writer.Status()
+		path := c.Request.URL.Path
+
+		logStr := fmt.Sprintf("| %3d | %v | %s | %s %s %s",
+			statusCode,
+			latency,
+			clientIP, method,
+			path,
+			c.Errors.String(),
+		)
+
+		switch {
+		case statusCode >= 400 && statusCode <= 499:
+			l.Warn(logStr)
+		case statusCode >= 500:
+			l.Error(logStr)
+		default:
+			l.Info(logStr)
+		}
+	}
+}
+
+func recovery() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		defer func() {
+			if err := recover(); err != nil {
+				httprequest, _ := httputil.DumpRequest(c.Request, false)
+				logger.Critical("Panic recovered: %+v\n%s", err, string(httprequest))
+				c.JSON(500, gin.H{
+					"title": "Error",
+					"err":   err,
+				})
+			}
+		}()
+		c.Next() // execute all the handlers
 	}
 }
 
@@ -53,13 +102,8 @@ func run() error {
 	gin.SetMode(gin.ReleaseMode)
 
 	r := gin.New()
-	r.Use(ginglog.Logger(3 * time.Second))
-	r.Use(nice.Recovery(func(c *gin.Context, err interface{}) {
-		c.JSON(500, gin.H{
-			"title": "Error",
-			"err":   err,
-		})
-	}))
+	r.Use(log())
+	r.Use(recovery())
 
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
@@ -123,7 +167,7 @@ func mainHandler(ctx context.Context) http.Handler {
 	)
 	if err != nil {
 		err = errors.WithStack(err)
-		logger.Fatalf("%+v", err)
+		logger.Error("%+v", err)
 	}
 
 	mux := http.NewServeMux()

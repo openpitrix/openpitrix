@@ -61,7 +61,7 @@ func ServeReverseRpcServerForPilot(
 		if err != nil {
 			gerr, ok := status.FromError(err)
 			if !ok {
-				logger.Fatalf("err shoule be grpc error type")
+				logger.Critical("err shoule be grpc error type")
 				os.Exit(1)
 			}
 

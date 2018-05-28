@@ -38,5 +38,13 @@ func TestLogger(t *testing.T) {
 	logger.SetPrefix("(prefix)").SetSuffix("(suffix)").SetOutput(buf)
 
 	logger.Warn("log_content")
-	assert.Regexp(t, " -WARNING- \\(prefix\\)log_content \\(testing.go:\\d+\\)\\(suffix\\)", readBuf(buf))
+	log := readBuf(buf)
+	assert.Regexp(t, " -WARNING- \\(prefix\\)log_content \\(testing.go:\\d+\\)\\(suffix\\)", log)
+	t.Log(log)
+
+	logger.HideCallstack()
+	logger.Warn("log_content")
+	log = readBuf(buf)
+	assert.Regexp(t, " -WARNING- \\(prefix\\)log_content\\(suffix\\)", log)
+	t.Log(log)
 }
