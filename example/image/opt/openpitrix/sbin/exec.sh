@@ -1,9 +1,4 @@
 #!/bin/bash
-#
-# Copyright (C) 2016 Yunify, Inc.
-#
-# Script to execute the service such as start/stop application deployed on
-# QingCloud AppCenter 2.0 platform.
 
 AGENT_PATH="/opt/openpitrix/log"
 CMD_INFO=$AGENT_PATH/cmd.info
