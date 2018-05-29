@@ -6,6 +6,7 @@ package libconfd
 
 import (
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 )
@@ -16,6 +17,18 @@ type fileInfo struct {
 	Gid  uint32
 	Mode os.FileMode
 	Md5  string
+}
+
+// ensureFileDir ensure file's dir is exist.
+func ensureFileDir(file string) error {
+	dir := filepath.Dir(file)
+	if dir == "" {
+		return nil
+	}
+	if dirExists(dir) {
+		return nil
+	}
+	return os.MkdirAll(dir, 0755)
 }
 
 func dirExists(path string) bool {
