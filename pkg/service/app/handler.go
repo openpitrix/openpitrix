@@ -7,6 +7,7 @@ package app
 import (
 	"context"
 	"io/ioutil"
+	"strings"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -52,6 +53,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 	var apps []*models.App
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
+	categoryIds := req.GetCategoryId()
 
 	query := p.Db.
 		Select(models.AppColumns...).
@@ -59,6 +61,13 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.AppTableName))
+	if len(categoryIds) > 0 {
+		subqueryStmt := p.Db.
+			Select(models.ColumnResouceId).
+			From(models.CategoryResourceTableName).
+			Where(db.Eq(models.ColumnCategoryId, categoryIds))
+		query = query.Where(db.Eq(models.ColumnAppId, []*db.SelectQuery{subqueryStmt}))
+	}
 	// TODO: validate sort_key
 	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	// TODO: add category_id join query
@@ -85,6 +94,20 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
 	// TODO: validate CreateAppRequest
+
+	// get categories
+	categoryIds := strings.Split(req.GetCategoryId().GetValue(), ",")
+	if len(categoryIds) > 0 {
+		categories, err := p.getCategories(categoryIds)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "CreateApp: %+v", err)
+		}
+		categoryIds = []string{}
+		for _, category := range categories {
+			categoryIds = append(categoryIds, category.CategoryId)
+		}
+	}
+
 	s := senderutil.GetSenderFromContext(ctx)
 	newApp := models.NewApp(
 		req.GetName().GetValue(),
@@ -107,6 +130,22 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+	}
+
+	// insert category resources
+	insertStmt := p.Db.
+		InsertInto(models.CategoryResourceTableName).
+		Columns(models.CategoryResourceColumns...)
+	for _, categoryId := range categoryIds {
+		insertStmt = insertStmt.Record(
+			models.NewCategoryResource(categoryId, newApp.AppId, constants.StatusActive),
+		)
+	}
+	if len(categoryIds) > 0 {
+		_, err = insertStmt.Exec()
+		if err != nil {
+			return nil, status.Errorf(codes.Internal, "CreateApp: %+v", err)
+		}
 	}
 
 	res := &pb.CreateAppResponse{
