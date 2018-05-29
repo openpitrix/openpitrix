@@ -464,7 +464,7 @@ func (p *Server) ReportSubTaskStatus(in *pbtypes.SubTaskStatus, out *pbtypes.Emp
 	}
 	defer conn.Close()
 
-	_, err = client.ReportSubTaskStatus(ctx, &pbtypes.SubTaskStatus{}) // todo
+	_, err = client.ReportSubTaskStatus(ctx, in)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err

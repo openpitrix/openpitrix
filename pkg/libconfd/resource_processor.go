@@ -229,6 +229,7 @@ func (p *TemplateResourceProcessor) createStageFile(call *Call) error {
 	}
 
 	// create TempFile in Dest directory to avoid cross-filesystem issues
+	ensureFileDir(p.Dest)
 	temp, err := ioutil.TempFile(filepath.Dir(p.Dest), "."+filepath.Base(p.Dest))
 	if err != nil {
 		GetLogger().Error(err)
