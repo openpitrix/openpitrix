@@ -29,6 +29,7 @@ const (
 	ActionPingDrone                 = "PingDrone"
 	ActionPingFrontgate             = "PingFrontgate"
 	ActionRunCommandOnDrone         = "RunCommandOnDrone"
+	ActionRemoveContainerOnDrone    = "RemoveContainerOnDrone"
 	ActionRunCommandOnFrontgateNode = "RunCommandOnFrontgateNode"
 )
 
@@ -57,6 +58,7 @@ const (
 	TimeoutFormatAndMountVolume = 600
 	TimeoutUmountVolume         = 120
 	TimeoutSshKeygen            = 120
+	TimeoutRemoveContainer      = 120
 )
 
 const (
