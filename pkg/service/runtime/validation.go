@@ -47,7 +47,11 @@ func ValidateCredential(provider, url, credential string) error {
 		return fmt.Errorf("the length of credential should > 0")
 	}
 	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
-		_, err := yaml.JSONToYAML([]byte(credential))
+		err := ValidateURL(url)
+		if err != nil {
+			return err
+		}
+		_, err = yaml.JSONToYAML([]byte(credential))
 		if err != nil {
 			return err
 		}
@@ -156,10 +160,6 @@ func validateCreateRuntimeRequest(req *pb.CreateRuntimeRequest) error {
 		return err
 	}
 	err = ValidateLabelString(req.Labels.GetValue())
-	if err != nil {
-		return err
-	}
-	err = ValidateURL(req.RuntimeUrl.GetValue())
 	if err != nil {
 		return err
 	}

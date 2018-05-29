@@ -41,6 +41,8 @@ func (p *ProviderHandler) initQingCloudService(runtimeUrl, runtimeCredential, zo
 	conf.Zone = zone
 	if strings.HasPrefix(runtimeUrl, "https://") {
 		runtimeUrl = strings.Split(runtimeUrl, "https://")[1]
+	} else if strings.HasPrefix(runtimeUrl, "http://") {
+		runtimeUrl = strings.Split(runtimeUrl, "http://")[1]
 	}
 	urlAndPort := strings.Split(runtimeUrl, ":")
 	if len(urlAndPort) == 2 {
