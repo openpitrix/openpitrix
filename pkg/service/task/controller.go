@@ -5,10 +5,11 @@
 package task
 
 import (
+	"context"
 	"sync"
 	"time"
 
-	"context"
+	"strings"
 
 	"openpitrix.io/openpitrix/pkg/client"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
@@ -241,6 +242,29 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 				logger.Debug("Finish subtask [%s]", task.TaskId)
 
 				time.Sleep(1 * time.Second)
+
+			case vmbased.ActionRemoveContainerOnDrone:
+				request := new(pbtypes.RunCommandOnDroneRequest)
+				err = jsonutil.Decode([]byte(task.Directive), request)
+				if err != nil {
+					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					return err
+				}
+
+				err = retryutil.Retry(3, 0, func() error {
+					_, err = pilotClient.RunCommandOnDrone(withTimeoutCtx, request)
+					if strings.Contains(err.Error(), "transport is closing") {
+						logger.Debug("Expected error: %+v", err)
+						return nil
+					} else {
+						logger.Error("%s", err.Error())
+					}
+					return err
+				})
+				if err != nil {
+					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					return err
+				}
 
 			case vmbased.ActionRunCommandOnDrone:
 				request := new(pbtypes.RunCommandOnDroneRequest)

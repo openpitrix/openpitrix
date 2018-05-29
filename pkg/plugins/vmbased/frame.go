@@ -554,7 +554,7 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		ip := clusterNode.PrivateIp
-		cmd := "sleep 2 && docker rm -f default &"
+		cmd := "sleep 2 && docker rm -f default"
 		request := &pbtypes.RunCommandOnDroneRequest{
 			Endpoint: &pbtypes.DroneEndpoint{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
@@ -562,13 +562,13 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 				DronePort:   constants.DroneServicePort,
 			},
 			Command:        cmd,
-			TimeoutSeconds: TimeoutSshKeygen,
+			TimeoutSeconds: TimeoutRemoveContainer,
 		}
 		directive := jsonutil.ToString(request)
 		formatVolumeTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
-			TaskAction:     ActionRunCommandOnDrone,
+			TaskAction:     ActionRemoveContainerOnDrone,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
 			Directive:      directive,
