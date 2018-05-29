@@ -8,7 +8,7 @@ EnvironmentFile=/opt/openpitrix/conf/openpitrix.conf
 ExecStart=/opt/openpitrix/sbin/start_default.sh $MOUNT_POINT $FILE_NAME $FILE_CONF $IMAGE
 ExecStop=docker stop default
 Restart=always
-RestartSec=30
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target

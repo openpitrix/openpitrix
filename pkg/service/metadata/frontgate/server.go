@@ -7,7 +7,7 @@ package frontgate
 import (
 	"context"
 	"fmt"
-	"os"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -61,8 +61,9 @@ func ServeReverseRpcServerForPilot(
 		if err != nil {
 			gerr, ok := status.FromError(err)
 			if !ok {
-				logger.Fatalf("err shoule be grpc error type")
-				os.Exit(1)
+				logger.Error("err shoule be grpc error type")
+				time.Sleep(time.Second)
+				continue
 			}
 
 			if gerr.Code() != codes.Unavailable || gerr.Code() != lastErrCode {

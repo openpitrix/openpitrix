@@ -25,4 +25,4 @@ fi
 
 echo $FILE_CONF > /opt/openpitrix/conf/$FILE_NAME
 if ! service docker status|grep running ; then service docker start; fi
-if docker ps -a | grep default; then docker start -a default; else docker kill $(docker ps -q); docker run $mount -v /opt/openpitrix/:/opt/openpitrix/ -v $CMD_INFO_TOML:$CMD_INFO_TOML -v $CMD_INFO_TMPL:$CMD_INFO_TMPL --name default --network host --pid host --privileged $IMAGE $START_CMD; fi
+if docker ps -a | grep default; then docker start -a default; else docker kill $(docker ps -q); docker run $mount -v /opt/openpitrix/:/opt/openpitrix/ -v $CMD_INFO_TOML:$CMD_INFO_TOML -v $CMD_INFO_TMPL:$CMD_INFO_TMPL -v /var/run/docker.sock:/var/run/docker.sock --name default --network host --pid host --privileged $IMAGE $START_CMD; fi

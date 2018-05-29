@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 // Linux: /opt/openpitrix/drone/log/cmd.info
@@ -42,7 +44,7 @@ func LoadLastCmdStatus(filename string) (status *CmdStatus, err error) {
 	if err != nil {
 		return nil, err
 	}
-	for i := len(lines) - 1; i >= 0; i++ {
+	for i := len(lines) - 1; i >= 0; i-- {
 		if s, err := parseCmdLog(lines[i]); err == nil {
 			return s, nil
 		}
@@ -79,7 +81,7 @@ func tailLines(filename string, nlines, bufsize int) ([]string, error) {
 	}
 
 	buf = buf[:n]
-	for i := len(buf); i >= 0 && nlines > 0; i-- {
+	for i := len(buf) - 1; i >= 0 && nlines > 0; i-- {
 		if buf[i] == '\n' {
 			nlines--
 		}
@@ -91,35 +93,48 @@ func tailLines(filename string, nlines, bufsize int) ([]string, error) {
 
 // format: datetime subtask_id [executing]: cmd
 func parseCmdLog(line string) (status *CmdStatus, err error) {
+	// TODO: regex is better
 	line = strings.TrimSpace(line)
+	if line == "" {
+		err = fmt.Errorf("invalid empty cmd log")
+		return
+	}
 
 	idx0 := strings.Index(line, "[")
 	idx1 := strings.Index(line, "]:")
 
 	if idx0 <= 0 || idx1 <= 0 {
 		err = fmt.Errorf("invalid cmd log: %s", line)
+		logger.Error("%+v", err)
 		return
 	}
 
-	var sDatatime, sSubtaskId string
-	_, err = fmt.Sscanf(line[:idx0], "%s%s", &sDatatime, &sSubtaskId)
+	var sData, sTime, sSubtaskId string
+	_, err = fmt.Sscanf(line[:idx0], "%s%s%s", &sData, &sTime, &sSubtaskId)
 	if err != nil {
 		err = fmt.Errorf("invalid cmd log: %s", line)
+		logger.Error("%+v", err)
 		return
 	}
 
-	var (
-		sStatus  string
-		exitCode int
-	)
-	_, err = fmt.Sscanf(line[idx0:idx1], "%s+%d", &sStatus, &exitCode)
-	if err != nil {
-		err = fmt.Errorf("invalid cmd log: %s", line)
-		return
+	var sStatus string
+	exitCode := 0
+
+	sStatus = line[idx0+1 : idx1]
+	if strings.HasPrefix(sStatus, "failed") {
+		sExitCode := strings.Replace(sStatus, "failed", "", -1)
+		sStatus = "failed"
+		if sExitCode != "" {
+			exitCode, err = strconv.Atoi(sExitCode)
+			if err != nil {
+				logger.Error("%+v", err)
+				return
+			}
+		}
 	}
 
 	status = &CmdStatus{
-		UpTime:    atotime(sDatatime),
+		UpTime:    atotime(sData + " " + sTime),
 		SubtaskId: sSubtaskId,
 		Status:    sStatus,
 		ExitCode:  exitCode,

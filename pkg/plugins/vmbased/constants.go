@@ -29,6 +29,7 @@ const (
 	ActionPingDrone                 = "PingDrone"
 	ActionPingFrontgate             = "PingFrontgate"
 	ActionRunCommandOnDrone         = "RunCommandOnDrone"
+	ActionRemoveContainerOnDrone    = "RemoveContainerOnDrone"
 	ActionRunCommandOnFrontgateNode = "RunCommandOnFrontgateNode"
 )
 
@@ -57,16 +58,20 @@ const (
 	TimeoutFormatAndMountVolume = 600
 	TimeoutUmountVolume         = 120
 	TimeoutSshKeygen            = 120
+	TimeoutRemoveContainer      = 120
 )
 
 const (
-	MetadataConfPath   = "/opt/openpitrix/conf/"
+	OpenPitrixBasePath = "/opt/openpitrix/"
+	OpenPitrixConfPath = OpenPitrixBasePath + "conf/"
+	OpenPitrixSbinPath = OpenPitrixBasePath + "sbin/"
 	OpenPitrixConfFile = "openpitrix.conf"
 	DroneConfFile      = "drone.conf"
 	FrontgateConfFile  = "frontgate.conf"
+	UpdateFstabFile    = "update_fstab.sh"
 	ConfdPath          = "/etc/confd/"
 	MetadataLogLevel   = "debug"
 	ConfdBackendType   = "libconfd-backend-etcdv3"
-	ConfdCmdLogPath    = "/opt/openpitrix/logs/cmd.log"
+	ConfdCmdLogPath    = "/opt/openpitrix/log/cmd.log"
 	HostCmdPrefix      = "nsenter -t 1 -m -u -n -i sh -c"
 )

@@ -2,7 +2,7 @@
 	"id": "openpitrix-drone-001",
 	"host": "localhost",
 	"listen_port": 9112,
-	"cmd_info_log_path": "${HOME}/.openpitrix/drone/log/cmd.info",
+	"cmd_info_log_path": "/opt/openpitrix/log/cmd.log",
 	"confd_self_host": "127.0.0.1",
 	"log_level": "debug"
 }

@@ -12,12 +12,8 @@ func formatVolumeCmd(device, fileSystem string) string {
 }
 
 func updateTabCmd(device, mountPoint, fileSystem, mountOptions string) string {
-	// `blkid /dev/vdc` outputs like
-	// /dev/vdc: UUID="b73ab0cd-f976-4559-b9f6-a6fbf013570d" TYPE="ext4"
-	uuid := fmt.Sprintf("uuid=`blkid %s | awk -F '\\\"' '{print $2}'`", device)
-	content := fmt.Sprintf("UUID=$uuid %s %s %s 0 2", mountPoint, fileSystem, mountOptions)
-	fstab := fmt.Sprintf("sed -i \\\"s/^UUID=$uuid .*//g\\\" /etc/fstab && echo \\\"%s\\\" >> /etc/fstab", content)
-	return fmt.Sprintf("%s && %s", uuid, fstab)
+	cmd := fmt.Sprintf("%s%s %s %s %s %s", OpenPitrixSbinPath, UpdateFstabFile, fileSystem, device, mountPoint, mountOptions)
+	return cmd
 }
 
 func mountVolumeCmd(device, mountPoint, fileSystem, mountOptions string) string {

@@ -44,7 +44,7 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", g.Port))
 	if err != nil {
 		err = errors.WithStack(err)
-		logger.Fatalf("failed to listen: %+v", err)
+		logger.Critical("failed to listen: %+v", err)
 	}
 
 	grpcServer := grpc.NewServer(
@@ -74,7 +74,7 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 
 	if err = grpcServer.Serve(lis); err != nil {
 		err = errors.WithStack(err)
-		logger.Fatalf("%+v", err)
+		logger.Critical("%+v", err)
 	}
 }
 

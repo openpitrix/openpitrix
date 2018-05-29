@@ -31,7 +31,7 @@ func (tc DbTestConfig) GetDatabaseConn() *db.Database {
 	if tc.openDbUnitTests == "1" {
 		d, err := db.OpenDatabase(tc.envConfig.Mysql)
 		if err != nil {
-			logger.Fatalf("failed to open database %+v", tc.envConfig.Mysql)
+			logger.Critical("failed to open database %+v", tc.envConfig.Mysql)
 		}
 		return d
 	}

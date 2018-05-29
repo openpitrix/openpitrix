@@ -125,7 +125,7 @@ func (t *Processor) Pre() error {
 		// write back
 		t.Task.Directive = jsonutil.ToString(request)
 
-	case vmbased.ActionRunCommandOnDrone:
+	case vmbased.ActionRunCommandOnDrone, vmbased.ActionRemoveContainerOnDrone:
 		request := new(pbtypes.RunCommandOnDroneRequest)
 		err := jsonutil.Decode([]byte(t.Task.Directive), request)
 		if err != nil {
@@ -370,7 +370,7 @@ func (t *Processor) Post() error {
 		}
 
 	default:
-		logger.Info("Nothing to do with task [%s] post processor", t.Task.TaskId)
+		logger.Debug("Nothing to do with task [%s] post processor", t.Task.TaskId)
 	}
 	return err
 }

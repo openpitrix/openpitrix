@@ -20,7 +20,7 @@ func NewDefaultConfigString() string {
 		Id:             "openpitrix-drone-001",
 		Host:           "localhost",
 		ListenPort:     constants.DroneServicePort,
-		CmdInfoLogPath: "${HOME}/.openpitrix/drone/log/cmd.info",
+		CmdInfoLogPath: "/opt/openpitrix/log/cmd.log",
 		ConfdSelfHost:  "127.0.0.1",
 		LogLevel:       logger.DebugLevel.String(),
 	}

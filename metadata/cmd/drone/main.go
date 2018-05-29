@@ -227,7 +227,7 @@ EXAMPLE:
 					return
 
 				default:
-					logger.Fatalf("unknown endpoint type: %s\n", s)
+					logger.Critical("unknown endpoint type: %s\n", s)
 					os.Exit(1)
 				}
 

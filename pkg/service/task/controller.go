@@ -5,10 +5,11 @@
 package task
 
 import (
+	"context"
 	"sync"
 	"time"
 
-	"context"
+	"strings"
 
 	"openpitrix.io/openpitrix/pkg/client"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
@@ -23,6 +24,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/retryutil"
 )
 
 type Controller struct {
@@ -134,7 +136,10 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
 					return err
 				}
-				_, err = pilotClient.SetDroneConfig(withTimeoutCtx, config)
+				err = retryutil.Retry(3, 0, func() error {
+					_, err = pilotClient.SetDroneConfig(withTimeoutCtx, config)
+					return err
+				})
 				if err != nil {
 					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
 					return err
@@ -146,7 +151,10 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
 					return err
 				}
-				_, err = pilotClient.SetFrontgateConfig(withTimeoutCtx, config)
+				err = retryutil.Retry(3, 0, func() error {
+					_, err = pilotClient.SetFrontgateConfig(withTimeoutCtx, config)
+					return err
+				})
 				if err != nil {
 					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
 					return err
@@ -199,12 +207,15 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 			case vmbased.ActionStartConfd:
 				pbTask := models.TaskToPb(task)
-				_, err := pilotClient.HandleSubtask(withTimeoutCtx,
-					&pbtypes.SubTaskMessage{
-						TaskId:    pbTask.TaskId.GetValue(),
-						Action:    pbTask.TaskAction.GetValue(),
-						Directive: pbTask.Directive.GetValue(),
-					})
+				err = retryutil.Retry(3, 0, func() error {
+					_, err := pilotClient.HandleSubtask(withTimeoutCtx,
+						&pbtypes.SubTaskMessage{
+							TaskId:    pbTask.TaskId.GetValue(),
+							Action:    pbTask.TaskAction.GetValue(),
+							Directive: pbTask.Directive.GetValue(),
+						})
+					return err
+				})
 				if err != nil {
 					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
 					return err
@@ -214,12 +225,15 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 			case vmbased.ActionStopConfd:
 				pbTask := models.TaskToPb(task)
-				_, err := pilotClient.HandleSubtask(withTimeoutCtx,
-					&pbtypes.SubTaskMessage{
-						TaskId:    pbTask.TaskId.GetValue(),
-						Action:    pbTask.TaskAction.GetValue(),
-						Directive: pbTask.Directive.GetValue(),
-					})
+				err = retryutil.Retry(3, 0, func() error {
+					_, err := pilotClient.HandleSubtask(withTimeoutCtx,
+						&pbtypes.SubTaskMessage{
+							TaskId:    pbTask.TaskId.GetValue(),
+							Action:    pbTask.TaskAction.GetValue(),
+							Directive: pbTask.Directive.GetValue(),
+						})
+					return err
+				})
 				if err != nil {
 					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
 					return err
@@ -229,6 +243,29 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 				time.Sleep(1 * time.Second)
 
+			case vmbased.ActionRemoveContainerOnDrone:
+				request := new(pbtypes.RunCommandOnDroneRequest)
+				err = jsonutil.Decode([]byte(task.Directive), request)
+				if err != nil {
+					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					return err
+				}
+
+				err = retryutil.Retry(3, 0, func() error {
+					_, err = pilotClient.RunCommandOnDrone(withTimeoutCtx, request)
+					if strings.Contains(err.Error(), "transport is closing") {
+						logger.Debug("Expected error: %+v", err)
+						return nil
+					} else {
+						logger.Error("%s", err.Error())
+					}
+					return err
+				})
+				if err != nil {
+					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					return err
+				}
+
 			case vmbased.ActionRunCommandOnDrone:
 				request := new(pbtypes.RunCommandOnDroneRequest)
 				err = jsonutil.Decode([]byte(task.Directive), request)
@@ -236,7 +273,11 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
 					return err
 				}
-				_, err = pilotClient.RunCommandOnDrone(withTimeoutCtx, request)
+
+				err = retryutil.Retry(3, 0, func() error {
+					_, err = pilotClient.RunCommandOnDrone(withTimeoutCtx, request)
+					return err
+				})
 				if err != nil {
 					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
 					return err
@@ -249,7 +290,10 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
 					return err
 				}
-				_, err = pilotClient.RunCommandOnFrontgateNode(withTimeoutCtx, request)
+				err = retryutil.Retry(3, 0, func() error {
+					_, err = pilotClient.RunCommandOnFrontgateNode(withTimeoutCtx, request)
+					return err
+				})
 				if err != nil {
 					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
 					return err
@@ -257,12 +301,15 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 			case vmbased.ActionRegisterMetadata, vmbased.ActionDeregesterCmd, vmbased.ActionDeregisterMetadata:
 				pbTask := models.TaskToPb(task)
-				_, err := pilotClient.HandleSubtask(withTimeoutCtx,
-					&pbtypes.SubTaskMessage{
-						TaskId:    pbTask.TaskId.GetValue(),
-						Action:    pbTask.TaskAction.GetValue(),
-						Directive: pbTask.Directive.GetValue(),
-					})
+				err = retryutil.Retry(3, 0, func() error {
+					_, err := pilotClient.HandleSubtask(withTimeoutCtx,
+						&pbtypes.SubTaskMessage{
+							TaskId:    pbTask.TaskId.GetValue(),
+							Action:    pbTask.TaskAction.GetValue(),
+							Directive: pbTask.Directive.GetValue(),
+						})
+					return err
+				})
 				if err != nil {
 					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
 					return err
@@ -270,12 +317,15 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 			case vmbased.ActionRegisterCmd:
 				pbTask := models.TaskToPb(task)
-				_, err := pilotClient.HandleSubtask(withTimeoutCtx,
-					&pbtypes.SubTaskMessage{
-						TaskId:    pbTask.TaskId.GetValue(),
-						Action:    pbTask.TaskAction.GetValue(),
-						Directive: pbTask.Directive.GetValue(),
-					})
+				err = retryutil.Retry(3, 0, func() error {
+					_, err := pilotClient.HandleSubtask(withTimeoutCtx,
+						&pbtypes.SubTaskMessage{
+							TaskId:    pbTask.TaskId.GetValue(),
+							Action:    pbTask.TaskAction.GetValue(),
+							Directive: pbTask.Directive.GetValue(),
+						})
+					return err
+				})
 				if err != nil {
 					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
 					return err

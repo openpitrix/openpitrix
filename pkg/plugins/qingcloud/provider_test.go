@@ -29,6 +29,9 @@ func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
 		{vmbased.ActionPingDrone, 5},
 		{vmbased.ActionSetDroneConfig, 5},
 		{vmbased.ActionFormatAndMountVolume, 5},
+		{vmbased.ActionRemoveContainerOnDrone, 5},
+		{vmbased.ActionPingDrone, 5},
+		{vmbased.ActionSetDroneConfig, 5},
 		{vmbased.ActionRunCommandOnDrone, 2}, // master ssh key generate
 		{vmbased.ActionRegisterMetadata, 1},
 		{vmbased.ActionStartConfd, 5},
