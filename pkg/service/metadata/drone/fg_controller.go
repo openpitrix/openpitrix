@@ -56,6 +56,9 @@ func (p *FrontgateController) SetConfig(cfg *pbtypes.FrontgateConfig) error {
 }
 
 func (p *FrontgateController) ReportSubTaskStatus(in *pbtypes.SubTaskStatus) error {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	client, err := p.getClient()
 	if err != nil {
 		logger.Warn("%+v", err)
@@ -75,9 +78,6 @@ func (p *FrontgateController) getClient() (
 	*pbfrontgate.FrontgateServiceClient,
 	error,
 ) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
 	if p.cfg == nil {
 		err := fmt.Errorf("drone: Frontgate config is empty")
 		logger.Warn("%+v", err)
@@ -108,9 +108,6 @@ func (p *FrontgateController) getClient() (
 }
 
 func (p *FrontgateController) closeAllClient() {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-
 	for _, c := range p.clientMap {
 		c.Close()
 	}
