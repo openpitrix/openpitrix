@@ -5,7 +5,7 @@ metadata:
   labels:
     app: openpitrix
   name: openpitrix-db-init
-  namespace: default
+  namespace: openpitrix-system
 spec:
   activeDeadlineSeconds: 600
   backoffLimit: 6
@@ -21,9 +21,9 @@ spec:
       - name: wait-mysql
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-db.default.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-db.openpitrix-system.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
       containers:
-      - command: ["/flyway/sql/ddl/ddl_init.sh", "-hopenpitrix-db.default.svc.cluster.local", "-uroot", "--connect-timeout=5"]
+      - command: ["/flyway/sql/ddl/ddl_init.sh", "-hopenpitrix-db.openpitrix-system.svc.cluster.local", "-uroot", "--connect-timeout=5"]
         env:
         - name: PASSWORD
           valueFrom:

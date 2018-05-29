@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: openpitrix-job-manager
-  namespace: default
+  namespace: openpitrix-system
   labels:
     app: openpitrix
     service: openpitrix-job-manager
@@ -20,7 +20,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: openpitrix-job
-  namespace: default
+  namespace: openpitrix-system
   labels:
     app: openpitrix
 spec:
@@ -38,11 +38,11 @@ spec:
       - name: wait-mysql
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-db.default.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-db.openpitrix-system.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
       - name: wait-etcd
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-etcd.default.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-etcd.openpitrix-system.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
       - name: job-manager
         image: openpitrix/openpitrix:latest

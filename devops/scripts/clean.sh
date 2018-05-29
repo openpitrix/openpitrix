@@ -7,11 +7,7 @@ echo "start to clean k8s resource"
 cd $(dirname $0)
 cd ../..
 
-kubectl delete -f ./devops/kubernetes/openpitrix
-kubectl delete -f ./devops/kubernetes/etcd
-kubectl delete -f ./devops/kubernetes/ctrl
-kubectl delete  -f ./devops/kubernetes/db
-
+kubectl delete namespace openpitrix-system
 
 
 echo "start to clean docker resource"

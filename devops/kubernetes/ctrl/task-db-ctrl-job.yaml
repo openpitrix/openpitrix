@@ -5,7 +5,7 @@ metadata:
   labels:
     app: openpitrix-task-db-ctrl
   name: openpitrix-task-db-ctrl
-  namespace: default
+  namespace: openpitrix-system
 spec:
   activeDeadlineSeconds: 600
   backoffLimit: 6
@@ -21,9 +21,9 @@ spec:
       - name: wait-mysql
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-db.default.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-db.openpitrix-system.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
       containers:
-      - command: ["flyway", "-X", "-url=jdbc:mysql://openpitrix-db.default.svc.cluster.local/task", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/task", "migrate"]
+      - command: ["flyway", "-X", "-url=jdbc:mysql://openpitrix-db.openpitrix-system.svc.cluster.local/task", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/task", "migrate"]
         env:
         - name: FLYWAY_PASSWORD
           valueFrom:

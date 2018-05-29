@@ -4,7 +4,8 @@
 cd $(dirname $0)
 cd ../..
 
-kubectl create secret generic mysql-pass --from-file=./devops/kubernetes/password.txt -n default
+kubectl create namespace openpitrix-system
+kubectl create secret generic mysql-pass --from-file=./devops/kubernetes/password.txt -n openpitrix-system
 kubectl apply -f ./devops/kubernetes/db
 kubectl apply -f ./devops/kubernetes/etcd
 kubectl apply -f ./devops/kubernetes/openpitrix
