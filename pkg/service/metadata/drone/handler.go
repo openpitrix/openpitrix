@@ -139,6 +139,8 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 			}
 			if trName == "/etc/confd/conf.d/cmd.info.toml" {
 				go func() {
+					logger.Info("LoadLastCmdStatus: %v", cfg.CmdInfoLogPath)
+
 					status, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
 					if err != nil {
 						logger.Warn("%+v", err)
