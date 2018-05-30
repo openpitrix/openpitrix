@@ -16,6 +16,9 @@ import (
 
 	"github.com/chai2010/jsonmap"
 	"github.com/coreos/etcd/clientv3"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const DefaultEtcdMaxOpsPerTxn = 128
@@ -63,6 +66,19 @@ func (p *EtcdClientManager) GetClient(endpoints []string, timeout time.Duration,
 
 	p.clientMap[key] = c
 	return c, nil
+}
+
+func (p *EtcdClientManager) ClearClient(client *EtcdClient) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	for k, c := range p.clientMap {
+		if c == client {
+			delete(p.clientMap, k)
+			c.Close()
+			return
+		}
+	}
 }
 
 func (p *EtcdClientManager) Clear() {
@@ -335,4 +351,25 @@ func (p *EtcdClient) Clear() error {
 	}
 
 	return nil
+}
+
+func (p *EtcdClient) isHaltErr(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	// Deprecated: this error should not be relied upon by users; use the status
+	// code of Canceled instead.
+	if err == grpc.ErrClientConnClosing {
+		return true
+	}
+	if ev, ok := status.FromError(err); ok {
+		switch ev.Code() {
+		case codes.Canceled, codes.Unavailable, codes.Internal:
+			return true
+		}
+	}
+
+	// not the connection error
+	return false
 }

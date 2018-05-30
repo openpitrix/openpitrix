@@ -293,7 +293,16 @@ func (p *Server) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata, out *pbt
 		return err
 	}
 
-	return etcdClient.RegisterMetadata(in)
+	err = etcdClient.RegisterMetadata(in)
+	if err != nil {
+		if etcdClient.isHaltErr(err) {
+			p.etcd.ClearClient(etcdClient)
+		}
+		logger.Warn("%+v", err)
+		return err
+	}
+
+	return nil
 }
 
 func (p *EtcdClient) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata) error {
@@ -331,6 +340,9 @@ func (p *Server) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata, out 
 
 	err = etcdClient.DeregisterMetadata(in)
 	if err != nil {
+		if etcdClient.isHaltErr(err) {
+			p.etcd.ClearClient(etcdClient)
+		}
 		logger.Warn("%+v", err)
 		return err
 	}
@@ -378,6 +390,9 @@ func (p *Server) RegisterCmd(in *pbtypes.SubTask_RegisterCmd, out *pbtypes.Empty
 
 	err = etcdClient.RegisterCmd(in)
 	if err != nil {
+		if etcdClient.isHaltErr(err) {
+			p.etcd.ClearClient(etcdClient)
+		}
 		logger.Warn("%+v", err)
 		return err
 	}
@@ -420,6 +435,9 @@ func (p *Server) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd, out *pbtypes.E
 
 	err = etcdClient.DeregisterCmd(in)
 	if err != nil {
+		if etcdClient.isHaltErr(err) {
+			p.etcd.ClearClient(etcdClient)
+		}
 		logger.Warn("%+v", err)
 		return err
 	}
@@ -501,6 +519,9 @@ func (p *Server) GetEtcdValuesByPrefix(in *pbtypes.String, out *pbtypes.StringMa
 
 	m, err := etcdClient.GetValuesByPrefix(in.Value)
 	if err != nil {
+		if etcdClient.isHaltErr(err) {
+			p.etcd.ClearClient(etcdClient)
+		}
 		logger.Warn("%+v", err)
 		return err
 	}
@@ -525,6 +546,9 @@ func (p *Server) GetEtcdValues(in *pbtypes.StringList, out *pbtypes.StringMap) e
 
 	m, err := etcdClient.GetValues(in.ValueList...)
 	if err != nil {
+		if etcdClient.isHaltErr(err) {
+			p.etcd.ClearClient(etcdClient)
+		}
 		logger.Warn("%+v", err)
 		return err
 	}
@@ -549,6 +573,9 @@ func (p *Server) SetEtcdValues(in *pbtypes.StringMap, out *pbtypes.Empty) error 
 
 	err = etcdClient.SetValues(in.GetValueMap())
 	if err != nil {
+		if etcdClient.isHaltErr(err) {
+			p.etcd.ClearClient(etcdClient)
+		}
 		logger.Warn("%+v", err)
 		return err
 	}
