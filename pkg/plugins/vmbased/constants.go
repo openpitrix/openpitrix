@@ -21,7 +21,7 @@ const (
 	ActionRegisterMetadata          = "RegisterMetadata"
 	ActionDeregisterMetadata        = "DeregisterMetadata"
 	ActionRegisterCmd               = "RegisterCmd"
-	ActionDeregesterCmd             = "DeregisterCmd"
+	ActionDeregisterCmd             = "DeregisterCmd"
 	ActionStartConfd                = "StartConfd"
 	ActionStopConfd                 = "StopConfd"
 	ActionSetFrontgateConfig        = "SetFrontgateConfig"

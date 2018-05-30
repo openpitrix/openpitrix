@@ -170,12 +170,29 @@ func (t *Processor) Pre() error {
 				return err
 			}
 			meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
-			cnodes, err := models.NewCmd(meta.Cnodes)
+		}
+		cnodes, err := models.NewCmd(meta.Cnodes)
+		if err != nil {
+			return err
+		}
+		cnodes.Id = t.Task.TaskId
+		meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(meta.DroneIp, cnodes))
+		// write back
+		t.Task.Directive = jsonutil.ToString(meta)
+
+	case vmbased.ActionDeregisterCmd:
+		// when CreateCluster need to reload ip
+		meta, err := models.NewMeta(t.Task.Directive)
+		if err != nil {
+			return err
+		}
+		if meta.DroneIp == "" {
+			clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{meta.NodeId})
 			if err != nil {
 				return err
 			}
-			cnodes.Id = t.Task.TaskId
-			meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(meta.DroneIp, cnodes))
+			meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
+			meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(meta.DroneIp, nil))
 			// write back
 			t.Task.Directive = jsonutil.ToString(meta)
 		}
