@@ -133,3 +133,31 @@ func (f *Frontgate) DeleteClusterLayer() *models.TaskLayer {
 
 	return headTaskLayer.Child
 }
+
+func (f *Frontgate) StartClusterLayer() *models.TaskLayer {
+	var nodeIds []string
+	for nodeId := range f.ClusterWrapper.ClusterNodes {
+		nodeIds = append(nodeIds, nodeId)
+	}
+	headTaskLayer := new(models.TaskLayer)
+
+	headTaskLayer.
+		Append(f.startInstancesLayer(false)).             // run instance and attach volume to instance
+		Append(f.pingFrontgateLayer(false)).              // ping frontgate
+		Append(f.setFrontgateConfigLayer(nodeIds, false)) // set frontgate config
+
+	return headTaskLayer.Child
+}
+
+func (f *Frontgate) StopClusterLayer() *models.TaskLayer {
+	var nodeIds []string
+	for nodeId := range f.ClusterWrapper.ClusterNodes {
+		nodeIds = append(nodeIds, nodeId)
+	}
+	headTaskLayer := new(models.TaskLayer)
+
+	headTaskLayer.
+		Append(f.stopInstancesLayer(nodeIds, false)) // delete instance
+
+	return headTaskLayer.Child
+}

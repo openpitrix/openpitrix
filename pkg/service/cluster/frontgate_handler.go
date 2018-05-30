@@ -91,7 +91,7 @@ func (f *Frontgate) StartCluster(frontgate *models.Cluster) error {
 		frontgate.ClusterId,
 		frontgate.AppId,
 		frontgate.VersionId,
-		constants.ActionRecoverClusters,
+		constants.ActionStartClusters,
 		directive,
 		f.Runtime.Provider,
 		frontgate.Owner,

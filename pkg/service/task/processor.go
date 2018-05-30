@@ -192,10 +192,10 @@ func (t *Processor) Pre() error {
 				return err
 			}
 			meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
-			meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(meta.DroneIp, nil))
-			// write back
-			t.Task.Directive = jsonutil.ToString(meta)
 		}
+		meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(meta.DroneIp, nil))
+		// write back
+		t.Task.Directive = jsonutil.ToString(meta)
 
 	case vmbased.ActionStartConfd:
 		// when CreateCluster need to reload ip

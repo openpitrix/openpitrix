@@ -154,7 +154,7 @@ func (j *Processor) Post() error {
 		clusterWrapper := clusterWrappers[0]
 		frontgateId := clusterWrapper.Cluster.FrontgateId
 		pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
-			[]string{constants.StatusActive})
+			[]string{constants.StatusActive, constants.StatusPending})
 		if err != nil {
 			return err
 		}
