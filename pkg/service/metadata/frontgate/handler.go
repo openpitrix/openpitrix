@@ -349,7 +349,7 @@ func (p *EtcdClient) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata) 
 	}
 
 	var keyPrefixs []string
-	for key, _ := range m {
+	for key, _ := range jsonmap.JsonMap(m).ToMapString("/") {
 		keyPrefixs = append(keyPrefixs, key)
 	}
 
@@ -438,7 +438,7 @@ func (p *EtcdClient) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd) error {
 	}
 
 	var keyPrefixs []string
-	for key, _ := range m {
+	for key, _ := range jsonmap.JsonMap(m).ToMapString("/") {
 		keyPrefixs = append(keyPrefixs, key)
 	}
 
