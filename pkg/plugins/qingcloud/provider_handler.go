@@ -159,6 +159,31 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 		return err
 	}
 
+	describeOutput, err := instanceService.DescribeInstances(
+		&qcservice.DescribeInstancesInput{
+			Instances: qcservice.StringSlice([]string{instance.InstanceId}),
+		},
+	)
+	if err != nil {
+		logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
+	if describeRetCode != 0 {
+		message := qcservice.StringValue(describeOutput.Message)
+		logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
+			MyProvider, describeRetCode, message)
+		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
+	}
+
+	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
+
+	if status == constants.StatusStopped {
+		logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
+		return nil
+	}
+
 	output, err := instanceService.StopInstances(
 		&qcservice.StopInstancesInput{
 			Instances: qcservice.StringSlice([]string{instance.InstanceId}),
@@ -203,6 +228,31 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 	if err != nil {
 		logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
 		return err
+	}
+
+	describeOutput, err := instanceService.DescribeInstances(
+		&qcservice.DescribeInstancesInput{
+			Instances: qcservice.StringSlice([]string{instance.InstanceId}),
+		},
+	)
+	if err != nil {
+		logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
+	if describeRetCode != 0 {
+		message := qcservice.StringValue(describeOutput.Message)
+		logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
+			MyProvider, describeRetCode, message)
+		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
+	}
+
+	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
+
+	if status == constants.StatusActive {
+		logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
+		return nil
 	}
 
 	output, err := instanceService.StartInstances(
@@ -532,6 +582,10 @@ func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
 	instance, err := models.NewInstance(task.Directive)
 	if err != nil {
 		return err
+	}
+	if instance.TargetJobId == "" {
+		logger.Warn("Skip empty task [%s] target job id", task.TaskId)
+		return nil
 	}
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {

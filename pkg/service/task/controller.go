@@ -253,11 +253,13 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 				err = retryutil.Retry(3, 0, func() error {
 					_, err = pilotClient.RunCommandOnDrone(withTimeoutCtx, request)
-					if strings.Contains(err.Error(), "transport is closing") {
-						logger.Debug("Expected error: %+v", err)
-						return nil
-					} else {
-						logger.Error("%s", err.Error())
+					if err != nil {
+						if strings.Contains(err.Error(), "transport is closing") {
+							logger.Debug("Expected error: %+v", err)
+							return nil
+						} else {
+							logger.Error("%s", err.Error())
+						}
 					}
 					return err
 				})

@@ -1160,8 +1160,8 @@ func (f *Frame) StartClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.startInstancesLayer(false)).             // start instance
 		Append(f.attachVolumesLayer(false)).              // attach volume to instance, will auto mount
+		Append(f.startInstancesLayer(false)).             // start instance
 		Append(f.waitFrontgateLayer(false)).              // wait frontgate cluster to be active
 		Append(f.registerMetadataLayer(false)).           // register cluster metadata
 		Append(f.pingDroneLayer(nodeIds, false)).         // ping drone
@@ -1180,15 +1180,19 @@ func (f *Frame) DeleteClusterLayer() *models.TaskLayer {
 	}
 	headTaskLayer := new(models.TaskLayer)
 
+	if f.ClusterWrapper.Cluster.Status == constants.StatusActive {
+		headTaskLayer.
+			Append(f.destroyAndStopServiceLayer(nodeIds, nil, true)). // register destroy and stop cmd to exec
+			Append(f.stopConfdServiceLayer(nodeIds, true)).           // stop confd service
+			Append(f.umountVolumeLayer(nodeIds, true)).               // umount volume from instance
+			Append(f.stopInstancesLayer(nodeIds, true)).              // stop instance
+			Append(f.detachVolumesLayer(nodeIds, false))              // detach volume from instance
+	}
+
 	headTaskLayer.
-		Append(f.destroyAndStopServiceLayer(nodeIds, nil, true)). // register destroy and stop cmd to exec
-		Append(f.stopConfdServiceLayer(nodeIds, true)).           // stop confd service
-		Append(f.umountVolumeLayer(nodeIds, true)).               // umount volume from instance
-		Append(f.stopInstancesLayer(nodeIds, true)).              // stop instance
-		Append(f.detachVolumesLayer(nodeIds, false)).             // detach volume from instance
-		Append(f.deleteInstancesLayer(nodeIds, false)).           // delete instance
-		Append(f.deleteVolumesLayer(nodeIds, false)).             // delete volume
-		Append(f.deregisterMetadataLayer(true))                   // deregister cluster
+		Append(f.deleteInstancesLayer(nodeIds, false)). // delete instance
+		Append(f.deleteVolumesLayer(nodeIds, false)).   // delete volume
+		Append(f.deregisterMetadataLayer(true))         // deregister cluster
 
 	return headTaskLayer.Child
 }
