@@ -342,20 +342,3 @@ func (m *MetadataV1) GetEmptyClusterCnodes() map[string]interface{} {
 	}
 	return data
 }
-
-func GetCmdCnodes(ip string, cmd *models.Cmd) map[string]interface{} {
-	if cmd == nil {
-		// deregister
-		return map[string]interface{}{
-			ip: map[string]interface{}{
-				RegisterNodeCmd: "",
-			},
-		}
-	} else {
-		return map[string]interface{}{
-			ip: map[string]interface{}{
-				RegisterNodeCmd: cmd,
-			},
-		}
-	}
-}

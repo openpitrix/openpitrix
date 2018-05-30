@@ -171,12 +171,15 @@ func (t *Processor) Pre() error {
 			}
 			meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
 		}
-		cnodes, err := models.NewCmd(meta.Cnodes)
+		cnodes, err := models.NewCmdCnodes(meta.Cnodes)
 		if err != nil {
 			return err
 		}
-		cnodes.Id = t.Task.TaskId
-		meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(meta.DroneIp, cnodes))
+		err = cnodes.Format(meta.DroneIp, t.Task.TaskId)
+		if err != nil {
+			return err
+		}
+		meta.Cnodes = jsonutil.ToString(cnodes)
 		// write back
 		t.Task.Directive = jsonutil.ToString(meta)
 
@@ -193,7 +196,10 @@ func (t *Processor) Pre() error {
 			}
 			meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
 		}
-		meta.Cnodes = jsonutil.ToString(vmbased.GetCmdCnodes(meta.DroneIp, nil))
+		meta.Cnodes = jsonutil.ToString(map[string]map[string]string{
+			meta.DroneIp: {"cmd": ""},
+		})
+
 		// write back
 		t.Task.Directive = jsonutil.ToString(meta)
 
