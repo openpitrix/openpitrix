@@ -353,7 +353,7 @@ func (p *Server) DeregisterCmd(ctx context.Context, arg *pbtypes.SubTask_Deregis
 }
 
 func (p *Server) ReportSubTaskStatus(ctx context.Context, arg *pbtypes.SubTaskStatus) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info("%s taskId: %s", funcutil.CallerName(1), arg.TaskId)
 
 	p.taskStatusMgr.PutStatus(*arg)
 	return &pbtypes.Empty{}, nil

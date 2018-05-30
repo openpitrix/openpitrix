@@ -452,7 +452,7 @@ func (p *EtcdClient) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd) error {
 }
 
 func (p *Server) ReportSubTaskStatus(in *pbtypes.SubTaskStatus, out *pbtypes.Empty) error {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info("%s taskId: %s", funcutil.CallerName(1), in.TaskId)
 
 	ctx := context.Background()
 

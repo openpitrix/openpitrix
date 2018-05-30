@@ -7,6 +7,8 @@ User=root
 EnvironmentFile=/opt/openpitrix/conf/openpitrix.conf
 ExecStart=/opt/openpitrix/sbin/start_etcd.sh $FILE_NAME
 ExecStop=docker stop etcd
+Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target

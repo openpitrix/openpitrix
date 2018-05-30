@@ -15,6 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/frontgate"
 	"openpitrix.io/openpitrix/pkg/pb/types"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
 type FrontgateController struct {
@@ -56,6 +57,7 @@ func (p *FrontgateController) SetConfig(cfg *pbtypes.FrontgateConfig) error {
 }
 
 func (p *FrontgateController) ReportSubTaskStatus(in *pbtypes.SubTaskStatus) error {
+	logger.Info("%s taskId: %s", funcutil.CallerName(1), in.TaskId)
 	p.mu.Lock()
 	defer p.mu.Unlock()
 

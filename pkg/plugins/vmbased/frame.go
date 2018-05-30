@@ -149,22 +149,17 @@ func (f *Frame) deregisterCmdLayer(nodeIds []string, failureAllowed bool) *model
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		ip := f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp
-		cnodes := GetCmdCnodes(
-			ip,
-			nil,
-		)
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			NodeId:      nodeId,
 			DroneIp:     ip,
 			Timeout:     TimeoutDeregister,
-			Cnodes:      jsonutil.ToString(cnodes),
 		}
 		directive := jsonutil.ToString(meta)
 		deregisterCmdTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
-			TaskAction:     ActionDeregesterCmd,
+			TaskAction:     ActionDeregisterCmd,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
 			Directive:      directive,

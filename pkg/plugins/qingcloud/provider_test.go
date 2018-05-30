@@ -39,7 +39,7 @@ func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
 		{vmbased.ActionRegisterCmd, 1}, // hbase-hdfs-master start
 		{vmbased.ActionRegisterCmd, 1}, // hbase-master start
 		{vmbased.ActionRegisterCmd, 3}, // hbase-slave start
-		{vmbased.ActionDeregesterCmd, 5},
+		{vmbased.ActionDeregisterCmd, 5},
 	}
 
 	var result []ActionNum
