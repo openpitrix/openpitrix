@@ -196,9 +196,12 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string, failureAl
 				continue
 			}
 			ip := f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp
-			cnodes := &models.Cmd{
+			cmd := &models.Cmd{
 				Cmd:     service.Cmd,
 				Timeout: timeout,
+			}
+			cnodes := map[string]map[string]*models.Cmd{
+				ip: {"cmd": cmd},
 			}
 			meta := &models.Meta{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,

@@ -5,6 +5,8 @@
 package models
 
 import (
+	"fmt"
+
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
@@ -15,11 +17,30 @@ type Cmd struct {
 	Timeout int    `json:"timeout"`
 }
 
-func NewCmd(data string) (*Cmd, error) {
-	cmd := new(Cmd)
-	err := jsonutil.Decode([]byte(data), cmd)
+type CmdCnodes map[string]map[string]*Cmd
+
+func (c CmdCnodes) Format(ip, taskId string) error {
+	cnodes, exist := c[""]
+	if exist {
+		c[ip] = cnodes
+		delete(c, "")
+	}
+	cnodes, exist = c[ip]
+	if exist {
+		cmd := cnodes["cmd"]
+		cmd.Id = taskId
+	} else {
+		logger.Error("Ip [%s] not in Cnodes [%+v]", ip, c)
+		return fmt.Errorf("ip [%s] not in Cnodes [%+v]", ip, c)
+	}
+	return nil
+}
+
+func NewCmdCnodes(data string) (*CmdCnodes, error) {
+	cmdCnodes := new(CmdCnodes)
+	err := jsonutil.Decode([]byte(data), cmdCnodes)
 	if err != nil {
 		logger.Error("Decode [%s] into cmd failed: %+v", data, err)
 	}
-	return cmd, err
+	return cmdCnodes, err
 }
