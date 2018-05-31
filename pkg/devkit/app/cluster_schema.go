@@ -91,15 +91,7 @@ const ClusterSchema = `
                 "type": "string"
               }
             }
-          }, 
-          "instance_class": {
-            "enum": [
-              0, 
-              1, 
-              5
-            ], 
-            "type": "integer"
-          }, 
+          },
           "role": {
             "type": "string"
           }, 
@@ -163,16 +155,7 @@ const ClusterSchema = `
                   "ntfs"
                 ], 
                 "type": "string"
-              }, 
-              "class": {
-                "enum": [
-                  0, 
-                  2, 
-                  3, 
-                  10
-                ], 
-                "type": "integer"
-              }, 
+              },
               "mount_options": {
                 "type": "string", 
                 "maxLength": 100

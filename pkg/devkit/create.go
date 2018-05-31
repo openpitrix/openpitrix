@@ -25,7 +25,6 @@ const defaultClusterJsonTmpl = `
             "type": "docker",
             "image": "nginx"
         },
-        "instance_class": "{{.cluster.role_name1.instance_class}}",
         "count": "{{.cluster.role_name1.count}}",
         "cpu": "{{.cluster.role_name1.cpu}}",
         "memory": "{{.cluster.role_name1.memory}}",
@@ -105,17 +104,6 @@ const defaultConfigJson = `
                 "min": 10,
                 "max": 1000,
                 "step": 10,
-                "required": true
-            }, {
-                "key": "instance_class",
-                "label": "resource type",
-                "description": "The instance type for the cluster to run, such as high performance, high performance plus",
-                "type": "integer",
-                "default": 0,
-                "range": [
-                    0,
-                    1
-                ],
                 "required": true
             }]
         }]
