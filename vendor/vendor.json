@@ -671,28 +671,28 @@
 			"revisionTime": "2017-11-23T12:37:36Z"
 		},
 		{
-			"checksumSHA1": "X3dVTe3pvf7ZQKzhUXXGUrJv4Ao=",
+			"checksumSHA1": "Beh8bLsyMviYZeqS88ya7ZIWduI=",
 			"path": "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options",
-			"revision": "8cc3a55af3bcf171a1c23a90c4df9cf591706104",
-			"revisionTime": "2017-11-03T16:55:59Z"
+			"revision": "a5b66c16bab6156b1cc525e76159bdff463123ba",
+			"revisionTime": "2018-05-17T19:03:18Z"
 		},
 		{
-			"checksumSHA1": "waS+0BsNfvxLGQIKyBkTZUaCJqk=",
+			"checksumSHA1": "5gcgyRkJrdQ5VClihFH6u+dXg7s=",
 			"path": "github.com/grpc-ecosystem/grpc-gateway/runtime",
-			"revision": "b0be3cdef0ed27e3c420795e2efbfe9c27e839cc",
-			"revisionTime": "2017-10-25T16:38:55Z"
+			"revision": "a5b66c16bab6156b1cc525e76159bdff463123ba",
+			"revisionTime": "2018-05-17T19:03:18Z"
 		},
 		{
-			"checksumSHA1": "V1qChZAWS+xzlEBSyz2r8JlzmM8=",
+			"checksumSHA1": "HV5bBOOPCOhO6SUMFIGW/M6vi+I=",
 			"path": "github.com/grpc-ecosystem/grpc-gateway/runtime/internal",
-			"revision": "b0be3cdef0ed27e3c420795e2efbfe9c27e839cc",
-			"revisionTime": "2017-10-25T16:38:55Z"
+			"revision": "a5b66c16bab6156b1cc525e76159bdff463123ba",
+			"revisionTime": "2018-05-17T19:03:18Z"
 		},
 		{
-			"checksumSHA1": "vqiK5r5dntV7JNZ+ZsGlD0Samos=",
+			"checksumSHA1": "QuHQq2+nPPMMJ3qoJxlQ8ZCVEfk=",
 			"path": "github.com/grpc-ecosystem/grpc-gateway/utilities",
-			"revision": "b0be3cdef0ed27e3c420795e2efbfe9c27e839cc",
-			"revisionTime": "2017-10-25T16:38:55Z"
+			"revision": "a5b66c16bab6156b1cc525e76159bdff463123ba",
+			"revisionTime": "2018-05-17T19:03:18Z"
 		},
 		{
 			"checksumSHA1": "K6exl2ouL7d8cR2i378EzZOdRVI=",

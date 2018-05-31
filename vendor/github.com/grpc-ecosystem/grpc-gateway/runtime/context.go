@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/net/context"
+	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
@@ -80,7 +80,7 @@ func AnnotateContext(ctx context.Context, mux *ServeMux, req *http.Request) (con
 				pairs = append(pairs, strings.ToLower(xForwardedFor), fmt.Sprintf("%s, %s", fwd, remoteIP))
 			}
 		} else {
-			grpclog.Printf("invalid remote addr: %s", addr)
+			grpclog.Infof("invalid remote addr: %s", addr)
 		}
 	}
 
@@ -91,8 +91,8 @@ func AnnotateContext(ctx context.Context, mux *ServeMux, req *http.Request) (con
 		return ctx, nil
 	}
 	md := metadata.Pairs(pairs...)
-	if mux.metadataAnnotator != nil {
-		md = metadata.Join(md, mux.metadataAnnotator(ctx, req))
+	for _, mda := range mux.metadataAnnotators {
+		md = metadata.Join(md, mda(ctx, req))
 	}
 	return metadata.NewOutgoingContext(ctx, md), nil
 }
