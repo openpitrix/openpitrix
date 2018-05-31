@@ -15,6 +15,7 @@ import (
 	indexerclient "openpitrix.io/openpitrix/pkg/client/repo_indexer"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -32,12 +33,12 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 
 	labelMap, err := neturl.ParseQuery(req.GetLabel().GetValue())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeRepos: GetLabelMapFromRequest %+v", err)
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
 	}
 
 	selectorMap, err := neturl.ParseQuery(req.GetSelector().GetValue())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeRepos: GetSelectorMapFromRequest %+v", err)
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "selector")
 	}
 
 	query := p.Db.
@@ -56,17 +57,17 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 	_, err = query.Load(&repos)
 	if err != nil {
 		// TODO: err_code should be implementation
-		return nil, status.Errorf(codes.Internal, "DescribeRepos: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	count, err := query.Count()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeRepos: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	repoSet, err := p.formatRepoSet(repos)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeRepos: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeReposResponse{
@@ -105,29 +106,29 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		Record(newRepo).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 
 	err = p.createProviders(newRepo.RepoId, providers)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 	if len(req.GetLabels()) > 0 {
 		err = p.createLabels(newRepo.RepoId, req.GetLabels())
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 		}
 	}
 	if len(req.GetSelectors()) > 0 {
 		err = p.createSelectors(newRepo.RepoId, req.GetSelectors())
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 		}
 	}
 
 	repo, err := p.formatRepo(newRepo)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateRepo: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.CreateRepoResponse{
@@ -159,7 +160,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	repoId := req.GetRepoId().GetValue()
 	repo, err := p.getRepo(repoId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get repo [%s]", repoId)
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorResourcesNotFound, repoId)
 	}
 	url := repo.Url
 	credential := repo.Credential
@@ -194,7 +195,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 			Where(db.Eq(models.ColumnRepoId, repoId)).
 			Exec()
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 
@@ -202,29 +203,29 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		providers = stringutil.Unique(providers)
 		err = p.modifyProviders(repoId, providers)
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 	if len(req.GetLabels()) > 0 {
 		err = p.modifyLabels(repoId, req.GetLabels())
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 	if len(req.GetSelectors()) > 0 {
 		err = p.modifySelectors(repoId, req.GetSelectors())
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 
 	repo, err = p.getRepo(repoId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get repo [%s]", repoId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	pbRepo, err := p.formatRepo(repo)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ModifyRepo: %+v", repoId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.ModifyRepoResponse{
@@ -247,7 +248,7 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DeleteRepos: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
 	}
 
 	return &pb.DeleteReposResponse{

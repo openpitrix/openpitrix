@@ -25,3 +25,8 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	consumes: "application/json";
 	produces: "application/json";
 };
+
+message ErrorDetail {
+	string error_name = 1;
+	string cause = 2;
+}
