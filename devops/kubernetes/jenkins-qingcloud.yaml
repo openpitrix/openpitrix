@@ -11,6 +11,7 @@ metadata:
     app: jenkins
   namespace: jenkins
 spec:
+  type: NodePort
   selector:
     app: jenkins
   ports:
@@ -41,6 +42,9 @@ metadata:
   name: jenkins
   namespace: jenkins
 spec:
+  selector:
+    matchLabels:
+      app: jenkins
   replicas: 1
   template:
     metadata:
