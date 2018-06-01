@@ -127,7 +127,16 @@ func run() error {
 }
 
 func mainHandler(ctx context.Context) http.Handler {
-	var gwmux = runtime.NewServeMux(runtime.WithMetadata(senderutil.ServeMuxSetSender))
+	var gwmux = runtime.NewServeMux(
+		runtime.WithMetadata(senderutil.ServeMuxSetSender),
+		runtime.WithMarshalerOption(
+			runtime.MIMEWildcard,
+			&runtime.JSONPb{
+				OrigName:     true,
+				EmitDefaults: true,
+			},
+		),
+	)
 	var opts = []grpc.DialOption{grpc.WithInsecure()}
 	var err error
 
