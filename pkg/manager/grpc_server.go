@@ -79,7 +79,9 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 }
 
 var (
-	jsonPbMarshaller = &jsonpb.Marshaler{}
+	jsonPbMarshaller = &jsonpb.Marshaler{
+		OrigName: true,
+	}
 )
 
 func UnaryServerLogInterceptor() grpc.UnaryServerInterceptor {
