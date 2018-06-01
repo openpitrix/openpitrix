@@ -483,8 +483,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for JobManager service
-
+// JobManagerClient is the client API for JobManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type JobManagerClient interface {
 	CreateJob(ctx context.Context, in *CreateJobRequest, opts ...grpc.CallOption) (*CreateJobResponse, error)
 	DescribeJobs(ctx context.Context, in *DescribeJobsRequest, opts ...grpc.CallOption) (*DescribeJobsResponse, error)
@@ -500,7 +501,7 @@ func NewJobManagerClient(cc *grpc.ClientConn) JobManagerClient {
 
 func (c *jobManagerClient) CreateJob(ctx context.Context, in *CreateJobRequest, opts ...grpc.CallOption) (*CreateJobResponse, error) {
 	out := new(CreateJobResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.JobManager/CreateJob", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.JobManager/CreateJob", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -509,15 +510,14 @@ func (c *jobManagerClient) CreateJob(ctx context.Context, in *CreateJobRequest, 
 
 func (c *jobManagerClient) DescribeJobs(ctx context.Context, in *DescribeJobsRequest, opts ...grpc.CallOption) (*DescribeJobsResponse, error) {
 	out := new(DescribeJobsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.JobManager/DescribeJobs", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.JobManager/DescribeJobs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for JobManager service
-
+// JobManagerServer is the server API for JobManager service.
 type JobManagerServer interface {
 	CreateJob(context.Context, *CreateJobRequest) (*CreateJobResponse, error)
 	DescribeJobs(context.Context, *DescribeJobsRequest) (*DescribeJobsResponse, error)

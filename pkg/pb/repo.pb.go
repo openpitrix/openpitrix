@@ -913,8 +913,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for RepoManager service
-
+// RepoManagerClient is the client API for RepoManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RepoManagerClient interface {
 	CreateRepo(ctx context.Context, in *CreateRepoRequest, opts ...grpc.CallOption) (*CreateRepoResponse, error)
 	DescribeRepos(ctx context.Context, in *DescribeReposRequest, opts ...grpc.CallOption) (*DescribeReposResponse, error)
@@ -933,7 +934,7 @@ func NewRepoManagerClient(cc *grpc.ClientConn) RepoManagerClient {
 
 func (c *repoManagerClient) CreateRepo(ctx context.Context, in *CreateRepoRequest, opts ...grpc.CallOption) (*CreateRepoResponse, error) {
 	out := new(CreateRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/CreateRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/CreateRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -942,7 +943,7 @@ func (c *repoManagerClient) CreateRepo(ctx context.Context, in *CreateRepoReques
 
 func (c *repoManagerClient) DescribeRepos(ctx context.Context, in *DescribeReposRequest, opts ...grpc.CallOption) (*DescribeReposResponse, error) {
 	out := new(DescribeReposResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DescribeRepos", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/DescribeRepos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -951,7 +952,7 @@ func (c *repoManagerClient) DescribeRepos(ctx context.Context, in *DescribeRepos
 
 func (c *repoManagerClient) ModifyRepo(ctx context.Context, in *ModifyRepoRequest, opts ...grpc.CallOption) (*ModifyRepoResponse, error) {
 	out := new(ModifyRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/ModifyRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/ModifyRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -960,7 +961,7 @@ func (c *repoManagerClient) ModifyRepo(ctx context.Context, in *ModifyRepoReques
 
 func (c *repoManagerClient) DeleteRepos(ctx context.Context, in *DeleteReposRequest, opts ...grpc.CallOption) (*DeleteReposResponse, error) {
 	out := new(DeleteReposResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DeleteRepos", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/DeleteRepos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -969,15 +970,14 @@ func (c *repoManagerClient) DeleteRepos(ctx context.Context, in *DeleteReposRequ
 
 func (c *repoManagerClient) ValidateRepo(ctx context.Context, in *ValidateRepoRequest, opts ...grpc.CallOption) (*ValidateRepoResponse, error) {
 	out := new(ValidateRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/ValidateRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/ValidateRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for RepoManager service
-
+// RepoManagerServer is the server API for RepoManager service.
 type RepoManagerServer interface {
 	CreateRepo(context.Context, *CreateRepoRequest) (*CreateRepoResponse, error)
 	DescribeRepos(context.Context, *DescribeReposRequest) (*DescribeReposResponse, error)

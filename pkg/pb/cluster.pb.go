@@ -2755,8 +2755,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for ClusterManager service
-
+// ClusterManagerClient is the client API for ClusterManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ClusterManagerClient interface {
 	CreateCluster(ctx context.Context, in *CreateClusterRequest, opts ...grpc.CallOption) (*CreateClusterResponse, error)
 	ModifyCluster(ctx context.Context, in *ModifyClusterRequest, opts ...grpc.CallOption) (*ModifyClusterResponse, error)
@@ -2788,7 +2789,7 @@ func NewClusterManagerClient(cc *grpc.ClientConn) ClusterManagerClient {
 
 func (c *clusterManagerClient) CreateCluster(ctx context.Context, in *CreateClusterRequest, opts ...grpc.CallOption) (*CreateClusterResponse, error) {
 	out := new(CreateClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/CreateCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/CreateCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2797,7 +2798,7 @@ func (c *clusterManagerClient) CreateCluster(ctx context.Context, in *CreateClus
 
 func (c *clusterManagerClient) ModifyCluster(ctx context.Context, in *ModifyClusterRequest, opts ...grpc.CallOption) (*ModifyClusterResponse, error) {
 	out := new(ModifyClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/ModifyCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/ModifyCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2806,7 +2807,7 @@ func (c *clusterManagerClient) ModifyCluster(ctx context.Context, in *ModifyClus
 
 func (c *clusterManagerClient) ModifyClusterNode(ctx context.Context, in *ModifyClusterNodeRequest, opts ...grpc.CallOption) (*ModifyClusterNodeResponse, error) {
 	out := new(ModifyClusterNodeResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/ModifyClusterNode", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/ModifyClusterNode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2815,7 +2816,7 @@ func (c *clusterManagerClient) ModifyClusterNode(ctx context.Context, in *Modify
 
 func (c *clusterManagerClient) AddTableClusterNodes(ctx context.Context, in *AddTableClusterNodesRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/AddTableClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/AddTableClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2824,7 +2825,7 @@ func (c *clusterManagerClient) AddTableClusterNodes(ctx context.Context, in *Add
 
 func (c *clusterManagerClient) DeleteTableClusterNodes(ctx context.Context, in *DeleteTableClusterNodesRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteTableClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteTableClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2833,7 +2834,7 @@ func (c *clusterManagerClient) DeleteTableClusterNodes(ctx context.Context, in *
 
 func (c *clusterManagerClient) DeleteClusters(ctx context.Context, in *DeleteClustersRequest, opts ...grpc.CallOption) (*DeleteClustersResponse, error) {
 	out := new(DeleteClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2842,7 +2843,7 @@ func (c *clusterManagerClient) DeleteClusters(ctx context.Context, in *DeleteClu
 
 func (c *clusterManagerClient) UpgradeCluster(ctx context.Context, in *UpgradeClusterRequest, opts ...grpc.CallOption) (*UpgradeClusterResponse, error) {
 	out := new(UpgradeClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/UpgradeCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/UpgradeCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2851,7 +2852,7 @@ func (c *clusterManagerClient) UpgradeCluster(ctx context.Context, in *UpgradeCl
 
 func (c *clusterManagerClient) RollbackCluster(ctx context.Context, in *RollbackClusterRequest, opts ...grpc.CallOption) (*RollbackClusterResponse, error) {
 	out := new(RollbackClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/RollbackCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/RollbackCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2860,7 +2861,7 @@ func (c *clusterManagerClient) RollbackCluster(ctx context.Context, in *Rollback
 
 func (c *clusterManagerClient) ResizeCluster(ctx context.Context, in *ResizeClusterRequest, opts ...grpc.CallOption) (*ResizeClusterResponse, error) {
 	out := new(ResizeClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/ResizeCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/ResizeCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2869,7 +2870,7 @@ func (c *clusterManagerClient) ResizeCluster(ctx context.Context, in *ResizeClus
 
 func (c *clusterManagerClient) AddClusterNodes(ctx context.Context, in *AddClusterNodesRequest, opts ...grpc.CallOption) (*AddClusterNodesResponse, error) {
 	out := new(AddClusterNodesResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/AddClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/AddClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2878,7 +2879,7 @@ func (c *clusterManagerClient) AddClusterNodes(ctx context.Context, in *AddClust
 
 func (c *clusterManagerClient) DeleteClusterNodes(ctx context.Context, in *DeleteClusterNodesRequest, opts ...grpc.CallOption) (*DeleteClusterNodesResponse, error) {
 	out := new(DeleteClusterNodesResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2887,7 +2888,7 @@ func (c *clusterManagerClient) DeleteClusterNodes(ctx context.Context, in *Delet
 
 func (c *clusterManagerClient) UpdateClusterEnv(ctx context.Context, in *UpdateClusterEnvRequest, opts ...grpc.CallOption) (*UpdateClusterEnvResponse, error) {
 	out := new(UpdateClusterEnvResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/UpdateClusterEnv", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/UpdateClusterEnv", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2896,7 +2897,7 @@ func (c *clusterManagerClient) UpdateClusterEnv(ctx context.Context, in *UpdateC
 
 func (c *clusterManagerClient) DescribeClusters(ctx context.Context, in *DescribeClustersRequest, opts ...grpc.CallOption) (*DescribeClustersResponse, error) {
 	out := new(DescribeClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2905,7 +2906,7 @@ func (c *clusterManagerClient) DescribeClusters(ctx context.Context, in *Describ
 
 func (c *clusterManagerClient) DescribeClusterNodes(ctx context.Context, in *DescribeClusterNodesRequest, opts ...grpc.CallOption) (*DescribeClusterNodesResponse, error) {
 	out := new(DescribeClusterNodesResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2914,7 +2915,7 @@ func (c *clusterManagerClient) DescribeClusterNodes(ctx context.Context, in *Des
 
 func (c *clusterManagerClient) StopClusters(ctx context.Context, in *StopClustersRequest, opts ...grpc.CallOption) (*StopClustersResponse, error) {
 	out := new(StopClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/StopClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/StopClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2923,7 +2924,7 @@ func (c *clusterManagerClient) StopClusters(ctx context.Context, in *StopCluster
 
 func (c *clusterManagerClient) StartClusters(ctx context.Context, in *StartClustersRequest, opts ...grpc.CallOption) (*StartClustersResponse, error) {
 	out := new(StartClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/StartClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/StartClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2932,7 +2933,7 @@ func (c *clusterManagerClient) StartClusters(ctx context.Context, in *StartClust
 
 func (c *clusterManagerClient) RecoverClusters(ctx context.Context, in *RecoverClustersRequest, opts ...grpc.CallOption) (*RecoverClustersResponse, error) {
 	out := new(RecoverClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/RecoverClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/RecoverClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2941,15 +2942,14 @@ func (c *clusterManagerClient) RecoverClusters(ctx context.Context, in *RecoverC
 
 func (c *clusterManagerClient) CeaseClusters(ctx context.Context, in *CeaseClustersRequest, opts ...grpc.CallOption) (*CeaseClustersResponse, error) {
 	out := new(CeaseClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/CeaseClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/CeaseClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for ClusterManager service
-
+// ClusterManagerServer is the server API for ClusterManager service.
 type ClusterManagerServer interface {
 	CreateCluster(context.Context, *CreateClusterRequest) (*CreateClusterResponse, error)
 	ModifyCluster(context.Context, *ModifyClusterRequest) (*ModifyClusterResponse, error)

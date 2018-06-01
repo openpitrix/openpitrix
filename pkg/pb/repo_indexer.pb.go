@@ -329,8 +329,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for RepoIndexer service
-
+// RepoIndexerClient is the client API for RepoIndexer service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RepoIndexerClient interface {
 	IndexRepo(ctx context.Context, in *IndexRepoRequest, opts ...grpc.CallOption) (*IndexRepoResponse, error)
 	DescribeRepoEvents(ctx context.Context, in *DescribeRepoEventsRequest, opts ...grpc.CallOption) (*DescribeRepoEventsResponse, error)
@@ -346,7 +347,7 @@ func NewRepoIndexerClient(cc *grpc.ClientConn) RepoIndexerClient {
 
 func (c *repoIndexerClient) IndexRepo(ctx context.Context, in *IndexRepoRequest, opts ...grpc.CallOption) (*IndexRepoResponse, error) {
 	out := new(IndexRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoIndexer/IndexRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoIndexer/IndexRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -355,15 +356,14 @@ func (c *repoIndexerClient) IndexRepo(ctx context.Context, in *IndexRepoRequest,
 
 func (c *repoIndexerClient) DescribeRepoEvents(ctx context.Context, in *DescribeRepoEventsRequest, opts ...grpc.CallOption) (*DescribeRepoEventsResponse, error) {
 	out := new(DescribeRepoEventsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoIndexer/DescribeRepoEvents", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoIndexer/DescribeRepoEvents", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for RepoIndexer service
-
+// RepoIndexerServer is the server API for RepoIndexer service.
 type RepoIndexerServer interface {
 	IndexRepo(context.Context, *IndexRepoRequest) (*IndexRepoResponse, error)
 	DescribeRepoEvents(context.Context, *DescribeRepoEventsRequest) (*DescribeRepoEventsResponse, error)
