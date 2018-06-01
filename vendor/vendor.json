@@ -210,6 +210,12 @@
 			"revisionTime": "2018-03-20T21:51:08Z"
 		},
 		{
+			"checksumSHA1": "twq4cA8FyUJwI3fWuhW8YxHSEd0=",
+			"path": "github.com/chai2010/assert",
+			"revision": "e2e343b3c581b8c2c52f557f0141b6874c71f499",
+			"revisionTime": "2018-05-31T05:07:23Z"
+		},
+		{
 			"checksumSHA1": "ZRhh8kOr7NJPMQlZts/wz263/94=",
 			"path": "github.com/chai2010/jsonmap",
 			"revision": "ab63064a4d412352d083136ce16d9909c4853867",
