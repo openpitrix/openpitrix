@@ -2167,8 +2167,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for AppManager service
-
+// AppManagerClient is the client API for AppManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AppManagerClient interface {
 	CreateApp(ctx context.Context, in *CreateAppRequest, opts ...grpc.CallOption) (*CreateAppResponse, error)
 	DescribeApps(ctx context.Context, in *DescribeAppsRequest, opts ...grpc.CallOption) (*DescribeAppsResponse, error)
@@ -2196,7 +2197,7 @@ func NewAppManagerClient(cc *grpc.ClientConn) AppManagerClient {
 
 func (c *appManagerClient) CreateApp(ctx context.Context, in *CreateAppRequest, opts ...grpc.CallOption) (*CreateAppResponse, error) {
 	out := new(CreateAppResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/CreateApp", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/CreateApp", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2205,7 +2206,7 @@ func (c *appManagerClient) CreateApp(ctx context.Context, in *CreateAppRequest, 
 
 func (c *appManagerClient) DescribeApps(ctx context.Context, in *DescribeAppsRequest, opts ...grpc.CallOption) (*DescribeAppsResponse, error) {
 	out := new(DescribeAppsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DescribeApps", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DescribeApps", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2214,7 +2215,7 @@ func (c *appManagerClient) DescribeApps(ctx context.Context, in *DescribeAppsReq
 
 func (c *appManagerClient) ModifyApp(ctx context.Context, in *ModifyAppRequest, opts ...grpc.CallOption) (*ModifyAppResponse, error) {
 	out := new(ModifyAppResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/ModifyApp", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/ModifyApp", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2223,7 +2224,7 @@ func (c *appManagerClient) ModifyApp(ctx context.Context, in *ModifyAppRequest, 
 
 func (c *appManagerClient) DeleteApps(ctx context.Context, in *DeleteAppsRequest, opts ...grpc.CallOption) (*DeleteAppsResponse, error) {
 	out := new(DeleteAppsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DeleteApps", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DeleteApps", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2232,7 +2233,7 @@ func (c *appManagerClient) DeleteApps(ctx context.Context, in *DeleteAppsRequest
 
 func (c *appManagerClient) CreateAppVersion(ctx context.Context, in *CreateAppVersionRequest, opts ...grpc.CallOption) (*CreateAppVersionResponse, error) {
 	out := new(CreateAppVersionResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/CreateAppVersion", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/CreateAppVersion", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2241,7 +2242,7 @@ func (c *appManagerClient) CreateAppVersion(ctx context.Context, in *CreateAppVe
 
 func (c *appManagerClient) DescribeAppVersions(ctx context.Context, in *DescribeAppVersionsRequest, opts ...grpc.CallOption) (*DescribeAppVersionsResponse, error) {
 	out := new(DescribeAppVersionsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DescribeAppVersions", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DescribeAppVersions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2250,7 +2251,7 @@ func (c *appManagerClient) DescribeAppVersions(ctx context.Context, in *Describe
 
 func (c *appManagerClient) ModifyAppVersion(ctx context.Context, in *ModifyAppVersionRequest, opts ...grpc.CallOption) (*ModifyAppVersionResponse, error) {
 	out := new(ModifyAppVersionResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/ModifyAppVersion", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/ModifyAppVersion", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2259,7 +2260,7 @@ func (c *appManagerClient) ModifyAppVersion(ctx context.Context, in *ModifyAppVe
 
 func (c *appManagerClient) DeleteAppVersions(ctx context.Context, in *DeleteAppVersionsRequest, opts ...grpc.CallOption) (*DeleteAppVersionsResponse, error) {
 	out := new(DeleteAppVersionsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DeleteAppVersions", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DeleteAppVersions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2268,7 +2269,7 @@ func (c *appManagerClient) DeleteAppVersions(ctx context.Context, in *DeleteAppV
 
 func (c *appManagerClient) GetAppVersionPackage(ctx context.Context, in *GetAppVersionPackageRequest, opts ...grpc.CallOption) (*GetAppVersionPackageResponse, error) {
 	out := new(GetAppVersionPackageResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackage", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackage", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2277,7 +2278,7 @@ func (c *appManagerClient) GetAppVersionPackage(ctx context.Context, in *GetAppV
 
 func (c *appManagerClient) GetAppVersionPackageFiles(ctx context.Context, in *GetAppVersionPackageFilesRequest, opts ...grpc.CallOption) (*GetAppVersionPackageFilesResponse, error) {
 	out := new(GetAppVersionPackageFilesResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackageFiles", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackageFiles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2286,7 +2287,7 @@ func (c *appManagerClient) GetAppVersionPackageFiles(ctx context.Context, in *Ge
 
 func (c *appManagerClient) DescribeCategories(ctx context.Context, in *DescribeCategoriesRequest, opts ...grpc.CallOption) (*DescribeCategoriesResponse, error) {
 	out := new(DescribeCategoriesResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DescribeCategories", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DescribeCategories", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2295,7 +2296,7 @@ func (c *appManagerClient) DescribeCategories(ctx context.Context, in *DescribeC
 
 func (c *appManagerClient) CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CreateCategoryResponse, error) {
 	out := new(CreateCategoryResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/CreateCategory", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/CreateCategory", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2304,7 +2305,7 @@ func (c *appManagerClient) CreateCategory(ctx context.Context, in *CreateCategor
 
 func (c *appManagerClient) ModifyCategory(ctx context.Context, in *ModifyCategoryRequest, opts ...grpc.CallOption) (*ModifyCategoryResponse, error) {
 	out := new(ModifyCategoryResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/ModifyCategory", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/ModifyCategory", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2313,15 +2314,14 @@ func (c *appManagerClient) ModifyCategory(ctx context.Context, in *ModifyCategor
 
 func (c *appManagerClient) DeleteCategories(ctx context.Context, in *DeleteCategoriesRequest, opts ...grpc.CallOption) (*DeleteCategoriesResponse, error) {
 	out := new(DeleteCategoriesResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DeleteCategories", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DeleteCategories", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for AppManager service
-
+// AppManagerServer is the server API for AppManager service.
 type AppManagerServer interface {
 	CreateApp(context.Context, *CreateAppRequest) (*CreateAppResponse, error)
 	DescribeApps(context.Context, *DescribeAppsRequest) (*DescribeAppsResponse, error)

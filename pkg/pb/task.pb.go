@@ -529,8 +529,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for TaskManager service
-
+// TaskManagerClient is the client API for TaskManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type TaskManagerClient interface {
 	CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error)
 	DescribeTasks(ctx context.Context, in *DescribeTasksRequest, opts ...grpc.CallOption) (*DescribeTasksResponse, error)
@@ -547,7 +548,7 @@ func NewTaskManagerClient(cc *grpc.ClientConn) TaskManagerClient {
 
 func (c *taskManagerClient) CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error) {
 	out := new(CreateTaskResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.TaskManager/CreateTask", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.TaskManager/CreateTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -556,7 +557,7 @@ func (c *taskManagerClient) CreateTask(ctx context.Context, in *CreateTaskReques
 
 func (c *taskManagerClient) DescribeTasks(ctx context.Context, in *DescribeTasksRequest, opts ...grpc.CallOption) (*DescribeTasksResponse, error) {
 	out := new(DescribeTasksResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.TaskManager/DescribeTasks", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.TaskManager/DescribeTasks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -565,15 +566,14 @@ func (c *taskManagerClient) DescribeTasks(ctx context.Context, in *DescribeTasks
 
 func (c *taskManagerClient) RetryTasks(ctx context.Context, in *RetryTasksRequest, opts ...grpc.CallOption) (*RetryTasksResponse, error) {
 	out := new(RetryTasksResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.TaskManager/RetryTasks", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.TaskManager/RetryTasks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for TaskManager service
-
+// TaskManagerServer is the server API for TaskManager service.
 type TaskManagerServer interface {
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskResponse, error)
 	DescribeTasks(context.Context, *DescribeTasksRequest) (*DescribeTasksResponse, error)

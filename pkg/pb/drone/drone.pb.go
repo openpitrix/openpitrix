@@ -32,8 +32,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for DroneService service
-
+// DroneServiceClient is the client API for DroneService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DroneServiceClient interface {
 	GetDroneConfig(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.DroneConfig, error)
 	SetDroneConfig(ctx context.Context, in *types.DroneConfig, opts ...grpc.CallOption) (*types.Empty, error)
@@ -62,7 +63,7 @@ func NewDroneServiceClient(cc *grpc.ClientConn) DroneServiceClient {
 
 func (c *droneServiceClient) GetDroneConfig(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.DroneConfig, error) {
 	out := new(types.DroneConfig)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/GetDroneConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/GetDroneConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +72,7 @@ func (c *droneServiceClient) GetDroneConfig(ctx context.Context, in *types.Empty
 
 func (c *droneServiceClient) SetDroneConfig(ctx context.Context, in *types.DroneConfig, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/SetDroneConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/SetDroneConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +81,7 @@ func (c *droneServiceClient) SetDroneConfig(ctx context.Context, in *types.Drone
 
 func (c *droneServiceClient) GetConfdConfig(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.ConfdConfig, error) {
 	out := new(types.ConfdConfig)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/GetConfdConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/GetConfdConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +90,7 @@ func (c *droneServiceClient) GetConfdConfig(ctx context.Context, in *types.Empty
 
 func (c *droneServiceClient) SetConfdConfig(ctx context.Context, in *types.ConfdConfig, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/SetConfdConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/SetConfdConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +99,7 @@ func (c *droneServiceClient) SetConfdConfig(ctx context.Context, in *types.Confd
 
 func (c *droneServiceClient) GetFrontgateConfig(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.FrontgateConfig, error) {
 	out := new(types.FrontgateConfig)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/GetFrontgateConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/GetFrontgateConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +108,7 @@ func (c *droneServiceClient) GetFrontgateConfig(ctx context.Context, in *types.E
 
 func (c *droneServiceClient) SetFrontgateConfig(ctx context.Context, in *types.FrontgateConfig, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/SetFrontgateConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/SetFrontgateConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +117,7 @@ func (c *droneServiceClient) SetFrontgateConfig(ctx context.Context, in *types.F
 
 func (c *droneServiceClient) IsConfdRunning(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.Bool, error) {
 	out := new(types.Bool)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/IsConfdRunning", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/IsConfdRunning", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +126,7 @@ func (c *droneServiceClient) IsConfdRunning(ctx context.Context, in *types.Empty
 
 func (c *droneServiceClient) StartConfd(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/StartConfd", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/StartConfd", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +135,7 @@ func (c *droneServiceClient) StartConfd(ctx context.Context, in *types.Empty, op
 
 func (c *droneServiceClient) StopConfd(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/StopConfd", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/StopConfd", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +144,7 @@ func (c *droneServiceClient) StopConfd(ctx context.Context, in *types.Empty, opt
 
 func (c *droneServiceClient) GetTemplateFiles(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.StringList, error) {
 	out := new(types.StringList)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/GetTemplateFiles", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/GetTemplateFiles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +153,7 @@ func (c *droneServiceClient) GetTemplateFiles(ctx context.Context, in *types.Emp
 
 func (c *droneServiceClient) GetValues(ctx context.Context, in *types.StringList, opts ...grpc.CallOption) (*types.StringMap, error) {
 	out := new(types.StringMap)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/GetValues", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/GetValues", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +162,7 @@ func (c *droneServiceClient) GetValues(ctx context.Context, in *types.StringList
 
 func (c *droneServiceClient) PingPilot(ctx context.Context, in *types.FrontgateEndpoint, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/PingPilot", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/PingPilot", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +171,7 @@ func (c *droneServiceClient) PingPilot(ctx context.Context, in *types.FrontgateE
 
 func (c *droneServiceClient) PingFrontgate(ctx context.Context, in *types.FrontgateEndpoint, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/PingFrontgate", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/PingFrontgate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -179,7 +180,7 @@ func (c *droneServiceClient) PingFrontgate(ctx context.Context, in *types.Frontg
 
 func (c *droneServiceClient) PingDrone(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/PingDrone", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/PingDrone", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -188,15 +189,14 @@ func (c *droneServiceClient) PingDrone(ctx context.Context, in *types.Empty, opt
 
 func (c *droneServiceClient) RunCommand(ctx context.Context, in *types.RunCommandOnDroneRequest, opts ...grpc.CallOption) (*types.String, error) {
 	out := new(types.String)
-	err := grpc.Invoke(ctx, "/openpitrix.drone.DroneService/RunCommand", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.drone.DroneService/RunCommand", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for DroneService service
-
+// DroneServiceServer is the server API for DroneService service.
 type DroneServiceServer interface {
 	GetDroneConfig(context.Context, *types.Empty) (*types.DroneConfig, error)
 	SetDroneConfig(context.Context, *types.DroneConfig) (*types.Empty, error)
