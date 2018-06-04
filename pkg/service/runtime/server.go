@@ -21,7 +21,9 @@ type Server struct {
 func Serve(cfg *config.Config) {
 	pi.SetGlobalPi(cfg)
 	s := Server{pi.Global()}
-	manager.NewGrpcServer("runtime-manager", constants.RuntimeManagerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterRuntimeManagerServer(server, &s)
-	})
+	manager.NewGrpcServer("runtime-manager", constants.RuntimeManagerPort).
+		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		Serve(func(server *grpc.Server) {
+			pb.RegisterRuntimeManagerServer(server, &s)
+		})
 }

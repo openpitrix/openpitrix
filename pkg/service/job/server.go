@@ -34,7 +34,9 @@ func Serve(cfg *config.Config) {
 	s := Server{Pi: p, controller: jobController}
 	go jobController.Serve()
 
-	manager.NewGrpcServer("job", constants.JobManagerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterJobManagerServer(server, &s)
-	})
+	manager.NewGrpcServer("job-controller", constants.JobManagerPort).
+		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		Serve(func(server *grpc.Server) {
+			pb.RegisterJobManagerServer(server, &s)
+		})
 }

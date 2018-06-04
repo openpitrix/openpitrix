@@ -30,3 +30,14 @@ func TestNewWithDetail(t *testing.T) {
 	assert.Equal(t, fmt.Sprint(ge.Details()), "[error_name:\"create_resource_failed\" cause:\"test with error detail\" ]")
 	//t.Log(ge.Code(), ge.Err(), ge.Details())
 }
+
+func TestClearErrorCause(t *testing.T) {
+	var e = NewWithDetail(InvalidArgument, fmt.Errorf("test with error detail"), ErrorCreateResourceFailed)
+
+	ge := status.Convert(e)
+	assert.Equal(t, fmt.Sprint(ge.Details()), "[error_name:\"create_resource_failed\" cause:\"test with error detail\" ]")
+
+	e = ClearErrorCause(e)
+	ge = status.Convert(e)
+	assert.Equal(t, fmt.Sprint(ge.Details()), "[error_name:\"create_resource_failed\" ]")
+}

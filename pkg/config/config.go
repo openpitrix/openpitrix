@@ -16,12 +16,17 @@ import (
 
 type Config struct {
 	Log   LogConfig
+	Grpc  GrpcConfig
 	Mysql MysqlConfig
 	Etcd  EtcdConfig
 }
 
 type LogConfig struct {
 	Level string `default:"info"` // debug, info, warn, error, fatal
+}
+
+type GrpcConfig struct {
+	ShowErrorCause bool `default:"false"` // show grpc error cause to frontend
 }
 
 type EtcdConfig struct {
