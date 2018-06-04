@@ -30,4 +30,7 @@ const (
 	ColumnVisibility = "visibility"
 
 	ColumnProvider = "provider"
+
+	ColumnVersionId = "version_id"
+	ColumnAppId     = "app_id"
 )

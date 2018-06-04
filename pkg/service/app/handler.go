@@ -9,11 +9,9 @@ import (
 	"io/ioutil"
 	"time"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -29,7 +27,7 @@ func (p *Server) getAppVersion(versionId string) (*models.AppVersion, error) {
 	err := p.Db.
 		Select(models.AppVersionColumns...).
 		From(models.AppVersionTableName).
-		Where(db.Eq("version_id", versionId)).
+		Where(db.Eq(models.ColumnVersionId, versionId)).
 		LoadOne(&version)
 	if err != nil {
 		return nil, err
@@ -42,7 +40,7 @@ func (p *Server) getAppVersions(versionIds []string) ([]*models.AppVersion, erro
 	_, err := p.Db.
 		Select(models.AppVersionColumns...).
 		From(models.AppVersionTableName).
-		Where(db.Eq("version_id", versionIds)).
+		Where(db.Eq(models.ColumnVersionId, versionIds)).
 		Load(&versions)
 	if err != nil {
 		return nil, err
@@ -66,17 +64,16 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 	// TODO: add category_id join query
 	_, err := query.Load(&apps)
 	if err != nil {
-		// TODO: err_code should be implementation
-		return nil, status.Errorf(codes.Internal, "DescribeApps: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeApps: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	appSet, err := p.formatAppSet(apps)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeApps: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeAppsResponse{
@@ -109,7 +106,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		Record(newApp).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateApp: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 
 	res := &pb.CreateAppResponse{
@@ -123,7 +120,7 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 	appId := req.GetAppId().GetValue()
 	app, err := p.getApp(appId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app [%s]", appId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
@@ -134,14 +131,14 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 	_, err = p.Db.
 		Update(models.AppTableName).
 		SetMap(attributes).
-		Where(db.Eq("app_id", appId)).
+		Where(db.Eq(models.ColumnAppId, appId)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ModifyApp: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 	app, err = p.getApp(appId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app [%s]", appId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.ModifyAppResponse{
@@ -152,19 +149,19 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 
 func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb.DeleteAppsResponse, error) {
 	// TODO: check resource permission
-	err := manager.CheckParamsRequired(req, "app_id")
+	err := manager.CheckParamsRequired(req, models.ColumnAppId)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, err
 	}
 	appIds := req.GetAppId()
 
 	_, err = p.Db.
 		Update(models.AppTableName).
-		Set("status", constants.StatusDeleted).
-		Where(db.Eq("app_id", appIds)).
+		Set(models.ColumnStatus, constants.StatusDeleted).
+		Where(db.Eq(models.ColumnAppId, appIds)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DeleteApps: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
 	}
 
 	return &pb.DeleteAppsResponse{
@@ -192,7 +189,7 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		Record(newAppVersion).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateAppVersion: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 
 	res := &pb.CreateAppVersionResponse{
@@ -216,12 +213,11 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 	query = manager.AddQueryOrderDir(query, req, models.ColumnSequence)
 	_, err := query.Load(&versions)
 	if err != nil {
-		// TODO: err_code should be implementation
-		return nil, status.Errorf(codes.Internal, "DescribeAppVersions: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeAppVersions: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeAppVersionsResponse{
@@ -237,22 +233,22 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	versionId := req.GetVersionId().GetValue()
 	version, err := p.getAppVersion(versionId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name", "sequence")
 	_, err = p.Db.
 		Update(models.AppVersionTableName).
 		SetMap(attributes).
-		Where(db.Eq("version_id", versionId)).
+		Where(db.Eq(models.ColumnVersionId, versionId)).
 		Exec()
 	attributes["update_time"] = time.Now()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ModifyAppVersion: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 	version, err = p.getAppVersion(versionId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.ModifyAppVersionResponse{
@@ -264,20 +260,20 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 
 func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersionsRequest) (*pb.DeleteAppVersionsResponse, error) {
 	// TODO: check resource permission
-	err := manager.CheckParamsRequired(req, "version_id")
+	err := manager.CheckParamsRequired(req, models.ColumnVersionId)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, err
 	}
 
 	versionIds := req.GetVersionId()
 
 	_, err = p.Db.
 		Update(models.AppVersionTableName).
-		Set("status", constants.StatusDeleted).
-		Where(db.Eq("version_id", versionIds)).
+		Set(models.ColumnStatus, constants.StatusDeleted).
+		Where(db.Eq(models.ColumnVersionId, versionIds)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DeleteAppVersions: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
 	}
 
 	return &pb.DeleteAppVersionsResponse{
@@ -290,19 +286,19 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 	versionId := req.GetVersionId().GetValue()
 	version, err := p.getAppVersion(versionId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	logger.Debug("Got app version: [%+v]", version)
 	packageUrl := version.PackageName
 	resp, err := httputil.HttpGet(packageUrl)
 	if err != nil {
 		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logger.Error("Failed to read http response [%s], error: %+v", packageUrl, err)
-		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	return &pb.GetAppVersionPackageResponse{
 		Package: content,
@@ -315,18 +311,18 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 	includeFiles := req.Files
 	version, err := p.getAppVersion(versionId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get app version [%s]", versionId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	packageUrl := version.PackageName
 	resp, err := httputil.HttpGet(packageUrl)
 	if err != nil {
 		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, status.Errorf(codes.Internal, "Failed to http get [%s]", versionId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	archiveFiles, err := gziputil.LoadArchive(resp.Body, includeFiles...)
 	if err != nil {
 		logger.Error("Failed to load package [%s] archive, error: %+v", packageUrl, err)
-		return nil, status.Errorf(codes.Internal, "Failed to load package [%s] archiv", versionId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	return &pb.GetAppVersionPackageFilesResponse{
 		Files: archiveFiles,
@@ -348,12 +344,11 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err := query.Load(&categories)
 	if err != nil {
-		// TODO: err_code should be implementation
-		return nil, status.Errorf(codes.Internal, "DescribeCategories: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeCategories: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeCategoriesResponse{
@@ -373,7 +368,7 @@ func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 		Record(category).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateCategory: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 
 	res := &pb.CreateCategoryResponse{
@@ -387,7 +382,7 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 	categoryId := req.GetCategoryId().GetValue()
 	category, err := p.getCategory(categoryId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get category [%s]", categoryId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	attributes := manager.BuildUpdateAttributes(req, "name", "locale")
@@ -398,11 +393,11 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 		Where(db.Eq("category_id", categoryId)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "ModifyCategory: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 	category, err = p.getCategory(categoryId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get category [%s]", categoryId)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.ModifyCategoryResponse{
@@ -414,7 +409,7 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesRequest) (*pb.DeleteCategoriesResponse, error) {
 	err := manager.CheckParamsRequired(req, "category_id")
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, err
 	}
 	categoryIds := req.GetCategoryId()
 
@@ -423,7 +418,7 @@ func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesR
 		Where(db.Eq("category_id", categoryIds)).
 		Exec()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DeleteCategories: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
 	}
 
 	return &pb.DeleteCategoriesResponse{
