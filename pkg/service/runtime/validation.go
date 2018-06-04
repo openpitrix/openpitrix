@@ -1,7 +1,6 @@
 package runtime
 
 import (
-	"fmt"
 	"net/url"
 	"regexp"
 
@@ -9,6 +8,7 @@ import (
 	"github.com/ghodss/yaml"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
@@ -17,14 +17,14 @@ import (
 
 func ValidateName(name string) error {
 	if !govalidator.StringLength(name, NameMinLength, NameMaxLength) {
-		return fmt.Errorf("the length of name should be 1 to 255")
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "name")
 	}
 	return nil
 }
 
 func ValidateProvider(provider string) error {
 	if !govalidator.StringLength(provider, ProviderMinLength, ProviderMaxLength) {
-		return fmt.Errorf("the length of provider should be 1 to 255")
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "provider")
 	}
 	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
 		return nil
@@ -32,19 +32,19 @@ func ValidateProvider(provider string) error {
 	if constants.ProviderKubernetes == provider {
 		return nil
 	}
-	return fmt.Errorf("unsupport provider")
+	return gerr.New(gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, "provider", provider)
 }
 
 func ValidateURL(url string) error {
 	if !govalidator.IsURL(url) {
-		return fmt.Errorf("url format error")
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalUrlFormat, url)
 	}
 	return nil
 }
 
 func ValidateCredential(provider, url, credential string) error {
 	if len(credential) < CredentialMinLength {
-		return fmt.Errorf("the length of credential should > 0")
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "credential")
 	}
 	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
 		err := ValidateURL(url)
@@ -66,14 +66,14 @@ func ValidateCredential(provider, url, credential string) error {
 	providerInterface, err := plugins.GetProviderPlugin(provider)
 	if err != nil {
 		logger.Error("No such provider [%s]. ", provider)
-		return err
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, "provider", provider)
 	}
 	return providerInterface.ValidateCredential(url, credential)
 }
 
 func ValidateZone(zone string) error {
 	if !govalidator.StringLength(zone, ZoneMinLength, ZoneMaxLength) {
-		return fmt.Errorf("the length of zone should be 1 to 255")
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "zone")
 	}
 	return nil
 }
@@ -121,7 +121,7 @@ func ValidateSelectorMapFmt(selectorMap map[string][]string) error {
 func ValidateLabelMapFmt(labelMap map[string][]string) error {
 	for mKey, mValue := range labelMap {
 		if len(mValue) != 1 {
-			return fmt.Errorf("label format error ")
+			return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalLabelFormat)
 		}
 		err := ValidateLabelKey(mKey)
 		if err != nil {
@@ -139,17 +139,17 @@ var LabelNameRegexp = regexp.MustCompile(LabelKeyFmt)
 
 func ValidateLabelKey(labelName string) error {
 	if !govalidator.StringLength(labelName, LabelKeyMinLength, LabelKeyMaxLength) {
-		return fmt.Errorf("the length of the label key should be 1 to 50")
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "label_key")
 	}
 	if !LabelNameRegexp.Match([]byte(labelName)) {
-		return fmt.Errorf("label key format error %v", labelName)
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalLabelFormat)
 	}
 	return nil
 }
 
 func ValidateLabelValue(labelValue string) error {
 	if !govalidator.StringLength(labelValue, LabelValueMinLength, LabelValueMaxLength) {
-		return fmt.Errorf("the length of the label value should be 1 to 255")
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "label_value")
 	}
 	return nil
 }

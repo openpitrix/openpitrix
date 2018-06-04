@@ -7,10 +7,7 @@ package repo_indexer
 import (
 	"context"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
-	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -19,15 +16,15 @@ import (
 )
 
 func (p *Server) IndexRepo(ctx context.Context, req *pb.IndexRepoRequest) (*pb.IndexRepoResponse, error) {
+	err := manager.CheckParamsRequired(req, "repo_id")
+	if err != nil {
+		return nil, err
+	}
 	s := senderutil.GetSenderFromContext(ctx)
 	repoId := req.GetRepoId().GetValue()
-	if repoId == "" {
-		// TODO: api gateway params validate
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid argument: [repo_id]")
-	}
 	repoEvent, err := p.controller.NewRepoEvent(repoId, s.UserId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "IndexRepo error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 	ret := pb.IndexRepoResponse{
 		RepoEvent: models.RepoEventToPb(repoEvent),
@@ -48,13 +45,11 @@ func (p *Server) DescribeRepoEvents(ctx context.Context, req *pb.DescribeRepoEve
 		Where(manager.BuildFilterConditions(req, models.RepoEventTableName))
 	_, err := query.Load(&repoEvents)
 	if err != nil {
-		logger.Error("DescribeRepoEvents error: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeRepoEvents: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		logger.Error("DescribeRepoEvents error: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeRepoEvents: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res := &pb.DescribeRepoEventsResponse{
 		RepoEventSet: models.RepoEventsToPbs(repoEvents),

@@ -15,6 +15,7 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -163,16 +164,15 @@ func CheckParamsRequired(req Request, columns ...string) error {
 	for _, field := range structs.Fields(req) {
 		column := getFieldName(field)
 		param := field.Value()
-		err := fmt.Errorf("missing parameter [%s]", column)
 		if stringutil.StringIn(column, columns) {
 			switch value := param.(type) {
 			case string:
 				if value == "" {
-					return err
+					return gerr.New(gerr.InvalidArgument, gerr.ErrorMissingParameter, column)
 				}
 			case *wrappers.StringValue:
 				if value == nil || value.GetValue() == "" {
-					return err
+					return gerr.New(gerr.InvalidArgument, gerr.ErrorMissingParameter, column)
 				}
 			case []string:
 				var values []string
@@ -182,7 +182,7 @@ func CheckParamsRequired(req Request, columns ...string) error {
 					}
 				}
 				if len(values) == 0 {
-					return err
+					return gerr.New(gerr.InvalidArgument, gerr.ErrorMissingParameter, column)
 				}
 			}
 		}

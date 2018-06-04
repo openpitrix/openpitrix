@@ -62,7 +62,10 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
 					logger.Critical("GRPC server recovery with error: %+v", p)
 					logger.Critical(string(debug.Stack()))
-					return status.Errorf(codes.Internal, "%+v", p)
+					if e, ok := p.(error); ok {
+						return gerr.NewWithDetail(gerr.Internal, e, gerr.ErrorInternalError)
+					}
+					return gerr.New(gerr.Internal, gerr.ErrorInternalError)
 				}),
 			),
 		),
@@ -71,7 +74,10 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
 					logger.Critical("GRPC server recovery with error: %+v", p)
 					logger.Critical(string(debug.Stack()))
-					return status.Errorf(codes.Internal, "%+v", p)
+					if e, ok := p.(error); ok {
+						return gerr.NewWithDetail(gerr.Internal, e, gerr.ErrorInternalError)
+					}
+					return gerr.New(gerr.Internal, gerr.ErrorInternalError)
 				}),
 			),
 		),

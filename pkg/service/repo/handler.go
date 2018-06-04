@@ -8,9 +8,6 @@ import (
 	"context"
 	neturl "net/url"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	indexerclient "openpitrix.io/openpitrix/pkg/client/repo_indexer"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -87,7 +84,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 
 	err := validate(repoType, url, credential, visibility, providers)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "CreateRepo: Validate failed, %+v", err)
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
 	s := senderutil.GetSenderFromContext(ctx)
@@ -181,7 +178,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	if needValidate {
 		err = validate(repoType, url, credential, visibility, providers)
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "ModifyRepo: Validate failed, %+v", err)
+			return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 		}
 	}
 
@@ -238,7 +235,7 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 	// TODO: check resource permission
 	err := manager.CheckParamsRequired(req, "repo_id")
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, err
 	}
 	repoIds := req.GetRepoId()
 

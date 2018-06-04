@@ -5,6 +5,8 @@
 package gerr
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,7 +25,7 @@ func newStatus(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}
 
 	errorDetail := &pb.ErrorDetail{ErrorName: errMsg.Name}
 	if err != nil {
-		errorDetail.Cause = err.Error()
+		errorDetail.Cause = fmt.Sprintf("%+v", err)
 	}
 
 	sd, e := s.WithDetails(errorDetail)
@@ -58,6 +60,18 @@ func New(code codes.Code, errMsg ErrorMessage, a ...interface{}) error {
 	return newStatus(code, nil, errMsg, a...).Err()
 }
 
+type grpcError interface {
+	error
+	GRPCStatus() *status.Status
+}
+
 func NewWithDetail(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) error {
 	return newStatus(code, err, errMsg, a...).Err()
+}
+
+func IsGRPCError(err error) bool {
+	if e, ok := err.(grpcError); ok && e != nil {
+		return true
+	}
+	return false
 }
