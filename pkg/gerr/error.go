@@ -5,6 +5,8 @@
 package gerr
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,7 +25,7 @@ func newStatus(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}
 
 	errorDetail := &pb.ErrorDetail{ErrorName: errMsg.Name}
 	if err != nil {
-		errorDetail.Cause = err.Error()
+		errorDetail.Cause = fmt.Sprintf("%+v", err)
 	}
 
 	sd, e := s.WithDetails(errorDetail)

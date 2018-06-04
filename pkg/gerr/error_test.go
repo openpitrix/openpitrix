@@ -6,8 +6,10 @@ package gerr
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/status"
 )
@@ -29,6 +31,10 @@ func TestNewWithDetail(t *testing.T) {
 	assert.Equal(t, ge.Err().Error(), "rpc error: code = InvalidArgument desc = create resource failed")
 	assert.Equal(t, fmt.Sprint(ge.Details()), "[error_name:\"create_resource_failed\" cause:\"test with error detail\" ]")
 	//t.Log(ge.Code(), ge.Err(), ge.Details())
+
+	e = NewWithDetail(InvalidArgument, errors.New("test with error detail"), ErrorCreateResourceFailed)
+	ge = status.Convert(e)
+	assert.Regexp(t, regexp.MustCompile("TestNewWithDetail"), ge.Details())
 }
 
 func TestClearErrorCause(t *testing.T) {
