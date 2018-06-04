@@ -49,6 +49,10 @@ var (
 		Name: "missing_parameter",
 		En:   "missing parameter [%s]",
 	}
+	ErrorValidateFailed = ErrorMessage{
+		Name: "validate_failed",
+		En:   "validate failed",
+	}
 	ErrorParameterParseFailed = ErrorMessage{
 		Name: "parameter_parse_failed",
 		En:   "parameter [%s] parse failed",
