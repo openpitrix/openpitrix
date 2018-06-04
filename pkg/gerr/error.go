@@ -35,6 +35,25 @@ func newStatus(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}
 	return s
 }
 
+func ClearErrorCause(err error) error {
+	if e, ok := status.FromError(err); ok {
+		details := e.Details()
+		if len(details) > 0 {
+			detail := details[0]
+			if d, ok := detail.(*pb.ErrorDetail); ok {
+				d.Cause = ""
+				// clear detail
+				proto := e.Proto()
+				proto.Details = proto.Details[:0]
+				e = status.FromProto(proto)
+				e, _ := e.WithDetails(d)
+				return e.Err()
+			}
+		}
+	}
+	return err
+}
+
 func New(code codes.Code, errMsg ErrorMessage, a ...interface{}) error {
 	return newStatus(code, nil, errMsg, a...).Err()
 }

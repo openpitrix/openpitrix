@@ -20,7 +20,9 @@ type Server struct {
 func Serve(cfg *config.Config) {
 	pi.SetGlobalPi(cfg)
 	s := Server{}
-	manager.NewGrpcServer("cluster-manager", constants.ClusterManagerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterClusterManagerServer(server, &s)
-	})
+	manager.NewGrpcServer("cluster-manager", constants.ClusterManagerPort).
+		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		Serve(func(server *grpc.Server) {
+			pb.RegisterClusterManagerServer(server, &s)
+		})
 }

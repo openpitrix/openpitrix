@@ -26,7 +26,9 @@ func Serve(cfg *config.Config) {
 	s := Server{Pi: p, controller: controller}
 	go controller.Serve()
 	go s.Cron()
-	manager.NewGrpcServer("repo-indexer", constants.RepoIndexerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterRepoIndexerServer(server, &s)
-	})
+	manager.NewGrpcServer("repo-indexer", constants.RepoIndexerPort).
+		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		Serve(func(server *grpc.Server) {
+			pb.RegisterRepoIndexerServer(server, &s)
+		})
 }

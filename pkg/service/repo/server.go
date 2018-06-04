@@ -21,7 +21,9 @@ type Server struct {
 func Serve(cfg *config.Config) {
 	pi.SetGlobalPi(cfg)
 	s := Server{pi.Global()}
-	manager.NewGrpcServer("repo-manager", constants.RepoManagerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterRepoManagerServer(server, &s)
-	})
+	manager.NewGrpcServer("repo-manager", constants.RepoManagerPort).
+		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		Serve(func(server *grpc.Server) {
+			pb.RegisterRepoManagerServer(server, &s)
+		})
 }

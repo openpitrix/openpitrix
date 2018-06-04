@@ -34,7 +34,9 @@ func Serve(cfg *config.Config) {
 	s := Server{Pi: p, controller: taskController}
 	go taskController.Serve()
 
-	manager.NewGrpcServer("task", constants.TaskManagerPort).Serve(func(server *grpc.Server) {
-		pb.RegisterTaskManagerServer(server, &s)
-	})
+	manager.NewGrpcServer("task-controller", constants.TaskManagerPort).
+		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		Serve(func(server *grpc.Server) {
+			pb.RegisterTaskManagerServer(server, &s)
+		})
 }

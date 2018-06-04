@@ -22,20 +22,27 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
 type GrpcServer struct {
-	ServiceName string
-	Port        int
+	ServiceName    string
+	Port           int
+	showErrorCause bool
 }
 
 type RegisterCallback func(*grpc.Server)
 
 func NewGrpcServer(serviceName string, port int) *GrpcServer {
-	return &GrpcServer{serviceName, port}
+	return &GrpcServer{serviceName, port, false}
+}
+
+func (g *GrpcServer) ShowErrorCause(b bool) *GrpcServer {
+	g.showErrorCause = b
+	return g
 }
 
 func (g *GrpcServer) Serve(callback RegisterCallback) {
@@ -50,7 +57,7 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 	grpcServer := grpc.NewServer(
 		grpc_middleware.WithUnaryServerChain(
 			grpc_validator.UnaryServerInterceptor(),
-			UnaryServerLogInterceptor(),
+			UnaryServerLogInterceptor(g.showErrorCause),
 			grpc_recovery.UnaryServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
 					logger.Critical("GRPC server recovery with error: %+v", p)
@@ -84,7 +91,7 @@ var (
 	}
 )
 
-func UnaryServerLogInterceptor() grpc.UnaryServerInterceptor {
+func UnaryServerLogInterceptor(showErrorCause bool) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		s := senderutil.GetSenderFromContext(ctx)
 		method := strings.Split(info.FullMethod, "/")
@@ -103,6 +110,9 @@ func UnaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 		if e, ok := status.FromError(err); ok {
 			if e.Code() != codes.OK {
 				logger.Debug("Response is error: %s, %s", e.Code().String(), e.Message())
+				if !showErrorCause {
+					err = gerr.ClearErrorCause(err)
+				}
 			}
 		}
 		return resp, err
