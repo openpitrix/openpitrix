@@ -29,6 +29,8 @@ func getv(input interface{}) interface{} {
 	switch i := input.(type) {
 	case string:
 		return template.HTML(fmt.Sprintf(`"%s"`, i))
+	case nil:
+		return template.HTML("null")
 	default:
 		return i
 	}

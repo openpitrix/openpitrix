@@ -29,10 +29,10 @@ type ConfigTemplate struct {
 
 	Port int `json:"port,omitempty"`
 
-	Range []int `json:"range,omitempty"`
-	Min   int   `json:"min,omitempty"`
-	Max   int   `json:"max,omitempty"`
-	Step  int   `json:"step,omitempty"`
+	Range []interface{} `json:"range,omitempty"`
+	Min   int           `json:"min,omitempty"`
+	Max   int           `json:"max,omitempty"`
+	Step  int           `json:"step,omitempty"`
 
 	Changeable  bool   `json:"changeable,omitempty"`
 	Separator   string `json:"separator,omitempty"`
