@@ -46,4 +46,7 @@ func TestClearErrorCause(t *testing.T) {
 	e = ClearErrorCause(e)
 	ge = status.Convert(e)
 	assert.Equal(t, fmt.Sprint(ge.Details()), "[error_name:\"create_resource_failed\" ]")
+	assert.True(t, IsGRPCError(e))
+	assert.False(t, IsGRPCError(fmt.Errorf("test")))
+	assert.False(t, IsGRPCError(func() grpcError { return nil }()))
 }

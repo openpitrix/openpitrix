@@ -7,9 +7,8 @@ package runtime
 import (
 	"context"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
+	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -23,16 +22,19 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	s := senderutil.GetSenderFromContext(ctx)
 	// validate req
 	err := validateCreateRuntimeRequest(req)
+	// TODO: refactor create runtime params
 	if err != nil {
-		logger.Error("CreateRuntime: %+v", err)
-		return nil, status.Errorf(codes.InvalidArgument, "CreateRuntime: %+v", err)
+		if gerr.IsGRPCError(err) {
+			return nil, err
+		} else {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+		}
 	}
 
 	// create runtime credential
 	runtimeCredentialId, err := p.createRuntimeCredential(req.Provider.GetValue(), req.RuntimeCredential.GetValue())
 	if err != nil {
-		logger.Error("CreateRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal, "CreateRuntime: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 
 	// create runtime
@@ -45,15 +47,13 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		req.Zone.GetValue(),
 		s.UserId)
 	if err != nil {
-		logger.Error("CreateRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal, "CreateRuntime: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 
 	// create labels
 	err = p.createRuntimeLabels(runtimeId, req.Labels.GetValue())
 	if err != nil {
-		logger.Error("CreateRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal, "CreateRuntime: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 
 	// get response
@@ -63,8 +63,7 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	}
 	pbRuntime, err := p.formatRuntime(runtime)
 	if err != nil {
-		logger.Error("CreateRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal, "CreateRuntime: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res := &pb.CreateRuntimeResponse{
 		Runtime: pbRuntime,
@@ -73,18 +72,20 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 }
 
 func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesRequest) (*pb.DescribeRuntimesResponse, error) {
-	// validate req
+	// TODO: refactor validate req
 	err := validateDescribeRuntimesRequest(req)
+	if err != nil {
+		if gerr.IsGRPCError(err) {
+			return nil, err
+		} else {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+		}
+	}
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
-	if err != nil {
-		logger.Error("DescribeRuntimes: %+v", err)
-		return nil, status.Errorf(codes.InvalidArgument, "DescribeRuntimes: %+v", err)
-	}
 	selectorMap, err := SelectorStringToMap(req.Label.GetValue())
 	if err != nil {
-		logger.Error("DescribeRuntimes: %+v", err)
-		return nil, status.Errorf(codes.InvalidArgument, "DescribeRuntimes: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
 	}
 
 	var runtimes []*models.Runtime
@@ -101,18 +102,16 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 
 	_, err = query.Load(&runtimes)
 	if err != nil {
-		logger.Error("DescribeRuntimes: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeRuntimes: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	count, err = query.Count()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "DescribeRuntimes: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	pbRuntime, err := p.formatRuntimeSet(runtimes)
 	if err != nil {
-		logger.Error("DescribeRuntimes: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeRuntimes %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res := &pb.DescribeRuntimesResponse{
 		RuntimeSet: pbRuntime,
@@ -125,46 +124,44 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	// validate req
 	err := validateModifyRuntimeRequest(req)
 	if err != nil {
-		logger.Error("ModifyRuntime: %+v", err)
-		return nil, status.Errorf(codes.InvalidArgument, "ModifyRuntime: %+v", err)
+		if gerr.IsGRPCError(err) {
+			return nil, err
+		} else {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+		}
 	}
 	// check runtime can be modified
 	runtimeId := req.GetRuntimeId().GetValue()
-	deleted, err := p.checkRuntimeDeleted(runtimeId)
+	runtime, err := p.getRuntime(runtimeId)
 	if err != nil {
-		logger.Error("ModifyRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal, "ModifyRuntime: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourcesNotFound, runtimeId)
 	}
-	if deleted {
-		logger.Error("ModifyRuntime: runtime has been deleted [%+v]", runtimeId)
-		return nil, status.Errorf(codes.Internal,
-			"ModifyRuntime: runtime has been deleted [%+v]", runtimeId)
+	if runtime.Status == constants.StatusDeleted {
+		logger.Error("runtime has been deleted [%s]", runtimeId)
+		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, runtimeId)
 	}
 	// update runtime
 	err = p.updateRuntime(req)
 	if err != nil {
-		logger.Error("ModifyRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal, "ModifyRuntime: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 
 	// update runtime label
 	if req.Labels != nil {
 		err := p.updateRuntimeLabels(runtimeId, req.Labels.GetValue())
 		if err != nil {
-			logger.Error("ModifyRuntime: %+v", err)
-			return nil, status.Errorf(codes.Internal, "ModifyRuntime: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 
 	// get response
-	runtime, err := p.getRuntime(runtimeId)
+	runtime, err = p.getRuntime(runtimeId)
 	if err != nil {
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	pbRuntime, err := p.formatRuntime(runtime)
 	if err != nil {
-		logger.Error("ModifyRuntime: %+v", err)
-		return nil, status.Errorf(codes.Internal, "ModifyRuntime: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res := &pb.ModifyRuntimeResponse{
 		Runtime: pbRuntime,
@@ -177,7 +174,7 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 	// validate req
 	err := manager.CheckParamsRequired(req, "runtime_id")
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		return nil, err
 	}
 
 	// check runtime can be deleted
@@ -186,8 +183,7 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 	// deleted runtime
 	err = p.deleteRuntimes(runtimeIds)
 	if err != nil {
-		logger.Error("DeleteRuntimes: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DeleteRuntimes: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
 	}
 
 	res := &pb.DeleteRuntimesResponse{
@@ -202,14 +198,16 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	credential := req.RuntimeCredential.GetValue()
 	err := ValidateCredential(provider, url, credential)
 	if err != nil {
-		logger.Error("DescribeRuntimeProviderZones: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeRuntimeProviderZones: %+v", err)
+		if gerr.IsGRPCError(err) {
+			return nil, err
+		} else {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+		}
 	}
 
 	providerInterface, err := plugins.GetProviderPlugin(provider)
 	if err != nil {
-		logger.Error("No such provider [%s]. ", provider)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	zones := providerInterface.DescribeRuntimeProviderZones(url, credential)
 	return &pb.DescribeRuntimeProviderZonesResponse{

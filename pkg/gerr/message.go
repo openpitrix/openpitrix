@@ -57,4 +57,24 @@ var (
 		Name: "parameter_parse_failed",
 		En:   "parameter [%s] parse failed",
 	}
+	ErrorResourceAlreadyDeleted = ErrorMessage{
+		Name: "resource_already_deleted",
+		En:   "resource [%s] has already been deleted",
+	}
+	ErrorIllegalParameterLength = ErrorMessage{
+		Name: "illegal_parameter_length",
+		En:   "illegal parameter [%s] length",
+	}
+	ErrorUnsupportedParameterValue = ErrorMessage{
+		Name: "unsupported_parameter_value",
+		En:   "unsupported parameter [%s] value [%s]",
+	}
+	ErrorIllegalUrlFormat = ErrorMessage{
+		Name: "illegal_url_format",
+		En:   "illegal URL format [%s]",
+	}
+	ErrorIllegalLabelFormat = ErrorMessage{
+		Name: "illegal_label_format",
+		En:   "illegal label format",
+	}
 )

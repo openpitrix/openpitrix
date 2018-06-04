@@ -297,14 +297,3 @@ func (p *Server) createRuntimeCredential(provider, content string) (
 	}
 	return newRunTimeCredential.RuntimeCredentialId, nil
 }
-
-func (p *Server) checkRuntimeDeleted(runtimeId string) (bool, error) {
-	runtime, err := p.getRuntime(runtimeId)
-	if err != nil {
-		return true, err
-	}
-	if runtime.Status == constants.StatusDeleted {
-		return true, nil
-	}
-	return false, nil
-}

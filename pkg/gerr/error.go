@@ -60,6 +60,18 @@ func New(code codes.Code, errMsg ErrorMessage, a ...interface{}) error {
 	return newStatus(code, nil, errMsg, a...).Err()
 }
 
+type grpcError interface {
+	error
+	GRPCStatus() *status.Status
+}
+
 func NewWithDetail(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) error {
 	return newStatus(code, err, errMsg, a...).Err()
+}
+
+func IsGRPCError(err error) bool {
+	if e, ok := err.(grpcError); ok && e != nil {
+		return true
+	}
+	return false
 }
