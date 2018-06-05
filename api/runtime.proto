@@ -49,7 +49,7 @@ message CreateRuntimeRequest {
 }
 
 message CreateRuntimeResponse {
-	Runtime runtime = 1;
+	google.protobuf.StringValue runtime_id = 1;
 }
 
 message DescribeRuntimesRequest {
@@ -75,7 +75,7 @@ message ModifyRuntimeRequest {
 }
 
 message ModifyRuntimeResponse {
-	Runtime runtime = 1;
+	google.protobuf.StringValue runtime_id = 1;
 }
 
 message DeleteRuntimesRequest {

@@ -88,7 +88,7 @@ func TestRepo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	repoId := createResp.Payload.Repo.RepoID
+	repoId := createResp.Payload.RepoID
 	// modify repo
 	modifyParams := repo_manager.NewModifyRepoParams()
 	modifyParams.SetBody(
@@ -255,7 +255,7 @@ func TestRepoLabelSelector(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	repoId := createResp.Payload.Repo.RepoID
+	repoId := createResp.Payload.RepoID
 	testDescribeReposWithLabelSelector(t, repoId, labels, selectors)
 
 	i := 0

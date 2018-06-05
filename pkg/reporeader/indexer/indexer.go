@@ -107,7 +107,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		if err != nil {
 			return appId, err
 		}
-		appId = createRes.GetApp().GetAppId().GetValue()
+		appId = createRes.GetAppId().GetValue()
 		return appId, err
 
 	} else {
@@ -126,7 +126,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		if err != nil {
 			return appId, err
 		}
-		appId = modifyRes.GetApp().GetAppId().GetValue()
+		appId = modifyRes.GetAppId().GetValue()
 		return appId, err
 	}
 }
@@ -167,7 +167,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 		if err != nil {
 			return versionId, err
 		}
-		versionId = createRes.GetAppVersion().GetVersionId().GetValue()
+		versionId = createRes.GetVersionId().GetValue()
 		return versionId, err
 	} else {
 		modifyReq := pb.ModifyAppVersionRequest{}
@@ -180,7 +180,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 		if err != nil {
 			return versionId, err
 		}
-		versionId = modifyRes.GetAppVersion().GetVersionId().GetValue()
+		versionId = modifyRes.GetVersionId().GetValue()
 		return versionId, err
 	}
 }

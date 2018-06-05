@@ -16,9 +16,6 @@ import (
 // swagger:model openpitrixCreateRepoRequest
 type OpenpitrixCreateRepoRequest struct {
 
-	//
-	string `json:"_,omitempty"`
-
 	// credential
 	Credential string `json:"credential,omitempty"`
 

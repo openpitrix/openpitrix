@@ -16,41 +16,17 @@ import (
 // swagger:model openpitrixModifyCategoryResponse
 type OpenpitrixModifyCategoryResponse struct {
 
-	// category
-	Category *OpenpitrixCategory `json:"category,omitempty"`
+	// category id
+	CategoryID string `json:"category_id,omitempty"`
 }
 
 // Validate validates this openpitrix modify category response
 func (m *OpenpitrixModifyCategoryResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateCategory(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixModifyCategoryResponse) validateCategory(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Category) { // not required
-		return nil
-	}
-
-	if m.Category != nil {
-
-		if err := m.Category.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("category")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

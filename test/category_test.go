@@ -46,7 +46,7 @@ func TestCategory(t *testing.T) {
 	createResp, err := client.AppManager.CreateCategory(createParams)
 	require.NoError(t, err)
 
-	categoryId := createResp.Payload.Category.CategoryID
+	categoryId := createResp.Payload.CategoryID
 	// modify category
 	modifyParams := app_manager.NewModifyCategoryParams()
 	modifyParams.SetBody(

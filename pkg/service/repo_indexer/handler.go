@@ -28,6 +28,7 @@ func (p *Server) IndexRepo(ctx context.Context, req *pb.IndexRepoRequest) (*pb.I
 	}
 	ret := pb.IndexRepoResponse{
 		RepoEvent: models.RepoEventToPb(repoEvent),
+		RepoId:    req.GetRepoId(),
 	}
 	return &ret, nil
 }

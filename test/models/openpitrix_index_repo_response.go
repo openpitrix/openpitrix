@@ -18,6 +18,9 @@ type OpenpitrixIndexRepoResponse struct {
 
 	// repo event
 	RepoEvent *OpenpitrixRepoEvent `json:"repo_event,omitempty"`
+
+	// repo id
+	RepoID string `json:"repo_id,omitempty"`
 }
 
 // Validate validates this openpitrix index repo response

@@ -123,13 +123,8 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		}
 	}
 
-	repo, err := p.formatRepo(newRepo)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
-
 	res := &pb.CreateRepoResponse{
-		Repo: repo,
+		RepoId: pbutil.ToProtoString(newRepo.RepoId),
 	}
 
 	ctx = clientutil.GetSystemUserContext()
@@ -216,17 +211,8 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		}
 	}
 
-	repo, err = p.getRepo(repoId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
-	pbRepo, err := p.formatRepo(repo)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
-
 	res := &pb.ModifyRepoResponse{
-		Repo: pbRepo,
+		RepoId: req.GetRepoId(),
 	}
 	return res, nil
 }

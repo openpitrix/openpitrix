@@ -16,9 +16,6 @@ import (
 // swagger:model openpitrixCreateAppRequest
 type OpenpitrixCreateAppRequest struct {
 
-	//
-	string `json:"_,omitempty"`
-
 	// category id
 	CategoryID string `json:"category_id,omitempty"`
 

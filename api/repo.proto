@@ -14,20 +14,19 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 message CreateRepoRequest {
-	google.protobuf.StringValue _ = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue description = 3;
-	google.protobuf.StringValue type = 4;
-	google.protobuf.StringValue url = 5;
-	google.protobuf.StringValue credential = 6;
-	google.protobuf.StringValue visibility = 7;
-	repeated string providers = 8;
-	repeated RepoLabel labels = 9;
-	repeated RepoSelector selectors = 10;
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue description = 2;
+	google.protobuf.StringValue type = 3;
+	google.protobuf.StringValue url = 4;
+	google.protobuf.StringValue credential = 5;
+	google.protobuf.StringValue visibility = 6;
+	repeated string providers = 7;
+	repeated RepoLabel labels = 8;
+	repeated RepoSelector selectors = 9;
 }
 
 message CreateRepoResponse {
-	Repo repo = 1;
+	google.protobuf.StringValue repo_id = 1;
 }
 
 message ModifyRepoRequest {
@@ -44,7 +43,7 @@ message ModifyRepoRequest {
 }
 
 message ModifyRepoResponse {
-	Repo repo = 1;
+	google.protobuf.StringValue repo_id = 1;
 }
 
 message DeleteReposRequest {

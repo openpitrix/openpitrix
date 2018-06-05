@@ -56,17 +56,8 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 	}
 
-	// get response
-	runtime, err := p.getRuntime(runtimeId)
-	if err != nil {
-		return nil, err
-	}
-	pbRuntime, err := p.formatRuntime(runtime)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
 	res := &pb.CreateRuntimeResponse{
-		Runtime: pbRuntime,
+		RuntimeId: pbutil.ToProtoString(runtimeId),
 	}
 	return res, nil
 }
@@ -154,17 +145,8 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 		}
 	}
 
-	// get response
-	runtime, err = p.getRuntime(runtimeId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
-	pbRuntime, err := p.formatRuntime(runtime)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
 	res := &pb.ModifyRuntimeResponse{
-		Runtime: pbRuntime,
+		RuntimeId: req.GetRuntimeId(),
 	}
 
 	return res, nil

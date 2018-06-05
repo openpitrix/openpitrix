@@ -16,41 +16,17 @@ import (
 // swagger:model openpitrixModifyAppVersionResponse
 type OpenpitrixModifyAppVersionResponse struct {
 
-	// app version
-	AppVersion *OpenpitrixAppVersion `json:"app_version,omitempty"`
+	// version id
+	VersionID string `json:"version_id,omitempty"`
 }
 
 // Validate validates this openpitrix modify app version response
 func (m *OpenpitrixModifyAppVersionResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAppVersion(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixModifyAppVersionResponse) validateAppVersion(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.AppVersion) { // not required
-		return nil
-	}
-
-	if m.AppVersion != nil {
-
-		if err := m.AppVersion.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("app_version")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

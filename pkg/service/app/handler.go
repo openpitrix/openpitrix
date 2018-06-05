@@ -110,7 +110,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	}
 
 	res := &pb.CreateAppResponse{
-		App: models.AppToPb(newApp),
+		AppId: pbutil.ToProtoString(newApp.AppId),
 	}
 	return res, nil
 }
@@ -121,6 +121,9 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 	app, err := p.getApp(appId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	if app.Status == constants.StatusDeleted {
+		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, appId)
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
@@ -136,13 +139,9 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
-	app, err = p.getApp(appId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
 
 	res := &pb.ModifyAppResponse{
-		App: models.AppToPb(app),
+		AppId: req.GetAppId(),
 	}
 	return res, nil
 }
@@ -193,7 +192,7 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 	}
 
 	res := &pb.CreateAppVersionResponse{
-		AppVersion: models.AppVersionToPb(newAppVersion),
+		VersionId: pbutil.ToProtoString(newAppVersion.VersionId),
 	}
 	return res, nil
 
@@ -235,6 +234,9 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
+	if version.Status == constants.StatusDeleted {
+		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, versionId)
+	}
 
 	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name", "sequence")
 	_, err = p.Db.
@@ -246,13 +248,9 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
-	version, err = p.getAppVersion(versionId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
 
 	res := &pb.ModifyAppVersionResponse{
-		AppVersion: models.AppVersionToPb(version),
+		VersionId: req.GetVersionId(),
 	}
 	return res, nil
 
@@ -301,7 +299,8 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	return &pb.GetAppVersionPackageResponse{
-		Package: content,
+		Package:   content,
+		VersionId: req.GetVersionId(),
 	}, nil
 }
 
@@ -325,7 +324,8 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	return &pb.GetAppVersionPackageFilesResponse{
-		Files: archiveFiles,
+		Files:     archiveFiles,
+		VersionId: req.GetVersionId(),
 	}, nil
 }
 
@@ -372,7 +372,7 @@ func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 	}
 
 	res := &pb.CreateCategoryResponse{
-		Category: models.CategoryToPb(category),
+		CategoryId: pbutil.ToProtoString(category.CategoryId),
 	}
 	return res, nil
 }
@@ -380,7 +380,7 @@ func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryRequest) (*pb.ModifyCategoryResponse, error) {
 	// TODO: check resource permission
 	categoryId := req.GetCategoryId().GetValue()
-	category, err := p.getCategory(categoryId)
+	_, err := p.getCategory(categoryId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
@@ -395,13 +395,8 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
-	category, err = p.getCategory(categoryId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
-
 	res := &pb.ModifyCategoryResponse{
-		Category: models.CategoryToPb(category),
+		CategoryId: req.GetCategoryId(),
 	}
 	return res, nil
 }

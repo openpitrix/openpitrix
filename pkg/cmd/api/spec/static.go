@@ -1979,9 +1979,6 @@ var Files = map[string]string{
     "openpitrixCreateAppRequest": {
       "type": "object",
       "properties": {
-        "_": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
@@ -2026,17 +2023,14 @@ var Files = map[string]string{
     "openpitrixCreateAppResponse": {
       "type": "object",
       "properties": {
-        "app": {
-          "$ref": "#/definitions/openpitrixApp"
+        "app_id": {
+          "type": "string"
         }
       }
     },
     "openpitrixCreateAppVersionRequest": {
       "type": "object",
       "properties": {
-        "_": {
-          "type": "string"
-        },
         "app_id": {
           "type": "string"
         },
@@ -2060,8 +2054,8 @@ var Files = map[string]string{
     "openpitrixCreateAppVersionResponse": {
       "type": "object",
       "properties": {
-        "app_version": {
-          "$ref": "#/definitions/openpitrixAppVersion"
+        "version_id": {
+          "type": "string"
         }
       }
     },
@@ -2079,8 +2073,8 @@ var Files = map[string]string{
     "openpitrixCreateCategoryResponse": {
       "type": "object",
       "properties": {
-        "category": {
-          "$ref": "#/definitions/openpitrixCategory"
+        "category_id": {
+          "type": "string"
         }
       }
     },
@@ -2204,6 +2198,9 @@ var Files = map[string]string{
             "type": "string",
             "format": "byte"
           }
+        },
+        "version_id": {
+          "type": "string"
         }
       }
     },
@@ -2213,6 +2210,9 @@ var Files = map[string]string{
         "package": {
           "type": "string",
           "format": "byte"
+        },
+        "version_id": {
+          "type": "string"
         }
       }
     },
@@ -2266,8 +2266,8 @@ var Files = map[string]string{
     "openpitrixModifyAppResponse": {
       "type": "object",
       "properties": {
-        "app": {
-          "$ref": "#/definitions/openpitrixApp"
+        "app_id": {
+          "type": "string"
         }
       }
     },
@@ -2297,8 +2297,8 @@ var Files = map[string]string{
     "openpitrixModifyAppVersionResponse": {
       "type": "object",
       "properties": {
-        "app_version": {
-          "$ref": "#/definitions/openpitrixAppVersion"
+        "version_id": {
+          "type": "string"
         }
       }
     },
@@ -2319,8 +2319,8 @@ var Files = map[string]string{
     "openpitrixModifyCategoryResponse": {
       "type": "object",
       "properties": {
-        "category": {
-          "$ref": "#/definitions/openpitrixCategory"
+        "category_id": {
+          "type": "string"
         }
       }
     },
@@ -3194,9 +3194,6 @@ var Files = map[string]string{
     "openpitrixCreateRepoRequest": {
       "type": "object",
       "properties": {
-        "_": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
@@ -3238,8 +3235,8 @@ var Files = map[string]string{
     "openpitrixCreateRepoResponse": {
       "type": "object",
       "properties": {
-        "repo": {
-          "$ref": "#/definitions/openpitrixRepo"
+        "repo_id": {
+          "type": "string"
         }
       }
     },
@@ -3327,8 +3324,8 @@ var Files = map[string]string{
     "openpitrixModifyRepoResponse": {
       "type": "object",
       "properties": {
-        "repo": {
-          "$ref": "#/definitions/openpitrixRepo"
+        "repo_id": {
+          "type": "string"
         }
       }
     },
@@ -3453,6 +3450,9 @@ var Files = map[string]string{
       "properties": {
         "repo_event": {
           "$ref": "#/definitions/openpitrixRepoEvent"
+        },
+        "repo_id": {
+          "type": "string"
         }
       }
     },
@@ -3513,8 +3513,8 @@ var Files = map[string]string{
     "openpitrixCreateRuntimeResponse": {
       "type": "object",
       "properties": {
-        "runtime": {
-          "$ref": "#/definitions/openpitrixRuntime"
+        "runtime_id": {
+          "type": "string"
         }
       }
     },
@@ -3589,8 +3589,8 @@ var Files = map[string]string{
     "openpitrixModifyRuntimeResponse": {
       "type": "object",
       "properties": {
-        "runtime": {
-          "$ref": "#/definitions/openpitrixRuntime"
+        "runtime_id": {
+          "type": "string"
         }
       }
     },

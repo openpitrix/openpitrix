@@ -16,41 +16,17 @@ import (
 // swagger:model openpitrixCreateAppResponse
 type OpenpitrixCreateAppResponse struct {
 
-	// app
-	App *OpenpitrixApp `json:"app,omitempty"`
+	// app id
+	AppID string `json:"app_id,omitempty"`
 }
 
 // Validate validates this openpitrix create app response
 func (m *OpenpitrixCreateAppResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateApp(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixCreateAppResponse) validateApp(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.App) { // not required
-		return nil
-	}
-
-	if m.App != nil {
-
-		if err := m.App.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("app")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
