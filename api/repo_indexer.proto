@@ -20,6 +20,7 @@ message IndexRepoRequest {
 
 message IndexRepoResponse {
 	RepoEvent repo_event = 1;
+	google.protobuf.StringValue repo_id = 2;
 }
 
 message RepoEvent {

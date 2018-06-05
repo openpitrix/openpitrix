@@ -16,41 +16,17 @@ import (
 // swagger:model openpitrixCreateRepoResponse
 type OpenpitrixCreateRepoResponse struct {
 
-	// repo
-	Repo *OpenpitrixRepo `json:"repo,omitempty"`
+	// repo id
+	RepoID string `json:"repo_id,omitempty"`
 }
 
 // Validate validates this openpitrix create repo response
 func (m *OpenpitrixCreateRepoResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateRepo(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixCreateRepoResponse) validateRepo(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Repo) { // not required
-		return nil
-	}
-
-	if m.Repo != nil {
-
-		if err := m.Repo.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("repo")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

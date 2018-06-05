@@ -64,7 +64,7 @@ func TestApp(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	appId := createResp.Payload.App.AppID
+	appId := createResp.Payload.AppID
 	// modify app
 	modifyParams := app_manager.NewModifyAppParams()
 	modifyParams.SetBody(

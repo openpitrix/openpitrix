@@ -55,7 +55,7 @@ func TestRuntime(t *testing.T) {
 		t.Logf("Create runtime will fail without credential")
 		return
 	}
-	runtimeId := createResp.Payload.Runtime.RuntimeID
+	runtimeId := createResp.Payload.RuntimeID
 	// modify runtime
 	modifyParams := runtime_manager.NewModifyRuntimeParams()
 	modifyParams.SetBody(
@@ -146,7 +146,7 @@ func TestRuntimeLabel(t *testing.T) {
 		t.Logf("Create runtime will fail without credential")
 		return
 	}
-	runtimeId := createResp.Payload.Runtime.RuntimeID
+	runtimeId := createResp.Payload.RuntimeID
 
 	describeParams := runtime_manager.NewDescribeRuntimesParams()
 	describeParams.Label = &labels

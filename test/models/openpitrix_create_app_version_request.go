@@ -16,9 +16,6 @@ import (
 // swagger:model openpitrixCreateAppVersionRequest
 type OpenpitrixCreateAppVersionRequest struct {
 
-	//
-	string `json:"_,omitempty"`
-
 	// app id
 	AppID string `json:"app_id,omitempty"`
 

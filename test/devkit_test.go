@@ -110,7 +110,7 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 	createResp, err := client.RepoManager.CreateRepo(createParams)
 	require.NoError(t, err)
 
-	repoId := createResp.Payload.Repo.RepoID
+	repoId := createResp.Payload.RepoID
 
 	describeParams := repo_indexer.NewDescribeRepoEventsParams()
 	describeParams.SetRepoID([]string{repoId})

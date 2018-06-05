@@ -18,6 +18,9 @@ type OpenpitrixGetAppVersionPackageFilesResponse struct {
 
 	// files
 	Files map[string]strfmt.Base64 `json:"files,omitempty"`
+
+	// version id
+	VersionID string `json:"version_id,omitempty"`
 }
 
 // Validate validates this openpitrix get app version package files response

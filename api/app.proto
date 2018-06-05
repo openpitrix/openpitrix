@@ -15,24 +15,23 @@ import "protoc-gen-swagger/options/annotations.proto";
 
 
 message CreateAppRequest {
-	google.protobuf.StringValue _ = 1; // placeholder for app_id
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue repo_id = 3;
-	google.protobuf.StringValue owner = 4;
-	google.protobuf.StringValue chart_name = 5;
-	google.protobuf.StringValue description = 6;
-	google.protobuf.StringValue home = 8;
-	google.protobuf.StringValue icon = 9;
-	google.protobuf.StringValue screenshots = 10;
-	google.protobuf.StringValue maintainers = 11;
-	google.protobuf.StringValue sources = 12;
-	google.protobuf.StringValue readme = 13;
-	google.protobuf.StringValue category_id = 14;
-	google.protobuf.StringValue keywords = 15;
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue repo_id = 2;
+	google.protobuf.StringValue owner = 3;
+	google.protobuf.StringValue chart_name = 4;
+	google.protobuf.StringValue description = 5;
+	google.protobuf.StringValue home = 7;
+	google.protobuf.StringValue icon = 8;
+	google.protobuf.StringValue screenshots = 9;
+	google.protobuf.StringValue maintainers = 10;
+	google.protobuf.StringValue sources = 11;
+	google.protobuf.StringValue readme = 12;
+	google.protobuf.StringValue category_id = 13;
+	google.protobuf.StringValue keywords = 14;
 }
 
 message CreateAppResponse {
-	App app = 1;
+	google.protobuf.StringValue app_id = 1;
 }
 
 message ModifyAppRequest {
@@ -53,7 +52,7 @@ message ModifyAppRequest {
 }
 
 message ModifyAppResponse {
-	App app = 1;
+	google.protobuf.StringValue app_id = 1;
 }
 
 message DeleteAppsRequest {
@@ -125,17 +124,16 @@ message DescribeAppsResponse {
 }
 
 message CreateAppVersionRequest {
-	google.protobuf.StringValue _ = 1; // placeholder for version_id
-	google.protobuf.StringValue app_id = 2;
-	google.protobuf.StringValue owner = 3;
-	google.protobuf.StringValue name = 4;
-	google.protobuf.StringValue package_name = 5;
-	google.protobuf.StringValue description = 6;
-	google.protobuf.UInt32Value sequence = 7;
+	google.protobuf.StringValue app_id = 1;
+	google.protobuf.StringValue owner = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue package_name = 4;
+	google.protobuf.StringValue description = 5;
+	google.protobuf.UInt32Value sequence = 6;
 }
 
 message CreateAppVersionResponse {
-	AppVersion app_version = 1;
+	google.protobuf.StringValue version_id = 1;
 }
 
 message ModifyAppVersionRequest {
@@ -148,7 +146,7 @@ message ModifyAppVersionRequest {
 }
 
 message ModifyAppVersionResponse {
-	AppVersion app_version = 1;
+	google.protobuf.StringValue version_id = 1;
 }
 
 message DeleteAppVersionsRequest {
@@ -199,6 +197,7 @@ message GetAppVersionPackageRequest {
 
 message GetAppVersionPackageResponse {
 	bytes package = 1;
+	google.protobuf.StringValue version_id = 2;
 }
 
 message GetAppVersionPackageFilesRequest {
@@ -208,6 +207,7 @@ message GetAppVersionPackageFilesRequest {
 
 message GetAppVersionPackageFilesResponse {
 	map<string, bytes> files = 1;
+	google.protobuf.StringValue version_id = 2;
 }
 
 message DescribeCategoriesRequest {
@@ -230,7 +230,7 @@ message CreateCategoryRequest {
 }
 
 message CreateCategoryResponse {
-	Category category = 1;
+	google.protobuf.StringValue category_id = 1;
 }
 
 message ModifyCategoryRequest {
@@ -240,7 +240,7 @@ message ModifyCategoryRequest {
 }
 
 message ModifyCategoryResponse {
-	Category category = 1;
+	google.protobuf.StringValue category_id = 1;
 }
 
 message DeleteCategoriesRequest {

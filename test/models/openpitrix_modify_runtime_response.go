@@ -16,41 +16,17 @@ import (
 // swagger:model openpitrixModifyRuntimeResponse
 type OpenpitrixModifyRuntimeResponse struct {
 
-	// runtime
-	Runtime *OpenpitrixRuntime `json:"runtime,omitempty"`
+	// runtime id
+	RuntimeID string `json:"runtime_id,omitempty"`
 }
 
 // Validate validates this openpitrix modify runtime response
 func (m *OpenpitrixModifyRuntimeResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateRuntime(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixModifyRuntimeResponse) validateRuntime(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Runtime) { // not required
-		return nil
-	}
-
-	if m.Runtime != nil {
-
-		if err := m.Runtime.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("runtime")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

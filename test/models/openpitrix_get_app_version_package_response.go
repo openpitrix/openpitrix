@@ -18,6 +18,9 @@ type OpenpitrixGetAppVersionPackageResponse struct {
 
 	// package
 	Package strfmt.Base64 `json:"package,omitempty"`
+
+	// version id
+	VersionID string `json:"version_id,omitempty"`
 }
 
 // Validate validates this openpitrix get app version package response
