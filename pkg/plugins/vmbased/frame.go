@@ -680,6 +680,10 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 }
 
 func (f *Frame) getUserDataExec(filename, contents string) string {
+	if pi.Global() == nil {
+		logger.Error("Pi global should be init.")
+		return ""
+	}
 	exec := fmt.Sprintf(`#!/bin/bash -e
 
 mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
