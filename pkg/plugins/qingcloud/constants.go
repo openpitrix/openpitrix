@@ -11,5 +11,5 @@ const (
 	DefaultLoginMode     = "passwd"
 	DefaultLoginPassword = "p12cHANgepwD"
 
-	DefaultUserDataType = "plain"
+	DefaultUserDataType = "exec"
 )

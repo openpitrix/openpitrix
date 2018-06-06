@@ -5,7 +5,6 @@
 package vmbased
 
 import (
-	"encoding/base64"
 	"fmt"
 	"strings"
 
@@ -55,7 +54,7 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 	result += fmt.Sprintf("FILE_NAME=\"%s\"\n", FrontgateConfFile)
 	result += fmt.Sprintf("FILE_CONF=%s\n", frontgateConfStr)
 
-	return base64.StdEncoding.EncodeToString([]byte(result))
+	return result
 }
 
 func (f *Frame) pingFrontgateLayer(failureAllowed bool) *models.TaskLayer {

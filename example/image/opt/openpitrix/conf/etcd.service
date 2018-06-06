@@ -6,7 +6,7 @@ After=syslog.target network.target docker.target
 User=root
 EnvironmentFile=/opt/openpitrix/conf/openpitrix.conf
 ExecStart=/opt/openpitrix/sbin/start_etcd.sh $FILE_NAME
-ExecStop=docker stop etcd
+ExecStop=/usr/bin/docker stop etcd
 Restart=always
 RestartSec=30
 
