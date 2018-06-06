@@ -6,7 +6,7 @@ After=syslog.target network.target docker.target etcd.target
 User=root
 EnvironmentFile=/opt/openpitrix/conf/openpitrix.conf
 ExecStart=/opt/openpitrix/sbin/start_default.sh $MOUNT_POINT $FILE_NAME $FILE_CONF $IMAGE
-ExecStop=docker stop default
+ExecStop=/usr/bin/docker stop default
 Restart=always
 RestartSec=10
 

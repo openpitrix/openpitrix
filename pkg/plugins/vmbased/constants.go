@@ -63,6 +63,7 @@ const (
 
 const (
 	OpenPitrixBasePath = "/opt/openpitrix/"
+	OpenPitrixExecFile = "/etc/rc.local"
 	OpenPitrixConfPath = OpenPitrixBasePath + "conf/"
 	OpenPitrixSbinPath = OpenPitrixBasePath + "sbin/"
 	OpenPitrixConfFile = "openpitrix.conf"

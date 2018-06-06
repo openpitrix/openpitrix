@@ -28,6 +28,7 @@ type RepoServiceConfig struct {
 }
 
 type ClusterServiceConfig struct {
+	ImageUrl      string   `json:"image_url"`
 	Plugins       []string `json:"plugins"`
 	FrontgateConf string   `json:"frontgate_conf"`
 }
@@ -74,6 +75,7 @@ repo:
   #
   cron: "0 30 4 * * *"
 cluster:
+  image_url: https://openpitrix.pek3a.qingstor.com/image/ubuntu.tar.gz
   plugins:
     - qingcloud
     - kubernetes
@@ -84,11 +86,11 @@ runtime:
   qingcloud_pek3a:
     api_server: api.qingcloud.com
     zone: pek3a
-    image_id: img-abcdefgh
+    image_id: xenial4x64a
   qingcloud_sh1a:
     api_server: api.qingcloud.com
     zone: sh1a
-    image_id: img-abcdefgh
+    image_id: xenial4x64a
 `
 
 const (

@@ -679,6 +679,21 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 	}
 }
 
+func (f *Frame) getUserDataExec(filename, contents string) string {
+	if pi.Global() == nil {
+		logger.Error("Pi global should be init.")
+		return ""
+	}
+	exec := fmt.Sprintf(`#!/bin/bash -e
+
+mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
+echo '%s' >> %s
+for i in 0 1 2 3 4 5 6 7 8 9; do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 5; done
+/opt/openpitrix/image/install_service.sh %s
+`, contents, f.getConfFile(), pi.Global().GlobalConfig().Cluster.ImageUrl, filename)
+	return base64.StdEncoding.EncodeToString([]byte(exec))
+}
+
 /*
 cat /opt/openpitrix/conf/drone.conf
 IMAGE="mysql:5.7"
@@ -712,10 +727,14 @@ func (f *Frame) getUserDataValue(nodeId string) string {
 	result += fmt.Sprintf("FILE_NAME=\"%s\"\n", DroneConfFile)
 	result += fmt.Sprintf("FILE_CONF=%s\n", droneConfStr)
 
-	return base64.StdEncoding.EncodeToString([]byte(result))
+	return result
 }
 
 func (f *Frame) getUserDataFile() string {
+	return OpenPitrixExecFile
+}
+
+func (f *Frame) getConfFile() string {
 	return OpenPitrixConfPath + OpenPitrixConfFile
 }
 
@@ -783,9 +802,9 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 		}
 		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
 			frontgate := &Frontgate{f}
-			instance.UserDataValue = frontgate.getUserDataValue(nodeId)
+			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId))
 		} else {
-			instance.UserDataValue = f.getUserDataValue(nodeId)
+			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId))
 		}
 		directive := jsonutil.ToString(instance)
 		if err != nil {
