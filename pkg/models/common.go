@@ -48,6 +48,9 @@ var IndexedColumns = map[string][]string{
 	ClusterNodeTableName: {
 		"cluster_id", "node_id", "status", "owner",
 	},
+	CategoryTableName: {
+		"category_id", "status", "locale", "owner", "name",
+	},
 }
 
 var SearchWordColumnTable = []string{

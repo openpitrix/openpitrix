@@ -30,6 +30,7 @@ services:
      - "9100:9100"
     links:
       - openpitrix-app-manager:openpitrix-app-manager
+      - openpitrix-category-manager:openpitrix-category-manager
       - openpitrix-runtime-manager:openpitrix-runtime-manager
       - openpitrix-repo-manager:openpitrix-repo-manager
       - openpitrix-job-manager:openpitrix-job-manager
@@ -93,6 +94,21 @@ services:
       - openpitrix-app-db-ctrl
       - openpitrix-etcd
     container_name: "openpitrix-app-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=app
+  openpitrix-category-manager:
+    build: .
+    image: "openpitrix"
+    command: "category-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-app-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-category-manager"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}

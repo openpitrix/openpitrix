@@ -40,6 +40,7 @@ func Serve() {
 	logger.Info("Job service http://%s:%d", constants.JobManagerHost, constants.JobManagerPort)
 	logger.Info("Task service http://%s:%d", constants.TaskManagerHost, constants.TaskManagerPort)
 	logger.Info("Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
+	logger.Info("Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
 	logger.Info("Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
 	if err := run(); err != nil {
@@ -133,6 +134,11 @@ func mainHandler(ctx context.Context) http.Handler {
 	err = pb.RegisterAppManagerHandlerFromEndpoint(
 		ctx, gwmux,
 		fmt.Sprintf("%s:%d", constants.AppManagerHost, constants.AppManagerPort),
+		opts,
+	)
+	err = pb.RegisterCategoryManagerHandlerFromEndpoint(
+		ctx, gwmux,
+		fmt.Sprintf("%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort),
 		opts,
 	)
 	err = pb.RegisterRuntimeManagerHandlerFromEndpoint(

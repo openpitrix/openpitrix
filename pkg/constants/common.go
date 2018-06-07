@@ -7,16 +7,17 @@ package constants
 import "time"
 
 const (
-	prefix             = "openpitrix-"
-	ApiGatewayHost     = prefix + "api-gateway"
-	RepoManagerHost    = prefix + "repo-manager"
-	AppManagerHost     = prefix + "app-manager"
-	RuntimeManagerHost = prefix + "runtime-manager"
-	ClusterManagerHost = prefix + "cluster-manager"
-	JobManagerHost     = prefix + "job-manager"
-	TaskManagerHost    = prefix + "task-manager"
-	PilotServiceHost   = prefix + "pilot-service"
-	RepoIndexerHost    = prefix + "repo-indexer"
+	prefix              = "openpitrix-"
+	ApiGatewayHost      = prefix + "api-gateway"
+	RepoManagerHost     = prefix + "repo-manager"
+	AppManagerHost      = prefix + "app-manager"
+	RuntimeManagerHost  = prefix + "runtime-manager"
+	ClusterManagerHost  = prefix + "cluster-manager"
+	JobManagerHost      = prefix + "job-manager"
+	TaskManagerHost     = prefix + "task-manager"
+	PilotServiceHost    = prefix + "pilot-service"
+	RepoIndexerHost     = prefix + "repo-indexer"
+	CategoryManagerHost = prefix + "category-manager"
 )
 
 const (
@@ -31,11 +32,14 @@ const (
 	PilotServicePort     = 9110
 	FrontgateServicePort = 9111
 	DroneServicePort     = 9112
+	CategoryManagerPort  = 9113
 	EtcdServicePort      = 2379
 )
 
 const (
 	StatusActive      = "active"
+	StatusEnabled     = "enabled"
+	StatusDisabled    = "disabled"
 	StatusCreating    = "creating"
 	StatusDeleted     = "deleted"
 	StatusDeleting    = "deleting"

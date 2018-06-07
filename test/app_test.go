@@ -9,7 +9,11 @@ package test
 import (
 	"log"
 	"os"
+	"sort"
+	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/test/client/app_manager"
@@ -25,6 +29,12 @@ func init() {
 
 func TestMain(m *testing.M) {
 	os.Exit(m.Run())
+}
+
+func getSortedString(s []string) string {
+	sortedCategoryIds := sort.StringSlice(s)
+	sortedCategoryIds.Sort()
+	return strings.Join(sortedCategoryIds, ",")
 }
 
 func TestApp(t *testing.T) {
@@ -57,8 +67,9 @@ func TestApp(t *testing.T) {
 	createParams := app_manager.NewCreateAppParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateAppRequest{
-			Name:   testAppName,
-			RepoID: testRepoId,
+			Name:       testAppName,
+			RepoID:     testRepoId,
+			CategoryID: "xx,yy,zz",
 		})
 	createResp, err := client.AppManager.CreateApp(createParams)
 	if err != nil {
@@ -69,8 +80,9 @@ func TestApp(t *testing.T) {
 	modifyParams := app_manager.NewModifyAppParams()
 	modifyParams.SetBody(
 		&models.OpenpitrixModifyAppRequest{
-			AppID:  appId,
-			RepoID: testRepoId2,
+			AppID:      appId,
+			RepoID:     testRepoId2,
+			CategoryID: "aa,bb,cc,xx",
 		})
 	modifyResp, err := client.AppManager.ModifyApp(modifyParams)
 	if err != nil {
@@ -87,9 +99,23 @@ func TestApp(t *testing.T) {
 	if len(apps) != 1 {
 		t.Fatalf("failed to describe apps with params [%+v]", describeParams)
 	}
-	if apps[0].RepoID != testRepoId2 {
+	app := apps[0]
+	if app.RepoID != testRepoId2 {
 		t.Fatalf("failed to modify app, app [%+v] repo is not [%s]", apps[0], testRepoId2)
 	}
+	var enabledCategoryIds []string
+	var disabledCategoryIds []string
+	for _, a := range app.AppCategorySet {
+		if a.Status == constants.StatusEnabled {
+			enabledCategoryIds = append(enabledCategoryIds, a.CategoryID)
+		}
+		if a.Status == constants.StatusDisabled {
+			disabledCategoryIds = append(disabledCategoryIds, a.CategoryID)
+		}
+	}
+
+	require.Equal(t, getSortedString(enabledCategoryIds), "aa,bb,cc,xx")
+	require.Equal(t, getSortedString(disabledCategoryIds), "yy,zz")
 	// delete app
 	deleteParams := app_manager.NewDeleteAppsParams()
 	deleteParams.WithBody(&models.OpenpitrixDeleteAppsRequest{
@@ -112,7 +138,7 @@ func TestApp(t *testing.T) {
 	if len(apps) != 1 {
 		t.Fatalf("failed to describe apps with params [%+v]", describeParams)
 	}
-	app := apps[0]
+	app = apps[0]
 	if app.AppID != appId {
 		t.Fatalf("failed to describe app")
 	}

@@ -556,7 +556,7 @@ var Files = map[string]string{
           }
         ],
         "tags": [
-          "AppManager"
+          "CategoryManager"
         ]
       },
       "delete": {
@@ -581,7 +581,7 @@ var Files = map[string]string{
           }
         ],
         "tags": [
-          "AppManager"
+          "CategoryManager"
         ]
       },
       "post": {
@@ -606,7 +606,7 @@ var Files = map[string]string{
           }
         ],
         "tags": [
-          "AppManager"
+          "CategoryManager"
         ]
       },
       "patch": {
@@ -631,7 +631,7 @@ var Files = map[string]string{
           }
         ],
         "tags": [
-          "AppManager"
+          "CategoryManager"
         ]
       }
     },
@@ -1951,31 +1951,6 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixCategory": {
-      "type": "object",
-      "properties": {
-        "category_id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "locale": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "update_time": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
     "openpitrixCreateAppRequest": {
       "type": "object",
       "properties": {
@@ -2059,25 +2034,6 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixCreateCategoryRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "locale": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateCategoryResponse": {
-      "type": "object",
-      "properties": {
-        "category_id": {
-          "type": "string"
-        }
-      }
-    },
     "openpitrixDeleteAppVersionsRequest": {
       "type": "object",
       "properties": {
@@ -2122,28 +2078,6 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixDeleteCategoriesRequest": {
-      "type": "object",
-      "properties": {
-        "category_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixDeleteCategoriesResponse": {
-      "type": "object",
-      "properties": {
-        "category_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "openpitrixDescribeAppVersionsResponse": {
       "type": "object",
       "properties": {
@@ -2170,21 +2104,6 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixApp"
-          }
-        }
-      }
-    },
-    "openpitrixDescribeCategoriesResponse": {
-      "type": "object",
-      "properties": {
-        "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "category_set": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixCategory"
           }
         }
       }
@@ -2302,6 +2221,98 @@ var Files = map[string]string{
         }
       }
     },
+    "protobufUInt32Value": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The uint32 value."
+        }
+      },
+      "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
+    },
+    "openpitrixCategory": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixCreateCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteCategoriesRequest": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "category_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixCategory"
+          }
+        }
+      }
+    },
     "openpitrixModifyCategoryRequest": {
       "type": "object",
       "properties": {
@@ -2323,17 +2334,6 @@ var Files = map[string]string{
           "type": "string"
         }
       }
-    },
-    "protobufUInt32Value": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer",
-          "format": "int64",
-          "description": "The uint32 value."
-        }
-      },
-      "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
     },
     "openpitrixAddClusterNodesRequest": {
       "type": "object",
