@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-echo y | sudo apt-get remove docker docker-engine docker.io
 echo y | sudo apt-get update
 echo y | sudo apt-get install \
     apt-transport-https \
