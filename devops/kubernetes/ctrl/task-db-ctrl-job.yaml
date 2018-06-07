@@ -3,7 +3,8 @@ kind: Job
 metadata:
   annotations:
   labels:
-    app: openpitrix-task-db-ctrl
+    app: openpitrix
+    job-name: openpitrix-task-db-ctrl
   name: openpitrix-task-db-ctrl
   namespace: openpitrix-system
 spec:
@@ -14,6 +15,7 @@ spec:
   template:
     metadata:
       labels:
+        app: openpitrix
         job-name: openpitrix-task-db-ctrl
       name: task-db-ctrl
     spec:

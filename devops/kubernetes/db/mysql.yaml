@@ -11,6 +11,7 @@ spec:
     app: openpitrix
     tier: db
   #clusterIP: None
+  type: LoadBalancer
   ports:
   - name: tcp
     protocol: TCP
@@ -39,10 +40,12 @@ metadata:
   namespace: openpitrix-system
   labels:
     app: openpitrix
+    tier: db
 spec:
   selector:
     matchLabels:
       app: openpitrix
+      tier: db
   strategy:
     type: Recreate
   template:

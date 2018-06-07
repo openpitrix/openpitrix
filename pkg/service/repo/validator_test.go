@@ -49,3 +49,17 @@ func TestValidate3(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestValidate4(t *testing.T) {
+	repoType := "https"
+	url := "https://kubernetes1-charts.storage.googleapis.com"
+	credential := ``
+	visibility := "public"
+	providers := []string{"qingcloud"}
+
+	err := validate(repoType, url, credential, visibility, providers)
+
+	if err == nil {
+		t.Error("error expect, because this is a bad url")
+	}
+}

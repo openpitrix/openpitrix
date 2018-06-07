@@ -3,7 +3,8 @@ kind: Job
 metadata:
   annotations:
   labels:
-    app: openpitrix-repo-db-ctrl
+    app: openpitrix
+    job-name: openpitrix-repo-db-ctrl
   name: openpitrix-repo-db-ctrl
   namespace: openpitrix-system
 spec:
@@ -14,6 +15,7 @@ spec:
   template:
     metadata:
       labels:
+        app: openpitrix
         job-name: openpitrix-repo-db-ctrl
       name: repo-db-ctrl
     spec:
