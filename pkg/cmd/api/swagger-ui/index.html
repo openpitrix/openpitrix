@@ -71,10 +71,12 @@
 <script src="./swagger-ui-standalone-preset.js"> </script>
 <script>
 window.onload = function() {
-  
+
   // Build a system
   const ui = SwaggerUIBundle({
-    url: "http://petstore.swagger.io/v2/swagger.json",
+    urls: [
+      { name:"Api", url:"/swagger-ui/api.swagger.json" }
+    ],
     dom_id: '#swagger-ui',
     deepLinking: true,
     presets: [
@@ -84,7 +86,8 @@ window.onload = function() {
     plugins: [
       SwaggerUIBundle.plugins.DownloadUrl
     ],
-    layout: "StandaloneLayout"
+    layout: "StandaloneLayout",
+    validatorUrl: false,
   })
 
   window.ui = ui
