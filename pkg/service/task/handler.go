@@ -7,13 +7,11 @@ package task
 import (
 	"context"
 	"fmt"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -44,15 +42,13 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 		Record(newTask).
 		Exec()
 	if err != nil {
-		logger.Error("CreateTask failed: %+v", err)
-		return nil, status.Errorf(codes.Internal, "CreateTask: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	if newTask.Status != constants.StatusFailed {
 		err = p.controller.queue.Enqueue(newTask.TaskId)
 		if err != nil {
-			logger.Error("CreateTask [%s] failed: %+v", newTask.TaskId, err)
-			return nil, status.Errorf(codes.Internal, "Enqueue task [%s] failed: %+v", newTask.TaskId, err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
 	}
 
@@ -80,14 +76,11 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 
 	_, err := query.Load(&tasks)
 	if err != nil {
-		// TODO: err_code should be implementation
-		logger.Error("DescribeTasks failed: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeTasks: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		logger.Error("DescribeTasks failed: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeTasks: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeTasksResponse{
@@ -110,21 +103,18 @@ func (p *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb
 
 	_, err := query.Load(&tasks)
 	if err != nil {
-		// TODO: err_code should be implementation
-		logger.Error("RetryTasks %s failed: %+v", taskIds, err)
-		return nil, status.Errorf(codes.Internal, "RetryTasks: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
 	}
 
 	if len(tasks) != len(taskIds) {
-		logger.Error("RetryTasks %s with count [%d]", taskIds, len(tasks))
-		return nil, fmt.Errorf("retryTasks %s with count [%d]", taskIds, len(tasks))
+		err = fmt.Errorf("retryTasks [%s] with count [%d]", strings.Join(taskIds, ","), len(tasks))
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
 	}
 
 	for _, taskId := range taskIds {
 		err = p.controller.queue.Enqueue(taskId)
 		if err != nil {
-			logger.Error("Enqueue [%s] failed: %+v", taskId, err)
-			return nil, status.Errorf(codes.Internal, "Enqueue task [%s] failed: %+v", taskId, err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
 		}
 	}
 

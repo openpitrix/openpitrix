@@ -103,23 +103,23 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		Record(newRepo).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	err = p.createProviders(newRepo.RepoId, providers)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 	if len(req.GetLabels()) > 0 {
 		err = p.createLabels(newRepo.RepoId, req.GetLabels())
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
 	}
 	if len(req.GetSelectors()) > 0 {
 		err = p.createSelectors(newRepo.RepoId, req.GetSelectors())
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
 	}
 
@@ -152,7 +152,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	repoId := req.GetRepoId().GetValue()
 	repo, err := p.getRepo(repoId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorResourcesNotFound, repoId)
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorResourceNotFound, repoId)
 	}
 	url := repo.Url
 	credential := repo.Credential
@@ -231,7 +231,7 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	return &pb.DeleteReposResponse{

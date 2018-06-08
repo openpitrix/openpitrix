@@ -7,11 +7,8 @@ package job
 import (
 	"context"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -38,14 +35,12 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 		Record(newJob).
 		Exec()
 	if err != nil {
-		logger.Error("CreateJob [%s] failed: %+v", newJob.JobId, err)
-		return nil, status.Errorf(codes.Internal, "CreateJob [%s] failed: %+v", newJob.JobId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	err = p.controller.queue.Enqueue(newJob.JobId)
 	if err != nil {
-		logger.Error("CreateJob [%s] failed: %+v", newJob.JobId, err)
-		return nil, status.Errorf(codes.Internal, "Enqueue job [%s] failed: %+v", newJob.JobId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateJobResponse{
@@ -73,14 +68,11 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 
 	_, err := query.Load(&jobs)
 	if err != nil {
-		// TODO: err_code should be implementation
-		logger.Error("DescribeJobs failed: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeJobs: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		logger.Error("DescribeJobs failed: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeJobs: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeJobsResponse{

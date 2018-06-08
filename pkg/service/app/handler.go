@@ -117,12 +117,12 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		Record(newApp).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	err = p.syncAppCategories(newApp.AppId, strings.Split(req.GetCategoryId().GetValue(), ","))
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateAppResponse{
@@ -181,7 +181,7 @@ func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb
 		Where(db.Eq(models.ColumnAppId, appIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	return &pb.DeleteAppsResponse{
@@ -209,7 +209,7 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		Record(newAppVersion).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateAppVersionResponse{
@@ -292,7 +292,7 @@ func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersion
 		Where(db.Eq(models.ColumnVersionId, versionIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	return &pb.DeleteAppVersionsResponse{

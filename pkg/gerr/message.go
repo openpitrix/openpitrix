@@ -21,23 +21,75 @@ func (em ErrorMessage) Message(locale string, a ...interface{}) string {
 }
 
 var (
-	ErrorCreateResourceFailed = ErrorMessage{
-		Name: "create_resource_failed",
-		En:   "create resource failed",
+	ErrorCreateResourcesFailed = ErrorMessage{
+		Name: "create_resources_failed",
+		En:   "create resources failed",
+	}
+	ErrorDeleteResourcesFailed = ErrorMessage{
+		Name: "delete_resources_failed",
+		En:   "delete resources failed",
 	}
 	ErrorDeleteResourceFailed = ErrorMessage{
 		Name: "delete_resource_failed",
-		En:   "delete resource failed",
+		En:   "delete resource [%s] failed",
+	}
+	ErrorUpgradeResourceFailed = ErrorMessage{
+		Name: "upgrade_resource_failed",
+		En:   "upgrade resource [%s] failed",
+	}
+	ErrorRollbackResourceFailed = ErrorMessage{
+		Name: "rollback_resource_failed",
+		En:   "rollback resource [%s] failed",
+	}
+	ErrorResizeResourceFailed = ErrorMessage{
+		Name: "resize_resource_failed",
+		En:   "resize resource [%s] failed",
+	}
+	ErrorAddResourceNodeFailed = ErrorMessage{
+		Name: "add_resource_node_failed",
+		En:   "add resource [%s] node failed",
+	}
+	ErrorDeleteResourceNodeFailed = ErrorMessage{
+		Name: "delete_resource_node_failed",
+		En:   "delete resource [%s] node failed",
+	}
+	ErrorUpdateResourceEnvFailed = ErrorMessage{
+		Name: "update_resource_env_failed",
+		En:   "update resource [%s] env failed",
+	}
+	ErrorStopResourceFailed = ErrorMessage{
+		Name: "stop_resource_failed",
+		En:   "stop resource [%s] failed",
+	}
+	ErrorStartResourceFailed = ErrorMessage{
+		Name: "start_resource_failed",
+		En:   "start resource [%s] failed",
+	}
+	ErrorRecoverResourceFailed = ErrorMessage{
+		Name: "recover_resource_failed",
+		En:   "recover resource [%s] failed",
+	}
+	ErrorCeaseResourceFailed = ErrorMessage{
+		Name: "cease_resource_failed",
+		En:   "cease resource [%s] failed",
+	}
+	ErrorRetryTaskFailed = ErrorMessage{
+		Name: "retry_task_failed",
+		En:   "retry task [%s] failed",
 	}
 	ErrorDescribeResourcesFailed = ErrorMessage{
 		Name: "describe_resources_failed",
-		En:   "describe resource failed",
+		En:   "describe resources failed",
 	}
 	ErrorModifyResourcesFailed = ErrorMessage{
 		Name: "modify_resources_failed",
-		En:   "modify resource failed",
+		En:   "modify resources failed",
 	}
-	ErrorResourcesNotFound = ErrorMessage{
+	ErrorModifyResourceFailed = ErrorMessage{
+		Name: "modify_resource_failed",
+		En:   "modify resource [%s] failed",
+	}
+	ErrorResourceNotFound = ErrorMessage{
 		Name: "resource_not_found",
 		En:   "resource [%s] not found",
 	}
