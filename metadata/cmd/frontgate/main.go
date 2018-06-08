@@ -27,22 +27,22 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "openpitrix-frontgate"
-	app.Usage = "openpitrix-frontgate provides frontgate service."
+	app.Name = "frontgate"
+	app.Usage = "frontgate provides frontgate service."
 	app.Version = "0.0.0"
 
-	app.UsageText = `openpitrix-frontgate [global options] command [options] [args...]
+	app.UsageText = `frontgate [global options] command [options] [args...]
 
 EXAMPLE:
-   openpitrix-frontgate gen-config
-   openpitrix-frontgate info
-   openpitrix-frontgate list
-   openpitrix-frontgate ping
-   openpitrix-frontgate getv key
-   openpitrix-frontgate setv key value
-   openpitrix-frontgate confd-start
-   openpitrix-frontgate serve
-   openpitrix-frontgate tour`
+   frontgate gen-config
+   frontgate info
+   frontgate list
+   frontgate ping
+   frontgate getv key
+   frontgate setv key value
+   frontgate confd-start
+   frontgate serve
+   frontgate tour`
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -537,21 +537,21 @@ func Atoi(s string, defaultValue int) int {
 }
 
 const tourTopic = `
-openpitrix-frontgate gen-config
+frontgate gen-config
 
-openpitrix-frontgate info
-openpitrix-frontgate list
+frontgate info
+frontgate list
 
-openpitrix-frontgate getv /
-openpitrix-frontgate getv /key
-openpitrix-frontgate getv / /key
+frontgate getv /
+frontgate getv /key
+frontgate getv / /key
 
-openpitrix-frontgate confd-start
-openpitrix-frontgate confd-stop
-openpitrix-frontgate confd-status
+frontgate confd-start
+frontgate confd-stop
+frontgate confd-status
 
-openpitrix-frontgate serve
+frontgate serve
 
-GOOS=windows openpitrix-frontgate list
-LIBCONFD_GOOS=windows openpitrix-frontgate list
+GOOS=windows frontgate list
+LIBCONFD_GOOS=windows frontgate list
 `

@@ -17,7 +17,7 @@ type Options func(opt *pbtypes.DroneConfig)
 
 func NewDefaultConfigString() string {
 	p := &pbtypes.DroneConfig{
-		Id:             "openpitrix-drone-001",
+		Id:             "drone-001",
 		Host:           "localhost",
 		ListenPort:     constants.DroneServicePort,
 		CmdInfoLogPath: "/opt/openpitrix/log/cmd.log",

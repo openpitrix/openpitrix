@@ -26,21 +26,21 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "openpitrix-drone"
-	app.Usage = "openpitrix-drone provides drone service."
+	app.Name = "drone"
+	app.Usage = "drone provides drone service."
 	app.Version = "0.0.0"
 
-	app.UsageText = `openpitrix-drone [global options] command [options] [args...]
+	app.UsageText = `drone [global options] command [options] [args...]
 
 EXAMPLE:
-   openpitrix-drone gen-config
-   openpitrix-drone info
-   openpitrix-drone list
-   openpitrix-drone ping
-   openpitrix-drone getv key
-   openpitrix-drone confd-start
-   openpitrix-drone serve
-   openpitrix-drone tour`
+   drone gen-config
+   drone info
+   drone list
+   drone ping
+   drone getv key
+   drone confd-start
+   drone serve
+   drone tour`
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -431,21 +431,21 @@ func JSONString(m interface{}) string {
 }
 
 const tourTopic = `
-openpitrix-drone gen-config
+drone gen-config
 
-openpitrix-drone info
-openpitrix-drone list
-openpitrix-drone ping
+drone info
+drone list
+drone ping
 
-openpitrix-drone getv /
-openpitrix-drone getv /key
-openpitrix-drone getv / /key
+drone getv /
+drone getv /key
+drone getv / /key
 
-openpitrix-drone confd-start
-openpitrix-drone confd-stop
+drone confd-start
+drone confd-stop
 
-openpitrix-drone serve
+drone serve
 
-GOOS=windows openpitrix-drone list
-LIBCONFD_GOOS=windows openpitrix-drone list
+GOOS=windows drone list
+LIBCONFD_GOOS=windows drone list
 `
