@@ -69,3 +69,75 @@ spec:
           requests:
             cpu: 500m
             memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-category-manager
+  namespace: openpitrix-system
+  labels:
+    app: openpitrix
+    service: openpitrix-category-manager
+spec:
+  selector:
+    app: openpitrix
+    service: openpitrix-category-manager
+  ports:
+  - name: openpitrix-category-manager
+    protocol: TCP
+    port: 9113
+    targetPort: 9113
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: openpitrix-category-manager
+  namespace: openpitrix-system
+  labels:
+    app: openpitrix
+spec:
+  selector:
+    matchLabels:
+      app: openpitrix
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        service: openpitrix-category-manager
+    spec:
+      initContainers:
+      - name: wait-mysql
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z openpitrix-db.openpitrix-system.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
+      - name: wait-etcd
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z openpitrix-etcd.openpitrix-system.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
+      containers:
+      - name: category-manager
+        image: openpitrix/openpitrix:latest
+        imagePullPolicy: Always
+        command:
+          - category-manager
+        ports:
+        - containerPort: 9108
+          name: category-manager
+        env:
+        - name: OPENPITRIX_LOG_LEVEL
+          value: ${OPENPITRIX_LOG_LEVEL}
+        - name: OPENPITRIX_MYSQL_DATABASE
+          value: "app"
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password.txt
+              name: mysql-pass
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
