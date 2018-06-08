@@ -842,12 +842,12 @@ func (s *LoadBalancerService) DescribeLoadBalancerBackends(i *DescribeLoadBalanc
 }
 
 type DescribeLoadBalancerBackendsInput struct {
-	Limit                *int    `json:"limit" name:"limit" default:"20" location:"params"`
-	LoadBalancer         *string `json:"loadbalancer" name:"loadbalancer" location:"params"`
-	LoadBalancerBackends *string `json:"loadbalancer_backends" name:"loadbalancer_backends" location:"params"`
-	LoadBalancerListener *string `json:"loadbalancer_listener" name:"loadbalancer_listener" location:"params"`
-	Offset               *int    `json:"offset" name:"offset" default:"0" location:"params"`
-	Verbose              *int    `json:"verbose" name:"verbose" location:"params"`
+	Limit                *int      `json:"limit" name:"limit" default:"20" location:"params"`
+	LoadBalancer         *string   `json:"loadbalancer" name:"loadbalancer" location:"params"`
+	LoadBalancerBackends []*string `json:"loadbalancer_backends" name:"loadbalancer_backends" location:"params"`
+	LoadBalancerListener *string   `json:"loadbalancer_listener" name:"loadbalancer_listener" location:"params"`
+	Offset               *int      `json:"offset" name:"offset" default:"0" location:"params"`
+	Verbose              *int      `json:"verbose" name:"verbose" location:"params"`
 }
 
 func (v *DescribeLoadBalancerBackendsInput) Validate() error {
@@ -1330,8 +1330,8 @@ type ModifyLoadBalancerBackendAttributesInput struct {
 	LoadBalancerBackend     *string `json:"loadbalancer_backend" name:"loadbalancer_backend" location:"params"`
 	LoadBalancerBackendName *string `json:"loadbalancer_backend_name" name:"loadbalancer_backend_name" location:"params"`
 	LoadBalancerPolicyID    *string `json:"loadbalancer_policy_id" name:"loadbalancer_policy_id" location:"params"`
-	Port                    *string `json:"port" name:"port" location:"params"`
-	Weight                  *string `json:"weight" name:"weight" location:"params"`
+	Port                    *int    `json:"port" name:"port" location:"params"`
+	Weight                  *int    `json:"weight" name:"weight" location:"params"`
 }
 
 func (v *ModifyLoadBalancerBackendAttributesInput) Validate() error {
@@ -1401,6 +1401,7 @@ type ModifyLoadBalancerListenerAttributesInput struct {
 	LoadBalancerListenerName *string `json:"loadbalancer_listener_name" name:"loadbalancer_listener_name" location:"params"`
 	ServerCertificateID      *string `json:"server_certificate_id" name:"server_certificate_id" location:"params"`
 	SessionSticky            *string `json:"session_sticky" name:"session_sticky" location:"params"`
+	Timeout                  *int    `json:"timeout" name:"timeout" location:"params"`
 }
 
 func (v *ModifyLoadBalancerListenerAttributesInput) Validate() error {

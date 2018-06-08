@@ -47,6 +47,55 @@ func (s *QingCloudService) Instance(zone string) (*InstanceService, error) {
 	return &InstanceService{Config: s.Config, Properties: properties}, nil
 }
 
+// Documentation URL: https://docs.qingcloud.com/api/instance/cease_instances.html
+func (s *InstanceService) CeaseInstances(i *CeaseInstancesInput) (*CeaseInstancesOutput, error) {
+	if i == nil {
+		i = &CeaseInstancesInput{}
+	}
+	o := &data.Operation{
+		Config:        s.Config,
+		Properties:    s.Properties,
+		APIName:       "CeaseInstances",
+		RequestMethod: "GET",
+	}
+
+	x := &CeaseInstancesOutput{}
+	r, err := request.New(o, i, x)
+	if err != nil {
+		return nil, err
+	}
+
+	err = r.Send()
+	if err != nil {
+		return nil, err
+	}
+
+	return x, err
+}
+
+type CeaseInstancesInput struct {
+	Instances []*string `json:"instances" name:"instances" location:"params"` // Required
+}
+
+func (v *CeaseInstancesInput) Validate() error {
+
+	if len(v.Instances) == 0 {
+		return errors.ParameterRequiredError{
+			ParameterName: "Instances",
+			ParentName:    "CeaseInstancesInput",
+		}
+	}
+
+	return nil
+}
+
+type CeaseInstancesOutput struct {
+	Message *string `json:"message" name:"message"`
+	Action  *string `json:"action" name:"action" location:"elements"`
+	JobID   *string `json:"job_id" name:"job_id" location:"elements"`
+	RetCode *int    `json:"ret_code" name:"ret_code" location:"elements"`
+}
+
 // Documentation URL: https://docs.qingcloud.com/api/instance/describe_instance_types.html
 func (s *InstanceService) DescribeInstanceTypes(i *DescribeInstanceTypesInput) (*DescribeInstanceTypesOutput, error) {
 	if i == nil {
