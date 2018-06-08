@@ -34,7 +34,7 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	// create runtime credential
 	runtimeCredentialId, err := p.createRuntimeCredential(req.Provider.GetValue(), req.RuntimeCredential.GetValue())
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	// create runtime
@@ -47,13 +47,13 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		req.Zone.GetValue(),
 		s.UserId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	// create labels
 	err = p.createRuntimeLabels(runtimeId, req.Labels.GetValue())
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateRuntimeResponse{
@@ -125,7 +125,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := p.getRuntime(runtimeId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourcesNotFound, runtimeId)
+		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceNotFound, runtimeId)
 	}
 	if runtime.Status == constants.StatusDeleted {
 		logger.Error("runtime has been deleted [%s]", runtimeId)
@@ -165,7 +165,7 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 	// deleted runtime
 	err = p.deleteRuntimes(runtimeIds)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	res := &pb.DeleteRuntimesResponse{

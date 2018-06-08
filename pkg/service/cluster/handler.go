@@ -8,13 +8,12 @@ import (
 	"context"
 
 	pb_empty "github.com/golang/protobuf/ptypes/empty"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -150,21 +149,18 @@ func getClusterNode(nodeId, userId string) (*models.ClusterNode, error) {
 
 func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest) (*pb.CreateClusterResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := runtimeclient.NewRuntime(runtimeId)
 	if err != nil {
-		logger.Error("CreateCluster failed: %+v", err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, runtimeId)
 	}
 
 	// check image
 	if reflectutil.In(runtime.Provider, constants.VmBaseProviders) {
 		_, err = pi.Global().GlobalConfig().GetRuntimeImageId(runtime.RuntimeUrl, runtime.Zone)
 		if err != nil {
-			logger.Error("CreateCluster failed: %+v", err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorValidateFailed)
 		}
 	}
 
@@ -177,18 +173,18 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider)
 	if err != nil {
 		logger.Error("No such provider [%s]. ", runtime.Provider)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorValidateFailed)
 	}
 	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, conf)
 	if err != nil {
-		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed, %+v", versionId, runtime, err)
-		return nil, err
+		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
 	subnet, err := providerInterface.DescribeSubnet(runtimeId, clusterWrapper.Cluster.SubnetId)
 	if err != nil {
 		logger.Error("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
 	}
 
 	vpcId := ""
@@ -210,7 +206,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		frontgate, err := fg.GetActiveFrontgate(vpcId, s.UserId, register)
 		if err != nil {
 			logger.Error("Get frontgate in vpc [%s] user [%s] failed. ", vpcId, s.UserId)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, vpcId)
 		}
 
 		register.FrontgateId = frontgate.ClusterId
@@ -222,8 +218,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 
 	err = register.RegisterClusterWrapper()
 	if err != nil {
-		logger.Error("CreateCluster failed: %+v", err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	directive := jsonutil.ToString(clusterWrapper)
@@ -241,8 +236,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
-		logger.Error("Send job [%s] failed: %+v", jobId, err)
-		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 	res := &pb.CreateClusterResponse{
 		ClusterId: pbutil.ToProtoString(clusterId),
@@ -257,8 +251,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	clusterId := req.GetCluster().GetClusterId().GetValue()
 	_, err := getCluster(clusterId, s.UserId)
 	if err != nil {
-		logger.Error("ModifyCluster [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.Internal, "Get cluster [%s] failed", clusterId)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
 	attributes := manager.BuildUpdateAttributes(req.Cluster, models.ClusterColumns...)
@@ -270,8 +263,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		Where(db.Eq("cluster_id", clusterId)).
 		Exec()
 	if err != nil {
-		logger.Error("ModifyCluster [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] failed: %+v", clusterId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
 	}
 
 	for _, clusterNode := range req.ClusterNodeSet {
@@ -286,8 +278,8 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("node_id", nodeId)).
 			Exec()
 		if err != nil {
-			logger.Error("ModifyCluster [%s] node [%s] failed: %+v", clusterId, nodeId, err)
-			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] node [%s] failed: %+v", clusterId, nodeId, err)
+			logger.Error("ModifyCluster [%s] node [%s] failed. ", clusterId, nodeId)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
 		}
 	}
 
@@ -303,8 +295,8 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("role", role)).
 			Exec()
 		if err != nil {
-			logger.Error("ModifyCluster [%s] role [%s] failed: %+v", clusterId, role, err)
-			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] failed: %+v", clusterId, role, err)
+			logger.Error("ModifyCluster [%s] role [%s] failed. ", clusterId, role)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
 		}
 	}
 
@@ -320,8 +312,8 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("role", role)).
 			Exec()
 		if err != nil {
-			logger.Error("ModifyCluster [%s] role [%s] common failed: %+v", clusterId, role, err)
-			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] common failed: %+v", clusterId, role, err)
+			logger.Error("ModifyCluster [%s] role [%s] common failed. ", clusterId, role)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
 		}
 	}
 
@@ -337,8 +329,8 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("name", name)).
 			Exec()
 		if err != nil {
-			logger.Error("ModifyCluster [%s] name [%s] link failed: %+v", clusterId, name, err)
-			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] name [%s] link failed: %+v", clusterId, name, err)
+			logger.Error("ModifyCluster [%s] name [%s] link failed. ", clusterId, name)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
 		}
 	}
 
@@ -357,10 +349,9 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 			Where(db.Eq("loadbalancer_listener_id", listenerId)).
 			Exec()
 		if err != nil {
-			logger.Error("ModifyCluster [%s] role [%s] loadbalancer listener id [%s] failed: %+v",
-				clusterId, role, listenerId, err)
-			return nil, status.Errorf(codes.Internal, "ModifyCluster [%s] role [%s] loadbalancer listener id [%s] failed: %+v",
-				clusterId, role, listenerId, err)
+			logger.Error("ModifyCluster [%s] role [%s] loadbalancer listener id [%s] failed. ",
+				clusterId, role, listenerId)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
 		}
 	}
 
@@ -376,8 +367,7 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 	nodeId := req.GetClusterNode().GetNodeId().GetValue()
 	_, err := getClusterNode(nodeId, s.UserId)
 	if err != nil {
-		logger.Error("Get cluster node [%s] failed", nodeId)
-		return nil, status.Errorf(codes.Internal, "Get cluster node [%s] failed", nodeId)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, nodeId)
 	}
 
 	attributes := manager.BuildUpdateAttributes(req.ClusterNode, models.ClusterNodeColumns...)
@@ -387,8 +377,7 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 		Where(db.Eq("node_id", nodeId)).
 		Exec()
 	if err != nil {
-		logger.Error("ModifyClusterNode [%s] failed: %+v", nodeId, err)
-		return nil, status.Errorf(codes.Internal, "ModifyClusterNode [%s] failed: %+v", nodeId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, nodeId)
 	}
 
 	res := &pb.ModifyClusterNodeResponse{
@@ -408,8 +397,7 @@ func (p *Server) AddTableClusterNodes(ctx context.Context, req *pb.AddTableClust
 		}
 		err := register.RegisterClusterNode(node)
 		if err != nil {
-			logger.Error("AddTableClusterNodes: %+v", err)
-			return nil, status.Errorf(codes.Internal, "AddTableClusterNodes: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorInternalError)
 		}
 	}
 
@@ -423,8 +411,7 @@ func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTabl
 			Where(db.Eq("node_id", nodeId)).
 			Exec()
 		if err != nil {
-			logger.Error("DeleteTableClusterNodes: %+v", err)
-			return nil, status.Errorf(codes.Internal, "DeleteTableClusterNodes: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorInternalError)
 		}
 	}
 
@@ -433,28 +420,24 @@ func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTabl
 
 func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersRequest) (*pb.DeleteClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive, constants.StatusStopped, constants.StatusPending})
 		if err != nil {
-			logger.Error("DeleteClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorDeleteResourceFailed, clusterId)
 		}
 
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
-			logger.Error("Get cluster [%s] failed: %+v", clusterId, err)
-			return nil, status.Errorf(codes.PermissionDenied, "Get cluster [%s] failed: %+v", clusterId, err)
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
-			logger.Error("DeleteClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 		newJob := models.NewJob(
 			constants.PlaceHolder,
@@ -469,8 +452,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
-			logger.Error("Send job [%s] failed: %+v", jobId, err)
-			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed, clusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}
@@ -483,27 +465,23 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 
 func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterRequest) (*pb.UpgradeClusterResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
 	versionId := req.GetVersionId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusStopped})
 	if err != nil {
-		logger.Error("UpgradeCluster [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorUpgradeResourceFailed, clusterId)
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
-		logger.Error("UpgradeCluster [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
 	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
-		logger.Error("UpgradeCluster [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
 	newJob := models.NewJob(
@@ -519,8 +497,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
-		logger.Error("UpgradeCluster [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorUpgradeResourceFailed, clusterId)
 	}
 
 	return &pb.UpgradeClusterResponse{
@@ -531,25 +508,22 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 
 func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterRequest) (*pb.RollbackClusterResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorRollbackResourceFailed, clusterId)
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
-		logger.Error("RollbackCluster [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
 	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
-		logger.Error("RollbackCluster [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
 	newJob := models.NewJob(
@@ -565,8 +539,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
-		logger.Error("RollbackCluster [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorRollbackResourceFailed, clusterId)
 	}
 
 	return &pb.RollbackClusterResponse{
@@ -577,26 +550,22 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 
 func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest) (*pb.ResizeClusterResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		logger.Error("ResizeCluster [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResizeResourceFailed, clusterId)
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
-		logger.Error("ResizeCluster [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
 	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
-		logger.Error("ResizeCluster [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
 	newJob := models.NewJob(
@@ -612,8 +581,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
-		logger.Error("ResizeCluster [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorResizeResourceFailed, clusterId)
 	}
 
 	return &pb.ResizeClusterResponse{
@@ -624,26 +592,22 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 
 func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesRequest) (*pb.AddClusterNodesResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		logger.Error("AddClusterNodes [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
-		logger.Error("AddClusterNodes [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
 	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
-		logger.Error("AddClusterNodes [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
 	newJob := models.NewJob(
@@ -659,8 +623,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
-		logger.Error("AddClusterNodes [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorAddResourceNodeFailed, clusterId)
 	}
 
 	return &pb.AddClusterNodesResponse{
@@ -671,26 +634,22 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 
 func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNodesRequest) (*pb.DeleteClusterNodesResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		logger.Error("DeleteClusterNodes [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorDeleteResourceNodeFailed, clusterId)
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
-		logger.Error("DeleteClusterNodes [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
 	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
-		logger.Error("DeleteClusterNodes [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
 	newJob := models.NewJob(
@@ -706,8 +665,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
-		logger.Error("DeleteClusterNodes [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceNodeFailed, clusterId)
 	}
 
 	return &pb.DeleteClusterNodesResponse{
@@ -718,26 +676,22 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 
 func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvRequest) (*pb.UpdateClusterEnvResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	clusterId := req.GetClusterId().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
-		logger.Error("UpdateClusterEnv [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorUpdateResourceEnvFailed, clusterId)
 	}
 	clusterWrapper, err := getClusterWrapper(clusterId)
 	if err != nil {
-		logger.Error("UpdateClusterEnv [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
 	directive := jsonutil.ToString(clusterWrapper)
 
 	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
-		logger.Error("UpdateClusterEnv [%s] failed: %+v", clusterId, err)
-		return nil, err
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
 	newJob := models.NewJob(
@@ -753,8 +707,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 
 	jobId, err := jobclient.SendJob(newJob)
 	if err != nil {
-		logger.Error("UpdateClusterEnv [%s] failed: %+v", clusterId, err)
-		return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorUpdateResourceEnvFailed, clusterId)
 	}
 
 	return &pb.UpdateClusterEnvResponse{
@@ -776,14 +729,11 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		Where(manager.BuildFilterConditions(req, models.ClusterTableName))
 	_, err := query.Load(&clusters)
 	if err != nil {
-		// TODO: err_code should be implementation
-		logger.Error("DescribeClusters failed: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeClusters failed: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		logger.Error("DescribeClusters failed: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeClusters failed: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	var pbClusters []*pb.Cluster
@@ -791,8 +741,7 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		clusterId := cluster.ClusterId
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
-			logger.Error("DescribeClusters failed: %+v", err)
-			return nil, status.Errorf(codes.Internal, "DescribeClusters failed: %+v", err)
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
 		pbClusters = append(pbClusters, models.ClusterWrapperToPb(clusterWrapper))
 	}
@@ -817,8 +766,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		Where(manager.BuildFilterConditions(req, models.ClusterNodeTableName))
 	_, err := query.Load(&clusterNodes)
 	if err != nil {
-		logger.Error("DescribeClusterNodes failed: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeClusterNodes: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	var pbClusterNodes []*pb.ClusterNode
@@ -835,8 +783,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 			Where(db.Eq("role", role)).
 			LoadOne(&clusterCommon)
 		if err != nil {
-			logger.Error("DescribeClusterNodes failed: %+v", err)
-			return nil, status.Errorf(codes.Internal, "DescribeClusterNodes [%s] common failed: %+v", nodeId, err)
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, nodeId)
 		}
 
 		err = pi.Global().Db.
@@ -846,8 +793,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 			Where(db.Eq("role", role)).
 			LoadOne(&clusterRole)
 		if err != nil {
-			logger.Error("DescribeClusterNodes failed: %+v", err)
-			return nil, status.Errorf(codes.Internal, "DescribeClusterNodes [%s] role failed: %+v", nodeId, err)
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, nodeId)
 		}
 
 		pbClusterNodes = append(pbClusterNodes,
@@ -856,8 +802,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 
 	count, err := query.Count()
 	if err != nil {
-		logger.Error("DescribeClusterNodes failed: %+v", err)
-		return nil, status.Errorf(codes.Internal, "DescribeClusterNodes: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeClusterNodesResponse{
@@ -869,27 +814,23 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 
 func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) (*pb.StopClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 		if err != nil {
-			logger.Error("StopClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorStopResourceFailed, clusterId)
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
-			logger.Error("StopClusters [%s] failed: %+v", clusterId, err)
-			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
-			logger.Error("StopClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
 		newJob := models.NewJob(
@@ -905,8 +846,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
-			logger.Error("StopClusters [%s] failed: %+v", clusterId, err)
-			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorStopResourceFailed, clusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}
@@ -919,27 +859,23 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 
 func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest) (*pb.StartClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusStopped})
 		if err != nil {
-			logger.Error("StartClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorStartResourceFailed, clusterId)
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
-			logger.Error("StartClusters [%s] failed: %+v", clusterId, err)
-			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
-			logger.Error("StartClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
 		fg := &Frontgate{
@@ -947,8 +883,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 		}
 		err = fg.ActivateFrontgate(clusterWrapper.Cluster.FrontgateId)
 		if err != nil {
-			logger.Error("Activate frontgate [%s] failed. ", clusterWrapper.Cluster.FrontgateId)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorStartResourceFailed, clusterId)
 		}
 
 		newJob := models.NewJob(
@@ -964,8 +899,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
-			logger.Error("StartClusters [%s] failed: %+v", clusterId, err)
-			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorStartResourceFailed, clusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}
@@ -978,27 +912,23 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 
 func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersRequest) (*pb.RecoverClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusDeleted})
 		if err != nil {
-			logger.Error("RecoverClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorRecoverResourceFailed, clusterId)
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
-			logger.Error("RecoverClusters [%s] failed: %+v", clusterId, err)
-			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
-			logger.Error("RecoverClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
 		fg := &Frontgate{
@@ -1006,8 +936,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 		}
 		err = fg.ActivateFrontgate(clusterWrapper.Cluster.FrontgateId)
 		if err != nil {
-			logger.Error("Activate frontgate [%s] failed. ", clusterWrapper.Cluster.FrontgateId)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorRecoverResourceFailed, clusterId)
 		}
 
 		newJob := models.NewJob(
@@ -1023,8 +952,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
-			logger.Error("RecoverClusters [%s] failed: %+v", clusterId, err)
-			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorRecoverResourceFailed, clusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}
@@ -1037,27 +965,23 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 
 func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest) (*pb.CeaseClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	// TODO: check resource permission
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
 		err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusDeleted})
 		if err != nil {
-			logger.Error("CeaseClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorCeaseResourceFailed, clusterId)
 		}
 		clusterWrapper, err := getClusterWrapper(clusterId)
 		if err != nil {
-			logger.Error("CeaseClusters [%s] failed: %+v", clusterId, err)
-			return nil, status.Errorf(codes.PermissionDenied, "Failed to get cluster [%s]", clusterId)
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
 
 		runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
-			logger.Error("CeaseClusters [%s] failed: %+v", clusterId, err)
-			return nil, err
+			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
 		newJob := models.NewJob(
@@ -1073,8 +997,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 
 		jobId, err := jobclient.SendJob(newJob)
 		if err != nil {
-			logger.Error("CeaseClusters [%s] failed: %+v", clusterId, err)
-			return nil, status.Errorf(codes.Internal, "Send job [%s] failed: %+v", jobId, err)
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCeaseResourceFailed, clusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}

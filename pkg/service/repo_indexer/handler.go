@@ -24,7 +24,7 @@ func (p *Server) IndexRepo(ctx context.Context, req *pb.IndexRepoRequest) (*pb.I
 	repoId := req.GetRepoId().GetValue()
 	repoEvent, err := p.controller.NewRepoEvent(repoId, s.UserId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 	ret := pb.IndexRepoResponse{
 		RepoEvent: models.RepoEventToPb(repoEvent),

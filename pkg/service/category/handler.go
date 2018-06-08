@@ -56,7 +56,7 @@ func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 		Record(category).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateCategoryResponse{
@@ -101,7 +101,7 @@ func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesR
 		Where(db.Eq("category_id", categoryIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	return &pb.DeleteCategoriesResponse{
