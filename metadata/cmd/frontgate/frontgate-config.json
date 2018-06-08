@@ -1,13 +1,13 @@
 {
-	"id": "openpitrix-frontgate-001",
-	"node_id": "openpitrix-frontgate-001-node-01",
+	"id": "frontgate-001",
+	"node_id": "frontgate-001-node-01",
 	"host": "localhost",
 	"listen_port": 9111,
 	"pilot_host": "localhost",
 	"pilot_port": 9110,
 	"node_list": [
 		{
-			"frontgate_id": "openpitrix-frontgate-001",
+			"frontgate_id": "frontgate-001",
 			"frontgate_ip": "localhost",
 			"frontgate_port": 9111
 		}

@@ -28,24 +28,24 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "openpitrix-pilot"
-	app.Usage = "openpitrix-pilot provides pilot service."
+	app.Name = "pilot"
+	app.Usage = "pilot provides pilot service."
 	app.Version = "0.0.0"
 
-	app.UsageText = `openpitrix-pilot [global options] command [options] [args...]
+	app.UsageText = `pilot [global options] command [options] [args...]
 
 EXAMPLE:
-   openpitrix-pilot gen-config
-   openpitrix-pilot info
-   openpitrix-pilot list
-   openpitrix-pilot ping
-   openpitrix-pilot exec
-   openpitrix-pilot getv key
-   openpitrix-pilot confd-info
-   openpitrix-pilot confd-start
-   openpitrix-pilot serve
-   openpitrix-pilot send-task
-   openpitrix-pilot tour`
+   pilot gen-config
+   pilot info
+   pilot list
+   pilot ping
+   pilot exec
+   pilot getv key
+   pilot confd-info
+   pilot confd-start
+   pilot serve
+   pilot send-task
+   pilot tour`
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -149,7 +149,7 @@ EXAMPLE:
 
 				cli.StringFlag{
 					Name:  "frontgate-id",
-					Value: "openpitrix-frontgate-001",
+					Value: "frontgate-001",
 				},
 				cli.StringFlag{
 					Name:  "drone-host",
@@ -232,11 +232,11 @@ EXAMPLE:
 
 				cli.StringFlag{
 					Name:  "frontgate-id",
-					Value: "openpitrix-frontgate-001",
+					Value: "frontgate-001",
 				},
 				cli.StringFlag{
 					Name:  "frontgate-node-id",
-					Value: "openpitrix-frontgate-node-001",
+					Value: "frontgate-node-001",
 				},
 				cli.StringFlag{
 					Name:  "drone-host",
@@ -317,7 +317,7 @@ EXAMPLE:
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "frontgate-id",
-					Value: "openpitrix-frontgate-001",
+					Value: "frontgate-001",
 				},
 				cli.StringFlag{
 					Name:  "drone-host",
@@ -372,7 +372,7 @@ EXAMPLE:
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "frontgate-id",
-					Value: "openpitrix-frontgate-001",
+					Value: "frontgate-001",
 				},
 				cli.StringFlag{
 					Name:  "drone-host",
@@ -417,7 +417,7 @@ EXAMPLE:
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "frontgate-id",
-					Value: "openpitrix-frontgate-001",
+					Value: "frontgate-001",
 				},
 				cli.StringFlag{
 					Name:  "drone-host",
@@ -462,7 +462,7 @@ EXAMPLE:
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "frontgate-id",
-					Value: "openpitrix-frontgate-001",
+					Value: "frontgate-001",
 				},
 				cli.StringFlag{
 					Name:  "drone-host",
@@ -631,21 +631,21 @@ func Atoi(s string, defaultValue int) int {
 }
 
 const tourTopic = `
-openpitrix-pilot gen-config
+pilot gen-config
 
-openpitrix-pilot info
-openpitrix-pilot list
+pilot info
+pilot list
 
-openpitrix-pilot getv /
-openpitrix-pilot getv /key
-openpitrix-pilot getv / /key
+pilot getv /
+pilot getv /key
+pilot getv / /key
 
-openpitrix-pilot confd-start
-openpitrix-pilot confd-stop
-openpitrix-pilot confd-status
+pilot confd-start
+pilot confd-stop
+pilot confd-status
 
-openpitrix-pilot serve
+pilot serve
 
-GOOS=windows openpitrix-pilot list
-LIBCONFD_GOOS=windows openpitrix-pilot list
+GOOS=windows pilot list
+LIBCONFD_GOOS=windows pilot list
 `

@@ -17,7 +17,7 @@ type Options func(opt *pbtypes.PilotConfig)
 
 func NewDefaultConfigString() string {
 	p := &pbtypes.PilotConfig{
-		Id:         "openpitrix-pilot-001",
+		Id:         "pilot-001",
 		Host:       "localhost",
 		ListenPort: constants.PilotServicePort,
 		LogLevel:   logger.DebugLevel.String(),

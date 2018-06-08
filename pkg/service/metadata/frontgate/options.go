@@ -19,8 +19,8 @@ type Options func(opt *pbtypes.FrontgateConfig)
 
 func NewDefaultConfigString() string {
 	var (
-		id      = "openpitrix-frontgate-001"
-		nodeId  = "openpitrix-frontgate-001-node-01"
+		id      = "frontgate-001"
+		nodeId  = "frontgate-001-node-01"
 		localIp = "localhost"
 	)
 	p := &pbtypes.FrontgateConfig{
