@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"openpitrix.io/openpitrix/test/client/app_manager"
+	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
 
@@ -22,46 +22,46 @@ func TestCategory(t *testing.T) {
 	testCategoryName := "test_category_name"
 	testCategoryName2 := "test_category_name2"
 	testCategoryLocale := "{}"
-	describeParams := app_manager.NewDescribeCategoriesParams()
+	describeParams := category_manager.NewDescribeCategoriesParams()
 	describeParams.SetName([]string{testCategoryName})
-	describeResp, err := client.AppManager.DescribeCategories(describeParams)
+	describeResp, err := client.CategoryManager.DescribeCategories(describeParams)
 	require.NoError(t, err)
 	categories := describeResp.Payload.CategorySet
 	for _, category := range categories {
-		deleteParams := app_manager.NewDeleteCategoriesParams()
+		deleteParams := category_manager.NewDeleteCategoriesParams()
 		deleteParams.SetBody(
 			&models.OpenpitrixDeleteCategoriesRequest{
 				CategoryID: []string{category.CategoryID},
 			})
-		_, err := client.AppManager.DeleteCategories(deleteParams)
+		_, err := client.CategoryManager.DeleteCategories(deleteParams)
 		require.NoError(t, err)
 	}
 	// create category
-	createParams := app_manager.NewCreateCategoryParams()
+	createParams := category_manager.NewCreateCategoryParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateCategoryRequest{
 			Name:   testCategoryName,
 			Locale: testCategoryLocale,
 		})
-	createResp, err := client.AppManager.CreateCategory(createParams)
+	createResp, err := client.CategoryManager.CreateCategory(createParams)
 	require.NoError(t, err)
 
 	categoryId := createResp.Payload.CategoryID
 	// modify category
-	modifyParams := app_manager.NewModifyCategoryParams()
+	modifyParams := category_manager.NewModifyCategoryParams()
 	modifyParams.SetBody(
 		&models.OpenpitrixModifyCategoryRequest{
 			CategoryID: categoryId,
 			Name:       testCategoryName2,
 		})
-	modifyResp, err := client.AppManager.ModifyCategory(modifyParams)
+	modifyResp, err := client.CategoryManager.ModifyCategory(modifyParams)
 	require.NoError(t, err)
 
 	t.Log(modifyResp)
 	// describe category
 	describeParams.WithCategoryID([]string{categoryId})
 	describeParams.WithName([]string{testCategoryName2})
-	describeResp, err = client.AppManager.DescribeCategories(describeParams)
+	describeResp, err = client.CategoryManager.DescribeCategories(describeParams)
 	require.NoError(t, err)
 
 	categories = describeResp.Payload.CategorySet
@@ -71,18 +71,18 @@ func TestCategory(t *testing.T) {
 	require.Equal(t, testCategoryName2, categories[0].Name)
 
 	// delete category
-	deleteParams := app_manager.NewDeleteCategoriesParams()
+	deleteParams := category_manager.NewDeleteCategoriesParams()
 	deleteParams.WithBody(&models.OpenpitrixDeleteCategoriesRequest{
 		CategoryID: []string{categoryId},
 	})
-	deleteResp, err := client.AppManager.DeleteCategories(deleteParams)
+	deleteResp, err := client.CategoryManager.DeleteCategories(deleteParams)
 	require.NoError(t, err)
 
 	t.Log(deleteResp)
 	// describe deleted category
 	describeParams.WithCategoryID([]string{categoryId})
 	describeParams.WithName(nil)
-	describeResp, err = client.AppManager.DescribeCategories(describeParams)
+	describeResp, err = client.CategoryManager.DescribeCategories(describeParams)
 	require.NoError(t, err)
 
 	categories = describeResp.Payload.CategorySet

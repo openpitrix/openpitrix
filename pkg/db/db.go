@@ -99,6 +99,11 @@ func (b *SelectQuery) Where(query interface{}, value ...interface{}) *SelectQuer
 	return b
 }
 
+func (b *SelectQuery) GroupBy(col ...string) *SelectQuery {
+	b.SelectBuilder.GroupBy(col...)
+	return b
+}
+
 func (b *SelectQuery) Distinct() *SelectQuery {
 	b.SelectBuilder.Distinct()
 	return b

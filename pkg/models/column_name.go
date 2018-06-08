@@ -5,7 +5,9 @@
 package models
 
 const (
-	ColumnRepoId = "repo_id"
+	ColumnRepoId     = "repo_id"
+	ColumnResouceId  = "resource_id"
+	ColumnCategoryId = "category_id"
 
 	ColumnName        = "name"
 	ColumnDescription = "description"

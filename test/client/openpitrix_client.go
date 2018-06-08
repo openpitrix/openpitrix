@@ -12,6 +12,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 
 	"openpitrix.io/openpitrix/test/client/app_manager"
+	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
 	"openpitrix.io/openpitrix/test/client/job_manager"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
@@ -62,6 +63,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 	cli.Transport = transport
 
 	cli.AppManager = app_manager.New(transport, formats)
+
+	cli.CategoryManager = category_manager.New(transport, formats)
 
 	cli.ClusterManager = cluster_manager.New(transport, formats)
 
@@ -121,6 +124,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type Openpitrix struct {
 	AppManager *app_manager.Client
 
+	CategoryManager *category_manager.Client
+
 	ClusterManager *cluster_manager.Client
 
 	JobManager *job_manager.Client
@@ -141,6 +146,8 @@ func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 
 	c.AppManager.SetTransport(transport)
+
+	c.CategoryManager.SetTransport(transport)
 
 	c.ClusterManager.SetTransport(transport)
 
