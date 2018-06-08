@@ -443,6 +443,9 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		if clusterNode.VolumeId == "" {
+			continue
+		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
 			Zone:       f.Runtime.Zone,
@@ -494,6 +497,9 @@ func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *model
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		if clusterNode.VolumeId == "" {
+			continue
+		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
 			Zone:       f.Runtime.Zone,
@@ -651,24 +657,39 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 		cmd := UmountVolumeCmd(clusterRole.MountPoint)
 		ip := clusterNode.PrivateIp
 
-		request := &pbtypes.RunCommandOnDroneRequest{
-			Endpoint: &pbtypes.DroneEndpoint{
-				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
-				DroneIp:     ip,
-				DronePort:   constants.DroneServicePort,
-			},
-			Command:        cmd,
-			TimeoutSeconds: TimeoutUmountVolume,
-		}
-		directive := jsonutil.ToString(request)
 		umountVolumeTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
-			TaskAction:     ActionRunCommandOnDrone,
 			Target:         constants.TargetPilot,
 			NodeId:         nodeId,
-			Directive:      directive,
 			FailureAllowed: failureAllowed,
+		}
+
+		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
+			request := &pbtypes.RunCommandOnFrontgateRequest{
+				Endpoint: &pbtypes.FrontgateEndpoint{
+					FrontgateId:     f.ClusterWrapper.Cluster.ClusterId,
+					FrontgateNodeId: nodeId,
+					NodeIp:          ip,
+					NodePort:        constants.FrontgateServicePort,
+				},
+				Command:        cmd,
+				TimeoutSeconds: TimeoutUmountVolume,
+			}
+			umountVolumeTask.Directive = jsonutil.ToString(request)
+			umountVolumeTask.TaskAction = ActionRunCommandOnFrontgateNode
+		} else {
+			request := &pbtypes.RunCommandOnDroneRequest{
+				Endpoint: &pbtypes.DroneEndpoint{
+					FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+					DroneIp:     ip,
+					DronePort:   constants.DroneServicePort,
+				},
+				Command:        cmd,
+				TimeoutSeconds: TimeoutUmountVolume,
+			}
+			umountVolumeTask.Directive = jsonutil.ToString(request)
+			umountVolumeTask.TaskAction = ActionRunCommandOnDrone
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, umountVolumeTask)
 	}
@@ -787,8 +808,16 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 				role, f.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
+
+		showName := role
+		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
+			showName = MetadataNodeName
+		} else if role == "" {
+			showName = DefaultNodeName
+		}
 		instance := &models.Instance{
-			Name:         clusterNode.ClusterId + "_" + nodeId,
+			Name:         clusterNode.ClusterId + "_" + nodeId + "_" + showName,
+			Hostname:     nodeId,
 			NodeId:       nodeId,
 			ImageId:      imageId,
 			Cpu:          int(clusterRole.Cpu),
