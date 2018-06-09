@@ -709,7 +709,7 @@ func (f *Frame) getUserDataExec(filename, contents string) string {
 
 mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
 echo '%s' >> %s
-for i in 0 1 2 3 4 5 6 7 8 9; do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 5; done
+for i in $(seq 1 100); do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 3; done
 /opt/openpitrix/image/install_service.sh %s
 `, contents, f.getConfFile(), pi.Global().GlobalConfig().Cluster.ImageUrl, filename)
 	return base64.StdEncoding.EncodeToString([]byte(exec))

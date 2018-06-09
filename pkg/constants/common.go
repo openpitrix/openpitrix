@@ -76,6 +76,7 @@ const (
 )
 
 const (
+	MaxTaskTimeout               = 3600 * time.Second
 	WaitTaskTimeout              = 600 * time.Second
 	WaitFrontgateServiceTimeout  = 1800 * time.Second
 	WaitDroneServiceTimeout      = 1800 * time.Second
