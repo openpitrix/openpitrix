@@ -97,6 +97,7 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 		LoginMode:     qcservice.String(DefaultLoginMode),
 		LoginPasswd:   qcservice.String(DefaultLoginPassword),
 		NeedUserdata:  qcservice.Int(instance.NeedUserData),
+		Hostname:      qcservice.String(instance.Hostname),
 		// GPU:     qcservice.Int(instance.Gpu),
 	}
 	if instance.VolumeId != "" {
