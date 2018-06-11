@@ -2,22 +2,23 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
-func UnmarshalMetadata(data []byte) (*Metadata, error) {
+func DecodePackageJson(data []byte) (*Metadata, error) {
 	y := &Metadata{}
 	err := json.Unmarshal(data, y)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decode package.json: %+v", err)
 	}
 	return y, nil
 }
 
-func UnmarshalConfigTemplate(data []byte) (*ConfigTemplate, error) {
+func DecodeConfigJson(data []byte) (*ConfigTemplate, error) {
 	y := &ConfigTemplate{}
 	err := json.Unmarshal(data, y)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decode config.json: %+v", err)
 	}
 	y.Raw = string(data)
 	return y, nil

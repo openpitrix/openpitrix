@@ -18,7 +18,7 @@ func getError(result *gojsonschema.Result) error {
 	for _, desc := range result.Errors() {
 		errs = append(errs, desc.String())
 	}
-	return fmt.Errorf(strings.Join(errs, "; "))
+	return fmt.Errorf(strings.Join(errs, "\n\t"))
 }
 
 func (c ClusterConf) Validate() error {

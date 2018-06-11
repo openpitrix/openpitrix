@@ -135,7 +135,7 @@ func Create(metadata *app.Metadata, dir string) (string, error) {
 	cf := filepath.Join(cdir, PackageJson)
 	if _, err := os.Stat(cf); err != nil {
 		if err := savePackageJson(cf, metadata); err != nil {
-			return cdir, err
+			return cdir, fmt.Errorf("failed to write [%s], error: %+v", PackageJson, err)
 		}
 	}
 
@@ -161,7 +161,7 @@ func Create(metadata *app.Metadata, dir string) (string, error) {
 			continue
 		}
 		if err := ioutil.WriteFile(file.path, []byte(file.content), 0644); err != nil {
-			return cdir, err
+			return cdir, fmt.Errorf("failed to write [%s], error: %+v", file.path, err)
 		}
 	}
 	return cdir, nil

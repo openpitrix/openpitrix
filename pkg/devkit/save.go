@@ -27,7 +27,7 @@ func Save(c *app.App, outDir string) (string, error) {
 	}
 
 	if c.Metadata == nil {
-		return "", fmt.Errorf("no %s data", PackageJson)
+		return "", fmt.Errorf("no [%s] data", PackageJson)
 	}
 
 	cfile := c.Metadata
