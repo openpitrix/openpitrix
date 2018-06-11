@@ -36,23 +36,27 @@ func getv(input interface{}) interface{} {
 	}
 }
 
-func (c *ClusterConfTemplate) Render(input ClusterUserConfig) (cluster ClusterConf, err error) {
+func (c *ClusterConfTemplate) Render(input ClusterUserConfig) (ClusterConf, error) {
+	var cluster ClusterConf
 	var tmpl *template.Template
 	raw := replaceTemplateExpression(c.Raw)
-	tmpl, err = template.New("render_cluster_config").Funcs(template.FuncMap{
+	tmpl, err := template.New("render_cluster_config").Funcs(template.FuncMap{
 		"getv": getv,
 	}).Parse(raw)
 	if err != nil {
-		return
+		return cluster, fmt.Errorf("failed to parse cluster.json.tmpl: %+v", err)
 	}
 	b := bytes.NewBuffer([]byte{})
 	err = tmpl.Execute(b, input)
 	if err != nil {
-		return
+		return cluster, fmt.Errorf("failed to render cluster.json: %+v", err)
 	}
 	cluster.RenderJson = b.String()
 	err = json.Unmarshal(b.Bytes(), &cluster)
-	return
+	if err != nil {
+		return cluster, fmt.Errorf("failed to decode cluster.json: %+v", err)
+	}
+	return cluster, nil
 }
 
 type ClusterConf struct {

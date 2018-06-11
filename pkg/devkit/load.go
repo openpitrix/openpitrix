@@ -88,7 +88,7 @@ func LoadArchive(in io.Reader) (*app.App, error) {
 		n = strings.Replace(n, delimiter, "/", -1)
 
 		if parts[0] == PackageJson {
-			return nil, fmt.Errorf("%s not in base directory", PackageJson)
+			return nil, fmt.Errorf("[%s] not in base directory", PackageJson)
 		}
 
 		if _, err := io.Copy(b, tr); err != nil {
@@ -133,7 +133,7 @@ func LoadDir(dir string) (*app.App, error) {
 
 		data, err := ioutil.ReadFile(name)
 		if err != nil {
-			return fmt.Errorf("error reading [%s]: %s", n, err)
+			return fmt.Errorf("failed to read [%s]: %+v", n, err)
 		}
 
 		files = append(files, app.BufferedFile{Name: n, Data: data})
@@ -152,7 +152,7 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 
 	for _, f := range files {
 		if f.Name == PackageJson {
-			m, err := app.UnmarshalMetadata(f.Data)
+			m, err := app.DecodePackageJson(f.Data)
 			if err != nil {
 				return c, err
 			}
@@ -160,7 +160,7 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 		} else if f.Name == ClusterJsonTmpl {
 			c.ClusterConfTemplate = &app.ClusterConfTemplate{Raw: string(f.Data)}
 		} else if f.Name == ConfigJson {
-			m, err := app.UnmarshalConfigTemplate(f.Data)
+			m, err := app.DecodeConfigJson(f.Data)
 			if err != nil {
 				return c, err
 			}
@@ -171,10 +171,10 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 	}
 
 	if c.Metadata == nil {
-		return c, fmt.Errorf("version metadata (package) missing")
+		return c, fmt.Errorf("missing file [%s]", PackageJson)
 	}
 	if c.Metadata.Name == "" {
-		return c, fmt.Errorf("invalid version (package): name must not be empty")
+		return c, fmt.Errorf("failed to load [%s]: name must not be empty", PackageJson)
 	}
 	// Validate default config
 	config := c.ConfigTemplate.GetDefaultConfig()

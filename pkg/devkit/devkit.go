@@ -40,7 +40,7 @@ func IsAppDir(dirName string) (bool, error) {
 		return false, fmt.Errorf("cannot read %s in directory [%s]", PackageJson, dirName)
 	}
 
-	packageContent, err := app.UnmarshalMetadata(packageJsonContent)
+	packageContent, err := app.DecodePackageJson(packageJsonContent)
 	if err != nil {
 		return false, err
 	}

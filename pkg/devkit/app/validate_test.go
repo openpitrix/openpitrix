@@ -135,7 +135,7 @@ var testClusterTmpl = `
 func TestValidateClusterTmpl(t *testing.T) {
 	// normal tmpl
 	clusterTmpl := &ClusterConfTemplate{Raw: testClusterTmpl}
-	configJson, err := UnmarshalConfigTemplate([]byte(testConfigJson))
+	configJson, err := DecodeConfigJson([]byte(testConfigJson))
 	if err != nil {
 		t.Fatal(err)
 	}
