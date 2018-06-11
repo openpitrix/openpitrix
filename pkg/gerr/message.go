@@ -25,6 +25,10 @@ var (
 		Name: "create_resources_failed",
 		En:   "create resources failed",
 	}
+	ErrorCreateResourceFailed = ErrorMessage{
+		Name: "create_resource_failed",
+		En:   "create resource [%s] failed",
+	}
 	ErrorDeleteResourcesFailed = ErrorMessage{
 		Name: "delete_resources_failed",
 		En:   "delete resources failed",
@@ -81,6 +85,10 @@ var (
 		Name: "describe_resources_failed",
 		En:   "describe resources failed",
 	}
+	ErrorDescribeResourceFailed = ErrorMessage{
+		Name: "describe_resource_failed",
+		En:   "describe resource [%s] failed",
+	}
 	ErrorModifyResourcesFailed = ErrorMessage{
 		Name: "modify_resources_failed",
 		En:   "modify resources failed",
@@ -112,6 +120,14 @@ var (
 	ErrorResourceAlreadyDeleted = ErrorMessage{
 		Name: "resource_already_deleted",
 		En:   "resource [%s] has already been deleted",
+	}
+	ErrorResourceNotInStatus = ErrorMessage{
+		Name: "resource_not_in_status",
+		En:   "resource [%s] is not in status [%s]",
+	}
+	ErrorResourceTransitionStatus = ErrorMessage{
+		Name: "resource_transition_status",
+		En:   "resource [%s] is [%s]",
 	}
 	ErrorIllegalParameterLength = ErrorMessage{
 		Name: "illegal_parameter_length",
