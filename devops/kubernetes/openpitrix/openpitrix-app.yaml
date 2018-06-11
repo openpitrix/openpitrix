@@ -97,10 +97,12 @@ metadata:
   namespace: openpitrix-system
   labels:
     app: openpitrix
+    service: openpitrix-category-manager
 spec:
   selector:
     matchLabels:
       app: openpitrix
+      service: openpitrix-category-manager
   replicas: 1
   template:
     metadata:
@@ -125,7 +127,7 @@ spec:
           - category-manager
         ports:
         - containerPort: 9108
-          name: category-manager
+          name: category-mgr
         env:
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
