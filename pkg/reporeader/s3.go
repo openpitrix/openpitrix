@@ -29,7 +29,7 @@ func NewS3Reader(url *neturl.URL, accessKeyId, secretAccessKey, zone, host, buck
 	creds := credentials.NewStaticCredentials(accessKeyId, secretAccessKey, "")
 	config := &aws.Config{
 		Region:      aws.String(zone),
-		Endpoint:    aws.String(fmt.Sprintf("%s://s3.%s.%s/%s/", "http", zone, host, bucket)),
+		Endpoint:    aws.String(fmt.Sprintf("%s://s3.%s.%s", "https", zone, host)),
 		Credentials: creds,
 	}
 	return &S3Reader{

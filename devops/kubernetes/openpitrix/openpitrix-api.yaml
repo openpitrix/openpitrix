@@ -10,6 +10,7 @@ spec:
   selector:
     app: openpitrix
     service: openpitrix-api-gateway
+  type: LoadBalancer
   ports:
   - name: openpitrix-api-gateway
     protocol: TCP
@@ -23,10 +24,12 @@ metadata:
   namespace: openpitrix-system
   labels:
     app: openpitrix
+    service: openpitrix-api-gateway
 spec:
   selector:
     matchLabels:
       app: openpitrix
+      service: openpitrix-api-gateway
   replicas: 1
   template:
     metadata:

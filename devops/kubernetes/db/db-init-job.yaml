@@ -4,6 +4,7 @@ metadata:
   annotations:
   labels:
     app: openpitrix
+    job-name: openpitrix-db-init
   name: openpitrix-db-init
   namespace: openpitrix-system
 spec:
@@ -14,6 +15,7 @@ spec:
   template:
     metadata:
       labels:
+        app: openpitrix
         job-name: openpitrix-db-init
       name: db-init
     spec:

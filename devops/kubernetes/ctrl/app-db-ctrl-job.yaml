@@ -3,7 +3,8 @@ kind: Job
 metadata:
   annotations:
   labels:
-    app: openpitrix-app-db-ctrl
+    app: openpitrix
+    job-name: openpitrix-app-db-ctrl
   name: openpitrix-app-db-ctrl
   namespace: openpitrix-system
 spec:
@@ -14,6 +15,7 @@ spec:
   template:
     metadata:
       labels:
+        app: openpitrix
         job-name: openpitrix-app-db-ctrl
       name: app-db-ctrl
     spec:

@@ -29,9 +29,14 @@ func (h *HttpReader) GetIndexYaml() ([]byte, error) {
 		return nil, ErrGetIndexYamlFailed
 	}
 
+	if resp.StatusCode != 200 {
+		return nil, ErrGetIndexYamlFailed
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, ErrGetIndexYamlFailed
 	}
+
 	return body, nil
 }

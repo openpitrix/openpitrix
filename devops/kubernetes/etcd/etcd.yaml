@@ -11,6 +11,7 @@ spec:
     app: openpitrix
     tier: etcd
   #clusterIP: None
+  type: LoadBalancer
   ports:
   - name: tcp
     protocol: TCP
@@ -39,10 +40,12 @@ metadata:
   namespace: openpitrix-system
   labels:
     app: openpitrix
+    tier: etcd
 spec:
   selector:
     matchLabels:
       app: openpitrix
+      tier: etcd
   strategy:
     type: Recreate
   template:

@@ -27,6 +27,7 @@ spec:
   selector:
     matchLabels:
       app: openpitrix
+      service: openpitrix-repo-manager
   replicas: 1
   template:
     metadata:
@@ -95,10 +96,12 @@ metadata:
   namespace: openpitrix-system
   labels:
     app: openpitrix
+    service: openpitrix-repo-indexer
 spec:
   selector:
     matchLabels:
       app: openpitrix
+      service: openpitrix-repo-indexer
   replicas: 1
   template:
     metadata:

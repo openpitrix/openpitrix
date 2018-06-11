@@ -23,10 +23,12 @@ metadata:
   namespace: openpitrix-system
   labels:
     app: openpitrix
+    service: openpitrix-task-manager
 spec:
   selector:
     matchLabels:
       app: openpitrix
+      service: openpitrix-task-manager
   replicas: 1
   template:
     metadata:
