@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	qcclient "github.com/yunify/qingcloud-sdk-go/client"
 	qcconfig "github.com/yunify/qingcloud-sdk-go/config"
@@ -18,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
@@ -65,10 +67,45 @@ func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudSer
 	return p.initQingCloudService(runtime.RuntimeUrl, runtime.Credential, runtime.Zone)
 }
 
+func (p *ProviderHandler) waitInstanceNetworkAndVolume(instanceService *qcservice.InstanceService, instanceId string, needVolume bool, timeout time.Duration, waitInterval time.Duration) (ins *qcservice.Instance, err error) {
+	logger.Debug("Waiting for IP address to be assigned and volume attached to Instance [%s]", instanceId)
+	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
+		describeOutput, err := instanceService.DescribeInstances(
+			&qcservice.DescribeInstancesInput{
+				Instances: qcservice.StringSlice([]string{instanceId}),
+			},
+		)
+		if err != nil {
+			return false, err
+		}
+
+		describeRetCode := qcservice.IntValue(describeOutput.RetCode)
+		if describeRetCode != 0 {
+			return false, err
+		}
+		if len(describeOutput.InstanceSet) == 0 {
+			return false, fmt.Errorf("Instance with id [%s] not exist", instanceId)
+		}
+		instance := describeOutput.InstanceSet[0]
+		if len(instance.VxNets) == 0 || instance.VxNets[0].PrivateIP == nil || *instance.VxNets[0].PrivateIP == "" {
+			return false, nil
+		}
+		if needVolume {
+			if len(instance.Volumes) == 0 || instance.Volumes[0].Device == nil || *instance.Volumes[0].Device == "" {
+				return false, nil
+			}
+		}
+		ins = instance
+		logger.Debug("Instance [%s] get IP address [%s]", instanceId, *ins.VxNets[0].PrivateIP)
+		return true, nil
+	}, timeout, waitInterval)
+	return
+}
+
 func (p *ProviderHandler) RunInstances(task *models.Task) error {
 
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -141,12 +178,16 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 
 func (p *ProviderHandler) StopInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
 	if err != nil {
 		return err
+	}
+	if instance.InstanceId == "" {
+		logger.Warn("Skip task [%s] without instance", task.TaskId)
+		return nil
 	}
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
@@ -176,6 +217,9 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 		logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, describeRetCode, message)
 		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
+	}
+	if len(describeOutput.InstanceSet) == 0 {
+		return fmt.Errorf("Instance with id [%s] not exist", instance.InstanceId)
 	}
 
 	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
@@ -212,12 +256,16 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 
 func (p *ProviderHandler) StartInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
 	if err != nil {
 		return err
+	}
+	if instance.InstanceId == "" {
+		logger.Warn("Skip task [%s] without instance", task.TaskId)
+		return nil
 	}
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
@@ -247,6 +295,9 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 		logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, describeRetCode, message)
 		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
+	}
+	if len(describeOutput.InstanceSet) == 0 {
+		return fmt.Errorf("Instance with id [%s] not exist", instance.InstanceId)
 	}
 
 	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
@@ -283,13 +334,18 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 
 func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
 	if err != nil {
 		return err
 	}
+	if instance.InstanceId == "" {
+		logger.Warn("Skip task [%s] without instance", task.TaskId)
+		return nil
+	}
+
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
 		logger.Error("Init %s api service failed: %+v", MyProvider, err)
@@ -300,6 +356,34 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 	if err != nil {
 		logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
 		return err
+	}
+
+	describeOutput, err := instanceService.DescribeInstances(
+		&qcservice.DescribeInstancesInput{
+			Instances: qcservice.StringSlice([]string{instance.InstanceId}),
+		},
+	)
+	if err != nil {
+		logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
+	if describeRetCode != 0 {
+		message := qcservice.StringValue(describeOutput.Message)
+		logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
+			MyProvider, describeRetCode, message)
+		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
+	}
+	if len(describeOutput.InstanceSet) == 0 {
+		return fmt.Errorf("Instance with id [%s] not exist", instance.InstanceId)
+	}
+
+	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
+
+	if status == constants.StatusDeleted || status == constants.StatusCeased {
+		logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
+		return nil
 	}
 
 	output, err := instanceService.TerminateInstances(
@@ -328,7 +412,7 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 
 func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -377,7 +461,7 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 
@@ -426,7 +510,7 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 
@@ -475,7 +559,7 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 
@@ -483,7 +567,10 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	if err != nil {
 		return err
 	}
-
+	if volume.VolumeId == "" {
+		logger.Warn("Skip task [%s] without volume", task.TaskId)
+		return nil
+	}
 	qingcloudService, err := p.initService(volume.RuntimeId)
 	if err != nil {
 		logger.Error("Init %s api service failed: %+v", MyProvider, err)
@@ -494,6 +581,34 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	if err != nil {
 		logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
 		return err
+	}
+
+	describeOutput, err := volumeService.DescribeVolumes(
+		&qcservice.DescribeVolumesInput{
+			Volumes: qcservice.StringSlice([]string{volume.VolumeId}),
+		},
+	)
+	if err != nil {
+		logger.Error("Send DescribeVolumes to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
+	if describeRetCode != 0 {
+		message := qcservice.StringValue(describeOutput.Message)
+		logger.Error("Send DescribeVolumes to %s failed with return code [%d], message [%s]",
+			MyProvider, describeRetCode, message)
+		return fmt.Errorf("send DescribeVolumes to %s failed: %s", MyProvider, message)
+	}
+	if len(describeOutput.VolumeSet) == 0 {
+		return fmt.Errorf("Volume with id [%s] not exist", volume.VolumeId)
+	}
+
+	status := qcservice.StringValue(describeOutput.VolumeSet[0].Status)
+
+	if status == constants.StatusDeleted || status == constants.StatusCeased {
+		logger.Warn("Volume [%s] has already been [%s], do nothing", volume.VolumeId, status)
+		return nil
 	}
 
 	output, err := volumeService.DeleteVolumes(
@@ -523,13 +638,18 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
 	if err != nil {
 		return err
 	}
+	if instance.TargetJobId == "" {
+		logger.Warn("Skip task [%s] without target job id", task.TaskId)
+		return nil
+	}
+
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
 		logger.Error("Init %s api service failed: %+v", MyProvider, err)
@@ -555,7 +675,12 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 		return err
 	}
 
-	output, err := qcclient.WaitInstanceNetwork(instanceService, instance.InstanceId,
+	needVolume := false
+	if instance.VolumeId != "" {
+		needVolume = true
+	}
+
+	output, err := p.waitInstanceNetworkAndVolume(instanceService, instance.InstanceId, needVolume,
 		task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 	if err != nil {
 		logger.Error("Wait %s instance [%s] network failed: %+v", MyProvider, instance.InstanceId, err)
@@ -577,7 +702,7 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 
 func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -585,7 +710,7 @@ func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
 		return err
 	}
 	if instance.TargetJobId == "" {
-		logger.Warn("Skip empty task [%s] target job id", task.TaskId)
+		logger.Warn("Skip task [%s] without target job id", task.TaskId)
 		return nil
 	}
 	qingcloudService, err := p.initService(instance.RuntimeId)
@@ -612,12 +737,16 @@ func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
 
 func (p *ProviderHandler) WaitVolumeTask(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		logger.Warn("Skip task [%s] without directive", task.TaskId)
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
 	if err != nil {
 		return err
+	}
+	if volume.TargetJobId == "" {
+		logger.Warn("Skip task [%s] without target job id", task.TaskId)
+		return nil
 	}
 	qingcloudService, err := p.initService(volume.RuntimeId)
 	if err != nil {
