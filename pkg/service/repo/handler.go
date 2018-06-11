@@ -75,7 +75,6 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 }
 
 func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb.CreateRepoResponse, error) {
-	// TODO: common validate
 	repoType := req.GetType().GetValue()
 	url := req.GetUrl().GetValue()
 	credential := req.GetCredential().GetValue()
@@ -87,9 +86,15 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
+	name := req.GetName().GetValue()
+	err = p.validateRepoName(name)
+	if err != nil {
+		return nil, err
+	}
+
 	s := senderutil.GetSenderFromContext(ctx)
 	newRepo := models.NewRepo(
-		req.GetName().GetValue(),
+		name,
 		req.GetDescription().GetValue(),
 		repoType,
 		url,
@@ -174,6 +179,12 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		err = validate(repoType, url, credential, visibility, providers)
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
+		}
+	}
+	if req.GetName() != nil && req.GetName().GetValue() != repo.Name {
+		err = p.validateRepoName(req.GetName().GetValue())
+		if err != nil {
+			return nil, err
 		}
 	}
 

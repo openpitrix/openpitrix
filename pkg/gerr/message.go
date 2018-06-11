@@ -117,6 +117,10 @@ var (
 		Name: "illegal_parameter_length",
 		En:   "illegal parameter [%s] length",
 	}
+	ErrorParameterShouldNotBeEmpty = ErrorMessage{
+		Name: "parameter_should_not_be_empty",
+		En:   "parameter [%s] should not be empty",
+	}
 	ErrorUnsupportedParameterValue = ErrorMessage{
 		Name: "unsupported_parameter_value",
 		En:   "unsupported parameter [%s] value [%s]",
@@ -128,5 +132,9 @@ var (
 	ErrorIllegalLabelFormat = ErrorMessage{
 		Name: "illegal_label_format",
 		En:   "illegal label format",
+	}
+	ErrorConflictRepoName = ErrorMessage{
+		Name: "conflict_repo_name",
+		En:   "conflict repo name [%s]",
 	}
 )
