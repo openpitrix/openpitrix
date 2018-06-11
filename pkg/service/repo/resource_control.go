@@ -5,11 +5,37 @@
 package repo
 
 import (
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
+
+func (p *Server) validateRepoName(name string) error {
+	if len(name) == 0 {
+		return gerr.New(gerr.InvalidArgument, gerr.ErrorParameterShouldNotBeEmpty, "name")
+	}
+
+	var repo []*models.Repo
+	_, err := p.Db.
+		Select(models.RepoColumns...).
+		From(models.RepoTableName).
+		Where(db.Eq(models.ColumnName, name)).
+		Where(db.Eq(models.ColumnStatus, constants.StatusActive)).
+		Limit(1).
+		Load(&repo)
+	if err != nil {
+		return gerr.New(gerr.Internal, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	if len(repo) > 0 {
+		return gerr.New(gerr.Internal, gerr.ErrorConflictRepoName, name)
+	}
+
+	return nil
+}
 
 func (p *Server) getRepo(repoId string) (*models.Repo, error) {
 	repo := &models.Repo{}
