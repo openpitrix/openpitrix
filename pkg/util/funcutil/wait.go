@@ -28,6 +28,13 @@ func NewTimeoutError(timeout time.Duration) *TimeoutError {
 
 // WaitForSpecificOrError wait a function return true or error.
 func WaitForSpecificOrError(f func() (bool, error), timeout time.Duration, waitInterval time.Duration) error {
+	stop, err := f()
+	if err != nil {
+		return err
+	}
+	if stop {
+		return nil
+	}
 	ticker := time.NewTicker(waitInterval)
 	defer ticker.Stop()
 	timer := time.NewTimer(timeout)
