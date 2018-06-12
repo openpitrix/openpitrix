@@ -16,7 +16,7 @@ import (
 	"strings"
 	"text/template"
 
-	libconfd "."
+	"openpitrix.io/libconfd"
 )
 
 var flagOutput = flag.String("output", "tmpl_funcs_zz.go", "set output file")
