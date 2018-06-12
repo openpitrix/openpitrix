@@ -28,7 +28,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type IndexRepoRequest struct {
-	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -66,8 +66,8 @@ func (m *IndexRepoRequest) GetRepoId() *wrappers.StringValue {
 }
 
 type IndexRepoResponse struct {
-	RepoEvent            *RepoEvent            `protobuf:"bytes,1,opt,name=repo_event,json=repoEvent" json:"repo_event,omitempty"`
-	RepoId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoEvent            *RepoEvent            `protobuf:"bytes,1,opt,name=repo_event,json=repoEvent,proto3" json:"repo_event,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -112,13 +112,13 @@ func (m *IndexRepoResponse) GetRepoId() *wrappers.StringValue {
 }
 
 type RepoEvent struct {
-	RepoEventId          *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_event_id,json=repoEventId" json:"repo_event_id,omitempty"`
-	RepoId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
-	Result               *wrappers.StringValue `protobuf:"bytes,5,opt,name=result" json:"result,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	RepoEventId          *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_event_id,json=repoEventId,proto3" json:"repo_event_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	Result               *wrappers.StringValue `protobuf:"bytes,5,opt,name=result,proto3" json:"result,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -198,12 +198,12 @@ func (m *RepoEvent) GetStatusTime() *timestamp.Timestamp {
 }
 
 type DescribeRepoEventsRequest struct {
-	RepoEventId          []string `protobuf:"bytes,1,rep,name=repo_event_id,json=repoEventId" json:"repo_event_id,omitempty"`
-	RepoId               []string `protobuf:"bytes,2,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Owner                []string `protobuf:"bytes,3,rep,name=owner" json:"owner,omitempty"`
-	Status               []string `protobuf:"bytes,4,rep,name=status" json:"status,omitempty"`
-	Limit                uint32   `protobuf:"varint,5,opt,name=limit" json:"limit,omitempty"`
-	Offset               uint32   `protobuf:"varint,6,opt,name=offset" json:"offset,omitempty"`
+	RepoEventId          []string `protobuf:"bytes,1,rep,name=repo_event_id,json=repoEventId,proto3" json:"repo_event_id,omitempty"`
+	RepoId               []string `protobuf:"bytes,2,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
+	Owner                []string `protobuf:"bytes,3,rep,name=owner,proto3" json:"owner,omitempty"`
+	Status               []string `protobuf:"bytes,4,rep,name=status,proto3" json:"status,omitempty"`
+	Limit                uint32   `protobuf:"varint,5,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset               uint32   `protobuf:"varint,6,opt,name=offset,proto3" json:"offset,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -276,8 +276,8 @@ func (m *DescribeRepoEventsRequest) GetOffset() uint32 {
 }
 
 type DescribeRepoEventsResponse struct {
-	TotalCount           uint32       `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	RepoEventSet         []*RepoEvent `protobuf:"bytes,2,rep,name=repo_event_set,json=repoEventSet" json:"repo_event_set,omitempty"`
+	TotalCount           uint32       `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	RepoEventSet         []*RepoEvent `protobuf:"bytes,2,rep,name=repo_event_set,json=repoEventSet,proto3" json:"repo_event_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
 	XXX_sizecache        int32        `json:"-"`
@@ -337,8 +337,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for RepoIndexer service
-
+// RepoIndexerClient is the client API for RepoIndexer service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RepoIndexerClient interface {
 	IndexRepo(ctx context.Context, in *IndexRepoRequest, opts ...grpc.CallOption) (*IndexRepoResponse, error)
 	DescribeRepoEvents(ctx context.Context, in *DescribeRepoEventsRequest, opts ...grpc.CallOption) (*DescribeRepoEventsResponse, error)
@@ -354,7 +355,7 @@ func NewRepoIndexerClient(cc *grpc.ClientConn) RepoIndexerClient {
 
 func (c *repoIndexerClient) IndexRepo(ctx context.Context, in *IndexRepoRequest, opts ...grpc.CallOption) (*IndexRepoResponse, error) {
 	out := new(IndexRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoIndexer/IndexRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoIndexer/IndexRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -363,15 +364,14 @@ func (c *repoIndexerClient) IndexRepo(ctx context.Context, in *IndexRepoRequest,
 
 func (c *repoIndexerClient) DescribeRepoEvents(ctx context.Context, in *DescribeRepoEventsRequest, opts ...grpc.CallOption) (*DescribeRepoEventsResponse, error) {
 	out := new(DescribeRepoEventsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoIndexer/DescribeRepoEvents", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoIndexer/DescribeRepoEvents", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for RepoIndexer service
-
+// RepoIndexerServer is the server API for RepoIndexer service.
 type RepoIndexerServer interface {
 	IndexRepo(context.Context, *IndexRepoRequest) (*IndexRepoResponse, error)
 	DescribeRepoEvents(context.Context, *DescribeRepoEventsRequest) (*DescribeRepoEventsResponse, error)

@@ -28,13 +28,13 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateTaskRequest struct {
-	JobId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
-	NodeId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	Target               *wrappers.StringValue `protobuf:"bytes,3,opt,name=target" json:"target,omitempty"`
-	TaskAction           *wrappers.StringValue `protobuf:"bytes,4,opt,name=task_action,json=taskAction" json:"task_action,omitempty"`
-	Directive            *wrappers.StringValue `protobuf:"bytes,5,opt,name=directive" json:"directive,omitempty"`
-	FailureAllowed       *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=failure_allowed,json=failureAllowed" json:"failure_allowed,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=status" json:"status,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	NodeId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	Target               *wrappers.StringValue `protobuf:"bytes,3,opt,name=target,proto3" json:"target,omitempty"`
+	TaskAction           *wrappers.StringValue `protobuf:"bytes,4,opt,name=task_action,json=taskAction,proto3" json:"task_action,omitempty"`
+	Directive            *wrappers.StringValue `protobuf:"bytes,5,opt,name=directive,proto3" json:"directive,omitempty"`
+	FailureAllowed       *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=failure_allowed,json=failureAllowed,proto3" json:"failure_allowed,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -114,8 +114,8 @@ func (m *CreateTaskRequest) GetStatus() *wrappers.StringValue {
 }
 
 type CreateTaskResponse struct {
-	TaskId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=task_id,json=taskId" json:"task_id,omitempty"`
-	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	TaskId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -160,7 +160,7 @@ func (m *CreateTaskResponse) GetJobId() *wrappers.StringValue {
 }
 
 type RetryTasksRequest struct {
-	TaskId               []string `protobuf:"bytes,1,rep,name=task_id,json=taskId" json:"task_id,omitempty"`
+	TaskId               []string `protobuf:"bytes,1,rep,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -198,7 +198,7 @@ func (m *RetryTasksRequest) GetTaskId() []string {
 }
 
 type RetryTasksResponse struct {
-	TaskSet              []*Task  `protobuf:"bytes,1,rep,name=task_set,json=taskSet" json:"task_set,omitempty"`
+	TaskSet              []*Task  `protobuf:"bytes,1,rep,name=task_set,json=taskSet,proto3" json:"task_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -236,19 +236,19 @@ func (m *RetryTasksResponse) GetTaskSet() []*Task {
 }
 
 type Task struct {
-	TaskId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=task_id,json=taskId" json:"task_id,omitempty"`
-	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
-	TaskAction           *wrappers.StringValue `protobuf:"bytes,3,opt,name=task_action,json=taskAction" json:"task_action,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
-	ErrorCode            *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=error_code,json=errorCode" json:"error_code,omitempty"`
-	Directive            *wrappers.StringValue `protobuf:"bytes,6,opt,name=directive" json:"directive,omitempty"`
-	Executor             *wrappers.StringValue `protobuf:"bytes,7,opt,name=executor" json:"executor,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,8,opt,name=owner" json:"owner,omitempty"`
-	Target               *wrappers.StringValue `protobuf:"bytes,9,opt,name=target" json:"target,omitempty"`
-	NodeId               *wrappers.StringValue `protobuf:"bytes,10,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,11,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,12,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
-	FailureAllowed       *wrappers.BoolValue   `protobuf:"bytes,13,opt,name=failure_allowed,json=failureAllowed" json:"failure_allowed,omitempty"`
+	TaskId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	TaskAction           *wrappers.StringValue `protobuf:"bytes,3,opt,name=task_action,json=taskAction,proto3" json:"task_action,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	ErrorCode            *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=error_code,json=errorCode,proto3" json:"error_code,omitempty"`
+	Directive            *wrappers.StringValue `protobuf:"bytes,6,opt,name=directive,proto3" json:"directive,omitempty"`
+	Executor             *wrappers.StringValue `protobuf:"bytes,7,opt,name=executor,proto3" json:"executor,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
+	Target               *wrappers.StringValue `protobuf:"bytes,9,opt,name=target,proto3" json:"target,omitempty"`
+	NodeId               *wrappers.StringValue `protobuf:"bytes,10,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,11,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,12,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	FailureAllowed       *wrappers.BoolValue   `protobuf:"bytes,13,opt,name=failure_allowed,json=failureAllowed,proto3" json:"failure_allowed,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -370,15 +370,15 @@ func (m *Task) GetFailureAllowed() *wrappers.BoolValue {
 }
 
 type DescribeTasksRequest struct {
-	TaskId   []string              `protobuf:"bytes,1,rep,name=task_id,json=taskId" json:"task_id,omitempty"`
-	JobId    []string              `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
-	Executor *wrappers.StringValue `protobuf:"bytes,3,opt,name=executor" json:"executor,omitempty"`
-	Target   *wrappers.StringValue `protobuf:"bytes,4,opt,name=target" json:"target,omitempty"`
-	Status   []string              `protobuf:"bytes,5,rep,name=status" json:"status,omitempty"`
+	TaskId   []string              `protobuf:"bytes,1,rep,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	JobId    []string              `protobuf:"bytes,2,rep,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	Executor *wrappers.StringValue `protobuf:"bytes,3,opt,name=executor,proto3" json:"executor,omitempty"`
+	Target   *wrappers.StringValue `protobuf:"bytes,4,opt,name=target,proto3" json:"target,omitempty"`
+	Status   []string              `protobuf:"bytes,5,rep,name=status,proto3" json:"status,omitempty"`
 	// default is 20, max value is 200
-	Limit uint32 `protobuf:"varint,6,opt,name=limit" json:"limit,omitempty"`
+	Limit uint32 `protobuf:"varint,6,opt,name=limit,proto3" json:"limit,omitempty"`
 	// default is 0
-	Offset               uint32   `protobuf:"varint,7,opt,name=offset" json:"offset,omitempty"`
+	Offset               uint32   `protobuf:"varint,7,opt,name=offset,proto3" json:"offset,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -458,8 +458,8 @@ func (m *DescribeTasksRequest) GetOffset() uint32 {
 }
 
 type DescribeTasksResponse struct {
-	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	TaskSet              []*Task  `protobuf:"bytes,2,rep,name=task_set,json=taskSet" json:"task_set,omitempty"`
+	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	TaskSet              []*Task  `protobuf:"bytes,2,rep,name=task_set,json=taskSet,proto3" json:"task_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -521,8 +521,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for TaskManager service
-
+// TaskManagerClient is the client API for TaskManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type TaskManagerClient interface {
 	CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error)
 	DescribeTasks(ctx context.Context, in *DescribeTasksRequest, opts ...grpc.CallOption) (*DescribeTasksResponse, error)
@@ -539,7 +540,7 @@ func NewTaskManagerClient(cc *grpc.ClientConn) TaskManagerClient {
 
 func (c *taskManagerClient) CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error) {
 	out := new(CreateTaskResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.TaskManager/CreateTask", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.TaskManager/CreateTask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -548,7 +549,7 @@ func (c *taskManagerClient) CreateTask(ctx context.Context, in *CreateTaskReques
 
 func (c *taskManagerClient) DescribeTasks(ctx context.Context, in *DescribeTasksRequest, opts ...grpc.CallOption) (*DescribeTasksResponse, error) {
 	out := new(DescribeTasksResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.TaskManager/DescribeTasks", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.TaskManager/DescribeTasks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -557,15 +558,14 @@ func (c *taskManagerClient) DescribeTasks(ctx context.Context, in *DescribeTasks
 
 func (c *taskManagerClient) RetryTasks(ctx context.Context, in *RetryTasksRequest, opts ...grpc.CallOption) (*RetryTasksResponse, error) {
 	out := new(RetryTasksResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.TaskManager/RetryTasks", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.TaskManager/RetryTasks", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for TaskManager service
-
+// TaskManagerServer is the server API for TaskManager service.
 type TaskManagerServer interface {
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskResponse, error)
 	DescribeTasks(context.Context, *DescribeTasksRequest) (*DescribeTasksResponse, error)

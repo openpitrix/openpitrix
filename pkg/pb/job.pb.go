@@ -28,12 +28,12 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateJobRequest struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId            *wrappers.StringValue `protobuf:"bytes,3,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	JobAction            *wrappers.StringValue `protobuf:"bytes,4,opt,name=job_action,json=jobAction" json:"job_action,omitempty"`
-	Provider             *wrappers.StringValue `protobuf:"bytes,5,opt,name=provider" json:"provider,omitempty"`
-	Directive            *wrappers.StringValue `protobuf:"bytes,6,opt,name=directive" json:"directive,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,3,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	JobAction            *wrappers.StringValue `protobuf:"bytes,4,opt,name=job_action,json=jobAction,proto3" json:"job_action,omitempty"`
+	Provider             *wrappers.StringValue `protobuf:"bytes,5,opt,name=provider,proto3" json:"provider,omitempty"`
+	Directive            *wrappers.StringValue `protobuf:"bytes,6,opt,name=directive,proto3" json:"directive,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -106,10 +106,10 @@ func (m *CreateJobRequest) GetDirective() *wrappers.StringValue {
 }
 
 type CreateJobResponse struct {
-	JobId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId                *wrappers.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId            *wrappers.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -168,20 +168,20 @@ func (m *CreateJobResponse) GetVersionId() *wrappers.StringValue {
 }
 
 type Job struct {
-	JobId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId                *wrappers.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId            *wrappers.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	JobAction            *wrappers.StringValue `protobuf:"bytes,5,opt,name=job_action,json=jobAction" json:"job_action,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,6,opt,name=status" json:"status,omitempty"`
-	ErrorCode            *wrappers.UInt32Value `protobuf:"bytes,7,opt,name=error_code,json=errorCode" json:"error_code,omitempty"`
-	Directive            *wrappers.StringValue `protobuf:"bytes,8,opt,name=directive" json:"directive,omitempty"`
-	Executor             *wrappers.StringValue `protobuf:"bytes,9,opt,name=executor" json:"executor,omitempty"`
-	TaskCount            *wrappers.UInt32Value `protobuf:"bytes,10,opt,name=task_count,json=taskCount" json:"task_count,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,11,opt,name=owner" json:"owner,omitempty"`
-	Provider             *wrappers.StringValue `protobuf:"bytes,12,opt,name=provider" json:"provider,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,13,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,14,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	JobAction            *wrappers.StringValue `protobuf:"bytes,5,opt,name=job_action,json=jobAction,proto3" json:"job_action,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
+	ErrorCode            *wrappers.UInt32Value `protobuf:"bytes,7,opt,name=error_code,json=errorCode,proto3" json:"error_code,omitempty"`
+	Directive            *wrappers.StringValue `protobuf:"bytes,8,opt,name=directive,proto3" json:"directive,omitempty"`
+	Executor             *wrappers.StringValue `protobuf:"bytes,9,opt,name=executor,proto3" json:"executor,omitempty"`
+	TaskCount            *wrappers.UInt32Value `protobuf:"bytes,10,opt,name=task_count,json=taskCount,proto3" json:"task_count,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,11,opt,name=owner,proto3" json:"owner,omitempty"`
+	Provider             *wrappers.StringValue `protobuf:"bytes,12,opt,name=provider,proto3" json:"provider,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,13,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,14,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -310,17 +310,17 @@ func (m *Job) GetStatusTime() *timestamp.Timestamp {
 }
 
 type DescribeJobsRequest struct {
-	JobId     []string              `protobuf:"bytes,1,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
-	ClusterId *wrappers.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId     *wrappers.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId *wrappers.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	Executor  *wrappers.StringValue `protobuf:"bytes,5,opt,name=executor" json:"executor,omitempty"`
-	Provider  *wrappers.StringValue `protobuf:"bytes,6,opt,name=provider" json:"provider,omitempty"`
-	Status    []string              `protobuf:"bytes,7,rep,name=status" json:"status,omitempty"`
+	JobId     []string              `protobuf:"bytes,1,rep,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
+	ClusterId *wrappers.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AppId     *wrappers.StringValue `protobuf:"bytes,3,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId *wrappers.StringValue `protobuf:"bytes,4,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	Executor  *wrappers.StringValue `protobuf:"bytes,5,opt,name=executor,proto3" json:"executor,omitempty"`
+	Provider  *wrappers.StringValue `protobuf:"bytes,6,opt,name=provider,proto3" json:"provider,omitempty"`
+	Status    []string              `protobuf:"bytes,7,rep,name=status,proto3" json:"status,omitempty"`
 	// default is 20, max value is 200
-	Limit uint32 `protobuf:"varint,8,opt,name=limit" json:"limit,omitempty"`
+	Limit uint32 `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
 	// default is 0
-	Offset               uint32   `protobuf:"varint,9,opt,name=offset" json:"offset,omitempty"`
+	Offset               uint32   `protobuf:"varint,9,opt,name=offset,proto3" json:"offset,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -414,8 +414,8 @@ func (m *DescribeJobsRequest) GetOffset() uint32 {
 }
 
 type DescribeJobsResponse struct {
-	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	JobSet               []*Job   `protobuf:"bytes,2,rep,name=job_set,json=jobSet" json:"job_set,omitempty"`
+	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	JobSet               []*Job   `protobuf:"bytes,2,rep,name=job_set,json=jobSet,proto3" json:"job_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -475,8 +475,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for JobManager service
-
+// JobManagerClient is the client API for JobManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type JobManagerClient interface {
 	CreateJob(ctx context.Context, in *CreateJobRequest, opts ...grpc.CallOption) (*CreateJobResponse, error)
 	DescribeJobs(ctx context.Context, in *DescribeJobsRequest, opts ...grpc.CallOption) (*DescribeJobsResponse, error)
@@ -492,7 +493,7 @@ func NewJobManagerClient(cc *grpc.ClientConn) JobManagerClient {
 
 func (c *jobManagerClient) CreateJob(ctx context.Context, in *CreateJobRequest, opts ...grpc.CallOption) (*CreateJobResponse, error) {
 	out := new(CreateJobResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.JobManager/CreateJob", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.JobManager/CreateJob", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -501,15 +502,14 @@ func (c *jobManagerClient) CreateJob(ctx context.Context, in *CreateJobRequest, 
 
 func (c *jobManagerClient) DescribeJobs(ctx context.Context, in *DescribeJobsRequest, opts ...grpc.CallOption) (*DescribeJobsResponse, error) {
 	out := new(DescribeJobsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.JobManager/DescribeJobs", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.JobManager/DescribeJobs", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for JobManager service
-
+// JobManagerServer is the server API for JobManager service.
 type JobManagerServer interface {
 	CreateJob(context.Context, *CreateJobRequest) (*CreateJobResponse, error)
 	DescribeJobs(context.Context, *DescribeJobsRequest) (*DescribeJobsResponse, error)

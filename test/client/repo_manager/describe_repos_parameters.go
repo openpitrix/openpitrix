@@ -63,6 +63,8 @@ for the describe repos operation typically these are written to a http.Request
 */
 type DescribeReposParams struct {
 
+	/*CategoryID*/
+	CategoryID []string
 	/*Label*/
 	Label *string
 	/*Limit*/
@@ -120,6 +122,17 @@ func (o *DescribeReposParams) WithHTTPClient(client *http.Client) *DescribeRepos
 // SetHTTPClient adds the HTTPClient to the describe repos params
 func (o *DescribeReposParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithCategoryID adds the categoryID to the describe repos params
+func (o *DescribeReposParams) WithCategoryID(categoryID []string) *DescribeReposParams {
+	o.SetCategoryID(categoryID)
+	return o
+}
+
+// SetCategoryID adds the categoryId to the describe repos params
+func (o *DescribeReposParams) SetCategoryID(categoryID []string) {
+	o.CategoryID = categoryID
 }
 
 // WithLabel adds the label to the describe repos params
@@ -239,6 +252,14 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	valuesCategoryID := o.CategoryID
+
+	joinedCategoryID := swag.JoinByFormat(valuesCategoryID, "multi")
+	// query array param category_id
+	if err := r.SetQueryParam("category_id", joinedCategoryID...); err != nil {
+		return err
+	}
 
 	if o.Label != nil {
 

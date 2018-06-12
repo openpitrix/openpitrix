@@ -107,8 +107,8 @@ message DescribeAppsRequest {
 	repeated string owner = 11;
 	repeated string chart_name = 12;
 	repeated string category_id = 13;
-	repeated string category_name = 14;
 }
+
 message DescribeAppsResponse {
 	uint32 total_count = 1;
 	repeated App app_set = 2;

@@ -399,16 +399,6 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
-          },
-          {
-            "name": "category_name",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1371,6 +1361,16 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -3341,6 +3341,9 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixRepoSelector"
           }
+        },
+        "category_id": {
+          "type": "string"
         }
       }
     },
@@ -3430,6 +3433,9 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixRepoSelector"
           }
+        },
+        "category_id": {
+          "type": "string"
         }
       }
     },
@@ -3485,6 +3491,37 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixRepoSelector"
           }
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "repo_category_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRepoCategory"
+          }
+        }
+      }
+    },
+    "openpitrixRepoCategory": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
         },
         "status": {
           "type": "string"

@@ -37,6 +37,9 @@ type OpenpitrixRepo struct {
 	// providers
 	Providers []string `json:"providers"`
 
+	// repo category set
+	RepoCategorySet OpenpitrixRepoRepoCategorySet `json:"repo_category_set"`
+
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`
 

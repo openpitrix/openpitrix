@@ -28,15 +28,16 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateRepoRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Type                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=type" json:"type,omitempty"`
-	Url                  *wrappers.StringValue `protobuf:"bytes,4,opt,name=url" json:"url,omitempty"`
-	Credential           *wrappers.StringValue `protobuf:"bytes,5,opt,name=credential" json:"credential,omitempty"`
-	Visibility           *wrappers.StringValue `protobuf:"bytes,6,opt,name=visibility" json:"visibility,omitempty"`
-	Providers            []string              `protobuf:"bytes,7,rep,name=providers" json:"providers,omitempty"`
-	Labels               []*RepoLabel          `protobuf:"bytes,8,rep,name=labels" json:"labels,omitempty"`
-	Selectors            []*RepoSelector       `protobuf:"bytes,9,rep,name=selectors" json:"selectors,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,4,opt,name=url,proto3" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,5,opt,name=credential,proto3" json:"credential,omitempty"`
+	Visibility           *wrappers.StringValue `protobuf:"bytes,6,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	Providers            []string              `protobuf:"bytes,7,rep,name=providers,proto3" json:"providers,omitempty"`
+	Labels               []*RepoLabel          `protobuf:"bytes,8,rep,name=labels,proto3" json:"labels,omitempty"`
+	Selectors            []*RepoSelector       `protobuf:"bytes,9,rep,name=selectors,proto3" json:"selectors,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,10,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -46,7 +47,7 @@ func (m *CreateRepoRequest) Reset()         { *m = CreateRepoRequest{} }
 func (m *CreateRepoRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateRepoRequest) ProtoMessage()    {}
 func (*CreateRepoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{0}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{0}
 }
 func (m *CreateRepoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateRepoRequest.Unmarshal(m, b)
@@ -129,8 +130,15 @@ func (m *CreateRepoRequest) GetSelectors() []*RepoSelector {
 	return nil
 }
 
+func (m *CreateRepoRequest) GetCategoryId() *wrappers.StringValue {
+	if m != nil {
+		return m.CategoryId
+	}
+	return nil
+}
+
 type CreateRepoResponse struct {
-	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -140,7 +148,7 @@ func (m *CreateRepoResponse) Reset()         { *m = CreateRepoResponse{} }
 func (m *CreateRepoResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateRepoResponse) ProtoMessage()    {}
 func (*CreateRepoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{1}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{1}
 }
 func (m *CreateRepoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateRepoResponse.Unmarshal(m, b)
@@ -168,16 +176,17 @@ func (m *CreateRepoResponse) GetRepoId() *wrappers.StringValue {
 }
 
 type ModifyRepoRequest struct {
-	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
-	Providers            []string              `protobuf:"bytes,8,rep,name=providers" json:"providers,omitempty"`
-	Labels               []*RepoLabel          `protobuf:"bytes,9,rep,name=labels" json:"labels,omitempty"`
-	Selectors            []*RepoSelector       `protobuf:"bytes,10,rep,name=selectors" json:"selectors,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential,proto3" json:"credential,omitempty"`
+	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	Providers            []string              `protobuf:"bytes,8,rep,name=providers,proto3" json:"providers,omitempty"`
+	Labels               []*RepoLabel          `protobuf:"bytes,9,rep,name=labels,proto3" json:"labels,omitempty"`
+	Selectors            []*RepoSelector       `protobuf:"bytes,10,rep,name=selectors,proto3" json:"selectors,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,11,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -187,7 +196,7 @@ func (m *ModifyRepoRequest) Reset()         { *m = ModifyRepoRequest{} }
 func (m *ModifyRepoRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyRepoRequest) ProtoMessage()    {}
 func (*ModifyRepoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{2}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{2}
 }
 func (m *ModifyRepoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyRepoRequest.Unmarshal(m, b)
@@ -277,8 +286,15 @@ func (m *ModifyRepoRequest) GetSelectors() []*RepoSelector {
 	return nil
 }
 
+func (m *ModifyRepoRequest) GetCategoryId() *wrappers.StringValue {
+	if m != nil {
+		return m.CategoryId
+	}
+	return nil
+}
+
 type ModifyRepoResponse struct {
-	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -288,7 +304,7 @@ func (m *ModifyRepoResponse) Reset()         { *m = ModifyRepoResponse{} }
 func (m *ModifyRepoResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyRepoResponse) ProtoMessage()    {}
 func (*ModifyRepoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{3}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{3}
 }
 func (m *ModifyRepoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyRepoResponse.Unmarshal(m, b)
@@ -316,7 +332,7 @@ func (m *ModifyRepoResponse) GetRepoId() *wrappers.StringValue {
 }
 
 type DeleteReposRequest struct {
-	RepoId               []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -326,7 +342,7 @@ func (m *DeleteReposRequest) Reset()         { *m = DeleteReposRequest{} }
 func (m *DeleteReposRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteReposRequest) ProtoMessage()    {}
 func (*DeleteReposRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{4}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{4}
 }
 func (m *DeleteReposRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteReposRequest.Unmarshal(m, b)
@@ -354,7 +370,7 @@ func (m *DeleteReposRequest) GetRepoId() []string {
 }
 
 type DeleteReposResponse struct {
-	RepoId               []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -364,7 +380,7 @@ func (m *DeleteReposResponse) Reset()         { *m = DeleteReposResponse{} }
 func (m *DeleteReposResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteReposResponse) ProtoMessage()    {}
 func (*DeleteReposResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{5}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{5}
 }
 func (m *DeleteReposResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteReposResponse.Unmarshal(m, b)
@@ -392,8 +408,8 @@ func (m *DeleteReposResponse) GetRepoId() []string {
 }
 
 type RepoLabel struct {
-	LabelKey             *wrappers.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
-	LabelValue           *wrappers.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+	LabelKey             *wrappers.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey,proto3" json:"label_key,omitempty"`
+	LabelValue           *wrappers.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue,proto3" json:"label_value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -403,7 +419,7 @@ func (m *RepoLabel) Reset()         { *m = RepoLabel{} }
 func (m *RepoLabel) String() string { return proto.CompactTextString(m) }
 func (*RepoLabel) ProtoMessage()    {}
 func (*RepoLabel) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{6}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{6}
 }
 func (m *RepoLabel) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RepoLabel.Unmarshal(m, b)
@@ -438,8 +454,8 @@ func (m *RepoLabel) GetLabelValue() *wrappers.StringValue {
 }
 
 type RepoSelector struct {
-	SelectorKey          *wrappers.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
-	SelectorValue        *wrappers.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+	SelectorKey          *wrappers.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey,proto3" json:"selector_key,omitempty"`
+	SelectorValue        *wrappers.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue,proto3" json:"selector_value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -449,7 +465,7 @@ func (m *RepoSelector) Reset()         { *m = RepoSelector{} }
 func (m *RepoSelector) String() string { return proto.CompactTextString(m) }
 func (*RepoSelector) ProtoMessage()    {}
 func (*RepoSelector) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{7}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{7}
 }
 func (m *RepoSelector) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RepoSelector.Unmarshal(m, b)
@@ -484,20 +500,21 @@ func (m *RepoSelector) GetSelectorValue() *wrappers.StringValue {
 }
 
 type Repo struct {
-	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,8,opt,name=owner" json:"owner,omitempty"`
-	Providers            []string              `protobuf:"bytes,9,rep,name=providers" json:"providers,omitempty"`
-	Labels               []*RepoLabel          `protobuf:"bytes,10,rep,name=labels" json:"labels,omitempty"`
-	Selectors            []*RepoSelector       `protobuf:"bytes,11,rep,name=selectors" json:"selectors,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,12,opt,name=status" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,13,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,14,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential,proto3" json:"credential,omitempty"`
+	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
+	Providers            []string              `protobuf:"bytes,9,rep,name=providers,proto3" json:"providers,omitempty"`
+	Labels               []*RepoLabel          `protobuf:"bytes,10,rep,name=labels,proto3" json:"labels,omitempty"`
+	Selectors            []*RepoSelector       `protobuf:"bytes,11,rep,name=selectors,proto3" json:"selectors,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,12,opt,name=status,proto3" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,13,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,14,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	RepoCategorySet      []*RepoCategory       `protobuf:"bytes,15,rep,name=repo_category_set,json=repoCategorySet,proto3" json:"repo_category_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -507,7 +524,7 @@ func (m *Repo) Reset()         { *m = Repo{} }
 func (m *Repo) String() string { return proto.CompactTextString(m) }
 func (*Repo) ProtoMessage()    {}
 func (*Repo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{8}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{8}
 }
 func (m *Repo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Repo.Unmarshal(m, b)
@@ -625,17 +642,103 @@ func (m *Repo) GetStatusTime() *timestamp.Timestamp {
 	return nil
 }
 
+func (m *Repo) GetRepoCategorySet() []*RepoCategory {
+	if m != nil {
+		return m.RepoCategorySet
+	}
+	return nil
+}
+
+type RepoCategory struct {
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale,proto3" json:"locale,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *RepoCategory) Reset()         { *m = RepoCategory{} }
+func (m *RepoCategory) String() string { return proto.CompactTextString(m) }
+func (*RepoCategory) ProtoMessage()    {}
+func (*RepoCategory) Descriptor() ([]byte, []int) {
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{9}
+}
+func (m *RepoCategory) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RepoCategory.Unmarshal(m, b)
+}
+func (m *RepoCategory) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RepoCategory.Marshal(b, m, deterministic)
+}
+func (dst *RepoCategory) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepoCategory.Merge(dst, src)
+}
+func (m *RepoCategory) XXX_Size() int {
+	return xxx_messageInfo_RepoCategory.Size(m)
+}
+func (m *RepoCategory) XXX_DiscardUnknown() {
+	xxx_messageInfo_RepoCategory.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RepoCategory proto.InternalMessageInfo
+
+func (m *RepoCategory) GetCategoryId() *wrappers.StringValue {
+	if m != nil {
+		return m.CategoryId
+	}
+	return nil
+}
+
+func (m *RepoCategory) GetName() *wrappers.StringValue {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *RepoCategory) GetLocale() *wrappers.StringValue {
+	if m != nil {
+		return m.Locale
+	}
+	return nil
+}
+
+func (m *RepoCategory) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *RepoCategory) GetCreateTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.CreateTime
+	}
+	return nil
+}
+
+func (m *RepoCategory) GetStatusTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StatusTime
+	}
+	return nil
+}
+
 type DescribeReposRequest struct {
-	RepoId               []string              `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name                 []string              `protobuf:"bytes,2,rep,name=name" json:"name,omitempty"`
-	Type                 []string              `protobuf:"bytes,3,rep,name=type" json:"type,omitempty"`
-	Visibility           []string              `protobuf:"bytes,4,rep,name=visibility" json:"visibility,omitempty"`
-	Status               []string              `protobuf:"bytes,5,rep,name=status" json:"status,omitempty"`
-	Provider             []string              `protobuf:"bytes,6,rep,name=provider" json:"provider,omitempty"`
-	Label                *wrappers.StringValue `protobuf:"bytes,7,opt,name=label" json:"label,omitempty"`
-	Selector             *wrappers.StringValue `protobuf:"bytes,8,opt,name=selector" json:"selector,omitempty"`
-	Limit                uint32                `protobuf:"varint,9,opt,name=limit" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,10,opt,name=offset" json:"offset,omitempty"`
+	RepoId               []string              `protobuf:"bytes,1,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
+	Name                 []string              `protobuf:"bytes,2,rep,name=name,proto3" json:"name,omitempty"`
+	Type                 []string              `protobuf:"bytes,3,rep,name=type,proto3" json:"type,omitempty"`
+	Visibility           []string              `protobuf:"bytes,4,rep,name=visibility,proto3" json:"visibility,omitempty"`
+	Status               []string              `protobuf:"bytes,5,rep,name=status,proto3" json:"status,omitempty"`
+	Provider             []string              `protobuf:"bytes,6,rep,name=provider,proto3" json:"provider,omitempty"`
+	Label                *wrappers.StringValue `protobuf:"bytes,7,opt,name=label,proto3" json:"label,omitempty"`
+	Selector             *wrappers.StringValue `protobuf:"bytes,8,opt,name=selector,proto3" json:"selector,omitempty"`
+	Limit                uint32                `protobuf:"varint,9,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,10,opt,name=offset,proto3" json:"offset,omitempty"`
+	CategoryId           []string              `protobuf:"bytes,11,rep,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -645,7 +748,7 @@ func (m *DescribeReposRequest) Reset()         { *m = DescribeReposRequest{} }
 func (m *DescribeReposRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeReposRequest) ProtoMessage()    {}
 func (*DescribeReposRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{9}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{10}
 }
 func (m *DescribeReposRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeReposRequest.Unmarshal(m, b)
@@ -735,9 +838,16 @@ func (m *DescribeReposRequest) GetOffset() uint32 {
 	return 0
 }
 
+func (m *DescribeReposRequest) GetCategoryId() []string {
+	if m != nil {
+		return m.CategoryId
+	}
+	return nil
+}
+
 type DescribeReposResponse struct {
-	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	RepoSet              []*Repo  `protobuf:"bytes,2,rep,name=repo_set,json=repoSet" json:"repo_set,omitempty"`
+	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	RepoSet              []*Repo  `protobuf:"bytes,2,rep,name=repo_set,json=repoSet,proto3" json:"repo_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -747,7 +857,7 @@ func (m *DescribeReposResponse) Reset()         { *m = DescribeReposResponse{} }
 func (m *DescribeReposResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeReposResponse) ProtoMessage()    {}
 func (*DescribeReposResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{10}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{11}
 }
 func (m *DescribeReposResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeReposResponse.Unmarshal(m, b)
@@ -782,9 +892,9 @@ func (m *DescribeReposResponse) GetRepoSet() []*Repo {
 }
 
 type ValidateRepoRequest struct {
-	Type                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
-	Url                  *wrappers.StringValue `protobuf:"bytes,2,opt,name=url" json:"url,omitempty"`
-	Credential           *wrappers.StringValue `protobuf:"bytes,3,opt,name=credential" json:"credential,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,3,opt,name=credential,proto3" json:"credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -794,7 +904,7 @@ func (m *ValidateRepoRequest) Reset()         { *m = ValidateRepoRequest{} }
 func (m *ValidateRepoRequest) String() string { return proto.CompactTextString(m) }
 func (*ValidateRepoRequest) ProtoMessage()    {}
 func (*ValidateRepoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{11}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{12}
 }
 func (m *ValidateRepoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ValidateRepoRequest.Unmarshal(m, b)
@@ -836,8 +946,8 @@ func (m *ValidateRepoRequest) GetCredential() *wrappers.StringValue {
 }
 
 type ValidateRepoResponse struct {
-	Ok                   *wrappers.BoolValue `protobuf:"bytes,1,opt,name=ok" json:"ok,omitempty"`
-	ErrorCode            uint32              `protobuf:"varint,2,opt,name=errorCode" json:"errorCode,omitempty"`
+	Ok                   *wrappers.BoolValue `protobuf:"bytes,1,opt,name=ok,proto3" json:"ok,omitempty"`
+	ErrorCode            uint32              `protobuf:"varint,2,opt,name=errorCode,proto3" json:"errorCode,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
 	XXX_sizecache        int32               `json:"-"`
@@ -847,7 +957,7 @@ func (m *ValidateRepoResponse) Reset()         { *m = ValidateRepoResponse{} }
 func (m *ValidateRepoResponse) String() string { return proto.CompactTextString(m) }
 func (*ValidateRepoResponse) ProtoMessage()    {}
 func (*ValidateRepoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_3e099e3056667a6c, []int{12}
+	return fileDescriptor_repo_8f8cd6343117a33e, []int{13}
 }
 func (m *ValidateRepoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ValidateRepoResponse.Unmarshal(m, b)
@@ -891,6 +1001,7 @@ func init() {
 	proto.RegisterType((*RepoLabel)(nil), "openpitrix.RepoLabel")
 	proto.RegisterType((*RepoSelector)(nil), "openpitrix.RepoSelector")
 	proto.RegisterType((*Repo)(nil), "openpitrix.Repo")
+	proto.RegisterType((*RepoCategory)(nil), "openpitrix.RepoCategory")
 	proto.RegisterType((*DescribeReposRequest)(nil), "openpitrix.DescribeReposRequest")
 	proto.RegisterType((*DescribeReposResponse)(nil), "openpitrix.DescribeReposResponse")
 	proto.RegisterType((*ValidateRepoRequest)(nil), "openpitrix.ValidateRepoRequest")
@@ -905,8 +1016,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for RepoManager service
-
+// RepoManagerClient is the client API for RepoManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RepoManagerClient interface {
 	CreateRepo(ctx context.Context, in *CreateRepoRequest, opts ...grpc.CallOption) (*CreateRepoResponse, error)
 	DescribeRepos(ctx context.Context, in *DescribeReposRequest, opts ...grpc.CallOption) (*DescribeReposResponse, error)
@@ -925,7 +1037,7 @@ func NewRepoManagerClient(cc *grpc.ClientConn) RepoManagerClient {
 
 func (c *repoManagerClient) CreateRepo(ctx context.Context, in *CreateRepoRequest, opts ...grpc.CallOption) (*CreateRepoResponse, error) {
 	out := new(CreateRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/CreateRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/CreateRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -934,7 +1046,7 @@ func (c *repoManagerClient) CreateRepo(ctx context.Context, in *CreateRepoReques
 
 func (c *repoManagerClient) DescribeRepos(ctx context.Context, in *DescribeReposRequest, opts ...grpc.CallOption) (*DescribeReposResponse, error) {
 	out := new(DescribeReposResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DescribeRepos", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/DescribeRepos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -943,7 +1055,7 @@ func (c *repoManagerClient) DescribeRepos(ctx context.Context, in *DescribeRepos
 
 func (c *repoManagerClient) ModifyRepo(ctx context.Context, in *ModifyRepoRequest, opts ...grpc.CallOption) (*ModifyRepoResponse, error) {
 	out := new(ModifyRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/ModifyRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/ModifyRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -952,7 +1064,7 @@ func (c *repoManagerClient) ModifyRepo(ctx context.Context, in *ModifyRepoReques
 
 func (c *repoManagerClient) DeleteRepos(ctx context.Context, in *DeleteReposRequest, opts ...grpc.CallOption) (*DeleteReposResponse, error) {
 	out := new(DeleteReposResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DeleteRepos", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/DeleteRepos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -961,15 +1073,14 @@ func (c *repoManagerClient) DeleteRepos(ctx context.Context, in *DeleteReposRequ
 
 func (c *repoManagerClient) ValidateRepo(ctx context.Context, in *ValidateRepoRequest, opts ...grpc.CallOption) (*ValidateRepoResponse, error) {
 	out := new(ValidateRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/ValidateRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/ValidateRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for RepoManager service
-
+// RepoManagerServer is the server API for RepoManager service.
 type RepoManagerServer interface {
 	CreateRepo(context.Context, *CreateRepoRequest) (*CreateRepoResponse, error)
 	DescribeRepos(context.Context, *DescribeReposRequest) (*DescribeReposResponse, error)
@@ -1101,72 +1212,78 @@ var _RepoManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "repo.proto",
 }
 
-func init() { proto.RegisterFile("repo.proto", fileDescriptor_repo_3e099e3056667a6c) }
+func init() { proto.RegisterFile("repo.proto", fileDescriptor_repo_8f8cd6343117a33e) }
 
-var fileDescriptor_repo_3e099e3056667a6c = []byte{
-	// 1017 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x57, 0xcb, 0x6e, 0x23, 0x45,
-	0x14, 0x95, 0x9f, 0x71, 0xdf, 0x8e, 0x03, 0x53, 0x93, 0x81, 0x56, 0x2b, 0x24, 0x4d, 0x0b, 0xa4,
-	0x28, 0x4c, 0xec, 0xc1, 0x3c, 0xc4, 0x1b, 0x65, 0x32, 0x1b, 0x34, 0xcc, 0xa6, 0x83, 0x66, 0xc1,
-	0x26, 0xb4, 0xdd, 0x65, 0x53, 0x4a, 0xbb, 0xab, 0xa7, 0xaa, 0xec, 0xe0, 0x15, 0x12, 0x12, 0x7c,
-	0x40, 0x60, 0xcf, 0x57, 0xf0, 0x0d, 0x7c, 0x00, 0xbf, 0xc0, 0x82, 0x0f, 0x40, 0xac, 0x51, 0x55,
-	0xf5, 0xd3, 0x1e, 0x43, 0xdb, 0xd9, 0xb0, 0x60, 0x35, 0xd3, 0x75, 0xcf, 0xa9, 0xfb, 0x3a, 0x75,
-	0x7d, 0x03, 0xc0, 0x70, 0x4c, 0x7b, 0x31, 0xa3, 0x82, 0x22, 0xa0, 0x31, 0x8e, 0x62, 0x22, 0x18,
-	0xf9, 0xc6, 0x3e, 0x9c, 0x50, 0x3a, 0x09, 0x71, 0x5f, 0x59, 0x86, 0xb3, 0x71, 0xff, 0x9a, 0xf9,
-	0x71, 0x8c, 0x19, 0xd7, 0x58, 0xfb, 0x68, 0xd9, 0x2e, 0xc8, 0x14, 0x73, 0xe1, 0x4f, 0xe3, 0x04,
-	0x70, 0x90, 0x00, 0xfc, 0x98, 0xf4, 0xfd, 0x28, 0xa2, 0xc2, 0x17, 0x84, 0x46, 0x29, 0xfd, 0xbe,
-	0xfa, 0x67, 0x74, 0x3a, 0xc1, 0xd1, 0x29, 0xbf, 0xf6, 0x27, 0x13, 0xcc, 0xfa, 0x34, 0x56, 0x88,
-	0x55, 0xb4, 0xfb, 0x47, 0x03, 0xee, 0x9c, 0x33, 0xec, 0x0b, 0xec, 0xe1, 0x98, 0x7a, 0xf8, 0xd9,
-	0x0c, 0x73, 0x81, 0x1e, 0x40, 0x33, 0xf2, 0xa7, 0xd8, 0xaa, 0x39, 0xb5, 0x63, 0x73, 0x70, 0xd0,
-	0xd3, 0x0e, 0x7b, 0x69, 0x44, 0xbd, 0x0b, 0xc1, 0x48, 0x34, 0x79, 0xea, 0x87, 0x33, 0xec, 0x29,
-	0x24, 0xfa, 0x04, 0xcc, 0x00, 0xf3, 0x11, 0x23, 0xca, 0x93, 0x55, 0xaf, 0x40, 0x2c, 0x12, 0xa4,
-	0x47, 0xb1, 0x88, 0xb1, 0xd5, 0xa8, 0xe2, 0x51, 0x22, 0x51, 0x0f, 0x1a, 0x33, 0x16, 0x5a, 0xcd,
-	0x0a, 0x04, 0x09, 0x44, 0x1f, 0x01, 0x8c, 0x18, 0x0e, 0x70, 0x24, 0x88, 0x1f, 0x5a, 0xad, 0x0a,
-	0xb4, 0x02, 0x5e, 0xb2, 0xe7, 0x84, 0x93, 0x21, 0x09, 0x89, 0x58, 0x58, 0xed, 0x2a, 0xec, 0x1c,
-	0x8f, 0x0e, 0xc0, 0x88, 0x19, 0x9d, 0x93, 0x00, 0x33, 0x6e, 0xed, 0x38, 0x8d, 0x63, 0xc3, 0xcb,
-	0x0f, 0xd0, 0x29, 0xb4, 0x43, 0x7f, 0x88, 0x43, 0x6e, 0x75, 0x9c, 0xc6, 0xb1, 0x39, 0xb8, 0xd7,
-	0xcb, 0xd5, 0xd2, 0x93, 0x6d, 0xf9, 0x5c, 0x5a, 0xbd, 0x04, 0x84, 0xde, 0x05, 0x83, 0xe3, 0x10,
-	0x8f, 0x04, 0x65, 0xdc, 0x32, 0x14, 0xc3, 0x5a, 0x66, 0x5c, 0x24, 0x00, 0x2f, 0x87, 0xba, 0x8f,
-	0x01, 0x15, 0x3b, 0xcd, 0x63, 0x1a, 0x71, 0x8c, 0xde, 0x81, 0x1d, 0xa9, 0xd3, 0x4b, 0x12, 0x54,
-	0xea, 0x76, 0x5b, 0x82, 0x3f, 0x0b, 0xdc, 0x9f, 0x9b, 0x70, 0xe7, 0x09, 0x0d, 0xc8, 0x78, 0x51,
-	0xd4, 0xcd, 0x76, 0x97, 0x65, 0x72, 0xab, 0x6f, 0x2b, 0xb7, 0xc6, 0xb6, 0x72, 0x6b, 0x6e, 0x2a,
-	0xb7, 0xd6, 0x76, 0x72, 0x6b, 0xdf, 0x4a, 0x6e, 0x3b, 0xb7, 0x91, 0x5b, 0x67, 0xbd, 0xdc, 0x8c,
-	0x8d, 0xe5, 0x06, 0x1b, 0xc9, 0xad, 0x28, 0x90, 0xdb, 0xc9, 0xed, 0x14, 0xd0, 0x23, 0x1c, 0x62,
-	0xad, 0x5d, 0x9e, 0xca, 0xed, 0xe5, 0xe2, 0x65, 0x32, 0xcb, 0x14, 0xde, 0x83, 0xbb, 0x25, 0x78,
-	0xe2, 0x7c, 0x2d, 0xfe, 0xfb, 0x1a, 0x18, 0x59, 0xe6, 0xe8, 0x7d, 0x30, 0x54, 0xee, 0x97, 0x57,
-	0x78, 0x51, 0x49, 0x5a, 0x1d, 0x05, 0x7f, 0x8c, 0x17, 0xe8, 0x63, 0x30, 0x35, 0x75, 0x2e, 0x0d,
-	0x95, 0xe4, 0x05, 0x8a, 0xa0, 0xfe, 0xef, 0xfe, 0x54, 0x83, 0xdd, 0x62, 0x3d, 0xd1, 0xa7, 0xb0,
-	0x9b, 0x56, 0xb4, 0x72, 0x34, 0x66, 0xca, 0x90, 0x01, 0x9d, 0xc3, 0x5e, 0x76, 0x41, 0xf5, 0x98,
-	0xba, 0x29, 0x47, 0x87, 0xf5, 0x57, 0x0b, 0x9a, 0x32, 0xac, 0xff, 0xdf, 0xf7, 0x7f, 0xe3, 0x7d,
-	0x0f, 0xa0, 0x45, 0xaf, 0x23, 0xcc, 0xac, 0x4e, 0x05, 0xa2, 0x86, 0x96, 0x67, 0x82, 0xb1, 0x7e,
-	0x26, 0xc0, 0xc6, 0x33, 0xc1, 0xac, 0x3c, 0x13, 0xd0, 0xdb, 0xd0, 0xe6, 0xc2, 0x17, 0x33, 0x6e,
-	0xed, 0x56, 0x91, 0x8f, 0xc6, 0xa2, 0x0f, 0xc1, 0x1c, 0xa9, 0x1f, 0xae, 0x4b, 0xb9, 0x09, 0x59,
-	0x5d, 0x45, 0xb5, 0x57, 0xa8, 0x5f, 0xa4, 0x6b, 0x92, 0xaa, 0xb4, 0x2f, 0xb0, 0x3c, 0x90, 0x64,
-	0x7d, 0x8d, 0x26, 0xef, 0xfd, 0x3b, 0x59, 0xc3, 0xe5, 0x81, 0xfb, 0x6b, 0x1d, 0xf6, 0x1f, 0x29,
-	0x59, 0x0d, 0xab, 0x4d, 0x1e, 0x84, 0x32, 0xa9, 0xcb, 0x53, 0x2d, 0x66, 0x94, 0xed, 0x36, 0xea,
-	0x4c, 0xc9, 0xed, 0xb0, 0x24, 0x80, 0xa6, 0xb2, 0x14, 0x5b, 0xfc, 0x52, 0x56, 0xa9, 0x96, 0xbe,
-	0x3f, 0xa9, 0x85, 0x0d, 0x9d, 0xb4, 0x6b, 0x56, 0x5b, 0x59, 0xb2, 0x6f, 0x29, 0x0b, 0xd5, 0x9f,
-	0x4a, 0x7a, 0xd2, 0x50, 0xf4, 0x1e, 0x74, 0xd2, 0xf6, 0x54, 0x52, 0x53, 0x86, 0x46, 0xfb, 0xd0,
-	0x0a, 0xc9, 0x94, 0x08, 0xcb, 0x70, 0x6a, 0xc7, 0x5d, 0x4f, 0x7f, 0xc8, 0xb8, 0xe9, 0x78, 0xcc,
-	0xb1, 0xb0, 0x40, 0x1d, 0x27, 0x5f, 0x2e, 0x86, 0x7b, 0x4b, 0x85, 0x4c, 0x66, 0xf2, 0x11, 0x98,
-	0x82, 0x0a, 0x3f, 0xbc, 0x1c, 0xd1, 0x59, 0x24, 0xd4, 0x58, 0xe9, 0x7a, 0xa0, 0x8e, 0xce, 0xe5,
-	0x09, 0x7a, 0x03, 0x3a, 0xaa, 0xd4, 0xf2, 0xce, 0xba, 0x92, 0xda, 0x8b, 0xcb, 0x52, 0xf3, 0x54,
-	0x33, 0x2e, 0xb0, 0x70, 0x7f, 0xa9, 0xc1, 0xdd, 0xa7, 0x7e, 0x48, 0x82, 0xd5, 0x85, 0x56, 0xb5,
-	0xa0, 0xb6, 0xe9, 0x3c, 0xa8, 0x6f, 0x37, 0x0f, 0x1a, 0x9b, 0xcd, 0x03, 0xf7, 0x2b, 0xd8, 0x2f,
-	0x87, 0x9d, 0x54, 0xe7, 0x04, 0xea, 0xf4, 0x2a, 0x89, 0x7a, 0x55, 0xb4, 0x0f, 0x29, 0xd5, 0x3f,
-	0x1c, 0x5e, 0x9d, 0x5e, 0xc9, 0x17, 0x8e, 0x19, 0xa3, 0xec, 0x9c, 0x06, 0x7a, 0xd4, 0x76, 0xbd,
-	0xfc, 0x60, 0xf0, 0x67, 0x13, 0x4c, 0x79, 0xf5, 0x13, 0x3f, 0xf2, 0x27, 0x98, 0xa1, 0x67, 0x00,
-	0xf9, 0x36, 0x88, 0x5e, 0x29, 0x96, 0x74, 0xe5, 0xef, 0x01, 0xfb, 0x70, 0x9d, 0x59, 0x87, 0xe9,
-	0xbe, 0x76, 0x73, 0xd6, 0x45, 0xc9, 0x23, 0x75, 0x64, 0x2f, 0xbe, 0xfb, 0xed, 0xf7, 0x1f, 0xeb,
-	0x7b, 0xae, 0xd1, 0x9f, 0xbf, 0xd9, 0x97, 0xdf, 0xfc, 0x83, 0xda, 0x09, 0xfa, 0xa1, 0x06, 0xdd,
-	0x92, 0x08, 0x90, 0x53, 0xbc, 0xf7, 0x79, 0x0f, 0xcd, 0x7e, 0xf5, 0x1f, 0x10, 0x89, 0xf3, 0x07,
-	0x37, 0x67, 0x07, 0xc8, 0x0e, 0x12, 0x9b, 0x72, 0xcf, 0x9d, 0x6b, 0x22, 0xbe, 0x76, 0xc6, 0x24,
-	0x14, 0x98, 0xa9, 0x58, 0x4c, 0x94, 0xc7, 0x22, 0x73, 0xcf, 0x57, 0x93, 0x72, 0xee, 0x2b, 0x3b,
-	0x6d, 0x39, 0xf7, 0xd5, 0x8d, 0x26, 0xc9, 0x7d, 0xaa, 0x0c, 0x85, 0xdc, 0x07, 0xe5, 0xdc, 0x67,
-	0x60, 0x16, 0x36, 0x12, 0x74, 0x58, 0x4e, 0x6b, 0x79, 0xb3, 0xb1, 0x8f, 0xd6, 0xda, 0x13, 0xaf,
-	0xaf, 0xdf, 0x9c, 0xed, 0xa1, 0xdd, 0x40, 0x59, 0x74, 0xca, 0xda, 0xed, 0x49, 0xd9, 0xed, 0xb7,
-	0xb0, 0x5b, 0xd4, 0x15, 0x2a, 0xdd, 0xfb, 0x9c, 0x87, 0x62, 0x3b, 0xeb, 0x01, 0x89, 0xe7, 0xfb,
-	0x37, 0x67, 0x2f, 0xa0, 0xee, 0x3c, 0x31, 0xe5, 0x19, 0xef, 0x23, 0x94, 0xb9, 0xee, 0xa7, 0xe6,
-	0x87, 0xcd, 0x2f, 0xeb, 0xf1, 0x70, 0xd8, 0x56, 0x92, 0x7d, 0xeb, 0xef, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0xe0, 0xbb, 0x25, 0xb1, 0x13, 0x0f, 0x00, 0x00,
+var fileDescriptor_repo_8f8cd6343117a33e = []byte{
+	// 1112 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x57, 0x4f, 0x6f, 0xe3, 0x44,
+	0x14, 0x97, 0x1d, 0xc7, 0x8d, 0x9f, 0x9b, 0x96, 0xce, 0x76, 0xc1, 0x8a, 0x4a, 0x1b, 0x22, 0x90,
+	0xaa, 0xb2, 0x4d, 0x96, 0xb2, 0x20, 0xfe, 0xa3, 0x6e, 0x7b, 0x59, 0x2d, 0x7b, 0x71, 0xd1, 0x1e,
+	0xb8, 0x14, 0x27, 0x9e, 0x86, 0x51, 0x5d, 0x8f, 0x77, 0x3c, 0x49, 0xc9, 0x09, 0x09, 0x09, 0x3e,
+	0x40, 0xe1, 0x3b, 0xf0, 0x09, 0xb8, 0xf1, 0x2d, 0xb8, 0x73, 0x02, 0x89, 0x0f, 0xc0, 0x07, 0x40,
+	0xf3, 0xc7, 0x8e, 0x9d, 0x34, 0xe0, 0xa4, 0x17, 0x0e, 0x9c, 0x12, 0xcf, 0xfb, 0xfd, 0xe6, 0xbd,
+	0x79, 0xef, 0xf7, 0x9e, 0xc7, 0x00, 0x0c, 0x27, 0xb4, 0x9b, 0x30, 0xca, 0x29, 0x02, 0x9a, 0xe0,
+	0x38, 0x21, 0x9c, 0x91, 0xaf, 0x5b, 0xbb, 0x43, 0x4a, 0x87, 0x11, 0xee, 0x49, 0x4b, 0x7f, 0x74,
+	0xd1, 0xbb, 0x66, 0x41, 0x92, 0x60, 0x96, 0x2a, 0x6c, 0x6b, 0x6f, 0xd6, 0xce, 0xc9, 0x15, 0x4e,
+	0x79, 0x70, 0x95, 0x68, 0xc0, 0x8e, 0x06, 0x04, 0x09, 0xe9, 0x05, 0x71, 0x4c, 0x79, 0xc0, 0x09,
+	0x8d, 0x33, 0xfa, 0x03, 0xf9, 0x33, 0x38, 0x1c, 0xe2, 0xf8, 0x30, 0xbd, 0x0e, 0x86, 0x43, 0xcc,
+	0x7a, 0x34, 0x91, 0x88, 0x79, 0x74, 0xe7, 0x27, 0x0b, 0xb6, 0x4e, 0x18, 0x0e, 0x38, 0xf6, 0x71,
+	0x42, 0x7d, 0xfc, 0x62, 0x84, 0x53, 0x8e, 0x1e, 0x82, 0x15, 0x07, 0x57, 0xd8, 0x33, 0xda, 0xc6,
+	0xbe, 0x7b, 0xb4, 0xd3, 0x55, 0x0e, 0xbb, 0x59, 0x44, 0xdd, 0x33, 0xce, 0x48, 0x3c, 0x7c, 0x1e,
+	0x44, 0x23, 0xec, 0x4b, 0x24, 0xfa, 0x04, 0xdc, 0x10, 0xa7, 0x03, 0x46, 0xa4, 0x27, 0xcf, 0xac,
+	0x40, 0x2c, 0x12, 0x84, 0x47, 0x3e, 0x49, 0xb0, 0x57, 0xab, 0xe2, 0x51, 0x20, 0x51, 0x17, 0x6a,
+	0x23, 0x16, 0x79, 0x56, 0x05, 0x82, 0x00, 0xa2, 0x8f, 0x00, 0x06, 0x0c, 0x87, 0x38, 0xe6, 0x24,
+	0x88, 0xbc, 0x7a, 0x05, 0x5a, 0x01, 0x2f, 0xd8, 0x63, 0x92, 0x92, 0x3e, 0x89, 0x08, 0x9f, 0x78,
+	0x76, 0x15, 0xf6, 0x14, 0x8f, 0x76, 0xc0, 0x49, 0x18, 0x1d, 0x93, 0x10, 0xb3, 0xd4, 0x5b, 0x6b,
+	0xd7, 0xf6, 0x1d, 0x7f, 0xba, 0x80, 0x0e, 0xc1, 0x8e, 0x82, 0x3e, 0x8e, 0x52, 0xaf, 0xd1, 0xae,
+	0xed, 0xbb, 0x47, 0xf7, 0xbb, 0x53, 0xb5, 0x74, 0x45, 0x59, 0x3e, 0x13, 0x56, 0x5f, 0x83, 0xd0,
+	0xbb, 0xe0, 0xa4, 0x38, 0xc2, 0x03, 0x4e, 0x59, 0xea, 0x39, 0x92, 0xe1, 0xcd, 0x32, 0xce, 0x34,
+	0xc0, 0x9f, 0x42, 0xd1, 0xc7, 0xe0, 0x0e, 0x02, 0x8e, 0x87, 0x94, 0x4d, 0xce, 0x49, 0xe8, 0x41,
+	0xa5, 0x0c, 0x68, 0xc2, 0x93, 0xb0, 0xf3, 0x14, 0x50, 0x51, 0x28, 0x69, 0x42, 0xe3, 0x14, 0xa3,
+	0x77, 0x60, 0x4d, 0xc8, 0x5c, 0x6c, 0x58, 0x45, 0x2c, 0xb6, 0x00, 0x3f, 0x09, 0x3b, 0xbf, 0x59,
+	0xb0, 0xf5, 0x8c, 0x86, 0xe4, 0x62, 0x52, 0x94, 0xdd, 0x6a, 0x9b, 0xe5, 0x6a, 0x35, 0x57, 0x55,
+	0x6b, 0x6d, 0x55, 0xb5, 0x5a, 0xcb, 0xaa, 0xb5, 0xbe, 0x9a, 0x5a, 0xed, 0x3b, 0xa9, 0x75, 0xed,
+	0x2e, 0x6a, 0x6d, 0x2c, 0x56, 0xab, 0xb3, 0xb4, 0x5a, 0x61, 0x65, 0xb5, 0xba, 0xcb, 0xab, 0xb5,
+	0xa8, 0xaf, 0xbb, 0xa9, 0xf5, 0x10, 0xd0, 0x29, 0x8e, 0xb0, 0x92, 0x7e, 0x9a, 0xa9, 0xf5, 0x95,
+	0xe2, 0x66, 0x22, 0x49, 0x19, 0xbc, 0x0b, 0xf7, 0x4a, 0x70, 0xed, 0x7c, 0x21, 0xfe, 0x3b, 0x03,
+	0x9c, 0x3c, 0x71, 0xe8, 0x7d, 0x70, 0x64, 0xea, 0xce, 0x2f, 0xf1, 0xa4, 0x92, 0x32, 0x1b, 0x12,
+	0xfe, 0x14, 0x4f, 0x44, 0xce, 0x14, 0x75, 0x2c, 0x0c, 0x95, 0xd4, 0x09, 0x92, 0x20, 0xff, 0x77,
+	0x7e, 0x34, 0x60, 0xbd, 0x58, 0x0e, 0xf4, 0x29, 0xac, 0x67, 0x05, 0xa9, 0x1c, 0x8d, 0x9b, 0x31,
+	0x44, 0x40, 0x27, 0xb0, 0x91, 0x6f, 0x50, 0x3d, 0xa6, 0x66, 0xc6, 0x51, 0x61, 0xfd, 0x62, 0x83,
+	0x25, 0xc2, 0xfa, 0x7f, 0x3c, 0xfc, 0x37, 0xc6, 0xc3, 0x11, 0xd4, 0xe9, 0x75, 0x8c, 0x99, 0xd7,
+	0xa8, 0x40, 0x54, 0xd0, 0xf2, 0x48, 0x71, 0x16, 0x8f, 0x14, 0x58, 0x7a, 0xa4, 0xb8, 0xd5, 0x47,
+	0xca, 0x23, 0xb0, 0x53, 0x1e, 0xf0, 0x51, 0xea, 0xad, 0x57, 0x91, 0x8f, 0xc2, 0xa2, 0x0f, 0xc1,
+	0x1d, 0xc8, 0xf7, 0xde, 0xb9, 0xb8, 0x87, 0x79, 0x4d, 0x49, 0x6d, 0xcd, 0x51, 0x3f, 0xcf, 0x2e,
+	0x69, 0x32, 0xd3, 0x01, 0xc7, 0x62, 0x41, 0x90, 0xd5, 0x36, 0x8a, 0xbc, 0xf1, 0xef, 0x64, 0x05,
+	0x97, 0xe4, 0x53, 0xd8, 0x92, 0x7a, 0xcf, 0xe7, 0x60, 0x8a, 0xb9, 0xb7, 0x79, 0xfb, 0x79, 0x4f,
+	0x34, 0xc6, 0xdf, 0x64, 0x85, 0xa7, 0x33, 0xcc, 0x3b, 0x7f, 0x98, 0xaa, 0xab, 0xb3, 0xb5, 0xd9,
+	0xc9, 0x6a, 0x2c, 0x37, 0x59, 0x57, 0x68, 0xa7, 0x47, 0x60, 0x47, 0x74, 0x10, 0x44, 0xd5, 0x6e,
+	0x77, 0x1a, 0x5b, 0xa8, 0x96, 0xb5, 0x7a, 0xb5, 0xea, 0x77, 0xa9, 0x96, 0xbd, 0x4c, 0xb5, 0x3a,
+	0x7f, 0x9a, 0xb0, 0x7d, 0x2a, 0x87, 0x40, 0xbf, 0xda, 0x7b, 0x02, 0xa1, 0x3c, 0x93, 0x62, 0x55,
+	0xe5, 0x0a, 0xe5, 0xf7, 0x60, 0xb9, 0x26, 0x87, 0xc3, 0x6e, 0xa9, 0x5d, 0x2d, 0x69, 0x29, 0x36,
+	0xe4, 0xcb, 0x79, 0xa6, 0xea, 0x6a, 0x7f, 0x9d, 0x8b, 0x16, 0x34, 0xb2, 0x1e, 0xf3, 0x6c, 0x69,
+	0xc9, 0x9f, 0x45, 0x13, 0xcb, 0x6e, 0xaa, 0xd4, 0xfd, 0x0a, 0x8a, 0xde, 0x83, 0x46, 0xd6, 0x4c,
+	0x95, 0x7a, 0x3f, 0x47, 0xa3, 0x6d, 0xa8, 0x47, 0xe4, 0x8a, 0x70, 0xcf, 0x69, 0x1b, 0xfb, 0x4d,
+	0x5f, 0x3d, 0x88, 0xb8, 0xe9, 0xc5, 0x85, 0x10, 0x35, 0xc8, 0x65, 0xfd, 0x84, 0xf6, 0x66, 0x5f,
+	0xfd, 0xf2, 0xc0, 0x85, 0x97, 0x3b, 0x86, 0xfb, 0x33, 0x99, 0xd6, 0xaf, 0xd8, 0x3d, 0x70, 0x39,
+	0xe5, 0x41, 0x74, 0x3e, 0xa0, 0xa3, 0x98, 0x4b, 0x69, 0x37, 0x7d, 0x90, 0x4b, 0x27, 0x62, 0x05,
+	0xbd, 0x09, 0x0d, 0x59, 0x0b, 0xe1, 0xd4, 0x94, 0x9d, 0xf4, 0xd2, 0x6c, 0x27, 0xf9, 0xb2, 0x5a,
+	0xa2, 0x73, 0x7e, 0x36, 0xe0, 0xde, 0xf3, 0x20, 0x22, 0xe1, 0xfc, 0xd7, 0x91, 0xac, 0x91, 0xb1,
+	0xec, 0x78, 0x37, 0x57, 0x1b, 0xef, 0xb5, 0xe5, 0xc6, 0x7b, 0xe7, 0x4b, 0xd8, 0x2e, 0x87, 0xad,
+	0xb3, 0x73, 0x00, 0x26, 0xbd, 0xd4, 0x51, 0xcf, 0xab, 0xfa, 0x31, 0xa5, 0xea, 0x1e, 0xe0, 0x9b,
+	0xf4, 0x52, 0x0c, 0x6c, 0xcc, 0x18, 0x65, 0x27, 0x34, 0x54, 0xad, 0xde, 0xf4, 0xa7, 0x0b, 0x47,
+	0x7f, 0x59, 0xe0, 0x8a, 0xad, 0x9f, 0x05, 0x71, 0x30, 0xc4, 0x0c, 0xbd, 0x00, 0x98, 0x7e, 0x1b,
+	0xa0, 0x57, 0x8b, 0x29, 0x9d, 0xfb, 0xb8, 0x6c, 0xed, 0x2e, 0x32, 0xab, 0x30, 0x3b, 0xaf, 0xdf,
+	0x1c, 0x37, 0x91, 0xee, 0xe2, 0xb6, 0xa8, 0xc5, 0xb7, 0xbf, 0xfe, 0xfe, 0x83, 0xb9, 0xd1, 0x71,
+	0x7a, 0xe3, 0xb7, 0x7a, 0xe2, 0x39, 0xfd, 0xc0, 0x38, 0x40, 0xdf, 0x1b, 0xd0, 0x2c, 0x89, 0x00,
+	0xb5, 0x8b, 0xfb, 0xde, 0xd6, 0x89, 0xad, 0xd7, 0xfe, 0x01, 0xa1, 0x9d, 0x3f, 0xbc, 0x39, 0xde,
+	0x41, 0xad, 0x50, 0xdb, 0xa4, 0xfb, 0xb4, 0x7d, 0x4d, 0xf8, 0x57, 0xed, 0x0b, 0x12, 0x71, 0xcc,
+	0x64, 0x2c, 0x2e, 0x9a, 0xc6, 0x22, 0xce, 0x3e, 0xbd, 0x69, 0x96, 0xcf, 0x3e, 0xf7, 0x85, 0x53,
+	0x3e, 0xfb, 0xfc, 0x05, 0x55, 0x9f, 0xfd, 0x4a, 0x1a, 0x0a, 0x67, 0x3f, 0x2a, 0x9f, 0x7d, 0x04,
+	0x6e, 0xe1, 0x82, 0x89, 0x76, 0xcb, 0xc7, 0x9a, 0xbd, 0xa8, 0xb6, 0xf6, 0x16, 0xda, 0xb5, 0xd7,
+	0x37, 0x6e, 0x8e, 0x37, 0xd0, 0x7a, 0x28, 0x2d, 0xea, 0xc8, 0xca, 0xed, 0x41, 0xd9, 0xed, 0x37,
+	0xb0, 0x5e, 0xd4, 0x15, 0x2a, 0xed, 0x7b, 0x4b, 0xa3, 0xb4, 0xda, 0x8b, 0x01, 0xda, 0xf3, 0x83,
+	0x9b, 0xe3, 0x4d, 0xd4, 0x1c, 0x6b, 0xd3, 0xf4, 0xc4, 0xdb, 0x08, 0xe5, 0xae, 0x7b, 0x99, 0xf9,
+	0xb1, 0xf5, 0x85, 0x99, 0xf4, 0xfb, 0xb6, 0x94, 0xec, 0xdb, 0x7f, 0x07, 0x00, 0x00, 0xff, 0xff,
+	0x22, 0x5e, 0xda, 0x41, 0x60, 0x11, 0x00, 0x00,
 }
