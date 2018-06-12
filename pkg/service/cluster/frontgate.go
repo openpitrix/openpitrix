@@ -11,6 +11,7 @@ import (
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -42,16 +43,21 @@ func (f *Frontgate) activate(frontgate *models.Cluster) error {
 	if frontgate.TransitionStatus != "" {
 		logger.Warn("Frontgate cluster [%s] is in [%s] transition status, please try laster",
 			frontgate.ClusterId, frontgate.TransitionStatus)
-		return fmt.Errorf("Frontgate service is [%s], please try later. ", frontgate.TransitionStatus)
+		err := fmt.Errorf("frontgate service is [%s], please try later", frontgate.TransitionStatus)
+		return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceTransitionStatus, "frontgate", constants.StatusUpdating)
 	}
 
 	if frontgate.Status == constants.StatusActive {
 		return nil
 	} else if frontgate.Status == constants.StatusStopped {
-		return f.StartCluster(frontgate)
+		err := f.StartCluster(frontgate)
+		if err != nil {
+			return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorStartResourceFailed, frontgate.ClusterId)
+		}
+		return nil
 	} else {
-		logger.Critical("Frontgate cluster [%s] is in wrong status [%s]", frontgate.ClusterId, frontgate.Status)
-		return fmt.Errorf("Frontgate cluster is in wrong status [%s]. ", frontgate.Status)
+		err := fmt.Errorf("frontgate cluster [%s] is in wrong status [%s]", frontgate.ClusterId, frontgate.Status)
+		return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorResourceTransitionStatus, frontgate.ClusterId, frontgate.Status)
 	}
 }
 
@@ -83,40 +89,44 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 		// Check vpc status
 		providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider)
 		if err != nil {
-			logger.Error("No such provider [%s]. ", f.Runtime.Provider)
-			return err
+			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, f.Runtime.Provider)
 		}
 		vpc, err := providerInterface.DescribeVpc(register.Runtime.RuntimeId, vpcId)
 		if err != nil {
-			return err
+			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, vpcId)
 		}
 		if vpc == nil {
-			return fmt.Errorf("Describe vpc [%s] failed. ", vpcId)
+			err = fmt.Errorf("describe vpc [%s] failed", vpcId)
+			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed, vpcId)
 		}
 		if vpc.Status != constants.StatusActive {
-			logger.Warn("Vpc [%s] is not active. ", vpcId)
-			return fmt.Errorf("Vpc [%s] is not active. ", vpcId)
+			err = fmt.Errorf("vpc [%s] is not active", vpcId)
+			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotInStatus, vpcId, constants.StatusActive)
 		}
 		if vpc.TransitionStatus != "" {
-			logger.Warn("Vpc [%s] is now updating. ", vpcId)
-			return fmt.Errorf("Vpc [%s] is now updating. ", vpcId)
+			err = fmt.Errorf("vpc [%s] is now updating", vpcId)
+			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceTransitionStatus, vpcId, constants.StatusUpdating)
 		}
 
 		frontgates, err := f.getFrontgateFromDb(vpcId, userId)
 		if err != nil {
-			return err
+			return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, vpcId)
 		}
 		if len(frontgates) == 0 {
 			frontgateId, err := f.CreateCluster(register)
 			frontgate = &models.Cluster{ClusterId: frontgateId}
-			return err
+			if err != nil {
+				return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed, frontgateId)
+			}
+			return nil
 		} else if len(frontgates) == 1 {
 			frontgate = frontgates[0]
 			err = f.activate(frontgate)
 			return err
 		} else {
-			logger.Critical("More than one frontgate non-ceased cluster in the vpc [%s] for user [%s]", vpcId, userId)
-			return fmt.Errorf("More than one frontgate non-ceased cluster. ")
+			logger.Critical("More than one non-ceased frontgate cluster in the vpc [%s] for user [%s]", vpcId, userId)
+			err = fmt.Errorf("more than one non-ceased frontgate cluster")
+			return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorInternalError)
 		}
 	})
 	if err != nil {

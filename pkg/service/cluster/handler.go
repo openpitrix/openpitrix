@@ -206,7 +206,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		frontgate, err := fg.GetActiveFrontgate(vpcId, s.UserId, register)
 		if err != nil {
 			logger.Error("Get frontgate in vpc [%s] user [%s] failed. ", vpcId, s.UserId)
-			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, vpcId)
+			return nil, err
 		}
 
 		register.FrontgateId = frontgate.ClusterId
