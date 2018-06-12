@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRepoRepoCategorySet openpitrix repo repo category set
-// swagger:model openpitrixRepoRepoCategorySet
-type OpenpitrixRepoRepoCategorySet []*OpenpitrixRepoCategory
+// OpenpitrixAppCategorySet openpitrix app category set
+// swagger:model openpitrixAppCategorySet
+type OpenpitrixAppCategorySet []*OpenpitrixResourceCategory
 
-// Validate validates this openpitrix repo repo category set
-func (m OpenpitrixRepoRepoCategorySet) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix app category set
+func (m OpenpitrixAppCategorySet) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {

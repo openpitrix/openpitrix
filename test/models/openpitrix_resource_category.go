@@ -12,9 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRepoCategory openpitrix repo category
-// swagger:model openpitrixRepoCategory
-type OpenpitrixRepoCategory struct {
+// OpenpitrixResourceCategory openpitrix resource category
+// swagger:model openpitrixResourceCategory
+type OpenpitrixResourceCategory struct {
 
 	// category id
 	CategoryID string `json:"category_id,omitempty"`
@@ -35,8 +35,8 @@ type OpenpitrixRepoCategory struct {
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 }
 
-// Validate validates this openpitrix repo category
-func (m *OpenpitrixRepoCategory) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix resource category
+func (m *OpenpitrixResourceCategory) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -46,7 +46,7 @@ func (m *OpenpitrixRepoCategory) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixRepoCategory) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixResourceCategory) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -54,8 +54,8 @@ func (m *OpenpitrixRepoCategory) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixRepoCategory) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixRepoCategory
+func (m *OpenpitrixResourceCategory) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixResourceCategory
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

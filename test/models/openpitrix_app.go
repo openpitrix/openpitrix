@@ -16,11 +16,11 @@ import (
 // swagger:model openpitrixApp
 type OpenpitrixApp struct {
 
-	// app category set
-	AppCategorySet OpenpitrixAppAppCategorySet `json:"app_category_set"`
-
 	// app id
 	AppID string `json:"app_id,omitempty"`
+
+	// category set
+	CategorySet OpenpitrixAppCategorySet `json:"category_set"`
 
 	// chart name
 	ChartName string `json:"chart_name,omitempty"`

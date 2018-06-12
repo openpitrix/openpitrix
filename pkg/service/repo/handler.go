@@ -7,6 +7,7 @@ package repo
 import (
 	"context"
 	neturl "net/url"
+	"strings"
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	indexerclient "openpitrix.io/openpitrix/pkg/client/repo_indexer"
@@ -17,6 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
@@ -27,6 +29,7 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 	var repos []*models.Repo
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
+	categoryIds := req.GetCategoryId()
 
 	labelMap, err := neturl.ParseQuery(req.GetLabel().GetValue())
 	if err != nil {
@@ -44,6 +47,14 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditionsWithPrefix(req, models.RepoTableName))
+
+	if len(categoryIds) > 0 {
+		subqueryStmt := p.Db.
+			Select(models.ColumnResouceId).
+			From(models.CategoryResourceTableName).
+			Where(db.Eq(models.ColumnCategoryId, categoryIds))
+		query = query.Where(db.Eq(models.ColumnAppId, []*db.SelectQuery{subqueryStmt}))
+	}
 
 	query = manager.AddQueryJoinWithMap(query, models.RepoTableName, models.RepoLabelTableName, models.ColumnRepoId,
 		models.ColumnLabelKey, models.ColumnLabelValue, labelMap)
@@ -126,6 +137,11 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
+	}
+
+	err = categoryutil.SyncResourceCategories(p.Db, newRepo.RepoId, strings.Split(req.GetCategoryId().GetValue(), ","))
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateRepoResponse{
@@ -220,6 +236,10 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
+	}
+	err = categoryutil.SyncResourceCategories(p.Db, repoId, strings.Split(req.GetCategoryId().GetValue(), ","))
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.ModifyRepoResponse{

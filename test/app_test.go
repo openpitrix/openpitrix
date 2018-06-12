@@ -105,7 +105,7 @@ func TestApp(t *testing.T) {
 	}
 	var enabledCategoryIds []string
 	var disabledCategoryIds []string
-	for _, a := range app.AppCategorySet {
+	for _, a := range app.CategorySet {
 		if a.Status == constants.StatusEnabled {
 			enabledCategoryIds = append(enabledCategoryIds, a.CategoryID)
 		}

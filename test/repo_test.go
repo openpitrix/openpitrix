@@ -12,6 +12,8 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
@@ -83,6 +85,7 @@ func TestRepo(t *testing.T) {
 			Credential:  `{}`,
 			Visibility:  "public",
 			Providers:   []string{constants.ProviderKubernetes},
+			CategoryID:  "xx,yy,zz",
 		})
 	createResp, err := client.RepoManager.CreateRepo(createParams)
 	if err != nil {
@@ -100,6 +103,7 @@ func TestRepo(t *testing.T) {
 			Credential:  `{}`,
 			Visibility:  "private",
 			Providers:   []string{constants.ProviderKubernetes},
+			CategoryID:  "aa,bb,cc,xx",
 		})
 	modifyResp, err := client.RepoManager.ModifyRepo(modifyParams)
 	if err != nil {
@@ -116,9 +120,24 @@ func TestRepo(t *testing.T) {
 	if len(repos) != 1 {
 		t.Fatalf("failed to describe repos with params [%+v]", describeParams)
 	}
-	if repos[0].Name != testRepoName || repos[0].Description != "cc" || repos[0].URL != repoUrl {
-		t.Fatalf("failed to modify repo [%+v]", repos[0])
+	repo := repos[0]
+	require.Equal(t, testRepoName, repo.Name)
+	require.Equal(t, "cc", repo.Description)
+	require.Equal(t, repoUrl, repo.URL)
+
+	var enabledCategoryIds []string
+	var disabledCategoryIds []string
+	for _, a := range repo.CategorySet {
+		if a.Status == constants.StatusEnabled {
+			enabledCategoryIds = append(enabledCategoryIds, a.CategoryID)
+		}
+		if a.Status == constants.StatusDisabled {
+			disabledCategoryIds = append(disabledCategoryIds, a.CategoryID)
+		}
 	}
+
+	require.Equal(t, "aa,bb,cc,xx", getSortedString(enabledCategoryIds))
+	require.Equal(t, "yy,zz", getSortedString(disabledCategoryIds))
 	// delete repo
 	deleteParams := repo_manager.NewDeleteReposParams()
 	deleteParams.WithBody(&models.OpenpitrixDeleteReposRequest{
@@ -141,7 +160,7 @@ func TestRepo(t *testing.T) {
 	if len(repos) != 1 {
 		t.Fatalf("failed to describe repos with params [%+v]", describeParams)
 	}
-	repo := repos[0]
+	repo = repos[0]
 	if repo.RepoID != repoId {
 		t.Fatalf("failed to describe repo")
 	}

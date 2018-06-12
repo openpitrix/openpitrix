@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixRepo
 type OpenpitrixRepo struct {
 
+	// category set
+	CategorySet OpenpitrixRepoCategorySet `json:"category_set"`
+
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
@@ -36,9 +39,6 @@ type OpenpitrixRepo struct {
 
 	// providers
 	Providers []string `json:"providers"`
-
-	// repo category set
-	RepoCategorySet OpenpitrixRepoRepoCategorySet `json:"repo_category_set"`
 
 	// repo id
 	RepoID string `json:"repo_id,omitempty"`

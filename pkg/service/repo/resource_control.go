@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -263,7 +264,6 @@ func (p *Server) formatRepoSet(repos []*models.Repo) (pbRepos []*pb.Repo, err er
 	for _, repo := range repos {
 		repoIds = append(repoIds, repo.RepoId)
 	}
-
 	var providersMap map[string][]*models.RepoProvider
 	providersMap, err = p.getProvidersMap(repoIds)
 	if err != nil {
@@ -282,12 +282,21 @@ func (p *Server) formatRepoSet(repos []*models.Repo) (pbRepos []*pb.Repo, err er
 		return
 	}
 
+	var rcmap map[string][]*pb.ResourceCategory
+	rcmap, err = categoryutil.GetResourcesCategories(p.Db, repoIds)
+	if err != nil {
+		return
+	}
+
 	for _, pbRepo := range pbRepos {
 		repoId := pbRepo.GetRepoId().GetValue()
 		pbRepo.Labels = models.RepoLabelsToPbs(labelsMap[repoId])
 		pbRepo.Selectors = models.RepoSelectorsToPbs(selectorsMap[repoId])
 		for _, p := range providersMap[repoId] {
 			pbRepo.Providers = append(pbRepo.Providers, p.Provider)
+		}
+		if categorySet, ok := rcmap[pbRepo.GetRepoId().GetValue()]; ok {
+			pbRepo.CategorySet = categorySet
 		}
 	}
 	return

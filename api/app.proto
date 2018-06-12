@@ -12,6 +12,7 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
+import "types.proto";
 
 
 message CreateAppRequest {
@@ -81,17 +82,8 @@ message App {
 	google.protobuf.Timestamp create_time = 15;
 	google.protobuf.Timestamp status_time = 16;
 	google.protobuf.Timestamp update_time = 17;
-	repeated AppCategory app_category_set = 18;
+	repeated ResourceCategory category_set = 18;
 	AppVersion latest_app_version = 19;
-}
-
-message AppCategory {
-	google.protobuf.StringValue category_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue locale = 3;
-	google.protobuf.StringValue status = 4;
-	google.protobuf.Timestamp create_time = 5;
-	google.protobuf.Timestamp status_time = 6;
 }
 
 message DescribeAppsRequest {

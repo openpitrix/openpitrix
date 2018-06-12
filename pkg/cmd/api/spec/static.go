@@ -1940,39 +1940,14 @@ var Files = map[string]string{
           "type": "string",
           "format": "date-time"
         },
-        "app_category_set": {
+        "category_set": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixAppCategory"
+            "$ref": "#/definitions/openpitrixResourceCategory"
           }
         },
         "latest_app_version": {
           "$ref": "#/definitions/openpitrixAppVersion"
-        }
-      }
-    },
-    "openpitrixAppCategory": {
-      "type": "object",
-      "properties": {
-        "category_id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "locale": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "status_time": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -2285,6 +2260,31 @@ var Files = map[string]string{
       "properties": {
         "version_id": {
           "type": "string"
+        }
+      }
+    },
+    "openpitrixResourceCategory": {
+      "type": "object",
+      "properties": {
+        "category_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -3503,36 +3503,11 @@ var Files = map[string]string{
           "type": "string",
           "format": "date-time"
         },
-        "repo_category_set": {
+        "category_set": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixRepoCategory"
+            "$ref": "#/definitions/openpitrixResourceCategory"
           }
-        }
-      }
-    },
-    "openpitrixRepoCategory": {
-      "type": "object",
-      "properties": {
-        "category_id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "locale": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "status_time": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },

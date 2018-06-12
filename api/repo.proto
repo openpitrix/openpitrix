@@ -12,6 +12,7 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
+import "types.proto";
 
 message CreateRepoRequest {
 	google.protobuf.StringValue name = 1;
@@ -82,16 +83,7 @@ message Repo {
 	google.protobuf.StringValue status = 12;
 	google.protobuf.Timestamp create_time = 13;
 	google.protobuf.Timestamp status_time = 14;
-	repeated RepoCategory repo_category_set = 15;
-}
-
-message RepoCategory {
-	google.protobuf.StringValue category_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue locale = 3;
-	google.protobuf.StringValue status = 4;
-	google.protobuf.Timestamp create_time = 5;
-	google.protobuf.Timestamp status_time = 6;
+	repeated ResourceCategory category_set = 15;
 }
 
 message DescribeReposRequest {
