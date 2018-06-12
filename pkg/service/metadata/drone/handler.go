@@ -19,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/drone"
 	"openpitrix.io/openpitrix/pkg/pb/types"
+	"openpitrix.io/openpitrix/pkg/service/metadata/drone/yunify_confdfunc"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
@@ -118,6 +119,7 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 	logger.Info("StartConfd: %v", cfg)
 
 	err := p.confd.Start(func(opt *libconfd.Config) {
+		opt.FuncMap = yunify_confdfunc.MakeCustomFuncMap()
 		opt.HookAbsKeyAdjuster = func(absKey string) (realKey string) {
 			if absKey == "/"+cfg.ConfdSelfHost || strings.HasPrefix(absKey, "/"+cfg.ConfdSelfHost+"/") {
 				return absKey
