@@ -5,6 +5,7 @@
 package qingcloud
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -18,9 +19,11 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 var MyProvider = constants.ProviderQingCloud
@@ -798,8 +801,8 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 	return p.WaitVolumeTask(task)
 }
 
-func (p *ProviderHandler) DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error) {
-	qingcloudService, err := p.initService(runtimeId)
+func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
+	qingcloudService, err := p.initService(req.GetRuntimeId().GetValue())
 	if err != nil {
 		logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return nil, err
@@ -811,11 +814,21 @@ func (p *ProviderHandler) DescribeSubnet(runtimeId, subnetId string) (*models.Su
 		return nil, err
 	}
 
-	output, err := vxnetService.DescribeVxNets(
-		&qcservice.DescribeVxNetsInput{
-			VxNets: qcservice.StringSlice([]string{subnetId}),
-		},
-	)
+	input := new(qcservice.DescribeVxNetsInput)
+	if len(req.GetSubnetId()) > 0 {
+		input.VxNets = qcservice.StringSlice(req.GetSubnetId())
+	}
+	if req.GetLimit() > 0 {
+		input.Limit = qcservice.Int(int(req.GetLimit()))
+	}
+	if req.GetOffset() > 0 {
+		input.Offset = qcservice.Int(int(req.GetOffset()))
+	}
+	if req.GetSubnetType().GetValue() > 0 {
+		input.VxNetType = qcservice.Int(int(req.GetSubnetType().GetValue()))
+	}
+
+	output, err := vxnetService.DescribeVxNets(input)
 	if err != nil {
 		logger.Error("DescribeVxNets to %s failed: %+v", MyProvider, err)
 		return nil, err
@@ -830,19 +843,27 @@ func (p *ProviderHandler) DescribeSubnet(runtimeId, subnetId string) (*models.Su
 	}
 
 	if len(output.VxNetSet) == 0 {
-		logger.Error("Send DescribeVxNets to %s failed with 0 output instances", MyProvider)
-		return nil, fmt.Errorf("send DescribeVxNets to %s failed with 0 output instances", MyProvider)
+		logger.Error("Send DescribeVxNets to %s failed with 0 output subnets", MyProvider)
+		return nil, fmt.Errorf("send DescribeVxNets to %s failed with 0 output subnets", MyProvider)
 	}
 
-	vxnet := output.VxNetSet[0]
-	return &models.Subnet{
-		SubnetId:    qcservice.StringValue(vxnet.VxNetID),
-		Name:        qcservice.StringValue(vxnet.VxNetName),
-		CreateTime:  qcservice.TimeValue(vxnet.CreateTime),
-		Description: qcservice.StringValue(vxnet.Description),
-		InstanceIds: qcservice.StringValueSlice(vxnet.InstanceIDs),
-		VpcId:       qcservice.StringValue(vxnet.VpcRouterID),
-	}, nil
+	response := new(pb.DescribeSubnetsResponse)
+
+	response.TotalCount = uint32(qcservice.IntValue(output.TotalCount))
+	for _, vxnet := range output.VxNetSet {
+		subnet := &pb.Subnet{
+			SubnetId:    pbutil.ToProtoString(qcservice.StringValue(vxnet.VxNetID)),
+			Name:        pbutil.ToProtoString(qcservice.StringValue(vxnet.VxNetName)),
+			CreateTime:  pbutil.ToProtoTimestamp(qcservice.TimeValue(vxnet.CreateTime)),
+			Description: pbutil.ToProtoString(qcservice.StringValue(vxnet.Description)),
+			InstanceId:  qcservice.StringValueSlice(vxnet.InstanceIDs),
+			VpcId:       pbutil.ToProtoString(qcservice.StringValue(vxnet.VpcRouterID)),
+			SubnetType:  pbutil.ToProtoUInt32(uint32(qcservice.IntValue(vxnet.VxNetType))),
+		}
+		response.SubnetSet = append(response.SubnetSet, subnet)
+	}
+
+	return response, nil
 }
 
 func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {

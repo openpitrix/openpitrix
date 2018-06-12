@@ -1704,9 +1704,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// AppManagerClient is the client API for AppManager service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for AppManager service
+
 type AppManagerClient interface {
 	CreateApp(ctx context.Context, in *CreateAppRequest, opts ...grpc.CallOption) (*CreateAppResponse, error)
 	DescribeApps(ctx context.Context, in *DescribeAppsRequest, opts ...grpc.CallOption) (*DescribeAppsResponse, error)
@@ -1730,7 +1729,7 @@ func NewAppManagerClient(cc *grpc.ClientConn) AppManagerClient {
 
 func (c *appManagerClient) CreateApp(ctx context.Context, in *CreateAppRequest, opts ...grpc.CallOption) (*CreateAppResponse, error) {
 	out := new(CreateAppResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/CreateApp", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/CreateApp", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1739,7 +1738,7 @@ func (c *appManagerClient) CreateApp(ctx context.Context, in *CreateAppRequest, 
 
 func (c *appManagerClient) DescribeApps(ctx context.Context, in *DescribeAppsRequest, opts ...grpc.CallOption) (*DescribeAppsResponse, error) {
 	out := new(DescribeAppsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DescribeApps", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DescribeApps", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1748,7 +1747,7 @@ func (c *appManagerClient) DescribeApps(ctx context.Context, in *DescribeAppsReq
 
 func (c *appManagerClient) ModifyApp(ctx context.Context, in *ModifyAppRequest, opts ...grpc.CallOption) (*ModifyAppResponse, error) {
 	out := new(ModifyAppResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/ModifyApp", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/ModifyApp", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1757,7 +1756,7 @@ func (c *appManagerClient) ModifyApp(ctx context.Context, in *ModifyAppRequest, 
 
 func (c *appManagerClient) DeleteApps(ctx context.Context, in *DeleteAppsRequest, opts ...grpc.CallOption) (*DeleteAppsResponse, error) {
 	out := new(DeleteAppsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DeleteApps", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DeleteApps", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1766,7 +1765,7 @@ func (c *appManagerClient) DeleteApps(ctx context.Context, in *DeleteAppsRequest
 
 func (c *appManagerClient) CreateAppVersion(ctx context.Context, in *CreateAppVersionRequest, opts ...grpc.CallOption) (*CreateAppVersionResponse, error) {
 	out := new(CreateAppVersionResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/CreateAppVersion", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/CreateAppVersion", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1775,7 +1774,7 @@ func (c *appManagerClient) CreateAppVersion(ctx context.Context, in *CreateAppVe
 
 func (c *appManagerClient) DescribeAppVersions(ctx context.Context, in *DescribeAppVersionsRequest, opts ...grpc.CallOption) (*DescribeAppVersionsResponse, error) {
 	out := new(DescribeAppVersionsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DescribeAppVersions", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DescribeAppVersions", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1784,7 +1783,7 @@ func (c *appManagerClient) DescribeAppVersions(ctx context.Context, in *Describe
 
 func (c *appManagerClient) ModifyAppVersion(ctx context.Context, in *ModifyAppVersionRequest, opts ...grpc.CallOption) (*ModifyAppVersionResponse, error) {
 	out := new(ModifyAppVersionResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/ModifyAppVersion", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/ModifyAppVersion", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1793,7 +1792,7 @@ func (c *appManagerClient) ModifyAppVersion(ctx context.Context, in *ModifyAppVe
 
 func (c *appManagerClient) DeleteAppVersions(ctx context.Context, in *DeleteAppVersionsRequest, opts ...grpc.CallOption) (*DeleteAppVersionsResponse, error) {
 	out := new(DeleteAppVersionsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DeleteAppVersions", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DeleteAppVersions", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1802,7 +1801,7 @@ func (c *appManagerClient) DeleteAppVersions(ctx context.Context, in *DeleteAppV
 
 func (c *appManagerClient) GetAppVersionPackage(ctx context.Context, in *GetAppVersionPackageRequest, opts ...grpc.CallOption) (*GetAppVersionPackageResponse, error) {
 	out := new(GetAppVersionPackageResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackage", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackage", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1811,14 +1810,15 @@ func (c *appManagerClient) GetAppVersionPackage(ctx context.Context, in *GetAppV
 
 func (c *appManagerClient) GetAppVersionPackageFiles(ctx context.Context, in *GetAppVersionPackageFilesRequest, opts ...grpc.CallOption) (*GetAppVersionPackageFilesResponse, error) {
 	out := new(GetAppVersionPackageFilesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackageFiles", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackageFiles", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AppManagerServer is the server API for AppManager service.
+// Server API for AppManager service
+
 type AppManagerServer interface {
 	CreateApp(context.Context, *CreateAppRequest) (*CreateAppResponse, error)
 	DescribeApps(context.Context, *DescribeAppsRequest) (*DescribeAppsResponse, error)

@@ -15,14 +15,13 @@ import "protoc-gen-swagger/options/annotations.proto";
 
 
 message CreateTaskRequest {
-	google.protobuf.StringValue _ = 1; // placeholder for task_id
-	google.protobuf.StringValue job_id = 2;
-	google.protobuf.StringValue node_id = 3;
-	google.protobuf.StringValue target = 4;
-	google.protobuf.StringValue task_action = 5;
-	google.protobuf.StringValue directive = 6;
-	google.protobuf.BoolValue failure_allowed = 7;
-	google.protobuf.StringValue status = 8;
+	google.protobuf.StringValue job_id = 1;
+	google.protobuf.StringValue node_id = 2;
+	google.protobuf.StringValue target = 3;
+	google.protobuf.StringValue task_action = 4;
+	google.protobuf.StringValue directive = 5;
+	google.protobuf.BoolValue failure_allowed = 6;
+	google.protobuf.StringValue status = 7;
 }
 
 message CreateTaskResponse {

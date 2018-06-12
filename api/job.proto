@@ -14,13 +14,12 @@ import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
 message CreateJobRequest {
-	google.protobuf.StringValue _ = 1; // placeholder for job_id
-	google.protobuf.StringValue cluster_id = 2;
-	google.protobuf.StringValue app_id = 3;
-	google.protobuf.StringValue version_id = 4;
-	google.protobuf.StringValue job_action = 5;
-	google.protobuf.StringValue provider = 6;
-	google.protobuf.StringValue directive = 7;
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue app_id = 2;
+	google.protobuf.StringValue version_id = 3;
+	google.protobuf.StringValue job_action = 4;
+	google.protobuf.StringValue provider = 5;
+	google.protobuf.StringValue directive = 6;
 }
 
 message CreateJobResponse {

@@ -14,6 +14,30 @@ import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
+message DescribeSubnetsRequest {
+	google.protobuf.StringValue runtime_id = 1;
+	uint32 limit = 2;
+	uint32 offset = 3;
+	google.protobuf.UInt32Value subnet_type = 4;
+	repeated string subnet_id = 5;
+	repeated string advanced_param = 6;
+}
+
+message Subnet {
+	google.protobuf.StringValue subnet_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.Timestamp create_time = 3;
+	google.protobuf.StringValue description = 4;
+	repeated string instance_id = 5;
+	google.protobuf.StringValue vpc_id = 6;
+	google.protobuf.UInt32Value subnet_type = 7;
+}
+
+message DescribeSubnetsResponse {
+	uint32 total_count = 1;
+	repeated Subnet subnet_set = 2;
+}
+
 message CreateClusterRequest {
 	google.protobuf.StringValue app_id = 1;
 	google.protobuf.StringValue version_id = 2;
@@ -321,6 +345,14 @@ message CeaseClustersResponse {
 }
 
 service ClusterManager {
+	rpc DescribeSubnets (DescribeSubnetsRequest) returns (DescribeSubnetsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe subnets"
+		};
+		option (google.api.http) = {
+			get: "/v1/clusters/subnets"
+		};
+	}
 	rpc CreateCluster (CreateClusterRequest) returns (CreateClusterResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create cluster"

@@ -28,6 +28,23 @@ var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
 
+var (
+	filter_ClusterManager_DescribeSubnets_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_ClusterManager_DescribeSubnets_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DescribeSubnetsRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_ClusterManager_DescribeSubnets_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.DescribeSubnets(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
 func request_ClusterManager_CreateCluster_0(ctx context.Context, marshaler runtime.Marshaler, client ClusterManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq CreateClusterRequest
 	var metadata runtime.ServerMetadata
@@ -228,14 +245,14 @@ func RegisterClusterManagerHandlerFromEndpoint(ctx context.Context, mux *runtime
 	defer func() {
 		if err != nil {
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Printf("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 			return
 		}
 		go func() {
 			<-ctx.Done()
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Printf("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 		}()
 	}()
@@ -255,6 +272,35 @@ func RegisterClusterManagerHandler(ctx context.Context, mux *runtime.ServeMux, c
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "ClusterManagerClient" to call the correct interceptors.
 func RegisterClusterManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux, client ClusterManagerClient) error {
+
+	mux.Handle("GET", pattern_ClusterManager_DescribeSubnets_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		if cn, ok := w.(http.CloseNotifier); ok {
+			go func(done <-chan struct{}, closed <-chan bool) {
+				select {
+				case <-done:
+				case <-closed:
+					cancel()
+				}
+			}(ctx.Done(), cn.CloseNotify())
+		}
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_ClusterManager_DescribeSubnets_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_ClusterManager_DescribeSubnets_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
 
 	mux.Handle("POST", pattern_ClusterManager_CreateCluster_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -666,6 +712,8 @@ func RegisterClusterManagerHandlerClient(ctx context.Context, mux *runtime.Serve
 }
 
 var (
+	pattern_ClusterManager_DescribeSubnets_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "clusters", "subnets"}, ""))
+
 	pattern_ClusterManager_CreateCluster_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "clusters", "create"}, ""))
 
 	pattern_ClusterManager_DeleteClusters_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "clusters", "delete"}, ""))
@@ -696,6 +744,8 @@ var (
 )
 
 var (
+	forward_ClusterManager_DescribeSubnets_0 = runtime.ForwardResponseMessage
+
 	forward_ClusterManager_CreateCluster_0 = runtime.ForwardResponseMessage
 
 	forward_ClusterManager_DeleteClusters_0 = runtime.ForwardResponseMessage

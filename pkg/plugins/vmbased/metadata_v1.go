@@ -285,7 +285,7 @@ func (m *MetadataV1) GetClusterMetadataCnodes() map[string]interface{} {
 	clusterMetadata := map[string]interface{}{
 		"cluster_id":  m.ClusterWrapper.Cluster.ClusterId,
 		"app_id":      m.ClusterWrapper.Cluster.AppId,
-		"vxnet":       m.ClusterWrapper.Cluster.SubnetId,
+		"subnet":      m.ClusterWrapper.Cluster.SubnetId,
 		"user_id":     m.ClusterWrapper.Cluster.Owner,
 		"runtime_id":  m.ClusterWrapper.Cluster.RuntimeId,
 		"global_uuid": m.ClusterWrapper.Cluster.GlobalUuid,

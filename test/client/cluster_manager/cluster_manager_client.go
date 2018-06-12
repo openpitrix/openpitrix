@@ -221,6 +221,34 @@ func (a *Client) DescribeClusters(params *DescribeClustersParams) (*DescribeClus
 }
 
 /*
+DescribeSubnets describes subnets
+*/
+func (a *Client) DescribeSubnets(params *DescribeSubnetsParams) (*DescribeSubnetsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeSubnetsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeSubnets",
+		Method:             "GET",
+		PathPattern:        "/v1/clusters/subnets",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DescribeSubnetsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeSubnetsOK), nil
+
+}
+
+/*
 RecoverClusters recovers clusters
 */
 func (a *Client) RecoverClusters(params *RecoverClustersParams) (*RecoverClustersOK, error) {
