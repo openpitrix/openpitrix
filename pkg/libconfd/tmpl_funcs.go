@@ -345,6 +345,26 @@ func (_ TemplateFunc) LookupIP(data string) []string {
 	return ipStrings
 }
 
+func (_ TemplateFunc) LookupIPV6(data string) []string {
+	var addresses []string
+	for _, ip := range (TemplateFunc{}).LookupIP(data) {
+		if strings.Contains(ip, ":") {
+			addresses = append(addresses, ip)
+		}
+	}
+	return addresses
+}
+
+func (_ TemplateFunc) LookupIPV4(data string) []string {
+	var addresses []string
+	for _, ip := range (TemplateFunc{}).LookupIP(data) {
+		if strings.Contains(ip, ".") {
+			addresses = append(addresses, ip)
+		}
+	}
+	return addresses
+}
+
 func (_ TemplateFunc) LookupSRV(service, proto, name string) []*net.SRV {
 	_, s, err := net.LookupSRV(service, proto, name)
 	if err != nil {

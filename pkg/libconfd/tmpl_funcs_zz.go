@@ -37,6 +37,8 @@ func init() {
 			"json":           p.Json,
 			"jsonArray":      p.JsonArray,
 			"lookupIP":       p.LookupIP,
+			"lookupIPV4":     p.LookupIPV4,
+			"lookupIPV6":     p.LookupIPV6,
 			"lookupSRV":      p.LookupSRV,
 			"ls":             p.Ls,
 			"lsdir":          p.Lsdir,
