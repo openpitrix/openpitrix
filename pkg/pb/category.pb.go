@@ -501,9 +501,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// CategoryManagerClient is the client API for CategoryManager service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for CategoryManager service
+
 type CategoryManagerClient interface {
 	DescribeCategories(ctx context.Context, in *DescribeCategoriesRequest, opts ...grpc.CallOption) (*DescribeCategoriesResponse, error)
 	CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CreateCategoryResponse, error)
@@ -521,7 +520,7 @@ func NewCategoryManagerClient(cc *grpc.ClientConn) CategoryManagerClient {
 
 func (c *categoryManagerClient) DescribeCategories(ctx context.Context, in *DescribeCategoriesRequest, opts ...grpc.CallOption) (*DescribeCategoriesResponse, error) {
 	out := new(DescribeCategoriesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.CategoryManager/DescribeCategories", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.CategoryManager/DescribeCategories", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -530,7 +529,7 @@ func (c *categoryManagerClient) DescribeCategories(ctx context.Context, in *Desc
 
 func (c *categoryManagerClient) CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CreateCategoryResponse, error) {
 	out := new(CreateCategoryResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.CategoryManager/CreateCategory", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.CategoryManager/CreateCategory", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -539,7 +538,7 @@ func (c *categoryManagerClient) CreateCategory(ctx context.Context, in *CreateCa
 
 func (c *categoryManagerClient) ModifyCategory(ctx context.Context, in *ModifyCategoryRequest, opts ...grpc.CallOption) (*ModifyCategoryResponse, error) {
 	out := new(ModifyCategoryResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.CategoryManager/ModifyCategory", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.CategoryManager/ModifyCategory", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -548,14 +547,15 @@ func (c *categoryManagerClient) ModifyCategory(ctx context.Context, in *ModifyCa
 
 func (c *categoryManagerClient) DeleteCategories(ctx context.Context, in *DeleteCategoriesRequest, opts ...grpc.CallOption) (*DeleteCategoriesResponse, error) {
 	out := new(DeleteCategoriesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.CategoryManager/DeleteCategories", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.CategoryManager/DeleteCategories", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// CategoryManagerServer is the server API for CategoryManager service.
+// Server API for CategoryManager service
+
 type CategoryManagerServer interface {
 	DescribeCategories(context.Context, *DescribeCategoriesRequest) (*DescribeCategoriesResponse, error)
 	CreateCategory(context.Context, *CreateCategoryRequest) (*CreateCategoryResponse, error)

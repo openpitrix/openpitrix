@@ -31,7 +31,7 @@ message Cluster {
 	string cluster_id                   = 2; // cluster ID
 	string user_id                      = 3; // user ID
 	string global_uuid                  = 4; // global UUID
-	string vxnet                        = 5; // VxNet ID
+	string subnet                        = 5; // Subnet ID
 	string zone                         = 6; // Zone ID
 	map<string, Endpoint> endpoints     = 7; // key: service name
 	map<string, IPAddress> reserved_ips = 8; // moved: endpoints/reserved_ips => reserved_ips

@@ -778,9 +778,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// RuntimeManagerClient is the client API for RuntimeManager service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for RuntimeManager service
+
 type RuntimeManagerClient interface {
 	CreateRuntime(ctx context.Context, in *CreateRuntimeRequest, opts ...grpc.CallOption) (*CreateRuntimeResponse, error)
 	DescribeRuntimes(ctx context.Context, in *DescribeRuntimesRequest, opts ...grpc.CallOption) (*DescribeRuntimesResponse, error)
@@ -799,7 +798,7 @@ func NewRuntimeManagerClient(cc *grpc.ClientConn) RuntimeManagerClient {
 
 func (c *runtimeManagerClient) CreateRuntime(ctx context.Context, in *CreateRuntimeRequest, opts ...grpc.CallOption) (*CreateRuntimeResponse, error) {
 	out := new(CreateRuntimeResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/CreateRuntime", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/CreateRuntime", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -808,7 +807,7 @@ func (c *runtimeManagerClient) CreateRuntime(ctx context.Context, in *CreateRunt
 
 func (c *runtimeManagerClient) DescribeRuntimes(ctx context.Context, in *DescribeRuntimesRequest, opts ...grpc.CallOption) (*DescribeRuntimesResponse, error) {
 	out := new(DescribeRuntimesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimes", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimes", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -817,7 +816,7 @@ func (c *runtimeManagerClient) DescribeRuntimes(ctx context.Context, in *Describ
 
 func (c *runtimeManagerClient) ModifyRuntime(ctx context.Context, in *ModifyRuntimeRequest, opts ...grpc.CallOption) (*ModifyRuntimeResponse, error) {
 	out := new(ModifyRuntimeResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/ModifyRuntime", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/ModifyRuntime", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -826,7 +825,7 @@ func (c *runtimeManagerClient) ModifyRuntime(ctx context.Context, in *ModifyRunt
 
 func (c *runtimeManagerClient) DeleteRuntimes(ctx context.Context, in *DeleteRuntimesRequest, opts ...grpc.CallOption) (*DeleteRuntimesResponse, error) {
 	out := new(DeleteRuntimesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/DeleteRuntimes", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/DeleteRuntimes", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -835,14 +834,15 @@ func (c *runtimeManagerClient) DeleteRuntimes(ctx context.Context, in *DeleteRun
 
 func (c *runtimeManagerClient) DescribeRuntimeProviderZones(ctx context.Context, in *DescribeRuntimeProviderZonesRequest, opts ...grpc.CallOption) (*DescribeRuntimeProviderZonesResponse, error) {
 	out := new(DescribeRuntimeProviderZonesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimeProviderZones", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimeProviderZones", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// RuntimeManagerServer is the server API for RuntimeManager service.
+// Server API for RuntimeManager service
+
 type RuntimeManagerServer interface {
 	CreateRuntime(context.Context, *CreateRuntimeRequest) (*CreateRuntimeResponse, error)
 	DescribeRuntimes(context.Context, *DescribeRuntimesRequest) (*DescribeRuntimesResponse, error)

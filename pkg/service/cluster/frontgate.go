@@ -89,7 +89,7 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 		// Check vpc status
 		providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider)
 		if err != nil {
-			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, f.Runtime.Provider)
+			return gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Provider)
 		}
 		vpc, err := providerInterface.DescribeVpc(register.Runtime.RuntimeId, vpcId)
 		if err != nil {

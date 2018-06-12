@@ -5,11 +5,13 @@
 package plugins
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins/helm"
 	"openpitrix.io/openpitrix/pkg/plugins/qingcloud"
 )
@@ -27,7 +29,7 @@ type ProviderInterface interface {
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
 	WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error
-	DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error)
+	DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error)
 	DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error)
 	ValidateCredential(url, credential string) error
 	DescribeRuntimeProviderZones(url, credential string) []string

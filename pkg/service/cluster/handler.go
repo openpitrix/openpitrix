@@ -9,6 +9,8 @@ import (
 
 	pb_empty "github.com/golang/protobuf/ptypes/empty"
 
+	"fmt"
+
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -147,6 +149,22 @@ func getClusterNode(nodeId, userId string) (*models.ClusterNode, error) {
 	return clusterNode, nil
 }
 
+func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
+	runtimeId := req.GetRuntimeId().GetValue()
+	runtime, err := runtimeclient.NewRuntime(runtimeId)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, runtimeId)
+	}
+
+	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider)
+	if err != nil {
+		logger.Error("No such provider [%s]. ", runtime.Provider)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+	}
+
+	return providerInterface.DescribeSubnets(ctx, req)
+}
+
 func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest) (*pb.CreateClusterResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 
@@ -173,7 +191,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider)
 	if err != nil {
 		logger.Error("No such provider [%s]. ", runtime.Provider)
-		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorValidateFailed)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
 	}
 	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, conf)
 	if err != nil {
@@ -181,15 +199,23 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
-	subnet, err := providerInterface.DescribeSubnet(runtimeId, clusterWrapper.Cluster.SubnetId)
+	subnetResponse, err := providerInterface.DescribeSubnets(ctx, &pb.DescribeSubnetsRequest{
+		RuntimeId: pbutil.ToProtoString(runtimeId),
+		SubnetId:  []string{clusterWrapper.Cluster.SubnetId},
+	})
 	if err != nil {
 		logger.Error("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
 		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
 	}
 
 	vpcId := ""
-	if subnet != nil {
-		vpcId = subnet.VpcId
+	if subnetResponse != nil && len(subnetResponse.SubnetSet) == 1 {
+		vpcId = subnetResponse.SubnetSet[0].GetVpcId().GetValue()
+	}
+
+	if vpcId == "" {
+		err = fmt.Errorf("subnet [%s] not found", clusterWrapper.Cluster.SubnetId)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
 	}
 
 	register := &Register{

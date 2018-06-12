@@ -101,6 +101,10 @@ var (
 		Name: "resource_not_found",
 		En:   "resource [%s] not found",
 	}
+	ErrorProviderNotFound = ErrorMessage{
+		Name: "provider_not_found",
+		En:   "provider [%s] not found",
+	}
 	ErrorInternalError = ErrorMessage{
 		Name: "internal_error",
 		En:   "internal error",

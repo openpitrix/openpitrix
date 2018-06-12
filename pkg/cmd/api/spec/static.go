@@ -1067,6 +1067,73 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/clusters/subnets": {
+      "get": {
+        "summary": "describe subnets",
+        "operationId": "DescribeSubnets",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeSubnetsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "runtime_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "subnet_type.value",
+            "description": "The uint32 value.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "subnet_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "advanced_param",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
     "/v1/clusters/update_env": {
       "patch": {
         "summary": "update cluster env",
@@ -2872,6 +2939,21 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixDescribeSubnetsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "subnet_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixSubnet"
+          }
+        }
+      }
+    },
     "openpitrixModifyClusterNodeResponse": {
       "type": "object",
       "properties": {
@@ -3046,6 +3128,36 @@ var Files = map[string]string{
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "openpitrixSubnet": {
+      "type": "object",
+      "properties": {
+        "subnet_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "instance_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "vpc_id": {
+          "type": "string"
+        },
+        "subnet_type": {
+          "$ref": "#/definitions/protobufUInt32Value"
         }
       }
     },

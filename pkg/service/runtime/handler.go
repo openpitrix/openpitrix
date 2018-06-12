@@ -189,7 +189,7 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 
 	providerInterface, err := plugins.GetProviderPlugin(provider)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, provider)
 	}
 	zones := providerInterface.DescribeRuntimeProviderZones(url, credential)
 	return &pb.DescribeRuntimeProviderZonesResponse{

@@ -6,6 +6,7 @@ package helm
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"time"
 
@@ -374,7 +375,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 	return nil
 }
 
-func (p *Provider) DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error) {
+func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
 	return nil, nil
 }
 func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {

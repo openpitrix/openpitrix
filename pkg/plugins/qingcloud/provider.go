@@ -92,7 +92,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 	switch job.JobAction {
 	case constants.ActionCreateCluster:
-		// TODO: vpc, eip, vxnet
+		// TODO: vpc, eip, subnet
 
 		return frameInterface.CreateClusterLayer(), nil
 	case constants.ActionUpgradeCluster:
@@ -186,9 +186,9 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 	}
 }
 
-func (p *Provider) DescribeSubnet(runtimeId, subnetId string) (*models.Subnet, error) {
+func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
 	handler := new(ProviderHandler)
-	return handler.DescribeSubnet(runtimeId, subnetId)
+	return handler.DescribeSubnets(ctx, req)
 }
 
 func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
