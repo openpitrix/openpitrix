@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/gziputil"
 	"openpitrix.io/openpitrix/pkg/util/httputil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -120,7 +121,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	err = p.syncAppCategories(newApp.AppId, strings.Split(req.GetCategoryId().GetValue(), ","))
+	err = categoryutil.SyncResourceCategories(p.Db, newApp.AppId, strings.Split(req.GetCategoryId().GetValue(), ","))
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
@@ -156,7 +157,7 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 
-	err = p.syncAppCategories(appId, strings.Split(req.GetCategoryId().GetValue(), ","))
+	err = categoryutil.SyncResourceCategories(p.Db, appId, strings.Split(req.GetCategoryId().GetValue(), ","))
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}

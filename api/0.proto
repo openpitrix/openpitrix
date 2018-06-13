@@ -10,7 +10,6 @@ option go_package = "pb";
 
 import "protoc-gen-swagger/options/annotations.proto";
 
-
 // 0.pb.go define the swagger project metadata
 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	info: {
@@ -25,8 +24,3 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	consumes: "application/json";
 	produces: "application/json";
 };
-
-message ErrorDetail {
-	string error_name = 1;
-	string cause = 2;
-}

@@ -19,7 +19,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DroneId struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -57,7 +57,7 @@ func (m *DroneId) GetId() string {
 }
 
 type DroneIdList struct {
-	IdList               []string `protobuf:"bytes,1,rep,name=id_list,json=idList" json:"id_list"`
+	IdList               []string `protobuf:"bytes,1,rep,name=id_list,json=idList,proto3" json:"id_list"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -95,12 +95,12 @@ func (m *DroneIdList) GetIdList() []string {
 }
 
 type DroneConfig struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id"`
-	Host                 string   `protobuf:"bytes,2,opt,name=host" json:"host"`
-	ListenPort           int32    `protobuf:"varint,3,opt,name=listen_port,json=listenPort" json:"listen_port"`
-	CmdInfoLogPath       string   `protobuf:"bytes,4,opt,name=cmd_info_log_path,json=cmdInfoLogPath" json:"cmd_info_log_path"`
-	ConfdSelfHost        string   `protobuf:"bytes,5,opt,name=confd_self_host,json=confdSelfHost" json:"confd_self_host"`
-	LogLevel             string   `protobuf:"bytes,6,opt,name=log_level,json=logLevel" json:"log_level"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	Host                 string   `protobuf:"bytes,2,opt,name=host,proto3" json:"host"`
+	ListenPort           int32    `protobuf:"varint,3,opt,name=listen_port,json=listenPort,proto3" json:"listen_port"`
+	CmdInfoLogPath       string   `protobuf:"bytes,4,opt,name=cmd_info_log_path,json=cmdInfoLogPath,proto3" json:"cmd_info_log_path"`
+	ConfdSelfHost        string   `protobuf:"bytes,5,opt,name=confd_self_host,json=confdSelfHost,proto3" json:"confd_self_host"`
+	LogLevel             string   `protobuf:"bytes,6,opt,name=log_level,json=logLevel,proto3" json:"log_level"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -173,9 +173,9 @@ func (m *DroneConfig) GetLogLevel() string {
 }
 
 type DroneEndpoint struct {
-	FrontgateId          string   `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
-	DroneIp              string   `protobuf:"bytes,2,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
-	DronePort            int32    `protobuf:"varint,3,opt,name=drone_port,json=dronePort" json:"drone_port"`
+	FrontgateId          string   `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,2,opt,name=drone_ip,json=droneIp,proto3" json:"drone_ip"`
+	DronePort            int32    `protobuf:"varint,3,opt,name=drone_port,json=dronePort,proto3" json:"drone_port"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -227,8 +227,8 @@ func (m *DroneEndpoint) GetDronePort() int32 {
 }
 
 type SetDroneConfigRequest struct {
-	Endpoint             *DroneEndpoint `protobuf:"bytes,1,opt,name=endpoint" json:"endpoint"`
-	Config               *DroneConfig   `protobuf:"bytes,2,opt,name=config" json:"config"`
+	Endpoint             *DroneEndpoint `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint"`
+	Config               *DroneConfig   `protobuf:"bytes,2,opt,name=config,proto3" json:"config"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`
@@ -273,9 +273,9 @@ func (m *SetDroneConfigRequest) GetConfig() *DroneConfig {
 }
 
 type RunCommandOnDroneRequest struct {
-	Endpoint             *DroneEndpoint `protobuf:"bytes,1,opt,name=endpoint" json:"endpoint"`
-	Command              string         `protobuf:"bytes,2,opt,name=command" json:"command"`
-	TimeoutSeconds       int32          `protobuf:"varint,3,opt,name=timeout_seconds,json=timeoutSeconds" json:"timeout_seconds"`
+	Endpoint             *DroneEndpoint `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint"`
+	Command              string         `protobuf:"bytes,2,opt,name=command,proto3" json:"command"`
+	TimeoutSeconds       int32          `protobuf:"varint,3,opt,name=timeout_seconds,json=timeoutSeconds,proto3" json:"timeout_seconds"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`

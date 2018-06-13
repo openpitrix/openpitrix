@@ -1,0 +1,26 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+message ErrorDetail {
+	string error_name = 1;
+	string cause = 2;
+}
+
+message ResourceCategory {
+	google.protobuf.StringValue category_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue locale = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
+}

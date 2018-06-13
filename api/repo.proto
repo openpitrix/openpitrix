@@ -12,6 +12,7 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
+import "types.proto";
 
 message CreateRepoRequest {
 	google.protobuf.StringValue name = 1;
@@ -23,6 +24,7 @@ message CreateRepoRequest {
 	repeated string providers = 7;
 	repeated RepoLabel labels = 8;
 	repeated RepoSelector selectors = 9;
+	google.protobuf.StringValue category_id = 10;
 }
 
 message CreateRepoResponse {
@@ -40,6 +42,7 @@ message ModifyRepoRequest {
 	repeated string providers = 8;
 	repeated RepoLabel labels = 9;
 	repeated RepoSelector selectors = 10;
+	google.protobuf.StringValue category_id = 11;
 }
 
 message ModifyRepoResponse {
@@ -80,6 +83,7 @@ message Repo {
 	google.protobuf.StringValue status = 12;
 	google.protobuf.Timestamp create_time = 13;
 	google.protobuf.Timestamp status_time = 14;
+	repeated ResourceCategory category_set = 15;
 }
 
 message DescribeReposRequest {
@@ -93,6 +97,7 @@ message DescribeReposRequest {
 	google.protobuf.StringValue selector = 8;
 	uint32 limit = 9; // NOTE: uint64 marshal to json will convert to string
 	uint32 offset = 10;
+	repeated string category_id = 11;
 }
 
 message DescribeReposResponse {

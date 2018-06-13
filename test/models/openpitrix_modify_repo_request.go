@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixModifyRepoRequest
 type OpenpitrixModifyRepoRequest struct {
 
+	// category id
+	CategoryID string `json:"category_id,omitempty"`
+
 	// credential
 	Credential string `json:"credential,omitempty"`
 
