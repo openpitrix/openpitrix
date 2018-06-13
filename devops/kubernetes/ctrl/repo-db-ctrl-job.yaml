@@ -1,12 +1,11 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  annotations:
+  name: openpitrix-repo-db-ctrl-job
+  namespace: openpitrix-system
   labels:
     app: openpitrix
-    job-name: openpitrix-repo-db-ctrl
-  name: openpitrix-repo-db-ctrl
-  namespace: openpitrix-system
+    job: openpitrix-repo-db-ctrl
 spec:
   activeDeadlineSeconds: 600
   backoffLimit: 6
@@ -16,8 +15,8 @@ spec:
     metadata:
       labels:
         app: openpitrix
-        job-name: openpitrix-repo-db-ctrl
-      name: repo-db-ctrl
+        job: openpitrix-repo-db-ctrl
+      name: openpitrix-repo-db-ctrl
     spec:
       initContainers:
       - name: wait-mysql
@@ -34,7 +33,7 @@ spec:
               name: mysql-pass
         image: openpitrix/openpitrix:flyway
         imagePullPolicy: Always
-        name: repo-db-ctrl
+        name: openpitrix-repo-db-ctrl
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File

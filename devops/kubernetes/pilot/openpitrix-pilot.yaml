@@ -5,14 +5,14 @@ metadata:
   namespace: openpitrix-system
   labels:
     app: openpitrix
-    service: pilot
+    component: openpitrix-pilot
 spec:
   selector:
     app: openpitrix
-    service: openpitrix-pilot-service
+    component: openpitrix-pilot
   type: LoadBalancer
   ports:
-  - name: openpitrix-pilot-service
+  - name: openpitrix-pilot
     protocol: TCP
     port: 9110
     targetPort: 9110
@@ -20,22 +20,22 @@ spec:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: openpitrix-pilot-service
+  name: openpitrix-pilot-deployment
   namespace: openpitrix-system
   labels:
     app: openpitrix
-    service: openpitrix-pilot-service
+    component: openpitrix-pilot
 spec:
   selector:
     matchLabels:
       app: openpitrix
-      service: openpitrix-pilot-service
+      component: openpitrix-pilot
   replicas: 1
   template:
     metadata:
       labels:
         app: openpitrix
-        service: openpitrix-pilot-service
+        component: openpitrix-pilot
     spec:
       initContainers:
       - name: wait-mysql
@@ -47,7 +47,7 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'until nc -z openpitrix-etcd.openpitrix-system.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
-      - name: pilot
+      - name: openpitrix-pilot
         image: openpitrix/openpitrix:metadata
         imagePullPolicy: Always
         command: ['pilot', '-config=/opt/openpitrix/conf/pilot-config.json', 'serve']
@@ -70,13 +70,16 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: openpitrix-pilot-config
+          name: openpitrix-pilot-configmap
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: openpitrix-pilot-config
+  name: openpitrix-pilot-configmap
   namespace: openpitrix-system
+  labels:
+    app: openpitrix
+    component: openpitrix-pilot
 data:
   pilot-config.json: |-
     {
