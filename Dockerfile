@@ -8,9 +8,9 @@ WORKDIR /go/src/openpitrix.io/openpitrix/
 COPY . .
 
 RUN go generate openpitrix.io/openpitrix/pkg/version && \
-	go install  openpitrix.io/openpitrix/cmd/...
+	go install -tags netgo openpitrix.io/openpitrix/cmd/...
 
-FROM alpine:3.6
+FROM alpine:3.7
 RUN apk add --update ca-certificates && update-ca-certificates
 COPY --from=builder /go/bin/* /usr/local/bin/
 
