@@ -42,6 +42,7 @@ func newRootCmd(c string, args []string) *cobra.Command {
 	flags := cmd.PersistentFlags()
 
 	cmd.AddCommand(getCobraCmds(AllCmd)...)
+	cmd.AddCommand(getValidateCmd())
 	flags.Parse(args)
 	return cmd
 }
@@ -53,7 +54,7 @@ func getCobraCmds(cmds []Cmd) (cobraCmds []*cobra.Command) {
 		run := cmd.Run
 		c := &cobra.Command{
 			Use:   fmt.Sprintf("%s [flags]", underscoreAction),
-			Short: strings.Replace(underscoreAction, "_", " ", 0),
+			Short: strings.Replace(underscoreAction, "_", " ", -1),
 			RunE: func(c *cobra.Command, args []string) error {
 				return run(Out{
 					action: action,

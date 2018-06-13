@@ -69,9 +69,13 @@ generate-in-local: ## Generate code from protobuf file in local
 	go generate ./pkg/version/
 
 .PHONY: generate
-generate: ## Generate code from protobuf file in docker
+generate: generate-global-config ## Generate code from protobuf file in docker
 	$(RUN_IN_DOCKER) make generate-in-local
 	@echo "generate done"
+
+.PHONY: generate-global-config
+generate-global-config:
+	$(RUN_IN_DOCKER) go generate openpitrix.io/openpitrix/config
 
 .PHONY: fmt-all
 fmt-all: ## Format all code
@@ -130,6 +134,12 @@ compose-update-%: ## Update "openpitrix-%" service in docker compose
 	CMD=$* make build
 	docker-compose up -d --no-deps openpitrix-$*
 	@echo "compose-update done"
+
+.PHONY: compose-put-global-config
+compose-put-global-config:
+	@test -s config/global_config.yaml || { echo "[config/global_config.yaml] not exist"; exit 1; }
+	cat config/global_config.yaml | docker run -i --rm openpitrix opctl validate_global_config
+	cat config/global_config.yaml | docker-compose exec -T openpitrix-etcd etcdctl put openpitrix/global_config
 
 .PHONY: compose-up
 compose-up: ## Launch openpitrix in docker compose
