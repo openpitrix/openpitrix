@@ -23,13 +23,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate"
 	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate/frontgateutil"
 	"openpitrix.io/openpitrix/pkg/util/pathutil"
+	"openpitrix.io/openpitrix/pkg/version"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "frontgate"
 	app.Usage = "frontgate provides frontgate service."
-	app.Version = "0.0.0"
+	app.Version = version.ShortVersion + "; git: " + version.GitSha1Version + "; build time: " + version.BuildDate
 
 	app.UsageText = `frontgate [global options] command [options] [args...]
 

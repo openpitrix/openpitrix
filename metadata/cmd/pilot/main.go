@@ -24,13 +24,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/pilot"
 	"openpitrix.io/openpitrix/pkg/service/pilot/pilotutil"
 	"openpitrix.io/openpitrix/pkg/util/pathutil"
+	"openpitrix.io/openpitrix/pkg/version"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "pilot"
 	app.Usage = "pilot provides pilot service."
-	app.Version = "0.0.0"
+	app.Version = version.ShortVersion + "; git: " + version.GitSha1Version + "; build time: " + version.BuildDate
 
 	app.UsageText = `pilot [global options] command [options] [args...]
 
