@@ -33,6 +33,7 @@ func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
 		{vmbased.ActionPingDrone, 5},
 		{vmbased.ActionSetDroneConfig, 5},
 		{vmbased.ActionRunCommandOnDrone, 2}, // master ssh key generate
+		{vmbased.ActionDeregisterMetadata, 1},
 		{vmbased.ActionRegisterMetadata, 1},
 		{vmbased.ActionStartConfd, 5},
 		{vmbased.ActionRegisterCmd, 1}, // hbase-hdfs-master init
