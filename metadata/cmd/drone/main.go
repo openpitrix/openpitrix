@@ -22,13 +22,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/droneutil"
 	"openpitrix.io/openpitrix/pkg/util/pathutil"
+	"openpitrix.io/openpitrix/pkg/version"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "drone"
 	app.Usage = "drone provides drone service."
-	app.Version = "0.0.0"
+	app.Version = version.ShortVersion + "; git: " + version.GitSha1Version + "; build time: " + version.BuildDate
 
 	app.UsageText = `drone [global options] command [options] [args...]
 
