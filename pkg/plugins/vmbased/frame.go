@@ -1176,6 +1176,7 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 		Append(f.pingDroneLayer(nodeIds, false)).            // ping drone
 		Append(f.setDroneConfigLayer(nodeIds, false)).       // set drone config
 		Append(f.sshKeygenLayer(false)).                     // generate ssh key
+		Append(f.deregisterMetadataLayer(true)).             // deregister cluster
 		Append(f.registerMetadataLayer(false)).              // register cluster metadata
 		Append(f.startConfdServiceLayer(nodeIds, false)).    // start confd service
 		Append(f.initAndStartServiceLayer(nodeIds, false)).  // register init and start cmd to exec
