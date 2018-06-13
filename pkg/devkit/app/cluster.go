@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"html/template"
 	"regexp"
+
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type ClusterConfTemplate struct {
@@ -28,7 +30,7 @@ func replaceTemplateExpression(s string) string {
 func getv(input interface{}) interface{} {
 	switch i := input.(type) {
 	case string:
-		return template.HTML(fmt.Sprintf(`"%s"`, i))
+		return template.HTML(jsonutil.ToString(i))
 	case nil:
 		return template.HTML("null")
 	default:
