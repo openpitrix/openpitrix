@@ -5,11 +5,11 @@ metadata:
   namespace: openpitrix-system
   labels:
     app: openpitrix
-    service: openpitrix-job-manager
+    component: openpitrix-job-manager
 spec:
   selector:
     app: openpitrix
-    service: openpitrix-job-manager
+    component: openpitrix-job-manager
   ports:
   - name:  openpitrix-job-manager
     protocol: TCP
@@ -19,22 +19,22 @@ spec:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: openpitrix-job
+  name: openpitrix-job-manager-deployment
   namespace: openpitrix-system
   labels:
     app: openpitrix
-    service: openpitrix-job-manager
+    component: openpitrix-job-manager
 spec:
   selector:
     matchLabels:
       app: openpitrix
-      service: openpitrix-job-manager
+      component: openpitrix-job-manager
   replicas: 1
   template:
     metadata:
       labels:
         app: openpitrix
-        service: openpitrix-job-manager
+        component: openpitrix-job-manager
     spec:
       initContainers:
       - name: wait-mysql
@@ -46,7 +46,7 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'until nc -z openpitrix-etcd.openpitrix-system.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
-      - name: job-manager
+      - name: openpitrix-job-manager
         image: openpitrix/openpitrix:latest
         imagePullPolicy: Always
         command:

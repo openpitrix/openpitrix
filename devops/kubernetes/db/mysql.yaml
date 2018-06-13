@@ -21,7 +21,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: db-pv-claim
+  name: openpitrix-db-pvc
   namespace: openpitrix-system
   labels:
     app: openpitrix
@@ -36,7 +36,7 @@ spec:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: openpitrix-db
+  name: openpitrix-db-deployment
   namespace: openpitrix-system
   labels:
     app: openpitrix
@@ -79,4 +79,4 @@ spec:
       volumes:
       - name: db-persistent-storage
         persistentVolumeClaim:
-          claimName: db-pv-claim
+          claimName: openpitrix-db-pvc

@@ -5,11 +5,11 @@ metadata:
   namespace: openpitrix-system
   labels:
     app: openpitrix
-    service: openpitrix-cluster-manager
+    component: openpitrix-cluster-manager
 spec:
   selector:
     app: openpitrix
-    service: openpitrix-cluster-manager
+    component: openpitrix-cluster-manager
   ports:
   - name:  openpitrix-cluster-manager
     protocol: TCP
@@ -19,22 +19,22 @@ spec:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: openpitrix-cluster
+  name: openpitrix-cluster-manager-deployment
   namespace: openpitrix-system
   labels:
     app: openpitrix
-    service: openpitrix-cluster-manager
+    component: openpitrix-cluster-manager
 spec:
   selector:
     matchLabels:
       app: openpitrix
-      service: openpitrix-cluster-manager
+      component: openpitrix-cluster-manager
   replicas: 1
   template:
     metadata:
       labels:
         app: openpitrix
-        service: openpitrix-cluster-manager
+        component: openpitrix-cluster-manager
     spec:
       initContainers:
       - name: wait-mysql
@@ -46,7 +46,7 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'until nc -z openpitrix-etcd.openpitrix-system.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
-      - name: cluster-manager
+      - name: openpitrix-cluster-manager
         image: openpitrix/openpitrix:latest
         imagePullPolicy: Always
         command:
@@ -71,4 +71,3 @@ spec:
           requests:
             cpu: 500m
             memory: 500Mi
-

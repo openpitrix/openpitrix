@@ -21,7 +21,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: etcd-pv-claim
+  name: openpitrix-etcd-pvc
   namespace: openpitrix-system
   labels:
     app: openpitrix
@@ -36,7 +36,7 @@ spec:
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: openpitrix-etcd
+  name: openpitrix-etcd-deployment
   namespace: openpitrix-system
   labels:
     app: openpitrix
@@ -67,4 +67,4 @@ spec:
       volumes:
       - name: etcd-persistent-storage
         persistentVolumeClaim:
-          claimName: etcd-pv-claim
+          claimName: openpitrix-etcd-pvc
