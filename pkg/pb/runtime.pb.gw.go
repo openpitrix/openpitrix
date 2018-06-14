@@ -132,8 +132,8 @@ func RegisterRuntimeManagerHandler(ctx context.Context, mux *runtime.ServeMux, c
 	return RegisterRuntimeManagerHandlerClient(ctx, mux, NewRuntimeManagerClient(conn))
 }
 
-// RegisterRuntimeManagerHandler registers the http handlers for service RuntimeManager to "mux".
-// The handlers forward requests to the grpc endpoint over the given implementation of "RuntimeManagerClient".
+// RegisterRuntimeManagerHandlerClient registers the http handlers for service RuntimeManager
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "RuntimeManagerClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "RuntimeManagerClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "RuntimeManagerClient" to call the correct interceptors.
