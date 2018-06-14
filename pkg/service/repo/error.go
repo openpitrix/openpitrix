@@ -17,6 +17,7 @@ const (
 	ErrProviders         = 112
 	ErrNotRepoUrl        = 113
 	ErrSchemeNotS3       = 114
+	ErrBadIndexYaml      = 115
 )
 
 type ErrorWithCode struct {

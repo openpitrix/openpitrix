@@ -7,11 +7,18 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
+	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
 type QingStorCredential struct {
 	AccessKeyId     string `json:"access_key_id"`
 	SecretAccessKey string `json:"secret_access_key"`
+}
+
+type IndexYaml struct {
+	ApiVersion string                 `yaml:"apiVersion"`
+	Entries    map[string]interface{} `yaml:"entries"`
+	Generated  string                 `yaml:"generated"`
 }
 
 var (
@@ -81,7 +88,7 @@ func validate(repoType, url, credential, visibility string, providers []string) 
 		return newErrorWithCode(errCode, err)
 	}
 
-	_, err = reader.GetIndexYaml()
+	body, err := reader.GetIndexYaml()
 	if err != nil {
 		switch err {
 		case reporeader.ErrGetIndexYamlFailed:
@@ -95,5 +102,13 @@ func validate(repoType, url, credential, visibility string, providers []string) 
 		}
 		return newErrorWithCode(errCode, err)
 	}
+
+	var y IndexYaml
+	err = yamlutil.Decode(body, &y)
+	if err != nil {
+		errCode = ErrBadIndexYaml
+		return newErrorWithCode(errCode, err)
+	}
+
 	return nil
 }
