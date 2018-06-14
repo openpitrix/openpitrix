@@ -759,14 +759,14 @@ func (p *ProviderHandler) WaitVolumeTask(task *models.Task) error {
 
 	jobService, err := qingcloudService.Job(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s job api service failed: %+v", MyProvider, err)
+		logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	err = qcclient.WaitJob(jobService, volume.TargetJobId, task.GetTimeout(constants.WaitTaskTimeout),
 		constants.WaitTaskInterval)
 	if err != nil {
-		logger.Error("Wait %s job [%s] failed: %+v", MyProvider, volume.TargetJobId, err)
+		logger.Error("Wait %s volume [%s] failed: %+v", MyProvider, volume.TargetJobId, err)
 		return err
 	}
 
@@ -810,11 +810,12 @@ func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeS
 
 	vxnetService, err := qingcloudService.VxNet(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s job api service failed: %+v", MyProvider, err)
+		logger.Error("Init %s vxnet api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
 	input := new(qcservice.DescribeVxNetsInput)
+	input.Verbose = qcservice.Int(1)
 	if len(req.GetSubnetId()) > 0 {
 		input.VxNets = qcservice.StringSlice(req.GetSubnetId())
 	}
@@ -849,21 +850,46 @@ func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeS
 
 	response := new(pb.DescribeSubnetsResponse)
 
-	response.TotalCount = uint32(qcservice.IntValue(output.TotalCount))
 	for _, vxnet := range output.VxNetSet {
-		subnet := &pb.Subnet{
-			SubnetId:    pbutil.ToProtoString(qcservice.StringValue(vxnet.VxNetID)),
-			Name:        pbutil.ToProtoString(qcservice.StringValue(vxnet.VxNetName)),
-			CreateTime:  pbutil.ToProtoTimestamp(qcservice.TimeValue(vxnet.CreateTime)),
-			Description: pbutil.ToProtoString(qcservice.StringValue(vxnet.Description)),
-			InstanceId:  qcservice.StringValueSlice(vxnet.InstanceIDs),
-			VpcId:       pbutil.ToProtoString(qcservice.StringValue(vxnet.VpcRouterID)),
-			SubnetType:  pbutil.ToProtoUInt32(uint32(qcservice.IntValue(vxnet.VxNetType))),
+		if vxnet.Router != nil && vxnet.VpcRouterID != nil && qcservice.StringValue(vxnet.VpcRouterID) != "" {
+			vpc, err := p.DescribeVpc(req.GetRuntimeId().GetValue(), qcservice.StringValue(vxnet.VpcRouterID))
+			if err != nil {
+				return nil, err
+			}
+			if vpc.Eip != nil && vpc.Eip.Addr != "" {
+				subnet := &pb.Subnet{
+					SubnetId:    pbutil.ToProtoString(qcservice.StringValue(vxnet.VxNetID)),
+					Name:        pbutil.ToProtoString(qcservice.StringValue(vxnet.VxNetName)),
+					CreateTime:  pbutil.ToProtoTimestamp(qcservice.TimeValue(vxnet.CreateTime)),
+					Description: pbutil.ToProtoString(qcservice.StringValue(vxnet.Description)),
+					InstanceId:  qcservice.StringValueSlice(vxnet.InstanceIDs),
+					VpcId:       pbutil.ToProtoString(qcservice.StringValue(vxnet.VpcRouterID)),
+					SubnetType:  pbutil.ToProtoUInt32(uint32(qcservice.IntValue(vxnet.VxNetType))),
+				}
+				response.SubnetSet = append(response.SubnetSet, subnet)
+			}
 		}
-		response.SubnetSet = append(response.SubnetSet, subnet)
 	}
 
+	response.TotalCount = uint32(len(response.SubnetSet))
+
 	return response, nil
+}
+
+func (p *ProviderHandler) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error) {
+	roleCount := make(map[string]int)
+	for _, clusterNode := range clusterWrapper.ClusterNodes {
+		role := clusterNode.Role
+		_, isExist := roleCount[role]
+		if isExist {
+			roleCount[role] = roleCount[role] + 1
+		} else {
+			roleCount[role] = 1
+		}
+	}
+
+	//TODO: need send request to qingcloud to validate quota, https://github.com/yunify/qingcloud-sdk-go/issues/99
+	return "", nil
 }
 
 func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
@@ -875,7 +901,7 @@ func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, err
 
 	routerService, err := qingcloudService.Router(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s job api service failed: %+v", MyProvider, err)
+		logger.Error("Init %s router api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 

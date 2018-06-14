@@ -30,6 +30,7 @@ type ProviderInterface interface {
 	HandleSubtask(task *models.Task) error
 	WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error
 	DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error)
+	CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error)
 	DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error)
 	ValidateCredential(url, credential string) error
 	DescribeRuntimeProviderZones(url, credential string) []string

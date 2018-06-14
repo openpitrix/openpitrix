@@ -191,6 +191,11 @@ func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsR
 	return handler.DescribeSubnets(ctx, req)
 }
 
+func (p *Provider) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error) {
+	handler := new(ProviderHandler)
+	return handler.CheckResourceQuotas(ctx, clusterWrapper)
+}
+
 func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 	handler := new(ProviderHandler)
 	return handler.DescribeVpc(runtimeId, vpcId)

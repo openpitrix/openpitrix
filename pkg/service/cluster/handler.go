@@ -199,6 +199,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
+	// check subnet, vpc, eip
 	subnetResponse, err := providerInterface.DescribeSubnets(ctx, &pb.DescribeSubnetsRequest{
 		RuntimeId: pbutil.ToProtoString(runtimeId),
 		SubnetId:  []string{clusterWrapper.Cluster.SubnetId},
@@ -207,15 +208,19 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		logger.Error("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
 		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
 	}
-
 	vpcId := ""
 	if subnetResponse != nil && len(subnetResponse.SubnetSet) == 1 {
 		vpcId = subnetResponse.SubnetSet[0].GetVpcId().GetValue()
 	}
-
 	if vpcId == "" {
-		err = fmt.Errorf("subnet [%s] not found", clusterWrapper.Cluster.SubnetId)
-		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
+		err = fmt.Errorf("subnet [%s] not found or vpc not bind eip", clusterWrapper.Cluster.SubnetId)
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorSubnetNotFound, clusterWrapper.Cluster.SubnetId)
+	}
+
+	// check resource quota
+	message, err := providerInterface.CheckResourceQuotas(ctx, clusterWrapper)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceQuotaNotEnough, message)
 	}
 
 	register := &Register{

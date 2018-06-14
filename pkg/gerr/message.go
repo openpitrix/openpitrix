@@ -101,6 +101,10 @@ var (
 		Name: "resource_not_found",
 		En:   "resource [%s] not found",
 	}
+	ErrorSubnetNotFound = ErrorMessage{
+		Name: "subnet_not_found",
+		En:   "subnet [%s] not found or vpc not bind eip",
+	}
 	ErrorProviderNotFound = ErrorMessage{
 		Name: "provider_not_found",
 		En:   "provider [%s] not found",
@@ -156,5 +160,9 @@ var (
 	ErrorConflictRepoName = ErrorMessage{
 		Name: "conflict_repo_name",
 		En:   "conflict repo name [%s]",
+	}
+	ErrorResourceQuotaNotEnough = ErrorMessage{
+		Name: "resource_quota_not_enough",
+		En:   "resource quota not enough: %s",
 	}
 )
