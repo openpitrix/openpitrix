@@ -43,9 +43,6 @@ func (c *Controller) updateJobAttributes(jobId string, attributes map[string]int
 		SetMap(attributes).
 		Where(db.Eq("job_id", jobId)).
 		Exec()
-	if err != nil {
-		logger.Error("Failed to update job [%s]: %+v", jobId, err)
-	}
 	return err
 }
 
@@ -82,18 +79,25 @@ func (c *Controller) ExtractJobs() {
 }
 
 func (c *Controller) HandleJob(jobId string, cb func()) error {
+	jLogger := logger.NewLogger()
+	jLogger.SetSuffix("(" + jobId + ")")
+
 	defer cb()
 
 	job := &models.Job{
 		JobId:  jobId,
 		Status: constants.StatusWorking,
 	}
-	c.updateJobAttributes(job.JobId, map[string]interface{}{
+	err := c.updateJobAttributes(job.JobId, map[string]interface{}{
 		"status":   job.Status,
 		"executor": c.hostname,
 	})
+	if err != nil {
+		jLogger.Error("Failed to update job: %+v", err)
+		return err
+	}
 
-	err := func() error {
+	err = func() error {
 		query := c.Db.
 			Select(models.JobColumns...).
 			From(models.JobTableName).
@@ -101,33 +105,32 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 
 		err := query.LoadOne(&job)
 		if err != nil {
-			logger.Error("Failed to get job [%s]: %+v", job.JobId, err)
+			jLogger.Error("Failed to get job: %+v", err)
 			return err
 		}
 
-		processor := NewProcessor(job)
+		processor := NewProcessor(job, jLogger)
 		err = processor.Pre()
 		if err != nil {
 			return err
 		}
 		defer processor.Final()
 
-		providerInterface, err := plugins.GetProviderPlugin(job.Provider)
+		providerInterface, err := plugins.GetProviderPlugin(job.Provider, jLogger)
 		if err != nil {
-			logger.Error("No such provider [%s]. ", job.Provider)
+			jLogger.Error("No such provider [%s]. ", job.Provider)
 			return err
 		}
 		module, err := providerInterface.SplitJobIntoTasks(job)
 		if err != nil {
-			logger.Error("Failed to split job [%s] into tasks with provider [%s]: %+v",
-				job.JobId, job.Provider, err)
+			jLogger.Error("Failed to split job into tasks with provider [%s]: %+v", job.Provider, err)
 			return err
 		}
 
 		ctx := client.GetSystemUserContext()
 		taskClient, err := taskclient.NewClient(ctx)
 		if err != nil {
-			logger.Error("Connect to task service failed: %+v", err)
+			jLogger.Error("Connect to task service failed: %+v", err)
 			return err
 		}
 
@@ -137,7 +140,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 				for _, parentTask := range parent.Tasks {
 					err = taskClient.WaitTask(ctx, parentTask.TaskId, parentTask.GetTimeout(constants.MaxTaskTimeout), constants.WaitTaskInterval)
 					if err != nil {
-						logger.Error("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
+						jLogger.Error("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 						if !parentTask.FailureAllowed {
 							successful = false
 						}
@@ -152,7 +155,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 					}
 					currentTask.TaskId, err = taskClient.SendTask(ctx, currentTask)
 					if err != nil {
-						logger.Error("Failed to send task [%s]: %+v", currentTask.TaskId, err)
+						jLogger.Error("Failed to send task [%s]: %+v", currentTask.TaskId, err)
 						successful = false
 					}
 				}
@@ -160,7 +163,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 					for _, currentTask := range current.Tasks {
 						err = taskClient.WaitTask(ctx, currentTask.TaskId, currentTask.GetTimeout(constants.MaxTaskTimeout), constants.WaitTaskInterval)
 						if err != nil {
-							logger.Error("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
+							jLogger.Error("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
 							if !currentTask.FailureAllowed {
 								successful = false
 							}
@@ -179,13 +182,17 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 
 	var status = constants.StatusSuccessful
 	if err != nil {
-		logger.Error("Job [%s] failed: %+v", jobId, err)
+		jLogger.Error("Job [%s] failed: %+v", jobId, err)
 		status = constants.StatusFailed
 	}
-	c.updateJobAttributes(jobId, map[string]interface{}{
+	err = c.updateJobAttributes(jobId, map[string]interface{}{
 		"status":      status,
 		"status_time": time.Now(),
 	})
+	if err != nil {
+		jLogger.Error("Failed to update job: %+v", err)
+	}
+
 	return err
 }
 

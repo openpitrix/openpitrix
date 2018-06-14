@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins/helm"
@@ -19,11 +20,12 @@ import (
 var providerPlugins = make(map[string]ProviderInterface)
 
 func init() {
-	RegisterProviderPlugin(constants.ProviderQingCloud, new(qingcloud.Provider))
-	RegisterProviderPlugin(constants.ProviderKubernetes, new(helm.Provider))
+	RegisterProviderPlugin(constants.ProviderQingCloud, qingcloud.NewProvider())
+	RegisterProviderPlugin(constants.ProviderKubernetes, helm.NewProvider())
 }
 
 type ProviderInterface interface {
+	SetLogger(logger *logger.Logger)
 	// Parse package and conf into cluster which clusterManager will register into db.
 	ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error)
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
@@ -41,9 +43,10 @@ func RegisterProviderPlugin(provider string, providerInterface ProviderInterface
 	providerPlugins[provider] = providerInterface
 }
 
-func GetProviderPlugin(provider string) (ProviderInterface, error) {
+func GetProviderPlugin(provider string, logger *logger.Logger) (ProviderInterface, error) {
 	providerInterface, exists := providerPlugins[provider]
 	if exists {
+		providerInterface.SetLogger(logger)
 		return providerInterface, nil
 	} else {
 		return nil, fmt.Errorf("No such provider [%s]. ", provider)

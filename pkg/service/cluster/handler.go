@@ -156,7 +156,7 @@ func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsReq
 		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, runtimeId)
 	}
 
-	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider)
+	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider, nil)
 	if err != nil {
 		logger.Error("No such provider [%s]. ", runtime.Provider)
 		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
@@ -188,7 +188,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 
 	clusterId := models.NewClusterId()
 
-	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider)
+	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider, nil)
 	if err != nil {
 		logger.Error("No such provider [%s]. ", runtime.Provider)
 		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)

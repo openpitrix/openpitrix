@@ -18,6 +18,7 @@ import (
 )
 
 type Parser struct {
+	Logger *logger.Logger
 }
 
 func (p *Parser) generateServerId(upperBound int, excludeServerIds []int) (int, error) {
@@ -105,14 +106,14 @@ func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*m
 	for i := 1; i <= count; i++ {
 		serverId, err := p.generateServerId(int(serverIdUpperBound), serverIds)
 		if err != nil {
-			logger.Error("Generate server id failed: %v", err)
+			p.Logger.Error("Generate server id failed: %v", err)
 			return nil, err
 		}
 		serverIds = append(serverIds, serverId)
 
 		groupId, err := p.generateServerId(int(serverIdUpperBound), groupIds)
 		if err != nil {
-			logger.Error("Generate group id failed: %v", err)
+			p.Logger.Error("Generate group id failed: %v", err)
 			return nil, err
 		}
 		groupIds = append(groupIds, groupId)
@@ -132,7 +133,7 @@ func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*m
 		for j := 1; j <= replica; j++ {
 			serverId, err = p.generateServerId(int(serverIdUpperBound), serverIds)
 			if err != nil {
-				logger.Error("Generate server id failed: %v", err)
+				p.Logger.Error("Generate server id failed: %v", err)
 				return nil, err
 			}
 			serverIds = append(serverIds, serverId)
@@ -264,7 +265,7 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 				}
 			}
 		default:
-			logger.Error("Unknown type of service [%s] ", serviceName)
+			p.Logger.Error("Unknown type of service [%s] ", serviceName)
 			return nil, fmt.Errorf("Unknown type of service [%s] ", serviceName)
 		}
 		serviceStr := jsonutil.ToString(serviceValue)

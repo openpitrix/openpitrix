@@ -51,9 +51,6 @@ func (c *Controller) updateTaskAttributes(taskId string, attributes map[string]i
 		SetMap(attributes).
 		Where(db.Eq("task_id", taskId)).
 		Exec()
-	if err != nil {
-		logger.Error("Failed to update task [%s]: %+v", taskId, err)
-	}
 	return err
 }
 
@@ -91,37 +88,42 @@ func (c *Controller) ExtractTasks() {
 
 func (c *Controller) HandleTask(taskId string, cb func()) error {
 	defer cb()
-	task := &models.Task{
-		TaskId: taskId,
-		Status: constants.StatusWorking,
+	task := new(models.Task)
+	query := c.Db.
+		Select(models.TaskColumns...).
+		From(models.TaskTableName).
+		Where(db.Eq("task_id", taskId))
+
+	err := query.LoadOne(&task)
+	if err != nil {
+		logger.Error("Failed to get task [%s]: %+v", task.TaskId, err)
+		return err
 	}
-	c.updateTaskAttributes(task.TaskId, map[string]interface{}{
-		"status":   task.Status,
+
+	tLogger := logger.NewLogger()
+	tLogger.SetSuffix("(" + task.JobId + ")(" + taskId + ")")
+
+	err = c.updateTaskAttributes(task.TaskId, map[string]interface{}{
+		"status":   constants.StatusWorking,
 		"executor": c.hostname,
 	})
-	err := func() error {
-		query := c.Db.
-			Select(models.TaskColumns...).
-			From(models.TaskTableName).
-			Where(db.Eq("task_id", taskId))
+	if err != nil {
+		tLogger.Error("Failed to update task: %+v", err)
+		return err
+	}
 
-		err := query.LoadOne(&task)
-		if err != nil {
-			logger.Error("Failed to get task [%s]: %+v", task.TaskId, err)
-			return err
-		}
-
-		processor := NewProcessor(task)
+	err = func() error {
+		processor := NewProcessor(task, tLogger)
 		err = processor.Pre()
 		if err != nil {
-			logger.Error("Executing task [%s] pre processor failed: %+v", task.TaskId, err)
+			tLogger.Error("Executing task pre processor failed: %+v", err)
 			return err
 		}
 
 		ctx := client.GetSystemUserContext()
 		pilotClient, err := pilotclient.NewClient(ctx)
 		if err != nil {
-			logger.Error("Connect to pilot service failed: %+v", err)
+			tLogger.Error("Connect to pilot service failed: %+v", err)
 			return err
 		}
 
@@ -133,7 +135,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 				config := new(pbtypes.SetDroneConfigRequest)
 				err = jsonutil.Decode([]byte(task.Directive), config)
 				if err != nil {
-					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					tLogger.Error("Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
 				err = retryutil.Retry(3, 0, func() error {
@@ -141,14 +143,14 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				})
 				if err != nil {
-					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					tLogger.Error("Send task to pilot failed: %+v", err)
 					return err
 				}
 			case vmbased.ActionSetFrontgateConfig:
 				config := new(pbtypes.FrontgateConfig)
 				err = jsonutil.Decode([]byte(task.Directive), config)
 				if err != nil {
-					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					tLogger.Error("Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
 				err = retryutil.Retry(3, 0, func() error {
@@ -156,14 +158,14 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				})
 				if err != nil {
-					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					tLogger.Error("Send task to pilot failed: %+v", err)
 					return err
 				}
 			case vmbased.ActionPingDrone:
 				droneEndpoint := new(pbtypes.DroneEndpoint)
 				err = jsonutil.Decode([]byte(task.Directive), droneEndpoint)
 				if err != nil {
-					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					tLogger.Error("Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
 				err = funcutil.WaitForSpecificOrError(func() (bool, error) {
@@ -171,14 +173,14 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					defer cancel()
 					_, err := pilotClient.PingDrone(withTimeoutCtx, droneEndpoint)
 					if err != nil {
-						logger.Warn("Send task [%s] to pilot failed, will retry: %+v", taskId, err)
+						tLogger.Warn("Send task to pilot failed, will retry: %+v", err)
 						return false, nil
 					} else {
 						return true, nil
 					}
 				}, task.GetTimeout(constants.WaitDroneServiceTimeout), constants.WaitDroneServiceInterval)
 				if err != nil {
-					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					tLogger.Error("Send task to pilot failed: %+v", err)
 					return err
 				}
 
@@ -186,7 +188,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 				request := new(pbtypes.FrontgateId)
 				err = jsonutil.Decode([]byte(task.Directive), request)
 				if err != nil {
-					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					tLogger.Error("Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
 				err = funcutil.WaitForSpecificOrError(func() (bool, error) {
@@ -194,14 +196,14 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					defer cancel()
 					_, err := pilotClient.PingFrontgate(withTimeoutCtx, request)
 					if err != nil {
-						logger.Warn("Send task [%s] to pilot failed, will retry: %+v", taskId, err)
+						tLogger.Warn("Send task to pilot failed, will retry: %+v", err)
 						return false, nil
 					} else {
 						return true, nil
 					}
 				}, task.GetTimeout(constants.WaitFrontgateServiceTimeout), constants.WaitFrontgateServiceInterval)
 				if err != nil {
-					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					tLogger.Error("Send task to pilot failed: %+v", err)
 					return err
 				}
 
@@ -217,7 +219,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				})
 				if err != nil {
-					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+					tLogger.Error("Failed to handle task to pilot: %+v", err)
 					return err
 				}
 
@@ -235,11 +237,11 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				})
 				if err != nil {
-					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+					tLogger.Error("Failed to handle task to pilot: %+v", err)
 					return err
 				}
 
-				logger.Debug("Finish subtask [%s]", task.TaskId)
+				tLogger.Debug("Finish subtask [%s]", task.TaskId)
 
 				time.Sleep(1 * time.Second)
 
@@ -247,7 +249,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 				request := new(pbtypes.RunCommandOnDroneRequest)
 				err = jsonutil.Decode([]byte(task.Directive), request)
 				if err != nil {
-					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					tLogger.Error("Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
 
@@ -255,16 +257,16 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					_, err = pilotClient.RunCommandOnDrone(withTimeoutCtx, request)
 					if err != nil {
 						if strings.Contains(err.Error(), "transport is closing") {
-							logger.Debug("Expected error: %+v", err)
+							tLogger.Debug("Expected error: %+v", err)
 							return nil
 						} else {
-							logger.Error("%s", err.Error())
+							tLogger.Error("%s", err.Error())
 						}
 					}
 					return err
 				})
 				if err != nil {
-					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					tLogger.Error("Send task to pilot failed: %+v", err)
 					return err
 				}
 
@@ -272,7 +274,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 				request := new(pbtypes.RunCommandOnFrontgateRequest)
 				err = jsonutil.Decode([]byte(task.Directive), request)
 				if err != nil {
-					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					tLogger.Error("Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
 
@@ -280,16 +282,16 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					_, err = pilotClient.RunCommandOnFrontgateNode(withTimeoutCtx, request)
 					if err != nil {
 						if strings.Contains(err.Error(), "context canceled") {
-							logger.Debug("Expected error: %+v", err)
+							tLogger.Debug("Expected error: %+v", err)
 							return nil
 						} else {
-							logger.Error("%s", err.Error())
+							tLogger.Error("%s", err.Error())
 						}
 					}
 					return err
 				})
 				if err != nil {
-					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					tLogger.Error("Send task to pilot failed: %+v", err)
 					return err
 				}
 
@@ -297,7 +299,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 				request := new(pbtypes.RunCommandOnDroneRequest)
 				err = jsonutil.Decode([]byte(task.Directive), request)
 				if err != nil {
-					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					tLogger.Error("Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
 
@@ -306,7 +308,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				})
 				if err != nil {
-					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					tLogger.Error("Send task to pilot failed: %+v", err)
 					return err
 				}
 
@@ -314,7 +316,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 				request := new(pbtypes.RunCommandOnFrontgateRequest)
 				err = jsonutil.Decode([]byte(task.Directive), request)
 				if err != nil {
-					logger.Error("Decode task [%s] directive [%s] failed: %+v", taskId, task.Directive, err)
+					tLogger.Error("Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
 				err = retryutil.Retry(3, 0, func() error {
@@ -322,7 +324,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				})
 				if err != nil {
-					logger.Error("Send task [%s] to pilot failed: %+v", taskId, err)
+					tLogger.Error("Send task to pilot failed: %+v", err)
 					return err
 				}
 
@@ -338,7 +340,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				})
 				if err != nil {
-					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+					tLogger.Error("Failed to handle task to pilot: %+v", err)
 					return err
 				}
 
@@ -354,40 +356,38 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 					return err
 				})
 				if err != nil {
-					logger.Error("Failed to handle task [%s] to pilot: %+v", task.TaskId, err)
+					tLogger.Error("Failed to handle task to pilot: %+v", err)
 					return err
 				}
 				err = pilotClient.WaitSubtask(
 					ctx, task.TaskId, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 				if err != nil {
-					logger.Error("Failed to wait task [%s]: %+v", task.TaskId, err)
+					tLogger.Error("Failed to wait task: %+v", err)
 					return err
 				}
 
 			default:
-				logger.Error("Unknown task [%s] action [%s]", task.TaskId, task.TaskAction)
+				tLogger.Error("Unknown task action [%s]", task.TaskAction)
 			}
 		} else {
-			providerInterface, err := plugins.GetProviderPlugin(task.Target)
+			providerInterface, err := plugins.GetProviderPlugin(task.Target, tLogger)
 			if err != nil {
-				logger.Error("No such runtime [%s]. ", task.Target)
+				tLogger.Error("No such runtime [%s]. ", task.Target)
 				return err
 			}
 			err = providerInterface.HandleSubtask(task)
 			if err != nil {
-				logger.Error("Failed to handle subtask [%s] in runtime [%s]: %+v",
-					task.TaskId, task.Target, err)
+				tLogger.Error("Failed to handle subtask in runtime [%s]: %+v", task.Target, err)
 				return err
 			}
 			err = providerInterface.WaitSubtask(
 				task, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 			if err != nil {
-				logger.Error("Failed to wait subtask [%s] in runtime [%s]: %+v",
-					task.TaskId, task.Target, err)
+				tLogger.Error("Failed to wait subtask in runtime [%s]: %+v", task.Target, err)
 				return err
 			}
 
-			logger.Debug("After wait subtask [%s] directive: %s", task.TaskId, task.Directive)
+			tLogger.Debug("After wait subtask directive: %s", task.Directive)
 		}
 
 		if err != nil {
@@ -396,7 +396,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 
 		err = processor.Post()
 		if err != nil {
-			logger.Error("Executing task [%s] post processor failed: %+v", task.TaskId, err)
+			tLogger.Error("Executing task post processor failed: %+v", err)
 		}
 		return err
 	}()
@@ -405,10 +405,14 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		status = constants.StatusFailed
 
 	}
-	c.updateTaskAttributes(task.TaskId, map[string]interface{}{
+	err = c.updateTaskAttributes(task.TaskId, map[string]interface{}{
 		"status":      status,
 		"status_time": time.Now(),
 	})
+	if err != nil {
+		tLogger.Error("Failed to update task: %+v", err)
+	}
+
 	return err
 }
 

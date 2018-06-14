@@ -38,6 +38,19 @@ import (
 )
 
 type Provider struct {
+	Logger *logger.Logger
+}
+
+func NewProvider() *Provider {
+	return &Provider{
+		Logger: logger.NewLogger(),
+	}
+}
+
+func (p *Provider) SetLogger(logger *logger.Logger) {
+	if logger != nil {
+		p.Logger = logger
+	}
 }
 
 func (p *Provider) getKubeClient(runtimeId string) (clientset *kubernetes.Clientset, config *rest.Config, err error) {
@@ -96,7 +109,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 	ctx := clientutil.GetSystemUserContext()
 	appManagerClient, err := appclient.NewAppManagerClient(ctx)
 	if err != nil {
-		logger.Error("Connect to app manager failed: %+v", err)
+		p.Logger.Error("Connect to app manager failed: %+v", err)
 		return nil, err
 	}
 
@@ -106,7 +119,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 
 	resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
 	if err != nil {
-		logger.Error("Get app version [%s] package failed: %+v", versionId, err)
+		p.Logger.Error("Get app version [%s] package failed: %+v", versionId, err)
 		return nil, err
 	}
 
@@ -115,14 +128,14 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 
 	c, err := chartutil.LoadArchive(r)
 	if err != nil {
-		logger.Error("Load helm chart from app version [%s] failed: %+v", versionId, err)
+		p.Logger.Error("Load helm chart from app version [%s] failed: %+v", versionId, err)
 		return nil, err
 	}
 
-	parser := Parser{}
+	parser := Parser{Logger: p.Logger}
 	clusterWrapper, err := parser.Parse(c, []byte(conf), versionId)
 	if err != nil {
-		logger.Error("Parse app version [%s] failed: %+v", versionId, err)
+		p.Logger.Error("Parse app version [%s] failed: %+v", versionId, err)
 		return nil, err
 	}
 	return clusterWrapper, nil
@@ -443,7 +456,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 
 	pbClusterNodes, err := p.getKubePodsAsClusterNodes(runtimeId, namespace, job.ClusterId, clusterName, job.Owner)
 	if err != nil {
-		logger.Error("Get kubernetes pods failed, %+v", err)
+		p.Logger.Error("Get kubernetes pods failed, %+v", err)
 		return err
 	}
 
@@ -459,7 +472,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	}
 	describeNodesResponse, err := clusterClient.DescribeClusterNodes(ctx, describeNodesRequest)
 	if err != nil {
-		logger.Error("Get old nodes failed, %+v", err)
+		p.Logger.Error("Get old nodes failed, %+v", err)
 		return err
 	}
 	var nodeIds []string

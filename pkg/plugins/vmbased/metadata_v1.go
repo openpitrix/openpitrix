@@ -16,6 +16,7 @@ import (
 
 type MetadataV1 struct {
 	ClusterWrapper *models.ClusterWrapper
+	Logger         *logger.Logger
 }
 
 /*
@@ -39,7 +40,7 @@ in order to register cluster to configuration management service.
 }
 */
 func (m *MetadataV1) GetClusterCnodes() map[string]interface{} {
-	logger.Info("Composing cluster %s", m.ClusterWrapper.Cluster.ClusterId)
+	m.Logger.Info("Composing cluster %s", m.ClusterWrapper.Cluster.ClusterId)
 
 	data := make(map[string]interface{})
 
@@ -80,13 +81,13 @@ func (m *MetadataV1) GetClusterCnodes() map[string]interface{} {
 		data[ip] = selfCnodes
 	}
 
-	logger.Info("Composed cluster %s cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, data)
+	m.Logger.Info("Composed cluster %s cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, data)
 
 	return data
 }
 
 func (m *MetadataV1) GetClusterNodeCnodes(nodeIds []string) map[string]interface{} {
-	logger.Info("Composing cluster %s nodes", m.ClusterWrapper.Cluster.ClusterId)
+	m.Logger.Info("Composing cluster %s nodes", m.ClusterWrapper.Cluster.ClusterId)
 
 	data := make(map[string]interface{})
 
@@ -103,13 +104,13 @@ func (m *MetadataV1) GetClusterNodeCnodes(nodeIds []string) map[string]interface
 		}
 	}
 
-	logger.Info("Composed cluster %s nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, data)
+	m.Logger.Info("Composed cluster %s nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, data)
 
 	return data
 }
 
 func (m *MetadataV1) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]interface{} {
-	logger.Info("Composing cluster %s empty nodes", m.ClusterWrapper.Cluster.ClusterId)
+	m.Logger.Info("Composing cluster %s empty nodes", m.ClusterWrapper.Cluster.ClusterId)
 
 	data := make(map[string]interface{})
 
@@ -123,7 +124,7 @@ func (m *MetadataV1) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]inte
 			data[ip] = hosts
 		}
 	}
-	logger.Info("Composed cluster %s empty nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, data)
+	m.Logger.Info("Composed cluster %s empty nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, data)
 
 	return data
 }
@@ -166,12 +167,12 @@ func (m *MetadataV1) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 		}
 		clusterRole, exist := m.ClusterWrapper.ClusterRoles[role]
 		if !exist {
-			logger.Error("No such role [%s] in cluster role [%s]. ", role, m.ClusterWrapper.Cluster.ClusterId)
+			m.Logger.Error("No such role [%s] in cluster role [%s]. ", role, m.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
 		clusterCommon, exist := m.ClusterWrapper.ClusterCommons[role]
 		if !exist {
-			logger.Error("No such role [%s] in cluster common [%s]. ", role, m.ClusterWrapper.Cluster.ClusterId)
+			m.Logger.Error("No such role [%s] in cluster common [%s]. ", role, m.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
 
@@ -205,7 +206,7 @@ func (m *MetadataV1) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 				case map[string]interface{}:
 					v[instanceId] = host
 				default:
-					logger.Error("Cnodes [%s] should be a map. ", clusterNode.NodeId)
+					m.Logger.Error("Cnodes [%s] should be a map. ", clusterNode.NodeId)
 					return nil
 				}
 			} else {
@@ -231,12 +232,12 @@ func (m *MetadataV1) GetHostCnodes(nodeId string) map[string]interface{} {
 	}
 	clusterRole, exist := m.ClusterWrapper.ClusterRoles[role]
 	if !exist {
-		logger.Error("No such role [%s] in cluster role [%s]. ", role, m.ClusterWrapper.Cluster.ClusterId)
+		m.Logger.Error("No such role [%s] in cluster role [%s]. ", role, m.ClusterWrapper.Cluster.ClusterId)
 		return nil
 	}
 	clusterCommon, exist := m.ClusterWrapper.ClusterCommons[role]
 	if !exist {
-		logger.Error("No such role [%s] in cluster common [%s]. ", role, m.ClusterWrapper.Cluster.ClusterId)
+		m.Logger.Error("No such role [%s] in cluster common [%s]. ", role, m.ClusterWrapper.Cluster.ClusterId)
 		return nil
 	}
 
@@ -313,7 +314,7 @@ func (m *MetadataV1) GetSelfEnvCnodes(nodeId string) map[string]interface{} {
 	if env != "" {
 		err := jsonutil.Decode([]byte(env), &result)
 		if err != nil {
-			logger.Error("Unmarshal cluster [%s] env failed: %+v", m.ClusterWrapper.Cluster.ClusterId, err)
+			m.Logger.Error("Unmarshal cluster [%s] env failed: %+v", m.ClusterWrapper.Cluster.ClusterId, err)
 			return nil
 		}
 	}

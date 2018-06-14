@@ -7,11 +7,11 @@ import (
 )
 
 func TestProviderInterface(t *testing.T) {
-	_, err := GetProviderPlugin(constants.ProviderQingCloud)
+	_, err := GetProviderPlugin(constants.ProviderQingCloud, nil)
 	if err != nil {
 		t.Errorf("Error: %+v", err)
 	}
-	_, err = GetProviderPlugin(constants.ProviderKubernetes)
+	_, err = GetProviderPlugin(constants.ProviderKubernetes, nil)
 	if err != nil {
 		t.Errorf("Error: %+v", err)
 	}

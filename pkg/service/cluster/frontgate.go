@@ -87,7 +87,7 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 	var frontgate *models.Cluster
 	err := pi.Global().Etcd.DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
-		providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider)
+		providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider, nil)
 		if err != nil {
 			return gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Provider)
 		}

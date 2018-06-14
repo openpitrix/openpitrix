@@ -20,34 +20,39 @@ import (
 )
 
 type Processor struct {
-	Task *models.Task
+	Task    *models.Task
+	TLogger *logger.Logger
 }
 
-func NewProcessor(task *models.Task) *Processor {
+func NewProcessor(task *models.Task, tLogger *logger.Logger) *Processor {
+	if tLogger == nil {
+		tLogger = logger.NewLogger()
+	}
 	return &Processor{
-		Task: task,
+		Task:    task,
+		TLogger: tLogger,
 	}
 }
 
 // Post process when task is start
-func (t *Processor) Pre() error {
-	if t.Task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
+func (p *Processor) Pre() error {
+	if p.Task.Directive == "" {
+		p.TLogger.Warn("Skip empty task [%s] directive", p.Task.TaskId)
 		return nil
 	}
 	var err error
 	ctx := client.GetSystemUserContext()
 	clusterClient, err := clusterclient.NewClient(ctx)
 	if err != nil {
-		logger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
+		p.TLogger.Error("Executing task [%s] post processor failed: %+v", p.Task.TaskId, err)
 		return err
 	}
 
-	oldDirective := t.Task.Directive
-	switch t.Task.TaskAction {
+	oldDirective := p.Task.Directive
+	switch p.Task.TaskAction {
 	case vmbased.ActionRunInstances:
 		// volume created before instance, so need to change RunInstances task directive
-		instance, err := models.NewInstance(t.Task.Directive)
+		instance, err := models.NewInstance(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -61,10 +66,10 @@ func (t *Processor) Pre() error {
 		}
 		instance.VolumeId = clusterNodes[0].GetVolumeId().GetValue()
 		// write back
-		t.Task.Directive = jsonutil.ToString(instance)
+		p.Task.Directive = jsonutil.ToString(instance)
 
 	case vmbased.ActionStartInstances:
-		instance, err := models.NewInstance(t.Task.Directive)
+		instance, err := models.NewInstance(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -74,7 +79,7 @@ func (t *Processor) Pre() error {
 		}
 
 	case vmbased.ActionStopInstances:
-		instance, err := models.NewInstance(t.Task.Directive)
+		instance, err := models.NewInstance(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -84,7 +89,7 @@ func (t *Processor) Pre() error {
 		}
 
 	case vmbased.ActionTerminateInstances:
-		instance, err := models.NewInstance(t.Task.Directive)
+		instance, err := models.NewInstance(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -94,7 +99,7 @@ func (t *Processor) Pre() error {
 		}
 
 	case vmbased.ActionFormatAndMountVolume:
-		meta, err := models.NewMeta(t.Task.Directive)
+		meta, err := models.NewMeta(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -112,7 +117,7 @@ func (t *Processor) Pre() error {
 		)
 
 		if meta.FrontgateId == "" {
-			t.Task.TaskAction = vmbased.ActionRunCommandOnFrontgateNode
+			p.Task.TaskAction = vmbased.ActionRunCommandOnFrontgateNode
 			request := &pbtypes.RunCommandOnFrontgateRequest{
 				Endpoint: &pbtypes.FrontgateEndpoint{
 					FrontgateId:     clusterNode.GetClusterId().GetValue(),
@@ -124,9 +129,9 @@ func (t *Processor) Pre() error {
 				TimeoutSeconds: int32(meta.Timeout),
 			}
 			// write back
-			t.Task.Directive = jsonutil.ToString(request)
+			p.Task.Directive = jsonutil.ToString(request)
 		} else {
-			t.Task.TaskAction = vmbased.ActionRunCommandOnDrone
+			p.Task.TaskAction = vmbased.ActionRunCommandOnDrone
 			request := &pbtypes.RunCommandOnDroneRequest{
 				Endpoint: &pbtypes.DroneEndpoint{
 					FrontgateId: meta.FrontgateId,
@@ -137,16 +142,16 @@ func (t *Processor) Pre() error {
 				TimeoutSeconds: int32(meta.Timeout),
 			}
 			// write back
-			t.Task.Directive = jsonutil.ToString(request)
+			p.Task.Directive = jsonutil.ToString(request)
 		}
 
 	case vmbased.ActionRunCommandOnDrone, vmbased.ActionRemoveContainerOnDrone:
 		request := new(pbtypes.RunCommandOnDroneRequest)
-		err := jsonutil.Decode([]byte(t.Task.Directive), request)
+		err := jsonutil.Decode([]byte(p.Task.Directive), request)
 		if err != nil {
 			return err
 		}
-		clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{t.Task.NodeId})
+		clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{p.Task.NodeId})
 		if err != nil {
 			return err
 		}
@@ -154,15 +159,15 @@ func (t *Processor) Pre() error {
 		request.Endpoint.DroneIp = clusterNode.GetPrivateIp().GetValue()
 
 		// write back
-		t.Task.Directive = jsonutil.ToString(request)
+		p.Task.Directive = jsonutil.ToString(request)
 
 	case vmbased.ActionRunCommandOnFrontgateNode, vmbased.ActionRemoveContainerOnFrontgate:
 		request := new(pbtypes.RunCommandOnFrontgateRequest)
-		err := jsonutil.Decode([]byte(t.Task.Directive), request)
+		err := jsonutil.Decode([]byte(p.Task.Directive), request)
 		if err != nil {
 			return err
 		}
-		clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{t.Task.NodeId})
+		clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{p.Task.NodeId})
 		if err != nil {
 			return err
 		}
@@ -170,10 +175,10 @@ func (t *Processor) Pre() error {
 		request.Endpoint.NodeIp = clusterNode.GetPrivateIp().GetValue()
 
 		// write back
-		t.Task.Directive = jsonutil.ToString(request)
+		p.Task.Directive = jsonutil.ToString(request)
 
 	case vmbased.ActionRegisterMetadata:
-		meta, err := models.NewMeta(t.Task.Directive)
+		meta, err := models.NewMeta(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -183,15 +188,16 @@ func (t *Processor) Pre() error {
 		}
 		metadata := &vmbased.MetadataV1{
 			ClusterWrapper: pbClusterWrappers[0],
+			Logger:         p.TLogger,
 		}
 		meta.Cnodes = jsonutil.ToString(metadata.GetClusterCnodes())
 
 		// write back
-		t.Task.Directive = jsonutil.ToString(meta)
+		p.Task.Directive = jsonutil.ToString(meta)
 
 	case vmbased.ActionRegisterCmd:
 		// when CreateCluster need to reload ip
-		meta, err := models.NewMeta(t.Task.Directive)
+		meta, err := models.NewMeta(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -206,17 +212,17 @@ func (t *Processor) Pre() error {
 		if err != nil {
 			return err
 		}
-		err = cnodes.Format(meta.DroneIp, t.Task.TaskId)
+		err = cnodes.Format(meta.DroneIp, p.Task.TaskId)
 		if err != nil {
 			return err
 		}
 		meta.Cnodes = jsonutil.ToString(cnodes)
 		// write back
-		t.Task.Directive = jsonutil.ToString(meta)
+		p.Task.Directive = jsonutil.ToString(meta)
 
 	case vmbased.ActionDeregisterCmd:
 		// when CreateCluster need to reload ip
-		meta, err := models.NewMeta(t.Task.Directive)
+		meta, err := models.NewMeta(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -232,11 +238,11 @@ func (t *Processor) Pre() error {
 		})
 
 		// write back
-		t.Task.Directive = jsonutil.ToString(meta)
+		p.Task.Directive = jsonutil.ToString(meta)
 
 	case vmbased.ActionStartConfd:
 		// when CreateCluster need to reload ip
-		meta, err := models.NewMeta(t.Task.Directive)
+		meta, err := models.NewMeta(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -248,38 +254,38 @@ func (t *Processor) Pre() error {
 			meta.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
 
 			// write back
-			t.Task.Directive = jsonutil.ToString(meta)
+			p.Task.Directive = jsonutil.ToString(meta)
 		}
 
 	case vmbased.ActionPingDrone:
 		droneEndpoint := new(pbtypes.DroneEndpoint)
-		err := jsonutil.Decode([]byte(t.Task.Directive), droneEndpoint)
+		err := jsonutil.Decode([]byte(p.Task.Directive), droneEndpoint)
 		if err != nil {
 			return err
 		}
 		if droneEndpoint.DroneIp == "" {
-			clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{t.Task.NodeId})
+			clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{p.Task.NodeId})
 			if err != nil {
 				return err
 			}
 			droneEndpoint.DroneIp = clusterNodes[0].GetPrivateIp().GetValue()
 
 			// write back
-			t.Task.Directive = jsonutil.ToString(droneEndpoint)
+			p.Task.Directive = jsonutil.ToString(droneEndpoint)
 		}
 
 	case vmbased.ActionPingFrontgate:
-		meta, err := models.NewMeta(t.Task.Directive)
+		meta, err := models.NewMeta(p.Task.Directive)
 		if err != nil {
 			return err
 		}
 		directive := &pbtypes.FrontgateId{
 			Id: meta.ClusterId,
 		}
-		t.Task.Directive = jsonutil.ToString(directive)
+		p.Task.Directive = jsonutil.ToString(directive)
 
 	case vmbased.ActionSetFrontgateConfig:
-		meta, err := models.NewMeta(t.Task.Directive)
+		meta, err := models.NewMeta(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -291,10 +297,10 @@ func (t *Processor) Pre() error {
 		metadataConfig := &vmbased.MetadataConfig{
 			ClusterWrapper: pbClusterWrappers[0],
 		}
-		t.Task.Directive = metadataConfig.GetFrontgateConfig(t.Task.NodeId)
+		p.Task.Directive = metadataConfig.GetFrontgateConfig(p.Task.NodeId)
 
 	case vmbased.ActionSetDroneConfig:
-		meta, err := models.NewMeta(t.Task.Directive)
+		meta, err := models.NewMeta(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -306,24 +312,24 @@ func (t *Processor) Pre() error {
 		metadataConfig := &vmbased.MetadataConfig{
 			ClusterWrapper: pbClusterWrappers[0],
 		}
-		t.Task.Directive = metadataConfig.GetDroneConfig(t.Task.NodeId)
+		p.Task.Directive = metadataConfig.GetDroneConfig(p.Task.NodeId)
 
 	default:
-		logger.Debug("Nothing to do with task [%s] pre processor", t.Task.TaskId)
+		p.TLogger.Debug("Nothing to do with task [%s] pre processor", p.Task.TaskId)
 	}
 
 	// update directive when changed
-	if oldDirective != t.Task.Directive {
+	if oldDirective != p.Task.Directive {
 		attributes := map[string]interface{}{
-			"directive": t.Task.Directive,
+			"directive": p.Task.Directive,
 		}
 		_, err := pi.Global().Db.
 			Update(models.TaskTableName).
 			SetMap(attributes).
-			Where(db.Eq("task_id", t.Task.TaskId)).
+			Where(db.Eq("task_id", p.Task.TaskId)).
 			Exec()
 		if err != nil {
-			logger.Error("Failed to update task [%s]: %+v", t.Task.TaskId, err)
+			p.TLogger.Error("Failed to update task [%s]: %+v", p.Task.TaskId, err)
 			return err
 		}
 	}
@@ -332,18 +338,18 @@ func (t *Processor) Pre() error {
 
 // Post process when task is done
 func (t *Processor) Post() error {
-	logger.Debug("Post task [%s] directive: %s", t.Task.TaskId, t.Task.Directive)
+	t.TLogger.Debug("Post task [%s] directive: %s", t.Task.TaskId, t.Task.Directive)
 	var err error
 	ctx := client.GetSystemUserContext()
 	clusterClient, err := clusterclient.NewClient(ctx)
 	if err != nil {
-		logger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
+		t.TLogger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
 		return err
 	}
 	switch t.Task.TaskAction {
 	case vmbased.ActionRunInstances:
 		if t.Task.Directive == "" {
-			logger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
+			t.TLogger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
 		}
 		instance, err := models.NewInstance(t.Task.Directive)
 		if err != nil {
@@ -407,7 +413,7 @@ func (t *Processor) Post() error {
 
 	case vmbased.ActionCreateVolumes:
 		if t.Task.Directive == "" {
-			logger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
+			t.TLogger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
 		}
 		volume, err := models.NewVolume(t.Task.Directive)
 		if err != nil {
@@ -424,7 +430,7 @@ func (t *Processor) Post() error {
 		}
 
 	default:
-		logger.Debug("Nothing to do with task [%s] post processor", t.Task.TaskId)
+		t.TLogger.Debug("Nothing to do with task [%s] post processor", t.Task.TaskId)
 	}
 	return err
 }
