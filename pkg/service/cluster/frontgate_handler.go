@@ -42,7 +42,7 @@ func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 		logger.Error("Get frontgate cluster conf failed. ")
 		return clusterId, err
 	}
-	providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider)
+	providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider, nil)
 	if err != nil {
 		logger.Error("No such provider [%s]. ", f.Runtime.Provider)
 		return clusterId, err

@@ -25,6 +25,7 @@ import (
 )
 
 type Parser struct {
+	Logger *logger.Logger
 }
 
 func (p *Parser) ParseCluster(name string, description string, versionId string) (*models.Cluster, error) {
@@ -85,7 +86,7 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 
 		obj, _, err := decode([]byte(v), nil, nil)
 		if err != nil {
-			logger.Warn("Decode file [%s] in chart failed, %+v", k, err)
+			p.Logger.Warn("Decode file [%s] in chart failed, %+v", k, err)
 			continue
 		}
 

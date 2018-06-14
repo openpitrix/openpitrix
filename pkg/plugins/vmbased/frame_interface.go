@@ -7,6 +7,7 @@ package vmbased
 import (
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 )
 
@@ -19,7 +20,7 @@ type FrameInterface interface {
 	DeleteClusterNodesLayer() *models.TaskLayer
 }
 
-func NewFrameInterface(job *models.Job) (FrameInterface, error) {
+func NewFrameInterface(job *models.Job, logger *logger.Logger) (FrameInterface, error) {
 	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
 	if err != nil {
 		return nil, err
@@ -35,6 +36,7 @@ func NewFrameInterface(job *models.Job) (FrameInterface, error) {
 		Job:            job,
 		ClusterWrapper: clusterWrapper,
 		Runtime:        runtime,
+		Logger:         logger,
 	}
 
 	switch clusterWrapper.Cluster.ClusterType {

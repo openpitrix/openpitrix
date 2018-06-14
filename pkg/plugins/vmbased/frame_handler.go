@@ -18,6 +18,7 @@ import (
 )
 
 type FrameHandler struct {
+	Logger *logger.Logger
 }
 
 func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
@@ -25,12 +26,12 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 	waitFrontgateDirective := new(models.Meta)
 
 	if task.Directive == "" {
-		logger.Warn("Skip empty task [%s] directive", task.TaskId)
+		f.Logger.Warn("Skip empty task [%s] directive", task.TaskId)
 		return nil
 	}
 	err := jsonutil.Decode([]byte(task.Directive), waitFrontgateDirective)
 	if err != nil {
-		logger.Error("Unmarshal into map failed: %+v", err)
+		f.Logger.Error("Unmarshal into map failed: %+v", err)
 		return err
 	}
 
@@ -55,7 +56,7 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 		}
 		frontgate := response.ClusterSet[0]
 		if frontgate.Status == nil {
-			logger.Error("Frontgate [%s] status is nil", frontgateId)
+			f.Logger.Error("Frontgate [%s] status is nil", frontgateId)
 			return false, nil
 		}
 

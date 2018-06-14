@@ -32,11 +32,21 @@ type ProviderHandler struct {
 	vmbased.FrameHandler
 }
 
+func GetProviderHandler(Logger *logger.Logger) *ProviderHandler {
+	providerHandler := new(ProviderHandler)
+	if Logger == nil {
+		providerHandler.Logger = logger.NewLogger()
+	} else {
+		providerHandler.Logger = Logger
+	}
+	return providerHandler
+}
+
 func (p *ProviderHandler) initQingCloudService(runtimeUrl, runtimeCredential, zone string) (*qcservice.QingCloudService, error) {
 	credential := new(Credential)
 	err := jsonutil.Decode([]byte(runtimeCredential), credential)
 	if err != nil {
-		logger.Error("Parse [%s] credential failed: %+v", MyProvider, err)
+		p.Logger.Error("Parse [%s] credential failed: %+v", MyProvider, err)
 		return nil, err
 	}
 	conf, err := qcconfig.New(credential.AccessKeyId, credential.SecretAccessKey)
@@ -55,7 +65,7 @@ func (p *ProviderHandler) initQingCloudService(runtimeUrl, runtimeCredential, zo
 	}
 	conf.Host = urlAndPort[0]
 	if err != nil {
-		logger.Error("Parse [%s] runtimeUrl [%s] failed: %+v", MyProvider, runtimeUrl, err)
+		p.Logger.Error("Parse [%s] runtimeUrl [%s] failed: %+v", MyProvider, runtimeUrl, err)
 		return nil, err
 	}
 	return qcservice.Init(conf)
@@ -71,7 +81,7 @@ func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudSer
 }
 
 func (p *ProviderHandler) waitInstanceNetworkAndVolume(instanceService *qcservice.InstanceService, instanceId string, needVolume bool, timeout time.Duration, waitInterval time.Duration) (ins *qcservice.Instance, err error) {
-	logger.Debug("Waiting for IP address to be assigned and volume attached to Instance [%s]", instanceId)
+	p.Logger.Debug("Waiting for IP address to be assigned and volume attached to Instance [%s]", instanceId)
 	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
 		describeOutput, err := instanceService.DescribeInstances(
 			&qcservice.DescribeInstancesInput{
@@ -99,7 +109,7 @@ func (p *ProviderHandler) waitInstanceNetworkAndVolume(instanceService *qcservic
 			}
 		}
 		ins = instance
-		logger.Debug("Instance [%s] get IP address [%s]", instanceId, *ins.VxNets[0].PrivateIP)
+		p.Logger.Debug("Instance [%s] get IP address [%s]", instanceId, *ins.VxNets[0].PrivateIP)
 		return true, nil
 	}, timeout, waitInterval)
 	return
@@ -108,7 +118,7 @@ func (p *ProviderHandler) waitInstanceNetworkAndVolume(instanceService *qcservic
 func (p *ProviderHandler) RunInstances(task *models.Task) error {
 
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -117,13 +127,13 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	}
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	instanceService, err := qingcloudService.Instance(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -150,23 +160,23 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 		input.UserdataValue = qcservice.String(instance.UserDataValue)
 		input.UserdataType = qcservice.String(DefaultUserDataType)
 	}
-	logger.Debug("RunInstances with input: %s", jsonutil.ToString(input))
+	p.Logger.Debug("RunInstances with input: %s", jsonutil.ToString(input))
 	output, err := instanceService.RunInstances(input)
 	if err != nil {
-		logger.Error("Send RunInstances to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send RunInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send RunInstances to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send RunInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return fmt.Errorf("send RunInstances to %s failed: %s", MyProvider, message)
 	}
 
 	if len(output.Instances) == 0 {
-		logger.Error("Send RunInstances to %s failed with 0 output instances", MyProvider)
+		p.Logger.Error("Send RunInstances to %s failed with 0 output instances", MyProvider)
 		return fmt.Errorf("send RunInstances to %s failed with 0 output instances", MyProvider)
 	}
 
@@ -181,7 +191,7 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 
 func (p *ProviderHandler) StopInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -189,18 +199,18 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 		return err
 	}
 	if instance.InstanceId == "" {
-		logger.Warn("Skip task [%s] without instance", task.TaskId)
+		p.Logger.Warn("Skip task without instance")
 		return nil
 	}
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	instanceService, err := qingcloudService.Instance(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -210,14 +220,14 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
 	if describeRetCode != 0 {
 		message := qcservice.StringValue(describeOutput.Message)
-		logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, describeRetCode, message)
 		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
 	}
@@ -228,7 +238,7 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
 
 	if status == constants.StatusStopped {
-		logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
+		p.Logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
 		return nil
 	}
 
@@ -238,14 +248,14 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send StopInstances to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send StopInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send StopInstances to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send StopInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return fmt.Errorf("send StopInstances to %s failed: %s", MyProvider, message)
 	}
@@ -259,7 +269,7 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 
 func (p *ProviderHandler) StartInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -267,18 +277,18 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 		return err
 	}
 	if instance.InstanceId == "" {
-		logger.Warn("Skip task [%s] without instance", task.TaskId)
+		p.Logger.Warn("Skip task without instance id")
 		return nil
 	}
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	instanceService, err := qingcloudService.Instance(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -288,25 +298,25 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
 	if describeRetCode != 0 {
 		message := qcservice.StringValue(describeOutput.Message)
-		logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, describeRetCode, message)
 		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
 	}
 	if len(describeOutput.InstanceSet) == 0 {
-		return fmt.Errorf("Instance with id [%s] not exist", instance.InstanceId)
+		return fmt.Errorf("Instance id [%s] not exist", instance.InstanceId)
 	}
 
 	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
 
 	if status == constants.StatusActive {
-		logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
+		p.Logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
 		return nil
 	}
 
@@ -316,14 +326,14 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send StartInstances to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send StartInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send StartInstances to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send StartInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return fmt.Errorf("send StartInstances to %s failed: %s", MyProvider, message)
 	}
@@ -337,7 +347,7 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 
 func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -345,19 +355,19 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 		return err
 	}
 	if instance.InstanceId == "" {
-		logger.Warn("Skip task [%s] without instance", task.TaskId)
+		p.Logger.Warn("Skip task without instance id")
 		return nil
 	}
 
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	instanceService, err := qingcloudService.Instance(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -367,25 +377,25 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
 	if describeRetCode != 0 {
 		message := qcservice.StringValue(describeOutput.Message)
-		logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send DescribeInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, describeRetCode, message)
 		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
 	}
 	if len(describeOutput.InstanceSet) == 0 {
-		return fmt.Errorf("Instance with id [%s] not exist", instance.InstanceId)
+		return fmt.Errorf("Instance id [%s] not exist", instance.InstanceId)
 	}
 
 	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
 
 	if status == constants.StatusDeleted || status == constants.StatusCeased {
-		logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
+		p.Logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
 		return nil
 	}
 
@@ -395,14 +405,14 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send TerminateInstances to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send TerminateInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send TerminateInstances to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send TerminateInstances to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return fmt.Errorf("send TerminateInstances to %s failed: %s", MyProvider, message)
 	}
@@ -415,7 +425,7 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 
 func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -424,13 +434,13 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	}
 	qingcloudService, err := p.initService(volume.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	volumeService, err := qingcloudService.Volume(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -442,14 +452,14 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send CreateVolumes to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send CreateVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send CreateVolumes to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send CreateVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return fmt.Errorf("send CreateVolumes to %s failed: %s", MyProvider, message)
 	}
@@ -464,7 +474,7 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 
@@ -475,13 +485,13 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 
 	qingcloudService, err := p.initService(volume.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	volumeService, err := qingcloudService.Volume(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -492,14 +502,14 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send DetachVolumes to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send DetachVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send DetachVolumes to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send DetachVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return fmt.Errorf("send DetachVolumes to %s failed: %s", MyProvider, message)
 	}
@@ -513,7 +523,7 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 
@@ -524,13 +534,13 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 
 	qingcloudService, err := p.initService(volume.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	volumeService, err := qingcloudService.Volume(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -541,14 +551,14 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send AttachVolumes to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send AttachVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send AttachVolumes to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send AttachVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return fmt.Errorf("send AttachVolumes to %s failed: %s", MyProvider, message)
 	}
@@ -562,7 +572,7 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 
@@ -571,18 +581,18 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		return err
 	}
 	if volume.VolumeId == "" {
-		logger.Warn("Skip task [%s] without volume", task.TaskId)
+		p.Logger.Warn("Skip task without volume")
 		return nil
 	}
 	qingcloudService, err := p.initService(volume.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	volumeService, err := qingcloudService.Volume(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -592,14 +602,14 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send DescribeVolumes to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send DescribeVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
 	if describeRetCode != 0 {
 		message := qcservice.StringValue(describeOutput.Message)
-		logger.Error("Send DescribeVolumes to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send DescribeVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, describeRetCode, message)
 		return fmt.Errorf("send DescribeVolumes to %s failed: %s", MyProvider, message)
 	}
@@ -610,7 +620,7 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	status := qcservice.StringValue(describeOutput.VolumeSet[0].Status)
 
 	if status == constants.StatusDeleted || status == constants.StatusCeased {
-		logger.Warn("Volume [%s] has already been [%s], do nothing", volume.VolumeId, status)
+		p.Logger.Warn("Volume [%s] has already been [%s], do nothing", volume.VolumeId, status)
 		return nil
 	}
 
@@ -620,14 +630,14 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		},
 	)
 	if err != nil {
-		logger.Error("Send DeleteVolumes to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("Send DeleteVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send DeleteVolumes to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send DeleteVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return fmt.Errorf("send DeleteVolumes to %s failed: %s", MyProvider, message)
 	}
@@ -641,7 +651,7 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -649,32 +659,32 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 		return err
 	}
 	if instance.TargetJobId == "" {
-		logger.Warn("Skip task [%s] without target job id", task.TaskId)
+		p.Logger.Warn("Skip task without target job id")
 		return nil
 	}
 
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	jobService, err := qingcloudService.Job(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s job api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s job api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	err = qcclient.WaitJob(jobService, instance.TargetJobId, task.GetTimeout(constants.WaitTaskTimeout),
 		constants.WaitTaskInterval)
 	if err != nil {
-		logger.Error("Wait %s job [%s] failed: %+v", MyProvider, instance.TargetJobId, err)
+		p.Logger.Error("Wait %s job [%s] failed: %+v", MyProvider, instance.TargetJobId, err)
 		return err
 	}
 
 	instanceService, err := qingcloudService.Instance(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s instance api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -686,7 +696,7 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	output, err := p.waitInstanceNetworkAndVolume(instanceService, instance.InstanceId, needVolume,
 		task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 	if err != nil {
-		logger.Error("Wait %s instance [%s] network failed: %+v", MyProvider, instance.InstanceId, err)
+		p.Logger.Error("Wait %s instance [%s] network failed: %+v", MyProvider, instance.InstanceId, err)
 		return err
 	}
 
@@ -698,14 +708,14 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	// write back
 	task.Directive = jsonutil.ToString(instance)
 
-	logger.Debug("WaitRunInstances task [%s] directive: %s", task.TaskId, task.Directive)
+	p.Logger.Debug("WaitRunInstances task [%s] directive: %s", task.TaskId, task.Directive)
 
 	return nil
 }
 
 func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -713,25 +723,25 @@ func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
 		return err
 	}
 	if instance.TargetJobId == "" {
-		logger.Warn("Skip task [%s] without target job id", task.TaskId)
+		p.Logger.Warn("Skip task without target job id")
 		return nil
 	}
 	qingcloudService, err := p.initService(instance.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	jobService, err := qingcloudService.Job(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s job api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s job api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	err = qcclient.WaitJob(jobService, instance.TargetJobId, task.GetTimeout(constants.WaitTaskTimeout),
 		constants.WaitTaskInterval)
 	if err != nil {
-		logger.Error("Wait %s job [%s] failed: %+v", MyProvider, instance.TargetJobId, err)
+		p.Logger.Error("Wait %s job [%s] failed: %+v", MyProvider, instance.TargetJobId, err)
 		return err
 	}
 
@@ -740,7 +750,7 @@ func (p *ProviderHandler) WaitInstanceTask(task *models.Task) error {
 
 func (p *ProviderHandler) WaitVolumeTask(task *models.Task) error {
 	if task.Directive == "" {
-		logger.Warn("Skip task [%s] without directive", task.TaskId)
+		p.Logger.Warn("Skip task without directive")
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -748,25 +758,25 @@ func (p *ProviderHandler) WaitVolumeTask(task *models.Task) error {
 		return err
 	}
 	if volume.TargetJobId == "" {
-		logger.Warn("Skip task [%s] without target job id", task.TaskId)
+		p.Logger.Warn("Skip task without target job id")
 		return nil
 	}
 	qingcloudService, err := p.initService(volume.RuntimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	jobService, err := qingcloudService.Job(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s volume api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	err = qcclient.WaitJob(jobService, volume.TargetJobId, task.GetTimeout(constants.WaitTaskTimeout),
 		constants.WaitTaskInterval)
 	if err != nil {
-		logger.Error("Wait %s volume [%s] failed: %+v", MyProvider, volume.TargetJobId, err)
+		p.Logger.Error("Wait %s volume [%s] failed: %+v", MyProvider, volume.TargetJobId, err)
 		return err
 	}
 
@@ -804,13 +814,13 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
 	qingcloudService, err := p.initService(req.GetRuntimeId().GetValue())
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
 	vxnetService, err := qingcloudService.VxNet(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s vxnet api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s vxnet api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -831,20 +841,20 @@ func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeS
 
 	output, err := vxnetService.DescribeVxNets(input)
 	if err != nil {
-		logger.Error("DescribeVxNets to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("DescribeVxNets to %s failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send DescribeVxNets to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send DescribeVxNets to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return nil, fmt.Errorf("send DescribeVxNets to %s failed: %s", MyProvider, message)
 	}
 
 	if len(output.VxNetSet) == 0 {
-		logger.Error("Send DescribeVxNets to %s failed with 0 output subnets", MyProvider)
+		p.Logger.Error("Send DescribeVxNets to %s failed with 0 output subnets", MyProvider)
 		return nil, fmt.Errorf("send DescribeVxNets to %s failed with 0 output subnets", MyProvider)
 	}
 
@@ -895,13 +905,13 @@ func (p *ProviderHandler) CheckResourceQuotas(ctx context.Context, clusterWrappe
 func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 	qingcloudService, err := p.initService(runtimeId)
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
 	routerService, err := qingcloudService.Router(qingcloudService.Config.Zone)
 	if err != nil {
-		logger.Error("Init %s router api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s router api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -911,20 +921,20 @@ func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, err
 		},
 	)
 	if err != nil {
-		logger.Error("DescribeRouters to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("DescribeRouters to %s failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send DescribeRouters to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send DescribeRouters to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return nil, fmt.Errorf("send DescribeRouters to %s failed: %s", MyProvider, message)
 	}
 
 	if len(output.RouterSet) == 0 {
-		logger.Error("Send DescribeRouters to %s failed with 0 output instances", MyProvider)
+		p.Logger.Error("Send DescribeRouters to %s failed with 0 output instances", MyProvider)
 		return nil, fmt.Errorf("send DescribeRouters to %s failed with 0 output instances", MyProvider)
 	}
 
@@ -954,7 +964,7 @@ func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, err
 func (p *ProviderHandler) DescribeZones(url, credential string) ([]string, error) {
 	qingcloudService, err := p.initQingCloudService(url, credential, "")
 	if err != nil {
-		logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -964,14 +974,14 @@ func (p *ProviderHandler) DescribeZones(url, credential string) ([]string, error
 		},
 	)
 	if err != nil {
-		logger.Error("DescribeZones to %s failed: %+v", MyProvider, err)
+		p.Logger.Error("DescribeZones to %s failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
 	retCode := qcservice.IntValue(output.RetCode)
 	if retCode != 0 {
 		message := qcservice.StringValue(output.Message)
-		logger.Error("Send DescribeZones to %s failed with return code [%d], message [%s]",
+		p.Logger.Error("Send DescribeZones to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return nil, fmt.Errorf("send DescribeZones to %s failed: %s", MyProvider, message)
 	}

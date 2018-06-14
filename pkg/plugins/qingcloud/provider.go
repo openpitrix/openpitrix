@@ -23,6 +23,19 @@ import (
 )
 
 type Provider struct {
+	Logger *logger.Logger
+}
+
+func NewProvider() *Provider {
+	return &Provider{
+		Logger: logger.NewLogger(),
+	}
+}
+
+func (p *Provider) SetLogger(logger *logger.Logger) {
+	if logger != nil {
+		p.Logger = logger
+	}
 }
 
 func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
@@ -32,7 +45,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 		ctx := context.Background()
 		appManagerClient, err := appclient.NewAppManagerClient(ctx)
 		if err != nil {
-			logger.Error("Connect to app manager failed: %+v", err)
+			p.Logger.Error("Connect to app manager failed: %+v", err)
 			return nil, err
 		}
 
@@ -42,41 +55,41 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 
 		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
 		if err != nil {
-			logger.Error("Get app version [%s] package failed: %+v", versionId, err)
+			p.Logger.Error("Get app version [%s] package failed: %+v", versionId, err)
 			return nil, err
 		}
 
 		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
 		if err != nil {
-			logger.Error("Load app version [%s] package failed: %+v", versionId, err)
+			p.Logger.Error("Load app version [%s] package failed: %+v", versionId, err)
 			return nil, err
 		}
 		var confJson app.ClusterUserConfig
 		err = jsonutil.Decode([]byte(conf), &confJson)
 		if err != nil {
-			logger.Error("Parse conf [%s] failed: %+v", conf, err)
+			p.Logger.Error("Parse conf [%s] failed: %+v", conf, err)
 			return nil, err
 		}
 		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
 		if err != nil {
-			logger.Error("Render app version [%s] cluster template failed: %+v", versionId, err)
+			p.Logger.Error("Render app version [%s] cluster template failed: %+v", versionId, err)
 			return nil, err
 		}
 		err = clusterConf.Validate()
 		if err != nil {
-			logger.Error("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
+			p.Logger.Error("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
 			return nil, err
 		}
 
 	} else {
 		err := jsonutil.Decode([]byte(conf), &clusterConf)
 		if err != nil {
-			logger.Error("Parse conf [%s] to cluster failed: %+v", conf, err)
+			p.Logger.Error("Parse conf [%s] to cluster failed: %+v", conf, err)
 			return nil, err
 		}
 	}
 
-	parser := Parser{}
+	parser := Parser{Logger: p.Logger}
 	clusterWrapper, err := parser.Parse(clusterConf)
 	if err != nil {
 		return nil, err
@@ -85,7 +98,7 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	frameInterface, err := vmbased.NewFrameInterface(job)
+	frameInterface, err := vmbased.NewFrameInterface(job, p.Logger)
 	if err != nil {
 		return nil, err
 	}
@@ -122,14 +135,14 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionUpdateClusterEnv:
 
 	default:
-		logger.Error("Unknown job action [%s]", job.JobAction)
+		p.Logger.Error("Unknown job action [%s]", job.JobAction)
 		return nil, fmt.Errorf("unknown job action [%s]", job.JobAction)
 	}
 	return nil, nil
 }
 
 func (p *Provider) HandleSubtask(task *models.Task) error {
-	handler := new(ProviderHandler)
+	handler := GetProviderHandler(p.Logger)
 
 	switch task.TaskAction {
 	case vmbased.ActionRunInstances:
@@ -153,13 +166,13 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		// do nothing
 		return nil
 	default:
-		logger.Error("Unknown task action [%s]", task.TaskAction)
+		p.Logger.Error("Unknown task action [%s]", task.TaskAction)
 		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }
 func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error {
-	logger.Debug("Wait sub task [%s] timeout [%s] interval [%s]", task.TaskId, timeout, waitInterval)
-	handler := new(ProviderHandler)
+	p.Logger.Debug("Wait sub task timeout [%s] interval [%s]", timeout, waitInterval)
+	handler := GetProviderHandler(p.Logger)
 
 	switch task.TaskAction {
 	case vmbased.ActionRunInstances:
@@ -181,28 +194,28 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 	case vmbased.ActionWaitFrontgateAvailable:
 		return handler.WaitFrontgateAvailable(task)
 	default:
-		logger.Error("Unknown task action [%s]", task.TaskAction)
+		p.Logger.Error("Unknown task action [%s]", task.TaskAction)
 		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }
 
 func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
-	handler := new(ProviderHandler)
+	handler := GetProviderHandler(p.Logger)
 	return handler.DescribeSubnets(ctx, req)
 }
 
 func (p *Provider) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error) {
-	handler := new(ProviderHandler)
+	handler := GetProviderHandler(p.Logger)
 	return handler.CheckResourceQuotas(ctx, clusterWrapper)
 }
 
 func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
-	handler := new(ProviderHandler)
+	handler := GetProviderHandler(p.Logger)
 	return handler.DescribeVpc(runtimeId, vpcId)
 }
 
 func (p *Provider) ValidateCredential(url, credential string) error {
-	handler := new(ProviderHandler)
+	handler := GetProviderHandler(p.Logger)
 	_, err := handler.DescribeZones(url, credential)
 	return err
 }
@@ -212,7 +225,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 }
 
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) []string {
-	handler := new(ProviderHandler)
+	handler := GetProviderHandler(p.Logger)
 	zones, _ := handler.DescribeZones(url, credential)
 	return zones
 }
