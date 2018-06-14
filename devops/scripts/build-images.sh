@@ -5,5 +5,4 @@ cd $(dirname $0)
 cd ../..
 
 echo "Building images..."
-docker build -t openpitrix .
-docker tag openpitrix openpitrix/openpitrix-dev:latest
+docker build -t openpitrix -t openpitrix/openpitrix-dev:latest .
