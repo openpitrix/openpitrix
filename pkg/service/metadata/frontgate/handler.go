@@ -17,11 +17,11 @@ import (
 	"github.com/chai2010/jsonmap"
 
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb/frontgate"
-	"openpitrix.io/openpitrix/pkg/pb/types"
+	"openpitrix.io/openpitrix/pkg/pb/metadata/frontgate"
+	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/droneutil"
 	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate/frontgateutil"
-	"openpitrix.io/openpitrix/pkg/service/pilot/pilotutil"
+	"openpitrix.io/openpitrix/pkg/service/metadata/pilot/pilotutil"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 

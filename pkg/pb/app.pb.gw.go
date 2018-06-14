@@ -205,8 +205,8 @@ func RegisterAppManagerHandler(ctx context.Context, mux *runtime.ServeMux, conn 
 	return RegisterAppManagerHandlerClient(ctx, mux, NewAppManagerClient(conn))
 }
 
-// RegisterAppManagerHandler registers the http handlers for service AppManager to "mux".
-// The handlers forward requests to the grpc endpoint over the given implementation of "AppManagerClient".
+// RegisterAppManagerHandlerClient registers the http handlers for service AppManager
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "AppManagerClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "AppManagerClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "AppManagerClient" to call the correct interceptors.

@@ -18,7 +18,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb/types"
+	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/droneutil"
 	"openpitrix.io/openpitrix/pkg/util/pathutil"

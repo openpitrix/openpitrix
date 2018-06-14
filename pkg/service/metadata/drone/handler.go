@@ -17,8 +17,8 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/libconfd"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb/drone"
-	"openpitrix.io/openpitrix/pkg/pb/types"
+	"openpitrix.io/openpitrix/pkg/pb/metadata/drone"
+	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/yunify_confdfunc"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )

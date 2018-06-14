@@ -132,8 +132,8 @@ func RegisterRepoManagerHandler(ctx context.Context, mux *runtime.ServeMux, conn
 	return RegisterRepoManagerHandlerClient(ctx, mux, NewRepoManagerClient(conn))
 }
 
-// RegisterRepoManagerHandler registers the http handlers for service RepoManager to "mux".
-// The handlers forward requests to the grpc endpoint over the given implementation of "RepoManagerClient".
+// RegisterRepoManagerHandlerClient registers the http handlers for service RepoManager
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "RepoManagerClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "RepoManagerClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "RepoManagerClient" to call the correct interceptors.

@@ -19,7 +19,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb/types"
+	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate"
 	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate/frontgateutil"
 	"openpitrix.io/openpitrix/pkg/util/pathutil"

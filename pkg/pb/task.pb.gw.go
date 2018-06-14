@@ -89,8 +89,8 @@ func RegisterTaskManagerHandler(ctx context.Context, mux *runtime.ServeMux, conn
 	return RegisterTaskManagerHandlerClient(ctx, mux, NewTaskManagerClient(conn))
 }
 
-// RegisterTaskManagerHandler registers the http handlers for service TaskManager to "mux".
-// The handlers forward requests to the grpc endpoint over the given implementation of "TaskManagerClient".
+// RegisterTaskManagerHandlerClient registers the http handlers for service TaskManager
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "TaskManagerClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "TaskManagerClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "TaskManagerClient" to call the correct interceptors.

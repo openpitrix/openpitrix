@@ -20,9 +20,9 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb/types"
-	"openpitrix.io/openpitrix/pkg/service/pilot"
-	"openpitrix.io/openpitrix/pkg/service/pilot/pilotutil"
+	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	"openpitrix.io/openpitrix/pkg/service/metadata/pilot"
+	"openpitrix.io/openpitrix/pkg/service/metadata/pilot/pilotutil"
 	"openpitrix.io/openpitrix/pkg/util/pathutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
