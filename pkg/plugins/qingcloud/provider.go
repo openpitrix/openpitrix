@@ -20,6 +20,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type Provider struct {
@@ -214,18 +215,26 @@ func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 	return handler.DescribeVpc(runtimeId, vpcId)
 }
 
-func (p *Provider) ValidateCredential(url, credential string) error {
+func (p *Provider) ValidateCredential(url, credential, zone string) error {
 	handler := GetProviderHandler(p.Logger)
-	_, err := handler.DescribeZones(url, credential)
-	return err
+	zones, err := handler.DescribeZones(url, credential)
+	if err != nil {
+		return err
+	}
+	if zone == "" {
+		return nil
+	}
+	if !stringutil.StringIn(zone, zones) {
+		return fmt.Errorf("cannot access zone [%s]", zone)
+	}
+	return nil
 }
 
 func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	return nil
 }
 
-func (p *Provider) DescribeRuntimeProviderZones(url, credential string) []string {
+func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
 	handler := GetProviderHandler(p.Logger)
-	zones, _ := handler.DescribeZones(url, credential)
-	return zones
+	return handler.DescribeZones(url, credential)
 }

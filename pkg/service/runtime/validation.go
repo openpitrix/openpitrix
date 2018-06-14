@@ -42,7 +42,7 @@ func ValidateURL(url string) error {
 	return nil
 }
 
-func ValidateCredential(provider, url, credential string) error {
+func ValidateCredential(provider, url, credential, zone string) error {
 	if len(credential) < CredentialMinLength {
 		return gerr.New(gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "credential")
 	}
@@ -68,7 +68,7 @@ func ValidateCredential(provider, url, credential string) error {
 		logger.Error("No such provider [%s]. ", provider)
 		return gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, provider)
 	}
-	return providerInterface.ValidateCredential(url, credential)
+	return providerInterface.ValidateCredential(url, credential, zone)
 }
 
 func ValidateZone(zone string) error {
@@ -167,8 +167,11 @@ func validateCreateRuntimeRequest(req *pb.CreateRuntimeRequest) error {
 	if err != nil {
 		return err
 	}
-	err = ValidateCredential(req.Provider.GetValue(),
-		req.RuntimeUrl.GetValue(), req.RuntimeCredential.GetValue())
+	err = ValidateCredential(
+		req.Provider.GetValue(),
+		req.RuntimeUrl.GetValue(),
+		req.RuntimeCredential.GetValue(),
+		req.GetZone().GetValue())
 	if err != nil {
 		return err
 	}

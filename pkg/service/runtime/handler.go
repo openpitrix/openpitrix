@@ -178,12 +178,12 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	provider := req.Provider.GetValue()
 	url := req.RuntimeUrl.GetValue()
 	credential := req.RuntimeCredential.GetValue()
-	err := ValidateCredential(provider, url, credential)
+	err := ValidateCredential(provider, url, credential, "")
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		} else {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorValidateFailed)
 		}
 	}
 
@@ -191,7 +191,10 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, provider)
 	}
-	zones := providerInterface.DescribeRuntimeProviderZones(url, credential)
+	zones, err := providerInterface.DescribeRuntimeProviderZones(url, credential)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed)
+	}
 	return &pb.DescribeRuntimeProviderZonesResponse{
 		Provider: req.Provider,
 		Zone:     zones,
