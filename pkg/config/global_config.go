@@ -52,6 +52,11 @@ func (g *GlobalConfig) GetRuntimeImageId(apiServer, zone string) (string, error)
 			return imageConfig.ImageId, nil
 		}
 	}
+	for _, imageConfig := range g.Runtime {
+		if imageConfig.ApiServer == apiServer && imageConfig.Zone == ".*" {
+			return imageConfig.ImageId, nil
+		}
+	}
 	logger.Error("No such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 	return "", fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 }
