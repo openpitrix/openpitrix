@@ -24,11 +24,7 @@ cluster:
 pilot:
   ip: 127.0.0.1
 runtime:
-  qingcloud_pek3a:
+  qingcloud_provider:
     api_server: api.qingcloud.com
-    zone: pek3a
-    image_id: xenial4x64a
-  qingcloud_sh1a:
-    api_server: api.qingcloud.com
-    zone: sh1a
+    zone: .*
     image_id: xenial4x64a
