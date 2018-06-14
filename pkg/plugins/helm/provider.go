@@ -503,7 +503,7 @@ func getLabelString(m map[string]string) string {
 	return b.String()
 }
 
-func (p *Provider) ValidateCredential(url, credential string) error {
+func (p *Provider) ValidateCredential(url, credential, zone string) error {
 	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
 		return clientcmd.Load([]byte(credential))
 	}
@@ -519,7 +519,7 @@ func (p *Provider) ValidateCredential(url, credential string) error {
 	}
 
 	cli := clientset.CoreV1().Namespaces()
-	_, err = cli.List(metav1.ListOptions{})
+	_, err = cli.Get(zone, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -527,6 +527,6 @@ func (p *Provider) ValidateCredential(url, credential string) error {
 	return nil
 }
 
-func (p *Provider) DescribeRuntimeProviderZones(url, credential string) []string {
-	return nil
+func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
+	return nil, nil
 }

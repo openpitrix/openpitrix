@@ -34,8 +34,8 @@ type ProviderInterface interface {
 	DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error)
 	CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error)
 	DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error)
-	ValidateCredential(url, credential string) error
-	DescribeRuntimeProviderZones(url, credential string) []string
+	ValidateCredential(url, credential, zone string) error
+	DescribeRuntimeProviderZones(url, credential string) ([]string, error)
 	UpdateClusterStatus(job *models.Job) error
 }
 
