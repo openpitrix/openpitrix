@@ -54,6 +54,35 @@ var (
             "instance_class": 1,
             "volume_size": 10
         }
+    },
+    "env": {
+        "es_node": {
+            "action_destructive_requires_name": "true",
+            "indices_fielddata_cache_size": "90%",
+            "logstash_node_ip": "",
+            "discovery_zen_no_master_block": "write",
+            "gateway_recover_after_time": "5m",
+            "http_cors_enabled": "true",
+            "http_cors_allow_origin": "*",
+            "indices_queries_cache_size": "10%",
+            "indices_memory_index_buffer_size": "10%",
+            "indices_requests_cache_size": "2%",
+            "script_inline": "true",
+            "script_stored": "true",
+            "script_file": "false",
+            "script_aggs": "true",
+            "script_search": "true",
+            "script_update": "true",
+            "remote_ext_dict": "",
+            "remote_ext_stopwords": ""
+        },
+        "lst_node": {
+            "input_conf_content": "http { port => 9700 }",
+            "filter_conf_content": "",
+            "output_conf_content": "",
+            "output_es_content": "",
+            "gemfile_append_content": ""
+        }
     }
 }`
 )

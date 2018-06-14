@@ -63,3 +63,17 @@ func TestValidate4(t *testing.T) {
 		t.Error("error expect, because this is a bad url")
 	}
 }
+
+func TestValidate5(t *testing.T) {
+	repoType := "https"
+	url := "https://baidu.com"
+	credential := ``
+	visibility := "public"
+	providers := []string{"qingcloud"}
+
+	err := validate(repoType, url, credential, visibility, providers)
+
+	if err == nil {
+		t.Error("error expect, because this is a bad url")
+	}
+}
