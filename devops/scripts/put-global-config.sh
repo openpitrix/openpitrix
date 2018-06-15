@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 
-POD=`kubectl get pods -l tier=etcd --namespace=openpitrix-system --no-headers -o custom-columns=:metadata.name`
+DEFAULT_NAMESPACE=openpitrix-system
+NAMESPACE=${DEFAULT_NAMESPACE}
+
+while getopts n:h option
+do
+  case "${option}"
+  in
+  n) NAMESPACE=${OPTARG};;
+  h) echo "usage ./put-global-config.sh -n namespace" && exit 1 ;;
+  *) echo "usage ./put-global-config.sh -n namespace" && exit 1 ;;
+  esac
+done
+
+POD=`kubectl get pods -l tier=etcd --namespace=${NAMESPACE} --no-headers -o custom-columns=:metadata.name`
 
 
 # Back to the root of the project
@@ -13,4 +26,4 @@ cat config/global_config.yaml | kubectl run --restart=Never --quiet --rm -i test
 
 if [[ $? != 0 ]]; then exit 1; fi
 
-cat config/global_config.yaml | kubectl exec --namespace=openpitrix-system -i $POD etcdctl put openpitrix/global_config
+cat config/global_config.yaml | kubectl exec --namespace=${NAMESPACE} -i ${POD} etcdctl put openpitrix/global_config

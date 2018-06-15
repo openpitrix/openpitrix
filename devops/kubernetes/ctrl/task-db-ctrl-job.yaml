@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: openpitrix-task-db-ctrl-job
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     job: openpitrix-task-db-ctrl
@@ -22,16 +22,16 @@ spec:
       - name: wait-mysql
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-db.openpitrix-system.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-db.${NAMESPACE}.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
       containers:
-      - command: ["flyway", "-X", "-url=jdbc:mysql://openpitrix-db.openpitrix-system.svc.cluster.local/task", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/task", "migrate"]
+      - command: ["flyway", "-X", "-url=jdbc:mysql://openpitrix-db.${NAMESPACE}.svc.cluster.local/task", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/task", "migrate"]
         env:
         - name: FLYWAY_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password.txt
               name: mysql-pass
-        image: openpitrix/openpitrix:flyway
+        image: ${FLYWAY_IMAGE}
         imagePullPolicy: Always
         name: openpitrix-task-db-ctrl
         resources: {}
