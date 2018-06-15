@@ -20,8 +20,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ConfdConfig struct {
-	ProcessorConfig      *ConfdProcessorConfig `protobuf:"bytes,1,opt,name=processor_config,json=processorConfig,proto3" json:"processor_config"`
-	BackendConfig        *ConfdBackendConfig   `protobuf:"bytes,2,opt,name=backend_config,json=backendConfig,proto3" json:"backend_config"`
+	ProcessorConfig      *ConfdProcessorConfig `protobuf:"bytes,1,opt,name=processor_config,json=processorConfig" json:"processor_config"`
+	BackendConfig        *ConfdBackendConfig   `protobuf:"bytes,2,opt,name=backend_config,json=backendConfig" json:"backend_config"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -66,9 +66,9 @@ func (m *ConfdConfig) GetBackendConfig() *ConfdBackendConfig {
 }
 
 type ConfdEndpoint struct {
-	FrontgateId          string   `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id"`
-	DroneIp              string   `protobuf:"bytes,2,opt,name=drone_ip,json=droneIp,proto3" json:"drone_ip"`
-	DronePort            int32    `protobuf:"varint,3,opt,name=drone_port,json=dronePort,proto3" json:"drone_port"`
+	FrontgateId          string   `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,2,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
+	DronePort            int32    `protobuf:"varint,3,opt,name=drone_port,json=dronePort" json:"drone_port"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -122,15 +122,15 @@ func (m *ConfdEndpoint) GetDronePort() int32 {
 // Keep same as libconfd.Config
 // See https://godoc.org/openpitrix.io/libconfd#Config
 type ConfdProcessorConfig struct {
-	Confdir              string   `protobuf:"bytes,1,opt,name=confdir,proto3" json:"confdir"`
-	Interval             int32    `protobuf:"varint,2,opt,name=interval,proto3" json:"interval"`
-	Noop                 bool     `protobuf:"varint,3,opt,name=noop,proto3" json:"noop"`
-	Prefix               string   `protobuf:"bytes,4,opt,name=prefix,proto3" json:"prefix"`
-	SyncOnly             bool     `protobuf:"varint,5,opt,name=sync_only,json=syncOnly,proto3" json:"sync_only"`
-	LogLevel             string   `protobuf:"bytes,6,opt,name=log_level,json=logLevel,proto3" json:"log_level"`
-	Onetime              bool     `protobuf:"varint,7,opt,name=onetime,proto3" json:"onetime"`
-	Watch                bool     `protobuf:"varint,8,opt,name=watch,proto3" json:"watch"`
-	KeepStageFile        bool     `protobuf:"varint,9,opt,name=keep_stage_file,json=keepStageFile,proto3" json:"keep_stage_file"`
+	Confdir              string   `protobuf:"bytes,1,opt,name=confdir" json:"confdir"`
+	Interval             int32    `protobuf:"varint,2,opt,name=interval" json:"interval"`
+	Noop                 bool     `protobuf:"varint,3,opt,name=noop" json:"noop"`
+	Prefix               string   `protobuf:"bytes,4,opt,name=prefix" json:"prefix"`
+	SyncOnly             bool     `protobuf:"varint,5,opt,name=sync_only,json=syncOnly" json:"sync_only"`
+	LogLevel             string   `protobuf:"bytes,6,opt,name=log_level,json=logLevel" json:"log_level"`
+	Onetime              bool     `protobuf:"varint,7,opt,name=onetime" json:"onetime"`
+	Watch                bool     `protobuf:"varint,8,opt,name=watch" json:"watch"`
+	KeepStageFile        bool     `protobuf:"varint,9,opt,name=keep_stage_file,json=keepStageFile" json:"keep_stage_file"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -226,13 +226,13 @@ func (m *ConfdProcessorConfig) GetKeepStageFile() bool {
 // Keep same as libconfd.BackendConfig
 // See https://godoc.org/openpitrix.io/libconfd#BackendConfig
 type ConfdBackendConfig struct {
-	Type                 string   `protobuf:"bytes,1,opt,name=type,proto3" json:"type"`
-	Host                 []string `protobuf:"bytes,2,rep,name=host,proto3" json:"host"`
-	User                 string   `protobuf:"bytes,3,opt,name=user,proto3" json:"user"`
-	Password             string   `protobuf:"bytes,4,opt,name=password,proto3" json:"password"`
-	ClientCaKeys         string   `protobuf:"bytes,5,opt,name=client_ca_keys,json=clientCaKeys,proto3" json:"client_ca_keys"`
-	ClientCert           string   `protobuf:"bytes,6,opt,name=client_cert,json=clientCert,proto3" json:"client_cert"`
-	ClientKey            string   `protobuf:"bytes,7,opt,name=client_key,json=clientKey,proto3" json:"client_key"`
+	Type                 string   `protobuf:"bytes,1,opt,name=type" json:"type"`
+	Host                 []string `protobuf:"bytes,2,rep,name=host" json:"host"`
+	User                 string   `protobuf:"bytes,3,opt,name=user" json:"user"`
+	Password             string   `protobuf:"bytes,4,opt,name=password" json:"password"`
+	ClientCaKeys         string   `protobuf:"bytes,5,opt,name=client_ca_keys,json=clientCaKeys" json:"client_ca_keys"`
+	ClientCert           string   `protobuf:"bytes,6,opt,name=client_cert,json=clientCert" json:"client_cert"`
+	ClientKey            string   `protobuf:"bytes,7,opt,name=client_key,json=clientKey" json:"client_key"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -312,9 +312,9 @@ func (m *ConfdBackendConfig) GetClientKey() string {
 }
 
 type ConfdStatus struct {
-	ProcessId            int32                `protobuf:"varint,1,opt,name=process_id,json=processId,proto3" json:"process_id"`
-	UpTime               *timestamp.Timestamp `protobuf:"bytes,2,opt,name=up_time,json=upTime,proto3" json:"up_time"`
-	Status               string               `protobuf:"bytes,3,opt,name=status,proto3" json:"status"`
+	ProcessId            int32                `protobuf:"varint,1,opt,name=process_id,json=processId" json:"process_id"`
+	UpTime               *timestamp.Timestamp `protobuf:"bytes,2,opt,name=up_time,json=upTime" json:"up_time"`
+	Status               string               `protobuf:"bytes,3,opt,name=status" json:"status"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -366,8 +366,8 @@ func (m *ConfdStatus) GetStatus() string {
 }
 
 type SetConfdConfigRequest struct {
-	Endpoint             *ConfdEndpoint `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint"`
-	Config               *ConfdConfig   `protobuf:"bytes,2,opt,name=config,proto3" json:"config"`
+	Endpoint             *ConfdEndpoint `protobuf:"bytes,1,opt,name=endpoint" json:"endpoint"`
+	Config               *ConfdConfig   `protobuf:"bytes,2,opt,name=config" json:"config"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`

@@ -21,8 +21,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ErrorDetail struct {
-	ErrorName            string   `protobuf:"bytes,1,opt,name=error_name,json=errorName,proto3" json:"error_name,omitempty"`
-	Cause                string   `protobuf:"bytes,2,opt,name=cause,proto3" json:"cause,omitempty"`
+	ErrorName            string   `protobuf:"bytes,1,opt,name=error_name,json=errorName" json:"error_name,omitempty"`
+	Cause                string   `protobuf:"bytes,2,opt,name=cause" json:"cause,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -67,12 +67,12 @@ func (m *ErrorDetail) GetCause() string {
 }
 
 type ResourceCategory struct {
-	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale,proto3" json:"locale,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`

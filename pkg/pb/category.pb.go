@@ -28,12 +28,12 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Category struct {
-	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale,proto3" json:"locale,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=update_time,json=updateTime" json:"update_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -106,12 +106,12 @@ func (m *Category) GetUpdateTime() *timestamp.Timestamp {
 }
 
 type DescribeCategoriesRequest struct {
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
-	Limit                uint32                `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	CategoryId           []string              `protobuf:"bytes,4,rep,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Name                 []string              `protobuf:"bytes,5,rep,name=name,proto3" json:"name,omitempty"`
-	Owner                []string              `protobuf:"bytes,6,rep,name=owner,proto3" json:"owner,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
+	Limit                uint32                `protobuf:"varint,2,opt,name=limit" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,3,opt,name=offset" json:"offset,omitempty"`
+	CategoryId           []string              `protobuf:"bytes,4,rep,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Name                 []string              `protobuf:"bytes,5,rep,name=name" json:"name,omitempty"`
+	Owner                []string              `protobuf:"bytes,6,rep,name=owner" json:"owner,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -184,8 +184,8 @@ func (m *DescribeCategoriesRequest) GetOwner() []string {
 }
 
 type DescribeCategoriesResponse struct {
-	TotalCount           uint32      `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	CategorySet          []*Category `protobuf:"bytes,2,rep,name=category_set,json=categorySet,proto3" json:"category_set,omitempty"`
+	TotalCount           uint32      `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	CategorySet          []*Category `protobuf:"bytes,2,rep,name=category_set,json=categorySet" json:"category_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -230,8 +230,8 @@ func (m *DescribeCategoriesResponse) GetCategorySet() []*Category {
 }
 
 type CreateCategoryRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale,proto3" json:"locale,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -276,7 +276,7 @@ func (m *CreateCategoryRequest) GetLocale() *wrappers.StringValue {
 }
 
 type CreateCategoryResponse struct {
-	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -314,9 +314,9 @@ func (m *CreateCategoryResponse) GetCategoryId() *wrappers.StringValue {
 }
 
 type ModifyCategoryRequest struct {
-	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale,proto3" json:"locale,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Locale               *wrappers.StringValue `protobuf:"bytes,3,opt,name=locale" json:"locale,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -368,7 +368,7 @@ func (m *ModifyCategoryRequest) GetLocale() *wrappers.StringValue {
 }
 
 type ModifyCategoryResponse struct {
-	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -406,7 +406,7 @@ func (m *ModifyCategoryResponse) GetCategoryId() *wrappers.StringValue {
 }
 
 type DeleteCategoriesRequest struct {
-	CategoryId           []string `protobuf:"bytes,1,rep,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	CategoryId           []string `protobuf:"bytes,1,rep,name=category_id,json=categoryId" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -444,7 +444,7 @@ func (m *DeleteCategoriesRequest) GetCategoryId() []string {
 }
 
 type DeleteCategoriesResponse struct {
-	CategoryId           []string `protobuf:"bytes,1,rep,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	CategoryId           []string `protobuf:"bytes,1,rep,name=category_id,json=categoryId" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -501,9 +501,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// CategoryManagerClient is the client API for CategoryManager service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for CategoryManager service
+
 type CategoryManagerClient interface {
 	DescribeCategories(ctx context.Context, in *DescribeCategoriesRequest, opts ...grpc.CallOption) (*DescribeCategoriesResponse, error)
 	CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CreateCategoryResponse, error)
@@ -521,7 +520,7 @@ func NewCategoryManagerClient(cc *grpc.ClientConn) CategoryManagerClient {
 
 func (c *categoryManagerClient) DescribeCategories(ctx context.Context, in *DescribeCategoriesRequest, opts ...grpc.CallOption) (*DescribeCategoriesResponse, error) {
 	out := new(DescribeCategoriesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.CategoryManager/DescribeCategories", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.CategoryManager/DescribeCategories", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -530,7 +529,7 @@ func (c *categoryManagerClient) DescribeCategories(ctx context.Context, in *Desc
 
 func (c *categoryManagerClient) CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CreateCategoryResponse, error) {
 	out := new(CreateCategoryResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.CategoryManager/CreateCategory", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.CategoryManager/CreateCategory", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -539,7 +538,7 @@ func (c *categoryManagerClient) CreateCategory(ctx context.Context, in *CreateCa
 
 func (c *categoryManagerClient) ModifyCategory(ctx context.Context, in *ModifyCategoryRequest, opts ...grpc.CallOption) (*ModifyCategoryResponse, error) {
 	out := new(ModifyCategoryResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.CategoryManager/ModifyCategory", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.CategoryManager/ModifyCategory", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -548,14 +547,15 @@ func (c *categoryManagerClient) ModifyCategory(ctx context.Context, in *ModifyCa
 
 func (c *categoryManagerClient) DeleteCategories(ctx context.Context, in *DeleteCategoriesRequest, opts ...grpc.CallOption) (*DeleteCategoriesResponse, error) {
 	out := new(DeleteCategoriesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.CategoryManager/DeleteCategories", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.CategoryManager/DeleteCategories", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// CategoryManagerServer is the server API for CategoryManager service.
+// Server API for CategoryManager service
+
 type CategoryManagerServer interface {
 	DescribeCategories(context.Context, *DescribeCategoriesRequest) (*DescribeCategoriesResponse, error)
 	CreateCategory(context.Context, *CreateCategoryRequest) (*CreateCategoryResponse, error)
