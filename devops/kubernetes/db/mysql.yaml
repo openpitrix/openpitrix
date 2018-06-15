@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: openpitrix-db
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     tier: db
@@ -22,7 +22,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: openpitrix-db-pvc
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     tier: db
@@ -37,7 +37,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: openpitrix-db-deployment
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     tier: db

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: openpitrix-etcd
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     tier: etcd
@@ -22,7 +22,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: openpitrix-etcd-pvc
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     tier: etcd
@@ -37,7 +37,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: openpitrix-etcd-deployment
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     tier: etcd

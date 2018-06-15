@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: openpitrix-app-manager
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     component: openpitrix-app-manager
@@ -20,7 +20,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: openpitrix-app-manager-deployment
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     component: openpitrix-app-manager
@@ -40,14 +40,14 @@ spec:
       - name: wait-mysql
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-db.openpitrix-system.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-db.${NAMESPACE}.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
       - name: wait-etcd
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-etcd.openpitrix-system.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
       - name: openpitrix-app-manager
-        image: openpitrix/openpitrix:latest
+        image: ${IMAGE}
         imagePullPolicy: Always
         command:
           - app-manager
@@ -76,7 +76,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: openpitrix-category-manager
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     component: openpitrix-category-manager
@@ -94,7 +94,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: openpitrix-category-manager-deployment
-  namespace: openpitrix-system
+  namespace: ${NAMESPACE}
   labels:
     app: openpitrix
     component: openpitrix-category-manager
@@ -114,14 +114,14 @@ spec:
       - name: wait-mysql
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-db.openpitrix-system.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-db.${NAMESPACE}.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
       - name: wait-etcd
         image: busybox
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z openpitrix-etcd.openpitrix-system.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
       - name: openpitrix-category-manager
-        image: openpitrix/openpitrix:latest
+        image: ${IMAGE}
         imagePullPolicy: Always
         command:
           - category-manager
