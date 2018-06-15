@@ -25,6 +25,8 @@ kubectl delete namespace ${NAMESPACE}
 
 echo "start to clean docker resource"
 docker rmi openpitrix/openpitrix-dev:latest
+docker rmi openpitrix/openpitrix-dev:metadata
+docker rmi openpitrix/openpitrix-dev:flyway
 docker rmi openpitrix
 
 echo "cleaned successfully"

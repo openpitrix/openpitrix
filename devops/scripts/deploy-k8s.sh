@@ -1,20 +1,9 @@
 #!/bin/bash
 
 DEFAULT_NAMESPACE=openpitrix-system
-DEFAULT_VERSION=latest
 DEFAULT_METADATA=off
 
 NAMESPACE=${DEFAULT_NAMESPACE}
-VERSION=${DEFAULT_VERSION}
-
-IMAGE="openpitrix/openpitrix:$VERSION"
-METADATA_IMAGE="openpitrix/openpitrix:metadata"
-FLYWAY_IMAGE="openpitrix/openpitrix:flyway"
-
-if [ "VERSION" != "latest" ];then
-  METADATA_IMAGE="openpitrix/openpitrix:metadata-$VERSION"
-  FLYWAY_IMAGE="openpitrix/openpitrix:flyway-$VERSION"
-fi
 
 while getopts n:v:m:h option
 do
@@ -27,6 +16,20 @@ do
   *) echo "usage ./deploy-k8s.sh -n namespace -v version -m on" && exit 1 ;;
   esac
 done
+
+if [ "${VERSION}" == "" ];then
+  IMAGE="openpitrix/openpitrix-dev:latest"
+  METADATA_IMAGE="openpitrix/openpitrix-dev:metadata"
+  FLYWAY_IMAGE="openpitrix/openpitrix-dev:flyway"
+elif [ "$VERSION" == "latest" ];then
+  IMAGE="openpitrix/openpitrix:latest"
+  METADATA_IMAGE="openpitrix/openpitrix:metadata"
+  FLYWAY_IMAGE="openpitrix/openpitrix:flyway"
+else
+  IMAGE="openpitrix/openpitrix:$VERSION"
+  METADATA_IMAGE="openpitrix/openpitrix:metadata-$VERSION"
+  FLYWAY_IMAGE="openpitrix/openpitrix:flyway-$VERSION"
+fi
 
 # Back to the root of the project
 cd $(dirname $0)
