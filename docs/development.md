@@ -38,13 +38,13 @@ $ make compose-down
 ```shell
 $ git clone https://github.com/openpitrix/openpitrix.git
 $ cd openpitrix/devops/scripts
-$ ./deploy-k8s.sh && ./ctrl-db.sh
+$ ./deploy-k8s.sh -v latest -m all
 ```
 
 #### How to upgrade
 
 ```shell
-$ ./ctrl-db.sh
+$ ./deploy-k8s.sh -v latest -m dbctrl
 $ kubectl delete -f ../kubernetes/openpitrix
 $ kubectl apply -f ../kubernetes/openpitrix
 ```
