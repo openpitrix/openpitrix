@@ -10,7 +10,7 @@ spec:
   selector:
     app: openpitrix
     component: openpitrix-api-gateway
-  type: LoadBalancer
+  clusterIP: None
   ports:
   - name: openpitrix-api-gateway
     protocol: TCP
