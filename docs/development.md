@@ -38,7 +38,7 @@ $ make compose-down
 ```shell
 $ git clone https://github.com/openpitrix/openpitrix.git
 $ cd openpitrix/devops/scripts
-$ ./deploy-k8s.sh -v latest -m all
+$ ./deploy-k8s.sh -v v0.1.0 -b -d
 ```
 
 #### How to upgrade
