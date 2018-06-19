@@ -10,8 +10,7 @@ spec:
   selector:
     app: openpitrix
     tier: db
-  #clusterIP: None
-  type: LoadBalancer
+  clusterIP: None
   ports:
   - name: tcp
     protocol: TCP
