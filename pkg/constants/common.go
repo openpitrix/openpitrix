@@ -4,7 +4,9 @@
 
 package constants
 
-import "time"
+import (
+	"time"
+)
 
 const (
 	prefix              = "openpitrix-"
@@ -116,7 +118,13 @@ const (
 	TargetPilot        = "pilot"
 )
 
-var VmBaseProviders = []string{ProviderQingCloud}
+var VmBaseProviders = []string{
+	ProviderQingCloud,
+}
+var SupportedProvider = []string{
+	ProviderKubernetes,
+	ProviderQingCloud,
+}
 
 const (
 	PlaceHolder       = "*"

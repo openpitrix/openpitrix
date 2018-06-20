@@ -1,10 +1,13 @@
 package cluster
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/manager"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
@@ -44,4 +47,62 @@ func isActionSupported(clusterId, role, action string) bool {
 	} else {
 		return false
 	}
+}
+
+func (p *Server) Checker(ctx context.Context, req interface{}) error {
+	switch r := req.(type) {
+	case *pb.DescribeSubnetsRequest:
+		return manager.NewChecker(ctx, r).
+			Required("runtime_id").
+			Exec()
+	case *pb.CreateClusterRequest:
+		return manager.NewChecker(ctx, r).
+			Required("app_id", "version_id", "runtime_id", "conf").
+			Exec()
+	case *pb.DeleteClustersRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id").
+			Exec()
+	case *pb.UpgradeClusterRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id", "version_id").
+			Exec()
+	case *pb.RollbackClusterRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id").
+			Exec()
+	case *pb.ResizeClusterRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id", "role").
+			Exec()
+	case *pb.AddClusterNodesRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id", "role").
+			Exec()
+	case *pb.DeleteClusterNodesRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id", "role", "node_id").
+			Exec()
+	case *pb.UpdateClusterEnvRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id", "env").
+			Exec()
+	case *pb.StopClustersRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id").
+			Exec()
+	case *pb.StartClustersRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id").
+			Exec()
+	case *pb.RecoverClustersRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id").
+			Exec()
+	case *pb.CeaseClustersRequest:
+		return manager.NewChecker(ctx, r).
+			Required("cluster_id").
+			Exec()
+	}
+	return nil
 }

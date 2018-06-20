@@ -12,10 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-var SupportedProvider = []string{
-	constants.ProviderKubernetes,
-	constants.ProviderQingCloud,
-}
 var SupportedVisibility = []string{
 	constants.VisibilityPrivate,
 	constants.VisibilityPublic,
@@ -26,13 +22,13 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.CreateRepoRequest:
 		return manager.NewChecker(ctx, r).
 			Required("type", "name", "url", "credential", "visibility", "providers").
-			StringChosen("providers", SupportedProvider).
+			StringChosen("providers", constants.SupportedProvider).
 			StringChosen("visibility", SupportedVisibility).
 			Exec()
 	case *pb.ModifyRepoRequest:
 		return manager.NewChecker(ctx, r).
 			Required("repo_id").
-			StringChosen("providers", SupportedProvider).
+			StringChosen("providers", constants.SupportedProvider).
 			StringChosen("visibility", SupportedVisibility).
 			Exec()
 	case *pb.DeleteReposRequest:

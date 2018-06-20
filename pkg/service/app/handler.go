@@ -94,8 +94,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
 	// TODO: validate CreateAppRequest
-
-	// check categories
+	// TODO: check categories
 
 	s := senderutil.GetSenderFromContext(ctx)
 	newApp := models.NewApp(
@@ -170,13 +169,9 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 
 func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb.DeleteAppsResponse, error) {
 	// TODO: check resource permission
-	err := manager.CheckParamsRequired(req, models.ColumnAppId)
-	if err != nil {
-		return nil, err
-	}
 	appIds := req.GetAppId()
 
-	_, err = p.Db.
+	_, err := p.Db.
 		Update(models.AppTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(models.ColumnAppId, appIds)).
@@ -280,14 +275,9 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 
 func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersionsRequest) (*pb.DeleteAppVersionsResponse, error) {
 	// TODO: check resource permission
-	err := manager.CheckParamsRequired(req, models.ColumnVersionId)
-	if err != nil {
-		return nil, err
-	}
-
 	versionIds := req.GetVersionId()
 
-	_, err = p.Db.
+	_, err := p.Db.
 		Update(models.AppVersionTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(models.ColumnVersionId, versionIds)).
