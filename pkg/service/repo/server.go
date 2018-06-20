@@ -23,6 +23,7 @@ func Serve(cfg *config.Config) {
 	s := Server{pi.Global()}
 	manager.NewGrpcServer("repo-manager", constants.RepoManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithChecker(s.Checker).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterRepoManagerServer(server, &s)
 		})

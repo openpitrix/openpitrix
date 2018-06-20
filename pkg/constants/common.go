@@ -61,6 +61,11 @@ const (
 )
 
 const (
+	VisibilityPublic  = "public"
+	VisibilityPrivate = "private"
+)
+
+const (
 	JobLength       = 20
 	TaskLength      = 20
 	RepoEventLength = 20

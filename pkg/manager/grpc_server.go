@@ -28,20 +28,30 @@ import (
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
+type checkerT func(ctx context.Context, req interface{}) error
+
+var defaultChecker checkerT
+
 type GrpcServer struct {
 	ServiceName    string
 	Port           int
 	showErrorCause bool
+	checker        checkerT
 }
 
 type RegisterCallback func(*grpc.Server)
 
 func NewGrpcServer(serviceName string, port int) *GrpcServer {
-	return &GrpcServer{serviceName, port, false}
+	return &GrpcServer{serviceName, port, false, defaultChecker}
 }
 
 func (g *GrpcServer) ShowErrorCause(b bool) *GrpcServer {
 	g.showErrorCause = b
+	return g
+}
+
+func (g *GrpcServer) WithChecker(c checkerT) *GrpcServer {
+	g.checker = c
 	return g
 }
 
@@ -57,7 +67,7 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 	grpcServer := grpc.NewServer(
 		grpc_middleware.WithUnaryServerChain(
 			grpc_validator.UnaryServerInterceptor(),
-			UnaryServerLogInterceptor(g.showErrorCause),
+			g.unaryServerLogInterceptor(),
 			grpc_recovery.UnaryServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
 					logger.Critical("GRPC server recovery with error: %+v", p)
@@ -97,7 +107,10 @@ var (
 	}
 )
 
-func UnaryServerLogInterceptor(showErrorCause bool) grpc.UnaryServerInterceptor {
+func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
+	showErrorCause := g.showErrorCause
+	checker := g.checker
+
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		s := senderutil.GetSenderFromContext(ctx)
 		method := strings.Split(info.FullMethod, "/")
@@ -110,7 +123,14 @@ func UnaryServerLogInterceptor(showErrorCause bool) grpc.UnaryServerInterceptor 
 			}
 		}
 		start := time.Now()
-		resp, err := handler(ctx, req)
+		var err error
+		var resp interface{}
+		if checker != nil {
+			err = checker(ctx, req)
+		}
+		if err == nil {
+			resp, err = handler(ctx, req)
+		}
 		elapsed := time.Since(start)
 		logger.Info("Handled request [%s] [%+v] exec_time is [%s]", action, s, elapsed)
 		if e, ok := status.FromError(err); ok {
