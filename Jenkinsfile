@@ -3,32 +3,32 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh './devops/scripts/build-images.sh'
+        sh './deploy/devops/scripts/build-images.sh'
       }
     }
     stage('Test') {
       steps {
-        sh './devops/scripts/test.sh'
+        sh './deploy/devops/scripts/test.sh'
       }
     }
     stage('Push Images') {
       steps {
-        sh './devops/scripts/push-images.sh'
+        sh './deploy/devops/scripts/push-images.sh'
       }
     }
     stage('Deploy') {
       steps {
-        sh './devops/scripts/deploy-k8s.sh'
+        sh './deploy/kubernetes/scripts/deploy-k8s.sh -v dev -b -d -m'
       }
     }
     stage ('Verify') {
       steps {
-        sh './devops/scripts/verify.sh'
+        sh './deploy/devops/scripts/verify.sh'
       }
     }
     stage ('Clean') {
       steps {
-        sh './devops/scripts/clean.sh'
+        sh './deploy/kubernetes/scripts/clean.sh'
       }
     }
   }
