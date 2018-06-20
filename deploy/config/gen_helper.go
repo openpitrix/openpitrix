@@ -27,7 +27,7 @@ func main() {
 		panic(err)
 	}
 	data := fmt.Sprintf(Tmpl, "`"+string(yamlContent)+"`")
-	err = ioutil.WriteFile("../pkg/config/init_global_config.go", []byte(data), 0666)
+	err = ioutil.WriteFile("../../pkg/config/init_global_config.go", []byte(data), 0666)
 	if err != nil {
 		panic(err)
 	}
