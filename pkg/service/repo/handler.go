@@ -92,7 +92,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	visibility := req.GetVisibility().GetValue()
 	providers := req.GetProviders()
 
-	err := validate(repoType, url, credential, visibility, providers)
+	err := validate(repoType, url, credential, providers)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
@@ -177,7 +177,6 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	}
 	url := repo.Url
 	credential := repo.Credential
-	visibility := repo.Visibility
 	needValidate := false
 	if req.GetUrl() != nil {
 		url = req.GetUrl().GetValue()
@@ -188,11 +187,10 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		needValidate = true
 	}
 	if req.GetVisibility() != nil {
-		visibility = req.GetVisibility().GetValue()
 		needValidate = true
 	}
 	if needValidate {
-		err = validate(repoType, url, credential, visibility, providers)
+		err = validate(repoType, url, credential, providers)
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 		}
@@ -250,13 +248,9 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 
 func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*pb.DeleteReposResponse, error) {
 	// TODO: check resource permission
-	err := manager.CheckParamsRequired(req, "repo_id")
-	if err != nil {
-		return nil, err
-	}
 	repoIds := req.GetRepoId()
 
-	_, err = p.Db.
+	_, err := p.Db.
 		Update(models.RepoTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
@@ -275,10 +269,9 @@ func (p *Server) ValidateRepo(ctx context.Context, req *pb.ValidateRepoRequest) 
 	repoType := req.GetType().GetValue()
 	url := req.GetUrl().GetValue()
 	credential := req.GetCredential().GetValue()
-	visibility := "public"
 	providers := []string{"qingcloud"}
 
-	err := validate(repoType, url, credential, visibility, providers)
+	err := validate(repoType, url, credential, providers)
 	if err != nil {
 		e, ok := err.(*ErrorWithCode)
 		if !ok {
