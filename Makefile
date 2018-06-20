@@ -154,9 +154,10 @@ compose-down: ## Shutdown docker compose
 	docker-compose down
 	@echo "compose-down done"
 
-.PHONY: release
-release:
-	@echo "TODO"
+release-%: ## Release version
+	mkdir deploy/openpitrix-kubernetes-$*
+	cp -r deploy/config deploy/kubernetes deploy/openpitrix-kubernetes-$*/
+	cd deploy/ && tar -czvf openpitrix-kubernetes-$*.tar.gz openpitrix-kubernetes-$*
 
 .PHONY: test
 test: ## Run all tests
