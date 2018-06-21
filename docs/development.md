@@ -63,11 +63,21 @@ $ cd openpitrix/deploy/kubernetes/scripts
 $ ./deploy-k8s.sh -n openpitrix-system -b -d
 ```
 
-or go to the [OpenPitrix release](https://github.com/openpitrix/openpitrix/releases) page to download the deploy package. You can also run the following command to download and extract the latest release deploy package automatically:
+Or go to the [OpenPitrix release](https://github.com/openpitrix/openpitrix/releases) page to download the deploy package. You can also run the following command to download and extract the latest release deploy package automatically:
 ```shell
 $ curl -L https://git.io/getOpenPitrix | sh -
 $ cd openpitrix-${OPENPITRIX_VERSION}-kubernetes/kubernetes/scripts
 $ ./deploy-k8s.sh -n openpitrix-system -b -d
+```
+
+If the dashboard is required:
+```shell
+$ ./deploy-k8s.sh -n openpitrix-system -s
+```
+
+If create clusters in vm-based runtime is required, the metadata model is needed:
+```shell
+$ ./deploy-k8s.sh -n openpitrix-system -m
 ```
 
 #### Verifying the deploy
@@ -91,6 +101,16 @@ openpitrix-task-manager-deployment       1         1         1            1     
 
 ```shell
 $ ./deploy-k8s.sh -n openpitrix-system -b -d
+```
+
+If the dashboard is required:
+```shell
+$ ./deploy-k8s.sh -n openpitrix-system -s
+```
+
+If create clusters in vm-based runtime is required, the metadata model is needed:
+```shell
+$ ./deploy-k8s.sh -n openpitrix-system -m
 ```
 
 #### How to clean environment

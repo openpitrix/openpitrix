@@ -8,6 +8,7 @@ VERSION=${DEFAULT_VERSION}
 METADATA=0
 DBCTRL=0
 BASE=0
+DASHBOARD=0
 
 usage() {
   echo "Usage:"
@@ -18,10 +19,11 @@ usage() {
   echo "    -b          : base model will be applied."
   echo "    -m          : metadata will be applied."
   echo "    -d          : dbctrl will be applied."
+  echo "    -s          : dashboard will be applied."
   exit -1
 }
 
-while getopts n:v:m:hbdm option
+while getopts n:v:m:hbdms option
 do
   case "${option}"
   in
@@ -30,14 +32,17 @@ do
   d) DBCTRL=1;;
   m) METADATA=1;;
   b) BASE=1;;
+  s) DASHBOARD=1;;
   h) usage ;;
   *) usage ;;
   esac
 done
 
-if [ "${METADATA}" == "0" ] && [ "${DBCTRL}" == "0" ] && [ "${BASE}" == "0" ];then
+if [ "${METADATA}" == "0" ] && [ "${DBCTRL}" == "0" ] && [ "${BASE}" == "0" ] && [ "${DASHBOARD}" == "0" ] ;then
   usage
 fi
+
+DASHBOARD_IMAGE="openpitrix/dashboard"
 
 if [ "${VERSION}" == "dev" ];then
   IMAGE="openpitrix/openpitrix-dev:latest"
@@ -53,6 +58,14 @@ else
   FLYWAY_IMAGE="openpitrix/openpitrix:flyway-$VERSION"
 fi
 
+replace() {
+  sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" \
+	  -e "s!\${IMAGE}!${IMAGE}!g" \
+	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
+	  -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" \
+	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" $1
+}
+
 echo "Deploying k8s resource..."
 # Back to the root of the project
 cd $(dirname $0)
@@ -64,31 +77,36 @@ kubectl create secret generic mysql-pass --from-file=./kubernetes/password.txt -
 
 if [ "${DBCTRL}" == "1" ];then
   for FILE in `ls ./kubernetes/ctrl`;do
-    sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" -e "s!\${IMAGE}!${IMAGE}!g" -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" ./kubernetes/ctrl/${FILE} | kubectl delete -f - --ignore-not-found=true
-    sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" -e "s!\${IMAGE}!${IMAGE}!g" -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" ./kubernetes/ctrl/${FILE} | kubectl apply -f -
+    replace ./kubernetes/ctrl/${FILE} | kubectl delete -f - --ignore-not-found=true
+    replace ./kubernetes/ctrl/${FILE} | kubectl apply -f -
   done
 fi
 if [ "${BASE}" == "1" ];then
   for FILE in `ls ./kubernetes/db/ | grep -v "\-job.yaml$"`;do
-    sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" -e "s!\${IMAGE}!${IMAGE}!g" -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" ./kubernetes/db/${FILE} | kubectl apply -f -
+    replace ./kubernetes/db/${FILE} | kubectl apply -f -
   done
 
   for FILE in `ls ./kubernetes/db/ | grep "\-job.yaml$"`;do
-    sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" -e "s!\${IMAGE}!${IMAGE}!g" -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" ./kubernetes/db/${FILE} | kubectl delete -f - --ignore-not-found=true
-    sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" -e "s!\${IMAGE}!${IMAGE}!g" -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" ./kubernetes/db/${FILE} | kubectl apply -f -
+    replace ./kubernetes/db/${FILE} | kubectl delete -f - --ignore-not-found=true
+    replace ./kubernetes/db/${FILE} | kubectl apply -f -
   done
 
   for FILE in `ls ./kubernetes/etcd/`;do
-    sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" -e "s!\${IMAGE}!${IMAGE}!g" -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" ./kubernetes/etcd/${FILE} | kubectl apply -f -
+    replace ./kubernetes/etcd/${FILE} | kubectl apply -f -
   done
 
   for FILE in `ls ./kubernetes/openpitrix/ | grep "^openpitrix-"`;do
-    sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" -e "s!\${IMAGE}!${IMAGE}!g" -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" ./kubernetes/openpitrix/${FILE} | kubectl apply -f -
+    replace ./kubernetes/openpitrix/${FILE} | kubectl apply -f -
   done
 fi
 if [ "${METADATA}" == "1" ];then
   for FILE in `ls ./kubernetes/openpitrix/metadata/`;do
-    sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" -e "s!\${IMAGE}!${IMAGE}!g" -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -
+    replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -
+  done
+fi
+if [ "${DASHBOARD}" == "1" ];then
+  for FILE in `ls ./kubernetes/openpitrix/dashboard/`;do
+    replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl apply -f -
   done
 fi
 
