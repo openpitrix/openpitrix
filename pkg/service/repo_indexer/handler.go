@@ -16,10 +16,6 @@ import (
 )
 
 func (p *Server) IndexRepo(ctx context.Context, req *pb.IndexRepoRequest) (*pb.IndexRepoResponse, error) {
-	err := manager.CheckParamsRequired(req, "repo_id")
-	if err != nil {
-		return nil, err
-	}
 	s := senderutil.GetSenderFromContext(ctx)
 	repoId := req.GetRepoId().GetValue()
 	repoEvent, err := p.controller.NewRepoEvent(repoId, s.UserId)

@@ -138,4 +138,12 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 	require.Equal(t, "nginx", app.Name, "app_name not equal nginx")
 
 	t.Logf("got app [%+v]", app)
+
+	deleteRepoParams := repo_manager.NewDeleteReposParams()
+	deleteRepoParams.WithBody(&models.OpenpitrixDeleteReposRequest{
+		RepoID: []string{repoId},
+	})
+
+	_, err = client.RepoManager.DeleteRepos(deleteRepoParams)
+	require.NoError(t, err)
 }

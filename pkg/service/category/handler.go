@@ -90,13 +90,9 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 }
 
 func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesRequest) (*pb.DeleteCategoriesResponse, error) {
-	err := manager.CheckParamsRequired(req, "category_id")
-	if err != nil {
-		return nil, err
-	}
 	categoryIds := req.GetCategoryId()
 
-	_, err = p.Db.
+	_, err := p.Db.
 		DeleteFrom(models.CategoryTableName).
 		Where(db.Eq("category_id", categoryIds)).
 		Exec()

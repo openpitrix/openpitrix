@@ -28,6 +28,7 @@ func Serve(cfg *config.Config) {
 	go s.Cron()
 	manager.NewGrpcServer("repo-indexer", constants.RepoIndexerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithChecker(s.Checker).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterRepoIndexerServer(server, &s)
 		})
