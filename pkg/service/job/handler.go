@@ -65,7 +65,7 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.JobTableName)).
 		Where(db.Eq("owner", s.UserId))
-
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err := query.Load(&jobs)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)

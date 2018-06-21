@@ -90,7 +90,7 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 
 	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, RuntimeIdColumn,
 		models.ColumnLabelKey, models.ColumnLabelValue, selectorMap)
-
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err = query.Load(&runtimes)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)

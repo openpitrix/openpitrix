@@ -758,6 +758,7 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.ClusterTableName))
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err := query.Load(&clusters)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
