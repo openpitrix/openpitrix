@@ -60,6 +60,7 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		models.ColumnLabelKey, models.ColumnLabelValue, labelMap)
 	query = manager.AddQueryJoinWithMap(query, models.RepoTableName, models.RepoSelectorTableName, models.ColumnRepoId,
 		models.ColumnSelectorKey, models.ColumnSelectorValue, selectorMap)
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	query = query.Distinct()
 
 	_, err = query.Load(&repos)
