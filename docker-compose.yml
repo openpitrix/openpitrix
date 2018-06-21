@@ -22,6 +22,15 @@ services:
     ports:
      - "12379:2379" # for unit-test & debug
     container_name: "openpitrix-etcd"
+  openpitrix-dashboard:
+    image: "openpitrix/dashboard"
+    ports:
+     - "8000:8000"
+    container_name: "openpitrix-dashboard"
+    volumes:
+      - ./deploy/config/dashboard.yaml:/app/server/local_config.yml
+    links:
+      - openpitrix-api-gateway:openpitrix-api-gateway
   openpitrix-api-gateway:
     build: .
     image: "openpitrix"
