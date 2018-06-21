@@ -7,7 +7,6 @@ package runtime
 import (
 	"context"
 
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
@@ -17,7 +16,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.CreateRuntimeRequest:
 		return manager.NewChecker(ctx, r).
 			Required("name", "provider", "runtime_url", "zone", "runtime_credential").
-			StringChosen("provider", constants.SupportedProvider).
+			StringChosen("provider", p.GlobalConfig().Cluster.Plugins).
 			Exec()
 	case *pb.ModifyRuntimeRequest:
 		return manager.NewChecker(ctx, r).
@@ -30,7 +29,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.DescribeRuntimeProviderZonesRequest:
 		return manager.NewChecker(ctx, r).
 			Required("provider", "runtime_url", "runtime_credential").
-			StringChosen("provider", constants.SupportedProvider).
+			StringChosen("provider", p.GlobalConfig().Cluster.Plugins).
 			Exec()
 
 	}

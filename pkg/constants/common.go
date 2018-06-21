@@ -121,10 +121,6 @@ const (
 var VmBaseProviders = []string{
 	ProviderQingCloud,
 }
-var SupportedProvider = []string{
-	ProviderKubernetes,
-	ProviderQingCloud,
-}
 
 const (
 	PlaceHolder       = "*"
