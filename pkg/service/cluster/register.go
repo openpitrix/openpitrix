@@ -7,27 +7,13 @@ package cluster
 import (
 	"time"
 
-	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
 )
 
-type Register struct {
-	ClusterId      string
-	SubnetId       string
-	VpcId          string
-	FrontgateId    string
-	Owner          string
-	ClusterType    uint32
-	ClusterWrapper *models.ClusterWrapper
-	Runtime        *runtimeclient.Runtime
-}
-
-func (r *Register) RegisterClusterNode(clusterNode *models.ClusterNode) error {
-	clusterNode.ClusterId = r.ClusterId
+func RegisterClusterNode(clusterNode *models.ClusterNode) error {
 	clusterNode.NodeId = models.NewClusterNodeId()
-	clusterNode.Owner = r.Owner
 	clusterNode.CreateTime = time.Now()
 	clusterNode.StatusTime = time.Now()
 	_, err := pi.Global().Db.
@@ -37,50 +23,48 @@ func (r *Register) RegisterClusterNode(clusterNode *models.ClusterNode) error {
 		Exec()
 	if err != nil {
 		logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
-			models.ClusterNodeTableName, r.ClusterWrapper.Cluster.ClusterId, err)
+			models.ClusterNodeTableName, clusterNode.ClusterId, err)
 		return err
 	}
 	return nil
 }
 
-func (r *Register) RegisterClusterWrapper() error {
+func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
+	clusterId := clusterWrapper.Cluster.ClusterId
+	owner := clusterWrapper.Cluster.Owner
 	// register cluster
-	if r.ClusterWrapper.Cluster != nil {
-		r.ClusterWrapper.Cluster.ClusterId = r.ClusterId
-		r.ClusterWrapper.Cluster.RuntimeId = r.Runtime.RuntimeId
-		r.ClusterWrapper.Cluster.FrontgateId = r.FrontgateId
-		r.ClusterWrapper.Cluster.VpcId = r.VpcId
-		r.ClusterWrapper.Cluster.Owner = r.Owner
-		r.ClusterWrapper.Cluster.ClusterType = r.ClusterType
-		r.ClusterWrapper.Cluster.CreateTime = time.Now()
-		r.ClusterWrapper.Cluster.StatusTime = time.Now()
+	if clusterWrapper.Cluster != nil {
+		clusterWrapper.Cluster.CreateTime = time.Now()
+		clusterWrapper.Cluster.StatusTime = time.Now()
 		_, err := pi.Global().Db.
 			InsertInto(models.ClusterTableName).
 			Columns(models.ClusterColumns...).
-			Record(r.ClusterWrapper.Cluster).
+			Record(clusterWrapper.Cluster).
 			Exec()
 		if err != nil {
 			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterTableName, r.ClusterWrapper.Cluster.ClusterId, err)
+				models.ClusterTableName, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
 	}
 
 	// register cluster node
 	newClusterNodes := make(map[string]*models.ClusterNode)
-	for _, clusterNode := range r.ClusterWrapper.ClusterNodes {
-		err := r.RegisterClusterNode(clusterNode)
+	for _, clusterNode := range clusterWrapper.ClusterNodes {
+		clusterNode.ClusterId = clusterId
+		clusterNode.Owner = owner
+		err := RegisterClusterNode(clusterNode)
 		if err != nil {
 			return err
 		}
 		newClusterNodes[clusterNode.NodeId] = clusterNode
 	}
 
-	r.ClusterWrapper.ClusterNodes = newClusterNodes
+	clusterWrapper.ClusterNodes = newClusterNodes
 
 	// register cluster common
-	for _, clusterCommon := range r.ClusterWrapper.ClusterCommons {
-		clusterCommon.ClusterId = r.ClusterId
+	for _, clusterCommon := range clusterWrapper.ClusterCommons {
+		clusterCommon.ClusterId = clusterId
 		_, err := pi.Global().Db.
 			InsertInto(models.ClusterCommonTableName).
 			Columns(models.ClusterCommonColumns...).
@@ -88,15 +72,15 @@ func (r *Register) RegisterClusterWrapper() error {
 			Exec()
 		if err != nil {
 			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterCommonTableName, r.ClusterWrapper.Cluster.ClusterId, err)
+				models.ClusterCommonTableName, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
 	}
 
 	// register cluster link
-	for _, clusterLink := range r.ClusterWrapper.ClusterLinks {
-		clusterLink.ClusterId = r.ClusterId
-		clusterLink.Owner = r.Owner
+	for _, clusterLink := range clusterWrapper.ClusterLinks {
+		clusterLink.ClusterId = clusterId
+		clusterLink.Owner = owner
 		_, err := pi.Global().Db.
 			InsertInto(models.ClusterLinkTableName).
 			Columns(models.ClusterLinkColumns...).
@@ -104,14 +88,14 @@ func (r *Register) RegisterClusterWrapper() error {
 			Exec()
 		if err != nil {
 			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterLinkTableName, r.ClusterWrapper.Cluster.ClusterId, err)
+				models.ClusterLinkTableName, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
 	}
 
 	// register cluster role
-	for _, clusterRole := range r.ClusterWrapper.ClusterRoles {
-		clusterRole.ClusterId = r.ClusterId
+	for _, clusterRole := range clusterWrapper.ClusterRoles {
+		clusterRole.ClusterId = clusterId
 		_, err := pi.Global().Db.
 			InsertInto(models.ClusterRoleTableName).
 			Columns(models.ClusterRoleColumns...).
@@ -119,15 +103,15 @@ func (r *Register) RegisterClusterWrapper() error {
 			Exec()
 		if err != nil {
 			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterRoleTableName, r.ClusterWrapper.Cluster.ClusterId, err)
+				models.ClusterRoleTableName, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
 	}
 
 	// register cluster loadbalancer
-	for _, clusterLoadbalancers := range r.ClusterWrapper.ClusterLoadbalancers {
+	for _, clusterLoadbalancers := range clusterWrapper.ClusterLoadbalancers {
 		for _, clusterLoadbalancer := range clusterLoadbalancers {
-			clusterLoadbalancer.ClusterId = r.ClusterId
+			clusterLoadbalancer.ClusterId = clusterId
 			_, err := pi.Global().Db.
 				InsertInto(models.ClusterLoadbalancerTableName).
 				Columns(models.ClusterLoadbalancerColumns...).
@@ -135,7 +119,7 @@ func (r *Register) RegisterClusterWrapper() error {
 				Exec()
 			if err != nil {
 				logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
-					models.ClusterLoadbalancerTableName, r.ClusterWrapper.Cluster.ClusterId, err)
+					models.ClusterLoadbalancerTableName, clusterWrapper.Cluster.ClusterId, err)
 				return err
 			}
 		}

@@ -34,10 +34,10 @@ func (f *Frontgate) getConf(subnetId string) (string, error) {
 	return f.parseConf(subnetId, conf)
 }
 
-func (f *Frontgate) CreateCluster(register *Register) (string, error) {
+func (f *Frontgate) CreateCluster(clusterWrapper *models.ClusterWrapper) (string, error) {
 	clusterId := models.NewClusterId()
 
-	conf, err := f.getConf(register.SubnetId)
+	conf, err := f.getConf(clusterWrapper.Cluster.SubnetId)
 	if err != nil {
 		logger.Error("Get frontgate cluster conf failed. ")
 		return clusterId, err
@@ -47,32 +47,35 @@ func (f *Frontgate) CreateCluster(register *Register) (string, error) {
 		logger.Error("No such provider [%s]. ", f.Runtime.Provider)
 		return clusterId, err
 	}
-	clusterWrapper, err := providerInterface.ParseClusterConf(constants.FrontgateVersionId, conf)
+	frontgateWrapper, err := providerInterface.ParseClusterConf(constants.FrontgateVersionId, conf)
 	if err != nil {
 		logger.Error("Parse frontgate cluster conf failed. ")
 		return clusterId, err
 	}
 
-	register.ClusterId = clusterId
-	register.FrontgateId = ""
-	register.ClusterType = constants.FrontgateClusterType
-	register.ClusterWrapper = clusterWrapper
+	frontgateWrapper.Cluster.ClusterId = clusterId
+	frontgateWrapper.Cluster.SubnetId = clusterWrapper.Cluster.SubnetId
+	frontgateWrapper.Cluster.VpcId = clusterWrapper.Cluster.VpcId
+	frontgateWrapper.Cluster.Owner = clusterWrapper.Cluster.Owner
+	frontgateWrapper.Cluster.ClusterType = constants.FrontgateClusterType
+	frontgateWrapper.Cluster.FrontgateId = ""
+	frontgateWrapper.Cluster.RuntimeId = f.Runtime.RuntimeId
 
-	err = register.RegisterClusterWrapper()
+	err = RegisterClusterWrapper(frontgateWrapper)
 	if err != nil {
 		return clusterId, err
 	}
 
-	directive := jsonutil.ToString(clusterWrapper)
+	directive := jsonutil.ToString(frontgateWrapper)
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		clusterId,
-		clusterWrapper.Cluster.AppId,
-		clusterWrapper.Cluster.VersionId,
+		frontgateWrapper.Cluster.AppId,
+		frontgateWrapper.Cluster.VersionId,
 		constants.ActionCreateCluster,
 		directive,
 		f.Runtime.Provider,
-		register.Owner,
+		frontgateWrapper.Cluster.Owner,
 	)
 
 	_, err = jobclient.SendJob(newJob)

@@ -9,8 +9,6 @@ import (
 
 	pb_empty "github.com/golang/protobuf/ptypes/empty"
 
-	"fmt"
-
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -168,25 +166,15 @@ func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsReq
 func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest) (*pb.CreateClusterResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 
+	appId := req.GetAppId().GetValue()
+	versionId := req.GetVersionId().GetValue()
+	conf := req.GetConf().GetValue()
+	clusterId := models.NewClusterId()
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := runtimeclient.NewRuntime(runtimeId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, runtimeId)
 	}
-
-	// check image
-	if reflectutil.In(runtime.Provider, constants.VmBaseProviders) {
-		_, err = pi.Global().GlobalConfig().GetRuntimeImageId(runtime.RuntimeUrl, runtime.Zone)
-		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorValidateFailed)
-		}
-	}
-
-	appId := req.GetAppId().GetValue()
-	versionId := req.GetVersionId().GetValue()
-	conf := req.GetConf().GetValue()
-
-	clusterId := models.NewClusterId()
 
 	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider, nil)
 	if err != nil {
@@ -199,55 +187,18 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
-	// check subnet, vpc, eip
-	subnetResponse, err := providerInterface.DescribeSubnets(ctx, &pb.DescribeSubnetsRequest{
-		RuntimeId: pbutil.ToProtoString(runtimeId),
-		SubnetId:  []string{clusterWrapper.Cluster.SubnetId},
-	})
-	if err != nil {
-		logger.Error("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
-		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
-	}
-	vpcId := ""
-	if subnetResponse != nil && len(subnetResponse.SubnetSet) == 1 {
-		vpcId = subnetResponse.SubnetSet[0].GetVpcId().GetValue()
-	}
-	if vpcId == "" {
-		err = fmt.Errorf("subnet [%s] not found or vpc not bind eip", clusterWrapper.Cluster.SubnetId)
-		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorSubnetNotFound, clusterWrapper.Cluster.SubnetId)
-	}
-
-	// check resource quota
-	message, err := providerInterface.CheckResourceQuotas(ctx, clusterWrapper)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceQuotaNotEnough, message)
-	}
-
-	register := &Register{
-		SubnetId: clusterWrapper.Cluster.SubnetId,
-		VpcId:    vpcId,
-		Runtime:  runtime,
-		Owner:    s.UserId,
-	}
+	clusterWrapper.Cluster.Owner = s.UserId
+	clusterWrapper.Cluster.ClusterId = clusterId
+	clusterWrapper.Cluster.ClusterType = constants.NormalClusterType
 
 	if reflectutil.In(runtime.Provider, constants.VmBaseProviders) {
-		fg := &Frontgate{
-			Runtime: runtime,
-		}
-		frontgate, err := fg.GetActiveFrontgate(vpcId, s.UserId, register)
+		err = CheckVmBasedProvider(ctx, runtime, providerInterface, clusterWrapper)
 		if err != nil {
-			logger.Error("Get frontgate in vpc [%s] user [%s] failed. ", vpcId, s.UserId)
 			return nil, err
 		}
-
-		register.FrontgateId = frontgate.ClusterId
 	}
 
-	register.ClusterId = clusterId
-	register.ClusterType = constants.NormalClusterType
-	register.ClusterWrapper = clusterWrapper
-
-	err = register.RegisterClusterWrapper()
+	err = RegisterClusterWrapper(clusterWrapper)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
@@ -418,15 +369,9 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 }
 
 func (p *Server) AddTableClusterNodes(ctx context.Context, req *pb.AddTableClusterNodesRequest) (*pb_empty.Empty, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-
 	for _, clusterNode := range req.ClusterNodeSet {
 		node := models.PbToClusterNode(clusterNode)
-		register := &Register{
-			ClusterId: node.ClusterId,
-			Owner:     s.UserId,
-		}
-		err := register.RegisterClusterNode(node)
+		err := RegisterClusterNode(node)
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorInternalError)
 		}
