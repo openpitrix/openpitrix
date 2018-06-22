@@ -392,8 +392,8 @@ func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsR
 	return nil, nil
 }
 
-func (p *Provider) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error) {
-	return "", nil
+func (p *Provider) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
+	return nil
 }
 
 func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {

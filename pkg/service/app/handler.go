@@ -283,7 +283,7 @@ func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersion
 		Where(db.Eq(models.ColumnVersionId, versionIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed, strings.Join(versionIds, ","))
 	}
 
 	return &pb.DeleteAppVersionsResponse{
@@ -296,19 +296,19 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 	versionId := req.GetVersionId().GetValue()
 	version, err := p.getAppVersion(versionId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 	logger.Debug("Got app version: [%+v]", version)
 	packageUrl := version.PackageName
 	resp, err := httputil.HttpGet(packageUrl)
 	if err != nil {
 		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logger.Error("Failed to read http response [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	return &pb.GetAppVersionPackageResponse{
 		Package:   content,
@@ -322,18 +322,18 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 	includeFiles := req.Files
 	version, err := p.getAppVersion(versionId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 	packageUrl := version.PackageName
 	resp, err := httputil.HttpGet(packageUrl)
 	if err != nil {
 		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	archiveFiles, err := gziputil.LoadArchive(resp.Body, includeFiles...)
 	if err != nil {
 		logger.Error("Failed to load package [%s] archive, error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	return &pb.GetAppVersionPackageFilesResponse{
 		Files:     archiveFiles,

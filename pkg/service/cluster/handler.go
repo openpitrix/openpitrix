@@ -187,6 +187,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
+	clusterWrapper.Cluster.RuntimeId = runtimeId
 	clusterWrapper.Cluster.Owner = s.UserId
 	clusterWrapper.Cluster.ClusterId = clusterId
 	clusterWrapper.Cluster.ClusterType = constants.NormalClusterType

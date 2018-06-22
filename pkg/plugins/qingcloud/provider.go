@@ -205,7 +205,7 @@ func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsR
 	return handler.DescribeSubnets(ctx, req)
 }
 
-func (p *Provider) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error) {
+func (p *Provider) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
 	handler := GetProviderHandler(p.Logger)
 	return handler.CheckResourceQuotas(ctx, clusterWrapper)
 }
