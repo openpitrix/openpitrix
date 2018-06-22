@@ -864,14 +864,14 @@
 		{
 			"checksumSHA1": "/GqMjpfiE2Nm4Rh/6M2AvoEC6w8=",
 			"path": "github.com/yunify/qingcloud-sdk-go/client",
-			"revision": "05aacd4b8cb0717a36d8236d38bfc023aee8f761",
-			"revisionTime": "2018-06-01T06:21:45Z"
+			"revision": "8afb238210668a1aba7267ea872c92ff8c274626",
+			"revisionTime": "2018-06-22T07:21:47Z"
 		},
 		{
-			"checksumSHA1": "PuuU1tcgv7ZqXbD89giT4KMDTuM=",
+			"checksumSHA1": "avlYycZ9tTtwqBfNSTAExx90mds=",
 			"path": "github.com/yunify/qingcloud-sdk-go/service",
-			"revision": "05aacd4b8cb0717a36d8236d38bfc023aee8f761",
-			"revisionTime": "2018-06-01T06:21:45Z"
+			"revision": "8afb238210668a1aba7267ea872c92ff8c274626",
+			"revisionTime": "2018-06-22T07:21:47Z"
 		},
 		{
 			"checksumSHA1": "TT1rac6kpQp2vz24m5yDGUNQ/QQ=",

@@ -372,7 +372,7 @@ func (s *NicService) ModifyNicAttributes(i *ModifyNicAttributesInput) (*ModifyNi
 }
 
 type ModifyNicAttributesInput struct {
-	NICID     *string `json:"nic_id" name:"nic_id" location:"params"` // Required
+	NIC       *string `json:"nic" name:"nic" location:"params"` // Required
 	NICName   *string `json:"nic_name" name:"nic_name" location:"params"`
 	PrivateIP *string `json:"private_ip" name:"private_ip" location:"params"`
 	VxNet     *string `json:"vxnet" name:"vxnet" location:"params"`
@@ -380,9 +380,9 @@ type ModifyNicAttributesInput struct {
 
 func (v *ModifyNicAttributesInput) Validate() error {
 
-	if v.NICID == nil {
+	if v.NIC == nil {
 		return errors.ParameterRequiredError{
-			ParameterName: "NICID",
+			ParameterName: "NIC",
 			ParentName:    "ModifyNicAttributesInput",
 		}
 	}

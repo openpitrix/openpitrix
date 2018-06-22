@@ -913,21 +913,18 @@ type Instance struct {
 	CreateTime       *time.Time     `json:"create_time" name:"create_time" format:"ISO 8601"`
 	Description      *string        `json:"description" name:"description"`
 	Device           *string        `json:"device" name:"device"`
-	DHCPOptions      *DHCPOption    `json:"dhcp_options" name:"dhcp_options"`
 	DNSAliases       []*DNSAlias    `json:"dns_aliases" name:"dns_aliases"`
 	EIP              *EIP           `json:"eip" name:"eip"`
 	Extra            *Extra         `json:"extra" name:"extra"`
 	GraphicsPasswd   *string        `json:"graphics_passwd" name:"graphics_passwd"`
 	GraphicsProtocol *string        `json:"graphics_protocol" name:"graphics_protocol"`
 	Image            *Image         `json:"image" name:"image"`
-	ImageID          *string        `json:"image_id" name:"image_id"`
 	InstanceClass    *int           `json:"instance_class" name:"instance_class"`
 	InstanceID       *string        `json:"instance_id" name:"instance_id"`
 	InstanceName     *string        `json:"instance_name" name:"instance_name"`
 	InstanceType     *string        `json:"instance_type" name:"instance_type"`
 	KeyPairIDs       []*string      `json:"keypair_ids" name:"keypair_ids"`
 	MemoryCurrent    *int           `json:"memory_current" name:"memory_current"`
-	PrivateIP        *string        `json:"private_ip" name:"private_ip"`
 	SecurityGroup    *SecurityGroup `json:"security_group" name:"security_group"`
 	// Status's available values: pending, running, stopped, suspended, terminated, ceased
 	Status     *string    `json:"status" name:"status"`
@@ -935,20 +932,14 @@ type Instance struct {
 	SubCode    *int       `json:"sub_code" name:"sub_code"`
 	Tags       []*Tag     `json:"tags" name:"tags"`
 	// TransitionStatus's available values: creating, starting, stopping, restarting, suspending, resuming, terminating, recovering, resetting
-	TransitionStatus *string          `json:"transition_status" name:"transition_status"`
-	VCPUsCurrent     *int             `json:"vcpus_current" name:"vcpus_current"`
-	VolumeIDs        []*string        `json:"volume_ids" name:"volume_ids"`
-	Volumes          []*Volume        `json:"volumes" name:"volumes"`
-	VxNets           []*InstanceVxNet `json:"vxnets" name:"vxnets"`
+	TransitionStatus *string     `json:"transition_status" name:"transition_status"`
+	VCPUsCurrent     *int        `json:"vcpus_current" name:"vcpus_current"`
+	VolumeIDs        []*string   `json:"volume_ids" name:"volume_ids"`
+	Volumes          []*Volume   `json:"volumes" name:"volumes"`
+	VxNets           []*NICVxNet `json:"vxnets" name:"vxnets"`
 }
 
 func (v *Instance) Validate() error {
-
-	if v.DHCPOptions != nil {
-		if err := v.DHCPOptions.Validate(); err != nil {
-			return err
-		}
-	}
 
 	if len(v.DNSAliases) > 0 {
 		for _, property := range v.DNSAliases {
@@ -1157,13 +1148,17 @@ func (v *Job) Validate() error {
 }
 
 type KeyPair struct {
-	Description *string `json:"description" name:"description"`
+	CreateTime  *time.Time `json:"create_time" name:"create_time" format:"ISO 8601"`
+	Description *string    `json:"description" name:"description"`
 	// EncryptMethod's available values: ssh-rsa, ssh-dss
 	EncryptMethod *string   `json:"encrypt_method" name:"encrypt_method"`
 	InstanceIDs   []*string `json:"instance_ids" name:"instance_ids"`
 	KeyPairID     *string   `json:"keypair_id" name:"keypair_id"`
 	KeyPairName   *string   `json:"keypair_name" name:"keypair_name"`
+	Owner         *string   `json:"owner" name:"owner"`
+	PrivKey       *string   `json:"priv_key" name:"priv_key"`
 	PubKey        *string   `json:"pub_key" name:"pub_key"`
+	ResourceIDs   *string   `json:"resource_ids" name:"resource_ids"`
 	Tags          []*Tag    `json:"tags" name:"tags"`
 }
 
@@ -1459,8 +1454,7 @@ func (v *LoadBalancerPolicyRule) Validate() error {
 }
 
 type Meter struct {
-	Data     interface{}   `json:"data" name:"data"`
-	DataSet  []interface{} `json:"data_set" name:"data_set"`
+	Data     []interface{} `json:"data" name:"data"`
 	MeterID  *string       `json:"meter_id" name:"meter_id"`
 	Sequence *int          `json:"sequence" name:"sequence"`
 	VxNetID  *string       `json:"vxnet_id" name:"vxnet_id"`
@@ -1676,6 +1670,7 @@ func (v *MongoPrivateIP) Validate() error {
 
 type NIC struct {
 	CreateTime    *time.Time `json:"create_time" name:"create_time" format:"ISO 8601"`
+	EIP           *NICEIP    `json:"eip" name:"eip"`
 	InstanceID    *string    `json:"instance_id" name:"instance_id"`
 	NICID         *string    `json:"nic_id" name:"nic_id"`
 	NICName       *string    `json:"nic_name" name:"nic_name"`
@@ -1693,6 +1688,12 @@ type NIC struct {
 }
 
 func (v *NIC) Validate() error {
+
+	if v.EIP != nil {
+		if err := v.EIP.Validate(); err != nil {
+			return err
+		}
+	}
 
 	if v.Status != nil {
 		statusValidValues := []string{"available", "in-use"}
@@ -1725,12 +1726,47 @@ func (v *NIC) Validate() error {
 	return nil
 }
 
+type NICEIP struct {
+	Bandwidth *int    `json:"bandwidth" name:"bandwidth"`
+	EIPAddr   *string `json:"eip_addr" name:"eip_addr"`
+	EIPID     *string `json:"eip_id" name:"eip_id"`
+}
+
+func (v *NICEIP) Validate() error {
+
+	return nil
+}
+
 type NICIP struct {
 	NICID     *string `json:"nic_id" name:"nic_id"`
 	PrivateIP *string `json:"private_ip" name:"private_ip"`
 }
 
 func (v *NICIP) Validate() error {
+
+	return nil
+}
+
+type NICVxNet struct {
+	NICID     *string `json:"nic_id" name:"nic_id"`
+	PrivateIP *string `json:"private_ip" name:"private_ip"`
+	Role      *int    `json:"role" name:"role"`
+	VxNetID   *string `json:"vxnet_id" name:"vxnet_id"`
+	VxNetName *string `json:"vxnet_name" name:"vxnet_name"`
+	VxNetType *int    `json:"vxnet_type" name:"vxnet_type"`
+}
+
+func (v *NICVxNet) Validate() error {
+
+	return nil
+}
+
+type QuotaLeft struct {
+	Left         *int    `json:"left" name:"left"`
+	ResourceType *string `json:"resource_type" name:"resource_type"`
+}
+
+func (v *QuotaLeft) Validate() error {
 
 	return nil
 }
@@ -2063,6 +2099,7 @@ type Router struct {
 	Tags       []*Tag     `json:"tags" name:"tags"`
 	// TransitionStatus's available values: creating, updating, suspending, resuming, poweroffing, poweroning, deleting
 	TransitionStatus *string  `json:"transition_status" name:"transition_status"`
+	VpcNetwork       *string  `json:"vpc_network" name:"vpc_network"`
 	VxNets           []*VxNet `json:"vxnets" name:"vxnets"`
 }
 
@@ -2174,10 +2211,11 @@ func (v *Router) Validate() error {
 }
 
 type RouterStatic struct {
-	CreateTime       *time.Time `json:"create_time" name:"create_time" format:"ISO 8601"`
-	RouterID         *string    `json:"router_id" name:"router_id"`
-	RouterStaticID   *string    `json:"router_static_id" name:"router_static_id"`
-	RouterStaticName *string    `json:"router_static_name" name:"router_static_name"`
+	CreateTime       *time.Time                 `json:"create_time" name:"create_time" format:"ISO 8601"`
+	EntrySet         []*RouterStaticEntrySimple `json:"entry_set" name:"entry_set"`
+	RouterID         *string                    `json:"router_id" name:"router_id"`
+	RouterStaticID   *string                    `json:"router_static_id" name:"router_static_id"`
+	RouterStaticName *string                    `json:"router_static_name" name:"router_static_name"`
 	// StaticType's available values: 1, 2, 3, 4, 5, 6, 7, 8
 	StaticType *int    `json:"static_type" name:"static_type"`
 	Val1       *string `json:"val1" name:"val1"`
@@ -2186,10 +2224,21 @@ type RouterStatic struct {
 	Val4       *string `json:"val4" name:"val4"`
 	Val5       *string `json:"val5" name:"val5"`
 	Val6       *string `json:"val6" name:"val6"`
+	Val7       *string `json:"val7" name:"val7"`
+	Val8       *string `json:"val8" name:"val8"`
+	Val9       *string `json:"val9" name:"val9"`
 	VxNetID    *string `json:"vxnet_id" name:"vxnet_id"`
 }
 
 func (v *RouterStatic) Validate() error {
+
+	if len(v.EntrySet) > 0 {
+		for _, property := range v.EntrySet {
+			if err := property.Validate(); err != nil {
+				return err
+			}
+		}
+	}
 
 	if v.StaticType != nil {
 		staticTypeValidValues := []string{"1", "2", "3", "4", "5", "6", "7", "8"}
@@ -2218,11 +2267,23 @@ type RouterStaticEntry struct {
 	RouterID              *string `json:"router_id" name:"router_id"`
 	RouterStaticEntryID   *string `json:"router_static_entry_id" name:"router_static_entry_id"`
 	RouterStaticEntryName *string `json:"router_static_entry_name" name:"router_static_entry_name"`
+	RouterStaticID        *string `json:"router_static_id" name:"router_static_id"`
 	Val1                  *string `json:"val1" name:"val1"`
 	Val2                  *string `json:"val2" name:"val2"`
 }
 
 func (v *RouterStaticEntry) Validate() error {
+
+	return nil
+}
+
+type RouterStaticEntrySimple struct {
+	RouterStaticEntryID *string `json:"router_static_entry_id" name:"router_static_entry_id"`
+	Val1                *string `json:"val1" name:"val1"`
+	Val2                *string `json:"val2" name:"val2"`
+}
+
+func (v *RouterStaticEntrySimple) Validate() error {
 
 	return nil
 }
@@ -2595,7 +2656,7 @@ func (v *ServerCertificate) Validate() error {
 type Snapshot struct {
 	CreateTime  *time.Time `json:"create_time" name:"create_time" format:"ISO 8601"`
 	Description *string    `json:"description" name:"description"`
-	HeadChain   *string    `json:"head_chain" name:"head_chain"`
+	HeadChain   *int       `json:"head_chain" name:"head_chain"`
 	// IsHead's available values: 0, 1
 	IsHead *int `json:"is_head" name:"is_head"`
 	// IsTaken's available values: 0, 1
@@ -2611,7 +2672,7 @@ type Snapshot struct {
 	SnapshotResource   *SnapshotResource `json:"snapshot_resource" name:"snapshot_resource"`
 	SnapshotTime       *time.Time        `json:"snapshot_time" name:"snapshot_time" format:"ISO 8601"`
 	// SnapshotType's available values: 0, 1
-	SnapshotType *string `json:"snapshot_type" name:"snapshot_type"`
+	SnapshotType *int `json:"snapshot_type" name:"snapshot_type"`
 	// Status's available values: pending, available, suspended, deleted, ceased
 	Status     *string    `json:"status" name:"status"`
 	StatusTime *time.Time `json:"status_time" name:"status_time" format:"ISO 8601"`

@@ -234,95 +234,6 @@ type DescribeInstancesOutput struct {
 	TotalCount  *int        `json:"total_count" name:"total_count" location:"elements"`
 }
 
-// Documentation URL: https://docs.qingcloud.com/api/monitor/get_monitor.html
-func (s *InstanceService) GetInstanceMonitor(i *GetInstanceMonitorInput) (*GetInstanceMonitorOutput, error) {
-	if i == nil {
-		i = &GetInstanceMonitorInput{}
-	}
-	o := &data.Operation{
-		Config:        s.Config,
-		Properties:    s.Properties,
-		APIName:       "GetMonitor",
-		RequestMethod: "GET",
-	}
-
-	x := &GetInstanceMonitorOutput{}
-	r, err := request.New(o, i, x)
-	if err != nil {
-		return nil, err
-	}
-
-	err = r.Send()
-	if err != nil {
-		return nil, err
-	}
-
-	return x, err
-}
-
-type GetInstanceMonitorInput struct {
-	EndTime   *time.Time `json:"end_time" name:"end_time" format:"ISO 8601" location:"params"`     // Required
-	Meters    []*string  `json:"meters" name:"meters" location:"params"`                           // Required
-	Resource  *string    `json:"resource" name:"resource" location:"params"`                       // Required
-	StartTime *time.Time `json:"start_time" name:"start_time" format:"ISO 8601" location:"params"` // Required
-	// Step's available values: 5m, 15m, 2h, 1d
-	Step *string `json:"step" name:"step" location:"params"` // Required
-}
-
-func (v *GetInstanceMonitorInput) Validate() error {
-
-	if len(v.Meters) == 0 {
-		return errors.ParameterRequiredError{
-			ParameterName: "Meters",
-			ParentName:    "GetInstanceMonitorInput",
-		}
-	}
-
-	if v.Resource == nil {
-		return errors.ParameterRequiredError{
-			ParameterName: "Resource",
-			ParentName:    "GetInstanceMonitorInput",
-		}
-	}
-
-	if v.Step == nil {
-		return errors.ParameterRequiredError{
-			ParameterName: "Step",
-			ParentName:    "GetInstanceMonitorInput",
-		}
-	}
-
-	if v.Step != nil {
-		stepValidValues := []string{"5m", "15m", "2h", "1d"}
-		stepParameterValue := fmt.Sprint(*v.Step)
-
-		stepIsValid := false
-		for _, value := range stepValidValues {
-			if value == stepParameterValue {
-				stepIsValid = true
-			}
-		}
-
-		if !stepIsValid {
-			return errors.ParameterValueNotAllowedError{
-				ParameterName:  "Step",
-				ParameterValue: stepParameterValue,
-				AllowedValues:  stepValidValues,
-			}
-		}
-	}
-
-	return nil
-}
-
-type GetInstanceMonitorOutput struct {
-	Message    *string  `json:"message" name:"message"`
-	Action     *string  `json:"action" name:"action" location:"elements"`
-	MeterSet   []*Meter `json:"meter_set" name:"meter_set" location:"elements"`
-	ResourceID *string  `json:"resource_id" name:"resource_id" location:"elements"`
-	RetCode    *int     `json:"ret_code" name:"ret_code" location:"elements"`
-}
-
 // Documentation URL: https://docs.qingcloud.com/api/instance/modify_instance_attributes.html
 func (s *InstanceService) ModifyInstanceAttributes(i *ModifyInstanceAttributesInput) (*ModifyInstanceAttributesOutput, error) {
 	if i == nil {
@@ -652,6 +563,7 @@ type RunInstancesInput struct {
 	CPU *int `json:"cpu" name:"cpu" default:"1" location:"params"`
 	// CPUMax's available values: 1, 2, 4, 8, 16
 	CPUMax   *int    `json:"cpu_max" name:"cpu_max" location:"params"`
+	Gpu      *int    `json:"gpu" name:"gpu" default:"0" location:"params"`
 	Hostname *string `json:"hostname" name:"hostname" location:"params"`
 	ImageID  *string `json:"image_id" name:"image_id" location:"params"` // Required
 	// InstanceClass's available values: 0, 1
