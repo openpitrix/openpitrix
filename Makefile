@@ -75,7 +75,7 @@ generate: generate-global-config ## Generate code from protobuf file in docker
 
 .PHONY: generate-global-config
 generate-global-config: ## Generate global config
-	$(RUN_IN_DOCKER) go generate openpitrix.io/openpitrix/config
+	$(RUN_IN_DOCKER) go generate openpitrix.io/openpitrix/deploy/config
 
 .PHONY: fmt-all
 fmt-all: ## Format all code
@@ -137,9 +137,9 @@ compose-update-%: ## Update "openpitrix-%" service in docker compose
 
 .PHONY: compose-put-global-config
 compose-put-global-config: ## Put global config in docker compose
-	@test -s config/global_config.yaml || { echo "[config/global_config.yaml] not exist"; exit 1; }
-	cat config/global_config.yaml | docker run -i --rm openpitrix opctl validate_global_config
-	cat config/global_config.yaml | docker-compose exec -T openpitrix-etcd etcdctl put openpitrix/global_config
+	@test -s deploy/config/global_config.yaml || { echo "[deploy/config/global_config.yaml] not exist"; exit 1; }
+	cat deploy/config/global_config.yaml | docker run -i --rm openpitrix opctl validate_global_config
+	cat deploy/config/global_config.yaml | docker-compose exec -T openpitrix-etcd etcdctl put openpitrix/global_config
 
 .PHONY: compose-up
 compose-up: ## Launch openpitrix in docker compose
@@ -154,9 +154,10 @@ compose-down: ## Shutdown docker compose
 	docker-compose down
 	@echo "compose-down done"
 
-.PHONY: release
-release:
-	@echo "TODO"
+release-%: ## Release version
+	mkdir deploy/openpitrix-kubernetes-$*
+	cp -r deploy/config deploy/kubernetes deploy/openpitrix-kubernetes-$*/
+	cd deploy/ && tar -czvf openpitrix-kubernetes-$*.tar.gz openpitrix-kubernetes-$*
 
 .PHONY: test
 test: ## Run all tests

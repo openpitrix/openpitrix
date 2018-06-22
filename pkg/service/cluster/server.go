@@ -22,6 +22,7 @@ func Serve(cfg *config.Config) {
 	s := Server{}
 	manager.NewGrpcServer("cluster-manager", constants.ClusterManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithChecker(s.Checker).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterClusterManagerServer(server, &s)
 		})

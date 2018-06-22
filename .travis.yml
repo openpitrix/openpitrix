@@ -1,24 +1,28 @@
 sudo: required
-
 services:
-  - docker
-
+- docker
 language: go
-
 go:
-  - "1.9"
-  - "1.10"
-
+- '1.9'
+- '1.10'
 go_import_path: openpitrix.io/openpitrix
-
 before_install:
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y install docker-ce
-
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+- sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu
+  $(lsb_release -cs) stable"
+- sudo apt-get update
+- sudo apt-get -y install docker-ce
 before_script:
-  - docker --version
-
+- docker --version
 script:
-  - make ci-test
+- make ci-test
+before_deploy:
+- make release-$TRAVIS_TAG
+deploy:
+  provider: releases
+  api_key:
+    secure: wGc/B54i+lERB3S0+Be0NKzCKI0cLIhr7/5IrvMxG7ztY8IhVFJB4abgw4fFk18iskIMTSnqQ3LTpNUq5aZEWq+ZOz0LOsdhpX7uhHjjuBZGTp6D1GctfWhqL9rftfHx0sdv1vJ2XQeMWyY4z/gr2bHpwn+2OiLFmRQAz9XWCnkLRSldQ+D/XOi6erhW3wKJdLwe7fT/IcTL6bRhErhpYy1uNbIz7EjWMKsprL24+XAaylKlF8r34OA7mRZ/k7RX8ZhwWp23DZmiEJ8oCfSM2YMb0t/u91I59ezSUjNq2JrqhHRsLG8cuG5yEBs0jqoGAUxmTOdOJ7X3tmuDSNLX8eggHXXA1B7goOG6X/Ey0V3LMEGTA/s9yTHWUZl9IpIHAaYPphcnyHO+bow34zM/JNkE7emzygFGAjA3M+YUXSFJxe6Bzs5I+VFWU7aHDtBoCCsAIORjailYj7+/aRe9tucpOQqydxIN/tW8ya0q959G4nWyPqQrIayuBmv3ylxR3QHebS1REOaJafDhlcUHlt05m1Yu6qwd1w+1Dx8rDt8uuCYNFk/4Sxn0TgsNijq4wE/c/gyDSArV/k2pB7gpl4ZB1Dynl7Yb2B4axAs5czD1p5Eai+CkFbN2d2AgDnSzpcQqyWdWaUPT2vk0R8spIG/n7TAe9jUKEsM3v2Gnd8k=
+  file: deploy/openpitrix-kubernetes-$TRAVIS_TAG.tar.gz
+  on:
+    repo: openpitrix/openpitrix
+    tags: true

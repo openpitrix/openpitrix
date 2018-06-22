@@ -417,7 +417,7 @@ type DescribeRouterStaticEntriesInput struct {
 	Limit               *int    `json:"limit" name:"limit" location:"params"`
 	Offset              *int    `json:"offset" name:"offset" location:"params"`
 	RouterStatic        *string `json:"router_static" name:"router_static" location:"params"`
-	RouterStaticEntryID *string `json:"router_static_entry_id" name:"router_static_entry_id" location:"params"`
+	RouterStaticEntries *string `json:"router_static_entries" name:"router_static_entries" location:"params"`
 }
 
 func (v *DescribeRouterStaticEntriesInput) Validate() error {
@@ -832,13 +832,15 @@ func (v *GetVPNCertsInput) Validate() error {
 }
 
 type GetVPNCertsOutput struct {
-	Message           *string `json:"message" name:"message"`
-	Action            *string `json:"action" name:"action" location:"elements"`
-	CaCert            *string `json:"ca_cert" name:"ca_cert" location:"elements"`
-	ClientCrt         *string `json:"client_crt" name:"client_crt" location:"elements"`
-	ClientKey         *string `json:"client_key" name:"client_key" location:"elements"`
-	LinuxConfSample   *string `json:"linux_conf_sample" name:"linux_conf_sample" location:"elements"`
-	MacConfSample     *string `json:"mac_conf_sample" name:"mac_conf_sample" location:"elements"`
+	Message         *string `json:"message" name:"message"`
+	Action          *string `json:"action" name:"action" location:"elements"`
+	CaCert          *string `json:"ca_cert" name:"ca_cert" location:"elements"`
+	ClientCrt       *string `json:"client_crt" name:"client_crt" location:"elements"`
+	ClientKey       *string `json:"client_key" name:"client_key" location:"elements"`
+	LinuxConfSample *string `json:"linux_conf_sample" name:"linux_conf_sample" location:"elements"`
+	MacConfSample   *string `json:"mac_conf_sample" name:"mac_conf_sample" location:"elements"`
+	// Platform's available values: linux, windows, mac
+	Platform          *string `json:"platform" name:"platform" location:"elements"`
 	RetCode           *int    `json:"ret_code" name:"ret_code" location:"elements"`
 	RouterID          *string `json:"router_id" name:"router_id" location:"elements"`
 	StaticKey         *string `json:"static_key" name:"static_key" location:"elements"`
@@ -1108,6 +1110,9 @@ type ModifyRouterStaticAttributesInput struct {
 	Val4             *string `json:"val4" name:"val4" location:"params"`
 	Val5             *string `json:"val5" name:"val5" location:"params"`
 	Val6             *string `json:"val6" name:"val6" location:"params"`
+	Val7             *string `json:"val7" name:"val7" location:"params"`
+	Val8             *string `json:"val8" name:"val8" location:"params"`
+	Val9             *string `json:"val9" name:"val9" location:"params"`
 }
 
 func (v *ModifyRouterStaticAttributesInput) Validate() error {

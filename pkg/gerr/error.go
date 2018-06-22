@@ -26,6 +26,7 @@ func newStatus(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}
 	errorDetail := &pb.ErrorDetail{ErrorName: errMsg.Name}
 	if err != nil {
 		errorDetail.Cause = fmt.Sprintf("%+v", err)
+		logger.Error("%+v", err)
 	}
 
 	sd, e := s.WithDetails(errorDetail)

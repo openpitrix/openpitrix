@@ -94,8 +94,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
 	// TODO: validate CreateAppRequest
-
-	// check categories
+	// TODO: check categories
 
 	s := senderutil.GetSenderFromContext(ctx)
 	newApp := models.NewApp(
@@ -170,13 +169,9 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 
 func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb.DeleteAppsResponse, error) {
 	// TODO: check resource permission
-	err := manager.CheckParamsRequired(req, models.ColumnAppId)
-	if err != nil {
-		return nil, err
-	}
 	appIds := req.GetAppId()
 
-	_, err = p.Db.
+	_, err := p.Db.
 		Update(models.AppTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(models.ColumnAppId, appIds)).
@@ -280,20 +275,15 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 
 func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersionsRequest) (*pb.DeleteAppVersionsResponse, error) {
 	// TODO: check resource permission
-	err := manager.CheckParamsRequired(req, models.ColumnVersionId)
-	if err != nil {
-		return nil, err
-	}
-
 	versionIds := req.GetVersionId()
 
-	_, err = p.Db.
+	_, err := p.Db.
 		Update(models.AppVersionTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(models.ColumnVersionId, versionIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed, strings.Join(versionIds, ","))
 	}
 
 	return &pb.DeleteAppVersionsResponse{
@@ -306,19 +296,19 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 	versionId := req.GetVersionId().GetValue()
 	version, err := p.getAppVersion(versionId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 	logger.Debug("Got app version: [%+v]", version)
 	packageUrl := version.PackageName
 	resp, err := httputil.HttpGet(packageUrl)
 	if err != nil {
 		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logger.Error("Failed to read http response [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	return &pb.GetAppVersionPackageResponse{
 		Package:   content,
@@ -332,18 +322,18 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 	includeFiles := req.Files
 	version, err := p.getAppVersion(versionId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 	packageUrl := version.PackageName
 	resp, err := httputil.HttpGet(packageUrl)
 	if err != nil {
 		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	archiveFiles, err := gziputil.LoadArchive(resp.Body, includeFiles...)
 	if err != nil {
 		logger.Error("Failed to load package [%s] archive, error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	return &pb.GetAppVersionPackageFilesResponse{
 		Files:     archiveFiles,

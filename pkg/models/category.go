@@ -30,6 +30,9 @@ type Category struct {
 var CategoryColumns = GetColumnsFromStruct(&Category{})
 
 func NewCategory(name, locale, owner string) *Category {
+	if locale == "" {
+		locale = "{}"
+	}
 	return &Category{
 		CategoryId: NewCategoryId(),
 		Name:       name,

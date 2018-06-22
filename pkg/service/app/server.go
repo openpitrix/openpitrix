@@ -23,6 +23,7 @@ func Serve(cfg *config.Config) {
 	s := Server{pi.Global()}
 	manager.NewGrpcServer("app-manager", constants.AppManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithChecker(s.Checker).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterAppManagerServer(server, &s)
 		})

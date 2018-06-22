@@ -15,7 +15,6 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -158,36 +157,6 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 		}
 	}
 	return attributes
-}
-
-func CheckParamsRequired(req Request, columns ...string) error {
-	for _, field := range structs.Fields(req) {
-		column := getFieldName(field)
-		param := field.Value()
-		if stringutil.StringIn(column, columns) {
-			switch value := param.(type) {
-			case string:
-				if value == "" {
-					return gerr.New(gerr.InvalidArgument, gerr.ErrorMissingParameter, column)
-				}
-			case *wrappers.StringValue:
-				if value == nil || value.GetValue() == "" {
-					return gerr.New(gerr.InvalidArgument, gerr.ErrorMissingParameter, column)
-				}
-			case []string:
-				var values []string
-				for _, v := range value {
-					if v != "" {
-						values = append(values, v)
-					}
-				}
-				if len(values) == 0 {
-					return gerr.New(gerr.InvalidArgument, gerr.ErrorMissingParameter, column)
-				}
-			}
-		}
-	}
-	return nil
 }
 
 func AddQueryOrderDir(query *db.SelectQuery, req Request, column string) *db.SelectQuery {

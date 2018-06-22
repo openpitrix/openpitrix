@@ -1,8 +1,6 @@
 #!/bin/bash
 
-echo "clean all stuff"
-
-echo "start to clean k8s resource"
+echo "Cleaning k8s resource..."
 # Back to the root of the project
 cd $(dirname $0)
 cd ../..
@@ -10,23 +8,31 @@ cd ../..
 DEFAULT_NAMESPACE=openpitrix-system
 NAMESPACE=${DEFAULT_NAMESPACE}
 
+usage() {
+  echo "Usage:"
+  echo "  clean.sh [-n NAMESPACE]"
+  echo "Description:"
+  echo "    -n NAMESPACE: the namespace of kubernetes."
+  exit -1
+}
+
 while getopts n:h option
 do
  case "${option}"
  in
  n) NAMESPACE=${OPTARG};;
- h) echo "usage ./clean.sh -n namespace" && exit 1 ;;
- *) echo "usage ./clean.sh -n namespace" && exit 1 ;;
+ h) usage ;;
+ *) usage ;;
  esac
 done
 
 kubectl delete namespace ${NAMESPACE}
 
 
-echo "start to clean docker resource"
+echo "Cleaning docker resource..."
 docker rmi openpitrix/openpitrix-dev:latest
 docker rmi openpitrix/openpitrix-dev:metadata
 docker rmi openpitrix/openpitrix-dev:flyway
 docker rmi openpitrix
 
-echo "cleaned successfully"
+echo "Cleaned successfully"

@@ -16,10 +16,6 @@ import (
 )
 
 func (p *Server) IndexRepo(ctx context.Context, req *pb.IndexRepoRequest) (*pb.IndexRepoResponse, error) {
-	err := manager.CheckParamsRequired(req, "repo_id")
-	if err != nil {
-		return nil, err
-	}
 	s := senderutil.GetSenderFromContext(ctx)
 	repoId := req.GetRepoId().GetValue()
 	repoEvent, err := p.controller.NewRepoEvent(repoId, s.UserId)
@@ -44,6 +40,7 @@ func (p *Server) DescribeRepoEvents(ctx context.Context, req *pb.DescribeRepoEve
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.RepoEventTableName))
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err := query.Load(&repoEvents)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)

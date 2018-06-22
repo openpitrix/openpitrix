@@ -90,7 +90,7 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 
 	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, RuntimeIdColumn,
 		models.ColumnLabelKey, models.ColumnLabelValue, selectorMap)
-
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err = query.Load(&runtimes)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -153,17 +153,11 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 }
 
 func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesRequest) (*pb.DeleteRuntimesResponse, error) {
-	// validate req
-	err := manager.CheckParamsRequired(req, "runtime_id")
-	if err != nil {
-		return nil, err
-	}
-
-	// check runtime can be deleted
+	// TODO: check runtime can be deleted
 	runtimeIds := req.GetRuntimeId()
 
 	// deleted runtime
-	err = p.deleteRuntimes(runtimeIds)
+	err := p.deleteRuntimes(runtimeIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}

@@ -23,6 +23,7 @@ func Serve(cfg *config.Config) {
 	s := Server{pi.Global()}
 	manager.NewGrpcServer("category-manager", constants.CategoryManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithChecker(s.Checker).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterCategoryManagerServer(server, &s)
 		})

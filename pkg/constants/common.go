@@ -4,7 +4,9 @@
 
 package constants
 
-import "time"
+import (
+	"time"
+)
 
 const (
 	prefix              = "openpitrix-"
@@ -61,6 +63,11 @@ const (
 )
 
 const (
+	VisibilityPublic  = "public"
+	VisibilityPrivate = "private"
+)
+
+const (
 	JobLength       = 20
 	TaskLength      = 20
 	RepoEventLength = 20
@@ -111,7 +118,9 @@ const (
 	TargetPilot        = "pilot"
 )
 
-var VmBaseProviders = []string{ProviderQingCloud}
+var VmBaseProviders = []string{
+	ProviderQingCloud,
+}
 
 const (
 	PlaceHolder       = "*"
