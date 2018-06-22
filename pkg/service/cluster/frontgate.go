@@ -83,15 +83,17 @@ func (f *Frontgate) ActivateFrontgate(frontgateId string) error {
 	return f.activate(frontgate)
 }
 
-func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register) (*models.Cluster, error) {
+func (f *Frontgate) GetActiveFrontgate(clusterWrapper *models.ClusterWrapper) (*models.Cluster, error) {
 	var frontgate *models.Cluster
+	vpcId := clusterWrapper.Cluster.VpcId
+	owner := clusterWrapper.Cluster.Owner
 	err := pi.Global().Etcd.DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
 		providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider, nil)
 		if err != nil {
 			return gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Provider)
 		}
-		vpc, err := providerInterface.DescribeVpc(register.Runtime.RuntimeId, vpcId)
+		vpc, err := providerInterface.DescribeVpc(f.Runtime.RuntimeId, vpcId)
 		if err != nil {
 			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, vpcId)
 		}
@@ -108,12 +110,12 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceTransitionStatus, vpcId, constants.StatusUpdating)
 		}
 
-		frontgates, err := f.getFrontgateFromDb(vpcId, userId)
+		frontgates, err := f.getFrontgateFromDb(vpcId, owner)
 		if err != nil {
 			return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, vpcId)
 		}
 		if len(frontgates) == 0 {
-			frontgateId, err := f.CreateCluster(register)
+			frontgateId, err := f.CreateCluster(clusterWrapper)
 			frontgate = &models.Cluster{ClusterId: frontgateId}
 			if err != nil {
 				return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed, frontgateId)
@@ -124,7 +126,7 @@ func (f *Frontgate) GetActiveFrontgate(vpcId, userId string, register *Register)
 			err = f.activate(frontgate)
 			return err
 		} else {
-			logger.Critical("More than one non-ceased frontgate cluster in the vpc [%s] for user [%s]", vpcId, userId)
+			logger.Critical("More than one non-ceased frontgate cluster in the vpc [%s] for user [%s]", vpcId, owner)
 			err = fmt.Errorf("more than one non-ceased frontgate cluster")
 			return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorInternalError)
 		}
