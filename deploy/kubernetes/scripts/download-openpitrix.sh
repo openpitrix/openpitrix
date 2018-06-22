@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# This file will be fetched as: curl -L https://git.io/getOpenPitrix | sh -
+# This file will be fetched as: curl -L https://git.io/GetOpenPitrix | sh -
 #
 # The script fetches the latest OpenPitrix release and untars it.
 # It's latest stable releases but lets
-# users do curl -L https://git.io/getOpenPitrix | OPENPITRIX_VERSION=0.1.0 sh -
+# users do curl -L https://git.io/GetOpenPitrix | OPENPITRIX_VERSION=0.1.0 sh -
 # for instance to change the version fetched.
 
 if [ "x${OPENPITRIX_VERSION}" = "x" ] ; then

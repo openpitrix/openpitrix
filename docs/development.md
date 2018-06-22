@@ -65,7 +65,7 @@ $ ./deploy-k8s.sh -n openpitrix-system -b -d
 
 Or go to the [OpenPitrix release](https://github.com/openpitrix/openpitrix/releases) page to download the deploy package. You can also run the following command to download and extract the latest release deploy package automatically:
 ```shell
-$ curl -L https://git.io/getOpenPitrix | sh -
+$ curl -L https://git.io/GetOpenPitrix | sh -
 $ cd openpitrix-${OPENPITRIX_VERSION}-kubernetes/kubernetes/scripts
 $ ./deploy-k8s.sh -n openpitrix-system -b -d
 ```
