@@ -349,10 +349,11 @@ func (s *SnapshotService) DescribeSnapshots(i *DescribeSnapshotsInput) (*Describ
 }
 
 type DescribeSnapshotsInput struct {
-	Limit      *int    `json:"limit" name:"limit" default:"20" location:"params"`
-	Offset     *int    `json:"offset" name:"offset" default:"0" location:"params"`
-	ResourceID *string `json:"resource_id" name:"resource_id" location:"params"`
-	SearchWord *string `json:"search_word" name:"search_word" location:"params"`
+	Limit        *int    `json:"limit" name:"limit" default:"20" location:"params"`
+	Offset       *int    `json:"offset" name:"offset" default:"0" location:"params"`
+	ResourceID   *string `json:"resource_id" name:"resource_id" location:"params"`
+	SearchWord   *string `json:"search_word" name:"search_word" location:"params"`
+	SnapshotTime *string `json:"snapshot_time" name:"snapshot_time" location:"params"`
 	// SnapshotType's available values: 0, 1
 	SnapshotType *int      `json:"snapshot_type" name:"snapshot_type" location:"params"`
 	Snapshots    []*string `json:"snapshots" name:"snapshots" location:"params"`
@@ -412,6 +413,7 @@ type DescribeSnapshotsOutput struct {
 	Action      *string     `json:"action" name:"action" location:"elements"`
 	RetCode     *int        `json:"ret_code" name:"ret_code" location:"elements"`
 	SnapshotSet []*Snapshot `json:"snapshot_set" name:"snapshot_set" location:"elements"`
+	TotalCount  *int        `json:"total_count" name:"total_count" location:"elements"`
 }
 
 // Documentation URL: https://docs.qingcloud.com/api/snapshot/modify_snapshot_attributes.html

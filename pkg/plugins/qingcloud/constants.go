@@ -12,4 +12,11 @@ const (
 	DefaultLoginPassword = "p12cHANgepwD"
 
 	DefaultUserDataType = "exec"
+
+	ResourceTypeInstance   = "hp_instance"
+	ResourceTypeCpu        = "hp_cpu"
+	ResourceTypeGpu        = "gpu_passthrough"
+	ResourceTypeMemory     = "hp_memory"
+	ResourceTypeVolume     = "hpp_volume"
+	ResourceTypeVolumeSize = "hpp_volume_size"
 )

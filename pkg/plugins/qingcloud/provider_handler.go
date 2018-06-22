@@ -148,7 +148,7 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 		LoginPasswd:   qcservice.String(DefaultLoginPassword),
 		NeedUserdata:  qcservice.Int(instance.NeedUserData),
 		Hostname:      qcservice.String(instance.Hostname),
-		// GPU:     qcservice.Int(instance.Gpu),
+		Gpu:           qcservice.Int(instance.Gpu),
 	}
 	if instance.VolumeId != "" {
 		input.Volumes = qcservice.StringSlice([]string{instance.VolumeId})
@@ -886,7 +886,7 @@ func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeS
 	return response, nil
 }
 
-func (p *ProviderHandler) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error) {
+func (p *ProviderHandler) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
 	roleCount := make(map[string]int)
 	for _, clusterNode := range clusterWrapper.ClusterNodes {
 		role := clusterNode.Role
@@ -898,8 +898,92 @@ func (p *ProviderHandler) CheckResourceQuotas(ctx context.Context, clusterWrappe
 		}
 	}
 
-	//TODO: need send request to qingcloud to validate quota, https://github.com/yunify/qingcloud-sdk-go/issues/99
-	return "", nil
+	needQuotas := models.NewQuotas()
+	needQuotas.Instance.Name = ResourceTypeInstance
+	needQuotas.Cpu.Name = ResourceTypeCpu
+	needQuotas.Gpu.Name = ResourceTypeGpu
+	needQuotas.Memory.Name = ResourceTypeMemory
+	needQuotas.Volume.Name = ResourceTypeVolume
+	needQuotas.VolumeSize.Name = ResourceTypeVolumeSize
+	for role, count := range roleCount {
+		clusterRole := clusterWrapper.ClusterRoles[role]
+		needQuotas.Instance.Count += count
+		needQuotas.Cpu.Count += int(clusterRole.Cpu) * count
+		needQuotas.Gpu.Count += int(clusterRole.Gpu) * count
+		needQuotas.Memory.Count += int(clusterRole.Memory) * count
+		needQuotas.Volume.Count += count
+		needQuotas.VolumeSize.Count += int(clusterRole.StorageSize) * count
+	}
+
+	qingcloudService, err := p.initService(clusterWrapper.Cluster.RuntimeId)
+	if err != nil {
+		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		return err
+	}
+
+	resourceTypes := []string{ResourceTypeInstance, ResourceTypeCpu, ResourceTypeGpu, ResourceTypeMemory,
+		ResourceTypeVolume, ResourceTypeVolumeSize}
+	var qcResourceTypes []*string
+
+	for _, resourceType := range resourceTypes {
+		qcResourceTypes = append(qcResourceTypes, qcservice.String(resourceType))
+	}
+
+	miscService, err := qingcloudService.Misc()
+	if err != nil {
+		p.Logger.Error("Init %s misc api service failed: %+v", MyProvider, err)
+		return err
+	}
+	output, err := miscService.GetQuotaLeft(&qcservice.GetQuotaLeftInput{
+		ResourceTypes: qcResourceTypes,
+		Zone:          qcservice.String(qingcloudService.Config.Zone),
+	})
+	if err != nil {
+		p.Logger.Error("GetQuotaLeft to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	retCode := qcservice.IntValue(output.RetCode)
+	if retCode != 0 {
+		message := qcservice.StringValue(output.Message)
+		p.Logger.Error("Send GetQuotaLeft to %s failed with return code [%d], message [%s]",
+			MyProvider, retCode, message)
+		return fmt.Errorf("send GetQuotaLeft to %s failed: %s", MyProvider, message)
+	}
+
+	leftQuotas := models.NewQuotas()
+	for _, quotaLeftSet := range output.QuotaLeftSet {
+		switch qcservice.StringValue(quotaLeftSet.ResourceType) {
+		case ResourceTypeInstance:
+			leftQuotas.Instance.Name = ResourceTypeInstance
+			leftQuotas.Instance.Count = qcservice.IntValue(quotaLeftSet.Left)
+		case ResourceTypeCpu:
+			leftQuotas.Cpu.Name = ResourceTypeCpu
+			leftQuotas.Cpu.Count = qcservice.IntValue(quotaLeftSet.Left)
+		case ResourceTypeGpu:
+			leftQuotas.Gpu.Name = ResourceTypeGpu
+			leftQuotas.Gpu.Count = qcservice.IntValue(quotaLeftSet.Left)
+		case ResourceTypeMemory:
+			leftQuotas.Memory.Name = ResourceTypeMemory
+			leftQuotas.Memory.Count = qcservice.IntValue(quotaLeftSet.Left)
+		case ResourceTypeVolume:
+			leftQuotas.Volume.Name = ResourceTypeVolume
+			leftQuotas.Volume.Count = qcservice.IntValue(quotaLeftSet.Left)
+		case ResourceTypeVolumeSize:
+			leftQuotas.VolumeSize.Name = ResourceTypeVolumeSize
+			leftQuotas.VolumeSize.Count = qcservice.IntValue(quotaLeftSet.Left)
+		default:
+			p.Logger.Error("Unknown quota type: %s", qcservice.StringValue(quotaLeftSet.ResourceType))
+		}
+	}
+
+	err = needQuotas.LessThan(leftQuotas)
+	if err != nil {
+		p.Logger.Error("[%s] quota not enough: %+v", MyProvider, err)
+		return err
+	}
+
+	return nil
 }
 
 func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
