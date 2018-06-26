@@ -18,6 +18,7 @@ import (
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 
 	staticSpec "openpitrix.io/openpitrix/pkg/cmd/api/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/cmd/api/swagger-ui"
@@ -126,54 +127,50 @@ func run() error {
 	return r.Run(fmt.Sprintf(":%d", constants.ApiGatewayPort))
 }
 
+type register struct {
+	f        func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error)
+	endpoint string
+}
+
 func mainHandler(ctx context.Context) http.Handler {
 	var gwmux = runtime.NewServeMux(runtime.WithMetadata(senderutil.ServeMuxSetSender))
-	var opts = []grpc.DialOption{grpc.WithInsecure()}
+	var opts = []grpc.DialOption{grpc.WithInsecure(), grpc.WithKeepaliveParams(keepalive.ClientParameters{
+		Time:                10 * time.Second,
+		Timeout:             5 * time.Second,
+		PermitWithoutStream: true,
+	})}
 	var err error
 
-	err = pb.RegisterAppManagerHandlerFromEndpoint(
-		ctx, gwmux,
+	for _, r := range []register{{
+		pb.RegisterAppManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.AppManagerHost, constants.AppManagerPort),
-		opts,
-	)
-	err = pb.RegisterCategoryManagerHandlerFromEndpoint(
-		ctx, gwmux,
+	}, {
+		pb.RegisterCategoryManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort),
-		opts,
-	)
-	err = pb.RegisterRuntimeManagerHandlerFromEndpoint(
-		ctx, gwmux,
+	}, {
+		pb.RegisterRuntimeManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.RuntimeManagerHost, constants.RuntimeManagerPort),
-		opts,
-	)
-	err = pb.RegisterJobManagerHandlerFromEndpoint(
-		ctx, gwmux,
+	}, {
+		pb.RegisterJobManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.JobManagerHost, constants.JobManagerPort),
-		opts,
-	)
-	err = pb.RegisterTaskManagerHandlerFromEndpoint(
-		ctx, gwmux,
+	}, {
+		pb.RegisterTaskManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.TaskManagerHost, constants.TaskManagerPort),
-		opts,
-	)
-	err = pb.RegisterRepoManagerHandlerFromEndpoint(
-		ctx, gwmux,
+	}, {
+		pb.RegisterRepoManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.RepoManagerHost, constants.RepoManagerPort),
-		opts,
-	)
-	err = pb.RegisterRepoIndexerHandlerFromEndpoint(
-		ctx, gwmux,
+	}, {
+		pb.RegisterRepoIndexerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort),
-		opts,
-	)
-	err = pb.RegisterClusterManagerHandlerFromEndpoint(
-		ctx, gwmux,
+	}, {
+		pb.RegisterClusterManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort),
-		opts,
-	)
-	if err != nil {
-		err = errors.WithStack(err)
-		logger.Error("%+v", err)
+	}} {
+		err = r.f(ctx, gwmux, r.endpoint, opts)
+		if err != nil {
+			err = errors.WithStack(err)
+			logger.Error("Dial [%s] failed: %+v", r.endpoint, err)
+		}
 	}
 
 	mux := http.NewServeMux()
