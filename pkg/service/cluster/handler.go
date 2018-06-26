@@ -181,9 +181,9 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		logger.Error("No such provider [%s]. ", runtime.Provider)
 		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
 	}
-	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, conf)
+	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, runtimeId, conf)
 	if err != nil {
-		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed. ", versionId, runtime)
+		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", versionId, runtime, err)
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 

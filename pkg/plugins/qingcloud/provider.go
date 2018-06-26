@@ -39,7 +39,7 @@ func (p *Provider) SetLogger(logger *logger.Logger) {
 	}
 }
 
-func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
+func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
 	clusterConf := app.ClusterConf{}
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
