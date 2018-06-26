@@ -13,6 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	//"openpitrix.io/openpitrix/pkg/plugins/aws"
 	"openpitrix.io/openpitrix/pkg/plugins/helm"
 	"openpitrix.io/openpitrix/pkg/plugins/qingcloud"
 )
@@ -22,12 +23,13 @@ var providerPlugins = make(map[string]ProviderInterface)
 func init() {
 	RegisterProviderPlugin(constants.ProviderQingCloud, qingcloud.NewProvider())
 	RegisterProviderPlugin(constants.ProviderKubernetes, helm.NewProvider())
+	//RegisterProviderPlugin(constants.ProviderAWS, aws.NewProvider())
 }
 
 type ProviderInterface interface {
 	SetLogger(logger *logger.Logger)
 	// Parse package and conf into cluster which clusterManager will register into db.
-	ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error)
+	ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error)
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
 	WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error

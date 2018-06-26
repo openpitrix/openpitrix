@@ -105,7 +105,27 @@ func (p *Provider) getHelmClient(runtimeId string) (helmClient *helm.Client, err
 	return
 }
 
-func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrapper, error) {
+func (p *Provider) checkClusterNameIsUniqueInRuntime(clusterName, runtimeId string) (err error) {
+	hc, err := p.getHelmClient(runtimeId)
+	if err != nil {
+		return err
+	}
+
+	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
+		_, err := hc.ReleaseStatus(clusterName)
+		if err != nil {
+			if _, ok := err.(transport.ConnectionError); ok {
+				return false, nil
+			}
+			return true, nil
+		}
+
+		return true, fmt.Errorf("helm release [%s] already exists", clusterName)
+	}, constants.DefaultServiceTimeout, constants.WaitTaskInterval)
+	return
+}
+
+func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
 	ctx := clientutil.GetSystemUserContext()
 	appManagerClient, err := appclient.NewAppManagerClient(ctx)
 	if err != nil {
@@ -138,6 +158,13 @@ func (p *Provider) ParseClusterConf(versionId, conf string) (*models.ClusterWrap
 		p.Logger.Error("Parse app version [%s] failed: %+v", versionId, err)
 		return nil, err
 	}
+
+	err = p.checkClusterNameIsUniqueInRuntime(clusterWrapper.Cluster.Name, runtimeId)
+	if err != nil {
+		p.Logger.Error("Check cluster name [%s] is unique in runtime [%s] failed: %+v", clusterWrapper.Cluster.Name, runtimeId, err)
+		return nil, err
+	}
+
 	return clusterWrapper, nil
 }
 
