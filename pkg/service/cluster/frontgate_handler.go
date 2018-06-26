@@ -47,7 +47,7 @@ func (f *Frontgate) CreateCluster(clusterWrapper *models.ClusterWrapper) (string
 		logger.Error("No such provider [%s]. ", f.Runtime.Provider)
 		return clusterId, err
 	}
-	frontgateWrapper, err := providerInterface.ParseClusterConf(constants.FrontgateVersionId, conf)
+	frontgateWrapper, err := providerInterface.ParseClusterConf(constants.FrontgateVersionId, clusterWrapper.Cluster.RuntimeId, conf)
 	if err != nil {
 		logger.Error("Parse frontgate cluster conf failed. ")
 		return clusterId, err
