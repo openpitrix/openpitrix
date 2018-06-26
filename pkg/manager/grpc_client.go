@@ -15,14 +15,18 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 )
 
+var ClientOptions = []grpc.DialOption{
+	grpc.WithInsecure(),
+	grpc.WithKeepaliveParams(keepalive.ClientParameters{
+		Time:                30 * time.Second,
+		Timeout:             10 * time.Second,
+		PermitWithoutStream: true,
+	}),
+}
+
 func NewClient(ctx context.Context, host string, port int) (*grpc.ClientConn, error) {
 	endpoint := fmt.Sprintf("%s:%d", host, port)
-	conn, err := grpc.DialContext(ctx, endpoint,
-		grpc.WithInsecure(), grpc.WithKeepaliveParams(keepalive.ClientParameters{
-			Time:                10 * time.Second,
-			Timeout:             5 * time.Second,
-			PermitWithoutStream: true,
-		}))
+	conn, err := grpc.DialContext(ctx, endpoint, ClientOptions...)
 	if err != nil {
 		return nil, err
 	}

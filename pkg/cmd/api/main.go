@@ -18,13 +18,13 @@ import (
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/keepalive"
 
 	staticSpec "openpitrix.io/openpitrix/pkg/cmd/api/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/cmd/api/swagger-ui"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/version"
@@ -134,11 +134,7 @@ type register struct {
 
 func mainHandler(ctx context.Context) http.Handler {
 	var gwmux = runtime.NewServeMux(runtime.WithMetadata(senderutil.ServeMuxSetSender))
-	var opts = []grpc.DialOption{grpc.WithInsecure(), grpc.WithKeepaliveParams(keepalive.ClientParameters{
-		Time:                10 * time.Second,
-		Timeout:             5 * time.Second,
-		PermitWithoutStream: true,
-	})}
+	var opts = manager.ClientOptions
 	var err error
 
 	for _, r := range []register{{
