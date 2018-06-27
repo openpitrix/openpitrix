@@ -39,18 +39,10 @@ func make_update_version_go_file(version, gitSha1Version, buildTime string) stri
 
 package version
 
-import "fmt"
-
 func init() {
 	ShortVersion = "%s"
 	GitSha1Version = "%s"
 	BuildDate = "%s"
-}
-
-func PrintVersionInfo() {
-	fmt.Println("Release Version:", ShortVersion)
-	fmt.Println("Git Commit Hash:", GitSha1Version)
-	fmt.Println("Build Time:", BuildDate)
 }
 `,
 		version,

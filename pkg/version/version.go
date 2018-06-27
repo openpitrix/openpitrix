@@ -12,3 +12,9 @@ var (
 	GitSha1Version = "git-sha1"
 	BuildDate      = "2017-01-01"
 )
+
+func PrintVersionInfo(printer func(string, ...interface{})) {
+	printer("Release Version: %s", ShortVersion)
+	printer("Git Commit Hash: %s", GitSha1Version)
+	printer("Build Time: %s", BuildDate)
+}
