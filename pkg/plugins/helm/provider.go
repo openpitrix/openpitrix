@@ -29,6 +29,7 @@ import (
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -120,7 +121,7 @@ func (p *Provider) checkClusterNameIsUniqueInRuntime(clusterName, runtimeId stri
 			return true, nil
 		}
 
-		return true, fmt.Errorf("helm release [%s] already exists", clusterName)
+		return true, gerr.New(gerr.PermissionDenied, gerr.ErrorHelmReleaseExists, clusterName)
 	}, constants.DefaultServiceTimeout, constants.WaitTaskInterval)
 	return
 }

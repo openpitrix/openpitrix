@@ -38,7 +38,8 @@ func TestNewWithDetail(t *testing.T) {
 }
 
 func TestClearErrorCause(t *testing.T) {
-	var e = NewWithDetail(InvalidArgument, fmt.Errorf("test with error detail"), ErrorCreateResourcesFailed)
+	var e error
+	e = NewWithDetail(InvalidArgument, fmt.Errorf("test with error detail"), ErrorCreateResourcesFailed)
 
 	ge := status.Convert(e)
 	assert.Equal(t, fmt.Sprint(ge.Details()), "[error_name:\"create_resources_failed\" cause:\"test with error detail\" ]")
@@ -48,5 +49,5 @@ func TestClearErrorCause(t *testing.T) {
 	assert.Equal(t, fmt.Sprint(ge.Details()), "[error_name:\"create_resources_failed\" ]")
 	assert.True(t, IsGRPCError(e))
 	assert.False(t, IsGRPCError(fmt.Errorf("test")))
-	assert.False(t, IsGRPCError(func() grpcError { return nil }()))
+	assert.False(t, IsGRPCError(func() GRPCError { return nil }()))
 }

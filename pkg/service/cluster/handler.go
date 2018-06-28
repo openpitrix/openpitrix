@@ -183,6 +183,9 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	}
 	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, runtimeId, conf)
 	if err != nil {
+		if gerr.IsGRPCError(err) {
+			return nil, err
+		}
 		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", versionId, runtime, err)
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
