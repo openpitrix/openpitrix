@@ -31,7 +31,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "pilot"
 	app.Usage = "pilot provides pilot service."
-	app.Version = version.ShortVersion + "; git: " + version.GitSha1Version + "; build time: " + version.BuildDate
+	app.Version = version.GetVersionString()
 
 	app.UsageText = `pilot [global options] command [options] [args...]
 
