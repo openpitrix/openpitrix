@@ -33,7 +33,7 @@ import (
 func Serve() {
 	config.LoadConf()
 
-	logger.Info("Openpitrix %s", version.ShortVersion)
+	version.PrintVersionInfo(logger.Info)
 	logger.Info("App service http://%s:%d", constants.AppManagerHost, constants.AppManagerPort)
 	logger.Info("Runtime service http://%s:%d", constants.RuntimeManagerHost, constants.RuntimeManagerPort)
 	logger.Info("Cluster service http://%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort)
