@@ -16,6 +16,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
+	apiclient "openpitrix.io/openpitrix/test/client"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
@@ -32,8 +33,30 @@ import (
 //}
 
 var (
-	repoUrl = "https://kubernetes-charts.storage.googleapis.com"
+	repoUrl = "https://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
 )
+
+func deleteRepo(t *testing.T, client *apiclient.Openpitrix, testRepoName string) {
+	describeParams := repo_manager.NewDescribeReposParams()
+	describeParams.SetName([]string{testRepoName})
+	describeParams.SetStatus([]string{constants.StatusActive})
+	describeResp, err := client.RepoManager.DescribeRepos(describeParams)
+	if err != nil {
+		t.Fatal(err)
+	}
+	repos := describeResp.Payload.RepoSet
+	for _, repo := range repos {
+		deleteParams := repo_manager.NewDeleteReposParams()
+		deleteParams.SetBody(
+			&models.OpenpitrixDeleteReposRequest{
+				RepoID: []string{repo.RepoID},
+			})
+		_, err := client.RepoManager.DeleteRepos(deleteParams)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+}
 
 func TestRepo(t *testing.T) {
 	client := GetClient(clientConfig)
@@ -55,25 +78,7 @@ func TestRepo(t *testing.T) {
 
 	// delete old repo
 	testRepoName := "e2e_test_repo"
-	describeParams := repo_manager.NewDescribeReposParams()
-	describeParams.SetName([]string{testRepoName})
-	describeParams.SetStatus([]string{constants.StatusActive})
-	describeResp, err := client.RepoManager.DescribeRepos(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
-	repos := describeResp.Payload.RepoSet
-	for _, repo := range repos {
-		deleteParams := repo_manager.NewDeleteReposParams()
-		deleteParams.SetBody(
-			&models.OpenpitrixDeleteReposRequest{
-				RepoID: []string{repo.RepoID},
-			})
-		_, err := client.RepoManager.DeleteRepos(deleteParams)
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
+
 	// create repo
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
@@ -111,12 +116,15 @@ func TestRepo(t *testing.T) {
 	}
 	t.Log(modifyResp)
 	// describe repo
+	describeParams := repo_manager.NewDescribeReposParams()
+	describeParams.SetName([]string{testRepoName})
+	describeParams.SetStatus([]string{constants.StatusActive})
 	describeParams.WithRepoID([]string{repoId})
-	describeResp, err = client.RepoManager.DescribeRepos(describeParams)
+	describeResp, err := client.RepoManager.DescribeRepos(describeParams)
 	if err != nil {
 		t.Fatal(err)
 	}
-	repos = describeResp.Payload.RepoSet
+	repos := describeResp.Payload.RepoSet
 	if len(repos) != 1 {
 		t.Fatalf("failed to describe repos with params [%+v]", describeParams)
 	}
