@@ -57,21 +57,21 @@ func ClearErrorCause(err error) error {
 	return err
 }
 
-func New(code codes.Code, errMsg ErrorMessage, a ...interface{}) error {
-	return newStatus(code, nil, errMsg, a...).Err()
-}
-
-type grpcError interface {
+type GRPCError interface {
 	error
 	GRPCStatus() *status.Status
 }
 
-func NewWithDetail(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) error {
-	return newStatus(code, err, errMsg, a...).Err()
+func New(code codes.Code, errMsg ErrorMessage, a ...interface{}) GRPCError {
+	return newStatus(code, nil, errMsg, a...).Err().(GRPCError)
+}
+
+func NewWithDetail(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) GRPCError {
+	return newStatus(code, err, errMsg, a...).Err().(GRPCError)
 }
 
 func IsGRPCError(err error) bool {
-	if e, ok := err.(grpcError); ok && e != nil {
+	if e, ok := err.(GRPCError); ok && e != nil {
 		return true
 	}
 	return false
