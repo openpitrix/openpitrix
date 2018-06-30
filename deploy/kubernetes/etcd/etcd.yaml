@@ -55,7 +55,7 @@ spec:
     spec:
       containers:
       - name: openpitrix-etcd
-        image: appcelerator/etcd
+        image: appcelerator/etcd:3.3.3
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 2379
