@@ -20,7 +20,7 @@ spec:
     spec:
       initContainers:
       - name: wait-mysql
-        image: busybox
+        image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'until nc -z openpitrix-db.${NAMESPACE}.svc.cluster.local 3306; do echo "waiting for mysql"; sleep 2; done;']
       containers:
