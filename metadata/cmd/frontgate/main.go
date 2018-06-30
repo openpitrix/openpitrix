@@ -30,7 +30,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "frontgate"
 	app.Usage = "frontgate provides frontgate service."
-	app.Version = version.ShortVersion + "; git: " + version.GitSha1Version + "; build time: " + version.BuildDate
+	app.Version = version.GetVersionString()
 
 	app.UsageText = `frontgate [global options] command [options] [args...]
 

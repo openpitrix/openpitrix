@@ -96,6 +96,9 @@ func waitRepoEventSuccess(t *testing.T, repoEventId string) {
 
 func testCreateRepo(t *testing.T, name, provider, url string) {
 	client := GetClient(clientConfig)
+
+	deleteRepo(t, client, name)
+
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRepoRequest{

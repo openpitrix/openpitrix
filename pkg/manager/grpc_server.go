@@ -20,6 +20,7 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -56,7 +57,7 @@ func (g *GrpcServer) WithChecker(c checkerT) *GrpcServer {
 }
 
 func (g *GrpcServer) Serve(callback RegisterCallback) {
-	logger.Info("Openpitrix %s", version.ShortVersion)
+	version.PrintVersionInfo(logger.Info)
 	logger.Info("Service [%s] start listen at port [%d]", g.ServiceName, g.Port)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", g.Port))
 	if err != nil {
@@ -65,6 +66,10 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 	}
 
 	grpcServer := grpc.NewServer(
+		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+			MinTime:             10 * time.Second,
+			PermitWithoutStream: true,
+		}),
 		grpc_middleware.WithUnaryServerChain(
 			grpc_validator.UnaryServerInterceptor(),
 			g.unaryServerLogInterceptor(),

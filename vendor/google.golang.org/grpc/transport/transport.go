@@ -185,13 +185,22 @@ type Stream struct {
 
 	headerChan chan struct{} // closed to indicate the end of header metadata.
 	headerDone uint32        // set when headerChan is closed. Used to avoid closing headerChan multiple times.
-	header     metadata.MD   // the received header metadata.
-	trailer    metadata.MD   // the key-value map of trailer metadata.
 
-	headerOk bool // becomes true from the first header is about to send
-	state    streamState
+	// hdrMu protects header and trailer metadata on the server-side.
+	hdrMu   sync.Mutex
+	header  metadata.MD // the received header metadata.
+	trailer metadata.MD // the key-value map of trailer metadata.
 
-	status *status.Status // the status error received from the server
+	noHeaders bool // set if the client never received headers (set only after the stream is done).
+
+	// On the server-side, headerSent is atomically set to 1 when the headers are sent out.
+	headerSent uint32
+
+	state streamState
+
+	// On client-side it is the status error received from the server.
+	// On server-side it is unused.
+	status *status.Status
 
 	bytesReceived uint32 // indicates whether any bytes have been received on this stream
 	unprocessed   uint32 // set if the server sends a refused stream or GOAWAY including this stream
@@ -199,6 +208,17 @@ type Stream struct {
 	// contentSubtype is the content-subtype for requests.
 	// this must be lowercase or the behavior is undefined.
 	contentSubtype string
+}
+
+// isHeaderSent is only valid on the server-side.
+func (s *Stream) isHeaderSent() bool {
+	return atomic.LoadUint32(&s.headerSent) == 1
+}
+
+// updateHeaderSent updates headerSent and returns true
+// if it was alreay set. It is valid only on server-side.
+func (s *Stream) updateHeaderSent() bool {
+	return atomic.SwapUint32(&s.headerSent, 1) == 1
 }
 
 func (s *Stream) swapState(st streamState) streamState {
@@ -264,6 +284,19 @@ func (s *Stream) Header() (metadata.MD, error) {
 	return nil, err
 }
 
+// TrailersOnly blocks until a header or trailers-only frame is received and
+// then returns true if the stream was trailers-only.  If the stream ends
+// before headers are received, returns true, nil.  If a context error happens
+// first, returns it as a status error.  Client-side only.
+func (s *Stream) TrailersOnly() (bool, error) {
+	err := s.waitOnHeader()
+	if err != nil {
+		return false, err
+	}
+	// if !headerDone, some other connection error occurred.
+	return s.noHeaders && atomic.LoadUint32(&s.headerDone) == 1, nil
+}
+
 // Trailer returns the cached trailer metedata. Note that if it is not called
 // after the entire stream is done, it could return an empty MD. Client
 // side only.
@@ -313,10 +346,12 @@ func (s *Stream) SetHeader(md metadata.MD) error {
 	if md.Len() == 0 {
 		return nil
 	}
-	if s.headerOk || atomic.LoadUint32((*uint32)(&s.state)) == uint32(streamDone) {
+	if s.isHeaderSent() || s.getState() == streamDone {
 		return ErrIllegalHeaderWrite
 	}
+	s.hdrMu.Lock()
 	s.header = metadata.Join(s.header, md)
+	s.hdrMu.Unlock()
 	return nil
 }
 
@@ -335,7 +370,12 @@ func (s *Stream) SetTrailer(md metadata.MD) error {
 	if md.Len() == 0 {
 		return nil
 	}
+	if s.getState() == streamDone {
+		return ErrIllegalHeaderWrite
+	}
+	s.hdrMu.Lock()
 	s.trailer = metadata.Join(s.trailer, md)
+	s.hdrMu.Unlock()
 	return nil
 }
 
@@ -509,6 +549,8 @@ type CallHdr struct {
 	// https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md#requests
 	// for more details.
 	ContentSubtype string
+
+	PreviousAttempts int // value of grpc-previous-rpc-attempts header to set
 }
 
 // ClientTransport is the common interface for all gRPC client-side transport
@@ -603,6 +645,11 @@ func streamErrorf(c codes.Code, format string, a ...interface{}) StreamError {
 		Code: c,
 		Desc: fmt.Sprintf(format, a...),
 	}
+}
+
+// streamError creates an StreamError with the specified error code and description.
+func streamError(c codes.Code, desc string) StreamError {
+	return StreamError{Code: c, Desc: desc}
 }
 
 // connectionErrorf creates an ConnectionError with the specified error description.
