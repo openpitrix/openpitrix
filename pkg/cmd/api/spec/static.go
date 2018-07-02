@@ -543,6 +543,19 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [
@@ -1371,6 +1384,25 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [
@@ -2321,6 +2353,9 @@ var Files = map[string]string{
         "update_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "description": {
+          "type": "string"
         }
       }
     },
@@ -2331,6 +2366,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "locale": {
+          "type": "string"
+        },
+        "description": {
           "type": "string"
         }
       }
@@ -2390,6 +2428,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "locale": {
+          "type": "string"
+        },
+        "description": {
           "type": "string"
         }
       }

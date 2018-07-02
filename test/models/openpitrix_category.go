@@ -22,6 +22,9 @@ type OpenpitrixCategory struct {
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
+	// description
+	Description string `json:"description,omitempty"`
+
 	// locale
 	Locale string `json:"locale,omitempty"`
 
