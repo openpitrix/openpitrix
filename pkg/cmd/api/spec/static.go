@@ -481,6 +481,23 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/apps/statistics": {
+      "get": {
+        "summary": "get app statistics",
+        "operationId": "GetAppStatistics",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetAppStatisticsResponse"
+            }
+          }
+        },
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/categories": {
       "get": {
         "summary": "describe categories with filter",
@@ -2203,6 +2220,33 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixApp"
           }
+        }
+      }
+    },
+    "openpitrixGetAppStatisticsResponse": {
+      "type": "object",
+      "properties": {
+        "last_two_week_created": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "top_ten_repos": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "app_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "repo_count": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

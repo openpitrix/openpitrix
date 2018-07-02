@@ -193,6 +193,15 @@ message GetAppVersionPackageFilesResponse {
 	google.protobuf.StringValue version_id = 2;
 }
 
+message GetAppStatisticsRequest {}
+
+message GetAppStatisticsResponse {
+	map<string, uint32> last_two_week_created = 1; // app create time range -> app count, max length is 14
+	map<string, uint32> top_ten_repos = 2; // repo id -> app count, max length is 10
+	uint32 app_count = 3;
+	uint32 repo_count = 4;
+}
+
 service AppManager {
 	rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -201,6 +210,14 @@ service AppManager {
 		option (google.api.http) = {
 			post: "/v1/apps"
 			body: "*"
+		};
+	}
+	rpc GetAppStatistics (GetAppStatisticsRequest) returns (GetAppStatisticsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "get app statistics"
+		};
+		option (google.api.http) = {
+			get: "/v1/apps/statistics"
 		};
 	}
 	rpc DescribeApps (DescribeAppsRequest) returns (DescribeAppsResponse) {

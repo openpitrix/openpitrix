@@ -7,6 +7,8 @@ package idutil
 import (
 	"github.com/sony/sonyflake"
 	"github.com/speps/go-hashids"
+
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 var sf *sonyflake.Sonyflake
@@ -37,7 +39,7 @@ func GetUuid(prefix string) string {
 		panic(err)
 	}
 
-	return prefix + i
+	return prefix + stringutil.Reverse(i)
 }
 
 const Alphabet36 = "abcdefghijklmnopqrstuvwxyz1234567890"
@@ -56,5 +58,5 @@ func GetUuid36(prefix string) string {
 		panic(err)
 	}
 
-	return prefix + i
+	return prefix + stringutil.Reverse(i)
 }

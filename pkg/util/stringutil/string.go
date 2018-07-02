@@ -4,7 +4,11 @@
 
 package stringutil
 
-import "github.com/asaskevich/govalidator"
+import (
+	"unicode/utf8"
+
+	"github.com/asaskevich/govalidator"
+)
 
 // Creates an slice of slice values not included in the other given slice.
 func Diff(base, exclude []string) (result []string) {
@@ -46,4 +50,15 @@ func FindString(array []string, str string) int {
 
 func StringIn(str string, array []string) bool {
 	return FindString(array, str) > -1
+}
+
+func Reverse(s string) string {
+	size := len(s)
+	buf := make([]byte, size)
+	for start := 0; start < size; {
+		r, n := utf8.DecodeRuneInString(s[start:])
+		start += n
+		utf8.EncodeRune(buf[size-start:], r)
+	}
+	return string(buf)
 }
