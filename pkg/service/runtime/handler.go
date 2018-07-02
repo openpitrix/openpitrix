@@ -111,6 +111,55 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 	return res, nil
 }
 
+func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRuntimesRequest) (*pb.DescribeRuntimeDetailsResponse, error) {
+	// TODO: refactor validate req
+	err := validateDescribeRuntimesRequest(req)
+	if err != nil {
+		if gerr.IsGRPCError(err) {
+			return nil, err
+		} else {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+		}
+	}
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
+	selectorMap, err := SelectorStringToMap(req.Label.GetValue())
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
+	}
+
+	var runtimes []*models.Runtime
+	var count uint32
+	query := p.Db.
+		Select(models.RuntimeColumnsWithTablePrefix...).
+		From(models.RuntimeTableName).
+		Offset(offset).
+		Limit(limit).
+		Where(manager.BuildFilterConditionsWithPrefix(req, models.RuntimeTableName))
+
+	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, RuntimeIdColumn,
+		models.ColumnLabelKey, models.ColumnLabelValue, selectorMap)
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	_, err = query.Load(&runtimes)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	count, err = query.Count()
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	pbRuntimeDetails, err := p.formatRuntimeDetailSet(runtimes)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	res := &pb.DescribeRuntimeDetailsResponse{
+		RuntimeDetailSet: pbRuntimeDetails,
+		TotalCount:       count,
+	}
+	return res, nil
+}
+
 func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest) (*pb.ModifyRuntimeResponse, error) {
 	// validate req
 	err := validateModifyRuntimeRequest(req)

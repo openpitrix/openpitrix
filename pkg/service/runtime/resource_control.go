@@ -196,14 +196,6 @@ func BuildDeleteLabelFilterCondition(runtimeId, labelKey, labelValue string) dbr
 	return db.And(conditions...)
 }
 
-func (p *Server) formatRuntime(runtime *models.Runtime) (*pb.Runtime, error) {
-	pbRuntimes, err := p.formatRuntimeSet([]*models.Runtime{runtime})
-	if err != nil {
-		return nil, err
-	}
-	return pbRuntimes[0], nil
-}
-
 func (p *Server) createRuntime(name, description, provider, url, runtimeCredentialId, zone, userId string) (runtimeId string, err error) {
 	newRuntime := models.NewRuntime(name, description, provider, url, runtimeCredentialId, zone, userId)
 	err = p.insertRuntime(*newRuntime)
@@ -228,6 +220,25 @@ func (p *Server) createRuntimeLabels(runtimeId, labelString string) error {
 func (p *Server) formatRuntimeSet(runtimes []*models.Runtime) (pbRuntimes []*pb.Runtime, err error) {
 	pbRuntimes = models.RuntimeToPbs(runtimes)
 	var runtimeIds []string
+	for _, runtime := range runtimes {
+		runtimeIds = append(runtimeIds, runtime.RuntimeId)
+	}
+
+	labelsMap, err := p.getLabelsMap(runtimeIds)
+	if err != nil {
+		return
+	}
+	for _, pbRuntime := range pbRuntimes {
+		runtimeId := pbRuntime.GetRuntimeId().GetValue()
+		pbRuntime.Labels = models.RuntimeLabelsToPbs(labelsMap[runtimeId])
+	}
+
+	return
+}
+
+func (p *Server) formatRuntimeDetailSet(runtimes []*models.Runtime) (pbRuntimeDetails []*pb.RuntimeDetail, err error) {
+	pbRuntimes := models.RuntimeToPbs(runtimes)
+	var runtimeIds []string
 	var credentialIds []string
 	runtimeCredentialMap := map[string]string{}
 	for _, runtime := range runtimes {
@@ -242,18 +253,21 @@ func (p *Server) formatRuntimeSet(runtimes []*models.Runtime) (pbRuntimes []*pb.
 	}
 	runtimeCredentials, err := p.getCredentialMap(credentialIds...)
 	if err != nil {
-		return nil, err
+		return
 	}
 	for _, pbRuntime := range pbRuntimes {
+		pbRuntimeDetail := new(pb.RuntimeDetail)
+		pbRuntimeDetail.Runtime = pbRuntime
 		runtimeId := pbRuntime.GetRuntimeId().GetValue()
 		credentialId := runtimeCredentialMap[runtimeId]
 		pbRuntime.Labels = models.RuntimeLabelsToPbs(labelsMap[runtimeId])
-		pbRuntime.RuntimeCredential = pbutil.ToProtoString(
+		pbRuntimeDetail.RuntimeCredential = pbutil.ToProtoString(
 			RuntimeCredentialJsonStringToString(
 				pbRuntime.Provider.GetValue(), runtimeCredentials[credentialId].Content))
+		pbRuntimeDetails = append(pbRuntimeDetails, pbRuntimeDetail)
 	}
 
-	return pbRuntimes, nil
+	return
 }
 
 func (p *Server) updateRuntime(req *pb.ModifyRuntimeRequest) error {
