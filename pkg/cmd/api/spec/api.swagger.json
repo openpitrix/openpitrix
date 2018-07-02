@@ -723,6 +723,12 @@
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -919,6 +925,12 @@
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1260,6 +1272,12 @@
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1870,6 +1888,12 @@
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [

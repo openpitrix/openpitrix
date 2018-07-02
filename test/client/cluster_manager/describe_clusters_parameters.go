@@ -83,6 +83,8 @@ type DescribeClustersParams struct {
 	Offset *int64
 	/*RuntimeID*/
 	RuntimeID []string
+	/*SearchWord*/
+	SearchWord *string
 	/*Status*/
 	Status []string
 	/*VersionID*/
@@ -203,6 +205,17 @@ func (o *DescribeClustersParams) SetRuntimeID(runtimeID []string) {
 	o.RuntimeID = runtimeID
 }
 
+// WithSearchWord adds the searchWord to the describe clusters params
+func (o *DescribeClustersParams) WithSearchWord(searchWord *string) *DescribeClustersParams {
+	o.SetSearchWord(searchWord)
+	return o
+}
+
+// SetSearchWord adds the searchWord to the describe clusters params
+func (o *DescribeClustersParams) SetSearchWord(searchWord *string) {
+	o.SearchWord = searchWord
+}
+
 // WithStatus adds the status to the describe clusters params
 func (o *DescribeClustersParams) WithStatus(status []string) *DescribeClustersParams {
 	o.SetStatus(status)
@@ -311,6 +324,22 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 	// query array param runtime_id
 	if err := r.SetQueryParam("runtime_id", joinedRuntimeID...); err != nil {
 		return err
+	}
+
+	if o.SearchWord != nil {
+
+		// query param search_word
+		var qrSearchWord string
+		if o.SearchWord != nil {
+			qrSearchWord = *o.SearchWord
+		}
+		qSearchWord := qrSearchWord
+		if qSearchWord != "" {
+			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	valuesStatus := o.Status

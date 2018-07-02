@@ -60,6 +60,10 @@ var SearchWordColumnTable = []string{
 	AppTableName,
 	AppVersionTableName,
 	RepoTableName,
+	JobTableName,
+	TaskTableName,
+	ClusterTableName,
+	ClusterNodeTableName,
 }
 
 // columns that can be search through sql 'like' operator
@@ -71,19 +75,19 @@ var SearchColumns = map[string][]string{
 		ColumnVersionId, ColumnAppId, ColumnName, ColumnDescription, ColumnOwner, ColumnPackageName,
 	},
 	JobTableName: {
-		ColumnExecutor, ColumnProvider,
+		ColumnJobId, ColumnClusterId, ColumnOwner, ColumnJobAction, ColumnExecutor, ColumnProvider, ColumnExecutor, ColumnProvider,
 	},
 	TaskTableName: {
-		ColumnJobId, ColumnTaskId, ColumnStatus,
+		ColumnJobId, ColumnTaskId, ColumnTaskAction, ColumnOwner, ColumnNodeId, ColumnTarget,
 	},
 	RuntimeTableName: {
-		ColumnRuntimeId, ColumnName,
+		ColumnRuntimeId, ColumnName, ColumnOwner, ColumnProvider, ColumnZone,
 	},
 	ClusterTableName: {
-		ColumnName, ColumnDescription,
+		ColumnClusterId, ColumnName, ColumnOwner, ColumnAppId, ColumnVersionId, ColumnRuntimeId,
 	},
 	ClusterNodeTableName: {
-		ColumnName,
+		ColumnNodeId, ColumnClusterId, ColumnName, ColumnInstanceId, ColumnVolumeId, ColumnPrivateIp, ColumnRole, ColumnOwner,
 	},
 	RepoTableName: {
 		ColumnName, ColumnDescription,

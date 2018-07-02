@@ -732,6 +732,12 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -928,6 +934,12 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1269,6 +1281,12 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -1879,6 +1897,12 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
