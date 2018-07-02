@@ -48,7 +48,11 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 
 func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryRequest) (*pb.CreateCategoryResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-	category := models.NewCategory(req.GetName().GetValue(), req.GetLocale().GetValue(), s.UserId)
+	category := models.NewCategory(
+		req.GetName().GetValue(),
+		req.GetLocale().GetValue(),
+		req.GetDescription().GetValue(),
+		s.UserId)
 
 	_, err := p.Db.
 		InsertInto(models.CategoryTableName).
@@ -73,12 +77,13 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	attributes := manager.BuildUpdateAttributes(req, "name", "locale")
-	attributes["update_time"] = time.Now()
+	attributes := manager.BuildUpdateAttributes(req,
+		models.ColumnName, models.ColumnLocale, models.ColumnDescription)
+	attributes[models.ColumnUpdateTime] = time.Now()
 	_, err = p.Db.
 		Update(models.CategoryTableName).
 		SetMap(attributes).
-		Where(db.Eq("category_id", categoryId)).
+		Where(db.Eq(models.ColumnCategoryId, categoryId)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
@@ -94,7 +99,7 @@ func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesR
 
 	_, err := p.Db.
 		DeleteFrom(models.CategoryTableName).
-		Where(db.Eq("category_id", categoryIds)).
+		Where(db.Eq(models.ColumnCategoryId, categoryIds)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
