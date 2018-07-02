@@ -55,10 +55,18 @@ const (
 	ColumnExecutor    = "executor"
 	ColumnTaskId      = "task_id"
 	ColumnRuntimeId   = "runtime_id"
+	ColumnInstanceId  = "instance_id"
+	ColumnVolumeId    = "volume_id"
+	ColumnPrivateIp   = "private_ip"
+	ColumnRole        = "role"
 	ColumnFrontgateId = "frontgate_id"
 
 	ColumnZone   = "zone"
 	ColumnNodeId = "node_id"
+
+	ColumnTaskAction = "task_action"
+	ColumnJobAction  = "job_action"
+	ColumnTarget     = "target"
 
 	ColumnUpdateTime = "update_time"
 )

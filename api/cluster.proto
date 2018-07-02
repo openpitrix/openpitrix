@@ -284,6 +284,7 @@ message DescribeClustersRequest {
 	uint32 limit = 8;
 	// default is 0
 	uint32 offset = 9;
+	google.protobuf.StringValue search_word = 10;
 }
 message DescribeClustersResponse {
 	uint32 total_count = 1;
@@ -298,6 +299,7 @@ message DescribeClusterNodesRequest {
 	uint32 limit = 4;
 	// default is 0
 	uint32 offset = 5;
+	google.protobuf.StringValue search_word = 6;
 }
 message DescribeClusterNodesResponse {
 	uint32 total_count = 1;
