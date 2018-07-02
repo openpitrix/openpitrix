@@ -13,6 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
@@ -104,9 +105,26 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
+
+	providerCount := 0
+	providerQuery := pi.Global().Db.SelectBySql("select count(distinct provider) from runtime;")
+	err = providerQuery.LoadOne(&providerCount)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	lastTwoWeekCount := 0
+	lastTwoWeekQuery := pi.Global().Db.SelectBySql("select count(runtime_id) from runtime where DATE_SUB(CURDATE(), INTERVAL 14 DAY) <= date(create_time);")
+	err = lastTwoWeekQuery.LoadOne(&lastTwoWeekCount)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
 	res := &pb.DescribeRuntimesResponse{
-		RuntimeSet: pbRuntime,
-		TotalCount: count,
+		RuntimeSet:       pbRuntime,
+		TotalCount:       count,
+		ProviderCount:    uint32(providerCount),
+		LastTwoWeekCount: uint32(lastTwoWeekCount),
 	}
 	return res, nil
 }

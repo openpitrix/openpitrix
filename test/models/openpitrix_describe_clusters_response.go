@@ -19,6 +19,12 @@ type OpenpitrixDescribeClustersResponse struct {
 	// cluster set
 	ClusterSet OpenpitrixDescribeClustersResponseClusterSet `json:"cluster_set"`
 
+	// last two week count
+	LastTwoWeekCount int64 `json:"last_two_week_count,omitempty"`
+
+	// runtime count
+	RuntimeCount int64 `json:"runtime_count,omitempty"`
+
 	// total count
 	TotalCount int64 `json:"total_count,omitempty"`
 }

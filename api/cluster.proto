@@ -289,6 +289,8 @@ message DescribeClustersRequest {
 message DescribeClustersResponse {
 	uint32 total_count = 1;
 	repeated Cluster cluster_set = 2;
+	uint32 runtime_count = 3;
+	uint32 last_two_week_count = 4;
 }
 
 message DescribeClusterNodesRequest {

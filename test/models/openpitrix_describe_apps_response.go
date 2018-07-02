@@ -19,6 +19,12 @@ type OpenpitrixDescribeAppsResponse struct {
 	// app set
 	AppSet OpenpitrixDescribeAppsResponseAppSet `json:"app_set"`
 
+	// last two week count
+	LastTwoWeekCount int64 `json:"last_two_week_count,omitempty"`
+
+	// repo count
+	RepoCount int64 `json:"repo_count,omitempty"`
+
 	// total count
 	TotalCount int64 `json:"total_count,omitempty"`
 }

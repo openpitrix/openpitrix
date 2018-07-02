@@ -2203,6 +2203,14 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixApp"
           }
+        },
+        "repo_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "last_two_week_count": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -3001,6 +3009,14 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixCluster"
           }
+        },
+        "runtime_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "last_two_week_count": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -3770,6 +3786,14 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixRuntime"
           }
+        },
+        "provider_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "last_two_week_count": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

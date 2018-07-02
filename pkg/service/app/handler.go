@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/gziputil"
 	"openpitrix.io/openpitrix/pkg/util/httputil"
@@ -85,9 +86,25 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
+	repoCount := 0
+	repoQuery := pi.Global().Db.SelectBySql("select count(distinct repo_id) from app;")
+	err = repoQuery.LoadOne(&repoCount)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	lastTwoWeekCount := 0
+	lastTwoWeekQuery := pi.Global().Db.SelectBySql("select count(app_id) from app where DATE_SUB(CURDATE(), INTERVAL 14 DAY) <= date(create_time);")
+	err = lastTwoWeekQuery.LoadOne(&lastTwoWeekCount)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
 	res := &pb.DescribeAppsResponse{
-		AppSet:     appSet,
-		TotalCount: count,
+		AppSet:           appSet,
+		TotalCount:       count,
+		RepoCount:        uint32(repoCount),
+		LastTwoWeekCount: uint32(lastTwoWeekCount),
 	}
 	return res, nil
 }

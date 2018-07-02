@@ -727,9 +727,25 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		pbClusters = append(pbClusters, models.ClusterWrapperToPb(clusterWrapper))
 	}
 
+	runtimeCount := 0
+	runtimeQuery := pi.Global().Db.SelectBySql("select count(distinct runtime_id) from cluster;")
+	err = runtimeQuery.LoadOne(&runtimeCount)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	lastTwoWeekCount := 0
+	lastTwoWeekQuery := pi.Global().Db.SelectBySql("select count(cluster_id) from cluster where DATE_SUB(CURDATE(), INTERVAL 14 DAY) <= date(create_time);")
+	err = lastTwoWeekQuery.LoadOne(&lastTwoWeekCount)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
 	res := &pb.DescribeClustersResponse{
-		ClusterSet: pbClusters,
-		TotalCount: count,
+		ClusterSet:       pbClusters,
+		TotalCount:       count,
+		RuntimeCount:     uint32(runtimeCount),
+		LastTwoWeekCount: uint32(lastTwoWeekCount),
 	}
 	return res, nil
 }
