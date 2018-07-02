@@ -14,6 +14,8 @@ const (
 	ColumnStatus      = "status"
 	ColumnType        = "type"
 	ColumnUrl         = "url"
+	ColumnOwner       = "owner"
+	ColumnLocale      = "locale"
 
 	ColumnCreateTime = "create_time"
 	ColumnStatusTime = "status_time"
@@ -27,6 +29,8 @@ const (
 	ColumnSelectorKey    = "selector_key"
 	ColumnSelectorValue  = "selector_value"
 
+	ColumnRepoEventId = "repo_event_id"
+
 	ColumnCredential = "credential"
 
 	ColumnVisibility = "visibility"
@@ -35,4 +39,26 @@ const (
 
 	ColumnVersionId = "version_id"
 	ColumnAppId     = "app_id"
+
+	ColumnHome        = "home"
+	ColumnIcon        = "icon"
+	ColumnScreenshots = "screenshots"
+	ColumnMaintainers = "maintainers"
+	ColumnSources     = "sources"
+	ColumnReadme      = "readme"
+	ColumnChartName   = "chart_name"
+	ColumnKeywords    = "keywords"
+	ColumnPackageName = "package_name"
+
+	ColumnJobId       = "job_id"
+	ColumnClusterId   = "cluster_id"
+	ColumnExecutor    = "executor"
+	ColumnTaskId      = "task_id"
+	ColumnRuntimeId   = "runtime_id"
+	ColumnFrontgateId = "frontgate_id"
+
+	ColumnZone   = "zone"
+	ColumnNodeId = "node_id"
+
+	ColumnUpdateTime = "update_time"
 )

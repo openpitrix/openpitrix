@@ -20,6 +20,7 @@ message Category {
 	google.protobuf.StringValue owner = 4;
 	google.protobuf.Timestamp create_time = 5;
 	google.protobuf.Timestamp update_time = 6;
+	google.protobuf.StringValue description = 7;
 }
 
 message DescribeCategoriesRequest {
@@ -29,6 +30,8 @@ message DescribeCategoriesRequest {
 	repeated string category_id = 4;
 	repeated string name = 5;
 	repeated string owner = 6;
+	google.protobuf.StringValue sort_key = 7;
+	google.protobuf.BoolValue reverse = 8;
 }
 
 message DescribeCategoriesResponse {
@@ -39,6 +42,7 @@ message DescribeCategoriesResponse {
 message CreateCategoryRequest {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue locale = 3;
+	google.protobuf.StringValue description = 4;
 }
 
 message CreateCategoryResponse {
@@ -49,6 +53,7 @@ message ModifyCategoryRequest {
 	google.protobuf.StringValue category_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue locale = 3;
+	google.protobuf.StringValue description = 4;
 }
 
 message ModifyCategoryResponse {

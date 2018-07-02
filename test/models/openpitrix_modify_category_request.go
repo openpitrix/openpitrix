@@ -19,6 +19,9 @@ type OpenpitrixModifyCategoryRequest struct {
 	// category id
 	CategoryID string `json:"category_id,omitempty"`
 
+	// description
+	Description string `json:"description,omitempty"`
+
 	// locale
 	Locale string `json:"locale,omitempty"`
 

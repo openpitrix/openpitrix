@@ -73,8 +73,12 @@ type DescribeCategoriesParams struct {
 	Offset *int64
 	/*Owner*/
 	Owner []string
+	/*Reverse*/
+	Reverse *bool
 	/*SearchWord*/
 	SearchWord *string
+	/*SortKey*/
+	SortKey *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -169,6 +173,17 @@ func (o *DescribeCategoriesParams) SetOwner(owner []string) {
 	o.Owner = owner
 }
 
+// WithReverse adds the reverse to the describe categories params
+func (o *DescribeCategoriesParams) WithReverse(reverse *bool) *DescribeCategoriesParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe categories params
+func (o *DescribeCategoriesParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
 // WithSearchWord adds the searchWord to the describe categories params
 func (o *DescribeCategoriesParams) WithSearchWord(searchWord *string) *DescribeCategoriesParams {
 	o.SetSearchWord(searchWord)
@@ -178,6 +193,17 @@ func (o *DescribeCategoriesParams) WithSearchWord(searchWord *string) *DescribeC
 // SetSearchWord adds the searchWord to the describe categories params
 func (o *DescribeCategoriesParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe categories params
+func (o *DescribeCategoriesParams) WithSortKey(sortKey *string) *DescribeCategoriesParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe categories params
+func (o *DescribeCategoriesParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -244,6 +270,22 @@ func (o *DescribeCategoriesParams) WriteToRequest(r runtime.ClientRequest, reg s
 		return err
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.SearchWord != nil {
 
 		// query param search_word
@@ -254,6 +296,22 @@ func (o *DescribeCategoriesParams) WriteToRequest(r runtime.ClientRequest, reg s
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}
