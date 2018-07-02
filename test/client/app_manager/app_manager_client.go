@@ -193,6 +193,34 @@ func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, erro
 }
 
 /*
+GetAppStatistics gets app statistics
+*/
+func (a *Client) GetAppStatistics(params *GetAppStatisticsParams) (*GetAppStatisticsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetAppStatisticsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetAppStatistics",
+		Method:             "GET",
+		PathPattern:        "/v1/apps/statistics",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetAppStatisticsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetAppStatisticsOK), nil
+
+}
+
+/*
 GetAppVersionPackage gets the package content of app version
 */
 func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams) (*GetAppVersionPackageOK, error) {

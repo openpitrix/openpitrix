@@ -6,7 +6,10 @@ package idutil
 
 import (
 	"fmt"
+	"sort"
 	"testing"
+
+	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 func TestGetUuid(t *testing.T) {
@@ -15,4 +18,16 @@ func TestGetUuid(t *testing.T) {
 
 func TestGetUuid36(t *testing.T) {
 	fmt.Println(GetUuid36(""))
+}
+
+func TestGetManyUuid(t *testing.T) {
+	var strSlice []string
+	for i := 0; i < 10000; i++ {
+		testId := GetUuid("")
+		strSlice = append(strSlice, testId)
+	}
+	sort.Strings(strSlice)
+	for i, str := range strSlice {
+		logger.Info("%4d: %s", i, str)
+	}
 }
