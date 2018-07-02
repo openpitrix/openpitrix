@@ -16,6 +16,12 @@ import (
 // swagger:model openpitrixDescribeRuntimesResponse
 type OpenpitrixDescribeRuntimesResponse struct {
 
+	// last two week count
+	LastTwoWeekCount int64 `json:"last_two_week_count,omitempty"`
+
+	// provider count
+	ProviderCount int64 `json:"provider_count,omitempty"`
+
 	// runtime set
 	RuntimeSet OpenpitrixDescribeRuntimesResponseRuntimeSet `json:"runtime_set"`
 
