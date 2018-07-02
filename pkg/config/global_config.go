@@ -28,7 +28,6 @@ type RepoServiceConfig struct {
 }
 
 type ClusterServiceConfig struct {
-	ImageUrl      string   `json:"image_url"`
 	Plugins       []string `json:"plugins"`
 	FrontgateConf string   `json:"frontgate_conf"`
 }
@@ -41,24 +40,25 @@ type ImageConfig struct {
 	ApiServer string `json:"api_server"`
 	Zone      string `json:"zone"`
 	ImageId   string `json:"image_id"`
+	ImageUrl  string `json:"image_url"`
 }
 
-func (g *GlobalConfig) GetRuntimeImageId(apiServer, zone string) (string, error) {
+func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (string, string, error) {
 	if strings.HasPrefix(apiServer, "https://") {
 		apiServer = strings.Split(apiServer, "https://")[1]
 	}
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == zone {
-			return imageConfig.ImageId, nil
+			return imageConfig.ImageId, imageConfig.ImageUrl, nil
 		}
 	}
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == ".*" {
-			return imageConfig.ImageId, nil
+			return imageConfig.ImageId, imageConfig.ImageUrl, nil
 		}
 	}
 	logger.Error("No such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
-	return "", fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
+	return "", "", fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 }
 
 const (

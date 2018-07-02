@@ -116,7 +116,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, providerInterface plugins.ProviderInterface,
 	clusterWrapper *models.ClusterWrapper) error {
 	// check image
-	_, err := pi.Global().GlobalConfig().GetRuntimeImageId(runtime.RuntimeUrl, runtime.Zone)
+	_, _, err := pi.Global().GlobalConfig().GetRuntimeImageIdAndUrl(runtime.RuntimeUrl, runtime.Zone)
 	if err != nil {
 		return gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorValidateFailed)
 	}
