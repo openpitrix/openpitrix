@@ -34,9 +34,6 @@ type OpenpitrixRuntime struct {
 	// provider
 	Provider string `json:"provider,omitempty"`
 
-	// runtime credential
-	RuntimeCredential string `json:"runtime_credential,omitempty"`
-
 	// runtime id
 	RuntimeID string `json:"runtime_id,omitempty"`
 

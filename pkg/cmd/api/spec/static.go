@@ -3664,6 +3664,21 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixDescribeRuntimeDetailsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "runtime_detail_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRuntimeDetail"
+          }
+        }
+      }
+    },
     "openpitrixDescribeRuntimeProviderZonesResponse": {
       "type": "object",
       "properties": {
@@ -3739,9 +3754,6 @@ var Files = map[string]string{
         "zone": {
           "type": "string"
         },
-        "runtime_credential": {
-          "type": "string"
-        },
         "labels": {
           "type": "array",
           "items": {
@@ -3761,6 +3773,17 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "openpitrixRuntimeDetail": {
+      "type": "object",
+      "properties": {
+        "runtime": {
+          "$ref": "#/definitions/openpitrixRuntime"
+        },
+        "runtime_credential": {
+          "type": "string"
         }
       }
     },
