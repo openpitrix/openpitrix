@@ -154,7 +154,7 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 	}
 
 	parser := Parser{Logger: p.Logger}
-	clusterWrapper, err := parser.Parse(c, []byte(conf), versionId)
+	clusterWrapper, err := parser.Parse(c, []byte(conf), versionId, runtimeId)
 	if err != nil {
 		p.Logger.Error("Parse app version [%s] failed: %+v", versionId, err)
 		return nil, err

@@ -169,4 +169,8 @@ var (
 		Name: "helm_release_exists",
 		En:   "helm release [%s] already exists",
 	}
+	ErrorUnsupportedApiVersion = ErrorMessage{
+		Name: "unsupported_api_version",
+		En:   "unsupported api version [%s]",
+	}
 )
