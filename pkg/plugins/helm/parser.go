@@ -121,8 +121,8 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(
 				p.Logger.Error("Decode file [%s] in chart failed, %+v", k, err)
 				return nil, nil, err
 			}
-			p.Logger.Info("Yaml content: %+v", obj)
-			p.Logger.Info("Group version: %+v", groupVersionKind.GroupVersion().String())
+			p.Logger.Debug("Yaml content: %+v", obj)
+			p.Logger.Debug("Group version: %+v", groupVersionKind.GroupVersion().String())
 
 			apiVersions = append(apiVersions, groupVersionKind.GroupVersion().String())
 
@@ -355,8 +355,8 @@ func (p *Parser) CheckApiVersionsSupported(runtimeId string, apiVersions []strin
 			supportedVersions = append(supportedVersions, version.GroupVersion)
 		}
 	}
-	p.Logger.Info("Get runtime [%s] supported versions [%+v]", runtimeId, supportedVersions)
-	p.Logger.Info("Check api versions [%+v]", apiVersions)
+	p.Logger.Debug("Get runtime [%s] supported versions [%+v]", runtimeId, supportedVersions)
+	p.Logger.Debug("Check api versions [%+v]", apiVersions)
 	for _, apiVersion := range apiVersions {
 		if !stringutil.StringIn(apiVersion, supportedVersions) {
 			return gerr.New(gerr.PermissionDenied, gerr.ErrorUnsupportedApiVersion, apiVersion)
