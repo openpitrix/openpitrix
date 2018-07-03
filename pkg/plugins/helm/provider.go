@@ -42,15 +42,9 @@ type Provider struct {
 	Logger *logger.Logger
 }
 
-func NewProvider() *Provider {
+func NewProvider(l *logger.Logger) *Provider {
 	return &Provider{
-		Logger: logger.NewLogger(),
-	}
-}
-
-func (p *Provider) SetLogger(logger *logger.Logger) {
-	if logger != nil {
-		p.Logger = logger
+		Logger: l,
 	}
 }
 
@@ -154,7 +148,7 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 	}
 
 	parser := Parser{Logger: p.Logger}
-	clusterWrapper, err := parser.Parse(c, []byte(conf), versionId)
+	clusterWrapper, err := parser.Parse(c, []byte(conf), versionId, runtimeId)
 	if err != nil {
 		p.Logger.Error("Parse app version [%s] failed: %+v", versionId, err)
 		return nil, err

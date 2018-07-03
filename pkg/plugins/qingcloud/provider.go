@@ -27,15 +27,9 @@ type Provider struct {
 	Logger *logger.Logger
 }
 
-func NewProvider() *Provider {
+func NewProvider(l *logger.Logger) *Provider {
 	return &Provider{
-		Logger: logger.NewLogger(),
-	}
-}
-
-func (p *Provider) SetLogger(logger *logger.Logger) {
-	if logger != nil {
-		p.Logger = logger
+		Logger: l,
 	}
 }
 
