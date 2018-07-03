@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"time"
 
+	//"openpitrix.io/openpitrix/pkg/plugins/aws"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	//"openpitrix.io/openpitrix/pkg/plugins/aws"
 	"openpitrix.io/openpitrix/pkg/plugins/helm"
 	"openpitrix.io/openpitrix/pkg/plugins/qingcloud"
 )
