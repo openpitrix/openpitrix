@@ -168,6 +168,12 @@
 			"revisionTime": "2018-03-20T21:51:08Z"
 		},
 		{
+			"checksumSHA1": "GQuRJY72iGQrufDqIaB50zG27u0=",
+			"path": "github.com/aws/aws-sdk-go/private/protocol/ec2query",
+			"revision": "e79e9fd4ec11ccc242a472f980be78830f9eba80",
+			"revisionTime": "2018-06-22T22:18:31Z"
+		},
+		{
 			"checksumSHA1": "SBBVYdLcocjdPzMWgDuR8vcOfDQ=",
 			"path": "github.com/aws/aws-sdk-go/private/protocol/query",
 			"revision": "f21685d7a47768086027e41dff8bf6358e04b548",
@@ -196,6 +202,12 @@
 			"path": "github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil",
 			"revision": "f21685d7a47768086027e41dff8bf6358e04b548",
 			"revisionTime": "2018-03-20T21:51:08Z"
+		},
+		{
+			"checksumSHA1": "SfYmxNsUZdSLy6VahSyRVaACeSU=",
+			"path": "github.com/aws/aws-sdk-go/service/ec2",
+			"revision": "e79e9fd4ec11ccc242a472f980be78830f9eba80",
+			"revisionTime": "2018-06-22T22:18:31Z"
 		},
 		{
 			"checksumSHA1": "/MR2uoycqymJLdO3Bu1pTkZCpDY=",
