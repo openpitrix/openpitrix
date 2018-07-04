@@ -128,7 +128,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		}
 
 		ctx := client.GetSystemUserContext()
-		taskClient, err := taskclient.NewClient(ctx)
+		taskClient, err := taskclient.NewClient()
 		if err != nil {
 			jLogger.Error("Connect to task service failed: %+v", err)
 			return err

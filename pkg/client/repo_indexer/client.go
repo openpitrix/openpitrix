@@ -5,15 +5,13 @@
 package repo_indexer
 
 import (
-	"context"
-
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-func NewRepoIndexerClient(ctx context.Context) (pb.RepoIndexerClient, error) {
-	conn, err := manager.NewClient(ctx, constants.RepoIndexerHost, constants.RepoIndexerPort)
+func NewRepoIndexerClient() (pb.RepoIndexerClient, error) {
+	conn, err := manager.NewClient(constants.RepoIndexerHost, constants.RepoIndexerPort)
 	if err != nil {
 		return nil, err
 	}

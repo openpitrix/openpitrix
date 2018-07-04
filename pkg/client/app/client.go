@@ -5,15 +5,13 @@
 package app
 
 import (
-	"context"
-
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-func NewAppManagerClient(ctx context.Context) (pb.AppManagerClient, error) {
-	conn, err := manager.NewClient(ctx, constants.AppManagerHost, constants.AppManagerPort)
+func NewAppManagerClient() (pb.AppManagerClient, error) {
+	conn, err := manager.NewClient(constants.AppManagerHost, constants.AppManagerPort)
 	if err != nil {
 		return nil, err
 	}

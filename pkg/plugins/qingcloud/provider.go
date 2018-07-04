@@ -38,7 +38,7 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
 		ctx := context.Background()
-		appManagerClient, err := appclient.NewAppManagerClient(ctx)
+		appManagerClient, err := appclient.NewAppManagerClient()
 		if err != nil {
 			p.Logger.Error("Connect to app manager failed: %+v", err)
 			return nil, err

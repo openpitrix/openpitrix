@@ -591,7 +591,7 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	ctx := client.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		f.Logger.Error("New ssh key gen task layer failed: %+v", err)
 		return nil

@@ -80,6 +80,7 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=repo
+      - OPENPITRIX_PROFILING_ENABLE=1
   openpitrix-repo-db-ctrl:
     image: boxfuse/flyway:5.0.7-alpine
     command: -url=jdbc:mysql://openpitrix-db/repo -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
@@ -107,6 +108,7 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=app
+      - OPENPITRIX_PROFILING_ENABLE=1
   openpitrix-category-manager:
     build: .
     image: "openpitrix"

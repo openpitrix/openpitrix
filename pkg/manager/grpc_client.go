@@ -7,12 +7,11 @@ package manager
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
-
-	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 var ClientOptions = []grpc.DialOption{
@@ -24,25 +23,18 @@ var ClientOptions = []grpc.DialOption{
 	}),
 }
 
-func NewClient(ctx context.Context, host string, port int) (*grpc.ClientConn, error) {
+var clientCache sync.Map
+
+func NewClient(host string, port int) (*grpc.ClientConn, error) {
 	endpoint := fmt.Sprintf("%s:%d", host, port)
+	if conn, ok := clientCache.Load(endpoint); ok {
+		return conn.(*grpc.ClientConn), nil
+	}
+	ctx := context.Background()
 	conn, err := grpc.DialContext(ctx, endpoint, ClientOptions...)
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		if err != nil {
-			if cerr := conn.Close(); cerr != nil {
-				logger.Error("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-			return
-		}
-		go func() {
-			<-ctx.Done()
-			if cerr := conn.Close(); cerr != nil {
-				logger.Error("Failed to close conn to %s: %v", endpoint, cerr)
-			}
-		}()
-	}()
-	return conn, err
+	clientCache.Store(endpoint, conn)
+	return conn, nil
 }

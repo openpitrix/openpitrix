@@ -41,7 +41,7 @@ type Parser struct {
 
 func (p *Parser) ParseCluster(name string, description string, versionId string) (*models.Cluster, error) {
 	ctx := clientutil.GetSystemUserContext()
-	appManagerClient, err := appclient.NewAppManagerClient(ctx)
+	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return nil, err
 	}

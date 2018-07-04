@@ -38,7 +38,7 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 	frontgateId := waitFrontgateDirective.FrontgateId
 
 	ctx := client.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		return err
 	}
