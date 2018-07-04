@@ -34,6 +34,7 @@ import (
 
 var (
 	repoUrl = "https://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
+	//repoUrl = "https://helm-chart-repo.pek3a.qingstor.com/kubernetes-charts/"
 )
 
 func deleteRepo(t *testing.T, client *apiclient.Openpitrix, testRepoName string) {
