@@ -65,7 +65,7 @@ update-builder: ## Pull openpitrix-builder image
 .PHONY: generate-in-local
 generate-in-local: ## Generate code from protobuf file in local
 	cd ./api && make generate
-	cd ./pkg/cmd/api && make
+	cd ./pkg/apigateway && make
 	go generate ./pkg/version/
 
 .PHONY: generate

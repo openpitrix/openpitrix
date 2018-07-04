@@ -5,10 +5,8 @@
 // openpitrix api gateway
 package main
 
-import (
-	"openpitrix.io/openpitrix/pkg/cmd/api"
-)
+import "openpitrix.io/openpitrix/pkg/apigateway"
 
 func main() {
-	api.Serve()
+	apigateway.Serve()
 }

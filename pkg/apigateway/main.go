@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package api
+package apigateway
 
 import (
 	"context"
@@ -19,8 +19,8 @@ import (
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
 
-	staticSpec "openpitrix.io/openpitrix/pkg/cmd/api/spec"
-	staticSwaggerUI "openpitrix.io/openpitrix/pkg/cmd/api/swagger-ui"
+	staticSpec "openpitrix.io/openpitrix/pkg/apigateway/spec"
+	staticSwaggerUI "openpitrix.io/openpitrix/pkg/apigateway/swagger-ui"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
