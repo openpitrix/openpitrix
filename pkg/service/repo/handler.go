@@ -150,7 +150,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	}
 
 	ctx = clientutil.GetSystemUserContext()
-	repoIndexerClient, err := indexerclient.NewRepoIndexerClient(ctx)
+	repoIndexerClient, err := indexerclient.NewRepoIndexerClient()
 	if err != nil {
 		logger.Warn("Could not get repo indexer client, %+v", err)
 		return res, nil

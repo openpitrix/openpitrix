@@ -41,7 +41,7 @@ func NewRuntime(runtimeId string) (*Runtime, error) {
 func getRuntime(runtimeId string) (*pb.RuntimeDetail, error) {
 	runtimeIds := []string{runtimeId}
 	ctx := clientutil.GetSystemUserContext()
-	client, err := NewRuntimeManagerClient(ctx)
+	client, err := NewRuntimeManagerClient()
 	if err != nil {
 		return nil, err
 	}

@@ -122,7 +122,7 @@ func (p *Provider) checkClusterNameIsUniqueInRuntime(clusterName, runtimeId stri
 
 func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
 	ctx := clientutil.GetSystemUserContext()
-	appManagerClient, err := appclient.NewAppManagerClient(ctx)
+	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		p.Logger.Error("Connect to app manager failed: %+v", err)
 		return nil, err
@@ -256,7 +256,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 
 	switch task.TaskAction {
 	case constants.ActionCreateCluster:
-		appc, err := appclient.NewAppManagerClient(ctx)
+		appc, err := appclient.NewAppManagerClient()
 		if err != nil {
 			return err
 		}
@@ -297,7 +297,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 			return err
 		}
 	case constants.ActionUpgradeCluster:
-		appc, err := appclient.NewAppManagerClient(ctx)
+		appc, err := appclient.NewAppManagerClient()
 		if err != nil {
 			return err
 		}
@@ -483,7 +483,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	}
 
 	ctx := clientutil.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		return err
 	}

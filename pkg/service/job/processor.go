@@ -35,7 +35,7 @@ func NewProcessor(job *models.Job, jLogger *logger.Logger) *Processor {
 func (j *Processor) Pre() error {
 	var err error
 	ctx := client.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		j.JLogger.Error("Executing job pre processor failed: %+v", err)
 		return err
@@ -79,7 +79,7 @@ func (j *Processor) Pre() error {
 func (j *Processor) Post() error {
 	var err error
 	ctx := client.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		j.JLogger.Error("Executing job post processor failed: %+v", err)
 		return err
@@ -248,7 +248,7 @@ func (j *Processor) Post() error {
 
 func (j *Processor) Final() {
 	ctx := client.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		j.JLogger.Error("Executing job final processor failed: %+v", err)
 		return

@@ -121,7 +121,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		}
 
 		ctx := client.GetSystemUserContext()
-		pilotClient, err := pilotclient.NewClient(ctx)
+		pilotClient, err := pilotclient.NewClient()
 		if err != nil {
 			tLogger.Error("Connect to pilot service failed: %+v", err)
 			return err

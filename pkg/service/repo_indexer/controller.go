@@ -104,7 +104,7 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 	logger.Info("Got repo event: %+v", repoEvent)
 	err := func() (err error) {
 		ctx := client.GetSystemUserContext()
-		repoManagerClient, err := repoClient.NewRepoManagerClient(ctx)
+		repoManagerClient, err := repoClient.NewRepoManagerClient()
 		if err != nil {
 			return
 		}

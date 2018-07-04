@@ -40,7 +40,7 @@ func GetResourcesCategories(d *db.Database, resourceIds []string) (map[string][]
 		rcmap[r.ResourceId] = categorySet
 	}
 	ctx := client.GetSystemUserContext()
-	c, err := categoryclient.NewCategoryManagerClient(ctx)
+	c, err := categoryclient.NewCategoryManagerClient()
 	if err != nil {
 		return rcmap, err
 	}
