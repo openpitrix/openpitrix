@@ -4,7 +4,7 @@
 
 FROM golang:1.10.1-alpine3.7 as builder
 
-RUN apk add --no-cache git curl openssl upx
+RUN apk add --no-cache git curl openssl
 
 RUN go get github.com/golang/protobuf/protoc-gen-go
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
@@ -26,7 +26,7 @@ RUN mkdir -p /protoc && cd /protoc \
 
 FROM golang:1.10.1-alpine3.7
 
-RUN apk add --no-cache git protobuf make curl openssl jq rsync
+RUN apk add --no-cache git protobuf make curl openssl jq rsync upx
 
 COPY --from=builder /protoc/include /usr/local/include
 COPY --from=builder /go/bin /go/bin
