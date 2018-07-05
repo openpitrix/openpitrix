@@ -4,7 +4,7 @@
 
 FROM golang:1.10.1-alpine3.7 as builder
 
-RUN apk add --no-cache git curl openssl
+RUN apk add --no-cache git curl openssl upx
 
 RUN go get github.com/golang/protobuf/protoc-gen-go
 RUN go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
