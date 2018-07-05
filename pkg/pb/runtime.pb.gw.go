@@ -101,6 +101,15 @@ func request_RuntimeManager_DescribeRuntimeProviderZones_0(ctx context.Context, 
 
 }
 
+func request_RuntimeManager_GetRuntimeStatistics_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetRuntimeStatisticsRequest
+	var metadata runtime.ServerMetadata
+
+	msg, err := client.GetRuntimeStatistics(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
 // RegisterRuntimeManagerHandlerFromEndpoint is same as RegisterRuntimeManagerHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
 func RegisterRuntimeManagerHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
@@ -111,14 +120,14 @@ func RegisterRuntimeManagerHandlerFromEndpoint(ctx context.Context, mux *runtime
 	defer func() {
 		if err != nil {
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Printf("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 			return
 		}
 		go func() {
 			<-ctx.Done()
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Printf("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 		}()
 	}()
@@ -132,8 +141,8 @@ func RegisterRuntimeManagerHandler(ctx context.Context, mux *runtime.ServeMux, c
 	return RegisterRuntimeManagerHandlerClient(ctx, mux, NewRuntimeManagerClient(conn))
 }
 
-// RegisterRuntimeManagerHandlerClient registers the http handlers for service RuntimeManager
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "RuntimeManagerClient".
+// RegisterRuntimeManagerHandler registers the http handlers for service RuntimeManager to "mux".
+// The handlers forward requests to the grpc endpoint over the given implementation of "RuntimeManagerClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "RuntimeManagerClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "RuntimeManagerClient" to call the correct interceptors.
@@ -284,6 +293,35 @@ func RegisterRuntimeManagerHandlerClient(ctx context.Context, mux *runtime.Serve
 
 	})
 
+	mux.Handle("GET", pattern_RuntimeManager_GetRuntimeStatistics_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		if cn, ok := w.(http.CloseNotifier); ok {
+			go func(done <-chan struct{}, closed <-chan bool) {
+				select {
+				case <-done:
+				case <-closed:
+					cancel()
+				}
+			}(ctx.Done(), cn.CloseNotify())
+		}
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_RuntimeManager_GetRuntimeStatistics_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_RuntimeManager_GetRuntimeStatistics_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -297,6 +335,8 @@ var (
 	pattern_RuntimeManager_DeleteRuntimes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "runtimes"}, ""))
 
 	pattern_RuntimeManager_DescribeRuntimeProviderZones_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "runtimes", "zones"}, ""))
+
+	pattern_RuntimeManager_GetRuntimeStatistics_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "runtimes", "statistics"}, ""))
 )
 
 var (
@@ -309,4 +349,6 @@ var (
 	forward_RuntimeManager_DeleteRuntimes_0 = runtime.ForwardResponseMessage
 
 	forward_RuntimeManager_DescribeRuntimeProviderZones_0 = runtime.ForwardResponseMessage
+
+	forward_RuntimeManager_GetRuntimeStatistics_0 = runtime.ForwardResponseMessage
 )

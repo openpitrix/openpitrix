@@ -19,11 +19,11 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type EtcdConfig struct {
-	User                 string          `protobuf:"bytes,1,opt,name=user,proto3" json:"user"`
-	Password             string          `protobuf:"bytes,2,opt,name=password,proto3" json:"password"`
-	MaxTxnOps            int32           `protobuf:"varint,3,opt,name=max_txn_ops,json=maxTxnOps,proto3" json:"max_txn_ops"`
-	TimeoutSeconds       int32           `protobuf:"varint,4,opt,name=timeout_seconds,json=timeoutSeconds,proto3" json:"timeout_seconds"`
-	NodeList             []*EtcdEndpoint `protobuf:"bytes,5,rep,name=node_list,json=nodeList,proto3" json:"node_list"`
+	User                 string          `protobuf:"bytes,1,opt,name=user" json:"user"`
+	Password             string          `protobuf:"bytes,2,opt,name=password" json:"password"`
+	MaxTxnOps            int32           `protobuf:"varint,3,opt,name=max_txn_ops,json=maxTxnOps" json:"max_txn_ops"`
+	TimeoutSeconds       int32           `protobuf:"varint,4,opt,name=timeout_seconds,json=timeoutSeconds" json:"timeout_seconds"`
+	NodeList             []*EtcdEndpoint `protobuf:"bytes,5,rep,name=node_list,json=nodeList" json:"node_list"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
 	XXX_unrecognized     []byte          `json:"-"`
 	XXX_sizecache        int32           `json:"-"`
@@ -89,8 +89,8 @@ func (m *EtcdConfig) GetNodeList() []*EtcdEndpoint {
 }
 
 type EtcdEndpoint struct {
-	Host                 string   `protobuf:"bytes,1,opt,name=host,proto3" json:"host"`
-	Port                 int32    `protobuf:"varint,2,opt,name=port,proto3" json:"port"`
+	Host                 string   `protobuf:"bytes,1,opt,name=host" json:"host"`
+	Port                 int32    `protobuf:"varint,2,opt,name=port" json:"port"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

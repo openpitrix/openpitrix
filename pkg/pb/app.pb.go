@@ -28,19 +28,19 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateAppRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	RepoId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
-	ChartName            *wrappers.StringValue `protobuf:"bytes,4,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	Home                 *wrappers.StringValue `protobuf:"bytes,7,opt,name=home,proto3" json:"home,omitempty"`
-	Icon                 *wrappers.StringValue `protobuf:"bytes,8,opt,name=icon,proto3" json:"icon,omitempty"`
-	Screenshots          *wrappers.StringValue `protobuf:"bytes,9,opt,name=screenshots,proto3" json:"screenshots,omitempty"`
-	Maintainers          *wrappers.StringValue `protobuf:"bytes,10,opt,name=maintainers,proto3" json:"maintainers,omitempty"`
-	Sources              *wrappers.StringValue `protobuf:"bytes,11,opt,name=sources,proto3" json:"sources,omitempty"`
-	Readme               *wrappers.StringValue `protobuf:"bytes,12,opt,name=readme,proto3" json:"readme,omitempty"`
-	CategoryId           *wrappers.StringValue `protobuf:"bytes,13,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Keywords             *wrappers.StringValue `protobuf:"bytes,14,opt,name=keywords,proto3" json:"keywords,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
+	ChartName            *wrappers.StringValue `protobuf:"bytes,4,opt,name=chart_name,json=chartName" json:"chart_name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
+	Home                 *wrappers.StringValue `protobuf:"bytes,7,opt,name=home" json:"home,omitempty"`
+	Icon                 *wrappers.StringValue `protobuf:"bytes,8,opt,name=icon" json:"icon,omitempty"`
+	Screenshots          *wrappers.StringValue `protobuf:"bytes,9,opt,name=screenshots" json:"screenshots,omitempty"`
+	Maintainers          *wrappers.StringValue `protobuf:"bytes,10,opt,name=maintainers" json:"maintainers,omitempty"`
+	Sources              *wrappers.StringValue `protobuf:"bytes,11,opt,name=sources" json:"sources,omitempty"`
+	Readme               *wrappers.StringValue `protobuf:"bytes,12,opt,name=readme" json:"readme,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,13,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Keywords             *wrappers.StringValue `protobuf:"bytes,14,opt,name=keywords" json:"keywords,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -162,7 +162,7 @@ func (m *CreateAppRequest) GetKeywords() *wrappers.StringValue {
 }
 
 type CreateAppResponse struct {
-	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -200,20 +200,20 @@ func (m *CreateAppResponse) GetAppId() *wrappers.StringValue {
 }
 
 type ModifyAppRequest struct {
-	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	RepoId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	ChartName            *wrappers.StringValue `protobuf:"bytes,5,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
-	Home                 *wrappers.StringValue `protobuf:"bytes,8,opt,name=home,proto3" json:"home,omitempty"`
-	Icon                 *wrappers.StringValue `protobuf:"bytes,9,opt,name=icon,proto3" json:"icon,omitempty"`
-	Screenshots          *wrappers.StringValue `protobuf:"bytes,10,opt,name=screenshots,proto3" json:"screenshots,omitempty"`
-	Maintainers          *wrappers.StringValue `protobuf:"bytes,11,opt,name=maintainers,proto3" json:"maintainers,omitempty"`
-	Sources              *wrappers.StringValue `protobuf:"bytes,12,opt,name=sources,proto3" json:"sources,omitempty"`
-	Readme               *wrappers.StringValue `protobuf:"bytes,13,opt,name=readme,proto3" json:"readme,omitempty"`
-	CategoryId           *wrappers.StringValue `protobuf:"bytes,14,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	Keywords             *wrappers.StringValue `protobuf:"bytes,15,opt,name=keywords,proto3" json:"keywords,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	ChartName            *wrappers.StringValue `protobuf:"bytes,5,opt,name=chart_name,json=chartName" json:"chart_name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,6,opt,name=description" json:"description,omitempty"`
+	Home                 *wrappers.StringValue `protobuf:"bytes,8,opt,name=home" json:"home,omitempty"`
+	Icon                 *wrappers.StringValue `protobuf:"bytes,9,opt,name=icon" json:"icon,omitempty"`
+	Screenshots          *wrappers.StringValue `protobuf:"bytes,10,opt,name=screenshots" json:"screenshots,omitempty"`
+	Maintainers          *wrappers.StringValue `protobuf:"bytes,11,opt,name=maintainers" json:"maintainers,omitempty"`
+	Sources              *wrappers.StringValue `protobuf:"bytes,12,opt,name=sources" json:"sources,omitempty"`
+	Readme               *wrappers.StringValue `protobuf:"bytes,13,opt,name=readme" json:"readme,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,14,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Keywords             *wrappers.StringValue `protobuf:"bytes,15,opt,name=keywords" json:"keywords,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -342,7 +342,7 @@ func (m *ModifyAppRequest) GetKeywords() *wrappers.StringValue {
 }
 
 type ModifyAppResponse struct {
-	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -380,7 +380,7 @@ func (m *ModifyAppResponse) GetAppId() *wrappers.StringValue {
 }
 
 type DeleteAppsRequest struct {
-	AppId                []string `protobuf:"bytes,1,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	AppId                []string `protobuf:"bytes,1,rep,name=app_id,json=appId" json:"app_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -418,7 +418,7 @@ func (m *DeleteAppsRequest) GetAppId() []string {
 }
 
 type DeleteAppsResponse struct {
-	AppId                []string `protobuf:"bytes,1,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	AppId                []string `protobuf:"bytes,1,rep,name=app_id,json=appId" json:"app_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -456,25 +456,25 @@ func (m *DeleteAppsResponse) GetAppId() []string {
 }
 
 type App struct {
-	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	RepoId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
-	Home                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=home,proto3" json:"home,omitempty"`
-	Icon                 *wrappers.StringValue `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
-	Screenshots          *wrappers.StringValue `protobuf:"bytes,8,opt,name=screenshots,proto3" json:"screenshots,omitempty"`
-	Maintainers          *wrappers.StringValue `protobuf:"bytes,9,opt,name=maintainers,proto3" json:"maintainers,omitempty"`
-	Keywords             *wrappers.StringValue `protobuf:"bytes,10,opt,name=keywords,proto3" json:"keywords,omitempty"`
-	Sources              *wrappers.StringValue `protobuf:"bytes,11,opt,name=sources,proto3" json:"sources,omitempty"`
-	Readme               *wrappers.StringValue `protobuf:"bytes,12,opt,name=readme,proto3" json:"readme,omitempty"`
-	ChartName            *wrappers.StringValue `protobuf:"bytes,13,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,14,opt,name=owner,proto3" json:"owner,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,15,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,16,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
-	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,17,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
-	CategorySet          []*ResourceCategory   `protobuf:"bytes,18,rep,name=category_set,json=categorySet,proto3" json:"category_set,omitempty"`
-	LatestAppVersion     *AppVersion           `protobuf:"bytes,19,opt,name=latest_app_version,json=latestAppVersion,proto3" json:"latest_app_version,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,5,opt,name=status" json:"status,omitempty"`
+	Home                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=home" json:"home,omitempty"`
+	Icon                 *wrappers.StringValue `protobuf:"bytes,7,opt,name=icon" json:"icon,omitempty"`
+	Screenshots          *wrappers.StringValue `protobuf:"bytes,8,opt,name=screenshots" json:"screenshots,omitempty"`
+	Maintainers          *wrappers.StringValue `protobuf:"bytes,9,opt,name=maintainers" json:"maintainers,omitempty"`
+	Keywords             *wrappers.StringValue `protobuf:"bytes,10,opt,name=keywords" json:"keywords,omitempty"`
+	Sources              *wrappers.StringValue `protobuf:"bytes,11,opt,name=sources" json:"sources,omitempty"`
+	Readme               *wrappers.StringValue `protobuf:"bytes,12,opt,name=readme" json:"readme,omitempty"`
+	ChartName            *wrappers.StringValue `protobuf:"bytes,13,opt,name=chart_name,json=chartName" json:"chart_name,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,14,opt,name=owner" json:"owner,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,15,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,16,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,17,opt,name=update_time,json=updateTime" json:"update_time,omitempty"`
+	CategorySet          []*ResourceCategory   `protobuf:"bytes,18,rep,name=category_set,json=categorySet" json:"category_set,omitempty"`
+	LatestAppVersion     *AppVersion           `protobuf:"bytes,19,opt,name=latest_app_version,json=latestAppVersion" json:"latest_app_version,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -638,18 +638,18 @@ func (m *App) GetLatestAppVersion() *AppVersion {
 }
 
 type DescribeAppsRequest struct {
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
-	Limit                uint32                `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	AppId                []string              `protobuf:"bytes,7,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Name                 []string              `protobuf:"bytes,8,rep,name=name,proto3" json:"name,omitempty"`
-	RepoId               []string              `protobuf:"bytes,9,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
-	Status               []string              `protobuf:"bytes,10,rep,name=status,proto3" json:"status,omitempty"`
-	Owner                []string              `protobuf:"bytes,11,rep,name=owner,proto3" json:"owner,omitempty"`
-	ChartName            []string              `protobuf:"bytes,12,rep,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
-	CategoryId           []string              `protobuf:"bytes,13,rep,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
+	Limit                uint32                `protobuf:"varint,2,opt,name=limit" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,3,opt,name=offset" json:"offset,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=reverse" json:"reverse,omitempty"`
+	AppId                []string              `protobuf:"bytes,7,rep,name=app_id,json=appId" json:"app_id,omitempty"`
+	Name                 []string              `protobuf:"bytes,8,rep,name=name" json:"name,omitempty"`
+	RepoId               []string              `protobuf:"bytes,9,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	Status               []string              `protobuf:"bytes,10,rep,name=status" json:"status,omitempty"`
+	Owner                []string              `protobuf:"bytes,11,rep,name=owner" json:"owner,omitempty"`
+	ChartName            []string              `protobuf:"bytes,12,rep,name=chart_name,json=chartName" json:"chart_name,omitempty"`
+	CategoryId           []string              `protobuf:"bytes,13,rep,name=category_id,json=categoryId" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -764,8 +764,8 @@ func (m *DescribeAppsRequest) GetCategoryId() []string {
 }
 
 type DescribeAppsResponse struct {
-	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	AppSet               []*App   `protobuf:"bytes,2,rep,name=app_set,json=appSet,proto3" json:"app_set,omitempty"`
+	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	AppSet               []*App   `protobuf:"bytes,2,rep,name=app_set,json=appSet" json:"app_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -810,12 +810,12 @@ func (m *DescribeAppsResponse) GetAppSet() []*App {
 }
 
 type CreateAppVersionRequest struct {
-	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	PackageName          *wrappers.StringValue `protobuf:"bytes,4,opt,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	Sequence             *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,2,opt,name=owner" json:"owner,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
+	PackageName          *wrappers.StringValue `protobuf:"bytes,4,opt,name=package_name,json=packageName" json:"package_name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
+	Sequence             *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=sequence" json:"sequence,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -888,7 +888,7 @@ func (m *CreateAppVersionRequest) GetSequence() *wrappers.UInt32Value {
 }
 
 type CreateAppVersionResponse struct {
-	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -926,12 +926,12 @@ func (m *CreateAppVersionResponse) GetVersionId() *wrappers.StringValue {
 }
 
 type ModifyAppVersionRequest struct {
-	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	PackageName          *wrappers.StringValue `protobuf:"bytes,3,opt,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	Sequence             *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	PackageName          *wrappers.StringValue `protobuf:"bytes,3,opt,name=package_name,json=packageName" json:"package_name,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
+	Sequence             *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=sequence" json:"sequence,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1004,7 +1004,7 @@ func (m *ModifyAppVersionRequest) GetSequence() *wrappers.UInt32Value {
 }
 
 type ModifyAppVersionResponse struct {
-	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1042,7 +1042,7 @@ func (m *ModifyAppVersionResponse) GetVersionId() *wrappers.StringValue {
 }
 
 type DeleteAppVersionsRequest struct {
-	VersionId            []string `protobuf:"bytes,1,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	VersionId            []string `protobuf:"bytes,1,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1080,7 +1080,7 @@ func (m *DeleteAppVersionsRequest) GetVersionId() []string {
 }
 
 type DeleteAppVersionsResponse struct {
-	VersionId            []string `protobuf:"bytes,1,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	VersionId            []string `protobuf:"bytes,1,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1118,17 +1118,17 @@ func (m *DeleteAppVersionsResponse) GetVersionId() []string {
 }
 
 type AppVersion struct {
-	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	AppId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	PackageName          *wrappers.StringValue `protobuf:"bytes,6,opt,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
-	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
-	Sequence             uint32                `protobuf:"varint,11,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=app_id,json=appId" json:"app_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner" json:"owner,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
+	PackageName          *wrappers.StringValue `protobuf:"bytes,6,opt,name=package_name,json=packageName" json:"package_name,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=status" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
+	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=update_time,json=updateTime" json:"update_time,omitempty"`
+	Sequence             uint32                `protobuf:"varint,11,opt,name=sequence" json:"sequence,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1236,18 +1236,18 @@ func (m *AppVersion) GetSequence() uint32 {
 }
 
 type DescribeAppVersionsRequest struct {
-	VersionId            []string              `protobuf:"bytes,1,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	AppId                []string              `protobuf:"bytes,2,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Name                 []string              `protobuf:"bytes,3,rep,name=name,proto3" json:"name,omitempty"`
-	Owner                []string              `protobuf:"bytes,4,rep,name=owner,proto3" json:"owner,omitempty"`
-	Description          []string              `protobuf:"bytes,5,rep,name=description,proto3" json:"description,omitempty"`
-	PackageName          []string              `protobuf:"bytes,6,rep,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
-	Status               []string              `protobuf:"bytes,7,rep,name=status,proto3" json:"status,omitempty"`
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,8,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
-	Limit                uint32                `protobuf:"varint,9,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,10,opt,name=offset,proto3" json:"offset,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,11,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,12,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	VersionId            []string              `protobuf:"bytes,1,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
+	AppId                []string              `protobuf:"bytes,2,rep,name=app_id,json=appId" json:"app_id,omitempty"`
+	Name                 []string              `protobuf:"bytes,3,rep,name=name" json:"name,omitempty"`
+	Owner                []string              `protobuf:"bytes,4,rep,name=owner" json:"owner,omitempty"`
+	Description          []string              `protobuf:"bytes,5,rep,name=description" json:"description,omitempty"`
+	PackageName          []string              `protobuf:"bytes,6,rep,name=package_name,json=packageName" json:"package_name,omitempty"`
+	Status               []string              `protobuf:"bytes,7,rep,name=status" json:"status,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,8,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
+	Limit                uint32                `protobuf:"varint,9,opt,name=limit" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,10,opt,name=offset" json:"offset,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,11,opt,name=sort_key,json=sortKey" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,12,opt,name=reverse" json:"reverse,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1362,8 +1362,8 @@ func (m *DescribeAppVersionsRequest) GetReverse() *wrappers.BoolValue {
 }
 
 type DescribeAppVersionsResponse struct {
-	TotalCount           uint32        `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	AppVersionSet        []*AppVersion `protobuf:"bytes,2,rep,name=app_version_set,json=appVersionSet,proto3" json:"app_version_set,omitempty"`
+	TotalCount           uint32        `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	AppVersionSet        []*AppVersion `protobuf:"bytes,2,rep,name=app_version_set,json=appVersionSet" json:"app_version_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
 	XXX_sizecache        int32         `json:"-"`
@@ -1408,7 +1408,7 @@ func (m *DescribeAppVersionsResponse) GetAppVersionSet() []*AppVersion {
 }
 
 type GetAppVersionPackageRequest struct {
-	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1447,7 +1447,7 @@ func (m *GetAppVersionPackageRequest) GetVersionId() *wrappers.StringValue {
 
 type GetAppVersionPackageResponse struct {
 	Package              []byte                `protobuf:"bytes,1,opt,name=package,proto3" json:"package,omitempty"`
-	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1492,8 +1492,8 @@ func (m *GetAppVersionPackageResponse) GetVersionId() *wrappers.StringValue {
 }
 
 type GetAppVersionPackageFilesRequest struct {
-	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	Files                []string              `protobuf:"bytes,2,rep,name=files,proto3" json:"files,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
+	Files                []string              `protobuf:"bytes,2,rep,name=files" json:"files,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1538,8 +1538,8 @@ func (m *GetAppVersionPackageFilesRequest) GetFiles() []string {
 }
 
 type GetAppVersionPackageFilesResponse struct {
-	Files                map[string][]byte     `protobuf:"bytes,1,rep,name=files,proto3" json:"files,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	Files                map[string][]byte     `protobuf:"bytes,1,rep,name=files" json:"files,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1614,10 +1614,10 @@ func (m *GetAppStatisticsRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_GetAppStatisticsRequest proto.InternalMessageInfo
 
 type GetAppStatisticsResponse struct {
-	LastTwoWeekCreated   map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated,proto3" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	TopTenRepos          map[string]uint32 `protobuf:"bytes,2,rep,name=top_ten_repos,json=topTenRepos,proto3" json:"top_ten_repos,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	AppCount             uint32            `protobuf:"varint,3,opt,name=app_count,json=appCount,proto3" json:"app_count,omitempty"`
-	RepoCount            uint32            `protobuf:"varint,4,opt,name=repo_count,json=repoCount,proto3" json:"repo_count,omitempty"`
+	LastTwoWeekCreated   map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	TopTenRepos          map[string]uint32 `protobuf:"bytes,2,rep,name=top_ten_repos,json=topTenRepos" json:"top_ten_repos,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	AppCount             uint32            `protobuf:"varint,3,opt,name=app_count,json=appCount" json:"app_count,omitempty"`
+	RepoCount            uint32            `protobuf:"varint,4,opt,name=repo_count,json=repoCount" json:"repo_count,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -1713,9 +1713,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// AppManagerClient is the client API for AppManager service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for AppManager service
+
 type AppManagerClient interface {
 	CreateApp(ctx context.Context, in *CreateAppRequest, opts ...grpc.CallOption) (*CreateAppResponse, error)
 	GetAppStatistics(ctx context.Context, in *GetAppStatisticsRequest, opts ...grpc.CallOption) (*GetAppStatisticsResponse, error)
@@ -1740,7 +1739,7 @@ func NewAppManagerClient(cc *grpc.ClientConn) AppManagerClient {
 
 func (c *appManagerClient) CreateApp(ctx context.Context, in *CreateAppRequest, opts ...grpc.CallOption) (*CreateAppResponse, error) {
 	out := new(CreateAppResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/CreateApp", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/CreateApp", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1749,7 +1748,7 @@ func (c *appManagerClient) CreateApp(ctx context.Context, in *CreateAppRequest, 
 
 func (c *appManagerClient) GetAppStatistics(ctx context.Context, in *GetAppStatisticsRequest, opts ...grpc.CallOption) (*GetAppStatisticsResponse, error) {
 	out := new(GetAppStatisticsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/GetAppStatistics", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/GetAppStatistics", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1758,7 +1757,7 @@ func (c *appManagerClient) GetAppStatistics(ctx context.Context, in *GetAppStati
 
 func (c *appManagerClient) DescribeApps(ctx context.Context, in *DescribeAppsRequest, opts ...grpc.CallOption) (*DescribeAppsResponse, error) {
 	out := new(DescribeAppsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DescribeApps", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DescribeApps", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1767,7 +1766,7 @@ func (c *appManagerClient) DescribeApps(ctx context.Context, in *DescribeAppsReq
 
 func (c *appManagerClient) ModifyApp(ctx context.Context, in *ModifyAppRequest, opts ...grpc.CallOption) (*ModifyAppResponse, error) {
 	out := new(ModifyAppResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/ModifyApp", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/ModifyApp", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1776,7 +1775,7 @@ func (c *appManagerClient) ModifyApp(ctx context.Context, in *ModifyAppRequest, 
 
 func (c *appManagerClient) DeleteApps(ctx context.Context, in *DeleteAppsRequest, opts ...grpc.CallOption) (*DeleteAppsResponse, error) {
 	out := new(DeleteAppsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DeleteApps", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DeleteApps", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1785,7 +1784,7 @@ func (c *appManagerClient) DeleteApps(ctx context.Context, in *DeleteAppsRequest
 
 func (c *appManagerClient) CreateAppVersion(ctx context.Context, in *CreateAppVersionRequest, opts ...grpc.CallOption) (*CreateAppVersionResponse, error) {
 	out := new(CreateAppVersionResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/CreateAppVersion", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/CreateAppVersion", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1794,7 +1793,7 @@ func (c *appManagerClient) CreateAppVersion(ctx context.Context, in *CreateAppVe
 
 func (c *appManagerClient) DescribeAppVersions(ctx context.Context, in *DescribeAppVersionsRequest, opts ...grpc.CallOption) (*DescribeAppVersionsResponse, error) {
 	out := new(DescribeAppVersionsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DescribeAppVersions", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DescribeAppVersions", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1803,7 +1802,7 @@ func (c *appManagerClient) DescribeAppVersions(ctx context.Context, in *Describe
 
 func (c *appManagerClient) ModifyAppVersion(ctx context.Context, in *ModifyAppVersionRequest, opts ...grpc.CallOption) (*ModifyAppVersionResponse, error) {
 	out := new(ModifyAppVersionResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/ModifyAppVersion", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/ModifyAppVersion", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1812,7 +1811,7 @@ func (c *appManagerClient) ModifyAppVersion(ctx context.Context, in *ModifyAppVe
 
 func (c *appManagerClient) DeleteAppVersions(ctx context.Context, in *DeleteAppVersionsRequest, opts ...grpc.CallOption) (*DeleteAppVersionsResponse, error) {
 	out := new(DeleteAppVersionsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DeleteAppVersions", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/DeleteAppVersions", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1821,7 +1820,7 @@ func (c *appManagerClient) DeleteAppVersions(ctx context.Context, in *DeleteAppV
 
 func (c *appManagerClient) GetAppVersionPackage(ctx context.Context, in *GetAppVersionPackageRequest, opts ...grpc.CallOption) (*GetAppVersionPackageResponse, error) {
 	out := new(GetAppVersionPackageResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackage", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackage", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1830,14 +1829,15 @@ func (c *appManagerClient) GetAppVersionPackage(ctx context.Context, in *GetAppV
 
 func (c *appManagerClient) GetAppVersionPackageFiles(ctx context.Context, in *GetAppVersionPackageFilesRequest, opts ...grpc.CallOption) (*GetAppVersionPackageFilesResponse, error) {
 	out := new(GetAppVersionPackageFilesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackageFiles", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.AppManager/GetAppVersionPackageFiles", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AppManagerServer is the server API for AppManager service.
+// Server API for AppManager service
+
 type AppManagerServer interface {
 	CreateApp(context.Context, *CreateAppRequest) (*CreateAppResponse, error)
 	GetAppStatistics(context.Context, *GetAppStatisticsRequest) (*GetAppStatisticsResponse, error)

@@ -1,14 +1,22 @@
 package helm
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/ghodss/yaml"
 	"k8s.io/api/apps/v1beta1"
 	"k8s.io/api/apps/v1beta2"
 	exv1beta1 "k8s.io/api/extensions/v1beta1"
+	k8syaml "k8s.io/apimachinery/pkg/util/yaml"
+	"k8s.io/client-go/discovery"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 	"k8s.io/helm/pkg/chartutil"
 	"k8s.io/helm/pkg/engine"
 	"k8s.io/helm/pkg/proto/hapi/chart"
@@ -18,10 +26,13 @@ import (
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type Parser struct {
@@ -30,7 +41,7 @@ type Parser struct {
 
 func (p *Parser) ParseCluster(name string, description string, versionId string) (*models.Cluster, error) {
 	ctx := clientutil.GetSystemUserContext()
-	appManagerClient, err := appclient.NewAppManagerClient(ctx)
+	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +73,16 @@ func (p *Parser) ParseCluster(name string, description string, versionId string)
 	return cluster, nil
 }
 
-func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[string]interface{}, customVals map[string]interface{}) (map[string]*models.ClusterRole, map[string]*models.ClusterCommon, error) {
+func (p *Parser) ParseClusterRolesAndClusterCommons(
+	c *chart.Chart,
+	vals map[string]interface{},
+	customVals map[string]interface{},
+	runtimeId string,
+) (
+	map[string]*models.ClusterRole,
+	map[string]*models.ClusterCommon,
+	error,
+) {
 	env := jsonutil.ToString(customVals)
 
 	renderer := engine.New()
@@ -71,6 +91,7 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 		return nil, nil, err
 	}
 
+	var apiVersions []string
 	decode := legacyscheme.Codecs.UniversalDeserializer().Decode
 
 	clusterRoles := map[string]*models.ClusterRole{}
@@ -83,189 +104,210 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 		if len([]byte(v)) == 0 {
 			continue
 		}
+		b := bufio.NewReader(strings.NewReader(v))
+		r := k8syaml.NewYAMLReader(b)
+		for {
+			doc, err := r.Read()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				p.Logger.Error("Decode file [%s] in chart failed, %+v", k, err)
+				return nil, nil, err
+			}
+			obj, groupVersionKind, err := decode(doc, nil, nil)
 
-		obj, _, err := decode([]byte(v), nil, nil)
-		if err != nil {
-			p.Logger.Warn("Decode file [%s] in chart failed, %+v", k, err)
-			continue
+			if err != nil {
+				p.Logger.Error("Decode file [%s] in chart failed, %+v", k, err)
+				return nil, nil, err
+			}
+			p.Logger.Debug("Yaml content: %+v", obj)
+			p.Logger.Debug("Group version: %+v", groupVersionKind.GroupVersion().String())
+
+			apiVersions = append(apiVersions, groupVersionKind.GroupVersion().String())
+
+			switch o := obj.(type) {
+			case *v1beta2.Deployment:
+				clusterRole := &models.ClusterRole{
+					Role: fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
+					Env:  string(env),
+				}
+
+				if o.Spec.Replicas == nil {
+					clusterRole.InstanceSize = 1
+				} else {
+					clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
+				}
+
+				if len(o.Spec.Template.Spec.Containers) > 0 {
+					clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
+					clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
+					clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
+					clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *v1beta1.Deployment:
+				clusterRole := &models.ClusterRole{
+					Role: fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
+					Env:  string(env),
+				}
+
+				if o.Spec.Replicas == nil {
+					clusterRole.InstanceSize = 1
+				} else {
+					clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
+				}
+
+				if len(o.Spec.Template.Spec.Containers) > 0 {
+					clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
+					clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
+					clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
+					clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *exv1beta1.Deployment:
+				clusterRole := &models.ClusterRole{
+					Role: fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
+					Env:  string(env),
+				}
+
+				if o.Spec.Replicas == nil {
+					clusterRole.InstanceSize = 1
+				} else {
+					clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
+				}
+
+				if len(o.Spec.Template.Spec.Containers) > 0 {
+					clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
+					clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
+					clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
+					clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *v1beta2.StatefulSet:
+				clusterRole := &models.ClusterRole{
+					Role: fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
+					Env:  string(env),
+				}
+
+				if o.Spec.Replicas == nil {
+					clusterRole.InstanceSize = 1
+				} else {
+					clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
+				}
+
+				if len(o.Spec.Template.Spec.Containers) > 0 {
+					clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
+					clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
+					clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
+					clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *v1beta1.StatefulSet:
+				clusterRole := &models.ClusterRole{
+					Role: fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
+					Env:  string(env),
+				}
+
+				if o.Spec.Replicas == nil {
+					clusterRole.InstanceSize = 1
+				} else {
+					clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
+				}
+
+				if len(o.Spec.Template.Spec.Containers) > 0 {
+					clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
+					clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
+					clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
+					clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *v1beta2.DaemonSet:
+				clusterRole := &models.ClusterRole{
+					Role:         fmt.Sprintf("%s-DaemonSet", o.GetObjectMeta().GetName()),
+					InstanceSize: uint32(1),
+					Env:          string(env),
+				}
+
+				if len(o.Spec.Template.Spec.Containers) > 0 {
+					clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
+					clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
+					clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
+					clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *exv1beta1.DaemonSet:
+				clusterRole := &models.ClusterRole{
+					Role:         fmt.Sprintf("%s-DaemonSet", o.GetObjectMeta().GetName()),
+					InstanceSize: uint32(1),
+					Env:          string(env),
+				}
+
+				if len(o.Spec.Template.Spec.Containers) > 0 {
+					clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
+					clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
+					clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
+					clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			default:
+				continue
+			}
 		}
+	}
 
-		switch o := obj.(type) {
-		case *v1beta2.Deployment:
-			clusterRole := &models.ClusterRole{
-				Role: fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
-				Env:  string(env),
-			}
-
-			if o.Spec.Replicas == nil {
-				clusterRole.InstanceSize = 1
-			} else {
-				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
-			}
-
-			if len(o.Spec.Template.Spec.Containers) > 0 {
-				clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
-				clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
-				clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
-				clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
-			}
-
-			clusterCommon := &models.ClusterCommon{
-				Role:       clusterRole.Role,
-				Hypervisor: "docker",
-			}
-
-			clusterRoles[clusterRole.Role] = clusterRole
-			clusterCommons[clusterRole.Role] = clusterCommon
-		case *v1beta1.Deployment:
-			clusterRole := &models.ClusterRole{
-				Role: fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
-				Env:  string(env),
-			}
-
-			if o.Spec.Replicas == nil {
-				clusterRole.InstanceSize = 1
-			} else {
-				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
-			}
-
-			if len(o.Spec.Template.Spec.Containers) > 0 {
-				clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
-				clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
-				clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
-				clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
-			}
-
-			clusterCommon := &models.ClusterCommon{
-				Role:       clusterRole.Role,
-				Hypervisor: "docker",
-			}
-
-			clusterRoles[clusterRole.Role] = clusterRole
-			clusterCommons[clusterRole.Role] = clusterCommon
-		case *exv1beta1.Deployment:
-			clusterRole := &models.ClusterRole{
-				Role: fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
-				Env:  string(env),
-			}
-
-			if o.Spec.Replicas == nil {
-				clusterRole.InstanceSize = 1
-			} else {
-				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
-			}
-
-			if len(o.Spec.Template.Spec.Containers) > 0 {
-				clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
-				clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
-				clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
-				clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
-			}
-
-			clusterCommon := &models.ClusterCommon{
-				Role:       clusterRole.Role,
-				Hypervisor: "docker",
-			}
-
-			clusterRoles[clusterRole.Role] = clusterRole
-			clusterCommons[clusterRole.Role] = clusterCommon
-		case *v1beta2.StatefulSet:
-			clusterRole := &models.ClusterRole{
-				Role: fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
-				Env:  string(env),
-			}
-
-			if o.Spec.Replicas == nil {
-				clusterRole.InstanceSize = 1
-			} else {
-				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
-			}
-
-			if len(o.Spec.Template.Spec.Containers) > 0 {
-				clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
-				clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
-				clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
-				clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
-			}
-
-			clusterCommon := &models.ClusterCommon{
-				Role:       clusterRole.Role,
-				Hypervisor: "docker",
-			}
-
-			clusterRoles[clusterRole.Role] = clusterRole
-			clusterCommons[clusterRole.Role] = clusterCommon
-		case *v1beta1.StatefulSet:
-			clusterRole := &models.ClusterRole{
-				Role: fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
-				Env:  string(env),
-			}
-
-			if o.Spec.Replicas == nil {
-				clusterRole.InstanceSize = 1
-			} else {
-				clusterRole.InstanceSize = uint32(*o.Spec.Replicas)
-			}
-
-			if len(o.Spec.Template.Spec.Containers) > 0 {
-				clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
-				clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
-				clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
-				clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
-			}
-
-			clusterCommon := &models.ClusterCommon{
-				Role:       clusterRole.Role,
-				Hypervisor: "docker",
-			}
-
-			clusterRoles[clusterRole.Role] = clusterRole
-			clusterCommons[clusterRole.Role] = clusterCommon
-		case *v1beta2.DaemonSet:
-			clusterRole := &models.ClusterRole{
-				Role:         fmt.Sprintf("%s-DaemonSet", o.GetObjectMeta().GetName()),
-				InstanceSize: uint32(1),
-				Env:          string(env),
-			}
-
-			if len(o.Spec.Template.Spec.Containers) > 0 {
-				clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
-				clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
-				clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
-				clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
-			}
-
-			clusterCommon := &models.ClusterCommon{
-				Role:       clusterRole.Role,
-				Hypervisor: "docker",
-			}
-
-			clusterRoles[clusterRole.Role] = clusterRole
-			clusterCommons[clusterRole.Role] = clusterCommon
-		case *exv1beta1.DaemonSet:
-			clusterRole := &models.ClusterRole{
-				Role:         fmt.Sprintf("%s-DaemonSet", o.GetObjectMeta().GetName()),
-				InstanceSize: uint32(1),
-				Env:          string(env),
-			}
-
-			if len(o.Spec.Template.Spec.Containers) > 0 {
-				clusterRole.Cpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Cpu().Value())
-				clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
-				clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
-				clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
-			}
-
-			clusterCommon := &models.ClusterCommon{
-				Role:       clusterRole.Role,
-				Hypervisor: "docker",
-			}
-
-			clusterRoles[clusterRole.Role] = clusterRole
-			clusterCommons[clusterRole.Role] = clusterCommon
-		default:
-			continue
-		}
+	err = p.CheckApiVersionsSupported(runtimeId, apiVersions)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	_, ok := clusterRoles[""]
@@ -279,7 +321,51 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(c *chart.Chart, vals map[str
 	return clusterRoles, clusterCommons, nil
 }
 
-func (p *Parser) Parse(c *chart.Chart, conf []byte, versionId string) (*models.ClusterWrapper, error) {
+func (p *Parser) CheckApiVersionsSupported(runtimeId string, apiVersions []string) error {
+	if len(apiVersions) == 0 {
+		return nil
+	}
+	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
+		runtime, err := runtimeclient.NewRuntime(runtimeId)
+		if err != nil {
+			return nil, err
+		}
+
+		credential := runtime.Credential
+
+		return clientcmd.Load([]byte(credential))
+	}
+
+	config, err := clientcmd.BuildConfigFromKubeconfigGetter("", kubeconfigGetter)
+	if err != nil {
+		return err
+	}
+
+	client, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return err
+	}
+	apiGroupResources, err := discovery.GetAPIGroupResources(client)
+	if err != nil {
+		return err
+	}
+	var supportedVersions []string
+	for _, group := range apiGroupResources {
+		for _, version := range group.Group.Versions {
+			supportedVersions = append(supportedVersions, version.GroupVersion)
+		}
+	}
+	p.Logger.Debug("Get runtime [%s] supported versions [%+v]", runtimeId, supportedVersions)
+	p.Logger.Debug("Check api versions [%+v]", apiVersions)
+	for _, apiVersion := range apiVersions {
+		if !stringutil.StringIn(apiVersion, supportedVersions) {
+			return gerr.New(gerr.PermissionDenied, gerr.ErrorUnsupportedApiVersion, apiVersion)
+		}
+	}
+	return nil
+}
+
+func (p *Parser) Parse(c *chart.Chart, conf []byte, versionId, runtimeId string) (*models.ClusterWrapper, error) {
 	customVals, name, description, err := p.ParseCustomValues(conf)
 	if err != nil {
 		return nil, err
@@ -295,7 +381,7 @@ func (p *Parser) Parse(c *chart.Chart, conf []byte, versionId string) (*models.C
 		return nil, err
 	}
 
-	clusterRoles, clusterCommons, err := p.ParseClusterRolesAndClusterCommons(c, vals, customVals)
+	clusterRoles, clusterCommons, err := p.ParseClusterRolesAndClusterCommons(c, vals, customVals, runtimeId)
 	if err != nil {
 		return nil, err
 	}

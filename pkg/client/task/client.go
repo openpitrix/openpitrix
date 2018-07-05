@@ -21,8 +21,8 @@ type Client struct {
 	pb.TaskManagerClient
 }
 
-func NewClient(ctx context.Context) (*Client, error) {
-	conn, err := manager.NewClient(ctx, constants.TaskManagerHost, constants.TaskManagerPort)
+func NewClient() (*Client, error) {
+	conn, err := manager.NewClient(constants.TaskManagerHost, constants.TaskManagerPort)
 	if err != nil {
 		return nil, err
 	}

@@ -397,6 +397,8 @@ func (f *Frame) destroyAndStopServiceLayer(nodeIds []string, extraLayer *models.
 }
 
 func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
+	availabilityZone := f.ClusterWrapper.Cluster.Zone
+
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -419,7 +421,7 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 			volume := &models.Volume{
 				Name:      clusterNode.ClusterId + "_" + nodeId,
 				Size:      eachSize,
-				Zone:      f.Runtime.Zone,
+				Zone:      availabilityZone,
 				RuntimeId: f.Runtime.RuntimeId,
 			}
 			directive := jsonutil.ToString(volume)
@@ -441,6 +443,8 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 }
 
 func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
+	availabilityZone := f.ClusterWrapper.Cluster.Zone
+
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -449,7 +453,7 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
-			Zone:       f.Runtime.Zone,
+			Zone:       availabilityZone,
 			RuntimeId:  f.Runtime.RuntimeId,
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
@@ -470,11 +474,13 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 }
 
 func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
+	availabilityZone := f.ClusterWrapper.Cluster.Zone
+
 	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
-			Zone:       f.Runtime.Zone,
+			Zone:       availabilityZone,
 			RuntimeId:  f.Runtime.RuntimeId,
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
@@ -495,6 +501,8 @@ func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
 }
 
 func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
+	availabilityZone := f.ClusterWrapper.Cluster.Zone
+
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -503,7 +511,7 @@ func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *model
 		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
-			Zone:       f.Runtime.Zone,
+			Zone:       availabilityZone,
 			RuntimeId:  f.Runtime.RuntimeId,
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
@@ -591,7 +599,7 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	ctx := client.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		f.Logger.Error("New ssh key gen task layer failed: %+v", err)
 		return nil
@@ -785,6 +793,8 @@ func (f *Frame) setDroneConfigLayer(nodeIds []string, failureAllowed bool) *mode
 }
 
 func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
+	availabilityZone := f.ClusterWrapper.Cluster.Zone
+
 	taskLayer := new(models.TaskLayer)
 	apiServer := f.Runtime.RuntimeUrl
 	zone := f.Runtime.Zone
@@ -826,7 +836,7 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 			Gpu:          int(clusterRole.Gpu),
 			Subnet:       clusterNode.SubnetId,
 			RuntimeId:    f.Runtime.RuntimeId,
-			Zone:         f.Runtime.Zone,
+			Zone:         availabilityZone,
 			NeedUserData: 1,
 			UserdataFile: f.getUserDataFile(),
 		}
@@ -860,6 +870,8 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 }
 
 func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
+	availabilityZone := f.ClusterWrapper.Cluster.Zone
+
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -868,7 +880,7 @@ func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *model
 			NodeId:     nodeId,
 			InstanceId: clusterNode.InstanceId,
 			RuntimeId:  f.Runtime.RuntimeId,
-			Zone:       f.Runtime.Zone,
+			Zone:       availabilityZone,
 		}
 		directive := jsonutil.ToString(instance)
 		stopInstanceTask := &models.Task{
@@ -891,6 +903,8 @@ func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *model
 }
 
 func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
+	availabilityZone := f.ClusterWrapper.Cluster.Zone
+
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -899,7 +913,7 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 			NodeId:     nodeId,
 			InstanceId: clusterNode.InstanceId,
 			RuntimeId:  f.Runtime.RuntimeId,
-			Zone:       f.Runtime.Zone,
+			Zone:       availabilityZone,
 		}
 		directive := jsonutil.ToString(instance)
 		deleteInstanceTask := &models.Task{
@@ -922,6 +936,8 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 }
 
 func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
+	availabilityZone := f.ClusterWrapper.Cluster.Zone
+
 	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		instance := &models.Instance{
@@ -929,7 +945,7 @@ func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
 			NodeId:     nodeId,
 			InstanceId: clusterNode.InstanceId,
 			RuntimeId:  f.Runtime.RuntimeId,
-			Zone:       f.Runtime.Zone,
+			Zone:       availabilityZone,
 		}
 		directive := jsonutil.ToString(instance)
 		startInstanceTask := &models.Task{

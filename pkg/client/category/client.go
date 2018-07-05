@@ -5,15 +5,13 @@
 package category
 
 import (
-	"context"
-
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-func NewCategoryManagerClient(ctx context.Context) (pb.CategoryManagerClient, error) {
-	conn, err := manager.NewClient(ctx, constants.CategoryManagerHost, constants.CategoryManagerPort)
+func NewCategoryManagerClient() (pb.CategoryManagerClient, error) {
+	conn, err := manager.NewClient(constants.CategoryManagerHost, constants.CategoryManagerPort)
 	if err != nil {
 		return nil, err
 	}

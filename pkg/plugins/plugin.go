@@ -13,21 +13,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	//"openpitrix.io/openpitrix/pkg/plugins/aws"
+	"openpitrix.io/openpitrix/pkg/plugins/aws"
 	"openpitrix.io/openpitrix/pkg/plugins/helm"
 	"openpitrix.io/openpitrix/pkg/plugins/qingcloud"
 )
 
-var providerPlugins = make(map[string]ProviderInterface)
-
-func init() {
-	RegisterProviderPlugin(constants.ProviderQingCloud, qingcloud.NewProvider())
-	RegisterProviderPlugin(constants.ProviderKubernetes, helm.NewProvider())
-	//RegisterProviderPlugin(constants.ProviderAWS, aws.NewProvider())
-}
-
 type ProviderInterface interface {
-	SetLogger(logger *logger.Logger)
 	// Parse package and conf into cluster which clusterManager will register into db.
 	ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error)
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
@@ -39,18 +30,23 @@ type ProviderInterface interface {
 	ValidateCredential(url, credential, zone string) error
 	DescribeRuntimeProviderZones(url, credential string) ([]string, error)
 	UpdateClusterStatus(job *models.Job) error
+	DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error)
 }
 
-func RegisterProviderPlugin(provider string, providerInterface ProviderInterface) {
-	providerPlugins[provider] = providerInterface
-}
-
-func GetProviderPlugin(provider string, logger *logger.Logger) (ProviderInterface, error) {
-	providerInterface, exists := providerPlugins[provider]
-	if exists {
-		providerInterface.SetLogger(logger)
-		return providerInterface, nil
-	} else {
+func GetProviderPlugin(provider string, l *logger.Logger) (ProviderInterface, error) {
+	var providerInterface ProviderInterface
+	if l == nil {
+		l = logger.NewLogger()
+	}
+	switch provider {
+	case constants.ProviderQingCloud:
+		providerInterface = qingcloud.NewProvider(l)
+	case constants.ProviderKubernetes:
+		providerInterface = helm.NewProvider(l)
+	case constants.ProviderAWS:
+		providerInterface = aws.NewProvider(l)
+	default:
 		return nil, fmt.Errorf("No such provider [%s]. ", provider)
 	}
+	return providerInterface, nil
 }

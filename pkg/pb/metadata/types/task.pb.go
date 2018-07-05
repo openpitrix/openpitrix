@@ -60,7 +60,7 @@ func (SubTaskAction) EnumDescriptor() ([]byte, []int) {
 }
 
 type SubTaskId struct {
-	TaskId               string   `protobuf:"bytes,1,opt,name=task_id,json=taskId,proto3" json:"task_id"`
+	TaskId               string   `protobuf:"bytes,1,opt,name=task_id,json=taskId" json:"task_id"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -98,9 +98,9 @@ func (m *SubTaskId) GetTaskId() string {
 }
 
 type SubTaskMessage struct {
-	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
-	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
-	Directive            string   `protobuf:"bytes,3,opt,name=directive,proto3" json:"directive"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	Directive            string   `protobuf:"bytes,3,opt,name=directive" json:"directive"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -152,8 +152,8 @@ func (m *SubTaskMessage) GetDirective() string {
 }
 
 type SubTaskStatus struct {
-	TaskId               string   `protobuf:"bytes,1,opt,name=task_id,json=taskId,proto3" json:"task_id"`
-	Status               string   `protobuf:"bytes,2,opt,name=status,proto3" json:"status"`
+	TaskId               string   `protobuf:"bytes,1,opt,name=task_id,json=taskId" json:"task_id"`
+	Status               string   `protobuf:"bytes,2,opt,name=status" json:"status"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -204,11 +204,11 @@ func (m *SubTaskStatus) GetStatus() string {
 // "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", "timeout": 600}
 // }
 type SubTask_StartConfd struct {
-	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
-	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
-	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id"`
-	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp,proto3" json:"drone_ip"`
-	Timeout              int32    `protobuf:"varint,5,opt,name=timeout,proto3" json:"timeout"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
+	Timeout              int32    `protobuf:"varint,5,opt,name=timeout" json:"timeout"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -280,11 +280,11 @@ func (m *SubTask_StartConfd) GetTimeout() int32 {
 // "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", "timeout": 600}
 // }
 type SubTask_StopConfd struct {
-	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
-	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
-	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id"`
-	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp,proto3" json:"drone_ip"`
-	Timeout              int32    `protobuf:"varint,5,opt,name=timeout,proto3" json:"timeout"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
+	Timeout              int32    `protobuf:"varint,5,opt,name=timeout" json:"timeout"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -356,12 +356,12 @@ func (m *SubTask_StopConfd) GetTimeout() int32 {
 // "directive": {"frontgateId": "cl-abcdefgh", "cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
 // }
 type SubTask_RegisterMetadata struct {
-	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
-	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
-	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id"`
-	Cnodes               string   `protobuf:"bytes,4,opt,name=cnodes,proto3" json:"cnodes"`
-	Timeout              int32    `protobuf:"varint,5,opt,name=timeout,proto3" json:"timeout"`
-	Retry                int32    `protobuf:"varint,6,opt,name=retry,proto3" json:"retry"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	Cnodes               string   `protobuf:"bytes,4,opt,name=cnodes" json:"cnodes"`
+	Timeout              int32    `protobuf:"varint,5,opt,name=timeout" json:"timeout"`
+	Retry                int32    `protobuf:"varint,6,opt,name=retry" json:"retry"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -440,13 +440,13 @@ func (m *SubTask_RegisterMetadata) GetRetry() int32 {
 // "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
 // }
 type SubTask_DeregisterMetadata struct {
-	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
-	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
-	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id"`
-	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp,proto3" json:"drone_ip"`
-	Cnodes               string   `protobuf:"bytes,5,opt,name=cnodes,proto3" json:"cnodes"`
-	Timeout              int32    `protobuf:"varint,6,opt,name=timeout,proto3" json:"timeout"`
-	Retry                int32    `protobuf:"varint,7,opt,name=retry,proto3" json:"retry"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
+	Cnodes               string   `protobuf:"bytes,5,opt,name=cnodes" json:"cnodes"`
+	Timeout              int32    `protobuf:"varint,6,opt,name=timeout" json:"timeout"`
+	Retry                int32    `protobuf:"varint,7,opt,name=retry" json:"retry"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -532,13 +532,13 @@ func (m *SubTask_DeregisterMetadata) GetRetry() int32 {
 // "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
 // }
 type SubTask_RegisterCmd struct {
-	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
-	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
-	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id"`
-	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp,proto3" json:"drone_ip"`
-	Cnodes               string   `protobuf:"bytes,5,opt,name=cnodes,proto3" json:"cnodes"`
-	Timeout              int32    `protobuf:"varint,6,opt,name=timeout,proto3" json:"timeout"`
-	Retry                int32    `protobuf:"varint,7,opt,name=retry,proto3" json:"retry"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
+	Cnodes               string   `protobuf:"bytes,5,opt,name=cnodes" json:"cnodes"`
+	Timeout              int32    `protobuf:"varint,6,opt,name=timeout" json:"timeout"`
+	Retry                int32    `protobuf:"varint,7,opt,name=retry" json:"retry"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -624,13 +624,13 @@ func (m *SubTask_RegisterCmd) GetRetry() int32 {
 // "directive": {"frontgateId": "cl-abcdefgh", "droneIp": "192.168.0.1", cnodes": "{\"key\", \"value\"}", "timeout": 600, "retry": 5}
 // }
 type SubTask_DeregisterCmd struct {
-	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
-	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
-	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id"`
-	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp,proto3" json:"drone_ip"`
-	Cnodes               string   `protobuf:"bytes,5,opt,name=cnodes,proto3" json:"cnodes"`
-	Timeout              int32    `protobuf:"varint,6,opt,name=timeout,proto3" json:"timeout"`
-	Retry                int32    `protobuf:"varint,7,opt,name=retry,proto3" json:"retry"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
+	FrontgateId          string   `protobuf:"bytes,3,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
+	DroneIp              string   `protobuf:"bytes,4,opt,name=drone_ip,json=droneIp" json:"drone_ip"`
+	Cnodes               string   `protobuf:"bytes,5,opt,name=cnodes" json:"cnodes"`
+	Timeout              int32    `protobuf:"varint,6,opt,name=timeout" json:"timeout"`
+	Retry                int32    `protobuf:"varint,7,opt,name=retry" json:"retry"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -715,8 +715,8 @@ func (m *SubTask_DeregisterCmd) GetRetry() int32 {
 // "taskId": "t-abcdefgh"
 // }
 type SubTask_GetTaskStatus struct {
-	Action               string   `protobuf:"bytes,1,opt,name=action,proto3" json:"action"`
-	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id"`
+	Action               string   `protobuf:"bytes,1,opt,name=action" json:"action"`
+	TaskId               string   `protobuf:"bytes,2,opt,name=task_id,json=taskId" json:"task_id"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

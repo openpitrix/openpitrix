@@ -73,7 +73,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 
 	var appId string
 	ctx := client.GetSystemUserContext()
-	appManagerClient, err := appclient.NewAppManagerClient(ctx)
+	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return appId, err
 	}
@@ -136,7 +136,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 
 	var versionId string
 	ctx := client.GetSystemUserContext()
-	appManagerClient, err := appclient.NewAppManagerClient(ctx)
+	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return versionId, err
 	}

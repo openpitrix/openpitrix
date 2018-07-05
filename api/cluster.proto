@@ -20,17 +20,19 @@ message DescribeSubnetsRequest {
 	uint32 offset = 3;
 	google.protobuf.UInt32Value subnet_type = 4;
 	repeated string subnet_id = 5;
-	repeated string advanced_param = 6;
+	repeated string zone = 6;
+	repeated string advanced_param = 7;
 }
 
 message Subnet {
 	google.protobuf.StringValue subnet_id = 1;
 	google.protobuf.StringValue name = 2;
-	google.protobuf.Timestamp create_time = 3;
-	google.protobuf.StringValue description = 4;
-	repeated string instance_id = 5;
-	google.protobuf.StringValue vpc_id = 6;
-	google.protobuf.UInt32Value subnet_type = 7;
+	google.protobuf.StringValue zone = 3;
+	google.protobuf.Timestamp create_time = 4;
+	google.protobuf.StringValue description = 5;
+	repeated string instance_id = 6;
+	google.protobuf.StringValue vpc_id = 7;
+	google.protobuf.UInt32Value subnet_type = 8;
 }
 
 message DescribeSubnetsResponse {
@@ -346,6 +348,16 @@ message CeaseClustersResponse {
 	repeated string job_id = 2;
 }
 
+
+message GetClusterStatisticsRequest {}
+
+message GetClusterStatisticsResponse {
+	map<string, uint32> last_two_week_created = 1; // cluster create time range -> cluster count, max length is 14
+	map<string, uint32> top_ten_runtimes = 2; // runtime id -> cluster count, max length is 10
+	uint32 cluster_count = 3;
+	uint32 runtime_count = 4;
+}
+
 service ClusterManager {
 	rpc DescribeSubnets (DescribeSubnetsRequest) returns (DescribeSubnetsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -481,6 +493,14 @@ service ClusterManager {
 		option (google.api.http) = {
 			post: "/v1/clusters/cease"
 			body: "*"
+		};
+	}
+	rpc GetClusterStatistics (GetClusterStatisticsRequest) returns (GetClusterStatisticsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "get cluster statistics"
+		};
+		option (google.api.http) = {
+			get: "/v1/clusters/statistics"
 		};
 	}
 }

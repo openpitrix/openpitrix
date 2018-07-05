@@ -21,8 +21,8 @@ type Client struct {
 	pbpilot.PilotServiceClient
 }
 
-func NewClient(ctx context.Context) (*Client, error) {
-	conn, err := manager.NewClient(ctx, constants.PilotServiceHost, constants.PilotServicePort)
+func NewClient() (*Client, error) {
+	conn, err := manager.NewClient(constants.PilotServiceHost, constants.PilotServicePort)
 	if err != nil {
 		return nil, err
 	}

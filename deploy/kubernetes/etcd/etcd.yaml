@@ -10,7 +10,6 @@ spec:
   selector:
     app: openpitrix
     tier: etcd
-  clusterIP: None
   ports:
   - name: tcp
     protocol: TCP

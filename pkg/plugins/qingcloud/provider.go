@@ -27,15 +27,9 @@ type Provider struct {
 	Logger *logger.Logger
 }
 
-func NewProvider() *Provider {
+func NewProvider(l *logger.Logger) *Provider {
 	return &Provider{
-		Logger: logger.NewLogger(),
-	}
-}
-
-func (p *Provider) SetLogger(logger *logger.Logger) {
-	if logger != nil {
-		p.Logger = logger
+		Logger: l,
 	}
 }
 
@@ -44,7 +38,7 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
 		ctx := context.Background()
-		appManagerClient, err := appclient.NewAppManagerClient(ctx)
+		appManagerClient, err := appclient.NewAppManagerClient()
 		if err != nil {
 			p.Logger.Error("Connect to app manager failed: %+v", err)
 			return nil, err
@@ -237,4 +231,8 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
 	handler := GetProviderHandler(p.Logger)
 	return handler.DescribeZones(url, credential)
+}
+
+func (p *Provider) DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error) {
+	return "", nil
 }

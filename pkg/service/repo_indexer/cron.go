@@ -19,7 +19,7 @@ type repoInfos map[string]string // repoId & owner
 
 func getRepos() (repoInfos, error) {
 	ctx := client.GetSystemUserContext()
-	repoManagerClient, err := repoClient.NewRepoManagerClient(ctx)
+	repoManagerClient, err := repoClient.NewRepoManagerClient()
 	if err != nil {
 		return nil, err
 	}

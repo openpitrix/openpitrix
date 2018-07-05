@@ -7,6 +7,7 @@ package models
 import "time"
 
 type Subnet struct {
+	Zone        string
 	SubnetId    string
 	Name        string
 	CreateTime  time.Time

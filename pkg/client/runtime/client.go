@@ -5,15 +5,13 @@
 package runtime
 
 import (
-	"context"
-
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-func NewRuntimeManagerClient(ctx context.Context) (pb.RuntimeManagerClient, error) {
-	conn, err := manager.NewClient(ctx, constants.RuntimeManagerHost, constants.RuntimeManagerPort)
+func NewRuntimeManagerClient() (pb.RuntimeManagerClient, error) {
+	conn, err := manager.NewClient(constants.RuntimeManagerHost, constants.RuntimeManagerPort)
 	if err != nil {
 		return nil, err
 	}

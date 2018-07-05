@@ -6,6 +6,7 @@ package cluster
 
 import (
 	"context"
+	"time"
 
 	pb_empty "github.com/golang/protobuf/ptypes/empty"
 
@@ -190,6 +191,17 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
+	var availabilityZone string
+	if runtime.Provider == constants.ProviderAWS {
+		availabilityZone, err = providerInterface.DescribeAvailabilityZoneBySubnetId(runtimeId, clusterWrapper.Cluster.SubnetId)
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
+		}
+	} else {
+		availabilityZone = runtime.Zone
+	}
+
+	clusterWrapper.Cluster.Zone = availabilityZone
 	clusterWrapper.Cluster.RuntimeId = runtimeId
 	clusterWrapper.Cluster.Owner = s.UserId
 	clusterWrapper.Cluster.ClusterId = clusterId
@@ -987,4 +999,70 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 		ClusterId: req.GetClusterId(),
 		JobId:     jobIds,
 	}, nil
+}
+
+type clusterStatistic struct {
+	Date  string `db:"DATE_FORMAT(create_time, '%Y-%m-%d')"`
+	Count uint32 `db:"COUNT(cluster_id)"`
+}
+type runtimeStatistic struct {
+	RuntimeId string `db:"runtime_id"`
+	Count     uint32 `db:"COUNT(cluster_id)"`
+}
+
+func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterStatisticsRequest) (*pb.GetClusterStatisticsResponse, error) {
+	res := &pb.GetClusterStatisticsResponse{
+		LastTwoWeekCreated: make(map[string]uint32),
+		TopTenRuntimes:     make(map[string]uint32),
+	}
+	clusterCount, err := pi.Global().Db.Select(models.ColumnClusterId).From(models.ClusterTableName).Count()
+	if err != nil {
+		logger.Error("Failed to get cluster count, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	res.ClusterCount = clusterCount
+
+	err = pi.Global().Db.
+		Select("COUNT(DISTINCT runtime_id)").
+		From(models.ClusterTableName).
+		LoadOne(&res.RuntimeCount)
+	if err != nil {
+		logger.Error("Failed to get runtime count, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	time2week := time.Now().Add(-14 * 24 * time.Hour)
+	var cs []*clusterStatistic
+	_, err = pi.Global().Db.
+		Select("DATE_FORMAT(create_time, '%Y-%m-%d')", "COUNT(cluster_id)").
+		From(models.ClusterTableName).
+		GroupBy("DATE_FORMAT(create_time, '%Y-%m-%d')").
+		Where(db.Gte(models.ColumnCreateTime, time2week)).
+		Limit(14).Load(&cs)
+
+	if err != nil {
+		logger.Error("Failed to get cluster statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	for _, a := range cs {
+		res.LastTwoWeekCreated[a.Date] = a.Count
+	}
+
+	var rs []*runtimeStatistic
+	_, err = pi.Global().Db.
+		Select("runtime_id", "COUNT(cluster_id)").
+		From(models.ClusterTableName).
+		GroupBy(models.ColumnRuntimeId).
+		OrderDir("COUNT(cluster_id)", false).
+		Limit(10).Load(&rs)
+
+	if err != nil {
+		logger.Error("Failed to get runtime statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	for _, a := range rs {
+		res.TopTenRuntimes[a.RuntimeId] = a.Count
+	}
+
+	return res, nil
 }
