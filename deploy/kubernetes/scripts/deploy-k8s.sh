@@ -23,7 +23,7 @@ usage() {
   exit -1
 }
 
-while getopts n:v:m:hbdms option
+while getopts n:v:hbdms option
 do
   case "${option}"
   in
