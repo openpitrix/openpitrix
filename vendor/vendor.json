@@ -641,6 +641,12 @@
 			"revisionTime": "2017-12-11T02:40:24Z"
 		},
 		{
+			"checksumSHA1": "QdSIO+gp41BqNti0ZDVdXvfDvDo=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "5ed622c449da6d44c3c8329331ff47a9e5844f71",
+			"revisionTime": "2018-06-05T20:25:52Z"
+		},
+		{
 			"checksumSHA1": "oiAXz4eNo8+dtIxI5Rw9hZ0L4h0=",
 			"path": "github.com/gregjones/httpcache",
 			"revision": "787624de3eb7bd915c329cba748687a3b22666a6",
