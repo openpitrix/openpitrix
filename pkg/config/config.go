@@ -42,6 +42,7 @@ type MysqlConfig struct {
 	User     string `default:"root"`
 	Password string `default:"password"`
 	Database string `default:"openpitrix"`
+	Disable  bool   `default:"false"`
 }
 
 type ProfilingConfig struct {

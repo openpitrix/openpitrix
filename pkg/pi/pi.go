@@ -94,6 +94,9 @@ func (p *Pi) watchGlobalCfg() *Pi {
 }
 
 func (p *Pi) openDatabase() *Pi {
+	if p.cfg.Mysql.Disable {
+		return p
+	}
 	dbSession, err := db.OpenDatabase(p.cfg.Mysql)
 	if err != nil {
 		logger.Critical("failed to connect mysql")

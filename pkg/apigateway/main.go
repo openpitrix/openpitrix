@@ -26,13 +26,22 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
-func Serve() {
-	config.LoadConf()
+type Server struct {
+	*pi.Pi
+}
 
+type register struct {
+	f        func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error)
+	endpoint string
+}
+
+func Serve(cfg *config.Config) {
 	version.PrintVersionInfo(logger.Info)
 	logger.Info("App service http://%s:%d", constants.AppManagerHost, constants.AppManagerPort)
 	logger.Info("Runtime service http://%s:%d", constants.RuntimeManagerHost, constants.RuntimeManagerPort)
@@ -44,8 +53,11 @@ func Serve() {
 	logger.Info("Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
 	logger.Info("Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
-	if err := run(); err != nil {
-		logger.Critical("%+v", err)
+	cfg.Mysql.Disable = true
+	s := Server{pi.NewPi(cfg)}
+
+	if err := s.run(); err != nil {
+		logger.Critical("Api gateway run failed: %+v", err)
 		panic(err)
 	}
 }
@@ -100,39 +112,26 @@ func recovery() gin.HandlerFunc {
 	}
 }
 
-func run() error {
+func handleSwagger() http.Handler {
+	ns := vfs.NameSpace{}
+	ns.Bind("/", mapfs.New(staticSwaggerUI.Files), "/", vfs.BindReplace)
+	ns.Bind("/", mapfs.New(staticSpec.Files), "/", vfs.BindBefore)
+	return http.StripPrefix("/swagger-ui", http.FileServer(httpfs.New(ns)))
+}
+
+func (s *Server) run() error {
 	gin.SetMode(gin.ReleaseMode)
 
 	r := gin.New()
 	r.Use(log())
 	r.Use(recovery())
-
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
-	allHandler := gin.WrapH(mainHandler(ctx))
-	r.Any("/v1/*filepath", allHandler)
-	r.Any("/swagger-ui/*filepath", allHandler)
-
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.GET("/panic", func(c *gin.Context) {
-		panic("this is a panic")
-	})
+	r.Any("/swagger-ui/*filepath", gin.WrapH(handleSwagger()))
+	r.Any("/v1/*filepath", gin.WrapH(s.mainHandler()))
 
 	return r.Run(fmt.Sprintf(":%d", constants.ApiGatewayPort))
 }
 
-type register struct {
-	f        func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error)
-	endpoint string
-}
-
-func mainHandler(ctx context.Context) http.Handler {
+func (s *Server) mainHandler() http.Handler {
 	var gwmux = runtime.NewServeMux(runtime.WithMetadata(senderutil.ServeMuxSetSender))
 	var opts = manager.ClientOptions
 	var err error
@@ -162,7 +161,7 @@ func mainHandler(ctx context.Context) http.Handler {
 		pb.RegisterClusterManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort),
 	}} {
-		err = r.f(ctx, gwmux, r.endpoint, opts)
+		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {
 			err = errors.WithStack(err)
 			logger.Error("Dial [%s] failed: %+v", r.endpoint, err)
@@ -170,13 +169,11 @@ func mainHandler(ctx context.Context) http.Handler {
 	}
 
 	mux := http.NewServeMux()
-
-	ns := vfs.NameSpace{}
-	ns.Bind("/", mapfs.New(staticSwaggerUI.Files), "/", vfs.BindReplace)
-	ns.Bind("/", mapfs.New(staticSpec.Files), "/", vfs.BindBefore)
+	tm := topic.NewTopicManager(s.Pi)
+	go tm.Run()
 
 	mux.Handle("/", gwmux)
-	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui", http.FileServer(httpfs.New(ns))))
+	mux.HandleFunc("/v1/io", tm.HandleEvent)
 
 	return mux
 }
