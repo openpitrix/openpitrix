@@ -19,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
+	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
@@ -123,6 +124,8 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
+	go topic.PushEvent(p.Etcd, s.UserId, topic.Create, newRepo)
+
 	err = p.createProviders(newRepo.RepoId, providers)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
@@ -168,6 +171,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 }
 
 func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb.ModifyRepoResponse, error) {
+	s := senderutil.GetSenderFromContext(ctx)
 	repoType := req.GetType().GetValue()
 	providers := req.GetProviders()
 	// TODO: check resource permission
@@ -210,11 +214,13 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		_, err = p.Db.
 			Update(models.RepoTableName).
 			SetMap(attributes).
+			Where(db.Eq(models.ColumnOwner, s.UserId)).
 			Where(db.Eq(models.ColumnRepoId, repoId)).
 			Exec()
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
+		go topic.PushEvent(p.Etcd, s.UserId, topic.Update, topic.NewResource(models.RepoTableName, repoId))
 	}
 
 	if len(providers) > 0 {
@@ -249,15 +255,21 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 
 func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*pb.DeleteReposResponse, error) {
 	// TODO: check resource permission
+	s := senderutil.GetSenderFromContext(ctx)
 	repoIds := req.GetRepoId()
 
 	_, err := p.Db.
 		Update(models.RepoTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
+		Where(db.Eq(models.ColumnOwner, s.UserId)).
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+	}
+
+	for _, repoId := range repoIds {
+		go topic.PushEvent(p.Etcd, s.UserId, topic.Delete, topic.NewResource(models.RepoTableName, repoId))
 	}
 
 	return &pb.DeleteReposResponse{

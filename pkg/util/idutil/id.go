@@ -18,7 +18,7 @@ func init() {
 	sf = sonyflake.NewSonyflake(st)
 }
 
-func newId() uint64 {
+func GetIntId() uint64 {
 	id, err := sf.NextID()
 	if err != nil {
 		panic(err)
@@ -28,7 +28,7 @@ func newId() uint64 {
 
 // format likes: B6BZVN3mOPvx
 func GetUuid(prefix string) string {
-	id := newId()
+	id := GetIntId()
 	hd := hashids.NewData()
 	h, err := hashids.NewWithData(hd)
 	if err != nil {
@@ -46,7 +46,7 @@ const Alphabet36 = "abcdefghijklmnopqrstuvwxyz1234567890"
 
 // format likes: 300m50zn91nwz5
 func GetUuid36(prefix string) string {
-	id := newId()
+	id := GetIntId()
 	hd := hashids.NewData()
 	hd.Alphabet = Alphabet36
 	h, err := hashids.NewWithData(hd)
