@@ -14,7 +14,6 @@ FROM alpine:3.7
 
 COPY --from=builder /go/bin/drone     /usr/local/bin/
 COPY --from=builder /go/bin/frontgate /usr/local/bin/
-COPY --from=builder /go/bin/pilot     /usr/local/bin/
 
 RUN apk add --no-cache docker util-linux
 
