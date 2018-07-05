@@ -19,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/reporeader/indexer"
+	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/atomicutil"
 )
 
@@ -62,6 +63,9 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 		if err != nil {
 			return err
 		}
+
+		go topic.PushEvent(i.Etcd, repoEvent.Owner, topic.Create, repoEvent)
+
 		repoEventId = repoEvent.RepoEventId
 		err = i.queue.Enqueue(repoEventId)
 		return err
@@ -80,17 +84,23 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 	return &repoEvent, nil
 }
 
-func (i *EventController) updateRepoEventStatus(repoEventId, status, result string) error {
+func (i *EventController) updateRepoEventStatus(repoEvent *models.RepoEvent, status, result string) error {
 	_, err := i.Db.
 		Update(models.RepoEventTableName).
 		Set("status", status).
 		Set("result", result).
-		Where(db.Eq("repo_event_id", repoEventId)).
+		Where(db.Eq("repo_event_id", repoEvent.RepoEventId)).
 		Exec()
 	if err != nil {
-		logger.Critical("Failed to set repo event [&s] status to [%s] result to [%s], %+v", repoEventId, status, result, err)
+		logger.Critical(
+			"Failed to set repo event [&s] status to [%s] result to [%s], %+v",
+			repoEvent.RepoEventId, status, result, err)
+		return err
 	}
-	return err
+
+	go topic.PushEvent(i.Etcd, repoEvent.Owner, topic.Update, repoEvent.GetTopicResource().SetStatus(status))
+
+	return nil
 }
 
 func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
@@ -98,7 +108,7 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 	defer func() {
 		if err := recover(); err != nil {
 			logger.Critical("ExecuteEvent [%s] recover with error: %+v", repoEvent.RepoEventId, err)
-			i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusFailed, fmt.Sprintf("%+v", err))
+			i.updateRepoEventStatus(repoEvent, constants.StatusFailed, fmt.Sprintf("%+v", err))
 		}
 	}()
 	logger.Info("Got repo event: %+v", repoEvent)
@@ -129,9 +139,9 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 	}()
 	if err != nil {
 		logger.Critical("Failed to execute repo event: %+v", err)
-		i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusFailed, err.Error())
+		i.updateRepoEventStatus(repoEvent, constants.StatusFailed, err.Error())
 	} else {
-		i.updateRepoEventStatus(repoEvent.RepoEventId, constants.StatusSuccessful, "")
+		i.updateRepoEventStatus(repoEvent, constants.StatusSuccessful, "")
 	}
 }
 

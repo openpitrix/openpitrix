@@ -36,11 +36,11 @@ func TestWatchEvents(t *testing.T) {
 
 	require.NoError(t, err)
 
-	c := WatchEvents(e)
+	c := watchEvents(e)
 
 	time.Sleep(2 * time.Second)
 
-	err = PushEvent(e, testUid, Message{
+	err = pushEvent(e, testUid, Message{
 		Type: Create,
 	})
 	require.NoError(t, err)

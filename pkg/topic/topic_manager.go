@@ -25,17 +25,17 @@ var upgrader = websocket.Upgrader{
 type topicManager struct {
 	*pi.Pi
 	receiverMap map[string]map[*websocket.Conn]bool
-	addReceiver chan Receiver
-	delReceiver chan Receiver
-	msgChan     chan UserMessage
+	addReceiver chan receiver
+	delReceiver chan receiver
+	msgChan     chan userMessage
 }
 
 func NewTopicManager(p *pi.Pi) *topicManager {
 	var tm topicManager
 	tm.Pi = p
-	tm.msgChan = WatchEvents(tm.Pi.Etcd)
-	tm.addReceiver = make(chan Receiver, 255)
-	tm.delReceiver = make(chan Receiver, 255)
+	tm.msgChan = watchEvents(tm.Pi.Etcd)
+	tm.addReceiver = make(chan receiver, 255)
+	tm.delReceiver = make(chan receiver, 255)
 	tm.receiverMap = make(map[string]map[*websocket.Conn]bool)
 	return &tm
 }
@@ -57,7 +57,7 @@ func (tm *topicManager) Run() {
 	//			msg := Message{
 	//				Type: Create,
 	//			}
-	//			PushEvent(tm.Pi.Etcd, userId, msg)
+	//			pushEvent(tm.Pi.Etcd, userId, msg)
 	//			logger.Debug("Got user [%s], send msg: %+v", userId, msg)
 	//		}
 	//	}
@@ -86,7 +86,7 @@ func (tm *topicManager) Run() {
 	}
 }
 
-func writeMessage(conn *websocket.Conn, userMsg UserMessage) {
+func writeMessage(conn *websocket.Conn, userMsg userMessage) {
 	err := conn.WriteJSON(userMsg.Message)
 	if err != nil {
 		logger.Error("Failed to send message [%+v] to [%+v], error: %+v", userMsg, conn, err)
@@ -106,7 +106,7 @@ func (tm *topicManager) HandleEvent(w http.ResponseWriter, r *http.Request) {
 		logger.Info("Upgrade websocket request failed: %+v", err)
 		return
 	}
-	receiver := Receiver{UserId: userId, Conn: c}
+	receiver := receiver{UserId: userId, Conn: c}
 	tm.addReceiver <- receiver
 	for {
 		_, _, err := receiver.Conn.ReadMessage()

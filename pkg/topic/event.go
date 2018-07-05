@@ -33,7 +33,7 @@ func parseTopic(topic string) (uid string, eventId uint64) {
 	return
 }
 
-func PushEvent(e *etcd.Etcd, uid string, msg Message) error {
+func pushEvent(e *etcd.Etcd, uid string, msg Message) error {
 	var err error
 	var ctx = context.Background()
 	var eventId = idutil.GetIntId()
@@ -58,8 +58,8 @@ func PushEvent(e *etcd.Etcd, uid string, msg Message) error {
 	return nil
 }
 
-func WatchEvents(e *etcd.Etcd) chan UserMessage {
-	var c = make(chan UserMessage, 255)
+func watchEvents(e *etcd.Etcd) chan userMessage {
+	var c = make(chan userMessage, 255)
 	go func() {
 		logger.Debug("Start watch events")
 		watchRes := e.Watch(context.Background(), topicPrefix+"/", clientv3.WithPrefix())
@@ -75,7 +75,7 @@ func WatchEvents(e *etcd.Etcd) chan UserMessage {
 							userId, eventId, string(ev.Kv.Value), err)
 					} else {
 						logger.Debug("Got event [%s] [%d] [%s]", userId, eventId, string(ev.Kv.Value))
-						c <- UserMessage{
+						c <- userMessage{
 							UserId:  userId,
 							Message: message,
 						}
@@ -85,4 +85,12 @@ func WatchEvents(e *etcd.Etcd) chan UserMessage {
 		}
 	}()
 	return c
+}
+
+func PushEvent(e *etcd.Etcd, uid string, t messageType, model model) error {
+	msg := Message{
+		Type:     t,
+		Resource: model.GetTopicResource(),
+	}
+	return pushEvent(e, uid, msg)
 }

@@ -6,16 +6,21 @@ package topic
 
 import "github.com/gorilla/websocket"
 
-type UserMessage struct {
+type model interface {
+	GetTopicResource() Resource
+}
+
+type userMessage struct {
 	UserId  string
 	Message Message
 }
 
 type Message struct {
 	// Type: optional create/delete/update
-	Type        MessageType `json:"type,omitempty"`
-	ResourceSet []Resource  `json:"resource_set,omitempty"`
+	Type     messageType `json:"type,omitempty"`
+	Resource Resource    `json:"resource_set,omitempty"`
 }
+
 type Resource struct {
 	ResourceType     string  `json:"rtype,omitempty"`
 	ResourceId       string  `json:"rid,omitempty"`
@@ -23,17 +28,38 @@ type Resource struct {
 	TransitionStatus *string `json:"tstatus,omitempty"`
 }
 
-type Receiver struct {
+func NewResource(rtype, rid string) Resource {
+	return Resource{
+		ResourceType:     rtype,
+		ResourceId:       rid,
+		Status:           nil,
+		TransitionStatus: nil,
+	}
+}
+
+func (r Resource) SetStatus(status string) Resource {
+	r.Status = &status
+	return r
+}
+
+func (r Resource) SetTransitionStatus(transitionStatus string) Resource {
+	r.TransitionStatus = &transitionStatus
+	return r
+}
+
+func (r Resource) GetTopicResource() Resource { return r }
+
+type receiver struct {
 	UserId string
 	Conn   *websocket.Conn
 }
 
-type MessageType string
+type messageType string
 
 const (
-	Create MessageType = "create"
-	Update MessageType = "update"
-	Delete MessageType = "delete"
+	Create messageType = "create"
+	Update messageType = "update"
+	Delete messageType = "delete"
 )
 
 const topicPrefix = "topic"
