@@ -6,8 +6,10 @@ package runtime
 
 import (
 	"context"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -111,6 +113,55 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 	return res, nil
 }
 
+func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRuntimesRequest) (*pb.DescribeRuntimeDetailsResponse, error) {
+	// TODO: refactor validate req
+	err := validateDescribeRuntimesRequest(req)
+	if err != nil {
+		if gerr.IsGRPCError(err) {
+			return nil, err
+		} else {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+		}
+	}
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
+	selectorMap, err := SelectorStringToMap(req.Label.GetValue())
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
+	}
+
+	var runtimes []*models.Runtime
+	var count uint32
+	query := p.Db.
+		Select(models.RuntimeColumnsWithTablePrefix...).
+		From(models.RuntimeTableName).
+		Offset(offset).
+		Limit(limit).
+		Where(manager.BuildFilterConditionsWithPrefix(req, models.RuntimeTableName))
+
+	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, RuntimeIdColumn,
+		models.ColumnLabelKey, models.ColumnLabelValue, selectorMap)
+	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	_, err = query.Load(&runtimes)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	count, err = query.Count()
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	pbRuntimeDetails, err := p.formatRuntimeDetailSet(runtimes)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	res := &pb.DescribeRuntimeDetailsResponse{
+		RuntimeDetailSet: pbRuntimeDetails,
+		TotalCount:       count,
+	}
+	return res, nil
+}
+
 func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest) (*pb.ModifyRuntimeResponse, error) {
 	// validate req
 	err := validateModifyRuntimeRequest(req)
@@ -193,4 +244,67 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 		Provider: req.Provider,
 		Zone:     zones,
 	}, nil
+}
+
+type runtimeStatistic struct {
+	Date  string `db:"DATE_FORMAT(create_time, '%Y-%m-%d')"`
+	Count uint32 `db:"COUNT(runtime_id)"`
+}
+type providerStatistic struct {
+	Provider string `db:"provider"`
+	Count    uint32 `db:"COUNT(runtime_id)"`
+}
+
+func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeStatisticsRequest) (*pb.GetRuntimeStatisticsResponse, error) {
+	res := &pb.GetRuntimeStatisticsResponse{
+		LastTwoWeekCreated: make(map[string]uint32),
+		TopTenProviders:    make(map[string]uint32),
+	}
+	runtimeCount, err := p.Db.Select(models.ColumnRuntimeId).From(models.RuntimeTableName).Count()
+	if err != nil {
+		logger.Error("Failed to get runtime count, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	res.RuntimeCount = runtimeCount
+
+	err = p.Db.Select("COUNT(DISTINCT provider)").From(models.RuntimeTableName).LoadOne(&res.ProviderCount)
+	if err != nil {
+		logger.Error("Failed to get provider count, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	time2week := time.Now().Add(-14 * 24 * time.Hour)
+	var rs []*runtimeStatistic
+	_, err = p.Db.
+		Select("DATE_FORMAT(create_time, '%Y-%m-%d')", "COUNT(runtime_id)").
+		From(models.RuntimeTableName).
+		GroupBy("DATE_FORMAT(create_time, '%Y-%m-%d')").
+		Where(db.Gte(models.ColumnCreateTime, time2week)).
+		Limit(14).Load(&rs)
+
+	if err != nil {
+		logger.Error("Failed to get runtime statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	for _, a := range rs {
+		res.LastTwoWeekCreated[a.Date] = a.Count
+	}
+
+	var ps []*providerStatistic
+	_, err = p.Db.
+		Select("provider", "COUNT(runtime_id)").
+		From(models.RuntimeTableName).
+		GroupBy(models.ColumnProvider).
+		OrderDir("COUNT(runtime_id)", false).
+		Limit(10).Load(&ps)
+
+	if err != nil {
+		logger.Error("Failed to get provider statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	for _, a := range ps {
+		res.TopTenProviders[a.Provider] = a.Count
+	}
+
+	return res, nil
 }

@@ -21,8 +21,8 @@ type Client struct {
 	pb.ClusterManagerClient
 }
 
-func NewClient(ctx context.Context) (*Client, error) {
-	conn, err := manager.NewClient(ctx, constants.ClusterManagerHost, constants.ClusterManagerPort)
+func NewClient() (*Client, error) {
+	conn, err := manager.NewClient(constants.ClusterManagerHost, constants.ClusterManagerPort)
 	if err != nil {
 		return nil, err
 	}

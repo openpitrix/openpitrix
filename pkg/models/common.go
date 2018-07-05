@@ -13,73 +13,84 @@ import (
 // columns that can be search through sql '=' operator
 var IndexedColumns = map[string][]string{
 	AppTableName: {
-		"app_id", "name", "repo_id", "description", "status",
-		"home", "icon", "screenshots", "maintainers", "sources",
-		"readme", "owner", "chart_name",
+		ColumnAppId, ColumnName, ColumnRepoId, ColumnDescription, ColumnStatus,
+		ColumnHome, ColumnIcon, ColumnScreenshots, ColumnMaintainers, ColumnSources,
+		ColumnReadme, ColumnOwner, ColumnChartName,
 	},
 	AppVersionTableName: {
-		"version_id", "app_id", "name", "owner", "description",
-		"package_name", "status",
+		ColumnVersionId, ColumnAppId, ColumnName, ColumnOwner, ColumnDescription,
+		ColumnPackageName, ColumnStatus,
 	},
 	JobTableName: {
-		"job_id", "cluster_id", "app_id", "version_id", "executor", "provider", "status", "owner",
+		ColumnJobId, ColumnClusterId, ColumnAppId, ColumnVersionId,
+		ColumnExecutor, ColumnProvider, ColumnStatus, ColumnOwner,
 	},
 	TaskTableName: {
-		"job_id", "task_id", "executor", "status", "owner",
+		ColumnJobId, ColumnTaskId, ColumnExecutor, ColumnStatus, ColumnOwner,
 	},
 	RepoTableName: {
-		"repo_id", "name", "type", "visibility", "status",
+		ColumnRepoId, ColumnName, ColumnType, ColumnVisibility, ColumnStatus,
 	},
 	RuntimeTableName: {
-		"runtime_id", "provider", "zone", "status", "owner",
+		ColumnRuntimeId, ColumnProvider, ColumnZone, ColumnStatus, ColumnOwner,
 	},
 	RepoLabelTableName: {
-		"repo_id", "repo_label_id", "status",
+		ColumnRepoId, ColumnRepoLabelId, ColumnStatus,
 	},
 	RepoSelectorTableName: {
-		"repo_id", "repo_selector_id", "status",
+		ColumnRepoId, ColumnRepoSelectorId, ColumnStatus,
 	},
 	RepoEventTableName: {
-		"repo_event_id", "repo_id", "status",
+		ColumnRepoEventId, ColumnRepoId, ColumnStatus,
 	},
 	ClusterTableName: {
-		"cluster_id", "app_id", "version_id", "status", "runtime_id", "frontgate_id", "owner",
+		ColumnClusterId, ColumnAppId, ColumnVersionId, ColumnStatus,
+		ColumnRuntimeId, ColumnFrontgateId, ColumnOwner,
 	},
 	ClusterNodeTableName: {
-		"cluster_id", "node_id", "status", "owner",
+		ColumnClusterId, ColumnNodeId, ColumnStatus, ColumnOwner,
 	},
 	CategoryTableName: {
-		"category_id", "status", "locale", "owner", "name",
+		ColumnCategoryId, ColumnStatus, ColumnLocale, ColumnOwner, ColumnName,
 	},
 }
 
 var SearchWordColumnTable = []string{
 	RuntimeTableName,
-	AppTableName, AppVersionTableName,
+	AppTableName,
+	AppVersionTableName,
+	RepoTableName,
+	JobTableName,
+	TaskTableName,
+	ClusterTableName,
+	ClusterNodeTableName,
 }
 
 // columns that can be search through sql 'like' operator
 var SearchColumns = map[string][]string{
 	AppTableName: {
-		"app_id", "name", "repo_id", "owner", "chart_name", "keywords",
+		ColumnAppId, ColumnName, ColumnRepoId, ColumnOwner, ColumnChartName, ColumnKeywords,
 	},
 	AppVersionTableName: {
-		"version_id", "app_id", "name", "description", "owner", "package_name",
+		ColumnVersionId, ColumnAppId, ColumnName, ColumnDescription, ColumnOwner, ColumnPackageName,
 	},
 	JobTableName: {
-		"executor", "provider",
+		ColumnJobId, ColumnClusterId, ColumnOwner, ColumnJobAction, ColumnExecutor, ColumnProvider, ColumnExecutor, ColumnProvider,
 	},
 	TaskTableName: {
-		"job_id", "task_id", "status",
+		ColumnJobId, ColumnTaskId, ColumnTaskAction, ColumnOwner, ColumnNodeId, ColumnTarget,
 	},
 	RuntimeTableName: {
-		"runtime_id", "name",
+		ColumnRuntimeId, ColumnName, ColumnOwner, ColumnProvider, ColumnZone,
 	},
 	ClusterTableName: {
-		"name", "description",
+		ColumnClusterId, ColumnName, ColumnOwner, ColumnAppId, ColumnVersionId, ColumnRuntimeId,
 	},
 	ClusterNodeTableName: {
-		"name",
+		ColumnNodeId, ColumnClusterId, ColumnName, ColumnInstanceId, ColumnVolumeId, ColumnPrivateIp, ColumnRole, ColumnOwner,
+	},
+	RepoTableName: {
+		ColumnName, ColumnDescription,
 	},
 }
 

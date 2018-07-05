@@ -249,6 +249,34 @@ func (a *Client) DescribeSubnets(params *DescribeSubnetsParams) (*DescribeSubnet
 }
 
 /*
+GetClusterStatistics gets cluster statistics
+*/
+func (a *Client) GetClusterStatistics(params *GetClusterStatisticsParams) (*GetClusterStatisticsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetClusterStatisticsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetClusterStatistics",
+		Method:             "GET",
+		PathPattern:        "/v1/clusters/statistics",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetClusterStatisticsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetClusterStatisticsOK), nil
+
+}
+
+/*
 RecoverClusters recovers clusters
 */
 func (a *Client) RecoverClusters(params *RecoverClustersParams) (*RecoverClustersOK, error) {

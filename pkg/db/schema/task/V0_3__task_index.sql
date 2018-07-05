@@ -1,0 +1,1 @@
+CREATE INDEX cluster_executor_index ON task (executor ASC);

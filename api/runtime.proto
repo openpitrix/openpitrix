@@ -29,12 +29,16 @@ message Runtime {
 	google.protobuf.StringValue provider = 4;
 	google.protobuf.StringValue runtime_url = 5;
 	google.protobuf.StringValue zone = 6;
-	google.protobuf.StringValue runtime_credential = 7;
-	repeated RuntimeLabel labels = 8;
-	google.protobuf.StringValue owner = 9;
-	google.protobuf.StringValue status = 10;
-	google.protobuf.Timestamp create_time = 11;
-	google.protobuf.Timestamp status_time = 12;
+	repeated RuntimeLabel labels = 7;
+	google.protobuf.StringValue owner = 8;
+	google.protobuf.StringValue status = 9;
+	google.protobuf.Timestamp create_time = 10;
+	google.protobuf.Timestamp status_time = 11;
+}
+
+message RuntimeDetail {
+	Runtime runtime = 1;
+	google.protobuf.StringValue runtime_credential = 2;
 }
 
 
@@ -65,6 +69,11 @@ message DescribeRuntimesRequest {
 message DescribeRuntimesResponse {
 	uint32 total_count = 1;
 	repeated Runtime runtime_set = 2;
+}
+
+message DescribeRuntimeDetailsResponse {
+	uint32 total_count = 1;
+	repeated RuntimeDetail runtime_detail_set = 2;
 }
 
 message ModifyRuntimeRequest {
@@ -98,6 +107,14 @@ message DescribeRuntimeProviderZonesResponse {
 }
 
 
+message GetRuntimeStatisticsRequest {}
+
+message GetRuntimeStatisticsResponse {
+	map<string, uint32> last_two_week_created = 1; // runtime create time range -> runtime count, max length is 14
+	map<string, uint32> top_ten_providers = 2; // provider id -> runtime count, max length is 10
+	uint32 runtime_count = 3;
+	uint32 provider_count = 4;
+}
 
 service RuntimeManager {
 	rpc CreateRuntime (CreateRuntimeRequest) returns (CreateRuntimeResponse) {
@@ -110,6 +127,7 @@ service RuntimeManager {
 		};
 	}
 
+	rpc DescribeRuntimeDetails (DescribeRuntimesRequest) returns (DescribeRuntimeDetailsResponse);
 	rpc DescribeRuntimes (DescribeRuntimesRequest) returns (DescribeRuntimesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "describe runtime"
@@ -149,4 +167,12 @@ service RuntimeManager {
 	}
 
 
+	rpc GetRuntimeStatistics (GetRuntimeStatisticsRequest) returns (GetRuntimeStatisticsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "get runtime statistics"
+		};
+		option (google.api.http) = {
+			get: "/v1/runtimes/statistics"
+		};
+	}
 }

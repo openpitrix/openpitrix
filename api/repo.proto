@@ -98,6 +98,9 @@ message DescribeReposRequest {
 	uint32 limit = 9; // NOTE: uint64 marshal to json will convert to string
 	uint32 offset = 10;
 	repeated string category_id = 11;
+	google.protobuf.StringValue search_word = 12;
+	google.protobuf.StringValue sort_key = 13;
+	google.protobuf.BoolValue reverse = 14;
 }
 
 message DescribeReposResponse {

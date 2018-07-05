@@ -22,7 +22,6 @@ const InitialGlobalConfig = `repo:
   #
   cron: "0 30 4 * * *"
 cluster:
-  image_url: https://openpitrix.pek3a.qingstor.com/image/ubuntu.tar.gz
   plugins:
     - qingcloud
     - kubernetes
@@ -34,4 +33,5 @@ runtime:
     api_server: api.qingcloud.com
     zone: .*
     image_id: xenial4x64a
+    image_url: https://openpitrix.pek3a.qingstor.com/image/ubuntu.tar.gz
 `

@@ -146,5 +146,12 @@ func TestApp(t *testing.T) {
 		t.Fatalf("failed to delete app, got app status [%s]", app.Status)
 	}
 
+	getStatisticsResp, err := client.AppManager.GetAppStatistics(nil)
+	require.NoError(t, err)
+	require.NotEmpty(t, getStatisticsResp.Payload.LastTwoWeekCreated)
+	require.NotEmpty(t, getStatisticsResp.Payload.TopTenRepos)
+	require.NotEmpty(t, getStatisticsResp.Payload.AppCount)
+	require.NotEmpty(t, getStatisticsResp.Payload.RepoCount)
+
 	t.Log("test app finish, all test is ok")
 }

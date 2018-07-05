@@ -4,6 +4,7 @@
 
 build:
 	cd .. && docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .
+	docker images openpitrix/openpitrix:metadata
 
 pull:
 	docker pull openpitrix/openpitrix:metadata

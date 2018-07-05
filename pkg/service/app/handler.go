@@ -340,3 +340,66 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 		VersionId: req.GetVersionId(),
 	}, nil
 }
+
+type appStatistic struct {
+	Date  string `db:"DATE_FORMAT(create_time, '%Y-%m-%d')"`
+	Count uint32 `db:"COUNT(app_id)"`
+}
+type repoStatistic struct {
+	RepoId string `db:"repo_id"`
+	Count  uint32 `db:"COUNT(app_id)"`
+}
+
+func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsRequest) (*pb.GetAppStatisticsResponse, error) {
+	res := &pb.GetAppStatisticsResponse{
+		LastTwoWeekCreated: make(map[string]uint32),
+		TopTenRepos:        make(map[string]uint32),
+	}
+	appCount, err := p.Db.Select(models.ColumnAppId).From(models.AppTableName).Count()
+	if err != nil {
+		logger.Error("Failed to get app count, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	res.AppCount = appCount
+
+	err = p.Db.Select("COUNT(DISTINCT repo_id)").From(models.AppTableName).LoadOne(&res.RepoCount)
+	if err != nil {
+		logger.Error("Failed to get repo count, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	time2week := time.Now().Add(-14 * 24 * time.Hour)
+	var as []*appStatistic
+	_, err = p.Db.
+		Select("DATE_FORMAT(create_time, '%Y-%m-%d')", "COUNT(app_id)").
+		From(models.AppTableName).
+		GroupBy("DATE_FORMAT(create_time, '%Y-%m-%d')").
+		Where(db.Gte(models.ColumnCreateTime, time2week)).
+		Limit(14).Load(&as)
+
+	if err != nil {
+		logger.Error("Failed to get app statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	for _, a := range as {
+		res.LastTwoWeekCreated[a.Date] = a.Count
+	}
+
+	var rs []*repoStatistic
+	_, err = p.Db.
+		Select("repo_id", "COUNT(app_id)").
+		From(models.AppTableName).
+		GroupBy(models.ColumnRepoId).
+		OrderDir("COUNT(app_id)", false).
+		Limit(10).Load(&rs)
+
+	if err != nil {
+		logger.Error("Failed to get repo statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	for _, a := range rs {
+		res.TopTenRepos[a.RepoId] = a.Count
+	}
+
+	return res, nil
+}

@@ -591,7 +591,7 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	ctx := client.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		f.Logger.Error("New ssh key gen task layer failed: %+v", err)
 		return nil
@@ -701,7 +701,7 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 	}
 }
 
-func (f *Frame) getUserDataExec(filename, contents string) string {
+func (f *Frame) getUserDataExec(filename, contents, imageUrl string) string {
 	if pi.Global() == nil {
 		f.Logger.Error("Pi global should be init.")
 		return ""
@@ -712,7 +712,7 @@ mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
 echo '%s' >> %s
 for i in $(seq 1 100); do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 3; done
 /opt/openpitrix/image/install_service.sh %s
-`, contents, f.getConfFile(), pi.Global().GlobalConfig().Cluster.ImageUrl, filename)
+`, contents, f.getConfFile(), imageUrl, filename)
 	return base64.StdEncoding.EncodeToString([]byte(exec))
 }
 
@@ -789,10 +789,10 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 	apiServer := f.Runtime.RuntimeUrl
 	zone := f.Runtime.Zone
 	globalPi := pi.Global()
-	imageId := ""
+	imageId, imageUrl := "", ""
 	var err error
 	if globalPi != nil {
-		imageId, err = globalPi.GlobalConfig().GetRuntimeImageId(apiServer, zone)
+		imageId, imageUrl, err = globalPi.GlobalConfig().GetRuntimeImageIdAndUrl(apiServer, zone)
 		if err != nil {
 			return nil
 		}
@@ -832,9 +832,9 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 		}
 		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
 			frontgate := &Frontgate{f}
-			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId))
+			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), imageUrl)
 		} else {
-			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId))
+			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), imageUrl)
 		}
 		directive := jsonutil.ToString(instance)
 		if err != nil {

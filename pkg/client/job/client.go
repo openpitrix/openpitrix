@@ -5,8 +5,6 @@
 package job
 
 import (
-	"context"
-
 	"openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -19,8 +17,8 @@ type Client struct {
 	pb.JobManagerClient
 }
 
-func NewClient(ctx context.Context) (*Client, error) {
-	conn, err := manager.NewClient(ctx, constants.JobManagerHost, constants.JobManagerPort)
+func NewClient() (*Client, error) {
+	conn, err := manager.NewClient(constants.JobManagerHost, constants.JobManagerPort)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +39,7 @@ func SendJob(job *models.Job) (string, error) {
 	}
 
 	ctx := client.GetSystemUserContext()
-	jobClient, err := NewClient(ctx)
+	jobClient, err := NewClient()
 	if err != nil {
 		logger.Error("Connect to job service failed: %+v", err)
 		return "", err

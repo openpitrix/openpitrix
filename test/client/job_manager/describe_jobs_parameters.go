@@ -83,6 +83,8 @@ type DescribeJobsParams struct {
 	Offset *int64
 	/*Provider*/
 	Provider *string
+	/*SearchWord*/
+	SearchWord *string
 	/*Status*/
 	Status []string
 	/*VersionID*/
@@ -201,6 +203,17 @@ func (o *DescribeJobsParams) WithProvider(provider *string) *DescribeJobsParams 
 // SetProvider adds the provider to the describe jobs params
 func (o *DescribeJobsParams) SetProvider(provider *string) {
 	o.Provider = provider
+}
+
+// WithSearchWord adds the searchWord to the describe jobs params
+func (o *DescribeJobsParams) WithSearchWord(searchWord *string) *DescribeJobsParams {
+	o.SetSearchWord(searchWord)
+	return o
+}
+
+// SetSearchWord adds the searchWord to the describe jobs params
+func (o *DescribeJobsParams) SetSearchWord(searchWord *string) {
+	o.SearchWord = searchWord
 }
 
 // WithStatus adds the status to the describe jobs params
@@ -331,6 +344,22 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		qProvider := qrProvider
 		if qProvider != "" {
 			if err := r.SetQueryParam("provider", qProvider); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SearchWord != nil {
+
+		// query param search_word
+		var qrSearchWord string
+		if o.SearchWord != nil {
+			qrSearchWord = *o.SearchWord
+		}
+		qSearchWord := qrSearchWord
+		if qSearchWord != "" {
+			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
 				return err
 			}
 		}

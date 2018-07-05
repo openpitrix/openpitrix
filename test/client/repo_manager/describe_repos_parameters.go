@@ -77,8 +77,14 @@ type DescribeReposParams struct {
 	Provider []string
 	/*RepoID*/
 	RepoID []string
+	/*Reverse*/
+	Reverse *bool
+	/*SearchWord*/
+	SearchWord *string
 	/*Selector*/
 	Selector *string
+	/*SortKey*/
+	SortKey *string
 	/*Status*/
 	Status []string
 	/*Type*/
@@ -201,6 +207,28 @@ func (o *DescribeReposParams) SetRepoID(repoID []string) {
 	o.RepoID = repoID
 }
 
+// WithReverse adds the reverse to the describe repos params
+func (o *DescribeReposParams) WithReverse(reverse *bool) *DescribeReposParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe repos params
+func (o *DescribeReposParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
+// WithSearchWord adds the searchWord to the describe repos params
+func (o *DescribeReposParams) WithSearchWord(searchWord *string) *DescribeReposParams {
+	o.SetSearchWord(searchWord)
+	return o
+}
+
+// SetSearchWord adds the searchWord to the describe repos params
+func (o *DescribeReposParams) SetSearchWord(searchWord *string) {
+	o.SearchWord = searchWord
+}
+
 // WithSelector adds the selector to the describe repos params
 func (o *DescribeReposParams) WithSelector(selector *string) *DescribeReposParams {
 	o.SetSelector(selector)
@@ -210,6 +238,17 @@ func (o *DescribeReposParams) WithSelector(selector *string) *DescribeReposParam
 // SetSelector adds the selector to the describe repos params
 func (o *DescribeReposParams) SetSelector(selector *string) {
 	o.Selector = selector
+}
+
+// WithSortKey adds the sortKey to the describe repos params
+func (o *DescribeReposParams) WithSortKey(sortKey *string) *DescribeReposParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe repos params
+func (o *DescribeReposParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WithStatus adds the status to the describe repos params
@@ -333,6 +372,38 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SearchWord != nil {
+
+		// query param search_word
+		var qrSearchWord string
+		if o.SearchWord != nil {
+			qrSearchWord = *o.SearchWord
+		}
+		qSearchWord := qrSearchWord
+		if qSearchWord != "" {
+			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Selector != nil {
 
 		// query param selector
@@ -343,6 +414,22 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qSelector := qrSelector
 		if qSelector != "" {
 			if err := r.SetQueryParam("selector", qSelector); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}

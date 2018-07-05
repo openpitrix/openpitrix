@@ -26,26 +26,26 @@ func NewRuntime(runtimeId string) (*Runtime, error) {
 	if err != nil {
 		return nil, err
 	}
-	provider := runtime.GetProvider().GetValue()
-	zone := runtime.GetZone().GetValue()
+	provider := runtime.GetRuntime().GetProvider().GetValue()
+	zone := runtime.GetRuntime().GetZone().GetValue()
 	result := &Runtime{
 		Credential: runtime.GetRuntimeCredential().GetValue(),
 	}
 	result.RuntimeId = runtimeId
 	result.Provider = provider
 	result.Zone = zone
-	result.RuntimeUrl = runtime.GetRuntimeUrl().GetValue()
+	result.RuntimeUrl = runtime.GetRuntime().GetRuntimeUrl().GetValue()
 	return result, nil
 }
 
-func getRuntime(runtimeId string) (*pb.Runtime, error) {
+func getRuntime(runtimeId string) (*pb.RuntimeDetail, error) {
 	runtimeIds := []string{runtimeId}
 	ctx := clientutil.GetSystemUserContext()
-	client, err := NewRuntimeManagerClient(ctx)
+	client, err := NewRuntimeManagerClient()
 	if err != nil {
 		return nil, err
 	}
-	response, err := client.DescribeRuntimes(ctx, &pb.DescribeRuntimesRequest{
+	response, err := client.DescribeRuntimeDetails(ctx, &pb.DescribeRuntimesRequest{
 		RuntimeId: runtimeIds,
 	})
 	if err != nil {
@@ -61,5 +61,5 @@ func getRuntime(runtimeId string) (*pb.Runtime, error) {
 			strings.Join(runtimeIds, ","), err)
 	}
 
-	return response.RuntimeSet[0], nil
+	return response.RuntimeDetailSet[0], nil
 }

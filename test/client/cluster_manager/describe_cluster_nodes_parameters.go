@@ -77,6 +77,8 @@ type DescribeClusterNodesParams struct {
 
 	*/
 	Offset *int64
+	/*SearchWord*/
+	SearchWord *string
 	/*Status*/
 	Status []string
 
@@ -162,6 +164,17 @@ func (o *DescribeClusterNodesParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithSearchWord adds the searchWord to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) WithSearchWord(searchWord *string) *DescribeClusterNodesParams {
+	o.SetSearchWord(searchWord)
+	return o
+}
+
+// SetSearchWord adds the searchWord to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) SetSearchWord(searchWord *string) {
+	o.SearchWord = searchWord
+}
+
 // WithStatus adds the status to the describe cluster nodes params
 func (o *DescribeClusterNodesParams) WithStatus(status []string) *DescribeClusterNodesParams {
 	o.SetStatus(status)
@@ -231,6 +244,22 @@ func (o *DescribeClusterNodesParams) WriteToRequest(r runtime.ClientRequest, reg
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SearchWord != nil {
+
+		// query param search_word
+		var qrSearchWord string
+		if o.SearchWord != nil {
+			qrSearchWord = *o.SearchWord
+		}
+		qSearchWord := qrSearchWord
+		if qSearchWord != "" {
+			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
 				return err
 			}
 		}

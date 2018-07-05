@@ -19,26 +19,28 @@ func NewCategoryId() string {
 }
 
 type Category struct {
-	CategoryId string
-	Name       string
-	Locale     string
-	Owner      string
-	CreateTime time.Time
-	UpdateTime *time.Time
+	CategoryId  string
+	Name        string
+	Description string
+	Locale      string
+	Owner       string
+	CreateTime  time.Time
+	UpdateTime  *time.Time
 }
 
 var CategoryColumns = GetColumnsFromStruct(&Category{})
 
-func NewCategory(name, locale, owner string) *Category {
+func NewCategory(name, locale, description, owner string) *Category {
 	if locale == "" {
 		locale = "{}"
 	}
 	return &Category{
-		CategoryId: NewCategoryId(),
-		Name:       name,
-		Locale:     locale,
-		Owner:      owner,
-		CreateTime: time.Now(),
+		CategoryId:  NewCategoryId(),
+		Name:        name,
+		Locale:      locale,
+		Description: description,
+		Owner:       owner,
+		CreateTime:  time.Now(),
 	}
 }
 
@@ -48,6 +50,7 @@ func CategoryToPb(category *Category) *pb.Category {
 	pbCategory.Name = pbutil.ToProtoString(category.Name)
 	pbCategory.Locale = pbutil.ToProtoString(category.Locale)
 	pbCategory.Owner = pbutil.ToProtoString(category.Owner)
+	pbCategory.Description = pbutil.ToProtoString(category.Description)
 	pbCategory.CreateTime = pbutil.ToProtoTimestamp(category.CreateTime)
 	if category.UpdateTime != nil {
 		pbCategory.UpdateTime = pbutil.ToProtoTimestamp(*category.UpdateTime)

@@ -284,6 +284,7 @@ message DescribeClustersRequest {
 	uint32 limit = 8;
 	// default is 0
 	uint32 offset = 9;
+	google.protobuf.StringValue search_word = 10;
 }
 message DescribeClustersResponse {
 	uint32 total_count = 1;
@@ -298,6 +299,7 @@ message DescribeClusterNodesRequest {
 	uint32 limit = 4;
 	// default is 0
 	uint32 offset = 5;
+	google.protobuf.StringValue search_word = 6;
 }
 message DescribeClusterNodesResponse {
 	uint32 total_count = 1;
@@ -342,6 +344,16 @@ message CeaseClustersRequest {
 message CeaseClustersResponse {
 	repeated string cluster_id = 1;
 	repeated string job_id = 2;
+}
+
+
+message GetClusterStatisticsRequest {}
+
+message GetClusterStatisticsResponse {
+	map<string, uint32> last_two_week_created = 1; // cluster create time range -> cluster count, max length is 14
+	map<string, uint32> top_ten_runtimes = 2; // runtime id -> cluster count, max length is 10
+	uint32 cluster_count = 3;
+	uint32 runtime_count = 4;
 }
 
 service ClusterManager {
@@ -479,6 +491,14 @@ service ClusterManager {
 		option (google.api.http) = {
 			post: "/v1/clusters/cease"
 			body: "*"
+		};
+	}
+	rpc GetClusterStatistics (GetClusterStatisticsRequest) returns (GetClusterStatisticsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "get cluster statistics"
+		};
+		option (google.api.http) = {
+			get: "/v1/clusters/statistics"
 		};
 	}
 }

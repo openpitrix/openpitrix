@@ -42,7 +42,7 @@ func (p *Processor) Pre() error {
 	}
 	var err error
 	ctx := client.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		p.TLogger.Error("Executing task [%s] post processor failed: %+v", p.Task.TaskId, err)
 		return err
@@ -341,7 +341,7 @@ func (t *Processor) Post() error {
 	t.TLogger.Debug("Post task [%s] directive: %s", t.Task.TaskId, t.Task.Directive)
 	var err error
 	ctx := client.GetSystemUserContext()
-	clusterClient, err := clusterclient.NewClient(ctx)
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		t.TLogger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
 		return err

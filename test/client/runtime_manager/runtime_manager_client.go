@@ -137,6 +137,34 @@ func (a *Client) DescribeRuntimes(params *DescribeRuntimesParams) (*DescribeRunt
 }
 
 /*
+GetRuntimeStatistics gets runtime statistics
+*/
+func (a *Client) GetRuntimeStatistics(params *GetRuntimeStatisticsParams) (*GetRuntimeStatisticsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetRuntimeStatisticsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetRuntimeStatistics",
+		Method:             "GET",
+		PathPattern:        "/v1/runtimes/statistics",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetRuntimeStatisticsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetRuntimeStatisticsOK), nil
+
+}
+
+/*
 ModifyRuntime modifies runtime
 */
 func (a *Client) ModifyRuntime(params *ModifyRuntimeParams) (*ModifyRuntimeOK, error) {

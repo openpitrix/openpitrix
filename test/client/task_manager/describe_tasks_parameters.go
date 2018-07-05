@@ -77,6 +77,8 @@ type DescribeTasksParams struct {
 
 	*/
 	Offset *int64
+	/*SearchWord*/
+	SearchWord *string
 	/*Status*/
 	Status []string
 	/*Target*/
@@ -164,6 +166,17 @@ func (o *DescribeTasksParams) WithOffset(offset *int64) *DescribeTasksParams {
 // SetOffset adds the offset to the describe tasks params
 func (o *DescribeTasksParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithSearchWord adds the searchWord to the describe tasks params
+func (o *DescribeTasksParams) WithSearchWord(searchWord *string) *DescribeTasksParams {
+	o.SetSearchWord(searchWord)
+	return o
+}
+
+// SetSearchWord adds the searchWord to the describe tasks params
+func (o *DescribeTasksParams) SetSearchWord(searchWord *string) {
+	o.SearchWord = searchWord
 }
 
 // WithStatus adds the status to the describe tasks params
@@ -257,6 +270,22 @@ func (o *DescribeTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qOffset := swag.FormatInt64(qrOffset)
 		if qOffset != "" {
 			if err := r.SetQueryParam("offset", qOffset); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SearchWord != nil {
+
+		// query param search_word
+		var qrSearchWord string
+		if o.SearchWord != nil {
+			qrSearchWord = *o.SearchWord
+		}
+		qSearchWord := qrSearchWord
+		if qSearchWord != "" {
+			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
 				return err
 			}
 		}
