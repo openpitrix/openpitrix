@@ -10,6 +10,8 @@ import (
 	apiclient "openpitrix.io/openpitrix/test/client"
 )
 
+const UserSystem = "system"
+
 type IgnoreLogger struct{}
 
 func (IgnoreLogger) Printf(format string, args ...interface{}) {

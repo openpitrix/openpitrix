@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	apiclient "openpitrix.io/openpitrix/test/client"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
@@ -62,6 +63,11 @@ func deleteRepo(t *testing.T, client *apiclient.Openpitrix, testRepoName string)
 func TestRepo(t *testing.T) {
 	client := GetClient(clientConfig)
 
+	// delete old repo
+	testRepoName := "e2e_test_repo"
+	deleteRepo(t, client, testRepoName)
+	ioClient := GetIoClient(clientConfig, UserSystem)
+
 	// test validate repo
 	repoType := "https"
 	credential := "{}"
@@ -77,9 +83,6 @@ func TestRepo(t *testing.T) {
 		t.Fatal("validate repo failed")
 	}
 
-	// delete old repo
-	testRepoName := "e2e_test_repo"
-
 	// create repo
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
@@ -92,12 +95,33 @@ func TestRepo(t *testing.T) {
 			Visibility:  "public",
 			Providers:   []string{constants.ProviderKubernetes},
 			CategoryID:  "xx,yy,zz",
-		})
+		},
+	)
 	createResp, err := client.RepoManager.CreateRepo(createParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
+
 	repoId := createResp.Payload.RepoID
+
+	msg := ioClient.ReadMessage()
+	require.Equal(t, "repo", msg.Resource.ResourceType)
+	require.Equal(t, topic.Create, msg.Type)
+	require.Equal(t, "active", *msg.Resource.Status)
+	require.Equal(t, repoId, msg.Resource.ResourceId)
+
+	// repo-event pending
+	msg = ioClient.ReadMessage()
+	repoEventId := msg.Resource.ResourceId
+	require.Equal(t, "repo_event", msg.Resource.ResourceType)
+	require.Equal(t, topic.Create, msg.Type)
+	require.Equal(t, "pending", *msg.Resource.Status)
+
+	// repo-event success
+	msg = ioClient.ReadMessage()
+	require.Equal(t, "repo_event", msg.Resource.ResourceType)
+	require.Equal(t, topic.Update, msg.Type)
+	require.Equal(t, "successful", *msg.Resource.Status)
+	require.Equal(t, repoEventId, msg.Resource.ResourceId)
+
 	// modify repo
 	modifyParams := repo_manager.NewModifyRepoParams()
 	modifyParams.SetBody(
@@ -115,6 +139,12 @@ func TestRepo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	msg = ioClient.ReadMessage()
+	require.Equal(t, "repo", msg.Resource.ResourceType)
+	require.Equal(t, topic.Update, msg.Type)
+	require.Equal(t, repoId, msg.Resource.ResourceId)
+
 	t.Log(modifyResp)
 	// describe repo
 	describeParams := repo_manager.NewDescribeReposParams()
@@ -156,6 +186,12 @@ func TestRepo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	msg = ioClient.ReadMessage()
+	require.Equal(t, "repo", msg.Resource.ResourceType)
+	require.Equal(t, topic.Delete, msg.Type)
+	require.Equal(t, repoId, msg.Resource.ResourceId)
+
 	t.Log(deleteResp)
 	// describe deleted repo
 	describeParams.WithRepoID([]string{repoId})
