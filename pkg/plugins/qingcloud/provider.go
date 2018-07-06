@@ -232,3 +232,7 @@ func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]strin
 	handler := GetProviderHandler(p.Logger)
 	return handler.DescribeZones(url, credential)
 }
+
+func (p *Provider) DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error) {
+	return "", nil
+}

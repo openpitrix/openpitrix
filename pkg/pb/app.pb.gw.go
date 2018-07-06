@@ -193,14 +193,14 @@ func RegisterAppManagerHandlerFromEndpoint(ctx context.Context, mux *runtime.Ser
 	defer func() {
 		if err != nil {
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Printf("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 			return
 		}
 		go func() {
 			<-ctx.Done()
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Printf("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 		}()
 	}()
@@ -214,8 +214,8 @@ func RegisterAppManagerHandler(ctx context.Context, mux *runtime.ServeMux, conn 
 	return RegisterAppManagerHandlerClient(ctx, mux, NewAppManagerClient(conn))
 }
 
-// RegisterAppManagerHandlerClient registers the http handlers for service AppManager
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "AppManagerClient".
+// RegisterAppManagerHandler registers the http handlers for service AppManager to "mux".
+// The handlers forward requests to the grpc endpoint over the given implementation of "AppManagerClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "AppManagerClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
 // "AppManagerClient" to call the correct interceptors.

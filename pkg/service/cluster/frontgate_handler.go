@@ -53,6 +53,7 @@ func (f *Frontgate) CreateCluster(clusterWrapper *models.ClusterWrapper) (string
 		return clusterId, err
 	}
 
+	frontgateWrapper.Cluster.Zone = clusterWrapper.Cluster.Zone
 	frontgateWrapper.Cluster.ClusterId = clusterId
 	frontgateWrapper.Cluster.SubnetId = clusterWrapper.Cluster.SubnetId
 	frontgateWrapper.Cluster.VpcId = clusterWrapper.Cluster.VpcId

@@ -1168,6 +1168,16 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
+            "name": "zone",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "advanced_param",
             "in": "query",
             "required": false,
@@ -3308,6 +3318,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "name": {
+          "type": "string"
+        },
+        "zone": {
           "type": "string"
         },
         "create_time": {

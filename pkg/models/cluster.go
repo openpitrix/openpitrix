@@ -19,6 +19,7 @@ func NewClusterId() string {
 }
 
 type Cluster struct {
+	Zone               string
 	ClusterId          string
 	Name               string
 	Description        string

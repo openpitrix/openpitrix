@@ -19,10 +19,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PilotConfig struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
-	Host                 string   `protobuf:"bytes,2,opt,name=host,proto3" json:"host"`
-	ListenPort           int32    `protobuf:"varint,4,opt,name=listen_port,json=listenPort,proto3" json:"listen_port"`
-	LogLevel             string   `protobuf:"bytes,5,opt,name=log_level,json=logLevel,proto3" json:"log_level"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id"`
+	Host                 string   `protobuf:"bytes,2,opt,name=host" json:"host"`
+	ListenPort           int32    `protobuf:"varint,4,opt,name=listen_port,json=listenPort" json:"listen_port"`
+	LogLevel             string   `protobuf:"bytes,5,opt,name=log_level,json=logLevel" json:"log_level"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -81,9 +81,9 @@ func (m *PilotConfig) GetLogLevel() string {
 }
 
 type PilotEndpoint struct {
-	PilotId              string   `protobuf:"bytes,1,opt,name=pilot_id,json=pilotId,proto3" json:"pilot_id"`
-	PilotHost            string   `protobuf:"bytes,2,opt,name=pilot_host,json=pilotHost,proto3" json:"pilot_host"`
-	PilotPort            int32    `protobuf:"varint,3,opt,name=pilot_port,json=pilotPort,proto3" json:"pilot_port"`
+	PilotId              string   `protobuf:"bytes,1,opt,name=pilot_id,json=pilotId" json:"pilot_id"`
+	PilotHost            string   `protobuf:"bytes,2,opt,name=pilot_host,json=pilotHost" json:"pilot_host"`
+	PilotPort            int32    `protobuf:"varint,3,opt,name=pilot_port,json=pilotPort" json:"pilot_port"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

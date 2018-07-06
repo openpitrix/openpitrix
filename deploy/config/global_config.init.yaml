@@ -19,6 +19,7 @@ cluster:
   plugins:
     - qingcloud
     - kubernetes
+    - aws
   frontgate_conf: '{"app_id":"app-ABCDEFGHIJKLMNOPQRST","version_id":"appv-ABCDEFGHIJKLMNOPQRST","name":"frontgate","description":"OpenPitrixbuilt-infrontgateservice","subnet":"","nodes":[{"container":{"type":"docker","image":"openpitrix/openpitrix:metadata"},"count":1,"cpu":1,"memory":1024,"volume":{"size":10,"mount_point":"/data","filesystem":"ext4"}}]}'
 pilot:
   ip: 127.0.0.1
@@ -28,3 +29,8 @@ runtime:
     zone: .*
     image_id: xenial4x64a
     image_url: https://openpitrix.pek3a.qingstor.com/image/ubuntu.tar.gz
+  aws_provider:
+    api_server: ec2.us-east-2.amazonaws.com
+    zone: .*
+    image_name: amzn2-ami-hvm-2.0.20180622.1-x86_64-gp2
+    image_url: https://openpitrix.pek3a.qingstor.com/image/amazon-linux.tar.gz

@@ -20,14 +20,14 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Metadata struct {
 	// Instance host                     = _; // softlink, ignore
-	Cluster              *Cluster             `protobuf:"bytes,1,opt,name=cluster,proto3" json:"cluster"`
-	Hosts                map[string]*Instance `protobuf:"bytes,2,rep,name=hosts,proto3" json:"hosts" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	AddingHosts          map[string]*Instance `protobuf:"bytes,3,rep,name=adding_hosts,json=addingHosts,proto3" json:"adding_hosts" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	DeletingHosts        map[string]*Instance `protobuf:"bytes,4,rep,name=deleting_hosts,json=deletingHosts,proto3" json:"deleting_hosts" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Env                  map[string]string    `protobuf:"bytes,5,rep,name=env,proto3" json:"env" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Links                map[string]string    `protobuf:"bytes,6,rep,name=links,proto3" json:"links" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	VerticalScalingRoles string               `protobuf:"bytes,7,opt,name=vertical_scaling_roles,json=verticalScalingRoles,proto3" json:"vertical_scaling_roles"`
-	Cmd                  *CommandInfo         `protobuf:"bytes,8,opt,name=cmd,proto3" json:"cmd"`
+	Cluster              *Cluster             `protobuf:"bytes,1,opt,name=cluster" json:"cluster"`
+	Hosts                map[string]*Instance `protobuf:"bytes,2,rep,name=hosts" json:"hosts" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	AddingHosts          map[string]*Instance `protobuf:"bytes,3,rep,name=adding_hosts,json=addingHosts" json:"adding_hosts" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	DeletingHosts        map[string]*Instance `protobuf:"bytes,4,rep,name=deleting_hosts,json=deletingHosts" json:"deleting_hosts" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Env                  map[string]string    `protobuf:"bytes,5,rep,name=env" json:"env" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Links                map[string]string    `protobuf:"bytes,6,rep,name=links" json:"links" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	VerticalScalingRoles string               `protobuf:"bytes,7,opt,name=vertical_scaling_roles,json=verticalScalingRoles" json:"vertical_scaling_roles"`
+	Cmd                  *CommandInfo         `protobuf:"bytes,8,opt,name=cmd" json:"cmd"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -115,15 +115,15 @@ func (m *Metadata) GetCmd() *CommandInfo {
 
 // key: /self/cluster
 type Cluster struct {
-	AppId                string                `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id"`
-	ClusterId            string                `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id"`
-	UserId               string                `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id"`
-	GlobalUuid           string                `protobuf:"bytes,4,opt,name=global_uuid,json=globalUuid,proto3" json:"global_uuid"`
-	Subnet               string                `protobuf:"bytes,5,opt,name=subnet,proto3" json:"subnet"`
-	Zone                 string                `protobuf:"bytes,6,opt,name=zone,proto3" json:"zone"`
-	Endpoints            map[string]*Endpoint  `protobuf:"bytes,7,rep,name=endpoints,proto3" json:"endpoints" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	ReservedIps          map[string]*IPAddress `protobuf:"bytes,8,rep,name=reserved_ips,json=reservedIps,proto3" json:"reserved_ips" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	ApiServer            *Endpoint             `protobuf:"bytes,9,opt,name=api_server,json=apiServer,proto3" json:"api_server"`
+	AppId                string                `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id"`
+	ClusterId            string                `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id"`
+	UserId               string                `protobuf:"bytes,3,opt,name=user_id,json=userId" json:"user_id"`
+	GlobalUuid           string                `protobuf:"bytes,4,opt,name=global_uuid,json=globalUuid" json:"global_uuid"`
+	Subnet               string                `protobuf:"bytes,5,opt,name=subnet" json:"subnet"`
+	Zone                 string                `protobuf:"bytes,6,opt,name=zone" json:"zone"`
+	Endpoints            map[string]*Endpoint  `protobuf:"bytes,7,rep,name=endpoints" json:"endpoints" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	ReservedIps          map[string]*IPAddress `protobuf:"bytes,8,rep,name=reserved_ips,json=reservedIps" json:"reserved_ips" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	ApiServer            *Endpoint             `protobuf:"bytes,9,opt,name=api_server,json=apiServer" json:"api_server"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -222,28 +222,28 @@ func (m *Cluster) GetApiServer() *Endpoint {
 // key: /self/deleting-hosts/[role name]/[instance_id]
 // key: /[instance_id]
 type Instance struct {
-	Id                   string                `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
-	Ip                   string                `protobuf:"bytes,2,opt,name=ip,proto3" json:"ip"`
-	Port                 int32                 `protobuf:"varint,3,opt,name=port,proto3" json:"port"`
-	Eip                  string                `protobuf:"bytes,4,opt,name=eip,proto3" json:"eip"`
-	Mac                  string                `protobuf:"bytes,5,opt,name=mac,proto3" json:"mac"`
-	Sid                  string                `protobuf:"bytes,6,opt,name=sid,proto3" json:"sid"`
-	Gid                  string                `protobuf:"bytes,7,opt,name=gid,proto3" json:"gid"`
-	Gsid                 string                `protobuf:"bytes,8,opt,name=gsid,proto3" json:"gsid"`
-	NodeId               string                `protobuf:"bytes,9,opt,name=node_id,json=nodeId,proto3" json:"node_id"`
-	InstanceId           string                `protobuf:"bytes,10,opt,name=instance_id,json=instanceId,proto3" json:"instance_id"`
-	Cpu                  int32                 `protobuf:"varint,11,opt,name=cpu,proto3" json:"cpu"`
-	Gpu                  int32                 `protobuf:"varint,12,opt,name=gpu,proto3" json:"gpu"`
-	Memory               int32                 `protobuf:"varint,13,opt,name=memory,proto3" json:"memory"`
-	VolumeSize           int32                 `protobuf:"varint,14,opt,name=volume_size,json=volumeSize,proto3" json:"volume_size"`
-	InstanceClass        string                `protobuf:"bytes,15,opt,name=instance_class,json=instanceClass,proto3" json:"instance_class"`
-	GpuClass             string                `protobuf:"bytes,16,opt,name=gpu_class,json=gpuClass,proto3" json:"gpu_class"`
-	VolumeClass          string                `protobuf:"bytes,17,opt,name=volume_class,json=volumeClass,proto3" json:"volume_class"`
-	PhysicalMachine      string                `protobuf:"bytes,18,opt,name=physical_machine,json=physicalMachine,proto3" json:"physical_machine"`
-	Role                 string                `protobuf:"bytes,19,opt,name=role,proto3" json:"role"`
-	PubKey               string                `protobuf:"bytes,20,opt,name=pub_key,json=pubKey,proto3" json:"pub_key"`
-	Token                string                `protobuf:"bytes,21,opt,name=token,proto3" json:"token"`
-	ReservedIps          map[string]*IPAddress `protobuf:"bytes,22,rep,name=reserved_ips,json=reservedIps,proto3" json:"reserved_ips" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Id                   string                `protobuf:"bytes,1,opt,name=id" json:"id"`
+	Ip                   string                `protobuf:"bytes,2,opt,name=ip" json:"ip"`
+	Port                 int32                 `protobuf:"varint,3,opt,name=port" json:"port"`
+	Eip                  string                `protobuf:"bytes,4,opt,name=eip" json:"eip"`
+	Mac                  string                `protobuf:"bytes,5,opt,name=mac" json:"mac"`
+	Sid                  string                `protobuf:"bytes,6,opt,name=sid" json:"sid"`
+	Gid                  string                `protobuf:"bytes,7,opt,name=gid" json:"gid"`
+	Gsid                 string                `protobuf:"bytes,8,opt,name=gsid" json:"gsid"`
+	NodeId               string                `protobuf:"bytes,9,opt,name=node_id,json=nodeId" json:"node_id"`
+	InstanceId           string                `protobuf:"bytes,10,opt,name=instance_id,json=instanceId" json:"instance_id"`
+	Cpu                  int32                 `protobuf:"varint,11,opt,name=cpu" json:"cpu"`
+	Gpu                  int32                 `protobuf:"varint,12,opt,name=gpu" json:"gpu"`
+	Memory               int32                 `protobuf:"varint,13,opt,name=memory" json:"memory"`
+	VolumeSize           int32                 `protobuf:"varint,14,opt,name=volume_size,json=volumeSize" json:"volume_size"`
+	InstanceClass        string                `protobuf:"bytes,15,opt,name=instance_class,json=instanceClass" json:"instance_class"`
+	GpuClass             string                `protobuf:"bytes,16,opt,name=gpu_class,json=gpuClass" json:"gpu_class"`
+	VolumeClass          string                `protobuf:"bytes,17,opt,name=volume_class,json=volumeClass" json:"volume_class"`
+	PhysicalMachine      string                `protobuf:"bytes,18,opt,name=physical_machine,json=physicalMachine" json:"physical_machine"`
+	Role                 string                `protobuf:"bytes,19,opt,name=role" json:"role"`
+	PubKey               string                `protobuf:"bytes,20,opt,name=pub_key,json=pubKey" json:"pub_key"`
+	Token                string                `protobuf:"bytes,21,opt,name=token" json:"token"`
+	ReservedIps          map[string]*IPAddress `protobuf:"bytes,22,rep,name=reserved_ips,json=reservedIps" json:"reserved_ips" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -428,9 +428,9 @@ func (m *Instance) GetReservedIps() map[string]*IPAddress {
 }
 
 type CommandInfo struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
-	Cmd                  string   `protobuf:"bytes,2,opt,name=cmd,proto3" json:"cmd"`
-	Timeout              int32    `protobuf:"varint,3,opt,name=timeout,proto3" json:"timeout"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id"`
+	Cmd                  string   `protobuf:"bytes,2,opt,name=cmd" json:"cmd"`
+	Timeout              int32    `protobuf:"varint,3,opt,name=timeout" json:"timeout"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -482,9 +482,9 @@ func (m *CommandInfo) GetTimeout() int32 {
 }
 
 type Endpoint struct {
-	Host                 string   `protobuf:"bytes,1,opt,name=host,proto3" json:"host"`
-	Protocol             string   `protobuf:"bytes,2,opt,name=protocol,proto3" json:"protocol"`
-	Port                 int32    `protobuf:"varint,3,opt,name=port,proto3" json:"port"`
+	Host                 string   `protobuf:"bytes,1,opt,name=host" json:"host"`
+	Protocol             string   `protobuf:"bytes,2,opt,name=protocol" json:"protocol"`
+	Port                 int32    `protobuf:"varint,3,opt,name=port" json:"port"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -536,7 +536,7 @@ func (m *Endpoint) GetPort() int32 {
 }
 
 type IPAddress struct {
-	Value                string   `protobuf:"bytes,1,opt,name=value,proto3" json:"value"`
+	Value                string   `protobuf:"bytes,1,opt,name=value" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`

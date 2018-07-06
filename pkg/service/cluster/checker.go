@@ -125,6 +125,7 @@ func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, p
 	subnetResponse, err := providerInterface.DescribeSubnets(ctx, &pb.DescribeSubnetsRequest{
 		RuntimeId: pbutil.ToProtoString(runtime.RuntimeId),
 		SubnetId:  []string{clusterWrapper.Cluster.SubnetId},
+		Zone:      []string{clusterWrapper.Cluster.Zone},
 	})
 	if err != nil {
 		logger.Error("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)

@@ -20,17 +20,19 @@ message DescribeSubnetsRequest {
 	uint32 offset = 3;
 	google.protobuf.UInt32Value subnet_type = 4;
 	repeated string subnet_id = 5;
-	repeated string advanced_param = 6;
+	repeated string zone = 6;
+	repeated string advanced_param = 7;
 }
 
 message Subnet {
 	google.protobuf.StringValue subnet_id = 1;
 	google.protobuf.StringValue name = 2;
-	google.protobuf.Timestamp create_time = 3;
-	google.protobuf.StringValue description = 4;
-	repeated string instance_id = 5;
-	google.protobuf.StringValue vpc_id = 6;
-	google.protobuf.UInt32Value subnet_type = 7;
+	google.protobuf.StringValue zone = 3;
+	google.protobuf.Timestamp create_time = 4;
+	google.protobuf.StringValue description = 5;
+	repeated string instance_id = 6;
+	google.protobuf.StringValue vpc_id = 7;
+	google.protobuf.UInt32Value subnet_type = 8;
 }
 
 message DescribeSubnetsResponse {

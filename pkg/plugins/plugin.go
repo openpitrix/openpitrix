@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"time"
 
-	//"openpitrix.io/openpitrix/pkg/plugins/aws"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/plugins/aws"
 	"openpitrix.io/openpitrix/pkg/plugins/helm"
 	"openpitrix.io/openpitrix/pkg/plugins/qingcloud"
 )
@@ -30,6 +30,7 @@ type ProviderInterface interface {
 	ValidateCredential(url, credential, zone string) error
 	DescribeRuntimeProviderZones(url, credential string) ([]string, error)
 	UpdateClusterStatus(job *models.Job) error
+	DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error)
 }
 
 func GetProviderPlugin(provider string, l *logger.Logger) (ProviderInterface, error) {
@@ -42,6 +43,8 @@ func GetProviderPlugin(provider string, l *logger.Logger) (ProviderInterface, er
 		providerInterface = qingcloud.NewProvider(l)
 	case constants.ProviderKubernetes:
 		providerInterface = helm.NewProvider(l)
+	case constants.ProviderAWS:
+		providerInterface = aws.NewProvider(l)
 	default:
 		return nil, fmt.Errorf("No such provider [%s]. ", provider)
 	}

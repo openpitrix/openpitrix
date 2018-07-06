@@ -28,11 +28,11 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type RuntimeLabel struct {
-	RuntimeLabelId       *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_label_id,json=runtimeLabelId,proto3" json:"runtime_label_id,omitempty"`
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	LabelKey             *wrappers.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey,proto3" json:"label_key,omitempty"`
-	LabelValue           *wrappers.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue,proto3" json:"label_value,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	RuntimeLabelId       *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_label_id,json=runtimeLabelId" json:"runtime_label_id,omitempty"`
+	RuntimeId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
+	LabelKey             *wrappers.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
+	LabelValue           *wrappers.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -98,17 +98,17 @@ func (m *RuntimeLabel) GetCreateTime() *timestamp.Timestamp {
 }
 
 type Runtime struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Provider             *wrappers.StringValue `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
-	RuntimeUrl           *wrappers.StringValue `protobuf:"bytes,5,opt,name=runtime_url,json=runtimeUrl,proto3" json:"runtime_url,omitempty"`
-	Zone                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=zone,proto3" json:"zone,omitempty"`
-	Labels               []*RuntimeLabel       `protobuf:"bytes,7,rep,name=labels,proto3" json:"labels,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,11,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Provider             *wrappers.StringValue `protobuf:"bytes,4,opt,name=provider" json:"provider,omitempty"`
+	RuntimeUrl           *wrappers.StringValue `protobuf:"bytes,5,opt,name=runtime_url,json=runtimeUrl" json:"runtime_url,omitempty"`
+	Zone                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=zone" json:"zone,omitempty"`
+	Labels               []*RuntimeLabel       `protobuf:"bytes,7,rep,name=labels" json:"labels,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,8,opt,name=owner" json:"owner,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,9,opt,name=status" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,11,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -216,8 +216,8 @@ func (m *Runtime) GetStatusTime() *timestamp.Timestamp {
 }
 
 type RuntimeDetail struct {
-	Runtime              *Runtime              `protobuf:"bytes,1,opt,name=runtime,proto3" json:"runtime,omitempty"`
-	RuntimeCredential    *wrappers.StringValue `protobuf:"bytes,2,opt,name=runtime_credential,json=runtimeCredential,proto3" json:"runtime_credential,omitempty"`
+	Runtime              *Runtime              `protobuf:"bytes,1,opt,name=runtime" json:"runtime,omitempty"`
+	RuntimeCredential    *wrappers.StringValue `protobuf:"bytes,2,opt,name=runtime_credential,json=runtimeCredential" json:"runtime_credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -262,13 +262,13 @@ func (m *RuntimeDetail) GetRuntimeCredential() *wrappers.StringValue {
 }
 
 type CreateRuntimeRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Provider             *wrappers.StringValue `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
-	RuntimeUrl           *wrappers.StringValue `protobuf:"bytes,5,opt,name=runtime_url,json=runtimeUrl,proto3" json:"runtime_url,omitempty"`
-	Zone                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=zone,proto3" json:"zone,omitempty"`
-	RuntimeCredential    *wrappers.StringValue `protobuf:"bytes,7,opt,name=runtime_credential,json=runtimeCredential,proto3" json:"runtime_credential,omitempty"`
-	Labels               *wrappers.StringValue `protobuf:"bytes,8,opt,name=labels,proto3" json:"labels,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
+	Provider             *wrappers.StringValue `protobuf:"bytes,4,opt,name=provider" json:"provider,omitempty"`
+	RuntimeUrl           *wrappers.StringValue `protobuf:"bytes,5,opt,name=runtime_url,json=runtimeUrl" json:"runtime_url,omitempty"`
+	Zone                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=zone" json:"zone,omitempty"`
+	RuntimeCredential    *wrappers.StringValue `protobuf:"bytes,7,opt,name=runtime_credential,json=runtimeCredential" json:"runtime_credential,omitempty"`
+	Labels               *wrappers.StringValue `protobuf:"bytes,8,opt,name=labels" json:"labels,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -348,7 +348,7 @@ func (m *CreateRuntimeRequest) GetLabels() *wrappers.StringValue {
 }
 
 type CreateRuntimeResponse struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -386,13 +386,13 @@ func (m *CreateRuntimeResponse) GetRuntimeId() *wrappers.StringValue {
 }
 
 type DescribeRuntimesRequest struct {
-	RuntimeId            []string              `protobuf:"bytes,1,rep,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	Status               []string              `protobuf:"bytes,2,rep,name=status,proto3" json:"status,omitempty"`
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,3,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
-	Label                *wrappers.StringValue `protobuf:"bytes,4,opt,name=label,proto3" json:"label,omitempty"`
-	Owner                []string              `protobuf:"bytes,5,rep,name=owner,proto3" json:"owner,omitempty"`
-	Limit                uint32                `protobuf:"varint,6,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,7,opt,name=offset,proto3" json:"offset,omitempty"`
+	RuntimeId            []string              `protobuf:"bytes,1,rep,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
+	Status               []string              `protobuf:"bytes,2,rep,name=status" json:"status,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,3,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
+	Label                *wrappers.StringValue `protobuf:"bytes,4,opt,name=label" json:"label,omitempty"`
+	Owner                []string              `protobuf:"bytes,5,rep,name=owner" json:"owner,omitempty"`
+	Limit                uint32                `protobuf:"varint,6,opt,name=limit" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,7,opt,name=offset" json:"offset,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -472,8 +472,8 @@ func (m *DescribeRuntimesRequest) GetOffset() uint32 {
 }
 
 type DescribeRuntimesResponse struct {
-	TotalCount           uint32     `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	RuntimeSet           []*Runtime `protobuf:"bytes,2,rep,name=runtime_set,json=runtimeSet,proto3" json:"runtime_set,omitempty"`
+	TotalCount           uint32     `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	RuntimeSet           []*Runtime `protobuf:"bytes,2,rep,name=runtime_set,json=runtimeSet" json:"runtime_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
 	XXX_sizecache        int32      `json:"-"`
@@ -518,8 +518,8 @@ func (m *DescribeRuntimesResponse) GetRuntimeSet() []*Runtime {
 }
 
 type DescribeRuntimeDetailsResponse struct {
-	TotalCount           uint32           `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
-	RuntimeDetailSet     []*RuntimeDetail `protobuf:"bytes,2,rep,name=runtime_detail_set,json=runtimeDetailSet,proto3" json:"runtime_detail_set,omitempty"`
+	TotalCount           uint32           `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
+	RuntimeDetailSet     []*RuntimeDetail `protobuf:"bytes,2,rep,name=runtime_detail_set,json=runtimeDetailSet" json:"runtime_detail_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
 	XXX_sizecache        int32            `json:"-"`
@@ -564,10 +564,10 @@ func (m *DescribeRuntimeDetailsResponse) GetRuntimeDetailSet() []*RuntimeDetail 
 }
 
 type ModifyRuntimeRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Labels               *wrappers.StringValue `protobuf:"bytes,4,opt,name=labels,proto3" json:"labels,omitempty"`
+	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Labels               *wrappers.StringValue `protobuf:"bytes,4,opt,name=labels" json:"labels,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -626,7 +626,7 @@ func (m *ModifyRuntimeRequest) GetLabels() *wrappers.StringValue {
 }
 
 type ModifyRuntimeResponse struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -664,7 +664,7 @@ func (m *ModifyRuntimeResponse) GetRuntimeId() *wrappers.StringValue {
 }
 
 type DeleteRuntimesRequest struct {
-	RuntimeId            []string `protobuf:"bytes,1,rep,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	RuntimeId            []string `protobuf:"bytes,1,rep,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -702,7 +702,7 @@ func (m *DeleteRuntimesRequest) GetRuntimeId() []string {
 }
 
 type DeleteRuntimesResponse struct {
-	RuntimeId            []string `protobuf:"bytes,1,rep,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	RuntimeId            []string `protobuf:"bytes,1,rep,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -740,9 +740,9 @@ func (m *DeleteRuntimesResponse) GetRuntimeId() []string {
 }
 
 type DescribeRuntimeProviderZonesRequest struct {
-	Provider             *wrappers.StringValue `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
-	RuntimeUrl           *wrappers.StringValue `protobuf:"bytes,2,opt,name=runtime_url,json=runtimeUrl,proto3" json:"runtime_url,omitempty"`
-	RuntimeCredential    *wrappers.StringValue `protobuf:"bytes,3,opt,name=runtime_credential,json=runtimeCredential,proto3" json:"runtime_credential,omitempty"`
+	Provider             *wrappers.StringValue `protobuf:"bytes,1,opt,name=provider" json:"provider,omitempty"`
+	RuntimeUrl           *wrappers.StringValue `protobuf:"bytes,2,opt,name=runtime_url,json=runtimeUrl" json:"runtime_url,omitempty"`
+	RuntimeCredential    *wrappers.StringValue `protobuf:"bytes,3,opt,name=runtime_credential,json=runtimeCredential" json:"runtime_credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -794,8 +794,8 @@ func (m *DescribeRuntimeProviderZonesRequest) GetRuntimeCredential() *wrappers.S
 }
 
 type DescribeRuntimeProviderZonesResponse struct {
-	Provider             *wrappers.StringValue `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
-	Zone                 []string              `protobuf:"bytes,2,rep,name=zone,proto3" json:"zone,omitempty"`
+	Provider             *wrappers.StringValue `protobuf:"bytes,1,opt,name=provider" json:"provider,omitempty"`
+	Zone                 []string              `protobuf:"bytes,2,rep,name=zone" json:"zone,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -870,10 +870,10 @@ func (m *GetRuntimeStatisticsRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_GetRuntimeStatisticsRequest proto.InternalMessageInfo
 
 type GetRuntimeStatisticsResponse struct {
-	LastTwoWeekCreated   map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated,proto3" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	TopTenProviders      map[string]uint32 `protobuf:"bytes,2,rep,name=top_ten_providers,json=topTenProviders,proto3" json:"top_ten_providers,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	RuntimeCount         uint32            `protobuf:"varint,3,opt,name=runtime_count,json=runtimeCount,proto3" json:"runtime_count,omitempty"`
-	ProviderCount        uint32            `protobuf:"varint,4,opt,name=provider_count,json=providerCount,proto3" json:"provider_count,omitempty"`
+	LastTwoWeekCreated   map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	TopTenProviders      map[string]uint32 `protobuf:"bytes,2,rep,name=top_ten_providers,json=topTenProviders" json:"top_ten_providers,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	RuntimeCount         uint32            `protobuf:"varint,3,opt,name=runtime_count,json=runtimeCount" json:"runtime_count,omitempty"`
+	ProviderCount        uint32            `protobuf:"varint,4,opt,name=provider_count,json=providerCount" json:"provider_count,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -960,9 +960,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// RuntimeManagerClient is the client API for RuntimeManager service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for RuntimeManager service
+
 type RuntimeManagerClient interface {
 	CreateRuntime(ctx context.Context, in *CreateRuntimeRequest, opts ...grpc.CallOption) (*CreateRuntimeResponse, error)
 	DescribeRuntimeDetails(ctx context.Context, in *DescribeRuntimesRequest, opts ...grpc.CallOption) (*DescribeRuntimeDetailsResponse, error)
@@ -983,7 +982,7 @@ func NewRuntimeManagerClient(cc *grpc.ClientConn) RuntimeManagerClient {
 
 func (c *runtimeManagerClient) CreateRuntime(ctx context.Context, in *CreateRuntimeRequest, opts ...grpc.CallOption) (*CreateRuntimeResponse, error) {
 	out := new(CreateRuntimeResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/CreateRuntime", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/CreateRuntime", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -992,7 +991,7 @@ func (c *runtimeManagerClient) CreateRuntime(ctx context.Context, in *CreateRunt
 
 func (c *runtimeManagerClient) DescribeRuntimeDetails(ctx context.Context, in *DescribeRuntimesRequest, opts ...grpc.CallOption) (*DescribeRuntimeDetailsResponse, error) {
 	out := new(DescribeRuntimeDetailsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimeDetails", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimeDetails", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1001,7 +1000,7 @@ func (c *runtimeManagerClient) DescribeRuntimeDetails(ctx context.Context, in *D
 
 func (c *runtimeManagerClient) DescribeRuntimes(ctx context.Context, in *DescribeRuntimesRequest, opts ...grpc.CallOption) (*DescribeRuntimesResponse, error) {
 	out := new(DescribeRuntimesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimes", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimes", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1010,7 +1009,7 @@ func (c *runtimeManagerClient) DescribeRuntimes(ctx context.Context, in *Describ
 
 func (c *runtimeManagerClient) ModifyRuntime(ctx context.Context, in *ModifyRuntimeRequest, opts ...grpc.CallOption) (*ModifyRuntimeResponse, error) {
 	out := new(ModifyRuntimeResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/ModifyRuntime", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/ModifyRuntime", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1019,7 +1018,7 @@ func (c *runtimeManagerClient) ModifyRuntime(ctx context.Context, in *ModifyRunt
 
 func (c *runtimeManagerClient) DeleteRuntimes(ctx context.Context, in *DeleteRuntimesRequest, opts ...grpc.CallOption) (*DeleteRuntimesResponse, error) {
 	out := new(DeleteRuntimesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/DeleteRuntimes", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/DeleteRuntimes", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1028,7 +1027,7 @@ func (c *runtimeManagerClient) DeleteRuntimes(ctx context.Context, in *DeleteRun
 
 func (c *runtimeManagerClient) DescribeRuntimeProviderZones(ctx context.Context, in *DescribeRuntimeProviderZonesRequest, opts ...grpc.CallOption) (*DescribeRuntimeProviderZonesResponse, error) {
 	out := new(DescribeRuntimeProviderZonesResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimeProviderZones", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/DescribeRuntimeProviderZones", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1037,14 +1036,15 @@ func (c *runtimeManagerClient) DescribeRuntimeProviderZones(ctx context.Context,
 
 func (c *runtimeManagerClient) GetRuntimeStatistics(ctx context.Context, in *GetRuntimeStatisticsRequest, opts ...grpc.CallOption) (*GetRuntimeStatisticsResponse, error) {
 	out := new(GetRuntimeStatisticsResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.RuntimeManager/GetRuntimeStatistics", in, out, opts...)
+	err := grpc.Invoke(ctx, "/openpitrix.RuntimeManager/GetRuntimeStatistics", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// RuntimeManagerServer is the server API for RuntimeManager service.
+// Server API for RuntimeManager service
+
 type RuntimeManagerServer interface {
 	CreateRuntime(context.Context, *CreateRuntimeRequest) (*CreateRuntimeResponse, error)
 	DescribeRuntimeDetails(context.Context, *DescribeRuntimesRequest) (*DescribeRuntimeDetailsResponse, error)
