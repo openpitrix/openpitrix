@@ -19,8 +19,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type FrontgateId struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id"`
-	Payload              string   `protobuf:"bytes,2,opt,name=payload" json:"payload"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	Payload              string   `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -65,9 +65,9 @@ func (m *FrontgateId) GetPayload() string {
 }
 
 type FrontgateNodeId struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id"`
-	NodeId               string   `protobuf:"bytes,2,opt,name=node_id,json=nodeId" json:"node_id"`
-	Payload              string   `protobuf:"bytes,3,opt,name=payload" json:"payload"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	NodeId               string   `protobuf:"bytes,2,opt,name=node_id,json=nodeId,proto3" json:"node_id"`
+	Payload              string   `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -119,7 +119,7 @@ func (m *FrontgateNodeId) GetPayload() string {
 }
 
 type FrontgateIdList struct {
-	IdList               []string `protobuf:"bytes,1,rep,name=id_list,json=idList" json:"id_list"`
+	IdList               []string `protobuf:"bytes,1,rep,name=id_list,json=idList,proto3" json:"id_list"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -157,16 +157,16 @@ func (m *FrontgateIdList) GetIdList() []string {
 }
 
 type FrontgateConfig struct {
-	Id                   string               `protobuf:"bytes,1,opt,name=id" json:"id"`
-	NodeId               string               `protobuf:"bytes,2,opt,name=node_id,json=nodeId" json:"node_id"`
-	Host                 string               `protobuf:"bytes,3,opt,name=host" json:"host"`
-	ListenPort           int32                `protobuf:"varint,4,opt,name=listen_port,json=listenPort" json:"listen_port"`
-	PilotHost            string               `protobuf:"bytes,5,opt,name=pilot_host,json=pilotHost" json:"pilot_host"`
-	PilotPort            int32                `protobuf:"varint,6,opt,name=pilot_port,json=pilotPort" json:"pilot_port"`
-	NodeList             []*FrontgateEndpoint `protobuf:"bytes,7,rep,name=node_list,json=nodeList" json:"node_list"`
-	EtcdConfig           *EtcdConfig          `protobuf:"bytes,8,opt,name=etcd_config,json=etcdConfig" json:"etcd_config"`
-	ConfdConfig          *ConfdConfig         `protobuf:"bytes,9,opt,name=confd_config,json=confdConfig" json:"confd_config"`
-	LogLevel             string               `protobuf:"bytes,10,opt,name=log_level,json=logLevel" json:"log_level"`
+	Id                   string               `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	NodeId               string               `protobuf:"bytes,2,opt,name=node_id,json=nodeId,proto3" json:"node_id"`
+	Host                 string               `protobuf:"bytes,3,opt,name=host,proto3" json:"host"`
+	ListenPort           int32                `protobuf:"varint,4,opt,name=listen_port,json=listenPort,proto3" json:"listen_port"`
+	PilotHost            string               `protobuf:"bytes,5,opt,name=pilot_host,json=pilotHost,proto3" json:"pilot_host"`
+	PilotPort            int32                `protobuf:"varint,6,opt,name=pilot_port,json=pilotPort,proto3" json:"pilot_port"`
+	NodeList             []*FrontgateEndpoint `protobuf:"bytes,7,rep,name=node_list,json=nodeList,proto3" json:"node_list"`
+	EtcdConfig           *EtcdConfig          `protobuf:"bytes,8,opt,name=etcd_config,json=etcdConfig,proto3" json:"etcd_config"`
+	ConfdConfig          *ConfdConfig         `protobuf:"bytes,9,opt,name=confd_config,json=confdConfig,proto3" json:"confd_config"`
+	LogLevel             string               `protobuf:"bytes,10,opt,name=log_level,json=logLevel,proto3" json:"log_level"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -267,10 +267,10 @@ func (m *FrontgateConfig) GetLogLevel() string {
 }
 
 type FrontgateEndpoint struct {
-	FrontgateId          string   `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id"`
-	FrontgateNodeId      string   `protobuf:"bytes,2,opt,name=frontgate_node_id,json=frontgateNodeId" json:"frontgate_node_id"`
-	NodeIp               string   `protobuf:"bytes,3,opt,name=node_ip,json=nodeIp" json:"node_ip"`
-	NodePort             int32    `protobuf:"varint,4,opt,name=node_port,json=nodePort" json:"node_port"`
+	FrontgateId          string   `protobuf:"bytes,1,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id"`
+	FrontgateNodeId      string   `protobuf:"bytes,2,opt,name=frontgate_node_id,json=frontgateNodeId,proto3" json:"frontgate_node_id"`
+	NodeIp               string   `protobuf:"bytes,3,opt,name=node_ip,json=nodeIp,proto3" json:"node_ip"`
+	NodePort             int32    `protobuf:"varint,4,opt,name=node_port,json=nodePort,proto3" json:"node_port"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -329,9 +329,9 @@ func (m *FrontgateEndpoint) GetNodePort() int32 {
 }
 
 type RunCommandOnFrontgateRequest struct {
-	Endpoint             *FrontgateEndpoint `protobuf:"bytes,1,opt,name=endpoint" json:"endpoint"`
-	Command              string             `protobuf:"bytes,2,opt,name=command" json:"command"`
-	TimeoutSeconds       int32              `protobuf:"varint,3,opt,name=timeout_seconds,json=timeoutSeconds" json:"timeout_seconds"`
+	Endpoint             *FrontgateEndpoint `protobuf:"bytes,1,opt,name=endpoint,proto3" json:"endpoint"`
+	Command              string             `protobuf:"bytes,2,opt,name=command,proto3" json:"command"`
+	TimeoutSeconds       int32              `protobuf:"varint,3,opt,name=timeout_seconds,json=timeoutSeconds,proto3" json:"timeout_seconds"`
 	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
 	XXX_unrecognized     []byte             `json:"-"`
 	XXX_sizecache        int32              `json:"-"`

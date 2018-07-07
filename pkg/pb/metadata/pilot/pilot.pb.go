@@ -34,8 +34,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for PilotService service
-
+// PilotServiceClient is the client API for PilotService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PilotServiceClient interface {
 	GetPilotConfig(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.PilotConfig, error)
 	GetFrontgateList(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.FrontgateIdList, error)
@@ -73,7 +74,7 @@ func NewPilotServiceClient(cc *grpc.ClientConn) PilotServiceClient {
 
 func (c *pilotServiceClient) GetPilotConfig(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.PilotConfig, error) {
 	out := new(types.PilotConfig)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/GetPilotConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/GetPilotConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +83,7 @@ func (c *pilotServiceClient) GetPilotConfig(ctx context.Context, in *types.Empty
 
 func (c *pilotServiceClient) GetFrontgateList(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.FrontgateIdList, error) {
 	out := new(types.FrontgateIdList)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/GetFrontgateList", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/GetFrontgateList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +92,7 @@ func (c *pilotServiceClient) GetFrontgateList(ctx context.Context, in *types.Emp
 
 func (c *pilotServiceClient) GetFrontgateConfig(ctx context.Context, in *types.FrontgateId, opts ...grpc.CallOption) (*types.FrontgateConfig, error) {
 	out := new(types.FrontgateConfig)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/GetFrontgateConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/GetFrontgateConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +101,7 @@ func (c *pilotServiceClient) GetFrontgateConfig(ctx context.Context, in *types.F
 
 func (c *pilotServiceClient) SetFrontgateConfig(ctx context.Context, in *types.FrontgateConfig, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/SetFrontgateConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/SetFrontgateConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +110,7 @@ func (c *pilotServiceClient) SetFrontgateConfig(ctx context.Context, in *types.F
 
 func (c *pilotServiceClient) GetDroneConfig(ctx context.Context, in *types.DroneEndpoint, opts ...grpc.CallOption) (*types.DroneConfig, error) {
 	out := new(types.DroneConfig)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/GetDroneConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/GetDroneConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +119,7 @@ func (c *pilotServiceClient) GetDroneConfig(ctx context.Context, in *types.Drone
 
 func (c *pilotServiceClient) SetDroneConfig(ctx context.Context, in *types.SetDroneConfigRequest, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/SetDroneConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/SetDroneConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +128,7 @@ func (c *pilotServiceClient) SetDroneConfig(ctx context.Context, in *types.SetDr
 
 func (c *pilotServiceClient) GetConfdConfig(ctx context.Context, in *types.ConfdEndpoint, opts ...grpc.CallOption) (*types.ConfdConfig, error) {
 	out := new(types.ConfdConfig)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/GetConfdConfig", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/GetConfdConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (c *pilotServiceClient) GetConfdConfig(ctx context.Context, in *types.Confd
 
 func (c *pilotServiceClient) IsConfdRunning(ctx context.Context, in *types.DroneEndpoint, opts ...grpc.CallOption) (*types.Bool, error) {
 	out := new(types.Bool)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/IsConfdRunning", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/IsConfdRunning", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +146,7 @@ func (c *pilotServiceClient) IsConfdRunning(ctx context.Context, in *types.Drone
 
 func (c *pilotServiceClient) StartConfd(ctx context.Context, in *types.DroneEndpoint, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/StartConfd", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/StartConfd", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +155,7 @@ func (c *pilotServiceClient) StartConfd(ctx context.Context, in *types.DroneEndp
 
 func (c *pilotServiceClient) StopConfd(ctx context.Context, in *types.DroneEndpoint, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/StopConfd", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/StopConfd", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +164,7 @@ func (c *pilotServiceClient) StopConfd(ctx context.Context, in *types.DroneEndpo
 
 func (c *pilotServiceClient) RegisterMetadata(ctx context.Context, in *types.SubTask_RegisterMetadata, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/RegisterMetadata", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/RegisterMetadata", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +173,7 @@ func (c *pilotServiceClient) RegisterMetadata(ctx context.Context, in *types.Sub
 
 func (c *pilotServiceClient) DeregisterMetadata(ctx context.Context, in *types.SubTask_DeregisterMetadata, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/DeregisterMetadata", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/DeregisterMetadata", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +182,7 @@ func (c *pilotServiceClient) DeregisterMetadata(ctx context.Context, in *types.S
 
 func (c *pilotServiceClient) RegisterCmd(ctx context.Context, in *types.SubTask_RegisterCmd, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/RegisterCmd", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/RegisterCmd", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +191,7 @@ func (c *pilotServiceClient) RegisterCmd(ctx context.Context, in *types.SubTask_
 
 func (c *pilotServiceClient) DeregisterCmd(ctx context.Context, in *types.SubTask_DeregisterCmd, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/DeregisterCmd", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/DeregisterCmd", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +200,7 @@ func (c *pilotServiceClient) DeregisterCmd(ctx context.Context, in *types.SubTas
 
 func (c *pilotServiceClient) ReportSubTaskStatus(ctx context.Context, in *types.SubTaskStatus, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/ReportSubTaskStatus", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/ReportSubTaskStatus", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +209,7 @@ func (c *pilotServiceClient) ReportSubTaskStatus(ctx context.Context, in *types.
 
 func (c *pilotServiceClient) GetSubtaskStatus(ctx context.Context, in *types.SubTaskId, opts ...grpc.CallOption) (*types.SubTaskStatus, error) {
 	out := new(types.SubTaskStatus)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/GetSubtaskStatus", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/GetSubtaskStatus", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +218,7 @@ func (c *pilotServiceClient) GetSubtaskStatus(ctx context.Context, in *types.Sub
 
 func (c *pilotServiceClient) HandleSubtask(ctx context.Context, in *types.SubTaskMessage, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/HandleSubtask", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/HandleSubtask", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +227,7 @@ func (c *pilotServiceClient) HandleSubtask(ctx context.Context, in *types.SubTas
 
 func (c *pilotServiceClient) PingPilot(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/PingPilot", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/PingPilot", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -235,7 +236,7 @@ func (c *pilotServiceClient) PingPilot(ctx context.Context, in *types.Empty, opt
 
 func (c *pilotServiceClient) PingFrontgate(ctx context.Context, in *types.FrontgateId, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/PingFrontgate", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/PingFrontgate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -244,7 +245,7 @@ func (c *pilotServiceClient) PingFrontgate(ctx context.Context, in *types.Frontg
 
 func (c *pilotServiceClient) PingFrontgateNode(ctx context.Context, in *types.FrontgateNodeId, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/PingFrontgateNode", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/PingFrontgateNode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -253,7 +254,7 @@ func (c *pilotServiceClient) PingFrontgateNode(ctx context.Context, in *types.Fr
 
 func (c *pilotServiceClient) PingDrone(ctx context.Context, in *types.DroneEndpoint, opts ...grpc.CallOption) (*types.Empty, error) {
 	out := new(types.Empty)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/PingDrone", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/PingDrone", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +263,7 @@ func (c *pilotServiceClient) PingDrone(ctx context.Context, in *types.DroneEndpo
 
 func (c *pilotServiceClient) RunCommandOnFrontgateNode(ctx context.Context, in *types.RunCommandOnFrontgateRequest, opts ...grpc.CallOption) (*types.String, error) {
 	out := new(types.String)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/RunCommandOnFrontgateNode", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/RunCommandOnFrontgateNode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -271,7 +272,7 @@ func (c *pilotServiceClient) RunCommandOnFrontgateNode(ctx context.Context, in *
 
 func (c *pilotServiceClient) RunCommandOnDrone(ctx context.Context, in *types.RunCommandOnDroneRequest, opts ...grpc.CallOption) (*types.String, error) {
 	out := new(types.String)
-	err := grpc.Invoke(ctx, "/metadata.pilot.PilotService/RunCommandOnDrone", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/metadata.pilot.PilotService/RunCommandOnDrone", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -279,7 +280,7 @@ func (c *pilotServiceClient) RunCommandOnDrone(ctx context.Context, in *types.Ru
 }
 
 func (c *pilotServiceClient) FrontgateChannel(ctx context.Context, opts ...grpc.CallOption) (PilotService_FrontgateChannelClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_PilotService_serviceDesc.Streams[0], c.cc, "/metadata.pilot.PilotService/FrontgateChannel", opts...)
+	stream, err := c.cc.NewStream(ctx, &_PilotService_serviceDesc.Streams[0], "/metadata.pilot.PilotService/FrontgateChannel", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -309,8 +310,7 @@ func (x *pilotServiceFrontgateChannelClient) Recv() (*types.Bytes, error) {
 	return m, nil
 }
 
-// Server API for PilotService service
-
+// PilotServiceServer is the server API for PilotService service.
 type PilotServiceServer interface {
 	GetPilotConfig(context.Context, *types.Empty) (*types.PilotConfig, error)
 	GetFrontgateList(context.Context, *types.Empty) (*types.FrontgateIdList, error)
