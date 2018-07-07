@@ -66,11 +66,11 @@ spec:
               name: mysql-pass
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${LIMITS}m
+            memory: ${LIMITS}Mi
           requests:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${REQUESTS}m
+            memory: ${REQUESTS}Mi
 ---
 apiVersion: v1
 kind: Service
@@ -140,8 +140,8 @@ spec:
               name: mysql-pass
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${LIMITS}m
+            memory: ${LIMITS}Mi
           requests:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${REQUESTS}m
+            memory: ${REQUESTS}Mi
