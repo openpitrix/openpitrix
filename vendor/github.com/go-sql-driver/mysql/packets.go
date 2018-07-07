@@ -149,24 +149,29 @@ func (mc *mysqlConn) writePacket(data []byte) error {
 }
 
 /******************************************************************************
-*                           Initialisation Process                            *
+*                           Initialization Process                            *
 ******************************************************************************/
 
 // Handshake Initialization Packet
 // http://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::Handshake
-func (mc *mysqlConn) readInitPacket() ([]byte, error) {
+func (mc *mysqlConn) readHandshakePacket() ([]byte, string, error) {
 	data, err := mc.readPacket()
 	if err != nil {
-		return nil, err
+		// for init we can rewrite this to ErrBadConn for sql.Driver to retry, since
+		// in connection initialization we don't risk retrying non-idempotent actions.
+		if err == ErrInvalidConn {
+			return nil, "", driver.ErrBadConn
+		}
+		return nil, "", err
 	}
 
 	if data[0] == iERR {
-		return nil, mc.handleErrorPacket(data)
+		return nil, "", mc.handleErrorPacket(data)
 	}
 
 	// protocol version [1 byte]
 	if data[0] < minProtocolVersion {
-		return nil, fmt.Errorf(
+		return nil, "", fmt.Errorf(
 			"unsupported protocol version %d. Version %d or higher is required",
 			data[0],
 			minProtocolVersion,
@@ -178,7 +183,7 @@ func (mc *mysqlConn) readInitPacket() ([]byte, error) {
 	pos := 1 + bytes.IndexByte(data[1:], 0x00) + 1 + 4
 
 	// first part of the password cipher [8 bytes]
-	cipher := data[pos : pos+8]
+	authData := data[pos : pos+8]
 
 	// (filler) always 0x00 [1 byte]
 	pos += 8 + 1
@@ -186,13 +191,14 @@ func (mc *mysqlConn) readInitPacket() ([]byte, error) {
 	// capability flags (lower 2 bytes) [2 bytes]
 	mc.flags = clientFlag(binary.LittleEndian.Uint16(data[pos : pos+2]))
 	if mc.flags&clientProtocol41 == 0 {
-		return nil, ErrOldProtocol
+		return nil, "", ErrOldProtocol
 	}
 	if mc.flags&clientSSL == 0 && mc.cfg.tls != nil {
-		return nil, ErrNoTLS
+		return nil, "", ErrNoTLS
 	}
 	pos += 2
 
+	plugin := ""
 	if len(data) > pos {
 		// character set [1 byte]
 		// status flags [2 bytes]
@@ -213,32 +219,34 @@ func (mc *mysqlConn) readInitPacket() ([]byte, error) {
 		//
 		// The official Python library uses the fixed length 12
 		// which seems to work but technically could have a hidden bug.
-		cipher = append(cipher, data[pos:pos+12]...)
+		authData = append(authData, data[pos:pos+12]...)
+		pos += 13
 
-		// TODO: Verify string termination
 		// EOF if version (>= 5.5.7 and < 5.5.10) or (>= 5.6.0 and < 5.6.2)
 		// \NUL otherwise
-		//
-		//if data[len(data)-1] == 0 {
-		//	return
-		//}
-		//return ErrMalformPkt
+		if end := bytes.IndexByte(data[pos:], 0x00); end != -1 {
+			plugin = string(data[pos : pos+end])
+		} else {
+			plugin = string(data[pos:])
+		}
 
 		// make a memory safe copy of the cipher slice
 		var b [20]byte
-		copy(b[:], cipher)
-		return b[:], nil
+		copy(b[:], authData)
+		return b[:], plugin, nil
 	}
+
+	plugin = defaultAuthPlugin
 
 	// make a memory safe copy of the cipher slice
 	var b [8]byte
-	copy(b[:], cipher)
-	return b[:], nil
+	copy(b[:], authData)
+	return b[:], plugin, nil
 }
 
 // Client Authentication Packet
 // http://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::HandshakeResponse
-func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
+func (mc *mysqlConn) writeHandshakeResponsePacket(authResp []byte, addNUL bool, plugin string) error {
 	// Adjust client flags based on server support
 	clientFlags := clientProtocol41 |
 		clientSecureConn |
@@ -262,10 +270,19 @@ func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
 		clientFlags |= clientMultiStatements
 	}
 
-	// User Password
-	scrambleBuff := scramblePassword(cipher, []byte(mc.cfg.Passwd))
+	// encode length of the auth plugin data
+	var authRespLEIBuf [9]byte
+	authRespLEI := appendLengthEncodedInteger(authRespLEIBuf[:0], uint64(len(authResp)))
+	if len(authRespLEI) > 1 {
+		// if the length can not be written in 1 byte, it must be written as a
+		// length encoded integer
+		clientFlags |= clientPluginAuthLenEncClientData
+	}
 
-	pktLen := 4 + 4 + 1 + 23 + len(mc.cfg.User) + 1 + 1 + len(scrambleBuff) + 21 + 1
+	pktLen := 4 + 4 + 1 + 23 + len(mc.cfg.User) + 1 + len(authRespLEI) + len(authResp) + 21 + 1
+	if addNUL {
+		pktLen++
+	}
 
 	// To specify a db name
 	if n := len(mc.cfg.DBName); n > 0 {
@@ -276,7 +293,7 @@ func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
 	// Calculate packet length and get buffer with that size
 	data := mc.buf.takeSmallBuffer(pktLen + 4)
 	if data == nil {
-		// can not take the buffer. Something must be wrong with the connection
+		// cannot take the buffer. Something must be wrong with the connection
 		errLog.Print(ErrBusyBuffer)
 		return errBadConnNoWrite
 	}
@@ -333,9 +350,13 @@ func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
 	data[pos] = 0x00
 	pos++
 
-	// ScrambleBuffer [length encoded integer]
-	data[pos] = byte(len(scrambleBuff))
-	pos += 1 + copy(data[pos+1:], scrambleBuff)
+	// Auth Data [length encoded integer]
+	pos += copy(data[pos:], authRespLEI)
+	pos += copy(data[pos:], authResp)
+	if addNUL {
+		data[pos] = 0x00
+		pos++
+	}
 
 	// Databasename [null terminated string]
 	if len(mc.cfg.DBName) > 0 {
@@ -344,75 +365,31 @@ func (mc *mysqlConn) writeAuthPacket(cipher []byte) error {
 		pos++
 	}
 
-	// Assume native client during response
-	pos += copy(data[pos:], "mysql_native_password")
+	pos += copy(data[pos:], plugin)
 	data[pos] = 0x00
 
 	// Send Auth packet
 	return mc.writePacket(data)
 }
 
-//  Client old authentication packet
 // http://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::AuthSwitchResponse
-func (mc *mysqlConn) writeOldAuthPacket(cipher []byte) error {
-	// User password
-	// https://dev.mysql.com/doc/internals/en/old-password-authentication.html
-	// Old password authentication only need and will need 8-byte challenge.
-	scrambleBuff := scrambleOldPassword(cipher[:8], []byte(mc.cfg.Passwd))
-
-	// Calculate the packet length and add a tailing 0
-	pktLen := len(scrambleBuff) + 1
-	data := mc.buf.takeSmallBuffer(4 + pktLen)
+func (mc *mysqlConn) writeAuthSwitchPacket(authData []byte, addNUL bool) error {
+	pktLen := 4 + len(authData)
+	if addNUL {
+		pktLen++
+	}
+	data := mc.buf.takeSmallBuffer(pktLen)
 	if data == nil {
-		// can not take the buffer. Something must be wrong with the connection
+		// cannot take the buffer. Something must be wrong with the connection
 		errLog.Print(ErrBusyBuffer)
 		return errBadConnNoWrite
 	}
 
-	// Add the scrambled password [null terminated string]
-	copy(data[4:], scrambleBuff)
-	data[4+pktLen-1] = 0x00
-
-	return mc.writePacket(data)
-}
-
-//  Client clear text authentication packet
-// http://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::AuthSwitchResponse
-func (mc *mysqlConn) writeClearAuthPacket() error {
-	// Calculate the packet length and add a tailing 0
-	pktLen := len(mc.cfg.Passwd) + 1
-	data := mc.buf.takeSmallBuffer(4 + pktLen)
-	if data == nil {
-		// can not take the buffer. Something must be wrong with the connection
-		errLog.Print(ErrBusyBuffer)
-		return errBadConnNoWrite
+	// Add the auth data [EOF]
+	copy(data[4:], authData)
+	if addNUL {
+		data[pktLen-1] = 0x00
 	}
-
-	// Add the clear password [null terminated string]
-	copy(data[4:], mc.cfg.Passwd)
-	data[4+pktLen-1] = 0x00
-
-	return mc.writePacket(data)
-}
-
-//  Native password authentication method
-// http://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::AuthSwitchResponse
-func (mc *mysqlConn) writeNativeAuthPacket(cipher []byte) error {
-	// https://dev.mysql.com/doc/internals/en/secure-password-authentication.html
-	// Native password authentication only need and will need 20-byte challenge.
-	scrambleBuff := scramblePassword(cipher[0:20], []byte(mc.cfg.Passwd))
-
-	// Calculate the packet length and add a tailing 0
-	pktLen := len(scrambleBuff)
-	data := mc.buf.takeSmallBuffer(4 + pktLen)
-	if data == nil {
-		// can not take the buffer. Something must be wrong with the connection
-		errLog.Print(ErrBusyBuffer)
-		return errBadConnNoWrite
-	}
-
-	// Add the scramble
-	copy(data[4:], scrambleBuff)
 
 	return mc.writePacket(data)
 }
@@ -427,7 +404,7 @@ func (mc *mysqlConn) writeCommandPacket(command byte) error {
 
 	data := mc.buf.takeSmallBuffer(4 + 1)
 	if data == nil {
-		// can not take the buffer. Something must be wrong with the connection
+		// cannot take the buffer. Something must be wrong with the connection
 		errLog.Print(ErrBusyBuffer)
 		return errBadConnNoWrite
 	}
@@ -446,7 +423,7 @@ func (mc *mysqlConn) writeCommandPacketStr(command byte, arg string) error {
 	pktLen := 1 + len(arg)
 	data := mc.buf.takeBuffer(pktLen + 4)
 	if data == nil {
-		// can not take the buffer. Something must be wrong with the connection
+		// cannot take the buffer. Something must be wrong with the connection
 		errLog.Print(ErrBusyBuffer)
 		return errBadConnNoWrite
 	}
@@ -467,7 +444,7 @@ func (mc *mysqlConn) writeCommandPacketUint32(command byte, arg uint32) error {
 
 	data := mc.buf.takeSmallBuffer(4 + 1 + 4)
 	if data == nil {
-		// can not take the buffer. Something must be wrong with the connection
+		// cannot take the buffer. Something must be wrong with the connection
 		errLog.Print(ErrBusyBuffer)
 		return errBadConnNoWrite
 	}
@@ -489,45 +466,50 @@ func (mc *mysqlConn) writeCommandPacketUint32(command byte, arg uint32) error {
 *                              Result Packets                                 *
 ******************************************************************************/
 
-// Returns error if Packet is not an 'Result OK'-Packet
-func (mc *mysqlConn) readResultOK() ([]byte, error) {
+func (mc *mysqlConn) readAuthResult() ([]byte, string, error) {
 	data, err := mc.readPacket()
-	if err == nil {
-		// packet indicator
-		switch data[0] {
-
-		case iOK:
-			return nil, mc.handleOkPacket(data)
-
-		case iEOF:
-			if len(data) > 1 {
-				pluginEndIndex := bytes.IndexByte(data, 0x00)
-				plugin := string(data[1:pluginEndIndex])
-				cipher := data[pluginEndIndex+1:]
-
-				switch plugin {
-				case "mysql_old_password":
-					// using old_passwords
-					return cipher, ErrOldPassword
-				case "mysql_clear_password":
-					// using clear text password
-					return cipher, ErrCleartextPassword
-				case "mysql_native_password":
-					// using mysql default authentication method
-					return cipher, ErrNativePassword
-				default:
-					return cipher, ErrUnknownPlugin
-				}
-			}
-
-			// https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::OldAuthSwitchRequest
-			return nil, ErrOldPassword
-
-		default: // Error otherwise
-			return nil, mc.handleErrorPacket(data)
-		}
+	if err != nil {
+		return nil, "", err
 	}
-	return nil, err
+
+	// packet indicator
+	switch data[0] {
+
+	case iOK:
+		return nil, "", mc.handleOkPacket(data)
+
+	case iAuthMoreData:
+		return data[1:], "", err
+
+	case iEOF:
+		if len(data) < 1 {
+			// https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::OldAuthSwitchRequest
+			return nil, "mysql_old_password", nil
+		}
+		pluginEndIndex := bytes.IndexByte(data, 0x00)
+		if pluginEndIndex < 0 {
+			return nil, "", ErrMalformPkt
+		}
+		plugin := string(data[1:pluginEndIndex])
+		authData := data[pluginEndIndex+1:]
+		return authData, plugin, nil
+
+	default: // Error otherwise
+		return nil, "", mc.handleErrorPacket(data)
+	}
+}
+
+// Returns error if Packet is not an 'Result OK'-Packet
+func (mc *mysqlConn) readResultOK() error {
+	data, err := mc.readPacket()
+	if err != nil {
+		return err
+	}
+
+	if data[0] == iOK {
+		return mc.handleOkPacket(data)
+	}
+	return mc.handleErrorPacket(data)
 }
 
 // Result Set Header Packet
@@ -571,7 +553,8 @@ func (mc *mysqlConn) handleErrorPacket(data []byte) error {
 	errno := binary.LittleEndian.Uint16(data[1:3])
 
 	// 1792: ER_CANT_EXECUTE_IN_READ_ONLY_TRANSACTION
-	if errno == 1792 && mc.cfg.RejectReadOnly {
+	// 1290: ER_OPTION_PREVENTS_STATEMENT (returned by Aurora during failover)
+	if (errno == 1792 || errno == 1290) && mc.cfg.RejectReadOnly {
 		// Oops; we are connected to a read-only connection, and won't be able
 		// to issue any write statements. Since RejectReadOnly is configured,
 		// we throw away this connection hoping this one would have write
@@ -624,14 +607,7 @@ func (mc *mysqlConn) handleOkPacket(data []byte) error {
 	}
 
 	// warning count [2 bytes]
-	if !mc.strict {
-		return nil
-	}
 
-	pos := 1 + n + m + 2
-	if binary.LittleEndian.Uint16(data[pos:pos+2]) > 0 {
-		return mc.getWarnings()
-	}
 	return nil
 }
 
@@ -703,14 +679,21 @@ func (mc *mysqlConn) readColumns(count int) ([]mysqlField, error) {
 		if err != nil {
 			return nil, err
 		}
+		pos += n
 
 		// Filler [uint8]
+		pos++
+
 		// Charset [charset, collation uint8]
+		columns[i].charSet = data[pos]
+		pos += 2
+
 		// Length [uint32]
-		pos += n + 1 + 2 + 4
+		columns[i].length = binary.LittleEndian.Uint32(data[pos : pos+4])
+		pos += 4
 
 		// Field type [uint8]
-		columns[i].fieldType = data[pos]
+		columns[i].fieldType = fieldType(data[pos])
 		pos++
 
 		// Flags [uint16]
@@ -843,14 +826,7 @@ func (stmt *mysqlStmt) readPrepareResultPacket() (uint16, error) {
 		// Reserved [8 bit]
 
 		// Warning count [16 bit uint]
-		if !stmt.mc.strict {
-			return columnCount, nil
-		}
 
-		// Check for warnings count > 0, only available in MySQL > 4.1
-		if len(data) >= 12 && binary.LittleEndian.Uint16(data[10:12]) > 0 {
-			return columnCount, stmt.mc.getWarnings()
-		}
 		return columnCount, nil
 	}
 	return 0, err
@@ -867,7 +843,7 @@ func (stmt *mysqlStmt) writeCommandLongData(paramID int, arg []byte) error {
 	// 2 bytes paramID
 	const dataOffset = 1 + 4 + 2
 
-	// Can not use the write buffer since
+	// Cannot use the write buffer since
 	// a) the buffer is too small
 	// b) it is in use
 	data := make([]byte, 4+1+4+2+len(arg))
@@ -922,6 +898,12 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 	const minPktLen = 4 + 1 + 4 + 1 + 4
 	mc := stmt.mc
 
+	// Determine threshould dynamically to avoid packet size shortage.
+	longDataSize := mc.maxAllowedPacket / (stmt.paramCount + 1)
+	if longDataSize < 64 {
+		longDataSize = 64
+	}
+
 	// Reset packet-sequence
 	mc.sequence = 0
 
@@ -933,7 +915,7 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 		data = mc.buf.takeCompleteBuffer()
 	}
 	if data == nil {
-		// can not take the buffer. Something must be wrong with the connection
+		// cannot take the buffer. Something must be wrong with the connection
 		errLog.Print(ErrBusyBuffer)
 		return errBadConnNoWrite
 	}
@@ -994,7 +976,7 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 			// build NULL-bitmap
 			if arg == nil {
 				nullMask[i/8] |= 1 << (uint(i) & 7)
-				paramTypes[i+i] = fieldTypeNULL
+				paramTypes[i+i] = byte(fieldTypeNULL)
 				paramTypes[i+i+1] = 0x00
 				continue
 			}
@@ -1002,7 +984,7 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 			// cache types and values
 			switch v := arg.(type) {
 			case int64:
-				paramTypes[i+i] = fieldTypeLongLong
+				paramTypes[i+i] = byte(fieldTypeLongLong)
 				paramTypes[i+i+1] = 0x00
 
 				if cap(paramValues)-len(paramValues)-8 >= 0 {
@@ -1018,7 +1000,7 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 				}
 
 			case float64:
-				paramTypes[i+i] = fieldTypeDouble
+				paramTypes[i+i] = byte(fieldTypeDouble)
 				paramTypes[i+i+1] = 0x00
 
 				if cap(paramValues)-len(paramValues)-8 >= 0 {
@@ -1034,7 +1016,7 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 				}
 
 			case bool:
-				paramTypes[i+i] = fieldTypeTiny
+				paramTypes[i+i] = byte(fieldTypeTiny)
 				paramTypes[i+i+1] = 0x00
 
 				if v {
@@ -1046,10 +1028,10 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 			case []byte:
 				// Common case (non-nil value) first
 				if v != nil {
-					paramTypes[i+i] = fieldTypeString
+					paramTypes[i+i] = byte(fieldTypeString)
 					paramTypes[i+i+1] = 0x00
 
-					if len(v) < mc.maxAllowedPacket-pos-len(paramValues)-(len(args)-(i+1))*64 {
+					if len(v) < longDataSize {
 						paramValues = appendLengthEncodedInteger(paramValues,
 							uint64(len(v)),
 						)
@@ -1064,14 +1046,14 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 
 				// Handle []byte(nil) as a NULL value
 				nullMask[i/8] |= 1 << (uint(i) & 7)
-				paramTypes[i+i] = fieldTypeNULL
+				paramTypes[i+i] = byte(fieldTypeNULL)
 				paramTypes[i+i+1] = 0x00
 
 			case string:
-				paramTypes[i+i] = fieldTypeString
+				paramTypes[i+i] = byte(fieldTypeString)
 				paramTypes[i+i+1] = 0x00
 
-				if len(v) < mc.maxAllowedPacket-pos-len(paramValues)-(len(args)-(i+1))*64 {
+				if len(v) < longDataSize {
 					paramValues = appendLengthEncodedInteger(paramValues,
 						uint64(len(v)),
 					)
@@ -1083,7 +1065,7 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 				}
 
 			case time.Time:
-				paramTypes[i+i] = fieldTypeString
+				paramTypes[i+i] = byte(fieldTypeString)
 				paramTypes[i+i+1] = 0x00
 
 				var a [64]byte
@@ -1101,7 +1083,7 @@ func (stmt *mysqlStmt) writeExecutePacket(args []driver.Value) error {
 				paramValues = append(paramValues, b...)
 
 			default:
-				return fmt.Errorf("can not convert type: %T", arg)
+				return fmt.Errorf("cannot convert type: %T", arg)
 			}
 		}
 
@@ -1157,10 +1139,11 @@ func (rows *binaryRows) readRow(dest []driver.Value) error {
 			}
 			return io.EOF
 		}
+		mc := rows.mc
 		rows.mc = nil
 
 		// Error otherwise
-		return rows.mc.handleErrorPacket(data)
+		return mc.handleErrorPacket(data)
 	}
 
 	// NULL-bitmap,  [(column-count + 7 + 2) / 8 bytes]
@@ -1278,7 +1261,7 @@ func (rows *binaryRows) readRow(dest []driver.Value) error {
 						rows.rs.columns[i].decimals,
 					)
 				}
-				dest[i], err = formatBinaryDateTime(data[pos:pos+int(num)], dstlen, true)
+				dest[i], err = formatBinaryTime(data[pos:pos+int(num)], dstlen)
 			case rows.mc.parseTime:
 				dest[i], err = parseBinaryDateTime(num, data[pos:], rows.mc.cfg.Loc)
 			default:
@@ -1298,7 +1281,7 @@ func (rows *binaryRows) readRow(dest []driver.Value) error {
 						)
 					}
 				}
-				dest[i], err = formatBinaryDateTime(data[pos:pos+int(num)], dstlen, false)
+				dest[i], err = formatBinaryDateTime(data[pos:pos+int(num)], dstlen)
 			}
 
 			if err == nil {
