@@ -49,7 +49,7 @@ func (m *Empty) XXX_DiscardUnknown() {
 var xxx_messageInfo_Empty proto.InternalMessageInfo
 
 type Bool struct {
-	Value                bool     `protobuf:"varint,1,opt,name=value" json:"value"`
+	Value                bool     `protobuf:"varint,1,opt,name=value,proto3" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -87,7 +87,7 @@ func (m *Bool) GetValue() bool {
 }
 
 type BoolList struct {
-	ValueList            []bool   `protobuf:"varint,1,rep,packed,name=value_list,json=valueList" json:"value_list"`
+	ValueList            []bool   `protobuf:"varint,1,rep,packed,name=value_list,json=valueList,proto3" json:"value_list"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -125,7 +125,7 @@ func (m *BoolList) GetValueList() []bool {
 }
 
 type Int32 struct {
-	Value                int32    `protobuf:"varint,1,opt,name=value" json:"value"`
+	Value                int32    `protobuf:"varint,1,opt,name=value,proto3" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -163,7 +163,7 @@ func (m *Int32) GetValue() int32 {
 }
 
 type Int32List struct {
-	ValueList            []int32  `protobuf:"varint,1,rep,packed,name=value_list,json=valueList" json:"value_list"`
+	ValueList            []int32  `protobuf:"varint,1,rep,packed,name=value_list,json=valueList,proto3" json:"value_list"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -201,7 +201,7 @@ func (m *Int32List) GetValueList() []int32 {
 }
 
 type UInt32 struct {
-	Value                uint32   `protobuf:"varint,1,opt,name=value" json:"value"`
+	Value                uint32   `protobuf:"varint,1,opt,name=value,proto3" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -239,7 +239,7 @@ func (m *UInt32) GetValue() uint32 {
 }
 
 type UInt32List struct {
-	ValueList            []uint32 `protobuf:"varint,1,rep,packed,name=value_list,json=valueList" json:"value_list"`
+	ValueList            []uint32 `protobuf:"varint,1,rep,packed,name=value_list,json=valueList,proto3" json:"value_list"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -277,7 +277,7 @@ func (m *UInt32List) GetValueList() []uint32 {
 }
 
 type Int64 struct {
-	Value                int64    `protobuf:"varint,1,opt,name=value" json:"value"`
+	Value                int64    `protobuf:"varint,1,opt,name=value,proto3" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -315,7 +315,7 @@ func (m *Int64) GetValue() int64 {
 }
 
 type Int64List struct {
-	ValueList            []int64  `protobuf:"varint,1,rep,packed,name=value_list,json=valueList" json:"value_list"`
+	ValueList            []int64  `protobuf:"varint,1,rep,packed,name=value_list,json=valueList,proto3" json:"value_list"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -353,7 +353,7 @@ func (m *Int64List) GetValueList() []int64 {
 }
 
 type UInt64 struct {
-	Value                uint64   `protobuf:"varint,1,opt,name=value" json:"value"`
+	Value                uint64   `protobuf:"varint,1,opt,name=value,proto3" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -391,7 +391,7 @@ func (m *UInt64) GetValue() uint64 {
 }
 
 type UInt64List struct {
-	ValueList            []uint64 `protobuf:"varint,1,rep,packed,name=value_list,json=valueList" json:"value_list"`
+	ValueList            []uint64 `protobuf:"varint,1,rep,packed,name=value_list,json=valueList,proto3" json:"value_list"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -429,7 +429,7 @@ func (m *UInt64List) GetValueList() []uint64 {
 }
 
 type Float32 struct {
-	Value                float32  `protobuf:"fixed32,1,opt,name=value" json:"value"`
+	Value                float32  `protobuf:"fixed32,1,opt,name=value,proto3" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -467,7 +467,7 @@ func (m *Float32) GetValue() float32 {
 }
 
 type Float32List struct {
-	ValueList            []float32 `protobuf:"fixed32,1,rep,packed,name=value_list,json=valueList" json:"value_list"`
+	ValueList            []float32 `protobuf:"fixed32,1,rep,packed,name=value_list,json=valueList,proto3" json:"value_list"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -505,7 +505,7 @@ func (m *Float32List) GetValueList() []float32 {
 }
 
 type Float64 struct {
-	Value                float64  `protobuf:"fixed64,1,opt,name=value" json:"value"`
+	Value                float64  `protobuf:"fixed64,1,opt,name=value,proto3" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -543,7 +543,7 @@ func (m *Float64) GetValue() float64 {
 }
 
 type Float64List struct {
-	ValueList            []float64 `protobuf:"fixed64,1,rep,packed,name=value_list,json=valueList" json:"value_list"`
+	ValueList            []float64 `protobuf:"fixed64,1,rep,packed,name=value_list,json=valueList,proto3" json:"value_list"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -581,7 +581,7 @@ func (m *Float64List) GetValueList() []float64 {
 }
 
 type String struct {
-	Value                string   `protobuf:"bytes,1,opt,name=value" json:"value"`
+	Value                string   `protobuf:"bytes,1,opt,name=value,proto3" json:"value"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -619,7 +619,7 @@ func (m *String) GetValue() string {
 }
 
 type StringList struct {
-	ValueList            []string `protobuf:"bytes,1,rep,name=value_list,json=valueList" json:"value_list"`
+	ValueList            []string `protobuf:"bytes,1,rep,name=value_list,json=valueList,proto3" json:"value_list"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -657,7 +657,7 @@ func (m *StringList) GetValueList() []string {
 }
 
 type StringMap struct {
-	ValueMap             map[string]string `protobuf:"bytes,1,rep,name=value_map,json=valueMap" json:"value_map" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	ValueMap             map[string]string `protobuf:"bytes,1,rep,name=value_map,json=valueMap,proto3" json:"value_map" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -695,7 +695,7 @@ func (m *StringMap) GetValueMap() map[string]string {
 }
 
 type StringListMap struct {
-	ValueListMap         map[string]*StringList `protobuf:"bytes,1,rep,name=value_list_map,json=valueListMap" json:"value_list_map" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	ValueListMap         map[string]*StringList `protobuf:"bytes,1,rep,name=value_list_map,json=valueListMap,proto3" json:"value_list_map" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
 	XXX_unrecognized     []byte                 `json:"-"`
 	XXX_sizecache        int32                  `json:"-"`
@@ -809,7 +809,7 @@ func (m *BytesList) GetValueList() [][]byte {
 }
 
 type BytesMap struct {
-	ValueMap             map[string][]byte `protobuf:"bytes,1,rep,name=value_map,json=valueMap" json:"value_map" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	ValueMap             map[string][]byte `protobuf:"bytes,1,rep,name=value_map,json=valueMap,proto3" json:"value_map" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -847,7 +847,7 @@ func (m *BytesMap) GetValueMap() map[string][]byte {
 }
 
 type BytesListMap struct {
-	ValueListMap         map[string]*BytesList `protobuf:"bytes,1,rep,name=value_list_map,json=valueListMap" json:"value_list_map" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	ValueListMap         map[string]*BytesList `protobuf:"bytes,1,rep,name=value_list_map,json=valueListMap,proto3" json:"value_list_map" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
