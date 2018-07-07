@@ -59,11 +59,11 @@ spec:
         - name: OPENPITRIX_LOG_LEVEL
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${LIMITS}m
+            memory: ${LIMITS}Mi
           requests:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${REQUESTS}m
+            memory: ${REQUESTS}Mi
         volumeMounts:
         - mountPath: /opt/openpitrix/conf
           name: config-volume

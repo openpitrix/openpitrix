@@ -9,12 +9,17 @@ DBCTRL=0
 BASE=0
 DASHBOARD=0
 
+REQUESTS=100
+LIMITS=500
+
 usage() {
   echo "Usage:"
   echo "  deploy-k8s.sh [-n NAMESPACE] [-v VERSION] COMMAND"
   echo "Description:"
   echo "    -n NAMESPACE: the namespace of kubernetes."
   echo "    -v VERSION  : the version to be deployed."
+  echo "    -r REQUESTS : the requests of container resources."
+  echo "    -l LIMITS   : the limits of container resources."
   echo "    -b          : base model will be applied."
   echo "    -m          : metadata will be applied."
   echo "    -d          : dbctrl will be applied."
@@ -22,12 +27,14 @@ usage() {
   exit -1
 }
 
-while getopts n:v:hbdms option
+while getopts n:v:r:l:hbdms option
 do
   case "${option}"
   in
   n) NAMESPACE=${OPTARG};;
   v) VERSION=${OPTARG};;
+  r) REQUESTS=${OPTARG};;
+  l) LIMITS=${OPTARG};;
   d) DBCTRL=1;;
   m) METADATA=1;;
   b) BASE=1;;
@@ -65,7 +72,10 @@ replace() {
 	  -e "s!\${IMAGE}!${IMAGE}!g" \
 	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
 	  -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" \
-	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" $1
+	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
+	  -e "s!\${REQUESTS}!${REQUESTS}!g" \
+	  -e "s!\${LIMITS}!${LIMITS}!g" \
+	  $1
 }
 
 echo "Deploying k8s resource..."

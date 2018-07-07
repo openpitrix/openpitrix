@@ -51,8 +51,8 @@ spec:
           value: v1
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${LIMITS}m
+            memory: ${LIMITS}Mi
           requests:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${REQUESTS}m
+            memory: ${REQUESTS}Mi
