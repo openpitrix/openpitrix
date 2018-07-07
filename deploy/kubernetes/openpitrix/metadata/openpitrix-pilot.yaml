@@ -48,7 +48,7 @@ spec:
         command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc.cluster.local 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
       - name: openpitrix-pilot
-        image: ${METADATA_IMAGE}
+        image: ${IMAGE}
         imagePullPolicy: Always
         command: ['pilot', '-config=/opt/openpitrix/conf/pilot-config.json', 'serve']
         ports:
@@ -59,11 +59,11 @@ spec:
         - name: OPENPITRIX_LOG_LEVEL
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${LIMITS}m
+            memory: ${LIMITS}Mi
           requests:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${REQUESTS}m
+            memory: ${REQUESTS}Mi
         volumeMounts:
         - mountPath: /opt/openpitrix/conf
           name: config-volume

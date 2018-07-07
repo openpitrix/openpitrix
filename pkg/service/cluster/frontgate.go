@@ -101,8 +101,8 @@ func (f *Frontgate) GetActiveFrontgate(clusterWrapper *models.ClusterWrapper) (*
 			err = fmt.Errorf("describe vpc [%s] failed", vpcId)
 			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed, vpcId)
 		}
-		if vpc.Status != constants.StatusActive {
-			err = fmt.Errorf("vpc [%s] is not active", vpcId)
+		if vpc.Status != constants.StatusActive && vpc.Status != constants.StatusAvailable {
+			err = fmt.Errorf("vpc [%s] is not active or available", vpcId)
 			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotInStatus, vpcId, constants.StatusActive)
 		}
 		if vpc.TransitionStatus != "" {

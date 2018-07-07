@@ -7,14 +7,16 @@ FROM openpitrix/openpitrix-builder as builder
 WORKDIR /go/src/openpitrix.io/openpitrix/
 COPY . .
 
+RUN mkdir -p /metadata_bin
 RUN go generate openpitrix.io/openpitrix/pkg/version && \
-	go install -tags netgo openpitrix.io/openpitrix/metadata/cmd/...
+	GOBIN=/metadata_bin go install -tags netgo openpitrix.io/openpitrix/metadata/cmd/...
+
+RUN find /metadata_bin -type f -exec upx {} \;
 
 FROM alpine:3.7
 
-COPY --from=builder /go/bin/drone     /usr/local/bin/
-COPY --from=builder /go/bin/frontgate /usr/local/bin/
-COPY --from=builder /go/bin/pilot     /usr/local/bin/
+COPY --from=builder /metadata_bin/drone     /usr/local/bin/
+COPY --from=builder /metadata_bin/frontgate /usr/local/bin/
 
 RUN apk add --no-cache docker util-linux
 

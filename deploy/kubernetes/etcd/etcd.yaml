@@ -10,7 +10,6 @@ spec:
   selector:
     app: openpitrix
     tier: etcd
-  clusterIP: None
   ports:
   - name: tcp
     protocol: TCP
@@ -55,8 +54,9 @@ spec:
     spec:
       containers:
       - name: openpitrix-etcd
-        image: appcelerator/etcd:3.3.3
+        image: quay.io/coreos/etcd:v3.2.18
         imagePullPolicy: IfNotPresent
+        command: ["etcd", "--listen-client-urls=http://0.0.0.0:2379", "--advertise-client-urls=http://openpitrix-etcd.${NAMESPACE}.svc.cluster.local:2379", "--max-snapshots=5", "--max-wals=5", "--auto-compaction-retention=168"]
         ports:
         - containerPort: 2379
           name: etcd

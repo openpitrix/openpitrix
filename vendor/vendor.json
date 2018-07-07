@@ -3,6 +3,10 @@
 	"ignore": "test",
 	"package": [
 		{
+			"path": "appengine/cloudsql",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "fUuwLceQlmZnqCoM0fB+xU1zNiM=",
 			"origin": "k8s.io/kubernetes/vendor/github.com/Azure/go-ansiterm",
 			"path": "github.com/Azure/go-ansiterm",
@@ -168,6 +172,12 @@
 			"revisionTime": "2018-03-20T21:51:08Z"
 		},
 		{
+			"checksumSHA1": "GQuRJY72iGQrufDqIaB50zG27u0=",
+			"path": "github.com/aws/aws-sdk-go/private/protocol/ec2query",
+			"revision": "e79e9fd4ec11ccc242a472f980be78830f9eba80",
+			"revisionTime": "2018-06-22T22:18:31Z"
+		},
+		{
 			"checksumSHA1": "SBBVYdLcocjdPzMWgDuR8vcOfDQ=",
 			"path": "github.com/aws/aws-sdk-go/private/protocol/query",
 			"revision": "f21685d7a47768086027e41dff8bf6358e04b548",
@@ -196,6 +206,12 @@
 			"path": "github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil",
 			"revision": "f21685d7a47768086027e41dff8bf6358e04b548",
 			"revisionTime": "2018-03-20T21:51:08Z"
+		},
+		{
+			"checksumSHA1": "SfYmxNsUZdSLy6VahSyRVaACeSU=",
+			"path": "github.com/aws/aws-sdk-go/service/ec2",
+			"revision": "e79e9fd4ec11ccc242a472f980be78830f9eba80",
+			"revisionTime": "2018-06-22T22:18:31Z"
 		},
 		{
 			"checksumSHA1": "/MR2uoycqymJLdO3Bu1pTkZCpDY=",
@@ -472,10 +488,10 @@
 			"revisionTime": "2018-02-04T09:47:04Z"
 		},
 		{
-			"checksumSHA1": "HnjM0xNE7bh3cTub92/JjhAwBp8=",
+			"checksumSHA1": "W+IoIME5mgWjwU+dOlh3DZEZEN4=",
 			"path": "github.com/go-sql-driver/mysql",
-			"revision": "7785c74297136c027fdf2fd6f8931c0e19be8aa7",
-			"revisionTime": "2017-09-21T06:28:06Z"
+			"revision": "749ddf1598b47e3cd909414bda735fe790ef3d30",
+			"revisionTime": "2018-06-18T11:59:01Z"
 		},
 		{
 			"checksumSHA1": "2LUvj5BwwIzkp94ydDrcVpLV+XY=",
@@ -639,6 +655,12 @@
 			"path": "github.com/googleapis/gnostic/extensions",
 			"revision": "933c109c13cecdb5b6157989d357acac8afc4c04",
 			"revisionTime": "2017-12-11T02:40:24Z"
+		},
+		{
+			"checksumSHA1": "QdSIO+gp41BqNti0ZDVdXvfDvDo=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "5ed622c449da6d44c3c8329331ff47a9e5844f71",
+			"revisionTime": "2018-06-05T20:25:52Z"
 		},
 		{
 			"checksumSHA1": "oiAXz4eNo8+dtIxI5Rw9hZ0L4h0=",
@@ -1069,6 +1091,12 @@
 			"path": "golang.org/x/tools/godoc/vfs/mapfs",
 			"revision": "9deed8c6c1c89e0b6d68d727f215de8e851d1064",
 			"revisionTime": "2016-08-29T18:36:23Z"
+		},
+		{
+			"checksumSHA1": "LiyXfqOzaeQ8vgYZH3t2hUEdVTw=",
+			"path": "google.golang.org/appengine/cloudsql",
+			"revision": "b1f26356af11148e710935ed1ac8a7f5702c7612",
+			"revisionTime": "2018-05-21T22:34:13Z"
 		},
 		{
 			"checksumSHA1": "B22iMMY2vi1Q9kseWb/ZznpW8lQ=",

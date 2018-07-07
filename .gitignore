@@ -12,6 +12,7 @@
 *.out
 
 .idea
+*.iml
 bin/
 
 .vscode/

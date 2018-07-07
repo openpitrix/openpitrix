@@ -78,6 +78,8 @@ type DescribeSubnetsParams struct {
 
 	*/
 	SubnetTypeValue *int64
+	/*Zone*/
+	Zone []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -183,6 +185,17 @@ func (o *DescribeSubnetsParams) SetSubnetTypeValue(subnetTypeValue *int64) {
 	o.SubnetTypeValue = subnetTypeValue
 }
 
+// WithZone adds the zone to the describe subnets params
+func (o *DescribeSubnetsParams) WithZone(zone []string) *DescribeSubnetsParams {
+	o.SetZone(zone)
+	return o
+}
+
+// SetZone adds the zone to the describe subnets params
+func (o *DescribeSubnetsParams) SetZone(zone []string) {
+	o.Zone = zone
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DescribeSubnetsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -269,6 +282,14 @@ func (o *DescribeSubnetsParams) WriteToRequest(r runtime.ClientRequest, reg strf
 			}
 		}
 
+	}
+
+	valuesZone := o.Zone
+
+	joinedZone := swag.JoinByFormat(valuesZone, "multi")
+	// query array param zone
+	if err := r.SetQueryParam("zone", joinedZone...); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

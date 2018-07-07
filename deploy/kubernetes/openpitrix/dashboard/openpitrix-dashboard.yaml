@@ -14,7 +14,7 @@ spec:
   ports:
   - name: openpitrix-dashboard
     protocol: TCP
-    port: 8000
+    port: 80
     targetPort: 8000
 ---
 apiVersion: apps/v1beta2
@@ -44,10 +44,15 @@ spec:
         ports:
         - containerPort: 8000
           name: dashboard
+        env:
+        - name: serverUrl
+          value: http://openpitrix-api-gateway:9100
+        - name: apiVersion
+          value: v1
         resources:
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${LIMITS}m
+            memory: ${LIMITS}Mi
           requests:
-            cpu: 500m
-            memory: 500Mi
+            cpu: ${REQUESTS}m
+            memory: ${REQUESTS}Mi

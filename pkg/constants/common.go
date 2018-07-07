@@ -60,6 +60,12 @@ const (
 	StatusPending     = "pending"
 	StatusSuccessful  = "successful"
 	StatusFailed      = "failed"
+
+	StatusRunning    = "running"
+	StatusTerminated = "terminated"
+
+	StatusAvailable = "available"
+	StatusInUse     = "in-use"
 )
 
 const (
@@ -115,11 +121,13 @@ const (
 const (
 	ProviderQingCloud  = "qingcloud"
 	ProviderKubernetes = "kubernetes"
+	ProviderAWS        = "aws"
 	TargetPilot        = "pilot"
 )
 
 var VmBaseProviders = []string{
 	ProviderQingCloud,
+	ProviderAWS,
 }
 
 const (
