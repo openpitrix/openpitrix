@@ -29,13 +29,13 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DescribeSubnetsRequest struct {
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
-	Limit                uint32                `protobuf:"varint,2,opt,name=limit" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,3,opt,name=offset" json:"offset,omitempty"`
-	SubnetType           *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=subnet_type,json=subnetType" json:"subnet_type,omitempty"`
-	SubnetId             []string              `protobuf:"bytes,5,rep,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
-	Zone                 []string              `protobuf:"bytes,6,rep,name=zone" json:"zone,omitempty"`
-	AdvancedParam        []string              `protobuf:"bytes,7,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	RuntimeId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	Limit                uint32                `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	SubnetType           *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=subnet_type,json=subnetType,proto3" json:"subnet_type,omitempty"`
+	SubnetId             []string              `protobuf:"bytes,5,rep,name=subnet_id,json=subnetId,proto3" json:"subnet_id,omitempty"`
+	Zone                 []string              `protobuf:"bytes,6,rep,name=zone,proto3" json:"zone,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,7,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -115,14 +115,14 @@ func (m *DescribeSubnetsRequest) GetAdvancedParam() []string {
 }
 
 type Subnet struct {
-	SubnetId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Zone                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=zone" json:"zone,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,4,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
-	InstanceId           []string              `protobuf:"bytes,6,rep,name=instance_id,json=instanceId" json:"instance_id,omitempty"`
-	VpcId                *wrappers.StringValue `protobuf:"bytes,7,opt,name=vpc_id,json=vpcId" json:"vpc_id,omitempty"`
-	SubnetType           *wrappers.UInt32Value `protobuf:"bytes,8,opt,name=subnet_type,json=subnetType" json:"subnet_type,omitempty"`
+	SubnetId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=subnet_id,json=subnetId,proto3" json:"subnet_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Zone                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=zone,proto3" json:"zone,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,4,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	InstanceId           []string              `protobuf:"bytes,6,rep,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	VpcId                *wrappers.StringValue `protobuf:"bytes,7,opt,name=vpc_id,json=vpcId,proto3" json:"vpc_id,omitempty"`
+	SubnetType           *wrappers.UInt32Value `protobuf:"bytes,8,opt,name=subnet_type,json=subnetType,proto3" json:"subnet_type,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -209,8 +209,8 @@ func (m *Subnet) GetSubnetType() *wrappers.UInt32Value {
 }
 
 type DescribeSubnetsResponse struct {
-	TotalCount           uint32    `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	SubnetSet            []*Subnet `protobuf:"bytes,2,rep,name=subnet_set,json=subnetSet" json:"subnet_set,omitempty"`
+	TotalCount           uint32    `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	SubnetSet            []*Subnet `protobuf:"bytes,2,rep,name=subnet_set,json=subnetSet,proto3" json:"subnet_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -255,11 +255,11 @@ func (m *DescribeSubnetsResponse) GetSubnetSet() []*Subnet {
 }
 
 type CreateClusterRequest struct {
-	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	RuntimeId            *wrappers.StringValue `protobuf:"bytes,3,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
-	Conf                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=conf" json:"conf,omitempty"`
-	AdvancedParam        []string              `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	RuntimeId            *wrappers.StringValue `protobuf:"bytes,3,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	Conf                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=conf,proto3" json:"conf,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -325,8 +325,8 @@ func (m *CreateClusterRequest) GetAdvancedParam() []string {
 }
 
 type CreateClusterResponse struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -371,12 +371,12 @@ func (m *CreateClusterResponse) GetJobId() *wrappers.StringValue {
 }
 
 type ModifyClusterRequest struct {
-	Cluster                *Cluster               `protobuf:"bytes,1,opt,name=cluster" json:"cluster,omitempty"`
-	ClusterNodeSet         []*ClusterNode         `protobuf:"bytes,2,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
-	ClusterRoleSet         []*ClusterRole         `protobuf:"bytes,3,rep,name=cluster_role_set,json=clusterRoleSet" json:"cluster_role_set,omitempty"`
-	ClusterLinkSet         []*ClusterLink         `protobuf:"bytes,4,rep,name=cluster_link_set,json=clusterLinkSet" json:"cluster_link_set,omitempty"`
-	ClusterCommonSet       []*ClusterCommon       `protobuf:"bytes,5,rep,name=cluster_common_set,json=clusterCommonSet" json:"cluster_common_set,omitempty"`
-	ClusterLoadbalancerSet []*ClusterLoadbalancer `protobuf:"bytes,6,rep,name=cluster_loadbalancer_set,json=clusterLoadbalancerSet" json:"cluster_loadbalancer_set,omitempty"`
+	Cluster                *Cluster               `protobuf:"bytes,1,opt,name=cluster,proto3" json:"cluster,omitempty"`
+	ClusterNodeSet         []*ClusterNode         `protobuf:"bytes,2,rep,name=cluster_node_set,json=clusterNodeSet,proto3" json:"cluster_node_set,omitempty"`
+	ClusterRoleSet         []*ClusterRole         `protobuf:"bytes,3,rep,name=cluster_role_set,json=clusterRoleSet,proto3" json:"cluster_role_set,omitempty"`
+	ClusterLinkSet         []*ClusterLink         `protobuf:"bytes,4,rep,name=cluster_link_set,json=clusterLinkSet,proto3" json:"cluster_link_set,omitempty"`
+	ClusterCommonSet       []*ClusterCommon       `protobuf:"bytes,5,rep,name=cluster_common_set,json=clusterCommonSet,proto3" json:"cluster_common_set,omitempty"`
+	ClusterLoadbalancerSet []*ClusterLoadbalancer `protobuf:"bytes,6,rep,name=cluster_loadbalancer_set,json=clusterLoadbalancerSet,proto3" json:"cluster_loadbalancer_set,omitempty"`
 	XXX_NoUnkeyedLiteral   struct{}               `json:"-"`
 	XXX_unrecognized       []byte                 `json:"-"`
 	XXX_sizecache          int32                  `json:"-"`
@@ -449,7 +449,7 @@ func (m *ModifyClusterRequest) GetClusterLoadbalancerSet() []*ClusterLoadbalance
 }
 
 type ModifyClusterResponse struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -487,7 +487,7 @@ func (m *ModifyClusterResponse) GetClusterId() *wrappers.StringValue {
 }
 
 type ModifyClusterNodeRequest struct {
-	ClusterNode          *ClusterNode `protobuf:"bytes,1,opt,name=cluster_node,json=clusterNode" json:"cluster_node,omitempty"`
+	ClusterNode          *ClusterNode `protobuf:"bytes,1,opt,name=cluster_node,json=clusterNode,proto3" json:"cluster_node,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
 	XXX_sizecache        int32        `json:"-"`
@@ -525,7 +525,7 @@ func (m *ModifyClusterNodeRequest) GetClusterNode() *ClusterNode {
 }
 
 type ModifyClusterNodeResponse struct {
-	NodeId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	NodeId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -563,7 +563,7 @@ func (m *ModifyClusterNodeResponse) GetNodeId() *wrappers.StringValue {
 }
 
 type AddTableClusterNodesRequest struct {
-	ClusterNodeSet       []*ClusterNode `protobuf:"bytes,1,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
+	ClusterNodeSet       []*ClusterNode `protobuf:"bytes,1,rep,name=cluster_node_set,json=clusterNodeSet,proto3" json:"cluster_node_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`
@@ -601,7 +601,7 @@ func (m *AddTableClusterNodesRequest) GetClusterNodeSet() []*ClusterNode {
 }
 
 type DeleteTableClusterNodesRequest struct {
-	NodeId               []string `protobuf:"bytes,1,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
+	NodeId               []string `protobuf:"bytes,1,rep,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -639,8 +639,8 @@ func (m *DeleteTableClusterNodesRequest) GetNodeId() []string {
 }
 
 type DeleteClustersRequest struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -685,8 +685,8 @@ func (m *DeleteClustersRequest) GetAdvancedParam() []string {
 }
 
 type DeleteClustersResponse struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -731,9 +731,9 @@ func (m *DeleteClustersResponse) GetJobId() []string {
 }
 
 type UpgradeClusterRequest struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	AdvancedParam        []string              `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -785,8 +785,8 @@ func (m *UpgradeClusterRequest) GetAdvancedParam() []string {
 }
 
 type UpgradeClusterResponse struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -831,8 +831,8 @@ func (m *UpgradeClusterResponse) GetJobId() *wrappers.StringValue {
 }
 
 type RollbackClusterRequest struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam        []string              `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -877,8 +877,8 @@ func (m *RollbackClusterRequest) GetAdvancedParam() []string {
 }
 
 type RollbackClusterResponse struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -923,11 +923,11 @@ func (m *RollbackClusterResponse) GetJobId() *wrappers.StringValue {
 }
 
 type ResizeClusterRequest struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	Cpu                  *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=cpu" json:"cpu,omitempty"`
-	Memory               *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=memory" json:"memory,omitempty"`
-	AdvancedParam        []string              `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	Cpu                  *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=cpu,proto3" json:"cpu,omitempty"`
+	Memory               *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=memory,proto3" json:"memory,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,5,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -993,8 +993,8 @@ func (m *ResizeClusterRequest) GetAdvancedParam() []string {
 }
 
 type ResizeClusterResponse struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1039,10 +1039,10 @@ func (m *ResizeClusterResponse) GetJobId() *wrappers.StringValue {
 }
 
 type AddClusterNodesRequest struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	NodeCount            *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=node_count,json=nodeCount" json:"node_count,omitempty"`
-	AdvancedParam        []string              `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	NodeCount            *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=node_count,json=nodeCount,proto3" json:"node_count,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1101,8 +1101,8 @@ func (m *AddClusterNodesRequest) GetAdvancedParam() []string {
 }
 
 type AddClusterNodesResponse struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1147,10 +1147,10 @@ func (m *AddClusterNodesResponse) GetJobId() *wrappers.StringValue {
 }
 
 type DeleteClusterNodesRequest struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	NodeId               []string              `protobuf:"bytes,3,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	AdvancedParam        []string              `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	NodeId               []string              `protobuf:"bytes,3,rep,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,4,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1209,8 +1209,8 @@ func (m *DeleteClusterNodesRequest) GetAdvancedParam() []string {
 }
 
 type DeleteClusterNodesResponse struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1255,9 +1255,9 @@ func (m *DeleteClusterNodesResponse) GetJobId() *wrappers.StringValue {
 }
 
 type UpdateClusterEnvRequest struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Env                  *wrappers.StringValue `protobuf:"bytes,2,opt,name=env" json:"env,omitempty"`
-	AdvancedParam        []string              `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Env                  *wrappers.StringValue `protobuf:"bytes,2,opt,name=env,proto3" json:"env,omitempty"`
+	AdvancedParam        []string              `protobuf:"bytes,3,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1309,8 +1309,8 @@ func (m *UpdateClusterEnvRequest) GetAdvancedParam() []string {
 }
 
 type UpdateClusterEnvResponse struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1355,32 +1355,32 @@ func (m *UpdateClusterEnvResponse) GetJobId() *wrappers.StringValue {
 }
 
 type ClusterCommon struct {
-	ClusterId                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role                       *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	ServerIdUpperBound         *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=server_id_upper_bound,json=serverIdUpperBound" json:"server_id_upper_bound,omitempty"`
-	AdvancedActions            *wrappers.StringValue `protobuf:"bytes,4,opt,name=advanced_actions,json=advancedActions" json:"advanced_actions,omitempty"`
-	InitService                *wrappers.StringValue `protobuf:"bytes,5,opt,name=init_service,json=initService" json:"init_service,omitempty"`
-	StartService               *wrappers.StringValue `protobuf:"bytes,6,opt,name=start_service,json=startService" json:"start_service,omitempty"`
-	StopService                *wrappers.StringValue `protobuf:"bytes,7,opt,name=stop_service,json=stopService" json:"stop_service,omitempty"`
-	ScaleOutService            *wrappers.StringValue `protobuf:"bytes,8,opt,name=scale_out_service,json=scaleOutService" json:"scale_out_service,omitempty"`
-	ScaleInService             *wrappers.StringValue `protobuf:"bytes,9,opt,name=scale_in_service,json=scaleInService" json:"scale_in_service,omitempty"`
-	RestartService             *wrappers.StringValue `protobuf:"bytes,10,opt,name=restart_service,json=restartService" json:"restart_service,omitempty"`
-	DestroyService             *wrappers.StringValue `protobuf:"bytes,11,opt,name=destroy_service,json=destroyService" json:"destroy_service,omitempty"`
-	UpgradeService             *wrappers.StringValue `protobuf:"bytes,12,opt,name=upgrade_service,json=upgradeService" json:"upgrade_service,omitempty"`
-	CustomService              *wrappers.StringValue `protobuf:"bytes,13,opt,name=custom_service,json=customService" json:"custom_service,omitempty"`
-	BackupService              *wrappers.StringValue `protobuf:"bytes,14,opt,name=backup_service,json=backupService" json:"backup_service,omitempty"`
-	RestoreService             *wrappers.StringValue `protobuf:"bytes,15,opt,name=restore_service,json=restoreService" json:"restore_service,omitempty"`
-	DeleteSnapshotService      *wrappers.StringValue `protobuf:"bytes,16,opt,name=delete_snapshot_service,json=deleteSnapshotService" json:"delete_snapshot_service,omitempty"`
-	HealthCheck                *wrappers.StringValue `protobuf:"bytes,17,opt,name=health_check,json=healthCheck" json:"health_check,omitempty"`
-	Monitor                    *wrappers.StringValue `protobuf:"bytes,18,opt,name=monitor" json:"monitor,omitempty"`
-	Passphraseless             *wrappers.StringValue `protobuf:"bytes,19,opt,name=passphraseless" json:"passphraseless,omitempty"`
-	VerticalScalingPolicy      *wrappers.StringValue `protobuf:"bytes,20,opt,name=vertical_scaling_policy,json=verticalScalingPolicy" json:"vertical_scaling_policy,omitempty"`
-	AgentInstalled             *wrappers.BoolValue   `protobuf:"bytes,21,opt,name=agent_installed,json=agentInstalled" json:"agent_installed,omitempty"`
-	CustomMetadataScript       *wrappers.StringValue `protobuf:"bytes,22,opt,name=custom_metadata_script,json=customMetadataScript" json:"custom_metadata_script,omitempty"`
-	ImageId                    *wrappers.StringValue `protobuf:"bytes,23,opt,name=image_id,json=imageId" json:"image_id,omitempty"`
-	BackupPolicy               *wrappers.StringValue `protobuf:"bytes,24,opt,name=backup_policy,json=backupPolicy" json:"backup_policy,omitempty"`
-	IncrementalBackupSupported *wrappers.BoolValue   `protobuf:"bytes,25,opt,name=incremental_backup_supported,json=incrementalBackupSupported" json:"incremental_backup_supported,omitempty"`
-	Hypervisor                 *wrappers.StringValue `protobuf:"bytes,26,opt,name=hypervisor" json:"hypervisor,omitempty"`
+	ClusterId                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Role                       *wrappers.StringValue `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	ServerIdUpperBound         *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=server_id_upper_bound,json=serverIdUpperBound,proto3" json:"server_id_upper_bound,omitempty"`
+	AdvancedActions            *wrappers.StringValue `protobuf:"bytes,4,opt,name=advanced_actions,json=advancedActions,proto3" json:"advanced_actions,omitempty"`
+	InitService                *wrappers.StringValue `protobuf:"bytes,5,opt,name=init_service,json=initService,proto3" json:"init_service,omitempty"`
+	StartService               *wrappers.StringValue `protobuf:"bytes,6,opt,name=start_service,json=startService,proto3" json:"start_service,omitempty"`
+	StopService                *wrappers.StringValue `protobuf:"bytes,7,opt,name=stop_service,json=stopService,proto3" json:"stop_service,omitempty"`
+	ScaleOutService            *wrappers.StringValue `protobuf:"bytes,8,opt,name=scale_out_service,json=scaleOutService,proto3" json:"scale_out_service,omitempty"`
+	ScaleInService             *wrappers.StringValue `protobuf:"bytes,9,opt,name=scale_in_service,json=scaleInService,proto3" json:"scale_in_service,omitempty"`
+	RestartService             *wrappers.StringValue `protobuf:"bytes,10,opt,name=restart_service,json=restartService,proto3" json:"restart_service,omitempty"`
+	DestroyService             *wrappers.StringValue `protobuf:"bytes,11,opt,name=destroy_service,json=destroyService,proto3" json:"destroy_service,omitempty"`
+	UpgradeService             *wrappers.StringValue `protobuf:"bytes,12,opt,name=upgrade_service,json=upgradeService,proto3" json:"upgrade_service,omitempty"`
+	CustomService              *wrappers.StringValue `protobuf:"bytes,13,opt,name=custom_service,json=customService,proto3" json:"custom_service,omitempty"`
+	BackupService              *wrappers.StringValue `protobuf:"bytes,14,opt,name=backup_service,json=backupService,proto3" json:"backup_service,omitempty"`
+	RestoreService             *wrappers.StringValue `protobuf:"bytes,15,opt,name=restore_service,json=restoreService,proto3" json:"restore_service,omitempty"`
+	DeleteSnapshotService      *wrappers.StringValue `protobuf:"bytes,16,opt,name=delete_snapshot_service,json=deleteSnapshotService,proto3" json:"delete_snapshot_service,omitempty"`
+	HealthCheck                *wrappers.StringValue `protobuf:"bytes,17,opt,name=health_check,json=healthCheck,proto3" json:"health_check,omitempty"`
+	Monitor                    *wrappers.StringValue `protobuf:"bytes,18,opt,name=monitor,proto3" json:"monitor,omitempty"`
+	Passphraseless             *wrappers.StringValue `protobuf:"bytes,19,opt,name=passphraseless,proto3" json:"passphraseless,omitempty"`
+	VerticalScalingPolicy      *wrappers.StringValue `protobuf:"bytes,20,opt,name=vertical_scaling_policy,json=verticalScalingPolicy,proto3" json:"vertical_scaling_policy,omitempty"`
+	AgentInstalled             *wrappers.BoolValue   `protobuf:"bytes,21,opt,name=agent_installed,json=agentInstalled,proto3" json:"agent_installed,omitempty"`
+	CustomMetadataScript       *wrappers.StringValue `protobuf:"bytes,22,opt,name=custom_metadata_script,json=customMetadataScript,proto3" json:"custom_metadata_script,omitempty"`
+	ImageId                    *wrappers.StringValue `protobuf:"bytes,23,opt,name=image_id,json=imageId,proto3" json:"image_id,omitempty"`
+	BackupPolicy               *wrappers.StringValue `protobuf:"bytes,24,opt,name=backup_policy,json=backupPolicy,proto3" json:"backup_policy,omitempty"`
+	IncrementalBackupSupported *wrappers.BoolValue   `protobuf:"bytes,25,opt,name=incremental_backup_supported,json=incrementalBackupSupported,proto3" json:"incremental_backup_supported,omitempty"`
+	Hypervisor                 *wrappers.StringValue `protobuf:"bytes,26,opt,name=hypervisor,proto3" json:"hypervisor,omitempty"`
 	XXX_NoUnkeyedLiteral       struct{}              `json:"-"`
 	XXX_unrecognized           []byte                `json:"-"`
 	XXX_sizecache              int32                 `json:"-"`
@@ -1593,30 +1593,30 @@ func (m *ClusterCommon) GetHypervisor() *wrappers.StringValue {
 }
 
 type ClusterNode struct {
-	NodeId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	InstanceId           *wrappers.StringValue `protobuf:"bytes,4,opt,name=instance_id,json=instanceId" json:"instance_id,omitempty"`
-	VolumeId             *wrappers.StringValue `protobuf:"bytes,5,opt,name=volume_id,json=volumeId" json:"volume_id,omitempty"`
-	Device               *wrappers.StringValue `protobuf:"bytes,6,opt,name=device" json:"device,omitempty"`
-	SubnetId             *wrappers.StringValue `protobuf:"bytes,7,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
-	PrivateIp            *wrappers.StringValue `protobuf:"bytes,8,opt,name=private_ip,json=privateIp" json:"private_ip,omitempty"`
-	ServerId             *wrappers.UInt32Value `protobuf:"bytes,9,opt,name=server_id,json=serverId" json:"server_id,omitempty"`
-	Role                 *wrappers.StringValue `protobuf:"bytes,10,opt,name=role" json:"role,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,11,opt,name=status" json:"status,omitempty"`
-	TransitionStatus     *wrappers.StringValue `protobuf:"bytes,12,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
-	GroupId              *wrappers.UInt32Value `protobuf:"bytes,13,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,14,opt,name=owner" json:"owner,omitempty"`
-	GlobalServerId       *wrappers.UInt32Value `protobuf:"bytes,15,opt,name=global_server_id,json=globalServerId" json:"global_server_id,omitempty"`
-	CustomMetadata       *wrappers.StringValue `protobuf:"bytes,16,opt,name=custom_metadata,json=customMetadata" json:"custom_metadata,omitempty"`
-	PubKey               *wrappers.StringValue `protobuf:"bytes,17,opt,name=pub_key,json=pubKey" json:"pub_key,omitempty"`
-	HealthStatus         *wrappers.StringValue `protobuf:"bytes,18,opt,name=health_status,json=healthStatus" json:"health_status,omitempty"`
-	IsBackup             *wrappers.BoolValue   `protobuf:"bytes,19,opt,name=is_backup,json=isBackup" json:"is_backup,omitempty"`
-	AutoBackup           *wrappers.BoolValue   `protobuf:"bytes,20,opt,name=auto_backup,json=autoBackup" json:"auto_backup,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,21,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,22,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
-	ClusterRole          *ClusterRole          `protobuf:"bytes,23,opt,name=cluster_role,json=clusterRole" json:"cluster_role,omitempty"`
-	ClusterCommon        *ClusterCommon        `protobuf:"bytes,24,opt,name=cluster_common,json=clusterCommon" json:"cluster_common,omitempty"`
+	NodeId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	InstanceId           *wrappers.StringValue `protobuf:"bytes,4,opt,name=instance_id,json=instanceId,proto3" json:"instance_id,omitempty"`
+	VolumeId             *wrappers.StringValue `protobuf:"bytes,5,opt,name=volume_id,json=volumeId,proto3" json:"volume_id,omitempty"`
+	Device               *wrappers.StringValue `protobuf:"bytes,6,opt,name=device,proto3" json:"device,omitempty"`
+	SubnetId             *wrappers.StringValue `protobuf:"bytes,7,opt,name=subnet_id,json=subnetId,proto3" json:"subnet_id,omitempty"`
+	PrivateIp            *wrappers.StringValue `protobuf:"bytes,8,opt,name=private_ip,json=privateIp,proto3" json:"private_ip,omitempty"`
+	ServerId             *wrappers.UInt32Value `protobuf:"bytes,9,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,10,opt,name=role,proto3" json:"role,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,11,opt,name=status,proto3" json:"status,omitempty"`
+	TransitionStatus     *wrappers.StringValue `protobuf:"bytes,12,opt,name=transition_status,json=transitionStatus,proto3" json:"transition_status,omitempty"`
+	GroupId              *wrappers.UInt32Value `protobuf:"bytes,13,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,14,opt,name=owner,proto3" json:"owner,omitempty"`
+	GlobalServerId       *wrappers.UInt32Value `protobuf:"bytes,15,opt,name=global_server_id,json=globalServerId,proto3" json:"global_server_id,omitempty"`
+	CustomMetadata       *wrappers.StringValue `protobuf:"bytes,16,opt,name=custom_metadata,json=customMetadata,proto3" json:"custom_metadata,omitempty"`
+	PubKey               *wrappers.StringValue `protobuf:"bytes,17,opt,name=pub_key,json=pubKey,proto3" json:"pub_key,omitempty"`
+	HealthStatus         *wrappers.StringValue `protobuf:"bytes,18,opt,name=health_status,json=healthStatus,proto3" json:"health_status,omitempty"`
+	IsBackup             *wrappers.BoolValue   `protobuf:"bytes,19,opt,name=is_backup,json=isBackup,proto3" json:"is_backup,omitempty"`
+	AutoBackup           *wrappers.BoolValue   `protobuf:"bytes,20,opt,name=auto_backup,json=autoBackup,proto3" json:"auto_backup,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,21,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,22,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	ClusterRole          *ClusterRole          `protobuf:"bytes,23,opt,name=cluster_role,json=clusterRole,proto3" json:"cluster_role,omitempty"`
+	ClusterCommon        *ClusterCommon        `protobuf:"bytes,24,opt,name=cluster_common,json=clusterCommon,proto3" json:"cluster_common,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1815,17 +1815,17 @@ func (m *ClusterNode) GetClusterCommon() *ClusterCommon {
 }
 
 type ClusterRole struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	Cpu                  *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=cpu" json:"cpu,omitempty"`
-	Gpu                  *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=gpu" json:"gpu,omitempty"`
-	Memory               *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=memory" json:"memory,omitempty"`
-	InstanceSize         *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=instance_size,json=instanceSize" json:"instance_size,omitempty"`
-	StorageSize          *wrappers.UInt32Value `protobuf:"bytes,7,opt,name=storage_size,json=storageSize" json:"storage_size,omitempty"`
-	MountPoint           *wrappers.StringValue `protobuf:"bytes,8,opt,name=mount_point,json=mountPoint" json:"mount_point,omitempty"`
-	MountOptions         *wrappers.StringValue `protobuf:"bytes,9,opt,name=mount_options,json=mountOptions" json:"mount_options,omitempty"`
-	FileSystem           *wrappers.StringValue `protobuf:"bytes,10,opt,name=file_system,json=fileSystem" json:"file_system,omitempty"`
-	Env                  *wrappers.StringValue `protobuf:"bytes,11,opt,name=env" json:"env,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Role                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	Cpu                  *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=cpu,proto3" json:"cpu,omitempty"`
+	Gpu                  *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=gpu,proto3" json:"gpu,omitempty"`
+	Memory               *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=memory,proto3" json:"memory,omitempty"`
+	InstanceSize         *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=instance_size,json=instanceSize,proto3" json:"instance_size,omitempty"`
+	StorageSize          *wrappers.UInt32Value `protobuf:"bytes,7,opt,name=storage_size,json=storageSize,proto3" json:"storage_size,omitempty"`
+	MountPoint           *wrappers.StringValue `protobuf:"bytes,8,opt,name=mount_point,json=mountPoint,proto3" json:"mount_point,omitempty"`
+	MountOptions         *wrappers.StringValue `protobuf:"bytes,9,opt,name=mount_options,json=mountOptions,proto3" json:"mount_options,omitempty"`
+	FileSystem           *wrappers.StringValue `protobuf:"bytes,10,opt,name=file_system,json=fileSystem,proto3" json:"file_system,omitempty"`
+	Env                  *wrappers.StringValue `protobuf:"bytes,11,opt,name=env,proto3" json:"env,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1933,11 +1933,11 @@ func (m *ClusterRole) GetEnv() *wrappers.StringValue {
 }
 
 type ClusterLoadbalancer struct {
-	ClusterId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Role                   *wrappers.StringValue `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
-	LoadbalancerListenerId *wrappers.StringValue `protobuf:"bytes,3,opt,name=loadbalancer_listener_id,json=loadbalancerListenerId" json:"loadbalancer_listener_id,omitempty"`
-	LoadbalancerPort       *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=loadbalancer_port,json=loadbalancerPort" json:"loadbalancer_port,omitempty"`
-	LoadbalancerPolicyId   *wrappers.StringValue `protobuf:"bytes,5,opt,name=loadbalancer_policy_id,json=loadbalancerPolicyId" json:"loadbalancer_policy_id,omitempty"`
+	ClusterId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Role                   *wrappers.StringValue `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	LoadbalancerListenerId *wrappers.StringValue `protobuf:"bytes,3,opt,name=loadbalancer_listener_id,json=loadbalancerListenerId,proto3" json:"loadbalancer_listener_id,omitempty"`
+	LoadbalancerPort       *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=loadbalancer_port,json=loadbalancerPort,proto3" json:"loadbalancer_port,omitempty"`
+	LoadbalancerPolicyId   *wrappers.StringValue `protobuf:"bytes,5,opt,name=loadbalancer_policy_id,json=loadbalancerPolicyId,proto3" json:"loadbalancer_policy_id,omitempty"`
 	XXX_NoUnkeyedLiteral   struct{}              `json:"-"`
 	XXX_unrecognized       []byte                `json:"-"`
 	XXX_sizecache          int32                 `json:"-"`
@@ -2003,10 +2003,10 @@ func (m *ClusterLoadbalancer) GetLoadbalancerPolicyId() *wrappers.StringValue {
 }
 
 type ClusterLink struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	ExternalClusterId    *wrappers.StringValue `protobuf:"bytes,3,opt,name=external_cluster_id,json=externalClusterId" json:"external_cluster_id,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner" json:"owner,omitempty"`
+	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ExternalClusterId    *wrappers.StringValue `protobuf:"bytes,3,opt,name=external_cluster_id,json=externalClusterId,proto3" json:"external_cluster_id,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2065,31 +2065,31 @@ func (m *ClusterLink) GetOwner() *wrappers.StringValue {
 }
 
 type Cluster struct {
-	ClusterId              *wrappers.StringValue  `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	Name                   *wrappers.StringValue  `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description            *wrappers.StringValue  `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	AppId                  *wrappers.StringValue  `protobuf:"bytes,4,opt,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId              *wrappers.StringValue  `protobuf:"bytes,5,opt,name=version_id,json=versionId" json:"version_id,omitempty"`
-	SubnetId               *wrappers.StringValue  `protobuf:"bytes,6,opt,name=subnet_id,json=subnetId" json:"subnet_id,omitempty"`
-	VpcId                  *wrappers.StringValue  `protobuf:"bytes,7,opt,name=vpc_id,json=vpcId" json:"vpc_id,omitempty"`
-	FrontgateId            *wrappers.StringValue  `protobuf:"bytes,8,opt,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
-	ClusterType            *wrappers.UInt32Value  `protobuf:"bytes,9,opt,name=cluster_type,json=clusterType" json:"cluster_type,omitempty"`
-	Endpoints              *wrappers.StringValue  `protobuf:"bytes,10,opt,name=endpoints" json:"endpoints,omitempty"`
-	Status                 *wrappers.StringValue  `protobuf:"bytes,11,opt,name=status" json:"status,omitempty"`
-	TransitionStatus       *wrappers.StringValue  `protobuf:"bytes,12,opt,name=transition_status,json=transitionStatus" json:"transition_status,omitempty"`
-	MetadataRootAccess     *wrappers.BoolValue    `protobuf:"bytes,13,opt,name=metadata_root_access,json=metadataRootAccess" json:"metadata_root_access,omitempty"`
-	Owner                  *wrappers.StringValue  `protobuf:"bytes,14,opt,name=owner" json:"owner,omitempty"`
-	GlobalUuid             *wrappers.StringValue  `protobuf:"bytes,15,opt,name=global_uuid,json=globalUuid" json:"global_uuid,omitempty"`
-	UpgradeStatus          *wrappers.StringValue  `protobuf:"bytes,16,opt,name=upgrade_status,json=upgradeStatus" json:"upgrade_status,omitempty"`
-	UpgradeTime            *timestamp.Timestamp   `protobuf:"bytes,17,opt,name=upgrade_time,json=upgradeTime" json:"upgrade_time,omitempty"`
-	RuntimeId              *wrappers.StringValue  `protobuf:"bytes,18,opt,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
-	CreateTime             *timestamp.Timestamp   `protobuf:"bytes,19,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime             *timestamp.Timestamp   `protobuf:"bytes,20,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
-	ClusterNodeSet         []*ClusterNode         `protobuf:"bytes,21,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
-	ClusterRoleSet         []*ClusterRole         `protobuf:"bytes,22,rep,name=cluster_role_set,json=clusterRoleSet" json:"cluster_role_set,omitempty"`
-	ClusterLinkSet         []*ClusterLink         `protobuf:"bytes,23,rep,name=cluster_link_set,json=clusterLinkSet" json:"cluster_link_set,omitempty"`
-	ClusterCommonSet       []*ClusterCommon       `protobuf:"bytes,24,rep,name=cluster_common_set,json=clusterCommonSet" json:"cluster_common_set,omitempty"`
-	ClusterLoadbalancerSet []*ClusterLoadbalancer `protobuf:"bytes,25,rep,name=cluster_loadbalancer_set,json=clusterLoadbalancerSet" json:"cluster_loadbalancer_set,omitempty"`
+	ClusterId              *wrappers.StringValue  `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	Name                   *wrappers.StringValue  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description            *wrappers.StringValue  `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	AppId                  *wrappers.StringValue  `protobuf:"bytes,4,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId              *wrappers.StringValue  `protobuf:"bytes,5,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	SubnetId               *wrappers.StringValue  `protobuf:"bytes,6,opt,name=subnet_id,json=subnetId,proto3" json:"subnet_id,omitempty"`
+	VpcId                  *wrappers.StringValue  `protobuf:"bytes,7,opt,name=vpc_id,json=vpcId,proto3" json:"vpc_id,omitempty"`
+	FrontgateId            *wrappers.StringValue  `protobuf:"bytes,8,opt,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id,omitempty"`
+	ClusterType            *wrappers.UInt32Value  `protobuf:"bytes,9,opt,name=cluster_type,json=clusterType,proto3" json:"cluster_type,omitempty"`
+	Endpoints              *wrappers.StringValue  `protobuf:"bytes,10,opt,name=endpoints,proto3" json:"endpoints,omitempty"`
+	Status                 *wrappers.StringValue  `protobuf:"bytes,11,opt,name=status,proto3" json:"status,omitempty"`
+	TransitionStatus       *wrappers.StringValue  `protobuf:"bytes,12,opt,name=transition_status,json=transitionStatus,proto3" json:"transition_status,omitempty"`
+	MetadataRootAccess     *wrappers.BoolValue    `protobuf:"bytes,13,opt,name=metadata_root_access,json=metadataRootAccess,proto3" json:"metadata_root_access,omitempty"`
+	Owner                  *wrappers.StringValue  `protobuf:"bytes,14,opt,name=owner,proto3" json:"owner,omitempty"`
+	GlobalUuid             *wrappers.StringValue  `protobuf:"bytes,15,opt,name=global_uuid,json=globalUuid,proto3" json:"global_uuid,omitempty"`
+	UpgradeStatus          *wrappers.StringValue  `protobuf:"bytes,16,opt,name=upgrade_status,json=upgradeStatus,proto3" json:"upgrade_status,omitempty"`
+	UpgradeTime            *timestamp.Timestamp   `protobuf:"bytes,17,opt,name=upgrade_time,json=upgradeTime,proto3" json:"upgrade_time,omitempty"`
+	RuntimeId              *wrappers.StringValue  `protobuf:"bytes,18,opt,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	CreateTime             *timestamp.Timestamp   `protobuf:"bytes,19,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime             *timestamp.Timestamp   `protobuf:"bytes,20,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	ClusterNodeSet         []*ClusterNode         `protobuf:"bytes,21,rep,name=cluster_node_set,json=clusterNodeSet,proto3" json:"cluster_node_set,omitempty"`
+	ClusterRoleSet         []*ClusterRole         `protobuf:"bytes,22,rep,name=cluster_role_set,json=clusterRoleSet,proto3" json:"cluster_role_set,omitempty"`
+	ClusterLinkSet         []*ClusterLink         `protobuf:"bytes,23,rep,name=cluster_link_set,json=clusterLinkSet,proto3" json:"cluster_link_set,omitempty"`
+	ClusterCommonSet       []*ClusterCommon       `protobuf:"bytes,24,rep,name=cluster_common_set,json=clusterCommonSet,proto3" json:"cluster_common_set,omitempty"`
+	ClusterLoadbalancerSet []*ClusterLoadbalancer `protobuf:"bytes,25,rep,name=cluster_loadbalancer_set,json=clusterLoadbalancerSet,proto3" json:"cluster_loadbalancer_set,omitempty"`
 	XXX_NoUnkeyedLiteral   struct{}               `json:"-"`
 	XXX_unrecognized       []byte                 `json:"-"`
 	XXX_sizecache          int32                  `json:"-"`
@@ -2295,18 +2295,18 @@ func (m *Cluster) GetClusterLoadbalancerSet() []*ClusterLoadbalancer {
 }
 
 type DescribeClustersRequest struct {
-	ClusterId         []string              `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AppId             []string              `protobuf:"bytes,2,rep,name=app_id,json=appId" json:"app_id,omitempty"`
-	VersionId         []string              `protobuf:"bytes,3,rep,name=version_id,json=versionId" json:"version_id,omitempty"`
-	Status            []string              `protobuf:"bytes,4,rep,name=status" json:"status,omitempty"`
-	RuntimeId         []string              `protobuf:"bytes,5,rep,name=runtime_id,json=runtimeId" json:"runtime_id,omitempty"`
-	FrontgateId       []string              `protobuf:"bytes,6,rep,name=frontgate_id,json=frontgateId" json:"frontgate_id,omitempty"`
-	ExternalClusterId *wrappers.StringValue `protobuf:"bytes,7,opt,name=external_cluster_id,json=externalClusterId" json:"external_cluster_id,omitempty"`
+	ClusterId         []string              `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AppId             []string              `protobuf:"bytes,2,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId         []string              `protobuf:"bytes,3,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	Status            []string              `protobuf:"bytes,4,rep,name=status,proto3" json:"status,omitempty"`
+	RuntimeId         []string              `protobuf:"bytes,5,rep,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	FrontgateId       []string              `protobuf:"bytes,6,rep,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id,omitempty"`
+	ExternalClusterId *wrappers.StringValue `protobuf:"bytes,7,opt,name=external_cluster_id,json=externalClusterId,proto3" json:"external_cluster_id,omitempty"`
 	// default is 20, max value is 200
-	Limit uint32 `protobuf:"varint,8,opt,name=limit" json:"limit,omitempty"`
+	Limit uint32 `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
 	// default is 0
-	Offset               uint32                `protobuf:"varint,9,opt,name=offset" json:"offset,omitempty"`
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,10,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
+	Offset               uint32                `protobuf:"varint,9,opt,name=offset,proto3" json:"offset,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,10,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2407,8 +2407,8 @@ func (m *DescribeClustersRequest) GetSearchWord() *wrappers.StringValue {
 }
 
 type DescribeClustersResponse struct {
-	TotalCount           uint32     `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	ClusterSet           []*Cluster `protobuf:"bytes,2,rep,name=cluster_set,json=clusterSet" json:"cluster_set,omitempty"`
+	TotalCount           uint32     `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	ClusterSet           []*Cluster `protobuf:"bytes,2,rep,name=cluster_set,json=clusterSet,proto3" json:"cluster_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
 	XXX_sizecache        int32      `json:"-"`
@@ -2453,14 +2453,14 @@ func (m *DescribeClustersResponse) GetClusterSet() []*Cluster {
 }
 
 type DescribeClusterNodesRequest struct {
-	ClusterId *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	NodeId    []string              `protobuf:"bytes,2,rep,name=node_id,json=nodeId" json:"node_id,omitempty"`
-	Status    []string              `protobuf:"bytes,3,rep,name=status" json:"status,omitempty"`
+	ClusterId *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	NodeId    []string              `protobuf:"bytes,2,rep,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	Status    []string              `protobuf:"bytes,3,rep,name=status,proto3" json:"status,omitempty"`
 	// default is 20, max value is 200
-	Limit uint32 `protobuf:"varint,4,opt,name=limit" json:"limit,omitempty"`
+	Limit uint32 `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
 	// default is 0
-	Offset               uint32                `protobuf:"varint,5,opt,name=offset" json:"offset,omitempty"`
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,6,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
+	Offset               uint32                `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,6,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2533,8 +2533,8 @@ func (m *DescribeClusterNodesRequest) GetSearchWord() *wrappers.StringValue {
 }
 
 type DescribeClusterNodesResponse struct {
-	TotalCount           uint32         `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	ClusterNodeSet       []*ClusterNode `protobuf:"bytes,2,rep,name=cluster_node_set,json=clusterNodeSet" json:"cluster_node_set,omitempty"`
+	TotalCount           uint32         `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	ClusterNodeSet       []*ClusterNode `protobuf:"bytes,2,rep,name=cluster_node_set,json=clusterNodeSet,proto3" json:"cluster_node_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`
@@ -2579,8 +2579,8 @@ func (m *DescribeClusterNodesResponse) GetClusterNodeSet() []*ClusterNode {
 }
 
 type StopClustersRequest struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2625,8 +2625,8 @@ func (m *StopClustersRequest) GetAdvancedParam() []string {
 }
 
 type StopClustersResponse struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2671,8 +2671,8 @@ func (m *StopClustersResponse) GetJobId() []string {
 }
 
 type StartClustersRequest struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2717,8 +2717,8 @@ func (m *StartClustersRequest) GetAdvancedParam() []string {
 }
 
 type StartClustersResponse struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2763,8 +2763,8 @@ func (m *StartClustersResponse) GetJobId() []string {
 }
 
 type RecoverClustersRequest struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2809,8 +2809,8 @@ func (m *RecoverClustersRequest) GetAdvancedParam() []string {
 }
 
 type RecoverClustersResponse struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2855,8 +2855,8 @@ func (m *RecoverClustersResponse) GetJobId() []string {
 }
 
 type CeaseClustersRequest struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam" json:"advanced_param,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AdvancedParam        []string `protobuf:"bytes,2,rep,name=advanced_param,json=advancedParam,proto3" json:"advanced_param,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2901,8 +2901,8 @@ func (m *CeaseClustersRequest) GetAdvancedParam() []string {
 }
 
 type CeaseClustersResponse struct {
-	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId" json:"cluster_id,omitempty"`
-	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId" json:"job_id,omitempty"`
+	ClusterId            []string `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	JobId                []string `protobuf:"bytes,2,rep,name=job_id,json=jobId,proto3" json:"job_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -2977,10 +2977,10 @@ func (m *GetClusterStatisticsRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_GetClusterStatisticsRequest proto.InternalMessageInfo
 
 type GetClusterStatisticsResponse struct {
-	LastTwoWeekCreated   map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	TopTenRuntimes       map[string]uint32 `protobuf:"bytes,2,rep,name=top_ten_runtimes,json=topTenRuntimes" json:"top_ten_runtimes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	ClusterCount         uint32            `protobuf:"varint,3,opt,name=cluster_count,json=clusterCount" json:"cluster_count,omitempty"`
-	RuntimeCount         uint32            `protobuf:"varint,4,opt,name=runtime_count,json=runtimeCount" json:"runtime_count,omitempty"`
+	LastTwoWeekCreated   map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated,proto3" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	TopTenRuntimes       map[string]uint32 `protobuf:"bytes,2,rep,name=top_ten_runtimes,json=topTenRuntimes,proto3" json:"top_ten_runtimes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	ClusterCount         uint32            `protobuf:"varint,3,opt,name=cluster_count,json=clusterCount,proto3" json:"cluster_count,omitempty"`
+	RuntimeCount         uint32            `protobuf:"varint,4,opt,name=runtime_count,json=runtimeCount,proto3" json:"runtime_count,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -3096,8 +3096,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for ClusterManager service
-
+// ClusterManagerClient is the client API for ClusterManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ClusterManagerClient interface {
 	DescribeSubnets(ctx context.Context, in *DescribeSubnetsRequest, opts ...grpc.CallOption) (*DescribeSubnetsResponse, error)
 	CreateCluster(ctx context.Context, in *CreateClusterRequest, opts ...grpc.CallOption) (*CreateClusterResponse, error)
@@ -3131,7 +3132,7 @@ func NewClusterManagerClient(cc *grpc.ClientConn) ClusterManagerClient {
 
 func (c *clusterManagerClient) DescribeSubnets(ctx context.Context, in *DescribeSubnetsRequest, opts ...grpc.CallOption) (*DescribeSubnetsResponse, error) {
 	out := new(DescribeSubnetsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeSubnets", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeSubnets", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3140,7 +3141,7 @@ func (c *clusterManagerClient) DescribeSubnets(ctx context.Context, in *Describe
 
 func (c *clusterManagerClient) CreateCluster(ctx context.Context, in *CreateClusterRequest, opts ...grpc.CallOption) (*CreateClusterResponse, error) {
 	out := new(CreateClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/CreateCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/CreateCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3149,7 +3150,7 @@ func (c *clusterManagerClient) CreateCluster(ctx context.Context, in *CreateClus
 
 func (c *clusterManagerClient) ModifyCluster(ctx context.Context, in *ModifyClusterRequest, opts ...grpc.CallOption) (*ModifyClusterResponse, error) {
 	out := new(ModifyClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/ModifyCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/ModifyCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3158,7 +3159,7 @@ func (c *clusterManagerClient) ModifyCluster(ctx context.Context, in *ModifyClus
 
 func (c *clusterManagerClient) ModifyClusterNode(ctx context.Context, in *ModifyClusterNodeRequest, opts ...grpc.CallOption) (*ModifyClusterNodeResponse, error) {
 	out := new(ModifyClusterNodeResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/ModifyClusterNode", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/ModifyClusterNode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3167,7 +3168,7 @@ func (c *clusterManagerClient) ModifyClusterNode(ctx context.Context, in *Modify
 
 func (c *clusterManagerClient) AddTableClusterNodes(ctx context.Context, in *AddTableClusterNodesRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/AddTableClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/AddTableClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3176,7 +3177,7 @@ func (c *clusterManagerClient) AddTableClusterNodes(ctx context.Context, in *Add
 
 func (c *clusterManagerClient) DeleteTableClusterNodes(ctx context.Context, in *DeleteTableClusterNodesRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteTableClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteTableClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3185,7 +3186,7 @@ func (c *clusterManagerClient) DeleteTableClusterNodes(ctx context.Context, in *
 
 func (c *clusterManagerClient) DeleteClusters(ctx context.Context, in *DeleteClustersRequest, opts ...grpc.CallOption) (*DeleteClustersResponse, error) {
 	out := new(DeleteClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3194,7 +3195,7 @@ func (c *clusterManagerClient) DeleteClusters(ctx context.Context, in *DeleteClu
 
 func (c *clusterManagerClient) UpgradeCluster(ctx context.Context, in *UpgradeClusterRequest, opts ...grpc.CallOption) (*UpgradeClusterResponse, error) {
 	out := new(UpgradeClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/UpgradeCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/UpgradeCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3203,7 +3204,7 @@ func (c *clusterManagerClient) UpgradeCluster(ctx context.Context, in *UpgradeCl
 
 func (c *clusterManagerClient) RollbackCluster(ctx context.Context, in *RollbackClusterRequest, opts ...grpc.CallOption) (*RollbackClusterResponse, error) {
 	out := new(RollbackClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/RollbackCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/RollbackCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3212,7 +3213,7 @@ func (c *clusterManagerClient) RollbackCluster(ctx context.Context, in *Rollback
 
 func (c *clusterManagerClient) ResizeCluster(ctx context.Context, in *ResizeClusterRequest, opts ...grpc.CallOption) (*ResizeClusterResponse, error) {
 	out := new(ResizeClusterResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/ResizeCluster", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/ResizeCluster", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3221,7 +3222,7 @@ func (c *clusterManagerClient) ResizeCluster(ctx context.Context, in *ResizeClus
 
 func (c *clusterManagerClient) AddClusterNodes(ctx context.Context, in *AddClusterNodesRequest, opts ...grpc.CallOption) (*AddClusterNodesResponse, error) {
 	out := new(AddClusterNodesResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/AddClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/AddClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3230,7 +3231,7 @@ func (c *clusterManagerClient) AddClusterNodes(ctx context.Context, in *AddClust
 
 func (c *clusterManagerClient) DeleteClusterNodes(ctx context.Context, in *DeleteClusterNodesRequest, opts ...grpc.CallOption) (*DeleteClusterNodesResponse, error) {
 	out := new(DeleteClusterNodesResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DeleteClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3239,7 +3240,7 @@ func (c *clusterManagerClient) DeleteClusterNodes(ctx context.Context, in *Delet
 
 func (c *clusterManagerClient) UpdateClusterEnv(ctx context.Context, in *UpdateClusterEnvRequest, opts ...grpc.CallOption) (*UpdateClusterEnvResponse, error) {
 	out := new(UpdateClusterEnvResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/UpdateClusterEnv", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/UpdateClusterEnv", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3248,7 +3249,7 @@ func (c *clusterManagerClient) UpdateClusterEnv(ctx context.Context, in *UpdateC
 
 func (c *clusterManagerClient) DescribeClusters(ctx context.Context, in *DescribeClustersRequest, opts ...grpc.CallOption) (*DescribeClustersResponse, error) {
 	out := new(DescribeClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3257,7 +3258,7 @@ func (c *clusterManagerClient) DescribeClusters(ctx context.Context, in *Describ
 
 func (c *clusterManagerClient) DescribeClusterNodes(ctx context.Context, in *DescribeClusterNodesRequest, opts ...grpc.CallOption) (*DescribeClusterNodesResponse, error) {
 	out := new(DescribeClusterNodesResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeClusterNodes", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/DescribeClusterNodes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3266,7 +3267,7 @@ func (c *clusterManagerClient) DescribeClusterNodes(ctx context.Context, in *Des
 
 func (c *clusterManagerClient) StopClusters(ctx context.Context, in *StopClustersRequest, opts ...grpc.CallOption) (*StopClustersResponse, error) {
 	out := new(StopClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/StopClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/StopClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3275,7 +3276,7 @@ func (c *clusterManagerClient) StopClusters(ctx context.Context, in *StopCluster
 
 func (c *clusterManagerClient) StartClusters(ctx context.Context, in *StartClustersRequest, opts ...grpc.CallOption) (*StartClustersResponse, error) {
 	out := new(StartClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/StartClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/StartClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3284,7 +3285,7 @@ func (c *clusterManagerClient) StartClusters(ctx context.Context, in *StartClust
 
 func (c *clusterManagerClient) RecoverClusters(ctx context.Context, in *RecoverClustersRequest, opts ...grpc.CallOption) (*RecoverClustersResponse, error) {
 	out := new(RecoverClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/RecoverClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/RecoverClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3293,7 +3294,7 @@ func (c *clusterManagerClient) RecoverClusters(ctx context.Context, in *RecoverC
 
 func (c *clusterManagerClient) CeaseClusters(ctx context.Context, in *CeaseClustersRequest, opts ...grpc.CallOption) (*CeaseClustersResponse, error) {
 	out := new(CeaseClustersResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/CeaseClusters", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/CeaseClusters", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -3302,15 +3303,14 @@ func (c *clusterManagerClient) CeaseClusters(ctx context.Context, in *CeaseClust
 
 func (c *clusterManagerClient) GetClusterStatistics(ctx context.Context, in *GetClusterStatisticsRequest, opts ...grpc.CallOption) (*GetClusterStatisticsResponse, error) {
 	out := new(GetClusterStatisticsResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.ClusterManager/GetClusterStatistics", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.ClusterManager/GetClusterStatistics", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for ClusterManager service
-
+// ClusterManagerServer is the server API for ClusterManager service.
 type ClusterManagerServer interface {
 	DescribeSubnets(context.Context, *DescribeSubnetsRequest) (*DescribeSubnetsResponse, error)
 	CreateCluster(context.Context, *CreateClusterRequest) (*CreateClusterResponse, error)

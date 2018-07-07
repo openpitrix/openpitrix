@@ -30,13 +30,13 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Config struct {
-	Id                   string                   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	ListenPort           int32                    `protobuf:"varint,2,opt,name=listen_port,json=listenPort" json:"listen_port,omitempty"`
-	PilotHost            string                   `protobuf:"bytes,3,opt,name=pilot_host,json=pilotHost" json:"pilot_host,omitempty"`
-	PilotPort            int32                    `protobuf:"varint,4,opt,name=pilot_port,json=pilotPort" json:"pilot_port,omitempty"`
-	NodeList             *types.FrontgateEndpoint `protobuf:"bytes,5,opt,name=node_list,json=nodeList" json:"node_list,omitempty"`
-	EtcdConfig           *types.EtcdConfig        `protobuf:"bytes,6,opt,name=etcd_config,json=etcdConfig" json:"etcd_config,omitempty"`
-	ConfdConfig          *types.ConfdConfig       `protobuf:"bytes,7,opt,name=confd_config,json=confdConfig" json:"confd_config,omitempty"`
+	Id                   string                   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ListenPort           int32                    `protobuf:"varint,2,opt,name=listen_port,json=listenPort,proto3" json:"listen_port,omitempty"`
+	PilotHost            string                   `protobuf:"bytes,3,opt,name=pilot_host,json=pilotHost,proto3" json:"pilot_host,omitempty"`
+	PilotPort            int32                    `protobuf:"varint,4,opt,name=pilot_port,json=pilotPort,proto3" json:"pilot_port,omitempty"`
+	NodeList             *types.FrontgateEndpoint `protobuf:"bytes,5,opt,name=node_list,json=nodeList,proto3" json:"node_list,omitempty"`
+	EtcdConfig           *types.EtcdConfig        `protobuf:"bytes,6,opt,name=etcd_config,json=etcdConfig,proto3" json:"etcd_config,omitempty"`
+	ConfdConfig          *types.ConfdConfig       `protobuf:"bytes,7,opt,name=confd_config,json=confdConfig,proto3" json:"confd_config,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
 	XXX_unrecognized     []byte                   `json:"-"`
 	XXX_sizecache        int32                    `json:"-"`

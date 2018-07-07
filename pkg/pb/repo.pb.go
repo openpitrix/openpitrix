@@ -28,16 +28,16 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateRepoRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Type                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=type" json:"type,omitempty"`
-	Url                  *wrappers.StringValue `protobuf:"bytes,4,opt,name=url" json:"url,omitempty"`
-	Credential           *wrappers.StringValue `protobuf:"bytes,5,opt,name=credential" json:"credential,omitempty"`
-	Visibility           *wrappers.StringValue `protobuf:"bytes,6,opt,name=visibility" json:"visibility,omitempty"`
-	Providers            []string              `protobuf:"bytes,7,rep,name=providers" json:"providers,omitempty"`
-	Labels               []*RepoLabel          `protobuf:"bytes,8,rep,name=labels" json:"labels,omitempty"`
-	Selectors            []*RepoSelector       `protobuf:"bytes,9,rep,name=selectors" json:"selectors,omitempty"`
-	CategoryId           *wrappers.StringValue `protobuf:"bytes,10,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,4,opt,name=url,proto3" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,5,opt,name=credential,proto3" json:"credential,omitempty"`
+	Visibility           *wrappers.StringValue `protobuf:"bytes,6,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	Providers            []string              `protobuf:"bytes,7,rep,name=providers,proto3" json:"providers,omitempty"`
+	Labels               []*RepoLabel          `protobuf:"bytes,8,rep,name=labels,proto3" json:"labels,omitempty"`
+	Selectors            []*RepoSelector       `protobuf:"bytes,9,rep,name=selectors,proto3" json:"selectors,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,10,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -138,7 +138,7 @@ func (m *CreateRepoRequest) GetCategoryId() *wrappers.StringValue {
 }
 
 type CreateRepoResponse struct {
-	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -176,17 +176,17 @@ func (m *CreateRepoResponse) GetRepoId() *wrappers.StringValue {
 }
 
 type ModifyRepoRequest struct {
-	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
-	Providers            []string              `protobuf:"bytes,8,rep,name=providers" json:"providers,omitempty"`
-	Labels               []*RepoLabel          `protobuf:"bytes,9,rep,name=labels" json:"labels,omitempty"`
-	Selectors            []*RepoSelector       `protobuf:"bytes,10,rep,name=selectors" json:"selectors,omitempty"`
-	CategoryId           *wrappers.StringValue `protobuf:"bytes,11,opt,name=category_id,json=categoryId" json:"category_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential,proto3" json:"credential,omitempty"`
+	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	Providers            []string              `protobuf:"bytes,8,rep,name=providers,proto3" json:"providers,omitempty"`
+	Labels               []*RepoLabel          `protobuf:"bytes,9,rep,name=labels,proto3" json:"labels,omitempty"`
+	Selectors            []*RepoSelector       `protobuf:"bytes,10,rep,name=selectors,proto3" json:"selectors,omitempty"`
+	CategoryId           *wrappers.StringValue `protobuf:"bytes,11,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -294,7 +294,7 @@ func (m *ModifyRepoRequest) GetCategoryId() *wrappers.StringValue {
 }
 
 type ModifyRepoResponse struct {
-	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -332,7 +332,7 @@ func (m *ModifyRepoResponse) GetRepoId() *wrappers.StringValue {
 }
 
 type DeleteReposRequest struct {
-	RepoId               []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -370,7 +370,7 @@ func (m *DeleteReposRequest) GetRepoId() []string {
 }
 
 type DeleteReposResponse struct {
-	RepoId               []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
+	RepoId               []string `protobuf:"bytes,1,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -408,8 +408,8 @@ func (m *DeleteReposResponse) GetRepoId() []string {
 }
 
 type RepoLabel struct {
-	LabelKey             *wrappers.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey" json:"label_key,omitempty"`
-	LabelValue           *wrappers.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue" json:"label_value,omitempty"`
+	LabelKey             *wrappers.StringValue `protobuf:"bytes,3,opt,name=label_key,json=labelKey,proto3" json:"label_key,omitempty"`
+	LabelValue           *wrappers.StringValue `protobuf:"bytes,4,opt,name=label_value,json=labelValue,proto3" json:"label_value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -454,8 +454,8 @@ func (m *RepoLabel) GetLabelValue() *wrappers.StringValue {
 }
 
 type RepoSelector struct {
-	SelectorKey          *wrappers.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey" json:"selector_key,omitempty"`
-	SelectorValue        *wrappers.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue" json:"selector_value,omitempty"`
+	SelectorKey          *wrappers.StringValue `protobuf:"bytes,3,opt,name=selector_key,json=selectorKey,proto3" json:"selector_key,omitempty"`
+	SelectorValue        *wrappers.StringValue `protobuf:"bytes,4,opt,name=selector_value,json=selectorValue,proto3" json:"selector_value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -500,21 +500,21 @@ func (m *RepoSelector) GetSelectorValue() *wrappers.StringValue {
 }
 
 type Repo struct {
-	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type" json:"type,omitempty"`
-	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url" json:"url,omitempty"`
-	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential" json:"credential,omitempty"`
-	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility" json:"visibility,omitempty"`
-	Owner                *wrappers.StringValue `protobuf:"bytes,8,opt,name=owner" json:"owner,omitempty"`
-	Providers            []string              `protobuf:"bytes,9,rep,name=providers" json:"providers,omitempty"`
-	Labels               []*RepoLabel          `protobuf:"bytes,10,rep,name=labels" json:"labels,omitempty"`
-	Selectors            []*RepoSelector       `protobuf:"bytes,11,rep,name=selectors" json:"selectors,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,12,opt,name=status" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,13,opt,name=create_time,json=createTime" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,14,opt,name=status_time,json=statusTime" json:"status_time,omitempty"`
-	CategorySet          []*ResourceCategory   `protobuf:"bytes,15,rep,name=category_set,json=categorySet" json:"category_set,omitempty"`
+	RepoId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,6,opt,name=credential,proto3" json:"credential,omitempty"`
+	Visibility           *wrappers.StringValue `protobuf:"bytes,7,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,8,opt,name=owner,proto3" json:"owner,omitempty"`
+	Providers            []string              `protobuf:"bytes,9,rep,name=providers,proto3" json:"providers,omitempty"`
+	Labels               []*RepoLabel          `protobuf:"bytes,10,rep,name=labels,proto3" json:"labels,omitempty"`
+	Selectors            []*RepoSelector       `protobuf:"bytes,11,rep,name=selectors,proto3" json:"selectors,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,12,opt,name=status,proto3" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,13,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,14,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	CategorySet          []*ResourceCategory   `protobuf:"bytes,15,rep,name=category_set,json=categorySet,proto3" json:"category_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -650,20 +650,20 @@ func (m *Repo) GetCategorySet() []*ResourceCategory {
 }
 
 type DescribeReposRequest struct {
-	RepoId               []string              `protobuf:"bytes,1,rep,name=repo_id,json=repoId" json:"repo_id,omitempty"`
-	Name                 []string              `protobuf:"bytes,2,rep,name=name" json:"name,omitempty"`
-	Type                 []string              `protobuf:"bytes,3,rep,name=type" json:"type,omitempty"`
-	Visibility           []string              `protobuf:"bytes,4,rep,name=visibility" json:"visibility,omitempty"`
-	Status               []string              `protobuf:"bytes,5,rep,name=status" json:"status,omitempty"`
-	Provider             []string              `protobuf:"bytes,6,rep,name=provider" json:"provider,omitempty"`
-	Label                *wrappers.StringValue `protobuf:"bytes,7,opt,name=label" json:"label,omitempty"`
-	Selector             *wrappers.StringValue `protobuf:"bytes,8,opt,name=selector" json:"selector,omitempty"`
-	Limit                uint32                `protobuf:"varint,9,opt,name=limit" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,10,opt,name=offset" json:"offset,omitempty"`
-	CategoryId           []string              `protobuf:"bytes,11,rep,name=category_id,json=categoryId" json:"category_id,omitempty"`
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,12,opt,name=search_word,json=searchWord" json:"search_word,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,13,opt,name=sort_key,json=sortKey" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,14,opt,name=reverse" json:"reverse,omitempty"`
+	RepoId               []string              `protobuf:"bytes,1,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
+	Name                 []string              `protobuf:"bytes,2,rep,name=name,proto3" json:"name,omitempty"`
+	Type                 []string              `protobuf:"bytes,3,rep,name=type,proto3" json:"type,omitempty"`
+	Visibility           []string              `protobuf:"bytes,4,rep,name=visibility,proto3" json:"visibility,omitempty"`
+	Status               []string              `protobuf:"bytes,5,rep,name=status,proto3" json:"status,omitempty"`
+	Provider             []string              `protobuf:"bytes,6,rep,name=provider,proto3" json:"provider,omitempty"`
+	Label                *wrappers.StringValue `protobuf:"bytes,7,opt,name=label,proto3" json:"label,omitempty"`
+	Selector             *wrappers.StringValue `protobuf:"bytes,8,opt,name=selector,proto3" json:"selector,omitempty"`
+	Limit                uint32                `protobuf:"varint,9,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset               uint32                `protobuf:"varint,10,opt,name=offset,proto3" json:"offset,omitempty"`
+	CategoryId           []string              `protobuf:"bytes,11,rep,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	SearchWord           *wrappers.StringValue `protobuf:"bytes,12,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,13,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,14,opt,name=reverse,proto3" json:"reverse,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -792,8 +792,8 @@ func (m *DescribeReposRequest) GetReverse() *wrappers.BoolValue {
 }
 
 type DescribeReposResponse struct {
-	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount" json:"total_count,omitempty"`
-	RepoSet              []*Repo  `protobuf:"bytes,2,rep,name=repo_set,json=repoSet" json:"repo_set,omitempty"`
+	TotalCount           uint32   `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	RepoSet              []*Repo  `protobuf:"bytes,2,rep,name=repo_set,json=repoSet,proto3" json:"repo_set,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -838,9 +838,9 @@ func (m *DescribeReposResponse) GetRepoSet() []*Repo {
 }
 
 type ValidateRepoRequest struct {
-	Type                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=type" json:"type,omitempty"`
-	Url                  *wrappers.StringValue `protobuf:"bytes,2,opt,name=url" json:"url,omitempty"`
-	Credential           *wrappers.StringValue `protobuf:"bytes,3,opt,name=credential" json:"credential,omitempty"`
+	Type                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	Credential           *wrappers.StringValue `protobuf:"bytes,3,opt,name=credential,proto3" json:"credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -892,8 +892,8 @@ func (m *ValidateRepoRequest) GetCredential() *wrappers.StringValue {
 }
 
 type ValidateRepoResponse struct {
-	Ok                   *wrappers.BoolValue `protobuf:"bytes,1,opt,name=ok" json:"ok,omitempty"`
-	ErrorCode            uint32              `protobuf:"varint,2,opt,name=errorCode" json:"errorCode,omitempty"`
+	Ok                   *wrappers.BoolValue `protobuf:"bytes,1,opt,name=ok,proto3" json:"ok,omitempty"`
+	ErrorCode            uint32              `protobuf:"varint,2,opt,name=errorCode,proto3" json:"errorCode,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
 	XXX_sizecache        int32               `json:"-"`
@@ -961,8 +961,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for RepoManager service
-
+// RepoManagerClient is the client API for RepoManager service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RepoManagerClient interface {
 	CreateRepo(ctx context.Context, in *CreateRepoRequest, opts ...grpc.CallOption) (*CreateRepoResponse, error)
 	DescribeRepos(ctx context.Context, in *DescribeReposRequest, opts ...grpc.CallOption) (*DescribeReposResponse, error)
@@ -981,7 +982,7 @@ func NewRepoManagerClient(cc *grpc.ClientConn) RepoManagerClient {
 
 func (c *repoManagerClient) CreateRepo(ctx context.Context, in *CreateRepoRequest, opts ...grpc.CallOption) (*CreateRepoResponse, error) {
 	out := new(CreateRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/CreateRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/CreateRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -990,7 +991,7 @@ func (c *repoManagerClient) CreateRepo(ctx context.Context, in *CreateRepoReques
 
 func (c *repoManagerClient) DescribeRepos(ctx context.Context, in *DescribeReposRequest, opts ...grpc.CallOption) (*DescribeReposResponse, error) {
 	out := new(DescribeReposResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DescribeRepos", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/DescribeRepos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -999,7 +1000,7 @@ func (c *repoManagerClient) DescribeRepos(ctx context.Context, in *DescribeRepos
 
 func (c *repoManagerClient) ModifyRepo(ctx context.Context, in *ModifyRepoRequest, opts ...grpc.CallOption) (*ModifyRepoResponse, error) {
 	out := new(ModifyRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/ModifyRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/ModifyRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1008,7 +1009,7 @@ func (c *repoManagerClient) ModifyRepo(ctx context.Context, in *ModifyRepoReques
 
 func (c *repoManagerClient) DeleteRepos(ctx context.Context, in *DeleteReposRequest, opts ...grpc.CallOption) (*DeleteReposResponse, error) {
 	out := new(DeleteReposResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/DeleteRepos", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/DeleteRepos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1017,15 +1018,14 @@ func (c *repoManagerClient) DeleteRepos(ctx context.Context, in *DeleteReposRequ
 
 func (c *repoManagerClient) ValidateRepo(ctx context.Context, in *ValidateRepoRequest, opts ...grpc.CallOption) (*ValidateRepoResponse, error) {
 	out := new(ValidateRepoResponse)
-	err := grpc.Invoke(ctx, "/openpitrix.RepoManager/ValidateRepo", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/openpitrix.RepoManager/ValidateRepo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for RepoManager service
-
+// RepoManagerServer is the server API for RepoManager service.
 type RepoManagerServer interface {
 	CreateRepo(context.Context, *CreateRepoRequest) (*CreateRepoResponse, error)
 	DescribeRepos(context.Context, *DescribeReposRequest) (*DescribeReposResponse, error)
