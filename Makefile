@@ -139,7 +139,7 @@ compose-update-%: ## Update "openpitrix-%" service in docker compose
 compose-put-global-config: ## Put global config in docker compose
 	@test -s deploy/config/global_config.yaml || { echo "[deploy/config/global_config.yaml] not exist"; exit 1; }
 	cat deploy/config/global_config.yaml | docker run -i --rm openpitrix opctl validate_global_config
-	cat deploy/config/global_config.yaml | docker-compose exec -T openpitrix-etcd etcdctl put openpitrix/global_config
+	cat deploy/config/global_config.yaml | docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl put openpitrix/global_config"
 
 .PHONY: compose-up
 compose-up: ## Launch openpitrix in docker compose

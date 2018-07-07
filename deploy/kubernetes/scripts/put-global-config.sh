@@ -34,5 +34,5 @@ cat config/global_config.yaml | kubectl run --restart=Never --quiet --rm -i test
 
 if [[ $? != 0 ]]; then exit 1; fi
 
-cat config/global_config.yaml | kubectl exec --namespace=${NAMESPACE} -i ${POD} etcdctl put openpitrix/global_config
+cat config/global_config.yaml | kubectl exec --namespace=${NAMESPACE} -i ${POD} -- /bin/sh -c "export ETCDCTL_API=3 && etcdctl put openpitrix/global_config"
 echo "Put successfully"
