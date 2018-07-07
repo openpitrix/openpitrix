@@ -56,8 +56,12 @@ spec:
       - name: openpitrix-db
         image: mysql:8.0.11
         imagePullPolicy: IfNotPresent
+        lifecycle:
+          postStart:
+            exec:
+              command: ["sh", "-c", "rm -rf /var/lib/mysql/lost+found"]
         args:
-          - "--ignore-db-dir=lost+found"
+          - --default-authentication-plugin=mysql_native_password
         env:
           # $ kubectl create secret generic mysql-pass --from-file=password.txt
           # make sure password.txt does not have a trailing newline
