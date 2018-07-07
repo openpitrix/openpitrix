@@ -1,10 +1,9 @@
 #!/bin/bash
 
 DEFAULT_NAMESPACE=openpitrix-system
-DEFAULT_VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
 
 NAMESPACE=${DEFAULT_NAMESPACE}
-VERSION=${DEFAULT_VERSION}
+VERSION=""
 METADATA=0
 DBCTRL=0
 BASE=0
@@ -43,6 +42,9 @@ if [ "${METADATA}" == "0" ] && [ "${DBCTRL}" == "0" ] && [ "${BASE}" == "0" ] &&
 fi
 
 DASHBOARD_IMAGE="openpitrix/dashboard"
+if [ "${VERSION}" == "" ];then
+  VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
+fi
 
 if [ "${VERSION}" == "dev" ];then
   IMAGE="openpitrix/openpitrix-dev:latest"

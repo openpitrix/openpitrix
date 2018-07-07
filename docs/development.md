@@ -24,19 +24,20 @@ $ make compose-up
 #### Verifying the deploy
 ```shell
 $ docker ps
-CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                                                   NAMES
-6175016eb01a        9582e61c942a          "api-gateway"            5 days ago          Up 5 days           0.0.0.0:9100->9100/tcp                                  openpitrix-api-gateway
-4e905535495d        9582e61c942a          "repo-indexer"           5 days ago          Up 5 days                                                                   openpitrix-repo-indexer
-f34ea610e15c        9582e61c942a          "category-manager"       5 days ago          Up 5 days                                                                   openpitrix-category-manager
-1301b99a84bd        9582e61c942a          "repo-manager"           5 days ago          Up 5 days                                                                   openpitrix-repo-manager
-1762b181210a        9582e61c942a          "runtime-manager"        5 days ago          Up 5 days                                                                   openpitrix-runtime-manager
-f2b1837bafc4        9582e61c942a          "job-manager"            5 days ago          Up 5 days                                                                   openpitrix-job-manager
-88f8fce699f4        9582e61c942a          "app-manager"            5 days ago          Up 5 days                                                                   openpitrix-app-manager
-225e3287a711        9582e61c942a          "task-manager"           5 days ago          Up 5 days                                                                   openpitrix-task-manager
-7222376a87df        9582e61c942a          "cluster-manager"        5 days ago          Up 5 days                                                                   openpitrix-cluster-manager
-114a8485175e        openpitrix:metadata   "pilot -config=/opt/…"   5 days ago          Up 5 days           0.0.0.0:9110->9110/tcp                                  openpitrix-pilot-service
-90d5dde1171e        appcelerator/etcd     "/sbin/tini -- /bin/…"   6 weeks ago         Up 6 weeks          2380/tcp, 4001/tcp, 7001/tcp, 0.0.0.0:12379->2379/tcp   openpitrix-etcd
-888db85ff8d5        mysql:5.7             "docker-entrypoint.s…"   6 weeks ago         Up 6 weeks          0.0.0.0:13306->3306/tcp                                 openpitrix-db
+CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS              PORTS                               NAMES
+c5fbe681d670        openpitrix/dashboard          "npm run prod:serve"     26 minutes ago      Up 26 minutes       0.0.0.0:8000->8000/tcp              openpitrix-dashboard
+69d849bf8429        openpitrix                    "api-gateway"            26 minutes ago      Up 26 minutes       0.0.0.0:9100->9100/tcp              openpitrix-api-gateway
+0ee764b83fd6        openpitrix                    "repo-indexer"           26 minutes ago      Up 26 minutes                                           openpitrix-repo-indexer
+e0de82867bf2        openpitrix                    "task-manager"           26 minutes ago      Up 26 minutes                                           openpitrix-task-manager
+a7d3bfd02cc9        openpitrix                    "app-manager"            26 minutes ago      Up 26 minutes                                           openpitrix-app-manager
+4104d75d3ec9        openpitrix                    "cluster-manager"        26 minutes ago      Up 26 minutes                                           openpitrix-cluster-manager
+f10d5e45cf0a        openpitrix                    "job-manager"            26 minutes ago      Up 26 minutes                                           openpitrix-job-manager
+c67c9d43d762        openpitrix                    "category-manager"       26 minutes ago      Up 26 minutes                                           openpitrix-category-manager
+a7e346810492        openpitrix                    "repo-manager"           26 minutes ago      Up 26 minutes                                           openpitrix-repo-manager
+77ad45001c06        openpitrix                    "runtime-manager"        26 minutes ago      Up 26 minutes                                           openpitrix-runtime-manager
+7e11808e4c46        quay.io/coreos/etcd:v3.2.18   "etcd -listen-client…"   26 minutes ago      Up 26 minutes       2380/tcp, 0.0.0.0:12379->2379/tcp   openpitrix-etcd
+f00be9e66ba1        openpitrix                    "pilot -config=/opt/…"   27 minutes ago      Up 27 minutes       0.0.0.0:9110->9110/tcp              openpitrix-pilot-service
+2d312d6eb408        mysql:8.0.11                  "docker-entrypoint.s…"   31 minutes ago      Up 31 minutes       0.0.0.0:13306->3306/tcp             openpitrix-db
 ```
 
 #### How to upgrade
