@@ -54,7 +54,7 @@ spec:
     spec:
       containers:
       - name: openpitrix-db
-        image: mysql:5.7.21
+        image: mysql:8.0.11
         imagePullPolicy: IfNotPresent
         args:
           - "--ignore-db-dir=lost+found"
