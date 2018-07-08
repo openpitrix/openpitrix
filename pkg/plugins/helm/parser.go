@@ -101,7 +101,7 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(
 			continue
 		}
 
-		if len([]byte(v)) == 0 {
+		if len(strings.TrimSpace(v)) == 0 {
 			continue
 		}
 		b := bufio.NewReader(strings.NewReader(v))
