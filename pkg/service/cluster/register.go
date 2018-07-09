@@ -34,8 +34,12 @@ func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
 	owner := clusterWrapper.Cluster.Owner
 	// register cluster
 	if clusterWrapper.Cluster != nil {
-		clusterWrapper.Cluster.CreateTime = time.Now()
-		clusterWrapper.Cluster.StatusTime = time.Now()
+		now := time.Now()
+		clusterWrapper.Cluster.CreateTime = now
+		clusterWrapper.Cluster.StatusTime = now
+		if clusterWrapper.Cluster.UpgradeTime == nil {
+			clusterWrapper.Cluster.UpgradeTime = &now
+		}
 		_, err := pi.Global().Db.
 			InsertInto(models.ClusterTableName).
 			Columns(models.ClusterColumns...).
