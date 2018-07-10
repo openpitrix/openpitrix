@@ -5,6 +5,7 @@
 package categoryutil
 
 import (
+	"strings"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -13,6 +14,13 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
+
+func DecodeCategoryIds(s string) []string {
+	if len(s) == 0 {
+		return []string{}
+	}
+	return strings.Split(s, ",")
+}
 
 func SyncResourceCategories(d *db.Database, appId string, categoryIds []string) error {
 	var existCategoryIds []string

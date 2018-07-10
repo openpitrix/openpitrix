@@ -173,4 +173,8 @@ var (
 		Name: "unsupported_api_version",
 		En:   "unsupported api version [%s]",
 	}
+	ErrorCannotDeleteDefaultCategory = ErrorMessage{
+		Name: "cannot_delete_default_category",
+		En:   "cannot delete default category",
+	}
 )

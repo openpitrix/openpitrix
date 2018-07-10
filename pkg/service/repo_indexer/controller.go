@@ -131,7 +131,11 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 			return
 		}
 		repo := res.RepoSet[0]
-		err = indexer.GetIndexer(repo, repoEvent.RepoEventId).IndexRepo()
+		if repo.GetStatus().GetValue() == constants.StatusDeleted {
+			err = indexer.GetIndexer(repo, repoEvent.RepoEventId).DeleteRepo()
+		} else {
+			err = indexer.GetIndexer(repo, repoEvent.RepoEventId).IndexRepo()
+		}
 		if err != nil {
 			logger.Error("Failed to index repo [%s]", repoId)
 		}
