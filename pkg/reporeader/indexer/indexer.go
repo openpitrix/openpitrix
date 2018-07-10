@@ -16,6 +16,7 @@ import (
 
 type Indexer interface {
 	IndexRepo() error
+	DeleteRepo() error
 }
 
 func GetIndexer(repo *pb.Repo, eventId string) Indexer {
@@ -91,6 +92,19 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	sources := pbutil.ToProtoString(strings.Join(app.GetSources(), ","))
 	keywords := pbutil.ToProtoString(strings.Join(app.GetKeywords(), ","))
 	maintainers := pbutil.ToProtoString(app.GetMaintainers())
+
+	var enabledCategoryIds []string
+	var disabledCategoryIds []string
+
+	for _, c := range i.repo.GetCategorySet() {
+		switch c.Status.GetValue() {
+		case constants.StatusEnabled:
+			enabledCategoryIds = append(enabledCategoryIds, c.CategoryId.GetValue())
+		case constants.StatusDisabled:
+			disabledCategoryIds = append(disabledCategoryIds, c.CategoryId.GetValue())
+		}
+	}
+
 	if res.TotalCount == 0 {
 		createReq := pb.CreateAppRequest{}
 		createReq.RepoId = pbutil.ToProtoString(repoId)
@@ -102,6 +116,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		createReq.Sources = sources
 		createReq.Keywords = keywords
 		createReq.Maintainers = maintainers
+		createReq.CategoryId = pbutil.ToProtoString(strings.Join(enabledCategoryIds, ","))
 
 		createRes, err := appManagerClient.CreateApp(ctx, &createReq)
 		if err != nil {
@@ -109,10 +124,21 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		}
 		appId = createRes.GetAppId().GetValue()
 		return appId, err
-
 	} else {
+		app := res.AppSet[0]
+		var categoryIds []string
+		for _, c := range app.GetCategorySet() {
+			categoryId := c.GetCategoryId().GetValue()
+			// app follow repo's categories: if repo disable some categories, app MUST disable it
+			if c.GetStatus().GetValue() == constants.StatusEnabled {
+				if !stringutil.StringIn(categoryId, disabledCategoryIds) {
+					categoryIds = append(categoryIds, categoryId)
+				}
+			}
+		}
+
 		modifyReq := pb.ModifyAppRequest{}
-		modifyReq.AppId = res.AppSet[0].AppId
+		modifyReq.AppId = app.AppId
 		modifyReq.Name = pbutil.ToProtoString(chartName)
 		modifyReq.ChartName = pbutil.ToProtoString(chartName)
 		modifyReq.Description = description
@@ -121,6 +147,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		modifyReq.Sources = sources
 		modifyReq.Keywords = keywords
 		modifyReq.Maintainers = maintainers
+		modifyReq.CategoryId = pbutil.ToProtoString(strings.Join(categoryIds, ","))
 
 		modifyRes, err := appManagerClient.ModifyApp(ctx, &modifyReq)
 		if err != nil {
@@ -183,4 +210,37 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 		versionId = modifyRes.GetVersionId().GetValue()
 		return versionId, err
 	}
+}
+
+func (i *indexer) DeleteRepo() error {
+	ctx := client.GetSystemUserContext()
+	appManagerClient, err := appclient.NewAppManagerClient()
+	if err != nil {
+		return err
+	}
+	limit := 50
+	for {
+		req := pb.DescribeAppsRequest{}
+		req.RepoId = []string{i.repo.GetRepoId().GetValue()}
+		req.Status = []string{constants.StatusActive}
+		req.Limit = uint32(limit)
+		res, err := appManagerClient.DescribeApps(ctx, &req)
+		if err != nil {
+			return err
+		}
+		if len(res.GetAppSet()) == 0 {
+			break
+		}
+		var appIds []string
+		for _, app := range res.GetAppSet() {
+			appIds = append(appIds, app.GetAppId().GetValue())
+		}
+		deleteReq := pb.DeleteAppsRequest{}
+		deleteReq.AppId = appIds
+		_, err = appManagerClient.DeleteApps(ctx, &deleteReq)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

@@ -105,7 +105,11 @@ func GetColumnsFromStruct(s interface{}) []string {
 func GetColumnsFromStructWithPrefix(prefix string, s interface{}) []string {
 	names := structs.Names(s)
 	for i, name := range names {
-		names[i] = prefix + "." + stringutil.CamelCaseToUnderscore(name)
+		names[i] = WithPrefix(prefix, stringutil.CamelCaseToUnderscore(name))
 	}
 	return names
+}
+
+func WithPrefix(prefix, str string) string {
+	return prefix + "." + str
 }
