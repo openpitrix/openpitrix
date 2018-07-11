@@ -37,6 +37,9 @@ type OpenpitrixClusterNode struct {
 	// device
 	Device string `json:"device,omitempty"`
 
+	// eip
+	Eip string `json:"eip,omitempty"`
+
 	// global server id
 	GlobalServerID *ProtobufUint32Value `json:"global_server_id,omitempty"`
 
