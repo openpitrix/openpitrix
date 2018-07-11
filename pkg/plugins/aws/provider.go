@@ -5,21 +5,15 @@
 package aws
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"time"
 
-	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/devkit"
-	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
-	"openpitrix.io/openpitrix/pkg/util/jsonutil"
-	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -40,61 +34,20 @@ func (p *Provider) SetLogger(logger *logger.Logger) {
 }
 
 func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
-	clusterConf := app.ClusterConf{}
-	// Normal cluster need package to generate final conf
-	if versionId != constants.FrontgateVersionId {
-		ctx := context.Background()
-		appManagerClient, err := appclient.NewAppManagerClient()
-		if err != nil {
-			p.Logger.Error("Connect to app manager failed: %+v", err)
-			return nil, err
-		}
-
-		req := &pb.GetAppVersionPackageRequest{
-			VersionId: pbutil.ToProtoString(versionId),
-		}
-
-		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
-		if err != nil {
-			p.Logger.Error("Get app version [%s] package failed: %+v", versionId, err)
-			return nil, err
-		}
-
-		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
-		if err != nil {
-			p.Logger.Error("Load app version [%s] package failed: %+v", versionId, err)
-			return nil, err
-		}
-		var confJson app.ClusterUserConfig
-		err = jsonutil.Decode([]byte(conf), &confJson)
-		if err != nil {
-			p.Logger.Error("Parse conf [%s] failed: %+v", conf, err)
-			return nil, err
-		}
-		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
-		if err != nil {
-			p.Logger.Error("Render app version [%s] cluster template failed: %+v", versionId, err)
-			return nil, err
-		}
-		err = clusterConf.Validate()
-		if err != nil {
-			p.Logger.Error("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
-			return nil, err
-		}
-
-	} else {
-		err := jsonutil.Decode([]byte(conf), &clusterConf)
-		if err != nil {
-			p.Logger.Error("Parse conf [%s] to cluster failed: %+v", conf, err)
-			return nil, err
-		}
-	}
-
-	parser := Parser{Logger: p.Logger}
-	clusterWrapper, err := parser.Parse(clusterConf)
+	frameInterface, err := vmbased.NewFrameInterface(nil, p.Logger)
 	if err != nil {
 		return nil, err
 	}
+	clusterWrapper, err := frameInterface.ParseClusterConf(versionId, runtimeId, conf)
+	if err != nil {
+		return nil, err
+	}
+	handler := GetProviderHandler(p.Logger)
+	availabilityZone, err := handler.DescribeAvailabilityZoneBySubnetId(runtimeId, clusterWrapper.Cluster.SubnetId)
+	if err != nil {
+		return nil, err
+	}
+	clusterWrapper.Cluster.Zone = availabilityZone
 	return clusterWrapper, nil
 }
 
@@ -244,9 +197,4 @@ func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]strin
 func (p *Provider) DescribeImage(runtimeId, name string) (string, error) {
 	handler := GetProviderHandler(p.Logger)
 	return handler.DescribeImage(runtimeId, name)
-}
-
-func (p *Provider) DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error) {
-	handler := GetProviderHandler(p.Logger)
-	return handler.DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId)
 }

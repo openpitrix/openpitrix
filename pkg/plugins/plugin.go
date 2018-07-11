@@ -30,7 +30,6 @@ type ProviderInterface interface {
 	ValidateCredential(url, credential, zone string) error
 	DescribeRuntimeProviderZones(url, credential string) ([]string, error)
 	UpdateClusterStatus(job *models.Job) error
-	DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error)
 }
 
 func GetProviderPlugin(provider string, l *logger.Logger) (ProviderInterface, error) {

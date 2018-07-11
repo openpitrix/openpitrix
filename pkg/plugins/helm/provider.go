@@ -552,7 +552,3 @@ func (p *Provider) ValidateCredential(url, credential, zone string) error {
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
 	return nil, nil
 }
-
-func (p *Provider) DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error) {
-	return "", nil
-}

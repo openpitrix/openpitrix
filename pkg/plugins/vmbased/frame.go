@@ -5,15 +5,19 @@
 package vmbased
 
 import (
+	"bytes"
+	"context"
 	"encoding/base64"
 	"fmt"
 	"sort"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/client"
+	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/devkit"
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -1320,4 +1324,63 @@ func (f *Frame) DeleteClusterNodesLayer() *models.TaskLayer {
 		Append(f.deregisterNodesMetadataLayer(deleteNodeIds, false)).                                               // deregister deleting cluster nodes metadata
 		Append(f.deregisterScalingNodesMetadataLayer(RegisterNodeDeleting, false))                                  // deregister deleting nodes metadata
 	return headTaskLayer.Child
+}
+
+func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
+	clusterConf := app.ClusterConf{}
+	// Normal cluster need package to generate final conf
+	if versionId != constants.FrontgateVersionId {
+		ctx := context.Background()
+		appManagerClient, err := appclient.NewAppManagerClient()
+		if err != nil {
+			f.Logger.Error("Connect to app manager failed: %+v", err)
+			return nil, err
+		}
+
+		req := &pb.GetAppVersionPackageRequest{
+			VersionId: pbutil.ToProtoString(versionId),
+		}
+
+		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
+		if err != nil {
+			f.Logger.Error("Get app version [%s] package failed: %+v", versionId, err)
+			return nil, err
+		}
+
+		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
+		if err != nil {
+			f.Logger.Error("Load app version [%s] package failed: %+v", versionId, err)
+			return nil, err
+		}
+		var confJson app.ClusterUserConfig
+		err = jsonutil.Decode([]byte(conf), &confJson)
+		if err != nil {
+			f.Logger.Error("Parse conf [%s] failed: %+v", conf, err)
+			return nil, err
+		}
+		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
+		if err != nil {
+			f.Logger.Error("Render app version [%s] cluster template failed: %+v", versionId, err)
+			return nil, err
+		}
+		err = clusterConf.Validate()
+		if err != nil {
+			f.Logger.Error("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
+			return nil, err
+		}
+
+	} else {
+		err := jsonutil.Decode([]byte(conf), &clusterConf)
+		if err != nil {
+			f.Logger.Error("Parse conf [%s] to cluster failed: %+v", conf, err)
+			return nil, err
+		}
+	}
+
+	parser := Parser{Logger: f.Logger}
+	clusterWrapper, err := parser.Parse(clusterConf)
+	if err != nil {
+		return nil, err
+	}
+	return clusterWrapper, nil
 }
