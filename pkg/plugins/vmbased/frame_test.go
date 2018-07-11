@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
+	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -81,6 +82,9 @@ func TestSplitJobIntoTasks(t *testing.T) {
 		ClusterWrapper: clusterWrapper,
 		Runtime:        runtime,
 		Logger:         logger.NewLogger(),
+		ImageConfig: &config.ImageConfig{
+			ImageId: "img:abcd",
+		},
 	}
 	testCreateCluster(t, frame)
 }

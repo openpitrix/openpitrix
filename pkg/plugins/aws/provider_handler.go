@@ -920,14 +920,14 @@ func (p *ProviderHandler) DescribeKeyPairs(url, credential, zone string) ([]stri
 	return keys, nil
 }
 
-func (p *ProviderHandler) DescribeImage(runtimeId, name string) (string, error) {
+func (p *ProviderHandler) DescribeImage(runtimeId, imageName string) (string, error) {
 	instanceService, err := p.initInstanceService(runtimeId)
 	if err != nil {
 		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return "", err
 	}
 
-	filter := &ec2.Filter{Name: aws.String("name"), Values: aws.StringSlice([]string{name})}
+	filter := &ec2.Filter{Name: aws.String("name"), Values: aws.StringSlice([]string{imageName})}
 
 	input := ec2.DescribeImagesInput{
 		Filters: []*ec2.Filter{filter},
@@ -940,7 +940,7 @@ func (p *ProviderHandler) DescribeImage(runtimeId, name string) (string, error) 
 	}
 
 	if len(output.Images) == 0 {
-		return "", fmt.Errorf("image with name [%s] not exist", name)
+		return "", fmt.Errorf("image with name [%s] not exist", imageName)
 	}
 
 	imageId := aws.StringValue(output.Images[0].ImageId)

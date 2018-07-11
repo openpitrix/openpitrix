@@ -16,6 +16,7 @@ import (
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
+	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/devkit"
 	"openpitrix.io/openpitrix/pkg/devkit/app"
@@ -34,6 +35,7 @@ type Frame struct {
 	ClusterWrapper *models.ClusterWrapper
 	Runtime        *runtimeclient.Runtime
 	Logger         *logger.Logger
+	ImageConfig    *config.ImageConfig
 }
 
 func (f *Frame) startConfdServiceLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
@@ -401,8 +403,6 @@ func (f *Frame) destroyAndStopServiceLayer(nodeIds []string, extraLayer *models.
 }
 
 func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -425,7 +425,7 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 			volume := &models.Volume{
 				Name:      clusterNode.ClusterId + "_" + nodeId,
 				Size:      eachSize,
-				Zone:      availabilityZone,
+				Zone:      f.ClusterWrapper.Cluster.Zone,
 				RuntimeId: f.Runtime.RuntimeId,
 			}
 			directive := jsonutil.ToString(volume)
@@ -447,8 +447,6 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 }
 
 func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -457,7 +455,7 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 			RuntimeId:  f.Runtime.RuntimeId,
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
@@ -478,13 +476,11 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 }
 
 func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 			RuntimeId:  f.Runtime.RuntimeId,
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
@@ -505,8 +501,6 @@ func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
 }
 
 func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -515,7 +509,7 @@ func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *model
 		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 			RuntimeId:  f.Runtime.RuntimeId,
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
@@ -797,20 +791,7 @@ func (f *Frame) setDroneConfigLayer(nodeIds []string, failureAllowed bool) *mode
 }
 
 func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
-	apiServer := f.Runtime.RuntimeUrl
-	zone := f.Runtime.Zone
-	globalPi := pi.Global()
-	imageId, imageUrl := "", ""
-	var err error
-	if globalPi != nil {
-		imageId, imageUrl, err = globalPi.GlobalConfig().GetRuntimeImageIdAndUrl(apiServer, zone)
-		if err != nil {
-			return nil
-		}
-	}
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
 		role := clusterNode.Role
@@ -834,26 +815,23 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 			Name:         clusterNode.ClusterId + "_" + nodeId + "_" + showName,
 			Hostname:     nodeId,
 			NodeId:       nodeId,
-			ImageId:      imageId,
+			ImageId:      f.ImageConfig.ImageId,
 			Cpu:          int(clusterRole.Cpu),
 			Memory:       int(clusterRole.Memory),
 			Gpu:          int(clusterRole.Gpu),
 			Subnet:       clusterNode.SubnetId,
 			RuntimeId:    f.Runtime.RuntimeId,
-			Zone:         availabilityZone,
+			Zone:         f.ClusterWrapper.Cluster.Zone,
 			NeedUserData: 1,
 			UserdataFile: f.getUserDataFile(),
 		}
 		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
 			frontgate := &Frontgate{f}
-			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), imageUrl)
+			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.ImageConfig.ImageUrl)
 		} else {
-			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), imageUrl)
+			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.ImageConfig.ImageUrl)
 		}
 		directive := jsonutil.ToString(instance)
-		if err != nil {
-			return nil
-		}
 		runInstanceTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
@@ -874,8 +852,6 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 }
 
 func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -884,7 +860,7 @@ func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *model
 			NodeId:     nodeId,
 			InstanceId: clusterNode.InstanceId,
 			RuntimeId:  f.Runtime.RuntimeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 		}
 		directive := jsonutil.ToString(instance)
 		stopInstanceTask := &models.Task{
@@ -907,8 +883,6 @@ func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *model
 }
 
 func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -917,7 +891,7 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 			NodeId:     nodeId,
 			InstanceId: clusterNode.InstanceId,
 			RuntimeId:  f.Runtime.RuntimeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 		}
 		directive := jsonutil.ToString(instance)
 		deleteInstanceTask := &models.Task{
@@ -940,8 +914,6 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 }
 
 func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		instance := &models.Instance{
@@ -949,7 +921,7 @@ func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
 			NodeId:     nodeId,
 			InstanceId: clusterNode.InstanceId,
 			RuntimeId:  f.Runtime.RuntimeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 		}
 		directive := jsonutil.ToString(instance)
 		startInstanceTask := &models.Task{
