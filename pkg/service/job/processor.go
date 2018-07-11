@@ -14,6 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
 type Processor struct {
@@ -156,6 +157,9 @@ func (j *Processor) Post() error {
 		if err != nil {
 			return err
 		}
+		if !reflectutil.In(j.Job.Provider, constants.VmBaseProviders) {
+			return nil
+		}
 		clusterWrapper := clusterWrappers[0]
 		frontgateId := clusterWrapper.Cluster.FrontgateId
 		pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
@@ -195,6 +199,9 @@ func (j *Processor) Post() error {
 		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{j.Job.ClusterId})
 		if err != nil {
 			return err
+		}
+		if !reflectutil.In(j.Job.Provider, constants.VmBaseProviders) {
+			return nil
 		}
 		clusterWrapper := clusterWrappers[0]
 		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType {

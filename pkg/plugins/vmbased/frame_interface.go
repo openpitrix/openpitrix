@@ -18,9 +18,13 @@ type FrameInterface interface {
 	DeleteClusterLayer() *models.TaskLayer
 	AddClusterNodesLayer() *models.TaskLayer
 	DeleteClusterNodesLayer() *models.TaskLayer
+	ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error)
 }
 
 func NewFrameInterface(job *models.Job, logger *logger.Logger) (FrameInterface, error) {
+	if job == nil {
+		return &Frame{Logger: logger}, nil
+	}
 	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
 	if err != nil {
 		return nil, err

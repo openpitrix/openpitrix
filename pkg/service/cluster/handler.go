@@ -191,17 +191,9 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
-	var availabilityZone string
-	if runtime.Provider == constants.ProviderAWS {
-		availabilityZone, err = providerInterface.DescribeAvailabilityZoneBySubnetId(runtimeId, clusterWrapper.Cluster.SubnetId)
-		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
-		}
-	} else {
-		availabilityZone = runtime.Zone
+	if clusterWrapper.Cluster.Zone == "" {
+		clusterWrapper.Cluster.Zone = runtime.Zone
 	}
-
-	clusterWrapper.Cluster.Zone = availabilityZone
 	clusterWrapper.Cluster.RuntimeId = runtimeId
 	clusterWrapper.Cluster.Owner = s.UserId
 	clusterWrapper.Cluster.ClusterId = clusterId
