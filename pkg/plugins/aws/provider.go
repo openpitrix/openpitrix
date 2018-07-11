@@ -9,10 +9,12 @@ import (
 	"fmt"
 	"time"
 
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -52,7 +54,28 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	frameInterface, err := vmbased.NewFrameInterface(job, p.Logger)
+	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
+	if err != nil {
+		return nil, err
+	}
+
+	runtimeId := clusterWrapper.Cluster.RuntimeId
+	runtime, err := runtimeclient.NewRuntime(runtimeId)
+	if err != nil {
+		return nil, err
+	}
+	imageConfig, err := pi.Global().GlobalConfig().GetRuntimeImageIdAndUrl(runtime.RuntimeUrl, runtime.Zone)
+	if err != nil {
+		return nil, err
+	}
+	if imageConfig.ImageId == "" && imageConfig.ImageName != "" {
+		handler := GetProviderHandler(p.Logger)
+		imageConfig.ImageId, err = handler.DescribeImage(runtimeId, imageConfig.ImageName)
+		if err != nil {
+			return nil, err
+		}
+	}
+	frameInterface, err := vmbased.NewFrameInterface(job, p.Logger, imageConfig.ImageId)
 	if err != nil {
 		return nil, err
 	}
@@ -192,9 +215,4 @@ func (p *Provider) DescribeRuntimeProviderAvailabilityZones(url, credential, zon
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
 	handler := GetProviderHandler(p.Logger)
 	return handler.DescribeZones(url, credential)
-}
-
-func (p *Provider) DescribeImage(runtimeId, name string) (string, error) {
-	handler := GetProviderHandler(p.Logger)
-	return handler.DescribeImage(runtimeId, name)
 }
