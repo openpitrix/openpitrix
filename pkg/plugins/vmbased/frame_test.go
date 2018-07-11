@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package qingcloud
+package vmbased
 
 import (
 	"testing"
@@ -11,7 +11,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
@@ -20,28 +19,27 @@ type ActionNum struct {
 	Num    int
 }
 
-func testCreateCluster(t *testing.T, frame *vmbased.Frame) {
+func testCreateCluster(t *testing.T, frame *Frame) {
 	rootTaskLayer := frame.CreateClusterLayer()
 
 	expectResult := []ActionNum{
-		{vmbased.ActionCreateVolumes, 5},
-		{vmbased.ActionRunInstances, 5},
-		{vmbased.ActionWaitFrontgateAvailable, 1},
-		{vmbased.ActionPingDrone, 5},
-		{vmbased.ActionSetDroneConfig, 5},
-		{vmbased.ActionFormatAndMountVolume, 5},
-		{vmbased.ActionRemoveContainerOnDrone, 5},
-		{vmbased.ActionPingDrone, 5},
-		{vmbased.ActionSetDroneConfig, 5},
-		{vmbased.ActionRunCommandOnDrone, 2}, // master ssh key generate
-		{vmbased.ActionDeregisterMetadata, 1},
-		{vmbased.ActionRegisterMetadata, 1},
-		{vmbased.ActionStartConfd, 5},
-		{vmbased.ActionRegisterCmd, 1}, // hbase-hdfs-master init
-		{vmbased.ActionRegisterCmd, 1}, // hbase-hdfs-master start
-		{vmbased.ActionRegisterCmd, 1}, // hbase-master start
-		{vmbased.ActionRegisterCmd, 3}, // hbase-slave start
-		{vmbased.ActionDeregisterCmd, 5},
+		{ActionCreateVolumes, 5},
+		{ActionRunInstances, 5},
+		{ActionWaitFrontgateAvailable, 1},
+		{ActionPingDrone, 5},
+		{ActionSetDroneConfig, 5},
+		{ActionFormatAndMountVolume, 5},
+		{ActionRemoveContainerOnDrone, 5},
+		{ActionPingDrone, 5},
+		{ActionSetDroneConfig, 5},
+		{ActionDeregisterMetadata, 1},
+		{ActionRegisterMetadata, 1},
+		{ActionStartConfd, 5},
+		{ActionRegisterCmd, 1}, // hbase-hdfs-master init
+		{ActionRegisterCmd, 1}, // hbase-hdfs-master start
+		{ActionRegisterCmd, 1}, // hbase-master start
+		{ActionRegisterCmd, 3}, // hbase-slave start
+		{ActionDeregisterCmd, 5},
 	}
 
 	var result []ActionNum
@@ -78,7 +76,7 @@ func TestSplitJobIntoTasks(t *testing.T) {
 	runtime.Provider = constants.ProviderQingCloud
 	runtime.Zone = "testing"
 
-	frame := &vmbased.Frame{
+	frame := &Frame{
 		Job:            mockJob,
 		ClusterWrapper: clusterWrapper,
 		Runtime:        runtime,

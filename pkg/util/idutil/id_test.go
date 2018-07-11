@@ -8,8 +8,6 @@ import (
 	"fmt"
 	"sort"
 	"testing"
-
-	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 func TestGetUuid(t *testing.T) {
@@ -27,7 +25,4 @@ func TestGetManyUuid(t *testing.T) {
 		strSlice = append(strSlice, testId)
 	}
 	sort.Strings(strSlice)
-	for i, str := range strSlice {
-		logger.Info("%4d: %s", i, str)
-	}
 }

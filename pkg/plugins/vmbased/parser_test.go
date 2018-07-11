@@ -38,7 +38,6 @@ const hbaseMustache = `
             "mount_point": "/data",
             "filesystem": "ext4"
         },
-        "passphraseless": "ssh-dsa",
         "advanced_actions": ["change_subnet", "scale_horizontal"],
         "services": {
             "start": {
@@ -94,7 +93,6 @@ const hbaseMustache = `
             "mount_point": "/data",
             "filesystem": "ext4"
         },
-        "passphraseless":"ssh-dsa",
         "advanced_actions": ["change_subnet"],
         "services": {
             "init": {
@@ -418,7 +416,7 @@ var hbaseClusterCommons = map[string]models.ClusterCommon{
 		DeleteSnapshotService:      "",
 		HealthCheck:                "{\"enable\":true,\"interval_sec\":60,\"timeout_sec\":45,\"action_timeout_sec\":45,\"healthy_threshold\":2,\"unhealthy_threshold\":2,\"check_cmd\":\"/opt/hbase/bin/health-check.sh\",\"action_cmd\":\"/opt/hbase/bin/health-action.sh\"}",
 		Monitor:                    "{\"enable\":true,\"cmd\":\"/usr/bin/python /opt/hbase/bin/hbase-monitor.py\",\"items\":{\"ritCount\":{\"unit\":\"region\",\"value_type\":\"int\",\"statistics_type\":\"delta\",\"scale_factor_when_display\":0,\"enums\":null}},\"groups\":null,\"display\":[\"ritCount\"],\"alarm\":null}",
-		Passphraseless:             "ssh-dsa",
+		Passphraseless:             "",
 		VerticalScalingPolicy:      "sequential",
 		AgentInstalled:             true,
 		CustomMetadataScript:       "",
@@ -446,7 +444,7 @@ var hbaseClusterCommons = map[string]models.ClusterCommon{
 		DeleteSnapshotService:      "",
 		HealthCheck:                "{\"enable\":true,\"interval_sec\":60,\"timeout_sec\":45,\"action_timeout_sec\":45,\"healthy_threshold\":2,\"unhealthy_threshold\":2,\"check_cmd\":\"sh /opt/hadoop/sbin/health-check.sh\",\"action_cmd\":\"sh /opt/hadoop/sbin/health-action.sh\"}",
 		Monitor:                    "{\"enable\":true,\"cmd\":\"/usr/bin/python /opt/hbase/bin/hbase-monitor.py\",\"items\":{\"DeadNodes\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null},\"DecomDeadNodes\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null},\"DecomLiveNodes\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null},\"DecommissioningNodes\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null},\"FilesAppended\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"delta\",\"scale_factor_when_display\":0,\"enums\":null},\"FilesCreated\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"delta\",\"scale_factor_when_display\":0,\"enums\":null},\"FilesDeleted\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"delta\",\"scale_factor_when_display\":0,\"enums\":null},\"FilesRenamed\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"delta\",\"scale_factor_when_display\":0,\"enums\":null},\"FilesTotal\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null},\"LiveNodes\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null},\"PercentRemaining\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null},\"PercentUsed\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null},\"RemainingGB\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null},\"UsedGB\":{\"unit\":\"\",\"value_type\":\"int\",\"statistics_type\":\"latest\",\"scale_factor_when_display\":0,\"enums\":null}},\"groups\":{\"DFS Capacity\":[\"UsedGB\",\"RemainingGB\"],\"DFS Files\":[\"FilesTotal\",\"FilesCreated\",\"FilesAppended\",\"FilesRenamed\",\"FilesDeleted\"],\"DFS Percentage\":[\"PercentUsed\",\"PercentRemaining\"],\"Data Nodes\":[\"LiveNodes\",\"DeadNodes\",\"DecomLiveNodes\",\"DecomDeadNodes\",\"DecommissioningNodes\"]},\"display\":[\"DFS Files\",\"DFS Percentage\",\"DFS Capacity\",\"Data Nodes\"],\"alarm\":null}",
-		Passphraseless:             "ssh-dsa",
+		Passphraseless:             "",
 		VerticalScalingPolicy:      "sequential",
 		AgentInstalled:             true,
 		CustomMetadataScript:       "",
