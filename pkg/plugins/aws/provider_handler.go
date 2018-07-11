@@ -514,6 +514,9 @@ func (p *ProviderHandler) waitInstanceVolumeAndNetwork(instanceService *ec2.EC2,
 		if instance.PrivateIpAddress == nil || aws.StringValue(instance.PrivateIpAddress) == "" {
 			return false, nil
 		}
+		if instance.PublicIpAddress == nil || aws.StringValue(instance.PublicIpAddress) == "" {
+			return false, nil
+		}
 		if volumeId != "" {
 			if len(instance.BlockDeviceMappings) == 0 {
 				return false, nil
@@ -566,6 +569,7 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	}
 
 	instance.PrivateIp = aws.StringValue(output.PrivateIpAddress)
+	instance.EIP = aws.StringValue(output.PublicIpAddress)
 	if len(output.BlockDeviceMappings) > 0 {
 		for _, dev := range output.BlockDeviceMappings {
 			if aws.StringValue(dev.Ebs.VolumeId) == instance.VolumeId {

@@ -170,12 +170,15 @@ func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 
 func (p *Provider) ValidateCredential(url, credential, zone string) error {
 	handler := GetProviderHandler(p.Logger)
-	keys, err := handler.DescribeKeyPairs(url, credential, zone)
+	zones, err := handler.DescribeZones(url, credential)
 	if err != nil {
 		return err
 	}
-	if !stringutil.StringIn(DefaultKeyName, keys) {
-		return fmt.Errorf("we need a key pair named [%s] in the zone [%s]", DefaultKeyName, zone)
+	if zone == "" {
+		return nil
+	}
+	if !stringutil.StringIn(zone, zones) {
+		return fmt.Errorf("cannot access zone [%s]", zone)
 	}
 	return nil
 }

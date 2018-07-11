@@ -2868,6 +2868,9 @@ var Files = map[string]string{
         "private_ip": {
           "type": "string"
         },
+        "eip": {
+          "type": "string"
+        },
         "server_id": {
           "$ref": "#/definitions/protobufUInt32Value"
         },
