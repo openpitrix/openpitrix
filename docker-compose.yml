@@ -47,6 +47,8 @@ services:
       - openpitrix-task-manager:openpitrix-task-manager
       - openpitrix-cluster-manager:openpitrix-cluster-manager
       - openpitrix-pilot-service:openpitrix-pilot-service
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
     container_name: "openpitrix-api-gateway"
 
   # repo service

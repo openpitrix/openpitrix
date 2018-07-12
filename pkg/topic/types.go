@@ -18,7 +18,7 @@ type userMessage struct {
 type Message struct {
 	// Type: optional create/delete/update
 	Type     messageType `json:"type,omitempty"`
-	Resource Resource    `json:"resource_set,omitempty"`
+	Resource Resource    `json:"resource,omitempty"`
 }
 
 type Resource struct {
