@@ -699,18 +699,6 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
-	for role, clusterRole := range clusterWrapper.ClusterRoles {
-		_, err = pi.Global().Db.
-			Update(models.ClusterRoleTableName).
-			Set("env", clusterRole.Env).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("role", role)).
-			Exec()
-		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
-		}
-	}
-
 	directive := jsonutil.ToString(clusterWrapper)
 	newJob := models.NewJob(
 		constants.PlaceHolder,
