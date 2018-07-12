@@ -1,0 +1,2 @@
+ALTER TABLE cluster_node
+	ADD COLUMN eip VARCHAR(50);
