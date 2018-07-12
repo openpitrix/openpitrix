@@ -6,6 +6,7 @@ package frontgate
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"time"
 
@@ -21,21 +22,23 @@ import (
 )
 
 type Server struct {
-	cfg  *ConfigManager
-	etcd *EtcdClientManager
+	cfg            *ConfigManager
+	tlsPilotConfig *tls.Config
+	etcd           *EtcdClientManager
 
 	ch   *pilotutil.FrameChannel
 	conn *grpc.ClientConn
 	err  error
 }
 
-func Serve(cfg *ConfigManager) {
+func Serve(cfg *ConfigManager, tlsPilotConfig *tls.Config) {
 	p := &Server{
-		cfg:  cfg,
-		etcd: NewEtcdClientManager(),
+		cfg:            cfg,
+		tlsPilotConfig: tlsPilotConfig,
+		etcd:           NewEtcdClientManager(),
 	}
 
-	go ServeReverseRpcServerForPilot(cfg.Get(), p)
+	go ServeReverseRpcServerForPilot(cfg.Get(), tlsPilotConfig, p)
 	go pbfrontgate.ListenAndServeFrontgateService("tcp",
 		fmt.Sprintf(":%d", constants.FrontgateServicePort),
 		p,
@@ -45,7 +48,7 @@ func Serve(cfg *ConfigManager) {
 }
 
 func ServeReverseRpcServerForPilot(
-	cfg *pbtypes.FrontgateConfig,
+	cfg *pbtypes.FrontgateConfig, tlsConfig *tls.Config,
 	service pbfrontgate.FrontgateService,
 ) {
 	logger.Info("ReverseRpcServerForPilot beign")
@@ -54,9 +57,9 @@ func ServeReverseRpcServerForPilot(
 	var lastErrCode = codes.OK
 
 	for {
-		ch, conn, err := pilotutil.DialFrontgateChannel(
+		ch, conn, err := pilotutil.DialFrontgateChannelTLS(
 			context.Background(), fmt.Sprintf("%s:%d", cfg.PilotHost, cfg.PilotPort),
-			grpc.WithInsecure(),
+			tlsConfig,
 		)
 		if err != nil {
 			gerr, ok := status.FromError(err)

@@ -40,9 +40,7 @@ service PilotService {
 	rpc RegisterCmd (metadata.types.SubTask_RegisterCmd) returns (metadata.types.Empty);
 	rpc DeregisterCmd (metadata.types.SubTask_DeregisterCmd) returns (metadata.types.Empty);
 
-	rpc ReportSubTaskStatus (metadata.types.SubTaskStatus) returns (metadata.types.Empty);
 	rpc GetSubtaskStatus (metadata.types.SubTaskId) returns (metadata.types.SubTaskStatus);
-
 	rpc HandleSubtask (metadata.types.SubTaskMessage) returns (metadata.types.Empty);
 
 	rpc PingPilot (metadata.types.Empty) returns (metadata.types.Empty);
@@ -52,6 +50,11 @@ service PilotService {
 
 	rpc RunCommandOnFrontgateNode (metadata.types.RunCommandOnFrontgateRequest) returns (metadata.types.String);
 	rpc RunCommandOnDrone (metadata.types.RunCommandOnDroneRequest) returns (metadata.types.String);
+}
 
+service PilotServiceForFrontgate {
+	rpc PingPilot (metadata.types.Empty) returns (metadata.types.Empty);
+	rpc GetPilotConfig (metadata.types.Empty) returns (metadata.types.PilotConfig);
+	rpc ReportSubTaskStatus (metadata.types.SubTaskStatus) returns (metadata.types.Empty);
 	rpc FrontgateChannel (stream metadata.types.Bytes) returns (stream metadata.types.Bytes);
 }

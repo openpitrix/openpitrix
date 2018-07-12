@@ -6,12 +6,14 @@ package pilotutil
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
 
 	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
@@ -52,5 +54,23 @@ func DialPilotService(ctx context.Context, host string, port int) (
 	}
 
 	client = pbpilot.NewPilotServiceClient(conn)
+	return
+}
+
+func DialPilotServiceForFrontgate_TLS(
+	ctx context.Context, host string, port int,
+	tlsConfig *tls.Config,
+) (
+	client pbpilot.PilotServiceForFrontgateClient,
+	conn *grpc.ClientConn,
+	err error,
+) {
+	creds := credentials.NewTLS(tlsConfig)
+	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", host, port), grpc.WithTransportCredentials(creds))
+	if err != nil {
+		return
+	}
+
+	client = pbpilot.NewPilotServiceForFrontgateClient(conn)
 	return
 }

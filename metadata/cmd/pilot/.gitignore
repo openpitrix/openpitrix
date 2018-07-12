@@ -6,5 +6,3 @@
 
 *.out.log
 *.out
-
-default.etcd

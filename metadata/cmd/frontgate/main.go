@@ -23,6 +23,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate"
 	"openpitrix.io/openpitrix/pkg/service/metadata/frontgate/frontgateutil"
 	"openpitrix.io/openpitrix/pkg/util/pathutil"
+	"openpitrix.io/openpitrix/pkg/util/tlsutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -51,6 +52,32 @@ EXAMPLE:
 			Value:  "frontgate-config.json",
 			Usage:  "frontgate config file",
 			EnvVar: "OPENPITRIX_FRONTGATE_CONFIG",
+		},
+
+		cli.StringFlag{
+			Name:   "pilot-server-name",
+			Value:  "pilot.openpitrix.io",
+			Usage:  "pilot server name",
+			EnvVar: "OPENPITRIX_PILOT_SERVER_NAME",
+		},
+		cli.StringFlag{
+			Name:   "pilot-client-crt-file",
+			Value:  "tls-config/pilot-client.crt",
+			Usage:  "pilot client tls crt file",
+			EnvVar: "OPENPITRIX_PILOT_CLIENT_CRT_FILE",
+		},
+		cli.StringFlag{
+			Name:   "pilot-client-key-file",
+			Value:  "tls-config/pilot-client.key",
+			Usage:  "pilot client tls key file",
+			EnvVar: "OPENPITRIX_PILOT_CLIENT_KEY_FILE",
+		},
+
+		cli.StringFlag{
+			Name:   "openpitrix-ca-crt-file",
+			Value:  "tls-config/openpitrix-ca.crt",
+			Usage:  "openpitrix ca crt file",
+			EnvVar: "OPENPITRIX_CA_CRT_FILE",
 		},
 	}
 
@@ -499,8 +526,20 @@ EXAMPLE:
 				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
 				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
+				tlsPilotClientConfig, err := tlsutil.NewClientTLSConfigFromFile(
+					c.GlobalString("pilot-client-crt-file"),
+					c.GlobalString("pilot-client-key-file"),
+					c.GlobalString("openpitrix-ca-crt-file"),
+					c.GlobalString("pilot-server-name"),
+				)
+				if err != nil {
+					logger.Critical("%+v", err)
+					os.Exit(1)
+
+				}
+
 				frontgate.Serve(
-					frontgate.NewConfigManager(cfgpath, cfg),
+					frontgate.NewConfigManager(cfgpath, cfg), tlsPilotClientConfig,
 				)
 				return
 			},

@@ -130,7 +130,7 @@ func (p *Server) SetDroneConfig(ctx context.Context, arg *pbtypes.SetDroneConfig
 	return &pbtypes.Empty{}, nil
 }
 
-func (p *Server) FrontgateChannel(ch pbpilot.PilotService_FrontgateChannelServer) error {
+func (p *Server) FrontgateChannel(ch pbpilot.PilotServiceForFrontgate_FrontgateChannelServer) error {
 	logger.Info(funcutil.CallerName(1))
 
 	c := pbfrontgate.NewFrontgateServiceClient(

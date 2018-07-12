@@ -24,6 +24,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/metadata/pilot"
 	"openpitrix.io/openpitrix/pkg/service/metadata/pilot/pilotutil"
 	"openpitrix.io/openpitrix/pkg/util/pathutil"
+	"openpitrix.io/openpitrix/pkg/util/tlsutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -54,6 +55,44 @@ EXAMPLE:
 			Value:  "pilot-config.json",
 			Usage:  "pilot config file",
 			EnvVar: "OPENPITRIX_PILOT_CONFIG",
+		},
+
+		cli.StringFlag{
+			Name:   "pilot-server-name",
+			Value:  "pilot.openpitrix.io",
+			Usage:  "pilot server name",
+			EnvVar: "OPENPITRIX_PILOT_SERVER_NAME",
+		},
+		cli.StringFlag{
+			Name:   "pilot-server-crt-file",
+			Value:  "tls-config/pilot-server.crt",
+			Usage:  "pilot server tls crt file",
+			EnvVar: "OPENPITRIX_PILOT_SERVER_CRT_FILE",
+		},
+		cli.StringFlag{
+			Name:   "pilot-server-key-file",
+			Value:  "tls-config/pilot-server.key",
+			Usage:  "pilot server tls key file",
+			EnvVar: "OPENPITRIX_PILOT_SERVER_KEY_FILE",
+		},
+		cli.StringFlag{
+			Name:   "pilot-client-crt-file",
+			Value:  "tls-config/pilot-client.crt",
+			Usage:  "pilot client tls crt file",
+			EnvVar: "OPENPITRIX_PILOT_CLIENT_CRT_FILE",
+		},
+		cli.StringFlag{
+			Name:   "pilot-client-key-file",
+			Value:  "tls-config/pilot-client.key",
+			Usage:  "pilot client tls key file",
+			EnvVar: "OPENPITRIX_PILOT_CLIENT_KEY_FILE",
+		},
+
+		cli.StringFlag{
+			Name:   "openpitrix-ca-crt-file",
+			Value:  "tls-config/openpitrix-ca.crt",
+			Usage:  "openpitrix ca crt file",
+			EnvVar: "OPENPITRIX_CA_CRT_FILE",
 		},
 	}
 
@@ -590,11 +629,17 @@ EXAMPLE:
 		{
 			Name:  "serve",
 			Usage: "run as pilot service",
+
 			Action: func(c *cli.Context) {
 				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
 				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
+				tlsCfg, _ := tlsutil.NewServerTLSConfigFromFile(
+					c.GlobalString("pilot-server-crt-file"),
+					c.GlobalString("pilot-server-key-file"),
+					c.GlobalString("openpitrix-ca-crt-file"),
+				)
 
-				pilot.Serve(cfg)
+				pilot.Serve(cfg, tlsCfg)
 				return
 			},
 		},
@@ -633,6 +678,7 @@ func Atoi(s string, defaultValue int) int {
 
 const tourTopic = `
 pilot gen-config
+pilot gen-cert
 
 pilot info
 pilot list

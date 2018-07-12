@@ -56,7 +56,7 @@ func (g *GrpcServer) WithChecker(c checkerT) *GrpcServer {
 	return g
 }
 
-func (g *GrpcServer) Serve(callback RegisterCallback) {
+func (g *GrpcServer) Serve(callback RegisterCallback, opt ...grpc.ServerOption) {
 	version.PrintVersionInfo(logger.Info)
 	logger.Info("Service [%s] start listen at port [%d]", g.ServiceName, g.Port)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", g.Port))
@@ -65,7 +65,7 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 		logger.Critical("failed to listen: %+v", err)
 	}
 
-	grpcServer := grpc.NewServer(
+	builtinOptions := []grpc.ServerOption{
 		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
 			MinTime:             10 * time.Second,
 			PermitWithoutStream: true,
@@ -96,8 +96,9 @@ func (g *GrpcServer) Serve(callback RegisterCallback) {
 				}),
 			),
 		),
-	)
+	}
 
+	grpcServer := grpc.NewServer(append(opt, builtinOptions...)...)
 	callback(grpcServer)
 
 	if err = grpcServer.Serve(lis); err != nil {
