@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/topic"
 )
 
 type Controller struct {
@@ -88,6 +89,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		JobId:  jobId,
 		Status: constants.StatusWorking,
 	}
+	go topic.PushEvent(pi.Global().Etcd, job.Owner, topic.Create, topic.NewResource(models.JobTableName, jobId))
 	err := c.updateJobAttributes(job.JobId, map[string]interface{}{
 		"status":   job.Status,
 		"executor": c.hostname,
@@ -185,6 +187,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		jLogger.Error("Job [%s] failed: %+v", jobId, err)
 		status = constants.StatusFailed
 	}
+	go topic.PushEvent(pi.Global().Etcd, job.Owner, topic.Delete, topic.NewResource(models.JobTableName, jobId))
 	err = c.updateJobAttributes(jobId, map[string]interface{}{
 		"status":      status,
 		"status_time": time.Now(),
