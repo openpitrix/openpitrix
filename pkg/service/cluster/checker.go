@@ -141,8 +141,8 @@ func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, p
 	}
 	clusterWrapper.Cluster.VpcId = vpcId
 
-	// check resource quota
-	err = providerInterface.CheckResourceQuotas(ctx, clusterWrapper)
+	// check resource
+	err = providerInterface.CheckResource(ctx, clusterWrapper)
 	if err != nil {
 		return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceQuotaNotEnough, err.Error())
 	}

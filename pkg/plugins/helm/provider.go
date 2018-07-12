@@ -154,12 +154,6 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 		return nil, err
 	}
 
-	err = p.checkClusterNameIsUniqueInRuntime(clusterWrapper.Cluster.Name, runtimeId)
-	if err != nil {
-		p.Logger.Error("Check cluster name [%s] is unique in runtime [%s] failed: %+v", clusterWrapper.Cluster.Name, runtimeId, err)
-		return nil, err
-	}
-
 	return clusterWrapper, nil
 }
 
@@ -414,7 +408,13 @@ func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsR
 	return nil, nil
 }
 
-func (p *Provider) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
+func (p *Provider) CheckResource(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
+	err := p.checkClusterNameIsUniqueInRuntime(clusterWrapper.Cluster.Name, clusterWrapper.Cluster.RuntimeId)
+	if err != nil {
+		p.Logger.Error("Cluster name [%s] already existed in runtime [%s]: %+v",
+			clusterWrapper.Cluster.Name, clusterWrapper.Cluster.RuntimeId, err)
+		return err
+	}
 	return nil
 }
 
