@@ -184,10 +184,10 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	}
 	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, runtimeId, conf)
 	if err != nil {
+		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", versionId, runtime, err)
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		}
-		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", versionId, runtime, err)
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
@@ -201,6 +201,11 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 
 	if reflectutil.In(runtime.Provider, constants.VmBaseProviders) {
 		err = CheckVmBasedProvider(ctx, runtime, providerInterface, clusterWrapper)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err = providerInterface.CheckResource(ctx, clusterWrapper)
 		if err != nil {
 			return nil, err
 		}
@@ -662,6 +667,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
+	conf := req.GetEnv().GetValue()
 	err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorUpdateResourceEnvFailed, clusterId)
@@ -670,14 +676,42 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
+	versionId := clusterWrapper.Cluster.VersionId
+	runtimeId := clusterWrapper.Cluster.RuntimeId
 
-	directive := jsonutil.ToString(clusterWrapper)
-
-	runtime, err := runtimeclient.NewRuntime(clusterWrapper.Cluster.RuntimeId)
+	runtime, err := runtimeclient.NewRuntime(runtimeId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
+	providerInterface, err := plugins.GetProviderPlugin(runtime.Provider, nil)
+	if err != nil {
+		logger.Error("No such provider [%s]. ", runtime.Provider)
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+	}
+	clusterWrapper, err = providerInterface.ParseClusterConf(versionId, runtimeId, conf)
+	if err != nil {
+		logger.Error("Parse cluster conf with versionId [%s] runtime [%s] conf [%s] failed: %+v",
+			versionId, runtime, conf, err)
+		if gerr.IsGRPCError(err) {
+			return nil, err
+		}
+		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
+	}
+
+	for role, clusterRole := range clusterWrapper.ClusterRoles {
+		_, err = pi.Global().Db.
+			Update(models.ClusterRoleTableName).
+			Set("env", clusterRole.Env).
+			Where(db.Eq("cluster_id", clusterId)).
+			Where(db.Eq("role", role)).
+			Exec()
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+		}
+	}
+
+	directive := jsonutil.ToString(clusterWrapper)
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		clusterId,
