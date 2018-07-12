@@ -12,9 +12,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 type Processor struct {
@@ -34,8 +37,9 @@ func NewProcessor(job *models.Job, jLogger *logger.Logger) *Processor {
 
 // Pre process when job is start
 func (j *Processor) Pre() error {
-	var err error
 	ctx := client.GetSystemUserContext()
+	sender := senderutil.GetSenderFromContext(ctx)
+	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		j.JLogger.Error("Executing job pre processor failed: %+v", err)
@@ -43,6 +47,8 @@ func (j *Processor) Pre() error {
 	}
 	switch j.Job.JobAction {
 	case constants.ActionCreateCluster:
+		go topic.PushEvent(pi.Global().Etcd, sender.UserId, topic.Create,
+			topic.NewResource(models.ClusterTableName, j.Job.ClusterId))
 		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusCreating)
 	case constants.ActionUpgradeCluster:
 		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusUpgrading)
@@ -78,8 +84,9 @@ func (j *Processor) Pre() error {
 
 // Post process when job is done
 func (j *Processor) Post() error {
-	var err error
 	ctx := client.GetSystemUserContext()
+	sender := senderutil.GetSenderFromContext(ctx)
+	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		j.JLogger.Error("Executing job post processor failed: %+v", err)
@@ -196,6 +203,11 @@ func (j *Processor) Post() error {
 		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
 	case constants.ActionDeleteClusters:
 		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusDeleted)
+		if err != nil {
+			return err
+		}
+		go topic.PushEvent(pi.Global().Etcd, sender.UserId, topic.Delete,
+			topic.NewResource(models.ClusterTableName, j.Job.ClusterId))
 		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{j.Job.ClusterId})
 		if err != nil {
 			return err
@@ -260,7 +272,6 @@ func (j *Processor) Final() {
 		j.JLogger.Error("Executing job final processor failed: %+v", err)
 		return
 	}
-	// TODO: modify cluster status to `active or deleted`
 	err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, "")
 	if err != nil {
 		j.JLogger.Error("Executing job final processor failed: %+v", err)
