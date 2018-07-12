@@ -7,6 +7,5 @@ package aws
 const (
 	DefaultVolumeClass = 1
 	DefaultDevice      = "/dev/sdf"
-	DefaultKeyName     = "openpitrix"
 	DefaultZone        = "us-east-2"
 )

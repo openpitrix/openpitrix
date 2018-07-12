@@ -110,7 +110,6 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	}
 
 	input := ec2.RunInstancesInput{
-		KeyName:           aws.String(DefaultKeyName),
 		ImageId:           aws.String(instance.ImageId),
 		InstanceType:      aws.String(instanceType),
 		TagSpecifications: []*ec2.TagSpecification{&tagSpec},
