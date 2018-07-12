@@ -361,7 +361,7 @@ func (t *Processor) Post() error {
 				InstanceId:       pbutil.ToProtoString(instance.InstanceId),
 				Device:           pbutil.ToProtoString(instance.Device),
 				PrivateIp:        pbutil.ToProtoString(instance.PrivateIp),
-				Eip:              pbutil.ToProtoString(instance.EIP),
+				Eip:              pbutil.ToProtoString(instance.Eip),
 				TransitionStatus: pbutil.ToProtoString(""),
 				Status:           pbutil.ToProtoString(constants.StatusActive),
 			},

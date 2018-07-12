@@ -569,7 +569,7 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	}
 
 	instance.PrivateIp = aws.StringValue(output.PrivateIpAddress)
-	instance.EIP = aws.StringValue(output.PublicIpAddress)
+	instance.Eip = aws.StringValue(output.PublicIpAddress)
 	if len(output.BlockDeviceMappings) > 0 {
 		for _, dev := range output.BlockDeviceMappings {
 			if aws.StringValue(dev.Ebs.VolumeId) == instance.VolumeId {
