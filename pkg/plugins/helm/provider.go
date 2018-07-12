@@ -158,7 +158,7 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	jodDirective, err := getJobDirective(job.Directive)
+	jobDirective, err := getJobDirective(job.Directive)
 	if err != nil {
 		return nil, err
 	}
@@ -167,10 +167,10 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionCreateCluster:
 		td := TaskDirective{
 			VersionId:   job.VersionId,
-			Namespace:   jodDirective.Namespace,
-			RuntimeId:   jodDirective.RuntimeId,
-			Values:      jodDirective.Values,
-			ClusterName: jodDirective.ClusterName,
+			Namespace:   jobDirective.Namespace,
+			RuntimeId:   jobDirective.RuntimeId,
+			Values:      jobDirective.Values,
+			ClusterName: jobDirective.ClusterName,
 		}
 		tdj := getTaskDirectiveJson(td)
 
@@ -184,9 +184,25 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionUpgradeCluster:
 		td := TaskDirective{
 			VersionId:   job.VersionId,
-			RuntimeId:   jodDirective.RuntimeId,
-			Values:      jodDirective.Values,
-			ClusterName: jodDirective.ClusterName,
+			RuntimeId:   jobDirective.RuntimeId,
+			Values:      jobDirective.Values,
+			ClusterName: jobDirective.ClusterName,
+		}
+		tdj := getTaskDirectiveJson(td)
+
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, job.Owner, false)
+		tl := models.TaskLayer{
+			Tasks: []*models.Task{task},
+			Child: nil,
+		}
+
+		return &tl, nil
+	case constants.ActionUpdateClusterEnv:
+		td := TaskDirective{
+			VersionId:   job.VersionId,
+			RuntimeId:   jobDirective.RuntimeId,
+			Values:      jobDirective.Values,
+			ClusterName: jobDirective.ClusterName,
 		}
 		tdj := getTaskDirectiveJson(td)
 
@@ -198,7 +214,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 		return &tl, nil
 	case constants.ActionRollbackCluster:
-		td := TaskDirective{ClusterName: jodDirective.ClusterName, RuntimeId: jodDirective.RuntimeId}
+		td := TaskDirective{ClusterName: jobDirective.ClusterName, RuntimeId: jobDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
 		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionRollbackCluster, tdj, job.Owner, false)
@@ -209,7 +225,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 		return &tl, nil
 	case constants.ActionDeleteClusters:
-		td := TaskDirective{ClusterName: jodDirective.ClusterName, RuntimeId: jodDirective.RuntimeId}
+		td := TaskDirective{ClusterName: jobDirective.ClusterName, RuntimeId: jobDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
 		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionDeleteClusters, tdj, job.Owner, false)
@@ -220,7 +236,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 		return &tl, nil
 	case constants.ActionCeaseClusters:
-		td := TaskDirective{ClusterName: jodDirective.ClusterName, RuntimeId: jodDirective.RuntimeId}
+		td := TaskDirective{ClusterName: jobDirective.ClusterName, RuntimeId: jobDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
 		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCeaseClusters, tdj, job.Owner, false)
@@ -461,6 +477,35 @@ func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, cl
 	return pbClusterNodes, nil
 }
 
+func (p *Provider) updateClusterEnv(job *models.Job) error {
+	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
+	if err != nil {
+		return err
+	}
+
+	ctx := clientutil.GetSystemUserContext()
+	clusterClient, err := clusterclient.NewClient()
+	if err != nil {
+		return err
+	}
+
+	clusterRoles := []*models.ClusterRole{}
+	for _, clusterRole := range clusterWrapper.ClusterRoles {
+		clusterRoles = append(clusterRoles, clusterRole)
+	}
+
+	modifyClusterRequest := &pb.ModifyClusterRequest{
+		Cluster:        models.ClusterToPb(clusterWrapper.Cluster),
+		ClusterRoleSet: models.ClusterRolesToPbs(clusterRoles),
+	}
+	_, err = clusterClient.ModifyCluster(ctx, modifyClusterRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
 	if err != nil {
@@ -513,6 +558,14 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 		ClusterNodeSet: pbClusterNodes,
 	}
 	clusterClient.AddTableClusterNodes(ctx, addNodesRequest)
+
+	if job.JobAction == constants.ActionUpdateClusterEnv {
+		err := p.updateClusterEnv(job)
+		if err != nil {
+			p.Logger.Error("Update cluster env failed, %+v", err)
+			return err
+		}
+	}
 
 	return nil
 }
