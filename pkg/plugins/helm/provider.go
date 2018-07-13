@@ -603,5 +603,30 @@ func (p *Provider) ValidateCredential(url, credential, zone string) error {
 }
 
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
-	return nil, nil
+	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
+		return clientcmd.Load([]byte(credential))
+	}
+
+	config, err := clientcmd.BuildConfigFromKubeconfigGetter("", kubeconfigGetter)
+	if err != nil {
+		return nil, err
+	}
+
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+
+	cli := clientset.CoreV1().Namespaces()
+	out, err := cli.List(metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	namespaces := []string{}
+	for _, ns := range out.Items {
+		namespaces = append(namespaces, ns.Name)
+	}
+
+	return namespaces, nil
 }
