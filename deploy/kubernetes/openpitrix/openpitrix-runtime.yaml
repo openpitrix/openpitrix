@@ -48,7 +48,7 @@ spec:
       containers:
       - name: openpitrix-runtime-manager
         image: ${IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         command:
           - runtime-manager
         ports:

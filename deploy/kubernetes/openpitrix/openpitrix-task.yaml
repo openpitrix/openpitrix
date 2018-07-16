@@ -48,7 +48,7 @@ spec:
       containers:
       - name: openpitrix-task-manager
         image: ${IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         command:
           - task-manager
         ports:

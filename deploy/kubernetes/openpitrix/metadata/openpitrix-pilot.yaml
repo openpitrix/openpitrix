@@ -49,7 +49,7 @@ spec:
       containers:
       - name: openpitrix-pilot
         image: ${IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         command: ['pilot', '-config=/opt/openpitrix/conf/pilot-config.json', 'serve']
         ports:
         - containerPort: 9110

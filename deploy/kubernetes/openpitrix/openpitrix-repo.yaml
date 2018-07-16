@@ -48,7 +48,7 @@ spec:
       containers:
       - name: openpitrix-repo-manager
         image: ${IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         command:
           - repo-manager
         ports:
@@ -122,7 +122,7 @@ spec:
       containers:
       - name: openpitrix-repo-indexer
         image: ${IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         command:
           - repo-indexer
         ports:

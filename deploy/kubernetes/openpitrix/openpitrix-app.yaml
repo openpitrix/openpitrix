@@ -48,7 +48,7 @@ spec:
       containers:
       - name: openpitrix-app-manager
         image: ${IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         command:
           - app-manager
         ports:
@@ -122,7 +122,7 @@ spec:
       containers:
       - name: openpitrix-category-manager
         image: ${IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         command:
           - category-manager
         ports:
