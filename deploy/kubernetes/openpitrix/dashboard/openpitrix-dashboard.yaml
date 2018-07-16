@@ -40,7 +40,7 @@ spec:
       containers:
       - name: openpitrix-dashboard
         image: ${DASHBOARD_IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
           name: dashboard
