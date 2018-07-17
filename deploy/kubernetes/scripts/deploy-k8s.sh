@@ -48,6 +48,7 @@ if [ "${METADATA}" == "0" ] && [ "${DBCTRL}" == "0" ] && [ "${BASE}" == "0" ] &&
   usage
 fi
 
+IMAGE_PULL_POLICY="IfNotPresent"
 DASHBOARD_IMAGE="openpitrix/dashboard"
 if [ "${VERSION}" == "" ];then
   VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
@@ -57,10 +58,12 @@ if [ "${VERSION}" == "dev" ];then
   IMAGE="openpitrix/openpitrix-dev:latest"
   METADATA_IMAGE="openpitrix/openpitrix-dev:metadata"
   FLYWAY_IMAGE="openpitrix/openpitrix-dev:flyway"
+  IMAGE_PULL_POLICY="Always"
 elif [ "$VERSION" == "latest" ];then
   IMAGE="openpitrix/openpitrix:latest"
   METADATA_IMAGE="openpitrix/openpitrix:metadata"
   FLYWAY_IMAGE="openpitrix/openpitrix:flyway"
+  IMAGE_PULL_POLICY="Always"
 else
   IMAGE="openpitrix/openpitrix:$VERSION"
   METADATA_IMAGE="openpitrix/openpitrix:metadata-$VERSION"
@@ -75,6 +78,8 @@ replace() {
 	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
 	  -e "s!\${REQUESTS}!${REQUESTS}!g" \
 	  -e "s!\${LIMITS}!${LIMITS}!g" \
+	  -e "s!\${VERSION}!${VERSION}!g" \
+	  -e "s!\${IMAGE_PULL_POLICY}!${IMAGE_PULL_POLICY}!g" \
 	  $1
 }
 
