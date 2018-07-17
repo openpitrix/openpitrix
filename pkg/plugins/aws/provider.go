@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"time"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
+	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -54,9 +56,31 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
-	if err != nil {
-		return nil, err
+	var clusterWrapper *models.ClusterWrapper
+	var err error
+
+	switch job.JobAction {
+	case constants.ActionAttachKeyPairs, constants.ActionDetachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		clusterId := nodeKeyPairDetails[0].ClusterNode.ClusterId
+		clusterClient, err := clusterclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+		ctx := clientutil.GetSystemUserContext()
+		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
+		if err != nil {
+			return nil, err
+		}
+		clusterWrapper = pbClusterWrappers[0]
+	default:
+		clusterWrapper, err = models.NewClusterWrapper(job.Directive)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	runtimeId := clusterWrapper.Cluster.RuntimeId
@@ -110,7 +134,18 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		// not supported yet
 		return nil, nil
 	case constants.ActionUpdateClusterEnv:
-
+	case constants.ActionAttachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.AttachKeyPairsLayer(nodeKeyPairDetails), nil
+	case constants.ActionDetachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.DetachKeyPairsLayer(nodeKeyPairDetails), nil
 	default:
 		p.Logger.Error("Unknown job action [%s]", job.JobAction)
 		return nil, fmt.Errorf("unknown job action [%s]", job.JobAction)

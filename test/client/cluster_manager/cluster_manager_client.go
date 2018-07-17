@@ -53,6 +53,34 @@ func (a *Client) AddClusterNodes(params *AddClusterNodesParams) (*AddClusterNode
 }
 
 /*
+AttachKeyPairs attaches key pairs
+*/
+func (a *Client) AttachKeyPairs(params *AttachKeyPairsParams) (*AttachKeyPairsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewAttachKeyPairsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "AttachKeyPairs",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/key_pair/attach",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &AttachKeyPairsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*AttachKeyPairsOK), nil
+
+}
+
+/*
 CeaseClusters ceases clusters
 */
 func (a *Client) CeaseClusters(params *CeaseClustersParams) (*CeaseClustersOK, error) {
@@ -105,6 +133,34 @@ func (a *Client) CreateCluster(params *CreateClusterParams) (*CreateClusterOK, e
 		return nil, err
 	}
 	return result.(*CreateClusterOK), nil
+
+}
+
+/*
+CreateKeyPair creates key pair
+*/
+func (a *Client) CreateKeyPair(params *CreateKeyPairParams) (*CreateKeyPairOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateKeyPairParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CreateKeyPair",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/key_pairs",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &CreateKeyPairReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CreateKeyPairOK), nil
 
 }
 
@@ -165,6 +221,34 @@ func (a *Client) DeleteClusters(params *DeleteClustersParams) (*DeleteClustersOK
 }
 
 /*
+DeleteKeyPairs deletes key pairs
+*/
+func (a *Client) DeleteKeyPairs(params *DeleteKeyPairsParams) (*DeleteKeyPairsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteKeyPairsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteKeyPairs",
+		Method:             "DELETE",
+		PathPattern:        "/v1/clusters/key_pairs",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DeleteKeyPairsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteKeyPairsOK), nil
+
+}
+
+/*
 DescribeClusterNodes describes cluster nodes
 */
 func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams) (*DescribeClusterNodesOK, error) {
@@ -221,6 +305,34 @@ func (a *Client) DescribeClusters(params *DescribeClustersParams) (*DescribeClus
 }
 
 /*
+DescribeKeyPairs describes key pairs
+*/
+func (a *Client) DescribeKeyPairs(params *DescribeKeyPairsParams) (*DescribeKeyPairsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeKeyPairsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeKeyPairs",
+		Method:             "GET",
+		PathPattern:        "/v1/clusters/key_pairs",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DescribeKeyPairsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeKeyPairsOK), nil
+
+}
+
+/*
 DescribeSubnets describes subnets
 */
 func (a *Client) DescribeSubnets(params *DescribeSubnetsParams) (*DescribeSubnetsOK, error) {
@@ -245,6 +357,34 @@ func (a *Client) DescribeSubnets(params *DescribeSubnetsParams) (*DescribeSubnet
 		return nil, err
 	}
 	return result.(*DescribeSubnetsOK), nil
+
+}
+
+/*
+DetachKeyPairs detaches key pairs
+*/
+func (a *Client) DetachKeyPairs(params *DetachKeyPairsParams) (*DetachKeyPairsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDetachKeyPairsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DetachKeyPairs",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/key_pair/detach",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &DetachKeyPairsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DetachKeyPairsOK), nil
 
 }
 

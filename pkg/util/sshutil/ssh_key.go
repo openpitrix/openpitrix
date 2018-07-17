@@ -20,3 +20,33 @@ func MakeSSHKeyPair(keyType string) (string, string, error) {
 		return "", "", fmt.Errorf("wrong key type [%s]", keyType)
 	}
 }
+
+func prepareDirAndFileCmd() string {
+	path := "/root/.ssh"
+	file := fmt.Sprintf("%s/authorized_keys", path)
+	cmd := fmt.Sprintf("ls %s;if [ $? -ne 0 ];then mkdir -p %s && chmod 0755 %s && touch %s && chmod 0644 %s;fi",
+		path, path, path, file, file)
+	return cmd
+}
+
+func DoAttachCmd(keyPair string) string {
+	path := "/root/.ssh"
+	file := fmt.Sprintf("%s/authorized_keys", path)
+	tmpFile := fmt.Sprintf("%s/authorized_keys.tmp", path)
+	tmpFileCmd := fmt.Sprintf("touch %s && chmod 0644 %s", tmpFile, tmpFile)
+	cmd := fmt.Sprintf("while read line; do if [ \\\"$line\\\" != \\\"%s\\\" ] && [ -n \\\"$line\\\" ];then echo $line >> %s;fi;done < %s && echo %s >> %s",
+		keyPair, tmpFile, file, keyPair, tmpFile)
+	mvCmd := fmt.Sprintf("mv %s %s", tmpFile, file)
+	return fmt.Sprintf("%s && %s && %s && %s", prepareDirAndFileCmd(), tmpFileCmd, cmd, mvCmd)
+}
+
+func DoDetachCmd(keyPair string) string {
+	path := "/root/.ssh"
+	file := fmt.Sprintf("%s/authorized_keys", path)
+	tmpFile := fmt.Sprintf("%s/authorized_keys.tmp", path)
+	tmpFileCmd := fmt.Sprintf("touch %s && chmod 0644 %s", tmpFile, tmpFile)
+	cmd := fmt.Sprintf("while read line; do if [ \\\"$line\\\" != \\\"%s\\\" ] && [ -n \\\"$line\\\" ];then echo $line >> %s;fi;done < %s",
+		keyPair, tmpFile, file)
+	mvCmd := fmt.Sprintf("mv %s %s", tmpFile, file)
+	return fmt.Sprintf("%s && %s && %s && %s", prepareDirAndFileCmd(), tmpFileCmd, cmd, mvCmd)
+}

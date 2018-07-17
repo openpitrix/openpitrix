@@ -71,7 +71,18 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		// not supported yet
 		return nil, nil
 	case constants.ActionUpdateClusterEnv:
-
+	case constants.ActionAttachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.AttachKeyPairsLayer(nodeKeyPairDetails), nil
+	case constants.ActionDetachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.DetachKeyPairsLayer(nodeKeyPairDetails), nil
 	default:
 		p.Logger.Error("Unknown job action [%s]", job.JobAction)
 		return nil, fmt.Errorf("unknown job action [%s]", job.JobAction)

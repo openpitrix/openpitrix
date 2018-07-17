@@ -116,6 +116,8 @@ const (
 	ActionRecoverClusters    = "RecoverClusters"
 	ActionCeaseClusters      = "CeaseClusters"
 	ActionUpdateClusterEnv   = "UpdateClusterEnv"
+	ActionAttachKeyPairs     = "AttachKeyPairs"
+	ActionDetachKeyPairs     = "DetachKeyPairs"
 )
 
 const (
