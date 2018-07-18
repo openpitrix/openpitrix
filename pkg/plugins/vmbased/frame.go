@@ -625,7 +625,7 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		ip := clusterNode.PrivateIp
-		cmd := "sleep 2 && docker rm -f default"
+		cmd := fmt.Sprintf("%s \"docker rm -f default\"", HostCmdPrefix)
 		request := &pbtypes.RunCommandOnDroneRequest{
 			Endpoint: &pbtypes.DroneEndpoint{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,

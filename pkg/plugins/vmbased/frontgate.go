@@ -111,7 +111,7 @@ func (f *Frontgate) removeContainerLayer(nodeIds []string, failureAllowed bool) 
 
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		ip := clusterNode.PrivateIp
-		cmd := "sleep 2 && docker rm -f default"
+		cmd := fmt.Sprintf("%s \"docker rm -f default\"", HostCmdPrefix)
 		request := &pbtypes.RunCommandOnFrontgateRequest{
 			Endpoint: &pbtypes.FrontgateEndpoint{
 				FrontgateId:     f.ClusterWrapper.Cluster.ClusterId,

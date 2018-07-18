@@ -3,14 +3,16 @@
 FILE_NAME="$1"
 
 chmod +x opt/openpitrix/sbin/*
+
+mkdir -p /etc/docker/
+echo '{
+  "registry-mirrors": ["https://registry.docker-cn.com"]
+}' > /etc/docker/daemon.json
+
 for i in $(seq 1 100)
 do
   opt/openpitrix/sbin/install_docker.sh && break || sleep 3
 done
-
-echo '{
-  "registry-mirrors": ["https://registry.docker-cn.com"]
-}' > /etc/docker/daemon.json
 
 mkdir -p /opt/openpitrix/conf
 mkdir -p /opt/openpitrix/log
