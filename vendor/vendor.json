@@ -1908,6 +1908,12 @@
 			"revisionTime": "2018-05-18T16:27:43Z"
 		},
 		{
+			"checksumSHA1": "bmPATxXRxdR41d+ftOLA7SDl5mk=",
+			"path": "k8s.io/client-go",
+			"revision": "4e3d951df380433be1bcb8e6a147dd4221af0af9",
+			"revisionTime": "2018-07-17T17:20:20Z"
+		},
+		{
 			"checksumSHA1": "LwKGyRY/xkKQ+eXyz0LNl5vUQxU=",
 			"path": "k8s.io/client-go/discovery",
 			"revision": "0be17c78bfcc74e0b455bf0fa1ec14e207f0fa64",

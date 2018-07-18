@@ -594,7 +594,7 @@ func (p *Provider) ValidateCredential(url, credential, zone string) error {
 	}
 
 	cli := clientset.CoreV1().Namespaces()
-	_, err = cli.Get(zone, metav1.GetOptions{})
+	_, err = cli.Get(KubeSystemNamespace, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
