@@ -14,6 +14,12 @@ const (
 	placeholder = "?"
 )
 
+type EqCondition struct {
+	dbr.Builder
+	Column string
+	Value  interface{}
+}
+
 // Copy From vendor/github.com/gocraft/dbr/condition.go:36
 func buildCmp(d dbr.Dialect, buf dbr.Buffer, pred string, column string, value interface{}) error {
 	buf.WriteString(d.QuoteIdent(column))
@@ -58,7 +64,11 @@ func Like(column string, value string) dbr.Builder {
 // When value is a slice, it will be translated to `IN`.
 // Otherwise it will be translated to `=`.
 func Eq(column string, value interface{}) dbr.Builder {
-	return dbr.Eq(column, value)
+	return &EqCondition{
+		Builder: dbr.Eq(column, value),
+		Column:  column,
+		Value:   value,
+	}
 }
 
 // Neq is `!=`.

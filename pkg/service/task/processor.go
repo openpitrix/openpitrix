@@ -15,10 +15,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
-	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 type Processor struct {
@@ -39,7 +37,6 @@ func NewProcessor(task *models.Task, tLogger *logger.Logger) *Processor {
 // Post process when task is start
 func (p *Processor) Pre() error {
 	ctx := client.GetSystemUserContext()
-	sender := senderutil.GetSenderFromContext(ctx)
 	if p.Task.Directive == "" {
 		p.TLogger.Warn("Skip empty task [%s] directive", p.Task.TaskId)
 		return nil
@@ -59,8 +56,6 @@ func (p *Processor) Pre() error {
 		if err != nil {
 			return err
 		}
-		go topic.PushEvent(pi.Global().Etcd, sender.UserId, topic.Create,
-			topic.NewResource(models.ClusterNodeTableName, instance.NodeId))
 		err = clusterClient.ModifyClusterNodeTransitionStatus(ctx, instance.NodeId, constants.StatusCreating)
 		if err != nil {
 			return err
@@ -356,7 +351,6 @@ func (p *Processor) Pre() error {
 // Post process when task is done
 func (p *Processor) Post() error {
 	ctx := client.GetSystemUserContext()
-	sender := senderutil.GetSenderFromContext(ctx)
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
@@ -434,8 +428,6 @@ func (p *Processor) Post() error {
 		if err != nil {
 			return err
 		}
-		go topic.PushEvent(pi.Global().Etcd, sender.UserId, topic.Delete,
-			topic.NewResource(models.ClusterNodeTableName, instance.NodeId))
 
 	case vmbased.ActionCreateVolumes:
 		if p.Task.Directive == "" {

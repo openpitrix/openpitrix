@@ -18,7 +18,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
-	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
@@ -126,8 +125,6 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	go topic.PushEvent(p.Etcd, s.UserId, topic.Create, newRepo)
-
 	err = p.createProviders(newRepo.RepoId, providers)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
@@ -226,7 +223,6 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
-		go topic.PushEvent(p.Etcd, s.UserId, topic.Update, topic.NewResource(models.RepoTableName, repoId))
 	}
 
 	if len(providers) > 0 {
@@ -290,8 +286,6 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 	}
 
 	for _, repoId := range repoIds {
-		go topic.PushEvent(p.Etcd, s.UserId, topic.Delete, topic.NewResource(models.RepoTableName, repoId))
-
 		indexRequest := pb.IndexRepoRequest{
 			RepoId: pbutil.ToProtoString(repoId),
 		}

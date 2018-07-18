@@ -6,10 +6,9 @@ package task
 
 import (
 	"context"
+	"strings"
 	"sync"
 	"time"
-
-	"strings"
 
 	"openpitrix.io/openpitrix/pkg/client"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
@@ -22,7 +21,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
-	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/retryutil"
@@ -105,7 +103,6 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 	tLogger := logger.NewLogger()
 	tLogger.SetSuffix("(" + task.JobId + ")(" + taskId + ")")
 
-	go topic.PushEvent(pi.Global().Etcd, task.Owner, topic.Create, topic.NewResource(models.TaskTableName, taskId))
 	err = c.updateTaskAttributes(task.TaskId, map[string]interface{}{
 		"status":   constants.StatusWorking,
 		"executor": c.hostname,
@@ -408,7 +405,6 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		status = constants.StatusFailed
 
 	}
-	go topic.PushEvent(pi.Global().Etcd, task.Owner, topic.Delete, topic.NewResource(models.TaskTableName, taskId))
 	err = c.updateTaskAttributes(task.TaskId, map[string]interface{}{
 		"status":      status,
 		"status_time": time.Now(),

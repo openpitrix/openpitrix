@@ -10,6 +10,21 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
+var PushEventTables = map[string][]string{
+	RepoTableName: {
+		ColumnRepoId, ColumnStatus, ColumnTransitionStatus,
+	},
+	RepoEventTableName: {
+		ColumnRepoEventId, ColumnRepoId, ColumnStatus,
+	},
+	ClusterTableName: {
+		ColumnRepoEventId, ColumnStatus, ColumnTransitionStatus,
+	},
+	JobTableName: {
+		ColumnJobId, ColumnStatus, ColumnClusterId, ColumnAppId, ColumnAppId,
+	},
+}
+
 // columns that can be search through sql '=' operator
 var IndexedColumns = map[string][]string{
 	AppTableName: {

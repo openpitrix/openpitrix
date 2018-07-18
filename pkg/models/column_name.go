@@ -9,6 +9,8 @@ const (
 	ColumnResouceId  = "resource_id"
 	ColumnCategoryId = "category_id"
 
+	ColumnTransitionStatus = "transition_status"
+
 	ColumnName        = "name"
 	ColumnDescription = "description"
 	ColumnStatus      = "status"

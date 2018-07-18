@@ -9,7 +9,6 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -28,10 +27,6 @@ type RepoEvent struct {
 	Owner       string
 	CreateTime  time.Time
 	StatusTime  time.Time
-}
-
-func (r RepoEvent) GetTopicResource() topic.Resource {
-	return topic.NewResource(RepoEventTableName, r.RepoEventId).SetStatus(r.Status)
 }
 
 var RepoEventColumns = GetColumnsFromStruct(&RepoEvent{})

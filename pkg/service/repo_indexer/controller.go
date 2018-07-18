@@ -19,7 +19,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/reporeader/indexer"
-	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/atomicutil"
 )
 
@@ -64,8 +63,6 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 			return err
 		}
 
-		go topic.PushEvent(i.Etcd, repoEvent.Owner, topic.Create, repoEvent)
-
 		repoEventId = repoEvent.RepoEventId
 		err = i.queue.Enqueue(repoEventId)
 		return err
@@ -97,8 +94,6 @@ func (i *EventController) updateRepoEventStatus(repoEvent *models.RepoEvent, sta
 			repoEvent.RepoEventId, status, result, err)
 		return err
 	}
-
-	go topic.PushEvent(i.Etcd, repoEvent.Owner, topic.Update, repoEvent.GetTopicResource().SetStatus(status))
 
 	return nil
 }

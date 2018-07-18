@@ -22,28 +22,21 @@ type Message struct {
 }
 
 type Resource struct {
-	ResourceType     string  `json:"rtype,omitempty"`
-	ResourceId       string  `json:"rid,omitempty"`
-	Status           *string `json:"status,omitempty"`
-	TransitionStatus *string `json:"tstatus,omitempty"`
+	ResourceType string                 `json:"rtype,omitempty"`
+	ResourceId   string                 `json:"rid,omitempty"`
+	Values       map[string]interface{} `json:"values,omitempty"`
 }
 
 func NewResource(rtype, rid string) Resource {
 	return Resource{
-		ResourceType:     rtype,
-		ResourceId:       rid,
-		Status:           nil,
-		TransitionStatus: nil,
+		ResourceType: rtype,
+		ResourceId:   rid,
+		Values:       make(map[string]interface{}),
 	}
 }
 
-func (r Resource) SetStatus(status string) Resource {
-	r.Status = &status
-	return r
-}
-
-func (r Resource) SetTransitionStatus(transitionStatus string) Resource {
-	r.TransitionStatus = &transitionStatus
+func (r Resource) WithValue(key string, value interface{}) Resource {
+	r.Values[key] = value
 	return r
 }
 

@@ -23,5 +23,7 @@ func OpenDatabase(cfg config.MysqlConfig) (*Database, error) {
 	conn.SetMaxIdleConns(100)
 	conn.SetMaxOpenConns(100)
 	conn.SetConnMaxLifetime(10 * time.Second)
-	return &Database{conn.NewSession(nil)}, nil
+	return &Database{
+		Session: conn.NewSession(nil),
+	}, nil
 }
