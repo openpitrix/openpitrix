@@ -7,6 +7,8 @@ package vmbased
 import (
 	"fmt"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
+	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -21,6 +23,8 @@ type FrameInterface interface {
 	DeleteClusterLayer() *models.TaskLayer
 	AddClusterNodesLayer() *models.TaskLayer
 	DeleteClusterNodesLayer() *models.TaskLayer
+	AttachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
+	DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
 	ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error)
 }
 
@@ -28,9 +32,32 @@ func NewFrameInterface(job *models.Job, logger *logger.Logger, advancedParam ...
 	if job == nil {
 		return &Frame{Logger: logger}, nil
 	}
-	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
-	if err != nil {
-		return nil, err
+
+	var clusterWrapper *models.ClusterWrapper
+	var err error
+
+	switch job.JobAction {
+	case constants.ActionAttachKeyPairs, constants.ActionDetachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		clusterId := nodeKeyPairDetails[0].ClusterNode.ClusterId
+		clusterClient, err := clusterclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+		ctx := clientutil.GetSystemUserContext()
+		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
+		if err != nil {
+			return nil, err
+		}
+		clusterWrapper = pbClusterWrappers[0]
+	default:
+		clusterWrapper, err = models.NewClusterWrapper(job.Directive)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	runtimeId := clusterWrapper.Cluster.RuntimeId

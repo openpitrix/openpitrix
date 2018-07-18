@@ -15,7 +15,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 type Client struct {
@@ -82,10 +81,6 @@ func (c *Client) ModifyClusterTransitionStatus(ctx context.Context, clusterId st
 			StatusTime:       pbutil.ToProtoTimestamp(time.Now()),
 		},
 	})
-	if err != nil {
-		return err
-	}
-
 	return err
 }
 
@@ -97,10 +92,6 @@ func (c *Client) ModifyClusterStatus(ctx context.Context, clusterId string, stat
 			StatusTime: pbutil.ToProtoTimestamp(time.Now()),
 		},
 	})
-	if err != nil {
-		return err
-	}
-
 	return err
 }
 
@@ -111,15 +102,6 @@ func (c *Client) ModifyClusterNodeTransitionStatus(ctx context.Context, nodeId s
 			TransitionStatus: pbutil.ToProtoString(transitionStatus),
 		},
 	})
-	if err != nil {
-		return err
-	}
-
-	sender := senderutil.GetSenderFromContext(ctx)
-	if sender == nil {
-		return fmt.Errorf("get sender of node [%s] from context failed", nodeId)
-	}
-
 	return err
 }
 
@@ -130,15 +112,6 @@ func (c *Client) ModifyClusterNodeStatus(ctx context.Context, nodeId string, sta
 			Status: pbutil.ToProtoString(status),
 		},
 	})
-	if err != nil {
-		return err
-	}
-
-	sender := senderutil.GetSenderFromContext(ctx)
-	if sender == nil {
-		return fmt.Errorf("get sender of node [%s] from context failed", nodeId)
-	}
-
 	return err
 }
 

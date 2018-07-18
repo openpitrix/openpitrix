@@ -5,6 +5,8 @@
 package job
 
 import (
+	"context"
+
 	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
@@ -33,106 +35,106 @@ func NewProcessor(job *models.Job, jLogger *logger.Logger) *Processor {
 }
 
 // Pre process when job is start
-func (j *Processor) Pre() error {
+func (p *Processor) Pre() error {
 	ctx := client.GetSystemUserContext()
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		j.JLogger.Error("Executing job pre processor failed: %+v", err)
+		p.JLogger.Error("Executing job pre processor failed: %+v", err)
 		return err
 	}
-	switch j.Job.JobAction {
+	switch p.Job.JobAction {
 	case constants.ActionCreateCluster:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusCreating)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusCreating)
 	case constants.ActionUpgradeCluster:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusUpgrading)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusUpgrading)
 	case constants.ActionRollbackCluster:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusRollbacking)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusRollbacking)
 	case constants.ActionResizeCluster:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusResizing)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusResizing)
 	case constants.ActionAddClusterNodes:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusScaling)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusScaling)
 	case constants.ActionDeleteClusterNodes:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusScaling)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusScaling)
 	case constants.ActionStopClusters:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusStopping)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusStopping)
 	case constants.ActionStartClusters:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusStarting)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusStarting)
 	case constants.ActionDeleteClusters:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusDeleting)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusDeleting)
 	case constants.ActionRecoverClusters:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusRecovering)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusRecovering)
 	case constants.ActionCeaseClusters:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusCeasing)
-	case constants.ActionUpdateClusterEnv:
-		err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, constants.StatusUpdating)
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusCeasing)
+	case constants.ActionUpdateClusterEnv, constants.ActionAttachKeyPairs, constants.ActionDetachKeyPairs:
+		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusUpdating)
 	default:
-		j.JLogger.Error("Unknown job action [%s]", j.Job.JobAction)
+		p.JLogger.Error("Unknown job action [%s]", p.Job.JobAction)
 	}
 
 	if err != nil {
-		j.JLogger.Critical("Executing job pre processor failed: %+v", err)
+		p.JLogger.Critical("Executing job pre processor failed: %+v", err)
 	}
 	return err
 }
 
 // Post process when job is done
-func (j *Processor) Post() error {
+func (p *Processor) Post() error {
 	ctx := client.GetSystemUserContext()
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		j.JLogger.Error("Executing job post processor failed: %+v", err)
+		p.JLogger.Error("Executing job post processor failed: %+v", err)
 		return err
 	}
-	switch j.Job.JobAction {
+	switch p.Job.JobAction {
 	case constants.ActionCreateCluster:
-		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider, j.JLogger)
+		providerInterface, err := plugins.GetProviderPlugin(p.Job.Provider, p.JLogger)
 		if err != nil {
-			j.JLogger.Error("No such provider [%s]. ", j.Job.Provider)
+			p.JLogger.Error("No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
-		err = providerInterface.UpdateClusterStatus(j.Job)
+		err = providerInterface.UpdateClusterStatus(p.Job)
 		if err != nil {
-			j.JLogger.Error("Executing job post processor failed: %+v", err)
+			p.JLogger.Error("Executing job post processor failed: %+v", err)
 			return err
 		}
 
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionUpgradeCluster:
-		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider, j.JLogger)
+		providerInterface, err := plugins.GetProviderPlugin(p.Job.Provider, p.JLogger)
 		if err != nil {
-			j.JLogger.Error("No such provider [%s]. ", j.Job.Provider)
+			p.JLogger.Error("No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
-		err = providerInterface.UpdateClusterStatus(j.Job)
+		err = providerInterface.UpdateClusterStatus(p.Job)
 		if err != nil {
-			j.JLogger.Error("Executing job post processor failed: %+v", err)
+			p.JLogger.Error("Executing job post processor failed: %+v", err)
 			return err
 		}
 
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionRollbackCluster:
-		providerInterface, err := plugins.GetProviderPlugin(j.Job.Provider, j.JLogger)
+		providerInterface, err := plugins.GetProviderPlugin(p.Job.Provider, p.JLogger)
 		if err != nil {
-			j.JLogger.Error("No such provider [%s]. ", j.Job.Provider)
+			p.JLogger.Error("No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
-		err = providerInterface.UpdateClusterStatus(j.Job)
+		err = providerInterface.UpdateClusterStatus(p.Job)
 		if err != nil {
-			j.JLogger.Error("Executing job post processor failed: %+v", err)
+			p.JLogger.Error("Executing job post processor failed: %+v", err)
 			return err
 		}
 
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionResizeCluster:
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionAddClusterNodes:
 		// delete node record from db when pre check is failed
-		if j.Job.Status == constants.StatusFailed {
-			clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{j.Job.ClusterId})
+		if p.Job.Status == constants.StatusFailed {
+			clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{p.Job.ClusterId})
 			if err != nil {
-				j.JLogger.Error("No such cluster [%s], %+v ", j.Job.ClusterId, err)
+				p.JLogger.Error("No such cluster [%s], %+v ", p.Job.ClusterId, err)
 				return err
 			}
 			clusterWrapper := clusterWrappers[0]
@@ -148,16 +150,16 @@ func (j *Processor) Post() error {
 				})
 			}
 		}
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionDeleteClusterNodes:
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionStopClusters:
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusStopped)
-		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{j.Job.ClusterId})
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusStopped)
+		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{p.Job.ClusterId})
 		if err != nil {
 			return err
 		}
-		if !reflectutil.In(j.Job.Provider, constants.VmBaseProviders) {
+		if !reflectutil.In(p.Job.Provider, constants.VmBaseProviders) {
 			return nil
 		}
 		clusterWrapper := clusterWrappers[0]
@@ -183,8 +185,8 @@ func (j *Processor) Post() error {
 				frontgate.Cluster.VersionId,
 				constants.ActionStopClusters,
 				directive,
-				j.Job.Provider,
-				j.Job.Owner,
+				p.Job.Provider,
+				p.Job.Owner,
 			)
 
 			_, err = jobclient.SendJob(newJob)
@@ -193,18 +195,18 @@ func (j *Processor) Post() error {
 			}
 		}
 	case constants.ActionStartClusters:
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionDeleteClusters:
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusDeleted)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusDeleted)
 		if err != nil {
 			return err
 		}
 
-		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{j.Job.ClusterId})
+		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{p.Job.ClusterId})
 		if err != nil {
 			return err
 		}
-		if !reflectutil.In(j.Job.Provider, constants.VmBaseProviders) {
+		if !reflectutil.In(p.Job.Provider, constants.VmBaseProviders) {
 			return nil
 		}
 		clusterWrapper := clusterWrappers[0]
@@ -231,8 +233,8 @@ func (j *Processor) Post() error {
 					frontgate.Cluster.VersionId,
 					constants.ActionDeleteClusters,
 					directive,
-					j.Job.Provider,
-					j.Job.Owner,
+					p.Job.Provider,
+					p.Job.Owner,
 				)
 
 				_, err = jobclient.SendJob(newJob)
@@ -242,30 +244,56 @@ func (j *Processor) Post() error {
 			}
 		}
 	case constants.ActionRecoverClusters:
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionCeaseClusters:
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusCeased)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusCeased)
 	case constants.ActionUpdateClusterEnv:
-		err = clusterClient.ModifyClusterStatus(ctx, j.Job.ClusterId, constants.StatusActive)
+		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
+	case constants.ActionAttachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(p.Job.Directive)
+		if err != nil {
+			return err
+		}
+		var pbNodeKeyPairs []*pb.NodeKeyPair
+		for _, nodeKeyPairDetail := range nodeKeyPairDetails {
+			pbNodeKeyPair := models.NodeKeyPairToPb(nodeKeyPairDetail.NodeKeyPair)
+			pbNodeKeyPairs = append(pbNodeKeyPairs, pbNodeKeyPair)
+		}
+		_, err = clusterClient.AddNodeKeyPairs(ctx, &pb.AddNodeKeyPairsRequest{
+			NodeKeyPair: pbNodeKeyPairs,
+		})
+	case constants.ActionDetachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(p.Job.Directive)
+		if err != nil {
+			return err
+		}
+		var pbNodeKeyPairs []*pb.NodeKeyPair
+		for _, nodeKeyPairDetail := range nodeKeyPairDetails {
+			pbNodeKeyPair := models.NodeKeyPairToPb(nodeKeyPairDetail.NodeKeyPair)
+			pbNodeKeyPairs = append(pbNodeKeyPairs, pbNodeKeyPair)
+		}
+		_, err = clusterClient.DeleteNodeKeyPairs(ctx, &pb.DeleteNodeKeyPairsRequest{
+			NodeKeyPair: pbNodeKeyPairs,
+		})
 	default:
-		j.JLogger.Error("Unknown job action [%s]", j.Job.JobAction)
+		p.JLogger.Error("Unknown job action [%s]", p.Job.JobAction)
 	}
 
 	if err != nil {
-		j.JLogger.Error("Executing job post processor failed: %+v", err)
+		p.JLogger.Error("Executing job post processor failed: %+v", err)
 	}
 	return err
 }
 
-func (j *Processor) Final() {
-	ctx := client.GetSystemUserContext()
+func (p *Processor) Final() {
+	ctx := context.WithValue(client.GetSystemUserContext(), "owner", p.Job.Owner)
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		j.JLogger.Error("Executing job final processor failed: %+v", err)
+		p.JLogger.Error("Executing job final processor failed: %+v", err)
 		return
 	}
-	err = clusterClient.ModifyClusterTransitionStatus(ctx, j.Job.ClusterId, "")
+	err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, "")
 	if err != nil {
-		j.JLogger.Error("Executing job final processor failed: %+v", err)
+		p.JLogger.Error("Executing job final processor failed: %+v", err)
 	}
 }

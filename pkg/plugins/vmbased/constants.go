@@ -60,6 +60,7 @@ const (
 	TimeoutUmountVolume         = 120
 	TimeoutSshKeygen            = 120
 	TimeoutRemoveContainer      = 120
+	TimeoutKeyPair              = 60
 )
 
 const (

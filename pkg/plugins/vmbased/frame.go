@@ -238,6 +238,66 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string, failureAl
 	}
 }
 
+func (f *Frame) attachKeyPairLayer(nodeKeyPairDetail *models.NodeKeyPairDetail) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	clusterNode := nodeKeyPairDetail.ClusterNode
+	request := &pbtypes.RunCommandOnDroneRequest{
+		Endpoint: &pbtypes.DroneEndpoint{
+			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+			DroneIp:     clusterNode.PrivateIp,
+			DronePort:   constants.DroneServicePort,
+		},
+		Command:        fmt.Sprintf("%s \"%s\"", HostCmdPrefix, sshutil.DoAttachCmd(nodeKeyPairDetail.KeyPair.PubKey)),
+		TimeoutSeconds: TimeoutKeyPair,
+	}
+	directive := jsonutil.ToString(request)
+	attachKeyPairTask := &models.Task{
+		JobId:          f.Job.JobId,
+		Owner:          f.Job.Owner,
+		TaskAction:     ActionRunCommandOnDrone,
+		Target:         constants.TargetPilot,
+		NodeId:         clusterNode.NodeId,
+		Directive:      directive,
+		FailureAllowed: false,
+	}
+	taskLayer.Tasks = append(taskLayer.Tasks, attachKeyPairTask)
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
+func (f *Frame) detachKeyPairLayer(nodeKeyPairDetail *models.NodeKeyPairDetail) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	clusterNode := nodeKeyPairDetail.ClusterNode
+	request := &pbtypes.RunCommandOnDroneRequest{
+		Endpoint: &pbtypes.DroneEndpoint{
+			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+			DroneIp:     clusterNode.PrivateIp,
+			DronePort:   constants.DroneServicePort,
+		},
+		Command:        fmt.Sprintf("%s \"%s\"", HostCmdPrefix, sshutil.DoDetachCmd(nodeKeyPairDetail.KeyPair.PubKey)),
+		TimeoutSeconds: TimeoutKeyPair,
+	}
+	directive := jsonutil.ToString(request)
+	attachKeyPairTask := &models.Task{
+		JobId:          f.Job.JobId,
+		Owner:          f.Job.Owner,
+		TaskAction:     ActionRunCommandOnDrone,
+		Target:         constants.TargetPilot,
+		NodeId:         clusterNode.NodeId,
+		Directive:      directive,
+		FailureAllowed: false,
+	}
+	taskLayer.Tasks = append(taskLayer.Tasks, attachKeyPairTask)
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
 func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []string,
 	serviceParams map[string]interface{}, failureAllowed bool) *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
@@ -1295,6 +1355,26 @@ func (f *Frame) DeleteClusterNodesLayer() *models.TaskLayer {
 		Append(f.deleteVolumesLayer(deleteNodeIds, false)).                                                         // delete volume
 		Append(f.deregisterNodesMetadataLayer(deleteNodeIds, false)).                                               // deregister deleting cluster nodes metadata
 		Append(f.deregisterScalingNodesMetadataLayer(RegisterNodeDeleting, false))                                  // deregister deleting nodes metadata
+	return headTaskLayer.Child
+}
+
+func (f *Frame) AttachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer {
+	headTaskLayer := new(models.TaskLayer)
+
+	for _, nodeKeyPairDetail := range nodeKeyPairDetails {
+		headTaskLayer.Append(f.attachKeyPairLayer(&nodeKeyPairDetail))
+	}
+
+	return headTaskLayer.Child
+}
+
+func (f *Frame) DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer {
+	headTaskLayer := new(models.TaskLayer)
+
+	for _, nodeKeyPairDetail := range nodeKeyPairDetails {
+		headTaskLayer.Append(f.detachKeyPairLayer(&nodeKeyPairDetail))
+	}
+
 	return headTaskLayer.Child
 }
 

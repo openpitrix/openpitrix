@@ -6,6 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-app-manager
+    version: ${VERSION}
 spec:
   selector:
     app: openpitrix
@@ -24,6 +25,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-app-manager
+    version: ${VERSION}
 spec:
   selector:
     matchLabels:
@@ -35,6 +37,7 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-app-manager
+        version: ${VERSION}
     spec:
       initContainers:
       - name: wait-mysql
@@ -48,7 +51,7 @@ spec:
       containers:
       - name: openpitrix-app-manager
         image: ${IMAGE}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
           - app-manager
         ports:
@@ -80,6 +83,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-category-manager
+    version: ${VERSION}
 spec:
   selector:
     app: openpitrix
@@ -98,6 +102,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-category-manager
+    version: ${VERSION}
 spec:
   selector:
     matchLabels:
@@ -109,6 +114,7 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-category-manager
+        version: ${VERSION}
     spec:
       initContainers:
       - name: wait-mysql
@@ -122,7 +128,7 @@ spec:
       containers:
       - name: openpitrix-category-manager
         image: ${IMAGE}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
           - category-manager
         ports:
