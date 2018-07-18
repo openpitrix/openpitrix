@@ -105,7 +105,7 @@ func TestRepo(t *testing.T) {
 	msg := ioClient.ReadMessage()
 	require.Equal(t, "repo", msg.Resource.ResourceType)
 	require.Equal(t, topic.Create, msg.Type)
-	require.Equal(t, "active", *msg.Resource.Status)
+	require.Equal(t, "active", msg.Resource.Values["status"])
 	require.Equal(t, repoId, msg.Resource.ResourceId)
 
 	// repo-event pending
@@ -113,13 +113,13 @@ func TestRepo(t *testing.T) {
 	repoEventId := msg.Resource.ResourceId
 	require.Equal(t, "repo_event", msg.Resource.ResourceType)
 	require.Equal(t, topic.Create, msg.Type)
-	require.Equal(t, "pending", *msg.Resource.Status)
+	require.Equal(t, "pending", msg.Resource.Values["status"])
 
 	// repo-event success
 	msg = ioClient.ReadMessage()
 	require.Equal(t, "repo_event", msg.Resource.ResourceType)
 	require.Equal(t, topic.Update, msg.Type)
-	require.Equal(t, "successful", *msg.Resource.Status)
+	require.Equal(t, "successful", msg.Resource.Values["status"])
 	require.Equal(t, repoEventId, msg.Resource.ResourceId)
 
 	// modify repo
@@ -189,7 +189,7 @@ func TestRepo(t *testing.T) {
 
 	msg = ioClient.ReadMessage()
 	require.Equal(t, "repo", msg.Resource.ResourceType)
-	require.Equal(t, topic.Delete, msg.Type)
+	require.Equal(t, topic.Update, msg.Type)
 	require.Equal(t, repoId, msg.Resource.ResourceId)
 
 	t.Log(deleteResp)

@@ -9,8 +9,8 @@ import (
 
 	"github.com/gorilla/websocket"
 
+	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pi"
 )
 
 var upgrader = websocket.Upgrader{
@@ -23,17 +23,17 @@ var upgrader = websocket.Upgrader{
 }
 
 type topicManager struct {
-	*pi.Pi
+	*etcd.Etcd
 	receiverMap map[string]map[*websocket.Conn]bool
 	addReceiver chan receiver
 	delReceiver chan receiver
 	msgChan     chan userMessage
 }
 
-func NewTopicManager(p *pi.Pi) *topicManager {
+func NewTopicManager(e *etcd.Etcd) *topicManager {
 	var tm topicManager
-	tm.Pi = p
-	tm.msgChan = watchEvents(tm.Pi.Etcd)
+	tm.Etcd = e
+	tm.msgChan = watchEvents(e)
 	tm.addReceiver = make(chan receiver, 255)
 	tm.delReceiver = make(chan receiver, 255)
 	tm.receiverMap = make(map[string]map[*websocket.Conn]bool)

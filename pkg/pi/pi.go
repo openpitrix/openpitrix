@@ -33,6 +33,13 @@ func NewPi(cfg *config.Config) *Pi {
 	p.openDatabase()
 	p.openEtcd()
 	p.watchGlobalCfg()
+
+	if p.Db != nil {
+		p.Db.UpdateHook = GetUpdateHook(p)
+		p.Db.DeleteHook = GetDeleteHook(p)
+		p.Db.InsertHook = GetInsertHook(p)
+	}
+
 	return p
 }
 
