@@ -18,7 +18,10 @@ var PushEventTables = map[string][]string{
 		ColumnRepoEventId, ColumnRepoId, ColumnStatus,
 	},
 	ClusterTableName: {
-		ColumnRepoEventId, ColumnStatus, ColumnTransitionStatus,
+		ColumnClusterId, ColumnStatus, ColumnTransitionStatus,
+	},
+	ClusterNodeTableName: {
+		ColumnNodeId, ColumnStatus, ColumnTransitionStatus,
 	},
 	JobTableName: {
 		ColumnJobId, ColumnStatus, ColumnClusterId, ColumnAppId, ColumnAppId,
