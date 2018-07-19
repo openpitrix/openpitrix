@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-echo y | sudo apt-get update
-echo y | sudo apt-get install \
+echo y | sudo apt update
+echo y | sudo apt install \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -12,5 +12,5 @@ echo y | sudo add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable"
-echo y | sudo apt-get update
-echo y | sudo apt-get install docker-ce
+echo y | sudo apt update
+echo y | sudo apt install docker-ce
