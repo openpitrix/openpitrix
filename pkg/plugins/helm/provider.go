@@ -101,6 +101,10 @@ func (p *Provider) getHelmClient(runtimeId string) (helmClient *helm.Client, err
 }
 
 func (p *Provider) checkClusterNameIsUniqueInRuntime(clusterName, runtimeId string) (err error) {
+	if clusterName == "" {
+		return fmt.Errorf("cluster name must be provided")
+	}
+
 	hc, err := p.getHelmClient(runtimeId)
 	if err != nil {
 		return err
