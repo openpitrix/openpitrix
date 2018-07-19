@@ -28,7 +28,9 @@ func TestLogger(t *testing.T) {
 	assert.Contains(t, readBuf(buf), "info log, should visable")
 
 	Info("format [%d]", 111)
-	assert.Contains(t, readBuf(buf), "format [111]")
+	log := readBuf(buf)
+	assert.Contains(t, log, "format [111]")
+	t.Log(log)
 
 	SetLevelByString("debug")
 	Debug("debug log, now it becomes visible")
@@ -38,8 +40,8 @@ func TestLogger(t *testing.T) {
 	logger.SetPrefix("(prefix)").SetSuffix("(suffix)").SetOutput(buf)
 
 	logger.Warn("log_content")
-	log := readBuf(buf)
-	assert.Regexp(t, " -WARNING- \\(prefix\\)log_content \\(testing.go:\\d+\\)\\(suffix\\)", log)
+	log = readBuf(buf)
+	assert.Regexp(t, " -WARNING- \\(prefix\\)log_content \\(logger_test.go:\\d+\\)\\(suffix\\)", log)
 	t.Log(log)
 
 	logger.HideCallstack()
