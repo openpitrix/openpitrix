@@ -14,6 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
@@ -212,7 +213,7 @@ func (p *Processor) Post() error {
 			return nil
 		}
 		clusterWrapper := clusterWrappers[0]
-		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType {
+		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType && pi.Global().GlobalConfig().Cluster.FrontgateAutoDelete {
 			frontgateId := clusterWrapper.Cluster.FrontgateId
 			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
 				[]string{constants.StatusStopped, constants.StatusActive, constants.StatusPending})
