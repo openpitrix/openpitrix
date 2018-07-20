@@ -27,6 +27,7 @@ type ClusterNode struct {
 	Device           string
 	SubnetId         string
 	PrivateIp        string
+	Eip              string
 	ServerId         uint32
 	Role             string
 	Status           string

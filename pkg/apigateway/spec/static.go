@@ -897,6 +897,179 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/clusters/key_pair/attach": {
+      "post": {
+        "summary": "attach key pairs",
+        "operationId": "AttachKeyPairs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixAttachKeyPairsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixAttachKeyPairsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/key_pair/detach": {
+      "post": {
+        "summary": "detach key pairs",
+        "operationId": "DetachKeyPairs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDetachKeyPairsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDetachKeyPairsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/key_pairs": {
+      "get": {
+        "summary": "describe key pairs",
+        "operationId": "DescribeKeyPairs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeKeyPairsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "key_pair_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pub_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      },
+      "delete": {
+        "summary": "delete key pairs",
+        "operationId": "DeleteKeyPairs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteKeyPairsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteKeyPairsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      },
+      "post": {
+        "summary": "create key pair",
+        "operationId": "CreateKeyPair",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateKeyPairResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateKeyPairRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
     "/v1/clusters/nodes": {
       "get": {
         "summary": "describe cluster nodes",
@@ -2586,6 +2759,37 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixAddNodeKeyPairsResponse": {
+      "type": "object"
+    },
+    "openpitrixAttachKeyPairsRequest": {
+      "type": "object",
+      "properties": {
+        "key_pair_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "node_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixAttachKeyPairsResponse": {
+      "type": "object",
+      "properties": {
+        "job_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "openpitrixCeaseClustersRequest": {
       "type": "object",
       "properties": {
@@ -2868,6 +3072,9 @@ var Files = map[string]string{
         "private_ip": {
           "type": "string"
         },
+        "eip": {
+          "type": "string"
+        },
         "server_id": {
           "$ref": "#/definitions/protobufUInt32Value"
         },
@@ -2994,6 +3201,28 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixCreateKeyPairRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "pub_key": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateKeyPairResponse": {
+      "type": "object",
+      "properties": {
+        "key_pair_id": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixDeleteClusterNodesRequest": {
       "type": "object",
       "properties": {
@@ -3062,6 +3291,31 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixDeleteKeyPairsRequest": {
+      "type": "object",
+      "properties": {
+        "key_pair_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteKeyPairsResponse": {
+      "type": "object",
+      "properties": {
+        "key_pair_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteNodeKeyPairsResponse": {
+      "type": "object"
+    },
     "openpitrixDescribeClusterNodesResponse": {
       "type": "object",
       "properties": {
@@ -3092,6 +3346,21 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixDescribeKeyPairsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "key_pair_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixKeyPair"
+          }
+        }
+      }
+    },
     "openpitrixDescribeSubnetsResponse": {
       "type": "object",
       "properties": {
@@ -3103,6 +3372,34 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixSubnet"
+          }
+        }
+      }
+    },
+    "openpitrixDetachKeyPairsRequest": {
+      "type": "object",
+      "properties": {
+        "key_pair_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "node_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDetachKeyPairsResponse": {
+      "type": "object",
+      "properties": {
+        "job_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }
@@ -3134,6 +3431,34 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixKeyPair": {
+      "type": "object",
+      "properties": {
+        "key_pair_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "pub_key": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "openpitrixModifyClusterNodeResponse": {
       "type": "object",
       "properties": {
@@ -3146,6 +3471,17 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "cluster_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixNodeKeyPair": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string"
+        },
+        "key_pair_id": {
           "type": "string"
         }
       }

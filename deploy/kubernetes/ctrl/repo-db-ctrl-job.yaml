@@ -6,6 +6,7 @@ metadata:
   labels:
     app: openpitrix
     job: openpitrix-repo-db-ctrl
+    version: ${VERSION}
 spec:
   activeDeadlineSeconds: 600
   backoffLimit: 6
@@ -16,6 +17,7 @@ spec:
       labels:
         app: openpitrix
         job: openpitrix-repo-db-ctrl
+        version: ${VERSION}
       name: openpitrix-repo-db-ctrl
     spec:
       initContainers:
@@ -32,7 +34,7 @@ spec:
               key: password.txt
               name: mysql-pass
         image: ${FLYWAY_IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
         name: openpitrix-repo-db-ctrl
         resources: {}
         terminationMessagePath: /dev/termination-log

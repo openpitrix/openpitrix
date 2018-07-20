@@ -57,7 +57,7 @@ func StringToLevel(level string) Level {
 	return InfoLevel
 }
 
-var logger = NewLogger()
+var logger = NewLogger().WithDepth(4)
 
 func Info(format string, v ...interface{}) {
 	logger.Info(format, v...)
@@ -96,6 +96,7 @@ func NewLogger() *Logger {
 		output: os.Stdout,
 		suffix: "",
 		prefix: "",
+		depth:  3,
 	}
 }
 
@@ -105,6 +106,7 @@ type Logger struct {
 	prefix        string
 	output        io.Writer
 	hideCallstack bool
+	depth         int
 }
 
 func (logger *Logger) level() Level {
@@ -125,7 +127,7 @@ func (logger *Logger) formatOutput(level Level, output string) string {
 		return fmt.Sprintf("%-25s -%s- %s%s%s",
 			now, strings.ToUpper(level.String()), logger.prefix, output, logger.suffix)
 	} else {
-		_, file, line, ok := runtime.Caller(4)
+		_, file, line, ok := runtime.Caller(logger.depth)
 		if !ok {
 			file = "???"
 			line = 0
@@ -189,5 +191,10 @@ func (logger *Logger) SetOutput(output io.Writer) *Logger {
 
 func (logger *Logger) HideCallstack() *Logger {
 	logger.hideCallstack = true
+	return logger
+}
+
+func (logger *Logger) WithDepth(depth int) *Logger {
+	logger.depth = depth
 	return logger
 }

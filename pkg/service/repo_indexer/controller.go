@@ -19,7 +19,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/reporeader/indexer"
-	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/atomicutil"
 )
 
@@ -64,8 +63,6 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 			return err
 		}
 
-		go topic.PushEvent(i.Etcd, repoEvent.Owner, topic.Create, repoEvent)
-
 		repoEventId = repoEvent.RepoEventId
 		err = i.queue.Enqueue(repoEventId)
 		return err
@@ -98,8 +95,6 @@ func (i *EventController) updateRepoEventStatus(repoEvent *models.RepoEvent, sta
 		return err
 	}
 
-	go topic.PushEvent(i.Etcd, repoEvent.Owner, topic.Update, repoEvent.GetTopicResource().SetStatus(status))
-
 	return nil
 }
 
@@ -131,7 +126,11 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 			return
 		}
 		repo := res.RepoSet[0]
-		err = indexer.GetIndexer(repo, repoEvent.RepoEventId).IndexRepo()
+		if repo.GetStatus().GetValue() == constants.StatusDeleted {
+			err = indexer.GetIndexer(repo, repoEvent.RepoEventId).DeleteRepo()
+		} else {
+			err = indexer.GetIndexer(repo, repoEvent.RepoEventId).IndexRepo()
+		}
 		if err != nil {
 			logger.Error("Failed to index repo [%s]", repoId)
 		}

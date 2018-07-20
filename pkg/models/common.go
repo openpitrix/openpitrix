@@ -10,6 +10,24 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
+var PushEventTables = map[string][]string{
+	RepoTableName: {
+		ColumnRepoId, ColumnStatus, ColumnTransitionStatus,
+	},
+	RepoEventTableName: {
+		ColumnRepoEventId, ColumnRepoId, ColumnStatus,
+	},
+	ClusterTableName: {
+		ColumnClusterId, ColumnStatus, ColumnTransitionStatus,
+	},
+	ClusterNodeTableName: {
+		ColumnNodeId, ColumnStatus, ColumnTransitionStatus,
+	},
+	JobTableName: {
+		ColumnJobId, ColumnStatus, ColumnClusterId, ColumnAppId, ColumnAppId,
+	},
+}
+
 // columns that can be search through sql '=' operator
 var IndexedColumns = map[string][]string{
 	AppTableName: {
@@ -105,7 +123,11 @@ func GetColumnsFromStruct(s interface{}) []string {
 func GetColumnsFromStructWithPrefix(prefix string, s interface{}) []string {
 	names := structs.Names(s)
 	for i, name := range names {
-		names[i] = prefix + "." + stringutil.CamelCaseToUnderscore(name)
+		names[i] = WithPrefix(prefix, stringutil.CamelCaseToUnderscore(name))
 	}
 	return names
+}
+
+func WithPrefix(prefix, str string) string {
+	return prefix + "." + str
 }

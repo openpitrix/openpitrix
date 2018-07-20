@@ -6,6 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-dashboard
+    version: ${VERSION}
 spec:
   selector:
     app: openpitrix
@@ -25,6 +26,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-dashboard
+    version: ${VERSION}
 spec:
   selector:
     matchLabels:
@@ -36,11 +38,12 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-dashboard
+        version: ${VERSION}
     spec:
       containers:
       - name: openpitrix-dashboard
         image: ${DASHBOARD_IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
         ports:
         - containerPort: 8000
           name: dashboard

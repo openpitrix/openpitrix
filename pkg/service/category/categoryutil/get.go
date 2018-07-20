@@ -16,6 +16,9 @@ import (
 
 func GetResourcesCategories(d *db.Database, resourceIds []string) (map[string][]*pb.ResourceCategory, error) {
 	var rcmap = make(map[string][]*pb.ResourceCategory)
+	if len(resourceIds) == 0 {
+		return rcmap, nil
+	}
 	var categoryResources []*models.CategoryResource
 	_, err := d.Select(models.CategoryResourceColumns...).
 		From(models.CategoryResourceTableName).

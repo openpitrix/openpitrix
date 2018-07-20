@@ -110,7 +110,6 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	}
 
 	input := ec2.RunInstancesInput{
-		KeyName:           aws.String(DefaultKeyName),
 		ImageId:           aws.String(instance.ImageId),
 		InstanceType:      aws.String(instanceType),
 		TagSpecifications: []*ec2.TagSpecification{&tagSpec},
@@ -514,6 +513,9 @@ func (p *ProviderHandler) waitInstanceVolumeAndNetwork(instanceService *ec2.EC2,
 		if instance.PrivateIpAddress == nil || aws.StringValue(instance.PrivateIpAddress) == "" {
 			return false, nil
 		}
+		if instance.PublicIpAddress == nil || aws.StringValue(instance.PublicIpAddress) == "" {
+			return false, nil
+		}
 		if volumeId != "" {
 			if len(instance.BlockDeviceMappings) == 0 {
 				return false, nil
@@ -566,6 +568,7 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	}
 
 	instance.PrivateIp = aws.StringValue(output.PrivateIpAddress)
+	instance.Eip = aws.StringValue(output.PublicIpAddress)
 	if len(output.BlockDeviceMappings) > 0 {
 		for _, dev := range output.BlockDeviceMappings {
 			if aws.StringValue(dev.Ebs.VolumeId) == instance.VolumeId {
@@ -916,14 +919,14 @@ func (p *ProviderHandler) DescribeKeyPairs(url, credential, zone string) ([]stri
 	return keys, nil
 }
 
-func (p *ProviderHandler) DescribeImage(runtimeId, name string) (string, error) {
+func (p *ProviderHandler) DescribeImage(runtimeId, imageName string) (string, error) {
 	instanceService, err := p.initInstanceService(runtimeId)
 	if err != nil {
 		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
 		return "", err
 	}
 
-	filter := &ec2.Filter{Name: aws.String("name"), Values: aws.StringSlice([]string{name})}
+	filter := &ec2.Filter{Name: aws.String("name"), Values: aws.StringSlice([]string{imageName})}
 
 	input := ec2.DescribeImagesInput{
 		Filters: []*ec2.Filter{filter},
@@ -936,7 +939,7 @@ func (p *ProviderHandler) DescribeImage(runtimeId, name string) (string, error) 
 	}
 
 	if len(output.Images) == 0 {
-		return "", fmt.Errorf("image with name [%s] not exist", name)
+		return "", fmt.Errorf("image with name [%s] not exist", imageName)
 	}
 
 	imageId := aws.StringValue(output.Images[0].ImageId)

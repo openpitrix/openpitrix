@@ -1,3 +1,7 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package helm
 
 import (
@@ -89,6 +93,10 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(
 	out, err := renderer.Render(c, vals)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	if len(out) == 0 {
+		return nil, nil, fmt.Errorf("this chart has no resources defined")
 	}
 
 	var apiVersions []string

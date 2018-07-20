@@ -28,8 +28,9 @@ type RepoServiceConfig struct {
 }
 
 type ClusterServiceConfig struct {
-	Plugins       []string `json:"plugins"`
-	FrontgateConf string   `json:"frontgate_conf"`
+	Plugins             []string `json:"plugins"`
+	FrontgateConf       string   `json:"frontgate_conf"`
+	FrontgateAutoDelete bool     `json:"frontgate_auto_delete"`
 }
 
 type PilotServiceConfig struct {
@@ -41,24 +42,33 @@ type ImageConfig struct {
 	Zone      string `json:"zone"`
 	ImageId   string `json:"image_id"`
 	ImageUrl  string `json:"image_url"`
+	ImageName string `json:"image_name"`
 }
 
-func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (string, string, error) {
+func (g *GlobalConfig) GetFrontgateAutoDelete() bool {
+	if g.Cluster.FrontgateAutoDelete == false {
+		return false
+	} else {
+		return true
+	}
+}
+
+func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageConfig, error) {
 	if strings.HasPrefix(apiServer, "https://") {
 		apiServer = strings.Split(apiServer, "https://")[1]
 	}
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == zone {
-			return imageConfig.ImageId, imageConfig.ImageUrl, nil
+			return &imageConfig, nil
 		}
 	}
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == ".*" {
-			return imageConfig.ImageId, imageConfig.ImageUrl, nil
+			return &imageConfig, nil
 		}
 	}
 	logger.Error("No such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
-	return "", "", fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
+	return nil, fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 }
 
 const (

@@ -18,6 +18,7 @@ type Instance struct {
 	Memory           int
 	Gpu              int
 	PrivateIp        string
+	Eip              string
 	VolumeId         string
 	Device           string
 	LoginPasswd      string

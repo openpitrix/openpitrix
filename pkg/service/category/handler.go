@@ -15,6 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategoriesRequest) (*pb.DescribeCategoriesResponse, error) {
@@ -96,6 +97,10 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 
 func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesRequest) (*pb.DeleteCategoriesResponse, error) {
 	categoryIds := req.GetCategoryId()
+
+	if stringutil.StringIn(models.UncategorizedId, categoryIds) {
+		return nil, gerr.New(gerr.PermissionDenied, gerr.ErrorCannotDeleteDefaultCategory)
+	}
 
 	_, err := p.Db.
 		DeleteFrom(models.CategoryTableName).

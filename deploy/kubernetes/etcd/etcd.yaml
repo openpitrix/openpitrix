@@ -6,6 +6,7 @@ metadata:
   labels:
     app: openpitrix
     tier: etcd
+    version: ${VERSION}
 spec:
   selector:
     app: openpitrix
@@ -24,6 +25,7 @@ metadata:
   labels:
     app: openpitrix
     tier: etcd
+    version: ${VERSION}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -39,6 +41,7 @@ metadata:
   labels:
     app: openpitrix
     tier: etcd
+    version: ${VERSION}
 spec:
   selector:
     matchLabels:
@@ -51,6 +54,7 @@ spec:
       labels:
         app: openpitrix
         tier: etcd
+        version: ${VERSION}
     spec:
       containers:
       - name: openpitrix-etcd

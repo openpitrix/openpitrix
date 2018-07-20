@@ -1,6 +1,6 @@
 [Unit]
 Description=default
-After=syslog.target network.target docker.target etcd.target
+After=syslog.target network.target docker.target etcd.target registry.target
 
 [Service]
 User=root

@@ -6,10 +6,9 @@ package task
 
 import (
 	"context"
+	"strings"
 	"sync"
 	"time"
-
-	"strings"
 
 	"openpitrix.io/openpitrix/pkg/client"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
@@ -51,6 +50,7 @@ func (c *Controller) updateTaskAttributes(taskId string, attributes map[string]i
 		SetMap(attributes).
 		Where(db.Eq("task_id", taskId)).
 		Exec()
+
 	return err
 }
 

@@ -5,15 +5,20 @@
 package vmbased
 
 import (
+	"bytes"
+	"context"
 	"encoding/base64"
 	"fmt"
 	"sort"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/client"
+	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
+	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/devkit"
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -26,10 +31,12 @@ import (
 )
 
 type Frame struct {
-	Job            *models.Job
-	ClusterWrapper *models.ClusterWrapper
-	Runtime        *runtimeclient.Runtime
-	Logger         *logger.Logger
+	Job                     *models.Job
+	ClusterWrapper          *models.ClusterWrapper
+	FrontgateClusterWrapper *models.ClusterWrapper
+	Runtime                 *runtimeclient.Runtime
+	Logger                  *logger.Logger
+	ImageConfig             *config.ImageConfig
 }
 
 func (f *Frame) startConfdServiceLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
@@ -232,6 +239,66 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string, failureAl
 	}
 }
 
+func (f *Frame) attachKeyPairLayer(nodeKeyPairDetail *models.NodeKeyPairDetail) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	clusterNode := nodeKeyPairDetail.ClusterNode
+	request := &pbtypes.RunCommandOnDroneRequest{
+		Endpoint: &pbtypes.DroneEndpoint{
+			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+			DroneIp:     clusterNode.PrivateIp,
+			DronePort:   constants.DroneServicePort,
+		},
+		Command:        fmt.Sprintf("%s \"%s\"", HostCmdPrefix, sshutil.DoAttachCmd(nodeKeyPairDetail.KeyPair.PubKey)),
+		TimeoutSeconds: TimeoutKeyPair,
+	}
+	directive := jsonutil.ToString(request)
+	attachKeyPairTask := &models.Task{
+		JobId:          f.Job.JobId,
+		Owner:          f.Job.Owner,
+		TaskAction:     ActionRunCommandOnDrone,
+		Target:         constants.TargetPilot,
+		NodeId:         clusterNode.NodeId,
+		Directive:      directive,
+		FailureAllowed: false,
+	}
+	taskLayer.Tasks = append(taskLayer.Tasks, attachKeyPairTask)
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
+func (f *Frame) detachKeyPairLayer(nodeKeyPairDetail *models.NodeKeyPairDetail) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	clusterNode := nodeKeyPairDetail.ClusterNode
+	request := &pbtypes.RunCommandOnDroneRequest{
+		Endpoint: &pbtypes.DroneEndpoint{
+			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+			DroneIp:     clusterNode.PrivateIp,
+			DronePort:   constants.DroneServicePort,
+		},
+		Command:        fmt.Sprintf("%s \"%s\"", HostCmdPrefix, sshutil.DoDetachCmd(nodeKeyPairDetail.KeyPair.PubKey)),
+		TimeoutSeconds: TimeoutKeyPair,
+	}
+	directive := jsonutil.ToString(request)
+	attachKeyPairTask := &models.Task{
+		JobId:          f.Job.JobId,
+		Owner:          f.Job.Owner,
+		TaskAction:     ActionRunCommandOnDrone,
+		Target:         constants.TargetPilot,
+		NodeId:         clusterNode.NodeId,
+		Directive:      directive,
+		FailureAllowed: false,
+	}
+	taskLayer.Tasks = append(taskLayer.Tasks, attachKeyPairTask)
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
 func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []string,
 	serviceParams map[string]interface{}, failureAllowed bool) *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
@@ -397,8 +464,6 @@ func (f *Frame) destroyAndStopServiceLayer(nodeIds []string, extraLayer *models.
 }
 
 func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -421,7 +486,7 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 			volume := &models.Volume{
 				Name:      clusterNode.ClusterId + "_" + nodeId,
 				Size:      eachSize,
-				Zone:      availabilityZone,
+				Zone:      f.ClusterWrapper.Cluster.Zone,
 				RuntimeId: f.Runtime.RuntimeId,
 			}
 			directive := jsonutil.ToString(volume)
@@ -443,8 +508,6 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 }
 
 func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -453,7 +516,7 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 			RuntimeId:  f.Runtime.RuntimeId,
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
@@ -474,13 +537,11 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 }
 
 func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 			RuntimeId:  f.Runtime.RuntimeId,
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
@@ -501,8 +562,6 @@ func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
 }
 
 func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -511,7 +570,7 @@ func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *model
 		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 			RuntimeId:  f.Runtime.RuntimeId,
 			VolumeId:   clusterNode.VolumeId,
 			InstanceId: clusterNode.InstanceId,
@@ -567,7 +626,7 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		ip := clusterNode.PrivateIp
-		cmd := "sleep 2 && docker rm -f default"
+		cmd := fmt.Sprintf("%s \"docker rm -f default\"", HostCmdPrefix)
 		request := &pbtypes.RunCommandOnDroneRequest{
 			Endpoint: &pbtypes.DroneEndpoint{
 				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
@@ -709,18 +768,29 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 	}
 }
 
-func (f *Frame) getUserDataExec(filename, contents, imageUrl string) string {
+func (f *Frame) getUserDataExec(filename, contents, imageUrl, frontgateIp string) string {
 	if pi.Global() == nil {
 		f.Logger.Error("Pi global should be init.")
 		return ""
+	}
+
+	var mirror string
+	if len(frontgateIp) > 0 {
+		mirror = fmt.Sprintf("http://%s:5000", frontgateIp)
+	} else {
+		mirror = "https://registry.docker-cn.com"
 	}
 	exec := fmt.Sprintf(`#!/bin/bash -e
 
 mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
 echo '%s' >> %s
+mkdir -p /etc/docker/
+echo '{
+  "registry-mirrors": ["%s"]
+}' > /etc/docker/daemon.json
 for i in $(seq 1 100); do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 3; done
 /opt/openpitrix/image/install_service.sh %s
-`, contents, f.getConfFile(), imageUrl, filename)
+`, contents, f.getConfFile(), mirror, imageUrl, filename)
 	return base64.StdEncoding.EncodeToString([]byte(exec))
 }
 
@@ -793,20 +863,16 @@ func (f *Frame) setDroneConfigLayer(nodeIds []string, failureAllowed bool) *mode
 }
 
 func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
-	apiServer := f.Runtime.RuntimeUrl
-	zone := f.Runtime.Zone
-	globalPi := pi.Global()
-	imageId, imageUrl := "", ""
-	var err error
-	if globalPi != nil {
-		imageId, imageUrl, err = globalPi.GlobalConfig().GetRuntimeImageIdAndUrl(apiServer, zone)
-		if err != nil {
-			return nil
+	var frontgateIp string
+
+	if f.FrontgateClusterWrapper != nil {
+		for _, frontgateNode := range f.FrontgateClusterWrapper.ClusterNodes {
+			frontgateIp = frontgateNode.PrivateIp
+			break
 		}
 	}
+
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
 		role := clusterNode.Role
@@ -830,26 +896,23 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 			Name:         clusterNode.ClusterId + "_" + nodeId + "_" + showName,
 			Hostname:     nodeId,
 			NodeId:       nodeId,
-			ImageId:      imageId,
+			ImageId:      f.ImageConfig.ImageId,
 			Cpu:          int(clusterRole.Cpu),
 			Memory:       int(clusterRole.Memory),
 			Gpu:          int(clusterRole.Gpu),
 			Subnet:       clusterNode.SubnetId,
 			RuntimeId:    f.Runtime.RuntimeId,
-			Zone:         availabilityZone,
+			Zone:         f.ClusterWrapper.Cluster.Zone,
 			NeedUserData: 1,
 			UserdataFile: f.getUserDataFile(),
 		}
 		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
 			frontgate := &Frontgate{f}
-			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), imageUrl)
+			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp)
 		} else {
-			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), imageUrl)
+			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp)
 		}
 		directive := jsonutil.ToString(instance)
-		if err != nil {
-			return nil
-		}
 		runInstanceTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
@@ -870,8 +933,6 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 }
 
 func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -880,7 +941,7 @@ func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *model
 			NodeId:     nodeId,
 			InstanceId: clusterNode.InstanceId,
 			RuntimeId:  f.Runtime.RuntimeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 		}
 		directive := jsonutil.ToString(instance)
 		stopInstanceTask := &models.Task{
@@ -903,8 +964,6 @@ func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *model
 }
 
 func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
@@ -913,7 +972,7 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 			NodeId:     nodeId,
 			InstanceId: clusterNode.InstanceId,
 			RuntimeId:  f.Runtime.RuntimeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 		}
 		directive := jsonutil.ToString(instance)
 		deleteInstanceTask := &models.Task{
@@ -936,8 +995,6 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 }
 
 func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
-	availabilityZone := f.ClusterWrapper.Cluster.Zone
-
 	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
 		instance := &models.Instance{
@@ -945,7 +1002,7 @@ func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
 			NodeId:     nodeId,
 			InstanceId: clusterNode.InstanceId,
 			RuntimeId:  f.Runtime.RuntimeId,
-			Zone:       availabilityZone,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
 		}
 		directive := jsonutil.ToString(instance)
 		startInstanceTask := &models.Task{
@@ -1188,8 +1245,8 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 
 	headTaskLayer.
 		Append(f.createVolumesLayer(nodeIds, false)).        // create volume
-		Append(f.runInstancesLayer(nodeIds, false)).         // run instance and attach volume to instance
 		Append(f.waitFrontgateLayer(false)).                 // wait frontgate cluster to be active
+		Append(f.runInstancesLayer(nodeIds, false)).         // run instance and attach volume to instance
 		Append(f.pingDroneLayer(nodeIds, false)).            // ping drone
 		Append(f.setDroneConfigLayer(nodeIds, false)).       // set drone config
 		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance
@@ -1320,4 +1377,83 @@ func (f *Frame) DeleteClusterNodesLayer() *models.TaskLayer {
 		Append(f.deregisterNodesMetadataLayer(deleteNodeIds, false)).                                               // deregister deleting cluster nodes metadata
 		Append(f.deregisterScalingNodesMetadataLayer(RegisterNodeDeleting, false))                                  // deregister deleting nodes metadata
 	return headTaskLayer.Child
+}
+
+func (f *Frame) AttachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer {
+	headTaskLayer := new(models.TaskLayer)
+
+	for _, nodeKeyPairDetail := range nodeKeyPairDetails {
+		headTaskLayer.Append(f.attachKeyPairLayer(&nodeKeyPairDetail))
+	}
+
+	return headTaskLayer.Child
+}
+
+func (f *Frame) DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer {
+	headTaskLayer := new(models.TaskLayer)
+
+	for _, nodeKeyPairDetail := range nodeKeyPairDetails {
+		headTaskLayer.Append(f.detachKeyPairLayer(&nodeKeyPairDetail))
+	}
+
+	return headTaskLayer.Child
+}
+
+func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
+	clusterConf := app.ClusterConf{}
+	// Normal cluster need package to generate final conf
+	if versionId != constants.FrontgateVersionId {
+		ctx := context.Background()
+		appManagerClient, err := appclient.NewAppManagerClient()
+		if err != nil {
+			f.Logger.Error("Connect to app manager failed: %+v", err)
+			return nil, err
+		}
+
+		req := &pb.GetAppVersionPackageRequest{
+			VersionId: pbutil.ToProtoString(versionId),
+		}
+
+		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
+		if err != nil {
+			f.Logger.Error("Get app version [%s] package failed: %+v", versionId, err)
+			return nil, err
+		}
+
+		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
+		if err != nil {
+			f.Logger.Error("Load app version [%s] package failed: %+v", versionId, err)
+			return nil, err
+		}
+		var confJson app.ClusterUserConfig
+		err = jsonutil.Decode([]byte(conf), &confJson)
+		if err != nil {
+			f.Logger.Error("Parse conf [%s] failed: %+v", conf, err)
+			return nil, err
+		}
+		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
+		if err != nil {
+			f.Logger.Error("Render app version [%s] cluster template failed: %+v", versionId, err)
+			return nil, err
+		}
+		err = clusterConf.Validate()
+		if err != nil {
+			f.Logger.Error("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
+			return nil, err
+		}
+
+	} else {
+		err := jsonutil.Decode([]byte(conf), &clusterConf)
+		if err != nil {
+			f.Logger.Error("Parse conf [%s] to cluster failed: %+v", conf, err)
+			return nil, err
+		}
+	}
+
+	parser := Parser{Logger: f.Logger}
+	clusterWrapper, err := parser.Parse(clusterConf)
+	if err != nil {
+		return nil, err
+	}
+	return clusterWrapper, nil
 }

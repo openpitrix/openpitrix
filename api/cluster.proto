@@ -199,22 +199,23 @@ message ClusterNode {
 	google.protobuf.StringValue device = 6;
 	google.protobuf.StringValue subnet_id = 7;
 	google.protobuf.StringValue private_ip = 8;
-	google.protobuf.UInt32Value server_id = 9;
-	google.protobuf.StringValue role = 10;
-	google.protobuf.StringValue status = 11;
-	google.protobuf.StringValue transition_status = 12;
-	google.protobuf.UInt32Value group_id = 13;
-	google.protobuf.StringValue owner = 14;
-	google.protobuf.UInt32Value global_server_id = 15;
-	google.protobuf.StringValue custom_metadata = 16;
-	google.protobuf.StringValue pub_key = 17;
-	google.protobuf.StringValue health_status = 18;
-	google.protobuf.BoolValue is_backup = 19;
-	google.protobuf.BoolValue auto_backup = 20;
-	google.protobuf.Timestamp create_time = 21;
-	google.protobuf.Timestamp status_time = 22;
-	ClusterRole cluster_role = 23;
-	ClusterCommon cluster_common = 24;
+	google.protobuf.StringValue eip = 9;
+	google.protobuf.UInt32Value server_id = 10;
+	google.protobuf.StringValue role = 11;
+	google.protobuf.StringValue status = 12;
+	google.protobuf.StringValue transition_status = 13;
+	google.protobuf.UInt32Value group_id = 14;
+	google.protobuf.StringValue owner = 15;
+	google.protobuf.UInt32Value global_server_id = 16;
+	google.protobuf.StringValue custom_metadata = 17;
+	google.protobuf.StringValue pub_key = 18;
+	google.protobuf.StringValue health_status = 19;
+	google.protobuf.BoolValue is_backup = 20;
+	google.protobuf.BoolValue auto_backup = 21;
+	google.protobuf.Timestamp create_time = 22;
+	google.protobuf.Timestamp status_time = 23;
+	ClusterRole cluster_role = 24;
+	ClusterCommon cluster_common = 25;
 }
 
 message ClusterRole {
@@ -358,7 +359,139 @@ message GetClusterStatisticsResponse {
 	uint32 runtime_count = 4;
 }
 
+message KeyPair {
+	google.protobuf.StringValue key_pair_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue pub_key = 4;
+	google.protobuf.StringValue owner = 5;
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.Timestamp status_time = 7;
+}
+
+message CreateKeyPairRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue description = 2;
+	google.protobuf.StringValue pub_key = 3;
+}
+
+message CreateKeyPairResponse {
+	google.protobuf.StringValue key_pair_id = 1;
+}
+
+message DescribeKeyPairsRequest {
+	google.protobuf.StringValue key_pair_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue pub_key = 4;
+	google.protobuf.StringValue owner = 5;
+	google.protobuf.StringValue search_word = 6;
+	uint32 limit = 7;
+	uint32 offset = 8;
+}
+
+message DescribeKeyPairsResponse {
+	uint32 total_count = 1;
+	repeated KeyPair key_pair_set = 2;
+}
+
+message DeleteKeyPairsRequest {
+	repeated string key_pair_id = 1;
+}
+
+message DeleteKeyPairsResponse {
+	repeated string key_pair_id = 1;
+}
+
+message AttachKeyPairsRequest {
+	repeated string key_pair_id = 1;
+	repeated string node_id = 2;
+}
+
+message AttachKeyPairsResponse {
+	repeated string job_id = 1;
+}
+
+message DetachKeyPairsRequest {
+	repeated string key_pair_id = 1;
+	repeated string node_id = 2;
+}
+
+message DetachKeyPairsResponse {
+	repeated string job_id = 1;
+}
+
+message NodeKeyPair {
+	google.protobuf.StringValue node_id = 1;
+	google.protobuf.StringValue key_pair_id = 2;
+}
+
+message AddNodeKeyPairsRequest {
+	repeated NodeKeyPair node_key_pair = 1;
+}
+
+message AddNodeKeyPairsResponse {
+	// empty
+}
+
+message DeleteNodeKeyPairsRequest {
+	repeated NodeKeyPair node_key_pair = 1;
+}
+
+message DeleteNodeKeyPairsResponse {
+	// empty
+}
+
 service ClusterManager {
+	rpc AddNodeKeyPairs (AddNodeKeyPairsRequest) returns (AddNodeKeyPairsResponse);
+	rpc DeleteNodeKeyPairs (DeleteNodeKeyPairsRequest) returns (DeleteNodeKeyPairsResponse);
+	rpc CreateKeyPair (CreateKeyPairRequest) returns (CreateKeyPairResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create key pair"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters/key_pairs"
+			body: "*"
+		};
+	}
+	rpc DescribeKeyPairs (DescribeKeyPairsRequest) returns (DescribeKeyPairsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe key pairs"
+		};
+		option (google.api.http) = {
+			get: "/v1/clusters/key_pairs"
+		};
+	}
+	rpc DeleteKeyPairs (DeleteKeyPairsRequest) returns (DeleteKeyPairsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete key pairs"
+		};
+		option (google.api.http) = {
+			delete: "/v1/clusters/key_pairs"
+			body: "*"
+		};
+	}
+
+	rpc AttachKeyPairs (AttachKeyPairsRequest) returns (AttachKeyPairsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "attach key pairs"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters/key_pair/attach"
+			body: "*"
+		};
+	}
+
+	rpc DetachKeyPairs (DetachKeyPairsRequest) returns (DetachKeyPairsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "detach key pairs"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters/key_pair/detach"
+			body: "*"
+		};
+	}
+
 	rpc DescribeSubnets (DescribeSubnetsRequest) returns (DescribeSubnetsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "describe subnets"

@@ -5,21 +5,19 @@
 package aws
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"time"
 
-	appclient "openpitrix.io/openpitrix/pkg/client/app"
+	clientutil "openpitrix.io/openpitrix/pkg/client"
+	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
+	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/devkit"
-	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
-	"openpitrix.io/openpitrix/pkg/util/jsonutil"
-	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -40,66 +38,68 @@ func (p *Provider) SetLogger(logger *logger.Logger) {
 }
 
 func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
-	clusterConf := app.ClusterConf{}
-	// Normal cluster need package to generate final conf
-	if versionId != constants.FrontgateVersionId {
-		ctx := context.Background()
-		appManagerClient, err := appclient.NewAppManagerClient()
-		if err != nil {
-			p.Logger.Error("Connect to app manager failed: %+v", err)
-			return nil, err
-		}
-
-		req := &pb.GetAppVersionPackageRequest{
-			VersionId: pbutil.ToProtoString(versionId),
-		}
-
-		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
-		if err != nil {
-			p.Logger.Error("Get app version [%s] package failed: %+v", versionId, err)
-			return nil, err
-		}
-
-		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
-		if err != nil {
-			p.Logger.Error("Load app version [%s] package failed: %+v", versionId, err)
-			return nil, err
-		}
-		var confJson app.ClusterUserConfig
-		err = jsonutil.Decode([]byte(conf), &confJson)
-		if err != nil {
-			p.Logger.Error("Parse conf [%s] failed: %+v", conf, err)
-			return nil, err
-		}
-		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
-		if err != nil {
-			p.Logger.Error("Render app version [%s] cluster template failed: %+v", versionId, err)
-			return nil, err
-		}
-		err = clusterConf.Validate()
-		if err != nil {
-			p.Logger.Error("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
-			return nil, err
-		}
-
-	} else {
-		err := jsonutil.Decode([]byte(conf), &clusterConf)
-		if err != nil {
-			p.Logger.Error("Parse conf [%s] to cluster failed: %+v", conf, err)
-			return nil, err
-		}
-	}
-
-	parser := Parser{Logger: p.Logger}
-	clusterWrapper, err := parser.Parse(clusterConf)
+	frameInterface, err := vmbased.NewFrameInterface(nil, p.Logger)
 	if err != nil {
 		return nil, err
 	}
+	clusterWrapper, err := frameInterface.ParseClusterConf(versionId, runtimeId, conf)
+	if err != nil {
+		return nil, err
+	}
+	handler := GetProviderHandler(p.Logger)
+	availabilityZone, err := handler.DescribeAvailabilityZoneBySubnetId(runtimeId, clusterWrapper.Cluster.SubnetId)
+	if err != nil {
+		return nil, err
+	}
+	clusterWrapper.Cluster.Zone = availabilityZone
 	return clusterWrapper, nil
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	frameInterface, err := vmbased.NewFrameInterface(job, p.Logger)
+	var clusterWrapper *models.ClusterWrapper
+	var err error
+
+	switch job.JobAction {
+	case constants.ActionAttachKeyPairs, constants.ActionDetachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		clusterId := nodeKeyPairDetails[0].ClusterNode.ClusterId
+		clusterClient, err := clusterclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+		ctx := clientutil.GetSystemUserContext()
+		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
+		if err != nil {
+			return nil, err
+		}
+		clusterWrapper = pbClusterWrappers[0]
+	default:
+		clusterWrapper, err = models.NewClusterWrapper(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	runtimeId := clusterWrapper.Cluster.RuntimeId
+	runtime, err := runtimeclient.NewRuntime(runtimeId)
+	if err != nil {
+		return nil, err
+	}
+	imageConfig, err := pi.Global().GlobalConfig().GetRuntimeImageIdAndUrl(runtime.RuntimeUrl, runtime.Zone)
+	if err != nil {
+		return nil, err
+	}
+	if imageConfig.ImageId == "" && imageConfig.ImageName != "" {
+		handler := GetProviderHandler(p.Logger)
+		imageConfig.ImageId, err = handler.DescribeImage(runtimeId, imageConfig.ImageName)
+		if err != nil {
+			return nil, err
+		}
+	}
+	frameInterface, err := vmbased.NewFrameInterface(job, p.Logger, imageConfig.ImageId)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,18 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		// not supported yet
 		return nil, nil
 	case constants.ActionUpdateClusterEnv:
-
+	case constants.ActionAttachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.AttachKeyPairsLayer(nodeKeyPairDetails), nil
+	case constants.ActionDetachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.DetachKeyPairsLayer(nodeKeyPairDetails), nil
 	default:
 		p.Logger.Error("Unknown job action [%s]", job.JobAction)
 		return nil, fmt.Errorf("unknown job action [%s]", job.JobAction)
@@ -205,7 +216,7 @@ func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsR
 	return handler.DescribeSubnets(ctx, req)
 }
 
-func (p *Provider) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
+func (p *Provider) CheckResource(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
 	handler := GetProviderHandler(p.Logger)
 	return handler.CheckResourceQuotas(ctx, clusterWrapper)
 }
@@ -217,12 +228,15 @@ func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 
 func (p *Provider) ValidateCredential(url, credential, zone string) error {
 	handler := GetProviderHandler(p.Logger)
-	keys, err := handler.DescribeKeyPairs(url, credential, zone)
+	zones, err := handler.DescribeZones(url, credential)
 	if err != nil {
 		return err
 	}
-	if !stringutil.StringIn(DefaultKeyName, keys) {
-		return fmt.Errorf("we need a key pair named [%s] in the zone [%s]", DefaultKeyName, zone)
+	if zone == "" {
+		return nil
+	}
+	if !stringutil.StringIn(zone, zones) {
+		return fmt.Errorf("cannot access zone [%s]", zone)
 	}
 	return nil
 }
@@ -239,14 +253,4 @@ func (p *Provider) DescribeRuntimeProviderAvailabilityZones(url, credential, zon
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
 	handler := GetProviderHandler(p.Logger)
 	return handler.DescribeZones(url, credential)
-}
-
-func (p *Provider) DescribeImage(runtimeId, name string) (string, error) {
-	handler := GetProviderHandler(p.Logger)
-	return handler.DescribeImage(runtimeId, name)
-}
-
-func (p *Provider) DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error) {
-	handler := GetProviderHandler(p.Logger)
-	return handler.DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId)
 }

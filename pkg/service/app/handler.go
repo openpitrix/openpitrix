@@ -120,7 +120,11 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	err = categoryutil.SyncResourceCategories(p.Db, newApp.AppId, strings.Split(req.GetCategoryId().GetValue(), ","))
+	err = categoryutil.SyncResourceCategories(
+		p.Db,
+		newApp.AppId,
+		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
+	)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
@@ -156,7 +160,11 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 
-	err = categoryutil.SyncResourceCategories(p.Db, appId, strings.Split(req.GetCategoryId().GetValue(), ","))
+	err = categoryutil.SyncResourceCategories(
+		p.Db,
+		appId,
+		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
+	)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}

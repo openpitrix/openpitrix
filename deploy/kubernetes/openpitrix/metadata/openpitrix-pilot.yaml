@@ -6,6 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-pilot
+    version: ${VERSION}
 spec:
   selector:
     app: openpitrix
@@ -25,6 +26,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-pilot
+    version: ${VERSION}
 spec:
   selector:
     matchLabels:
@@ -36,6 +38,7 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-pilot
+        version: ${VERSION}
     spec:
       initContainers:
       - name: wait-mysql
@@ -49,7 +52,7 @@ spec:
       containers:
       - name: openpitrix-pilot
         image: ${IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
         command: ['pilot', '-config=/opt/openpitrix/conf/pilot-config.json', 'serve']
         ports:
         - containerPort: 9110
@@ -80,6 +83,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-pilot
+    version: ${VERSION}
 data:
   pilot-config.json: |-
     {

@@ -36,12 +36,12 @@ func NewProcessor(task *models.Task, tLogger *logger.Logger) *Processor {
 
 // Post process when task is start
 func (p *Processor) Pre() error {
+	ctx := client.GetSystemUserContext()
 	if p.Task.Directive == "" {
 		p.TLogger.Warn("Skip empty task [%s] directive", p.Task.TaskId)
 		return nil
 	}
 	var err error
-	ctx := client.GetSystemUserContext()
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		p.TLogger.Error("Executing task [%s] post processor failed: %+v", p.Task.TaskId, err)
@@ -201,6 +201,10 @@ func (p *Processor) Pre() error {
 		if err != nil {
 			return err
 		}
+		err = clusterClient.ModifyClusterNodeTransitionStatus(ctx, meta.NodeId, constants.StatusUpdating)
+		if err != nil {
+			return err
+		}
 		if meta.DroneIp == "" {
 			clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{meta.NodeId})
 			if err != nil {
@@ -246,6 +250,10 @@ func (p *Processor) Pre() error {
 		if err != nil {
 			return err
 		}
+		err = clusterClient.ModifyClusterNodeTransitionStatus(ctx, meta.NodeId, constants.StatusUpdating)
+		if err != nil {
+			return err
+		}
 		if meta.DroneIp == "" {
 			clusterNodes, err := clusterClient.GetClusterNodes(ctx, []string{meta.NodeId})
 			if err != nil {
@@ -260,6 +268,10 @@ func (p *Processor) Pre() error {
 	case vmbased.ActionPingDrone:
 		droneEndpoint := new(pbtypes.DroneEndpoint)
 		err := jsonutil.Decode([]byte(p.Task.Directive), droneEndpoint)
+		if err != nil {
+			return err
+		}
+		err = clusterClient.ModifyClusterNodeTransitionStatus(ctx, p.Task.NodeId, constants.StatusUpdating)
 		if err != nil {
 			return err
 		}
@@ -337,40 +349,46 @@ func (p *Processor) Pre() error {
 }
 
 // Post process when task is done
-func (t *Processor) Post() error {
-	t.TLogger.Debug("Post task [%s] directive: %s", t.Task.TaskId, t.Task.Directive)
-	var err error
+func (p *Processor) Post() error {
 	ctx := client.GetSystemUserContext()
+	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		t.TLogger.Error("Executing task [%s] post processor failed: %+v", t.Task.TaskId, err)
+		p.TLogger.Error("Executing task [%s] post processor failed: %+v", p.Task.TaskId, err)
 		return err
 	}
-	switch t.Task.TaskAction {
+	switch p.Task.TaskAction {
 	case vmbased.ActionRunInstances:
-		if t.Task.Directive == "" {
-			t.TLogger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
+		if p.Task.Directive == "" {
+			p.TLogger.Warn("Skip empty task [%s] directive", p.Task.TaskId)
 		}
-		instance, err := models.NewInstance(t.Task.Directive)
+		instance, err := models.NewInstance(p.Task.Directive)
 		if err != nil {
 			return err
 		}
 		_, err = clusterClient.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 			ClusterNode: &pb.ClusterNode{
-				NodeId:           pbutil.ToProtoString(instance.NodeId),
-				InstanceId:       pbutil.ToProtoString(instance.InstanceId),
-				Device:           pbutil.ToProtoString(instance.Device),
-				PrivateIp:        pbutil.ToProtoString(instance.PrivateIp),
-				TransitionStatus: pbutil.ToProtoString(""),
-				Status:           pbutil.ToProtoString(constants.StatusActive),
+				NodeId:     pbutil.ToProtoString(instance.NodeId),
+				InstanceId: pbutil.ToProtoString(instance.InstanceId),
+				Device:     pbutil.ToProtoString(instance.Device),
+				PrivateIp:  pbutil.ToProtoString(instance.PrivateIp),
+				Eip:        pbutil.ToProtoString(instance.Eip),
 			},
 		})
 		if err != nil {
 			return err
 		}
+		err = clusterClient.ModifyClusterNodeTransitionStatus(ctx, instance.NodeId, "")
+		if err != nil {
+			return err
+		}
+		err = clusterClient.ModifyClusterNodeStatus(ctx, instance.NodeId, constants.StatusActive)
+		if err != nil {
+			return err
+		}
 
 	case vmbased.ActionStartInstances:
-		instance, err := models.NewInstance(t.Task.Directive)
+		instance, err := models.NewInstance(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -384,7 +402,7 @@ func (t *Processor) Post() error {
 		}
 
 	case vmbased.ActionStopInstances:
-		instance, err := models.NewInstance(t.Task.Directive)
+		instance, err := models.NewInstance(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -398,7 +416,7 @@ func (t *Processor) Post() error {
 		}
 
 	case vmbased.ActionTerminateInstances:
-		instance, err := models.NewInstance(t.Task.Directive)
+		instance, err := models.NewInstance(p.Task.Directive)
 		if err != nil {
 			return err
 		}
@@ -412,16 +430,16 @@ func (t *Processor) Post() error {
 		}
 
 	case vmbased.ActionCreateVolumes:
-		if t.Task.Directive == "" {
-			t.TLogger.Warn("Skip empty task [%s] directive", t.Task.TaskId)
+		if p.Task.Directive == "" {
+			p.TLogger.Warn("Skip empty task [%s] directive", p.Task.TaskId)
 		}
-		volume, err := models.NewVolume(t.Task.Directive)
+		volume, err := models.NewVolume(p.Task.Directive)
 		if err != nil {
 			return err
 		}
 		_, err = clusterClient.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
 			ClusterNode: &pb.ClusterNode{
-				NodeId:   pbutil.ToProtoString(t.Task.NodeId),
+				NodeId:   pbutil.ToProtoString(p.Task.NodeId),
 				VolumeId: pbutil.ToProtoString(volume.VolumeId),
 			},
 		})
@@ -429,8 +447,13 @@ func (t *Processor) Post() error {
 			return err
 		}
 
+	case vmbased.ActionPingDrone, vmbased.ActionRegisterCmd, vmbased.ActionStartConfd:
+		err = clusterClient.ModifyClusterNodeTransitionStatus(ctx, p.Task.NodeId, "")
+		if err != nil {
+			return err
+		}
 	default:
-		t.TLogger.Debug("Nothing to do with task [%s] post processor", t.Task.TaskId)
+		p.TLogger.Debug("Nothing to do with task [%s] post processor", p.Task.TaskId)
 	}
 	return err
 }

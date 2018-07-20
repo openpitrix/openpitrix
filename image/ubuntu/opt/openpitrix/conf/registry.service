@@ -1,0 +1,14 @@
+[Unit]
+Description=registry
+After=syslog.target network.target docker.target
+
+[Service]
+User=root
+EnvironmentFile=/opt/openpitrix/conf/openpitrix.conf
+ExecStart=/opt/openpitrix/sbin/start_registry.sh $FILE_NAME
+ExecStop=/usr/bin/docker stop registry
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

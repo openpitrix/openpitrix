@@ -6,6 +6,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-runtime-manager
+    version: ${VERSION}
 spec:
   selector:
     app: openpitrix
@@ -24,6 +25,7 @@ metadata:
   labels:
     app: openpitrix
     component: openpitrix-runtime-manager
+    version: ${VERSION}
 spec:
   selector:
     matchLabels:
@@ -35,6 +37,7 @@ spec:
       labels:
         app: openpitrix
         component: openpitrix-runtime-manager
+        version: ${VERSION}
     spec:
       initContainers:
       - name: wait-mysql
@@ -48,7 +51,7 @@ spec:
       containers:
       - name: openpitrix-runtime-manager
         image: ${IMAGE}
-        imagePullPolicy: Always
+        imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
           - runtime-manager
         ports:

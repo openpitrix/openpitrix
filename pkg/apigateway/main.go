@@ -169,7 +169,7 @@ func (s *Server) mainHandler() http.Handler {
 	}
 
 	mux := http.NewServeMux()
-	tm := topic.NewTopicManager(s.Pi)
+	tm := topic.NewTopicManager(s.Pi.Etcd)
 	go tm.Run()
 
 	mux.Handle("/", gwmux)

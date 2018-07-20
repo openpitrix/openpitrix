@@ -88,6 +88,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		JobId:  jobId,
 		Status: constants.StatusWorking,
 	}
+
 	err := c.updateJobAttributes(job.JobId, map[string]interface{}{
 		"status":   job.Status,
 		"executor": c.hostname,
@@ -185,6 +186,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		jLogger.Error("Job [%s] failed: %+v", jobId, err)
 		status = constants.StatusFailed
 	}
+
 	err = c.updateJobAttributes(jobId, map[string]interface{}{
 		"status":      status,
 		"status_time": time.Now(),

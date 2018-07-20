@@ -17,20 +17,39 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
-func checkPermissionAndTransition(clusterId, userId string, status []string) error {
+func checkPermissionAndTransition(clusterId, userId string, status []string) (*models.Cluster, error) {
 	cluster, err := getCluster(clusterId, userId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if cluster.TransitionStatus != "" {
 		logger.Error("Cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
-		return fmt.Errorf("cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
+		return nil, fmt.Errorf("cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
 	}
 	if status != nil && !reflectutil.In(cluster.Status, status) {
 		logger.Error("Cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
-		return fmt.Errorf("cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
+		return nil, fmt.Errorf("cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
 	}
-	return nil
+	return cluster, nil
+}
+
+func checkNodesPermissionAndTransition(nodeIds []string, userId string, status []string) ([]*models.ClusterNode, error) {
+	clusterNodes, err := getClusterNodes(nodeIds, userId)
+	if err != nil {
+		return nil, err
+	}
+	for _, clusterNode := range clusterNodes {
+		if clusterNode.TransitionStatus != "" {
+			logger.Error("Cluster node [%s] is [%s], please try later", clusterNode.NodeId, clusterNode.TransitionStatus)
+			return nil, fmt.Errorf("cluster [%s] is [%s], please try later", clusterNode.NodeId, clusterNode.TransitionStatus)
+		}
+		if status != nil && !reflectutil.In(clusterNode.Status, status) {
+			logger.Error("Cluster [%s] status is [%s] not in %s", clusterNode.NodeId, clusterNode.Status, status)
+			return nil, fmt.Errorf("cluster [%s] status is [%s] not in %s", clusterNode.NodeId, clusterNode.Status, status)
+		}
+	}
+
+	return clusterNodes, nil
 }
 
 func isActionSupported(clusterId, role, action string) bool {
@@ -57,6 +76,14 @@ func isActionSupported(clusterId, role, action string) bool {
 
 func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
+	case *pb.CreateKeyPairRequest:
+		return manager.NewChecker(ctx, r).
+			Required("key").
+			Exec()
+	case *pb.DeleteKeyPairsRequest:
+		return manager.NewChecker(ctx, r).
+			Required("key_pair_id").
+			Exec()
 	case *pb.DescribeSubnetsRequest:
 		return manager.NewChecker(ctx, r).
 			Required("runtime_id").
@@ -116,7 +143,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, providerInterface plugins.ProviderInterface,
 	clusterWrapper *models.ClusterWrapper) error {
 	// check image
-	_, _, err := pi.Global().GlobalConfig().GetRuntimeImageIdAndUrl(runtime.RuntimeUrl, runtime.Zone)
+	_, err := pi.Global().GlobalConfig().GetRuntimeImageIdAndUrl(runtime.RuntimeUrl, runtime.Zone)
 	if err != nil {
 		return gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorValidateFailed)
 	}
@@ -141,8 +168,8 @@ func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, p
 	}
 	clusterWrapper.Cluster.VpcId = vpcId
 
-	// check resource quota
-	err = providerInterface.CheckResourceQuotas(ctx, clusterWrapper)
+	// check resource
+	err = providerInterface.CheckResource(ctx, clusterWrapper)
 	if err != nil {
 		return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceQuotaNotEnough, err.Error())
 	}

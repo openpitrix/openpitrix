@@ -6,11 +6,12 @@ package topic
 
 import (
 	"net/http"
+	"sync"
 
 	"github.com/gorilla/websocket"
 
+	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pi"
 )
 
 var upgrader = websocket.Upgrader{
@@ -22,31 +23,33 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+type receiversT map[*websocket.Conn]*sync.Mutex
+
 type topicManager struct {
-	*pi.Pi
-	receiverMap map[string]map[*websocket.Conn]bool
+	*etcd.Etcd
+	receiverMap map[string]receiversT
 	addReceiver chan receiver
 	delReceiver chan receiver
 	msgChan     chan userMessage
 }
 
-func NewTopicManager(p *pi.Pi) *topicManager {
+func NewTopicManager(e *etcd.Etcd) *topicManager {
 	var tm topicManager
-	tm.Pi = p
-	tm.msgChan = watchEvents(tm.Pi.Etcd)
+	tm.Etcd = e
+	tm.msgChan = watchEvents(e)
 	tm.addReceiver = make(chan receiver, 255)
 	tm.delReceiver = make(chan receiver, 255)
-	tm.receiverMap = make(map[string]map[*websocket.Conn]bool)
+	tm.receiverMap = make(map[string]receiversT)
 	return &tm
 }
 
-func (tm *topicManager) getReceivers(userId string) map[*websocket.Conn]bool {
-	receivers, ok := tm.receiverMap[userId]
+func (tm *topicManager) getReceivers(userId string) receiversT {
+	rs, ok := tm.receiverMap[userId]
 	if !ok {
-		receivers = make(map[*websocket.Conn]bool)
-		tm.receiverMap[userId] = receivers
+		rs = make(receiversT)
+		tm.receiverMap[userId] = rs
 	}
-	return receivers
+	return rs
 }
 
 func (tm *topicManager) Run() {
@@ -66,7 +69,7 @@ func (tm *topicManager) Run() {
 		select {
 		case receiver := <-tm.addReceiver:
 			receivers := tm.getReceivers(receiver.UserId)
-			receivers[receiver.Conn] = true
+			receivers[receiver.Conn] = &sync.Mutex{}
 
 		case receiver := <-tm.delReceiver:
 			receivers := tm.getReceivers(receiver.UserId)
@@ -79,14 +82,16 @@ func (tm *topicManager) Run() {
 
 		case userMsg := <-tm.msgChan:
 			receivers := tm.getReceivers(userMsg.UserId)
-			for r := range receivers {
-				go writeMessage(r, userMsg)
+			for r, mutex := range receivers {
+				go writeMessage(r, mutex, userMsg)
 			}
 		}
 	}
 }
 
-func writeMessage(conn *websocket.Conn, userMsg userMessage) {
+func writeMessage(conn *websocket.Conn, mutex *sync.Mutex, userMsg userMessage) {
+	mutex.Lock()
+	defer mutex.Unlock()
 	err := conn.WriteJSON(userMsg.Message)
 	if err != nil {
 		logger.Error("Failed to send message [%+v] to [%+v], error: %+v", userMsg, conn, err)

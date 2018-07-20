@@ -173,4 +173,16 @@ var (
 		Name: "unsupported_api_version",
 		En:   "unsupported api version [%s]",
 	}
+	ErrorCannotDeleteDefaultCategory = ErrorMessage{
+		Name: "cannot_delete_default_category",
+		En:   "cannot delete default category",
+	}
+	ErrorAttachKeyPairsFailed = ErrorMessage{
+		Name: "attach_key_pairs_failed",
+		En:   "attach key pairs failed",
+	}
+	ErrorDetachKeyPairsFailed = ErrorMessage{
+		Name: "detach_key_pairs_failed",
+		En:   "detach key pairs failed",
+	}
 )

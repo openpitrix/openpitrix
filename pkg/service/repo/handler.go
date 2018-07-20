@@ -7,7 +7,6 @@ package repo
 import (
 	"context"
 	neturl "net/url"
-	"strings"
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	indexerclient "openpitrix.io/openpitrix/pkg/client/repo_indexer"
@@ -19,7 +18,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
-	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
@@ -54,7 +52,10 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 			Select(models.ColumnResouceId).
 			From(models.CategoryResourceTableName).
 			Where(db.Eq(models.ColumnCategoryId, categoryIds))
-		query = query.Where(db.Eq(models.ColumnAppId, []*db.SelectQuery{subqueryStmt}))
+		query = query.Where(db.Eq(models.WithPrefix(
+			models.RepoTableName,
+			models.ColumnRepoId,
+		), []*db.SelectQuery{subqueryStmt}))
 	}
 
 	query = manager.AddQueryJoinWithMap(query, models.RepoTableName, models.RepoLabelTableName, models.ColumnRepoId,
@@ -124,8 +125,6 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	go topic.PushEvent(p.Etcd, s.UserId, topic.Create, newRepo)
-
 	err = p.createProviders(newRepo.RepoId, providers)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
@@ -143,7 +142,11 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		}
 	}
 
-	err = categoryutil.SyncResourceCategories(p.Db, newRepo.RepoId, strings.Split(req.GetCategoryId().GetValue(), ","))
+	categoryIds := categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue())
+	if len(req.GetCategoryId().GetValue()) == 0 {
+		categoryIds = []string{models.UncategorizedId}
+	}
+	err = categoryutil.SyncResourceCategories(p.Db, newRepo.RepoId, categoryIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
@@ -220,7 +223,6 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
-		go topic.PushEvent(p.Etcd, s.UserId, topic.Update, topic.NewResource(models.RepoTableName, repoId))
 	}
 
 	if len(providers) > 0 {
@@ -242,7 +244,11 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
-	err = categoryutil.SyncResourceCategories(p.Db, repoId, strings.Split(req.GetCategoryId().GetValue(), ","))
+	err = categoryutil.SyncResourceCategories(
+		p.Db,
+		repoId,
+		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
+	)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
@@ -268,13 +274,28 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
-	for _, repoId := range repoIds {
-		go topic.PushEvent(p.Etcd, s.UserId, topic.Delete, topic.NewResource(models.RepoTableName, repoId))
+	res := &pb.DeleteReposResponse{
+		RepoId: repoIds,
 	}
 
-	return &pb.DeleteReposResponse{
-		RepoId: repoIds,
-	}, nil
+	ctx = clientutil.GetSystemUserContext()
+	repoIndexerClient, err := indexerclient.NewRepoIndexerClient()
+	if err != nil {
+		logger.Warn("Could not get repo indexer client, %+v", err)
+		return res, nil
+	}
+
+	for _, repoId := range repoIds {
+		indexRequest := pb.IndexRepoRequest{
+			RepoId: pbutil.ToProtoString(repoId),
+		}
+		_, err = repoIndexerClient.IndexRepo(ctx, &indexRequest)
+		if err != nil {
+			logger.Warn("Call index repo service failed, %+v", err)
+		}
+	}
+
+	return res, nil
 }
 
 func (p *Server) ValidateRepo(ctx context.Context, req *pb.ValidateRepoRequest) (*pb.ValidateRepoResponse, error) {

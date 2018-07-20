@@ -101,6 +101,10 @@ func (p *Provider) getHelmClient(runtimeId string) (helmClient *helm.Client, err
 }
 
 func (p *Provider) checkClusterNameIsUniqueInRuntime(clusterName, runtimeId string) (err error) {
+	if clusterName == "" {
+		return fmt.Errorf("cluster name must be provided")
+	}
+
 	hc, err := p.getHelmClient(runtimeId)
 	if err != nil {
 		return err
@@ -154,17 +158,11 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 		return nil, err
 	}
 
-	err = p.checkClusterNameIsUniqueInRuntime(clusterWrapper.Cluster.Name, runtimeId)
-	if err != nil {
-		p.Logger.Error("Check cluster name [%s] is unique in runtime [%s] failed: %+v", clusterWrapper.Cluster.Name, runtimeId, err)
-		return nil, err
-	}
-
 	return clusterWrapper, nil
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	jodDirective, err := getJobDirective(job.Directive)
+	jobDirective, err := getJobDirective(job.Directive)
 	if err != nil {
 		return nil, err
 	}
@@ -173,10 +171,10 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionCreateCluster:
 		td := TaskDirective{
 			VersionId:   job.VersionId,
-			Namespace:   jodDirective.Namespace,
-			RuntimeId:   jodDirective.RuntimeId,
-			Values:      jodDirective.Values,
-			ClusterName: jodDirective.ClusterName,
+			Namespace:   jobDirective.Namespace,
+			RuntimeId:   jobDirective.RuntimeId,
+			Values:      jobDirective.Values,
+			ClusterName: jobDirective.ClusterName,
 		}
 		tdj := getTaskDirectiveJson(td)
 
@@ -190,9 +188,25 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionUpgradeCluster:
 		td := TaskDirective{
 			VersionId:   job.VersionId,
-			RuntimeId:   jodDirective.RuntimeId,
-			Values:      jodDirective.Values,
-			ClusterName: jodDirective.ClusterName,
+			RuntimeId:   jobDirective.RuntimeId,
+			Values:      jobDirective.Values,
+			ClusterName: jobDirective.ClusterName,
+		}
+		tdj := getTaskDirectiveJson(td)
+
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, job.Owner, false)
+		tl := models.TaskLayer{
+			Tasks: []*models.Task{task},
+			Child: nil,
+		}
+
+		return &tl, nil
+	case constants.ActionUpdateClusterEnv:
+		td := TaskDirective{
+			VersionId:   job.VersionId,
+			RuntimeId:   jobDirective.RuntimeId,
+			Values:      jobDirective.Values,
+			ClusterName: jobDirective.ClusterName,
 		}
 		tdj := getTaskDirectiveJson(td)
 
@@ -204,7 +218,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 		return &tl, nil
 	case constants.ActionRollbackCluster:
-		td := TaskDirective{ClusterName: jodDirective.ClusterName, RuntimeId: jodDirective.RuntimeId}
+		td := TaskDirective{ClusterName: jobDirective.ClusterName, RuntimeId: jobDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
 		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionRollbackCluster, tdj, job.Owner, false)
@@ -215,7 +229,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 		return &tl, nil
 	case constants.ActionDeleteClusters:
-		td := TaskDirective{ClusterName: jodDirective.ClusterName, RuntimeId: jodDirective.RuntimeId}
+		td := TaskDirective{ClusterName: jobDirective.ClusterName, RuntimeId: jobDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
 		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionDeleteClusters, tdj, job.Owner, false)
@@ -226,7 +240,7 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 
 		return &tl, nil
 	case constants.ActionCeaseClusters:
-		td := TaskDirective{ClusterName: jodDirective.ClusterName, RuntimeId: jodDirective.RuntimeId}
+		td := TaskDirective{ClusterName: jobDirective.ClusterName, RuntimeId: jobDirective.RuntimeId}
 		tdj := getTaskDirectiveJson(td)
 
 		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCeaseClusters, tdj, job.Owner, false)
@@ -414,7 +428,13 @@ func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsR
 	return nil, nil
 }
 
-func (p *Provider) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
+func (p *Provider) CheckResource(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
+	err := p.checkClusterNameIsUniqueInRuntime(clusterWrapper.Cluster.Name, clusterWrapper.Cluster.RuntimeId)
+	if err != nil {
+		p.Logger.Error("Cluster name [%s] already existed in runtime [%s]: %+v",
+			clusterWrapper.Cluster.Name, clusterWrapper.Cluster.RuntimeId, err)
+		return err
+	}
 	return nil
 }
 
@@ -459,6 +479,35 @@ func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, cl
 	}
 
 	return pbClusterNodes, nil
+}
+
+func (p *Provider) updateClusterEnv(job *models.Job) error {
+	clusterWrapper, err := models.NewClusterWrapper(job.Directive)
+	if err != nil {
+		return err
+	}
+
+	ctx := clientutil.GetSystemUserContext()
+	clusterClient, err := clusterclient.NewClient()
+	if err != nil {
+		return err
+	}
+
+	clusterRoles := []*models.ClusterRole{}
+	for _, clusterRole := range clusterWrapper.ClusterRoles {
+		clusterRoles = append(clusterRoles, clusterRole)
+	}
+
+	modifyClusterRequest := &pb.ModifyClusterRequest{
+		Cluster:        models.ClusterToPb(clusterWrapper.Cluster),
+		ClusterRoleSet: models.ClusterRolesToPbs(clusterRoles),
+	}
+	_, err = clusterClient.ModifyCluster(ctx, modifyClusterRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Provider) UpdateClusterStatus(job *models.Job) error {
@@ -514,6 +563,14 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	}
 	clusterClient.AddTableClusterNodes(ctx, addNodesRequest)
 
+	if job.JobAction == constants.ActionUpdateClusterEnv {
+		err := p.updateClusterEnv(job)
+		if err != nil {
+			p.Logger.Error("Update cluster env failed, %+v", err)
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -541,7 +598,7 @@ func (p *Provider) ValidateCredential(url, credential, zone string) error {
 	}
 
 	cli := clientset.CoreV1().Namespaces()
-	_, err = cli.Get(zone, metav1.GetOptions{})
+	_, err = cli.Get(KubeSystemNamespace, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -550,9 +607,30 @@ func (p *Provider) ValidateCredential(url, credential, zone string) error {
 }
 
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
-	return nil, nil
-}
+	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
+		return clientcmd.Load([]byte(credential))
+	}
 
-func (p *Provider) DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error) {
-	return "", nil
+	config, err := clientcmd.BuildConfigFromKubeconfigGetter("", kubeconfigGetter)
+	if err != nil {
+		return nil, err
+	}
+
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+
+	cli := clientset.CoreV1().Namespaces()
+	out, err := cli.List(metav1.ListOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	namespaces := []string{}
+	for _, ns := range out.Items {
+		namespaces = append(namespaces, ns.Name)
+	}
+
+	return namespaces, nil
 }
