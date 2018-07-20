@@ -31,11 +31,12 @@ import (
 )
 
 type Frame struct {
-	Job            *models.Job
-	ClusterWrapper *models.ClusterWrapper
-	Runtime        *runtimeclient.Runtime
-	Logger         *logger.Logger
-	ImageConfig    *config.ImageConfig
+	Job                     *models.Job
+	ClusterWrapper          *models.ClusterWrapper
+	FrontgateClusterWrapper *models.ClusterWrapper
+	Runtime                 *runtimeclient.Runtime
+	Logger                  *logger.Logger
+	ImageConfig             *config.ImageConfig
 }
 
 func (f *Frame) startConfdServiceLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
@@ -767,18 +768,29 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 	}
 }
 
-func (f *Frame) getUserDataExec(filename, contents, imageUrl string) string {
+func (f *Frame) getUserDataExec(filename, contents, imageUrl, frontgateIp string) string {
 	if pi.Global() == nil {
 		f.Logger.Error("Pi global should be init.")
 		return ""
+	}
+
+	var mirror string
+	if len(frontgateIp) > 0 {
+		mirror = fmt.Sprintf("http://%s:5000", frontgateIp)
+	} else {
+		mirror = "https://registry.docker-cn.com"
 	}
 	exec := fmt.Sprintf(`#!/bin/bash -e
 
 mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
 echo '%s' >> %s
+mkdir -p /etc/docker/
+echo '{
+  "registry-mirrors": ["%s"]
+}' > /etc/docker/daemon.json
 for i in $(seq 1 100); do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 3; done
 /opt/openpitrix/image/install_service.sh %s
-`, contents, f.getConfFile(), imageUrl, filename)
+`, contents, f.getConfFile(), mirror, imageUrl, filename)
 	return base64.StdEncoding.EncodeToString([]byte(exec))
 }
 
@@ -852,6 +864,15 @@ func (f *Frame) setDroneConfigLayer(nodeIds []string, failureAllowed bool) *mode
 
 func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
+	var frontgateIp string
+
+	if f.FrontgateClusterWrapper != nil {
+		for _, frontgateNode := range f.FrontgateClusterWrapper.ClusterNodes {
+			frontgateIp = frontgateNode.PrivateIp
+			break
+		}
+	}
+
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
 		role := clusterNode.Role
@@ -887,9 +908,9 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 		}
 		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
 			frontgate := &Frontgate{f}
-			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.ImageConfig.ImageUrl)
+			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp)
 		} else {
-			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.ImageConfig.ImageUrl)
+			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp)
 		}
 		directive := jsonutil.ToString(instance)
 		runInstanceTask := &models.Task{
@@ -1224,8 +1245,8 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 
 	headTaskLayer.
 		Append(f.createVolumesLayer(nodeIds, false)).        // create volume
-		Append(f.runInstancesLayer(nodeIds, false)).         // run instance and attach volume to instance
 		Append(f.waitFrontgateLayer(false)).                 // wait frontgate cluster to be active
+		Append(f.runInstancesLayer(nodeIds, false)).         // run instance and attach volume to instance
 		Append(f.pingDroneLayer(nodeIds, false)).            // ping drone
 		Append(f.setDroneConfigLayer(nodeIds, false)).       // set drone config
 		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance

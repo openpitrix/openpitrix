@@ -70,12 +70,27 @@ func NewFrameInterface(job *models.Job, logger *logger.Logger, advancedParam ...
 		return nil, err
 	}
 
+	var frontgateClusterWrapper *models.ClusterWrapper
+	if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType {
+		clusterClient, err := clusterclient.NewClient()
+		if err != nil {
+			return nil, err
+		}
+		ctx := clientutil.GetSystemUserContext()
+		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterWrapper.Cluster.FrontgateId})
+		if err != nil {
+			return nil, err
+		}
+		frontgateClusterWrapper = pbClusterWrappers[0]
+	}
+
 	frame := &Frame{
-		Job:            job,
-		ClusterWrapper: clusterWrapper,
-		Runtime:        runtime,
-		Logger:         logger,
-		ImageConfig:    imageConfig,
+		Job:                     job,
+		ClusterWrapper:          clusterWrapper,
+		FrontgateClusterWrapper: frontgateClusterWrapper,
+		Runtime:                 runtime,
+		Logger:                  logger,
+		ImageConfig:             imageConfig,
 	}
 
 	if len(advancedParam) >= 1 {

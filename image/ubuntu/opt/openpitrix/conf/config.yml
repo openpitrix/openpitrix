@@ -1,0 +1,12 @@
+version: 0.1
+log:
+  level: debug
+storage:
+    filesystem:
+        rootdirectory: /var/lib/registry
+http:
+    addr: :5000
+    debug:
+        addr: localhost:5001
+proxy:
+    remoteurl: https://registry.docker-cn.com
