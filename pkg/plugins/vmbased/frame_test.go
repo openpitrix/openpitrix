@@ -25,8 +25,8 @@ func testCreateCluster(t *testing.T, frame *Frame) {
 
 	expectResult := []ActionNum{
 		{ActionCreateVolumes, 5},
-		{ActionRunInstances, 5},
 		{ActionWaitFrontgateAvailable, 1},
+		{ActionRunInstances, 5},
 		{ActionPingDrone, 5},
 		{ActionSetDroneConfig, 5},
 		{ActionFormatAndMountVolume, 5},

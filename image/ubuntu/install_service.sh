@@ -4,11 +4,6 @@ FILE_NAME="$1"
 
 chmod +x opt/openpitrix/sbin/*
 
-mkdir -p /etc/docker/
-echo '{
-  "registry-mirrors": ["https://registry.docker-cn.com"]
-}' > /etc/docker/daemon.json
-
 for i in $(seq 1 100)
 do
   opt/openpitrix/sbin/install_docker.sh && break || sleep 3
@@ -26,9 +21,13 @@ if [ "$FILE_NAME" == "frontgate.conf" ]
 then
   mkdir -p /opt/openpitrix/etcd
   cp opt/openpitrix/sbin/start_etcd.sh /opt/openpitrix/sbin/
-
   cp opt/openpitrix/conf/etcd.service /lib/systemd/system/etcd.service
   systemctl enable etcd.service && systemctl start etcd.service
+
+  cp opt/openpitrix/sbin/start_registry.sh /opt/openpitrix/sbin/
+  cp opt/openpitrix/conf/config.yml /opt/openpitrix/conf/config.yml
+  cp opt/openpitrix/conf/registry.service /lib/systemd/system/registry.service
+  systemctl enable registry.service && systemctl start registry.service
 fi
 
 systemctl enable default.service && systemctl start default.service

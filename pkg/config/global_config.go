@@ -28,8 +28,9 @@ type RepoServiceConfig struct {
 }
 
 type ClusterServiceConfig struct {
-	Plugins       []string `json:"plugins"`
-	FrontgateConf string   `json:"frontgate_conf"`
+	Plugins             []string `json:"plugins"`
+	FrontgateConf       string   `json:"frontgate_conf"`
+	FrontgateAutoDelete bool     `json:"frontgate_auto_delete"`
 }
 
 type PilotServiceConfig struct {
@@ -42,6 +43,14 @@ type ImageConfig struct {
 	ImageId   string `json:"image_id"`
 	ImageUrl  string `json:"image_url"`
 	ImageName string `json:"image_name"`
+}
+
+func (g *GlobalConfig) GetFrontgateAutoDelete() bool {
+	if g.Cluster.FrontgateAutoDelete == false {
+		return false
+	} else {
+		return true
+	}
 }
 
 func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageConfig, error) {
