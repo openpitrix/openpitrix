@@ -95,6 +95,10 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(
 		return nil, nil, err
 	}
 
+	if len(out) == 0 {
+		return nil, nil, fmt.Errorf("this chart has no resources defined")
+	}
+
 	var apiVersions []string
 	decode := legacyscheme.Codecs.UniversalDeserializer().Decode
 
