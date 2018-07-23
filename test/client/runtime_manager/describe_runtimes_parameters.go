@@ -71,6 +71,8 @@ type DescribeRuntimesParams struct {
 	Offset *int64
 	/*Owner*/
 	Owner []string
+	/*Provider*/
+	Provider []string
 	/*RuntimeID*/
 	RuntimeID []string
 	/*SearchWord*/
@@ -158,6 +160,17 @@ func (o *DescribeRuntimesParams) WithOwner(owner []string) *DescribeRuntimesPara
 // SetOwner adds the owner to the describe runtimes params
 func (o *DescribeRuntimesParams) SetOwner(owner []string) {
 	o.Owner = owner
+}
+
+// WithProvider adds the provider to the describe runtimes params
+func (o *DescribeRuntimesParams) WithProvider(provider []string) *DescribeRuntimesParams {
+	o.SetProvider(provider)
+	return o
+}
+
+// SetProvider adds the provider to the describe runtimes params
+func (o *DescribeRuntimesParams) SetProvider(provider []string) {
+	o.Provider = provider
 }
 
 // WithRuntimeID adds the runtimeID to the describe runtimes params
@@ -254,6 +267,14 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
 	// query array param owner
 	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
+	}
+
+	valuesProvider := o.Provider
+
+	joinedProvider := swag.JoinByFormat(valuesProvider, "multi")
+	// query array param provider
+	if err := r.SetQueryParam("provider", joinedProvider...); err != nil {
 		return err
 	}
 

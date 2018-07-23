@@ -1891,6 +1891,16 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "search_word",
             "in": "query",
             "required": false,

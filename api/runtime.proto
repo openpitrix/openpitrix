@@ -59,11 +59,12 @@ message CreateRuntimeResponse {
 message DescribeRuntimesRequest {
 	repeated string runtime_id = 1;
 	repeated string status = 2;
-	google.protobuf.StringValue search_word = 3;
-	google.protobuf.StringValue label = 4;
-	repeated string owner = 5;
-	uint32 limit = 6;
-	uint32 offset = 7;
+	repeated string provider = 3;
+	google.protobuf.StringValue search_word = 4;
+	google.protobuf.StringValue label = 5;
+	repeated string owner = 6;
+	uint32 limit = 7;
+	uint32 offset = 8;
 }
 
 message DescribeRuntimesResponse {
