@@ -539,6 +539,9 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+		if clusterNode.VolumeId == "" {
+			continue
+		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
 			Zone:       f.ClusterWrapper.Cluster.Zone,
@@ -595,24 +598,35 @@ func (f *Frame) formatAndMountVolumeLayer(nodeIds []string, failureAllowed bool)
 
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
-		// cmd will be assigned when the task is handling
-		meta := &models.Meta{
-			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
-			Timeout:     TimeoutFormatAndMountVolume,
-			NodeId:      clusterNode.NodeId,
-			DroneIp:     clusterNode.PrivateIp,
+		role := clusterNode.Role
+		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
+		if !exist {
+			f.Logger.Error("No such role [%s] in cluster role [%s]. ",
+				role, f.ClusterWrapper.Cluster.ClusterId)
+			return nil
 		}
-		directive := jsonutil.ToString(meta)
-		formatVolumeTask := &models.Task{
-			JobId:          f.Job.JobId,
-			Owner:          f.Job.Owner,
-			TaskAction:     ActionFormatAndMountVolume,
-			Target:         constants.TargetPilot,
-			NodeId:         nodeId,
-			Directive:      directive,
-			FailureAllowed: failureAllowed,
+
+		size := clusterRole.StorageSize
+		if size > 0 {
+			// cmd will be assigned when the task is handling
+			meta := &models.Meta{
+				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+				Timeout:     TimeoutFormatAndMountVolume,
+				NodeId:      clusterNode.NodeId,
+				DroneIp:     clusterNode.PrivateIp,
+			}
+			directive := jsonutil.ToString(meta)
+			formatVolumeTask := &models.Task{
+				JobId:          f.Job.JobId,
+				Owner:          f.Job.Owner,
+				TaskAction:     ActionFormatAndMountVolume,
+				Target:         constants.TargetPilot,
+				NodeId:         nodeId,
+				Directive:      directive,
+				FailureAllowed: failureAllowed,
+			}
+			taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 		}
-		taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 	}
 	if len(taskLayer.Tasks) > 0 {
 		return taskLayer
@@ -625,28 +639,39 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 	taskLayer := new(models.TaskLayer)
 
 	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
-		ip := clusterNode.PrivateIp
-		cmd := fmt.Sprintf("%s \"docker rm -f default\"", HostCmdPrefix)
-		request := &pbtypes.RunCommandOnDroneRequest{
-			Endpoint: &pbtypes.DroneEndpoint{
-				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
-				DroneIp:     ip,
-				DronePort:   constants.DroneServicePort,
-			},
-			Command:        cmd,
-			TimeoutSeconds: TimeoutRemoveContainer,
+		role := clusterNode.Role
+		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
+		if !exist {
+			f.Logger.Error("No such role [%s] in cluster role [%s]. ",
+				role, f.ClusterWrapper.Cluster.ClusterId)
+			return nil
 		}
-		directive := jsonutil.ToString(request)
-		formatVolumeTask := &models.Task{
-			JobId:          f.Job.JobId,
-			Owner:          f.Job.Owner,
-			TaskAction:     ActionRemoveContainerOnDrone,
-			Target:         constants.TargetPilot,
-			NodeId:         nodeId,
-			Directive:      directive,
-			FailureAllowed: failureAllowed,
+
+		size := clusterRole.StorageSize
+		if size > 0 {
+			ip := clusterNode.PrivateIp
+			cmd := fmt.Sprintf("%s \"docker rm -f default\"", HostCmdPrefix)
+			request := &pbtypes.RunCommandOnDroneRequest{
+				Endpoint: &pbtypes.DroneEndpoint{
+					FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+					DroneIp:     ip,
+					DronePort:   constants.DroneServicePort,
+				},
+				Command:        cmd,
+				TimeoutSeconds: TimeoutRemoveContainer,
+			}
+			directive := jsonutil.ToString(request)
+			formatVolumeTask := &models.Task{
+				JobId:          f.Job.JobId,
+				Owner:          f.Job.Owner,
+				TaskAction:     ActionRemoveContainerOnDrone,
+				Target:         constants.TargetPilot,
+				NodeId:         nodeId,
+				Directive:      directive,
+				FailureAllowed: failureAllowed,
+			}
+			taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 		}
-		taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 	}
 	if len(taskLayer.Tasks) > 0 {
 		return taskLayer
@@ -721,6 +746,9 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		if clusterNode.VolumeId == "" {
+			continue
+		}
 		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
 		cmd := UmountVolumeCmd(clusterRole.MountPoint)
 		ip := clusterNode.PrivateIp
