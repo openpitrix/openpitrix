@@ -173,6 +173,12 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 	if c.Metadata == nil {
 		return c, fmt.Errorf("missing file [%s]", PackageJson)
 	}
+	if c.ClusterConfTemplate == nil {
+		return c, fmt.Errorf("missing file [%s]", ClusterJsonTmpl)
+	}
+	if c.ConfigTemplate == nil {
+		return c, fmt.Errorf("missing file [%s]", ConfigJson)
+	}
 	if c.Metadata.Name == "" {
 		return c, fmt.Errorf("failed to load [%s]: name must not be empty", PackageJson)
 	}
