@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/libconfd"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/drone"
@@ -146,6 +147,10 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 					status, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
 					if err != nil {
 						logger.Warn("%+v", err)
+						p.fg.ReportSubTaskStatus(&pbtypes.SubTaskStatus{
+							TaskId: status.SubtaskId,
+							Status: constants.StatusFailed,
+						})
 					} else {
 						p.fg.ReportSubTaskStatus(&pbtypes.SubTaskStatus{
 							TaskId: status.SubtaskId,
@@ -165,6 +170,10 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 					status, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
 					if err != nil {
 						logger.Warn("%+v", err)
+						p.fg.ReportSubTaskStatus(&pbtypes.SubTaskStatus{
+							TaskId: status.SubtaskId,
+							Status: constants.StatusFailed,
+						})
 					} else {
 						p.fg.ReportSubTaskStatus(&pbtypes.SubTaskStatus{
 							TaskId: status.SubtaskId,

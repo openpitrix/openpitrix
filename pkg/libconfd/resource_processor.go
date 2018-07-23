@@ -386,7 +386,7 @@ func (_ *TemplateResourceProcessor) runCommand(cmd string) error {
 
 	output, err := c.CombinedOutput()
 	if err != nil {
-		GetLogger().Errorf("%q", string(output))
+		GetLogger().Errorf("%v, output: %q", err, string(output))
 		return err
 	}
 
