@@ -11,6 +11,7 @@ import (
 
 	"github.com/golang/protobuf/proto"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/frontgate"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
@@ -386,11 +387,22 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		x.Action = msg.Action
 		x.TaskId = msg.TaskId
 
-		return p.StartConfd(ctx, &pbtypes.DroneEndpoint{
+		reply, err := p.StartConfd(ctx, &pbtypes.DroneEndpoint{
 			FrontgateId: x.FrontgateId,
 			DroneIp:     x.DroneIp,
 			DronePort:   9112,
 		})
+		if err != nil {
+			p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+				TaskId: x.TaskId,
+				Status: constants.StatusFailed,
+			})
+			return nil, err
+		}
+
+		// start confd is async task,
+		// the drone service should report the task status
+		return reply, nil
 
 	case pbtypes.SubTaskAction_StopConfd.String():
 		var x pbtypes.SubTask_StopConfd
@@ -403,11 +415,25 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		x.Action = msg.Action
 		x.TaskId = msg.TaskId
 
-		return p.StopConfd(ctx, &pbtypes.DroneEndpoint{
+		reply, err := p.StopConfd(ctx, &pbtypes.DroneEndpoint{
 			FrontgateId: x.FrontgateId,
 			DroneIp:     x.DroneIp,
 			DronePort:   9112,
 		})
+
+		if err != nil {
+			p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+				TaskId: x.TaskId,
+				Status: constants.StatusFailed,
+			})
+			return nil, err
+		}
+
+		p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+			TaskId: x.TaskId,
+			Status: constants.StatusSuccessful,
+		})
+		return reply, nil
 
 	case pbtypes.SubTaskAction_RegisterMetadata.String():
 
@@ -421,7 +447,21 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		x.Action = msg.Action
 		x.TaskId = msg.TaskId
 
-		return p.RegisterMetadata(ctx, &x)
+		reply, err := p.RegisterMetadata(ctx, &x)
+
+		if err != nil {
+			p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+				TaskId: x.TaskId,
+				Status: constants.StatusFailed,
+			})
+			return nil, err
+		}
+
+		p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+			TaskId: x.TaskId,
+			Status: constants.StatusSuccessful,
+		})
+		return reply, nil
 
 	case pbtypes.SubTaskAction_DeregisterMetadata.String():
 
@@ -435,7 +475,21 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		x.Action = msg.Action
 		x.TaskId = msg.TaskId
 
-		return p.DeregisterMetadata(ctx, &x)
+		reply, err := p.DeregisterMetadata(ctx, &x)
+
+		if err != nil {
+			p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+				TaskId: x.TaskId,
+				Status: constants.StatusFailed,
+			})
+			return nil, err
+		}
+
+		p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+			TaskId: x.TaskId,
+			Status: constants.StatusSuccessful,
+		})
+		return reply, nil
 
 	case pbtypes.SubTaskAction_RegisterCmd.String():
 
@@ -449,7 +503,21 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		x.Action = msg.Action
 		x.TaskId = msg.TaskId
 
-		return p.RegisterCmd(ctx, &x)
+		reply, err := p.RegisterCmd(ctx, &x)
+
+		if err != nil {
+			p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+				TaskId: x.TaskId,
+				Status: constants.StatusFailed,
+			})
+			return nil, err
+		}
+
+		p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+			TaskId: x.TaskId,
+			Status: constants.StatusSuccessful,
+		})
+		return reply, nil
 
 	case pbtypes.SubTaskAction_DeregisterCmd.String():
 
@@ -463,7 +531,20 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		x.Action = msg.Action
 		x.TaskId = msg.TaskId
 
-		return p.DeregisterCmd(ctx, &x)
+		reply, err := p.DeregisterCmd(ctx, &x)
+		if err != nil {
+			p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+				TaskId: x.TaskId,
+				Status: constants.StatusFailed,
+			})
+			return nil, err
+		}
+
+		p.taskStatusMgr.PutStatus(pbtypes.SubTaskStatus{
+			TaskId: x.TaskId,
+			Status: constants.StatusSuccessful,
+		})
+		return reply, nil
 
 	case pbtypes.SubTaskAction_GetTaskStatus.String():
 
