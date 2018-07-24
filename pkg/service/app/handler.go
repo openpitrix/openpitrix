@@ -66,6 +66,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 		subqueryStmt := p.Db.
 			Select(models.ColumnResouceId).
 			From(models.CategoryResourceTableName).
+			Where(db.Eq(models.ColumnStatus, constants.StatusEnabled)).
 			Where(db.Eq(models.ColumnCategoryId, categoryIds))
 		query = query.Where(db.Eq(models.ColumnAppId, []*db.SelectQuery{subqueryStmt}))
 	}
@@ -160,13 +161,15 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 
-	err = categoryutil.SyncResourceCategories(
-		p.Db,
-		appId,
-		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
-	)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+	if req.GetCategoryId() != nil {
+		err = categoryutil.SyncResourceCategories(
+			p.Db,
+			appId,
+			categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
+		)
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		}
 	}
 
 	res := &pb.ModifyAppResponse{

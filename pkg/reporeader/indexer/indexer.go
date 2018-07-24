@@ -8,6 +8,7 @@ import (
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -104,6 +105,9 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 			disabledCategoryIds = append(disabledCategoryIds, c.CategoryId.GetValue())
 		}
 	}
+	if len(enabledCategoryIds) == 0 {
+		enabledCategoryIds = append(enabledCategoryIds, models.UncategorizedId)
+	}
 
 	if res.TotalCount == 0 {
 		createReq := pb.CreateAppRequest{}
@@ -126,10 +130,12 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		return appId, err
 	} else {
 		app := res.AppSet[0]
-		var categoryIds []string
+		var categoryIds = enabledCategoryIds
 		for _, c := range app.GetCategorySet() {
 			categoryId := c.GetCategoryId().GetValue()
-			// app follow repo's categories: if repo disable some categories, app MUST disable it
+			// app follow repo's categories:
+			// if repo *disable* some categories, app MUST *disable* it
+			// if repo *enable*  some categories, app MUST *enable*  it
 			if c.GetStatus().GetValue() == constants.StatusEnabled {
 				if !stringutil.StringIn(categoryId, disabledCategoryIds) {
 					categoryIds = append(categoryIds, categoryId)

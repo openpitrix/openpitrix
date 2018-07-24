@@ -17,12 +17,15 @@ import (
 
 func DecodeCategoryIds(s string) []string {
 	if len(s) == 0 {
-		return []string{}
+		return []string{models.UncategorizedId}
 	}
 	return strings.Split(s, ",")
 }
 
 func SyncResourceCategories(d *db.Database, appId string, categoryIds []string) error {
+	if len(categoryIds) == 0 {
+		categoryIds = append(categoryIds, models.UncategorizedId)
+	}
 	var existCategoryIds []string
 	_, err := d.
 		Select(models.ColumnCategoryId).

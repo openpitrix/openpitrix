@@ -51,6 +51,7 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		subqueryStmt := p.Db.
 			Select(models.ColumnResouceId).
 			From(models.CategoryResourceTableName).
+			Where(db.Eq(models.ColumnStatus, constants.StatusEnabled)).
 			Where(db.Eq(models.ColumnCategoryId, categoryIds))
 		query = query.Where(db.Eq(models.WithPrefix(
 			models.RepoTableName,
@@ -142,11 +143,11 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		}
 	}
 
-	categoryIds := categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue())
-	if len(req.GetCategoryId().GetValue()) == 0 {
-		categoryIds = []string{models.UncategorizedId}
-	}
-	err = categoryutil.SyncResourceCategories(p.Db, newRepo.RepoId, categoryIds)
+	err = categoryutil.SyncResourceCategories(
+		p.Db,
+		newRepo.RepoId,
+		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
+	)
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
@@ -244,13 +245,15 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
-	err = categoryutil.SyncResourceCategories(
-		p.Db,
-		repoId,
-		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
-	)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	if req.GetCategoryId() != nil {
+		err = categoryutil.SyncResourceCategories(
+			p.Db,
+			repoId,
+			categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
+		)
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		}
 	}
 
 	res := &pb.ModifyRepoResponse{
