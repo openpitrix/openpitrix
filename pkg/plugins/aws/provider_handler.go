@@ -479,16 +479,18 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) waitInstanceVolumeAndNetwork(instanceService *ec2.EC2, task *models.Task, instanceId, volumeId string, timeout time.Duration, waitInterval time.Duration) (ins *ec2.Instance, err error) {
 	p.Logger.Debug("Waiting for volume [%s] attached to Instance [%s]", volumeId, instanceId)
-	err = p.AttachVolumes(task)
-	if err != nil {
-		p.Logger.Debug("Attach volume [%s] to Instance [%s] failed: %+v", volumeId, instanceId, err)
-		return nil, err
-	}
+	if volumeId != "" {
+		err = p.AttachVolumes(task)
+		if err != nil {
+			p.Logger.Debug("Attach volume [%s] to Instance [%s] failed: %+v", volumeId, instanceId, err)
+			return nil, err
+		}
 
-	err = p.WaitAttachVolumes(task)
-	if err != nil {
-		p.Logger.Debug("Waiting for volume [%s] attached to Instance [%s] failed: %+v", volumeId, instanceId, err)
-		return nil, err
+		err = p.WaitAttachVolumes(task)
+		if err != nil {
+			p.Logger.Debug("Waiting for volume [%s] attached to Instance [%s] failed: %+v", volumeId, instanceId, err)
+			return nil, err
+		}
 	}
 
 	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
