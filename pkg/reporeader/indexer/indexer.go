@@ -60,6 +60,7 @@ type appInterface interface {
 	GetSources() []string
 	GetKeywords() []string
 	GetMaintainers() string
+	GetScreenshots() string
 }
 type versionInterface interface {
 	GetVersion() string
@@ -93,6 +94,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	sources := pbutil.ToProtoString(strings.Join(app.GetSources(), ","))
 	keywords := pbutil.ToProtoString(strings.Join(app.GetKeywords(), ","))
 	maintainers := pbutil.ToProtoString(app.GetMaintainers())
+	screenshots := pbutil.ToProtoString(app.GetScreenshots())
 
 	var enabledCategoryIds []string
 	var disabledCategoryIds []string
@@ -120,6 +122,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		createReq.Sources = sources
 		createReq.Keywords = keywords
 		createReq.Maintainers = maintainers
+		createReq.Screenshots = screenshots
 		createReq.CategoryId = pbutil.ToProtoString(strings.Join(enabledCategoryIds, ","))
 
 		createRes, err := appManagerClient.CreateApp(ctx, &createReq)
@@ -153,6 +156,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		modifyReq.Sources = sources
 		modifyReq.Keywords = keywords
 		modifyReq.Maintainers = maintainers
+		modifyReq.Screenshots = screenshots
 		modifyReq.CategoryId = pbutil.ToProtoString(strings.Join(categoryIds, ","))
 
 		modifyRes, err := appManagerClient.ModifyApp(ctx, &modifyReq)

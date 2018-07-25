@@ -37,6 +37,9 @@ func (h helmVersionWrapper) GetKeywords() []string  { return h.ChartVersion.GetK
 func (h helmVersionWrapper) GetMaintainers() string {
 	return jsonutil.ToString(h.ChartVersion.GetMaintainers())
 }
+func (h helmVersionWrapper) GetScreenshots() string {
+	return ""
+}
 
 func (i *helmIndexer) IndexRepo() error {
 	indexFile, err := i.getIndexFile()
