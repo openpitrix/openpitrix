@@ -1,16 +1,8 @@
 #!/bin/bash -e
 
-echo y | sudo apt update
-echo y | sudo apt install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-echo y | sudo apt-key fingerprint 0EBFCD88
-echo y | sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
-echo y | sudo apt update
-echo y | sudo apt install docker-ce
+rm -rf /opt/*.deb
+wget -P /opt https://openpitrix.pek3a.qingstor.com/image/docker-ce_18.06.0_ce_3-0_ubuntu_amd64.deb
+wget -P /opt https://openpitrix.pek3a.qingstor.com/image/libltdl7_2.4.6-0.1_amd64.deb
+
+sudo dpkg -i /opt/libltdl7_2.4.6-0.1_amd64.deb
+sudo dpkg -i /opt/docker-ce_18.06.0_ce_3-0_ubuntu_amd64.deb
