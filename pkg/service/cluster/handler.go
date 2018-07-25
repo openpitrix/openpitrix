@@ -415,7 +415,7 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 
 	var jobIds []string
 	for clusterId, nodeIds := range clusterNodeIds {
-		cluster, err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
+		cluster, err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive, constants.StatusPending})
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
 		}
@@ -508,7 +508,7 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 
 	var jobIds []string
 	for clusterId, nodeIds := range clusterNodeIds {
-		cluster, err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
+		cluster, err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive, constants.StatusPending})
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 		}
