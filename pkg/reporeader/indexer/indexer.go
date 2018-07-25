@@ -133,7 +133,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		return appId, err
 	} else {
 		app := res.AppSet[0]
-		var categoryIds = enabledCategoryIds
+		var categoryMap = make(map[string]bool)
 		for _, c := range app.GetCategorySet() {
 			categoryId := c.GetCategoryId().GetValue()
 			// app follow repo's categories:
@@ -141,9 +141,19 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 			// if repo *enable*  some categories, app MUST *enable*  it
 			if c.GetStatus().GetValue() == constants.StatusEnabled {
 				if !stringutil.StringIn(categoryId, disabledCategoryIds) {
-					categoryIds = append(categoryIds, categoryId)
+					categoryMap[categoryId] = true
 				}
 			}
+		}
+		for _, c := range enabledCategoryIds {
+			categoryMap[c] = true
+		}
+		var categoryIds []string
+		for c := range categoryMap {
+			if c == models.UncategorizedId && len(categoryMap) > 1 {
+				continue
+			}
+			categoryIds = append(categoryIds, c)
 		}
 
 		modifyReq := pb.ModifyAppRequest{}
