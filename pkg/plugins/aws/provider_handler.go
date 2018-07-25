@@ -134,6 +134,8 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 		return fmt.Errorf("send RunInstances to %s failed with 0 output instances", MyProvider)
 	}
 
+	p.Logger.Debug("RunInstances get output: %s", jsonutil.ToString(output))
+
 	instance.InstanceId = aws.StringValue(output.Instances[0].InstanceId)
 
 	// write back
