@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/ghodss/yaml"
@@ -36,6 +37,10 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
+)
+
+var (
+	ClusterNameRegExp = regexp.MustCompile(`[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*`)
 )
 
 type Provider struct {
@@ -103,6 +108,10 @@ func (p *Provider) getHelmClient(runtimeId string) (helmClient *helm.Client, err
 func (p *Provider) checkClusterNameIsUniqueInRuntime(clusterName, runtimeId string) (err error) {
 	if clusterName == "" {
 		return fmt.Errorf("cluster name must be provided")
+	}
+
+	if !ClusterNameRegExp.MatchString(clusterName) {
+		return fmt.Errorf(`cluster name must match with regexp "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"`)
 	}
 
 	hc, err := p.getHelmClient(runtimeId)
