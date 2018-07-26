@@ -31,6 +31,7 @@ import (
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -70,6 +71,7 @@ func (p *Parser) ParseCluster(name string, description string, versionId string)
 		Description: description,
 		AppId:       appVersion.AppId.GetValue(),
 		VersionId:   versionId,
+		Status:      constants.StatusPending,
 		CreateTime:  time.Now(),
 		StatusTime:  time.Now(),
 	}
@@ -412,9 +414,6 @@ func (p *Parser) ParseCustomValues(conf []byte) (map[string]interface{}, string,
 		return nil, "", "", fmt.Errorf("config [Name] is missing")
 	}
 	desc, _ := p.getStringFromValues(customVals, "Description")
-
-	delete(customVals, "Name")
-	delete(customVals, "Description")
 
 	return customVals, name, desc, nil
 }
