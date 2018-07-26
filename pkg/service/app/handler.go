@@ -366,14 +366,22 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 		LastTwoWeekCreated: make(map[string]uint32),
 		TopTenRepos:        make(map[string]uint32),
 	}
-	appCount, err := p.Db.Select(models.ColumnAppId).From(models.AppTableName).Count()
+	appCount, err := p.Db.
+		Select(models.ColumnAppId).
+		From(models.AppTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Count()
 	if err != nil {
 		logger.Error("Failed to get app count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res.AppCount = appCount
 
-	err = p.Db.Select("COUNT(DISTINCT repo_id)").From(models.AppTableName).LoadOne(&res.RepoCount)
+	err = p.Db.
+		Select("COUNT(DISTINCT repo_id)").
+		From(models.AppTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		LoadOne(&res.RepoCount)
 	if err != nil {
 		logger.Error("Failed to get repo count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -400,6 +408,7 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 	_, err = p.Db.
 		Select("repo_id", "COUNT(app_id)").
 		From(models.AppTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		GroupBy(models.ColumnRepoId).
 		OrderDir("COUNT(app_id)", false).
 		Limit(10).Load(&rs)

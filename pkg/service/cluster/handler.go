@@ -1423,7 +1423,11 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 		LastTwoWeekCreated: make(map[string]uint32),
 		TopTenRuntimes:     make(map[string]uint32),
 	}
-	clusterCount, err := pi.Global().Db.Select(models.ColumnClusterId).From(models.ClusterTableName).Count()
+	clusterCount, err := pi.Global().Db.
+		Select(models.ColumnClusterId).
+		From(models.ClusterTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Count()
 	if err != nil {
 		logger.Error("Failed to get cluster count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -1433,6 +1437,7 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 	err = pi.Global().Db.
 		Select("COUNT(DISTINCT runtime_id)").
 		From(models.ClusterTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		LoadOne(&res.RuntimeCount)
 	if err != nil {
 		logger.Error("Failed to get runtime count, error: %+v", err)
@@ -1460,6 +1465,7 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 	_, err = pi.Global().Db.
 		Select("runtime_id", "COUNT(cluster_id)").
 		From(models.ClusterTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		GroupBy(models.ColumnRuntimeId).
 		OrderDir("COUNT(cluster_id)", false).
 		Limit(10).Load(&rs)

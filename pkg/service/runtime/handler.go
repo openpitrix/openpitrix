@@ -260,14 +260,22 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 		LastTwoWeekCreated: make(map[string]uint32),
 		TopTenProviders:    make(map[string]uint32),
 	}
-	runtimeCount, err := p.Db.Select(models.ColumnRuntimeId).From(models.RuntimeTableName).Count()
+	runtimeCount, err := p.Db.
+		Select(models.ColumnRuntimeId).
+		From(models.RuntimeTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Count()
 	if err != nil {
 		logger.Error("Failed to get runtime count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res.RuntimeCount = runtimeCount
 
-	err = p.Db.Select("COUNT(DISTINCT provider)").From(models.RuntimeTableName).LoadOne(&res.ProviderCount)
+	err = p.Db.
+		Select("COUNT(DISTINCT provider)").
+		From(models.RuntimeTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		LoadOne(&res.ProviderCount)
 	if err != nil {
 		logger.Error("Failed to get provider count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -294,6 +302,7 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 	_, err = p.Db.
 		Select("provider", "COUNT(runtime_id)").
 		From(models.RuntimeTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		GroupBy(models.ColumnProvider).
 		OrderDir("COUNT(runtime_id)", false).
 		Limit(10).Load(&ps)
