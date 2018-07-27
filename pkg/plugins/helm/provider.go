@@ -41,6 +41,7 @@ import (
 
 var (
 	ClusterNameRegExp = regexp.MustCompile(`[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*`)
+	NamespaceRegExp   = regexp.MustCompile(`[a-z0-9]([-a-z0-9]*[a-z0-9])?`)
 )
 
 type Provider struct {
@@ -592,6 +593,10 @@ func getLabelString(m map[string]string) string {
 }
 
 func (p *Provider) ValidateCredential(url, credential, zone string) error {
+	if !NamespaceRegExp.MatchString(zone) {
+		return fmt.Errorf(`namespace must match with regexp "[a-z0-9]([-a-z0-9]*[a-z0-9])?"`)
+	}
+
 	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
 		return clientcmd.Load([]byte(credential))
 	}
