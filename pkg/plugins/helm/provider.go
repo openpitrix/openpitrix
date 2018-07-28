@@ -9,11 +9,14 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/ghodss/yaml"
 	"google.golang.org/grpc/transport"
+	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -452,20 +455,8 @@ func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 	return nil, nil
 }
 
-func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, clusterName, owner string) ([]*pb.ClusterNode, error) {
-	kubeClient, _, err := p.getKubeClient(runtimeId)
-	if err != nil {
-		return nil, err
-	}
-
-	podsClient := kubeClient.CoreV1().Pods(namespace)
-	list, err := podsClient.List(metav1.ListOptions{LabelSelector: fmt.Sprintf("release=%s", clusterName)})
-	if err != nil {
-		return nil, err
-	}
-
-	var pbClusterNodes []*pb.ClusterNode
-	for _, pod := range list.Items {
+func (p *Provider) appendKubePodsToClusterNodes(pbClusterNodes []*pb.ClusterNode, pods *v1.PodList, clusterId, owner string) {
+	for _, pod := range pods.Items {
 
 		clusterNode := &models.ClusterNode{
 			ClusterId:  clusterId,
@@ -486,6 +477,60 @@ func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, cl
 
 		pbClusterNode := models.ClusterNodeToPb(clusterNode)
 		pbClusterNodes = append(pbClusterNodes, pbClusterNode)
+	}
+}
+
+func (p *Provider) getKubePodsAsClusterNodes(runtimeId, namespace, clusterId, owner string, clusterRoles map[string]*models.ClusterRole) ([]*pb.ClusterNode, error) {
+	kubeClient, _, err := p.getKubeClient(runtimeId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pbClusterNodes []*pb.ClusterNode
+	for _, clusterRole := range clusterRoles {
+		if strings.HasSuffix(clusterRole.Role, DeploymentFlag) {
+			deploymentName := strings.TrimSuffix(clusterRole.Role, DeploymentFlag)
+			deployment, err := kubeClient.AppsV1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+
+			p.appendKubePodsToClusterNodes(pbClusterNodes, pods, clusterId, owner)
+		} else if strings.HasSuffix(clusterRole.Role, StatefulSetFlag) {
+			statefulSetName := strings.TrimSuffix(clusterRole.Role, StatefulSetFlag)
+			statefulSet, err := kubeClient.AppsV1().StatefulSets(namespace).Get(statefulSetName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			labelSelector := labels.Set(statefulSet.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+
+			p.appendKubePodsToClusterNodes(pbClusterNodes, pods, clusterId, owner)
+		} else if strings.HasSuffix(clusterRole.Role, DaemonSetFlag) {
+			daemonSetName := strings.TrimSuffix(clusterRole.Role, DaemonSetFlag)
+			daemonSet, err := kubeClient.AppsV1().DaemonSets(namespace).Get(daemonSetName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			labelSelector := labels.Set(daemonSet.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+
+			p.appendKubePodsToClusterNodes(pbClusterNodes, pods, clusterId, owner)
+		}
 	}
 
 	return pbClusterNodes, nil
@@ -526,7 +571,6 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 		return err
 	}
 
-	clusterName := clusterWrapper.Cluster.Name
 	runtimeId := clusterWrapper.Cluster.RuntimeId
 
 	runtime, err := runtimeclient.NewRuntime(runtimeId)
@@ -535,7 +579,7 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	}
 	namespace := runtime.Zone
 
-	pbClusterNodes, err := p.getKubePodsAsClusterNodes(runtimeId, namespace, job.ClusterId, clusterName, job.Owner)
+	pbClusterNodes, err := p.getKubePodsAsClusterNodes(runtimeId, namespace, job.ClusterId, job.Owner, clusterWrapper.ClusterRoles)
 	if err != nil {
 		p.Logger.Error("Get kubernetes pods failed, %+v", err)
 		return err
