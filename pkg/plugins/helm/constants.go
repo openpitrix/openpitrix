@@ -6,4 +6,8 @@ package helm
 
 const (
 	KubeSystemNamespace = "kube-system"
+
+	DeploymentFlag  = "-Deployment"
+	StatefulSetFlag = "-StatefulSet"
+	DaemonSetFlag   = "-DaemonSet"
 )
