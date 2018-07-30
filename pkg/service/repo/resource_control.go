@@ -104,6 +104,16 @@ func (p *Server) modifyLabels(repoId string, labels []*pb.RepoLabel) error {
 	currentLabels := labelsMap[repoId]
 	currentLabelsLength := len(currentLabels)
 	labelsLength := len(labels)
+	firstLabel := labels[0]
+	if labelsLength == 1 &&
+		firstLabel.GetLabelValue().GetValue() == "" &&
+		firstLabel.GetLabelKey().GetValue() == "" {
+		_, err = p.Db.
+			DeleteFrom(models.RepoLabelTableName).
+			Where(db.Eq(models.ColumnRepoId, repoId)).
+			Exec()
+		return err
+	}
 	// create new labels
 	if labelsLength > currentLabelsLength {
 		err = p.createLabels(repoId, labels[currentLabelsLength:])
@@ -159,6 +169,16 @@ func (p *Server) modifySelectors(repoId string, selectors []*pb.RepoSelector) er
 	currentSelectors := selectorsMap[repoId]
 	currentSelectorsLength := len(currentSelectors)
 	selectorsLength := len(selectors)
+	firstSelector := selectors[0]
+	if selectorsLength == 1 &&
+		firstSelector.GetSelectorValue().GetValue() == "" &&
+		firstSelector.GetSelectorKey().GetValue() == "" {
+		_, err = p.Db.
+			DeleteFrom(models.RepoSelectorTableName).
+			Where(db.Eq(models.ColumnRepoId, repoId)).
+			Exec()
+		return err
+	}
 	// create new selectors
 	if selectorsLength > currentSelectorsLength {
 		err = p.createSelectors(repoId, selectors[currentSelectorsLength:])
