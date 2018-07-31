@@ -28,6 +28,9 @@ type OpenpitrixKeyPair struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// node id
+	NodeID []string `json:"node_id"`
+
 	// owner
 	Owner string `json:"owner,omitempty"`
 
@@ -42,9 +45,23 @@ type OpenpitrixKeyPair struct {
 func (m *OpenpitrixKeyPair) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateNodeID(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixKeyPair) validateNodeID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.NodeID) { // not required
+		return nil
+	}
+
 	return nil
 }
 

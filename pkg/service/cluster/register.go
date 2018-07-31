@@ -53,18 +53,18 @@ func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
 	}
 
 	// register cluster node
-	newClusterNodes := make(map[string]*models.ClusterNode)
-	for _, clusterNode := range clusterWrapper.ClusterNodes {
-		clusterNode.ClusterId = clusterId
-		clusterNode.Owner = owner
-		err := RegisterClusterNode(clusterNode)
+	newClusterNodes := make(map[string]*models.ClusterNodeWithKeyPairs)
+	for _, clusterNodeWithKeyPairs := range clusterWrapper.ClusterNodesWithKeyPairs {
+		clusterNodeWithKeyPairs.ClusterId = clusterId
+		clusterNodeWithKeyPairs.Owner = owner
+		err := RegisterClusterNode(clusterNodeWithKeyPairs.ClusterNode)
 		if err != nil {
 			return err
 		}
-		newClusterNodes[clusterNode.NodeId] = clusterNode
+		newClusterNodes[clusterNodeWithKeyPairs.NodeId] = clusterNodeWithKeyPairs
 	}
 
-	clusterWrapper.ClusterNodes = newClusterNodes
+	clusterWrapper.ClusterNodesWithKeyPairs = newClusterNodes
 
 	// register cluster common
 	for _, clusterCommon := range clusterWrapper.ClusterCommons {

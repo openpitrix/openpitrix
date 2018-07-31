@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
@@ -140,7 +141,7 @@ func (p *Processor) Post() error {
 			}
 			clusterWrapper := clusterWrappers[0]
 			var deleteNodeIds []string
-			for _, clusterNode := range clusterWrapper.ClusterNodes {
+			for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
 				if clusterNode.Status == constants.StatusPending && clusterNode.TransitionStatus == "" {
 					deleteNodeIds = append(deleteNodeIds, clusterNode.NodeId)
 				}
@@ -204,15 +205,32 @@ func (p *Processor) Post() error {
 		if err != nil {
 			return err
 		}
-
+		if !reflectutil.In(p.Job.Provider, constants.VmBaseProviders) {
+			return nil
+		}
 		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{p.Job.ClusterId})
 		if err != nil {
 			return err
 		}
-		if !reflectutil.In(p.Job.Provider, constants.VmBaseProviders) {
-			return nil
-		}
 		clusterWrapper := clusterWrappers[0]
+
+		// delete node key pairs
+		var pbNodeKeyPairs []*pb.NodeKeyPair
+		for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
+			for _, keyPairId := range clusterNode.KeyPairId {
+				pbNodeKeyPairs = append(pbNodeKeyPairs, &pb.NodeKeyPair{
+					NodeId:    pbutil.ToProtoString(clusterNode.NodeId),
+					KeyPairId: pbutil.ToProtoString(keyPairId),
+				})
+			}
+		}
+		_, err = clusterClient.DeleteNodeKeyPairs(ctx, &pb.DeleteNodeKeyPairsRequest{
+			NodeKeyPair: pbNodeKeyPairs,
+		})
+		if err != nil {
+			return err
+		}
+
 		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType && pi.Global().GlobalConfig().Cluster.FrontgateAutoDelete {
 			frontgateId := clusterWrapper.Cluster.FrontgateId
 			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,

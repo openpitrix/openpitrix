@@ -28,7 +28,7 @@ FILE_CONF={\\"id\\":\\"cln-abcdefgh\\",\\"listen_port\\":9111,\\"pilot_host\\":1
 */
 func (f *Frontgate) getUserDataValue(nodeId string) string {
 	var result string
-	clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+	clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 	role := clusterNode.Role
 	if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
 		role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
@@ -109,7 +109,7 @@ func (f *Frontgate) setFrontgateConfigLayer(nodeIds []string, failureAllowed boo
 func (f *Frontgate) removeContainerLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 
-	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		ip := clusterNode.PrivateIp
 		cmd := fmt.Sprintf("%s \"docker rm -f default\"", HostCmdPrefix)
 		request := &pbtypes.RunCommandOnFrontgateRequest{
@@ -143,7 +143,7 @@ func (f *Frontgate) removeContainerLayer(nodeIds []string, failureAllowed bool) 
 
 func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -162,7 +162,7 @@ func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 
 func (f *Frontgate) DeleteClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -182,7 +182,7 @@ func (f *Frontgate) DeleteClusterLayer() *models.TaskLayer {
 
 func (f *Frontgate) StartClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -198,7 +198,7 @@ func (f *Frontgate) StartClusterLayer() *models.TaskLayer {
 
 func (f *Frontgate) StopClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)

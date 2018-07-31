@@ -417,6 +417,62 @@ func (a *Client) GetClusterStatistics(params *GetClusterStatisticsParams) (*GetC
 }
 
 /*
+ModifyClusterAttributes modifies cluster attributes
+*/
+func (a *Client) ModifyClusterAttributes(params *ModifyClusterAttributesParams) (*ModifyClusterAttributesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewModifyClusterAttributesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ModifyClusterAttributes",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/modify",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ModifyClusterAttributesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ModifyClusterAttributesOK), nil
+
+}
+
+/*
+ModifyClusterNodeAttributes modifies cluster node attributes
+*/
+func (a *Client) ModifyClusterNodeAttributes(params *ModifyClusterNodeAttributesParams) (*ModifyClusterNodeAttributesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewModifyClusterNodeAttributesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ModifyClusterNodeAttributes",
+		Method:             "POST",
+		PathPattern:        "/v1/clusters/modify_nodes",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &ModifyClusterNodeAttributesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ModifyClusterNodeAttributesOK), nil
+
+}
+
+/*
 RecoverClusters recovers clusters
 */
 func (a *Client) RecoverClusters(params *RecoverClustersParams) (*RecoverClustersOK, error) {

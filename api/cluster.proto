@@ -74,6 +74,25 @@ message ModifyClusterNodeResponse {
 	google.protobuf.StringValue node_id = 1;
 }
 
+message ModifyClusterAttributesRequest {
+	google.protobuf.StringValue cluster_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+}
+
+message ModifyClusterAttributesResponse {
+	google.protobuf.StringValue cluster_id = 1;
+}
+
+message ModifyClusterNodeAttributesRequest {
+	google.protobuf.StringValue node_id = 1;
+	google.protobuf.StringValue name = 2;
+}
+
+message ModifyClusterNodeAttributesResponse {
+	google.protobuf.StringValue node_id = 1;
+}
+
 message AddTableClusterNodesRequest {
 	repeated ClusterNode cluster_node_set = 1;
 }
@@ -216,6 +235,7 @@ message ClusterNode {
 	google.protobuf.Timestamp status_time = 23;
 	ClusterRole cluster_role = 24;
 	ClusterCommon cluster_common = 25;
+	repeated string key_pair_id = 26;
 }
 
 message ClusterRole {
@@ -367,6 +387,7 @@ message KeyPair {
 	google.protobuf.StringValue owner = 5;
 	google.protobuf.Timestamp create_time = 6;
 	google.protobuf.Timestamp status_time = 7;
+	repeated string node_id = 8;
 }
 
 message CreateKeyPairRequest {
@@ -511,6 +532,24 @@ service ClusterManager {
 	}
 	rpc ModifyCluster (ModifyClusterRequest) returns (ModifyClusterResponse);
 	rpc ModifyClusterNode (ModifyClusterNodeRequest) returns (ModifyClusterNodeResponse);
+	rpc ModifyClusterAttributes (ModifyClusterAttributesRequest) returns (ModifyClusterAttributesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify cluster attributes"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters/modify"
+			body: "*"
+		};
+	}
+	rpc ModifyClusterNodeAttributes (ModifyClusterNodeAttributesRequest) returns (ModifyClusterNodeAttributesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify cluster node attributes"
+		};
+		option (google.api.http) = {
+			post: "/v1/clusters/modify_nodes"
+			body: "*"
+		};
+	}
 	rpc AddTableClusterNodes (AddTableClusterNodesRequest) returns (google.protobuf.Empty);
 	rpc DeleteTableClusterNodes (DeleteTableClusterNodesRequest) returns (google.protobuf.Empty);
 	rpc DeleteClusters (DeleteClustersRequest) returns (DeleteClustersResponse) {
