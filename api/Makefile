@@ -25,6 +25,11 @@ help:
 	@echo "  tools             to install depends tools"
 	@echo "  help              to show this help informatrion"
 
+generate_opctl:
+	go run ../cmd/opctl/opctl-gen-yaml/main.go -f ../pkg/apigateway/spec/api.swagger.json > ../cmd/opctl/config.yaml
+	go run ../cmd/opctl/opctl-gen-cmd/main.go -f ../cmd/opctl/config.yaml > ../cmd/opctl/all_cmd.go
+	goimports -l -w -e -local=openpitrix ../cmd/opctl/all_cmd.go
+
 generate: $(PROTO_FILES) Makefile
 	mkdir -p ../pkg/pb
 	rm -rf ../pkg/pb/*
@@ -40,6 +45,8 @@ generate: $(PROTO_FILES) Makefile
 	cd ../pkg/apigateway/spec/ && cat ./*.swagger.json 0.swagger.json | jq --slurp 'reduce .[] as $$item ({}; . * $$item)' | jq -f ./preprocess.jq > ./api.swagger.json
 	cd ../pkg/apigateway/spec/ && find . | grep .swagger.json | grep -v "api" | xargs rm
 	# generate client code
+	make generate_opctl
+
 	rm -rf ../test/models/* ../test/client/*
 	cd ../test/ && swagger generate client -f ../pkg/apigateway/spec/api.swagger.json -A openpitrix
 	# need to exec chown finally
