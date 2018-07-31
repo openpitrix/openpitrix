@@ -97,12 +97,12 @@ func (p *Parser) ParseClusterRole(clusterConf app.ClusterConf, node app.Node) (*
 	return clusterRole, nil
 }
 
-func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*models.ClusterNode, error) {
+func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*models.ClusterNodeWithKeyPairs, error) {
 	count := int(node.Count)
 	serverIdUpperBound := node.ServerIDUpperBound
 	replicaRole := node.Role + constants.ReplicaRoleSuffix
 	var serverIds, groupIds []int
-	clusterNodes := make(map[string]*models.ClusterNode)
+	clusterNodes := make(map[string]*models.ClusterNodeWithKeyPairs)
 	for i := 1; i <= count; i++ {
 		serverId, err := p.generateServerId(int(serverIdUpperBound), serverIds)
 		if err != nil {
@@ -126,8 +126,11 @@ func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*m
 			Status:   constants.StatusPending,
 			GroupId:  uint32(groupId),
 		}
+		clusterNodeWIthKeyPairs := &models.ClusterNodeWithKeyPairs{
+			ClusterNode: clusterNode,
+		}
 		// NodeId has not been generated yet.
-		clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNode
+		clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNodeWIthKeyPairs
 
 		replica := int(node.Replica)
 		for j := 1; j <= replica; j++ {
@@ -146,7 +149,10 @@ func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*m
 				Status:   constants.StatusPending,
 				GroupId:  uint32(groupId),
 			}
-			clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNode
+			clusterNodeWIthKeyPairs := &models.ClusterNodeWithKeyPairs{
+				ClusterNode: clusterNode,
+			}
+			clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNodeWIthKeyPairs
 		}
 	}
 	return clusterNodes, nil
@@ -303,7 +309,7 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 
 func (p *Parser) Parse(clusterConf app.ClusterConf) (*models.ClusterWrapper, error) {
 	var cluster *models.Cluster
-	clusterNodes := make(map[string]*models.ClusterNode)
+	clusterNodes := make(map[string]*models.ClusterNodeWithKeyPairs)
 	clusterCommons := make(map[string]*models.ClusterCommon)
 	clusterLinks := make(map[string]*models.ClusterLink)
 	clusterRoles := make(map[string]*models.ClusterRole)
@@ -349,12 +355,12 @@ func (p *Parser) Parse(clusterConf app.ClusterConf) (*models.ClusterWrapper, err
 	}
 
 	clusterWrapper := &models.ClusterWrapper{
-		Cluster:              cluster,
-		ClusterNodes:         clusterNodes,
-		ClusterCommons:       clusterCommons,
-		ClusterLinks:         clusterLinks,
-		ClusterRoles:         clusterRoles,
-		ClusterLoadbalancers: clusterLoadbalancers,
+		Cluster:                  cluster,
+		ClusterNodesWithKeyPairs: clusterNodes,
+		ClusterCommons:           clusterCommons,
+		ClusterLinks:             clusterLinks,
+		ClusterRoles:             clusterRoles,
+		ClusterLoadbalancers:     clusterLoadbalancers,
 	}
 	return clusterWrapper, nil
 }

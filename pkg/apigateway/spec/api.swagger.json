@@ -1061,6 +1061,60 @@
         ]
       }
     },
+    "/v1/clusters/modify": {
+      "post": {
+        "summary": "modify cluster attributes",
+        "operationId": "ModifyClusterAttributes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyClusterAttributesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyClusterAttributesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/modify_nodes": {
+      "post": {
+        "summary": "modify cluster node attributes",
+        "operationId": "ModifyClusterNodeAttributes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyClusterNodeAttributesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyClusterNodeAttributesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
     "/v1/clusters/nodes": {
       "get": {
         "summary": "describe cluster nodes",
@@ -3127,6 +3181,12 @@
         },
         "cluster_common": {
           "$ref": "#/definitions/openpitrixClusterCommon"
+        },
+        "key_pair_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -3457,6 +3517,53 @@
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "node_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixModifyClusterAttributesRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyClusterAttributesResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyClusterNodeAttributesRequest": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyClusterNodeAttributesResponse": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string"
         }
       }
     },

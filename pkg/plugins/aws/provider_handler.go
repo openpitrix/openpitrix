@@ -780,7 +780,7 @@ func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeS
 
 func (p *ProviderHandler) CheckResourceQuotas(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
 	roleCount := make(map[string]int)
-	for _, clusterNode := range clusterWrapper.ClusterNodes {
+	for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
 		role := clusterNode.Role
 		_, isExist := roleCount[role]
 		if isExist {

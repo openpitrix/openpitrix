@@ -55,6 +55,9 @@ type OpenpitrixClusterNode struct {
 	// is backup
 	IsBackup bool `json:"is_backup,omitempty"`
 
+	// key pair id
+	KeyPairID []string `json:"key_pair_id"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
@@ -112,6 +115,11 @@ func (m *OpenpitrixClusterNode) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateGroupID(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateKeyPairID(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -198,6 +206,15 @@ func (m *OpenpitrixClusterNode) validateGroupID(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *OpenpitrixClusterNode) validateKeyPairID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.KeyPairID) { // not required
+		return nil
 	}
 
 	return nil

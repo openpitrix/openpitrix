@@ -28,23 +28,29 @@ type KeyPair struct {
 	StatusTime  time.Time
 }
 
+type KeyPairWithNodes struct {
+	*KeyPair
+	NodeId []string
+}
+
 var KeyPairColumns = GetColumnsFromStruct(&KeyPair{})
 
-func KeyPairToPb(keyPair *KeyPair) *pb.KeyPair {
+func KeyPairNodesToPb(keyPairNodes *KeyPairWithNodes) *pb.KeyPair {
 	pbKeyPair := pb.KeyPair{}
-	pbKeyPair.KeyPairId = pbutil.ToProtoString(keyPair.KeyPairId)
-	pbKeyPair.Name = pbutil.ToProtoString(keyPair.Name)
-	pbKeyPair.Description = pbutil.ToProtoString(keyPair.Description)
-	pbKeyPair.PubKey = pbutil.ToProtoString(keyPair.PubKey)
-	pbKeyPair.Owner = pbutil.ToProtoString(keyPair.Owner)
-	pbKeyPair.CreateTime = pbutil.ToProtoTimestamp(keyPair.CreateTime)
-	pbKeyPair.StatusTime = pbutil.ToProtoTimestamp(keyPair.StatusTime)
+	pbKeyPair.KeyPairId = pbutil.ToProtoString(keyPairNodes.KeyPairId)
+	pbKeyPair.Name = pbutil.ToProtoString(keyPairNodes.Name)
+	pbKeyPair.Description = pbutil.ToProtoString(keyPairNodes.Description)
+	pbKeyPair.PubKey = pbutil.ToProtoString(keyPairNodes.PubKey)
+	pbKeyPair.Owner = pbutil.ToProtoString(keyPairNodes.Owner)
+	pbKeyPair.CreateTime = pbutil.ToProtoTimestamp(keyPairNodes.CreateTime)
+	pbKeyPair.StatusTime = pbutil.ToProtoTimestamp(keyPairNodes.StatusTime)
+	pbKeyPair.NodeId = keyPairNodes.NodeId
 	return &pbKeyPair
 }
 
-func KeyPairsToPbs(keyPairs []*KeyPair) (pbKeyPairs []*pb.KeyPair) {
-	for _, keyPair := range keyPairs {
-		pbKeyPairs = append(pbKeyPairs, KeyPairToPb(keyPair))
+func KeyPairNodesToPbs(keyPairNodes []*KeyPairWithNodes) (pbKeyPairs []*pb.KeyPair) {
+	for _, keyPairNodesItem := range keyPairNodes {
+		pbKeyPairs = append(pbKeyPairs, KeyPairNodesToPb(keyPairNodesItem))
 	}
 	return
 }

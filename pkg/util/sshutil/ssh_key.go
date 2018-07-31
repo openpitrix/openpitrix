@@ -24,7 +24,7 @@ func MakeSSHKeyPair(keyType string) (string, string, error) {
 func prepareDirAndFileCmd() string {
 	path := "/root/.ssh"
 	file := fmt.Sprintf("%s/authorized_keys", path)
-	cmd := fmt.Sprintf("ls %s;if [ $? -ne 0 ];then mkdir -p %s && chmod 0755 %s && touch %s && chmod 0644 %s;fi",
+	cmd := fmt.Sprintf("if [ ! -d %s ];then mkdir -p %s && chmod 0755 %s && touch %s && chmod 0644 %s;fi",
 		path, path, path, file, file)
 	return cmd
 }
