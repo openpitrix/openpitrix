@@ -38,7 +38,7 @@ type OpenpitrixCluster struct {
 	ClusterRoleSet OpenpitrixClusterClusterRoleSet `json:"cluster_role_set"`
 
 	// cluster type
-	ClusterType *ProtobufUint32Value `json:"cluster_type,omitempty"`
+	ClusterType int64 `json:"cluster_type,omitempty"`
 
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
@@ -96,33 +96,9 @@ type OpenpitrixCluster struct {
 func (m *OpenpitrixCluster) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateClusterType(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixCluster) validateClusterType(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ClusterType) { // not required
-		return nil
-	}
-
-	if m.ClusterType != nil {
-
-		if err := m.ClusterType.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("cluster_type")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

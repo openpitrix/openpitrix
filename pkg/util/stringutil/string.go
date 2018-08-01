@@ -39,6 +39,10 @@ func CamelCaseToUnderscore(str string) string {
 	return govalidator.CamelCaseToUnderscore(str)
 }
 
+func UnderscoreToCamelCase(str string) string {
+	return govalidator.UnderscoreToCamelCase(str)
+}
+
 func FindString(array []string, str string) int {
 	for index, s := range array {
 		if str == s {

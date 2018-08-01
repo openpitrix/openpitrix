@@ -29,7 +29,7 @@ type OpenpitrixJob struct {
 	Directive string `json:"directive,omitempty"`
 
 	// error code
-	ErrorCode *ProtobufUint32Value `json:"error_code,omitempty"`
+	ErrorCode int64 `json:"error_code,omitempty"`
 
 	// executor
 	Executor string `json:"executor,omitempty"`
@@ -53,7 +53,7 @@ type OpenpitrixJob struct {
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
 	// task count
-	TaskCount *ProtobufUint32Value `json:"task_count,omitempty"`
+	TaskCount int64 `json:"task_count,omitempty"`
 
 	// version id
 	VersionID string `json:"version_id,omitempty"`
@@ -63,57 +63,9 @@ type OpenpitrixJob struct {
 func (m *OpenpitrixJob) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateErrorCode(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateTaskCount(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixJob) validateErrorCode(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ErrorCode) { // not required
-		return nil
-	}
-
-	if m.ErrorCode != nil {
-
-		if err := m.ErrorCode.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("error_code")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixJob) validateTaskCount(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.TaskCount) { // not required
-		return nil
-	}
-
-	if m.TaskCount != nil {
-
-		if err := m.TaskCount.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("task_count")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

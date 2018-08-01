@@ -73,11 +73,8 @@ type DescribeSubnetsParams struct {
 	RuntimeID *string
 	/*SubnetID*/
 	SubnetID []string
-	/*SubnetTypeValue
-	  The uint32 value.
-
-	*/
-	SubnetTypeValue *int64
+	/*SubnetType*/
+	SubnetType *int64
 	/*Zone*/
 	Zone []string
 
@@ -174,15 +171,15 @@ func (o *DescribeSubnetsParams) SetSubnetID(subnetID []string) {
 	o.SubnetID = subnetID
 }
 
-// WithSubnetTypeValue adds the subnetTypeValue to the describe subnets params
-func (o *DescribeSubnetsParams) WithSubnetTypeValue(subnetTypeValue *int64) *DescribeSubnetsParams {
-	o.SetSubnetTypeValue(subnetTypeValue)
+// WithSubnetType adds the subnetType to the describe subnets params
+func (o *DescribeSubnetsParams) WithSubnetType(subnetType *int64) *DescribeSubnetsParams {
+	o.SetSubnetType(subnetType)
 	return o
 }
 
-// SetSubnetTypeValue adds the subnetTypeValue to the describe subnets params
-func (o *DescribeSubnetsParams) SetSubnetTypeValue(subnetTypeValue *int64) {
-	o.SubnetTypeValue = subnetTypeValue
+// SetSubnetType adds the subnetType to the describe subnets params
+func (o *DescribeSubnetsParams) SetSubnetType(subnetType *int64) {
+	o.SubnetType = subnetType
 }
 
 // WithZone adds the zone to the describe subnets params
@@ -268,16 +265,16 @@ func (o *DescribeSubnetsParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		return err
 	}
 
-	if o.SubnetTypeValue != nil {
+	if o.SubnetType != nil {
 
-		// query param subnet_type.value
-		var qrSubnetTypeValue int64
-		if o.SubnetTypeValue != nil {
-			qrSubnetTypeValue = *o.SubnetTypeValue
+		// query param subnet_type
+		var qrSubnetType int64
+		if o.SubnetType != nil {
+			qrSubnetType = *o.SubnetType
 		}
-		qSubnetTypeValue := swag.FormatInt64(qrSubnetTypeValue)
-		if qSubnetTypeValue != "" {
-			if err := r.SetQueryParam("subnet_type.value", qSubnetTypeValue); err != nil {
+		qSubnetType := swag.FormatInt64(qrSubnetType)
+		if qSubnetType != "" {
+			if err := r.SetQueryParam("subnet_type", qSubnetType); err != nil {
 				return err
 			}
 		}

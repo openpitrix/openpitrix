@@ -29,7 +29,7 @@ type OpenpitrixModifyAppVersionRequest struct {
 	PackageName string `json:"package_name,omitempty"`
 
 	// sequence
-	Sequence *ProtobufUint32Value `json:"sequence,omitempty"`
+	Sequence int64 `json:"sequence,omitempty"`
 
 	// version id
 	VersionID string `json:"version_id,omitempty"`
@@ -39,33 +39,9 @@ type OpenpitrixModifyAppVersionRequest struct {
 func (m *OpenpitrixModifyAppVersionRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateSequence(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixModifyAppVersionRequest) validateSequence(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Sequence) { // not required
-		return nil
-	}
-
-	if m.Sequence != nil {
-
-		if err := m.Sequence.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("sequence")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

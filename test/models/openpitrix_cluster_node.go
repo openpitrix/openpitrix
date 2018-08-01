@@ -41,10 +41,10 @@ type OpenpitrixClusterNode struct {
 	Eip string `json:"eip,omitempty"`
 
 	// global server id
-	GlobalServerID *ProtobufUint32Value `json:"global_server_id,omitempty"`
+	GlobalServerID int64 `json:"global_server_id,omitempty"`
 
 	// group id
-	GroupID *ProtobufUint32Value `json:"group_id,omitempty"`
+	GroupID int64 `json:"group_id,omitempty"`
 
 	// health status
 	HealthStatus string `json:"health_status,omitempty"`
@@ -77,7 +77,7 @@ type OpenpitrixClusterNode struct {
 	Role string `json:"role,omitempty"`
 
 	// server id
-	ServerID *ProtobufUint32Value `json:"server_id,omitempty"`
+	ServerID int64 `json:"server_id,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`
@@ -109,22 +109,7 @@ func (m *OpenpitrixClusterNode) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateGlobalServerID(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateGroupID(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateKeyPairID(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateServerID(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -173,67 +158,10 @@ func (m *OpenpitrixClusterNode) validateClusterRole(formats strfmt.Registry) err
 	return nil
 }
 
-func (m *OpenpitrixClusterNode) validateGlobalServerID(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.GlobalServerID) { // not required
-		return nil
-	}
-
-	if m.GlobalServerID != nil {
-
-		if err := m.GlobalServerID.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("global_server_id")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterNode) validateGroupID(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.GroupID) { // not required
-		return nil
-	}
-
-	if m.GroupID != nil {
-
-		if err := m.GroupID.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("group_id")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (m *OpenpitrixClusterNode) validateKeyPairID(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.KeyPairID) { // not required
 		return nil
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterNode) validateServerID(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ServerID) { // not required
-		return nil
-	}
-
-	if m.ServerID != nil {
-
-		if err := m.ServerID.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("server_id")
-			}
-			return err
-		}
 	}
 
 	return nil
