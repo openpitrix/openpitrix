@@ -381,8 +381,7 @@
       type: string
     subnet_id:
       type: '[]string'
-    subnet_type_value:
-      help: The uint32 value.
+    subnet_type:
       type: integer
     zone:
       type: '[]string'
@@ -397,6 +396,24 @@
 - action: GetClusterStatistics
   description: get cluster statistics
   service: ClusterManager
+- action: ModifyClusterAttributes
+  description: modify cluster attributes
+  service: ClusterManager
+  body:
+    cluster_id:
+      type: string
+    description:
+      type: string
+    name:
+      type: string
+- action: ModifyClusterNodeAttributes
+  description: modify cluster node attributes
+  service: ClusterManager
+  body:
+    name:
+      type: string
+    node_id:
+      type: string
 - action: RecoverClusters
   description: recover clusters
   service: ClusterManager

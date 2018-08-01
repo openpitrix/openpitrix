@@ -47,6 +47,8 @@ var AllCmd = []Cmd{
 	NewDescribeSubnetsCmd(),
 	NewDetachKeyPairsCmd(),
 	NewGetClusterStatisticsCmd(),
+	NewModifyClusterAttributesCmd(),
+	NewModifyClusterNodeAttributesCmd(),
 	NewRecoverClustersCmd(),
 	NewResizeClusterCmd(),
 	NewRollbackClusterCmd(),
@@ -1122,8 +1124,8 @@ func (c *DescribeSubnetsCmd) ParseFlag(f Flag) {
 	c.RuntimeID = new(string)
 	f.StringVarP(c.RuntimeID, "runtime_id", "", "", "")
 	f.StringSliceVarP(&c.SubnetID, "subnet_id", "", []string{}, "")
-	c.SubnetTypeValue = new(int64)
-	f.Int64VarP(c.SubnetTypeValue, "subnet_type_value", "", 0, "The uint32 value.")
+	c.SubnetType = new(int64)
+	f.Int64VarP(c.SubnetType, "subnet_type", "", 0, "")
 	f.StringSliceVarP(&c.Zone, "zone", "", []string{}, "")
 }
 
@@ -1201,6 +1203,79 @@ func (c *GetClusterStatisticsCmd) Run(out Out) error {
 
 	client := test.GetClient(clientConfig)
 	res, err := client.ClusterManager.GetClusterStatistics(c.GetClusterStatisticsParams)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyClusterAttributesCmd struct {
+	*models.OpenpitrixModifyClusterAttributesRequest
+}
+
+func NewModifyClusterAttributesCmd() Cmd {
+	return &ModifyClusterAttributesCmd{
+		&models.OpenpitrixModifyClusterAttributesRequest{},
+	}
+}
+
+func (*ModifyClusterAttributesCmd) GetActionName() string {
+	return "ModifyClusterAttributes"
+}
+
+func (c *ModifyClusterAttributesCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.ClusterID, "cluster_id", "", "", "")
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+}
+
+func (c *ModifyClusterAttributesCmd) Run(out Out) error {
+	params := cluster_manager.NewModifyClusterAttributesParams()
+	params.WithBody(c.OpenpitrixModifyClusterAttributesRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.ClusterManager.ModifyClusterAttributes(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyClusterNodeAttributesCmd struct {
+	*models.OpenpitrixModifyClusterNodeAttributesRequest
+}
+
+func NewModifyClusterNodeAttributesCmd() Cmd {
+	return &ModifyClusterNodeAttributesCmd{
+		&models.OpenpitrixModifyClusterNodeAttributesRequest{},
+	}
+}
+
+func (*ModifyClusterNodeAttributesCmd) GetActionName() string {
+	return "ModifyClusterNodeAttributes"
+}
+
+func (c *ModifyClusterNodeAttributesCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.NodeID, "node_id", "", "", "")
+}
+
+func (c *ModifyClusterNodeAttributesCmd) Run(out Out) error {
+	params := cluster_manager.NewModifyClusterNodeAttributesParams()
+	params.WithBody(c.OpenpitrixModifyClusterNodeAttributesRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.ClusterManager.ModifyClusterNodeAttributes(params)
 	if err != nil {
 		return err
 	}

@@ -23,10 +23,10 @@ type OpenpitrixResizeClusterRequest struct {
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// cpu
-	CPU *ProtobufUint32Value `json:"cpu,omitempty"`
+	CPU int64 `json:"cpu,omitempty"`
 
 	// memory
-	Memory *ProtobufUint32Value `json:"memory,omitempty"`
+	Memory int64 `json:"memory,omitempty"`
 
 	// role
 	Role string `json:"role,omitempty"`
@@ -41,16 +41,6 @@ func (m *OpenpitrixResizeClusterRequest) Validate(formats strfmt.Registry) error
 		res = append(res, err)
 	}
 
-	if err := m.validateCPU(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateMemory(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -61,44 +51,6 @@ func (m *OpenpitrixResizeClusterRequest) validateAdvancedParam(formats strfmt.Re
 
 	if swag.IsZero(m.AdvancedParam) { // not required
 		return nil
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixResizeClusterRequest) validateCPU(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.CPU) { // not required
-		return nil
-	}
-
-	if m.CPU != nil {
-
-		if err := m.CPU.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("cpu")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixResizeClusterRequest) validateMemory(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Memory) { // not required
-		return nil
-	}
-
-	if m.Memory != nil {
-
-		if err := m.Memory.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("memory")
-			}
-			return err
-		}
 	}
 
 	return nil

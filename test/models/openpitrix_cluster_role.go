@@ -20,7 +20,7 @@ type OpenpitrixClusterRole struct {
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// cpu
-	CPU *ProtobufUint32Value `json:"cpu,omitempty"`
+	CPU int64 `json:"cpu,omitempty"`
 
 	// env
 	Env string `json:"env,omitempty"`
@@ -29,13 +29,13 @@ type OpenpitrixClusterRole struct {
 	FileSystem string `json:"file_system,omitempty"`
 
 	// gpu
-	Gpu *ProtobufUint32Value `json:"gpu,omitempty"`
+	Gpu int64 `json:"gpu,omitempty"`
 
 	// instance size
-	InstanceSize *ProtobufUint32Value `json:"instance_size,omitempty"`
+	InstanceSize int64 `json:"instance_size,omitempty"`
 
 	// memory
-	Memory *ProtobufUint32Value `json:"memory,omitempty"`
+	Memory int64 `json:"memory,omitempty"`
 
 	// mount options
 	MountOptions string `json:"mount_options,omitempty"`
@@ -47,136 +47,16 @@ type OpenpitrixClusterRole struct {
 	Role string `json:"role,omitempty"`
 
 	// storage size
-	StorageSize *ProtobufUint32Value `json:"storage_size,omitempty"`
+	StorageSize int64 `json:"storage_size,omitempty"`
 }
 
 // Validate validates this openpitrix cluster role
 func (m *OpenpitrixClusterRole) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateCPU(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateGpu(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateInstanceSize(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateMemory(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateStorageSize(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixClusterRole) validateCPU(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.CPU) { // not required
-		return nil
-	}
-
-	if m.CPU != nil {
-
-		if err := m.CPU.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("cpu")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterRole) validateGpu(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Gpu) { // not required
-		return nil
-	}
-
-	if m.Gpu != nil {
-
-		if err := m.Gpu.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("gpu")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterRole) validateInstanceSize(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.InstanceSize) { // not required
-		return nil
-	}
-
-	if m.InstanceSize != nil {
-
-		if err := m.InstanceSize.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("instance_size")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterRole) validateMemory(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Memory) { // not required
-		return nil
-	}
-
-	if m.Memory != nil {
-
-		if err := m.Memory.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("memory")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixClusterRole) validateStorageSize(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.StorageSize) { // not required
-		return nil
-	}
-
-	if m.StorageSize != nil {
-
-		if err := m.StorageSize.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("storage_size")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

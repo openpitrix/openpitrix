@@ -23,7 +23,7 @@ type OpenpitrixAddClusterNodesRequest struct {
 	ClusterID string `json:"cluster_id,omitempty"`
 
 	// node count
-	NodeCount *ProtobufUint32Value `json:"node_count,omitempty"`
+	NodeCount int64 `json:"node_count,omitempty"`
 
 	// role
 	Role string `json:"role,omitempty"`
@@ -38,11 +38,6 @@ func (m *OpenpitrixAddClusterNodesRequest) Validate(formats strfmt.Registry) err
 		res = append(res, err)
 	}
 
-	if err := m.validateNodeCount(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -53,25 +48,6 @@ func (m *OpenpitrixAddClusterNodesRequest) validateAdvancedParam(formats strfmt.
 
 	if swag.IsZero(m.AdvancedParam) { // not required
 		return nil
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixAddClusterNodesRequest) validateNodeCount(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.NodeCount) { // not required
-		return nil
-	}
-
-	if m.NodeCount != nil {
-
-		if err := m.NodeCount.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("node_count")
-			}
-			return err
-		}
 	}
 
 	return nil
