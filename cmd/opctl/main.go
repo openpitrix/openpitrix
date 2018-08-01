@@ -7,7 +7,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -27,11 +26,6 @@ type Cmd interface {
 }
 
 var clientConfig = &test.ClientConfig{}
-
-func init() {
-	clientConfig = test.GetClientConfig()
-	clientConfig.Debug = false
-}
 
 func newRootCmd(c string, args []string) *cobra.Command {
 	cmd := &cobra.Command{
@@ -54,9 +48,12 @@ func getCobraCmds(cmds []Cmd) (cobraCmds []*cobra.Command) {
 		underscoreAction := stringutil.CamelCaseToUnderscore(action)
 		run := cmd.Run
 		c := &cobra.Command{
-			Use:   fmt.Sprintf("%s [flags]", underscoreAction),
-			Short: strings.Replace(underscoreAction, "_", " ", -1),
+			Use: fmt.Sprintf("%s [flags]", underscoreAction),
 			RunE: func(c *cobra.Command, args []string) error {
+				// TODO: read from config files
+				clientConfig = test.GetClientConfig()
+				clientConfig.Debug = false
+
 				return run(Out{
 					action: action,
 					out:    c.OutOrStdout(),

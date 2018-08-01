@@ -17,8 +17,8 @@ func getValidateCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "validate_global_config [FILE]",
-		Short: "validate global config",
-		Long:  "validate global config from stdin or [FILE]",
+		Short: "Validate global config",
+		Long:  "Validate global config from stdin or [FILE]",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var data []byte
 			var err error
