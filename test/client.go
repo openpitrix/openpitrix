@@ -35,6 +35,7 @@ func GetClient(conf *ClientConfig) *apiclient.Openpitrix {
 }
 
 func GetClientConfig() *ClientConfig {
+	// TODO: read from config files
 	log.SetFlags(log.Ldate | log.Lmicroseconds | log.Lshortfile)
 	var (
 		host     string

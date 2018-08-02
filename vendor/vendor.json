@@ -836,10 +836,16 @@
 			"revisionTime": "2017-07-05T20:44:38Z"
 		},
 		{
-			"checksumSHA1": "tfKmT8uovT9Ch2YyDJtti3egAB4=",
+			"checksumSHA1": "Tg05rfWxVqlqtB8G6QDHGo5wjAQ=",
+			"path": "github.com/spf13/cobra",
+			"revision": "7c4570c3ebeb8129a1f7456d0908a8b676b6f9f1",
+			"revisionTime": "2018-07-22T21:56:44Z"
+		},
+		{
+			"checksumSHA1": "OJI0OgC5V8gZtfS1e0CDYMhkDNc=",
 			"path": "github.com/spf13/pflag",
-			"revision": "ee5fd03fd6acfd43e44aea0b4135958546ed8e73",
-			"revisionTime": "2018-02-20T14:32:36Z"
+			"revision": "3ebe029320b2676d667ae88da602a5f854788a8a",
+			"revisionTime": "2018-06-01T13:25:42Z"
 		},
 		{
 			"checksumSHA1": "6LwXZI7kXm1C0h4Ui0Y52p9uQhk=",
