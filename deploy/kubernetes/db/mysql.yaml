@@ -25,7 +25,6 @@ metadata:
   labels:
     app: openpitrix
     tier: db
-    version: ${VERSION}
 spec:
   accessModes:
     - ReadWriteOnce
