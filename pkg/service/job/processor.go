@@ -251,6 +251,17 @@ func (p *Processor) Post() error {
 	case constants.ActionCeaseClusters:
 		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusCeased)
 	case constants.ActionUpdateClusterEnv:
+		providerInterface, err := plugins.GetProviderPlugin(p.Job.Provider, p.JLogger)
+		if err != nil {
+			p.JLogger.Error("No such provider [%s]. ", p.Job.Provider)
+			return err
+		}
+		err = providerInterface.UpdateClusterStatus(p.Job)
+		if err != nil {
+			p.JLogger.Error("Executing job post processor failed: %+v", err)
+			return err
+		}
+
 		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionAttachKeyPairs:
 		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(p.Job.Directive)
