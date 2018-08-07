@@ -19,7 +19,7 @@ type JobDirective struct {
 	ClusterName string
 }
 
-func getJobDirective(data string) (*JobDirective, error) {
+func decodeJobDirective(data string) (*JobDirective, error) {
 	clusterWrapper, err := models.NewClusterWrapper(data)
 	if err != nil {
 		return nil, err
@@ -49,18 +49,19 @@ func getJobDirective(data string) (*JobDirective, error) {
 }
 
 type TaskDirective struct {
-	VersionId   string
-	Namespace   string
-	RuntimeId   string
-	Values      string
-	ClusterName string
+	VersionId         string
+	Namespace         string
+	RuntimeId         string
+	Values            string
+	ClusterName       string
+	RawClusterWrapper string
 }
 
-func getTaskDirectiveJson(v interface{}) string {
+func encodeTaskDirective(v interface{}) string {
 	return jsonutil.ToString(v)
 }
 
-func getTaskDirective(data string) (*TaskDirective, error) {
+func decodeTaskDirective(data string) (*TaskDirective, error) {
 	var v TaskDirective
 	err := jsonutil.Decode([]byte(data), &v)
 	if err != nil {
