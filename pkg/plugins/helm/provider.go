@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"regexp"
 	"time"
 
 	"google.golang.org/grpc/transport"
@@ -26,10 +25,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-)
-
-var (
-	NamespaceRegExp = regexp.MustCompile(`[a-z0-9]([-a-z0-9]*[a-z0-9])?`)
 )
 
 type Provider struct {
