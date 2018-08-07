@@ -301,6 +301,19 @@ func (p *Server) updateRuntimeLabels(runtimeId string, labelString string) error
 	return nil
 }
 
+func (p *Server) updateRuntimeCredential(credentialId, provider, credential string) error {
+	content := RuntimeCredentialStringToJsonString(provider, credential)
+	attributes := map[string]interface{}{
+		RuntimeCredentialContentColumn: content,
+	}
+	_, err := p.Db.
+		Update(models.RuntimeCredentialTableName).
+		SetMap(attributes).
+		Where(db.Eq(RuntimeCredentialIdColumn, credentialId)).
+		Exec()
+	return err
+}
+
 func (p *Server) createRuntimeCredential(provider, content string) (
 	runtimeCredentialId string, err error) {
 

@@ -4392,6 +4392,9 @@ var Files = map[string]string{
         },
         "labels": {
           "type": "string"
+        },
+        "runtime_credential": {
+          "type": "string"
         }
       }
     },

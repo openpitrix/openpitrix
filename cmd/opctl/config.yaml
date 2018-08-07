@@ -693,6 +693,8 @@
       type: string
     name:
       type: string
+    runtime_credential:
+      type: string
     runtime_id:
       type: string
 - action: DescribeTasks
