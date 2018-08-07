@@ -6,6 +6,7 @@ package helm
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -25,6 +26,10 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
+)
+
+var (
+	NamespaceRegExp = regexp.MustCompile(`[a-z0-9]([-a-z0-9]*[a-z0-9])?`)
 )
 
 type KubeHandler struct {
@@ -122,6 +127,10 @@ func (p *KubeHandler) WaitPodsRunning(runtimeId, namespace string, clusterRoles 
 				return true, err
 			}
 
+			if pods == nil {
+				continue
+			}
+
 			if !p.checkPodsCount(pods, clusterRole.InstanceSize) {
 				return false, nil
 			}
@@ -203,6 +212,10 @@ func (p *KubeHandler) GetKubePodsAsClusterNodes(namespace, clusterId, owner stri
 		pods, err := p.getPodsByClusterRole(namespace, clusterRole)
 		if err != nil {
 			return nil, err
+		}
+
+		if pods == nil {
+			continue
 		}
 
 		p.appendKubePodsToClusterNodes(pbClusterNodes, pods, clusterId, owner)
