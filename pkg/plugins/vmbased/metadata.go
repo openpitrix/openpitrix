@@ -47,7 +47,7 @@ func (m *Metadata) GetClusterCnodes() map[string]interface{} {
 	data := make(map[string]interface{})
 
 	var nodeIds []string
-	for nodeId := range m.ClusterWrapper.ClusterNodes {
+	for nodeId := range m.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	// hosts
@@ -148,7 +148,7 @@ or (without role)
 func (m *Metadata) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 	hosts := make(map[string]interface{})
 	for _, nodeId := range nodeIds {
-		clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		instanceId := clusterNode.InstanceId
 		role := clusterNode.Role
 		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
@@ -211,7 +211,7 @@ func (m *Metadata) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 func (m *Metadata) GetEmptyHostsCnodes(nodeIds []string) map[string]interface{} {
 	hosts := make(map[string]interface{})
 	for _, nodeId := range nodeIds {
-		clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		instanceId := clusterNode.InstanceId
 		role := clusterNode.Role
 		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
@@ -292,7 +292,7 @@ func (m *Metadata) GetScalingCnodes(nodeIds []string, path string) map[string]in
 
 func (m *Metadata) GetCmdCnodes(nodeId, cmd string) map[string]interface{} {
 	clusterId := m.ClusterWrapper.Cluster.ClusterId
-	clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+	clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 	instanceId := clusterNode.InstanceId
 
 	return map[string]interface{}{

@@ -19,7 +19,7 @@ type MetadataConfig struct {
 }
 
 func (m *MetadataConfig) GetDroneConfig(nodeId string) string {
-	clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+	clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 
 	droneEndpoint := &pbtypes.DroneEndpoint{
 		FrontgateId: m.ClusterWrapper.Cluster.FrontgateId,
@@ -42,12 +42,12 @@ func (m *MetadataConfig) GetDroneConfig(nodeId string) string {
 }
 
 func (m *MetadataConfig) GetFrontgateConfig(nodeId string) string {
-	clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+	clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 
 	var frontgateEndpoints []*pbtypes.FrontgateEndpoint
 	var etcdEndpoints []*pbtypes.EtcdEndpoint
 	var backendHosts []string
-	for _, node := range m.ClusterWrapper.ClusterNodes {
+	for _, node := range m.ClusterWrapper.ClusterNodesWithKeyPairs {
 		frontgateNode := &pbtypes.FrontgateEndpoint{
 			FrontgateId: m.ClusterWrapper.Cluster.ClusterId,
 			NodeIp:      node.PrivateIp,

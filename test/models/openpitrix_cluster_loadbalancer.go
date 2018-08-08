@@ -26,7 +26,7 @@ type OpenpitrixClusterLoadbalancer struct {
 	LoadbalancerPolicyID string `json:"loadbalancer_policy_id,omitempty"`
 
 	// loadbalancer port
-	LoadbalancerPort *ProtobufUint32Value `json:"loadbalancer_port,omitempty"`
+	LoadbalancerPort int64 `json:"loadbalancer_port,omitempty"`
 
 	// role
 	Role string `json:"role,omitempty"`
@@ -36,33 +36,9 @@ type OpenpitrixClusterLoadbalancer struct {
 func (m *OpenpitrixClusterLoadbalancer) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateLoadbalancerPort(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixClusterLoadbalancer) validateLoadbalancerPort(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.LoadbalancerPort) { // not required
-		return nil
-	}
-
-	if m.LoadbalancerPort != nil {
-
-		if err := m.LoadbalancerPort.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("loadbalancer_port")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

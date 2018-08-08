@@ -52,6 +52,9 @@ func (h appVersionWrapper) GetKeywords() []string  { return h.Version.GetKeyword
 func (h appVersionWrapper) GetMaintainers() string {
 	return jsonutil.ToString(h.Version.GetMaintainers())
 }
+func (h appVersionWrapper) GetScreenshots() string {
+	return jsonutil.ToString(h.Version.GetScreenshots())
+}
 
 func (i *devkitIndexer) IndexRepo() error {
 	indexFile, err := i.getIndexFile()

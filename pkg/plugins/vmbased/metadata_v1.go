@@ -45,7 +45,7 @@ func (m *MetadataV1) GetClusterCnodes() map[string]interface{} {
 	data := make(map[string]interface{})
 
 	var nodeIds []string
-	for nodeId := range m.ClusterWrapper.ClusterNodes {
+	for nodeId := range m.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 
@@ -54,7 +54,7 @@ func (m *MetadataV1) GetClusterCnodes() map[string]interface{} {
 
 	for _, nodeId := range nodeIds {
 
-		clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		ip := clusterNode.PrivateIp
 
 		selfCnodes := make(map[string]interface{})
@@ -95,7 +95,7 @@ func (m *MetadataV1) GetClusterNodeCnodes(nodeIds []string) map[string]interface
 	// hosts
 	hosts := map[string]interface{}{RegisterNodeHosts: m.GetHostsCnodes(nodeIds)}
 
-	for nodeId, clusterNode := range m.ClusterWrapper.ClusterNodes {
+	for nodeId, clusterNode := range m.ClusterWrapper.ClusterNodesWithKeyPairs {
 		ip := clusterNode.PrivateIp
 		if reflectutil.In(nodeId, nodeIds) {
 			data[ip] = clusterCnodes[ip]
@@ -116,7 +116,7 @@ func (m *MetadataV1) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]inte
 
 	// hosts
 	hosts := map[string]interface{}{RegisterNodeHosts: m.GetEmptyHostsCnodes(nodeIds)}
-	for nodeId, clusterNode := range m.ClusterWrapper.ClusterNodes {
+	for nodeId, clusterNode := range m.ClusterWrapper.ClusterNodesWithKeyPairs {
 		ip := clusterNode.PrivateIp
 		if reflectutil.In(nodeId, nodeIds) {
 			data[ip] = ""
@@ -159,7 +159,7 @@ or (without role)
 func (m *MetadataV1) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 	hosts := make(map[string]interface{})
 	for _, nodeId := range nodeIds {
-		clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		instanceId := clusterNode.InstanceId
 		role := clusterNode.Role
 		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
@@ -224,7 +224,7 @@ func (m *MetadataV1) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 }
 */
 func (m *MetadataV1) GetHostCnodes(nodeId string) map[string]interface{} {
-	clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+	clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 	instanceId := clusterNode.InstanceId
 	role := clusterNode.Role
 	if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
@@ -267,7 +267,7 @@ func (m *MetadataV1) GetHostCnodes(nodeId string) map[string]interface{} {
 func (m *MetadataV1) GetEmptyHostsCnodes(nodeIds []string) map[string]interface{} {
 	hosts := make(map[string]interface{})
 	for _, nodeId := range nodeIds {
-		clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		instanceId := clusterNode.InstanceId
 		role := clusterNode.Role
 		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
@@ -304,7 +304,7 @@ func (m *MetadataV1) GetClusterMetadataCnodes() map[string]interface{} {
 */
 func (m *MetadataV1) GetSelfEnvCnodes(nodeId string) map[string]interface{} {
 	result := make(map[string]interface{})
-	clusterNode := m.ClusterWrapper.ClusterNodes[nodeId]
+	clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 	role := clusterNode.Role
 	if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
 		role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
@@ -328,7 +328,7 @@ func (m *MetadataV1) GetScalingCnodes(nodeIds []string, path string) map[string]
 	}
 
 	data := make(map[string]interface{})
-	for _, clusterNode := range m.ClusterWrapper.ClusterNodes {
+	for _, clusterNode := range m.ClusterWrapper.ClusterNodesWithKeyPairs {
 		ip := clusterNode.PrivateIp
 		data[ip] = map[string]interface{}{path: hosts}
 	}
@@ -337,7 +337,7 @@ func (m *MetadataV1) GetScalingCnodes(nodeIds []string, path string) map[string]
 
 func (m *MetadataV1) GetEmptyClusterCnodes() map[string]interface{} {
 	data := make(map[string]interface{})
-	for _, clusterNode := range m.ClusterWrapper.ClusterNodes {
+	for _, clusterNode := range m.ClusterWrapper.ClusterNodesWithKeyPairs {
 		ip := clusterNode.PrivateIp
 		data[ip] = ""
 	}

@@ -700,15 +700,15 @@ func TestParse(t *testing.T) {
 	}
 
 	// check cluser node
-	if len(hbaseClusterNodes) != len(clusterWrapper.ClusterNodes) {
+	if len(hbaseClusterNodes) != len(clusterWrapper.ClusterNodesWithKeyPairs) {
 		t.Errorf("ClusterConf node length not equal, ori: %d, dst: %d",
-			len(hbaseClusterNodes), len(clusterWrapper.ClusterNodes))
+			len(hbaseClusterNodes), len(clusterWrapper.ClusterNodesWithKeyPairs))
 	}
-	for index := range clusterWrapper.ClusterNodes {
-		if hbaseClusterNodes[index] != *clusterWrapper.ClusterNodes[index] {
+	for index := range clusterWrapper.ClusterNodesWithKeyPairs {
+		if hbaseClusterNodes[index] != *clusterWrapper.ClusterNodesWithKeyPairs[index].ClusterNode {
 			t.Errorf("ClusterConf node [%s] not equal.", index)
 			t.Logf("ori: %+v", hbaseClusterNodes[index].Role)
-			t.Logf("dst: %+v", *clusterWrapper.ClusterNodes[index])
+			t.Logf("dst: %+v", *clusterWrapper.ClusterNodesWithKeyPairs[index])
 		}
 	}
 

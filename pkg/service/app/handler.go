@@ -66,6 +66,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 		subqueryStmt := p.Db.
 			Select(models.ColumnResouceId).
 			From(models.CategoryResourceTableName).
+			Where(db.Eq(models.ColumnStatus, constants.StatusEnabled)).
 			Where(db.Eq(models.ColumnCategoryId, categoryIds))
 		query = query.Where(db.Eq(models.ColumnAppId, []*db.SelectQuery{subqueryStmt}))
 	}
@@ -160,13 +161,15 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 
-	err = categoryutil.SyncResourceCategories(
-		p.Db,
-		appId,
-		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
-	)
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+	if req.GetCategoryId() != nil {
+		err = categoryutil.SyncResourceCategories(
+			p.Db,
+			appId,
+			categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
+		)
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		}
 	}
 
 	res := &pb.ModifyAppResponse{
@@ -363,14 +366,22 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 		LastTwoWeekCreated: make(map[string]uint32),
 		TopTenRepos:        make(map[string]uint32),
 	}
-	appCount, err := p.Db.Select(models.ColumnAppId).From(models.AppTableName).Count()
+	appCount, err := p.Db.
+		Select(models.ColumnAppId).
+		From(models.AppTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Count()
 	if err != nil {
 		logger.Error("Failed to get app count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res.AppCount = appCount
 
-	err = p.Db.Select("COUNT(DISTINCT repo_id)").From(models.AppTableName).LoadOne(&res.RepoCount)
+	err = p.Db.
+		Select("COUNT(DISTINCT repo_id)").
+		From(models.AppTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		LoadOne(&res.RepoCount)
 	if err != nil {
 		logger.Error("Failed to get repo count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -397,6 +408,7 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 	_, err = p.Db.
 		Select("repo_id", "COUNT(app_id)").
 		From(models.AppTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		GroupBy(models.ColumnRepoId).
 		OrderDir("COUNT(app_id)", false).
 		Limit(10).Load(&rs)

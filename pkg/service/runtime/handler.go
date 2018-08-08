@@ -178,6 +178,20 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceNotFound, runtimeId)
 	}
+	if req.RuntimeCredential != nil {
+		err = ValidateCredential(
+			runtime.Provider,
+			runtime.RuntimeUrl,
+			req.RuntimeCredential.GetValue(),
+			runtime.Zone)
+		if err != nil {
+			if gerr.IsGRPCError(err) {
+				return nil, err
+			} else {
+				return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorValidateFailed)
+			}
+		}
+	}
 	if runtime.Status == constants.StatusDeleted {
 		logger.Error("runtime has been deleted [%s]", runtimeId)
 		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, runtimeId)
@@ -191,6 +205,14 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	// update runtime label
 	if req.Labels != nil {
 		err := p.updateRuntimeLabels(runtimeId, req.Labels.GetValue())
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		}
+	}
+
+	// update runtime credential
+	if req.RuntimeCredential != nil {
+		err := p.updateRuntimeCredential(runtime.RuntimeCredentialId, runtime.Provider, req.RuntimeCredential.GetValue())
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
@@ -260,14 +282,22 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 		LastTwoWeekCreated: make(map[string]uint32),
 		TopTenProviders:    make(map[string]uint32),
 	}
-	runtimeCount, err := p.Db.Select(models.ColumnRuntimeId).From(models.RuntimeTableName).Count()
+	runtimeCount, err := p.Db.
+		Select(models.ColumnRuntimeId).
+		From(models.RuntimeTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Count()
 	if err != nil {
 		logger.Error("Failed to get runtime count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res.RuntimeCount = runtimeCount
 
-	err = p.Db.Select("COUNT(DISTINCT provider)").From(models.RuntimeTableName).LoadOne(&res.ProviderCount)
+	err = p.Db.
+		Select("COUNT(DISTINCT provider)").
+		From(models.RuntimeTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		LoadOne(&res.ProviderCount)
 	if err != nil {
 		logger.Error("Failed to get provider count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -294,6 +324,7 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 	_, err = p.Db.
 		Select("provider", "COUNT(runtime_id)").
 		From(models.RuntimeTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		GroupBy(models.ColumnProvider).
 		OrderDir("COUNT(runtime_id)", false).
 		Limit(10).Load(&ps)

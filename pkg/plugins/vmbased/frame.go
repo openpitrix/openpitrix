@@ -42,7 +42,7 @@ type Frame struct {
 func (f *Frame) startConfdServiceLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			Timeout:     TimeoutStartConfd,
@@ -71,7 +71,7 @@ func (f *Frame) startConfdServiceLayer(nodeIds []string, failureAllowed bool) *m
 func (f *Frame) stopConfdServiceLayer(nodeIds []string, failtureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			Timeout:     TimeoutStopConfd,
@@ -101,7 +101,7 @@ func (f *Frame) stopConfdServiceLayer(nodeIds []string, failtureAllowed bool) *m
 func (f *Frame) getPreAndPostStartGroupNodes(nodeIds []string) ([]string, []string) {
 	var preGroupNodes, postGroupNodes []string
 	for _, nodeId := range nodeIds {
-		role := f.ClusterWrapper.ClusterNodes[nodeId].Role
+		role := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId].Role
 		serviceStr := f.ClusterWrapper.ClusterCommons[role].InitService
 		if serviceStr != "" {
 			service := app.Service{}
@@ -129,7 +129,7 @@ func (f *Frame) getPreAndPostStartGroupNodes(nodeIds []string) ([]string, []stri
 func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []string) {
 	var preGroupNodes, postGroupNodes []string
 	for _, nodeId := range nodeIds {
-		role := f.ClusterWrapper.ClusterNodes[nodeId].Role
+		role := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId].Role
 		serviceStr := f.ClusterWrapper.ClusterCommons[role].DestroyService
 		if serviceStr != "" {
 			service := app.Service{}
@@ -156,7 +156,7 @@ func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []strin
 func (f *Frame) deregisterCmdLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		ip := f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp
+		ip := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId].PrivateIp
 		meta := &models.Meta{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			NodeId:      nodeId,
@@ -186,7 +186,7 @@ func (f *Frame) deregisterCmdLayer(nodeIds []string, failureAllowed bool) *model
 func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		role := f.ClusterWrapper.ClusterNodes[nodeId].Role
+		role := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId].Role
 		serviceStr := f.ClusterWrapper.GetCommonAttribute(role, serviceName)
 		if serviceStr != nil {
 			service := app.Service{}
@@ -203,7 +203,7 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string, failureAl
 			if service.Cmd == "" {
 				continue
 			}
-			ip := f.ClusterWrapper.ClusterNodes[nodeId].PrivateIp
+			ip := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId].PrivateIp
 			cmd := &models.Cmd{
 				Cmd:     service.Cmd,
 				Timeout: timeout,
@@ -309,7 +309,7 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 	roleNodeIds := make(map[string][]string)
 	nodeIdRole := make(map[string]string)
 	for _, nodeId := range nodeIds {
-		clusterNode, exist := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode, exist := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		if !exist {
 			f.Logger.Error("ClusterConf [%s] node [%s] not exist", f.ClusterWrapper.Cluster.ClusterId, nodeId)
 			continue
@@ -466,7 +466,7 @@ func (f *Frame) destroyAndStopServiceLayer(nodeIds []string, extraLayer *models.
 func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		role := clusterNode.Role
 		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
 			role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
@@ -510,7 +510,7 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		if clusterNode.VolumeId == "" {
 			continue
 		}
@@ -538,7 +538,10 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 
 func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
-	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
+		if clusterNode.VolumeId == "" {
+			continue
+		}
 		volume := &models.Volume{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
 			Zone:       f.ClusterWrapper.Cluster.Zone,
@@ -564,7 +567,7 @@ func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
 func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		if clusterNode.VolumeId == "" {
 			continue
 		}
@@ -594,25 +597,36 @@ func (f *Frame) formatAndMountVolumeLayer(nodeIds []string, failureAllowed bool)
 	taskLayer := new(models.TaskLayer)
 
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
-		// cmd will be assigned when the task is handling
-		meta := &models.Meta{
-			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
-			Timeout:     TimeoutFormatAndMountVolume,
-			NodeId:      clusterNode.NodeId,
-			DroneIp:     clusterNode.PrivateIp,
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
+		role := clusterNode.Role
+		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
+		if !exist {
+			f.Logger.Error("No such role [%s] in cluster role [%s]. ",
+				role, f.ClusterWrapper.Cluster.ClusterId)
+			return nil
 		}
-		directive := jsonutil.ToString(meta)
-		formatVolumeTask := &models.Task{
-			JobId:          f.Job.JobId,
-			Owner:          f.Job.Owner,
-			TaskAction:     ActionFormatAndMountVolume,
-			Target:         constants.TargetPilot,
-			NodeId:         nodeId,
-			Directive:      directive,
-			FailureAllowed: failureAllowed,
+
+		size := clusterRole.StorageSize
+		if size > 0 {
+			// cmd will be assigned when the task is handling
+			meta := &models.Meta{
+				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+				Timeout:     TimeoutFormatAndMountVolume,
+				NodeId:      clusterNode.NodeId,
+				DroneIp:     clusterNode.PrivateIp,
+			}
+			directive := jsonutil.ToString(meta)
+			formatVolumeTask := &models.Task{
+				JobId:          f.Job.JobId,
+				Owner:          f.Job.Owner,
+				TaskAction:     ActionFormatAndMountVolume,
+				Target:         constants.TargetPilot,
+				NodeId:         nodeId,
+				Directive:      directive,
+				FailureAllowed: failureAllowed,
+			}
+			taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 		}
-		taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 	}
 	if len(taskLayer.Tasks) > 0 {
 		return taskLayer
@@ -624,29 +638,40 @@ func (f *Frame) formatAndMountVolumeLayer(nodeIds []string, failureAllowed bool)
 func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 
-	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
-		ip := clusterNode.PrivateIp
-		cmd := fmt.Sprintf("%s \"docker rm -f default\"", HostCmdPrefix)
-		request := &pbtypes.RunCommandOnDroneRequest{
-			Endpoint: &pbtypes.DroneEndpoint{
-				FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
-				DroneIp:     ip,
-				DronePort:   constants.DroneServicePort,
-			},
-			Command:        cmd,
-			TimeoutSeconds: TimeoutRemoveContainer,
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
+		role := clusterNode.Role
+		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
+		if !exist {
+			f.Logger.Error("No such role [%s] in cluster role [%s]. ",
+				role, f.ClusterWrapper.Cluster.ClusterId)
+			return nil
 		}
-		directive := jsonutil.ToString(request)
-		formatVolumeTask := &models.Task{
-			JobId:          f.Job.JobId,
-			Owner:          f.Job.Owner,
-			TaskAction:     ActionRemoveContainerOnDrone,
-			Target:         constants.TargetPilot,
-			NodeId:         nodeId,
-			Directive:      directive,
-			FailureAllowed: failureAllowed,
+
+		size := clusterRole.StorageSize
+		if size > 0 {
+			ip := clusterNode.PrivateIp
+			cmd := fmt.Sprintf("%s \"docker rm -f default\"", HostCmdPrefix)
+			request := &pbtypes.RunCommandOnDroneRequest{
+				Endpoint: &pbtypes.DroneEndpoint{
+					FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+					DroneIp:     ip,
+					DronePort:   constants.DroneServicePort,
+				},
+				Command:        cmd,
+				TimeoutSeconds: TimeoutRemoveContainer,
+			}
+			directive := jsonutil.ToString(request)
+			formatVolumeTask := &models.Task{
+				JobId:          f.Job.JobId,
+				Owner:          f.Job.Owner,
+				TaskAction:     ActionRemoveContainerOnDrone,
+				Target:         constants.TargetPilot,
+				NodeId:         nodeId,
+				Directive:      directive,
+				FailureAllowed: failureAllowed,
+			}
+			taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 		}
-		taskLayer.Tasks = append(taskLayer.Tasks, formatVolumeTask)
 	}
 	if len(taskLayer.Tasks) > 0 {
 		return taskLayer
@@ -664,7 +689,7 @@ func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 		return nil
 	}
 
-	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		role := clusterNode.Role
 		clusterCommon := f.ClusterWrapper.ClusterCommons[role]
 		keyType := clusterCommon.Passphraseless
@@ -720,7 +745,10 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 	taskLayer := new(models.TaskLayer)
 
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
+		if clusterNode.VolumeId == "" {
+			continue
+		}
 		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
 		cmd := UmountVolumeCmd(clusterRole.MountPoint)
 		ip := clusterNode.PrivateIp
@@ -803,7 +831,7 @@ FILE_CONF={\\"id\\":\\"cln-abcdefgh\\",\\"listen_port\\":9112}
 */
 func (f *Frame) getUserDataValue(nodeId string) string {
 	var result string
-	clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+	clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 	role := clusterNode.Role
 	if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
 		role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
@@ -867,14 +895,14 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 	var frontgateIp string
 
 	if f.FrontgateClusterWrapper != nil {
-		for _, frontgateNode := range f.FrontgateClusterWrapper.ClusterNodes {
+		for _, frontgateNode := range f.FrontgateClusterWrapper.ClusterNodesWithKeyPairs {
 			frontgateIp = frontgateNode.PrivateIp
 			break
 		}
 	}
 
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		role := clusterNode.Role
 		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
 			role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
@@ -935,7 +963,7 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		instance := &models.Instance{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
 			NodeId:     nodeId,
@@ -966,7 +994,7 @@ func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *model
 func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		instance := &models.Instance{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
 			NodeId:     nodeId,
@@ -996,7 +1024,7 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 
 func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
-	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		instance := &models.Instance{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
 			NodeId:     nodeId,
@@ -1047,7 +1075,7 @@ func (f *Frame) waitFrontgateLayer(failureAllowed bool) *models.TaskLayer {
 func (f *Frame) pingDroneLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 	for _, nodeId := range nodeIds {
-		clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		droneEndpoint := &pbtypes.DroneEndpoint{
 			FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
 			DroneIp:     clusterNode.PrivateIp,
@@ -1238,7 +1266,7 @@ func (f *Frame) deregisterMetadataLayer(failureAllowed bool) *models.TaskLayer {
 
 func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -1265,7 +1293,7 @@ func (f *Frame) CreateClusterLayer() *models.TaskLayer {
 
 func (f *Frame) StopClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -1284,7 +1312,7 @@ func (f *Frame) StopClusterLayer() *models.TaskLayer {
 
 func (f *Frame) StartClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -1305,7 +1333,7 @@ func (f *Frame) StartClusterLayer() *models.TaskLayer {
 
 func (f *Frame) DeleteClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -1329,7 +1357,7 @@ func (f *Frame) DeleteClusterLayer() *models.TaskLayer {
 
 func (f *Frame) AddClusterNodesLayer() *models.TaskLayer {
 	var addNodeIds, nonAddNodeIds []string
-	for nodeId, node := range f.ClusterWrapper.ClusterNodes {
+	for nodeId, node := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		if node.Status == constants.StatusPending {
 			addNodeIds = append(addNodeIds, nodeId)
 		} else {
@@ -1356,7 +1384,7 @@ func (f *Frame) AddClusterNodesLayer() *models.TaskLayer {
 
 func (f *Frame) DeleteClusterNodesLayer() *models.TaskLayer {
 	var deleteNodeIds, nonDeleteNodeIds []string
-	for nodeId, node := range f.ClusterWrapper.ClusterNodes {
+	for nodeId, node := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		if node.Status == constants.StatusDeleting {
 			deleteNodeIds = append(deleteNodeIds, nodeId)
 		} else {

@@ -32,7 +32,7 @@ type OpenpitrixSubnet struct {
 	SubnetID string `json:"subnet_id,omitempty"`
 
 	// subnet type
-	SubnetType *ProtobufUint32Value `json:"subnet_type,omitempty"`
+	SubnetType int64 `json:"subnet_type,omitempty"`
 
 	// vpc id
 	VpcID string `json:"vpc_id,omitempty"`
@@ -50,11 +50,6 @@ func (m *OpenpitrixSubnet) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateSubnetType(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -65,25 +60,6 @@ func (m *OpenpitrixSubnet) validateInstanceID(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.InstanceID) { // not required
 		return nil
-	}
-
-	return nil
-}
-
-func (m *OpenpitrixSubnet) validateSubnetType(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.SubnetType) { // not required
-		return nil
-	}
-
-	if m.SubnetType != nil {
-
-		if err := m.SubnetType.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("subnet_type")
-			}
-			return err
-		}
 	}
 
 	return nil

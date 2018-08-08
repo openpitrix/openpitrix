@@ -44,6 +44,11 @@ type ClusterNode struct {
 	StatusTime       time.Time
 }
 
+type ClusterNodeWithKeyPairs struct {
+	*ClusterNode
+	KeyPairId []string
+}
+
 var ClusterNodeColumns = GetColumnsFromStruct(&ClusterNode{})
 
 func NewClusterNode() *ClusterNode {
@@ -80,36 +85,68 @@ func ClusterNodeToPb(clusterNode *ClusterNode) *pb.ClusterNode {
 	}
 }
 
-func PbToClusterNode(pbClusterNode *pb.ClusterNode) *ClusterNode {
-	return &ClusterNode{
-		NodeId:           pbClusterNode.GetNodeId().GetValue(),
-		ClusterId:        pbClusterNode.GetClusterId().GetValue(),
-		Name:             pbClusterNode.GetName().GetValue(),
-		InstanceId:       pbClusterNode.GetInstanceId().GetValue(),
-		VolumeId:         pbClusterNode.GetVolumeId().GetValue(),
-		Device:           pbClusterNode.GetDevice().GetValue(),
-		SubnetId:         pbClusterNode.GetSubnetId().GetValue(),
-		PrivateIp:        pbClusterNode.GetPrivateIp().GetValue(),
-		ServerId:         pbClusterNode.GetServerId().GetValue(),
-		Role:             pbClusterNode.GetRole().GetValue(),
-		Status:           pbClusterNode.GetStatus().GetValue(),
-		TransitionStatus: pbClusterNode.GetTransitionStatus().GetValue(),
-		GroupId:          pbClusterNode.GetGroupId().GetValue(),
-		Owner:            pbClusterNode.GetOwner().GetValue(),
-		GlobalServerId:   pbClusterNode.GetGlobalServerId().GetValue(),
-		CustomMetadata:   pbClusterNode.GetCustomMetadata().GetValue(),
-		PubKey:           pbClusterNode.GetPubKey().GetValue(),
-		HealthStatus:     pbClusterNode.GetHealthStatus().GetValue(),
-		IsBackup:         pbClusterNode.GetIsBackup().GetValue(),
-		AutoBackup:       pbClusterNode.GetAutoBackup().GetValue(),
-		CreateTime:       pbutil.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
-		StatusTime:       pbutil.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
+func ClusterNodeWithKeyPairsToPb(clusterNodeKeyPairs *ClusterNodeWithKeyPairs) *pb.ClusterNode {
+	return &pb.ClusterNode{
+		NodeId:           pbutil.ToProtoString(clusterNodeKeyPairs.NodeId),
+		ClusterId:        pbutil.ToProtoString(clusterNodeKeyPairs.ClusterId),
+		Name:             pbutil.ToProtoString(clusterNodeKeyPairs.Name),
+		InstanceId:       pbutil.ToProtoString(clusterNodeKeyPairs.InstanceId),
+		VolumeId:         pbutil.ToProtoString(clusterNodeKeyPairs.VolumeId),
+		Device:           pbutil.ToProtoString(clusterNodeKeyPairs.Device),
+		SubnetId:         pbutil.ToProtoString(clusterNodeKeyPairs.SubnetId),
+		PrivateIp:        pbutil.ToProtoString(clusterNodeKeyPairs.PrivateIp),
+		ServerId:         pbutil.ToProtoUInt32(clusterNodeKeyPairs.ServerId),
+		Role:             pbutil.ToProtoString(clusterNodeKeyPairs.Role),
+		Status:           pbutil.ToProtoString(clusterNodeKeyPairs.Status),
+		TransitionStatus: pbutil.ToProtoString(clusterNodeKeyPairs.TransitionStatus),
+		GroupId:          pbutil.ToProtoUInt32(clusterNodeKeyPairs.GroupId),
+		Owner:            pbutil.ToProtoString(clusterNodeKeyPairs.Owner),
+		GlobalServerId:   pbutil.ToProtoUInt32(clusterNodeKeyPairs.GlobalServerId),
+		CustomMetadata:   pbutil.ToProtoString(clusterNodeKeyPairs.CustomMetadata),
+		PubKey:           pbutil.ToProtoString(clusterNodeKeyPairs.PubKey),
+		HealthStatus:     pbutil.ToProtoString(clusterNodeKeyPairs.HealthStatus),
+		IsBackup:         pbutil.ToProtoBool(clusterNodeKeyPairs.IsBackup),
+		AutoBackup:       pbutil.ToProtoBool(clusterNodeKeyPairs.AutoBackup),
+		CreateTime:       pbutil.ToProtoTimestamp(clusterNodeKeyPairs.CreateTime),
+		StatusTime:       pbutil.ToProtoTimestamp(clusterNodeKeyPairs.StatusTime),
+		KeyPairId:        clusterNodeKeyPairs.KeyPairId,
 	}
 }
 
-func ClusterNodesToPbs(clusterNodes []*ClusterNode) (pbClusterNodes []*pb.ClusterNode) {
-	for _, clusterNode := range clusterNodes {
-		pbClusterNodes = append(pbClusterNodes, ClusterNodeToPb(clusterNode))
+func PbToClusterNode(pbClusterNode *pb.ClusterNode) *ClusterNodeWithKeyPairs {
+	clusterNodeKeyPairs := &ClusterNodeWithKeyPairs{
+		ClusterNode: &ClusterNode{
+			NodeId:           pbClusterNode.GetNodeId().GetValue(),
+			ClusterId:        pbClusterNode.GetClusterId().GetValue(),
+			Name:             pbClusterNode.GetName().GetValue(),
+			InstanceId:       pbClusterNode.GetInstanceId().GetValue(),
+			VolumeId:         pbClusterNode.GetVolumeId().GetValue(),
+			Device:           pbClusterNode.GetDevice().GetValue(),
+			SubnetId:         pbClusterNode.GetSubnetId().GetValue(),
+			PrivateIp:        pbClusterNode.GetPrivateIp().GetValue(),
+			ServerId:         pbClusterNode.GetServerId().GetValue(),
+			Role:             pbClusterNode.GetRole().GetValue(),
+			Status:           pbClusterNode.GetStatus().GetValue(),
+			TransitionStatus: pbClusterNode.GetTransitionStatus().GetValue(),
+			GroupId:          pbClusterNode.GetGroupId().GetValue(),
+			Owner:            pbClusterNode.GetOwner().GetValue(),
+			GlobalServerId:   pbClusterNode.GetGlobalServerId().GetValue(),
+			CustomMetadata:   pbClusterNode.GetCustomMetadata().GetValue(),
+			PubKey:           pbClusterNode.GetPubKey().GetValue(),
+			HealthStatus:     pbClusterNode.GetHealthStatus().GetValue(),
+			IsBackup:         pbClusterNode.GetIsBackup().GetValue(),
+			AutoBackup:       pbClusterNode.GetAutoBackup().GetValue(),
+			CreateTime:       pbutil.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
+			StatusTime:       pbutil.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
+		},
+	}
+	clusterNodeKeyPairs.KeyPairId = pbClusterNode.KeyPairId
+	return clusterNodeKeyPairs
+}
+
+func ClusterNodesWithKeyPairsToPbs(clusterNodeKeyPairs []*ClusterNodeWithKeyPairs) (pbClusterNodes []*pb.ClusterNode) {
+	for _, clusterNodeKeyPairsItem := range clusterNodeKeyPairs {
+		pbClusterNodes = append(pbClusterNodes, ClusterNodeWithKeyPairsToPb(clusterNodeKeyPairsItem))
 	}
 	return
 }

@@ -23,7 +23,7 @@ type OpenpitrixTask struct {
 	Directive string `json:"directive,omitempty"`
 
 	// error code
-	ErrorCode *ProtobufUint32Value `json:"error_code,omitempty"`
+	ErrorCode int64 `json:"error_code,omitempty"`
 
 	// executor
 	Executor string `json:"executor,omitempty"`
@@ -60,33 +60,9 @@ type OpenpitrixTask struct {
 func (m *OpenpitrixTask) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateErrorCode(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixTask) validateErrorCode(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ErrorCode) { // not required
-		return nil
-	}
-
-	if m.ErrorCode != nil {
-
-		if err := m.ErrorCode.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("error_code")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

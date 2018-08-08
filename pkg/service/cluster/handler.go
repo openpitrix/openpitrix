@@ -85,9 +85,25 @@ func getClusterWrapper(clusterId string) (*models.ClusterWrapper, error) {
 		return nil, err
 	}
 
-	clusterWrapper.ClusterNodes = map[string]*models.ClusterNode{}
+	clusterWrapper.ClusterNodesWithKeyPairs = map[string]*models.ClusterNodeWithKeyPairs{}
 	for _, clusterNode := range clusterNodes {
-		clusterWrapper.ClusterNodes[clusterNode.NodeId] = clusterNode
+		var nodeKeyPairs []*models.NodeKeyPair
+		_, err = pi.Global().Db.
+			Select(models.NodeKeyPairColumns...).
+			From(models.NodeKeyPairTableName).
+			Where(db.Eq("node_id", clusterNode.NodeId)).
+			Load(&nodeKeyPairs)
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+
+		clusterNodeWithKeyPairs := &models.ClusterNodeWithKeyPairs{
+			ClusterNode: clusterNode,
+		}
+		for _, nodeKeyPair := range nodeKeyPairs {
+			clusterNodeWithKeyPairs.KeyPairId = append(clusterNodeWithKeyPairs.KeyPairId, nodeKeyPair.KeyPairId)
+		}
+		clusterWrapper.ClusterNodesWithKeyPairs[clusterNode.NodeId] = clusterNodeWithKeyPairs
 	}
 
 	_, err = pi.Global().Db.
@@ -290,6 +306,7 @@ func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsR
 	s := senderutil.GetSenderFromContext(ctx)
 	owner := s.UserId
 	var keyPairs []*models.KeyPair
+	var keyPairWithNodes []*models.KeyPairWithNodes
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 	query := pi.Global().Db.
@@ -308,7 +325,29 @@ func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsR
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
-	keyPairSet := models.KeyPairsToPbs(keyPairs)
+
+	for _, keyPair := range keyPairs {
+		var nodeKeyPairs []*models.NodeKeyPair
+		query = pi.Global().Db.
+			Select(models.NodeKeyPairColumns...).
+			From(models.NodeKeyPairTableName).
+			Where(db.Eq("key_pair_id", keyPair.KeyPairId))
+		_, err := query.Load(&nodeKeyPairs)
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+
+		keyPairWithNodesItem := &models.KeyPairWithNodes{
+			KeyPair: keyPair,
+		}
+
+		for _, nodeKeyPair := range nodeKeyPairs {
+			keyPairWithNodesItem.NodeId = append(keyPairWithNodesItem.NodeId, nodeKeyPair.NodeId)
+		}
+		keyPairWithNodes = append(keyPairWithNodes, keyPairWithNodesItem)
+	}
+
+	keyPairSet := models.KeyPairNodesToPbs(keyPairWithNodes)
 
 	res := &pb.DescribeKeyPairsResponse{
 		KeyPairSet: keyPairSet,
@@ -415,7 +454,7 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 
 	var jobIds []string
 	for clusterId, nodeIds := range clusterNodeIds {
-		cluster, err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
+		cluster, err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive, constants.StatusPending})
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
 		}
@@ -508,7 +547,7 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 
 	var jobIds []string
 	for clusterId, nodeIds := range clusterNodeIds {
-		cluster, err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive})
+		cluster, err := checkPermissionAndTransition(clusterId, s.UserId, []string{constants.StatusActive, constants.StatusPending})
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 		}
@@ -775,10 +814,60 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 	return res, nil
 }
 
+func (p *Server) ModifyClusterAttributes(ctx context.Context, req *pb.ModifyClusterAttributesRequest) (*pb.ModifyClusterAttributesResponse, error) {
+	s := senderutil.GetSenderFromContext(ctx)
+
+	clusterId := req.GetClusterId().GetValue()
+	_, err := getCluster(clusterId, s.UserId)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+	}
+
+	attributes := manager.BuildUpdateAttributes(req, models.ClusterColumns...)
+	_, err = pi.Global().Db.
+		Update(models.ClusterTableName).
+		SetMap(attributes).
+		Where(db.Eq("cluster_id", clusterId)).
+		Exec()
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+	}
+
+	res := &pb.ModifyClusterAttributesResponse{
+		ClusterId: pbutil.ToProtoString(clusterId),
+	}
+	return res, nil
+}
+
+func (p *Server) ModifyClusterNodeAttributes(ctx context.Context, req *pb.ModifyClusterNodeAttributesRequest) (*pb.ModifyClusterNodeAttributesResponse, error) {
+	s := senderutil.GetSenderFromContext(ctx)
+
+	nodeId := req.GetNodeId().GetValue()
+	_, err := getClusterNode(nodeId, s.UserId)
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, nodeId)
+	}
+
+	attributes := manager.BuildUpdateAttributes(req, models.ClusterNodeColumns...)
+	_, err = pi.Global().Db.
+		Update(models.ClusterNodeTableName).
+		SetMap(attributes).
+		Where(db.Eq("node_id", nodeId)).
+		Exec()
+	if err != nil {
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, nodeId)
+	}
+
+	res := &pb.ModifyClusterNodeAttributesResponse{
+		NodeId: pbutil.ToProtoString(nodeId),
+	}
+	return res, nil
+}
+
 func (p *Server) AddTableClusterNodes(ctx context.Context, req *pb.AddTableClusterNodesRequest) (*pb_empty.Empty, error) {
 	for _, clusterNode := range req.ClusterNodeSet {
 		node := models.PbToClusterNode(clusterNode)
-		err := RegisterClusterNode(node)
+		err := RegisterClusterNode(node.ClusterNode)
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorInternalError)
 		}
@@ -1197,8 +1286,26 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 			return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, nodeId)
 		}
 
+		var nodeKeyPairs []*models.NodeKeyPair
+		_, err = pi.Global().Db.
+			Select(models.NodeKeyPairColumns...).
+			From(models.NodeKeyPairTableName).
+			Where(db.Eq("node_id", clusterNode.NodeId)).
+			Load(&nodeKeyPairs)
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+
+		clusterNodeWithKeyPairs := &models.ClusterNodeWithKeyPairs{
+			ClusterNode: clusterNode,
+		}
+
+		for _, nodeKeyPair := range nodeKeyPairs {
+			clusterNodeWithKeyPairs.KeyPairId = append(clusterNodeWithKeyPairs.KeyPairId, nodeKeyPair.KeyPairId)
+		}
+
 		pbClusterNodes = append(pbClusterNodes,
-			models.ClusterNodeWrapperToPb(clusterNode, clusterCommon, clusterRole))
+			models.ClusterNodeWrapperToPb(clusterNodeWithKeyPairs, clusterCommon, clusterRole))
 	}
 
 	count, err := query.Count()
@@ -1423,7 +1530,11 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 		LastTwoWeekCreated: make(map[string]uint32),
 		TopTenRuntimes:     make(map[string]uint32),
 	}
-	clusterCount, err := pi.Global().Db.Select(models.ColumnClusterId).From(models.ClusterTableName).Count()
+	clusterCount, err := pi.Global().Db.
+		Select(models.ColumnClusterId).
+		From(models.ClusterTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Count()
 	if err != nil {
 		logger.Error("Failed to get cluster count, error: %+v", err)
 		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -1433,6 +1544,7 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 	err = pi.Global().Db.
 		Select("COUNT(DISTINCT runtime_id)").
 		From(models.ClusterTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		LoadOne(&res.RuntimeCount)
 	if err != nil {
 		logger.Error("Failed to get runtime count, error: %+v", err)
@@ -1460,6 +1572,7 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 	_, err = pi.Global().Db.
 		Select("runtime_id", "COUNT(cluster_id)").
 		From(models.ClusterTableName).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		GroupBy(models.ColumnRuntimeId).
 		OrderDir("COUNT(cluster_id)", false).
 		Limit(10).Load(&rs)

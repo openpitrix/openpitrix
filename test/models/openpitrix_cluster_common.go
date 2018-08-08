@@ -80,7 +80,7 @@ type OpenpitrixClusterCommon struct {
 	ScaleOutService string `json:"scale_out_service,omitempty"`
 
 	// server id upper bound
-	ServerIDUpperBound *ProtobufUint32Value `json:"server_id_upper_bound,omitempty"`
+	ServerIDUpperBound int64 `json:"server_id_upper_bound,omitempty"`
 
 	// start service
 	StartService string `json:"start_service,omitempty"`
@@ -99,33 +99,9 @@ type OpenpitrixClusterCommon struct {
 func (m *OpenpitrixClusterCommon) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateServerIDUpperBound(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixClusterCommon) validateServerIDUpperBound(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ServerIDUpperBound) { // not required
-		return nil
-	}
-
-	if m.ServerIDUpperBound != nil {
-
-		if err := m.ServerIDUpperBound.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("server_id_upper_bound")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

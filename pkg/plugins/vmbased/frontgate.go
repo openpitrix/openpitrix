@@ -13,6 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/sshutil"
 )
 
 type Frontgate struct {
@@ -28,7 +29,7 @@ FILE_CONF={\\"id\\":\\"cln-abcdefgh\\",\\"listen_port\\":9111,\\"pilot_host\\":1
 */
 func (f *Frontgate) getUserDataValue(nodeId string) string {
 	var result string
-	clusterNode := f.ClusterWrapper.ClusterNodes[nodeId]
+	clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 	role := clusterNode.Role
 	if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
 		role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
@@ -58,7 +59,7 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 	return result
 }
 
-func (f *Frame) pingFrontgateLayer(failureAllowed bool) *models.TaskLayer {
+func (f *Frontgate) pingFrontgateLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 
 	directive := jsonutil.ToString(&models.Meta{
@@ -109,7 +110,7 @@ func (f *Frontgate) setFrontgateConfigLayer(nodeIds []string, failureAllowed boo
 func (f *Frontgate) removeContainerLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 
-	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodes {
+	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		ip := clusterNode.PrivateIp
 		cmd := fmt.Sprintf("%s \"docker rm -f default\"", HostCmdPrefix)
 		request := &pbtypes.RunCommandOnFrontgateRequest{
@@ -141,9 +142,71 @@ func (f *Frontgate) removeContainerLayer(nodeIds []string, failureAllowed bool) 
 	}
 }
 
+func (f *Frontgate) attachKeyPairLayer(nodeKeyPairDetail *models.NodeKeyPairDetail) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	clusterNode := nodeKeyPairDetail.ClusterNode
+	request := &pbtypes.RunCommandOnFrontgateRequest{
+		Endpoint: &pbtypes.FrontgateEndpoint{
+			FrontgateId:     f.ClusterWrapper.Cluster.ClusterId,
+			FrontgateNodeId: clusterNode.NodeId,
+			NodeIp:          clusterNode.PrivateIp,
+			NodePort:        constants.FrontgateServicePort,
+		},
+		Command:        fmt.Sprintf("%s \"%s\"", HostCmdPrefix, sshutil.DoAttachCmd(nodeKeyPairDetail.KeyPair.PubKey)),
+		TimeoutSeconds: TimeoutKeyPair,
+	}
+	directive := jsonutil.ToString(request)
+	attachKeyPairTask := &models.Task{
+		JobId:          f.Job.JobId,
+		Owner:          f.Job.Owner,
+		TaskAction:     ActionRunCommandOnFrontgateNode,
+		Target:         constants.TargetPilot,
+		NodeId:         clusterNode.NodeId,
+		Directive:      directive,
+		FailureAllowed: false,
+	}
+	taskLayer.Tasks = append(taskLayer.Tasks, attachKeyPairTask)
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
+func (f *Frontgate) detachKeyPairLayer(nodeKeyPairDetail *models.NodeKeyPairDetail) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	clusterNode := nodeKeyPairDetail.ClusterNode
+	request := &pbtypes.RunCommandOnFrontgateRequest{
+		Endpoint: &pbtypes.FrontgateEndpoint{
+			FrontgateId:     f.ClusterWrapper.Cluster.ClusterId,
+			FrontgateNodeId: clusterNode.NodeId,
+			NodeIp:          clusterNode.PrivateIp,
+			NodePort:        constants.FrontgateServicePort,
+		},
+		Command:        fmt.Sprintf("%s \"%s\"", HostCmdPrefix, sshutil.DoDetachCmd(nodeKeyPairDetail.KeyPair.PubKey)),
+		TimeoutSeconds: TimeoutKeyPair,
+	}
+	directive := jsonutil.ToString(request)
+	attachKeyPairTask := &models.Task{
+		JobId:          f.Job.JobId,
+		Owner:          f.Job.Owner,
+		TaskAction:     ActionRunCommandOnFrontgateNode,
+		Target:         constants.TargetPilot,
+		NodeId:         clusterNode.NodeId,
+		Directive:      directive,
+		FailureAllowed: false,
+	}
+	taskLayer.Tasks = append(taskLayer.Tasks, attachKeyPairTask)
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
 func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -162,7 +225,7 @@ func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 
 func (f *Frontgate) DeleteClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -182,7 +245,7 @@ func (f *Frontgate) DeleteClusterLayer() *models.TaskLayer {
 
 func (f *Frontgate) StartClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -198,7 +261,7 @@ func (f *Frontgate) StartClusterLayer() *models.TaskLayer {
 
 func (f *Frontgate) StopClusterLayer() *models.TaskLayer {
 	var nodeIds []string
-	for nodeId := range f.ClusterWrapper.ClusterNodes {
+	for nodeId := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	headTaskLayer := new(models.TaskLayer)
@@ -207,6 +270,26 @@ func (f *Frontgate) StopClusterLayer() *models.TaskLayer {
 		Append(f.umountVolumeLayer(nodeIds, true)).   // umount volume from instance
 		Append(f.detachVolumesLayer(nodeIds, false)). // detach volume from instance
 		Append(f.stopInstancesLayer(nodeIds, false))  // delete instance
+
+	return headTaskLayer.Child
+}
+
+func (f *Frontgate) AttachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer {
+	headTaskLayer := new(models.TaskLayer)
+
+	for _, nodeKeyPairDetail := range nodeKeyPairDetails {
+		headTaskLayer.Append(f.attachKeyPairLayer(&nodeKeyPairDetail))
+	}
+
+	return headTaskLayer.Child
+}
+
+func (f *Frontgate) DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer {
+	headTaskLayer := new(models.TaskLayer)
+
+	for _, nodeKeyPairDetail := range nodeKeyPairDetails {
+		headTaskLayer.Append(f.detachKeyPairLayer(&nodeKeyPairDetail))
+	}
 
 	return headTaskLayer.Child
 }

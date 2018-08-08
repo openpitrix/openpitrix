@@ -17,10 +17,6 @@ import (
 	"k8s.io/api/apps/v1beta2"
 	exv1beta1 "k8s.io/api/extensions/v1beta1"
 	k8syaml "k8s.io/apimachinery/pkg/util/yaml"
-	"k8s.io/client-go/discovery"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
-	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 	"k8s.io/helm/pkg/chartutil"
 	"k8s.io/helm/pkg/engine"
 	"k8s.io/helm/pkg/proto/hapi/chart"
@@ -30,20 +26,22 @@ import (
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
-	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
-	"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type Parser struct {
-	Logger *logger.Logger
+	Logger    *logger.Logger
+	Chart     *chart.Chart
+	Conf      string
+	VersionId string
+	RuntimeId string
 }
 
-func (p *Parser) ParseCluster(name string, description string, versionId string) (*models.Cluster, error) {
+func (p *Parser) getAppVersion() (*pb.AppVersion, error) {
 	ctx := clientutil.GetSystemUserContext()
 	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
@@ -51,7 +49,7 @@ func (p *Parser) ParseCluster(name string, description string, versionId string)
 	}
 
 	req := &pb.DescribeAppVersionsRequest{
-		VersionId: []string{versionId},
+		VersionId: []string{p.VersionId},
 	}
 
 	resp, err := appManagerClient.DescribeAppVersions(ctx, req)
@@ -60,16 +58,25 @@ func (p *Parser) ParseCluster(name string, description string, versionId string)
 	}
 
 	if len(resp.AppVersionSet) == 0 {
-		return nil, fmt.Errorf("app version [%s] not found", versionId)
+		return nil, fmt.Errorf("app version [%s] not found", p.VersionId)
 	}
 
 	appVersion := resp.AppVersionSet[0]
+	return appVersion, nil
+}
+
+func (p *Parser) parseCluster(name string, description string) (*models.Cluster, error) {
+	appVersion, err := p.getAppVersion()
+	if err != nil {
+		return nil, err
+	}
 
 	cluster := &models.Cluster{
 		Name:        name,
 		Description: description,
 		AppId:       appVersion.AppId.GetValue(),
-		VersionId:   versionId,
+		VersionId:   p.VersionId,
+		Status:      constants.StatusPending,
 		CreateTime:  time.Now(),
 		StatusTime:  time.Now(),
 	}
@@ -77,12 +84,7 @@ func (p *Parser) ParseCluster(name string, description string, versionId string)
 	return cluster, nil
 }
 
-func (p *Parser) ParseClusterRolesAndClusterCommons(
-	c *chart.Chart,
-	vals map[string]interface{},
-	customVals map[string]interface{},
-	runtimeId string,
-) (
+func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{}, customVals map[string]interface{}) (
 	map[string]*models.ClusterRole,
 	map[string]*models.ClusterCommon,
 	error,
@@ -90,7 +92,7 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(
 	env := jsonutil.ToString(customVals)
 
 	renderer := engine.New()
-	out, err := renderer.Render(c, vals)
+	out, err := renderer.Render(p.Chart, vals)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -313,7 +315,8 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(
 		}
 	}
 
-	err = p.CheckApiVersionsSupported(runtimeId, apiVersions)
+	kubeHandler := GetKubeHandler(p.Logger, p.RuntimeId)
+	err = kubeHandler.CheckApiVersionsSupported(apiVersions)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -329,67 +332,23 @@ func (p *Parser) ParseClusterRolesAndClusterCommons(
 	return clusterRoles, clusterCommons, nil
 }
 
-func (p *Parser) CheckApiVersionsSupported(runtimeId string, apiVersions []string) error {
-	if len(apiVersions) == 0 {
-		return nil
-	}
-	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
-		runtime, err := runtimeclient.NewRuntime(runtimeId)
-		if err != nil {
-			return nil, err
-		}
-
-		credential := runtime.Credential
-
-		return clientcmd.Load([]byte(credential))
-	}
-
-	config, err := clientcmd.BuildConfigFromKubeconfigGetter("", kubeconfigGetter)
-	if err != nil {
-		return err
-	}
-
-	client, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		return err
-	}
-	apiGroupResources, err := discovery.GetAPIGroupResources(client)
-	if err != nil {
-		return err
-	}
-	var supportedVersions []string
-	for _, group := range apiGroupResources {
-		for _, version := range group.Group.Versions {
-			supportedVersions = append(supportedVersions, version.GroupVersion)
-		}
-	}
-	p.Logger.Debug("Get runtime [%s] supported versions [%+v]", runtimeId, supportedVersions)
-	p.Logger.Debug("Check api versions [%+v]", apiVersions)
-	for _, apiVersion := range apiVersions {
-		if !stringutil.StringIn(apiVersion, supportedVersions) {
-			return gerr.New(gerr.PermissionDenied, gerr.ErrorUnsupportedApiVersion, apiVersion)
-		}
-	}
-	return nil
-}
-
-func (p *Parser) Parse(c *chart.Chart, conf []byte, versionId, runtimeId string) (*models.ClusterWrapper, error) {
-	customVals, name, description, err := p.ParseCustomValues(conf)
+func (p *Parser) Parse() (*models.ClusterWrapper, error) {
+	customVals, name, description, err := p.parseCustomValues()
 	if err != nil {
 		return nil, err
 	}
 
-	vals, err := p.parseValues(c, customVals, name)
+	vals, err := p.parseValues(customVals, name)
 	if err != nil {
 		return nil, err
 	}
 
-	cluster, err := p.ParseCluster(name, description, versionId)
+	cluster, err := p.parseCluster(name, description)
 	if err != nil {
 		return nil, err
 	}
 
-	clusterRoles, clusterCommons, err := p.ParseClusterRolesAndClusterCommons(c, vals, customVals, runtimeId)
+	clusterRoles, clusterCommons, err := p.parseClusterRolesAndClusterCommons(vals, customVals)
 	if err != nil {
 		return nil, err
 	}
@@ -402,26 +361,23 @@ func (p *Parser) Parse(c *chart.Chart, conf []byte, versionId, runtimeId string)
 	return clusterWrapper, nil
 }
 
-func (p *Parser) ParseCustomValues(conf []byte) (map[string]interface{}, string, string, error) {
-	customVals, err := chartutil.ReadValues(conf)
+func (p *Parser) parseCustomValues() (map[string]interface{}, string, string, error) {
+	customVals, err := chartutil.ReadValues([]byte(p.Conf))
 	if err != nil {
 		return nil, "", "", err
 	}
-	name, ok := p.getStringFromValues(customVals, "Name")
+	name, ok := GetStringFromValues(customVals, "Name")
 	if !ok {
 		return nil, "", "", fmt.Errorf("config [Name] is missing")
 	}
-	desc, _ := p.getStringFromValues(customVals, "Description")
-
-	delete(customVals, "Name")
-	delete(customVals, "Description")
+	desc, _ := GetStringFromValues(customVals, "Description")
 
 	return customVals, name, desc, nil
 }
 
-func (p *Parser) parseValues(c *chart.Chart, customVals map[string]interface{}, name string) (map[string]interface{}, error) {
+func (p *Parser) parseValues(customVals map[string]interface{}, name string) (map[string]interface{}, error) {
 	// Get and merge values
-	chartVals, err := chartutil.ReadValues([]byte(c.Values.GetRaw()))
+	chartVals, err := chartutil.ReadValues([]byte(p.Chart.Values.GetRaw()))
 	if err != nil {
 		return nil, err
 	}
@@ -441,24 +397,12 @@ func (p *Parser) parseValues(c *chart.Chart, customVals map[string]interface{}, 
 		Namespace: "",
 	}
 
-	vals, err := chartutil.ToRenderValues(c, config, options)
+	vals, err := chartutil.ToRenderValues(p.Chart, config, options)
 	if err != nil {
 		return nil, err
 	}
 
 	return vals, nil
-}
-
-func (p *Parser) getStringFromValues(vals map[string]interface{}, key string) (string, bool) {
-	v, ok := vals[key]
-	if !ok {
-		return "", false
-	}
-	s, ok := v.(string)
-	if !ok {
-		return "", false
-	}
-	return s, true
 }
 
 func (p *Parser) mergeValues(dest map[string]interface{}, src map[string]interface{}) map[string]interface{} {

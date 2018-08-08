@@ -91,3 +91,10 @@ func (m *Metadata) GetDescription() string {
 	}
 	return ""
 }
+
+func (m *Metadata) GetScreenshots() []string {
+	if m != nil {
+		return m.Screenshots
+	}
+	return []string{}
+}

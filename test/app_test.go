@@ -116,6 +116,14 @@ func TestApp(t *testing.T) {
 
 	require.Equal(t, getSortedString(enabledCategoryIds), "aa,bb,cc,xx")
 	require.Equal(t, getSortedString(disabledCategoryIds), "yy,zz")
+
+	getStatisticsResp, err := client.AppManager.GetAppStatistics(nil)
+	require.NoError(t, err)
+	require.NotEmpty(t, getStatisticsResp.Payload.LastTwoWeekCreated)
+	require.NotEmpty(t, getStatisticsResp.Payload.TopTenRepos)
+	require.NotEmpty(t, getStatisticsResp.Payload.AppCount)
+	require.NotEmpty(t, getStatisticsResp.Payload.RepoCount)
+
 	// delete app
 	deleteParams := app_manager.NewDeleteAppsParams()
 	deleteParams.WithBody(&models.OpenpitrixDeleteAppsRequest{
@@ -145,13 +153,6 @@ func TestApp(t *testing.T) {
 	if app.Status != constants.StatusDeleted {
 		t.Fatalf("failed to delete app, got app status [%s]", app.Status)
 	}
-
-	getStatisticsResp, err := client.AppManager.GetAppStatistics(nil)
-	require.NoError(t, err)
-	require.NotEmpty(t, getStatisticsResp.Payload.LastTwoWeekCreated)
-	require.NotEmpty(t, getStatisticsResp.Payload.TopTenRepos)
-	require.NotEmpty(t, getStatisticsResp.Payload.AppCount)
-	require.NotEmpty(t, getStatisticsResp.Payload.RepoCount)
 
 	t.Log("test app finish, all test is ok")
 }

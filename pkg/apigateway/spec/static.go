@@ -1070,6 +1070,60 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/clusters/modify": {
+      "post": {
+        "summary": "modify cluster attributes",
+        "operationId": "ModifyClusterAttributes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyClusterAttributesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyClusterAttributesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
+    "/v1/clusters/modify_nodes": {
+      "post": {
+        "summary": "modify cluster node attributes",
+        "operationId": "ModifyClusterNodeAttributes",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyClusterNodeAttributesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyClusterNodeAttributesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterManager"
+        ]
+      }
+    },
     "/v1/clusters/nodes": {
       "get": {
         "summary": "describe cluster nodes",
@@ -1323,8 +1377,7 @@ var Files = map[string]string{
             "format": "int64"
           },
           {
-            "name": "subnet_type.value",
-            "description": "The uint32 value.",
+            "name": "subnet_type",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1891,6 +1944,16 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "search_word",
             "in": "query",
             "required": false,
@@ -2354,7 +2417,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "sequence": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -2568,7 +2632,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "sequence": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -2604,17 +2669,6 @@ var Files = map[string]string{
           "format": "date-time"
         }
       }
-    },
-    "protobufUInt32Value": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "integer",
-          "format": "int64",
-          "description": "The uint32 value."
-        }
-      },
-      "description": "Wrapper message for ` + "`" + `uint32` + "`" + `.\n\nThe JSON representation for ` + "`" + `UInt32Value` + "`" + ` is JSON number."
     },
     "openpitrixCategory": {
       "type": "object",
@@ -2738,7 +2792,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "node_count": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "advanced_param": {
           "type": "array",
@@ -2852,7 +2907,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "cluster_type": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "endpoints": {
           "type": "string"
@@ -2933,7 +2989,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "server_id_upper_bound": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "advanced_actions": {
           "type": "string"
@@ -3038,7 +3095,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "loadbalancer_port": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "loadbalancer_policy_id": {
           "type": "string"
@@ -3076,7 +3134,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "server_id": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "role": {
           "type": "string"
@@ -3088,13 +3147,15 @@ var Files = map[string]string{
           "type": "string"
         },
         "group_id": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "owner": {
           "type": "string"
         },
         "global_server_id": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "custom_metadata": {
           "type": "string"
@@ -3126,6 +3187,12 @@ var Files = map[string]string{
         },
         "cluster_common": {
           "$ref": "#/definitions/openpitrixClusterCommon"
+        },
+        "key_pair_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -3139,19 +3206,24 @@ var Files = map[string]string{
           "type": "string"
         },
         "cpu": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "gpu": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "memory": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "instance_size": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "storage_size": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "mount_point": {
           "type": "string"
@@ -3456,6 +3528,53 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "node_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixModifyClusterAttributesRequest": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyClusterAttributesResponse": {
+      "type": "object",
+      "properties": {
+        "cluster_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyClusterNodeAttributesRequest": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyClusterNodeAttributesResponse": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "string"
         }
       }
     },
@@ -3530,10 +3649,12 @@ var Files = map[string]string{
           "type": "string"
         },
         "cpu": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "memory": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "advanced_param": {
           "type": "array",
@@ -3676,7 +3797,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "subnet_type": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -3795,7 +3917,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "error_code": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "directive": {
           "type": "string"
@@ -3804,7 +3927,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "task_count": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "owner": {
           "type": "string"
@@ -4268,6 +4392,9 @@ var Files = map[string]string{
         },
         "labels": {
           "type": "string"
+        },
+        "runtime_credential": {
+          "type": "string"
         }
       }
     },
@@ -4418,7 +4545,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "error_code": {
-          "$ref": "#/definitions/protobufUInt32Value"
+          "type": "integer",
+          "format": "int64"
         },
         "directive": {
           "type": "string"

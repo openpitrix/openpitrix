@@ -15,12 +15,12 @@ import (
 )
 
 type ClusterWrapper struct {
-	Cluster              *Cluster
-	ClusterNodes         map[string]*ClusterNode           // key=nodeId
-	ClusterCommons       map[string]*ClusterCommon         // key=role
-	ClusterLinks         map[string]*ClusterLink           // key=name
-	ClusterRoles         map[string]*ClusterRole           // key=role
-	ClusterLoadbalancers map[string][]*ClusterLoadbalancer // key=role
+	Cluster                  *Cluster
+	ClusterNodesWithKeyPairs map[string]*ClusterNodeWithKeyPairs // key=nodeId
+	ClusterCommons           map[string]*ClusterCommon           // key=role
+	ClusterLinks             map[string]*ClusterLink             // key=name
+	ClusterRoles             map[string]*ClusterRole             // key=role
+	ClusterLoadbalancers     map[string][]*ClusterLoadbalancer   // key=role
 }
 
 func NewClusterWrapper(data string) (*ClusterWrapper, error) {
@@ -37,7 +37,7 @@ func ClusterWrapperToPb(clusterWrapper *ClusterWrapper) *pb.Cluster {
 	pbCluster := ClusterToPb(clusterWrapper.Cluster)
 
 	var clusterCommons []*ClusterCommon
-	var clusterNodes []*ClusterNode
+	var clusterNodesWithKeyPairs []*ClusterNodeWithKeyPairs
 	var clusterRoles []*ClusterRole
 	var clusterLinks []*ClusterLink
 	var clusterLoadbalancers []*ClusterLoadbalancer
@@ -47,10 +47,10 @@ func ClusterWrapperToPb(clusterWrapper *ClusterWrapper) *pb.Cluster {
 	}
 	pbCluster.ClusterCommonSet = ClusterCommonsToPbs(clusterCommons)
 
-	for _, clusterNode := range clusterWrapper.ClusterNodes {
-		clusterNodes = append(clusterNodes, clusterNode)
+	for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
+		clusterNodesWithKeyPairs = append(clusterNodesWithKeyPairs, clusterNode)
 	}
-	pbCluster.ClusterNodeSet = ClusterNodesToPbs(clusterNodes)
+	pbCluster.ClusterNodeSet = ClusterNodesWithKeyPairsToPbs(clusterNodesWithKeyPairs)
 
 	for _, clusterRole := range clusterWrapper.ClusterRoles {
 		clusterRoles = append(clusterRoles, clusterRole)
@@ -70,10 +70,10 @@ func ClusterWrapperToPb(clusterWrapper *ClusterWrapper) *pb.Cluster {
 	return pbCluster
 }
 
-func ClusterNodeWrapperToPb(clusterNode *ClusterNode, clusterCommon *ClusterCommon,
+func ClusterNodeWrapperToPb(clusterNode *ClusterNodeWithKeyPairs, clusterCommon *ClusterCommon,
 	clusterRole *ClusterRole) *pb.ClusterNode {
 
-	pbClusterNode := ClusterNodeToPb(clusterNode)
+	pbClusterNode := ClusterNodeWithKeyPairsToPb(clusterNode)
 	pbClusterNode.ClusterCommon = ClusterCommonToPb(clusterCommon)
 	pbClusterNode.ClusterRole = ClusterRoleToPb(clusterRole)
 
@@ -89,9 +89,9 @@ func PbToClusterWrapper(pbCluster *pb.Cluster) *ClusterWrapper {
 		clusterWrapper.ClusterCommons[pbClusterCommon.GetRole().GetValue()] = PbToClusterCommon(pbClusterCommon)
 	}
 
-	clusterWrapper.ClusterNodes = make(map[string]*ClusterNode)
+	clusterWrapper.ClusterNodesWithKeyPairs = make(map[string]*ClusterNodeWithKeyPairs)
 	for _, pbClusterNode := range pbCluster.ClusterNodeSet {
-		clusterWrapper.ClusterNodes[pbClusterNode.GetNodeId().GetValue()] = PbToClusterNode(pbClusterNode)
+		clusterWrapper.ClusterNodesWithKeyPairs[pbClusterNode.GetNodeId().GetValue()] = PbToClusterNode(pbClusterNode)
 	}
 
 	clusterWrapper.ClusterRoles = make(map[string]*ClusterRole)

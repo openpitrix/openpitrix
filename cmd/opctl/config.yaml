@@ -1,0 +1,727 @@
+- action: CreateApp
+  description: create app
+  service: AppManager
+  body:
+    category_id:
+      type: string
+    chart_name:
+      type: string
+    description:
+      type: string
+    home:
+      type: string
+    icon:
+      type: string
+    keywords:
+      type: string
+    maintainers:
+      type: string
+    name:
+      type: string
+    owner:
+      type: string
+    readme:
+      type: string
+    repo_id:
+      type: string
+    screenshots:
+      type: string
+    sources:
+      type: string
+- action: CreateAppVersion
+  description: create app version
+  service: AppManager
+  body:
+    app_id:
+      type: string
+    description:
+      type: string
+    name:
+      type: string
+    owner:
+      type: string
+    package_name:
+      type: string
+    sequence:
+      type: integer
+- action: DeleteAppVersions
+  description: delete app versions
+  service: AppManager
+  body:
+    version_id:
+      type: '[]string'
+- action: DeleteApps
+  description: delete apps
+  service: AppManager
+  body:
+    app_id:
+      type: '[]string'
+- action: DescribeAppVersions
+  description: describe app versions with filter
+  service: AppManager
+  query:
+    app_id:
+      type: '[]string'
+    description:
+      type: '[]string'
+    limit:
+      type: integer
+    name:
+      type: '[]string'
+    offset:
+      type: integer
+    owner:
+      type: '[]string'
+    package_name:
+      type: '[]string'
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    version_id:
+      type: '[]string'
+- action: DescribeApps
+  description: describe apps with filter
+  service: AppManager
+  query:
+    app_id:
+      type: '[]string'
+    category_id:
+      type: '[]string'
+    chart_name:
+      type: '[]string'
+    limit:
+      type: integer
+    name:
+      type: '[]string'
+    offset:
+      type: integer
+    owner:
+      type: '[]string'
+    repo_id:
+      type: '[]string'
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+- action: GetAppStatistics
+  description: get app statistics
+  service: AppManager
+- action: GetAppVersionPackage
+  description: get the package content of app version
+  service: AppManager
+  query:
+    version_id:
+      type: string
+- action: GetAppVersionPackageFiles
+  description: get the package files content of app version
+  service: AppManager
+  query:
+    files:
+      type: '[]string'
+    version_id:
+      type: string
+- action: ModifyApp
+  description: modify app
+  service: AppManager
+  body:
+    app_id:
+      type: string
+    category_id:
+      type: string
+    chart_name:
+      type: string
+    description:
+      type: string
+    home:
+      type: string
+    icon:
+      type: string
+    keywords:
+      type: string
+    maintainers:
+      type: string
+    name:
+      type: string
+    owner:
+      type: string
+    readme:
+      type: string
+    repo_id:
+      type: string
+    screenshots:
+      type: string
+    sources:
+      type: string
+- action: ModifyAppVersion
+  description: modify app version
+  service: AppManager
+  body:
+    description:
+      type: string
+    name:
+      type: string
+    owner:
+      type: string
+    package_name:
+      type: string
+    sequence:
+      type: integer
+    version_id:
+      type: string
+- action: CreateCategory
+  description: create category
+  service: CategoryManager
+  body:
+    description:
+      type: string
+    locale:
+      type: string
+    name:
+      type: string
+- action: DeleteCategories
+  description: delete categories
+  service: CategoryManager
+  body:
+    category_id:
+      type: '[]string'
+- action: DescribeCategories
+  description: describe categories with filter
+  service: CategoryManager
+  query:
+    category_id:
+      type: '[]string'
+    limit:
+      type: integer
+    name:
+      type: '[]string'
+    offset:
+      type: integer
+    owner:
+      type: '[]string'
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+- action: ModifyCategory
+  description: modify category
+  service: CategoryManager
+  body:
+    category_id:
+      type: string
+    description:
+      type: string
+    locale:
+      type: string
+    name:
+      type: string
+- action: AddClusterNodes
+  description: add cluster nodes
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: string
+    node_count:
+      type: integer
+    role:
+      type: string
+- action: AttachKeyPairs
+  description: attach key pairs
+  service: ClusterManager
+  body:
+    key_pair_id:
+      type: '[]string'
+    node_id:
+      type: '[]string'
+- action: CeaseClusters
+  description: cease clusters
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: '[]string'
+- action: CreateCluster
+  description: create cluster
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    app_id:
+      type: string
+    conf:
+      type: string
+    runtime_id:
+      type: string
+    version_id:
+      type: string
+- action: CreateKeyPair
+  description: create key pair
+  service: ClusterManager
+  body:
+    description:
+      type: string
+    name:
+      type: string
+    pub_key:
+      type: string
+- action: DeleteClusterNodes
+  description: delete cluster nodes
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: string
+    node_id:
+      type: '[]string'
+    role:
+      type: string
+- action: DeleteClusters
+  description: delete clusters
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: '[]string'
+- action: DeleteKeyPairs
+  description: delete key pairs
+  service: ClusterManager
+  body:
+    key_pair_id:
+      type: '[]string'
+- action: DescribeClusterNodes
+  description: describe cluster nodes
+  service: ClusterManager
+  query:
+    cluster_id:
+      type: string
+    limit:
+      help: default is 20, max value is 200.
+      type: integer
+    node_id:
+      type: '[]string'
+    offset:
+      help: default is 0.
+      type: integer
+    search_word:
+      type: string
+    status:
+      type: '[]string'
+- action: DescribeClusters
+  description: describe clusters
+  service: ClusterManager
+  query:
+    app_id:
+      type: '[]string'
+    cluster_id:
+      type: '[]string'
+    external_cluster_id:
+      type: string
+    frontgate_id:
+      type: '[]string'
+    limit:
+      help: default is 20, max value is 200.
+      type: integer
+    offset:
+      help: default is 0.
+      type: integer
+    runtime_id:
+      type: '[]string'
+    search_word:
+      type: string
+    status:
+      type: '[]string'
+    version_id:
+      type: '[]string'
+- action: DescribeKeyPairs
+  description: describe key pairs
+  service: ClusterManager
+  query:
+    description:
+      type: string
+    key_pair_id:
+      type: string
+    limit:
+      type: integer
+    name:
+      type: string
+    offset:
+      type: integer
+    owner:
+      type: string
+    pub_key:
+      type: string
+    search_word:
+      type: string
+- action: DescribeSubnets
+  description: describe subnets
+  service: ClusterManager
+  query:
+    advanced_param:
+      type: '[]string'
+    limit:
+      type: integer
+    offset:
+      type: integer
+    runtime_id:
+      type: string
+    subnet_id:
+      type: '[]string'
+    subnet_type:
+      type: integer
+    zone:
+      type: '[]string'
+- action: DetachKeyPairs
+  description: detach key pairs
+  service: ClusterManager
+  body:
+    key_pair_id:
+      type: '[]string'
+    node_id:
+      type: '[]string'
+- action: GetClusterStatistics
+  description: get cluster statistics
+  service: ClusterManager
+- action: ModifyClusterAttributes
+  description: modify cluster attributes
+  service: ClusterManager
+  body:
+    cluster_id:
+      type: string
+    description:
+      type: string
+    name:
+      type: string
+- action: ModifyClusterNodeAttributes
+  description: modify cluster node attributes
+  service: ClusterManager
+  body:
+    name:
+      type: string
+    node_id:
+      type: string
+- action: RecoverClusters
+  description: recover clusters
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: '[]string'
+- action: ResizeCluster
+  description: resize cluster
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: string
+    cpu:
+      type: integer
+    memory:
+      type: integer
+    role:
+      type: string
+- action: RollbackCluster
+  description: rollback cluster
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: string
+- action: StartClusters
+  description: start clusters
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: '[]string'
+- action: StopClusters
+  description: stop clusters
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: '[]string'
+- action: UpdateClusterEnv
+  description: update cluster env
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: string
+    env:
+      type: string
+- action: UpgradeCluster
+  description: upgrade cluster
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    cluster_id:
+      type: string
+    version_id:
+      type: string
+- action: DescribeJobs
+  description: describe jobs with filter
+  service: JobManager
+  query:
+    app_id:
+      type: string
+    cluster_id:
+      type: string
+    executor:
+      type: string
+    job_id:
+      type: '[]string'
+    limit:
+      help: default is 20, max value is 200.
+      type: integer
+    offset:
+      help: default is 0.
+      type: integer
+    provider:
+      type: string
+    search_word:
+      type: string
+    status:
+      type: '[]string'
+    version_id:
+      type: string
+- action: DescribeRepoEvents
+  description: describe repo events
+  service: RepoIndexer
+  query:
+    limit:
+      type: integer
+    offset:
+      type: integer
+    owner:
+      type: '[]string'
+    repo_event_id:
+      type: '[]string'
+    repo_id:
+      type: '[]string'
+    status:
+      type: '[]string'
+- action: IndexRepo
+  description: start a index repo event
+  service: RepoIndexer
+  body:
+    repo_id:
+      type: string
+- action: CreateRepo
+  description: create repo
+  service: RepoManager
+  body:
+    category_id:
+      type: string
+    credential:
+      type: string
+    description:
+      type: string
+    labels:
+      type: '[]'
+    name:
+      type: string
+    providers:
+      type: '[]string'
+    selectors:
+      type: '[]'
+    type:
+      type: string
+    url:
+      type: string
+    visibility:
+      type: string
+- action: DeleteRepos
+  description: delete repos
+  service: RepoManager
+  body:
+    repo_id:
+      type: '[]string'
+- action: DescribeRepos
+  description: describe repos with filter
+  service: RepoManager
+  query:
+    category_id:
+      type: '[]string'
+    label:
+      type: string
+    limit:
+      type: integer
+    name:
+      type: '[]string'
+    offset:
+      type: integer
+    provider:
+      type: '[]string'
+    repo_id:
+      type: '[]string'
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    selector:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    type:
+      type: '[]string'
+    visibility:
+      type: '[]string'
+- action: ModifyRepo
+  description: modify repo
+  service: RepoManager
+  body:
+    category_id:
+      type: string
+    credential:
+      type: string
+    description:
+      type: string
+    labels:
+      type: '[]'
+    name:
+      type: string
+    providers:
+      type: '[]string'
+    repo_id:
+      type: string
+    selectors:
+      type: '[]'
+    type:
+      type: string
+    url:
+      type: string
+    visibility:
+      type: string
+- action: ValidateRepo
+  description: validate repo
+  service: RepoManager
+  query:
+    credential:
+      type: string
+    type:
+      type: string
+    url:
+      type: string
+- action: CreateRuntime
+  description: create runtime
+  service: RuntimeManager
+  body:
+    description:
+      type: string
+    labels:
+      type: string
+    name:
+      type: string
+    provider:
+      type: string
+    runtime_credential:
+      type: string
+    runtime_url:
+      type: string
+    zone:
+      type: string
+- action: DeleteRuntimes
+  description: delete runtimes
+  service: RuntimeManager
+  body:
+    runtime_id:
+      type: '[]string'
+- action: DescribeRuntimeProviderZones
+  description: describe runtime provider zones
+  service: RuntimeManager
+  query:
+    provider:
+      type: string
+    runtime_credential:
+      type: string
+    runtime_url:
+      type: string
+- action: DescribeRuntimes
+  description: describe runtime
+  service: RuntimeManager
+  query:
+    label:
+      type: string
+    limit:
+      type: integer
+    offset:
+      type: integer
+    owner:
+      type: '[]string'
+    provider:
+      type: '[]string'
+    runtime_id:
+      type: '[]string'
+    search_word:
+      type: string
+    status:
+      type: '[]string'
+- action: GetRuntimeStatistics
+  description: get runtime statistics
+  service: RuntimeManager
+- action: ModifyRuntime
+  description: modify runtime
+  service: RuntimeManager
+  body:
+    description:
+      type: string
+    labels:
+      type: string
+    name:
+      type: string
+    runtime_credential:
+      type: string
+    runtime_id:
+      type: string
+- action: DescribeTasks
+  description: describe tasks with filter
+  service: TaskManager
+  query:
+    executor:
+      type: string
+    job_id:
+      type: '[]string'
+    limit:
+      help: default is 20, max value is 200.
+      type: integer
+    offset:
+      help: default is 0.
+      type: integer
+    search_word:
+      type: string
+    status:
+      type: '[]string'
+    target:
+      type: string
+    task_id:
+      type: '[]string'
+- action: RetryTasks
+  description: retry tasks
+  service: TaskManager
+  body:
+    task_id:
+      type: '[]string'
