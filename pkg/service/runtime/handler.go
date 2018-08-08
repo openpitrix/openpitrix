@@ -178,6 +178,20 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	if err != nil {
 		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceNotFound, runtimeId)
 	}
+	if req.RuntimeCredential != nil {
+		err = ValidateCredential(
+			runtime.Provider,
+			runtime.RuntimeUrl,
+			req.RuntimeCredential.GetValue(),
+			runtime.Zone)
+		if err != nil {
+			if gerr.IsGRPCError(err) {
+				return nil, err
+			} else {
+				return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorValidateFailed)
+			}
+		}
+	}
 	if runtime.Status == constants.StatusDeleted {
 		logger.Error("runtime has been deleted [%s]", runtimeId)
 		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, runtimeId)
@@ -191,6 +205,14 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	// update runtime label
 	if req.Labels != nil {
 		err := p.updateRuntimeLabels(runtimeId, req.Labels.GetValue())
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		}
+	}
+
+	// update runtime credential
+	if req.RuntimeCredential != nil {
+		err := p.updateRuntimeCredential(runtime.RuntimeCredentialId, runtime.Provider, req.RuntimeCredential.GetValue())
 		if err != nil {
 			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}

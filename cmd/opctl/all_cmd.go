@@ -2086,6 +2086,7 @@ func (c *ModifyRuntimeCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Labels, "labels", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.RuntimeCredential, "runtime_credential", "", "", "")
 	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "")
 }
 

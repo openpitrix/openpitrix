@@ -4383,6 +4383,9 @@
         },
         "labels": {
           "type": "string"
+        },
+        "runtime_credential": {
+          "type": "string"
         }
       }
     },
