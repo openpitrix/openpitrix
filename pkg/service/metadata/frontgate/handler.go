@@ -35,7 +35,10 @@ func (p *Server) GetPilotConfig(in *pbtypes.Empty, out *pbtypes.PilotConfig) err
 	ctx := context.Background()
 
 	cfg := p.cfg.Get()
-	client, conn, err := pilotutil.DialPilotService(ctx, cfg.PilotHost, int(cfg.PilotPort))
+	client, conn, err := pilotutil.DialPilotServiceForFrontgate_TLS(
+		ctx, cfg.PilotHost, int(cfg.PilotPort),
+		p.tlsPilotConfig,
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err
@@ -475,7 +478,10 @@ func (p *Server) ReportSubTaskStatus(in *pbtypes.SubTaskStatus, out *pbtypes.Emp
 	ctx := context.Background()
 
 	cfg := p.cfg.Get()
-	client, conn, err := pilotutil.DialPilotService(ctx, cfg.PilotHost, int(cfg.PilotPort))
+	client, conn, err := pilotutil.DialPilotServiceForFrontgate_TLS(
+		ctx, cfg.PilotHost, int(cfg.PilotPort),
+		p.tlsPilotConfig,
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err
@@ -589,7 +595,10 @@ func (p *Server) PingPilot(in *pbtypes.Empty, out *pbtypes.Empty) error {
 	ctx := context.Background()
 
 	cfg := p.cfg.Get()
-	client, conn, err := pilotutil.DialPilotService(ctx, cfg.PilotHost, int(cfg.PilotPort))
+	client, conn, err := pilotutil.DialPilotServiceForFrontgate_TLS(
+		ctx, cfg.PilotHost, int(cfg.PilotPort),
+		p.tlsPilotConfig,
+	)
 	if err != nil {
 		logger.Warn("%+v", err)
 		return err

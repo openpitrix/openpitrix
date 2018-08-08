@@ -2,5 +2,6 @@
 	"id": "pilot-001",
 	"host": "localhost",
 	"listen_port": 9110,
+	"for_frontgate_listen_port": 9114,
 	"log_level": "debug"
 }

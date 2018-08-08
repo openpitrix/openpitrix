@@ -7,10 +7,12 @@ package pilotutil
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"io"
 	"sync"
 
 	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
@@ -39,7 +41,7 @@ func NewFrameChannel(
 	}
 }
 
-func DialFrontgateChannel(
+func _DialFrontgateChannel(
 	ctx context.Context, target string,
 	opts ...grpc.DialOption,
 ) (
@@ -51,7 +53,7 @@ func DialFrontgateChannel(
 		return
 	}
 
-	channel, err := pbpilot.NewPilotServiceClient(conn).FrontgateChannel(ctx)
+	channel, err := pbpilot.NewPilotServiceForFrontgateClient(conn).FrontgateChannel(ctx)
 	if err != nil {
 		conn.Close()
 		conn = nil
@@ -62,7 +64,35 @@ func DialFrontgateChannel(
 	return
 }
 
-func NewFrontgateChannelFromServer(ch pbpilot.PilotService_FrontgateChannelServer) *FrameChannel {
+func DialFrontgateChannelTLS(
+	ctx context.Context, target string, tlsConfig *tls.Config,
+	opts ...grpc.DialOption,
+) (
+	ch *FrameChannel, conn *grpc.ClientConn,
+	err error,
+) {
+	creds := credentials.NewTLS(tlsConfig)
+	opts = append([]grpc.DialOption{
+		grpc.WithTransportCredentials(creds),
+	}, opts...)
+
+	conn, err = grpc.Dial(target, opts...)
+	if err != nil {
+		return
+	}
+
+	channel, err := pbpilot.NewPilotServiceForFrontgateClient(conn).FrontgateChannel(ctx)
+	if err != nil {
+		conn.Close()
+		conn = nil
+		return
+	}
+
+	ch = NewFrontgateChannelFromClient(channel)
+	return
+}
+
+func NewFrontgateChannelFromServer(ch pbpilot.PilotServiceForFrontgate_FrontgateChannelServer) *FrameChannel {
 	return &FrameChannel{
 		RecvMsgFunc: func() ([]byte, error) {
 			msg, err := ch.Recv()
@@ -80,7 +110,7 @@ func NewFrontgateChannelFromServer(ch pbpilot.PilotService_FrontgateChannelServe
 	}
 }
 
-func NewFrontgateChannelFromClient(ch pbpilot.PilotService_FrontgateChannelClient) *FrameChannel {
+func NewFrontgateChannelFromClient(ch pbpilot.PilotServiceForFrontgate_FrontgateChannelClient) *FrameChannel {
 	return &FrameChannel{
 		RecvMsgFunc: func() ([]byte, error) {
 			msg, err := ch.Recv()

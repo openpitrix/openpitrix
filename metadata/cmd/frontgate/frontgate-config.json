@@ -4,7 +4,7 @@
 	"host": "localhost",
 	"listen_port": 9111,
 	"pilot_host": "localhost",
-	"pilot_port": 9110,
+	"pilot_port": 9114,
 	"node_list": [
 		{
 			"frontgate_id": "frontgate-001",

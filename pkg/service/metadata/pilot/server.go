@@ -5,10 +5,12 @@
 package pilot
 
 import (
+	"crypto/tls"
 	"time"
 
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
@@ -21,7 +23,7 @@ type Server struct {
 	taskStatusMgr *TaskStatusManager
 }
 
-func Serve(cfg *pbtypes.PilotConfig, opts ...Options) {
+func Serve(cfg *pbtypes.PilotConfig, tlsCfg *tls.Config, opts ...Options) {
 	if cfg != nil {
 		cfg = proto.Clone(cfg).(*pbtypes.PilotConfig)
 	} else {
@@ -45,7 +47,26 @@ func Serve(cfg *pbtypes.PilotConfig, opts ...Options) {
 		}
 	}()
 
-	manager.NewGrpcServer("pilot-service", int(p.cfg.ListenPort)).Serve(func(server *grpc.Server) {
-		pbpilot.RegisterPilotServiceServer(server, p)
-	})
+	// internal service
+	go manager.NewGrpcServer("pilot-service", int(p.cfg.ListenPort)).Serve(
+		func(server *grpc.Server) {
+			pbpilot.RegisterPilotServiceServer(server, p)
+		},
+	)
+
+	// tls for public service
+	if tlsCfg != nil {
+		manager.NewGrpcServer("pilot-service-for-frontgate", int(p.cfg.ForFrontgateListenPort)).Serve(
+			func(server *grpc.Server) {
+				pbpilot.RegisterPilotServiceForFrontgateServer(server, p)
+			},
+			grpc.Creds(credentials.NewTLS(tlsCfg)),
+		)
+	} else {
+		manager.NewGrpcServer("pilot-service-for-frontgate", int(p.cfg.ForFrontgateListenPort)).Serve(
+			func(server *grpc.Server) {
+				pbpilot.RegisterPilotServiceForFrontgateServer(server, p)
+			},
+		)
+	}
 }
