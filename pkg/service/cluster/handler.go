@@ -685,13 +685,15 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	attributes := manager.BuildUpdateAttributes(req.Cluster, models.ClusterColumns...)
 	logger.Debug("ModifyCluster got attributes: [%+v]", attributes)
 	delete(attributes, "cluster_id")
-	_, err = pi.Global().Db.
-		Update(models.ClusterTableName).
-		SetMap(attributes).
-		Where(db.Eq("cluster_id", clusterId)).
-		Exec()
-	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+	if len(attributes) != 0 {
+		_, err = pi.Global().Db.
+			Update(models.ClusterTableName).
+			SetMap(attributes).
+			Where(db.Eq("cluster_id", clusterId)).
+			Exec()
+		if err != nil {
+			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+		}
 	}
 
 	for _, clusterNode := range req.ClusterNodeSet {
@@ -699,15 +701,17 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		nodeAttributes := manager.BuildUpdateAttributes(clusterNode, models.ClusterNodeColumns...)
 		delete(nodeAttributes, "cluster_id")
 		delete(nodeAttributes, "node_id")
-		_, err = pi.Global().Db.
-			Update(models.ClusterNodeTableName).
-			SetMap(nodeAttributes).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("node_id", nodeId)).
-			Exec()
-		if err != nil {
-			logger.Error("ModifyCluster [%s] node [%s] failed. ", clusterId, nodeId)
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+		if len(nodeAttributes) != 0 {
+			_, err = pi.Global().Db.
+				Update(models.ClusterNodeTableName).
+				SetMap(nodeAttributes).
+				Where(db.Eq("cluster_id", clusterId)).
+				Where(db.Eq("node_id", nodeId)).
+				Exec()
+			if err != nil {
+				logger.Error("ModifyCluster [%s] node [%s] failed. ", clusterId, nodeId)
+				return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+			}
 		}
 	}
 
@@ -716,15 +720,17 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		roleAttributes := manager.BuildUpdateAttributes(clusterRole, models.ClusterRoleColumns...)
 		delete(roleAttributes, "cluster_id")
 		delete(roleAttributes, "role")
-		_, err = pi.Global().Db.
-			Update(models.ClusterRoleTableName).
-			SetMap(roleAttributes).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("role", role)).
-			Exec()
-		if err != nil {
-			logger.Error("ModifyCluster [%s] role [%s] failed. ", clusterId, role)
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+		if len(roleAttributes) != 0 {
+			_, err = pi.Global().Db.
+				Update(models.ClusterRoleTableName).
+				SetMap(roleAttributes).
+				Where(db.Eq("cluster_id", clusterId)).
+				Where(db.Eq("role", role)).
+				Exec()
+			if err != nil {
+				logger.Error("ModifyCluster [%s] role [%s] failed. ", clusterId, role)
+				return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+			}
 		}
 	}
 
@@ -733,15 +739,17 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		commonAttributes := manager.BuildUpdateAttributes(clusterCommon, models.ClusterCommonColumns...)
 		delete(commonAttributes, "cluster_id")
 		delete(commonAttributes, "role")
-		_, err = pi.Global().Db.
-			Update(models.ClusterCommonTableName).
-			SetMap(commonAttributes).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("role", role)).
-			Exec()
-		if err != nil {
-			logger.Error("ModifyCluster [%s] role [%s] common failed. ", clusterId, role)
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+		if len(commonAttributes) != 0 {
+			_, err = pi.Global().Db.
+				Update(models.ClusterCommonTableName).
+				SetMap(commonAttributes).
+				Where(db.Eq("cluster_id", clusterId)).
+				Where(db.Eq("role", role)).
+				Exec()
+			if err != nil {
+				logger.Error("ModifyCluster [%s] role [%s] common failed. ", clusterId, role)
+				return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+			}
 		}
 	}
 
@@ -750,15 +758,17 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		linkAttributes := manager.BuildUpdateAttributes(clusterLink, models.ClusterLinkColumns...)
 		delete(linkAttributes, "cluster_id")
 		delete(linkAttributes, "name")
-		_, err = pi.Global().Db.
-			Update(models.ClusterLinkTableName).
-			SetMap(linkAttributes).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("name", name)).
-			Exec()
-		if err != nil {
-			logger.Error("ModifyCluster [%s] name [%s] link failed. ", clusterId, name)
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+		if len(linkAttributes) != 0 {
+			_, err = pi.Global().Db.
+				Update(models.ClusterLinkTableName).
+				SetMap(linkAttributes).
+				Where(db.Eq("cluster_id", clusterId)).
+				Where(db.Eq("name", name)).
+				Exec()
+			if err != nil {
+				logger.Error("ModifyCluster [%s] name [%s] link failed. ", clusterId, name)
+				return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+			}
 		}
 	}
 
@@ -769,17 +779,19 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		delete(loadbalancerAttributes, "cluster_id")
 		delete(loadbalancerAttributes, "role")
 		delete(loadbalancerAttributes, "loadbalancer_listener_id")
-		_, err = pi.Global().Db.
-			Update(models.ClusterLoadbalancerTableName).
-			SetMap(loadbalancerAttributes).
-			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("role", role)).
-			Where(db.Eq("loadbalancer_listener_id", listenerId)).
-			Exec()
-		if err != nil {
-			logger.Error("ModifyCluster [%s] role [%s] loadbalancer listener id [%s] failed. ",
-				clusterId, role, listenerId)
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+		if len(loadbalancerAttributes) != 0 {
+			_, err = pi.Global().Db.
+				Update(models.ClusterLoadbalancerTableName).
+				SetMap(loadbalancerAttributes).
+				Where(db.Eq("cluster_id", clusterId)).
+				Where(db.Eq("role", role)).
+				Where(db.Eq("loadbalancer_listener_id", listenerId)).
+				Exec()
+			if err != nil {
+				logger.Error("ModifyCluster [%s] role [%s] loadbalancer listener id [%s] failed. ",
+					clusterId, role, listenerId)
+				return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+			}
 		}
 	}
 
@@ -873,7 +885,7 @@ func (p *Server) AddTableClusterNodes(ctx context.Context, req *pb.AddTableClust
 		}
 	}
 
-	return nil, nil
+	return &pb_empty.Empty{}, nil
 }
 
 func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTableClusterNodesRequest) (*pb_empty.Empty, error) {
@@ -887,7 +899,7 @@ func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTabl
 		}
 	}
 
-	return nil, nil
+	return &pb_empty.Empty{}, nil
 }
 
 func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersRequest) (*pb.DeleteClustersResponse, error) {
@@ -1161,6 +1173,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	}
 	versionId := clusterWrapper.Cluster.VersionId
 	runtimeId := clusterWrapper.Cluster.RuntimeId
+	clusterName := clusterWrapper.Cluster.Name
 
 	runtime, err := runtimeclient.NewRuntime(runtimeId)
 	if err != nil {
@@ -1182,6 +1195,8 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
+	clusterWrapper.Cluster.ClusterId = clusterId
+	clusterWrapper.Cluster.Name = clusterName
 	directive := jsonutil.ToString(clusterWrapper)
 	newJob := models.NewJob(
 		constants.PlaceHolder,
