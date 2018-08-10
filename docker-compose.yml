@@ -250,16 +250,11 @@ services:
   openpitrix-pilot-service:
     build: .
     image: "openpitrix"
-    command: "pilot -config=/opt/openpitrix/conf/pilot-config.json --openpitrix-ca-crt-file=/opt/openpitrix/conf/openpitrix-ca.crt --pilot-server-crt-file=/opt/openpitrix/conf/pilot-server.crt --pilot-server-key-file=/opt/openpitrix/conf/pilot-server.key --pilot-client-crt-file=/opt/openpitrix/conf/pilot-client.crt --pilot-client-key-file=/opt/openpitrix/conf/pilot-client.key serve"
+    command: "pilot -config=/opt/openpitrix/conf/pilot-config.json serve"
     ports:
       - "9110:9110"
     volumes:
       - ./metadata/cmd/pilot/pilot-config.json:/opt/openpitrix/conf/pilot-config.json
-      - ./metadata/cmd/pilot/tls-config/openpitrix-ca.crt:/opt/openpitrix/conf/openpitrix-ca.crt
-      - ./metadata/cmd/pilot/tls-config/pilot-server.crt:/opt/openpitrix/conf/pilot-server.crt
-      - ./metadata/cmd/pilot/tls-config/pilot-server.key:/opt/openpitrix/conf/pilot-server.key
-      - ./metadata/cmd/pilot/tls-config/pilot-client.crt:/opt/openpitrix/conf/pilot-client.crt
-      - ./metadata/cmd/pilot/tls-config/pilot-client.key:/opt/openpitrix/conf/pilot-client.key
     container_name: "openpitrix-pilot-service"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}

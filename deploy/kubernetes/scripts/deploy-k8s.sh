@@ -90,7 +90,7 @@ cd ../..
 
 kubectl create namespace ${NAMESPACE}
 kubectl create secret generic mysql-pass --from-file=./kubernetes/password.txt -n ${NAMESPACE}
-./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE}
+
 
 if [ "${DBCTRL}" == "1" ];then
   for FILE in `ls ./kubernetes/ctrl`;do

@@ -53,7 +53,7 @@ spec:
       - name: openpitrix-pilot
         image: ${IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
-        command: ['pilot', '-config=/opt/openpitrix/conf/pilot-config.json', '--openpitrix-ca-crt-file=/opt/openpitrix/conf/openpitrix-ca.crt', '--pilot-server-crt-file=/opt/openpitrix/conf/pilot-server.crt', '--pilot-server-key-file=/opt/openpitrix/conf/pilot-server.key', '--pilot-client-crt-file=/opt/openpitrix/conf/pilot-client.crt', '--pilot-client-key-file=/opt/openpitrix/conf/pilot-client.key', 'serve']
+        command: ['pilot', '-config=/opt/openpitrix/conf/pilot-config.json', 'serve']
         ports:
         - containerPort: 9110
           name: pilot
@@ -72,20 +72,8 @@ spec:
           name: config-volume
       volumes:
       - name: config-volume
-        projected:
-          sources:
-          - configMap:
-              name: openpitrix-pilot-configmap
-          - secret:
-              name: openpitrix-ca.crt
-          - secret:
-              name: pilot-server.crt
-          - secret:
-              name: pilot-server.key
-          - secret:
-              name: pilot-client.crt
-          - secret:
-              name: pilot-client.key
+        configMap:
+          name: openpitrix-pilot-configmap
 ---
 apiVersion: v1
 kind: ConfigMap
