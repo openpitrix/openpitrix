@@ -193,7 +193,7 @@ func (p *KubeHandler) getPodsByClusterRole(namespace string, clusterRole *models
 }
 
 func (p *KubeHandler) checkPodsCount(pods *corev1.PodList, count uint32) bool {
-	return len(pods.Items) == int(count)
+	return len(pods.Items) >= int(count)
 }
 
 func (p *KubeHandler) checkPodsRunning(pods *corev1.PodList) bool {
@@ -207,7 +207,7 @@ func (p *KubeHandler) checkPodsRunning(pods *corev1.PodList) bool {
 }
 
 func (p *KubeHandler) GetKubePodsAsClusterNodes(namespace, clusterId, owner string, clusterRoles map[string]*models.ClusterRole) ([]*pb.ClusterNode, error) {
-	var pbClusterNodes []*pb.ClusterNode
+	pbClusterNodes := []*pb.ClusterNode{}
 	for _, clusterRole := range clusterRoles {
 		pods, err := p.getPodsByClusterRole(namespace, clusterRole)
 		if err != nil {
@@ -218,13 +218,13 @@ func (p *KubeHandler) GetKubePodsAsClusterNodes(namespace, clusterId, owner stri
 			continue
 		}
 
-		p.appendKubePodsToClusterNodes(pbClusterNodes, pods, clusterId, owner)
+		pbClusterNodes = p.appendKubePodsToClusterNodes(pbClusterNodes, pods, clusterId, owner)
 	}
 
 	return pbClusterNodes, nil
 }
 
-func (p *KubeHandler) appendKubePodsToClusterNodes(pbClusterNodes []*pb.ClusterNode, pods *corev1.PodList, clusterId, owner string) {
+func (p *KubeHandler) appendKubePodsToClusterNodes(pbClusterNodes []*pb.ClusterNode, pods *corev1.PodList, clusterId, owner string) []*pb.ClusterNode {
 	for _, pod := range pods.Items {
 
 		clusterNode := &models.ClusterNode{
@@ -247,6 +247,7 @@ func (p *KubeHandler) appendKubePodsToClusterNodes(pbClusterNodes []*pb.ClusterN
 		pbClusterNode := models.ClusterNodeToPb(clusterNode)
 		pbClusterNodes = append(pbClusterNodes, pbClusterNode)
 	}
+	return pbClusterNodes
 }
 
 func (p *KubeHandler) ValidateCredential(credential, zone string) error {

@@ -216,6 +216,8 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 			return err
 		}
 
+		p.Logger.Debug("Install helm release with name [%+v], namespace [%+v], values [%s]", taskDirective.ClusterName, taskDirective.Namespace, rawVals)
+
 		err = helmHandler.InstallReleaseFromChart(c, taskDirective.Namespace, rawVals, taskDirective.ClusterName)
 		if err != nil {
 			return err
@@ -230,6 +232,8 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		if err != nil {
 			return err
 		}
+
+		p.Logger.Debug("Update helm release [%+v] with values [%s]", taskDirective.ClusterName, rawVals)
 
 		err = helmHandler.UpdateReleaseFromChart(taskDirective.ClusterName, c, rawVals)
 		if err != nil {
@@ -282,6 +286,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 
 			switch resp.Info.Status.Code {
 			case release.Status_FAILED:
+				p.Logger.Debug("Helm release gone to failed")
 				return true, fmt.Errorf("release failed")
 			case release.Status_DEPLOYED:
 				clusterWrapper, err := models.NewClusterWrapper(taskDirective.RawClusterWrapper)
@@ -362,7 +367,9 @@ func (p *Provider) updateClusterEnv(job *models.Job) error {
 	}
 
 	modifyClusterRequest := &pb.ModifyClusterRequest{
-		Cluster:        models.ClusterToPb(clusterWrapper.Cluster),
+		Cluster: &pb.Cluster{
+			ClusterId: pbutil.ToProtoString(job.ClusterId),
+		},
 		ClusterRoleSet: models.ClusterRolesToPbs(clusterRoles),
 	}
 	_, err = clusterClient.ModifyCluster(ctx, modifyClusterRequest)
@@ -414,17 +421,27 @@ func (p *Provider) updateClusterNodes(job *models.Job) error {
 		nodeIds = append(nodeIds, clusterNode.GetNodeId().GetValue())
 	}
 
-	// delete old nodes from table
-	deleteNodesRequest := &pb.DeleteTableClusterNodesRequest{
-		NodeId: nodeIds,
+	if len(nodeIds) != 0 {
+		// delete old nodes from table
+		deleteNodesRequest := &pb.DeleteTableClusterNodesRequest{
+			NodeId: nodeIds,
+		}
+		_, err = clusterClient.DeleteTableClusterNodes(ctx, deleteNodesRequest)
+		if err != nil {
+			p.Logger.Error("Delete old nodes failed, %+v", err)
+		}
 	}
-	clusterClient.DeleteTableClusterNodes(ctx, deleteNodesRequest)
 
-	// add new nodes into table
-	addNodesRequest := &pb.AddTableClusterNodesRequest{
-		ClusterNodeSet: pbClusterNodes,
+	if len(pbClusterNodes) != 0 {
+		// add new nodes into table
+		addNodesRequest := &pb.AddTableClusterNodesRequest{
+			ClusterNodeSet: pbClusterNodes,
+		}
+		_, err = clusterClient.AddTableClusterNodes(ctx, addNodesRequest)
+		if err != nil {
+			p.Logger.Error("Add new nodes failed, %+v", err)
+		}
 	}
-	clusterClient.AddTableClusterNodes(ctx, addNodesRequest)
 	return nil
 }
 
