@@ -92,11 +92,15 @@ func (m *MetadataConfig) GetFrontgateConfig(nodeId string) string {
 		Host:        clusterNode.PrivateIp,
 		ListenPort:  constants.FrontgateServicePort,
 		PilotHost:   pi.Global().GlobalConfig().Pilot.Ip,
-		PilotPort:   constants.PilotServicePort,
 		NodeList:    frontgateEndpoints,
 		EtcdConfig:  etcdConfig,
 		ConfdConfig: confdConfig,
 		LogLevel:    MetadataLogLevel,
+	}
+	if pi.Global().GlobalConfig().Pilot.Port > 0 {
+		config.PilotPort = pi.Global().GlobalConfig().Pilot.Port
+	} else {
+		config.PilotPort = constants.PilotServicePort
 	}
 
 	return jsonutil.ToString(config)

@@ -48,7 +48,11 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 	frontgateConf["node_id"] = nodeId
 	frontgateConf["listen_port"] = constants.FrontgateServicePort
 	frontgateConf["pilot_host"] = pi.Global().GlobalConfig().Pilot.Ip
-	frontgateConf["pilot_port"] = constants.PilotServicePort
+	if pi.Global().GlobalConfig().Pilot.Port > 0 {
+		frontgateConf["pilot_port"] = pi.Global().GlobalConfig().Pilot.Port
+	} else {
+		frontgateConf["pilot_port"] = constants.PilotServicePort
+	}
 	frontgateConfStr := strings.Replace(jsonutil.ToString(frontgateConf), "\"", "\\\\\"", -1)
 
 	result += fmt.Sprintf("IMAGE=\"%s\"\n", imageId)
