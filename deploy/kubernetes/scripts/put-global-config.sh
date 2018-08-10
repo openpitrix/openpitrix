@@ -2,20 +2,26 @@
 
 DEFAULT_NAMESPACE=openpitrix-system
 NAMESPACE=${DEFAULT_NAMESPACE}
+PILOT_IP=
+PILOT_PORT=
 
 usage() {
   echo "Usage:"
-  echo "  put-global-config.sh [-n NAMESPACE]"
+  echo "  put-global-config.sh [-n NAMESPACE] COMMAND"
   echo "Description:"
-  echo "    -n NAMESPACE: the namespace of kubernetes."
+  echo "    -n NAMESPACE : the namespace of kubernetes."
+  echo "    -i PILOT_IP  : the ip of pilot service."
+  echo "    -p PILOT_PORT: the port of pilot service."
   exit -1
 }
 
-while getopts n:h option
+while getopts n:i:p:h option
 do
   case "${option}"
   in
   n) NAMESPACE=${OPTARG};;
+  i) PILOT_IP=${OPTARG};;
+  p) PILOT_PORT=${OPTARG};;
   h) usage ;;
   *) usage ;;
   esac
@@ -28,7 +34,18 @@ echo "Putting global config..."
 cd $(dirname $0)
 cd ../..
 
-test -s config/global_config.yaml || { echo "[config/global_config.yaml] not exist"; exit 1; }
+if [ ! -f "config/global_config.yaml" ];then
+  cp config/global_config.init.yaml config/global_config.yaml
+fi
+
+if [ ! -z "${PILOT_IP}" ]; then
+  OLD_PILOT_IP=`cat config/global_config.yaml | grep -e "^  ip:" | awk -F : '{print $2}'`
+  sed -i -e "s/${OLD_PILOT_IP}/ ${PILOT_IP}/g" config/global_config.yaml
+fi
+if [ ! -z "${PILOT_PORT}" ]; then
+  OLD_PILOT_PORT=`cat config/global_config.yaml | grep -e "^  port:" | awk -F : '{print $2}'`
+  sed -i -e "s/${OLD_PILOT_PORT}/ ${PILOT_PORT}/g" config/global_config.yaml
+fi
 
 cat config/global_config.yaml | kubectl run --restart=Never --quiet --rm -i test --image=openpitrix/openpitrix:latest -- opctl validate_global_config
 
