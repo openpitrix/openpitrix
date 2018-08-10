@@ -34,7 +34,8 @@ type ClusterServiceConfig struct {
 }
 
 type PilotServiceConfig struct {
-	Ip string `json:"ip"`
+	Ip   string `json:"ip"`
+	Port int32  `json:"port"`
 }
 
 type ImageConfig struct {
