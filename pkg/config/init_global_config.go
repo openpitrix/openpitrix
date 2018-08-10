@@ -30,6 +30,7 @@ cluster:
   frontgate_auto_delete: true
 pilot:
   ip: 127.0.0.1
+  port: 9110
 runtime:
   qingcloud_provider:
     api_server: api.qingcloud.com
