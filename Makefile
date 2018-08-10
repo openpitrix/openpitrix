@@ -141,8 +141,12 @@ compose-put-global-config: ## Put global config in docker compose
 	cat deploy/config/global_config.yaml | docker run -i --rm openpitrix opctl validate_global_config
 	cat deploy/config/global_config.yaml | docker-compose exec -T openpitrix-etcd /bin/sh -c "export ETCDCTL_API=3 && etcdctl put openpitrix/global_config"
 
+.PHONY: generate-certs
+generate-certs: ## Generate tls certificates
+	cd ./metadata/cmd/pilot/tls-config && make
+
 .PHONY: compose-up
-compose-up: ## Launch openpitrix in docker compose
+compose-up: generate-certs ## Launch openpitrix in docker compose
 	docker-compose up -d openpitrix-db
 	until docker-compose exec openpitrix-db bash -c "echo 'SELECT VERSION();' | mysql -uroot -ppassword"; do echo "waiting for mysql"; sleep 2; done;
 	# make compose-migrate-db
