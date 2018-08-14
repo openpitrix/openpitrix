@@ -20,6 +20,7 @@ import "metadata/types/task.proto";
 
 service PilotService {
 	rpc GetPilotConfig (metadata.types.Empty) returns (metadata.types.PilotConfig);
+	rpc GetPilotClientTLSConfig (metadata.types.Empty) returns (metadata.types.PilotClientTLSConfig);
 
 	rpc GetFrontgateList (metadata.types.Empty) returns (metadata.types.FrontgateIdList);
 	rpc GetFrontgateConfig (metadata.types.FrontgateId) returns (metadata.types.FrontgateConfig);
