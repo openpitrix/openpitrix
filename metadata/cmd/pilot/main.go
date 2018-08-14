@@ -24,7 +24,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/service/metadata/pilot"
 	"openpitrix.io/openpitrix/pkg/service/metadata/pilot/pilotutil"
 	"openpitrix.io/openpitrix/pkg/util/pathutil"
-	"openpitrix.io/openpitrix/pkg/util/tlsutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -633,13 +632,19 @@ EXAMPLE:
 			Action: func(c *cli.Context) {
 				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
 				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
-				tlsCfg, _ := tlsutil.NewServerTLSConfigFromFile(
-					c.GlobalString("pilot-server-crt-file"),
-					c.GlobalString("pilot-server-key-file"),
-					c.GlobalString("openpitrix-ca-crt-file"),
-				)
 
-				pilot.Serve(cfg, tlsCfg)
+				pbPilotClientTLSConfig, err := pilotutil.LoadPilotClientTLSConfig(
+					c.GlobalString("pilot-client-crt-file"),
+					c.GlobalString("pilot-client-key-file"),
+					c.GlobalString("openpitrix-ca-crt-file"),
+					c.GlobalString("pilot-server-name"),
+				)
+				if err != nil {
+					logger.Critical("%+v", err)
+					os.Exit(1)
+				}
+
+				pilot.Serve(cfg, pbPilotClientTLSConfig)
 				return
 			},
 		},

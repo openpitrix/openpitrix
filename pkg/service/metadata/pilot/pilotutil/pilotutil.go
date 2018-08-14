@@ -18,6 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	"openpitrix.io/openpitrix/pkg/util/tlsutil"
 )
 
 func MustLoadPilotConfig(path string) *pbtypes.PilotConfig {
@@ -73,4 +74,41 @@ func DialPilotServiceForFrontgate_TLS(
 
 	client = pbpilot.NewPilotServiceForFrontgateClient(conn)
 	return
+}
+
+func LoadPilotClientTLSConfig(
+	certFile, keyFile, caCertFile, tlsServerName string,
+) (p *pbtypes.PilotClientTLSConfig, err error) {
+
+	caData, err := ioutil.ReadFile(caCertFile)
+	if err != nil {
+		return nil, err
+	}
+
+	clientCrtData, err := ioutil.ReadFile(certFile)
+	if err != nil {
+		return nil, err
+	}
+	clientKeyData, err := ioutil.ReadFile(keyFile)
+	if err != nil {
+		return nil, err
+	}
+
+	p = &pbtypes.PilotClientTLSConfig{
+		CaCrtData:       string(caData),
+		ClientCrtData:   string(clientCrtData),
+		ClientKeyData:   string(clientKeyData),
+		PilotServerName: tlsServerName,
+	}
+
+	return p, nil
+}
+
+func NewClientTLSConfigFromPbConfig(pbcfg *pbtypes.PilotClientTLSConfig) (*tls.Config, error) {
+	return tlsutil.NewClientTLSConfigFromString(
+		pbcfg.ClientCrtData,
+		pbcfg.ClientKeyData,
+		pbcfg.CaCrtData,
+		pbcfg.PilotServerName,
+	)
 }

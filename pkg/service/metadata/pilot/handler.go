@@ -30,6 +30,12 @@ func (p *Server) GetPilotConfig(context.Context, *pbtypes.Empty) (*pbtypes.Pilot
 	return proto.Clone(p.cfg).(*pbtypes.PilotConfig), nil
 }
 
+func (p *Server) GetPilotClientTLSConfig(context.Context, *pbtypes.Empty) (*pbtypes.PilotClientTLSConfig, error) {
+	logger.Info(funcutil.CallerName(1))
+
+	return proto.Clone(p.pbClientTlsCfg).(*pbtypes.PilotClientTLSConfig), nil
+}
+
 func (p *Server) GetFrontgateList(context.Context, *pbtypes.Empty) (*pbtypes.FrontgateIdList, error) {
 	logger.Info(funcutil.CallerName(1))
 

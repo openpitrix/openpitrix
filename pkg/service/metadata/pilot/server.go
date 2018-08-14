@@ -5,25 +5,28 @@
 package pilot
 
 import (
-	"crypto/tls"
+	"os"
 	"time"
 
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	"openpitrix.io/openpitrix/pkg/service/metadata/pilot/pilotutil"
 )
 
 type Server struct {
-	cfg           *pbtypes.PilotConfig
-	fgClientMgr   *FrontgateClientManager
-	taskStatusMgr *TaskStatusManager
+	cfg            *pbtypes.PilotConfig
+	pbClientTlsCfg *pbtypes.PilotClientTLSConfig
+	fgClientMgr    *FrontgateClientManager
+	taskStatusMgr  *TaskStatusManager
 }
 
-func Serve(cfg *pbtypes.PilotConfig, tlsCfg *tls.Config, opts ...Options) {
+func Serve(cfg *pbtypes.PilotConfig, pbClientTlsCfg *pbtypes.PilotClientTLSConfig, opts ...Options) {
 	if cfg != nil {
 		cfg = proto.Clone(cfg).(*pbtypes.PilotConfig)
 	} else {
@@ -35,9 +38,10 @@ func Serve(cfg *pbtypes.PilotConfig, tlsCfg *tls.Config, opts ...Options) {
 	}
 
 	p := &Server{
-		cfg:           cfg,
-		fgClientMgr:   NewFrontgateClientManager(),
-		taskStatusMgr: NewTaskStatusManager(),
+		cfg:            cfg,
+		pbClientTlsCfg: proto.Clone(pbClientTlsCfg).(*pbtypes.PilotClientTLSConfig),
+		fgClientMgr:    NewFrontgateClientManager(),
+		taskStatusMgr:  NewTaskStatusManager(),
 	}
 
 	go func() {
@@ -55,7 +59,13 @@ func Serve(cfg *pbtypes.PilotConfig, tlsCfg *tls.Config, opts ...Options) {
 	)
 
 	// tls for public service
-	if tlsCfg != nil {
+	if pbClientTlsCfg != nil {
+		tlsCfg, err := pilotutil.NewClientTLSConfigFromPbConfig(pbClientTlsCfg)
+		if err != nil {
+			logger.Critical("%+v", err)
+			os.Exit(1)
+		}
+
 		manager.NewGrpcServer("pilot-service-for-frontgate", int(p.cfg.ForFrontgateListenPort)).Serve(
 			func(server *grpc.Server) {
 				pbpilot.RegisterPilotServiceForFrontgateServer(server, p)

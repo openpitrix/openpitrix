@@ -16,6 +16,13 @@ message PilotConfig {
 	int32 for_frontgate_listen_port = 6;
 }
 
+message PilotClientTLSConfig {
+	string ca_crt_data = 1;
+	string client_crt_data = 2;
+	string client_key_data = 3;
+	string pilot_server_name = 4;
+}
+
 message PilotEndpoint {
 	string pilot_id = 1;
 	string pilot_host = 2;
