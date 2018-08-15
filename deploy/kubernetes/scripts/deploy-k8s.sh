@@ -113,16 +113,19 @@ if [ "${BASE}" == "1" ];then
   done
 
   for FILE in `ls ./kubernetes/openpitrix/ | grep "^openpitrix-"`;do
+    replace ./kubernetes/openpitrix/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/${FILE} | kubectl apply -f -
   done
 fi
 if [ "${METADATA}" == "1" ];then
   for FILE in `ls ./kubernetes/openpitrix/metadata/`;do
+    replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -
   done
 fi
 if [ "${DASHBOARD}" == "1" ];then
   for FILE in `ls ./kubernetes/openpitrix/dashboard/`;do
+    replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl apply -f -
   done
 fi
