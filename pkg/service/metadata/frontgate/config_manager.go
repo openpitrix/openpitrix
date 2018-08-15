@@ -28,7 +28,7 @@ type ConfigManager struct {
 
 func NewConfigManager(path string, cfg *pbtypes.FrontgateConfig, opts ...Options) *ConfigManager {
 	if !filepath.IsAbs(path) {
-		logger.Error("NewConfigManager: path is not abs path", path)
+		logger.Error("NewConfigManager: path is not abs path: %s", path)
 	}
 
 	if cfg != nil {

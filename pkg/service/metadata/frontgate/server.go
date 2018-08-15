@@ -69,7 +69,7 @@ func ServeReverseRpcServerForPilot(
 				continue
 			}
 
-			if gerr.Code() != codes.Unavailable || gerr.Code() != lastErrCode {
+			if gerr.Code() != lastErrCode {
 				logger.Error("did not connect: %v", gerr.Err())
 			}
 
