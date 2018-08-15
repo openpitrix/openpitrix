@@ -51,7 +51,7 @@ func ServeReverseRpcServerForPilot(
 	cfg *pbtypes.FrontgateConfig, tlsConfig *tls.Config,
 	service pbfrontgate.FrontgateService,
 ) {
-	logger.Info("ReverseRpcServerForPilot beign")
+	logger.Info("ReverseRpcServerForPilot begin")
 	defer logger.Info("ReverseRpcServerForPilot end")
 
 	var lastErrCode = codes.OK
@@ -69,7 +69,7 @@ func ServeReverseRpcServerForPilot(
 				continue
 			}
 
-			if gerr.Code() != codes.Unavailable || gerr.Code() != lastErrCode {
+			if gerr.Code() != lastErrCode {
 				logger.Error("did not connect: %v", gerr.Err())
 			}
 
