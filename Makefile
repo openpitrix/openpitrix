@@ -159,6 +159,12 @@ release-%: ## Release version
 	cp -r deploy/config deploy/kubernetes deploy/openpitrix-$*-kubernetes/
 	cd deploy/ && tar -czvf openpitrix-$*-kubernetes.tar.gz openpitrix-$*-kubernetes
 
+bin-release-%: ## Bin release version
+	mkdir deploy/openpitrix-$*-bin
+	docker cp openpitrix-api-gateway:/usr/local/bin/op deploy/openpitrix-$*-bin
+	docker cp openpitrix-api-gateway:/usr/local/bin/opctl deploy/openpitrix-$*-bin
+	cd deploy/ && tar -czvf openpitrix-$*-bin.tar.gz openpitrix-$*-bin
+
 .PHONY: test
 test: ## Run all tests
 	make unit-test
