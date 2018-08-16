@@ -1539,11 +1539,16 @@ type runtimeStatistic struct {
 	RuntimeId string `db:"runtime_id"`
 	Count     uint32 `db:"COUNT(cluster_id)"`
 }
+type appStatistic struct {
+	AppId string `db:"app_id"`
+	Count uint32 `db:"COUNT(cluster_id)"`
+}
 
 func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterStatisticsRequest) (*pb.GetClusterStatisticsResponse, error) {
 	res := &pb.GetClusterStatisticsResponse{
 		LastTwoWeekCreated: make(map[string]uint32),
 		TopTenRuntimes:     make(map[string]uint32),
+		TopTenApps:         make(map[string]uint32),
 	}
 	clusterCount, err := pi.Global().Db.
 		Select(models.ColumnClusterId).
@@ -1587,7 +1592,7 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 	_, err = pi.Global().Db.
 		Select("runtime_id", "COUNT(cluster_id)").
 		From(models.ClusterTableName).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Where(db.Eq(models.ColumnStatus, constants.StatusActive)).
 		GroupBy(models.ColumnRuntimeId).
 		OrderDir("COUNT(cluster_id)", false).
 		Limit(10).Load(&rs)
@@ -1598,6 +1603,24 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 	}
 	for _, a := range rs {
 		res.TopTenRuntimes[a.RuntimeId] = a.Count
+	}
+
+	var as []*appStatistic
+	_, err = pi.Global().Db.
+		Select("app_id", "COUNT(cluster_id)").
+		From(models.ClusterTableName).
+		Where(db.Eq(models.ColumnStatus, constants.StatusActive)).
+		Where(db.Neq(models.ColumnAppId, []string{"", constants.FrontgateAppId})).
+		GroupBy(models.ColumnAppId).
+		OrderDir("COUNT(cluster_id)", false).
+		Limit(10).Load(&as)
+
+	if err != nil {
+		logger.Error("Failed to get app statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	for _, a := range as {
+		res.TopTenApps[a.AppId] = a.Count
 	}
 
 	return res, nil

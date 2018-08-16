@@ -6,6 +6,7 @@ package constants
 
 // can use this id for internal test
 const FrontgateVersionId = "appv-ABCDEFGHIJKLMNOPQRST"
+const FrontgateAppId = "app-ABCDEFGHIJKLMNOPQRST"
 
 const FrontgateDefaultConf = `
 {

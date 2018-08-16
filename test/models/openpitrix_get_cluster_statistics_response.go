@@ -25,6 +25,9 @@ type OpenpitrixGetClusterStatisticsResponse struct {
 	// runtime count
 	RuntimeCount int64 `json:"runtime_count,omitempty"`
 
+	// top ten apps
+	TopTenApps map[string]int64 `json:"top_ten_apps,omitempty"`
+
 	// top ten runtimes
 	TopTenRuntimes map[string]int64 `json:"top_ten_runtimes,omitempty"`
 }
