@@ -3500,6 +3500,13 @@ var Files = map[string]string{
         "runtime_count": {
           "type": "integer",
           "format": "int64"
+        },
+        "top_ten_apps": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int64"
+          }
         }
       }
     },

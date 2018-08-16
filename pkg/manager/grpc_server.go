@@ -21,6 +21,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/keepalive"
+	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -99,6 +100,7 @@ func (g *GrpcServer) Serve(callback RegisterCallback, opt ...grpc.ServerOption) 
 	}
 
 	grpcServer := grpc.NewServer(append(opt, builtinOptions...)...)
+	reflection.Register(grpcServer)
 	callback(grpcServer)
 
 	if err = grpcServer.Serve(lis); err != nil {
