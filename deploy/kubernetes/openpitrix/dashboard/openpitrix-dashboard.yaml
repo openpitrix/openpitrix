@@ -8,6 +8,7 @@ metadata:
     component: openpitrix-dashboard
     version: ${VERSION}
 spec:
+  type: NodePort
   selector:
     app: openpitrix
     component: openpitrix-dashboard
