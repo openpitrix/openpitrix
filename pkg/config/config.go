@@ -19,6 +19,7 @@ type Config struct {
 	Grpc  GrpcConfig
 	Mysql MysqlConfig
 	Etcd  EtcdConfig
+	Token TokenConfig
 }
 
 type LogConfig struct {
@@ -31,6 +32,11 @@ type GrpcConfig struct {
 
 type EtcdConfig struct {
 	Endpoints string `default:"openpitrix-etcd:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"
+}
+
+type TokenConfig struct {
+	Secret          string `default:"token_secret"`
+	DurationSeconds int    `default:"3600"`
 }
 
 type MysqlConfig struct {
