@@ -1,0 +1,190 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package iam;
+
+option go_package = "openpitrix.io/openpitrix/pkg/pb/iam;pbiam";
+
+import "google/protobuf/wrappers.proto";
+
+message User {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue user_name = 2;
+	google.protobuf.StringValue user_email = 3;
+	google.protobuf.StringValue role = 4; // default is user
+	google.protobuf.StringValue description = 5;
+}
+
+message UserClient {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue client_id = 2;
+	google.protobuf.StringValue client_secret = 3;
+	google.protobuf.StringValue description = 4;
+}
+
+message Group {
+	google.protobuf.StringValue group_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+}
+
+message GroupMember {
+	google.protobuf.StringValue group_id = 1;
+	google.protobuf.StringValue user_id = 2;
+}
+
+service AccountManager {
+	rpc DescribeUsers(DescribeUsersRequest) returns (DescribeUsersResponse);
+	rpc ModifyUser(ModifyUserRequest) returns (ModifyUserResponse);
+	rpc DeleteUsers(DeleteUsersRequest) returns (DeleteUsersResponse);
+	rpc InviteUsers(InviteUsersRequest) returns (InviteUsersResponse);
+
+	rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+	rpc CreatePasswordReset(CreatePasswordResetRequest) returns (CreatePasswordResetResponse);
+
+	// admin permission
+	rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+	rpc GetPasswordReset(GetPasswordResetRequest) returns (GetPasswordResetResponse);
+	rpc ValidateUserPassword(ValidateUserPasswordRequest) returns (ValidateUserPasswordResponse);
+
+	// group
+	rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse);
+	rpc DescribeGroups(DescribeGroupsRequest) returns (DescribeGroupsResponse);
+	rpc ModifyGroup(ModifyGroupRequest) returns (ModifyGroupResponse);
+	rpc DeleteGroups(DeleteGroupsRequest) returns (DeleteGroupsResponse);
+	rpc JoinGroup(JoinGroupRequest) returns (JoinGroupResponse);
+	rpc LeaveGroup(LeaveGroupRequest) returns (LeaveGroupResponse);
+}
+
+message DescribeUsersRequest {
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	repeated string group_id = 4;
+	repeated string user_id = 5;
+	uint32 limit = 6;
+	uint32 offset = 7;
+}
+message DescribeUsersResponse {
+	uint32 total_count = 1;
+	repeated User user_set = 2;
+}
+
+message ModifyUserRequest {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue email = 2;    // for admin
+	google.protobuf.StringValue username = 3;
+	google.protobuf.StringValue role = 4;     // for admin
+}
+message ModifyUserResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+message DeleteUsersRequest {
+	repeated string user_id = 1;
+}
+message DeleteUsersResponse {
+	repeated string user_id = 1;
+}
+message InviteUsersRequest {
+	repeated string email = 1;
+}
+
+message InviteUsersResponse {
+	repeated string token = 1;
+}
+message CreatePasswordResetRequest {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue password = 2;
+}
+message CreatePasswordResetResponse {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue reset_id = 2;
+}
+message ChangePasswordRequest {
+	google.protobuf.StringValue new_password = 1;
+	google.protobuf.StringValue reset_id = 2;
+}
+message ChangePasswordResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+message GetPasswordResetRequest {
+	google.protobuf.StringValue reset_id = 1;
+}
+message GetPasswordResetResponse {
+	google.protobuf.StringValue reset_id = 1;
+	google.protobuf.StringValue user_id = 2;
+}
+message CreateUserRequest {
+	google.protobuf.StringValue email = 1;
+	google.protobuf.StringValue password = 2;
+	google.protobuf.StringValue role = 3; // default is user
+}
+message CreateUserResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message ValidateUserPasswordRequest {
+	string email = 1;
+	string password = 2;
+}
+message ValidateUserPasswordResponse {
+	bool validated = 1;
+}
+
+message CreateGroupRequest {
+	google.protobuf.StringValue name = 1;
+}
+message CreateGroupResponse {
+	google.protobuf.StringValue group_id = 1;
+}
+
+message DescribeGroupsRequest {
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	repeated string group_id = 4;
+	repeated string user_id = 5;
+	uint32 limit = 6;
+	uint32 offset = 7;
+}
+message DescribeGroupsResponse {
+	uint32 total_count = 1;
+	repeated Group group_set = 2;
+}
+
+message ModifyGroupRequest {
+	google.protobuf.StringValue group_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+}
+message ModifyGroupResponse {
+	google.protobuf.StringValue group_id = 1;
+}
+
+message DeleteGroupsRequest {
+	repeated string group_id = 1;
+}
+message DeleteGroupsResponse {
+	repeated string group_id = 1;
+}
+
+message JoinGroupRequest {
+	repeated string group_id = 1;
+	repeated string user_id = 2;
+}
+message JoinGroupResponse {
+	repeated string group_id = 1;
+	repeated string user_id = 2;
+}
+
+message LeaveGroupRequest {
+	repeated string group_id = 1;
+	repeated string user_id = 2;
+}
+message LeaveGroupResponse {
+	repeated string group_id = 1;
+	repeated string user_id = 2;
+}

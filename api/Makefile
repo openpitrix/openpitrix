@@ -19,6 +19,8 @@ METADATA_DRONE_PBFILES=$(sort $(wildcard metadata/drone/*.proto))
 METADATA_FRONTGATE_PBFILES=$(sort $(wildcard metadata/frontgate/*.proto))
 METADATA_PILOT_PBFILES=$(sort $(wildcard metadata/pilot/*.proto))
 
+IAM_PBFILES=$(sort $(wildcard iam/*.proto))
+
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
 	@echo "  generate          to generate grpc/grpc-gateway/swagger code"
@@ -38,6 +40,8 @@ generate: $(PROTO_FILES) Makefile
 	make metadata_drone
 	make metadata_frontgate
 	make metadata_pilot
+
+	make iam
 
 	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:../pkg/pb ${PROTO_FILES}
 	protoc $(PROTOC_FLAGS) --grpc-gateway_out=logtostderr=true,allow_delete_body=true:../pkg/pb ${PROTO_FILES}
@@ -77,6 +81,12 @@ metadata_pilot: ${METADATA_PILOT_PBFILES}
 	mkdir -p $(GOPATH)/src/openpitrix.io/openpitrix/pkg/pb/metadata/pilot
 	rm -rf   $(GOPATH)/src/openpitrix.io/openpitrix/pkg/pb/metadata/pilot/*
 	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:$(GOPATH)/src ${METADATA_PILOT_PBFILES}
+	@echo "ok"
+
+iam: ${IAM_PBFILES}
+	mkdir -p $(GOPATH)/src/openpitrix.io/openpitrix/pkg/pb/iam
+	rm -rf   $(GOPATH)/src/openpitrix.io/openpitrix/pkg/pb/iam/*
+	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:$(GOPATH)/src ${IAM_PBFILES}
 	@echo "ok"
 
 
