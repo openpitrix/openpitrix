@@ -5,20 +5,23 @@
 package runtime
 
 import (
+	"context"
 	"testing"
 )
+
+var ctx = context.TODO()
 
 func TestValidateName(t *testing.T) {
 	validNames := []string{"aa", "validatename!2313", "2131", "!!,."}
 	invalidNames := []string{"", "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"}
 	for _, validName := range validNames {
-		err := ValidateName(validName)
+		err := ValidateName(ctx, validName)
 		if err != nil {
 			t.Fatalf("%+v should be validName", validName)
 		}
 	}
 	for _, invalidName := range invalidNames {
-		err := ValidateName(invalidName)
+		err := ValidateName(ctx, invalidName)
 		if err == nil {
 			t.Fatalf("%+v should be invalidName", invalidName)
 		}
@@ -41,13 +44,13 @@ func TestValidateURL(t *testing.T) {
 		"http://224.1.1.1",
 	}
 	for _, validURL := range validURLs {
-		err := ValidateURL(validURL)
+		err := ValidateURL(ctx, validURL)
 		if err != nil {
 			t.Fatalf("%+v should be validURL", validURL)
 		}
 	}
 	for _, invalidURL := range invalidURLs {
-		err := ValidateURL(invalidURL)
+		err := ValidateURL(ctx, invalidURL)
 		if err == nil {
 			t.Fatalf("%+v should be validURL", invalidURL)
 		}
@@ -71,13 +74,13 @@ func TestValidateLabelKey(t *testing.T) {
 		"",
 	}
 	for _, validLabelValue := range validLabelValues {
-		err := ValidateLabelKey(validLabelValue)
+		err := ValidateLabelKey(ctx, validLabelValue)
 		if err != nil {
 			t.Fatalf("%+v should be validLabelValue", validLabelValue)
 		}
 	}
 	for _, invalidLabelValue := range invalidLabelValues {
-		err := ValidateLabelKey(invalidLabelValue)
+		err := ValidateLabelKey(ctx, invalidLabelValue)
 		if err == nil {
 			t.Fatalf("%+v should be invalidLabelValue", invalidLabelValue)
 		}
@@ -88,13 +91,13 @@ func TestValidateLabelValue(t *testing.T) {
 	validLabelValues := []string{"aa", "validatename!2313", "2131", "!!,."}
 	invalidLabelValues := []string{"", "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"}
 	for _, validLabelValue := range validLabelValues {
-		err := ValidateLabelValue(validLabelValue)
+		err := ValidateLabelValue(ctx, validLabelValue)
 		if err != nil {
 			t.Fatalf("%+v should be validLabelValue", validLabelValue)
 		}
 	}
 	for _, invalidLabelValue := range invalidLabelValues {
-		err := ValidateLabelValue(invalidLabelValue)
+		err := ValidateLabelValue(ctx, invalidLabelValue)
 		if err == nil {
 			t.Fatalf("%+v should be invalidLabelValue", invalidLabelValue)
 		}
@@ -140,13 +143,13 @@ func TestValidateLabelMapFmt(t *testing.T) {
 		},
 	}
 	for _, validLabelMap := range validLabelMaps {
-		err := ValidateLabelMapFmt(validLabelMap)
+		err := ValidateLabelMapFmt(ctx, validLabelMap)
 		if err != nil {
 			t.Fatalf("%+v should be validLabelMap", validLabelMap)
 		}
 	}
 	for _, invalidLabelMap := range invalidLabelMaps {
-		err := ValidateLabelMapFmt(invalidLabelMap)
+		err := ValidateLabelMapFmt(ctx, invalidLabelMap)
 		if err == nil {
 			t.Fatalf("%+v should be invalidLabelMap", invalidLabelMap)
 		}
@@ -163,13 +166,13 @@ func TestValidateLabelString(t *testing.T) {
 		"runtime=kubernetes&__=1",
 	}
 	for _, validLabelString := range validLabelStrings {
-		err := ValidateLabelString(validLabelString)
+		err := ValidateLabelString(ctx, validLabelString)
 		if err != nil {
 			t.Fatalf("%+v should be validLabelString", validLabelString)
 		}
 	}
 	for _, invalidLabelString := range invalidLabelStrings {
-		err := ValidateLabelString(invalidLabelString)
+		err := ValidateLabelString(ctx, invalidLabelString)
 		if err == nil {
 			t.Fatalf("%+v should be invalidLabelString", invalidLabelString)
 		}
@@ -216,13 +219,13 @@ func TestValidateSelectorMapFmt(t *testing.T) {
 		},
 	}
 	for _, validSelectorMap := range validSelectorMaps {
-		err := ValidateSelectorMapFmt(validSelectorMap)
+		err := ValidateSelectorMapFmt(ctx, validSelectorMap)
 		if err != nil {
 			t.Fatalf("%+v should be validSelectorMap", validSelectorMap)
 		}
 	}
 	for _, invalidSelectorMap := range invalidSelectorMaps {
-		err := ValidateSelectorMapFmt(invalidSelectorMap)
+		err := ValidateSelectorMapFmt(ctx, invalidSelectorMap)
 		if err == nil {
 			t.Fatalf("%+v should be invalidSelectorMap", invalidSelectorMap)
 		}
@@ -243,13 +246,13 @@ func TestValidateSelectorString(t *testing.T) {
 	}
 
 	for _, validSelectorString := range validSelectorStrings {
-		err := ValidateSelectorString(validSelectorString)
+		err := ValidateSelectorString(ctx, validSelectorString)
 		if err != nil {
 			t.Fatalf("%+v should be validSelectorString", validSelectorString)
 		}
 	}
 	for _, invalidSelectorString := range invalidSelectorStrings {
-		err := ValidateSelectorString(invalidSelectorString)
+		err := ValidateSelectorString(ctx, invalidSelectorString)
 		if err == nil {
 			t.Fatalf("%+v should be invalidSelectorString", invalidSelectorString)
 		}
