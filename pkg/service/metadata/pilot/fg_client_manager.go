@@ -71,7 +71,7 @@ func (p *FrontgateClientManager) CheckAllClient() {
 		}
 
 		c := invalidClientMap[key]
-		logger.Info("frontgate (%s/%s) offline", c.info.Id, c.info.NodeId)
+		logger.Info(nil, "frontgate (%s/%s) offline", c.info.Id, c.info.NodeId)
 	}
 }
 
@@ -103,7 +103,7 @@ func (p *FrontgateClientManager) PutClient(c *pbfrontgate.FrontgateServiceClient
 	p.Lock()
 	defer p.Unlock()
 
-	logger.Info("frontgate (%s/%s) online", info.Id, info.NodeId)
+	logger.Info(nil, "frontgate (%s/%s) online", info.Id, info.NodeId)
 
 	client := &FrontgateClient{
 		FrontgateServiceClient: c,

@@ -1,13 +1,13 @@
 package indexer
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/reporeader"
@@ -20,35 +20,33 @@ type Indexer interface {
 	DeleteRepo() error
 }
 
-func GetIndexer(repo *pb.Repo, eventId string) Indexer {
+func GetIndexer(ctx context.Context, repo *pb.Repo) Indexer {
 	var i Indexer
 	providers := repo.GetProviders()
-	reader, err := reporeader.New(repo.Type.GetValue(), repo.Url.GetValue(), repo.Credential.GetValue())
+	reader, err := reporeader.New(ctx, repo.Type.GetValue(), repo.Url.GetValue(), repo.Credential.GetValue())
 	if err != nil {
 		panic(fmt.Sprintf("failed to get repo reader from repo [%s]", repo.RepoId.GetValue()))
 	}
 
 	if stringutil.StringIn(constants.ProviderKubernetes, providers) {
-		i = NewHelmIndexer(newIndexer(repo, reader, eventId))
+		i = NewHelmIndexer(newIndexer(ctx, repo, reader))
 	} else {
-		i = NewDevkitIndexer(newIndexer(repo, reader, eventId))
+		i = NewDevkitIndexer(newIndexer(ctx, repo, reader))
 	}
 	return i
 }
 
 type indexer struct {
+	ctx    context.Context
 	repo   *pb.Repo
-	log    *logger.Logger
 	reader reporeader.Reader
 }
 
-func newIndexer(repo *pb.Repo, reader reporeader.Reader, eventId string) indexer {
-	log := logger.NewLogger()
-	log.SetSuffix(fmt.Sprintf("(%s:%s)", repo.GetRepoId().Value, eventId))
+func newIndexer(ctx context.Context, repo *pb.Repo, reader reporeader.Reader) indexer {
 	return indexer{
+		ctx:    ctx,
 		repo:   repo,
 		reader: reader,
-		log:    log,
 	}
 }
 
@@ -75,7 +73,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	owner := i.repo.GetOwner().GetValue()
 
 	var appId string
-	ctx := client.GetSystemUserContext()
+	ctx := client.SetSystemUserToContext(i.ctx)
 	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return appId, err
@@ -182,7 +180,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 	owner := i.repo.GetOwner().GetValue()
 
 	var versionId string
-	ctx := client.GetSystemUserContext()
+	ctx := client.SetSystemUserToContext(i.ctx)
 	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return versionId, err
@@ -233,7 +231,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 }
 
 func (i *indexer) DeleteRepo() error {
-	ctx := client.GetSystemUserContext()
+	ctx := client.SetSystemUserToContext(i.ctx)
 	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return err

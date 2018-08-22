@@ -32,7 +32,7 @@ func NewClient() (*Client, error) {
 }
 
 func (c *Client) WaitSubtask(ctx context.Context, taskId string, timeout time.Duration, waitInterval time.Duration) error {
-	logger.Debug("Waiting for task [%s] finished", taskId)
+	logger.Debug(ctx, "Waiting for task [%s] finished", taskId)
 	return funcutil.WaitForSpecificOrError(func() (bool, error) {
 		taskStatusRequest := &pbtypes.SubTaskId{
 			TaskId: taskId,
@@ -55,7 +55,7 @@ func (c *Client) WaitSubtask(ctx context.Context, taskId string, timeout time.Du
 		if t.Status == constants.StatusFailed {
 			return false, fmt.Errorf("Task [%s] failed. ", taskId)
 		}
-		logger.Error("Unknown status [%s] for task [%s]. ", t.Status, taskId)
+		logger.Error(ctx, "Unknown status [%s] for task [%s]. ", t.Status, taskId)
 		return false, nil
 	}, timeout, waitInterval)
 }

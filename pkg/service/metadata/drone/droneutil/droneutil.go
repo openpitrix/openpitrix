@@ -23,7 +23,7 @@ import (
 func MustLoadConfdConfig(path string) *pbtypes.ConfdConfig {
 	p, err := LoadConfdConfig(path)
 	if err != nil {
-		logger.Critical("%+v", err)
+		logger.Critical(nil, "%+v", err)
 		os.Exit(1)
 	}
 	return p
@@ -32,7 +32,7 @@ func MustLoadConfdConfig(path string) *pbtypes.ConfdConfig {
 func MustLoadDroneConfig(path string) *pbtypes.DroneConfig {
 	p, err := LoadDroneConfig(path)
 	if err != nil {
-		logger.Critical("%+v", err)
+		logger.Critical(nil, "%+v", err)
 		os.Exit(1)
 	}
 	return p
@@ -41,13 +41,13 @@ func MustLoadDroneConfig(path string) *pbtypes.DroneConfig {
 func LoadConfdConfig(path string) (*pbtypes.ConfdConfig, error) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
 	p := new(pbtypes.ConfdConfig)
 	if err := json.Unmarshal(data, p); err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -68,13 +68,13 @@ func LoadConfdConfig(path string) (*pbtypes.ConfdConfig, error) {
 func LoadDroneConfig(path string) (*pbtypes.DroneConfig, error) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
 	p := new(pbtypes.DroneConfig)
 	if err := json.Unmarshal(data, p); err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -89,7 +89,7 @@ func DialDroneService(ctx context.Context, host string, port int) (
 ) {
 	conn, err = grpc.Dial(fmt.Sprintf("%s:%d", host, port), grpc.WithInsecure())
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return
 	}
 

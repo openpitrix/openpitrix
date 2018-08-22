@@ -15,6 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
@@ -23,24 +24,25 @@ import (
 func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest) (*pb.CreateRuntimeResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 	// validate req
-	err := validateCreateRuntimeRequest(req)
+	err := validateCreateRuntimeRequest(ctx, req)
 	// TODO: refactor create runtime params
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		} else {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
 		}
 	}
 
 	// create runtime credential
-	runtimeCredentialId, err := p.createRuntimeCredential(req.Provider.GetValue(), req.RuntimeCredential.GetValue())
+	runtimeCredentialId, err := p.createRuntimeCredential(ctx, req.Provider.GetValue(), req.RuntimeCredential.GetValue())
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	// create runtime
 	runtimeId, err := p.createRuntime(
+		ctx,
 		req.GetName().GetValue(),
 		req.GetDescription().GetValue(),
 		req.Provider.GetValue(),
@@ -49,13 +51,13 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		req.Zone.GetValue(),
 		s.UserId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	// create labels
-	err = p.createRuntimeLabels(runtimeId, req.Labels.GetValue())
+	err = p.createRuntimeLabels(ctx, runtimeId, req.Labels.GetValue())
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateRuntimeResponse{
@@ -66,45 +68,45 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 
 func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesRequest) (*pb.DescribeRuntimesResponse, error) {
 	// TODO: refactor validate req
-	err := validateDescribeRuntimesRequest(req)
+	err := validateDescribeRuntimesRequest(ctx, req)
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		} else {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
 		}
 	}
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 	selectorMap, err := SelectorStringToMap(req.Label.GetValue())
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
 	}
 
 	var runtimes []*models.Runtime
 	var count uint32
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.RuntimeColumnsWithTablePrefix...).
 		From(models.RuntimeTableName).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditionsWithPrefix(req, models.RuntimeTableName))
 
-	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, RuntimeIdColumn,
+	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, models.ColumnRuntimeId,
 		models.ColumnLabelKey, models.ColumnLabelValue, selectorMap)
 	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err = query.Load(&runtimes)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	count, err = query.Count()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
-	pbRuntime, err := p.formatRuntimeSet(runtimes)
+	pbRuntime, err := p.formatRuntimeSet(ctx, runtimes)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res := &pb.DescribeRuntimesResponse{
 		RuntimeSet: pbRuntime,
@@ -115,45 +117,45 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 
 func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRuntimesRequest) (*pb.DescribeRuntimeDetailsResponse, error) {
 	// TODO: refactor validate req
-	err := validateDescribeRuntimesRequest(req)
+	err := validateDescribeRuntimesRequest(ctx, req)
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		} else {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
 		}
 	}
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 	selectorMap, err := SelectorStringToMap(req.Label.GetValue())
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
 	}
 
 	var runtimes []*models.Runtime
 	var count uint32
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.RuntimeColumnsWithTablePrefix...).
 		From(models.RuntimeTableName).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditionsWithPrefix(req, models.RuntimeTableName))
 
-	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, RuntimeIdColumn,
+	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, models.ColumnRuntimeId,
 		models.ColumnLabelKey, models.ColumnLabelValue, selectorMap)
 	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err = query.Load(&runtimes)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	count, err = query.Count()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
-	pbRuntimeDetails, err := p.formatRuntimeDetailSet(runtimes)
+	pbRuntimeDetails, err := p.formatRuntimeDetailSet(ctx, runtimes)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res := &pb.DescribeRuntimeDetailsResponse{
 		RuntimeDetailSet: pbRuntimeDetails,
@@ -164,22 +166,23 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 
 func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest) (*pb.ModifyRuntimeResponse, error) {
 	// validate req
-	err := validateModifyRuntimeRequest(req)
+	err := validateModifyRuntimeRequest(ctx, req)
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		} else {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorValidateFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
 		}
 	}
 	// check runtime can be modified
 	runtimeId := req.GetRuntimeId().GetValue()
-	runtime, err := p.getRuntime(runtimeId)
+	runtime, err := p.getRuntime(ctx, runtimeId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceNotFound, runtimeId)
+		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceNotFound, runtimeId)
 	}
 	if req.RuntimeCredential != nil {
 		err = ValidateCredential(
+			ctx,
 			runtime.Provider,
 			runtime.RuntimeUrl,
 			req.RuntimeCredential.GetValue(),
@@ -188,33 +191,33 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 			if gerr.IsGRPCError(err) {
 				return nil, err
 			} else {
-				return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorValidateFailed)
+				return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorValidateFailed)
 			}
 		}
 	}
 	if runtime.Status == constants.StatusDeleted {
-		logger.Error("runtime has been deleted [%s]", runtimeId)
-		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, runtimeId)
+		logger.Error(ctx, "runtime has been deleted [%s]", runtimeId)
+		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, runtimeId)
 	}
 	// update runtime
-	err = p.updateRuntime(req)
+	err = p.updateRuntime(ctx, req)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 
 	// update runtime label
 	if req.Labels != nil {
-		err := p.updateRuntimeLabels(runtimeId, req.Labels.GetValue())
+		err := p.updateRuntimeLabels(ctx, runtimeId, req.Labels.GetValue())
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 
 	// update runtime credential
 	if req.RuntimeCredential != nil {
-		err := p.updateRuntimeCredential(runtime.RuntimeCredentialId, runtime.Provider, req.RuntimeCredential.GetValue())
+		err := p.updateRuntimeCredential(ctx, runtime.RuntimeCredentialId, runtime.Provider, req.RuntimeCredential.GetValue())
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 
@@ -230,9 +233,9 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 	runtimeIds := req.GetRuntimeId()
 
 	// deleted runtime
-	err := p.deleteRuntimes(runtimeIds)
+	err := p.deleteRuntimes(ctx, runtimeIds)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	res := &pb.DeleteRuntimesResponse{
@@ -245,22 +248,22 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	provider := req.Provider.GetValue()
 	url := req.RuntimeUrl.GetValue()
 	credential := req.RuntimeCredential.GetValue()
-	err := ValidateCredential(provider, url, credential, "")
+	err := ValidateCredential(ctx, provider, url, credential, "")
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		} else {
-			return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorValidateFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorValidateFailed)
 		}
 	}
 
-	providerInterface, err := plugins.GetProviderPlugin(provider, nil)
+	providerInterface, err := plugins.GetProviderPlugin(ctx, provider)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, provider)
 	}
 	zones, err := providerInterface.DescribeRuntimeProviderZones(url, credential)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed)
 	}
 	return &pb.DescribeRuntimeProviderZonesResponse{
 		Provider: req.Provider,
@@ -282,30 +285,30 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 		LastTwoWeekCreated: make(map[string]uint32),
 		TopTenProviders:    make(map[string]uint32),
 	}
-	runtimeCount, err := p.Db.
+	runtimeCount, err := pi.Global().DB(ctx).
 		Select(models.ColumnRuntimeId).
 		From(models.RuntimeTableName).
 		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		Count()
 	if err != nil {
-		logger.Error("Failed to get runtime count, error: %+v", err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		logger.Error(ctx, "Failed to get runtime count, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res.RuntimeCount = runtimeCount
 
-	err = p.Db.
+	err = pi.Global().DB(ctx).
 		Select("COUNT(DISTINCT provider)").
 		From(models.RuntimeTableName).
 		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		LoadOne(&res.ProviderCount)
 	if err != nil {
-		logger.Error("Failed to get provider count, error: %+v", err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		logger.Error(ctx, "Failed to get provider count, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	time2week := time.Now().Add(-14 * 24 * time.Hour)
 	var rs []*runtimeStatistic
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Select("DATE_FORMAT(create_time, '%Y-%m-%d')", "COUNT(runtime_id)").
 		From(models.RuntimeTableName).
 		GroupBy("DATE_FORMAT(create_time, '%Y-%m-%d')").
@@ -313,15 +316,15 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 		Limit(14).Load(&rs)
 
 	if err != nil {
-		logger.Error("Failed to get runtime statistics, error: %+v", err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		logger.Error(ctx, "Failed to get runtime statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	for _, a := range rs {
 		res.LastTwoWeekCreated[a.Date] = a.Count
 	}
 
 	var ps []*providerStatistic
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Select("provider", "COUNT(runtime_id)").
 		From(models.RuntimeTableName).
 		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
@@ -330,8 +333,8 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 		Limit(10).Load(&ps)
 
 	if err != nil {
-		logger.Error("Failed to get provider statistics, error: %+v", err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		logger.Error(ctx, "Failed to get provider statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	for _, a := range ps {
 		res.TopTenProviders[a.Provider] = a.Count

@@ -93,7 +93,7 @@ func (t *Task) GetTimeout(defaultTimeout time.Duration) time.Duration {
 	directive := make(map[string]interface{})
 	err := jsonutil.Decode([]byte(t.Directive), &directive)
 	if err != nil {
-		logger.Error("Decode task [%s] directive [%s] failed: %+v.", t.TaskId, t.Directive, err)
+		logger.Error(nil, "Decode task [%s] directive [%s] failed: %+v.", t.TaskId, t.Directive, err)
 		return defaultTimeout
 	}
 

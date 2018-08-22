@@ -56,7 +56,6 @@ func NewApp(name, repoId, description, owner, chartName string) *App {
 }
 
 func AppToPb(app *App) *pb.App {
-	//logger.Info("%+v", app.Home)
 	pbApp := pb.App{}
 	pbApp.AppId = pbutil.ToProtoString(app.AppId)
 	pbApp.Name = pbutil.ToProtoString(app.Name)
@@ -78,11 +77,4 @@ func AppToPb(app *App) *pb.App {
 		pbApp.UpdateTime = pbutil.ToProtoTimestamp(*app.UpdateTime)
 	}
 	return &pbApp
-}
-
-func AppsToPbs(apps []*App) (pbApps []*pb.App) {
-	for _, app := range apps {
-		pbApps = append(pbApps, AppToPb(app))
-	}
-	return
 }

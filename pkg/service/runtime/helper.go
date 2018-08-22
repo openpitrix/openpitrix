@@ -72,7 +72,7 @@ func LabelStructToMap(labelStructs []*models.RuntimeLabel) map[string]string {
 	return mapLabel
 }
 
-func RuntimeCredentialStringToJsonString(provider, content string) string {
+func CredentialStringToJsonString(provider, content string) string {
 	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
 		return content
 	}
@@ -86,7 +86,7 @@ func RuntimeCredentialStringToJsonString(provider, content string) string {
 	panic("unsupport provider")
 }
 
-func RuntimeCredentialJsonStringToString(provider, content string) string {
+func CredentialJsonStringToString(provider, content string) string {
 	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
 		return content
 	}

@@ -5,6 +5,7 @@
 package categoryutil
 
 import (
+	"context"
 	"strings"
 	"time"
 
@@ -22,7 +23,7 @@ func DecodeCategoryIds(s string) []string {
 	return strings.Split(s, ",")
 }
 
-func SyncResourceCategories(d *db.Database, appId string, categoryIds []string) error {
+func SyncResourceCategories(ctx context.Context, d *db.Conn, appId string, categoryIds []string) error {
 	if len(categoryIds) == 0 {
 		categoryIds = append(categoryIds, models.UncategorizedId)
 	}
@@ -33,7 +34,7 @@ func SyncResourceCategories(d *db.Database, appId string, categoryIds []string) 
 		Where(db.Eq(models.ColumnResouceId, appId)).
 		Load(&existCategoryIds)
 	if err != nil {
-		logger.Error("Failed to load resource [%s] categories", appId)
+		logger.Error(ctx, "Failed to load resource [%s] categories", appId)
 		return err
 	}
 	disableIds := stringutil.Diff(existCategoryIds, categoryIds)
@@ -53,7 +54,7 @@ func SyncResourceCategories(d *db.Database, appId string, categoryIds []string) 
 			Where(db.Eq(models.ColumnCategoryId, disableIds))
 		_, err = updateStmt.Exec()
 		if err != nil {
-			logger.Error("Failed to set resource [%s] categories [%s] to disabled", appId, disableIds)
+			logger.Error(ctx, "Failed to set resource [%s] categories [%s] to disabled", appId, disableIds)
 			return err
 		}
 	}
@@ -66,7 +67,7 @@ func SyncResourceCategories(d *db.Database, appId string, categoryIds []string) 
 			Where(db.Eq(models.ColumnCategoryId, enableIds))
 		_, err = updateStmt.Exec()
 		if err != nil {
-			logger.Error("Failed to set resource [%s] categories [%s] to enabled", appId, enableIds)
+			logger.Error(ctx, "Failed to set resource [%s] categories [%s] to enabled", appId, enableIds)
 			return err
 		}
 	}
@@ -81,7 +82,7 @@ func SyncResourceCategories(d *db.Database, appId string, categoryIds []string) 
 		}
 		_, err = insertStmt.Exec()
 		if err != nil {
-			logger.Error("Failed to create resource [%s] categories [%s]", appId, createIds)
+			logger.Error(ctx, "Failed to create resource [%s] categories [%s]", appId, createIds)
 			return err
 		}
 	}

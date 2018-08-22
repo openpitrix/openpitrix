@@ -5,6 +5,7 @@
 package gerr
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -18,7 +19,7 @@ import (
 const EN = "en"
 const DefaultLocale = EN
 
-func newStatus(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) *status.Status {
+func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) *status.Status {
 	locale := DefaultLocale
 
 	s := status.New(code, errMsg.Message(locale, a...))
@@ -26,14 +27,14 @@ func newStatus(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}
 	errorDetail := &pb.ErrorDetail{ErrorName: errMsg.Name}
 	if err != nil {
 		errorDetail.Cause = fmt.Sprintf("%+v", err)
-		logger.Error("%+v", err)
+		logger.Error(ctx, "%+v", err)
 	}
 
 	sd, e := s.WithDetails(errorDetail)
 	if e == nil {
 		return sd
 	} else {
-		logger.Error("%+v", errors.WithStack(e))
+		logger.Error(ctx, "%+v", errors.WithStack(e))
 	}
 	return s
 }
@@ -62,12 +63,12 @@ type GRPCError interface {
 	GRPCStatus() *status.Status
 }
 
-func New(code codes.Code, errMsg ErrorMessage, a ...interface{}) GRPCError {
-	return newStatus(code, nil, errMsg, a...).Err().(GRPCError)
+func New(ctx context.Context, code codes.Code, errMsg ErrorMessage, a ...interface{}) GRPCError {
+	return newStatus(ctx, code, nil, errMsg, a...).Err().(GRPCError)
 }
 
-func NewWithDetail(code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) GRPCError {
-	return newStatus(code, err, errMsg, a...).Err().(GRPCError)
+func NewWithDetail(ctx context.Context, code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) GRPCError {
+	return newStatus(ctx, code, err, errMsg, a...).Err().(GRPCError)
 }
 
 func IsGRPCError(err error) bool {

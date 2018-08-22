@@ -5,6 +5,7 @@
 package job
 
 import (
+	"context"
 	"sync"
 	"time"
 
@@ -17,28 +18,29 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 type Controller struct {
-	*pi.Pi
+	ctx          context.Context
 	runningJobs  chan string
 	runningCount uint32
 	hostname     string
 	queue        *etcd.Queue
 }
 
-func NewController(pi *pi.Pi, hostname string) *Controller {
+func NewController(hostname string) *Controller {
+	ctx := context.TODO()
 	return &Controller{
-		Pi:           pi,
 		runningJobs:  make(chan string),
 		runningCount: 0,
 		hostname:     hostname,
-		queue:        pi.Etcd.NewQueue("job"),
+		queue:        pi.Global().Etcd(ctx).NewQueue("job"),
 	}
 }
 
 func (c *Controller) updateJobAttributes(jobId string, attributes map[string]interface{}) error {
-	_, err := c.Db.
+	_, err := pi.Global().DB(c.ctx).
 		Update(models.JobTableName).
 		SetMap(attributes).
 		Where(db.Eq("job_id", jobId)).
@@ -63,24 +65,22 @@ func (c *Controller) IsRunningExceed() bool {
 func (c *Controller) ExtractJobs() {
 	for {
 		if c.IsRunningExceed() {
-			logger.Error("Sleep 10s, running job count exceed [%d/%d]", c.runningCount, c.GetJobLength())
+			logger.Error(c.ctx, "Sleep 10s, running job count exceed [%d/%d]", c.runningCount, c.GetJobLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		jobId, err := c.queue.Dequeue()
 		if err != nil {
-			logger.Error("Failed to dequeue job from etcd queue: %+v", err)
+			logger.Error(c.ctx, "Failed to dequeue job from etcd queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		logger.Debug("Dequeue job [%s] from etcd queue success", jobId)
+		logger.Debug(c.ctx, "Dequeue job [%s] from etcd queue success", jobId)
 		c.runningJobs <- jobId
 	}
 }
 
-func (c *Controller) HandleJob(jobId string, cb func()) error {
-	jLogger := logger.NewLogger()
-	jLogger.SetSuffix("(" + jobId + ")")
+func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) error {
 
 	defer cb()
 
@@ -94,44 +94,44 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		"executor": c.hostname,
 	})
 	if err != nil {
-		jLogger.Error("Failed to update job: %+v", err)
+		logger.Error(ctx, "Failed to update job: %+v", err)
 		return err
 	}
 
 	err = func() error {
-		query := c.Db.
+		query := pi.Global().DB(c.ctx).
 			Select(models.JobColumns...).
 			From(models.JobTableName).
 			Where(db.Eq("job_id", jobId))
 
 		err := query.LoadOne(&job)
 		if err != nil {
-			jLogger.Error("Failed to get job: %+v", err)
+			logger.Error(ctx, "Failed to get job: %+v", err)
 			return err
 		}
 
-		processor := NewProcessor(job, jLogger)
+		processor := NewProcessor(ctx, job)
 		err = processor.Pre()
 		if err != nil {
 			return err
 		}
 		defer processor.Final()
 
-		providerInterface, err := plugins.GetProviderPlugin(job.Provider, jLogger)
+		providerInterface, err := plugins.GetProviderPlugin(ctx, job.Provider)
 		if err != nil {
-			jLogger.Error("No such provider [%s]. ", job.Provider)
+			logger.Error(ctx, "No such provider [%s]. ", job.Provider)
 			return err
 		}
 		module, err := providerInterface.SplitJobIntoTasks(job)
 		if err != nil {
-			jLogger.Error("Failed to split job into tasks with provider [%s]: %+v", job.Provider, err)
+			logger.Error(ctx, "Failed to split job into tasks with provider [%s]: %+v", job.Provider, err)
 			return err
 		}
 
-		ctx := client.GetSystemUserContext()
+		ctx := client.SetSystemUserToContext(ctx)
 		taskClient, err := taskclient.NewClient()
 		if err != nil {
-			jLogger.Error("Connect to task service failed: %+v", err)
+			logger.Error(ctx, "Connect to task service failed: %+v", err)
 			return err
 		}
 
@@ -141,7 +141,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 				for _, parentTask := range parent.Tasks {
 					err = taskClient.WaitTask(ctx, parentTask.TaskId, parentTask.GetTimeout(constants.MaxTaskTimeout), constants.WaitTaskInterval)
 					if err != nil {
-						jLogger.Error("Failed to wait task [%s]: %+v", parentTask.TaskId, err)
+						logger.Error(ctx, "Failed to wait task [%s]: %+v", parentTask.TaskId, err)
 						if !parentTask.FailureAllowed {
 							successful = false
 						}
@@ -156,7 +156,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 					}
 					currentTask.TaskId, err = taskClient.SendTask(ctx, currentTask)
 					if err != nil {
-						jLogger.Error("Failed to send task [%s]: %+v", currentTask.TaskId, err)
+						logger.Error(ctx, "Failed to send task [%s]: %+v", currentTask.TaskId, err)
 						successful = false
 					}
 				}
@@ -164,7 +164,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 					for _, currentTask := range current.Tasks {
 						err = taskClient.WaitTask(ctx, currentTask.TaskId, currentTask.GetTimeout(constants.MaxTaskTimeout), constants.WaitTaskInterval)
 						if err != nil {
-							jLogger.Error("Failed to wait task [%s]: %+v", currentTask.TaskId, err)
+							logger.Error(ctx, "Failed to wait task [%s]: %+v", currentTask.TaskId, err)
 							if !currentTask.FailureAllowed {
 								successful = false
 							}
@@ -183,7 +183,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 
 	var status = constants.StatusSuccessful
 	if err != nil {
-		jLogger.Error("Job [%s] failed: %+v", jobId, err)
+		logger.Error(ctx, "Job [%s] failed: %+v", jobId, err)
 		status = constants.StatusFailed
 	}
 
@@ -192,7 +192,7 @@ func (c *Controller) HandleJob(jobId string, cb func()) error {
 		"status_time": time.Now(),
 	})
 	if err != nil {
-		jLogger.Error("Failed to update job: %+v", err)
+		logger.Error(ctx, "Failed to update job: %+v", err)
 	}
 
 	return err
@@ -203,7 +203,7 @@ func (c *Controller) HandleJobs() {
 		mutex.Lock()
 		c.runningCount++
 		mutex.Unlock()
-		go c.HandleJob(jobId, func() {
+		go c.HandleJob(ctxutil.AddMessageId(c.ctx, jobId), jobId, func() {
 			mutex.Lock()
 			c.runningCount--
 			mutex.Unlock()

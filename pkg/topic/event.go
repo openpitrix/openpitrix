@@ -33,26 +33,25 @@ func parseTopic(topic string) (uid string, eventId uint64) {
 	return
 }
 
-func pushEvent(e *etcd.Etcd, uid string, msg Message) error {
+func pushEvent(ctx context.Context, e *etcd.Etcd, uid string, msg Message) error {
 	var err error
-	var ctx = context.Background()
 	var eventId = idutil.GetIntId()
 	var key = formatTopic(uid, eventId)
 	value, err := jsonutil.Encode(msg)
 	if err != nil {
-		logger.Error("Encode message [%+v] to json failed", msg)
+		logger.Error(ctx, "Encode message [%+v] to json failed", msg)
 		return err
 	}
 
 	resp, err := e.Grant(ctx, expireTime)
 	if err != nil {
-		logger.Error("Grant ttl from etcd failed: %+v", err)
+		logger.Error(ctx, "Grant ttl from etcd failed: %+v", err)
 		return err
 	}
 
 	_, err = e.Put(ctx, key, string(value), clientv3.WithLease(resp.ID))
 	if err != nil {
-		logger.Error("Push user [%s] event [%s] [%s] to etcd failed: %+v", uid, eventId, string(value), err)
+		logger.Error(ctx, "Push user [%s] event [%s] [%s] to etcd failed: %+v", uid, eventId, string(value), err)
 		return err
 	}
 	return nil
@@ -61,7 +60,7 @@ func pushEvent(e *etcd.Etcd, uid string, msg Message) error {
 func watchEvents(e *etcd.Etcd) chan userMessage {
 	var c = make(chan userMessage, 255)
 	go func() {
-		logger.Debug("Start watch events")
+		logger.Debug(nil, "Start watch events")
 		watchRes := e.Watch(context.Background(), topicPrefix+"/", clientv3.WithPrefix())
 		for res := range watchRes {
 			for _, ev := range res.Events {
@@ -71,10 +70,10 @@ func watchEvents(e *etcd.Etcd) chan userMessage {
 					userId, eventId := parseTopic(key)
 					err := jsonutil.Decode(ev.Kv.Value, &message)
 					if err != nil {
-						logger.Error("Decode event [%s] [%d] [%s] failed: %+v",
+						logger.Error(nil, "Decode event [%s] [%d] [%s] failed: %+v",
 							userId, eventId, string(ev.Kv.Value), err)
 					} else {
-						logger.Debug("Got event [%s] [%d] [%s]", userId, eventId, string(ev.Kv.Value))
+						logger.Debug(nil, "Got event [%s] [%d] [%s]", userId, eventId, string(ev.Kv.Value))
 						c <- userMessage{
 							UserId:  userId,
 							Message: message,
@@ -87,10 +86,10 @@ func watchEvents(e *etcd.Etcd) chan userMessage {
 	return c
 }
 
-func PushEvent(e *etcd.Etcd, uid string, t messageType, model model) error {
+func PushEvent(ctx context.Context, e *etcd.Etcd, uid string, t messageType, model model) error {
 	msg := Message{
 		Type:     t,
 		Resource: model.GetTopicResource(),
 	}
-	return pushEvent(e, uid, msg)
+	return pushEvent(ctx, e, uid, msg)
 }

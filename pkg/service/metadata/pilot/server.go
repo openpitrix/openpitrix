@@ -62,7 +62,7 @@ func Serve(cfg *pbtypes.PilotConfig, pbClientTlsCfg *pbtypes.PilotClientTLSConfi
 	if pbClientTlsCfg != nil {
 		tlsCfg, err := pilotutil.NewClientTLSConfigFromPbConfig(pbClientTlsCfg)
 		if err != nil {
-			logger.Critical("%+v", err)
+			logger.Critical(nil, "%+v", err)
 			os.Exit(1)
 		}
 

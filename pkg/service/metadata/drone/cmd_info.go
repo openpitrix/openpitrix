@@ -105,7 +105,7 @@ func parseCmdLog(line string) (status *CmdStatus, err error) {
 
 	if idx0 <= 0 || idx1 <= 0 {
 		err = fmt.Errorf("invalid cmd log: %s", line)
-		logger.Error("%+v", err)
+		logger.Error(nil, "%+v", err)
 		return
 	}
 
@@ -113,7 +113,7 @@ func parseCmdLog(line string) (status *CmdStatus, err error) {
 	_, err = fmt.Sscanf(line[:idx0], "%s%s%s", &sData, &sTime, &sSubtaskId)
 	if err != nil {
 		err = fmt.Errorf("invalid cmd log: %s", line)
-		logger.Error("%+v", err)
+		logger.Error(nil, "%+v", err)
 		return
 	}
 
@@ -127,7 +127,7 @@ func parseCmdLog(line string) (status *CmdStatus, err error) {
 		if sExitCode != "" {
 			exitCode, err = strconv.Atoi(sExitCode)
 			if err != nil {
-				logger.Error("%+v", err)
+				logger.Error(nil, "%+v", err)
 				return
 			}
 		}

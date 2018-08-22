@@ -5,7 +5,11 @@
 package repo_indexer
 
 import (
+	"context"
+
 	"github.com/robfig/cron"
+
+	"openpitrix.io/openpitrix/pkg/pi"
 
 	"openpitrix.io/openpitrix/pkg/client"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
@@ -18,7 +22,7 @@ import (
 type repoInfos map[string]string // repoId & owner
 
 func getRepos() (repoInfos, error) {
-	ctx := client.GetSystemUserContext()
+	ctx := client.SetSystemUserToContext(context.Background())
 	repoManagerClient, err := repoClient.NewRepoManagerClient()
 	if err != nil {
 		return nil, err
@@ -52,13 +56,13 @@ func (p *Server) autoIndex() error {
 	if err != nil {
 		return err
 	}
-	logger.Info("Got repos [%+v]", repos)
+	logger.Info(nil, "Got repos [%+v]", repos)
 	for repoId, owner := range repos {
 		repoEvent, err := p.controller.NewRepoEvent(repoId, owner)
 		if err != nil {
 			return err
 		}
-		logger.Info("Repo [%s] submit repo event [%+v] success", repoId, repoEvent)
+		logger.Info(nil, "Repo [%s] submit repo event [%+v] success", repoId, repoEvent)
 	}
 	return nil
 }
@@ -67,25 +71,25 @@ func (p *Server) startCron(repoCron string) *cron.Cron {
 	c := cron.New()
 	if repoCron != "" {
 		c.AddFunc(repoCron, func() {
-			logger.Debug("Start auto index, current cron is [%s]", repoCron)
+			logger.Debug(nil, "Start auto index, current cron is [%s]", repoCron)
 			err := p.autoIndex()
 			if err != nil {
-				logger.Critical("failed to auto index repos, [%+v]", err)
+				logger.Critical(nil, "failed to auto index repos, [%+v]", err)
 			}
 		})
 	}
 	c.Start()
-	logger.Debug("Repo cron had started")
+	logger.Debug(nil, "Repo cron had started")
 	return c
 }
 
 func (p *Server) Cron() {
-	repoCron := p.GlobalConfig().Repo.Cron
+	repoCron := pi.Global().GlobalConfig().Repo.Cron
 	c := p.startCron(repoCron)
-	p.ThreadWatchGlobalConfig(func(globalConfig *config.GlobalConfig) {
+	pi.Global().ThreadWatchGlobalConfig(func(globalConfig *config.GlobalConfig) {
 		currentRepoCron := globalConfig.Repo.Cron
 		if currentRepoCron != repoCron {
-			logger.Debug("Repo cron had update to [%s], stop old cron job [%s]", currentRepoCron, repoCron)
+			logger.Debug(nil, "Repo cron had update to [%s], stop old cron job [%s]", currentRepoCron, repoCron)
 			c.Stop()
 			repoCron = currentRepoCron
 			c = p.startCron(repoCron)

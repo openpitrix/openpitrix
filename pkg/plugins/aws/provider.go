@@ -22,23 +22,17 @@ import (
 )
 
 type Provider struct {
-	Logger *logger.Logger
+	ctx context.Context
 }
 
-func NewProvider(l *logger.Logger) *Provider {
+func NewProvider(ctx context.Context) *Provider {
 	return &Provider{
-		Logger: l,
-	}
-}
-
-func (p *Provider) SetLogger(logger *logger.Logger) {
-	if logger != nil {
-		p.Logger = logger
+		ctx,
 	}
 }
 
 func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
-	frameInterface, err := vmbased.NewFrameInterface(nil, p.Logger)
+	frameInterface, err := vmbased.NewFrameInterface(p.ctx, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +40,7 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 	if err != nil {
 		return nil, err
 	}
-	handler := GetProviderHandler(p.Logger)
+	handler := GetProviderHandler(p.ctx)
 	availabilityZone, err := handler.DescribeAvailabilityZoneBySubnetId(runtimeId, clusterWrapper.Cluster.SubnetId)
 	if err != nil {
 		return nil, err
@@ -70,21 +64,21 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		if err != nil {
 			return nil, err
 		}
-		ctx := clientutil.GetSystemUserContext()
+		ctx := clientutil.SetSystemUserToContext(p.ctx)
 		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
 		if err != nil {
 			return nil, err
 		}
 		clusterWrapper = pbClusterWrappers[0]
 	default:
-		clusterWrapper, err = models.NewClusterWrapper(job.Directive)
+		clusterWrapper, err = models.NewClusterWrapper(p.ctx, job.Directive)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	runtimeId := clusterWrapper.Cluster.RuntimeId
-	runtime, err := runtimeclient.NewRuntime(runtimeId)
+	runtime, err := runtimeclient.NewRuntime(p.ctx, runtimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -93,13 +87,13 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		return nil, err
 	}
 	if imageConfig.ImageId == "" && imageConfig.ImageName != "" {
-		handler := GetProviderHandler(p.Logger)
+		handler := GetProviderHandler(p.ctx)
 		imageConfig.ImageId, err = handler.DescribeImage(runtimeId, imageConfig.ImageName)
 		if err != nil {
 			return nil, err
 		}
 	}
-	frameInterface, err := vmbased.NewFrameInterface(job, p.Logger, imageConfig.ImageId)
+	frameInterface, err := vmbased.NewFrameInterface(p.ctx, job, imageConfig.ImageId)
 	if err != nil {
 		return nil, err
 	}
@@ -147,14 +141,14 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		}
 		return frameInterface.DetachKeyPairsLayer(nodeKeyPairDetails), nil
 	default:
-		p.Logger.Error("Unknown job action [%s]", job.JobAction)
+		logger.Error(p.ctx, "Unknown job action [%s]", job.JobAction)
 		return nil, fmt.Errorf("unknown job action [%s]", job.JobAction)
 	}
 	return nil, nil
 }
 
 func (p *Provider) HandleSubtask(task *models.Task) error {
-	handler := GetProviderHandler(p.Logger)
+	handler := GetProviderHandler(p.ctx)
 
 	switch task.TaskAction {
 	case vmbased.ActionRunInstances:
@@ -178,13 +172,13 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		// do nothing
 		return nil
 	default:
-		p.Logger.Error("Unknown task action [%s]", task.TaskAction)
+		logger.Error(p.ctx, "Unknown task action [%s]", task.TaskAction)
 		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }
 func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error {
-	p.Logger.Debug("Wait sub task timeout [%s] interval [%s]", timeout, waitInterval)
-	handler := GetProviderHandler(p.Logger)
+	logger.Debug(p.ctx, "Wait sub task timeout [%s] interval [%s]", timeout, waitInterval)
+	handler := GetProviderHandler(p.ctx)
 
 	switch task.TaskAction {
 	case vmbased.ActionRunInstances:
@@ -206,28 +200,28 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 	case vmbased.ActionWaitFrontgateAvailable:
 		return handler.WaitFrontgateAvailable(task)
 	default:
-		p.Logger.Error("Unknown task action [%s]", task.TaskAction)
+		logger.Error(p.ctx, "Unknown task action [%s]", task.TaskAction)
 		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }
 
 func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
-	handler := GetProviderHandler(p.Logger)
+	handler := GetProviderHandler(p.ctx)
 	return handler.DescribeSubnets(ctx, req)
 }
 
 func (p *Provider) CheckResource(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
-	handler := GetProviderHandler(p.Logger)
+	handler := GetProviderHandler(p.ctx)
 	return handler.CheckResourceQuotas(ctx, clusterWrapper)
 }
 
 func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
-	handler := GetProviderHandler(p.Logger)
+	handler := GetProviderHandler(p.ctx)
 	return handler.DescribeVpc(runtimeId, vpcId)
 }
 
 func (p *Provider) ValidateCredential(url, credential, zone string) error {
-	handler := GetProviderHandler(p.Logger)
+	handler := GetProviderHandler(p.ctx)
 	zones, err := handler.DescribeZones(url, credential)
 	if err != nil {
 		return err
@@ -246,11 +240,11 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 }
 
 func (p *Provider) DescribeRuntimeProviderAvailabilityZones(url, credential, zone string) ([]string, error) {
-	handler := GetProviderHandler(p.Logger)
+	handler := GetProviderHandler(p.ctx)
 	return handler.DescribeAvailabilityZones(url, credential, zone)
 }
 
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
-	handler := GetProviderHandler(p.Logger)
+	handler := GetProviderHandler(p.ctx)
 	return handler.DescribeZones(url, credential)
 }

@@ -107,7 +107,7 @@ func (c *MetadClient) selectConnection() error {
 	if i >= maxTime {
 		return fmt.Errorf("fail to connect any backend.")
 	}
-	logger.Info("Using Metad URL: " + c.current.url)
+	logger.Info(nil, "Using Metad URL: "+c.current.url)
 	return nil
 }
 
@@ -123,7 +123,7 @@ func (c *MetadClient) testConnection() (*MetadConnection, error) {
 	startConn := conn
 	_, err := conn.makeMetaDataRequest("/")
 	for err != nil {
-		logger.Error("connection to [%s], error: [%v]", conn.url, err)
+		logger.Error(nil, "connection to [%s], error: [%v]", conn.url, err)
 		c.connections = c.connections.Next()
 		conn = c.connections.Value.(*MetadConnection)
 		if conn == startConn {
@@ -182,7 +182,7 @@ func treeWalk(root string, val interface{}, vars map[string]string) error {
 	case nil:
 		vars[root] = "null"
 	default:
-		logger.Error("Unknown type: " + reflect.TypeOf(val).Name())
+		logger.Error(nil, "Unknown type: "+reflect.TypeOf(val).Name())
 	}
 	return nil
 }
@@ -229,7 +229,7 @@ func (c *MetadClient) WatchPrefix(prefix string, keys []string, waitIndex uint64
 		defer resp.Body.Close()
 	}
 	if err != nil {
-		logger.Error("failed to connect to metad when watch prefix")
+		logger.Error(nil, "failed to connect to metad when watch prefix")
 		atomic.AddUint32(&conn.errTimes, 1)
 		return conn.waitIndex, err
 	}
@@ -240,11 +240,11 @@ func (c *MetadClient) WatchPrefix(prefix string, keys []string, waitIndex uint64
 	if versionStr != "" {
 		v, err := strconv.ParseUint(versionStr, 10, 64)
 		if err != nil {
-			logger.Error("Parse X-Metad-Version %s error:%s", versionStr, err.Error())
+			logger.Error(nil, "Parse X-Metad-Version %s error:%s", versionStr, err.Error())
 		}
 		conn.waitIndex = v
 	} else {
-		logger.Warn("Metad response miss X-Metad-Version header.")
+		logger.Warn(nil, "Metad response miss X-Metad-Version header.")
 		conn.waitIndex = conn.waitIndex + 1
 	}
 	return conn.waitIndex, nil

@@ -7,9 +7,6 @@ package runtime
 const (
 	RuntimeCredentialIdColumn      = "runtime_credential_id"
 	RuntimeCredentialContentColumn = "content"
-	RuntimeIdColumn                = "runtime_id"
-	RuntimeLabelValueColumn        = "label_value"
-	RuntimeLabelKeyColumn          = "label_key"
 )
 
 const (

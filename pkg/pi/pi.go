@@ -5,6 +5,7 @@
 package pi
 
 import (
+	"context"
 	"strings"
 	"sync"
 
@@ -20,8 +21,8 @@ type Pi struct {
 	cfg              *config.Config
 	globalCfg        *config.GlobalConfig
 	globalCfgWatcher []globalCfgWatcher
-	Db               *db.Database
-	Etcd             *etcd.Etcd
+	database         *db.Database
+	etcd             *etcd.Etcd
 }
 
 var global *Pi
@@ -34,16 +35,10 @@ func NewPi(cfg *config.Config) *Pi {
 	p.openEtcd()
 	p.watchGlobalCfg()
 
-	if p.Db != nil {
-		p.Db.UpdateHook = GetUpdateHook(p)
-		p.Db.DeleteHook = GetDeleteHook(p)
-		p.Db.InsertHook = GetInsertHook(p)
-	}
-
 	return p
 }
 
-func SetGlobalPi(cfg *config.Config) {
+func SetGlobal(cfg *config.Config) {
 	globalMutex.Lock()
 	global = NewPi(cfg)
 	globalMutex.Unlock()
@@ -53,6 +48,18 @@ func Global() *Pi {
 	globalMutex.RLock()
 	defer globalMutex.RUnlock()
 	return global
+}
+
+func (p *Pi) DB(ctx context.Context) *db.Conn {
+	conn := p.database.New(ctx)
+	conn.UpdateHook = p.GetUpdateHook(ctx)
+	conn.DeleteHook = p.GetDeleteHook(ctx)
+	conn.InsertHook = p.GetInsertHook(ctx)
+	return conn
+}
+
+func (p *Pi) Etcd(ctx context.Context) *etcd.Etcd {
+	return p.etcd
 }
 
 func (p *Pi) GlobalConfig() (globalCfg *config.GlobalConfig) {
@@ -76,24 +83,24 @@ func (p *Pi) ThreadWatchGlobalConfig(cb globalCfgWatcher) {
 }
 
 func (p *Pi) watchGlobalCfg() *Pi {
-	watcher := make(config.Watcher)
+	watcher := make(Watcher)
 
 	go func() {
-		err := config.WatchGlobalConfig(p.Etcd, watcher)
+		err := WatchGlobalConfig(p.Etcd(nil), watcher)
 		if err != nil {
-			logger.Critical("failed to watch global config")
+			logger.Critical(nil, "failed to watch global config")
 			panic(err)
 		}
 	}()
 
 	globalCfg := <-watcher
 	p.setGlobalCfg(globalCfg)
-	logger.Debug("Pi got global config: [%+v]", p.globalCfg)
+	logger.Debug(nil, "Pi got global config: [%+v]", p.globalCfg)
 
 	go func() {
 		for globalCfg := range watcher {
 			p.setGlobalCfg(globalCfg)
-			logger.Debug("Global config update to [%+v]", globalCfg)
+			logger.Debug(nil, "Global config update to [%+v]", globalCfg)
 		}
 	}()
 
@@ -106,20 +113,20 @@ func (p *Pi) openDatabase() *Pi {
 	}
 	dbSession, err := db.OpenDatabase(p.cfg.Mysql)
 	if err != nil {
-		logger.Critical("failed to connect mysql")
+		logger.Critical(nil, "failed to connect mysql")
 		panic(err)
 	}
-	p.Db = dbSession
+	p.database = dbSession
 	return p
 }
 
 func (p *Pi) openEtcd() *Pi {
 	endpoints := strings.Split(p.cfg.Etcd.Endpoints, ",")
-	e, err := etcd.Connect(endpoints, config.EtcdPrefix)
+	e, err := etcd.Connect(endpoints, EtcdPrefix)
 	if err != nil {
-		logger.Critical("failed to connect etcd")
+		logger.Critical(nil, "failed to connect etcd")
 		panic(err)
 	}
-	p.Etcd = e
+	p.etcd = e
 	return p
 }

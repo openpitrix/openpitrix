@@ -21,7 +21,7 @@ func Decode(y []byte, o interface{}) error {
 func ToString(o interface{}) string {
 	b, err := Encode(o)
 	if err != nil {
-		logger.Error("Failed to encode [%+v], error: %+v", o, err)
+		logger.Error(nil, "Failed to encode [%+v], error: %+v", o, err)
 		return ""
 	}
 	return string(b)

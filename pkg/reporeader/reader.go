@@ -5,6 +5,7 @@
 package reporeader
 
 import (
+	"context"
 	"fmt"
 	neturl "net/url"
 	"regexp"
@@ -41,17 +42,17 @@ var (
 
 const IndexYaml = "index.yaml"
 
-func New(repoType, url, credential string) (Reader, error) {
+func New(ctx context.Context, repoType, url, credential string) (Reader, error) {
 	u, err := neturl.ParseRequestURI(url)
 	if err != nil {
-		logger.Error("Parse url [%s] failed, error: %+v", url, err)
+		logger.Error(ctx, "Parse url [%s] failed, error: %+v", url, err)
 		return nil, ErrParseUrlFailed
 	}
 
 	switch repoType {
 	case constants.TypeS3:
 		m := compRegEx.FindStringSubmatch(u.Host + u.Path)
-		logger.Debug("Repo url [%s] regexp result: %+v", url, m)
+		logger.Debug(ctx, "Repo url [%s] regexp result: %+v", url, m)
 
 		if len(m) != 0 && len(m) == 4 {
 			zone := m[1]
@@ -72,21 +73,21 @@ func New(repoType, url, credential string) (Reader, error) {
 				return nil, ErrEmptySecretAccessKey
 			}
 
-			return NewS3Reader(u, qc.AccessKeyId, qc.SecretAccessKey, zone, host, bucket), nil
+			return NewS3Reader(ctx, u, qc.AccessKeyId, qc.SecretAccessKey, zone, host, bucket), nil
 		} else {
-			logger.Error("Repo url [%s] regex test failed", url)
+			logger.Error(ctx, "Repo url [%s] regex test failed", url)
 			return nil, ErrParseUrlFailed
 		}
 	case constants.TypeHttp:
 		if u.Scheme != constants.TypeHttp {
 			return nil, ErrSchemeNotMatched
 		}
-		return NewHttpReader(u), nil
+		return NewHttpReader(ctx, u), nil
 	case constants.TypeHttps:
 		if u.Scheme != constants.TypeHttps {
 			return nil, ErrSchemeNotMatched
 		}
-		return NewHttpReader(u), nil
+		return NewHttpReader(ctx, u), nil
 	default:
 		return nil, ErrInvalidType
 	}

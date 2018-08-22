@@ -18,20 +18,18 @@ import (
 )
 
 type Server struct {
-	*pi.Pi
 	controller *Controller
 }
 
 func Serve(cfg *config.Config) {
 	hostname, err := os.Hostname()
 	if err != nil {
-		logger.Critical("Failed to get os hostname: %+v", err)
+		logger.Critical(nil, "Failed to get os hostname: %+v", err)
 		return
 	}
-	pi.SetGlobalPi(cfg)
-	p := pi.Global()
-	jobController := NewController(p, hostname)
-	s := Server{Pi: p, controller: jobController}
+	pi.SetGlobal(cfg)
+	jobController := NewController(hostname)
+	s := Server{controller: jobController}
 	go jobController.Serve()
 
 	manager.NewGrpcServer("job-controller", constants.JobManagerPort).

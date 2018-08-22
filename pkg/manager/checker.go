@@ -42,11 +42,11 @@ func (c *checker) checkRequired(param string, value interface{}) error {
 		switch v := value.(type) {
 		case string:
 			if v == "" {
-				return gerr.New(gerr.InvalidArgument, gerr.ErrorMissingParameter, param)
+				return gerr.New(c.ctx, gerr.InvalidArgument, gerr.ErrorMissingParameter, param)
 			}
 		case *wrappers.StringValue:
 			if v == nil || v.GetValue() == "" {
-				return gerr.New(gerr.InvalidArgument, gerr.ErrorMissingParameter, param)
+				return gerr.New(c.ctx, gerr.InvalidArgument, gerr.ErrorMissingParameter, param)
 			}
 		case []string:
 			var values []string
@@ -56,7 +56,7 @@ func (c *checker) checkRequired(param string, value interface{}) error {
 				}
 			}
 			if len(values) == 0 {
-				return gerr.New(gerr.InvalidArgument, gerr.ErrorMissingParameter, param)
+				return gerr.New(c.ctx, gerr.InvalidArgument, gerr.ErrorMissingParameter, param)
 			}
 		}
 	}
@@ -80,18 +80,18 @@ func (c *checker) checkStringChosen(param string, value interface{}) error {
 			switch v := value.(type) {
 			case string:
 				if !stringutil.StringIn(v, chosen) {
-					return gerr.New(gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, param, v)
+					return gerr.New(c.ctx, gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, param, v)
 				}
 			case *wrappers.StringValue:
 				if v != nil {
 					if !stringutil.StringIn(v.GetValue(), chosen) {
-						return gerr.New(gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, param, v.GetValue())
+						return gerr.New(c.ctx, gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, param, v.GetValue())
 					}
 				}
 			case []string:
 				for _, s := range v {
 					if !stringutil.StringIn(s, chosen) {
-						return gerr.New(gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, param, s)
+						return gerr.New(c.ctx, gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, param, s)
 					}
 				}
 			}

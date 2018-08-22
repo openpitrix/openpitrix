@@ -5,6 +5,8 @@
 package task
 
 import (
+	"context"
+
 	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -20,31 +22,28 @@ import (
 )
 
 type Processor struct {
-	Task    *models.Task
-	TLogger *logger.Logger
+	Task *models.Task
+	ctx  context.Context
 }
 
-func NewProcessor(task *models.Task, tLogger *logger.Logger) *Processor {
-	if tLogger == nil {
-		tLogger = logger.NewLogger()
-	}
+func NewProcessor(ctx context.Context, task *models.Task) *Processor {
 	return &Processor{
-		Task:    task,
-		TLogger: tLogger,
+		Task: task,
+		ctx:  ctx,
 	}
 }
 
 // Post process when task is start
 func (p *Processor) Pre() error {
-	ctx := client.GetSystemUserContext()
+	ctx := p.ctx
 	if p.Task.Directive == "" {
-		p.TLogger.Warn("Skip empty task [%s] directive", p.Task.TaskId)
+		logger.Warn(ctx, "Skip empty task [%s] directive", p.Task.TaskId)
 		return nil
 	}
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		p.TLogger.Error("Executing task [%s] post processor failed: %+v", p.Task.TaskId, err)
+		logger.Error(ctx, "Executing task [%s] post processor failed: %+v", p.Task.TaskId, err)
 		return err
 	}
 
@@ -187,8 +186,8 @@ func (p *Processor) Pre() error {
 			return err
 		}
 		metadata := &vmbased.MetadataV1{
+			Ctx:            ctx,
 			ClusterWrapper: pbClusterWrappers[0],
-			Logger:         p.TLogger,
 		}
 		meta.Cnodes = jsonutil.ToString(metadata.GetClusterCnodes())
 
@@ -327,7 +326,7 @@ func (p *Processor) Pre() error {
 		p.Task.Directive = metadataConfig.GetDroneConfig(p.Task.NodeId)
 
 	default:
-		p.TLogger.Debug("Nothing to do with task [%s] pre processor", p.Task.TaskId)
+		logger.Debug(ctx, "Nothing to do with task [%s] pre processor", p.Task.TaskId)
 	}
 
 	// update directive when changed
@@ -335,13 +334,13 @@ func (p *Processor) Pre() error {
 		attributes := map[string]interface{}{
 			"directive": p.Task.Directive,
 		}
-		_, err := pi.Global().Db.
+		_, err := pi.Global().DB(ctx).
 			Update(models.TaskTableName).
 			SetMap(attributes).
 			Where(db.Eq("task_id", p.Task.TaskId)).
 			Exec()
 		if err != nil {
-			p.TLogger.Error("Failed to update task [%s]: %+v", p.Task.TaskId, err)
+			logger.Error(ctx, "Failed to update task [%s]: %+v", p.Task.TaskId, err)
 			return err
 		}
 	}
@@ -350,17 +349,17 @@ func (p *Processor) Pre() error {
 
 // Post process when task is done
 func (p *Processor) Post() error {
-	ctx := client.GetSystemUserContext()
+	ctx := client.SetSystemUserToContext(p.ctx)
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		p.TLogger.Error("Executing task [%s] post processor failed: %+v", p.Task.TaskId, err)
+		logger.Error(ctx, "Executing task [%s] post processor failed: %+v", p.Task.TaskId, err)
 		return err
 	}
 	switch p.Task.TaskAction {
 	case vmbased.ActionRunInstances:
 		if p.Task.Directive == "" {
-			p.TLogger.Warn("Skip empty task [%s] directive", p.Task.TaskId)
+			logger.Warn(ctx, "Skip empty task [%s] directive", p.Task.TaskId)
 		}
 		instance, err := models.NewInstance(p.Task.Directive)
 		if err != nil {
@@ -431,7 +430,7 @@ func (p *Processor) Post() error {
 
 	case vmbased.ActionCreateVolumes:
 		if p.Task.Directive == "" {
-			p.TLogger.Warn("Skip empty task [%s] directive", p.Task.TaskId)
+			logger.Warn(ctx, "Skip empty task [%s] directive", p.Task.TaskId)
 		}
 		volume, err := models.NewVolume(p.Task.Directive)
 		if err != nil {
@@ -453,7 +452,7 @@ func (p *Processor) Post() error {
 			return err
 		}
 	default:
-		p.TLogger.Debug("Nothing to do with task [%s] post processor", p.Task.TaskId)
+		logger.Debug(ctx, "Nothing to do with task [%s] post processor", p.Task.TaskId)
 	}
 	return err
 }

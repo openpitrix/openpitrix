@@ -28,7 +28,7 @@ type ConfigManager struct {
 
 func NewConfigManager(path string, cfg *pbtypes.DroneConfig, opts ...Options) *ConfigManager {
 	if !filepath.IsAbs(path) {
-		logger.Error("NewConfigManager: path is not abs path", path)
+		logger.Error(nil, "NewConfigManager: path is not abs path", path)
 	}
 
 	if cfg != nil {
@@ -61,12 +61,12 @@ func (p *ConfigManager) Set(cfg *pbtypes.DroneConfig) error {
 
 	if cfg.Id != "" && cfg.Id != p.cfg.Id {
 		err := fmt.Errorf("drone: config.Id is read only")
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 	if cfg.ListenPort > 0 && cfg.ListenPort != p.cfg.ListenPort {
 		err := fmt.Errorf("drone: config.ListenPort is read only")
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 
@@ -83,14 +83,14 @@ func (p *ConfigManager) Save() error {
 
 	data, err := json.MarshalIndent(p.cfg, "", "\t")
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 
 	// backup old config
 	bakpath := p.path + time.Now().Format(".20060102.bak")
 	if err := os.Rename(p.path, bakpath); err != nil && !os.IsNotExist(err) {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 
@@ -98,7 +98,7 @@ func (p *ConfigManager) Save() error {
 	err = ioutil.WriteFile(p.path, data, 0666)
 	if err != nil {
 		os.Rename(bakpath, p.path) // revert
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 

@@ -5,9 +5,12 @@
 package runtime
 
 import (
+	"context"
 	"time"
 
 	"github.com/gocraft/dbr"
+
+	"openpitrix.io/openpitrix/pkg/pi"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -17,12 +20,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-func (p *Server) getLabelsMap(runtimeIds []string) (labelsMap map[string][]*models.RuntimeLabel, err error) {
+func (p *Server) getLabelsMap(ctx context.Context, runtimeIds []string) (labelsMap map[string][]*models.RuntimeLabel, err error) {
 	var runtimeLabels []*models.RuntimeLabel
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Select(models.RuntimeLabelColumns...).
 		From(models.RuntimeLabelTableName).
-		Where(db.Eq(RuntimeIdColumn, runtimeIds)).
+		Where(db.Eq(models.ColumnRuntimeId, runtimeIds)).
 		Load(&runtimeLabels)
 	if err != nil {
 		return
@@ -31,9 +34,9 @@ func (p *Server) getLabelsMap(runtimeIds []string) (labelsMap map[string][]*mode
 	return
 }
 
-func (p *Server) getRuntimeCredential(runtimeCredentialId string) (*models.RuntimeCredential, error) {
+func (p *Server) getRuntimeCredential(ctx context.Context, runtimeCredentialId string) (*models.RuntimeCredential, error) {
 	runtimeCredential := &models.RuntimeCredential{}
-	err := p.Db.
+	err := pi.Global().DB(ctx).
 		Select(models.RuntimeCredentialColumns...).
 		From(models.RuntimeCredentialTableName).
 		Where(db.Eq(RuntimeCredentialIdColumn, runtimeCredentialId)).
@@ -44,12 +47,12 @@ func (p *Server) getRuntimeCredential(runtimeCredentialId string) (*models.Runti
 	return runtimeCredential, nil
 }
 
-func (p *Server) getRuntime(runtimeId string) (*models.Runtime, error) {
+func (p *Server) getRuntime(ctx context.Context, runtimeId string) (*models.Runtime, error) {
 	runtime := &models.Runtime{}
-	err := p.Db.
+	err := pi.Global().DB(ctx).
 		Select(models.RuntimeColumns...).
 		From(models.RuntimeTableName).
-		Where(db.Eq(RuntimeIdColumn, runtimeId)).
+		Where(db.Eq(models.ColumnRuntimeId, runtimeId)).
 		LoadOne(runtime)
 	if err != nil {
 		return nil, err
@@ -57,15 +60,15 @@ func (p *Server) getRuntime(runtimeId string) (*models.Runtime, error) {
 	return runtime, nil
 }
 
-func (p *Server) getRuntimeLabelsById(runtimeIds ...string) ([]*models.RuntimeLabel, error) {
+func (p *Server) getRuntimeLabelsById(ctx context.Context, runtimeIds ...string) ([]*models.RuntimeLabel, error) {
 	if len(runtimeIds) == 0 {
 		return nil, nil
 	}
 	var runtimeLabels []*models.RuntimeLabel
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.RuntimeLabelColumns...).
 		From(models.RuntimeLabelTableName).
-		Where(db.Eq(RuntimeIdColumn, runtimeIds))
+		Where(db.Eq(models.ColumnRuntimeId, runtimeIds))
 
 	_, err := query.Load(&runtimeLabels)
 	if err != nil {
@@ -74,12 +77,12 @@ func (p *Server) getRuntimeLabelsById(runtimeIds ...string) ([]*models.RuntimeLa
 	return runtimeLabels, nil
 }
 
-func (p *Server) getCredentialMap(credentialIds ...string) (map[string]*models.RuntimeCredential, error) {
+func (p *Server) getCredentialMap(ctx context.Context, credentialIds ...string) (map[string]*models.RuntimeCredential, error) {
 	if len(credentialIds) == 0 {
 		return nil, nil
 	}
 	var runtimeCredneitals []*models.RuntimeCredential
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.RuntimeCredentialColumns...).
 		From(models.RuntimeCredentialTableName).
 		Where(db.Eq(RuntimeCredentialIdColumn, credentialIds))
@@ -92,9 +95,9 @@ func (p *Server) getCredentialMap(credentialIds ...string) (map[string]*models.R
 	return credentialMap, nil
 }
 
-func (p *Server) getRuntimesByFilterCondition(filterCondition dbr.Builder, limit, offset uint64) (
+func (p *Server) getRuntimesByFilterCondition(ctx context.Context, filterCondition dbr.Builder, limit, offset uint64) (
 	runtimes []*models.Runtime, count uint32, err error) {
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.RuntimeColumns...).
 		From(models.RuntimeTableName).
 		Offset(offset).
@@ -110,11 +113,11 @@ func (p *Server) getRuntimesByFilterCondition(filterCondition dbr.Builder, limit
 	return runtimes, count, nil
 }
 
-func (p *Server) insertRuntimeLabels(runtimeId string, labelMap map[string]string) error {
+func (p *Server) insertRuntimeLabels(ctx context.Context, runtimeId string, labelMap map[string]string) error {
 	if len(labelMap) == 0 {
 		return nil
 	}
-	insertQuery := p.Db.
+	insertQuery := pi.Global().DB(ctx).
 		InsertInto(models.RuntimeLabelTableName).
 		Columns(models.RuntimeLabelColumns...)
 	for labelKey, labelValue := range labelMap {
@@ -130,7 +133,7 @@ func (p *Server) insertRuntimeLabels(runtimeId string, labelMap map[string]strin
 }
 
 // deleteRuntimeLabels by runtimeId and labelMap.if len(labelMap) =0 , record are not deleted.
-func (p *Server) deleteRuntimeLabels(runtimeId string, labelMap map[string]string) error {
+func (p *Server) deleteRuntimeLabels(ctx context.Context, runtimeId string, labelMap map[string]string) error {
 	if len(labelMap) == 0 {
 		return nil
 	}
@@ -138,7 +141,7 @@ func (p *Server) deleteRuntimeLabels(runtimeId string, labelMap map[string]strin
 	for labelKey, labelValue := range labelMap {
 		conditions = append(conditions, BuildDeleteLabelFilterCondition(runtimeId, labelKey, labelValue))
 	}
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		DeleteFrom(models.RuntimeLabelTableName).
 		Where(db.Or(conditions...)).
 		Exec()
@@ -148,18 +151,18 @@ func (p *Server) deleteRuntimeLabels(runtimeId string, labelMap map[string]strin
 	return nil
 }
 
-func (p *Server) deleteRuntimes(runtimeIds []string) error {
-	_, err := p.Db.
+func (p *Server) deleteRuntimes(ctx context.Context, runtimeIds []string) error {
+	_, err := pi.Global().DB(ctx).
 		Update(models.RuntimeTableName).
 		Set(StatusColumn, constants.StatusDeleted).
 		Set(StatusTimeColumn, time.Now()).
-		Where(db.Eq(RuntimeIdColumn, runtimeIds)).
+		Where(db.Eq(models.ColumnRuntimeId, runtimeIds)).
 		Exec()
 	return err
 }
 
-func (p *Server) insertRuntime(runtime models.Runtime) error {
-	_, err := p.Db.
+func (p *Server) insertRuntime(ctx context.Context, runtime models.Runtime) error {
+	_, err := pi.Global().DB(ctx).
 		InsertInto(models.RuntimeTableName).
 		Columns(models.RuntimeColumns...).
 		Record(runtime).
@@ -167,8 +170,8 @@ func (p *Server) insertRuntime(runtime models.Runtime) error {
 	return err
 }
 
-func (p *Server) insertRuntimeCredential(runtimeCredential models.RuntimeCredential) error {
-	_, err := p.Db.
+func (p *Server) insertRuntimeCredential(ctx context.Context, runtimeCredential models.RuntimeCredential) error {
+	_, err := pi.Global().DB(ctx).
 		InsertInto(models.RuntimeCredentialTableName).
 		Columns(models.RuntimeCredentialColumns...).
 		Record(runtimeCredential).
@@ -176,55 +179,55 @@ func (p *Server) insertRuntimeCredential(runtimeCredential models.RuntimeCredent
 	return err
 }
 
-func (p *Server) updateRuntimeByMap(runtimeId string, attributes map[string]interface{}) error {
+func (p *Server) updateRuntimeByMap(ctx context.Context, runtimeId string, attributes map[string]interface{}) error {
 	if attributes == nil {
 		return nil
 	}
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		Update(models.RuntimeTableName).
 		SetMap(attributes).
-		Where(db.Eq(RuntimeIdColumn, runtimeId)).
+		Where(db.Eq(models.ColumnRuntimeId, runtimeId)).
 		Exec()
 	return err
 }
 
 func BuildDeleteLabelFilterCondition(runtimeId, labelKey, labelValue string) dbr.Builder {
 	var conditions []dbr.Builder
-	conditions = append(conditions, db.Eq(RuntimeIdColumn, runtimeId))
+	conditions = append(conditions, db.Eq(models.ColumnRuntimeId, runtimeId))
 	conditions = append(conditions, db.Eq(LabelKeyColumn, labelKey))
 	conditions = append(conditions, db.Eq(LabelValueColumn, labelValue))
 	return db.And(conditions...)
 }
 
-func (p *Server) createRuntime(name, description, provider, url, runtimeCredentialId, zone, userId string) (runtimeId string, err error) {
+func (p *Server) createRuntime(ctx context.Context, name, description, provider, url, runtimeCredentialId, zone, userId string) (runtimeId string, err error) {
 	newRuntime := models.NewRuntime(name, description, provider, url, runtimeCredentialId, zone, userId)
-	err = p.insertRuntime(*newRuntime)
+	err = p.insertRuntime(ctx, *newRuntime)
 	if err != nil {
 		return "", err
 	}
 	return newRuntime.RuntimeId, err
 }
 
-func (p *Server) createRuntimeLabels(runtimeId, labelString string) error {
+func (p *Server) createRuntimeLabels(ctx context.Context, runtimeId, labelString string) error {
 	labelMap, err := LabelStringToMap(labelString)
 	if err != nil {
 		return err
 	}
-	err = p.insertRuntimeLabels(runtimeId, labelMap)
+	err = p.insertRuntimeLabels(ctx, runtimeId, labelMap)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *Server) formatRuntimeSet(runtimes []*models.Runtime) (pbRuntimes []*pb.Runtime, err error) {
+func (p *Server) formatRuntimeSet(ctx context.Context, runtimes []*models.Runtime) (pbRuntimes []*pb.Runtime, err error) {
 	pbRuntimes = models.RuntimeToPbs(runtimes)
 	var runtimeIds []string
 	for _, runtime := range runtimes {
 		runtimeIds = append(runtimeIds, runtime.RuntimeId)
 	}
 
-	labelsMap, err := p.getLabelsMap(runtimeIds)
+	labelsMap, err := p.getLabelsMap(ctx, runtimeIds)
 	if err != nil {
 		return
 	}
@@ -236,7 +239,7 @@ func (p *Server) formatRuntimeSet(runtimes []*models.Runtime) (pbRuntimes []*pb.
 	return
 }
 
-func (p *Server) formatRuntimeDetailSet(runtimes []*models.Runtime) (pbRuntimeDetails []*pb.RuntimeDetail, err error) {
+func (p *Server) formatRuntimeDetailSet(ctx context.Context, runtimes []*models.Runtime) (pbRuntimeDetails []*pb.RuntimeDetail, err error) {
 	pbRuntimes := models.RuntimeToPbs(runtimes)
 	var runtimeIds []string
 	var credentialIds []string
@@ -247,11 +250,11 @@ func (p *Server) formatRuntimeDetailSet(runtimes []*models.Runtime) (pbRuntimeDe
 		runtimeCredentialMap[runtime.RuntimeId] = runtime.RuntimeCredentialId
 	}
 
-	labelsMap, err := p.getLabelsMap(runtimeIds)
+	labelsMap, err := p.getLabelsMap(ctx, runtimeIds)
 	if err != nil {
 		return
 	}
-	runtimeCredentials, err := p.getCredentialMap(credentialIds...)
+	runtimeCredentials, err := p.getCredentialMap(ctx, credentialIds...)
 	if err != nil {
 		return
 	}
@@ -262,7 +265,7 @@ func (p *Server) formatRuntimeDetailSet(runtimes []*models.Runtime) (pbRuntimeDe
 		credentialId := runtimeCredentialMap[runtimeId]
 		pbRuntime.Labels = models.RuntimeLabelsToPbs(labelsMap[runtimeId])
 		pbRuntimeDetail.RuntimeCredential = pbutil.ToProtoString(
-			RuntimeCredentialJsonStringToString(
+			CredentialJsonStringToString(
 				pbRuntime.Provider.GetValue(), runtimeCredentials[credentialId].Content))
 		pbRuntimeDetails = append(pbRuntimeDetails, pbRuntimeDetail)
 	}
@@ -270,43 +273,43 @@ func (p *Server) formatRuntimeDetailSet(runtimes []*models.Runtime) (pbRuntimeDe
 	return
 }
 
-func (p *Server) updateRuntime(req *pb.ModifyRuntimeRequest) error {
+func (p *Server) updateRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest) error {
 	attributes := manager.BuildUpdateAttributes(req, NameColumn, DescriptionColumn)
-	err := p.updateRuntimeByMap(req.RuntimeId.GetValue(), attributes)
+	err := p.updateRuntimeByMap(ctx, req.RuntimeId.GetValue(), attributes)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *Server) updateRuntimeLabels(runtimeId string, labelString string) error {
+func (p *Server) updateRuntimeLabels(ctx context.Context, runtimeId string, labelString string) error {
 	newLabelMap, err := LabelStringToMap(labelString)
 	if err != nil {
 		return err
 	}
-	oldRuntimeLabels, err := p.getRuntimeLabelsById(runtimeId)
+	oldRuntimeLabels, err := p.getRuntimeLabelsById(ctx, runtimeId)
 	if err != nil {
 		return err
 	}
 	oldLabelMap := LabelStructToMap(oldRuntimeLabels)
 	additionLabelMap, deletionLabelMap := LabelMapDiff(oldLabelMap, newLabelMap)
-	err = p.deleteRuntimeLabels(runtimeId, deletionLabelMap)
+	err = p.deleteRuntimeLabels(ctx, runtimeId, deletionLabelMap)
 	if err != nil {
 		return err
 	}
-	err = p.insertRuntimeLabels(runtimeId, additionLabelMap)
+	err = p.insertRuntimeLabels(ctx, runtimeId, additionLabelMap)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *Server) updateRuntimeCredential(credentialId, provider, credential string) error {
-	content := RuntimeCredentialStringToJsonString(provider, credential)
+func (p *Server) updateRuntimeCredential(ctx context.Context, credentialId, provider, credential string) error {
+	content := CredentialStringToJsonString(provider, credential)
 	attributes := map[string]interface{}{
 		RuntimeCredentialContentColumn: content,
 	}
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		Update(models.RuntimeCredentialTableName).
 		SetMap(attributes).
 		Where(db.Eq(RuntimeCredentialIdColumn, credentialId)).
@@ -314,11 +317,11 @@ func (p *Server) updateRuntimeCredential(credentialId, provider, credential stri
 	return err
 }
 
-func (p *Server) createRuntimeCredential(provider, content string) (
+func (p *Server) createRuntimeCredential(ctx context.Context, provider, content string) (
 	runtimeCredentialId string, err error) {
 
-	newRunTimeCredential := models.NewRuntimeCredential(RuntimeCredentialStringToJsonString(provider, content))
-	err = p.insertRuntimeCredential(*newRunTimeCredential)
+	newRunTimeCredential := models.NewRuntimeCredential(CredentialStringToJsonString(provider, content))
+	err = p.insertRuntimeCredential(ctx, *newRunTimeCredential)
 	if err != nil {
 		return "", err
 	}

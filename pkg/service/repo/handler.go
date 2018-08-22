@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
@@ -32,15 +33,15 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 
 	labelMap, err := neturl.ParseQuery(req.GetLabel().GetValue())
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
 	}
 
 	selectorMap, err := neturl.ParseQuery(req.GetSelector().GetValue())
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "selector")
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "selector")
 	}
 
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.RepoColumnsWithTablePrefix...).
 		From(models.RepoTableName).
 		Offset(offset).
@@ -48,7 +49,7 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		Where(manager.BuildFilterConditionsWithPrefix(req, models.RepoTableName))
 
 	if len(categoryIds) > 0 {
-		subqueryStmt := p.Db.
+		subqueryStmt := pi.Global().DB(ctx).
 			Select(models.ColumnResouceId).
 			From(models.CategoryResourceTableName).
 			Where(db.Eq(models.ColumnStatus, constants.StatusEnabled)).
@@ -69,17 +70,17 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 	_, err = query.Load(&repos)
 	if err != nil {
 		// TODO: err_code should be implementation
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	count, err := query.Count()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	repoSet, err := p.formatRepoSet(repos)
+	repoSet, err := p.formatRepoSet(ctx, repos)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeReposResponse{
@@ -96,13 +97,13 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	visibility := req.GetVisibility().GetValue()
 	providers := req.GetProviders()
 
-	err := validate(repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential, providers)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
 	name := req.GetName().GetValue()
-	err = p.validateRepoName(name)
+	err = p.validateRepoName(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -117,49 +118,50 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		visibility,
 		s.UserId)
 
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		InsertInto(models.RepoTableName).
 		Columns(models.RepoColumns...).
 		Record(newRepo).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	err = p.createProviders(newRepo.RepoId, providers)
+	err = p.createProviders(ctx, newRepo.RepoId, providers)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 	if len(req.GetLabels()) > 0 {
-		err = p.createLabels(newRepo.RepoId, req.GetLabels())
+		err = p.createLabels(ctx, newRepo.RepoId, req.GetLabels())
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
 	}
 	if len(req.GetSelectors()) > 0 {
-		err = p.createSelectors(newRepo.RepoId, req.GetSelectors())
+		err = p.createSelectors(ctx, newRepo.RepoId, req.GetSelectors())
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
 	}
 
 	err = categoryutil.SyncResourceCategories(
-		p.Db,
+		ctx,
+		pi.Global().DB(ctx),
 		newRepo.RepoId,
 		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
 	)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateRepoResponse{
 		RepoId: pbutil.ToProtoString(newRepo.RepoId),
 	}
 
-	ctx = clientutil.GetSystemUserContext()
+	ctx = clientutil.SetSystemUserToContext(ctx)
 	repoIndexerClient, err := indexerclient.NewRepoIndexerClient()
 	if err != nil {
-		logger.Warn("Could not get repo indexer client, %+v", err)
+		logger.Warn(ctx, "Could not get repo indexer client, %+v", err)
 		return res, nil
 	}
 
@@ -168,7 +170,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	}
 	_, err = repoIndexerClient.IndexRepo(ctx, &indexRequest)
 	if err != nil {
-		logger.Warn("Call index repo service failed, %+v", err)
+		logger.Warn(ctx, "Call index repo service failed, %+v", err)
 	}
 
 	return res, nil
@@ -180,9 +182,9 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	providers := req.GetProviders()
 	// TODO: check resource permission
 	repoId := req.GetRepoId().GetValue()
-	repo, err := p.getRepo(repoId)
+	repo, err := p.getRepo(ctx, repoId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorResourceNotFound, repoId)
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorResourceNotFound, repoId)
 	}
 	url := repo.Url
 	credential := repo.Credential
@@ -199,13 +201,13 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		needValidate = true
 	}
 	if needValidate {
-		err = validate(repoType, url, credential, providers)
+		err = validate(ctx, repoType, url, credential, providers)
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 		}
 	}
 	if req.GetName() != nil && req.GetName().GetValue() != repo.Name {
-		err = p.validateRepoName(req.GetName().GetValue())
+		err = p.validateRepoName(ctx, req.GetName().GetValue())
 		if err != nil {
 			return nil, err
 		}
@@ -215,44 +217,45 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		models.ColumnName, models.ColumnDescription, models.ColumnType, models.ColumnUrl,
 		models.ColumnCredential, models.ColumnVisibility)
 	if len(attributes) > 0 {
-		_, err = p.Db.
+		_, err = pi.Global().DB(ctx).
 			Update(models.RepoTableName).
 			SetMap(attributes).
 			Where(db.Eq(models.ColumnOwner, s.UserId)).
 			Where(db.Eq(models.ColumnRepoId, repoId)).
 			Exec()
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 
 	if len(providers) > 0 {
 		providers = stringutil.Unique(providers)
-		err = p.modifyProviders(repoId, providers)
+		err = p.modifyProviders(ctx, repoId, providers)
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 	if len(req.GetLabels()) > 0 {
-		err = p.modifyLabels(repoId, req.GetLabels())
+		err = p.modifyLabels(ctx, repoId, req.GetLabels())
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 	if len(req.GetSelectors()) > 0 {
-		err = p.modifySelectors(repoId, req.GetSelectors())
+		err = p.modifySelectors(ctx, repoId, req.GetSelectors())
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 	if req.GetCategoryId() != nil {
 		err = categoryutil.SyncResourceCategories(
-			p.Db,
+			ctx,
+			pi.Global().DB(ctx),
 			repoId,
 			categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
 		)
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
 	}
 
@@ -267,24 +270,24 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 	s := senderutil.GetSenderFromContext(ctx)
 	repoIds := req.GetRepoId()
 
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		Update(models.RepoTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(models.ColumnOwner, s.UserId)).
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	res := &pb.DeleteReposResponse{
 		RepoId: repoIds,
 	}
 
-	ctx = clientutil.GetSystemUserContext()
+	ctx = clientutil.SetSystemUserToContext(ctx)
 	repoIndexerClient, err := indexerclient.NewRepoIndexerClient()
 	if err != nil {
-		logger.Warn("Could not get repo indexer client, %+v", err)
+		logger.Warn(ctx, "Could not get repo indexer client, %+v", err)
 		return res, nil
 	}
 
@@ -294,7 +297,7 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 		}
 		_, err = repoIndexerClient.IndexRepo(ctx, &indexRequest)
 		if err != nil {
-			logger.Warn("Call index repo service failed, %+v", err)
+			logger.Warn(ctx, "Call index repo service failed, %+v", err)
 		}
 	}
 
@@ -308,7 +311,7 @@ func (p *Server) ValidateRepo(ctx context.Context, req *pb.ValidateRepoRequest) 
 	credential := req.GetCredential().GetValue()
 	providers := []string{"qingcloud"}
 
-	err := validate(repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential, providers)
 	if err != nil {
 		e, ok := err.(*ErrorWithCode)
 		if !ok {

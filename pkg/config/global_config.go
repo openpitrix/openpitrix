@@ -5,13 +5,9 @@
 package config
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
-	"github.com/coreos/etcd/mvcc/mvccpb"
-
-	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
@@ -68,66 +64,8 @@ func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageCo
 			return &imageConfig, nil
 		}
 	}
-	logger.Error("No such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
+	logger.Error(nil, "No such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 	return nil, fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
-}
-
-const (
-	EtcdPrefix      = "openpitrix/"
-	GlobalConfigKey = "global_config"
-	DlockKey        = "dlock_" + GlobalConfigKey
-)
-
-type Watcher chan *GlobalConfig
-
-func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
-	ctx := context.Background()
-	var globalConfig GlobalConfig
-	err := etcd.Dlock(ctx, DlockKey, func() error {
-		// get value
-		get, err := etcd.Get(ctx, GlobalConfigKey)
-		if err != nil {
-			return err
-		}
-		// parse value
-		if get.Count == 0 {
-			logger.Debug("Cannot get global config, put the initial string. [%s]", InitialGlobalConfig)
-			globalConfig = DecodeInitConfig()
-			_, err = etcd.Put(ctx, GlobalConfigKey, InitialGlobalConfig)
-			if err != nil {
-				return err
-			}
-		} else {
-			globalConfig, err = ParseGlobalConfig(get.Kvs[0].Value)
-			if err != nil {
-				return err
-			}
-		}
-		logger.Debug("Global config update to [%+v]", globalConfig)
-		// send it back
-		watcher <- &globalConfig
-		return nil
-	})
-
-	// watch
-	go func() {
-		logger.Debug("Start watch global config")
-		watchRes := etcd.Watch(ctx, GlobalConfigKey)
-		for res := range watchRes {
-			for _, ev := range res.Events {
-				if ev.Type == mvccpb.PUT {
-					//logger.Debug("Got updated global config from etcd, try to decode with yaml")
-					globalConfig, err := ParseGlobalConfig(ev.Kv.Value)
-					if err != nil {
-						logger.Error("Watch global config from etcd found error: %+v", err)
-					} else {
-						watcher <- &globalConfig
-					}
-				}
-			}
-		}
-	}()
-	return err
 }
 
 func ParseGlobalConfig(data []byte) (GlobalConfig, error) {

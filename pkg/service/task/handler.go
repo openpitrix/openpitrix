@@ -15,6 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
@@ -36,19 +37,19 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 		newTask.Status = req.GetStatus().GetValue()
 	}
 
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		InsertInto(models.TaskTableName).
 		Columns(models.TaskColumns...).
 		Record(newTask).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	if newTask.Status != constants.StatusFailed {
 		err = p.controller.queue.Enqueue(newTask.TaskId)
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
 	}
 
@@ -65,7 +66,7 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.TaskColumns...).
 		From(models.TaskTableName).
 		Offset(offset).
@@ -76,11 +77,11 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 
 	_, err := query.Load(&tasks)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeTasksResponse{
@@ -95,7 +96,7 @@ func (p *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb
 
 	taskIds := req.GetTaskId()
 	var tasks []*models.Task
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.TaskColumns...).
 		From(models.TaskTableName).
 		Where(db.Eq("task_id", taskIds)).
@@ -103,18 +104,18 @@ func (p *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb
 
 	_, err := query.Load(&tasks)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
 	}
 
 	if len(tasks) != len(taskIds) {
 		err = fmt.Errorf("retryTasks [%s] with count [%d]", strings.Join(taskIds, ","), len(tasks))
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
 	}
 
 	for _, taskId := range taskIds {
 		err = p.controller.queue.Enqueue(taskId)
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
 		}
 	}
 

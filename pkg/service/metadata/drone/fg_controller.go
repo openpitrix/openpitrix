@@ -34,7 +34,7 @@ func (p *FrontgateController) GetConfig() (*pbtypes.FrontgateConfig, error) {
 
 	if p.cfg == nil {
 		err := fmt.Errorf("drone: Frontgate config is empty")
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -47,7 +47,7 @@ func (p *FrontgateController) SetConfig(cfg *pbtypes.FrontgateConfig) error {
 	defer p.mu.Unlock()
 
 	if reflect.DeepEqual(p.cfg, cfg) {
-		logger.Info("SetConfig: not changed")
+		logger.Info(nil, "SetConfig: not changed")
 		return nil // not changed
 	}
 
@@ -57,19 +57,19 @@ func (p *FrontgateController) SetConfig(cfg *pbtypes.FrontgateConfig) error {
 }
 
 func (p *FrontgateController) ReportSubTaskStatus(in *pbtypes.SubTaskStatus) error {
-	logger.Info("%s taskId: %s", funcutil.CallerName(1), in.TaskId)
+	logger.Info(nil, "%s taskId: %s", funcutil.CallerName(1), in.TaskId)
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	client, err := p.getClient()
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 
 	_, err = client.ReportSubTaskStatus(in)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 
@@ -82,14 +82,14 @@ func (p *FrontgateController) getClient() (
 ) {
 	if p.cfg == nil {
 		err := fmt.Errorf("drone: Frontgate config is empty")
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
 	nodes := p.cfg.GetNodeList()
 	if len(nodes) == 0 {
 		err := fmt.Errorf("drone: no frontgate node")
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -101,7 +101,7 @@ func (p *FrontgateController) getClient() (
 
 	client, err := pbfrontgate.DialFrontgateService("tcp", addr)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 	p.clientMap[addr] = client

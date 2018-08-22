@@ -5,6 +5,7 @@
 package helm
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 	"strings"
@@ -33,25 +34,20 @@ var (
 )
 
 type KubeHandler struct {
-	Logger    *logger.Logger
+	ctx       context.Context
 	RuntimeId string
 }
 
-func GetKubeHandler(Logger *logger.Logger, runtimeId string) *KubeHandler {
+func GetKubeHandler(ctx context.Context, runtimeId string) *KubeHandler {
 	kubeHandler := new(KubeHandler)
-	if Logger == nil {
-		kubeHandler.Logger = logger.NewLogger()
-	} else {
-		kubeHandler.Logger = Logger
-	}
-
+	kubeHandler.ctx = ctx
 	kubeHandler.RuntimeId = runtimeId
 	return kubeHandler
 }
 
 func (p *KubeHandler) initKubeClient() (*kubernetes.Clientset, *rest.Config, error) {
 	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
-		runtime, err := runtimeclient.NewRuntime(p.RuntimeId)
+		runtime, err := runtimeclient.NewRuntime(p.ctx, p.RuntimeId)
 		if err != nil {
 			return nil, err
 		}
@@ -109,11 +105,11 @@ func (p *KubeHandler) CheckApiVersionsSupported(apiVersions []string) error {
 			supportedVersions = append(supportedVersions, version.GroupVersion)
 		}
 	}
-	p.Logger.Debug("Get runtime [%s] supported versions [%+v]", p.RuntimeId, supportedVersions)
-	p.Logger.Debug("Check api versions [%+v]", apiVersions)
+	logger.Debug(p.ctx, "Get runtime [%s] supported versions [%+v]", p.RuntimeId, supportedVersions)
+	logger.Debug(p.ctx, "Check api versions [%+v]", apiVersions)
 	for _, apiVersion := range apiVersions {
 		if !stringutil.StringIn(apiVersion, supportedVersions) {
-			return gerr.New(gerr.PermissionDenied, gerr.ErrorUnsupportedApiVersion, apiVersion)
+			return gerr.New(p.ctx, gerr.PermissionDenied, gerr.ErrorUnsupportedApiVersion, apiVersion)
 		}
 	}
 	return nil
@@ -207,7 +203,7 @@ func (p *KubeHandler) checkPodsRunning(pods *corev1.PodList) bool {
 }
 
 func (p *KubeHandler) GetKubePodsAsClusterNodes(namespace, clusterId, owner string, clusterRoles map[string]*models.ClusterRole) ([]*pb.ClusterNode, error) {
-	pbClusterNodes := []*pb.ClusterNode{}
+	var pbClusterNodes []*pb.ClusterNode
 	for _, clusterRole := range clusterRoles {
 		pods, err := p.getPodsByClusterRole(namespace, clusterRole)
 		if err != nil {
@@ -281,7 +277,7 @@ func (p *KubeHandler) DescribeRuntimeProviderZones(credential string) ([]string,
 		return nil, err
 	}
 
-	namespaces := []string{}
+	var namespaces []string
 	for _, ns := range out.Items {
 		namespaces = append(namespaces, ns.Name)
 	}

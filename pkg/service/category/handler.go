@@ -13,6 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
@@ -23,7 +24,7 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.CategoryColumns...).
 		From(models.CategoryTableName).
 		Offset(offset).
@@ -33,11 +34,11 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err := query.Load(&categories)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeCategoriesResponse{
@@ -55,13 +56,13 @@ func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 		req.GetDescription().GetValue(),
 		s.UserId)
 
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		InsertInto(models.CategoryTableName).
 		Columns(models.CategoryColumns...).
 		Record(category).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateCategoryResponse{
@@ -73,21 +74,21 @@ func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryRequest) (*pb.ModifyCategoryResponse, error) {
 	// TODO: check resource permission
 	categoryId := req.GetCategoryId().GetValue()
-	_, err := p.getCategory(categoryId)
+	_, err := p.getCategory(ctx, categoryId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
 		models.ColumnName, models.ColumnLocale, models.ColumnDescription)
 	attributes[models.ColumnUpdateTime] = time.Now()
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Update(models.CategoryTableName).
 		SetMap(attributes).
 		Where(db.Eq(models.ColumnCategoryId, categoryId)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 	res := &pb.ModifyCategoryResponse{
 		CategoryId: req.GetCategoryId(),
@@ -99,15 +100,15 @@ func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesR
 	categoryIds := req.GetCategoryId()
 
 	if stringutil.StringIn(models.UncategorizedId, categoryIds) {
-		return nil, gerr.New(gerr.PermissionDenied, gerr.ErrorCannotDeleteDefaultCategory)
+		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorCannotDeleteDefaultCategory)
 	}
 
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		DeleteFrom(models.CategoryTableName).
 		Where(db.Eq(models.ColumnCategoryId, categoryIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	return &pb.DeleteCategoriesResponse{

@@ -36,11 +36,11 @@ func (c *Client) GetClusterNodes(ctx context.Context, nodeIds []string) ([]*pb.C
 		NodeId: nodeIds,
 	})
 	if err != nil {
-		logger.Error("Describe cluster nodes %s failed: %+v", nodeIds, err)
+		logger.Error(ctx, "Describe cluster nodes %s failed: %+v", nodeIds, err)
 		return nil, err
 	}
 	if len(response.ClusterNodeSet) != len(nodeIds) {
-		logger.Error("Describe cluster nodes %s with return count [%d]", nodeIds, len(response.ClusterNodeSet))
+		logger.Error(ctx, "Describe cluster nodes %s with return count [%d]", nodeIds, len(response.ClusterNodeSet))
 		return nil, fmt.Errorf("describe cluster nodes %s with return count [%d]", nodeIds, len(response.ClusterNodeSet))
 	}
 	return response.ClusterNodeSet, nil
@@ -51,11 +51,11 @@ func (c *Client) GetClusters(ctx context.Context, clusterIds []string) ([]*pb.Cl
 		ClusterId: clusterIds,
 	})
 	if err != nil {
-		logger.Error("Describe clusters %s failed: %+v", clusterIds, err)
+		logger.Error(ctx, "Describe clusters %s failed: %+v", clusterIds, err)
 		return nil, err
 	}
 	if len(response.ClusterSet) != len(clusterIds) {
-		logger.Error("Describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
+		logger.Error(ctx, "Describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
 		return nil, fmt.Errorf("describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
 	}
 	return response.ClusterSet, nil
@@ -129,7 +129,7 @@ func (c *Client) DescribeClustersWithFrontgateId(ctx context.Context, frontgateI
 	}
 	response, err := c.DescribeClusters(ctx, request)
 	if err != nil {
-		logger.Error("Describe clusters with frontgate [%s] failed: %+v", frontgateId, err)
+		logger.Error(ctx, "Describe clusters with frontgate [%s] failed: %+v", frontgateId, err)
 		return nil, err
 	}
 	return response.ClusterSet, nil

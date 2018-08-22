@@ -4,10 +4,16 @@
 
 package db
 
-import "openpitrix.io/openpitrix/pkg/logger"
+import (
+	"context"
+
+	"openpitrix.io/openpitrix/pkg/logger"
+)
 
 // EventReceiver is a sentinel EventReceiver; use it if the caller doesn't supply one
-type EventReceiver struct{}
+type EventReceiver struct {
+	ctx context.Context
+}
 
 // Event receives a simple notification when various events occur
 func (n *EventReceiver) Event(eventName string) {
@@ -27,8 +33,8 @@ func (n *EventReceiver) EventErr(eventName string, err error) error {
 // EventErrKv receives a notification of an error if one occurs along with
 // optional key/value data
 func (n *EventReceiver) EventErrKv(eventName string, err error, kvs map[string]string) error {
-	logger.Error("%+v", err)
-	logger.Error("%s: %+v", eventName, kvs)
+	logger.Error(n.ctx, "%+v", err)
+	logger.Error(n.ctx, "%s: %+v", eventName, kvs)
 	return err
 }
 
@@ -39,6 +45,5 @@ func (n *EventReceiver) Timing(eventName string, nanoseconds int64) {
 
 // TimingKv receives the time an event took to happen along with optional key/value data
 func (n *EventReceiver) TimingKv(eventName string, nanoseconds int64, kvs map[string]string) {
-	// TODO: Change logger level to debug
-	logger.Debug("%s spend %.2fms: %+v", eventName, float32(nanoseconds)/1000000, kvs)
+	logger.Debug(n.ctx, "%s spend %.2fms: %+v", eventName, float32(nanoseconds)/1000000, kvs)
 }

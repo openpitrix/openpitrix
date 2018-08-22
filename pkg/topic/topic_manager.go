@@ -61,7 +61,7 @@ func (tm *topicManager) Run() {
 	//				Type: Create,
 	//			}
 	//			pushEvent(tm.Pi.Etcd, userId, msg)
-	//			logger.Debug("Got user [%s], send msg: %+v", userId, msg)
+	//			logger.Debug(nil, "Got user [%s], send msg: %+v", userId, msg)
 	//		}
 	//	}
 	//}()
@@ -94,9 +94,9 @@ func writeMessage(conn *websocket.Conn, mutex *sync.Mutex, userMsg userMessage) 
 	defer mutex.Unlock()
 	err := conn.WriteJSON(userMsg.Message)
 	if err != nil {
-		logger.Error("Failed to send message [%+v] to [%+v], error: %+v", userMsg, conn, err)
+		logger.Error(nil, "Failed to send message [%+v] to [%+v], error: %+v", userMsg, conn, err)
 	}
-	logger.Debug("Message sent [%+v]", userMsg)
+	logger.Debug(nil, "Message sent [%+v]", userMsg)
 }
 
 func (tm *topicManager) HandleEvent(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +108,7 @@ func (tm *topicManager) HandleEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		logger.Info("Upgrade websocket request failed: %+v", err)
+		logger.Info(nil, "Upgrade websocket request failed: %+v", err)
 		return
 	}
 	receiver := receiver{UserId: userId, Conn: c}
@@ -117,7 +117,7 @@ func (tm *topicManager) HandleEvent(w http.ResponseWriter, r *http.Request) {
 		_, _, err := receiver.Conn.ReadMessage()
 		if err != nil {
 			tm.delReceiver <- receiver
-			logger.Error("Connection [%p] error: %+v", receiver.Conn, err)
+			logger.Error(nil, "Connection [%p] error: %+v", receiver.Conn, err)
 			return
 		}
 	}

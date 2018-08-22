@@ -39,7 +39,7 @@ func NewInstance(data string) (*Instance, error) {
 	instance := &Instance{}
 	err := jsonutil.Decode([]byte(data), instance)
 	if err != nil {
-		logger.Error("Decode [%s] into instance failed: %+v", data, err)
+		logger.Error(nil, "Decode [%s] into instance failed: %+v", data, err)
 	}
 	return instance, err
 }

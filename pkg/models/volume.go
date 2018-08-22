@@ -31,7 +31,7 @@ func NewVolume(data string) (*Volume, error) {
 	volume := &Volume{}
 	err := jsonutil.Decode([]byte(data), volume)
 	if err != nil {
-		logger.Error("Decode [%s] into volume failed: %+v", data, err)
+		logger.Error(nil, "Decode [%s] into volume failed: %+v", data, err)
 	}
 	return volume, err
 }
