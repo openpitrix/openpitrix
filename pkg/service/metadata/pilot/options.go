@@ -17,11 +17,11 @@ type Options func(opt *pbtypes.PilotConfig)
 
 func NewDefaultConfigString() string {
 	p := &pbtypes.PilotConfig{
-		Id:                     "pilot-001",
-		Host:                   "localhost",
-		ListenPort:             constants.PilotServicePort,
-		ForFrontgateListenPort: constants.PilotServiceForFrontgatePort,
-		LogLevel:               logger.DebugLevel.String(),
+		Id:            "pilot-001",
+		Host:          "localhost",
+		ListenPort:    constants.PilotServicePort,
+		TlsListenPort: constants.PilotTlsListenPort,
+		LogLevel:      logger.DebugLevel.String(),
 	}
 
 	data, err := json.MarshalIndent(p, "", "\t")
@@ -57,6 +57,6 @@ func WithListenPort(port int) func(opt *pbtypes.PilotConfig) {
 
 func WithFroFgListenPort(port int) func(opt *pbtypes.PilotConfig) {
 	return func(opt *pbtypes.PilotConfig) {
-		opt.ForFrontgateListenPort = int32(port)
+		opt.TlsListenPort = int32(port)
 	}
 }

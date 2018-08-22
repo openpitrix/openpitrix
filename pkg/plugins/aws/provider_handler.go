@@ -154,7 +154,7 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 		return err
 	}
 	if instance.InstanceId == "" {
-		p.Logger.Warn("Skip task without instance")
+		p.Logger.Warn("Skip task without instance id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(instance.RuntimeId)
@@ -378,6 +378,14 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 	if err != nil {
 		return err
 	}
+	if volume.VolumeId == "" {
+		p.Logger.Warn("Skip task without volume id")
+		return nil
+	}
+	if volume.InstanceId == "" {
+		p.Logger.Warn("Skip task without instance id")
+		return nil
+	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
 		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
@@ -408,6 +416,14 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 	volume, err := models.NewVolume(task.Directive)
 	if err != nil {
 		return err
+	}
+	if volume.VolumeId == "" {
+		p.Logger.Warn("Skip task without volume id")
+		return nil
+	}
+	if volume.InstanceId == "" {
+		p.Logger.Warn("Skip task without instance id")
+		return nil
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
@@ -442,7 +458,7 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		return err
 	}
 	if volume.VolumeId == "" {
-		p.Logger.Warn("Skip task without volume")
+		p.Logger.Warn("Skip task without volume id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
@@ -553,6 +569,10 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	if err != nil {
 		return err
 	}
+	if instance.InstanceId == "" {
+		p.Logger.Warn("Skip task without instance id")
+		return nil
+	}
 	instanceService, err := p.initInstanceService(instance.RuntimeId)
 	if err != nil {
 		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
@@ -597,6 +617,10 @@ func (p *ProviderHandler) WaitInstanceState(task *models.Task, state string) err
 	instance, err := models.NewInstance(task.Directive)
 	if err != nil {
 		return err
+	}
+	if instance.InstanceId == "" {
+		p.Logger.Warn("Skip task without instance id")
+		return nil
 	}
 	instanceService, err := p.initInstanceService(instance.RuntimeId)
 	if err != nil {
@@ -644,6 +668,10 @@ func (p *ProviderHandler) WaitVolumeState(task *models.Task, state string) error
 	volume, err := models.NewVolume(task.Directive)
 	if err != nil {
 		return err
+	}
+	if volume.VolumeId == "" {
+		p.Logger.Warn("Skip task without volume id")
+		return nil
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
@@ -711,6 +739,10 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 	volume, err := models.NewVolume(task.Directive)
 	if err != nil {
 		return err
+	}
+	if volume.VolumeId == "" {
+		p.Logger.Warn("Skip task without volume id")
+		return nil
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
