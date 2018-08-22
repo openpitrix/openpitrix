@@ -123,7 +123,11 @@ func (logger *Logger) SetLevelByString(level string) {
 func (logger *Logger) formatOutput(ctx context.Context, level Level, output string) string {
 	now := time.Now().Format("2006-01-02 15:04:05.99999")
 	messageId := ctxutil.GetMessageId(ctx)
+	requestId := ctxutil.GetRequestId(ctx)
 	var suffix string
+	if len(requestId) > 0 {
+		messageId = append(messageId, requestId)
+	}
 	if len(messageId) > 0 {
 		suffix = fmt.Sprintf("(%s)", strings.Join(messageId, "|"))
 	}

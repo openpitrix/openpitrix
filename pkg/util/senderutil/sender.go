@@ -11,8 +11,6 @@ import (
 
 	context2 "golang.org/x/net/context"
 	"google.golang.org/grpc/metadata"
-
-	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 const senderKey = "sender"
@@ -32,23 +30,23 @@ func (info *Info) ToJson() string {
 
 func GetSenderFromContext(ctx context.Context) *Info {
 	md, ok := metadata.FromIncomingContext(ctx)
-	if ok {
-		//logger.Debug(nil, "%+v", md[senderKey])
-		if len(md[senderKey]) == 0 {
-			return nil
-		}
-		sender := Info{}
-		err := json.Unmarshal([]byte(md[senderKey][0]), &sender)
-		if err != nil {
-			panic(err)
-		}
-		return &sender
+	if !ok {
+		return nil
 	}
-	return nil
+	//logger.Debug(nil, "%+v", md[senderKey])
+	if len(md[senderKey]) == 0 {
+		return nil
+	}
+	sender := Info{}
+	err := json.Unmarshal([]byte(md[senderKey][0]), &sender)
+	if err != nil {
+		panic(err)
+	}
+	return &sender
 }
 
 func AuthUserInfo(ctx context.Context, authKey string) *Info {
-	logger.Debug(ctx, "got auth key: %+v", authKey)
+	//logger.Debug(ctx, "got auth key: %+v", authKey)
 	// TODO: validate auth key && get user info from db
 	return GetSystemUser()
 }

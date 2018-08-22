@@ -71,10 +71,8 @@ func log() gin.HandlerFunc {
 	l := logger.NewLogger()
 	l.HideCallstack()
 	return func(c *gin.Context) {
-		requestID := c.Request.Header.Get(RequestIdKey)
-		if requestID == "" {
-			requestID = uuid.New()
-		}
+		requestID := uuid.New()
+		c.Request.Header.Set(RequestIdKey, requestID)
 		c.Writer.Header().Set(RequestIdKey, requestID)
 
 		t := time.Now()
@@ -144,7 +142,15 @@ func (s *Server) run() error {
 }
 
 func (s *Server) mainHandler() http.Handler {
-	var gwmux = runtime.NewServeMux(runtime.WithMetadata(senderutil.ServeMuxSetSender))
+	var gwmux = runtime.NewServeMux(
+		runtime.WithMetadata(senderutil.ServeMuxSetSender),
+		runtime.WithIncomingHeaderMatcher(func(s string) (string, bool) {
+			if s == RequestIdKey {
+				return RequestIdKey, true
+			}
+			return "", false
+		}),
+	)
 	var opts = manager.ClientOptions
 	var err error
 

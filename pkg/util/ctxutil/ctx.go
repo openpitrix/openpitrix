@@ -6,6 +6,8 @@ package ctxutil
 
 import (
 	"context"
+
+	"google.golang.org/grpc/metadata"
 )
 
 var messageIdKey struct{}
@@ -51,4 +53,19 @@ func Copy(src, dst context.Context) context.Context {
 		dst = SetMessageId(dst, GetMessageId(src))
 	}
 	return dst
+}
+
+func GetRequestId(ctx context.Context) string {
+	if ctx == nil {
+		return ""
+	}
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return ""
+	}
+	rid, ok := md["x-request-id"]
+	if !ok || len(rid) == 0 {
+		return ""
+	}
+	return rid[0]
 }
