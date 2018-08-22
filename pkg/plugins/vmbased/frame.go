@@ -796,7 +796,7 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 	}
 }
 
-func (f *Frame) getUserDataExec(filename, contents, imageUrl, frontgateIp string) string {
+func (f *Frame) getUserDataExec(filename, contents, imageUrl, frontgateIp, certificateExec string) string {
 	if pi.Global() == nil {
 		logger.Error(f.Ctx, "Pi global should be init.")
 		return ""
@@ -811,6 +811,7 @@ func (f *Frame) getUserDataExec(filename, contents, imageUrl, frontgateIp string
 	exec := fmt.Sprintf(`#!/bin/bash -e
 
 mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
+%s
 echo '%s' >> %s
 mkdir -p /etc/docker/
 echo '{
@@ -818,7 +819,7 @@ echo '{
 }' > /etc/docker/daemon.json
 for i in $(seq 1 100); do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 3; done
 /opt/openpitrix/image/install_service.sh %s
-`, contents, f.getConfFile(), mirror, imageUrl, filename)
+`, certificateExec, contents, f.getConfFile(), mirror, imageUrl, filename)
 	return base64.StdEncoding.EncodeToString([]byte(exec))
 }
 
@@ -936,9 +937,9 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 		}
 		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
 			frontgate := &Frontgate{f}
-			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp)
+			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp, frontgate.getCertificateExec())
 		} else {
-			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp)
+			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp, "")
 		}
 		directive := jsonutil.ToString(instance)
 		runInstanceTask := &models.Task{

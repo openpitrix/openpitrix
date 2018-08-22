@@ -8,11 +8,17 @@ import (
 	"fmt"
 	"strings"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
+	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	metadatatypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	types "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/retryutil"
 	"openpitrix.io/openpitrix/pkg/util/sshutil"
 )
 
@@ -61,6 +67,36 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 	result += fmt.Sprintf("FILE_CONF=%s\n", frontgateConfStr)
 
 	return result
+}
+
+func (f *Frontgate) getCertificateExec() string {
+	var pilotClientTLSConfig *types.PilotClientTLSConfig
+
+	ctx := clientutil.SetSystemUserToContext(f.Ctx)
+	err := retryutil.Retry(3, constants.RetryInterval, func() error {
+		pilotClient, err := pilotclient.NewClient()
+		if err != nil {
+			return err
+		}
+		pilotClientTLSConfig, err = pilotClient.GetPilotClientTLSConfig(ctx, &metadatatypes.Empty{})
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		logger.Critical(f.Ctx, "Get pilot client tls config failed, %+v", err)
+		return ""
+	}
+
+	exec := fmt.Sprintf(`
+echo '%s' > /opt/openpitrix/conf/openpitrix-ca.crt
+echo '%s' > /opt/openpitrix/conf/pilot-client.crt
+echo '%s' > /opt/openpitrix/conf/pilot-client.key
+`, pilotClientTLSConfig.CaCrtData, pilotClientTLSConfig.ClientCrtData, pilotClientTLSConfig.ClientKeyData)
+
+	return exec
 }
 
 func (f *Frontgate) pingFrontgateLayer(failureAllowed bool) *models.TaskLayer {

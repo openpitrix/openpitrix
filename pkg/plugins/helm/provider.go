@@ -368,7 +368,8 @@ func (p *Provider) updateClusterEnv(job *models.Job) error {
 
 	modifyClusterRequest := &pb.ModifyClusterRequest{
 		Cluster: &pb.Cluster{
-			ClusterId: pbutil.ToProtoString(job.ClusterId),
+			ClusterId:   pbutil.ToProtoString(job.ClusterId),
+			Description: pbutil.ToProtoString(clusterWrapper.Cluster.Description),
 		},
 		ClusterRoleSet: models.ClusterRolesToPbs(clusterRoles),
 	}

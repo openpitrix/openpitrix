@@ -633,7 +633,9 @@ EXAMPLE:
 				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
 				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
 
-				pbPilotClientTLSConfig, err := pilotutil.LoadPilotClientTLSConfig(
+				pbPilotTLSConfig, err := pilotutil.LoadPilotTLSConfig(
+					c.GlobalString("pilot-server-crt-file"),
+					c.GlobalString("pilot-server-key-file"),
 					c.GlobalString("pilot-client-crt-file"),
 					c.GlobalString("pilot-client-key-file"),
 					c.GlobalString("openpitrix-ca-crt-file"),
@@ -644,7 +646,7 @@ EXAMPLE:
 					os.Exit(1)
 				}
 
-				pilot.Serve(cfg, pbPilotClientTLSConfig)
+				pilot.Serve(cfg, pbPilotTLSConfig)
 				return
 			},
 		},

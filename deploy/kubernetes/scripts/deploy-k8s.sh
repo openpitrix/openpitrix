@@ -91,7 +91,6 @@ cd ../..
 kubectl create namespace ${NAMESPACE}
 kubectl create secret generic mysql-pass --from-file=./kubernetes/password.txt -n ${NAMESPACE}
 
-
 if [ "${DBCTRL}" == "1" ];then
   for FILE in `ls ./kubernetes/ctrl`;do
     replace ./kubernetes/ctrl/${FILE} | kubectl delete -f - --ignore-not-found=true
@@ -118,6 +117,7 @@ if [ "${BASE}" == "1" ];then
   done
 fi
 if [ "${METADATA}" == "1" ];then
+  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE}
   for FILE in `ls ./kubernetes/openpitrix/metadata/`;do
     replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -

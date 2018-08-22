@@ -17,6 +17,10 @@ spec:
     protocol: TCP
     port: 9110
     targetPort: 9110
+  - name: openpitrix-pilot-tls
+    protocol: TCP
+    port: 9114
+    targetPort: 9114
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
@@ -53,10 +57,12 @@ spec:
       - name: openpitrix-pilot
         image: ${IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
-        command: ['pilot', '-config=/opt/openpitrix/conf/pilot-config.json', 'serve']
+        command: ['pilot', '-config=/opt/openpitrix/conf/pilot-config.json', '--openpitrix-ca-crt-file=/opt/openpitrix/conf/openpitrix-ca.crt', '--pilot-server-crt-file=/opt/openpitrix/conf/pilot-server.crt', '--pilot-server-key-file=/opt/openpitrix/conf/pilot-server.key', '--pilot-client-crt-file=/opt/openpitrix/conf/pilot-client.crt', '--pilot-client-key-file=/opt/openpitrix/conf/pilot-client.key', 'serve']
         ports:
         - containerPort: 9110
           name: pilot
+        - containerPort: 9114
+          name: pilot-tls
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
         - name: OPENPITRIX_LOG_LEVEL
@@ -72,8 +78,20 @@ spec:
           name: config-volume
       volumes:
       - name: config-volume
-        configMap:
-          name: openpitrix-pilot-configmap
+        projected:
+          sources:
+          - configMap:
+              name: openpitrix-pilot-configmap
+          - secret:
+              name: openpitrix-ca.crt
+          - secret:
+              name: pilot-server.crt
+          - secret:
+              name: pilot-server.key
+          - secret:
+              name: pilot-client.crt
+          - secret:
+              name: pilot-client.key
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -90,5 +108,6 @@ data:
         "id": "openpitrix-pilot-001",
         "host": "localhost",
         "listen_port": 9110,
+        "tls_listen_port": 9114,
         "log_level": "debug"
     }
