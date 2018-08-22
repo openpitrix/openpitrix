@@ -8,13 +8,13 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"os"
 	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/frontgate"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
@@ -39,10 +39,16 @@ func Serve(cfg *ConfigManager, tlsPilotConfig *tls.Config) {
 	}
 
 	go ServeReverseRpcServerForPilot(cfg.Get(), tlsPilotConfig, p)
-	go pbfrontgate.ListenAndServeFrontgateService("tcp",
-		fmt.Sprintf(":%d", constants.FrontgateServicePort),
-		p,
-	)
+	go func() {
+		err := pbfrontgate.ListenAndServeFrontgateService("tcp",
+			fmt.Sprintf(":%d", cfg.Get().ListenPort),
+			p,
+		)
+		if err != nil {
+			logger.Critical("%+v", err)
+			os.Exit(1)
+		}
+	}()
 
 	<-make(chan bool)
 }

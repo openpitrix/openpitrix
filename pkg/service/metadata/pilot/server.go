@@ -20,13 +20,13 @@ import (
 )
 
 type Server struct {
-	cfg            *pbtypes.PilotConfig
-	pbClientTlsCfg *pbtypes.PilotClientTLSConfig
-	fgClientMgr    *FrontgateClientManager
-	taskStatusMgr  *TaskStatusManager
+	cfg           *pbtypes.PilotConfig
+	pbTlsCfg      *pbtypes.PilotTLSConfig
+	fgClientMgr   *FrontgateClientManager
+	taskStatusMgr *TaskStatusManager
 }
 
-func Serve(cfg *pbtypes.PilotConfig, pbClientTlsCfg *pbtypes.PilotClientTLSConfig, opts ...Options) {
+func Serve(cfg *pbtypes.PilotConfig, pbTlsCfg *pbtypes.PilotTLSConfig, opts ...Options) {
 	if cfg != nil {
 		cfg = proto.Clone(cfg).(*pbtypes.PilotConfig)
 	} else {
@@ -38,10 +38,10 @@ func Serve(cfg *pbtypes.PilotConfig, pbClientTlsCfg *pbtypes.PilotClientTLSConfi
 	}
 
 	p := &Server{
-		cfg:            cfg,
-		pbClientTlsCfg: proto.Clone(pbClientTlsCfg).(*pbtypes.PilotClientTLSConfig),
-		fgClientMgr:    NewFrontgateClientManager(),
-		taskStatusMgr:  NewTaskStatusManager(),
+		cfg:           cfg,
+		pbTlsCfg:      proto.Clone(pbTlsCfg).(*pbtypes.PilotTLSConfig),
+		fgClientMgr:   NewFrontgateClientManager(),
+		taskStatusMgr: NewTaskStatusManager(),
 	}
 
 	go func() {
@@ -59,8 +59,8 @@ func Serve(cfg *pbtypes.PilotConfig, pbClientTlsCfg *pbtypes.PilotClientTLSConfi
 	)
 
 	// tls for public service
-	if pbClientTlsCfg != nil {
-		tlsCfg, err := pilotutil.NewClientTLSConfigFromPbConfig(pbClientTlsCfg)
+	if pbTlsCfg != nil {
+		tlsCfg, err := pilotutil.NewServerTLSConfigFromPbConfig(pbTlsCfg)
 		if err != nil {
 			logger.Critical("%+v", err)
 			os.Exit(1)

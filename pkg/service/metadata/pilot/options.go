@@ -55,7 +55,7 @@ func WithListenPort(port int) func(opt *pbtypes.PilotConfig) {
 	}
 }
 
-func WithFroFgListenPort(port int) func(opt *pbtypes.PilotConfig) {
+func WithForFgListenPort(port int) func(opt *pbtypes.PilotConfig) {
 	return func(opt *pbtypes.PilotConfig) {
 		opt.ForFrontgateListenPort = int32(port)
 	}
