@@ -29,7 +29,7 @@ import (
 )
 
 var (
-	NamespaceRegExp = regexp.MustCompile(`[a-z0-9]([-a-z0-9]*[a-z0-9])?`)
+	NamespaceRegExp = regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`)
 )
 
 type KubeHandler struct {

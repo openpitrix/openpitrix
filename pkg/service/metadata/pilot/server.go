@@ -66,14 +66,14 @@ func Serve(cfg *pbtypes.PilotConfig, pbTlsCfg *pbtypes.PilotTLSConfig, opts ...O
 			os.Exit(1)
 		}
 
-		manager.NewGrpcServer("pilot-service-for-frontgate", int(p.cfg.ForFrontgateListenPort)).Serve(
+		manager.NewGrpcServer("pilot-service-for-frontgate", int(p.cfg.TlsListenPort)).Serve(
 			func(server *grpc.Server) {
 				pbpilot.RegisterPilotServiceForFrontgateServer(server, p)
 			},
 			grpc.Creds(credentials.NewTLS(tlsCfg)),
 		)
 	} else {
-		manager.NewGrpcServer("pilot-service-for-frontgate", int(p.cfg.ForFrontgateListenPort)).Serve(
+		manager.NewGrpcServer("pilot-service-for-frontgate", int(p.cfg.TlsListenPort)).Serve(
 			func(server *grpc.Server) {
 				pbpilot.RegisterPilotServiceForFrontgateServer(server, p)
 			},
