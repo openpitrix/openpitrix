@@ -76,6 +76,48 @@ func DialPilotServiceForFrontgate_TLS(
 	return
 }
 
+func LoadPilotTLSConfig(
+	serverCertFile, serverKeyFile string,
+	clientCertFile, clientKeyFile string,
+	caCertFile string,
+	tlsServerName string,
+) (p *pbtypes.PilotTLSConfig, err error) {
+
+	caData, err := ioutil.ReadFile(caCertFile)
+	if err != nil {
+		return nil, err
+	}
+
+	serverCrtData, err := ioutil.ReadFile(serverCertFile)
+	if err != nil {
+		return nil, err
+	}
+	serverKeyData, err := ioutil.ReadFile(serverKeyFile)
+	if err != nil {
+		return nil, err
+	}
+
+	clientCrtData, err := ioutil.ReadFile(clientCertFile)
+	if err != nil {
+		return nil, err
+	}
+	clientKeyData, err := ioutil.ReadFile(clientKeyFile)
+	if err != nil {
+		return nil, err
+	}
+
+	p = &pbtypes.PilotTLSConfig{
+		CaCrtData:       string(caData),
+		ServerCrtData:   string(serverCrtData),
+		ServerKeyData:   string(serverKeyData),
+		ClientCrtData:   string(clientCrtData),
+		ClientKeyData:   string(clientKeyData),
+		PilotServerName: tlsServerName,
+	}
+
+	return p, nil
+}
+
 func LoadPilotClientTLSConfig(
 	certFile, keyFile, caCertFile, tlsServerName string,
 ) (p *pbtypes.PilotClientTLSConfig, err error) {
@@ -102,6 +144,14 @@ func LoadPilotClientTLSConfig(
 	}
 
 	return p, nil
+}
+
+func NewServerTLSConfigFromPbConfig(pbcfg *pbtypes.PilotTLSConfig) (*tls.Config, error) {
+	return tlsutil.NewServerTLSConfigFromString(
+		pbcfg.ServerCrtData,
+		pbcfg.ServerKeyData,
+		pbcfg.CaCrtData,
+	)
 }
 
 func NewClientTLSConfigFromPbConfig(pbcfg *pbtypes.PilotClientTLSConfig) (*tls.Config, error) {

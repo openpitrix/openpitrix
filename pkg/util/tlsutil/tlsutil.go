@@ -47,6 +47,31 @@ func NewServerTLSConfigFromFile(server_crt, server_key, ca_crt string) (*tls.Con
 	return tlsConfig, nil
 }
 
+func NewServerTLSConfigFromString(certData, keyData, caCertData string) (*tls.Config, error) {
+	certificate, err := tls.X509KeyPair([]byte(certData), []byte(keyData))
+	if err != nil {
+		return nil, err
+	}
+
+	certPool := x509.NewCertPool()
+	if ok := certPool.AppendCertsFromPEM([]byte(caCertData)); !ok {
+		err = fmt.Errorf("failed to append ca certs")
+		return nil, err
+	}
+
+	// Append the client certificates from the CA
+	if ok := certPool.AppendCertsFromPEM([]byte(caCertData)); !ok {
+		return nil, fmt.Errorf("failed to append client certs")
+	}
+
+	tlsConfig := &tls.Config{
+		ClientAuth:   tls.RequireAndVerifyClientCert, // NOTE: this is optional!
+		Certificates: []tls.Certificate{certificate},
+		ClientCAs:    certPool,
+	}
+	return tlsConfig, nil
+}
+
 func NewClientTLSConfigFromFile(certFile, keyFile, caCertFile, tlsServerName string) (*tls.Config, error) {
 	certificate, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
