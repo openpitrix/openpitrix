@@ -5,6 +5,7 @@
 package cluster
 
 import (
+	"context"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -12,24 +13,24 @@ import (
 	"openpitrix.io/openpitrix/pkg/pi"
 )
 
-func RegisterClusterNode(clusterNode *models.ClusterNode) error {
+func RegisterClusterNode(ctx context.Context, clusterNode *models.ClusterNode) error {
 	clusterNode.NodeId = models.NewClusterNodeId()
 	clusterNode.CreateTime = time.Now()
 	clusterNode.StatusTime = time.Now()
-	_, err := pi.Global().Db.
+	_, err := pi.Global().DB(ctx).
 		InsertInto(models.ClusterNodeTableName).
 		Columns(models.ClusterNodeColumns...).
 		Record(clusterNode).
 		Exec()
 	if err != nil {
-		logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
+		logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
 			models.ClusterNodeTableName, clusterNode.ClusterId, err)
 		return err
 	}
 	return nil
 }
 
-func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
+func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
 	clusterId := clusterWrapper.Cluster.ClusterId
 	owner := clusterWrapper.Cluster.Owner
 	// register cluster
@@ -40,13 +41,13 @@ func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
 		if clusterWrapper.Cluster.UpgradeTime == nil {
 			clusterWrapper.Cluster.UpgradeTime = &now
 		}
-		_, err := pi.Global().Db.
+		_, err := pi.Global().DB(ctx).
 			InsertInto(models.ClusterTableName).
 			Columns(models.ClusterColumns...).
 			Record(clusterWrapper.Cluster).
 			Exec()
 		if err != nil {
-			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
+			logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
 				models.ClusterTableName, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
@@ -57,7 +58,7 @@ func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
 	for _, clusterNodeWithKeyPairs := range clusterWrapper.ClusterNodesWithKeyPairs {
 		clusterNodeWithKeyPairs.ClusterId = clusterId
 		clusterNodeWithKeyPairs.Owner = owner
-		err := RegisterClusterNode(clusterNodeWithKeyPairs.ClusterNode)
+		err := RegisterClusterNode(ctx, clusterNodeWithKeyPairs.ClusterNode)
 		if err != nil {
 			return err
 		}
@@ -69,13 +70,13 @@ func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
 	// register cluster common
 	for _, clusterCommon := range clusterWrapper.ClusterCommons {
 		clusterCommon.ClusterId = clusterId
-		_, err := pi.Global().Db.
+		_, err := pi.Global().DB(ctx).
 			InsertInto(models.ClusterCommonTableName).
 			Columns(models.ClusterCommonColumns...).
 			Record(clusterCommon).
 			Exec()
 		if err != nil {
-			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
+			logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
 				models.ClusterCommonTableName, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
@@ -85,13 +86,13 @@ func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
 	for _, clusterLink := range clusterWrapper.ClusterLinks {
 		clusterLink.ClusterId = clusterId
 		clusterLink.Owner = owner
-		_, err := pi.Global().Db.
+		_, err := pi.Global().DB(ctx).
 			InsertInto(models.ClusterLinkTableName).
 			Columns(models.ClusterLinkColumns...).
 			Record(clusterLink).
 			Exec()
 		if err != nil {
-			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
+			logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
 				models.ClusterLinkTableName, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
@@ -100,13 +101,13 @@ func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
 	// register cluster role
 	for _, clusterRole := range clusterWrapper.ClusterRoles {
 		clusterRole.ClusterId = clusterId
-		_, err := pi.Global().Db.
+		_, err := pi.Global().DB(ctx).
 			InsertInto(models.ClusterRoleTableName).
 			Columns(models.ClusterRoleColumns...).
 			Record(clusterRole).
 			Exec()
 		if err != nil {
-			logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
+			logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
 				models.ClusterRoleTableName, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
@@ -116,13 +117,13 @@ func RegisterClusterWrapper(clusterWrapper *models.ClusterWrapper) error {
 	for _, clusterLoadbalancers := range clusterWrapper.ClusterLoadbalancers {
 		for _, clusterLoadbalancer := range clusterLoadbalancers {
 			clusterLoadbalancer.ClusterId = clusterId
-			_, err := pi.Global().Db.
+			_, err := pi.Global().DB(ctx).
 				InsertInto(models.ClusterLoadbalancerTableName).
 				Columns(models.ClusterLoadbalancerColumns...).
 				Record(clusterLoadbalancer).
 				Exec()
 			if err != nil {
-				logger.Error("Failed to insert table [%s] with cluster id [%s]: %+v",
+				logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
 					models.ClusterLoadbalancerTableName, clusterWrapper.Cluster.ClusterId, err)
 				return err
 			}

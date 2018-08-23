@@ -30,7 +30,7 @@ func (c CmdCnodes) Format(ip, taskId string) error {
 		cmd := cnodes["cmd"]
 		cmd.Id = taskId
 	} else {
-		logger.Error("Ip [%s] not in Cnodes [%+v]", ip, c)
+		logger.Error(nil, "Ip [%s] not in Cnodes [%+v]", ip, c)
 		return fmt.Errorf("ip [%s] not in Cnodes [%+v]", ip, c)
 	}
 	return nil
@@ -40,7 +40,7 @@ func NewCmdCnodes(data string) (*CmdCnodes, error) {
 	cmdCnodes := new(CmdCnodes)
 	err := jsonutil.Decode([]byte(data), cmdCnodes)
 	if err != nil {
-		logger.Error("Decode [%s] into cmd failed: %+v", data, err)
+		logger.Error(nil, "Decode [%s] into cmd failed: %+v", data, err)
 	}
 	return cmdCnodes, err
 }

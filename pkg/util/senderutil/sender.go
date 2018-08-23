@@ -11,8 +11,6 @@ import (
 
 	context2 "golang.org/x/net/context"
 	"google.golang.org/grpc/metadata"
-
-	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 const senderKey = "sender"
@@ -32,37 +30,37 @@ func (info *Info) ToJson() string {
 
 func GetSenderFromContext(ctx context.Context) *Info {
 	md, ok := metadata.FromIncomingContext(ctx)
-	if ok {
-		//logger.Debug("%+v", md[senderKey])
-		if len(md[senderKey]) == 0 {
-			return nil
-		}
-		sender := Info{}
-		err := json.Unmarshal([]byte(md[senderKey][0]), &sender)
-		if err != nil {
-			panic(err)
-		}
-		return &sender
+	if !ok {
+		return nil
 	}
-	return nil
+	//logger.Debug(nil, "%+v", md[senderKey])
+	if len(md[senderKey]) == 0 {
+		return nil
+	}
+	sender := Info{}
+	err := json.Unmarshal([]byte(md[senderKey][0]), &sender)
+	if err != nil {
+		panic(err)
+	}
+	return &sender
 }
 
-func AuthUserInfo(authKey string) *Info {
-	logger.Debug("got auth key: %+v", authKey)
+func AuthUserInfo(ctx context.Context, authKey string) *Info {
+	//logger.Debug(ctx, "got auth key: %+v", authKey)
 	// TODO: validate auth key && get user info from db
 	return GetSystemUser()
 }
 
-func ServeMuxSetSender(_ context2.Context, request *http.Request) metadata.MD {
+func ServeMuxSetSender(ctx context2.Context, request *http.Request) metadata.MD {
 	md := metadata.MD{}
 	authKey := request.Header.Get("X-Auth-Key")
-	user := AuthUserInfo(authKey)
-	md["sender"] = []string{user.ToJson()}
+	user := AuthUserInfo(ctx, authKey)
+	md[senderKey] = []string{user.ToJson()}
 	return md
 }
 
 func NewContext(ctx context.Context, user *Info) context.Context {
 	md := metadata.MD{}
-	md["sender"] = []string{user.ToJson()}
+	md[senderKey] = []string{user.ToJson()}
 	return metadata.NewOutgoingContext(ctx, md)
 }

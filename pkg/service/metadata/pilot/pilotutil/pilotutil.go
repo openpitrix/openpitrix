@@ -24,7 +24,7 @@ import (
 func MustLoadPilotConfig(path string) *pbtypes.PilotConfig {
 	p, err := LoadPilotConfig(path)
 	if err != nil {
-		logger.Critical("%+v", err)
+		logger.Critical(nil, "%+v", err)
 		os.Exit(1)
 	}
 	return p

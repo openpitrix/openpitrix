@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"strings"
@@ -35,29 +36,30 @@ type UpdateHook func(query *UpdateQuery)
 type DeleteHook func(query *DeleteQuery)
 
 type Database struct {
-	*dbr.Session
-	InsertHook InsertHook
-	UpdateHook UpdateHook
-	DeleteHook DeleteHook
+	Conn *dbr.Connection
 }
 
 type SelectQuery struct {
 	*dbr.SelectBuilder
+	ctx       context.Context
 	JoinCount int // for join filter
 }
 
 type InsertQuery struct {
 	*dbr.InsertBuilder
+	ctx  context.Context
 	Hook InsertHook
 }
 
 type DeleteQuery struct {
 	*dbr.DeleteBuilder
+	ctx  context.Context
 	Hook DeleteHook
 }
 
 type UpdateQuery struct {
 	*dbr.UpdateBuilder
+	ctx  context.Context
 	Hook UpdateHook
 }
 
@@ -68,6 +70,21 @@ type UpsertQuery struct {
 	upsertValues map[string]interface{}
 }
 
+type Conn struct {
+	*dbr.Session
+	ctx        context.Context
+	InsertHook InsertHook
+	UpdateHook UpdateHook
+	DeleteHook DeleteHook
+}
+
+func (db *Database) New(ctx context.Context) *Conn {
+	return &Conn{
+		Session: db.Conn.NewSession(&EventReceiver{ctx}),
+		ctx:     ctx,
+	}
+}
+
 // SelectQuery
 // Example: Select().From().Where().Limit().Offset().OrderDir().Load()
 //          Select().From().Where().Limit().Offset().OrderDir().LoadOne()
@@ -76,16 +93,16 @@ type UpsertQuery struct {
 //          SelectAll().From().Where().Limit().Offset().OrderDir().LoadOne()
 //          SelectAll().From().Where().Count()
 
-func (db *Database) Select(columns ...string) *SelectQuery {
-	return &SelectQuery{db.Session.Select(columns...), 0}
+func (conn *Conn) Select(columns ...string) *SelectQuery {
+	return &SelectQuery{conn.Session.Select(columns...), conn.ctx, 0}
 }
 
-func (db *Database) SelectBySql(query string, value ...interface{}) *SelectQuery {
-	return &SelectQuery{db.Session.SelectBySql(query, value...), 0}
+func (conn *Conn) SelectBySql(query string, value ...interface{}) *SelectQuery {
+	return &SelectQuery{conn.Session.SelectBySql(query, value...), conn.ctx, 0}
 }
 
-func (db *Database) SelectAll(columns ...string) *SelectQuery {
-	return &SelectQuery{db.Session.Select("*"), 0}
+func (conn *Conn) SelectAll(columns ...string) *SelectQuery {
+	return &SelectQuery{conn.Session.Select("*"), conn.ctx, 0}
 }
 
 func (b *SelectQuery) Join(table, on interface{}) *SelectQuery {
@@ -136,11 +153,11 @@ func (b *SelectQuery) OrderDir(col string, isAsc bool) *SelectQuery {
 }
 
 func (b *SelectQuery) Load(value interface{}) (int, error) {
-	return b.SelectBuilder.Load(value)
+	return b.SelectBuilder.LoadContext(b.ctx, value)
 }
 
 func (b *SelectQuery) LoadOne(value interface{}) error {
-	return b.SelectBuilder.LoadOne(value)
+	return b.SelectBuilder.LoadOneContext(b.ctx, value)
 }
 
 func getColumns(dbrColumns []interface{}) string {
@@ -187,12 +204,12 @@ func (b *SelectQuery) Count() (count uint32, err error) {
 // InsertQuery
 // Example: InsertInto().Columns().Record().Exec()
 
-func (db *Database) InsertInto(table string) *InsertQuery {
-	return &InsertQuery{db.Session.InsertInto(table), db.InsertHook}
+func (conn *Conn) InsertInto(table string) *InsertQuery {
+	return &InsertQuery{conn.Session.InsertInto(table), conn.ctx, conn.InsertHook}
 }
 
 func (b *InsertQuery) Exec() (sql.Result, error) {
-	result, err := b.InsertBuilder.Exec()
+	result, err := b.InsertBuilder.ExecContext(b.ctx)
 	if b.Hook != nil && err == nil {
 		defer b.Hook(b)
 	}
@@ -212,8 +229,8 @@ func (b *InsertQuery) Record(structValue interface{}) *InsertQuery {
 // DeleteQuery
 // Example: DeleteFrom().Where().Limit().Exec()
 
-func (db *Database) DeleteFrom(table string) *DeleteQuery {
-	return &DeleteQuery{db.Session.DeleteFrom(table), db.DeleteHook}
+func (conn *Conn) DeleteFrom(table string) *DeleteQuery {
+	return &DeleteQuery{conn.Session.DeleteFrom(table), conn.ctx, conn.DeleteHook}
 }
 
 func (b *DeleteQuery) Where(query interface{}, value ...interface{}) *DeleteQuery {
@@ -227,7 +244,7 @@ func (b *DeleteQuery) Limit(n uint64) *DeleteQuery {
 }
 
 func (b *DeleteQuery) Exec() (sql.Result, error) {
-	result, err := b.DeleteBuilder.Exec()
+	result, err := b.DeleteBuilder.ExecContext(b.ctx)
 	if b.Hook != nil && err == nil {
 		defer b.Hook(b)
 	}
@@ -237,12 +254,12 @@ func (b *DeleteQuery) Exec() (sql.Result, error) {
 // UpdateQuery
 // Example: Update().Set().Where().Exec()
 
-func (db *Database) Update(table string) *UpdateQuery {
-	return &UpdateQuery{db.Session.Update(table), db.UpdateHook}
+func (conn *Conn) Update(table string) *UpdateQuery {
+	return &UpdateQuery{conn.Session.Update(table), conn.ctx, conn.UpdateHook}
 }
 
 func (b *UpdateQuery) Exec() (sql.Result, error) {
-	result, err := b.UpdateBuilder.Exec()
+	result, err := b.UpdateBuilder.ExecContext(b.ctx)
 	if b.Hook != nil && err == nil {
 		defer b.Hook(b)
 	}

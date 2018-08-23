@@ -5,6 +5,7 @@
 package helm
 
 import (
+	"context"
 	"fmt"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
@@ -19,15 +20,15 @@ type JobDirective struct {
 	ClusterName string
 }
 
-func decodeJobDirective(data string) (*JobDirective, error) {
-	clusterWrapper, err := models.NewClusterWrapper(data)
+func decodeJobDirective(ctx context.Context, data string) (*JobDirective, error) {
+	clusterWrapper, err := models.NewClusterWrapper(ctx, data)
 	if err != nil {
 		return nil, err
 	}
 
 	runtimeId := clusterWrapper.Cluster.RuntimeId
 
-	runtime, err := runtimeclient.NewRuntime(runtimeId)
+	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
 	if err != nil {
 		return nil, err
 	}

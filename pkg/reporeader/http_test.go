@@ -5,6 +5,7 @@
 package reporeader
 
 import (
+	"context"
 	neturl "net/url"
 	"testing"
 
@@ -15,7 +16,7 @@ func TestNewHttpReader(t *testing.T) {
 	var url = "https://kubernetes-charts.storage.googleapis.com/"
 	u, err := neturl.Parse(url)
 	require.NoError(t, err)
-	httpReader := NewHttpReader(u)
+	httpReader := NewHttpReader(context.TODO(), u)
 	body, err := httpReader.GetIndexYaml()
 	require.NoError(t, err)
 	t.Log(len(body))

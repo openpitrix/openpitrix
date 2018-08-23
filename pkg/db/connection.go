@@ -12,11 +12,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/config"
 )
 
-var defaultEventReceiver = EventReceiver{}
-
 func OpenDatabase(cfg config.MysqlConfig) (*Database, error) {
 	// https://github.com/go-sql-driver/mysql/issues/9
-	conn, err := dbr.Open("mysql", cfg.GetUrl()+"?parseTime=1&multiStatements=1&charset=utf8mb4&collation=utf8mb4_unicode_ci", &defaultEventReceiver)
+	conn, err := dbr.Open("mysql", cfg.GetUrl()+"?parseTime=1&multiStatements=1&charset=utf8mb4&collation=utf8mb4_unicode_ci", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -24,6 +22,6 @@ func OpenDatabase(cfg config.MysqlConfig) (*Database, error) {
 	conn.SetMaxOpenConns(100)
 	conn.SetConnMaxLifetime(10 * time.Second)
 	return &Database{
-		Session: conn.NewSession(nil),
+		Conn: conn,
 	}, nil
 }

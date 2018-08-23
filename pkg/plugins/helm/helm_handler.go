@@ -5,6 +5,7 @@
 package helm
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 
@@ -22,7 +23,6 @@ import (
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
@@ -31,25 +31,20 @@ var (
 )
 
 type HelmHandler struct {
-	Logger    *logger.Logger
+	ctx       context.Context
 	RuntimeId string
 }
 
-func GetHelmHandler(Logger *logger.Logger, runtimeId string) *HelmHandler {
+func GetHelmHandler(ctx context.Context, runtimeId string) *HelmHandler {
 	helmHandler := new(HelmHandler)
-	if Logger == nil {
-		helmHandler.Logger = logger.NewLogger()
-	} else {
-		helmHandler.Logger = Logger
-	}
-
+	helmHandler.ctx = ctx
 	helmHandler.RuntimeId = runtimeId
 	return helmHandler
 }
 
 func (p *HelmHandler) initKubeClient() (*kubernetes.Clientset, *rest.Config, error) {
 	kubeconfigGetter := func() (*clientcmdapi.Config, error) {
-		runtime, err := runtimeclient.NewRuntime(p.RuntimeId)
+		runtime, err := runtimeclient.NewRuntime(p.ctx, p.RuntimeId)
 		if err != nil {
 			return nil, err
 		}
@@ -165,7 +160,7 @@ func (p *HelmHandler) CheckClusterNameIsUnique(clusterName string) error {
 			return true, nil
 		}
 
-		return true, gerr.New(gerr.PermissionDenied, gerr.ErrorHelmReleaseExists, clusterName)
+		return true, gerr.New(p.ctx, gerr.PermissionDenied, gerr.ErrorHelmReleaseExists, clusterName)
 	}, constants.DefaultServiceTimeout, constants.WaitTaskInterval)
 	return err
 }

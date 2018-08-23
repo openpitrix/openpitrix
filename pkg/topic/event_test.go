@@ -7,6 +7,7 @@
 package topic
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -40,7 +41,7 @@ func TestWatchEvents(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 
-	err = pushEvent(e, testUid, Message{
+	err = pushEvent(context.Background(), e, testUid, Message{
 		Type: Create,
 	})
 	require.NoError(t, err)

@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/gziputil"
 	"openpitrix.io/openpitrix/pkg/util/httputil"
@@ -24,9 +25,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
-func (p *Server) getAppVersion(versionId string) (*models.AppVersion, error) {
+func (p *Server) getAppVersion(ctx context.Context, versionId string) (*models.AppVersion, error) {
 	version := &models.AppVersion{}
-	err := p.Db.
+	err := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
 		From(models.AppVersionTableName).
 		Where(db.Eq(models.ColumnVersionId, versionId)).
@@ -37,9 +38,9 @@ func (p *Server) getAppVersion(versionId string) (*models.AppVersion, error) {
 	return version, nil
 }
 
-func (p *Server) getAppVersions(versionIds []string) ([]*models.AppVersion, error) {
+func (p *Server) getAppVersions(ctx context.Context, versionIds []string) ([]*models.AppVersion, error) {
 	var versions []*models.AppVersion
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
 		From(models.AppVersionTableName).
 		Where(db.Eq(models.ColumnVersionId, versionIds)).
@@ -56,14 +57,14 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 	limit := pbutil.GetLimitFromRequest(req)
 	categoryIds := req.GetCategoryId()
 
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.AppColumns...).
 		From(models.AppTableName).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.AppTableName))
 	if len(categoryIds) > 0 {
-		subqueryStmt := p.Db.
+		subqueryStmt := pi.Global().DB(ctx).
 			Select(models.ColumnResouceId).
 			From(models.CategoryResourceTableName).
 			Where(db.Eq(models.ColumnStatus, constants.StatusEnabled)).
@@ -74,16 +75,16 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err := query.Load(&apps)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	appSet, err := p.formatAppSet(apps)
+	appSet, err := p.formatAppSet(ctx, apps)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeAppsResponse{
@@ -112,22 +113,23 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	newApp.Readme = req.GetReadme().GetValue()
 	newApp.Keywords = req.GetKeywords().GetValue()
 
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		InsertInto(models.AppTableName).
 		Columns(models.AppColumns...).
 		Record(newApp).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	err = categoryutil.SyncResourceCategories(
-		p.Db,
+		ctx,
+		pi.Global().DB(ctx),
 		newApp.AppId,
 		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
 	)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateAppResponse{
@@ -139,12 +141,12 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.ModifyAppResponse, error) {
 	// TODO: check resource permission
 	appId := req.GetAppId().GetValue()
-	app, err := p.getApp(appId)
+	app, err := p.getApp(ctx, appId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	if app.Status == constants.StatusDeleted {
-		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, appId)
+		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, appId)
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
@@ -152,23 +154,24 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		"description", "home", "icon", "screenshots",
 		"maintainers", "sources", "readme", "keywords")
 	attributes["update_time"] = time.Now()
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Update(models.AppTableName).
 		SetMap(attributes).
 		Where(db.Eq(models.ColumnAppId, appId)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 
 	if req.GetCategoryId() != nil {
 		err = categoryutil.SyncResourceCategories(
-			p.Db,
+			ctx,
+			pi.Global().DB(ctx),
 			appId,
 			categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
 		)
 		if err != nil {
-			return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
 
@@ -182,13 +185,13 @@ func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb
 	// TODO: check resource permission
 	appIds := req.GetAppId()
 
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		Update(models.AppTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(models.ColumnAppId, appIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	return &pb.DeleteAppsResponse{
@@ -210,13 +213,13 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		newAppVersion.Sequence = req.Sequence.GetValue()
 	}
 
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		InsertInto(models.AppVersionTableName).
 		Columns(models.AppVersionColumns...).
 		Record(newAppVersion).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateAppVersionResponse{
@@ -231,7 +234,7 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
 		From(models.AppVersionTableName).
 		Offset(offset).
@@ -240,11 +243,11 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 	query = manager.AddQueryOrderDir(query, req, models.ColumnSequence)
 	_, err := query.Load(&versions)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeAppVersionsResponse{
@@ -258,23 +261,23 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionRequest) (*pb.ModifyAppVersionResponse, error) {
 	// TODO: check resource permission
 	versionId := req.GetVersionId().GetValue()
-	version, err := p.getAppVersion(versionId)
+	version, err := p.getAppVersion(ctx, versionId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	if version.Status == constants.StatusDeleted {
-		return nil, gerr.NewWithDetail(gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, versionId)
+		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, versionId)
 	}
 
 	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name", "sequence")
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Update(models.AppVersionTableName).
 		SetMap(attributes).
 		Where(db.Eq(models.ColumnVersionId, versionId)).
 		Exec()
 	attributes["update_time"] = time.Now()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 
 	res := &pb.ModifyAppVersionResponse{
@@ -288,13 +291,13 @@ func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersion
 	// TODO: check resource permission
 	versionIds := req.GetVersionId()
 
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		Update(models.AppVersionTableName).
 		Set(models.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(models.ColumnVersionId, versionIds)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDeleteResourceFailed, strings.Join(versionIds, ","))
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, strings.Join(versionIds, ","))
 	}
 
 	return &pb.DeleteAppVersionsResponse{
@@ -305,21 +308,21 @@ func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersion
 func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersionPackageRequest) (*pb.GetAppVersionPackageResponse, error) {
 	// TODO: check resource permission
 	versionId := req.GetVersionId().GetValue()
-	version, err := p.getAppVersion(versionId)
+	version, err := p.getAppVersion(ctx, versionId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
-	logger.Debug("Got app version: [%+v]", version)
+	logger.Debug(ctx, "Got app version: [%+v]", version)
 	packageUrl := version.PackageName
 	resp, err := httputil.HttpGet(packageUrl)
 	if err != nil {
-		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
+		logger.Error(ctx, "Failed to http get [%s], error: %+v", packageUrl, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		logger.Error("Failed to read http response [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
+		logger.Error(ctx, "Failed to read http response [%s], error: %+v", packageUrl, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	return &pb.GetAppVersionPackageResponse{
 		Package:   content,
@@ -331,20 +334,20 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 	// TODO: check resource permission
 	versionId := req.GetVersionId().GetValue()
 	includeFiles := req.Files
-	version, err := p.getAppVersion(versionId)
+	version, err := p.getAppVersion(ctx, versionId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 	packageUrl := version.PackageName
 	resp, err := httputil.HttpGet(packageUrl)
 	if err != nil {
-		logger.Error("Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
+		logger.Error(ctx, "Failed to http get [%s], error: %+v", packageUrl, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	archiveFiles, err := gziputil.LoadArchive(resp.Body, includeFiles...)
 	if err != nil {
-		logger.Error("Failed to load package [%s] archive, error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
+		logger.Error(ctx, "Failed to load package [%s] archive, error: %+v", packageUrl, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	return &pb.GetAppVersionPackageFilesResponse{
 		Files:     archiveFiles,
@@ -366,30 +369,30 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 		LastTwoWeekCreated: make(map[string]uint32),
 		TopTenRepos:        make(map[string]uint32),
 	}
-	appCount, err := p.Db.
+	appCount, err := pi.Global().DB(ctx).
 		Select(models.ColumnAppId).
 		From(models.AppTableName).
 		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		Count()
 	if err != nil {
-		logger.Error("Failed to get app count, error: %+v", err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		logger.Error(ctx, "Failed to get app count, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res.AppCount = appCount
 
-	err = p.Db.
+	err = pi.Global().DB(ctx).
 		Select("COUNT(DISTINCT repo_id)").
 		From(models.AppTableName).
 		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		LoadOne(&res.RepoCount)
 	if err != nil {
-		logger.Error("Failed to get repo count, error: %+v", err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		logger.Error(ctx, "Failed to get repo count, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	time2week := time.Now().Add(-14 * 24 * time.Hour)
 	var as []*appStatistic
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Select("DATE_FORMAT(create_time, '%Y-%m-%d')", "COUNT(app_id)").
 		From(models.AppTableName).
 		GroupBy("DATE_FORMAT(create_time, '%Y-%m-%d')").
@@ -397,15 +400,15 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 		Limit(14).Load(&as)
 
 	if err != nil {
-		logger.Error("Failed to get app statistics, error: %+v", err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		logger.Error(ctx, "Failed to get app statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	for _, a := range as {
 		res.LastTwoWeekCreated[a.Date] = a.Count
 	}
 
 	var rs []*repoStatistic
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Select("repo_id", "COUNT(app_id)").
 		From(models.AppTableName).
 		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
@@ -414,8 +417,8 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 		Limit(10).Load(&rs)
 
 	if err != nil {
-		logger.Error("Failed to get repo statistics, error: %+v", err)
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		logger.Error(ctx, "Failed to get repo statistics, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	for _, a := range rs {
 		res.TopTenRepos[a.RepoId] = a.Count

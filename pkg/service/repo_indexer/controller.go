@@ -20,21 +20,22 @@ import (
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/reporeader/indexer"
 	"openpitrix.io/openpitrix/pkg/util/atomicutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 type eventChannel chan *models.RepoEvent
 
 type EventController struct {
-	*pi.Pi
+	ctx          context.Context
 	queue        *etcd.Queue
 	channel      eventChannel
 	runningCount atomicutil.Counter
 }
 
-func NewEventController(pi *pi.Pi) *EventController {
+func NewEventController(ctx context.Context) *EventController {
 	return &EventController{
-		Pi:           pi,
-		queue:        pi.Etcd.NewQueue("repo-indexer-event"),
+		ctx:          ctx,
+		queue:        pi.Global().Etcd(ctx).NewQueue("repo-indexer-event"),
 		channel:      make(eventChannel),
 		runningCount: atomicutil.Counter(0),
 	}
@@ -42,8 +43,8 @@ func NewEventController(pi *pi.Pi) *EventController {
 
 func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent, error) {
 	var repoEventId string
-	err := i.Etcd.Dlock(context.Background(), constants.RepoIndexPrefix+repoId, func() error {
-		count, err := i.Db.Select(models.RepoEventColumns...).
+	err := pi.Global().Etcd(i.ctx).Dlock(context.Background(), constants.RepoIndexPrefix+repoId, func() error {
+		count, err := pi.Global().DB(i.ctx).Select(models.RepoEventColumns...).
 			From(models.RepoEventTableName).
 			Where(db.Eq("repo_id", repoId)).
 			Where(db.Eq("status", []string{constants.StatusWorking, constants.StatusPending})).
@@ -55,7 +56,7 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 			return fmt.Errorf("repo [%s] had running index event", repoId)
 		}
 		repoEvent := models.NewRepoEvent(repoId, owner)
-		_, err = i.Db.InsertInto(models.RepoEventTableName).
+		_, err = pi.Global().DB(i.ctx).InsertInto(models.RepoEventTableName).
 			Columns(models.RepoEventColumns...).
 			Record(repoEvent).
 			Exec()
@@ -71,7 +72,7 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 		return nil, err
 	}
 	var repoEvent models.RepoEvent
-	err = i.Db.Select(models.RepoEventColumns...).
+	err = pi.Global().DB(i.ctx).Select(models.RepoEventColumns...).
 		From(models.RepoEventTableName).
 		Where(db.Eq("repo_event_id", repoEventId)).
 		LoadOne(&repoEvent)
@@ -81,8 +82,8 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 	return &repoEvent, nil
 }
 
-func (i *EventController) updateRepoEventStatus(repoEvent *models.RepoEvent, status, result string) error {
-	_, err := i.Db.
+func (i *EventController) updateRepoEventStatus(ctx context.Context, repoEvent *models.RepoEvent, status, result string) error {
+	_, err := pi.Global().DB(ctx).
 		Update(models.RepoEventTableName).
 		Set("status", status).
 		Set("result", result).
@@ -90,6 +91,7 @@ func (i *EventController) updateRepoEventStatus(repoEvent *models.RepoEvent, sta
 		Exec()
 	if err != nil {
 		logger.Critical(
+			ctx,
 			"Failed to set repo event [&s] status to [%s] result to [%s], %+v",
 			repoEvent.RepoEventId, status, result, err)
 		return err
@@ -98,22 +100,24 @@ func (i *EventController) updateRepoEventStatus(repoEvent *models.RepoEvent, sta
 	return nil
 }
 
-func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
+func (i *EventController) ExecuteEvent(ctx context.Context, repoEvent *models.RepoEvent, cb func()) {
+	ctx = client.SetSystemUserToContext(ctx)
+	ctx = ctxutil.AddMessageId(ctx, repoEvent.RepoEventId)
+	ctx = ctxutil.AddMessageId(ctx, repoEvent.RepoId)
 	defer cb()
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Critical("ExecuteEvent [%s] recover with error: %+v", repoEvent.RepoEventId, err)
-			i.updateRepoEventStatus(repoEvent, constants.StatusFailed, fmt.Sprintf("%+v", err))
+			logger.Critical(ctx, "ExecuteEvent [%s] recover with error: %+v", repoEvent.RepoEventId, err)
+			i.updateRepoEventStatus(ctx, repoEvent, constants.StatusFailed, fmt.Sprintf("%+v", err))
 		}
 	}()
-	logger.Info("Got repo event: %+v", repoEvent)
+	logger.Info(ctx, "Got repo event: %+v", repoEvent)
 	err := func() (err error) {
-		ctx := client.GetSystemUserContext()
+		repoId := repoEvent.RepoId
 		repoManagerClient, err := repoClient.NewRepoManagerClient()
 		if err != nil {
 			return
 		}
-		repoId := repoEvent.RepoId
 		req := pb.DescribeReposRequest{
 			RepoId: []string{repoId},
 		}
@@ -127,25 +131,25 @@ func (i *EventController) ExecuteEvent(repoEvent *models.RepoEvent, cb func()) {
 		}
 		repo := res.RepoSet[0]
 		if repo.GetStatus().GetValue() == constants.StatusDeleted {
-			err = indexer.GetIndexer(repo, repoEvent.RepoEventId).DeleteRepo()
+			err = indexer.GetIndexer(ctx, repo).DeleteRepo()
 		} else {
-			err = indexer.GetIndexer(repo, repoEvent.RepoEventId).IndexRepo()
+			err = indexer.GetIndexer(ctx, repo).IndexRepo()
 		}
 		if err != nil {
-			logger.Error("Failed to index repo [%s]", repoId)
+			logger.Error(ctx, "Failed to index repo [%s]", repoId)
 		}
 		return
 	}()
 	if err != nil {
-		logger.Critical("Failed to execute repo event: %+v", err)
-		i.updateRepoEventStatus(repoEvent, constants.StatusFailed, err.Error())
+		logger.Critical(ctx, "Failed to execute repo event: %+v", err)
+		i.updateRepoEventStatus(ctx, repoEvent, constants.StatusFailed, err.Error())
 	} else {
-		i.updateRepoEventStatus(repoEvent, constants.StatusSuccessful, "")
+		i.updateRepoEventStatus(ctx, repoEvent, constants.StatusSuccessful, "")
 	}
 }
 
 func (i *EventController) getRepoEvent(repoEventId string) (repoEvent models.RepoEvent, err error) {
-	err = i.Db.
+	err = pi.Global().DB(i.ctx).
 		Select(models.RepoEventColumns...).
 		From(models.RepoEventTableName).
 		Where(db.Eq("repo_event_id", repoEventId)).
@@ -169,13 +173,13 @@ func (i *EventController) GetEventLength() int32 {
 func (i *EventController) Dequeue() {
 	for {
 		if i.runningCount.Get() > i.GetEventLength() {
-			logger.Error("Sleep 10s, running event count exceed [%d/%d]", i.runningCount.Get(), i.GetEventLength())
+			logger.Error(i.ctx, "Sleep 10s, running event count exceed [%d/%d]", i.runningCount.Get(), i.GetEventLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		repoEvent, err := i.getRepoEventFromQueue()
 		if err != nil {
-			logger.Error("Failed to get repo event from etcd: %+v", err)
+			logger.Error(i.ctx, "Failed to get repo event from etcd: %+v", err)
 			time.Sleep(10 * time.Second)
 			continue
 		}
@@ -187,7 +191,7 @@ func (i *EventController) Serve() {
 	go i.Dequeue()
 	for event := range i.channel {
 		i.runningCount.Add(1)
-		go i.ExecuteEvent(event, func() {
+		go i.ExecuteEvent(i.ctx, event, func() {
 			i.runningCount.Add(-1)
 		})
 	}

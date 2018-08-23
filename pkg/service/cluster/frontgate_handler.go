@@ -5,6 +5,8 @@
 package cluster
 
 import (
+	"context"
+
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -26,7 +28,7 @@ func (f *Frontgate) parseConf(subnetId, conf string) (string, error) {
 	return resConf, nil
 }
 
-func (f *Frontgate) getConf(subnetId string) (string, error) {
+func (f *Frontgate) getConf(ctx context.Context, subnetId string) (string, error) {
 	conf := constants.FrontgateDefaultConf
 	if pi.Global().GlobalConfig().Cluster.FrontgateConf != "" {
 		conf = pi.Global().GlobalConfig().Cluster.FrontgateConf
@@ -34,22 +36,22 @@ func (f *Frontgate) getConf(subnetId string) (string, error) {
 	return f.parseConf(subnetId, conf)
 }
 
-func (f *Frontgate) CreateCluster(clusterWrapper *models.ClusterWrapper) (string, error) {
+func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error) {
 	clusterId := models.NewClusterId()
 
-	conf, err := f.getConf(clusterWrapper.Cluster.SubnetId)
+	conf, err := f.getConf(ctx, clusterWrapper.Cluster.SubnetId)
 	if err != nil {
-		logger.Error("Get frontgate cluster conf failed. ")
+		logger.Error(ctx, "Get frontgate cluster conf failed. ")
 		return clusterId, err
 	}
-	providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider, nil)
+	providerInterface, err := plugins.GetProviderPlugin(ctx, f.Runtime.Provider)
 	if err != nil {
-		logger.Error("No such provider [%s]. ", f.Runtime.Provider)
+		logger.Error(ctx, "No such provider [%s]. ", f.Runtime.Provider)
 		return clusterId, err
 	}
 	frontgateWrapper, err := providerInterface.ParseClusterConf(constants.FrontgateVersionId, clusterWrapper.Cluster.RuntimeId, conf)
 	if err != nil {
-		logger.Error("Parse frontgate cluster conf failed. ")
+		logger.Error(ctx, "Parse frontgate cluster conf failed. ")
 		return clusterId, err
 	}
 
@@ -62,7 +64,7 @@ func (f *Frontgate) CreateCluster(clusterWrapper *models.ClusterWrapper) (string
 	frontgateWrapper.Cluster.FrontgateId = ""
 	frontgateWrapper.Cluster.RuntimeId = f.Runtime.RuntimeId
 
-	err = RegisterClusterWrapper(frontgateWrapper)
+	err = RegisterClusterWrapper(ctx, frontgateWrapper)
 	if err != nil {
 		return clusterId, err
 	}
@@ -79,12 +81,12 @@ func (f *Frontgate) CreateCluster(clusterWrapper *models.ClusterWrapper) (string
 		frontgateWrapper.Cluster.Owner,
 	)
 
-	_, err = jobclient.SendJob(newJob)
+	_, err = jobclient.SendJob(ctx, newJob)
 	return clusterId, err
 }
 
-func (f *Frontgate) StartCluster(frontgate *models.Cluster) error {
-	clusterWrapper, err := getClusterWrapper(frontgate.ClusterId)
+func (f *Frontgate) StartCluster(ctx context.Context, frontgate *models.Cluster) error {
+	clusterWrapper, err := getClusterWrapper(ctx, frontgate.ClusterId)
 	if err != nil {
 		return err
 	}
@@ -101,12 +103,12 @@ func (f *Frontgate) StartCluster(frontgate *models.Cluster) error {
 		frontgate.Owner,
 	)
 
-	_, err = jobclient.SendJob(newJob)
+	_, err = jobclient.SendJob(ctx, newJob)
 	return err
 }
 
-func (f *Frontgate) RecoverCluster(frontgate *models.Cluster) error {
-	clusterWrapper, err := getClusterWrapper(frontgate.ClusterId)
+func (f *Frontgate) RecoverCluster(ctx context.Context, frontgate *models.Cluster) error {
+	clusterWrapper, err := getClusterWrapper(ctx, frontgate.ClusterId)
 	if err != nil {
 		return err
 	}
@@ -123,6 +125,6 @@ func (f *Frontgate) RecoverCluster(frontgate *models.Cluster) error {
 		frontgate.Owner,
 	)
 
-	_, err = jobclient.SendJob(newJob)
+	_, err = jobclient.SendJob(ctx, newJob)
 	return err
 }

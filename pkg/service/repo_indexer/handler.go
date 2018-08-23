@@ -11,6 +11,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
@@ -20,7 +21,7 @@ func (p *Server) IndexRepo(ctx context.Context, req *pb.IndexRepoRequest) (*pb.I
 	repoId := req.GetRepoId().GetValue()
 	repoEvent, err := p.controller.NewRepoEvent(repoId, s.UserId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 	ret := pb.IndexRepoResponse{
 		RepoEvent: models.RepoEventToPb(repoEvent),
@@ -34,7 +35,7 @@ func (p *Server) DescribeRepoEvents(ctx context.Context, req *pb.DescribeRepoEve
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.RepoEventColumns...).
 		From(models.RepoEventTableName).
 		Offset(offset).
@@ -43,11 +44,11 @@ func (p *Server) DescribeRepoEvents(ctx context.Context, req *pb.DescribeRepoEve
 	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err := query.Load(&repoEvents)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	res := &pb.DescribeRepoEventsResponse{
 		RepoEventSet: models.RepoEventsToPbs(repoEvents),

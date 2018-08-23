@@ -19,7 +19,7 @@ func NewNodeKeyPairDetails(data string) (NodeKeyPairDetails, error) {
 	var nodeKeyPairDetails NodeKeyPairDetails
 	err := jsonutil.Decode([]byte(data), &nodeKeyPairDetails)
 	if err != nil {
-		logger.Error("Decode [%s] into node key pair details failed: %+v", data, err)
+		logger.Error(nil, "Decode [%s] into node key pair details failed: %+v", data, err)
 	}
 	return nodeKeyPairDetails, err
 }

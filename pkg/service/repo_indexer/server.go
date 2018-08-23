@@ -5,6 +5,8 @@
 package repo_indexer
 
 import (
+	"context"
+
 	"google.golang.org/grpc"
 
 	"openpitrix.io/openpitrix/pkg/config"
@@ -15,15 +17,13 @@ import (
 )
 
 type Server struct {
-	*pi.Pi
 	controller *EventController
 }
 
 func Serve(cfg *config.Config) {
-	pi.SetGlobalPi(cfg)
-	p := pi.Global()
-	controller := NewEventController(p)
-	s := Server{Pi: p, controller: controller}
+	pi.SetGlobal(cfg)
+	controller := NewEventController(context.TODO())
+	s := Server{controller: controller}
 	go controller.Serve()
 	go s.Cron()
 	manager.NewGrpcServer("repo-indexer", constants.RepoIndexerPort).

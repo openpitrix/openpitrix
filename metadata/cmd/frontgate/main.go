@@ -104,14 +104,14 @@ EXAMPLE:
 					cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer client.Close()
 
 				info, err := client.GetFrontgateConfig(&pbtypes.Empty{})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -132,14 +132,14 @@ EXAMPLE:
 					cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer client.Close()
 
 				list, err := client.GetDroneList(&pbtypes.Empty{})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -151,7 +151,7 @@ EXAMPLE:
 					}
 					matched, err := regexp.MatchString(re, v)
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					if matched {
@@ -189,7 +189,7 @@ EXAMPLE:
 					cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer client.Close()
@@ -198,7 +198,7 @@ EXAMPLE:
 				case "frontgate":
 					_, err = client.PingFrontgate(&pbtypes.Empty{})
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					fmt.Println("OK")
@@ -206,7 +206,7 @@ EXAMPLE:
 				case "pilot":
 					_, err = client.PingPilot(&pbtypes.Empty{})
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					fmt.Println("OK")
@@ -218,13 +218,13 @@ EXAMPLE:
 						DronePort:   int32(c.Int("drone-port")),
 					})
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					fmt.Println("OK")
 
 				default:
-					logger.Critical("unknown endpoint type: %s\n", s)
+					logger.Critical(nil, "unknown endpoint type: %s\n", s)
 					os.Exit(1)
 				}
 
@@ -247,7 +247,7 @@ EXAMPLE:
 				cfg := frontgateutil.MustLoadFrontgateConfig(cfgpath)
 
 				if c.NArg() == 0 {
-					logger.Critical("missing value")
+					logger.Critical(nil, "missing value")
 					os.Exit(1)
 				}
 
@@ -255,7 +255,7 @@ EXAMPLE:
 					cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer client.Close()
@@ -271,7 +271,7 @@ EXAMPLE:
 					})
 				}
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -307,13 +307,13 @@ EXAMPLE:
 					cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer client.Close()
 
 				if c.NArg() < 2 {
-					logger.Critical("missing args")
+					logger.Critical(nil, "missing args")
 					os.Exit(1)
 				}
 
@@ -322,13 +322,13 @@ EXAMPLE:
 				if c.Bool("value-is-file") {
 					data, err := ioutil.ReadFile(c.Args().Get(1))
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 
 					var datMap map[string]interface{}
 					if err := json.Unmarshal(data, &datMap); err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 
@@ -342,7 +342,7 @@ EXAMPLE:
 					ValueMap: kvMap,
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -373,7 +373,7 @@ EXAMPLE:
 					cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer client.Close()
@@ -383,7 +383,7 @@ EXAMPLE:
 					DronePort: int32(c.Int("drone-port")),
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -422,7 +422,7 @@ EXAMPLE:
 					cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer client.Close()
@@ -432,7 +432,7 @@ EXAMPLE:
 					DronePort: int32(c.Int("drone-port")),
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -461,7 +461,7 @@ EXAMPLE:
 					cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer client.Close()
@@ -471,7 +471,7 @@ EXAMPLE:
 					DronePort: int32(c.Int("drone-port")),
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -501,7 +501,7 @@ EXAMPLE:
 					cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer client.Close()
@@ -511,7 +511,7 @@ EXAMPLE:
 					Status: c.String("task-status"),
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -533,7 +533,7 @@ EXAMPLE:
 					c.GlobalString("pilot-server-name"),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 
 				}

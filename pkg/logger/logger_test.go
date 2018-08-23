@@ -6,9 +6,12 @@ package logger
 
 import (
 	"bytes"
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func readBuf(buf *bytes.Buffer) string {
@@ -17,36 +20,38 @@ func readBuf(buf *bytes.Buffer) string {
 	return str
 }
 
+var ctx = context.TODO()
+
 func TestLogger(t *testing.T) {
 	buf := new(bytes.Buffer)
 	SetOutput(buf)
 
-	Debug("debug log, should ignore by default")
+	Debug(ctx, "debug log, should ignore by default")
 	assert.Empty(t, readBuf(buf))
 
-	Info("info log, should visable")
+	Info(ctx, "info log, should visable")
 	assert.Contains(t, readBuf(buf), "info log, should visable")
 
-	Info("format [%d]", 111)
+	Info(ctx, "format [%d]", 111)
 	log := readBuf(buf)
 	assert.Contains(t, log, "format [111]")
 	t.Log(log)
 
+	Info(ctxutil.SetMessageId(ctx, []string{"xxxxx", "yyyyy"}), "format [%d]", 111)
+	log = readBuf(buf)
+	assert.Contains(t, log, "format [111]")
+	t.Log(log)
+
 	SetLevelByString("debug")
-	Debug("debug log, now it becomes visible")
+	Debug(ctx, "debug log, now it becomes visible")
 	assert.Contains(t, readBuf(buf), "debug log, now it becomes visible")
 
 	logger = NewLogger()
-	logger.SetPrefix("(prefix)").SetSuffix("(suffix)").SetOutput(buf)
-
-	logger.Warn("log_content")
-	log = readBuf(buf)
-	assert.Regexp(t, " -WARNING- \\(prefix\\)log_content \\(logger_test.go:\\d+\\)\\(suffix\\)", log)
-	t.Log(log)
+	logger.SetOutput(buf)
 
 	logger.HideCallstack()
-	logger.Warn("log_content")
+	logger.Warn(nil, "log_content")
 	log = readBuf(buf)
-	assert.Regexp(t, " -WARNING- \\(prefix\\)log_content\\(suffix\\)", log)
+	assert.Regexp(t, " -WARNING- log_content", log)
 	t.Log(log)
 }

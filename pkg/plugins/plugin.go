@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins/aws"
@@ -32,18 +31,16 @@ type ProviderInterface interface {
 	UpdateClusterStatus(job *models.Job) error
 }
 
-func GetProviderPlugin(provider string, l *logger.Logger) (ProviderInterface, error) {
+func GetProviderPlugin(ctx context.Context, provider string) (ProviderInterface, error) {
 	var providerInterface ProviderInterface
-	if l == nil {
-		l = logger.NewLogger()
-	}
+
 	switch provider {
 	case constants.ProviderQingCloud:
-		providerInterface = qingcloud.NewProvider(l)
+		providerInterface = qingcloud.NewProvider(ctx)
 	case constants.ProviderKubernetes:
-		providerInterface = helm.NewProvider(l)
+		providerInterface = helm.NewProvider(ctx)
 	case constants.ProviderAWS:
-		providerInterface = aws.NewProvider(l)
+		providerInterface = aws.NewProvider(ctx)
 	default:
 		return nil, fmt.Errorf("No such provider [%s]. ", provider)
 	}

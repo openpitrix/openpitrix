@@ -5,6 +5,7 @@
 package reporeader
 
 import (
+	"context"
 	"io/ioutil"
 	"net/http"
 	neturl "net/url"
@@ -13,11 +14,13 @@ import (
 
 type HttpReader struct {
 	url *neturl.URL
+	ctx context.Context
 }
 
-func NewHttpReader(url *neturl.URL) *HttpReader {
+func NewHttpReader(ctx context.Context, url *neturl.URL) *HttpReader {
 	return &HttpReader{
 		url: url,
+		ctx: ctx,
 	}
 }
 

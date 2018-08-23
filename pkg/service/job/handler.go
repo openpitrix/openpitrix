@@ -12,6 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
@@ -29,18 +30,18 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 		s.UserId,
 	)
 
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		InsertInto(models.JobTableName).
 		Columns(models.JobColumns...).
 		Record(newJob).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	err = p.controller.queue.Enqueue(newJob.JobId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	res := &pb.CreateJobResponse{
@@ -58,7 +59,7 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
-	query := p.Db.
+	query := pi.Global().DB(ctx).
 		Select(models.JobColumns...).
 		From(models.JobTableName).
 		Offset(offset).
@@ -68,11 +69,11 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
 	_, err := query.Load(&jobs)
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	count, err := query.Count()
 	if err != nil {
-		return nil, gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	res := &pb.DescribeJobsResponse{

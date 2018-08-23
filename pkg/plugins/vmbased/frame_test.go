@@ -5,12 +5,12 @@
 package vmbased
 
 import (
+	"context"
 	"testing"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
@@ -81,7 +81,7 @@ func TestSplitJobIntoTasks(t *testing.T) {
 		Job:            mockJob,
 		ClusterWrapper: clusterWrapper,
 		Runtime:        runtime,
-		Logger:         logger.NewLogger(),
+		Ctx:            context.Background(),
 		ImageConfig: &config.ImageConfig{
 			ImageId: "img:abcd",
 		},

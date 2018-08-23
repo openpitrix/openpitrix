@@ -5,6 +5,7 @@
 package task
 
 import (
+	"context"
 	"os"
 
 	"google.golang.org/grpc"
@@ -18,20 +19,19 @@ import (
 )
 
 type Server struct {
-	*pi.Pi
 	controller *Controller
 }
 
 func Serve(cfg *config.Config) {
 	hostname, err := os.Hostname()
 	if err != nil {
-		logger.Critical("Failed to get os hostname: %+v", err)
+		logger.Critical(nil, "Failed to get os hostname: %+v", err)
 		return
 	}
-	pi.SetGlobalPi(cfg)
-	p := pi.Global()
-	taskController := NewController(p, hostname)
-	s := Server{Pi: p, controller: taskController}
+	pi.SetGlobal(cfg)
+	ctx := context.TODO()
+	taskController := NewController(ctx, hostname)
+	s := Server{controller: taskController}
 	go taskController.Serve()
 
 	manager.NewGrpcServer("task-controller", constants.TaskManagerPort).

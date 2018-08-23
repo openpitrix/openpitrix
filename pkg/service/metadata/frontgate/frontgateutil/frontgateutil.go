@@ -20,7 +20,7 @@ import (
 func MustLoadFrontgateConfig(path string) *pbtypes.FrontgateConfig {
 	p, err := LoadFrontgateConfig(path)
 	if err != nil {
-		logger.Critical("%+v", err)
+		logger.Critical(nil, "%+v", err)
 		os.Exit(1)
 	}
 	return p
@@ -29,13 +29,13 @@ func MustLoadFrontgateConfig(path string) *pbtypes.FrontgateConfig {
 func LoadFrontgateConfig(path string) (*pbtypes.FrontgateConfig, error) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
 	p := new(pbtypes.FrontgateConfig)
 	if err := json.Unmarshal(data, p); err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -65,7 +65,7 @@ func DialFrontgateService(host string, port int) (
 		"tcp", fmt.Sprintf("%s:%d", host, port),
 	)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 

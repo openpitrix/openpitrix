@@ -5,28 +5,30 @@
 package category
 
 import (
+	"context"
 	"fmt"
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pi"
 )
 
-func (p *Server) getCategory(categoryId string) (*models.Category, error) {
-	categories, err := p.getCategories([]string{categoryId})
+func (p *Server) getCategory(ctx context.Context, categoryId string) (*models.Category, error) {
+	categories, err := p.getCategories(ctx, []string{categoryId})
 	if err != nil {
 		return nil, err
 	}
 	if len(categories) == 0 {
-		logger.Error("Failed to get category [%s]", categoryId)
+		logger.Error(ctx, "Failed to get category [%s]", categoryId)
 		return nil, fmt.Errorf("failed to get category [%s]", categoryId)
 	}
 	return categories[0], nil
 }
 
-func (p *Server) getCategories(categoryIds []string) ([]*models.Category, error) {
+func (p *Server) getCategories(ctx context.Context, categoryIds []string) ([]*models.Category, error) {
 	var categories []*models.Category
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		Select(models.CategoryColumns...).
 		From(models.CategoryTableName).
 		Where(db.Eq("category_id", categoryIds)).

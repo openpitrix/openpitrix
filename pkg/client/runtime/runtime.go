@@ -5,6 +5,7 @@
 package runtime
 
 import (
+	"context"
 	"strings"
 
 	"google.golang.org/grpc/codes"
@@ -21,8 +22,8 @@ type Runtime struct {
 	Credential string
 }
 
-func NewRuntime(runtimeId string) (*Runtime, error) {
-	runtime, err := getRuntime(runtimeId)
+func NewRuntime(ctx context.Context, runtimeId string) (*Runtime, error) {
+	runtime, err := getRuntime(ctx, runtimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -38,9 +39,9 @@ func NewRuntime(runtimeId string) (*Runtime, error) {
 	return result, nil
 }
 
-func getRuntime(runtimeId string) (*pb.RuntimeDetail, error) {
+func getRuntime(ctx context.Context, runtimeId string) (*pb.RuntimeDetail, error) {
 	runtimeIds := []string{runtimeId}
-	ctx := clientutil.GetSystemUserContext()
+	ctx = clientutil.SetSystemUserToContext(ctx)
 	client, err := NewRuntimeManagerClient()
 	if err != nil {
 		return nil, err
@@ -49,14 +50,14 @@ func getRuntime(runtimeId string) (*pb.RuntimeDetail, error) {
 		RuntimeId: runtimeIds,
 	})
 	if err != nil {
-		logger.Error("Describe runtime [%s] failed: %+v",
+		logger.Error(ctx, "Describe runtime [%s] failed: %+v",
 			strings.Join(runtimeIds, ","), err)
 		return nil, status.Errorf(codes.Internal, "Describe runtime [%s] failed: %+v",
 			strings.Join(runtimeIds, ","), err)
 	}
 
 	if response.GetTotalCount() == 0 {
-		logger.Error("Runtime [%s] not found", strings.Join(runtimeIds, ","))
+		logger.Error(ctx, "Runtime [%s] not found", strings.Join(runtimeIds, ","))
 		return nil, status.Errorf(codes.PermissionDenied, "Runtime [%s] not found: %+v",
 			strings.Join(runtimeIds, ","), err)
 	}

@@ -31,11 +31,11 @@ import (
 )
 
 type Frame struct {
+	Ctx                     context.Context
 	Job                     *models.Job
 	ClusterWrapper          *models.ClusterWrapper
 	FrontgateClusterWrapper *models.ClusterWrapper
 	Runtime                 *runtimeclient.Runtime
-	Logger                  *logger.Logger
 	ImageConfig             *config.ImageConfig
 }
 
@@ -107,7 +107,7 @@ func (f *Frame) getPreAndPostStartGroupNodes(nodeIds []string) ([]string, []stri
 			service := app.Service{}
 			err := jsonutil.Decode([]byte(serviceStr), &service)
 			if err != nil {
-				f.Logger.Error("Unmarshal cluster [%s] init service failed: %+v",
+				logger.Error(f.Ctx, "Unmarshal cluster [%s] init service failed: %+v",
 					f.ClusterWrapper.Cluster.ClusterId, err)
 				return nil, nil
 			}
@@ -135,7 +135,7 @@ func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []strin
 			service := app.Service{}
 			err := jsonutil.Decode([]byte(serviceStr), &service)
 			if err != nil {
-				f.Logger.Error("Unmarshal cluster [%s] init service failed: %+v",
+				logger.Error(f.Ctx, "Unmarshal cluster [%s] init service failed: %+v",
 					f.ClusterWrapper.Cluster.ClusterId, err)
 				return nil, nil
 			}
@@ -192,7 +192,7 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string, failureAl
 			service := app.Service{}
 			err := jsonutil.Decode([]byte(serviceStr.(string)), &service)
 			if err != nil {
-				f.Logger.Error("Unmarshal cluster [%s] service [%s] failed: %+v",
+				logger.Error(f.Ctx, "Unmarshal cluster [%s] service [%s] failed: %+v",
 					f.ClusterWrapper.Cluster.ClusterId, serviceName, err)
 				return nil
 			}
@@ -311,7 +311,7 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 	for _, nodeId := range nodeIds {
 		clusterNode, exist := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		if !exist {
-			f.Logger.Error("ClusterConf [%s] node [%s] not exist", f.ClusterWrapper.Cluster.ClusterId, nodeId)
+			logger.Error(f.Ctx, "ClusterConf [%s] node [%s] not exist", f.ClusterWrapper.Cluster.ClusterId, nodeId)
 			continue
 		}
 		role := clusterNode.Role
@@ -342,7 +342,7 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 		service := app.Service{}
 		err := jsonutil.Decode([]byte(serviceStr.(string)), &service)
 		if err != nil {
-			f.Logger.Error("Unmarshal cluster [%s] service [%s] failed: %+v",
+			logger.Error(f.Ctx, "Unmarshal cluster [%s] service [%s] failed: %+v",
 				f.ClusterWrapper.Cluster.ClusterId, serviceName, err)
 			return nil
 		}
@@ -473,7 +473,7 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 		}
 		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
 		if !exist {
-			f.Logger.Error("No such role [%s] in cluster role [%s]. ",
+			logger.Error(f.Ctx, "No such role [%s] in cluster role [%s]. ",
 				role, f.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
@@ -601,7 +601,7 @@ func (f *Frame) formatAndMountVolumeLayer(nodeIds []string, failureAllowed bool)
 		role := clusterNode.Role
 		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
 		if !exist {
-			f.Logger.Error("No such role [%s] in cluster role [%s]. ",
+			logger.Error(f.Ctx, "No such role [%s] in cluster role [%s]. ",
 				role, f.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
@@ -642,7 +642,7 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 		role := clusterNode.Role
 		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
 		if !exist {
-			f.Logger.Error("No such role [%s] in cluster role [%s]. ",
+			logger.Error(f.Ctx, "No such role [%s] in cluster role [%s]. ",
 				role, f.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
@@ -682,10 +682,10 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 
 func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
-	ctx := client.GetSystemUserContext()
+	ctx := client.SetSystemUserToContext(f.Ctx)
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		f.Logger.Error("New ssh key gen task layer failed: %+v", err)
+		logger.Error(f.Ctx, "New ssh key gen task layer failed: %+v", err)
 		return nil
 	}
 
@@ -696,7 +696,7 @@ func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 		if keyType != "" {
 			private, public, err := sshutil.MakeSSHKeyPair(keyType)
 			if err != nil {
-				f.Logger.Error("Generate ssh key [%s] in cluster node [%s] failed",
+				logger.Error(f.Ctx, "Generate ssh key [%s] in cluster node [%s] failed",
 					clusterCommon.Passphraseless, nodeId)
 				return nil
 			}
@@ -798,7 +798,7 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 
 func (f *Frame) getUserDataExec(filename, contents, imageUrl, frontgateIp, certificateExec string) string {
 	if pi.Global() == nil {
-		f.Logger.Error("Pi global should be init.")
+		logger.Error(f.Ctx, "Pi global should be init.")
 		return ""
 	}
 
@@ -910,7 +910,7 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 		}
 		clusterRole, exist := f.ClusterWrapper.ClusterRoles[role]
 		if !exist {
-			f.Logger.Error("No such role [%s] in cluster role [%s]. ",
+			logger.Error(f.Ctx, "No such role [%s] in cluster role [%s]. ",
 				role, f.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
@@ -1125,7 +1125,7 @@ func (f *Frame) registerMetadataLayer(failureAllowed bool) *models.TaskLayer {
 func (f *Frame) registerNodesMetadataLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	metadata := &MetadataV1{
 		ClusterWrapper: f.ClusterWrapper,
-		Logger:         f.Logger,
+		Ctx:            f.Ctx,
 	}
 	cnodes := jsonutil.ToString(metadata.GetClusterNodeCnodes(nodeIds))
 	meta := &models.Meta{
@@ -1153,11 +1153,11 @@ func (f *Frame) registerScalingNodesMetadataLayer(nodeIds []string, path string,
 	clusterId := f.ClusterWrapper.Cluster.ClusterId
 	metadata := &MetadataV1{
 		ClusterWrapper: f.ClusterWrapper,
-		Logger:         f.Logger,
+		Ctx:            f.Ctx,
 	}
 	scalingCnodes := metadata.GetScalingCnodes(nodeIds, path)
 	if scalingCnodes == nil {
-		f.Logger.Info("No new nodes for cluster [%s] is registered", clusterId)
+		logger.Info(f.Ctx, "No new nodes for cluster [%s] is registered", clusterId)
 		return nil
 	}
 	meta := &models.Meta{
@@ -1184,7 +1184,7 @@ func (f *Frame) registerScalingNodesMetadataLayer(nodeIds []string, path string,
 func (f *Frame) deregisterNodesMetadataLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	metadata := &MetadataV1{
 		ClusterWrapper: f.ClusterWrapper,
-		Logger:         f.Logger,
+		Ctx:            f.Ctx,
 	}
 	cnodes := jsonutil.ToString(metadata.GetEmptyClusterNodeCnodes(nodeIds))
 	meta := &models.Meta{
@@ -1241,7 +1241,7 @@ func (f *Frame) deregisterScalingNodesMetadataLayer(path string, failureAllowed 
 func (f *Frame) deregisterMetadataLayer(failureAllowed bool) *models.TaskLayer {
 	metadata := &MetadataV1{
 		ClusterWrapper: f.ClusterWrapper,
-		Logger:         f.Logger,
+		Ctx:            f.Ctx,
 	}
 	cnodes := metadata.GetEmptyClusterCnodes()
 	meta := &models.Meta{
@@ -1435,7 +1435,7 @@ func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string) (*models.Clu
 		ctx := context.Background()
 		appManagerClient, err := appclient.NewAppManagerClient()
 		if err != nil {
-			f.Logger.Error("Connect to app manager failed: %+v", err)
+			logger.Error(f.Ctx, "Connect to app manager failed: %+v", err)
 			return nil, err
 		}
 
@@ -1445,41 +1445,41 @@ func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string) (*models.Clu
 
 		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
 		if err != nil {
-			f.Logger.Error("Get app version [%s] package failed: %+v", versionId, err)
+			logger.Error(f.Ctx, "Get app version [%s] package failed: %+v", versionId, err)
 			return nil, err
 		}
 
 		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
 		if err != nil {
-			f.Logger.Error("Load app version [%s] package failed: %+v", versionId, err)
+			logger.Error(f.Ctx, "Load app version [%s] package failed: %+v", versionId, err)
 			return nil, err
 		}
 		var confJson app.ClusterUserConfig
 		err = jsonutil.Decode([]byte(conf), &confJson)
 		if err != nil {
-			f.Logger.Error("Parse conf [%s] failed: %+v", conf, err)
+			logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)
 			return nil, err
 		}
 		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
 		if err != nil {
-			f.Logger.Error("Render app version [%s] cluster template failed: %+v", versionId, err)
+			logger.Error(f.Ctx, "Render app version [%s] cluster template failed: %+v", versionId, err)
 			return nil, err
 		}
 		err = clusterConf.Validate()
 		if err != nil {
-			f.Logger.Error("Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
+			logger.Error(f.Ctx, "Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
 			return nil, err
 		}
 
 	} else {
 		err := jsonutil.Decode([]byte(conf), &clusterConf)
 		if err != nil {
-			f.Logger.Error("Parse conf [%s] to cluster failed: %+v", conf, err)
+			logger.Error(f.Ctx, "Parse conf [%s] to cluster failed: %+v", conf, err)
 			return nil, err
 		}
 	}
 
-	parser := Parser{Logger: f.Logger}
+	parser := Parser{Ctx: f.Ctx}
 	clusterWrapper, err := parser.Parse(clusterConf)
 	if err != nil {
 		return nil, err

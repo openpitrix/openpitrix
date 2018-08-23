@@ -84,15 +84,15 @@ func LoadConf() *Config {
 	)
 	err := m.Load(config)
 	if err != nil {
-		logger.Critical("Failed to load config: %+v", err)
+		logger.Critical(nil, "Failed to load config: %+v", err)
 		panic(err)
 	}
 	logger.SetLevelByString(config.Log.Level)
-	logger.Debug("LoadConf: %+v", config)
+	logger.Debug(nil, "LoadConf: %+v", config)
 
 	if config.Profiling.Enable && !profilingServerStarted {
 		profilingServerStarted = true
-		logger.Info("Profiling start...")
+		logger.Info(nil, "Profiling start...")
 		go func() {
 			mux := http.NewServeMux()
 			mux.HandleFunc("/debug/pprof/", pprof.Index)
@@ -100,7 +100,7 @@ func LoadConf() *Config {
 			mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
 			mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
 			mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
-			logger.Info("Profiling log: %s", http.ListenAndServe("localhost:9300", mux))
+			logger.Info(nil, "Profiling log: %s", http.ListenAndServe("localhost:9300", mux))
 		}()
 	}
 

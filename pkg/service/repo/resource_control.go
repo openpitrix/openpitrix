@@ -5,22 +5,25 @@
 package repo
 
 import (
+	"context"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
-func (p *Server) validateRepoName(name string) error {
+func (p *Server) validateRepoName(ctx context.Context, name string) error {
 	if len(name) == 0 {
-		return gerr.New(gerr.InvalidArgument, gerr.ErrorParameterShouldNotBeEmpty, "name")
+		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorParameterShouldNotBeEmpty, "name")
 	}
 
 	var repo []*models.Repo
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		Select(models.RepoColumns...).
 		From(models.RepoTableName).
 		Where(db.Eq(models.ColumnName, name)).
@@ -28,19 +31,19 @@ func (p *Server) validateRepoName(name string) error {
 		Limit(1).
 		Load(&repo)
 	if err != nil {
-		return gerr.New(gerr.Internal, gerr.ErrorDescribeResourcesFailed)
+		return gerr.New(ctx, gerr.Internal, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	if len(repo) > 0 {
-		return gerr.New(gerr.Internal, gerr.ErrorConflictRepoName, name)
+		return gerr.New(ctx, gerr.Internal, gerr.ErrorConflictRepoName, name)
 	}
 
 	return nil
 }
 
-func (p *Server) getRepo(repoId string) (*models.Repo, error) {
+func (p *Server) getRepo(ctx context.Context, repoId string) (*models.Repo, error) {
 	repo := &models.Repo{}
-	err := p.Db.
+	err := pi.Global().DB(ctx).
 		Select(models.RepoColumns...).
 		From(models.RepoTableName).
 		Where(db.Eq(models.ColumnRepoId, repoId)).
@@ -51,11 +54,11 @@ func (p *Server) getRepo(repoId string) (*models.Repo, error) {
 	return repo, nil
 }
 
-func (p *Server) createProviders(repoId string, providers []string) error {
+func (p *Server) createProviders(ctx context.Context, repoId string, providers []string) error {
 	if len(providers) == 0 {
 		return nil
 	}
-	insert := p.Db.InsertInto(models.RepoProviderTableName).Columns(models.RepoProviderColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(models.RepoProviderTableName).Columns(models.RepoProviderColumns...)
 	for _, provider := range providers {
 		record := models.RepoProvider{
 			RepoId:   repoId,
@@ -67,11 +70,11 @@ func (p *Server) createProviders(repoId string, providers []string) error {
 	return err
 }
 
-func (p *Server) deleteProviders(repoId string, providers []string) error {
+func (p *Server) deleteProviders(ctx context.Context, repoId string, providers []string) error {
 	if len(providers) == 0 {
 		return nil
 	}
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		DeleteFrom(models.RepoProviderTableName).
 		Where(db.Eq(models.ColumnRepoId, repoId)).
 		Where(db.Eq(models.ColumnProvider, providers)).
@@ -79,8 +82,8 @@ func (p *Server) deleteProviders(repoId string, providers []string) error {
 	return err
 }
 
-func (p *Server) modifyProviders(repoId string, providers []string) error {
-	providersMap, err := p.getProvidersMap([]string{repoId})
+func (p *Server) modifyProviders(ctx context.Context, repoId string, providers []string) error {
+	providersMap, err := p.getProvidersMap(ctx, []string{repoId})
 
 	var currentProviders []string
 	for _, repoProvider := range providersMap[repoId] {
@@ -88,16 +91,16 @@ func (p *Server) modifyProviders(repoId string, providers []string) error {
 	}
 	deleteProviders := stringutil.Diff(currentProviders, providers)
 	addProviders := stringutil.Diff(providers, currentProviders)
-	err = p.createProviders(repoId, addProviders)
+	err = p.createProviders(ctx, repoId, addProviders)
 	if err != nil {
 		return err
 	}
-	err = p.deleteProviders(repoId, deleteProviders)
+	err = p.deleteProviders(ctx, repoId, deleteProviders)
 	return err
 }
 
-func (p *Server) modifyLabels(repoId string, labels []*pb.RepoLabel) error {
-	labelsMap, err := p.getLabelsMap([]string{repoId})
+func (p *Server) modifyLabels(ctx context.Context, repoId string, labels []*pb.RepoLabel) error {
+	labelsMap, err := p.getLabelsMap(ctx, []string{repoId})
 	if err != nil {
 		return err
 	}
@@ -108,7 +111,7 @@ func (p *Server) modifyLabels(repoId string, labels []*pb.RepoLabel) error {
 	if labelsLength == 1 &&
 		firstLabel.GetLabelValue().GetValue() == "" &&
 		firstLabel.GetLabelKey().GetValue() == "" {
-		_, err = p.Db.
+		_, err = pi.Global().DB(ctx).
 			DeleteFrom(models.RepoLabelTableName).
 			Where(db.Eq(models.ColumnRepoId, repoId)).
 			Exec()
@@ -116,7 +119,7 @@ func (p *Server) modifyLabels(repoId string, labels []*pb.RepoLabel) error {
 	}
 	// create new labels
 	if labelsLength > currentLabelsLength {
-		err = p.createLabels(repoId, labels[currentLabelsLength:])
+		err = p.createLabels(ctx, repoId, labels[currentLabelsLength:])
 		if err != nil {
 			return err
 		}
@@ -128,7 +131,7 @@ func (p *Server) modifyLabels(repoId string, labels []*pb.RepoLabel) error {
 		if i+1 <= labelsLength {
 			// if current label exist, update it to new key/value
 			targetLabel := labels[i]
-			_, err = p.Db.
+			_, err = pi.Global().DB(ctx).
 				Update(models.RepoLabelTableName).
 				Set(models.ColumnLabelKey, targetLabel.GetLabelKey().GetValue()).
 				Set(models.ColumnLabelValue, targetLabel.GetLabelValue().GetValue()).
@@ -136,7 +139,7 @@ func (p *Server) modifyLabels(repoId string, labels []*pb.RepoLabel) error {
 				Exec()
 		} else {
 			// if current label more than arguments, delete it
-			_, err = p.Db.
+			_, err = pi.Global().DB(ctx).
 				DeleteFrom(models.RepoLabelTableName).
 				Where(whereCondition).
 				Exec()
@@ -148,11 +151,11 @@ func (p *Server) modifyLabels(repoId string, labels []*pb.RepoLabel) error {
 	return nil
 }
 
-func (p *Server) createLabels(repoId string, labels []*pb.RepoLabel) error {
+func (p *Server) createLabels(ctx context.Context, repoId string, labels []*pb.RepoLabel) error {
 	if len(labels) == 0 {
 		return nil
 	}
-	insert := p.Db.InsertInto(models.RepoLabelTableName).Columns(models.RepoLabelColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(models.RepoLabelTableName).Columns(models.RepoLabelColumns...)
 	for _, label := range labels {
 		repoLabel := models.NewRepoLabel(repoId, label.GetLabelKey().GetValue(), label.GetLabelValue().GetValue())
 		insert = insert.Record(repoLabel)
@@ -161,8 +164,8 @@ func (p *Server) createLabels(repoId string, labels []*pb.RepoLabel) error {
 	return err
 }
 
-func (p *Server) modifySelectors(repoId string, selectors []*pb.RepoSelector) error {
-	selectorsMap, err := p.getSelectorsMap([]string{repoId})
+func (p *Server) modifySelectors(ctx context.Context, repoId string, selectors []*pb.RepoSelector) error {
+	selectorsMap, err := p.getSelectorsMap(ctx, []string{repoId})
 	if err != nil {
 		return err
 	}
@@ -173,7 +176,7 @@ func (p *Server) modifySelectors(repoId string, selectors []*pb.RepoSelector) er
 	if selectorsLength == 1 &&
 		firstSelector.GetSelectorValue().GetValue() == "" &&
 		firstSelector.GetSelectorKey().GetValue() == "" {
-		_, err = p.Db.
+		_, err = pi.Global().DB(ctx).
 			DeleteFrom(models.RepoSelectorTableName).
 			Where(db.Eq(models.ColumnRepoId, repoId)).
 			Exec()
@@ -181,7 +184,7 @@ func (p *Server) modifySelectors(repoId string, selectors []*pb.RepoSelector) er
 	}
 	// create new selectors
 	if selectorsLength > currentSelectorsLength {
-		err = p.createSelectors(repoId, selectors[currentSelectorsLength:])
+		err = p.createSelectors(ctx, repoId, selectors[currentSelectorsLength:])
 		if err != nil {
 			return err
 		}
@@ -193,7 +196,7 @@ func (p *Server) modifySelectors(repoId string, selectors []*pb.RepoSelector) er
 		if i+1 <= selectorsLength {
 			// if current selectors exist, update it to new key/value
 			targetSelector := selectors[i]
-			_, err = p.Db.
+			_, err = pi.Global().DB(ctx).
 				Update(models.RepoSelectorTableName).
 				Set(models.ColumnSelectorKey, targetSelector.GetSelectorKey().GetValue()).
 				Set(models.ColumnSelectorValue, targetSelector.GetSelectorValue().GetValue()).
@@ -201,7 +204,7 @@ func (p *Server) modifySelectors(repoId string, selectors []*pb.RepoSelector) er
 				Exec()
 		} else {
 			// if current selectors more than arguments, delete it
-			_, err = p.Db.
+			_, err = pi.Global().DB(ctx).
 				DeleteFrom(models.RepoSelectorTableName).
 				Where(whereCondition).
 				Exec()
@@ -213,11 +216,11 @@ func (p *Server) modifySelectors(repoId string, selectors []*pb.RepoSelector) er
 	return nil
 }
 
-func (p *Server) createSelectors(repoId string, selectors []*pb.RepoSelector) error {
+func (p *Server) createSelectors(ctx context.Context, repoId string, selectors []*pb.RepoSelector) error {
 	if len(selectors) == 0 {
 		return nil
 	}
-	insert := p.Db.InsertInto(models.RepoSelectorTableName).Columns(models.RepoSelectorColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(models.RepoSelectorTableName).Columns(models.RepoSelectorColumns...)
 	for _, selector := range selectors {
 		repoSelector := models.NewRepoSelector(repoId, selector.GetSelectorKey().GetValue(), selector.GetSelectorValue().GetValue())
 		insert = insert.Record(repoSelector)
@@ -226,9 +229,9 @@ func (p *Server) createSelectors(repoId string, selectors []*pb.RepoSelector) er
 	return err
 }
 
-func (p *Server) getProvidersMap(repoIds []string) (providersMap map[string][]*models.RepoProvider, err error) {
+func (p *Server) getProvidersMap(ctx context.Context, repoIds []string) (providersMap map[string][]*models.RepoProvider, err error) {
 	var repoProviders []*models.RepoProvider
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Select(models.RepoProviderColumns...).
 		From(models.RepoProviderTableName).
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
@@ -240,9 +243,9 @@ func (p *Server) getProvidersMap(repoIds []string) (providersMap map[string][]*m
 	return
 }
 
-func (p *Server) getSelectorsMap(repoIds []string) (selectorsMap map[string][]*models.RepoSelector, err error) {
+func (p *Server) getSelectorsMap(ctx context.Context, repoIds []string) (selectorsMap map[string][]*models.RepoSelector, err error) {
 	var repoSelectors []*models.RepoSelector
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Select(models.RepoSelectorColumns...).
 		From(models.RepoSelectorTableName).
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
@@ -255,9 +258,9 @@ func (p *Server) getSelectorsMap(repoIds []string) (selectorsMap map[string][]*m
 	return
 }
 
-func (p *Server) getLabelsMap(repoIds []string) (labelsMap map[string][]*models.RepoLabel, err error) {
+func (p *Server) getLabelsMap(ctx context.Context, repoIds []string) (labelsMap map[string][]*models.RepoLabel, err error) {
 	var repoLabels []*models.RepoLabel
-	_, err = p.Db.
+	_, err = pi.Global().DB(ctx).
 		Select(models.RepoLabelColumns...).
 		From(models.RepoLabelTableName).
 		Where(db.Eq(models.ColumnRepoId, repoIds)).
@@ -270,40 +273,40 @@ func (p *Server) getLabelsMap(repoIds []string) (labelsMap map[string][]*models.
 	return
 }
 
-func (p *Server) formatRepo(repo *models.Repo) (*pb.Repo, error) {
-	pbRepos, err := p.formatRepoSet([]*models.Repo{repo})
+func (p *Server) formatRepo(ctx context.Context, repo *models.Repo) (*pb.Repo, error) {
+	pbRepos, err := p.formatRepoSet(ctx, []*models.Repo{repo})
 	if err != nil {
 		return nil, err
 	}
 	return pbRepos[0], nil
 }
 
-func (p *Server) formatRepoSet(repos []*models.Repo) (pbRepos []*pb.Repo, err error) {
+func (p *Server) formatRepoSet(ctx context.Context, repos []*models.Repo) (pbRepos []*pb.Repo, err error) {
 	pbRepos = models.ReposToPbs(repos)
 	var repoIds []string
 	for _, repo := range repos {
 		repoIds = append(repoIds, repo.RepoId)
 	}
 	var providersMap map[string][]*models.RepoProvider
-	providersMap, err = p.getProvidersMap(repoIds)
+	providersMap, err = p.getProvidersMap(ctx, repoIds)
 	if err != nil {
 		return
 	}
 
 	var labelsMap map[string][]*models.RepoLabel
-	labelsMap, err = p.getLabelsMap(repoIds)
+	labelsMap, err = p.getLabelsMap(ctx, repoIds)
 	if err != nil {
 		return
 	}
 
 	var selectorsMap map[string][]*models.RepoSelector
-	selectorsMap, err = p.getSelectorsMap(repoIds)
+	selectorsMap, err = p.getSelectorsMap(ctx, repoIds)
 	if err != nil {
 		return
 	}
 
 	var rcmap map[string][]*pb.ResourceCategory
-	rcmap, err = categoryutil.GetResourcesCategories(p.Db, repoIds)
+	rcmap, err = categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), repoIds)
 	if err != nil {
 		return
 	}

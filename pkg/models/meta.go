@@ -22,7 +22,7 @@ func NewMeta(data string) (*Meta, error) {
 	meta := &Meta{}
 	err := jsonutil.Decode([]byte(data), meta)
 	if err != nil {
-		logger.Error("Decode [%s] into meta failed: %+v", data, err)
+		logger.Error(nil, "Decode [%s] into meta failed: %+v", data, err)
 	}
 	return meta, err
 }

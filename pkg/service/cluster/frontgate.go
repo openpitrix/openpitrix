@@ -5,6 +5,7 @@
 package cluster
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -22,10 +23,10 @@ type Frontgate struct {
 	Runtime *runtimeclient.Runtime
 }
 
-func (f *Frontgate) getFrontgateFromDb(vpcId, userId string) ([]*models.Cluster, error) {
+func (f *Frontgate) getFrontgateFromDb(ctx context.Context, vpcId, userId string) ([]*models.Cluster, error) {
 	var frontgates []*models.Cluster
 	statuses := []string{constants.StatusActive, constants.StatusPending, constants.StatusStopped}
-	_, err := pi.Global().Db.
+	_, err := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
 		From(models.ClusterTableName).
 		Where(db.Eq("vpc_id", vpcId)).
@@ -39,31 +40,31 @@ func (f *Frontgate) getFrontgateFromDb(vpcId, userId string) ([]*models.Cluster,
 	return frontgates, nil
 }
 
-func (f *Frontgate) activate(frontgate *models.Cluster) error {
+func (f *Frontgate) activate(ctx context.Context, frontgate *models.Cluster) error {
 	if frontgate.TransitionStatus != "" {
-		logger.Warn("Frontgate cluster [%s] is in [%s] transition status, please try laster",
+		logger.Warn(ctx, "Frontgate cluster [%s] is in [%s] transition status, please try laster",
 			frontgate.ClusterId, frontgate.TransitionStatus)
 		err := fmt.Errorf("frontgate service is [%s], please try later", frontgate.TransitionStatus)
-		return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceTransitionStatus, "frontgate", constants.StatusUpdating)
+		return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceTransitionStatus, "frontgate", constants.StatusUpdating)
 	}
 
 	if frontgate.Status == constants.StatusActive {
 		return nil
 	} else if frontgate.Status == constants.StatusStopped {
-		err := f.StartCluster(frontgate)
+		err := f.StartCluster(ctx, frontgate)
 		if err != nil {
-			return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorStartResourceFailed, frontgate.ClusterId)
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorStartResourceFailed, frontgate.ClusterId)
 		}
 		return nil
 	} else {
 		err := fmt.Errorf("frontgate cluster [%s] is in wrong status [%s]", frontgate.ClusterId, frontgate.Status)
-		return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorResourceTransitionStatus, frontgate.ClusterId, frontgate.Status)
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorResourceTransitionStatus, frontgate.ClusterId, frontgate.Status)
 	}
 }
 
-func (f *Frontgate) GetFrontgate(frontgateId string) (*models.Cluster, error) {
+func (f *Frontgate) GetFrontgate(ctx context.Context, frontgateId string) (*models.Cluster, error) {
 	var frontgate *models.Cluster
-	err := pi.Global().Db.
+	err := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
 		From(models.ClusterTableName).
 		Where(db.Eq("cluster_id", frontgateId)).
@@ -74,61 +75,61 @@ func (f *Frontgate) GetFrontgate(frontgateId string) (*models.Cluster, error) {
 	return frontgate, nil
 }
 
-func (f *Frontgate) ActivateFrontgate(frontgateId string) error {
-	frontgate, err := f.GetFrontgate(frontgateId)
+func (f *Frontgate) ActivateFrontgate(ctx context.Context, frontgateId string) error {
+	frontgate, err := f.GetFrontgate(ctx, frontgateId)
 	if err != nil {
 		return err
 	}
 
-	return f.activate(frontgate)
+	return f.activate(ctx, frontgate)
 }
 
-func (f *Frontgate) GetActiveFrontgate(clusterWrapper *models.ClusterWrapper) (*models.Cluster, error) {
+func (f *Frontgate) GetActiveFrontgate(ctx context.Context, clusterWrapper *models.ClusterWrapper) (*models.Cluster, error) {
 	var frontgate *models.Cluster
 	vpcId := clusterWrapper.Cluster.VpcId
 	owner := clusterWrapper.Cluster.Owner
-	err := pi.Global().Etcd.DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
+	err := pi.Global().Etcd(ctx).DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
-		providerInterface, err := plugins.GetProviderPlugin(f.Runtime.Provider, nil)
+		providerInterface, err := plugins.GetProviderPlugin(ctx, f.Runtime.Provider)
 		if err != nil {
-			return gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Provider)
+			return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Provider)
 		}
 		vpc, err := providerInterface.DescribeVpc(f.Runtime.RuntimeId, vpcId)
 		if err != nil {
-			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, vpcId)
+			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, vpcId)
 		}
 		if vpc == nil {
 			err = fmt.Errorf("describe vpc [%s] failed", vpcId)
-			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed, vpcId)
+			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed, vpcId)
 		}
 		if vpc.Status != constants.StatusActive && vpc.Status != constants.StatusAvailable {
 			err = fmt.Errorf("vpc [%s] is not active or available", vpcId)
-			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceNotInStatus, vpcId, constants.StatusActive)
+			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotInStatus, vpcId, constants.StatusActive)
 		}
 		if vpc.TransitionStatus != "" {
 			err = fmt.Errorf("vpc [%s] is now updating", vpcId)
-			return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceTransitionStatus, vpcId, constants.StatusUpdating)
+			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceTransitionStatus, vpcId, constants.StatusUpdating)
 		}
 
-		frontgates, err := f.getFrontgateFromDb(vpcId, owner)
+		frontgates, err := f.getFrontgateFromDb(ctx, vpcId, owner)
 		if err != nil {
-			return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorDescribeResourceFailed, vpcId)
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, vpcId)
 		}
 		if len(frontgates) == 0 {
-			frontgateId, err := f.CreateCluster(clusterWrapper)
+			frontgateId, err := f.CreateCluster(ctx, clusterWrapper)
 			frontgate = &models.Cluster{ClusterId: frontgateId}
 			if err != nil {
-				return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorCreateResourceFailed, frontgateId)
+				return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourceFailed, frontgateId)
 			}
 			return nil
 		} else if len(frontgates) == 1 {
 			frontgate = frontgates[0]
-			err = f.activate(frontgate)
+			err = f.activate(ctx, frontgate)
 			return err
 		} else {
-			logger.Critical("More than one non-ceased frontgate cluster in the vpc [%s] for user [%s]", vpcId, owner)
+			logger.Critical(ctx, "More than one non-ceased frontgate cluster in the vpc [%s] for user [%s]", vpcId, owner)
 			err = fmt.Errorf("more than one non-ceased frontgate cluster")
-			return gerr.NewWithDetail(gerr.Internal, err, gerr.ErrorInternalError)
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 	})
 	if err != nil {

@@ -1,6 +1,8 @@
 package repo
 
 import (
+	"context"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/reporeader"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
@@ -17,9 +19,9 @@ type IndexYaml struct {
 	Generated  string                 `yaml:"generated"`
 }
 
-func validate(repoType, url, credential string, providers []string) error {
+func validate(ctx context.Context, repoType, url, credential string, providers []string) error {
 	var errCode uint32
-	reader, err := reporeader.New(repoType, url, credential)
+	reader, err := reporeader.New(ctx, repoType, url, credential)
 	if err != nil {
 		switch err {
 		case reporeader.ErrParseUrlFailed:

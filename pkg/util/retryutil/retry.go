@@ -26,7 +26,7 @@ func Retry(attempts int, sleep time.Duration, callback func() error) (err error)
 			time.Sleep(sleep)
 		}
 
-		logger.Warn("Will retry %d because of error: %+v", i, err)
+		logger.Warn(nil, "Will retry %d because of error: %+v", i, err)
 	}
 	return fmt.Errorf("failed after %d attempts, error: %+v", attempts, err)
 }

@@ -13,6 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/pborman/uuid"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/godoc/vfs"
 	"golang.org/x/tools/godoc/vfs/httpfs"
@@ -33,7 +34,6 @@ import (
 )
 
 type Server struct {
-	*pi.Pi
 }
 
 type register struct {
@@ -42,30 +42,39 @@ type register struct {
 }
 
 func Serve(cfg *config.Config) {
-	version.PrintVersionInfo(logger.Info)
-	logger.Info("App service http://%s:%d", constants.AppManagerHost, constants.AppManagerPort)
-	logger.Info("Runtime service http://%s:%d", constants.RuntimeManagerHost, constants.RuntimeManagerPort)
-	logger.Info("Cluster service http://%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort)
-	logger.Info("Repo service http://%s:%d", constants.RepoManagerHost, constants.RepoManagerPort)
-	logger.Info("Job service http://%s:%d", constants.JobManagerHost, constants.JobManagerPort)
-	logger.Info("Task service http://%s:%d", constants.TaskManagerHost, constants.TaskManagerPort)
-	logger.Info("Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
-	logger.Info("Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
-	logger.Info("Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
+	version.PrintVersionInfo(func(s string, i ...interface{}) {
+		logger.Info(nil, s, i...)
+	})
+	logger.Info(nil, "App service http://%s:%d", constants.AppManagerHost, constants.AppManagerPort)
+	logger.Info(nil, "Runtime service http://%s:%d", constants.RuntimeManagerHost, constants.RuntimeManagerPort)
+	logger.Info(nil, "Cluster service http://%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort)
+	logger.Info(nil, "Repo service http://%s:%d", constants.RepoManagerHost, constants.RepoManagerPort)
+	logger.Info(nil, "Job service http://%s:%d", constants.JobManagerHost, constants.JobManagerPort)
+	logger.Info(nil, "Task service http://%s:%d", constants.TaskManagerHost, constants.TaskManagerPort)
+	logger.Info(nil, "Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
+	logger.Info(nil, "Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
+	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
 	cfg.Mysql.Disable = true
-	s := Server{pi.NewPi(cfg)}
+	pi.SetGlobal(cfg)
+	s := Server{}
 
 	if err := s.run(); err != nil {
-		logger.Critical("Api gateway run failed: %+v", err)
+		logger.Critical(nil, "Api gateway run failed: %+v", err)
 		panic(err)
 	}
 }
+
+const RequestIdKey = "X-Request-Id"
 
 func log() gin.HandlerFunc {
 	l := logger.NewLogger()
 	l.HideCallstack()
 	return func(c *gin.Context) {
+		requestID := uuid.New()
+		c.Request.Header.Set(RequestIdKey, requestID)
+		c.Writer.Header().Set(RequestIdKey, requestID)
+
 		t := time.Now()
 
 		// process request
@@ -77,7 +86,8 @@ func log() gin.HandlerFunc {
 		statusCode := c.Writer.Status()
 		path := c.Request.URL.Path
 
-		logStr := fmt.Sprintf("| %3d | %v | %s | %s %s %s",
+		logStr := fmt.Sprintf("%s | %3d | %v | %s | %s %s %s",
+			requestID,
 			statusCode,
 			latency,
 			clientIP, method,
@@ -87,11 +97,11 @@ func log() gin.HandlerFunc {
 
 		switch {
 		case statusCode >= 400 && statusCode <= 499:
-			l.Warn(logStr)
+			l.Warn(nil, logStr)
 		case statusCode >= 500:
-			l.Error(logStr)
+			l.Error(nil, logStr)
 		default:
-			l.Info(logStr)
+			l.Info(nil, logStr)
 		}
 	}
 }
@@ -101,7 +111,7 @@ func recovery() gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				httprequest, _ := httputil.DumpRequest(c.Request, false)
-				logger.Critical("Panic recovered: %+v\n%s", err, string(httprequest))
+				logger.Critical(nil, "Panic recovered: %+v\n%s", err, string(httprequest))
 				c.JSON(500, gin.H{
 					"title": "Error",
 					"err":   err,
@@ -132,7 +142,15 @@ func (s *Server) run() error {
 }
 
 func (s *Server) mainHandler() http.Handler {
-	var gwmux = runtime.NewServeMux(runtime.WithMetadata(senderutil.ServeMuxSetSender))
+	var gwmux = runtime.NewServeMux(
+		runtime.WithMetadata(senderutil.ServeMuxSetSender),
+		runtime.WithIncomingHeaderMatcher(func(s string) (string, bool) {
+			if s == RequestIdKey {
+				return RequestIdKey, true
+			}
+			return "", false
+		}),
+	)
 	var opts = manager.ClientOptions
 	var err error
 
@@ -164,12 +182,12 @@ func (s *Server) mainHandler() http.Handler {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {
 			err = errors.WithStack(err)
-			logger.Error("Dial [%s] failed: %+v", r.endpoint, err)
+			logger.Error(nil, "Dial [%s] failed: %+v", r.endpoint, err)
 		}
 	}
 
 	mux := http.NewServeMux()
-	tm := topic.NewTopicManager(s.Pi.Etcd)
+	tm := topic.NewTopicManager(pi.Global().Etcd(nil))
 	go tm.Run()
 
 	mux.Handle("/", gwmux)

@@ -6,6 +6,7 @@ package helm
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"io"
 	"path/filepath"
@@ -34,7 +35,7 @@ import (
 )
 
 type Parser struct {
-	Logger    *logger.Logger
+	ctx       context.Context
 	Chart     *chart.Chart
 	Conf      string
 	VersionId string
@@ -42,7 +43,7 @@ type Parser struct {
 }
 
 func (p *Parser) getAppVersion() (*pb.AppVersion, error) {
-	ctx := clientutil.GetSystemUserContext()
+	ctx := clientutil.SetSystemUserToContext(p.ctx)
 	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return nil, err
@@ -122,17 +123,17 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 				break
 			}
 			if err != nil {
-				p.Logger.Error("Decode file [%s] in chart failed, %+v", k, err)
+				logger.Error(p.ctx, "Decode file [%s] in chart failed, %+v", k, err)
 				return nil, nil, err
 			}
 			obj, groupVersionKind, err := decode(doc, nil, nil)
 
 			if err != nil {
-				p.Logger.Error("Decode file [%s] in chart failed, %+v", k, err)
+				logger.Error(p.ctx, "Decode file [%s] in chart failed, %+v", k, err)
 				return nil, nil, err
 			}
-			p.Logger.Debug("Yaml content: %+v", obj)
-			p.Logger.Debug("Group version: %+v", groupVersionKind.GroupVersion().String())
+			logger.Debug(p.ctx, "Yaml content: %+v", obj)
+			logger.Debug(p.ctx, "Group version: %+v", groupVersionKind.GroupVersion().String())
 
 			apiVersions = append(apiVersions, groupVersionKind.GroupVersion().String())
 
@@ -315,7 +316,7 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 		}
 	}
 
-	kubeHandler := GetKubeHandler(p.Logger, p.RuntimeId)
+	kubeHandler := GetKubeHandler(p.ctx, p.RuntimeId)
 	err = kubeHandler.CheckApiVersionsSupported(apiVersions)
 	if err != nil {
 		return nil, nil, err

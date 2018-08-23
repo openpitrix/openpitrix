@@ -5,6 +5,8 @@
 package job
 
 import (
+	"context"
+
 	"openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -27,7 +29,7 @@ func NewClient() (*Client, error) {
 	}, nil
 }
 
-func SendJob(job *models.Job) (string, error) {
+func SendJob(ctx context.Context, job *models.Job) (string, error) {
 	pbJob := models.JobToPb(job)
 	jobRequest := &pb.CreateJobRequest{
 		ClusterId: pbJob.ClusterId,
@@ -38,16 +40,16 @@ func SendJob(job *models.Job) (string, error) {
 		Directive: pbJob.Directive,
 	}
 
-	ctx := client.GetSystemUserContext()
+	ctx = client.SetSystemUserToContext(ctx)
 	jobClient, err := NewClient()
 	if err != nil {
-		logger.Error("Connect to job service failed: %+v", err)
+		logger.Error(ctx, "Connect to job service failed: %+v", err)
 		return "", err
 	}
 	response, err := jobClient.CreateJob(ctx, jobRequest)
 	jobId := response.GetJobId().GetValue()
 	if err != nil {
-		logger.Error("Failed to create job [%s]: %+v", jobId, err)
+		logger.Error(ctx, "Failed to create job [%s]: %+v", jobId, err)
 		return "", err
 	}
 	return jobId, nil

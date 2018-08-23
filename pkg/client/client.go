@@ -10,6 +10,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
-func GetSystemUserContext() context.Context {
-	return senderutil.NewContext(context.Background(), senderutil.GetSystemUser())
+func SetSystemUserToContext(ctx context.Context) context.Context {
+	return senderutil.NewContext(ctx, senderutil.GetSystemUser())
 }

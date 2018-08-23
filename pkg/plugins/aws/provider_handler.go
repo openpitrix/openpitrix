@@ -31,13 +31,9 @@ type ProviderHandler struct {
 	vmbased.FrameHandler
 }
 
-func GetProviderHandler(Logger *logger.Logger) *ProviderHandler {
+func GetProviderHandler(ctx context.Context) *ProviderHandler {
 	providerHandler := new(ProviderHandler)
-	if Logger == nil {
-		providerHandler.Logger = logger.NewLogger()
-	} else {
-		providerHandler.Logger = Logger
-	}
+	providerHandler.Ctx = ctx
 	return providerHandler
 }
 
@@ -45,7 +41,7 @@ func (p *ProviderHandler) initAWSSession(runtimeUrl, runtimeCredential, zone str
 	credential := new(Credential)
 	err := jsonutil.Decode([]byte(runtimeCredential), credential)
 	if err != nil {
-		p.Logger.Error("Parse [%s] credential failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Parse [%s] credential failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -60,7 +56,7 @@ func (p *ProviderHandler) initAWSSession(runtimeUrl, runtimeCredential, zone str
 }
 
 func (p *ProviderHandler) initSession(runtimeId string) (*session.Session, error) {
-	runtime, err := runtimeclient.NewRuntime(runtimeId)
+	runtime, err := runtimeclient.NewRuntime(p.Ctx, runtimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +67,7 @@ func (p *ProviderHandler) initSession(runtimeId string) (*session.Session, error
 func (p *ProviderHandler) initInstanceService(runtimeId string) (*ec2.EC2, error) {
 	awsSession, err := p.initSession(runtimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api session failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api session failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -80,7 +76,7 @@ func (p *ProviderHandler) initInstanceService(runtimeId string) (*ec2.EC2, error
 
 func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -89,13 +85,13 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	}
 	instanceService, err := p.initInstanceService(instance.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	instanceType, err := ConvertToInstanceType(instance.Cpu, instance.Memory)
 	if err != nil {
-		p.Logger.Error("Could not find an aws instance type: %+v", err)
+		logger.Error(p.Ctx, "Could not find an aws instance type: %+v", err)
 		return err
 	}
 
@@ -122,19 +118,19 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 		input.UserData = aws.String(instance.UserDataValue)
 	}
 
-	p.Logger.Debug("RunInstances with input: %s", jsonutil.ToString(input))
+	logger.Debug(p.Ctx, "RunInstances with input: %s", jsonutil.ToString(input))
 	output, err := instanceService.RunInstances(&input)
 	if err != nil {
-		p.Logger.Error("Send RunInstances to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send RunInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	if len(output.Instances) == 0 {
-		p.Logger.Error("Send RunInstances to %s failed with 0 output instances", MyProvider)
+		logger.Error(p.Ctx, "Send RunInstances to %s failed with 0 output instances", MyProvider)
 		return fmt.Errorf("send RunInstances to %s failed with 0 output instances", MyProvider)
 	}
 
-	p.Logger.Debug("RunInstances get output: %s", jsonutil.ToString(output))
+	logger.Debug(p.Ctx, "RunInstances get output: %s", jsonutil.ToString(output))
 
 	instance.InstanceId = aws.StringValue(output.Instances[0].InstanceId)
 
@@ -146,7 +142,7 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 
 func (p *ProviderHandler) StopInstances(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -154,12 +150,12 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 		return err
 	}
 	if instance.InstanceId == "" {
-		p.Logger.Warn("Skip task without instance id")
+		logger.Warn(p.Ctx, "Skip task without instance id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(instance.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -168,7 +164,7 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
 		})
 	if err != nil {
-		p.Logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -183,7 +179,7 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 	status := aws.StringValue(describeOutput.Reservations[0].Instances[0].State.Name)
 
 	if status == constants.StatusStopped {
-		p.Logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
+		logger.Warn(p.Ctx, "Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
 		return nil
 	}
 
@@ -192,7 +188,7 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
 		})
 	if err != nil {
-		p.Logger.Error("Send StopInstances to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send StopInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -204,7 +200,7 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 
 func (p *ProviderHandler) StartInstances(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -212,12 +208,12 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 		return err
 	}
 	if instance.InstanceId == "" {
-		p.Logger.Warn("Skip task without instance id")
+		logger.Warn(p.Ctx, "Skip task without instance id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(instance.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -226,7 +222,7 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
 		})
 	if err != nil {
-		p.Logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -241,7 +237,7 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 	status := aws.StringValue(describeOutput.Reservations[0].Instances[0].State.Name)
 
 	if status == constants.StatusRunning {
-		p.Logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
+		logger.Warn(p.Ctx, "Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
 		return nil
 	}
 
@@ -250,7 +246,7 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
 		})
 	if err != nil {
-		p.Logger.Error("Send StartInstances to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send StartInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -262,7 +258,7 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 
 func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -270,12 +266,12 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 		return err
 	}
 	if instance.InstanceId == "" {
-		p.Logger.Warn("Skip task without instance id")
+		logger.Warn(p.Ctx, "Skip task without instance id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(instance.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -284,7 +280,7 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
 		})
 	if err != nil {
-		p.Logger.Error("Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -299,7 +295,7 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 	status := aws.StringValue(describeOutput.Reservations[0].Instances[0].State.Name)
 
 	if status == constants.StatusTerminated {
-		p.Logger.Warn("Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
+		logger.Warn(p.Ctx, "Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
 		return nil
 	}
 
@@ -308,7 +304,7 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
 		})
 	if err != nil {
-		p.Logger.Error("Send TerminateInstances to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send TerminateInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -320,7 +316,7 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 
 func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -329,7 +325,7 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -357,7 +353,7 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 
 	output, err := instanceService.CreateVolume(&input)
 	if err != nil {
-		p.Logger.Error("Send CreateVolumes to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send CreateVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -371,7 +367,7 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -379,16 +375,16 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 		return err
 	}
 	if volume.VolumeId == "" {
-		p.Logger.Warn("Skip task without volume id")
+		logger.Warn(p.Ctx, "Skip task without volume id")
 		return nil
 	}
 	if volume.InstanceId == "" {
-		p.Logger.Warn("Skip task without instance id")
+		logger.Warn(p.Ctx, "Skip task without instance id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -398,7 +394,7 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 			VolumeId:   aws.String(volume.VolumeId),
 		})
 	if err != nil {
-		p.Logger.Error("Send DetachVolumes to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send DetachVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -410,7 +406,7 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -418,16 +414,16 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 		return err
 	}
 	if volume.VolumeId == "" {
-		p.Logger.Warn("Skip task without volume id")
+		logger.Warn(p.Ctx, "Skip task without volume id")
 		return nil
 	}
 	if volume.InstanceId == "" {
-		p.Logger.Warn("Skip task without instance id")
+		logger.Warn(p.Ctx, "Skip task without instance id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -438,7 +434,7 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 			Device:     aws.String(DefaultDevice),
 		})
 	if err != nil {
-		p.Logger.Error("Send AttachVolumes to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send AttachVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -450,7 +446,7 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -458,12 +454,12 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		return err
 	}
 	if volume.VolumeId == "" {
-		p.Logger.Warn("Skip task without volume id")
+		logger.Warn(p.Ctx, "Skip task without volume id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -472,7 +468,7 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 			VolumeIds: aws.StringSlice([]string{volume.VolumeId}),
 		})
 	if err != nil {
-		p.Logger.Error("Send DescribeVolumes to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -485,7 +481,7 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 			VolumeId: aws.String(volume.VolumeId),
 		})
 	if err != nil {
-		p.Logger.Error("Send DeleteVolumes to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Send DeleteVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -496,17 +492,17 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 }
 
 func (p *ProviderHandler) waitInstanceVolumeAndNetwork(instanceService *ec2.EC2, task *models.Task, instanceId, volumeId string, timeout time.Duration, waitInterval time.Duration) (ins *ec2.Instance, err error) {
-	p.Logger.Debug("Waiting for volume [%s] attached to Instance [%s]", volumeId, instanceId)
+	logger.Debug(p.Ctx, "Waiting for volume [%s] attached to Instance [%s]", volumeId, instanceId)
 	if volumeId != "" {
 		err = p.AttachVolumes(task)
 		if err != nil {
-			p.Logger.Debug("Attach volume [%s] to Instance [%s] failed: %+v", volumeId, instanceId, err)
+			logger.Debug(p.Ctx, "Attach volume [%s] to Instance [%s] failed: %+v", volumeId, instanceId, err)
 			return nil, err
 		}
 
 		err = p.WaitAttachVolumes(task)
 		if err != nil {
-			p.Logger.Debug("Waiting for volume [%s] attached to Instance [%s] failed: %+v", volumeId, instanceId, err)
+			logger.Debug(p.Ctx, "Waiting for volume [%s] attached to Instance [%s] failed: %+v", volumeId, instanceId, err)
 			return nil, err
 		}
 	}
@@ -554,7 +550,7 @@ func (p *ProviderHandler) waitInstanceVolumeAndNetwork(instanceService *ec2.EC2,
 		}
 
 		ins = instance
-		p.Logger.Debug("Instance [%s] get IP address [%s]", instanceId, *ins.PrivateIpAddress)
+		logger.Debug(p.Ctx, "Instance [%s] get IP address [%s]", instanceId, *ins.PrivateIpAddress)
 		return true, nil
 	}, timeout, waitInterval)
 	return
@@ -562,7 +558,7 @@ func (p *ProviderHandler) waitInstanceVolumeAndNetwork(instanceService *ec2.EC2,
 
 func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -570,24 +566,24 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 		return err
 	}
 	if instance.InstanceId == "" {
-		p.Logger.Warn("Skip task without instance id")
+		logger.Warn(p.Ctx, "Skip task without instance id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(instance.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
 	err = p.WaitInstanceState(task, constants.StatusRunning)
 	if err != nil {
-		p.Logger.Error("Wait %s job [%s] failed: %+v", MyProvider, instance.TargetJobId, err)
+		logger.Error(p.Ctx, "Wait %s job [%s] failed: %+v", MyProvider, instance.TargetJobId, err)
 		return err
 	}
 
 	output, err := p.waitInstanceVolumeAndNetwork(instanceService, task, instance.InstanceId, instance.VolumeId, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 	if err != nil {
-		p.Logger.Error("Wait %s instance [%s] network failed: %+v", MyProvider, instance.InstanceId, err)
+		logger.Error(p.Ctx, "Wait %s instance [%s] network failed: %+v", MyProvider, instance.InstanceId, err)
 		return err
 	}
 
@@ -604,14 +600,14 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	// write back
 	task.Directive = jsonutil.ToString(instance)
 
-	p.Logger.Debug("WaitRunInstances task [%s] directive: %s", task.TaskId, task.Directive)
+	logger.Debug(p.Ctx, "WaitRunInstances task [%s] directive: %s", task.TaskId, task.Directive)
 
 	return nil
 }
 
 func (p *ProviderHandler) WaitInstanceState(task *models.Task, state string) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	instance, err := models.NewInstance(task.Directive)
@@ -619,12 +615,12 @@ func (p *ProviderHandler) WaitInstanceState(task *models.Task, state string) err
 		return err
 	}
 	if instance.InstanceId == "" {
-		p.Logger.Warn("Skip task without instance id")
+		logger.Warn(p.Ctx, "Skip task without instance id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(instance.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -653,7 +649,7 @@ func (p *ProviderHandler) WaitInstanceState(task *models.Task, state string) err
 		return false, nil
 	}, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 	if err != nil {
-		p.Logger.Error("Wait %s instance [%s] status become to [%s] failed: %+v", MyProvider, instance.InstanceId, state, err)
+		logger.Error(p.Ctx, "Wait %s instance [%s] status become to [%s] failed: %+v", MyProvider, instance.InstanceId, state, err)
 		return err
 	}
 
@@ -662,7 +658,7 @@ func (p *ProviderHandler) WaitInstanceState(task *models.Task, state string) err
 
 func (p *ProviderHandler) WaitVolumeState(task *models.Task, state string) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -670,12 +666,12 @@ func (p *ProviderHandler) WaitVolumeState(task *models.Task, state string) error
 		return err
 	}
 	if volume.VolumeId == "" {
-		p.Logger.Warn("Skip task without volume id")
+		logger.Warn(p.Ctx, "Skip task without volume id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -700,7 +696,7 @@ func (p *ProviderHandler) WaitVolumeState(task *models.Task, state string) error
 		return false, nil
 	}, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 	if err != nil {
-		p.Logger.Error("Wait %s volume [%s] status become to [%s] failed: %+v", MyProvider, volume.VolumeId, state, err)
+		logger.Error(p.Ctx, "Wait %s volume [%s] status become to [%s] failed: %+v", MyProvider, volume.VolumeId, state, err)
 		return err
 	}
 
@@ -733,7 +729,7 @@ func (p *ProviderHandler) WaitDetachVolumes(task *models.Task) error {
 
 func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 	if task.Directive == "" {
-		p.Logger.Warn("Skip task without directive")
+		logger.Warn(p.Ctx, "Skip task without directive")
 		return nil
 	}
 	volume, err := models.NewVolume(task.Directive)
@@ -741,12 +737,12 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 		return err
 	}
 	if volume.VolumeId == "" {
-		p.Logger.Warn("Skip task without volume id")
+		logger.Warn(p.Ctx, "Skip task without volume id")
 		return nil
 	}
 	instanceService, err := p.initInstanceService(volume.RuntimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -759,7 +755,7 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
 	instanceService, err := p.initInstanceService(req.GetRuntimeId().GetValue())
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -776,12 +772,12 @@ func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeS
 
 	output, err := instanceService.DescribeSubnets(input)
 	if err != nil {
-		p.Logger.Error("DescribeSubnets to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "DescribeSubnets to %s failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
 	if len(output.Subnets) == 0 {
-		p.Logger.Error("Send DescribeVxNets to %s failed with 0 output subnets", MyProvider)
+		logger.Error(p.Ctx, "Send DescribeVxNets to %s failed with 0 output subnets", MyProvider)
 		return nil, fmt.Errorf("send DescribeVxNets to %s failed with 0 output subnets", MyProvider)
 	}
 
@@ -828,7 +824,7 @@ func (p *ProviderHandler) CheckResourceQuotas(ctx context.Context, clusterWrappe
 func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 	instanceService, err := p.initInstanceService(runtimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -837,12 +833,12 @@ func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, err
 			VpcIds: aws.StringSlice([]string{vpcId}),
 		})
 	if err != nil {
-		p.Logger.Error("DescribeVpcs to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "DescribeVpcs to %s failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
 	if len(output.Vpcs) == 0 {
-		p.Logger.Error("Send DescribeVpcs to %s failed with 0 output instances", MyProvider)
+		logger.Error(p.Ctx, "Send DescribeVpcs to %s failed with 0 output instances", MyProvider)
 		return nil, fmt.Errorf("send DescribeVpcs to %s failed with 0 output instances", MyProvider)
 	}
 
@@ -858,7 +854,7 @@ func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, err
 			Filters: []*ec2.Filter{filter},
 		})
 	if err != nil {
-		p.Logger.Error("DescribeSubnets to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "DescribeSubnets to %s failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -885,7 +881,7 @@ func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, err
 func (p *ProviderHandler) DescribeAvailabilityZones(url, credential, zone string) ([]string, error) {
 	awsSession, err := p.initAWSSession(url, credential, zone)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -895,7 +891,7 @@ func (p *ProviderHandler) DescribeAvailabilityZones(url, credential, zone string
 
 	output, err := instanceService.DescribeAvailabilityZones(&input)
 	if err != nil {
-		p.Logger.Error("DescribeAvailabilityZones to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "DescribeAvailabilityZones to %s failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -910,7 +906,7 @@ func (p *ProviderHandler) DescribeZones(url, credential string) ([]string, error
 	zone := DefaultZone
 	awsSession, err := p.initAWSSession(url, credential, zone)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -920,7 +916,7 @@ func (p *ProviderHandler) DescribeZones(url, credential string) ([]string, error
 
 	output, err := instanceService.DescribeRegions(&input)
 	if err != nil {
-		p.Logger.Error("DescribeRegions to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "DescribeRegions to %s failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -934,7 +930,7 @@ func (p *ProviderHandler) DescribeZones(url, credential string) ([]string, error
 func (p *ProviderHandler) DescribeKeyPairs(url, credential, zone string) ([]string, error) {
 	awsSession, err := p.initAWSSession(url, credential, zone)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -944,7 +940,7 @@ func (p *ProviderHandler) DescribeKeyPairs(url, credential, zone string) ([]stri
 
 	output, err := instanceService.DescribeKeyPairs(&input)
 	if err != nil {
-		p.Logger.Error("DescribeKeyPairs to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "DescribeKeyPairs to %s failed: %+v", MyProvider, err)
 		return nil, err
 	}
 
@@ -958,7 +954,7 @@ func (p *ProviderHandler) DescribeKeyPairs(url, credential, zone string) ([]stri
 func (p *ProviderHandler) DescribeImage(runtimeId, imageName string) (string, error) {
 	instanceService, err := p.initInstanceService(runtimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return "", err
 	}
 
@@ -970,7 +966,7 @@ func (p *ProviderHandler) DescribeImage(runtimeId, imageName string) (string, er
 
 	output, err := instanceService.DescribeImages(&input)
 	if err != nil {
-		p.Logger.Error("DescribeImages to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "DescribeImages to %s failed: %+v", MyProvider, err)
 		return "", err
 	}
 
@@ -986,7 +982,7 @@ func (p *ProviderHandler) DescribeImage(runtimeId, imageName string) (string, er
 func (p *ProviderHandler) DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId string) (string, error) {
 	instanceService, err := p.initInstanceService(runtimeId)
 	if err != nil {
-		p.Logger.Error("Init %s api service failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return "", err
 	}
 
@@ -996,7 +992,7 @@ func (p *ProviderHandler) DescribeAvailabilityZoneBySubnetId(runtimeId, subnetId
 
 	output, err := instanceService.DescribeSubnets(&input)
 	if err != nil {
-		p.Logger.Error("DescribeSubnets to %s failed: %+v", MyProvider, err)
+		logger.Error(p.Ctx, "DescribeSubnets to %s failed: %+v", MyProvider, err)
 		return "", err
 	}
 

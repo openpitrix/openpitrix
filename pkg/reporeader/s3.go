@@ -5,6 +5,7 @@
 package reporeader
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	neturl "net/url"
@@ -18,6 +19,7 @@ import (
 )
 
 type S3Reader struct {
+	ctx             context.Context
 	url             *neturl.URL
 	accessKeyId     string
 	secretAccessKey string
@@ -25,7 +27,7 @@ type S3Reader struct {
 	config          *aws.Config
 }
 
-func NewS3Reader(url *neturl.URL, accessKeyId, secretAccessKey, zone, host, bucket string) *S3Reader {
+func NewS3Reader(ctx context.Context, url *neturl.URL, accessKeyId, secretAccessKey, zone, host, bucket string) *S3Reader {
 	creds := credentials.NewStaticCredentials(accessKeyId, secretAccessKey, "")
 	config := &aws.Config{
 		Region:      aws.String(zone),
@@ -33,6 +35,7 @@ func NewS3Reader(url *neturl.URL, accessKeyId, secretAccessKey, zone, host, buck
 		Credentials: creds,
 	}
 	return &S3Reader{
+		ctx:             ctx,
 		url:             url,
 		accessKeyId:     accessKeyId,
 		secretAccessKey: secretAccessKey,
@@ -44,7 +47,7 @@ func NewS3Reader(url *neturl.URL, accessKeyId, secretAccessKey, zone, host, buck
 func (s *S3Reader) GetIndexYaml() ([]byte, error) {
 	sess, err := session.NewSession(s.config)
 	if err != nil {
-		logger.Error("Connect to s3 failed: %+v", err)
+		logger.Error(s.ctx, "Connect to s3 failed: %+v", err)
 		return nil, ErrGetIndexYamlFailed
 	}
 
@@ -55,7 +58,7 @@ func (s *S3Reader) GetIndexYaml() ([]byte, error) {
 		Key:    aws.String(IndexYaml),
 	})
 	if err != nil {
-		logger.Error("Failed to get s3 repo [%+v] index.yaml, error: %+v", s, err)
+		logger.Error(s.ctx, "Failed to get s3 repo [%+v] index.yaml, error: %+v", s, err)
 		return nil, ErrGetIndexYamlFailed
 	}
 

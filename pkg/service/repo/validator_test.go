@@ -5,8 +5,11 @@
 package repo
 
 import (
+	"context"
 	"testing"
 )
+
+var ctx = context.TODO()
 
 func TestValidate1(t *testing.T) {
 	repoType := "s3"
@@ -14,7 +17,7 @@ func TestValidate1(t *testing.T) {
 	credential := `{"access_key_id": "wiandianiaeudsadf8a33uffhufhud", "secret_access_key": "nduaufbuabfuebaufbaufaueuu"}`
 	providers := []string{"qingcloud"}
 
-	err := validate(repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential, providers)
 
 	if err == nil {
 		t.Errorf("expect error, because access_key_id and secret_access_key is wrong")
@@ -27,7 +30,7 @@ func TestValidate2(t *testing.T) {
 	credential := ``
 	providers := []string{"qingcloud"}
 
-	err := validate(repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential, providers)
 
 	if err == nil {
 		t.Errorf("expect error, because type is not matched")
@@ -40,7 +43,7 @@ func TestValidate3(t *testing.T) {
 	credential := ``
 	providers := []string{"qingcloud"}
 
-	err := validate(repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential, providers)
 
 	if err != nil {
 		t.Error(err)
@@ -53,7 +56,7 @@ func TestValidate4(t *testing.T) {
 	credential := ``
 	providers := []string{"qingcloud"}
 
-	err := validate(repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential, providers)
 
 	if err == nil {
 		t.Error("error expect, because this is a bad url")
@@ -66,7 +69,7 @@ func TestValidate5(t *testing.T) {
 	credential := ``
 	providers := []string{"qingcloud"}
 
-	err := validate(repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential, providers)
 
 	if err == nil {
 		t.Error("error expect, because this is a bad url")

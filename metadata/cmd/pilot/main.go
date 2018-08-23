@@ -118,14 +118,14 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
 
 				info, err := client.GetPilotConfig(context.Background(), &pbtypes.Empty{})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -146,14 +146,14 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
 
 				list, err := client.GetFrontgateList(context.Background(), &pbtypes.Empty{})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -165,7 +165,7 @@ EXAMPLE:
 					}
 					matched, err := regexp.MatchString(re, v)
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					if matched {
@@ -208,7 +208,7 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
@@ -217,7 +217,7 @@ EXAMPLE:
 				case "pilot":
 					_, err = client.PingPilot(context.Background(), &pbtypes.Empty{})
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					fmt.Println("OK")
@@ -228,7 +228,7 @@ EXAMPLE:
 						Id: c.String("frontgate-id"),
 					})
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					fmt.Println("OK")
@@ -244,14 +244,14 @@ EXAMPLE:
 						},
 					)
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					fmt.Println("OK")
 					return
 
 				default:
-					logger.Critical("unknown endpoint type: %s\n", s)
+					logger.Critical(nil, "unknown endpoint type: %s\n", s)
 					os.Exit(1)
 				}
 
@@ -299,7 +299,7 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
@@ -315,7 +315,7 @@ EXAMPLE:
 						TimeoutSeconds: int32(c.Int("timeout")),
 					})
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					fmt.Println("OK")
@@ -335,14 +335,14 @@ EXAMPLE:
 						},
 					)
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					fmt.Println("OK")
 					return
 
 				default:
-					logger.Critical("unknown endpoint type: %s\n", s)
+					logger.Critical(nil, "unknown endpoint type: %s\n", s)
 					os.Exit(1)
 				}
 
@@ -376,7 +376,7 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
@@ -387,7 +387,7 @@ EXAMPLE:
 					DronePort:   int32(c.Int("drone-port")),
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -431,7 +431,7 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
@@ -442,7 +442,7 @@ EXAMPLE:
 					DronePort:   int32(c.Int("drone-port")),
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				fmt.Println(JSONString(reply))
@@ -476,7 +476,7 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
@@ -487,7 +487,7 @@ EXAMPLE:
 					DronePort:   int32(c.Int("drone-port")),
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -521,7 +521,7 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
@@ -532,7 +532,7 @@ EXAMPLE:
 					DronePort:   int32(c.Int("drone-port")),
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -559,7 +559,7 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
@@ -568,7 +568,7 @@ EXAMPLE:
 					TaskId: c.String("task-id"),
 				})
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -594,12 +594,12 @@ EXAMPLE:
 				task := func() *pbtypes.SubTaskMessage {
 					data, err := ioutil.ReadFile(c.String("task-file"))
 					if err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					p := new(pbtypes.SubTaskMessage)
 					if err := json.Unmarshal(data, p); err != nil {
-						logger.Critical("%+v", err)
+						logger.Critical(nil, "%+v", err)
 						os.Exit(1)
 					}
 					return p
@@ -609,14 +609,14 @@ EXAMPLE:
 					context.Background(), cfg.Host, int(cfg.ListenPort),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 				defer conn.Close()
 
 				_, err = client.HandleSubtask(context.Background(), task)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 
@@ -642,7 +642,7 @@ EXAMPLE:
 					c.GlobalString("pilot-server-name"),
 				)
 				if err != nil {
-					logger.Critical("%+v", err)
+					logger.Critical(nil, "%+v", err)
 					os.Exit(1)
 				}
 

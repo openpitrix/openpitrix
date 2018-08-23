@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"k8s.io/helm/pkg/repo"
 
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
@@ -48,27 +49,27 @@ func (i *helmIndexer) IndexRepo() error {
 	}
 	for chartName, chartVersions := range indexFile.Entries {
 		var appId string
-		i.log.Debug("Start index chart [%s]", chartName)
-		i.log.Debug("Chart [%s] has [%d] versions", chartName, chartVersions.Len())
+		logger.Debug(i.ctx, "Start index chart [%s]", chartName)
+		logger.Debug(i.ctx, "Chart [%s] has [%d] versions", chartName, chartVersions.Len())
 		if len(chartVersions) == 0 {
 			return fmt.Errorf("failed to sync chart [%s], no versions", chartName)
 		}
 		appId, err = i.syncAppInfo(helmVersionWrapper{chartVersions[0]})
 		if err != nil {
-			i.log.Error("Failed to sync chart [%s] to app info", chartName)
+			logger.Error(i.ctx, "Failed to sync chart [%s] to app info", chartName)
 			return err
 		}
-		i.log.Info("Sync chart [%s] to app [%s] success", chartName, appId)
+		logger.Info(i.ctx, "Sync chart [%s] to app [%s] success", chartName, appId)
 		sort.Sort(chartVersions)
 		for index, chartVersion := range chartVersions {
 			var versionId string
 			v := helmVersionWrapper{ChartVersion: chartVersion}
 			versionId, err = i.syncAppVersionInfo(appId, v, index)
 			if err != nil {
-				i.log.Error("Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
+				logger.Error(i.ctx, "Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())
 				return err
 			}
-			i.log.Debug("Chart version [%s] sync to app version [%s]", chartVersion.GetVersion(), versionId)
+			logger.Debug(i.ctx, "Chart version [%s] sync to app version [%s]", chartVersion.GetVersion(), versionId)
 		}
 	}
 	return err

@@ -25,13 +25,13 @@ var (
 )
 
 func (p *Server) GetPilotConfig(context.Context, *pbtypes.Empty) (*pbtypes.PilotConfig, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	return proto.Clone(p.cfg).(*pbtypes.PilotConfig), nil
 }
 
 func (p *Server) GetPilotClientTLSConfig(context.Context, *pbtypes.Empty) (*pbtypes.PilotClientTLSConfig, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	cfg := &pbtypes.PilotClientTLSConfig{
 		CaCrtData:       p.pbTlsCfg.CaCrtData,
@@ -44,17 +44,17 @@ func (p *Server) GetPilotClientTLSConfig(context.Context, *pbtypes.Empty) (*pbty
 }
 
 func (p *Server) GetFrontgateList(context.Context, *pbtypes.Empty) (*pbtypes.FrontgateIdList, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	return nil, fmt.Errorf("TODO")
 }
 
 func (p *Server) GetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateId) (*pbtypes.FrontgateConfig, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.Id)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -66,7 +66,7 @@ func (p *Server) GetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateI
 
 	reply, err := client.GetFrontgateConfig(&pbtypes.Empty{})
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -74,11 +74,11 @@ func (p *Server) GetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateI
 }
 
 func (p *Server) SetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateConfig) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.Id)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -90,7 +90,7 @@ func (p *Server) SetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateC
 
 	reply, err := client.SetFrontgateConfig(arg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -98,11 +98,11 @@ func (p *Server) SetFrontgateConfig(ctx context.Context, arg *pbtypes.FrontgateC
 }
 
 func (p *Server) GetDroneConfig(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pbtypes.DroneConfig, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -114,18 +114,18 @@ func (p *Server) GetDroneConfig(ctx context.Context, arg *pbtypes.DroneEndpoint)
 
 	reply, err := client.GetDroneConfig(arg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
 	return reply, nil
 }
 func (p *Server) SetDroneConfig(ctx context.Context, arg *pbtypes.SetDroneConfigRequest) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.Endpoint.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -137,7 +137,7 @@ func (p *Server) SetDroneConfig(ctx context.Context, arg *pbtypes.SetDroneConfig
 
 	_, err = client.SetDroneConfig(arg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -145,7 +145,7 @@ func (p *Server) SetDroneConfig(ctx context.Context, arg *pbtypes.SetDroneConfig
 }
 
 func (p *Server) FrontgateChannel(ch pbpilot.PilotServiceForFrontgate_FrontgateChannelServer) error {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	c := pbfrontgate.NewFrontgateServiceClient(
 		pilotutil.NewFrontgateChannelFromServer(ch),
@@ -153,7 +153,7 @@ func (p *Server) FrontgateChannel(ch pbpilot.PilotServiceForFrontgate_FrontgateC
 
 	info, err := c.GetFrontgateConfig(&pbtypes.Empty{})
 	if err != nil {
-		logger.Debug("%+v", err)
+		logger.Debug(nil, "%+v", err)
 		return err
 	}
 
@@ -163,11 +163,11 @@ func (p *Server) FrontgateChannel(ch pbpilot.PilotServiceForFrontgate_FrontgateC
 }
 
 func (p *Server) GetConfdConfig(ctx context.Context, arg *pbtypes.ConfdEndpoint) (*pbtypes.ConfdConfig, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -182,7 +182,7 @@ func (p *Server) GetConfdConfig(ctx context.Context, arg *pbtypes.ConfdEndpoint)
 		DronePort: arg.DronePort,
 	})
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -190,11 +190,11 @@ func (p *Server) GetConfdConfig(ctx context.Context, arg *pbtypes.ConfdEndpoint)
 }
 
 func (p *Server) IsConfdRunning(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pbtypes.Bool, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -209,7 +209,7 @@ func (p *Server) IsConfdRunning(ctx context.Context, arg *pbtypes.DroneEndpoint)
 		DronePort: arg.DronePort,
 	})
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -217,11 +217,11 @@ func (p *Server) IsConfdRunning(ctx context.Context, arg *pbtypes.DroneEndpoint)
 }
 
 func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -236,7 +236,7 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.DroneEndpoint) (*p
 		DronePort: arg.DronePort,
 	})
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -244,11 +244,11 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.DroneEndpoint) (*p
 }
 
 func (p *Server) StopConfd(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -263,7 +263,7 @@ func (p *Server) StopConfd(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pb
 		DronePort: arg.DronePort,
 	})
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -271,11 +271,11 @@ func (p *Server) StopConfd(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pb
 }
 
 func (p *Server) RegisterMetadata(ctx context.Context, arg *pbtypes.SubTask_RegisterMetadata) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -287,7 +287,7 @@ func (p *Server) RegisterMetadata(ctx context.Context, arg *pbtypes.SubTask_Regi
 
 	_, err = client.RegisterMetadata(arg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -295,11 +295,11 @@ func (p *Server) RegisterMetadata(ctx context.Context, arg *pbtypes.SubTask_Regi
 }
 
 func (p *Server) DeregisterMetadata(ctx context.Context, arg *pbtypes.SubTask_DeregisterMetadata) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -311,7 +311,7 @@ func (p *Server) DeregisterMetadata(ctx context.Context, arg *pbtypes.SubTask_De
 
 	_, err = client.DeregisterMetadata(arg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -319,11 +319,11 @@ func (p *Server) DeregisterMetadata(ctx context.Context, arg *pbtypes.SubTask_De
 }
 
 func (p *Server) RegisterCmd(ctx context.Context, arg *pbtypes.SubTask_RegisterCmd) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -335,7 +335,7 @@ func (p *Server) RegisterCmd(ctx context.Context, arg *pbtypes.SubTask_RegisterC
 
 	_, err = client.RegisterCmd(arg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -343,11 +343,11 @@ func (p *Server) RegisterCmd(ctx context.Context, arg *pbtypes.SubTask_RegisterC
 }
 
 func (p *Server) DeregisterCmd(ctx context.Context, arg *pbtypes.SubTask_DeregisterCmd) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -359,7 +359,7 @@ func (p *Server) DeregisterCmd(ctx context.Context, arg *pbtypes.SubTask_Deregis
 
 	_, err = client.DeregisterCmd(arg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -367,33 +367,33 @@ func (p *Server) DeregisterCmd(ctx context.Context, arg *pbtypes.SubTask_Deregis
 }
 
 func (p *Server) ReportSubTaskStatus(ctx context.Context, arg *pbtypes.SubTaskStatus) (*pbtypes.Empty, error) {
-	logger.Info("%s taskId: %s", funcutil.CallerName(1), arg.TaskId)
+	logger.Info(nil, "%s taskId: %s", funcutil.CallerName(1), arg.TaskId)
 
 	p.taskStatusMgr.PutStatus(*arg)
 	return &pbtypes.Empty{}, nil
 }
 
 func (p *Server) GetSubtaskStatus(ctx context.Context, arg *pbtypes.SubTaskId) (*pbtypes.SubTaskStatus, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	if s, ok := p.taskStatusMgr.GetStatus(arg.TaskId); ok {
 		return &s, nil
 	}
 
 	err := fmt.Errorf("pilot: not found, taskId = %s", arg.TaskId)
-	logger.Warn("%+v", err)
+	logger.Warn(nil, "%+v", err)
 	return nil, err
 }
 
 func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	switch msg.Action {
 	case pbtypes.SubTaskAction_StartConfd.String():
 		var x pbtypes.SubTask_StartConfd
 		err := json.Unmarshal([]byte(msg.Directive), &x)
 		if err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return nil, err
 		}
 
@@ -421,7 +421,7 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		var x pbtypes.SubTask_StopConfd
 		err := json.Unmarshal([]byte(msg.Directive), &x)
 		if err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return nil, err
 		}
 
@@ -453,7 +453,7 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		var x pbtypes.SubTask_RegisterMetadata
 		err := json.Unmarshal([]byte(msg.Directive), &x)
 		if err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return nil, err
 		}
 
@@ -481,7 +481,7 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		var x pbtypes.SubTask_DeregisterMetadata
 		err := json.Unmarshal([]byte(msg.Directive), &x)
 		if err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return nil, err
 		}
 
@@ -509,7 +509,7 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		var x pbtypes.SubTask_RegisterCmd
 		err := json.Unmarshal([]byte(msg.Directive), &x)
 		if err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return nil, err
 		}
 
@@ -537,7 +537,7 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		var x pbtypes.SubTask_DeregisterCmd
 		err := json.Unmarshal([]byte(msg.Directive), &x)
 		if err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return nil, err
 		}
 
@@ -564,7 +564,7 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 		var x pbtypes.SubTask_GetTaskStatus
 		err := json.Unmarshal([]byte(msg.Directive), &x)
 		if err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return nil, err
 		}
 
@@ -573,7 +573,7 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 
 		_, err = p.GetSubtaskStatus(ctx, &pbtypes.SubTaskId{})
 		if err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return nil, err
 		}
 
@@ -581,23 +581,23 @@ func (p *Server) HandleSubtask(ctx context.Context, msg *pbtypes.SubTaskMessage)
 
 	default:
 		err := fmt.Errorf("pilot: unknown action: %s", msg.Action)
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 }
 
 func (p *Server) PingPilot(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	return &pbtypes.Empty{}, nil
 }
 
 func (p *Server) PingFrontgate(ctx context.Context, arg *pbtypes.FrontgateId) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.Id)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -609,7 +609,7 @@ func (p *Server) PingFrontgate(ctx context.Context, arg *pbtypes.FrontgateId) (*
 
 	_, err = client.PingFrontgate(&pbtypes.Empty{})
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -617,11 +617,11 @@ func (p *Server) PingFrontgate(ctx context.Context, arg *pbtypes.FrontgateId) (*
 }
 
 func (p *Server) PingFrontgateNode(ctx context.Context, arg *pbtypes.FrontgateNodeId) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetNodeClient(arg.Id, arg.NodeId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -633,7 +633,7 @@ func (p *Server) PingFrontgateNode(ctx context.Context, arg *pbtypes.FrontgateNo
 
 	_, err = client.PingFrontgateNode(&pbtypes.Empty{})
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -641,11 +641,11 @@ func (p *Server) PingFrontgateNode(ctx context.Context, arg *pbtypes.FrontgateNo
 }
 
 func (p *Server) PingDrone(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pbtypes.Empty, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.FrontgateId)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -661,7 +661,7 @@ func (p *Server) PingDrone(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pb
 		DronePort:   arg.DronePort,
 	})
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -669,14 +669,14 @@ func (p *Server) PingDrone(ctx context.Context, arg *pbtypes.DroneEndpoint) (*pb
 }
 
 func (p *Server) RunCommandOnFrontgateNode(ctx context.Context, arg *pbtypes.RunCommandOnFrontgateRequest) (*pbtypes.String, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetNodeClient(
 		arg.GetEndpoint().GetFrontgateId(),
 		arg.GetEndpoint().GetFrontgateNodeId(),
 	)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -688,7 +688,7 @@ func (p *Server) RunCommandOnFrontgateNode(ctx context.Context, arg *pbtypes.Run
 
 	reply, err := client.RunCommand(arg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -696,11 +696,11 @@ func (p *Server) RunCommandOnFrontgateNode(ctx context.Context, arg *pbtypes.Run
 }
 
 func (p *Server) RunCommandOnDrone(ctx context.Context, arg *pbtypes.RunCommandOnDroneRequest) (*pbtypes.String, error) {
-	logger.Info(funcutil.CallerName(1))
+	logger.Info(nil, funcutil.CallerName(1))
 
 	client, err := p.fgClientMgr.GetClient(arg.GetEndpoint().GetFrontgateId())
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -712,7 +712,7 @@ func (p *Server) RunCommandOnDrone(ctx context.Context, arg *pbtypes.RunCommandO
 
 	reply, err := client.RunCommandOnDrone(arg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 

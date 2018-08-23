@@ -38,7 +38,7 @@ type ConfdServer struct {
 
 func NewConfdServer(cfgpath string) *ConfdServer {
 	if !filepath.IsAbs(cfgpath) {
-		logger.Error("NewConfdServer: cfgpath is not abs path", cfgpath)
+		logger.Error(nil, "NewConfdServer: cfgpath is not abs path", cfgpath)
 	}
 
 	return &ConfdServer{
@@ -70,7 +70,7 @@ func (p *ConfdServer) SetConfig(cfg *pbtypes.ConfdConfig, fnHookKeyAdjuster func
 
 	config, backendConfig, err := p.parseConfig(cfg)
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 
@@ -90,7 +90,7 @@ func (p *ConfdServer) GetBackendClient() libconfd.BackendClient {
 }
 
 func (p *ConfdServer) Start(opts ...libconfd.Options) error {
-	logger.Info("ConfdServer: Start")
+	logger.Info(nil, "ConfdServer: Start")
 
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -99,17 +99,17 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 		p.processor = libconfd.NewProcessor()
 	}
 	if p.running {
-		logger.Error("ConfdServer: confd is running")
+		logger.Error(nil, "ConfdServer: confd is running")
 		return fmt.Errorf("drone: confd is running")
 	}
 
 	if p.cfg == nil {
-		logger.Error("ConfdServer: config is nil")
+		logger.Error(nil, "ConfdServer: config is nil")
 		return fmt.Errorf("drone: config is nil")
 	}
 
 	if s := p.backendConfig.Type; s != backends.Etcdv3BackendType {
-		logger.Error("ConfdServer: unsupport confd backend: " + s)
+		logger.Error(nil, "ConfdServer: unsupport confd backend: "+s)
 		return fmt.Errorf("drone: unsupport confd backend: %s", s)
 	}
 
@@ -120,7 +120,7 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 
 	backendClient, err := libconfd.NewBackendClient(p.backendConfig)
 	if err != nil {
-		logger.Error("ConfdServer: NewBackendClient: %v", err)
+		logger.Error(nil, "ConfdServer: NewBackendClient: %v", err)
 		return err
 	}
 
@@ -128,14 +128,14 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 	p.running = true
 
 	go func() {
-		logger.Info("ConfdServer: run...")
+		logger.Info(nil, "ConfdServer: run...")
 
 		// set log level
 		libconfd.GetLogger().SetLevel(p.config.LogLevel)
 
 		var err = p.processor.Run(p.config, backendClient) // blocked
 		if err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 		}
 
 		p.mu.Lock()
@@ -144,14 +144,14 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 		p.err = err
 		p.mu.Unlock()
 
-		logger.Info("ConfdServer: stoped")
+		logger.Info(nil, "ConfdServer: stoped")
 	}()
 
 	return nil
 }
 
 func (p *ConfdServer) Stop() error {
-	logger.Info("ConfdServer: Stop")
+	logger.Info(nil, "ConfdServer: Stop")
 
 	p.mu.Lock()
 	var processer = p.processor
@@ -162,7 +162,7 @@ func (p *ConfdServer) Stop() error {
 
 	if processer != nil {
 		if err := processer.Close(); err != nil {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return err
 		}
 	}
@@ -179,25 +179,25 @@ func (p *ConfdServer) Err() error {
 func (p *ConfdServer) parseConfig(pbcfg *pbtypes.ConfdConfig) (*libconfd.Config, *libconfd.BackendConfig, error) {
 	sCfg, err := json.Marshal(pbcfg.GetProcessorConfig())
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, nil, err
 	}
 
 	sCfgBackend, err := json.Marshal(pbcfg.GetBackendConfig())
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, nil, err
 	}
 
 	cfg, err := libconfd.LoadConfigFromJsonString(string(sCfg))
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, nil, err
 	}
 
 	cfgBackend, err := libconfd.LoadBackendConfigFromJsonString(string(sCfgBackend))
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return nil, nil, err
 	}
 
@@ -210,7 +210,7 @@ func (p *ConfdServer) Save() error {
 
 	data, err := json.MarshalIndent(p.cfg, "", "\t")
 	if err != nil {
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 
@@ -218,7 +218,7 @@ func (p *ConfdServer) Save() error {
 	bakpath := p.cfgpath + time.Now().Format(".20060102.bak")
 	if false {
 		if err := os.Rename(p.cfgpath, bakpath); err != nil && !os.IsNotExist(err) {
-			logger.Warn("%+v", err)
+			logger.Warn(nil, "%+v", err)
 			return err
 		}
 	}
@@ -229,7 +229,7 @@ func (p *ConfdServer) Save() error {
 		if false {
 			os.Rename(bakpath, p.cfgpath) // revert
 		}
-		logger.Warn("%+v", err)
+		logger.Warn(nil, "%+v", err)
 		return err
 	}
 

@@ -5,18 +5,21 @@
 package app
 
 import (
+	"context"
+
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 )
 
-func (p *Server) getApp(appId string) (*models.App, error) {
+func (p *Server) getApp(ctx context.Context, appId string) (*models.App, error) {
 	app := &models.App{}
-	err := p.Db.
+	err := pi.Global().DB(ctx).
 		Select(models.AppColumns...).
 		From(models.AppTableName).
-		Where(db.Eq("app_id", appId)).
+		Where(db.Eq(models.ColumnAppId, appId)).
 		LoadOne(&app)
 	if err != nil {
 		return nil, err
@@ -24,12 +27,12 @@ func (p *Server) getApp(appId string) (*models.App, error) {
 	return app, nil
 }
 
-func (p *Server) getApps(appIds []string) ([]*models.App, error) {
+func (p *Server) getApps(ctx context.Context, appIds []string) ([]*models.App, error) {
 	var apps []*models.App
-	_, err := p.Db.
+	_, err := pi.Global().DB(ctx).
 		Select(models.AppColumns...).
 		From(models.AppTableName).
-		Where(db.Eq("app_id", appIds)).
+		Where(db.Eq(models.ColumnAppId, appIds)).
 		Load(&apps)
 	if err != nil {
 		return nil, err
@@ -37,12 +40,12 @@ func (p *Server) getApps(appIds []string) ([]*models.App, error) {
 	return apps, nil
 }
 
-func (p *Server) getLatestAppVersion(appId string) (*models.AppVersion, error) {
+func (p *Server) getLatestAppVersion(ctx context.Context, appId string) (*models.AppVersion, error) {
 	appVersion := &models.AppVersion{}
-	err := p.Db.
+	err := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
 		From(models.AppVersionTableName).
-		Where(db.Eq("app_id", appId)).
+		Where(db.Eq(models.ColumnAppId, appId)).
 		OrderDir(models.ColumnSequence, false).
 		LoadOne(&appVersion)
 	if err != nil {
@@ -54,10 +57,10 @@ func (p *Server) getLatestAppVersion(appId string) (*models.AppVersion, error) {
 	return appVersion, nil
 }
 
-func (p *Server) formatApp(app *models.App) (*pb.App, error) {
+func (p *Server) formatApp(ctx context.Context, app *models.App) (*pb.App, error) {
 	pbApp := models.AppToPb(app)
 
-	latestAppVersion, err := p.getLatestAppVersion(app.AppId)
+	latestAppVersion, err := p.getLatestAppVersion(ctx, app.AppId)
 	if err != nil {
 		return nil, err
 	}
@@ -66,19 +69,19 @@ func (p *Server) formatApp(app *models.App) (*pb.App, error) {
 	return pbApp, nil
 }
 
-func (p *Server) formatAppSet(apps []*models.App) ([]*pb.App, error) {
+func (p *Server) formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
 	var pbApps []*pb.App
 	var appIds []string
 	for _, app := range apps {
 		var pbApp *pb.App
-		pbApp, err := p.formatApp(app)
+		pbApp, err := p.formatApp(ctx, app)
 		if err != nil {
 			return pbApps, err
 		}
 		appIds = append(appIds, app.AppId)
 		pbApps = append(pbApps, pbApp)
 	}
-	rcmap, err := categoryutil.GetResourcesCategories(p.Db, appIds)
+	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), appIds)
 	if err != nil {
 		return pbApps, err
 	}

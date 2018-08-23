@@ -72,7 +72,7 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 func (f *Frontgate) getCertificateExec() string {
 	var pilotClientTLSConfig *types.PilotClientTLSConfig
 
-	ctx := clientutil.GetSystemUserContext()
+	ctx := clientutil.SetSystemUserToContext(f.Ctx)
 	err := retryutil.Retry(3, constants.RetryInterval, func() error {
 		pilotClient, err := pilotclient.NewClient()
 		if err != nil {
@@ -86,7 +86,7 @@ func (f *Frontgate) getCertificateExec() string {
 	})
 
 	if err != nil {
-		logger.Critical("Get pilot client tls config failed, %+v", err)
+		logger.Critical(f.Ctx, "Get pilot client tls config failed, %+v", err)
 		return ""
 	}
 

@@ -5,6 +5,8 @@
 package pi
 
 import (
+	"context"
+
 	"github.com/gocraft/dbr"
 
 	"openpitrix.io/openpitrix/pkg/db"
@@ -32,7 +34,7 @@ func getResourceIds(key string, whereCond []dbr.Builder) []string {
 	return rids
 }
 
-func GetUpdateHook(p *Pi) db.UpdateHook {
+func (p *Pi) GetUpdateHook(ctx context.Context) db.UpdateHook {
 	return func(query *db.UpdateQuery) {
 		table := query.Table
 		whereCond := query.WhereCond
@@ -47,7 +49,7 @@ func GetUpdateHook(p *Pi) db.UpdateHook {
 		}
 		for _, rid := range rids {
 			var owner string
-			err := p.Db.Select(models.ColumnOwner).From(table).Where(db.Eq(key, rids)).LoadOne(&owner)
+			err := p.DB(ctx).Select(models.ColumnOwner).From(table).Where(db.Eq(key, rids)).LoadOne(&owner)
 			if err != nil {
 				continue
 			}
@@ -60,12 +62,12 @@ func GetUpdateHook(p *Pi) db.UpdateHook {
 					event.WithValue(column, value)
 				}
 			}
-			topic.PushEvent(p.Etcd, owner, topic.Update, event)
+			topic.PushEvent(ctx, p.Etcd(ctx), owner, topic.Update, event)
 		}
 	}
 }
 
-func GetDeleteHook(p *Pi) db.DeleteHook {
+func (p *Pi) GetDeleteHook(ctx context.Context) db.DeleteHook {
 	return func(query *db.DeleteQuery) {
 		table := query.Table
 		whereCond := query.WhereCond
@@ -80,19 +82,19 @@ func GetDeleteHook(p *Pi) db.DeleteHook {
 		}
 		for _, rid := range rids {
 			var owner string
-			err := p.Db.Select(models.ColumnOwner).From(table).Where(db.Eq(key, rid)).LoadOne(&owner)
+			err := p.DB(ctx).Select(models.ColumnOwner).From(table).Where(db.Eq(key, rid)).LoadOne(&owner)
 			if err != nil {
 				continue
 			}
 			if owner == "" {
 				continue
 			}
-			topic.PushEvent(p.Etcd, owner, topic.Delete, topic.NewResource(table, rid))
+			topic.PushEvent(ctx, p.Etcd(ctx), owner, topic.Delete, topic.NewResource(table, rid))
 		}
 	}
 }
 
-func GetInsertHook(p *Pi) db.InsertHook {
+func (p *Pi) GetInsertHook(ctx context.Context) db.InsertHook {
 	return func(query *db.InsertQuery) {
 		table := query.Table
 		columns, ok := models.PushEventTables[table]
@@ -120,7 +122,7 @@ func GetInsertHook(p *Pi) db.InsertHook {
 		}
 		for rid, resource := range resources {
 			var owner string
-			err := p.Db.Select(models.ColumnOwner).From(table).Where(db.Eq(key, rid)).LoadOne(&owner)
+			err := p.DB(ctx).Select(models.ColumnOwner).From(table).Where(db.Eq(key, rid)).LoadOne(&owner)
 			if err != nil {
 				return
 			}
@@ -131,7 +133,7 @@ func GetInsertHook(p *Pi) db.InsertHook {
 			for key, value := range resource {
 				event.WithValue(key, value)
 			}
-			topic.PushEvent(p.Etcd, owner, topic.Create, event)
+			topic.PushEvent(ctx, p.Etcd(ctx), owner, topic.Create, event)
 		}
 	}
 }

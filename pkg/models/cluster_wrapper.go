@@ -5,6 +5,7 @@
 package models
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -15,6 +16,7 @@ import (
 )
 
 type ClusterWrapper struct {
+	ctx                      context.Context
 	Cluster                  *Cluster
 	ClusterNodesWithKeyPairs map[string]*ClusterNodeWithKeyPairs // key=nodeId
 	ClusterCommons           map[string]*ClusterCommon           // key=role
@@ -23,11 +25,13 @@ type ClusterWrapper struct {
 	ClusterLoadbalancers     map[string][]*ClusterLoadbalancer   // key=role
 }
 
-func NewClusterWrapper(data string) (*ClusterWrapper, error) {
-	clusterWrapper := &ClusterWrapper{}
+func NewClusterWrapper(ctx context.Context, data string) (*ClusterWrapper, error) {
+	clusterWrapper := &ClusterWrapper{
+		ctx: ctx,
+	}
 	err := jsonutil.Decode([]byte(data), clusterWrapper)
 	if err != nil {
-		logger.Error("Decode [%s] into cluster wrapper failed: %+v", data, err)
+		logger.Error(ctx, "Decode [%s] into cluster wrapper failed: %+v", data, err)
 	}
 	return clusterWrapper, err
 }
@@ -120,7 +124,7 @@ func (c *ClusterWrapper) GetCommonAttribute(role, attributeName string) interfac
 
 	clusterCommon, exist := c.ClusterCommons[role]
 	if !exist {
-		logger.Error("No such role [%s] in cluster [%s]. ",
+		logger.Error(c.ctx, "No such role [%s] in cluster [%s]. ",
 			role, c.Cluster.ClusterId)
 		return nil
 	}
@@ -152,7 +156,7 @@ func (c *ClusterWrapper) GetEndpoints() (map[string]map[string]interface{}, erro
 		endpoints := make(map[string]map[string]interface{})
 		err := jsonutil.Decode([]byte(c.Cluster.Endpoints), &endpoints)
 		if err != nil {
-			logger.Error("Unmarshal cluster [%s] endpoints failed: %+v", c.Cluster.ClusterId, err)
+			logger.Error(c.ctx, "Unmarshal cluster [%s] endpoints failed: %+v", c.Cluster.ClusterId, err)
 			return nil, err
 		}
 		for _, service := range endpoints {
@@ -180,18 +184,18 @@ func (c *ClusterWrapper) GetEndpoints() (map[string]map[string]interface{}, erro
 							cRole = c.ClusterRoles[role]
 						}
 					} else {
-						logger.Error("Link [%s] in endpoints must be in env.x or <role name>.env.x for the cluster [%s]",
+						logger.Error(c.ctx, "Link [%s] in endpoints must be in env.x or <role name>.env.x for the cluster [%s]",
 							port, c.Cluster.ClusterId)
 						return nil, fmt.Errorf("Cluster [%s] endpoints link error. ", c.Cluster.ClusterId)
 					}
 					if cRole == nil {
-						logger.Error("Can't find the node of the cluster [%s] for the endpoints", c.Cluster.ClusterId)
+						logger.Error(c.ctx, "Can't find the node of the cluster [%s] for the endpoints", c.Cluster.ClusterId)
 						return nil, fmt.Errorf("Cluster [%s] endpoints parse failed. ", c.Cluster.ClusterId)
 					}
 					env := make(map[string]interface{})
 					err = jsonutil.Decode([]byte(cRole.Env), &env)
 					if err != nil {
-						logger.Error("Unmarshal cluster [%s] env failed: %+v", c.Cluster.ClusterId, err)
+						logger.Error(c.ctx, "Unmarshal cluster [%s] env failed: %+v", c.Cluster.ClusterId, err)
 						return nil, err
 					}
 					value, exist := env[param]

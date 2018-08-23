@@ -3,7 +3,6 @@ package cluster
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -17,61 +16,39 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
-func checkPermissionAndTransition(clusterId, userId string, status []string) (*models.Cluster, error) {
-	cluster, err := getCluster(clusterId, userId)
+func checkPermissionAndTransition(ctx context.Context, clusterId, userId string, status []string) (*models.Cluster, error) {
+	cluster, err := getCluster(ctx, clusterId, userId)
 	if err != nil {
 		return nil, err
 	}
 	if cluster.TransitionStatus != "" {
-		logger.Error("Cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
+		logger.Error(ctx, "Cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
 		return nil, fmt.Errorf("cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
 	}
 	if status != nil && !reflectutil.In(cluster.Status, status) {
-		logger.Error("Cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
+		logger.Error(ctx, "Cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
 		return nil, fmt.Errorf("cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
 	}
 	return cluster, nil
 }
 
-func checkNodesPermissionAndTransition(nodeIds []string, userId string, status []string) ([]*models.ClusterNode, error) {
-	clusterNodes, err := getClusterNodes(nodeIds, userId)
+func checkNodesPermissionAndTransition(ctx context.Context, nodeIds []string, userId string, status []string) ([]*models.ClusterNode, error) {
+	clusterNodes, err := getClusterNodes(ctx, nodeIds, userId)
 	if err != nil {
 		return nil, err
 	}
 	for _, clusterNode := range clusterNodes {
 		if clusterNode.TransitionStatus != "" {
-			logger.Error("Cluster node [%s] is [%s], please try later", clusterNode.NodeId, clusterNode.TransitionStatus)
+			logger.Error(ctx, "Cluster node [%s] is [%s], please try later", clusterNode.NodeId, clusterNode.TransitionStatus)
 			return nil, fmt.Errorf("cluster [%s] is [%s], please try later", clusterNode.NodeId, clusterNode.TransitionStatus)
 		}
 		if status != nil && !reflectutil.In(clusterNode.Status, status) {
-			logger.Error("Cluster [%s] status is [%s] not in %s", clusterNode.NodeId, clusterNode.Status, status)
+			logger.Error(ctx, "Cluster [%s] status is [%s] not in %s", clusterNode.NodeId, clusterNode.Status, status)
 			return nil, fmt.Errorf("cluster [%s] status is [%s] not in %s", clusterNode.NodeId, clusterNode.Status, status)
 		}
 	}
 
 	return clusterNodes, nil
-}
-
-func isActionSupported(clusterId, role, action string) bool {
-	clusterWrapper, err := getClusterWrapper(clusterId)
-	if err != nil {
-		return false
-	}
-	clusterCommon, exist := clusterWrapper.ClusterCommons[role]
-	if !exist {
-		logger.Error("Cluster [%s] has no role [%s]", clusterId, role)
-		return false
-	}
-	advanceActions := clusterCommon.AdvancedActions
-	if advanceActions == "" {
-		return false
-	}
-	actions := strings.Split(advanceActions, ",")
-	if reflectutil.In(action, actions) {
-		return true
-	} else {
-		return false
-	}
 }
 
 func (p *Server) Checker(ctx context.Context, req interface{}) error {
@@ -145,7 +122,7 @@ func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, p
 	// check image
 	_, err := pi.Global().GlobalConfig().GetRuntimeImageIdAndUrl(runtime.RuntimeUrl, runtime.Zone)
 	if err != nil {
-		return gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorValidateFailed)
+		return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorValidateFailed)
 	}
 
 	// check subnet, vpc, eip
@@ -155,8 +132,8 @@ func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, p
 		Zone:      []string{clusterWrapper.Cluster.Zone},
 	})
 	if err != nil {
-		logger.Error("Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
-		return gerr.NewWithDetail(gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
+		logger.Error(ctx, "Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
+		return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
 	}
 	vpcId := ""
 	if subnetResponse != nil && len(subnetResponse.SubnetSet) == 1 {
@@ -164,22 +141,22 @@ func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, p
 	}
 	if vpcId == "" {
 		err = fmt.Errorf("subnet [%s] not found or vpc not bind eip", clusterWrapper.Cluster.SubnetId)
-		return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorSubnetNotFound, clusterWrapper.Cluster.SubnetId)
+		return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorSubnetNotFound, clusterWrapper.Cluster.SubnetId)
 	}
 	clusterWrapper.Cluster.VpcId = vpcId
 
 	// check resource
 	err = providerInterface.CheckResource(ctx, clusterWrapper)
 	if err != nil {
-		return gerr.NewWithDetail(gerr.PermissionDenied, err, gerr.ErrorResourceQuotaNotEnough, err.Error())
+		return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceQuotaNotEnough, err.Error())
 	}
 
 	fg := &Frontgate{
 		Runtime: runtime,
 	}
-	frontgate, err := fg.GetActiveFrontgate(clusterWrapper)
+	frontgate, err := fg.GetActiveFrontgate(ctx, clusterWrapper)
 	if err != nil {
-		logger.Error("Get frontgate in vpc [%s] user [%s] failed. ", clusterWrapper.Cluster.VpcId, clusterWrapper.Cluster.Owner)
+		logger.Error(ctx, "Get frontgate in vpc [%s] user [%s] failed. ", clusterWrapper.Cluster.VpcId, clusterWrapper.Cluster.Owner)
 		return err
 	}
 

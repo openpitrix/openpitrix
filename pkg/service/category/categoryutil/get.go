@@ -5,7 +5,8 @@
 package categoryutil
 
 import (
-	"openpitrix.io/openpitrix/pkg/client"
+	"context"
+
 	categoryclient "openpitrix.io/openpitrix/pkg/client/category"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -14,7 +15,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
-func GetResourcesCategories(d *db.Database, resourceIds []string) (map[string][]*pb.ResourceCategory, error) {
+func GetResourcesCategories(ctx context.Context, d *db.Conn, resourceIds []string) (map[string][]*pb.ResourceCategory, error) {
 	var rcmap = make(map[string][]*pb.ResourceCategory)
 	if len(resourceIds) == 0 {
 		return rcmap, nil
@@ -42,7 +43,6 @@ func GetResourcesCategories(d *db.Database, resourceIds []string) (map[string][]
 		})
 		rcmap[r.ResourceId] = categorySet
 	}
-	ctx := client.GetSystemUserContext()
 	c, err := categoryclient.NewCategoryManagerClient()
 	if err != nil {
 		return rcmap, err

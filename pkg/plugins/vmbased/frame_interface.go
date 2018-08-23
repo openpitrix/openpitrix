@@ -5,6 +5,7 @@
 package vmbased
 
 import (
+	"context"
 	"fmt"
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
@@ -28,9 +29,9 @@ type FrameInterface interface {
 	ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error)
 }
 
-func NewFrameInterface(job *models.Job, logger *logger.Logger, advancedParam ...string) (FrameInterface, error) {
+func NewFrameInterface(ctx context.Context, job *models.Job, advancedParam ...string) (FrameInterface, error) {
 	if job == nil {
-		return &Frame{Logger: logger}, nil
+		return &Frame{Ctx: ctx}, nil
 	}
 
 	var clusterWrapper *models.ClusterWrapper
@@ -47,21 +48,21 @@ func NewFrameInterface(job *models.Job, logger *logger.Logger, advancedParam ...
 		if err != nil {
 			return nil, err
 		}
-		ctx := clientutil.GetSystemUserContext()
+		ctx := clientutil.SetSystemUserToContext(ctx)
 		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
 		if err != nil {
 			return nil, err
 		}
 		clusterWrapper = pbClusterWrappers[0]
 	default:
-		clusterWrapper, err = models.NewClusterWrapper(job.Directive)
+		clusterWrapper, err = models.NewClusterWrapper(ctx, job.Directive)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	runtimeId := clusterWrapper.Cluster.RuntimeId
-	runtime, err := runtimeclient.NewRuntime(runtimeId)
+	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +77,7 @@ func NewFrameInterface(job *models.Job, logger *logger.Logger, advancedParam ...
 		if err != nil {
 			return nil, err
 		}
-		ctx := clientutil.GetSystemUserContext()
+		ctx := clientutil.SetSystemUserToContext(ctx)
 		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterWrapper.Cluster.FrontgateId})
 		if err != nil {
 			return nil, err
@@ -89,7 +90,7 @@ func NewFrameInterface(job *models.Job, logger *logger.Logger, advancedParam ...
 		ClusterWrapper:          clusterWrapper,
 		FrontgateClusterWrapper: frontgateClusterWrapper,
 		Runtime:                 runtime,
-		Logger:                  logger,
+		Ctx:                     ctx,
 		ImageConfig:             imageConfig,
 	}
 
@@ -98,7 +99,7 @@ func NewFrameInterface(job *models.Job, logger *logger.Logger, advancedParam ...
 	}
 
 	if frame.ImageConfig.ImageId == "" {
-		logger.Error("Failed to find image id for url [%s], zone [%s]", runtime.RuntimeUrl, runtime.Zone)
+		logger.Error(ctx, "Failed to find image id for url [%s], zone [%s]", runtime.RuntimeUrl, runtime.Zone)
 		return nil, fmt.Errorf("failed to find image id for url [%s], zone [%s]", runtime.RuntimeUrl, runtime.Zone)
 	}
 
