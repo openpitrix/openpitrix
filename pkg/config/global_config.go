@@ -6,6 +6,7 @@ package config
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -54,6 +55,7 @@ func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageCo
 	if strings.HasPrefix(apiServer, "https://") {
 		apiServer = strings.Split(apiServer, "https://")[1]
 	}
+
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == zone {
 			return &imageConfig, nil
@@ -64,6 +66,21 @@ func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageCo
 			return &imageConfig, nil
 		}
 	}
+	for _, imageConfig := range g.Runtime {
+		matched, _ := regexp.MatchString(imageConfig.ApiServer, apiServer)
+
+		if matched && imageConfig.Zone == zone {
+			return &imageConfig, nil
+		}
+	}
+	for _, imageConfig := range g.Runtime {
+		matched, _ := regexp.MatchString(imageConfig.ApiServer, apiServer)
+
+		if matched && imageConfig.Zone == ".*" {
+			return &imageConfig, nil
+		}
+	}
+
 	logger.Error(nil, "No such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 	return nil, fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 }
