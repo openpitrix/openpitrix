@@ -2,6 +2,8 @@
 
 set -e
 
+[ -z `which make` ] && echo "You need to install make first." && exit 1
+
 DEFAULT_NAMESPACE=openpitrix-system
 NAMESPACE=${DEFAULT_NAMESPACE}
 
@@ -29,5 +31,5 @@ make
 SECRETS=("openpitrix-ca.crt" "pilot-server.crt" "pilot-server.key" "pilot-client.crt" "pilot-client.key")
 for i in ${SECRETS[@]}; do
   echo ${i}
-  kubectl create secret generic ${i} --from-file=./${i} -n ${NAMESPACE}
+  kubectl create secret generic ${i} --from-file=./${i} -n ${NAMESPACE} || true
 done

@@ -118,6 +118,11 @@ if [ "${BASE}" == "1" ];then
 fi
 if [ "${METADATA}" == "1" ];then
   ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE}
+  if [ $? -ne 0 ]; then
+	echo "Deploy failed."
+	exit 1
+  fi
+
   for FILE in `ls ./kubernetes/openpitrix/metadata/`;do
     replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -
