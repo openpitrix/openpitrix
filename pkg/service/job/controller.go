@@ -22,7 +22,6 @@ import (
 )
 
 type Controller struct {
-	ctx          context.Context
 	runningJobs  chan string
 	runningCount uint32
 	hostname     string
@@ -30,17 +29,16 @@ type Controller struct {
 }
 
 func NewController(hostname string) *Controller {
-	ctx := context.TODO()
 	return &Controller{
 		runningJobs:  make(chan string),
 		runningCount: 0,
 		hostname:     hostname,
-		queue:        pi.Global().Etcd(ctx).NewQueue("job"),
+		queue:        pi.Global().Etcd(nil).NewQueue("job"),
 	}
 }
 
-func (c *Controller) updateJobAttributes(jobId string, attributes map[string]interface{}) error {
-	_, err := pi.Global().DB(c.ctx).
+func (c *Controller) updateJobAttributes(ctx context.Context, jobId string, attributes map[string]interface{}) error {
+	_, err := pi.Global().DB(ctx).
 		Update(models.JobTableName).
 		SetMap(attributes).
 		Where(db.Eq("job_id", jobId)).
@@ -65,22 +63,23 @@ func (c *Controller) IsRunningExceed() bool {
 func (c *Controller) ExtractJobs() {
 	for {
 		if c.IsRunningExceed() {
-			logger.Error(c.ctx, "Sleep 10s, running job count exceed [%d/%d]", c.runningCount, c.GetJobLength())
+			logger.Error(nil, "Sleep 10s, running job count exceed [%d/%d]", c.runningCount, c.GetJobLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		jobId, err := c.queue.Dequeue()
 		if err != nil {
-			logger.Error(c.ctx, "Failed to dequeue job from etcd queue: %+v", err)
+			logger.Error(nil, "Failed to dequeue job from etcd queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		logger.Debug(c.ctx, "Dequeue job [%s] from etcd queue success", jobId)
+		logger.Debug(nil, "Dequeue job [%s] from etcd queue success", jobId)
 		c.runningJobs <- jobId
 	}
 }
 
 func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) error {
+	ctx = ctxutil.AddMessageId(ctx, jobId)
 
 	defer cb()
 
@@ -89,7 +88,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 		Status: constants.StatusWorking,
 	}
 
-	err := c.updateJobAttributes(job.JobId, map[string]interface{}{
+	err := c.updateJobAttributes(ctx, job.JobId, map[string]interface{}{
 		"status":   job.Status,
 		"executor": c.hostname,
 	})
@@ -99,7 +98,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 	}
 
 	err = func() error {
-		query := pi.Global().DB(c.ctx).
+		query := pi.Global().DB(ctx).
 			Select(models.JobColumns...).
 			From(models.JobTableName).
 			Where(db.Eq("job_id", jobId))
@@ -110,12 +109,12 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 			return err
 		}
 
-		processor := NewProcessor(ctx, job)
-		err = processor.Pre()
+		processor := NewProcessor(job)
+		err = processor.Pre(ctx)
 		if err != nil {
 			return err
 		}
-		defer processor.Final()
+		defer processor.Final(ctx)
 
 		providerInterface, err := plugins.GetProviderPlugin(ctx, job.Provider)
 		if err != nil {
@@ -178,7 +177,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 		}
 
 		processor.Job.Status = constants.StatusSuccessful
-		return processor.Post()
+		return processor.Post(ctx)
 	}()
 
 	var status = constants.StatusSuccessful
@@ -187,7 +186,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 		status = constants.StatusFailed
 	}
 
-	err = c.updateJobAttributes(jobId, map[string]interface{}{
+	err = c.updateJobAttributes(ctx, jobId, map[string]interface{}{
 		"status":      status,
 		"status_time": time.Now(),
 	})
@@ -203,7 +202,7 @@ func (c *Controller) HandleJobs() {
 		mutex.Lock()
 		c.runningCount++
 		mutex.Unlock()
-		go c.HandleJob(ctxutil.AddMessageId(c.ctx, jobId), jobId, func() {
+		go c.HandleJob(context.Background(), jobId, func() {
 			mutex.Lock()
 			c.runningCount--
 			mutex.Unlock()

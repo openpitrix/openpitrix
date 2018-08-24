@@ -22,24 +22,21 @@ import (
 )
 
 type Processor struct {
-	ctx context.Context
 	Job *models.Job
 }
 
-func NewProcessor(ctx context.Context, job *models.Job) *Processor {
+func NewProcessor(job *models.Job) *Processor {
 	return &Processor{
-		ctx: ctx,
 		Job: job,
 	}
 }
 
 // Pre process when job is start
-func (p *Processor) Pre() error {
-	ctx := p.ctx
+func (p *Processor) Pre(ctx context.Context) error {
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		logger.Error(p.ctx, "Executing job pre processor failed: %+v", err)
+		logger.Error(ctx, "Executing job pre processor failed: %+v", err)
 		return err
 	}
 	switch p.Job.JobAction {
@@ -68,34 +65,34 @@ func (p *Processor) Pre() error {
 	case constants.ActionUpdateClusterEnv, constants.ActionAttachKeyPairs, constants.ActionDetachKeyPairs:
 		err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, constants.StatusUpdating)
 	default:
-		logger.Error(p.ctx, "Unknown job action [%s]", p.Job.JobAction)
+		logger.Error(ctx, "Unknown job action [%s]", p.Job.JobAction)
 	}
 
 	if err != nil {
-		logger.Critical(p.ctx, "Executing job pre processor failed: %+v", err)
+		logger.Critical(ctx, "Executing job pre processor failed: %+v", err)
 	}
 	return err
 }
 
 // Post process when job is done
-func (p *Processor) Post() error {
-	ctx := client.SetSystemUserToContext(p.ctx)
+func (p *Processor) Post(ctx context.Context) error {
+	ctx = client.SetSystemUserToContext(ctx)
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		logger.Error(p.ctx, "Executing job post processor failed: %+v", err)
+		logger.Error(ctx, "Executing job post processor failed: %+v", err)
 		return err
 	}
 	switch p.Job.JobAction {
 	case constants.ActionCreateCluster:
 		providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
 		if err != nil {
-			logger.Error(p.ctx, "No such provider [%s]. ", p.Job.Provider)
+			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
 		err = providerInterface.UpdateClusterStatus(p.Job)
 		if err != nil {
-			logger.Error(p.ctx, "Executing job post processor failed: %+v", err)
+			logger.Error(ctx, "Executing job post processor failed: %+v", err)
 			return err
 		}
 
@@ -103,12 +100,12 @@ func (p *Processor) Post() error {
 	case constants.ActionUpgradeCluster:
 		providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
 		if err != nil {
-			logger.Error(p.ctx, "No such provider [%s]. ", p.Job.Provider)
+			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
 		err = providerInterface.UpdateClusterStatus(p.Job)
 		if err != nil {
-			logger.Error(p.ctx, "Executing job post processor failed: %+v", err)
+			logger.Error(ctx, "Executing job post processor failed: %+v", err)
 			return err
 		}
 
@@ -116,12 +113,12 @@ func (p *Processor) Post() error {
 	case constants.ActionRollbackCluster:
 		providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
 		if err != nil {
-			logger.Error(p.ctx, "No such provider [%s]. ", p.Job.Provider)
+			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
 		err = providerInterface.UpdateClusterStatus(p.Job)
 		if err != nil {
-			logger.Error(p.ctx, "Executing job post processor failed: %+v", err)
+			logger.Error(ctx, "Executing job post processor failed: %+v", err)
 			return err
 		}
 
@@ -133,7 +130,7 @@ func (p *Processor) Post() error {
 		if p.Job.Status == constants.StatusFailed {
 			clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{p.Job.ClusterId})
 			if err != nil {
-				logger.Error(p.ctx, "No such cluster [%s], %+v ", p.Job.ClusterId, err)
+				logger.Error(ctx, "No such cluster [%s], %+v ", p.Job.ClusterId, err)
 				return err
 			}
 			clusterWrapper := clusterWrappers[0]
@@ -266,14 +263,14 @@ func (p *Processor) Post() error {
 	case constants.ActionCeaseClusters:
 		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusCeased)
 	case constants.ActionUpdateClusterEnv:
-		providerInterface, err := plugins.GetProviderPlugin(p.ctx, p.Job.Provider)
+		providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
 		if err != nil {
-			logger.Error(p.ctx, "No such provider [%s]. ", p.Job.Provider)
+			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
 		err = providerInterface.UpdateClusterStatus(p.Job)
 		if err != nil {
-			logger.Error(p.ctx, "Executing job post processor failed: %+v", err)
+			logger.Error(ctx, "Executing job post processor failed: %+v", err)
 			return err
 		}
 
@@ -305,24 +302,24 @@ func (p *Processor) Post() error {
 			NodeKeyPair: pbNodeKeyPairs,
 		})
 	default:
-		logger.Error(p.ctx, "Unknown job action [%s]", p.Job.JobAction)
+		logger.Error(ctx, "Unknown job action [%s]", p.Job.JobAction)
 	}
 
 	if err != nil {
-		logger.Error(p.ctx, "Executing job post processor failed: %+v", err)
+		logger.Error(ctx, "Executing job post processor failed: %+v", err)
 	}
 	return err
 }
 
-func (p *Processor) Final() {
-	ctx := client.SetSystemUserToContext(p.ctx)
+func (p *Processor) Final(ctx context.Context) {
+	ctx = client.SetSystemUserToContext(ctx)
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		logger.Error(p.ctx, "Executing job final processor failed: %+v", err)
+		logger.Error(ctx, "Executing job final processor failed: %+v", err)
 		return
 	}
 	err = clusterClient.ModifyClusterTransitionStatus(ctx, p.Job.ClusterId, "")
 	if err != nil {
-		logger.Error(p.ctx, "Executing job final processor failed: %+v", err)
+		logger.Error(ctx, "Executing job final processor failed: %+v", err)
 	}
 }

@@ -5,7 +5,6 @@
 package task
 
 import (
-	"context"
 	"os"
 
 	"google.golang.org/grpc"
@@ -29,8 +28,7 @@ func Serve(cfg *config.Config) {
 		return
 	}
 	pi.SetGlobal(cfg)
-	ctx := context.TODO()
-	taskController := NewController(ctx, hostname)
+	taskController := NewController(hostname)
 	s := Server{controller: taskController}
 	go taskController.Serve()
 
