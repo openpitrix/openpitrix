@@ -28,25 +28,23 @@ import (
 )
 
 type Controller struct {
-	ctx          context.Context
 	runningTasks chan string
 	runningCount uint32
 	hostname     string
 	queue        *etcd.Queue
 }
 
-func NewController(ctx context.Context, hostname string) *Controller {
+func NewController(hostname string) *Controller {
 	return &Controller{
-		ctx:          ctx,
 		runningTasks: make(chan string),
 		runningCount: 0,
 		hostname:     hostname,
-		queue:        pi.Global().Etcd(ctx).NewQueue("task"),
+		queue:        pi.Global().Etcd(context.Background()).NewQueue("task"),
 	}
 }
 
-func (c *Controller) updateTaskAttributes(taskId string, attributes map[string]interface{}) error {
-	_, err := pi.Global().DB(c.ctx).
+func (c *Controller) updateTaskAttributes(ctx context.Context, taskId string, attributes map[string]interface{}) error {
+	_, err := pi.Global().DB(ctx).
 		Update(models.TaskTableName).
 		SetMap(attributes).
 		Where(db.Eq("task_id", taskId)).
@@ -72,23 +70,23 @@ func (c *Controller) IsRunningExceed() bool {
 func (c *Controller) ExtractTasks() {
 	for {
 		if c.IsRunningExceed() {
-			logger.Error(c.ctx, "Sleep 10s, running task count exceed [%d/%d]", c.runningCount, c.GetTaskLength())
+			logger.Error(nil, "Sleep 10s, running task count exceed [%d/%d]", c.runningCount, c.GetTaskLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		taskId, err := c.queue.Dequeue()
 		if err != nil {
-			logger.Error(c.ctx, "Failed to dequeue task from etcd queue: %+v", err)
+			logger.Error(nil, "Failed to dequeue task from etcd queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		logger.Debug(c.ctx, "Dequeue task [%s] from etcd queue success", taskId)
+		logger.Debug(nil, "Dequeue task [%s] from etcd queue success", taskId)
 		c.runningTasks <- taskId
 	}
 }
 
-func (c *Controller) HandleTask(taskId string, cb func()) error {
-	ctx := ctxutil.AddMessageId(c.ctx, taskId)
+func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) error {
+	ctx = ctxutil.AddMessageId(ctx, taskId)
 	defer cb()
 	task := new(models.Task)
 	query := pi.Global().DB(ctx).
@@ -101,9 +99,9 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		logger.Error(ctx, "Failed to get task [%s]: %+v", task.TaskId, err)
 		return err
 	}
-	ctx = ctxutil.AddMessageId(c.ctx, task.JobId)
+	ctx = ctxutil.AddMessageId(ctx, task.JobId)
 
-	err = c.updateTaskAttributes(task.TaskId, map[string]interface{}{
+	err = c.updateTaskAttributes(ctx, task.TaskId, map[string]interface{}{
 		"status":   constants.StatusWorking,
 		"executor": c.hostname,
 	})
@@ -113,8 +111,8 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 	}
 
 	err = func() error {
-		processor := NewProcessor(ctx, task)
-		err = processor.Pre()
+		processor := NewProcessor(task)
+		err = processor.Pre(ctx)
 		if err != nil {
 			logger.Error(ctx, "Executing task pre processor failed: %+v", err)
 			return err
@@ -394,7 +392,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 			return err
 		}
 
-		err = processor.Post()
+		err = processor.Post(ctx)
 		if err != nil {
 			logger.Error(ctx, "Executing task post processor failed: %+v", err)
 		}
@@ -405,7 +403,7 @@ func (c *Controller) HandleTask(taskId string, cb func()) error {
 		status = constants.StatusFailed
 
 	}
-	err = c.updateTaskAttributes(task.TaskId, map[string]interface{}{
+	err = c.updateTaskAttributes(ctx, task.TaskId, map[string]interface{}{
 		"status":      status,
 		"status_time": time.Now(),
 	})
@@ -422,7 +420,7 @@ func (c *Controller) HandleTasks() {
 		c.runningCount++
 		mutex.Unlock()
 
-		go c.HandleTask(taskId, func() {
+		go c.HandleTask(context.Background(), taskId, func() {
 			mutex.Lock()
 			c.runningCount--
 			mutex.Unlock()

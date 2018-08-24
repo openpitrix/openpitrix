@@ -23,19 +23,16 @@ import (
 
 type Processor struct {
 	Task *models.Task
-	ctx  context.Context
 }
 
-func NewProcessor(ctx context.Context, task *models.Task) *Processor {
+func NewProcessor(task *models.Task) *Processor {
 	return &Processor{
 		Task: task,
-		ctx:  ctx,
 	}
 }
 
 // Post process when task is start
-func (p *Processor) Pre() error {
-	ctx := p.ctx
+func (p *Processor) Pre(ctx context.Context) error {
 	if p.Task.Directive == "" {
 		logger.Warn(ctx, "Skip empty task [%s] directive", p.Task.TaskId)
 		return nil
@@ -348,8 +345,8 @@ func (p *Processor) Pre() error {
 }
 
 // Post process when task is done
-func (p *Processor) Post() error {
-	ctx := client.SetSystemUserToContext(p.ctx)
+func (p *Processor) Post(ctx context.Context) error {
+	ctx = client.SetSystemUserToContext(ctx)
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
