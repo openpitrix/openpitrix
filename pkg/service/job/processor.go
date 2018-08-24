@@ -33,6 +33,7 @@ func NewProcessor(job *models.Job) *Processor {
 
 // Pre process when job is start
 func (p *Processor) Pre(ctx context.Context) error {
+	ctx = client.SetSystemUserToContext(ctx)
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
