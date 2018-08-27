@@ -727,7 +727,6 @@
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -735,7 +734,6 @@
           },
           {
             "name": "offset",
-            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -746,6 +744,19 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [
@@ -1156,7 +1167,6 @@
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1164,7 +1174,6 @@
           },
           {
             "name": "offset",
-            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1175,6 +1184,19 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [

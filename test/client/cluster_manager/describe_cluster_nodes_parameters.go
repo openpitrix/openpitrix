@@ -65,20 +65,18 @@ type DescribeClusterNodesParams struct {
 
 	/*ClusterID*/
 	ClusterID *string
-	/*Limit
-	  default is 20, max value is 200.
-
-	*/
+	/*Limit*/
 	Limit *int64
 	/*NodeID*/
 	NodeID []string
-	/*Offset
-	  default is 0.
-
-	*/
+	/*Offset*/
 	Offset *int64
+	/*Reverse*/
+	Reverse *bool
 	/*SearchWord*/
 	SearchWord *string
+	/*SortKey*/
+	SortKey *string
 	/*Status*/
 	Status []string
 
@@ -164,6 +162,17 @@ func (o *DescribeClusterNodesParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithReverse adds the reverse to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) WithReverse(reverse *bool) *DescribeClusterNodesParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
 // WithSearchWord adds the searchWord to the describe cluster nodes params
 func (o *DescribeClusterNodesParams) WithSearchWord(searchWord *string) *DescribeClusterNodesParams {
 	o.SetSearchWord(searchWord)
@@ -173,6 +182,17 @@ func (o *DescribeClusterNodesParams) WithSearchWord(searchWord *string) *Describ
 // SetSearchWord adds the searchWord to the describe cluster nodes params
 func (o *DescribeClusterNodesParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) WithSortKey(sortKey *string) *DescribeClusterNodesParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WithStatus adds the status to the describe cluster nodes params
@@ -250,6 +270,22 @@ func (o *DescribeClusterNodesParams) WriteToRequest(r runtime.ClientRequest, reg
 
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.SearchWord != nil {
 
 		// query param search_word
@@ -260,6 +296,22 @@ func (o *DescribeClusterNodesParams) WriteToRequest(r runtime.ClientRequest, reg
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}

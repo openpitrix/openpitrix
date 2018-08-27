@@ -159,7 +159,7 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 	return attributes
 }
 
-func AddQueryOrderDir(query *db.SelectQuery, req Request, column string) *db.SelectQuery {
+func AddQueryOrderDir(query *db.SelectQuery, req Request, defaultColumn string) *db.SelectQuery {
 	isAsc := false
 	if r, ok := req.(RequestWithReverse); ok {
 		reverse := r.GetReverse()
@@ -170,10 +170,10 @@ func AddQueryOrderDir(query *db.SelectQuery, req Request, column string) *db.Sel
 	if r, ok := req.(RequestWithSortKey); ok {
 		s := r.GetSortKey()
 		if s != nil {
-			column = s.GetValue()
+			defaultColumn = s.GetValue()
 		}
 	}
-	query = query.OrderDir(column, isAsc)
+	query = query.OrderDir(defaultColumn, isAsc)
 	return query
 }
 
