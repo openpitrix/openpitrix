@@ -37,7 +37,7 @@ message CreateAppResponse {
 
 message ModifyAppRequest {
 	google.protobuf.StringValue app_id = 1;
-	google.protobuf.StringValue name = 2; // TODO: using google.protobuf.StringValue to handle nil param
+	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue repo_id = 3;
 	google.protobuf.StringValue owner = 4;
 	google.protobuf.StringValue chart_name = 5;
@@ -202,6 +202,55 @@ message GetAppStatisticsResponse {
 	uint32 repo_count = 4;
 }
 
+message SubmitAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message SubmitAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message CancelAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message CancelAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message ReleaseAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message ReleaseAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message DeleteAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message DeleteAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message PassAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message PassAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message RejectAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message RejectAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message SuspendAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message SuspendAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message RecoverAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message RecoverAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+
 service AppManager {
 	rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -297,5 +346,79 @@ service AppManager {
 		option (google.api.http) = {
 			get: "/v1/app_version/package/files"
 		};
+	}
+
+	rpc SubmitAppVersion (SubmitAppVersionRequest) returns (SubmitAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "submit app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/submit"
+            body: "*"
+        };
+	}
+	rpc CancelAppVersion (CancelAppVersionRequest) returns (CancelAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "cancel app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/cancel"
+            body: "*"
+        };
+	}
+	rpc ReleaseAppVersion (ReleaseAppVersionRequest) returns (ReleaseAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "release app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/release"
+            body: "*"
+        };
+	}
+	rpc DeleteAppVersion (DeleteAppVersionRequest) returns (DeleteAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "delete app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/delete"
+            body: "*"
+        };
+	}
+
+	rpc PassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "pass app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/pass"
+            body: "*"
+        };
+	}
+	rpc RejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "reject app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/reject"
+            body: "*"
+        };
+	}
+	rpc SuspendAppVersion (SuspendAppVersionRequest) returns (SuspendAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "suspend app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/suspend"
+            body: "*"
+        };
+	}
+	rpc RecoverAppVersion (RecoverAppVersionRequest) returns (RecoverAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "recover app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/recover"
+            body: "*"
+        };
 	}
 }
