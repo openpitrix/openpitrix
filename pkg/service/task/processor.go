@@ -33,6 +33,7 @@ func NewProcessor(task *models.Task) *Processor {
 
 // Post process when task is start
 func (p *Processor) Pre(ctx context.Context) error {
+	ctx = client.SetSystemUserToContext(ctx)
 	if p.Task.Directive == "" {
 		logger.Warn(ctx, "Skip empty task [%s] directive", p.Task.TaskId)
 		return nil
