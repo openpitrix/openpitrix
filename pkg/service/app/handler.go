@@ -306,6 +306,12 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersionsRequest) (*pb.DeleteAppVersionsResponse, error) {
 	// TODO: check resource permission
 	versionIds := req.GetVersionId()
+	for _, versionId := range versionIds {
+		_, err := checkAppVersionHandlePermission(ctx, Delete, versionId)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	_, err := pi.Global().DB(ctx).
 		Update(models.AppVersionTableName).

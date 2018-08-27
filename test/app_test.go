@@ -37,6 +37,100 @@ func getSortedString(s []string) string {
 	return strings.Join(sortedCategoryIds, ",")
 }
 
+func testVersionLifeCycle(t *testing.T, appId string) {
+	client := GetClient(clientConfig)
+
+	modifyAppParams := app_manager.NewModifyAppParams()
+	modifyAppParams.SetBody(
+		&models.OpenpitrixModifyAppRequest{
+			AppID:  appId,
+			Status: constants.StatusDraft,
+		})
+	_, err := client.AppManager.ModifyApp(modifyAppParams)
+
+	require.NoError(t, err)
+
+	createAppVersionParams := app_manager.NewCreateAppVersionParams()
+	createAppVersionParams.SetBody(
+		&models.OpenpitrixCreateAppVersionRequest{
+			Name:  "test_version",
+			AppID: appId,
+		})
+	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams)
+
+	require.NoError(t, err)
+
+	versionId := createAppVersionResp.Payload.VersionID
+
+	modifyAppVersionParams := app_manager.NewModifyAppVersionParams()
+	modifyAppVersionParams.SetBody(
+		&models.OpenpitrixModifyAppVersionRequest{
+			VersionID: versionId,
+			Name:      "test_version2",
+		})
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams)
+
+	require.NoError(t, err)
+
+	submitAppVersionParams := app_manager.NewSubmitAppVersionParams()
+	submitAppVersionParams.SetBody(
+		&models.OpenpitrixSubmitAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.SubmitAppVersion(submitAppVersionParams)
+
+	require.NoError(t, err)
+
+	rejectAppVersionParams := app_manager.NewRejectAppVersionParams()
+	rejectAppVersionParams.SetBody(
+		&models.OpenpitrixRejectAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.RejectAppVersion(rejectAppVersionParams)
+
+	require.NoError(t, err)
+
+	_, err = client.AppManager.SubmitAppVersion(submitAppVersionParams)
+
+	require.NoError(t, err)
+
+	passAppVersionParams := app_manager.NewPassAppVersionParams()
+	passAppVersionParams.SetBody(
+		&models.OpenpitrixPassAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.PassAppVersion(passAppVersionParams)
+
+	require.NoError(t, err)
+
+	releaseAppVersionParams := app_manager.NewReleaseAppVersionParams()
+	releaseAppVersionParams.SetBody(
+		&models.OpenpitrixReleaseAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.ReleaseAppVersion(releaseAppVersionParams)
+
+	require.NoError(t, err)
+
+	suspendAppVersionParams := app_manager.NewSuspendAppVersionParams()
+	suspendAppVersionParams.SetBody(
+		&models.OpenpitrixSuspendAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.SuspendAppVersion(suspendAppVersionParams)
+
+	require.NoError(t, err)
+
+	deleteAppVersionParams := app_manager.NewDeleteAppVersionsParams()
+	deleteAppVersionParams.SetBody(
+		&models.OpenpitrixDeleteAppVersionsRequest{
+			VersionID: []string{versionId},
+		})
+	_, err = client.AppManager.DeleteAppVersions(deleteAppVersionParams)
+
+	require.NoError(t, err)
+}
+
 func TestApp(t *testing.T) {
 	client := GetClient(clientConfig)
 
@@ -123,6 +217,8 @@ func TestApp(t *testing.T) {
 	require.NotEmpty(t, getStatisticsResp.Payload.TopTenRepos)
 	require.NotEmpty(t, getStatisticsResp.Payload.AppCount)
 	require.NotEmpty(t, getStatisticsResp.Payload.RepoCount)
+
+	testVersionLifeCycle(t, appId)
 
 	// delete app
 	deleteParams := app_manager.NewDeleteAppsParams()
