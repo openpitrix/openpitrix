@@ -310,14 +310,16 @@
     cluster_id:
       type: string
     limit:
-      help: default is 20, max value is 200.
       type: integer
     node_id:
       type: '[]string'
     offset:
-      help: default is 0.
       type: integer
+    reverse:
+      type: boolean
     search_word:
+      type: string
+    sort_key:
       type: string
     status:
       type: '[]string'
@@ -334,14 +336,16 @@
     frontgate_id:
       type: '[]string'
     limit:
-      help: default is 20, max value is 200.
       type: integer
     offset:
-      help: default is 0.
       type: integer
+    reverse:
+      type: boolean
     runtime_id:
       type: '[]string'
     search_word:
+      type: string
+    sort_key:
       type: string
     status:
       type: '[]string'

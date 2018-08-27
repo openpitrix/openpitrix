@@ -736,7 +736,6 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -744,7 +743,6 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -755,6 +753,19 @@ var Files = map[string]string{
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [
@@ -1165,7 +1176,6 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
-            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1173,7 +1183,6 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1184,6 +1193,19 @@ var Files = map[string]string{
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [

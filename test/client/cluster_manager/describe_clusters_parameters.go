@@ -71,20 +71,18 @@ type DescribeClustersParams struct {
 	ExternalClusterID *string
 	/*FrontgateID*/
 	FrontgateID []string
-	/*Limit
-	  default is 20, max value is 200.
-
-	*/
+	/*Limit*/
 	Limit *int64
-	/*Offset
-	  default is 0.
-
-	*/
+	/*Offset*/
 	Offset *int64
+	/*Reverse*/
+	Reverse *bool
 	/*RuntimeID*/
 	RuntimeID []string
 	/*SearchWord*/
 	SearchWord *string
+	/*SortKey*/
+	SortKey *string
 	/*Status*/
 	Status []string
 	/*VersionID*/
@@ -194,6 +192,17 @@ func (o *DescribeClustersParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
+// WithReverse adds the reverse to the describe clusters params
+func (o *DescribeClustersParams) WithReverse(reverse *bool) *DescribeClustersParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe clusters params
+func (o *DescribeClustersParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
 // WithRuntimeID adds the runtimeID to the describe clusters params
 func (o *DescribeClustersParams) WithRuntimeID(runtimeID []string) *DescribeClustersParams {
 	o.SetRuntimeID(runtimeID)
@@ -214,6 +223,17 @@ func (o *DescribeClustersParams) WithSearchWord(searchWord *string) *DescribeClu
 // SetSearchWord adds the searchWord to the describe clusters params
 func (o *DescribeClustersParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe clusters params
+func (o *DescribeClustersParams) WithSortKey(sortKey *string) *DescribeClustersParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe clusters params
+func (o *DescribeClustersParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WithStatus adds the status to the describe clusters params
@@ -318,6 +338,22 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	valuesRuntimeID := o.RuntimeID
 
 	joinedRuntimeID := swag.JoinByFormat(valuesRuntimeID, "multi")
@@ -336,6 +372,22 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}
