@@ -196,6 +196,7 @@ ci-test: ## Run CI tests
 .PHONY: clean
 clean: ## Clean generated version file
 	-make -C ./pkg/version clean
+	cd ./deploy/kubernetes/tls-config && make clean
 	@echo "ok"
 
 .PHONY: unit-test

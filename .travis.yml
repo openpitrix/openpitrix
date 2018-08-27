@@ -17,6 +17,7 @@ before_script:
 script:
 - make ci-test
 before_deploy:
+- make clean
 - make release-$TRAVIS_TAG
 - make bin-release-$TRAVIS_TAG
 deploy:
