@@ -59,12 +59,14 @@ type appInterface interface {
 	GetKeywords() []string
 	GetMaintainers() string
 	GetScreenshots() string
+	GetStatus() string
 }
 type versionInterface interface {
 	GetVersion() string
 	GetAppVersion() string
 	GetDescription() string
 	GetUrls() []string
+	GetStatus() string
 }
 
 func (i *indexer) syncAppInfo(app appInterface) (string, error) {
@@ -93,6 +95,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	keywords := pbutil.ToProtoString(strings.Join(app.GetKeywords(), ","))
 	maintainers := pbutil.ToProtoString(app.GetMaintainers())
 	screenshots := pbutil.ToProtoString(app.GetScreenshots())
+	status := pbutil.ToProtoString(app.GetStatus())
 
 	var enabledCategoryIds []string
 	var disabledCategoryIds []string
@@ -122,6 +125,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		createReq.Maintainers = maintainers
 		createReq.Screenshots = screenshots
 		createReq.CategoryId = pbutil.ToProtoString(strings.Join(enabledCategoryIds, ","))
+		createReq.Status = status
 
 		createRes, err := appManagerClient.CreateApp(ctx, &createReq)
 		if err != nil {
@@ -191,6 +195,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 	}
 	packageName := version.GetUrls()[0]
 	description := version.GetDescription()
+	status := pbutil.ToProtoString(version.GetStatus())
 	req := pb.DescribeAppVersionsRequest{}
 	req.AppId = []string{appId}
 	req.Owner = []string{owner}
@@ -207,6 +212,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 		createReq.PackageName = pbutil.ToProtoString(packageName)
 		createReq.Description = pbutil.ToProtoString(description)
 		createReq.Sequence = pbutil.ToProtoUInt32(uint32(index))
+		createReq.Status = status
 
 		createRes, err := appManagerClient.CreateAppVersion(ctx, &createReq)
 		if err != nil {

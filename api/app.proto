@@ -29,6 +29,7 @@ message CreateAppRequest {
 	google.protobuf.StringValue readme = 12;
 	google.protobuf.StringValue category_id = 13;
 	google.protobuf.StringValue keywords = 14;
+	google.protobuf.StringValue status = 15;
 }
 
 message CreateAppResponse {
@@ -50,6 +51,7 @@ message ModifyAppRequest {
 	google.protobuf.StringValue readme = 13;
 	google.protobuf.StringValue category_id = 14;
 	google.protobuf.StringValue keywords = 15;
+	google.protobuf.StringValue status = 16;
 }
 
 message ModifyAppResponse {
@@ -113,6 +115,7 @@ message CreateAppVersionRequest {
 	google.protobuf.StringValue package_name = 4;
 	google.protobuf.StringValue description = 5;
 	google.protobuf.UInt32Value sequence = 6;
+	google.protobuf.StringValue status = 7;
 }
 
 message CreateAppVersionResponse {
@@ -126,6 +129,7 @@ message ModifyAppVersionRequest {
 	google.protobuf.StringValue owner = 4;
 	google.protobuf.StringValue description = 5;
 	google.protobuf.UInt32Value sequence = 6;
+	google.protobuf.StringValue status = 7;
 }
 
 message ModifyAppVersionResponse {

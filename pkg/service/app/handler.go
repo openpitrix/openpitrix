@@ -82,7 +82,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	appSet, err := p.formatAppSet(ctx, apps)
+	appSet, err := formatAppSet(ctx, apps)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
@@ -113,6 +113,10 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	newApp.Readme = req.GetReadme().GetValue()
 	newApp.Keywords = req.GetKeywords().GetValue()
 
+	if req.GetStatus() != nil {
+		newApp.Status = req.GetStatus().GetValue()
+	}
+
 	_, err := pi.Global().DB(ctx).
 		InsertInto(models.AppTableName).
 		Columns(models.AppColumns...).
@@ -141,9 +145,9 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.ModifyAppResponse, error) {
 	// TODO: check resource permission
 	appId := req.GetAppId().GetValue()
-	app, err := p.getApp(ctx, appId)
+	app, err := getApp(ctx, appId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, err
 	}
 	if app.Status == constants.StatusDeleted {
 		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, appId)
@@ -153,7 +157,11 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		"name", "repo_id", "owner", "chart_name",
 		"description", "home", "icon", "screenshots",
 		"maintainers", "sources", "readme", "keywords")
-	attributes["update_time"] = time.Now()
+	attributes[models.ColumnUpdateTime] = time.Now()
+
+	if req.GetStatus() != nil {
+		attributes[models.ColumnStatus] = req.GetStatus().GetValue()
+	}
 	_, err = pi.Global().DB(ctx).
 		Update(models.AppTableName).
 		SetMap(attributes).
@@ -212,6 +220,9 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 	if req.Sequence != nil {
 		newAppVersion.Sequence = req.Sequence.GetValue()
 	}
+	if req.GetStatus() != nil {
+		newAppVersion.Status = req.GetStatus().GetValue()
+	}
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(models.AppVersionTableName).
@@ -261,21 +272,26 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionRequest) (*pb.ModifyAppVersionResponse, error) {
 	// TODO: check resource permission
 	versionId := req.GetVersionId().GetValue()
-	version, err := p.getAppVersion(ctx, versionId)
+	version, err := checkAppVersionHandlePermission(ctx, Modify, versionId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
-	}
-	if version.Status == constants.StatusDeleted {
-		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, versionId)
+		return nil, err
 	}
 
 	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name", "sequence")
+	attributes[models.ColumnUpdateTime] = time.Now()
+
+	if version.Status != constants.StatusActive {
+		attributes[models.ColumnStatus] = constants.StatusDraft
+	}
+	if req.GetStatus() != nil {
+		attributes[models.ColumnStatus] = req.GetStatus().GetValue()
+	}
+
 	_, err = pi.Global().DB(ctx).
 		Update(models.AppVersionTableName).
 		SetMap(attributes).
 		Where(db.Eq(models.ColumnVersionId, versionId)).
 		Exec()
-	attributes["update_time"] = time.Now()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
@@ -425,4 +441,124 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 	}
 
 	return res, nil
+}
+
+func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionRequest) (*pb.SubmitAppVersionResponse, error) {
+	version, err := checkAppVersionHandlePermission(ctx, Submit, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
+	err = updateVersionStatus(ctx, version, constants.StatusSubmitted)
+	if err != nil {
+		return nil, err
+	}
+	res := pb.SubmitAppVersionResponse{
+		VersionId: pbutil.ToProtoString(version.VersionId),
+	}
+	return &res, nil
+}
+
+func (p *Server) CancelAppVersion(ctx context.Context, req *pb.CancelAppVersionRequest) (*pb.CancelAppVersionResponse, error) {
+	version, err := checkAppVersionHandlePermission(ctx, Cancel, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
+	err = updateVersionStatus(ctx, version, constants.StatusDraft)
+	if err != nil {
+		return nil, err
+	}
+	res := pb.CancelAppVersionResponse{
+		VersionId: pbutil.ToProtoString(version.VersionId),
+	}
+	return &res, nil
+}
+
+func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersionRequest) (*pb.ReleaseAppVersionResponse, error) {
+	version, err := checkAppVersionHandlePermission(ctx, Release, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
+	err = updateVersionStatus(ctx, version, constants.StatusActive)
+	if err != nil {
+		return nil, err
+	}
+	res := pb.ReleaseAppVersionResponse{
+		VersionId: pbutil.ToProtoString(version.VersionId),
+	}
+	return &res, nil
+}
+
+func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionRequest) (*pb.DeleteAppVersionResponse, error) {
+	version, err := checkAppVersionHandlePermission(ctx, Delete, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
+	err = updateVersionStatus(ctx, version, constants.StatusDeleted)
+	if err != nil {
+		return nil, err
+	}
+	res := pb.DeleteAppVersionResponse{
+		VersionId: pbutil.ToProtoString(version.VersionId),
+	}
+	return &res, nil
+}
+
+func (p *Server) PassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+	version, err := checkAppVersionHandlePermission(ctx, Pass, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
+	err = updateVersionStatus(ctx, version, constants.StatusPassed)
+	if err != nil {
+		return nil, err
+	}
+	res := pb.PassAppVersionResponse{
+		VersionId: pbutil.ToProtoString(version.VersionId),
+	}
+	return &res, nil
+}
+
+func (p *Server) RejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+	version, err := checkAppVersionHandlePermission(ctx, Reject, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
+	err = updateVersionStatus(ctx, version, constants.StatusRejected)
+	if err != nil {
+		return nil, err
+	}
+	res := pb.RejectAppVersionResponse{
+		VersionId: pbutil.ToProtoString(version.VersionId),
+	}
+	return &res, nil
+}
+
+func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersionRequest) (*pb.SuspendAppVersionResponse, error) {
+	version, err := checkAppVersionHandlePermission(ctx, Suspend, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
+	err = updateVersionStatus(ctx, version, constants.StatusSuspended)
+	if err != nil {
+		return nil, err
+	}
+	res := pb.SuspendAppVersionResponse{
+		VersionId: pbutil.ToProtoString(version.VersionId),
+	}
+	return &res, nil
+}
+
+func (p *Server) RecoverAppVersion(ctx context.Context, req *pb.RecoverAppVersionRequest) (*pb.RecoverAppVersionResponse, error) {
+	version, err := checkAppVersionHandlePermission(ctx, Recover, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
+	err = updateVersionStatus(ctx, version, constants.StatusActive)
+	if err != nil {
+		return nil, err
+	}
+	res := pb.RecoverAppVersionResponse{
+		VersionId: pbutil.ToProtoString(version.VersionId),
+	}
+	return &res, nil
 }

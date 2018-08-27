@@ -54,6 +54,9 @@ type OpenpitrixCreateAppRequest struct {
 
 	// sources
 	Sources string `json:"sources,omitempty"`
+
+	// status
+	Status string `json:"status,omitempty"`
 }
 
 // Validate validates this openpitrix create app request

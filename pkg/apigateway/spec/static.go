@@ -2641,6 +2641,9 @@ var Files = map[string]string{
         },
         "keywords": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -2673,6 +2676,9 @@ var Files = map[string]string{
         "sequence": {
           "type": "integer",
           "format": "int64"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -2872,6 +2878,9 @@ var Files = map[string]string{
         },
         "keywords": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },
@@ -2904,6 +2913,9 @@ var Files = map[string]string{
         "sequence": {
           "type": "integer",
           "format": "int64"
+        },
+        "status": {
+          "type": "string"
         }
       }
     },

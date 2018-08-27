@@ -48,9 +48,9 @@ func TestApp(t *testing.T) {
 	describeParams.SetName([]string{testAppName})
 	describeParams.SetStatus([]string{constants.StatusActive})
 	describeResp, err := client.AppManager.DescribeApps(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	apps := describeResp.Payload.AppSet
 	for _, app := range apps {
 		deleteParams := app_manager.NewDeleteAppsParams()
@@ -59,9 +59,8 @@ func TestApp(t *testing.T) {
 				AppID: []string{app.AppID},
 			})
 		_, err := client.AppManager.DeleteApps(deleteParams)
-		if err != nil {
-			t.Fatal(err)
-		}
+
+		require.NoError(t, err)
 	}
 	// create app
 	createParams := app_manager.NewCreateAppParams()
@@ -69,12 +68,13 @@ func TestApp(t *testing.T) {
 		&models.OpenpitrixCreateAppRequest{
 			Name:       testAppName,
 			RepoID:     testRepoId,
+			Status:     constants.StatusActive,
 			CategoryID: "xx,yy,zz",
 		})
 	createResp, err := client.AppManager.CreateApp(createParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	appId := createResp.Payload.AppID
 	// modify app
 	modifyParams := app_manager.NewModifyAppParams()
@@ -85,24 +85,24 @@ func TestApp(t *testing.T) {
 			CategoryID: "aa,bb,cc,xx",
 		})
 	modifyResp, err := client.AppManager.ModifyApp(modifyParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	t.Log(modifyResp)
 	// describe app
 	describeParams.WithAppID([]string{appId})
 	describeResp, err = client.AppManager.DescribeApps(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	apps = describeResp.Payload.AppSet
-	if len(apps) != 1 {
-		t.Fatalf("failed to describe apps with params [%+v]", describeParams)
-	}
+
+	require.Equal(t, 1, len(apps))
+
 	app := apps[0]
-	if app.RepoID != testRepoId2 {
-		t.Fatalf("failed to modify app, app [%+v] repo is not [%s]", apps[0], testRepoId2)
-	}
+
+	require.Equal(t, testRepoId2, app.RepoID)
+
 	var enabledCategoryIds []string
 	var disabledCategoryIds []string
 	for _, a := range app.CategorySet {
@@ -130,29 +130,27 @@ func TestApp(t *testing.T) {
 		AppID: []string{appId},
 	})
 	deleteResp, err := client.AppManager.DeleteApps(deleteParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	t.Log(deleteResp)
 	// describe deleted app
 	describeParams.WithAppID([]string{appId})
 	describeParams.WithStatus([]string{constants.StatusDeleted})
 	describeParams.WithName(nil)
 	describeResp, err = client.AppManager.DescribeApps(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	apps = describeResp.Payload.AppSet
-	if len(apps) != 1 {
-		t.Fatalf("failed to describe apps with params [%+v]", describeParams)
-	}
+
+	require.Equal(t, 1, len(apps))
+
 	app = apps[0]
-	if app.AppID != appId {
-		t.Fatalf("failed to describe app")
-	}
-	if app.Status != constants.StatusDeleted {
-		t.Fatalf("failed to delete app, got app status [%s]", app.Status)
-	}
+
+	require.Equal(t, appId, app.AppID)
+
+	require.Equal(t, constants.StatusDeleted, app.Status)
 
 	t.Log("test app finish, all test is ok")
 }

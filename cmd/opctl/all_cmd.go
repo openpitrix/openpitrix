@@ -147,6 +147,7 @@ func (c *CreateAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
 	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
 	f.StringVarP(&c.Sources, "sources", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *CreateAppCmd) Run(out Out) error {
@@ -186,6 +187,7 @@ func (c *CreateAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *CreateAppVersionCmd) Run(out Out) error {
@@ -538,6 +540,7 @@ func (c *ModifyAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
 	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
 	f.StringVarP(&c.Sources, "sources", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *ModifyAppCmd) Run(out Out) error {
@@ -576,6 +579,7 @@ func (c *ModifyAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 

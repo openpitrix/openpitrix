@@ -34,6 +34,8 @@
       type: string
     sources:
       type: string
+    status:
+      type: string
 - action: CreateAppVersion
   description: create app version
   service: AppManager
@@ -50,6 +52,8 @@
       type: string
     sequence:
       type: integer
+    status:
+      type: string
 - action: DeleteAppVersion
   description: delete app version
   service: AppManager
@@ -173,6 +177,8 @@
       type: string
     sources:
       type: string
+    status:
+      type: string
 - action: ModifyAppVersion
   description: modify app version
   service: AppManager
@@ -187,6 +193,8 @@
       type: string
     sequence:
       type: integer
+    status:
+      type: string
     version_id:
       type: string
 - action: PassAppVersion

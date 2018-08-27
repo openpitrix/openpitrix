@@ -185,4 +185,8 @@ var (
 		Name: "detach_key_pairs_failed",
 		En:   "detach key pairs failed",
 	}
+	ErrorAppVersionIncorrectStatus = ErrorMessage{
+		Name: "app_version_incorrect_status",
+		En:   "App version [%s] has incorrect status [%s], cannot execute the current action",
+	}
 )

@@ -11,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"k8s.io/helm/pkg/repo"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
@@ -40,6 +41,9 @@ func (h helmVersionWrapper) GetMaintainers() string {
 }
 func (h helmVersionWrapper) GetScreenshots() string {
 	return ""
+}
+func (h helmVersionWrapper) GetStatus() string {
+	return constants.StatusActive
 }
 
 func (i *helmIndexer) IndexRepo() error {
