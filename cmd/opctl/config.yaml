@@ -1,3 +1,9 @@
+- action: CancelAppVersion
+  description: cancel app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
 - action: CreateApp
   description: create app
   service: AppManager
@@ -28,6 +34,8 @@
       type: string
     sources:
       type: string
+    status:
+      type: string
 - action: CreateAppVersion
   description: create app version
   service: AppManager
@@ -44,6 +52,14 @@
       type: string
     sequence:
       type: integer
+    status:
+      type: string
+- action: DeleteAppVersion
+  description: delete app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
 - action: DeleteAppVersions
   description: delete app versions
   service: AppManager
@@ -161,6 +177,8 @@
       type: string
     sources:
       type: string
+    status:
+      type: string
 - action: ModifyAppVersion
   description: modify app version
   service: AppManager
@@ -175,6 +193,44 @@
       type: string
     sequence:
       type: integer
+    status:
+      type: string
+    version_id:
+      type: string
+- action: PassAppVersion
+  description: pass app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: RecoverAppVersion
+  description: recover app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: RejectAppVersion
+  description: reject app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: ReleaseAppVersion
+  description: release app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: SubmitAppVersion
+  description: submit app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: SuspendAppVersion
+  description: suspend app version
+  service: AppManager
+  body:
     version_id:
       type: string
 - action: CreateCategory

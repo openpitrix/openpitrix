@@ -20,8 +20,10 @@ import (
 )
 
 var AllCmd = []Cmd{
+	NewCancelAppVersionCmd(),
 	NewCreateAppCmd(),
 	NewCreateAppVersionCmd(),
+	NewDeleteAppVersionCmd(),
 	NewDeleteAppVersionsCmd(),
 	NewDeleteAppsCmd(),
 	NewDescribeAppVersionsCmd(),
@@ -31,6 +33,12 @@ var AllCmd = []Cmd{
 	NewGetAppVersionPackageFilesCmd(),
 	NewModifyAppCmd(),
 	NewModifyAppVersionCmd(),
+	NewPassAppVersionCmd(),
+	NewRecoverAppVersionCmd(),
+	NewRejectAppVersionCmd(),
+	NewReleaseAppVersionCmd(),
+	NewSubmitAppVersionCmd(),
+	NewSuspendAppVersionCmd(),
 	NewCreateCategoryCmd(),
 	NewDeleteCategoriesCmd(),
 	NewDescribeCategoriesCmd(),
@@ -76,6 +84,41 @@ var AllCmd = []Cmd{
 	NewRetryTasksCmd(),
 }
 
+type CancelAppVersionCmd struct {
+	*models.OpenpitrixCancelAppVersionRequest
+}
+
+func NewCancelAppVersionCmd() Cmd {
+	return &CancelAppVersionCmd{
+		&models.OpenpitrixCancelAppVersionRequest{},
+	}
+}
+
+func (*CancelAppVersionCmd) GetActionName() string {
+	return "CancelAppVersion"
+}
+
+func (c *CancelAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *CancelAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewCancelAppVersionParams()
+	params.WithBody(c.OpenpitrixCancelAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AppManager.CancelAppVersion(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type CreateAppCmd struct {
 	*models.OpenpitrixCreateAppRequest
 }
@@ -104,6 +147,7 @@ func (c *CreateAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
 	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
 	f.StringVarP(&c.Sources, "sources", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *CreateAppCmd) Run(out Out) error {
@@ -143,6 +187,7 @@ func (c *CreateAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *CreateAppVersionCmd) Run(out Out) error {
@@ -153,6 +198,41 @@ func (c *CreateAppVersionCmd) Run(out Out) error {
 
 	client := test.GetClient(clientConfig)
 	res, err := client.AppManager.CreateAppVersion(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DeleteAppVersionCmd struct {
+	*models.OpenpitrixDeleteAppVersionRequest
+}
+
+func NewDeleteAppVersionCmd() Cmd {
+	return &DeleteAppVersionCmd{
+		&models.OpenpitrixDeleteAppVersionRequest{},
+	}
+}
+
+func (*DeleteAppVersionCmd) GetActionName() string {
+	return "DeleteAppVersion"
+}
+
+func (c *DeleteAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *DeleteAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewDeleteAppVersionParams()
+	params.WithBody(c.OpenpitrixDeleteAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AppManager.DeleteAppVersion(params)
 	if err != nil {
 		return err
 	}
@@ -460,6 +540,7 @@ func (c *ModifyAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
 	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
 	f.StringVarP(&c.Sources, "sources", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *ModifyAppCmd) Run(out Out) error {
@@ -498,6 +579,7 @@ func (c *ModifyAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
@@ -509,6 +591,216 @@ func (c *ModifyAppVersionCmd) Run(out Out) error {
 
 	client := test.GetClient(clientConfig)
 	res, err := client.AppManager.ModifyAppVersion(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type PassAppVersionCmd struct {
+	*models.OpenpitrixPassAppVersionRequest
+}
+
+func NewPassAppVersionCmd() Cmd {
+	return &PassAppVersionCmd{
+		&models.OpenpitrixPassAppVersionRequest{},
+	}
+}
+
+func (*PassAppVersionCmd) GetActionName() string {
+	return "PassAppVersion"
+}
+
+func (c *PassAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *PassAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewPassAppVersionParams()
+	params.WithBody(c.OpenpitrixPassAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AppManager.PassAppVersion(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type RecoverAppVersionCmd struct {
+	*models.OpenpitrixRecoverAppVersionRequest
+}
+
+func NewRecoverAppVersionCmd() Cmd {
+	return &RecoverAppVersionCmd{
+		&models.OpenpitrixRecoverAppVersionRequest{},
+	}
+}
+
+func (*RecoverAppVersionCmd) GetActionName() string {
+	return "RecoverAppVersion"
+}
+
+func (c *RecoverAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *RecoverAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewRecoverAppVersionParams()
+	params.WithBody(c.OpenpitrixRecoverAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AppManager.RecoverAppVersion(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type RejectAppVersionCmd struct {
+	*models.OpenpitrixRejectAppVersionRequest
+}
+
+func NewRejectAppVersionCmd() Cmd {
+	return &RejectAppVersionCmd{
+		&models.OpenpitrixRejectAppVersionRequest{},
+	}
+}
+
+func (*RejectAppVersionCmd) GetActionName() string {
+	return "RejectAppVersion"
+}
+
+func (c *RejectAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *RejectAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewRejectAppVersionParams()
+	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AppManager.RejectAppVersion(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ReleaseAppVersionCmd struct {
+	*models.OpenpitrixReleaseAppVersionRequest
+}
+
+func NewReleaseAppVersionCmd() Cmd {
+	return &ReleaseAppVersionCmd{
+		&models.OpenpitrixReleaseAppVersionRequest{},
+	}
+}
+
+func (*ReleaseAppVersionCmd) GetActionName() string {
+	return "ReleaseAppVersion"
+}
+
+func (c *ReleaseAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *ReleaseAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewReleaseAppVersionParams()
+	params.WithBody(c.OpenpitrixReleaseAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AppManager.ReleaseAppVersion(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type SubmitAppVersionCmd struct {
+	*models.OpenpitrixSubmitAppVersionRequest
+}
+
+func NewSubmitAppVersionCmd() Cmd {
+	return &SubmitAppVersionCmd{
+		&models.OpenpitrixSubmitAppVersionRequest{},
+	}
+}
+
+func (*SubmitAppVersionCmd) GetActionName() string {
+	return "SubmitAppVersion"
+}
+
+func (c *SubmitAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *SubmitAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewSubmitAppVersionParams()
+	params.WithBody(c.OpenpitrixSubmitAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AppManager.SubmitAppVersion(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type SuspendAppVersionCmd struct {
+	*models.OpenpitrixSuspendAppVersionRequest
+}
+
+func NewSuspendAppVersionCmd() Cmd {
+	return &SuspendAppVersionCmd{
+		&models.OpenpitrixSuspendAppVersionRequest{},
+	}
+}
+
+func (*SuspendAppVersionCmd) GetActionName() string {
+	return "SuspendAppVersion"
+}
+
+func (c *SuspendAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *SuspendAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewSuspendAppVersionParams()
+	params.WithBody(c.OpenpitrixSuspendAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AppManager.SuspendAppVersion(params)
 	if err != nil {
 		return err
 	}

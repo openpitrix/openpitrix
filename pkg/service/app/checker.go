@@ -45,6 +45,38 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			Required("version_id").
 			Exec()
+	case *pb.SubmitAppVersionRequest:
+		return manager.NewChecker(ctx, r).
+			Required("version_id").
+			Exec()
+	case *pb.CancelAppVersionRequest:
+		return manager.NewChecker(ctx, r).
+			Required("version_id").
+			Exec()
+	case *pb.ReleaseAppVersionRequest:
+		return manager.NewChecker(ctx, r).
+			Required("version_id").
+			Exec()
+	case *pb.DeleteAppVersionRequest:
+		return manager.NewChecker(ctx, r).
+			Required("version_id").
+			Exec()
+	case *pb.PassAppVersionRequest:
+		return manager.NewChecker(ctx, r).
+			Required("version_id").
+			Exec()
+	case *pb.RejectAppVersionRequest:
+		return manager.NewChecker(ctx, r).
+			Required("version_id").
+			Exec()
+	case *pb.SuspendAppVersionRequest:
+		return manager.NewChecker(ctx, r).
+			Required("version_id").
+			Exec()
+	case *pb.RecoverAppVersionRequest:
+		return manager.NewChecker(ctx, r).
+			Required("version_id").
+			Exec()
 	}
 	return nil
 }

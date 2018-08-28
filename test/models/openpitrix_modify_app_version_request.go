@@ -31,6 +31,9 @@ type OpenpitrixModifyAppVersionRequest struct {
 	// sequence
 	Sequence int64 `json:"sequence,omitempty"`
 
+	// status
+	Status string `json:"status,omitempty"`
+
 	// version id
 	VersionID string `json:"version_id,omitempty"`
 }

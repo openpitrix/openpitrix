@@ -43,7 +43,7 @@ func NewAppVersion(appId, name, description, owner, packageName string) *AppVers
 		Owner:       owner,
 		PackageName: packageName,
 		Description: description,
-		Status:      constants.StatusActive,
+		Status:      constants.StatusDraft,
 		CreateTime:  time.Now(),
 		StatusTime:  time.Now(),
 	}

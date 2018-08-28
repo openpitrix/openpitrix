@@ -10,6 +10,7 @@ import (
 
 	"github.com/pkg/errors"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
@@ -56,6 +57,9 @@ func (h appVersionWrapper) GetMaintainers() string {
 func (h appVersionWrapper) GetScreenshots() string {
 	return jsonutil.ToString(h.Version.GetScreenshots())
 }
+func (h appVersionWrapper) GetStatus() string {
+	return constants.StatusDraft
+}
 
 func (i *devkitIndexer) IndexRepo() error {
 	indexFile, err := i.getIndexFile()
@@ -78,7 +82,7 @@ func (i *devkitIndexer) IndexRepo() error {
 		sort.Sort(appVersions)
 		for index, appVersion := range appVersions {
 			var versionId string
-			versionId, err = i.syncAppVersionInfo(appId, appVersion, index)
+			versionId, err = i.syncAppVersionInfo(appId, appVersionWrapper{appVersion}, index)
 			if err != nil {
 				logger.Error(i.ctx, "Failed to sync app version [%s] to app version", appVersion.GetAppVersion())
 				return err

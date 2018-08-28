@@ -37,6 +37,100 @@ func getSortedString(s []string) string {
 	return strings.Join(sortedCategoryIds, ",")
 }
 
+func testVersionLifeCycle(t *testing.T, appId string) {
+	client := GetClient(clientConfig)
+
+	modifyAppParams := app_manager.NewModifyAppParams()
+	modifyAppParams.SetBody(
+		&models.OpenpitrixModifyAppRequest{
+			AppID:  appId,
+			Status: constants.StatusDraft,
+		})
+	_, err := client.AppManager.ModifyApp(modifyAppParams)
+
+	require.NoError(t, err)
+
+	createAppVersionParams := app_manager.NewCreateAppVersionParams()
+	createAppVersionParams.SetBody(
+		&models.OpenpitrixCreateAppVersionRequest{
+			Name:  "test_version",
+			AppID: appId,
+		})
+	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams)
+
+	require.NoError(t, err)
+
+	versionId := createAppVersionResp.Payload.VersionID
+
+	modifyAppVersionParams := app_manager.NewModifyAppVersionParams()
+	modifyAppVersionParams.SetBody(
+		&models.OpenpitrixModifyAppVersionRequest{
+			VersionID: versionId,
+			Name:      "test_version2",
+		})
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams)
+
+	require.NoError(t, err)
+
+	submitAppVersionParams := app_manager.NewSubmitAppVersionParams()
+	submitAppVersionParams.SetBody(
+		&models.OpenpitrixSubmitAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.SubmitAppVersion(submitAppVersionParams)
+
+	require.NoError(t, err)
+
+	rejectAppVersionParams := app_manager.NewRejectAppVersionParams()
+	rejectAppVersionParams.SetBody(
+		&models.OpenpitrixRejectAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.RejectAppVersion(rejectAppVersionParams)
+
+	require.NoError(t, err)
+
+	_, err = client.AppManager.SubmitAppVersion(submitAppVersionParams)
+
+	require.NoError(t, err)
+
+	passAppVersionParams := app_manager.NewPassAppVersionParams()
+	passAppVersionParams.SetBody(
+		&models.OpenpitrixPassAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.PassAppVersion(passAppVersionParams)
+
+	require.NoError(t, err)
+
+	releaseAppVersionParams := app_manager.NewReleaseAppVersionParams()
+	releaseAppVersionParams.SetBody(
+		&models.OpenpitrixReleaseAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.ReleaseAppVersion(releaseAppVersionParams)
+
+	require.NoError(t, err)
+
+	suspendAppVersionParams := app_manager.NewSuspendAppVersionParams()
+	suspendAppVersionParams.SetBody(
+		&models.OpenpitrixSuspendAppVersionRequest{
+			VersionID: versionId,
+		})
+	_, err = client.AppManager.SuspendAppVersion(suspendAppVersionParams)
+
+	require.NoError(t, err)
+
+	deleteAppVersionParams := app_manager.NewDeleteAppVersionsParams()
+	deleteAppVersionParams.SetBody(
+		&models.OpenpitrixDeleteAppVersionsRequest{
+			VersionID: []string{versionId},
+		})
+	_, err = client.AppManager.DeleteAppVersions(deleteAppVersionParams)
+
+	require.NoError(t, err)
+}
+
 func TestApp(t *testing.T) {
 	client := GetClient(clientConfig)
 
@@ -48,9 +142,9 @@ func TestApp(t *testing.T) {
 	describeParams.SetName([]string{testAppName})
 	describeParams.SetStatus([]string{constants.StatusActive})
 	describeResp, err := client.AppManager.DescribeApps(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	apps := describeResp.Payload.AppSet
 	for _, app := range apps {
 		deleteParams := app_manager.NewDeleteAppsParams()
@@ -59,9 +153,8 @@ func TestApp(t *testing.T) {
 				AppID: []string{app.AppID},
 			})
 		_, err := client.AppManager.DeleteApps(deleteParams)
-		if err != nil {
-			t.Fatal(err)
-		}
+
+		require.NoError(t, err)
 	}
 	// create app
 	createParams := app_manager.NewCreateAppParams()
@@ -69,12 +162,13 @@ func TestApp(t *testing.T) {
 		&models.OpenpitrixCreateAppRequest{
 			Name:       testAppName,
 			RepoID:     testRepoId,
+			Status:     constants.StatusActive,
 			CategoryID: "xx,yy,zz",
 		})
 	createResp, err := client.AppManager.CreateApp(createParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	appId := createResp.Payload.AppID
 	// modify app
 	modifyParams := app_manager.NewModifyAppParams()
@@ -85,24 +179,24 @@ func TestApp(t *testing.T) {
 			CategoryID: "aa,bb,cc,xx",
 		})
 	modifyResp, err := client.AppManager.ModifyApp(modifyParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	t.Log(modifyResp)
 	// describe app
 	describeParams.WithAppID([]string{appId})
 	describeResp, err = client.AppManager.DescribeApps(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	apps = describeResp.Payload.AppSet
-	if len(apps) != 1 {
-		t.Fatalf("failed to describe apps with params [%+v]", describeParams)
-	}
+
+	require.Equal(t, 1, len(apps))
+
 	app := apps[0]
-	if app.RepoID != testRepoId2 {
-		t.Fatalf("failed to modify app, app [%+v] repo is not [%s]", apps[0], testRepoId2)
-	}
+
+	require.Equal(t, testRepoId2, app.RepoID)
+
 	var enabledCategoryIds []string
 	var disabledCategoryIds []string
 	for _, a := range app.CategorySet {
@@ -124,35 +218,35 @@ func TestApp(t *testing.T) {
 	require.NotEmpty(t, getStatisticsResp.Payload.AppCount)
 	require.NotEmpty(t, getStatisticsResp.Payload.RepoCount)
 
+	testVersionLifeCycle(t, appId)
+
 	// delete app
 	deleteParams := app_manager.NewDeleteAppsParams()
 	deleteParams.WithBody(&models.OpenpitrixDeleteAppsRequest{
 		AppID: []string{appId},
 	})
 	deleteResp, err := client.AppManager.DeleteApps(deleteParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	t.Log(deleteResp)
 	// describe deleted app
 	describeParams.WithAppID([]string{appId})
 	describeParams.WithStatus([]string{constants.StatusDeleted})
 	describeParams.WithName(nil)
 	describeResp, err = client.AppManager.DescribeApps(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	apps = describeResp.Payload.AppSet
-	if len(apps) != 1 {
-		t.Fatalf("failed to describe apps with params [%+v]", describeParams)
-	}
+
+	require.Equal(t, 1, len(apps))
+
 	app = apps[0]
-	if app.AppID != appId {
-		t.Fatalf("failed to describe app")
-	}
-	if app.Status != constants.StatusDeleted {
-		t.Fatalf("failed to delete app, got app status [%s]", app.Status)
-	}
+
+	require.Equal(t, appId, app.AppID)
+
+	require.Equal(t, constants.StatusDeleted, app.Status)
 
 	t.Log("test app finish, all test is ok")
 }

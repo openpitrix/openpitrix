@@ -33,6 +33,9 @@ type OpenpitrixCreateAppVersionRequest struct {
 
 	// sequence
 	Sequence int64 `json:"sequence,omitempty"`
+
+	// status
+	Status string `json:"status,omitempty"`
 }
 
 // Validate validates this openpitrix create app version request
