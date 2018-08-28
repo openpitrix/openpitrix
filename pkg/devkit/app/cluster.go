@@ -19,8 +19,7 @@ type ClusterConfTemplate struct {
 }
 
 func replaceTemplateExpression(s string) string {
-	var re *regexp.Regexp
-	re = regexp.MustCompile(`"{{`)
+	var re = regexp.MustCompile(`"{{`)
 	s = re.ReplaceAllString(s, `{{ getv `)
 	re = regexp.MustCompile(`}}"`)
 	s = re.ReplaceAllString(s, `}}`)

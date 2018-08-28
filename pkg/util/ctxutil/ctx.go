@@ -35,9 +35,7 @@ func AddMessageId(ctx context.Context, messageId ...string) context.Context {
 		return ctx
 	}
 	m := GetMessageId(ctx)
-	for _, mi := range messageId {
-		m = append(m, mi)
-	}
+	m = append(m, messageId...)
 	return SetMessageId(ctx, m)
 }
 

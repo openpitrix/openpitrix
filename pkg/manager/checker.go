@@ -31,9 +31,7 @@ func NewChecker(ctx context.Context, req Request) *checker {
 }
 
 func (c *checker) Required(params ...string) *checker {
-	for _, p := range params {
-		c.required = append(c.required, p)
-	}
+	c.required = append(c.required, params...)
 	return c
 }
 
@@ -65,9 +63,7 @@ func (c *checker) checkRequired(param string, value interface{}) error {
 
 func (c *checker) StringChosen(param string, chosen []string) *checker {
 	if exist, ok := c.stringChosen[param]; ok {
-		for _, cho := range chosen {
-			exist = append(exist, cho)
-		}
+		exist = append(exist, chosen...)
 	} else {
 		c.stringChosen[param] = chosen
 	}

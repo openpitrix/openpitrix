@@ -44,11 +44,7 @@ type ImageConfig struct {
 }
 
 func (g *GlobalConfig) GetFrontgateAutoDelete() bool {
-	if g.Cluster.FrontgateAutoDelete == false {
-		return false
-	} else {
-		return true
-	}
+	return g.Cluster.FrontgateAutoDelete
 }
 
 func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageConfig, error) {

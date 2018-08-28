@@ -84,6 +84,9 @@ func (p *Server) deleteProviders(ctx context.Context, repoId string, providers [
 
 func (p *Server) modifyProviders(ctx context.Context, repoId string, providers []string) error {
 	providersMap, err := p.getProvidersMap(ctx, []string{repoId})
+	if err != nil {
+		return err
+	}
 
 	var currentProviders []string
 	for _, repoProvider := range providersMap[repoId] {
