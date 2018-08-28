@@ -491,6 +491,39 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 		return err
 	}
 
+	describeOutput, err := volumeService.DescribeVolumes(
+		&qcservice.DescribeVolumesInput{
+			Volumes: qcservice.StringSlice([]string{volume.VolumeId}),
+		},
+	)
+	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
+	if describeRetCode != 0 {
+		message := qcservice.StringValue(describeOutput.Message)
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed with return code [%d], message [%s]",
+			MyProvider, describeRetCode, message)
+		return fmt.Errorf("send DescribeVolumes to %s failed: %s", MyProvider, message)
+	}
+	if len(describeOutput.VolumeSet) == 0 {
+		logger.Error(p.Ctx, "Volume with id [%s] not exist", volume.VolumeId)
+		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
+	}
+
+	status := qcservice.StringValue(describeOutput.VolumeSet[0].Status)
+	if status == constants.StatusDeleted || status == constants.StatusCeased {
+		logger.Warn(p.Ctx, "Volume [%s] has already been [%s], do nothing", volume.VolumeId, status)
+		return nil
+	}
+
+	if describeOutput.VolumeSet[0].Instance == nil || len(qcservice.StringValue(describeOutput.VolumeSet[0].Instance.InstanceID)) == 0 {
+		logger.Warn(p.Ctx, "Volume [%s] has not been attached, do nothing", volume.VolumeId)
+		return nil
+	}
+
 	output, err := volumeService.DetachVolumes(
 		&qcservice.DetachVolumesInput{
 			Instance: qcservice.String(volume.InstanceId),
