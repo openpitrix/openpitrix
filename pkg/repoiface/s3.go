@@ -5,6 +5,7 @@
 package repoiface
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io/ioutil"
@@ -79,31 +80,71 @@ func NewS3Interface(ctx context.Context, u *neturl.URL, credential string) (*S3I
 	}
 }
 
-func (i *S3Interface) ReadFile(ctx context.Context, filename string) ([]byte, error) {
+func (i *S3Interface) getService(ctx context.Context) (*s3.S3, error) {
 	sess, err := session.NewSession(i.config)
 	if err != nil {
-		logger.Error(ctx, "Connect to s3 failed: %+v", err)
-		return nil, ErrGetIndexYamlFailed
+		logger.Error(ctx, "Connect to s3 [%s] failed: %+v", i.url, err)
+		return nil, err
 	}
-
 	svc := s3.New(sess)
+	return svc, err
+}
+
+func (i *S3Interface) ReadFile(ctx context.Context, filename string) ([]byte, error) {
+	svc, err := i.getService(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	output, err := svc.GetObject(&s3.GetObjectInput{
 		Bucket: aws.String(i.bucket),
 		Key:    aws.String(filename),
 	})
 	if err != nil {
-		logger.Error(ctx, "Failed to get s3 repo [%+v] index.yaml, error: %+v", i, err)
-		return nil, ErrGetIndexYamlFailed
+		logger.Error(ctx, "Failed to read file [%s] from s3 [%s], error: %+v", filename, i.url, err)
+		return nil, err
 	}
 
 	body, err := ioutil.ReadAll(output.Body)
 	if err != nil {
-		return nil, ErrGetIndexYamlFailed
+		return nil, err
 	}
 	return body, nil
 }
 
 func (i *S3Interface) WriteFile(ctx context.Context, filename string, data []byte) error {
+	svc, err := i.getService(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = svc.PutObject(&s3.PutObjectInput{
+		Bucket: aws.String(i.bucket),
+		Key:    aws.String(filename),
+		Body:   bytes.NewReader(data),
+	})
+	if err != nil {
+		logger.Error(ctx, "Failed to write file [%s] to s3 [%s], error: %+v", filename, i.url, err)
+		return err
+	}
+
 	return nil
+}
+
+func (i *S3Interface) CheckRead(ctx context.Context) error {
+	svc, err := i.getService(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = svc.HeadBucket(&s3.HeadBucketInput{
+		Bucket: aws.String(i.bucket),
+	})
+	if err != nil {
+		logger.Error(ctx, "Failed to get bucket info from s3 [%s], error: %+v", i.url, err)
+	}
+	return err
+}
+
+func (i *S3Interface) CheckWrite(ctx context.Context) error {
+	return i.WriteFile(ctx, ".openpitrix.test", []byte{})
 }

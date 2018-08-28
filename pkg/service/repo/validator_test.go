@@ -7,6 +7,8 @@ package repo
 import (
 	"context"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var ctx = context.TODO()
@@ -18,9 +20,8 @@ func TestValidate1(t *testing.T) {
 
 	err := validate(ctx, repoType, url, credential)
 
-	if err == nil {
-		t.Errorf("expect error, because access_key_id and secret_access_key is wrong")
-	}
+	assert.Error(t, err, "expect error, because access_key_id and secret_access_key is wrong")
+
 }
 
 func TestValidate2(t *testing.T) {
@@ -30,33 +31,29 @@ func TestValidate2(t *testing.T) {
 
 	err := validate(ctx, repoType, url, credential)
 
-	if err == nil {
-		t.Errorf("expect error, because type is not matched")
-	}
+	assert.Error(t, err, "expect error, because type is not matched")
+
 }
 
 func TestValidate3(t *testing.T) {
 	repoType := "https"
-	url := "https://kubernetes-charts.storage.googleapis.com"
+	url := "https://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
 	credential := ``
 
 	err := validate(ctx, repoType, url, credential)
 
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 }
 
 func TestValidate4(t *testing.T) {
 	repoType := "https"
-	url := "https://kubernetes1-charts.storage.googleapis.com"
+	url := "https://helmxxxxx-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
 	credential := ``
 
 	err := validate(ctx, repoType, url, credential)
 
-	if err == nil {
-		t.Error("error expect, because this is a bad url")
-	}
+	assert.Error(t, err, "error expect, because this is a bad url")
+
 }
 
 func TestValidate5(t *testing.T) {
@@ -66,7 +63,6 @@ func TestValidate5(t *testing.T) {
 
 	err := validate(ctx, repoType, url, credential)
 
-	if err == nil {
-		t.Error("error expect, because this is a bad url")
-	}
+	assert.Error(t, err, "error expect, because this is a bad url")
+
 }

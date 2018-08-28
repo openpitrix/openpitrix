@@ -9,7 +9,7 @@ import (
 
 func validate(ctx context.Context, repoType, url, credential string) error {
 	var errCode uint32
-	_, err := repoiface.New(ctx, repoType, url, credential)
+	r, err := repoiface.New(ctx, repoType, url, credential)
 	if err != nil {
 		switch err {
 		case repoiface.ErrParseUrlFailed:
@@ -31,6 +31,19 @@ func validate(ctx context.Context, repoType, url, credential string) error {
 			case constants.TypeS3:
 				errCode = ErrSchemeNotS3
 			}
+		}
+		return newErrorWithCode(errCode, err)
+	}
+
+	err = r.CheckRead(ctx)
+	if err != nil {
+		switch repoType {
+		case constants.TypeHttp:
+			errCode = ErrHttpAccessDeny
+		case constants.TypeHttps:
+			errCode = ErrHttpAccessDeny
+		case constants.TypeS3:
+			errCode = ErrS3AccessDeny
 		}
 		return newErrorWithCode(errCode, err)
 	}

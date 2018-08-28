@@ -6,10 +6,13 @@ package repoiface
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	neturl "net/url"
 	"strings"
+
+	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
 type HttpInterface struct {
@@ -31,7 +34,7 @@ func (i *HttpInterface) ReadFile(ctx context.Context, filename string) ([]byte, 
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, err
+		return nil, fmt.Errorf("http status code is not 200")
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
@@ -43,5 +46,25 @@ func (i *HttpInterface) ReadFile(ctx context.Context, filename string) ([]byte, 
 }
 
 func (i *HttpInterface) WriteFile(ctx context.Context, filename string, data []byte) error {
-	return nil
+	return ErrWriteIsUnsupported
+}
+
+type indexYaml struct {
+	ApiVersion string                 `yaml:"apiVersion"`
+	Entries    map[string]interface{} `yaml:"entries"`
+	Generated  string                 `yaml:"generated"`
+}
+
+func (i *HttpInterface) CheckRead(ctx context.Context) error {
+	data, err := i.ReadFile(ctx, "index.yaml")
+	if err != nil {
+		return err
+	}
+	var y indexYaml
+	err = yamlutil.Decode(data, &y)
+	return err
+}
+
+func (i *HttpInterface) CheckWrite(ctx context.Context) error {
+	return ErrWriteIsUnsupported
 }

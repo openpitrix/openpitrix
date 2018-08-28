@@ -16,18 +16,20 @@ import (
 type Err error
 
 var (
-	ErrGetIndexYamlFailed   Err = fmt.Errorf("get index.yaml failed")
 	ErrParseUrlFailed       Err = fmt.Errorf("parse url failed")
 	ErrDecodeJsonFailed     Err = fmt.Errorf("decode json failed")
 	ErrEmptyAccessKeyId     Err = fmt.Errorf("access key id is empty")
 	ErrEmptySecretAccessKey Err = fmt.Errorf("secret access key is empty")
 	ErrSchemeNotMatched     Err = fmt.Errorf("scheme not matched")
 	ErrInvalidType          Err = fmt.Errorf("invalid repo type")
+	ErrWriteIsUnsupported   Err = fmt.Errorf("write is unsupported")
 )
 
 type RepoInterface interface {
 	ReadFile(ctx context.Context, filename string) ([]byte, error)
 	WriteFile(ctx context.Context, filename string, data []byte) error
+	CheckRead(ctx context.Context) error
+	CheckWrite(ctx context.Context) error
 }
 
 func New(ctx context.Context, repoType, url, credential string) (RepoInterface, error) {
