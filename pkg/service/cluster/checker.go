@@ -16,6 +16,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
+	"openpitrix.io/openpitrix/pkg/util/tlsutil"
 )
 
 func checkPermissionAndTransition(ctx context.Context, clusterId, userId string, status []string) (*models.Cluster, error) {
@@ -128,7 +129,24 @@ func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, p
 		logger.Error(ctx, "Connect to pilot service failed")
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	_, err = pilotClient.PingPilot(ctx, &pbtypes.Empty{})
+	tlsConfig, err := pilotClient.GetPilotClientTLSConfig(ctx, &pbtypes.Empty{})
+	if err != nil {
+		logger.Error(ctx, "Get pilot client tls config failed")
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	tlsPilotClientConfig, err := tlsutil.NewClientTLSConfigFromFile(
+		tlsConfig.ClientCrtData,
+		tlsConfig.ClientKeyData,
+		tlsConfig.CaCrtData,
+		tlsConfig.PilotServerName,
+	)
+
+	pilotTLSClient, err := pilotclient.NewTLSClient(tlsPilotClientConfig)
+	if err != nil {
+		logger.Error(ctx, "Connect to pilot tls service failed")
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	_, err = pilotTLSClient.PingPilot(ctx, &pbtypes.Empty{})
 	if err != nil {
 		logger.Error(ctx, "Pilot service is not running")
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
