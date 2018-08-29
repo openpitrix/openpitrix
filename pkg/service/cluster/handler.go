@@ -924,22 +924,49 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
-		newJob := models.NewJob(
-			constants.PlaceHolder,
-			clusterId,
-			clusterWrapper.Cluster.AppId,
-			clusterWrapper.Cluster.VersionId,
-			constants.ActionDeleteClusters,
-			directive,
-			runtime.Provider,
-			s.UserId,
-		)
 
-		jobId, err := jobclient.SendJob(ctx, newJob)
-		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, clusterId)
+		if runtime.Status == constants.StatusDeleted {
+			logger.Warn(ctx, "Runtime [%s] has been deleted", runtime.RuntimeId)
+			attributes := map[string]interface{}{
+				"status_time": time.Now(),
+				"status":      constants.StatusDeleted,
+			}
+			_, err = pi.Global().DB(ctx).
+				Update(models.ClusterTableName).
+				SetMap(attributes).
+				Where(db.Eq("cluster_id", clusterId)).
+				Exec()
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+			}
+
+			_, err = pi.Global().DB(ctx).
+				Update(models.ClusterNodeTableName).
+				SetMap(attributes).
+				Where(db.Eq("cluster_id", clusterId)).
+				Exec()
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+			}
+			jobIds = append(jobIds, "")
+		} else {
+			newJob := models.NewJob(
+				constants.PlaceHolder,
+				clusterId,
+				clusterWrapper.Cluster.AppId,
+				clusterWrapper.Cluster.VersionId,
+				constants.ActionDeleteClusters,
+				directive,
+				runtime.Provider,
+				s.UserId,
+			)
+
+			jobId, err := jobclient.SendJob(ctx, newJob)
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, clusterId)
+			}
+			jobIds = append(jobIds, jobId)
 		}
-		jobIds = append(jobIds, jobId)
 	}
 
 	return &pb.DeleteClustersResponse{
