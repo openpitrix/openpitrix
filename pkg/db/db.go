@@ -142,7 +142,7 @@ func (b *SelectQuery) Limit(n uint64) *SelectQuery {
 }
 
 func (b *SelectQuery) Offset(n uint64) *SelectQuery {
-	n = GetLimit(n)
+	n = GetOffset(n)
 	b.SelectBuilder.Offset(n)
 	return b
 }
