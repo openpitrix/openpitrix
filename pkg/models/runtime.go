@@ -68,6 +68,21 @@ func RuntimeToPb(runtime *Runtime) *pb.Runtime {
 	return &pbRuntime
 }
 
+func PbToRuntime(pbRuntime *pb.Runtime) *Runtime {
+	runtime := Runtime{}
+	runtime.RuntimeId = pbRuntime.GetRuntimeId().GetValue()
+	runtime.Name = pbRuntime.GetName().GetValue()
+	runtime.Description = pbRuntime.GetDescription().GetValue()
+	runtime.Provider = pbRuntime.GetProvider().GetValue()
+	runtime.RuntimeUrl = pbRuntime.GetRuntimeUrl().GetValue()
+	runtime.Zone = pbRuntime.GetZone().GetValue()
+	runtime.Owner = pbRuntime.GetOwner().GetValue()
+	runtime.Status = pbRuntime.GetStatus().GetValue()
+	runtime.CreateTime = pbutil.FromProtoTimestamp(pbRuntime.GetCreateTime())
+	runtime.StatusTime = pbutil.FromProtoTimestamp(pbRuntime.GetStatusTime())
+	return &runtime
+}
+
 func RuntimeToPbs(runtimes []*Runtime) (pbRuntimes []*pb.Runtime) {
 	for _, runtime := range runtimes {
 		pbRuntimes = append(pbRuntimes, RuntimeToPb(runtime))
