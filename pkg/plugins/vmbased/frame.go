@@ -812,7 +812,7 @@ func (f *Frame) getUserDataExec(filename, contents, imageUrl, frontgateIp, certi
 
 mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
 %s
-echo '%s' >> %s
+echo '%s' > %s
 mkdir -p /etc/docker/
 echo '{
   "registry-mirrors": ["%s"]
