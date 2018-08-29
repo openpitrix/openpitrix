@@ -6,6 +6,7 @@ package pilot
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"time"
 
@@ -14,11 +15,16 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
 type Client struct {
 	pbpilot.PilotServiceClient
+}
+
+type TLSClient struct {
+	pbpilot.PilotServiceForFrontgateClient
 }
 
 func NewClient() (*Client, error) {
@@ -28,6 +34,21 @@ func NewClient() (*Client, error) {
 	}
 	return &Client{
 		PilotServiceClient: pbpilot.NewPilotServiceClient(conn),
+	}, nil
+}
+
+func NewTLSClient(tlsConfig *tls.Config) (*TLSClient, error) {
+	host := pi.Global().GlobalConfig().Pilot.Ip
+	port := constants.PilotTlsListenPort
+	if pi.Global().GlobalConfig().Pilot.Port > 0 {
+		port = int(pi.Global().GlobalConfig().Pilot.Port)
+	}
+	conn, err := manager.NewTLSClient(host, port, tlsConfig)
+	if err != nil {
+		return nil, err
+	}
+	return &TLSClient{
+		PilotServiceForFrontgateClient: pbpilot.NewPilotServiceForFrontgateClient(conn),
 	}, nil
 }
 

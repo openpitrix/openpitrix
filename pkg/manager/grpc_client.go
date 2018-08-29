@@ -10,7 +10,10 @@ import (
 	"sync"
 	"time"
 
+	"crypto/tls"
+
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -32,6 +35,22 @@ func NewClient(host string, port int) (*grpc.ClientConn, error) {
 	}
 	ctx := context.Background()
 	conn, err := grpc.DialContext(ctx, endpoint, ClientOptions...)
+	if err != nil {
+		return nil, err
+	}
+	clientCache.Store(endpoint, conn)
+	return conn, nil
+}
+
+func NewTLSClient(host string, port int, tlsConfig *tls.Config) (*grpc.ClientConn, error) {
+	endpoint := fmt.Sprintf("%s:%d", host, port)
+	if conn, ok := clientCache.Load(endpoint); ok {
+		return conn.(*grpc.ClientConn), nil
+	}
+	creds := credentials.NewTLS(tlsConfig)
+	ctx := context.Background()
+	tlsClientOptions := append(ClientOptions, grpc.WithTransportCredentials(creds))
+	conn, err := grpc.DialContext(ctx, endpoint, tlsClientOptions...)
 	if err != nil {
 		return nil, err
 	}

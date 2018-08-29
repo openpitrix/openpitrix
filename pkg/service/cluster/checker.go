@@ -4,16 +4,19 @@ import (
 	"context"
 	"fmt"
 
+	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
+	"openpitrix.io/openpitrix/pkg/util/tlsutil"
 )
 
 func checkPermissionAndTransition(ctx context.Context, clusterId, userId string, status []string) (*models.Cluster, error) {
@@ -119,8 +122,38 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 
 func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, providerInterface plugins.ProviderInterface,
 	clusterWrapper *models.ClusterWrapper) error {
+
+	// check pilot service
+	pilotClient, err := pilotclient.NewClient()
+	if err != nil {
+		logger.Error(ctx, "Connect to pilot service failed")
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	tlsConfig, err := pilotClient.GetPilotClientTLSConfig(ctx, &pbtypes.Empty{})
+	if err != nil {
+		logger.Error(ctx, "Get pilot client tls config failed")
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	tlsPilotClientConfig, err := tlsutil.NewClientTLSConfigFromFile(
+		tlsConfig.ClientCrtData,
+		tlsConfig.ClientKeyData,
+		tlsConfig.CaCrtData,
+		tlsConfig.PilotServerName,
+	)
+
+	pilotTLSClient, err := pilotclient.NewTLSClient(tlsPilotClientConfig)
+	if err != nil {
+		logger.Error(ctx, "Connect to pilot tls service failed")
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	_, err = pilotTLSClient.PingPilot(ctx, &pbtypes.Empty{})
+	if err != nil {
+		logger.Error(ctx, "Pilot service is not running")
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
 	// check image
-	_, err := pi.Global().GlobalConfig().GetRuntimeImageIdAndUrl(runtime.RuntimeUrl, runtime.Zone)
+	_, err = pi.Global().GlobalConfig().GetRuntimeImageIdAndUrl(runtime.RuntimeUrl, runtime.Zone)
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorValidateFailed)
 	}
