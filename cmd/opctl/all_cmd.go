@@ -578,6 +578,7 @@ func (c *ModifyAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
+	f.StringVarP(&c.Package, "package", "", "", "")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
 	f.StringVarP(&c.Status, "status", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")

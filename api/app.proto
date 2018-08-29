@@ -130,6 +130,7 @@ message ModifyAppVersionRequest {
 	google.protobuf.StringValue description = 5;
 	google.protobuf.UInt32Value sequence = 6;
 	google.protobuf.StringValue status = 7;
+	google.protobuf.BytesValue package = 8;
 }
 
 message ModifyAppVersionResponse {

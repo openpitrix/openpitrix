@@ -189,6 +189,8 @@
       type: string
     owner:
       type: string
+    package:
+      type: string
     package_name:
       type: string
     sequence:

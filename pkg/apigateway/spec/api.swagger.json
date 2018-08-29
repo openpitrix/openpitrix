@@ -2907,6 +2907,10 @@
         },
         "status": {
           "type": "string"
+        },
+        "package": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
