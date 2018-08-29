@@ -10,7 +10,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	neturl "net/url"
-	"regexp"
+	"path"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -26,6 +27,7 @@ type S3Interface struct {
 	accessKeyId     string
 	secretAccessKey string
 	bucket          string
+	prefix          string
 	config          *aws.Config
 }
 
@@ -33,10 +35,6 @@ type S3Credential struct {
 	AccessKeyId     string `json:"access_key_id"`
 	SecretAccessKey string `json:"secret_access_key"`
 }
-
-var (
-	compRegEx = regexp.MustCompile(`^s3\.(?P<zone>.+)\.(?P<host>.+\..+)/(?P<bucket>.+)/?$`)
-)
 
 func NewS3Interface(ctx context.Context, u *neturl.URL, credential string) (*S3Interface, error) {
 	var s3Credential S3Credential
@@ -56,28 +54,35 @@ func NewS3Interface(ctx context.Context, u *neturl.URL, credential string) (*S3I
 	accessKeyId := s3Credential.AccessKeyId
 	secretAccessKey := s3Credential.SecretAccessKey
 
-	m := compRegEx.FindStringSubmatch(u.Host + u.Path)
-	if len(m) != 0 && len(m) == 4 {
-		zone := m[1]
-		host := m[2]
-		bucket := m[3]
-		creds := credentials.NewStaticCredentials(accessKeyId, secretAccessKey, "")
-		config := &aws.Config{
-			Region:      aws.String(zone),
-			Endpoint:    aws.String(fmt.Sprintf("%s://s3.%s.%s", "https", zone, host)),
-			Credentials: creds,
-		}
-		return &S3Interface{
-			url:             u,
-			accessKeyId:     accessKeyId,
-			secretAccessKey: secretAccessKey,
-			config:          config,
-			bucket:          bucket,
-		}, nil
+	// e.g. s3://s3.us-east-2.amazonaws.com/my-openpitrix
+	creds := credentials.NewStaticCredentials(accessKeyId, secretAccessKey, "")
+	var region, endpoint, bucket, prefix string
+	bucket, prefix = getBucketPrefix(u.Path)
+
+	if strings.HasPrefix(u.Host, "s3.") {
+		region = strings.Split(u.Host, ".")[1]
+		endpoint = fmt.Sprintf("https://%s", u.Host)
 	} else {
-		logger.Error(ctx, "Repo url [%s] regex test failed", u.String())
-		return nil, ErrParseUrlFailed
+		// If using alternative s3 endpoint (e.g. Minio) default region to us-east-1
+		region = "us-east-1"
+		endpoint = fmt.Sprintf("http://%s", u.Host)
 	}
+
+	config := &aws.Config{
+		Region:           aws.String(region),
+		Endpoint:         aws.String(endpoint),
+		DisableSSL:       aws.Bool(strings.HasPrefix(endpoint, "http://")),
+		S3ForcePathStyle: aws.Bool(endpoint != ""),
+		Credentials:      creds,
+	}
+	return &S3Interface{
+		url:             u,
+		accessKeyId:     accessKeyId,
+		secretAccessKey: secretAccessKey,
+		config:          config,
+		bucket:          bucket,
+		prefix:          prefix,
+	}, nil
 }
 
 func (i *S3Interface) getService(ctx context.Context) (*s3.S3, error) {
@@ -98,7 +103,7 @@ func (i *S3Interface) ReadFile(ctx context.Context, filename string) ([]byte, er
 
 	output, err := svc.GetObject(&s3.GetObjectInput{
 		Bucket: aws.String(i.bucket),
-		Key:    aws.String(filename),
+		Key:    aws.String(path.Join(i.prefix, GetFileName(filename))),
 	})
 	if err != nil {
 		logger.Error(ctx, "Failed to read file [%s] from s3 [%s], error: %+v", filename, i.url, err)
@@ -120,7 +125,7 @@ func (i *S3Interface) WriteFile(ctx context.Context, filename string, data []byt
 
 	_, err = svc.PutObject(&s3.PutObjectInput{
 		Bucket: aws.String(i.bucket),
-		Key:    aws.String(filename),
+		Key:    aws.String(path.Join(i.prefix, GetFileName(filename))),
 		Body:   bytes.NewReader(data),
 	})
 	if err != nil {

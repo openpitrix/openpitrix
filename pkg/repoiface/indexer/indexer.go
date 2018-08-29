@@ -183,7 +183,6 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 }
 
 func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, index int) (string, error) {
-	owner := i.repo.GetOwner().GetValue()
 
 	var versionId string
 	ctx := client.SetSystemUserToContext(i.ctx)
@@ -195,12 +194,16 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 	if version.GetAppVersion() != "" {
 		appVersionName += fmt.Sprintf(" [%s]", version.GetAppVersion())
 	}
-	packageName := version.GetUrls()[0]
-	description := version.GetDescription()
+
+	owner := pbutil.ToProtoString(i.repo.GetOwner().GetValue())
+	name := pbutil.ToProtoString(appVersionName)
+	packageName := pbutil.ToProtoString(repoiface.GetFileName(version.GetUrls()[0]))
+	description := pbutil.ToProtoString(version.GetDescription())
+	sequence := pbutil.ToProtoUInt32(uint32(index))
 	status := pbutil.ToProtoString(version.GetStatus())
 	req := pb.DescribeAppVersionsRequest{}
 	req.AppId = []string{appId}
-	req.Owner = []string{owner}
+	req.Owner = []string{owner.Value}
 	req.Name = []string{appVersionName}
 	res, err := appManagerClient.DescribeAppVersions(ctx, &req)
 	if err != nil {
@@ -209,11 +212,11 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 	if res.TotalCount == 0 {
 		createReq := pb.CreateAppVersionRequest{}
 		createReq.AppId = pbutil.ToProtoString(appId)
-		createReq.Owner = pbutil.ToProtoString(owner)
-		createReq.Name = pbutil.ToProtoString(appVersionName)
-		createReq.PackageName = pbutil.ToProtoString(packageName)
-		createReq.Description = pbutil.ToProtoString(description)
-		createReq.Sequence = pbutil.ToProtoUInt32(uint32(index))
+		createReq.Owner = owner
+		createReq.Name = name
+		createReq.PackageName = packageName
+		createReq.Description = description
+		createReq.Sequence = sequence
 		createReq.Status = status
 
 		createRes, err := appManagerClient.CreateAppVersion(ctx, &createReq)
@@ -225,9 +228,9 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 	} else {
 		modifyReq := pb.ModifyAppVersionRequest{}
 		modifyReq.VersionId = res.AppVersionSet[0].VersionId
-		modifyReq.PackageName = pbutil.ToProtoString(packageName)
-		modifyReq.Description = pbutil.ToProtoString(description)
-		modifyReq.Sequence = pbutil.ToProtoUInt32(uint32(index))
+		modifyReq.PackageName = packageName
+		modifyReq.Description = description
+		modifyReq.Sequence = sequence
 
 		modifyRes, err := appManagerClient.ModifyAppVersion(ctx, &modifyReq)
 		if err != nil {

@@ -5,8 +5,8 @@
 package app
 
 import (
+	"bytes"
 	"context"
-	"io/ioutil"
 	"strings"
 	"time"
 
@@ -20,7 +20,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/gziputil"
-	"openpitrix.io/openpitrix/pkg/util/httputil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
@@ -293,7 +292,14 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		Where(db.Eq(models.ColumnVersionId, versionId)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, versionId)
+	}
+
+	if req.GetPackage() != nil {
+		err = modifyPackageFile(ctx, version, req.GetPackage().GetValue())
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, versionId)
+		}
 	}
 
 	res := &pb.ModifyAppVersionResponse{
@@ -335,17 +341,12 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 	logger.Debug(ctx, "Got app version: [%+v]", version)
-	packageUrl := version.PackageName
-	resp, err := httputil.HttpGet(packageUrl)
+
+	content, err := getPackageFile(ctx, version)
 	if err != nil {
-		logger.Error(ctx, "Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
+		return nil, err
 	}
-	content, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logger.Error(ctx, "Failed to read http response [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
-	}
+
 	return &pb.GetAppVersionPackageResponse{
 		Package:   content,
 		VersionId: req.GetVersionId(),
@@ -360,15 +361,16 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
-	packageUrl := version.PackageName
-	resp, err := httputil.HttpGet(packageUrl)
+
+	content, err := getPackageFile(ctx, version)
 	if err != nil {
-		logger.Error(ctx, "Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
+		logger.Error(ctx, "Failed to load [%s] package, error: %+v", versionId, err)
+		return nil, err
 	}
-	archiveFiles, err := gziputil.LoadArchive(resp.Body, includeFiles...)
+
+	archiveFiles, err := gziputil.LoadArchive(bytes.NewReader(content), includeFiles...)
 	if err != nil {
-		logger.Error(ctx, "Failed to load package [%s] archive, error: %+v", packageUrl, err)
+		logger.Error(ctx, "Failed to load [%s] package, error: %+v", versionId, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	return &pb.GetAppVersionPackageFilesResponse{

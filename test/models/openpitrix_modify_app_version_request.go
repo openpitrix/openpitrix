@@ -25,6 +25,9 @@ type OpenpitrixModifyAppVersionRequest struct {
 	// owner
 	Owner string `json:"owner,omitempty"`
 
+	// package
+	Package strfmt.Base64 `json:"package,omitempty"`
+
 	// package name
 	PackageName string `json:"package_name,omitempty"`
 

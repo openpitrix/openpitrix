@@ -8,10 +8,9 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	neturl "net/url"
-	"strings"
 
+	"openpitrix.io/openpitrix/pkg/util/httputil"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
@@ -26,9 +25,9 @@ func NewHttpInterface(ctx context.Context, url *neturl.URL) (*HttpInterface, err
 }
 
 func (i *HttpInterface) ReadFile(ctx context.Context, filename string) ([]byte, error) {
-	u := strings.TrimSuffix(i.url.String(), "/") + "/" + filename
+	u := URLJoin(i.url.String(), GetFileName(filename))
 
-	resp, err := http.Get(u)
+	resp, err := httputil.HttpGet(u)
 	if err != nil {
 		return nil, err
 	}

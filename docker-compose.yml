@@ -12,6 +12,7 @@ services:
     volumes:
       - ${DATA_PATH}/mysql:/var/lib/mysql
       - ./pkg/db/ddl:/docker-entrypoint-initdb.d
+    command: --lower_case_table_names=0
     ports:
      - "13306:3306" # for unit-test & debug
     container_name: "openpitrix-db"
@@ -25,7 +26,7 @@ services:
     container_name: "openpitrix-etcd"
   openpitrix-minio:
     image: "minio/minio:RELEASE.2018-08-25T01-56-38Z"
-    command: -c "mkdir -p /data/openpitrix-internal-repo/ && minio server /data"
+    command: -c "mkdir -p /data/openpitrix-internal-repo/vmbased /data/openpitrix-internal-repo/helm-charts && minio server /data"
     entrypoint: sh
     environment:
       - MINIO_ACCESS_KEY=openpitrixminioaccesskey

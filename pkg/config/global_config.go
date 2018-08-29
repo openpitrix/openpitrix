@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
@@ -21,7 +22,8 @@ type GlobalConfig struct {
 }
 
 type RepoServiceConfig struct {
-	Cron string `json:"cron"`
+	Cron             string `json:"cron"`
+	ActiveAppDefault *bool  `json:"active_app_default,default=true"`
 }
 
 type ClusterServiceConfig struct {
@@ -41,6 +43,13 @@ type ImageConfig struct {
 	ImageId   string `json:"image_id"`
 	ImageUrl  string `json:"image_url"`
 	ImageName string `json:"image_name"`
+}
+
+func (g *GlobalConfig) GetAppDefaultStatus() string {
+	if g.Repo.ActiveAppDefault != nil && *g.Repo.ActiveAppDefault {
+		return constants.StatusDraft
+	}
+	return constants.StatusActive
 }
 
 func (g *GlobalConfig) GetFrontgateAutoDelete() bool {

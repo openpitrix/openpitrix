@@ -6,14 +6,17 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	repoclient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/repoiface"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -200,4 +203,50 @@ func formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
 		}
 	}
 	return pbApps, nil
+}
+
+func getRepo(ctx context.Context, repoId string) (*pb.Repo, error) {
+	rc, err := repoclient.NewRepoManagerClient()
+	if err != nil {
+		return nil, err
+	}
+	describeResp, err := rc.DescribeRepos(ctx, &pb.DescribeReposRequest{
+		RepoId: []string{repoId},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if len(describeResp.RepoSet) == 0 {
+		return nil, fmt.Errorf("repo [%s] not exists", repoId)
+	}
+
+	return describeResp.RepoSet[0], nil
+}
+
+func getPackageFile(ctx context.Context, version *models.AppVersion) ([]byte, error) {
+	riface, err := getRepoInterface(ctx, version)
+	if err != nil {
+		return nil, err
+	}
+	return riface.ReadFile(ctx, version.PackageName)
+}
+
+func getRepoInterface(ctx context.Context, version *models.AppVersion) (repoiface.RepoInterface, error) {
+	app, err := getApp(ctx, version.AppId)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, version.AppId)
+	}
+	repo, err := getRepo(ctx, app.RepoId)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, app.RepoId)
+	}
+	return repoiface.New(ctx, repo.Type.GetValue(), repo.Url.GetValue(), repo.Credential.GetValue())
+}
+
+func modifyPackageFile(ctx context.Context, version *models.AppVersion, newPackage []byte) error {
+	riface, err := getRepoInterface(ctx, version)
+	if err != nil {
+		return err
+	}
+	return riface.WriteFile(ctx, version.PackageName, newPackage)
 }
