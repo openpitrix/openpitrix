@@ -125,6 +125,7 @@ func (c *CancelAppVersionCmd) Run(out Out) error {
 
 type CreateAppCmd struct {
 	*models.OpenpitrixCreateAppRequest
+	PackagePath string
 }
 
 func NewCreateAppCmd() Cmd {
@@ -147,6 +148,7 @@ func (c *CreateAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
+	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
 	f.StringVarP(&c.Readme, "readme", "", "", "")
 	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
 	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
@@ -155,6 +157,13 @@ func (c *CreateAppCmd) ParseFlag(f Flag) {
 }
 
 func (c *CreateAppCmd) Run(out Out) error {
+	if c.PackagePath != "" {
+		content, err := ioutil.ReadFile(c.PackagePath)
+		if err != nil {
+			return err
+		}
+		c.Package = strfmt.Base64(content)
+	}
 	params := app_manager.NewCreateAppParams()
 	params.WithBody(c.OpenpitrixCreateAppRequest)
 
@@ -173,6 +182,7 @@ func (c *CreateAppCmd) Run(out Out) error {
 
 type CreateAppVersionCmd struct {
 	*models.OpenpitrixCreateAppVersionRequest
+	PackagePath string
 }
 
 func NewCreateAppVersionCmd() Cmd {
@@ -190,11 +200,19 @@ func (c *CreateAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
+	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
 	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *CreateAppVersionCmd) Run(out Out) error {
+	if c.PackagePath != "" {
+		content, err := ioutil.ReadFile(c.PackagePath)
+		if err != nil {
+			return err
+		}
+		c.Package = strfmt.Base64(content)
+	}
 	params := app_manager.NewCreateAppVersionParams()
 	params.WithBody(c.OpenpitrixCreateAppVersionRequest)
 

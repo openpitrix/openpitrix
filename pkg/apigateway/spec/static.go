@@ -2644,6 +2644,10 @@ var Files = map[string]string{
         },
         "status": {
           "type": "string"
+        },
+        "package": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -2679,6 +2683,10 @@ var Files = map[string]string{
         },
         "status": {
           "type": "string"
+        },
+        "package": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

@@ -26,6 +26,8 @@
       type: string
     owner:
       type: string
+    package:
+      type: byte
     readme:
       type: string
     repo_id:
@@ -48,6 +50,8 @@
       type: string
     owner:
       type: string
+    package:
+      type: byte
     package_name:
       type: string
     sequence:

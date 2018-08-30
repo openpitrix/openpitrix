@@ -43,6 +43,9 @@ type OpenpitrixCreateAppRequest struct {
 	// owner
 	Owner string `json:"owner,omitempty"`
 
+	// package
+	Package strfmt.Base64 `json:"package,omitempty"`
+
 	// readme
 	Readme string `json:"readme,omitempty"`
 

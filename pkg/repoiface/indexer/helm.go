@@ -7,6 +7,7 @@ package indexer
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/pkg/errors"
 	"k8s.io/helm/pkg/repo"
@@ -34,8 +35,15 @@ type helmVersionWrapper struct {
 func (h helmVersionWrapper) GetVersion() string     { return h.ChartVersion.GetVersion() }
 func (h helmVersionWrapper) GetAppVersion() string  { return h.ChartVersion.GetAppVersion() }
 func (h helmVersionWrapper) GetDescription() string { return h.ChartVersion.GetDescription() }
-func (h helmVersionWrapper) GetUrls() []string      { return h.ChartVersion.URLs }
-func (h helmVersionWrapper) GetKeywords() []string  { return h.ChartVersion.GetKeywords() }
+func (h helmVersionWrapper) GetUrls() string {
+	return h.ChartVersion.URLs[0]
+}
+func (h helmVersionWrapper) GetSources() string {
+	return jsonutil.ToString(h.ChartVersion.GetSources())
+}
+func (h helmVersionWrapper) GetKeywords() string {
+	return strings.Join(h.ChartVersion.GetKeywords(), ",")
+}
 func (h helmVersionWrapper) GetMaintainers() string {
 	return jsonutil.ToString(h.ChartVersion.GetMaintainers())
 }

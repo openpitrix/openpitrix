@@ -135,6 +135,18 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
+	if req.GetPackage() != nil {
+		version := models.NewAppVersion(newApp.AppId, newApp.Name, newApp.Description, newApp.Owner, "")
+		err = insertVersion(ctx, version)
+		if err != nil {
+			return nil, err
+		}
+		err = newVersionProxy(version).ModifyPackageFile(ctx, req.GetPackage().GetValue())
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	res := &pb.CreateAppResponse{
 		AppId: pbutil.ToProtoString(newApp.AppId),
 	}
@@ -156,18 +168,13 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		"name", "repo_id", "owner", "chart_name",
 		"description", "home", "icon", "screenshots",
 		"maintainers", "sources", "readme", "keywords")
-	attributes[models.ColumnUpdateTime] = time.Now()
 
 	if req.GetStatus() != nil {
 		attributes[models.ColumnStatus] = req.GetStatus().GetValue()
 	}
-	_, err = pi.Global().DB(ctx).
-		Update(models.AppTableName).
-		SetMap(attributes).
-		Where(db.Eq(models.ColumnAppId, appId)).
-		Exec()
+	err = updateApp(ctx, appId, attributes)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		return nil, err
 	}
 
 	if req.GetCategoryId() != nil {
@@ -223,13 +230,16 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		newAppVersion.Status = req.GetStatus().GetValue()
 	}
 
-	_, err := pi.Global().DB(ctx).
-		InsertInto(models.AppVersionTableName).
-		Columns(models.AppVersionColumns...).
-		Record(newAppVersion).
-		Exec()
+	err := insertVersion(ctx, newAppVersion)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, err
+	}
+
+	if req.GetPackage() != nil {
+		err = newVersionProxy(newAppVersion).ModifyPackageFile(ctx, req.GetPackage().GetValue())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	res := &pb.CreateAppVersionResponse{
@@ -277,7 +287,6 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	}
 
 	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name", "sequence")
-	attributes[models.ColumnUpdateTime] = time.Now()
 
 	if version.Status != constants.StatusActive {
 		attributes[models.ColumnStatus] = constants.StatusDraft
@@ -286,19 +295,15 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		attributes[models.ColumnStatus] = req.GetStatus().GetValue()
 	}
 
-	_, err = pi.Global().DB(ctx).
-		Update(models.AppVersionTableName).
-		SetMap(attributes).
-		Where(db.Eq(models.ColumnVersionId, versionId)).
-		Exec()
+	err = updateVersion(ctx, versionId, attributes)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, versionId)
+		return nil, err
 	}
 
 	if req.GetPackage() != nil {
-		err = modifyPackageFile(ctx, version, req.GetPackage().GetValue())
+		err = newVersionProxy(version).ModifyPackageFile(ctx, req.GetPackage().GetValue())
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, versionId)
+			return nil, err
 		}
 	}
 
@@ -342,7 +347,7 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 	}
 	logger.Debug(ctx, "Got app version: [%+v]", version)
 
-	content, err := getPackageFile(ctx, version)
+	content, err := newVersionProxy(version).GetPackageFile(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -362,7 +367,7 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 
-	content, err := getPackageFile(ctx, version)
+	content, err := newVersionProxy(version).GetPackageFile(ctx)
 	if err != nil {
 		logger.Error(ctx, "Failed to load [%s] package, error: %+v", versionId, err)
 		return nil, err

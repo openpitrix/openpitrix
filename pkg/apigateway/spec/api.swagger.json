@@ -2635,6 +2635,10 @@
         },
         "status": {
           "type": "string"
+        },
+        "package": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -2670,6 +2674,10 @@
         },
         "status": {
           "type": "string"
+        },
+        "package": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

@@ -15,7 +15,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.CreateAppRequest:
 		return manager.NewChecker(ctx, r).
-			Required("name", "repo_id").
+			Required("repo_id").
 			Exec()
 	case *pb.ModifyAppRequest:
 		return manager.NewChecker(ctx, r).

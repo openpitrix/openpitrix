@@ -7,6 +7,7 @@ package indexer
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/pkg/errors"
 
@@ -42,22 +43,29 @@ func (i *devkitIndexer) getIndexFile() (*app.IndexFile, error) {
 	return indexFile, nil
 }
 
-type appVersionWrapper struct {
+type AppVersionWrapper struct {
 	*app.Version
 }
 
-func (h appVersionWrapper) GetVersion() string     { return h.Version.GetVersion() }
-func (h appVersionWrapper) GetAppVersion() string  { return h.Version.GetAppVersion() }
-func (h appVersionWrapper) GetDescription() string { return h.Version.GetDescription() }
-func (h appVersionWrapper) GetUrls() []string      { return h.Version.GetUrls() }
-func (h appVersionWrapper) GetKeywords() []string  { return h.Version.GetKeywords() }
-func (h appVersionWrapper) GetMaintainers() string {
+func (h AppVersionWrapper) GetVersion() string     { return h.Version.GetVersion() }
+func (h AppVersionWrapper) GetAppVersion() string  { return h.Version.GetAppVersion() }
+func (h AppVersionWrapper) GetDescription() string { return h.Version.GetDescription() }
+func (h AppVersionWrapper) GetUrls() string {
+	return h.Version.GetUrls()[0]
+}
+func (h AppVersionWrapper) GetSources() string {
+	return jsonutil.ToString(h.Version.GetSources())
+}
+func (h AppVersionWrapper) GetKeywords() string {
+	return strings.Join(h.Version.GetKeywords(), ",")
+}
+func (h AppVersionWrapper) GetMaintainers() string {
 	return jsonutil.ToString(h.Version.GetMaintainers())
 }
-func (h appVersionWrapper) GetScreenshots() string {
+func (h AppVersionWrapper) GetScreenshots() string {
 	return jsonutil.ToString(h.Version.GetScreenshots())
 }
-func (h appVersionWrapper) GetStatus() string {
+func (h AppVersionWrapper) GetStatus() string {
 	return constants.StatusDraft
 }
 
@@ -73,7 +81,7 @@ func (i *devkitIndexer) IndexRepo() error {
 		if len(appVersions) == 0 {
 			return fmt.Errorf("failed to sync app [%s], no versions", appName)
 		}
-		appId, err = i.syncAppInfo(appVersionWrapper{appVersions[0]})
+		appId, err = i.syncAppInfo(AppVersionWrapper{appVersions[0]})
 		if err != nil {
 			logger.Error(i.ctx, "Failed to sync app [%s] to app info", appName)
 			return err
@@ -82,7 +90,7 @@ func (i *devkitIndexer) IndexRepo() error {
 		sort.Sort(appVersions)
 		for index, appVersion := range appVersions {
 			var versionId string
-			versionId, err = i.syncAppVersionInfo(appId, appVersionWrapper{appVersion}, index)
+			versionId, err = i.syncAppVersionInfo(appId, AppVersionWrapper{appVersion}, index)
 			if err != nil {
 				logger.Error(i.ctx, "Failed to sync app version [%s] to app version", appVersion.GetAppVersion())
 				return err

@@ -57,8 +57,8 @@ type appInterface interface {
 	GetDescription() string
 	GetIcon() string
 	GetHome() string
-	GetSources() []string
-	GetKeywords() []string
+	GetSources() string
+	GetKeywords() string
 	GetMaintainers() string
 	GetScreenshots() string
 	GetStatus() string
@@ -67,7 +67,7 @@ type versionInterface interface {
 	GetVersion() string
 	GetAppVersion() string
 	GetDescription() string
-	GetUrls() []string
+	GetUrls() string
 	GetStatus() string
 }
 
@@ -93,8 +93,8 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	description := pbutil.ToProtoString(app.GetDescription())
 	icon := pbutil.ToProtoString(app.GetIcon())
 	home := pbutil.ToProtoString(app.GetHome())
-	sources := pbutil.ToProtoString(strings.Join(app.GetSources(), ","))
-	keywords := pbutil.ToProtoString(strings.Join(app.GetKeywords(), ","))
+	sources := pbutil.ToProtoString(app.GetSources())
+	keywords := pbutil.ToProtoString(app.GetKeywords())
 	maintainers := pbutil.ToProtoString(app.GetMaintainers())
 	screenshots := pbutil.ToProtoString(app.GetScreenshots())
 	status := pbutil.ToProtoString(app.GetStatus())
@@ -197,7 +197,7 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 
 	owner := pbutil.ToProtoString(i.repo.GetOwner().GetValue())
 	name := pbutil.ToProtoString(appVersionName)
-	packageName := pbutil.ToProtoString(repoiface.GetFileName(version.GetUrls()[0]))
+	packageName := pbutil.ToProtoString(repoiface.GetFileName(version.GetUrls()))
 	description := pbutil.ToProtoString(version.GetDescription())
 	sequence := pbutil.ToProtoUInt32(uint32(index))
 	status := pbutil.ToProtoString(version.GetStatus())

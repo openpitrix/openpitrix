@@ -30,6 +30,7 @@ message CreateAppRequest {
 	google.protobuf.StringValue category_id = 13;
 	google.protobuf.StringValue keywords = 14;
 	google.protobuf.StringValue status = 15;
+	google.protobuf.BytesValue package = 16;
 }
 
 message CreateAppResponse {
@@ -116,6 +117,7 @@ message CreateAppVersionRequest {
 	google.protobuf.StringValue description = 5;
 	google.protobuf.UInt32Value sequence = 6;
 	google.protobuf.StringValue status = 7;
+	google.protobuf.BytesValue package = 8;
 }
 
 message CreateAppVersionResponse {
