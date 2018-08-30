@@ -86,3 +86,9 @@ message BytesMap {
 message BytesListMap {
 	map<string, BytesList> value_list_map = 1;
 }
+
+message Version {
+	string short_version = 1;
+	string git_sha1_version = 2;
+	string build_date = 3;
+}

@@ -38,7 +38,7 @@ type ConfdServer struct {
 
 func NewConfdServer(cfgpath string) *ConfdServer {
 	if !filepath.IsAbs(cfgpath) {
-		logger.Error(nil, "NewConfdServer: cfgpath is not abs path", cfgpath)
+		logger.Error(nil, "NewConfdServer: cfgpath is not abs path: %s", cfgpath)
 	}
 
 	return &ConfdServer{
