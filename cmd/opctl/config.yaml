@@ -190,7 +190,7 @@
     owner:
       type: string
     package:
-      type: string
+      type: byte
     package_name:
       type: string
     sequence:
