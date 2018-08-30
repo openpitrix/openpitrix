@@ -18,7 +18,8 @@ var Files = map[string]string{
     }
   },
   "schemes": [
-    "http"
+    "http",
+    "https"
   ],
   "consumes": [
     "application/json"

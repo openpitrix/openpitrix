@@ -39,7 +39,7 @@ func (a *Client) DescribeJobs(params *DescribeJobsParams) (*DescribeJobsOK, erro
 		PathPattern:        "/v1/jobs",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeJobsReader{formats: a.formats},
 		Context:            params.Context,
