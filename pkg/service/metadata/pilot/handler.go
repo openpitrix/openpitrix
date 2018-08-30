@@ -18,11 +18,55 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/pilot/pilotutil"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
+	"openpitrix.io/openpitrix/pkg/version"
 )
 
 var (
 	_ pbpilot.PilotServiceServer = (*Server)(nil)
 )
+
+func (p *Server) GetPilotVersion(context.Context, *pbtypes.Empty) (*pbtypes.Version, error) {
+	reply := &pbtypes.Version{
+		ShortVersion:   version.ShortVersion,
+		GitSha1Version: version.GitSha1Version,
+		BuildDate:      version.BuildDate,
+	}
+	return reply, nil
+}
+func (p *Server) GetFrontgateVersion(context.Context, *pbtypes.FrontgateId) (*pbtypes.Version, error) {
+	err := fmt.Errorf("TODO")
+	logger.Warn(nil, "%+v", err)
+	return nil, err
+}
+func (p *Server) GetDroneVersion(context.Context, *pbtypes.DroneEndpoint) (*pbtypes.Version, error) {
+	err := fmt.Errorf("TODO")
+	logger.Warn(nil, "%+v", err)
+	return nil, err
+}
+
+func (p *Server) PingMetadataBackend(ctx context.Context, arg *pbtypes.FrontgateId) (*pbtypes.Empty, error) {
+	logger.Info(nil, funcutil.CallerName(1))
+
+	client, err := p.fgClientMgr.GetClient(arg.Id)
+	if err != nil {
+		logger.Warn(nil, "%+v", err)
+		return nil, err
+	}
+
+	defer func() {
+		if err != nil && p.fgClientMgr.IsFrontgateShutdownError(err) {
+			p.fgClientMgr.CloseClient(client.info.Id, client.info.NodeId)
+		}
+	}()
+
+	_, err = client.PingMetadataBackend(&pbtypes.Empty{})
+	if err != nil {
+		logger.Warn(nil, "%+v", err)
+		return nil, err
+	}
+
+	return &pbtypes.Empty{}, nil
+}
 
 func (p *Server) GetPilotConfig(context.Context, *pbtypes.Empty) (*pbtypes.PilotConfig, error) {
 	logger.Info(nil, funcutil.CallerName(1))

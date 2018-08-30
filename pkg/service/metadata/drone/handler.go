@@ -28,6 +28,28 @@ var (
 	_ pbdrone.DroneServiceServer = (*Server)(nil)
 )
 
+func (p *Server) GetPilotVersion(context.Context, *pbtypes.Empty) (*pbtypes.Version, error) {
+	err := fmt.Errorf("TODO")
+	logger.Warn(nil, "%+v", err)
+	return nil, err
+}
+func (p *Server) GetFrontgateVersion(context.Context, *pbtypes.Empty) (*pbtypes.Version, error) {
+	err := fmt.Errorf("TODO")
+	logger.Warn(nil, "%+v", err)
+	return nil, err
+}
+func (p *Server) GetDroneVersion(context.Context, *pbtypes.DroneEndpoint) (*pbtypes.Version, error) {
+	err := fmt.Errorf("TODO")
+	logger.Warn(nil, "%+v", err)
+	return nil, err
+}
+
+func (p *Server) PingMetadataBackend(context.Context, *pbtypes.FrontgateEndpoint) (*pbtypes.Empty, error) {
+	err := fmt.Errorf("TODO")
+	logger.Warn(nil, "%+v", err)
+	return nil, err
+}
+
 func (p *Server) GetDroneConfig(context.Context, *pbtypes.Empty) (*pbtypes.DroneConfig, error) {
 	logger.Info(nil, funcutil.CallerName(1))
 
@@ -203,7 +225,7 @@ func (p *Server) StopConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.Em
 	logger.Info(nil, funcutil.CallerName(1))
 
 	if err := p.confd.Stop(); err != nil {
-		logger.Error(nil, "StopConfd:", err)
+		logger.Error(nil, "StopConfd: %v", err)
 		return nil, err
 	}
 

@@ -183,7 +183,7 @@ EXAMPLE:
 				cli.StringFlag{
 					Name:  "endpoint-type",
 					Value: "pilot",
-					Usage: "set endpoint type (pilot/frontgate/drone)",
+					Usage: "set endpoint type (pilot/frontgate/metad/drone)",
 				},
 
 				cli.StringFlag{
@@ -225,6 +225,17 @@ EXAMPLE:
 
 				case "frontgate":
 					_, err = client.PingFrontgate(context.Background(), &pbtypes.FrontgateId{
+						Id: c.String("frontgate-id"),
+					})
+					if err != nil {
+						logger.Critical(nil, "%+v", err)
+						os.Exit(1)
+					}
+					fmt.Println("OK")
+					return
+
+				case "metad":
+					_, err = client.PingMetadataBackend(context.Background(), &pbtypes.FrontgateId{
 						Id: c.String("frontgate-id"),
 					})
 					if err != nil {
@@ -647,6 +658,34 @@ EXAMPLE:
 				}
 
 				pilot.Serve(cfg, pbPilotTLSConfig)
+				return
+			},
+		},
+
+		{
+			Name:  "get-version",
+			Usage: "get service version",
+
+			Action: func(c *cli.Context) {
+				cfgpath := pathutil.MakeAbsPath(c.GlobalString("config"))
+				cfg := pilotutil.MustLoadPilotConfig(cfgpath)
+
+				client, conn, err := pilotutil.DialPilotService(
+					context.Background(), cfg.Host, int(cfg.ListenPort),
+				)
+				if err != nil {
+					logger.Critical(nil, "%+v", err)
+					os.Exit(1)
+				}
+				defer conn.Close()
+
+				info, err := client.GetPilotVersion(context.Background(), &pbtypes.Empty{})
+				if err != nil {
+					logger.Critical(nil, "%+v", err)
+					os.Exit(1)
+				}
+
+				fmt.Println(JSONString(info))
 				return
 			},
 		},

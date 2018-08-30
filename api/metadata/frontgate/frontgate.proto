@@ -29,6 +29,10 @@ message Config {
 }
 
 service FrontgateService {
+	rpc GetPilotVersion (metadata.types.Empty) returns (metadata.types.Version);
+	rpc GetFrontgateVersion (metadata.types.Empty) returns (metadata.types.Version);
+	rpc GetDroneVersion (metadata.types.DroneEndpoint) returns (metadata.types.Version);
+
 	rpc GetPilotConfig (metadata.types.Empty) returns (metadata.types.PilotConfig);
 
 	rpc GetFrontgateConfig (metadata.types.Empty) returns (metadata.types.FrontgateConfig);
@@ -61,6 +65,7 @@ service FrontgateService {
 	rpc PingFrontgate (metadata.types.Empty) returns (metadata.types.Empty);
 	rpc PingFrontgateNode (metadata.types.Empty) returns (metadata.types.Empty);
 	rpc PingDrone (metadata.types.DroneEndpoint) returns (metadata.types.Empty);
+	rpc PingMetadataBackend (metadata.types.Empty) returns (metadata.types.Empty);
 
 	rpc RunCommand (metadata.types.RunCommandOnFrontgateRequest) returns (metadata.types.String);
 	rpc RunCommandOnDrone (metadata.types.RunCommandOnDroneRequest) returns (metadata.types.String);
