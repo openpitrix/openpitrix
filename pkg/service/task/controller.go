@@ -205,6 +205,29 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 					return err
 				}
 
+			case vmbased.PingMetadataBackend:
+				request := new(pbtypes.FrontgateId)
+				err = jsonutil.Decode([]byte(task.Directive), request)
+				if err != nil {
+					logger.Error(ctx, "Decode task directive [%s] failed: %+v", task.Directive, err)
+					return err
+				}
+				err = funcutil.WaitForSpecificOrError(func() (bool, error) {
+					withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.GrpcToPilotTimeout)
+					defer cancel()
+					_, err := pilotClient.PingMetadataBackend(withTimeoutCtx, request)
+					if err != nil {
+						logger.Warn(ctx, "Send task to pilot failed, will retry: %+v", err)
+						return false, nil
+					} else {
+						return true, nil
+					}
+				}, task.GetTimeout(constants.WaitFrontgateServiceTimeout), constants.WaitFrontgateServiceInterval)
+				if err != nil {
+					logger.Error(ctx, "Send task to pilot failed: %+v", err)
+					return err
+				}
+
 			case vmbased.ActionStartConfd:
 				pbTask := models.TaskToPb(task)
 				err = retryutil.Retry(3, 0, func() error {
