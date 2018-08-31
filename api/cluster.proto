@@ -233,9 +233,11 @@ message ClusterNode {
 	google.protobuf.BoolValue auto_backup = 21;
 	google.protobuf.Timestamp create_time = 22;
 	google.protobuf.Timestamp status_time = 23;
-	ClusterRole cluster_role = 24;
-	ClusterCommon cluster_common = 25;
-	repeated string key_pair_id = 26;
+	google.protobuf.StringValue host_id = 24;
+	google.protobuf.StringValue host_ip = 25;
+	ClusterRole cluster_role = 26;
+	ClusterCommon cluster_common = 27;
+	repeated string key_pair_id = 28;
 }
 
 message ClusterRole {
@@ -250,6 +252,9 @@ message ClusterRole {
 	google.protobuf.StringValue mount_options = 9;
 	google.protobuf.StringValue file_system = 10;
 	google.protobuf.StringValue env = 11;
+	google.protobuf.UInt32Value replicas = 12;
+	google.protobuf.UInt32Value ready_replicas = 13;
+	google.protobuf.StringValue api_version = 14;
 }
 
 message ClusterLoadbalancer {

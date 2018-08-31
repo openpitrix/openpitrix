@@ -70,12 +70,19 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 		return nil, err
 	}
 
+	runtime, err := runtimeclient.NewRuntime(p.ctx, runtimeId)
+	if err != nil {
+		return nil, err
+	}
+	namespace := runtime.Zone
+
 	parser := Parser{
 		ctx:       p.ctx,
 		Chart:     c,
 		Conf:      conf,
 		VersionId: versionId,
 		RuntimeId: runtimeId,
+		Namespace: namespace,
 	}
 	clusterWrapper, err := parser.Parse()
 	if err != nil {
@@ -295,7 +302,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 				}
 
 				kubeHandler := GetKubeHandler(p.ctx, taskDirective.RuntimeId)
-				err = kubeHandler.WaitPodsRunning(taskDirective.RuntimeId, taskDirective.Namespace, clusterWrapper.ClusterRoles, timeout, waitInterval)
+				err = kubeHandler.WaitWorkloadReady(taskDirective.RuntimeId, taskDirective.Namespace, clusterWrapper.ClusterRoles, timeout, waitInterval)
 				if err != nil {
 					return true, err
 				}
@@ -349,15 +356,16 @@ func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
 	return nil, nil
 }
 
-func (p *Provider) updateClusterEnv(job *models.Job) error {
+func (p *Provider) updateClusterStatus(job *models.Job) error {
 	clusterWrapper, err := models.NewClusterWrapper(p.ctx, job.Directive)
 	if err != nil {
 		return err
 	}
 
-	ctx := clientutil.SetSystemUserToContext(p.ctx)
-	clusterClient, err := clusterclient.NewClient()
+	kubeHandler := GetKubeHandler(p.ctx, clusterWrapper.Cluster.RuntimeId)
+	err = kubeHandler.DescribeClusterDetails(clusterWrapper)
 	if err != nil {
+		logger.Error(p.ctx, "Describe cluster details failed, %+v", err)
 		return err
 	}
 
@@ -366,40 +374,9 @@ func (p *Provider) updateClusterEnv(job *models.Job) error {
 		clusterRoles = append(clusterRoles, clusterRole)
 	}
 
-	modifyClusterRequest := &pb.ModifyClusterRequest{
-		Cluster: &pb.Cluster{
-			ClusterId:   pbutil.ToProtoString(job.ClusterId),
-			Description: pbutil.ToProtoString(clusterWrapper.Cluster.Description),
-		},
-		ClusterRoleSet: models.ClusterRolesToPbs(clusterRoles),
-	}
-	_, err = clusterClient.ModifyCluster(ctx, modifyClusterRequest)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (p *Provider) updateClusterNodes(job *models.Job) error {
-	clusterWrapper, err := models.NewClusterWrapper(p.ctx, job.Directive)
-	if err != nil {
-		return err
-	}
-
-	runtimeId := clusterWrapper.Cluster.RuntimeId
-
-	runtime, err := runtimeclient.NewRuntime(p.ctx, runtimeId)
-	if err != nil {
-		return err
-	}
-	namespace := runtime.Zone
-
-	kubeHandler := GetKubeHandler(p.ctx, runtimeId)
-	pbClusterNodes, err := kubeHandler.GetKubePodsAsClusterNodes(namespace, job.ClusterId, job.Owner, clusterWrapper.ClusterRoles)
-	if err != nil {
-		logger.Error(p.ctx, "Get kubernetes pods failed, %+v", err)
-		return err
+	var clusterNodesList []*models.ClusterNodeWithKeyPairs
+	for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
+		clusterNodesList = append(clusterNodesList, clusterNode)
 	}
 
 	ctx := clientutil.SetSystemUserToContext(p.ctx)
@@ -408,41 +385,19 @@ func (p *Provider) updateClusterNodes(job *models.Job) error {
 		return err
 	}
 
-	// get all old node ids
-	describeNodesRequest := &pb.DescribeClusterNodesRequest{
-		ClusterId: pbutil.ToProtoString(job.ClusterId),
+	modifyClusterRequest := &pb.ModifyClusterRequest{
+		Cluster: &pb.Cluster{
+			ClusterId:   pbutil.ToProtoString(clusterWrapper.Cluster.ClusterId),
+			Description: pbutil.ToProtoString(clusterWrapper.Cluster.Description),
+		},
+		ClusterRoleSet: models.ClusterRolesToPbs(clusterRoles),
+		ClusterNodeSet: models.ClusterNodesWithKeyPairsToPbs(clusterNodesList),
 	}
-	describeNodesResponse, err := clusterClient.DescribeClusterNodes(ctx, describeNodesRequest)
+	_, err = clusterClient.ModifyCluster(ctx, modifyClusterRequest)
 	if err != nil {
-		logger.Error(p.ctx, "Get old nodes failed, %+v", err)
 		return err
 	}
-	var nodeIds []string
-	for _, clusterNode := range describeNodesResponse.ClusterNodeSet {
-		nodeIds = append(nodeIds, clusterNode.GetNodeId().GetValue())
-	}
 
-	if len(nodeIds) != 0 {
-		// delete old nodes from table
-		deleteNodesRequest := &pb.DeleteTableClusterNodesRequest{
-			NodeId: nodeIds,
-		}
-		_, err = clusterClient.DeleteTableClusterNodes(ctx, deleteNodesRequest)
-		if err != nil {
-			logger.Error(p.ctx, "Delete old nodes failed, %+v", err)
-		}
-	}
-
-	if len(pbClusterNodes) != 0 {
-		// add new nodes into table
-		addNodesRequest := &pb.AddTableClusterNodesRequest{
-			ClusterNodeSet: pbClusterNodes,
-		}
-		_, err = clusterClient.AddTableClusterNodes(ctx, addNodesRequest)
-		if err != nil {
-			logger.Error(p.ctx, "Add new nodes failed, %+v", err)
-		}
-	}
 	return nil
 }
 
@@ -453,21 +408,11 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	case constants.ActionUpgradeCluster:
 		fallthrough
 	case constants.ActionRollbackCluster:
-		err := p.updateClusterNodes(job)
-		if err != nil {
-			logger.Error(p.ctx, "Update cluster nodes failed, %+v", err)
-			return err
-		}
+		fallthrough
 	case constants.ActionUpdateClusterEnv:
-		err := p.updateClusterNodes(job)
+		err := p.updateClusterStatus(job)
 		if err != nil {
-			logger.Error(p.ctx, "Update cluster nodes failed, %+v", err)
-			return err
-		}
-
-		err = p.updateClusterEnv(job)
-		if err != nil {
-			logger.Error(p.ctx, "Update cluster env failed, %+v", err)
+			logger.Error(p.ctx, "Update cluster status failed, %+v", err)
 			return err
 		}
 	}
@@ -483,4 +428,9 @@ func (p *Provider) ValidateCredential(url, credential, zone string) error {
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
 	kubeHandler := GetKubeHandler(p.ctx, "")
 	return kubeHandler.DescribeRuntimeProviderZones(credential)
+}
+
+func (p *Provider) DescribeClusterDetails(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
+	kubeHandler := GetKubeHandler(ctx, clusterWrapper.Cluster.RuntimeId)
+	return kubeHandler.DescribeClusterDetails(clusterWrapper)
 }

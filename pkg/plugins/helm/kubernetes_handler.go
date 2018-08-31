@@ -24,7 +24,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -115,9 +114,13 @@ func (p *KubeHandler) CheckApiVersionsSupported(apiVersions []string) error {
 	return nil
 }
 
-func (p *KubeHandler) WaitPodsRunning(runtimeId, namespace string, clusterRoles map[string]*models.ClusterRole, timeout time.Duration, waitInterval time.Duration) error {
+func (p *KubeHandler) WaitWorkloadReady(runtimeId, namespace string, clusterRoles map[string]*models.ClusterRole, timeout time.Duration, waitInterval time.Duration) error {
 	err := funcutil.WaitForSpecificOrError(func() (bool, error) {
 		for _, clusterRole := range clusterRoles {
+			if clusterRole.Role == "" {
+				continue
+			}
+
 			pods, err := p.getPodsByClusterRole(namespace, clusterRole)
 			if err != nil {
 				return true, err
@@ -127,11 +130,7 @@ func (p *KubeHandler) WaitPodsRunning(runtimeId, namespace string, clusterRoles 
 				continue
 			}
 
-			if !p.checkPodsCount(pods, clusterRole.InstanceSize) {
-				return false, nil
-			}
-
-			if !p.checkPodsRunning(pods) {
+			if clusterRole.ReadyReplicas != clusterRole.Replicas {
 				return false, nil
 			}
 		}
@@ -141,109 +140,33 @@ func (p *KubeHandler) WaitPodsRunning(runtimeId, namespace string, clusterRoles 
 	return err
 }
 
-func (p *KubeHandler) getPodsByClusterRole(namespace string, clusterRole *models.ClusterRole) (pods *corev1.PodList, err error) {
-	kubeClient, _, err := p.initKubeClient()
+func (p *KubeHandler) DescribeClusterDetails(clusterWrapper *models.ClusterWrapper) error {
+	runtime, err := runtimeclient.NewRuntime(p.ctx, p.RuntimeId)
 	if err != nil {
-		return nil, err
+		return err
 	}
+	namespace := runtime.Zone
 
-	if strings.HasSuffix(clusterRole.Role, DeploymentFlag) {
-		deploymentName := strings.TrimSuffix(clusterRole.Role, DeploymentFlag)
-		deployment, err := kubeClient.AppsV1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
-		if err != nil {
-			return nil, err
+	for k, clusterRole := range clusterWrapper.ClusterRoles {
+		if clusterRole.Role == "" {
+			continue
 		}
 
-		labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
-		pods, err = kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
-		if err != nil {
-			return nil, err
-		}
-	} else if strings.HasSuffix(clusterRole.Role, StatefulSetFlag) {
-		statefulSetName := strings.TrimSuffix(clusterRole.Role, StatefulSetFlag)
-		statefulSet, err := kubeClient.AppsV1().StatefulSets(namespace).Get(statefulSetName, metav1.GetOptions{})
-		if err != nil {
-			return nil, err
-		}
-
-		labelSelector := labels.Set(statefulSet.Spec.Selector.MatchLabels).AsSelector().String()
-		pods, err = kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
-		if err != nil {
-			return nil, err
-		}
-
-	} else if strings.HasSuffix(clusterRole.Role, DaemonSetFlag) {
-		daemonSetName := strings.TrimSuffix(clusterRole.Role, DaemonSetFlag)
-		daemonSet, err := kubeClient.AppsV1().DaemonSets(namespace).Get(daemonSetName, metav1.GetOptions{})
-		if err != nil {
-			return nil, err
-		}
-
-		labelSelector := labels.Set(daemonSet.Spec.Selector.MatchLabels).AsSelector().String()
-		pods, err = kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
-		if err != nil {
-			return nil, err
-		}
-	}
-	return
-}
-
-func (p *KubeHandler) checkPodsCount(pods *corev1.PodList, count uint32) bool {
-	return len(pods.Items) >= int(count)
-}
-
-func (p *KubeHandler) checkPodsRunning(pods *corev1.PodList) bool {
-	for _, pod := range pods.Items {
-		if pod.Status.Phase != corev1.PodRunning {
-			return false
-		}
-	}
-
-	return true
-}
-
-func (p *KubeHandler) GetKubePodsAsClusterNodes(namespace, clusterId, owner string, clusterRoles map[string]*models.ClusterRole) ([]*pb.ClusterNode, error) {
-	var pbClusterNodes []*pb.ClusterNode
-	for _, clusterRole := range clusterRoles {
 		pods, err := p.getPodsByClusterRole(namespace, clusterRole)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		if pods == nil {
 			continue
 		}
 
-		pbClusterNodes = p.appendKubePodsToClusterNodes(pbClusterNodes, pods, clusterId, owner)
+		(*clusterWrapper).ClusterRoles[k] = clusterRole
+
+		p.addPodsToClusterNodes(&clusterWrapper.ClusterNodesWithKeyPairs, pods, clusterWrapper.Cluster.ClusterId, clusterWrapper.Cluster.Owner, clusterRole.Role)
 	}
 
-	return pbClusterNodes, nil
-}
-
-func (p *KubeHandler) appendKubePodsToClusterNodes(pbClusterNodes []*pb.ClusterNode, pods *corev1.PodList, clusterId, owner string) []*pb.ClusterNode {
-	for _, pod := range pods.Items {
-
-		clusterNode := &models.ClusterNode{
-			ClusterId:  clusterId,
-			Name:       pod.GetName(),
-			InstanceId: string(pod.GetUID()),
-			PrivateIp:  pod.Status.PodIP,
-			Status:     string(pod.Status.Phase),
-			Owner:      owner,
-			//GlobalServerId: pod.Spec.NodeName,
-			CustomMetadata: GetLabelString(pod.GetObjectMeta().GetLabels()),
-			CreateTime:     pod.GetObjectMeta().GetCreationTimestamp().Time,
-			StatusTime:     pod.GetObjectMeta().GetCreationTimestamp().Time,
-		}
-
-		if len(pod.OwnerReferences) != 0 {
-			clusterNode.Role = fmt.Sprintf("%s-%s", pod.OwnerReferences[0].Name, pod.OwnerReferences[0].Kind)
-		}
-
-		pbClusterNode := models.ClusterNodeToPb(clusterNode)
-		pbClusterNodes = append(pbClusterNodes, pbClusterNode)
-	}
-	return pbClusterNodes
+	return nil
 }
 
 func (p *KubeHandler) ValidateCredential(credential, zone string) error {
@@ -283,4 +206,201 @@ func (p *KubeHandler) DescribeRuntimeProviderZones(credential string) ([]string,
 	}
 
 	return namespaces, nil
+}
+
+func (p *KubeHandler) getPodsByClusterRole(namespace string, clusterRole *models.ClusterRole) (*corev1.PodList, error) {
+	kubeClient, _, err := p.initKubeClient()
+	if err != nil {
+		return nil, err
+	}
+
+	if strings.HasSuffix(clusterRole.Role, DeploymentFlag) {
+		deploymentName := strings.TrimSuffix(clusterRole.Role, DeploymentFlag)
+		switch clusterRole.ApiVersion {
+		case "apps/v1":
+			deployment, err := kubeClient.AppsV1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).ReadyReplicas = uint32(deployment.Status.ReadyReplicas)
+
+			labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		case "apps/v1beta2":
+			deployment, err := kubeClient.AppsV1beta2().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).ReadyReplicas = uint32(deployment.Status.ReadyReplicas)
+
+			labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		case "apps/v1beta1":
+			deployment, err := kubeClient.AppsV1beta1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).ReadyReplicas = uint32(deployment.Status.ReadyReplicas)
+
+			labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		case "extensions/v1beta1":
+			deployment, err := kubeClient.ExtensionsV1beta1().Deployments(namespace).Get(deploymentName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).ReadyReplicas = uint32(deployment.Status.ReadyReplicas)
+
+			labelSelector := labels.Set(deployment.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		}
+	} else if strings.HasSuffix(clusterRole.Role, StatefulSetFlag) {
+		statefulSetName := strings.TrimSuffix(clusterRole.Role, StatefulSetFlag)
+
+		switch clusterRole.ApiVersion {
+		case "apps/v1":
+			statefulSet, err := kubeClient.AppsV1().StatefulSets(namespace).Get(statefulSetName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).ReadyReplicas = uint32(statefulSet.Status.ReadyReplicas)
+
+			labelSelector := labels.Set(statefulSet.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		case "apps/v1beta2":
+			statefulSet, err := kubeClient.AppsV1beta2().StatefulSets(namespace).Get(statefulSetName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).ReadyReplicas = uint32(statefulSet.Status.ReadyReplicas)
+
+			labelSelector := labels.Set(statefulSet.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		case "apps/v1beta1":
+			statefulSet, err := kubeClient.AppsV1beta1().StatefulSets(namespace).Get(statefulSetName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).ReadyReplicas = uint32(statefulSet.Status.ReadyReplicas)
+
+			labelSelector := labels.Set(statefulSet.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		}
+	} else if strings.HasSuffix(clusterRole.Role, DaemonSetFlag) {
+		daemonSetName := strings.TrimSuffix(clusterRole.Role, DaemonSetFlag)
+
+		switch clusterRole.ApiVersion {
+		case "apps/v1":
+			daemonSet, err := kubeClient.AppsV1().DaemonSets(namespace).Get(daemonSetName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).Replicas = uint32(daemonSet.Status.DesiredNumberScheduled)
+			(*clusterRole).ReadyReplicas = uint32(daemonSet.Status.NumberReady)
+
+			labelSelector := labels.Set(daemonSet.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		case "apps/v1beta2":
+			daemonSet, err := kubeClient.AppsV1beta2().DaemonSets(namespace).Get(daemonSetName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).Replicas = uint32(daemonSet.Status.DesiredNumberScheduled)
+			(*clusterRole).ReadyReplicas = uint32(daemonSet.Status.NumberReady)
+
+			labelSelector := labels.Set(daemonSet.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		case "extensions/v1beta1":
+			daemonSet, err := kubeClient.ExtensionsV1beta1().DaemonSets(namespace).Get(daemonSetName, metav1.GetOptions{})
+			if err != nil {
+				return nil, err
+			}
+
+			(*clusterRole).Replicas = uint32(daemonSet.Status.DesiredNumberScheduled)
+			(*clusterRole).ReadyReplicas = uint32(daemonSet.Status.NumberReady)
+
+			labelSelector := labels.Set(daemonSet.Spec.Selector.MatchLabels).AsSelector().String()
+			pods, err := kubeClient.CoreV1().Pods(namespace).List(metav1.ListOptions{LabelSelector: labelSelector})
+			if err != nil {
+				return nil, err
+			}
+			return pods, nil
+		}
+	}
+
+	return nil, nil
+}
+
+func (p *KubeHandler) addPodsToClusterNodes(clusterNodes *map[string]*models.ClusterNodeWithKeyPairs, pods *corev1.PodList, clusterId, owner, role string) {
+	for _, pod := range pods.Items {
+
+		clusterNode := &models.ClusterNodeWithKeyPairs{
+			ClusterNode: &models.ClusterNode{
+				NodeId:         models.NewClusterNodeId(),
+				ClusterId:      clusterId,
+				Name:           pod.GetName(),
+				InstanceId:     string(pod.GetUID()),
+				PrivateIp:      pod.Status.PodIP,
+				Status:         string(pod.Status.Phase),
+				Owner:          owner,
+				Role:           role,
+				CustomMetadata: GetLabelString(pod.GetObjectMeta().GetLabels()),
+				CreateTime:     pod.GetObjectMeta().GetCreationTimestamp().Time,
+				StatusTime:     pod.GetObjectMeta().GetCreationTimestamp().Time,
+				HostId:         pod.Spec.NodeName,
+				HostIp:         pod.Status.HostIP,
+			},
+		}
+
+		//if len(pod.OwnerReferences) != 0 {
+		//	clusterNode.Role = fmt.Sprintf("%s-%s", pod.OwnerReferences[0].Name, pod.OwnerReferences[0].Kind)
+		//}
+
+		(*clusterNodes)[clusterNode.NodeId] = clusterNode
+	}
 }

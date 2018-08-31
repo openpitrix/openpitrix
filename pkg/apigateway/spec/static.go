@@ -3560,6 +3560,12 @@ var Files = map[string]string{
           "type": "string",
           "format": "date-time"
         },
+        "host_id": {
+          "type": "string"
+        },
+        "host_ip": {
+          "type": "string"
+        },
         "cluster_role": {
           "$ref": "#/definitions/openpitrixClusterRole"
         },
@@ -3613,6 +3619,17 @@ var Files = map[string]string{
           "type": "string"
         },
         "env": {
+          "type": "string"
+        },
+        "replicas": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "ready_replicas": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "api_version": {
           "type": "string"
         }
       }

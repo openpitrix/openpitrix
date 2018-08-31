@@ -29,6 +29,7 @@ type ProviderInterface interface {
 	ValidateCredential(url, credential, zone string) error
 	DescribeRuntimeProviderZones(url, credential string) ([]string, error)
 	UpdateClusterStatus(job *models.Job) error
+	DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) error
 }
 
 func GetProviderPlugin(ctx context.Context, provider string) (ProviderInterface, error) {

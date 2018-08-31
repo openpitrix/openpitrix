@@ -186,3 +186,7 @@ func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]strin
 	handler := GetProviderHandler(p.ctx)
 	return handler.DescribeZones(url, credential)
 }
+
+func (p *Provider) DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) error {
+	return nil
+}
