@@ -7,7 +7,7 @@ package vmbased
 import (
 	"testing"
 
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
@@ -18,7 +18,7 @@ const hbaseMustache = `
     "version_id": "appv-12345678",
     "debug": true,
     "name": "MyHBase",
-    "description": "my hbase App",
+    "description": "my hbase OpApp",
     "subnet": "vxnet-t8szyjn",
     "links": {
         "zk_service": "cl-w8qh5hf6"
@@ -380,7 +380,7 @@ const hbaseMustache = `
 var hbaseCluster = models.Cluster{
 	ClusterId:          "",
 	Name:               "MyHBase",
-	Description:        "my hbase App",
+	Description:        "my hbase OpApp",
 	AppId:              "app-12345678",
 	VersionId:          "appv-12345678",
 	SubnetId:           "vxnet-t8szyjn",
@@ -643,7 +643,7 @@ var hbaseClusterLinks = map[string]models.ClusterLink{
 }
 
 func getTestClusterWrapper(t *testing.T) *models.ClusterWrapper {
-	cluster := app.ClusterConf{}
+	cluster := opapp.ClusterConf{}
 	err := jsonutil.Decode([]byte(hbaseMustache), &cluster)
 	if err != nil {
 		t.Fatalf("Parse mustache failed: %+v", err)

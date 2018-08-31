@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"openpitrix.io/openpitrix/pkg/devkit"
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
 type createCmd struct {
@@ -44,7 +44,7 @@ func (c *createCmd) run() error {
 	fmt.Fprintf(c.out, "Creating [%s]\n", c.name)
 
 	appName := filepath.Base(c.name)
-	cfile := &app.Metadata{
+	cfile := &opapp.Metadata{
 		Name:        appName,
 		Description: "An OpenPitrix app",
 		Version:     "0.1.0",

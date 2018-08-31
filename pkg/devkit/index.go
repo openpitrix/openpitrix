@@ -11,16 +11,16 @@ import (
 	"k8s.io/helm/pkg/provenance"
 	"k8s.io/helm/pkg/urlutil"
 
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
-func IndexDirectory(dir, baseURL string) (*app.IndexFile, error) {
+func IndexDirectory(dir, baseURL string) (*opapp.IndexFile, error) {
 	archives, err := filepath.Glob(filepath.Join(dir, "*.tgz"))
 	if err != nil {
 		return nil, err
 	}
 
-	index := app.NewIndexFile()
+	index := opapp.NewIndexFile()
 	for _, arch := range archives {
 		fname, err := filepath.Rel(dir, arch)
 		if err != nil {

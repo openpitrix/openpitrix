@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package app
+package opapp
 
 import (
 	"fmt"
@@ -21,9 +21,9 @@ import (
 const APIVersionV1 = "v1"
 
 type IndexFile struct {
-	APIVersion string              `json:"api_version"`
-	Generated  time.Time           `json:"generated"`
-	Entries    map[string]Versions `json:"entries"`
+	APIVersion string                `json:"api_version"`
+	Generated  time.Time             `json:"generated"`
+	Entries    map[string]OpVersions `json:"entries"`
 	//PublicKeys []string            `json:"publicKeys,omitempty"`
 }
 
@@ -32,13 +32,13 @@ func NewIndexFile() *IndexFile {
 	return &IndexFile{
 		APIVersion: APIVersionV1,
 		Generated:  time.Now(),
-		Entries:    map[string]Versions{},
+		Entries:    map[string]OpVersions{},
 	}
 }
 
 // loadIndex loads an index file and does minimal validity checking.
 //
-// This will fail if API Version is not set (ErrNoAPIVersion) or if the unmarshal fails.
+// This will fail if API OpVersion is not set (ErrNoAPIVersion) or if the unmarshal fails.
 func loadIndex(data []byte) (*IndexFile, error) {
 	i := &IndexFile{}
 	if err := yamlutil.Decode(data, i); err != nil {
@@ -69,14 +69,14 @@ func (i IndexFile) Add(md *Metadata, filename, baseURL, digest string) {
 			u = filepath.Join(baseURL, file)
 		}
 	}
-	cr := &Version{
+	cr := &OpVersion{
 		URLs:     []string{u},
 		Metadata: md,
 		Digest:   digest,
 		Created:  time.Now(),
 	}
 	if ee, ok := i.Entries[md.Name]; !ok {
-		i.Entries[md.Name] = Versions{cr}
+		i.Entries[md.Name] = OpVersions{cr}
 	} else {
 		i.Entries[md.Name] = append(ee, cr)
 	}
@@ -103,7 +103,7 @@ func (i IndexFile) SortEntries() {
 // Get returns the AppVersion for the given name.
 //
 // If version is empty, this will return the app with the highest version.
-func (i IndexFile) Get(name, version string) (*Version, error) {
+func (i IndexFile) Get(name, version string) (*OpVersion, error) {
 	vs, ok := i.Entries[name]
 	if !ok {
 		return nil, fmt.Errorf("no app name found")

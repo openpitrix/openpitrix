@@ -2560,6 +2560,27 @@ var Files = map[string]string{
         "description": {
           "type": "string"
         },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
+        },
         "package_name": {
           "type": "string"
         },
@@ -2687,6 +2708,27 @@ var Files = map[string]string{
         "package": {
           "type": "string",
           "format": "byte"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
         }
       }
     },
@@ -2928,6 +2970,27 @@ var Files = map[string]string{
         "package": {
           "type": "string",
           "format": "byte"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
         }
       }
     },

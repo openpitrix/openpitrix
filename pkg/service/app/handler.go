@@ -83,7 +83,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 
 	appSet, err := formatAppSet(ctx, apps)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, err
 	}
 
 	res := &pb.DescribeAppsResponse{
@@ -114,6 +114,8 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 
 	if req.GetStatus() != nil {
 		newApp.Status = req.GetStatus().GetValue()
+	} else {
+		newApp.Status = pi.Global().GlobalConfig().GetAppDefaultStatus()
 	}
 
 	_, err := pi.Global().DB(ctx).
@@ -141,7 +143,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		if err != nil {
 			return nil, err
 		}
-		err = newVersionProxy(version).ModifyPackageFile(ctx, req.GetPackage().GetValue())
+		err = newVersionProxy(version).ModifyPackageFile(ctx, req.GetPackage().GetValue(), true)
 		if err != nil {
 			return nil, err
 		}
@@ -225,9 +227,26 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 
 	if req.Sequence != nil {
 		newAppVersion.Sequence = req.Sequence.GetValue()
+	} else {
+		seq, err := getBigestSequence(ctx, newAppVersion.AppId)
+		if err != nil {
+			return nil, err
+		}
+		newAppVersion.Sequence = seq + 1
 	}
+
+	newAppVersion.Home = req.GetHome().GetValue()
+	newAppVersion.Icon = req.GetIcon().GetValue()
+	newAppVersion.Screenshots = req.GetScreenshots().GetValue()
+	newAppVersion.Maintainers = req.GetMaintainers().GetValue()
+	newAppVersion.Keywords = req.GetKeywords().GetValue()
+	newAppVersion.Sources = req.GetSources().GetValue()
+	newAppVersion.Readme = req.GetReadme().GetValue()
+
 	if req.GetStatus() != nil {
 		newAppVersion.Status = req.GetStatus().GetValue()
+	} else {
+		newAppVersion.Status = pi.Global().GlobalConfig().GetAppDefaultStatus()
 	}
 
 	err := insertVersion(ctx, newAppVersion)
@@ -236,7 +255,7 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 	}
 
 	if req.GetPackage() != nil {
-		err = newVersionProxy(newAppVersion).ModifyPackageFile(ctx, req.GetPackage().GetValue())
+		err = newVersionProxy(newAppVersion).ModifyPackageFile(ctx, req.GetPackage().GetValue(), false)
 		if err != nil {
 			return nil, err
 		}
@@ -286,7 +305,10 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		return nil, err
 	}
 
-	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name", "sequence")
+	attributes := manager.BuildUpdateAttributes(req,
+		"name", "description", "package_name",
+		"sequence", "home", "icon", "screenshots",
+		"maintainers", "keywords", "sources", "readme")
 
 	if version.Status != constants.StatusActive {
 		attributes[models.ColumnStatus] = constants.StatusDraft
@@ -301,7 +323,7 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	}
 
 	if req.GetPackage() != nil {
-		err = newVersionProxy(version).ModifyPackageFile(ctx, req.GetPackage().GetValue())
+		err = newVersionProxy(version).ModifyPackageFile(ctx, req.GetPackage().GetValue(), false)
 		if err != nil {
 			return nil, err
 		}

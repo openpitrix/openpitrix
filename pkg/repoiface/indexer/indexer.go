@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/golang/protobuf/proto"
+
 	"openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/repoiface"
+	"openpitrix.io/openpitrix/pkg/repoiface/wrapper"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -25,15 +28,15 @@ type Indexer interface {
 func GetIndexer(ctx context.Context, repo *pb.Repo) Indexer {
 	var i Indexer
 	providers := repo.GetProviders()
-	repoInterface, err := repoiface.New(ctx, repo.Type.GetValue(), repo.Url.GetValue(), repo.Credential.GetValue())
+	repoReader, err := repoiface.NewReader(ctx, repo)
 	if err != nil {
 		panic(fmt.Sprintf("failed to get repo interface from repo [%s]", repo.RepoId.GetValue()))
 	}
 
 	if stringutil.StringIn(constants.ProviderKubernetes, providers) {
-		i = NewHelmIndexer(newIndexer(ctx, repo, repoInterface))
+		i = NewHelmIndexer(newIndexer(ctx, repo, repoReader))
 	} else {
-		i = NewDevkitIndexer(newIndexer(ctx, repo, repoInterface))
+		i = NewDevkitIndexer(newIndexer(ctx, repo, repoReader))
 	}
 	return i
 }
@@ -52,26 +55,7 @@ func newIndexer(ctx context.Context, repo *pb.Repo, repoInterface repoiface.Repo
 	}
 }
 
-type appInterface interface {
-	GetName() string
-	GetDescription() string
-	GetIcon() string
-	GetHome() string
-	GetSources() string
-	GetKeywords() string
-	GetMaintainers() string
-	GetScreenshots() string
-	GetStatus() string
-}
-type versionInterface interface {
-	GetVersion() string
-	GetAppVersion() string
-	GetDescription() string
-	GetUrls() string
-	GetStatus() string
-}
-
-func (i *indexer) syncAppInfo(app appInterface) (string, error) {
+func (i *indexer) syncAppInfo(app wrapper.VersionInterface) (string, error) {
 	chartName := app.GetName()
 	repoId := i.repo.GetRepoId().GetValue()
 	owner := i.repo.GetOwner().GetValue()
@@ -90,14 +74,6 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	if err != nil {
 		return appId, err
 	}
-	description := pbutil.ToProtoString(app.GetDescription())
-	icon := pbutil.ToProtoString(app.GetIcon())
-	home := pbutil.ToProtoString(app.GetHome())
-	sources := pbutil.ToProtoString(app.GetSources())
-	keywords := pbutil.ToProtoString(app.GetKeywords())
-	maintainers := pbutil.ToProtoString(app.GetMaintainers())
-	screenshots := pbutil.ToProtoString(app.GetScreenshots())
-	status := pbutil.ToProtoString(app.GetStatus())
 
 	var enabledCategoryIds []string
 	var disabledCategoryIds []string
@@ -119,15 +95,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 		createReq.RepoId = pbutil.ToProtoString(repoId)
 		createReq.ChartName = pbutil.ToProtoString(chartName)
 		createReq.Name = pbutil.ToProtoString(chartName)
-		createReq.Description = description
-		createReq.Icon = icon
-		createReq.Home = home
-		createReq.Sources = sources
-		createReq.Keywords = keywords
-		createReq.Maintainers = maintainers
-		createReq.Screenshots = screenshots
 		createReq.CategoryId = pbutil.ToProtoString(strings.Join(enabledCategoryIds, ","))
-		createReq.Status = status
 
 		createRes, err := appManagerClient.CreateApp(ctx, &createReq)
 		if err != nil {
@@ -162,15 +130,6 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 
 		modifyReq := pb.ModifyAppRequest{}
 		modifyReq.AppId = app.AppId
-		modifyReq.Name = pbutil.ToProtoString(chartName)
-		modifyReq.ChartName = pbutil.ToProtoString(chartName)
-		modifyReq.Description = description
-		modifyReq.Icon = icon
-		modifyReq.Home = home
-		modifyReq.Sources = sources
-		modifyReq.Keywords = keywords
-		modifyReq.Maintainers = maintainers
-		modifyReq.Screenshots = screenshots
 		modifyReq.CategoryId = pbutil.ToProtoString(strings.Join(categoryIds, ","))
 
 		modifyRes, err := appManagerClient.ModifyApp(ctx, &modifyReq)
@@ -182,7 +141,7 @@ func (i *indexer) syncAppInfo(app appInterface) (string, error) {
 	}
 }
 
-func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, index int) (string, error) {
+func (i *indexer) syncAppVersionInfo(appId string, version wrapper.VersionInterface, index int) (string, error) {
 
 	var versionId string
 	ctx := client.SetSystemUserToContext(i.ctx)
@@ -190,17 +149,19 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 	if err != nil {
 		return versionId, err
 	}
-	appVersionName := version.GetVersion()
-	if version.GetAppVersion() != "" {
-		appVersionName += fmt.Sprintf(" [%s]", version.GetAppVersion())
-	}
+	appVersionName := version.GetVersionName()
 
 	owner := pbutil.ToProtoString(i.repo.GetOwner().GetValue())
 	name := pbutil.ToProtoString(appVersionName)
 	packageName := pbutil.ToProtoString(repoiface.GetFileName(version.GetUrls()))
 	description := pbutil.ToProtoString(version.GetDescription())
 	sequence := pbutil.ToProtoUInt32(uint32(index))
-	status := pbutil.ToProtoString(version.GetStatus())
+	icon := pbutil.ToProtoString(version.GetIcon())
+	home := pbutil.ToProtoString(version.GetHome())
+	sources := pbutil.ToProtoString(version.GetSources())
+	keywords := pbutil.ToProtoString(version.GetKeywords())
+	maintainers := pbutil.ToProtoString(version.GetMaintainers())
+	screenshots := pbutil.ToProtoString(version.GetScreenshots())
 	req := pb.DescribeAppVersionsRequest{}
 	req.AppId = []string{appId}
 	req.Owner = []string{owner.Value}
@@ -217,7 +178,13 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 		createReq.PackageName = packageName
 		createReq.Description = description
 		createReq.Sequence = sequence
-		createReq.Status = status
+
+		createReq.Home = home
+		createReq.Icon = icon
+		createReq.Screenshots = screenshots
+		createReq.Maintainers = maintainers
+		createReq.Keywords = keywords
+		createReq.Sources = sources
 
 		createRes, err := appManagerClient.CreateAppVersion(ctx, &createReq)
 		if err != nil {
@@ -226,11 +193,40 @@ func (i *indexer) syncAppVersionInfo(appId string, version versionInterface, ind
 		versionId = createRes.GetVersionId().GetValue()
 		return versionId, err
 	} else {
+		existVersion := res.AppVersionSet[0]
 		modifyReq := pb.ModifyAppVersionRequest{}
-		modifyReq.VersionId = res.AppVersionSet[0].VersionId
-		modifyReq.PackageName = packageName
-		modifyReq.Description = description
-		modifyReq.Sequence = sequence
+		if existVersion.PackageName.GetValue() != packageName.GetValue() {
+			modifyReq.PackageName = packageName
+		}
+		if existVersion.Description.GetValue() != description.GetValue() {
+			modifyReq.Description = description
+		}
+		if existVersion.Sequence.GetValue() != sequence.GetValue() {
+			modifyReq.Sequence = sequence
+		}
+		if existVersion.Home.GetValue() != home.GetValue() {
+			modifyReq.Home = home
+		}
+		if existVersion.Icon.GetValue() != icon.GetValue() {
+			modifyReq.Icon = icon
+		}
+		if existVersion.Screenshots.GetValue() != screenshots.GetValue() {
+			modifyReq.Screenshots = screenshots
+		}
+		if existVersion.Maintainers.GetValue() != maintainers.GetValue() {
+			modifyReq.Maintainers = maintainers
+		}
+		if existVersion.Keywords.GetValue() != keywords.GetValue() {
+			modifyReq.Keywords = keywords
+		}
+		if existVersion.Sources.GetValue() != sources.GetValue() {
+			modifyReq.Sources = sources
+		}
+		if proto.Size(&modifyReq) == 0 {
+			return versionId, err
+		}
+
+		modifyReq.VersionId = existVersion.VersionId
 
 		modifyRes, err := appManagerClient.ModifyAppVersion(ctx, &modifyReq)
 		if err != nil {
@@ -251,7 +247,6 @@ func (i *indexer) DeleteRepo() error {
 	for {
 		req := pb.DescribeAppsRequest{}
 		req.RepoId = []string{i.repo.GetRepoId().GetValue()}
-		req.Status = []string{constants.StatusActive}
 		req.Limit = uint32(limit)
 		res, err := appManagerClient.DescribeApps(ctx, &req)
 		if err != nil {

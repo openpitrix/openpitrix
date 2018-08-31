@@ -7,14 +7,12 @@ package indexer
 import (
 	"fmt"
 	"sort"
-	"strings"
 
 	"github.com/pkg/errors"
 	"k8s.io/helm/pkg/repo"
 
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/repoiface/wrapper"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
@@ -26,32 +24,6 @@ func NewHelmIndexer(i indexer) *helmIndexer {
 	return &helmIndexer{
 		indexer: i,
 	}
-}
-
-type helmVersionWrapper struct {
-	*repo.ChartVersion
-}
-
-func (h helmVersionWrapper) GetVersion() string     { return h.ChartVersion.GetVersion() }
-func (h helmVersionWrapper) GetAppVersion() string  { return h.ChartVersion.GetAppVersion() }
-func (h helmVersionWrapper) GetDescription() string { return h.ChartVersion.GetDescription() }
-func (h helmVersionWrapper) GetUrls() string {
-	return h.ChartVersion.URLs[0]
-}
-func (h helmVersionWrapper) GetSources() string {
-	return jsonutil.ToString(h.ChartVersion.GetSources())
-}
-func (h helmVersionWrapper) GetKeywords() string {
-	return strings.Join(h.ChartVersion.GetKeywords(), ",")
-}
-func (h helmVersionWrapper) GetMaintainers() string {
-	return jsonutil.ToString(h.ChartVersion.GetMaintainers())
-}
-func (h helmVersionWrapper) GetScreenshots() string {
-	return ""
-}
-func (h helmVersionWrapper) GetStatus() string {
-	return constants.StatusActive
 }
 
 func (i *helmIndexer) IndexRepo() error {
@@ -66,7 +38,7 @@ func (i *helmIndexer) IndexRepo() error {
 		if len(chartVersions) == 0 {
 			return fmt.Errorf("failed to sync chart [%s], no versions", chartName)
 		}
-		appId, err = i.syncAppInfo(helmVersionWrapper{chartVersions[0]})
+		appId, err = i.syncAppInfo(wrapper.HelmVersionWrapper{ChartVersion: chartVersions[0]})
 		if err != nil {
 			logger.Error(i.ctx, "Failed to sync chart [%s] to app info", chartName)
 			return err
@@ -75,7 +47,7 @@ func (i *helmIndexer) IndexRepo() error {
 		sort.Sort(chartVersions)
 		for index, chartVersion := range chartVersions {
 			var versionId string
-			v := helmVersionWrapper{ChartVersion: chartVersion}
+			v := wrapper.HelmVersionWrapper{ChartVersion: chartVersion}
 			versionId, err = i.syncAppVersionInfo(appId, v, index)
 			if err != nil {
 				logger.Error(i.ctx, "Failed to sync chart version [%s] to app version", chartVersion.GetAppVersion())

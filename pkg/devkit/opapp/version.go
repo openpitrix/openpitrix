@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package app
+package opapp
 
 import (
 	"time"
@@ -10,18 +10,18 @@ import (
 	"github.com/Masterminds/semver"
 )
 
-// Versions is a list of versioned app references.
-// Implements a sorter on App.
-type Versions []*Version
+// OpVersions is a list of versioned app references.
+// Implements a sorter on OpApp.
+type OpVersions []*OpVersion
 
 // Len returns the length.
-func (c Versions) Len() int { return len(c) }
+func (c OpVersions) Len() int { return len(c) }
 
 // Swap swaps the position of two items in the versions slice.
-func (c Versions) Swap(i, j int) { c[i], c[j] = c[j], c[i] }
+func (c OpVersions) Swap(i, j int) { c[i], c[j] = c[j], c[i] }
 
 // Less returns true if the version of entry a is less than the version of entry b.
-func (c Versions) Less(a, b int) bool {
+func (c OpVersions) Less(a, b int) bool {
 	// Failed parse pushes to the back.
 	i, err := semver.NewVersion(c[a].Version)
 	if err != nil {
@@ -34,8 +34,8 @@ func (c Versions) Less(a, b int) bool {
 	return i.LessThan(j)
 }
 
-// Version represents a app entry in the IndexFile
-type Version struct {
+// OpVersion represents a app entry in the IndexFile
+type OpVersion struct {
 	*Metadata
 	URLs    []string  `json:"urls"`
 	Created time.Time `json:"created,omitempty"`
@@ -43,4 +43,4 @@ type Version struct {
 	Digest  string    `json:"digest,omitempty"`
 }
 
-func (h Version) GetUrls() []string { return h.URLs }
+func (h OpVersion) GetUrls() []string { return h.URLs }

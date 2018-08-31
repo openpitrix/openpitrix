@@ -46,6 +46,14 @@
       type: string
     description:
       type: string
+    home:
+      type: string
+    icon:
+      type: string
+    keywords:
+      type: string
+    maintainers:
+      type: string
     name:
       type: string
     owner:
@@ -54,8 +62,14 @@
       type: byte
     package_name:
       type: string
+    readme:
+      type: string
+    screenshots:
+      type: string
     sequence:
       type: integer
+    sources:
+      type: string
     status:
       type: string
 - action: DeleteAppVersion
@@ -189,6 +203,14 @@
   body:
     description:
       type: string
+    home:
+      type: string
+    icon:
+      type: string
+    keywords:
+      type: string
+    maintainers:
+      type: string
     name:
       type: string
     owner:
@@ -197,8 +219,14 @@
       type: byte
     package_name:
       type: string
+    readme:
+      type: string
+    screenshots:
+      type: string
     sequence:
       type: integer
+    sources:
+      type: string
     status:
       type: string
     version_id:

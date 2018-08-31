@@ -2,7 +2,9 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package app
+package opapp
+
+import "fmt"
 
 type Metadata struct {
 	ApiVersion  string        `json:"api_version,omitempty"`
@@ -97,4 +99,8 @@ func (m *Metadata) GetScreenshots() []string {
 		return m.Screenshots
 	}
 	return []string{}
+}
+
+func (m *Metadata) GetPackageName() string {
+	return fmt.Sprintf("%s-%s.tgz", m.Name, m.Version)
 }

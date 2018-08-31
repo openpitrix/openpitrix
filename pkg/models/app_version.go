@@ -5,9 +5,13 @@
 package models
 
 import (
+	"strings"
 	"time"
 
+	"github.com/Masterminds/semver"
+
 	"openpitrix.io/openpitrix/pkg/constants"
+
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -26,6 +30,13 @@ type AppVersion struct {
 	Name        string
 	Description string
 	PackageName string
+	Home        string
+	Icon        string
+	Screenshots string
+	Maintainers string
+	Keywords    string
+	Sources     string
+	Readme      string
 	Status      string
 	Sequence    uint32
 	CreateTime  time.Time
@@ -34,6 +45,37 @@ type AppVersion struct {
 }
 
 var AppVersionColumns = GetColumnsFromStruct(&AppVersion{})
+
+func (v AppVersion) GetSemver() string {
+	return strings.Split(v.Name, " ")[0]
+}
+
+type AppVersions []*AppVersion
+
+// Len returns the length.
+func (c AppVersions) Len() int { return len(c) }
+
+// Swap swaps the position of two items in the versions slice.
+func (c AppVersions) Swap(i, j int) { c[i], c[j] = c[j], c[i] }
+
+// Less returns true if the version of entry a is less than the version of entry b.
+func (c AppVersions) Less(a, b int) bool {
+	// Failed parse pushes to the back.
+	aVersion := c[a]
+	bVersion := c[b]
+	i, err := semver.NewVersion(aVersion.GetSemver())
+	if err != nil {
+		return true
+	}
+	j, err := semver.NewVersion(bVersion.GetSemver())
+	if err != nil {
+		return false
+	}
+	if i.Equal(j) {
+		return aVersion.CreateTime.Before(bVersion.CreateTime)
+	}
+	return i.LessThan(j)
+}
 
 func NewAppVersion(appId, name, description, owner, packageName string) *AppVersion {
 	return &AppVersion{
@@ -63,7 +105,7 @@ func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
 	pbAppVersion.Owner = pbutil.ToProtoString(appVersion.Owner)
 	pbAppVersion.CreateTime = pbutil.ToProtoTimestamp(appVersion.CreateTime)
 	pbAppVersion.StatusTime = pbutil.ToProtoTimestamp(appVersion.StatusTime)
-	pbAppVersion.Sequence = uint32(appVersion.Sequence)
+	pbAppVersion.Sequence = pbutil.ToProtoUInt32(appVersion.Sequence)
 	if appVersion.UpdateTime != nil {
 		pbAppVersion.UpdateTime = pbutil.ToProtoTimestamp(*appVersion.UpdateTime)
 	}

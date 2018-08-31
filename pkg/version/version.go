@@ -16,7 +16,7 @@ var (
 )
 
 func PrintVersionInfo(printer func(string, ...interface{})) {
-	printer("Release Version: %s", ShortVersion)
+	printer("Release OpVersion: %s", ShortVersion)
 	printer("Git Commit Hash: %s", GitSha1Version)
 	printer("Build Time: %s", BuildDate)
 }

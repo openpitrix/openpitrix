@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
 const defaultClusterJsonTmpl = `
@@ -111,7 +111,7 @@ const defaultConfigJson = `
 }
 `
 
-func Create(metadata *app.Metadata, dir string) (string, error) {
+func Create(metadata *opapp.Metadata, dir string) (string, error) {
 	path, err := filepath.Abs(dir)
 	if err != nil {
 		return path, err

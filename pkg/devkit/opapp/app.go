@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package app
+package opapp
 
 // BufferedFile represents an archive file buffered for later processing.
 type BufferedFile struct {
@@ -10,7 +10,7 @@ type BufferedFile struct {
 	Data []byte
 }
 
-type App struct {
+type OpApp struct {
 	Metadata *Metadata `json:"metadata,omitempty"`
 
 	ConfigTemplate *ConfigTemplate `json:"config,omitempty"`

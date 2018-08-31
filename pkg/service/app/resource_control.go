@@ -5,23 +5,17 @@
 package app
 
 import (
-	"bytes"
 	"context"
-	"fmt"
+	"sort"
 	"time"
 
-	repoclient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/devkit"
-	"openpitrix.io/openpitrix/pkg/devkit/app"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/repoiface"
-	"openpitrix.io/openpitrix/pkg/repoiface/indexer"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -152,26 +146,54 @@ func syncAppStatus(ctx context.Context, appId string) error {
 		app.Status == constants.StatusDeleted {
 		return nil
 	}
-	var status string
-	countActive, err := pi.Global().DB(ctx).
-		Select(models.AppVersionColumns...).
-		From(models.AppVersionTableName).
-		Where(db.Eq(models.ColumnAppId, appId)).
-		Where(db.Eq(models.ColumnStatus, constants.StatusActive)).
-		Count()
+	attributes := make(map[string]interface{})
+	activeVersion, err := getLatestAppVersion(ctx, appId, constants.StatusActive)
 	if err != nil {
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return err
 	}
-	if countActive > 0 {
+	var status string
+	if activeVersion != nil {
 		status = constants.StatusActive
+
+		if activeVersion.Description != app.Description {
+			attributes[models.ColumnDescription] = activeVersion.Description
+		}
+		if activeVersion.Home != app.Home {
+			attributes[models.ColumnHome] = activeVersion.Home
+		}
+		if activeVersion.Icon != app.Icon {
+			attributes[models.ColumnIcon] = activeVersion.Icon
+		}
+		if activeVersion.Screenshots != app.Screenshots {
+			attributes[models.ColumnScreenshots] = activeVersion.Screenshots
+		}
+		if activeVersion.Maintainers != app.Maintainers {
+			attributes[models.ColumnMaintainers] = activeVersion.Maintainers
+		}
+		if activeVersion.Keywords != app.Keywords {
+			attributes[models.ColumnKeywords] = activeVersion.Keywords
+		}
+		if activeVersion.Sources != app.Sources {
+			attributes[models.ColumnSources] = activeVersion.Sources
+		}
+		if activeVersion.Readme != app.Readme {
+			attributes[models.ColumnReadme] = activeVersion.Readme
+		}
 	} else {
 		status = constants.StatusDraft
 	}
+	if status != app.Status {
+		attributes[models.ColumnStatus] = status
+		attributes[models.ColumnStatusTime] = time.Now()
+	}
+	if len(attributes) == 0 {
+		return nil
+	}
+	attributes[models.ColumnUpdateTime] = time.Now()
 
 	_, err = pi.Global().DB(ctx).
 		Update(models.AppTableName).
-		Set(models.ColumnStatus, status).
-		Set(models.ColumnStatusTime, time.Now()).
+		SetMap(attributes).
 		Where(db.Eq(models.ColumnAppId, appId)).
 		Exec()
 	if err != nil {
@@ -194,19 +216,23 @@ func getApp(ctx context.Context, appId string) (*models.App, error) {
 	return app, nil
 }
 
-func getLatestAppVersion(ctx context.Context, appId string) (*models.AppVersion, error) {
+func getLatestAppVersion(ctx context.Context, appId string, status ...string) (*models.AppVersion, error) {
 	appVersion := &models.AppVersion{}
-	err := pi.Global().DB(ctx).
+	stmt := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
 		From(models.AppVersionTableName).
-		Where(db.Eq(models.ColumnAppId, appId)).
+		Where(db.Eq(models.ColumnAppId, appId))
+	if len(status) > 0 {
+		stmt.Where(db.Eq(models.ColumnStatus, status))
+	}
+	err := stmt.
 		OrderDir(models.ColumnSequence, false).
 		LoadOne(&appVersion)
 	if err != nil {
 		if err == db.ErrNotFound {
 			return nil, nil
 		}
-		return nil, err
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 	return appVersion, nil
 }
@@ -247,126 +273,39 @@ func formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
 	return pbApps, nil
 }
 
-type versionProxy struct {
-	version *models.AppVersion
-	app     *models.App
-	repo    *pb.Repo
+func getBigestSequence(ctx context.Context, appId string) (uint32, error) {
+	var sequence uint32
+	err := pi.Global().DB(ctx).
+		Select("max(sequence)").
+		From(models.AppVersionTableName).
+		Where(db.Eq(models.ColumnAppId, appId)).
+		LoadOne(&sequence)
+	if err != nil {
+		return sequence, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)
+	}
+	return sequence, nil
 }
 
-func newVersionProxy(version *models.AppVersion) *versionProxy {
-	vp := &versionProxy{}
-	vp.version = version
-	return vp
-}
-
-func (vp *versionProxy) GetVersion(ctx context.Context) (*models.AppVersion, error) {
-	return vp.version, nil
-}
-
-func (vp *versionProxy) GetApp(ctx context.Context) (*models.App, error) {
-	if vp.app != nil {
-		return vp.app, nil
-	}
-	app, err := getApp(ctx, vp.version.AppId)
+func resortAppVersions(ctx context.Context, appId string) error {
+	var versions models.AppVersions
+	_, err := pi.Global().DB(ctx).
+		Select(models.ColumnVersionId, models.ColumnName, models.ColumnSequence, models.ColumnCreateTime).
+		From(models.AppVersionTableName).
+		Where(db.Eq(models.ColumnAppId, appId)).
+		Load(&versions)
 	if err != nil {
-		return nil, err
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)
 	}
-	vp.app = app
-	return app, nil
-}
-
-func (vp *versionProxy) GetRepo(ctx context.Context) (*pb.Repo, error) {
-	if vp.repo != nil {
-		return vp.repo, nil
-	}
-	app, err := vp.GetApp(ctx)
-	if err != nil {
-		return nil, err
-	}
-	repoId := app.RepoId
-	rc, err := repoclient.NewRepoManagerClient()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, app.RepoId)
-	}
-	describeResp, err := rc.DescribeRepos(ctx, &pb.DescribeReposRequest{
-		RepoId: []string{repoId},
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, app.RepoId)
-	}
-	if len(describeResp.RepoSet) == 0 {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, app.RepoId)
-	}
-	vp.repo = describeResp.RepoSet[0]
-	return vp.repo, nil
-}
-
-func (vp *versionProxy) GetPackageFile(ctx context.Context) ([]byte, error) {
-	riface, err := vp.GetRepoInterface(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return riface.ReadFile(ctx, vp.version.PackageName)
-}
-
-func (vp *versionProxy) GetRepoInterface(ctx context.Context) (repoiface.RepoInterface, error) {
-	repo, err := vp.GetRepo(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return repoiface.New(ctx, repo.Type.GetValue(), repo.Url.GetValue(), repo.Credential.GetValue())
-}
-
-func (vp *versionProxy) ModifyPackageFile(ctx context.Context, newPackage []byte) error {
-	riface, err := vp.GetRepoInterface(ctx)
-	if err != nil {
-		return err
-	}
-	appId := vp.version.AppId
-	versionId := vp.version.VersionId
-
-	pkg, err := devkit.LoadArchive(bytes.NewReader(newPackage))
-	if err != nil {
-		logger.Error(ctx, "Failed to load package, error: %+v", err)
-		return gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorLoadPackageFailed, err.Error())
-	}
-
-	appVersion := &app.Version{}
-	appVersion.Metadata = pkg.Metadata
-	pkgVersion := indexer.AppVersionWrapper{Version: appVersion}
-	appVersionName := pkgVersion.GetVersion()
-	if pkgVersion.GetAppVersion() != "" {
-		appVersionName += fmt.Sprintf(" [%s]", pkgVersion.GetAppVersion())
-	}
-	packageName := fmt.Sprintf("%s-%s.tgz", appVersion.Name, appVersion.Version)
-
-	err = updateApp(ctx, appId, map[string]interface{}{
-		models.ColumnName:        pkgVersion.GetName(),
-		models.ColumnDescription: pkgVersion.GetDescription(),
-		models.ColumnChartName:   pkgVersion.GetName(),
-		models.ColumnHome:        pkgVersion.GetHome(),
-		models.ColumnIcon:        pkgVersion.GetIcon(),
-		models.ColumnScreenshots: pkgVersion.GetScreenshots(),
-		models.ColumnSources:     pkgVersion.GetSources(),
-		models.ColumnKeywords:    pkgVersion.GetKeywords(),
-	})
-	if err != nil {
-		return err
-	}
-
-	err = updateVersion(ctx, versionId, map[string]interface{}{
-		models.ColumnName:        appVersionName,
-		models.ColumnDescription: pkgVersion.GetDescription(),
-		models.ColumnPackageName: packageName,
-	})
-	if err != nil {
-		return err
-	}
-
-	err = riface.WriteFile(ctx, packageName, newPackage)
-	if err != nil {
-		logger.Error(ctx, "Failed to write [%s] package, error: %+v", vp.version.VersionId, err)
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourceFailed, vp.version.VersionId)
+	sort.Sort(versions)
+	for i, version := range versions {
+		if version.Sequence != uint32(i) {
+			err = updateVersion(ctx, version.VersionId, map[string]interface{}{
+				models.ColumnSequence: i,
+			})
+			if err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }

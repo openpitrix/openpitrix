@@ -193,4 +193,16 @@ var (
 		Name: "load_package_failed",
 		En:   "load package failed, reason: [%s]",
 	}
+	ErrorCannotChangeAppName = ErrorMessage{
+		Name: "cannot_change_app_name",
+		En:   "cannot change app name",
+	}
+	ErrorAppNameExists = ErrorMessage{
+		Name: "app_name_exists",
+		En:   "app name [%s] exists",
+	}
+	ErrorCannotAccessRepo = ErrorMessage{
+		Name: "cannot_access_repo",
+		En:   "cannot access repo",
+	}
 )

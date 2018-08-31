@@ -19,7 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/devkit"
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -104,7 +104,7 @@ func (f *Frame) getPreAndPostStartGroupNodes(nodeIds []string) ([]string, []stri
 		role := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId].Role
 		serviceStr := f.ClusterWrapper.ClusterCommons[role].InitService
 		if serviceStr != "" {
-			service := app.Service{}
+			service := opapp.Service{}
 			err := jsonutil.Decode([]byte(serviceStr), &service)
 			if err != nil {
 				logger.Error(f.Ctx, "Unmarshal cluster [%s] init service failed: %+v",
@@ -132,7 +132,7 @@ func (f *Frame) getPreAndPostStopGroupNodes(nodeIds []string) ([]string, []strin
 		role := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId].Role
 		serviceStr := f.ClusterWrapper.ClusterCommons[role].DestroyService
 		if serviceStr != "" {
-			service := app.Service{}
+			service := opapp.Service{}
 			err := jsonutil.Decode([]byte(serviceStr), &service)
 			if err != nil {
 				logger.Error(f.Ctx, "Unmarshal cluster [%s] init service failed: %+v",
@@ -189,7 +189,7 @@ func (f *Frame) registerCmdLayer(nodeIds []string, serviceName string, failureAl
 		role := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId].Role
 		serviceStr := f.ClusterWrapper.GetCommonAttribute(role, serviceName)
 		if serviceStr != nil {
-			service := app.Service{}
+			service := opapp.Service{}
 			err := jsonutil.Decode([]byte(serviceStr.(string)), &service)
 			if err != nil {
 				logger.Error(f.Ctx, "Unmarshal cluster [%s] service [%s] failed: %+v",
@@ -333,13 +333,13 @@ func (f *Frame) constructServiceTasks(serviceName, cmdName string, nodeIds []str
 	}
 
 	filterNodes := make(map[string]string)
-	roleService := make(map[string]app.Service)
+	roleService := make(map[string]opapp.Service)
 	for role, nodes := range roleNodeIds {
 		serviceStr := f.ClusterWrapper.GetCommonAttribute(role, serviceName)
 		if serviceStr == nil {
 			return nil
 		}
-		service := app.Service{}
+		service := opapp.Service{}
 		err := jsonutil.Decode([]byte(serviceStr.(string)), &service)
 		if err != nil {
 			logger.Error(f.Ctx, "Unmarshal cluster [%s] service [%s] failed: %+v",
@@ -1429,7 +1429,7 @@ func (f *Frame) DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails
 }
 
 func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
-	clusterConf := app.ClusterConf{}
+	clusterConf := opapp.ClusterConf{}
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
 		ctx := context.Background()
@@ -1454,7 +1454,7 @@ func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string) (*models.Clu
 			logger.Error(f.Ctx, "Load app version [%s] package failed: %+v", versionId, err)
 			return nil, err
 		}
-		var confJson app.ClusterUserConfig
+		var confJson opapp.ClusterUserConfig
 		err = jsonutil.Decode([]byte(conf), &confJson)
 		if err != nil {
 			logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)

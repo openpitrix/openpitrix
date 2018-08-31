@@ -27,7 +27,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.CreateAppVersionRequest:
 		return manager.NewChecker(ctx, r).
-			Required("app_id", "name", "repo_id").
+			Required("app_id", "repo_id").
 			Exec()
 	case *pb.ModifyAppVersionRequest:
 		return manager.NewChecker(ctx, r).

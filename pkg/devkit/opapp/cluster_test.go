@@ -2,15 +2,23 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package app
+package opapp
 
 import (
 	"encoding/json"
 	"testing"
 )
 
-func TestConfigJson_GetDefault(t *testing.T) {
-	var configJson = ConfigTemplate{
+func TestCluster_Render(t *testing.T) {
+	tmpl := `
+{
+	"name": "{{.cluster.name}}"
+}
+`
+	clusterTmpl := ClusterConfTemplate{
+		Raw: tmpl,
+	}
+	configJson := ConfigTemplate{
 		Type: TypeArray,
 		Properties: []*ConfigTemplate{
 			{
@@ -19,25 +27,7 @@ func TestConfigJson_GetDefault(t *testing.T) {
 				Properties: []*ConfigTemplate{
 					{
 						Key:     "name",
-						Default: 1,
-					},
-					{
-						Key:     "description",
-						Default: 2,
-					},
-				},
-			},
-			{
-				Key:  "env",
-				Type: TypeArray,
-				Properties: []*ConfigTemplate{
-					{
-						Key:     "user",
-						Default: "test",
-					},
-					{
-						Key:     "passwd",
-						Default: 0.01,
+						Default: "foobar",
 					},
 				},
 			},
@@ -49,4 +39,10 @@ func TestConfigJson_GetDefault(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(string(j))
+	cluster, err := clusterTmpl.Render(defaultConfig)
+	t.Log(cluster.RenderJson)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(cluster.Name, cluster.Description)
 }

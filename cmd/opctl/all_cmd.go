@@ -198,10 +198,17 @@ func (*CreateAppVersionCmd) GetActionName() string {
 func (c *CreateAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.AppID, "app_id", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Home, "home", "", "", "")
+	f.StringVarP(&c.Icon, "icon", "", "", "")
+	f.StringVarP(&c.Keywords, "keywords", "", "", "")
+	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
+	f.StringVarP(&c.Readme, "readme", "", "", "")
+	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
+	f.StringVarP(&c.Sources, "sources", "", "", "")
 	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
@@ -599,10 +606,17 @@ func (*ModifyAppVersionCmd) GetActionName() string {
 
 func (c *ModifyAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Home, "home", "", "", "")
+	f.StringVarP(&c.Icon, "icon", "", "", "")
+	f.StringVarP(&c.Keywords, "keywords", "", "", "")
+	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
+	f.StringVarP(&c.Readme, "readme", "", "", "")
+	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
+	f.StringVarP(&c.Sources, "sources", "", "", "")
 	f.StringVarP(&c.Status, "status", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }

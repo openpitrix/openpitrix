@@ -236,15 +236,15 @@ func (c *MetadClient) WatchPrefix(prefix string, keys []string, waitIndex uint64
 	if resp.StatusCode != 200 {
 		return conn.waitIndex, errors.New(fmt.Sprintf("metad response status [%v], requestID: [%s]", resp.StatusCode, resp.Header.Get("X-Metad-RequestID")))
 	}
-	versionStr := resp.Header.Get("X-Metad-Version")
+	versionStr := resp.Header.Get("X-Metad-OpVersion")
 	if versionStr != "" {
 		v, err := strconv.ParseUint(versionStr, 10, 64)
 		if err != nil {
-			logger.Error(nil, "Parse X-Metad-Version %s error:%s", versionStr, err.Error())
+			logger.Error(nil, "Parse X-Metad-OpVersion %s error:%s", versionStr, err.Error())
 		}
 		conn.waitIndex = v
 	} else {
-		logger.Warn(nil, "Metad response miss X-Metad-Version header.")
+		logger.Warn(nil, "Metad response miss X-Metad-OpVersion header.")
 		conn.waitIndex = conn.waitIndex + 1
 	}
 	return conn.waitIndex, nil

@@ -15,15 +15,19 @@ import (
 )
 
 type GlobalConfig struct {
+	App     AppServiceConfig       `json:"app"`
 	Repo    RepoServiceConfig      `json:"repo"`
 	Cluster ClusterServiceConfig   `json:"cluster"`
 	Runtime map[string]ImageConfig `json:"runtime"`
 	Pilot   PilotServiceConfig     `json:"pilot"`
 }
 
+type AppServiceConfig struct {
+	DefaultDraftStatus bool `json:"default_draft_status"`
+}
+
 type RepoServiceConfig struct {
-	Cron             string `json:"cron"`
-	ActiveAppDefault *bool  `json:"active_app_default,default=true"`
+	Cron string `json:"cron"`
 }
 
 type ClusterServiceConfig struct {
@@ -46,7 +50,7 @@ type ImageConfig struct {
 }
 
 func (g *GlobalConfig) GetAppDefaultStatus() string {
-	if g.Repo.ActiveAppDefault != nil && *g.Repo.ActiveAppDefault {
+	if g.App.DefaultDraftStatus {
 		return constants.StatusDraft
 	}
 	return constants.StatusActive
