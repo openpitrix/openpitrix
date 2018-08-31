@@ -28,6 +28,7 @@ const (
 	ActionSetDroneConfig             = "SetDroneConfig"
 	ActionPingDrone                  = "PingDrone"
 	ActionPingFrontgate              = "PingFrontgate"
+	PingMetadataBackend              = "PingMetadataBackend"
 	ActionRunCommandOnDrone          = "RunCommandOnDrone"
 	ActionRemoveContainerOnDrone     = "RemoveContainerOnDrone"
 	ActionRemoveContainerOnFrontgate = "RemoveContainerOnFrontgate"

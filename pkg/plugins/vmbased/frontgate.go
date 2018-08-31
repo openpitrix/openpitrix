@@ -147,6 +147,30 @@ func (f *Frontgate) setFrontgateConfigLayer(nodeIds []string, failureAllowed boo
 	}
 }
 
+func (f *Frontgate) pingMetadataBackendLayer(failureAllowed bool) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+
+	directive := jsonutil.ToString(&models.Meta{
+		ClusterId: f.ClusterWrapper.Cluster.ClusterId,
+	})
+
+	task := &models.Task{
+		JobId:          f.Job.JobId,
+		Owner:          f.Job.Owner,
+		TaskAction:     PingMetadataBackend,
+		Target:         constants.TargetPilot,
+		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
+		Directive:      directive,
+		FailureAllowed: failureAllowed,
+	}
+	taskLayer.Tasks = append(taskLayer.Tasks, task)
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
 func (f *Frontgate) removeContainerLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
 
@@ -258,7 +282,8 @@ func (f *Frontgate) CreateClusterLayer() *models.TaskLayer {
 		Append(f.formatAndMountVolumeLayer(nodeIds, false)). // format and mount volume to instance
 		Append(f.removeContainerLayer(nodeIds, false)).      // remove default container
 		Append(f.pingFrontgateLayer(false)).                 // ping frontgate
-		Append(f.setFrontgateConfigLayer(nodeIds, false))    // set frontgate config
+		Append(f.setFrontgateConfigLayer(nodeIds, false)).   // set frontgate config
+		Append(f.pingMetadataBackendLayer(false))            // ping metadata backend
 
 	return headTaskLayer.Child
 }
@@ -291,10 +316,11 @@ func (f *Frontgate) StartClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.attachVolumesLayer(false)).              // attach volume to instance, will auto mount
-		Append(f.startInstancesLayer(false)).             // run instance and attach volume to instance
-		Append(f.pingFrontgateLayer(false)).              // ping frontgate
-		Append(f.setFrontgateConfigLayer(nodeIds, false)) // set frontgate config
+		Append(f.attachVolumesLayer(false)).               // attach volume to instance, will auto mount
+		Append(f.startInstancesLayer(false)).              // run instance and attach volume to instance
+		Append(f.pingFrontgateLayer(false)).               // ping frontgate
+		Append(f.setFrontgateConfigLayer(nodeIds, false)). // set frontgate config
+		Append(f.pingMetadataBackendLayer(false))          // ping metadata backend
 
 	return headTaskLayer.Child
 }
