@@ -42,6 +42,8 @@ type ClusterNode struct {
 	AutoBackup       bool
 	CreateTime       time.Time
 	StatusTime       time.Time
+	HostId           string
+	HostIp           string
 }
 
 type ClusterNodeWithKeyPairs struct {
@@ -82,6 +84,8 @@ func ClusterNodeToPb(clusterNode *ClusterNode) *pb.ClusterNode {
 		AutoBackup:       pbutil.ToProtoBool(clusterNode.AutoBackup),
 		CreateTime:       pbutil.ToProtoTimestamp(clusterNode.CreateTime),
 		StatusTime:       pbutil.ToProtoTimestamp(clusterNode.StatusTime),
+		HostId:           pbutil.ToProtoString(clusterNode.HostId),
+		HostIp:           pbutil.ToProtoString(clusterNode.HostIp),
 	}
 }
 
@@ -109,6 +113,8 @@ func ClusterNodeWithKeyPairsToPb(clusterNodeKeyPairs *ClusterNodeWithKeyPairs) *
 		AutoBackup:       pbutil.ToProtoBool(clusterNodeKeyPairs.AutoBackup),
 		CreateTime:       pbutil.ToProtoTimestamp(clusterNodeKeyPairs.CreateTime),
 		StatusTime:       pbutil.ToProtoTimestamp(clusterNodeKeyPairs.StatusTime),
+		HostId:           pbutil.ToProtoString(clusterNodeKeyPairs.HostId),
+		HostIp:           pbutil.ToProtoString(clusterNodeKeyPairs.HostIp),
 		KeyPairId:        clusterNodeKeyPairs.KeyPairId,
 	}
 }
@@ -138,6 +144,8 @@ func PbToClusterNode(pbClusterNode *pb.ClusterNode) *ClusterNodeWithKeyPairs {
 			AutoBackup:       pbClusterNode.GetAutoBackup().GetValue(),
 			CreateTime:       pbutil.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
 			StatusTime:       pbutil.FromProtoTimestamp(pbClusterNode.GetCreateTime()),
+			HostId:           pbClusterNode.HostId.GetValue(),
+			HostIp:           pbClusterNode.HostIp.GetValue(),
 		},
 	}
 	clusterNodeKeyPairs.KeyPairId = pbClusterNode.KeyPairId

@@ -1249,6 +1249,25 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
+
+		runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
+		}
+
+		if runtime.Provider == constants.ProviderKubernetes {
+			providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
+			if err != nil {
+				logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
+				return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+			}
+
+			err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
+			if err != nil {
+				logger.Warn(ctx, "Describe cluster details failed: %+v", err)
+			}
+		}
+
 		pbClusters = append(pbClusters, models.ClusterWrapperToPb(clusterWrapper))
 	}
 

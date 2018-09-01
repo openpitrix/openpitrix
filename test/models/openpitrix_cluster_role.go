@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixClusterRole
 type OpenpitrixClusterRole struct {
 
+	// api version
+	APIVersion string `json:"api_version,omitempty"`
+
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
@@ -42,6 +45,12 @@ type OpenpitrixClusterRole struct {
 
 	// mount point
 	MountPoint string `json:"mount_point,omitempty"`
+
+	// ready replicas
+	ReadyReplicas int64 `json:"ready_replicas,omitempty"`
+
+	// replicas
+	Replicas int64 `json:"replicas,omitempty"`
 
 	// role
 	Role string `json:"role,omitempty"`
