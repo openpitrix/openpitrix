@@ -25,7 +25,11 @@ var (
 	ErrWriteIsUnsupported   Err = fmt.Errorf("write is unsupported")
 )
 
+var _ RepoInterface = &S3Interface{}
+var _ RepoInterface = &HttpInterface{}
+
 type RepoInterface interface {
+	CheckFile(ctx context.Context, filename string) (bool, error)
 	ReadFile(ctx context.Context, filename string) ([]byte, error)
 	WriteFile(ctx context.Context, filename string, data []byte) error
 	CheckRead(ctx context.Context) error

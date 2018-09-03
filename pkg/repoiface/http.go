@@ -24,6 +24,22 @@ func NewHttpInterface(ctx context.Context, url *neturl.URL) (*HttpInterface, err
 	}, nil
 }
 
+func (i *HttpInterface) CheckFile(ctx context.Context, filename string) (bool, error) {
+	u := URLJoin(i.url.String(), GetFileName(filename))
+
+	resp, err := httputil.HttpGet(u)
+	if err != nil {
+		return false, err
+	}
+	defer resp.Body.Close()
+
+	if 200 <= resp.StatusCode || resp.StatusCode <= 299 {
+		return false, fmt.Errorf("http status code is %d", resp.StatusCode)
+	}
+
+	return true, nil
+}
+
 func (i *HttpInterface) ReadFile(ctx context.Context, filename string) ([]byte, error) {
 	u := URLJoin(i.url.String(), GetFileName(filename))
 

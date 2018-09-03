@@ -69,16 +69,24 @@ func (r *Reader) GetPackagesName(ctx context.Context) ([]string, error) {
 }
 
 func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
-	content, err := r.ReadFile(ctx, IndexYaml)
+	exists, err := r.CheckFile(ctx, IndexYaml)
 	if err != nil {
 		return err
 	}
+	var content []byte
+	if exists {
+		content, err = r.ReadFile(ctx, IndexYaml)
+		if err != nil {
+			return err
+		}
+	}
+
 	hash, err := provenance.Digest(bytes.NewReader(pkg))
 	if err != nil {
 		return err
 	}
 	if stringutil.StringIn(constants.ProviderKubernetes, r.repo.GetProviders()) {
-		var indexFile = new(repo.IndexFile)
+		var indexFile = repo.NewIndexFile()
 		err = yamlutil.Decode(content, indexFile)
 		if err != nil {
 			return errors.Wrap(err, "decode yaml failed")
@@ -88,10 +96,10 @@ func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 			return err
 		}
 		w := wrapper.HelmVersionWrapper{ChartVersion: &repo.ChartVersion{Metadata: app.Metadata}}
-		indexFile.Add(app.Metadata, w.GetPackageName(), r.repo.Url.GetValue(), hash)
+		indexFile.Add(app.Metadata, w.GetPackageName(), "", hash)
 		content, err = yamlutil.Encode(indexFile)
 	} else {
-		var indexFile = new(opapp.IndexFile)
+		var indexFile = opapp.NewIndexFile()
 		err = yamlutil.Decode(content, indexFile)
 		if err != nil {
 			return errors.Wrap(err, "decode yaml failed")
@@ -101,7 +109,7 @@ func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 			return err
 		}
 		w := wrapper.OpVersionWrapper{OpVersion: &opapp.OpVersion{Metadata: app.Metadata}}
-		indexFile.Add(app.Metadata, w.GetPackageName(), r.repo.Url.GetValue(), hash)
+		indexFile.Add(app.Metadata, w.GetPackageName(), "", hash)
 		content, err = yamlutil.Encode(indexFile)
 	}
 	if err != nil {

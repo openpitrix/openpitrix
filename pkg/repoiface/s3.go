@@ -95,6 +95,24 @@ func (i *S3Interface) getService(ctx context.Context) (*s3.S3, error) {
 	return svc, err
 }
 
+func (i *S3Interface) CheckFile(ctx context.Context, filename string) (bool, error) {
+	svc, err := i.getService(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = svc.HeadObject(&s3.HeadObjectInput{
+		Bucket: aws.String(i.bucket),
+		Key:    aws.String(path.Join(i.prefix, GetFileName(filename))),
+	})
+	if err != nil {
+		logger.Error(ctx, "Failed to read file [%s] from s3 [%s], error: %+v", filename, i.url, err)
+		return false, nil
+	}
+
+	return true, nil
+}
+
 func (i *S3Interface) ReadFile(ctx context.Context, filename string) ([]byte, error) {
 	svc, err := i.getService(ctx)
 	if err != nil {
