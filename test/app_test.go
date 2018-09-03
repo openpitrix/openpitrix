@@ -53,8 +53,9 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 	createAppVersionParams := app_manager.NewCreateAppVersionParams()
 	createAppVersionParams.SetBody(
 		&models.OpenpitrixCreateAppVersionRequest{
-			Name:  "test_version",
-			AppID: appId,
+			Name:   "test_version",
+			AppID:  appId,
+			Status: constants.StatusDraft,
 		})
 	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams)
 
@@ -140,7 +141,7 @@ func TestApp(t *testing.T) {
 	testRepoId2 := "e2e_test_repo2"
 	describeParams := app_manager.NewDescribeAppsParams()
 	describeParams.SetName([]string{testAppName})
-	describeParams.SetStatus([]string{constants.StatusActive})
+	describeParams.SetStatus([]string{constants.StatusDraft, constants.StatusActive})
 	describeResp, err := client.AppManager.DescribeApps(describeParams)
 
 	require.NoError(t, err)
@@ -162,7 +163,6 @@ func TestApp(t *testing.T) {
 		&models.OpenpitrixCreateAppRequest{
 			Name:       testAppName,
 			RepoID:     testRepoId,
-			Status:     constants.StatusActive,
 			CategoryID: "xx,yy,zz",
 		})
 	createResp, err := client.AppManager.CreateApp(createParams)

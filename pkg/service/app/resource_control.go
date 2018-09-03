@@ -276,7 +276,7 @@ func formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
 func getBigestSequence(ctx context.Context, appId string) (uint32, error) {
 	var sequence uint32
 	err := pi.Global().DB(ctx).
-		Select("max(sequence)").
+		Select("coalesce(max(sequence), 0)").
 		From(models.AppVersionTableName).
 		Where(db.Eq(models.ColumnAppId, appId)).
 		LoadOne(&sequence)
