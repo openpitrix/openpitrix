@@ -4048,16 +4048,11 @@ var Files = map[string]string{
         "cluster_id": {
           "type": "string"
         },
-        "role": {
-          "type": "string"
-        },
-        "cpu": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "memory": {
-          "type": "integer",
-          "format": "int64"
+        "role_resource": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRoleResource"
+          }
         },
         "advanced_param": {
           "type": "array",
@@ -4075,6 +4070,34 @@ var Files = map[string]string{
         },
         "job_id": {
           "type": "string"
+        }
+      }
+    },
+    "openpitrixRoleResource": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "cpu": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "gpu": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "memory": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "instance_size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "storage_size": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

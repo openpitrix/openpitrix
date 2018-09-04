@@ -24,6 +24,7 @@ type FrameInterface interface {
 	DeleteClusterLayer() *models.TaskLayer
 	AddClusterNodesLayer() *models.TaskLayer
 	DeleteClusterNodesLayer() *models.TaskLayer
+	ResizeClusterLayer(roleResizeResources models.RoleResizeResources) *models.TaskLayer
 	AttachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
 	DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
 	ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error)
@@ -38,12 +39,8 @@ func NewFrameInterface(ctx context.Context, job *models.Job, advancedParam ...st
 	var err error
 
 	switch job.JobAction {
-	case constants.ActionAttachKeyPairs, constants.ActionDetachKeyPairs:
-		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
-		if err != nil {
-			return nil, err
-		}
-		clusterId := nodeKeyPairDetails[0].ClusterNode.ClusterId
+	case constants.ActionAttachKeyPairs, constants.ActionDetachKeyPairs, constants.ActionResizeCluster:
+		clusterId := job.ClusterId
 		clusterClient, err := clusterclient.NewClient()
 		if err != nil {
 			return nil, err

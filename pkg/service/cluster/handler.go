@@ -1046,7 +1046,42 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
-	directive := jsonutil.ToString(clusterWrapper)
+	var roleResizeResources models.RoleResizeResources
+	for _, pbRoleResource := range req.RoleResource {
+		roleResource := models.PbToRoleResource(pbRoleResource)
+		clusterRole, isExist := clusterWrapper.ClusterRoles[roleResource.Role]
+		if !isExist {
+			err = fmt.Errorf("role [%s] not found", roleResource.Role)
+			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceRoleNotFound, clusterId, roleResource.Role)
+		}
+
+		if isSame, roleResizeResource := roleResource.IsSame(clusterRole); !isSame && roleResizeResource != nil {
+			roleResizeResources = append(roleResizeResources, roleResizeResource)
+			attributes := map[string]interface{}{
+				"cpu":           clusterRole.Cpu,
+				"memory":        clusterRole.Memory,
+				"gpu":           clusterRole.Gpu,
+				"instance_size": clusterRole.InstanceSize,
+				"storage_size":  clusterRole.StorageSize,
+			}
+			_, err = pi.Global().DB(ctx).
+				Update(models.ClusterRoleTableName).
+				SetMap(attributes).
+				Where(db.Eq("cluster_id", clusterId)).
+				Where(db.Eq("role", roleResource.Role)).
+				Exec()
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+			}
+		}
+	}
+
+	if len(roleResizeResources) == 0 {
+		err = fmt.Errorf("cluster [%s] is already the resource type", clusterId)
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorResizeResourceFailed, clusterId)
+	}
+
+	directive := jsonutil.ToString(roleResizeResources)
 
 	runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
 	if err != nil {

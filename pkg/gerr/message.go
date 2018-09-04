@@ -101,6 +101,10 @@ var (
 		Name: "resource_not_found",
 		En:   "resource [%s] not found",
 	}
+	ErrorResourceRoleNotFound = ErrorMessage{
+		Name: "resource_role_not_found",
+		En:   "resource [%s] role [%s] not found",
+	}
 	ErrorSubnetNotFound = ErrorMessage{
 		Name: "subnet_not_found",
 		En:   "subnet [%s] not found or vpc not bind eip",

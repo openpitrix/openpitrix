@@ -536,9 +536,10 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 	return taskLayer
 }
 
-func (f *Frame) attachVolumesLayer(failureAllowed bool) *models.TaskLayer {
+func (f *Frame) attachVolumesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
-	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
+	for _, nodeId := range nodeIds {
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		if clusterNode.VolumeId == "" {
 			continue
 		}
@@ -583,6 +584,42 @@ func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *model
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionDeleteVolumes,
+			Target:         f.Runtime.Provider,
+			NodeId:         nodeId,
+			Directive:      directive,
+			FailureAllowed: failureAllowed,
+		}
+		taskLayer.Tasks = append(taskLayer.Tasks, deleteVolumesTask)
+	}
+	return taskLayer
+}
+
+func (f *Frame) resizeVolumesLayer(nodeIds []string, roleResizeResource *models.RoleResizeResource, failureAllowed bool) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	for _, nodeId := range nodeIds {
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
+		if clusterNode.VolumeId == "" {
+			continue
+		}
+		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
+
+		if !roleResizeResource.StorageSize {
+			logger.Debug(f.Ctx, "No need to resize node [%s] volume", nodeId)
+			continue
+		}
+		volume := &models.Volume{
+			Name:       clusterNode.ClusterId + "_" + nodeId,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
+			RuntimeId:  f.Runtime.RuntimeId,
+			VolumeId:   clusterNode.VolumeId,
+			InstanceId: clusterNode.InstanceId,
+			Size:       int(clusterRole.StorageSize),
+		}
+		directive := jsonutil.ToString(volume)
+		deleteVolumesTask := &models.Task{
+			JobId:          f.Job.JobId,
+			Owner:          f.Job.Owner,
+			TaskAction:     ActionResizeVolumes,
 			Target:         f.Runtime.Provider,
 			NodeId:         nodeId,
 			Directive:      directive,
@@ -1023,9 +1060,10 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 	}
 }
 
-func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
+func (f *Frame) startInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
-	for nodeId, clusterNode := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
+	for _, nodeId := range nodeIds {
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 		instance := &models.Instance{
 			Name:       clusterNode.ClusterId + "_" + nodeId,
 			NodeId:     nodeId,
@@ -1044,6 +1082,48 @@ func (f *Frame) startInstancesLayer(failureAllowed bool) *models.TaskLayer {
 			FailureAllowed: failureAllowed,
 		}
 		taskLayer.Tasks = append(taskLayer.Tasks, startInstanceTask)
+	}
+
+	if len(taskLayer.Tasks) > 0 {
+		return taskLayer
+	} else {
+		return nil
+	}
+}
+
+func (f *Frame) resizeInstancesLayer(nodeIds []string, roleResizeResource *models.RoleResizeResource, failureAllowed bool) *models.TaskLayer {
+	taskLayer := new(models.TaskLayer)
+	for _, nodeId := range nodeIds {
+		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
+		clusterRole := f.ClusterWrapper.ClusterRoles[clusterNode.Role]
+		if !roleResizeResource.Cpu &&
+			!roleResizeResource.Gpu &&
+			!roleResizeResource.Memory &&
+			!roleResizeResource.InstanceSize {
+			logger.Debug(f.Ctx, "No need to resize node [%s] instance", nodeId)
+			continue
+		}
+		instance := &models.Instance{
+			Name:       clusterNode.ClusterId + "_" + nodeId,
+			NodeId:     nodeId,
+			InstanceId: clusterNode.InstanceId,
+			RuntimeId:  f.Runtime.RuntimeId,
+			Zone:       f.ClusterWrapper.Cluster.Zone,
+			Cpu:        int(clusterRole.Cpu),
+			Memory:     int(clusterRole.Memory),
+			Gpu:        int(clusterRole.Gpu),
+		}
+		directive := jsonutil.ToString(instance)
+		resizeInstanceTask := &models.Task{
+			JobId:          f.Job.JobId,
+			Owner:          f.Job.Owner,
+			TaskAction:     ActionResizeInstances,
+			Target:         f.Runtime.Provider,
+			NodeId:         nodeId,
+			Directive:      directive,
+			FailureAllowed: failureAllowed,
+		}
+		taskLayer.Tasks = append(taskLayer.Tasks, resizeInstanceTask)
 	}
 
 	if len(taskLayer.Tasks) > 0 {
@@ -1138,7 +1218,7 @@ func (f *Frame) registerNodesMetadataLayer(nodeIds []string, failureAllowed bool
 	task := &models.Task{
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,
-		TaskAction:     ActionRegisterMetadata,
+		TaskAction:     ActionRegisterNodesMetadata,
 		Target:         constants.TargetPilot,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
 		Directive:      directive,
@@ -1170,7 +1250,7 @@ func (f *Frame) registerScalingNodesMetadataLayer(nodeIds []string, path string,
 	task := &models.Task{
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,
-		TaskAction:     ActionRegisterMetadata,
+		TaskAction:     ActionRegisterNodesMetadata,
 		Target:         constants.TargetPilot,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
 		Directive:      directive,
@@ -1300,7 +1380,6 @@ func (f *Frame) StopClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.waitFrontgateLayer(true)).             // wait frontgate cluster to be active
 		Append(f.stopServiceLayer(nodeIds, true)).      // register stop cmd to exec
 		Append(f.stopConfdServiceLayer(nodeIds, true)). // stop confd service
 		Append(f.umountVolumeLayer(nodeIds, true)).     // umount volume from instance
@@ -1319,8 +1398,8 @@ func (f *Frame) StartClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.attachVolumesLayer(false)).              // attach volume to instance, will auto mount
-		Append(f.startInstancesLayer(false)).             // start instance
+		Append(f.attachVolumesLayer(nodeIds, false)).     // attach volume to instance, will auto mount
+		Append(f.startInstancesLayer(nodeIds, false)).    // start instance
 		Append(f.waitFrontgateLayer(false)).              // wait frontgate cluster to be active
 		Append(f.registerMetadataLayer(false)).           // register cluster metadata
 		Append(f.pingDroneLayer(nodeIds, false)).         // ping drone
@@ -1405,6 +1484,46 @@ func (f *Frame) DeleteClusterNodesLayer() *models.TaskLayer {
 		Append(f.deleteVolumesLayer(deleteNodeIds, false)).                                                         // delete volume
 		Append(f.deregisterNodesMetadataLayer(deleteNodeIds, false)).                                               // deregister deleting cluster nodes metadata
 		Append(f.deregisterScalingNodesMetadataLayer(RegisterNodeDeleting, false))                                  // deregister deleting nodes metadata
+	return headTaskLayer.Child
+}
+
+func (f *Frame) resizeClusterLayer(headTaskLayer *models.TaskLayer, nodeIds []string, roleResizeResource *models.RoleResizeResource) {
+	headTaskLayer.
+		Append(f.stopServiceLayer(nodeIds, true)).      // register stop cmd to exec
+		Append(f.stopConfdServiceLayer(nodeIds, true)). // stop confd service
+		Append(f.umountVolumeLayer(nodeIds, true)).     // umount volume from instance
+		Append(f.detachVolumesLayer(nodeIds, false)).   // detach volume from instance
+		Append(f.stopInstancesLayer(nodeIds, false)).   // stop instance
+		Append(f.resizeInstancesLayer(nodeIds, roleResizeResource, false)).
+		Append(f.resizeVolumesLayer(nodeIds, roleResizeResource, false)).
+		Append(f.attachVolumesLayer(nodeIds, false)).         // attach volume to instance, will auto mount
+		Append(f.startInstancesLayer(nodeIds, false)).        // start instance
+		Append(f.registerNodesMetadataLayer(nodeIds, false)). // register cluster metadata
+		Append(f.pingDroneLayer(nodeIds, false)).             // ping drone
+		Append(f.setDroneConfigLayer(nodeIds, false)).        // set drone config
+		Append(f.startConfdServiceLayer(nodeIds, false)).     // start confd service
+		Append(f.startServiceLayer(nodeIds, false)).          // register start cmd to exec
+		Append(f.deregisterCmdLayer(nodeIds, true))           // deregister cmd
+}
+
+func (f *Frame) ResizeClusterLayer(roleResizeResources models.RoleResizeResources) *models.TaskLayer {
+	headTaskLayer := new(models.TaskLayer)
+	for _, roleResizeResource := range roleResizeResources {
+		var nodeIds []string
+		for nodeId, node := range f.ClusterWrapper.ClusterNodesWithKeyPairs {
+			if node.Role == roleResizeResource.Role {
+				nodeIds = append(nodeIds, nodeId)
+			}
+		}
+		if f.ClusterWrapper.ClusterCommons[roleResizeResource.Role].VerticalScalingPolicy == constants.ScalingPolicySequential {
+			for _, nodeId := range nodeIds {
+				f.resizeClusterLayer(headTaskLayer, []string{nodeId}, roleResizeResource)
+			}
+		} else {
+			f.resizeClusterLayer(headTaskLayer, nodeIds, roleResizeResource)
+		}
+	}
+
 	return headTaskLayer.Child
 }
 

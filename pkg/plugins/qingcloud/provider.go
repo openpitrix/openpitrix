@@ -52,8 +52,6 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	case constants.ActionRollbackCluster:
 		// not supported yet
 		return nil, nil
-	case constants.ActionResizeCluster:
-
 	case constants.ActionAddClusterNodes:
 		return frameInterface.AddClusterNodesLayer(), nil
 	case constants.ActionDeleteClusterNodes:
@@ -64,6 +62,12 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		return frameInterface.StartClusterLayer(), nil
 	case constants.ActionDeleteClusters:
 		return frameInterface.DeleteClusterLayer(), nil
+	case constants.ActionResizeCluster:
+		roleResizeResources, err := models.NewRoleResizeResources(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.ResizeClusterLayer(roleResizeResources), nil
 	case constants.ActionRecoverClusters:
 		// not supported yet
 		return nil, nil
@@ -102,6 +106,8 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		return handler.StartInstances(task)
 	case vmbased.ActionTerminateInstances:
 		return handler.DeleteInstances(task)
+	case vmbased.ActionResizeInstances:
+		return handler.ResizeInstances(task)
 	case vmbased.ActionCreateVolumes:
 		return handler.CreateVolumes(task)
 	case vmbased.ActionDetachVolumes:
@@ -110,6 +116,8 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 		return handler.AttachVolumes(task)
 	case vmbased.ActionDeleteVolumes:
 		return handler.DeleteVolumes(task)
+	case vmbased.ActionResizeVolumes:
+		return handler.ResizeVolumes(task)
 
 	case vmbased.ActionWaitFrontgateAvailable:
 		// do nothing
@@ -132,6 +140,8 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 		return handler.WaitStartInstances(task)
 	case vmbased.ActionTerminateInstances:
 		return handler.WaitDeleteInstances(task)
+	case vmbased.ActionResizeInstances:
+		return handler.WaitResizeInstances(task)
 	case vmbased.ActionCreateVolumes:
 		return handler.WaitCreateVolumes(task)
 	case vmbased.ActionDetachVolumes:
@@ -140,6 +150,8 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 		return handler.WaitAttachVolumes(task)
 	case vmbased.ActionDeleteVolumes:
 		return handler.WaitDeleteVolumes(task)
+	case vmbased.ActionResizeVolumes:
+		return handler.WaitResizeVolumes(task)
 	case vmbased.ActionWaitFrontgateAvailable:
 		return handler.WaitFrontgateAvailable(task)
 	default:
