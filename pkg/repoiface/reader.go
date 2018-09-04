@@ -147,6 +147,9 @@ func (r *Reader) DeletePackage(ctx context.Context, appName, version string) err
 				}
 			}
 			indexFile.Entries[appName] = newVersions
+			if len(newVersions) == 0 {
+				delete(indexFile.Entries, appName)
+			}
 		}
 		content, err = yamlutil.Encode(indexFile)
 	} else {
@@ -163,6 +166,9 @@ func (r *Reader) DeletePackage(ctx context.Context, appName, version string) err
 				}
 			}
 			indexFile.Entries[appName] = newVersions
+			if len(newVersions) == 0 {
+				delete(indexFile.Entries, appName)
+			}
 		}
 		content, err = yamlutil.Encode(indexFile)
 	}

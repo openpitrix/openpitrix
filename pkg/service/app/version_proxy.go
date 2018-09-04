@@ -137,7 +137,7 @@ func (vp *versionProxy) AddPackageFile(ctx context.Context, newPackage []byte, s
 		}
 	}
 
-	if !replacePackage {
+	if !replacePackage || version != vp.version.GetSemver() {
 		if versionMap, ok := appVersions[appName]; ok {
 			if appVersion, ok := versionMap[version]; ok {
 				return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorAppVersionExists, version, appVersion)
@@ -165,7 +165,7 @@ func (vp *versionProxy) AddPackageFile(ctx context.Context, newPackage []byte, s
 	}
 
 	if replacePackage {
-		err = rreader.DeletePackage(ctx, appId, vp.version.GetSemver())
+		err = rreader.DeletePackage(ctx, appName, vp.version.GetSemver())
 		if err != nil {
 			logger.Error(ctx, "Failed to delete [%s] old package, error: %+v", vp.version.VersionId, err)
 			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
