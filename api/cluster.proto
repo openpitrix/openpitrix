@@ -132,11 +132,18 @@ message RollbackClusterResponse {
 	google.protobuf.StringValue job_id = 2;
 }
 
+message RoleResource {
+	google.protobuf.StringValue role = 1;
+	google.protobuf.UInt32Value cpu = 2;
+	google.protobuf.UInt32Value gpu = 3;
+	google.protobuf.UInt32Value memory = 4;
+	google.protobuf.UInt32Value instance_size = 5;
+	google.protobuf.UInt32Value storage_size = 6;
+}
+
 message ResizeClusterRequest {
 	google.protobuf.StringValue cluster_id = 1;
-	google.protobuf.StringValue role = 2;
-	google.protobuf.UInt32Value cpu = 3;
-	google.protobuf.UInt32Value memory = 4;
+	repeated RoleResource role_resource = 2;
 	repeated string advanced_param = 5;
 }
 

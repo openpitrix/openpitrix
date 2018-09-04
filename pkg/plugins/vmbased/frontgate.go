@@ -316,8 +316,8 @@ func (f *Frontgate) StartClusterLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
 
 	headTaskLayer.
-		Append(f.attachVolumesLayer(false)).               // attach volume to instance, will auto mount
-		Append(f.startInstancesLayer(false)).              // run instance and attach volume to instance
+		Append(f.attachVolumesLayer(nodeIds, false)).      // attach volume to instance, will auto mount
+		Append(f.startInstancesLayer(nodeIds, false)).     // run instance and attach volume to instance
 		Append(f.pingFrontgateLayer(false)).               // ping frontgate
 		Append(f.setFrontgateConfigLayer(nodeIds, false)). // set frontgate config
 		Append(f.pingMetadataBackendLayer(false))          // ping metadata backend

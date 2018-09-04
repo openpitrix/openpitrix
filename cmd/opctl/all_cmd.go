@@ -1640,7 +1640,6 @@ func (*ResizeClusterCmd) GetActionName() string {
 func (c *ResizeClusterCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AdvancedParam, "advanced_param", "", []string{}, "")
 	f.StringVarP(&c.ClusterID, "cluster_id", "", "", "")
-	f.StringVarP(&c.Role, "role", "", "", "")
 }
 
 func (c *ResizeClusterCmd) Run(out Out) error {

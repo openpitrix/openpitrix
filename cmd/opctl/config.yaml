@@ -490,12 +490,8 @@
       type: '[]string'
     cluster_id:
       type: string
-    cpu:
-      type: integer
-    memory:
-      type: integer
-    role:
-      type: string
+    role_resource:
+      type: '[]'
 - action: RollbackCluster
   description: rollback cluster
   service: ClusterManager

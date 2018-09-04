@@ -93,7 +93,7 @@ func (p *ProviderHandler) waitInstanceNetworkAndVolume(instanceService *qcservic
 			return false, err
 		}
 		if len(describeOutput.InstanceSet) == 0 {
-			return false, fmt.Errorf("Instance with id [%s] not exist", instanceId)
+			return false, fmt.Errorf("instance with id [%s] not exist", instanceId)
 		}
 		instance := describeOutput.InstanceSet[0]
 		if len(instance.VxNets) == 0 || instance.VxNets[0].PrivateIP == nil || *instance.VxNets[0].PrivateIP == "" {
@@ -306,7 +306,7 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
 	}
 	if len(describeOutput.InstanceSet) == 0 {
-		return fmt.Errorf("Instance id [%s] not exist", instance.InstanceId)
+		return fmt.Errorf("instance id [%s] not exist", instance.InstanceId)
 	}
 
 	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
@@ -385,7 +385,7 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
 	}
 	if len(describeOutput.InstanceSet) == 0 {
-		return fmt.Errorf("Instance id [%s] not exist", instance.InstanceId)
+		return fmt.Errorf("instance id [%s] not exist", instance.InstanceId)
 	}
 
 	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
@@ -416,6 +416,86 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 
 	// write back
 	task.Directive = jsonutil.ToString(instance)
+	return nil
+}
+
+func (p *ProviderHandler) ResizeInstances(task *models.Task) error {
+	if task.Directive == "" {
+		logger.Warn(p.Ctx, "Skip task without directive")
+		return nil
+	}
+	instance, err := models.NewInstance(task.Directive)
+	if err != nil {
+		return err
+	}
+	if instance.InstanceId == "" {
+		logger.Warn(p.Ctx, "Skip task without instance id")
+		return nil
+	}
+	qingcloudService, err := p.initService(instance.RuntimeId)
+	if err != nil {
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
+		return err
+	}
+
+	instanceService, err := qingcloudService.Instance(qingcloudService.Config.Zone)
+	if err != nil {
+		logger.Error(p.Ctx, "Init %s instance api service failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeOutput, err := instanceService.DescribeInstances(
+		&qcservice.DescribeInstancesInput{
+			Instances: qcservice.StringSlice([]string{instance.InstanceId}),
+		},
+	)
+	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
+	if describeRetCode != 0 {
+		message := qcservice.StringValue(describeOutput.Message)
+		logger.Error(p.Ctx, "Send DescribeInstances to %s failed with return code [%d], message [%s]",
+			MyProvider, describeRetCode, message)
+		return fmt.Errorf("send DescribeInstances to %s failed: %s", MyProvider, message)
+	}
+	if len(describeOutput.InstanceSet) == 0 {
+		return fmt.Errorf("instance id [%s] not exist", instance.InstanceId)
+	}
+
+	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
+
+	if status != constants.StatusStopped {
+		logger.Warn(p.Ctx, "Instance [%s] is in status [%s], can not resize", instance.InstanceId, status)
+		return fmt.Errorf("instance [%s] is in status [%s], can not resize", instance.InstanceId, status)
+	}
+
+	output, err := instanceService.ResizeInstances(
+		&qcservice.ResizeInstancesInput{
+			Instances: qcservice.StringSlice([]string{instance.InstanceId}),
+			CPU:       qcservice.Int(instance.Cpu),
+			Memory:    qcservice.Int(instance.Memory),
+		},
+	)
+	if err != nil {
+		logger.Error(p.Ctx, "Send ResizeInstances to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	retCode := qcservice.IntValue(output.RetCode)
+	if retCode != 0 {
+		message := qcservice.StringValue(output.Message)
+		logger.Error(p.Ctx, "Send ResizeInstances to %s failed with return code [%d], message [%s]",
+			MyProvider, retCode, message)
+		return fmt.Errorf("send ResizeInstances to %s failed: %s", MyProvider, message)
+	}
+	instance.TargetJobId = qcservice.StringValue(output.JobID)
+
+	// write back
+	task.Directive = jsonutil.ToString(instance)
+
 	return nil
 }
 
@@ -643,7 +723,7 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		return fmt.Errorf("send DescribeVolumes to %s failed: %s", MyProvider, message)
 	}
 	if len(describeOutput.VolumeSet) == 0 {
-		return fmt.Errorf("Volume with id [%s] not exist", volume.VolumeId)
+		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
 	}
 
 	status := qcservice.StringValue(describeOutput.VolumeSet[0].Status)
@@ -669,6 +749,86 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		logger.Error(p.Ctx, "Send DeleteVolumes to %s failed with return code [%d], message [%s]",
 			MyProvider, retCode, message)
 		return fmt.Errorf("send DeleteVolumes to %s failed: %s", MyProvider, message)
+	}
+	volume.TargetJobId = qcservice.StringValue(output.JobID)
+
+	// write back
+	task.Directive = jsonutil.ToString(volume)
+
+	return nil
+}
+
+func (p *ProviderHandler) ResizeVolumes(task *models.Task) error {
+	if task.Directive == "" {
+		logger.Warn(p.Ctx, "Skip task without directive")
+		return nil
+	}
+
+	volume, err := models.NewVolume(task.Directive)
+	if err != nil {
+		return err
+	}
+	if volume.VolumeId == "" {
+		logger.Warn(p.Ctx, "Skip task without volume")
+		return nil
+	}
+	qingcloudService, err := p.initService(volume.RuntimeId)
+	if err != nil {
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
+		return err
+	}
+
+	volumeService, err := qingcloudService.Volume(qingcloudService.Config.Zone)
+	if err != nil {
+		logger.Error(p.Ctx, "Init %s volume api service failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeOutput, err := volumeService.DescribeVolumes(
+		&qcservice.DescribeVolumesInput{
+			Volumes: qcservice.StringSlice([]string{volume.VolumeId}),
+		},
+	)
+	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
+	if describeRetCode != 0 {
+		message := qcservice.StringValue(describeOutput.Message)
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed with return code [%d], message [%s]",
+			MyProvider, describeRetCode, message)
+		return fmt.Errorf("send DescribeVolumes to %s failed: %s", MyProvider, message)
+	}
+	if len(describeOutput.VolumeSet) == 0 {
+		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
+	}
+
+	status := qcservice.StringValue(describeOutput.VolumeSet[0].Status)
+
+	if status != constants.StatusAvailable {
+		logger.Warn(p.Ctx, "Volume [%s] is in status [%s], can not resize.", volume.VolumeId, status)
+		return fmt.Errorf("volume [%s] is in status [%s], can not resize", volume.VolumeId, status)
+	}
+
+	output, err := volumeService.ResizeVolumes(
+		&qcservice.ResizeVolumesInput{
+			Volumes: qcservice.StringSlice([]string{volume.VolumeId}),
+			Size:    qcservice.Int(volume.Size),
+		},
+	)
+	if err != nil {
+		logger.Error(p.Ctx, "Send ResizeVolumes to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	retCode := qcservice.IntValue(output.RetCode)
+	if retCode != 0 {
+		message := qcservice.StringValue(output.Message)
+		logger.Error(p.Ctx, "Send ResizeVolumes to %s failed with return code [%d], message [%s]",
+			MyProvider, retCode, message)
+		return fmt.Errorf("send ResizeVolumes to %s failed: %s", MyProvider, message)
 	}
 	volume.TargetJobId = qcservice.StringValue(output.JobID)
 
@@ -824,6 +984,10 @@ func (p *ProviderHandler) WaitDeleteInstances(task *models.Task) error {
 	return p.WaitInstanceTask(task)
 }
 
+func (p *ProviderHandler) WaitResizeInstances(task *models.Task) error {
+	return p.WaitInstanceTask(task)
+}
+
 func (p *ProviderHandler) WaitCreateVolumes(task *models.Task) error {
 	return p.WaitVolumeTask(task)
 }
@@ -837,6 +1001,10 @@ func (p *ProviderHandler) WaitDetachVolumes(task *models.Task) error {
 }
 
 func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
+	return p.WaitVolumeTask(task)
+}
+
+func (p *ProviderHandler) WaitResizeVolumes(task *models.Task) error {
 	return p.WaitVolumeTask(task)
 }
 

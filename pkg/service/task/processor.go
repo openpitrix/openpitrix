@@ -192,6 +192,9 @@ func (p *Processor) Pre(ctx context.Context) error {
 		// write back
 		p.Task.Directive = jsonutil.ToString(meta)
 
+	case vmbased.ActionRegisterNodesMetadata:
+		p.Task.TaskAction = vmbased.ActionRegisterMetadata
+
 	case vmbased.ActionRegisterCmd:
 		// when CreateCluster need to reload ip
 		meta, err := models.NewMeta(p.Task.Directive)
