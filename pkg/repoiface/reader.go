@@ -7,6 +7,7 @@ package repoiface
 import (
 	"bytes"
 	"context"
+	"fmt"
 
 	"github.com/pkg/errors"
 	"k8s.io/helm/pkg/chartutil"
@@ -40,20 +41,37 @@ func NewReader(ctx context.Context, r *pb.Repo) (*Reader, error) {
 	return &reader, err
 }
 
-func (r *Reader) GetPackagesName(ctx context.Context) ([]string, error) {
-	content, err := r.ReadFile(ctx, IndexYaml)
+type AppVersions map[string]Versions
+
+type Versions map[string]string
+
+func (r *Reader) getIndexYaml(ctx context.Context) ([]byte, error) {
+	var content []byte
+	exists, err := r.CheckFile(ctx, IndexYaml)
 	if err != nil {
-		return nil, err
+		return content, err
 	}
-	var packagesName []string
+	if exists {
+		return r.ReadFile(ctx, IndexYaml)
+	}
+	return content, nil
+}
+
+func (r *Reader) GetAppVersions(ctx context.Context) (AppVersions, error) {
+	content, err := r.getIndexYaml(ctx)
+	var appVersions = make(AppVersions)
 	if stringutil.StringIn(constants.ProviderKubernetes, r.repo.GetProviders()) {
 		var indexFile = new(repo.IndexFile)
 		err = yamlutil.Decode(content, indexFile)
 		if err != nil {
 			return nil, errors.Wrap(err, "decode yaml failed")
 		}
-		for pkgName := range indexFile.Entries {
-			packagesName = append(packagesName, pkgName)
+		for appName, versions := range indexFile.Entries {
+			var vs = make(Versions)
+			for _, version := range versions {
+				vs[version.Version] = version.AppVersion
+			}
+			appVersions[appName] = vs
 		}
 	} else {
 		var indexFile = new(opapp.IndexFile)
@@ -61,26 +79,19 @@ func (r *Reader) GetPackagesName(ctx context.Context) ([]string, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "decode yaml failed")
 		}
-		for pkgName := range indexFile.Entries {
-			packagesName = append(packagesName, pkgName)
+		for appName, versions := range indexFile.Entries {
+			var vs = make(Versions)
+			for _, version := range versions {
+				vs[version.Version] = version.AppVersion
+			}
+			appVersions[appName] = vs
 		}
 	}
-	return packagesName, nil
+	return appVersions, nil
 }
 
 func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
-	exists, err := r.CheckFile(ctx, IndexYaml)
-	if err != nil {
-		return err
-	}
-	var content []byte
-	if exists {
-		content, err = r.ReadFile(ctx, IndexYaml)
-		if err != nil {
-			return err
-		}
-	}
-
+	content, err := r.getIndexYaml(ctx)
 	hash, err := provenance.Digest(bytes.NewReader(pkg))
 	if err != nil {
 		return err
@@ -116,4 +127,51 @@ func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 		return err
 	}
 	return r.WriteFile(ctx, IndexYaml, content)
+}
+
+func (r *Reader) DeletePackage(ctx context.Context, appName, version string) error {
+	content, err := r.getIndexYaml(ctx)
+	pkgName := fmt.Sprintf("%s-%s.tgz", appName, version)
+
+	if stringutil.StringIn(constants.ProviderKubernetes, r.repo.GetProviders()) {
+		var indexFile = repo.NewIndexFile()
+		err = yamlutil.Decode(content, indexFile)
+		if err != nil {
+			return errors.Wrap(err, "decode yaml failed")
+		}
+		if versions, ok := indexFile.Entries[appName]; ok {
+			var newVersions repo.ChartVersions
+			for _, v := range versions {
+				if v.Version != version {
+					newVersions = append(newVersions, v)
+				}
+			}
+			indexFile.Entries[appName] = newVersions
+		}
+		content, err = yamlutil.Encode(indexFile)
+	} else {
+		var indexFile = opapp.NewIndexFile()
+		err = yamlutil.Decode(content, indexFile)
+		if err != nil {
+			return errors.Wrap(err, "decode yaml failed")
+		}
+		if versions, ok := indexFile.Entries[appName]; ok {
+			var newVersions opapp.OpVersions
+			for _, v := range versions {
+				if v.Version != version {
+					newVersions = append(newVersions, v)
+				}
+			}
+			indexFile.Entries[appName] = newVersions
+		}
+		content, err = yamlutil.Encode(indexFile)
+	}
+	if err != nil {
+		return err
+	}
+	err = r.WriteFile(ctx, IndexYaml, content)
+	if err != nil {
+		return err
+	}
+	return r.DeleteFile(ctx, pkgName)
 }

@@ -17,7 +17,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/repoiface"
 	"openpitrix.io/openpitrix/pkg/repoiface/wrapper"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type versionProxy struct {
@@ -90,7 +89,7 @@ func (vp *versionProxy) GetRepoReader(ctx context.Context) (*repoiface.Reader, e
 	return repoiface.NewReader(ctx, repo)
 }
 
-func (vp *versionProxy) ModifyPackageFile(ctx context.Context, newPackage []byte, syncAppName bool) error {
+func (vp *versionProxy) AddPackageFile(ctx context.Context, newPackage []byte, syncAppName bool, replacePackage bool) error {
 	rreader, err := vp.GetRepoReader(ctx)
 	if err != nil {
 		return err
@@ -109,7 +108,14 @@ func (vp *versionProxy) ModifyPackageFile(ctx context.Context, newPackage []byte
 	}
 
 	pkgVersion := wrapper.OpVersionWrapper{OpVersion: &opapp.OpVersion{Metadata: pkg.Metadata}}
+
+	appVersions, err := rreader.GetAppVersions(ctx)
+	if err != nil {
+		return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotAccessRepo)
+	}
+
 	appName := pkgVersion.GetName()
+	version := pkgVersion.GetVersion()
 	if app.Name != appName ||
 		app.ChartName != appName {
 		if !syncAppName {
@@ -117,12 +123,8 @@ func (vp *versionProxy) ModifyPackageFile(ctx context.Context, newPackage []byte
 			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorCannotChangeAppName)
 		} else {
 			// check app name in index.yaml
-			packagesName, err := rreader.GetPackagesName(ctx)
-			if err != nil {
-				return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotAccessRepo)
-			}
-			if stringutil.StringIn(appName, packagesName) {
-				return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorAppNameExists)
+			if _, ok := appVersions[appName]; ok {
+				return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorAppNameExists, appName)
 			}
 
 			err = updateApp(ctx, appId, map[string]interface{}{
@@ -131,6 +133,14 @@ func (vp *versionProxy) ModifyPackageFile(ctx context.Context, newPackage []byte
 			})
 			if err != nil {
 				return err
+			}
+		}
+	}
+
+	if !replacePackage {
+		if versionMap, ok := appVersions[appName]; ok {
+			if appVersion, ok := versionMap[version]; ok {
+				return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorAppVersionExists, version, appVersion)
 			}
 		}
 	}
@@ -154,6 +164,14 @@ func (vp *versionProxy) ModifyPackageFile(ctx context.Context, newPackage []byte
 		return err
 	}
 
+	if replacePackage {
+		err = rreader.DeletePackage(ctx, appId, vp.version.GetSemver())
+		if err != nil {
+			logger.Error(ctx, "Failed to delete [%s] old package, error: %+v", vp.version.VersionId, err)
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		}
+	}
+
 	err = rreader.WriteFile(ctx, pkgVersion.GetPackageName(), newPackage)
 	if err != nil {
 		logger.Error(ctx, "Failed to write [%s] package, error: %+v", vp.version.VersionId, err)
@@ -163,6 +181,23 @@ func (vp *versionProxy) ModifyPackageFile(ctx context.Context, newPackage []byte
 	if err != nil {
 		logger.Error(ctx, "Failed to add version [%s] into index.yaml, error: %+v", vp.version.VersionId, err)
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourceFailed, vp.version.VersionId)
+	}
+	return nil
+}
+
+func (vp *versionProxy) DeletePackageFile(ctx context.Context) error {
+	rreader, err := vp.GetRepoReader(ctx)
+	if err != nil {
+		return err
+	}
+	app, err := vp.GetApp(ctx)
+	if err != nil {
+		return err
+	}
+	err = rreader.DeletePackage(ctx, app.ChartName, vp.version.GetSemver())
+	if err != nil {
+		logger.Error(ctx, "Failed to delete version [%s] from repo, error: %+v", vp.version.VersionId, err)
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, vp.version.VersionId)
 	}
 	return nil
 }

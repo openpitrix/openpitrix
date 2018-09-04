@@ -2677,6 +2677,9 @@ var Files = map[string]string{
       "properties": {
         "app_id": {
           "type": "string"
+        },
+        "version_id": {
+          "type": "string"
         }
       }
     },

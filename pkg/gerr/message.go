@@ -201,6 +201,10 @@ var (
 		Name: "app_name_exists",
 		En:   "app name [%s] exists",
 	}
+	ErrorAppVersionExists = ErrorMessage{
+		Name: "app_version_exists",
+		En:   "app version [%s:%s] exists",
+	}
 	ErrorCannotAccessRepo = ErrorMessage{
 		Name: "cannot_access_repo",
 		En:   "cannot access repo",

@@ -83,6 +83,28 @@ func checkAppVersionHandlePermission(
 	return &version, nil
 }
 
+func deleteApp(ctx context.Context, appId string) error {
+	_, err := pi.Global().DB(ctx).
+		DeleteFrom(models.AppTableName).
+		Where(db.Eq(models.ColumnAppId, appId)).
+		Exec()
+	if err != nil {
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+	}
+	return err
+}
+
+func deleteVersion(ctx context.Context, versionId string) error {
+	_, err := pi.Global().DB(ctx).
+		DeleteFrom(models.AppVersionTableName).
+		Where(db.Eq(models.ColumnVersionId, versionId)).
+		Exec()
+	if err != nil {
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+	}
+	return err
+}
+
 func insertVersion(ctx context.Context, version *models.AppVersion) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(models.AppVersionTableName).
@@ -279,6 +301,7 @@ func getBigestSequence(ctx context.Context, appId string) (uint32, error) {
 		Select("coalesce(max(sequence), 0)").
 		From(models.AppVersionTableName).
 		Where(db.Eq(models.ColumnAppId, appId)).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		LoadOne(&sequence)
 	if err != nil {
 		return sequence, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)
@@ -292,6 +315,7 @@ func resortAppVersions(ctx context.Context, appId string) error {
 		Select(models.ColumnVersionId, models.ColumnName, models.ColumnSequence, models.ColumnCreateTime).
 		From(models.AppVersionTableName).
 		Where(db.Eq(models.ColumnAppId, appId)).
+		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
 		Load(&versions)
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)

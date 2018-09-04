@@ -137,21 +137,27 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
+	res := &pb.CreateAppResponse{
+		AppId: pbutil.ToProtoString(newApp.AppId),
+	}
+
 	if req.GetPackage() != nil {
 		version := models.NewAppVersion(newApp.AppId, newApp.Name, newApp.Description, newApp.Owner, "")
 		err = insertVersion(ctx, version)
 		if err != nil {
 			return nil, err
 		}
-		err = newVersionProxy(version).ModifyPackageFile(ctx, req.GetPackage().GetValue(), true)
+		err = newVersionProxy(version).AddPackageFile(
+			ctx, req.GetPackage().GetValue(), true, false)
 		if err != nil {
+			deleteApp(ctx, newApp.AppId)
+			deleteVersion(ctx, version.VersionId)
 			return nil, err
 		}
+
+		res.VersionId = pbutil.ToProtoString(version.VersionId)
 	}
 
-	res := &pb.CreateAppResponse{
-		AppId: pbutil.ToProtoString(newApp.AppId),
-	}
 	return res, nil
 }
 
@@ -255,8 +261,14 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 	}
 
 	if req.GetPackage() != nil {
-		err = newVersionProxy(newAppVersion).ModifyPackageFile(ctx, req.GetPackage().GetValue(), false)
+		var syncAppName = false
+		if newAppVersion.Sequence == 1 {
+			syncAppName = true
+		}
+		err = newVersionProxy(newAppVersion).AddPackageFile(
+			ctx, req.GetPackage().GetValue(), syncAppName, false)
 		if err != nil {
+			deleteVersion(ctx, newAppVersion.VersionId)
 			return nil, err
 		}
 	}
@@ -323,7 +335,8 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	}
 
 	if req.GetPackage() != nil {
-		err = newVersionProxy(version).ModifyPackageFile(ctx, req.GetPackage().GetValue(), false)
+		err = newVersionProxy(version).AddPackageFile(
+			ctx, req.GetPackage().GetValue(), false, true)
 		if err != nil {
 			return nil, err
 		}
@@ -526,6 +539,11 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionRequest) (*pb.DeleteAppVersionResponse, error) {
 	version, err := checkAppVersionHandlePermission(ctx, Delete, req.GetVersionId().GetValue())
 	if err != nil {
+		return nil, err
+	}
+	err = newVersionProxy(version).DeletePackageFile(ctx)
+	if err != nil {
+		logger.Error(ctx, "Failed to delete [%s] package, error: %+v", req.GetVersionId().GetValue(), err)
 		return nil, err
 	}
 	err = updateVersionStatus(ctx, version, constants.StatusDeleted)

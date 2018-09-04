@@ -112,10 +112,13 @@ func (c *checker) Exec() error {
 		param := getFieldName(field)
 		value := field.Value()
 
-		return c.chainChecker(param, value,
+		err := c.chainChecker(param, value,
 			c.checkRequired,
 			c.checkStringChosen,
 		)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -18,6 +18,9 @@ type OpenpitrixCreateAppResponse struct {
 
 	// app id
 	AppID string `json:"app_id,omitempty"`
+
+	// version id
+	VersionID string `json:"version_id,omitempty"`
 }
 
 // Validate validates this openpitrix create app response

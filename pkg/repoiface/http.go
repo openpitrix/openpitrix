@@ -60,6 +60,10 @@ func (i *HttpInterface) ReadFile(ctx context.Context, filename string) ([]byte, 
 	return body, nil
 }
 
+func (i *HttpInterface) DeleteFile(ctx context.Context, filename string) error {
+	return ErrWriteIsUnsupported
+}
+
 func (i *HttpInterface) WriteFile(ctx context.Context, filename string, data []byte) error {
 	return ErrWriteIsUnsupported
 }

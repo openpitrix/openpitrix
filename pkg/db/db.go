@@ -63,13 +63,6 @@ type UpdateQuery struct {
 	Hook UpdateHook
 }
 
-type UpsertQuery struct {
-	table string
-	*dbr.Session
-	whereConds   map[string]string
-	upsertValues map[string]interface{}
-}
-
 type Conn struct {
 	*dbr.Session
 	ctx        context.Context

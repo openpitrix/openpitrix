@@ -35,6 +35,7 @@ message CreateAppRequest {
 
 message CreateAppResponse {
 	google.protobuf.StringValue app_id = 1;
+	google.protobuf.StringValue version_id = 2;
 }
 
 message ModifyAppRequest {

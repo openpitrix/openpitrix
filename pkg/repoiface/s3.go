@@ -135,6 +135,24 @@ func (i *S3Interface) ReadFile(ctx context.Context, filename string) ([]byte, er
 	return body, nil
 }
 
+func (i *S3Interface) DeleteFile(ctx context.Context, filename string) error {
+	svc, err := i.getService(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = svc.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: aws.String(i.bucket),
+		Key:    aws.String(path.Join(i.prefix, GetFileName(filename))),
+	})
+	if err != nil {
+		logger.Error(ctx, "Failed to delete file [%s] from s3 [%s], error: %+v", filename, i.url, err)
+		return err
+	}
+
+	return nil
+}
+
 func (i *S3Interface) WriteFile(ctx context.Context, filename string, data []byte) error {
 	svc, err := i.getService(ctx)
 	if err != nil {

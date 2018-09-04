@@ -32,6 +32,7 @@ type RepoInterface interface {
 	CheckFile(ctx context.Context, filename string) (bool, error)
 	ReadFile(ctx context.Context, filename string) ([]byte, error)
 	WriteFile(ctx context.Context, filename string, data []byte) error
+	DeleteFile(ctx context.Context, filename string) error
 	CheckRead(ctx context.Context) error
 	CheckWrite(ctx context.Context) error
 }
