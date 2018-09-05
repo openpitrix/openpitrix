@@ -14,14 +14,13 @@ import (
 	"k8s.io/helm/pkg/provenance"
 	"k8s.io/helm/pkg/repo"
 
-	"openpitrix.io/openpitrix/pkg/repoiface/wrapper"
-
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/devkit"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
-
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/repoiface/wrapper"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
@@ -57,10 +56,36 @@ func (r *Reader) getIndexYaml(ctx context.Context) ([]byte, error) {
 	return content, nil
 }
 
+func (r *Reader) isK8s() bool {
+	return stringutil.StringIn(constants.ProviderKubernetes, r.repo.GetProviders())
+}
+
+func (r *Reader) LoadPackage(ctx context.Context, pkg []byte) (wrapper.VersionInterface, error) {
+	if r.isK8s() {
+		p, err := chartutil.LoadArchive(bytes.NewReader(pkg))
+		if err != nil {
+			logger.Error(ctx, "Failed to load package, error: %+v", err)
+			return nil, err
+		}
+
+		pkgVersion := wrapper.HelmVersionWrapper{ChartVersion: &repo.ChartVersion{Metadata: p.Metadata}}
+		return pkgVersion, nil
+	} else {
+		p, err := devkit.LoadArchive(bytes.NewReader(pkg))
+		if err != nil {
+			logger.Error(ctx, "Failed to load package, error: %+v", err)
+			return nil, err
+		}
+
+		pkgVersion := wrapper.OpVersionWrapper{OpVersion: &opapp.OpVersion{Metadata: p.Metadata}}
+		return pkgVersion, nil
+	}
+}
+
 func (r *Reader) GetAppVersions(ctx context.Context) (AppVersions, error) {
 	content, err := r.getIndexYaml(ctx)
 	var appVersions = make(AppVersions)
-	if stringutil.StringIn(constants.ProviderKubernetes, r.repo.GetProviders()) {
+	if r.isK8s() {
 		var indexFile = new(repo.IndexFile)
 		err = yamlutil.Decode(content, indexFile)
 		if err != nil {
@@ -96,7 +121,7 @@ func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 	if err != nil {
 		return err
 	}
-	if stringutil.StringIn(constants.ProviderKubernetes, r.repo.GetProviders()) {
+	if r.isK8s() {
 		var indexFile = repo.NewIndexFile()
 		err = yamlutil.Decode(content, indexFile)
 		if err != nil {
@@ -133,7 +158,7 @@ func (r *Reader) DeletePackage(ctx context.Context, appName, version string) err
 	content, err := r.getIndexYaml(ctx)
 	pkgName := fmt.Sprintf("%s-%s.tgz", appName, version)
 
-	if stringutil.StringIn(constants.ProviderKubernetes, r.repo.GetProviders()) {
+	if r.isK8s() {
 		var indexFile = repo.NewIndexFile()
 		err = yamlutil.Decode(content, indexFile)
 		if err != nil {

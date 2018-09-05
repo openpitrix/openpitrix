@@ -5,18 +5,14 @@
 package app
 
 import (
-	"bytes"
 	"context"
 
 	repoclient "openpitrix.io/openpitrix/pkg/client/repo"
-	"openpitrix.io/openpitrix/pkg/devkit"
-	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/repoiface"
-	"openpitrix.io/openpitrix/pkg/repoiface/wrapper"
 )
 
 type versionProxy struct {
@@ -101,13 +97,11 @@ func (vp *versionProxy) AddPackageFile(ctx context.Context, newPackage []byte, s
 	appId := vp.version.AppId
 	versionId := vp.version.VersionId
 
-	pkg, err := devkit.LoadArchive(bytes.NewReader(newPackage))
+	pkgVersion, err := rreader.LoadPackage(ctx, newPackage)
 	if err != nil {
 		logger.Error(ctx, "Failed to load package, error: %+v", err)
 		return gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorLoadPackageFailed, err.Error())
 	}
-
-	pkgVersion := wrapper.OpVersionWrapper{OpVersion: &opapp.OpVersion{Metadata: pkg.Metadata}}
 
 	appVersions, err := rreader.GetAppVersions(ctx)
 	if err != nil {
