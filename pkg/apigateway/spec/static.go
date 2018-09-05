@@ -2561,6 +2561,27 @@ var Files = map[string]string{
         "description": {
           "type": "string"
         },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
+          "type": "string"
+        },
         "package_name": {
           "type": "string"
         },
@@ -2645,6 +2666,10 @@ var Files = map[string]string{
         },
         "status": {
           "type": "string"
+        },
+        "package": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -2652,6 +2677,9 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "app_id": {
+          "type": "string"
+        },
+        "version_id": {
           "type": "string"
         }
       }
@@ -2679,6 +2707,31 @@ var Files = map[string]string{
           "format": "int64"
         },
         "status": {
+          "type": "string"
+        },
+        "package": {
+          "type": "string",
+          "format": "byte"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
           "type": "string"
         }
       }
@@ -2916,6 +2969,31 @@ var Files = map[string]string{
           "format": "int64"
         },
         "status": {
+          "type": "string"
+        },
+        "package": {
+          "type": "string",
+          "format": "byte"
+        },
+        "home": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "screenshots": {
+          "type": "string"
+        },
+        "maintainers": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "string"
+        },
+        "readme": {
           "type": "string"
         }
       }

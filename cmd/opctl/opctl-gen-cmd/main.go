@@ -29,6 +29,10 @@ const AllCmdTmpl = `
 package main
 
 import (
+	"io/ioutil"
+
+	"github.com/go-openapi/strfmt"
+
 	"openpitrix.io/openpitrix/test"
 {{- range $index, $element := .services}}
 	"openpitrix.io/openpitrix/test/client/{{snakeCase $element}}"
@@ -47,12 +51,17 @@ const PreActionTmpl = `
 {{/*   this if post action   */}}
 type {{$element.Action}}Cmd struct {
 	*models.Openpitrix{{$element.Action}}Request
+{{- range $name, $p := $element.Body}}
+{{- if (eq $p.Type "byte")}}
+	{{pascalCase $name}}Path string
+{{- end}}
+{{- end}}
 }
 
 func New{{$element.Action}}Cmd() Cmd {
-	return &{{$element.Action}}Cmd{
-		&models.Openpitrix{{$element.Action}}Request{},
-	}
+	cmd := &{{$element.Action}}Cmd{}
+	cmd.Openpitrix{{$element.Action}}Request = &models.Openpitrix{{$element.Action}}Request{}
+	return cmd
 }
 
 func (*{{$element.Action}}Cmd) GetActionName() string {
@@ -63,6 +72,8 @@ func (c *{{$element.Action}}Cmd) ParseFlag(f Flag) {
 {{- range $name, $p := $element.Body}}
 {{- if (eq $p.Type "string")}}
 	f.StringVarP(&c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", "", "{{$p.Help}}")
+{{- else if (eq $p.Type "byte")}}
+	f.StringVarP(&c.{{pascalCase $name}}Path, "{{$name}}", "{{$p.Shorthand}}", "", "filepath of {{snakeCase $name}}. {{$p.Help}}")
 {{- else if (eq $p.Type "[]string")}}
 	f.StringSliceVarP(&c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", []string{}, "{{$p.Help}}")
 {{- else if (eq $p.Type "boolean")}}
@@ -72,6 +83,17 @@ func (c *{{$element.Action}}Cmd) ParseFlag(f Flag) {
 }
 
 func (c *{{$element.Action}}Cmd) Run(out Out) error {
+{{- range $name, $p := $element.Body}}
+{{- if (eq $p.Type "byte")}}
+	if c.{{pascalCase $name}}Path != "" {
+		content, err := ioutil.ReadFile(c.{{pascalCase $name}}Path)
+		if err != nil {
+			return err
+		}
+		c.{{pascalCase $name}} = strfmt.Base64(content)
+	}
+{{- end}}
+{{- end}}
 	params := {{snakeCase $element.Service}}.New{{$element.Action}}Params()
 	params.WithBody(c.Openpitrix{{$element.Action}}Request)
 

@@ -97,7 +97,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	visibility := req.GetVisibility().GetValue()
 	providers := req.GetProviders()
 
-	err := validate(ctx, repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
@@ -201,7 +201,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		needValidate = true
 	}
 	if needValidate {
-		err = validate(ctx, repoType, url, credential, providers)
+		err = validate(ctx, repoType, url, credential)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 		}
@@ -309,9 +309,8 @@ func (p *Server) ValidateRepo(ctx context.Context, req *pb.ValidateRepoRequest) 
 	repoType := req.GetType().GetValue()
 	url := req.GetUrl().GetValue()
 	credential := req.GetCredential().GetValue()
-	providers := []string{"qingcloud"}
 
-	err := validate(ctx, repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential)
 	if err != nil {
 		e, ok := err.(*ErrorWithCode)
 		if !ok {

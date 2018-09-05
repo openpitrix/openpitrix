@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
 const (
@@ -40,7 +40,7 @@ func IsAppDir(dirName string) (bool, error) {
 		return false, fmt.Errorf("cannot read %s in directory [%s]", PackageJson, dirName)
 	}
 
-	packageContent, err := app.DecodePackageJson(packageJsonContent)
+	packageContent, err := opapp.DecodePackageJson(packageJsonContent)
 	if err != nil {
 		return false, err
 	}

@@ -1,3 +1,5 @@
+app:
+  default_draft_status: false
 repo:
   # cron usage: https://godoc.org/github.com/robfig/cron#hdr-Usage
   #

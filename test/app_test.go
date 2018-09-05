@@ -7,15 +7,20 @@
 package test
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"sort"
 	"strings"
 	"testing"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/stretchr/testify/require"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/devkit"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
@@ -37,6 +42,130 @@ func getSortedString(s []string) string {
 	return strings.Join(sortedCategoryIds, ",")
 }
 
+func preparePackage(t *testing.T, v string) strfmt.Base64 {
+	var testAppName = "test-app"
+
+	cfile := &opapp.Metadata{
+		Name:        testAppName,
+		Description: "An OpenPitrix app",
+		Version:     v,
+		AppVersion:  "1.0",
+		ApiVersion:  devkit.ApiVersionV1,
+	}
+
+	os.MkdirAll(testTmpDir, 0755)
+	_, err := devkit.Create(cfile, testTmpDir)
+
+	require.NoError(t, err)
+
+	ch, err := devkit.LoadDir(path.Join(testTmpDir, testAppName))
+
+	require.NoError(t, err)
+
+	name, err := devkit.Save(ch, testTmpDir)
+
+	require.NoError(t, err)
+
+	t.Logf("save [%s] success", name)
+
+	content, err := ioutil.ReadFile(name)
+
+	require.NoError(t, err)
+
+	require.NoError(t, os.RemoveAll(testTmpDir))
+
+	return strfmt.Base64(content)
+}
+
+func testVersionPackage(t *testing.T, appId string) {
+	client := GetClient(clientConfig)
+
+	modifyAppParams := app_manager.NewModifyAppParams()
+	modifyAppParams.SetBody(
+		&models.OpenpitrixModifyAppRequest{
+			AppID:  appId,
+			RepoID: "repo-vmbased",
+			Status: constants.StatusDraft,
+		})
+	_, err := client.AppManager.ModifyApp(modifyAppParams)
+
+	require.NoError(t, err)
+
+	createAppVersionParams := app_manager.NewCreateAppVersionParams()
+	createAppVersionParams.SetBody(
+		&models.OpenpitrixCreateAppVersionRequest{
+			AppID:   appId,
+			Status:  constants.StatusDraft,
+			Package: preparePackage(t, "0.0.1"),
+		})
+	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams)
+
+	require.NoError(t, err)
+
+	versionId1 := createAppVersionResp.Payload.VersionID
+
+	modifyAppVersionParams := app_manager.NewModifyAppVersionParams()
+	modifyAppVersionParams.SetBody(
+		&models.OpenpitrixModifyAppVersionRequest{
+			VersionID: versionId1,
+			Package:   preparePackage(t, "0.0.2"),
+		})
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams)
+
+	require.NoError(t, err)
+
+	modifyAppVersionParams = app_manager.NewModifyAppVersionParams()
+	modifyAppVersionParams.SetBody(
+		&models.OpenpitrixModifyAppVersionRequest{
+			VersionID: versionId1,
+			Package:   preparePackage(t, "0.0.3"),
+		})
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams)
+
+	require.NoError(t, err)
+
+	createAppVersionParams = app_manager.NewCreateAppVersionParams()
+	createAppVersionParams.SetBody(
+		&models.OpenpitrixCreateAppVersionRequest{
+			AppID:   appId,
+			Status:  constants.StatusDraft,
+			Package: preparePackage(t, "0.1.0"),
+		})
+	createAppVersionResp, err = client.AppManager.CreateAppVersion(createAppVersionParams)
+
+	require.NoError(t, err)
+
+	versionId2 := createAppVersionResp.Payload.VersionID
+
+	modifyAppVersionParams = app_manager.NewModifyAppVersionParams()
+	modifyAppVersionParams.SetBody(
+		&models.OpenpitrixModifyAppVersionRequest{
+			VersionID: versionId2,
+			Package:   preparePackage(t, "0.0.3"),
+		})
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams)
+
+	require.Error(t, err)
+
+	deleteAppVersionParams := app_manager.NewDeleteAppVersionParams()
+	deleteAppVersionParams.SetBody(
+		&models.OpenpitrixDeleteAppVersionRequest{
+			VersionID: versionId2,
+		})
+	_, err = client.AppManager.DeleteAppVersion(deleteAppVersionParams)
+
+	require.NoError(t, err)
+
+	deleteAppVersionParams = app_manager.NewDeleteAppVersionParams()
+	deleteAppVersionParams.SetBody(
+		&models.OpenpitrixDeleteAppVersionRequest{
+			VersionID: versionId1,
+		})
+	_, err = client.AppManager.DeleteAppVersion(deleteAppVersionParams)
+
+	require.NoError(t, err)
+}
+
 func testVersionLifeCycle(t *testing.T, appId string) {
 	client := GetClient(clientConfig)
 
@@ -53,8 +182,9 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 	createAppVersionParams := app_manager.NewCreateAppVersionParams()
 	createAppVersionParams.SetBody(
 		&models.OpenpitrixCreateAppVersionRequest{
-			Name:  "test_version",
-			AppID: appId,
+			Name:   "test_version",
+			AppID:  appId,
+			Status: constants.StatusDraft,
 		})
 	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams)
 
@@ -140,7 +270,7 @@ func TestApp(t *testing.T) {
 	testRepoId2 := "e2e_test_repo2"
 	describeParams := app_manager.NewDescribeAppsParams()
 	describeParams.SetName([]string{testAppName})
-	describeParams.SetStatus([]string{constants.StatusActive})
+	describeParams.SetStatus([]string{constants.StatusDraft, constants.StatusActive})
 	describeResp, err := client.AppManager.DescribeApps(describeParams)
 
 	require.NoError(t, err)
@@ -162,7 +292,6 @@ func TestApp(t *testing.T) {
 		&models.OpenpitrixCreateAppRequest{
 			Name:       testAppName,
 			RepoID:     testRepoId,
-			Status:     constants.StatusActive,
 			CategoryID: "xx,yy,zz",
 		})
 	createResp, err := client.AppManager.CreateApp(createParams)
@@ -219,6 +348,8 @@ func TestApp(t *testing.T) {
 	require.NotEmpty(t, getStatisticsResp.Payload.RepoCount)
 
 	testVersionLifeCycle(t, appId)
+
+	testVersionPackage(t, appId)
 
 	// delete app
 	deleteParams := app_manager.NewDeleteAppsParams()

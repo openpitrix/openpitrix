@@ -30,10 +30,12 @@ message CreateAppRequest {
 	google.protobuf.StringValue category_id = 13;
 	google.protobuf.StringValue keywords = 14;
 	google.protobuf.StringValue status = 15;
+	google.protobuf.BytesValue package = 16;
 }
 
 message CreateAppResponse {
 	google.protobuf.StringValue app_id = 1;
+	google.protobuf.StringValue version_id = 2;
 }
 
 message ModifyAppRequest {
@@ -116,6 +118,14 @@ message CreateAppVersionRequest {
 	google.protobuf.StringValue description = 5;
 	google.protobuf.UInt32Value sequence = 6;
 	google.protobuf.StringValue status = 7;
+	google.protobuf.BytesValue package = 8;
+	google.protobuf.StringValue home = 9;
+	google.protobuf.StringValue icon = 10;
+	google.protobuf.StringValue screenshots = 11;
+	google.protobuf.StringValue maintainers = 12;
+	google.protobuf.StringValue keywords = 13;
+	google.protobuf.StringValue sources = 14;
+	google.protobuf.StringValue readme = 15;
 }
 
 message CreateAppVersionResponse {
@@ -130,6 +140,14 @@ message ModifyAppVersionRequest {
 	google.protobuf.StringValue description = 5;
 	google.protobuf.UInt32Value sequence = 6;
 	google.protobuf.StringValue status = 7;
+	google.protobuf.BytesValue package = 8;
+	google.protobuf.StringValue home = 9;
+	google.protobuf.StringValue icon = 10;
+	google.protobuf.StringValue screenshots = 11;
+	google.protobuf.StringValue maintainers = 12;
+	google.protobuf.StringValue keywords = 13;
+	google.protobuf.StringValue sources = 14;
+	google.protobuf.StringValue readme = 15;
 }
 
 message ModifyAppVersionResponse {
@@ -150,12 +168,19 @@ message AppVersion {
 	google.protobuf.StringValue owner = 3;
 	google.protobuf.StringValue name = 4;
 	google.protobuf.StringValue description = 5;
-	google.protobuf.StringValue package_name = 6;
-	google.protobuf.StringValue status = 7;
-	google.protobuf.Timestamp create_time = 8;
-	google.protobuf.Timestamp status_time = 9;
-	google.protobuf.Timestamp update_time = 10;
-	uint32 sequence = 11;
+	google.protobuf.StringValue home = 6;
+	google.protobuf.StringValue icon = 7;
+	google.protobuf.StringValue screenshots = 8;
+	google.protobuf.StringValue maintainers = 9;
+	google.protobuf.StringValue keywords = 10;
+	google.protobuf.StringValue sources = 11;
+	google.protobuf.StringValue readme = 12;
+	google.protobuf.StringValue package_name = 13;
+	google.protobuf.StringValue status = 14;
+	google.protobuf.Timestamp create_time = 15;
+	google.protobuf.Timestamp status_time = 16;
+	google.protobuf.Timestamp update_time = 17;
+	google.protobuf.UInt32Value sequence = 18;
 }
 
 message DescribeAppVersionsRequest {

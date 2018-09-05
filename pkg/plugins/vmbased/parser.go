@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
@@ -48,7 +48,7 @@ func (p *Parser) generateServerId(upperBound int, excludeServerIds []int) (int, 
 	return result, nil
 }
 
-func (p *Parser) ParseClusterRole(clusterConf app.ClusterConf, node app.Node) (*models.ClusterRole, error) {
+func (p *Parser) ParseClusterRole(clusterConf opapp.ClusterConf, node opapp.Node) (*models.ClusterRole, error) {
 	clusterRole := &models.ClusterRole{
 		Role:         node.Role,
 		Cpu:          node.CPU,
@@ -98,7 +98,7 @@ func (p *Parser) ParseClusterRole(clusterConf app.ClusterConf, node app.Node) (*
 	return clusterRole, nil
 }
 
-func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*models.ClusterNodeWithKeyPairs, error) {
+func (p *Parser) ParseClusterNode(node opapp.Node, subnetId string) (map[string]*models.ClusterNodeWithKeyPairs, error) {
 	count := int(node.Count)
 	serverIdUpperBound := node.ServerIDUpperBound
 	replicaRole := node.Role + constants.ReplicaRoleSuffix
@@ -159,7 +159,7 @@ func (p *Parser) ParseClusterNode(node app.Node, subnetId string) (map[string]*m
 	return clusterNodes, nil
 }
 
-func (p *Parser) ParseClusterLoadbalancer(node app.Node) []*models.ClusterLoadbalancer {
+func (p *Parser) ParseClusterLoadbalancer(node opapp.Node) []*models.ClusterLoadbalancer {
 	var clusterLoadbalancers []*models.ClusterLoadbalancer
 	for _, loadbalancer := range node.Loadbalancer {
 		clusterLoadbalancer := &models.ClusterLoadbalancer{
@@ -174,7 +174,7 @@ func (p *Parser) ParseClusterLoadbalancer(node app.Node) []*models.ClusterLoadba
 	return clusterLoadbalancers
 }
 
-func (p *Parser) ParseClusterLinks(clusterConf app.ClusterConf) map[string]*models.ClusterLink {
+func (p *Parser) ParseClusterLinks(clusterConf opapp.ClusterConf) map[string]*models.ClusterLink {
 	clusterLinks := make(map[string]*models.ClusterLink)
 	for name, link := range clusterConf.Links {
 		clusterLink := &models.ClusterLink{
@@ -187,7 +187,7 @@ func (p *Parser) ParseClusterLinks(clusterConf app.ClusterConf) map[string]*mode
 	return clusterLinks
 }
 
-func (p *Parser) ParseCluster(clusterConf app.ClusterConf) (*models.Cluster, error) {
+func (p *Parser) ParseCluster(clusterConf opapp.ClusterConf) (*models.Cluster, error) {
 	endpoints := jsonutil.ToString(clusterConf.Endpoints)
 
 	metadataRootAccess := false
@@ -209,7 +209,7 @@ func (p *Parser) ParseCluster(clusterConf app.ClusterConf) (*models.Cluster, err
 	return cluster, nil
 }
 
-func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) (*models.ClusterCommon, error) {
+func (p *Parser) ParseClusterCommon(clusterConf opapp.ClusterConf, node opapp.Node) (*models.ClusterCommon, error) {
 
 	customMetadata := ""
 	if len(node.CustomMetadata) != 0 {
@@ -308,7 +308,7 @@ func (p *Parser) ParseClusterCommon(clusterConf app.ClusterConf, node app.Node) 
 	return clusterCommon, nil
 }
 
-func (p *Parser) Parse(clusterConf app.ClusterConf) (*models.ClusterWrapper, error) {
+func (p *Parser) Parse(clusterConf opapp.ClusterConf) (*models.ClusterWrapper, error) {
 	var cluster *models.Cluster
 	clusterNodes := make(map[string]*models.ClusterNodeWithKeyPairs)
 	clusterCommons := make(map[string]*models.ClusterCommon)

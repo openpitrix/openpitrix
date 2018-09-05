@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
 const DefaultServeAddr = "127.0.0.1:8879"
@@ -26,7 +26,7 @@ const indexHTMLTemplate = `
 <ul>
 {{range $name, $ver := .Index.Entries}}
   <li>{{$name}}<ul>{{range $ver}}
-    <li><a href="{{index .URLs 0}}">{{.Name}}-{{.Version}}</a></li>
+    <li><a href="{{index .URLs 0}}">{{.Name}}-{{.OpVersion}}</a></li>
   {{end}}</ul>
   </li>
 {{end}}
@@ -68,7 +68,7 @@ func (s *RepositoryServer) htmlIndex(w http.ResponseWriter, r *http.Request) {
 	t := template.Must(template.New("index.html").Parse(indexHTMLTemplate))
 	// load index
 	lrp := filepath.Join(s.RepoPath, "index.yaml")
-	i, err := app.LoadIndexFile(lrp)
+	i, err := opapp.LoadIndexFile(lrp)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

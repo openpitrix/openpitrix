@@ -7,6 +7,10 @@
 package main
 
 import (
+	"io/ioutil"
+
+	"github.com/go-openapi/strfmt"
+
 	"openpitrix.io/openpitrix/test"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/category_manager"
@@ -89,9 +93,9 @@ type CancelAppVersionCmd struct {
 }
 
 func NewCancelAppVersionCmd() Cmd {
-	return &CancelAppVersionCmd{
-		&models.OpenpitrixCancelAppVersionRequest{},
-	}
+	cmd := &CancelAppVersionCmd{}
+	cmd.OpenpitrixCancelAppVersionRequest = &models.OpenpitrixCancelAppVersionRequest{}
+	return cmd
 }
 
 func (*CancelAppVersionCmd) GetActionName() string {
@@ -121,12 +125,13 @@ func (c *CancelAppVersionCmd) Run(out Out) error {
 
 type CreateAppCmd struct {
 	*models.OpenpitrixCreateAppRequest
+	PackagePath string
 }
 
 func NewCreateAppCmd() Cmd {
-	return &CreateAppCmd{
-		&models.OpenpitrixCreateAppRequest{},
-	}
+	cmd := &CreateAppCmd{}
+	cmd.OpenpitrixCreateAppRequest = &models.OpenpitrixCreateAppRequest{}
+	return cmd
 }
 
 func (*CreateAppCmd) GetActionName() string {
@@ -143,6 +148,7 @@ func (c *CreateAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
+	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
 	f.StringVarP(&c.Readme, "readme", "", "", "")
 	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
 	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
@@ -151,6 +157,13 @@ func (c *CreateAppCmd) ParseFlag(f Flag) {
 }
 
 func (c *CreateAppCmd) Run(out Out) error {
+	if c.PackagePath != "" {
+		content, err := ioutil.ReadFile(c.PackagePath)
+		if err != nil {
+			return err
+		}
+		c.Package = strfmt.Base64(content)
+	}
 	params := app_manager.NewCreateAppParams()
 	params.WithBody(c.OpenpitrixCreateAppRequest)
 
@@ -169,12 +182,13 @@ func (c *CreateAppCmd) Run(out Out) error {
 
 type CreateAppVersionCmd struct {
 	*models.OpenpitrixCreateAppVersionRequest
+	PackagePath string
 }
 
 func NewCreateAppVersionCmd() Cmd {
-	return &CreateAppVersionCmd{
-		&models.OpenpitrixCreateAppVersionRequest{},
-	}
+	cmd := &CreateAppVersionCmd{}
+	cmd.OpenpitrixCreateAppVersionRequest = &models.OpenpitrixCreateAppVersionRequest{}
+	return cmd
 }
 
 func (*CreateAppVersionCmd) GetActionName() string {
@@ -184,13 +198,28 @@ func (*CreateAppVersionCmd) GetActionName() string {
 func (c *CreateAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.AppID, "app_id", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Home, "home", "", "", "")
+	f.StringVarP(&c.Icon, "icon", "", "", "")
+	f.StringVarP(&c.Keywords, "keywords", "", "", "")
+	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
+	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
+	f.StringVarP(&c.Readme, "readme", "", "", "")
+	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
+	f.StringVarP(&c.Sources, "sources", "", "", "")
 	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *CreateAppVersionCmd) Run(out Out) error {
+	if c.PackagePath != "" {
+		content, err := ioutil.ReadFile(c.PackagePath)
+		if err != nil {
+			return err
+		}
+		c.Package = strfmt.Base64(content)
+	}
 	params := app_manager.NewCreateAppVersionParams()
 	params.WithBody(c.OpenpitrixCreateAppVersionRequest)
 
@@ -212,9 +241,9 @@ type DeleteAppVersionCmd struct {
 }
 
 func NewDeleteAppVersionCmd() Cmd {
-	return &DeleteAppVersionCmd{
-		&models.OpenpitrixDeleteAppVersionRequest{},
-	}
+	cmd := &DeleteAppVersionCmd{}
+	cmd.OpenpitrixDeleteAppVersionRequest = &models.OpenpitrixDeleteAppVersionRequest{}
+	return cmd
 }
 
 func (*DeleteAppVersionCmd) GetActionName() string {
@@ -247,9 +276,9 @@ type DeleteAppVersionsCmd struct {
 }
 
 func NewDeleteAppVersionsCmd() Cmd {
-	return &DeleteAppVersionsCmd{
-		&models.OpenpitrixDeleteAppVersionsRequest{},
-	}
+	cmd := &DeleteAppVersionsCmd{}
+	cmd.OpenpitrixDeleteAppVersionsRequest = &models.OpenpitrixDeleteAppVersionsRequest{}
+	return cmd
 }
 
 func (*DeleteAppVersionsCmd) GetActionName() string {
@@ -282,9 +311,9 @@ type DeleteAppsCmd struct {
 }
 
 func NewDeleteAppsCmd() Cmd {
-	return &DeleteAppsCmd{
-		&models.OpenpitrixDeleteAppsRequest{},
-	}
+	cmd := &DeleteAppsCmd{}
+	cmd.OpenpitrixDeleteAppsRequest = &models.OpenpitrixDeleteAppsRequest{}
+	return cmd
 }
 
 func (*DeleteAppsCmd) GetActionName() string {
@@ -516,9 +545,9 @@ type ModifyAppCmd struct {
 }
 
 func NewModifyAppCmd() Cmd {
-	return &ModifyAppCmd{
-		&models.OpenpitrixModifyAppRequest{},
-	}
+	cmd := &ModifyAppCmd{}
+	cmd.OpenpitrixModifyAppRequest = &models.OpenpitrixModifyAppRequest{}
+	return cmd
 }
 
 func (*ModifyAppCmd) GetActionName() string {
@@ -562,12 +591,13 @@ func (c *ModifyAppCmd) Run(out Out) error {
 
 type ModifyAppVersionCmd struct {
 	*models.OpenpitrixModifyAppVersionRequest
+	PackagePath string
 }
 
 func NewModifyAppVersionCmd() Cmd {
-	return &ModifyAppVersionCmd{
-		&models.OpenpitrixModifyAppVersionRequest{},
-	}
+	cmd := &ModifyAppVersionCmd{}
+	cmd.OpenpitrixModifyAppVersionRequest = &models.OpenpitrixModifyAppVersionRequest{}
+	return cmd
 }
 
 func (*ModifyAppVersionCmd) GetActionName() string {
@@ -576,14 +606,29 @@ func (*ModifyAppVersionCmd) GetActionName() string {
 
 func (c *ModifyAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Home, "home", "", "", "")
+	f.StringVarP(&c.Icon, "icon", "", "", "")
+	f.StringVarP(&c.Keywords, "keywords", "", "", "")
+	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Owner, "owner", "", "", "")
+	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
 	f.StringVarP(&c.PackageName, "package_name", "", "", "")
+	f.StringVarP(&c.Readme, "readme", "", "", "")
+	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
+	f.StringVarP(&c.Sources, "sources", "", "", "")
 	f.StringVarP(&c.Status, "status", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
 func (c *ModifyAppVersionCmd) Run(out Out) error {
+	if c.PackagePath != "" {
+		content, err := ioutil.ReadFile(c.PackagePath)
+		if err != nil {
+			return err
+		}
+		c.Package = strfmt.Base64(content)
+	}
 	params := app_manager.NewModifyAppVersionParams()
 	params.WithBody(c.OpenpitrixModifyAppVersionRequest)
 
@@ -605,9 +650,9 @@ type PassAppVersionCmd struct {
 }
 
 func NewPassAppVersionCmd() Cmd {
-	return &PassAppVersionCmd{
-		&models.OpenpitrixPassAppVersionRequest{},
-	}
+	cmd := &PassAppVersionCmd{}
+	cmd.OpenpitrixPassAppVersionRequest = &models.OpenpitrixPassAppVersionRequest{}
+	return cmd
 }
 
 func (*PassAppVersionCmd) GetActionName() string {
@@ -640,9 +685,9 @@ type RecoverAppVersionCmd struct {
 }
 
 func NewRecoverAppVersionCmd() Cmd {
-	return &RecoverAppVersionCmd{
-		&models.OpenpitrixRecoverAppVersionRequest{},
-	}
+	cmd := &RecoverAppVersionCmd{}
+	cmd.OpenpitrixRecoverAppVersionRequest = &models.OpenpitrixRecoverAppVersionRequest{}
+	return cmd
 }
 
 func (*RecoverAppVersionCmd) GetActionName() string {
@@ -675,9 +720,9 @@ type RejectAppVersionCmd struct {
 }
 
 func NewRejectAppVersionCmd() Cmd {
-	return &RejectAppVersionCmd{
-		&models.OpenpitrixRejectAppVersionRequest{},
-	}
+	cmd := &RejectAppVersionCmd{}
+	cmd.OpenpitrixRejectAppVersionRequest = &models.OpenpitrixRejectAppVersionRequest{}
+	return cmd
 }
 
 func (*RejectAppVersionCmd) GetActionName() string {
@@ -710,9 +755,9 @@ type ReleaseAppVersionCmd struct {
 }
 
 func NewReleaseAppVersionCmd() Cmd {
-	return &ReleaseAppVersionCmd{
-		&models.OpenpitrixReleaseAppVersionRequest{},
-	}
+	cmd := &ReleaseAppVersionCmd{}
+	cmd.OpenpitrixReleaseAppVersionRequest = &models.OpenpitrixReleaseAppVersionRequest{}
+	return cmd
 }
 
 func (*ReleaseAppVersionCmd) GetActionName() string {
@@ -745,9 +790,9 @@ type SubmitAppVersionCmd struct {
 }
 
 func NewSubmitAppVersionCmd() Cmd {
-	return &SubmitAppVersionCmd{
-		&models.OpenpitrixSubmitAppVersionRequest{},
-	}
+	cmd := &SubmitAppVersionCmd{}
+	cmd.OpenpitrixSubmitAppVersionRequest = &models.OpenpitrixSubmitAppVersionRequest{}
+	return cmd
 }
 
 func (*SubmitAppVersionCmd) GetActionName() string {
@@ -780,9 +825,9 @@ type SuspendAppVersionCmd struct {
 }
 
 func NewSuspendAppVersionCmd() Cmd {
-	return &SuspendAppVersionCmd{
-		&models.OpenpitrixSuspendAppVersionRequest{},
-	}
+	cmd := &SuspendAppVersionCmd{}
+	cmd.OpenpitrixSuspendAppVersionRequest = &models.OpenpitrixSuspendAppVersionRequest{}
+	return cmd
 }
 
 func (*SuspendAppVersionCmd) GetActionName() string {
@@ -815,9 +860,9 @@ type CreateCategoryCmd struct {
 }
 
 func NewCreateCategoryCmd() Cmd {
-	return &CreateCategoryCmd{
-		&models.OpenpitrixCreateCategoryRequest{},
-	}
+	cmd := &CreateCategoryCmd{}
+	cmd.OpenpitrixCreateCategoryRequest = &models.OpenpitrixCreateCategoryRequest{}
+	return cmd
 }
 
 func (*CreateCategoryCmd) GetActionName() string {
@@ -852,9 +897,9 @@ type DeleteCategoriesCmd struct {
 }
 
 func NewDeleteCategoriesCmd() Cmd {
-	return &DeleteCategoriesCmd{
-		&models.OpenpitrixDeleteCategoriesRequest{},
-	}
+	cmd := &DeleteCategoriesCmd{}
+	cmd.OpenpitrixDeleteCategoriesRequest = &models.OpenpitrixDeleteCategoriesRequest{}
+	return cmd
 }
 
 func (*DeleteCategoriesCmd) GetActionName() string {
@@ -932,9 +977,9 @@ type ModifyCategoryCmd struct {
 }
 
 func NewModifyCategoryCmd() Cmd {
-	return &ModifyCategoryCmd{
-		&models.OpenpitrixModifyCategoryRequest{},
-	}
+	cmd := &ModifyCategoryCmd{}
+	cmd.OpenpitrixModifyCategoryRequest = &models.OpenpitrixModifyCategoryRequest{}
+	return cmd
 }
 
 func (*ModifyCategoryCmd) GetActionName() string {
@@ -970,9 +1015,9 @@ type AddClusterNodesCmd struct {
 }
 
 func NewAddClusterNodesCmd() Cmd {
-	return &AddClusterNodesCmd{
-		&models.OpenpitrixAddClusterNodesRequest{},
-	}
+	cmd := &AddClusterNodesCmd{}
+	cmd.OpenpitrixAddClusterNodesRequest = &models.OpenpitrixAddClusterNodesRequest{}
+	return cmd
 }
 
 func (*AddClusterNodesCmd) GetActionName() string {
@@ -1007,9 +1052,9 @@ type AttachKeyPairsCmd struct {
 }
 
 func NewAttachKeyPairsCmd() Cmd {
-	return &AttachKeyPairsCmd{
-		&models.OpenpitrixAttachKeyPairsRequest{},
-	}
+	cmd := &AttachKeyPairsCmd{}
+	cmd.OpenpitrixAttachKeyPairsRequest = &models.OpenpitrixAttachKeyPairsRequest{}
+	return cmd
 }
 
 func (*AttachKeyPairsCmd) GetActionName() string {
@@ -1043,9 +1088,9 @@ type CeaseClustersCmd struct {
 }
 
 func NewCeaseClustersCmd() Cmd {
-	return &CeaseClustersCmd{
-		&models.OpenpitrixCeaseClustersRequest{},
-	}
+	cmd := &CeaseClustersCmd{}
+	cmd.OpenpitrixCeaseClustersRequest = &models.OpenpitrixCeaseClustersRequest{}
+	return cmd
 }
 
 func (*CeaseClustersCmd) GetActionName() string {
@@ -1079,9 +1124,9 @@ type CreateClusterCmd struct {
 }
 
 func NewCreateClusterCmd() Cmd {
-	return &CreateClusterCmd{
-		&models.OpenpitrixCreateClusterRequest{},
-	}
+	cmd := &CreateClusterCmd{}
+	cmd.OpenpitrixCreateClusterRequest = &models.OpenpitrixCreateClusterRequest{}
+	return cmd
 }
 
 func (*CreateClusterCmd) GetActionName() string {
@@ -1118,9 +1163,9 @@ type CreateKeyPairCmd struct {
 }
 
 func NewCreateKeyPairCmd() Cmd {
-	return &CreateKeyPairCmd{
-		&models.OpenpitrixCreateKeyPairRequest{},
-	}
+	cmd := &CreateKeyPairCmd{}
+	cmd.OpenpitrixCreateKeyPairRequest = &models.OpenpitrixCreateKeyPairRequest{}
+	return cmd
 }
 
 func (*CreateKeyPairCmd) GetActionName() string {
@@ -1155,9 +1200,9 @@ type DeleteClusterNodesCmd struct {
 }
 
 func NewDeleteClusterNodesCmd() Cmd {
-	return &DeleteClusterNodesCmd{
-		&models.OpenpitrixDeleteClusterNodesRequest{},
-	}
+	cmd := &DeleteClusterNodesCmd{}
+	cmd.OpenpitrixDeleteClusterNodesRequest = &models.OpenpitrixDeleteClusterNodesRequest{}
+	return cmd
 }
 
 func (*DeleteClusterNodesCmd) GetActionName() string {
@@ -1193,9 +1238,9 @@ type DeleteClustersCmd struct {
 }
 
 func NewDeleteClustersCmd() Cmd {
-	return &DeleteClustersCmd{
-		&models.OpenpitrixDeleteClustersRequest{},
-	}
+	cmd := &DeleteClustersCmd{}
+	cmd.OpenpitrixDeleteClustersRequest = &models.OpenpitrixDeleteClustersRequest{}
+	return cmd
 }
 
 func (*DeleteClustersCmd) GetActionName() string {
@@ -1229,9 +1274,9 @@ type DeleteKeyPairsCmd struct {
 }
 
 func NewDeleteKeyPairsCmd() Cmd {
-	return &DeleteKeyPairsCmd{
-		&models.OpenpitrixDeleteKeyPairsRequest{},
-	}
+	cmd := &DeleteKeyPairsCmd{}
+	cmd.OpenpitrixDeleteKeyPairsRequest = &models.OpenpitrixDeleteKeyPairsRequest{}
+	return cmd
 }
 
 func (*DeleteKeyPairsCmd) GetActionName() string {
@@ -1451,9 +1496,9 @@ type DetachKeyPairsCmd struct {
 }
 
 func NewDetachKeyPairsCmd() Cmd {
-	return &DetachKeyPairsCmd{
-		&models.OpenpitrixDetachKeyPairsRequest{},
-	}
+	cmd := &DetachKeyPairsCmd{}
+	cmd.OpenpitrixDetachKeyPairsRequest = &models.OpenpitrixDetachKeyPairsRequest{}
+	return cmd
 }
 
 func (*DetachKeyPairsCmd) GetActionName() string {
@@ -1519,9 +1564,9 @@ type ModifyClusterAttributesCmd struct {
 }
 
 func NewModifyClusterAttributesCmd() Cmd {
-	return &ModifyClusterAttributesCmd{
-		&models.OpenpitrixModifyClusterAttributesRequest{},
-	}
+	cmd := &ModifyClusterAttributesCmd{}
+	cmd.OpenpitrixModifyClusterAttributesRequest = &models.OpenpitrixModifyClusterAttributesRequest{}
+	return cmd
 }
 
 func (*ModifyClusterAttributesCmd) GetActionName() string {
@@ -1556,9 +1601,9 @@ type ModifyClusterNodeAttributesCmd struct {
 }
 
 func NewModifyClusterNodeAttributesCmd() Cmd {
-	return &ModifyClusterNodeAttributesCmd{
-		&models.OpenpitrixModifyClusterNodeAttributesRequest{},
-	}
+	cmd := &ModifyClusterNodeAttributesCmd{}
+	cmd.OpenpitrixModifyClusterNodeAttributesRequest = &models.OpenpitrixModifyClusterNodeAttributesRequest{}
+	return cmd
 }
 
 func (*ModifyClusterNodeAttributesCmd) GetActionName() string {
@@ -1592,9 +1637,9 @@ type RecoverClustersCmd struct {
 }
 
 func NewRecoverClustersCmd() Cmd {
-	return &RecoverClustersCmd{
-		&models.OpenpitrixRecoverClustersRequest{},
-	}
+	cmd := &RecoverClustersCmd{}
+	cmd.OpenpitrixRecoverClustersRequest = &models.OpenpitrixRecoverClustersRequest{}
+	return cmd
 }
 
 func (*RecoverClustersCmd) GetActionName() string {
@@ -1628,9 +1673,9 @@ type ResizeClusterCmd struct {
 }
 
 func NewResizeClusterCmd() Cmd {
-	return &ResizeClusterCmd{
-		&models.OpenpitrixResizeClusterRequest{},
-	}
+	cmd := &ResizeClusterCmd{}
+	cmd.OpenpitrixResizeClusterRequest = &models.OpenpitrixResizeClusterRequest{}
+	return cmd
 }
 
 func (*ResizeClusterCmd) GetActionName() string {
@@ -1664,9 +1709,9 @@ type RollbackClusterCmd struct {
 }
 
 func NewRollbackClusterCmd() Cmd {
-	return &RollbackClusterCmd{
-		&models.OpenpitrixRollbackClusterRequest{},
-	}
+	cmd := &RollbackClusterCmd{}
+	cmd.OpenpitrixRollbackClusterRequest = &models.OpenpitrixRollbackClusterRequest{}
+	return cmd
 }
 
 func (*RollbackClusterCmd) GetActionName() string {
@@ -1700,9 +1745,9 @@ type StartClustersCmd struct {
 }
 
 func NewStartClustersCmd() Cmd {
-	return &StartClustersCmd{
-		&models.OpenpitrixStartClustersRequest{},
-	}
+	cmd := &StartClustersCmd{}
+	cmd.OpenpitrixStartClustersRequest = &models.OpenpitrixStartClustersRequest{}
+	return cmd
 }
 
 func (*StartClustersCmd) GetActionName() string {
@@ -1736,9 +1781,9 @@ type StopClustersCmd struct {
 }
 
 func NewStopClustersCmd() Cmd {
-	return &StopClustersCmd{
-		&models.OpenpitrixStopClustersRequest{},
-	}
+	cmd := &StopClustersCmd{}
+	cmd.OpenpitrixStopClustersRequest = &models.OpenpitrixStopClustersRequest{}
+	return cmd
 }
 
 func (*StopClustersCmd) GetActionName() string {
@@ -1772,9 +1817,9 @@ type UpdateClusterEnvCmd struct {
 }
 
 func NewUpdateClusterEnvCmd() Cmd {
-	return &UpdateClusterEnvCmd{
-		&models.OpenpitrixUpdateClusterEnvRequest{},
-	}
+	cmd := &UpdateClusterEnvCmd{}
+	cmd.OpenpitrixUpdateClusterEnvRequest = &models.OpenpitrixUpdateClusterEnvRequest{}
+	return cmd
 }
 
 func (*UpdateClusterEnvCmd) GetActionName() string {
@@ -1809,9 +1854,9 @@ type UpgradeClusterCmd struct {
 }
 
 func NewUpgradeClusterCmd() Cmd {
-	return &UpgradeClusterCmd{
-		&models.OpenpitrixUpgradeClusterRequest{},
-	}
+	cmd := &UpgradeClusterCmd{}
+	cmd.OpenpitrixUpgradeClusterRequest = &models.OpenpitrixUpgradeClusterRequest{}
+	return cmd
 }
 
 func (*UpgradeClusterCmd) GetActionName() string {
@@ -1936,9 +1981,9 @@ type IndexRepoCmd struct {
 }
 
 func NewIndexRepoCmd() Cmd {
-	return &IndexRepoCmd{
-		&models.OpenpitrixIndexRepoRequest{},
-	}
+	cmd := &IndexRepoCmd{}
+	cmd.OpenpitrixIndexRepoRequest = &models.OpenpitrixIndexRepoRequest{}
+	return cmd
 }
 
 func (*IndexRepoCmd) GetActionName() string {
@@ -1971,9 +2016,9 @@ type CreateRepoCmd struct {
 }
 
 func NewCreateRepoCmd() Cmd {
-	return &CreateRepoCmd{
-		&models.OpenpitrixCreateRepoRequest{},
-	}
+	cmd := &CreateRepoCmd{}
+	cmd.OpenpitrixCreateRepoRequest = &models.OpenpitrixCreateRepoRequest{}
+	return cmd
 }
 
 func (*CreateRepoCmd) GetActionName() string {
@@ -2013,9 +2058,9 @@ type DeleteReposCmd struct {
 }
 
 func NewDeleteReposCmd() Cmd {
-	return &DeleteReposCmd{
-		&models.OpenpitrixDeleteReposRequest{},
-	}
+	cmd := &DeleteReposCmd{}
+	cmd.OpenpitrixDeleteReposRequest = &models.OpenpitrixDeleteReposRequest{}
+	return cmd
 }
 
 func (*DeleteReposCmd) GetActionName() string {
@@ -2101,9 +2146,9 @@ type ModifyRepoCmd struct {
 }
 
 func NewModifyRepoCmd() Cmd {
-	return &ModifyRepoCmd{
-		&models.OpenpitrixModifyRepoRequest{},
-	}
+	cmd := &ModifyRepoCmd{}
+	cmd.OpenpitrixModifyRepoRequest = &models.OpenpitrixModifyRepoRequest{}
+	return cmd
 }
 
 func (*ModifyRepoCmd) GetActionName() string {
@@ -2182,9 +2227,9 @@ type CreateRuntimeCmd struct {
 }
 
 func NewCreateRuntimeCmd() Cmd {
-	return &CreateRuntimeCmd{
-		&models.OpenpitrixCreateRuntimeRequest{},
-	}
+	cmd := &CreateRuntimeCmd{}
+	cmd.OpenpitrixCreateRuntimeRequest = &models.OpenpitrixCreateRuntimeRequest{}
+	return cmd
 }
 
 func (*CreateRuntimeCmd) GetActionName() string {
@@ -2223,9 +2268,9 @@ type DeleteRuntimesCmd struct {
 }
 
 func NewDeleteRuntimesCmd() Cmd {
-	return &DeleteRuntimesCmd{
-		&models.OpenpitrixDeleteRuntimesRequest{},
-	}
+	cmd := &DeleteRuntimesCmd{}
+	cmd.OpenpitrixDeleteRuntimesRequest = &models.OpenpitrixDeleteRuntimesRequest{}
+	return cmd
 }
 
 func (*DeleteRuntimesCmd) GetActionName() string {
@@ -2372,9 +2417,9 @@ type ModifyRuntimeCmd struct {
 }
 
 func NewModifyRuntimeCmd() Cmd {
-	return &ModifyRuntimeCmd{
-		&models.OpenpitrixModifyRuntimeRequest{},
-	}
+	cmd := &ModifyRuntimeCmd{}
+	cmd.OpenpitrixModifyRuntimeRequest = &models.OpenpitrixModifyRuntimeRequest{}
+	return cmd
 }
 
 func (*ModifyRuntimeCmd) GetActionName() string {
@@ -2456,9 +2501,9 @@ type RetryTasksCmd struct {
 }
 
 func NewRetryTasksCmd() Cmd {
-	return &RetryTasksCmd{
-		&models.OpenpitrixRetryTasksRequest{},
-	}
+	cmd := &RetryTasksCmd{}
+	cmd.OpenpitrixRetryTasksRequest = &models.OpenpitrixRetryTasksRequest{}
+	return cmd
 }
 
 func (*RetryTasksCmd) GetActionName() string {

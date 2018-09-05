@@ -17,12 +17,12 @@ import (
 )
 
 func TestHelm(t *testing.T) {
-	t.Logf("start create repo at [%s]", testRepoDir)
+	t.Logf("start create repo at [%s]", testTmpDir)
 
 	d := NewDocker(t, "test-helm", "lachlanevenson/k8s-helm:v2.8.2")
 	d.Port = testExportPort
-	d.WorkDir = testDockerPath
-	d.Volume[testRepoDir] = testDockerPath
+	d.WorkDir = testTmpPath
+	d.Volume[testTmpDir] = testTmpPath
 
 	t.Log(d.Setup())
 

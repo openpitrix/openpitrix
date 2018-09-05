@@ -26,6 +26,8 @@
       type: string
     owner:
       type: string
+    package:
+      type: byte
     readme:
       type: string
     repo_id:
@@ -44,14 +46,30 @@
       type: string
     description:
       type: string
+    home:
+      type: string
+    icon:
+      type: string
+    keywords:
+      type: string
+    maintainers:
+      type: string
     name:
       type: string
     owner:
       type: string
+    package:
+      type: byte
     package_name:
+      type: string
+    readme:
+      type: string
+    screenshots:
       type: string
     sequence:
       type: integer
+    sources:
+      type: string
     status:
       type: string
 - action: DeleteAppVersion
@@ -185,14 +203,30 @@
   body:
     description:
       type: string
+    home:
+      type: string
+    icon:
+      type: string
+    keywords:
+      type: string
+    maintainers:
+      type: string
     name:
       type: string
     owner:
       type: string
+    package:
+      type: byte
     package_name:
+      type: string
+    readme:
+      type: string
+    screenshots:
       type: string
     sequence:
       type: integer
+    sources:
+      type: string
     status:
       type: string
     version_id:

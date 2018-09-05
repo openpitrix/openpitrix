@@ -4,7 +4,9 @@
 
 package config
 
-const InitialGlobalConfig = `repo:
+const InitialGlobalConfig = `app:
+  default_draft_status: false
+repo:
   # cron usage: https://godoc.org/github.com/robfig/cron#hdr-Usage
   #
   #   "@every 1h30m" means Every hour thirty

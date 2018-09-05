@@ -5,8 +5,8 @@
 package app
 
 import (
+	"bytes"
 	"context"
-	"io/ioutil"
 	"strings"
 	"time"
 
@@ -20,7 +20,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/gziputil"
-	"openpitrix.io/openpitrix/pkg/util/httputil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
@@ -84,7 +83,7 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 
 	appSet, err := formatAppSet(ctx, apps)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, err
 	}
 
 	res := &pb.DescribeAppsResponse{
@@ -115,6 +114,8 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 
 	if req.GetStatus() != nil {
 		newApp.Status = req.GetStatus().GetValue()
+	} else {
+		newApp.Status = pi.Global().GlobalConfig().GetAppDefaultStatus()
 	}
 
 	_, err := pi.Global().DB(ctx).
@@ -139,6 +140,24 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	res := &pb.CreateAppResponse{
 		AppId: pbutil.ToProtoString(newApp.AppId),
 	}
+
+	if req.GetPackage() != nil {
+		version := models.NewAppVersion(newApp.AppId, newApp.Name, newApp.Description, newApp.Owner, "")
+		err = insertVersion(ctx, version)
+		if err != nil {
+			return nil, err
+		}
+		err = newVersionProxy(version).AddPackageFile(
+			ctx, req.GetPackage().GetValue(), true, false)
+		if err != nil {
+			deleteApp(ctx, newApp.AppId)
+			deleteVersion(ctx, version.VersionId)
+			return nil, err
+		}
+
+		res.VersionId = pbutil.ToProtoString(version.VersionId)
+	}
+
 	return res, nil
 }
 
@@ -157,18 +176,13 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		"name", "repo_id", "owner", "chart_name",
 		"description", "home", "icon", "screenshots",
 		"maintainers", "sources", "readme", "keywords")
-	attributes[models.ColumnUpdateTime] = time.Now()
 
 	if req.GetStatus() != nil {
 		attributes[models.ColumnStatus] = req.GetStatus().GetValue()
 	}
-	_, err = pi.Global().DB(ctx).
-		Update(models.AppTableName).
-		SetMap(attributes).
-		Where(db.Eq(models.ColumnAppId, appId)).
-		Exec()
+	err = updateApp(ctx, appId, attributes)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		return nil, err
 	}
 
 	if req.GetCategoryId() != nil {
@@ -219,18 +233,44 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 
 	if req.Sequence != nil {
 		newAppVersion.Sequence = req.Sequence.GetValue()
-	}
-	if req.GetStatus() != nil {
-		newAppVersion.Status = req.GetStatus().GetValue()
+	} else {
+		seq, err := getBigestSequence(ctx, newAppVersion.AppId)
+		if err != nil {
+			return nil, err
+		}
+		newAppVersion.Sequence = seq + 1
 	}
 
-	_, err := pi.Global().DB(ctx).
-		InsertInto(models.AppVersionTableName).
-		Columns(models.AppVersionColumns...).
-		Record(newAppVersion).
-		Exec()
+	newAppVersion.Home = req.GetHome().GetValue()
+	newAppVersion.Icon = req.GetIcon().GetValue()
+	newAppVersion.Screenshots = req.GetScreenshots().GetValue()
+	newAppVersion.Maintainers = req.GetMaintainers().GetValue()
+	newAppVersion.Keywords = req.GetKeywords().GetValue()
+	newAppVersion.Sources = req.GetSources().GetValue()
+	newAppVersion.Readme = req.GetReadme().GetValue()
+
+	if req.GetStatus() != nil {
+		newAppVersion.Status = req.GetStatus().GetValue()
+	} else {
+		newAppVersion.Status = pi.Global().GlobalConfig().GetAppDefaultStatus()
+	}
+
+	err := insertVersion(ctx, newAppVersion)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, err
+	}
+
+	if req.GetPackage() != nil {
+		var syncAppName = false
+		if newAppVersion.Sequence == 1 {
+			syncAppName = true
+		}
+		err = newVersionProxy(newAppVersion).AddPackageFile(
+			ctx, req.GetPackage().GetValue(), syncAppName, false)
+		if err != nil {
+			deleteVersion(ctx, newAppVersion.VersionId)
+			return nil, err
+		}
 	}
 
 	res := &pb.CreateAppVersionResponse{
@@ -277,8 +317,10 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		return nil, err
 	}
 
-	attributes := manager.BuildUpdateAttributes(req, "name", "description", "package_name", "sequence")
-	attributes[models.ColumnUpdateTime] = time.Now()
+	attributes := manager.BuildUpdateAttributes(req,
+		"name", "description", "package_name",
+		"sequence", "home", "icon", "screenshots",
+		"maintainers", "keywords", "sources", "readme")
 
 	if version.Status != constants.StatusActive {
 		attributes[models.ColumnStatus] = constants.StatusDraft
@@ -287,13 +329,17 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		attributes[models.ColumnStatus] = req.GetStatus().GetValue()
 	}
 
-	_, err = pi.Global().DB(ctx).
-		Update(models.AppVersionTableName).
-		SetMap(attributes).
-		Where(db.Eq(models.ColumnVersionId, versionId)).
-		Exec()
+	err = updateVersion(ctx, versionId, attributes)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+		return nil, err
+	}
+
+	if req.GetPackage() != nil {
+		err = newVersionProxy(version).AddPackageFile(
+			ctx, req.GetPackage().GetValue(), false, true)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	res := &pb.ModifyAppVersionResponse{
@@ -335,17 +381,12 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 	logger.Debug(ctx, "Got app version: [%+v]", version)
-	packageUrl := version.PackageName
-	resp, err := httputil.HttpGet(packageUrl)
+
+	content, err := newVersionProxy(version).GetPackageFile(ctx)
 	if err != nil {
-		logger.Error(ctx, "Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
+		return nil, err
 	}
-	content, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logger.Error(ctx, "Failed to read http response [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
-	}
+
 	return &pb.GetAppVersionPackageResponse{
 		Package:   content,
 		VersionId: req.GetVersionId(),
@@ -360,15 +401,16 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
-	packageUrl := version.PackageName
-	resp, err := httputil.HttpGet(packageUrl)
+
+	content, err := newVersionProxy(version).GetPackageFile(ctx)
 	if err != nil {
-		logger.Error(ctx, "Failed to http get [%s], error: %+v", packageUrl, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
+		logger.Error(ctx, "Failed to load [%s] package, error: %+v", versionId, err)
+		return nil, err
 	}
-	archiveFiles, err := gziputil.LoadArchive(resp.Body, includeFiles...)
+
+	archiveFiles, err := gziputil.LoadArchive(bytes.NewReader(content), includeFiles...)
 	if err != nil {
-		logger.Error(ctx, "Failed to load package [%s] archive, error: %+v", packageUrl, err)
+		logger.Error(ctx, "Failed to load [%s] package, error: %+v", versionId, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
 	}
 	return &pb.GetAppVersionPackageFilesResponse{
@@ -497,6 +539,11 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionRequest) (*pb.DeleteAppVersionResponse, error) {
 	version, err := checkAppVersionHandlePermission(ctx, Delete, req.GetVersionId().GetValue())
 	if err != nil {
+		return nil, err
+	}
+	err = newVersionProxy(version).DeletePackageFile(ctx)
+	if err != nil {
+		logger.Error(ctx, "Failed to delete [%s] package, error: %+v", req.GetVersionId().GetValue(), err)
 		return nil, err
 	}
 	err = updateVersionStatus(ctx, version, constants.StatusDeleted)

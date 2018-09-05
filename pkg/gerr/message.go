@@ -191,6 +191,26 @@ var (
 	}
 	ErrorAppVersionIncorrectStatus = ErrorMessage{
 		Name: "app_version_incorrect_status",
-		En:   "App version [%s] has incorrect status [%s], cannot execute the current action",
+		En:   "app version [%s] has incorrect status [%s], cannot execute the current action",
+	}
+	ErrorLoadPackageFailed = ErrorMessage{
+		Name: "load_package_failed",
+		En:   "load package failed, reason: [%s]",
+	}
+	ErrorCannotChangeAppName = ErrorMessage{
+		Name: "cannot_change_app_name",
+		En:   "cannot change app name",
+	}
+	ErrorAppNameExists = ErrorMessage{
+		Name: "app_name_exists",
+		En:   "app name [%s] exists",
+	}
+	ErrorAppVersionExists = ErrorMessage{
+		Name: "app_version_exists",
+		En:   "app version [%s:%s] exists",
+	}
+	ErrorCannotAccessRepo = ErrorMessage{
+		Name: "cannot_access_repo",
+		En:   "cannot access repo",
 	}
 )

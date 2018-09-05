@@ -84,6 +84,9 @@ func (p *Server) deleteProviders(ctx context.Context, repoId string, providers [
 
 func (p *Server) modifyProviders(ctx context.Context, repoId string, providers []string) error {
 	providersMap, err := p.getProvidersMap(ctx, []string{repoId})
+	if err != nil {
+		return err
+	}
 
 	var currentProviders []string
 	for _, repoProvider := range providersMap[repoId] {
@@ -230,6 +233,9 @@ func (p *Server) createSelectors(ctx context.Context, repoId string, selectors [
 }
 
 func (p *Server) getProvidersMap(ctx context.Context, repoIds []string) (providersMap map[string][]*models.RepoProvider, err error) {
+	if len(repoIds) == 0 {
+		return
+	}
 	var repoProviders []*models.RepoProvider
 	_, err = pi.Global().DB(ctx).
 		Select(models.RepoProviderColumns...).
@@ -244,6 +250,9 @@ func (p *Server) getProvidersMap(ctx context.Context, repoIds []string) (provide
 }
 
 func (p *Server) getSelectorsMap(ctx context.Context, repoIds []string) (selectorsMap map[string][]*models.RepoSelector, err error) {
+	if len(repoIds) == 0 {
+		return
+	}
 	var repoSelectors []*models.RepoSelector
 	_, err = pi.Global().DB(ctx).
 		Select(models.RepoSelectorColumns...).
@@ -259,6 +268,9 @@ func (p *Server) getSelectorsMap(ctx context.Context, repoIds []string) (selecto
 }
 
 func (p *Server) getLabelsMap(ctx context.Context, repoIds []string) (labelsMap map[string][]*models.RepoLabel, err error) {
+	if len(repoIds) == 0 {
+		return
+	}
 	var repoLabels []*models.RepoLabel
 	_, err = pi.Global().DB(ctx).
 		Select(models.RepoLabelColumns...).

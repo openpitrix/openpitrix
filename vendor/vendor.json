@@ -748,6 +748,12 @@
 			"revisionTime": "2017-07-01T12:15:58Z"
 		},
 		{
+			"checksumSHA1": "dcQdafqLkXwAP51DmaAzl/M4+9E=",
+			"path": "github.com/kubernetes/helm/pkg/urlutil",
+			"revision": "531deec220a2b7dc748e86f760a08248e6f39527",
+			"revisionTime": "2018-03-29T14:26:41Z"
+		},
+		{
 			"checksumSHA1": "T8soMJArSZrYnhmdpAnq1bVxQ6Q=",
 			"path": "github.com/mailru/easyjson/buffer",
 			"revision": "3b3bbef4e2d9a6f24d7ee73a894afbc064f0e057",
@@ -995,6 +1001,18 @@
 			"path": "golang.org/x/net/context/ctxhttp",
 			"revision": "f5079bd7f6f74e23c4d65efa0f4ce14cbd6a3c0f",
 			"revisionTime": "2017-07-19T21:11:51Z"
+		},
+		{
+			"checksumSHA1": "6WbIuKGVDXQWwDjjEYx4fzLfQO8=",
+			"path": "golang.org/x/net/html",
+			"revision": "e514e69ffb8bc3c76a71ae40de0118d794855992",
+			"revisionTime": "2018-06-27T15:43:21Z"
+		},
+		{
+			"checksumSHA1": "XtSbs1gpyaEsIqf6VRhJsgOQe5U=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "e514e69ffb8bc3c76a71ae40de0118d794855992",
+			"revisionTime": "2018-06-27T15:43:21Z"
 		},
 		{
 			"checksumSHA1": "pCY4YtdNKVBYRbNvODjx8hj0hIs=",

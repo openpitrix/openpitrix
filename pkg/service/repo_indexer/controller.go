@@ -18,7 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/reporeader/indexer"
+	"openpitrix.io/openpitrix/pkg/repoiface/indexer"
 	"openpitrix.io/openpitrix/pkg/util/atomicutil"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
