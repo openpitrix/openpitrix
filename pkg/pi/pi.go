@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/google/gops/agent"
+
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
@@ -34,6 +36,12 @@ func NewPi(cfg *config.Config) *Pi {
 	p.openDatabase()
 	p.openEtcd()
 	p.watchGlobalCfg()
+
+	if err := agent.Listen(agent.Options{
+		ShutdownCleanup: true,
+	}); err != nil {
+		logger.Critical(nil, "failed to start gops agent")
+	}
 
 	return p
 }

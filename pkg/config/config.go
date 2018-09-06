@@ -7,8 +7,6 @@ package config
 import (
 	"flag"
 	"fmt"
-	"net/http"
-	"net/http/pprof"
 	"os"
 
 	"github.com/koding/multiconfig"
@@ -17,11 +15,10 @@ import (
 )
 
 type Config struct {
-	Log       LogConfig
-	Grpc      GrpcConfig
-	Mysql     MysqlConfig
-	Etcd      EtcdConfig
-	Profiling ProfilingConfig
+	Log   LogConfig
+	Grpc  GrpcConfig
+	Mysql MysqlConfig
+	Etcd  EtcdConfig
 }
 
 type LogConfig struct {
@@ -43,10 +40,6 @@ type MysqlConfig struct {
 	Password string `default:"password"`
 	Database string `default:"openpitrix"`
 	Disable  bool   `default:"false"`
-}
-
-type ProfilingConfig struct {
-	Enable bool `default:"false"`
 }
 
 func (m *MysqlConfig) GetUrl() string {
@@ -71,8 +64,6 @@ func ParseFlag() {
 	GetFlagSet().Parse(os.Args[1:])
 }
 
-var profilingServerStarted = false
-
 func LoadConf() *Config {
 	ParseFlag()
 
@@ -89,20 +80,6 @@ func LoadConf() *Config {
 	}
 	logger.SetLevelByString(config.Log.Level)
 	logger.Debug(nil, "LoadConf: %+v", config)
-
-	if config.Profiling.Enable && !profilingServerStarted {
-		profilingServerStarted = true
-		logger.Info(nil, "Profiling start...")
-		go func() {
-			mux := http.NewServeMux()
-			mux.HandleFunc("/debug/pprof/", pprof.Index)
-			mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-			mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
-			mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-			mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
-			logger.Info(nil, "Profiling log: %s", http.ListenAndServe("localhost:9300", mux))
-		}()
-	}
 
 	return config
 }
