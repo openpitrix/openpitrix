@@ -27,12 +27,12 @@ func NewProvider(ctx context.Context) *Provider {
 	}
 }
 
-func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
+func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
 	frameInterface, err := vmbased.NewFrameInterface(p.ctx, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return frameInterface.ParseClusterConf(versionId, runtimeId, conf)
+	return frameInterface.ParseClusterConf(versionId, runtimeId, conf, clusterWrapper)
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {

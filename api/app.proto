@@ -209,7 +209,8 @@ message GetAppVersionPackageRequest {
 
 message GetAppVersionPackageResponse {
 	bytes package = 1;
-	google.protobuf.StringValue version_id = 2;
+	google.protobuf.StringValue app_id = 2;
+	google.protobuf.StringValue version_id = 3;
 }
 
 message GetAppVersionPackageFilesRequest {

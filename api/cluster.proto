@@ -166,9 +166,8 @@ message AddClusterNodesResponse {
 
 message DeleteClusterNodesRequest {
 	google.protobuf.StringValue cluster_id = 1;
-	google.protobuf.StringValue role = 2;
-	repeated string node_id = 3;
-	repeated string advanced_param = 4;
+	repeated string node_id = 2;
+	repeated string advanced_param = 3;
 }
 
 message DeleteClusterNodesResponse {

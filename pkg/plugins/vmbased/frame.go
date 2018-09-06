@@ -1547,7 +1547,7 @@ func (f *Frame) DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails
 	return headTaskLayer.Child
 }
 
-func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
+func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
 	clusterConf := opapp.ClusterConf{}
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
@@ -1555,7 +1555,7 @@ func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string) (*models.Clu
 		appManagerClient, err := appclient.NewAppManagerClient()
 		if err != nil {
 			logger.Error(f.Ctx, "Connect to app manager failed: %+v", err)
-			return nil, err
+			return err
 		}
 
 		req := &pb.GetAppVersionPackageRequest{
@@ -1565,43 +1565,50 @@ func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string) (*models.Clu
 		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
 		if err != nil {
 			logger.Error(f.Ctx, "Get app version [%s] package failed: %+v", versionId, err)
-			return nil, err
+			return err
 		}
 
 		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
 		if err != nil {
 			logger.Error(f.Ctx, "Load app version [%s] package failed: %+v", versionId, err)
-			return nil, err
+			return err
 		}
 		var confJson opapp.ClusterUserConfig
-		err = jsonutil.Decode([]byte(conf), &confJson)
-		if err != nil {
-			logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)
-			return nil, err
+		if len(conf) == 0 {
+			confJson = appPackage.ConfigTemplate.GetDefaultConfig()
+		} else {
+			err = jsonutil.Decode([]byte(conf), &confJson)
+			if err != nil {
+				logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)
+				return err
+			}
 		}
 		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
 		if err != nil {
 			logger.Error(f.Ctx, "Render app version [%s] cluster template failed: %+v", versionId, err)
-			return nil, err
+			return err
 		}
 		err = clusterConf.Validate()
 		if err != nil {
 			logger.Error(f.Ctx, "Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
-			return nil, err
+			return err
 		}
-
+		clusterConf.AppId = resp.GetAppId().GetValue()
+		clusterConf.VersionId = resp.GetVersionId().GetValue()
 	} else {
 		err := jsonutil.Decode([]byte(conf), &clusterConf)
 		if err != nil {
 			logger.Error(f.Ctx, "Parse conf [%s] to cluster failed: %+v", conf, err)
-			return nil, err
+			return err
 		}
 	}
 
 	parser := Parser{Ctx: f.Ctx}
-	clusterWrapper, err := parser.Parse(clusterConf)
+	err := parser.Parse(clusterConf, clusterWrapper)
 	if err != nil {
-		return nil, err
+		logger.Error(f.Ctx, "Parse app version [%s] failed: %+v", versionId, err)
+		return err
 	}
-	return clusterWrapper, nil
+
+	return nil
 }

@@ -19,7 +19,7 @@ import (
 
 type ProviderInterface interface {
 	// Parse package and conf into cluster which clusterManager will register into db.
-	ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error)
+	ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
 	WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error

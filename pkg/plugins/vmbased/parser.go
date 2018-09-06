@@ -22,8 +22,8 @@ type Parser struct {
 	Ctx context.Context
 }
 
-func (p *Parser) generateServerId(upperBound int, excludeServerIds []int) (int, error) {
-	result := 1
+func (p *Parser) generateServerId(upperBound uint32, excludeServerIds []uint32) (uint32, error) {
+	result := uint32(1)
 	if len(excludeServerIds) == 0 {
 		return result, nil
 	}
@@ -46,6 +46,20 @@ func (p *Parser) generateServerId(upperBound int, excludeServerIds []int) (int, 
 		}
 	}
 	return result, nil
+}
+
+func (p *Parser) getGroupAndServerIds(nodes []*models.ClusterNodeWithKeyPairs) ([]uint32, []uint32) {
+	var serverIds, groupIds []uint32
+	groupIdMap := make(map[uint32]interface{})
+	for _, node := range nodes {
+		groupIdMap[node.GroupId] = 0
+		serverIds = append(serverIds, node.ServerId)
+	}
+
+	for groupId := range groupIdMap {
+		groupIds = append(groupIds, groupId)
+	}
+	return groupIds, serverIds
 }
 
 func (p *Parser) ParseClusterRole(clusterConf opapp.ClusterConf, node opapp.Node) (*models.ClusterRole, error) {
@@ -98,21 +112,180 @@ func (p *Parser) ParseClusterRole(clusterConf opapp.ClusterConf, node opapp.Node
 	return clusterRole, nil
 }
 
+func (p *Parser) ParseAddClusterNode(clusterConf opapp.ClusterConf, clusterWrapper *models.ClusterWrapper) error {
+	existRoleNodes := make(map[string][]*models.ClusterNodeWithKeyPairs)
+	addRoleNodes := make(map[string][]*models.ClusterNodeWithKeyPairs)
+	clusterNodes := make(map[string]*models.ClusterNodeWithKeyPairs)
+	for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
+		role := clusterNode.Role
+		if strings.HasSuffix(role, constants.ReplicaRoleSuffix) {
+			role = string([]byte(role)[:len(role)-len(constants.ReplicaRoleSuffix)])
+		}
+		if clusterNode.Status != constants.StatusPending {
+			nodes, isExist := existRoleNodes[role]
+			if isExist {
+				nodes = append(nodes, clusterNode)
+			} else {
+				existRoleNodes[role] = []*models.ClusterNodeWithKeyPairs{clusterNode}
+			}
+		} else {
+			nodes, isExist := addRoleNodes[role]
+			if isExist {
+				nodes = append(nodes, clusterNode)
+			} else {
+				addRoleNodes[role] = []*models.ClusterNodeWithKeyPairs{clusterNode}
+			}
+		}
+	}
+
+	logger.Error(p.Ctx, "existRoleNodes: %+v", existRoleNodes)
+	logger.Error(p.Ctx, "addRoleNodes: %+v", addRoleNodes)
+
+	for role, addNodes := range addRoleNodes {
+		// add replica
+		addNodeRole := addNodes[0].Role
+		if strings.HasSuffix(addNodeRole, constants.ReplicaRoleSuffix) {
+			nodes, isExist := existRoleNodes[role]
+			if !isExist {
+				err := fmt.Errorf("role [%s] not exist", role)
+				return err
+			}
+
+			count := len(addNodes)
+			serverIdUpperBound := clusterWrapper.ClusterCommons[role].ServerIdUpperBound
+			groupIds, serverIds := p.getGroupAndServerIds(nodes)
+			for _, groupId := range groupIds {
+				for i := 1; i <= count; i++ {
+					serverId, err := p.generateServerId(serverIdUpperBound, serverIds)
+					if err != nil {
+						logger.Error(p.Ctx, "Generate server id failed: %v", err)
+						return err
+					}
+					serverIds = append(serverIds, serverId)
+					clusterNode := &models.ClusterNode{
+						Name:      "",
+						ClusterId: nodes[0].ClusterId,
+						Role:      addNodeRole,
+						SubnetId:  nodes[0].SubnetId,
+						ServerId:  serverId,
+						Status:    constants.StatusPending,
+						GroupId:   groupId,
+					}
+					clusterNodeWIthKeyPairs := &models.ClusterNodeWithKeyPairs{
+						ClusterNode: clusterNode,
+					}
+					// NodeId has not been generated yet.
+					clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNodeWIthKeyPairs
+				}
+			}
+		} else {
+			var replicaCount int
+			var serverIds, groupIds []uint32
+			var subnetId string
+			count := len(addNodes)
+			serverIdUpperBound := clusterWrapper.ClusterCommons[role].ServerIdUpperBound
+			nodes, isExist := existRoleNodes[role]
+			if !isExist {
+				var nodeConf *opapp.Node
+				if clusterConf.Nodes != nil {
+					for _, node := range clusterConf.Nodes {
+						if node.Role == role {
+							nodeConf = &node
+						}
+					}
+				}
+				if nodeConf == nil {
+					err := fmt.Errorf("role [%s] not exist in package", role)
+					return err
+				}
+
+				replicaCount = int(nodeConf.Replica)
+				subnetId = clusterWrapper.Cluster.SubnetId
+			} else {
+				groupIds, serverIds = p.getGroupAndServerIds(nodes)
+				replicaCount = (len(nodes) - len(groupIds)) / len(groupIds)
+				subnetId = nodes[0].SubnetId
+			}
+
+			for i := 1; i <= count; i++ {
+				serverId, err := p.generateServerId(serverIdUpperBound, serverIds)
+				if err != nil {
+					logger.Error(p.Ctx, "Generate server id failed: %v", err)
+					return err
+				}
+				serverIds = append(serverIds, serverId)
+
+				groupId, err := p.generateServerId(serverIdUpperBound, groupIds)
+				if err != nil {
+					logger.Error(p.Ctx, "Generate group id failed: %v", err)
+					return err
+				}
+				groupIds = append(groupIds, groupId)
+
+				clusterNode := &models.ClusterNode{
+					Name:      "",
+					Role:      addNodeRole,
+					ClusterId: clusterWrapper.Cluster.ClusterId,
+					SubnetId:  subnetId,
+					ServerId:  serverId,
+					Status:    constants.StatusPending,
+					GroupId:   groupId,
+				}
+				clusterNodeWIthKeyPairs := &models.ClusterNodeWithKeyPairs{
+					ClusterNode: clusterNode,
+				}
+				// NodeId has not been generated yet.
+				clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNodeWIthKeyPairs
+
+				for j := 1; j <= replicaCount; j++ {
+					serverId, err = p.generateServerId(serverIdUpperBound, serverIds)
+					if err != nil {
+						logger.Error(p.Ctx, "Generate server id failed: %v", err)
+						return err
+					}
+					serverIds = append(serverIds, serverId)
+
+					replicaRole := addNodeRole + constants.ReplicaRoleSuffix
+
+					clusterNode := &models.ClusterNode{
+						Name:      "",
+						Role:      replicaRole,
+						ClusterId: clusterWrapper.Cluster.ClusterId,
+						SubnetId:  subnetId,
+						ServerId:  serverId,
+						Status:    constants.StatusPending,
+						GroupId:   groupId,
+					}
+					clusterNodeWIthKeyPairs := &models.ClusterNodeWithKeyPairs{
+						ClusterNode: clusterNode,
+					}
+					clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNodeWIthKeyPairs
+				}
+			}
+
+		}
+	}
+	logger.Error(p.Ctx, "%+v", clusterNodes)
+	clusterWrapper.ClusterNodesWithKeyPairs = clusterNodes
+
+	return nil
+}
+
 func (p *Parser) ParseClusterNode(node opapp.Node, subnetId string) (map[string]*models.ClusterNodeWithKeyPairs, error) {
 	count := int(node.Count)
 	serverIdUpperBound := node.ServerIDUpperBound
 	replicaRole := node.Role + constants.ReplicaRoleSuffix
-	var serverIds, groupIds []int
+	var serverIds, groupIds []uint32
 	clusterNodes := make(map[string]*models.ClusterNodeWithKeyPairs)
 	for i := 1; i <= count; i++ {
-		serverId, err := p.generateServerId(int(serverIdUpperBound), serverIds)
+		serverId, err := p.generateServerId(serverIdUpperBound, serverIds)
 		if err != nil {
 			logger.Error(p.Ctx, "Generate server id failed: %v", err)
 			return nil, err
 		}
 		serverIds = append(serverIds, serverId)
 
-		groupId, err := p.generateServerId(int(serverIdUpperBound), groupIds)
+		groupId, err := p.generateServerId(serverIdUpperBound, groupIds)
 		if err != nil {
 			logger.Error(p.Ctx, "Generate group id failed: %v", err)
 			return nil, err
@@ -123,9 +296,9 @@ func (p *Parser) ParseClusterNode(node opapp.Node, subnetId string) (map[string]
 			Name:     "",
 			Role:     node.Role,
 			SubnetId: subnetId,
-			ServerId: uint32(serverId),
+			ServerId: serverId,
 			Status:   constants.StatusPending,
-			GroupId:  uint32(groupId),
+			GroupId:  groupId,
 		}
 		clusterNodeWIthKeyPairs := &models.ClusterNodeWithKeyPairs{
 			ClusterNode: clusterNode,
@@ -135,7 +308,7 @@ func (p *Parser) ParseClusterNode(node opapp.Node, subnetId string) (map[string]
 
 		replica := int(node.Replica)
 		for j := 1; j <= replica; j++ {
-			serverId, err = p.generateServerId(int(serverIdUpperBound), serverIds)
+			serverId, err = p.generateServerId(serverIdUpperBound, serverIds)
 			if err != nil {
 				logger.Error(p.Ctx, "Generate server id failed: %v", err)
 				return nil, err
@@ -146,9 +319,9 @@ func (p *Parser) ParseClusterNode(node opapp.Node, subnetId string) (map[string]
 				Name:     "",
 				Role:     replicaRole,
 				SubnetId: subnetId,
-				ServerId: uint32(serverId),
+				ServerId: serverId,
 				Status:   constants.StatusPending,
-				GroupId:  uint32(groupId),
+				GroupId:  groupId,
 			}
 			clusterNodeWIthKeyPairs := &models.ClusterNodeWithKeyPairs{
 				ClusterNode: clusterNode,
@@ -308,7 +481,7 @@ func (p *Parser) ParseClusterCommon(clusterConf opapp.ClusterConf, node opapp.No
 	return clusterCommon, nil
 }
 
-func (p *Parser) Parse(clusterConf opapp.ClusterConf) (*models.ClusterWrapper, error) {
+func (p *Parser) Parse(clusterConf opapp.ClusterConf, clusterWrapper *models.ClusterWrapper) error {
 	var cluster *models.Cluster
 	clusterNodes := make(map[string]*models.ClusterNodeWithKeyPairs)
 	clusterCommons := make(map[string]*models.ClusterCommon)
@@ -319,7 +492,7 @@ func (p *Parser) Parse(clusterConf opapp.ClusterConf) (*models.ClusterWrapper, e
 	// Parse cluster
 	cluster, err := p.ParseCluster(clusterConf)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	// Parse cluster link
@@ -334,14 +507,14 @@ func (p *Parser) Parse(clusterConf opapp.ClusterConf) (*models.ClusterWrapper, e
 			// Parse cluster role
 			clusterRole, err := p.ParseClusterRole(clusterConf, node)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			clusterRoles[clusterRole.Role] = clusterRole
 
 			// Parse cluster node
 			addClusterNodes, err := p.ParseClusterNode(node, clusterConf.Subnet)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			for key, value := range addClusterNodes {
 				clusterNodes[key] = value
@@ -355,13 +528,21 @@ func (p *Parser) Parse(clusterConf opapp.ClusterConf) (*models.ClusterWrapper, e
 		}
 	}
 
-	clusterWrapper := &models.ClusterWrapper{
-		Cluster:                  cluster,
-		ClusterNodesWithKeyPairs: clusterNodes,
-		ClusterCommons:           clusterCommons,
-		ClusterLinks:             clusterLinks,
-		ClusterRoles:             clusterRoles,
-		ClusterLoadbalancers:     clusterLoadbalancers,
+	// add cluster nodes
+	if clusterWrapper.Cluster != nil {
+		err = p.ParseAddClusterNode(clusterConf, clusterWrapper)
+		if err != nil {
+			return err
+		}
+	} else {
+		clusterWrapper.ClusterNodesWithKeyPairs = clusterNodes
 	}
-	return clusterWrapper, nil
+
+	clusterWrapper.Cluster = cluster
+	clusterWrapper.ClusterLinks = clusterLinks
+	clusterWrapper.ClusterCommons = clusterCommons
+	clusterWrapper.ClusterRoles = clusterRoles
+	clusterWrapper.ClusterLoadbalancers = clusterLoadbalancers
+
+	return nil
 }
