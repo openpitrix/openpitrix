@@ -41,10 +41,11 @@ func NewRepoLabel(repoId, labelKey, labelValue string) *RepoLabel {
 }
 
 func RepoLabelToPb(repoLabel *RepoLabel) *pb.RepoLabel {
-	pbRepoLabel := pb.RepoLabel{}
-	pbRepoLabel.LabelKey = pbutil.ToProtoString(repoLabel.LabelKey)
-	pbRepoLabel.LabelValue = pbutil.ToProtoString(repoLabel.LabelValue)
-	return &pbRepoLabel
+	return &pb.RepoLabel{
+		LabelKey:   pbutil.ToProtoString(repoLabel.LabelKey),
+		LabelValue: pbutil.ToProtoString(repoLabel.LabelValue),
+		CreateTime: pbutil.ToProtoTimestamp(repoLabel.CreateTime),
+	}
 }
 
 func RepoLabelsToPbs(repoLabels []*RepoLabel) (pbRepoLabels []*pb.RepoLabel) {

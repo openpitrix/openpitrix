@@ -209,18 +209,6 @@ func (p *Server) createRuntime(ctx context.Context, name, description, provider,
 	return newRuntime.RuntimeId, err
 }
 
-func (p *Server) createRuntimeLabels(ctx context.Context, runtimeId, labelString string) error {
-	labelMap, err := LabelStringToMap(labelString)
-	if err != nil {
-		return err
-	}
-	err = p.insertRuntimeLabels(ctx, runtimeId, labelMap)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (p *Server) formatRuntimeSet(ctx context.Context, runtimes []*models.Runtime) (pbRuntimes []*pb.Runtime, err error) {
 	pbRuntimes = models.RuntimeToPbs(runtimes)
 	var runtimeIds []string
@@ -277,28 +265,6 @@ func (p *Server) formatRuntimeDetailSet(ctx context.Context, runtimes []*models.
 func (p *Server) updateRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest) error {
 	attributes := manager.BuildUpdateAttributes(req, NameColumn, DescriptionColumn)
 	err := p.updateRuntimeByMap(ctx, req.RuntimeId.GetValue(), attributes)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (p *Server) updateRuntimeLabels(ctx context.Context, runtimeId string, labelString string) error {
-	newLabelMap, err := LabelStringToMap(labelString)
-	if err != nil {
-		return err
-	}
-	oldRuntimeLabels, err := p.getRuntimeLabelsById(ctx, runtimeId)
-	if err != nil {
-		return err
-	}
-	oldLabelMap := LabelStructToMap(oldRuntimeLabels)
-	additionLabelMap, deletionLabelMap := LabelMapDiff(oldLabelMap, newLabelMap)
-	err = p.deleteRuntimeLabels(ctx, runtimeId, deletionLabelMap)
-	if err != nil {
-		return err
-	}
-	err = p.insertRuntimeLabels(ctx, runtimeId, additionLabelMap)
 	if err != nil {
 		return err
 	}
