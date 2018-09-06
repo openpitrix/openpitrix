@@ -26,6 +26,7 @@ func (p *Server) getLabelsMap(ctx context.Context, runtimeIds []string) (labelsM
 		Select(models.RuntimeLabelColumns...).
 		From(models.RuntimeLabelTableName).
 		Where(db.Eq(models.ColumnRuntimeId, runtimeIds)).
+		OrderDir(models.ColumnCreateTime, true).
 		Load(&runtimeLabels)
 	if err != nil {
 		return

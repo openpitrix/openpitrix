@@ -4478,16 +4478,10 @@ var Files = map[string]string{
           }
         },
         "labels": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixRepoLabel"
-          }
+          "type": "string"
         },
         "selectors": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixRepoSelector"
-          }
+          "type": "string"
         },
         "category_id": {
           "type": "string"
@@ -4570,16 +4564,10 @@ var Files = map[string]string{
           }
         },
         "labels": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixRepoLabel"
-          }
+          "type": "string"
         },
         "selectors": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixRepoSelector"
-          }
+          "type": "string"
         },
         "category_id": {
           "type": "string"
@@ -4666,6 +4654,10 @@ var Files = map[string]string{
         },
         "label_value": {
           "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -4677,6 +4669,10 @@ var Files = map[string]string{
         },
         "selector_value": {
           "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -4967,12 +4963,6 @@ var Files = map[string]string{
     "openpitrixRuntimeLabel": {
       "type": "object",
       "properties": {
-        "runtime_label_id": {
-          "type": "string"
-        },
-        "runtime_id": {
-          "type": "string"
-        },
         "label_key": {
           "type": "string"
         },
