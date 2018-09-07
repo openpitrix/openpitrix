@@ -490,6 +490,7 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 			directive,
 			runtime.Provider,
 			s.UserId,
+			cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -583,6 +584,7 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 			directive,
 			runtime.Provider,
 			s.UserId,
+			cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -662,6 +664,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		directive,
 		runtime.Provider,
 		s.UserId,
+		runtimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -934,6 +937,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -979,6 +983,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1021,6 +1026,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1098,6 +1104,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1210,6 +1217,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1262,6 +1270,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1324,6 +1333,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1502,6 +1512,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1555,6 +1566,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1608,6 +1620,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1653,6 +1666,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)

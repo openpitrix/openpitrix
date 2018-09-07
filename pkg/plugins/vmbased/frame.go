@@ -1383,8 +1383,8 @@ func (f *Frame) StopClusterLayer() *models.TaskLayer {
 		Append(f.stopServiceLayer(nodeIds, true)).      // register stop cmd to exec
 		Append(f.stopConfdServiceLayer(nodeIds, true)). // stop confd service
 		Append(f.umountVolumeLayer(nodeIds, true)).     // umount volume from instance
-		Append(f.detachVolumesLayer(nodeIds, false)).   // detach volume from instance
 		Append(f.stopInstancesLayer(nodeIds, false)).   // stop instance
+		Append(f.detachVolumesLayer(nodeIds, false)).   // detach volume from instance
 		Append(f.deregisterMetadataLayer(true))         // deregister cluster
 
 	return headTaskLayer.Child
@@ -1492,8 +1492,8 @@ func (f *Frame) resizeClusterLayer(headTaskLayer *models.TaskLayer, nodeIds []st
 		Append(f.stopServiceLayer(nodeIds, true)).      // register stop cmd to exec
 		Append(f.stopConfdServiceLayer(nodeIds, true)). // stop confd service
 		Append(f.umountVolumeLayer(nodeIds, true)).     // umount volume from instance
-		Append(f.detachVolumesLayer(nodeIds, false)).   // detach volume from instance
 		Append(f.stopInstancesLayer(nodeIds, false)).   // stop instance
+		Append(f.detachVolumesLayer(nodeIds, false)).   // detach volume from instance
 		Append(f.resizeInstancesLayer(nodeIds, roleResizeResource, false)).
 		Append(f.resizeVolumesLayer(nodeIds, roleResizeResource, false)).
 		Append(f.attachVolumesLayer(nodeIds, false)).         // attach volume to instance, will auto mount

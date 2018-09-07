@@ -1757,6 +1757,12 @@
             "type": "string"
           },
           {
+            "name": "runtime_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "status",
             "in": "query",
             "required": false,
@@ -4372,6 +4378,9 @@
         },
         "version_id": {
           "type": "string"
+        },
+        "runtime_id": {
+          "type": "string"
         }
       }
     },
@@ -4429,6 +4438,9 @@
           "type": "string"
         },
         "provider": {
+          "type": "string"
+        },
+        "runtime_id": {
           "type": "string"
         },
         "create_time": {

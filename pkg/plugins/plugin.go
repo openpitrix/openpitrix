@@ -7,7 +7,6 @@ package plugins
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -22,7 +21,7 @@ type ProviderInterface interface {
 	ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
-	WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error
+	WaitSubtask(task *models.Task) error
 	DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error)
 	CheckResource(ctx context.Context, clusterWrapper *models.ClusterWrapper) error
 	DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error)

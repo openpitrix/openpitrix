@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"time"
 
 	"google.golang.org/grpc/transport"
 	"k8s.io/helm/pkg/chartutil"
@@ -268,7 +267,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 	return nil
 }
 
-func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error {
+func (p *Provider) WaitSubtask(task *models.Task) error {
 	taskDirective, err := decodeTaskDirective(task.Directive)
 	if err != nil {
 		return err
@@ -302,7 +301,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 				}
 
 				kubeHandler := GetKubeHandler(p.ctx, taskDirective.RuntimeId)
-				err = kubeHandler.WaitWorkloadReady(taskDirective.RuntimeId, taskDirective.Namespace, clusterWrapper.ClusterRoles, timeout, waitInterval)
+				err = kubeHandler.WaitWorkloadReady(taskDirective.RuntimeId, taskDirective.Namespace, clusterWrapper.ClusterRoles, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 				if err != nil {
 					return true, err
 				}
@@ -331,7 +330,7 @@ func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInt
 			}
 		}
 		return false, nil
-	}, timeout, waitInterval)
+	}, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 
 	return err
 }

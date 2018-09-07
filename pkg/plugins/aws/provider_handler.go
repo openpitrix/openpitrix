@@ -38,7 +38,7 @@ func GetProviderHandler(ctx context.Context) *ProviderHandler {
 }
 
 func (p *ProviderHandler) initAWSSession(runtimeUrl, runtimeCredential, zone string) (*session.Session, error) {
-	credential := new(Credential)
+	credential := new(vmbased.Credential)
 	err := jsonutil.Decode([]byte(runtimeCredential), credential)
 	if err != nil {
 		logger.Error(p.Ctx, "Parse [%s] credential failed: %+v", MyProvider, err)
@@ -715,6 +715,16 @@ func (p *ProviderHandler) WaitDeleteInstances(task *models.Task) error {
 	return p.WaitInstanceState(task, constants.StatusTerminated)
 }
 
+func (p *ProviderHandler) ResizeInstances(task *models.Task) error {
+	// TODO
+	return nil
+}
+
+func (p *ProviderHandler) WaitResizeInstances(task *models.Task) error {
+	// TODO
+	return nil
+}
+
 func (p *ProviderHandler) WaitCreateVolumes(task *models.Task) error {
 	return p.WaitVolumeState(task, constants.StatusAvailable)
 }
@@ -750,6 +760,16 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 		VolumeIds: []*string{aws.String(volume.VolumeId)},
 	}
 	return instanceService.WaitUntilVolumeDeleted(&input2)
+}
+
+func (p *ProviderHandler) ResizeVolumes(task *models.Task) error {
+	// TODO
+	return nil
+}
+
+func (p *ProviderHandler) WaitResizeVolumes(task *models.Task) error {
+	// TODO
+	return nil
 }
 
 func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
