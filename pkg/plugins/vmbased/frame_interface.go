@@ -27,7 +27,7 @@ type FrameInterface interface {
 	ResizeClusterLayer(roleResizeResources models.RoleResizeResources) *models.TaskLayer
 	AttachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
 	DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
-	ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error)
+	ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error
 }
 
 func NewFrameInterface(ctx context.Context, job *models.Job, advancedParam ...string) (FrameInterface, error) {

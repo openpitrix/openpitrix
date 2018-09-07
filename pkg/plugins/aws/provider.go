@@ -31,22 +31,22 @@ func NewProvider(ctx context.Context) *Provider {
 	}
 }
 
-func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
+func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
 	frameInterface, err := vmbased.NewFrameInterface(p.ctx, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	clusterWrapper, err := frameInterface.ParseClusterConf(versionId, runtimeId, conf)
+	err = frameInterface.ParseClusterConf(versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	handler := GetProviderHandler(p.ctx)
 	availabilityZone, err := handler.DescribeAvailabilityZoneBySubnetId(runtimeId, clusterWrapper.Cluster.SubnetId)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	clusterWrapper.Cluster.Zone = availabilityZone
-	return clusterWrapper, nil
+	return nil
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {

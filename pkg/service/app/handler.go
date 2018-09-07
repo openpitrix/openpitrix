@@ -389,6 +389,7 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 
 	return &pb.GetAppVersionPackageResponse{
 		Package:   content,
+		AppId:     pbutil.ToProtoString(version.AppId),
 		VersionId: req.GetVersionId(),
 	}, nil
 }

@@ -377,8 +377,6 @@
       type: string
     node_id:
       type: '[]string'
-    role:
-      type: string
 - action: DeleteClusters
   description: delete clusters
   service: ClusterManager

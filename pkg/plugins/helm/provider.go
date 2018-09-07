@@ -63,16 +63,16 @@ func (p *Provider) getChart(versionId string) (*chart.Chart, error) {
 	return c, nil
 }
 
-func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
+func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
 	c, err := p.getChart(versionId)
 	if err != nil {
 		logger.Error(p.ctx, "Load helm chart from app version [%s] failed: %+v", versionId, err)
-		return nil, err
+		return err
 	}
 
 	runtime, err := runtimeclient.NewRuntime(p.ctx, runtimeId)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	namespace := runtime.Zone
 
@@ -84,13 +84,13 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.
 		RuntimeId: runtimeId,
 		Namespace: namespace,
 	}
-	clusterWrapper, err := parser.Parse()
+	clusterWrapper, err = parser.Parse()
 	if err != nil {
 		logger.Error(p.ctx, "Parse app version [%s] failed: %+v", versionId, err)
-		return nil, err
+		return err
 	}
 
-	return clusterWrapper, nil
+	return nil
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {

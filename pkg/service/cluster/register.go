@@ -30,6 +30,20 @@ func RegisterClusterNode(ctx context.Context, clusterNode *models.ClusterNode) e
 	return nil
 }
 
+func RegisterClusterRole(ctx context.Context, clusterRole *models.ClusterRole) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(models.ClusterRoleTableName).
+		Columns(models.ClusterRoleColumns...).
+		Record(clusterRole).
+		Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
+			models.ClusterRoleTableName, clusterRole.ClusterId, err)
+		return err
+	}
+	return nil
+}
+
 func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
 	clusterId := clusterWrapper.Cluster.ClusterId
 	owner := clusterWrapper.Cluster.Owner
@@ -101,14 +115,8 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 	// register cluster role
 	for _, clusterRole := range clusterWrapper.ClusterRoles {
 		clusterRole.ClusterId = clusterId
-		_, err := pi.Global().DB(ctx).
-			InsertInto(models.ClusterRoleTableName).
-			Columns(models.ClusterRoleColumns...).
-			Record(clusterRole).
-			Exec()
+		err := RegisterClusterRole(ctx, clusterRole)
 		if err != nil {
-			logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterRoleTableName, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
 	}
