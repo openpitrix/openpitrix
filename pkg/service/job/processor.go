@@ -185,6 +185,7 @@ func (p *Processor) Post(ctx context.Context) error {
 					directive,
 					p.Job.Provider,
 					p.Job.Owner,
+					frontgate.Cluster.RuntimeId,
 				)
 
 				_, err = jobclient.SendJob(ctx, newJob)
@@ -251,6 +252,7 @@ func (p *Processor) Post(ctx context.Context) error {
 					directive,
 					p.Job.Provider,
 					p.Job.Owner,
+					frontgate.Cluster.RuntimeId,
 				)
 
 				_, err = jobclient.SendJob(ctx, newJob)

@@ -1913,6 +1913,8 @@ func (c *DescribeJobsCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	c.Provider = new(string)
 	f.StringVarP(c.Provider, "provider", "", "", "")
+	c.RuntimeID = new(string)
+	f.StringVarP(c.RuntimeID, "runtime_id", "", "", "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")

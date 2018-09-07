@@ -30,7 +30,66 @@ type FrameInterface interface {
 	ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error
 }
 
-func NewFrameInterface(ctx context.Context, job *models.Job, advancedParam ...string) (FrameInterface, error) {
+func SplitJobIntoTasks(ctx context.Context, job *models.Job, advancedParam ...string) (*models.TaskLayer, error) {
+	frameInterface, err := GetFrameInterface(ctx, job, advancedParam...)
+	if err != nil {
+		return nil, err
+	}
+
+	switch job.JobAction {
+	case constants.ActionCreateCluster:
+		// TODO: vpc, eip, subnet
+
+		return frameInterface.CreateClusterLayer(), nil
+	case constants.ActionUpgradeCluster:
+		// not supported yet
+		return nil, nil
+	case constants.ActionRollbackCluster:
+		// not supported yet
+		return nil, nil
+	case constants.ActionAddClusterNodes:
+		return frameInterface.AddClusterNodesLayer(), nil
+	case constants.ActionDeleteClusterNodes:
+		return frameInterface.DeleteClusterNodesLayer(), nil
+	case constants.ActionStopClusters:
+		return frameInterface.StopClusterLayer(), nil
+	case constants.ActionStartClusters:
+		return frameInterface.StartClusterLayer(), nil
+	case constants.ActionDeleteClusters:
+		return frameInterface.DeleteClusterLayer(), nil
+	case constants.ActionResizeCluster:
+		roleResizeResources, err := models.NewRoleResizeResources(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.ResizeClusterLayer(roleResizeResources), nil
+	case constants.ActionRecoverClusters:
+		// not supported yet
+		return nil, nil
+	case constants.ActionCeaseClusters:
+		// not supported yet
+		return nil, nil
+	case constants.ActionUpdateClusterEnv:
+	case constants.ActionAttachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.AttachKeyPairsLayer(nodeKeyPairDetails), nil
+	case constants.ActionDetachKeyPairs:
+		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
+		if err != nil {
+			return nil, err
+		}
+		return frameInterface.DetachKeyPairsLayer(nodeKeyPairDetails), nil
+	default:
+		logger.Error(ctx, "Unknown job action [%s]", job.JobAction)
+		return nil, fmt.Errorf("unknown job action [%s]", job.JobAction)
+	}
+	return nil, nil
+}
+
+func GetFrameInterface(ctx context.Context, job *models.Job, advancedParam ...string) (FrameInterface, error) {
 	if job == nil {
 		return &Frame{Ctx: ctx}, nil
 	}

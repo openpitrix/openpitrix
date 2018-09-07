@@ -39,7 +39,7 @@ func GetProviderHandler(ctx context.Context) *ProviderHandler {
 }
 
 func (p *ProviderHandler) initQingCloudService(runtimeUrl, runtimeCredential, zone string) (*qcservice.QingCloudService, error) {
-	credential := new(Credential)
+	credential := new(vmbased.Credential)
 	err := jsonutil.Decode([]byte(runtimeCredential), credential)
 	if err != nil {
 		logger.Error(p.Ctx, "Parse [%s] credential failed: %+v", MyProvider, err)

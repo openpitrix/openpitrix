@@ -1766,6 +1766,12 @@ var Files = map[string]string{
             "type": "string"
           },
           {
+            "name": "runtime_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "status",
             "in": "query",
             "required": false,
@@ -4381,6 +4387,9 @@ var Files = map[string]string{
         },
         "version_id": {
           "type": "string"
+        },
+        "runtime_id": {
+          "type": "string"
         }
       }
     },
@@ -4438,6 +4447,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "provider": {
+          "type": "string"
+        },
+        "runtime_id": {
           "type": "string"
         },
         "create_time": {

@@ -401,8 +401,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 				logger.Error(ctx, "Failed to handle subtask in runtime [%s]: %+v", task.Target, err)
 				return err
 			}
-			err = providerInterface.WaitSubtask(
-				task, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+			err = providerInterface.WaitSubtask(task)
 			if err != nil {
 				logger.Error(ctx, "Failed to wait subtask in runtime [%s]: %+v", task.Target, err)
 				return err
