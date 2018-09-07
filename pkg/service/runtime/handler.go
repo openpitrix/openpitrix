@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/labelutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
@@ -54,10 +55,11 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	// create labels
-	err = p.createRuntimeLabels(ctx, runtimeId, req.Labels.GetValue())
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	if req.GetLabels() != nil {
+		err = labelutil.SyncRuntimeLabels(ctx, runtimeId, req.GetLabels().GetValue())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	res := &pb.CreateRuntimeResponse{
@@ -205,11 +207,10 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
 
-	// update runtime label
-	if req.Labels != nil {
-		err := p.updateRuntimeLabels(ctx, runtimeId, req.Labels.GetValue())
+	if req.GetLabels() != nil {
+		err = labelutil.SyncRuntimeLabels(ctx, runtimeId, req.GetLabels().GetValue())
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, err
 		}
 	}
 

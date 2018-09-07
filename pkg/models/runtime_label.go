@@ -40,11 +40,9 @@ func NewRuntimeLabel(runtimeId, labelKey, labelValue string) *RuntimeLabel {
 
 func RuntimeLabelToPb(runtimeLabel *RuntimeLabel) *pb.RuntimeLabel {
 	return &pb.RuntimeLabel{
-		RuntimeLabelId: pbutil.ToProtoString(runtimeLabel.RuntimeLabelId),
-		RuntimeId:      pbutil.ToProtoString(runtimeLabel.RuntimeId),
-		LabelKey:       pbutil.ToProtoString(runtimeLabel.LabelKey),
-		LabelValue:     pbutil.ToProtoString(runtimeLabel.LabelValue),
-		CreateTime:     pbutil.ToProtoTimestamp(runtimeLabel.CreateTime),
+		LabelKey:   pbutil.ToProtoString(runtimeLabel.LabelKey),
+		LabelValue: pbutil.ToProtoString(runtimeLabel.LabelValue),
+		CreateTime: pbutil.ToProtoTimestamp(runtimeLabel.CreateTime),
 	}
 }
 

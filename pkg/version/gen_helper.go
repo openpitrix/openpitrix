@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -31,7 +31,7 @@ func main() {
 }
 
 func make_update_version_go_file(version, gitSha1Version, buildTime string) string {
-	return fmt.Sprintf(`// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+	return fmt.Sprintf(`// Copyright 2018 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 

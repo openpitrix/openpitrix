@@ -627,13 +627,13 @@
     description:
       type: string
     labels:
-      type: '[]'
+      type: string
     name:
       type: string
     providers:
       type: '[]string'
     selectors:
-      type: '[]'
+      type: string
     type:
       type: string
     url:
@@ -689,7 +689,7 @@
     description:
       type: string
     labels:
-      type: '[]'
+      type: string
     name:
       type: string
     providers:
@@ -697,7 +697,7 @@
     repo_id:
       type: string
     selectors:
-      type: '[]'
+      type: string
     type:
       type: string
     url:

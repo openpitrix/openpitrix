@@ -41,10 +41,11 @@ func NewRepoSelector(repoId, selectorKey, selectorValue string) *RepoSelector {
 }
 
 func RepoSelectorToPb(repoSelector *RepoSelector) *pb.RepoSelector {
-	pbRepoSelector := pb.RepoSelector{}
-	pbRepoSelector.SelectorKey = pbutil.ToProtoString(repoSelector.SelectorKey)
-	pbRepoSelector.SelectorValue = pbutil.ToProtoString(repoSelector.SelectorValue)
-	return &pbRepoSelector
+	return &pb.RepoSelector{
+		SelectorKey:   pbutil.ToProtoString(repoSelector.SelectorKey),
+		SelectorValue: pbutil.ToProtoString(repoSelector.SelectorValue),
+		CreateTime:    pbutil.ToProtoTimestamp(repoSelector.CreateTime),
+	}
 }
 
 func RepoSelectorsToPbs(repoSelectors []*RepoSelector) (pbRepoSelectors []*pb.RepoSelector) {

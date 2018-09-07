@@ -33,6 +33,8 @@ const (
 
 	ColumnRepoEventId = "repo_event_id"
 
+	ColumnRuntimeLabelId = "runtime_label_id"
+
 	ColumnCredential = "credential"
 
 	ColumnVisibility = "visibility"

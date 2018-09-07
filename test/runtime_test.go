@@ -115,7 +115,7 @@ func TestRuntime(t *testing.T) {
 	t.Log("test runtime finish, all test is ok")
 }
 
-func generateRuntimeLabels() string {
+func generateLabels() string {
 	v := url.Values{}
 	v.Add("key1", idutil.GetUuid(""))
 	v.Add("key2", idutil.GetUuid(""))
@@ -129,7 +129,7 @@ func TestRuntimeLabel(t *testing.T) {
 	client := GetClient(clientConfig)
 	// Create a test runtime that can attach label on it
 	testRuntimeName := "e2e-test-runtime"
-	labels := generateRuntimeLabels()
+	labels := generateLabels()
 	createParams := runtime_manager.NewCreateRuntimeParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRuntimeRequest{
