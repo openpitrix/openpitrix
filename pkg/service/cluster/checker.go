@@ -86,15 +86,15 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.ResizeClusterRequest:
 		return manager.NewChecker(ctx, r).
-			Required("cluster_id", "role").
+			Required("cluster_id").
 			Exec()
 	case *pb.AddClusterNodesRequest:
 		return manager.NewChecker(ctx, r).
-			Required("cluster_id", "role").
+			Required("cluster_id", "node_count").
 			Exec()
 	case *pb.DeleteClusterNodesRequest:
 		return manager.NewChecker(ctx, r).
-			Required("cluster_id", "role", "node_id").
+			Required("cluster_id", "node_id").
 			Exec()
 	case *pb.UpdateClusterEnvRequest:
 		return manager.NewChecker(ctx, r).
