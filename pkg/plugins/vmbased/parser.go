@@ -138,9 +138,6 @@ func (p *Parser) ParseAddClusterNode(clusterConf opapp.ClusterConf, clusterWrapp
 		}
 	}
 
-	logger.Error(p.Ctx, "existRoleNodes: %+v", existRoleNodes)
-	logger.Error(p.Ctx, "addRoleNodes: %+v", addRoleNodes)
-
 	for role, addNodes := range addRoleNodes {
 		// add replica
 		addNodeRole := addNodes[0].Role
@@ -265,7 +262,6 @@ func (p *Parser) ParseAddClusterNode(clusterConf opapp.ClusterConf, clusterWrapp
 
 		}
 	}
-	logger.Error(p.Ctx, "%+v", clusterNodes)
 	clusterWrapper.ClusterNodesWithKeyPairs = clusterNodes
 
 	return nil
@@ -536,13 +532,12 @@ func (p *Parser) Parse(clusterConf opapp.ClusterConf, clusterWrapper *models.Clu
 		}
 	} else {
 		clusterWrapper.ClusterNodesWithKeyPairs = clusterNodes
+		clusterWrapper.Cluster = cluster
+		clusterWrapper.ClusterLinks = clusterLinks
+		clusterWrapper.ClusterLoadbalancers = clusterLoadbalancers
 	}
-
-	clusterWrapper.Cluster = cluster
-	clusterWrapper.ClusterLinks = clusterLinks
 	clusterWrapper.ClusterCommons = clusterCommons
 	clusterWrapper.ClusterRoles = clusterRoles
-	clusterWrapper.ClusterLoadbalancers = clusterLoadbalancers
 
 	return nil
 }
