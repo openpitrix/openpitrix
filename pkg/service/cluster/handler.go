@@ -89,6 +89,10 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 
 	clusterWrapper.ClusterNodesWithKeyPairs = map[string]*models.ClusterNodeWithKeyPairs{}
 	for _, clusterNode := range clusterNodes {
+		if stringutil.StringIn(clusterNode.Status, constants.DeletedStatuses) {
+			continue
+		}
+
 		var nodeKeyPairs []*models.NodeKeyPair
 		_, err = pi.Global().DB(ctx).
 			Select(models.NodeKeyPairColumns...).

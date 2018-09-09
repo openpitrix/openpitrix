@@ -75,6 +75,11 @@ const (
 	StatusSuspended = "suspended"
 )
 
+var DeletedStatuses = []string{
+	StatusDeleted,
+	StatusCeased,
+}
+
 const (
 	VisibilityPublic  = "public"
 	VisibilityPrivate = "private"
