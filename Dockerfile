@@ -10,7 +10,7 @@ COPY . .
 RUN mkdir -p /openpitrix_bin
 RUN go generate openpitrix.io/openpitrix/pkg/version && \
 	GOBIN=/openpitrix_bin go install -tags netgo openpitrix.io/openpitrix/cmd/... && \
-	GOBIN=/openpitrix_bin go install -tags netgo openpitrix.io/openpitrix/metadata/cmd/pilot
+	GOBIN=/openpitrix_bin go install -tags netgo openpitrix.io/openpitrix/metadata/cmd/...
 
 RUN find /openpitrix_bin -type f -exec upx {} \;
 
