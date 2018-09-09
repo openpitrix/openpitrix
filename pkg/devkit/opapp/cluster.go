@@ -37,7 +37,7 @@ func getv(input interface{}) interface{} {
 	}
 }
 
-func (c *ClusterConfTemplate) Render(input ClusterUserConfig) (ClusterConf, error) {
+func (c *ClusterConfTemplate) Render(input jsonutil.Json) (ClusterConf, error) {
 	var cluster ClusterConf
 	var tmpl *template.Template
 	raw := replaceTemplateExpression(c.Raw)
@@ -48,7 +48,7 @@ func (c *ClusterConfTemplate) Render(input ClusterUserConfig) (ClusterConf, erro
 		return cluster, fmt.Errorf("failed to parse cluster.json.tmpl: %+v", err)
 	}
 	b := bytes.NewBuffer([]byte{})
-	err = tmpl.Execute(b, input)
+	err = tmpl.Execute(b, input.Interface())
 	if err != nil {
 		return cluster, fmt.Errorf("failed to render cluster.json: %+v", err)
 	}

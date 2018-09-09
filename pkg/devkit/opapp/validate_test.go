@@ -5,7 +5,6 @@
 package opapp
 
 import (
-	"encoding/json"
 	"testing"
 )
 
@@ -140,19 +139,15 @@ func TestValidateClusterTmpl(t *testing.T) {
 		t.Fatal(err)
 	}
 	config := configJson.GetDefaultConfig()
-	j, err := json.Marshal(&config)
-	if err != nil {
-		t.Fatal(err)
-	}
-	t.Log(string(j))
-	err = ValidateClusterConfTmpl(clusterTmpl, &config)
+	t.Log(config.String())
+	err = ValidateClusterConfTmpl(clusterTmpl, config)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// error tmpl
 	clusterTmpl = &ClusterConfTemplate{Raw: testErrorClusterTmpl}
-	err = ValidateClusterConfTmpl(clusterTmpl, &config)
+	err = ValidateClusterConfTmpl(clusterTmpl, config)
 	if err == nil {
 		t.Fatal("error cluster tmpl must failed")
 	}

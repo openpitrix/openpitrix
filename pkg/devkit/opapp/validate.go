@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/xeipuuv/gojsonschema"
+
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 var schemaLoader = gojsonschema.NewStringLoader(ClusterSchema)
@@ -33,7 +35,7 @@ func (c ClusterConf) Validate() error {
 	return nil
 }
 
-func ValidateClusterConfTmpl(clusterTmpl *ClusterConfTemplate, input *ClusterUserConfig) error {
+func ValidateClusterConfTmpl(clusterTmpl *ClusterConfTemplate, input jsonutil.Json) error {
 	cluster, err := clusterTmpl.Render(input)
 	if err != nil {
 		return err
