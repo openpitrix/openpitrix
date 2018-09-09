@@ -166,6 +166,8 @@ bin-release-%: ## Bin release version
 	mkdir deploy/openpitrix-$*-bin
 	docker cp openpitrix-api-gateway:/usr/local/bin/op deploy/openpitrix-$*-bin
 	docker cp openpitrix-api-gateway:/usr/local/bin/opctl deploy/openpitrix-$*-bin
+	docker cp openpitrix-api-gateway:/usr/local/bin/frontgate deploy/openpitrix-$*-bin
+	docker cp openpitrix-api-gateway:/usr/local/bin/drone deploy/openpitrix-$*-bin
 	cd deploy/ && tar -czvf openpitrix-$*-bin.tar.gz openpitrix-$*-bin
 
 .PHONY: test
@@ -202,3 +204,25 @@ clean: ## Clean generated version file
 unit-test: ## Run unit tests
 	$(DB_TEST) $(ETCD_TEST) go test -v -a -tags="etcd db" ./...
 	@echo "unit-test done"
+
+build-image-%: ## build docker image
+	@if [ "$*" = "latest" ];then \
+	docker build -t openpitrix/openpitrix:latest .; \
+	docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .; \
+	docker build -t openpitrix/openpitrix:flyway -f ./pkg/db/Dockerfile .;\
+	else \
+	docker build -t openpitrix/openpitrix:$* .; \
+	docker build -t openpitrix/openpitrix:metadata-$* -f ./Dockerfile.metadata .; \
+	docker build -t openpitrix/openpitrix:flyway-$* -f ./pkg/db/Dockerfile .; \
+	fi
+
+push-image-%: ## push docker image
+	@if [ "$*" = "latest" ];then \
+	docker push openpitrix/openpitrix:latest; \
+	docker push openpitrix/openpitrix:metadata; \
+	docker push openpitrix/openpitrix:flyway; \
+	else \
+	docker push openpitrix/openpitrix:$*; \
+	docker push openpitrix/openpitrix:metadata-$*; \
+	docker push openpitrix/openpitrix:flyway-$*; \
+	fi
