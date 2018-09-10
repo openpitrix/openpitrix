@@ -100,7 +100,7 @@ fmt-check: fmt-all ## Check whether all files be formatted
 
 .PHONY: build-flyway
 build-flyway: ## Build custom flyway image
-	cd ./pkg/db/ && docker build -t $(TARG.Name):flyway -f ./Dockerfile .
+	docker build -t $(TARG.Name):flyway -f ./pkg/db/Dockerfile ./pkg/db/
 
 .PHONY: build
 build: fmt build-flyway ## Build all openpitrix images
@@ -214,11 +214,11 @@ build-image-%: ## build docker image
 	@if [ "$*" = "latest" ];then \
 	docker build -t openpitrix/openpitrix:latest .; \
 	docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .; \
-	docker build -t openpitrix/openpitrix:flyway -f ./pkg/db/Dockerfile .;\
+	docker build -t openpitrix/openpitrix:flyway -f ./pkg/db/Dockerfile ./pkg/db/;\
 	elif [[ "$*" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]];then \
 	docker build -t openpitrix/openpitrix:$* .; \
 	docker build -t openpitrix/openpitrix:metadata-$* -f ./Dockerfile.metadata .; \
-	docker build -t openpitrix/openpitrix:flyway-$* -f ./pkg/db/Dockerfile .; \
+	docker build -t openpitrix/openpitrix:flyway-$* -f ./pkg/db/Dockerfile ./pkg/db/; \
 	fi
 
 push-image-%: ## push docker image
