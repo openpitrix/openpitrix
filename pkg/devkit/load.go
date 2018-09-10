@@ -184,6 +184,6 @@ func LoadFiles(files []opapp.BufferedFile) (*opapp.OpApp, error) {
 	}
 	// Validate default config
 	config := c.ConfigTemplate.GetDefaultConfig()
-	err := opapp.ValidateClusterConfTmpl(c.ClusterConfTemplate, &config)
+	err := opapp.ValidateClusterConfTmpl(c.ClusterConfTemplate, config)
 	return c, err
 }

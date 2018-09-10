@@ -1573,15 +1573,15 @@ func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string, clusterWrapp
 			logger.Error(f.Ctx, "Load app version [%s] package failed: %+v", versionId, err)
 			return err
 		}
-		var confJson opapp.ClusterUserConfig
-		if len(conf) == 0 {
-			confJson = appPackage.ConfigTemplate.GetDefaultConfig()
-		} else {
-			err = jsonutil.Decode([]byte(conf), &confJson)
-			if err != nil {
-				logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)
-				return err
-			}
+		confJson, err := jsonutil.NewJson([]byte(conf))
+		if err != nil {
+			logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)
+			return err
+		}
+		err = appPackage.Validate(confJson)
+		if err != nil {
+			logger.Error(f.Ctx, "Validate conf [%s] failed: %+v", conf, err)
+			return err
 		}
 		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
 		if err != nil {
