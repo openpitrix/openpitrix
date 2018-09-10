@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -64,7 +65,7 @@ func (p *ProviderHandler) initSession(runtimeId string) (*session.Session, error
 	return p.initAWSSession(runtime.RuntimeUrl, runtime.Credential, runtime.Zone)
 }
 
-func (p *ProviderHandler) initInstanceService(runtimeId string) (*ec2.EC2, error) {
+func (p *ProviderHandler) initInstanceService(runtimeId string) (ec2iface.EC2API, error) {
 	awsSession, err := p.initSession(runtimeId)
 	if err != nil {
 		logger.Error(p.Ctx, "Init %s api session failed: %+v", MyProvider, err)
@@ -94,6 +95,8 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 		logger.Error(p.Ctx, "Could not find an aws instance type: %+v", err)
 		return err
 	}
+
+	logger.Info(p.Ctx, "RunInstances with name [%s] instance type [%s]", instance.Name, instanceType)
 
 	tag := ec2.Tag{
 		Key:   aws.String("Name"),
@@ -183,6 +186,8 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 		return nil
 	}
 
+	logger.Info(p.Ctx, "StopInstances [%s]", instance.Name)
+
 	_, err = instanceService.StopInstances(
 		&ec2.StopInstancesInput{
 			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
@@ -240,6 +245,8 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 		logger.Warn(p.Ctx, "Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
 		return nil
 	}
+
+	logger.Info(p.Ctx, "StartInstances [%s]", instance.Name)
 
 	_, err = instanceService.StartInstances(
 		&ec2.StartInstancesInput{
@@ -299,6 +306,8 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 		return nil
 	}
 
+	logger.Info(p.Ctx, "TerminateInstances [%s]", instance.Name)
+
 	_, err = instanceService.TerminateInstances(
 		&ec2.TerminateInstancesInput{
 			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
@@ -311,6 +320,74 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 	// write back
 	task.Directive = jsonutil.ToString(instance)
 
+	return nil
+}
+
+func (p *ProviderHandler) ResizeInstances(task *models.Task) error {
+	if task.Directive == "" {
+		logger.Warn(p.Ctx, "Skip task without directive")
+		return nil
+	}
+	instance, err := models.NewInstance(task.Directive)
+	if err != nil {
+		return err
+	}
+	if instance.InstanceId == "" {
+		logger.Warn(p.Ctx, "Skip task without instance id")
+		return nil
+	}
+	instanceService, err := p.initInstanceService(instance.RuntimeId)
+	if err != nil {
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
+		return err
+	}
+	describeOutput, err := instanceService.DescribeInstances(
+		&ec2.DescribeInstancesInput{
+			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
+		})
+	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	if len(describeOutput.Reservations) == 0 {
+		return fmt.Errorf("instance with id [%s] not exist", instance.InstanceId)
+	}
+
+	if len(describeOutput.Reservations[0].Instances) == 0 {
+		return fmt.Errorf("instance with id [%s] not exist", instance.InstanceId)
+	}
+
+	status := aws.StringValue(describeOutput.Reservations[0].Instances[0].State.Name)
+
+	if status != constants.StatusStopped {
+		logger.Warn(p.Ctx, "Instance [%s] is in status [%s], can not resize", instance.InstanceId, status)
+		return fmt.Errorf("instance [%s] is in status [%s], can not resize", instance.InstanceId, status)
+	}
+
+	instanceType, err := ConvertToInstanceType(instance.Cpu, instance.Memory)
+	if err != nil {
+		logger.Error(p.Ctx, "Could not find an aws instance type: %+v", err)
+		return err
+	}
+
+	logger.Info(p.Ctx, "ResizeInstances [%s] with instance type [%s]", instance.Name, instanceType)
+
+	_, err = instanceService.ModifyInstanceAttribute(
+		&ec2.ModifyInstanceAttributeInput{
+			InstanceId: aws.String(instance.InstanceId),
+			InstanceType: &ec2.AttributeValue{
+				Value: aws.String(instanceType),
+			},
+		},
+	)
+	if err != nil {
+		logger.Error(p.Ctx, "Send ResizeInstances to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	// write back
+	task.Directive = jsonutil.ToString(instance)
 	return nil
 }
 
@@ -343,6 +420,8 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 	if err != nil {
 		return err
 	}
+
+	logger.Info(p.Ctx, "CreateVolumes with name [%s] volume type [%s]", volume.Name, volumeType)
 
 	input := ec2.CreateVolumeInput{
 		AvailabilityZone:  aws.String(volume.Zone),
@@ -388,6 +467,8 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 		return err
 	}
 
+	logger.Info(p.Ctx, "DetachVolume [%s] from instance with id [%s]", volume.Name, volume.InstanceId)
+
 	_, err = instanceService.DetachVolume(
 		&ec2.DetachVolumeInput{
 			InstanceId: aws.String(volume.InstanceId),
@@ -426,6 +507,8 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
 		return err
 	}
+
+	logger.Info(p.Ctx, "AttachVolume [%s] to instance with id [%s]", volume.Name, volume.InstanceId)
 
 	_, err = instanceService.AttachVolume(
 		&ec2.AttachVolumeInput{
@@ -476,6 +559,8 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
 	}
 
+	logger.Info(p.Ctx, "DeleteVolume [%s]", volume.Name)
+
 	_, err = instanceService.DeleteVolume(
 		&ec2.DeleteVolumeInput{
 			VolumeId: aws.String(volume.VolumeId),
@@ -491,7 +576,63 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 	return nil
 }
 
-func (p *ProviderHandler) waitInstanceVolumeAndNetwork(instanceService *ec2.EC2, task *models.Task, instanceId, volumeId string, timeout time.Duration, waitInterval time.Duration) (ins *ec2.Instance, err error) {
+func (p *ProviderHandler) ResizeVolumes(task *models.Task) error {
+	if task.Directive == "" {
+		logger.Warn(p.Ctx, "Skip task without directive")
+		return nil
+	}
+	volume, err := models.NewVolume(task.Directive)
+	if err != nil {
+		return err
+	}
+	if volume.VolumeId == "" {
+		logger.Warn(p.Ctx, "Skip task without volume")
+		return nil
+	}
+	instanceService, err := p.initInstanceService(volume.RuntimeId)
+	if err != nil {
+		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeOutput, err := instanceService.DescribeVolumes(
+		&ec2.DescribeVolumesInput{
+			VolumeIds: aws.StringSlice([]string{volume.VolumeId}),
+		})
+	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	if len(describeOutput.Volumes) == 0 {
+		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
+	}
+
+	status := aws.StringValue(describeOutput.Volumes[0].State)
+	if status != constants.StatusAvailable {
+		logger.Warn(p.Ctx, "Volume [%s] is in status [%s], can not resize.", volume.VolumeId, status)
+		return fmt.Errorf("volume [%s] is in status [%s], can not resize", volume.VolumeId, status)
+	}
+
+	logger.Info(p.Ctx, "ResizeVolumes [%s] with size [%d]", volume.Name, volume.Size)
+
+	_, err = instanceService.ModifyVolume(
+		&ec2.ModifyVolumeInput{
+			VolumeId: aws.String(volume.VolumeId),
+			Size:     aws.Int64(int64(volume.Size)),
+		},
+	)
+	if err != nil {
+		logger.Error(p.Ctx, "Send ResizeVolumes to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	// write back
+	task.Directive = jsonutil.ToString(volume)
+	return nil
+}
+
+func (p *ProviderHandler) waitInstanceVolumeAndNetwork(instanceService ec2iface.EC2API, task *models.Task, instanceId, volumeId string, timeout time.Duration, waitInterval time.Duration) (ins *ec2.Instance, err error) {
 	logger.Debug(p.Ctx, "Waiting for volume [%s] attached to Instance [%s]", volumeId, instanceId)
 	if volumeId != "" {
 		err = p.AttachVolumes(task)
@@ -653,6 +794,8 @@ func (p *ProviderHandler) WaitInstanceState(task *models.Task, state string) err
 		return err
 	}
 
+	logger.Info(p.Ctx, "Wait %s instance [%s] status become to [%s] success", MyProvider, instance.InstanceId, state)
+
 	return nil
 }
 
@@ -700,6 +843,8 @@ func (p *ProviderHandler) WaitVolumeState(task *models.Task, state string) error
 		return err
 	}
 
+	logger.Info(p.Ctx, "Wait %s volume [%s] status become to [%s] success", MyProvider, volume.VolumeId, state)
+
 	return nil
 }
 
@@ -715,14 +860,8 @@ func (p *ProviderHandler) WaitDeleteInstances(task *models.Task) error {
 	return p.WaitInstanceState(task, constants.StatusTerminated)
 }
 
-func (p *ProviderHandler) ResizeInstances(task *models.Task) error {
-	// TODO
-	return nil
-}
-
 func (p *ProviderHandler) WaitResizeInstances(task *models.Task) error {
-	// TODO
-	return nil
+	return p.WaitInstanceState(task, constants.StatusStopped)
 }
 
 func (p *ProviderHandler) WaitCreateVolumes(task *models.Task) error {
@@ -756,20 +895,27 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 		return err
 	}
 
+	describeOutput, err := instanceService.DescribeVolumes(
+		&ec2.DescribeVolumesInput{
+			VolumeIds: aws.StringSlice([]string{volume.VolumeId}),
+		})
+	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	if len(describeOutput.Volumes) == 0 {
+		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
+	}
+
 	input2 := ec2.DescribeVolumesInput{
 		VolumeIds: []*string{aws.String(volume.VolumeId)},
 	}
 	return instanceService.WaitUntilVolumeDeleted(&input2)
 }
 
-func (p *ProviderHandler) ResizeVolumes(task *models.Task) error {
-	// TODO
-	return nil
-}
-
 func (p *ProviderHandler) WaitResizeVolumes(task *models.Task) error {
-	// TODO
-	return nil
+	return p.WaitVolumeState(task, constants.StatusAvailable)
 }
 
 func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
@@ -905,7 +1051,8 @@ func (p *ProviderHandler) DescribeAvailabilityZones(url, credential, zone string
 		return nil, err
 	}
 
-	instanceService := ec2.New(awsSession)
+	var instanceService ec2iface.EC2API
+	instanceService = ec2.New(awsSession)
 
 	input := ec2.DescribeAvailabilityZonesInput{}
 
@@ -930,7 +1077,8 @@ func (p *ProviderHandler) DescribeZones(url, credential string) ([]string, error
 		return nil, err
 	}
 
-	instanceService := ec2.New(awsSession)
+	var instanceService ec2iface.EC2API
+	instanceService = ec2.New(awsSession)
 
 	input := ec2.DescribeRegionsInput{}
 
@@ -954,7 +1102,8 @@ func (p *ProviderHandler) DescribeKeyPairs(url, credential, zone string) ([]stri
 		return nil, err
 	}
 
-	instanceService := ec2.New(awsSession)
+	var instanceService ec2iface.EC2API
+	instanceService = ec2.New(awsSession)
 
 	input := ec2.DescribeKeyPairsInput{}
 

@@ -1479,11 +1479,12 @@ func (f *Frame) DeleteClusterNodesLayer() *models.TaskLayer {
 		Append(f.destroyAndStopServiceLayer(deleteNodeIds, f.scaleInServiceLayer(nonDeleteNodeIds, false), false)). // register destroy, scale in and stop cmd to exec
 		Append(f.stopConfdServiceLayer(deleteNodeIds, false)).                                                      // stop confd service
 		Append(f.umountVolumeLayer(deleteNodeIds, false)).                                                          // umount volume from instance
-		Append(f.detachVolumesLayer(deleteNodeIds, false)).                                                         // detach volume from instance
-		Append(f.deleteInstancesLayer(deleteNodeIds, false)).                                                       // delete instance
-		Append(f.deleteVolumesLayer(deleteNodeIds, false)).                                                         // delete volume
-		Append(f.deregisterNodesMetadataLayer(deleteNodeIds, false)).                                               // deregister deleting cluster nodes metadata
-		Append(f.deregisterScalingNodesMetadataLayer(RegisterNodeDeleting, false))                                  // deregister deleting nodes metadata
+		Append(f.stopInstancesLayer(deleteNodeIds, false)).
+		Append(f.detachVolumesLayer(deleteNodeIds, false)).                        // detach volume from instance
+		Append(f.deleteInstancesLayer(deleteNodeIds, false)).                      // delete instance
+		Append(f.deleteVolumesLayer(deleteNodeIds, false)).                        // delete volume
+		Append(f.deregisterNodesMetadataLayer(deleteNodeIds, false)).              // deregister deleting cluster nodes metadata
+		Append(f.deregisterScalingNodesMetadataLayer(RegisterNodeDeleting, false)) // deregister deleting nodes metadata
 	return headTaskLayer.Child
 }
 
