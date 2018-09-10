@@ -1,6 +1,7 @@
 # Copyright 2017 The OpenPitrix Authors. All rights reserved.
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
+SHELL=/bin/bash
 
 TARG.Name:=openpitrix
 TRAG.Gopkg:=openpitrix.io/openpitrix
@@ -158,17 +159,21 @@ compose-down: ## Shutdown docker compose
 	@echo "compose-down done"
 
 release-%: ## Release version
-	mkdir deploy/openpitrix-$*-kubernetes
-	cp -r deploy/config deploy/kubernetes deploy/openpitrix-$*-kubernetes/
-	cd deploy/ && tar -czvf openpitrix-$*-kubernetes.tar.gz openpitrix-$*-kubernetes
+	@if [[ "$*" =~ ^openpitrix-v[0-9]+\.[0-9]+\.[0-9]+ ]];then \
+	mkdir deploy/$*-kubernetes; \
+	cp -r deploy/config deploy/kubernetes deploy/$*-kubernetes/; \
+	cd deploy/ && tar -czvf $*-kubernetes.tar.gz $*-kubernetes; \
+	fi
 
 bin-release-%: ## Bin release version
-	mkdir deploy/openpitrix-$*-bin
-	docker cp openpitrix-api-gateway:/usr/local/bin/op deploy/openpitrix-$*-bin
-	docker cp openpitrix-api-gateway:/usr/local/bin/opctl deploy/openpitrix-$*-bin
-	docker cp openpitrix-api-gateway:/usr/local/bin/frontgate deploy/openpitrix-$*-bin
-	docker cp openpitrix-api-gateway:/usr/local/bin/drone deploy/openpitrix-$*-bin
-	cd deploy/ && tar -czvf openpitrix-$*-bin.tar.gz openpitrix-$*-bin
+	@if [[ "$*" =~ ^openpitrix-v[0-9]+\.[0-9]+\.[0-9]+ ]];then \
+	mkdir deploy/$*-bin; \
+	docker cp openpitrix-api-gateway:/usr/local/bin/op deploy/$*-bin; \
+	docker cp openpitrix-api-gateway:/usr/local/bin/opctl deploy/$*-bin; \
+	docker cp openpitrix-api-gateway:/usr/local/bin/frontgate deploy/$*-bin; \
+	docker cp openpitrix-api-gateway:/usr/local/bin/drone deploy/$*-bin; \
+	cd deploy/ && tar -czvf $*-bin.tar.gz $*-bin; \
+	fi
 
 .PHONY: test
 test: ## Run all tests
@@ -210,7 +215,7 @@ build-image-%: ## build docker image
 	docker build -t openpitrix/openpitrix:latest .; \
 	docker build -t openpitrix/openpitrix:metadata -f ./Dockerfile.metadata .; \
 	docker build -t openpitrix/openpitrix:flyway -f ./pkg/db/Dockerfile .;\
-	else \
+	elif [[ "$*" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]];then \
 	docker build -t openpitrix/openpitrix:$* .; \
 	docker build -t openpitrix/openpitrix:metadata-$* -f ./Dockerfile.metadata .; \
 	docker build -t openpitrix/openpitrix:flyway-$* -f ./pkg/db/Dockerfile .; \
@@ -221,7 +226,7 @@ push-image-%: ## push docker image
 	docker push openpitrix/openpitrix:latest; \
 	docker push openpitrix/openpitrix:metadata; \
 	docker push openpitrix/openpitrix:flyway; \
-	else \
+	elif [[ "$*" =~ ^v[0-9]+\.[0-9]+\.[0-9]+ ]];then \
 	docker push openpitrix/openpitrix:$*; \
 	docker push openpitrix/openpitrix:metadata-$*; \
 	docker push openpitrix/openpitrix:flyway-$*; \
