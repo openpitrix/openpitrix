@@ -32,16 +32,10 @@ deploy:
       repo: openpitrix/openpitrix
       tags: true
   - provider: script
-    script:
-      - make build-image-latest
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - make push-image-latest
+    script: bash docker_push latest
     on:
       branch: master
   - provider: script
-    script:
-      - make build-image-$TRAVIS_TAG
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - make push-image-$TRAVIS_TAG
+    script: bash docker_push $TRAVIS_TAG
     on:
       tags: true
