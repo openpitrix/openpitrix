@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"openpitrix.io/openpitrix/pkg/devkit"
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
 type packageCmd struct {
@@ -96,7 +96,7 @@ func (p *packageCmd) run() error {
 	return err
 }
 
-func setVersion(version *app.App, ver string) error {
+func setVersion(version *opapp.OpApp, ver string) error {
 	// Verify that version is a SemVer, and error out if it is not.
 	if _, err := semver.NewVersion(ver); err != nil {
 		return err

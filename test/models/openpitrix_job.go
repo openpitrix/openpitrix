@@ -46,6 +46,9 @@ type OpenpitrixJob struct {
 	// provider
 	Provider string `json:"provider,omitempty"`
 
+	// runtime id
+	RuntimeID string `json:"runtime_id,omitempty"`
+
 	// status
 	Status string `json:"status,omitempty"`
 

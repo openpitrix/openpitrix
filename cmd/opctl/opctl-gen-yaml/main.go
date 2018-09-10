@@ -70,11 +70,10 @@ func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
 						if s.Items != nil && s.Items.Schema != nil {
 							t += toString(s.Items.Schema.Type)
 						}
+					} else if s.Format == "byte" {
+						t += "byte"
 					} else {
 						t += toString(s.Type)
-					}
-					if s.Ref.String() == "#/definitions/protobufUInt32Value" {
-						t += "integer"
 					}
 					c.Body[getName(name)] = Param{
 						Shorthand: "",

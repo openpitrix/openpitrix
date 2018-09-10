@@ -28,7 +28,7 @@ type ConfigManager struct {
 
 func NewConfigManager(path string, cfg *pbtypes.DroneConfig, opts ...Options) *ConfigManager {
 	if !filepath.IsAbs(path) {
-		logger.Error(nil, "NewConfigManager: path is not abs path", path)
+		logger.Error(nil, "NewConfigManager: path is not abs path: %s", path)
 	}
 
 	if cfg != nil {

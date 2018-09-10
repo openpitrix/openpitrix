@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixGetAppVersionPackageResponse
 type OpenpitrixGetAppVersionPackageResponse struct {
 
+	// app id
+	AppID string `json:"app_id,omitempty"`
+
 	// package
 	Package strfmt.Base64 `json:"package,omitempty"`
 

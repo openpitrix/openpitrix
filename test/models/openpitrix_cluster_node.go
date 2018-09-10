@@ -49,6 +49,12 @@ type OpenpitrixClusterNode struct {
 	// health status
 	HealthStatus string `json:"health_status,omitempty"`
 
+	// host id
+	HostID string `json:"host_id,omitempty"`
+
+	// host ip
+	HostIP string `json:"host_ip,omitempty"`
+
 	// instance id
 	InstanceID string `json:"instance_id,omitempty"`
 

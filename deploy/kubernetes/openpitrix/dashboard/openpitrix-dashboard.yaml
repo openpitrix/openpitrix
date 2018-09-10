@@ -52,6 +52,8 @@ spec:
           value: http://openpitrix-api-gateway:9100
         - name: apiVersion
           value: v1
+        - name: socketUrl
+          value: ws://openpitrix-api-gateway:9100/v1/io
         resources:
           limits:
             cpu: ${LIMITS}m

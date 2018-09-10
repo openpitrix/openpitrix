@@ -83,6 +83,8 @@ type DescribeJobsParams struct {
 	Offset *int64
 	/*Provider*/
 	Provider *string
+	/*RuntimeID*/
+	RuntimeID *string
 	/*SearchWord*/
 	SearchWord *string
 	/*Status*/
@@ -203,6 +205,17 @@ func (o *DescribeJobsParams) WithProvider(provider *string) *DescribeJobsParams 
 // SetProvider adds the provider to the describe jobs params
 func (o *DescribeJobsParams) SetProvider(provider *string) {
 	o.Provider = provider
+}
+
+// WithRuntimeID adds the runtimeID to the describe jobs params
+func (o *DescribeJobsParams) WithRuntimeID(runtimeID *string) *DescribeJobsParams {
+	o.SetRuntimeID(runtimeID)
+	return o
+}
+
+// SetRuntimeID adds the runtimeId to the describe jobs params
+func (o *DescribeJobsParams) SetRuntimeID(runtimeID *string) {
+	o.RuntimeID = runtimeID
 }
 
 // WithSearchWord adds the searchWord to the describe jobs params
@@ -344,6 +357,22 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		qProvider := qrProvider
 		if qProvider != "" {
 			if err := r.SetQueryParam("provider", qProvider); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.RuntimeID != nil {
+
+		// query param runtime_id
+		var qrRuntimeID string
+		if o.RuntimeID != nil {
+			qrRuntimeID = *o.RuntimeID
+		}
+		qRuntimeID := qrRuntimeID
+		if qRuntimeID != "" {
+			if err := r.SetQueryParam("runtime_id", qRuntimeID); err != nil {
 				return err
 			}
 		}

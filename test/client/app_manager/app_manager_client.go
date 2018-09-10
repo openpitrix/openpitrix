@@ -25,6 +25,34 @@ type Client struct {
 }
 
 /*
+CancelAppVersion cancels app version
+*/
+func (a *Client) CancelAppVersion(params *CancelAppVersionParams) (*CancelAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCancelAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CancelAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/cancel",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &CancelAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CancelAppVersionOK), nil
+
+}
+
+/*
 CreateApp creates app
 */
 func (a *Client) CreateApp(params *CreateAppParams) (*CreateAppOK, error) {
@@ -39,7 +67,7 @@ func (a *Client) CreateApp(params *CreateAppParams) (*CreateAppOK, error) {
 		PathPattern:        "/v1/apps",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateAppReader{formats: a.formats},
 		Context:            params.Context,
@@ -67,7 +95,7 @@ func (a *Client) CreateAppVersion(params *CreateAppVersionParams) (*CreateAppVer
 		PathPattern:        "/v1/app_versions",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateAppVersionReader{formats: a.formats},
 		Context:            params.Context,
@@ -77,6 +105,34 @@ func (a *Client) CreateAppVersion(params *CreateAppVersionParams) (*CreateAppVer
 		return nil, err
 	}
 	return result.(*CreateAppVersionOK), nil
+
+}
+
+/*
+DeleteAppVersion deletes app version
+*/
+func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams) (*DeleteAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DeleteAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/delete",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DeleteAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DeleteAppVersionOK), nil
 
 }
 
@@ -95,7 +151,7 @@ func (a *Client) DeleteAppVersions(params *DeleteAppVersionsParams) (*DeleteAppV
 		PathPattern:        "/v1/app_versions",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteAppVersionsReader{formats: a.formats},
 		Context:            params.Context,
@@ -123,7 +179,7 @@ func (a *Client) DeleteApps(params *DeleteAppsParams) (*DeleteAppsOK, error) {
 		PathPattern:        "/v1/apps",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteAppsReader{formats: a.formats},
 		Context:            params.Context,
@@ -151,7 +207,7 @@ func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams) (*Descri
 		PathPattern:        "/v1/app_versions",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeAppVersionsReader{formats: a.formats},
 		Context:            params.Context,
@@ -179,7 +235,7 @@ func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, erro
 		PathPattern:        "/v1/apps",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeAppsReader{formats: a.formats},
 		Context:            params.Context,
@@ -207,7 +263,7 @@ func (a *Client) GetAppStatistics(params *GetAppStatisticsParams) (*GetAppStatis
 		PathPattern:        "/v1/apps/statistics",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &GetAppStatisticsReader{formats: a.formats},
 		Context:            params.Context,
@@ -235,7 +291,7 @@ func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams) (*GetA
 		PathPattern:        "/v1/app_version/package",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &GetAppVersionPackageReader{formats: a.formats},
 		Context:            params.Context,
@@ -263,7 +319,7 @@ func (a *Client) GetAppVersionPackageFiles(params *GetAppVersionPackageFilesPara
 		PathPattern:        "/v1/app_version/package/files",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &GetAppVersionPackageFilesReader{formats: a.formats},
 		Context:            params.Context,
@@ -291,7 +347,7 @@ func (a *Client) ModifyApp(params *ModifyAppParams) (*ModifyAppOK, error) {
 		PathPattern:        "/v1/apps",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyAppReader{formats: a.formats},
 		Context:            params.Context,
@@ -319,7 +375,7 @@ func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams) (*ModifyAppVer
 		PathPattern:        "/v1/app_versions",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
+		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyAppVersionReader{formats: a.formats},
 		Context:            params.Context,
@@ -329,6 +385,174 @@ func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams) (*ModifyAppVer
 		return nil, err
 	}
 	return result.(*ModifyAppVersionOK), nil
+
+}
+
+/*
+PassAppVersion passes app version
+*/
+func (a *Client) PassAppVersion(params *PassAppVersionParams) (*PassAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewPassAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "PassAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/pass",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &PassAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*PassAppVersionOK), nil
+
+}
+
+/*
+RecoverAppVersion recovers app version
+*/
+func (a *Client) RecoverAppVersion(params *RecoverAppVersionParams) (*RecoverAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewRecoverAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "RecoverAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/recover",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &RecoverAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*RecoverAppVersionOK), nil
+
+}
+
+/*
+RejectAppVersion rejects app version
+*/
+func (a *Client) RejectAppVersion(params *RejectAppVersionParams) (*RejectAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewRejectAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "RejectAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/reject",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &RejectAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*RejectAppVersionOK), nil
+
+}
+
+/*
+ReleaseAppVersion releases app version
+*/
+func (a *Client) ReleaseAppVersion(params *ReleaseAppVersionParams) (*ReleaseAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewReleaseAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ReleaseAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/release",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ReleaseAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ReleaseAppVersionOK), nil
+
+}
+
+/*
+SubmitAppVersion submits app version
+*/
+func (a *Client) SubmitAppVersion(params *SubmitAppVersionParams) (*SubmitAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewSubmitAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "SubmitAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/submit",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &SubmitAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*SubmitAppVersionOK), nil
+
+}
+
+/*
+SuspendAppVersion suspends app version
+*/
+func (a *Client) SuspendAppVersion(params *SuspendAppVersionParams) (*SuspendAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewSuspendAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "SuspendAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/suspend",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &SuspendAppVersionReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*SuspendAppVersionOK), nil
 
 }
 

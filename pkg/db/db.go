@@ -63,13 +63,6 @@ type UpdateQuery struct {
 	Hook UpdateHook
 }
 
-type UpsertQuery struct {
-	table string
-	*dbr.Session
-	whereConds   map[string]string
-	upsertValues map[string]interface{}
-}
-
 type Conn struct {
 	*dbr.Session
 	ctx        context.Context
@@ -142,7 +135,7 @@ func (b *SelectQuery) Limit(n uint64) *SelectQuery {
 }
 
 func (b *SelectQuery) Offset(n uint64) *SelectQuery {
-	n = GetLimit(n)
+	n = GetOffset(n)
 	b.SelectBuilder.Offset(n)
 	return b
 }

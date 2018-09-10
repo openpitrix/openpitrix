@@ -25,17 +25,17 @@ import (
 )
 
 const testExportPort = 8879
-const testDockerPath = "/tmp/openpitrix-test"
+const testTmpPath = "/tmp/openpitrix-test"
 
-var testRepoDir = path.Join(testDockerPath, idutil.GetUuid(""))
+var testTmpDir = path.Join(testTmpPath, idutil.GetUuid(""))
 
 func TestDevkit(t *testing.T) {
-	t.Logf("start create repo at [%s]", testRepoDir)
+	t.Logf("start create repo at [%s]", testTmpDir)
 
 	d := NewDocker(t, "test-op", "openpitrix")
 	d.Port = testExportPort
-	d.WorkDir = testDockerPath
-	d.Volume[testRepoDir] = testDockerPath
+	d.WorkDir = testTmpPath
+	d.Volume[testTmpDir] = testTmpPath
 
 	t.Log(d.Setup())
 

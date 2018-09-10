@@ -28,6 +28,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 func getCluster(ctx context.Context, clusterId, userId string) (*models.Cluster, error) {
@@ -88,6 +89,10 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 
 	clusterWrapper.ClusterNodesWithKeyPairs = map[string]*models.ClusterNodeWithKeyPairs{}
 	for _, clusterNode := range clusterNodes {
+		if stringutil.StringIn(clusterNode.Status, constants.DeletedStatuses) {
+			continue
+		}
+
 		var nodeKeyPairs []*models.NodeKeyPair
 		_, err = pi.Global().DB(ctx).
 			Select(models.NodeKeyPairColumns...).
@@ -490,6 +495,7 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 			directive,
 			runtime.Provider,
 			s.UserId,
+			cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -583,6 +589,7 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 			directive,
 			runtime.Provider,
 			s.UserId,
+			cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -616,9 +623,10 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
 	}
-	clusterWrapper, err := providerInterface.ParseClusterConf(versionId, runtimeId, conf)
+	clusterWrapper := new(models.ClusterWrapper)
+	err = providerInterface.ParseClusterConf(versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
-		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", versionId, runtime, err)
+		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", versionId, runtimeId, err)
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		}
@@ -661,6 +669,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		directive,
 		runtime.Provider,
 		s.UserId,
+		runtimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -933,6 +942,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -978,6 +988,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1020,6 +1031,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1046,12 +1058,51 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
-	directive := jsonutil.ToString(clusterWrapper)
-
 	runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
+
+	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !stringutil.StringIn(runtime.Provider, constants.VmBaseProviders) {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
+	}
+
+	var roleResizeResources models.RoleResizeResources
+	for _, pbRoleResource := range req.RoleResource {
+		roleResource := models.PbToRoleResource(pbRoleResource)
+		clusterRole, isExist := clusterWrapper.ClusterRoles[roleResource.Role]
+		if !isExist {
+			err = fmt.Errorf("role [%s] not found", roleResource.Role)
+			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceRoleNotFound, clusterId, roleResource.Role)
+		}
+
+		if isSame, roleResizeResource := roleResource.IsSame(clusterRole); !isSame && roleResizeResource != nil {
+			roleResizeResources = append(roleResizeResources, roleResizeResource)
+			attributes := map[string]interface{}{
+				"cpu":           clusterRole.Cpu,
+				"memory":        clusterRole.Memory,
+				"gpu":           clusterRole.Gpu,
+				"instance_size": clusterRole.InstanceSize,
+				"storage_size":  clusterRole.StorageSize,
+			}
+			_, err = pi.Global().DB(ctx).
+				Update(models.ClusterRoleTableName).
+				SetMap(attributes).
+				Where(db.Eq("cluster_id", clusterId)).
+				Where(db.Eq("role", roleResource.Role)).
+				Exec()
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, clusterId)
+			}
+		}
+	}
+
+	if len(roleResizeResources) == 0 {
+		err = fmt.Errorf("cluster [%s] is already the resource type", clusterId)
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorResizeResourceFailed, clusterId)
+	}
+
+	directive := jsonutil.ToString(roleResizeResources)
 
 	newJob := models.NewJob(
 		constants.PlaceHolder,
@@ -1062,6 +1113,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1079,6 +1131,8 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
+	role := req.GetRole().GetValue()
+	count := int(req.GetNodeCount().GetValue())
 	_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
@@ -1088,13 +1142,82 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
-	directive := jsonutil.ToString(clusterWrapper)
+	owner := clusterWrapper.Cluster.Owner
 
 	runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
+	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !stringutil.StringIn(runtime.Provider, constants.VmBaseProviders) {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
+	}
+
+	var roleNodes []*models.ClusterNodeWithKeyPairs
+	for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
+		if clusterNode.Role == role {
+			roleNodes = append(roleNodes, clusterNode)
+		}
+	}
+
+	for i := 1; i <= count; i++ {
+		clusterWrapper.ClusterNodesWithKeyPairs[string(i)] = &models.ClusterNodeWithKeyPairs{
+			ClusterNode: &models.ClusterNode{
+				Status: constants.StatusPending,
+				Role:   role,
+			},
+		}
+	}
+
+	conf := ""
+	if len(req.AdvancedParam) > 0 {
+		conf = req.AdvancedParam[0]
+	}
+	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
+	if err != nil {
+		logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+	}
+	err = providerInterface.ParseClusterConf(clusterWrapper.Cluster.VersionId, runtime.RuntimeId, conf, clusterWrapper)
+	if err != nil {
+		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", clusterWrapper.Cluster.VersionId, runtime.RuntimeId, err)
+		if gerr.IsGRPCError(err) {
+			return nil, err
+		}
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
+	}
+
+	// register new role
+	if len(roleNodes) == 0 {
+		if len(req.AdvancedParam) == 0 {
+			err = fmt.Errorf("conf parameter is needed when role [%s] node does not exist", role)
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorAddResourceNodeFailed, clusterId)
+		}
+
+		clusterWrapper.ClusterRoles[role].ClusterId = clusterId
+		err = RegisterClusterRole(ctx, clusterWrapper.ClusterRoles[role])
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorAddResourceNodeFailed)
+		}
+	}
+
+	// register new nodes
+	for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
+		if clusterNode.Status == constants.StatusPending {
+			clusterNode.ClusterNode.Owner = owner
+			err = RegisterClusterNode(ctx, clusterNode.ClusterNode)
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorAddResourceNodeFailed)
+			}
+		}
+	}
+
+	// reload clusterWrapper from db
+	clusterWrapper, err = getClusterWrapper(ctx, clusterId)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+	}
+	directive := jsonutil.ToString(clusterWrapper)
 	newJob := models.NewJob(
 		constants.PlaceHolder,
 		clusterId,
@@ -1104,6 +1227,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1130,12 +1254,26 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
-	directive := jsonutil.ToString(clusterWrapper)
-
 	runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
+
+	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !stringutil.StringIn(runtime.Provider, constants.VmBaseProviders) {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
+	}
+
+	// TODO: check
+	nodeIds := req.GetNodeId()
+	for _, nodeId := range nodeIds {
+		clusterNode, isExist := clusterWrapper.ClusterNodesWithKeyPairs[nodeId]
+		if !isExist || clusterNode.Status != constants.StatusActive {
+			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, nodeId)
+		}
+		clusterNode.Status = constants.StatusDeleting
+	}
+
+	directive := jsonutil.ToString(clusterWrapper)
 
 	newJob := models.NewJob(
 		constants.PlaceHolder,
@@ -1146,6 +1284,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1186,7 +1325,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
 	}
-	clusterWrapper, err = providerInterface.ParseClusterConf(versionId, runtimeId, conf)
+	err = providerInterface.ParseClusterConf(versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
 		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] conf [%s] failed: %+v",
 			versionId, runtime, conf, err)
@@ -1208,6 +1347,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		directive,
 		runtime.Provider,
 		s.UserId,
+		clusterWrapper.Cluster.RuntimeId,
 	)
 
 	jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1249,6 +1389,25 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
+
+		runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
+		}
+
+		if runtime.Provider == constants.ProviderKubernetes {
+			providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
+			if err != nil {
+				logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
+				return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+			}
+
+			err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
+			if err != nil {
+				logger.Warn(ctx, "Describe cluster details failed: %+v", err)
+			}
+		}
+
 		pbClusters = append(pbClusters, models.ClusterWrapperToPb(clusterWrapper))
 	}
 
@@ -1367,6 +1526,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1420,6 +1580,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1473,6 +1634,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
@@ -1518,6 +1680,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			directive,
 			runtime.Provider,
 			s.UserId,
+			clusterWrapper.Cluster.RuntimeId,
 		)
 
 		jobId, err := jobclient.SendJob(ctx, newJob)

@@ -1,3 +1,9 @@
+- action: CancelAppVersion
+  description: cancel app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
 - action: CreateApp
   description: create app
   service: AppManager
@@ -20,6 +26,8 @@
       type: string
     owner:
       type: string
+    package:
+      type: byte
     readme:
       type: string
     repo_id:
@@ -27,6 +35,8 @@
     screenshots:
       type: string
     sources:
+      type: string
+    status:
       type: string
 - action: CreateAppVersion
   description: create app version
@@ -36,14 +46,38 @@
       type: string
     description:
       type: string
+    home:
+      type: string
+    icon:
+      type: string
+    keywords:
+      type: string
+    maintainers:
+      type: string
     name:
       type: string
     owner:
       type: string
+    package:
+      type: byte
     package_name:
+      type: string
+    readme:
+      type: string
+    screenshots:
       type: string
     sequence:
       type: integer
+    sources:
+      type: string
+    status:
+      type: string
+- action: DeleteAppVersion
+  description: delete app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
 - action: DeleteAppVersions
   description: delete app versions
   service: AppManager
@@ -161,20 +195,76 @@
       type: string
     sources:
       type: string
+    status:
+      type: string
 - action: ModifyAppVersion
   description: modify app version
   service: AppManager
   body:
     description:
       type: string
+    home:
+      type: string
+    icon:
+      type: string
+    keywords:
+      type: string
+    maintainers:
+      type: string
     name:
       type: string
     owner:
       type: string
+    package:
+      type: byte
     package_name:
+      type: string
+    readme:
+      type: string
+    screenshots:
       type: string
     sequence:
       type: integer
+    sources:
+      type: string
+    status:
+      type: string
+    version_id:
+      type: string
+- action: PassAppVersion
+  description: pass app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: RecoverAppVersion
+  description: recover app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: RejectAppVersion
+  description: reject app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: ReleaseAppVersion
+  description: release app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: SubmitAppVersion
+  description: submit app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: SuspendAppVersion
+  description: suspend app version
+  service: AppManager
+  body:
     version_id:
       type: string
 - action: CreateCategory
@@ -287,8 +377,6 @@
       type: string
     node_id:
       type: '[]string'
-    role:
-      type: string
 - action: DeleteClusters
   description: delete clusters
   service: ClusterManager
@@ -434,12 +522,8 @@
       type: '[]string'
     cluster_id:
       type: string
-    cpu:
-      type: integer
-    memory:
-      type: integer
-    role:
-      type: string
+    role_resource:
+      type: '[]'
 - action: RollbackCluster
   description: rollback cluster
   service: ClusterManager
@@ -504,6 +588,8 @@
       type: integer
     provider:
       type: string
+    runtime_id:
+      type: string
     search_word:
       type: string
     status:
@@ -543,13 +629,13 @@
     description:
       type: string
     labels:
-      type: '[]'
+      type: string
     name:
       type: string
     providers:
       type: '[]string'
     selectors:
-      type: '[]'
+      type: string
     type:
       type: string
     url:
@@ -605,7 +691,7 @@
     description:
       type: string
     labels:
-      type: '[]'
+      type: string
     name:
       type: string
     providers:
@@ -613,7 +699,7 @@
     repo_id:
       type: string
     selectors:
-      type: '[]'
+      type: string
     type:
       type: string
     url:

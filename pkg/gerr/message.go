@@ -101,6 +101,10 @@ var (
 		Name: "resource_not_found",
 		En:   "resource [%s] not found",
 	}
+	ErrorResourceRoleNotFound = ErrorMessage{
+		Name: "resource_role_not_found",
+		En:   "resource [%s] role [%s] not found",
+	}
 	ErrorSubnetNotFound = ErrorMessage{
 		Name: "subnet_not_found",
 		En:   "subnet [%s] not found or vpc not bind eip",
@@ -184,5 +188,29 @@ var (
 	ErrorDetachKeyPairsFailed = ErrorMessage{
 		Name: "detach_key_pairs_failed",
 		En:   "detach key pairs failed",
+	}
+	ErrorAppVersionIncorrectStatus = ErrorMessage{
+		Name: "app_version_incorrect_status",
+		En:   "app version [%s] has incorrect status [%s], cannot execute the current action",
+	}
+	ErrorLoadPackageFailed = ErrorMessage{
+		Name: "load_package_failed",
+		En:   "load package failed, reason: [%s]",
+	}
+	ErrorCannotChangeAppName = ErrorMessage{
+		Name: "cannot_change_app_name",
+		En:   "cannot change app name",
+	}
+	ErrorAppNameExists = ErrorMessage{
+		Name: "app_name_exists",
+		En:   "app name [%s] exists",
+	}
+	ErrorAppVersionExists = ErrorMessage{
+		Name: "app_version_exists",
+		En:   "app version [%s:%s] exists",
+	}
+	ErrorCannotAccessRepo = ErrorMessage{
+		Name: "cannot_access_repo",
+		En:   "cannot access repo",
 	}
 )

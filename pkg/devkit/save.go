@@ -13,12 +13,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
 // Reference: vendor/k8s.io/helm/pkg/chartutil/save.go:97
 
-func Save(c *app.App, outDir string) (string, error) {
+func Save(c *opapp.OpApp, outDir string) (string, error) {
 	// Create archive
 	if fi, err := os.Stat(outDir); err != nil {
 		return "", err
@@ -37,7 +37,7 @@ func Save(c *app.App, outDir string) (string, error) {
 		return "", fmt.Errorf("no app version specified (%s)", PackageJson)
 	}
 
-	filename := fmt.Sprintf("%s-%s.tgz", cfile.Name, cfile.Version)
+	filename := cfile.GetPackageName()
 	filename = filepath.Join(outDir, filename)
 	if stat, err := os.Stat(filepath.Dir(filename)); os.IsNotExist(err) {
 		if err := os.MkdirAll(filepath.Dir(filename), 0755); !os.IsExist(err) {
@@ -73,7 +73,7 @@ func Save(c *app.App, outDir string) (string, error) {
 	return filename, err
 }
 
-func writeTarContents(out *tar.Writer, c *app.App, prefix string) error {
+func writeTarContents(out *tar.Writer, c *opapp.OpApp, prefix string) error {
 	base := filepath.Join(prefix, c.Metadata.Name)
 
 	cdata, err := json.Marshal(c.Metadata)
@@ -122,7 +122,7 @@ func writeToTar(out *tar.Writer, name string, body []byte) error {
 	return nil
 }
 
-func savePackageJson(filename string, metadata *app.Metadata) error {
+func savePackageJson(filename string, metadata *opapp.Metadata) error {
 	out, err := json.MarshalIndent(metadata, "", "    ")
 	if err != nil {
 		return err

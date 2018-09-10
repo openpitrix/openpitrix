@@ -19,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
+	"openpitrix.io/openpitrix/pkg/util/labelutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
@@ -97,7 +98,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	visibility := req.GetVisibility().GetValue()
 	providers := req.GetProviders()
 
-	err := validate(ctx, repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
@@ -131,16 +132,16 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
-	if len(req.GetLabels()) > 0 {
-		err = p.createLabels(ctx, newRepo.RepoId, req.GetLabels())
+	if req.GetLabels() != nil {
+		err = labelutil.SyncRepoLabels(ctx, newRepo.RepoId, req.GetLabels().GetValue())
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+			return nil, err
 		}
 	}
-	if len(req.GetSelectors()) > 0 {
-		err = p.createSelectors(ctx, newRepo.RepoId, req.GetSelectors())
+	if req.GetSelectors() != nil {
+		err = labelutil.SyncRepoSelectors(ctx, newRepo.RepoId, req.GetSelectors().GetValue())
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+			return nil, err
 		}
 	}
 
@@ -201,7 +202,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		needValidate = true
 	}
 	if needValidate {
-		err = validate(ctx, repoType, url, credential, providers)
+		err = validate(ctx, repoType, url, credential)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 		}
@@ -235,16 +236,16 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
 	}
-	if len(req.GetLabels()) > 0 {
-		err = p.modifyLabels(ctx, repoId, req.GetLabels())
+	if req.GetLabels() != nil {
+		err = labelutil.SyncRepoLabels(ctx, repoId, req.GetLabels().GetValue())
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, err
 		}
 	}
-	if len(req.GetSelectors()) > 0 {
-		err = p.modifySelectors(ctx, repoId, req.GetSelectors())
+	if req.GetSelectors() != nil {
+		err = labelutil.SyncRepoSelectors(ctx, repoId, req.GetSelectors().GetValue())
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+			return nil, err
 		}
 	}
 	if req.GetCategoryId() != nil {
@@ -309,9 +310,8 @@ func (p *Server) ValidateRepo(ctx context.Context, req *pb.ValidateRepoRequest) 
 	repoType := req.GetType().GetValue()
 	url := req.GetUrl().GetValue()
 	credential := req.GetCredential().GetValue()
-	providers := []string{"qingcloud"}
 
-	err := validate(ctx, repoType, url, credential, providers)
+	err := validate(ctx, repoType, url, credential)
 	if err != nil {
 		e, ok := err.(*ErrorWithCode)
 		if !ok {

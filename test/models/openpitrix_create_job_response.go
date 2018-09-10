@@ -25,6 +25,9 @@ type OpenpitrixCreateJobResponse struct {
 	// job id
 	JobID string `json:"job_id,omitempty"`
 
+	// runtime id
+	RuntimeID string `json:"runtime_id,omitempty"`
+
 	// version id
 	VersionID string `json:"version_id,omitempty"`
 }

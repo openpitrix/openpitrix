@@ -7,13 +7,8 @@ package aws
 import (
 	"context"
 	"fmt"
-	"time"
 
-	clientutil "openpitrix.io/openpitrix/pkg/client"
-	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
-	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -31,54 +26,26 @@ func NewProvider(ctx context.Context) *Provider {
 	}
 }
 
-func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error) {
-	frameInterface, err := vmbased.NewFrameInterface(p.ctx, nil)
+func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
+	frameInterface, err := vmbased.GetFrameInterface(p.ctx, nil)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	clusterWrapper, err := frameInterface.ParseClusterConf(versionId, runtimeId, conf)
+	err = frameInterface.ParseClusterConf(versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	handler := GetProviderHandler(p.ctx)
 	availabilityZone, err := handler.DescribeAvailabilityZoneBySubnetId(runtimeId, clusterWrapper.Cluster.SubnetId)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	clusterWrapper.Cluster.Zone = availabilityZone
-	return clusterWrapper, nil
+	return nil
 }
 
 func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	var clusterWrapper *models.ClusterWrapper
-	var err error
-
-	switch job.JobAction {
-	case constants.ActionAttachKeyPairs, constants.ActionDetachKeyPairs:
-		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
-		if err != nil {
-			return nil, err
-		}
-		clusterId := nodeKeyPairDetails[0].ClusterNode.ClusterId
-		clusterClient, err := clusterclient.NewClient()
-		if err != nil {
-			return nil, err
-		}
-		ctx := clientutil.SetSystemUserToContext(p.ctx)
-		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
-		if err != nil {
-			return nil, err
-		}
-		clusterWrapper = pbClusterWrappers[0]
-	default:
-		clusterWrapper, err = models.NewClusterWrapper(p.ctx, job.Directive)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	runtimeId := clusterWrapper.Cluster.RuntimeId
-	runtime, err := runtimeclient.NewRuntime(p.ctx, runtimeId)
+	runtime, err := runtimeclient.NewRuntime(p.ctx, job.RuntimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -88,121 +55,22 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	}
 	if imageConfig.ImageId == "" && imageConfig.ImageName != "" {
 		handler := GetProviderHandler(p.ctx)
-		imageConfig.ImageId, err = handler.DescribeImage(runtimeId, imageConfig.ImageName)
+		imageConfig.ImageId, err = handler.DescribeImage(job.RuntimeId, imageConfig.ImageName)
 		if err != nil {
 			return nil, err
 		}
 	}
-	frameInterface, err := vmbased.NewFrameInterface(p.ctx, job, imageConfig.ImageId)
-	if err != nil {
-		return nil, err
-	}
-
-	switch job.JobAction {
-	case constants.ActionCreateCluster:
-		// TODO: vpc, eip, subnet
-
-		return frameInterface.CreateClusterLayer(), nil
-	case constants.ActionUpgradeCluster:
-		// not supported yet
-		return nil, nil
-	case constants.ActionRollbackCluster:
-		// not supported yet
-		return nil, nil
-	case constants.ActionResizeCluster:
-
-	case constants.ActionAddClusterNodes:
-		return frameInterface.AddClusterNodesLayer(), nil
-	case constants.ActionDeleteClusterNodes:
-		return frameInterface.DeleteClusterNodesLayer(), nil
-	case constants.ActionStopClusters:
-		return frameInterface.StopClusterLayer(), nil
-	case constants.ActionStartClusters:
-		return frameInterface.StartClusterLayer(), nil
-	case constants.ActionDeleteClusters:
-		return frameInterface.DeleteClusterLayer(), nil
-	case constants.ActionRecoverClusters:
-		// not supported yet
-		return nil, nil
-	case constants.ActionCeaseClusters:
-		// not supported yet
-		return nil, nil
-	case constants.ActionUpdateClusterEnv:
-	case constants.ActionAttachKeyPairs:
-		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
-		if err != nil {
-			return nil, err
-		}
-		return frameInterface.AttachKeyPairsLayer(nodeKeyPairDetails), nil
-	case constants.ActionDetachKeyPairs:
-		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
-		if err != nil {
-			return nil, err
-		}
-		return frameInterface.DetachKeyPairsLayer(nodeKeyPairDetails), nil
-	default:
-		logger.Error(p.ctx, "Unknown job action [%s]", job.JobAction)
-		return nil, fmt.Errorf("unknown job action [%s]", job.JobAction)
-	}
-	return nil, nil
+	return vmbased.SplitJobIntoTasks(p.ctx, job, imageConfig.ImageId)
 }
 
 func (p *Provider) HandleSubtask(task *models.Task) error {
 	handler := GetProviderHandler(p.ctx)
-
-	switch task.TaskAction {
-	case vmbased.ActionRunInstances:
-		return handler.RunInstances(task)
-	case vmbased.ActionStopInstances:
-		return handler.StopInstances(task)
-	case vmbased.ActionStartInstances:
-		return handler.StartInstances(task)
-	case vmbased.ActionTerminateInstances:
-		return handler.DeleteInstances(task)
-	case vmbased.ActionCreateVolumes:
-		return handler.CreateVolumes(task)
-	case vmbased.ActionDetachVolumes:
-		return handler.DetachVolumes(task)
-	case vmbased.ActionAttachVolumes:
-		return handler.AttachVolumes(task)
-	case vmbased.ActionDeleteVolumes:
-		return handler.DeleteVolumes(task)
-
-	case vmbased.ActionWaitFrontgateAvailable:
-		// do nothing
-		return nil
-	default:
-		logger.Error(p.ctx, "Unknown task action [%s]", task.TaskAction)
-		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
-	}
+	return vmbased.HandleSubtask(p.ctx, task, handler)
 }
-func (p *Provider) WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error {
-	logger.Debug(p.ctx, "Wait sub task timeout [%s] interval [%s]", timeout, waitInterval)
-	handler := GetProviderHandler(p.ctx)
 
-	switch task.TaskAction {
-	case vmbased.ActionRunInstances:
-		return handler.WaitRunInstances(task)
-	case vmbased.ActionStopInstances:
-		return handler.WaitStopInstances(task)
-	case vmbased.ActionStartInstances:
-		return handler.WaitStartInstances(task)
-	case vmbased.ActionTerminateInstances:
-		return handler.WaitDeleteInstances(task)
-	case vmbased.ActionCreateVolumes:
-		return handler.WaitCreateVolumes(task)
-	case vmbased.ActionDetachVolumes:
-		return handler.WaitDetachVolumes(task)
-	case vmbased.ActionAttachVolumes:
-		return handler.WaitAttachVolumes(task)
-	case vmbased.ActionDeleteVolumes:
-		return handler.WaitDeleteVolumes(task)
-	case vmbased.ActionWaitFrontgateAvailable:
-		return handler.WaitFrontgateAvailable(task)
-	default:
-		logger.Error(p.ctx, "Unknown task action [%s]", task.TaskAction)
-		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
-	}
+func (p *Provider) WaitSubtask(task *models.Task) error {
+	handler := GetProviderHandler(p.ctx)
+	return vmbased.WaitSubtask(p.ctx, task, handler)
 }
 
 func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
@@ -247,4 +115,8 @@ func (p *Provider) DescribeRuntimeProviderAvailabilityZones(url, credential, zon
 func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
 	handler := GetProviderHandler(p.ctx)
 	return handler.DescribeZones(url, credential)
+}
+
+func (p *Provider) DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) error {
+	return nil
 }

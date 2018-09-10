@@ -67,7 +67,18 @@ const (
 
 	StatusAvailable = "available"
 	StatusInUse     = "in-use"
+
+	StatusDraft     = "draft"
+	StatusSubmitted = "submitted"
+	StatusPassed    = "passed"
+	StatusRejected  = "rejected"
+	StatusSuspended = "suspended"
 )
+
+var DeletedStatuses = []string{
+	StatusDeleted,
+	StatusCeased,
+}
 
 const (
 	VisibilityPublic  = "public"

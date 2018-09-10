@@ -47,7 +47,7 @@ func NewApp(name, repoId, description, owner, chartName string) *App {
 		Name:        name,
 		RepoId:      repoId,
 		Description: description,
-		Status:      constants.StatusActive,
+		Status:      constants.StatusDraft,
 		Owner:       owner,
 		ChartName:   chartName,
 		CreateTime:  time.Now(),

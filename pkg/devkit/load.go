@@ -15,10 +15,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
-func Load(name string) (*app.App, error) {
+func Load(name string) (*opapp.OpApp, error) {
 	fi, err := os.Stat(name)
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func Load(name string) (*app.App, error) {
 }
 
 // LoadFile loads from an archive file.
-func LoadFile(name string) (*app.App, error) {
+func LoadFile(name string) (*opapp.OpApp, error) {
 	if fi, err := os.Stat(name); err != nil {
 		return nil, err
 	} else if fi.IsDir() {
@@ -50,14 +50,14 @@ func LoadFile(name string) (*app.App, error) {
 }
 
 // LoadArchive loads from a reader containing a compressed tar archive.
-func LoadArchive(in io.Reader) (*app.App, error) {
+func LoadArchive(in io.Reader) (*opapp.OpApp, error) {
 	unzipped, err := gzip.NewReader(in)
 	if err != nil {
-		return &app.App{}, err
+		return &opapp.OpApp{}, err
 	}
 	defer unzipped.Close()
 
-	var files []app.BufferedFile
+	var files []opapp.BufferedFile
 	tr := tar.NewReader(unzipped)
 	for {
 		b := bytes.NewBuffer(nil)
@@ -66,7 +66,7 @@ func LoadArchive(in io.Reader) (*app.App, error) {
 			break
 		}
 		if err != nil {
-			return &app.App{}, err
+			return &opapp.OpApp{}, err
 		}
 
 		if hd.FileInfo().IsDir() {
@@ -92,10 +92,10 @@ func LoadArchive(in io.Reader) (*app.App, error) {
 		}
 
 		if _, err := io.Copy(b, tr); err != nil {
-			return &app.App{}, err
+			return &opapp.OpApp{}, err
 		}
 
-		files = append(files, app.BufferedFile{Name: n, Data: b.Bytes()})
+		files = append(files, opapp.BufferedFile{Name: n, Data: b.Bytes()})
 		b.Reset()
 	}
 
@@ -106,16 +106,16 @@ func LoadArchive(in io.Reader) (*app.App, error) {
 	return LoadFiles(files)
 }
 
-func LoadDir(dir string) (*app.App, error) {
+func LoadDir(dir string) (*opapp.OpApp, error) {
 	topdir, err := filepath.Abs(dir)
 	if err != nil {
 		return nil, err
 	}
 
 	// Just used for errors.
-	c := &app.App{}
+	c := &opapp.OpApp{}
 
-	var files []app.BufferedFile
+	var files []opapp.BufferedFile
 	topdir += string(filepath.Separator)
 
 	err = filepath.Walk(topdir, func(name string, fi os.FileInfo, err error) error {
@@ -136,7 +136,7 @@ func LoadDir(dir string) (*app.App, error) {
 			return fmt.Errorf("failed to read [%s]: %+v", n, err)
 		}
 
-		files = append(files, app.BufferedFile{Name: n, Data: data})
+		files = append(files, opapp.BufferedFile{Name: n, Data: data})
 		return nil
 	})
 	if err != nil {
@@ -147,20 +147,20 @@ func LoadDir(dir string) (*app.App, error) {
 }
 
 // LoadFiles loads from in-memory files.
-func LoadFiles(files []app.BufferedFile) (*app.App, error) {
-	c := &app.App{}
+func LoadFiles(files []opapp.BufferedFile) (*opapp.OpApp, error) {
+	c := &opapp.OpApp{}
 
 	for _, f := range files {
 		if f.Name == PackageJson {
-			m, err := app.DecodePackageJson(f.Data)
+			m, err := opapp.DecodePackageJson(f.Data)
 			if err != nil {
 				return c, err
 			}
 			c.Metadata = m
 		} else if f.Name == ClusterJsonTmpl {
-			c.ClusterConfTemplate = &app.ClusterConfTemplate{Raw: string(f.Data)}
+			c.ClusterConfTemplate = &opapp.ClusterConfTemplate{Raw: string(f.Data)}
 		} else if f.Name == ConfigJson {
-			m, err := app.DecodeConfigJson(f.Data)
+			m, err := opapp.DecodeConfigJson(f.Data)
 			if err != nil {
 				return c, err
 			}
@@ -184,6 +184,6 @@ func LoadFiles(files []app.BufferedFile) (*app.App, error) {
 	}
 	// Validate default config
 	config := c.ConfigTemplate.GetDefaultConfig()
-	err := app.ValidateClusterConfTmpl(c.ClusterConfTemplate, &config)
+	err := opapp.ValidateClusterConfTmpl(c.ClusterConfTemplate, config)
 	return c, err
 }

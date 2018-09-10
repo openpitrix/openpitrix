@@ -4,37 +4,25 @@ import (
 	"context"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/reporeader"
-	"openpitrix.io/openpitrix/pkg/util/yamlutil"
+	"openpitrix.io/openpitrix/pkg/repoiface"
 )
 
-type QingStorCredential struct {
-	AccessKeyId     string `json:"access_key_id"`
-	SecretAccessKey string `json:"secret_access_key"`
-}
-
-type IndexYaml struct {
-	ApiVersion string                 `yaml:"apiVersion"`
-	Entries    map[string]interface{} `yaml:"entries"`
-	Generated  string                 `yaml:"generated"`
-}
-
-func validate(ctx context.Context, repoType, url, credential string, providers []string) error {
+func validate(ctx context.Context, repoType, url, credential string) error {
 	var errCode uint32
-	reader, err := reporeader.New(ctx, repoType, url, credential)
+	r, err := repoiface.New(ctx, repoType, url, credential)
 	if err != nil {
 		switch err {
-		case reporeader.ErrParseUrlFailed:
+		case repoiface.ErrParseUrlFailed:
 			errCode = ErrUrlFormat
-		case reporeader.ErrDecodeJsonFailed:
+		case repoiface.ErrDecodeJsonFailed:
 			errCode = ErrCredentialNotJson
-		case reporeader.ErrEmptyAccessKeyId:
+		case repoiface.ErrEmptyAccessKeyId:
 			errCode = ErrNoAccessKeyId
-		case reporeader.ErrEmptySecretAccessKey:
+		case repoiface.ErrEmptySecretAccessKey:
 			errCode = ErrNoSecretAccessKey
-		case reporeader.ErrInvalidType:
+		case repoiface.ErrInvalidType:
 			errCode = ErrType
-		case reporeader.ErrSchemeNotMatched:
+		case repoiface.ErrSchemeNotMatched:
 			switch repoType {
 			case constants.TypeHttp:
 				errCode = ErrSchemeNotHttp
@@ -47,25 +35,16 @@ func validate(ctx context.Context, repoType, url, credential string, providers [
 		return newErrorWithCode(errCode, err)
 	}
 
-	body, err := reader.GetIndexYaml()
+	err = r.CheckRead(ctx)
 	if err != nil {
-		switch err {
-		case reporeader.ErrGetIndexYamlFailed:
-			switch repoType {
-			case constants.TypeHttp, constants.TypeHttps:
-				errCode = ErrHttpAccessDeny
-			case constants.TypeS3:
-				errCode = ErrS3AccessDeny
-			}
-
+		switch repoType {
+		case constants.TypeHttp:
+			errCode = ErrHttpAccessDeny
+		case constants.TypeHttps:
+			errCode = ErrHttpAccessDeny
+		case constants.TypeS3:
+			errCode = ErrS3AccessDeny
 		}
-		return newErrorWithCode(errCode, err)
-	}
-
-	var y IndexYaml
-	err = yamlutil.Decode(body, &y)
-	if err != nil {
-		errCode = ErrBadIndexYaml
 		return newErrorWithCode(errCode, err)
 	}
 

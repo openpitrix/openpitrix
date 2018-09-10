@@ -29,15 +29,18 @@ message CreateAppRequest {
 	google.protobuf.StringValue readme = 12;
 	google.protobuf.StringValue category_id = 13;
 	google.protobuf.StringValue keywords = 14;
+	google.protobuf.StringValue status = 15;
+	google.protobuf.BytesValue package = 16;
 }
 
 message CreateAppResponse {
 	google.protobuf.StringValue app_id = 1;
+	google.protobuf.StringValue version_id = 2;
 }
 
 message ModifyAppRequest {
 	google.protobuf.StringValue app_id = 1;
-	google.protobuf.StringValue name = 2; // TODO: using google.protobuf.StringValue to handle nil param
+	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue repo_id = 3;
 	google.protobuf.StringValue owner = 4;
 	google.protobuf.StringValue chart_name = 5;
@@ -50,6 +53,7 @@ message ModifyAppRequest {
 	google.protobuf.StringValue readme = 13;
 	google.protobuf.StringValue category_id = 14;
 	google.protobuf.StringValue keywords = 15;
+	google.protobuf.StringValue status = 16;
 }
 
 message ModifyAppResponse {
@@ -113,6 +117,15 @@ message CreateAppVersionRequest {
 	google.protobuf.StringValue package_name = 4;
 	google.protobuf.StringValue description = 5;
 	google.protobuf.UInt32Value sequence = 6;
+	google.protobuf.StringValue status = 7;
+	google.protobuf.BytesValue package = 8;
+	google.protobuf.StringValue home = 9;
+	google.protobuf.StringValue icon = 10;
+	google.protobuf.StringValue screenshots = 11;
+	google.protobuf.StringValue maintainers = 12;
+	google.protobuf.StringValue keywords = 13;
+	google.protobuf.StringValue sources = 14;
+	google.protobuf.StringValue readme = 15;
 }
 
 message CreateAppVersionResponse {
@@ -126,6 +139,15 @@ message ModifyAppVersionRequest {
 	google.protobuf.StringValue owner = 4;
 	google.protobuf.StringValue description = 5;
 	google.protobuf.UInt32Value sequence = 6;
+	google.protobuf.StringValue status = 7;
+	google.protobuf.BytesValue package = 8;
+	google.protobuf.StringValue home = 9;
+	google.protobuf.StringValue icon = 10;
+	google.protobuf.StringValue screenshots = 11;
+	google.protobuf.StringValue maintainers = 12;
+	google.protobuf.StringValue keywords = 13;
+	google.protobuf.StringValue sources = 14;
+	google.protobuf.StringValue readme = 15;
 }
 
 message ModifyAppVersionResponse {
@@ -146,12 +168,19 @@ message AppVersion {
 	google.protobuf.StringValue owner = 3;
 	google.protobuf.StringValue name = 4;
 	google.protobuf.StringValue description = 5;
-	google.protobuf.StringValue package_name = 6;
-	google.protobuf.StringValue status = 7;
-	google.protobuf.Timestamp create_time = 8;
-	google.protobuf.Timestamp status_time = 9;
-	google.protobuf.Timestamp update_time = 10;
-	uint32 sequence = 11;
+	google.protobuf.StringValue home = 6;
+	google.protobuf.StringValue icon = 7;
+	google.protobuf.StringValue screenshots = 8;
+	google.protobuf.StringValue maintainers = 9;
+	google.protobuf.StringValue keywords = 10;
+	google.protobuf.StringValue sources = 11;
+	google.protobuf.StringValue readme = 12;
+	google.protobuf.StringValue package_name = 13;
+	google.protobuf.StringValue status = 14;
+	google.protobuf.Timestamp create_time = 15;
+	google.protobuf.Timestamp status_time = 16;
+	google.protobuf.Timestamp update_time = 17;
+	google.protobuf.UInt32Value sequence = 18;
 }
 
 message DescribeAppVersionsRequest {
@@ -180,7 +209,8 @@ message GetAppVersionPackageRequest {
 
 message GetAppVersionPackageResponse {
 	bytes package = 1;
-	google.protobuf.StringValue version_id = 2;
+	google.protobuf.StringValue app_id = 2;
+	google.protobuf.StringValue version_id = 3;
 }
 
 message GetAppVersionPackageFilesRequest {
@@ -200,6 +230,55 @@ message GetAppStatisticsResponse {
 	map<string, uint32> top_ten_repos = 2; // repo id -> app count, max length is 10
 	uint32 app_count = 3;
 	uint32 repo_count = 4;
+}
+
+message SubmitAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message SubmitAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message CancelAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message CancelAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message ReleaseAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message ReleaseAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message DeleteAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message DeleteAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message PassAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message PassAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message RejectAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message RejectAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message SuspendAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message SuspendAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
+}
+message RecoverAppVersionRequest {
+	google.protobuf.StringValue version_id = 1;
+}
+message RecoverAppVersionResponse {
+	google.protobuf.StringValue version_id = 1;
 }
 
 service AppManager {
@@ -297,5 +376,79 @@ service AppManager {
 		option (google.api.http) = {
 			get: "/v1/app_version/package/files"
 		};
+	}
+
+	rpc SubmitAppVersion (SubmitAppVersionRequest) returns (SubmitAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "submit app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/submit"
+            body: "*"
+        };
+	}
+	rpc CancelAppVersion (CancelAppVersionRequest) returns (CancelAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "cancel app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/cancel"
+            body: "*"
+        };
+	}
+	rpc ReleaseAppVersion (ReleaseAppVersionRequest) returns (ReleaseAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "release app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/release"
+            body: "*"
+        };
+	}
+	rpc DeleteAppVersion (DeleteAppVersionRequest) returns (DeleteAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "delete app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/delete"
+            body: "*"
+        };
+	}
+
+	rpc PassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "pass app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/pass"
+            body: "*"
+        };
+	}
+	rpc RejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "reject app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/reject"
+            body: "*"
+        };
+	}
+	rpc SuspendAppVersion (SuspendAppVersionRequest) returns (SuspendAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "suspend app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/suspend"
+            body: "*"
+        };
+	}
+	rpc RecoverAppVersion (RecoverAppVersionRequest) returns (RecoverAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "recover app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/recover"
+            body: "*"
+        };
 	}
 }

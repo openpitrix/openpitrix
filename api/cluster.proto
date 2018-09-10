@@ -132,11 +132,18 @@ message RollbackClusterResponse {
 	google.protobuf.StringValue job_id = 2;
 }
 
+message RoleResource {
+	google.protobuf.StringValue role = 1;
+	google.protobuf.UInt32Value cpu = 2;
+	google.protobuf.UInt32Value gpu = 3;
+	google.protobuf.UInt32Value memory = 4;
+	google.protobuf.UInt32Value instance_size = 5;
+	google.protobuf.UInt32Value storage_size = 6;
+}
+
 message ResizeClusterRequest {
 	google.protobuf.StringValue cluster_id = 1;
-	google.protobuf.StringValue role = 2;
-	google.protobuf.UInt32Value cpu = 3;
-	google.protobuf.UInt32Value memory = 4;
+	repeated RoleResource role_resource = 2;
 	repeated string advanced_param = 5;
 }
 
@@ -159,9 +166,8 @@ message AddClusterNodesResponse {
 
 message DeleteClusterNodesRequest {
 	google.protobuf.StringValue cluster_id = 1;
-	google.protobuf.StringValue role = 2;
-	repeated string node_id = 3;
-	repeated string advanced_param = 4;
+	repeated string node_id = 2;
+	repeated string advanced_param = 3;
 }
 
 message DeleteClusterNodesResponse {
@@ -233,9 +239,11 @@ message ClusterNode {
 	google.protobuf.BoolValue auto_backup = 21;
 	google.protobuf.Timestamp create_time = 22;
 	google.protobuf.Timestamp status_time = 23;
-	ClusterRole cluster_role = 24;
-	ClusterCommon cluster_common = 25;
-	repeated string key_pair_id = 26;
+	google.protobuf.StringValue host_id = 24;
+	google.protobuf.StringValue host_ip = 25;
+	ClusterRole cluster_role = 26;
+	ClusterCommon cluster_common = 27;
+	repeated string key_pair_id = 28;
 }
 
 message ClusterRole {
@@ -250,6 +258,9 @@ message ClusterRole {
 	google.protobuf.StringValue mount_options = 9;
 	google.protobuf.StringValue file_system = 10;
 	google.protobuf.StringValue env = 11;
+	google.protobuf.UInt32Value replicas = 12;
+	google.protobuf.UInt32Value ready_replicas = 13;
+	google.protobuf.StringValue api_version = 14;
 }
 
 message ClusterLoadbalancer {

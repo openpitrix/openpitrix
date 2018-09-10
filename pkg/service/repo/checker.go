@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 )
 
 var SupportedVisibility = []string{
@@ -22,13 +23,13 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.CreateRepoRequest:
 		return manager.NewChecker(ctx, r).
 			Required("type", "name", "url", "credential", "visibility", "providers").
-			StringChosen("providers", p.GlobalConfig().Cluster.Plugins).
+			StringChosen("providers", pi.Global().GlobalConfig().Cluster.Plugins).
 			StringChosen("visibility", SupportedVisibility).
 			Exec()
 	case *pb.ModifyRepoRequest:
 		return manager.NewChecker(ctx, r).
 			Required("repo_id").
-			StringChosen("providers", p.GlobalConfig().Cluster.Plugins).
+			StringChosen("providers", pi.Global().GlobalConfig().Cluster.Plugins).
 			StringChosen("visibility", SupportedVisibility).
 			Exec()
 	case *pb.DeleteReposRequest:

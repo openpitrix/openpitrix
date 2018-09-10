@@ -15,12 +15,11 @@ import (
 )
 
 type Server struct {
-	*pi.Pi
 }
 
 func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
-	s := Server{pi.Global()}
+	s := Server{}
 	manager.NewGrpcServer("repo-manager", constants.RepoManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).

@@ -22,14 +22,8 @@ type OpenpitrixResizeClusterRequest struct {
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
-	// cpu
-	CPU int64 `json:"cpu,omitempty"`
-
-	// memory
-	Memory int64 `json:"memory,omitempty"`
-
-	// role
-	Role string `json:"role,omitempty"`
+	// role resource
+	RoleResource OpenpitrixResizeClusterRequestRoleResource `json:"role_resource"`
 }
 
 // Validate validates this openpitrix resize cluster request

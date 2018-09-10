@@ -31,6 +31,7 @@ type Job struct {
 	Status     string
 	ErrorCode  uint32
 	Executor   string
+	RuntimeId  string
 	TaskCount  uint32
 	CreateTime time.Time
 	StatusTime time.Time
@@ -38,7 +39,7 @@ type Job struct {
 
 var JobColumns = GetColumnsFromStruct(&Job{})
 
-func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, provider, userId string) *Job {
+func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, provider, userId, runtimeId string) *Job {
 	if jobId == "" {
 		jobId = NewJobId()
 	} else if jobId == constants.PlaceHolder {
@@ -53,6 +54,7 @@ func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, provider, 
 		Directive:  directive,
 		Provider:   provider,
 		Owner:      userId,
+		RuntimeId:  runtimeId,
 		Status:     constants.StatusPending,
 		CreateTime: time.Now(),
 		StatusTime: time.Now(),
@@ -72,6 +74,7 @@ func JobToPb(job *Job) *pb.Job {
 	pbJob.Status = pbutil.ToProtoString(job.Status)
 	pbJob.ErrorCode = pbutil.ToProtoUInt32(job.ErrorCode)
 	pbJob.Executor = pbutil.ToProtoString(job.Executor)
+	pbJob.RuntimeId = pbutil.ToProtoString(job.RuntimeId)
 	pbJob.TaskCount = pbutil.ToProtoUInt32(job.TaskCount)
 	pbJob.CreateTime = pbutil.ToProtoTimestamp(job.CreateTime)
 	pbJob.StatusTime = pbutil.ToProtoTimestamp(job.StatusTime)

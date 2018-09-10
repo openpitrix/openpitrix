@@ -13,6 +13,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -66,6 +67,13 @@ func ServeReverseRpcServerForPilot(
 		ch, conn, err := pilotutil.DialFrontgateChannelTLS(
 			context.Background(), fmt.Sprintf("%s:%d", cfg.PilotHost, cfg.PilotPort),
 			tlsConfig,
+			grpc.WithBlock(),
+			grpc.WithKeepaliveParams(keepalive.ClientParameters{
+				Time:                30 * time.Second,
+				Timeout:             10 * time.Second,
+				PermitWithoutStream: true,
+			}),
+			grpc.WithTimeout(20*time.Second),
 		)
 		if err != nil {
 			gerr, ok := status.FromError(err)

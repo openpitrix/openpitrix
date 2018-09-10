@@ -84,6 +84,9 @@ func (p *Server) deleteProviders(ctx context.Context, repoId string, providers [
 
 func (p *Server) modifyProviders(ctx context.Context, repoId string, providers []string) error {
 	providersMap, err := p.getProvidersMap(ctx, []string{repoId})
+	if err != nil {
+		return err
+	}
 
 	var currentProviders []string
 	for _, repoProvider := range providersMap[repoId] {
@@ -96,71 +99,6 @@ func (p *Server) modifyProviders(ctx context.Context, repoId string, providers [
 		return err
 	}
 	err = p.deleteProviders(ctx, repoId, deleteProviders)
-	return err
-}
-
-func (p *Server) modifyLabels(ctx context.Context, repoId string, labels []*pb.RepoLabel) error {
-	labelsMap, err := p.getLabelsMap(ctx, []string{repoId})
-	if err != nil {
-		return err
-	}
-	currentLabels := labelsMap[repoId]
-	currentLabelsLength := len(currentLabels)
-	labelsLength := len(labels)
-	firstLabel := labels[0]
-	if labelsLength == 1 &&
-		firstLabel.GetLabelValue().GetValue() == "" &&
-		firstLabel.GetLabelKey().GetValue() == "" {
-		_, err = pi.Global().DB(ctx).
-			DeleteFrom(models.RepoLabelTableName).
-			Where(db.Eq(models.ColumnRepoId, repoId)).
-			Exec()
-		return err
-	}
-	// create new labels
-	if labelsLength > currentLabelsLength {
-		err = p.createLabels(ctx, repoId, labels[currentLabelsLength:])
-		if err != nil {
-			return err
-		}
-	}
-	// update current labels
-	for i, currentLabel := range currentLabels {
-		var err error
-		whereCondition := db.Eq(models.ColumnRepoLabelId, currentLabel.RepoLabelId)
-		if i+1 <= labelsLength {
-			// if current label exist, update it to new key/value
-			targetLabel := labels[i]
-			_, err = pi.Global().DB(ctx).
-				Update(models.RepoLabelTableName).
-				Set(models.ColumnLabelKey, targetLabel.GetLabelKey().GetValue()).
-				Set(models.ColumnLabelValue, targetLabel.GetLabelValue().GetValue()).
-				Where(whereCondition).
-				Exec()
-		} else {
-			// if current label more than arguments, delete it
-			_, err = pi.Global().DB(ctx).
-				DeleteFrom(models.RepoLabelTableName).
-				Where(whereCondition).
-				Exec()
-		}
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (p *Server) createLabels(ctx context.Context, repoId string, labels []*pb.RepoLabel) error {
-	if len(labels) == 0 {
-		return nil
-	}
-	insert := pi.Global().DB(ctx).InsertInto(models.RepoLabelTableName).Columns(models.RepoLabelColumns...)
-	for _, label := range labels {
-		repoLabel := models.NewRepoLabel(repoId, label.GetLabelKey().GetValue(), label.GetLabelValue().GetValue())
-		insert = insert.Record(repoLabel)
-	}
-	_, err := insert.Exec()
 	return err
 }
 
@@ -230,6 +168,9 @@ func (p *Server) createSelectors(ctx context.Context, repoId string, selectors [
 }
 
 func (p *Server) getProvidersMap(ctx context.Context, repoIds []string) (providersMap map[string][]*models.RepoProvider, err error) {
+	if len(repoIds) == 0 {
+		return
+	}
 	var repoProviders []*models.RepoProvider
 	_, err = pi.Global().DB(ctx).
 		Select(models.RepoProviderColumns...).
@@ -244,6 +185,9 @@ func (p *Server) getProvidersMap(ctx context.Context, repoIds []string) (provide
 }
 
 func (p *Server) getSelectorsMap(ctx context.Context, repoIds []string) (selectorsMap map[string][]*models.RepoSelector, err error) {
+	if len(repoIds) == 0 {
+		return
+	}
 	var repoSelectors []*models.RepoSelector
 	_, err = pi.Global().DB(ctx).
 		Select(models.RepoSelectorColumns...).
@@ -258,7 +202,10 @@ func (p *Server) getSelectorsMap(ctx context.Context, repoIds []string) (selecto
 	return
 }
 
-func (p *Server) getLabelsMap(ctx context.Context, repoIds []string) (labelsMap map[string][]*models.RepoLabel, err error) {
+func getReposLabelsMap(ctx context.Context, repoIds []string) (reposLabelsMap map[string][]*models.RepoLabel, err error) {
+	if len(repoIds) == 0 {
+		return
+	}
 	var repoLabels []*models.RepoLabel
 	_, err = pi.Global().DB(ctx).
 		Select(models.RepoLabelColumns...).
@@ -269,7 +216,7 @@ func (p *Server) getLabelsMap(ctx context.Context, repoIds []string) (labelsMap 
 	if err != nil {
 		return
 	}
-	labelsMap = models.RepoLabelsMap(repoLabels)
+	reposLabelsMap = models.RepoLabelsMap(repoLabels)
 	return
 }
 
@@ -294,7 +241,7 @@ func (p *Server) formatRepoSet(ctx context.Context, repos []*models.Repo) (pbRep
 	}
 
 	var labelsMap map[string][]*models.RepoLabel
-	labelsMap, err = p.getLabelsMap(ctx, repoIds)
+	labelsMap, err = getReposLabelsMap(ctx, repoIds)
 	if err != nil {
 		return
 	}

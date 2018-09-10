@@ -41,6 +41,8 @@ type CreateAppRequest struct {
 	Readme               *wrappers.StringValue `protobuf:"bytes,12,opt,name=readme,proto3" json:"readme,omitempty"`
 	CategoryId           *wrappers.StringValue `protobuf:"bytes,13,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	Keywords             *wrappers.StringValue `protobuf:"bytes,14,opt,name=keywords,proto3" json:"keywords,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,15,opt,name=status,proto3" json:"status,omitempty"`
+	Package              *wrappers.BytesValue  `protobuf:"bytes,16,opt,name=package,proto3" json:"package,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -50,7 +52,7 @@ func (m *CreateAppRequest) Reset()         { *m = CreateAppRequest{} }
 func (m *CreateAppRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateAppRequest) ProtoMessage()    {}
 func (*CreateAppRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{0}
+	return fileDescriptor_app_c72527858dd2b44e, []int{0}
 }
 func (m *CreateAppRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateAppRequest.Unmarshal(m, b)
@@ -161,8 +163,23 @@ func (m *CreateAppRequest) GetKeywords() *wrappers.StringValue {
 	return nil
 }
 
+func (m *CreateAppRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *CreateAppRequest) GetPackage() *wrappers.BytesValue {
+	if m != nil {
+		return m.Package
+	}
+	return nil
+}
+
 type CreateAppResponse struct {
 	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -172,7 +189,7 @@ func (m *CreateAppResponse) Reset()         { *m = CreateAppResponse{} }
 func (m *CreateAppResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateAppResponse) ProtoMessage()    {}
 func (*CreateAppResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{1}
+	return fileDescriptor_app_c72527858dd2b44e, []int{1}
 }
 func (m *CreateAppResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateAppResponse.Unmarshal(m, b)
@@ -199,6 +216,13 @@ func (m *CreateAppResponse) GetAppId() *wrappers.StringValue {
 	return nil
 }
 
+func (m *CreateAppResponse) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
 type ModifyAppRequest struct {
 	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
 	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -214,6 +238,7 @@ type ModifyAppRequest struct {
 	Readme               *wrappers.StringValue `protobuf:"bytes,13,opt,name=readme,proto3" json:"readme,omitempty"`
 	CategoryId           *wrappers.StringValue `protobuf:"bytes,14,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	Keywords             *wrappers.StringValue `protobuf:"bytes,15,opt,name=keywords,proto3" json:"keywords,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,16,opt,name=status,proto3" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -223,7 +248,7 @@ func (m *ModifyAppRequest) Reset()         { *m = ModifyAppRequest{} }
 func (m *ModifyAppRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyAppRequest) ProtoMessage()    {}
 func (*ModifyAppRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{2}
+	return fileDescriptor_app_c72527858dd2b44e, []int{2}
 }
 func (m *ModifyAppRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyAppRequest.Unmarshal(m, b)
@@ -341,6 +366,13 @@ func (m *ModifyAppRequest) GetKeywords() *wrappers.StringValue {
 	return nil
 }
 
+func (m *ModifyAppRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
 type ModifyAppResponse struct {
 	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
@@ -352,7 +384,7 @@ func (m *ModifyAppResponse) Reset()         { *m = ModifyAppResponse{} }
 func (m *ModifyAppResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyAppResponse) ProtoMessage()    {}
 func (*ModifyAppResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{3}
+	return fileDescriptor_app_c72527858dd2b44e, []int{3}
 }
 func (m *ModifyAppResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyAppResponse.Unmarshal(m, b)
@@ -390,7 +422,7 @@ func (m *DeleteAppsRequest) Reset()         { *m = DeleteAppsRequest{} }
 func (m *DeleteAppsRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteAppsRequest) ProtoMessage()    {}
 func (*DeleteAppsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{4}
+	return fileDescriptor_app_c72527858dd2b44e, []int{4}
 }
 func (m *DeleteAppsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteAppsRequest.Unmarshal(m, b)
@@ -428,7 +460,7 @@ func (m *DeleteAppsResponse) Reset()         { *m = DeleteAppsResponse{} }
 func (m *DeleteAppsResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteAppsResponse) ProtoMessage()    {}
 func (*DeleteAppsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{5}
+	return fileDescriptor_app_c72527858dd2b44e, []int{5}
 }
 func (m *DeleteAppsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteAppsResponse.Unmarshal(m, b)
@@ -484,7 +516,7 @@ func (m *App) Reset()         { *m = App{} }
 func (m *App) String() string { return proto.CompactTextString(m) }
 func (*App) ProtoMessage()    {}
 func (*App) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{6}
+	return fileDescriptor_app_c72527858dd2b44e, []int{6}
 }
 func (m *App) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_App.Unmarshal(m, b)
@@ -659,7 +691,7 @@ func (m *DescribeAppsRequest) Reset()         { *m = DescribeAppsRequest{} }
 func (m *DescribeAppsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeAppsRequest) ProtoMessage()    {}
 func (*DescribeAppsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{7}
+	return fileDescriptor_app_c72527858dd2b44e, []int{7}
 }
 func (m *DescribeAppsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeAppsRequest.Unmarshal(m, b)
@@ -775,7 +807,7 @@ func (m *DescribeAppsResponse) Reset()         { *m = DescribeAppsResponse{} }
 func (m *DescribeAppsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeAppsResponse) ProtoMessage()    {}
 func (*DescribeAppsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{8}
+	return fileDescriptor_app_c72527858dd2b44e, []int{8}
 }
 func (m *DescribeAppsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeAppsResponse.Unmarshal(m, b)
@@ -816,6 +848,15 @@ type CreateAppVersionRequest struct {
 	PackageName          *wrappers.StringValue `protobuf:"bytes,4,opt,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
 	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
 	Sequence             *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
+	Package              *wrappers.BytesValue  `protobuf:"bytes,8,opt,name=package,proto3" json:"package,omitempty"`
+	Home                 *wrappers.StringValue `protobuf:"bytes,9,opt,name=home,proto3" json:"home,omitempty"`
+	Icon                 *wrappers.StringValue `protobuf:"bytes,10,opt,name=icon,proto3" json:"icon,omitempty"`
+	Screenshots          *wrappers.StringValue `protobuf:"bytes,11,opt,name=screenshots,proto3" json:"screenshots,omitempty"`
+	Maintainers          *wrappers.StringValue `protobuf:"bytes,12,opt,name=maintainers,proto3" json:"maintainers,omitempty"`
+	Keywords             *wrappers.StringValue `protobuf:"bytes,13,opt,name=keywords,proto3" json:"keywords,omitempty"`
+	Sources              *wrappers.StringValue `protobuf:"bytes,14,opt,name=sources,proto3" json:"sources,omitempty"`
+	Readme               *wrappers.StringValue `protobuf:"bytes,15,opt,name=readme,proto3" json:"readme,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -825,7 +866,7 @@ func (m *CreateAppVersionRequest) Reset()         { *m = CreateAppVersionRequest
 func (m *CreateAppVersionRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateAppVersionRequest) ProtoMessage()    {}
 func (*CreateAppVersionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{9}
+	return fileDescriptor_app_c72527858dd2b44e, []int{9}
 }
 func (m *CreateAppVersionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateAppVersionRequest.Unmarshal(m, b)
@@ -887,6 +928,69 @@ func (m *CreateAppVersionRequest) GetSequence() *wrappers.UInt32Value {
 	return nil
 }
 
+func (m *CreateAppVersionRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *CreateAppVersionRequest) GetPackage() *wrappers.BytesValue {
+	if m != nil {
+		return m.Package
+	}
+	return nil
+}
+
+func (m *CreateAppVersionRequest) GetHome() *wrappers.StringValue {
+	if m != nil {
+		return m.Home
+	}
+	return nil
+}
+
+func (m *CreateAppVersionRequest) GetIcon() *wrappers.StringValue {
+	if m != nil {
+		return m.Icon
+	}
+	return nil
+}
+
+func (m *CreateAppVersionRequest) GetScreenshots() *wrappers.StringValue {
+	if m != nil {
+		return m.Screenshots
+	}
+	return nil
+}
+
+func (m *CreateAppVersionRequest) GetMaintainers() *wrappers.StringValue {
+	if m != nil {
+		return m.Maintainers
+	}
+	return nil
+}
+
+func (m *CreateAppVersionRequest) GetKeywords() *wrappers.StringValue {
+	if m != nil {
+		return m.Keywords
+	}
+	return nil
+}
+
+func (m *CreateAppVersionRequest) GetSources() *wrappers.StringValue {
+	if m != nil {
+		return m.Sources
+	}
+	return nil
+}
+
+func (m *CreateAppVersionRequest) GetReadme() *wrappers.StringValue {
+	if m != nil {
+		return m.Readme
+	}
+	return nil
+}
+
 type CreateAppVersionResponse struct {
 	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
@@ -898,7 +1002,7 @@ func (m *CreateAppVersionResponse) Reset()         { *m = CreateAppVersionRespon
 func (m *CreateAppVersionResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateAppVersionResponse) ProtoMessage()    {}
 func (*CreateAppVersionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{10}
+	return fileDescriptor_app_c72527858dd2b44e, []int{10}
 }
 func (m *CreateAppVersionResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateAppVersionResponse.Unmarshal(m, b)
@@ -932,6 +1036,15 @@ type ModifyAppVersionRequest struct {
 	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
 	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
 	Sequence             *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
+	Package              *wrappers.BytesValue  `protobuf:"bytes,8,opt,name=package,proto3" json:"package,omitempty"`
+	Home                 *wrappers.StringValue `protobuf:"bytes,9,opt,name=home,proto3" json:"home,omitempty"`
+	Icon                 *wrappers.StringValue `protobuf:"bytes,10,opt,name=icon,proto3" json:"icon,omitempty"`
+	Screenshots          *wrappers.StringValue `protobuf:"bytes,11,opt,name=screenshots,proto3" json:"screenshots,omitempty"`
+	Maintainers          *wrappers.StringValue `protobuf:"bytes,12,opt,name=maintainers,proto3" json:"maintainers,omitempty"`
+	Keywords             *wrappers.StringValue `protobuf:"bytes,13,opt,name=keywords,proto3" json:"keywords,omitempty"`
+	Sources              *wrappers.StringValue `protobuf:"bytes,14,opt,name=sources,proto3" json:"sources,omitempty"`
+	Readme               *wrappers.StringValue `protobuf:"bytes,15,opt,name=readme,proto3" json:"readme,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -941,7 +1054,7 @@ func (m *ModifyAppVersionRequest) Reset()         { *m = ModifyAppVersionRequest
 func (m *ModifyAppVersionRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyAppVersionRequest) ProtoMessage()    {}
 func (*ModifyAppVersionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{11}
+	return fileDescriptor_app_c72527858dd2b44e, []int{11}
 }
 func (m *ModifyAppVersionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyAppVersionRequest.Unmarshal(m, b)
@@ -1003,6 +1116,69 @@ func (m *ModifyAppVersionRequest) GetSequence() *wrappers.UInt32Value {
 	return nil
 }
 
+func (m *ModifyAppVersionRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *ModifyAppVersionRequest) GetPackage() *wrappers.BytesValue {
+	if m != nil {
+		return m.Package
+	}
+	return nil
+}
+
+func (m *ModifyAppVersionRequest) GetHome() *wrappers.StringValue {
+	if m != nil {
+		return m.Home
+	}
+	return nil
+}
+
+func (m *ModifyAppVersionRequest) GetIcon() *wrappers.StringValue {
+	if m != nil {
+		return m.Icon
+	}
+	return nil
+}
+
+func (m *ModifyAppVersionRequest) GetScreenshots() *wrappers.StringValue {
+	if m != nil {
+		return m.Screenshots
+	}
+	return nil
+}
+
+func (m *ModifyAppVersionRequest) GetMaintainers() *wrappers.StringValue {
+	if m != nil {
+		return m.Maintainers
+	}
+	return nil
+}
+
+func (m *ModifyAppVersionRequest) GetKeywords() *wrappers.StringValue {
+	if m != nil {
+		return m.Keywords
+	}
+	return nil
+}
+
+func (m *ModifyAppVersionRequest) GetSources() *wrappers.StringValue {
+	if m != nil {
+		return m.Sources
+	}
+	return nil
+}
+
+func (m *ModifyAppVersionRequest) GetReadme() *wrappers.StringValue {
+	if m != nil {
+		return m.Readme
+	}
+	return nil
+}
+
 type ModifyAppVersionResponse struct {
 	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
@@ -1014,7 +1190,7 @@ func (m *ModifyAppVersionResponse) Reset()         { *m = ModifyAppVersionRespon
 func (m *ModifyAppVersionResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyAppVersionResponse) ProtoMessage()    {}
 func (*ModifyAppVersionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{12}
+	return fileDescriptor_app_c72527858dd2b44e, []int{12}
 }
 func (m *ModifyAppVersionResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyAppVersionResponse.Unmarshal(m, b)
@@ -1052,7 +1228,7 @@ func (m *DeleteAppVersionsRequest) Reset()         { *m = DeleteAppVersionsReque
 func (m *DeleteAppVersionsRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteAppVersionsRequest) ProtoMessage()    {}
 func (*DeleteAppVersionsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{13}
+	return fileDescriptor_app_c72527858dd2b44e, []int{13}
 }
 func (m *DeleteAppVersionsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteAppVersionsRequest.Unmarshal(m, b)
@@ -1090,7 +1266,7 @@ func (m *DeleteAppVersionsResponse) Reset()         { *m = DeleteAppVersionsResp
 func (m *DeleteAppVersionsResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteAppVersionsResponse) ProtoMessage()    {}
 func (*DeleteAppVersionsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{14}
+	return fileDescriptor_app_c72527858dd2b44e, []int{14}
 }
 func (m *DeleteAppVersionsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteAppVersionsResponse.Unmarshal(m, b)
@@ -1123,12 +1299,19 @@ type AppVersion struct {
 	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
 	Name                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	Description          *wrappers.StringValue `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	PackageName          *wrappers.StringValue `protobuf:"bytes,6,opt,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,7,opt,name=status,proto3" json:"status,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
-	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
-	Sequence             uint32                `protobuf:"varint,11,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Home                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=home,proto3" json:"home,omitempty"`
+	Icon                 *wrappers.StringValue `protobuf:"bytes,7,opt,name=icon,proto3" json:"icon,omitempty"`
+	Screenshots          *wrappers.StringValue `protobuf:"bytes,8,opt,name=screenshots,proto3" json:"screenshots,omitempty"`
+	Maintainers          *wrappers.StringValue `protobuf:"bytes,9,opt,name=maintainers,proto3" json:"maintainers,omitempty"`
+	Keywords             *wrappers.StringValue `protobuf:"bytes,10,opt,name=keywords,proto3" json:"keywords,omitempty"`
+	Sources              *wrappers.StringValue `protobuf:"bytes,11,opt,name=sources,proto3" json:"sources,omitempty"`
+	Readme               *wrappers.StringValue `protobuf:"bytes,12,opt,name=readme,proto3" json:"readme,omitempty"`
+	PackageName          *wrappers.StringValue `protobuf:"bytes,13,opt,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,14,opt,name=status,proto3" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,15,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,16,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	UpdateTime           *timestamp.Timestamp  `protobuf:"bytes,17,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	Sequence             *wrappers.UInt32Value `protobuf:"bytes,18,opt,name=sequence,proto3" json:"sequence,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1138,7 +1321,7 @@ func (m *AppVersion) Reset()         { *m = AppVersion{} }
 func (m *AppVersion) String() string { return proto.CompactTextString(m) }
 func (*AppVersion) ProtoMessage()    {}
 func (*AppVersion) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{15}
+	return fileDescriptor_app_c72527858dd2b44e, []int{15}
 }
 func (m *AppVersion) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AppVersion.Unmarshal(m, b)
@@ -1193,6 +1376,55 @@ func (m *AppVersion) GetDescription() *wrappers.StringValue {
 	return nil
 }
 
+func (m *AppVersion) GetHome() *wrappers.StringValue {
+	if m != nil {
+		return m.Home
+	}
+	return nil
+}
+
+func (m *AppVersion) GetIcon() *wrappers.StringValue {
+	if m != nil {
+		return m.Icon
+	}
+	return nil
+}
+
+func (m *AppVersion) GetScreenshots() *wrappers.StringValue {
+	if m != nil {
+		return m.Screenshots
+	}
+	return nil
+}
+
+func (m *AppVersion) GetMaintainers() *wrappers.StringValue {
+	if m != nil {
+		return m.Maintainers
+	}
+	return nil
+}
+
+func (m *AppVersion) GetKeywords() *wrappers.StringValue {
+	if m != nil {
+		return m.Keywords
+	}
+	return nil
+}
+
+func (m *AppVersion) GetSources() *wrappers.StringValue {
+	if m != nil {
+		return m.Sources
+	}
+	return nil
+}
+
+func (m *AppVersion) GetReadme() *wrappers.StringValue {
+	if m != nil {
+		return m.Readme
+	}
+	return nil
+}
+
 func (m *AppVersion) GetPackageName() *wrappers.StringValue {
 	if m != nil {
 		return m.PackageName
@@ -1228,11 +1460,11 @@ func (m *AppVersion) GetUpdateTime() *timestamp.Timestamp {
 	return nil
 }
 
-func (m *AppVersion) GetSequence() uint32 {
+func (m *AppVersion) GetSequence() *wrappers.UInt32Value {
 	if m != nil {
 		return m.Sequence
 	}
-	return 0
+	return nil
 }
 
 type DescribeAppVersionsRequest struct {
@@ -1257,7 +1489,7 @@ func (m *DescribeAppVersionsRequest) Reset()         { *m = DescribeAppVersionsR
 func (m *DescribeAppVersionsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeAppVersionsRequest) ProtoMessage()    {}
 func (*DescribeAppVersionsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{16}
+	return fileDescriptor_app_c72527858dd2b44e, []int{16}
 }
 func (m *DescribeAppVersionsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeAppVersionsRequest.Unmarshal(m, b)
@@ -1373,7 +1605,7 @@ func (m *DescribeAppVersionsResponse) Reset()         { *m = DescribeAppVersions
 func (m *DescribeAppVersionsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeAppVersionsResponse) ProtoMessage()    {}
 func (*DescribeAppVersionsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{17}
+	return fileDescriptor_app_c72527858dd2b44e, []int{17}
 }
 func (m *DescribeAppVersionsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeAppVersionsResponse.Unmarshal(m, b)
@@ -1418,7 +1650,7 @@ func (m *GetAppVersionPackageRequest) Reset()         { *m = GetAppVersionPackag
 func (m *GetAppVersionPackageRequest) String() string { return proto.CompactTextString(m) }
 func (*GetAppVersionPackageRequest) ProtoMessage()    {}
 func (*GetAppVersionPackageRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{18}
+	return fileDescriptor_app_c72527858dd2b44e, []int{18}
 }
 func (m *GetAppVersionPackageRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppVersionPackageRequest.Unmarshal(m, b)
@@ -1447,7 +1679,8 @@ func (m *GetAppVersionPackageRequest) GetVersionId() *wrappers.StringValue {
 
 type GetAppVersionPackageResponse struct {
 	Package              []byte                `protobuf:"bytes,1,opt,name=package,proto3" json:"package,omitempty"`
-	VersionId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	AppId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId            *wrappers.StringValue `protobuf:"bytes,3,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1457,7 +1690,7 @@ func (m *GetAppVersionPackageResponse) Reset()         { *m = GetAppVersionPacka
 func (m *GetAppVersionPackageResponse) String() string { return proto.CompactTextString(m) }
 func (*GetAppVersionPackageResponse) ProtoMessage()    {}
 func (*GetAppVersionPackageResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{19}
+	return fileDescriptor_app_c72527858dd2b44e, []int{19}
 }
 func (m *GetAppVersionPackageResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppVersionPackageResponse.Unmarshal(m, b)
@@ -1484,6 +1717,13 @@ func (m *GetAppVersionPackageResponse) GetPackage() []byte {
 	return nil
 }
 
+func (m *GetAppVersionPackageResponse) GetAppId() *wrappers.StringValue {
+	if m != nil {
+		return m.AppId
+	}
+	return nil
+}
+
 func (m *GetAppVersionPackageResponse) GetVersionId() *wrappers.StringValue {
 	if m != nil {
 		return m.VersionId
@@ -1503,7 +1743,7 @@ func (m *GetAppVersionPackageFilesRequest) Reset()         { *m = GetAppVersionP
 func (m *GetAppVersionPackageFilesRequest) String() string { return proto.CompactTextString(m) }
 func (*GetAppVersionPackageFilesRequest) ProtoMessage()    {}
 func (*GetAppVersionPackageFilesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{20}
+	return fileDescriptor_app_c72527858dd2b44e, []int{20}
 }
 func (m *GetAppVersionPackageFilesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppVersionPackageFilesRequest.Unmarshal(m, b)
@@ -1549,7 +1789,7 @@ func (m *GetAppVersionPackageFilesResponse) Reset()         { *m = GetAppVersion
 func (m *GetAppVersionPackageFilesResponse) String() string { return proto.CompactTextString(m) }
 func (*GetAppVersionPackageFilesResponse) ProtoMessage()    {}
 func (*GetAppVersionPackageFilesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{21}
+	return fileDescriptor_app_c72527858dd2b44e, []int{21}
 }
 func (m *GetAppVersionPackageFilesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppVersionPackageFilesResponse.Unmarshal(m, b)
@@ -1593,7 +1833,7 @@ func (m *GetAppStatisticsRequest) Reset()         { *m = GetAppStatisticsRequest
 func (m *GetAppStatisticsRequest) String() string { return proto.CompactTextString(m) }
 func (*GetAppStatisticsRequest) ProtoMessage()    {}
 func (*GetAppStatisticsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{22}
+	return fileDescriptor_app_c72527858dd2b44e, []int{22}
 }
 func (m *GetAppStatisticsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppStatisticsRequest.Unmarshal(m, b)
@@ -1627,7 +1867,7 @@ func (m *GetAppStatisticsResponse) Reset()         { *m = GetAppStatisticsRespon
 func (m *GetAppStatisticsResponse) String() string { return proto.CompactTextString(m) }
 func (*GetAppStatisticsResponse) ProtoMessage()    {}
 func (*GetAppStatisticsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_app_c2db7e52b44fbba8, []int{23}
+	return fileDescriptor_app_c72527858dd2b44e, []int{23}
 }
 func (m *GetAppStatisticsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetAppStatisticsResponse.Unmarshal(m, b)
@@ -1675,6 +1915,614 @@ func (m *GetAppStatisticsResponse) GetRepoCount() uint32 {
 	return 0
 }
 
+type SubmitAppVersionRequest struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *SubmitAppVersionRequest) Reset()         { *m = SubmitAppVersionRequest{} }
+func (m *SubmitAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*SubmitAppVersionRequest) ProtoMessage()    {}
+func (*SubmitAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{24}
+}
+func (m *SubmitAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubmitAppVersionRequest.Unmarshal(m, b)
+}
+func (m *SubmitAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubmitAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *SubmitAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubmitAppVersionRequest.Merge(dst, src)
+}
+func (m *SubmitAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_SubmitAppVersionRequest.Size(m)
+}
+func (m *SubmitAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubmitAppVersionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SubmitAppVersionRequest proto.InternalMessageInfo
+
+func (m *SubmitAppVersionRequest) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type SubmitAppVersionResponse struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *SubmitAppVersionResponse) Reset()         { *m = SubmitAppVersionResponse{} }
+func (m *SubmitAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*SubmitAppVersionResponse) ProtoMessage()    {}
+func (*SubmitAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{25}
+}
+func (m *SubmitAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubmitAppVersionResponse.Unmarshal(m, b)
+}
+func (m *SubmitAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubmitAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *SubmitAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubmitAppVersionResponse.Merge(dst, src)
+}
+func (m *SubmitAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_SubmitAppVersionResponse.Size(m)
+}
+func (m *SubmitAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubmitAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SubmitAppVersionResponse proto.InternalMessageInfo
+
+func (m *SubmitAppVersionResponse) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type CancelAppVersionRequest struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CancelAppVersionRequest) Reset()         { *m = CancelAppVersionRequest{} }
+func (m *CancelAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*CancelAppVersionRequest) ProtoMessage()    {}
+func (*CancelAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{26}
+}
+func (m *CancelAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CancelAppVersionRequest.Unmarshal(m, b)
+}
+func (m *CancelAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CancelAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *CancelAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CancelAppVersionRequest.Merge(dst, src)
+}
+func (m *CancelAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_CancelAppVersionRequest.Size(m)
+}
+func (m *CancelAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CancelAppVersionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CancelAppVersionRequest proto.InternalMessageInfo
+
+func (m *CancelAppVersionRequest) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type CancelAppVersionResponse struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CancelAppVersionResponse) Reset()         { *m = CancelAppVersionResponse{} }
+func (m *CancelAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*CancelAppVersionResponse) ProtoMessage()    {}
+func (*CancelAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{27}
+}
+func (m *CancelAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CancelAppVersionResponse.Unmarshal(m, b)
+}
+func (m *CancelAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CancelAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *CancelAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CancelAppVersionResponse.Merge(dst, src)
+}
+func (m *CancelAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_CancelAppVersionResponse.Size(m)
+}
+func (m *CancelAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CancelAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CancelAppVersionResponse proto.InternalMessageInfo
+
+func (m *CancelAppVersionResponse) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type ReleaseAppVersionRequest struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ReleaseAppVersionRequest) Reset()         { *m = ReleaseAppVersionRequest{} }
+func (m *ReleaseAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*ReleaseAppVersionRequest) ProtoMessage()    {}
+func (*ReleaseAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{28}
+}
+func (m *ReleaseAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReleaseAppVersionRequest.Unmarshal(m, b)
+}
+func (m *ReleaseAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReleaseAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *ReleaseAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReleaseAppVersionRequest.Merge(dst, src)
+}
+func (m *ReleaseAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_ReleaseAppVersionRequest.Size(m)
+}
+func (m *ReleaseAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReleaseAppVersionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ReleaseAppVersionRequest proto.InternalMessageInfo
+
+func (m *ReleaseAppVersionRequest) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type ReleaseAppVersionResponse struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ReleaseAppVersionResponse) Reset()         { *m = ReleaseAppVersionResponse{} }
+func (m *ReleaseAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*ReleaseAppVersionResponse) ProtoMessage()    {}
+func (*ReleaseAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{29}
+}
+func (m *ReleaseAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReleaseAppVersionResponse.Unmarshal(m, b)
+}
+func (m *ReleaseAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReleaseAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *ReleaseAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReleaseAppVersionResponse.Merge(dst, src)
+}
+func (m *ReleaseAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_ReleaseAppVersionResponse.Size(m)
+}
+func (m *ReleaseAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReleaseAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ReleaseAppVersionResponse proto.InternalMessageInfo
+
+func (m *ReleaseAppVersionResponse) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type DeleteAppVersionRequest struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DeleteAppVersionRequest) Reset()         { *m = DeleteAppVersionRequest{} }
+func (m *DeleteAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteAppVersionRequest) ProtoMessage()    {}
+func (*DeleteAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{30}
+}
+func (m *DeleteAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteAppVersionRequest.Unmarshal(m, b)
+}
+func (m *DeleteAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteAppVersionRequest.Merge(dst, src)
+}
+func (m *DeleteAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteAppVersionRequest.Size(m)
+}
+func (m *DeleteAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteAppVersionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteAppVersionRequest proto.InternalMessageInfo
+
+func (m *DeleteAppVersionRequest) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type DeleteAppVersionResponse struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DeleteAppVersionResponse) Reset()         { *m = DeleteAppVersionResponse{} }
+func (m *DeleteAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteAppVersionResponse) ProtoMessage()    {}
+func (*DeleteAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{31}
+}
+func (m *DeleteAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteAppVersionResponse.Unmarshal(m, b)
+}
+func (m *DeleteAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *DeleteAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteAppVersionResponse.Merge(dst, src)
+}
+func (m *DeleteAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteAppVersionResponse.Size(m)
+}
+func (m *DeleteAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteAppVersionResponse proto.InternalMessageInfo
+
+func (m *DeleteAppVersionResponse) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type PassAppVersionRequest struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *PassAppVersionRequest) Reset()         { *m = PassAppVersionRequest{} }
+func (m *PassAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*PassAppVersionRequest) ProtoMessage()    {}
+func (*PassAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{32}
+}
+func (m *PassAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PassAppVersionRequest.Unmarshal(m, b)
+}
+func (m *PassAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PassAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *PassAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PassAppVersionRequest.Merge(dst, src)
+}
+func (m *PassAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_PassAppVersionRequest.Size(m)
+}
+func (m *PassAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_PassAppVersionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PassAppVersionRequest proto.InternalMessageInfo
+
+func (m *PassAppVersionRequest) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type PassAppVersionResponse struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *PassAppVersionResponse) Reset()         { *m = PassAppVersionResponse{} }
+func (m *PassAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*PassAppVersionResponse) ProtoMessage()    {}
+func (*PassAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{33}
+}
+func (m *PassAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PassAppVersionResponse.Unmarshal(m, b)
+}
+func (m *PassAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PassAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *PassAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PassAppVersionResponse.Merge(dst, src)
+}
+func (m *PassAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_PassAppVersionResponse.Size(m)
+}
+func (m *PassAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_PassAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PassAppVersionResponse proto.InternalMessageInfo
+
+func (m *PassAppVersionResponse) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type RejectAppVersionRequest struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *RejectAppVersionRequest) Reset()         { *m = RejectAppVersionRequest{} }
+func (m *RejectAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*RejectAppVersionRequest) ProtoMessage()    {}
+func (*RejectAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{34}
+}
+func (m *RejectAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RejectAppVersionRequest.Unmarshal(m, b)
+}
+func (m *RejectAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RejectAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *RejectAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RejectAppVersionRequest.Merge(dst, src)
+}
+func (m *RejectAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_RejectAppVersionRequest.Size(m)
+}
+func (m *RejectAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RejectAppVersionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RejectAppVersionRequest proto.InternalMessageInfo
+
+func (m *RejectAppVersionRequest) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type RejectAppVersionResponse struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *RejectAppVersionResponse) Reset()         { *m = RejectAppVersionResponse{} }
+func (m *RejectAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*RejectAppVersionResponse) ProtoMessage()    {}
+func (*RejectAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{35}
+}
+func (m *RejectAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RejectAppVersionResponse.Unmarshal(m, b)
+}
+func (m *RejectAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RejectAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *RejectAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RejectAppVersionResponse.Merge(dst, src)
+}
+func (m *RejectAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_RejectAppVersionResponse.Size(m)
+}
+func (m *RejectAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RejectAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RejectAppVersionResponse proto.InternalMessageInfo
+
+func (m *RejectAppVersionResponse) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type SuspendAppVersionRequest struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *SuspendAppVersionRequest) Reset()         { *m = SuspendAppVersionRequest{} }
+func (m *SuspendAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*SuspendAppVersionRequest) ProtoMessage()    {}
+func (*SuspendAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{36}
+}
+func (m *SuspendAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SuspendAppVersionRequest.Unmarshal(m, b)
+}
+func (m *SuspendAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SuspendAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *SuspendAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SuspendAppVersionRequest.Merge(dst, src)
+}
+func (m *SuspendAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_SuspendAppVersionRequest.Size(m)
+}
+func (m *SuspendAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SuspendAppVersionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SuspendAppVersionRequest proto.InternalMessageInfo
+
+func (m *SuspendAppVersionRequest) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type SuspendAppVersionResponse struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *SuspendAppVersionResponse) Reset()         { *m = SuspendAppVersionResponse{} }
+func (m *SuspendAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*SuspendAppVersionResponse) ProtoMessage()    {}
+func (*SuspendAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{37}
+}
+func (m *SuspendAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SuspendAppVersionResponse.Unmarshal(m, b)
+}
+func (m *SuspendAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SuspendAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *SuspendAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SuspendAppVersionResponse.Merge(dst, src)
+}
+func (m *SuspendAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_SuspendAppVersionResponse.Size(m)
+}
+func (m *SuspendAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_SuspendAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SuspendAppVersionResponse proto.InternalMessageInfo
+
+func (m *SuspendAppVersionResponse) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type RecoverAppVersionRequest struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *RecoverAppVersionRequest) Reset()         { *m = RecoverAppVersionRequest{} }
+func (m *RecoverAppVersionRequest) String() string { return proto.CompactTextString(m) }
+func (*RecoverAppVersionRequest) ProtoMessage()    {}
+func (*RecoverAppVersionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{38}
+}
+func (m *RecoverAppVersionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RecoverAppVersionRequest.Unmarshal(m, b)
+}
+func (m *RecoverAppVersionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RecoverAppVersionRequest.Marshal(b, m, deterministic)
+}
+func (dst *RecoverAppVersionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RecoverAppVersionRequest.Merge(dst, src)
+}
+func (m *RecoverAppVersionRequest) XXX_Size() int {
+	return xxx_messageInfo_RecoverAppVersionRequest.Size(m)
+}
+func (m *RecoverAppVersionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RecoverAppVersionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RecoverAppVersionRequest proto.InternalMessageInfo
+
+func (m *RecoverAppVersionRequest) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
+type RecoverAppVersionResponse struct {
+	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *RecoverAppVersionResponse) Reset()         { *m = RecoverAppVersionResponse{} }
+func (m *RecoverAppVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*RecoverAppVersionResponse) ProtoMessage()    {}
+func (*RecoverAppVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_app_c72527858dd2b44e, []int{39}
+}
+func (m *RecoverAppVersionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RecoverAppVersionResponse.Unmarshal(m, b)
+}
+func (m *RecoverAppVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RecoverAppVersionResponse.Marshal(b, m, deterministic)
+}
+func (dst *RecoverAppVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RecoverAppVersionResponse.Merge(dst, src)
+}
+func (m *RecoverAppVersionResponse) XXX_Size() int {
+	return xxx_messageInfo_RecoverAppVersionResponse.Size(m)
+}
+func (m *RecoverAppVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_RecoverAppVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RecoverAppVersionResponse proto.InternalMessageInfo
+
+func (m *RecoverAppVersionResponse) GetVersionId() *wrappers.StringValue {
+	if m != nil {
+		return m.VersionId
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*CreateAppRequest)(nil), "openpitrix.CreateAppRequest")
 	proto.RegisterType((*CreateAppResponse)(nil), "openpitrix.CreateAppResponse")
@@ -1703,6 +2551,22 @@ func init() {
 	proto.RegisterType((*GetAppStatisticsResponse)(nil), "openpitrix.GetAppStatisticsResponse")
 	proto.RegisterMapType((map[string]uint32)(nil), "openpitrix.GetAppStatisticsResponse.LastTwoWeekCreatedEntry")
 	proto.RegisterMapType((map[string]uint32)(nil), "openpitrix.GetAppStatisticsResponse.TopTenReposEntry")
+	proto.RegisterType((*SubmitAppVersionRequest)(nil), "openpitrix.SubmitAppVersionRequest")
+	proto.RegisterType((*SubmitAppVersionResponse)(nil), "openpitrix.SubmitAppVersionResponse")
+	proto.RegisterType((*CancelAppVersionRequest)(nil), "openpitrix.CancelAppVersionRequest")
+	proto.RegisterType((*CancelAppVersionResponse)(nil), "openpitrix.CancelAppVersionResponse")
+	proto.RegisterType((*ReleaseAppVersionRequest)(nil), "openpitrix.ReleaseAppVersionRequest")
+	proto.RegisterType((*ReleaseAppVersionResponse)(nil), "openpitrix.ReleaseAppVersionResponse")
+	proto.RegisterType((*DeleteAppVersionRequest)(nil), "openpitrix.DeleteAppVersionRequest")
+	proto.RegisterType((*DeleteAppVersionResponse)(nil), "openpitrix.DeleteAppVersionResponse")
+	proto.RegisterType((*PassAppVersionRequest)(nil), "openpitrix.PassAppVersionRequest")
+	proto.RegisterType((*PassAppVersionResponse)(nil), "openpitrix.PassAppVersionResponse")
+	proto.RegisterType((*RejectAppVersionRequest)(nil), "openpitrix.RejectAppVersionRequest")
+	proto.RegisterType((*RejectAppVersionResponse)(nil), "openpitrix.RejectAppVersionResponse")
+	proto.RegisterType((*SuspendAppVersionRequest)(nil), "openpitrix.SuspendAppVersionRequest")
+	proto.RegisterType((*SuspendAppVersionResponse)(nil), "openpitrix.SuspendAppVersionResponse")
+	proto.RegisterType((*RecoverAppVersionRequest)(nil), "openpitrix.RecoverAppVersionRequest")
+	proto.RegisterType((*RecoverAppVersionResponse)(nil), "openpitrix.RecoverAppVersionResponse")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1728,6 +2592,14 @@ type AppManagerClient interface {
 	DeleteAppVersions(ctx context.Context, in *DeleteAppVersionsRequest, opts ...grpc.CallOption) (*DeleteAppVersionsResponse, error)
 	GetAppVersionPackage(ctx context.Context, in *GetAppVersionPackageRequest, opts ...grpc.CallOption) (*GetAppVersionPackageResponse, error)
 	GetAppVersionPackageFiles(ctx context.Context, in *GetAppVersionPackageFilesRequest, opts ...grpc.CallOption) (*GetAppVersionPackageFilesResponse, error)
+	SubmitAppVersion(ctx context.Context, in *SubmitAppVersionRequest, opts ...grpc.CallOption) (*SubmitAppVersionResponse, error)
+	CancelAppVersion(ctx context.Context, in *CancelAppVersionRequest, opts ...grpc.CallOption) (*CancelAppVersionResponse, error)
+	ReleaseAppVersion(ctx context.Context, in *ReleaseAppVersionRequest, opts ...grpc.CallOption) (*ReleaseAppVersionResponse, error)
+	DeleteAppVersion(ctx context.Context, in *DeleteAppVersionRequest, opts ...grpc.CallOption) (*DeleteAppVersionResponse, error)
+	PassAppVersion(ctx context.Context, in *PassAppVersionRequest, opts ...grpc.CallOption) (*PassAppVersionResponse, error)
+	RejectAppVersion(ctx context.Context, in *RejectAppVersionRequest, opts ...grpc.CallOption) (*RejectAppVersionResponse, error)
+	SuspendAppVersion(ctx context.Context, in *SuspendAppVersionRequest, opts ...grpc.CallOption) (*SuspendAppVersionResponse, error)
+	RecoverAppVersion(ctx context.Context, in *RecoverAppVersionRequest, opts ...grpc.CallOption) (*RecoverAppVersionResponse, error)
 }
 
 type appManagerClient struct {
@@ -1837,6 +2709,78 @@ func (c *appManagerClient) GetAppVersionPackageFiles(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *appManagerClient) SubmitAppVersion(ctx context.Context, in *SubmitAppVersionRequest, opts ...grpc.CallOption) (*SubmitAppVersionResponse, error) {
+	out := new(SubmitAppVersionResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/SubmitAppVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appManagerClient) CancelAppVersion(ctx context.Context, in *CancelAppVersionRequest, opts ...grpc.CallOption) (*CancelAppVersionResponse, error) {
+	out := new(CancelAppVersionResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/CancelAppVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appManagerClient) ReleaseAppVersion(ctx context.Context, in *ReleaseAppVersionRequest, opts ...grpc.CallOption) (*ReleaseAppVersionResponse, error) {
+	out := new(ReleaseAppVersionResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/ReleaseAppVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appManagerClient) DeleteAppVersion(ctx context.Context, in *DeleteAppVersionRequest, opts ...grpc.CallOption) (*DeleteAppVersionResponse, error) {
+	out := new(DeleteAppVersionResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/DeleteAppVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appManagerClient) PassAppVersion(ctx context.Context, in *PassAppVersionRequest, opts ...grpc.CallOption) (*PassAppVersionResponse, error) {
+	out := new(PassAppVersionResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/PassAppVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appManagerClient) RejectAppVersion(ctx context.Context, in *RejectAppVersionRequest, opts ...grpc.CallOption) (*RejectAppVersionResponse, error) {
+	out := new(RejectAppVersionResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/RejectAppVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appManagerClient) SuspendAppVersion(ctx context.Context, in *SuspendAppVersionRequest, opts ...grpc.CallOption) (*SuspendAppVersionResponse, error) {
+	out := new(SuspendAppVersionResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/SuspendAppVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appManagerClient) RecoverAppVersion(ctx context.Context, in *RecoverAppVersionRequest, opts ...grpc.CallOption) (*RecoverAppVersionResponse, error) {
+	out := new(RecoverAppVersionResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AppManager/RecoverAppVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AppManagerServer is the server API for AppManager service.
 type AppManagerServer interface {
 	CreateApp(context.Context, *CreateAppRequest) (*CreateAppResponse, error)
@@ -1850,6 +2794,14 @@ type AppManagerServer interface {
 	DeleteAppVersions(context.Context, *DeleteAppVersionsRequest) (*DeleteAppVersionsResponse, error)
 	GetAppVersionPackage(context.Context, *GetAppVersionPackageRequest) (*GetAppVersionPackageResponse, error)
 	GetAppVersionPackageFiles(context.Context, *GetAppVersionPackageFilesRequest) (*GetAppVersionPackageFilesResponse, error)
+	SubmitAppVersion(context.Context, *SubmitAppVersionRequest) (*SubmitAppVersionResponse, error)
+	CancelAppVersion(context.Context, *CancelAppVersionRequest) (*CancelAppVersionResponse, error)
+	ReleaseAppVersion(context.Context, *ReleaseAppVersionRequest) (*ReleaseAppVersionResponse, error)
+	DeleteAppVersion(context.Context, *DeleteAppVersionRequest) (*DeleteAppVersionResponse, error)
+	PassAppVersion(context.Context, *PassAppVersionRequest) (*PassAppVersionResponse, error)
+	RejectAppVersion(context.Context, *RejectAppVersionRequest) (*RejectAppVersionResponse, error)
+	SuspendAppVersion(context.Context, *SuspendAppVersionRequest) (*SuspendAppVersionResponse, error)
+	RecoverAppVersion(context.Context, *RecoverAppVersionRequest) (*RecoverAppVersionResponse, error)
 }
 
 func RegisterAppManagerServer(s *grpc.Server, srv AppManagerServer) {
@@ -2054,6 +3006,150 @@ func _AppManager_GetAppVersionPackageFiles_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AppManager_SubmitAppVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitAppVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppManagerServer).SubmitAppVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AppManager/SubmitAppVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppManagerServer).SubmitAppVersion(ctx, req.(*SubmitAppVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppManager_CancelAppVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelAppVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppManagerServer).CancelAppVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AppManager/CancelAppVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppManagerServer).CancelAppVersion(ctx, req.(*CancelAppVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppManager_ReleaseAppVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReleaseAppVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppManagerServer).ReleaseAppVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AppManager/ReleaseAppVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppManagerServer).ReleaseAppVersion(ctx, req.(*ReleaseAppVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppManager_DeleteAppVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAppVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppManagerServer).DeleteAppVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AppManager/DeleteAppVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppManagerServer).DeleteAppVersion(ctx, req.(*DeleteAppVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppManager_PassAppVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PassAppVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppManagerServer).PassAppVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AppManager/PassAppVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppManagerServer).PassAppVersion(ctx, req.(*PassAppVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppManager_RejectAppVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RejectAppVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppManagerServer).RejectAppVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AppManager/RejectAppVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppManagerServer).RejectAppVersion(ctx, req.(*RejectAppVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppManager_SuspendAppVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuspendAppVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppManagerServer).SuspendAppVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AppManager/SuspendAppVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppManagerServer).SuspendAppVersion(ctx, req.(*SuspendAppVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AppManager_RecoverAppVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecoverAppVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppManagerServer).RecoverAppVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AppManager/RecoverAppVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppManagerServer).RecoverAppVersion(ctx, req.(*RecoverAppVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _AppManager_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "openpitrix.AppManager",
 	HandlerType: (*AppManagerServer)(nil),
@@ -2102,130 +3198,191 @@ var _AppManager_serviceDesc = grpc.ServiceDesc{
 			MethodName: "GetAppVersionPackageFiles",
 			Handler:    _AppManager_GetAppVersionPackageFiles_Handler,
 		},
+		{
+			MethodName: "SubmitAppVersion",
+			Handler:    _AppManager_SubmitAppVersion_Handler,
+		},
+		{
+			MethodName: "CancelAppVersion",
+			Handler:    _AppManager_CancelAppVersion_Handler,
+		},
+		{
+			MethodName: "ReleaseAppVersion",
+			Handler:    _AppManager_ReleaseAppVersion_Handler,
+		},
+		{
+			MethodName: "DeleteAppVersion",
+			Handler:    _AppManager_DeleteAppVersion_Handler,
+		},
+		{
+			MethodName: "PassAppVersion",
+			Handler:    _AppManager_PassAppVersion_Handler,
+		},
+		{
+			MethodName: "RejectAppVersion",
+			Handler:    _AppManager_RejectAppVersion_Handler,
+		},
+		{
+			MethodName: "SuspendAppVersion",
+			Handler:    _AppManager_SuspendAppVersion_Handler,
+		},
+		{
+			MethodName: "RecoverAppVersion",
+			Handler:    _AppManager_RecoverAppVersion_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "app.proto",
 }
 
-func init() { proto.RegisterFile("app.proto", fileDescriptor_app_c2db7e52b44fbba8) }
+func init() { proto.RegisterFile("app.proto", fileDescriptor_app_c72527858dd2b44e) }
 
-var fileDescriptor_app_c2db7e52b44fbba8 = []byte{
-	// 1870 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x59, 0xdd, 0x8e, 0x1b, 0x49,
-	0x15, 0x96, 0x7f, 0xc6, 0x3f, 0xc7, 0x76, 0xe2, 0x54, 0x26, 0x99, 0x1e, 0x27, 0xb3, 0xe3, 0x74,
-	0x96, 0xdd, 0x51, 0x48, 0x6c, 0x98, 0x64, 0x61, 0xc8, 0xb2, 0x59, 0x79, 0x93, 0x05, 0x06, 0xd8,
-	0x15, 0x72, 0x86, 0x44, 0xec, 0x8d, 0x55, 0x63, 0xd7, 0x78, 0x5a, 0x63, 0x77, 0x15, 0xdd, 0xe5,
-	0x98, 0xb9, 0x41, 0x82, 0x37, 0xc0, 0x88, 0x27, 0x40, 0x42, 0x42, 0xe2, 0x76, 0xdf, 0x03, 0x09,
-	0x1e, 0x01, 0x71, 0xc1, 0x05, 0x5c, 0xee, 0x2d, 0xaa, 0x9f, 0xfe, 0xb5, 0x1d, 0x77, 0xdb, 0x23,
-	0xd8, 0xab, 0x99, 0xaa, 0x3a, 0xa7, 0xea, 0xd4, 0x39, 0xe7, 0x3b, 0xe7, 0xab, 0x36, 0x94, 0x31,
-	0x63, 0x2d, 0xe6, 0x50, 0x4e, 0x11, 0x50, 0x46, 0x6c, 0x66, 0x71, 0xc7, 0xfa, 0x55, 0xe3, 0x9d,
-	0x21, 0xa5, 0xc3, 0x11, 0x69, 0xcb, 0x95, 0xd3, 0xc9, 0x59, 0x7b, 0xea, 0x60, 0xc6, 0x88, 0xe3,
-	0x2a, 0xd9, 0xc6, 0x7e, 0x7c, 0x9d, 0x5b, 0x63, 0xe2, 0x72, 0x3c, 0xd6, 0x9b, 0x35, 0xee, 0x6a,
-	0x01, 0xcc, 0xac, 0x36, 0xb6, 0x6d, 0xca, 0x31, 0xb7, 0xa8, 0xed, 0xa9, 0x3f, 0x94, 0x7f, 0xfa,
-	0x8f, 0x86, 0xc4, 0x7e, 0xe4, 0x4e, 0xf1, 0x70, 0x48, 0x9c, 0x36, 0x65, 0x52, 0x62, 0x81, 0x74,
-	0x85, 0x5f, 0x32, 0xa2, 0x07, 0xe6, 0x57, 0x5b, 0x50, 0x7f, 0xee, 0x10, 0xcc, 0x49, 0x87, 0xb1,
-	0x2e, 0xf9, 0xe5, 0x84, 0xb8, 0x1c, 0x7d, 0x0b, 0xf2, 0x36, 0x1e, 0x13, 0x23, 0xd3, 0xcc, 0x1c,
-	0x54, 0x0e, 0xef, 0xb6, 0xd4, 0xe1, 0x2d, 0xcf, 0xba, 0xd6, 0x4b, 0xee, 0x58, 0xf6, 0xf0, 0x15,
-	0x1e, 0x4d, 0x48, 0x57, 0x4a, 0xa2, 0x0f, 0xa0, 0xe8, 0x10, 0x46, 0x7b, 0xd6, 0xc0, 0xc8, 0x26,
-	0x50, 0x2a, 0x08, 0xe1, 0xe3, 0x01, 0x3a, 0x84, 0x2d, 0x3a, 0xb5, 0x89, 0x63, 0xe4, 0x12, 0x28,
-	0x29, 0x51, 0xf4, 0x21, 0x40, 0xff, 0x1c, 0x3b, 0xbc, 0x27, 0x4d, 0xcc, 0x27, 0x50, 0x2c, 0x4b,
-	0xf9, 0xcf, 0x85, 0x9d, 0xcf, 0xa0, 0x32, 0x20, 0x6e, 0xdf, 0xb1, 0xa4, 0x77, 0x8c, 0xad, 0x04,
-	0xda, 0x61, 0x05, 0xe1, 0x99, 0x73, 0x3a, 0x26, 0x46, 0x31, 0x89, 0x67, 0x84, 0xa4, 0xd0, 0xb0,
-	0xfa, 0xd4, 0x36, 0x4a, 0x49, 0x34, 0x84, 0xa4, 0xb0, 0xd1, 0xed, 0x3b, 0x84, 0xd8, 0xee, 0x39,
-	0xe5, 0xae, 0x51, 0x4e, 0x62, 0x63, 0x48, 0x41, 0xe8, 0x8f, 0xb1, 0x65, 0x73, 0x6c, 0xd9, 0xc4,
-	0x71, 0x0d, 0x48, 0xa2, 0x1f, 0x52, 0x40, 0xdf, 0x81, 0xa2, 0x4b, 0x27, 0x4e, 0x9f, 0xb8, 0x46,
-	0x25, 0x81, 0xae, 0x27, 0x8c, 0x9e, 0x40, 0xc1, 0x21, 0x78, 0x30, 0x26, 0x46, 0x35, 0x59, 0x0a,
-	0x08, 0x59, 0xf4, 0x11, 0x54, 0xfa, 0x98, 0x93, 0x21, 0x75, 0x2e, 0x45, 0xf6, 0xd4, 0x12, 0xa8,
-	0x82, 0xa7, 0x70, 0x3c, 0x40, 0x47, 0x50, 0xba, 0x20, 0x97, 0x53, 0xea, 0x0c, 0x5c, 0xe3, 0x5a,
-	0x02, 0x5d, 0x5f, 0xda, 0xfc, 0x11, 0xdc, 0x08, 0x25, 0xbe, 0xcb, 0xa8, 0xed, 0x12, 0xf4, 0x18,
-	0x0a, 0x98, 0x31, 0x61, 0x48, 0x92, 0xdc, 0xdf, 0xc2, 0x8c, 0x1d, 0x0f, 0xcc, 0xbf, 0x14, 0xa0,
-	0xfe, 0x19, 0x1d, 0x58, 0x67, 0x97, 0x21, 0x0c, 0xad, 0xb3, 0x93, 0x0f, 0xbc, 0xec, 0x3a, 0xc0,
-	0xcb, 0xad, 0x03, 0xbc, 0xfc, 0xba, 0xc0, 0xdb, 0xda, 0x08, 0x78, 0x85, 0x75, 0x81, 0x57, 0x4a,
-	0x0d, 0xbc, 0xf2, 0xba, 0xc0, 0x83, 0x0d, 0x81, 0x57, 0xd9, 0x00, 0x78, 0xd5, 0xf5, 0x80, 0x57,
-	0x5b, 0x1f, 0x78, 0xd7, 0x36, 0x00, 0xde, 0xf5, 0xb4, 0xc0, 0x0b, 0xa1, 0x65, 0x13, 0xe0, 0x3d,
-	0x80, 0x1b, 0x2f, 0xc8, 0x88, 0x48, 0x08, 0xbb, 0x1e, 0xf0, 0x6e, 0x85, 0x76, 0xca, 0x1d, 0x94,
-	0x3d, 0xd9, 0x6f, 0x02, 0x0a, 0xcb, 0xea, 0x63, 0x97, 0x08, 0xff, 0xbd, 0x04, 0xb9, 0x0e, 0x63,
-	0x5f, 0x73, 0x10, 0xc7, 0x30, 0x95, 0x4f, 0x8b, 0xa9, 0x27, 0x50, 0x70, 0x39, 0xe6, 0x13, 0x37,
-	0x11, 0x98, 0xb5, 0xac, 0x8f, 0xc4, 0x42, 0x6a, 0x24, 0x16, 0xd7, 0x45, 0x62, 0x69, 0x43, 0x24,
-	0x96, 0xd3, 0x22, 0x31, 0x9c, 0xdc, 0x90, 0x26, 0xb9, 0xff, 0xc7, 0xcd, 0x33, 0x5a, 0x92, 0x6b,
-	0xe9, 0x4a, 0xb2, 0xdf, 0x03, 0xae, 0xa5, 0xe9, 0x01, 0x95, 0xbe, 0x6c, 0x9a, 0x3d, 0xc1, 0x50,
-	0x35, 0xf0, 0x1b, 0x73, 0x9a, 0x27, 0x1e, 0x7d, 0xed, 0x82, 0x12, 0x17, 0x13, 0x42, 0x59, 0xe5,
-	0x90, 0x52, 0xae, 0xaf, 0x56, 0x56, 0xe2, 0x9e, 0xf2, 0x84, 0x0d, 0xfc, 0x93, 0x6f, 0xac, 0x56,
-	0x56, 0xe2, 0x52, 0xf9, 0x63, 0xa8, 0xfa, 0xb5, 0xce, 0x25, 0xdc, 0x40, 0xcd, 0x9c, 0xbc, 0x71,
-	0x40, 0xd1, 0x5b, 0x5d, 0xa2, 0x42, 0xf1, 0x5c, 0xcb, 0x75, 0xfd, 0xea, 0xf8, 0x92, 0x70, 0xf4,
-	0x02, 0xd0, 0x08, 0x73, 0xe2, 0xf2, 0x9e, 0xa8, 0x07, 0x6f, 0x88, 0xe3, 0x0a, 0xc4, 0xdd, 0x94,
-	0x46, 0xdc, 0x0e, 0x6f, 0xd3, 0x61, 0xec, 0x95, 0x5a, 0xed, 0xd6, 0x95, 0x46, 0x30, 0x63, 0xfe,
-	0x31, 0x07, 0x37, 0x5f, 0x48, 0x00, 0x9e, 0x46, 0x4a, 0xd6, 0x47, 0x50, 0x71, 0x09, 0x76, 0xfa,
-	0xe7, 0x3d, 0x91, 0x44, 0x89, 0x6a, 0x0d, 0x28, 0x85, 0xd7, 0xd4, 0x19, 0xa0, 0x6d, 0xd8, 0x1a,
-	0x59, 0x63, 0x8b, 0xcb, 0x8a, 0x53, 0xeb, 0xaa, 0x01, 0xba, 0x0d, 0x05, 0x7a, 0x76, 0x26, 0x6e,
-	0x9b, 0x93, 0xd3, 0x7a, 0x84, 0xbe, 0x0b, 0x25, 0x97, 0x3a, 0xbc, 0x77, 0x41, 0x2e, 0x13, 0xe1,
-	0xbe, 0x28, 0xa4, 0x7f, 0x42, 0x2e, 0xd1, 0x13, 0x51, 0xa5, 0xc4, 0xd5, 0x3d, 0xec, 0xcf, 0x7b,
-	0xff, 0x13, 0x4a, 0x47, 0x5a, 0x4b, 0x8b, 0x86, 0x2a, 0x6c, 0x31, 0x54, 0x61, 0x11, 0xd2, 0x45,
-	0xb2, 0x24, 0x27, 0x55, 0x19, 0xdc, 0x09, 0xca, 0x60, 0x59, 0x4e, 0x7b, 0x85, 0xee, 0xb6, 0x5f,
-	0xa8, 0x40, 0xcd, 0xeb, 0x52, 0xb4, 0xed, 0x65, 0x70, 0x45, 0x6d, 0xad, 0x72, 0x74, 0x2f, 0x02,
-	0x8a, 0xaa, 0x5c, 0x0a, 0xa5, 0xfd, 0x7e, 0x9c, 0x70, 0x8a, 0xf5, 0x50, 0x67, 0x33, 0x31, 0x6c,
-	0x47, 0x83, 0xa4, 0x7b, 0xc5, 0x3e, 0x54, 0x38, 0xe5, 0x78, 0xd4, 0xeb, 0xd3, 0x89, 0xcd, 0x65,
-	0x94, 0x6a, 0x5d, 0x90, 0x53, 0xcf, 0xc5, 0x0c, 0x3a, 0x80, 0xa2, 0xb8, 0xaa, 0x70, 0x79, 0x56,
-	0x26, 0xd8, 0xf5, 0x58, 0x66, 0x74, 0x85, 0x2b, 0x5e, 0x12, 0x6e, 0xfe, 0x27, 0x0b, 0x3b, 0x3e,
-	0xf9, 0xf4, 0xf2, 0x65, 0x13, 0xe2, 0xe8, 0x63, 0x39, 0x9b, 0x1c, 0xcb, 0x5e, 0x9f, 0xca, 0x25,
-	0xee, 0x53, 0x1f, 0x43, 0x95, 0xe1, 0xfe, 0x05, 0x1e, 0x92, 0xe4, 0x8f, 0xaf, 0x8a, 0xd6, 0xb8,
-	0x92, 0xe7, 0xd7, 0x11, 0x94, 0x5c, 0xe1, 0x26, 0xbb, 0xbf, 0xbc, 0xff, 0xfc, 0xfc, 0xd8, 0xe6,
-	0x8f, 0x0f, 0x75, 0x5d, 0xf6, 0xa4, 0xcd, 0xd7, 0x60, 0xcc, 0x3b, 0x5c, 0x07, 0xf6, 0x43, 0x00,
-	0x8d, 0xe8, 0xa4, 0x5e, 0x2f, 0x6b, 0xf9, 0xe3, 0x81, 0xf9, 0x55, 0x16, 0x76, 0x7c, 0x3a, 0x13,
-	0x0b, 0xe5, 0x26, 0x1b, 0xaf, 0x41, 0x23, 0xe2, 0xe1, 0xc9, 0xa5, 0x0d, 0xcf, 0x3a, 0xaf, 0x82,
-	0xff, 0x6b, 0x48, 0xe7, 0x1d, 0x7f, 0x15, 0x21, 0xfd, 0x1e, 0x18, 0x3e, 0x55, 0xd4, 0x1b, 0xfb,
-	0xa5, 0x7a, 0x2f, 0xb6, 0xb1, 0x2c, 0x2e, 0x81, 0xea, 0x53, 0xd8, 0x5d, 0xa0, 0xaa, 0x8d, 0x5a,
-	0xa1, 0xfb, 0xef, 0x3c, 0x40, 0xa0, 0xb6, 0x59, 0xf2, 0x04, 0x45, 0x24, 0xbb, 0x46, 0x11, 0xc9,
-	0xa5, 0x2f, 0x22, 0xf9, 0xc4, 0x59, 0xba, 0x69, 0xc2, 0xc4, 0xb3, 0xbc, 0x90, 0x36, 0xcb, 0x03,
-	0xda, 0x5b, 0x4c, 0x41, 0x7b, 0x63, 0xcc, 0xa7, 0xb4, 0x09, 0xf3, 0x29, 0x6f, 0xc2, 0x7c, 0x20,
-	0x15, 0xf3, 0x69, 0x84, 0xe0, 0x55, 0x91, 0x1d, 0x2b, 0x00, 0xd0, 0x97, 0x39, 0x68, 0x84, 0x3a,
-	0x5d, 0xba, 0x54, 0x0f, 0x35, 0xf6, 0xec, 0xa2, 0xc6, 0x9e, 0x0b, 0x35, 0xf6, 0xed, 0xa0, 0xae,
-	0x84, 0xfa, 0x74, 0x33, 0x9e, 0x08, 0x62, 0x2d, 0x12, 0xea, 0x7b, 0x73, 0xa1, 0x96, 0x22, 0xe1,
-	0x60, 0xde, 0x0e, 0x05, 0x33, 0x4c, 0x0d, 0x62, 0x94, 0xaa, 0xb4, 0x2e, 0xa5, 0x2a, 0x2f, 0xa6,
-	0x54, 0xb0, 0x94, 0x52, 0x55, 0xd6, 0xa4, 0x54, 0xd5, 0xc4, 0x94, 0xca, 0xfc, 0x35, 0xdc, 0x59,
-	0x18, 0xb6, 0xa4, 0x3c, 0xe5, 0x19, 0x5c, 0x0f, 0xb1, 0xd8, 0x10, 0x5f, 0x59, 0xc6, 0x64, 0x6b,
-	0xd8, 0xff, 0x5f, 0xb0, 0x97, 0x2f, 0xe0, 0xce, 0x0f, 0x49, 0x88, 0xd7, 0xfe, 0x4c, 0xc5, 0xe3,
-	0x2a, 0xba, 0x9e, 0x39, 0x81, 0xbb, 0x8b, 0xf7, 0xd6, 0x97, 0x33, 0xa0, 0xa8, 0xc3, 0x2f, 0x77,
-	0xae, 0x76, 0xbd, 0x61, 0xec, 0xd8, 0x6c, 0xda, 0x63, 0x9b, 0x8b, 0x8e, 0xfd, 0x81, 0x35, 0x22,
-	0xee, 0x95, 0x74, 0xf3, 0x6d, 0xd8, 0x3a, 0x13, 0x9b, 0x79, 0x60, 0x91, 0x03, 0xf3, 0x5f, 0x19,
-	0xb8, 0xf7, 0x96, 0x73, 0xf5, 0x9d, 0x3f, 0xf7, 0x74, 0x33, 0x32, 0x4a, 0x47, 0xe1, 0x28, 0xad,
-	0xd4, 0x6e, 0xc9, 0xd1, 0xa7, 0x36, 0x77, 0x2e, 0xf5, 0xa9, 0x1b, 0x79, 0xaa, 0x71, 0x04, 0x10,
-	0xec, 0x88, 0xea, 0x90, 0x13, 0x49, 0x2f, 0x9c, 0x51, 0xee, 0x8a, 0x7f, 0xc5, 0x45, 0xdf, 0x08,
-	0x1d, 0xb9, 0x6f, 0xb5, 0xab, 0x06, 0x4f, 0xb3, 0x47, 0x19, 0x73, 0x17, 0x76, 0x94, 0xb5, 0x2f,
-	0x39, 0xe6, 0x96, 0xcb, 0xad, 0xbe, 0xe7, 0x5a, 0xf3, 0xcf, 0x39, 0x30, 0xe6, 0xd7, 0xf4, 0xf5,
-	0x29, 0xdc, 0x1a, 0x61, 0x97, 0xf7, 0xf8, 0x94, 0xf6, 0xa6, 0x84, 0x5c, 0xf4, 0x54, 0x61, 0x1d,
-	0x68, 0x77, 0x7c, 0x7f, 0xde, 0x1d, 0xf3, 0x9b, 0xb4, 0x7e, 0x8a, 0x5d, 0x7e, 0x32, 0xa5, 0xaf,
-	0x09, 0xb9, 0x50, 0x3c, 0x70, 0xa0, 0x5c, 0x82, 0x46, 0x73, 0x0b, 0xe8, 0x17, 0x50, 0xe3, 0x94,
-	0xf5, 0x38, 0xb1, 0x7b, 0xe2, 0x01, 0xe2, 0x6a, 0x74, 0x7c, 0x90, 0xe8, 0xa0, 0x13, 0xca, 0x4e,
-	0x88, 0xdd, 0x15, 0x7a, 0xea, 0x84, 0x0a, 0x0f, 0x66, 0xd0, 0x1d, 0xf9, 0x0b, 0x91, 0x46, 0xa6,
-	0x7a, 0x97, 0x95, 0x30, 0x63, 0x0a, 0x97, 0x7b, 0x00, 0xf2, 0xfd, 0xa3, 0x56, 0xf3, 0x72, 0xb5,
-	0x2c, 0x66, 0xe4, 0x72, 0xe3, 0x53, 0xd8, 0x59, 0x72, 0x8b, 0x55, 0x61, 0xa8, 0x85, 0xc2, 0xd0,
-	0x78, 0x06, 0xf5, 0xb8, 0x8d, 0x69, 0xf4, 0x0f, 0xff, 0x59, 0x95, 0x34, 0xe5, 0x33, 0x6c, 0xe3,
-	0x21, 0x71, 0xd0, 0x08, 0xca, 0x3e, 0xb1, 0x46, 0x91, 0x17, 0x75, 0xfc, 0x67, 0xa5, 0xc6, 0xde,
-	0x92, 0x55, 0xe5, 0x39, 0xd3, 0x9c, 0x75, 0xaa, 0x48, 0x77, 0xcd, 0x26, 0x66, 0xec, 0xb7, 0x7f,
-	0xfb, 0xc7, 0xef, 0xb3, 0x35, 0xb3, 0xd4, 0x7e, 0xf3, 0xed, 0x36, 0x66, 0xcc, 0x7d, 0x9a, 0x79,
-	0x80, 0x7e, 0x97, 0x81, 0x7a, 0xdc, 0xf5, 0xe8, 0xfe, 0xdb, 0x03, 0xa3, 0x0e, 0x7f, 0x37, 0x49,
-	0xf4, 0xcc, 0xc3, 0x59, 0x67, 0x1b, 0xa1, 0x21, 0xe1, 0xc2, 0x80, 0xa6, 0xeb, 0x0b, 0x48, 0x5b,
-	0x6e, 0xa1, 0x9b, 0x9e, 0x2d, 0xed, 0x60, 0x09, 0xfd, 0x26, 0x03, 0xd5, 0xf0, 0x83, 0x11, 0xed,
-	0x87, 0x8f, 0x5a, 0xf0, 0xde, 0x6f, 0x34, 0x97, 0x0b, 0x68, 0x3b, 0x5a, 0xb3, 0xce, 0x1d, 0xb4,
-	0x3b, 0xd0, 0x4b, 0xc2, 0x18, 0xb7, 0x39, 0xb5, 0xf8, 0x79, 0xf3, 0xcc, 0x1a, 0x71, 0xe2, 0x48,
-	0x73, 0x00, 0xf9, 0xae, 0x11, 0x51, 0xf0, 0xb9, 0x70, 0x34, 0x0a, 0xf1, 0x1f, 0x26, 0xa2, 0x51,
-	0x98, 0xfb, 0x10, 0xab, 0xa3, 0x30, 0x96, 0xf3, 0x41, 0x14, 0x0e, 0x23, 0x51, 0x60, 0x00, 0xc1,
-	0xb7, 0x54, 0xb4, 0x17, 0xbd, 0x4d, 0xec, 0x7b, 0x6c, 0xe3, 0x9d, 0x65, 0xcb, 0xfa, 0xc0, 0xfb,
-	0xb3, 0x4e, 0x0d, 0x55, 0x06, 0x72, 0x41, 0x5e, 0x54, 0x9d, 0xf8, 0x60, 0x2e, 0xee, 0xf1, 0xf7,
-	0x5b, 0x34, 0xee, 0x4b, 0x9e, 0xd3, 0xd1, 0xb8, 0x2f, 0x7b, 0x02, 0xea, 0xb8, 0x07, 0xb9, 0xd7,
-	0xd4, 0x05, 0x4f, 0xc5, 0xdd, 0xac, 0x6b, 0x5b, 0xbc, 0x9e, 0x29, 0x6d, 0xfa, 0x53, 0x26, 0xf2,
-	0x35, 0xc7, 0xeb, 0xc3, 0xe8, 0xbd, 0x25, 0xd1, 0x8d, 0xf1, 0xab, 0xc6, 0xfb, 0x2b, 0xe5, 0xb4,
-	0x71, 0xcf, 0x66, 0x9d, 0xfb, 0xe8, 0x5e, 0x38, 0x19, 0x3c, 0xf3, 0xe6, 0x93, 0x02, 0xa1, 0x39,
-	0x5b, 0xa5, 0xf3, 0xe2, 0x2f, 0xa5, 0xa8, 0xf3, 0x96, 0x3c, 0x60, 0xa3, 0xce, 0x5b, 0xf6, 0xd8,
-	0xd2, 0xce, 0x0b, 0x52, 0x26, 0xea, 0xbc, 0xc3, 0x85, 0xce, 0xfb, 0x43, 0x26, 0xf4, 0xed, 0xde,
-	0x77, 0xdd, 0xbb, 0x0b, 0x73, 0x25, 0xee, 0xb8, 0x6f, 0xac, 0x90, 0xd2, 0x66, 0x3d, 0x9e, 0x75,
-	0x6e, 0xa1, 0x9b, 0x41, 0x62, 0xf9, 0x4e, 0x53, 0x76, 0x3d, 0x58, 0x68, 0xd7, 0x97, 0x19, 0xd8,
-	0x5e, 0xd4, 0x53, 0xd1, 0xfb, 0xab, 0xba, 0xae, 0x67, 0xdd, 0xc1, 0x6a, 0x41, 0x6d, 0xe0, 0x8f,
-	0x67, 0x9d, 0x03, 0xf4, 0x9e, 0x28, 0x36, 0xfc, 0x9c, 0x34, 0x35, 0x8f, 0x69, 0xf6, 0xa9, 0xcd,
-	0x89, 0xcd, 0x9b, 0xf4, 0x6c, 0xce, 0x97, 0xbb, 0x68, 0x27, 0x66, 0x73, 0xdb, 0x63, 0x3f, 0x7f,
-	0xcd, 0xc0, 0xee, 0x52, 0x2e, 0x80, 0x1e, 0x26, 0xa4, 0x0c, 0xea, 0x06, 0x8f, 0x52, 0x11, 0x0c,
-	0xf3, 0xd5, 0xac, 0xd3, 0x42, 0x0f, 0xe3, 0xd7, 0x90, 0x54, 0xe3, 0x6d, 0x97, 0xd9, 0x47, 0x7b,
-	0x4b, 0x2e, 0xd3, 0x96, 0xba, 0x9f, 0xe4, 0xbf, 0xc8, 0xb2, 0xd3, 0xd3, 0x82, 0x24, 0x24, 0x8f,
-	0xff, 0x1b, 0x00, 0x00, 0xff, 0xff, 0xf7, 0x5d, 0x0b, 0x5b, 0x5a, 0x21, 0x00, 0x00,
+var fileDescriptor_app_c72527858dd2b44e = []byte{
+	// 2321 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x5a, 0xdd, 0x6e, 0x23, 0x49,
+	0x15, 0x96, 0xe3, 0xc4, 0xb1, 0x8f, 0xed, 0x8c, 0x53, 0x93, 0x9f, 0x8e, 0xb3, 0x99, 0x78, 0x7a,
+	0x86, 0xdd, 0x28, 0xcc, 0x24, 0x90, 0xd9, 0x85, 0x30, 0xcb, 0xce, 0xc8, 0x33, 0xb3, 0x40, 0x80,
+	0x5d, 0xad, 0x9c, 0x6c, 0x06, 0xf6, 0xc6, 0xea, 0xd8, 0x15, 0xa7, 0x89, 0xd3, 0xdd, 0x74, 0x95,
+	0x27, 0xe4, 0x06, 0x09, 0x24, 0x1e, 0x80, 0x00, 0x12, 0x57, 0xdc, 0xac, 0x84, 0x04, 0xf7, 0xfb,
+	0x1e, 0x48, 0xf0, 0x04, 0x68, 0x2f, 0x10, 0x57, 0x48, 0xbc, 0x00, 0xaa, 0x9f, 0xfe, 0x77, 0xc7,
+	0xdd, 0xed, 0xde, 0x05, 0xa4, 0xb9, 0x4a, 0xdc, 0x75, 0x4e, 0xd5, 0x57, 0xa7, 0xce, 0x77, 0x7e,
+	0xaa, 0x1b, 0x2a, 0x9a, 0x65, 0xed, 0x58, 0xb6, 0x49, 0x4d, 0x04, 0xa6, 0x85, 0x0d, 0x4b, 0xa7,
+	0xb6, 0xfe, 0xb3, 0xe6, 0x9d, 0x81, 0x69, 0x0e, 0x86, 0x78, 0x97, 0x8f, 0x9c, 0x8c, 0x4e, 0x77,
+	0x2f, 0x6d, 0xcd, 0xb2, 0xb0, 0x4d, 0x84, 0x6c, 0x73, 0x33, 0x3c, 0x4e, 0xf5, 0x0b, 0x4c, 0xa8,
+	0x76, 0x21, 0x27, 0x6b, 0xbe, 0x21, 0x05, 0x34, 0x4b, 0xdf, 0xd5, 0x0c, 0xc3, 0xa4, 0x1a, 0xd5,
+	0x4d, 0xc3, 0x51, 0x7f, 0xc0, 0xff, 0xf4, 0x1e, 0x0e, 0xb0, 0xf1, 0x90, 0x5c, 0x6a, 0x83, 0x01,
+	0xb6, 0x77, 0x4d, 0x8b, 0x4b, 0x8c, 0x91, 0xae, 0xd2, 0x2b, 0x0b, 0xcb, 0x1f, 0xea, 0xe7, 0x25,
+	0x68, 0x3c, 0xb7, 0xb1, 0x46, 0x71, 0xdb, 0xb2, 0x3a, 0xf8, 0xa7, 0x23, 0x4c, 0x28, 0xfa, 0x1a,
+	0xcc, 0x1a, 0xda, 0x05, 0x56, 0x0a, 0xad, 0xc2, 0x56, 0x75, 0xef, 0x8d, 0x1d, 0xb1, 0xf8, 0x8e,
+	0x83, 0x6e, 0xe7, 0x90, 0xda, 0xba, 0x31, 0x38, 0xd6, 0x86, 0x23, 0xdc, 0xe1, 0x92, 0xe8, 0x1d,
+	0x98, 0xb7, 0xb1, 0x65, 0x76, 0xf5, 0xbe, 0x32, 0x93, 0x40, 0xa9, 0xc4, 0x84, 0x0f, 0xfa, 0x68,
+	0x0f, 0xe6, 0xcc, 0x4b, 0x03, 0xdb, 0x4a, 0x31, 0x81, 0x92, 0x10, 0x45, 0xef, 0x02, 0xf4, 0xce,
+	0x34, 0x9b, 0x76, 0x39, 0xc4, 0xd9, 0x04, 0x8a, 0x15, 0x2e, 0xff, 0x21, 0xc3, 0xf9, 0x04, 0xaa,
+	0x7d, 0x4c, 0x7a, 0xb6, 0xce, 0xad, 0xa3, 0xcc, 0x25, 0xd0, 0xf6, 0x2b, 0x30, 0xcb, 0x9c, 0x99,
+	0x17, 0x58, 0x99, 0x4f, 0x62, 0x19, 0x26, 0xc9, 0x34, 0xf4, 0x9e, 0x69, 0x28, 0xe5, 0x24, 0x1a,
+	0x4c, 0x92, 0x61, 0x24, 0x3d, 0x1b, 0x63, 0x83, 0x9c, 0x99, 0x94, 0x28, 0x95, 0x24, 0x18, 0x7d,
+	0x0a, 0x4c, 0xff, 0x42, 0xd3, 0x0d, 0xaa, 0xe9, 0x06, 0xb6, 0x89, 0x02, 0x49, 0xf4, 0x7d, 0x0a,
+	0xe8, 0x1b, 0x30, 0x4f, 0xcc, 0x91, 0xdd, 0xc3, 0x44, 0xa9, 0x26, 0xd0, 0x75, 0x84, 0xd1, 0xdb,
+	0x50, 0xb2, 0xb1, 0xd6, 0xbf, 0xc0, 0x4a, 0x2d, 0x99, 0x0b, 0x30, 0x59, 0xf4, 0x1e, 0x54, 0x7b,
+	0x1a, 0xc5, 0x03, 0xd3, 0xbe, 0x62, 0xde, 0x53, 0x4f, 0xa0, 0x0a, 0x8e, 0xc2, 0x41, 0x1f, 0xed,
+	0x43, 0xf9, 0x1c, 0x5f, 0x5d, 0x9a, 0x76, 0x9f, 0x28, 0x0b, 0x09, 0x74, 0x5d, 0x69, 0x06, 0x97,
+	0x50, 0x8d, 0x8e, 0x88, 0x72, 0x2b, 0x09, 0x5c, 0x21, 0xcb, 0x1c, 0xdd, 0xd2, 0x7a, 0xe7, 0xda,
+	0x00, 0x2b, 0x0d, 0xae, 0xb6, 0x1e, 0x51, 0x7b, 0x76, 0x45, 0x31, 0x91, 0xb6, 0x91, 0xb2, 0xea,
+	0xaf, 0x0a, 0xb0, 0xe8, 0xa3, 0x19, 0xb1, 0x4c, 0x83, 0x60, 0xf4, 0x08, 0x4a, 0x9a, 0x65, 0xb1,
+	0x6d, 0x27, 0x61, 0xda, 0x9c, 0x66, 0x59, 0x07, 0x7d, 0xe6, 0xff, 0xaf, 0xb0, 0x4d, 0x74, 0xd3,
+	0x48, 0xca, 0xb6, 0x8a, 0x94, 0x3f, 0xe8, 0xab, 0x7f, 0x2f, 0x41, 0xe3, 0x03, 0xb3, 0xaf, 0x9f,
+	0x5e, 0xf9, 0xe8, 0x9e, 0x09, 0x86, 0x13, 0x23, 0x66, 0xb2, 0xc4, 0x88, 0x62, 0x96, 0x18, 0x31,
+	0x9b, 0x35, 0x46, 0xcc, 0x4d, 0x15, 0x23, 0x4a, 0x59, 0x63, 0x44, 0x39, 0x75, 0x8c, 0xa8, 0x64,
+	0x8d, 0x11, 0x30, 0x65, 0x8c, 0xa8, 0x4e, 0x11, 0x23, 0x6a, 0xd9, 0x62, 0x44, 0x3d, 0x7b, 0x8c,
+	0x58, 0x98, 0x22, 0x46, 0xdc, 0xca, 0x18, 0x23, 0x1a, 0xc9, 0x63, 0x84, 0xfa, 0x3d, 0x58, 0xf4,
+	0x71, 0x6c, 0x0a, 0xae, 0xab, 0xdb, 0xb0, 0xf8, 0x02, 0x0f, 0x31, 0x8f, 0x1a, 0xc4, 0xa1, 0xeb,
+	0xb2, 0x6f, 0xa6, 0xe2, 0x56, 0xc5, 0x91, 0xfd, 0x2a, 0x20, 0xbf, 0xac, 0x5c, 0x36, 0x46, 0xf8,
+	0x6f, 0x65, 0x28, 0xb6, 0x2d, 0xeb, 0x7f, 0x9c, 0xfa, 0x21, 0x26, 0xce, 0xa6, 0x65, 0xa2, 0x77,
+	0x7c, 0x73, 0x29, 0x42, 0xbc, 0xc3, 0xdf, 0x52, 0x6a, 0xfe, 0xce, 0x67, 0xe5, 0x6f, 0x79, 0x4a,
+	0xfe, 0x56, 0xd2, 0xf2, 0xd7, 0x4f, 0x09, 0x48, 0x45, 0x89, 0x2f, 0xb7, 0x3a, 0x08, 0x06, 0xf2,
+	0x7a, 0xba, 0x40, 0xee, 0x66, 0x8e, 0x85, 0x34, 0x99, 0xa3, 0xda, 0xe3, 0x79, 0xba, 0xcb, 0x4a,
+	0x70, 0x19, 0x2e, 0x9a, 0x11, 0xcd, 0x23, 0xa7, 0x3e, 0xef, 0x80, 0x10, 0x67, 0x0f, 0x98, 0xb2,
+	0xf0, 0x21, 0xa1, 0xdc, 0x98, 0xac, 0x2c, 0xc4, 0x1d, 0xe5, 0x91, 0xd5, 0x77, 0x57, 0x5e, 0x9c,
+	0xac, 0x2c, 0xc4, 0xb9, 0xf2, 0x53, 0xa8, 0xb9, 0x11, 0x92, 0x60, 0xaa, 0xa0, 0x56, 0x91, 0xef,
+	0xd8, 0xeb, 0x41, 0x76, 0x3a, 0x58, 0x1c, 0xc5, 0x73, 0x29, 0xd7, 0x71, 0x63, 0xea, 0x21, 0xa6,
+	0xe8, 0x05, 0xa0, 0xa1, 0x46, 0x31, 0xa1, 0x5d, 0x16, 0x0f, 0x64, 0xc1, 0xa0, 0xdc, 0xe6, 0x20,
+	0x56, 0xfc, 0xd3, 0xb4, 0x2d, 0xeb, 0x58, 0x8c, 0x76, 0x1a, 0x42, 0xc3, 0x7b, 0xa2, 0x7e, 0x5a,
+	0x84, 0xdb, 0x2f, 0x38, 0x01, 0x4f, 0x02, 0x21, 0xeb, 0x3d, 0xa8, 0x12, 0xac, 0xd9, 0xbd, 0xb3,
+	0x2e, 0x73, 0xa2, 0x44, 0xb1, 0x06, 0x84, 0xc2, 0x4b, 0xd3, 0xee, 0xa3, 0x25, 0x98, 0x1b, 0xea,
+	0x17, 0x3a, 0xe5, 0x11, 0xa7, 0xde, 0x11, 0x3f, 0xd0, 0x0a, 0x94, 0xcc, 0xd3, 0x53, 0xb6, 0xdb,
+	0x22, 0x7f, 0x2c, 0x7f, 0xa1, 0x6f, 0x42, 0x99, 0x98, 0x36, 0xed, 0x9e, 0xe3, 0xab, 0x44, 0xbc,
+	0x9f, 0x67, 0xd2, 0x3f, 0xc0, 0x57, 0xe8, 0x6d, 0x16, 0xa5, 0xd8, 0xd6, 0x1d, 0xee, 0x47, 0xad,
+	0xff, 0xcc, 0x34, 0x87, 0x52, 0x4b, 0x8a, 0xfa, 0x22, 0xec, 0xbc, 0x2f, 0xc2, 0x22, 0x24, 0x83,
+	0x64, 0x99, 0x3f, 0x14, 0x61, 0x70, 0xd5, 0x0b, 0x83, 0x15, 0xfe, 0xd8, 0x09, 0x74, 0x2b, 0x6e,
+	0xa0, 0x02, 0xf1, 0x5c, 0x86, 0xa2, 0x25, 0xc7, 0x83, 0xab, 0x62, 0x6a, 0xe1, 0xa3, 0x1b, 0x01,
+	0x52, 0xd4, 0xf8, 0x90, 0xcf, 0xed, 0x37, 0xc3, 0x15, 0x35, 0x1b, 0xf7, 0xe5, 0x43, 0x55, 0x83,
+	0xa5, 0xe0, 0x21, 0xc9, 0x5c, 0xb1, 0x09, 0x55, 0x6a, 0x52, 0x6d, 0xd8, 0xed, 0x99, 0x23, 0x83,
+	0xf2, 0x53, 0xaa, 0x77, 0x80, 0x3f, 0x7a, 0xce, 0x9e, 0xa0, 0x2d, 0x98, 0x67, 0x5b, 0x65, 0x26,
+	0x9f, 0xe1, 0x0e, 0x76, 0x2b, 0xe4, 0x19, 0x1d, 0x66, 0x8a, 0x43, 0x4c, 0xd5, 0x7f, 0x94, 0x60,
+	0xd5, 0xad, 0x77, 0x1d, 0x7f, 0x99, 0xa6, 0xdc, 0x74, 0xb9, 0x3c, 0x93, 0x9c, 0xcb, 0x4e, 0x9e,
+	0x2a, 0x26, 0xce, 0x53, 0x4f, 0xa1, 0x26, 0x2b, 0xf6, 0xe4, 0xdd, 0x65, 0x55, 0x6a, 0xe4, 0xd2,
+	0x5f, 0xee, 0x43, 0x99, 0x30, 0x33, 0x19, 0xbd, 0xf8, 0xfc, 0xf3, 0xf1, 0x81, 0x41, 0x1f, 0xed,
+	0xc9, 0xb8, 0xec, 0x48, 0xfb, 0x72, 0xdd, 0x7c, 0xb6, 0x76, 0xa6, 0x9c, 0xbc, 0x9d, 0x71, 0x53,
+	0x64, 0x25, 0x75, 0x8a, 0x84, 0xac, 0x29, 0xb2, 0x3a, 0x65, 0x8a, 0xac, 0x4d, 0x93, 0x22, 0xeb,
+	0x59, 0x53, 0xe4, 0x42, 0xb6, 0x14, 0x79, 0x2b, 0x79, 0x8a, 0x54, 0x5f, 0x82, 0x12, 0x65, 0x9a,
+	0x64, 0x74, 0xb0, 0x57, 0x2c, 0xa4, 0xeb, 0x15, 0xff, 0x55, 0x82, 0x55, 0xb7, 0x8e, 0x0d, 0x71,
+	0x78, 0x9a, 0x89, 0x33, 0xd4, 0x8f, 0x61, 0x5e, 0x16, 0xd3, 0xf2, 0x32, 0x4b, 0x13, 0xf9, 0x9a,
+	0xcb, 0xaf, 0xb9, 0xfc, 0xe5, 0x73, 0x39, 0xca, 0xb8, 0x3c, 0xb8, 0xfc, 0x2d, 0x50, 0xdc, 0xe6,
+	0x50, 0x4e, 0xec, 0x16, 0x67, 0x1b, 0xa1, 0x89, 0x79, 0x39, 0xe1, 0xa9, 0x3e, 0x86, 0xb5, 0x31,
+	0xaa, 0x12, 0xd4, 0x04, 0xdd, 0xdf, 0x97, 0x01, 0x3c, 0xb5, 0xe9, 0xa2, 0x86, 0x57, 0x36, 0xcc,
+	0x64, 0x28, 0x1b, 0x8a, 0xe9, 0xcb, 0x86, 0xd9, 0xc4, 0xe1, 0x29, 0xaf, 0x5b, 0xe5, 0xd7, 0x1d,
+	0xe7, 0x7f, 0xbf, 0xe3, 0x0c, 0xa7, 0x9a, 0x7a, 0xda, 0x54, 0xe3, 0x05, 0xef, 0x85, 0x14, 0xc1,
+	0xfb, 0xff, 0xb4, 0xef, 0xf4, 0xe7, 0x38, 0x94, 0x26, 0xc7, 0xa9, 0x9f, 0x15, 0xa1, 0xe9, 0xeb,
+	0x42, 0xd2, 0x05, 0x25, 0x5f, 0xd3, 0x35, 0x33, 0xae, 0xe9, 0x2a, 0xfa, 0x9a, 0xae, 0x25, 0x2f,
+	0xf5, 0xfb, 0x7a, 0xa8, 0x56, 0x98, 0xb2, 0x6c, 0x2c, 0x40, 0xca, 0xbb, 0x21, 0x47, 0x28, 0x09,
+	0x11, 0xff, 0x51, 0xaf, 0xf8, 0xf2, 0xb4, 0xbf, 0x6d, 0x0b, 0xb5, 0xbb, 0xe5, 0xac, 0xed, 0x6e,
+	0x65, 0x7c, 0xbb, 0x0b, 0xb1, 0xed, 0x6e, 0x35, 0x63, 0xbb, 0x5b, 0x4b, 0xdc, 0xee, 0xaa, 0x3f,
+	0x87, 0xf5, 0xb1, 0xc7, 0x96, 0xb4, 0x87, 0x7c, 0x02, 0xb7, 0x7c, 0x37, 0x0c, 0xbe, 0x5e, 0x32,
+	0xee, 0x96, 0xa1, 0xae, 0xb9, 0xff, 0xb3, 0xce, 0xf2, 0x13, 0x58, 0xff, 0x2e, 0xf6, 0xdd, 0x39,
+	0x7c, 0x24, 0xce, 0x23, 0x8f, 0xc2, 0x54, 0xfd, 0x73, 0x01, 0xde, 0x18, 0x3f, 0xb9, 0xdc, 0x9d,
+	0xe2, 0x95, 0x58, 0x6c, 0xea, 0x9a, 0x57, 0x45, 0x65, 0xca, 0x4e, 0x41, 0xb0, 0xc5, 0x74, 0x60,
+	0x47, 0xd0, 0x1a, 0x87, 0xf5, 0x3b, 0xfa, 0x10, 0x93, 0x5c, 0xca, 0xf4, 0x25, 0x98, 0x3b, 0x65,
+	0x93, 0x39, 0x14, 0xe3, 0x3f, 0xd4, 0x7f, 0x16, 0xe0, 0xee, 0x0d, 0xeb, 0x4a, 0x43, 0x7d, 0xe8,
+	0xe8, 0x16, 0xf8, 0xd9, 0xee, 0xfb, 0xcf, 0x76, 0xa2, 0xf6, 0x0e, 0xff, 0xf5, 0xbe, 0x41, 0xed,
+	0x2b, 0xb9, 0xea, 0x54, 0x2f, 0xbd, 0x9a, 0xfb, 0x00, 0xde, 0x8c, 0xa8, 0x01, 0x45, 0x46, 0x15,
+	0x66, 0x8c, 0x4a, 0x87, 0xfd, 0xcb, 0x36, 0xfa, 0x8a, 0xe9, 0xf0, 0x79, 0x6b, 0x1d, 0xf1, 0xe3,
+	0xf1, 0xcc, 0x7e, 0x41, 0x5d, 0x83, 0x55, 0x81, 0xf6, 0x90, 0x6a, 0x54, 0x27, 0x54, 0xef, 0x39,
+	0xa6, 0x55, 0xff, 0x54, 0x04, 0x25, 0x3a, 0x26, 0xb7, 0x6f, 0xc2, 0xf2, 0x50, 0x23, 0xb4, 0x4b,
+	0x2f, 0xcd, 0xee, 0x25, 0xc6, 0xe7, 0x5d, 0x11, 0xac, 0xfb, 0xd2, 0x1c, 0xdf, 0x8e, 0x9a, 0x23,
+	0x3a, 0xc9, 0xce, 0x0f, 0x35, 0x42, 0x8f, 0x2e, 0xcd, 0x97, 0x18, 0x9f, 0x8b, 0x06, 0xaf, 0x2f,
+	0x4c, 0x82, 0x86, 0x91, 0x01, 0xf4, 0x63, 0xa8, 0x53, 0xd3, 0xea, 0x52, 0x6c, 0x74, 0x6d, 0x6c,
+	0x99, 0x44, 0x72, 0xea, 0x9d, 0x44, 0x0b, 0x1d, 0x99, 0xd6, 0x11, 0x36, 0x3a, 0x4c, 0x4f, 0xac,
+	0x50, 0xa5, 0xde, 0x13, 0xb4, 0xce, 0x3f, 0x6a, 0x90, 0x7c, 0x16, 0x37, 0x6d, 0x65, 0xcd, 0xb2,
+	0x04, 0x9b, 0x37, 0x00, 0xf8, 0x8d, 0x96, 0x18, 0x9d, 0xe5, 0xa3, 0x15, 0xf6, 0x84, 0x0f, 0x37,
+	0xdf, 0x87, 0xd5, 0x98, 0x5d, 0x4c, 0x3a, 0x86, 0xba, 0xef, 0x18, 0x9a, 0x4f, 0xa0, 0x11, 0xc6,
+	0x98, 0x46, 0x5f, 0x3d, 0x86, 0xd5, 0xc3, 0xd1, 0xc9, 0x85, 0x4e, 0xf3, 0x6d, 0x64, 0x59, 0xb9,
+	0x1e, 0x9d, 0x37, 0x8f, 0x72, 0xfd, 0x18, 0x56, 0x9f, 0x6b, 0x46, 0x0f, 0x0f, 0xf3, 0x07, 0x1c,
+	0x9d, 0x37, 0x0f, 0xc0, 0x2f, 0x41, 0xe9, 0xe0, 0x21, 0xd6, 0x08, 0xce, 0x19, 0xf1, 0x8f, 0x60,
+	0x6d, 0xcc, 0xc4, 0x39, 0xd9, 0x38, 0xdc, 0xd7, 0xe4, 0x65, 0xe3, 0xe8, 0xbc, 0x79, 0x00, 0x3e,
+	0x82, 0xe5, 0x8f, 0x34, 0x42, 0x72, 0x86, 0xfb, 0x31, 0xac, 0x84, 0x67, 0xcd, 0xc9, 0xba, 0x1d,
+	0xfc, 0x13, 0xdc, 0xfb, 0x02, 0x28, 0x17, 0x9d, 0x37, 0x27, 0x0f, 0x3e, 0x1c, 0x11, 0x0b, 0x1b,
+	0xfd, 0xfc, 0x3d, 0x78, 0xcc, 0xc4, 0xb9, 0x91, 0xae, 0x67, 0xbe, 0xc2, 0xf6, 0x17, 0x41, 0xba,
+	0xc8, 0xc4, 0x39, 0x40, 0xde, 0xfb, 0xf7, 0x0a, 0xbf, 0x10, 0xf8, 0x40, 0x33, 0xb4, 0x01, 0xb6,
+	0xd1, 0x10, 0x2a, 0xee, 0xdd, 0x25, 0x0a, 0xbc, 0xad, 0x0a, 0x7f, 0x93, 0xd6, 0xdc, 0x88, 0x19,
+	0x15, 0xa8, 0x54, 0xf5, 0xba, 0x5d, 0x43, 0xb2, 0x27, 0x6a, 0x69, 0x96, 0xf5, 0xcb, 0xbf, 0x7e,
+	0xfe, 0x9b, 0x99, 0xba, 0x5a, 0xde, 0x7d, 0xf5, 0xf5, 0x5d, 0xcd, 0xb2, 0xc8, 0xe3, 0xc2, 0x36,
+	0xfa, 0x75, 0x01, 0x1a, 0xe1, 0x24, 0x88, 0xee, 0xdd, 0x9c, 0x22, 0xc5, 0xe2, 0xf7, 0x93, 0xe4,
+	0x51, 0x75, 0xef, 0xba, 0xbd, 0x84, 0xd0, 0x00, 0x53, 0x06, 0xa0, 0x45, 0x5c, 0x01, 0x8e, 0x65,
+	0x19, 0xdd, 0x76, 0xb0, 0xec, 0x7a, 0x43, 0xe8, 0x17, 0x05, 0xa8, 0xf9, 0x5f, 0xc6, 0xa0, 0x4d,
+	0xff, 0x52, 0x63, 0xde, 0xa5, 0x35, 0x5b, 0xf1, 0x02, 0x12, 0xc7, 0xce, 0x75, 0x7b, 0x1d, 0xad,
+	0xf5, 0xe5, 0x10, 0x03, 0x43, 0x5a, 0x97, 0x3a, 0x3d, 0x6b, 0x9d, 0xea, 0x43, 0x8a, 0x6d, 0x0e,
+	0x07, 0x90, 0x6b, 0x1a, 0x76, 0x0a, 0xee, 0xad, 0x53, 0xf0, 0x14, 0xc2, 0x9f, 0x0a, 0x05, 0x4f,
+	0x21, 0xf2, 0x91, 0x83, 0x3c, 0x85, 0x0b, 0xfe, 0xdc, 0x3b, 0x85, 0xbd, 0xc0, 0x29, 0x58, 0x00,
+	0xde, 0x77, 0x0a, 0x68, 0x23, 0xb8, 0x9b, 0xd0, 0xb7, 0x0e, 0xcd, 0x3b, 0x71, 0xc3, 0x72, 0xc1,
+	0x7b, 0xd7, 0xed, 0x3a, 0xaa, 0xf6, 0xf9, 0x00, 0xdf, 0xa8, 0x58, 0x71, 0x3b, 0x72, 0xee, 0xe1,
+	0x2b, 0xf2, 0xe0, 0xb9, 0xc7, 0xbc, 0xaa, 0x0a, 0x9e, 0x7b, 0xdc, 0x2d, 0xbb, 0x3c, 0x77, 0xcf,
+	0xf7, 0x5a, 0xd2, 0xdf, 0xc5, 0xb9, 0xab, 0x0d, 0x89, 0xc5, 0xe9, 0x79, 0x38, 0xa6, 0x3f, 0x16,
+	0x02, 0x6f, 0x4a, 0x9d, 0x3e, 0x0a, 0xbd, 0x19, 0x73, 0xba, 0xa1, 0xfe, 0xb8, 0xf9, 0xd6, 0x44,
+	0x39, 0x09, 0xee, 0xc9, 0x75, 0xfb, 0x1e, 0xba, 0xeb, 0x77, 0x06, 0x07, 0x5e, 0xd4, 0x29, 0x10,
+	0x8a, 0x60, 0xe5, 0xc6, 0x0b, 0xdf, 0x49, 0x06, 0x8d, 0x17, 0xf3, 0x8e, 0x20, 0x68, 0xbc, 0xb8,
+	0x6b, 0x4d, 0x69, 0x3c, 0xcf, 0x65, 0x82, 0xc6, 0xdb, 0x1b, 0x6b, 0xbc, 0xdf, 0x15, 0x7c, 0xdf,
+	0xc5, 0xb8, 0xa6, 0xbb, 0x3f, 0xd6, 0x57, 0xc2, 0x86, 0xfb, 0xca, 0x04, 0x29, 0x09, 0xeb, 0xd1,
+	0x75, 0x7b, 0x19, 0xdd, 0xf6, 0x1c, 0xcb, 0x35, 0x9a, 0xc0, 0xb5, 0x3d, 0x16, 0xd7, 0x67, 0x05,
+	0x58, 0x1a, 0xd7, 0xdd, 0xa0, 0xb7, 0x26, 0xf5, 0x3f, 0x0e, 0xba, 0xad, 0xc9, 0x82, 0x12, 0xe0,
+	0xf7, 0xaf, 0xdb, 0x5b, 0xe8, 0x4d, 0x16, 0x6c, 0xe8, 0x19, 0x6e, 0xc9, 0x36, 0xb4, 0xd5, 0x33,
+	0x0d, 0x8a, 0x0d, 0xda, 0x32, 0x4f, 0x23, 0xb6, 0x5c, 0x43, 0xab, 0x21, 0xcc, 0xbb, 0x4e, 0xf3,
+	0xfa, 0x97, 0x02, 0xac, 0xc5, 0x76, 0x65, 0xe8, 0x41, 0xc2, 0xe6, 0x4d, 0xec, 0xe0, 0x61, 0xaa,
+	0x56, 0x4f, 0x3d, 0xbe, 0x6e, 0xef, 0xa0, 0x07, 0xe1, 0x6d, 0xf0, 0xa6, 0xef, 0xa6, 0xcd, 0x6c,
+	0xa2, 0x8d, 0x98, 0xcd, 0xec, 0x8a, 0x86, 0xf1, 0x0f, 0x05, 0x68, 0x84, 0x6b, 0xf3, 0xa0, 0xdb,
+	0xc6, 0x74, 0x04, 0x41, 0xb7, 0x8d, 0x2b, 0xef, 0xd5, 0xa7, 0xdc, 0x6d, 0x09, 0x1f, 0x8e, 0xa0,
+	0x53, 0xd5, 0x08, 0x3a, 0xad, 0x47, 0xd9, 0x1f, 0xa1, 0xc0, 0x7c, 0x85, 0x01, 0x0c, 0xd7, 0xe2,
+	0xa1, 0xa0, 0x34, 0xbe, 0x03, 0x08, 0x05, 0xa5, 0x98, 0x72, 0x5e, 0x02, 0xec, 0xf1, 0xe1, 0x14,
+	0x00, 0x85, 0x02, 0x03, 0xf8, 0x69, 0x01, 0x16, 0x23, 0xa5, 0x77, 0x90, 0x64, 0x71, 0x25, 0x7f,
+	0x90, 0x64, 0xb1, 0xf5, 0xbb, 0xda, 0xe6, 0x24, 0xb3, 0xc5, 0x78, 0x04, 0xe4, 0x3d, 0xf5, 0x4e,
+	0x0c, 0x48, 0xa9, 0xe1, 0x98, 0x31, 0xcc, 0xe2, 0xa0, 0x19, 0x63, 0x8a, 0xfc, 0xe6, 0xfd, 0x9b,
+	0x85, 0x02, 0x66, 0x8c, 0xc6, 0x81, 0x09, 0x66, 0x14, 0x0a, 0x0c, 0xe0, 0x6f, 0x0b, 0xb0, 0x10,
+	0x2c, 0xb0, 0xd1, 0x5d, 0xff, 0xca, 0x63, 0x4b, 0xfa, 0xa6, 0x7a, 0x93, 0x88, 0x84, 0xf6, 0xee,
+	0x75, 0x1b, 0xa1, 0x86, 0xa5, 0x11, 0x12, 0x01, 0xd6, 0x52, 0xd7, 0x63, 0x80, 0x31, 0x71, 0xc7,
+	0x6e, 0xe1, 0x42, 0x3a, 0x68, 0xb7, 0x98, 0xf2, 0xbd, 0x79, 0xff, 0x66, 0xa1, 0x80, 0xdd, 0x6c,
+	0x3e, 0x9c, 0xc2, 0x6e, 0x42, 0xc1, 0x71, 0xbf, 0x48, 0xdd, 0x8c, 0x42, 0xe4, 0x1c, 0x5f, 0xaf,
+	0x07, 0xdd, 0x2f, 0xb6, 0xf8, 0x96, 0xee, 0x47, 0xc4, 0x78, 0x0a, 0xf7, 0x93, 0x1a, 0x1e, 0x49,
+	0x42, 0xa5, 0x72, 0x98, 0x24, 0xe3, 0x4b, 0xf4, 0x30, 0x49, 0x62, 0xea, 0x6d, 0x97, 0x24, 0x7c,
+	0x3c, 0x15, 0x49, 0xb8, 0xc6, 0xe3, 0xc2, 0xf6, 0xb3, 0xd9, 0x4f, 0x66, 0xac, 0x93, 0x93, 0x12,
+	0x2f, 0xce, 0x1f, 0xfd, 0x27, 0x00, 0x00, 0xff, 0xff, 0x1a, 0x1e, 0x56, 0xd7, 0xa4, 0x32, 0x00,
+	0x00,
 }

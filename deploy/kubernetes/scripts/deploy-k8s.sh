@@ -111,6 +111,10 @@ if [ "${BASE}" == "1" ];then
     replace ./kubernetes/etcd/${FILE} | kubectl apply -f -
   done
 
+  for FILE in `ls ./kubernetes/minio/`;do
+    replace ./kubernetes/minio/${FILE} | kubectl apply -f -
+  done
+
   for FILE in `ls ./kubernetes/openpitrix/ | grep "^openpitrix-"`;do
     replace ./kubernetes/openpitrix/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/${FILE} | kubectl apply -f -

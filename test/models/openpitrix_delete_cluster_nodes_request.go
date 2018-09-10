@@ -24,9 +24,6 @@ type OpenpitrixDeleteClusterNodesRequest struct {
 
 	// node id
 	NodeID []string `json:"node_id"`
-
-	// role
-	Role string `json:"role,omitempty"`
 }
 
 // Validate validates this openpitrix delete cluster nodes request

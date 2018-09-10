@@ -9,15 +9,21 @@ import (
 	"regexp"
 	"strings"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/yamlutil"
 )
 
 type GlobalConfig struct {
+	App     AppServiceConfig       `json:"app"`
 	Repo    RepoServiceConfig      `json:"repo"`
 	Cluster ClusterServiceConfig   `json:"cluster"`
 	Runtime map[string]ImageConfig `json:"runtime"`
 	Pilot   PilotServiceConfig     `json:"pilot"`
+}
+
+type AppServiceConfig struct {
+	DefaultDraftStatus bool `json:"default_draft_status"`
 }
 
 type RepoServiceConfig struct {
@@ -43,12 +49,15 @@ type ImageConfig struct {
 	ImageName string `json:"image_name"`
 }
 
-func (g *GlobalConfig) GetFrontgateAutoDelete() bool {
-	if g.Cluster.FrontgateAutoDelete == false {
-		return false
-	} else {
-		return true
+func (g *GlobalConfig) GetAppDefaultStatus() string {
+	if g.App.DefaultDraftStatus {
+		return constants.StatusDraft
 	}
+	return constants.StatusActive
+}
+
+func (g *GlobalConfig) GetFrontgateAutoDelete() bool {
+	return g.Cluster.FrontgateAutoDelete
 }
 
 func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageConfig, error) {

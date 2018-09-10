@@ -9,6 +9,7 @@ const (
 	ActionStartInstances     = "StartInstances"
 	ActionStopInstances      = "StopInstances"
 	ActionTerminateInstances = "TerminateInstances"
+	ActionResizeInstances    = "ResizeInstances"
 
 	ActionCreateVolumes = "CreateVolumes"
 	ActionAttachVolumes = "AttachVolumes"
@@ -19,6 +20,7 @@ const (
 	ActionFormatAndMountVolume       = "FormatAndMountVolume"
 	ActionWaitFrontgateAvailable     = "WaitFrontgateAvailable"
 	ActionRegisterMetadata           = "RegisterMetadata"
+	ActionRegisterNodesMetadata      = "RegisterNodesMetadata"
 	ActionDeregisterMetadata         = "DeregisterMetadata"
 	ActionRegisterCmd                = "RegisterCmd"
 	ActionDeregisterCmd              = "DeregisterCmd"
@@ -28,6 +30,7 @@ const (
 	ActionSetDroneConfig             = "SetDroneConfig"
 	ActionPingDrone                  = "PingDrone"
 	ActionPingFrontgate              = "PingFrontgate"
+	PingMetadataBackend              = "PingMetadataBackend"
 	ActionRunCommandOnDrone          = "RunCommandOnDrone"
 	ActionRemoveContainerOnDrone     = "RemoveContainerOnDrone"
 	ActionRemoveContainerOnFrontgate = "RemoveContainerOnFrontgate"

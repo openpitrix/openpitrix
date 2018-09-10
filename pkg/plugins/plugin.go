@@ -7,7 +7,6 @@ package plugins
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -19,16 +18,17 @@ import (
 
 type ProviderInterface interface {
 	// Parse package and conf into cluster which clusterManager will register into db.
-	ParseClusterConf(versionId, runtimeId, conf string) (*models.ClusterWrapper, error)
+	ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error
 	SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	HandleSubtask(task *models.Task) error
-	WaitSubtask(task *models.Task, timeout time.Duration, waitInterval time.Duration) error
+	WaitSubtask(task *models.Task) error
 	DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error)
 	CheckResource(ctx context.Context, clusterWrapper *models.ClusterWrapper) error
 	DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error)
 	ValidateCredential(url, credential, zone string) error
 	DescribeRuntimeProviderZones(url, credential string) ([]string, error)
 	UpdateClusterStatus(job *models.Job) error
+	DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) error
 }
 
 func GetProviderPlugin(ctx context.Context, provider string) (ProviderInterface, error) {

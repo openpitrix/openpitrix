@@ -24,12 +24,6 @@ type OpenpitrixRuntimeLabel struct {
 
 	// label value
 	LabelValue string `json:"label_value,omitempty"`
-
-	// runtime id
-	RuntimeID string `json:"runtime_id,omitempty"`
-
-	// runtime label id
-	RuntimeLabelID string `json:"runtime_label_id,omitempty"`
 }
 
 // Validate validates this openpitrix runtime label

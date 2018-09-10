@@ -49,7 +49,8 @@ func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.Cl
 		logger.Error(ctx, "No such provider [%s]. ", f.Runtime.Provider)
 		return clusterId, err
 	}
-	frontgateWrapper, err := providerInterface.ParseClusterConf(constants.FrontgateVersionId, clusterWrapper.Cluster.RuntimeId, conf)
+	frontgateWrapper := new(models.ClusterWrapper)
+	err = providerInterface.ParseClusterConf(constants.FrontgateVersionId, clusterWrapper.Cluster.RuntimeId, conf, frontgateWrapper)
 	if err != nil {
 		logger.Error(ctx, "Parse frontgate cluster conf failed. ")
 		return clusterId, err
@@ -79,6 +80,7 @@ func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.Cl
 		directive,
 		f.Runtime.Provider,
 		frontgateWrapper.Cluster.Owner,
+		frontgateWrapper.Cluster.RuntimeId,
 	)
 
 	_, err = jobclient.SendJob(ctx, newJob)
@@ -101,6 +103,7 @@ func (f *Frontgate) StartCluster(ctx context.Context, frontgate *models.Cluster)
 		directive,
 		f.Runtime.Provider,
 		frontgate.Owner,
+		frontgate.RuntimeId,
 	)
 
 	_, err = jobclient.SendJob(ctx, newJob)
@@ -123,6 +126,7 @@ func (f *Frontgate) RecoverCluster(ctx context.Context, frontgate *models.Cluste
 		directive,
 		f.Runtime.Provider,
 		frontgate.Owner,
+		frontgate.RuntimeId,
 	)
 
 	_, err = jobclient.SendJob(ctx, newJob)

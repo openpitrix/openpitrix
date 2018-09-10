@@ -29,6 +29,53 @@ var (
 	_ pbfrontgate.FrontgateService = (*Server)(nil)
 )
 
+func (p *Server) GetPilotVersion(*pbtypes.Empty, *pbtypes.Version) error {
+	err := fmt.Errorf("TODO")
+	logger.Warn(nil, "%+v", err)
+	return err
+}
+func (p *Server) GetFrontgateVersion(*pbtypes.Empty, *pbtypes.Version) error {
+	err := fmt.Errorf("TODO")
+	logger.Warn(nil, "%+v", err)
+	return err
+}
+func (p *Server) GetDroneVersion(*pbtypes.DroneEndpoint, *pbtypes.Version) error {
+	err := fmt.Errorf("TODO")
+	logger.Warn(nil, "%+v", err)
+	return err
+}
+
+func (p *Server) PingMetadataBackend(*pbtypes.Empty, *pbtypes.Empty) error {
+
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
+	if err != nil {
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	if err := etcdClient.Ping(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *EtcdClient) Ping() error {
+	logger.Info(nil, funcutil.CallerName(1))
+
+	if _, err := p.GetAllValues(); err != nil {
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	return nil
+}
+
 func (p *Server) GetPilotConfig(in *pbtypes.Empty, out *pbtypes.PilotConfig) error {
 	logger.Info(nil, funcutil.CallerName(1))
 

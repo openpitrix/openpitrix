@@ -1,0 +1,14 @@
+ALTER TABLE app_version
+	ADD COLUMN home TEXT NOT NULL;
+ALTER TABLE app_version
+	ADD COLUMN icon TEXT NOT NULL;
+ALTER TABLE app_version
+	ADD COLUMN screenshots TEXT NOT NULL;
+ALTER TABLE app_version
+	ADD COLUMN maintainers TEXT NOT NULL;
+ALTER TABLE app_version
+	ADD COLUMN keywords TEXT NOT NULL;
+ALTER TABLE app_version
+	ADD COLUMN sources TEXT NOT NULL;
+ALTER TABLE app_version
+	ADD COLUMN readme TEXT NOT NULL;

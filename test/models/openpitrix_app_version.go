@@ -25,6 +25,18 @@ type OpenpitrixAppVersion struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// home
+	Home string `json:"home,omitempty"`
+
+	// icon
+	Icon string `json:"icon,omitempty"`
+
+	// keywords
+	Keywords string `json:"keywords,omitempty"`
+
+	// maintainers
+	Maintainers string `json:"maintainers,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
@@ -34,8 +46,17 @@ type OpenpitrixAppVersion struct {
 	// package name
 	PackageName string `json:"package_name,omitempty"`
 
+	// readme
+	Readme string `json:"readme,omitempty"`
+
+	// screenshots
+	Screenshots string `json:"screenshots,omitempty"`
+
 	// sequence
 	Sequence int64 `json:"sequence,omitempty"`
+
+	// sources
+	Sources string `json:"sources,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`

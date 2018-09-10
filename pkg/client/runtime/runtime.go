@@ -27,15 +27,10 @@ func NewRuntime(ctx context.Context, runtimeId string) (*Runtime, error) {
 	if err != nil {
 		return nil, err
 	}
-	provider := runtime.GetRuntime().GetProvider().GetValue()
-	zone := runtime.GetRuntime().GetZone().GetValue()
 	result := &Runtime{
+		Runtime:    *models.PbToRuntime(runtime.Runtime),
 		Credential: runtime.GetRuntimeCredential().GetValue(),
 	}
-	result.RuntimeId = runtimeId
-	result.Provider = provider
-	result.Zone = zone
-	result.RuntimeUrl = runtime.GetRuntime().GetRuntimeUrl().GetValue()
 	return result, nil
 }
 

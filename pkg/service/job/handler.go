@@ -28,6 +28,7 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 		req.GetDirective().GetValue(),
 		req.GetProvider().GetValue(),
 		s.UserId,
+		req.GetRuntimeId().GetValue(),
 	)
 
 	_, err := pi.Global().DB(ctx).

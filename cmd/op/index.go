@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"openpitrix.io/openpitrix/pkg/devkit"
-	"openpitrix.io/openpitrix/pkg/devkit/app"
+	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
 type repoIndexCmd struct {
@@ -65,12 +65,12 @@ func index(dir, url, mergeTo string) error {
 	}
 	if mergeTo != "" {
 		// if index.yaml is missing then create an empty one to merge into
-		var i2 *app.IndexFile
+		var i2 *opapp.IndexFile
 		if _, err := os.Stat(mergeTo); os.IsNotExist(err) {
-			i2 = app.NewIndexFile()
+			i2 = opapp.NewIndexFile()
 			i2.WriteFile(mergeTo, 0755)
 		} else {
-			i2, err = app.LoadIndexFile(mergeTo)
+			i2, err = opapp.LoadIndexFile(mergeTo)
 			if err != nil {
 				return fmt.Errorf("merge failed: %s", err)
 			}
