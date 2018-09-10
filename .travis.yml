@@ -18,8 +18,8 @@ script:
 - make ci-test
 before_deploy:
 - make clean
-- make release-$TRAVIS_TAG
-- make bin-release-$TRAVIS_TAG
+- make release-openpitrix-$TRAVIS_TAG
+- make bin-release-openpitrix-$TRAVIS_TAG
 deploy:
   - provider: releases
     api_key:
