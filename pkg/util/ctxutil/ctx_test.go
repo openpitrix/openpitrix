@@ -28,3 +28,23 @@ func TestAddMessageId(t *testing.T) {
 	messageId = GetMessageId(ctx)
 	require.Equal(t, messageId, []string{})
 }
+
+func TestGetRequestId(t *testing.T) {
+	ctx := context.TODO()
+	requestId := "abcdef"
+	ctx = SetRequestId(ctx, requestId)
+
+	require.Equal(t, requestId, GetRequestId(ctx))
+
+	ctx = context.TODO()
+	requestId = "12345"
+	ctx = SetRequestId(ctx, requestId)
+
+	require.Equal(t, requestId, GetRequestId(ctx))
+
+	ctx = context.TODO()
+	requestId = "qwert"
+	ctx = SetRequestId(ctx, requestId)
+
+	require.Equal(t, requestId, GetRequestId(ctx))
+}
