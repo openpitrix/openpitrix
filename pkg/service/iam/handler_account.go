@@ -7,7 +7,6 @@ package iam
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -130,8 +129,7 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pbiam.DeleteUsersRequest)
 
 func (p *Server) CreateUser(ctx context.Context, req *pbiam.CreateUserRequest) (*pbiam.CreateUserResponse, error) {
 	var newUser = models.NewUser(
-		models.NewUserId(),
-		"", // name:todo
+		getUsernameFromEmail(req.GetEmail().GetValue()),
 		req.GetPassword().GetValue(),
 		req.GetEmail().GetValue(),
 		req.GetRole().GetValue(),
@@ -150,68 +148,75 @@ func (p *Server) CreateUser(ctx context.Context, req *pbiam.CreateUserRequest) (
 	return &pbiam.CreateUserResponse{}, nil
 }
 
-func (p *Server) InviteUsers(context.Context, *pbiam.InviteUsersRequest) (*pbiam.InviteUsersResponse, error) {
-	return nil, fmt.Errorf("TODO") // gen token
-}
-
 func (p *Server) CreatePasswordReset(ctx context.Context, req *pbiam.CreatePasswordResetRequest) (*pbiam.CreatePasswordResetResponse, error) {
-	var userId = req.GetUserId().GetValue()
-	var userInfo models.User
 
-	query := pi.Global().DB(ctx).
-		Select(models.UserColumns...).
-		From(models.UserTableName).Limit(1).
-		Where(db.Eq(models.ColumnName, userId))
-	err := query.LoadOne(&userInfo)
-	if err != nil {
-		return nil, fmt.Errorf("user(%q) not fount", userId)
-	}
+	/*
 
-	if userInfo.Password != req.GetPassword().GetValue() {
-		return nil, fmt.Errorf("user(%q) password failed", req.UserId)
-	}
+		var userId = req.GetUserId().GetValue()
+		var userInfo models.User
 
-	tokStr, err := MakeJwtToken(p.TokenConfig.Secret, func(opt *JwtToken) {
-		opt.UserId = userId
-		opt.TokenType = TokenType_ResetPassword
-		opt.ExpiresAt = int64(time.Second * time.Duration(p.DurationSeconds))
-	})
-	if err != nil {
-		return nil, err
-	}
+		query := pi.Global().DB(ctx).
+			Select(models.UserColumns...).
+			From(models.UserTableName).Limit(1).
+			Where(db.Eq(models.ColumnName, userId))
+		err := query.LoadOne(&userInfo)
+		if err != nil {
+			return nil, fmt.Errorf("user(%q) not fount", userId)
+		}
 
-	reply := &pbiam.CreatePasswordResetResponse{
-		UserId:  pbutil.ToProtoString(userId),
-		ResetId: pbutil.ToProtoString(tokStr),
-	}
+		if userInfo.Password != req.GetPassword().GetValue() {
+			return nil, fmt.Errorf("user(%q) password failed", req.UserId)
+		}
 
-	return reply, nil
+		tokStr, err := MakeJwtToken(p.TokenConfig.Secret, func(opt *JwtToken) {
+			opt.UserId = userId
+			opt.TokenType = TokenType_ResetPassword
+			opt.ExpiresAt = int64(time.Second * time.Duration(p.DurationSeconds))
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		reply := &pbiam.CreatePasswordResetResponse{
+			UserId:  pbutil.ToProtoString(userId),
+			ResetId: pbutil.ToProtoString(tokStr),
+		}
+
+		return reply, nil
+	*/
+
+	return nil, fmt.Errorf("TODO")
 }
 
 func (p *Server) ChangePassword(ctx context.Context, req *pbiam.ChangePasswordRequest) (*pbiam.ChangePasswordResponse, error) {
-	token, err := ValidateJwtToken(req.GetResetId().GetValue(), p.TokenConfig.Secret)
-	if err != nil {
-		return nil, err
-	}
 
-	if token.TokenType != TokenType_ResetPassword {
-		return nil, fmt.Errorf("invalid token type")
-	}
+	return nil, fmt.Errorf("TODO")
 
-	_, err = pi.Global().DB(ctx).
-		Update(models.UserTableName).
-		Set("password", req.GetNewPassword().GetValue()).
-		Where(db.Eq("id", []string{token.UserId})).
-		Exec()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
-	}
+	/*
+		token, err := ValidateJwtToken(req.GetResetId().GetValue(), p.TokenConfig.Secret)
+		if err != nil {
+			return nil, err
+		}
 
-	reply := &pbiam.ChangePasswordResponse{
-		UserId: pbutil.ToProtoString(token.UserId),
-	}
+		if token.TokenType != TokenType_ResetPassword {
+			return nil, fmt.Errorf("invalid token type")
+		}
 
-	return reply, nil
+		_, err = pi.Global().DB(ctx).
+			Update(models.UserTableName).
+			Set("password", req.GetNewPassword().GetValue()).
+			Where(db.Eq("id", []string{token.UserId})).
+			Exec()
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		}
+
+		reply := &pbiam.ChangePasswordResponse{
+			UserId: pbutil.ToProtoString(token.UserId),
+		}
+
+		return reply, nil
+	*/
 }
 
 func (p *Server) GetPasswordReset(context.Context, *pbiam.GetPasswordResetRequest) (*pbiam.GetPasswordResetResponse, error) {
@@ -226,9 +231,8 @@ func (p *Server) ValidateUserPassword(context.Context, *pbiam.ValidateUserPasswo
 
 func (p *Server) CreateGroup(ctx context.Context, req *pbiam.CreateGroupRequest) (*pbiam.CreateGroupResponse, error) {
 	var newGroup = models.NewGroup(
-		models.NewGroupId(),
 		req.GetName().GetValue(),
-		"",
+		req.GetDescription().GetValue(),
 	)
 
 	_, err := pi.Global().DB(ctx).
@@ -295,7 +299,6 @@ func (p *Server) JoinGroup(ctx context.Context, req *pbiam.JoinGroupRequest) (*p
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(models.GroupMemberTableName).
-		Columns(models.GroupMemberColumns...).
 		Record(newGroupMember).
 		Exec()
 	if err != nil {

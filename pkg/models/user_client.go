@@ -17,10 +17,12 @@ func NewUserClientId() string {
 }
 
 type UserClient struct {
-	UserId       string
 	ClientId     string
 	ClientSecret string
+	UserId       string
 	Description  string
+
+	Status string
 }
 
 var UserClientColumns = GetColumnsFromStruct(&UserClient{})

@@ -17,16 +17,18 @@ func NewGroupId() string {
 }
 
 type Group struct {
-	Id          string
+	GroupId     string
 	Name        string
 	Description string
+
+	Status string
 }
 
 var GroupColumns = GetColumnsFromStruct(&Group{})
 
-func NewGroup(id, name, description string) *Group {
+func NewGroup(name, description string) *Group {
 	return &Group{
-		Id:          id,
+		GroupId:     NewGroupId(),
 		Name:        name,
 		Description: description,
 	}
@@ -34,7 +36,7 @@ func NewGroup(id, name, description string) *Group {
 
 func GroupToPb(p *Group) *pbiam.Group {
 	q := new(pbiam.Group)
-	q.GroupId = pbutil.ToProtoString(p.Id)
+	q.GroupId = pbutil.ToProtoString(p.GroupId)
 	q.Name = pbutil.ToProtoString(p.Name)
 	q.Description = pbutil.ToProtoString(p.Description)
 	return q

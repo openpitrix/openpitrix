@@ -2,6 +2,8 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
+// +build ignore
+
 package iam
 
 import (
@@ -83,7 +85,7 @@ func (p *Server) Auth(ctx context.Context, req *pbiam.AuthRequest) (*pbiam.AuthR
 	}
 
 	tokStr, err := MakeJwtToken(p.TokenConfig.Secret, func(opt *JwtToken) {
-		opt.UserId = userInfo.Id
+		opt.UserId = userInfo.UserId
 		opt.ClientId = req.ClientId
 		opt.TokenType = TokenType_ID
 		opt.ExpiresAt = int64(time.Second * time.Duration(p.DurationSeconds))

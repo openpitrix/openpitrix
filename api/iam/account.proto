@@ -12,35 +12,32 @@ import "google/protobuf/wrappers.proto";
 
 message User {
 	google.protobuf.StringValue user_id = 1;
-	google.protobuf.StringValue user_name = 2;
-	google.protobuf.StringValue user_email = 3;
+	google.protobuf.StringValue username = 2;
+	google.protobuf.StringValue email = 3;
 	google.protobuf.StringValue role = 4; // default is user
 	google.protobuf.StringValue description = 5;
+	google.protobuf.StringValue status = 6;
 }
 
 message UserClient {
-	google.protobuf.StringValue user_id = 1;
-	google.protobuf.StringValue client_id = 2;
-	google.protobuf.StringValue client_secret = 3;
-	google.protobuf.StringValue description = 4;
+	google.protobuf.StringValue client_id = 1;
+	google.protobuf.StringValue client_secret = 2;
+	google.protobuf.StringValue user_id = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.StringValue description = 5;
 }
 
 message Group {
 	google.protobuf.StringValue group_id = 1;
 	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue description = 3;
-}
-
-message GroupMember {
-	google.protobuf.StringValue group_id = 1;
-	google.protobuf.StringValue user_id = 2;
+	google.protobuf.StringValue status = 3;
+	google.protobuf.StringValue description = 4;
 }
 
 service AccountManager {
 	rpc DescribeUsers(DescribeUsersRequest) returns (DescribeUsersResponse);
 	rpc ModifyUser(ModifyUserRequest) returns (ModifyUserResponse);
 	rpc DeleteUsers(DeleteUsersRequest) returns (DeleteUsersResponse);
-	rpc InviteUsers(InviteUsersRequest) returns (InviteUsersResponse);
 
 	rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
 	rpc CreatePasswordReset(CreatePasswordResetRequest) returns (CreatePasswordResetResponse);
@@ -63,10 +60,11 @@ message DescribeUsersRequest {
 	google.protobuf.StringValue search_word = 1;
 	google.protobuf.StringValue sort_key = 2;
 	google.protobuf.BoolValue reverse = 3;
-	repeated string group_id = 4;
-	repeated string user_id = 5;
-	uint32 limit = 6;
-	uint32 offset = 7;
+	uint32 limit = 4;
+	uint32 offset = 5;
+
+	repeated string group_id = 11;
+	repeated string user_id = 12;
 }
 message DescribeUsersResponse {
 	uint32 total_count = 1;
@@ -78,6 +76,7 @@ message ModifyUserRequest {
 	google.protobuf.StringValue email = 2;    // for admin
 	google.protobuf.StringValue username = 3;
 	google.protobuf.StringValue role = 4;     // for admin
+	google.protobuf.StringValue description = 5;
 }
 message ModifyUserResponse {
 	google.protobuf.StringValue user_id = 1;
@@ -88,13 +87,7 @@ message DeleteUsersRequest {
 message DeleteUsersResponse {
 	repeated string user_id = 1;
 }
-message InviteUsersRequest {
-	repeated string email = 1;
-}
 
-message InviteUsersResponse {
-	repeated string token = 1;
-}
 message CreatePasswordResetRequest {
 	google.protobuf.StringValue user_id = 1;
 	google.protobuf.StringValue password = 2;
@@ -121,6 +114,7 @@ message CreateUserRequest {
 	google.protobuf.StringValue email = 1;
 	google.protobuf.StringValue password = 2;
 	google.protobuf.StringValue role = 3; // default is user
+	google.protobuf.StringValue description = 4;
 }
 message CreateUserResponse {
 	google.protobuf.StringValue user_id = 1;
@@ -136,6 +130,7 @@ message ValidateUserPasswordResponse {
 
 message CreateGroupRequest {
 	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue description = 2;
 }
 message CreateGroupResponse {
 	google.protobuf.StringValue group_id = 1;
@@ -145,10 +140,11 @@ message DescribeGroupsRequest {
 	google.protobuf.StringValue search_word = 1;
 	google.protobuf.StringValue sort_key = 2;
 	google.protobuf.BoolValue reverse = 3;
-	repeated string group_id = 4;
-	repeated string user_id = 5;
-	uint32 limit = 6;
-	uint32 offset = 7;
+	uint32 limit = 4;
+	uint32 offset = 5;
+
+	repeated string group_id = 6;
+	repeated string user_id = 7;
 }
 message DescribeGroupsResponse {
 	uint32 total_count = 1;
