@@ -17,20 +17,22 @@ func NewUserId() string {
 }
 
 type User struct {
-	Id          string
-	Name        string
+	UserId      string
+	Username    string
 	Password    string
 	Email       string
 	Role        string
 	Description string
+
+	Status string
 }
 
 var UserColumns = GetColumnsFromStruct(&User{})
 
-func NewUser(id, name, password, email, role, description string) *User {
+func NewUser(username, password, email, role, description string) *User {
 	return &User{
-		Id:          id,
-		Name:        name,
+		UserId:      NewUserId(),
+		Username:    username,
 		Password:    password,
 		Email:       email,
 		Role:        role,
@@ -40,9 +42,9 @@ func NewUser(id, name, password, email, role, description string) *User {
 
 func UserToPb(p *User) *pbiam.User {
 	q := new(pbiam.User)
-	q.UserId = pbutil.ToProtoString(p.Id)
-	q.UserName = pbutil.ToProtoString(p.Name)
-	q.UserEmail = pbutil.ToProtoString(p.Email)
+	q.UserId = pbutil.ToProtoString(p.UserId)
+	q.Username = pbutil.ToProtoString(p.Username)
+	q.Email = pbutil.ToProtoString(p.Email)
 	q.Role = pbutil.ToProtoString(p.Role)
 	q.Description = pbutil.ToProtoString(p.Description)
 	return q

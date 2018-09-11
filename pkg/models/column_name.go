@@ -8,11 +8,17 @@ const (
 	ColumnRepoId     = "repo_id"
 	ColumnResouceId  = "resource_id"
 	ColumnCategoryId = "category_id"
+	ColumnUserId     = "user_id"
+	ColumnGroupId    = "group_id"
+	ColumnResetId    = "reset_id"
 
 	ColumnTransitionStatus = "transition_status"
 
+	ColumnEmail       = "email"
 	ColumnName        = "name"
+	ColumnUsername    = "username"
 	ColumnDescription = "description"
+	ColumnPassword    = "password"
 	ColumnStatus      = "status"
 	ColumnType        = "type"
 	ColumnUrl         = "url"

@@ -7,7 +7,6 @@ package iam
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -29,10 +28,8 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pbiam.DescribeUsersRequ
 	)
 
 	var query = pi.Global().DB(ctx).
-		Select(models.UserColumns...).
-		From(models.UserTableName).
-		Offset(offset).
-		Limit(limit).
+		Select(models.UserColumns...).From(models.UserTableName).
+		Offset(offset).Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.UserTableName))
 
 	var users []*models.User
@@ -60,10 +57,8 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pbiam.DescribeGroupsRe
 	)
 
 	var query = pi.Global().DB(ctx).
-		Select(models.GroupColumns...).
-		From(models.GroupTableName).
-		Offset(offset).
-		Limit(limit).
+		Select(models.GroupColumns...).From(models.GroupTableName).
+		Offset(offset).Limit(limit).
 		Where(manager.BuildFilterConditions(req, models.GroupTableName))
 
 	var groups []*models.Group
@@ -89,33 +84,43 @@ func (p *Server) ModifyUser(ctx context.Context, req *pbiam.ModifyUserRequest) (
 		return &pbiam.ModifyUserResponse{}, nil
 	}
 
-	var m = make(map[string]interface{})
+	var attributes = make(map[string]interface{})
 	if req.Email != nil {
-		m["email"] = req.Email.GetValue()
+		attributes[models.ColumnEmail] = req.Email.GetValue()
 	}
 	if req.Username != nil {
-		m["name"] = req.Username.GetValue()
+		attributes[models.ColumnUsername] = req.Username.GetValue()
 	}
 	if req.Role != nil {
-		m["role"] = req.Role.GetValue()
+		attributes[models.ColumnRole] = req.Role.GetValue()
+	}
+	if req.Description != nil {
+		attributes[models.ColumnDescription] = req.Description.GetValue()
+	}
+
+	if len(attributes) == 0 {
+		return &pbiam.ModifyUserResponse{}, nil
 	}
 
 	_, err := pi.Global().DB(ctx).
-		Update(models.UserTableName).
-		SetMap(m).
-		Where(db.Eq(models.ColumnRuntimeId, []string{})).
+		Update(models.UserTableName).SetMap(attributes).
+		Where(db.Eq(models.ColumnUserId, req.UserId.GetValue())).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
-	return &pbiam.ModifyUserResponse{}, nil
+	reply := &pbiam.ModifyUserResponse{
+		UserId: req.UserId,
+	}
+
+	return reply, nil
 }
 
 func (p *Server) DeleteUsers(ctx context.Context, req *pbiam.DeleteUsersRequest) (*pbiam.DeleteUsersResponse, error) {
 	_, err := pi.Global().DB(ctx).
 		DeleteFrom(models.UserTableName).
-		Where(db.Eq(models.ColumnName, req.UserId)).
+		Where(db.Eq(models.ColumnUserId, req.UserId)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
@@ -130,12 +135,11 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pbiam.DeleteUsersRequest)
 
 func (p *Server) CreateUser(ctx context.Context, req *pbiam.CreateUserRequest) (*pbiam.CreateUserResponse, error) {
 	var newUser = models.NewUser(
-		models.NewUserId(),
-		"", // name:todo
+		getUsernameFromEmail(req.GetEmail().GetValue()),
 		req.GetPassword().GetValue(),
 		req.GetEmail().GetValue(),
 		req.GetRole().GetValue(),
-		"",
+		req.GetDescription().GetValue(),
 	)
 
 	_, err := pi.Global().DB(ctx).
@@ -147,88 +151,127 @@ func (p *Server) CreateUser(ctx context.Context, req *pbiam.CreateUserRequest) (
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	return &pbiam.CreateUserResponse{}, nil
-}
+	reply := &pbiam.CreateUserResponse{
+		UserId: pbutil.ToProtoString(newUser.UserId),
+	}
 
-func (p *Server) InviteUsers(context.Context, *pbiam.InviteUsersRequest) (*pbiam.InviteUsersResponse, error) {
-	return nil, fmt.Errorf("TODO") // gen token
+	return reply, nil
 }
 
 func (p *Server) CreatePasswordReset(ctx context.Context, req *pbiam.CreatePasswordResetRequest) (*pbiam.CreatePasswordResetResponse, error) {
-	var userId = req.GetUserId().GetValue()
-	var userInfo models.User
+	var user_id = req.GetUserId().GetValue()
+	var user_info models.User
 
 	query := pi.Global().DB(ctx).
 		Select(models.UserColumns...).
-		From(models.UserTableName).Limit(1).
-		Where(db.Eq(models.ColumnName, userId))
-	err := query.LoadOne(&userInfo)
+		From(models.UserTableName).
+		Where(db.Eq(models.ColumnUserId, user_id))
+	err := query.LoadOne(&user_info)
 	if err != nil {
-		return nil, fmt.Errorf("user(%q) not fount", userId)
+		return nil, fmt.Errorf("user(%q) not fount", user_id)
 	}
 
-	if userInfo.Password != req.GetPassword().GetValue() {
-		return nil, fmt.Errorf("user(%q) password failed", req.UserId)
+	if user_info.Password != req.GetPassword().GetValue() {
+		return nil, fmt.Errorf("ivalid password")
 	}
 
-	tokStr, err := MakeJwtToken(p.TokenConfig.Secret, func(opt *JwtToken) {
-		opt.UserId = userId
-		opt.TokenType = TokenType_ResetPassword
-		opt.ExpiresAt = int64(time.Second * time.Duration(p.DurationSeconds))
-	})
+	var newUserPasswordReset = models.NewUserPasswordReset(user_id)
+
+	_, err = pi.Global().DB(ctx).
+		InsertInto(models.UserPasswordResetTableName).
+		Columns(models.UserPasswordResetColumns...).
+		Record(newUserPasswordReset).
+		Exec()
 	if err != nil {
-		return nil, err
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	reply := &pbiam.CreatePasswordResetResponse{
-		UserId:  pbutil.ToProtoString(userId),
-		ResetId: pbutil.ToProtoString(tokStr),
+		UserId:  pbutil.ToProtoString(user_id),
+		ResetId: pbutil.ToProtoString(newUserPasswordReset.ResetId),
 	}
 
 	return reply, nil
 }
 
 func (p *Server) ChangePassword(ctx context.Context, req *pbiam.ChangePasswordRequest) (*pbiam.ChangePasswordResponse, error) {
-	token, err := ValidateJwtToken(req.GetResetId().GetValue(), p.TokenConfig.Secret)
+	reset_id := req.GetResetId().GetValue()
+	new_password := req.GetNewPassword().GetValue()
+	var reset_info models.UserPasswordReset
+
+	if reset_id == "" || new_password == "" {
+		return nil, fmt.Errorf("invalid args")
+	}
+
+	query := pi.Global().DB(ctx).
+		Select(models.UserColumns...).
+		From(models.UserPasswordResetTableName).Limit(1).
+		Where(db.Eq(models.ColumnResetId, reset_id))
+	err := query.LoadOne(&reset_info)
 	if err != nil {
 		return nil, err
 	}
 
-	if token.TokenType != TokenType_ResetPassword {
-		return nil, fmt.Errorf("invalid token type")
-	}
-
 	_, err = pi.Global().DB(ctx).
-		Update(models.UserTableName).
-		Set("password", req.GetNewPassword().GetValue()).
-		Where(db.Eq("id", []string{token.UserId})).
+		Update(models.UserTableName).Set(models.ColumnPassword, new_password).
+		Where(db.Eq(models.ColumnUserId, reset_info.UserId)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
 	reply := &pbiam.ChangePasswordResponse{
-		UserId: pbutil.ToProtoString(token.UserId),
+		UserId: pbutil.ToProtoString(reset_info.UserId),
 	}
 
 	return reply, nil
 }
 
-func (p *Server) GetPasswordReset(context.Context, *pbiam.GetPasswordResetRequest) (*pbiam.GetPasswordResetResponse, error) {
-	// reset id is token
-	// parse user id from jwt token
-	return nil, fmt.Errorf("TODO")
+func (p *Server) GetPasswordReset(ctx context.Context, req *pbiam.GetPasswordResetRequest) (*pbiam.GetPasswordResetResponse, error) {
+
+	var reset_id = req.GetResetId().GetValue()
+	var reset_info models.UserPasswordReset
+
+	query := pi.Global().DB(ctx).
+		Select(models.UserColumns...).
+		From(models.UserPasswordResetTableName).Limit(1).
+		Where(db.Eq(models.ColumnResetId, reset_id))
+	err := query.LoadOne(&reset_info)
+	if err != nil {
+		return nil, err
+	}
+
+	reply := &pbiam.GetPasswordResetResponse{
+		ResetId: pbutil.ToProtoString(reset_id),
+		UserId:  pbutil.ToProtoString(reset_info.ResetId),
+	}
+
+	return reply, nil
 }
-func (p *Server) ValidateUserPassword(context.Context, *pbiam.ValidateUserPasswordRequest) (*pbiam.ValidateUserPasswordResponse, error) {
-	// email => name
-	return nil, fmt.Errorf("TODO")
+func (p *Server) ValidateUserPassword(ctx context.Context, req *pbiam.ValidateUserPasswordRequest) (*pbiam.ValidateUserPasswordResponse, error) {
+	var email = req.GetEmail()
+	var userInfo models.User
+
+	query := pi.Global().DB(ctx).
+		Select(models.UserColumns...).
+		From(models.UserTableName).Limit(1).
+		Where(db.Eq(models.ColumnEmail, email))
+	err := query.LoadOne(&userInfo)
+	if err != nil {
+		return nil, fmt.Errorf("user(%q) not fount", email)
+	}
+
+	reply := &pbiam.ValidateUserPasswordResponse{
+		Validated: userInfo.Password == req.GetPassword(),
+	}
+
+	return reply, nil
 }
 
 func (p *Server) CreateGroup(ctx context.Context, req *pbiam.CreateGroupRequest) (*pbiam.CreateGroupResponse, error) {
 	var newGroup = models.NewGroup(
-		models.NewGroupId(),
 		req.GetName().GetValue(),
-		"",
+		req.GetDescription().GetValue(),
 	)
 
 	_, err := pi.Global().DB(ctx).
@@ -240,37 +283,49 @@ func (p *Server) CreateGroup(ctx context.Context, req *pbiam.CreateGroupRequest)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	return &pbiam.CreateGroupResponse{}, nil
+	reply := &pbiam.CreateGroupResponse{
+		GroupId: pbutil.ToProtoString(newGroup.GroupId),
+	}
+
+	return reply, nil
 }
 
 func (p *Server) ModifyGroup(ctx context.Context, req *pbiam.ModifyGroupRequest) (*pbiam.ModifyGroupResponse, error) {
-	if req.GroupId == nil {
+	group_id := req.GetGroupId().GetValue()
+	if group_id == "" {
 		return &pbiam.ModifyGroupResponse{}, nil
 	}
 
-	var m = make(map[string]interface{})
+	var attributes = make(map[string]interface{})
 	if req.Name != nil {
-		m["name"] = req.Name.GetValue()
+		attributes[models.ColumnName] = req.Name.GetValue()
 	}
 	if req.Description != nil {
-		m["description"] = req.Description.GetValue()
+		attributes[models.ColumnDescription] = req.Description.GetValue()
+	}
+
+	if len(attributes) == 0 {
+		return &pbiam.ModifyGroupResponse{}, nil
 	}
 
 	_, err := pi.Global().DB(ctx).
-		Update(models.UserTableName).
-		SetMap(m).
-		Where(db.Eq(models.ColumnRuntimeId, []string{})).
+		Update(models.GroupTableName).SetMap(attributes).
+		Where(db.Eq(models.ColumnGroupId, group_id)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
 
-	return &pbiam.ModifyGroupResponse{}, nil
+	reply := &pbiam.ModifyGroupResponse{
+		GroupId: pbutil.ToProtoString(group_id),
+	}
+
+	return reply, nil
 }
 func (p *Server) DeleteGroups(ctx context.Context, req *pbiam.DeleteGroupsRequest) (*pbiam.DeleteGroupsResponse, error) {
 	_, err := pi.Global().DB(ctx).
 		DeleteFrom(models.GroupTableName).
-		Where(db.Eq(models.ColumnName, req.GroupId)).
+		Where(db.Eq(models.ColumnGroupId, req.GroupId)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
@@ -285,7 +340,7 @@ func (p *Server) DeleteGroups(ctx context.Context, req *pbiam.DeleteGroupsReques
 
 func (p *Server) JoinGroup(ctx context.Context, req *pbiam.JoinGroupRequest) (*pbiam.JoinGroupResponse, error) {
 	if len(req.GroupId) != 1 || len(req.UserId) != 1 {
-		return nil, fmt.Errorf("TODO")
+		return nil, fmt.Errorf("missing GroupId or UserId")
 	}
 
 	var newGroupMember = models.NewGroupMember(
@@ -295,29 +350,38 @@ func (p *Server) JoinGroup(ctx context.Context, req *pbiam.JoinGroupRequest) (*p
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(models.GroupMemberTableName).
-		Columns(models.GroupMemberColumns...).
 		Record(newGroupMember).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	return &pbiam.JoinGroupResponse{}, nil
+	reply := &pbiam.JoinGroupResponse{
+		GroupId: req.GroupId,
+		UserId:  req.UserId,
+	}
+
+	return reply, nil
 }
 
 func (p *Server) LeaveGroup(ctx context.Context, req *pbiam.LeaveGroupRequest) (*pbiam.LeaveGroupResponse, error) {
 	if len(req.GroupId) != 1 || len(req.UserId) != 1 {
-		return nil, fmt.Errorf("TODO")
+		return nil, fmt.Errorf("missing GroupId or UserId")
 	}
 
 	_, err := pi.Global().DB(ctx).
 		DeleteFrom(models.GroupMemberTableName).
-		Where(db.Eq("group_id", req.GroupId)).
-		Where(db.Eq("user_id", req.UserId)).
+		Where(db.Eq(models.ColumnGroupId, req.GroupId)).
+		Where(db.Eq(models.ColumnUserId, req.UserId)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	return &pbiam.LeaveGroupResponse{}, nil
+	reply := &pbiam.LeaveGroupResponse{
+		GroupId: req.GroupId,
+		UserId:  req.UserId,
+	}
+
+	return reply, nil
 }

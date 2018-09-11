@@ -24,6 +24,6 @@ func Serve(cfg *config.Config) {
 
 	manager.NewGrpcServer("iam-manager", constants.IamListenPort).Serve(func(server *grpc.Server) {
 		pbiam.RegisterAccountManagerServer(server, &s)
-		pbiam.RegisterTokenManagerServer(server, &s)
+		//pbiam.RegisterTokenManagerServer(server, &s)
 	})
 }
