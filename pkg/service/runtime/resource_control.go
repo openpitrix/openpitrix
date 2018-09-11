@@ -24,9 +24,9 @@ func (p *Server) getLabelsMap(ctx context.Context, runtimeIds []string) (labelsM
 	var runtimeLabels []*models.RuntimeLabel
 	_, err = pi.Global().DB(ctx).
 		Select(models.RuntimeLabelColumns...).
-		From(models.RuntimeLabelTableName).
-		Where(db.Eq(models.ColumnRuntimeId, runtimeIds)).
-		OrderDir(models.ColumnCreateTime, true).
+		From(constants.TableRuntimeLabel).
+		Where(db.Eq(constants.ColumnRuntimeId, runtimeIds)).
+		OrderDir(constants.ColumnCreateTime, true).
 		Load(&runtimeLabels)
 	if err != nil {
 		return
@@ -39,7 +39,7 @@ func (p *Server) getRuntimeCredential(ctx context.Context, runtimeCredentialId s
 	runtimeCredential := &models.RuntimeCredential{}
 	err := pi.Global().DB(ctx).
 		Select(models.RuntimeCredentialColumns...).
-		From(models.RuntimeCredentialTableName).
+		From(constants.TableRuntimeCredential).
 		Where(db.Eq(RuntimeCredentialIdColumn, runtimeCredentialId)).
 		LoadOne(&runtimeCredential)
 	if err != nil {
@@ -52,8 +52,8 @@ func (p *Server) getRuntime(ctx context.Context, runtimeId string) (*models.Runt
 	runtime := &models.Runtime{}
 	err := pi.Global().DB(ctx).
 		Select(models.RuntimeColumns...).
-		From(models.RuntimeTableName).
-		Where(db.Eq(models.ColumnRuntimeId, runtimeId)).
+		From(constants.TableRuntime).
+		Where(db.Eq(constants.ColumnRuntimeId, runtimeId)).
 		LoadOne(runtime)
 	if err != nil {
 		return nil, err
@@ -68,8 +68,8 @@ func (p *Server) getRuntimeLabelsById(ctx context.Context, runtimeIds ...string)
 	var runtimeLabels []*models.RuntimeLabel
 	query := pi.Global().DB(ctx).
 		Select(models.RuntimeLabelColumns...).
-		From(models.RuntimeLabelTableName).
-		Where(db.Eq(models.ColumnRuntimeId, runtimeIds))
+		From(constants.TableRuntimeLabel).
+		Where(db.Eq(constants.ColumnRuntimeId, runtimeIds))
 
 	_, err := query.Load(&runtimeLabels)
 	if err != nil {
@@ -85,7 +85,7 @@ func (p *Server) getCredentialMap(ctx context.Context, credentialIds ...string) 
 	var runtimeCredneitals []*models.RuntimeCredential
 	query := pi.Global().DB(ctx).
 		Select(models.RuntimeCredentialColumns...).
-		From(models.RuntimeCredentialTableName).
+		From(constants.TableRuntimeCredential).
 		Where(db.Eq(RuntimeCredentialIdColumn, credentialIds))
 
 	_, err := query.Load(&runtimeCredneitals)
@@ -100,7 +100,7 @@ func (p *Server) getRuntimesByFilterCondition(ctx context.Context, filterConditi
 	runtimes []*models.Runtime, count uint32, err error) {
 	query := pi.Global().DB(ctx).
 		Select(models.RuntimeColumns...).
-		From(models.RuntimeTableName).
+		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).Where(filterCondition)
 	_, err = query.Load(&runtimes)
@@ -119,7 +119,7 @@ func (p *Server) insertRuntimeLabels(ctx context.Context, runtimeId string, labe
 		return nil
 	}
 	insertQuery := pi.Global().DB(ctx).
-		InsertInto(models.RuntimeLabelTableName).
+		InsertInto(constants.TableRuntimeLabel).
 		Columns(models.RuntimeLabelColumns...)
 	for labelKey, labelValue := range labelMap {
 		insertQuery = insertQuery.Record(
@@ -143,7 +143,7 @@ func (p *Server) deleteRuntimeLabels(ctx context.Context, runtimeId string, labe
 		conditions = append(conditions, BuildDeleteLabelFilterCondition(runtimeId, labelKey, labelValue))
 	}
 	_, err := pi.Global().DB(ctx).
-		DeleteFrom(models.RuntimeLabelTableName).
+		DeleteFrom(constants.TableRuntimeLabel).
 		Where(db.Or(conditions...)).
 		Exec()
 	if err != nil {
@@ -154,17 +154,17 @@ func (p *Server) deleteRuntimeLabels(ctx context.Context, runtimeId string, labe
 
 func (p *Server) deleteRuntimes(ctx context.Context, runtimeIds []string) error {
 	_, err := pi.Global().DB(ctx).
-		Update(models.RuntimeTableName).
+		Update(constants.TableRuntime).
 		Set(StatusColumn, constants.StatusDeleted).
 		Set(StatusTimeColumn, time.Now()).
-		Where(db.Eq(models.ColumnRuntimeId, runtimeIds)).
+		Where(db.Eq(constants.ColumnRuntimeId, runtimeIds)).
 		Exec()
 	return err
 }
 
 func (p *Server) insertRuntime(ctx context.Context, runtime models.Runtime) error {
 	_, err := pi.Global().DB(ctx).
-		InsertInto(models.RuntimeTableName).
+		InsertInto(constants.TableRuntime).
 		Columns(models.RuntimeColumns...).
 		Record(runtime).
 		Exec()
@@ -173,7 +173,7 @@ func (p *Server) insertRuntime(ctx context.Context, runtime models.Runtime) erro
 
 func (p *Server) insertRuntimeCredential(ctx context.Context, runtimeCredential models.RuntimeCredential) error {
 	_, err := pi.Global().DB(ctx).
-		InsertInto(models.RuntimeCredentialTableName).
+		InsertInto(constants.TableRuntimeCredential).
 		Columns(models.RuntimeCredentialColumns...).
 		Record(runtimeCredential).
 		Exec()
@@ -185,16 +185,16 @@ func (p *Server) updateRuntimeByMap(ctx context.Context, runtimeId string, attri
 		return nil
 	}
 	_, err := pi.Global().DB(ctx).
-		Update(models.RuntimeTableName).
+		Update(constants.TableRuntime).
 		SetMap(attributes).
-		Where(db.Eq(models.ColumnRuntimeId, runtimeId)).
+		Where(db.Eq(constants.ColumnRuntimeId, runtimeId)).
 		Exec()
 	return err
 }
 
 func BuildDeleteLabelFilterCondition(runtimeId, labelKey, labelValue string) dbr.Builder {
 	var conditions []dbr.Builder
-	conditions = append(conditions, db.Eq(models.ColumnRuntimeId, runtimeId))
+	conditions = append(conditions, db.Eq(constants.ColumnRuntimeId, runtimeId))
 	conditions = append(conditions, db.Eq(LabelKeyColumn, labelKey))
 	conditions = append(conditions, db.Eq(LabelValueColumn, labelValue))
 	return db.And(conditions...)
@@ -277,7 +277,7 @@ func (p *Server) updateRuntimeCredential(ctx context.Context, credentialId, prov
 		RuntimeCredentialContentColumn: content,
 	}
 	_, err := pi.Global().DB(ctx).
-		Update(models.RuntimeCredentialTableName).
+		Update(constants.TableRuntimeCredential).
 		SetMap(attributes).
 		Where(db.Eq(RuntimeCredentialIdColumn, credentialId)).
 		Exec()

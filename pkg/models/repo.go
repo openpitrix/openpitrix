@@ -13,8 +13,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const RepoTableName = "repo"
-
 func NewRepoId() string {
 	return idutil.GetUuid("repo-")
 }
@@ -35,7 +33,7 @@ type Repo struct {
 }
 
 var RepoColumns = GetColumnsFromStruct(&Repo{})
-var RepoColumnsWithTablePrefix = GetColumnsFromStructWithPrefix(RepoTableName, &Repo{})
+var RepoColumnsWithTablePrefix = GetColumnsFromStructWithPrefix(constants.TableRepo, &Repo{})
 
 func NewRepo(name, description, typ, url, credential, visibility, owner string) *Repo {
 	return &Repo{

@@ -7,6 +7,7 @@ package repo_indexer
 import (
 	"context"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -37,11 +38,11 @@ func (p *Server) DescribeRepoEvents(ctx context.Context, req *pb.DescribeRepoEve
 
 	query := pi.Global().DB(ctx).
 		Select(models.RepoEventColumns...).
-		From(models.RepoEventTableName).
+		From(constants.TableRepoEvent).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.RepoEventTableName))
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+		Where(manager.BuildFilterConditions(req, constants.TableRepoEvent))
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&repoEvents)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)

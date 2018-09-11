@@ -35,7 +35,7 @@ func getCluster(ctx context.Context, clusterId, userId string) (*models.Cluster,
 	cluster := &models.Cluster{}
 	err := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
-		From(models.ClusterTableName).
+		From(constants.TableCluster).
 		Where(db.Eq("cluster_id", clusterId)).
 		Where(db.Eq("owner", userId)).
 		LoadOne(&cluster)
@@ -56,7 +56,7 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 
 	err := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
-		From(models.ClusterTableName).
+		From(constants.TableCluster).
 		Where(db.Eq("cluster_id", clusterId)).
 		LoadOne(&cluster)
 	if err != nil {
@@ -66,7 +66,7 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 
 	_, err = pi.Global().DB(ctx).
 		Select(models.ClusterCommonColumns...).
-		From(models.ClusterCommonTableName).
+		From(constants.TableClusterCommon).
 		Where(db.Eq("cluster_id", clusterId)).
 		Load(&clusterCommons)
 	if err != nil {
@@ -80,7 +80,7 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 
 	_, err = pi.Global().DB(ctx).
 		Select(models.ClusterNodeColumns...).
-		From(models.ClusterNodeTableName).
+		From(constants.TableClusterNode).
 		Where(db.Eq("cluster_id", clusterId)).
 		Load(&clusterNodes)
 	if err != nil {
@@ -96,7 +96,7 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 		var nodeKeyPairs []*models.NodeKeyPair
 		_, err = pi.Global().DB(ctx).
 			Select(models.NodeKeyPairColumns...).
-			From(models.NodeKeyPairTableName).
+			From(constants.TableNodeKeyPair).
 			Where(db.Eq("node_id", clusterNode.NodeId)).
 			Load(&nodeKeyPairs)
 		if err != nil {
@@ -114,7 +114,7 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 
 	_, err = pi.Global().DB(ctx).
 		Select(models.ClusterRoleColumns...).
-		From(models.ClusterRoleTableName).
+		From(constants.TableClusterRole).
 		Where(db.Eq("cluster_id", clusterId)).
 		Load(&clusterRoles)
 	if err != nil {
@@ -128,7 +128,7 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 
 	_, err = pi.Global().DB(ctx).
 		Select(models.ClusterLinkColumns...).
-		From(models.ClusterLinkTableName).
+		From(constants.TableClusterLink).
 		Where(db.Eq("cluster_id", clusterId)).
 		Load(&clusterLinks)
 	if err != nil {
@@ -142,7 +142,7 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 
 	_, err = pi.Global().DB(ctx).
 		Select(models.ClusterLoadbalancerColumns...).
-		From(models.ClusterLoadbalancerTableName).
+		From(constants.TableClusterLoadbalancer).
 		Where(db.Eq("cluster_id", clusterId)).
 		Load(&clusterLoadbalancers)
 	if err != nil {
@@ -162,7 +162,7 @@ func getClusterNode(ctx context.Context, nodeId, userId string) (*models.Cluster
 	clusterNode := &models.ClusterNode{}
 	err := pi.Global().DB(ctx).
 		Select(models.ClusterNodeColumns...).
-		From(models.ClusterNodeTableName).
+		From(constants.TableClusterNode).
 		Where(db.Eq("node_id", nodeId)).
 		Where(db.Eq("owner", userId)).
 		LoadOne(&clusterNode)
@@ -176,7 +176,7 @@ func getClusterNodes(ctx context.Context, nodeIds []string, userId string) ([]*m
 	var clusterNodes []*models.ClusterNode
 	_, err := pi.Global().DB(ctx).
 		Select(models.ClusterNodeColumns...).
-		From(models.ClusterNodeTableName).
+		From(constants.TableClusterNode).
 		Where(db.Eq("node_id", nodeIds)).
 		Where(db.Eq("owner", userId)).
 		Load(&clusterNodes)
@@ -193,7 +193,7 @@ func getKeyPairs(ctx context.Context, keyPairIds []string, userId string) ([]*mo
 	var keyPairs []*models.KeyPair
 	_, err := pi.Global().DB(ctx).
 		Select(models.KeyPairColumns...).
-		From(models.KeyPairTableName).
+		From(constants.TableKeyPair).
 		Where(db.Eq("key_pair_id", keyPairIds)).
 		Where(db.Eq("owner", userId)).
 		Load(&keyPairs)
@@ -212,7 +212,7 @@ func getNodeKeyPairs(ctx context.Context, keyPairIds []string, nodeIds []string,
 		var singleNodeKeyPairs []*models.NodeKeyPair
 		_, err := pi.Global().DB(ctx).
 			Select(models.NodeKeyPairColumns...).
-			From(models.NodeKeyPairTableName).
+			From(constants.TableNodeKeyPair).
 			Where(db.Eq("key_pair_id", keyPairId)).
 			Where(db.Eq("node_id", nodeIds)).
 			Load(&singleNodeKeyPairs)
@@ -245,7 +245,7 @@ func (p *Server) DeleteNodeKeyPairs(ctx context.Context, req *pb.DeleteNodeKeyPa
 	nodeKeyPairs := req.NodeKeyPair
 	for _, nodeKeyPair := range nodeKeyPairs {
 		_, err := pi.Global().DB(ctx).
-			DeleteFrom(models.NodeKeyPairTableName).
+			DeleteFrom(constants.TableNodeKeyPair).
 			Where(db.Eq("key_pair_id", nodeKeyPair.GetKeyPairId().GetValue())).
 			Where(db.Eq("node_id", nodeKeyPair.GetNodeId().GetValue())).
 			Exec()
@@ -265,7 +265,7 @@ func (p *Server) AddNodeKeyPairs(ctx context.Context, req *pb.AddNodeKeyPairsReq
 			KeyPairId: nodeKeyPair.GetKeyPairId().GetValue(),
 		}
 		_, err := pi.Global().DB(ctx).
-			InsertInto(models.NodeKeyPairTableName).
+			InsertInto(constants.TableNodeKeyPair).
 			Columns(models.NodeKeyPairColumns...).
 			Record(nodeKeyPair).
 			Exec()
@@ -295,7 +295,7 @@ func (p *Server) CreateKeyPair(ctx context.Context, req *pb.CreateKeyPairRequest
 	}
 
 	_, err := pi.Global().DB(ctx).
-		InsertInto(models.KeyPairTableName).
+		InsertInto(constants.TableKeyPair).
 		Columns(models.KeyPairColumns...).
 		Record(newKeyPair).
 		Exec()
@@ -317,12 +317,12 @@ func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsR
 	limit := pbutil.GetLimitFromRequest(req)
 	query := pi.Global().DB(ctx).
 		Select(models.KeyPairColumns...).
-		From(models.KeyPairTableName).
+		From(constants.TableKeyPair).
 		Offset(offset).
 		Limit(limit).
 		Where(db.Eq("owner", owner)).
-		Where(manager.BuildFilterConditions(req, models.KeyPairTableName))
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+		Where(manager.BuildFilterConditions(req, constants.TableKeyPair))
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&keyPairs)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -336,7 +336,7 @@ func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsR
 		var nodeKeyPairs []*models.NodeKeyPair
 		query = pi.Global().DB(ctx).
 			Select(models.NodeKeyPairColumns...).
-			From(models.NodeKeyPairTableName).
+			From(constants.TableNodeKeyPair).
 			Where(db.Eq("key_pair_id", keyPair.KeyPairId))
 		_, err := query.Load(&nodeKeyPairs)
 		if err != nil {
@@ -369,7 +369,7 @@ func (p *Server) DeleteKeyPairs(ctx context.Context, req *pb.DeleteKeyPairsReque
 	keyPairIds := req.KeyPairId
 	_, err := pi.Global().DB(ctx).
 		Select(models.KeyPairColumns...).
-		From(models.KeyPairTableName).
+		From(constants.TableKeyPair).
 		Where(db.Eq("owner", owner)).
 		Where(db.Eq("key_pair_id", keyPairIds)).Load(&keyPairs)
 	if err != nil {
@@ -383,7 +383,7 @@ func (p *Server) DeleteKeyPairs(ctx context.Context, req *pb.DeleteKeyPairsReque
 
 	_, err = pi.Global().DB(ctx).
 		Select(models.NodeKeyPairColumns...).
-		From(models.NodeKeyPairTableName).
+		From(constants.TableNodeKeyPair).
 		Where(db.Eq("key_pair_id", keyPairIds)).
 		Load(&attachedKeyPairs)
 	if err != nil {
@@ -404,7 +404,7 @@ func (p *Server) DeleteKeyPairs(ctx context.Context, req *pb.DeleteKeyPairsReque
 	}
 
 	_, err = pi.Global().DB(ctx).
-		DeleteFrom(models.KeyPairTableName).
+		DeleteFrom(constants.TableKeyPair).
 		Where(db.Eq("key_pair_id", deleteKeyPairIds)).
 		Exec()
 	if err != nil {
@@ -697,7 +697,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 	delete(attributes, "cluster_id")
 	if len(attributes) != 0 {
 		_, err = pi.Global().DB(ctx).
-			Update(models.ClusterTableName).
+			Update(constants.TableCluster).
 			SetMap(attributes).
 			Where(db.Eq("cluster_id", clusterId)).
 			Exec()
@@ -713,7 +713,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		delete(nodeAttributes, "node_id")
 		if len(nodeAttributes) != 0 {
 			_, err = pi.Global().DB(ctx).
-				Update(models.ClusterNodeTableName).
+				Update(constants.TableClusterNode).
 				SetMap(nodeAttributes).
 				Where(db.Eq("cluster_id", clusterId)).
 				Where(db.Eq("node_id", nodeId)).
@@ -732,7 +732,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		delete(roleAttributes, "role")
 		if len(roleAttributes) != 0 {
 			_, err = pi.Global().DB(ctx).
-				Update(models.ClusterRoleTableName).
+				Update(constants.TableClusterRole).
 				SetMap(roleAttributes).
 				Where(db.Eq("cluster_id", clusterId)).
 				Where(db.Eq("role", role)).
@@ -751,7 +751,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		delete(commonAttributes, "role")
 		if len(commonAttributes) != 0 {
 			_, err = pi.Global().DB(ctx).
-				Update(models.ClusterCommonTableName).
+				Update(constants.TableClusterCommon).
 				SetMap(commonAttributes).
 				Where(db.Eq("cluster_id", clusterId)).
 				Where(db.Eq("role", role)).
@@ -770,7 +770,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		delete(linkAttributes, "name")
 		if len(linkAttributes) != 0 {
 			_, err = pi.Global().DB(ctx).
-				Update(models.ClusterLinkTableName).
+				Update(constants.TableClusterLink).
 				SetMap(linkAttributes).
 				Where(db.Eq("cluster_id", clusterId)).
 				Where(db.Eq("name", name)).
@@ -791,7 +791,7 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 		delete(loadbalancerAttributes, "loadbalancer_listener_id")
 		if len(loadbalancerAttributes) != 0 {
 			_, err = pi.Global().DB(ctx).
-				Update(models.ClusterLoadbalancerTableName).
+				Update(constants.TableClusterLoadbalancer).
 				SetMap(loadbalancerAttributes).
 				Where(db.Eq("cluster_id", clusterId)).
 				Where(db.Eq("role", role)).
@@ -822,7 +822,7 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 
 	attributes := manager.BuildUpdateAttributes(req.ClusterNode, models.ClusterNodeColumns...)
 	_, err = pi.Global().DB(ctx).
-		Update(models.ClusterNodeTableName).
+		Update(constants.TableClusterNode).
 		SetMap(attributes).
 		Where(db.Eq("node_id", nodeId)).
 		Exec()
@@ -847,7 +847,7 @@ func (p *Server) ModifyClusterAttributes(ctx context.Context, req *pb.ModifyClus
 
 	attributes := manager.BuildUpdateAttributes(req, models.ClusterColumns...)
 	_, err = pi.Global().DB(ctx).
-		Update(models.ClusterTableName).
+		Update(constants.TableCluster).
 		SetMap(attributes).
 		Where(db.Eq("cluster_id", clusterId)).
 		Exec()
@@ -872,7 +872,7 @@ func (p *Server) ModifyClusterNodeAttributes(ctx context.Context, req *pb.Modify
 
 	attributes := manager.BuildUpdateAttributes(req, models.ClusterNodeColumns...)
 	_, err = pi.Global().DB(ctx).
-		Update(models.ClusterNodeTableName).
+		Update(constants.TableClusterNode).
 		SetMap(attributes).
 		Where(db.Eq("node_id", nodeId)).
 		Exec()
@@ -901,7 +901,7 @@ func (p *Server) AddTableClusterNodes(ctx context.Context, req *pb.AddTableClust
 func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTableClusterNodesRequest) (*pbempty.Empty, error) {
 	for _, nodeId := range req.NodeId {
 		_, err := pi.Global().DB(ctx).
-			DeleteFrom(models.ClusterNodeTableName).
+			DeleteFrom(constants.TableClusterNode).
 			Where(db.Eq("node_id", nodeId)).
 			Exec()
 		if err != nil {
@@ -1086,7 +1086,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 				"storage_size":  clusterRole.StorageSize,
 			}
 			_, err = pi.Global().DB(ctx).
-				Update(models.ClusterRoleTableName).
+				Update(constants.TableClusterRole).
 				SetMap(attributes).
 				Where(db.Eq("cluster_id", clusterId)).
 				Where(db.Eq("role", roleResource.Role)).
@@ -1368,11 +1368,11 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 
 	query := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
-		From(models.ClusterTableName).
+		From(constants.TableCluster).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.ClusterTableName))
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+		Where(manager.BuildFilterConditions(req, constants.TableCluster))
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&clusters)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -1425,11 +1425,11 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 
 	query := pi.Global().DB(ctx).
 		Select(models.ClusterNodeColumns...).
-		From(models.ClusterNodeTableName).
+		From(constants.TableClusterNode).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.ClusterNodeTableName))
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+		Where(manager.BuildFilterConditions(req, constants.TableClusterNode))
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&clusterNodes)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -1444,7 +1444,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		clusterId := clusterNode.ClusterId
 		err = pi.Global().DB(ctx).
 			Select(models.ClusterCommonColumns...).
-			From(models.ClusterCommonTableName).
+			From(constants.TableClusterCommon).
 			Where(db.Eq("cluster_id", clusterId)).
 			Where(db.Eq("role", role)).
 			LoadOne(&clusterCommon)
@@ -1454,7 +1454,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 
 		err = pi.Global().DB(ctx).
 			Select(models.ClusterRoleColumns...).
-			From(models.ClusterRoleTableName).
+			From(constants.TableClusterRole).
 			Where(db.Eq("cluster_id", clusterId)).
 			Where(db.Eq("role", role)).
 			LoadOne(&clusterRole)
@@ -1465,7 +1465,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		var nodeKeyPairs []*models.NodeKeyPair
 		_, err = pi.Global().DB(ctx).
 			Select(models.NodeKeyPairColumns...).
-			From(models.NodeKeyPairTableName).
+			From(constants.TableNodeKeyPair).
 			Where(db.Eq("node_id", clusterNode.NodeId)).
 			Load(&nodeKeyPairs)
 		if err != nil {
@@ -1716,9 +1716,9 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 		TopTenApps:         make(map[string]uint32),
 	}
 	clusterCount, err := pi.Global().DB(ctx).
-		Select(models.ColumnClusterId).
-		From(models.ClusterTableName).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Select(constants.ColumnClusterId).
+		From(constants.TableCluster).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
 		Count()
 	if err != nil {
 		logger.Error(ctx, "Failed to get cluster count, error: %+v", err)
@@ -1728,8 +1728,8 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 
 	err = pi.Global().DB(ctx).
 		Select("COUNT(DISTINCT runtime_id)").
-		From(models.ClusterTableName).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		From(constants.TableCluster).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
 		LoadOne(&res.RuntimeCount)
 	if err != nil {
 		logger.Error(ctx, "Failed to get runtime count, error: %+v", err)
@@ -1740,9 +1740,9 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 	var cs []*clusterStatistic
 	_, err = pi.Global().DB(ctx).
 		Select("DATE_FORMAT(create_time, '%Y-%m-%d')", "COUNT(cluster_id)").
-		From(models.ClusterTableName).
+		From(constants.TableCluster).
 		GroupBy("DATE_FORMAT(create_time, '%Y-%m-%d')").
-		Where(db.Gte(models.ColumnCreateTime, time2week)).
+		Where(db.Gte(constants.ColumnCreateTime, time2week)).
 		Limit(14).Load(&cs)
 
 	if err != nil {
@@ -1756,9 +1756,9 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 	var rs []*runtimeStatistic
 	_, err = pi.Global().DB(ctx).
 		Select("runtime_id", "COUNT(cluster_id)").
-		From(models.ClusterTableName).
-		Where(db.Eq(models.ColumnStatus, constants.StatusActive)).
-		GroupBy(models.ColumnRuntimeId).
+		From(constants.TableCluster).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
+		GroupBy(constants.ColumnRuntimeId).
 		OrderDir("COUNT(cluster_id)", false).
 		Limit(10).Load(&rs)
 
@@ -1773,10 +1773,10 @@ func (p *Server) GetClusterStatistics(ctx context.Context, req *pb.GetClusterSta
 	var as []*appStatistic
 	_, err = pi.Global().DB(ctx).
 		Select("app_id", "COUNT(cluster_id)").
-		From(models.ClusterTableName).
-		Where(db.Eq(models.ColumnStatus, constants.StatusActive)).
-		Where(db.Neq(models.ColumnAppId, []string{"", constants.FrontgateAppId})).
-		GroupBy(models.ColumnAppId).
+		From(constants.TableCluster).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
+		Where(db.Neq(constants.ColumnAppId, []string{"", constants.FrontgateAppId})).
+		GroupBy(constants.ColumnAppId).
 		OrderDir("COUNT(cluster_id)", false).
 		Limit(10).Load(&as)
 

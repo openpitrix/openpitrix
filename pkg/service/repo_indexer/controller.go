@@ -45,7 +45,7 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 	var repoEventId string
 	err := pi.Global().Etcd(i.ctx).Dlock(context.Background(), constants.RepoIndexPrefix+repoId, func() error {
 		count, err := pi.Global().DB(i.ctx).Select(models.RepoEventColumns...).
-			From(models.RepoEventTableName).
+			From(constants.TableRepoEvent).
 			Where(db.Eq("repo_id", repoId)).
 			Where(db.Eq("status", []string{constants.StatusWorking, constants.StatusPending})).
 			Count()
@@ -56,7 +56,7 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 			return fmt.Errorf("repo [%s] had running index event", repoId)
 		}
 		repoEvent := models.NewRepoEvent(repoId, owner)
-		_, err = pi.Global().DB(i.ctx).InsertInto(models.RepoEventTableName).
+		_, err = pi.Global().DB(i.ctx).InsertInto(constants.TableRepoEvent).
 			Columns(models.RepoEventColumns...).
 			Record(repoEvent).
 			Exec()
@@ -73,7 +73,7 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 	}
 	var repoEvent models.RepoEvent
 	err = pi.Global().DB(i.ctx).Select(models.RepoEventColumns...).
-		From(models.RepoEventTableName).
+		From(constants.TableRepoEvent).
 		Where(db.Eq("repo_event_id", repoEventId)).
 		LoadOne(&repoEvent)
 	if err != nil {
@@ -84,7 +84,7 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 
 func (i *EventController) updateRepoEventStatus(ctx context.Context, repoEvent *models.RepoEvent, status, result string) error {
 	_, err := pi.Global().DB(ctx).
-		Update(models.RepoEventTableName).
+		Update(constants.TableRepoEvent).
 		Set("status", status).
 		Set("result", result).
 		Where(db.Eq("repo_event_id", repoEvent.RepoEventId)).
@@ -151,7 +151,7 @@ func (i *EventController) ExecuteEvent(ctx context.Context, repoEvent *models.Re
 func (i *EventController) getRepoEvent(repoEventId string) (repoEvent models.RepoEvent, err error) {
 	err = pi.Global().DB(i.ctx).
 		Select(models.RepoEventColumns...).
-		From(models.RepoEventTableName).
+		From(constants.TableRepoEvent).
 		Where(db.Eq("repo_event_id", repoEventId)).
 		LoadOne(&repoEvent)
 	return

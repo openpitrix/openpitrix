@@ -29,9 +29,9 @@ func SyncResourceCategories(ctx context.Context, d *db.Conn, appId string, categ
 	}
 	var existCategoryIds []string
 	_, err := d.
-		Select(models.ColumnCategoryId).
-		From(models.CategoryResourceTableName).
-		Where(db.Eq(models.ColumnResouceId, appId)).
+		Select(constants.ColumnCategoryId).
+		From(constants.TableCategoryResource).
+		Where(db.Eq(constants.ColumnResouceId, appId)).
 		Load(&existCategoryIds)
 	if err != nil {
 		logger.Error(ctx, "Failed to load resource [%s] categories", appId)
@@ -47,11 +47,11 @@ func SyncResourceCategories(ctx context.Context, d *db.Conn, appId string, categ
 	}
 	if len(disableIds) > 0 {
 		updateStmt := d.
-			Update(models.CategoryResourceTableName).
-			Set(models.ColumnStatus, constants.StatusDisabled).
-			Set(models.ColumnStatusTime, time.Now()).
-			Where(db.Eq(models.ColumnResouceId, appId)).
-			Where(db.Eq(models.ColumnCategoryId, disableIds))
+			Update(constants.TableCategoryResource).
+			Set(constants.ColumnStatus, constants.StatusDisabled).
+			Set(constants.ColumnStatusTime, time.Now()).
+			Where(db.Eq(constants.ColumnResouceId, appId)).
+			Where(db.Eq(constants.ColumnCategoryId, disableIds))
 		_, err = updateStmt.Exec()
 		if err != nil {
 			logger.Error(ctx, "Failed to set resource [%s] categories [%s] to disabled", appId, disableIds)
@@ -60,11 +60,11 @@ func SyncResourceCategories(ctx context.Context, d *db.Conn, appId string, categ
 	}
 	if len(enableIds) > 0 {
 		updateStmt := d.
-			Update(models.CategoryResourceTableName).
-			Set(models.ColumnStatus, constants.StatusEnabled).
-			Set(models.ColumnStatusTime, time.Now()).
-			Where(db.Eq(models.ColumnResouceId, appId)).
-			Where(db.Eq(models.ColumnCategoryId, enableIds))
+			Update(constants.TableCategoryResource).
+			Set(constants.ColumnStatus, constants.StatusEnabled).
+			Set(constants.ColumnStatusTime, time.Now()).
+			Where(db.Eq(constants.ColumnResouceId, appId)).
+			Where(db.Eq(constants.ColumnCategoryId, enableIds))
 		_, err = updateStmt.Exec()
 		if err != nil {
 			logger.Error(ctx, "Failed to set resource [%s] categories [%s] to enabled", appId, enableIds)
@@ -73,7 +73,7 @@ func SyncResourceCategories(ctx context.Context, d *db.Conn, appId string, categ
 	}
 	if len(createIds) > 0 {
 		insertStmt := d.
-			InsertInto(models.CategoryResourceTableName).
+			InsertInto(constants.TableCategoryResource).
 			Columns(models.CategoryResourceColumns...)
 		for _, categoryId := range createIds {
 			insertStmt = insertStmt.Record(

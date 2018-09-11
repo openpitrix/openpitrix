@@ -9,8 +9,8 @@ import (
 
 	"github.com/gocraft/dbr"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -38,7 +38,7 @@ func (p *Pi) GetUpdateHook(ctx context.Context) db.UpdateHook {
 	return func(query *db.UpdateQuery) {
 		table := query.Table
 		whereCond := query.WhereCond
-		columns, ok := models.PushEventTables[table]
+		columns, ok := constants.PushEventTables[table]
 		if !ok {
 			return
 		}
@@ -49,7 +49,7 @@ func (p *Pi) GetUpdateHook(ctx context.Context) db.UpdateHook {
 		}
 		for _, rid := range rids {
 			var owner string
-			err := p.DB(ctx).Select(models.ColumnOwner).From(table).Where(db.Eq(key, rids)).LoadOne(&owner)
+			err := p.DB(ctx).Select(constants.ColumnOwner).From(table).Where(db.Eq(key, rids)).LoadOne(&owner)
 			if err != nil {
 				continue
 			}
@@ -71,7 +71,7 @@ func (p *Pi) GetDeleteHook(ctx context.Context) db.DeleteHook {
 	return func(query *db.DeleteQuery) {
 		table := query.Table
 		whereCond := query.WhereCond
-		columns, ok := models.PushEventTables[table]
+		columns, ok := constants.PushEventTables[table]
 		if !ok {
 			return
 		}
@@ -82,7 +82,7 @@ func (p *Pi) GetDeleteHook(ctx context.Context) db.DeleteHook {
 		}
 		for _, rid := range rids {
 			var owner string
-			err := p.DB(ctx).Select(models.ColumnOwner).From(table).Where(db.Eq(key, rid)).LoadOne(&owner)
+			err := p.DB(ctx).Select(constants.ColumnOwner).From(table).Where(db.Eq(key, rid)).LoadOne(&owner)
 			if err != nil {
 				continue
 			}
@@ -97,7 +97,7 @@ func (p *Pi) GetDeleteHook(ctx context.Context) db.DeleteHook {
 func (p *Pi) GetInsertHook(ctx context.Context) db.InsertHook {
 	return func(query *db.InsertQuery) {
 		table := query.Table
-		columns, ok := models.PushEventTables[table]
+		columns, ok := constants.PushEventTables[table]
 		if !ok {
 			return
 		}
@@ -122,7 +122,7 @@ func (p *Pi) GetInsertHook(ctx context.Context) db.InsertHook {
 		}
 		for rid, resource := range resources {
 			var owner string
-			err := p.DB(ctx).Select(models.ColumnOwner).From(table).Where(db.Eq(key, rid)).LoadOne(&owner)
+			err := p.DB(ctx).Select(constants.ColumnOwner).From(table).Where(db.Eq(key, rid)).LoadOne(&owner)
 			if err != nil {
 				return
 			}

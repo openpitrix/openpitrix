@@ -38,7 +38,7 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 	}
 
 	_, err := pi.Global().DB(ctx).
-		InsertInto(models.TaskTableName).
+		InsertInto(constants.TableTask).
 		Columns(models.TaskColumns...).
 		Record(newTask).
 		Exec()
@@ -68,10 +68,10 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 
 	query := pi.Global().DB(ctx).
 		Select(models.TaskColumns...).
-		From(models.TaskTableName).
+		From(constants.TableTask).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.TaskTableName)).
+		Where(manager.BuildFilterConditions(req, constants.TableTask)).
 		Where(db.Eq("owner", s.UserId)).
 		OrderDir("create_time", true)
 
@@ -98,7 +98,7 @@ func (p *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb
 	var tasks []*models.Task
 	query := pi.Global().DB(ctx).
 		Select(models.TaskColumns...).
-		From(models.TaskTableName).
+		From(constants.TableTask).
 		Where(db.Eq("task_id", taskIds)).
 		Where(db.Eq("owner", s.UserId))
 

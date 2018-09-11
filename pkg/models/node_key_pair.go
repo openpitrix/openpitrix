@@ -11,8 +11,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const NodeKeyPairTableName = "node_key_pair"
-
 type NodeKeyPairDetails []NodeKeyPairDetail
 
 func NewNodeKeyPairDetails(data string) (NodeKeyPairDetails, error) {

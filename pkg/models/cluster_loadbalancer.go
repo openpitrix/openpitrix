@@ -9,8 +9,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const ClusterLoadbalancerTableName = "cluster_loadbalancer"
-
 type ClusterLoadbalancer struct {
 	ClusterId              string
 	Role                   string

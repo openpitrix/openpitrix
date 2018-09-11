@@ -17,8 +17,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const AppVersionTableName = "app_version"
-
 func NewAppVersionId() string {
 	return idutil.GetUuid("appv-")
 }

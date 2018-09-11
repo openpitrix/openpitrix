@@ -10,7 +10,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 )
 
-const RuntimeCredentialTableName = "runtime_credential"
 const RuntimeCredentialPrifix = "runtimec-"
 
 type RuntimeCredential struct {

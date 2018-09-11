@@ -13,8 +13,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const JobTableName = "job"
-
 func NewJobId() string {
 	return idutil.GetUuid("j-")
 }

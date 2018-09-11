@@ -12,8 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const KeyPairTableName = "key_pair"
-
 func NewKeyPairId() string {
 	return idutil.GetUuid("kp-")
 }

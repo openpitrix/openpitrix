@@ -10,7 +10,6 @@ import (
 	"github.com/coreos/etcd/mvcc/mvccpb"
 
 	"openpitrix.io/openpitrix/pkg/config"
-
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
 )

@@ -12,8 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const RepoLabelTableName = "repo_label"
-
 func NewRepoLabelId() string {
 	return idutil.GetUuid("repol-")
 }

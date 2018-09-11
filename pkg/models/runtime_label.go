@@ -12,8 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const RuntimeLabelTableName = "runtime_label"
-
 func NewRuntimeLabelId() string {
 	return idutil.GetUuid("runtimel-")
 }

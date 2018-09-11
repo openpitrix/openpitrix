@@ -13,8 +13,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const RepoEventTableName = "repo_event"
-
 func NewRepoEventId() string {
 	return idutil.GetUuid("repoe-")
 }

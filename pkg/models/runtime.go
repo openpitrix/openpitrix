@@ -13,7 +13,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const RuntimeTableName = "runtime"
 const RuntimeIdPrefix = "runtime-"
 
 func NewRuntimeId() string {
@@ -34,7 +33,7 @@ type Runtime struct {
 	StatusTime          time.Time
 }
 
-var RuntimeColumnsWithTablePrefix = GetColumnsFromStructWithPrefix(RuntimeTableName, &Runtime{})
+var RuntimeColumnsWithTablePrefix = GetColumnsFromStructWithPrefix(constants.TableRuntime, &Runtime{})
 var RuntimeColumns = GetColumnsFromStruct(&Runtime{})
 
 func NewRuntime(name, description, provider, runtimeUrl, runtimeCredentialId, zone, owner string) *Runtime {

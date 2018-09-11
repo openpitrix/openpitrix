@@ -9,8 +9,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const ClusterLinkTableName = "cluster_link"
-
 type ClusterLink struct {
 	ClusterId         string
 	Name              string
