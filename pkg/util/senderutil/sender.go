@@ -11,6 +11,8 @@ import (
 
 	context2 "golang.org/x/net/context"
 	"google.golang.org/grpc/metadata"
+
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 const senderKey = "sender"
@@ -29,16 +31,13 @@ func (info *Info) ToJson() string {
 }
 
 func GetSenderFromContext(ctx context.Context) *Info {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil
-	}
+	values := ctxutil.GetValueFromContext(ctx, senderKey)
 	//logger.Debug(nil, "%+v", md[senderKey])
-	if len(md[senderKey]) == 0 {
+	if len(values) == 0 {
 		return nil
 	}
 	sender := Info{}
-	err := json.Unmarshal([]byte(md[senderKey][0]), &sender)
+	err := json.Unmarshal([]byte(values[0]), &sender)
 	if err != nil {
 		panic(err)
 	}
@@ -59,8 +58,11 @@ func ServeMuxSetSender(ctx context2.Context, request *http.Request) metadata.MD 
 	return md
 }
 
-func NewContext(ctx context.Context, user *Info) context.Context {
-	md := metadata.MD{}
+func ContextWithSender(ctx context.Context, user *Info) context.Context {
+	md, ok := metadata.FromOutgoingContext(ctx)
+	if !ok {
+		md = metadata.MD{}
+	}
 	md[senderKey] = []string{user.ToJson()}
 	return metadata.NewOutgoingContext(ctx, md)
 }
