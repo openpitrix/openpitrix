@@ -16,7 +16,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.CreateRuntimeRequest:
 		return manager.NewChecker(ctx, r).
-			Required("name", "provider", "runtime_url", "zone", "runtime_credential").
+			Required("name", "provider", "zone", "runtime_credential").
 			StringChosen("provider", pi.Global().GlobalConfig().Cluster.Plugins).
 			Exec()
 	case *pb.ModifyRuntimeRequest:
