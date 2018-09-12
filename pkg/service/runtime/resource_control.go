@@ -76,7 +76,6 @@ func deleteRuntimes(ctx context.Context, runtimeIds []string) error {
 func insertRuntime(ctx context.Context, runtime models.Runtime) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableRuntime).
-		Columns(models.RuntimeColumns...).
 		Record(runtime).
 		Exec()
 	return err
@@ -85,7 +84,6 @@ func insertRuntime(ctx context.Context, runtime models.Runtime) error {
 func insertRuntimeCredential(ctx context.Context, runtimeCredential models.RuntimeCredential) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableRuntimeCredential).
-		Columns(models.RuntimeCredentialColumns...).
 		Record(runtimeCredential).
 		Exec()
 	return err

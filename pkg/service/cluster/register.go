@@ -20,7 +20,6 @@ func RegisterClusterNode(ctx context.Context, clusterNode *models.ClusterNode) e
 	clusterNode.StatusTime = time.Now()
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableClusterNode).
-		Columns(models.ClusterNodeColumns...).
 		Record(clusterNode).
 		Exec()
 	if err != nil {
@@ -34,7 +33,6 @@ func RegisterClusterNode(ctx context.Context, clusterNode *models.ClusterNode) e
 func RegisterClusterRole(ctx context.Context, clusterRole *models.ClusterRole) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableClusterRole).
-		Columns(models.ClusterRoleColumns...).
 		Record(clusterRole).
 		Exec()
 	if err != nil {
@@ -58,7 +56,6 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 		}
 		_, err := pi.Global().DB(ctx).
 			InsertInto(constants.TableCluster).
-			Columns(models.ClusterColumns...).
 			Record(clusterWrapper.Cluster).
 			Exec()
 		if err != nil {
@@ -87,7 +84,6 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 		clusterCommon.ClusterId = clusterId
 		_, err := pi.Global().DB(ctx).
 			InsertInto(constants.TableClusterCommon).
-			Columns(models.ClusterCommonColumns...).
 			Record(clusterCommon).
 			Exec()
 		if err != nil {
@@ -103,7 +99,6 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 		clusterLink.Owner = owner
 		_, err := pi.Global().DB(ctx).
 			InsertInto(constants.TableClusterLink).
-			Columns(models.ClusterLinkColumns...).
 			Record(clusterLink).
 			Exec()
 		if err != nil {
@@ -128,7 +123,6 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 			clusterLoadbalancer.ClusterId = clusterId
 			_, err := pi.Global().DB(ctx).
 				InsertInto(constants.TableClusterLoadbalancer).
-				Columns(models.ClusterLoadbalancerColumns...).
 				Record(clusterLoadbalancer).
 				Exec()
 			if err != nil {

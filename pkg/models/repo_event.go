@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -27,7 +28,7 @@ type RepoEvent struct {
 	StatusTime  time.Time
 }
 
-var RepoEventColumns = GetColumnsFromStruct(&RepoEvent{})
+var RepoEventColumns = db.GetColumnsFromStruct(&RepoEvent{})
 
 func NewRepoEvent(repoId, owner string) *RepoEvent {
 	return &RepoEvent{

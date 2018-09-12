@@ -39,7 +39,6 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableTask).
-		Columns(models.TaskColumns...).
 		Record(newTask).
 		Exec()
 	if err != nil {

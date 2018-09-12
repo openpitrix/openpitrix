@@ -6,6 +6,8 @@ package models
 
 import (
 	"time"
+
+	"openpitrix.io/openpitrix/pkg/db"
 )
 
 type CategoryResource struct {
@@ -16,7 +18,7 @@ type CategoryResource struct {
 	StatusTime time.Time
 }
 
-var CategoryResourceColumns = GetColumnsFromStruct(&CategoryResource{})
+var CategoryResourceColumns = db.GetColumnsFromStruct(&CategoryResource{})
 
 func NewCategoryResource(categoryId, resourceId, status string) *CategoryResource {
 	return &CategoryResource{

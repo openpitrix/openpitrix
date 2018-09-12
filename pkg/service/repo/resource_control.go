@@ -58,7 +58,7 @@ func (p *Server) createProviders(ctx context.Context, repoId string, providers [
 	if len(providers) == 0 {
 		return nil
 	}
-	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoProvider).Columns(models.RepoProviderColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoProvider)
 	for _, provider := range providers {
 		record := models.RepoProvider{
 			RepoId:   repoId,
@@ -158,7 +158,7 @@ func (p *Server) createSelectors(ctx context.Context, repoId string, selectors [
 	if len(selectors) == 0 {
 		return nil
 	}
-	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoSelector).Columns(models.RepoSelectorColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoSelector)
 	for _, selector := range selectors {
 		repoSelector := models.NewRepoSelector(repoId, selector.GetSelectorKey().GetValue(), selector.GetSelectorValue().GetValue())
 		insert = insert.Record(repoSelector)

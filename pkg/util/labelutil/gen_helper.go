@@ -37,7 +37,7 @@ func Sync{{pascalCase .Name}}{{pascalCase .Key}}s(ctx context.Context, {{.Name}}
 	// update exists {{.Key}}
 	// insert new {{.Key}}
 	// delete outmoded {{.Key}}
-	insert := pi.Global().DB(ctx).InsertInto(constants.Table{{pascalCase .Name}}{{pascalCase .Key}}).Columns(models.{{pascalCase .Name}}{{pascalCase .Key}}Columns...)
+	insert := pi.Global().DB(ctx).InsertInto(constants.Table{{pascalCase .Name}}{{pascalCase .Key}})
 	for _, q := range {{.Key}}Query {
 		if len({{.Key}}s) >= i+1 {
             {{.Key}} := {{.Key}}s[i]

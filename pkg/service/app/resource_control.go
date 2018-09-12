@@ -108,7 +108,6 @@ func deleteVersion(ctx context.Context, versionId string) error {
 func insertVersion(ctx context.Context, version *models.AppVersion) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableAppVersion).
-		Columns(models.AppVersionColumns...).
 		Record(version).
 		Exec()
 	if err != nil {

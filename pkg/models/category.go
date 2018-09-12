@@ -7,6 +7,7 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -28,7 +29,7 @@ type Category struct {
 	UpdateTime  *time.Time
 }
 
-var CategoryColumns = GetColumnsFromStruct(&Category{})
+var CategoryColumns = db.GetColumnsFromStruct(&Category{})
 
 func NewCategory(name, locale, description, owner string) *Category {
 	if locale == "" {

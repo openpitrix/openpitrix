@@ -7,6 +7,7 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -25,7 +26,7 @@ type RepoSelector struct {
 	CreateTime time.Time
 }
 
-var RepoSelectorColumns = GetColumnsFromStruct(&RepoSelector{})
+var RepoSelectorColumns = db.GetColumnsFromStruct(&RepoSelector{})
 
 func NewRepoSelector(repoId, selectorKey, selectorValue string) *RepoSelector {
 	return &RepoSelector{

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -37,7 +38,7 @@ type App struct {
 	UpdateTime  *time.Time
 }
 
-var AppColumns = GetColumnsFromStruct(&App{})
+var AppColumns = db.GetColumnsFromStruct(&App{})
 
 func NewApp(name, repoId, description, owner, chartName string) *App {
 	return &App{

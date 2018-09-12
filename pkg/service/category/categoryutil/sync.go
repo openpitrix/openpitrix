@@ -73,8 +73,7 @@ func SyncResourceCategories(ctx context.Context, d *db.Conn, appId string, categ
 	}
 	if len(createIds) > 0 {
 		insertStmt := d.
-			InsertInto(constants.TableCategoryResource).
-			Columns(models.CategoryResourceColumns...)
+			InsertInto(constants.TableCategoryResource)
 		for _, categoryId := range createIds {
 			insertStmt = insertStmt.Record(
 				models.NewCategoryResource(categoryId, appId, constants.StatusEnabled),

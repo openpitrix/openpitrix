@@ -34,7 +34,6 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableJob).
-		Columns(models.JobColumns...).
 		Record(newJob).
 		Exec()
 	if err != nil {

@@ -5,6 +5,7 @@
 package models
 
 import (
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -16,7 +17,7 @@ type ClusterLink struct {
 	Owner             string
 }
 
-var ClusterLinkColumns = GetColumnsFromStruct(&ClusterLink{})
+var ClusterLinkColumns = db.GetColumnsFromStruct(&ClusterLink{})
 
 func ClusterLinkToPb(clusterLink *ClusterLink) *pb.ClusterLink {
 	return &pb.ClusterLink{
