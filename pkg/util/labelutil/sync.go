@@ -17,7 +17,7 @@ import (
 )
 
 func SyncRepoLabels(ctx context.Context, repoId, labelStr string) error {
-	labelMap, err := Parse(labelStr)
+	labelQuery, err := Parse(labelStr)
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
 	}
@@ -36,27 +36,25 @@ func SyncRepoLabels(ctx context.Context, repoId, labelStr string) error {
 	// insert new label
 	// delete outmoded label
 	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoLabel).Columns(models.RepoLabelColumns...)
-	for key, values := range labelMap {
-		for _, value := range values {
-			if len(labels) >= i+1 {
-				label := labels[i]
-				if label.LabelKey != key || label.LabelValue != value {
-					_, err = pi.Global().DB(ctx).
-						Update(constants.TableRepoLabel).
-						Set(constants.ColumnLabelKey, key).
-						Set(constants.ColumnLabelValue, value).
-						Where(db.Eq(constants.ColumnRepoLabelId, label.RepoLabelId)).
-						Exec()
-					if err != nil {
-						return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
-					}
+	for _, q := range labelQuery {
+		if len(labels) >= i+1 {
+			label := labels[i]
+			if label.LabelKey != q.K || label.LabelValue != q.V {
+				_, err = pi.Global().DB(ctx).
+					Update(constants.TableRepoLabel).
+					Set(constants.ColumnLabelKey, q.K).
+					Set(constants.ColumnLabelValue, q.V).
+					Where(db.Eq(constants.ColumnRepoLabelId, label.RepoLabelId)).
+					Exec()
+				if err != nil {
+					return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 				}
-			} else {
-				repoLabel := models.NewRepoLabel(repoId, key, value)
-				insert = insert.Record(repoLabel)
 			}
-			i++
+		} else {
+			repoLabel := models.NewRepoLabel(repoId, q.K, q.V)
+			insert = insert.Record(repoLabel)
 		}
+		i++
 	}
 	if len(insert.Value) > 0 {
 		_, err = insert.Exec()
@@ -82,7 +80,7 @@ func SyncRepoLabels(ctx context.Context, repoId, labelStr string) error {
 }
 
 func SyncRepoSelectors(ctx context.Context, repoId, selectorStr string) error {
-	selectorMap, err := Parse(selectorStr)
+	selectorQuery, err := Parse(selectorStr)
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "selector")
 	}
@@ -101,27 +99,25 @@ func SyncRepoSelectors(ctx context.Context, repoId, selectorStr string) error {
 	// insert new selector
 	// delete outmoded selector
 	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoSelector).Columns(models.RepoSelectorColumns...)
-	for key, values := range selectorMap {
-		for _, value := range values {
-			if len(selectors) >= i+1 {
-				selector := selectors[i]
-				if selector.SelectorKey != key || selector.SelectorValue != value {
-					_, err = pi.Global().DB(ctx).
-						Update(constants.TableRepoSelector).
-						Set(constants.ColumnSelectorKey, key).
-						Set(constants.ColumnSelectorValue, value).
-						Where(db.Eq(constants.ColumnRepoSelectorId, selector.RepoSelectorId)).
-						Exec()
-					if err != nil {
-						return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
-					}
+	for _, q := range selectorQuery {
+		if len(selectors) >= i+1 {
+			selector := selectors[i]
+			if selector.SelectorKey != q.K || selector.SelectorValue != q.V {
+				_, err = pi.Global().DB(ctx).
+					Update(constants.TableRepoSelector).
+					Set(constants.ColumnSelectorKey, q.K).
+					Set(constants.ColumnSelectorValue, q.V).
+					Where(db.Eq(constants.ColumnRepoSelectorId, selector.RepoSelectorId)).
+					Exec()
+				if err != nil {
+					return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 				}
-			} else {
-				repoSelector := models.NewRepoSelector(repoId, key, value)
-				insert = insert.Record(repoSelector)
 			}
-			i++
+		} else {
+			repoSelector := models.NewRepoSelector(repoId, q.K, q.V)
+			insert = insert.Record(repoSelector)
 		}
+		i++
 	}
 	if len(insert.Value) > 0 {
 		_, err = insert.Exec()
@@ -147,7 +143,7 @@ func SyncRepoSelectors(ctx context.Context, repoId, selectorStr string) error {
 }
 
 func SyncRuntimeLabels(ctx context.Context, runtimeId, labelStr string) error {
-	labelMap, err := Parse(labelStr)
+	labelQuery, err := Parse(labelStr)
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "label")
 	}
@@ -166,27 +162,25 @@ func SyncRuntimeLabels(ctx context.Context, runtimeId, labelStr string) error {
 	// insert new label
 	// delete outmoded label
 	insert := pi.Global().DB(ctx).InsertInto(constants.TableRuntimeLabel).Columns(models.RuntimeLabelColumns...)
-	for key, values := range labelMap {
-		for _, value := range values {
-			if len(labels) >= i+1 {
-				label := labels[i]
-				if label.LabelKey != key || label.LabelValue != value {
-					_, err = pi.Global().DB(ctx).
-						Update(constants.TableRuntimeLabel).
-						Set(constants.ColumnLabelKey, key).
-						Set(constants.ColumnLabelValue, value).
-						Where(db.Eq(constants.ColumnRuntimeLabelId, label.RuntimeLabelId)).
-						Exec()
-					if err != nil {
-						return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
-					}
+	for _, q := range labelQuery {
+		if len(labels) >= i+1 {
+			label := labels[i]
+			if label.LabelKey != q.K || label.LabelValue != q.V {
+				_, err = pi.Global().DB(ctx).
+					Update(constants.TableRuntimeLabel).
+					Set(constants.ColumnLabelKey, q.K).
+					Set(constants.ColumnLabelValue, q.V).
+					Where(db.Eq(constants.ColumnRuntimeLabelId, label.RuntimeLabelId)).
+					Exec()
+				if err != nil {
+					return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 				}
-			} else {
-				repoLabel := models.NewRuntimeLabel(runtimeId, key, value)
-				insert = insert.Record(repoLabel)
 			}
-			i++
+		} else {
+			repoLabel := models.NewRuntimeLabel(runtimeId, q.K, q.V)
+			insert = insert.Record(repoLabel)
 		}
+		i++
 	}
 	if len(insert.Value) > 0 {
 		_, err = insert.Exec()

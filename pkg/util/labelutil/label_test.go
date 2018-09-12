@@ -5,64 +5,39 @@
 package labelutil
 
 import (
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParse(t *testing.T) {
-	type args struct {
-		labelString string
-	}
 	tests := []struct {
 		name    string
-		args    args
-		want    map[string][]string
+		args    string
 		wantErr bool
 	}{
 		{
-			args: args{
-				"runtime=qingcloud&zone=pk3a&env=test",
-			},
-			want: map[string][]string{
-				"runtime": {"qingcloud"},
-				"zone":    {"pk3a"},
-				"env":     {"test"},
-			},
+			args: "runtime=qingcloud&zone=pk3a&env=test",
 		},
 		{
-			args: args{
-				"runtime=kubernetes&env=dev",
-			},
-			want: map[string][]string{
-				"runtime": {"kubernetes"},
-				"env":     {"dev"},
-			},
+			args: "runtime=kubernetes&env=dev",
 		},
 		{
-			args: args{
-				"runtime=kubernetes&team=openpitrix",
-			},
-			want: map[string][]string{
-				"runtime": {"kubernetes"},
-				"team":    {"openpitrix"},
-			},
+			args: "runtime=kubernetes&team=openpitrix",
 		},
 		{
-			args: args{
-				"runtime=&team=openpitrix",
-			},
+			args:    "runtime=&team=openpitrix",
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := Parse(tt.args.labelString)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Parse() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Parse() = %v, want %v", got, tt.want)
+			got, err := Parse(tt.args)
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.args, got.ToString())
 			}
 		})
 	}

@@ -19,14 +19,14 @@ var syncTemplate = template.Must(template.New("").Funcs(template.FuncMap{
 	"pascalCase": stringutil.UnderscoreToCamelCase,
 }).Parse(`
 func Sync{{pascalCase .Name}}{{pascalCase .Key}}s(ctx context.Context, {{.Name}}Id, {{.Key}}Str string) error {
-	{{.Key}}Map, err := Parse({{.Key}}Str)
+	{{.Key}}Query, err := Parse({{.Key}}Str)
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "{{.Key}}")
 	}
 	var {{.Key}}s []*models.{{pascalCase .Name}}{{pascalCase .Key}}
 	_, err = pi.Global().DB(ctx).
 		Select(models.{{pascalCase .Name}}{{pascalCase .Key}}Columns...).
-		From(constants.{{pascalCase .Name}}{{pascalCase .Key}}TableName).
+		From(constants.Table{{pascalCase .Name}}{{pascalCase .Key}}).
 		Where(db.Eq(constants.Column{{pascalCase .Name}}Id, {{.Name}}Id)).
 		OrderDir(constants.ColumnCreateTime, true).
 		Load(&{{.Key}}s)
@@ -37,28 +37,26 @@ func Sync{{pascalCase .Name}}{{pascalCase .Key}}s(ctx context.Context, {{.Name}}
 	// update exists {{.Key}}
 	// insert new {{.Key}}
 	// delete outmoded {{.Key}}
-	insert := pi.Global().DB(ctx).InsertInto(models.{{pascalCase .Name}}{{pascalCase .Key}}TableName).Columns(constants.{{pascalCase .Name}}{{pascalCase .Key}}Columns...)
-	for key, values := range {{.Key}}Map {
-		for _, value := range values {
-			if len({{.Key}}s) >= i+1 {
-				{{.Key}} := {{.Key}}s[i]
-				if {{.Key}}.{{pascalCase .Key}}Key != key || {{.Key}}.{{pascalCase .Key}}Value != value {
-					_, err = pi.Global().DB(ctx).
-						Update(constants.{{pascalCase .Name}}{{pascalCase .Key}}TableName).
-						Set(constants.Column{{pascalCase .Key}}Key, key).
-						Set(constants.Column{{pascalCase .Key}}Value, value).
-						Where(db.Eq(constants.Column{{pascalCase .Name}}{{pascalCase .Key}}Id, {{.Key}}.{{pascalCase .Name}}{{pascalCase .Key}}Id)).
-						Exec()
-					if err != nil {
-						return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
-					}
-				}
-			} else {
-				repo{{pascalCase .Key}} := models.New{{pascalCase .Name}}{{pascalCase .Key}}({{.Name}}Id, key, value)
-				insert = insert.Record(repo{{pascalCase .Key}})
-			}
-			i++
-		}
+	insert := pi.Global().DB(ctx).InsertInto(constants.Table{{pascalCase .Name}}{{pascalCase .Key}}).Columns(models.{{pascalCase .Name}}{{pascalCase .Key}}Columns...)
+	for _, q := range {{.Key}}Query {
+		if len({{.Key}}s) >= i+1 {
+            {{.Key}} := {{.Key}}s[i]
+            if {{.Key}}.{{pascalCase .Key}}Key != q.K || {{.Key}}.{{pascalCase .Key}}Value != q.V {
+                _, err = pi.Global().DB(ctx).
+                    Update(constants.Table{{pascalCase .Name}}{{pascalCase .Key}}).
+                    Set(constants.Column{{pascalCase .Key}}Key, q.K).
+                    Set(constants.Column{{pascalCase .Key}}Value, q.V).
+                    Where(db.Eq(constants.Column{{pascalCase .Name}}{{pascalCase .Key}}Id, {{.Key}}.{{pascalCase .Name}}{{pascalCase .Key}}Id)).
+                    Exec()
+                if err != nil {
+                    return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
+                }
+            }
+        } else {
+            repo{{pascalCase .Key}} := models.New{{pascalCase .Name}}{{pascalCase .Key}}({{.Name}}Id, q.K, q.V)
+            insert = insert.Record(repo{{pascalCase .Key}})
+        }
+        i++
 	}
 	if len(insert.Value) > 0 {
 		_, err = insert.Exec()
@@ -73,7 +71,7 @@ func Sync{{pascalCase .Name}}{{pascalCase .Key}}s(ctx context.Context, {{.Name}}
 			delete{{pascalCase .Key}}Ids = append(delete{{pascalCase .Key}}Ids, {{.Key}}.{{pascalCase .Name}}{{pascalCase .Key}}Id)
 		}
 		_, err := pi.Global().DB(ctx).
-			DeleteFrom(constants.{{pascalCase .Name}}{{pascalCase .Key}}TableName).
+			DeleteFrom(constants.Table{{pascalCase .Name}}{{pascalCase .Key}}).
 			Where(db.Eq(constants.Column{{pascalCase .Name}}{{pascalCase .Key}}Id, delete{{pascalCase .Key}}Ids)).
 			Exec()
 		if err != nil {
