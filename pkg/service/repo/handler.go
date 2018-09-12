@@ -55,7 +55,7 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 			From(constants.TableCategoryResource).
 			Where(db.Eq(constants.ColumnStatus, constants.StatusEnabled)).
 			Where(db.Eq(constants.ColumnCategoryId, categoryIds))
-		query = query.Where(db.Eq(models.WithPrefix(
+		query = query.Where(db.Eq(db.WithPrefix(
 			constants.TableRepo,
 			constants.ColumnRepoId,
 		), []*db.SelectQuery{subqueryStmt}))
@@ -121,7 +121,6 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 
 	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableRepo).
-		Columns(models.RepoColumns...).
 		Record(newRepo).
 		Exec()
 	if err != nil {

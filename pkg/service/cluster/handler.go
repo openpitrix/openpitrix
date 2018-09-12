@@ -266,7 +266,6 @@ func (p *Server) AddNodeKeyPairs(ctx context.Context, req *pb.AddNodeKeyPairsReq
 		}
 		_, err := pi.Global().DB(ctx).
 			InsertInto(constants.TableNodeKeyPair).
-			Columns(models.NodeKeyPairColumns...).
 			Record(nodeKeyPair).
 			Exec()
 		if err != nil {
@@ -296,7 +295,6 @@ func (p *Server) CreateKeyPair(ctx context.Context, req *pb.CreateKeyPairRequest
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableKeyPair).
-		Columns(models.KeyPairColumns...).
 		Record(newKeyPair).
 		Exec()
 	if err != nil {

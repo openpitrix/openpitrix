@@ -35,7 +35,7 @@ func SyncRepoLabels(ctx context.Context, repoId, labelStr string) error {
 	// update exists label
 	// insert new label
 	// delete outmoded label
-	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoLabel).Columns(models.RepoLabelColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoLabel)
 	for _, q := range labelQuery {
 		if len(labels) >= i+1 {
 			label := labels[i]
@@ -98,7 +98,7 @@ func SyncRepoSelectors(ctx context.Context, repoId, selectorStr string) error {
 	// update exists selector
 	// insert new selector
 	// delete outmoded selector
-	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoSelector).Columns(models.RepoSelectorColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoSelector)
 	for _, q := range selectorQuery {
 		if len(selectors) >= i+1 {
 			selector := selectors[i]
@@ -161,7 +161,7 @@ func SyncRuntimeLabels(ctx context.Context, runtimeId, labelStr string) error {
 	// update exists label
 	// insert new label
 	// delete outmoded label
-	insert := pi.Global().DB(ctx).InsertInto(constants.TableRuntimeLabel).Columns(models.RuntimeLabelColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(constants.TableRuntimeLabel)
 	for _, q := range labelQuery {
 		if len(labels) >= i+1 {
 			label := labels[i]

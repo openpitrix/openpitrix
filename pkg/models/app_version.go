@@ -11,6 +11,7 @@ import (
 	"github.com/Masterminds/semver"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
@@ -42,7 +43,7 @@ type AppVersion struct {
 	UpdateTime  *time.Time
 }
 
-var AppVersionColumns = GetColumnsFromStruct(&AppVersion{})
+var AppVersionColumns = db.GetColumnsFromStruct(&AppVersion{})
 
 func (v AppVersion) GetSemver() string {
 	return strings.Split(v.Name, " ")[0]

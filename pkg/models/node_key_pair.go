@@ -5,6 +5,7 @@
 package models
 
 import (
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
@@ -41,4 +42,4 @@ type NodeKeyPairDetail struct {
 	KeyPair     *KeyPair
 }
 
-var NodeKeyPairColumns = GetColumnsFromStruct(&NodeKeyPair{})
+var NodeKeyPairColumns = db.GetColumnsFromStruct(&NodeKeyPair{})

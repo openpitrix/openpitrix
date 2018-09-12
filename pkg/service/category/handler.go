@@ -59,7 +59,6 @@ func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableCategory).
-		Columns(models.CategoryColumns...).
 		Record(category).
 		Exec()
 	if err != nil {

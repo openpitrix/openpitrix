@@ -56,8 +56,8 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 			return fmt.Errorf("repo [%s] had running index event", repoId)
 		}
 		repoEvent := models.NewRepoEvent(repoId, owner)
-		_, err = pi.Global().DB(i.ctx).InsertInto(constants.TableRepoEvent).
-			Columns(models.RepoEventColumns...).
+		_, err = pi.Global().DB(i.ctx).
+			InsertInto(constants.TableRepoEvent).
 			Record(repoEvent).
 			Exec()
 		if err != nil {

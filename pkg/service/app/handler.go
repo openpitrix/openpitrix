@@ -120,7 +120,6 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableApp).
-		Columns(models.AppColumns...).
 		Record(newApp).
 		Exec()
 	if err != nil {
