@@ -36,13 +36,13 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	}
 
 	// create runtime credential
-	runtimeCredentialId, err := p.createRuntimeCredential(ctx, req.Provider.GetValue(), req.RuntimeCredential.GetValue())
+	runtimeCredentialId, err := createRuntimeCredential(ctx, req.Provider.GetValue(), req.RuntimeCredential.GetValue())
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	// create runtime
-	runtimeId, err := p.createRuntime(
+	runtimeId, err := createRuntime(
 		ctx,
 		req.GetName().GetValue(),
 		req.GetDescription().GetValue(),
@@ -106,7 +106,7 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
-	pbRuntime, err := p.formatRuntimeSet(ctx, runtimes)
+	pbRuntime, err := formatRuntimeSet(ctx, runtimes)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
@@ -155,7 +155,7 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
-	pbRuntimeDetails, err := p.formatRuntimeDetailSet(ctx, runtimes)
+	pbRuntimeDetails, err := formatRuntimeDetailSet(ctx, runtimes)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
@@ -178,7 +178,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	}
 	// check runtime can be modified
 	runtimeId := req.GetRuntimeId().GetValue()
-	runtime, err := p.getRuntime(ctx, runtimeId)
+	runtime, err := getRuntime(ctx, runtimeId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceNotFound, runtimeId)
 	}
@@ -202,7 +202,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, runtimeId)
 	}
 	// update runtime
-	err = p.updateRuntime(ctx, req)
+	err = updateRuntime(ctx, req)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
@@ -216,7 +216,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 
 	// update runtime credential
 	if req.RuntimeCredential != nil {
-		err := p.updateRuntimeCredential(ctx, runtime.RuntimeCredentialId, runtime.Provider, req.RuntimeCredential.GetValue())
+		err := updateRuntimeCredential(ctx, runtime.RuntimeCredentialId, runtime.Provider, req.RuntimeCredential.GetValue())
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
@@ -234,7 +234,7 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 	runtimeIds := req.GetRuntimeId()
 
 	// deleted runtime
-	err := p.deleteRuntimes(ctx, runtimeIds)
+	err := deleteRuntimes(ctx, runtimeIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}

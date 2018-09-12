@@ -14,8 +14,6 @@ const (
 	DescriptionColumn = "description"
 	StatusColumn      = "status"
 	StatusTimeColumn  = "status_time"
-	LabelKeyColumn    = "label_key"
-	LabelValueColumn  = "label_value"
 )
 
 const (
