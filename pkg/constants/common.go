@@ -36,6 +36,7 @@ const (
 	DroneServicePort     = 9112
 	CategoryManagerPort  = 9113
 	PilotTlsListenPort   = 9114 // public service for frontgate
+	IamListenPort        = 9115
 	EtcdServicePort      = 2379
 )
 

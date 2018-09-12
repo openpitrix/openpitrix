@@ -1,0 +1,66 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package iam;
+
+option go_package = "openpitrix.io/openpitrix/pkg/pb/iam;pbiam";
+
+service TokenManager {
+	rpc CreateClient(CreateClientRequest) returns (CreateClientResponse);
+
+	// get access_token with client_credentials or password
+	//
+	// Ref:
+	// - https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2
+	// - https://alexbilbie.com/guide-to-oauth-2-grants/
+	// - https://tools.ietf.org/html/rfc6749#section-4.4
+	//
+	rpc Auth(AuthRequest) returns (AuthResponse);
+
+	// refresh access_token
+	//
+	// Ref: https://tools.ietf.org/html/rfc6749#section-6
+	//
+	rpc Token(TokenRequest) returns (TokenResponse);
+}
+
+message CreateClientRequest {
+	string user_id = 1;
+}
+message CreateClientResponse {
+	string user_id = 1;
+	string client_id = 2;
+	string client_secret = 3;
+}
+
+message AuthRequest {
+	string grant_type = 1; // client_credentials or password
+	string client_id = 2;
+	string client_secret = 3;
+	string scope = 4;
+	string username = 5;
+	string password = 6;
+}
+message AuthResponse {
+	string token_type = 1;
+	string expires_in = 2;
+	string access_token = 3;
+	string refresh_token = 4;
+	string id_token = 5;
+}
+
+message TokenRequest {
+	string grant_type = 1; // refresh_token
+	string client_id = 2;
+	string client_secret = 3;
+	string refresh_token = 4;
+}
+message TokenResponse {
+	string token_type = 1;
+	string expires_in = 2;
+	string access_token = 3;
+	string refresh_token = 4;
+}
