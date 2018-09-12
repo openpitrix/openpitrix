@@ -4,8 +4,6 @@
 
 package models
 
-const ClusterSnapshotTableName = "cluster_snapshot"
-
 type ClusterSnapshot struct {
 	SnapshotId       string
 	Role             string

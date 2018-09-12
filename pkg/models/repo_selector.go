@@ -12,8 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const RepoSelectorTableName = "repo_selector"
-
 func NewRepoSelectorId() string {
 	return idutil.GetUuid("repos-")
 }

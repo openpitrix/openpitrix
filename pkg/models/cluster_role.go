@@ -9,8 +9,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const ClusterRoleTableName = "cluster_role"
-
 type ClusterRole struct {
 	ClusterId     string
 	Role          string

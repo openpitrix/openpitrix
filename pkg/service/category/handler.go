@@ -8,6 +8,7 @@ import (
 	"context"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -26,12 +27,12 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 
 	query := pi.Global().DB(ctx).
 		Select(models.CategoryColumns...).
-		From(models.CategoryTableName).
+		From(constants.TableCategory).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.CategoryTableName))
+		Where(manager.BuildFilterConditions(req, constants.TableCategory))
 	// TODO: validate sort_key
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&categories)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -57,7 +58,7 @@ func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 		s.UserId)
 
 	_, err := pi.Global().DB(ctx).
-		InsertInto(models.CategoryTableName).
+		InsertInto(constants.TableCategory).
 		Columns(models.CategoryColumns...).
 		Record(category).
 		Exec()
@@ -80,12 +81,12 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
-		models.ColumnName, models.ColumnLocale, models.ColumnDescription)
-	attributes[models.ColumnUpdateTime] = time.Now()
+		constants.ColumnName, constants.ColumnLocale, constants.ColumnDescription)
+	attributes[constants.ColumnUpdateTime] = time.Now()
 	_, err = pi.Global().DB(ctx).
-		Update(models.CategoryTableName).
+		Update(constants.TableCategory).
 		SetMap(attributes).
-		Where(db.Eq(models.ColumnCategoryId, categoryId)).
+		Where(db.Eq(constants.ColumnCategoryId, categoryId)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
@@ -104,8 +105,8 @@ func (p *Server) DeleteCategories(ctx context.Context, req *pb.DeleteCategoriesR
 	}
 
 	_, err := pi.Global().DB(ctx).
-		DeleteFrom(models.CategoryTableName).
-		Where(db.Eq(models.ColumnCategoryId, categoryIds)).
+		DeleteFrom(constants.TableCategory).
+		Where(db.Eq(constants.ColumnCategoryId, categoryIds)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)

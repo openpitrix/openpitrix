@@ -13,7 +13,6 @@ import (
 )
 
 const UncategorizedId = "ctg-uncategorized"
-const CategoryTableName = "category"
 
 func NewCategoryId() string {
 	return idutil.GetUuid("ctg-")

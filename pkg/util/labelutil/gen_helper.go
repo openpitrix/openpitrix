@@ -26,9 +26,9 @@ func Sync{{pascalCase .Name}}{{pascalCase .Key}}s(ctx context.Context, {{.Name}}
 	var {{.Key}}s []*models.{{pascalCase .Name}}{{pascalCase .Key}}
 	_, err = pi.Global().DB(ctx).
 		Select(models.{{pascalCase .Name}}{{pascalCase .Key}}Columns...).
-		From(models.{{pascalCase .Name}}{{pascalCase .Key}}TableName).
-		Where(db.Eq(models.Column{{pascalCase .Name}}Id, {{.Name}}Id)).
-		OrderDir(models.ColumnCreateTime, true).
+		From(constants.{{pascalCase .Name}}{{pascalCase .Key}}TableName).
+		Where(db.Eq(constants.Column{{pascalCase .Name}}Id, {{.Name}}Id)).
+		OrderDir(constants.ColumnCreateTime, true).
 		Load(&{{.Key}}s)
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorDescribeResourcesFailed)
@@ -37,17 +37,17 @@ func Sync{{pascalCase .Name}}{{pascalCase .Key}}s(ctx context.Context, {{.Name}}
 	// update exists {{.Key}}
 	// insert new {{.Key}}
 	// delete outmoded {{.Key}}
-	insert := pi.Global().DB(ctx).InsertInto(models.{{pascalCase .Name}}{{pascalCase .Key}}TableName).Columns(models.{{pascalCase .Name}}{{pascalCase .Key}}Columns...)
+	insert := pi.Global().DB(ctx).InsertInto(models.{{pascalCase .Name}}{{pascalCase .Key}}TableName).Columns(constants.{{pascalCase .Name}}{{pascalCase .Key}}Columns...)
 	for key, values := range {{.Key}}Map {
 		for _, value := range values {
 			if len({{.Key}}s) >= i+1 {
 				{{.Key}} := {{.Key}}s[i]
 				if {{.Key}}.{{pascalCase .Key}}Key != key || {{.Key}}.{{pascalCase .Key}}Value != value {
 					_, err = pi.Global().DB(ctx).
-						Update(models.{{pascalCase .Name}}{{pascalCase .Key}}TableName).
-						Set(models.Column{{pascalCase .Key}}Key, key).
-						Set(models.Column{{pascalCase .Key}}Value, value).
-						Where(db.Eq(models.Column{{pascalCase .Name}}{{pascalCase .Key}}Id, {{.Key}}.{{pascalCase .Name}}{{pascalCase .Key}}Id)).
+						Update(constants.{{pascalCase .Name}}{{pascalCase .Key}}TableName).
+						Set(constants.Column{{pascalCase .Key}}Key, key).
+						Set(constants.Column{{pascalCase .Key}}Value, value).
+						Where(db.Eq(constants.Column{{pascalCase .Name}}{{pascalCase .Key}}Id, {{.Key}}.{{pascalCase .Name}}{{pascalCase .Key}}Id)).
 						Exec()
 					if err != nil {
 						return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
@@ -73,8 +73,8 @@ func Sync{{pascalCase .Name}}{{pascalCase .Key}}s(ctx context.Context, {{.Name}}
 			delete{{pascalCase .Key}}Ids = append(delete{{pascalCase .Key}}Ids, {{.Key}}.{{pascalCase .Name}}{{pascalCase .Key}}Id)
 		}
 		_, err := pi.Global().DB(ctx).
-			DeleteFrom(models.{{pascalCase .Name}}{{pascalCase .Key}}TableName).
-			Where(db.Eq(models.Column{{pascalCase .Name}}{{pascalCase .Key}}Id, delete{{pascalCase .Key}}Ids)).
+			DeleteFrom(constants.{{pascalCase .Name}}{{pascalCase .Key}}TableName).
+			Where(db.Eq(constants.Column{{pascalCase .Name}}{{pascalCase .Key}}Id, delete{{pascalCase .Key}}Ids)).
 			Exec()
 		if err != nil {
 			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
@@ -107,6 +107,7 @@ package labelutil
 import (
 	"context"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"

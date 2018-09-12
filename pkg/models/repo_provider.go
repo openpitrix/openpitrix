@@ -4,8 +4,6 @@
 
 package models
 
-const RepoProviderTableName = "repo_provider"
-
 var RepoProviderColumns = GetColumnsFromStruct(&RepoProvider{})
 
 type RepoProvider struct {

@@ -8,6 +8,7 @@ import (
 	"context"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -18,13 +19,13 @@ func RegisterClusterNode(ctx context.Context, clusterNode *models.ClusterNode) e
 	clusterNode.CreateTime = time.Now()
 	clusterNode.StatusTime = time.Now()
 	_, err := pi.Global().DB(ctx).
-		InsertInto(models.ClusterNodeTableName).
+		InsertInto(constants.TableClusterNode).
 		Columns(models.ClusterNodeColumns...).
 		Record(clusterNode).
 		Exec()
 	if err != nil {
 		logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
-			models.ClusterNodeTableName, clusterNode.ClusterId, err)
+			constants.TableClusterNode, clusterNode.ClusterId, err)
 		return err
 	}
 	return nil
@@ -32,13 +33,13 @@ func RegisterClusterNode(ctx context.Context, clusterNode *models.ClusterNode) e
 
 func RegisterClusterRole(ctx context.Context, clusterRole *models.ClusterRole) error {
 	_, err := pi.Global().DB(ctx).
-		InsertInto(models.ClusterRoleTableName).
+		InsertInto(constants.TableClusterRole).
 		Columns(models.ClusterRoleColumns...).
 		Record(clusterRole).
 		Exec()
 	if err != nil {
 		logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
-			models.ClusterRoleTableName, clusterRole.ClusterId, err)
+			constants.TableClusterRole, clusterRole.ClusterId, err)
 		return err
 	}
 	return nil
@@ -56,13 +57,13 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 			clusterWrapper.Cluster.UpgradeTime = &now
 		}
 		_, err := pi.Global().DB(ctx).
-			InsertInto(models.ClusterTableName).
+			InsertInto(constants.TableCluster).
 			Columns(models.ClusterColumns...).
 			Record(clusterWrapper.Cluster).
 			Exec()
 		if err != nil {
 			logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterTableName, clusterWrapper.Cluster.ClusterId, err)
+				constants.TableCluster, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
 	}
@@ -85,13 +86,13 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 	for _, clusterCommon := range clusterWrapper.ClusterCommons {
 		clusterCommon.ClusterId = clusterId
 		_, err := pi.Global().DB(ctx).
-			InsertInto(models.ClusterCommonTableName).
+			InsertInto(constants.TableClusterCommon).
 			Columns(models.ClusterCommonColumns...).
 			Record(clusterCommon).
 			Exec()
 		if err != nil {
 			logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterCommonTableName, clusterWrapper.Cluster.ClusterId, err)
+				constants.TableClusterCommon, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
 	}
@@ -101,13 +102,13 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 		clusterLink.ClusterId = clusterId
 		clusterLink.Owner = owner
 		_, err := pi.Global().DB(ctx).
-			InsertInto(models.ClusterLinkTableName).
+			InsertInto(constants.TableClusterLink).
 			Columns(models.ClusterLinkColumns...).
 			Record(clusterLink).
 			Exec()
 		if err != nil {
 			logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
-				models.ClusterLinkTableName, clusterWrapper.Cluster.ClusterId, err)
+				constants.TableClusterLink, clusterWrapper.Cluster.ClusterId, err)
 			return err
 		}
 	}
@@ -126,13 +127,13 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 		for _, clusterLoadbalancer := range clusterLoadbalancers {
 			clusterLoadbalancer.ClusterId = clusterId
 			_, err := pi.Global().DB(ctx).
-				InsertInto(models.ClusterLoadbalancerTableName).
+				InsertInto(constants.TableClusterLoadbalancer).
 				Columns(models.ClusterLoadbalancerColumns...).
 				Record(clusterLoadbalancer).
 				Exec()
 			if err != nil {
 				logger.Error(ctx, "Failed to insert table [%s] with cluster id [%s]: %+v",
-					models.ClusterLoadbalancerTableName, clusterWrapper.Cluster.ClusterId, err)
+					constants.TableClusterLoadbalancer, clusterWrapper.Cluster.ClusterId, err)
 				return err
 			}
 		}

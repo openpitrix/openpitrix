@@ -15,8 +15,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const TaskTableName = "task"
-
 func NewTaskId() string {
 	return idutil.GetUuid("t-")
 }

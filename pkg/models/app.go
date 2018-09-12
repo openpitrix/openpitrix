@@ -13,8 +13,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const AppTableName = "app"
-
 func NewAppId() string {
 	return idutil.GetUuid("app-")
 }

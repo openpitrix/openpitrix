@@ -45,7 +45,7 @@ func NewController(hostname string) *Controller {
 
 func (c *Controller) updateTaskAttributes(ctx context.Context, taskId string, attributes map[string]interface{}) error {
 	_, err := pi.Global().DB(ctx).
-		Update(models.TaskTableName).
+		Update(constants.TableTask).
 		SetMap(attributes).
 		Where(db.Eq("task_id", taskId)).
 		Exec()
@@ -91,7 +91,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 	task := new(models.Task)
 	query := pi.Global().DB(ctx).
 		Select(models.TaskColumns...).
-		From(models.TaskTableName).
+		From(constants.TableTask).
 		Where(db.Eq("task_id", taskId))
 
 	err := query.LoadOne(&task)

@@ -336,7 +336,7 @@ func (p *Processor) Pre(ctx context.Context) error {
 			"directive": p.Task.Directive,
 		}
 		_, err := pi.Global().DB(ctx).
-			Update(models.TaskTableName).
+			Update(constants.TableTask).
 			SetMap(attributes).
 			Where(db.Eq("task_id", p.Task.TaskId)).
 			Exec()

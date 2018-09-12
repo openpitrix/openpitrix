@@ -12,8 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const ClusterNodeTableName = "cluster_node"
-
 func NewClusterNodeId() string {
 	return idutil.GetUuid("cln-")
 }

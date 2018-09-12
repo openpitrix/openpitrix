@@ -11,8 +11,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const ClusterCommonTableName = "cluster_common"
-
 type ClusterCommon struct {
 	ClusterId                  string
 	Role                       string

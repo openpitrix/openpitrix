@@ -6,8 +6,6 @@ package models
 
 import "time"
 
-const ClusterUpgradeAuditTableName = "cluster_upgrade_audit"
-
 type ClusterUpgradeAudit struct {
 	ClusterUpgradeAuditId string
 	ClusterId             string

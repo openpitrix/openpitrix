@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -30,7 +31,7 @@ func (p *Server) getCategories(ctx context.Context, categoryIds []string) ([]*mo
 	var categories []*models.Category
 	_, err := pi.Global().DB(ctx).
 		Select(models.CategoryColumns...).
-		From(models.CategoryTableName).
+		From(constants.TableCategory).
 		Where(db.Eq("category_id", categoryIds)).
 		Load(&categories)
 	if err != nil {

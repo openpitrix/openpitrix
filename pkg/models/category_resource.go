@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-const CategoryResourceTableName = "category_resource"
-
 type CategoryResource struct {
 	CategoryId string
 	ResourceId string

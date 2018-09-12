@@ -8,6 +8,7 @@ import (
 	"context"
 
 	categoryclient "openpitrix.io/openpitrix/pkg/client/category"
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -22,8 +23,8 @@ func GetResourcesCategories(ctx context.Context, d *db.Conn, resourceIds []strin
 	}
 	var categoryResources []*models.CategoryResource
 	_, err := d.Select(models.CategoryResourceColumns...).
-		From(models.CategoryResourceTableName).
-		Where(db.Eq(models.ColumnResouceId, resourceIds)).
+		From(constants.TableCategoryResource).
+		Where(db.Eq(constants.ColumnResouceId, resourceIds)).
 		Load(&categoryResources)
 	if err != nil {
 		return rcmap, err
