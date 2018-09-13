@@ -4,16 +4,20 @@
 
 package models
 
+import "time"
+
 const GroupMemberTableName = "group_member"
 
 type GroupMember struct {
-	GroupId string
-	UserId  string
+	GroupId    string
+	UserId     string
+	CreateTime time.Time
 }
 
 func NewGroupMember(gid, uid string) *GroupMember {
 	return &GroupMember{
-		GroupId: gid,
-		UserId:  uid,
+		GroupId:    gid,
+		UserId:     uid,
+		CreateTime: time.Now(),
 	}
 }

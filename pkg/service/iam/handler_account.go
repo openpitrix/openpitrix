@@ -8,8 +8,10 @@ import (
 	"context"
 	"fmt"
 
+	"golang.org/x/crypto/bcrypt"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb/iam"
@@ -84,7 +86,10 @@ func (p *Server) ModifyUser(ctx context.Context, req *pbiam.ModifyUserRequest) (
 		return &pbiam.ModifyUserResponse{}, nil
 	}
 
-	var attributes = make(map[string]interface{})
+	var attributes = manager.BuildUpdateAttributes(req,
+		"username", "email", "role", "status", "description",
+	)
+
 	if req.Email != nil {
 		attributes[models.ColumnEmail] = req.Email.GetValue()
 	}
@@ -134,15 +139,20 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pbiam.DeleteUsersRequest)
 }
 
 func (p *Server) CreateUser(ctx context.Context, req *pbiam.CreateUserRequest) (*pbiam.CreateUserResponse, error) {
+	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.GetPassword().GetValue()), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
 	var newUser = models.NewUser(
 		getUsernameFromEmail(req.GetEmail().GetValue()),
-		req.GetPassword().GetValue(),
+		string(hashedPass),
 		req.GetEmail().GetValue(),
 		req.GetRole().GetValue(),
 		req.GetDescription().GetValue(),
 	)
 
-	_, err := pi.Global().DB(ctx).
+	_, err = pi.Global().DB(ctx).
 		InsertInto(models.UserTableName).
 		Columns(models.UserColumns...).
 		Record(newUser).
@@ -197,23 +207,29 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pbiam.CreatePassw
 func (p *Server) ChangePassword(ctx context.Context, req *pbiam.ChangePasswordRequest) (*pbiam.ChangePasswordResponse, error) {
 	reset_id := req.GetResetId().GetValue()
 	new_password := req.GetNewPassword().GetValue()
-	var reset_info models.UserPasswordReset
 
 	if reset_id == "" || new_password == "" {
 		return nil, fmt.Errorf("invalid args")
 	}
 
+	hashedPass, err := bcrypt.GenerateFromPassword([]byte(new_password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
+	var reset_info models.UserPasswordReset
+
 	query := pi.Global().DB(ctx).
 		Select(models.UserColumns...).
 		From(models.UserPasswordResetTableName).Limit(1).
 		Where(db.Eq(models.ColumnResetId, reset_id))
-	err := query.LoadOne(&reset_info)
+	err = query.LoadOne(&reset_info)
 	if err != nil {
 		return nil, err
 	}
 
 	_, err = pi.Global().DB(ctx).
-		Update(models.UserTableName).Set(models.ColumnPassword, new_password).
+		Update(models.UserTableName).Set(models.ColumnPassword, string(hashedPass)).
 		Where(db.Eq(models.ColumnUserId, reset_info.UserId)).
 		Exec()
 	if err != nil {
@@ -261,8 +277,14 @@ func (p *Server) ValidateUserPassword(ctx context.Context, req *pbiam.ValidateUs
 		return nil, fmt.Errorf("user(%q) not fount", email)
 	}
 
+	var validated = true
+	err = bcrypt.CompareHashAndPassword([]byte(userInfo.Password), []byte(req.GetPassword()))
+	if err != nil {
+		validated = false
+	}
+
 	reply := &pbiam.ValidateUserPasswordResponse{
-		Validated: userInfo.Password == req.GetPassword(),
+		Validated: validated,
 	}
 
 	return reply, nil
@@ -296,7 +318,10 @@ func (p *Server) ModifyGroup(ctx context.Context, req *pbiam.ModifyGroupRequest)
 		return &pbiam.ModifyGroupResponse{}, nil
 	}
 
-	var attributes = make(map[string]interface{})
+	var attributes = manager.BuildUpdateAttributes(req,
+		"name", "status", "description",
+	)
+
 	if req.Name != nil {
 		attributes[models.ColumnName] = req.Name.GetValue()
 	}
@@ -343,22 +368,43 @@ func (p *Server) JoinGroup(ctx context.Context, req *pbiam.JoinGroupRequest) (*p
 		return nil, fmt.Errorf("missing GroupId or UserId")
 	}
 
-	var newGroupMember = models.NewGroupMember(
-		req.GroupId[0],
-		req.UserId[0],
-	)
+	var reply = &pbiam.JoinGroupResponse{}
+	var lastErr error
 
-	_, err := pi.Global().DB(ctx).
-		InsertInto(models.GroupMemberTableName).
-		Record(newGroupMember).
-		Exec()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	for _, gid := range req.GroupId {
+		for _, uid := range req.UserId {
+			query := pi.Global().DB(ctx).
+				Select().From(models.GroupMemberTableName).Limit(1).
+				Where(db.Eq(models.ColumnGroupId, gid)).
+				Where(db.Eq(models.ColumnUserId, uid))
+			if count, err := query.Count(); err != nil || count > 0 {
+				logger.Warn(ctx, "gid(%v)/uid(%v): %v", gid, uid, err)
+
+				if err != nil {
+					lastErr = err
+				}
+				continue
+			}
+
+			_, err := pi.Global().DB(ctx).
+				InsertInto(models.GroupMemberTableName).
+				Record(models.NewGroupMember(gid, uid)).
+				Exec()
+			if err != nil {
+				logger.Warn(ctx, "gid(%v)/uid(%v): %v", gid, uid, err)
+
+				if err != nil {
+					lastErr = err
+				}
+				continue
+			}
+
+			reply.GroupId = append(reply.GroupId, gid)
+			reply.UserId = append(reply.UserId, uid)
+		}
 	}
-
-	reply := &pbiam.JoinGroupResponse{
-		GroupId: req.GroupId,
-		UserId:  req.UserId,
+	if lastErr != nil {
+		return reply, lastErr
 	}
 
 	return reply, nil
@@ -369,18 +415,27 @@ func (p *Server) LeaveGroup(ctx context.Context, req *pbiam.LeaveGroupRequest) (
 		return nil, fmt.Errorf("missing GroupId or UserId")
 	}
 
-	_, err := pi.Global().DB(ctx).
-		DeleteFrom(models.GroupMemberTableName).
-		Where(db.Eq(models.ColumnGroupId, req.GroupId)).
-		Where(db.Eq(models.ColumnUserId, req.UserId)).
-		Exec()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
-	}
+	var lastErr error
+	var reply = &pbiam.LeaveGroupResponse{}
 
-	reply := &pbiam.LeaveGroupResponse{
-		GroupId: req.GroupId,
-		UserId:  req.UserId,
+	for _, gid := range req.GroupId {
+		for _, uid := range req.UserId {
+			_, err := pi.Global().DB(ctx).
+				DeleteFrom(models.GroupMemberTableName).
+				Where(db.Eq(models.ColumnGroupId, gid)).
+				Where(db.Eq(models.ColumnUserId, uid)).
+				Exec()
+			if err != nil {
+				logger.Warn(ctx, "gid(%v)/uid(%v): %v", gid, uid, err)
+				lastErr = err
+			}
+
+			reply.GroupId = append(reply.GroupId, gid)
+			reply.UserId = append(reply.UserId, uid)
+		}
+	}
+	if lastErr != nil {
+		return reply, lastErr
 	}
 
 	return reply, nil

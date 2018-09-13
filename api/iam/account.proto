@@ -9,6 +9,7 @@ package iam;
 option go_package = "openpitrix.io/openpitrix/pkg/pb/iam;pbiam";
 
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
 
 message User {
 	google.protobuf.StringValue user_id = 1;
@@ -17,6 +18,10 @@ message User {
 	google.protobuf.StringValue role = 4; // default is user
 	google.protobuf.StringValue description = 5;
 	google.protobuf.StringValue status = 6;
+
+	google.protobuf.Timestamp create_time = 7;
+	google.protobuf.Timestamp update_time = 8;
+	google.protobuf.Timestamp status_time = 9;
 }
 
 message UserClient {
@@ -25,6 +30,10 @@ message UserClient {
 	google.protobuf.StringValue user_id = 3;
 	google.protobuf.StringValue status = 4;
 	google.protobuf.StringValue description = 5;
+
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.Timestamp update_time = 7;
+	google.protobuf.Timestamp status_time = 8;
 }
 
 message Group {
@@ -32,6 +41,10 @@ message Group {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue status = 3;
 	google.protobuf.StringValue description = 4;
+
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp update_time = 6;
+	google.protobuf.Timestamp status_time = 7;
 }
 
 service AccountManager {
@@ -65,6 +78,7 @@ message DescribeUsersRequest {
 
 	repeated string group_id = 11;
 	repeated string user_id = 12;
+	google.protobuf.StringValue status_filter = 13;
 }
 message DescribeUsersResponse {
 	uint32 total_count = 1;
@@ -145,6 +159,7 @@ message DescribeGroupsRequest {
 
 	repeated string group_id = 6;
 	repeated string user_id = 7;
+	google.protobuf.StringValue status_filter = 8;
 }
 message DescribeGroupsResponse {
 	uint32 total_count = 1;

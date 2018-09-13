@@ -5,6 +5,9 @@
 package models
 
 import (
+	"time"
+
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb/iam"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -21,7 +24,10 @@ type Group struct {
 	Name        string
 	Description string
 
-	Status string
+	Status     string
+	CreateTime time.Time
+	UpdateTime time.Time
+	StatusTime time.Time
 }
 
 var GroupColumns = GetColumnsFromStruct(&Group{})
@@ -31,6 +37,10 @@ func NewGroup(name, description string) *Group {
 		GroupId:     NewGroupId(),
 		Name:        name,
 		Description: description,
+		Status:      constants.StatusActive,
+		CreateTime:  time.Now(),
+		UpdateTime:  time.Now(),
+		StatusTime:  time.Now(),
 	}
 }
 
@@ -39,6 +49,10 @@ func GroupToPb(p *Group) *pbiam.Group {
 	q.GroupId = pbutil.ToProtoString(p.GroupId)
 	q.Name = pbutil.ToProtoString(p.Name)
 	q.Description = pbutil.ToProtoString(p.Description)
+	q.Status = pbutil.ToProtoString(p.Status)
+	q.CreateTime = pbutil.ToProtoTimestamp(p.CreateTime)
+	q.UpdateTime = pbutil.ToProtoTimestamp(p.UpdateTime)
+	q.StatusTime = pbutil.ToProtoTimestamp(p.StatusTime)
 	return q
 }
 

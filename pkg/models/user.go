@@ -5,6 +5,9 @@
 package models
 
 import (
+	"time"
+
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb/iam"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -24,7 +27,10 @@ type User struct {
 	Role        string
 	Description string
 
-	Status string
+	Status     string
+	CreateTime time.Time
+	UpdateTime time.Time
+	StatusTime time.Time
 }
 
 var UserColumns = GetColumnsFromStruct(&User{})
@@ -37,6 +43,10 @@ func NewUser(username, password, email, role, description string) *User {
 		Email:       email,
 		Role:        role,
 		Description: description,
+		Status:      constants.StatusActive,
+		CreateTime:  time.Now(),
+		UpdateTime:  time.Now(),
+		StatusTime:  time.Now(),
 	}
 }
 
@@ -47,6 +57,10 @@ func UserToPb(p *User) *pbiam.User {
 	q.Email = pbutil.ToProtoString(p.Email)
 	q.Role = pbutil.ToProtoString(p.Role)
 	q.Description = pbutil.ToProtoString(p.Description)
+	q.Status = pbutil.ToProtoString(p.Status)
+	q.CreateTime = pbutil.ToProtoTimestamp(p.CreateTime)
+	q.UpdateTime = pbutil.ToProtoTimestamp(p.UpdateTime)
+	q.StatusTime = pbutil.ToProtoTimestamp(p.StatusTime)
 	return q
 }
 

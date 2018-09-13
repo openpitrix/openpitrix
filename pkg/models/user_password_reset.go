@@ -7,6 +7,7 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 )
 
@@ -17,8 +18,9 @@ func NewUserPasswordResetId() string {
 }
 
 type UserPasswordReset struct {
-	ResetId    string
-	UserId     string
+	ResetId string
+	UserId  string
+
 	Status     string
 	CreateTime time.Time
 }
@@ -29,6 +31,7 @@ func NewUserPasswordReset(user_id string) *UserPasswordReset {
 	return &UserPasswordReset{
 		ResetId:    NewUserPasswordResetId(),
 		UserId:     user_id,
+		Status:     constants.StatusActive,
 		CreateTime: time.Now(),
 	}
 }
