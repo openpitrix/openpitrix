@@ -94,7 +94,7 @@ func (f *Frontgate) GetActiveFrontgate(ctx context.Context, clusterWrapper *mode
 		if err != nil {
 			return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Provider)
 		}
-		vpc, err := providerInterface.DescribeVpc(f.Runtime.RuntimeId, vpcId)
+		vpc, err := providerInterface.DescribeVpc(ctx, f.Runtime.RuntimeId, vpcId)
 		if err != nil {
 			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, vpcId)
 		}

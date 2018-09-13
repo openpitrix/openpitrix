@@ -56,10 +56,6 @@ func (g *GlobalConfig) GetAppDefaultStatus() string {
 	return constants.StatusActive
 }
 
-func (g *GlobalConfig) GetFrontgateAutoDelete() bool {
-	return g.Cluster.FrontgateAutoDelete
-}
-
 func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageConfig, error) {
 	if strings.HasPrefix(apiServer, "https://") {
 		apiServer = strings.Split(apiServer, "https://")[1]

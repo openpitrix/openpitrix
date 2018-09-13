@@ -19,8 +19,6 @@ const (
 const (
 	NameMinLength       = "1"
 	NameMaxLength       = "255"
-	ProviderMinLength   = "1"
-	ProviderMaxLength   = "255"
 	ZoneMinLength       = "1"
 	ZoneMaxLength       = "255"
 	CredentialMinLength = 1

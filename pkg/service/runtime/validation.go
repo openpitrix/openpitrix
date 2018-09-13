@@ -13,7 +13,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 func ValidateName(ctx context.Context, name string) error {
@@ -21,19 +20,6 @@ func ValidateName(ctx context.Context, name string) error {
 		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "name")
 	}
 	return nil
-}
-
-func ValidateProvider(ctx context.Context, provider string) error {
-	if !govalidator.StringLength(provider, ProviderMinLength, ProviderMaxLength) {
-		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "provider")
-	}
-	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
-		return nil
-	}
-	if constants.ProviderKubernetes == provider {
-		return nil
-	}
-	return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, "provider", provider)
 }
 
 func ValidateURL(ctx context.Context, url string) error {
@@ -47,7 +33,7 @@ func ValidateCredential(ctx context.Context, provider, url, credential, zone str
 	if len(credential) < CredentialMinLength {
 		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "credential")
 	}
-	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
+	if plugins.IsVmbasedProviders(provider) {
 		err := ValidateURL(ctx, url)
 		if err != nil {
 			return err
@@ -56,8 +42,7 @@ func ValidateCredential(ctx context.Context, provider, url, credential, zone str
 		if err != nil {
 			return err
 		}
-	}
-	if constants.ProviderKubernetes == provider {
+	} else if constants.ProviderKubernetes == provider {
 		_, err := yaml.YAMLToJSON([]byte(credential))
 		if err != nil {
 			return err
@@ -69,7 +54,7 @@ func ValidateCredential(ctx context.Context, provider, url, credential, zone str
 		logger.Error(ctx, "No such provider [%s]. ", provider)
 		return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, provider)
 	}
-	return providerInterface.ValidateCredential(url, credential, zone)
+	return providerInterface.ValidateCredential(ctx, url, credential, zone)
 }
 
 func ValidateZone(ctx context.Context, zone string) error {
@@ -161,10 +146,6 @@ func validateCreateRuntimeRequest(ctx context.Context, req *pb.CreateRuntimeRequ
 		return err
 	}
 	err = ValidateLabelString(ctx, req.Labels.GetValue())
-	if err != nil {
-		return err
-	}
-	err = ValidateProvider(ctx, req.Provider.GetValue())
 	if err != nil {
 		return err
 	}

@@ -50,7 +50,7 @@ func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.Cl
 		return clusterId, err
 	}
 	frontgateWrapper := new(models.ClusterWrapper)
-	err = providerInterface.ParseClusterConf(constants.FrontgateVersionId, clusterWrapper.Cluster.RuntimeId, conf, frontgateWrapper)
+	err = providerInterface.ParseClusterConf(ctx, constants.FrontgateVersionId, clusterWrapper.Cluster.RuntimeId, conf, frontgateWrapper)
 	if err != nil {
 		logger.Error(ctx, "Parse frontgate cluster conf failed. ")
 		return clusterId, err

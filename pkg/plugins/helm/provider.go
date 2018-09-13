@@ -26,18 +26,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-type Provider struct {
-	ctx context.Context
+type Provider struct{}
+
+func NewProvider() *Provider {
+	return new(Provider)
 }
 
-func NewProvider(ctx context.Context) *Provider {
-	return &Provider{
-		ctx,
-	}
-}
-
-func (p *Provider) getChart(versionId string) (*chart.Chart, error) {
-	ctx := clientutil.SetSystemUserToContext(p.ctx)
+func (p *Provider) getChart(ctx context.Context, versionId string) (*chart.Chart, error) {
+	ctx = clientutil.SetSystemUserToContext(ctx)
 	appClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return nil, err
@@ -62,21 +58,21 @@ func (p *Provider) getChart(versionId string) (*chart.Chart, error) {
 	return c, nil
 }
 
-func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
-	c, err := p.getChart(versionId)
+func (p *Provider) ParseClusterConf(ctx context.Context, versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
+	c, err := p.getChart(ctx, versionId)
 	if err != nil {
-		logger.Error(p.ctx, "Load helm chart from app version [%s] failed: %+v", versionId, err)
+		logger.Error(ctx, "Load helm chart from app version [%s] failed: %+v", versionId, err)
 		return err
 	}
 
-	runtime, err := runtimeclient.NewRuntime(p.ctx, runtimeId)
+	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
 	if err != nil {
 		return err
 	}
 	namespace := runtime.Zone
 
 	parser := Parser{
-		ctx:       p.ctx,
+		ctx:       ctx,
 		Chart:     c,
 		Conf:      conf,
 		VersionId: versionId,
@@ -85,15 +81,15 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string, clusterWr
 	}
 	clusterWrapper, err = parser.Parse()
 	if err != nil {
-		logger.Error(p.ctx, "Parse app version [%s] failed: %+v", versionId, err)
+		logger.Error(ctx, "Parse app version [%s] failed: %+v", versionId, err)
 		return err
 	}
 
 	return nil
 }
 
-func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	jobDirective, err := decodeJobDirective(p.ctx, job.Directive)
+func (p *Provider) SplitJobIntoTasks(ctx context.Context, job *models.Job) (*models.TaskLayer, error) {
+	jobDirective, err := decodeJobDirective(ctx, job.Directive)
 	if err != nil {
 		return nil, err
 	}
@@ -202,17 +198,17 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 	}
 }
 
-func (p *Provider) HandleSubtask(task *models.Task) error {
+func (p *Provider) HandleSubtask(ctx context.Context, task *models.Task) error {
 	taskDirective, err := decodeTaskDirective(task.Directive)
 	if err != nil {
 		return err
 	}
 
-	helmHandler := GetHelmHandler(p.ctx, taskDirective.RuntimeId)
+	helmHandler := GetHelmHandler(ctx, taskDirective.RuntimeId)
 
 	switch task.TaskAction {
 	case constants.ActionCreateCluster:
-		c, err := p.getChart(taskDirective.VersionId)
+		c, err := p.getChart(ctx, taskDirective.VersionId)
 		if err != nil {
 			return err
 		}
@@ -222,14 +218,14 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 			return err
 		}
 
-		logger.Debug(p.ctx, "Install helm release with name [%+v], namespace [%+v], values [%s]", taskDirective.ClusterName, taskDirective.Namespace, rawVals)
+		logger.Debug(ctx, "Install helm release with name [%+v], namespace [%+v], values [%s]", taskDirective.ClusterName, taskDirective.Namespace, rawVals)
 
 		err = helmHandler.InstallReleaseFromChart(c, taskDirective.Namespace, rawVals, taskDirective.ClusterName)
 		if err != nil {
 			return err
 		}
 	case constants.ActionUpgradeCluster:
-		c, err := p.getChart(taskDirective.VersionId)
+		c, err := p.getChart(ctx, taskDirective.VersionId)
 		if err != nil {
 			return err
 		}
@@ -239,7 +235,7 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 			return err
 		}
 
-		logger.Debug(p.ctx, "Update helm release [%+v] with values [%s]", taskDirective.ClusterName, rawVals)
+		logger.Debug(ctx, "Update helm release [%+v] with values [%s]", taskDirective.ClusterName, rawVals)
 
 		err = helmHandler.UpdateReleaseFromChart(taskDirective.ClusterName, c, rawVals)
 		if err != nil {
@@ -267,13 +263,13 @@ func (p *Provider) HandleSubtask(task *models.Task) error {
 	return nil
 }
 
-func (p *Provider) WaitSubtask(task *models.Task) error {
+func (p *Provider) WaitSubtask(ctx context.Context, task *models.Task) error {
 	taskDirective, err := decodeTaskDirective(task.Directive)
 	if err != nil {
 		return err
 	}
 
-	helmHandler := GetHelmHandler(p.ctx, taskDirective.RuntimeId)
+	helmHandler := GetHelmHandler(ctx, taskDirective.RuntimeId)
 
 	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
 		switch task.TaskAction {
@@ -292,15 +288,15 @@ func (p *Provider) WaitSubtask(task *models.Task) error {
 
 			switch resp.Info.Status.Code {
 			case release.Status_FAILED:
-				logger.Debug(p.ctx, "Helm release gone to failed")
+				logger.Debug(ctx, "Helm release gone to failed")
 				return true, fmt.Errorf("release failed")
 			case release.Status_DEPLOYED:
-				clusterWrapper, err := models.NewClusterWrapper(p.ctx, taskDirective.RawClusterWrapper)
+				clusterWrapper, err := models.NewClusterWrapper(ctx, taskDirective.RawClusterWrapper)
 				if err != nil {
 					return true, err
 				}
 
-				kubeHandler := GetKubeHandler(p.ctx, taskDirective.RuntimeId)
+				kubeHandler := GetKubeHandler(ctx, taskDirective.RuntimeId)
 				err = kubeHandler.WaitWorkloadReady(taskDirective.RuntimeId, taskDirective.Namespace, clusterWrapper.ClusterRoles, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
 				if err != nil {
 					return true, err
@@ -340,31 +336,31 @@ func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsR
 }
 
 func (p *Provider) CheckResource(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
-	helmHandler := GetHelmHandler(p.ctx, clusterWrapper.Cluster.RuntimeId)
+	helmHandler := GetHelmHandler(ctx, clusterWrapper.Cluster.RuntimeId)
 
 	err := helmHandler.CheckClusterNameIsUnique(clusterWrapper.Cluster.Name)
 	if err != nil {
-		logger.Error(p.ctx, "Cluster name [%s] already existed in runtime [%s]: %+v",
+		logger.Error(ctx, "Cluster name [%s] already existed in runtime [%s]: %+v",
 			clusterWrapper.Cluster.Name, clusterWrapper.Cluster.RuntimeId, err)
 		return err
 	}
 	return nil
 }
 
-func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
+func (p *Provider) DescribeVpc(ctx context.Context, runtimeId, vpcId string) (*models.Vpc, error) {
 	return nil, nil
 }
 
-func (p *Provider) updateClusterStatus(job *models.Job) error {
-	clusterWrapper, err := models.NewClusterWrapper(p.ctx, job.Directive)
+func (p *Provider) updateClusterStatus(ctx context.Context, job *models.Job) error {
+	clusterWrapper, err := models.NewClusterWrapper(ctx, job.Directive)
 	if err != nil {
 		return err
 	}
 
-	kubeHandler := GetKubeHandler(p.ctx, clusterWrapper.Cluster.RuntimeId)
+	kubeHandler := GetKubeHandler(ctx, clusterWrapper.Cluster.RuntimeId)
 	err = kubeHandler.DescribeClusterDetails(clusterWrapper)
 	if err != nil {
-		logger.Error(p.ctx, "Describe cluster details failed, %+v", err)
+		logger.Error(ctx, "Describe cluster details failed, %+v", err)
 		return err
 	}
 
@@ -378,7 +374,7 @@ func (p *Provider) updateClusterStatus(job *models.Job) error {
 		clusterNodesList = append(clusterNodesList, clusterNode)
 	}
 
-	ctx := clientutil.SetSystemUserToContext(p.ctx)
+	ctx = clientutil.SetSystemUserToContext(ctx)
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		return err
@@ -400,7 +396,7 @@ func (p *Provider) updateClusterStatus(job *models.Job) error {
 	return nil
 }
 
-func (p *Provider) UpdateClusterStatus(job *models.Job) error {
+func (p *Provider) UpdateClusterStatus(ctx context.Context, job *models.Job) error {
 	switch job.JobAction {
 	case constants.ActionCreateCluster:
 		fallthrough
@@ -409,9 +405,9 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	case constants.ActionRollbackCluster:
 		fallthrough
 	case constants.ActionUpdateClusterEnv:
-		err := p.updateClusterStatus(job)
+		err := p.updateClusterStatus(ctx, job)
 		if err != nil {
-			logger.Error(p.ctx, "Update cluster status failed, %+v", err)
+			logger.Error(ctx, "Update cluster status failed, %+v", err)
 			return err
 		}
 	}
@@ -419,13 +415,13 @@ func (p *Provider) UpdateClusterStatus(job *models.Job) error {
 	return nil
 }
 
-func (p *Provider) ValidateCredential(url, credential, zone string) error {
-	kubeHandler := GetKubeHandler(p.ctx, "")
+func (p *Provider) ValidateCredential(ctx context.Context, url, credential, zone string) error {
+	kubeHandler := GetKubeHandler(ctx, "")
 	return kubeHandler.ValidateCredential(credential, zone)
 }
 
-func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
-	kubeHandler := GetKubeHandler(p.ctx, "")
+func (p *Provider) DescribeRuntimeProviderZones(ctx context.Context, url, credential string) ([]string, error) {
+	kubeHandler := GetKubeHandler(ctx, "")
 	return kubeHandler.DescribeRuntimeProviderZones(credential)
 }
 
