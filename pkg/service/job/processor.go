@@ -18,7 +18,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 )
 
 type Processor struct {
@@ -91,7 +90,7 @@ func (p *Processor) Post(ctx context.Context) error {
 			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
-		err = providerInterface.UpdateClusterStatus(p.Job)
+		err = providerInterface.UpdateClusterStatus(ctx, p.Job)
 		if err != nil {
 			logger.Error(ctx, "Executing job post processor failed: %+v", err)
 			return err
@@ -104,7 +103,7 @@ func (p *Processor) Post(ctx context.Context) error {
 			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
-		err = providerInterface.UpdateClusterStatus(p.Job)
+		err = providerInterface.UpdateClusterStatus(ctx, p.Job)
 		if err != nil {
 			logger.Error(ctx, "Executing job post processor failed: %+v", err)
 			return err
@@ -117,7 +116,7 @@ func (p *Processor) Post(ctx context.Context) error {
 			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
-		err = providerInterface.UpdateClusterStatus(p.Job)
+		err = providerInterface.UpdateClusterStatus(ctx, p.Job)
 		if err != nil {
 			logger.Error(ctx, "Executing job post processor failed: %+v", err)
 			return err
@@ -156,7 +155,7 @@ func (p *Processor) Post(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		if !reflectutil.In(p.Job.Provider, constants.VmBaseProviders) {
+		if !plugins.IsVmbasedProviders(p.Job.Provider) {
 			return nil
 		}
 		clusterWrapper := clusterWrappers[0]
@@ -201,7 +200,7 @@ func (p *Processor) Post(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		if !reflectutil.In(p.Job.Provider, constants.VmBaseProviders) {
+		if !plugins.IsVmbasedProviders(p.Job.Provider) {
 			return nil
 		}
 		clusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{p.Job.ClusterId})
@@ -271,7 +270,7 @@ func (p *Processor) Post(ctx context.Context) error {
 			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
 			return err
 		}
-		err = providerInterface.UpdateClusterStatus(p.Job)
+		err = providerInterface.UpdateClusterStatus(ctx, p.Job)
 		if err != nil {
 			logger.Error(ctx, "Executing job post processor failed: %+v", err)
 			return err

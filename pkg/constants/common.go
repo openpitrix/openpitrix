@@ -139,11 +139,6 @@ const (
 	TargetPilot        = "pilot"
 )
 
-var VmBaseProviders = []string{
-	ProviderQingCloud,
-	ProviderAWS,
-}
-
 const (
 	PlaceHolder       = "*"
 	ReplicaRoleSuffix = "-replica"

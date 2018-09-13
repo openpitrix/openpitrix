@@ -396,12 +396,12 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 				logger.Error(ctx, "No such runtime [%s]. ", task.Target)
 				return err
 			}
-			err = providerInterface.HandleSubtask(task)
+			err = providerInterface.HandleSubtask(ctx, task)
 			if err != nil {
 				logger.Error(ctx, "Failed to handle subtask in runtime [%s]: %+v", task.Target, err)
 				return err
 			}
-			err = providerInterface.WaitSubtask(task)
+			err = providerInterface.WaitSubtask(ctx, task)
 			if err != nil {
 				logger.Error(ctx, "Failed to wait subtask in runtime [%s]: %+v", task.Target, err)
 				return err

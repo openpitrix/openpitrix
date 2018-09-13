@@ -262,7 +262,7 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, provider)
 	}
-	zones, err := providerInterface.DescribeRuntimeProviderZones(url, credential)
+	zones, err := providerInterface.DescribeRuntimeProviderZones(ctx, url, credential)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed)
 	}

@@ -26,7 +26,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -624,7 +623,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
 	}
 	clusterWrapper := new(models.ClusterWrapper)
-	err = providerInterface.ParseClusterConf(versionId, runtimeId, conf, clusterWrapper)
+	err = providerInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
 		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", versionId, runtimeId, err)
 		if gerr.IsGRPCError(err) {
@@ -641,7 +640,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	clusterWrapper.Cluster.ClusterId = clusterId
 	clusterWrapper.Cluster.ClusterType = constants.NormalClusterType
 
-	if reflectutil.In(runtime.Provider, constants.VmBaseProviders) {
+	if plugins.IsVmbasedProviders(runtime.Provider) {
 		err = CheckVmBasedProvider(ctx, runtime, providerInterface, clusterWrapper)
 		if err != nil {
 			return nil, err
@@ -1063,7 +1062,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
-	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !stringutil.StringIn(runtime.Provider, constants.VmBaseProviders) {
+	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !plugins.IsVmbasedProviders(runtime.Provider) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
 	}
 
@@ -1149,7 +1148,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
-	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !stringutil.StringIn(runtime.Provider, constants.VmBaseProviders) {
+	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !plugins.IsVmbasedProviders(runtime.Provider) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
 	}
 
@@ -1178,7 +1177,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
 	}
-	err = providerInterface.ParseClusterConf(clusterWrapper.Cluster.VersionId, runtime.RuntimeId, conf, clusterWrapper)
+	err = providerInterface.ParseClusterConf(ctx, clusterWrapper.Cluster.VersionId, runtime.RuntimeId, conf, clusterWrapper)
 	if err != nil {
 		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", clusterWrapper.Cluster.VersionId, runtime.RuntimeId, err)
 		if gerr.IsGRPCError(err) {
@@ -1259,7 +1258,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
-	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !stringutil.StringIn(runtime.Provider, constants.VmBaseProviders) {
+	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !plugins.IsVmbasedProviders(runtime.Provider) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
 	}
 
@@ -1325,7 +1324,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
 	}
-	err = providerInterface.ParseClusterConf(versionId, runtimeId, conf, clusterWrapper)
+	err = providerInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
 		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] conf [%s] failed: %+v",
 			versionId, runtime, conf, err)

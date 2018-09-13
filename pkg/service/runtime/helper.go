@@ -10,7 +10,7 @@ import (
 	"github.com/ghodss/yaml"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
+	"openpitrix.io/openpitrix/pkg/plugins"
 )
 
 func SelectorStringToMap(selectorString string) (map[string][]string, error) {
@@ -22,10 +22,9 @@ func SelectorStringToMap(selectorString string) (map[string][]string, error) {
 }
 
 func CredentialStringToJsonString(provider, content string) string {
-	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
+	if plugins.IsVmbasedProviders(provider) {
 		return content
-	}
-	if constants.ProviderKubernetes == provider {
+	} else if constants.ProviderKubernetes == provider {
 		content, err := yaml.YAMLToJSON([]byte(content))
 		if err != nil {
 			panic(err)
@@ -36,10 +35,9 @@ func CredentialStringToJsonString(provider, content string) string {
 }
 
 func CredentialJsonStringToString(provider, content string) string {
-	if i := stringutil.FindString(constants.VmBaseProviders, provider); i != -1 {
+	if plugins.IsVmbasedProviders(provider) {
 		return content
-	}
-	if constants.ProviderKubernetes == provider {
+	} else if constants.ProviderKubernetes == provider {
 		content, err := yaml.JSONToYAML([]byte(content))
 		if err != nil {
 			panic(err)

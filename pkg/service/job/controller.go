@@ -121,7 +121,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 			logger.Error(ctx, "No such provider [%s]. ", job.Provider)
 			return err
 		}
-		module, err := providerInterface.SplitJobIntoTasks(job)
+		module, err := providerInterface.SplitJobIntoTasks(ctx, job)
 		if err != nil {
 			logger.Error(ctx, "Failed to split job into tasks with provider [%s]: %+v", job.Provider, err)
 			return err
