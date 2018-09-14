@@ -39,7 +39,7 @@ var VersionFiniteStatusMachine = map[Action][]string{
 	// TODO: only admin can modify active app version
 	Modify:  {constants.StatusDraft, constants.StatusRejected, constants.StatusActive},
 	Submit:  {constants.StatusDraft, constants.StatusRejected},
-	Cancel:  {constants.StatusSubmitted},
+	Cancel:  {constants.StatusSubmitted, constants.StatusPassed},
 	Release: {constants.StatusPassed},
 	Delete: {
 		constants.StatusSuspended,
