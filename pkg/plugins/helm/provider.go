@@ -79,7 +79,7 @@ func (p *Provider) ParseClusterConf(ctx context.Context, versionId, runtimeId, c
 		RuntimeId: runtimeId,
 		Namespace: namespace,
 	}
-	clusterWrapper, err = parser.Parse()
+	err = parser.Parse(clusterWrapper)
 	if err != nil {
 		logger.Error(ctx, "Parse app version [%s] failed: %+v", versionId, err)
 		return err

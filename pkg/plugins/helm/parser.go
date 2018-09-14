@@ -420,33 +420,31 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 	return clusterRoles, clusterCommons, nil
 }
 
-func (p *Parser) Parse() (*models.ClusterWrapper, error) {
+func (p *Parser) Parse(clusterWrapper *models.ClusterWrapper) error {
 	customVals, name, description, err := p.parseCustomValues()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	vals, err := p.parseValues(customVals, name)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	cluster, err := p.parseCluster(name, description)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	clusterRoles, clusterCommons, err := p.parseClusterRolesAndClusterCommons(vals, customVals)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	clusterWrapper := &models.ClusterWrapper{
-		Cluster:        cluster,
-		ClusterRoles:   clusterRoles,
-		ClusterCommons: clusterCommons,
-	}
-	return clusterWrapper, nil
+	clusterWrapper.Cluster = cluster
+	clusterWrapper.ClusterRoles = clusterRoles
+	clusterWrapper.ClusterCommons = clusterCommons
+	return nil
 }
 
 func (p *Parser) parseCustomValues() (map[string]interface{}, string, string, error) {
