@@ -78,7 +78,7 @@ message DescribeUsersRequest {
 
 	repeated string group_id = 11;
 	repeated string user_id = 12;
-	google.protobuf.StringValue status_filter = 13;
+	repeated string status = 13;
 }
 message DescribeUsersResponse {
 	uint32 total_count = 1;
@@ -95,6 +95,7 @@ message ModifyUserRequest {
 message ModifyUserResponse {
 	google.protobuf.StringValue user_id = 1;
 }
+
 message DeleteUsersRequest {
 	repeated string user_id = 1;
 }
@@ -110,6 +111,7 @@ message CreatePasswordResetResponse {
 	google.protobuf.StringValue user_id = 1;
 	google.protobuf.StringValue reset_id = 2;
 }
+
 message ChangePasswordRequest {
 	google.protobuf.StringValue new_password = 1;
 	google.protobuf.StringValue reset_id = 2;
@@ -117,6 +119,7 @@ message ChangePasswordRequest {
 message ChangePasswordResponse {
 	google.protobuf.StringValue user_id = 1;
 }
+
 message GetPasswordResetRequest {
 	google.protobuf.StringValue reset_id = 1;
 }
@@ -159,7 +162,7 @@ message DescribeGroupsRequest {
 
 	repeated string group_id = 6;
 	repeated string user_id = 7;
-	google.protobuf.StringValue status_filter = 8;
+	repeated string status = 8;
 }
 message DescribeGroupsResponse {
 	uint32 total_count = 1;

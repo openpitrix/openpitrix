@@ -22,8 +22,11 @@ func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
 	s := Server{cfg.Token}
 
-	manager.NewGrpcServer("iam-manager", constants.IamListenPort).Serve(func(server *grpc.Server) {
-		pbiam.RegisterAccountManagerServer(server, &s)
-		//pbiam.RegisterTokenManagerServer(server, &s)
-	})
+	manager.NewGrpcServer("iam-manager", constants.IamListenPort).
+		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithChecker(s.Checker).
+		Serve(func(server *grpc.Server) {
+			pbiam.RegisterAccountManagerServer(server, &s)
+			//pbiam.RegisterTokenManagerServer(server, &s)
+		})
 }

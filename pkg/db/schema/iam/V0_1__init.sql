@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS group_member (
 
 CREATE TABLE IF NOT EXISTS user_password_reset (
 	reset_id    varchar(50) PRIMARY KEY             NOT NULL,
-	user_id     varchar(255)                        NOT NULL,
+	user_id     varchar(50)                         NOT NULL,
 	status      varchar(50)                         NOT NULL,
 	create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
