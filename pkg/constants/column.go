@@ -57,6 +57,12 @@ const (
 	ColumnVisibility       = "visibility"
 	ColumnVolumeId         = "volume_id"
 	ColumnZone             = "zone"
+
+	ColumnUserId   = "user_id"
+	ColumnGroupId  = "group_id"
+	ColumnResetId  = "reset_id"
+	ColumnPassword = "password"
+	ColumnEmail    = "email"
 )
 
 var PushEventTables = map[string][]string{
