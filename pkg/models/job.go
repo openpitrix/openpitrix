@@ -8,12 +8,11 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const JobTableName = "job"
 
 func NewJobId() string {
 	return idutil.GetUuid("j-")
@@ -37,7 +36,7 @@ type Job struct {
 	StatusTime time.Time
 }
 
-var JobColumns = GetColumnsFromStruct(&Job{})
+var JobColumns = db.GetColumnsFromStruct(&Job{})
 
 func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, provider, userId, runtimeId string) *Job {
 	if jobId == "" {

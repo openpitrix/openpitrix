@@ -5,11 +5,10 @@
 package models
 
 import (
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const ClusterLoadbalancerTableName = "cluster_loadbalancer"
 
 type ClusterLoadbalancer struct {
 	ClusterId              string
@@ -19,7 +18,7 @@ type ClusterLoadbalancer struct {
 	LoadbalancerPolicyId   string
 }
 
-var ClusterLoadbalancerColumns = GetColumnsFromStruct(&ClusterLoadbalancer{})
+var ClusterLoadbalancerColumns = db.GetColumnsFromStruct(&ClusterLoadbalancer{})
 
 func ClusterLoadbalancerToPb(clusterLoadbalancer *ClusterLoadbalancer) *pb.ClusterLoadbalancer {
 	return &pb.ClusterLoadbalancer{

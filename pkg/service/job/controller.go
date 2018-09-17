@@ -39,7 +39,7 @@ func NewController(hostname string) *Controller {
 
 func (c *Controller) updateJobAttributes(ctx context.Context, jobId string, attributes map[string]interface{}) error {
 	_, err := pi.Global().DB(ctx).
-		Update(models.JobTableName).
+		Update(constants.TableJob).
 		SetMap(attributes).
 		Where(db.Eq("job_id", jobId)).
 		Exec()
@@ -100,7 +100,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 	err = func() error {
 		query := pi.Global().DB(ctx).
 			Select(models.JobColumns...).
-			From(models.JobTableName).
+			From(constants.TableJob).
 			Where(db.Eq("job_id", jobId))
 
 		err := query.LoadOne(&job)
@@ -121,7 +121,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 			logger.Error(ctx, "No such provider [%s]. ", job.Provider)
 			return err
 		}
-		module, err := providerInterface.SplitJobIntoTasks(job)
+		module, err := providerInterface.SplitJobIntoTasks(ctx, job)
 		if err != nil {
 			logger.Error(ctx, "Failed to split job into tasks with provider [%s]: %+v", job.Provider, err)
 			return err

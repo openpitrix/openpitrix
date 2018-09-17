@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-const RuntimeTableName = "runtime"
 const RuntimeIdPrefix = "runtime-"
 
 func NewRuntimeId() string {
@@ -34,8 +34,8 @@ type Runtime struct {
 	StatusTime          time.Time
 }
 
-var RuntimeColumnsWithTablePrefix = GetColumnsFromStructWithPrefix(RuntimeTableName, &Runtime{})
-var RuntimeColumns = GetColumnsFromStruct(&Runtime{})
+var RuntimeColumnsWithTablePrefix = db.GetColumnsFromStructWithPrefix(constants.TableRuntime, &Runtime{})
+var RuntimeColumns = db.GetColumnsFromStruct(&Runtime{})
 
 func NewRuntime(name, description, provider, runtimeUrl, runtimeCredentialId, zone, owner string) *Runtime {
 	return &Runtime{

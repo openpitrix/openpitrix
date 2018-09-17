@@ -7,12 +7,11 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const RuntimeLabelTableName = "runtime_label"
 
 func NewRuntimeLabelId() string {
 	return idutil.GetUuid("runtimel-")
@@ -26,7 +25,7 @@ type RuntimeLabel struct {
 	CreateTime     time.Time
 }
 
-var RuntimeLabelColumns = GetColumnsFromStruct(&RuntimeLabel{})
+var RuntimeLabelColumns = db.GetColumnsFromStruct(&RuntimeLabel{})
 
 func NewRuntimeLabel(runtimeId, labelKey, labelValue string) *RuntimeLabel {
 	return &RuntimeLabel{

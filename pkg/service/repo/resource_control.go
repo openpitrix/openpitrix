@@ -25,9 +25,9 @@ func (p *Server) validateRepoName(ctx context.Context, name string) error {
 	var repo []*models.Repo
 	_, err := pi.Global().DB(ctx).
 		Select(models.RepoColumns...).
-		From(models.RepoTableName).
-		Where(db.Eq(models.ColumnName, name)).
-		Where(db.Eq(models.ColumnStatus, constants.StatusActive)).
+		From(constants.TableRepo).
+		Where(db.Eq(constants.ColumnName, name)).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
 		Limit(1).
 		Load(&repo)
 	if err != nil {
@@ -45,8 +45,8 @@ func (p *Server) getRepo(ctx context.Context, repoId string) (*models.Repo, erro
 	repo := &models.Repo{}
 	err := pi.Global().DB(ctx).
 		Select(models.RepoColumns...).
-		From(models.RepoTableName).
-		Where(db.Eq(models.ColumnRepoId, repoId)).
+		From(constants.TableRepo).
+		Where(db.Eq(constants.ColumnRepoId, repoId)).
 		LoadOne(&repo)
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func (p *Server) createProviders(ctx context.Context, repoId string, providers [
 	if len(providers) == 0 {
 		return nil
 	}
-	insert := pi.Global().DB(ctx).InsertInto(models.RepoProviderTableName).Columns(models.RepoProviderColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoProvider)
 	for _, provider := range providers {
 		record := models.RepoProvider{
 			RepoId:   repoId,
@@ -75,9 +75,9 @@ func (p *Server) deleteProviders(ctx context.Context, repoId string, providers [
 		return nil
 	}
 	_, err := pi.Global().DB(ctx).
-		DeleteFrom(models.RepoProviderTableName).
-		Where(db.Eq(models.ColumnRepoId, repoId)).
-		Where(db.Eq(models.ColumnProvider, providers)).
+		DeleteFrom(constants.TableRepoProvider).
+		Where(db.Eq(constants.ColumnRepoId, repoId)).
+		Where(db.Eq(constants.ColumnProvider, providers)).
 		Exec()
 	return err
 }
@@ -115,8 +115,8 @@ func (p *Server) modifySelectors(ctx context.Context, repoId string, selectors [
 		firstSelector.GetSelectorValue().GetValue() == "" &&
 		firstSelector.GetSelectorKey().GetValue() == "" {
 		_, err = pi.Global().DB(ctx).
-			DeleteFrom(models.RepoSelectorTableName).
-			Where(db.Eq(models.ColumnRepoId, repoId)).
+			DeleteFrom(constants.TableRepoSelector).
+			Where(db.Eq(constants.ColumnRepoId, repoId)).
 			Exec()
 		return err
 	}
@@ -130,20 +130,20 @@ func (p *Server) modifySelectors(ctx context.Context, repoId string, selectors [
 	// update current selectors
 	for i, currentSelector := range currentSelectors {
 		var err error
-		whereCondition := db.Eq(models.ColumnRepoSelectorId, currentSelector.RepoSelectorId)
+		whereCondition := db.Eq(constants.ColumnRepoSelectorId, currentSelector.RepoSelectorId)
 		if i+1 <= selectorsLength {
 			// if current selectors exist, update it to new key/value
 			targetSelector := selectors[i]
 			_, err = pi.Global().DB(ctx).
-				Update(models.RepoSelectorTableName).
-				Set(models.ColumnSelectorKey, targetSelector.GetSelectorKey().GetValue()).
-				Set(models.ColumnSelectorValue, targetSelector.GetSelectorValue().GetValue()).
+				Update(constants.TableRepoSelector).
+				Set(constants.ColumnSelectorKey, targetSelector.GetSelectorKey().GetValue()).
+				Set(constants.ColumnSelectorValue, targetSelector.GetSelectorValue().GetValue()).
 				Where(whereCondition).
 				Exec()
 		} else {
 			// if current selectors more than arguments, delete it
 			_, err = pi.Global().DB(ctx).
-				DeleteFrom(models.RepoSelectorTableName).
+				DeleteFrom(constants.TableRepoSelector).
 				Where(whereCondition).
 				Exec()
 		}
@@ -158,7 +158,7 @@ func (p *Server) createSelectors(ctx context.Context, repoId string, selectors [
 	if len(selectors) == 0 {
 		return nil
 	}
-	insert := pi.Global().DB(ctx).InsertInto(models.RepoSelectorTableName).Columns(models.RepoSelectorColumns...)
+	insert := pi.Global().DB(ctx).InsertInto(constants.TableRepoSelector)
 	for _, selector := range selectors {
 		repoSelector := models.NewRepoSelector(repoId, selector.GetSelectorKey().GetValue(), selector.GetSelectorValue().GetValue())
 		insert = insert.Record(repoSelector)
@@ -174,8 +174,8 @@ func (p *Server) getProvidersMap(ctx context.Context, repoIds []string) (provide
 	var repoProviders []*models.RepoProvider
 	_, err = pi.Global().DB(ctx).
 		Select(models.RepoProviderColumns...).
-		From(models.RepoProviderTableName).
-		Where(db.Eq(models.ColumnRepoId, repoIds)).
+		From(constants.TableRepoProvider).
+		Where(db.Eq(constants.ColumnRepoId, repoIds)).
 		Load(&repoProviders)
 	if err != nil {
 		return
@@ -191,9 +191,9 @@ func (p *Server) getSelectorsMap(ctx context.Context, repoIds []string) (selecto
 	var repoSelectors []*models.RepoSelector
 	_, err = pi.Global().DB(ctx).
 		Select(models.RepoSelectorColumns...).
-		From(models.RepoSelectorTableName).
-		Where(db.Eq(models.ColumnRepoId, repoIds)).
-		OrderDir(models.ColumnCreateTime, true).
+		From(constants.TableRepoSelector).
+		Where(db.Eq(constants.ColumnRepoId, repoIds)).
+		OrderDir(constants.ColumnCreateTime, true).
 		Load(&repoSelectors)
 	if err != nil {
 		return
@@ -209,9 +209,9 @@ func getReposLabelsMap(ctx context.Context, repoIds []string) (reposLabelsMap ma
 	var repoLabels []*models.RepoLabel
 	_, err = pi.Global().DB(ctx).
 		Select(models.RepoLabelColumns...).
-		From(models.RepoLabelTableName).
-		Where(db.Eq(models.ColumnRepoId, repoIds)).
-		OrderDir(models.ColumnCreateTime, true).
+		From(constants.TableRepoLabel).
+		Where(db.Eq(constants.ColumnRepoId, repoIds)).
+		OrderDir(constants.ColumnCreateTime, true).
 		Load(&repoLabels)
 	if err != nil {
 		return

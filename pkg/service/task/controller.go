@@ -45,7 +45,7 @@ func NewController(hostname string) *Controller {
 
 func (c *Controller) updateTaskAttributes(ctx context.Context, taskId string, attributes map[string]interface{}) error {
 	_, err := pi.Global().DB(ctx).
-		Update(models.TaskTableName).
+		Update(constants.TableTask).
 		SetMap(attributes).
 		Where(db.Eq("task_id", taskId)).
 		Exec()
@@ -91,7 +91,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 	task := new(models.Task)
 	query := pi.Global().DB(ctx).
 		Select(models.TaskColumns...).
-		From(models.TaskTableName).
+		From(constants.TableTask).
 		Where(db.Eq("task_id", taskId))
 
 	err := query.LoadOne(&task)
@@ -396,12 +396,12 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 				logger.Error(ctx, "No such runtime [%s]. ", task.Target)
 				return err
 			}
-			err = providerInterface.HandleSubtask(task)
+			err = providerInterface.HandleSubtask(ctx, task)
 			if err != nil {
 				logger.Error(ctx, "Failed to handle subtask in runtime [%s]: %+v", task.Target, err)
 				return err
 			}
-			err = providerInterface.WaitSubtask(task)
+			err = providerInterface.WaitSubtask(ctx, task)
 			if err != nil {
 				logger.Error(ctx, "Failed to wait subtask in runtime [%s]: %+v", task.Target, err)
 				return err

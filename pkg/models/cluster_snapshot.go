@@ -4,7 +4,7 @@
 
 package models
 
-const ClusterSnapshotTableName = "cluster_snapshot"
+import "openpitrix.io/openpitrix/pkg/db"
 
 type ClusterSnapshot struct {
 	SnapshotId       string
@@ -17,4 +17,4 @@ type ClusterSnapshot struct {
 	Size             int32
 }
 
-var ClusterSnapshotColumns = GetColumnsFromStruct(&ClusterSnapshot{})
+var ClusterSnapshotColumns = db.GetColumnsFromStruct(&ClusterSnapshot{})

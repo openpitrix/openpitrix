@@ -28,7 +28,7 @@ func (f *Frontgate) getFrontgateFromDb(ctx context.Context, vpcId, userId string
 	statuses := []string{constants.StatusActive, constants.StatusPending, constants.StatusStopped}
 	_, err := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
-		From(models.ClusterTableName).
+		From(constants.TableCluster).
 		Where(db.Eq("vpc_id", vpcId)).
 		Where(db.Eq("owner", userId)).
 		Where(db.Eq("cluster_type", constants.FrontgateClusterType)).
@@ -66,7 +66,7 @@ func (f *Frontgate) GetFrontgate(ctx context.Context, frontgateId string) (*mode
 	var frontgate *models.Cluster
 	err := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
-		From(models.ClusterTableName).
+		From(constants.TableCluster).
 		Where(db.Eq("cluster_id", frontgateId)).
 		LoadOne(&frontgate)
 	if err != nil {
@@ -94,7 +94,7 @@ func (f *Frontgate) GetActiveFrontgate(ctx context.Context, clusterWrapper *mode
 		if err != nil {
 			return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Provider)
 		}
-		vpc, err := providerInterface.DescribeVpc(f.Runtime.RuntimeId, vpcId)
+		vpc, err := providerInterface.DescribeVpc(ctx, f.Runtime.RuntimeId, vpcId)
 		if err != nil {
 			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, vpcId)
 		}

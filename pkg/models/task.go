@@ -8,14 +8,13 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const TaskTableName = "task"
 
 func NewTaskId() string {
 	return idutil.GetUuid("t-")
@@ -37,7 +36,7 @@ type Task struct {
 	StatusTime     time.Time
 }
 
-var TaskColumns = GetColumnsFromStruct(&Task{})
+var TaskColumns = db.GetColumnsFromStruct(&Task{})
 
 func NewTask(taskId, jobId, nodeId, target, taskAction, directive, userId string, failureAllowed bool) *Task {
 	if taskId == "" {

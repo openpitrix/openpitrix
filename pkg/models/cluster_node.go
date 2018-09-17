@@ -7,12 +7,11 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const ClusterNodeTableName = "cluster_node"
 
 func NewClusterNodeId() string {
 	return idutil.GetUuid("cln-")
@@ -51,7 +50,7 @@ type ClusterNodeWithKeyPairs struct {
 	KeyPairId []string
 }
 
-var ClusterNodeColumns = GetColumnsFromStruct(&ClusterNode{})
+var ClusterNodeColumns = db.GetColumnsFromStruct(&ClusterNode{})
 
 func NewClusterNode() *ClusterNode {
 	return &ClusterNode{

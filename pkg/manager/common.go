@@ -14,9 +14,9 @@ import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -44,8 +44,14 @@ const (
 func getSearchFilter(tableName string, value interface{}, exclude ...string) dbr.Builder {
 	if v, ok := value.(string); ok {
 		var ops []dbr.Builder
-		for _, column := range models.SearchColumns[tableName] {
-			if !stringutil.StringIn(column, exclude) {
+		for _, column := range constants.SearchColumns[tableName] {
+			if stringutil.StringIn(column, exclude) {
+				continue
+			}
+			// if column suffix is _id, must exact match
+			if strings.HasSuffix(column, "_id") {
+				ops = append(ops, db.Eq(column, v))
+			} else {
 				ops = append(ops, db.Like(column, v))
 			}
 		}
@@ -108,7 +114,8 @@ func buildFilterConditions(withPrefix bool, req Request, tableName string, exclu
 	for _, field := range structs.Fields(req) {
 		column := getFieldName(field)
 		param := field.Value()
-		if stringutil.StringIn(column, models.IndexedColumns[tableName]) {
+		indexedColumns, ok := constants.IndexedColumns[tableName]
+		if ok && stringutil.StringIn(column, indexedColumns) {
 			value := getStringValue(param)
 			if value != nil {
 				key := column
@@ -118,7 +125,8 @@ func buildFilterConditions(withPrefix bool, req Request, tableName string, exclu
 				conditions = append(conditions, db.Eq(key, value))
 			}
 		}
-		if column == SearchWordColumnName && stringutil.StringIn(tableName, models.SearchWordColumnTable) {
+		// TODO: search column
+		if column == SearchWordColumnName && stringutil.StringIn(tableName, constants.SearchWordColumnTable) {
 			value := getStringValue(param)
 			condition := getSearchFilter(tableName, value, exclude...)
 			if condition != nil {

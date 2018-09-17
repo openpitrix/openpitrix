@@ -36,13 +36,13 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	}
 
 	// create runtime credential
-	runtimeCredentialId, err := p.createRuntimeCredential(ctx, req.Provider.GetValue(), req.RuntimeCredential.GetValue())
+	runtimeCredentialId, err := createRuntimeCredential(ctx, req.Provider.GetValue(), req.RuntimeCredential.GetValue())
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
 	// create runtime
-	runtimeId, err := p.createRuntime(
+	runtimeId, err := createRuntime(
 		ctx,
 		req.GetName().GetValue(),
 		req.GetDescription().GetValue(),
@@ -89,14 +89,14 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 	var count uint32
 	query := pi.Global().DB(ctx).
 		Select(models.RuntimeColumnsWithTablePrefix...).
-		From(models.RuntimeTableName).
+		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditionsWithPrefix(req, models.RuntimeTableName))
+		Where(manager.BuildFilterConditionsWithPrefix(req, constants.TableRuntime))
 
-	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, models.ColumnRuntimeId,
-		models.ColumnLabelKey, models.ColumnLabelValue, selectorMap)
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	query = manager.AddQueryJoinWithMap(query, constants.TableRuntime, constants.TableRuntimeLabel, constants.ColumnRuntimeId,
+		constants.ColumnLabelKey, constants.ColumnLabelValue, selectorMap)
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err = query.Load(&runtimes)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -106,7 +106,7 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
-	pbRuntime, err := p.formatRuntimeSet(ctx, runtimes)
+	pbRuntime, err := formatRuntimeSet(ctx, runtimes)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
@@ -138,14 +138,14 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 	var count uint32
 	query := pi.Global().DB(ctx).
 		Select(models.RuntimeColumnsWithTablePrefix...).
-		From(models.RuntimeTableName).
+		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditionsWithPrefix(req, models.RuntimeTableName))
+		Where(manager.BuildFilterConditionsWithPrefix(req, constants.TableRuntime))
 
-	query = manager.AddQueryJoinWithMap(query, models.RuntimeTableName, models.RuntimeLabelTableName, models.ColumnRuntimeId,
-		models.ColumnLabelKey, models.ColumnLabelValue, selectorMap)
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	query = manager.AddQueryJoinWithMap(query, constants.TableRuntime, constants.TableRuntimeLabel, constants.ColumnRuntimeId,
+		constants.ColumnLabelKey, constants.ColumnLabelValue, selectorMap)
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err = query.Load(&runtimes)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -155,7 +155,7 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
-	pbRuntimeDetails, err := p.formatRuntimeDetailSet(ctx, runtimes)
+	pbRuntimeDetails, err := formatRuntimeDetailSet(ctx, runtimes)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
@@ -178,7 +178,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	}
 	// check runtime can be modified
 	runtimeId := req.GetRuntimeId().GetValue()
-	runtime, err := p.getRuntime(ctx, runtimeId)
+	runtime, err := getRuntime(ctx, runtimeId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceNotFound, runtimeId)
 	}
@@ -202,7 +202,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, runtimeId)
 	}
 	// update runtime
-	err = p.updateRuntime(ctx, req)
+	err = updateRuntime(ctx, req)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 	}
@@ -216,7 +216,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 
 	// update runtime credential
 	if req.RuntimeCredential != nil {
-		err := p.updateRuntimeCredential(ctx, runtime.RuntimeCredentialId, runtime.Provider, req.RuntimeCredential.GetValue())
+		err := updateRuntimeCredential(ctx, runtime.RuntimeCredentialId, runtime.Provider, req.RuntimeCredential.GetValue())
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
 		}
@@ -234,7 +234,7 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 	runtimeIds := req.GetRuntimeId()
 
 	// deleted runtime
-	err := p.deleteRuntimes(ctx, runtimeIds)
+	err := deleteRuntimes(ctx, runtimeIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
@@ -262,7 +262,7 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, provider)
 	}
-	zones, err := providerInterface.DescribeRuntimeProviderZones(url, credential)
+	zones, err := providerInterface.DescribeRuntimeProviderZones(ctx, url, credential)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed)
 	}
@@ -287,9 +287,9 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 		TopTenProviders:    make(map[string]uint32),
 	}
 	runtimeCount, err := pi.Global().DB(ctx).
-		Select(models.ColumnRuntimeId).
-		From(models.RuntimeTableName).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Select(constants.ColumnRuntimeId).
+		From(constants.TableRuntime).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
 		Count()
 	if err != nil {
 		logger.Error(ctx, "Failed to get runtime count, error: %+v", err)
@@ -299,8 +299,8 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 
 	err = pi.Global().DB(ctx).
 		Select("COUNT(DISTINCT provider)").
-		From(models.RuntimeTableName).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		From(constants.TableRuntime).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
 		LoadOne(&res.ProviderCount)
 	if err != nil {
 		logger.Error(ctx, "Failed to get provider count, error: %+v", err)
@@ -311,9 +311,9 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 	var rs []*runtimeStatistic
 	_, err = pi.Global().DB(ctx).
 		Select("DATE_FORMAT(create_time, '%Y-%m-%d')", "COUNT(runtime_id)").
-		From(models.RuntimeTableName).
+		From(constants.TableRuntime).
 		GroupBy("DATE_FORMAT(create_time, '%Y-%m-%d')").
-		Where(db.Gte(models.ColumnCreateTime, time2week)).
+		Where(db.Gte(constants.ColumnCreateTime, time2week)).
 		Limit(14).Load(&rs)
 
 	if err != nil {
@@ -327,9 +327,9 @@ func (p *Server) GetRuntimeStatistics(ctx context.Context, req *pb.GetRuntimeSta
 	var ps []*providerStatistic
 	_, err = pi.Global().DB(ctx).
 		Select("provider", "COUNT(runtime_id)").
-		From(models.RuntimeTableName).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
-		GroupBy(models.ColumnProvider).
+		From(constants.TableRuntime).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
+		GroupBy(constants.ColumnProvider).
 		OrderDir("COUNT(runtime_id)", false).
 		Limit(10).Load(&ps)
 

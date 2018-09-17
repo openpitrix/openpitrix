@@ -14,15 +14,11 @@ const (
 	DescriptionColumn = "description"
 	StatusColumn      = "status"
 	StatusTimeColumn  = "status_time"
-	LabelKeyColumn    = "label_key"
-	LabelValueColumn  = "label_value"
 )
 
 const (
 	NameMinLength       = "1"
 	NameMaxLength       = "255"
-	ProviderMinLength   = "1"
-	ProviderMaxLength   = "255"
 	ZoneMinLength       = "1"
 	ZoneMaxLength       = "255"
 	CredentialMinLength = 1

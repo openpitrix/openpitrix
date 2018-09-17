@@ -39,7 +39,7 @@ var VersionFiniteStatusMachine = map[Action][]string{
 	// TODO: only admin can modify active app version
 	Modify:  {constants.StatusDraft, constants.StatusRejected, constants.StatusActive},
 	Submit:  {constants.StatusDraft, constants.StatusRejected},
-	Cancel:  {constants.StatusSubmitted},
+	Cancel:  {constants.StatusSubmitted, constants.StatusPassed},
 	Release: {constants.StatusPassed},
 	Delete: {
 		constants.StatusSuspended,
@@ -61,8 +61,8 @@ func checkAppVersionHandlePermission(
 	version := models.AppVersion{}
 	err := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
-		From(models.AppVersionTableName).
-		Where(db.Eq(models.ColumnVersionId, versionId)).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnVersionId, versionId)).
 		LoadOne(&version)
 	if err != nil {
 		if err == db.ErrNotFound {
@@ -85,8 +85,8 @@ func checkAppVersionHandlePermission(
 
 func deleteApp(ctx context.Context, appId string) error {
 	_, err := pi.Global().DB(ctx).
-		DeleteFrom(models.AppTableName).
-		Where(db.Eq(models.ColumnAppId, appId)).
+		DeleteFrom(constants.TableApp).
+		Where(db.Eq(constants.ColumnAppId, appId)).
 		Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
@@ -96,8 +96,8 @@ func deleteApp(ctx context.Context, appId string) error {
 
 func deleteVersion(ctx context.Context, versionId string) error {
 	_, err := pi.Global().DB(ctx).
-		DeleteFrom(models.AppVersionTableName).
-		Where(db.Eq(models.ColumnVersionId, versionId)).
+		DeleteFrom(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnVersionId, versionId)).
 		Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
@@ -107,8 +107,7 @@ func deleteVersion(ctx context.Context, versionId string) error {
 
 func insertVersion(ctx context.Context, version *models.AppVersion) error {
 	_, err := pi.Global().DB(ctx).
-		InsertInto(models.AppVersionTableName).
-		Columns(models.AppVersionColumns...).
+		InsertInto(constants.TableAppVersion).
 		Record(version).
 		Exec()
 	if err != nil {
@@ -119,11 +118,11 @@ func insertVersion(ctx context.Context, version *models.AppVersion) error {
 }
 
 func updateVersion(ctx context.Context, versionId string, attributes map[string]interface{}) error {
-	attributes[models.ColumnUpdateTime] = time.Now()
+	attributes[constants.ColumnUpdateTime] = time.Now()
 	_, err := pi.Global().DB(ctx).
-		Update(models.AppVersionTableName).
+		Update(constants.TableAppVersion).
 		SetMap(attributes).
-		Where(db.Eq(models.ColumnVersionId, versionId)).
+		Where(db.Eq(constants.ColumnVersionId, versionId)).
 		Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, versionId)
@@ -132,11 +131,11 @@ func updateVersion(ctx context.Context, versionId string, attributes map[string]
 }
 
 func updateApp(ctx context.Context, appId string, attributes map[string]interface{}) error {
-	attributes[models.ColumnUpdateTime] = time.Now()
+	attributes[constants.ColumnUpdateTime] = time.Now()
 	_, err := pi.Global().DB(ctx).
-		Update(models.AppTableName).
+		Update(constants.TableApp).
 		SetMap(attributes).
-		Where(db.Eq(models.ColumnAppId, appId)).
+		Where(db.Eq(constants.ColumnAppId, appId)).
 		Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
@@ -146,8 +145,8 @@ func updateApp(ctx context.Context, appId string, attributes map[string]interfac
 
 func updateVersionStatus(ctx context.Context, version *models.AppVersion, status string) error {
 	err := updateVersion(ctx, version.VersionId, map[string]interface{}{
-		models.ColumnStatus:     status,
-		models.ColumnStatusTime: time.Now(),
+		constants.ColumnStatus:     status,
+		constants.ColumnStatusTime: time.Now(),
 	})
 	if err != nil {
 		return err
@@ -178,45 +177,45 @@ func syncAppStatus(ctx context.Context, appId string) error {
 		status = constants.StatusActive
 
 		if activeVersion.Description != app.Description {
-			attributes[models.ColumnDescription] = activeVersion.Description
+			attributes[constants.ColumnDescription] = activeVersion.Description
 		}
 		if activeVersion.Home != app.Home {
-			attributes[models.ColumnHome] = activeVersion.Home
+			attributes[constants.ColumnHome] = activeVersion.Home
 		}
 		if activeVersion.Icon != app.Icon {
-			attributes[models.ColumnIcon] = activeVersion.Icon
+			attributes[constants.ColumnIcon] = activeVersion.Icon
 		}
 		if activeVersion.Screenshots != app.Screenshots {
-			attributes[models.ColumnScreenshots] = activeVersion.Screenshots
+			attributes[constants.ColumnScreenshots] = activeVersion.Screenshots
 		}
 		if activeVersion.Maintainers != app.Maintainers {
-			attributes[models.ColumnMaintainers] = activeVersion.Maintainers
+			attributes[constants.ColumnMaintainers] = activeVersion.Maintainers
 		}
 		if activeVersion.Keywords != app.Keywords {
-			attributes[models.ColumnKeywords] = activeVersion.Keywords
+			attributes[constants.ColumnKeywords] = activeVersion.Keywords
 		}
 		if activeVersion.Sources != app.Sources {
-			attributes[models.ColumnSources] = activeVersion.Sources
+			attributes[constants.ColumnSources] = activeVersion.Sources
 		}
 		if activeVersion.Readme != app.Readme {
-			attributes[models.ColumnReadme] = activeVersion.Readme
+			attributes[constants.ColumnReadme] = activeVersion.Readme
 		}
 	} else {
 		status = constants.StatusDraft
 	}
 	if status != app.Status {
-		attributes[models.ColumnStatus] = status
-		attributes[models.ColumnStatusTime] = time.Now()
+		attributes[constants.ColumnStatus] = status
+		attributes[constants.ColumnStatusTime] = time.Now()
 	}
 	if len(attributes) == 0 {
 		return nil
 	}
-	attributes[models.ColumnUpdateTime] = time.Now()
+	attributes[constants.ColumnUpdateTime] = time.Now()
 
 	_, err = pi.Global().DB(ctx).
-		Update(models.AppTableName).
+		Update(constants.TableApp).
 		SetMap(attributes).
-		Where(db.Eq(models.ColumnAppId, appId)).
+		Where(db.Eq(constants.ColumnAppId, appId)).
 		Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, appId)
@@ -229,8 +228,8 @@ func getApp(ctx context.Context, appId string) (*models.App, error) {
 	app := &models.App{}
 	err := pi.Global().DB(ctx).
 		Select(models.AppColumns...).
-		From(models.AppTableName).
-		Where(db.Eq(models.ColumnAppId, appId)).
+		From(constants.TableApp).
+		Where(db.Eq(constants.ColumnAppId, appId)).
 		LoadOne(&app)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)
@@ -242,13 +241,13 @@ func getLatestAppVersion(ctx context.Context, appId string, status ...string) (*
 	appVersion := &models.AppVersion{}
 	stmt := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
-		From(models.AppVersionTableName).
-		Where(db.Eq(models.ColumnAppId, appId))
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnAppId, appId))
 	if len(status) > 0 {
-		stmt.Where(db.Eq(models.ColumnStatus, status))
+		stmt.Where(db.Eq(constants.ColumnStatus, status))
 	}
 	err := stmt.
-		OrderDir(models.ColumnSequence, false).
+		OrderDir(constants.ColumnSequence, false).
 		LoadOne(&appVersion)
 	if err != nil {
 		if err == db.ErrNotFound {
@@ -299,9 +298,9 @@ func getBigestSequence(ctx context.Context, appId string) (uint32, error) {
 	var sequence uint32
 	err := pi.Global().DB(ctx).
 		Select("coalesce(max(sequence), 0)").
-		From(models.AppVersionTableName).
-		Where(db.Eq(models.ColumnAppId, appId)).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
 		LoadOne(&sequence)
 	if err != nil {
 		return sequence, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)
@@ -312,10 +311,10 @@ func getBigestSequence(ctx context.Context, appId string) (uint32, error) {
 func resortAppVersions(ctx context.Context, appId string) error {
 	var versions models.AppVersions
 	_, err := pi.Global().DB(ctx).
-		Select(models.ColumnVersionId, models.ColumnName, models.ColumnSequence, models.ColumnCreateTime).
-		From(models.AppVersionTableName).
-		Where(db.Eq(models.ColumnAppId, appId)).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Select(constants.ColumnVersionId, constants.ColumnName, constants.ColumnSequence, constants.ColumnCreateTime).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
 		Load(&versions)
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)
@@ -324,7 +323,7 @@ func resortAppVersions(ctx context.Context, appId string) error {
 	for i, version := range versions {
 		if version.Sequence != uint32(i) {
 			err = updateVersion(ctx, version.VersionId, map[string]interface{}{
-				models.ColumnSequence: i,
+				constants.ColumnSequence: i,
 			})
 			if err != nil {
 				return err

@@ -4,9 +4,11 @@
 
 package models
 
-import "time"
+import (
+	"time"
 
-const ClusterUpgradeAuditTableName = "cluster_upgrade_audit"
+	"openpitrix.io/openpitrix/pkg/db"
+)
 
 type ClusterUpgradeAudit struct {
 	ClusterUpgradeAuditId string
@@ -20,4 +22,4 @@ type ClusterUpgradeAudit struct {
 	Owner                 string
 }
 
-var ClusterUpgradeAuditColumns = GetColumnsFromStruct(&ClusterUpgradeAudit{})
+var ClusterUpgradeAuditColumns = db.GetColumnsFromStruct(&ClusterUpgradeAudit{})

@@ -44,28 +44,28 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 
 	query := pi.Global().DB(ctx).
 		Select(models.RepoColumnsWithTablePrefix...).
-		From(models.RepoTableName).
+		From(constants.TableRepo).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditionsWithPrefix(req, models.RepoTableName))
+		Where(manager.BuildFilterConditionsWithPrefix(req, constants.TableRepo))
 
 	if len(categoryIds) > 0 {
 		subqueryStmt := pi.Global().DB(ctx).
-			Select(models.ColumnResouceId).
-			From(models.CategoryResourceTableName).
-			Where(db.Eq(models.ColumnStatus, constants.StatusEnabled)).
-			Where(db.Eq(models.ColumnCategoryId, categoryIds))
-		query = query.Where(db.Eq(models.WithPrefix(
-			models.RepoTableName,
-			models.ColumnRepoId,
+			Select(constants.ColumnResouceId).
+			From(constants.TableCategoryResource).
+			Where(db.Eq(constants.ColumnStatus, constants.StatusEnabled)).
+			Where(db.Eq(constants.ColumnCategoryId, categoryIds))
+		query = query.Where(db.Eq(db.WithPrefix(
+			constants.TableRepo,
+			constants.ColumnRepoId,
 		), []*db.SelectQuery{subqueryStmt}))
 	}
 
-	query = manager.AddQueryJoinWithMap(query, models.RepoTableName, models.RepoLabelTableName, models.ColumnRepoId,
-		models.ColumnLabelKey, models.ColumnLabelValue, labelMap)
-	query = manager.AddQueryJoinWithMap(query, models.RepoTableName, models.RepoSelectorTableName, models.ColumnRepoId,
-		models.ColumnSelectorKey, models.ColumnSelectorValue, selectorMap)
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	query = manager.AddQueryJoinWithMap(query, constants.TableRepo, constants.TableRepoLabel, constants.ColumnRepoId,
+		constants.ColumnLabelKey, constants.ColumnLabelValue, labelMap)
+	query = manager.AddQueryJoinWithMap(query, constants.TableRepo, constants.TableRepoSelector, constants.ColumnRepoId,
+		constants.ColumnSelectorKey, constants.ColumnSelectorValue, selectorMap)
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	query = query.Distinct()
 
 	_, err = query.Load(&repos)
@@ -120,8 +120,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		s.UserId)
 
 	_, err = pi.Global().DB(ctx).
-		InsertInto(models.RepoTableName).
-		Columns(models.RepoColumns...).
+		InsertInto(constants.TableRepo).
 		Record(newRepo).
 		Exec()
 	if err != nil {
@@ -215,14 +214,14 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
-		models.ColumnName, models.ColumnDescription, models.ColumnType, models.ColumnUrl,
-		models.ColumnCredential, models.ColumnVisibility)
+		constants.ColumnName, constants.ColumnDescription, constants.ColumnType, constants.ColumnUrl,
+		constants.ColumnCredential, constants.ColumnVisibility)
 	if len(attributes) > 0 {
 		_, err = pi.Global().DB(ctx).
-			Update(models.RepoTableName).
+			Update(constants.TableRepo).
 			SetMap(attributes).
-			Where(db.Eq(models.ColumnOwner, s.UserId)).
-			Where(db.Eq(models.ColumnRepoId, repoId)).
+			Where(db.Eq(constants.ColumnOwner, s.UserId)).
+			Where(db.Eq(constants.ColumnRepoId, repoId)).
 			Exec()
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
@@ -272,10 +271,10 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 	repoIds := req.GetRepoId()
 
 	_, err := pi.Global().DB(ctx).
-		Update(models.RepoTableName).
-		Set(models.ColumnStatus, constants.StatusDeleted).
-		Where(db.Eq(models.ColumnOwner, s.UserId)).
-		Where(db.Eq(models.ColumnRepoId, repoIds)).
+		Update(constants.TableRepo).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Where(db.Eq(constants.ColumnOwner, s.UserId)).
+		Where(db.Eq(constants.ColumnRepoId, repoIds)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)

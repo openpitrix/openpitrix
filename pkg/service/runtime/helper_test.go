@@ -9,38 +9,6 @@ import (
 	"testing"
 )
 
-func TestLabelStringToMap(t *testing.T) {
-	labelStringArray := []string{
-		"runtime=qingcloud&zone=pk3a&env=test",
-		"runtime=kubernetes&env=dev",
-		"runtime=kubernetes&team=openpitrix",
-	}
-	labelMapArray := []map[string]string{
-		{
-			"runtime": "qingcloud",
-			"zone":    "pk3a",
-			"env":     "test",
-		},
-		{
-			"runtime": "kubernetes",
-			"env":     "dev",
-		},
-		{
-			"runtime": "kubernetes",
-			"team":    "openpitrix",
-		},
-	}
-	for n, lableString := range labelStringArray {
-		labelMap, err := LabelStringToMap(lableString)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if !reflect.DeepEqual(labelMapArray[n], labelMap) {
-			t.Fatal()
-		}
-	}
-}
-
 func TestSelectorStringToMap(t *testing.T) {
 	selectorStringArray := []string{
 		"runtime=qingcloud&zone=pk3a&env=test",
@@ -73,62 +41,4 @@ func TestSelectorStringToMap(t *testing.T) {
 		}
 	}
 
-}
-
-func TestLabelMapDiff(t *testing.T) {
-	oldLabelMapArray := []map[string]string{
-		{
-			"runtime": "qingcloud",
-			"zone":    "pk3a",
-			"env":     "test",
-		},
-		{
-			"runtime": "kubernetes",
-			"env":     "dev",
-		},
-		{
-			"runtime": "kubernetes",
-			"team":    "openpitrix",
-		},
-	}
-	newLabelMapArray := []map[string]string{
-		{
-			"runtime": "qingcloud",
-			"zone":    "pk3a",
-		},
-		{
-			"runtime": "kubernetes",
-			"env":     "dev",
-			"team":    "openpitrix",
-		},
-		{
-			"runtime": "kubernetes",
-			"env":     "dev",
-		},
-	}
-	additionsArray := []map[string]string{
-		{},
-		{
-			"team": "openpitrix",
-		},
-		{
-			"env": "dev",
-		},
-	}
-	deletionsArray := []map[string]string{
-		{
-			"env": "test",
-		},
-		{},
-		{
-			"team": "openpitrix",
-		},
-	}
-
-	for n := range oldLabelMapArray {
-		additions, deletions := LabelMapDiff(oldLabelMapArray[n], newLabelMapArray[n])
-		if !reflect.DeepEqual(additions, additionsArray[n]) || !reflect.DeepEqual(deletions, deletionsArray[n]) {
-			t.Fatal()
-		}
-	}
 }

@@ -8,6 +8,7 @@ import (
 	"context"
 
 	repoclient "openpitrix.io/openpitrix/pkg/client/repo"
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -122,8 +123,8 @@ func (vp *versionProxy) AddPackageFile(ctx context.Context, newPackage []byte, s
 			}
 
 			err = updateApp(ctx, appId, map[string]interface{}{
-				models.ColumnName:      appName,
-				models.ColumnChartName: appName,
+				constants.ColumnName:      appName,
+				constants.ColumnChartName: appName,
 			})
 			if err != nil {
 				return err
@@ -140,14 +141,14 @@ func (vp *versionProxy) AddPackageFile(ctx context.Context, newPackage []byte, s
 	}
 
 	err = updateVersion(ctx, versionId, map[string]interface{}{
-		models.ColumnName:        pkgVersion.GetVersionName(),
-		models.ColumnDescription: pkgVersion.GetDescription(),
-		models.ColumnPackageName: pkgVersion.GetPackageName(),
-		models.ColumnHome:        pkgVersion.GetHome(),
-		models.ColumnIcon:        pkgVersion.GetIcon(),
-		models.ColumnScreenshots: pkgVersion.GetScreenshots(),
-		models.ColumnSources:     pkgVersion.GetSources(),
-		models.ColumnKeywords:    pkgVersion.GetKeywords(),
+		constants.ColumnName:        pkgVersion.GetVersionName(),
+		constants.ColumnDescription: pkgVersion.GetDescription(),
+		constants.ColumnPackageName: pkgVersion.GetPackageName(),
+		constants.ColumnHome:        pkgVersion.GetHome(),
+		constants.ColumnIcon:        pkgVersion.GetIcon(),
+		constants.ColumnScreenshots: pkgVersion.GetScreenshots(),
+		constants.ColumnSources:     pkgVersion.GetSources(),
+		constants.ColumnKeywords:    pkgVersion.GetKeywords(),
 	})
 	if err != nil {
 		return err

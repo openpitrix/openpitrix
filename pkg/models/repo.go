@@ -8,12 +8,11 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const RepoTableName = "repo"
 
 func NewRepoId() string {
 	return idutil.GetUuid("repo-")
@@ -34,8 +33,8 @@ type Repo struct {
 	StatusTime time.Time
 }
 
-var RepoColumns = GetColumnsFromStruct(&Repo{})
-var RepoColumnsWithTablePrefix = GetColumnsFromStructWithPrefix(RepoTableName, &Repo{})
+var RepoColumns = db.GetColumnsFromStruct(&Repo{})
+var RepoColumnsWithTablePrefix = db.GetColumnsFromStructWithPrefix(constants.TableRepo, &Repo{})
 
 func NewRepo(name, description, typ, url, credential, visibility, owner string) *Repo {
 	return &Repo{

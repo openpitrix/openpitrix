@@ -7,11 +7,10 @@ package models
 import (
 	"reflect"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const ClusterCommonTableName = "cluster_common"
 
 type ClusterCommon struct {
 	ClusterId                  string
@@ -42,7 +41,7 @@ type ClusterCommon struct {
 	Hypervisor                 string
 }
 
-var ClusterCommonColumns = GetColumnsFromStruct(&ClusterCommon{})
+var ClusterCommonColumns = db.GetColumnsFromStruct(&ClusterCommon{})
 
 func (c ClusterCommon) GetAttribute(attributeName string) interface{} {
 	common := reflect.ValueOf(c)

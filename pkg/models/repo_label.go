@@ -7,12 +7,11 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const RepoLabelTableName = "repo_label"
 
 func NewRepoLabelId() string {
 	return idutil.GetUuid("repol-")
@@ -27,7 +26,7 @@ type RepoLabel struct {
 	CreateTime time.Time
 }
 
-var RepoLabelColumns = GetColumnsFromStruct(&RepoLabel{})
+var RepoLabelColumns = db.GetColumnsFromStruct(&RepoLabel{})
 
 func NewRepoLabel(repoId, labelKey, labelValue string) *RepoLabel {
 	return &RepoLabel{

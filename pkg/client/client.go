@@ -11,5 +11,5 @@ import (
 )
 
 func SetSystemUserToContext(ctx context.Context) context.Context {
-	return senderutil.NewContext(ctx, senderutil.GetSystemUser())
+	return senderutil.ContextWithSender(ctx, senderutil.GetSystemUser())
 }

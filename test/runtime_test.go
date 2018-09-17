@@ -10,13 +10,21 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
 
+func getRuntimeCredential(t *testing.T) string {
+	return execCmd(t, "kubectl config view --flatten")
+}
+
 func TestRuntime(t *testing.T) {
+	credential := getRuntimeCredential(t)
+
 	client := GetClient(clientConfig)
 
 	testRuntimeName := "e2e-test-runtime"
@@ -24,9 +32,7 @@ func TestRuntime(t *testing.T) {
 	describeParams.SetSearchWord(&testRuntimeName)
 	describeParams.SetStatus([]string{constants.StatusActive})
 	describeResp, err := client.RuntimeManager.DescribeRuntimes(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	runtimes := describeResp.Payload.RuntimeSet
 	for _, runtime := range runtimes {
 		deleteParams := runtime_manager.NewDeleteRuntimesParams()
@@ -35,9 +41,7 @@ func TestRuntime(t *testing.T) {
 				RuntimeID: []string{runtime.RuntimeID},
 			})
 		_, err := client.RuntimeManager.DeleteRuntimes(deleteParams)
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 	}
 	// create runtime
 	createParams := runtime_manager.NewCreateRuntimeParams()
@@ -45,16 +49,13 @@ func TestRuntime(t *testing.T) {
 		&models.OpenpitrixCreateRuntimeRequest{
 			Name:              testRuntimeName,
 			Description:       "description",
-			Provider:          "qingcloud",
-			RuntimeURL:        "https://github.com/",
-			RuntimeCredential: `{}`,
-			Zone:              "test",
+			Provider:          constants.ProviderKubernetes,
+			RuntimeURL:        "",
+			RuntimeCredential: credential,
+			Zone:              "default",
 		})
 	createResp, err := client.RuntimeManager.CreateRuntime(createParams)
-	if err != nil {
-		t.Logf("Create runtime will fail without credential")
-		return
-	}
+	require.NoError(t, err)
 	runtimeId := createResp.Payload.RuntimeID
 	// modify runtime
 	modifyParams := runtime_manager.NewModifyRuntimeParams()
@@ -64,16 +65,12 @@ func TestRuntime(t *testing.T) {
 			Description: "cc",
 		})
 	modifyResp, err := client.RuntimeManager.ModifyRuntime(modifyParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	t.Log(modifyResp)
 	// describe runtime
 	describeParams.WithRuntimeID([]string{runtimeId})
 	describeResp, err = client.RuntimeManager.DescribeRuntimes(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	runtimes = describeResp.Payload.RuntimeSet
 	if len(runtimes) != 1 {
 		t.Fatalf("failed to describe runtimes with params [%+v]", describeParams)
@@ -87,18 +84,14 @@ func TestRuntime(t *testing.T) {
 		RuntimeID: []string{runtimeId},
 	})
 	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	t.Log(deleteResp)
 	// describe deleted runtime
 	describeParams.WithRuntimeID([]string{runtimeId})
 	describeParams.WithStatus([]string{constants.StatusDeleted})
 	describeParams.WithSearchWord(nil)
 	describeResp, err = client.RuntimeManager.DescribeRuntimes(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	runtimes = describeResp.Payload.RuntimeSet
 	runtimes = describeResp.Payload.RuntimeSet
 	if len(runtimes) != 1 {
@@ -126,6 +119,7 @@ func generateLabels() string {
 }
 
 func TestRuntimeLabel(t *testing.T) {
+	credential := getRuntimeCredential(t)
 	client := GetClient(clientConfig)
 	// Create a test runtime that can attach label on it
 	testRuntimeName := "e2e-test-runtime"
@@ -135,26 +129,21 @@ func TestRuntimeLabel(t *testing.T) {
 		&models.OpenpitrixCreateRuntimeRequest{
 			Name:              testRuntimeName,
 			Description:       "description",
-			Provider:          "qingcloud",
-			RuntimeURL:        "https://github.com/",
-			RuntimeCredential: `{}`,
-			Zone:              "test",
+			Provider:          constants.ProviderKubernetes,
+			RuntimeURL:        "",
+			RuntimeCredential: credential,
+			Zone:              "default",
 			Labels:            labels,
 		})
 	createResp, err := client.RuntimeManager.CreateRuntime(createParams)
-	if err != nil {
-		t.Logf("Create runtime will fail without credential")
-		return
-	}
+	require.NoError(t, err)
 	runtimeId := createResp.Payload.RuntimeID
 
 	describeParams := runtime_manager.NewDescribeRuntimesParams()
 	describeParams.Label = &labels
 	describeParams.Status = []string{constants.StatusActive}
 	describeResp, err := client.RuntimeManager.DescribeRuntimes(describeParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	if len(describeResp.Payload.RuntimeSet) != 1 {
 		t.Fatalf("describe runtime with filter failed")
 	}
@@ -168,9 +157,7 @@ func TestRuntimeLabel(t *testing.T) {
 		RuntimeID: []string{runtimeId},
 	})
 	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	t.Log(deleteResp)
 
 	t.Log("test runtime label finish, all test is ok")

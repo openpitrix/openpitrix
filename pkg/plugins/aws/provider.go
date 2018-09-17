@@ -16,18 +16,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
-type Provider struct {
-	ctx context.Context
+type Provider struct{}
+
+func NewProvider() *Provider {
+	return new(Provider)
 }
 
-func NewProvider(ctx context.Context) *Provider {
-	return &Provider{
-		ctx,
-	}
-}
-
-func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
-	frameInterface, err := vmbased.GetFrameInterface(p.ctx, nil)
+func (p *Provider) ParseClusterConf(ctx context.Context, versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
+	frameInterface, err := vmbased.GetFrameInterface(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -35,7 +31,7 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string, clusterWr
 	if err != nil {
 		return err
 	}
-	handler := GetProviderHandler(p.ctx)
+	handler := GetProviderHandler(ctx)
 	availabilityZone, err := handler.DescribeAvailabilityZoneBySubnetId(runtimeId, clusterWrapper.Cluster.SubnetId)
 	if err != nil {
 		return err
@@ -44,8 +40,8 @@ func (p *Provider) ParseClusterConf(versionId, runtimeId, conf string, clusterWr
 	return nil
 }
 
-func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error) {
-	runtime, err := runtimeclient.NewRuntime(p.ctx, job.RuntimeId)
+func (p *Provider) SplitJobIntoTasks(ctx context.Context, job *models.Job) (*models.TaskLayer, error) {
+	runtime, err := runtimeclient.NewRuntime(ctx, job.RuntimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -54,42 +50,42 @@ func (p *Provider) SplitJobIntoTasks(job *models.Job) (*models.TaskLayer, error)
 		return nil, err
 	}
 	if imageConfig.ImageId == "" && imageConfig.ImageName != "" {
-		handler := GetProviderHandler(p.ctx)
+		handler := GetProviderHandler(ctx)
 		imageConfig.ImageId, err = handler.DescribeImage(job.RuntimeId, imageConfig.ImageName)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return vmbased.SplitJobIntoTasks(p.ctx, job, imageConfig.ImageId)
+	return vmbased.SplitJobIntoTasks(ctx, job, imageConfig.ImageId)
 }
 
-func (p *Provider) HandleSubtask(task *models.Task) error {
-	handler := GetProviderHandler(p.ctx)
-	return vmbased.HandleSubtask(p.ctx, task, handler)
+func (p *Provider) HandleSubtask(ctx context.Context, task *models.Task) error {
+	handler := GetProviderHandler(ctx)
+	return vmbased.HandleSubtask(ctx, task, handler)
 }
 
-func (p *Provider) WaitSubtask(task *models.Task) error {
-	handler := GetProviderHandler(p.ctx)
-	return vmbased.WaitSubtask(p.ctx, task, handler)
+func (p *Provider) WaitSubtask(ctx context.Context, task *models.Task) error {
+	handler := GetProviderHandler(ctx)
+	return vmbased.WaitSubtask(ctx, task, handler)
 }
 
 func (p *Provider) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
-	handler := GetProviderHandler(p.ctx)
+	handler := GetProviderHandler(ctx)
 	return handler.DescribeSubnets(ctx, req)
 }
 
 func (p *Provider) CheckResource(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
-	handler := GetProviderHandler(p.ctx)
+	handler := GetProviderHandler(ctx)
 	return handler.CheckResourceQuotas(ctx, clusterWrapper)
 }
 
-func (p *Provider) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, error) {
-	handler := GetProviderHandler(p.ctx)
+func (p *Provider) DescribeVpc(ctx context.Context, runtimeId, vpcId string) (*models.Vpc, error) {
+	handler := GetProviderHandler(ctx)
 	return handler.DescribeVpc(runtimeId, vpcId)
 }
 
-func (p *Provider) ValidateCredential(url, credential, zone string) error {
-	handler := GetProviderHandler(p.ctx)
+func (p *Provider) ValidateCredential(ctx context.Context, url, credential, zone string) error {
+	handler := GetProviderHandler(ctx)
 	zones, err := handler.DescribeZones(url, credential)
 	if err != nil {
 		return err
@@ -103,17 +99,12 @@ func (p *Provider) ValidateCredential(url, credential, zone string) error {
 	return nil
 }
 
-func (p *Provider) UpdateClusterStatus(job *models.Job) error {
+func (p *Provider) UpdateClusterStatus(ctx context.Context, job *models.Job) error {
 	return nil
 }
 
-func (p *Provider) DescribeRuntimeProviderAvailabilityZones(url, credential, zone string) ([]string, error) {
-	handler := GetProviderHandler(p.ctx)
-	return handler.DescribeAvailabilityZones(url, credential, zone)
-}
-
-func (p *Provider) DescribeRuntimeProviderZones(url, credential string) ([]string, error) {
-	handler := GetProviderHandler(p.ctx)
+func (p *Provider) DescribeRuntimeProviderZones(ctx context.Context, url, credential string) ([]string, error) {
+	handler := GetProviderHandler(ctx)
 	return handler.DescribeZones(url, credential)
 }
 

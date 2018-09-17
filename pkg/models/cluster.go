@@ -7,12 +7,11 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const ClusterTableName = "cluster"
 
 func NewClusterId() string {
 	return idutil.GetUuid36("cl-")
@@ -42,7 +41,7 @@ type Cluster struct {
 	StatusTime         time.Time
 }
 
-var ClusterColumns = GetColumnsFromStruct(&Cluster{})
+var ClusterColumns = db.GetColumnsFromStruct(&Cluster{})
 
 func NewCluster() *Cluster {
 	return &Cluster{

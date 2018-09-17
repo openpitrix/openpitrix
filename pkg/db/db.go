@@ -215,6 +215,9 @@ func (b *InsertQuery) Columns(columns ...string) *InsertQuery {
 }
 
 func (b *InsertQuery) Record(structValue interface{}) *InsertQuery {
+	if len(b.Column) == 0 {
+		b.Columns(GetColumnsFromStruct(structValue)...)
+	}
 	b.InsertBuilder.Record(structValue)
 	return b
 }

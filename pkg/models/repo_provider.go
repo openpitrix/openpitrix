@@ -4,9 +4,9 @@
 
 package models
 
-const RepoProviderTableName = "repo_provider"
+import "openpitrix.io/openpitrix/pkg/db"
 
-var RepoProviderColumns = GetColumnsFromStruct(&RepoProvider{})
+var RepoProviderColumns = db.GetColumnsFromStruct(&RepoProvider{})
 
 type RepoProvider struct {
 	RepoId   string

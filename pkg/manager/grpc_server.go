@@ -26,6 +26,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
@@ -122,6 +123,9 @@ func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 	checker := g.checker
 
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		requestId := ctxutil.GetRequestId(ctx)
+		ctx = ctxutil.SetRequestId(ctx, requestId)
+
 		s := senderutil.GetSenderFromContext(ctx)
 		method := strings.Split(info.FullMethod, "/")
 		action := method[len(method)-1]

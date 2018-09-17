@@ -28,8 +28,8 @@ func (p *Server) getAppVersion(ctx context.Context, versionId string) (*models.A
 	version := &models.AppVersion{}
 	err := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
-		From(models.AppVersionTableName).
-		Where(db.Eq(models.ColumnVersionId, versionId)).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnVersionId, versionId)).
 		LoadOne(&version)
 	if err != nil {
 		return nil, err
@@ -41,8 +41,8 @@ func (p *Server) getAppVersions(ctx context.Context, versionIds []string) ([]*mo
 	var versions []*models.AppVersion
 	_, err := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
-		From(models.AppVersionTableName).
-		Where(db.Eq(models.ColumnVersionId, versionIds)).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnVersionId, versionIds)).
 		Load(&versions)
 	if err != nil {
 		return nil, err
@@ -58,20 +58,20 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 
 	query := pi.Global().DB(ctx).
 		Select(models.AppColumns...).
-		From(models.AppTableName).
+		From(constants.TableApp).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.AppTableName))
+		Where(manager.BuildFilterConditions(req, constants.TableApp))
 	if len(categoryIds) > 0 {
 		subqueryStmt := pi.Global().DB(ctx).
-			Select(models.ColumnResouceId).
-			From(models.CategoryResourceTableName).
-			Where(db.Eq(models.ColumnStatus, constants.StatusEnabled)).
-			Where(db.Eq(models.ColumnCategoryId, categoryIds))
-		query = query.Where(db.Eq(models.ColumnAppId, []*db.SelectQuery{subqueryStmt}))
+			Select(constants.ColumnResouceId).
+			From(constants.TableCategoryResource).
+			Where(db.Eq(constants.ColumnStatus, constants.StatusEnabled)).
+			Where(db.Eq(constants.ColumnCategoryId, categoryIds))
+		query = query.Where(db.Eq(constants.ColumnAppId, []*db.SelectQuery{subqueryStmt}))
 	}
 	// TODO: validate sort_key
-	query = manager.AddQueryOrderDir(query, req, models.ColumnCreateTime)
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&apps)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -119,8 +119,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	}
 
 	_, err := pi.Global().DB(ctx).
-		InsertInto(models.AppTableName).
-		Columns(models.AppColumns...).
+		InsertInto(constants.TableApp).
 		Record(newApp).
 		Exec()
 	if err != nil {
@@ -178,7 +177,7 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		"maintainers", "sources", "readme", "keywords")
 
 	if req.GetStatus() != nil {
-		attributes[models.ColumnStatus] = req.GetStatus().GetValue()
+		attributes[constants.ColumnStatus] = req.GetStatus().GetValue()
 	}
 	err = updateApp(ctx, appId, attributes)
 	if err != nil {
@@ -208,9 +207,9 @@ func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb
 	appIds := req.GetAppId()
 
 	_, err := pi.Global().DB(ctx).
-		Update(models.AppTableName).
-		Set(models.ColumnStatus, constants.StatusDeleted).
-		Where(db.Eq(models.ColumnAppId, appIds)).
+		Update(constants.TableApp).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Where(db.Eq(constants.ColumnAppId, appIds)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
@@ -287,11 +286,11 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 
 	query := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
-		From(models.AppVersionTableName).
+		From(constants.TableAppVersion).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, models.AppVersionTableName))
-	query = manager.AddQueryOrderDir(query, req, models.ColumnSequence)
+		Where(manager.BuildFilterConditions(req, constants.TableAppVersion))
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnSequence)
 	_, err := query.Load(&versions)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -323,10 +322,10 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		"maintainers", "keywords", "sources", "readme")
 
 	if version.Status != constants.StatusActive {
-		attributes[models.ColumnStatus] = constants.StatusDraft
+		attributes[constants.ColumnStatus] = constants.StatusDraft
 	}
 	if req.GetStatus() != nil {
-		attributes[models.ColumnStatus] = req.GetStatus().GetValue()
+		attributes[constants.ColumnStatus] = req.GetStatus().GetValue()
 	}
 
 	err = updateVersion(ctx, versionId, attributes)
@@ -360,9 +359,9 @@ func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersion
 	}
 
 	_, err := pi.Global().DB(ctx).
-		Update(models.AppVersionTableName).
-		Set(models.ColumnStatus, constants.StatusDeleted).
-		Where(db.Eq(models.ColumnVersionId, versionIds)).
+		Update(constants.TableAppVersion).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Where(db.Eq(constants.ColumnVersionId, versionIds)).
 		Exec()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, strings.Join(versionIds, ","))
@@ -435,9 +434,9 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 		TopTenRepos:        make(map[string]uint32),
 	}
 	appCount, err := pi.Global().DB(ctx).
-		Select(models.ColumnAppId).
-		From(models.AppTableName).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		Select(constants.ColumnAppId).
+		From(constants.TableApp).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
 		Count()
 	if err != nil {
 		logger.Error(ctx, "Failed to get app count, error: %+v", err)
@@ -447,8 +446,8 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 
 	err = pi.Global().DB(ctx).
 		Select("COUNT(DISTINCT repo_id)").
-		From(models.AppTableName).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
+		From(constants.TableApp).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
 		LoadOne(&res.RepoCount)
 	if err != nil {
 		logger.Error(ctx, "Failed to get repo count, error: %+v", err)
@@ -459,9 +458,9 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 	var as []*appStatistic
 	_, err = pi.Global().DB(ctx).
 		Select("DATE_FORMAT(create_time, '%Y-%m-%d')", "COUNT(app_id)").
-		From(models.AppTableName).
+		From(constants.TableApp).
 		GroupBy("DATE_FORMAT(create_time, '%Y-%m-%d')").
-		Where(db.Gte(models.ColumnCreateTime, time2week)).
+		Where(db.Gte(constants.ColumnCreateTime, time2week)).
 		Limit(14).Load(&as)
 
 	if err != nil {
@@ -475,9 +474,9 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 	var rs []*repoStatistic
 	_, err = pi.Global().DB(ctx).
 		Select("repo_id", "COUNT(app_id)").
-		From(models.AppTableName).
-		Where(db.Neq(models.ColumnStatus, constants.StatusDeleted)).
-		GroupBy(models.ColumnRepoId).
+		From(constants.TableApp).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
+		GroupBy(constants.ColumnRepoId).
 		OrderDir("COUNT(app_id)", false).
 		Limit(10).Load(&rs)
 

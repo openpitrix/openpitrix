@@ -18,10 +18,6 @@ repo:
   #
   cron: "0 30 4 * * *"
 cluster:
-  plugins:
-    - qingcloud
-    - kubernetes
-    - aws
   frontgate_conf: '{"app_id":"app-ABCDEFGHIJKLMNOPQRST","version_id":"appv-ABCDEFGHIJKLMNOPQRST","name":"frontgate","description":"OpenPitrixbuilt-infrontgateservice","subnet":"","nodes":[{"container":{"type":"docker","image":"openpitrix/openpitrix:metadata"},"count":1,"cpu":1,"memory":1024,"volume":{"size":10,"mount_point":"/data","filesystem":"ext4"}}]}'
   frontgate_auto_delete: true
 pilot:

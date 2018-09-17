@@ -5,11 +5,10 @@
 package models
 
 import (
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const ClusterRoleTableName = "cluster_role"
 
 type ClusterRole struct {
 	ClusterId     string
@@ -28,7 +27,7 @@ type ClusterRole struct {
 	ApiVersion    string
 }
 
-var ClusterRoleColumns = GetColumnsFromStruct(&ClusterRole{})
+var ClusterRoleColumns = db.GetColumnsFromStruct(&ClusterRole{})
 
 func ClusterRoleToPb(clusterRole *ClusterRole) *pb.ClusterRole {
 	return &pb.ClusterRole{

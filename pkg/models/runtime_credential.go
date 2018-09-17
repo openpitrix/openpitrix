@@ -7,10 +7,10 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 )
 
-const RuntimeCredentialTableName = "runtime_credential"
 const RuntimeCredentialPrifix = "runtimec-"
 
 type RuntimeCredential struct {
@@ -23,7 +23,7 @@ func NewRuntimeCrentialId() string {
 	return idutil.GetUuid(RuntimeCredentialPrifix)
 }
 
-var RuntimeCredentialColumns = GetColumnsFromStruct(&RuntimeCredential{})
+var RuntimeCredentialColumns = db.GetColumnsFromStruct(&RuntimeCredential{})
 
 func NewRuntimeCredential(content string) *RuntimeCredential {
 	return &RuntimeCredential{

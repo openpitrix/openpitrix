@@ -1044,31 +1044,6 @@ func (p *ProviderHandler) DescribeVpc(runtimeId, vpcId string) (*models.Vpc, err
 	}, nil
 }
 
-func (p *ProviderHandler) DescribeAvailabilityZones(url, credential, zone string) ([]string, error) {
-	awsSession, err := p.initAWSSession(url, credential, zone)
-	if err != nil {
-		logger.Error(p.Ctx, "Init %s api service failed: %+v", MyProvider, err)
-		return nil, err
-	}
-
-	var instanceService ec2iface.EC2API
-	instanceService = ec2.New(awsSession)
-
-	input := ec2.DescribeAvailabilityZonesInput{}
-
-	output, err := instanceService.DescribeAvailabilityZones(&input)
-	if err != nil {
-		logger.Error(p.Ctx, "DescribeAvailabilityZones to %s failed: %+v", MyProvider, err)
-		return nil, err
-	}
-
-	var zones []string
-	for _, zone := range output.AvailabilityZones {
-		zones = append(zones, aws.StringValue(zone.ZoneName))
-	}
-	return zones, nil
-}
-
 func (p *ProviderHandler) DescribeZones(url, credential string) ([]string, error) {
 	zone := DefaultZone
 	awsSession, err := p.initAWSSession(url, credential, zone)

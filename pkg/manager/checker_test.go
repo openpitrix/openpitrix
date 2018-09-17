@@ -38,4 +38,24 @@ func TestChecker(t *testing.T) {
 	err = NewChecker(context.Background(), req).Required("repo_id").Exec()
 
 	assert.NoError(t, err)
+
+	req = &pb.CreateRepoRequest{
+		Providers: []string{"qingcloud", "aws"},
+	}
+	err = NewChecker(context.Background(), req).
+		Required("providers").
+		StringChosen("providers", []string{"qingcloud", "aws", "k8s"}).
+		Exec()
+
+	assert.NoError(t, err)
+
+	req = &pb.CreateRepoRequest{
+		Providers: []string{"qingcloud", "xxxx"},
+	}
+	err = NewChecker(context.Background(), req).
+		Required("providers").
+		StringChosen("providers", []string{"qingcloud", "aws", "k8s"}).
+		Exec()
+
+	assert.Error(t, err)
 }

@@ -7,12 +7,11 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
-
-const KeyPairTableName = "key_pair"
 
 func NewKeyPairId() string {
 	return idutil.GetUuid("kp-")
@@ -33,7 +32,7 @@ type KeyPairWithNodes struct {
 	NodeId []string
 }
 
-var KeyPairColumns = GetColumnsFromStruct(&KeyPair{})
+var KeyPairColumns = db.GetColumnsFromStruct(&KeyPair{})
 
 func KeyPairNodesToPb(keyPairNodes *KeyPairWithNodes) *pb.KeyPair {
 	pbKeyPair := pb.KeyPair{}

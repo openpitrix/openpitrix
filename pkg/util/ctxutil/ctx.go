@@ -10,60 +10,81 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-var messageIdKey struct{}
+const (
+	messageIdKey = "x-message-id"
+	requestIdKey = "x-request-id"
+)
 
-func GetMessageId(ctx context.Context) []string {
+type getMetadataFromContext func(ctx context.Context) (md metadata.MD, ok bool)
+
+var getMetadataFromContextFunc = []getMetadataFromContext{
+	metadata.FromOutgoingContext,
+	metadata.FromIncomingContext,
+}
+
+func GetValueFromContext(ctx context.Context, key string) []string {
 	if ctx == nil {
 		return []string{}
 	}
-	m, ok := ctx.Value(messageIdKey).([]string)
-	if !ok {
-		return []string{}
+	for _, f := range getMetadataFromContextFunc {
+		md, ok := f(ctx)
+		if !ok {
+			continue
+		}
+		m, ok := md[key]
+		if ok && len(m) > 0 {
+			return m
+		}
 	}
-	return m
+	m, ok := ctx.Value(key).([]string)
+	if ok && len(m) > 0 {
+		return m
+	}
+	return []string{}
+}
+
+func GetMessageId(ctx context.Context) []string {
+	return GetValueFromContext(ctx, messageIdKey)
 }
 
 func SetMessageId(ctx context.Context, messageId []string) context.Context {
-	if ctx == nil {
-		return ctx
+	ctx = context.WithValue(ctx, messageIdKey, messageId)
+	md, ok := metadata.FromOutgoingContext(ctx)
+	if !ok {
+		md = metadata.MD{}
 	}
-	return context.WithValue(ctx, messageIdKey, messageId)
+	md[messageIdKey] = messageId
+	return metadata.NewOutgoingContext(ctx, md)
 }
 
 func AddMessageId(ctx context.Context, messageId ...string) context.Context {
-	if ctx == nil {
-		return ctx
-	}
 	m := GetMessageId(ctx)
 	m = append(m, messageId...)
 	return SetMessageId(ctx, m)
 }
 
 func ClearMessageId(ctx context.Context) context.Context {
-	if ctx == nil {
-		return ctx
-	}
 	return SetMessageId(ctx, []string{})
 }
 
 func Copy(src, dst context.Context) context.Context {
-	if src != nil {
-		dst = SetMessageId(dst, GetMessageId(src))
-	}
-	return dst
+	return SetMessageId(dst, GetMessageId(src))
 }
 
 func GetRequestId(ctx context.Context) string {
-	if ctx == nil {
-		return ""
-	}
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return ""
-	}
-	rid, ok := md["x-request-id"]
-	if !ok || len(rid) == 0 {
+	rid := GetValueFromContext(ctx, requestIdKey)
+	if len(rid) == 0 {
 		return ""
 	}
 	return rid[0]
+}
+
+func SetRequestId(ctx context.Context, requestId string) context.Context {
+	ctx = context.WithValue(ctx, requestIdKey, requestId)
+	md, ok := metadata.FromOutgoingContext(ctx)
+	if !ok {
+		md = metadata.MD{}
+	}
+	md[requestIdKey] = []string{requestId}
+	return metadata.NewOutgoingContext(ctx, md)
 }
