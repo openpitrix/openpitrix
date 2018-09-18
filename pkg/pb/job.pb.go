@@ -3,13 +3,16 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
-import _ "google.golang.org/genproto/googleapis/api/annotations"
+import (
+	fmt "fmt"
+	math "math"
+
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
+)
 
 import (
 	context "golang.org/x/net/context"
@@ -44,16 +47,17 @@ func (m *CreateJobRequest) Reset()         { *m = CreateJobRequest{} }
 func (m *CreateJobRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateJobRequest) ProtoMessage()    {}
 func (*CreateJobRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_job_85e40ba38372c5eb, []int{0}
+	return fileDescriptor_f32c477d91a04ead, []int{0}
 }
+
 func (m *CreateJobRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateJobRequest.Unmarshal(m, b)
 }
 func (m *CreateJobRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateJobRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateJobRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateJobRequest.Merge(dst, src)
+func (m *CreateJobRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateJobRequest.Merge(m, src)
 }
 func (m *CreateJobRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateJobRequest.Size(m)
@@ -128,16 +132,17 @@ func (m *CreateJobResponse) Reset()         { *m = CreateJobResponse{} }
 func (m *CreateJobResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateJobResponse) ProtoMessage()    {}
 func (*CreateJobResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_job_85e40ba38372c5eb, []int{1}
+	return fileDescriptor_f32c477d91a04ead, []int{1}
 }
+
 func (m *CreateJobResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateJobResponse.Unmarshal(m, b)
 }
 func (m *CreateJobResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateJobResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateJobResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateJobResponse.Merge(dst, src)
+func (m *CreateJobResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateJobResponse.Merge(m, src)
 }
 func (m *CreateJobResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateJobResponse.Size(m)
@@ -208,16 +213,17 @@ func (m *Job) Reset()         { *m = Job{} }
 func (m *Job) String() string { return proto.CompactTextString(m) }
 func (*Job) ProtoMessage()    {}
 func (*Job) Descriptor() ([]byte, []int) {
-	return fileDescriptor_job_85e40ba38372c5eb, []int{2}
+	return fileDescriptor_f32c477d91a04ead, []int{2}
 }
+
 func (m *Job) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Job.Unmarshal(m, b)
 }
 func (m *Job) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Job.Marshal(b, m, deterministic)
 }
-func (dst *Job) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Job.Merge(dst, src)
+func (m *Job) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Job.Merge(m, src)
 }
 func (m *Job) XXX_Size() int {
 	return xxx_messageInfo_Job.Size(m)
@@ -356,16 +362,17 @@ func (m *DescribeJobsRequest) Reset()         { *m = DescribeJobsRequest{} }
 func (m *DescribeJobsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeJobsRequest) ProtoMessage()    {}
 func (*DescribeJobsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_job_85e40ba38372c5eb, []int{3}
+	return fileDescriptor_f32c477d91a04ead, []int{3}
 }
+
 func (m *DescribeJobsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeJobsRequest.Unmarshal(m, b)
 }
 func (m *DescribeJobsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeJobsRequest.Marshal(b, m, deterministic)
 }
-func (dst *DescribeJobsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeJobsRequest.Merge(dst, src)
+func (m *DescribeJobsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeJobsRequest.Merge(m, src)
 }
 func (m *DescribeJobsRequest) XXX_Size() int {
 	return xxx_messageInfo_DescribeJobsRequest.Size(m)
@@ -465,16 +472,17 @@ func (m *DescribeJobsResponse) Reset()         { *m = DescribeJobsResponse{} }
 func (m *DescribeJobsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeJobsResponse) ProtoMessage()    {}
 func (*DescribeJobsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_job_85e40ba38372c5eb, []int{4}
+	return fileDescriptor_f32c477d91a04ead, []int{4}
 }
+
 func (m *DescribeJobsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeJobsResponse.Unmarshal(m, b)
 }
 func (m *DescribeJobsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeJobsResponse.Marshal(b, m, deterministic)
 }
-func (dst *DescribeJobsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeJobsResponse.Merge(dst, src)
+func (m *DescribeJobsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeJobsResponse.Merge(m, src)
 }
 func (m *DescribeJobsResponse) XXX_Size() int {
 	return xxx_messageInfo_DescribeJobsResponse.Size(m)
@@ -612,9 +620,9 @@ var _JobManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "job.proto",
 }
 
-func init() { proto.RegisterFile("job.proto", fileDescriptor_job_85e40ba38372c5eb) }
+func init() { proto.RegisterFile("job.proto", fileDescriptor_f32c477d91a04ead) }
 
-var fileDescriptor_job_85e40ba38372c5eb = []byte{
+var fileDescriptor_f32c477d91a04ead = []byte{
 	// 735 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x56, 0xcd, 0x6e, 0xd3, 0x4a,
 	0x14, 0x56, 0x7e, 0x9c, 0x26, 0x27, 0xed, 0xed, 0xbd, 0xbe, 0xbd, 0x57, 0xbe, 0xb9, 0x85, 0x46,

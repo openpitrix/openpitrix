@@ -12,6 +12,7 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"openpitrix.io/openpitrix/test"
+	"openpitrix.io/openpitrix/test/client/account_manager"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
@@ -20,10 +21,25 @@ import (
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/client/task_manager"
+	"openpitrix.io/openpitrix/test/client/token_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
 
 var AllCmd = []Cmd{
+	NewChangePasswordCmd(),
+	NewCreateGroupCmd(),
+	NewCreatePasswordResetCmd(),
+	NewCreateUserCmd(),
+	NewDeleteGroupsCmd(),
+	NewDeleteUsersCmd(),
+	NewDescribeGroupsCmd(),
+	NewDescribeUsersCmd(),
+	NewGetPasswordResetCmd(),
+	NewJoinGroupCmd(),
+	NewLeaveGroupCmd(),
+	NewModifyGroupCmd(),
+	NewModifyUserCmd(),
+	NewValidateUserPasswordCmd(),
 	NewCancelAppVersionCmd(),
 	NewCreateAppCmd(),
 	NewCreateAppVersionCmd(),
@@ -86,6 +102,531 @@ var AllCmd = []Cmd{
 	NewModifyRuntimeCmd(),
 	NewDescribeTasksCmd(),
 	NewRetryTasksCmd(),
+	NewAuthCmd(),
+	NewCreateClientCmd(),
+	NewTokenCmd(),
+}
+
+type ChangePasswordCmd struct {
+	*models.OpenpitrixChangePasswordRequest
+}
+
+func NewChangePasswordCmd() Cmd {
+	cmd := &ChangePasswordCmd{}
+	cmd.OpenpitrixChangePasswordRequest = &models.OpenpitrixChangePasswordRequest{}
+	return cmd
+}
+
+func (*ChangePasswordCmd) GetActionName() string {
+	return "ChangePassword"
+}
+
+func (c *ChangePasswordCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.NewPassword, "new_password", "", "", "")
+	f.StringVarP(&c.ResetID, "reset_id", "", "", "")
+}
+
+func (c *ChangePasswordCmd) Run(out Out) error {
+	params := account_manager.NewChangePasswordParams()
+	params.WithBody(c.OpenpitrixChangePasswordRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.ChangePassword(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateGroupCmd struct {
+	*models.OpenpitrixCreateGroupRequest
+}
+
+func NewCreateGroupCmd() Cmd {
+	cmd := &CreateGroupCmd{}
+	cmd.OpenpitrixCreateGroupRequest = &models.OpenpitrixCreateGroupRequest{}
+	return cmd
+}
+
+func (*CreateGroupCmd) GetActionName() string {
+	return "CreateGroup"
+}
+
+func (c *CreateGroupCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+}
+
+func (c *CreateGroupCmd) Run(out Out) error {
+	params := account_manager.NewCreateGroupParams()
+	params.WithBody(c.OpenpitrixCreateGroupRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.CreateGroup(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreatePasswordResetCmd struct {
+	*models.OpenpitrixCreatePasswordResetRequest
+}
+
+func NewCreatePasswordResetCmd() Cmd {
+	cmd := &CreatePasswordResetCmd{}
+	cmd.OpenpitrixCreatePasswordResetRequest = &models.OpenpitrixCreatePasswordResetRequest{}
+	return cmd
+}
+
+func (*CreatePasswordResetCmd) GetActionName() string {
+	return "CreatePasswordReset"
+}
+
+func (c *CreatePasswordResetCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+}
+
+func (c *CreatePasswordResetCmd) Run(out Out) error {
+	params := account_manager.NewCreatePasswordResetParams()
+	params.WithBody(c.OpenpitrixCreatePasswordResetRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.CreatePasswordReset(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateUserCmd struct {
+	*models.OpenpitrixCreateUserRequest
+}
+
+func NewCreateUserCmd() Cmd {
+	cmd := &CreateUserCmd{}
+	cmd.OpenpitrixCreateUserRequest = &models.OpenpitrixCreateUserRequest{}
+	return cmd
+}
+
+func (*CreateUserCmd) GetActionName() string {
+	return "CreateUser"
+}
+
+func (c *CreateUserCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Email, "email", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.Role, "role", "", "", "")
+}
+
+func (c *CreateUserCmd) Run(out Out) error {
+	params := account_manager.NewCreateUserParams()
+	params.WithBody(c.OpenpitrixCreateUserRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.CreateUser(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DeleteGroupsCmd struct {
+	*models.OpenpitrixDeleteGroupsRequest
+}
+
+func NewDeleteGroupsCmd() Cmd {
+	cmd := &DeleteGroupsCmd{}
+	cmd.OpenpitrixDeleteGroupsRequest = &models.OpenpitrixDeleteGroupsRequest{}
+	return cmd
+}
+
+func (*DeleteGroupsCmd) GetActionName() string {
+	return "DeleteGroups"
+}
+
+func (c *DeleteGroupsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+}
+
+func (c *DeleteGroupsCmd) Run(out Out) error {
+	params := account_manager.NewDeleteGroupsParams()
+	params.WithBody(c.OpenpitrixDeleteGroupsRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.DeleteGroups(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DeleteUsersCmd struct {
+	*models.OpenpitrixDeleteUsersRequest
+}
+
+func NewDeleteUsersCmd() Cmd {
+	cmd := &DeleteUsersCmd{}
+	cmd.OpenpitrixDeleteUsersRequest = &models.OpenpitrixDeleteUsersRequest{}
+	return cmd
+}
+
+func (*DeleteUsersCmd) GetActionName() string {
+	return "DeleteUsers"
+}
+
+func (c *DeleteUsersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DeleteUsersCmd) Run(out Out) error {
+	params := account_manager.NewDeleteUsersParams()
+	params.WithBody(c.OpenpitrixDeleteUsersRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.DeleteUsers(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeGroupsCmd struct {
+	*account_manager.DescribeGroupsParams
+}
+
+func NewDescribeGroupsCmd() Cmd {
+	return &DescribeGroupsCmd{
+		account_manager.NewDescribeGroupsParams(),
+	}
+}
+
+func (*DescribeGroupsCmd) GetActionName() string {
+	return "DescribeGroups"
+}
+
+func (c *DescribeGroupsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DescribeGroupsCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeGroupsParams)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.DescribeGroups(c.DescribeGroupsParams)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeUsersCmd struct {
+	*account_manager.DescribeUsersParams
+}
+
+func NewDescribeUsersCmd() Cmd {
+	return &DescribeUsersCmd{
+		account_manager.NewDescribeUsersParams(),
+	}
+}
+
+func (*DescribeUsersCmd) GetActionName() string {
+	return "DescribeUsers"
+}
+
+func (c *DescribeUsersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DescribeUsersCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeUsersParams)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.DescribeUsers(c.DescribeUsersParams)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type GetPasswordResetCmd struct {
+	*account_manager.GetPasswordResetParams
+}
+
+func NewGetPasswordResetCmd() Cmd {
+	return &GetPasswordResetCmd{
+		account_manager.NewGetPasswordResetParams(),
+	}
+}
+
+func (*GetPasswordResetCmd) GetActionName() string {
+	return "GetPasswordReset"
+}
+
+func (c *GetPasswordResetCmd) ParseFlag(f Flag) {
+}
+
+func (c *GetPasswordResetCmd) Run(out Out) error {
+
+	out.WriteRequest(c.GetPasswordResetParams)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.GetPasswordReset(c.GetPasswordResetParams)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type JoinGroupCmd struct {
+	*models.OpenpitrixJoinGroupRequest
+}
+
+func NewJoinGroupCmd() Cmd {
+	cmd := &JoinGroupCmd{}
+	cmd.OpenpitrixJoinGroupRequest = &models.OpenpitrixJoinGroupRequest{}
+	return cmd
+}
+
+func (*JoinGroupCmd) GetActionName() string {
+	return "JoinGroup"
+}
+
+func (c *JoinGroupCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *JoinGroupCmd) Run(out Out) error {
+	params := account_manager.NewJoinGroupParams()
+	params.WithBody(c.OpenpitrixJoinGroupRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.JoinGroup(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type LeaveGroupCmd struct {
+	*models.OpenpitrixLeaveGroupRequest
+}
+
+func NewLeaveGroupCmd() Cmd {
+	cmd := &LeaveGroupCmd{}
+	cmd.OpenpitrixLeaveGroupRequest = &models.OpenpitrixLeaveGroupRequest{}
+	return cmd
+}
+
+func (*LeaveGroupCmd) GetActionName() string {
+	return "LeaveGroup"
+}
+
+func (c *LeaveGroupCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *LeaveGroupCmd) Run(out Out) error {
+	params := account_manager.NewLeaveGroupParams()
+	params.WithBody(c.OpenpitrixLeaveGroupRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.LeaveGroup(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyGroupCmd struct {
+	*models.OpenpitrixModifyGroupRequest
+}
+
+func NewModifyGroupCmd() Cmd {
+	cmd := &ModifyGroupCmd{}
+	cmd.OpenpitrixModifyGroupRequest = &models.OpenpitrixModifyGroupRequest{}
+	return cmd
+}
+
+func (*ModifyGroupCmd) GetActionName() string {
+	return "ModifyGroup"
+}
+
+func (c *ModifyGroupCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.GroupID, "group_id", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+}
+
+func (c *ModifyGroupCmd) Run(out Out) error {
+	params := account_manager.NewModifyGroupParams()
+	params.WithBody(c.OpenpitrixModifyGroupRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.ModifyGroup(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyUserCmd struct {
+	*models.OpenpitrixModifyUserRequest
+}
+
+func NewModifyUserCmd() Cmd {
+	cmd := &ModifyUserCmd{}
+	cmd.OpenpitrixModifyUserRequest = &models.OpenpitrixModifyUserRequest{}
+	return cmd
+}
+
+func (*ModifyUserCmd) GetActionName() string {
+	return "ModifyUser"
+}
+
+func (c *ModifyUserCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Email, "email", "", "", "")
+	f.StringVarP(&c.Role, "role", "", "", "")
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+	f.StringVarP(&c.Username, "username", "", "", "")
+}
+
+func (c *ModifyUserCmd) Run(out Out) error {
+	params := account_manager.NewModifyUserParams()
+	params.WithBody(c.OpenpitrixModifyUserRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.ModifyUser(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ValidateUserPasswordCmd struct {
+	*models.OpenpitrixValidateUserPasswordRequest
+}
+
+func NewValidateUserPasswordCmd() Cmd {
+	cmd := &ValidateUserPasswordCmd{}
+	cmd.OpenpitrixValidateUserPasswordRequest = &models.OpenpitrixValidateUserPasswordRequest{}
+	return cmd
+}
+
+func (*ValidateUserPasswordCmd) GetActionName() string {
+	return "ValidateUserPassword"
+}
+
+func (c *ValidateUserPasswordCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Email, "email", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
+}
+
+func (c *ValidateUserPasswordCmd) Run(out Out) error {
+	params := account_manager.NewValidateUserPasswordParams()
+	params.WithBody(c.OpenpitrixValidateUserPasswordRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.ValidateUserPassword(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
 }
 
 type CancelAppVersionCmd struct {
@@ -2527,6 +3068,119 @@ func (c *RetryTasksCmd) Run(out Out) error {
 
 	client := test.GetClient(clientConfig)
 	res, err := client.TaskManager.RetryTasks(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type AuthCmd struct {
+	*models.OpenpitrixAuthRequest
+}
+
+func NewAuthCmd() Cmd {
+	cmd := &AuthCmd{}
+	cmd.OpenpitrixAuthRequest = &models.OpenpitrixAuthRequest{}
+	return cmd
+}
+
+func (*AuthCmd) GetActionName() string {
+	return "Auth"
+}
+
+func (c *AuthCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.ClientID, "client_id", "", "", "")
+	f.StringVarP(&c.ClientSecret, "client_secret", "", "", "")
+	f.StringVarP(&c.GrantType, "grant_type", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.Scope, "scope", "", "", "")
+	f.StringVarP(&c.Username, "username", "", "", "")
+}
+
+func (c *AuthCmd) Run(out Out) error {
+	params := token_manager.NewAuthParams()
+	params.WithBody(c.OpenpitrixAuthRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.TokenManager.Auth(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateClientCmd struct {
+	*models.OpenpitrixCreateClientRequest
+}
+
+func NewCreateClientCmd() Cmd {
+	cmd := &CreateClientCmd{}
+	cmd.OpenpitrixCreateClientRequest = &models.OpenpitrixCreateClientRequest{}
+	return cmd
+}
+
+func (*CreateClientCmd) GetActionName() string {
+	return "CreateClient"
+}
+
+func (c *CreateClientCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+}
+
+func (c *CreateClientCmd) Run(out Out) error {
+	params := token_manager.NewCreateClientParams()
+	params.WithBody(c.OpenpitrixCreateClientRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.TokenManager.CreateClient(params)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type TokenCmd struct {
+	*models.OpenpitrixTokenRequest
+}
+
+func NewTokenCmd() Cmd {
+	cmd := &TokenCmd{}
+	cmd.OpenpitrixTokenRequest = &models.OpenpitrixTokenRequest{}
+	return cmd
+}
+
+func (*TokenCmd) GetActionName() string {
+	return "Token"
+}
+
+func (c *TokenCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.ClientID, "client_id", "", "", "")
+	f.StringVarP(&c.ClientSecret, "client_secret", "", "", "")
+	f.StringVarP(&c.GrantType, "grant_type", "", "", "")
+	f.StringVarP(&c.RefreshToken, "refresh_token", "", "", "")
+}
+
+func (c *TokenCmd) Run(out Out) error {
+	params := token_manager.NewTokenParams()
+	params.WithBody(c.OpenpitrixTokenRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.TokenManager.Token(params)
 	if err != nil {
 		return err
 	}

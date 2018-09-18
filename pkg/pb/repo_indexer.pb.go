@@ -3,13 +3,16 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
-import _ "google.golang.org/genproto/googleapis/api/annotations"
+import (
+	fmt "fmt"
+	math "math"
+
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
+)
 
 import (
 	context "golang.org/x/net/context"
@@ -38,16 +41,17 @@ func (m *IndexRepoRequest) Reset()         { *m = IndexRepoRequest{} }
 func (m *IndexRepoRequest) String() string { return proto.CompactTextString(m) }
 func (*IndexRepoRequest) ProtoMessage()    {}
 func (*IndexRepoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_indexer_b946580389fee661, []int{0}
+	return fileDescriptor_e135b06a8245a758, []int{0}
 }
+
 func (m *IndexRepoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IndexRepoRequest.Unmarshal(m, b)
 }
 func (m *IndexRepoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IndexRepoRequest.Marshal(b, m, deterministic)
 }
-func (dst *IndexRepoRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IndexRepoRequest.Merge(dst, src)
+func (m *IndexRepoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IndexRepoRequest.Merge(m, src)
 }
 func (m *IndexRepoRequest) XXX_Size() int {
 	return xxx_messageInfo_IndexRepoRequest.Size(m)
@@ -77,16 +81,17 @@ func (m *IndexRepoResponse) Reset()         { *m = IndexRepoResponse{} }
 func (m *IndexRepoResponse) String() string { return proto.CompactTextString(m) }
 func (*IndexRepoResponse) ProtoMessage()    {}
 func (*IndexRepoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_indexer_b946580389fee661, []int{1}
+	return fileDescriptor_e135b06a8245a758, []int{1}
 }
+
 func (m *IndexRepoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IndexRepoResponse.Unmarshal(m, b)
 }
 func (m *IndexRepoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IndexRepoResponse.Marshal(b, m, deterministic)
 }
-func (dst *IndexRepoResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IndexRepoResponse.Merge(dst, src)
+func (m *IndexRepoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IndexRepoResponse.Merge(m, src)
 }
 func (m *IndexRepoResponse) XXX_Size() int {
 	return xxx_messageInfo_IndexRepoResponse.Size(m)
@@ -128,16 +133,17 @@ func (m *RepoEvent) Reset()         { *m = RepoEvent{} }
 func (m *RepoEvent) String() string { return proto.CompactTextString(m) }
 func (*RepoEvent) ProtoMessage()    {}
 func (*RepoEvent) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_indexer_b946580389fee661, []int{2}
+	return fileDescriptor_e135b06a8245a758, []int{2}
 }
+
 func (m *RepoEvent) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RepoEvent.Unmarshal(m, b)
 }
 func (m *RepoEvent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RepoEvent.Marshal(b, m, deterministic)
 }
-func (dst *RepoEvent) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RepoEvent.Merge(dst, src)
+func (m *RepoEvent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepoEvent.Merge(m, src)
 }
 func (m *RepoEvent) XXX_Size() int {
 	return xxx_messageInfo_RepoEvent.Size(m)
@@ -213,16 +219,17 @@ func (m *DescribeRepoEventsRequest) Reset()         { *m = DescribeRepoEventsReq
 func (m *DescribeRepoEventsRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeRepoEventsRequest) ProtoMessage()    {}
 func (*DescribeRepoEventsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_indexer_b946580389fee661, []int{3}
+	return fileDescriptor_e135b06a8245a758, []int{3}
 }
+
 func (m *DescribeRepoEventsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeRepoEventsRequest.Unmarshal(m, b)
 }
 func (m *DescribeRepoEventsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeRepoEventsRequest.Marshal(b, m, deterministic)
 }
-func (dst *DescribeRepoEventsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeRepoEventsRequest.Merge(dst, src)
+func (m *DescribeRepoEventsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeRepoEventsRequest.Merge(m, src)
 }
 func (m *DescribeRepoEventsRequest) XXX_Size() int {
 	return xxx_messageInfo_DescribeRepoEventsRequest.Size(m)
@@ -287,16 +294,17 @@ func (m *DescribeRepoEventsResponse) Reset()         { *m = DescribeRepoEventsRe
 func (m *DescribeRepoEventsResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeRepoEventsResponse) ProtoMessage()    {}
 func (*DescribeRepoEventsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_indexer_b946580389fee661, []int{4}
+	return fileDescriptor_e135b06a8245a758, []int{4}
 }
+
 func (m *DescribeRepoEventsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeRepoEventsResponse.Unmarshal(m, b)
 }
 func (m *DescribeRepoEventsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeRepoEventsResponse.Marshal(b, m, deterministic)
 }
-func (dst *DescribeRepoEventsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeRepoEventsResponse.Merge(dst, src)
+func (m *DescribeRepoEventsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeRepoEventsResponse.Merge(m, src)
 }
 func (m *DescribeRepoEventsResponse) XXX_Size() int {
 	return xxx_messageInfo_DescribeRepoEventsResponse.Size(m)
@@ -434,9 +442,9 @@ var _RepoIndexer_serviceDesc = grpc.ServiceDesc{
 	Metadata: "repo_indexer.proto",
 }
 
-func init() { proto.RegisterFile("repo_indexer.proto", fileDescriptor_repo_indexer_b946580389fee661) }
+func init() { proto.RegisterFile("repo_indexer.proto", fileDescriptor_e135b06a8245a758) }
 
-var fileDescriptor_repo_indexer_b946580389fee661 = []byte{
+var fileDescriptor_e135b06a8245a758 = []byte{
 	// 576 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0xcd, 0x6e, 0xd3, 0x40,
 	0x10, 0x96, 0xd3, 0x36, 0x55, 0x26, 0x04, 0xe8, 0x2a, 0x14, 0x63, 0x05, 0x1a, 0x59, 0x02, 0x55,

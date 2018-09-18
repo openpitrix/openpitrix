@@ -3,13 +3,16 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
-import _ "google.golang.org/genproto/googleapis/api/annotations"
+import (
+	fmt "fmt"
+	math "math"
+
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
+)
 
 import (
 	context "golang.org/x/net/context"
@@ -47,16 +50,17 @@ func (m *CreateRepoRequest) Reset()         { *m = CreateRepoRequest{} }
 func (m *CreateRepoRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateRepoRequest) ProtoMessage()    {}
 func (*CreateRepoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{0}
+	return fileDescriptor_9a6377fc15c39a05, []int{0}
 }
+
 func (m *CreateRepoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateRepoRequest.Unmarshal(m, b)
 }
 func (m *CreateRepoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateRepoRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateRepoRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateRepoRequest.Merge(dst, src)
+func (m *CreateRepoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateRepoRequest.Merge(m, src)
 }
 func (m *CreateRepoRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateRepoRequest.Size(m)
@@ -148,16 +152,17 @@ func (m *CreateRepoResponse) Reset()         { *m = CreateRepoResponse{} }
 func (m *CreateRepoResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateRepoResponse) ProtoMessage()    {}
 func (*CreateRepoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{1}
+	return fileDescriptor_9a6377fc15c39a05, []int{1}
 }
+
 func (m *CreateRepoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateRepoResponse.Unmarshal(m, b)
 }
 func (m *CreateRepoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateRepoResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateRepoResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateRepoResponse.Merge(dst, src)
+func (m *CreateRepoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateRepoResponse.Merge(m, src)
 }
 func (m *CreateRepoResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateRepoResponse.Size(m)
@@ -196,16 +201,17 @@ func (m *ModifyRepoRequest) Reset()         { *m = ModifyRepoRequest{} }
 func (m *ModifyRepoRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyRepoRequest) ProtoMessage()    {}
 func (*ModifyRepoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{2}
+	return fileDescriptor_9a6377fc15c39a05, []int{2}
 }
+
 func (m *ModifyRepoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyRepoRequest.Unmarshal(m, b)
 }
 func (m *ModifyRepoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ModifyRepoRequest.Marshal(b, m, deterministic)
 }
-func (dst *ModifyRepoRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ModifyRepoRequest.Merge(dst, src)
+func (m *ModifyRepoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyRepoRequest.Merge(m, src)
 }
 func (m *ModifyRepoRequest) XXX_Size() int {
 	return xxx_messageInfo_ModifyRepoRequest.Size(m)
@@ -304,16 +310,17 @@ func (m *ModifyRepoResponse) Reset()         { *m = ModifyRepoResponse{} }
 func (m *ModifyRepoResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyRepoResponse) ProtoMessage()    {}
 func (*ModifyRepoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{3}
+	return fileDescriptor_9a6377fc15c39a05, []int{3}
 }
+
 func (m *ModifyRepoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyRepoResponse.Unmarshal(m, b)
 }
 func (m *ModifyRepoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ModifyRepoResponse.Marshal(b, m, deterministic)
 }
-func (dst *ModifyRepoResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ModifyRepoResponse.Merge(dst, src)
+func (m *ModifyRepoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyRepoResponse.Merge(m, src)
 }
 func (m *ModifyRepoResponse) XXX_Size() int {
 	return xxx_messageInfo_ModifyRepoResponse.Size(m)
@@ -342,16 +349,17 @@ func (m *DeleteReposRequest) Reset()         { *m = DeleteReposRequest{} }
 func (m *DeleteReposRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteReposRequest) ProtoMessage()    {}
 func (*DeleteReposRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{4}
+	return fileDescriptor_9a6377fc15c39a05, []int{4}
 }
+
 func (m *DeleteReposRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteReposRequest.Unmarshal(m, b)
 }
 func (m *DeleteReposRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteReposRequest.Marshal(b, m, deterministic)
 }
-func (dst *DeleteReposRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteReposRequest.Merge(dst, src)
+func (m *DeleteReposRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteReposRequest.Merge(m, src)
 }
 func (m *DeleteReposRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteReposRequest.Size(m)
@@ -380,16 +388,17 @@ func (m *DeleteReposResponse) Reset()         { *m = DeleteReposResponse{} }
 func (m *DeleteReposResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteReposResponse) ProtoMessage()    {}
 func (*DeleteReposResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{5}
+	return fileDescriptor_9a6377fc15c39a05, []int{5}
 }
+
 func (m *DeleteReposResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteReposResponse.Unmarshal(m, b)
 }
 func (m *DeleteReposResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteReposResponse.Marshal(b, m, deterministic)
 }
-func (dst *DeleteReposResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteReposResponse.Merge(dst, src)
+func (m *DeleteReposResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteReposResponse.Merge(m, src)
 }
 func (m *DeleteReposResponse) XXX_Size() int {
 	return xxx_messageInfo_DeleteReposResponse.Size(m)
@@ -420,16 +429,17 @@ func (m *RepoLabel) Reset()         { *m = RepoLabel{} }
 func (m *RepoLabel) String() string { return proto.CompactTextString(m) }
 func (*RepoLabel) ProtoMessage()    {}
 func (*RepoLabel) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{6}
+	return fileDescriptor_9a6377fc15c39a05, []int{6}
 }
+
 func (m *RepoLabel) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RepoLabel.Unmarshal(m, b)
 }
 func (m *RepoLabel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RepoLabel.Marshal(b, m, deterministic)
 }
-func (dst *RepoLabel) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RepoLabel.Merge(dst, src)
+func (m *RepoLabel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepoLabel.Merge(m, src)
 }
 func (m *RepoLabel) XXX_Size() int {
 	return xxx_messageInfo_RepoLabel.Size(m)
@@ -474,16 +484,17 @@ func (m *RepoSelector) Reset()         { *m = RepoSelector{} }
 func (m *RepoSelector) String() string { return proto.CompactTextString(m) }
 func (*RepoSelector) ProtoMessage()    {}
 func (*RepoSelector) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{7}
+	return fileDescriptor_9a6377fc15c39a05, []int{7}
 }
+
 func (m *RepoSelector) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RepoSelector.Unmarshal(m, b)
 }
 func (m *RepoSelector) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RepoSelector.Marshal(b, m, deterministic)
 }
-func (dst *RepoSelector) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RepoSelector.Merge(dst, src)
+func (m *RepoSelector) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RepoSelector.Merge(m, src)
 }
 func (m *RepoSelector) XXX_Size() int {
 	return xxx_messageInfo_RepoSelector.Size(m)
@@ -540,16 +551,17 @@ func (m *Repo) Reset()         { *m = Repo{} }
 func (m *Repo) String() string { return proto.CompactTextString(m) }
 func (*Repo) ProtoMessage()    {}
 func (*Repo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{8}
+	return fileDescriptor_9a6377fc15c39a05, []int{8}
 }
+
 func (m *Repo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Repo.Unmarshal(m, b)
 }
 func (m *Repo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Repo.Marshal(b, m, deterministic)
 }
-func (dst *Repo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Repo.Merge(dst, src)
+func (m *Repo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Repo.Merge(m, src)
 }
 func (m *Repo) XXX_Size() int {
 	return xxx_messageInfo_Repo.Size(m)
@@ -689,16 +701,17 @@ func (m *DescribeReposRequest) Reset()         { *m = DescribeReposRequest{} }
 func (m *DescribeReposRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeReposRequest) ProtoMessage()    {}
 func (*DescribeReposRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{9}
+	return fileDescriptor_9a6377fc15c39a05, []int{9}
 }
+
 func (m *DescribeReposRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeReposRequest.Unmarshal(m, b)
 }
 func (m *DescribeReposRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeReposRequest.Marshal(b, m, deterministic)
 }
-func (dst *DescribeReposRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeReposRequest.Merge(dst, src)
+func (m *DescribeReposRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeReposRequest.Merge(m, src)
 }
 func (m *DescribeReposRequest) XXX_Size() int {
 	return xxx_messageInfo_DescribeReposRequest.Size(m)
@@ -819,16 +832,17 @@ func (m *DescribeReposResponse) Reset()         { *m = DescribeReposResponse{} }
 func (m *DescribeReposResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeReposResponse) ProtoMessage()    {}
 func (*DescribeReposResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{10}
+	return fileDescriptor_9a6377fc15c39a05, []int{10}
 }
+
 func (m *DescribeReposResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeReposResponse.Unmarshal(m, b)
 }
 func (m *DescribeReposResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeReposResponse.Marshal(b, m, deterministic)
 }
-func (dst *DescribeReposResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeReposResponse.Merge(dst, src)
+func (m *DescribeReposResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeReposResponse.Merge(m, src)
 }
 func (m *DescribeReposResponse) XXX_Size() int {
 	return xxx_messageInfo_DescribeReposResponse.Size(m)
@@ -866,16 +880,17 @@ func (m *ValidateRepoRequest) Reset()         { *m = ValidateRepoRequest{} }
 func (m *ValidateRepoRequest) String() string { return proto.CompactTextString(m) }
 func (*ValidateRepoRequest) ProtoMessage()    {}
 func (*ValidateRepoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{11}
+	return fileDescriptor_9a6377fc15c39a05, []int{11}
 }
+
 func (m *ValidateRepoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ValidateRepoRequest.Unmarshal(m, b)
 }
 func (m *ValidateRepoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ValidateRepoRequest.Marshal(b, m, deterministic)
 }
-func (dst *ValidateRepoRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ValidateRepoRequest.Merge(dst, src)
+func (m *ValidateRepoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ValidateRepoRequest.Merge(m, src)
 }
 func (m *ValidateRepoRequest) XXX_Size() int {
 	return xxx_messageInfo_ValidateRepoRequest.Size(m)
@@ -919,16 +934,17 @@ func (m *ValidateRepoResponse) Reset()         { *m = ValidateRepoResponse{} }
 func (m *ValidateRepoResponse) String() string { return proto.CompactTextString(m) }
 func (*ValidateRepoResponse) ProtoMessage()    {}
 func (*ValidateRepoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_repo_9a477597f80decb8, []int{12}
+	return fileDescriptor_9a6377fc15c39a05, []int{12}
 }
+
 func (m *ValidateRepoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ValidateRepoResponse.Unmarshal(m, b)
 }
 func (m *ValidateRepoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ValidateRepoResponse.Marshal(b, m, deterministic)
 }
-func (dst *ValidateRepoResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ValidateRepoResponse.Merge(dst, src)
+func (m *ValidateRepoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ValidateRepoResponse.Merge(m, src)
 }
 func (m *ValidateRepoResponse) XXX_Size() int {
 	return xxx_messageInfo_ValidateRepoResponse.Size(m)
@@ -1173,9 +1189,9 @@ var _RepoManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "repo.proto",
 }
 
-func init() { proto.RegisterFile("repo.proto", fileDescriptor_repo_9a477597f80decb8) }
+func init() { proto.RegisterFile("repo.proto", fileDescriptor_9a6377fc15c39a05) }
 
-var fileDescriptor_repo_9a477597f80decb8 = []byte{
+var fileDescriptor_9a6377fc15c39a05 = []byte{
 	// 1140 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x57, 0x4d, 0x6f, 0x1b, 0x45,
 	0x18, 0x96, 0xed, 0x8d, 0x63, 0xbf, 0x6b, 0xa7, 0x74, 0x9a, 0xc2, 0xca, 0x0a, 0x89, 0xb1, 0x40,

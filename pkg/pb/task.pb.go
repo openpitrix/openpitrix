@@ -3,13 +3,16 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
-import _ "google.golang.org/genproto/googleapis/api/annotations"
+import (
+	fmt "fmt"
+	math "math"
+
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
+)
 
 import (
 	context "golang.org/x/net/context"
@@ -44,16 +47,17 @@ func (m *CreateTaskRequest) Reset()         { *m = CreateTaskRequest{} }
 func (m *CreateTaskRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateTaskRequest) ProtoMessage()    {}
 func (*CreateTaskRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8ceab251caf06fbd, []int{0}
+	return fileDescriptor_ce5d8dd45b4a91ff, []int{0}
 }
+
 func (m *CreateTaskRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateTaskRequest.Unmarshal(m, b)
 }
 func (m *CreateTaskRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateTaskRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateTaskRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateTaskRequest.Merge(dst, src)
+func (m *CreateTaskRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateTaskRequest.Merge(m, src)
 }
 func (m *CreateTaskRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateTaskRequest.Size(m)
@@ -125,16 +129,17 @@ func (m *CreateTaskResponse) Reset()         { *m = CreateTaskResponse{} }
 func (m *CreateTaskResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateTaskResponse) ProtoMessage()    {}
 func (*CreateTaskResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8ceab251caf06fbd, []int{1}
+	return fileDescriptor_ce5d8dd45b4a91ff, []int{1}
 }
+
 func (m *CreateTaskResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateTaskResponse.Unmarshal(m, b)
 }
 func (m *CreateTaskResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateTaskResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateTaskResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateTaskResponse.Merge(dst, src)
+func (m *CreateTaskResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateTaskResponse.Merge(m, src)
 }
 func (m *CreateTaskResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateTaskResponse.Size(m)
@@ -170,16 +175,17 @@ func (m *RetryTasksRequest) Reset()         { *m = RetryTasksRequest{} }
 func (m *RetryTasksRequest) String() string { return proto.CompactTextString(m) }
 func (*RetryTasksRequest) ProtoMessage()    {}
 func (*RetryTasksRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8ceab251caf06fbd, []int{2}
+	return fileDescriptor_ce5d8dd45b4a91ff, []int{2}
 }
+
 func (m *RetryTasksRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RetryTasksRequest.Unmarshal(m, b)
 }
 func (m *RetryTasksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RetryTasksRequest.Marshal(b, m, deterministic)
 }
-func (dst *RetryTasksRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RetryTasksRequest.Merge(dst, src)
+func (m *RetryTasksRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RetryTasksRequest.Merge(m, src)
 }
 func (m *RetryTasksRequest) XXX_Size() int {
 	return xxx_messageInfo_RetryTasksRequest.Size(m)
@@ -208,16 +214,17 @@ func (m *RetryTasksResponse) Reset()         { *m = RetryTasksResponse{} }
 func (m *RetryTasksResponse) String() string { return proto.CompactTextString(m) }
 func (*RetryTasksResponse) ProtoMessage()    {}
 func (*RetryTasksResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8ceab251caf06fbd, []int{3}
+	return fileDescriptor_ce5d8dd45b4a91ff, []int{3}
 }
+
 func (m *RetryTasksResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RetryTasksResponse.Unmarshal(m, b)
 }
 func (m *RetryTasksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RetryTasksResponse.Marshal(b, m, deterministic)
 }
-func (dst *RetryTasksResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RetryTasksResponse.Merge(dst, src)
+func (m *RetryTasksResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RetryTasksResponse.Merge(m, src)
 }
 func (m *RetryTasksResponse) XXX_Size() int {
 	return xxx_messageInfo_RetryTasksResponse.Size(m)
@@ -258,16 +265,17 @@ func (m *Task) Reset()         { *m = Task{} }
 func (m *Task) String() string { return proto.CompactTextString(m) }
 func (*Task) ProtoMessage()    {}
 func (*Task) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8ceab251caf06fbd, []int{4}
+	return fileDescriptor_ce5d8dd45b4a91ff, []int{4}
 }
+
 func (m *Task) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Task.Unmarshal(m, b)
 }
 func (m *Task) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Task.Marshal(b, m, deterministic)
 }
-func (dst *Task) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Task.Merge(dst, src)
+func (m *Task) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Task.Merge(m, src)
 }
 func (m *Task) XXX_Size() int {
 	return xxx_messageInfo_Task.Size(m)
@@ -389,16 +397,17 @@ func (m *DescribeTasksRequest) Reset()         { *m = DescribeTasksRequest{} }
 func (m *DescribeTasksRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeTasksRequest) ProtoMessage()    {}
 func (*DescribeTasksRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8ceab251caf06fbd, []int{5}
+	return fileDescriptor_ce5d8dd45b4a91ff, []int{5}
 }
+
 func (m *DescribeTasksRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeTasksRequest.Unmarshal(m, b)
 }
 func (m *DescribeTasksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeTasksRequest.Marshal(b, m, deterministic)
 }
-func (dst *DescribeTasksRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeTasksRequest.Merge(dst, src)
+func (m *DescribeTasksRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeTasksRequest.Merge(m, src)
 }
 func (m *DescribeTasksRequest) XXX_Size() int {
 	return xxx_messageInfo_DescribeTasksRequest.Size(m)
@@ -477,16 +486,17 @@ func (m *DescribeTasksResponse) Reset()         { *m = DescribeTasksResponse{} }
 func (m *DescribeTasksResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeTasksResponse) ProtoMessage()    {}
 func (*DescribeTasksResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_task_8ceab251caf06fbd, []int{6}
+	return fileDescriptor_ce5d8dd45b4a91ff, []int{6}
 }
+
 func (m *DescribeTasksResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeTasksResponse.Unmarshal(m, b)
 }
 func (m *DescribeTasksResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeTasksResponse.Marshal(b, m, deterministic)
 }
-func (dst *DescribeTasksResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeTasksResponse.Merge(dst, src)
+func (m *DescribeTasksResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeTasksResponse.Merge(m, src)
 }
 func (m *DescribeTasksResponse) XXX_Size() int {
 	return xxx_messageInfo_DescribeTasksResponse.Size(m)
@@ -659,9 +669,9 @@ var _TaskManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "task.proto",
 }
 
-func init() { proto.RegisterFile("task.proto", fileDescriptor_task_8ceab251caf06fbd) }
+func init() { proto.RegisterFile("task.proto", fileDescriptor_ce5d8dd45b4a91ff) }
 
-var fileDescriptor_task_8ceab251caf06fbd = []byte{
+var fileDescriptor_ce5d8dd45b4a91ff = []byte{
 	// 775 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x55, 0xcb, 0x4e, 0x1b, 0x49,
 	0x14, 0x95, 0x9f, 0xe0, 0xdb, 0xe3, 0x61, 0x28, 0xc1, 0x4c, 0xcb, 0x62, 0xc0, 0xd3, 0x2b, 0xc4,

@@ -41,8 +41,6 @@ generate: $(PROTO_FILES) Makefile
 	make metadata_frontgate
 	make metadata_pilot
 
-	make iam
-
 	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:../pkg/pb ${PROTO_FILES}
 	protoc $(PROTOC_FLAGS) --grpc-gateway_out=logtostderr=true,allow_delete_body=true:../pkg/pb ${PROTO_FILES}
 	protoc $(PROTOC_FLAGS) --swagger_out=logtostderr=true,allow_delete_body=true:../pkg/apigateway/spec ${PROTO_FILES}
@@ -55,6 +53,8 @@ generate: $(PROTO_FILES) Makefile
 	cd ../test/ && swagger generate client -f ../pkg/apigateway/spec/api.swagger.json -A openpitrix
 	# need to exec chown finally
 	chown -R $${USER_ID}:$${GROUP_ID} ../pkg ../test
+	# format generated files
+	goimports -l -w -e -local=openpitrix ../pkg/pb
 	@echo "ok"
 
 metadata_types: ${METADATA_TYPES_PBFILES}
@@ -82,13 +82,6 @@ metadata_pilot: ${METADATA_PILOT_PBFILES}
 	rm -rf   $(GOPATH)/src/openpitrix.io/openpitrix/pkg/pb/metadata/pilot/*
 	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:$(GOPATH)/src ${METADATA_PILOT_PBFILES}
 	@echo "ok"
-
-iam: ${IAM_PBFILES}
-	mkdir -p $(GOPATH)/src/openpitrix.io/openpitrix/pkg/pb/iam
-	rm -rf   $(GOPATH)/src/openpitrix.io/openpitrix/pkg/pb/iam/*
-	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:$(GOPATH)/src ${IAM_PBFILES}
-	@echo "ok"
-
 
 tools:
 	docker pull openpitrix/openpitrix:builder

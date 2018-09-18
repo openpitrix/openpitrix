@@ -11,6 +11,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
+	"openpitrix.io/openpitrix/test/client/account_manager"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
@@ -19,6 +20,7 @@ import (
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/client/task_manager"
+	"openpitrix.io/openpitrix/test/client/token_manager"
 )
 
 // Default openpitrix HTTP client.
@@ -62,6 +64,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 	cli := new(Openpitrix)
 	cli.Transport = transport
 
+	cli.AccountManager = account_manager.New(transport, formats)
+
 	cli.AppManager = app_manager.New(transport, formats)
 
 	cli.CategoryManager = category_manager.New(transport, formats)
@@ -77,6 +81,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 	cli.RuntimeManager = runtime_manager.New(transport, formats)
 
 	cli.TaskManager = task_manager.New(transport, formats)
+
+	cli.TokenManager = token_manager.New(transport, formats)
 
 	return cli
 }
@@ -122,6 +128,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // Openpitrix is a client for openpitrix
 type Openpitrix struct {
+	AccountManager *account_manager.Client
+
 	AppManager *app_manager.Client
 
 	CategoryManager *category_manager.Client
@@ -138,12 +146,16 @@ type Openpitrix struct {
 
 	TaskManager *task_manager.Client
 
+	TokenManager *token_manager.Client
+
 	Transport runtime.ClientTransport
 }
 
 // SetTransport changes the transport on the client and all its subresources
 func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
+
+	c.AccountManager.SetTransport(transport)
 
 	c.AppManager.SetTransport(transport)
 
@@ -160,5 +172,7 @@ func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 	c.RuntimeManager.SetTransport(transport)
 
 	c.TaskManager.SetTransport(transport)
+
+	c.TokenManager.SetTransport(transport)
 
 }

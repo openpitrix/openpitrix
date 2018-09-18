@@ -53,6 +53,7 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Task service http://%s:%d", constants.TaskManagerHost, constants.TaskManagerPort)
 	logger.Info(nil, "Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
 	logger.Info(nil, "Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
+	logger.Info(nil, "IAM service http://%s:%d", constants.IAMServiceHost, constants.IAMServicePort)
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
 	cfg.Mysql.Disable = true
@@ -175,6 +176,12 @@ func (s *Server) mainHandler() http.Handler {
 	}, {
 		pb.RegisterRepoIndexerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort),
+	}, {
+		pb.RegisterTokenManagerHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.IAMServiceHost, constants.IAMServicePort),
+	}, {
+		pb.RegisterAccountManagerHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.IAMServiceHost, constants.IAMServicePort),
 	}, {
 		pb.RegisterClusterManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort),

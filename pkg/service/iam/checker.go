@@ -9,64 +9,64 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
-	"openpitrix.io/openpitrix/pkg/pb/iam"
+	"openpitrix.io/openpitrix/pkg/pb"
 )
 
 func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
-	case *pbiam.DescribeUsersRequest:
+	case *pb.DescribeUsersRequest:
 		return manager.NewChecker(ctx, r).
 			Required().
 			Exec()
-	case *pbiam.ModifyUserRequest:
+	case *pb.ModifyUserRequest:
 		return manager.NewChecker(ctx, r).
 			Required("user_id").
 			Exec()
-	case *pbiam.DeleteUsersRequest:
+	case *pb.DeleteUsersRequest:
 		return manager.NewChecker(ctx, r).
 			Required("user_id").
 			Exec()
-	case *pbiam.CreateUserRequest:
+	case *pb.CreateUserRequest:
 		return manager.NewChecker(ctx, r).
 			Required("email", "password").
 			Exec()
-	case *pbiam.CreatePasswordResetRequest:
+	case *pb.CreatePasswordResetRequest:
 		return manager.NewChecker(ctx, r).
 			Required("user_id", "password").
 			Exec()
-	case *pbiam.ChangePasswordRequest:
+	case *pb.ChangePasswordRequest:
 		return manager.NewChecker(ctx, r).
 			Required("new_password", "reset_id").
 			Exec()
-	case *pbiam.GetPasswordResetRequest:
+	case *pb.GetPasswordResetRequest:
 		return manager.NewChecker(ctx, r).
 			Required("reset_id").
 			Exec()
-	case *pbiam.ValidateUserPasswordRequest:
+	case *pb.ValidateUserPasswordRequest:
 		return manager.NewChecker(ctx, r).
 			Required("email", "password").
 			Exec()
-	case *pbiam.DescribeGroupsRequest:
+	case *pb.DescribeGroupsRequest:
 		return manager.NewChecker(ctx, r).
 			Required().
 			Exec()
-	case *pbiam.CreateGroupRequest:
+	case *pb.CreateGroupRequest:
 		return manager.NewChecker(ctx, r).
 			Required("name").
 			Exec()
-	case *pbiam.ModifyGroupRequest:
+	case *pb.ModifyGroupRequest:
 		return manager.NewChecker(ctx, r).
 			Required("group_id").
 			Exec()
-	case *pbiam.DeleteGroupsRequest:
+	case *pb.DeleteGroupsRequest:
 		return manager.NewChecker(ctx, r).
 			Required("group_id").
 			Exec()
-	case *pbiam.JoinGroupRequest:
+	case *pb.JoinGroupRequest:
 		return manager.NewChecker(ctx, r).
 			Required("group_id", "user_id").
 			Exec()
-	case *pbiam.LeaveGroupRequest:
+	case *pb.LeaveGroupRequest:
 		return manager.NewChecker(ctx, r).
 			Required("group_id", "user_id").
 			Exec()
