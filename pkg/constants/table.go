@@ -27,4 +27,10 @@ const (
 	TableRuntimeCredential   = "runtime_credential"
 	TableRuntimeLabel        = "runtime_label"
 	TableTask                = "task"
+
+	TableUser              = "user"
+	TableGroupMember       = "group_member"
+	TableUserPasswordReset = "user_password_reset"
+	TableGroup             = "group"
+	TableUserClient        = "user_client"
 )
