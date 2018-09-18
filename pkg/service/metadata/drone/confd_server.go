@@ -108,7 +108,13 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 		return fmt.Errorf("drone: config is nil")
 	}
 
-	if s := p.backendConfig.Type; s != backends.Etcdv3BackendType {
+	switch p.backendConfig.Type {
+	case backends.Etcdv3BackendType:
+		// etcd: OK
+	case backends.MetadBackendType:
+		// metad: OK
+	default:
+		s := p.backendConfig.Type
 		logger.Error(nil, "ConfdServer: unsupport confd backend: "+s)
 		return fmt.Errorf("drone: unsupport confd backend: %s", s)
 	}

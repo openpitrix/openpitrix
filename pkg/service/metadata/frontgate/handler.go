@@ -355,6 +355,32 @@ func (p *Server) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata, out *pbt
 	return nil
 }
 
+func (p *Server) RegisterMetadataMapping(in *pbtypes.SubTask_RegisterMetadata, out *pbtypes.Empty) error {
+	logger.Info(nil, funcutil.CallerName(1))
+
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
+	if err != nil {
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	err = etcdClient.RegisterMetadataMapping(in)
+	if err != nil {
+		if etcdClient.isHaltErr(err) {
+			p.etcd.ClearClient(etcdClient)
+		}
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	return nil
+}
+
 func (p *EtcdClient) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata) error {
 	logger.Info(nil, funcutil.CallerName(1))
 
@@ -366,6 +392,26 @@ func (p *EtcdClient) RegisterMetadata(in *pbtypes.SubTask_RegisterMetadata) erro
 	}
 
 	err = p.SetValues(jsonmap.JsonMap(m).ToMapString("/"))
+	if err != nil {
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (p *EtcdClient) RegisterMetadataMapping(in *pbtypes.SubTask_RegisterMetadata) error {
+	logger.Info(nil, funcutil.CallerName(1))
+
+	var m = map[string]interface{}{}
+	err := json.Unmarshal([]byte(in.Cnodes), &m)
+	if err != nil {
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	const metadMappingPrefix = "/_metad/mapping/default"
+	err = p.SetValuesWithPrefix(metadMappingPrefix, jsonmap.JsonMap(m).ToMapString("/"))
 	if err != nil {
 		logger.Warn(nil, "%+v", err)
 		return err
@@ -400,6 +446,33 @@ func (p *Server) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata, out 
 	return nil
 }
 
+func (p *Server) DeregisterMetadataMapping(in *pbtypes.SubTask_DeregisterMetadata, out *pbtypes.Empty) error {
+	logger.Info(nil, funcutil.CallerName(1))
+
+	etcdConfig := p.cfg.Get().GetEtcdConfig()
+	etcdClient, err := p.etcd.GetClient(
+		pkgGetEtcdEndpointsFromConfig(etcdConfig),
+		time.Duration(etcdConfig.GetTimeoutSeconds())*time.Second,
+		int(etcdConfig.GetMaxTxnOps()),
+	)
+	if err != nil {
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	err = etcdClient.DeregisterMetadataMapping(in)
+	if err != nil {
+		if etcdClient.isHaltErr(err) {
+			p.etcd.ClearClient(etcdClient)
+		}
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	return nil
+	panic("TODO")
+}
+
 func (p *EtcdClient) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata) error {
 	logger.Info(nil, funcutil.CallerName(1))
 
@@ -413,6 +486,32 @@ func (p *EtcdClient) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata) 
 	var keyPrefixs []string
 	for key, _ := range jsonmap.JsonMap(m).ToMapString("/") {
 		keyPrefixs = append(keyPrefixs, key)
+	}
+
+	err = p.DelValuesWithPrefix(keyPrefixs...)
+	if err != nil {
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (p *EtcdClient) DeregisterMetadataMapping(in *pbtypes.SubTask_DeregisterMetadata) error {
+	logger.Info(nil, funcutil.CallerName(1))
+
+	var m = map[string]interface{}{}
+	err := json.Unmarshal([]byte(in.Cnodes), &m)
+	if err != nil {
+		logger.Warn(nil, "%+v", err)
+		return err
+	}
+
+	var keyPrefixs []string
+	const metadMappingPrefix = "/_metad/mapping/default"
+
+	for key, _ := range jsonmap.JsonMap(m).ToMapString("/") {
+		keyPrefixs = append(keyPrefixs, metadMappingPrefix+key)
 	}
 
 	err = p.DelValuesWithPrefix(keyPrefixs...)
