@@ -7,36 +7,41 @@ package senderutil
 import (
 	"context"
 	"encoding/json"
-	"net/http"
 
-	context2 "golang.org/x/net/context"
 	"google.golang.org/grpc/metadata"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
-const senderKey = "sender"
+const (
+	SenderKey = "sender"
+)
 
-type Info struct {
-	UserId string `json:"user_id"`
+type Sender struct {
+	UserId string `json:"user_id,omitempty"`
+	Role   string `json:"role,omitempty"`
 }
 
-func GetSystemUser() *Info {
-	return &Info{UserId: "system"}
+func GetSystemUser() *Sender {
+	return &Sender{UserId: "system", Role: constants.RoleGlobalAdmin}
 }
 
-func (info *Info) ToJson() string {
-	ret, _ := json.Marshal(info)
-	return string(ret)
+func (s *Sender) ToJson() string {
+	return jsonutil.ToString(s)
 }
 
-func GetSenderFromContext(ctx context.Context) *Info {
-	values := ctxutil.GetValueFromContext(ctx, senderKey)
-	//logger.Debug(nil, "%+v", md[senderKey])
+func (s *Sender) IsGlobalAdmin() bool {
+	return s.Role == constants.RoleGlobalAdmin
+}
+
+func GetSenderFromContext(ctx context.Context) *Sender {
+	values := ctxutil.GetValueFromContext(ctx, SenderKey)
 	if len(values) == 0 {
 		return nil
 	}
-	sender := Info{}
+	sender := Sender{}
 	err := json.Unmarshal([]byte(values[0]), &sender)
 	if err != nil {
 		panic(err)
@@ -44,25 +49,15 @@ func GetSenderFromContext(ctx context.Context) *Info {
 	return &sender
 }
 
-func AuthUserInfo(ctx context.Context, authKey string) *Info {
-	//logger.Debug(ctx, "got auth key: %+v", authKey)
-	// TODO: validate auth key && get user info from db
-	return GetSystemUser()
-}
-
-func ServeMuxSetSender(ctx context2.Context, request *http.Request) metadata.MD {
-	md := metadata.MD{}
-	authKey := request.Header.Get("X-Auth-Key")
-	user := AuthUserInfo(ctx, authKey)
-	md[senderKey] = []string{user.ToJson()}
-	return md
-}
-
-func ContextWithSender(ctx context.Context, user *Info) context.Context {
+func ContextWithSender(ctx context.Context, user *Sender) context.Context {
+	if user == nil {
+		return ctx
+	}
+	ctx = context.WithValue(ctx, SenderKey, []string{user.ToJson()})
 	md, ok := metadata.FromOutgoingContext(ctx)
 	if !ok {
 		md = metadata.MD{}
 	}
-	md[senderKey] = []string{user.ToJson()}
+	md[SenderKey] = []string{user.ToJson()}
 	return metadata.NewOutgoingContext(ctx, md)
 }

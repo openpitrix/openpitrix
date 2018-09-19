@@ -189,3 +189,15 @@ const (
 const (
 	RetryInterval = 3 * time.Second
 )
+
+var SupportRoles = []string{
+	RoleUser,
+	RoleDeveloper,
+	RoleGlobalAdmin,
+}
+
+const (
+	RoleUser        = "user"
+	RoleDeveloper   = "developer"
+	RoleGlobalAdmin = "global_admin"
+)

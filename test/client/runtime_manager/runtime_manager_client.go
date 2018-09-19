@@ -27,7 +27,7 @@ type Client struct {
 /*
 CreateRuntime creates runtime
 */
-func (a *Client) CreateRuntime(params *CreateRuntimeParams) (*CreateRuntimeOK, error) {
+func (a *Client) CreateRuntime(params *CreateRuntimeParams, authInfo runtime.ClientAuthInfoWriter) (*CreateRuntimeOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateRuntimeParams()
@@ -42,6 +42,7 @@ func (a *Client) CreateRuntime(params *CreateRuntimeParams) (*CreateRuntimeOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateRuntimeReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -55,7 +56,7 @@ func (a *Client) CreateRuntime(params *CreateRuntimeParams) (*CreateRuntimeOK, e
 /*
 DeleteRuntimes deletes runtimes
 */
-func (a *Client) DeleteRuntimes(params *DeleteRuntimesParams) (*DeleteRuntimesOK, error) {
+func (a *Client) DeleteRuntimes(params *DeleteRuntimesParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteRuntimesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteRuntimesParams()
@@ -70,6 +71,7 @@ func (a *Client) DeleteRuntimes(params *DeleteRuntimesParams) (*DeleteRuntimesOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteRuntimesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -83,7 +85,7 @@ func (a *Client) DeleteRuntimes(params *DeleteRuntimesParams) (*DeleteRuntimesOK
 /*
 DescribeRuntimeProviderZones describes runtime provider zones
 */
-func (a *Client) DescribeRuntimeProviderZones(params *DescribeRuntimeProviderZonesParams) (*DescribeRuntimeProviderZonesOK, error) {
+func (a *Client) DescribeRuntimeProviderZones(params *DescribeRuntimeProviderZonesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRuntimeProviderZonesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeRuntimeProviderZonesParams()
@@ -98,6 +100,7 @@ func (a *Client) DescribeRuntimeProviderZones(params *DescribeRuntimeProviderZon
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeRuntimeProviderZonesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -111,7 +114,7 @@ func (a *Client) DescribeRuntimeProviderZones(params *DescribeRuntimeProviderZon
 /*
 DescribeRuntimes describes runtime
 */
-func (a *Client) DescribeRuntimes(params *DescribeRuntimesParams) (*DescribeRuntimesOK, error) {
+func (a *Client) DescribeRuntimes(params *DescribeRuntimesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRuntimesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeRuntimesParams()
@@ -126,6 +129,7 @@ func (a *Client) DescribeRuntimes(params *DescribeRuntimesParams) (*DescribeRunt
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeRuntimesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -139,7 +143,7 @@ func (a *Client) DescribeRuntimes(params *DescribeRuntimesParams) (*DescribeRunt
 /*
 GetRuntimeStatistics gets runtime statistics
 */
-func (a *Client) GetRuntimeStatistics(params *GetRuntimeStatisticsParams) (*GetRuntimeStatisticsOK, error) {
+func (a *Client) GetRuntimeStatistics(params *GetRuntimeStatisticsParams, authInfo runtime.ClientAuthInfoWriter) (*GetRuntimeStatisticsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetRuntimeStatisticsParams()
@@ -154,6 +158,7 @@ func (a *Client) GetRuntimeStatistics(params *GetRuntimeStatisticsParams) (*GetR
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &GetRuntimeStatisticsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -167,7 +172,7 @@ func (a *Client) GetRuntimeStatistics(params *GetRuntimeStatisticsParams) (*GetR
 /*
 ModifyRuntime modifies runtime
 */
-func (a *Client) ModifyRuntime(params *ModifyRuntimeParams) (*ModifyRuntimeOK, error) {
+func (a *Client) ModifyRuntime(params *ModifyRuntimeParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyRuntimeOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewModifyRuntimeParams()
@@ -182,6 +187,7 @@ func (a *Client) ModifyRuntime(params *ModifyRuntimeParams) (*ModifyRuntimeOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyRuntimeReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/koding/multiconfig"
 
@@ -19,6 +20,13 @@ type Config struct {
 	Grpc  GrpcConfig
 	Mysql MysqlConfig
 	Etcd  EtcdConfig
+	IAM   IAMConfig
+}
+
+type IAMConfig struct {
+	SecretKey              string        `default:"OpenPitrix-lC4LipAXPYsuqw5F"`
+	ExpireTime             time.Duration `default:"2h"`
+	RefreshTokenExpireTime time.Duration `default:"336h"` // default is 2 week
 }
 
 type LogConfig struct {

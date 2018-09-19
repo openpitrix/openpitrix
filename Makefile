@@ -27,6 +27,7 @@ endef
 COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-pilot-service openpitrix-iam-service
 COMPOSE_DB_CTRL=openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl
 CMD?=...
+WITH_METADATA?=yes
 comma:= ,
 empty:=
 space:= $(empty) $(empty)
@@ -106,7 +107,9 @@ build: fmt build-flyway ## Build all openpitrix images
 	mkdir -p ./tmp/bin
 	$(call get_build_flags)
 	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
+ifneq ($(WITH_METADATA),no)
 	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(TRAG.Gopkg)/metadata/cmd/...
+endif
 	docker build -t $(TARG.Name) -t $(TARG.Name):metadata -f ./Dockerfile.dev ./tmp/bin
 	docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"

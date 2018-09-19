@@ -27,7 +27,7 @@ type Client struct {
 /*
 DescribeTasks describes tasks with filter
 */
-func (a *Client) DescribeTasks(params *DescribeTasksParams) (*DescribeTasksOK, error) {
+func (a *Client) DescribeTasks(params *DescribeTasksParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeTasksOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeTasksParams()
@@ -42,6 +42,7 @@ func (a *Client) DescribeTasks(params *DescribeTasksParams) (*DescribeTasksOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeTasksReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -55,7 +56,7 @@ func (a *Client) DescribeTasks(params *DescribeTasksParams) (*DescribeTasksOK, e
 /*
 RetryTasks retries tasks
 */
-func (a *Client) RetryTasks(params *RetryTasksParams) (*RetryTasksOK, error) {
+func (a *Client) RetryTasks(params *RetryTasksParams, authInfo runtime.ClientAuthInfoWriter) (*RetryTasksOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRetryTasksParams()
@@ -70,6 +71,7 @@ func (a *Client) RetryTasks(params *RetryTasksParams) (*RetryTasksOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &RetryTasksReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

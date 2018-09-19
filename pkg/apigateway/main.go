@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httputil"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,11 +20,13 @@ import (
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	staticSpec "openpitrix.io/openpitrix/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/apigateway/swagger-ui"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -34,6 +37,7 @@ import (
 )
 
 type Server struct {
+	config.IAMConfig
 }
 
 type register struct {
@@ -58,7 +62,9 @@ func Serve(cfg *config.Config) {
 
 	cfg.Mysql.Disable = true
 	pi.SetGlobal(cfg)
-	s := Server{}
+	s := Server{
+		cfg.IAM,
+	}
 
 	if err := s.run(); err != nil {
 		logger.Critical(nil, "Api gateway run failed: %+v", err)
@@ -66,7 +72,10 @@ func Serve(cfg *config.Config) {
 	}
 }
 
-const RequestIdKey = "X-Request-Id"
+const (
+	Authorization = "Authorization"
+	RequestIdKey  = "X-Request-Id"
+)
 
 func log() gin.HandlerFunc {
 	l := logger.NewLogger()
@@ -107,6 +116,35 @@ func log() gin.HandlerFunc {
 	}
 }
 
+func serveMuxSetSender(mux *runtime.ServeMux, key string) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		var err error
+		ctx := req.Context()
+		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+
+		auth := strings.SplitN(req.Header.Get(Authorization), " ", 2)
+		if auth[0] != "Bearer" {
+			err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAuthFailure)
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		sender, err := senderutil.Validate(key, auth[1])
+		if err != nil {
+			if err == senderutil.ErrExpired {
+				err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAccessTokenExpired)
+			} else {
+				err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAuthFailure)
+			}
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		req.Header.Set(senderutil.SenderKey, sender.ToJson())
+		req.Header.Del(Authorization)
+
+		mux.ServeHTTP(w, req)
+	})
+}
+
 func recovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
@@ -144,12 +182,11 @@ func (s *Server) run() error {
 
 func (s *Server) mainHandler() http.Handler {
 	var gwmux = runtime.NewServeMux(
-		runtime.WithMetadata(senderutil.ServeMuxSetSender),
-		runtime.WithIncomingHeaderMatcher(func(s string) (string, bool) {
-			if s == RequestIdKey {
-				return RequestIdKey, true
-			}
-			return "", false
+		runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
+			return metadata.Pairs(
+				senderutil.SenderKey, req.Header.Get(senderutil.SenderKey),
+				RequestIdKey, req.Header.Get(RequestIdKey),
+			)
 		}),
 	)
 	var opts = manager.ClientOptions
@@ -197,8 +234,8 @@ func (s *Server) mainHandler() http.Handler {
 	tm := topic.NewTopicManager(pi.Global().Etcd(nil))
 	go tm.Run()
 
-	mux.Handle("/", gwmux)
-	mux.HandleFunc("/v1/io", tm.HandleEvent)
+	mux.Handle("/", serveMuxSetSender(gwmux, s.IAMConfig.SecretKey))
+	mux.HandleFunc("/v1/io", tm.HandleEvent(s.IAMConfig.SecretKey))
 
 	return mux
 }

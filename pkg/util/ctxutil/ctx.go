@@ -40,6 +40,10 @@ func GetValueFromContext(ctx context.Context, key string) []string {
 	if ok && len(m) > 0 {
 		return m
 	}
+	s, ok := ctx.Value(key).(string)
+	if ok && len(s) > 0 {
+		return []string{s}
+	}
 	return []string{}
 }
 
@@ -80,7 +84,7 @@ func GetRequestId(ctx context.Context) string {
 }
 
 func SetRequestId(ctx context.Context, requestId string) context.Context {
-	ctx = context.WithValue(ctx, requestIdKey, requestId)
+	ctx = context.WithValue(ctx, requestIdKey, []string{requestId})
 	md, ok := metadata.FromOutgoingContext(ctx)
 	if !ok {
 		md = metadata.MD{}

@@ -27,7 +27,7 @@ type Client struct {
 /*
 CancelAppVersion cancels app version
 */
-func (a *Client) CancelAppVersion(params *CancelAppVersionParams) (*CancelAppVersionOK, error) {
+func (a *Client) CancelAppVersion(params *CancelAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*CancelAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCancelAppVersionParams()
@@ -42,6 +42,7 @@ func (a *Client) CancelAppVersion(params *CancelAppVersionParams) (*CancelAppVer
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CancelAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -55,7 +56,7 @@ func (a *Client) CancelAppVersion(params *CancelAppVersionParams) (*CancelAppVer
 /*
 CreateApp creates app
 */
-func (a *Client) CreateApp(params *CreateAppParams) (*CreateAppOK, error) {
+func (a *Client) CreateApp(params *CreateAppParams, authInfo runtime.ClientAuthInfoWriter) (*CreateAppOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateAppParams()
@@ -70,6 +71,7 @@ func (a *Client) CreateApp(params *CreateAppParams) (*CreateAppOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateAppReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -83,7 +85,7 @@ func (a *Client) CreateApp(params *CreateAppParams) (*CreateAppOK, error) {
 /*
 CreateAppVersion creates app version
 */
-func (a *Client) CreateAppVersion(params *CreateAppVersionParams) (*CreateAppVersionOK, error) {
+func (a *Client) CreateAppVersion(params *CreateAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*CreateAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateAppVersionParams()
@@ -98,6 +100,7 @@ func (a *Client) CreateAppVersion(params *CreateAppVersionParams) (*CreateAppVer
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -111,7 +114,7 @@ func (a *Client) CreateAppVersion(params *CreateAppVersionParams) (*CreateAppVer
 /*
 DeleteAppVersion deletes app version
 */
-func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams) (*DeleteAppVersionOK, error) {
+func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteAppVersionParams()
@@ -126,6 +129,7 @@ func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams) (*DeleteAppVer
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -139,7 +143,7 @@ func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams) (*DeleteAppVer
 /*
 DeleteAppVersions deletes app versions
 */
-func (a *Client) DeleteAppVersions(params *DeleteAppVersionsParams) (*DeleteAppVersionsOK, error) {
+func (a *Client) DeleteAppVersions(params *DeleteAppVersionsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteAppVersionsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteAppVersionsParams()
@@ -154,6 +158,7 @@ func (a *Client) DeleteAppVersions(params *DeleteAppVersionsParams) (*DeleteAppV
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteAppVersionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -167,7 +172,7 @@ func (a *Client) DeleteAppVersions(params *DeleteAppVersionsParams) (*DeleteAppV
 /*
 DeleteApps deletes apps
 */
-func (a *Client) DeleteApps(params *DeleteAppsParams) (*DeleteAppsOK, error) {
+func (a *Client) DeleteApps(params *DeleteAppsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteAppsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteAppsParams()
@@ -182,6 +187,7 @@ func (a *Client) DeleteApps(params *DeleteAppsParams) (*DeleteAppsOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteAppsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -195,7 +201,7 @@ func (a *Client) DeleteApps(params *DeleteAppsParams) (*DeleteAppsOK, error) {
 /*
 DescribeAppVersions describes app versions with filter
 */
-func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams) (*DescribeAppVersionsOK, error) {
+func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeAppVersionsParams()
@@ -210,6 +216,7 @@ func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams) (*Descri
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeAppVersionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -223,7 +230,7 @@ func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams) (*Descri
 /*
 DescribeApps describes apps with filter
 */
-func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, error) {
+func (a *Client) DescribeApps(params *DescribeAppsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeAppsParams()
@@ -238,6 +245,7 @@ func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, erro
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeAppsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -251,7 +259,7 @@ func (a *Client) DescribeApps(params *DescribeAppsParams) (*DescribeAppsOK, erro
 /*
 GetAppStatistics gets app statistics
 */
-func (a *Client) GetAppStatistics(params *GetAppStatisticsParams) (*GetAppStatisticsOK, error) {
+func (a *Client) GetAppStatistics(params *GetAppStatisticsParams, authInfo runtime.ClientAuthInfoWriter) (*GetAppStatisticsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetAppStatisticsParams()
@@ -266,6 +274,7 @@ func (a *Client) GetAppStatistics(params *GetAppStatisticsParams) (*GetAppStatis
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &GetAppStatisticsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -279,7 +288,7 @@ func (a *Client) GetAppStatistics(params *GetAppStatisticsParams) (*GetAppStatis
 /*
 GetAppVersionPackage gets the package content of app version
 */
-func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams) (*GetAppVersionPackageOK, error) {
+func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams, authInfo runtime.ClientAuthInfoWriter) (*GetAppVersionPackageOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetAppVersionPackageParams()
@@ -294,6 +303,7 @@ func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams) (*GetA
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &GetAppVersionPackageReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -307,7 +317,7 @@ func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams) (*GetA
 /*
 GetAppVersionPackageFiles gets the package files content of app version
 */
-func (a *Client) GetAppVersionPackageFiles(params *GetAppVersionPackageFilesParams) (*GetAppVersionPackageFilesOK, error) {
+func (a *Client) GetAppVersionPackageFiles(params *GetAppVersionPackageFilesParams, authInfo runtime.ClientAuthInfoWriter) (*GetAppVersionPackageFilesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetAppVersionPackageFilesParams()
@@ -322,6 +332,7 @@ func (a *Client) GetAppVersionPackageFiles(params *GetAppVersionPackageFilesPara
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &GetAppVersionPackageFilesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -335,7 +346,7 @@ func (a *Client) GetAppVersionPackageFiles(params *GetAppVersionPackageFilesPara
 /*
 ModifyApp modifies app
 */
-func (a *Client) ModifyApp(params *ModifyAppParams) (*ModifyAppOK, error) {
+func (a *Client) ModifyApp(params *ModifyAppParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyAppOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewModifyAppParams()
@@ -350,6 +361,7 @@ func (a *Client) ModifyApp(params *ModifyAppParams) (*ModifyAppOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyAppReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -363,7 +375,7 @@ func (a *Client) ModifyApp(params *ModifyAppParams) (*ModifyAppOK, error) {
 /*
 ModifyAppVersion modifies app version
 */
-func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams) (*ModifyAppVersionOK, error) {
+func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewModifyAppVersionParams()
@@ -378,6 +390,7 @@ func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams) (*ModifyAppVer
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -391,7 +404,7 @@ func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams) (*ModifyAppVer
 /*
 PassAppVersion passes app version
 */
-func (a *Client) PassAppVersion(params *PassAppVersionParams) (*PassAppVersionOK, error) {
+func (a *Client) PassAppVersion(params *PassAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*PassAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPassAppVersionParams()
@@ -406,6 +419,7 @@ func (a *Client) PassAppVersion(params *PassAppVersionParams) (*PassAppVersionOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &PassAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -419,7 +433,7 @@ func (a *Client) PassAppVersion(params *PassAppVersionParams) (*PassAppVersionOK
 /*
 RecoverAppVersion recovers app version
 */
-func (a *Client) RecoverAppVersion(params *RecoverAppVersionParams) (*RecoverAppVersionOK, error) {
+func (a *Client) RecoverAppVersion(params *RecoverAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*RecoverAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRecoverAppVersionParams()
@@ -434,6 +448,7 @@ func (a *Client) RecoverAppVersion(params *RecoverAppVersionParams) (*RecoverApp
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &RecoverAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -447,7 +462,7 @@ func (a *Client) RecoverAppVersion(params *RecoverAppVersionParams) (*RecoverApp
 /*
 RejectAppVersion rejects app version
 */
-func (a *Client) RejectAppVersion(params *RejectAppVersionParams) (*RejectAppVersionOK, error) {
+func (a *Client) RejectAppVersion(params *RejectAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*RejectAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRejectAppVersionParams()
@@ -462,6 +477,7 @@ func (a *Client) RejectAppVersion(params *RejectAppVersionParams) (*RejectAppVer
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &RejectAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -475,7 +491,7 @@ func (a *Client) RejectAppVersion(params *RejectAppVersionParams) (*RejectAppVer
 /*
 ReleaseAppVersion releases app version
 */
-func (a *Client) ReleaseAppVersion(params *ReleaseAppVersionParams) (*ReleaseAppVersionOK, error) {
+func (a *Client) ReleaseAppVersion(params *ReleaseAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*ReleaseAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewReleaseAppVersionParams()
@@ -490,6 +506,7 @@ func (a *Client) ReleaseAppVersion(params *ReleaseAppVersionParams) (*ReleaseApp
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ReleaseAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -503,7 +520,7 @@ func (a *Client) ReleaseAppVersion(params *ReleaseAppVersionParams) (*ReleaseApp
 /*
 SubmitAppVersion submits app version
 */
-func (a *Client) SubmitAppVersion(params *SubmitAppVersionParams) (*SubmitAppVersionOK, error) {
+func (a *Client) SubmitAppVersion(params *SubmitAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*SubmitAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSubmitAppVersionParams()
@@ -518,6 +535,7 @@ func (a *Client) SubmitAppVersion(params *SubmitAppVersionParams) (*SubmitAppVer
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &SubmitAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -531,7 +549,7 @@ func (a *Client) SubmitAppVersion(params *SubmitAppVersionParams) (*SubmitAppVer
 /*
 SuspendAppVersion suspends app version
 */
-func (a *Client) SuspendAppVersion(params *SuspendAppVersionParams) (*SuspendAppVersionOK, error) {
+func (a *Client) SuspendAppVersion(params *SuspendAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*SuspendAppVersionOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSuspendAppVersionParams()
@@ -546,6 +564,7 @@ func (a *Client) SuspendAppVersion(params *SuspendAppVersionParams) (*SuspendApp
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &SuspendAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

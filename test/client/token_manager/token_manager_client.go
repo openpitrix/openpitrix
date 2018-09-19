@@ -27,7 +27,7 @@ type Client struct {
 /*
 Auth auth API
 */
-func (a *Client) Auth(params *AuthParams) (*AuthOK, error) {
+func (a *Client) Auth(params *AuthParams, authInfo runtime.ClientAuthInfoWriter) (*AuthOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewAuthParams()
@@ -42,6 +42,7 @@ func (a *Client) Auth(params *AuthParams) (*AuthOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &AuthReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -55,7 +56,7 @@ func (a *Client) Auth(params *AuthParams) (*AuthOK, error) {
 /*
 CreateClient create client API
 */
-func (a *Client) CreateClient(params *CreateClientParams) (*CreateClientOK, error) {
+func (a *Client) CreateClient(params *CreateClientParams, authInfo runtime.ClientAuthInfoWriter) (*CreateClientOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateClientParams()
@@ -70,6 +71,7 @@ func (a *Client) CreateClient(params *CreateClientParams) (*CreateClientOK, erro
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateClientReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -83,7 +85,7 @@ func (a *Client) CreateClient(params *CreateClientParams) (*CreateClientOK, erro
 /*
 Token token API
 */
-func (a *Client) Token(params *TokenParams) (*TokenOK, error) {
+func (a *Client) Token(params *TokenParams, authInfo runtime.ClientAuthInfoWriter) (*TokenOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTokenParams()
@@ -98,6 +100,7 @@ func (a *Client) Token(params *TokenParams) (*TokenOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &TokenReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

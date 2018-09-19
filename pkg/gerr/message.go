@@ -21,6 +21,14 @@ func (em ErrorMessage) Message(locale string, a ...interface{}) string {
 }
 
 var (
+	ErrorAuthFailure = ErrorMessage{
+		Name: "auth_failure",
+		En:   "auth failure",
+	}
+	ErrorAccessTokenExpired = ErrorMessage{
+		Name: "access_token_expired",
+		En:   "access token expired",
+	}
 	ErrorCreateResourcesFailed = ErrorMessage{
 		Name: "create_resources_failed",
 		En:   "create resources failed",
