@@ -9,7 +9,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/pb/iam"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -43,8 +43,8 @@ func NewGroup(name, description string) *Group {
 	}
 }
 
-func GroupToPb(p *Group) *pbiam.Group {
-	q := new(pbiam.Group)
+func GroupToPb(p *Group) *pb.Group {
+	q := new(pb.Group)
 	q.GroupId = pbutil.ToProtoString(p.GroupId)
 	q.Name = pbutil.ToProtoString(p.Name)
 	q.Description = pbutil.ToProtoString(p.Description)
@@ -55,7 +55,7 @@ func GroupToPb(p *Group) *pbiam.Group {
 	return q
 }
 
-func GroupsToPbs(p []*Group) (pbs []*pbiam.Group) {
+func GroupsToPbs(p []*Group) (pbs []*pb.Group) {
 	for _, v := range p {
 		pbs = append(pbs, GroupToPb(v))
 	}

@@ -1,3 +1,130 @@
+- action: ChangePassword
+  service: AccountManager
+  body:
+    new_password:
+      type: string
+    reset_id:
+      type: string
+- action: CreateGroup
+  description: group
+  service: AccountManager
+  body:
+    description:
+      type: string
+    name:
+      type: string
+- action: CreatePasswordReset
+  service: AccountManager
+  body:
+    password:
+      type: string
+    user_id:
+      type: string
+- action: CreateUser
+  description: admin permission
+  service: AccountManager
+  body:
+    description:
+      type: string
+    email:
+      type: string
+    password:
+      type: string
+    role:
+      type: string
+- action: DeleteGroups
+  service: AccountManager
+  body:
+    group_id:
+      type: '[]string'
+- action: DeleteUsers
+  service: AccountManager
+  body:
+    user_id:
+      type: '[]string'
+- action: DescribeGroups
+  service: AccountManager
+  query:
+    group_id:
+      type: '[]string'
+    limit:
+      type: integer
+    offset:
+      type: integer
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: DescribeUsers
+  service: AccountManager
+  query:
+    group_id:
+      type: '[]string'
+    limit:
+      type: integer
+    offset:
+      type: integer
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: GetPasswordReset
+  service: AccountManager
+- action: JoinGroup
+  service: AccountManager
+  body:
+    group_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: LeaveGroup
+  service: AccountManager
+  body:
+    group_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: ModifyGroup
+  service: AccountManager
+  body:
+    description:
+      type: string
+    group_id:
+      type: string
+    name:
+      type: string
+- action: ModifyUser
+  service: AccountManager
+  body:
+    description:
+      type: string
+    email:
+      type: string
+    role:
+      type: string
+    user_id:
+      type: string
+    username:
+      type: string
+- action: ValidateUserPassword
+  service: AccountManager
+  body:
+    email:
+      type: string
+    password:
+      type: string
 - action: CancelAppVersion
   description: cancel app version
   service: AppManager
@@ -815,3 +942,34 @@
   body:
     task_id:
       type: '[]string'
+- action: Auth
+  service: TokenManager
+  body:
+    client_id:
+      type: string
+    client_secret:
+      type: string
+    grant_type:
+      type: string
+    password:
+      type: string
+    scope:
+      type: string
+    username:
+      type: string
+- action: CreateClient
+  service: TokenManager
+  body:
+    user_id:
+      type: string
+- action: Token
+  service: TokenManager
+  body:
+    client_id:
+      type: string
+    client_secret:
+      type: string
+    grant_type:
+      type: string
+    refresh_token:
+      type: string

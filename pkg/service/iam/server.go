@@ -10,7 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
-	"openpitrix.io/openpitrix/pkg/pb/iam"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 )
 
@@ -22,10 +22,11 @@ func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
 	s := Server{cfg}
 
-	manager.NewGrpcServer("iam-manager", constants.IamListenPort).
+	manager.NewGrpcServer("iam-manager", constants.IAMServicePort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
 		Serve(func(server *grpc.Server) {
-			pbiam.RegisterAccountManagerServer(server, &s)
+			pb.RegisterAccountManagerServer(server, &s)
+			pb.RegisterTokenManagerServer(server, &s)
 		})
 }

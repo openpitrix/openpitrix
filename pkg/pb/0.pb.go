@@ -3,10 +3,13 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+import (
+	fmt "fmt"
+	math "math"
+
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,9 +22,9 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-func init() { proto.RegisterFile("0.proto", fileDescriptor_0_70e8beaa0f11fec5) }
+func init() { proto.RegisterFile("0.proto", fileDescriptor_b5d39afb3b422e60) }
 
-var fileDescriptor_0_70e8beaa0f11fec5 = []byte{
+var fileDescriptor_b5d39afb3b422e60 = []byte{
 	// 163 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x62, 0x37, 0xd0, 0x2b, 0x28,
 	0xca, 0x2f, 0xc9, 0x17, 0xe2, 0xca, 0x2f, 0x48, 0xcd, 0x2b, 0xc8, 0x2c, 0x29, 0xca, 0xac, 0x90,

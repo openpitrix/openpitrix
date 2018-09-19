@@ -259,6 +259,33 @@ services:
       - openpitrix-db
     container_name: "openpitrix-cluster-db-ctrl"
 
+  # iam service
+  openpitrix-iam-service:
+    build: .
+    image: "openpitrix"
+    command: "iam-service"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-iam-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-iam-service"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=iam
+  openpitrix-iam-db-ctrl:
+    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    command: -url=jdbc:mysql://openpitrix-db/iam -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/iam:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-iam-db-ctrl"
+
   # pilot service
   openpitrix-pilot-service:
     build: .

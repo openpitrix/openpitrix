@@ -3,13 +3,16 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
-import _ "google.golang.org/genproto/googleapis/api/annotations"
+import (
+	fmt "fmt"
+	math "math"
+
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
+)
 
 import (
 	context "golang.org/x/net/context"
@@ -44,16 +47,17 @@ func (m *Category) Reset()         { *m = Category{} }
 func (m *Category) String() string { return proto.CompactTextString(m) }
 func (*Category) ProtoMessage()    {}
 func (*Category) Descriptor() ([]byte, []int) {
-	return fileDescriptor_category_c0682039d5bf9cd9, []int{0}
+	return fileDescriptor_1c6ef5ed29d8d1a1, []int{0}
 }
+
 func (m *Category) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Category.Unmarshal(m, b)
 }
 func (m *Category) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Category.Marshal(b, m, deterministic)
 }
-func (dst *Category) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Category.Merge(dst, src)
+func (m *Category) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Category.Merge(m, src)
 }
 func (m *Category) XXX_Size() int {
 	return xxx_messageInfo_Category.Size(m)
@@ -131,16 +135,17 @@ func (m *DescribeCategoriesRequest) Reset()         { *m = DescribeCategoriesReq
 func (m *DescribeCategoriesRequest) String() string { return proto.CompactTextString(m) }
 func (*DescribeCategoriesRequest) ProtoMessage()    {}
 func (*DescribeCategoriesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_category_c0682039d5bf9cd9, []int{1}
+	return fileDescriptor_1c6ef5ed29d8d1a1, []int{1}
 }
+
 func (m *DescribeCategoriesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeCategoriesRequest.Unmarshal(m, b)
 }
 func (m *DescribeCategoriesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeCategoriesRequest.Marshal(b, m, deterministic)
 }
-func (dst *DescribeCategoriesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeCategoriesRequest.Merge(dst, src)
+func (m *DescribeCategoriesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCategoriesRequest.Merge(m, src)
 }
 func (m *DescribeCategoriesRequest) XXX_Size() int {
 	return xxx_messageInfo_DescribeCategoriesRequest.Size(m)
@@ -219,16 +224,17 @@ func (m *DescribeCategoriesResponse) Reset()         { *m = DescribeCategoriesRe
 func (m *DescribeCategoriesResponse) String() string { return proto.CompactTextString(m) }
 func (*DescribeCategoriesResponse) ProtoMessage()    {}
 func (*DescribeCategoriesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_category_c0682039d5bf9cd9, []int{2}
+	return fileDescriptor_1c6ef5ed29d8d1a1, []int{2}
 }
+
 func (m *DescribeCategoriesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DescribeCategoriesResponse.Unmarshal(m, b)
 }
 func (m *DescribeCategoriesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DescribeCategoriesResponse.Marshal(b, m, deterministic)
 }
-func (dst *DescribeCategoriesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DescribeCategoriesResponse.Merge(dst, src)
+func (m *DescribeCategoriesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCategoriesResponse.Merge(m, src)
 }
 func (m *DescribeCategoriesResponse) XXX_Size() int {
 	return xxx_messageInfo_DescribeCategoriesResponse.Size(m)
@@ -266,16 +272,17 @@ func (m *CreateCategoryRequest) Reset()         { *m = CreateCategoryRequest{} }
 func (m *CreateCategoryRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCategoryRequest) ProtoMessage()    {}
 func (*CreateCategoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_category_c0682039d5bf9cd9, []int{3}
+	return fileDescriptor_1c6ef5ed29d8d1a1, []int{3}
 }
+
 func (m *CreateCategoryRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateCategoryRequest.Unmarshal(m, b)
 }
 func (m *CreateCategoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateCategoryRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateCategoryRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCategoryRequest.Merge(dst, src)
+func (m *CreateCategoryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCategoryRequest.Merge(m, src)
 }
 func (m *CreateCategoryRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateCategoryRequest.Size(m)
@@ -318,16 +325,17 @@ func (m *CreateCategoryResponse) Reset()         { *m = CreateCategoryResponse{}
 func (m *CreateCategoryResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCategoryResponse) ProtoMessage()    {}
 func (*CreateCategoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_category_c0682039d5bf9cd9, []int{4}
+	return fileDescriptor_1c6ef5ed29d8d1a1, []int{4}
 }
+
 func (m *CreateCategoryResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateCategoryResponse.Unmarshal(m, b)
 }
 func (m *CreateCategoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateCategoryResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateCategoryResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCategoryResponse.Merge(dst, src)
+func (m *CreateCategoryResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCategoryResponse.Merge(m, src)
 }
 func (m *CreateCategoryResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateCategoryResponse.Size(m)
@@ -359,16 +367,17 @@ func (m *ModifyCategoryRequest) Reset()         { *m = ModifyCategoryRequest{} }
 func (m *ModifyCategoryRequest) String() string { return proto.CompactTextString(m) }
 func (*ModifyCategoryRequest) ProtoMessage()    {}
 func (*ModifyCategoryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_category_c0682039d5bf9cd9, []int{5}
+	return fileDescriptor_1c6ef5ed29d8d1a1, []int{5}
 }
+
 func (m *ModifyCategoryRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyCategoryRequest.Unmarshal(m, b)
 }
 func (m *ModifyCategoryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ModifyCategoryRequest.Marshal(b, m, deterministic)
 }
-func (dst *ModifyCategoryRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ModifyCategoryRequest.Merge(dst, src)
+func (m *ModifyCategoryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCategoryRequest.Merge(m, src)
 }
 func (m *ModifyCategoryRequest) XXX_Size() int {
 	return xxx_messageInfo_ModifyCategoryRequest.Size(m)
@@ -418,16 +427,17 @@ func (m *ModifyCategoryResponse) Reset()         { *m = ModifyCategoryResponse{}
 func (m *ModifyCategoryResponse) String() string { return proto.CompactTextString(m) }
 func (*ModifyCategoryResponse) ProtoMessage()    {}
 func (*ModifyCategoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_category_c0682039d5bf9cd9, []int{6}
+	return fileDescriptor_1c6ef5ed29d8d1a1, []int{6}
 }
+
 func (m *ModifyCategoryResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ModifyCategoryResponse.Unmarshal(m, b)
 }
 func (m *ModifyCategoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ModifyCategoryResponse.Marshal(b, m, deterministic)
 }
-func (dst *ModifyCategoryResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ModifyCategoryResponse.Merge(dst, src)
+func (m *ModifyCategoryResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCategoryResponse.Merge(m, src)
 }
 func (m *ModifyCategoryResponse) XXX_Size() int {
 	return xxx_messageInfo_ModifyCategoryResponse.Size(m)
@@ -456,16 +466,17 @@ func (m *DeleteCategoriesRequest) Reset()         { *m = DeleteCategoriesRequest
 func (m *DeleteCategoriesRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteCategoriesRequest) ProtoMessage()    {}
 func (*DeleteCategoriesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_category_c0682039d5bf9cd9, []int{7}
+	return fileDescriptor_1c6ef5ed29d8d1a1, []int{7}
 }
+
 func (m *DeleteCategoriesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteCategoriesRequest.Unmarshal(m, b)
 }
 func (m *DeleteCategoriesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteCategoriesRequest.Marshal(b, m, deterministic)
 }
-func (dst *DeleteCategoriesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteCategoriesRequest.Merge(dst, src)
+func (m *DeleteCategoriesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCategoriesRequest.Merge(m, src)
 }
 func (m *DeleteCategoriesRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteCategoriesRequest.Size(m)
@@ -494,16 +505,17 @@ func (m *DeleteCategoriesResponse) Reset()         { *m = DeleteCategoriesRespon
 func (m *DeleteCategoriesResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteCategoriesResponse) ProtoMessage()    {}
 func (*DeleteCategoriesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_category_c0682039d5bf9cd9, []int{8}
+	return fileDescriptor_1c6ef5ed29d8d1a1, []int{8}
 }
+
 func (m *DeleteCategoriesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteCategoriesResponse.Unmarshal(m, b)
 }
 func (m *DeleteCategoriesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteCategoriesResponse.Marshal(b, m, deterministic)
 }
-func (dst *DeleteCategoriesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteCategoriesResponse.Merge(dst, src)
+func (m *DeleteCategoriesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCategoriesResponse.Merge(m, src)
 }
 func (m *DeleteCategoriesResponse) XXX_Size() int {
 	return xxx_messageInfo_DeleteCategoriesResponse.Size(m)
@@ -704,9 +716,9 @@ var _CategoryManager_serviceDesc = grpc.ServiceDesc{
 	Metadata: "category.proto",
 }
 
-func init() { proto.RegisterFile("category.proto", fileDescriptor_category_c0682039d5bf9cd9) }
+func init() { proto.RegisterFile("category.proto", fileDescriptor_1c6ef5ed29d8d1a1) }
 
-var fileDescriptor_category_c0682039d5bf9cd9 = []byte{
+var fileDescriptor_1c6ef5ed29d8d1a1 = []byte{
 	// 732 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x55, 0xcb, 0x6e, 0xd3, 0x40,
 	0x14, 0x95, 0xf3, 0x6a, 0xb9, 0xa1, 0xaf, 0xe9, 0x03, 0x13, 0x55, 0x24, 0x35, 0x0f, 0x55, 0x15,

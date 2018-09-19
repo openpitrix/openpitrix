@@ -9,7 +9,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
-	"openpitrix.io/openpitrix/pkg/pb/iam"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -49,8 +49,8 @@ func NewUser(username, password, email, role, description string) *User {
 	}
 }
 
-func UserToPb(p *User) *pbiam.User {
-	q := new(pbiam.User)
+func UserToPb(p *User) *pb.User {
+	q := new(pb.User)
 	q.UserId = pbutil.ToProtoString(p.UserId)
 	q.Username = pbutil.ToProtoString(p.Username)
 	q.Email = pbutil.ToProtoString(p.Email)
@@ -63,7 +63,7 @@ func UserToPb(p *User) *pbiam.User {
 	return q
 }
 
-func UsersToPbs(p []*User) (pbs []*pbiam.User) {
+func UsersToPbs(p []*User) (pbs []*pb.User) {
 	for _, v := range p {
 		pbs = append(pbs, UserToPb(v))
 	}
