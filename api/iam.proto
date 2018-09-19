@@ -78,6 +78,9 @@ service TokenManager {
 	// - https://tools.ietf.org/html/rfc6749#section-4.4
 	//
 	rpc Auth (AuthRequest) returns (AuthResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			security: {}
+		};
 		option (google.api.http) = { post: "/v1/oauth2/auth" body: "*" };
 	};
 
@@ -86,6 +89,9 @@ service TokenManager {
 	// Ref: https://tools.ietf.org/html/rfc6749#section-6
 	//
 	rpc Token (TokenRequest) returns (TokenResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			security: {}
+		};
 		option (google.api.http) = { post: "/v1/oauth2/token" body: "*" };
 	};
 }
@@ -271,7 +277,7 @@ message AuthRequest {
 }
 message AuthResponse {
 	string token_type = 1;
-	string expires_in = 2;
+	int32 expires_in = 2;
 	string access_token = 3;
 	string refresh_token = 4;
 	//	string id_token = 5;
@@ -285,7 +291,7 @@ message TokenRequest {
 }
 message TokenResponse {
 	string token_type = 1;
-	string expires_in = 2;
+	int32 expires_in = 2;
 	string access_token = 3;
 	string refresh_token = 4;
 }

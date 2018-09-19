@@ -47,6 +47,12 @@ var AllCmd = []Cmd{
 `
 const PreActionTmpl = `
 {{- range $index, $element := .cmds}}
+
+{{- $auth := ""}}
+{{- if not $element.Insecurity}}
+{{- $auth = ", nil"}}
+{{- end}}
+
 {{- if (gt (len $element.Body) 0)}}
 {{/*   this if post action   */}}
 type {{$element.Action}}Cmd struct {
@@ -100,7 +106,7 @@ func (c *{{$element.Action}}Cmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.{{$element.Service}}.{{$element.Action}}(params)
+	res, err := client.{{$element.Service}}.{{$element.Action}}(params{{$auth}})
 	if err != nil {
 		return err
 	}
@@ -151,7 +157,7 @@ func (c *{{$element.Action}}Cmd) Run(out Out) error {
 	out.WriteRequest(c.{{$element.Action}}Params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.{{$element.Service}}.{{$element.Action}}(c.{{$element.Action}}Params)
+	res, err := client.{{$element.Service}}.{{$element.Action}}(c.{{$element.Action}}Params{{$auth}})
 	if err != nil {
 		return err
 	}

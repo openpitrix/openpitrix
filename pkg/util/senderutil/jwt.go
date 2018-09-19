@@ -52,7 +52,8 @@ func Generate(k string, expire time.Duration, userId, role string) (string, erro
 	c := &jwt.Claims{
 		IssuedAt: jwt.NewNumericDate(now),
 		Expiry:   jwt.NewNumericDate(now.Add(expire)),
-		Subject:  userId,
+		// TODO: add jti
+		Subject: userId,
 	}
 	return jwt.Signed(signer).Claims(sender).Claims(c).CompactSerialize()
 }

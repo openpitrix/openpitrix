@@ -1,0 +1,5 @@
+{
+  "client_id": "x",
+  "client_secret": "y",
+  "endpoint_url": "http://localhost:9100"
+}

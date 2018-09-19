@@ -17,6 +17,7 @@ import (
 
 const (
 	SenderKey = "sender"
+	TokenType = "Bearer"
 )
 
 type Sender struct {
@@ -38,7 +39,7 @@ func (s *Sender) IsGlobalAdmin() bool {
 
 func GetSenderFromContext(ctx context.Context) *Sender {
 	values := ctxutil.GetValueFromContext(ctx, SenderKey)
-	if len(values) == 0 {
+	if len(values) == 0 || len(values[0]) == 0 {
 		return nil
 	}
 	sender := Sender{}

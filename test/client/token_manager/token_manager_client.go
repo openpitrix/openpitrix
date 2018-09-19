@@ -27,7 +27,7 @@ type Client struct {
 /*
 Auth auth API
 */
-func (a *Client) Auth(params *AuthParams, authInfo runtime.ClientAuthInfoWriter) (*AuthOK, error) {
+func (a *Client) Auth(params *AuthParams) (*AuthOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewAuthParams()
@@ -42,7 +42,6 @@ func (a *Client) Auth(params *AuthParams, authInfo runtime.ClientAuthInfoWriter)
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &AuthReader{formats: a.formats},
-		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -85,7 +84,7 @@ func (a *Client) CreateClient(params *CreateClientParams, authInfo runtime.Clien
 /*
 Token token API
 */
-func (a *Client) Token(params *TokenParams, authInfo runtime.ClientAuthInfoWriter) (*TokenOK, error) {
+func (a *Client) Token(params *TokenParams) (*TokenOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewTokenParams()
@@ -100,7 +99,6 @@ func (a *Client) Token(params *TokenParams, authInfo runtime.ClientAuthInfoWrite
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &TokenReader{formats: a.formats},
-		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

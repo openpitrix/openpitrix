@@ -21,6 +21,10 @@ func (em ErrorMessage) Message(locale string, a ...interface{}) string {
 }
 
 var (
+	ErrorPermissionDenied = ErrorMessage{
+		Name: "permission_denied",
+		En:   "permission denied",
+	}
 	ErrorAuthFailure = ErrorMessage{
 		Name: "auth_failure",
 		En:   "auth failure",
@@ -28,6 +32,14 @@ var (
 	ErrorAccessTokenExpired = ErrorMessage{
 		Name: "access_token_expired",
 		En:   "access token expired",
+	}
+	ErrorRefreshTokenExpired = ErrorMessage{
+		Name: "refresh_token_expired",
+		En:   "refresh token expired",
+	}
+	ErrorEmailPasswordNotMatched = ErrorMessage{
+		Name: "email_password_not_matched",
+		En:   "email and password does not match",
 	}
 	ErrorCreateResourcesFailed = ErrorMessage{
 		Name: "create_resources_failed",

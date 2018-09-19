@@ -1,0 +1,1 @@
+update `user_client` set `status`='disabled' where `client_id` = 'x';

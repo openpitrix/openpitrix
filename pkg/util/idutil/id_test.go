@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"sort"
 	"testing"
+
+	"github.com/magiconair/properties/assert"
 )
 
 func TestGetUuid(t *testing.T) {
@@ -25,4 +27,14 @@ func TestGetManyUuid(t *testing.T) {
 		strSlice = append(strSlice, testId)
 	}
 	sort.Strings(strSlice)
+}
+
+func TestRandString(t *testing.T) {
+	str := randString(Alphabet62, 50)
+	assert.Equal(t, 50, len(str))
+	t.Log(str)
+
+	str = randString(Alphabet62, 255)
+	assert.Equal(t, 255, len(str))
+	t.Log(str)
 }

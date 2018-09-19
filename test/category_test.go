@@ -24,7 +24,7 @@ func TestCategory(t *testing.T) {
 	testCategoryLocale := "{}"
 	describeParams := category_manager.NewDescribeCategoriesParams()
 	describeParams.SetName([]string{testCategoryName})
-	describeResp, err := client.CategoryManager.DescribeCategories(describeParams)
+	describeResp, err := client.CategoryManager.DescribeCategories(describeParams, nil)
 	require.NoError(t, err)
 	categories := describeResp.Payload.CategorySet
 	for _, category := range categories {
@@ -33,7 +33,7 @@ func TestCategory(t *testing.T) {
 			&models.OpenpitrixDeleteCategoriesRequest{
 				CategoryID: []string{category.CategoryID},
 			})
-		_, err := client.CategoryManager.DeleteCategories(deleteParams)
+		_, err := client.CategoryManager.DeleteCategories(deleteParams, nil)
 		require.NoError(t, err)
 	}
 	// create category
@@ -43,7 +43,7 @@ func TestCategory(t *testing.T) {
 			Name:   testCategoryName,
 			Locale: testCategoryLocale,
 		})
-	createResp, err := client.CategoryManager.CreateCategory(createParams)
+	createResp, err := client.CategoryManager.CreateCategory(createParams, nil)
 	require.NoError(t, err)
 
 	categoryId := createResp.Payload.CategoryID
@@ -54,14 +54,14 @@ func TestCategory(t *testing.T) {
 			CategoryID: categoryId,
 			Name:       testCategoryName2,
 		})
-	modifyResp, err := client.CategoryManager.ModifyCategory(modifyParams)
+	modifyResp, err := client.CategoryManager.ModifyCategory(modifyParams, nil)
 	require.NoError(t, err)
 
 	t.Log(modifyResp)
 	// describe category
 	describeParams.WithCategoryID([]string{categoryId})
 	describeParams.WithName([]string{testCategoryName2})
-	describeResp, err = client.CategoryManager.DescribeCategories(describeParams)
+	describeResp, err = client.CategoryManager.DescribeCategories(describeParams, nil)
 	require.NoError(t, err)
 
 	categories = describeResp.Payload.CategorySet
@@ -75,14 +75,14 @@ func TestCategory(t *testing.T) {
 	deleteParams.WithBody(&models.OpenpitrixDeleteCategoriesRequest{
 		CategoryID: []string{categoryId},
 	})
-	deleteResp, err := client.CategoryManager.DeleteCategories(deleteParams)
+	deleteResp, err := client.CategoryManager.DeleteCategories(deleteParams, nil)
 	require.NoError(t, err)
 
 	t.Log(deleteResp)
 	// describe deleted category
 	describeParams.WithCategoryID([]string{categoryId})
 	describeParams.WithName(nil)
-	describeResp, err = client.CategoryManager.DescribeCategories(describeParams)
+	describeResp, err = client.CategoryManager.DescribeCategories(describeParams, nil)
 	require.NoError(t, err)
 
 	categories = describeResp.Payload.CategorySet

@@ -5,8 +5,11 @@
 package apigateway
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 	"strings"
@@ -118,6 +121,14 @@ func log() gin.HandlerFunc {
 
 func serveMuxSetSender(mux *runtime.ServeMux, key string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+
+		if req.URL.Path == "/v1/oauth2/auth" ||
+			req.URL.Path == "/v1/oauth2/token" {
+			// skip auth sender
+			mux.ServeHTTP(w, req)
+			return
+		}
+
 		var err error
 		ctx := req.Context()
 		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -237,5 +248,33 @@ func (s *Server) mainHandler() http.Handler {
 	mux.Handle("/", serveMuxSetSender(gwmux, s.IAMConfig.SecretKey))
 	mux.HandleFunc("/v1/io", tm.HandleEvent(s.IAMConfig.SecretKey))
 
-	return mux
+	return formWrapper(mux)
+}
+
+// Ref: https://github.com/grpc-ecosystem/grpc-gateway/issues/7#issuecomment-358569373
+func formWrapper(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.ToLower(strings.Split(r.Header.Get("Content-Type"), ";")[0]) == "application/x-www-form-urlencoded" {
+			if err := r.ParseForm(); err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			jsonMap := make(map[string]interface{}, len(r.Form))
+			for k, v := range r.Form {
+				if len(v) > 0 {
+					jsonMap[k] = v[0]
+				}
+			}
+			jsonBody, err := json.Marshal(jsonMap)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
+
+			r.Body = ioutil.NopCloser(bytes.NewReader(jsonBody))
+			r.ContentLength = int64(len(jsonBody))
+			r.Header.Set("Content-Type", "application/json")
+		}
+
+		h.ServeHTTP(w, r)
+	})
 }

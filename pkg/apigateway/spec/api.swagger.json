@@ -1932,7 +1932,8 @@
         ],
         "tags": [
           "TokenManager"
-        ]
+        ],
+        "security": []
       }
     },
     "/v1/oauth2/token": {
@@ -1958,7 +1959,8 @@
         ],
         "tags": [
           "TokenManager"
-        ]
+        ],
+        "security": []
       }
     },
     "/v1/oauth2/{user_id}/client": {
@@ -4940,7 +4942,8 @@
           "type": "string"
         },
         "expires_in": {
-          "type": "string"
+          "type": "integer",
+          "format": "int32"
         },
         "access_token": {
           "type": "string"
@@ -5313,7 +5316,8 @@
           "type": "string"
         },
         "expires_in": {
-          "type": "string"
+          "type": "integer",
+          "format": "int32"
         },
         "access_token": {
           "type": "string"

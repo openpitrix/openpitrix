@@ -20,7 +20,7 @@ type OpenpitrixAuthResponse struct {
 	AccessToken string `json:"access_token,omitempty"`
 
 	// expires in
-	ExpiresIn string `json:"expires_in,omitempty"`
+	ExpiresIn int32 `json:"expires_in,omitempty"`
 
 	// refresh token
 	RefreshToken string `json:"refresh_token,omitempty"`

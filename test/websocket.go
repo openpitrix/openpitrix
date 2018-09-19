@@ -5,20 +5,37 @@
 package test
 
 import (
+	"context"
+	"log"
 	"net/url"
 
 	"github.com/gorilla/websocket"
 
 	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/test/config"
 )
 
-func GetIoClient(conf *ClientConfig, userId string) *IoClient {
+func GetIoClient(conf *ClientConfig) *IoClient {
+	tokenSource, err := config.GetTokenSource(context.Background(), conf.ConfigPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	token, err := tokenSource.Token()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	endpoint := conf.GetEndpoint()
+	var scheme = "ws"
+	if endpoint.Scheme == "https" {
+		scheme = "wss"
+	}
 	u := url.URL{
-		Scheme:   "ws",
-		Host:     conf.Host,
-		Path:     conf.BasePath + "v1/io",
-		RawQuery: "uid=" + userId,
+		Scheme:   scheme,
+		Host:     endpoint.Host,
+		Path:     "/v1/io",
+		RawQuery: "sid=" + token.AccessToken,
 	}
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {

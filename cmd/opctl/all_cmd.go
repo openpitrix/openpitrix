@@ -133,7 +133,7 @@ func (c *ChangePasswordCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.ChangePassword(params)
+	res, err := client.AccountManager.ChangePassword(params, nil)
 	if err != nil {
 		return err
 	}
@@ -169,7 +169,7 @@ func (c *CreateGroupCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.CreateGroup(params)
+	res, err := client.AccountManager.CreateGroup(params, nil)
 	if err != nil {
 		return err
 	}
@@ -205,7 +205,7 @@ func (c *CreatePasswordResetCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.CreatePasswordReset(params)
+	res, err := client.AccountManager.CreatePasswordReset(params, nil)
 	if err != nil {
 		return err
 	}
@@ -243,7 +243,7 @@ func (c *CreateUserCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.CreateUser(params)
+	res, err := client.AccountManager.CreateUser(params, nil)
 	if err != nil {
 		return err
 	}
@@ -278,7 +278,7 @@ func (c *DeleteGroupsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.DeleteGroups(params)
+	res, err := client.AccountManager.DeleteGroups(params, nil)
 	if err != nil {
 		return err
 	}
@@ -313,7 +313,7 @@ func (c *DeleteUsersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.DeleteUsers(params)
+	res, err := client.AccountManager.DeleteUsers(params, nil)
 	if err != nil {
 		return err
 	}
@@ -358,7 +358,7 @@ func (c *DescribeGroupsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeGroupsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.DescribeGroups(c.DescribeGroupsParams)
+	res, err := client.AccountManager.DescribeGroups(c.DescribeGroupsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -403,7 +403,7 @@ func (c *DescribeUsersCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeUsersParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.DescribeUsers(c.DescribeUsersParams)
+	res, err := client.AccountManager.DescribeUsers(c.DescribeUsersParams, nil)
 	if err != nil {
 		return err
 	}
@@ -435,7 +435,7 @@ func (c *GetPasswordResetCmd) Run(out Out) error {
 	out.WriteRequest(c.GetPasswordResetParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.GetPasswordReset(c.GetPasswordResetParams)
+	res, err := client.AccountManager.GetPasswordReset(c.GetPasswordResetParams, nil)
 	if err != nil {
 		return err
 	}
@@ -471,7 +471,7 @@ func (c *JoinGroupCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.JoinGroup(params)
+	res, err := client.AccountManager.JoinGroup(params, nil)
 	if err != nil {
 		return err
 	}
@@ -507,7 +507,7 @@ func (c *LeaveGroupCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.LeaveGroup(params)
+	res, err := client.AccountManager.LeaveGroup(params, nil)
 	if err != nil {
 		return err
 	}
@@ -544,7 +544,7 @@ func (c *ModifyGroupCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.ModifyGroup(params)
+	res, err := client.AccountManager.ModifyGroup(params, nil)
 	if err != nil {
 		return err
 	}
@@ -583,7 +583,7 @@ func (c *ModifyUserCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.ModifyUser(params)
+	res, err := client.AccountManager.ModifyUser(params, nil)
 	if err != nil {
 		return err
 	}
@@ -619,7 +619,7 @@ func (c *ValidateUserPasswordCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AccountManager.ValidateUserPassword(params)
+	res, err := client.AccountManager.ValidateUserPassword(params, nil)
 	if err != nil {
 		return err
 	}
@@ -654,7 +654,7 @@ func (c *CancelAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.CancelAppVersion(params)
+	res, err := client.AppManager.CancelAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -711,7 +711,7 @@ func (c *CreateAppCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.CreateApp(params)
+	res, err := client.AppManager.CreateApp(params, nil)
 	if err != nil {
 		return err
 	}
@@ -767,7 +767,7 @@ func (c *CreateAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.CreateAppVersion(params)
+	res, err := client.AppManager.CreateAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -802,7 +802,7 @@ func (c *DeleteAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DeleteAppVersion(params)
+	res, err := client.AppManager.DeleteAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -837,7 +837,7 @@ func (c *DeleteAppVersionsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DeleteAppVersions(params)
+	res, err := client.AppManager.DeleteAppVersions(params, nil)
 	if err != nil {
 		return err
 	}
@@ -872,7 +872,7 @@ func (c *DeleteAppsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DeleteApps(params)
+	res, err := client.AppManager.DeleteApps(params, nil)
 	if err != nil {
 		return err
 	}
@@ -921,7 +921,7 @@ func (c *DescribeAppVersionsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeAppVersionsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DescribeAppVersions(c.DescribeAppVersionsParams)
+	res, err := client.AppManager.DescribeAppVersions(c.DescribeAppVersionsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -970,7 +970,7 @@ func (c *DescribeAppsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeAppsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DescribeApps(c.DescribeAppsParams)
+	res, err := client.AppManager.DescribeApps(c.DescribeAppsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1002,7 +1002,7 @@ func (c *GetAppStatisticsCmd) Run(out Out) error {
 	out.WriteRequest(c.GetAppStatisticsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.GetAppStatistics(c.GetAppStatisticsParams)
+	res, err := client.AppManager.GetAppStatistics(c.GetAppStatisticsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1036,7 +1036,7 @@ func (c *GetAppVersionPackageCmd) Run(out Out) error {
 	out.WriteRequest(c.GetAppVersionPackageParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.GetAppVersionPackage(c.GetAppVersionPackageParams)
+	res, err := client.AppManager.GetAppVersionPackage(c.GetAppVersionPackageParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1071,7 +1071,7 @@ func (c *GetAppVersionPackageFilesCmd) Run(out Out) error {
 	out.WriteRequest(c.GetAppVersionPackageFilesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.GetAppVersionPackageFiles(c.GetAppVersionPackageFilesParams)
+	res, err := client.AppManager.GetAppVersionPackageFiles(c.GetAppVersionPackageFilesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1120,7 +1120,7 @@ func (c *ModifyAppCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.ModifyApp(params)
+	res, err := client.AppManager.ModifyApp(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1176,7 +1176,7 @@ func (c *ModifyAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.ModifyAppVersion(params)
+	res, err := client.AppManager.ModifyAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1211,7 +1211,7 @@ func (c *PassAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.PassAppVersion(params)
+	res, err := client.AppManager.PassAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1246,7 +1246,7 @@ func (c *RecoverAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.RecoverAppVersion(params)
+	res, err := client.AppManager.RecoverAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1281,7 +1281,7 @@ func (c *RejectAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.RejectAppVersion(params)
+	res, err := client.AppManager.RejectAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1316,7 +1316,7 @@ func (c *ReleaseAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.ReleaseAppVersion(params)
+	res, err := client.AppManager.ReleaseAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1351,7 +1351,7 @@ func (c *SubmitAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.SubmitAppVersion(params)
+	res, err := client.AppManager.SubmitAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1386,7 +1386,7 @@ func (c *SuspendAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.SuspendAppVersion(params)
+	res, err := client.AppManager.SuspendAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1423,7 +1423,7 @@ func (c *CreateCategoryCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.CategoryManager.CreateCategory(params)
+	res, err := client.CategoryManager.CreateCategory(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1458,7 +1458,7 @@ func (c *DeleteCategoriesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.CategoryManager.DeleteCategories(params)
+	res, err := client.CategoryManager.DeleteCategories(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1503,7 +1503,7 @@ func (c *DescribeCategoriesCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeCategoriesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.CategoryManager.DescribeCategories(c.DescribeCategoriesParams)
+	res, err := client.CategoryManager.DescribeCategories(c.DescribeCategoriesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1541,7 +1541,7 @@ func (c *ModifyCategoryCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.CategoryManager.ModifyCategory(params)
+	res, err := client.CategoryManager.ModifyCategory(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1578,7 +1578,7 @@ func (c *AddClusterNodesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.AddClusterNodes(params)
+	res, err := client.ClusterManager.AddClusterNodes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1614,7 +1614,7 @@ func (c *AttachKeyPairsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.AttachKeyPairs(params)
+	res, err := client.ClusterManager.AttachKeyPairs(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1650,7 +1650,7 @@ func (c *CeaseClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.CeaseClusters(params)
+	res, err := client.ClusterManager.CeaseClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1689,7 +1689,7 @@ func (c *CreateClusterCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.CreateCluster(params)
+	res, err := client.ClusterManager.CreateCluster(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1726,7 +1726,7 @@ func (c *CreateKeyPairCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.CreateKeyPair(params)
+	res, err := client.ClusterManager.CreateKeyPair(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1763,7 +1763,7 @@ func (c *DeleteClusterNodesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DeleteClusterNodes(params)
+	res, err := client.ClusterManager.DeleteClusterNodes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1799,7 +1799,7 @@ func (c *DeleteClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DeleteClusters(params)
+	res, err := client.ClusterManager.DeleteClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1834,7 +1834,7 @@ func (c *DeleteKeyPairsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DeleteKeyPairs(params)
+	res, err := client.ClusterManager.DeleteKeyPairs(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1880,7 +1880,7 @@ func (c *DescribeClusterNodesCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeClusterNodesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DescribeClusterNodes(c.DescribeClusterNodesParams)
+	res, err := client.ClusterManager.DescribeClusterNodes(c.DescribeClusterNodesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1930,7 +1930,7 @@ func (c *DescribeClustersCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeClustersParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DescribeClusters(c.DescribeClustersParams)
+	res, err := client.ClusterManager.DescribeClusters(c.DescribeClustersParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1978,7 +1978,7 @@ func (c *DescribeKeyPairsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeKeyPairsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DescribeKeyPairs(c.DescribeKeyPairsParams)
+	res, err := client.ClusterManager.DescribeKeyPairs(c.DescribeKeyPairsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2021,7 +2021,7 @@ func (c *DescribeSubnetsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeSubnetsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DescribeSubnets(c.DescribeSubnetsParams)
+	res, err := client.ClusterManager.DescribeSubnets(c.DescribeSubnetsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2057,7 +2057,7 @@ func (c *DetachKeyPairsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DetachKeyPairs(params)
+	res, err := client.ClusterManager.DetachKeyPairs(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2089,7 +2089,7 @@ func (c *GetClusterStatisticsCmd) Run(out Out) error {
 	out.WriteRequest(c.GetClusterStatisticsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.GetClusterStatistics(c.GetClusterStatisticsParams)
+	res, err := client.ClusterManager.GetClusterStatistics(c.GetClusterStatisticsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2126,7 +2126,7 @@ func (c *ModifyClusterAttributesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.ModifyClusterAttributes(params)
+	res, err := client.ClusterManager.ModifyClusterAttributes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2162,7 +2162,7 @@ func (c *ModifyClusterNodeAttributesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.ModifyClusterNodeAttributes(params)
+	res, err := client.ClusterManager.ModifyClusterNodeAttributes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2198,7 +2198,7 @@ func (c *RecoverClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.RecoverClusters(params)
+	res, err := client.ClusterManager.RecoverClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2234,7 +2234,7 @@ func (c *ResizeClusterCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.ResizeCluster(params)
+	res, err := client.ClusterManager.ResizeCluster(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2270,7 +2270,7 @@ func (c *RollbackClusterCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.RollbackCluster(params)
+	res, err := client.ClusterManager.RollbackCluster(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2306,7 +2306,7 @@ func (c *StartClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.StartClusters(params)
+	res, err := client.ClusterManager.StartClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2342,7 +2342,7 @@ func (c *StopClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.StopClusters(params)
+	res, err := client.ClusterManager.StopClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2379,7 +2379,7 @@ func (c *UpdateClusterEnvCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.UpdateClusterEnv(params)
+	res, err := client.ClusterManager.UpdateClusterEnv(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2416,7 +2416,7 @@ func (c *UpgradeClusterCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.UpgradeCluster(params)
+	res, err := client.ClusterManager.UpgradeCluster(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2468,7 +2468,7 @@ func (c *DescribeJobsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeJobsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.JobManager.DescribeJobs(c.DescribeJobsParams)
+	res, err := client.JobManager.DescribeJobs(c.DescribeJobsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2508,7 +2508,7 @@ func (c *DescribeRepoEventsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeRepoEventsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoIndexer.DescribeRepoEvents(c.DescribeRepoEventsParams)
+	res, err := client.RepoIndexer.DescribeRepoEvents(c.DescribeRepoEventsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2543,7 +2543,7 @@ func (c *IndexRepoCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoIndexer.IndexRepo(params)
+	res, err := client.RepoIndexer.IndexRepo(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2587,7 +2587,7 @@ func (c *CreateRepoCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.CreateRepo(params)
+	res, err := client.RepoManager.CreateRepo(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2622,7 +2622,7 @@ func (c *DeleteReposCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.DeleteRepos(params)
+	res, err := client.RepoManager.DeleteRepos(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2675,7 +2675,7 @@ func (c *DescribeReposCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeReposParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.DescribeRepos(c.DescribeReposParams)
+	res, err := client.RepoManager.DescribeRepos(c.DescribeReposParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2720,7 +2720,7 @@ func (c *ModifyRepoCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.ModifyRepo(params)
+	res, err := client.RepoManager.ModifyRepo(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2758,7 +2758,7 @@ func (c *ValidateRepoCmd) Run(out Out) error {
 	out.WriteRequest(c.ValidateRepoParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.ValidateRepo(c.ValidateRepoParams)
+	res, err := client.RepoManager.ValidateRepo(c.ValidateRepoParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2799,7 +2799,7 @@ func (c *CreateRuntimeCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.CreateRuntime(params)
+	res, err := client.RuntimeManager.CreateRuntime(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2834,7 +2834,7 @@ func (c *DeleteRuntimesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.DeleteRuntimes(params)
+	res, err := client.RuntimeManager.DeleteRuntimes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2872,7 +2872,7 @@ func (c *DescribeRuntimeProviderZonesCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeRuntimeProviderZonesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.DescribeRuntimeProviderZones(c.DescribeRuntimeProviderZonesParams)
+	res, err := client.RuntimeManager.DescribeRuntimeProviderZones(c.DescribeRuntimeProviderZonesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2916,7 +2916,7 @@ func (c *DescribeRuntimesCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeRuntimesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.DescribeRuntimes(c.DescribeRuntimesParams)
+	res, err := client.RuntimeManager.DescribeRuntimes(c.DescribeRuntimesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2948,7 +2948,7 @@ func (c *GetRuntimeStatisticsCmd) Run(out Out) error {
 	out.WriteRequest(c.GetRuntimeStatisticsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.GetRuntimeStatistics(c.GetRuntimeStatisticsParams)
+	res, err := client.RuntimeManager.GetRuntimeStatistics(c.GetRuntimeStatisticsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2987,7 +2987,7 @@ func (c *ModifyRuntimeCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.ModifyRuntime(params)
+	res, err := client.RuntimeManager.ModifyRuntime(params, nil)
 	if err != nil {
 		return err
 	}
@@ -3032,7 +3032,7 @@ func (c *DescribeTasksCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeTasksParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.TaskManager.DescribeTasks(c.DescribeTasksParams)
+	res, err := client.TaskManager.DescribeTasks(c.DescribeTasksParams, nil)
 	if err != nil {
 		return err
 	}
@@ -3067,7 +3067,7 @@ func (c *RetryTasksCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.TaskManager.RetryTasks(params)
+	res, err := client.TaskManager.RetryTasks(params, nil)
 	if err != nil {
 		return err
 	}
@@ -3142,7 +3142,7 @@ func (c *CreateClientCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.TokenManager.CreateClient(params)
+	res, err := client.TokenManager.CreateClient(params, nil)
 	if err != nil {
 		return err
 	}

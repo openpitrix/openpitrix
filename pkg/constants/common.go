@@ -200,4 +200,17 @@ const (
 	RoleUser        = "user"
 	RoleDeveloper   = "developer"
 	RoleGlobalAdmin = "global_admin"
+
+	GrantTypeClientCredentials = "client_credentials"
+	GrantTypePassword          = "password"
+	GrantTypeRefreshToken      = "refresh_token"
 )
+
+var GrantTypeAuths = []string{
+	GrantTypeClientCredentials,
+	GrantTypePassword,
+}
+
+var GrantTypeTokens = []string{
+	GrantTypeRefreshToken,
+}

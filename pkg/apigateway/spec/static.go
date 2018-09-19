@@ -1941,7 +1941,8 @@ var Files = map[string]string{
         ],
         "tags": [
           "TokenManager"
-        ]
+        ],
+        "security": []
       }
     },
     "/v1/oauth2/token": {
@@ -1967,7 +1968,8 @@ var Files = map[string]string{
         ],
         "tags": [
           "TokenManager"
-        ]
+        ],
+        "security": []
       }
     },
     "/v1/oauth2/{user_id}/client": {
@@ -4949,7 +4951,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "expires_in": {
-          "type": "string"
+          "type": "integer",
+          "format": "int32"
         },
         "access_token": {
           "type": "string"
@@ -5322,7 +5325,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "expires_in": {
-          "type": "string"
+          "type": "integer",
+          "format": "int32"
         },
         "access_token": {
           "type": "string"

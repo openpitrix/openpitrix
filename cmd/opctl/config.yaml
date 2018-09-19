@@ -957,6 +957,7 @@
       type: string
     username:
       type: string
+  insecurity: true
 - action: CreateClient
   service: TokenManager
   body:
@@ -973,3 +974,4 @@
       type: string
     refresh_token:
       type: string
+  insecurity: true
