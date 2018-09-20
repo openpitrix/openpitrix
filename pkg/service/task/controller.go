@@ -29,7 +29,7 @@ import (
 
 type Controller struct {
 	runningTasks chan string
-	runningCount uint32
+	runningCount int32
 	hostname     string
 	queue        *etcd.Queue
 }
@@ -55,9 +55,12 @@ func (c *Controller) updateTaskAttributes(ctx context.Context, taskId string, at
 
 var mutex sync.Mutex
 
-func (c *Controller) GetTaskLength() uint32 {
-	// TODO: from global config
-	return constants.TaskLength
+func (c *Controller) GetTaskLength() int32 {
+	if pi.Global().GlobalConfig().Task.MaxWorkingTasks > 0 {
+		return pi.Global().GlobalConfig().Task.MaxWorkingTasks
+	} else {
+		return constants.DefaultMaxWorkingTasks
+	}
 }
 
 func (c *Controller) IsRunningExceed() bool {

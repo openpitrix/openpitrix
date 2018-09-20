@@ -31,7 +31,7 @@ spec:
     matchLabels:
       app: openpitrix
       component: openpitrix-job-manager
-  replicas: 1
+  replicas: ${JOB_REPLICA}
   template:
     metadata:
       labels:

@@ -88,18 +88,9 @@ const (
 )
 
 const (
-	JobLength       = 20
-	TaskLength      = 20
-	RepoEventLength = 20
-	InstanceSize    = 20
-
-	DefaultMountPoint = "/data"
-
-	Ext4FileSystem = "ext4"
-	XfsFileSystem  = "xfs"
-
-	DefaultExt4MountOption = "defaults,noatime"
-	DefaultXfsMountOption  = "rw,noatime,inode64,allocsize=16m"
+	DefaultMaxWorkingJobs  = 20
+	DefaultMaxWorkingTasks = 20
+	DefaultMaxRepoEvents   = 20
 )
 
 const (

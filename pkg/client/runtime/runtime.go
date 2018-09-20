@@ -11,6 +11,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"fmt"
+
 	clientutil "openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -35,6 +37,9 @@ func NewRuntime(ctx context.Context, runtimeId string) (*Runtime, error) {
 }
 
 func getRuntime(ctx context.Context, runtimeId string) (*pb.RuntimeDetail, error) {
+	if len(runtimeId) == 0 {
+		return nil, fmt.Errorf("runtime id is nil")
+	}
 	runtimeIds := []string{runtimeId}
 	ctx = clientutil.SetSystemUserToContext(ctx)
 	client, err := NewRuntimeManagerClient()

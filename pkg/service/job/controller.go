@@ -23,7 +23,7 @@ import (
 
 type Controller struct {
 	runningJobs  chan string
-	runningCount uint32
+	runningCount int32
 	hostname     string
 	queue        *etcd.Queue
 }
@@ -48,9 +48,12 @@ func (c *Controller) updateJobAttributes(ctx context.Context, jobId string, attr
 
 var mutex sync.Mutex
 
-func (c *Controller) GetJobLength() uint32 {
-	// TODO: from global config
-	return constants.JobLength
+func (c *Controller) GetJobLength() int32 {
+	if pi.Global().GlobalConfig().Job.MaxWorkingJobs > 0 {
+		return pi.Global().GlobalConfig().Job.MaxWorkingJobs
+	} else {
+		return constants.DefaultMaxWorkingJobs
+	}
 }
 
 func (c *Controller) IsRunningExceed() bool {
