@@ -38,6 +38,7 @@ func SendJob(ctx context.Context, job *models.Job) (string, error) {
 		JobAction: pbJob.JobAction,
 		Provider:  pbJob.Provider,
 		Directive: pbJob.Directive,
+		RuntimeId: pbJob.RuntimeId,
 	}
 
 	ctx = client.SetSystemUserToContext(ctx)
