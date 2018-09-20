@@ -77,14 +77,9 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			Required("user_id").
 			Exec()
-	case *pb.AuthRequest:
-		return manager.NewChecker(ctx, r).
-			Required("grant_type", "client_id", "client_secret").
-			StringChosen("grant_type", constants.GrantTypeAuths).
-			Exec()
 	case *pb.TokenRequest:
 		return manager.NewChecker(ctx, r).
-			Required("grant_type", "client_id", "client_secret", "refresh_token").
+			Required("grant_type", "client_id", "client_secret").
 			StringChosen("grant_type", constants.GrantTypeTokens).
 			Exec()
 	}

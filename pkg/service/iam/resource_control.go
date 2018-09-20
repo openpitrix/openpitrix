@@ -23,8 +23,9 @@ func getClient(ctx context.Context, clientId, clientSecret string) (*models.User
 	err := pi.Global().DB(ctx).
 		Select(models.UserClientColumns...).
 		From(constants.TableUserClient).
-		Where(db.Eq(constants.ColumnClientId, clientId)).
-		Where(db.Eq(constants.ColumnClientSecret, clientSecret)).LoadOne(&userClient)
+		Where(constants.ColumnClientId, clientId).
+		Where(constants.ColumnClientSecret, clientSecret).
+		LoadOne(&userClient)
 	if err != nil {
 		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorAuthFailure)
 	}
@@ -90,15 +91,14 @@ func validateClientCredentials(ctx context.Context, client clientIface) (*models
 	return user, userClient, nil
 }
 
-func getToken(ctx context.Context, whereCond map[string]interface{}) (*models.Token, error) {
+func getTokenByRefreshToken(ctx context.Context, refreshToken string) (*models.Token, error) {
 	var token = models.Token{}
-	stmt := pi.Global().DB(ctx).
+	err := pi.Global().DB(ctx).
 		Select(models.TokenColumns...).
-		From(constants.TableToken)
-	for k, v := range whereCond {
-		stmt = stmt.Where(k, v)
-	}
-	err := stmt.LoadOne(&token)
+		From(constants.TableToken).
+		Where(constants.ColumnRefreshToken, refreshToken).
+		Where(constants.ColumnStatus, constants.StatusActive).
+		LoadOne(&token)
 	if err != nil {
 		return nil, err
 	}
@@ -110,10 +110,10 @@ func getLastToken(ctx context.Context, clientId, userId, scope string) (*models.
 	err := pi.Global().DB(ctx).
 		Select(models.TokenColumns...).
 		From(constants.TableToken).
-		Where(db.Eq(constants.ColumnUserId, userId)).
-		Where(db.Eq(constants.ColumnClientId, clientId)).
-		Where(db.Eq(constants.ColumnScope, scope)).
-		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
+		Where(constants.ColumnUserId, userId).
+		Where(constants.ColumnClientId, clientId).
+		Where(constants.ColumnScope, scope).
+		Where(constants.ColumnStatus, constants.StatusActive).
 		OrderDir(constants.ColumnCreateTime, false).
 		LoadOne(&token)
 	if err != nil {

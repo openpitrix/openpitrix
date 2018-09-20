@@ -776,6 +776,7 @@ func (m *SubTask_GetTaskStatus) GetTaskId() string {
 }
 
 func init() {
+	proto.RegisterEnum("metadata.types.SubTaskAction", SubTaskAction_name, SubTaskAction_value)
 	proto.RegisterType((*SubTaskId)(nil), "metadata.types.SubTaskId")
 	proto.RegisterType((*SubTaskMessage)(nil), "metadata.types.SubTaskMessage")
 	proto.RegisterType((*SubTaskStatus)(nil), "metadata.types.SubTaskStatus")
@@ -786,7 +787,6 @@ func init() {
 	proto.RegisterType((*SubTask_RegisterCmd)(nil), "metadata.types.SubTask_RegisterCmd")
 	proto.RegisterType((*SubTask_DeregisterCmd)(nil), "metadata.types.SubTask_DeregisterCmd")
 	proto.RegisterType((*SubTask_GetTaskStatus)(nil), "metadata.types.SubTask_GetTaskStatus")
-	proto.RegisterEnum("metadata.types.SubTaskAction", SubTaskAction_name, SubTaskAction_value)
 }
 
 func init() { proto.RegisterFile("metadata/types/task.proto", fileDescriptor_48a76b9d476194b0) }

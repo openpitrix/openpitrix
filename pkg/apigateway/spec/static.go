@@ -1918,33 +1918,6 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/oauth2/auth": {
-      "post": {
-        "operationId": "Auth",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixAuthResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixAuthRequest"
-            }
-          }
-        ],
-        "tags": [
-          "TokenManager"
-        ],
-        "security": []
-      }
-    },
     "/v1/oauth2/token": {
       "post": {
         "operationId": "Token",
@@ -4921,47 +4894,6 @@ var Files = map[string]string{
       "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
       "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
     },
-    "openpitrixAuthRequest": {
-      "type": "object",
-      "properties": {
-        "grant_type": {
-          "type": "string"
-        },
-        "client_id": {
-          "type": "string"
-        },
-        "client_secret": {
-          "type": "string"
-        },
-        "scope": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixAuthResponse": {
-      "type": "object",
-      "properties": {
-        "token_type": {
-          "type": "string"
-        },
-        "expires_in": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "access_token": {
-          "type": "string"
-        },
-        "refresh_token": {
-          "type": "string"
-        }
-      }
-    },
     "openpitrixChangePasswordRequest": {
       "type": "object",
       "properties": {
@@ -5311,6 +5243,15 @@ var Files = map[string]string{
           "type": "string"
         },
         "client_secret": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
           "type": "string"
         },
         "refresh_token": {

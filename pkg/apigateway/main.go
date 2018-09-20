@@ -122,8 +122,7 @@ func log() gin.HandlerFunc {
 func serveMuxSetSender(mux *runtime.ServeMux, key string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 
-		if req.URL.Path == "/v1/oauth2/auth" ||
-			req.URL.Path == "/v1/oauth2/token" {
+		if req.URL.Path == "/v1/oauth2/token" {
 			// skip auth sender
 			mux.ServeHTTP(w, req)
 			return

@@ -77,13 +77,6 @@ service TokenManager {
 	// - https://alexbilbie.com/guide-to-oauth-2-grants/
 	// - https://tools.ietf.org/html/rfc6749#section-4.4
 	//
-	rpc Auth (AuthRequest) returns (AuthResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			security: {}
-		};
-		option (google.api.http) = { post: "/v1/oauth2/auth" body: "*" };
-	};
-
 	// refresh access_token
 	//
 	// Ref: https://tools.ietf.org/html/rfc6749#section-6
@@ -267,31 +260,19 @@ message CreateClientResponse {
 	string client_secret = 3;
 }
 
-message AuthRequest {
+message TokenRequest {
 	string grant_type = 1; // client_credentials or password
 	string client_id = 2;
 	string client_secret = 3;
 	string scope = 4;
 	string username = 5;
 	string password = 6;
-}
-message AuthResponse {
-	string token_type = 1;
-	int32 expires_in = 2;
-	string access_token = 3;
-	string refresh_token = 4;
-	//	string id_token = 5;
-}
-
-message TokenRequest {
-	string grant_type = 1; // refresh_token
-	string client_id = 2;
-	string client_secret = 3;
-	string refresh_token = 4;
+	string refresh_token = 7;
 }
 message TokenResponse {
 	string token_type = 1;
 	int32 expires_in = 2;
 	string access_token = 3;
 	string refresh_token = 4;
+	//	string id_token = 5;
 }

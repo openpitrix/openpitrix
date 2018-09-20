@@ -9,7 +9,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/magiconair/properties/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetUuid(t *testing.T) {

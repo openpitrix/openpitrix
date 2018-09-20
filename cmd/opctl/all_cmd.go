@@ -102,7 +102,6 @@ var AllCmd = []Cmd{
 	NewModifyRuntimeCmd(),
 	NewDescribeTasksCmd(),
 	NewRetryTasksCmd(),
-	NewAuthCmd(),
 	NewCreateClientCmd(),
 	NewTokenCmd(),
 }
@@ -3077,46 +3076,6 @@ func (c *RetryTasksCmd) Run(out Out) error {
 	return nil
 }
 
-type AuthCmd struct {
-	*models.OpenpitrixAuthRequest
-}
-
-func NewAuthCmd() Cmd {
-	cmd := &AuthCmd{}
-	cmd.OpenpitrixAuthRequest = &models.OpenpitrixAuthRequest{}
-	return cmd
-}
-
-func (*AuthCmd) GetActionName() string {
-	return "Auth"
-}
-
-func (c *AuthCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.ClientID, "client_id", "", "", "")
-	f.StringVarP(&c.ClientSecret, "client_secret", "", "", "")
-	f.StringVarP(&c.GrantType, "grant_type", "", "", "")
-	f.StringVarP(&c.Password, "password", "", "", "")
-	f.StringVarP(&c.Scope, "scope", "", "", "")
-	f.StringVarP(&c.Username, "username", "", "", "")
-}
-
-func (c *AuthCmd) Run(out Out) error {
-	params := token_manager.NewAuthParams()
-	params.WithBody(c.OpenpitrixAuthRequest)
-
-	out.WriteRequest(params)
-
-	client := test.GetClient(clientConfig)
-	res, err := client.TokenManager.Auth(params)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
 type CreateClientCmd struct {
 	*models.OpenpitrixCreateClientRequest
 }
@@ -3170,7 +3129,10 @@ func (c *TokenCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.ClientID, "client_id", "", "", "")
 	f.StringVarP(&c.ClientSecret, "client_secret", "", "", "")
 	f.StringVarP(&c.GrantType, "grant_type", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
 	f.StringVarP(&c.RefreshToken, "refresh_token", "", "", "")
+	f.StringVarP(&c.Scope, "scope", "", "", "")
+	f.StringVarP(&c.Username, "username", "", "", "")
 }
 
 func (c *TokenCmd) Run(out Out) error {

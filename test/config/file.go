@@ -25,7 +25,7 @@ func (f *ClientConfig) tokenSource(ctx context.Context, scopes []string) (oauth2
 		ClientID:     f.ClientID,
 		ClientSecret: f.ClientSecret,
 		Scopes:       scopes,
-		TokenURL:     f.EndpointURL + "/v1/oauth2/auth",
+		TokenURL:     f.EndpointURL + "/v1/oauth2/token",
 	}
 
 	oauth2.RegisterBrokenAuthHeaderProvider(f.EndpointURL)

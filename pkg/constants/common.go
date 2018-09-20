@@ -206,11 +206,8 @@ const (
 	GrantTypeRefreshToken      = "refresh_token"
 )
 
-var GrantTypeAuths = []string{
+var GrantTypeTokens = []string{
 	GrantTypeClientCredentials,
 	GrantTypePassword,
-}
-
-var GrantTypeTokens = []string{
 	GrantTypeRefreshToken,
 }
