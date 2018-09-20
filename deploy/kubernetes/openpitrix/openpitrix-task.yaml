@@ -31,7 +31,7 @@ spec:
     matchLabels:
       app: openpitrix
       component: openpitrix-task-manager
-  replicas: 1
+  replicas: ${TASK_REPLICA}
   template:
     metadata:
       labels:

@@ -167,7 +167,11 @@ func (i *EventController) getRepoEventFromQueue() (repoEvent models.RepoEvent, e
 }
 
 func (i *EventController) GetEventLength() int32 {
-	return constants.RepoEventLength
+	if pi.Global().GlobalConfig().Repo.MaxRepoEvents > 0 {
+		return pi.Global().GlobalConfig().Repo.MaxRepoEvents
+	} else {
+		return constants.DefaultMaxRepoEvents
+	}
 }
 
 func (i *EventController) Dequeue() {

@@ -80,23 +80,23 @@ func (p *Parser) ParseClusterRole(clusterConf opapp.ClusterConf, node opapp.Node
 		clusterRole.MountPoint = strings.Join(v, ",")
 	case string:
 		if v == "" {
-			clusterRole.MountPoint = constants.DefaultMountPoint
+			clusterRole.MountPoint = DefaultMountPoint
 		} else {
 			clusterRole.MountPoint = v
 		}
 	default:
-		clusterRole.MountPoint = constants.DefaultMountPoint
+		clusterRole.MountPoint = DefaultMountPoint
 	}
 
 	if clusterRole.FileSystem == "" {
-		clusterRole.FileSystem = constants.Ext4FileSystem
+		clusterRole.FileSystem = Ext4FileSystem
 	}
 
 	if clusterRole.MountOptions == "" {
-		if clusterRole.FileSystem == constants.Ext4FileSystem {
-			clusterRole.MountOptions = constants.DefaultExt4MountOption
-		} else if clusterRole.FileSystem == constants.XfsFileSystem {
-			clusterRole.MountOptions = constants.DefaultXfsMountOption
+		if clusterRole.FileSystem == Ext4FileSystem {
+			clusterRole.MountOptions = DefaultExt4MountOption
+		} else if clusterRole.FileSystem == XfsFileSystem {
+			clusterRole.MountOptions = DefaultXfsMountOption
 		}
 	}
 
@@ -107,7 +107,7 @@ func (p *Parser) ParseClusterRole(clusterConf opapp.ClusterConf, node opapp.Node
 	}
 
 	if clusterRole.InstanceSize == 0 {
-		clusterRole.InstanceSize = constants.InstanceSize
+		clusterRole.InstanceSize = InstanceSize
 	}
 	return clusterRole, nil
 }

@@ -8,6 +8,8 @@ METADATA=0
 DBCTRL=0
 BASE=0
 DASHBOARD=0
+JOB_REPLICA=1
+TASK_REPLICA=1
 
 REQUESTS=100
 LIMITS=500
@@ -16,18 +18,20 @@ usage() {
   echo "Usage:"
   echo "  deploy-k8s.sh [-n NAMESPACE] [-v VERSION] COMMAND"
   echo "Description:"
-  echo "    -n NAMESPACE: the namespace of kubernetes."
-  echo "    -v VERSION  : the version to be deployed."
-  echo "    -r REQUESTS : the requests of container resources."
-  echo "    -l LIMITS   : the limits of container resources."
-  echo "    -b          : base model will be applied."
-  echo "    -m          : metadata will be applied."
-  echo "    -d          : dbctrl will be applied."
-  echo "    -s          : dashboard will be applied."
+  echo "    -n NAMESPACE    : the namespace of kubernetes."
+  echo "    -v VERSION  	: the version to be deployed."
+  echo "    -r REQUESTS 	: the requests of container resources."
+  echo "    -l LIMITS   	: the limits of container resources."
+  echo "    -j JOB REPLICA  : the job replica number."
+  echo "    -t TASK REPLICA	: the task replica number."
+  echo "    -b          	: base model will be applied."
+  echo "    -m          	: metadata will be applied."
+  echo "    -d          	: dbctrl will be applied."
+  echo "    -s          	: dashboard will be applied."
   exit -1
 }
 
-while getopts n:v:r:l:hbdms option
+while getopts n:v:r:l:j:t:hbdms option
 do
   case "${option}"
   in
@@ -35,6 +39,8 @@ do
   v) VERSION=${OPTARG};;
   r) REQUESTS=${OPTARG};;
   l) LIMITS=${OPTARG};;
+  j) JOB_REPLICA=${OPTARG};;
+  t) TASK_REPLICA=${OPTARG};;
   d) DBCTRL=1;;
   m) METADATA=1;;
   b) BASE=1;;
@@ -78,6 +84,8 @@ replace() {
 	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
 	  -e "s!\${REQUESTS}!${REQUESTS}!g" \
 	  -e "s!\${LIMITS}!${LIMITS}!g" \
+	  -e "s!\${JOB_REPLICA}!${JOB_REPLICA}!g" \
+	  -e "s!\${TASK_REPLICA}!${TASK_REPLICA}!g" \
 	  -e "s!\${VERSION}!${VERSION}!g" \
 	  -e "s!\${IMAGE_PULL_POLICY}!${IMAGE_PULL_POLICY}!g" \
 	  $1
