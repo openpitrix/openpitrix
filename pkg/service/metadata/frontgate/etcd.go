@@ -234,6 +234,29 @@ func (p *EtcdClient) SetValues(m map[string]string) error {
 	return nil
 }
 
+func (p *EtcdClient) SetValuesWithPrefix(prefix string, m map[string]string) error {
+	kvc := clientv3.NewKV(p.Client)
+
+	var ops []clientv3.Op
+	for k, v := range m {
+		ops = append(ops, clientv3.OpPut(prefix+k, v))
+	}
+
+	for startIdx := 0; startIdx < len(ops); startIdx += p.maxTxnOps {
+		endIdx := startIdx + p.maxTxnOps
+		if endIdx > len(ops) {
+			endIdx = len(ops)
+		}
+
+		_, err := kvc.Txn(context.Background()).Then(ops[startIdx:endIdx]...).Commit()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (p *EtcdClient) GetStructValue(keyPrefix string, out interface{}) error {
 	m := make(map[string]interface{})
 	kv := clientv3.NewKV(p.Client)
