@@ -34,7 +34,7 @@ before_script:
 - make compose-up
 - sleep 20
 script:
-#- make unit-test
+- make unit-test
 - make e2e-test
 before_deploy:
 - make clean

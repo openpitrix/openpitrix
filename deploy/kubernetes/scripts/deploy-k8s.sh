@@ -83,13 +83,20 @@ replace() {
 	  $1
 }
 
+[ -z `which make` ] && echo "You need to install 'make' first." && exit 1
+
 echo "Deploying k8s resource..."
 # Back to the root of the project
+cd $(dirname $0)
+cd ../..
+cd ./kubernetes/iam-config
+make
 cd $(dirname $0)
 cd ../..
 
 kubectl create namespace ${NAMESPACE}
 kubectl create secret generic mysql-pass --from-file=./kubernetes/password.txt -n ${NAMESPACE}
+kubectl create secret generic iam-secret-key --from-file=./kubernetes/iam-config/secret-key.txt -n ${NAMESPACE}
 
 if [ "${DBCTRL}" == "1" ];then
   for FILE in `ls ./kubernetes/ctrl`;do
