@@ -51,7 +51,7 @@ func pushEvent(ctx context.Context, e *etcd.Etcd, uid string, msg Message) error
 
 	_, err = e.Put(ctx, key, string(value), clientv3.WithLease(resp.ID))
 	if err != nil {
-		logger.Error(ctx, "Push user [%s] event [%s] [%s] to etcd failed: %+v", uid, eventId, string(value), err)
+		logger.Error(ctx, "Push user [%s] event [%d] [%s] to etcd failed: %+v", uid, eventId, string(value), err)
 		return err
 	}
 	return nil

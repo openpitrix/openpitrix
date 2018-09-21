@@ -192,18 +192,6 @@ e2e-test: ## Run integration tests
 	cat ./test/init/sql/down.sql | docker-compose exec -T openpitrix-db mysql -uroot -ppassword
 	@echo "e2e-test done"
 
-.PHONY: ci-test
-ci-test: ## Run CI tests
-	make fmt-check
-	# build with production Dockerfile, not dev version
-	docker build -t $(TARG.Name) -f ./Dockerfile .
-	docker build -t $(TARG.Name):metadata -f ./Dockerfile.metadata .
-	make compose-up
-	sleep 20
-	make unit-test
-	make e2e-test
-	@echo "ci-test done"
-
 .PHONY: clean
 clean: ## Clean generated version file
 	-make -C ./pkg/version clean

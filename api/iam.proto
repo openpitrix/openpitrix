@@ -261,7 +261,7 @@ message CreateClientResponse {
 }
 
 message TokenRequest {
-	string grant_type = 1; // client_credentials or password
+	string grant_type = 1; // client_credentials or password or refresh_token
 	string client_id = 2;
 	string client_secret = 3;
 	string scope = 4;

@@ -1,1 +1,1 @@
-update `user_client` set `status`='disabled' where `client_id` = 'x';
+update `iam`.`user_client` set `status`='disabled' where `client_id` = 'x';
