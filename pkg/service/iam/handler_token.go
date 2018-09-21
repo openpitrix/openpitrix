@@ -63,6 +63,9 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 		if err != nil {
 			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorEmailPasswordNotMatched)
 		}
+		if user.Status != constants.StatusActive {
+			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
+		}
 		if !validateUserPassword(user, req.Password) {
 			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorEmailPasswordNotMatched)
 		}

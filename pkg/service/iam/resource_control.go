@@ -49,7 +49,7 @@ func getUser(ctx context.Context, whereCond map[string]interface{}) (*models.Use
 
 func validateUserPassword(user *models.User, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	return err != nil
+	return err == nil
 }
 
 type clientIface interface {

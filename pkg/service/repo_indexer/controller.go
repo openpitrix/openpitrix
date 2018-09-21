@@ -92,7 +92,7 @@ func (i *EventController) updateRepoEventStatus(ctx context.Context, repoEvent *
 	if err != nil {
 		logger.Critical(
 			ctx,
-			"Failed to set repo event [&s] status to [%s] result to [%s], %+v",
+			"Failed to set repo event [%s] status to [%s] result to [%s], %+v",
 			repoEvent.RepoEventId, status, result, err)
 		return err
 	}
