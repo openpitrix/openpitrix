@@ -8,6 +8,7 @@ package metadata.types;
 
 option go_package = "openpitrix.io/openpitrix/pkg/pb/metadata/types;pbtypes";
 
+import "google/protobuf/wrappers.proto";
 import "metadata/types/confd.proto";
 
 message DroneId {
@@ -42,4 +43,9 @@ message RunCommandOnDroneRequest {
 	DroneEndpoint endpoint = 1;
 	string command = 2;
 	int32 timeout_seconds = 3;
+}
+
+message DroneBinary {
+	google.protobuf.StringValue version = 1;
+	google.protobuf.BytesValue drone = 2;
 }

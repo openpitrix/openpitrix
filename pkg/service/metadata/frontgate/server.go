@@ -97,7 +97,12 @@ func ServeReverseRpcServerForPilot(
 			lastErrCode = codes.OK
 		}
 
+		connClosed := make(chan struct{})
+		logger.Info(nil, "Starting updater")
+		updater := NewUpdater(conn, connClosed, cfg)
+		go updater.Serve()
 		pbfrontgate.ServeFrontgateService(ch, service)
 		conn.Close()
+		connClosed <- struct{}{}
 	}
 }
