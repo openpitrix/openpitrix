@@ -22,6 +22,14 @@ The project originates from [QingCloud AppCenter](https://appcenter.qingcloud.co
 
 Basic idea is to decouple application repository and runtime environment. The runtime environment that an application can run is by matching the labels of runtime environment and the selectors of the repository where the application is from besides the provider. Please check out how to [design the project](docs/design/README.md).
 
+## Installation
+Please follow the [Installation Guide](https://docs.openpitrix.io/v1.0/zh-CN/openpitrix-install-guide/) to install OpenPitrix.
+
+## To start using OpenPitrix
+To get started with OpenPitrix, please read the [User Guide](https://docs.openpitrix.io/v1.0/zh-CN/user-guide/).
+
+For more information, please go to [openpitrix.io](http://openpitrix.io).
+
 ## Contributing to the project
 
 All [members](docs/members.md) of the OpenPitrix community must abide by the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Only by respecting each other can we develop a productive, collaborative community.
