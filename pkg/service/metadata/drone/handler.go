@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"reflect"
@@ -22,11 +23,66 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/yunify_confdfunc"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
+	"openpitrix.io/openpitrix/pkg/version"
 )
 
 var (
-	_ pbdrone.DroneServiceServer = (*Server)(nil)
+	_                      pbdrone.DroneServiceServer = (*Server)(nil)
+	DowloadPathPattern                                = "/opt/openpitrix/bin/%s"
+	DowloadFilePathPattern                            = "/opt/openpitrix/bin/%s/%s"
+	PilotVersionFilePath                              = "/opt/openpitrix/conf/pilot-version"
 )
+
+func (p *Server) createPilotVersionFile(pilotVersion string) error {
+	f, err := os.Create(PilotVersionFilePath)
+	if err != nil {
+		return err
+	}
+
+	_, err = f.WriteString(pilotVersion)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *Server) DistributeDrone(ctx context.Context, in *pbtypes.DroneBinary) (*pbtypes.Empty, error) {
+	pilotVersion := in.GetVersion().GetValue()
+	droneBinary := in.GetDrone().GetValue()
+
+	err := os.MkdirAll(fmt.Sprintf(DowloadPathPattern, pilotVersion), os.ModeDir|os.ModePerm)
+	if err != nil {
+		return &pbtypes.Empty{}, err
+	}
+
+	filePath := fmt.Sprintf(DowloadFilePathPattern, pilotVersion, "drone")
+
+	logger.Info(nil, "Write drone to [%s]", filePath)
+	f, err := os.Create(filePath)
+	if err != nil {
+		return &pbtypes.Empty{}, err
+	}
+
+	_, err = f.Write(droneBinary)
+	if err != nil {
+		return &pbtypes.Empty{}, err
+	}
+
+	err = os.Chmod(filePath, os.ModePerm)
+	if err != nil {
+		return &pbtypes.Empty{}, err
+	}
+
+	err = p.createPilotVersionFile(pilotVersion)
+	if err != nil {
+		return &pbtypes.Empty{}, err
+	}
+
+	os.Exit(0)
+
+	return &pbtypes.Empty{}, nil
+}
 
 func (p *Server) GetPilotVersion(context.Context, *pbtypes.Empty) (*pbtypes.Version, error) {
 	err := fmt.Errorf("TODO")
@@ -39,9 +95,12 @@ func (p *Server) GetFrontgateVersion(context.Context, *pbtypes.Empty) (*pbtypes.
 	return nil, err
 }
 func (p *Server) GetDroneVersion(context.Context, *pbtypes.DroneEndpoint) (*pbtypes.Version, error) {
-	err := fmt.Errorf("TODO")
-	logger.Warn(nil, "%+v", err)
-	return nil, err
+	reply := &pbtypes.Version{
+		ShortVersion:   version.ShortVersion,
+		GitSha1Version: version.GitSha1Version,
+		BuildDate:      version.BuildDate,
+	}
+	return reply, nil
 }
 
 func (p *Server) PingMetadataBackend(context.Context, *pbtypes.FrontgateEndpoint) (*pbtypes.Empty, error) {

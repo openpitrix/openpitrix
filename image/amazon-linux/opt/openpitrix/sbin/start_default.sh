@@ -17,10 +17,10 @@ fi
 START_CMD=""
 if [ "$FILE_NAME" == "frontgate.conf" ]
 then
-  START_CMD="frontgate -config=/opt/openpitrix/conf/frontgate.conf --openpitrix-ca-crt-file=/opt/openpitrix/conf/openpitrix-ca.crt --pilot-client-crt-file=/opt/openpitrix/conf/pilot-client.crt --pilot-client-key-file=/opt/openpitrix/conf/pilot-client.key serve"
+  START_CMD="frontgate"
 elif [ "$FILE_NAME" == "drone.conf" ]
 then
-  START_CMD="drone -config=/opt/openpitrix/conf/drone.conf serve"
+  START_CMD="drone"
 fi
 
 echo $FILE_CONF > /opt/openpitrix/conf/$FILE_NAME

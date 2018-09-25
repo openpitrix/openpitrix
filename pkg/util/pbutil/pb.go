@@ -76,3 +76,7 @@ func ToProtoUInt32(uint32 uint32) *wrappers.UInt32Value {
 func ToProtoBool(bool bool) *wrappers.BoolValue {
 	return &wrappers.BoolValue{Value: bool}
 }
+
+func ToProtoBytes(bytes []byte) *wrappers.BytesValue {
+	return &wrappers.BytesValue{Value: bytes}
+}
