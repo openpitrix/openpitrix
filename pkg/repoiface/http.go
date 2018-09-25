@@ -33,7 +33,7 @@ func (i *HttpInterface) CheckFile(ctx context.Context, filename string) (bool, e
 	}
 	defer resp.Body.Close()
 
-	if 200 <= resp.StatusCode || resp.StatusCode <= 299 {
+	if resp.StatusCode < 200 || 299 < resp.StatusCode {
 		return false, fmt.Errorf("http status code is %d", resp.StatusCode)
 	}
 

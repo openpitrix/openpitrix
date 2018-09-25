@@ -332,7 +332,7 @@ func (p *Parser) ParseClusterLoadbalancer(node opapp.Node) []*models.ClusterLoad
 	var clusterLoadbalancers []*models.ClusterLoadbalancer
 	for _, loadbalancer := range node.Loadbalancer {
 		clusterLoadbalancer := &models.ClusterLoadbalancer{
-			Role: node.Role,
+			Role:                   node.Role,
 			LoadbalancerListenerId: loadbalancer.Listener,
 			LoadbalancerPolicyId:   loadbalancer.Policy,
 			LoadbalancerPort:       loadbalancer.Port,

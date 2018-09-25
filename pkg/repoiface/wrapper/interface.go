@@ -4,6 +4,8 @@
 
 package wrapper
 
+import "github.com/Masterminds/semver"
+
 type VersionInterface interface {
 	GetName() string
 	GetVersion() string
@@ -18,4 +20,30 @@ type VersionInterface interface {
 	GetMaintainers() string
 	GetScreenshots() string
 	GetPackageName() string
+}
+
+type VersionInterfaces []VersionInterface
+
+// Len returns the length.
+func (c VersionInterfaces) Len() int { return len(c) }
+
+// Swap swaps the position of two items in the versions slice.
+func (c VersionInterfaces) Swap(i, j int) { c[i], c[j] = c[j], c[i] }
+
+// Less returns true if the version of entry a is less than the version of entry b.
+func (c VersionInterfaces) Less(a, b int) bool {
+	// Failed parse pushes to the back.
+	i, err := semver.NewVersion(c[a].GetVersion())
+	if err != nil {
+		return true
+	}
+	j, err := semver.NewVersion(c[b].GetVersion())
+	if err != nil {
+		return false
+	}
+	return i.LessThan(j)
+}
+
+type IndexInterface interface {
+	GetEntries() map[string]VersionInterfaces
 }

@@ -6,6 +6,8 @@ package wrapper
 
 import (
 	"fmt"
+	"path/filepath"
+	"sort"
 	"strings"
 
 	"k8s.io/helm/pkg/repo"
@@ -55,5 +57,23 @@ func (h HelmVersionWrapper) GetVersionName() string {
 }
 
 func (h HelmVersionWrapper) GetPackageName() string {
-	return fmt.Sprintf("%s-%s.tgz", h.Name, h.Version)
+	_, file := filepath.Split(h.GetUrls())
+	return file
+}
+
+type HelmIndexWrapper struct {
+	*repo.IndexFile
+}
+
+func (h HelmIndexWrapper) GetEntries() map[string]VersionInterfaces {
+	var entries = make(map[string]VersionInterfaces)
+	for chartName, chartVersions := range h.Entries {
+		var versions VersionInterfaces
+		sort.Sort(chartVersions)
+		for _, v := range chartVersions {
+			versions = append(versions, HelmVersionWrapper{v})
+		}
+		entries[chartName] = versions
+	}
+	return entries
 }

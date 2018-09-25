@@ -270,6 +270,14 @@ func formatApp(ctx context.Context, app *models.App) (*pb.App, error) {
 	return pbApp, nil
 }
 
+func getAppCategories(ctx context.Context, appId string) ([]*pb.ResourceCategory, error) {
+	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), []string{appId})
+	if err != nil {
+		return nil, err
+	}
+	return rcmap[appId], nil
+}
+
 func formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
 	var pbApps []*pb.App
 	var appIds []string
@@ -331,4 +339,28 @@ func resortAppVersions(ctx context.Context, appId string) error {
 		}
 	}
 	return nil
+}
+
+func clearAppVersions(ctx context.Context, appId string, ignoredVersionIds []string) error {
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableAppVersion).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Set(constants.ColumnStatusTime, time.Now()).
+		Set(constants.ColumnUpdateTime, time.Now()).
+		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Neq(constants.ColumnVersionId, ignoredVersionIds)).
+		Exec()
+	return err
+}
+
+func clearApps(ctx context.Context, repoId string, ignoredAppIds []string) error {
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableApp).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Set(constants.ColumnStatusTime, time.Now()).
+		Set(constants.ColumnUpdateTime, time.Now()).
+		Where(db.Eq(constants.ColumnRepoId, repoId)).
+		Where(db.Neq(constants.ColumnAppId, ignoredAppIds)).
+		Exec()
+	return err
 }

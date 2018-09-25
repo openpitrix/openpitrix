@@ -3657,6 +3657,18 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixSyncRepoResponse": {
+      "type": "object",
+      "properties": {
+        "failed": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "result": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixCategory": {
       "type": "object",
       "properties": {
