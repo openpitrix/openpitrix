@@ -49,7 +49,7 @@ func (i *HttpInterface) ReadFile(ctx context.Context, filename string) ([]byte, 
 	}
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("http status code is not 200")
+		return nil, fmt.Errorf(`looks like "%s" is not a valid chart repository or cannot be reached: Failed to fetch %s : %s`, i.url.String(), u, resp.Status)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
