@@ -308,3 +308,17 @@ func TestRepoLabelSelector(t *testing.T) {
 
 	t.Log("test repo label and selector finish, all test is ok")
 }
+
+func TestDeleteInternalRepo(t *testing.T) {
+	client := GetClient(clientConfig)
+
+	// test delete internal repo, should be failed
+	for _, repoId := range constants.InternalRepos {
+		deleteParams := repo_manager.NewDeleteReposParams()
+		deleteParams.WithBody(&models.OpenpitrixDeleteReposRequest{
+			RepoID: []string{repoId},
+		})
+		_, err := client.RepoManager.DeleteRepos(deleteParams, nil)
+		require.Error(t, err)
+	}
+}

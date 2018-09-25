@@ -270,6 +270,12 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 	s := senderutil.GetSenderFromContext(ctx)
 	repoIds := req.GetRepoId()
 
+	for _, repoId := range repoIds {
+		if stringutil.StringIn(repoId, constants.InternalRepos) {
+			return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorCannotDeleteInternalRepo, repoId)
+		}
+	}
+
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableRepo).
 		Set(constants.ColumnStatus, constants.StatusDeleted).

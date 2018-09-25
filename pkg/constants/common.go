@@ -202,3 +202,7 @@ var GrantTypeTokens = []string{
 	GrantTypePassword,
 	GrantTypeRefreshToken,
 }
+
+var InternalRepos = []string{
+	"repo-vmbased", "repo-helm",
+}
