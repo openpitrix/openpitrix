@@ -12,8 +12,6 @@ import (
 
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 
-	"openpitrix.io/openpitrix/pkg/pi"
-
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -23,6 +21,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -31,17 +30,23 @@ import (
 )
 
 func getCluster(ctx context.Context, clusterId, userId string) (*models.Cluster, error) {
-	cluster := &models.Cluster{}
-	err := pi.Global().DB(ctx).
+	var clusters []*models.Cluster
+	_, err := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
 		From(constants.TableCluster).
 		Where(db.Eq("cluster_id", clusterId)).
 		Where(db.Eq("owner", userId)).
-		LoadOne(&cluster)
+		Load(&clusters)
 	if err != nil {
 		return nil, err
 	}
-	return cluster, nil
+
+	if len(clusters) == 0 {
+		logger.Error(ctx, "Failed to get cluster [%s] with user [%s]", clusterId, userId)
+		return nil, fmt.Errorf("cluster [%s] not exist", clusterId)
+	}
+
+	return clusters[0], nil
 }
 
 func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWrapper, error) {
@@ -229,6 +234,10 @@ func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsReq
 	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, runtimeId)
+	}
+
+	if !plugins.IsVmbasedProviders(runtime.Provider) {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
@@ -466,6 +475,10 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
 		}
 
+		if !plugins.IsVmbasedProviders(runtime.Provider) {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
+		}
+
 		var nodeKeyPairDetails models.NodeKeyPairDetails
 		for _, nodeId := range nodeIds {
 			for _, keyPairId := range keyPairIds {
@@ -557,6 +570,10 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 		}
 		runtime, err := runtimeclient.NewRuntime(ctx, cluster.RuntimeId)
 		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
+		}
+
+		if !plugins.IsVmbasedProviders(runtime.Provider) {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 		}
 
@@ -1514,6 +1531,10 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
+		if !plugins.IsVmbasedProviders(runtime.Provider) {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStopResourceFailed, clusterId)
+		}
+
 		newJob := models.NewJob(
 			constants.PlaceHolder,
 			clusterId,
@@ -1558,6 +1579,10 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 		runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
+		}
+
+		if !plugins.IsVmbasedProviders(runtime.Provider) {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStartResourceFailed, clusterId)
 		}
 
 		fg := &Frontgate{
