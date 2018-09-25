@@ -1,6 +1,6 @@
 # OpenPitrix Roadmap
 
-The Roadmap demonstrates a list of product development plans and features being split by the version and role modules, as well as our development team anticipates of OpenPitrix. Obviously, it details the future's direction of OpenPitrix, but may change over time. We hope that you can walk through our plans and vision through roadmap. Of course, if you have any better ideas, welcome to [Issues](https://github.com/openpitrix/openpitrix/issues)。
+The Roadmap demonstrates a list of product development plans and features being split by the edition and role modules, as well as our development team anticipates of OpenPitrix. Obviously, it details the future's direction of OpenPitrix, but may change over time. We hope that you can walk through our plans and vision through roadmap. Of course, if you have any better ideas, welcome to [Issues](https://github.com/openpitrix/openpitrix/issues)。
 
 ## Delivery
 
