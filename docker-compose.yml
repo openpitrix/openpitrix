@@ -16,6 +16,11 @@ services:
     ports:
      - "13306:3306" # for unit-test & debug
     container_name: "openpitrix-db"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-etcd:
     image: "quay.io/coreos/etcd:v3.2.18"
     command: etcd --data-dir /data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://openpitrix-etcd:2379 --max-snapshots 5 --max-wals 5 --auto-compaction-retention=168
@@ -24,6 +29,11 @@ services:
     ports:
      - "12379:2379" # for unit-test & debug
     container_name: "openpitrix-etcd"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-minio:
     image: "minio/minio:RELEASE.2018-08-25T01-56-38Z"
     command: -c "mkdir -p /data/openpitrix-internal-repo/vmbased /data/openpitrix-internal-repo/helm && minio server /data"
@@ -36,6 +46,11 @@ services:
     ports:
      - "19000:9000" # for unit-test & debug
     container_name: "openpitrix-minio"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-dashboard:
     image: "openpitrix/dashboard"
     ports:
@@ -45,6 +60,11 @@ services:
       - ./deploy/config/dashboard.yaml:/app/server/local_config.yml
     links:
       - openpitrix-api-gateway:openpitrix-api-gateway
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-api-gateway:
     build: .
     image: "openpitrix"
@@ -63,6 +83,11 @@ services:
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
     container_name: "openpitrix-api-gateway"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   # repo service
   openpitrix-repo-manager:
@@ -80,6 +105,11 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=repo
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-repo-indexer:
     build: .
     image: "openpitrix"
@@ -97,6 +127,11 @@ services:
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=repo
       - OPENPITRIX_PROFILING_ENABLE=1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-repo-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://openpitrix-db/repo -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
@@ -125,6 +160,11 @@ services:
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=app
       - OPENPITRIX_PROFILING_ENABLE=1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-category-manager:
     build: .
     image: "openpitrix"
@@ -140,6 +180,11 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=app
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-app-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://openpitrix-db/app -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
@@ -167,6 +212,11 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=runtime
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-runtime-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://openpitrix-db/runtime -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
@@ -194,6 +244,11 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=job
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-job-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://openpitrix-db/job -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
@@ -221,6 +276,11 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=task
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-task-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://openpitrix-db/task -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
@@ -248,6 +308,11 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=cluster
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-cluster-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://openpitrix-db/cluster -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
@@ -275,6 +340,11 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=iam
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-iam-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://openpitrix-db/iam -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
@@ -305,3 +375,8 @@ services:
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
