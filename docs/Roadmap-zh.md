@@ -4,12 +4,11 @@ OpenPitrix Roadmap 是 OpenPitrix 核心开发团队预期的产品开发计划�
 
 ## 版本
 
-- [Alpha 0.1](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#alpha-01)：2018 年 7 月
-- [Beta 0.2](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#beta-02)：2018 年 7 月
-- [Beta 0.3](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#beta-03)：2018 年 9 月底
-- [v1.0](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#v10)：2019 年 1 月
-- [v2.0](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#v20)：2019 年 6 月
-- v3.0：2019 年 12 月
+- [Alpha 0.1](docs/Roadmap-zh.md#alpha-01)：2018 年 7 月
+- [Beta 0.2](docs/Roadmap-zh.md#beta-02)：2018 年 7 月
+- [Beta 0.3](docs/Roadmap-zh.md#beta-03)：2018 年 9 月底
+- [v1.0](docs/Roadmap-zh.md#v10)：2019 年 1 月
+- [v2.0](docs/Roadmap-zh.md#v20)：2019 年 6 月
 
 ## 功能
 
@@ -74,7 +73,7 @@ OpenPitrix Roadmap 是 OpenPitrix 核心开发团队预期的产品开发计划�
 - [ ] 用户管理：支持添加和管理用户组
 - [ ] 财务管理：支持发票管理
 - [ ] 平台管理：引入工单系统；支持短信服务器配置
-- [ ] 身份验证管理：支持第三方登录如 Github、下一个版本将支持微信
+- [ ] 身份验证管理：支持第三方登录如 Github，下一个版本将支持微信
 - [ ] 运行环境：引入 EdgeWize
 
 应用提供商
