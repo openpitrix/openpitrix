@@ -24,7 +24,7 @@ Basic idea is to decouple application repository and runtime environment. The ru
 
 ## Roadmap
 
-The [Roadmap](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap.md) demonstrates a list of product development plans and features being split by the edition and role modules, as well as our development team anticipates of OpenPitrix. Obviously, it details the future's direction of OpenPitrix, but may change over time. We hope that you can walk through our plans and vision through roadmap. Of course, if you have any better ideas, welcome to [Issues](https://github.com/openpitrix/openpitrix/issues)。
+The [Roadmap](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md) demonstrates a list of product development plans and features being split by the edition and role modules, as well as our development team anticipates of OpenPitrix. Obviously, it details the future's direction of OpenPitrix, but may change over time. We hope that can help you to get familiar with our plans and vision through the Roadmap. Of course, if you have any better ideas, welcome to [Issues](https://github.com/openpitrix/openpitrix/issues).
 
 ## Installation
 Please follow the [Installation Guide](https://docs.openpitrix.io/v1.0/zh-CN/openpitrix-install-guide/) to install OpenPitrix.
