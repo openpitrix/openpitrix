@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -50,6 +51,41 @@ func (p *Server) getAppVersions(ctx context.Context, versionIds []string) ([]*mo
 	return versions, nil
 }
 
+func (p *Server) SyncRepo(ctx context.Context, req *pb.SyncRepoRequest) (*pb.SyncRepoResponse, error) {
+	var res = &pb.SyncRepoResponse{}
+	var repoId = req.GetRepoId()
+	if len(repoId) == 0 {
+		return res, nil
+	}
+	var failed = func(reason string) (*pb.SyncRepoResponse, error) {
+		res.Failed = true
+		res.Result = reason
+		return res, nil
+	}
+
+	repoManagerClient, err := repoClient.NewRepoManagerClient()
+	if err != nil {
+		return failed("internal error")
+	}
+	describeRepoReq := pb.DescribeReposRequest{
+		RepoId: []string{repoId},
+	}
+	describeRepoRes, err := repoManagerClient.DescribeRepos(ctx, &describeRepoReq)
+	if err != nil {
+		logger.Error(ctx, "Failed to describe repo [%s], %+v", repoId, err)
+		return failed("internal error")
+	}
+	if describeRepoRes.TotalCount == 0 {
+		logger.Error(ctx, "Failed to describe repo [%s], repo not exists", repoId)
+		return failed("internal error")
+	}
+	repo := describeRepoRes.RepoSet[0]
+	err = newRepoProxy(repo).SyncRepo(ctx)
+	if err != nil {
+		return failed(err.Error())
+	}
+	return res, nil
+}
 func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) (*pb.DescribeAppsResponse, error) {
 	var apps []*models.App
 	offset := pbutil.GetOffsetFromRequest(req)

@@ -223,7 +223,8 @@ message GetAppVersionPackageFilesResponse {
 	google.protobuf.StringValue version_id = 2;
 }
 
-message GetAppStatisticsRequest {}
+message GetAppStatisticsRequest {
+}
 
 message GetAppStatisticsResponse {
 	map<string, uint32> last_two_week_created = 1; // app create time range -> app count, max length is 14
@@ -281,7 +282,17 @@ message RecoverAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
 }
 
+message SyncRepoRequest {
+	string repo_id = 1;
+}
+message SyncRepoResponse {
+	bool failed = 1;
+	string result = 2;
+}
+
 service AppManager {
+	rpc SyncRepo (SyncRepoRequest) returns (SyncRepoResponse) {
+	}
 	rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create app"
