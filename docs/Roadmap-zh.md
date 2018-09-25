@@ -4,11 +4,11 @@ OpenPitrix Roadmap 是 OpenPitrix 核心开发团队预期的产品开发计划�
 
 ## 版本
 
-- [Alpha 0.1](docs/Roadmap-zh.md#alpha-01)：2018 年 7 月
-- [Beta 0.2](docs/Roadmap-zh.md#beta-02)：2018 年 7 月
-- [Beta 0.3](docs/Roadmap-zh.md#beta-03)：2018 年 9 月底
-- [v1.0](docs/Roadmap-zh.md#v10)：2019 年 1 月
-- [v2.0](docs/Roadmap-zh.md#v20)：2019 年 6 月
+- [Alpha 0.1](Roadmap-zh.md#alpha-01)：2018 年 7 月
+- [Beta 0.2](Roadmap-zh.md#beta-02)：2018 年 7 月
+- [Beta 0.3](Roadmap-zh.md#beta-03)：2018 年 9 月底
+- [v1.0](Roadmap-zh.md#v10)：2019 年 1 月
+- [v2.0](Roadmap-zh.md#v20)：2019 年 6 月
 
 ## 功能
 
