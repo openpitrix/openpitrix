@@ -55,6 +55,7 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest
 }
 
 func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsRequest) (*pb.DescribeGroupsResponse, error) {
+	// TODO: add filter condition
 	var (
 		offset = pbutil.GetOffsetFromRequest(req)
 		limit  = pbutil.GetLimitFromRequest(req)
@@ -84,6 +85,7 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 }
 
 func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb.ModifyUserResponse, error) {
+	// validate permission
 	var attributes = manager.BuildUpdateAttributes(req,
 		"username", "email", "role", "status", "description",
 	)

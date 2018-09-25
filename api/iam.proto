@@ -274,5 +274,5 @@ message TokenResponse {
 	int32 expires_in = 2;
 	string access_token = 3;
 	string refresh_token = 4;
-	//	string id_token = 5;
+	string id_token = 5;
 }

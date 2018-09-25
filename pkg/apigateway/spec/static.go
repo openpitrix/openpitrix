@@ -5286,6 +5286,9 @@ var Files = map[string]string{
         },
         "refresh_token": {
           "type": "string"
+        },
+        "id_token": {
+          "type": "string"
         }
       }
     },
