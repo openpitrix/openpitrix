@@ -2,7 +2,7 @@
 
 set -e
 
-[ -z `which make` ] && echo "You need to install make first." && exit 1
+[ -z `which make` ] && echo "You need to install 'make' first." && exit 1
 
 DEFAULT_NAMESPACE=openpitrix-system
 NAMESPACE=${DEFAULT_NAMESPACE}

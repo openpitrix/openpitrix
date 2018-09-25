@@ -87,7 +87,7 @@ func testVersionPackage(t *testing.T, appId string) {
 			RepoID: "repo-vmbased",
 			Status: constants.StatusDraft,
 		})
-	_, err := client.AppManager.ModifyApp(modifyAppParams)
+	_, err := client.AppManager.ModifyApp(modifyAppParams, nil)
 
 	require.NoError(t, err)
 
@@ -98,7 +98,7 @@ func testVersionPackage(t *testing.T, appId string) {
 			Status:  constants.StatusDraft,
 			Package: preparePackage(t, "0.0.1"),
 		})
-	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams)
+	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -110,7 +110,7 @@ func testVersionPackage(t *testing.T, appId string) {
 			VersionID: versionId1,
 			Package:   preparePackage(t, "0.0.2"),
 		})
-	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams)
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -120,7 +120,7 @@ func testVersionPackage(t *testing.T, appId string) {
 			VersionID: versionId1,
 			Package:   preparePackage(t, "0.0.3"),
 		})
-	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams)
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -131,7 +131,7 @@ func testVersionPackage(t *testing.T, appId string) {
 			Status:  constants.StatusDraft,
 			Package: preparePackage(t, "0.1.0"),
 		})
-	createAppVersionResp, err = client.AppManager.CreateAppVersion(createAppVersionParams)
+	createAppVersionResp, err = client.AppManager.CreateAppVersion(createAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -143,7 +143,7 @@ func testVersionPackage(t *testing.T, appId string) {
 			VersionID: versionId2,
 			Package:   preparePackage(t, "0.0.3"),
 		})
-	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams)
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
 
 	require.Error(t, err)
 
@@ -152,7 +152,7 @@ func testVersionPackage(t *testing.T, appId string) {
 		&models.OpenpitrixDeleteAppVersionRequest{
 			VersionID: versionId2,
 		})
-	_, err = client.AppManager.DeleteAppVersion(deleteAppVersionParams)
+	_, err = client.AppManager.DeleteAppVersion(deleteAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -161,7 +161,7 @@ func testVersionPackage(t *testing.T, appId string) {
 		&models.OpenpitrixDeleteAppVersionRequest{
 			VersionID: versionId1,
 		})
-	_, err = client.AppManager.DeleteAppVersion(deleteAppVersionParams)
+	_, err = client.AppManager.DeleteAppVersion(deleteAppVersionParams, nil)
 
 	require.NoError(t, err)
 }
@@ -175,7 +175,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 			AppID:  appId,
 			Status: constants.StatusDraft,
 		})
-	_, err := client.AppManager.ModifyApp(modifyAppParams)
+	_, err := client.AppManager.ModifyApp(modifyAppParams, nil)
 
 	require.NoError(t, err)
 
@@ -186,7 +186,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 			AppID:  appId,
 			Status: constants.StatusDraft,
 		})
-	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams)
+	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -198,7 +198,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 			VersionID: versionId,
 			Name:      "test_version2",
 		})
-	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams)
+	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -207,7 +207,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 		&models.OpenpitrixSubmitAppVersionRequest{
 			VersionID: versionId,
 		})
-	_, err = client.AppManager.SubmitAppVersion(submitAppVersionParams)
+	_, err = client.AppManager.SubmitAppVersion(submitAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -216,11 +216,11 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 		&models.OpenpitrixRejectAppVersionRequest{
 			VersionID: versionId,
 		})
-	_, err = client.AppManager.RejectAppVersion(rejectAppVersionParams)
+	_, err = client.AppManager.RejectAppVersion(rejectAppVersionParams, nil)
 
 	require.NoError(t, err)
 
-	_, err = client.AppManager.SubmitAppVersion(submitAppVersionParams)
+	_, err = client.AppManager.SubmitAppVersion(submitAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -229,7 +229,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 		&models.OpenpitrixPassAppVersionRequest{
 			VersionID: versionId,
 		})
-	_, err = client.AppManager.PassAppVersion(passAppVersionParams)
+	_, err = client.AppManager.PassAppVersion(passAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -238,7 +238,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 		&models.OpenpitrixReleaseAppVersionRequest{
 			VersionID: versionId,
 		})
-	_, err = client.AppManager.ReleaseAppVersion(releaseAppVersionParams)
+	_, err = client.AppManager.ReleaseAppVersion(releaseAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -247,7 +247,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 		&models.OpenpitrixSuspendAppVersionRequest{
 			VersionID: versionId,
 		})
-	_, err = client.AppManager.SuspendAppVersion(suspendAppVersionParams)
+	_, err = client.AppManager.SuspendAppVersion(suspendAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -256,7 +256,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 		&models.OpenpitrixDeleteAppVersionsRequest{
 			VersionID: []string{versionId},
 		})
-	_, err = client.AppManager.DeleteAppVersions(deleteAppVersionParams)
+	_, err = client.AppManager.DeleteAppVersions(deleteAppVersionParams, nil)
 
 	require.NoError(t, err)
 }
@@ -271,7 +271,7 @@ func TestApp(t *testing.T) {
 	describeParams := app_manager.NewDescribeAppsParams()
 	describeParams.SetName([]string{testAppName})
 	describeParams.SetStatus([]string{constants.StatusDraft, constants.StatusActive})
-	describeResp, err := client.AppManager.DescribeApps(describeParams)
+	describeResp, err := client.AppManager.DescribeApps(describeParams, nil)
 
 	require.NoError(t, err)
 
@@ -282,7 +282,7 @@ func TestApp(t *testing.T) {
 			&models.OpenpitrixDeleteAppsRequest{
 				AppID: []string{app.AppID},
 			})
-		_, err := client.AppManager.DeleteApps(deleteParams)
+		_, err := client.AppManager.DeleteApps(deleteParams, nil)
 
 		require.NoError(t, err)
 	}
@@ -294,7 +294,7 @@ func TestApp(t *testing.T) {
 			RepoID:     testRepoId,
 			CategoryID: "xx,yy,zz",
 		})
-	createResp, err := client.AppManager.CreateApp(createParams)
+	createResp, err := client.AppManager.CreateApp(createParams, nil)
 
 	require.NoError(t, err)
 
@@ -307,14 +307,14 @@ func TestApp(t *testing.T) {
 			RepoID:     testRepoId2,
 			CategoryID: "aa,bb,cc,xx",
 		})
-	modifyResp, err := client.AppManager.ModifyApp(modifyParams)
+	modifyResp, err := client.AppManager.ModifyApp(modifyParams, nil)
 
 	require.NoError(t, err)
 
 	t.Log(modifyResp)
 	// describe app
 	describeParams.WithAppID([]string{appId})
-	describeResp, err = client.AppManager.DescribeApps(describeParams)
+	describeResp, err = client.AppManager.DescribeApps(describeParams, nil)
 
 	require.NoError(t, err)
 
@@ -340,7 +340,7 @@ func TestApp(t *testing.T) {
 	require.Equal(t, getSortedString(enabledCategoryIds), "aa,bb,cc,xx")
 	require.Equal(t, getSortedString(disabledCategoryIds), "yy,zz")
 
-	getStatisticsResp, err := client.AppManager.GetAppStatistics(nil)
+	getStatisticsResp, err := client.AppManager.GetAppStatistics(nil, nil)
 	require.NoError(t, err)
 	require.NotEmpty(t, getStatisticsResp.Payload.LastTwoWeekCreated)
 	require.NotEmpty(t, getStatisticsResp.Payload.TopTenRepos)
@@ -356,7 +356,7 @@ func TestApp(t *testing.T) {
 	deleteParams.WithBody(&models.OpenpitrixDeleteAppsRequest{
 		AppID: []string{appId},
 	})
-	deleteResp, err := client.AppManager.DeleteApps(deleteParams)
+	deleteResp, err := client.AppManager.DeleteApps(deleteParams, nil)
 
 	require.NoError(t, err)
 
@@ -365,7 +365,7 @@ func TestApp(t *testing.T) {
 	describeParams.WithAppID([]string{appId})
 	describeParams.WithStatus([]string{constants.StatusDeleted})
 	describeParams.WithName(nil)
-	describeResp, err = client.AppManager.DescribeApps(describeParams)
+	describeResp, err = client.AppManager.DescribeApps(describeParams, nil)
 
 	require.NoError(t, err)
 

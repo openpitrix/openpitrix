@@ -942,21 +942,6 @@
   body:
     task_id:
       type: '[]string'
-- action: Auth
-  service: TokenManager
-  body:
-    client_id:
-      type: string
-    client_secret:
-      type: string
-    grant_type:
-      type: string
-    password:
-      type: string
-    scope:
-      type: string
-    username:
-      type: string
 - action: CreateClient
   service: TokenManager
   body:
@@ -971,5 +956,12 @@
       type: string
     grant_type:
       type: string
+    password:
+      type: string
     refresh_token:
       type: string
+    scope:
+      type: string
+    username:
+      type: string
+  insecurity: true

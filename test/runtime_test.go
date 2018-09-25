@@ -31,7 +31,7 @@ func TestRuntime(t *testing.T) {
 	describeParams := runtime_manager.NewDescribeRuntimesParams()
 	describeParams.SetSearchWord(&testRuntimeName)
 	describeParams.SetStatus([]string{constants.StatusActive})
-	describeResp, err := client.RuntimeManager.DescribeRuntimes(describeParams)
+	describeResp, err := client.RuntimeManager.DescribeRuntimes(describeParams, nil)
 	require.NoError(t, err)
 	runtimes := describeResp.Payload.RuntimeSet
 	for _, runtime := range runtimes {
@@ -40,7 +40,7 @@ func TestRuntime(t *testing.T) {
 			&models.OpenpitrixDeleteRuntimesRequest{
 				RuntimeID: []string{runtime.RuntimeID},
 			})
-		_, err := client.RuntimeManager.DeleteRuntimes(deleteParams)
+		_, err := client.RuntimeManager.DeleteRuntimes(deleteParams, nil)
 		require.NoError(t, err)
 	}
 	// create runtime
@@ -54,7 +54,7 @@ func TestRuntime(t *testing.T) {
 			RuntimeCredential: credential,
 			Zone:              "default",
 		})
-	createResp, err := client.RuntimeManager.CreateRuntime(createParams)
+	createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
 	require.NoError(t, err)
 	runtimeId := createResp.Payload.RuntimeID
 	// modify runtime
@@ -64,12 +64,12 @@ func TestRuntime(t *testing.T) {
 			RuntimeID:   runtimeId,
 			Description: "cc",
 		})
-	modifyResp, err := client.RuntimeManager.ModifyRuntime(modifyParams)
+	modifyResp, err := client.RuntimeManager.ModifyRuntime(modifyParams, nil)
 	require.NoError(t, err)
 	t.Log(modifyResp)
 	// describe runtime
 	describeParams.WithRuntimeID([]string{runtimeId})
-	describeResp, err = client.RuntimeManager.DescribeRuntimes(describeParams)
+	describeResp, err = client.RuntimeManager.DescribeRuntimes(describeParams, nil)
 	require.NoError(t, err)
 	runtimes = describeResp.Payload.RuntimeSet
 	if len(runtimes) != 1 {
@@ -83,14 +83,14 @@ func TestRuntime(t *testing.T) {
 	deleteParams.WithBody(&models.OpenpitrixDeleteRuntimesRequest{
 		RuntimeID: []string{runtimeId},
 	})
-	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams)
+	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams, nil)
 	require.NoError(t, err)
 	t.Log(deleteResp)
 	// describe deleted runtime
 	describeParams.WithRuntimeID([]string{runtimeId})
 	describeParams.WithStatus([]string{constants.StatusDeleted})
 	describeParams.WithSearchWord(nil)
-	describeResp, err = client.RuntimeManager.DescribeRuntimes(describeParams)
+	describeResp, err = client.RuntimeManager.DescribeRuntimes(describeParams, nil)
 	require.NoError(t, err)
 	runtimes = describeResp.Payload.RuntimeSet
 	runtimes = describeResp.Payload.RuntimeSet
@@ -135,14 +135,14 @@ func TestRuntimeLabel(t *testing.T) {
 			Zone:              "default",
 			Labels:            labels,
 		})
-	createResp, err := client.RuntimeManager.CreateRuntime(createParams)
+	createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
 	require.NoError(t, err)
 	runtimeId := createResp.Payload.RuntimeID
 
 	describeParams := runtime_manager.NewDescribeRuntimesParams()
 	describeParams.Label = &labels
 	describeParams.Status = []string{constants.StatusActive}
-	describeResp, err := client.RuntimeManager.DescribeRuntimes(describeParams)
+	describeResp, err := client.RuntimeManager.DescribeRuntimes(describeParams, nil)
 	require.NoError(t, err)
 	if len(describeResp.Payload.RuntimeSet) != 1 {
 		t.Fatalf("describe runtime with filter failed")
@@ -156,7 +156,7 @@ func TestRuntimeLabel(t *testing.T) {
 	deleteParams.WithBody(&models.OpenpitrixDeleteRuntimesRequest{
 		RuntimeID: []string{runtimeId},
 	})
-	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams)
+	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams, nil)
 	require.NoError(t, err)
 	t.Log(deleteResp)
 

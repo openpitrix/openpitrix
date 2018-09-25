@@ -25,37 +25,9 @@ type Client struct {
 }
 
 /*
-Auth auth API
-*/
-func (a *Client) Auth(params *AuthParams) (*AuthOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewAuthParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "Auth",
-		Method:             "POST",
-		PathPattern:        "/v1/oauth2/auth",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &AuthReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*AuthOK), nil
-
-}
-
-/*
 CreateClient create client API
 */
-func (a *Client) CreateClient(params *CreateClientParams) (*CreateClientOK, error) {
+func (a *Client) CreateClient(params *CreateClientParams, authInfo runtime.ClientAuthInfoWriter) (*CreateClientOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateClientParams()
@@ -70,6 +42,7 @@ func (a *Client) CreateClient(params *CreateClientParams) (*CreateClientOK, erro
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateClientReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

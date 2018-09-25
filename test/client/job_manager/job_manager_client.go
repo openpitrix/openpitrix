@@ -27,7 +27,7 @@ type Client struct {
 /*
 DescribeJobs describes jobs with filter
 */
-func (a *Client) DescribeJobs(params *DescribeJobsParams) (*DescribeJobsOK, error) {
+func (a *Client) DescribeJobs(params *DescribeJobsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeJobsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeJobsParams()
@@ -42,6 +42,7 @@ func (a *Client) DescribeJobs(params *DescribeJobsParams) (*DescribeJobsOK, erro
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeJobsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

@@ -27,7 +27,7 @@ type Client struct {
 /*
 ChangePassword change password API
 */
-func (a *Client) ChangePassword(params *ChangePasswordParams) (*ChangePasswordOK, error) {
+func (a *Client) ChangePassword(params *ChangePasswordParams, authInfo runtime.ClientAuthInfoWriter) (*ChangePasswordOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewChangePasswordParams()
@@ -42,6 +42,7 @@ func (a *Client) ChangePassword(params *ChangePasswordParams) (*ChangePasswordOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ChangePasswordReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -55,7 +56,7 @@ func (a *Client) ChangePassword(params *ChangePasswordParams) (*ChangePasswordOK
 /*
 CreateGroup groups
 */
-func (a *Client) CreateGroup(params *CreateGroupParams) (*CreateGroupOK, error) {
+func (a *Client) CreateGroup(params *CreateGroupParams, authInfo runtime.ClientAuthInfoWriter) (*CreateGroupOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateGroupParams()
@@ -70,6 +71,7 @@ func (a *Client) CreateGroup(params *CreateGroupParams) (*CreateGroupOK, error) 
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateGroupReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -83,7 +85,7 @@ func (a *Client) CreateGroup(params *CreateGroupParams) (*CreateGroupOK, error) 
 /*
 CreatePasswordReset create password reset API
 */
-func (a *Client) CreatePasswordReset(params *CreatePasswordResetParams) (*CreatePasswordResetOK, error) {
+func (a *Client) CreatePasswordReset(params *CreatePasswordResetParams, authInfo runtime.ClientAuthInfoWriter) (*CreatePasswordResetOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreatePasswordResetParams()
@@ -98,6 +100,7 @@ func (a *Client) CreatePasswordReset(params *CreatePasswordResetParams) (*Create
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreatePasswordResetReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -111,7 +114,7 @@ func (a *Client) CreatePasswordReset(params *CreatePasswordResetParams) (*Create
 /*
 CreateUser admins permission
 */
-func (a *Client) CreateUser(params *CreateUserParams) (*CreateUserOK, error) {
+func (a *Client) CreateUser(params *CreateUserParams, authInfo runtime.ClientAuthInfoWriter) (*CreateUserOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateUserParams()
@@ -126,6 +129,7 @@ func (a *Client) CreateUser(params *CreateUserParams) (*CreateUserOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateUserReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -139,7 +143,7 @@ func (a *Client) CreateUser(params *CreateUserParams) (*CreateUserOK, error) {
 /*
 DeleteGroups delete groups API
 */
-func (a *Client) DeleteGroups(params *DeleteGroupsParams) (*DeleteGroupsOK, error) {
+func (a *Client) DeleteGroups(params *DeleteGroupsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteGroupsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteGroupsParams()
@@ -154,6 +158,7 @@ func (a *Client) DeleteGroups(params *DeleteGroupsParams) (*DeleteGroupsOK, erro
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteGroupsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -167,7 +172,7 @@ func (a *Client) DeleteGroups(params *DeleteGroupsParams) (*DeleteGroupsOK, erro
 /*
 DeleteUsers delete users API
 */
-func (a *Client) DeleteUsers(params *DeleteUsersParams) (*DeleteUsersOK, error) {
+func (a *Client) DeleteUsers(params *DeleteUsersParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteUsersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteUsersParams()
@@ -182,6 +187,7 @@ func (a *Client) DeleteUsers(params *DeleteUsersParams) (*DeleteUsersOK, error) 
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteUsersReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -195,7 +201,7 @@ func (a *Client) DeleteUsers(params *DeleteUsersParams) (*DeleteUsersOK, error) 
 /*
 DescribeGroups describe groups API
 */
-func (a *Client) DescribeGroups(params *DescribeGroupsParams) (*DescribeGroupsOK, error) {
+func (a *Client) DescribeGroups(params *DescribeGroupsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeGroupsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeGroupsParams()
@@ -210,6 +216,7 @@ func (a *Client) DescribeGroups(params *DescribeGroupsParams) (*DescribeGroupsOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeGroupsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -223,7 +230,7 @@ func (a *Client) DescribeGroups(params *DescribeGroupsParams) (*DescribeGroupsOK
 /*
 DescribeUsers describe users API
 */
-func (a *Client) DescribeUsers(params *DescribeUsersParams) (*DescribeUsersOK, error) {
+func (a *Client) DescribeUsers(params *DescribeUsersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeUsersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeUsersParams()
@@ -238,6 +245,7 @@ func (a *Client) DescribeUsers(params *DescribeUsersParams) (*DescribeUsersOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeUsersReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -251,7 +259,7 @@ func (a *Client) DescribeUsers(params *DescribeUsersParams) (*DescribeUsersOK, e
 /*
 GetPasswordReset get password reset API
 */
-func (a *Client) GetPasswordReset(params *GetPasswordResetParams) (*GetPasswordResetOK, error) {
+func (a *Client) GetPasswordReset(params *GetPasswordResetParams, authInfo runtime.ClientAuthInfoWriter) (*GetPasswordResetOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetPasswordResetParams()
@@ -266,6 +274,7 @@ func (a *Client) GetPasswordReset(params *GetPasswordResetParams) (*GetPasswordR
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &GetPasswordResetReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -279,7 +288,7 @@ func (a *Client) GetPasswordReset(params *GetPasswordResetParams) (*GetPasswordR
 /*
 JoinGroup join group API
 */
-func (a *Client) JoinGroup(params *JoinGroupParams) (*JoinGroupOK, error) {
+func (a *Client) JoinGroup(params *JoinGroupParams, authInfo runtime.ClientAuthInfoWriter) (*JoinGroupOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewJoinGroupParams()
@@ -294,6 +303,7 @@ func (a *Client) JoinGroup(params *JoinGroupParams) (*JoinGroupOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &JoinGroupReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -307,7 +317,7 @@ func (a *Client) JoinGroup(params *JoinGroupParams) (*JoinGroupOK, error) {
 /*
 LeaveGroup leave group API
 */
-func (a *Client) LeaveGroup(params *LeaveGroupParams) (*LeaveGroupOK, error) {
+func (a *Client) LeaveGroup(params *LeaveGroupParams, authInfo runtime.ClientAuthInfoWriter) (*LeaveGroupOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewLeaveGroupParams()
@@ -322,6 +332,7 @@ func (a *Client) LeaveGroup(params *LeaveGroupParams) (*LeaveGroupOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &LeaveGroupReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -335,7 +346,7 @@ func (a *Client) LeaveGroup(params *LeaveGroupParams) (*LeaveGroupOK, error) {
 /*
 ModifyGroup modify group API
 */
-func (a *Client) ModifyGroup(params *ModifyGroupParams) (*ModifyGroupOK, error) {
+func (a *Client) ModifyGroup(params *ModifyGroupParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyGroupOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewModifyGroupParams()
@@ -350,6 +361,7 @@ func (a *Client) ModifyGroup(params *ModifyGroupParams) (*ModifyGroupOK, error) 
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyGroupReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -363,7 +375,7 @@ func (a *Client) ModifyGroup(params *ModifyGroupParams) (*ModifyGroupOK, error) 
 /*
 ModifyUser modify user API
 */
-func (a *Client) ModifyUser(params *ModifyUserParams) (*ModifyUserOK, error) {
+func (a *Client) ModifyUser(params *ModifyUserParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyUserOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewModifyUserParams()
@@ -378,6 +390,7 @@ func (a *Client) ModifyUser(params *ModifyUserParams) (*ModifyUserOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyUserReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -391,7 +404,7 @@ func (a *Client) ModifyUser(params *ModifyUserParams) (*ModifyUserOK, error) {
 /*
 ValidateUserPassword validate user password API
 */
-func (a *Client) ValidateUserPassword(params *ValidateUserPasswordParams) (*ValidateUserPasswordOK, error) {
+func (a *Client) ValidateUserPassword(params *ValidateUserPasswordParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateUserPasswordOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewValidateUserPasswordParams()
@@ -406,6 +419,7 @@ func (a *Client) ValidateUserPassword(params *ValidateUserPasswordParams) (*Vali
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ValidateUserPasswordReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

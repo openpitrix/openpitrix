@@ -7,6 +7,7 @@ package iam
 import (
 	"context"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -21,6 +22,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.ModifyUserRequest:
 		return manager.NewChecker(ctx, r).
 			Required("user_id").
+			StringChosen("role", constants.SupportRoles).
 			Exec()
 	case *pb.DeleteUsersRequest:
 		return manager.NewChecker(ctx, r).
@@ -29,6 +31,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.CreateUserRequest:
 		return manager.NewChecker(ctx, r).
 			Required("email", "password").
+			StringChosen("role", constants.SupportRoles).
 			Exec()
 	case *pb.CreatePasswordResetRequest:
 		return manager.NewChecker(ctx, r).
@@ -69,6 +72,15 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.LeaveGroupRequest:
 		return manager.NewChecker(ctx, r).
 			Required("group_id", "user_id").
+			Exec()
+	case *pb.CreateClientRequest:
+		return manager.NewChecker(ctx, r).
+			Required("user_id").
+			Exec()
+	case *pb.TokenRequest:
+		return manager.NewChecker(ctx, r).
+			Required("grant_type", "client_id", "client_secret").
+			StringChosen("grant_type", constants.GrantTypeTokens).
 			Exec()
 	}
 

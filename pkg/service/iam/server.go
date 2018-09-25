@@ -15,12 +15,12 @@ import (
 )
 
 type Server struct {
-	*config.Config
+	config.IAMConfig
 }
 
 func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
-	s := Server{cfg}
+	s := Server{cfg.IAM}
 
 	manager.NewGrpcServer("iam-manager", constants.IAMServicePort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).

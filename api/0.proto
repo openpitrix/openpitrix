@@ -24,4 +24,21 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	schemes: HTTPS;
 	consumes: "application/json";
 	produces: "application/json";
+	security_definitions: {
+		security: {
+			key: "BearerAuth";
+			value: {
+				description: "The Authorization header must be set to Bearer followed by a space and a token. For example, 'Bearer vHUabiBEIKi8n1RdvWOjGFulGSM6zunb'.";
+				type: TYPE_API_KEY;
+				in: IN_HEADER;
+				name: "Authorization";
+			}
+		}
+	}
+	security: {
+		security_requirement: {
+			key: "BearerAuth";
+			value: {};
+		}
+	}
 };

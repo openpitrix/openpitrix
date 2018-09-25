@@ -180,3 +180,25 @@ const (
 const (
 	RetryInterval = 3 * time.Second
 )
+
+var SupportRoles = []string{
+	RoleUser,
+	RoleDeveloper,
+	RoleGlobalAdmin,
+}
+
+const (
+	RoleUser        = "user"
+	RoleDeveloper   = "developer"
+	RoleGlobalAdmin = "global_admin"
+
+	GrantTypeClientCredentials = "client_credentials"
+	GrantTypePassword          = "password"
+	GrantTypeRefreshToken      = "refresh_token"
+)
+
+var GrantTypeTokens = []string{
+	GrantTypeClientCredentials,
+	GrantTypePassword,
+	GrantTypeRefreshToken,
+}

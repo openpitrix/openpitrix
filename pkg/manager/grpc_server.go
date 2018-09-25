@@ -123,10 +123,12 @@ func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 	checker := g.checker
 
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		var err error
+		s := senderutil.GetSenderFromContext(ctx)
 		requestId := ctxutil.GetRequestId(ctx)
 		ctx = ctxutil.SetRequestId(ctx, requestId)
+		ctx = senderutil.ContextWithSender(ctx, s)
 
-		s := senderutil.GetSenderFromContext(ctx)
 		method := strings.Split(info.FullMethod, "/")
 		action := method[len(method)-1]
 		if p, ok := req.(proto.Message); ok {
@@ -137,9 +139,8 @@ func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 			}
 		}
 		start := time.Now()
-		var err error
 		var resp interface{}
-		if checker != nil {
+		if err == nil && checker != nil {
 			err = checker(ctx, req)
 		}
 		if err == nil {

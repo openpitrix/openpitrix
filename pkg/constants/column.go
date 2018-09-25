@@ -58,11 +58,17 @@ const (
 	ColumnVolumeId         = "volume_id"
 	ColumnZone             = "zone"
 
-	ColumnUserId   = "user_id"
-	ColumnGroupId  = "group_id"
-	ColumnResetId  = "reset_id"
-	ColumnPassword = "password"
-	ColumnEmail    = "email"
+	ColumnUserId       = "user_id"
+	ColumnGroupId      = "group_id"
+	ColumnResetId      = "reset_id"
+	ColumnPassword     = "password"
+	ColumnEmail        = "email"
+	ColumnClientId     = "client_id"
+	ColumnClientSecret = "client_secret"
+	ColumnRefreshToken = "refresh_token"
+	ColumnAccessToken  = "access_token"
+	ColumnTokenId      = "token_id"
+	ColumnScope        = "scope"
 )
 
 var PushEventTables = map[string][]string{

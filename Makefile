@@ -27,6 +27,7 @@ endef
 COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-pilot-service openpitrix-iam-service
 COMPOSE_DB_CTRL=openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl
 CMD?=...
+WITH_METADATA?=yes
 comma:= ,
 empty:=
 space:= $(empty) $(empty)
@@ -106,7 +107,9 @@ build: fmt build-flyway ## Build all openpitrix images
 	mkdir -p ./tmp/bin
 	$(call get_build_flags)
 	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
+ifneq ($(WITH_METADATA),no)
 	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(TRAG.Gopkg)/metadata/cmd/...
+endif
 	docker build -t $(TARG.Name) -t $(TARG.Name):metadata -f ./Dockerfile.dev ./tmp/bin
 	docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
@@ -183,20 +186,11 @@ test: ## Run all tests
 
 .PHONY: e2e-test
 e2e-test: ## Run integration tests
+	cat ./test/init/sql/up.sql | docker-compose exec -T openpitrix-db mysql -uroot -ppassword
+	cd ./test/init/ && sh init_config.sh
 	go test -v -a -tags="integration" ./test/...
+	cat ./test/init/sql/down.sql | docker-compose exec -T openpitrix-db mysql -uroot -ppassword
 	@echo "e2e-test done"
-
-.PHONY: ci-test
-ci-test: ## Run CI tests
-	make fmt-check
-	# build with production Dockerfile, not dev version
-	docker build -t $(TARG.Name) -f ./Dockerfile .
-	docker build -t $(TARG.Name):metadata -f ./Dockerfile.metadata .
-	make compose-up
-	sleep 20
-	make unit-test
-	make e2e-test
-	@echo "ci-test done"
 
 .PHONY: clean
 clean: ## Clean generated version file

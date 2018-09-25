@@ -33,4 +33,5 @@ const (
 	TableUserPasswordReset = "user_password_reset"
 	TableGroup             = "group"
 	TableUserClient        = "user_client"
+	TableToken             = "token"
 )

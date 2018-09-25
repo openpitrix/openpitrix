@@ -25,8 +25,17 @@ type OpenpitrixTokenRequest struct {
 	// grant type
 	GrantType string `json:"grant_type,omitempty"`
 
+	// password
+	Password string `json:"password,omitempty"`
+
 	// refresh token
 	RefreshToken string `json:"refresh_token,omitempty"`
+
+	// scope
+	Scope string `json:"scope,omitempty"`
+
+	// username
+	Username string `json:"username,omitempty"`
 }
 
 // Validate validates this openpitrix token request

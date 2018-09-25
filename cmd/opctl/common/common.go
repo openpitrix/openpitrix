@@ -23,6 +23,7 @@ type Cmd struct {
 	Service     string           `yaml:"service,omitempty"`
 	Query       map[string]Param `yaml:"query,omitempty"`
 	Body        map[string]Param `yaml:"body,omitempty"`
+	Insecurity  bool             `yaml:"insecurity,omitempty"`
 }
 
 type Cmds []Cmd
