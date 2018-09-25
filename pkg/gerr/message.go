@@ -233,4 +233,8 @@ var (
 		Name: "cannot_access_repo",
 		En:   "cannot access repo",
 	}
+	ErrorCannotDeleteInternalRepo = ErrorMessage{
+		Name: "cannot_delete_internal_repo",
+		En:   "cannot delete internal repo [%s]",
+	}
 )
