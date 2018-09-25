@@ -6,6 +6,7 @@ import (
 
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -16,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/tlsutil"
 )
 
@@ -58,66 +60,106 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.CreateKeyPairRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("key").
 			Exec()
 	case *pb.DeleteKeyPairsRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("key_pair_id").
 			Exec()
 	case *pb.DescribeSubnetsRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("runtime_id").
 			Exec()
 	case *pb.CreateClusterRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("app_id", "version_id", "runtime_id", "conf").
 			Exec()
 	case *pb.DeleteClustersRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.UpgradeClusterRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id", "version_id").
 			Exec()
 	case *pb.RollbackClusterRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.ResizeClusterRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.AddClusterNodesRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id", "node_count").
 			Exec()
 	case *pb.DeleteClusterNodesRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id", "node_id").
 			Exec()
 	case *pb.UpdateClusterEnvRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id", "env").
 			Exec()
 	case *pb.StopClustersRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.StartClustersRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.RecoverClustersRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.CeaseClustersRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllRoles).
 			Required("cluster_id").
+			Exec()
+	case *pb.GetClusterStatisticsRequest:
+		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Exec()
 	}
 	return nil
+}
+
+func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
+	sender := senderutil.GetSenderFromContext(ctx)
+	switch r := req.(type) {
+	case *pb.DescribeClustersRequest:
+		if sender.IsGlobalAdmin() {
+
+		} else if sender.IsUser() {
+			r.Owner = []string{sender.UserId}
+		}
+		return r
+	case *pb.DescribeClusterNodesRequest:
+		if sender.IsGlobalAdmin() {
+
+		} else if sender.IsUser() {
+			r.Owner = []string{sender.UserId}
+		}
+		return r
+	}
+	return req
 }
 
 func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, providerInterface plugins.ProviderInterface,

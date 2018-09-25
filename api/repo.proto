@@ -103,6 +103,7 @@ message DescribeReposRequest {
 	google.protobuf.StringValue search_word = 12;
 	google.protobuf.StringValue sort_key = 13;
 	google.protobuf.BoolValue reverse = 14;
+	repeated string owner = 15;
 }
 
 message DescribeReposResponse {

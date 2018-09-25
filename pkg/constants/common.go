@@ -186,6 +186,18 @@ var SupportRoles = []string{
 	RoleDeveloper,
 	RoleGlobalAdmin,
 }
+var AllRoles = []string{
+	RoleUser,
+	RoleDeveloper,
+	RoleGlobalAdmin,
+}
+var AllDeveloperRoles = []string{
+	RoleDeveloper,
+	RoleGlobalAdmin,
+}
+var AllAdminRoles = []string{
+	RoleGlobalAdmin,
+}
 
 const (
 	RoleUser        = "user"

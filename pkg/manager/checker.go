@@ -11,6 +11,7 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -18,6 +19,7 @@ type checker struct {
 	ctx          context.Context
 	req          Request
 	required     []string
+	roles        []string
 	stringChosen map[string][]string
 }
 
@@ -26,6 +28,7 @@ func NewChecker(ctx context.Context, req Request) *checker {
 		ctx:          ctx,
 		req:          req,
 		required:     []string{},
+		roles:        []string{},
 		stringChosen: make(map[string][]string),
 	}
 }
@@ -107,12 +110,29 @@ func (c *checker) chainChecker(param string, value interface{}, checks ...func(s
 	return nil
 }
 
+func (c *checker) Role(roles []string) *checker {
+	c.roles = append(c.roles, roles...)
+	return c
+}
+
+func (c *checker) checkRole(_ string, _ interface{}) error {
+	if len(c.roles) == 0 {
+		return nil
+	}
+	sender := senderutil.GetSenderFromContext(c.ctx)
+	if stringutil.StringIn(sender.Role, c.roles) {
+		return nil
+	}
+	return gerr.New(c.ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
+}
+
 func (c *checker) Exec() error {
 	for _, field := range structs.Fields(c.req) {
 		param := getFieldName(field)
 		value := field.Value()
 
 		err := c.chainChecker(param, value,
+			c.checkRole,
 			c.checkRequired,
 			c.checkStringChosen,
 		)

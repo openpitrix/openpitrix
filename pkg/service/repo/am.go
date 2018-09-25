@@ -12,6 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 var SupportedVisibility = []string{
@@ -23,24 +24,43 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.CreateRepoRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllDeveloperRoles).
 			Required("type", "name", "url", "credential", "visibility", "providers").
 			StringChosen("providers", plugins.GetAvailablePlugins(pi.Global().GlobalConfig().Cluster.Plugins)).
 			StringChosen("visibility", SupportedVisibility).
 			Exec()
 	case *pb.ModifyRepoRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllDeveloperRoles).
 			Required("repo_id").
 			StringChosen("providers", plugins.GetAvailablePlugins(pi.Global().GlobalConfig().Cluster.Plugins)).
 			StringChosen("visibility", SupportedVisibility).
 			Exec()
 	case *pb.DeleteReposRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllDeveloperRoles).
 			Required("repo_id").
 			Exec()
 	case *pb.ValidateRepoRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllDeveloperRoles).
 			Required("type", "url", "credential").
 			Exec()
 	}
 	return nil
+}
+
+func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
+	sender := senderutil.GetSenderFromContext(ctx)
+	switch r := req.(type) {
+	case *pb.DescribeReposRequest:
+		if sender.IsGlobalAdmin() {
+
+		} else if sender.IsUser() {
+			r.Visibility = []string{constants.VisibilityPublic}
+		}
+		return r
+
+	}
+	return req
 }

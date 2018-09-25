@@ -197,7 +197,10 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 }
 
 func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.ModifyAppResponse, error) {
-	// TODO: check resource permission
+	err := models.CheckAppPermission(ctx, req.GetAppId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	appId := req.GetAppId().GetValue()
 	app, err := getApp(ctx, appId)
 	if err != nil {
@@ -239,10 +242,13 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 }
 
 func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb.DeleteAppsResponse, error) {
-	// TODO: check resource permission
+	err := models.CheckAppPermission(ctx, req.GetAppId()...)
+	if err != nil {
+		return nil, err
+	}
 	appIds := req.GetAppId()
 
-	_, err := pi.Global().DB(ctx).
+	_, err = pi.Global().DB(ctx).
 		Update(constants.TableApp).
 		Set(constants.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(constants.ColumnAppId, appIds)).
@@ -345,7 +351,10 @@ func (p *Server) DescribeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 }
 
 func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionRequest) (*pb.ModifyAppVersionResponse, error) {
-	// TODO: check resource permission
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	versionId := req.GetVersionId().GetValue()
 	version, err := checkAppVersionHandlePermission(ctx, Modify, versionId)
 	if err != nil {
@@ -385,7 +394,10 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 }
 
 func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersionsRequest) (*pb.DeleteAppVersionsResponse, error) {
-	// TODO: check resource permission
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId()...)
+	if err != nil {
+		return nil, err
+	}
 	versionIds := req.GetVersionId()
 	for _, versionId := range versionIds {
 		_, err := checkAppVersionHandlePermission(ctx, Delete, versionId)
@@ -394,7 +406,7 @@ func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersion
 		}
 	}
 
-	_, err := pi.Global().DB(ctx).
+	_, err = pi.Global().DB(ctx).
 		Update(constants.TableAppVersion).
 		Set(constants.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(constants.ColumnVersionId, versionIds)).
@@ -409,7 +421,6 @@ func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersion
 }
 
 func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersionPackageRequest) (*pb.GetAppVersionPackageResponse, error) {
-	// TODO: check resource permission
 	versionId := req.GetVersionId().GetValue()
 	version, err := p.getAppVersion(ctx, versionId)
 	if err != nil {
@@ -430,7 +441,6 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 }
 
 func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVersionPackageFilesRequest) (*pb.GetAppVersionPackageFilesResponse, error) {
-	// TODO: check resource permission
 	versionId := req.GetVersionId().GetValue()
 	includeFiles := req.Files
 	version, err := p.getAppVersion(ctx, versionId)
@@ -528,6 +538,10 @@ func (p *Server) GetAppStatistics(ctx context.Context, req *pb.GetAppStatisticsR
 }
 
 func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionRequest) (*pb.SubmitAppVersionResponse, error) {
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	version, err := checkAppVersionHandlePermission(ctx, Submit, req.GetVersionId().GetValue())
 	if err != nil {
 		return nil, err
@@ -543,6 +557,10 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 }
 
 func (p *Server) CancelAppVersion(ctx context.Context, req *pb.CancelAppVersionRequest) (*pb.CancelAppVersionResponse, error) {
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	version, err := checkAppVersionHandlePermission(ctx, Cancel, req.GetVersionId().GetValue())
 	if err != nil {
 		return nil, err
@@ -558,6 +576,10 @@ func (p *Server) CancelAppVersion(ctx context.Context, req *pb.CancelAppVersionR
 }
 
 func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersionRequest) (*pb.ReleaseAppVersionResponse, error) {
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	version, err := checkAppVersionHandlePermission(ctx, Release, req.GetVersionId().GetValue())
 	if err != nil {
 		return nil, err
@@ -573,6 +595,10 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 }
 
 func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionRequest) (*pb.DeleteAppVersionResponse, error) {
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	version, err := checkAppVersionHandlePermission(ctx, Delete, req.GetVersionId().GetValue())
 	if err != nil {
 		return nil, err
@@ -593,6 +619,10 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 }
 
 func (p *Server) PassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	version, err := checkAppVersionHandlePermission(ctx, Pass, req.GetVersionId().GetValue())
 	if err != nil {
 		return nil, err
@@ -608,6 +638,10 @@ func (p *Server) PassAppVersion(ctx context.Context, req *pb.PassAppVersionReque
 }
 
 func (p *Server) RejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	version, err := checkAppVersionHandlePermission(ctx, Reject, req.GetVersionId().GetValue())
 	if err != nil {
 		return nil, err
@@ -623,6 +657,10 @@ func (p *Server) RejectAppVersion(ctx context.Context, req *pb.RejectAppVersionR
 }
 
 func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersionRequest) (*pb.SuspendAppVersionResponse, error) {
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	version, err := checkAppVersionHandlePermission(ctx, Suspend, req.GetVersionId().GetValue())
 	if err != nil {
 		return nil, err
@@ -638,6 +676,10 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 }
 
 func (p *Server) RecoverAppVersion(ctx context.Context, req *pb.RecoverAppVersionRequest) (*pb.RecoverAppVersionResponse, error) {
+	err := models.CheckAppVersionPermission(ctx, req.GetVersionId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	version, err := checkAppVersionHandlePermission(ctx, Recover, req.GetVersionId().GetValue())
 	if err != nil {
 		return nil, err

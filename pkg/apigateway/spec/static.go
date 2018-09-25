@@ -983,6 +983,16 @@ var Files = map[string]string{
             "required": false,
             "type": "boolean",
             "format": "boolean"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1423,6 +1433,16 @@ var Files = map[string]string{
             "required": false,
             "type": "boolean",
             "format": "boolean"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -2457,6 +2477,16 @@ var Files = map[string]string{
             "required": false,
             "type": "boolean",
             "format": "boolean"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [

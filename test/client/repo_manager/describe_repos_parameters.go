@@ -73,6 +73,8 @@ type DescribeReposParams struct {
 	Name []string
 	/*Offset*/
 	Offset *int64
+	/*Owner*/
+	Owner []string
 	/*Provider*/
 	Provider []string
 	/*RepoID*/
@@ -183,6 +185,17 @@ func (o *DescribeReposParams) WithOffset(offset *int64) *DescribeReposParams {
 // SetOffset adds the offset to the describe repos params
 func (o *DescribeReposParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwner adds the owner to the describe repos params
+func (o *DescribeReposParams) WithOwner(owner []string) *DescribeReposParams {
+	o.SetOwner(owner)
+	return o
+}
+
+// SetOwner adds the owner to the describe repos params
+func (o *DescribeReposParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithProvider adds the provider to the describe repos params
@@ -354,6 +367,14 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 			}
 		}
 
+	}
+
+	valuesOwner := o.Owner
+
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	valuesProvider := o.Provider

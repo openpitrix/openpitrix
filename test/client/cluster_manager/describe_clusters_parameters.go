@@ -75,6 +75,8 @@ type DescribeClustersParams struct {
 	Limit *int64
 	/*Offset*/
 	Offset *int64
+	/*Owner*/
+	Owner []string
 	/*Reverse*/
 	Reverse *bool
 	/*RuntimeID*/
@@ -190,6 +192,17 @@ func (o *DescribeClustersParams) WithOffset(offset *int64) *DescribeClustersPara
 // SetOffset adds the offset to the describe clusters params
 func (o *DescribeClustersParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwner adds the owner to the describe clusters params
+func (o *DescribeClustersParams) WithOwner(owner []string) *DescribeClustersParams {
+	o.SetOwner(owner)
+	return o
+}
+
+// SetOwner adds the owner to the describe clusters params
+func (o *DescribeClustersParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithReverse adds the reverse to the describe clusters params
@@ -336,6 +349,14 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 			}
 		}
 
+	}
+
+	valuesOwner := o.Owner
+
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	if o.Reverse != nil {

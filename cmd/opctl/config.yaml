@@ -530,6 +530,8 @@
       type: '[]string'
     offset:
       type: integer
+    owner:
+      type: '[]string'
     reverse:
       type: boolean
     search_word:
@@ -554,6 +556,8 @@
       type: integer
     offset:
       type: integer
+    owner:
+      type: '[]string'
     reverse:
       type: boolean
     runtime_id:
@@ -789,6 +793,8 @@
       type: '[]string'
     offset:
       type: integer
+    owner:
+      type: '[]string'
     provider:
       type: '[]string'
     repo_id:
