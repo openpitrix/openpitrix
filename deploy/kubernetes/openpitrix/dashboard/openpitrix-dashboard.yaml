@@ -17,6 +17,7 @@ spec:
     protocol: TCP
     port: 80
     targetPort: 8000
+    ${DASHBOARD_NODEPORT}
 ---
 apiVersion: apps/v1beta2
 kind: Deployment

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+echo "Deploying k8s resource..."
+
+[ -z `which kubectl` ] && echo "Deployed failed: You need to install 'kubectl' first." && exit 1
+
+# Back to the root of the project
+cd $(dirname $0)
+cd ../..
+
 DEFAULT_NAMESPACE=openpitrix-system
 
 NAMESPACE=${DEFAULT_NAMESPACE}
@@ -8,8 +16,25 @@ METADATA=0
 DBCTRL=0
 BASE=0
 DASHBOARD=0
+STORAGE=0
+ALL=0
 JOB_REPLICA=1
 TASK_REPLICA=1
+API_NODEPORT=""
+PILOT_NODEPORT=""
+DASHBOARD_NODEPORT=""
+
+# use nodePort for api/pilot/dashboard service
+# $cat ${NODEPORT_FILE}
+# API_NODEPORT=31009
+# PILOT_NODEPORT=31019
+# DASHBOARD_NODEPORT=31029
+NODEPORT_FILE="./config/node_port"
+if [ -f ${NODEPORT_FILE} ];then
+  API_NODEPORT=`cat ${NODEPORT_FILE} | grep API_NODEPORT | awk -F '=' '{print "nodePort: "$2}'`
+  PILOT_NODEPORT=`cat ${NODEPORT_FILE} | grep PILOT_NODEPORT | awk -F '=' '{print "nodePort: "$2}'`
+  DASHBOARD_NODEPORT=`cat ${NODEPORT_FILE} | grep DASHBOARD_NODEPORT | awk -F '=' '{print "nodePort: "$2}'`
+fi
 
 REQUESTS=100
 LIMITS=500
@@ -18,20 +43,23 @@ usage() {
   echo "Usage:"
   echo "  deploy-k8s.sh [-n NAMESPACE] [-v VERSION] COMMAND"
   echo "Description:"
-  echo "    -n NAMESPACE    : the namespace of kubernetes."
-  echo "    -v VERSION  	: the version to be deployed."
-  echo "    -r REQUESTS 	: the requests of container resources."
-  echo "    -l LIMITS   	: the limits of container resources."
-  echo "    -j JOB REPLICA  : the job replica number."
-  echo "    -t TASK REPLICA	: the task replica number."
-  echo "    -b          	: base model will be applied."
-  echo "    -m          	: metadata will be applied."
-  echo "    -d          	: dbctrl will be applied."
-  echo "    -s          	: dashboard will be applied."
+  echo "        -n NAMESPACE    : the namespace of kubernetes."
+  echo "        -v VERSION      : the version to be deployed."
+  echo "        -r REQUESTS     : the requests of container resources."
+  echo "        -l LIMITS       : the limits of container resources."
+  echo "        -j JOB REPLICA  : the job replica number."
+  echo "        -t TASK REPLICA : the task replica number."
+  echo "        -b              : base model will be applied."
+  echo "        -m              : metadata will be applied."
+  echo "        -d              : dbctrl will be applied."
+  echo "        -s              : dashboard will be applied."
+  echo "        -o              : storage will be applied."
+  echo "        -a              : all of base/metadata/dbctrl/dashboard/storage will be applied."
   exit -1
 }
 
-while getopts n:v:r:l:j:t:hbdms option
+
+while getopts n:v:r:l:j:t:hbdmsoa option
 do
   case "${option}"
   in
@@ -45,12 +73,20 @@ do
   m) METADATA=1;;
   b) BASE=1;;
   s) DASHBOARD=1;;
+  o) STORAGE=1;;
+  a) ALL=1;;
   h) usage ;;
   *) usage ;;
   esac
 done
 
-if [ "${METADATA}" == "0" ] && [ "${DBCTRL}" == "0" ] && [ "${BASE}" == "0" ] && [ "${DASHBOARD}" == "0" ] ;then
+if [ "${METADATA}" == "0" ] && \
+   [ "${DBCTRL}" == "0" ] && \
+   [ "${BASE}" == "0" ] && \
+   [ "${DASHBOARD}" == "0" ] && \
+   [ "${STORAGE}" == "0" ] && \
+   [ "${ALL}" == "0" ]
+then
   usage
 fi
 
@@ -88,37 +124,22 @@ replace() {
 	  -e "s!\${TASK_REPLICA}!${TASK_REPLICA}!g" \
 	  -e "s!\${VERSION}!${VERSION}!g" \
 	  -e "s!\${IMAGE_PULL_POLICY}!${IMAGE_PULL_POLICY}!g" \
+	  -e "s!\${API_NODEPORT}!${API_NODEPORT}!g" \
+	  -e "s!\${PILOT_NODEPORT}!${PILOT_NODEPORT}!g" \
+	  -e "s!\${DASHBOARD_NODEPORT}!${DASHBOARD_NODEPORT}!g" \
 	  $1
 }
 
-[ -z `which make` ] && echo "You need to install 'make' first." && exit 1
+[ -z `which make` ] && echo "Deployed failed: You need to install 'make' first." && exit 1
 
-echo "Deploying k8s resource..."
-# Back to the root of the project
-cd $(dirname $0)
-cd ../..
-cd ./kubernetes/iam-config
-make
-cd $(dirname $0)
-cd ../..
-
-kubectl create namespace ${NAMESPACE}
-kubectl create secret generic mysql-pass --from-file=./kubernetes/password.txt -n ${NAMESPACE}
-kubectl create secret generic iam-secret-key --from-file=./kubernetes/iam-config/secret-key.txt -n ${NAMESPACE}
-
-if [ "${DBCTRL}" == "1" ];then
-  for FILE in `ls ./kubernetes/ctrl`;do
-    replace ./kubernetes/ctrl/${FILE} | kubectl delete -f - --ignore-not-found=true
-    replace ./kubernetes/ctrl/${FILE} | kubectl apply -f -
-  done
+kubectl get ns ${NAMESPACE}
+if [ $? != 0 ];then
+  kubectl create namespace ${NAMESPACE}
 fi
-if [ "${BASE}" == "1" ];then
-  for FILE in `ls ./kubernetes/db/ | grep -v "\-job.yaml$"`;do
-    replace ./kubernetes/db/${FILE} | kubectl apply -f -
-  done
 
-  for FILE in `ls ./kubernetes/db/ | grep "\-job.yaml$"`;do
-    replace ./kubernetes/db/${FILE} | kubectl delete -f - --ignore-not-found=true
+if [ "${STORAGE}" == "1" ] || [ "${ALL}" == "1" ];then
+  kubectl create secret generic mysql-pass --from-file=./kubernetes/password.txt -n ${NAMESPACE}
+  for FILE in `ls ./kubernetes/db/ | grep -v "\-job.yaml$"`;do
     replace ./kubernetes/db/${FILE} | kubectl apply -f -
   done
 
@@ -129,13 +150,30 @@ if [ "${BASE}" == "1" ];then
   for FILE in `ls ./kubernetes/minio/`;do
     replace ./kubernetes/minio/${FILE} | kubectl apply -f -
   done
+fi
+if [ "${DBCTRL}" == "1" ] || [ "${ALL}" == "1" ];then
+  for FILE in `ls ./kubernetes/ctrl`;do
+    replace ./kubernetes/ctrl/${FILE} | kubectl delete -f - --ignore-not-found=true
+    replace ./kubernetes/ctrl/${FILE} | kubectl apply -f -
+  done
 
+  for FILE in `ls ./kubernetes/db/ | grep "\-job.yaml$"`;do
+    replace ./kubernetes/db/${FILE} | kubectl delete -f - --ignore-not-found=true
+    replace ./kubernetes/db/${FILE} | kubectl apply -f -
+  done
+fi
+if [ "${BASE}" == "1" ] || [ "${ALL}" == "1" ];then
+  cd ./kubernetes/iam-config
+  make
+  cd ../..
+
+  kubectl create secret generic iam-secret-key --from-file=./kubernetes/iam-config/secret-key.txt -n ${NAMESPACE}
   for FILE in `ls ./kubernetes/openpitrix/ | grep "^openpitrix-"`;do
     replace ./kubernetes/openpitrix/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/${FILE} | kubectl apply -f -
   done
 fi
-if [ "${METADATA}" == "1" ];then
+if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
   ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE}
   if [ $? -ne 0 ]; then
 	echo "Deploy failed."
@@ -147,7 +185,7 @@ if [ "${METADATA}" == "1" ];then
     replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -
   done
 fi
-if [ "${DASHBOARD}" == "1" ];then
+if [ "${DASHBOARD}" == "1" ] || [ "${ALL}" == "1" ];then
   for FILE in `ls ./kubernetes/openpitrix/dashboard/`;do
     replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl apply -f -
