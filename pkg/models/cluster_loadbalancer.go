@@ -22,8 +22,8 @@ var ClusterLoadbalancerColumns = db.GetColumnsFromStruct(&ClusterLoadbalancer{})
 
 func ClusterLoadbalancerToPb(clusterLoadbalancer *ClusterLoadbalancer) *pb.ClusterLoadbalancer {
 	return &pb.ClusterLoadbalancer{
-		ClusterId: pbutil.ToProtoString(clusterLoadbalancer.ClusterId),
-		Role:      pbutil.ToProtoString(clusterLoadbalancer.Role),
+		ClusterId:              pbutil.ToProtoString(clusterLoadbalancer.ClusterId),
+		Role:                   pbutil.ToProtoString(clusterLoadbalancer.Role),
 		LoadbalancerListenerId: pbutil.ToProtoString(clusterLoadbalancer.LoadbalancerListenerId),
 		LoadbalancerPort:       pbutil.ToProtoUInt32(clusterLoadbalancer.LoadbalancerPort),
 		LoadbalancerPolicyId:   pbutil.ToProtoString(clusterLoadbalancer.LoadbalancerPolicyId),
@@ -32,8 +32,8 @@ func ClusterLoadbalancerToPb(clusterLoadbalancer *ClusterLoadbalancer) *pb.Clust
 
 func PbToClusterLoadbalancer(pbClusterLoadbalancer *pb.ClusterLoadbalancer) *ClusterLoadbalancer {
 	return &ClusterLoadbalancer{
-		ClusterId: pbClusterLoadbalancer.GetClusterId().GetValue(),
-		Role:      pbClusterLoadbalancer.GetRole().GetValue(),
+		ClusterId:              pbClusterLoadbalancer.GetClusterId().GetValue(),
+		Role:                   pbClusterLoadbalancer.GetRole().GetValue(),
 		LoadbalancerListenerId: pbClusterLoadbalancer.GetLoadbalancerListenerId().GetValue(),
 		LoadbalancerPort:       pbClusterLoadbalancer.GetLoadbalancerPort().GetValue(),
 		LoadbalancerPolicyId:   pbClusterLoadbalancer.GetLoadbalancerPolicyId().GetValue(),
