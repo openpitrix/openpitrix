@@ -69,6 +69,7 @@ const (
 	ColumnAccessToken  = "access_token"
 	ColumnTokenId      = "token_id"
 	ColumnScope        = "scope"
+	ColumnUsername     = "username"
 )
 
 var PushEventTables = map[string][]string{
@@ -132,6 +133,9 @@ var IndexedColumns = map[string][]string{
 	TableCategory: {
 		ColumnCategoryId, ColumnStatus, ColumnLocale, ColumnOwner, ColumnName,
 	},
+	TableUser: {
+		ColumnGroupId, ColumnUserId, ColumnStatus,
+	},
 }
 
 var SearchWordColumnTable = []string{
@@ -143,6 +147,7 @@ var SearchWordColumnTable = []string{
 	TableTask,
 	TableCluster,
 	TableClusterNode,
+	TableUser,
 }
 
 // columns that can be search through sql 'like' operator
@@ -170,5 +175,8 @@ var SearchColumns = map[string][]string{
 	},
 	TableRepo: {
 		ColumnName, ColumnDescription,
+	},
+	TableUser: {
+		ColumnUserId, ColumnDescription, ColumnEmail, ColumnUsername,
 	},
 }

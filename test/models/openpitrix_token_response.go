@@ -22,6 +22,9 @@ type OpenpitrixTokenResponse struct {
 	// expires in
 	ExpiresIn int32 `json:"expires_in,omitempty"`
 
+	// id token
+	IDToken string `json:"id_token,omitempty"`
+
 	// refresh token
 	RefreshToken string `json:"refresh_token,omitempty"`
 

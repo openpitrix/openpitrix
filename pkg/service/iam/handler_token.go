@@ -101,11 +101,18 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 	if err != nil {
 		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}
+	idToken, err := senderutil.Generate(
+		"", p.IAMConfig.ExpireTime, user.UserId, user.Role,
+	)
+	if err != nil {
+		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
+	}
 
 	return &pb.TokenResponse{
 		TokenType:    senderutil.TokenType,
 		ExpiresIn:    int32(p.ExpireTime.Seconds()),
 		AccessToken:  accessToken,
+		IdToken:      idToken,
 		RefreshToken: token.RefreshToken,
 	}, nil
 }
