@@ -17,6 +17,7 @@ spec:
     protocol: TCP
     port: 9100
     targetPort: 9100
+    ${API_NODEPORT}
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
