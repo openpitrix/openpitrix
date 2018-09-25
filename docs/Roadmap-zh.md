@@ -4,15 +4,16 @@ OpenPitrix Roadmap 是 OpenPitrix 核心开发团队预期的产品开发计划�
 
 ## 发布
 
-- Alpha 0.1：2018 年 7 月
-- Beta 0.2：2018 年 7 月
-- Beta 0.3：2018 年 9 月底
-- v1.0：2019 年 1 月
-- v2.0：2019 年 6 月
+- [Alpha 0.1](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#alpha-01)：2018 年 7 月
+- [Beta 0.2](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#beta-02)：2018 年 7 月
+- [Beta 0.3](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#beta-03)：2018 年 9 月底
+- [v1.0](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#v10)：2019 年 1 月
+- [v2.0](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap-zh.md#v20)：2019 年 6 月
+- v3.0 2019 年 12 月
 
 ## 功能
 
-### Beta 0.1：
+### Alpha 0.1：
 
 - [x] 用户资源概览
 - [x] 应用仓库，支持创建 S3 或 http/https 协议的仓库
