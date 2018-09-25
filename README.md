@@ -22,7 +22,7 @@ The project originates from [QingCloud AppCenter](https://appcenter.qingcloud.co
 
 Basic idea is to decouple application repository and runtime environment. The runtime environment that an application can run is by matching the labels of runtime environment and the selectors of the repository where the application is from besides the provider. Please check out how to [design the project](docs/design/README.md).
 
-# Roadmap
+## Roadmap
 
 The [Roadmap](https://github.com/FeynmanZhou/openpitrix/blob/master/docs/Roadmap.md) demonstrates a list of product development plans and features being split by the edition and role modules, as well as our development team anticipates of OpenPitrix. Obviously, it details the future's direction of OpenPitrix, but may change over time. We hope that you can walk through our plans and vision through roadmap. Of course, if you have any better ideas, welcome to [Issues](https://github.com/openpitrix/openpitrix/issues)。
 
