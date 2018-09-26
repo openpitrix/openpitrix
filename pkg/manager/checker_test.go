@@ -63,6 +63,6 @@ func TestChecker(t *testing.T) {
 	req = &pb.CreateRepoRequest{}
 	ctx := senderutil.ContextWithSender(context.Background(), senderutil.GetSystemUser())
 	//log.Print(senderutil.GetSenderFromContext(ctx))
-	err = NewChecker(ctx, req).Role("developer").Exec()
+	err = NewChecker(ctx, req).Role([]string{"developer"}).Exec()
 	assert.Error(t, err)
 }
