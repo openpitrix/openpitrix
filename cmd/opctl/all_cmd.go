@@ -389,6 +389,7 @@ func (c *DescribeUsersCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Offset, "offset", "", 0, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	f.StringSliceVarP(&c.Role, "role", "", []string{}, "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
 	c.SortKey = new(string)
