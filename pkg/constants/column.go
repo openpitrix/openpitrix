@@ -77,9 +77,6 @@ const (
 )
 
 var PushEventTables = map[string][]string{
-	TableRepo: {
-		ColumnRepoId, ColumnStatus, ColumnTransitionStatus,
-	},
 	TableRepoEvent: {
 		ColumnRepoEventId, ColumnRepoId, ColumnStatus,
 	},
