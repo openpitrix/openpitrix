@@ -23,6 +23,9 @@ func (h HelmVersionWrapper) GetVersion() string     { return h.ChartVersion.GetV
 func (h HelmVersionWrapper) GetAppVersion() string  { return h.ChartVersion.GetAppVersion() }
 func (h HelmVersionWrapper) GetDescription() string { return h.ChartVersion.GetDescription() }
 func (h HelmVersionWrapper) GetUrls() string {
+	if len(h.ChartVersion.URLs) == 0 {
+		return ""
+	}
 	return h.ChartVersion.URLs[0]
 }
 
@@ -58,6 +61,9 @@ func (h HelmVersionWrapper) GetVersionName() string {
 
 func (h HelmVersionWrapper) GetPackageName() string {
 	_, file := filepath.Split(h.GetUrls())
+	if len(file) == 0 {
+		return fmt.Sprintf("%s-%s.tgz", h.Name, h.Version)
+	}
 	return file
 }
 
