@@ -119,6 +119,8 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		visibility,
 		s.UserId)
 
+	newRepo.AppDefaultStatus = req.GetAppDefaultStatus().GetValue()
+
 	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableRepo).
 		Record(newRepo).
@@ -219,7 +221,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 
 	attributes := manager.BuildUpdateAttributes(req,
 		constants.ColumnName, constants.ColumnDescription, constants.ColumnType, constants.ColumnUrl,
-		constants.ColumnCredential, constants.ColumnVisibility)
+		constants.ColumnCredential, constants.ColumnVisibility, constants.ColumnAppDefaultStatus)
 	if len(attributes) > 0 {
 		_, err = pi.Global().DB(ctx).
 			Update(constants.TableRepo).

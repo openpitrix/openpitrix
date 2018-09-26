@@ -757,6 +757,8 @@
   description: create repo
   service: RepoManager
   body:
+    app_default_status:
+      type: string
     category_id:
       type: string
     credential:
@@ -787,6 +789,8 @@
   description: describe repos with filter
   service: RepoManager
   query:
+    app_default_status:
+      type: '[]string'
     category_id:
       type: '[]string'
     label:
@@ -821,6 +825,8 @@
   description: modify repo
   service: RepoManager
   body:
+    app_default_status:
+      type: string
     category_id:
       type: string
     credential:

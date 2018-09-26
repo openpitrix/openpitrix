@@ -19,14 +19,15 @@ func NewRepoId() string {
 }
 
 type Repo struct {
-	RepoId      string
-	Name        string
-	Description string
-	Type        string
-	Url         string
-	Credential  string
-	Visibility  string
-	Owner       string
+	RepoId           string
+	Name             string
+	Description      string
+	Type             string
+	Url              string
+	Credential       string
+	Visibility       string
+	Owner            string
+	AppDefaultStatus string
 
 	Status     string
 	CreateTime time.Time
@@ -65,6 +66,7 @@ func RepoToPb(repo *Repo) *pb.Repo {
 	pbRepo.Status = pbutil.ToProtoString(repo.Status)
 	pbRepo.CreateTime = pbutil.ToProtoTimestamp(repo.CreateTime)
 	pbRepo.StatusTime = pbutil.ToProtoTimestamp(repo.StatusTime)
+	pbRepo.AppDefaultStatus = pbutil.ToProtoString(repo.AppDefaultStatus)
 	return &pbRepo
 }
 

@@ -97,6 +97,10 @@ func (rp *repoProxy) SyncRepo(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+		err = syncAppStatus(ctx, appId)
+		if err != nil {
+			return err
+		}
 		appIds = append(appIds, appId)
 	}
 	err = clearApps(ctx, rp.repo.RepoId.GetValue(), appIds)
@@ -234,6 +238,8 @@ func (rp *repoProxy) syncAppVersionInfo(ctx context.Context, appId string, versi
 		appVersion.Keywords = versionInterface.GetKeywords()
 		appVersion.Sources = versionInterface.GetSources()
 
+		appVersion.Status = getAppDefaultStatus(rp.repo)
+
 		_, err = pi.Global().DB(ctx).
 			InsertInto(constants.TableAppVersion).
 			Record(appVersion).
@@ -245,6 +251,13 @@ func (rp *repoProxy) syncAppVersionInfo(ctx context.Context, appId string, versi
 	// update exists
 	versionId = appVersion.VersionId
 	var updateAttr = make(map[string]interface{})
+
+	if appVersion.Status != rp.repo.GetAppDefaultStatus().GetValue() {
+		updateAttr[constants.ColumnStatus] = getAppVersionStatus(
+			getAppDefaultStatus(rp.repo),
+			appVersion.Status,
+		)
+	}
 
 	if appVersion.PackageName != versionInterface.GetPackageName() {
 		updateAttr[constants.ColumnPackageName] = versionInterface.GetPackageName()

@@ -12,6 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
@@ -28,6 +29,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Required("type", "name", "url", "credential", "visibility", "providers").
 			StringChosen("providers", plugins.GetAvailablePlugins(pi.Global().GlobalConfig().Cluster.Plugins)).
 			StringChosen("visibility", SupportedVisibility).
+			StringChosen("app_default_status", constants.AllowedAppDefaultStatus).
 			Exec()
 	case *pb.ModifyRepoRequest:
 		return manager.NewChecker(ctx, r).
@@ -35,6 +37,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Required("repo_id").
 			StringChosen("providers", plugins.GetAvailablePlugins(pi.Global().GlobalConfig().Cluster.Plugins)).
 			StringChosen("visibility", SupportedVisibility).
+			StringChosen("app_default_status", constants.AllowedAppDefaultStatus).
 			Exec()
 	case *pb.DeleteReposRequest:
 		return manager.NewChecker(ctx, r).
@@ -57,7 +60,31 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 		if sender.IsGlobalAdmin() {
 
 		} else if sender.IsUser() {
+			// TODO: public repo or myself
 			r.Visibility = []string{constants.VisibilityPublic}
+			r.AppDefaultStatus = []string{}
+		}
+		return r
+
+	case *pb.ModifyRepoRequest:
+		if len(r.GetAppDefaultStatus().GetValue()) == 0 {
+			r.AppDefaultStatus = pbutil.ToProtoString(constants.StatusDraft)
+		}
+		if sender.IsGlobalAdmin() {
+
+		} else if sender.IsUser() {
+			r.AppDefaultStatus = pbutil.ToProtoString(pi.Global().GlobalConfig().GetAppDefaultStatus())
+		}
+		return r
+
+	case *pb.CreateRepoRequest:
+		if len(r.GetAppDefaultStatus().GetValue()) == 0 {
+			r.AppDefaultStatus = pbutil.ToProtoString(constants.StatusDraft)
+		}
+		if sender.IsGlobalAdmin() {
+
+		} else if sender.IsUser() {
+			r.AppDefaultStatus = pbutil.ToProtoString(pi.Global().GlobalConfig().GetAppDefaultStatus())
 		}
 		return r
 

@@ -63,6 +63,8 @@ for the describe repos operation typically these are written to a http.Request
 */
 type DescribeReposParams struct {
 
+	/*AppDefaultStatus*/
+	AppDefaultStatus []string
 	/*CategoryID*/
 	CategoryID []string
 	/*Label*/
@@ -130,6 +132,17 @@ func (o *DescribeReposParams) WithHTTPClient(client *http.Client) *DescribeRepos
 // SetHTTPClient adds the HTTPClient to the describe repos params
 func (o *DescribeReposParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithAppDefaultStatus adds the appDefaultStatus to the describe repos params
+func (o *DescribeReposParams) WithAppDefaultStatus(appDefaultStatus []string) *DescribeReposParams {
+	o.SetAppDefaultStatus(appDefaultStatus)
+	return o
+}
+
+// SetAppDefaultStatus adds the appDefaultStatus to the describe repos params
+func (o *DescribeReposParams) SetAppDefaultStatus(appDefaultStatus []string) {
+	o.AppDefaultStatus = appDefaultStatus
 }
 
 // WithCategoryID adds the categoryID to the describe repos params
@@ -304,6 +317,14 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	valuesAppDefaultStatus := o.AppDefaultStatus
+
+	joinedAppDefaultStatus := swag.JoinByFormat(valuesAppDefaultStatus, "multi")
+	// query array param app_default_status
+	if err := r.SetQueryParam("app_default_status", joinedAppDefaultStatus...); err != nil {
+		return err
+	}
 
 	valuesCategoryID := o.CategoryID
 

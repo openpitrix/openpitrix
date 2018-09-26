@@ -218,3 +218,9 @@ var GrantTypeTokens = []string{
 var InternalRepos = []string{
 	"repo-vmbased", "repo-helm",
 }
+
+var AllowedAppDefaultStatus = []string{
+	"",
+	StatusDraft,
+	StatusActive,
+}

@@ -2571,6 +2571,7 @@ func (*CreateRepoCmd) GetActionName() string {
 }
 
 func (c *CreateRepoCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.AppDefaultStatus, "app_default_status", "", "", "")
 	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
 	f.StringVarP(&c.Credential, "credential", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
@@ -2650,6 +2651,7 @@ func (*DescribeReposCmd) GetActionName() string {
 }
 
 func (c *DescribeReposCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppDefaultStatus, "app_default_status", "", []string{}, "")
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "")
 	c.Label = new(string)
 	f.StringVarP(c.Label, "label", "", "", "")
@@ -2704,6 +2706,7 @@ func (*ModifyRepoCmd) GetActionName() string {
 }
 
 func (c *ModifyRepoCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.AppDefaultStatus, "app_default_status", "", "", "")
 	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
 	f.StringVarP(&c.Credential, "credential", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")

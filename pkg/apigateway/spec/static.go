@@ -2497,6 +2497,16 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "app_default_status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -5517,6 +5527,9 @@ var Files = map[string]string{
         },
         "category_id": {
           "type": "string"
+        },
+        "app_default_status": {
+          "type": "string"
         }
       }
     },
@@ -5603,6 +5616,9 @@ var Files = map[string]string{
         },
         "category_id": {
           "type": "string"
+        },
+        "app_default_status": {
+          "type": "string"
         }
       }
     },
@@ -5675,6 +5691,9 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixResourceCategory"
           }
+        },
+        "app_default_status": {
+          "type": "string"
         }
       }
     },
