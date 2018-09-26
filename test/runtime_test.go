@@ -52,7 +52,7 @@ func TestRuntime(t *testing.T) {
 			Provider:          constants.ProviderKubernetes,
 			RuntimeURL:        "",
 			RuntimeCredential: credential,
-			Zone:              "default",
+			Zone:              idutil.GetUuid36("r-"),
 		})
 	createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
 	require.NoError(t, err)
@@ -132,7 +132,7 @@ func TestRuntimeLabel(t *testing.T) {
 			Provider:          constants.ProviderKubernetes,
 			RuntimeURL:        "",
 			RuntimeCredential: credential,
-			Zone:              "default",
+			Zone:              idutil.GetUuid36("r-"),
 			Labels:            labels,
 		})
 	createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
