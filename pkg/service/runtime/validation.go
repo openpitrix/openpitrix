@@ -29,7 +29,7 @@ func ValidateURL(ctx context.Context, url string) error {
 	return nil
 }
 
-func ValidateCredential(ctx context.Context, provider, url, credential, zone string) error {
+func ValidateCredential(ctx context.Context, runtimeId, provider, url, credential, zone string) error {
 	if len(credential) < CredentialMinLength {
 		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalParameterLength, "credential")
 	}
@@ -54,7 +54,7 @@ func ValidateCredential(ctx context.Context, provider, url, credential, zone str
 		logger.Error(ctx, "No such provider [%s]. ", provider)
 		return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, provider)
 	}
-	return providerInterface.ValidateCredential(ctx, url, credential, zone)
+	return providerInterface.ValidateCredential(ctx, runtimeId, url, credential, zone)
 }
 
 func ValidateZone(ctx context.Context, zone string) error {
@@ -140,7 +140,7 @@ func ValidateLabelValue(ctx context.Context, labelValue string) error {
 	return nil
 }
 
-func validateCreateRuntimeRequest(ctx context.Context, req *pb.CreateRuntimeRequest) error {
+func validateCreateRuntimeRequest(ctx context.Context, runtimeId string, req *pb.CreateRuntimeRequest) error {
 	err := ValidateName(ctx, req.Name.GetValue())
 	if err != nil {
 		return err
@@ -151,6 +151,7 @@ func validateCreateRuntimeRequest(ctx context.Context, req *pb.CreateRuntimeRequ
 	}
 	err = ValidateCredential(
 		ctx,
+		runtimeId,
 		req.Provider.GetValue(),
 		req.RuntimeUrl.GetValue(),
 		req.RuntimeCredential.GetValue(),

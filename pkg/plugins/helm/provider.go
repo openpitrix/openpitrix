@@ -415,8 +415,8 @@ func (p *Provider) UpdateClusterStatus(ctx context.Context, job *models.Job) err
 	return nil
 }
 
-func (p *Provider) ValidateCredential(ctx context.Context, url, credential, zone string) error {
-	kubeHandler := GetKubeHandler(ctx, "")
+func (p *Provider) ValidateCredential(ctx context.Context, runtimeId, url, credential, zone string) error {
+	kubeHandler := GetKubeHandler(ctx, runtimeId)
 	return kubeHandler.ValidateCredential(credential, zone)
 }
 

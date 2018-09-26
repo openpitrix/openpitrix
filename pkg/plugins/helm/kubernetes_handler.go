@@ -180,9 +180,31 @@ func (p *KubeHandler) ValidateCredential(credential, zone string) error {
 	}
 
 	cli := client.CoreV1().Namespaces()
-	_, err = cli.Get(KubeSystemNamespace, metav1.GetOptions{})
-	if err != nil {
-		return err
+	if len(p.RuntimeId) == 0 {
+		// modify runtime
+		_, err = cli.Get(zone, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+	} else {
+		// create runtime
+		_, err := cli.Get(zone, metav1.GetOptions{})
+		if err != nil {
+			logger.Info(p.ctx, "namespace [%s] not exist, need create", zone)
+			_, err = cli.Create(&corev1.Namespace{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: zone,
+					Annotations: map[string]string{
+						RuntimeAnnotationKey: p.RuntimeId,
+					},
+				},
+			})
+			if err != nil {
+				return err
+			}
+		} else {
+			return fmt.Errorf("namespace [%s] already exist", zone)
+		}
 	}
 
 	return nil

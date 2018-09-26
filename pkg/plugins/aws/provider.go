@@ -84,7 +84,7 @@ func (p *Provider) DescribeVpc(ctx context.Context, runtimeId, vpcId string) (*m
 	return handler.DescribeVpc(runtimeId, vpcId)
 }
 
-func (p *Provider) ValidateCredential(ctx context.Context, url, credential, zone string) error {
+func (p *Provider) ValidateCredential(ctx context.Context, runtimeId, url, credential, zone string) error {
 	handler := GetProviderHandler(ctx)
 	zones, err := handler.DescribeZones(url, credential)
 	if err != nil {

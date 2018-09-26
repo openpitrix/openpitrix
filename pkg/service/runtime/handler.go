@@ -24,8 +24,9 @@ import (
 
 func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest) (*pb.CreateRuntimeResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
+	runtimeId := models.NewRuntimeId()
 	// validate req
-	err := validateCreateRuntimeRequest(ctx, req)
+	err := validateCreateRuntimeRequest(ctx, runtimeId, req)
 	// TODO: refactor create runtime params
 	if err != nil {
 		if gerr.IsGRPCError(err) {
@@ -42,8 +43,9 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	}
 
 	// create runtime
-	runtimeId, err := createRuntime(
+	err = createRuntime(
 		ctx,
+		runtimeId,
 		req.GetName().GetValue(),
 		req.GetDescription().GetValue(),
 		req.Provider.GetValue(),
@@ -189,6 +191,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 	if req.RuntimeCredential != nil {
 		err = ValidateCredential(
 			ctx,
+			"",
 			runtime.Provider,
 			runtime.RuntimeUrl,
 			req.RuntimeCredential.GetValue(),
@@ -257,7 +260,7 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	provider := req.Provider.GetValue()
 	url := req.RuntimeUrl.GetValue()
 	credential := req.RuntimeCredential.GetValue()
-	err := ValidateCredential(ctx, provider, url, credential, "")
+	err := ValidateCredential(ctx, "", provider, url, credential, "")
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err

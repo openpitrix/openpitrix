@@ -5,7 +5,7 @@
 package helm
 
 const (
-	KubeSystemNamespace = "kube-system"
+	RuntimeAnnotationKey = "openpitrix_runtime"
 
 	DeploymentFlag  = "-Deployment"
 	StatefulSetFlag = "-StatefulSet"
