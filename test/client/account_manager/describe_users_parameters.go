@@ -71,6 +71,8 @@ type DescribeUsersParams struct {
 	Offset *int64
 	/*Reverse*/
 	Reverse *bool
+	/*Role*/
+	Role []string
 	/*SearchWord*/
 	SearchWord *string
 	/*SortKey*/
@@ -160,6 +162,17 @@ func (o *DescribeUsersParams) WithReverse(reverse *bool) *DescribeUsersParams {
 // SetReverse adds the reverse to the describe users params
 func (o *DescribeUsersParams) SetReverse(reverse *bool) {
 	o.Reverse = reverse
+}
+
+// WithRole adds the role to the describe users params
+func (o *DescribeUsersParams) WithRole(role []string) *DescribeUsersParams {
+	o.SetRole(role)
+	return o
+}
+
+// SetRole adds the role to the describe users params
+func (o *DescribeUsersParams) SetRole(role []string) {
+	o.Role = role
 }
 
 // WithSearchWord adds the searchWord to the describe users params
@@ -268,6 +281,14 @@ func (o *DescribeUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 			}
 		}
 
+	}
+
+	valuesRole := o.Role
+
+	joinedRole := swag.JoinByFormat(valuesRole, "multi")
+	// query array param role
+	if err := r.SetQueryParam("role", joinedRole...); err != nil {
+		return err
 	}
 
 	if o.SearchWord != nil {

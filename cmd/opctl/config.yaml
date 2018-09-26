@@ -72,6 +72,8 @@
       type: integer
     reverse:
       type: boolean
+    role:
+      type: '[]string'
     search_word:
       type: string
     sort_key:
