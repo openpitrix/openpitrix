@@ -66,7 +66,7 @@ func (c *checker) checkRequired(param string, value interface{}) error {
 
 func (c *checker) StringChosen(param string, chosen []string) *checker {
 	if exist, ok := c.stringChosen[param]; ok {
-		exist = append(exist, chosen...)
+		c.stringChosen[param] = append(exist, chosen...)
 	} else {
 		c.stringChosen[param] = chosen
 	}

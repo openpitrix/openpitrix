@@ -123,6 +123,9 @@ func (r *Reader) GetIndex(ctx context.Context) (wrapper.IndexInterface, error) {
 
 func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 	content, err := r.getIndexYaml(ctx)
+	if err != nil {
+		return err
+	}
 	hash, err := provenance.Digest(bytes.NewReader(pkg))
 	if err != nil {
 		return err
@@ -140,6 +143,9 @@ func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 		w := wrapper.HelmVersionWrapper{ChartVersion: &repo.ChartVersion{Metadata: app.Metadata}}
 		indexFile.Add(app.Metadata, w.GetPackageName(), "", hash)
 		content, err = yamlutil.Encode(indexFile)
+		if err != nil {
+			return err
+		}
 	} else {
 		var indexFile = opapp.NewIndexFile()
 		err = yamlutil.Decode(content, indexFile)
@@ -153,15 +159,18 @@ func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 		w := wrapper.OpVersionWrapper{OpVersion: &opapp.OpVersion{Metadata: app.Metadata}}
 		indexFile.Add(app.Metadata, w.GetPackageName(), "", hash)
 		content, err = yamlutil.Encode(indexFile)
-	}
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 	return r.WriteFile(ctx, IndexYaml, content)
 }
 
 func (r *Reader) DeletePackage(ctx context.Context, appName, version string) error {
 	content, err := r.getIndexYaml(ctx)
+	if err != nil {
+		return err
+	}
 	pkgName := fmt.Sprintf("%s-%s.tgz", appName, version)
 
 	if r.isK8s() {
