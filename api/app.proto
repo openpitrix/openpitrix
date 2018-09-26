@@ -181,6 +181,7 @@ message AppVersion {
 	google.protobuf.Timestamp status_time = 16;
 	google.protobuf.Timestamp update_time = 17;
 	google.protobuf.UInt32Value sequence = 18;
+	google.protobuf.StringValue message = 19;
 }
 
 message DescribeAppVersionsRequest {
@@ -265,6 +266,7 @@ message PassAppVersionResponse {
 }
 message RejectAppVersionRequest {
 	google.protobuf.StringValue version_id = 1;
+	google.protobuf.StringValue message = 2;
 }
 message RejectAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;

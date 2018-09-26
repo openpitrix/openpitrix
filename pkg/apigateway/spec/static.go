@@ -3170,6 +3170,9 @@ var Files = map[string]string{
         "sequence": {
           "type": "integer",
           "format": "int64"
+        },
+        "message": {
+          "type": "string"
         }
       }
     },
@@ -3612,6 +3615,9 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_id": {
+          "type": "string"
+        },
+        "message": {
           "type": "string"
         }
       }

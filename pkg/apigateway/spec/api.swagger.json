@@ -3161,6 +3161,9 @@
         "sequence": {
           "type": "integer",
           "format": "int64"
+        },
+        "message": {
+          "type": "string"
         }
       }
     },
@@ -3603,6 +3606,9 @@
       "type": "object",
       "properties": {
         "version_id": {
+          "type": "string"
+        },
+        "message": {
           "type": "string"
         }
       }

@@ -376,6 +376,8 @@
   description: reject app version
   service: AppManager
   body:
+    message:
+      type: string
     version_id:
       type: string
 - action: ReleaseAppVersion

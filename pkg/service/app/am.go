@@ -81,7 +81,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.RejectAppVersionRequest:
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllAdminRoles).
-			Required("version_id").
+			Required("version_id", "message").
 			Exec()
 	case *pb.SuspendAppVersionRequest:
 		return manager.NewChecker(ctx, r).

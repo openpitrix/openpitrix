@@ -646,7 +646,9 @@ func (p *Server) RejectAppVersion(ctx context.Context, req *pb.RejectAppVersionR
 	if err != nil {
 		return nil, err
 	}
-	err = updateVersionStatus(ctx, version, constants.StatusRejected)
+	err = updateVersionStatus(ctx, version, constants.StatusRejected, map[string]interface{}{
+		constants.ColumnMessage: req.GetMessage().GetValue(),
+	})
 	if err != nil {
 		return nil, err
 	}
