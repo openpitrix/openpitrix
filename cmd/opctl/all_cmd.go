@@ -1271,6 +1271,7 @@ func (*RejectAppVersionCmd) GetActionName() string {
 }
 
 func (c *RejectAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Message, "message", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 

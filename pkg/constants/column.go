@@ -70,6 +70,8 @@ const (
 	ColumnTokenId      = "token_id"
 	ColumnScope        = "scope"
 	ColumnUsername     = "username"
+
+	ColumnMessage = "message"
 )
 
 var PushEventTables = map[string][]string{

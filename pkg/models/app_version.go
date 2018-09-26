@@ -12,7 +12,6 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
-
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -37,6 +36,7 @@ type AppVersion struct {
 	Sources     string
 	Readme      string
 	Status      string
+	Message     string
 	Sequence    uint32
 	CreateTime  time.Time
 	StatusTime  time.Time
@@ -105,6 +105,7 @@ func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
 	pbAppVersion.CreateTime = pbutil.ToProtoTimestamp(appVersion.CreateTime)
 	pbAppVersion.StatusTime = pbutil.ToProtoTimestamp(appVersion.StatusTime)
 	pbAppVersion.Sequence = pbutil.ToProtoUInt32(appVersion.Sequence)
+	pbAppVersion.Message = pbutil.ToProtoString(appVersion.Message)
 	if appVersion.UpdateTime != nil {
 		pbAppVersion.UpdateTime = pbutil.ToProtoTimestamp(*appVersion.UpdateTime)
 	}

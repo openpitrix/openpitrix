@@ -37,6 +37,9 @@ type OpenpitrixAppVersion struct {
 	// maintainers
 	Maintainers string `json:"maintainers,omitempty"`
 
+	// message
+	Message string `json:"message,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
 

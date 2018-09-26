@@ -1,0 +1,2 @@
+ALTER TABLE app_version
+	ADD COLUMN message TEXT NOT NULL;

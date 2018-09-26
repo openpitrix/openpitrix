@@ -143,11 +143,16 @@ func updateApp(ctx context.Context, appId string, attributes map[string]interfac
 	return nil
 }
 
-func updateVersionStatus(ctx context.Context, version *models.AppVersion, status string) error {
-	err := updateVersion(ctx, version.VersionId, map[string]interface{}{
-		constants.ColumnStatus:     status,
-		constants.ColumnStatusTime: time.Now(),
-	})
+func updateVersionStatus(ctx context.Context, version *models.AppVersion, status string, attributes ...map[string]interface{}) error {
+	var attr = make(map[string]interface{})
+	for _, a := range attributes {
+		for k, v := range a {
+			attr[k] = v
+		}
+	}
+	attr[constants.ColumnStatus] = status
+	attr[constants.ColumnStatusTime] = time.Now()
+	err := updateVersion(ctx, version.VersionId, attr)
 	if err != nil {
 		return err
 	}

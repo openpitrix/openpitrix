@@ -215,6 +215,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 	rejectAppVersionParams.SetBody(
 		&models.OpenpitrixRejectAppVersionRequest{
 			VersionID: versionId,
+			Message:   "test message",
 		})
 	_, err = client.AppManager.RejectAppVersion(rejectAppVersionParams, nil)
 
