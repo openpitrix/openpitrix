@@ -134,7 +134,7 @@ var IndexedColumns = map[string][]string{
 		ColumnCategoryId, ColumnStatus, ColumnLocale, ColumnOwner, ColumnName,
 	},
 	TableUser: {
-		ColumnGroupId, ColumnUserId, ColumnStatus,
+		ColumnGroupId, ColumnUserId, ColumnStatus, ColumnRole,
 	},
 }
 

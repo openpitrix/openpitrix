@@ -125,6 +125,7 @@ message DescribeUsersRequest {
 	repeated string group_id = 11;
 	repeated string user_id = 12;
 	repeated string status = 13;
+	repeated string role = 14;
 }
 message DescribeUsersResponse {
 	uint32 total_count = 1;
