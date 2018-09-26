@@ -34,7 +34,28 @@ func (s *Sender) ToJson() string {
 }
 
 func (s *Sender) IsGlobalAdmin() bool {
+	if s == nil {
+		return false
+	}
 	return s.Role == constants.RoleGlobalAdmin
+}
+
+func (s *Sender) IsDeveloper() bool {
+	if s == nil {
+		return false
+	}
+	return s.Role == constants.RoleGlobalAdmin || s.Role == constants.RoleDeveloper
+}
+
+func (s *Sender) IsUser() bool {
+	if s == nil {
+		return false
+	}
+	return s.Role == constants.RoleGlobalAdmin || s.Role == constants.RoleDeveloper || s.Role == constants.RoleUser
+}
+
+func (s *Sender) IsGuest() bool {
+	return true
 }
 
 func GetSenderFromContext(ctx context.Context) *Sender {

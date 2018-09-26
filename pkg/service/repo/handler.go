@@ -177,6 +177,10 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 }
 
 func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb.ModifyRepoResponse, error) {
+	err := models.CheckRepoPermission(ctx, req.GetRepoId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	s := senderutil.GetSenderFromContext(ctx)
 	repoType := req.GetType().GetValue()
 	providers := req.GetProviders()
@@ -266,7 +270,10 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 }
 
 func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*pb.DeleteReposResponse, error) {
-	// TODO: check resource permission
+	err := models.CheckRepoPermission(ctx, req.GetRepoId()...)
+	if err != nil {
+		return nil, err
+	}
 	s := senderutil.GetSenderFromContext(ctx)
 	repoIds := req.GetRepoId()
 
@@ -276,7 +283,7 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 		}
 	}
 
-	_, err := pi.Global().DB(ctx).
+	_, err = pi.Global().DB(ctx).
 		Update(constants.TableRepo).
 		Set(constants.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(constants.ColumnOwner, s.UserId)).

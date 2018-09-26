@@ -237,4 +237,8 @@ var (
 		Name: "cannot_delete_internal_repo",
 		En:   "cannot delete internal repo [%s]",
 	}
+	ErrorResourceAccessDenied = ErrorMessage{
+		Name: "error_resource_access_denied",
+		En:   "access denied for resource [%s]",
+	}
 )

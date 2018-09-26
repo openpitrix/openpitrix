@@ -32,20 +32,31 @@ import (
 )
 
 type checkerT func(ctx context.Context, req interface{}) error
+type builderT func(ctx context.Context, req interface{}) interface{}
 
-var defaultChecker checkerT
+var (
+	defaultChecker checkerT
+	defaultBuilder builderT
+)
 
 type GrpcServer struct {
 	ServiceName    string
 	Port           int
 	showErrorCause bool
 	checker        checkerT
+	builder        builderT
 }
 
 type RegisterCallback func(*grpc.Server)
 
 func NewGrpcServer(serviceName string, port int) *GrpcServer {
-	return &GrpcServer{serviceName, port, false, defaultChecker}
+	return &GrpcServer{
+		ServiceName:    serviceName,
+		Port:           port,
+		showErrorCause: false,
+		checker:        defaultChecker,
+		builder:        defaultBuilder,
+	}
 }
 
 func (g *GrpcServer) ShowErrorCause(b bool) *GrpcServer {
@@ -55,6 +66,11 @@ func (g *GrpcServer) ShowErrorCause(b bool) *GrpcServer {
 
 func (g *GrpcServer) WithChecker(c checkerT) *GrpcServer {
 	g.checker = c
+	return g
+}
+
+func (g *GrpcServer) WithBuilder(b builderT) *GrpcServer {
+	g.builder = b
 	return g
 }
 
@@ -77,6 +93,22 @@ func (g *GrpcServer) Serve(callback RegisterCallback, opt ...grpc.ServerOption) 
 		grpc_middleware.WithUnaryServerChain(
 			grpc_validator.UnaryServerInterceptor(),
 			g.unaryServerLogInterceptor(),
+			func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+				if g.checker != nil {
+					err = g.checker(ctx, req)
+					if err != nil {
+						return
+					}
+				}
+
+				return handler(ctx, req)
+			},
+			func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+				if g.builder != nil {
+					req = g.builder(ctx, req)
+				}
+				return handler(ctx, req)
+			},
 			grpc_recovery.UnaryServerInterceptor(
 				grpc_recovery.WithRecoveryHandler(func(p interface{}) error {
 					logger.Critical(nil, "GRPC server recovery with error: %+v", p)
@@ -120,7 +152,6 @@ var (
 
 func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 	showErrorCause := g.showErrorCause
-	checker := g.checker
 
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		var err error
@@ -139,13 +170,9 @@ func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 			}
 		}
 		start := time.Now()
-		var resp interface{}
-		if err == nil && checker != nil {
-			err = checker(ctx, req)
-		}
-		if err == nil {
-			resp, err = handler(ctx, req)
-		}
+
+		resp, err := handler(ctx, req)
+
 		elapsed := time.Since(start)
 		logger.Info(ctx, "Handled request [%s] [%+v] exec_time is [%s]", action, s, elapsed)
 		if e, ok := status.FromError(err); ok {

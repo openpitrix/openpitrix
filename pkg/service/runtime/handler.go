@@ -167,8 +167,12 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 }
 
 func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest) (*pb.ModifyRuntimeResponse, error) {
+	err := models.CheckRuntimePermission(ctx, req.GetRuntimeId().GetValue())
+	if err != nil {
+		return nil, err
+	}
 	// validate req
-	err := validateModifyRuntimeRequest(ctx, req)
+	err = validateModifyRuntimeRequest(ctx, req)
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err
@@ -230,11 +234,15 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 }
 
 func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesRequest) (*pb.DeleteRuntimesResponse, error) {
+	err := models.CheckRuntimePermission(ctx, req.GetRuntimeId()...)
+	if err != nil {
+		return nil, err
+	}
 	// TODO: check runtime can be deleted
 	runtimeIds := req.GetRuntimeId()
 
 	// deleted runtime
-	err := deleteRuntimes(ctx, runtimeIds)
+	err = deleteRuntimes(ctx, runtimeIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}

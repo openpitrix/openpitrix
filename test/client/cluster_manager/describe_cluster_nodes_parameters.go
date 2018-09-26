@@ -71,6 +71,8 @@ type DescribeClusterNodesParams struct {
 	NodeID []string
 	/*Offset*/
 	Offset *int64
+	/*Owner*/
+	Owner []string
 	/*Reverse*/
 	Reverse *bool
 	/*SearchWord*/
@@ -160,6 +162,17 @@ func (o *DescribeClusterNodesParams) WithOffset(offset *int64) *DescribeClusterN
 // SetOffset adds the offset to the describe cluster nodes params
 func (o *DescribeClusterNodesParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwner adds the owner to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) WithOwner(owner []string) *DescribeClusterNodesParams {
+	o.SetOwner(owner)
+	return o
+}
+
+// SetOwner adds the owner to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithReverse adds the reverse to the describe cluster nodes params
@@ -268,6 +281,14 @@ func (o *DescribeClusterNodesParams) WriteToRequest(r runtime.ClientRequest, reg
 			}
 		}
 
+	}
+
+	valuesOwner := o.Owner
+
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	if o.Reverse != nil {

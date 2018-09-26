@@ -11,6 +11,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func (p *Server) Checker(ctx context.Context, req interface{}) error {
@@ -26,10 +28,12 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.DeleteUsersRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Required("user_id").
 			Exec()
 	case *pb.CreateUserRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Required("email", "password").
 			StringChosen("role", constants.SupportRoles).
 			Exec()
@@ -43,6 +47,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.GetPasswordResetRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Required("reset_id").
 			Exec()
 	case *pb.ValidateUserPasswordRequest:
@@ -55,26 +60,32 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.CreateGroupRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Required("name").
 			Exec()
 	case *pb.ModifyGroupRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Required("group_id").
 			Exec()
 	case *pb.DeleteGroupsRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Required("group_id").
 			Exec()
 	case *pb.JoinGroupRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Required("group_id", "user_id").
 			Exec()
 	case *pb.LeaveGroupRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Required("group_id", "user_id").
 			Exec()
 	case *pb.CreateClientRequest:
 		return manager.NewChecker(ctx, r).
+			Role(constants.AllAdminRoles).
 			Required("user_id").
 			Exec()
 	case *pb.TokenRequest:
@@ -86,4 +97,41 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 
 	logger.Warn(ctx, "checker unknown type: %T", req)
 	return nil
+}
+
+func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
+	sender := senderutil.GetSenderFromContext(ctx)
+	switch r := req.(type) {
+	case *pb.DescribeUsersRequest:
+		if sender.IsGlobalAdmin() {
+
+		} else if sender.IsUser() {
+			r.UserId = []string{sender.UserId}
+		}
+		return r
+	case *pb.CreatePasswordResetRequest:
+		if sender.IsGlobalAdmin() {
+
+		} else if sender.IsUser() {
+			r.UserId = pbutil.ToProtoString(sender.UserId)
+		}
+		return r
+	case *pb.ModifyUserRequest:
+		if sender.IsGlobalAdmin() {
+
+		} else if sender.IsUser() {
+			r.UserId = pbutil.ToProtoString(sender.UserId)
+			r.Role = nil
+			r.Email = nil
+		}
+		return r
+	case *pb.DescribeGroupsRequest:
+		if sender.IsGlobalAdmin() {
+
+		} else if sender.IsDeveloper() {
+			r.UserId = []string{sender.UserId}
+		}
+		return r
+	}
+	return req
 }
