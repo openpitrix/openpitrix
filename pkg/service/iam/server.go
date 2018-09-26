@@ -25,6 +25,7 @@ func Serve(cfg *config.Config) {
 	manager.NewGrpcServer("iam-manager", constants.IAMServicePort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
+		WithBuilder(s.Builder).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterAccountManagerServer(server, &s)
 			pb.RegisterTokenManagerServer(server, &s)
