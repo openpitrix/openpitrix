@@ -27,14 +27,14 @@ func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMess
 	errorDetail := &pb.ErrorDetail{ErrorName: errMsg.Name}
 	if err != nil {
 		errorDetail.Cause = fmt.Sprintf("%+v", err)
-		logger.Error(ctx, "%+v", err)
+		logger.NewLogger().WithDepth(5).Error(ctx, "%+v", err)
 	}
 
 	sd, e := s.WithDetails(errorDetail)
 	if e == nil {
 		return sd
 	} else {
-		logger.Error(ctx, "%+v", errors.WithStack(e))
+		logger.NewLogger().WithDepth(5).Error(ctx, "%+v", errors.WithStack(e))
 	}
 	return s
 }
