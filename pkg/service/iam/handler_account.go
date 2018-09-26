@@ -179,14 +179,15 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 	err := query.LoadOne(&userInfo)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal,
-			fmt.Errorf("user(%q) not fount", userId),
+			fmt.Errorf("user(%q) not found", userId),
 			gerr.ErrorCreateResourcesFailed,
 		)
 	}
 
-	if userInfo.Password != req.GetPassword().GetValue() {
+	err = bcrypt.CompareHashAndPassword([]byte(userInfo.Password), []byte(req.GetPassword().GetValue()))
+	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal,
-			fmt.Errorf("ivalid password"),
+			fmt.Errorf("invalid password"),
 			gerr.ErrorCreateResourcesFailed,
 		)
 	}
@@ -276,7 +277,7 @@ func (p *Server) ValidateUserPassword(ctx context.Context, req *pb.ValidateUserP
 	err := query.LoadOne(&userInfo)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal,
-			fmt.Errorf("user(%q) not fount", email),
+			fmt.Errorf("user(%q) not found", email),
 			gerr.ErrorCreateResourcesFailed,
 		)
 	}
