@@ -110,7 +110,7 @@ var IndexedColumns = map[string][]string{
 		ColumnJobId, ColumnTaskId, ColumnExecutor, ColumnStatus, ColumnOwner,
 	},
 	TableRepo: {
-		ColumnRepoId, ColumnName, ColumnType, ColumnVisibility, ColumnStatus, ColumnAppDefaultStatus,
+		ColumnRepoId, ColumnName, ColumnType, ColumnVisibility, ColumnStatus, ColumnAppDefaultStatus, ColumnOwner,
 	},
 	TableRuntime: {
 		ColumnRuntimeId, ColumnProvider, ColumnZone, ColumnStatus, ColumnOwner,
@@ -122,7 +122,7 @@ var IndexedColumns = map[string][]string{
 		ColumnRepoId, ColumnRepoSelectorId, ColumnStatus,
 	},
 	TableRepoEvent: {
-		ColumnRepoEventId, ColumnRepoId, ColumnStatus,
+		ColumnRepoEventId, ColumnRepoId, ColumnStatus, ColumnOwner,
 	},
 	TableCluster: {
 		ColumnClusterId, ColumnAppId, ColumnVersionId, ColumnStatus,

@@ -109,7 +109,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 
 		} else if sender.IsDeveloper() {
 			r.Owner = []string{sender.UserId}
-		} else if sender.IsGuest() {
+		} else {
 			r.Status = []string{constants.StatusActive}
 		}
 		return r
@@ -118,7 +118,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 
 		} else if sender.IsDeveloper() {
 			r.Owner = []string{sender.UserId}
-		} else if sender.IsGuest() {
+		} else {
 			r.Status = []string{constants.StatusActive}
 		}
 		return r

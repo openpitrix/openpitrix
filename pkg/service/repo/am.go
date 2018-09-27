@@ -59,7 +59,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 	case *pb.DescribeReposRequest:
 		if sender.IsGlobalAdmin() {
 
-		} else if sender.IsUser() {
+		} else {
 			// TODO: public repo or myself
 			r.Visibility = []string{constants.VisibilityPublic}
 			r.AppDefaultStatus = []string{}
@@ -72,7 +72,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 		}
 		if sender.IsGlobalAdmin() {
 
-		} else if sender.IsUser() {
+		} else {
 			r.AppDefaultStatus = pbutil.ToProtoString(pi.Global().GlobalConfig().GetAppDefaultStatus())
 		}
 		return r
@@ -83,7 +83,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 		}
 		if sender.IsGlobalAdmin() {
 
-		} else if sender.IsUser() {
+		} else {
 			r.AppDefaultStatus = pbutil.ToProtoString(pi.Global().GlobalConfig().GetAppDefaultStatus())
 		}
 		return r
