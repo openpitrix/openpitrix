@@ -7,6 +7,7 @@ package app
 import (
 	"context"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
 	repoclient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -14,7 +15,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/repoiface"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 type versionProxy struct {
@@ -58,7 +58,7 @@ func (vp *versionProxy) GetRepo(ctx context.Context) (*pb.Repo, error) {
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, app.RepoId)
 	}
-	systemCtx := senderutil.ContextWithSender(ctx, senderutil.GetSystemUser())
+	systemCtx := clientutil.SetSystemUserToContext(ctx)
 	describeResp, err := rc.DescribeRepos(systemCtx, &pb.DescribeReposRequest{
 		RepoId: []string{repoId},
 	})

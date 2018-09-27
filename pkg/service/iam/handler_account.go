@@ -137,10 +137,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		From(constants.TableUser).Limit(1).
 		Where(db.Eq(constants.ColumnEmail, email))
 	if count, err := query.Count(); err == nil && count > 0 {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal,
-			fmt.Errorf("email(%q) exists", email),
-			gerr.ErrorCreateResourcesFailed,
-		)
+		return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorEmailExists, email)
 	}
 
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.GetPassword().GetValue()), bcrypt.DefaultCost)

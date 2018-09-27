@@ -41,6 +41,10 @@ var (
 		Name: "email_password_not_matched",
 		En:   "email and password does not match",
 	}
+	ErrorEmailExists = ErrorMessage{
+		Name: "email_exists",
+		En:   "email [%s] exists",
+	}
 	ErrorCreateResourcesFailed = ErrorMessage{
 		Name: "create_resources_failed",
 		En:   "create resources failed",
