@@ -49,7 +49,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 	case *pb.DescribeRuntimesRequest:
 		if sender.IsGlobalAdmin() {
 
-		} else if sender.IsUser() {
+		} else {
 			r.Owner = []string{sender.UserId}
 		}
 		return r
