@@ -12,6 +12,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type Client struct {
@@ -29,16 +31,30 @@ func NewClient() (*Client, error) {
 }
 
 func (c *Client) GetUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
+	var internalUsers []*pb.User
+	var noInternalUserIds []string
+	for _, userId := range userIds {
+		if stringutil.StringIn(userId, constants.InternalUsers) {
+			internalUsers = append(internalUsers, &pb.User{
+				UserId: pbutil.ToProtoString(userId),
+				Role:   pbutil.ToProtoString(constants.RoleGlobalAdmin),
+			})
+		} else {
+			noInternalUserIds = append(noInternalUserIds, userId)
+		}
+	}
+
 	response, err := c.DescribeUsers(ctx, &pb.DescribeUsersRequest{
-		UserId: userIds,
+		UserId: noInternalUserIds,
 	})
 	if err != nil {
-		logger.Error(ctx, "Describe users %s failed: %+v", userIds, err)
+		logger.Error(ctx, "Describe users %s failed: %+v", noInternalUserIds, err)
 		return nil, err
 	}
-	if len(response.UserSet) != len(userIds) {
-		logger.Error(ctx, "Describe users %s with return count [%d]", userIds, len(response.UserSet))
-		return nil, fmt.Errorf("describe users %s with return count [%d]", userIds, len(response.UserSet))
+	if len(response.UserSet) != len(noInternalUserIds) {
+		logger.Error(ctx, "Describe users %s with return count [%d]", userIds, len(response.UserSet)+len(internalUsers))
+		return nil, fmt.Errorf("describe users %s with return count [%d]", userIds, len(response.UserSet)+len(internalUsers))
 	}
+	response.UserSet = append(response.UserSet, internalUsers...)
 	return response.UserSet, nil
 }
