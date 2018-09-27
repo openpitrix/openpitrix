@@ -466,11 +466,10 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 
 	var jobIds []string
 	for clusterId, nodeIds := range clusterNodeIds {
-		clusters, err := CheckClusterPermission(ctx, clusterId)
+		cluster, err := CheckClusterPermission(ctx, clusterId)
 		if err != nil {
 			return nil, err
 		}
-		cluster := clusters[0]
 		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive, constants.StatusPending})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
@@ -569,11 +568,10 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 
 	var jobIds []string
 	for clusterId, nodeIds := range clusterNodeIds {
-		clusters, err := CheckClusterPermission(ctx, clusterId)
+		cluster, err := CheckClusterPermission(ctx, clusterId)
 		if err != nil {
 			return nil, err
 		}
-		cluster := clusters[0]
 		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive, constants.StatusPending})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
@@ -931,7 +929,7 @@ func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTabl
 func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersRequest) (*pb.DeleteClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 	clusterIds := req.GetClusterId()
-	clusters, err := CheckClusterPermission(ctx, clusterIds...)
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
 	if err != nil {
 		return nil, err
 	}
@@ -982,11 +980,10 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterRequest) (*pb.UpgradeClusterResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 	clusterId := req.GetClusterId().GetValue()
-	clusters, err := CheckClusterPermission(ctx, clusterId)
+	cluster, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
 		return nil, err
 	}
-	cluster := clusters[0]
 	versionId := req.GetVersionId().GetValue()
 	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusStopped})
 	if err != nil {
@@ -1031,11 +1028,10 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
-	clusters, err := CheckClusterPermission(ctx, clusterId)
+	cluster, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
 		return nil, err
 	}
-	cluster := clusters[0]
 	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRollbackResourceFailed, clusterId)
@@ -1079,11 +1075,10 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
-	clusters, err := CheckClusterPermission(ctx, clusterId)
+	cluster, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
 		return nil, err
 	}
-	cluster := clusters[0]
 	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResizeResourceFailed, clusterId)
@@ -1166,11 +1161,10 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
-	clusters, err := CheckClusterPermission(ctx, clusterId)
+	cluster, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
 		return nil, err
 	}
-	cluster := clusters[0]
 	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
@@ -1285,11 +1279,10 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
-	clusters, err := CheckClusterPermission(ctx, clusterId)
+	cluster, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
 		return nil, err
 	}
-	cluster := clusters[0]
 	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourceNodeFailed, clusterId)
@@ -1347,11 +1340,10 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
-	clusters, err := CheckClusterPermission(ctx, clusterId)
+	cluster, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
 		return nil, err
 	}
-	cluster := clusters[0]
 	conf := req.GetEnv().GetValue()
 	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
@@ -1550,7 +1542,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterIds := req.GetClusterId()
-	clusters, err := CheckClusterPermission(ctx, clusterIds...)
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
 	if err != nil {
 		return nil, err
 	}
@@ -1606,7 +1598,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterIds := req.GetClusterId()
-	clusters, err := CheckClusterPermission(ctx, clusterIds...)
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
 	if err != nil {
 		return nil, err
 	}
@@ -1670,7 +1662,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterIds := req.GetClusterId()
-	clusters, err := CheckClusterPermission(ctx, clusterIds...)
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
 	if err != nil {
 		return nil, err
 	}
@@ -1730,7 +1722,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterIds := req.GetClusterId()
-	clusters, err := CheckClusterPermission(ctx, clusterIds...)
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
 	if err != nil {
 		return nil, err
 	}

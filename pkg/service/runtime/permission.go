@@ -17,7 +17,33 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
-func CheckRuntimePermission(ctx context.Context, resourceId ...string) ([]*models.Runtime, error) {
+func CheckRuntimesPermission(ctx context.Context, resourceIds []string) ([]*models.Runtime, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var runtimes []*models.Runtime
+	_, err := pi.Global().DB(ctx).
+		Select(models.RuntimeColumns...).
+		From(constants.TableRuntime).
+		Where(db.Eq(constants.ColumnRuntimeId, resourceIds)).Load(&runtimes)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, runtime := range runtimes {
+			if runtime.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, runtime.RuntimeId)
+			}
+		}
+	}
+	if len(runtimes) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return runtimes, nil
+}
+
+func CheckRuntimePermission(ctx context.Context, resourceId string) (*models.Runtime, error) {
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
@@ -30,9 +56,6 @@ func CheckRuntimePermission(ctx context.Context, resourceId ...string) ([]*model
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if len(runtimes) != len(resourceId) {
-		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourcesAccessDenied)
-	}
 	if sender != nil && !sender.IsGlobalAdmin() {
 		for _, runtime := range runtimes {
 			if runtime.Owner != sender.UserId {
@@ -40,5 +63,8 @@ func CheckRuntimePermission(ctx context.Context, resourceId ...string) ([]*model
 			}
 		}
 	}
-	return runtimes, nil
+	if len(runtimes) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return runtimes[0], nil
 }

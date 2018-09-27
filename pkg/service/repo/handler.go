@@ -179,11 +179,10 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 
 func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb.ModifyRepoResponse, error) {
 	repoId := req.GetRepoId().GetValue()
-	repos, err := CheckRepoPermission(ctx, repoId)
+	repo, err := CheckRepoPermission(ctx, repoId)
 	if err != nil {
 		return nil, err
 	}
-	repo := repos[0]
 
 	repoType := req.GetType().GetValue()
 	providers := req.GetProviders()
@@ -267,7 +266,7 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 
 func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*pb.DeleteReposResponse, error) {
 	repoIds := req.GetRepoId()
-	_, err := CheckRepoPermission(ctx, repoIds...)
+	_, err := CheckReposPermission(ctx, repoIds)
 	if err != nil {
 		return nil, err
 	}

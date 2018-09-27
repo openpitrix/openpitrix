@@ -172,7 +172,7 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 
 func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest) (*pb.ModifyRuntimeResponse, error) {
 	runtimeId := req.GetRuntimeId().GetValue()
-	runtimes, err := CheckRuntimePermission(ctx, runtimeId)
+	runtime, err := CheckRuntimePermission(ctx, runtimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -186,9 +186,6 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 		}
 	}
 	// check runtime can be modified
-
-	runtime := runtimes[0]
-
 	if req.RuntimeCredential != nil {
 		err = ValidateCredential(
 			ctx,
@@ -239,7 +236,7 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 
 func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesRequest) (*pb.DeleteRuntimesResponse, error) {
 	runtimeIds := req.GetRuntimeId()
-	_, err := CheckRuntimePermission(ctx, runtimeIds...)
+	_, err := CheckRuntimesPermission(ctx, runtimeIds)
 	if err != nil {
 		return nil, err
 	}

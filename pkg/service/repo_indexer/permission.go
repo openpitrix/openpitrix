@@ -17,7 +17,33 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
-func CheckRepoEventPermission(ctx context.Context, resourceId ...string) ([]*models.RepoEvent, error) {
+func CheckRepoEventsPermission(ctx context.Context, resourceIds []string) ([]*models.RepoEvent, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var repoevents []*models.RepoEvent
+	_, err := pi.Global().DB(ctx).
+		Select(models.RepoEventColumns...).
+		From(constants.TableRepoEvent).
+		Where(db.Eq(constants.ColumnRepoEventId, resourceIds)).Load(&repoevents)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, repoevent := range repoevents {
+			if repoevent.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, repoevent.RepoEventId)
+			}
+		}
+	}
+	if len(repoevents) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return repoevents, nil
+}
+
+func CheckRepoEventPermission(ctx context.Context, resourceId string) (*models.RepoEvent, error) {
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
@@ -30,9 +56,6 @@ func CheckRepoEventPermission(ctx context.Context, resourceId ...string) ([]*mod
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if len(repoevents) != len(resourceId) {
-		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourcesAccessDenied)
-	}
 	if sender != nil && !sender.IsGlobalAdmin() {
 		for _, repoevent := range repoevents {
 			if repoevent.Owner != sender.UserId {
@@ -40,5 +63,8 @@ func CheckRepoEventPermission(ctx context.Context, resourceId ...string) ([]*mod
 			}
 		}
 	}
-	return repoevents, nil
+	if len(repoevents) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return repoevents[0], nil
 }

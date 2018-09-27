@@ -17,7 +17,33 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
-func CheckClusterPermission(ctx context.Context, resourceId ...string) ([]*models.Cluster, error) {
+func CheckClustersPermission(ctx context.Context, resourceIds []string) ([]*models.Cluster, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var clusters []*models.Cluster
+	_, err := pi.Global().DB(ctx).
+		Select(models.ClusterColumns...).
+		From(constants.TableCluster).
+		Where(db.Eq(constants.ColumnClusterId, resourceIds)).Load(&clusters)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, cluster := range clusters {
+			if cluster.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, cluster.ClusterId)
+			}
+		}
+	}
+	if len(clusters) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return clusters, nil
+}
+
+func CheckClusterPermission(ctx context.Context, resourceId string) (*models.Cluster, error) {
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
@@ -30,9 +56,6 @@ func CheckClusterPermission(ctx context.Context, resourceId ...string) ([]*model
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if len(clusters) != len(resourceId) {
-		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourcesAccessDenied)
-	}
 	if sender != nil && !sender.IsGlobalAdmin() {
 		for _, cluster := range clusters {
 			if cluster.Owner != sender.UserId {
@@ -40,10 +63,39 @@ func CheckClusterPermission(ctx context.Context, resourceId ...string) ([]*model
 			}
 		}
 	}
-	return clusters, nil
+	if len(clusters) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return clusters[0], nil
 }
 
-func CheckClusterNodePermission(ctx context.Context, resourceId ...string) ([]*models.ClusterNode, error) {
+func CheckClusterNodesPermission(ctx context.Context, resourceIds []string) ([]*models.ClusterNode, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var clusternodes []*models.ClusterNode
+	_, err := pi.Global().DB(ctx).
+		Select(models.ClusterNodeColumns...).
+		From(constants.TableClusterNode).
+		Where(db.Eq(constants.ColumnNodeId, resourceIds)).Load(&clusternodes)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, clusternode := range clusternodes {
+			if clusternode.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, clusternode.NodeId)
+			}
+		}
+	}
+	if len(clusternodes) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return clusternodes, nil
+}
+
+func CheckClusterNodePermission(ctx context.Context, resourceId string) (*models.ClusterNode, error) {
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
@@ -56,9 +108,6 @@ func CheckClusterNodePermission(ctx context.Context, resourceId ...string) ([]*m
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if len(clusternodes) != len(resourceId) {
-		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourcesAccessDenied)
-	}
 	if sender != nil && !sender.IsGlobalAdmin() {
 		for _, clusternode := range clusternodes {
 			if clusternode.Owner != sender.UserId {
@@ -66,5 +115,8 @@ func CheckClusterNodePermission(ctx context.Context, resourceId ...string) ([]*m
 			}
 		}
 	}
-	return clusternodes, nil
+	if len(clusternodes) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return clusternodes[0], nil
 }

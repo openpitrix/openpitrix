@@ -17,7 +17,33 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
-func CheckJobPermission(ctx context.Context, resourceId ...string) ([]*models.Job, error) {
+func CheckJobsPermission(ctx context.Context, resourceIds []string) ([]*models.Job, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var jobs []*models.Job
+	_, err := pi.Global().DB(ctx).
+		Select(models.JobColumns...).
+		From(constants.TableJob).
+		Where(db.Eq(constants.ColumnJobId, resourceIds)).Load(&jobs)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, job := range jobs {
+			if job.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, job.JobId)
+			}
+		}
+	}
+	if len(jobs) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return jobs, nil
+}
+
+func CheckJobPermission(ctx context.Context, resourceId string) (*models.Job, error) {
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
@@ -30,9 +56,6 @@ func CheckJobPermission(ctx context.Context, resourceId ...string) ([]*models.Jo
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if len(jobs) != len(resourceId) {
-		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourcesAccessDenied)
-	}
 	if sender != nil && !sender.IsGlobalAdmin() {
 		for _, job := range jobs {
 			if job.Owner != sender.UserId {
@@ -40,5 +63,8 @@ func CheckJobPermission(ctx context.Context, resourceId ...string) ([]*models.Jo
 			}
 		}
 	}
-	return jobs, nil
+	if len(jobs) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return jobs[0], nil
 }

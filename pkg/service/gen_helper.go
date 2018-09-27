@@ -35,7 +35,33 @@ var syncTemplate = template.Must(template.New("").Funcs(template.FuncMap{
 		return table
 	},
 }).Parse(`
-func Check{{pascalCase .}}Permission(ctx context.Context, resourceId ...string) ([]*models.{{pascalCase .}}, error) {
+func Check{{pascalCase .}}sPermission(ctx context.Context, resourceIds []string) ([]*models.{{pascalCase .}}, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var {{escape .}}s []*models.{{pascalCase .}}
+	_, err := pi.Global().DB(ctx).
+		Select(models.{{pascalCase .}}Columns...).
+		From(constants.Table{{pascalCase .}}).
+		Where(db.Eq(constants.Column{{columnId . | pascalCase}}Id, resourceIds)).Load(&{{escape .}}s)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, {{escape .}} := range {{escape .}}s {
+			if {{escape .}}.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, {{escape .}}.{{columnId . | pascalCase}}Id)
+			}
+		}
+	}
+	if len({{escape .}}s) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return {{escape .}}s, nil
+}
+
+func Check{{pascalCase .}}Permission(ctx context.Context, resourceId string) (*models.{{pascalCase .}}, error) {
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
@@ -48,9 +74,6 @@ func Check{{pascalCase .}}Permission(ctx context.Context, resourceId ...string) 
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if len({{escape .}}s) != len(resourceId) {
-		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourcesAccessDenied)
-	}
 	if sender != nil && !sender.IsGlobalAdmin() {
 		for _, {{escape .}} := range {{escape .}}s {
 			if {{escape .}}.Owner != sender.UserId {
@@ -58,7 +81,10 @@ func Check{{pascalCase .}}Permission(ctx context.Context, resourceId ...string) 
 			}
 		}
 	}
-	return {{escape .}}s, nil
+	if len({{escape .}}s) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return {{escape .}}s[0], nil
 }
 `))
 

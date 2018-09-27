@@ -17,7 +17,33 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
-func CheckAppPermission(ctx context.Context, resourceId ...string) ([]*models.App, error) {
+func CheckAppsPermission(ctx context.Context, resourceIds []string) ([]*models.App, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var apps []*models.App
+	_, err := pi.Global().DB(ctx).
+		Select(models.AppColumns...).
+		From(constants.TableApp).
+		Where(db.Eq(constants.ColumnAppId, resourceIds)).Load(&apps)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, app := range apps {
+			if app.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, app.AppId)
+			}
+		}
+	}
+	if len(apps) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return apps, nil
+}
+
+func CheckAppPermission(ctx context.Context, resourceId string) (*models.App, error) {
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
@@ -30,9 +56,6 @@ func CheckAppPermission(ctx context.Context, resourceId ...string) ([]*models.Ap
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if len(apps) != len(resourceId) {
-		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourcesAccessDenied)
-	}
 	if sender != nil && !sender.IsGlobalAdmin() {
 		for _, app := range apps {
 			if app.Owner != sender.UserId {
@@ -40,10 +63,39 @@ func CheckAppPermission(ctx context.Context, resourceId ...string) ([]*models.Ap
 			}
 		}
 	}
-	return apps, nil
+	if len(apps) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return apps[0], nil
 }
 
-func CheckAppVersionPermission(ctx context.Context, resourceId ...string) ([]*models.AppVersion, error) {
+func CheckAppVersionsPermission(ctx context.Context, resourceIds []string) ([]*models.AppVersion, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var appversions []*models.AppVersion
+	_, err := pi.Global().DB(ctx).
+		Select(models.AppVersionColumns...).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnVersionId, resourceIds)).Load(&appversions)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, appversion := range appversions {
+			if appversion.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, appversion.VersionId)
+			}
+		}
+	}
+	if len(appversions) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return appversions, nil
+}
+
+func CheckAppVersionPermission(ctx context.Context, resourceId string) (*models.AppVersion, error) {
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
@@ -56,9 +108,6 @@ func CheckAppVersionPermission(ctx context.Context, resourceId ...string) ([]*mo
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if len(appversions) != len(resourceId) {
-		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourcesAccessDenied)
-	}
 	if sender != nil && !sender.IsGlobalAdmin() {
 		for _, appversion := range appversions {
 			if appversion.Owner != sender.UserId {
@@ -66,5 +115,8 @@ func CheckAppVersionPermission(ctx context.Context, resourceId ...string) ([]*mo
 			}
 		}
 	}
-	return appversions, nil
+	if len(appversions) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return appversions[0], nil
 }

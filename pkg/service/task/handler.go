@@ -91,7 +91,7 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 
 func (p *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb.RetryTasksResponse, error) {
 	taskIds := req.GetTaskId()
-	tasks, err := CheckTaskPermission(ctx, taskIds...)
+	tasks, err := CheckTasksPermission(ctx, taskIds)
 	if err != nil {
 		return nil, err
 	}
