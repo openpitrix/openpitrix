@@ -6,8 +6,10 @@ package runtime
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -241,8 +243,29 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 	if err != nil {
 		return nil, err
 	}
-	// TODO: check runtime can be deleted
 	runtimeIds := req.GetRuntimeId()
+
+	clusterClient, err := clusterclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+	}
+	clusters, err := clusterClient.DescribeClusters(ctx, &pb.DescribeClustersRequest{
+		RuntimeId: runtimeIds,
+		Status: []string{
+			constants.StatusActive,
+			constants.StatusStopped,
+			constants.StatusSuspended,
+			constants.StatusPending,
+		},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+	}
+
+	if clusters.TotalCount > 0 {
+		err = fmt.Errorf("there are still [%d] clusters in the runtime", clusters.TotalCount)
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourcesFailed)
+	}
 
 	// deleted runtime
 	err = deleteRuntimes(ctx, runtimeIds)
