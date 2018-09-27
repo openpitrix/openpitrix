@@ -7,6 +7,7 @@ package app
 import (
 	"context"
 
+	clientutil "openpitrix.io/openpitrix/pkg/client"
 	repoclient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -57,7 +58,8 @@ func (vp *versionProxy) GetRepo(ctx context.Context) (*pb.Repo, error) {
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, app.RepoId)
 	}
-	describeResp, err := rc.DescribeRepos(ctx, &pb.DescribeReposRequest{
+	systemCtx := clientutil.SetSystemUserToContext(ctx)
+	describeResp, err := rc.DescribeRepos(systemCtx, &pb.DescribeReposRequest{
 		RepoId: []string{repoId},
 	})
 	if err != nil {
