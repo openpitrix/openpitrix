@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixModifyRepoRequest
 type OpenpitrixModifyRepoRequest struct {
 
+	// app default status
+	AppDefaultStatus string `json:"app_default_status,omitempty"`
+
 	// category id
 	CategoryID string `json:"category_id,omitempty"`
 

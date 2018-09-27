@@ -98,14 +98,8 @@ func TestRepo(t *testing.T) {
 
 	repoId := createResp.Payload.RepoID
 
-	msg := ioClient.ReadMessage()
-	require.Equal(t, "repo", msg.Resource.ResourceType)
-	require.Equal(t, topic.Create, msg.Type)
-	require.Equal(t, "active", msg.Resource.Values["status"])
-	require.Equal(t, repoId, msg.Resource.ResourceId)
-
 	// repo-event pending
-	msg = ioClient.ReadMessage()
+	msg := ioClient.ReadMessage()
 	repoEventId := msg.Resource.ResourceId
 	require.Equal(t, "repo_event", msg.Resource.ResourceType)
 	require.Equal(t, topic.Create, msg.Type)
@@ -135,11 +129,6 @@ func TestRepo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	msg = ioClient.ReadMessage()
-	require.Equal(t, "repo", msg.Resource.ResourceType)
-	require.Equal(t, topic.Update, msg.Type)
-	require.Equal(t, repoId, msg.Resource.ResourceId)
 
 	t.Log(modifyResp)
 	// describe repo
@@ -182,11 +171,6 @@ func TestRepo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	msg = ioClient.ReadMessage()
-	require.Equal(t, "repo", msg.Resource.ResourceType)
-	require.Equal(t, topic.Update, msg.Type)
-	require.Equal(t, repoId, msg.Resource.ResourceId)
 
 	t.Log(deleteResp)
 	// describe deleted repo

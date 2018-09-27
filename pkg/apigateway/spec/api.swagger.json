@@ -2488,6 +2488,16 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "app_default_status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -5508,6 +5518,9 @@
         },
         "category_id": {
           "type": "string"
+        },
+        "app_default_status": {
+          "type": "string"
         }
       }
     },
@@ -5594,6 +5607,9 @@
         },
         "category_id": {
           "type": "string"
+        },
+        "app_default_status": {
+          "type": "string"
         }
       }
     },
@@ -5666,6 +5682,9 @@
           "items": {
             "$ref": "#/definitions/openpitrixResourceCategory"
           }
+        },
+        "app_default_status": {
+          "type": "string"
         }
       }
     },

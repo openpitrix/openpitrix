@@ -177,10 +177,7 @@ func syncAppStatus(ctx context.Context, appId string) error {
 	if err != nil {
 		return err
 	}
-	var status string
 	if activeVersion != nil {
-		status = constants.StatusActive
-
 		if activeVersion.Description != app.Description {
 			attributes[constants.ColumnDescription] = activeVersion.Description
 		}
@@ -205,13 +202,12 @@ func syncAppStatus(ctx context.Context, appId string) error {
 		if activeVersion.Readme != app.Readme {
 			attributes[constants.ColumnReadme] = activeVersion.Readme
 		}
-	} else {
-		status = constants.StatusDraft
+		if constants.StatusActive != app.Status {
+			attributes[constants.ColumnStatus] = constants.StatusActive
+			attributes[constants.ColumnStatusTime] = time.Now()
+		}
 	}
-	if status != app.Status {
-		attributes[constants.ColumnStatus] = status
-		attributes[constants.ColumnStatusTime] = time.Now()
-	}
+
 	if len(attributes) == 0 {
 		return nil
 	}
@@ -368,4 +364,37 @@ func clearApps(ctx context.Context, repoId string, ignoredAppIds []string) error
 		Where(db.Neq(constants.ColumnAppId, ignoredAppIds)).
 		Exec()
 	return err
+}
+
+var versionStatusPriority = map[string]int32{
+	constants.StatusActive:    7,
+	constants.StatusRejected:  6,
+	constants.StatusPassed:    5,
+	constants.StatusSubmitted: 4,
+	constants.StatusDraft:     3,
+	constants.StatusSuspended: 2,
+	constants.StatusDeleted:   1,
+}
+
+func getAppDefaultStatus(repo *pb.Repo) string {
+	var defaultStatus = repo.GetAppDefaultStatus().GetValue()
+	if len(defaultStatus) == 0 {
+		return pi.Global().GlobalConfig().GetAppDefaultStatus()
+	}
+	return defaultStatus
+}
+
+func getAppVersionStatus(defaultStatus, currentStatus string) string {
+	d, ok := versionStatusPriority[defaultStatus]
+	if !ok {
+		return currentStatus
+	}
+	c, ok := versionStatusPriority[defaultStatus]
+	if !ok {
+		return defaultStatus
+	}
+	if c >= d {
+		return currentStatus
+	}
+	return defaultStatus
 }
