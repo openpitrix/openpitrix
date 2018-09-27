@@ -106,7 +106,6 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 			Where(db.Eq(constants.ColumnCategoryId, categoryIds))
 		query = query.Where(db.Eq(constants.ColumnAppId, []*db.SelectQuery{subqueryStmt}))
 	}
-	// TODO: validate sort_key
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&apps)
 	if err != nil {

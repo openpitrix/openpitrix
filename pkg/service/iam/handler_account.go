@@ -36,6 +36,8 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest
 		Offset(offset).Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableUser))
 
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
+
 	var users []*models.User
 	_, err := query.Load(&users)
 	if err != nil {
@@ -65,6 +67,8 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 		Select(models.GroupColumns...).From(constants.TableGroup).
 		Offset(offset).Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableGroup))
+
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 
 	var groups []*models.Group
 	_, err := query.Load(&groups)

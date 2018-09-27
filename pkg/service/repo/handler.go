@@ -42,6 +42,19 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "selector")
 	}
 
+	//sender := senderutil.GetSenderFromContext(ctx)
+	//if !sender.IsGlobalAdmin() {
+	//	if len(req.Visibility) == 0 || stringutil.StringIn(constants.VisibilityPublic, req.Visibility) {
+	//		cond := db.Or(
+	//			db.Eq(constants.ColumnVisibility, constants.VisibilityPublic),
+	//			db.And(
+	//				db.Eq(constants.ColumnVisibility, constants.VisibilityPrivate),
+	//				db.Eq(constants.ColumnOwner, sender.UserId),
+	//			),
+	//		)
+	//	}
+	//}
+
 	query := pi.Global().DB(ctx).
 		Select(models.RepoColumnsWithTablePrefix...).
 		From(constants.TableRepo).
