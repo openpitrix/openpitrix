@@ -1230,7 +1230,11 @@ var Files = map[string]string{
             "name": "owner",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "search_word",

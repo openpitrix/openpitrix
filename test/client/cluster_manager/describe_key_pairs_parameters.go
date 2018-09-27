@@ -74,7 +74,7 @@ type DescribeKeyPairsParams struct {
 	/*Offset*/
 	Offset *int64
 	/*Owner*/
-	Owner *string
+	Owner []string
 	/*PubKey*/
 	PubKey *string
 	/*SearchWord*/
@@ -174,13 +174,13 @@ func (o *DescribeKeyPairsParams) SetOffset(offset *int64) {
 }
 
 // WithOwner adds the owner to the describe key pairs params
-func (o *DescribeKeyPairsParams) WithOwner(owner *string) *DescribeKeyPairsParams {
+func (o *DescribeKeyPairsParams) WithOwner(owner []string) *DescribeKeyPairsParams {
 	o.SetOwner(owner)
 	return o
 }
 
 // SetOwner adds the owner to the describe key pairs params
-func (o *DescribeKeyPairsParams) SetOwner(owner *string) {
+func (o *DescribeKeyPairsParams) SetOwner(owner []string) {
 	o.Owner = owner
 }
 
@@ -294,20 +294,12 @@ func (o *DescribeKeyPairsParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	}
 
-	if o.Owner != nil {
+	valuesOwner := o.Owner
 
-		// query param owner
-		var qrOwner string
-		if o.Owner != nil {
-			qrOwner = *o.Owner
-		}
-		qOwner := qrOwner
-		if qOwner != "" {
-			if err := r.SetQueryParam("owner", qOwner); err != nil {
-				return err
-			}
-		}
-
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	if o.PubKey != nil {

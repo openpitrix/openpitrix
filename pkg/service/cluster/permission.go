@@ -120,3 +120,55 @@ func CheckClusterNodePermission(ctx context.Context, resourceId string) (*models
 	}
 	return clusternodes[0], nil
 }
+
+func CheckKeyPairsPermission(ctx context.Context, resourceIds []string) ([]*models.KeyPair, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var keypairs []*models.KeyPair
+	_, err := pi.Global().DB(ctx).
+		Select(models.KeyPairColumns...).
+		From(constants.TableKeyPair).
+		Where(db.Eq(constants.ColumnKeyPairId, resourceIds)).Load(&keypairs)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, keypair := range keypairs {
+			if keypair.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, keypair.KeyPairId)
+			}
+		}
+	}
+	if len(keypairs) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return keypairs, nil
+}
+
+func CheckKeyPairPermission(ctx context.Context, resourceId string) (*models.KeyPair, error) {
+	if len(resourceId) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var keypairs []*models.KeyPair
+	_, err := pi.Global().DB(ctx).
+		Select(models.KeyPairColumns...).
+		From(constants.TableKeyPair).
+		Where(db.Eq(constants.ColumnKeyPairId, resourceId)).Load(&keypairs)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, keypair := range keypairs {
+			if keypair.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, keypair.KeyPairId)
+			}
+		}
+	}
+	if len(keypairs) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return keypairs[0], nil
+}

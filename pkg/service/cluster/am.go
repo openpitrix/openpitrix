@@ -37,23 +37,18 @@ func checkPermissionAndTransition(ctx context.Context, cluster *models.Cluster, 
 	return nil
 }
 
-func checkNodesPermissionAndTransition(ctx context.Context, nodeIds []string, userId string, status []string) ([]*models.ClusterNode, error) {
-	clusterNodes, err := getClusterNodes(ctx, nodeIds, userId)
-	if err != nil {
-		return nil, err
-	}
+func checkNodesPermissionAndTransition(ctx context.Context, clusterNodes []*models.ClusterNode, status []string) error {
 	for _, clusterNode := range clusterNodes {
 		if clusterNode.TransitionStatus != "" {
 			logger.Error(ctx, "Cluster node [%s] is [%s], please try later", clusterNode.NodeId, clusterNode.TransitionStatus)
-			return nil, fmt.Errorf("cluster [%s] is [%s], please try later", clusterNode.NodeId, clusterNode.TransitionStatus)
+			return fmt.Errorf("cluster [%s] is [%s], please try later", clusterNode.NodeId, clusterNode.TransitionStatus)
 		}
 		if status != nil && !reflectutil.In(clusterNode.Status, status) {
 			logger.Error(ctx, "Cluster [%s] status is [%s] not in %s", clusterNode.NodeId, clusterNode.Status, status)
-			return nil, fmt.Errorf("cluster [%s] status is [%s] not in %s", clusterNode.NodeId, clusterNode.Status, status)
+			return fmt.Errorf("cluster [%s] status is [%s] not in %s", clusterNode.NodeId, clusterNode.Status, status)
 		}
 	}
-
-	return clusterNodes, nil
+	return nil
 }
 
 func (p *Server) Checker(ctx context.Context, req interface{}) error {
@@ -152,6 +147,13 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 		}
 		return r
 	case *pb.DescribeClusterNodesRequest:
+		if sender.IsGlobalAdmin() {
+
+		} else {
+			r.Owner = []string{sender.UserId}
+		}
+		return r
+	case *pb.DescribeKeyPairsRequest:
 		if sender.IsGlobalAdmin() {
 
 		} else {
