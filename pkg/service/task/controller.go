@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/client"
+	accountclient "openpitrix.io/openpitrix/pkg/client/iam"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -104,6 +105,17 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 	}
 	ctx = ctxutil.AddMessageId(ctx, task.JobId)
 
+	accountClient, err := accountclient.NewClient()
+	if err != nil {
+		return err
+	}
+	users, err := accountClient.GetUsers(ctx, []string{task.Owner})
+	if err != nil {
+		return err
+	}
+
+	ctx = client.SetUserToContext(ctx, users[0])
+
 	err = c.updateTaskAttributes(ctx, task.TaskId, map[string]interface{}{
 		"status":   constants.StatusWorking,
 		"executor": c.hostname,
@@ -121,7 +133,6 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 			return err
 		}
 
-		ctx := client.SetSystemUserToContext(ctx)
 		pilotClient, err := pilotclient.NewClient()
 		if err != nil {
 			logger.Error(ctx, "Connect to pilot service failed: %+v", err)

@@ -13,7 +13,6 @@ import (
 
 	"fmt"
 
-	clientutil "openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -41,7 +40,6 @@ func getRuntime(ctx context.Context, runtimeId string) (*pb.RuntimeDetail, error
 		return nil, fmt.Errorf("runtime id is nil")
 	}
 	runtimeIds := []string{runtimeId}
-	ctx = clientutil.SetSystemUserToContext(ctx)
 	client, err := NewRuntimeManagerClient()
 	if err != nil {
 		return nil, err

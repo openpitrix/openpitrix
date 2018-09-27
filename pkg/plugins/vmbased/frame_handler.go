@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 
-	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -38,14 +37,13 @@ func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
 
 	frontgateId := waitFrontgateDirective.FrontgateId
 
-	ctx := client.SetSystemUserToContext(f.Ctx)
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		return err
 	}
 
 	return funcutil.WaitForSpecificOrError(func() (bool, error) {
-		response, err := clusterClient.DescribeClusters(ctx, &pb.DescribeClustersRequest{
+		response, err := clusterClient.DescribeClusters(f.Ctx, &pb.DescribeClustersRequest{
 			ClusterId: []string{frontgateId},
 		})
 		if err != nil {

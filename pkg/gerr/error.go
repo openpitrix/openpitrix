@@ -27,8 +27,8 @@ func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMess
 	errorDetail := &pb.ErrorDetail{ErrorName: errMsg.Name}
 	if err != nil {
 		errorDetail.Cause = fmt.Sprintf("%+v", err)
-		logger.NewLogger().WithDepth(5).Error(ctx, "%+v", err)
 	}
+	logger.NewLogger().WithDepth(5).Error(ctx, "err: %+v, errMsg: %s", err, errMsg)
 
 	sd, e := s.WithDetails(errorDetail)
 	if e == nil {

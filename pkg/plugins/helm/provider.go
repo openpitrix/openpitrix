@@ -14,7 +14,6 @@ import (
 	"k8s.io/helm/pkg/proto/hapi/chart"
 	"k8s.io/helm/pkg/proto/hapi/release"
 
-	clientutil "openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
@@ -33,7 +32,6 @@ func NewProvider() *Provider {
 }
 
 func (p *Provider) getChart(ctx context.Context, versionId string) (*chart.Chart, error) {
-	ctx = clientutil.SetSystemUserToContext(ctx)
 	appClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return nil, err
@@ -374,7 +372,6 @@ func (p *Provider) updateClusterStatus(ctx context.Context, job *models.Job) err
 		clusterNodesList = append(clusterNodesList, clusterNode)
 	}
 
-	ctx = clientutil.SetSystemUserToContext(ctx)
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		return err

@@ -7,7 +7,6 @@ package job
 import (
 	"context"
 
-	"openpitrix.io/openpitrix/pkg/client"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -41,7 +40,6 @@ func SendJob(ctx context.Context, job *models.Job) (string, error) {
 		RuntimeId: pbJob.RuntimeId,
 	}
 
-	ctx = client.SetSystemUserToContext(ctx)
 	jobClient, err := NewClient()
 	if err != nil {
 		logger.Error(ctx, "Connect to job service failed: %+v", err)

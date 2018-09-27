@@ -928,6 +928,7 @@ func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTabl
 
 func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersRequest) (*pb.DeleteClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
+	logger.Error(ctx, "%+v", s)
 
 	var jobIds []string
 	for _, clusterId := range req.GetClusterId() {
