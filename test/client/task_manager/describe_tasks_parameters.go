@@ -77,6 +77,8 @@ type DescribeTasksParams struct {
 
 	*/
 	Offset *int64
+	/*Owner*/
+	Owner []string
 	/*SearchWord*/
 	SearchWord *string
 	/*Status*/
@@ -166,6 +168,17 @@ func (o *DescribeTasksParams) WithOffset(offset *int64) *DescribeTasksParams {
 // SetOffset adds the offset to the describe tasks params
 func (o *DescribeTasksParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwner adds the owner to the describe tasks params
+func (o *DescribeTasksParams) WithOwner(owner []string) *DescribeTasksParams {
+	o.SetOwner(owner)
+	return o
+}
+
+// SetOwner adds the owner to the describe tasks params
+func (o *DescribeTasksParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithSearchWord adds the searchWord to the describe tasks params
@@ -274,6 +287,14 @@ func (o *DescribeTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 			}
 		}
 
+	}
+
+	valuesOwner := o.Owner
+
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	if o.SearchWord != nil {

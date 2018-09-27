@@ -721,6 +721,8 @@
     offset:
       help: default is 0.
       type: integer
+    owner:
+      type: '[]string'
     provider:
       type: string
     runtime_id:
@@ -944,6 +946,8 @@
     offset:
       help: default is 0.
       type: integer
+    owner:
+      type: '[]string'
     search_word:
       type: string
     status:

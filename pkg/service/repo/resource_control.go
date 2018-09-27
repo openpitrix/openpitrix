@@ -41,19 +41,6 @@ func (p *Server) validateRepoName(ctx context.Context, name string) error {
 	return nil
 }
 
-func (p *Server) getRepo(ctx context.Context, repoId string) (*models.Repo, error) {
-	repo := &models.Repo{}
-	err := pi.Global().DB(ctx).
-		Select(models.RepoColumns...).
-		From(constants.TableRepo).
-		Where(db.Eq(constants.ColumnRepoId, repoId)).
-		LoadOne(&repo)
-	if err != nil {
-		return nil, err
-	}
-	return repo, nil
-}
-
 func (p *Server) createProviders(ctx context.Context, repoId string, providers []string) error {
 	if len(providers) == 0 {
 		return nil

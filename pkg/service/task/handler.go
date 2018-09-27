@@ -6,7 +6,6 @@ package task
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -91,24 +90,10 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 }
 
 func (p *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb.RetryTasksResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-
 	taskIds := req.GetTaskId()
-	var tasks []*models.Task
-	query := pi.Global().DB(ctx).
-		Select(models.TaskColumns...).
-		From(constants.TableTask).
-		Where(db.Eq("task_id", taskIds)).
-		Where(db.Eq("owner", s.UserId))
-
-	_, err := query.Load(&tasks)
+	tasks, err := CheckTaskPermission(ctx, taskIds...)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
-	}
-
-	if len(tasks) != len(taskIds) {
-		err = fmt.Errorf("retryTasks [%s] with count [%d]", strings.Join(taskIds, ","), len(tasks))
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
+		return nil, err
 	}
 
 	for _, taskId := range taskIds {
