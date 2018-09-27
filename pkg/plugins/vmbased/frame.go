@@ -1546,11 +1546,10 @@ func (f *Frame) DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails
 	return headTaskLayer.Child
 }
 
-func (f *Frame) ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
+func (f *Frame) ParseClusterConf(ctx context.Context, versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
 	clusterConf := opapp.ClusterConf{}
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
-		ctx := context.Background()
 		appManagerClient, err := appclient.NewAppManagerClient()
 		if err != nil {
 			logger.Error(f.Ctx, "Connect to app manager failed: %+v", err)

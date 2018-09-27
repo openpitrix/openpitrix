@@ -27,7 +27,7 @@ func (p *Provider) ParseClusterConf(ctx context.Context, versionId, runtimeId, c
 	if err != nil {
 		return err
 	}
-	err = frameInterface.ParseClusterConf(versionId, runtimeId, conf, clusterWrapper)
+	err = frameInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
 		return err
 	}
