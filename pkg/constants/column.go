@@ -26,6 +26,7 @@ const (
 	ColumnMaintainers      = "maintainers"
 	ColumnName             = "name"
 	ColumnNodeId           = "node_id"
+	ColumnKeyPairId        = "key_pair_id"
 	ColumnOwner            = "owner"
 	ColumnPackageName      = "package_name"
 	ColumnPrivateIp        = "private_ip"

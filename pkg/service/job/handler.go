@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -55,7 +54,6 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 }
 
 func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) (*pb.DescribeJobsResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
 	var jobs []*models.Job
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
@@ -65,8 +63,7 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 		From(constants.TableJob).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildFilterConditions(req, constants.TableJob)).
-		Where(db.Eq("owner", s.UserId))
+		Where(manager.BuildFilterConditions(req, constants.TableJob))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&jobs)
 	if err != nil {

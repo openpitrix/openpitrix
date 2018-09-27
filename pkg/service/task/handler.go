@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -59,7 +58,6 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 }
 
 func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
 	var tasks []*models.Task
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
@@ -70,7 +68,6 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableTask)).
-		Where(db.Eq("owner", s.UserId)).
 		OrderDir("create_time", true)
 
 	_, err := query.Load(&tasks)

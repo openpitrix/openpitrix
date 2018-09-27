@@ -589,7 +589,7 @@
     offset:
       type: integer
     owner:
-      type: string
+      type: '[]string'
     pub_key:
       type: string
     search_word:

@@ -96,7 +96,7 @@ type Model struct {
 func main() {
 	var models = []string{
 		"repo", "app", "app_version", "cluster", "cluster_node",
-		"job", "task", "repo_event", "runtime",
+		"job", "task", "repo_event", "runtime", "key_pair",
 	}
 
 	permissions := make(map[string]*os.File)
@@ -108,6 +108,8 @@ func main() {
 		case "app_version":
 			packageName = "app"
 		case "cluster_node":
+			packageName = "cluster"
+		case "key_pair":
 			packageName = "cluster"
 		case "repo_event":
 			packageName = "repo_indexer"

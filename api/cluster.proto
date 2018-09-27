@@ -419,7 +419,7 @@ message DescribeKeyPairsRequest {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue pub_key = 4;
-	google.protobuf.StringValue owner = 5;
+	repeated string owner = 5;
 	google.protobuf.StringValue search_word = 6;
 	uint32 limit = 7;
 	uint32 offset = 8;
