@@ -26,7 +26,6 @@ import (
 	_ "k8s.io/kubernetes/pkg/apis/apps/install"
 	_ "k8s.io/kubernetes/pkg/apis/extensions/install"
 
-	clientutil "openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -45,7 +44,6 @@ type Parser struct {
 }
 
 func (p *Parser) getAppVersion() (*pb.AppVersion, error) {
-	ctx := clientutil.SetSystemUserToContext(p.ctx)
 	appManagerClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return nil, err
@@ -55,7 +53,7 @@ func (p *Parser) getAppVersion() (*pb.AppVersion, error) {
 		VersionId: []string{p.VersionId},
 	}
 
-	resp, err := appManagerClient.DescribeAppVersions(ctx, req)
+	resp, err := appManagerClient.DescribeAppVersions(p.ctx, req)
 	if err != nil {
 		return nil, err
 	}

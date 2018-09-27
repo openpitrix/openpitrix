@@ -85,52 +85,6 @@ func CheckAppVersionPermission(ctx context.Context, resourceId ...string) error 
 	return nil
 }
 
-func CheckClusterPermission(ctx context.Context, resourceId ...string) error {
-	if len(resourceId) == 0 {
-		return nil
-	}
-	var sender = senderutil.GetSenderFromContext(ctx)
-	var clusters []*Cluster
-	_, err := pi.Global().DB(ctx).
-		Select(constants.ColumnClusterId, constants.ColumnOwner).
-		From(constants.TableCluster).
-		Where(db.Eq(constants.ColumnClusterId, resourceId)).Load(&clusters)
-	if err != nil {
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-	if sender != nil && !sender.IsGlobalAdmin() {
-		for _, cluster := range clusters {
-			if cluster.Owner != sender.UserId {
-				return gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, cluster.ClusterId)
-			}
-		}
-	}
-	return nil
-}
-
-func CheckClusterNodePermission(ctx context.Context, resourceId ...string) error {
-	if len(resourceId) == 0 {
-		return nil
-	}
-	var sender = senderutil.GetSenderFromContext(ctx)
-	var clusternodes []*ClusterNode
-	_, err := pi.Global().DB(ctx).
-		Select(constants.ColumnNodeId, constants.ColumnOwner).
-		From(constants.TableClusterNode).
-		Where(db.Eq(constants.ColumnNodeId, resourceId)).Load(&clusternodes)
-	if err != nil {
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-	if sender != nil && !sender.IsGlobalAdmin() {
-		for _, clusternode := range clusternodes {
-			if clusternode.Owner != sender.UserId {
-				return gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, clusternode.NodeId)
-			}
-		}
-	}
-	return nil
-}
-
 func CheckJobPermission(ctx context.Context, resourceId ...string) error {
 	if len(resourceId) == 0 {
 		return nil

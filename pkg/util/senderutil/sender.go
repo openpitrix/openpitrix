@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
@@ -25,8 +26,12 @@ type Sender struct {
 	Role   string `json:"role,omitempty"`
 }
 
-func GetSystemUser() *Sender {
+func GetSystemSender() *Sender {
 	return &Sender{UserId: "system", Role: constants.RoleGlobalAdmin}
+}
+
+func GetSender(user *pb.User) *Sender {
+	return &Sender{UserId: user.GetUserId().GetValue(), Role: user.GetRole().GetValue()}
 }
 
 func (s *Sender) ToJson() string {

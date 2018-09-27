@@ -12,7 +12,6 @@ import (
 	"sort"
 	"strings"
 
-	"openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
@@ -719,7 +718,6 @@ func (f *Frame) removeContainerLayer(nodeIds []string, failureAllowed bool) *mod
 
 func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
-	ctx := client.SetSystemUserToContext(f.Ctx)
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		logger.Error(f.Ctx, "New ssh key gen task layer failed: %+v", err)
@@ -737,7 +735,7 @@ func (f *Frame) sshKeygenLayer(failureAllowed bool) *models.TaskLayer {
 					clusterCommon.Passphraseless, nodeId)
 				return nil
 			}
-			_, err = clusterClient.ModifyClusterNode(ctx, &pb.ModifyClusterNodeRequest{
+			_, err = clusterClient.ModifyClusterNode(f.Ctx, &pb.ModifyClusterNodeRequest{
 				ClusterNode: &pb.ClusterNode{
 					NodeId: pbutil.ToProtoString(nodeId),
 					PubKey: pbutil.ToProtoString(public),

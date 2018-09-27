@@ -7,7 +7,6 @@ package task
 import (
 	"context"
 
-	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -33,7 +32,6 @@ func NewProcessor(task *models.Task) *Processor {
 
 // Post process when task is start
 func (p *Processor) Pre(ctx context.Context) error {
-	ctx = client.SetSystemUserToContext(ctx)
 	if p.Task.Directive == "" {
 		logger.Warn(ctx, "Skip empty task [%s] directive", p.Task.TaskId)
 		return nil
@@ -350,7 +348,6 @@ func (p *Processor) Pre(ctx context.Context) error {
 
 // Post process when task is done
 func (p *Processor) Post(ctx context.Context) error {
-	ctx = client.SetSystemUserToContext(ctx)
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {

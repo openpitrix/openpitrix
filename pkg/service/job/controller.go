@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/client"
+	accountclient "openpitrix.io/openpitrix/pkg/client/iam"
 	taskclient "openpitrix.io/openpitrix/pkg/client/task"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -112,6 +113,17 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 			return err
 		}
 
+		accountClient, err := accountclient.NewClient()
+		if err != nil {
+			return err
+		}
+		users, err := accountClient.GetUsers(ctx, []string{job.Owner})
+		if err != nil {
+			return err
+		}
+
+		ctx = client.SetUserToContext(ctx, users[0])
+
 		processor := NewProcessor(job)
 		err = processor.Pre(ctx)
 		if err != nil {
@@ -130,7 +142,6 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 			return err
 		}
 
-		ctx := client.SetSystemUserToContext(ctx)
 		taskClient, err := taskclient.NewClient()
 		if err != nil {
 			logger.Error(ctx, "Connect to task service failed: %+v", err)
