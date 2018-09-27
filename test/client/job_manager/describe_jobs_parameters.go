@@ -81,6 +81,8 @@ type DescribeJobsParams struct {
 
 	*/
 	Offset *int64
+	/*Owner*/
+	Owner []string
 	/*Provider*/
 	Provider *string
 	/*RuntimeID*/
@@ -194,6 +196,17 @@ func (o *DescribeJobsParams) WithOffset(offset *int64) *DescribeJobsParams {
 // SetOffset adds the offset to the describe jobs params
 func (o *DescribeJobsParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwner adds the owner to the describe jobs params
+func (o *DescribeJobsParams) WithOwner(owner []string) *DescribeJobsParams {
+	o.SetOwner(owner)
+	return o
+}
+
+// SetOwner adds the owner to the describe jobs params
+func (o *DescribeJobsParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithProvider adds the provider to the describe jobs params
@@ -345,6 +358,14 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 			}
 		}
 
+	}
+
+	valuesOwner := o.Owner
+
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	if o.Provider != nil {

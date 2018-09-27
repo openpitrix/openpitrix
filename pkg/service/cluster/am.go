@@ -1,3 +1,7 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package cluster
 
 import (
@@ -21,20 +25,16 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/tlsutil"
 )
 
-func checkPermissionAndTransition(ctx context.Context, clusterId, userId string, status []string) (*models.Cluster, error) {
-	cluster, err := getCluster(ctx, clusterId, userId)
-	if err != nil {
-		return nil, err
-	}
+func checkPermissionAndTransition(ctx context.Context, cluster *models.Cluster, status []string) error {
 	if cluster.TransitionStatus != "" {
-		logger.Error(ctx, "Cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
-		return nil, fmt.Errorf("cluster [%s] is [%s], please try later", clusterId, cluster.TransitionStatus)
+		logger.Error(ctx, "Cluster [%s] is [%s], please try later", cluster.ClusterId, cluster.TransitionStatus)
+		return fmt.Errorf("cluster [%s] is [%s], please try later", cluster.ClusterId, cluster.TransitionStatus)
 	}
 	if status != nil && !reflectutil.In(cluster.Status, status) {
-		logger.Error(ctx, "Cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
-		return nil, fmt.Errorf("cluster [%s] status is [%s] not in %s", clusterId, cluster.Status, status)
+		logger.Error(ctx, "Cluster [%s] status is [%s] not in %s", cluster.ClusterId, cluster.Status, status)
+		return fmt.Errorf("cluster [%s] status is [%s] not in %s", cluster.ClusterId, cluster.Status, status)
 	}
-	return cluster, nil
+	return nil
 }
 
 func checkNodesPermissionAndTransition(ctx context.Context, nodeIds []string, userId string, status []string) ([]*models.ClusterNode, error) {

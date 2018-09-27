@@ -171,7 +171,8 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 }
 
 func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest) (*pb.ModifyRuntimeResponse, error) {
-	err := models.CheckRuntimePermission(ctx, req.GetRuntimeId().GetValue())
+	runtimeId := req.GetRuntimeId().GetValue()
+	runtime, err := CheckRuntimePermission(ctx, runtimeId)
 	if err != nil {
 		return nil, err
 	}
@@ -185,11 +186,6 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 		}
 	}
 	// check runtime can be modified
-	runtimeId := req.GetRuntimeId().GetValue()
-	runtime, err := getRuntime(ctx, runtimeId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceNotFound, runtimeId)
-	}
 	if req.RuntimeCredential != nil {
 		err = ValidateCredential(
 			ctx,
@@ -239,11 +235,11 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 }
 
 func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesRequest) (*pb.DeleteRuntimesResponse, error) {
-	err := models.CheckRuntimePermission(ctx, req.GetRuntimeId()...)
+	runtimeIds := req.GetRuntimeId()
+	_, err := CheckRuntimesPermission(ctx, runtimeIds)
 	if err != nil {
 		return nil, err
 	}
-	runtimeIds := req.GetRuntimeId()
 
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {

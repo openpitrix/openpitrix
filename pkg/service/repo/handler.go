@@ -83,7 +83,6 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 
 	_, err = query.Load(&repos)
 	if err != nil {
-		// TODO: err_code should be implementation
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
@@ -192,19 +191,14 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 }
 
 func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb.ModifyRepoResponse, error) {
-	err := models.CheckRepoPermission(ctx, req.GetRepoId().GetValue())
+	repoId := req.GetRepoId().GetValue()
+	repo, err := CheckRepoPermission(ctx, repoId)
 	if err != nil {
 		return nil, err
 	}
-	s := senderutil.GetSenderFromContext(ctx)
+
 	repoType := req.GetType().GetValue()
 	providers := req.GetProviders()
-	// TODO: check resource permission
-	repoId := req.GetRepoId().GetValue()
-	repo, err := p.getRepo(ctx, repoId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorResourceNotFound, repoId)
-	}
 	url := repo.Url
 	credential := repo.Credential
 	needValidate := false
@@ -239,7 +233,6 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 		_, err = pi.Global().DB(ctx).
 			Update(constants.TableRepo).
 			SetMap(attributes).
-			Where(db.Eq(constants.ColumnOwner, s.UserId)).
 			Where(db.Eq(constants.ColumnRepoId, repoId)).
 			Exec()
 		if err != nil {
@@ -285,12 +278,11 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 }
 
 func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*pb.DeleteReposResponse, error) {
-	err := models.CheckRepoPermission(ctx, req.GetRepoId()...)
+	repoIds := req.GetRepoId()
+	_, err := CheckReposPermission(ctx, repoIds)
 	if err != nil {
 		return nil, err
 	}
-	s := senderutil.GetSenderFromContext(ctx)
-	repoIds := req.GetRepoId()
 
 	for _, repoId := range repoIds {
 		if stringutil.StringIn(repoId, constants.InternalRepos) {
@@ -301,7 +293,6 @@ func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*
 	_, err = pi.Global().DB(ctx).
 		Update(constants.TableRepo).
 		Set(constants.ColumnStatus, constants.StatusDeleted).
-		Where(db.Eq(constants.ColumnOwner, s.UserId)).
 		Where(db.Eq(constants.ColumnRepoId, repoIds)).
 		Exec()
 	if err != nil {

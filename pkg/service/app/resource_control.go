@@ -53,34 +53,17 @@ var VersionFiniteStatusMachine = map[Action][]string{
 	Recover: {constants.StatusSuspended},
 }
 
-func checkAppVersionHandlePermission(
-	ctx context.Context, action Action, versionId string,
-) (*models.AppVersion, error) {
-	// TODO: check admin/developer permission
-	//sender := senderutil.GetSenderFromContext(ctx)
-	version := models.AppVersion{}
-	err := pi.Global().DB(ctx).
-		Select(models.AppVersionColumns...).
-		From(constants.TableAppVersion).
-		Where(db.Eq(constants.ColumnVersionId, versionId)).
-		LoadOne(&version)
-	if err != nil {
-		if err == db.ErrNotFound {
-			return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, versionId)
-		}
-		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
-	}
-
+func checkAppVersionHandlePermission(ctx context.Context, action Action, version *models.AppVersion) error {
 	allowedStatus, ok := VersionFiniteStatusMachine[action]
 	if !ok {
-		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
+		return gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}
 	versionStatus := version.Status
 	if !stringutil.StringIn(versionStatus, allowedStatus) {
-		return nil, gerr.New(ctx, gerr.FailedPrecondition,
+		return gerr.New(ctx, gerr.FailedPrecondition,
 			gerr.ErrorAppVersionIncorrectStatus, version.VersionId, versionStatus)
 	}
-	return &version, nil
+	return nil
 }
 
 func deleteApp(ctx context.Context, appId string) error {
