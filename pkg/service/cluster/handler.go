@@ -958,21 +958,30 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		return nil, err
 	}
 	versionId := req.GetVersionId().GetValue()
-	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusStopped})
+
+	runtime, err := runtimeclient.NewRuntime(ctx, cluster.RuntimeId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorUpgradeResourceFailed, clusterId)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, cluster.RuntimeId)
 	}
+
+	if runtime.Provider == constants.ProviderKubernetes {
+		err := checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorUpgradeResourceFailed, clusterId)
+		}
+	} else {
+		err := checkPermissionAndTransition(ctx, cluster, []string{constants.StatusStopped})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorUpgradeResourceFailed, clusterId)
+		}
+	}
+
 	clusterWrapper, err := getClusterWrapper(ctx, clusterId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
 	directive := jsonutil.ToString(clusterWrapper)
-
-	runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
-	}
 
 	newJob := models.NewJob(
 		constants.PlaceHolder,

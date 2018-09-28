@@ -35,7 +35,7 @@ CMDS=$(subst $(comma),$(space),$(CMD))
 
 .PHONY: help
 help: ## This help
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_%-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_%-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .PHONY: all
 all: generate build ## Run generate and build
@@ -189,6 +189,7 @@ e2e-test: ## Run integration tests
 	cat ./test/init/sql/up.sql | docker-compose exec -T openpitrix-db mysql -uroot -ppassword
 	cd ./test/init/ && sh init_config.sh
 	go test -v -a -tags="integration" ./test/...
+	go test -v -a -timeout 0 -tags="k8s" ./test/...
 	cat ./test/init/sql/down.sql | docker-compose exec -T openpitrix-db mysql -uroot -ppassword
 	@echo "e2e-test done"
 
