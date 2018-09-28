@@ -161,6 +161,29 @@ func getNodeKeyPairs(ctx context.Context, keyPairIds []string, nodeIds []string)
 	return nodeKeyPairs, nil
 }
 
+func updateTransitionStatus(ctx context.Context, cluster *models.Cluster) error {
+	if cluster.TransitionStatus != "" {
+		jobClient, err := jobclient.NewClient()
+		if err != nil {
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		}
+		jobs, err := jobClient.DescribeJobs(ctx, &pb.DescribeJobsRequest{
+			ClusterId: pbutil.ToProtoString(cluster.ClusterId),
+		})
+		if err != nil {
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		}
+		transitionStatus := ""
+		for _, job := range jobs.JobSet {
+			if !stringutil.StringIn(job.GetStatus().GetValue(), []string{constants.StatusSuccessful, constants.StatusFailed}) {
+				transitionStatus = cluster.TransitionStatus
+			}
+		}
+		cluster.TransitionStatus = transitionStatus
+	}
+	return nil
+}
+
 func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 
@@ -882,6 +905,10 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 
 	var jobIds []string
 	for _, cluster := range clusters {
+		err = updateTransitionStatus(ctx, cluster)
+		if err != nil {
+			return nil, err
+		}
 		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive, constants.StatusStopped, constants.StatusPending})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourceFailed, cluster.ClusterId)
