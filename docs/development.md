@@ -28,7 +28,7 @@ CONTAINER ID        IMAGE                                      COMMAND          
 b0540d41b90f        openpitrix/dashboard                       "npm run prod:serve"     5 hours ago         Up 5 hours               0.0.0.0:8000->8000/tcp                           openpitrix-dashboard
 162ee4e72a05        openpitrix                                 "api-gateway"            5 hours ago         Up 5 hours               0.0.0.0:9100->9100/tcp                           openpitrix-api-gateway
 7fa3bda14643        openpitrix                                 "repo-indexer"           5 hours ago         Up 5 hours                                                                openpitrix-repo-indexer
-f988950a170c        minio/minio:RELEASE.2018-08-25T01-56-38Z   "sh -c 'mkdir -p /da…"   5 hours ago         Up 5 hours (healthy)     0.0.0.0:19000->9000/tcp                          openpitrix-minio
+f988950a170c        minio/minio:RELEASE.2018-09-25T21-34-43Z   "sh -c 'mkdir -p /da…"   5 hours ago         Up 5 hours (healthy)     0.0.0.0:19000->9000/tcp                          openpitrix-minio
 7257c88b5048        openpitrix                                 "category-manager"       5 hours ago         Up 5 hours                                                                openpitrix-category-manager
 893fea21a52a        openpitrix                                 "cluster-manager"        5 hours ago         Up 5 hours                                                                openpitrix-cluster-manager
 fd670a665ca2        openpitrix                                 "iam-service"            5 hours ago         Up 5 hours                                                                openpitrix-iam-service
