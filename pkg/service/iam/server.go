@@ -31,8 +31,8 @@ func initIAMClient() {
 		return
 	}
 	_, err := pi.Global().DB(context.Background()).InsertBySql(
-		`insert into user_client (client_id, user_id, client_secret, status)
-values (?, ?, ?, 'active')
+		`insert into user_client (client_id, user_id, client_secret, status, description)
+values (?, ?, ?, 'active', '')
 on duplicate key update user_id = ?, client_secret = ?, status = 'active';`,
 		clientId, userId, clientSecret,
 		userId, clientSecret,
