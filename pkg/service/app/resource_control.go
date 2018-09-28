@@ -151,10 +151,6 @@ func syncAppStatus(ctx context.Context, appId string) error {
 	if err != nil {
 		return err
 	}
-	if app.Status == constants.StatusSuspended ||
-		app.Status == constants.StatusDeleted {
-		return nil
-	}
 	attributes := make(map[string]interface{})
 	activeVersion, err := getLatestAppVersion(ctx, appId, constants.StatusActive)
 	if err != nil {
