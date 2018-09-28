@@ -7,85 +7,80 @@
 package test
 
 import (
-	"io/ioutil"
-	"log"
+	"fmt"
 	"testing"
 	"time"
 
-	"k8s.io/client-go/util/homedir"
-
+	"openpitrix.io/openpitrix/pkg/constants"
+	log "openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
+	apiclient "openpitrix.io/openpitrix/test/client"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
+	"openpitrix.io/openpitrix/test/client/job_manager"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
 
 var (
-	clientConfig = &ClientConfig{
-		Host:  "192.168.0.3:9100",
-		Debug: true,
-	}
+	RepoNameForTest    = "google"
+	AppNameForTest     = "cerebro"
+	RuntimeNameForTest = "minikube"
 
-	RepoNameForTest    = "incubator"
-	RuntimeNameForTest = "k8s runtime"
-	RepoUrlForTest     = "http://192.168.0.11:8879/"
-
-	KubeConfig string
+	clientConfig = &ClientConfig{}
 )
 
-func TestK8s(t *testing.T) {
-	log.SetPrefix("[ K8S TEST ] ")
+func init() {
+	clientConfig = GetClientConfig()
+	log.Info(nil, "Got Client Config: %+v", clientConfig)
+}
 
-	b, err := ioutil.ReadFile(homedir.HomeDir() + "/.kube/config")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	KubeConfig = string(b)
-
+func TestK8S(t *testing.T) {
 	client := GetClient(clientConfig)
 
 	// create repo
-	var repo *models.OpenpitrixRepo
+	var repoId string
 	{
 		describeParams := repo_manager.NewDescribeReposParams()
 		describeParams.SetName([]string{RepoNameForTest})
-		describeResp, err := client.RepoManager.DescribeRepos(describeParams)
+		describeResp, err := client.RepoManager.DescribeRepos(describeParams, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
 		repos := describeResp.Payload.RepoSet
 
 		if len(repos) != 0 {
-			repo = repos[0]
+			repoId = repos[0].RepoID
 		} else {
 			createParams := repo_manager.NewCreateRepoParams()
 			createParams.SetBody(
 				&models.OpenpitrixCreateRepoRequest{
 					Name:        RepoNameForTest,
-					Description: "incubator charts",
-					Type:        "http",
-					URL:         RepoUrlForTest,
+					Description: "test repo",
+					Type:        "https",
+					URL:         "https://kubernetes-charts.storage.googleapis.com",
 					Credential:  `{}`,
 					Visibility:  "public",
+					Providers:   []string{constants.ProviderKubernetes},
 				})
-			createResp, err := client.RepoManager.CreateRepo(createParams)
+			createResp, err := client.RepoManager.CreateRepo(createParams, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
-			repo = createResp.Payload.Repo
+			repoId = createResp.Payload.RepoID
 		}
 	}
-	log.Printf("Got repo [%s]\n", repo.Name)
+	log.Info(nil, "Got repo id [%s]", repoId)
 
 	// waiting for apps indexed by repo indexer
 	var app *models.OpenpitrixApp
 	{
 		for {
 			describeParams := app_manager.NewDescribeAppsParams()
-			describeParams.WithRepoID([]string{repo.RepoID})
-			describeResp, err := client.AppManager.DescribeApps(describeParams)
+			describeParams.WithRepoID([]string{repoId})
+			describeParams.SetSearchWord(&AppNameForTest)
+			describeResp, err := client.AppManager.DescribeApps(describeParams, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -94,95 +89,113 @@ func TestK8s(t *testing.T) {
 				app = apps[0]
 				break
 			}
-			log.Printf("Waiting for app ...")
+			log.Info(nil, "Waiting for app [%s]...", AppNameForTest)
 			time.Sleep(5 * time.Second)
 		}
 	}
-	log.Printf("Got app [%s]\n", app.Name)
+	log.Info(nil, "Got app name [%s] latest version [%s]", app.Name, app.LatestAppVersion.Name)
 
 	var appVersion1 *models.OpenpitrixAppVersion
 	var appVersion2 *models.OpenpitrixAppVersion
 	{
-		describeParams := app_manager.NewDescribeAppVersionsParams()
-		describeParams.SetAppID([]string{app.AppID})
-		describeResp, err := client.AppManager.DescribeAppVersions(describeParams)
-		if err != nil {
-			t.Fatal(err)
-		}
-		appVersions := describeResp.Payload.AppVersionSet
-		if len(appVersions) == 0 {
-			t.Fatal("App has no version released")
-		}
+		for {
+			describeParams := app_manager.NewDescribeAppVersionsParams()
+			describeParams.SetAppID([]string{app.AppID})
+			describeParams.WithPackageName([]string{"cerebro-0.3.0.tgz", "cerebro-0.3.1.tgz"})
+			describeResp, err := client.AppManager.DescribeAppVersions(describeParams, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			appVersions := describeResp.Payload.AppVersionSet
 
-		if len(appVersions) != 2 {
-			t.Fatal("We need two version to test upgrade")
-		}
+			if len(appVersions) == 2 {
+				appVersion1 = appVersions[0]
+				appVersion2 = appVersions[1]
+				break
+			}
 
-		appVersion1 = appVersions[0]
-		appVersion2 = appVersions[1]
+			log.Info(nil, "Waiting for app version ...")
+			time.Sleep(5 * time.Second)
+		}
 	}
-	log.Printf("Got app version [%s] [%s]\n", appVersion1.Name, appVersion2.Name)
+	log.Info(nil, "Got app version 1, %s", appVersion1.Name)
+	log.Info(nil, "Got app version 2, %s", appVersion2.Name)
 
 	// create runtime
-	var runtime *models.OpenpitrixRuntime
+	var runtimeId string
 	{
 		describeParams := runtime_manager.NewDescribeRuntimesParams()
 		describeParams.SetSearchWord(&RuntimeNameForTest)
-		describeResp, err := client.RuntimeManager.DescribeRuntimes(describeParams)
+		describeResp, err := client.RuntimeManager.DescribeRuntimes(describeParams, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
 		runtimes := describeResp.Payload.RuntimeSet
 		if len(runtimes) != 0 {
-			runtime = runtimes[0]
+			runtimeId = runtimes[0].RuntimeID
 		} else {
+			KubeConfig := getRuntimeCredential(t)
+
 			createParams := runtime_manager.NewCreateRuntimeParams()
 			createParams.SetBody(
 				&models.OpenpitrixCreateRuntimeRequest{
 					Name:              RuntimeNameForTest,
-					Description:       "k8s runtime",
-					Provider:          "kubernetes",
-					RuntimeURL:        "https://k8s.io",
+					Description:       "minikube",
+					Provider:          constants.ProviderKubernetes,
+					RuntimeURL:        "",
 					RuntimeCredential: KubeConfig,
-					Zone:              "default",
+					Zone:              "test",
 				})
-			createResp, err := client.RuntimeManager.CreateRuntime(createParams)
+			createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
 			if err != nil {
+				fmt.Print(execCmd(t, "docker-compose logs openpitrix-runtime-manager"))
 				t.Fatal(err)
 			}
-			runtime = createResp.Payload.Runtime
+			runtimeId = createResp.Payload.RuntimeID
 		}
 	}
-	log.Printf("Got runtime [%s]\n", runtime.Name)
+	log.Info(nil, "Got runtime id [%s]", runtimeId)
 
 	var clusterId string
-	log.Printf("Creating cluster...\n")
 	{
-		conf := `Description: test
-Name: test`
+		log.Info(nil, "Creating cluster...")
+
+		conf := `Name: test`
 
 		createParams := cluster_manager.NewCreateClusterParams()
 		createParams.SetBody(&models.OpenpitrixCreateClusterRequest{
 			AdvancedParam: []string{},
 			AppID:         app.AppID,
 			Conf:          conf,
-			RuntimeID:     runtime.RuntimeID,
+			RuntimeID:     runtimeId,
 			VersionID:     appVersion1.VersionID,
 		})
 
-		createResp, err := client.ClusterManager.CreateCluster(createParams)
+		createResp, err := client.ClusterManager.CreateCluster(createParams, nil)
 		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
 			t.Fatal(err)
 		}
 
 		clusterId = createResp.Payload.ClusterID
+		jobId := createResp.Payload.JobID
+
+		err = waitJobFinish(t, client, jobId)
+		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
+			t.Fatal(err)
+		}
+
+		log.Info(nil, "Cluster [%s] created", clusterId)
 	}
-	log.Printf("Cluster [%s] created \n", clusterId)
 
-	time.Sleep(4 * time.Minute)
-
-	log.Printf("Upgrading cluster [%s]...\n", clusterId)
 	{
+		log.Info(nil, "Upgrading cluster [%s] ...", clusterId)
+
 		upgradeParams := cluster_manager.NewUpgradeClusterParams()
 		upgradeParams.SetBody(&models.OpenpitrixUpgradeClusterRequest{
 			AdvancedParam: []string{},
@@ -190,61 +203,183 @@ Name: test`
 			VersionID:     appVersion2.VersionID,
 		})
 
-		_, err := client.ClusterManager.UpgradeCluster(upgradeParams)
+		upgradeResp, err := client.ClusterManager.UpgradeCluster(upgradeParams, nil)
 		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
 			t.Fatal(err)
 		}
+
+		jobId := upgradeResp.Payload.JobID
+
+		err = waitJobFinish(t, client, jobId)
+		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
+			t.Fatal(err)
+		}
+
+		log.Info(nil, "Cluster [%s] upgraded", clusterId)
 	}
-	log.Printf("Cluster [%s] upgraded \n", clusterId)
 
-	time.Sleep(4 * time.Minute)
-
-	log.Printf("Rolling back cluster [%s]...\n", clusterId)
 	{
+		log.Info(nil, "Rolling back cluster [%s] ...", clusterId)
+
 		rollbackParams := cluster_manager.NewRollbackClusterParams()
 		rollbackParams.SetBody(&models.OpenpitrixRollbackClusterRequest{
 			AdvancedParam: []string{},
 			ClusterID:     clusterId,
 		})
 
-		_, err := client.ClusterManager.RollbackCluster(rollbackParams)
+		rollbackResp, err := client.ClusterManager.RollbackCluster(rollbackParams, nil)
 		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
 			t.Fatal(err)
 		}
+
+		jobId := rollbackResp.Payload.JobID
+
+		err = waitJobFinish(t, client, jobId)
+		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
+			t.Fatal(err)
+		}
+
+		log.Info(nil, "Cluster [%s] roll back", clusterId)
 	}
-	log.Printf("Cluster [%s] roll back \n", clusterId)
 
-	time.Sleep(4 * time.Minute)
-
-	log.Printf("Deleting cluster [%s]...\n", clusterId)
 	{
+		log.Info(nil, "Updating cluster [%s] env ...", clusterId)
+
+		env := `Name: test
+Description: test`
+
+		updateEnvParams := cluster_manager.NewUpdateClusterEnvParams()
+		updateEnvParams.SetBody(&models.OpenpitrixUpdateClusterEnvRequest{
+			ClusterID: clusterId,
+			Env:       env,
+		})
+
+		updateEnvResp, err := client.ClusterManager.UpdateClusterEnv(updateEnvParams, nil)
+		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
+			t.Fatal(err)
+		}
+
+		jobId := updateEnvResp.Payload.JobID
+
+		err = waitJobFinish(t, client, jobId)
+		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
+			t.Fatal(err)
+		}
+
+		log.Info(nil, "Cluster [%s] env updated", clusterId)
+	}
+
+	{
+		log.Info(nil, "Deleting cluster [%s]...", clusterId)
+
 		deleteParams := cluster_manager.NewDeleteClustersParams()
 		deleteParams.SetBody(&models.OpenpitrixDeleteClustersRequest{
 			AdvancedParam: []string{},
 			ClusterID:     []string{clusterId},
 		})
 
-		_, err := client.ClusterManager.DeleteClusters(deleteParams)
+		deleteResp, err := client.ClusterManager.DeleteClusters(deleteParams, nil)
 		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
 			t.Fatal(err)
 		}
+
+		jobId := deleteResp.Payload.JobID[0]
+
+		err = waitJobFinish(t, client, jobId)
+		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
+			t.Fatal(err)
+		}
+
+		log.Info(nil, "Cluster [%s] deleted", clusterId)
 	}
-	log.Printf("Cluster [%s] deleted \n", clusterId)
 
-	time.Sleep(4 * time.Minute)
-
-	log.Printf("Purging cluster [%s]...\n", clusterId)
 	{
+		log.Info(nil, "Purging cluster [%s]...", clusterId)
+
 		ceaseParams := cluster_manager.NewCeaseClustersParams()
 		ceaseParams.SetBody(&models.OpenpitrixCeaseClustersRequest{
 			AdvancedParam: []string{},
 			ClusterID:     []string{clusterId},
 		})
 
-		_, err := client.ClusterManager.CeaseClusters(ceaseParams)
+		ceaseResp, err := client.ClusterManager.CeaseClusters(ceaseParams, nil)
 		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
 			t.Fatal(err)
 		}
+
+		jobId := ceaseResp.Payload.JobID[0]
+
+		err = waitJobFinish(t, client, jobId)
+		if err != nil {
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-cluster-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-job-manager"))
+			fmt.Print(execCmd(t, "docker-compose logs openpitrix-task-manager"))
+			t.Fatal(err)
+		}
+
+		log.Info(nil, "Cluster [%s] purged", clusterId)
 	}
-	log.Printf("Cluster [%s] purged \n", clusterId)
+}
+
+func waitJobFinish(t *testing.T, client *apiclient.Openpitrix, jobId string) error {
+	log.Info(nil, "Waiting job [%s]", jobId)
+
+	describeParams := job_manager.NewDescribeJobsParams()
+	describeParams.WithJobID([]string{jobId})
+
+	return funcutil.WaitForSpecificOrError(func() (bool, error) {
+		describeResp, err := client.JobManager.DescribeJobs(describeParams, nil)
+		if err != nil {
+			//network or api error, not considered job fail.
+			return false, nil
+		}
+
+		if len(describeResp.Payload.JobSet) == 0 {
+			return false, fmt.Errorf("can not find job [%s]", jobId)
+		}
+		j := describeResp.Payload.JobSet[0]
+		if j.Status == "working" || j.Status == "pending" {
+			return false, nil
+		}
+		if j.Status == "successful" {
+			return true, nil
+		}
+		if j.Status == "failed" {
+			return false, fmt.Errorf("Job [%s] failed", jobId)
+		}
+		log.Info(nil, "Unknown status [%s] for job [%s]", j.Status, jobId)
+		return false, nil
+
+	}, constants.WaitTaskTimeout, constants.WaitTaskInterval)
+}
+
+func getRuntimeCredential(t *testing.T) string {
+	return execCmd(t, "kubectl config view --flatten")
 }

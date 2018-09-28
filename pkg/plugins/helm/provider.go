@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"strings"
 
 	"google.golang.org/grpc/transport"
 	"k8s.io/helm/pkg/chartutil"
@@ -308,6 +309,10 @@ func (p *Provider) WaitSubtask(ctx context.Context, task *models.Task) error {
 				if _, ok := err.(transport.ConnectionError); ok {
 					return false, nil
 				}
+				if strings.Contains(err.Error(), "not found") {
+					logger.Warn(nil, "Waiting on a helm release not existed, %+v", err)
+					return true, nil
+				}
 				return true, err
 			}
 
@@ -319,6 +324,10 @@ func (p *Provider) WaitSubtask(ctx context.Context, task *models.Task) error {
 			if err != nil {
 				if _, ok := err.(transport.ConnectionError); ok {
 					return false, nil
+				}
+				if strings.Contains(err.Error(), "not found") {
+					logger.Warn(nil, "Waiting on a helm release not existed, %+v", err)
+					return true, nil
 				}
 				return true, nil
 			}
