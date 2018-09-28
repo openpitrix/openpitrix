@@ -821,6 +821,8 @@
       type: '[]string'
     type:
       type: '[]string'
+    user_id:
+      type: string
     visibility:
       type: '[]string'
 - action: ModifyRepo

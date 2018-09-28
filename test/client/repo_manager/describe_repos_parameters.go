@@ -93,6 +93,8 @@ type DescribeReposParams struct {
 	Status []string
 	/*Type*/
 	Type []string
+	/*UserID*/
+	UserID *string
 	/*Visibility*/
 	Visibility []string
 
@@ -299,6 +301,17 @@ func (o *DescribeReposParams) SetType(typeVar []string) {
 	o.Type = typeVar
 }
 
+// WithUserID adds the userID to the describe repos params
+func (o *DescribeReposParams) WithUserID(userID *string) *DescribeReposParams {
+	o.SetUserID(userID)
+	return o
+}
+
+// SetUserID adds the userId to the describe repos params
+func (o *DescribeReposParams) SetUserID(userID *string) {
+	o.UserID = userID
+}
+
 // WithVisibility adds the visibility to the describe repos params
 func (o *DescribeReposParams) WithVisibility(visibility []string) *DescribeReposParams {
 	o.SetVisibility(visibility)
@@ -492,6 +505,22 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	// query array param type
 	if err := r.SetQueryParam("type", joinedType...); err != nil {
 		return err
+	}
+
+	if o.UserID != nil {
+
+		// query param user_id
+		var qrUserID string
+		if o.UserID != nil {
+			qrUserID = *o.UserID
+		}
+		qUserID := qrUserID
+		if qUserID != "" {
+			if err := r.SetQueryParam("user_id", qUserID); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	valuesVisibility := o.Visibility

@@ -2521,6 +2521,12 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [

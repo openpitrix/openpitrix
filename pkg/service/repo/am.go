@@ -61,11 +61,8 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 
 		} else {
 			r.AppDefaultStatus = []string{}
-
-			r.Owner = []string{sender.UserId}
-			if len(r.Visibility) == 1 && r.Visibility[0] == constants.VisibilityPublic {
-				r.Owner = []string{}
-			}
+			r.UserId = sender.UserId
+			r.Owner = []string{}
 		}
 		return r
 
