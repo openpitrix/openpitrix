@@ -186,11 +186,9 @@ test: ## Run all tests
 
 .PHONY: e2e-test
 e2e-test: ## Run integration tests
-	cat ./test/init/sql/up.sql | docker-compose exec -T openpitrix-db mysql -uroot -ppassword
 	cd ./test/init/ && sh init_config.sh
 	go test -v -a -tags="integration" ./test/...
 	go test -v -a -timeout 0 -tags="k8s" ./test/...
-	cat ./test/init/sql/down.sql | docker-compose exec -T openpitrix-db mysql -uroot -ppassword
 	@echo "e2e-test done"
 
 .PHONY: clean

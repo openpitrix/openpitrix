@@ -72,6 +72,16 @@ spec:
             secretKeyRef:
               key: secret-key.txt
               name: iam-secret-key
+        - name: IAM_INIT_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              key: client-id.txt
+              name: iam-client
+        - name: IAM_INIT_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: client-secret.txt
+              name: iam-client
         resources:
           limits:
             cpu: ${LIMITS}m
