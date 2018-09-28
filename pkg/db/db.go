@@ -165,7 +165,7 @@ func getColumns(dbrColumns []interface{}) string {
 
 func (b *SelectQuery) Count() (count uint32, err error) {
 	// cache SelectStmt
-	selectStmt := b.SelectStmt
+	selectStmt := b.SelectBuilder
 
 	limit := selectStmt.LimitCount
 	offset := selectStmt.OffsetCount
@@ -173,14 +173,14 @@ func (b *SelectQuery) Count() (count uint32, err error) {
 	isDistinct := selectStmt.IsDistinct
 	order := selectStmt.Order
 
-	b.SelectStmt.LimitCount = -1
-	b.SelectStmt.OffsetCount = -1
-	b.SelectStmt.Column = []interface{}{"COUNT(*)"}
-	b.SelectStmt.Order = []dbr.Builder{}
+	b.LimitCount = -1
+	b.OffsetCount = -1
+	b.Column = []interface{}{"COUNT(*)"}
+	b.Order = []dbr.Builder{}
 
 	if isDistinct {
-		b.SelectStmt.Column = []interface{}{fmt.Sprintf("COUNT(DISTINCT %s)", getColumns(column))}
-		b.SelectStmt.IsDistinct = false
+		b.Column = []interface{}{fmt.Sprintf("COUNT(DISTINCT %s)", getColumns(column))}
+		b.IsDistinct = false
 	}
 
 	err = b.LoadOne(&count)
@@ -190,7 +190,7 @@ func (b *SelectQuery) Count() (count uint32, err error) {
 	selectStmt.Column = column
 	selectStmt.IsDistinct = isDistinct
 	selectStmt.Order = order
-	b.SelectStmt = selectStmt
+	b.SelectBuilder = selectStmt
 	return
 }
 

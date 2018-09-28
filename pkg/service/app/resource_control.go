@@ -189,6 +189,16 @@ func syncAppStatus(ctx context.Context, appId string) error {
 			attributes[constants.ColumnStatus] = constants.StatusActive
 			attributes[constants.ColumnStatusTime] = time.Now()
 		}
+	} else {
+		statusCountMap, err := groupAppVersionStatus(ctx, appId)
+		if err != nil {
+			return err
+		}
+		status := computeAppStatus(statusCountMap)
+		if status != app.Status {
+			attributes[constants.ColumnStatus] = status
+			attributes[constants.ColumnStatusTime] = time.Now()
+		}
 	}
 
 	if len(attributes) == 0 {
@@ -380,4 +390,37 @@ func getAppVersionStatus(defaultStatus, currentStatus string) string {
 		return currentStatus
 	}
 	return defaultStatus
+}
+
+func groupAppVersionStatus(ctx context.Context, appId string) (map[string]int32, error) {
+	var statusCountMap = make(map[string]int32)
+	_, err := pi.Global().DB(ctx).
+		Select("status", "count(version_id)").
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnAppId, appId)).GroupBy("status").Load(&statusCountMap)
+	return statusCountMap, err
+}
+
+var versionStatusToAppStatus = [][]string{
+	// from => to
+	{constants.StatusActive, constants.StatusActive},
+	{constants.StatusRejected, constants.StatusDraft},
+	{constants.StatusPassed, constants.StatusDraft},
+	{constants.StatusSubmitted, constants.StatusDraft},
+	{constants.StatusDraft, constants.StatusDraft},
+	{constants.StatusSuspended, constants.StatusSuspended},
+	{constants.StatusDeleted, constants.StatusDeleted},
+}
+
+// compute status from exist app version status
+func computeAppStatus(statusCountMap map[string]int32) string {
+	for _, vs := range versionStatusToAppStatus {
+		if c, ok := statusCountMap[vs[0]]; ok && c > 0 {
+			return vs[1]
+		}
+	}
+	if len(statusCountMap) == 0 {
+		return constants.StatusDeleted
+	}
+	return constants.StatusDraft
 }

@@ -1,3 +1,4 @@
+// Package dbr provides additions to Go's database/sql for super fast performance and convenience.
 package dbr
 
 import (
@@ -9,8 +10,8 @@ import (
 	"github.com/gocraft/dbr/dialect"
 )
 
-// Open instantiates a Connection for a given database/sql connection
-// and event receiver
+// Open creates a Connection.
+// log can be nil to ignore logging.
 func Open(driver, dsn string, log EventReceiver) (*Connection, error) {
 	if log == nil {
 		log = nullReceiver
@@ -37,26 +38,36 @@ const (
 	placeholder = "?"
 )
 
-// Connection is a connection to the database with an EventReceiver
-// to send events, errors, and timings to
+// Connection wraps sql.DB with an EventReceiver
+// to send events, errors, and timings.
 type Connection struct {
 	*sql.DB
-	Dialect Dialect
+	Dialect
 	EventReceiver
 }
 
-// Session represents a business unit of execution for some connection
+// Session represents a business unit of execution.
+//
+// All queries in gocraft/dbr are made in the context of a session.
+// This is because when instrumenting your app, it's important
+// to understand which business action the query took place in.
+//
+// A custom EventReceiver can be set.
+//
+// Timeout specifies max duration for an operation like Select.
 type Session struct {
 	*Connection
 	EventReceiver
 	Timeout time.Duration
 }
 
-func (s *Session) GetTimeout() time.Duration {
-	return s.Timeout
+// GetTimeout returns current timeout enforced in session.
+func (sess *Session) GetTimeout() time.Duration {
+	return sess.Timeout
 }
 
-// NewSession instantiates a Session for the Connection
+// NewSession instantiates a Session from Connection.
+// If log is nil, Connection EventReceiver is used.
 func (conn *Connection) NewSession(log EventReceiver) *Session {
 	if log == nil {
 		log = conn.EventReceiver // Use parent instrumentation
@@ -71,6 +82,7 @@ var (
 )
 
 // SessionRunner can do anything that a Session can except start a transaction.
+// Both Session and Tx implements this interface.
 type SessionRunner interface {
 	Select(column ...string) *SelectBuilder
 	SelectBySql(query string, value ...interface{}) *SelectBuilder
@@ -104,7 +116,7 @@ func exec(ctx context.Context, runner runner, log EventReceiver, builder Builder
 		Dialect:      d,
 		IgnoreBinary: true,
 	}
-	err := i.interpolate(placeholder, []interface{}{builder})
+	err := i.encodePlaceholder(builder, true)
 	query, value := i.String(), i.Value()
 	if err != nil {
 		return nil, log.EventErrKv("dbr.exec.interpolate", err, kvs{
@@ -129,7 +141,7 @@ func exec(ctx context.Context, runner runner, log EventReceiver, builder Builder
 	return result, nil
 }
 
-func query(ctx context.Context, runner runner, log EventReceiver, builder Builder, d Dialect, dest interface{}) (int, error) {
+func queryRows(ctx context.Context, runner runner, log EventReceiver, builder Builder, d Dialect) (string, *sql.Rows, error) {
 	timeout := runner.GetTimeout()
 	if timeout > 0 {
 		var cancel func()
@@ -142,10 +154,10 @@ func query(ctx context.Context, runner runner, log EventReceiver, builder Builde
 		Dialect:      d,
 		IgnoreBinary: true,
 	}
-	err := i.interpolate(placeholder, []interface{}{builder})
+	err := i.encodePlaceholder(builder, true)
 	query, value := i.String(), i.Value()
 	if err != nil {
-		return 0, log.EventErrKv("dbr.select.interpolate", err, kvs{
+		return query, nil, log.EventErrKv("dbr.select.interpolate", err, kvs{
 			"sql":  query,
 			"args": fmt.Sprint(value),
 		})
@@ -160,9 +172,18 @@ func query(ctx context.Context, runner runner, log EventReceiver, builder Builde
 
 	rows, err := runner.QueryContext(ctx, query, value...)
 	if err != nil {
-		return 0, log.EventErrKv("dbr.select.load.query", err, kvs{
+		return query, nil, log.EventErrKv("dbr.select.load.query", err, kvs{
 			"sql": query,
 		})
+	}
+
+	return query, rows, nil
+}
+
+func query(ctx context.Context, runner runner, log EventReceiver, builder Builder, d Dialect, dest interface{}) (int, error) {
+	query, rows, err := queryRows(ctx, runner, log, builder, d)
+	if err != nil {
+		return 0, err
 	}
 	count, err := Load(rows, dest)
 	if err != nil {

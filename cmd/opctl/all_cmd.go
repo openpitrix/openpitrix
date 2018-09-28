@@ -2673,6 +2673,8 @@ func (c *DescribeReposCmd) ParseFlag(f Flag) {
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
 	f.StringSliceVarP(&c.Type, "type", "", []string{}, "")
+	c.UserID = new(string)
+	f.StringVarP(c.UserID, "user_id", "", "", "")
 	f.StringSliceVarP(&c.Visibility, "visibility", "", []string{}, "")
 }
 

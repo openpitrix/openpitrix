@@ -109,6 +109,7 @@ message DescribeReposRequest {
 	google.protobuf.BoolValue reverse = 14;
 	repeated string owner = 15;
 	repeated string app_default_status = 16;
+	string user_id = 17;
 }
 
 message DescribeReposResponse {

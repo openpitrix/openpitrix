@@ -42,25 +42,22 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorParameterParseFailed, "selector")
 	}
 
-	//sender := senderutil.GetSenderFromContext(ctx)
-	//if !sender.IsGlobalAdmin() {
-	//	if len(req.Visibility) == 0 || stringutil.StringIn(constants.VisibilityPublic, req.Visibility) {
-	//		cond := db.Or(
-	//			db.Eq(constants.ColumnVisibility, constants.VisibilityPublic),
-	//			db.And(
-	//				db.Eq(constants.ColumnVisibility, constants.VisibilityPrivate),
-	//				db.Eq(constants.ColumnOwner, sender.UserId),
-	//			),
-	//		)
-	//	}
-	//}
-
 	query := pi.Global().DB(ctx).
 		Select(models.RepoColumnsWithTablePrefix...).
 		From(constants.TableRepo).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditionsWithPrefix(req, constants.TableRepo))
+
+	if len(req.UserId) > 0 {
+		query = query.Where(db.Or(
+			db.Eq(constants.ColumnVisibility, constants.VisibilityPublic),
+			db.And(
+				db.Eq(constants.ColumnVisibility, constants.VisibilityPrivate),
+				db.Eq(constants.ColumnOwner, req.UserId),
+			),
+		))
+	}
 
 	if len(categoryIds) > 0 {
 		subqueryStmt := pi.Global().DB(ctx).
