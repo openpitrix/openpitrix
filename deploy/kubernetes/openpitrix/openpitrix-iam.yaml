@@ -82,6 +82,13 @@ spec:
             secretKeyRef:
               key: client-secret.txt
               name: iam-client
+        - name: IAM_INIT_ACCOUNT_EMAIL
+          value: "admin@op.com"
+        - name: IAM_INIT_ACCOUNT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: admin-password.txt
+              name: iam-account
         resources:
           limits:
             cpu: ${LIMITS}m

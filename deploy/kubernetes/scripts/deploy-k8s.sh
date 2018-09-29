@@ -168,7 +168,11 @@ if [ "${BASE}" == "1" ] || [ "${ALL}" == "1" ];then
   cd ../..
 
   kubectl create secret generic iam-secret-key --from-file=./kubernetes/iam-config/secret-key.txt -n ${NAMESPACE}
-  kubectl create secret generic iam-client --from-file=./kubernetes/iam-config/client-id.txt --from-file=./kubernetes/iam-config/client-secret.txt -n ${NAMESPACE}
+  kubectl create secret generic iam-client -n ${NAMESPACE} \
+  	--from-file=./kubernetes/iam-config/client-id.txt \
+  	--from-file=./kubernetes/iam-config/client-secret.txt
+  kubectl create secret generic iam-account -n ${NAMESPACE} --from-file=./kubernetes/iam-config/admin-password.txt
+
   for FILE in `ls ./kubernetes/openpitrix/ | grep "^openpitrix-"`;do
     replace ./kubernetes/openpitrix/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/${FILE} | kubectl apply -f -
