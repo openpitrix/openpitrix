@@ -43,7 +43,7 @@ func getSortedString(s []string) string {
 }
 
 func preparePackage(t *testing.T, v string) strfmt.Base64 {
-	var testAppName = "test-app"
+	var testAppName = "test-app1"
 
 	cfile := &opapp.Metadata{
 		Name:        testAppName,
@@ -173,6 +173,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 	modifyAppParams.SetBody(
 		&models.OpenpitrixModifyAppRequest{
 			AppID:  appId,
+			RepoID: "repo-vmbased",
 			Status: constants.StatusDraft,
 		})
 	_, err := client.AppManager.ModifyApp(modifyAppParams, nil)
@@ -252,12 +253,13 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 
 	require.NoError(t, err)
 
-	deleteAppVersionParams := app_manager.NewDeleteAppVersionsParams()
+	deleteAppVersionParams := app_manager.NewDeleteAppVersionParams()
 	deleteAppVersionParams.SetBody(
-		&models.OpenpitrixDeleteAppVersionsRequest{
-			VersionID: []string{versionId},
+		&models.OpenpitrixDeleteAppVersionRequest{
+			VersionID:    versionId,
+			DirectDelete: true,
 		})
-	_, err = client.AppManager.DeleteAppVersions(deleteAppVersionParams, nil)
+	_, err = client.AppManager.DeleteAppVersion(deleteAppVersionParams, nil)
 
 	require.NoError(t, err)
 }
@@ -281,7 +283,8 @@ func TestApp(t *testing.T) {
 		deleteParams := app_manager.NewDeleteAppsParams()
 		deleteParams.SetBody(
 			&models.OpenpitrixDeleteAppsRequest{
-				AppID: []string{app.AppID},
+				AppID:        []string{app.AppID},
+				DirectDelete: true,
 			})
 		_, err := client.AppManager.DeleteApps(deleteParams, nil)
 
@@ -348,9 +351,8 @@ func TestApp(t *testing.T) {
 	require.NotEmpty(t, getStatisticsResp.Payload.AppCount)
 	require.NotEmpty(t, getStatisticsResp.Payload.RepoCount)
 
-	testVersionLifeCycle(t, appId)
-
 	testVersionPackage(t, appId)
+	testVersionLifeCycle(t, appId)
 
 	// delete app
 	deleteParams := app_manager.NewDeleteAppsParams()

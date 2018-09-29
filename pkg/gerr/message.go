@@ -8,14 +8,21 @@ import "fmt"
 
 type ErrorMessage struct {
 	Name string
-	En   string
+	en   string
+	zhCN string
 }
 
 func (em ErrorMessage) Message(locale string, a ...interface{}) string {
 	format := ""
 	switch locale {
-	case EN:
-		format = em.En
+	case En:
+		format = em.en
+	case ZhCN:
+		if len(em.zhCN) > 0 {
+			format = em.zhCN
+		} else {
+			format = em.en
+		}
 	}
 	return fmt.Sprintf(format, a...)
 }
@@ -23,230 +30,292 @@ func (em ErrorMessage) Message(locale string, a ...interface{}) string {
 var (
 	ErrorPermissionDenied = ErrorMessage{
 		Name: "permission_denied",
-		En:   "permission denied",
+		en:   "permission denied",
+		zhCN: "没有权限",
 	}
 	ErrorAuthFailure = ErrorMessage{
 		Name: "auth_failure",
-		En:   "auth failure",
+		en:   "auth failure",
+		zhCN: "认证失败",
 	}
 	ErrorAccessTokenExpired = ErrorMessage{
 		Name: "access_token_expired",
-		En:   "access token expired",
+		en:   "access token expired",
+		zhCN: "访问令牌已过期",
 	}
 	ErrorRefreshTokenExpired = ErrorMessage{
 		Name: "refresh_token_expired",
-		En:   "refresh token expired",
+		en:   "refresh token expired",
+		zhCN: "刷新令牌已过期",
 	}
 	ErrorEmailPasswordNotMatched = ErrorMessage{
 		Name: "email_password_not_matched",
-		En:   "email and password does not match",
+		en:   "email and password does not match",
+		zhCN: "邮箱和密码不匹配",
 	}
 	ErrorEmailExists = ErrorMessage{
 		Name: "email_exists",
-		En:   "email [%s] exists",
+		en:   "email [%s] exists",
+		zhCN: "邮箱[%s]已存在",
 	}
 	ErrorCreateResourcesFailed = ErrorMessage{
 		Name: "create_resources_failed",
-		En:   "create resources failed",
+		en:   "create resources failed",
+		zhCN: "创建资源失败",
 	}
 	ErrorCreateResourceFailed = ErrorMessage{
 		Name: "create_resource_failed",
-		En:   "create resource [%s] failed",
+		en:   "create resource [%s] failed",
+		zhCN: "创建资源[%s]失败",
 	}
 	ErrorDeleteResourcesFailed = ErrorMessage{
 		Name: "delete_resources_failed",
-		En:   "delete resources failed",
+		en:   "delete resources failed",
+		zhCN: "删除资源失败",
 	}
 	ErrorDeleteResourceFailed = ErrorMessage{
 		Name: "delete_resource_failed",
-		En:   "delete resource [%s] failed",
+		en:   "delete resource [%s] failed",
+		zhCN: "删除资源[%s]失败",
 	}
 	ErrorUpgradeResourceFailed = ErrorMessage{
 		Name: "upgrade_resource_failed",
-		En:   "upgrade resource [%s] failed",
+		en:   "upgrade resource [%s] failed",
+		zhCN: "升级资源[%s]失败",
 	}
 	ErrorRollbackResourceFailed = ErrorMessage{
 		Name: "rollback_resource_failed",
-		En:   "rollback resource [%s] failed",
+		en:   "rollback resource [%s] failed",
+		zhCN: "回滚资源[%s]失败",
 	}
 	ErrorResizeResourceFailed = ErrorMessage{
 		Name: "resize_resource_failed",
-		En:   "resize resource [%s] failed",
+		en:   "resize resource [%s] failed",
+		zhCN: "调整资源[%s]失败",
 	}
 	ErrorAddResourceNodeFailed = ErrorMessage{
 		Name: "add_resource_node_failed",
-		En:   "add resource [%s] node failed",
+		en:   "add resource [%s] node failed",
+		zhCN: "为资源[%s]增加节点失败",
 	}
 	ErrorDeleteResourceNodeFailed = ErrorMessage{
 		Name: "delete_resource_node_failed",
-		En:   "delete resource [%s] node failed",
+		en:   "delete resource [%s] node failed",
+		zhCN: "删除资源[%s]的节点失败",
 	}
 	ErrorUpdateResourceEnvFailed = ErrorMessage{
 		Name: "update_resource_env_failed",
-		En:   "update resource [%s] env failed",
+		en:   "update resource [%s] env failed",
+		zhCN: "更新资源[%s]环境变量失败",
 	}
 	ErrorStopResourceFailed = ErrorMessage{
 		Name: "stop_resource_failed",
-		En:   "stop resource [%s] failed",
+		en:   "stop resource [%s] failed",
+		zhCN: "暂停资源[%s]失败",
 	}
 	ErrorStartResourceFailed = ErrorMessage{
 		Name: "start_resource_failed",
-		En:   "start resource [%s] failed",
+		en:   "start resource [%s] failed",
+		zhCN: "启动资源[%s]失败",
 	}
 	ErrorRecoverResourceFailed = ErrorMessage{
 		Name: "recover_resource_failed",
-		En:   "recover resource [%s] failed",
+		en:   "recover resource [%s] failed",
+		zhCN: "回复资源[%s]失败",
 	}
 	ErrorCeaseResourceFailed = ErrorMessage{
 		Name: "cease_resource_failed",
-		En:   "cease resource [%s] failed",
+		en:   "cease resource [%s] failed",
+		zhCN: "释放资源[%s]失败",
 	}
 	ErrorRetryTaskFailed = ErrorMessage{
 		Name: "retry_task_failed",
-		En:   "retry task [%s] failed",
+		en:   "retry task [%s] failed",
+		zhCN: "重试任务[%s]失败",
 	}
 	ErrorDescribeResourcesFailed = ErrorMessage{
 		Name: "describe_resources_failed",
-		En:   "describe resources failed",
+		en:   "describe resources failed",
+		zhCN: "获取资源失败",
 	}
 	ErrorDescribeResourceFailed = ErrorMessage{
 		Name: "describe_resource_failed",
-		En:   "describe resource [%s] failed",
+		en:   "describe resource [%s] failed",
+		zhCN: "获取资源[%s]失败",
 	}
 	ErrorModifyResourcesFailed = ErrorMessage{
 		Name: "modify_resources_failed",
-		En:   "modify resources failed",
+		en:   "modify resources failed",
+		zhCN: "修改资源失败",
 	}
 	ErrorModifyResourceFailed = ErrorMessage{
 		Name: "modify_resource_failed",
-		En:   "modify resource [%s] failed",
+		en:   "modify resource [%s] failed",
+		zhCN: "修改资源[%s]失败",
 	}
 	ErrorResourceNotFound = ErrorMessage{
 		Name: "resource_not_found",
-		En:   "resource [%s] not found",
+		en:   "resource [%s] not found",
+		zhCN: "没有找到资源[%s]",
 	}
 	ErrorResourceRoleNotFound = ErrorMessage{
 		Name: "resource_role_not_found",
-		En:   "resource [%s] role [%s] not found",
+		en:   "resource [%s] role [%s] not found",
+		zhCN: "没有找到资源[%s]对应的角色[%s]",
 	}
 	ErrorSubnetNotFound = ErrorMessage{
 		Name: "subnet_not_found",
-		En:   "subnet [%s] not found or vpc not bind eip",
+		en:   "subnet [%s] not found or vpc not bind eip",
+		zhCN: "没有找到子网[%s]或者VPC没有绑定公网IP",
 	}
 	ErrorProviderNotFound = ErrorMessage{
 		Name: "provider_not_found",
-		En:   "provider [%s] not found",
+		en:   "provider [%s] not found",
+		zhCN: "",
 	}
 	ErrorInternalError = ErrorMessage{
 		Name: "internal_error",
-		En:   "internal error",
+		en:   "internal error",
+		zhCN: "内部错误",
 	}
 	ErrorMissingParameter = ErrorMessage{
 		Name: "missing_parameter",
-		En:   "missing parameter [%s]",
+		en:   "missing parameter [%s]",
+		zhCN: "缺少参数[%s]",
 	}
 	ErrorValidateFailed = ErrorMessage{
 		Name: "validate_failed",
-		En:   "validate failed",
+		en:   "validate failed",
+		zhCN: "校验失败",
 	}
 	ErrorParameterParseFailed = ErrorMessage{
 		Name: "parameter_parse_failed",
-		En:   "parameter [%s] parse failed",
+		en:   "parameter [%s] parse failed",
+		zhCN: "参数[%s]解析失败",
 	}
 	ErrorResourceAlreadyDeleted = ErrorMessage{
 		Name: "resource_already_deleted",
-		En:   "resource [%s] has already been deleted",
+		en:   "resource [%s] has already been deleted",
+		zhCN: "资源[%s]已被删除",
 	}
 	ErrorResourceNotInStatus = ErrorMessage{
 		Name: "resource_not_in_status",
-		En:   "resource [%s] is not in status [%s]",
+		en:   "resource [%s] is not in status [%s]",
+		zhCN: "资源[%s]不处于[%s]状态",
 	}
 	ErrorResourceTransitionStatus = ErrorMessage{
 		Name: "resource_transition_status",
-		En:   "resource [%s] is [%s]",
+		en:   "resource [%s] is [%s]",
+		zhCN: "资源[%s]处于[%s]状态",
 	}
 	ErrorIllegalParameterLength = ErrorMessage{
 		Name: "illegal_parameter_length",
-		En:   "illegal parameter [%s] length",
+		en:   "illegal parameter [%s] length",
+		zhCN: "参数[%s]的长度非法",
 	}
 	ErrorParameterShouldNotBeEmpty = ErrorMessage{
 		Name: "parameter_should_not_be_empty",
-		En:   "parameter [%s] should not be empty",
+		en:   "parameter [%s] should not be empty",
+		zhCN: "参数[%s]应当为空",
 	}
 	ErrorUnsupportedParameterValue = ErrorMessage{
 		Name: "unsupported_parameter_value",
-		En:   "unsupported parameter [%s] value [%s]",
+		en:   "unsupported parameter [%s] value [%s]",
+		zhCN: "参数[%s]不支持值[%s]",
 	}
 	ErrorIllegalUrlFormat = ErrorMessage{
 		Name: "illegal_url_format",
-		En:   "illegal URL format [%s]",
+		en:   "illegal URL format [%s]",
+		zhCN: "非法的URL格式[%s]",
 	}
 	ErrorIllegalLabelFormat = ErrorMessage{
 		Name: "illegal_label_format",
-		En:   "illegal label format",
+		en:   "illegal label format",
+		zhCN: "非法的标签格式",
 	}
 	ErrorConflictRepoName = ErrorMessage{
 		Name: "conflict_repo_name",
-		En:   "conflict repo name [%s]",
+		en:   "conflict repo name [%s]",
+		zhCN: "",
 	}
 	ErrorResourceQuotaNotEnough = ErrorMessage{
 		Name: "resource_quota_not_enough",
-		En:   "resource quota not enough: %s",
+		en:   "resource quota not enough: %s",
+		zhCN: "资源配额不足: %s",
 	}
 	ErrorHelmReleaseExists = ErrorMessage{
 		Name: "helm_release_exists",
-		En:   "helm release [%s] already exists",
+		en:   "helm release [%s] already exists",
+		zhCN: "",
 	}
 	ErrorUnsupportedApiVersion = ErrorMessage{
 		Name: "unsupported_api_version",
-		En:   "unsupported api version [%s]",
+		en:   "unsupported api version [%s]",
+		zhCN: "不支持的API版本 [%s]",
 	}
 	ErrorCannotDeleteDefaultCategory = ErrorMessage{
 		Name: "cannot_delete_default_category",
-		En:   "cannot delete default category",
+		en:   "cannot delete default category",
+		zhCN: "无法删除默认的分类",
 	}
 	ErrorAttachKeyPairsFailed = ErrorMessage{
 		Name: "attach_key_pairs_failed",
-		En:   "attach key pairs failed",
+		en:   "attach key pairs failed",
+		zhCN: "绑定key pair失败",
 	}
 	ErrorDetachKeyPairsFailed = ErrorMessage{
 		Name: "detach_key_pairs_failed",
-		En:   "detach key pairs failed",
+		en:   "detach key pairs failed",
+		zhCN: "解除key pair失败",
 	}
 	ErrorAppVersionIncorrectStatus = ErrorMessage{
 		Name: "app_version_incorrect_status",
-		En:   "app version [%s] has incorrect status [%s], cannot execute the current action",
+		en:   "app version [%s] has incorrect status [%s], cannot execute the current action",
+		zhCN: "应用版本[%s]状态为[%s], 无法执行此操作",
 	}
 	ErrorLoadPackageFailed = ErrorMessage{
 		Name: "load_package_failed",
-		En:   "load package failed, reason: [%s]",
+		en:   "load package failed, reason: [%s]",
+		zhCN: "载入配置包失败, 原因: [%s]",
 	}
 	ErrorCannotChangeAppName = ErrorMessage{
 		Name: "cannot_change_app_name",
-		En:   "cannot change app name",
+		en:   "cannot change app name",
+		zhCN: "无法修改应用名称",
 	}
 	ErrorAppNameExists = ErrorMessage{
 		Name: "app_name_exists",
-		En:   "app name [%s] exists",
+		en:   "app name [%s] exists",
+		zhCN: "应用名称[%s]已存在",
 	}
 	ErrorAppVersionExists = ErrorMessage{
 		Name: "app_version_exists",
-		En:   "app version [%s:%s] exists",
+		en:   "app version [%s:%s] exists",
+		zhCN: "应用版本[%s:%s]已存在",
 	}
 	ErrorCannotAccessRepo = ErrorMessage{
 		Name: "cannot_access_repo",
-		En:   "cannot access repo",
+		en:   "cannot access repo",
+		zhCN: "",
 	}
 	ErrorCannotDeleteInternalRepo = ErrorMessage{
 		Name: "cannot_delete_internal_repo",
-		En:   "cannot delete internal repo [%s]",
+		en:   "cannot delete internal repo [%s]",
+		zhCN: "",
 	}
 	ErrorResourcesAccessDenied = ErrorMessage{
 		Name: "error_resources_access_denied",
-		En:   "access denied for resources",
+		en:   "access denied for resources",
+		zhCN: "",
 	}
 	ErrorResourceAccessDenied = ErrorMessage{
 		Name: "error_resource_access_denied",
-		En:   "access denied for resource [%s]",
+		en:   "access denied for resource [%s]",
+		zhCN: "",
+	}
+	ErrorExistsNoDeleteVersions = ErrorMessage{
+		Name: "exists_no_delete_versions",
+		en:   "app [%s] had some versions not deleted",
+		zhCN: "应用[%s]还有未删除的版本",
 	}
 )

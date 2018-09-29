@@ -360,8 +360,8 @@ var versionStatusPriority = map[string]int32{
 	constants.StatusRejected:  6,
 	constants.StatusPassed:    5,
 	constants.StatusSubmitted: 4,
-	constants.StatusDraft:     3,
-	constants.StatusSuspended: 2,
+	constants.StatusSuspended: 3,
+	constants.StatusDraft:     2,
 	constants.StatusDeleted:   1,
 }
 
@@ -378,7 +378,7 @@ func getAppVersionStatus(defaultStatus, currentStatus string) string {
 	if !ok {
 		return currentStatus
 	}
-	c, ok := versionStatusPriority[defaultStatus]
+	c, ok := versionStatusPriority[currentStatus]
 	if !ok {
 		return defaultStatus
 	}
@@ -405,7 +405,7 @@ var versionStatusToAppStatus = [][]string{
 	{constants.StatusSubmitted, constants.StatusDraft},
 	{constants.StatusDraft, constants.StatusDraft},
 	{constants.StatusSuspended, constants.StatusSuspended},
-	{constants.StatusDeleted, constants.StatusDeleted},
+	{constants.StatusDeleted, constants.StatusDraft},
 }
 
 // compute status from exist app version status
