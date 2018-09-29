@@ -9,6 +9,7 @@ const (
 	ColumnCategoryId       = "category_id"
 	ColumnChartName        = "chart_name"
 	ColumnClusterId        = "cluster_id"
+	ColumnClusterType      = "cluster_type"
 	ColumnCreateTime       = "create_time"
 	ColumnCredential       = "credential"
 	ColumnDescription      = "description"
@@ -127,7 +128,7 @@ var IndexedColumns = map[string][]string{
 	},
 	TableCluster: {
 		ColumnClusterId, ColumnAppId, ColumnVersionId, ColumnStatus,
-		ColumnRuntimeId, ColumnFrontgateId, ColumnOwner,
+		ColumnRuntimeId, ColumnFrontgateId, ColumnOwner, ColumnClusterType,
 	},
 	TableClusterNode: {
 		ColumnClusterId, ColumnNodeId, ColumnStatus, ColumnOwner,

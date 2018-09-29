@@ -993,6 +993,12 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "cluster_type",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [

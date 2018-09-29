@@ -552,6 +552,8 @@
       type: '[]string'
     cluster_id:
       type: '[]string'
+    cluster_type:
+      type: string
     external_cluster_id:
       type: string
     frontgate_id:

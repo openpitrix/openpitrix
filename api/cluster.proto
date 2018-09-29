@@ -320,6 +320,7 @@ message DescribeClustersRequest {
 	google.protobuf.StringValue sort_key = 11;
 	google.protobuf.BoolValue reverse = 12;
 	repeated string owner = 13;
+	google.protobuf.StringValue cluster_type = 14;
 }
 message DescribeClustersResponse {
 	uint32 total_count = 1;
