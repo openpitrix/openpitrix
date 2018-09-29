@@ -346,6 +346,8 @@ services:
       - OPENPITRIX_MYSQL_DATABASE=iam
       - IAM_INIT_CLIENT_ID=x
       - IAM_INIT_CLIENT_SECRET=y
+      - IAM_INIT_ACCOUNT_EMAIL=admin@op.com
+      - IAM_INIT_ACCOUNT_PASSWORD=passw0rd
     logging:
       driver: "json-file"
       options:
