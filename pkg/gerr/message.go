@@ -171,7 +171,7 @@ var (
 	ErrorProviderNotFound = ErrorMessage{
 		Name: "provider_not_found",
 		en:   "provider [%s] not found",
-		zhCN: "",
+		zhCN: "云服务商[%s]不存在",
 	}
 	ErrorInternalError = ErrorMessage{
 		Name: "internal_error",
@@ -236,7 +236,7 @@ var (
 	ErrorConflictRepoName = ErrorMessage{
 		Name: "conflict_repo_name",
 		en:   "conflict repo name [%s]",
-		zhCN: "",
+		zhCN: "仓库名称[%s]已存在",
 	}
 	ErrorResourceQuotaNotEnough = ErrorMessage{
 		Name: "resource_quota_not_enough",
@@ -296,22 +296,17 @@ var (
 	ErrorCannotAccessRepo = ErrorMessage{
 		Name: "cannot_access_repo",
 		en:   "cannot access repo",
-		zhCN: "",
+		zhCN: "仓库无法访问",
 	}
 	ErrorCannotDeleteInternalRepo = ErrorMessage{
 		Name: "cannot_delete_internal_repo",
 		en:   "cannot delete internal repo [%s]",
-		zhCN: "",
-	}
-	ErrorResourcesAccessDenied = ErrorMessage{
-		Name: "error_resources_access_denied",
-		en:   "access denied for resources",
-		zhCN: "",
+		zhCN: "无法删除内置仓库[%s]",
 	}
 	ErrorResourceAccessDenied = ErrorMessage{
 		Name: "error_resource_access_denied",
 		en:   "access denied for resource [%s]",
-		zhCN: "",
+		zhCN: "拒绝访问资源[%s]",
 	}
 	ErrorExistsNoDeleteVersions = ErrorMessage{
 		Name: "exists_no_delete_versions",
