@@ -7,7 +7,6 @@ package app
 import (
 	"bytes"
 	"context"
-	"strings"
 	"time"
 
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
@@ -237,13 +236,30 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 	return res, nil
 }
 
+// internal apis
 func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb.DeleteAppsResponse, error) {
 	appIds := req.GetAppId()
 	_, err := CheckAppsPermission(ctx, appIds)
 	if err != nil {
 		return nil, err
 	}
-
+	// check permission
+	if !req.DirectDelete {
+		for _, appId := range appIds {
+			count, err := pi.Global().DB(ctx).
+				Select().
+				From(constants.TableAppVersion).
+				Where(db.Eq(constants.ColumnAppId, appId)).
+				Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
+				Count()
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+			}
+			if count > 0 {
+				return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorExistsNoDeleteVersions, appId)
+			}
+		}
+	}
 	_, err = pi.Global().DB(ctx).
 		Update(constants.TableApp).
 		Set(constants.ColumnStatus, constants.StatusDeleted).
@@ -388,34 +404,6 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	}
 	return res, nil
 
-}
-
-func (p *Server) DeleteAppVersions(ctx context.Context, req *pb.DeleteAppVersionsRequest) (*pb.DeleteAppVersionsResponse, error) {
-	versionIds := req.GetVersionId()
-	versions, err := CheckAppVersionsPermission(ctx, versionIds)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, version := range versions {
-		err = checkAppVersionHandlePermission(ctx, Delete, version)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	_, err = pi.Global().DB(ctx).
-		Update(constants.TableAppVersion).
-		Set(constants.ColumnStatus, constants.StatusDeleted).
-		Where(db.Eq(constants.ColumnVersionId, versionIds)).
-		Exec()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, strings.Join(versionIds, ","))
-	}
-
-	return &pb.DeleteAppVersionsResponse{
-		VersionId: versionIds,
-	}, nil
 }
 
 func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersionPackageRequest) (*pb.GetAppVersionPackageResponse, error) {
@@ -602,15 +590,20 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 	if err != nil {
 		return nil, err
 	}
-	err = checkAppVersionHandlePermission(ctx, Delete, version)
-	if err != nil {
-		return nil, err
+	// check permission
+	if !req.DirectDelete {
+		err = checkAppVersionHandlePermission(ctx, Delete, version)
+		if err != nil {
+			return nil, err
+		}
+
+		err = newVersionProxy(version).DeletePackageFile(ctx)
+		if err != nil {
+			logger.Error(ctx, "Failed to delete [%s] package, error: %+v", req.GetVersionId().GetValue(), err)
+			return nil, err
+		}
 	}
-	err = newVersionProxy(version).DeletePackageFile(ctx)
-	if err != nil {
-		logger.Error(ctx, "Failed to delete [%s] package, error: %+v", req.GetVersionId().GetValue(), err)
-		return nil, err
-	}
+
 	err = updateVersionStatus(ctx, version, constants.StatusDeleted)
 	if err != nil {
 		return nil, err

@@ -141,35 +141,6 @@ func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams, authInfo runti
 }
 
 /*
-DeleteAppVersions deletes app versions
-*/
-func (a *Client) DeleteAppVersions(params *DeleteAppVersionsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteAppVersionsOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewDeleteAppVersionsParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DeleteAppVersions",
-		Method:             "DELETE",
-		PathPattern:        "/v1/app_versions",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &DeleteAppVersionsReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*DeleteAppVersionsOK), nil
-
-}
-
-/*
 DeleteApps deletes apps
 */
 func (a *Client) DeleteApps(params *DeleteAppsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteAppsOK, error) {

@@ -16,8 +16,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-const EN = "en"
-const DefaultLocale = EN
+const En = "en"
+const ZhCN = "zh_cn"
+const DefaultLocale = ZhCN
 
 func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) *status.Status {
 	locale := DefaultLocale

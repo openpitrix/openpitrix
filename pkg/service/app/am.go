@@ -40,11 +40,6 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Role(constants.AllDeveloperRoles).
 			Required("version_id").
 			Exec()
-	case *pb.DeleteAppVersionsRequest:
-		return manager.NewChecker(ctx, r).
-			Role(constants.AllDeveloperRoles).
-			Required("version_id").
-			Exec()
 	case *pb.GetAppVersionPackageRequest:
 		return manager.NewChecker(ctx, r).
 			Required("version_id").
@@ -120,6 +115,16 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 			r.Owner = []string{sender.UserId}
 		} else {
 			r.Status = []string{constants.StatusActive}
+		}
+		return r
+	case *pb.DeleteAppVersionRequest:
+		if !sender.IsGlobalAdmin() {
+			r.DirectDelete = false
+		}
+		return r
+	case *pb.DeleteAppsRequest:
+		if !sender.IsGlobalAdmin() {
+			r.DirectDelete = false
 		}
 		return r
 	}

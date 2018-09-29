@@ -62,6 +62,7 @@ message ModifyAppResponse {
 
 message DeleteAppsRequest {
 	repeated string app_id = 1;
+	bool direct_delete = 2;
 }
 
 message DeleteAppsResponse {
@@ -152,14 +153,6 @@ message ModifyAppVersionRequest {
 
 message ModifyAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
-}
-
-message DeleteAppVersionsRequest {
-	repeated string version_id = 1;
-}
-
-message DeleteAppVersionsResponse {
-	repeated string version_id = 1;
 }
 
 message AppVersion {
@@ -254,6 +247,7 @@ message ReleaseAppVersionResponse {
 }
 message DeleteAppVersionRequest {
 	google.protobuf.StringValue version_id = 1;
+	bool direct_delete = 2;
 }
 message DeleteAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
@@ -362,15 +356,6 @@ service AppManager {
 		};
 		option (google.api.http) = {
 			patch: "/v1/app_versions"
-			body: "*"
-		};
-	}
-	rpc DeleteAppVersions (DeleteAppVersionsRequest) returns (DeleteAppVersionsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete app versions"
-		};
-		option (google.api.http) = {
-			delete: "/v1/app_versions"
 			body: "*"
 		};
 	}
