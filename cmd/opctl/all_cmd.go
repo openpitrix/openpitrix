@@ -1909,6 +1909,8 @@ func (*DescribeClustersCmd) GetActionName() string {
 func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "")
+	c.ClusterType = new(string)
+	f.StringVarP(c.ClusterType, "cluster_type", "", "", "")
 	c.ExternalClusterID = new(string)
 	f.StringVarP(c.ExternalClusterID, "external_cluster_id", "", "", "")
 	f.StringSliceVarP(&c.FrontgateID, "frontgate_id", "", []string{}, "")
