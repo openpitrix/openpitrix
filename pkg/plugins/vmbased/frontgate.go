@@ -332,8 +332,8 @@ func (f *Frontgate) StopClusterLayer() *models.TaskLayer {
 
 	headTaskLayer.
 		Append(f.umountVolumeLayer(nodeIds, true)).   // umount volume from instance
-		Append(f.detachVolumesLayer(nodeIds, false)). // detach volume from instance
-		Append(f.stopInstancesLayer(nodeIds, false))  // delete instance
+		Append(f.stopInstancesLayer(nodeIds, false)). // delete instance
+		Append(f.detachVolumesLayer(nodeIds, false))  // detach volume from instance
 
 	return headTaskLayer.Child
 }
