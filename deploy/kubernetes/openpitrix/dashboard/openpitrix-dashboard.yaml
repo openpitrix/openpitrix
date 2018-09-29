@@ -55,6 +55,16 @@ spec:
           value: v1
         - name: socketUrl
           value: ws://openpitrix-api-gateway:9100/v1/io
+        - name: clientId
+          valueFrom:
+            secretKeyRef:
+              key: client-id.txt
+              name: iam-client
+        - name: clientSecret
+          valueFrom:
+            secretKeyRef:
+              key: client-secret.txt
+              name: iam-client
         resources:
           limits:
             cpu: ${LIMITS}m

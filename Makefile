@@ -125,7 +125,7 @@ compose-update-service-without-deps: build ## Update service in docker compose w
 
 .PHONY: compose-logs-f
 compose-logs-f: ## Follow openpitrix log in docker compose
-	docker-compose logs -f $(COMPOSE_APP_SERVICES)
+	docker-compose logs --tail 5 -f $(COMPOSE_APP_SERVICES)
 
 .PHONY: compose-migrate-db
 compose-migrate-db: ## Migrate db in docker compose
@@ -151,7 +151,7 @@ generate-certs: ## Generate tls certificates
 compose-up: generate-certs ## Launch openpitrix in docker compose
 	docker-compose up -d openpitrix-db
 	until docker-compose exec openpitrix-db bash -c "echo 'SELECT VERSION();' | mysql -uroot -ppassword"; do echo "waiting for mysql"; sleep 2; done;
-	# make compose-migrate-db
+	make compose-migrate-db
 	docker-compose up -d
 	@echo "compose-up done"
 
@@ -186,11 +186,9 @@ test: ## Run all tests
 
 .PHONY: e2e-test
 e2e-test: ## Run integration tests
-	cat ./test/init/sql/up.sql | docker-compose exec -T openpitrix-db mysql -uroot -ppassword
 	cd ./test/init/ && sh init_config.sh
 	go test -v -a -tags="integration" ./test/...
 	go test -v -a -timeout 0 -tags="k8s" ./test/...
-	cat ./test/init/sql/down.sql | docker-compose exec -T openpitrix-db mysql -uroot -ppassword
 	@echo "e2e-test done"
 
 .PHONY: clean

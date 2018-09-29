@@ -1,1 +1,0 @@
-replace into `iam`.`user_client` ( `client_id`, `user_id`, `client_secret`, `status`, `description`, `create_time`) values ( 'x', 'system', 'y', 'active', '\"\"', '2018-09-20 20:52:57');

@@ -5,7 +5,7 @@
 package config
 
 const InitialGlobalConfig = `app:
-  default_draft_status: false
+  default_draft_status: true
 repo:
   # cron usage: https://godoc.org/github.com/robfig/cron#hdr-Usage
   #

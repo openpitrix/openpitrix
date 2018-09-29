@@ -56,8 +56,12 @@ services:
     ports:
      - "8000:8000"
     container_name: "openpitrix-dashboard"
-    volumes:
-      - ./deploy/config/dashboard.yaml:/app/server/local_config.yml
+    environment:
+      - serverUrl=http://openpitrix-api-gateway:9100
+      - apiVersion=v1
+      - socketUrl=ws://openpitrix-api-gateway:9100/v1/io
+      - clientId=x
+      - clientSecret=y
     links:
       - openpitrix-api-gateway:openpitrix-api-gateway
     logging:
@@ -340,6 +344,8 @@ services:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
       - OPENPITRIX_MYSQL_DATABASE=iam
+      - IAM_INIT_CLIENT_ID=x
+      - IAM_INIT_CLIENT_SECRET=y
     logging:
       driver: "json-file"
       options:
