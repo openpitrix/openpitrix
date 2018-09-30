@@ -53,6 +53,11 @@ var (
 		en:   "email and password does not match",
 		zhCN: "邮箱和密码不匹配",
 	}
+	ErrorPasswordIncorrect = ErrorMessage{
+		Name: "password_incorrect",
+		en:   "password incorrect",
+		zhCN: "密码不正确",
+	}
 	ErrorEmailExists = ErrorMessage{
 		Name: "email_exists",
 		en:   "email [%s] exists",

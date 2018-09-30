@@ -22,6 +22,9 @@ type OpenpitrixModifyUserRequest struct {
 	// email
 	Email string `json:"email,omitempty"`
 
+	// password
+	Password string `json:"password,omitempty"`
+
 	// role
 	Role string `json:"role,omitempty"`
 

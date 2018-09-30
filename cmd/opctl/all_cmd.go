@@ -570,6 +570,7 @@ func (*ModifyUserCmd) GetActionName() string {
 func (c *ModifyUserCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Email, "email", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
 	f.StringVarP(&c.Role, "role", "", "", "")
 	f.StringVarP(&c.UserID, "user_id", "", "", "")
 	f.StringVarP(&c.Username, "username", "", "", "")

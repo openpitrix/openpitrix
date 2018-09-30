@@ -123,6 +123,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 			r.UserId = pbutil.ToProtoString(sender.UserId)
 			r.Role = nil
 			r.Email = nil
+			r.Password = nil
 		}
 		return r
 	case *pb.DescribeGroupsRequest:
