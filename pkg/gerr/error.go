@@ -16,8 +16,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-const EN = "en"
-const DefaultLocale = EN
+const En = "en"
+const ZhCN = "zh_cn"
+const DefaultLocale = ZhCN
 
 func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) *status.Status {
 	locale := DefaultLocale
@@ -28,7 +29,7 @@ func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMess
 	if err != nil {
 		errorDetail.Cause = fmt.Sprintf("%+v", err)
 	}
-	logger.NewLogger().WithDepth(5).Error(ctx, "err: %+v, errMsg: %s", err, errMsg)
+	logger.NewLogger().WithDepth(5).Error(ctx, "err: %+v, errMsg: %s", err, errMsg.Message(locale, a...))
 
 	sd, e := s.WithDetails(errorDetail)
 	if e == nil {

@@ -205,20 +205,18 @@
   description: delete app version
   service: AppManager
   body:
+    direct_delete:
+      type: boolean
     version_id:
       type: string
-- action: DeleteAppVersions
-  description: delete app versions
-  service: AppManager
-  body:
-    version_id:
-      type: '[]string'
 - action: DeleteApps
   description: delete apps
   service: AppManager
   body:
     app_id:
       type: '[]string'
+    direct_delete:
+      type: boolean
 - action: DescribeAppVersions
   description: describe app versions with filter
   service: AppManager
@@ -552,6 +550,8 @@
       type: '[]string'
     cluster_id:
       type: '[]string'
+    cluster_type:
+      type: string
     external_cluster_id:
       type: string
     frontgate_id:

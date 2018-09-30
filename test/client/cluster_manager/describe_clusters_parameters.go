@@ -67,6 +67,8 @@ type DescribeClustersParams struct {
 	AppID []string
 	/*ClusterID*/
 	ClusterID []string
+	/*ClusterType*/
+	ClusterType *string
 	/*ExternalClusterID*/
 	ExternalClusterID *string
 	/*FrontgateID*/
@@ -148,6 +150,17 @@ func (o *DescribeClustersParams) WithClusterID(clusterID []string) *DescribeClus
 // SetClusterID adds the clusterId to the describe clusters params
 func (o *DescribeClustersParams) SetClusterID(clusterID []string) {
 	o.ClusterID = clusterID
+}
+
+// WithClusterType adds the clusterType to the describe clusters params
+func (o *DescribeClustersParams) WithClusterType(clusterType *string) *DescribeClustersParams {
+	o.SetClusterType(clusterType)
+	return o
+}
+
+// SetClusterType adds the clusterType to the describe clusters params
+func (o *DescribeClustersParams) SetClusterType(clusterType *string) {
+	o.ClusterType = clusterType
 }
 
 // WithExternalClusterID adds the externalClusterID to the describe clusters params
@@ -293,6 +306,22 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 	// query array param cluster_id
 	if err := r.SetQueryParam("cluster_id", joinedClusterID...); err != nil {
 		return err
+	}
+
+	if o.ClusterType != nil {
+
+		// query param cluster_type
+		var qrClusterType string
+		if o.ClusterType != nil {
+			qrClusterType = *o.ClusterType
+		}
+		qClusterType := qrClusterType
+		if qClusterType != "" {
+			if err := r.SetQueryParam("cluster_type", qClusterType); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if o.ExternalClusterID != nil {

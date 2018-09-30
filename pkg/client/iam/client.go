@@ -44,6 +44,10 @@ func (c *Client) GetUsers(ctx context.Context, userIds []string) ([]*pb.User, er
 		}
 	}
 
+	if len(noInternalUserIds) == 0 {
+		return internalUsers, nil
+	}
+
 	response, err := c.DescribeUsers(ctx, &pb.DescribeUsersRequest{
 		UserId: noInternalUserIds,
 	})

@@ -44,7 +44,6 @@ var AllCmd = []Cmd{
 	NewCreateAppCmd(),
 	NewCreateAppVersionCmd(),
 	NewDeleteAppVersionCmd(),
-	NewDeleteAppVersionsCmd(),
 	NewDeleteAppsCmd(),
 	NewDescribeAppVersionsCmd(),
 	NewDescribeAppsCmd(),
@@ -792,6 +791,7 @@ func (*DeleteAppVersionCmd) GetActionName() string {
 }
 
 func (c *DeleteAppVersionCmd) ParseFlag(f Flag) {
+	f.BoolVarP(&c.DirectDelete, "direct_delete", "", false, "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
@@ -803,41 +803,6 @@ func (c *DeleteAppVersionCmd) Run(out Out) error {
 
 	client := test.GetClient(clientConfig)
 	res, err := client.AppManager.DeleteAppVersion(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
-type DeleteAppVersionsCmd struct {
-	*models.OpenpitrixDeleteAppVersionsRequest
-}
-
-func NewDeleteAppVersionsCmd() Cmd {
-	cmd := &DeleteAppVersionsCmd{}
-	cmd.OpenpitrixDeleteAppVersionsRequest = &models.OpenpitrixDeleteAppVersionsRequest{}
-	return cmd
-}
-
-func (*DeleteAppVersionsCmd) GetActionName() string {
-	return "DeleteAppVersions"
-}
-
-func (c *DeleteAppVersionsCmd) ParseFlag(f Flag) {
-	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
-}
-
-func (c *DeleteAppVersionsCmd) Run(out Out) error {
-	params := app_manager.NewDeleteAppVersionsParams()
-	params.WithBody(c.OpenpitrixDeleteAppVersionsRequest)
-
-	out.WriteRequest(params)
-
-	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DeleteAppVersions(params, nil)
 	if err != nil {
 		return err
 	}
@@ -863,6 +828,7 @@ func (*DeleteAppsCmd) GetActionName() string {
 
 func (c *DeleteAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
+	f.BoolVarP(&c.DirectDelete, "direct_delete", "", false, "")
 }
 
 func (c *DeleteAppsCmd) Run(out Out) error {
@@ -1909,6 +1875,8 @@ func (*DescribeClustersCmd) GetActionName() string {
 func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "")
+	c.ClusterType = new(string)
+	f.StringVarP(c.ClusterType, "cluster_type", "", "", "")
 	c.ExternalClusterID = new(string)
 	f.StringVarP(c.ExternalClusterID, "external_cluster_id", "", "", "")
 	f.StringSliceVarP(&c.FrontgateID, "frontgate_id", "", []string{}, "")

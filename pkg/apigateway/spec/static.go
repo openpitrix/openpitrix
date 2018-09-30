@@ -425,31 +425,6 @@ var Files = map[string]string{
           "AppManager"
         ]
       },
-      "delete": {
-        "summary": "delete app versions",
-        "operationId": "DeleteAppVersions",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppVersionsResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppVersionsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      },
       "post": {
         "summary": "create app version",
         "operationId": "CreateAppVersion",
@@ -993,6 +968,12 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "cluster_type",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -3359,6 +3340,10 @@ var Files = map[string]string{
       "properties": {
         "version_id": {
           "type": "string"
+        },
+        "direct_delete": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
@@ -3370,28 +3355,6 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixDeleteAppVersionsRequest": {
-      "type": "object",
-      "properties": {
-        "version_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixDeleteAppVersionsResponse": {
-      "type": "object",
-      "properties": {
-        "version_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "openpitrixDeleteAppsRequest": {
       "type": "object",
       "properties": {
@@ -3400,6 +3363,10 @@ var Files = map[string]string{
           "items": {
             "type": "string"
           }
+        },
+        "direct_delete": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
