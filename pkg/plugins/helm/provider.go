@@ -84,6 +84,8 @@ func (p *Provider) ParseClusterConf(ctx context.Context, versionId, runtimeId, c
 		return err
 	}
 
+	logger.Debug(ctx, "Parsed cluster wrapper: %+v", clusterWrapper)
+
 	return nil
 }
 
@@ -333,7 +335,7 @@ func (p *Provider) WaitSubtask(ctx context.Context, task *models.Task) error {
 			}
 		}
 		return false, nil
-	}, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+	}, task.GetTimeout(constants.WaitHelmTaskTimeout), constants.WaitTaskInterval)
 
 	return err
 }
