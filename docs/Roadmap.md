@@ -34,7 +34,7 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 - [x] Runtime: add support for AWS and enable creating and closing clusters.
 - [x] Repository: add support for AWS object storage of S3 protocol.
 - [x] Application Lifecycle Management: add support for application package upload and deployment based on VM runtimes.
-- [x] Add key pairs which can attach ssh key to cluster node.
+- [x] Adding key pairs which can attach ssh key to cluster node.
 
 ### Upcoming releases
 
@@ -50,7 +50,7 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 
 **ISV**
 
-- [ ] Add independent portal for ISV.
+- [ ] Adding independent portal for ISV.
 - [ ] Application Lifecycle Management: add support for version management, such as uploading and creating new versions, as well as deploy to runtimes for new version.
 - [ ] Platform Management: support to view and manage repositories, runtimes, and cluster instances.
 
@@ -70,20 +70,20 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 - [ ] Runtime: Adding support for Ali Cloud.
 - [ ] Application Lifecycle Management: refine application reviewing operations, such as supporting channel and development department.
 - [ ] User management: Optimize the management of user roles
-- [ ] Platform Management: Add support for service monitoring, message center, as well as real-time resource and health status monitoring.
+- [ ] Platform Management: add support for service monitoring, message center, as well as real-time resource and health status monitoring.
 - [ ] System Settings: support users to customize the system theme such as name, color, Logo, etc.
-- [ ] Add ISV management, such as service provider audit.
+- [ ] Adding ISV management, such as service provider audit.
 
 **ISV**
 
 - [ ] Application Management: add support for checking and editing application packages.
-- [ ] Testing Management: Sandbox will be added to provide test environment for all ISVs and isolate the production environment.
-- [ ] Add certification and contract management, such as manageing basic information and account of ISVs.
+- [ ] Testing Management: sandbox will be added to provide test environment for all ISVs and isolate the production environment.
+- [ ] Adding certification and contract management, such as manageing basic information and account of ISVs.
 
 
 **User**
 
-- [ ] Add user guide function to help user get started quickly.
+- [ ] Adding user guide function to help user get started quickly.
 
 
 ### v0.5:
@@ -98,7 +98,7 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 
 **ISV**
 
-- [ ] Add operation and maintenance management, providing operation and maintenance dashboard, as well as event list and strategy management.
+- [ ] Adding operation and maintenance management, providing operation and maintenance dashboard, as well as event list and strategy management.
 
 ### v1.0：
 
@@ -125,5 +125,5 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 
 - [ ] Application Management: support to create more application types, such as SaaS, API, native applications, which can be deployed and tested in the runtimes.
 - [ ] User List: introduce user ticket management.
-- [ ] Member Management: add support for adding members such as development, testing, finance, etc.
+- [ ] Member Management: add support for adding new members such as development, testing, finance, etc.
 
