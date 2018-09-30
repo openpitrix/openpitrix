@@ -138,6 +138,7 @@ message ModifyUserRequest {
 	google.protobuf.StringValue username = 3;
 	google.protobuf.StringValue role = 4; // for admin
 	google.protobuf.StringValue description = 5;
+	google.protobuf.StringValue password = 6;
 }
 message ModifyUserResponse {
 	google.protobuf.StringValue user_id = 1;

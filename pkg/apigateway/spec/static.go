@@ -5287,6 +5287,9 @@ var Files = map[string]string{
         },
         "description": {
           "type": "string"
+        },
+        "password": {
+          "type": "string"
         }
       }
     },

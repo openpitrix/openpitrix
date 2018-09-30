@@ -89,9 +89,17 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 }
 
 func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb.ModifyUserResponse, error) {
-	// validate permission
+	password := req.GetPassword().GetValue()
+	if password != "" {
+		hashedPass, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		req.Password = pbutil.ToProtoString(string(hashedPass))
+	}
+
 	var attributes = manager.BuildUpdateAttributes(req,
-		"username", "email", "role", "status", "description",
+		"username", "email", "role", "status", "description", "password",
 	)
 	if len(attributes) == 0 {
 		return &pb.ModifyUserResponse{}, nil
@@ -179,18 +187,15 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 		Where(db.Eq(constants.ColumnUserId, userId))
 	err := query.LoadOne(&userInfo)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal,
-			fmt.Errorf("user(%q) not found", userId),
-			gerr.ErrorCreateResourcesFailed,
-		)
+		if err == db.ErrNotFound {
+			return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorResourceNotFound, userId)
+		}
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(userInfo.Password), []byte(req.GetPassword().GetValue()))
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal,
-			fmt.Errorf("invalid password"),
-			gerr.ErrorCreateResourcesFailed,
-		)
+		return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorPasswordIncorrect)
 	}
 
 	var newUserPasswordReset = models.NewUserPasswordReset(userId)
@@ -201,7 +206,7 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 		Record(newUserPasswordReset).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
 	reply := &pb.CreatePasswordResetResponse{
@@ -216,20 +221,23 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 	resetId := req.GetResetId().GetValue()
 	newPassword := req.GetNewPassword().GetValue()
 
-	hashedPass, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpgradeResourceFailed)
-	}
-
 	var resetInfo models.UserPasswordReset
 
 	query := pi.Global().DB(ctx).
-		Select(models.UserColumns...).
+		Select(models.UserPasswordResetColumns...).
 		From(constants.TableUserPasswordReset).Limit(1).
 		Where(db.Eq(constants.ColumnResetId, resetId))
-	err = query.LoadOne(&resetInfo)
+	err := query.LoadOne(&resetInfo)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		if err == db.ErrNotFound {
+			return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorResourceNotFound, resetId)
+		}
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	hashedPass, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
 	_, err = pi.Global().DB(ctx).
@@ -237,7 +245,7 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 		Where(db.Eq(constants.ColumnUserId, resetInfo.UserId)).
 		Exec()
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
 	reply := &pb.ChangePasswordResponse{
