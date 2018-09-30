@@ -21,7 +21,21 @@ Pitrix 的发音是 _['paitriks]_，它意指将 IaaS 和 Paas 纵横交错连�
 
 ## 设计
 
-设计的基本思路就是解耦应用程序的仓库和运行时环境。应用程序可以通过匹配运行时环境的标签和应用来源的仓库选择器来运行。有关项目的设计详情请移步[项目设计](docs/design/README.md)
+设计的基本思路就是解耦应用程序的仓库和运行时环境。应用程序可以通过匹配运行时环境的标签和应用来源的仓库选择器来运行。有关项目的设计详情请移步[项目设计](docs/design/README.md)。
+
+## 路线图
+
+The [Roadmap](docs/Roadmap-zh.md) 是 OpenPitrix 核心开发团队预期的产品开发计划和功能列表，按照版本和角色模块进行功能的划分，详细说明了 OpenPitrix 开源的未来走向，后续可能会随时间出现变动。我们希望通过 Roadmap 能够让您知悉我们的开源计划与愿景。当然，如果您有什么更好的建议或意见，欢迎在 [Issues](https://github.com/openpitrix/openpitrix/issues) 中提出。
+
+## 安装
+
+请参考 [安装指南](https://docs.openpitrix.io/v1.0/zh-CN/openpitrix-install-guide/) 下载和体验 OpenPitrix。
+
+## 使用
+
+如果想快速了解如何使用 OpenPitrix，请参考 [快速入门](https://docs.openpitrix.io/v1.0/zh-CN/user-quick-start/).
+
+若想了解关于 OpenPitrix 更多的信息，请参阅我们的官网 [openpitrix.io](http://openpitrix.io).
 
 ## 为项目做贡献
 
