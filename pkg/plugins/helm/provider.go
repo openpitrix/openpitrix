@@ -8,13 +8,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"strings"
 
 	"google.golang.org/grpc/transport"
 	"k8s.io/helm/pkg/chartutil"
 	"k8s.io/helm/pkg/proto/hapi/chart"
 	"k8s.io/helm/pkg/proto/hapi/release"
 
-	clientutil "openpitrix.io/openpitrix/pkg/client"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
@@ -33,7 +33,6 @@ func NewProvider() *Provider {
 }
 
 func (p *Provider) getChart(ctx context.Context, versionId string) (*chart.Chart, error) {
-	ctx = clientutil.SetSystemUserToContext(ctx)
 	appClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return nil, err
@@ -84,6 +83,8 @@ func (p *Provider) ParseClusterConf(ctx context.Context, versionId, runtimeId, c
 		logger.Error(ctx, "Parse app version [%s] failed: %+v", versionId, err)
 		return err
 	}
+
+	logger.Debug(ctx, "Parsed cluster wrapper: %+v", clusterWrapper)
 
 	return nil
 }
@@ -310,6 +311,10 @@ func (p *Provider) WaitSubtask(ctx context.Context, task *models.Task) error {
 				if _, ok := err.(transport.ConnectionError); ok {
 					return false, nil
 				}
+				if strings.Contains(err.Error(), "not found") {
+					logger.Warn(nil, "Waiting on a helm release not existed, %+v", err)
+					return true, nil
+				}
 				return true, err
 			}
 
@@ -322,11 +327,15 @@ func (p *Provider) WaitSubtask(ctx context.Context, task *models.Task) error {
 				if _, ok := err.(transport.ConnectionError); ok {
 					return false, nil
 				}
+				if strings.Contains(err.Error(), "not found") {
+					logger.Warn(nil, "Waiting on a helm release not existed, %+v", err)
+					return true, nil
+				}
 				return true, nil
 			}
 		}
 		return false, nil
-	}, task.GetTimeout(constants.WaitTaskTimeout), constants.WaitTaskInterval)
+	}, task.GetTimeout(constants.WaitHelmTaskTimeout), constants.WaitTaskInterval)
 
 	return err
 }
@@ -374,7 +383,6 @@ func (p *Provider) updateClusterStatus(ctx context.Context, job *models.Job) err
 		clusterNodesList = append(clusterNodesList, clusterNode)
 	}
 
-	ctx = clientutil.SetSystemUserToContext(ctx)
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		return err
@@ -415,8 +423,8 @@ func (p *Provider) UpdateClusterStatus(ctx context.Context, job *models.Job) err
 	return nil
 }
 
-func (p *Provider) ValidateCredential(ctx context.Context, url, credential, zone string) error {
-	kubeHandler := GetKubeHandler(ctx, "")
+func (p *Provider) ValidateCredential(ctx context.Context, runtimeId, url, credential, zone string) error {
+	kubeHandler := GetKubeHandler(ctx, runtimeId)
 	return kubeHandler.ValidateCredential(credential, zone)
 }
 

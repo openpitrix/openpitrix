@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/client"
+	accountclient "openpitrix.io/openpitrix/pkg/client/iam"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -29,7 +30,7 @@ import (
 
 type Controller struct {
 	runningTasks chan string
-	runningCount uint32
+	runningCount int32
 	hostname     string
 	queue        *etcd.Queue
 }
@@ -55,9 +56,12 @@ func (c *Controller) updateTaskAttributes(ctx context.Context, taskId string, at
 
 var mutex sync.Mutex
 
-func (c *Controller) GetTaskLength() uint32 {
-	// TODO: from global config
-	return constants.TaskLength
+func (c *Controller) GetTaskLength() int32 {
+	if pi.Global().GlobalConfig().Task.MaxWorkingTasks > 0 {
+		return pi.Global().GlobalConfig().Task.MaxWorkingTasks
+	} else {
+		return constants.DefaultMaxWorkingTasks
+	}
 }
 
 func (c *Controller) IsRunningExceed() bool {
@@ -67,20 +71,30 @@ func (c *Controller) IsRunningExceed() bool {
 	return count > c.GetTaskLength()
 }
 
-func (c *Controller) ExtractTasks() {
+func (c *Controller) UpdateWorkingTasks(ctx context.Context) error {
+	//TODO: retry the tasks
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableTask).
+		SetMap(map[string]interface{}{"status": constants.StatusFailed}).
+		Where(db.Eq("status", constants.StatusWorking)).
+		Exec()
+	return err
+}
+
+func (c *Controller) ExtractTasks(ctx context.Context) {
 	for {
 		if c.IsRunningExceed() {
-			logger.Error(nil, "Sleep 10s, running task count exceed [%d/%d]", c.runningCount, c.GetTaskLength())
+			logger.Error(ctx, "Sleep 10s, running task count exceed [%d/%d]", c.runningCount, c.GetTaskLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		taskId, err := c.queue.Dequeue()
 		if err != nil {
-			logger.Error(nil, "Failed to dequeue task from etcd queue: %+v", err)
+			logger.Error(ctx, "Failed to dequeue task from etcd queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		logger.Debug(nil, "Dequeue task [%s] from etcd queue success", taskId)
+		logger.Debug(ctx, "Dequeue task [%s] from etcd queue success", taskId)
 		c.runningTasks <- taskId
 	}
 }
@@ -101,6 +115,17 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 	}
 	ctx = ctxutil.AddMessageId(ctx, task.JobId)
 
+	accountClient, err := accountclient.NewClient()
+	if err != nil {
+		return err
+	}
+	users, err := accountClient.GetUsers(ctx, []string{task.Owner})
+	if err != nil {
+		return err
+	}
+
+	ctx = client.SetUserToContext(ctx, users[0])
+
 	err = c.updateTaskAttributes(ctx, task.TaskId, map[string]interface{}{
 		"status":   constants.StatusWorking,
 		"executor": c.hostname,
@@ -118,7 +143,6 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 			return err
 		}
 
-		ctx := client.SetSystemUserToContext(ctx)
 		pilotClient, err := pilotclient.NewClient()
 		if err != nil {
 			logger.Error(ctx, "Connect to pilot service failed: %+v", err)
@@ -436,13 +460,13 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 	return err
 }
 
-func (c *Controller) HandleTasks() {
+func (c *Controller) HandleTasks(ctx context.Context) {
 	for taskId := range c.runningTasks {
 		mutex.Lock()
 		c.runningCount++
 		mutex.Unlock()
 
-		go c.HandleTask(context.Background(), taskId, func() {
+		go c.HandleTask(ctx, taskId, func() {
 			mutex.Lock()
 			c.runningCount--
 			mutex.Unlock()
@@ -451,6 +475,11 @@ func (c *Controller) HandleTasks() {
 }
 
 func (c *Controller) Serve() {
-	go c.ExtractTasks()
-	go c.HandleTasks()
+	ctx := context.Background()
+	err := c.UpdateWorkingTasks(ctx)
+	if err != nil {
+		logger.Error(ctx, "Failed to update working tasks: %+v", err)
+	}
+	go c.ExtractTasks(ctx)
+	go c.HandleTasks(ctx)
 }

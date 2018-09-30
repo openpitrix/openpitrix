@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"strings"
 
 	"google.golang.org/grpc/transport"
 	"k8s.io/client-go/kubernetes"
@@ -23,6 +24,7 @@ import (
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
@@ -128,6 +130,10 @@ func (p *HelmHandler) DeleteRelease(releaseName string, purge bool) error {
 
 	_, err = hc.DeleteRelease(releaseName, helm.DeletePurge(purge))
 	if err != nil {
+		if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "already deleted") {
+			logger.Warn(nil, "Delete helm release failed, %+v", err)
+			return nil
+		}
 		return err
 	}
 	return nil

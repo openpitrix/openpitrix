@@ -1,3 +1,0 @@
-serverUrl: http://openpitrix-api-gateway:9100
-apiVersion: v1
-socketUrl: ws://openpitrix-api-gateway:9100/v1/io

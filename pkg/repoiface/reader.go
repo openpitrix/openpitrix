@@ -83,40 +83,49 @@ func (r *Reader) LoadPackage(ctx context.Context, pkg []byte) (wrapper.VersionIn
 }
 
 func (r *Reader) GetAppVersions(ctx context.Context) (AppVersions, error) {
-	content, err := r.getIndexYaml(ctx)
+	index, err := r.GetIndex(ctx)
+	if err != nil {
+		return nil, err
+	}
 	var appVersions = make(AppVersions)
+	entries := index.GetEntries()
+	for appName, vs := range entries {
+		var versions = make(Versions)
+		for _, v := range vs {
+			versions[v.GetVersion()] = v.GetAppVersion()
+		}
+		appVersions[appName] = versions
+	}
+	return appVersions, nil
+}
+
+func (r *Reader) GetIndex(ctx context.Context) (wrapper.IndexInterface, error) {
+	content, err := r.getIndexYaml(ctx)
+	if err != nil {
+		return nil, err
+	}
 	if r.isK8s() {
 		var indexFile = new(repo.IndexFile)
 		err = yamlutil.Decode(content, indexFile)
 		if err != nil {
 			return nil, errors.Wrap(err, "decode yaml failed")
 		}
-		for appName, versions := range indexFile.Entries {
-			var vs = make(Versions)
-			for _, version := range versions {
-				vs[version.Version] = version.AppVersion
-			}
-			appVersions[appName] = vs
-		}
+		return &wrapper.HelmIndexWrapper{IndexFile: indexFile}, nil
 	} else {
 		var indexFile = new(opapp.IndexFile)
 		err = yamlutil.Decode(content, indexFile)
 		if err != nil {
 			return nil, errors.Wrap(err, "decode yaml failed")
 		}
-		for appName, versions := range indexFile.Entries {
-			var vs = make(Versions)
-			for _, version := range versions {
-				vs[version.Version] = version.AppVersion
-			}
-			appVersions[appName] = vs
-		}
+		return &wrapper.OpIndexWrapper{IndexFile: indexFile}, nil
 	}
-	return appVersions, nil
 }
 
 func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 	content, err := r.getIndexYaml(ctx)
+	if err != nil {
+		return err
+	}
 	hash, err := provenance.Digest(bytes.NewReader(pkg))
 	if err != nil {
 		return err
@@ -134,6 +143,9 @@ func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 		w := wrapper.HelmVersionWrapper{ChartVersion: &repo.ChartVersion{Metadata: app.Metadata}}
 		indexFile.Add(app.Metadata, w.GetPackageName(), "", hash)
 		content, err = yamlutil.Encode(indexFile)
+		if err != nil {
+			return err
+		}
 	} else {
 		var indexFile = opapp.NewIndexFile()
 		err = yamlutil.Decode(content, indexFile)
@@ -147,15 +159,18 @@ func (r *Reader) AddPackage(ctx context.Context, pkg []byte) error {
 		w := wrapper.OpVersionWrapper{OpVersion: &opapp.OpVersion{Metadata: app.Metadata}}
 		indexFile.Add(app.Metadata, w.GetPackageName(), "", hash)
 		content, err = yamlutil.Encode(indexFile)
-	}
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
 	}
 	return r.WriteFile(ctx, IndexYaml, content)
 }
 
 func (r *Reader) DeletePackage(ctx context.Context, appName, version string) error {
 	content, err := r.getIndexYaml(ctx)
+	if err != nil {
+		return err
+	}
 	pkgName := fmt.Sprintf("%s-%s.tgz", appName, version)
 
 	if r.isK8s() {

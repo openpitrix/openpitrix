@@ -27,7 +27,7 @@ type Client struct {
 /*
 DescribeRepoEvents describes repo events
 */
-func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams) (*DescribeRepoEventsOK, error) {
+func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRepoEventsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeRepoEventsParams()
@@ -42,6 +42,7 @@ func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams) (*Describe
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeRepoEventsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -55,7 +56,7 @@ func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams) (*Describe
 /*
 IndexRepo starts a index repo event
 */
-func (a *Client) IndexRepo(params *IndexRepoParams) (*IndexRepoOK, error) {
+func (a *Client) IndexRepo(params *IndexRepoParams, authInfo runtime.ClientAuthInfoWriter) (*IndexRepoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewIndexRepoParams()
@@ -70,6 +71,7 @@ func (a *Client) IndexRepo(params *IndexRepoParams) (*IndexRepoOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &IndexRepoReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

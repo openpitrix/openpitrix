@@ -23,6 +23,7 @@ func Serve(cfg *config.Config) {
 	manager.NewGrpcServer("runtime-manager", constants.RuntimeManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
+		WithBuilder(s.Builder).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterRuntimeManagerServer(server, &s)
 		})

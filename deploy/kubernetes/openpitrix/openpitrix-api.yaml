@@ -17,6 +17,7 @@ spec:
     protocol: TCP
     port: 9100
     targetPort: 9100
+    ${API_NODEPORT}
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
@@ -66,6 +67,11 @@ spec:
             secretKeyRef:
               key: password.txt
               name: mysql-pass
+        - name: OPENPITRIX_IAM_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secret-key.txt
+              name: iam-secret-key
         resources:
           limits:
             cpu: ${LIMITS}m

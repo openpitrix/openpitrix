@@ -12,8 +12,6 @@ import (
 
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 
-	"openpitrix.io/openpitrix/pkg/pi"
-
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -23,26 +21,13 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
-
-func getCluster(ctx context.Context, clusterId, userId string) (*models.Cluster, error) {
-	cluster := &models.Cluster{}
-	err := pi.Global().DB(ctx).
-		Select(models.ClusterColumns...).
-		From(constants.TableCluster).
-		Where(db.Eq("cluster_id", clusterId)).
-		Where(db.Eq("owner", userId)).
-		LoadOne(&cluster)
-	if err != nil {
-		return nil, err
-	}
-	return cluster, nil
-}
 
 func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWrapper, error) {
 	clusterWrapper := new(models.ClusterWrapper)
@@ -157,55 +142,7 @@ func getClusterWrapper(ctx context.Context, clusterId string) (*models.ClusterWr
 	return clusterWrapper, nil
 }
 
-func getClusterNode(ctx context.Context, nodeId, userId string) (*models.ClusterNode, error) {
-	clusterNode := &models.ClusterNode{}
-	err := pi.Global().DB(ctx).
-		Select(models.ClusterNodeColumns...).
-		From(constants.TableClusterNode).
-		Where(db.Eq("node_id", nodeId)).
-		Where(db.Eq("owner", userId)).
-		LoadOne(&clusterNode)
-	if err != nil {
-		return nil, err
-	}
-	return clusterNode, nil
-}
-
-func getClusterNodes(ctx context.Context, nodeIds []string, userId string) ([]*models.ClusterNode, error) {
-	var clusterNodes []*models.ClusterNode
-	_, err := pi.Global().DB(ctx).
-		Select(models.ClusterNodeColumns...).
-		From(constants.TableClusterNode).
-		Where(db.Eq("node_id", nodeIds)).
-		Where(db.Eq("owner", userId)).
-		Load(&clusterNodes)
-	if err != nil {
-		return nil, err
-	}
-	if len(clusterNodes) != len(nodeIds) {
-		return nil, fmt.Errorf("wrong node ids [%s]", strings.Join(nodeIds, ","))
-	}
-	return clusterNodes, nil
-}
-
-func getKeyPairs(ctx context.Context, keyPairIds []string, userId string) ([]*models.KeyPair, error) {
-	var keyPairs []*models.KeyPair
-	_, err := pi.Global().DB(ctx).
-		Select(models.KeyPairColumns...).
-		From(constants.TableKeyPair).
-		Where(db.Eq("key_pair_id", keyPairIds)).
-		Where(db.Eq("owner", userId)).
-		Load(&keyPairs)
-	if err != nil {
-		return nil, err
-	}
-	if len(keyPairIds) != len(keyPairs) {
-		return nil, fmt.Errorf("wrong key pair ids [%s]", strings.Join(keyPairIds, ","))
-	}
-	return keyPairs, nil
-}
-
-func getNodeKeyPairs(ctx context.Context, keyPairIds []string, nodeIds []string, userId string) ([]*models.NodeKeyPair, error) {
+func getNodeKeyPairs(ctx context.Context, keyPairIds []string, nodeIds []string) ([]*models.NodeKeyPair, error) {
 	var nodeKeyPairs []*models.NodeKeyPair
 	for _, keyPairId := range keyPairIds {
 		var singleNodeKeyPairs []*models.NodeKeyPair
@@ -224,11 +161,40 @@ func getNodeKeyPairs(ctx context.Context, keyPairIds []string, nodeIds []string,
 	return nodeKeyPairs, nil
 }
 
+func updateTransitionStatus(ctx context.Context, cluster *models.Cluster) error {
+	if cluster.TransitionStatus != "" {
+		jobClient, err := jobclient.NewClient()
+		if err != nil {
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		}
+		jobs, err := jobClient.DescribeJobs(ctx, &pb.DescribeJobsRequest{
+			ClusterId: pbutil.ToProtoString(cluster.ClusterId),
+		})
+		if err != nil {
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		}
+		transitionStatus := ""
+		for _, job := range jobs.JobSet {
+			if !stringutil.StringIn(job.GetStatus().GetValue(), []string{constants.StatusSuccessful, constants.StatusFailed}) {
+				transitionStatus = cluster.TransitionStatus
+			}
+		}
+		cluster.TransitionStatus = transitionStatus
+	}
+	return nil
+}
+
 func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
+	s := senderutil.GetSenderFromContext(ctx)
+
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, runtimeId)
+	if err != nil || runtime.Owner != s.UserId {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAccessDenied, runtimeId)
+	}
+
+	if !plugins.IsVmbasedProviders(runtime.Provider) {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
 	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
@@ -242,6 +208,16 @@ func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsReq
 
 func (p *Server) DeleteNodeKeyPairs(ctx context.Context, req *pb.DeleteNodeKeyPairsRequest) (*pb.DeleteNodeKeyPairsResponse, error) {
 	nodeKeyPairs := req.NodeKeyPair
+	for _, nodeKeyPair := range nodeKeyPairs {
+		_, err := CheckClusterNodePermission(ctx, nodeKeyPair.GetNodeId().GetValue())
+		if err != nil {
+			return nil, err
+		}
+		_, err = CheckKeyPairPermission(ctx, nodeKeyPair.GetKeyPairId().GetValue())
+		if err != nil {
+			return nil, err
+		}
+	}
 	for _, nodeKeyPair := range nodeKeyPairs {
 		_, err := pi.Global().DB(ctx).
 			DeleteFrom(constants.TableNodeKeyPair).
@@ -257,7 +233,16 @@ func (p *Server) DeleteNodeKeyPairs(ctx context.Context, req *pb.DeleteNodeKeyPa
 
 func (p *Server) AddNodeKeyPairs(ctx context.Context, req *pb.AddNodeKeyPairsRequest) (*pb.AddNodeKeyPairsResponse, error) {
 	nodeKeyPairs := req.NodeKeyPair
-
+	for _, nodeKeyPair := range nodeKeyPairs {
+		_, err := CheckClusterNodePermission(ctx, nodeKeyPair.GetNodeId().GetValue())
+		if err != nil {
+			return nil, err
+		}
+		_, err = CheckKeyPairPermission(ctx, nodeKeyPair.GetKeyPairId().GetValue())
+		if err != nil {
+			return nil, err
+		}
+	}
 	for _, nodeKeyPair := range nodeKeyPairs {
 		nodeKeyPair := &models.NodeKeyPair{
 			NodeId:    nodeKeyPair.GetNodeId().GetValue(),
@@ -306,8 +291,6 @@ func (p *Server) CreateKeyPair(ctx context.Context, req *pb.CreateKeyPairRequest
 }
 
 func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsRequest) (*pb.DescribeKeyPairsResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-	owner := s.UserId
 	var keyPairs []*models.KeyPair
 	var keyPairWithNodes []*models.KeyPairWithNodes
 	offset := pbutil.GetOffsetFromRequest(req)
@@ -317,7 +300,6 @@ func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsR
 		From(constants.TableKeyPair).
 		Offset(offset).
 		Limit(limit).
-		Where(db.Eq("owner", owner)).
 		Where(manager.BuildFilterConditions(req, constants.TableKeyPair))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&keyPairs)
@@ -360,24 +342,13 @@ func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsR
 }
 
 func (p *Server) DeleteKeyPairs(ctx context.Context, req *pb.DeleteKeyPairsRequest) (*pb.DeleteKeyPairsResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-	owner := s.UserId
-	var keyPairs, attachedKeyPairs []*models.KeyPair
 	keyPairIds := req.KeyPairId
-	_, err := pi.Global().DB(ctx).
-		Select(models.KeyPairColumns...).
-		From(constants.TableKeyPair).
-		Where(db.Eq("owner", owner)).
-		Where(db.Eq("key_pair_id", keyPairIds)).Load(&keyPairs)
+	keyPairs, err := CheckKeyPairsPermission(ctx, keyPairIds)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		return nil, err
 	}
 
-	if len(keyPairIds) != len(keyPairs) {
-		err = fmt.Errorf("key pair [%s] not exist", strings.Join(keyPairIds, ","))
-		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorDeleteResourcesFailed)
-	}
-
+	var attachedKeyPairs []*models.KeyPair
 	_, err = pi.Global().DB(ctx).
 		Select(models.NodeKeyPairColumns...).
 		From(constants.TableNodeKeyPair).
@@ -416,20 +387,24 @@ func (p *Server) DeleteKeyPairs(ctx context.Context, req *pb.DeleteKeyPairsReque
 
 func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsRequest) (*pb.AttachKeyPairsResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
+
 	nodeIds := req.GetNodeId()
-	owner := s.UserId
-	clusterNodes, err := checkNodesPermissionAndTransition(ctx, nodeIds, owner, []string{constants.StatusActive})
+	clusterNodes, err := CheckClusterNodesPermission(ctx, nodeIds)
+	if err != nil {
+		return nil, err
+	}
+	err = checkNodesPermissionAndTransition(ctx, clusterNodes, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
 	}
 
 	keyPairIds := req.GetKeyPairId()
-	keyPairs, err := getKeyPairs(ctx, keyPairIds, owner)
+	keyPairs, err := CheckKeyPairsPermission(ctx, keyPairIds)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
+		return nil, err
 	}
 
-	existNodeKeyPairs, err := getNodeKeyPairs(ctx, keyPairIds, nodeIds, owner)
+	existNodeKeyPairs, err := getNodeKeyPairs(ctx, keyPairIds, nodeIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
 	}
@@ -457,12 +432,20 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 
 	var jobIds []string
 	for clusterId, nodeIds := range clusterNodeIds {
-		cluster, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive, constants.StatusPending})
+		cluster, err := CheckClusterPermission(ctx, clusterId)
+		if err != nil {
+			return nil, err
+		}
+		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive, constants.StatusPending})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
 		}
 		runtime, err := runtimeclient.NewRuntime(ctx, cluster.RuntimeId)
 		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
+		}
+
+		if !plugins.IsVmbasedProviders(runtime.Provider) {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
 		}
 
@@ -511,19 +494,22 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsRequest) (*pb.DetachKeyPairsResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 	nodeIds := req.GetNodeId()
-	owner := s.UserId
-	clusterNodes, err := checkNodesPermissionAndTransition(ctx, nodeIds, owner, []string{constants.StatusActive})
+	clusterNodes, err := CheckClusterNodesPermission(ctx, nodeIds)
+	if err != nil {
+		return nil, err
+	}
+	err = checkNodesPermissionAndTransition(ctx, clusterNodes, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 	}
 
 	keyPairIds := req.GetKeyPairId()
-	keyPairs, err := getKeyPairs(ctx, keyPairIds, owner)
+	keyPairs, err := CheckKeyPairsPermission(ctx, keyPairIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 	}
 
-	existNodeKeyPairs, err := getNodeKeyPairs(ctx, keyPairIds, nodeIds, owner)
+	existNodeKeyPairs, err := getNodeKeyPairs(ctx, keyPairIds, nodeIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 	}
@@ -551,12 +537,20 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 
 	var jobIds []string
 	for clusterId, nodeIds := range clusterNodeIds {
-		cluster, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive, constants.StatusPending})
+		cluster, err := CheckClusterPermission(ctx, clusterId)
+		if err != nil {
+			return nil, err
+		}
+		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive, constants.StatusPending})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 		}
 		runtime, err := runtimeclient.NewRuntime(ctx, cluster.RuntimeId)
 		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
+		}
+
+		if !plugins.IsVmbasedProviders(runtime.Provider) {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 		}
 
@@ -611,8 +605,8 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	clusterId := models.NewClusterId()
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, runtimeId)
+	if err != nil || runtime.Owner != s.UserId {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAccessDenied, runtimeId)
 	}
 
 	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
@@ -681,12 +675,10 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 }
 
 func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest) (*pb.ModifyClusterResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-
 	clusterId := req.GetCluster().GetClusterId().GetValue()
-	_, err := getCluster(ctx, clusterId, s.UserId)
+	_, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+		return nil, err
 	}
 
 	attributes := manager.BuildUpdateAttributes(req.Cluster, models.ClusterColumns...)
@@ -809,12 +801,10 @@ func (p *Server) ModifyCluster(ctx context.Context, req *pb.ModifyClusterRequest
 }
 
 func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNodeRequest) (*pb.ModifyClusterNodeResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-
 	nodeId := req.GetClusterNode().GetNodeId().GetValue()
-	_, err := getClusterNode(ctx, nodeId, s.UserId)
+	_, err := CheckClusterNodePermission(ctx, nodeId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, nodeId)
+		return nil, err
 	}
 
 	attributes := manager.BuildUpdateAttributes(req.ClusterNode, models.ClusterNodeColumns...)
@@ -834,12 +824,10 @@ func (p *Server) ModifyClusterNode(ctx context.Context, req *pb.ModifyClusterNod
 }
 
 func (p *Server) ModifyClusterAttributes(ctx context.Context, req *pb.ModifyClusterAttributesRequest) (*pb.ModifyClusterAttributesResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-
 	clusterId := req.GetClusterId().GetValue()
-	_, err := getCluster(ctx, clusterId, s.UserId)
+	_, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+		return nil, err
 	}
 
 	attributes := manager.BuildUpdateAttributes(req, models.ClusterColumns...)
@@ -859,12 +847,10 @@ func (p *Server) ModifyClusterAttributes(ctx context.Context, req *pb.ModifyClus
 }
 
 func (p *Server) ModifyClusterNodeAttributes(ctx context.Context, req *pb.ModifyClusterNodeAttributesRequest) (*pb.ModifyClusterNodeAttributesResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-
 	nodeId := req.GetNodeId().GetValue()
-	_, err := getClusterNode(ctx, nodeId, s.UserId)
+	_, err := CheckClusterNodePermission(ctx, nodeId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, nodeId)
+		return nil, err
 	}
 
 	attributes := manager.BuildUpdateAttributes(req, models.ClusterNodeColumns...)
@@ -911,17 +897,26 @@ func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTabl
 
 func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersRequest) (*pb.DeleteClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
+	clusterIds := req.GetClusterId()
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
+	if err != nil {
+		return nil, err
+	}
 
 	var jobIds []string
-	for _, clusterId := range req.GetClusterId() {
-		_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive, constants.StatusStopped, constants.StatusPending})
+	for _, cluster := range clusters {
+		err = updateTransitionStatus(ctx, cluster)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourceFailed, clusterId)
+			return nil, err
+		}
+		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive, constants.StatusStopped, constants.StatusPending})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourceFailed, cluster.ClusterId)
 		}
 
-		clusterWrapper, err := getClusterWrapper(ctx, clusterId)
+		clusterWrapper, err := getClusterWrapper(ctx, cluster.ClusterId)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, cluster.ClusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
@@ -932,7 +927,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 		}
 		newJob := models.NewJob(
 			constants.PlaceHolder,
-			clusterId,
+			cluster.ClusterId,
 			clusterWrapper.Cluster.AppId,
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionDeleteClusters,
@@ -944,7 +939,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, cluster.ClusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}
@@ -957,24 +952,36 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 
 func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterRequest) (*pb.UpgradeClusterResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
-
 	clusterId := req.GetClusterId().GetValue()
-	versionId := req.GetVersionId().GetValue()
-	_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusStopped})
+	cluster, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorUpgradeResourceFailed, clusterId)
+		return nil, err
 	}
+	versionId := req.GetVersionId().GetValue()
+
+	runtime, err := runtimeclient.NewRuntime(ctx, cluster.RuntimeId)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, cluster.RuntimeId)
+	}
+
+	if runtime.Provider == constants.ProviderKubernetes {
+		err := checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorUpgradeResourceFailed, clusterId)
+		}
+	} else {
+		err := checkPermissionAndTransition(ctx, cluster, []string{constants.StatusStopped})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorUpgradeResourceFailed, clusterId)
+		}
+	}
+
 	clusterWrapper, err := getClusterWrapper(ctx, clusterId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 	}
 
 	directive := jsonutil.ToString(clusterWrapper)
-
-	runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
-	}
 
 	newJob := models.NewJob(
 		constants.PlaceHolder,
@@ -1003,7 +1010,11 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
-	_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive})
+	cluster, err := CheckClusterPermission(ctx, clusterId)
+	if err != nil {
+		return nil, err
+	}
+	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRollbackResourceFailed, clusterId)
 	}
@@ -1046,7 +1057,11 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
-	_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive})
+	cluster, err := CheckClusterPermission(ctx, clusterId)
+	if err != nil {
+		return nil, err
+	}
+	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResizeResourceFailed, clusterId)
 	}
@@ -1128,12 +1143,16 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
-	role := req.GetRole().GetValue()
-	count := int(req.GetNodeCount().GetValue())
-	_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive})
+	cluster, err := CheckClusterPermission(ctx, clusterId)
+	if err != nil {
+		return nil, err
+	}
+	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
 	}
+	role := req.GetRole().GetValue()
+	count := int(req.GetNodeCount().GetValue())
 	clusterWrapper, err := getClusterWrapper(ctx, clusterId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
@@ -1242,7 +1261,11 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
-	_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive})
+	cluster, err := CheckClusterPermission(ctx, clusterId)
+	if err != nil {
+		return nil, err
+	}
+	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourceNodeFailed, clusterId)
 	}
@@ -1299,8 +1322,12 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	s := senderutil.GetSenderFromContext(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
+	cluster, err := CheckClusterPermission(ctx, clusterId)
+	if err != nil {
+		return nil, err
+	}
 	conf := req.GetEnv().GetValue()
-	_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive})
+	err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorUpdateResourceEnvFailed, clusterId)
 	}
@@ -1496,15 +1523,21 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) (*pb.StopClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 
+	clusterIds := req.GetClusterId()
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
+	if err != nil {
+		return nil, err
+	}
+
 	var jobIds []string
-	for _, clusterId := range req.GetClusterId() {
-		_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusActive})
+	for _, cluster := range clusters {
+		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStopResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStopResourceFailed, cluster.ClusterId)
 		}
-		clusterWrapper, err := getClusterWrapper(ctx, clusterId)
+		clusterWrapper, err := getClusterWrapper(ctx, cluster.ClusterId)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, cluster.ClusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
@@ -1514,9 +1547,13 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
+		if !plugins.IsVmbasedProviders(runtime.Provider) {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStopResourceFailed, cluster.ClusterId)
+		}
+
 		newJob := models.NewJob(
 			constants.PlaceHolder,
-			clusterId,
+			cluster.ClusterId,
 			clusterWrapper.Cluster.AppId,
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionStopClusters,
@@ -1528,7 +1565,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorStopResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorStopResourceFailed, cluster.ClusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}
@@ -1542,15 +1579,21 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest) (*pb.StartClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 
+	clusterIds := req.GetClusterId()
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
+	if err != nil {
+		return nil, err
+	}
+
 	var jobIds []string
-	for _, clusterId := range req.GetClusterId() {
-		_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusStopped})
+	for _, cluster := range clusters {
+		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusStopped})
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStartResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStartResourceFailed, cluster.ClusterId)
 		}
-		clusterWrapper, err := getClusterWrapper(ctx, clusterId)
+		clusterWrapper, err := getClusterWrapper(ctx, cluster.ClusterId)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, cluster.ClusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
@@ -1560,17 +1603,21 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
+		if !plugins.IsVmbasedProviders(runtime.Provider) {
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStartResourceFailed, cluster.ClusterId)
+		}
+
 		fg := &Frontgate{
 			Runtime: runtime,
 		}
 		err = fg.ActivateFrontgate(ctx, clusterWrapper.Cluster.FrontgateId)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorStartResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorStartResourceFailed, cluster.ClusterId)
 		}
 
 		newJob := models.NewJob(
 			constants.PlaceHolder,
-			clusterId,
+			cluster.ClusterId,
 			clusterWrapper.Cluster.AppId,
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionStartClusters,
@@ -1582,7 +1629,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorStartResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorStartResourceFailed, cluster.ClusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}
@@ -1596,15 +1643,21 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersRequest) (*pb.RecoverClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 
+	clusterIds := req.GetClusterId()
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
+	if err != nil {
+		return nil, err
+	}
+
 	var jobIds []string
-	for _, clusterId := range req.GetClusterId() {
-		_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusDeleted})
+	for _, cluster := range clusters {
+		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusDeleted})
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRecoverResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRecoverResourceFailed, cluster.ClusterId)
 		}
-		clusterWrapper, err := getClusterWrapper(ctx, clusterId)
+		clusterWrapper, err := getClusterWrapper(ctx, cluster.ClusterId)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, cluster.ClusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
@@ -1619,12 +1672,12 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 		}
 		err = fg.ActivateFrontgate(ctx, clusterWrapper.Cluster.FrontgateId)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRecoverResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRecoverResourceFailed, cluster.ClusterId)
 		}
 
 		newJob := models.NewJob(
 			constants.PlaceHolder,
-			clusterId,
+			cluster.ClusterId,
 			clusterWrapper.Cluster.AppId,
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionRecoverClusters,
@@ -1636,7 +1689,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRecoverResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRecoverResourceFailed, cluster.ClusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}
@@ -1650,15 +1703,21 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest) (*pb.CeaseClustersResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
 
+	clusterIds := req.GetClusterId()
+	clusters, err := CheckClustersPermission(ctx, clusterIds)
+	if err != nil {
+		return nil, err
+	}
+
 	var jobIds []string
-	for _, clusterId := range req.GetClusterId() {
-		_, err := checkPermissionAndTransition(ctx, clusterId, s.UserId, []string{constants.StatusDeleted})
+	for _, cluster := range clusters {
+		err = checkPermissionAndTransition(ctx, cluster, []string{constants.StatusDeleted})
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCeaseResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCeaseResourceFailed, cluster.ClusterId)
 		}
-		clusterWrapper, err := getClusterWrapper(ctx, clusterId)
+		clusterWrapper, err := getClusterWrapper(ctx, cluster.ClusterId)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, cluster.ClusterId)
 		}
 
 		directive := jsonutil.ToString(clusterWrapper)
@@ -1670,7 +1729,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 
 		newJob := models.NewJob(
 			constants.PlaceHolder,
-			clusterId,
+			cluster.ClusterId,
 			clusterWrapper.Cluster.AppId,
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionCeaseClusters,
@@ -1682,7 +1741,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 
 		jobId, err := jobclient.SendJob(ctx, newJob)
 		if err != nil {
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCeaseResourceFailed, clusterId)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCeaseResourceFailed, cluster.ClusterId)
 		}
 		jobIds = append(jobIds, jobId)
 	}

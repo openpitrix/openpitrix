@@ -6,6 +6,7 @@ package wrapper
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
@@ -61,4 +62,21 @@ func (h OpVersionWrapper) GetVersionName() string {
 
 func (h OpVersionWrapper) GetPackageName() string {
 	return h.OpVersion.GetPackageName()
+}
+
+type OpIndexWrapper struct {
+	*opapp.IndexFile
+}
+
+func (h OpIndexWrapper) GetEntries() map[string]VersionInterfaces {
+	var entries = make(map[string]VersionInterfaces)
+	for chartName, chartVersions := range h.Entries {
+		var versions VersionInterfaces
+		sort.Sort(chartVersions)
+		for _, v := range chartVersions {
+			versions = append(versions, OpVersionWrapper{v})
+		}
+		entries[chartName] = versions
+	}
+	return entries
 }

@@ -25,6 +25,7 @@ message CreateRepoRequest {
 	google.protobuf.StringValue labels = 8;
 	google.protobuf.StringValue selectors = 9;
 	google.protobuf.StringValue category_id = 10;
+	google.protobuf.StringValue app_default_status = 11;
 }
 
 message CreateRepoResponse {
@@ -43,6 +44,7 @@ message ModifyRepoRequest {
 	google.protobuf.StringValue labels = 9;
 	google.protobuf.StringValue selectors = 10;
 	google.protobuf.StringValue category_id = 11;
+	google.protobuf.StringValue app_default_status = 12;
 }
 
 message ModifyRepoResponse {
@@ -86,6 +88,8 @@ message Repo {
 	google.protobuf.Timestamp create_time = 13;
 	google.protobuf.Timestamp status_time = 14;
 	repeated ResourceCategory category_set = 15;
+
+	google.protobuf.StringValue app_default_status = 16;
 }
 
 message DescribeReposRequest {
@@ -103,6 +107,9 @@ message DescribeReposRequest {
 	google.protobuf.StringValue search_word = 12;
 	google.protobuf.StringValue sort_key = 13;
 	google.protobuf.BoolValue reverse = 14;
+	repeated string owner = 15;
+	repeated string app_default_status = 16;
+	string user_id = 17;
 }
 
 message DescribeReposResponse {

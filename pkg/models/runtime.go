@@ -37,9 +37,12 @@ type Runtime struct {
 var RuntimeColumnsWithTablePrefix = db.GetColumnsFromStructWithPrefix(constants.TableRuntime, &Runtime{})
 var RuntimeColumns = db.GetColumnsFromStruct(&Runtime{})
 
-func NewRuntime(name, description, provider, runtimeUrl, runtimeCredentialId, zone, owner string) *Runtime {
+func NewRuntime(runtimeId, name, description, provider, runtimeUrl, runtimeCredentialId, zone, owner string) *Runtime {
+	if len(runtimeId) == 0 {
+		runtimeId = NewRuntimeId()
+	}
 	return &Runtime{
-		RuntimeId:           NewRuntimeId(),
+		RuntimeId:           runtimeId,
 		Name:                name,
 		Description:         description,
 		Provider:            provider,

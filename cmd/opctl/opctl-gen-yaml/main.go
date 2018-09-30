@@ -40,6 +40,9 @@ func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
 	c.Service = op.Tags[0]
 	c.Query = make(map[string]Param)
 	c.Body = make(map[string]Param)
+	if op.Security != nil && len(op.Security) == 0 {
+		c.Insecurity = true
+	}
 	for _, p := range op.Parameters {
 		if p.In == "query" {
 			var t string

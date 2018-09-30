@@ -5,6 +5,8 @@
 package idutil
 
 import (
+	"crypto/rand"
+
 	"github.com/sony/sonyflake"
 	"github.com/speps/go-hashids"
 
@@ -42,7 +44,10 @@ func GetUuid(prefix string) string {
 	return prefix + stringutil.Reverse(i)
 }
 
-const Alphabet36 = "abcdefghijklmnopqrstuvwxyz1234567890"
+const (
+	Alphabet62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+	Alphabet36 = "abcdefghijklmnopqrstuvwxyz1234567890"
+)
 
 // format likes: 300m50zn91nwz5
 func GetUuid36(prefix string) string {
@@ -59,4 +64,40 @@ func GetUuid36(prefix string) string {
 	}
 
 	return prefix + stringutil.Reverse(i)
+}
+
+func randString(letters string, n int) string {
+	output := make([]byte, n)
+
+	// We will take n bytes, one byte for each character of output.
+	randomness := make([]byte, n)
+
+	// read all random
+	_, err := rand.Read(randomness)
+	if err != nil {
+		panic(err)
+	}
+
+	l := len(letters)
+	// fill output
+	for pos := range output {
+		// get random item
+		random := uint8(randomness[pos])
+
+		// random % 64
+		randomPos := random % uint8(l)
+
+		// put into output
+		output[pos] = letters[randomPos]
+	}
+
+	return string(output)
+}
+
+func GetSecret() string {
+	return randString(Alphabet62, 50)
+}
+
+func GetRefreshToken() string {
+	return randString(Alphabet62, 50)
 }

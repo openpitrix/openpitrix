@@ -27,7 +27,7 @@ type Client struct {
 /*
 CreateRepo creates repo
 */
-func (a *Client) CreateRepo(params *CreateRepoParams) (*CreateRepoOK, error) {
+func (a *Client) CreateRepo(params *CreateRepoParams, authInfo runtime.ClientAuthInfoWriter) (*CreateRepoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateRepoParams()
@@ -42,6 +42,7 @@ func (a *Client) CreateRepo(params *CreateRepoParams) (*CreateRepoOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateRepoReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -55,7 +56,7 @@ func (a *Client) CreateRepo(params *CreateRepoParams) (*CreateRepoOK, error) {
 /*
 DeleteRepos deletes repos
 */
-func (a *Client) DeleteRepos(params *DeleteReposParams) (*DeleteReposOK, error) {
+func (a *Client) DeleteRepos(params *DeleteReposParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteReposOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteReposParams()
@@ -70,6 +71,7 @@ func (a *Client) DeleteRepos(params *DeleteReposParams) (*DeleteReposOK, error) 
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteReposReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -83,7 +85,7 @@ func (a *Client) DeleteRepos(params *DeleteReposParams) (*DeleteReposOK, error) 
 /*
 DescribeRepos describes repos with filter
 */
-func (a *Client) DescribeRepos(params *DescribeReposParams) (*DescribeReposOK, error) {
+func (a *Client) DescribeRepos(params *DescribeReposParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeReposOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeReposParams()
@@ -98,6 +100,7 @@ func (a *Client) DescribeRepos(params *DescribeReposParams) (*DescribeReposOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeReposReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -111,7 +114,7 @@ func (a *Client) DescribeRepos(params *DescribeReposParams) (*DescribeReposOK, e
 /*
 ModifyRepo modifies repo
 */
-func (a *Client) ModifyRepo(params *ModifyRepoParams) (*ModifyRepoOK, error) {
+func (a *Client) ModifyRepo(params *ModifyRepoParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyRepoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewModifyRepoParams()
@@ -126,6 +129,7 @@ func (a *Client) ModifyRepo(params *ModifyRepoParams) (*ModifyRepoOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyRepoReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -139,7 +143,7 @@ func (a *Client) ModifyRepo(params *ModifyRepoParams) (*ModifyRepoOK, error) {
 /*
 ValidateRepo validates repo
 */
-func (a *Client) ValidateRepo(params *ValidateRepoParams) (*ValidateRepoOK, error) {
+func (a *Client) ValidateRepo(params *ValidateRepoParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateRepoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewValidateRepoParams()
@@ -154,6 +158,7 @@ func (a *Client) ValidateRepo(params *ValidateRepoParams) (*ValidateRepoOK, erro
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ValidateRepoReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

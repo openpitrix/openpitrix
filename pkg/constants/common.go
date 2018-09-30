@@ -18,6 +18,7 @@ const (
 	JobManagerHost      = prefix + "job-manager"
 	TaskManagerHost     = prefix + "task-manager"
 	PilotServiceHost    = prefix + "pilot-service"
+	IAMServiceHost      = prefix + "iam-service"
 	RepoIndexerHost     = prefix + "repo-indexer"
 	CategoryManagerHost = prefix + "category-manager"
 )
@@ -36,6 +37,7 @@ const (
 	DroneServicePort     = 9112
 	CategoryManagerPort  = 9113
 	PilotTlsListenPort   = 9114 // public service for frontgate
+	IAMServicePort       = 9115
 	EtcdServicePort      = 2379
 )
 
@@ -86,22 +88,14 @@ const (
 )
 
 const (
-	JobLength       = 20
-	TaskLength      = 20
-	RepoEventLength = 20
-	InstanceSize    = 20
-
-	DefaultMountPoint = "/data"
-
-	Ext4FileSystem = "ext4"
-	XfsFileSystem  = "xfs"
-
-	DefaultExt4MountOption = "defaults,noatime"
-	DefaultXfsMountOption  = "rw,noatime,inode64,allocsize=16m"
+	DefaultMaxWorkingJobs  = 20
+	DefaultMaxWorkingTasks = 20
+	DefaultMaxRepoEvents   = 20
 )
 
 const (
 	MaxTaskTimeout               = 3600 * time.Second
+	WaitHelmTaskTimeout          = 1800 * time.Second
 	WaitTaskTimeout              = 600 * time.Second
 	WaitFrontgateServiceTimeout  = 1800 * time.Second
 	WaitDroneServiceTimeout      = 1800 * time.Second
@@ -187,3 +181,47 @@ const (
 const (
 	RetryInterval = 3 * time.Second
 )
+
+var SupportRoles = []string{
+	RoleUser,
+	RoleDeveloper,
+	RoleGlobalAdmin,
+}
+var AllRoles = []string{
+	RoleUser,
+	RoleDeveloper,
+	RoleGlobalAdmin,
+}
+var AllDeveloperRoles = []string{
+	RoleDeveloper,
+	RoleGlobalAdmin,
+}
+var AllAdminRoles = []string{
+	RoleGlobalAdmin,
+}
+
+const (
+	RoleUser        = "user"
+	RoleDeveloper   = "developer"
+	RoleGlobalAdmin = "global_admin"
+
+	GrantTypeClientCredentials = "client_credentials"
+	GrantTypePassword          = "password"
+	GrantTypeRefreshToken      = "refresh_token"
+)
+
+var GrantTypeTokens = []string{
+	GrantTypeClientCredentials,
+	GrantTypePassword,
+	GrantTypeRefreshToken,
+}
+
+var InternalRepos = []string{
+	"repo-vmbased", "repo-helm",
+}
+
+var AllowedAppDefaultStatus = []string{
+	"",
+	StatusDraft,
+	StatusActive,
+}

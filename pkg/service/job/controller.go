@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/client"
+	accountclient "openpitrix.io/openpitrix/pkg/client/iam"
 	taskclient "openpitrix.io/openpitrix/pkg/client/task"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -23,7 +24,7 @@ import (
 
 type Controller struct {
 	runningJobs  chan string
-	runningCount uint32
+	runningCount int32
 	hostname     string
 	queue        *etcd.Queue
 }
@@ -48,9 +49,12 @@ func (c *Controller) updateJobAttributes(ctx context.Context, jobId string, attr
 
 var mutex sync.Mutex
 
-func (c *Controller) GetJobLength() uint32 {
-	// TODO: from global config
-	return constants.JobLength
+func (c *Controller) GetJobLength() int32 {
+	if pi.Global().GlobalConfig().Job.MaxWorkingJobs > 0 {
+		return pi.Global().GlobalConfig().Job.MaxWorkingJobs
+	} else {
+		return constants.DefaultMaxWorkingJobs
+	}
 }
 
 func (c *Controller) IsRunningExceed() bool {
@@ -60,20 +64,30 @@ func (c *Controller) IsRunningExceed() bool {
 	return count > c.GetJobLength()
 }
 
-func (c *Controller) ExtractJobs() {
+func (c *Controller) UpdateWorkingJobs(ctx context.Context) error {
+	//TODO: retry the job
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableJob).
+		SetMap(map[string]interface{}{"status": constants.StatusFailed}).
+		Where(db.Eq("status", constants.StatusWorking)).
+		Exec()
+	return err
+}
+
+func (c *Controller) ExtractJobs(ctx context.Context) {
 	for {
 		if c.IsRunningExceed() {
-			logger.Error(nil, "Sleep 10s, running job count exceed [%d/%d]", c.runningCount, c.GetJobLength())
+			logger.Error(ctx, "Sleep 10s, running job count exceed [%d/%d]", c.runningCount, c.GetJobLength())
 			time.Sleep(10 * time.Second)
 			continue
 		}
 		jobId, err := c.queue.Dequeue()
 		if err != nil {
-			logger.Error(nil, "Failed to dequeue job from etcd queue: %+v", err)
+			logger.Error(ctx, "Failed to dequeue job from etcd queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
-		logger.Debug(nil, "Dequeue job [%s] from etcd queue success", jobId)
+		logger.Debug(ctx, "Dequeue job [%s] from etcd queue success", jobId)
 		c.runningJobs <- jobId
 	}
 }
@@ -109,6 +123,17 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 			return err
 		}
 
+		accountClient, err := accountclient.NewClient()
+		if err != nil {
+			return err
+		}
+		users, err := accountClient.GetUsers(ctx, []string{job.Owner})
+		if err != nil {
+			return err
+		}
+
+		ctx = client.SetUserToContext(ctx, users[0])
+
 		processor := NewProcessor(job)
 		err = processor.Pre(ctx)
 		if err != nil {
@@ -127,7 +152,6 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 			return err
 		}
 
-		ctx := client.SetSystemUserToContext(ctx)
 		taskClient, err := taskclient.NewClient()
 		if err != nil {
 			logger.Error(ctx, "Connect to task service failed: %+v", err)
@@ -197,12 +221,12 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 	return err
 }
 
-func (c *Controller) HandleJobs() {
+func (c *Controller) HandleJobs(ctx context.Context) {
 	for jobId := range c.runningJobs {
 		mutex.Lock()
 		c.runningCount++
 		mutex.Unlock()
-		go c.HandleJob(context.Background(), jobId, func() {
+		go c.HandleJob(ctx, jobId, func() {
 			mutex.Lock()
 			c.runningCount--
 			mutex.Unlock()
@@ -211,6 +235,11 @@ func (c *Controller) HandleJobs() {
 }
 
 func (c *Controller) Serve() {
-	go c.ExtractJobs()
-	go c.HandleJobs()
+	ctx := context.Background()
+	err := c.UpdateWorkingJobs(ctx)
+	if err != nil {
+		logger.Error(ctx, "Failed to update working jobs: %+v", err)
+	}
+	go c.ExtractJobs(ctx)
+	go c.HandleJobs(ctx)
 }

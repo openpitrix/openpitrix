@@ -467,6 +467,25 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 		return err
 	}
 
+	describeOutput, err := instanceService.DescribeVolumes(
+		&ec2.DescribeVolumesInput{
+			VolumeIds: aws.StringSlice([]string{volume.VolumeId}),
+		})
+	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	if len(describeOutput.Volumes) == 0 {
+		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
+	}
+
+	status := aws.StringValue(describeOutput.Volumes[0].State)
+	if status == constants.StatusAvailable {
+		logger.Warn(p.Ctx, "Volume [%s] is in status [%s], no need to detach.", volume.VolumeId, status)
+		return nil
+	}
+
 	logger.Info(p.Ctx, "DetachVolume [%s] from instance with id [%s]", volume.Name, volume.InstanceId)
 
 	_, err = instanceService.DetachVolume(

@@ -62,6 +62,7 @@ message DescribeJobsRequest {
 	// default is 0
 	uint32 offset = 10;
 	google.protobuf.StringValue search_word = 11;
+	repeated string owner = 12;
 }
 message DescribeJobsResponse {
 	uint32 total_count = 1;

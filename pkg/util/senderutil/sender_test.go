@@ -18,7 +18,7 @@ func TestGetSenderFromContext(t *testing.T) {
 	}
 	t.Logf("GetSenderFromContext(context.Background()) passed")
 
-	user1 := &Info{UserId: "user1"}
+	user1 := &Sender{UserId: "user1"}
 	md := metadata.MD{}
 	md["sender"] = []string{user1.ToJson()}
 	user1ctx := metadata.NewIncomingContext(context.Background(), md)

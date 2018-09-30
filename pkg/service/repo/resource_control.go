@@ -14,6 +14,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -39,19 +41,6 @@ func (p *Server) validateRepoName(ctx context.Context, name string) error {
 	}
 
 	return nil
-}
-
-func (p *Server) getRepo(ctx context.Context, repoId string) (*models.Repo, error) {
-	repo := &models.Repo{}
-	err := pi.Global().DB(ctx).
-		Select(models.RepoColumns...).
-		From(constants.TableRepo).
-		Where(db.Eq(constants.ColumnRepoId, repoId)).
-		LoadOne(&repo)
-	if err != nil {
-		return nil, err
-	}
-	return repo, nil
 }
 
 func (p *Server) createProviders(ctx context.Context, repoId string, providers []string) error {
@@ -258,6 +247,7 @@ func (p *Server) formatRepoSet(ctx context.Context, repos []*models.Repo) (pbRep
 		return
 	}
 
+	sender := senderutil.GetSenderFromContext(ctx)
 	for _, pbRepo := range pbRepos {
 		repoId := pbRepo.GetRepoId().GetValue()
 		pbRepo.Labels = models.RepoLabelsToPbs(labelsMap[repoId])
@@ -267,6 +257,9 @@ func (p *Server) formatRepoSet(ctx context.Context, repos []*models.Repo) (pbRep
 		}
 		if categorySet, ok := rcmap[pbRepo.GetRepoId().GetValue()]; ok {
 			pbRepo.CategorySet = categorySet
+		}
+		if !sender.IsGlobalAdmin() {
+			pbRepo.Credential = pbutil.ToProtoString("{}")
 		}
 	}
 	return

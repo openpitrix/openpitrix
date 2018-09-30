@@ -101,13 +101,13 @@ func updateRuntimeByMap(ctx context.Context, runtimeId string, attributes map[st
 	return err
 }
 
-func createRuntime(ctx context.Context, name, description, provider, url, runtimeCredentialId, zone, userId string) (runtimeId string, err error) {
-	newRuntime := models.NewRuntime(name, description, provider, url, runtimeCredentialId, zone, userId)
-	err = insertRuntime(ctx, *newRuntime)
+func createRuntime(ctx context.Context, runtimeId, name, description, provider, url, runtimeCredentialId, zone, userId string) error {
+	newRuntime := models.NewRuntime(runtimeId, name, description, provider, url, runtimeCredentialId, zone, userId)
+	err := insertRuntime(ctx, *newRuntime)
 	if err != nil {
-		return "", err
+		return err
 	}
-	return newRuntime.RuntimeId, err
+	return err
 }
 
 func formatRuntimeSet(ctx context.Context, runtimes []*models.Runtime) (pbRuntimes []*pb.Runtime, err error) {

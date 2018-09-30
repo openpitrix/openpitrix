@@ -7,7 +7,6 @@ package job
 import (
 	"context"
 
-	"openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -32,7 +31,6 @@ func NewProcessor(job *models.Job) *Processor {
 
 // Pre process when job is start
 func (p *Processor) Pre(ctx context.Context) error {
-	ctx = client.SetSystemUserToContext(ctx)
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
@@ -76,7 +74,6 @@ func (p *Processor) Pre(ctx context.Context) error {
 
 // Post process when job is done
 func (p *Processor) Post(ctx context.Context) error {
-	ctx = client.SetSystemUserToContext(ctx)
 	var err error
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
@@ -314,7 +311,6 @@ func (p *Processor) Post(ctx context.Context) error {
 }
 
 func (p *Processor) Final(ctx context.Context) {
-	ctx = client.SetSystemUserToContext(ctx)
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		logger.Error(ctx, "Executing job final processor failed: %+v", err)

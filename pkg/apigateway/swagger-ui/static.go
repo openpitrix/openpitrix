@@ -102,6 +102,9 @@ window.onload = function() {
     layout: "StandaloneLayout",
     validatorUrl: false,
   })
+  if (location.protocol.indexOf("https") == 0) {
+	ui.specActions.setScheme("https")
+  }
 
   window.ui = ui
 }

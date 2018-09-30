@@ -6,6 +6,8 @@ package wrapper
 
 import (
 	"fmt"
+	"path/filepath"
+	"sort"
 	"strings"
 
 	"k8s.io/helm/pkg/repo"
@@ -21,6 +23,9 @@ func (h HelmVersionWrapper) GetVersion() string     { return h.ChartVersion.GetV
 func (h HelmVersionWrapper) GetAppVersion() string  { return h.ChartVersion.GetAppVersion() }
 func (h HelmVersionWrapper) GetDescription() string { return h.ChartVersion.GetDescription() }
 func (h HelmVersionWrapper) GetUrls() string {
+	if len(h.ChartVersion.URLs) == 0 {
+		return ""
+	}
 	return h.ChartVersion.URLs[0]
 }
 
@@ -55,5 +60,26 @@ func (h HelmVersionWrapper) GetVersionName() string {
 }
 
 func (h HelmVersionWrapper) GetPackageName() string {
-	return fmt.Sprintf("%s-%s.tgz", h.Name, h.Version)
+	_, file := filepath.Split(h.GetUrls())
+	if len(file) == 0 {
+		return fmt.Sprintf("%s-%s.tgz", h.Name, h.Version)
+	}
+	return file
+}
+
+type HelmIndexWrapper struct {
+	*repo.IndexFile
+}
+
+func (h HelmIndexWrapper) GetEntries() map[string]VersionInterfaces {
+	var entries = make(map[string]VersionInterfaces)
+	for chartName, chartVersions := range h.Entries {
+		var versions VersionInterfaces
+		sort.Sort(chartVersions)
+		for _, v := range chartVersions {
+			versions = append(versions, HelmVersionWrapper{v})
+		}
+		entries[chartName] = versions
+	}
+	return entries
 }

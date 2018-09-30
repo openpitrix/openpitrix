@@ -12,6 +12,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 var upgrader = websocket.Upgrader{
@@ -99,26 +100,36 @@ func writeMessage(conn *websocket.Conn, mutex *sync.Mutex, userMsg userMessage) 
 	logger.Debug(nil, "Message sent [%+v]", userMsg)
 }
 
-func (tm *topicManager) HandleEvent(w http.ResponseWriter, r *http.Request) {
-	// TODO: check sid
-	userId := r.URL.Query().Get("uid")
-	if userId == "" {
-		http.Error(w, "Unauthorized: uid is required.", http.StatusUnauthorized)
-		return
-	}
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		logger.Info(nil, "Upgrade websocket request failed: %+v", err)
-		return
-	}
-	receiver := receiver{UserId: userId, Conn: c}
-	tm.addReceiver <- receiver
-	for {
-		_, _, err := receiver.Conn.ReadMessage()
-		if err != nil {
-			tm.delReceiver <- receiver
-			logger.Error(nil, "Connection [%p] error: %+v", receiver.Conn, err)
+func (tm *topicManager) HandleEvent(key string) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sid := r.URL.Query().Get("sid")
+		if sid == "" {
+			http.Error(w, "Unauthorized: [sid] is required.", http.StatusUnauthorized)
 			return
+		}
+		sender, err := senderutil.Validate(key, sid)
+		if err != nil {
+			if err == senderutil.ErrExpired {
+				http.Error(w, "Unauthorized: access token expired.", http.StatusUnauthorized)
+			} else {
+				http.Error(w, "Unauthorized: auth failure.", http.StatusUnauthorized)
+			}
+			return
+		}
+		c, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			logger.Info(nil, "Upgrade websocket request failed: %+v", err)
+			return
+		}
+		receiver := receiver{UserId: sender.UserId, Conn: c}
+		tm.addReceiver <- receiver
+		for {
+			_, _, err := receiver.Conn.ReadMessage()
+			if err != nil {
+				tm.delReceiver <- receiver
+				logger.Error(nil, "Connection [%p] error: %+v", receiver.Conn, err)
+				return
+			}
 		}
 	}
 }

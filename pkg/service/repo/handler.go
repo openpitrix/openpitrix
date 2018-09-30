@@ -49,6 +49,16 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		Limit(limit).
 		Where(manager.BuildFilterConditionsWithPrefix(req, constants.TableRepo))
 
+	if len(req.UserId) > 0 {
+		query = query.Where(db.Or(
+			db.Eq(constants.ColumnVisibility, constants.VisibilityPublic),
+			db.And(
+				db.Eq(constants.ColumnVisibility, constants.VisibilityPrivate),
+				db.Eq(constants.ColumnOwner, req.UserId),
+			),
+		))
+	}
+
 	if len(categoryIds) > 0 {
 		subqueryStmt := pi.Global().DB(ctx).
 			Select(constants.ColumnResouceId).
@@ -70,7 +80,6 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 
 	_, err = query.Load(&repos)
 	if err != nil {
-		// TODO: err_code should be implementation
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
@@ -118,6 +127,8 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		credential,
 		visibility,
 		s.UserId)
+
+	newRepo.AppDefaultStatus = req.GetAppDefaultStatus().GetValue()
 
 	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableRepo).
@@ -177,15 +188,14 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 }
 
 func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb.ModifyRepoResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	repoId := req.GetRepoId().GetValue()
+	repo, err := CheckRepoPermission(ctx, repoId)
+	if err != nil {
+		return nil, err
+	}
+
 	repoType := req.GetType().GetValue()
 	providers := req.GetProviders()
-	// TODO: check resource permission
-	repoId := req.GetRepoId().GetValue()
-	repo, err := p.getRepo(ctx, repoId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorResourceNotFound, repoId)
-	}
 	url := repo.Url
 	credential := repo.Credential
 	needValidate := false
@@ -215,12 +225,11 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 
 	attributes := manager.BuildUpdateAttributes(req,
 		constants.ColumnName, constants.ColumnDescription, constants.ColumnType, constants.ColumnUrl,
-		constants.ColumnCredential, constants.ColumnVisibility)
+		constants.ColumnCredential, constants.ColumnVisibility, constants.ColumnAppDefaultStatus)
 	if len(attributes) > 0 {
 		_, err = pi.Global().DB(ctx).
 			Update(constants.TableRepo).
 			SetMap(attributes).
-			Where(db.Eq(constants.ColumnOwner, s.UserId)).
 			Where(db.Eq(constants.ColumnRepoId, repoId)).
 			Exec()
 		if err != nil {
@@ -266,14 +275,21 @@ func (p *Server) ModifyRepo(ctx context.Context, req *pb.ModifyRepoRequest) (*pb
 }
 
 func (p *Server) DeleteRepos(ctx context.Context, req *pb.DeleteReposRequest) (*pb.DeleteReposResponse, error) {
-	// TODO: check resource permission
-	s := senderutil.GetSenderFromContext(ctx)
 	repoIds := req.GetRepoId()
+	_, err := CheckReposPermission(ctx, repoIds)
+	if err != nil {
+		return nil, err
+	}
 
-	_, err := pi.Global().DB(ctx).
+	for _, repoId := range repoIds {
+		if stringutil.StringIn(repoId, constants.InternalRepos) {
+			return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorCannotDeleteInternalRepo, repoId)
+		}
+	}
+
+	_, err = pi.Global().DB(ctx).
 		Update(constants.TableRepo).
 		Set(constants.ColumnStatus, constants.StatusDeleted).
-		Where(db.Eq(constants.ColumnOwner, s.UserId)).
 		Where(db.Eq(constants.ColumnRepoId, repoIds)).
 		Exec()
 	if err != nil {

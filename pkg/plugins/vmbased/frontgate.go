@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strings"
 
-	clientutil "openpitrix.io/openpitrix/pkg/client"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -72,13 +71,12 @@ func (f *Frontgate) getUserDataValue(nodeId string) string {
 func (f *Frontgate) getCertificateExec() string {
 	var pilotClientTLSConfig *types.PilotClientTLSConfig
 
-	ctx := clientutil.SetSystemUserToContext(f.Ctx)
 	err := retryutil.Retry(3, constants.RetryInterval, func() error {
 		pilotClient, err := pilotclient.NewClient()
 		if err != nil {
 			return err
 		}
-		pilotClientTLSConfig, err = pilotClient.GetPilotClientTLSConfig(ctx, &metadatatypes.Empty{})
+		pilotClientTLSConfig, err = pilotClient.GetPilotClientTLSConfig(f.Ctx, &metadatatypes.Empty{})
 		if err != nil {
 			return err
 		}
@@ -334,8 +332,8 @@ func (f *Frontgate) StopClusterLayer() *models.TaskLayer {
 
 	headTaskLayer.
 		Append(f.umountVolumeLayer(nodeIds, true)).   // umount volume from instance
-		Append(f.detachVolumesLayer(nodeIds, false)). // detach volume from instance
-		Append(f.stopInstancesLayer(nodeIds, false))  // delete instance
+		Append(f.stopInstancesLayer(nodeIds, false)). // delete instance
+		Append(f.detachVolumesLayer(nodeIds, false))  // detach volume from instance
 
 	return headTaskLayer.Child
 }

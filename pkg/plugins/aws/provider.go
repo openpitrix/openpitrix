@@ -27,7 +27,7 @@ func (p *Provider) ParseClusterConf(ctx context.Context, versionId, runtimeId, c
 	if err != nil {
 		return err
 	}
-	err = frameInterface.ParseClusterConf(versionId, runtimeId, conf, clusterWrapper)
+	err = frameInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func (p *Provider) DescribeVpc(ctx context.Context, runtimeId, vpcId string) (*m
 	return handler.DescribeVpc(runtimeId, vpcId)
 }
 
-func (p *Provider) ValidateCredential(ctx context.Context, url, credential, zone string) error {
+func (p *Provider) ValidateCredential(ctx context.Context, runtimeId, url, credential, zone string) error {
 	handler := GetProviderHandler(ctx)
 	zones, err := handler.DescribeZones(url, credential)
 	if err != nil {

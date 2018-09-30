@@ -6,8 +6,10 @@ package runtime
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -24,8 +26,9 @@ import (
 
 func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest) (*pb.CreateRuntimeResponse, error) {
 	s := senderutil.GetSenderFromContext(ctx)
+	runtimeId := models.NewRuntimeId()
 	// validate req
-	err := validateCreateRuntimeRequest(ctx, req)
+	err := validateCreateRuntimeRequest(ctx, runtimeId, req)
 	// TODO: refactor create runtime params
 	if err != nil {
 		if gerr.IsGRPCError(err) {
@@ -42,8 +45,9 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	}
 
 	// create runtime
-	runtimeId, err := createRuntime(
+	err = createRuntime(
 		ctx,
+		runtimeId,
 		req.GetName().GetValue(),
 		req.GetDescription().GetValue(),
 		req.Provider.GetValue(),
@@ -167,8 +171,13 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 }
 
 func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest) (*pb.ModifyRuntimeResponse, error) {
+	runtimeId := req.GetRuntimeId().GetValue()
+	runtime, err := CheckRuntimePermission(ctx, runtimeId)
+	if err != nil {
+		return nil, err
+	}
 	// validate req
-	err := validateModifyRuntimeRequest(ctx, req)
+	err = validateModifyRuntimeRequest(ctx, req)
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err
@@ -177,14 +186,10 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 		}
 	}
 	// check runtime can be modified
-	runtimeId := req.GetRuntimeId().GetValue()
-	runtime, err := getRuntime(ctx, runtimeId)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceNotFound, runtimeId)
-	}
 	if req.RuntimeCredential != nil {
 		err = ValidateCredential(
 			ctx,
+			"",
 			runtime.Provider,
 			runtime.RuntimeUrl,
 			req.RuntimeCredential.GetValue(),
@@ -230,11 +235,36 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 }
 
 func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesRequest) (*pb.DeleteRuntimesResponse, error) {
-	// TODO: check runtime can be deleted
 	runtimeIds := req.GetRuntimeId()
+	_, err := CheckRuntimesPermission(ctx, runtimeIds)
+	if err != nil {
+		return nil, err
+	}
+
+	clusterClient, err := clusterclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+	}
+	clusters, err := clusterClient.DescribeClusters(ctx, &pb.DescribeClustersRequest{
+		RuntimeId: runtimeIds,
+		Status: []string{
+			constants.StatusActive,
+			constants.StatusStopped,
+			constants.StatusSuspended,
+			constants.StatusPending,
+		},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+	}
+
+	if clusters.TotalCount > 0 {
+		err = fmt.Errorf("there are still [%d] clusters in the runtime", clusters.TotalCount)
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourcesFailed)
+	}
 
 	// deleted runtime
-	err := deleteRuntimes(ctx, runtimeIds)
+	err = deleteRuntimes(ctx, runtimeIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
 	}
@@ -249,7 +279,7 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	provider := req.Provider.GetValue()
 	url := req.RuntimeUrl.GetValue()
 	credential := req.RuntimeCredential.GetValue()
-	err := ValidateCredential(ctx, provider, url, credential, "")
+	err := ValidateCredential(ctx, "", provider, url, credential, "")
 	if err != nil {
 		if gerr.IsGRPCError(err) {
 			return nil, err

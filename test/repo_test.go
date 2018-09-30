@@ -38,7 +38,7 @@ func deleteRepo(t *testing.T, client *apiclient.Openpitrix, testRepoName string)
 	describeParams := repo_manager.NewDescribeReposParams()
 	describeParams.SetName([]string{testRepoName})
 	describeParams.SetStatus([]string{constants.StatusActive})
-	describeResp, err := client.RepoManager.DescribeRepos(describeParams)
+	describeResp, err := client.RepoManager.DescribeRepos(describeParams, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,7 +49,7 @@ func deleteRepo(t *testing.T, client *apiclient.Openpitrix, testRepoName string)
 			&models.OpenpitrixDeleteReposRequest{
 				RepoID: []string{repo.RepoID},
 			})
-		_, err := client.RepoManager.DeleteRepos(deleteParams)
+		_, err := client.RepoManager.DeleteRepos(deleteParams, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -62,7 +62,7 @@ func TestRepo(t *testing.T) {
 	// delete old repo
 	testRepoName := "e2e_test_repo"
 	deleteRepo(t, client, testRepoName)
-	ioClient := GetIoClient(clientConfig, UserSystem)
+	ioClient := GetIoClient(clientConfig)
 
 	// test validate repo
 	repoType := "https"
@@ -71,7 +71,7 @@ func TestRepo(t *testing.T) {
 	validateParams.SetType(&repoType)
 	validateParams.SetURL(&repoUrl)
 	validateParams.SetCredential(&credential)
-	validateResp, err := client.RepoManager.ValidateRepo(validateParams)
+	validateResp, err := client.RepoManager.ValidateRepo(validateParams, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -93,19 +93,13 @@ func TestRepo(t *testing.T) {
 			CategoryID:  "xx,yy,zz",
 		},
 	)
-	createResp, err := client.RepoManager.CreateRepo(createParams)
+	createResp, err := client.RepoManager.CreateRepo(createParams, nil)
 	require.NoError(t, err)
 
 	repoId := createResp.Payload.RepoID
 
-	msg := ioClient.ReadMessage()
-	require.Equal(t, "repo", msg.Resource.ResourceType)
-	require.Equal(t, topic.Create, msg.Type)
-	require.Equal(t, "active", msg.Resource.Values["status"])
-	require.Equal(t, repoId, msg.Resource.ResourceId)
-
 	// repo-event pending
-	msg = ioClient.ReadMessage()
+	msg := ioClient.ReadMessage()
 	repoEventId := msg.Resource.ResourceId
 	require.Equal(t, "repo_event", msg.Resource.ResourceType)
 	require.Equal(t, topic.Create, msg.Type)
@@ -131,15 +125,10 @@ func TestRepo(t *testing.T) {
 			Providers:   []string{constants.ProviderKubernetes},
 			CategoryID:  "aa,bb,cc,xx",
 		})
-	modifyResp, err := client.RepoManager.ModifyRepo(modifyParams)
+	modifyResp, err := client.RepoManager.ModifyRepo(modifyParams, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	msg = ioClient.ReadMessage()
-	require.Equal(t, "repo", msg.Resource.ResourceType)
-	require.Equal(t, topic.Update, msg.Type)
-	require.Equal(t, repoId, msg.Resource.ResourceId)
 
 	t.Log(modifyResp)
 	// describe repo
@@ -147,7 +136,7 @@ func TestRepo(t *testing.T) {
 	describeParams.SetName([]string{testRepoName})
 	describeParams.SetStatus([]string{constants.StatusActive})
 	describeParams.WithRepoID([]string{repoId})
-	describeResp, err := client.RepoManager.DescribeRepos(describeParams)
+	describeResp, err := client.RepoManager.DescribeRepos(describeParams, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -178,22 +167,17 @@ func TestRepo(t *testing.T) {
 	deleteParams.WithBody(&models.OpenpitrixDeleteReposRequest{
 		RepoID: []string{repoId},
 	})
-	deleteResp, err := client.RepoManager.DeleteRepos(deleteParams)
+	deleteResp, err := client.RepoManager.DeleteRepos(deleteParams, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	msg = ioClient.ReadMessage()
-	require.Equal(t, "repo", msg.Resource.ResourceType)
-	require.Equal(t, topic.Update, msg.Type)
-	require.Equal(t, repoId, msg.Resource.ResourceId)
 
 	t.Log(deleteResp)
 	// describe deleted repo
 	describeParams.WithRepoID([]string{repoId})
 	describeParams.WithStatus([]string{constants.StatusDeleted})
 	describeParams.WithName(nil)
-	describeResp, err = client.RepoManager.DescribeRepos(describeParams)
+	describeResp, err = client.RepoManager.DescribeRepos(describeParams, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -222,7 +206,7 @@ func testDescribeReposWithLabelSelector(t *testing.T,
 	describeParams.SetLabel(&labels)
 	describeParams.SetSelector(&selectors)
 	describeParams.SetStatus([]string{constants.StatusActive})
-	describeResp, err := client.RepoManager.DescribeRepos(describeParams)
+	describeResp, err := client.RepoManager.DescribeRepos(describeParams, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -267,7 +251,7 @@ func TestRepoLabelSelector(t *testing.T) {
 			Labels:      labels,
 			Selectors:   selectors,
 		})
-	createResp, err := client.RepoManager.CreateRepo(createParams)
+	createResp, err := client.RepoManager.CreateRepo(createParams, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -288,7 +272,7 @@ func TestRepoLabelSelector(t *testing.T) {
 				Selectors: newSelectors,
 			},
 		)
-		_, err := client.RepoManager.ModifyRepo(modifyParams)
+		_, err := client.RepoManager.ModifyRepo(modifyParams, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -300,11 +284,25 @@ func TestRepoLabelSelector(t *testing.T) {
 	deleteParams.WithBody(&models.OpenpitrixDeleteReposRequest{
 		RepoID: []string{repoId},
 	})
-	deleteResp, err := client.RepoManager.DeleteRepos(deleteParams)
+	deleteResp, err := client.RepoManager.DeleteRepos(deleteParams, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(deleteResp)
 
 	t.Log("test repo label and selector finish, all test is ok")
+}
+
+func TestDeleteInternalRepo(t *testing.T) {
+	client := GetClient(clientConfig)
+
+	// test delete internal repo, should be failed
+	for _, repoId := range constants.InternalRepos {
+		deleteParams := repo_manager.NewDeleteReposParams()
+		deleteParams.WithBody(&models.OpenpitrixDeleteReposRequest{
+			RepoID: []string{repoId},
+		})
+		_, err := client.RepoManager.DeleteRepos(deleteParams, nil)
+		require.Error(t, err)
+	}
 }

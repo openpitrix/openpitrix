@@ -62,6 +62,7 @@ message ModifyAppResponse {
 
 message DeleteAppsRequest {
 	repeated string app_id = 1;
+	bool direct_delete = 2;
 }
 
 message DeleteAppsResponse {
@@ -154,14 +155,6 @@ message ModifyAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
 }
 
-message DeleteAppVersionsRequest {
-	repeated string version_id = 1;
-}
-
-message DeleteAppVersionsResponse {
-	repeated string version_id = 1;
-}
-
 message AppVersion {
 	google.protobuf.StringValue version_id = 1;
 	google.protobuf.StringValue app_id = 2;
@@ -181,6 +174,7 @@ message AppVersion {
 	google.protobuf.Timestamp status_time = 16;
 	google.protobuf.Timestamp update_time = 17;
 	google.protobuf.UInt32Value sequence = 18;
+	google.protobuf.StringValue message = 19;
 }
 
 message DescribeAppVersionsRequest {
@@ -223,7 +217,8 @@ message GetAppVersionPackageFilesResponse {
 	google.protobuf.StringValue version_id = 2;
 }
 
-message GetAppStatisticsRequest {}
+message GetAppStatisticsRequest {
+}
 
 message GetAppStatisticsResponse {
 	map<string, uint32> last_two_week_created = 1; // app create time range -> app count, max length is 14
@@ -252,6 +247,7 @@ message ReleaseAppVersionResponse {
 }
 message DeleteAppVersionRequest {
 	google.protobuf.StringValue version_id = 1;
+	bool direct_delete = 2;
 }
 message DeleteAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
@@ -264,6 +260,7 @@ message PassAppVersionResponse {
 }
 message RejectAppVersionRequest {
 	google.protobuf.StringValue version_id = 1;
+	google.protobuf.StringValue message = 2;
 }
 message RejectAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
@@ -281,7 +278,17 @@ message RecoverAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
 }
 
+message SyncRepoRequest {
+	string repo_id = 1;
+}
+message SyncRepoResponse {
+	bool failed = 1;
+	string result = 2;
+}
+
 service AppManager {
+	rpc SyncRepo (SyncRepoRequest) returns (SyncRepoResponse) {
+	}
 	rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create app"
@@ -349,15 +356,6 @@ service AppManager {
 		};
 		option (google.api.http) = {
 			patch: "/v1/app_versions"
-			body: "*"
-		};
-	}
-	rpc DeleteAppVersions (DeleteAppVersionsRequest) returns (DeleteAppVersionsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete app versions"
-		};
-		option (google.api.http) = {
-			delete: "/v1/app_versions"
 			body: "*"
 		};
 	}

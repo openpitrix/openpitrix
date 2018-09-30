@@ -27,7 +27,7 @@ type Client struct {
 /*
 AddClusterNodes adds cluster nodes
 */
-func (a *Client) AddClusterNodes(params *AddClusterNodesParams) (*AddClusterNodesOK, error) {
+func (a *Client) AddClusterNodes(params *AddClusterNodesParams, authInfo runtime.ClientAuthInfoWriter) (*AddClusterNodesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewAddClusterNodesParams()
@@ -42,6 +42,7 @@ func (a *Client) AddClusterNodes(params *AddClusterNodesParams) (*AddClusterNode
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &AddClusterNodesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -55,7 +56,7 @@ func (a *Client) AddClusterNodes(params *AddClusterNodesParams) (*AddClusterNode
 /*
 AttachKeyPairs attaches key pairs
 */
-func (a *Client) AttachKeyPairs(params *AttachKeyPairsParams) (*AttachKeyPairsOK, error) {
+func (a *Client) AttachKeyPairs(params *AttachKeyPairsParams, authInfo runtime.ClientAuthInfoWriter) (*AttachKeyPairsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewAttachKeyPairsParams()
@@ -70,6 +71,7 @@ func (a *Client) AttachKeyPairs(params *AttachKeyPairsParams) (*AttachKeyPairsOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &AttachKeyPairsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -83,7 +85,7 @@ func (a *Client) AttachKeyPairs(params *AttachKeyPairsParams) (*AttachKeyPairsOK
 /*
 CeaseClusters ceases clusters
 */
-func (a *Client) CeaseClusters(params *CeaseClustersParams) (*CeaseClustersOK, error) {
+func (a *Client) CeaseClusters(params *CeaseClustersParams, authInfo runtime.ClientAuthInfoWriter) (*CeaseClustersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCeaseClustersParams()
@@ -98,6 +100,7 @@ func (a *Client) CeaseClusters(params *CeaseClustersParams) (*CeaseClustersOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CeaseClustersReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -111,7 +114,7 @@ func (a *Client) CeaseClusters(params *CeaseClustersParams) (*CeaseClustersOK, e
 /*
 CreateCluster creates cluster
 */
-func (a *Client) CreateCluster(params *CreateClusterParams) (*CreateClusterOK, error) {
+func (a *Client) CreateCluster(params *CreateClusterParams, authInfo runtime.ClientAuthInfoWriter) (*CreateClusterOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateClusterParams()
@@ -126,6 +129,7 @@ func (a *Client) CreateCluster(params *CreateClusterParams) (*CreateClusterOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateClusterReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -139,7 +143,7 @@ func (a *Client) CreateCluster(params *CreateClusterParams) (*CreateClusterOK, e
 /*
 CreateKeyPair creates key pair
 */
-func (a *Client) CreateKeyPair(params *CreateKeyPairParams) (*CreateKeyPairOK, error) {
+func (a *Client) CreateKeyPair(params *CreateKeyPairParams, authInfo runtime.ClientAuthInfoWriter) (*CreateKeyPairOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateKeyPairParams()
@@ -154,6 +158,7 @@ func (a *Client) CreateKeyPair(params *CreateKeyPairParams) (*CreateKeyPairOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateKeyPairReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -167,7 +172,7 @@ func (a *Client) CreateKeyPair(params *CreateKeyPairParams) (*CreateKeyPairOK, e
 /*
 DeleteClusterNodes deletes cluster nodes
 */
-func (a *Client) DeleteClusterNodes(params *DeleteClusterNodesParams) (*DeleteClusterNodesOK, error) {
+func (a *Client) DeleteClusterNodes(params *DeleteClusterNodesParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteClusterNodesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteClusterNodesParams()
@@ -182,6 +187,7 @@ func (a *Client) DeleteClusterNodes(params *DeleteClusterNodesParams) (*DeleteCl
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteClusterNodesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -195,7 +201,7 @@ func (a *Client) DeleteClusterNodes(params *DeleteClusterNodesParams) (*DeleteCl
 /*
 DeleteClusters deletes clusters
 */
-func (a *Client) DeleteClusters(params *DeleteClustersParams) (*DeleteClustersOK, error) {
+func (a *Client) DeleteClusters(params *DeleteClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteClustersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteClustersParams()
@@ -210,6 +216,7 @@ func (a *Client) DeleteClusters(params *DeleteClustersParams) (*DeleteClustersOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteClustersReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -223,7 +230,7 @@ func (a *Client) DeleteClusters(params *DeleteClustersParams) (*DeleteClustersOK
 /*
 DeleteKeyPairs deletes key pairs
 */
-func (a *Client) DeleteKeyPairs(params *DeleteKeyPairsParams) (*DeleteKeyPairsOK, error) {
+func (a *Client) DeleteKeyPairs(params *DeleteKeyPairsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteKeyPairsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteKeyPairsParams()
@@ -238,6 +245,7 @@ func (a *Client) DeleteKeyPairs(params *DeleteKeyPairsParams) (*DeleteKeyPairsOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteKeyPairsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -251,7 +259,7 @@ func (a *Client) DeleteKeyPairs(params *DeleteKeyPairsParams) (*DeleteKeyPairsOK
 /*
 DescribeClusterNodes describes cluster nodes
 */
-func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams) (*DescribeClusterNodesOK, error) {
+func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeClusterNodesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeClusterNodesParams()
@@ -266,6 +274,7 @@ func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams) (*Desc
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeClusterNodesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -279,7 +288,7 @@ func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams) (*Desc
 /*
 DescribeClusters describes clusters
 */
-func (a *Client) DescribeClusters(params *DescribeClustersParams) (*DescribeClustersOK, error) {
+func (a *Client) DescribeClusters(params *DescribeClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeClustersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeClustersParams()
@@ -294,6 +303,7 @@ func (a *Client) DescribeClusters(params *DescribeClustersParams) (*DescribeClus
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeClustersReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -307,7 +317,7 @@ func (a *Client) DescribeClusters(params *DescribeClustersParams) (*DescribeClus
 /*
 DescribeKeyPairs describes key pairs
 */
-func (a *Client) DescribeKeyPairs(params *DescribeKeyPairsParams) (*DescribeKeyPairsOK, error) {
+func (a *Client) DescribeKeyPairs(params *DescribeKeyPairsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeKeyPairsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeKeyPairsParams()
@@ -322,6 +332,7 @@ func (a *Client) DescribeKeyPairs(params *DescribeKeyPairsParams) (*DescribeKeyP
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeKeyPairsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -335,7 +346,7 @@ func (a *Client) DescribeKeyPairs(params *DescribeKeyPairsParams) (*DescribeKeyP
 /*
 DescribeSubnets describes subnets
 */
-func (a *Client) DescribeSubnets(params *DescribeSubnetsParams) (*DescribeSubnetsOK, error) {
+func (a *Client) DescribeSubnets(params *DescribeSubnetsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeSubnetsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeSubnetsParams()
@@ -350,6 +361,7 @@ func (a *Client) DescribeSubnets(params *DescribeSubnetsParams) (*DescribeSubnet
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeSubnetsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -363,7 +375,7 @@ func (a *Client) DescribeSubnets(params *DescribeSubnetsParams) (*DescribeSubnet
 /*
 DetachKeyPairs detaches key pairs
 */
-func (a *Client) DetachKeyPairs(params *DetachKeyPairsParams) (*DetachKeyPairsOK, error) {
+func (a *Client) DetachKeyPairs(params *DetachKeyPairsParams, authInfo runtime.ClientAuthInfoWriter) (*DetachKeyPairsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDetachKeyPairsParams()
@@ -378,6 +390,7 @@ func (a *Client) DetachKeyPairs(params *DetachKeyPairsParams) (*DetachKeyPairsOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DetachKeyPairsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -391,7 +404,7 @@ func (a *Client) DetachKeyPairs(params *DetachKeyPairsParams) (*DetachKeyPairsOK
 /*
 GetClusterStatistics gets cluster statistics
 */
-func (a *Client) GetClusterStatistics(params *GetClusterStatisticsParams) (*GetClusterStatisticsOK, error) {
+func (a *Client) GetClusterStatistics(params *GetClusterStatisticsParams, authInfo runtime.ClientAuthInfoWriter) (*GetClusterStatisticsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetClusterStatisticsParams()
@@ -406,6 +419,7 @@ func (a *Client) GetClusterStatistics(params *GetClusterStatisticsParams) (*GetC
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &GetClusterStatisticsReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -419,7 +433,7 @@ func (a *Client) GetClusterStatistics(params *GetClusterStatisticsParams) (*GetC
 /*
 ModifyClusterAttributes modifies cluster attributes
 */
-func (a *Client) ModifyClusterAttributes(params *ModifyClusterAttributesParams) (*ModifyClusterAttributesOK, error) {
+func (a *Client) ModifyClusterAttributes(params *ModifyClusterAttributesParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyClusterAttributesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewModifyClusterAttributesParams()
@@ -434,6 +448,7 @@ func (a *Client) ModifyClusterAttributes(params *ModifyClusterAttributesParams) 
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyClusterAttributesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -447,7 +462,7 @@ func (a *Client) ModifyClusterAttributes(params *ModifyClusterAttributesParams) 
 /*
 ModifyClusterNodeAttributes modifies cluster node attributes
 */
-func (a *Client) ModifyClusterNodeAttributes(params *ModifyClusterNodeAttributesParams) (*ModifyClusterNodeAttributesOK, error) {
+func (a *Client) ModifyClusterNodeAttributes(params *ModifyClusterNodeAttributesParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyClusterNodeAttributesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewModifyClusterNodeAttributesParams()
@@ -462,6 +477,7 @@ func (a *Client) ModifyClusterNodeAttributes(params *ModifyClusterNodeAttributes
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyClusterNodeAttributesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -475,7 +491,7 @@ func (a *Client) ModifyClusterNodeAttributes(params *ModifyClusterNodeAttributes
 /*
 RecoverClusters recovers clusters
 */
-func (a *Client) RecoverClusters(params *RecoverClustersParams) (*RecoverClustersOK, error) {
+func (a *Client) RecoverClusters(params *RecoverClustersParams, authInfo runtime.ClientAuthInfoWriter) (*RecoverClustersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRecoverClustersParams()
@@ -490,6 +506,7 @@ func (a *Client) RecoverClusters(params *RecoverClustersParams) (*RecoverCluster
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &RecoverClustersReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -503,7 +520,7 @@ func (a *Client) RecoverClusters(params *RecoverClustersParams) (*RecoverCluster
 /*
 ResizeCluster resizes cluster
 */
-func (a *Client) ResizeCluster(params *ResizeClusterParams) (*ResizeClusterOK, error) {
+func (a *Client) ResizeCluster(params *ResizeClusterParams, authInfo runtime.ClientAuthInfoWriter) (*ResizeClusterOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewResizeClusterParams()
@@ -518,6 +535,7 @@ func (a *Client) ResizeCluster(params *ResizeClusterParams) (*ResizeClusterOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ResizeClusterReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -531,7 +549,7 @@ func (a *Client) ResizeCluster(params *ResizeClusterParams) (*ResizeClusterOK, e
 /*
 RollbackCluster rollbacks cluster
 */
-func (a *Client) RollbackCluster(params *RollbackClusterParams) (*RollbackClusterOK, error) {
+func (a *Client) RollbackCluster(params *RollbackClusterParams, authInfo runtime.ClientAuthInfoWriter) (*RollbackClusterOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRollbackClusterParams()
@@ -546,6 +564,7 @@ func (a *Client) RollbackCluster(params *RollbackClusterParams) (*RollbackCluste
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &RollbackClusterReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -559,7 +578,7 @@ func (a *Client) RollbackCluster(params *RollbackClusterParams) (*RollbackCluste
 /*
 StartClusters starts clusters
 */
-func (a *Client) StartClusters(params *StartClustersParams) (*StartClustersOK, error) {
+func (a *Client) StartClusters(params *StartClustersParams, authInfo runtime.ClientAuthInfoWriter) (*StartClustersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewStartClustersParams()
@@ -574,6 +593,7 @@ func (a *Client) StartClusters(params *StartClustersParams) (*StartClustersOK, e
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &StartClustersReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -587,7 +607,7 @@ func (a *Client) StartClusters(params *StartClustersParams) (*StartClustersOK, e
 /*
 StopClusters stops clusters
 */
-func (a *Client) StopClusters(params *StopClustersParams) (*StopClustersOK, error) {
+func (a *Client) StopClusters(params *StopClustersParams, authInfo runtime.ClientAuthInfoWriter) (*StopClustersOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewStopClustersParams()
@@ -602,6 +622,7 @@ func (a *Client) StopClusters(params *StopClustersParams) (*StopClustersOK, erro
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &StopClustersReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -615,7 +636,7 @@ func (a *Client) StopClusters(params *StopClustersParams) (*StopClustersOK, erro
 /*
 UpdateClusterEnv updates cluster env
 */
-func (a *Client) UpdateClusterEnv(params *UpdateClusterEnvParams) (*UpdateClusterEnvOK, error) {
+func (a *Client) UpdateClusterEnv(params *UpdateClusterEnvParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateClusterEnvOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateClusterEnvParams()
@@ -630,6 +651,7 @@ func (a *Client) UpdateClusterEnv(params *UpdateClusterEnvParams) (*UpdateCluste
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &UpdateClusterEnvReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -643,7 +665,7 @@ func (a *Client) UpdateClusterEnv(params *UpdateClusterEnvParams) (*UpdateCluste
 /*
 UpgradeCluster upgrades cluster
 */
-func (a *Client) UpgradeCluster(params *UpgradeClusterParams) (*UpgradeClusterOK, error) {
+func (a *Client) UpgradeCluster(params *UpgradeClusterParams, authInfo runtime.ClientAuthInfoWriter) (*UpgradeClusterOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpgradeClusterParams()
@@ -658,6 +680,7 @@ func (a *Client) UpgradeCluster(params *UpgradeClusterParams) (*UpgradeClusterOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &UpgradeClusterReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

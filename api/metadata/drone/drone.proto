@@ -14,6 +14,8 @@ import "metadata/types/drone.proto";
 import "metadata/types/frontgate.proto";
 
 service DroneService {
+	rpc DistributeDrone (metadata.types.DroneBinary) returns (metadata.types.Empty);
+
 	rpc GetPilotVersion (metadata.types.Empty) returns (metadata.types.Version);
 	rpc GetFrontgateVersion (metadata.types.Empty) returns (metadata.types.Version);
 	rpc GetDroneVersion (metadata.types.DroneEndpoint) returns (metadata.types.Version);

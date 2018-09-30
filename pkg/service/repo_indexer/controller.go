@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/client"
-	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
+	appClient "openpitrix.io/openpitrix/pkg/client/app"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
@@ -18,7 +18,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/repoiface/indexer"
 	"openpitrix.io/openpitrix/pkg/util/atomicutil"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
@@ -92,7 +91,7 @@ func (i *EventController) updateRepoEventStatus(ctx context.Context, repoEvent *
 	if err != nil {
 		logger.Critical(
 			ctx,
-			"Failed to set repo event [&s] status to [%s] result to [%s], %+v",
+			"Failed to set repo event [%s] status to [%s] result to [%s], %+v",
 			repoEvent.RepoEventId, status, result, err)
 		return err
 	}
@@ -114,29 +113,20 @@ func (i *EventController) ExecuteEvent(ctx context.Context, repoEvent *models.Re
 	logger.Info(ctx, "Got repo event: %+v", repoEvent)
 	err := func() (err error) {
 		repoId := repoEvent.RepoId
-		repoManagerClient, err := repoClient.NewRepoManagerClient()
+		appManagerClient, err := appClient.NewAppManagerClient()
 		if err != nil {
 			return
 		}
-		req := pb.DescribeReposRequest{
-			RepoId: []string{repoId},
+		req := pb.SyncRepoRequest{
+			RepoId: repoId,
 		}
-		res, err := repoManagerClient.DescribeRepos(ctx, &req)
+		res, err := appManagerClient.SyncRepo(ctx, &req)
 		if err != nil {
 			return
 		}
-		if res.TotalCount == 0 {
-			err = fmt.Errorf("failed to get repo [%s]", repoId)
-			return
-		}
-		repo := res.RepoSet[0]
-		if repo.GetStatus().GetValue() == constants.StatusDeleted {
-			err = indexer.GetIndexer(ctx, repo).DeleteRepo()
-		} else {
-			err = indexer.GetIndexer(ctx, repo).IndexRepo()
-		}
-		if err != nil {
-			logger.Error(ctx, "Failed to index repo [%s]", repoId)
+		if res.Failed {
+			err = fmt.Errorf(res.Result)
+			logger.Error(ctx, "Failed to index repo [%s], %+v", repoId, err)
 		}
 		return
 	}()
@@ -167,7 +157,11 @@ func (i *EventController) getRepoEventFromQueue() (repoEvent models.RepoEvent, e
 }
 
 func (i *EventController) GetEventLength() int32 {
-	return constants.RepoEventLength
+	if pi.Global().GlobalConfig().Repo.MaxRepoEvents > 0 {
+		return pi.Global().GlobalConfig().Repo.MaxRepoEvents
+	} else {
+		return constants.DefaultMaxRepoEvents
+	}
 }
 
 func (i *EventController) Dequeue() {

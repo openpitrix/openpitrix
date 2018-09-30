@@ -6,11 +6,9 @@ package task
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -60,7 +58,6 @@ func (p *Server) CreateTask(ctx context.Context, req *pb.CreateTaskRequest) (*pb
 }
 
 func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
 	var tasks []*models.Task
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
@@ -71,7 +68,6 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableTask)).
-		Where(db.Eq("owner", s.UserId)).
 		OrderDir("create_time", true)
 
 	_, err := query.Load(&tasks)
@@ -91,24 +87,10 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 }
 
 func (p *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb.RetryTasksResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-
 	taskIds := req.GetTaskId()
-	var tasks []*models.Task
-	query := pi.Global().DB(ctx).
-		Select(models.TaskColumns...).
-		From(constants.TableTask).
-		Where(db.Eq("task_id", taskIds)).
-		Where(db.Eq("owner", s.UserId))
-
-	_, err := query.Load(&tasks)
+	tasks, err := CheckTasksPermission(ctx, taskIds)
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
-	}
-
-	if len(tasks) != len(taskIds) {
-		err = fmt.Errorf("retryTasks [%s] with count [%d]", strings.Join(taskIds, ","), len(tasks))
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, strings.Join(taskIds, ","))
+		return nil, err
 	}
 
 	for _, taskId := range taskIds {

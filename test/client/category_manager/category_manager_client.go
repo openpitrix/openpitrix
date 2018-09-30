@@ -27,7 +27,7 @@ type Client struct {
 /*
 CreateCategory creates category
 */
-func (a *Client) CreateCategory(params *CreateCategoryParams) (*CreateCategoryOK, error) {
+func (a *Client) CreateCategory(params *CreateCategoryParams, authInfo runtime.ClientAuthInfoWriter) (*CreateCategoryOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateCategoryParams()
@@ -42,6 +42,7 @@ func (a *Client) CreateCategory(params *CreateCategoryParams) (*CreateCategoryOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &CreateCategoryReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -55,7 +56,7 @@ func (a *Client) CreateCategory(params *CreateCategoryParams) (*CreateCategoryOK
 /*
 DeleteCategories deletes categories
 */
-func (a *Client) DeleteCategories(params *DeleteCategoriesParams) (*DeleteCategoriesOK, error) {
+func (a *Client) DeleteCategories(params *DeleteCategoriesParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteCategoriesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteCategoriesParams()
@@ -70,6 +71,7 @@ func (a *Client) DeleteCategories(params *DeleteCategoriesParams) (*DeleteCatego
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DeleteCategoriesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -83,7 +85,7 @@ func (a *Client) DeleteCategories(params *DeleteCategoriesParams) (*DeleteCatego
 /*
 DescribeCategories describes categories with filter
 */
-func (a *Client) DescribeCategories(params *DescribeCategoriesParams) (*DescribeCategoriesOK, error) {
+func (a *Client) DescribeCategories(params *DescribeCategoriesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeCategoriesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDescribeCategoriesParams()
@@ -98,6 +100,7 @@ func (a *Client) DescribeCategories(params *DescribeCategoriesParams) (*Describe
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &DescribeCategoriesReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -111,7 +114,7 @@ func (a *Client) DescribeCategories(params *DescribeCategoriesParams) (*Describe
 /*
 ModifyCategory modifies category
 */
-func (a *Client) ModifyCategory(params *ModifyCategoryParams) (*ModifyCategoryOK, error) {
+func (a *Client) ModifyCategory(params *ModifyCategoryParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyCategoryOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewModifyCategoryParams()
@@ -126,6 +129,7 @@ func (a *Client) ModifyCategory(params *ModifyCategoryParams) (*ModifyCategoryOK
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &ModifyCategoryReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})

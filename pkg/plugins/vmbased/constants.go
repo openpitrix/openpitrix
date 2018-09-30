@@ -83,3 +83,12 @@ const (
 	MetadataNodeName   = "metadata"
 	DefaultNodeName    = "node"
 )
+
+const (
+	InstanceSize           = 20
+	DefaultMountPoint      = "/data"
+	Ext4FileSystem         = "ext4"
+	XfsFileSystem          = "xfs"
+	DefaultExt4MountOption = "defaults,noatime"
+	DefaultXfsMountOption  = "rw,noatime,inode64,allocsize=16m"
+)

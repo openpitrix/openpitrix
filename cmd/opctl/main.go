@@ -13,6 +13,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 	"openpitrix.io/openpitrix/test"
+	"openpitrix.io/openpitrix/test/config"
 )
 
 type Flag struct {
@@ -25,7 +26,10 @@ type Cmd interface {
 	Run(out Out) error
 }
 
-var clientConfig = &test.ClientConfig{}
+// TODO: refactor http client config
+var clientConfig = &test.ClientConfig{
+	Debug: false,
+}
 
 func newRootCmd(c string, args []string) *cobra.Command {
 	cmd := &cobra.Command{
@@ -50,10 +54,6 @@ func getCobraCmds(cmds []Cmd) (cobraCmds []*cobra.Command) {
 		c := &cobra.Command{
 			Use: fmt.Sprintf("%s [flags]", underscoreAction),
 			RunE: func(c *cobra.Command, args []string) error {
-				// TODO: read from config files
-				clientConfig = test.GetClientConfig()
-				clientConfig.Debug = false
-
 				return run(Out{
 					action: action,
 					out:    c.OutOrStdout(),
@@ -61,6 +61,7 @@ func getCobraCmds(cmds []Cmd) (cobraCmds []*cobra.Command) {
 			},
 		}
 		f := c.Flags()
+		config.AddFlag(f, &clientConfig.ConfigPath)
 		cmd.ParseFlag(Flag{f})
 
 		cobraCmds = append(cobraCmds, c)

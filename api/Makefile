@@ -19,6 +19,8 @@ METADATA_DRONE_PBFILES=$(sort $(wildcard metadata/drone/*.proto))
 METADATA_FRONTGATE_PBFILES=$(sort $(wildcard metadata/frontgate/*.proto))
 METADATA_PILOT_PBFILES=$(sort $(wildcard metadata/pilot/*.proto))
 
+IAM_PBFILES=$(sort $(wildcard iam/*.proto))
+
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
 	@echo "  generate          to generate grpc/grpc-gateway/swagger code"
@@ -51,6 +53,8 @@ generate: $(PROTO_FILES) Makefile
 	cd ../test/ && swagger generate client -f ../pkg/apigateway/spec/api.swagger.json -A openpitrix
 	# need to exec chown finally
 	chown -R $${USER_ID}:$${GROUP_ID} ../pkg ../test
+	# format generated files
+	goimports -l -w -e -local=openpitrix ../pkg/pb
 	@echo "ok"
 
 metadata_types: ${METADATA_TYPES_PBFILES}
@@ -78,7 +82,6 @@ metadata_pilot: ${METADATA_PILOT_PBFILES}
 	rm -rf   $(GOPATH)/src/openpitrix.io/openpitrix/pkg/pb/metadata/pilot/*
 	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:$(GOPATH)/src ${METADATA_PILOT_PBFILES}
 	@echo "ok"
-
 
 tools:
 	docker pull openpitrix/openpitrix:builder

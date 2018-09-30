@@ -20,6 +20,8 @@ type GlobalConfig struct {
 	Cluster ClusterServiceConfig   `json:"cluster"`
 	Runtime map[string]ImageConfig `json:"runtime"`
 	Pilot   PilotServiceConfig     `json:"pilot"`
+	Job     JobServiceConfig       `json:"job"`
+	Task    TaskServiceConfig      `json:"task"`
 }
 
 type AppServiceConfig struct {
@@ -27,7 +29,8 @@ type AppServiceConfig struct {
 }
 
 type RepoServiceConfig struct {
-	Cron string `json:"cron"`
+	Cron          string `json:"cron"`
+	MaxRepoEvents int32  `json:"max_repo_events"`
 }
 
 type ClusterServiceConfig struct {
@@ -39,6 +42,14 @@ type ClusterServiceConfig struct {
 type PilotServiceConfig struct {
 	Ip   string `json:"ip"`
 	Port int32  `json:"port"`
+}
+
+type JobServiceConfig struct {
+	MaxWorkingJobs int32 `json:"max_working_jobs"`
+}
+
+type TaskServiceConfig struct {
+	MaxWorkingTasks int32 `json:"max_working_tasks"`
 }
 
 type ImageConfig struct {

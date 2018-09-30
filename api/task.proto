@@ -63,6 +63,7 @@ message DescribeTasksRequest {
 	// default is 0
 	uint32 offset = 7;
 	google.protobuf.StringValue search_word = 8;
+	repeated string owner = 9;
 }
 message DescribeTasksResponse {
 	uint32 total_count = 1;

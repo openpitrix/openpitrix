@@ -107,8 +107,8 @@ func (p *FrontgateClientManager) PutClient(c *pbfrontgate.FrontgateServiceClient
 
 	client := &FrontgateClient{
 		FrontgateServiceClient: c,
-		info:   info,
-		closed: make(chan bool),
+		info:                   info,
+		closed:                 make(chan bool),
 	}
 
 	p.clientMap[info.Id] = append(p.clientMap[info.Id], client)

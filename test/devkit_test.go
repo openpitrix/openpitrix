@@ -75,7 +75,7 @@ func waitRepoEventSuccess(t *testing.T, repoEventId string) {
 	for {
 		describeEventParams := repo_indexer.NewDescribeRepoEventsParams()
 		describeEventParams.RepoEventID = []string{repoEventId}
-		describeEventResp, err := client.RepoIndexer.DescribeRepoEvents(describeEventParams)
+		describeEventResp, err := client.RepoIndexer.DescribeRepoEvents(describeEventParams, nil)
 		require.NoError(t, err)
 		require.Equal(t, int64(1), describeEventResp.Payload.TotalCount, "count should be 1")
 		require.Equal(t, repoEventId, describeEventResp.Payload.RepoEventSet[0].RepoEventID, "error repo event id")
@@ -110,7 +110,7 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 			Credential:  `{}`,
 			Visibility:  "public",
 		})
-	createResp, err := client.RepoManager.CreateRepo(createParams)
+	createResp, err := client.RepoManager.CreateRepo(createParams, nil)
 	require.NoError(t, err)
 
 	repoId := createResp.Payload.RepoID
@@ -118,7 +118,7 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 	describeParams := repo_indexer.NewDescribeRepoEventsParams()
 	describeParams.SetRepoID([]string{repoId})
 	describeParams.SetStatus([]string{constants.StatusPending, constants.StatusWorking})
-	describeResp, err := client.RepoIndexer.DescribeRepoEvents(describeParams)
+	describeResp, err := client.RepoIndexer.DescribeRepoEvents(describeParams, nil)
 	require.NoError(t, err)
 
 	if len(describeResp.Payload.RepoEventSet) < 1 {
@@ -131,7 +131,7 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 	describeAppParams := app_manager.NewDescribeAppsParams()
 	describeAppParams.WithRepoID([]string{repoId})
 
-	describeAppResp, err := client.AppManager.DescribeApps(describeAppParams)
+	describeAppResp, err := client.AppManager.DescribeApps(describeAppParams, nil)
 	require.NoError(t, err)
 
 	t.Logf("success got [%d] apps", describeAppResp.Payload.TotalCount)
@@ -147,6 +147,6 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 		RepoID: []string{repoId},
 	})
 
-	_, err = client.RepoManager.DeleteRepos(deleteRepoParams)
+	_, err = client.RepoManager.DeleteRepos(deleteRepoParams, nil)
 	require.NoError(t, err)
 }

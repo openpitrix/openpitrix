@@ -3,11 +3,14 @@
 
 package pb
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import (
+	fmt "fmt"
+	math "math"
+
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -32,16 +35,17 @@ func (m *ErrorDetail) Reset()         { *m = ErrorDetail{} }
 func (m *ErrorDetail) String() string { return proto.CompactTextString(m) }
 func (*ErrorDetail) ProtoMessage()    {}
 func (*ErrorDetail) Descriptor() ([]byte, []int) {
-	return fileDescriptor_types_4dc538ddd7029038, []int{0}
+	return fileDescriptor_d938547f84707355, []int{0}
 }
+
 func (m *ErrorDetail) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ErrorDetail.Unmarshal(m, b)
 }
 func (m *ErrorDetail) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ErrorDetail.Marshal(b, m, deterministic)
 }
-func (dst *ErrorDetail) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ErrorDetail.Merge(dst, src)
+func (m *ErrorDetail) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ErrorDetail.Merge(m, src)
 }
 func (m *ErrorDetail) XXX_Size() int {
 	return xxx_messageInfo_ErrorDetail.Size(m)
@@ -82,16 +86,17 @@ func (m *ResourceCategory) Reset()         { *m = ResourceCategory{} }
 func (m *ResourceCategory) String() string { return proto.CompactTextString(m) }
 func (*ResourceCategory) ProtoMessage()    {}
 func (*ResourceCategory) Descriptor() ([]byte, []int) {
-	return fileDescriptor_types_4dc538ddd7029038, []int{1}
+	return fileDescriptor_d938547f84707355, []int{1}
 }
+
 func (m *ResourceCategory) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ResourceCategory.Unmarshal(m, b)
 }
 func (m *ResourceCategory) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ResourceCategory.Marshal(b, m, deterministic)
 }
-func (dst *ResourceCategory) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ResourceCategory.Merge(dst, src)
+func (m *ResourceCategory) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResourceCategory.Merge(m, src)
 }
 func (m *ResourceCategory) XXX_Size() int {
 	return xxx_messageInfo_ResourceCategory.Size(m)
@@ -149,9 +154,9 @@ func init() {
 	proto.RegisterType((*ResourceCategory)(nil), "openpitrix.ResourceCategory")
 }
 
-func init() { proto.RegisterFile("types.proto", fileDescriptor_types_4dc538ddd7029038) }
+func init() { proto.RegisterFile("types.proto", fileDescriptor_d938547f84707355) }
 
-var fileDescriptor_types_4dc538ddd7029038 = []byte{
+var fileDescriptor_d938547f84707355 = []byte{
 	// 282 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0x3d, 0x4f, 0xc3, 0x30,
 	0x10, 0x86, 0xd5, 0xd0, 0x56, 0xea, 0x65, 0x41, 0x16, 0x43, 0x14, 0xf1, 0xa5, 0x4e, 0x4c, 0x29,

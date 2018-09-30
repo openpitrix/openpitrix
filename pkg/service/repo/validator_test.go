@@ -66,3 +66,13 @@ func TestValidate5(t *testing.T) {
 	assert.Error(t, err, "error expect, because this is a bad url")
 
 }
+
+func TestValidate6(t *testing.T) {
+	repoType := "http"
+	url := "http://op-test.pek3a.qingstor.com/"
+	credential := ``
+
+	err := validate(ctx, repoType, url, credential)
+
+	assert.Error(t, err, "error expect, because we don't have permission")
+}

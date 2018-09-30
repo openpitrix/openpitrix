@@ -21,6 +21,7 @@ spec:
     protocol: TCP
     port: 9114
     targetPort: 9114
+    ${PILOT_NODEPORT}
 ---
 apiVersion: apps/v1beta2
 kind: Deployment

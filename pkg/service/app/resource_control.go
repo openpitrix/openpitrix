@@ -53,34 +53,17 @@ var VersionFiniteStatusMachine = map[Action][]string{
 	Recover: {constants.StatusSuspended},
 }
 
-func checkAppVersionHandlePermission(
-	ctx context.Context, action Action, versionId string,
-) (*models.AppVersion, error) {
-	// TODO: check admin/developer permission
-	//sender := senderutil.GetSenderFromContext(ctx)
-	version := models.AppVersion{}
-	err := pi.Global().DB(ctx).
-		Select(models.AppVersionColumns...).
-		From(constants.TableAppVersion).
-		Where(db.Eq(constants.ColumnVersionId, versionId)).
-		LoadOne(&version)
-	if err != nil {
-		if err == db.ErrNotFound {
-			return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, versionId)
-		}
-		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
-	}
-
+func checkAppVersionHandlePermission(ctx context.Context, action Action, version *models.AppVersion) error {
 	allowedStatus, ok := VersionFiniteStatusMachine[action]
 	if !ok {
-		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
+		return gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}
 	versionStatus := version.Status
 	if !stringutil.StringIn(versionStatus, allowedStatus) {
-		return nil, gerr.New(ctx, gerr.FailedPrecondition,
+		return gerr.New(ctx, gerr.FailedPrecondition,
 			gerr.ErrorAppVersionIncorrectStatus, version.VersionId, versionStatus)
 	}
-	return &version, nil
+	return nil
 }
 
 func deleteApp(ctx context.Context, appId string) error {
@@ -143,11 +126,16 @@ func updateApp(ctx context.Context, appId string, attributes map[string]interfac
 	return nil
 }
 
-func updateVersionStatus(ctx context.Context, version *models.AppVersion, status string) error {
-	err := updateVersion(ctx, version.VersionId, map[string]interface{}{
-		constants.ColumnStatus:     status,
-		constants.ColumnStatusTime: time.Now(),
-	})
+func updateVersionStatus(ctx context.Context, version *models.AppVersion, status string, attributes ...map[string]interface{}) error {
+	var attr = make(map[string]interface{})
+	for _, a := range attributes {
+		for k, v := range a {
+			attr[k] = v
+		}
+	}
+	attr[constants.ColumnStatus] = status
+	attr[constants.ColumnStatusTime] = time.Now()
+	err := updateVersion(ctx, version.VersionId, attr)
 	if err != nil {
 		return err
 	}
@@ -163,19 +151,12 @@ func syncAppStatus(ctx context.Context, appId string) error {
 	if err != nil {
 		return err
 	}
-	if app.Status == constants.StatusSuspended ||
-		app.Status == constants.StatusDeleted {
-		return nil
-	}
 	attributes := make(map[string]interface{})
 	activeVersion, err := getLatestAppVersion(ctx, appId, constants.StatusActive)
 	if err != nil {
 		return err
 	}
-	var status string
 	if activeVersion != nil {
-		status = constants.StatusActive
-
 		if activeVersion.Description != app.Description {
 			attributes[constants.ColumnDescription] = activeVersion.Description
 		}
@@ -200,13 +181,22 @@ func syncAppStatus(ctx context.Context, appId string) error {
 		if activeVersion.Readme != app.Readme {
 			attributes[constants.ColumnReadme] = activeVersion.Readme
 		}
+		if constants.StatusActive != app.Status {
+			attributes[constants.ColumnStatus] = constants.StatusActive
+			attributes[constants.ColumnStatusTime] = time.Now()
+		}
 	} else {
-		status = constants.StatusDraft
+		statusCountMap, err := groupAppVersionStatus(ctx, appId)
+		if err != nil {
+			return err
+		}
+		status := computeAppStatus(statusCountMap)
+		if status != app.Status {
+			attributes[constants.ColumnStatus] = status
+			attributes[constants.ColumnStatusTime] = time.Now()
+		}
 	}
-	if status != app.Status {
-		attributes[constants.ColumnStatus] = status
-		attributes[constants.ColumnStatusTime] = time.Now()
-	}
+
 	if len(attributes) == 0 {
 		return nil
 	}
@@ -270,6 +260,14 @@ func formatApp(ctx context.Context, app *models.App) (*pb.App, error) {
 	return pbApp, nil
 }
 
+func getAppCategories(ctx context.Context, appId string) ([]*pb.ResourceCategory, error) {
+	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), []string{appId})
+	if err != nil {
+		return nil, err
+	}
+	return rcmap[appId], nil
+}
+
 func formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
 	var pbApps []*pb.App
 	var appIds []string
@@ -331,4 +329,94 @@ func resortAppVersions(ctx context.Context, appId string) error {
 		}
 	}
 	return nil
+}
+
+func clearAppVersions(ctx context.Context, appId string, ignoredVersionIds []string) error {
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableAppVersion).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Set(constants.ColumnStatusTime, time.Now()).
+		Set(constants.ColumnUpdateTime, time.Now()).
+		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Neq(constants.ColumnVersionId, ignoredVersionIds)).
+		Exec()
+	return err
+}
+
+func clearApps(ctx context.Context, repoId string, ignoredAppIds []string) error {
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableApp).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Set(constants.ColumnStatusTime, time.Now()).
+		Set(constants.ColumnUpdateTime, time.Now()).
+		Where(db.Eq(constants.ColumnRepoId, repoId)).
+		Where(db.Neq(constants.ColumnAppId, ignoredAppIds)).
+		Exec()
+	return err
+}
+
+var versionStatusPriority = map[string]int32{
+	constants.StatusActive:    7,
+	constants.StatusRejected:  6,
+	constants.StatusPassed:    5,
+	constants.StatusSubmitted: 4,
+	constants.StatusSuspended: 3,
+	constants.StatusDraft:     2,
+	constants.StatusDeleted:   1,
+}
+
+func getAppDefaultStatus(repo *pb.Repo) string {
+	var defaultStatus = repo.GetAppDefaultStatus().GetValue()
+	if len(defaultStatus) == 0 {
+		return pi.Global().GlobalConfig().GetAppDefaultStatus()
+	}
+	return defaultStatus
+}
+
+func getAppVersionStatus(defaultStatus, currentStatus string) string {
+	d, ok := versionStatusPriority[defaultStatus]
+	if !ok {
+		return currentStatus
+	}
+	c, ok := versionStatusPriority[currentStatus]
+	if !ok {
+		return defaultStatus
+	}
+	if c >= d {
+		return currentStatus
+	}
+	return defaultStatus
+}
+
+func groupAppVersionStatus(ctx context.Context, appId string) (map[string]int32, error) {
+	var statusCountMap = make(map[string]int32)
+	_, err := pi.Global().DB(ctx).
+		Select("status", "count(version_id)").
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnAppId, appId)).GroupBy("status").Load(&statusCountMap)
+	return statusCountMap, err
+}
+
+var versionStatusToAppStatus = [][]string{
+	// from => to
+	{constants.StatusActive, constants.StatusActive},
+	{constants.StatusRejected, constants.StatusDraft},
+	{constants.StatusPassed, constants.StatusDraft},
+	{constants.StatusSubmitted, constants.StatusDraft},
+	{constants.StatusDraft, constants.StatusDraft},
+	{constants.StatusSuspended, constants.StatusSuspended},
+	{constants.StatusDeleted, constants.StatusDraft},
+}
+
+// compute status from exist app version status
+func computeAppStatus(statusCountMap map[string]int32) string {
+	for _, vs := range versionStatusToAppStatus {
+		if c, ok := statusCountMap[vs[0]]; ok && c > 0 {
+			return vs[1]
+		}
+	}
+	if len(statusCountMap) == 0 {
+		return constants.StatusDeleted
+	}
+	return constants.StatusDraft
 }

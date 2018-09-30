@@ -67,6 +67,8 @@ type DescribeClustersParams struct {
 	AppID []string
 	/*ClusterID*/
 	ClusterID []string
+	/*ClusterType*/
+	ClusterType *string
 	/*ExternalClusterID*/
 	ExternalClusterID *string
 	/*FrontgateID*/
@@ -75,6 +77,8 @@ type DescribeClustersParams struct {
 	Limit *int64
 	/*Offset*/
 	Offset *int64
+	/*Owner*/
+	Owner []string
 	/*Reverse*/
 	Reverse *bool
 	/*RuntimeID*/
@@ -148,6 +152,17 @@ func (o *DescribeClustersParams) SetClusterID(clusterID []string) {
 	o.ClusterID = clusterID
 }
 
+// WithClusterType adds the clusterType to the describe clusters params
+func (o *DescribeClustersParams) WithClusterType(clusterType *string) *DescribeClustersParams {
+	o.SetClusterType(clusterType)
+	return o
+}
+
+// SetClusterType adds the clusterType to the describe clusters params
+func (o *DescribeClustersParams) SetClusterType(clusterType *string) {
+	o.ClusterType = clusterType
+}
+
 // WithExternalClusterID adds the externalClusterID to the describe clusters params
 func (o *DescribeClustersParams) WithExternalClusterID(externalClusterID *string) *DescribeClustersParams {
 	o.SetExternalClusterID(externalClusterID)
@@ -190,6 +205,17 @@ func (o *DescribeClustersParams) WithOffset(offset *int64) *DescribeClustersPara
 // SetOffset adds the offset to the describe clusters params
 func (o *DescribeClustersParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwner adds the owner to the describe clusters params
+func (o *DescribeClustersParams) WithOwner(owner []string) *DescribeClustersParams {
+	o.SetOwner(owner)
+	return o
+}
+
+// SetOwner adds the owner to the describe clusters params
+func (o *DescribeClustersParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithReverse adds the reverse to the describe clusters params
@@ -282,6 +308,22 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 		return err
 	}
 
+	if o.ClusterType != nil {
+
+		// query param cluster_type
+		var qrClusterType string
+		if o.ClusterType != nil {
+			qrClusterType = *o.ClusterType
+		}
+		qClusterType := qrClusterType
+		if qClusterType != "" {
+			if err := r.SetQueryParam("cluster_type", qClusterType); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.ExternalClusterID != nil {
 
 		// query param external_cluster_id
@@ -336,6 +378,14 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 			}
 		}
 
+	}
+
+	valuesOwner := o.Owner
+
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	if o.Reverse != nil {

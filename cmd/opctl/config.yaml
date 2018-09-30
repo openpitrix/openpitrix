@@ -1,3 +1,134 @@
+- action: ChangePassword
+  service: AccountManager
+  body:
+    new_password:
+      type: string
+    reset_id:
+      type: string
+- action: CreateGroup
+  description: group
+  service: AccountManager
+  body:
+    description:
+      type: string
+    name:
+      type: string
+- action: CreatePasswordReset
+  service: AccountManager
+  body:
+    password:
+      type: string
+    user_id:
+      type: string
+- action: CreateUser
+  description: admin permission
+  service: AccountManager
+  body:
+    description:
+      type: string
+    email:
+      type: string
+    password:
+      type: string
+    role:
+      type: string
+- action: DeleteGroups
+  service: AccountManager
+  body:
+    group_id:
+      type: '[]string'
+- action: DeleteUsers
+  service: AccountManager
+  body:
+    user_id:
+      type: '[]string'
+- action: DescribeGroups
+  service: AccountManager
+  query:
+    group_id:
+      type: '[]string'
+    limit:
+      type: integer
+    offset:
+      type: integer
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: DescribeUsers
+  service: AccountManager
+  query:
+    group_id:
+      type: '[]string'
+    limit:
+      type: integer
+    offset:
+      type: integer
+    reverse:
+      type: boolean
+    role:
+      type: '[]string'
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: GetPasswordReset
+  service: AccountManager
+- action: JoinGroup
+  service: AccountManager
+  body:
+    group_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: LeaveGroup
+  service: AccountManager
+  body:
+    group_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: ModifyGroup
+  service: AccountManager
+  body:
+    description:
+      type: string
+    group_id:
+      type: string
+    name:
+      type: string
+- action: ModifyUser
+  service: AccountManager
+  body:
+    description:
+      type: string
+    email:
+      type: string
+    password:
+      type: string
+    role:
+      type: string
+    user_id:
+      type: string
+    username:
+      type: string
+- action: ValidateUserPassword
+  service: AccountManager
+  body:
+    email:
+      type: string
+    password:
+      type: string
 - action: CancelAppVersion
   description: cancel app version
   service: AppManager
@@ -76,20 +207,18 @@
   description: delete app version
   service: AppManager
   body:
+    direct_delete:
+      type: boolean
     version_id:
       type: string
-- action: DeleteAppVersions
-  description: delete app versions
-  service: AppManager
-  body:
-    version_id:
-      type: '[]string'
 - action: DeleteApps
   description: delete apps
   service: AppManager
   body:
     app_id:
       type: '[]string'
+    direct_delete:
+      type: boolean
 - action: DescribeAppVersions
   description: describe app versions with filter
   service: AppManager
@@ -247,6 +376,8 @@
   description: reject app version
   service: AppManager
   body:
+    message:
+      type: string
     version_id:
       type: string
 - action: ReleaseAppVersion
@@ -403,6 +534,8 @@
       type: '[]string'
     offset:
       type: integer
+    owner:
+      type: '[]string'
     reverse:
       type: boolean
     search_word:
@@ -419,6 +552,8 @@
       type: '[]string'
     cluster_id:
       type: '[]string'
+    cluster_type:
+      type: string
     external_cluster_id:
       type: string
     frontgate_id:
@@ -427,6 +562,8 @@
       type: integer
     offset:
       type: integer
+    owner:
+      type: '[]string'
     reverse:
       type: boolean
     runtime_id:
@@ -454,7 +591,7 @@
     offset:
       type: integer
     owner:
-      type: string
+      type: '[]string'
     pub_key:
       type: string
     search_word:
@@ -586,6 +723,8 @@
     offset:
       help: default is 0.
       type: integer
+    owner:
+      type: '[]string'
     provider:
       type: string
     runtime_id:
@@ -622,6 +761,8 @@
   description: create repo
   service: RepoManager
   body:
+    app_default_status:
+      type: string
     category_id:
       type: string
     credential:
@@ -652,6 +793,8 @@
   description: describe repos with filter
   service: RepoManager
   query:
+    app_default_status:
+      type: '[]string'
     category_id:
       type: '[]string'
     label:
@@ -662,6 +805,8 @@
       type: '[]string'
     offset:
       type: integer
+    owner:
+      type: '[]string'
     provider:
       type: '[]string'
     repo_id:
@@ -678,12 +823,16 @@
       type: '[]string'
     type:
       type: '[]string'
+    user_id:
+      type: string
     visibility:
       type: '[]string'
 - action: ModifyRepo
   description: modify repo
   service: RepoManager
   body:
+    app_default_status:
+      type: string
     category_id:
       type: string
     credential:
@@ -801,6 +950,8 @@
     offset:
       help: default is 0.
       type: integer
+    owner:
+      type: '[]string'
     search_word:
       type: string
     status:
@@ -815,3 +966,26 @@
   body:
     task_id:
       type: '[]string'
+- action: CreateClient
+  service: TokenManager
+  body:
+    user_id:
+      type: string
+- action: Token
+  service: TokenManager
+  body:
+    client_id:
+      type: string
+    client_secret:
+      type: string
+    grant_type:
+      type: string
+    password:
+      type: string
+    refresh_token:
+      type: string
+    scope:
+      type: string
+    username:
+      type: string
+  insecurity: true

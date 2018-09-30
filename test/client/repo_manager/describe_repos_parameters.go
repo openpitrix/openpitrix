@@ -63,6 +63,8 @@ for the describe repos operation typically these are written to a http.Request
 */
 type DescribeReposParams struct {
 
+	/*AppDefaultStatus*/
+	AppDefaultStatus []string
 	/*CategoryID*/
 	CategoryID []string
 	/*Label*/
@@ -73,6 +75,8 @@ type DescribeReposParams struct {
 	Name []string
 	/*Offset*/
 	Offset *int64
+	/*Owner*/
+	Owner []string
 	/*Provider*/
 	Provider []string
 	/*RepoID*/
@@ -89,6 +93,8 @@ type DescribeReposParams struct {
 	Status []string
 	/*Type*/
 	Type []string
+	/*UserID*/
+	UserID *string
 	/*Visibility*/
 	Visibility []string
 
@@ -128,6 +134,17 @@ func (o *DescribeReposParams) WithHTTPClient(client *http.Client) *DescribeRepos
 // SetHTTPClient adds the HTTPClient to the describe repos params
 func (o *DescribeReposParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithAppDefaultStatus adds the appDefaultStatus to the describe repos params
+func (o *DescribeReposParams) WithAppDefaultStatus(appDefaultStatus []string) *DescribeReposParams {
+	o.SetAppDefaultStatus(appDefaultStatus)
+	return o
+}
+
+// SetAppDefaultStatus adds the appDefaultStatus to the describe repos params
+func (o *DescribeReposParams) SetAppDefaultStatus(appDefaultStatus []string) {
+	o.AppDefaultStatus = appDefaultStatus
 }
 
 // WithCategoryID adds the categoryID to the describe repos params
@@ -183,6 +200,17 @@ func (o *DescribeReposParams) WithOffset(offset *int64) *DescribeReposParams {
 // SetOffset adds the offset to the describe repos params
 func (o *DescribeReposParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwner adds the owner to the describe repos params
+func (o *DescribeReposParams) WithOwner(owner []string) *DescribeReposParams {
+	o.SetOwner(owner)
+	return o
+}
+
+// SetOwner adds the owner to the describe repos params
+func (o *DescribeReposParams) SetOwner(owner []string) {
+	o.Owner = owner
 }
 
 // WithProvider adds the provider to the describe repos params
@@ -273,6 +301,17 @@ func (o *DescribeReposParams) SetType(typeVar []string) {
 	o.Type = typeVar
 }
 
+// WithUserID adds the userID to the describe repos params
+func (o *DescribeReposParams) WithUserID(userID *string) *DescribeReposParams {
+	o.SetUserID(userID)
+	return o
+}
+
+// SetUserID adds the userId to the describe repos params
+func (o *DescribeReposParams) SetUserID(userID *string) {
+	o.UserID = userID
+}
+
 // WithVisibility adds the visibility to the describe repos params
 func (o *DescribeReposParams) WithVisibility(visibility []string) *DescribeReposParams {
 	o.SetVisibility(visibility)
@@ -291,6 +330,14 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	valuesAppDefaultStatus := o.AppDefaultStatus
+
+	joinedAppDefaultStatus := swag.JoinByFormat(valuesAppDefaultStatus, "multi")
+	// query array param app_default_status
+	if err := r.SetQueryParam("app_default_status", joinedAppDefaultStatus...); err != nil {
+		return err
+	}
 
 	valuesCategoryID := o.CategoryID
 
@@ -354,6 +401,14 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 			}
 		}
 
+	}
+
+	valuesOwner := o.Owner
+
+	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
+	// query array param owner
+	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+		return err
 	}
 
 	valuesProvider := o.Provider
@@ -450,6 +505,22 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	// query array param type
 	if err := r.SetQueryParam("type", joinedType...); err != nil {
 		return err
+	}
+
+	if o.UserID != nil {
+
+		// query param user_id
+		var qrUserID string
+		if o.UserID != nil {
+			qrUserID = *o.UserID
+		}
+		qUserID := qrUserID
+		if qUserID != "" {
+			if err := r.SetQueryParam("user_id", qUserID); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	valuesVisibility := o.Visibility

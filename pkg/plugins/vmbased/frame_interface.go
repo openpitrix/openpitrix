@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 
-	clientutil "openpitrix.io/openpitrix/pkg/client"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -27,7 +26,7 @@ type FrameInterface interface {
 	ResizeClusterLayer(roleResizeResources models.RoleResizeResources) *models.TaskLayer
 	AttachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
 	DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
-	ParseClusterConf(versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error
+	ParseClusterConf(ctx context.Context, versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error
 }
 
 func SplitJobIntoTasks(ctx context.Context, job *models.Job, advancedParam ...string) (*models.TaskLayer, error) {
@@ -104,7 +103,6 @@ func GetFrameInterface(ctx context.Context, job *models.Job, advancedParam ...st
 		if err != nil {
 			return nil, err
 		}
-		ctx := clientutil.SetSystemUserToContext(ctx)
 		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterId})
 		if err != nil {
 			return nil, err
@@ -133,7 +131,6 @@ func GetFrameInterface(ctx context.Context, job *models.Job, advancedParam ...st
 		if err != nil {
 			return nil, err
 		}
-		ctx := clientutil.SetSystemUserToContext(ctx)
 		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterWrapper.Cluster.FrontgateId})
 		if err != nil {
 			return nil, err

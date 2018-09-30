@@ -12,6 +12,7 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"openpitrix.io/openpitrix/test"
+	"openpitrix.io/openpitrix/test/client/account_manager"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
@@ -20,15 +21,29 @@ import (
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/client/task_manager"
+	"openpitrix.io/openpitrix/test/client/token_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
 
 var AllCmd = []Cmd{
+	NewChangePasswordCmd(),
+	NewCreateGroupCmd(),
+	NewCreatePasswordResetCmd(),
+	NewCreateUserCmd(),
+	NewDeleteGroupsCmd(),
+	NewDeleteUsersCmd(),
+	NewDescribeGroupsCmd(),
+	NewDescribeUsersCmd(),
+	NewGetPasswordResetCmd(),
+	NewJoinGroupCmd(),
+	NewLeaveGroupCmd(),
+	NewModifyGroupCmd(),
+	NewModifyUserCmd(),
+	NewValidateUserPasswordCmd(),
 	NewCancelAppVersionCmd(),
 	NewCreateAppCmd(),
 	NewCreateAppVersionCmd(),
 	NewDeleteAppVersionCmd(),
-	NewDeleteAppVersionsCmd(),
 	NewDeleteAppsCmd(),
 	NewDescribeAppVersionsCmd(),
 	NewDescribeAppsCmd(),
@@ -86,6 +101,532 @@ var AllCmd = []Cmd{
 	NewModifyRuntimeCmd(),
 	NewDescribeTasksCmd(),
 	NewRetryTasksCmd(),
+	NewCreateClientCmd(),
+	NewTokenCmd(),
+}
+
+type ChangePasswordCmd struct {
+	*models.OpenpitrixChangePasswordRequest
+}
+
+func NewChangePasswordCmd() Cmd {
+	cmd := &ChangePasswordCmd{}
+	cmd.OpenpitrixChangePasswordRequest = &models.OpenpitrixChangePasswordRequest{}
+	return cmd
+}
+
+func (*ChangePasswordCmd) GetActionName() string {
+	return "ChangePassword"
+}
+
+func (c *ChangePasswordCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.NewPassword, "new_password", "", "", "")
+	f.StringVarP(&c.ResetID, "reset_id", "", "", "")
+}
+
+func (c *ChangePasswordCmd) Run(out Out) error {
+	params := account_manager.NewChangePasswordParams()
+	params.WithBody(c.OpenpitrixChangePasswordRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.ChangePassword(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateGroupCmd struct {
+	*models.OpenpitrixCreateGroupRequest
+}
+
+func NewCreateGroupCmd() Cmd {
+	cmd := &CreateGroupCmd{}
+	cmd.OpenpitrixCreateGroupRequest = &models.OpenpitrixCreateGroupRequest{}
+	return cmd
+}
+
+func (*CreateGroupCmd) GetActionName() string {
+	return "CreateGroup"
+}
+
+func (c *CreateGroupCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+}
+
+func (c *CreateGroupCmd) Run(out Out) error {
+	params := account_manager.NewCreateGroupParams()
+	params.WithBody(c.OpenpitrixCreateGroupRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.CreateGroup(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreatePasswordResetCmd struct {
+	*models.OpenpitrixCreatePasswordResetRequest
+}
+
+func NewCreatePasswordResetCmd() Cmd {
+	cmd := &CreatePasswordResetCmd{}
+	cmd.OpenpitrixCreatePasswordResetRequest = &models.OpenpitrixCreatePasswordResetRequest{}
+	return cmd
+}
+
+func (*CreatePasswordResetCmd) GetActionName() string {
+	return "CreatePasswordReset"
+}
+
+func (c *CreatePasswordResetCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+}
+
+func (c *CreatePasswordResetCmd) Run(out Out) error {
+	params := account_manager.NewCreatePasswordResetParams()
+	params.WithBody(c.OpenpitrixCreatePasswordResetRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.CreatePasswordReset(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateUserCmd struct {
+	*models.OpenpitrixCreateUserRequest
+}
+
+func NewCreateUserCmd() Cmd {
+	cmd := &CreateUserCmd{}
+	cmd.OpenpitrixCreateUserRequest = &models.OpenpitrixCreateUserRequest{}
+	return cmd
+}
+
+func (*CreateUserCmd) GetActionName() string {
+	return "CreateUser"
+}
+
+func (c *CreateUserCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Email, "email", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.Role, "role", "", "", "")
+}
+
+func (c *CreateUserCmd) Run(out Out) error {
+	params := account_manager.NewCreateUserParams()
+	params.WithBody(c.OpenpitrixCreateUserRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.CreateUser(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DeleteGroupsCmd struct {
+	*models.OpenpitrixDeleteGroupsRequest
+}
+
+func NewDeleteGroupsCmd() Cmd {
+	cmd := &DeleteGroupsCmd{}
+	cmd.OpenpitrixDeleteGroupsRequest = &models.OpenpitrixDeleteGroupsRequest{}
+	return cmd
+}
+
+func (*DeleteGroupsCmd) GetActionName() string {
+	return "DeleteGroups"
+}
+
+func (c *DeleteGroupsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+}
+
+func (c *DeleteGroupsCmd) Run(out Out) error {
+	params := account_manager.NewDeleteGroupsParams()
+	params.WithBody(c.OpenpitrixDeleteGroupsRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.DeleteGroups(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DeleteUsersCmd struct {
+	*models.OpenpitrixDeleteUsersRequest
+}
+
+func NewDeleteUsersCmd() Cmd {
+	cmd := &DeleteUsersCmd{}
+	cmd.OpenpitrixDeleteUsersRequest = &models.OpenpitrixDeleteUsersRequest{}
+	return cmd
+}
+
+func (*DeleteUsersCmd) GetActionName() string {
+	return "DeleteUsers"
+}
+
+func (c *DeleteUsersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DeleteUsersCmd) Run(out Out) error {
+	params := account_manager.NewDeleteUsersParams()
+	params.WithBody(c.OpenpitrixDeleteUsersRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.DeleteUsers(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeGroupsCmd struct {
+	*account_manager.DescribeGroupsParams
+}
+
+func NewDescribeGroupsCmd() Cmd {
+	return &DescribeGroupsCmd{
+		account_manager.NewDescribeGroupsParams(),
+	}
+}
+
+func (*DescribeGroupsCmd) GetActionName() string {
+	return "DescribeGroups"
+}
+
+func (c *DescribeGroupsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DescribeGroupsCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeGroupsParams)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.DescribeGroups(c.DescribeGroupsParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeUsersCmd struct {
+	*account_manager.DescribeUsersParams
+}
+
+func NewDescribeUsersCmd() Cmd {
+	return &DescribeUsersCmd{
+		account_manager.NewDescribeUsersParams(),
+	}
+}
+
+func (*DescribeUsersCmd) GetActionName() string {
+	return "DescribeUsers"
+}
+
+func (c *DescribeUsersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	f.StringSliceVarP(&c.Role, "role", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DescribeUsersCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeUsersParams)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.DescribeUsers(c.DescribeUsersParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type GetPasswordResetCmd struct {
+	*account_manager.GetPasswordResetParams
+}
+
+func NewGetPasswordResetCmd() Cmd {
+	return &GetPasswordResetCmd{
+		account_manager.NewGetPasswordResetParams(),
+	}
+}
+
+func (*GetPasswordResetCmd) GetActionName() string {
+	return "GetPasswordReset"
+}
+
+func (c *GetPasswordResetCmd) ParseFlag(f Flag) {
+}
+
+func (c *GetPasswordResetCmd) Run(out Out) error {
+
+	out.WriteRequest(c.GetPasswordResetParams)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.GetPasswordReset(c.GetPasswordResetParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type JoinGroupCmd struct {
+	*models.OpenpitrixJoinGroupRequest
+}
+
+func NewJoinGroupCmd() Cmd {
+	cmd := &JoinGroupCmd{}
+	cmd.OpenpitrixJoinGroupRequest = &models.OpenpitrixJoinGroupRequest{}
+	return cmd
+}
+
+func (*JoinGroupCmd) GetActionName() string {
+	return "JoinGroup"
+}
+
+func (c *JoinGroupCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *JoinGroupCmd) Run(out Out) error {
+	params := account_manager.NewJoinGroupParams()
+	params.WithBody(c.OpenpitrixJoinGroupRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.JoinGroup(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type LeaveGroupCmd struct {
+	*models.OpenpitrixLeaveGroupRequest
+}
+
+func NewLeaveGroupCmd() Cmd {
+	cmd := &LeaveGroupCmd{}
+	cmd.OpenpitrixLeaveGroupRequest = &models.OpenpitrixLeaveGroupRequest{}
+	return cmd
+}
+
+func (*LeaveGroupCmd) GetActionName() string {
+	return "LeaveGroup"
+}
+
+func (c *LeaveGroupCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *LeaveGroupCmd) Run(out Out) error {
+	params := account_manager.NewLeaveGroupParams()
+	params.WithBody(c.OpenpitrixLeaveGroupRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.LeaveGroup(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyGroupCmd struct {
+	*models.OpenpitrixModifyGroupRequest
+}
+
+func NewModifyGroupCmd() Cmd {
+	cmd := &ModifyGroupCmd{}
+	cmd.OpenpitrixModifyGroupRequest = &models.OpenpitrixModifyGroupRequest{}
+	return cmd
+}
+
+func (*ModifyGroupCmd) GetActionName() string {
+	return "ModifyGroup"
+}
+
+func (c *ModifyGroupCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.GroupID, "group_id", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+}
+
+func (c *ModifyGroupCmd) Run(out Out) error {
+	params := account_manager.NewModifyGroupParams()
+	params.WithBody(c.OpenpitrixModifyGroupRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.ModifyGroup(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyUserCmd struct {
+	*models.OpenpitrixModifyUserRequest
+}
+
+func NewModifyUserCmd() Cmd {
+	cmd := &ModifyUserCmd{}
+	cmd.OpenpitrixModifyUserRequest = &models.OpenpitrixModifyUserRequest{}
+	return cmd
+}
+
+func (*ModifyUserCmd) GetActionName() string {
+	return "ModifyUser"
+}
+
+func (c *ModifyUserCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Email, "email", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.Role, "role", "", "", "")
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+	f.StringVarP(&c.Username, "username", "", "", "")
+}
+
+func (c *ModifyUserCmd) Run(out Out) error {
+	params := account_manager.NewModifyUserParams()
+	params.WithBody(c.OpenpitrixModifyUserRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.ModifyUser(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ValidateUserPasswordCmd struct {
+	*models.OpenpitrixValidateUserPasswordRequest
+}
+
+func NewValidateUserPasswordCmd() Cmd {
+	cmd := &ValidateUserPasswordCmd{}
+	cmd.OpenpitrixValidateUserPasswordRequest = &models.OpenpitrixValidateUserPasswordRequest{}
+	return cmd
+}
+
+func (*ValidateUserPasswordCmd) GetActionName() string {
+	return "ValidateUserPassword"
+}
+
+func (c *ValidateUserPasswordCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Email, "email", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
+}
+
+func (c *ValidateUserPasswordCmd) Run(out Out) error {
+	params := account_manager.NewValidateUserPasswordParams()
+	params.WithBody(c.OpenpitrixValidateUserPasswordRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.AccountManager.ValidateUserPassword(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
 }
 
 type CancelAppVersionCmd struct {
@@ -113,7 +654,7 @@ func (c *CancelAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.CancelAppVersion(params)
+	res, err := client.AppManager.CancelAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -170,7 +711,7 @@ func (c *CreateAppCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.CreateApp(params)
+	res, err := client.AppManager.CreateApp(params, nil)
 	if err != nil {
 		return err
 	}
@@ -226,7 +767,7 @@ func (c *CreateAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.CreateAppVersion(params)
+	res, err := client.AppManager.CreateAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -251,6 +792,7 @@ func (*DeleteAppVersionCmd) GetActionName() string {
 }
 
 func (c *DeleteAppVersionCmd) ParseFlag(f Flag) {
+	f.BoolVarP(&c.DirectDelete, "direct_delete", "", false, "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
@@ -261,42 +803,7 @@ func (c *DeleteAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DeleteAppVersion(params)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
-type DeleteAppVersionsCmd struct {
-	*models.OpenpitrixDeleteAppVersionsRequest
-}
-
-func NewDeleteAppVersionsCmd() Cmd {
-	cmd := &DeleteAppVersionsCmd{}
-	cmd.OpenpitrixDeleteAppVersionsRequest = &models.OpenpitrixDeleteAppVersionsRequest{}
-	return cmd
-}
-
-func (*DeleteAppVersionsCmd) GetActionName() string {
-	return "DeleteAppVersions"
-}
-
-func (c *DeleteAppVersionsCmd) ParseFlag(f Flag) {
-	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
-}
-
-func (c *DeleteAppVersionsCmd) Run(out Out) error {
-	params := app_manager.NewDeleteAppVersionsParams()
-	params.WithBody(c.OpenpitrixDeleteAppVersionsRequest)
-
-	out.WriteRequest(params)
-
-	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DeleteAppVersions(params)
+	res, err := client.AppManager.DeleteAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -322,6 +829,7 @@ func (*DeleteAppsCmd) GetActionName() string {
 
 func (c *DeleteAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
+	f.BoolVarP(&c.DirectDelete, "direct_delete", "", false, "")
 }
 
 func (c *DeleteAppsCmd) Run(out Out) error {
@@ -331,7 +839,7 @@ func (c *DeleteAppsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DeleteApps(params)
+	res, err := client.AppManager.DeleteApps(params, nil)
 	if err != nil {
 		return err
 	}
@@ -380,7 +888,7 @@ func (c *DescribeAppVersionsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeAppVersionsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DescribeAppVersions(c.DescribeAppVersionsParams)
+	res, err := client.AppManager.DescribeAppVersions(c.DescribeAppVersionsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -429,7 +937,7 @@ func (c *DescribeAppsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeAppsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.DescribeApps(c.DescribeAppsParams)
+	res, err := client.AppManager.DescribeApps(c.DescribeAppsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -461,7 +969,7 @@ func (c *GetAppStatisticsCmd) Run(out Out) error {
 	out.WriteRequest(c.GetAppStatisticsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.GetAppStatistics(c.GetAppStatisticsParams)
+	res, err := client.AppManager.GetAppStatistics(c.GetAppStatisticsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -495,7 +1003,7 @@ func (c *GetAppVersionPackageCmd) Run(out Out) error {
 	out.WriteRequest(c.GetAppVersionPackageParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.GetAppVersionPackage(c.GetAppVersionPackageParams)
+	res, err := client.AppManager.GetAppVersionPackage(c.GetAppVersionPackageParams, nil)
 	if err != nil {
 		return err
 	}
@@ -530,7 +1038,7 @@ func (c *GetAppVersionPackageFilesCmd) Run(out Out) error {
 	out.WriteRequest(c.GetAppVersionPackageFilesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.GetAppVersionPackageFiles(c.GetAppVersionPackageFilesParams)
+	res, err := client.AppManager.GetAppVersionPackageFiles(c.GetAppVersionPackageFilesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -579,7 +1087,7 @@ func (c *ModifyAppCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.ModifyApp(params)
+	res, err := client.AppManager.ModifyApp(params, nil)
 	if err != nil {
 		return err
 	}
@@ -635,7 +1143,7 @@ func (c *ModifyAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.ModifyAppVersion(params)
+	res, err := client.AppManager.ModifyAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -670,7 +1178,7 @@ func (c *PassAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.PassAppVersion(params)
+	res, err := client.AppManager.PassAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -705,7 +1213,7 @@ func (c *RecoverAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.RecoverAppVersion(params)
+	res, err := client.AppManager.RecoverAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -730,6 +1238,7 @@ func (*RejectAppVersionCmd) GetActionName() string {
 }
 
 func (c *RejectAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Message, "message", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
@@ -740,7 +1249,7 @@ func (c *RejectAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.RejectAppVersion(params)
+	res, err := client.AppManager.RejectAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -775,7 +1284,7 @@ func (c *ReleaseAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.ReleaseAppVersion(params)
+	res, err := client.AppManager.ReleaseAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -810,7 +1319,7 @@ func (c *SubmitAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.SubmitAppVersion(params)
+	res, err := client.AppManager.SubmitAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -845,7 +1354,7 @@ func (c *SuspendAppVersionCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.AppManager.SuspendAppVersion(params)
+	res, err := client.AppManager.SuspendAppVersion(params, nil)
 	if err != nil {
 		return err
 	}
@@ -882,7 +1391,7 @@ func (c *CreateCategoryCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.CategoryManager.CreateCategory(params)
+	res, err := client.CategoryManager.CreateCategory(params, nil)
 	if err != nil {
 		return err
 	}
@@ -917,7 +1426,7 @@ func (c *DeleteCategoriesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.CategoryManager.DeleteCategories(params)
+	res, err := client.CategoryManager.DeleteCategories(params, nil)
 	if err != nil {
 		return err
 	}
@@ -962,7 +1471,7 @@ func (c *DescribeCategoriesCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeCategoriesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.CategoryManager.DescribeCategories(c.DescribeCategoriesParams)
+	res, err := client.CategoryManager.DescribeCategories(c.DescribeCategoriesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1000,7 +1509,7 @@ func (c *ModifyCategoryCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.CategoryManager.ModifyCategory(params)
+	res, err := client.CategoryManager.ModifyCategory(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1037,7 +1546,7 @@ func (c *AddClusterNodesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.AddClusterNodes(params)
+	res, err := client.ClusterManager.AddClusterNodes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1073,7 +1582,7 @@ func (c *AttachKeyPairsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.AttachKeyPairs(params)
+	res, err := client.ClusterManager.AttachKeyPairs(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1109,7 +1618,7 @@ func (c *CeaseClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.CeaseClusters(params)
+	res, err := client.ClusterManager.CeaseClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1148,7 +1657,7 @@ func (c *CreateClusterCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.CreateCluster(params)
+	res, err := client.ClusterManager.CreateCluster(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1185,7 +1694,7 @@ func (c *CreateKeyPairCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.CreateKeyPair(params)
+	res, err := client.ClusterManager.CreateKeyPair(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1222,7 +1731,7 @@ func (c *DeleteClusterNodesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DeleteClusterNodes(params)
+	res, err := client.ClusterManager.DeleteClusterNodes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1258,7 +1767,7 @@ func (c *DeleteClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DeleteClusters(params)
+	res, err := client.ClusterManager.DeleteClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1293,7 +1802,7 @@ func (c *DeleteKeyPairsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DeleteKeyPairs(params)
+	res, err := client.ClusterManager.DeleteKeyPairs(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1325,6 +1834,7 @@ func (c *DescribeClusterNodesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.NodeID, "node_id", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -1339,7 +1849,7 @@ func (c *DescribeClusterNodesCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeClusterNodesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DescribeClusterNodes(c.DescribeClusterNodesParams)
+	res, err := client.ClusterManager.DescribeClusterNodes(c.DescribeClusterNodesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1366,6 +1876,8 @@ func (*DescribeClustersCmd) GetActionName() string {
 func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "")
+	c.ClusterType = new(string)
+	f.StringVarP(c.ClusterType, "cluster_type", "", "", "")
 	c.ExternalClusterID = new(string)
 	f.StringVarP(c.ExternalClusterID, "external_cluster_id", "", "", "")
 	f.StringSliceVarP(&c.FrontgateID, "frontgate_id", "", []string{}, "")
@@ -1373,6 +1885,7 @@ func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "")
@@ -1389,7 +1902,7 @@ func (c *DescribeClustersCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeClustersParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DescribeClusters(c.DescribeClustersParams)
+	res, err := client.ClusterManager.DescribeClusters(c.DescribeClustersParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1424,8 +1937,7 @@ func (c *DescribeKeyPairsCmd) ParseFlag(f Flag) {
 	f.StringVarP(c.Name, "name", "", "", "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "")
-	c.Owner = new(string)
-	f.StringVarP(c.Owner, "owner", "", "", "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.PubKey = new(string)
 	f.StringVarP(c.PubKey, "pub_key", "", "", "")
 	c.SearchWord = new(string)
@@ -1437,7 +1949,7 @@ func (c *DescribeKeyPairsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeKeyPairsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DescribeKeyPairs(c.DescribeKeyPairsParams)
+	res, err := client.ClusterManager.DescribeKeyPairs(c.DescribeKeyPairsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1480,7 +1992,7 @@ func (c *DescribeSubnetsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeSubnetsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DescribeSubnets(c.DescribeSubnetsParams)
+	res, err := client.ClusterManager.DescribeSubnets(c.DescribeSubnetsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1516,7 +2028,7 @@ func (c *DetachKeyPairsCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.DetachKeyPairs(params)
+	res, err := client.ClusterManager.DetachKeyPairs(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1548,7 +2060,7 @@ func (c *GetClusterStatisticsCmd) Run(out Out) error {
 	out.WriteRequest(c.GetClusterStatisticsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.GetClusterStatistics(c.GetClusterStatisticsParams)
+	res, err := client.ClusterManager.GetClusterStatistics(c.GetClusterStatisticsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1585,7 +2097,7 @@ func (c *ModifyClusterAttributesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.ModifyClusterAttributes(params)
+	res, err := client.ClusterManager.ModifyClusterAttributes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1621,7 +2133,7 @@ func (c *ModifyClusterNodeAttributesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.ModifyClusterNodeAttributes(params)
+	res, err := client.ClusterManager.ModifyClusterNodeAttributes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1657,7 +2169,7 @@ func (c *RecoverClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.RecoverClusters(params)
+	res, err := client.ClusterManager.RecoverClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1693,7 +2205,7 @@ func (c *ResizeClusterCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.ResizeCluster(params)
+	res, err := client.ClusterManager.ResizeCluster(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1729,7 +2241,7 @@ func (c *RollbackClusterCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.RollbackCluster(params)
+	res, err := client.ClusterManager.RollbackCluster(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1765,7 +2277,7 @@ func (c *StartClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.StartClusters(params)
+	res, err := client.ClusterManager.StartClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1801,7 +2313,7 @@ func (c *StopClustersCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.StopClusters(params)
+	res, err := client.ClusterManager.StopClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1838,7 +2350,7 @@ func (c *UpdateClusterEnvCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.UpdateClusterEnv(params)
+	res, err := client.ClusterManager.UpdateClusterEnv(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1875,7 +2387,7 @@ func (c *UpgradeClusterCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.ClusterManager.UpgradeCluster(params)
+	res, err := client.ClusterManager.UpgradeCluster(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1911,6 +2423,7 @@ func (c *DescribeJobsCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Provider = new(string)
 	f.StringVarP(c.Provider, "provider", "", "", "")
 	c.RuntimeID = new(string)
@@ -1927,7 +2440,7 @@ func (c *DescribeJobsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeJobsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.JobManager.DescribeJobs(c.DescribeJobsParams)
+	res, err := client.JobManager.DescribeJobs(c.DescribeJobsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1967,7 +2480,7 @@ func (c *DescribeRepoEventsCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeRepoEventsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoIndexer.DescribeRepoEvents(c.DescribeRepoEventsParams)
+	res, err := client.RepoIndexer.DescribeRepoEvents(c.DescribeRepoEventsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2002,7 +2515,7 @@ func (c *IndexRepoCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoIndexer.IndexRepo(params)
+	res, err := client.RepoIndexer.IndexRepo(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2027,6 +2540,7 @@ func (*CreateRepoCmd) GetActionName() string {
 }
 
 func (c *CreateRepoCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.AppDefaultStatus, "app_default_status", "", "", "")
 	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
 	f.StringVarP(&c.Credential, "credential", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
@@ -2046,7 +2560,7 @@ func (c *CreateRepoCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.CreateRepo(params)
+	res, err := client.RepoManager.CreateRepo(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2081,7 +2595,7 @@ func (c *DeleteReposCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.DeleteRepos(params)
+	res, err := client.RepoManager.DeleteRepos(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2106,6 +2620,7 @@ func (*DescribeReposCmd) GetActionName() string {
 }
 
 func (c *DescribeReposCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppDefaultStatus, "app_default_status", "", []string{}, "")
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "")
 	c.Label = new(string)
 	f.StringVarP(c.Label, "label", "", "", "")
@@ -2114,6 +2629,7 @@ func (c *DescribeReposCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
 	c.Reverse = new(bool)
@@ -2126,6 +2642,8 @@ func (c *DescribeReposCmd) ParseFlag(f Flag) {
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
 	f.StringSliceVarP(&c.Type, "type", "", []string{}, "")
+	c.UserID = new(string)
+	f.StringVarP(c.UserID, "user_id", "", "", "")
 	f.StringSliceVarP(&c.Visibility, "visibility", "", []string{}, "")
 }
 
@@ -2134,7 +2652,7 @@ func (c *DescribeReposCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeReposParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.DescribeRepos(c.DescribeReposParams)
+	res, err := client.RepoManager.DescribeRepos(c.DescribeReposParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2159,6 +2677,7 @@ func (*ModifyRepoCmd) GetActionName() string {
 }
 
 func (c *ModifyRepoCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.AppDefaultStatus, "app_default_status", "", "", "")
 	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
 	f.StringVarP(&c.Credential, "credential", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
@@ -2179,7 +2698,7 @@ func (c *ModifyRepoCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.ModifyRepo(params)
+	res, err := client.RepoManager.ModifyRepo(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2217,7 +2736,7 @@ func (c *ValidateRepoCmd) Run(out Out) error {
 	out.WriteRequest(c.ValidateRepoParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RepoManager.ValidateRepo(c.ValidateRepoParams)
+	res, err := client.RepoManager.ValidateRepo(c.ValidateRepoParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2258,7 +2777,7 @@ func (c *CreateRuntimeCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.CreateRuntime(params)
+	res, err := client.RuntimeManager.CreateRuntime(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2293,7 +2812,7 @@ func (c *DeleteRuntimesCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.DeleteRuntimes(params)
+	res, err := client.RuntimeManager.DeleteRuntimes(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2331,7 +2850,7 @@ func (c *DescribeRuntimeProviderZonesCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeRuntimeProviderZonesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.DescribeRuntimeProviderZones(c.DescribeRuntimeProviderZonesParams)
+	res, err := client.RuntimeManager.DescribeRuntimeProviderZones(c.DescribeRuntimeProviderZonesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2375,7 +2894,7 @@ func (c *DescribeRuntimesCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeRuntimesParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.DescribeRuntimes(c.DescribeRuntimesParams)
+	res, err := client.RuntimeManager.DescribeRuntimes(c.DescribeRuntimesParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2407,7 +2926,7 @@ func (c *GetRuntimeStatisticsCmd) Run(out Out) error {
 	out.WriteRequest(c.GetRuntimeStatisticsParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.GetRuntimeStatistics(c.GetRuntimeStatisticsParams)
+	res, err := client.RuntimeManager.GetRuntimeStatistics(c.GetRuntimeStatisticsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2446,7 +2965,7 @@ func (c *ModifyRuntimeCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.RuntimeManager.ModifyRuntime(params)
+	res, err := client.RuntimeManager.ModifyRuntime(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2478,6 +2997,7 @@ func (c *DescribeTasksCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
@@ -2491,7 +3011,7 @@ func (c *DescribeTasksCmd) Run(out Out) error {
 	out.WriteRequest(c.DescribeTasksParams)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.TaskManager.DescribeTasks(c.DescribeTasksParams)
+	res, err := client.TaskManager.DescribeTasks(c.DescribeTasksParams, nil)
 	if err != nil {
 		return err
 	}
@@ -2526,7 +3046,83 @@ func (c *RetryTasksCmd) Run(out Out) error {
 	out.WriteRequest(params)
 
 	client := test.GetClient(clientConfig)
-	res, err := client.TaskManager.RetryTasks(params)
+	res, err := client.TaskManager.RetryTasks(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateClientCmd struct {
+	*models.OpenpitrixCreateClientRequest
+}
+
+func NewCreateClientCmd() Cmd {
+	cmd := &CreateClientCmd{}
+	cmd.OpenpitrixCreateClientRequest = &models.OpenpitrixCreateClientRequest{}
+	return cmd
+}
+
+func (*CreateClientCmd) GetActionName() string {
+	return "CreateClient"
+}
+
+func (c *CreateClientCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+}
+
+func (c *CreateClientCmd) Run(out Out) error {
+	params := token_manager.NewCreateClientParams()
+	params.WithBody(c.OpenpitrixCreateClientRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.TokenManager.CreateClient(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type TokenCmd struct {
+	*models.OpenpitrixTokenRequest
+}
+
+func NewTokenCmd() Cmd {
+	cmd := &TokenCmd{}
+	cmd.OpenpitrixTokenRequest = &models.OpenpitrixTokenRequest{}
+	return cmd
+}
+
+func (*TokenCmd) GetActionName() string {
+	return "Token"
+}
+
+func (c *TokenCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.ClientID, "client_id", "", "", "")
+	f.StringVarP(&c.ClientSecret, "client_secret", "", "", "")
+	f.StringVarP(&c.GrantType, "grant_type", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.RefreshToken, "refresh_token", "", "", "")
+	f.StringVarP(&c.Scope, "scope", "", "", "")
+	f.StringVarP(&c.Username, "username", "", "", "")
+}
+
+func (c *TokenCmd) Run(out Out) error {
+	params := token_manager.NewTokenParams()
+	params.WithBody(c.OpenpitrixTokenRequest)
+
+	out.WriteRequest(params)
+
+	client := test.GetClient(clientConfig)
+	res, err := client.TokenManager.Token(params)
 	if err != nil {
 		return err
 	}

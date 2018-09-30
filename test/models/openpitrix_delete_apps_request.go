@@ -18,6 +18,9 @@ type OpenpitrixDeleteAppsRequest struct {
 
 	// app id
 	AppID []string `json:"app_id"`
+
+	// direct delete
+	DirectDelete bool `json:"direct_delete,omitempty"`
 }
 
 // Validate validates this openpitrix delete apps request

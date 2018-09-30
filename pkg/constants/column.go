@@ -9,6 +9,7 @@ const (
 	ColumnCategoryId       = "category_id"
 	ColumnChartName        = "chart_name"
 	ColumnClusterId        = "cluster_id"
+	ColumnClusterType      = "cluster_type"
 	ColumnCreateTime       = "create_time"
 	ColumnCredential       = "credential"
 	ColumnDescription      = "description"
@@ -26,6 +27,7 @@ const (
 	ColumnMaintainers      = "maintainers"
 	ColumnName             = "name"
 	ColumnNodeId           = "node_id"
+	ColumnKeyPairId        = "key_pair_id"
 	ColumnOwner            = "owner"
 	ColumnPackageName      = "package_name"
 	ColumnPrivateIp        = "private_ip"
@@ -57,12 +59,26 @@ const (
 	ColumnVisibility       = "visibility"
 	ColumnVolumeId         = "volume_id"
 	ColumnZone             = "zone"
+
+	ColumnUserId       = "user_id"
+	ColumnGroupId      = "group_id"
+	ColumnResetId      = "reset_id"
+	ColumnPassword     = "password"
+	ColumnEmail        = "email"
+	ColumnClientId     = "client_id"
+	ColumnClientSecret = "client_secret"
+	ColumnRefreshToken = "refresh_token"
+	ColumnAccessToken  = "access_token"
+	ColumnTokenId      = "token_id"
+	ColumnScope        = "scope"
+	ColumnUsername     = "username"
+
+	ColumnMessage = "message"
+
+	ColumnAppDefaultStatus = "app_default_status"
 )
 
 var PushEventTables = map[string][]string{
-	TableRepo: {
-		ColumnRepoId, ColumnStatus, ColumnTransitionStatus,
-	},
 	TableRepoEvent: {
 		ColumnRepoEventId, ColumnRepoId, ColumnStatus,
 	},
@@ -96,7 +112,7 @@ var IndexedColumns = map[string][]string{
 		ColumnJobId, ColumnTaskId, ColumnExecutor, ColumnStatus, ColumnOwner,
 	},
 	TableRepo: {
-		ColumnRepoId, ColumnName, ColumnType, ColumnVisibility, ColumnStatus,
+		ColumnRepoId, ColumnName, ColumnType, ColumnVisibility, ColumnStatus, ColumnAppDefaultStatus, ColumnOwner,
 	},
 	TableRuntime: {
 		ColumnRuntimeId, ColumnProvider, ColumnZone, ColumnStatus, ColumnOwner,
@@ -108,17 +124,20 @@ var IndexedColumns = map[string][]string{
 		ColumnRepoId, ColumnRepoSelectorId, ColumnStatus,
 	},
 	TableRepoEvent: {
-		ColumnRepoEventId, ColumnRepoId, ColumnStatus,
+		ColumnRepoEventId, ColumnRepoId, ColumnStatus, ColumnOwner,
 	},
 	TableCluster: {
 		ColumnClusterId, ColumnAppId, ColumnVersionId, ColumnStatus,
-		ColumnRuntimeId, ColumnFrontgateId, ColumnOwner,
+		ColumnRuntimeId, ColumnFrontgateId, ColumnOwner, ColumnClusterType,
 	},
 	TableClusterNode: {
 		ColumnClusterId, ColumnNodeId, ColumnStatus, ColumnOwner,
 	},
 	TableCategory: {
 		ColumnCategoryId, ColumnStatus, ColumnLocale, ColumnOwner, ColumnName,
+	},
+	TableUser: {
+		ColumnGroupId, ColumnUserId, ColumnStatus, ColumnRole,
 	},
 }
 
@@ -131,6 +150,7 @@ var SearchWordColumnTable = []string{
 	TableTask,
 	TableCluster,
 	TableClusterNode,
+	TableUser,
 }
 
 // columns that can be search through sql 'like' operator
@@ -158,5 +178,8 @@ var SearchColumns = map[string][]string{
 	},
 	TableRepo: {
 		ColumnName, ColumnDescription,
+	},
+	TableUser: {
+		ColumnUserId, ColumnDescription, ColumnEmail, ColumnUsername,
 	},
 }

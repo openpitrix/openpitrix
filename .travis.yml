@@ -6,8 +6,20 @@ services:
 language: go
 go:
 - '1.10'
+- '1.11'
 go_import_path: openpitrix.io/openpitrix
+addons:
+  apt:
+    packages:
+      - docker-ce
 before_install:
+# Install nsenter.
+- sudo docker run -d -it --name nsenter ubuntu:16.04 bash
+- sudo docker cp nsenter:/usr/bin/nsenter /usr/local/bin/nsenter
+- sudo docker stop nsenter && sudo docker rm nsenter
+# Install docker-compose.
+- sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+- sudo chmod +x /usr/local/bin/docker-compose
 # Download kubectl, which is a requirement for using minikube.
 - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.10.0/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
 # Download minikube.
@@ -17,11 +29,23 @@ before_install:
 - minikube update-context
 # Wait for Kubernetes to be up and ready.
 - JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'; until kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do sleep 1; done
+# Install helm.
+- DESIRED_VERSION=2.9.1 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | DESIRED_VERSION=v2.9.1 bash
+# Install tiller.
+- ./deploy/kubernetes/scripts/init-helm.sh
+# Wait for tiller to be up and ready.
+- until helm list -a; do sleep 1; done
 before_script:
 - docker --version
+- docker-compose --version
 - kubectl cluster-info
+- make fmt-check
+- docker build -t openpitrix -f ./Dockerfile .
+- docker build -t openpitrix:metadata -f ./Dockerfile.metadata .
+- make compose-up
+- sleep 20
 script:
-- make ci-test
+- make unit-test && travis_wait 30 make e2e-test
 before_deploy:
 - make clean
 - make release-openpitrix-$TRAVIS_TAG
