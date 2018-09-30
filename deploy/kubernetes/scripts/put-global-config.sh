@@ -47,7 +47,7 @@ if [ ! -z "${PILOT_PORT}" ]; then
   sed -i -e "s/${OLD_PILOT_PORT}/ ${PILOT_PORT}/g" config/global_config.yaml
 fi
 
-cat config/global_config.yaml | kubectl run --restart=Never --quiet --rm -i test --image=openpitrix/openpitrix:latest -- opctl validate_global_config
+cat config/global_config.yaml | kubectl run --namespace=${NAMESPACE} --restart=Never --quiet --rm -i test --image=openpitrix/openpitrix:latest -- opctl validate_global_config
 
 if [[ $? != 0 ]]; then exit 1; fi
 
