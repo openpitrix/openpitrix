@@ -19,10 +19,10 @@ import (
 	appsv1beta2 "k8s.io/api/apps/v1beta2"
 	exv1beta1 "k8s.io/api/extensions/v1beta1"
 	k8syaml "k8s.io/apimachinery/pkg/util/yaml"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/helm/pkg/chartutil"
 	"k8s.io/helm/pkg/engine"
 	"k8s.io/helm/pkg/proto/hapi/chart"
-	"k8s.io/kubernetes/pkg/api/legacyscheme"
 	_ "k8s.io/kubernetes/pkg/apis/apps/install"
 	_ "k8s.io/kubernetes/pkg/apis/extensions/install"
 
@@ -105,7 +105,7 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 	}
 
 	var apiVersions []string
-	decode := legacyscheme.Codecs.UniversalDeserializer().Decode
+	decode := scheme.Codecs.UniversalDeserializer().Decode
 
 	clusterRoles := map[string]*models.ClusterRole{}
 	clusterCommons := map[string]*models.ClusterCommon{}
@@ -485,6 +485,8 @@ func (p *Parser) parseValues(customVals map[string]interface{}, name string) (ma
 	if err != nil {
 		return nil, err
 	}
+
+	logger.Debug(p.ctx, "Parsed values: %+v", vals)
 
 	return vals, nil
 }
