@@ -44,7 +44,7 @@ func NewUpgradeClusterOK() *UpgradeClusterOK {
 
 /*UpgradeClusterOK handles this case with default header values.
 
-UpgradeClusterOK upgrade cluster o k
+A successful response.
 */
 type UpgradeClusterOK struct {
 	Payload *models.OpenpitrixUpgradeClusterResponse

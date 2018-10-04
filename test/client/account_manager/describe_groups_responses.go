@@ -44,7 +44,7 @@ func NewDescribeGroupsOK() *DescribeGroupsOK {
 
 /*DescribeGroupsOK handles this case with default header values.
 
-DescribeGroupsOK describe groups o k
+A successful response.
 */
 type DescribeGroupsOK struct {
 	Payload *models.OpenpitrixDescribeGroupsResponse

@@ -44,7 +44,7 @@ func NewDeleteGroupsOK() *DeleteGroupsOK {
 
 /*DeleteGroupsOK handles this case with default header values.
 
-DeleteGroupsOK delete groups o k
+A successful response.
 */
 type DeleteGroupsOK struct {
 	Payload *models.OpenpitrixDeleteGroupsResponse

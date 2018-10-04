@@ -69,7 +69,7 @@ generate-in-local: ## Generate code from protobuf file in local
 	cd ./pkg/apigateway && make
 
 .PHONY: generate
-generate: generate-global-config ## Generate code from protobuf file in docker
+generate: update-builder generate-global-config ## Generate code from protobuf file in docker
 	$(RUN_IN_DOCKER) make generate-in-local
 	@echo "generate done"
 

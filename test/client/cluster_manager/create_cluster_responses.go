@@ -44,7 +44,7 @@ func NewCreateClusterOK() *CreateClusterOK {
 
 /*CreateClusterOK handles this case with default header values.
 
-CreateClusterOK create cluster o k
+A successful response.
 */
 type CreateClusterOK struct {
 	Payload *models.OpenpitrixCreateClusterResponse

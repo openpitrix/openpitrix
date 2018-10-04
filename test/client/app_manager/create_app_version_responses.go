@@ -44,7 +44,7 @@ func NewCreateAppVersionOK() *CreateAppVersionOK {
 
 /*CreateAppVersionOK handles this case with default header values.
 
-CreateAppVersionOK create app version o k
+A successful response.
 */
 type CreateAppVersionOK struct {
 	Payload *models.OpenpitrixCreateAppVersionResponse

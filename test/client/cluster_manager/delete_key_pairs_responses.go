@@ -44,7 +44,7 @@ func NewDeleteKeyPairsOK() *DeleteKeyPairsOK {
 
 /*DeleteKeyPairsOK handles this case with default header values.
 
-DeleteKeyPairsOK delete key pairs o k
+A successful response.
 */
 type DeleteKeyPairsOK struct {
 	Payload *models.OpenpitrixDeleteKeyPairsResponse

@@ -44,7 +44,7 @@ func NewCreateKeyPairOK() *CreateKeyPairOK {
 
 /*CreateKeyPairOK handles this case with default header values.
 
-CreateKeyPairOK create key pair o k
+A successful response.
 */
 type CreateKeyPairOK struct {
 	Payload *models.OpenpitrixCreateKeyPairResponse

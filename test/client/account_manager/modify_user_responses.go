@@ -44,7 +44,7 @@ func NewModifyUserOK() *ModifyUserOK {
 
 /*ModifyUserOK handles this case with default header values.
 
-ModifyUserOK modify user o k
+A successful response.
 */
 type ModifyUserOK struct {
 	Payload *models.OpenpitrixModifyUserResponse

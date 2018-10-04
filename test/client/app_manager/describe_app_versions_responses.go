@@ -44,7 +44,7 @@ func NewDescribeAppVersionsOK() *DescribeAppVersionsOK {
 
 /*DescribeAppVersionsOK handles this case with default header values.
 
-DescribeAppVersionsOK describe app versions o k
+A successful response.
 */
 type DescribeAppVersionsOK struct {
 	Payload *models.OpenpitrixDescribeAppVersionsResponse

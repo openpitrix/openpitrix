@@ -44,7 +44,7 @@ func NewGetAppStatisticsOK() *GetAppStatisticsOK {
 
 /*GetAppStatisticsOK handles this case with default header values.
 
-GetAppStatisticsOK get app statistics o k
+A successful response.
 */
 type GetAppStatisticsOK struct {
 	Payload *models.OpenpitrixGetAppStatisticsResponse

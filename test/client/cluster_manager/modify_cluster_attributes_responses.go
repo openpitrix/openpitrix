@@ -44,7 +44,7 @@ func NewModifyClusterAttributesOK() *ModifyClusterAttributesOK {
 
 /*ModifyClusterAttributesOK handles this case with default header values.
 
-ModifyClusterAttributesOK modify cluster attributes o k
+A successful response.
 */
 type ModifyClusterAttributesOK struct {
 	Payload *models.OpenpitrixModifyClusterAttributesResponse

@@ -44,7 +44,7 @@ func NewUpdateClusterEnvOK() *UpdateClusterEnvOK {
 
 /*UpdateClusterEnvOK handles this case with default header values.
 
-UpdateClusterEnvOK update cluster env o k
+A successful response.
 */
 type UpdateClusterEnvOK struct {
 	Payload *models.OpenpitrixUpdateClusterEnvResponse

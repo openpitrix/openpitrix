@@ -44,7 +44,7 @@ func NewValidateRepoOK() *ValidateRepoOK {
 
 /*ValidateRepoOK handles this case with default header values.
 
-ValidateRepoOK validate repo o k
+A successful response.
 */
 type ValidateRepoOK struct {
 	Payload *models.OpenpitrixValidateRepoResponse

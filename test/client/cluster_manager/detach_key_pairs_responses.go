@@ -44,7 +44,7 @@ func NewDetachKeyPairsOK() *DetachKeyPairsOK {
 
 /*DetachKeyPairsOK handles this case with default header values.
 
-DetachKeyPairsOK detach key pairs o k
+A successful response.
 */
 type DetachKeyPairsOK struct {
 	Payload *models.OpenpitrixDetachKeyPairsResponse
