@@ -44,7 +44,7 @@ func NewDeleteCategoriesOK() *DeleteCategoriesOK {
 
 /*DeleteCategoriesOK handles this case with default header values.
 
-DeleteCategoriesOK delete categories o k
+A successful response.
 */
 type DeleteCategoriesOK struct {
 	Payload *models.OpenpitrixDeleteCategoriesResponse

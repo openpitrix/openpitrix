@@ -44,7 +44,7 @@ func NewModifyAppOK() *ModifyAppOK {
 
 /*ModifyAppOK handles this case with default header values.
 
-ModifyAppOK modify app o k
+A successful response.
 */
 type ModifyAppOK struct {
 	Payload *models.OpenpitrixModifyAppResponse

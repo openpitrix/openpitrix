@@ -44,7 +44,7 @@ func NewDeleteReposOK() *DeleteReposOK {
 
 /*DeleteReposOK handles this case with default header values.
 
-DeleteReposOK delete repos o k
+A successful response.
 */
 type DeleteReposOK struct {
 	Payload *models.OpenpitrixDeleteReposResponse

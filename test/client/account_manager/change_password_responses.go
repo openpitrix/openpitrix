@@ -44,7 +44,7 @@ func NewChangePasswordOK() *ChangePasswordOK {
 
 /*ChangePasswordOK handles this case with default header values.
 
-ChangePasswordOK change password o k
+A successful response.
 */
 type ChangePasswordOK struct {
 	Payload *models.OpenpitrixChangePasswordResponse

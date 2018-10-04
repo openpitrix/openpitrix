@@ -44,7 +44,7 @@ func NewSubmitAppVersionOK() *SubmitAppVersionOK {
 
 /*SubmitAppVersionOK handles this case with default header values.
 
-SubmitAppVersionOK submit app version o k
+A successful response.
 */
 type SubmitAppVersionOK struct {
 	Payload *models.OpenpitrixSubmitAppVersionResponse

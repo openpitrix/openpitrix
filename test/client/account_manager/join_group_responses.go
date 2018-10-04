@@ -44,7 +44,7 @@ func NewJoinGroupOK() *JoinGroupOK {
 
 /*JoinGroupOK handles this case with default header values.
 
-JoinGroupOK join group o k
+A successful response.
 */
 type JoinGroupOK struct {
 	Payload *models.OpenpitrixJoinGroupResponse

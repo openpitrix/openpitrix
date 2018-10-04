@@ -44,7 +44,7 @@ func NewAttachKeyPairsOK() *AttachKeyPairsOK {
 
 /*AttachKeyPairsOK handles this case with default header values.
 
-AttachKeyPairsOK attach key pairs o k
+A successful response.
 */
 type AttachKeyPairsOK struct {
 	Payload *models.OpenpitrixAttachKeyPairsResponse

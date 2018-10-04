@@ -44,7 +44,7 @@ func NewDescribeKeyPairsOK() *DescribeKeyPairsOK {
 
 /*DescribeKeyPairsOK handles this case with default header values.
 
-DescribeKeyPairsOK describe key pairs o k
+A successful response.
 */
 type DescribeKeyPairsOK struct {
 	Payload *models.OpenpitrixDescribeKeyPairsResponse

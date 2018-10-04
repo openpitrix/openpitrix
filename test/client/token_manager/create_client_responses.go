@@ -44,7 +44,7 @@ func NewCreateClientOK() *CreateClientOK {
 
 /*CreateClientOK handles this case with default header values.
 
-CreateClientOK create client o k
+A successful response.
 */
 type CreateClientOK struct {
 	Payload *models.OpenpitrixCreateClientResponse

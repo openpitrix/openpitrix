@@ -44,7 +44,7 @@ func NewModifyRuntimeOK() *ModifyRuntimeOK {
 
 /*ModifyRuntimeOK handles this case with default header values.
 
-ModifyRuntimeOK modify runtime o k
+A successful response.
 */
 type ModifyRuntimeOK struct {
 	Payload *models.OpenpitrixModifyRuntimeResponse

@@ -44,7 +44,7 @@ func NewPassAppVersionOK() *PassAppVersionOK {
 
 /*PassAppVersionOK handles this case with default header values.
 
-PassAppVersionOK pass app version o k
+A successful response.
 */
 type PassAppVersionOK struct {
 	Payload *models.OpenpitrixPassAppVersionResponse

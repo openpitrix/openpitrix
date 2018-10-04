@@ -44,7 +44,7 @@ func NewCreateCategoryOK() *CreateCategoryOK {
 
 /*CreateCategoryOK handles this case with default header values.
 
-CreateCategoryOK create category o k
+A successful response.
 */
 type CreateCategoryOK struct {
 	Payload *models.OpenpitrixCreateCategoryResponse

@@ -44,7 +44,7 @@ func NewGetRuntimeStatisticsOK() *GetRuntimeStatisticsOK {
 
 /*GetRuntimeStatisticsOK handles this case with default header values.
 
-GetRuntimeStatisticsOK get runtime statistics o k
+A successful response.
 */
 type GetRuntimeStatisticsOK struct {
 	Payload *models.OpenpitrixGetRuntimeStatisticsResponse

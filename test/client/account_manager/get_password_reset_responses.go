@@ -44,7 +44,7 @@ func NewGetPasswordResetOK() *GetPasswordResetOK {
 
 /*GetPasswordResetOK handles this case with default header values.
 
-GetPasswordResetOK get password reset o k
+A successful response.
 */
 type GetPasswordResetOK struct {
 	Payload *models.OpenpitrixGetPasswordResetResponse

@@ -44,7 +44,7 @@ func NewReleaseAppVersionOK() *ReleaseAppVersionOK {
 
 /*ReleaseAppVersionOK handles this case with default header values.
 
-ReleaseAppVersionOK release app version o k
+A successful response.
 */
 type ReleaseAppVersionOK struct {
 	Payload *models.OpenpitrixReleaseAppVersionResponse
