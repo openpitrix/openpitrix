@@ -241,7 +241,8 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 	}
 
 	_, err = pi.Global().DB(ctx).
-		Update(constants.TableUser).Set(constants.ColumnPassword, string(hashedPass)).
+		Update(constants.TableUser).
+		Set(constants.ColumnPassword, string(hashedPass)).
 		Where(db.Eq(constants.ColumnUserId, resetInfo.UserId)).
 		Exec()
 	if err != nil {

@@ -26,10 +26,10 @@ type UserPasswordReset struct {
 
 var UserPasswordResetColumns = db.GetColumnsFromStruct(&UserPasswordReset{})
 
-func NewUserPasswordReset(user_id string) *UserPasswordReset {
+func NewUserPasswordReset(userId string) *UserPasswordReset {
 	return &UserPasswordReset{
 		ResetId:    NewUserPasswordResetId(),
-		UserId:     user_id,
+		UserId:     userId,
 		Status:     constants.StatusActive,
 		CreateTime: time.Now(),
 	}
