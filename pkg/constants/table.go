@@ -34,4 +34,7 @@ const (
 	TableGroup             = "group"
 	TableUserClient        = "user_client"
 	TableToken             = "token"
+
+	TableMarket     = "market"
+	TableMarketUser = "market_user"
 )
