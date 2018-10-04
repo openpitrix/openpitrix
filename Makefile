@@ -7,7 +7,8 @@ TRAG.Gopkg:=openpitrix.io/openpitrix
 TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 
 DOCKER_TAGS=latest
-RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` openpitrix/openpitrix-builder
+BUILDER_IMAGE=openpitrix/openpitrix-builder:release-v0.2.3
+RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
 GO_FILES:=./cmd ./test ./pkg
 DB_TEST:=OP_DB_UNIT_TEST=1 OPENPITRIX_MYSQL_HOST=127.0.0.1 OPENPITRIX_MYSQL_PORT=13306
@@ -60,7 +61,7 @@ update-vendor: ## Update dependence
 
 .PHONY: update-builder
 update-builder: ## Pull openpitrix-builder image
-	docker pull openpitrix/openpitrix-builder
+	docker pull $(BUILDER_IMAGE)
 	@echo "update-builder done"
 
 .PHONY: generate-in-local

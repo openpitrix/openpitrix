@@ -44,7 +44,7 @@ func NewIndexRepoOK() *IndexRepoOK {
 
 /*IndexRepoOK handles this case with default header values.
 
-IndexRepoOK index repo o k
+A successful response.
 */
 type IndexRepoOK struct {
 	Payload *models.OpenpitrixIndexRepoResponse

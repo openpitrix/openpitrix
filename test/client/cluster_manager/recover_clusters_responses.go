@@ -44,7 +44,7 @@ func NewRecoverClustersOK() *RecoverClustersOK {
 
 /*RecoverClustersOK handles this case with default header values.
 
-RecoverClustersOK recover clusters o k
+A successful response.
 */
 type RecoverClustersOK struct {
 	Payload *models.OpenpitrixRecoverClustersResponse

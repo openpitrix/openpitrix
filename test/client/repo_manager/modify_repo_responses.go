@@ -44,7 +44,7 @@ func NewModifyRepoOK() *ModifyRepoOK {
 
 /*ModifyRepoOK handles this case with default header values.
 
-ModifyRepoOK modify repo o k
+A successful response.
 */
 type ModifyRepoOK struct {
 	Payload *models.OpenpitrixModifyRepoResponse

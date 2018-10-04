@@ -44,7 +44,7 @@ func NewCreateUserOK() *CreateUserOK {
 
 /*CreateUserOK handles this case with default header values.
 
-CreateUserOK create user o k
+A successful response.
 */
 type CreateUserOK struct {
 	Payload *models.OpenpitrixCreateUserResponse

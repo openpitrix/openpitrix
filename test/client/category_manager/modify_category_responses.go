@@ -44,7 +44,7 @@ func NewModifyCategoryOK() *ModifyCategoryOK {
 
 /*ModifyCategoryOK handles this case with default header values.
 
-ModifyCategoryOK modify category o k
+A successful response.
 */
 type ModifyCategoryOK struct {
 	Payload *models.OpenpitrixModifyCategoryResponse

@@ -44,7 +44,7 @@ func NewDescribeSubnetsOK() *DescribeSubnetsOK {
 
 /*DescribeSubnetsOK handles this case with default header values.
 
-DescribeSubnetsOK describe subnets o k
+A successful response.
 */
 type DescribeSubnetsOK struct {
 	Payload *models.OpenpitrixDescribeSubnetsResponse

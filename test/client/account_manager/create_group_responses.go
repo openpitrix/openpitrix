@@ -44,7 +44,7 @@ func NewCreateGroupOK() *CreateGroupOK {
 
 /*CreateGroupOK handles this case with default header values.
 
-CreateGroupOK create group o k
+A successful response.
 */
 type CreateGroupOK struct {
 	Payload *models.OpenpitrixCreateGroupResponse

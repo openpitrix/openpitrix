@@ -25,7 +25,7 @@
         "operationId": "CancelAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCancelAppVersionResponse"
             }
@@ -52,7 +52,7 @@
         "operationId": "DeleteAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteAppVersionResponse"
             }
@@ -79,7 +79,7 @@
         "operationId": "PassAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixPassAppVersionResponse"
             }
@@ -106,7 +106,7 @@
         "operationId": "RecoverAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRecoverAppVersionResponse"
             }
@@ -133,7 +133,7 @@
         "operationId": "RejectAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
             }
@@ -160,7 +160,7 @@
         "operationId": "ReleaseAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixReleaseAppVersionResponse"
             }
@@ -187,7 +187,7 @@
         "operationId": "SubmitAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixSubmitAppVersionResponse"
             }
@@ -214,7 +214,7 @@
         "operationId": "SuspendAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixSuspendAppVersionResponse"
             }
@@ -241,7 +241,7 @@
         "operationId": "GetAppVersionPackage",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetAppVersionPackageResponse"
             }
@@ -266,7 +266,7 @@
         "operationId": "GetAppVersionPackageFiles",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetAppVersionPackageFilesResponse"
             }
@@ -301,7 +301,7 @@
         "operationId": "DescribeAppVersions",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeAppVersionsResponse"
             }
@@ -421,7 +421,7 @@
         "operationId": "CreateAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateAppVersionResponse"
             }
@@ -446,7 +446,7 @@
         "operationId": "ModifyAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyAppVersionResponse"
             }
@@ -473,7 +473,7 @@
         "operationId": "DescribeApps",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeAppsResponse"
             }
@@ -593,7 +593,7 @@
         "operationId": "DeleteApps",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteAppsResponse"
             }
@@ -618,7 +618,7 @@
         "operationId": "CreateApp",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateAppResponse"
             }
@@ -643,7 +643,7 @@
         "operationId": "ModifyApp",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyAppResponse"
             }
@@ -670,7 +670,7 @@
         "operationId": "GetAppStatistics",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetAppStatisticsResponse"
             }
@@ -687,7 +687,7 @@
         "operationId": "DescribeCategories",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeCategoriesResponse"
             }
@@ -767,7 +767,7 @@
         "operationId": "DeleteCategories",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteCategoriesResponse"
             }
@@ -792,7 +792,7 @@
         "operationId": "CreateCategory",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateCategoryResponse"
             }
@@ -817,7 +817,7 @@
         "operationId": "ModifyCategory",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyCategoryResponse"
             }
@@ -844,7 +844,7 @@
         "operationId": "DescribeClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeClustersResponse"
             }
@@ -978,7 +978,7 @@
         "operationId": "AddClusterNodes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixAddClusterNodesResponse"
             }
@@ -1005,7 +1005,7 @@
         "operationId": "CeaseClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCeaseClustersResponse"
             }
@@ -1032,7 +1032,7 @@
         "operationId": "CreateCluster",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateClusterResponse"
             }
@@ -1059,7 +1059,7 @@
         "operationId": "DeleteClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteClustersResponse"
             }
@@ -1086,7 +1086,7 @@
         "operationId": "DeleteClusterNodes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteClusterNodesResponse"
             }
@@ -1113,7 +1113,7 @@
         "operationId": "AttachKeyPairs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixAttachKeyPairsResponse"
             }
@@ -1140,7 +1140,7 @@
         "operationId": "DetachKeyPairs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDetachKeyPairsResponse"
             }
@@ -1167,7 +1167,7 @@
         "operationId": "DescribeKeyPairs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeKeyPairsResponse"
             }
@@ -1238,7 +1238,7 @@
         "operationId": "DeleteKeyPairs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteKeyPairsResponse"
             }
@@ -1263,7 +1263,7 @@
         "operationId": "CreateKeyPair",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateKeyPairResponse"
             }
@@ -1290,7 +1290,7 @@
         "operationId": "ModifyClusterAttributes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyClusterAttributesResponse"
             }
@@ -1317,7 +1317,7 @@
         "operationId": "ModifyClusterNodeAttributes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyClusterNodeAttributesResponse"
             }
@@ -1344,7 +1344,7 @@
         "operationId": "DescribeClusterNodes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeClusterNodesResponse"
             }
@@ -1432,7 +1432,7 @@
         "operationId": "RecoverClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRecoverClustersResponse"
             }
@@ -1459,7 +1459,7 @@
         "operationId": "ResizeCluster",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixResizeClusterResponse"
             }
@@ -1486,7 +1486,7 @@
         "operationId": "RollbackCluster",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRollbackClusterResponse"
             }
@@ -1513,7 +1513,7 @@
         "operationId": "StartClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixStartClustersResponse"
             }
@@ -1540,7 +1540,7 @@
         "operationId": "GetClusterStatistics",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetClusterStatisticsResponse"
             }
@@ -1557,7 +1557,7 @@
         "operationId": "StopClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixStopClustersResponse"
             }
@@ -1584,7 +1584,7 @@
         "operationId": "DescribeSubnets",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeSubnetsResponse"
             }
@@ -1660,7 +1660,7 @@
         "operationId": "UpdateClusterEnv",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixUpdateClusterEnvResponse"
             }
@@ -1687,7 +1687,7 @@
         "operationId": "UpgradeCluster",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixUpgradeClusterResponse"
             }
@@ -1713,7 +1713,7 @@
         "operationId": "DescribeGroups",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeGroupsResponse"
             }
@@ -1792,7 +1792,7 @@
         "operationId": "DeleteGroups",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteGroupsResponse"
             }
@@ -1817,7 +1817,7 @@
         "operationId": "CreateGroup",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateGroupResponse"
             }
@@ -1841,7 +1841,7 @@
         "operationId": "ModifyGroup",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyGroupResponse"
             }
@@ -1867,7 +1867,7 @@
         "operationId": "JoinGroup",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixJoinGroupResponse"
             }
@@ -1893,7 +1893,7 @@
         "operationId": "LeaveGroup",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixLeaveGroupResponse"
             }
@@ -1919,7 +1919,7 @@
         "operationId": "Token",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixTokenResponse"
             }
@@ -1946,7 +1946,7 @@
         "operationId": "CreateClient",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateClientResponse"
             }
@@ -1978,7 +1978,7 @@
         "operationId": "DescribeUsers",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeUsersResponse"
             }
@@ -2067,7 +2067,7 @@
         "operationId": "DeleteUsers",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteUsersResponse"
             }
@@ -2092,7 +2092,7 @@
         "operationId": "CreateUser",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateUserResponse"
             }
@@ -2116,7 +2116,7 @@
         "operationId": "ModifyUser",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyUserResponse"
             }
@@ -2142,7 +2142,7 @@
         "operationId": "GetPasswordReset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetPasswordResetResponse"
             }
@@ -2166,7 +2166,7 @@
         "operationId": "ChangePassword",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixChangePasswordResponse"
             }
@@ -2192,7 +2192,7 @@
         "operationId": "CreatePasswordReset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreatePasswordResetResponse"
             }
@@ -2218,7 +2218,7 @@
         "operationId": "ValidateUserPassword",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixValidateUserPasswordResponse"
             }
@@ -2245,7 +2245,7 @@
         "operationId": "DescribeJobs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeJobsResponse"
             }
@@ -2352,7 +2352,7 @@
         "operationId": "DescribeRepos",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeReposResponse"
             }
@@ -2510,7 +2510,7 @@
         "operationId": "DeleteRepos",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteReposResponse"
             }
@@ -2535,7 +2535,7 @@
         "operationId": "CreateRepo",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateRepoResponse"
             }
@@ -2560,7 +2560,7 @@
         "operationId": "ModifyRepo",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyRepoResponse"
             }
@@ -2587,7 +2587,7 @@
         "operationId": "ValidateRepo",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixValidateRepoResponse"
             }
@@ -2624,7 +2624,7 @@
         "operationId": "DescribeRepoEvents",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeRepoEventsResponse"
             }
@@ -2697,7 +2697,7 @@
         "operationId": "IndexRepo",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixIndexRepoResponse"
             }
@@ -2724,7 +2724,7 @@
         "operationId": "DescribeRuntimes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeRuntimesResponse"
             }
@@ -2807,7 +2807,7 @@
         "operationId": "DeleteRuntimes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteRuntimesResponse"
             }
@@ -2832,7 +2832,7 @@
         "operationId": "CreateRuntime",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateRuntimeResponse"
             }
@@ -2857,7 +2857,7 @@
         "operationId": "ModifyRuntime",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyRuntimeResponse"
             }
@@ -2884,7 +2884,7 @@
         "operationId": "GetRuntimeStatistics",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetRuntimeStatisticsResponse"
             }
@@ -2901,7 +2901,7 @@
         "operationId": "DescribeRuntimeProviderZones",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeRuntimeProviderZonesResponse"
             }
@@ -2938,7 +2938,7 @@
         "operationId": "DescribeTasks",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeTasksResponse"
             }
@@ -3031,7 +3031,7 @@
         "operationId": "RetryTasks",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRetryTasksResponse"
             }

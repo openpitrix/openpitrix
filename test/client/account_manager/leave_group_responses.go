@@ -44,7 +44,7 @@ func NewLeaveGroupOK() *LeaveGroupOK {
 
 /*LeaveGroupOK handles this case with default header values.
 
-LeaveGroupOK leave group o k
+A successful response.
 */
 type LeaveGroupOK struct {
 	Payload *models.OpenpitrixLeaveGroupResponse

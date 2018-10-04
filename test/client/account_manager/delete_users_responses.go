@@ -44,7 +44,7 @@ func NewDeleteUsersOK() *DeleteUsersOK {
 
 /*DeleteUsersOK handles this case with default header values.
 
-DeleteUsersOK delete users o k
+A successful response.
 */
 type DeleteUsersOK struct {
 	Payload *models.OpenpitrixDeleteUsersResponse

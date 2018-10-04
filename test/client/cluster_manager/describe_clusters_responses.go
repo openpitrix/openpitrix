@@ -44,7 +44,7 @@ func NewDescribeClustersOK() *DescribeClustersOK {
 
 /*DescribeClustersOK handles this case with default header values.
 
-DescribeClustersOK describe clusters o k
+A successful response.
 */
 type DescribeClustersOK struct {
 	Payload *models.OpenpitrixDescribeClustersResponse

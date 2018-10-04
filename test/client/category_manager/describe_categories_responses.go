@@ -44,7 +44,7 @@ func NewDescribeCategoriesOK() *DescribeCategoriesOK {
 
 /*DescribeCategoriesOK handles this case with default header values.
 
-DescribeCategoriesOK describe categories o k
+A successful response.
 */
 type DescribeCategoriesOK struct {
 	Payload *models.OpenpitrixDescribeCategoriesResponse

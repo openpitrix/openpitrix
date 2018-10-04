@@ -44,7 +44,7 @@ func NewDescribeTasksOK() *DescribeTasksOK {
 
 /*DescribeTasksOK handles this case with default header values.
 
-DescribeTasksOK describe tasks o k
+A successful response.
 */
 type DescribeTasksOK struct {
 	Payload *models.OpenpitrixDescribeTasksResponse

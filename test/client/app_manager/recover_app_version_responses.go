@@ -44,7 +44,7 @@ func NewRecoverAppVersionOK() *RecoverAppVersionOK {
 
 /*RecoverAppVersionOK handles this case with default header values.
 
-RecoverAppVersionOK recover app version o k
+A successful response.
 */
 type RecoverAppVersionOK struct {
 	Payload *models.OpenpitrixRecoverAppVersionResponse

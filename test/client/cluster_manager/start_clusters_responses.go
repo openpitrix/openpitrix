@@ -44,7 +44,7 @@ func NewStartClustersOK() *StartClustersOK {
 
 /*StartClustersOK handles this case with default header values.
 
-StartClustersOK start clusters o k
+A successful response.
 */
 type StartClustersOK struct {
 	Payload *models.OpenpitrixStartClustersResponse

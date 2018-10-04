@@ -44,7 +44,7 @@ func NewRejectAppVersionOK() *RejectAppVersionOK {
 
 /*RejectAppVersionOK handles this case with default header values.
 
-RejectAppVersionOK reject app version o k
+A successful response.
 */
 type RejectAppVersionOK struct {
 	Payload *models.OpenpitrixRejectAppVersionResponse

@@ -44,7 +44,7 @@ func NewDeleteRuntimesOK() *DeleteRuntimesOK {
 
 /*DeleteRuntimesOK handles this case with default header values.
 
-DeleteRuntimesOK delete runtimes o k
+A successful response.
 */
 type DeleteRuntimesOK struct {
 	Payload *models.OpenpitrixDeleteRuntimesResponse

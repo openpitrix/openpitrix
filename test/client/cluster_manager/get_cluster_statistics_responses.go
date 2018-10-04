@@ -44,7 +44,7 @@ func NewGetClusterStatisticsOK() *GetClusterStatisticsOK {
 
 /*GetClusterStatisticsOK handles this case with default header values.
 
-GetClusterStatisticsOK get cluster statistics o k
+A successful response.
 */
 type GetClusterStatisticsOK struct {
 	Payload *models.OpenpitrixGetClusterStatisticsResponse

@@ -44,7 +44,7 @@ func NewAddClusterNodesOK() *AddClusterNodesOK {
 
 /*AddClusterNodesOK handles this case with default header values.
 
-AddClusterNodesOK add cluster nodes o k
+A successful response.
 */
 type AddClusterNodesOK struct {
 	Payload *models.OpenpitrixAddClusterNodesResponse
