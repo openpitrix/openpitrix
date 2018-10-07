@@ -424,6 +424,12 @@ func (p *Parser) Parse(clusterWrapper *models.ClusterWrapper) error {
 		return err
 	}
 
+	if clusterWrapper.Cluster != nil && clusterWrapper.Cluster.Name != "" {
+		if name != clusterWrapper.Cluster.Name {
+			return fmt.Errorf("cluster name can't be changed by config [Name]")
+		}
+	}
+
 	vals, err := p.parseValues(customVals, name)
 	if err != nil {
 		return err
