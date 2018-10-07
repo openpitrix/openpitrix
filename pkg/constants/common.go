@@ -107,6 +107,10 @@ const (
 
 	TimeoutName           = "timeout"
 	DefaultServiceTimeout = 600
+
+	// Maybe metadata is upgrading
+	PilotTasksRetry = 5
+	PilotTasksSleep = 2 * time.Second
 )
 
 const (

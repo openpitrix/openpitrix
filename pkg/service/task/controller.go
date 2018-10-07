@@ -160,7 +160,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 					logger.Error(ctx, "Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err = pilotClient.SetDroneConfig(withTimeoutCtx, config)
 					return err
 				})
@@ -175,7 +175,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 					logger.Error(ctx, "Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err = pilotClient.SetFrontgateConfig(withTimeoutCtx, config)
 					return err
 				})
@@ -254,7 +254,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 
 			case vmbased.ActionStartConfd:
 				pbTask := models.TaskToPb(task)
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err := pilotClient.HandleSubtask(withTimeoutCtx,
 						&pbtypes.SubTaskMessage{
 							TaskId:    pbTask.TaskId.GetValue(),
@@ -272,7 +272,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 
 			case vmbased.ActionStopConfd:
 				pbTask := models.TaskToPb(task)
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err := pilotClient.HandleSubtask(withTimeoutCtx,
 						&pbtypes.SubTaskMessage{
 							TaskId:    pbTask.TaskId.GetValue(),
@@ -298,7 +298,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 					return err
 				}
 
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err = pilotClient.RunCommandOnDrone(withTimeoutCtx, request)
 					if err != nil {
 						if strings.Contains(err.Error(), "transport is closing") {
@@ -323,7 +323,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 					return err
 				}
 
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err = pilotClient.RunCommandOnFrontgateNode(withTimeoutCtx, request)
 					if err != nil {
 						if strings.Contains(err.Error(), "context canceled") {
@@ -348,7 +348,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 					return err
 				}
 
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err = pilotClient.RunCommandOnDrone(withTimeoutCtx, request)
 					return err
 				})
@@ -364,7 +364,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 					logger.Error(ctx, "Decode task directive [%s] failed: %+v", task.Directive, err)
 					return err
 				}
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err = pilotClient.RunCommandOnFrontgateNode(withTimeoutCtx, request)
 					return err
 				})
@@ -375,7 +375,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 
 			case vmbased.ActionRegisterMetadata, vmbased.ActionDeregisterCmd, vmbased.ActionDeregisterMetadata:
 				pbTask := models.TaskToPb(task)
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err := pilotClient.HandleSubtask(withTimeoutCtx,
 						&pbtypes.SubTaskMessage{
 							TaskId:    pbTask.TaskId.GetValue(),
@@ -391,7 +391,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 
 			case vmbased.ActionRegisterCmd:
 				pbTask := models.TaskToPb(task)
-				err = retryutil.Retry(3, 0, func() error {
+				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err := pilotClient.HandleSubtask(withTimeoutCtx,
 						&pbtypes.SubTaskMessage{
 							TaskId:    pbTask.TaskId.GetValue(),
