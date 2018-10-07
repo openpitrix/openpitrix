@@ -44,7 +44,7 @@ func NewDeleteClusterNodesOK() *DeleteClusterNodesOK {
 
 /*DeleteClusterNodesOK handles this case with default header values.
 
-DeleteClusterNodesOK delete cluster nodes o k
+A successful response.
 */
 type DeleteClusterNodesOK struct {
 	Payload *models.OpenpitrixDeleteClusterNodesResponse

@@ -44,7 +44,7 @@ func NewDescribeRepoEventsOK() *DescribeRepoEventsOK {
 
 /*DescribeRepoEventsOK handles this case with default header values.
 
-DescribeRepoEventsOK describe repo events o k
+A successful response.
 */
 type DescribeRepoEventsOK struct {
 	Payload *models.OpenpitrixDescribeRepoEventsResponse

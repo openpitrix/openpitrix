@@ -44,7 +44,7 @@ func NewRollbackClusterOK() *RollbackClusterOK {
 
 /*RollbackClusterOK handles this case with default header values.
 
-RollbackClusterOK rollback cluster o k
+A successful response.
 */
 type RollbackClusterOK struct {
 	Payload *models.OpenpitrixRollbackClusterResponse

@@ -44,7 +44,7 @@ func NewRetryTasksOK() *RetryTasksOK {
 
 /*RetryTasksOK handles this case with default header values.
 
-RetryTasksOK retry tasks o k
+A successful response.
 */
 type RetryTasksOK struct {
 	Payload *models.OpenpitrixRetryTasksResponse

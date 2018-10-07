@@ -44,7 +44,7 @@ func NewDescribeRuntimesOK() *DescribeRuntimesOK {
 
 /*DescribeRuntimesOK handles this case with default header values.
 
-DescribeRuntimesOK describe runtimes o k
+A successful response.
 */
 type DescribeRuntimesOK struct {
 	Payload *models.OpenpitrixDescribeRuntimesResponse

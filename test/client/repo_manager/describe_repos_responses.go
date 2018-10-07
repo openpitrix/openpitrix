@@ -44,7 +44,7 @@ func NewDescribeReposOK() *DescribeReposOK {
 
 /*DescribeReposOK handles this case with default header values.
 
-DescribeReposOK describe repos o k
+A successful response.
 */
 type DescribeReposOK struct {
 	Payload *models.OpenpitrixDescribeReposResponse

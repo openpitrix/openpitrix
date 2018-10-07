@@ -34,7 +34,7 @@ var Files = map[string]string{
         "operationId": "CancelAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCancelAppVersionResponse"
             }
@@ -61,7 +61,7 @@ var Files = map[string]string{
         "operationId": "DeleteAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteAppVersionResponse"
             }
@@ -88,7 +88,7 @@ var Files = map[string]string{
         "operationId": "PassAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixPassAppVersionResponse"
             }
@@ -115,7 +115,7 @@ var Files = map[string]string{
         "operationId": "RecoverAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRecoverAppVersionResponse"
             }
@@ -142,7 +142,7 @@ var Files = map[string]string{
         "operationId": "RejectAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
             }
@@ -169,7 +169,7 @@ var Files = map[string]string{
         "operationId": "ReleaseAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixReleaseAppVersionResponse"
             }
@@ -196,7 +196,7 @@ var Files = map[string]string{
         "operationId": "SubmitAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixSubmitAppVersionResponse"
             }
@@ -223,7 +223,7 @@ var Files = map[string]string{
         "operationId": "SuspendAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixSuspendAppVersionResponse"
             }
@@ -250,7 +250,7 @@ var Files = map[string]string{
         "operationId": "GetAppVersionPackage",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetAppVersionPackageResponse"
             }
@@ -275,7 +275,7 @@ var Files = map[string]string{
         "operationId": "GetAppVersionPackageFiles",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetAppVersionPackageFilesResponse"
             }
@@ -310,7 +310,7 @@ var Files = map[string]string{
         "operationId": "DescribeAppVersions",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeAppVersionsResponse"
             }
@@ -430,7 +430,7 @@ var Files = map[string]string{
         "operationId": "CreateAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateAppVersionResponse"
             }
@@ -455,7 +455,7 @@ var Files = map[string]string{
         "operationId": "ModifyAppVersion",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyAppVersionResponse"
             }
@@ -482,7 +482,7 @@ var Files = map[string]string{
         "operationId": "DescribeApps",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeAppsResponse"
             }
@@ -602,7 +602,7 @@ var Files = map[string]string{
         "operationId": "DeleteApps",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteAppsResponse"
             }
@@ -627,7 +627,7 @@ var Files = map[string]string{
         "operationId": "CreateApp",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateAppResponse"
             }
@@ -652,7 +652,7 @@ var Files = map[string]string{
         "operationId": "ModifyApp",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyAppResponse"
             }
@@ -679,7 +679,7 @@ var Files = map[string]string{
         "operationId": "GetAppStatistics",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetAppStatisticsResponse"
             }
@@ -696,7 +696,7 @@ var Files = map[string]string{
         "operationId": "DescribeCategories",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeCategoriesResponse"
             }
@@ -776,7 +776,7 @@ var Files = map[string]string{
         "operationId": "DeleteCategories",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteCategoriesResponse"
             }
@@ -801,7 +801,7 @@ var Files = map[string]string{
         "operationId": "CreateCategory",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateCategoryResponse"
             }
@@ -826,7 +826,7 @@ var Files = map[string]string{
         "operationId": "ModifyCategory",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyCategoryResponse"
             }
@@ -853,7 +853,7 @@ var Files = map[string]string{
         "operationId": "DescribeClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeClustersResponse"
             }
@@ -987,7 +987,7 @@ var Files = map[string]string{
         "operationId": "AddClusterNodes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixAddClusterNodesResponse"
             }
@@ -1014,7 +1014,7 @@ var Files = map[string]string{
         "operationId": "CeaseClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCeaseClustersResponse"
             }
@@ -1041,7 +1041,7 @@ var Files = map[string]string{
         "operationId": "CreateCluster",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateClusterResponse"
             }
@@ -1068,7 +1068,7 @@ var Files = map[string]string{
         "operationId": "DeleteClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteClustersResponse"
             }
@@ -1095,7 +1095,7 @@ var Files = map[string]string{
         "operationId": "DeleteClusterNodes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteClusterNodesResponse"
             }
@@ -1122,7 +1122,7 @@ var Files = map[string]string{
         "operationId": "AttachKeyPairs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixAttachKeyPairsResponse"
             }
@@ -1149,7 +1149,7 @@ var Files = map[string]string{
         "operationId": "DetachKeyPairs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDetachKeyPairsResponse"
             }
@@ -1176,7 +1176,7 @@ var Files = map[string]string{
         "operationId": "DescribeKeyPairs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeKeyPairsResponse"
             }
@@ -1247,7 +1247,7 @@ var Files = map[string]string{
         "operationId": "DeleteKeyPairs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteKeyPairsResponse"
             }
@@ -1272,7 +1272,7 @@ var Files = map[string]string{
         "operationId": "CreateKeyPair",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateKeyPairResponse"
             }
@@ -1299,7 +1299,7 @@ var Files = map[string]string{
         "operationId": "ModifyClusterAttributes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyClusterAttributesResponse"
             }
@@ -1326,7 +1326,7 @@ var Files = map[string]string{
         "operationId": "ModifyClusterNodeAttributes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyClusterNodeAttributesResponse"
             }
@@ -1353,7 +1353,7 @@ var Files = map[string]string{
         "operationId": "DescribeClusterNodes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeClusterNodesResponse"
             }
@@ -1441,7 +1441,7 @@ var Files = map[string]string{
         "operationId": "RecoverClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRecoverClustersResponse"
             }
@@ -1468,7 +1468,7 @@ var Files = map[string]string{
         "operationId": "ResizeCluster",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixResizeClusterResponse"
             }
@@ -1495,7 +1495,7 @@ var Files = map[string]string{
         "operationId": "RollbackCluster",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRollbackClusterResponse"
             }
@@ -1522,7 +1522,7 @@ var Files = map[string]string{
         "operationId": "StartClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixStartClustersResponse"
             }
@@ -1549,7 +1549,7 @@ var Files = map[string]string{
         "operationId": "GetClusterStatistics",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetClusterStatisticsResponse"
             }
@@ -1566,7 +1566,7 @@ var Files = map[string]string{
         "operationId": "StopClusters",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixStopClustersResponse"
             }
@@ -1593,7 +1593,7 @@ var Files = map[string]string{
         "operationId": "DescribeSubnets",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeSubnetsResponse"
             }
@@ -1669,7 +1669,7 @@ var Files = map[string]string{
         "operationId": "UpdateClusterEnv",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixUpdateClusterEnvResponse"
             }
@@ -1696,7 +1696,7 @@ var Files = map[string]string{
         "operationId": "UpgradeCluster",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixUpgradeClusterResponse"
             }
@@ -1722,7 +1722,7 @@ var Files = map[string]string{
         "operationId": "DescribeGroups",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeGroupsResponse"
             }
@@ -1801,7 +1801,7 @@ var Files = map[string]string{
         "operationId": "DeleteGroups",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteGroupsResponse"
             }
@@ -1826,7 +1826,7 @@ var Files = map[string]string{
         "operationId": "CreateGroup",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateGroupResponse"
             }
@@ -1850,7 +1850,7 @@ var Files = map[string]string{
         "operationId": "ModifyGroup",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyGroupResponse"
             }
@@ -1876,7 +1876,7 @@ var Files = map[string]string{
         "operationId": "JoinGroup",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixJoinGroupResponse"
             }
@@ -1902,7 +1902,7 @@ var Files = map[string]string{
         "operationId": "LeaveGroup",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixLeaveGroupResponse"
             }
@@ -1928,7 +1928,7 @@ var Files = map[string]string{
         "operationId": "Token",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixTokenResponse"
             }
@@ -1955,7 +1955,7 @@ var Files = map[string]string{
         "operationId": "CreateClient",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateClientResponse"
             }
@@ -1987,7 +1987,7 @@ var Files = map[string]string{
         "operationId": "DescribeUsers",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeUsersResponse"
             }
@@ -2076,7 +2076,7 @@ var Files = map[string]string{
         "operationId": "DeleteUsers",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteUsersResponse"
             }
@@ -2101,7 +2101,7 @@ var Files = map[string]string{
         "operationId": "CreateUser",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateUserResponse"
             }
@@ -2125,7 +2125,7 @@ var Files = map[string]string{
         "operationId": "ModifyUser",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyUserResponse"
             }
@@ -2151,7 +2151,7 @@ var Files = map[string]string{
         "operationId": "GetPasswordReset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetPasswordResetResponse"
             }
@@ -2175,7 +2175,7 @@ var Files = map[string]string{
         "operationId": "ChangePassword",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixChangePasswordResponse"
             }
@@ -2201,7 +2201,7 @@ var Files = map[string]string{
         "operationId": "CreatePasswordReset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreatePasswordResetResponse"
             }
@@ -2227,7 +2227,7 @@ var Files = map[string]string{
         "operationId": "ValidateUserPassword",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixValidateUserPasswordResponse"
             }
@@ -2254,7 +2254,7 @@ var Files = map[string]string{
         "operationId": "DescribeJobs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeJobsResponse"
             }
@@ -2361,7 +2361,7 @@ var Files = map[string]string{
         "operationId": "DescribeRepos",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeReposResponse"
             }
@@ -2519,7 +2519,7 @@ var Files = map[string]string{
         "operationId": "DeleteRepos",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteReposResponse"
             }
@@ -2544,7 +2544,7 @@ var Files = map[string]string{
         "operationId": "CreateRepo",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateRepoResponse"
             }
@@ -2569,7 +2569,7 @@ var Files = map[string]string{
         "operationId": "ModifyRepo",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyRepoResponse"
             }
@@ -2596,7 +2596,7 @@ var Files = map[string]string{
         "operationId": "ValidateRepo",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixValidateRepoResponse"
             }
@@ -2633,7 +2633,7 @@ var Files = map[string]string{
         "operationId": "DescribeRepoEvents",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeRepoEventsResponse"
             }
@@ -2706,7 +2706,7 @@ var Files = map[string]string{
         "operationId": "IndexRepo",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixIndexRepoResponse"
             }
@@ -2733,7 +2733,7 @@ var Files = map[string]string{
         "operationId": "DescribeRuntimes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeRuntimesResponse"
             }
@@ -2816,7 +2816,7 @@ var Files = map[string]string{
         "operationId": "DeleteRuntimes",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteRuntimesResponse"
             }
@@ -2841,7 +2841,7 @@ var Files = map[string]string{
         "operationId": "CreateRuntime",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixCreateRuntimeResponse"
             }
@@ -2866,7 +2866,7 @@ var Files = map[string]string{
         "operationId": "ModifyRuntime",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixModifyRuntimeResponse"
             }
@@ -2893,7 +2893,7 @@ var Files = map[string]string{
         "operationId": "GetRuntimeStatistics",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixGetRuntimeStatisticsResponse"
             }
@@ -2910,7 +2910,7 @@ var Files = map[string]string{
         "operationId": "DescribeRuntimeProviderZones",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeRuntimeProviderZonesResponse"
             }
@@ -2947,7 +2947,7 @@ var Files = map[string]string{
         "operationId": "DescribeTasks",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixDescribeTasksResponse"
             }
@@ -3040,7 +3040,7 @@ var Files = map[string]string{
         "operationId": "RetryTasks",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/openpitrixRetryTasksResponse"
             }

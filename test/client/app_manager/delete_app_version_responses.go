@@ -44,7 +44,7 @@ func NewDeleteAppVersionOK() *DeleteAppVersionOK {
 
 /*DeleteAppVersionOK handles this case with default header values.
 
-DeleteAppVersionOK delete app version o k
+A successful response.
 */
 type DeleteAppVersionOK struct {
 	Payload *models.OpenpitrixDeleteAppVersionResponse

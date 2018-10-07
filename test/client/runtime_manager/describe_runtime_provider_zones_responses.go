@@ -44,7 +44,7 @@ func NewDescribeRuntimeProviderZonesOK() *DescribeRuntimeProviderZonesOK {
 
 /*DescribeRuntimeProviderZonesOK handles this case with default header values.
 
-DescribeRuntimeProviderZonesOK describe runtime provider zones o k
+A successful response.
 */
 type DescribeRuntimeProviderZonesOK struct {
 	Payload *models.OpenpitrixDescribeRuntimeProviderZonesResponse

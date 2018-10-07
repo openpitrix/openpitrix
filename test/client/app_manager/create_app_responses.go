@@ -44,7 +44,7 @@ func NewCreateAppOK() *CreateAppOK {
 
 /*CreateAppOK handles this case with default header values.
 
-CreateAppOK create app o k
+A successful response.
 */
 type CreateAppOK struct {
 	Payload *models.OpenpitrixCreateAppResponse

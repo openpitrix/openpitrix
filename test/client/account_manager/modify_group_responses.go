@@ -44,7 +44,7 @@ func NewModifyGroupOK() *ModifyGroupOK {
 
 /*ModifyGroupOK handles this case with default header values.
 
-ModifyGroupOK modify group o k
+A successful response.
 */
 type ModifyGroupOK struct {
 	Payload *models.OpenpitrixModifyGroupResponse

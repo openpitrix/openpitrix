@@ -44,7 +44,7 @@ func NewValidateUserPasswordOK() *ValidateUserPasswordOK {
 
 /*ValidateUserPasswordOK handles this case with default header values.
 
-ValidateUserPasswordOK validate user password o k
+A successful response.
 */
 type ValidateUserPasswordOK struct {
 	Payload *models.OpenpitrixValidateUserPasswordResponse

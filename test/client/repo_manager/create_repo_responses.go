@@ -44,7 +44,7 @@ func NewCreateRepoOK() *CreateRepoOK {
 
 /*CreateRepoOK handles this case with default header values.
 
-CreateRepoOK create repo o k
+A successful response.
 */
 type CreateRepoOK struct {
 	Payload *models.OpenpitrixCreateRepoResponse

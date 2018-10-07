@@ -44,7 +44,7 @@ func NewCreateRuntimeOK() *CreateRuntimeOK {
 
 /*CreateRuntimeOK handles this case with default header values.
 
-CreateRuntimeOK create runtime o k
+A successful response.
 */
 type CreateRuntimeOK struct {
 	Payload *models.OpenpitrixCreateRuntimeResponse

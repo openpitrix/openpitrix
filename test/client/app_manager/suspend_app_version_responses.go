@@ -44,7 +44,7 @@ func NewSuspendAppVersionOK() *SuspendAppVersionOK {
 
 /*SuspendAppVersionOK handles this case with default header values.
 
-SuspendAppVersionOK suspend app version o k
+A successful response.
 */
 type SuspendAppVersionOK struct {
 	Payload *models.OpenpitrixSuspendAppVersionResponse

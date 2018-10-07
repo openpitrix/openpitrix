@@ -44,7 +44,7 @@ func NewResizeClusterOK() *ResizeClusterOK {
 
 /*ResizeClusterOK handles this case with default header values.
 
-ResizeClusterOK resize cluster o k
+A successful response.
 */
 type ResizeClusterOK struct {
 	Payload *models.OpenpitrixResizeClusterResponse

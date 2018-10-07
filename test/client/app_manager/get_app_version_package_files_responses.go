@@ -44,7 +44,7 @@ func NewGetAppVersionPackageFilesOK() *GetAppVersionPackageFilesOK {
 
 /*GetAppVersionPackageFilesOK handles this case with default header values.
 
-GetAppVersionPackageFilesOK get app version package files o k
+A successful response.
 */
 type GetAppVersionPackageFilesOK struct {
 	Payload *models.OpenpitrixGetAppVersionPackageFilesResponse

@@ -44,7 +44,7 @@ func NewCeaseClustersOK() *CeaseClustersOK {
 
 /*CeaseClustersOK handles this case with default header values.
 
-CeaseClustersOK cease clusters o k
+A successful response.
 */
 type CeaseClustersOK struct {
 	Payload *models.OpenpitrixCeaseClustersResponse

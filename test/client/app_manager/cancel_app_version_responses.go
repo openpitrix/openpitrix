@@ -44,7 +44,7 @@ func NewCancelAppVersionOK() *CancelAppVersionOK {
 
 /*CancelAppVersionOK handles this case with default header values.
 
-CancelAppVersionOK cancel app version o k
+A successful response.
 */
 type CancelAppVersionOK struct {
 	Payload *models.OpenpitrixCancelAppVersionResponse

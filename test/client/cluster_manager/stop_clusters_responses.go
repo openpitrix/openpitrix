@@ -44,7 +44,7 @@ func NewStopClustersOK() *StopClustersOK {
 
 /*StopClustersOK handles this case with default header values.
 
-StopClustersOK stop clusters o k
+A successful response.
 */
 type StopClustersOK struct {
 	Payload *models.OpenpitrixStopClustersResponse

@@ -44,7 +44,7 @@ func NewTokenOK() *TokenOK {
 
 /*TokenOK handles this case with default header values.
 
-TokenOK token o k
+A successful response.
 */
 type TokenOK struct {
 	Payload *models.OpenpitrixTokenResponse
