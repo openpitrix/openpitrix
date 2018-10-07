@@ -89,7 +89,7 @@ func (p *HelmHandler) InstallReleaseFromChart(c *chart.Chart, ns string, rawVals
 		return err
 	}
 
-	_, err = hc.InstallReleaseFromChart(c, ns, helm.ValueOverrides(rawVals), helm.ReleaseName(releaseName), helm.InstallWait(true))
+	_, err = hc.InstallReleaseFromChart(c, ns, helm.ValueOverrides(rawVals), helm.ReleaseName(releaseName), helm.InstallWait(true), helm.InstallTimeout(3600))
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func (p *HelmHandler) UpdateReleaseFromChart(releaseName string, c *chart.Chart,
 		return err
 	}
 
-	_, err = hc.UpdateReleaseFromChart(releaseName, c, helm.UpdateValueOverrides(rawVals), helm.UpgradeWait(true))
+	_, err = hc.UpdateReleaseFromChart(releaseName, c, helm.UpdateValueOverrides(rawVals), helm.UpgradeWait(true), helm.UpgradeTimeout(3600))
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func (p *HelmHandler) RollbackRelease(releaseName string) error {
 		return err
 	}
 
-	_, err = hc.RollbackRelease(releaseName, helm.RollbackWait(true))
+	_, err = hc.RollbackRelease(releaseName, helm.RollbackWait(true), helm.RollbackTimeout(3600))
 	if err != nil {
 		return err
 	}
@@ -128,7 +128,7 @@ func (p *HelmHandler) DeleteRelease(releaseName string, purge bool) error {
 		return err
 	}
 
-	_, err = hc.DeleteRelease(releaseName, helm.DeletePurge(purge))
+	_, err = hc.DeleteRelease(releaseName, helm.DeletePurge(purge), helm.DeleteTimeout(3600))
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") || strings.Contains(err.Error(), "already deleted") {
 			logger.Warn(nil, "Delete helm release failed, %+v", err)
