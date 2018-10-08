@@ -96,6 +96,7 @@ func (m *MetadataConfig) GetFrontgateConfig(nodeId string) string {
 		EtcdConfig:  etcdConfig,
 		ConfdConfig: confdConfig,
 		LogLevel:    MetadataLogLevel,
+		AutoUpdate:  pi.Global().GlobalConfig().Cluster.FrontgateAutoUpdate,
 	}
 	if pi.Global().GlobalConfig().Pilot.Port > 0 {
 		config.PilotPort = pi.Global().GlobalConfig().Pilot.Port

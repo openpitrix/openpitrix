@@ -40,6 +40,7 @@ message FrontgateConfig {
 	metadata.types.ConfdConfig confd_config = 9;
 
 	string log_level = 10;
+	bool auto_update = 11;
 }
 
 message FrontgateEndpoint {

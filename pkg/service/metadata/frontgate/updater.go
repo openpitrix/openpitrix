@@ -229,6 +229,7 @@ func (u *Updater) distributeDrones(pilotVersion string) error {
 
 func (u *Updater) Serve() {
 	ticker := time.NewTicker(CheckInterval)
+	defer ticker.Stop()
 
 	for t := range ticker.C {
 		logger.Debug(nil, "Tick at [%s]", t)
