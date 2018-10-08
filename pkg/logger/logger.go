@@ -120,10 +120,15 @@ func (logger *Logger) SetLevelByString(level string) {
 	logger.SetLevel(StringToLevel(level))
 }
 
+var replacer = strings.NewReplacer("\r", "\\r", "\n", "\\n")
+
 func (logger *Logger) formatOutput(ctx context.Context, level Level, output string) string {
 	now := time.Now().Format("2006-01-02 15:04:05.99999")
 	messageId := ctxutil.GetMessageId(ctx)
 	requestId := ctxutil.GetRequestId(ctx)
+
+	output = replacer.Replace(output)
+
 	var suffix string
 	if len(requestId) > 0 {
 		messageId = append(messageId, requestId)

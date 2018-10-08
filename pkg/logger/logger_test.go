@@ -55,3 +55,13 @@ func TestLogger(t *testing.T) {
 	assert.Regexp(t, " -WARNING- log_content", log)
 	t.Log(log)
 }
+
+func TestReplacer(t *testing.T) {
+	input := `
+x
+y
+z
+`
+	output := "\\nx\\ny\\nz\\n"
+	assert.Equal(t, output, replacer.Replace(input))
+}
