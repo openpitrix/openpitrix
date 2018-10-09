@@ -13,7 +13,7 @@ import (
 )
 
 func TestNewHttpInterface(t *testing.T) {
-	var url = "https://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
+	var url = "http://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
 	u, err := neturl.Parse(url)
 	require.NoError(t, err)
 	httpInterface, err := NewHttpInterface(context.TODO(), u)

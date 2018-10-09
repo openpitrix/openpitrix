@@ -1,4 +1,8 @@
-package test
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+package testutil
 
 import (
 	"context"
@@ -9,8 +13,8 @@ import (
 	"github.com/go-openapi/strfmt"
 	flag "github.com/spf13/pflag"
 
+	"openpitrix.io/openpitrix/pkg/client/config"
 	apiclient "openpitrix.io/openpitrix/test/client"
-	"openpitrix.io/openpitrix/test/config"
 )
 
 const UserSystem = "system"

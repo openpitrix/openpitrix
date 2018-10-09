@@ -11,9 +11,10 @@ import (
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 
+	"openpitrix.io/openpitrix/pkg/client/config"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
-	"openpitrix.io/openpitrix/test"
-	"openpitrix.io/openpitrix/test/config"
+	"openpitrix.io/openpitrix/test/client"
+	"openpitrix.io/openpitrix/test/testutil"
 )
 
 type Flag struct {
@@ -27,8 +28,12 @@ type Cmd interface {
 }
 
 // TODO: refactor http client config
-var clientConfig = &test.ClientConfig{
+var clientConfig = &testutil.ClientConfig{
 	Debug: false,
+}
+
+func getClient() *client.Openpitrix {
+	return testutil.GetClient(clientConfig)
 }
 
 func newRootCmd(c string, args []string) *cobra.Command {

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package test
+package testutil
 
 import (
 	"context"
@@ -11,9 +11,9 @@ import (
 
 	"github.com/gorilla/websocket"
 
+	"openpitrix.io/openpitrix/pkg/client/config"
 	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
-	"openpitrix.io/openpitrix/test/config"
 )
 
 func GetIoClient(conf *ClientConfig) *IoClient {

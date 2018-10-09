@@ -4,7 +4,7 @@
 
 // +build integration
 
-package test
+package repo
 
 import (
 	"testing"
@@ -13,9 +13,11 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/topic"
-	apiclient "openpitrix.io/openpitrix/test/client"
+	"openpitrix.io/openpitrix/test/categorycommon"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/models"
+	"openpitrix.io/openpitrix/test/repocommon"
+	"openpitrix.io/openpitrix/test/testutil"
 )
 
 //var clientConfig = &ClientConfig{}
@@ -30,42 +32,20 @@ import (
 //}
 
 var (
-	repoUrl = "https://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
-	//repoUrl = "https://helm-chart-repo.pek3a.qingstor.com/kubernetes-charts/"
+	clientConfig = testutil.GetClientConfig()
+	repoUrl      = "http://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
+	//repoUrl = "http://helm-chart-repo.pek3a.qingstor.com/kubernetes-charts/"
 )
 
-func deleteRepo(t *testing.T, client *apiclient.Openpitrix, testRepoName string) {
-	describeParams := repo_manager.NewDescribeReposParams()
-	describeParams.SetName([]string{testRepoName})
-	describeParams.SetStatus([]string{constants.StatusActive})
-	describeResp, err := client.RepoManager.DescribeRepos(describeParams, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	repos := describeResp.Payload.RepoSet
-	for _, repo := range repos {
-		deleteParams := repo_manager.NewDeleteReposParams()
-		deleteParams.SetBody(
-			&models.OpenpitrixDeleteReposRequest{
-				RepoID: []string{repo.RepoID},
-			})
-		_, err := client.RepoManager.DeleteRepos(deleteParams, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
-	}
-}
-
 func TestRepo(t *testing.T) {
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 
 	// delete old repo
-	testRepoName := "e2e_test_repo"
-	deleteRepo(t, client, testRepoName)
-	ioClient := GetIoClient(clientConfig)
+	testRepoName := "e2e_test_repo1"
+	repocommon.DeleteRepo(t, client, testRepoName)
 
 	// test validate repo
-	repoType := "https"
+	repoType := "http"
 	credential := "{}"
 	validateParams := repo_manager.NewValidateRepoParams()
 	validateParams.SetType(&repoType)
@@ -79,13 +59,14 @@ func TestRepo(t *testing.T) {
 		t.Fatal("validate repo failed")
 	}
 
+	ioClient := testutil.GetIoClient(clientConfig)
 	// create repo
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRepoRequest{
 			Name:        testRepoName,
 			Description: "description",
-			Type:        "https",
+			Type:        "http",
 			URL:         repoUrl,
 			Credential:  `{}`,
 			Visibility:  "public",
@@ -99,18 +80,35 @@ func TestRepo(t *testing.T) {
 	repoId := createResp.Payload.RepoID
 
 	// repo-event pending
-	msg := ioClient.ReadMessage()
-	repoEventId := msg.Resource.ResourceId
+	var msg topic.Message
+	var repoEventId string
+	for {
+		msg = ioClient.ReadMessage()
+		t.Log(msg)
+		if rid, ok := msg.Resource.Values["repo_id"]; ok && rid.(string) == repoId {
+			repoEventId = msg.Resource.ResourceId
+			break
+		} else {
+			t.Log("ignore this msg")
+		}
+	}
 	require.Equal(t, "repo_event", msg.Resource.ResourceType)
 	require.Equal(t, topic.Create, msg.Type)
 	require.Equal(t, "pending", msg.Resource.Values["status"])
-
+	t.Log(repoEventId)
 	// repo-event success
-	msg = ioClient.ReadMessage()
+	for {
+		msg = ioClient.ReadMessage()
+		t.Log(msg)
+		if msg.Resource.ResourceId == repoEventId {
+			break
+		} else {
+			t.Log("ignore this msg")
+		}
+	}
 	require.Equal(t, "repo_event", msg.Resource.ResourceType)
 	require.Equal(t, topic.Update, msg.Type)
 	require.Equal(t, "successful", msg.Resource.Values["status"])
-	require.Equal(t, repoEventId, msg.Resource.ResourceId)
 
 	// modify repo
 	modifyParams := repo_manager.NewModifyRepoParams()
@@ -118,7 +116,7 @@ func TestRepo(t *testing.T) {
 		&models.OpenpitrixModifyRepoRequest{
 			RepoID:      repoId,
 			Description: "cc",
-			Type:        "https",
+			Type:        "http",
 			URL:         repoUrl,
 			Credential:  `{}`,
 			Visibility:  "private",
@@ -160,8 +158,8 @@ func TestRepo(t *testing.T) {
 		}
 	}
 
-	require.Equal(t, "aa,bb,cc,xx", getSortedString(enabledCategoryIds))
-	require.Equal(t, "yy,zz", getSortedString(disabledCategoryIds))
+	require.Equal(t, "aa,bb,cc,xx", categorycommon.SortedString(enabledCategoryIds))
+	require.Equal(t, "yy,zz", categorycommon.SortedString(disabledCategoryIds))
 	// delete repo
 	deleteParams := repo_manager.NewDeleteReposParams()
 	deleteParams.WithBody(&models.OpenpitrixDeleteReposRequest{
@@ -200,7 +198,7 @@ func testDescribeReposWithLabelSelector(t *testing.T,
 	repoId string,
 	labels string,
 	selectors string) {
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 
 	describeParams := repo_manager.NewDescribeReposParams()
 	describeParams.SetLabel(&labels)
@@ -233,17 +231,17 @@ func testDescribeReposWithLabelSelector(t *testing.T,
 }
 
 func TestRepoLabelSelector(t *testing.T) {
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 	// Create a test repo that can attach label and selector on it
-	testRepoName := "e2e_test_repo"
-	labels := generateLabels()
-	selectors := generateLabels()
+	testRepoName := "e2e_test_repo2"
+	labels := repocommon.GenerateLabels()
+	selectors := repocommon.GenerateLabels()
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRepoRequest{
 			Name:        testRepoName,
 			Description: "description",
-			Type:        "https",
+			Type:        "http",
 			URL:         repoUrl,
 			Credential:  `{}`,
 			Visibility:  "public",
@@ -261,8 +259,8 @@ func TestRepoLabelSelector(t *testing.T) {
 	i := 0
 	for i < 10 {
 		i++
-		newLabels := generateLabels()
-		newSelectors := generateLabels()
+		newLabels := repocommon.GenerateLabels()
+		newSelectors := repocommon.GenerateLabels()
 		modifyParams := repo_manager.NewModifyRepoParams()
 		modifyParams.SetBody(
 			&models.OpenpitrixModifyRepoRequest{
@@ -294,7 +292,7 @@ func TestRepoLabelSelector(t *testing.T) {
 }
 
 func TestDeleteInternalRepo(t *testing.T) {
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 
 	// test delete internal repo, should be failed
 	for _, repoId := range constants.InternalRepos {

@@ -343,6 +343,18 @@ func clearAppVersions(ctx context.Context, appId string, ignoredVersionIds []str
 	return err
 }
 
+func clearRepoAppVersions(ctx context.Context, repoId string, ignoredVersionIds []string) error {
+	_, err := pi.Global().DB(ctx).
+		Update(constants.TableAppVersion).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
+		Set(constants.ColumnStatusTime, time.Now()).
+		Set(constants.ColumnUpdateTime, time.Now()).
+		Where(db.Eq(constants.ColumnRepoId, repoId)).
+		Where(db.Neq(constants.ColumnVersionId, ignoredVersionIds)).
+		Exec()
+	return err
+}
+
 func clearApps(ctx context.Context, repoId string, ignoredAppIds []string) error {
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableApp).

@@ -2,9 +2,9 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-// +build aws
+// +build elk
 
-package test
+package elk
 
 import (
 	"log"
@@ -16,11 +16,12 @@ import (
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/models"
+	"openpitrix.io/openpitrix/test/testutil"
 )
 
 var (
-	clientConfig = &ClientConfig{
-		Host:  "192.168.0.6:9100",
+	clientConfig = &testutil.ClientConfig{
+		Host:  "192.168.0.7:9100",
 		Debug: true,
 	}
 
@@ -32,24 +33,24 @@ var (
     "cluster": {
         "name": "ELK",
         "description": "The description of the ELK service",
-        "subnet": "subnet-03f37679",
+        "subnet": "vxnet-dkdu5u0",
         "es_node": {
-            "cpu": 1,
-            "memory": 1024,
+            "cpu": 2,
+            "memory": 4096,
             "count": 3,
             "instance_class": 1,
             "volume_size": 10
         },
         "kbn_node": {
-            "cpu": 1,
-            "memory": 1024,
+            "cpu": 2,
+            "memory": 4096,
             "count": 1,
             "instance_class": 1,
             "volume_size": 10
         },
         "lst_node": {
-            "cpu": 1,
-            "memory": 1024,
+            "cpu": 2,
+            "memory": 4096,
             "count": 1,
             "instance_class": 1,
             "volume_size": 10
@@ -87,10 +88,10 @@ var (
 }`
 )
 
-func TestAWS(t *testing.T) {
-	log.SetPrefix("[ === AWS TEST === ] ")
+func TestK8s(t *testing.T) {
+	log.SetPrefix("[ === ELK TEST === ] ")
 
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 
 	// create repo
 	var repoID string
@@ -186,11 +187,11 @@ func TestAWS(t *testing.T) {
 			createParams.SetBody(
 				&models.OpenpitrixCreateRuntimeRequest{
 					Name:              RuntimeNameForTest,
-					Description:       "aws runtime",
-					Provider:          "aws",
-					RuntimeURL:        "https://ec2.us-east-2.amazonaws.com",
-					RuntimeCredential: `{"access_key_id": "xxxxxxxxxxxxxxx", "secret_access_key": "xxxxxxxxxxxxxxxx"}`,
-					Zone:              "us-east-2",
+					Description:       "qingcloud runtime",
+					Provider:          "qingcloud",
+					RuntimeURL:        "https://api.qingcloud.com",
+					RuntimeCredential: `{"access_key_id": "xxxxxxxxxx", "secret_access_key": "xxxxxxxxxxxxxxxx"}`,
+					Zone:              "ap2a",
 				})
 			createResp, err := client.RuntimeManager.CreateRuntime(createParams)
 			if err != nil {
@@ -208,7 +209,6 @@ func TestAWS(t *testing.T) {
 		createParams.SetBody(&models.OpenpitrixCreateClusterRequest{
 			AdvancedParam: []string{},
 			AppID:         app.AppID,
-			Zone:          "us-east-2b",
 			Conf:          ClusterConf,
 			RuntimeID:     runtimeID,
 			VersionID:     appVersion.VersionID,

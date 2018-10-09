@@ -4,7 +4,7 @@
 
 // +build integration
 
-package test
+package category
 
 import (
 	"testing"
@@ -13,10 +13,13 @@ import (
 
 	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/models"
+	"openpitrix.io/openpitrix/test/testutil"
 )
 
+var clientConfig = testutil.GetClientConfig()
+
 func TestCategory(t *testing.T) {
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 
 	// delete old category
 	testCategoryName := "test_category_name"

@@ -4,15 +4,12 @@
 
 // +build integration
 
-package test
+package app
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
-	"sort"
-	"strings"
 	"testing"
 
 	"github.com/go-openapi/strfmt"
@@ -21,26 +18,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/devkit"
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
+	"openpitrix.io/openpitrix/test/categorycommon"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/models"
+	"openpitrix.io/openpitrix/test/testutil"
 )
 
-var clientConfig = &ClientConfig{}
-
-func init() {
-	clientConfig = GetClientConfig()
-	log.Printf("Got Client Config: %+v", clientConfig)
-}
-
-func TestMain(m *testing.M) {
-	os.Exit(m.Run())
-}
-
-func getSortedString(s []string) string {
-	sortedCategoryIds := sort.StringSlice(s)
-	sortedCategoryIds.Sort()
-	return strings.Join(sortedCategoryIds, ",")
-}
+var clientConfig = testutil.GetClientConfig()
+var testTmpDir = testutil.GetTmpDir()
 
 func preparePackage(t *testing.T, v string) strfmt.Base64 {
 	var testAppName = "test-app1"
@@ -78,7 +63,7 @@ func preparePackage(t *testing.T, v string) strfmt.Base64 {
 }
 
 func testVersionPackage(t *testing.T, appId string) {
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 
 	modifyAppParams := app_manager.NewModifyAppParams()
 	modifyAppParams.SetBody(
@@ -167,7 +152,7 @@ func testVersionPackage(t *testing.T, appId string) {
 }
 
 func testVersionLifeCycle(t *testing.T, appId string) {
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 
 	modifyAppParams := app_manager.NewModifyAppParams()
 	modifyAppParams.SetBody(
@@ -265,7 +250,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 }
 
 func TestApp(t *testing.T) {
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 
 	// delete old app
 	testAppName := "e2e_test_app"
@@ -341,8 +326,8 @@ func TestApp(t *testing.T) {
 		}
 	}
 
-	require.Equal(t, getSortedString(enabledCategoryIds), "aa,bb,cc,xx")
-	require.Equal(t, getSortedString(disabledCategoryIds), "yy,zz")
+	require.Equal(t, categorycommon.SortedString(enabledCategoryIds), "aa,bb,cc,xx")
+	require.Equal(t, categorycommon.SortedString(disabledCategoryIds), "yy,zz")
 
 	getStatisticsResp, err := client.AppManager.GetAppStatistics(nil, nil)
 	require.NoError(t, err)

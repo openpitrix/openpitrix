@@ -33,21 +33,12 @@ func newRepoProxy(repo *pb.Repo) *repoProxy {
 }
 
 func (rp *repoProxy) deleteAppVersions(ctx context.Context) error {
-	repoId := rp.repo.RepoId
-	_, err := pi.Global().DB(ctx).
-		Update(constants.TableApp).
-		Set(constants.ColumnStatus, constants.StatusDeleted).
-		Where(db.Eq(constants.ColumnRepoId, repoId)).
-		Exec()
+	repoId := rp.repo.RepoId.GetValue()
+	err := clearApps(ctx, repoId, []string{})
 	if err != nil {
 		return err
 	}
-	_, err = pi.Global().DB(ctx).
-		Update(constants.TableAppVersion).
-		Set(constants.ColumnStatus, constants.StatusDeleted).
-		Where(db.Eq(constants.ColumnRepoId, repoId)).
-		Exec()
-	return err
+	return clearRepoAppVersions(ctx, repoId, []string{})
 }
 
 func (rp *repoProxy) SyncRepo(ctx context.Context) error {

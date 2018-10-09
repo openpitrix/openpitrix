@@ -18,9 +18,9 @@ import (
 func TestReader_GetIndex(t *testing.T) {
 	var repo = &pb.Repo{
 		RepoId:     pbutil.ToProtoString("test"),
-		Url:        pbutil.ToProtoString("https://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"),
+		Url:        pbutil.ToProtoString("http://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"),
 		Providers:  []string{constants.ProviderKubernetes},
-		Type:       pbutil.ToProtoString("https"),
+		Type:       pbutil.ToProtoString("http"),
 		Credential: pbutil.ToProtoString("{}"),
 	}
 	reader, err := NewReader(context.Background(), repo)

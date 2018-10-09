@@ -2,12 +2,11 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-// +build integration
+// +build k8s
 
-package test
+package runtime
 
 import (
-	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -16,16 +15,20 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/models"
+	"openpitrix.io/openpitrix/test/repocommon"
+	"openpitrix.io/openpitrix/test/testutil"
 )
 
+var clientConfig = testutil.GetClientConfig()
+
 func getRuntimeCredential(t *testing.T) string {
-	return execCmd(t, "kubectl config view --flatten")
+	return testutil.ExecCmd(t, "kubectl config view --flatten")
 }
 
 func TestRuntime(t *testing.T) {
 	credential := getRuntimeCredential(t)
 
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 
 	testRuntimeName := "e2e-test-runtime"
 	describeParams := runtime_manager.NewDescribeRuntimesParams()
@@ -108,22 +111,12 @@ func TestRuntime(t *testing.T) {
 	t.Log("test runtime finish, all test is ok")
 }
 
-func generateLabels() string {
-	v := url.Values{}
-	v.Add("key1", idutil.GetUuid(""))
-	v.Add("key2", idutil.GetUuid(""))
-	v.Add("key3", idutil.GetUuid(""))
-	v.Add("key4", idutil.GetUuid(""))
-	v.Add("key5", idutil.GetUuid(""))
-	return v.Encode()
-}
-
 func TestRuntimeLabel(t *testing.T) {
 	credential := getRuntimeCredential(t)
-	client := GetClient(clientConfig)
+	client := testutil.GetClient(clientConfig)
 	// Create a test runtime that can attach label on it
 	testRuntimeName := "e2e-test-runtime"
-	labels := generateLabels()
+	labels := repocommon.GenerateLabels()
 	createParams := runtime_manager.NewCreateRuntimeParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRuntimeRequest{

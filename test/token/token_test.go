@@ -4,4 +4,4 @@
 
 // +build integration
 
-package test
+package token
