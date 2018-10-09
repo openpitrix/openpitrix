@@ -37,6 +37,7 @@ type ClusterServiceConfig struct {
 	Plugins             []string `json:"plugins"`
 	FrontgateConf       string   `json:"frontgate_conf"`
 	FrontgateAutoDelete bool     `json:"frontgate_auto_delete"`
+	FrontgateAutoUpdate bool     `json:"frontgate_auto_update"`
 }
 
 type PilotServiceConfig struct {
