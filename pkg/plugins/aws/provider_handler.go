@@ -7,6 +7,7 @@ package aws
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -287,16 +288,22 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 			InstanceIds: aws.StringSlice([]string{instance.InstanceId}),
 		})
 	if err != nil {
+		if strings.Contains(err.Error(), "not exist") {
+			logger.Warn(nil, "Delete instance failed, %+v", err)
+			return nil
+		}
 		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	if len(describeOutput.Reservations) == 0 {
-		return fmt.Errorf("instance with id [%s] not exist", instance.InstanceId)
+		logger.Warn(nil, "Instance with id [%s] not exist", instance.InstanceId)
+		return nil
 	}
 
 	if len(describeOutput.Reservations[0].Instances) == 0 {
-		return fmt.Errorf("instance with id [%s] not exist", instance.InstanceId)
+		logger.Warn(nil, "Instance with id [%s] not exist", instance.InstanceId)
+		return nil
 	}
 
 	status := aws.StringValue(describeOutput.Reservations[0].Instances[0].State.Name)
@@ -570,12 +577,17 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 			VolumeIds: aws.StringSlice([]string{volume.VolumeId}),
 		})
 	if err != nil {
+		if strings.Contains(err.Error(), "not exist") {
+			logger.Warn(nil, "Delete volume failed, %+v", err)
+			return nil
+		}
 		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	if len(describeOutput.Volumes) == 0 {
-		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
+		logger.Warn(nil, "Volume with id [%s] not exist", volume.VolumeId)
+		return nil
 	}
 
 	logger.Info(p.Ctx, "DeleteVolume [%s]", volume.Name)
@@ -919,12 +931,17 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 			VolumeIds: aws.StringSlice([]string{volume.VolumeId}),
 		})
 	if err != nil {
+		if strings.Contains(err.Error(), "not exist") {
+			logger.Warn(nil, "Wait delete volume failed, %+v", err)
+			return nil
+		}
 		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
 	if len(describeOutput.Volumes) == 0 {
-		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
+		logger.Warn(nil, "Volume with id [%s] not exist", volume.VolumeId)
+		return nil
 	}
 
 	input2 := ec2.DescribeVolumesInput{
