@@ -130,6 +130,9 @@ var IndexedColumns = map[string][]string{
 		ColumnClusterId, ColumnAppId, ColumnVersionId, ColumnStatus,
 		ColumnRuntimeId, ColumnFrontgateId, ColumnOwner, ColumnClusterType,
 	},
+	TableKeyPair: {
+		ColumnKeyPairId, ColumnName, ColumnOwner,
+	},
 	TableClusterNode: {
 		ColumnClusterId, ColumnNodeId, ColumnStatus, ColumnOwner,
 	},
