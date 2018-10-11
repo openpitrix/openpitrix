@@ -154,6 +154,7 @@ var SearchWordColumnTable = []string{
 	TableCluster,
 	TableClusterNode,
 	TableUser,
+	TableCategory,
 }
 
 // columns that can be search through sql 'like' operator
@@ -184,5 +185,8 @@ var SearchColumns = map[string][]string{
 	},
 	TableUser: {
 		ColumnUserId, ColumnDescription, ColumnEmail, ColumnUsername,
+	},
+	TableCategory: {
+		ColumnCategoryId, ColumnLocale, ColumnOwner, ColumnName,
 	},
 }
