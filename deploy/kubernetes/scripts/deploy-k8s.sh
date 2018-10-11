@@ -90,8 +90,6 @@ then
   usage
 fi
 
-IMAGE_PULL_POLICY="IfNotPresent"
-DASHBOARD_IMAGE="openpitrix/dashboard"
 if [ "${VERSION}" == "" ];then
   VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
 fi
@@ -100,16 +98,25 @@ if [ "${VERSION}" == "dev" ];then
   IMAGE="openpitrix/openpitrix-dev:latest"
   METADATA_IMAGE="openpitrix/openpitrix-dev:metadata"
   FLYWAY_IMAGE="openpitrix/openpitrix-dev:flyway"
+  DASHBOARD_IMAGE="openpitrix/dashboard:latest"
   IMAGE_PULL_POLICY="Always"
 elif [ "$VERSION" == "latest" ];then
   IMAGE="openpitrix/openpitrix:latest"
   METADATA_IMAGE="openpitrix/openpitrix:metadata"
   FLYWAY_IMAGE="openpitrix/openpitrix:flyway"
+  DASHBOARD_IMAGE="openpitrix/dashboard:latest"
   IMAGE_PULL_POLICY="Always"
 else
-  IMAGE="openpitrix/openpitrix:$VERSION"
-  METADATA_IMAGE="openpitrix/openpitrix:metadata-$VERSION"
-  FLYWAY_IMAGE="openpitrix/openpitrix:flyway-$VERSION"
+  IMAGE="openpitrix/openpitrix:${VERSION}"
+  METADATA_IMAGE="openpitrix/openpitrix:metadata-${VERSION}"
+  FLYWAY_IMAGE="openpitrix/openpitrix:flyway-${VERSION}"
+  curl -L -s https://api.github.com/repos/openpitrix/dashboard/releases | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/" | grep ${VERSION}
+  if [ $? == 0 ];then
+    DASHBOARD_IMAGE="openpitrix/dashboard:${VERSION}"
+  else
+    DASHBOARD_IMAGE="openpitrix/dashboard:latest"
+  fi
+  IMAGE_PULL_POLICY="IfNotPresent"
 fi
 
 replace() {
@@ -174,8 +181,11 @@ if [ "${BASE}" == "1" ] || [ "${ALL}" == "1" ];then
   kubectl create secret generic iam-account -n ${NAMESPACE} --from-file=./kubernetes/iam-config/admin-password.txt
 
   for FILE in `ls ./kubernetes/openpitrix/ | grep "^openpitrix-"`;do
-    replace ./kubernetes/openpitrix/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/${FILE} | kubectl apply -f -
+    if [ $? -ne 0 ]; then
+      replace ./kubernetes/openpitrix/${FILE} | kubectl delete -f - --ignore-not-found=true
+      replace ./kubernetes/openpitrix/${FILE} | kubectl apply -f -
+    fi
   done
 fi
 if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
@@ -186,14 +196,20 @@ if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
   fi
 
   for FILE in `ls ./kubernetes/openpitrix/metadata/`;do
-    replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -
+    if [ $? -ne 0 ]; then
+	  replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl delete -f - --ignore-not-found=true
+      replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -
+    fi
   done
 fi
 if [ "${DASHBOARD}" == "1" ] || [ "${ALL}" == "1" ];then
   for FILE in `ls ./kubernetes/openpitrix/dashboard/`;do
-    replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl delete -f - --ignore-not-found=true
     replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl apply -f -
+    if [ $? -ne 0 ]; then
+      replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl delete -f - --ignore-not-found=true
+      replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl apply -f -
+    fi
   done
 fi
 
