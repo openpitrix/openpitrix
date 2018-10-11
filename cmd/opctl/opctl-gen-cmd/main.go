@@ -33,7 +33,6 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
-	"openpitrix.io/openpitrix/test"
 {{- range $index, $element := .services}}
 	"openpitrix.io/openpitrix/test/client/{{snakeCase $element}}"
 {{- end}}
@@ -105,7 +104,7 @@ func (c *{{$element.Action}}Cmd) Run(out Out) error {
 
 	out.WriteRequest(params)
 
-	client := test.GetClient(clientConfig)
+	client := getClient()
 	res, err := client.{{$element.Service}}.{{$element.Action}}(params{{$auth}})
 	if err != nil {
 		return err
@@ -156,7 +155,7 @@ func (c *{{$element.Action}}Cmd) Run(out Out) error {
 
 	out.WriteRequest(c.{{$element.Action}}Params)
 
-	client := test.GetClient(clientConfig)
+	client := getClient()
 	res, err := client.{{$element.Service}}.{{$element.Action}}(c.{{$element.Action}}Params{{$auth}})
 	if err != nil {
 		return err

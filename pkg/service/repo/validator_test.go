@@ -36,8 +36,8 @@ func TestValidate2(t *testing.T) {
 }
 
 func TestValidate3(t *testing.T) {
-	repoType := "https"
-	url := "https://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
+	repoType := "http"
+	url := "http://helm-chart-repo.pek3a.qingstor.com/svc-catalog-charts/"
 	credential := ``
 
 	err := validate(ctx, repoType, url, credential)

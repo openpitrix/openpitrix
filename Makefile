@@ -29,6 +29,7 @@ COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitri
 COMPOSE_DB_CTRL=openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl
 CMD?=...
 WITH_METADATA?=yes
+WITH_K8S=no
 comma:= ,
 empty:=
 space:= $(empty) $(empty)
@@ -189,7 +190,9 @@ test: ## Run all tests
 e2e-test: ## Run integration tests
 	cd ./test/init/ && sh init_config.sh
 	go test -v -a -tags="integration" ./test/...
+ifeq ($(WITH_K8S),yes)
 	go test -v -a -timeout 0 -tags="k8s" ./test/...
+endif
 	@echo "e2e-test done"
 
 .PHONY: clean

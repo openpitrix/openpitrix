@@ -45,7 +45,7 @@ before_script:
 - make compose-up
 - sleep 20
 script:
-- make unit-test && travis_wait 30 make e2e-test
+- make unit-test && travis_wait 30 make e2e-test WITH_K8S=yes
 before_deploy:
 - make clean
 - make release-openpitrix-$TRAVIS_TAG

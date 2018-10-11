@@ -2,80 +2,49 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-// +build integration
-
-package test
+package repocommon
 
 import (
-	"fmt"
-	"path"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/require"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/util/idutil"
-	"openpitrix.io/openpitrix/pkg/util/iputil"
+	"openpitrix.io/openpitrix/test/client"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/models"
 )
 
-const testExportPort = 8879
-const testTmpPath = "/tmp/openpitrix-test"
-
-var testTmpDir = path.Join(testTmpPath, idutil.GetUuid(""))
-
-func TestDevkit(t *testing.T) {
-	t.Logf("start create repo at [%s]", testTmpDir)
-
-	d := NewDocker(t, "test-op", "openpitrix")
-	d.Port = testExportPort
-	d.WorkDir = testTmpPath
-	d.Volume[testTmpDir] = testTmpPath
-
-	t.Log(d.Setup())
-
-	t.Log(d.Exec("op create nginx"))
-
-	t.Log(d.Exec("ls nginx"))
-
-	// TODO: write file content to testRepoDir, so that we can test create cluster
-
-	t.Log(d.Exec("op package nginx"))
-
-	t.Log(d.Exec("op index ./"))
-
-	t.Log(d.Exec("cat index.yaml"))
-
-	ip := strings.TrimSpace(d.Exec("hostname -i"))
-	localIp := iputil.GetLocalIP()
-	t.Log(d.ExecD(fmt.Sprintf("op serve --address %s:%d --url http://%s:%d/", ip, testExportPort, localIp, testExportPort)))
-
-	t.Run("create repo", func(t *testing.T) {
-		time.Sleep(5 * time.Second)
-		testCreateRepo(t, "test-devkit-repo-name", constants.ProviderQingCloud, fmt.Sprintf("http://%s:8879/", iputil.GetLocalIP()))
-	})
-
-	t.Run("create cluster", func(t *testing.T) {
-		t.Log("TODO")
-	})
-
-	// cleanup
-	t.Log(d.Exec("find . -mindepth 1 -delete"))
-	t.Log(d.Teardown())
+func DeleteRepo(t *testing.T, c *client.Openpitrix, testRepoName string) {
+	describeParams := repo_manager.NewDescribeReposParams()
+	describeParams.SetName([]string{testRepoName})
+	describeParams.SetStatus([]string{constants.StatusActive})
+	describeResp, err := c.RepoManager.DescribeRepos(describeParams, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	repos := describeResp.Payload.RepoSet
+	for _, repo := range repos {
+		deleteParams := repo_manager.NewDeleteReposParams()
+		deleteParams.SetBody(
+			&models.OpenpitrixDeleteReposRequest{
+				RepoID: []string{repo.RepoID},
+			})
+		_, err := c.RepoManager.DeleteRepos(deleteParams, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
 }
 
-func waitRepoEventSuccess(t *testing.T, repoEventId string) {
-	client := GetClient(clientConfig)
-
+func waitRepoEventSuccess(t *testing.T, c *client.Openpitrix, repoEventId string) {
 	for {
 		describeEventParams := repo_indexer.NewDescribeRepoEventsParams()
 		describeEventParams.RepoEventID = []string{repoEventId}
-		describeEventResp, err := client.RepoIndexer.DescribeRepoEvents(describeEventParams, nil)
+		describeEventResp, err := c.RepoIndexer.DescribeRepoEvents(describeEventParams, nil)
 		require.NoError(t, err)
 		require.Equal(t, int64(1), describeEventResp.Payload.TotalCount, "count should be 1")
 		require.Equal(t, repoEventId, describeEventResp.Payload.RepoEventSet[0].RepoEventID, "error repo event id")
@@ -94,10 +63,8 @@ func waitRepoEventSuccess(t *testing.T, repoEventId string) {
 	}
 }
 
-func testCreateRepo(t *testing.T, name, provider, url string) {
-	client := GetClient(clientConfig)
-
-	deleteRepo(t, client, name)
+func CreateRepo(t *testing.T, c *client.Openpitrix, name, provider, url string) {
+	DeleteRepo(t, c, name)
 
 	createParams := repo_manager.NewCreateRepoParams()
 	createParams.SetBody(
@@ -110,7 +77,7 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 			Credential:  `{}`,
 			Visibility:  "public",
 		})
-	createResp, err := client.RepoManager.CreateRepo(createParams, nil)
+	createResp, err := c.RepoManager.CreateRepo(createParams, nil)
 	require.NoError(t, err)
 
 	repoId := createResp.Payload.RepoID
@@ -118,7 +85,7 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 	describeParams := repo_indexer.NewDescribeRepoEventsParams()
 	describeParams.SetRepoID([]string{repoId})
 	describeParams.SetStatus([]string{constants.StatusPending, constants.StatusWorking})
-	describeResp, err := client.RepoIndexer.DescribeRepoEvents(describeParams, nil)
+	describeResp, err := c.RepoIndexer.DescribeRepoEvents(describeParams, nil)
 	require.NoError(t, err)
 
 	if len(describeResp.Payload.RepoEventSet) < 1 {
@@ -126,12 +93,12 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 	}
 
 	repoEventId := describeResp.Payload.RepoEventSet[0].RepoEventID
-	waitRepoEventSuccess(t, repoEventId)
+	waitRepoEventSuccess(t, c, repoEventId)
 
 	describeAppParams := app_manager.NewDescribeAppsParams()
 	describeAppParams.WithRepoID([]string{repoId})
 
-	describeAppResp, err := client.AppManager.DescribeApps(describeAppParams, nil)
+	describeAppResp, err := c.AppManager.DescribeApps(describeAppParams, nil)
 	require.NoError(t, err)
 
 	t.Logf("success got [%d] apps", describeAppResp.Payload.TotalCount)
@@ -147,6 +114,6 @@ func testCreateRepo(t *testing.T, name, provider, url string) {
 		RepoID: []string{repoId},
 	})
 
-	_, err = client.RepoManager.DeleteRepos(deleteRepoParams, nil)
+	_, err = c.RepoManager.DeleteRepos(deleteRepoParams, nil)
 	require.NoError(t, err)
 }

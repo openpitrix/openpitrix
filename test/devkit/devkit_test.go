@@ -4,7 +4,7 @@
 
 // +build integration
 
-package test
+package devkit
 
 import (
 	"fmt"
@@ -14,39 +14,46 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/util/iputil"
+	"openpitrix.io/openpitrix/test/repocommon"
+	"openpitrix.io/openpitrix/test/testutil"
 )
 
-func TestHelm(t *testing.T) {
+const testExportPort = 9191
+
+var testTmpDir = testutil.GetTmpDir()
+var clientConfig = testutil.GetClientConfig()
+
+func TestDevkit(t *testing.T) {
 	t.Logf("start create repo at [%s]", testTmpDir)
 
-	d := NewDocker(t, "test-helm", "lachlanevenson/k8s-helm:v2.8.2")
+	d := testutil.NewDocker(t, "test-op", "openpitrix")
 	d.Port = testExportPort
-	d.WorkDir = testTmpPath
-	d.Volume[testTmpDir] = testTmpPath
+	d.WorkDir = testutil.TmpPath
+	d.Volume[testTmpDir] = testutil.TmpPath
 
 	t.Log(d.Setup())
 
-	t.Log(d.Exec("helm init --client-only"))
-
-	t.Log(d.Exec("helm create nginx"))
+	t.Log(d.Exec("op create nginx"))
 
 	t.Log(d.Exec("ls nginx"))
 
 	// TODO: write file content to testRepoDir, so that we can test create cluster
 
-	t.Log(d.Exec("helm package nginx"))
+	t.Log(d.Exec("op package nginx"))
 
-	t.Log(d.Exec("helm repo index ./"))
+	t.Log(d.Exec("op index ./"))
 
 	t.Log(d.Exec("cat index.yaml"))
 
 	ip := strings.TrimSpace(d.Exec("hostname -i"))
 	localIp := iputil.GetLocalIP()
-	t.Log(d.ExecD(fmt.Sprintf("helm serve --address %s:%d --url http://%s:%d/", ip, testExportPort, localIp, testExportPort)))
+	t.Log(d.ExecD(fmt.Sprintf("op serve --address %s:%d --url http://%s:%d/", ip, testExportPort, localIp, testExportPort)))
+
+	client := testutil.GetClient(clientConfig)
 
 	t.Run("create repo", func(t *testing.T) {
 		time.Sleep(5 * time.Second)
-		testCreateRepo(t, "test-helm-repo-name", constants.ProviderKubernetes, fmt.Sprintf("http://%s:8879/", iputil.GetLocalIP()))
+		repocommon.CreateRepo(t, client, "test-devkit-repo-name", constants.ProviderQingCloud, fmt.Sprintf("http://%s:9191/", iputil.GetLocalIP()))
 	})
 
 	t.Run("create cluster", func(t *testing.T) {

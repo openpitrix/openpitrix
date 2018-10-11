@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package test
+package testutil
 
 import (
 	"fmt"
@@ -29,6 +29,8 @@ func NewDocker(t *testing.T, name, image string) *Docker {
 }
 
 func (d *Docker) Setup() string {
+	d.t.Log(d.Teardown())
+
 	s := fmt.Sprintf("docker run -i -d --name='%s' --entrypoint='%s'", d.Name, d.Entrypoint)
 	for src, dst := range d.Volume {
 		// " -v src:dst"
@@ -41,17 +43,17 @@ func (d *Docker) Setup() string {
 		s = fmt.Sprintf("%s -p %d:%d", s, d.Port, d.Port)
 	}
 	s = fmt.Sprintf("%s %s sh", s, d.Image)
-	return execCmd(d.t, s)
+	return ExecCmd(d.t, s)
 }
 
 func (d *Docker) Exec(cmd string) string {
-	return execCmd(d.t, fmt.Sprintf("docker exec -i %s %s", d.Name, cmd))
+	return ExecCmd(d.t, fmt.Sprintf("docker exec -i %s %s", d.Name, cmd))
 }
 
 func (d *Docker) ExecD(cmd string) string {
-	return execCmd(d.t, fmt.Sprintf("docker exec -i -d %s %s", d.Name, cmd))
+	return ExecCmd(d.t, fmt.Sprintf("docker exec -i -d %s %s", d.Name, cmd))
 }
 
 func (d *Docker) Teardown() string {
-	return execCmd(d.t, fmt.Sprintf("docker rm -f %s", d.Name))
+	return ExecCmd(d.t, fmt.Sprintf("docker rm -f %s || true", d.Name))
 }

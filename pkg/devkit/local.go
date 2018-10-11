@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
-const DefaultServeAddr = "127.0.0.1:8879"
+const DefaultServeAddr = "127.0.0.1:9191"
 
 const indexHTMLTemplate = `
 <html>
