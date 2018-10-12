@@ -61,6 +61,9 @@ func (p *HelmHandler) initKubeClient() (*kubernetes.Clientset, *rest.Config, err
 		return nil, nil, err
 	}
 
+	config.CAData = config.CAData[0:0]
+	config.TLSClientConfig.Insecure = true
+
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, nil, err
