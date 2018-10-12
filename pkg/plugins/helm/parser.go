@@ -460,10 +460,6 @@ func (p *Parser) parseCustomValues() (map[string]interface{}, string, string, er
 	if !ok {
 		return nil, "", "", fmt.Errorf("config [Name] is missing")
 	}
-	// Related to https://github.com/helm/helm/pull/1080
-	if len(name) > 14 {
-		return nil, "", "", fmt.Errorf("the length of config [Name] must be less than 15")
-	}
 	desc, _ := GetStringFromValues(customVals, "Description")
 
 	return customVals, name, desc, nil
