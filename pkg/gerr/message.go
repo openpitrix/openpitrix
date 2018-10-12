@@ -221,7 +221,7 @@ var (
 	ErrorParameterShouldNotBeEmpty = ErrorMessage{
 		Name: "parameter_should_not_be_empty",
 		en:   "parameter [%s] should not be empty",
-		zhCN: "参数[%s]应当为空",
+		zhCN: "参数[%s]不应该为空",
 	}
 	ErrorUnsupportedParameterValue = ErrorMessage{
 		Name: "unsupported_parameter_value",
@@ -302,6 +302,11 @@ var (
 		Name: "cannot_access_repo",
 		en:   "cannot access repo",
 		zhCN: "仓库无法访问",
+	}
+	ErrorCannotWriteRepo = ErrorMessage{
+		Name: "cannot_write_repo",
+		en:   "cannot write repo [%s]",
+		zhCN: "仓库[%s]无法写入",
 	}
 	ErrorCannotDeleteInternalRepo = ErrorMessage{
 		Name: "cannot_delete_internal_repo",

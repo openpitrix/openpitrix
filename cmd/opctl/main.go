@@ -47,6 +47,7 @@ func newRootCmd(c string, args []string) *cobra.Command {
 	cmd.AddCommand(getCobraCmds(AllCmd)...)
 	cmd.AddCommand(getValidateCmd())
 	cmd.AddCommand(getCompletionCmd())
+	cmd.AddCommand(getJwtCmd())
 	flags.Parse(args)
 	return cmd
 }
