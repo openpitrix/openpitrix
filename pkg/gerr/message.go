@@ -221,7 +221,7 @@ var (
 	ErrorParameterShouldNotBeEmpty = ErrorMessage{
 		Name: "parameter_should_not_be_empty",
 		en:   "parameter [%s] should not be empty",
-		zhCN: "参数[%s]应当为空",
+		zhCN: "参数[%s]不应该为空",
 	}
 	ErrorUnsupportedParameterValue = ErrorMessage{
 		Name: "unsupported_parameter_value",
