@@ -169,6 +169,10 @@ func (vp *versionProxy) AddPackageFile(ctx context.Context, newPackage []byte, s
 		}
 	}
 
+	err = rreader.CheckWrite(ctx)
+	if err != nil {
+		return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotWriteRepo, vp.repo.RepoId)
+	}
 	err = rreader.WriteFile(ctx, pkgVersion.GetPackageName(), newPackage)
 	if err != nil {
 		logger.Error(ctx, "Failed to write [%s] package, error: %+v", vp.version.VersionId, err)

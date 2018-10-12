@@ -303,6 +303,11 @@ var (
 		en:   "cannot access repo",
 		zhCN: "仓库无法访问",
 	}
+	ErrorCannotWriteRepo = ErrorMessage{
+		Name: "cannot_write_repo",
+		en:   "cannot write repo [%s]",
+		zhCN: "仓库[%s]无法写入",
+	}
 	ErrorCannotDeleteInternalRepo = ErrorMessage{
 		Name: "cannot_delete_internal_repo",
 		en:   "cannot delete internal repo [%s]",
