@@ -29,11 +29,11 @@ The [Roadmap](docs/Roadmap-zh.md) 是 OpenPitrix 核心开发团队预期的产�
 
 ## 安装
 
-请参考 [安装指南](https://docs.openpitrix.io/v1.0/zh-CN/openpitrix-install-guide/) 下载和体验 OpenPitrix。
+请参考 [安装指南](https://docs.openpitrix.io/v0.3/zh-CN/openpitrix-install-guide/) 下载和体验 OpenPitrix。
 
 ## 使用
 
-如果想快速了解如何使用 OpenPitrix，请参考 [快速入门](https://docs.openpitrix.io/v1.0/zh-CN/user-quick-start/).
+如果想快速了解如何使用 OpenPitrix，请参考 [快速入门](https://docs.openpitrix.io/v0.3/zh-CN/user-quick-start/).
 
 若想了解关于 OpenPitrix 更多的信息，请参阅我们的官网 [openpitrix.io](http://openpitrix.io).
 
