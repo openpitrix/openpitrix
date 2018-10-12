@@ -29,7 +29,8 @@ import (
 )
 
 var (
-	ClusterNameRegExp = regexp.MustCompile(`^[a-z]([-a-z0-9]*[a-z0-9])?$`)
+	ClusterNameReg    = `^[a-z]([-a-z0-9]*[a-z0-9])?$`
+	ClusterNameRegExp = regexp.MustCompile(ClusterNameReg)
 )
 
 type HelmHandler struct {
@@ -154,7 +155,12 @@ func (p *HelmHandler) CheckClusterNameIsUnique(clusterName string) error {
 	}
 
 	if !ClusterNameRegExp.MatchString(clusterName) {
-		return fmt.Errorf(`cluster name must match with regexp "[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*"`)
+		return fmt.Errorf(`cluster name must match with regexp "%s"`, ClusterNameReg)
+	}
+
+	// Related to https://github.com/helm/helm/pull/1080
+	if len(clusterName) > 14 {
+		return fmt.Errorf("the length of config [Name] must be less than 15")
 	}
 
 	err := funcutil.WaitForSpecificOrError(func() (bool, error) {
