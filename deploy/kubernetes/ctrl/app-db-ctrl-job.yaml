@@ -8,7 +8,6 @@ metadata:
     job: openpitrix-app-db-ctrl
     version: ${VERSION}
 spec:
-  activeDeadlineSeconds: 600
   backoffLimit: 6
   completions: 1
   parallelism: 1
