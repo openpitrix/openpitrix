@@ -11,30 +11,31 @@ go_import_path: openpitrix.io/openpitrix
 addons:
   apt:
     packages:
-      - docker-ce
+    - docker-ce
 before_install:
-# Install nsenter.
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then openssl aes-256-cbc -K $encrypted_31dac1cc4b44_key -iv $encrypted_31dac1cc4b44_iv -in key.yaml.enc -out key.yaml -d;fi
 - sudo docker run -d -it --name nsenter ubuntu:16.04 bash
 - sudo docker cp nsenter:/usr/bin/nsenter /usr/local/bin/nsenter
 - sudo docker stop nsenter && sudo docker rm nsenter
-# Install docker-compose.
-- sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+- sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname
+  -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 - sudo chmod +x /usr/local/bin/docker-compose
-# Download kubectl, which is a requirement for using minikube.
-- curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.10.0/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
-# Download minikube.
-- curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.25.2/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
+- curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.10.0/bin/linux/amd64/kubectl
+  && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+- curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.25.2/minikube-linux-amd64
+  && chmod +x minikube && sudo mv minikube /usr/local/bin/
 - sudo minikube start --vm-driver=none --kubernetes-version=v1.10.0
-# Fix the kubectl context, as it's often stale.
 - minikube update-context
-# Wait for Kubernetes to be up and ready.
-- JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'; until kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do sleep 1; done
-# Install helm.
-- DESIRED_VERSION=2.9.1 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | DESIRED_VERSION=v2.9.1 bash
-# Install tiller.
-- ./deploy/kubernetes/scripts/init-helm.sh
-# Wait for tiller to be up and ready.
+- JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}';
+  until kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do
+  sleep 1; done
+- DESIRED_VERSION=2.9.1 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get
+  | DESIRED_VERSION=v2.9.1 bash
+- "./deploy/kubernetes/scripts/init-helm.sh"
 - until helm list -a; do sleep 1; done
+install:
+- curl https://pek3a.qingstor.com/releases-qs/qsctl/qsctl-latest-linux.tar.gz -O
+- tar -xzvf qsctl-latest-linux.tar.gz
 before_script:
 - docker --version
 - docker-compose --version
@@ -50,22 +51,27 @@ before_deploy:
 - make clean
 - make release-openpitrix-$TRAVIS_TAG
 - make bin-release-openpitrix-$TRAVIS_TAG
+- cd image/amazon-linux/; tar -czvf amazon-linux.tar.gz *;cd ../..
+- cd image/ubuntu/; tar -czvf ubuntu.tar.gz *;cd ../..
 deploy:
-  - provider: releases
-    api_key:
-      secure: k6pBb0kP99Sb0ZmJjncWZNugdUpT90dwWmvnlG4j8t+U61QarfgarR1RdDi8fYLKdioIOwfduH3SU5iq1Xtc4qV62f1J0mXvoRalcEhCeh16edaBxSIs1akUNirNjAvosKURcqmVpUXo+iRFhSI2708J2XBl8sogAqnuuW49LbcrsY7K4DrFFujjysBeSZDaRxPU8nMFykHNSrbEQgw2u/YK6PI0jg73RDhAfnr6cPfZr0ZJDr0ykLrra6faZLANR9khXKaTCN5JT3enI6ufd4bAY0WvjM6XeNLU9vWGeB5QbJErvLlkANrrtkCA6mRDVh6kUxkEM0R1VirGR4XJMk+kVdCzgJV4bpmQSzFhHVbr0g2+4hqeAvNrbVjGq6z9orbv//Lkg7IXhu21u/wcgSAzBWHZdMpoaAVPvySJSVAIhdCgJD5Q3Ebh7L3olLnQ0MWWf95Mz21jTaH0F76pe3Kcu/p3ATSsomZQL9ez+W1A0P+3Bxcjk4fjqjQDkrwBqxo4wTb0Oix66eZFJtwPWKqu0erzuViprSDi6+vwPydjt9ADxMWescFc53sfFPkQWzVC6Pfbxdqt4jCcgRBPipzchsbxHYaofKzfMJrJYIx67iR5Ai9Z8Nwwki6rGXocuR06uhuIyyN4j0yR6Y9qiCslvLUbptsU69WDkMlsOwI=
-    file:
-      - deploy/openpitrix-$TRAVIS_TAG-kubernetes.tar.gz
-      - deploy/openpitrix-$TRAVIS_TAG-bin.tar.gz
-    skip_cleanup: true
-    on:
-      repo: openpitrix/openpitrix
-      tags: true
-  - provider: script
-    script: bash docker_push latest
-    on:
-      branch: master
-  - provider: script
-    script: bash docker_push $TRAVIS_TAG
-    on:
-      tags: true
+- provider: releases
+  api_key:
+    secure: k6pBb0kP99Sb0ZmJjncWZNugdUpT90dwWmvnlG4j8t+U61QarfgarR1RdDi8fYLKdioIOwfduH3SU5iq1Xtc4qV62f1J0mXvoRalcEhCeh16edaBxSIs1akUNirNjAvosKURcqmVpUXo+iRFhSI2708J2XBl8sogAqnuuW49LbcrsY7K4DrFFujjysBeSZDaRxPU8nMFykHNSrbEQgw2u/YK6PI0jg73RDhAfnr6cPfZr0ZJDr0ykLrra6faZLANR9khXKaTCN5JT3enI6ufd4bAY0WvjM6XeNLU9vWGeB5QbJErvLlkANrrtkCA6mRDVh6kUxkEM0R1VirGR4XJMk+kVdCzgJV4bpmQSzFhHVbr0g2+4hqeAvNrbVjGq6z9orbv//Lkg7IXhu21u/wcgSAzBWHZdMpoaAVPvySJSVAIhdCgJD5Q3Ebh7L3olLnQ0MWWf95Mz21jTaH0F76pe3Kcu/p3ATSsomZQL9ez+W1A0P+3Bxcjk4fjqjQDkrwBqxo4wTb0Oix66eZFJtwPWKqu0erzuViprSDi6+vwPydjt9ADxMWescFc53sfFPkQWzVC6Pfbxdqt4jCcgRBPipzchsbxHYaofKzfMJrJYIx67iR5Ai9Z8Nwwki6rGXocuR06uhuIyyN4j0yR6Y9qiCslvLUbptsU69WDkMlsOwI=
+  file:
+  - deploy/openpitrix-$TRAVIS_TAG-kubernetes.tar.gz
+  - deploy/openpitrix-$TRAVIS_TAG-bin.tar.gz
+  skip_cleanup: true
+  on:
+    repo: openpitrix/openpitrix
+    tags: true
+- provider: script
+  script: bash docker_push latest
+  on:
+    branch: master
+- provider: script
+  script: bash docker_push $TRAVIS_TAG
+  on:
+    tags: true
+after_deploy:
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./qsctl cp -f image/ubuntu/ubuntu.tar.gz qs://openpitrix/image/amazon-linux.tar.gz -c key.yaml -z pek3a; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./qsctl cp -f image/amazon-linux/amazon-linux.tar.gz qs://openpitrix/image/amazon-linux.tar.gz -c key.yaml -z pek3a"; fi
