@@ -74,4 +74,4 @@ deploy:
     tags: true
 after_deploy:
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./qsctl cp -f image/ubuntu/ubuntu.tar.gz qs://openpitrix/image/amazon-linux.tar.gz -c key.yaml -z pek3a; fi
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./qsctl cp -f image/amazon-linux/amazon-linux.tar.gz qs://openpitrix/image/amazon-linux.tar.gz -c key.yaml -z pek3a"; fi
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then ./qsctl cp -f image/amazon-linux/amazon-linux.tar.gz qs://openpitrix/image/amazon-linux.tar.gz -c key.yaml -z pek3a; fi
