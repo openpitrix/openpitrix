@@ -52,12 +52,10 @@ func TestRepo(t *testing.T) {
 	validateParams.SetURL(&repoUrl)
 	validateParams.SetCredential(&credential)
 	validateResp, err := client.RepoManager.ValidateRepo(validateParams, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if validateResp.Payload.Ok != true {
-		t.Fatal("validate repo failed")
-	}
+
+	t.Log(validateResp)
+	require.NoError(t, err)
+	require.Equal(t, true, validateResp.Payload.Ok)
 
 	ioClient := testutil.GetIoClient(clientConfig)
 	// create repo
@@ -124,9 +122,8 @@ func TestRepo(t *testing.T) {
 			CategoryID:  "aa,bb,cc,xx",
 		})
 	modifyResp, err := client.RepoManager.ModifyRepo(modifyParams, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
 
 	t.Log(modifyResp)
 	// describe repo
@@ -135,13 +132,13 @@ func TestRepo(t *testing.T) {
 	describeParams.SetStatus([]string{constants.StatusActive})
 	describeParams.WithRepoID([]string{repoId})
 	describeResp, err := client.RepoManager.DescribeRepos(describeParams, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	repos := describeResp.Payload.RepoSet
-	if len(repos) != 1 {
-		t.Fatalf("failed to describe repos with params [%+v]", describeParams)
-	}
+
+	require.Equalf(t, 1, len(repos), "failed to describe repos with params [%+v]", describeParams)
+
 	repo := repos[0]
 	require.Equal(t, testRepoName, repo.Name)
 	require.Equal(t, "cc", repo.Description)
@@ -166,9 +163,8 @@ func TestRepo(t *testing.T) {
 		RepoID: []string{repoId},
 	})
 	deleteResp, err := client.RepoManager.DeleteRepos(deleteParams, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
 
 	t.Log(deleteResp)
 	// describe deleted repo
@@ -176,20 +172,17 @@ func TestRepo(t *testing.T) {
 	describeParams.WithStatus([]string{constants.StatusDeleted})
 	describeParams.WithName(nil)
 	describeResp, err = client.RepoManager.DescribeRepos(describeParams, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	repos = describeResp.Payload.RepoSet
-	if len(repos) != 1 {
-		t.Fatalf("failed to describe repos with params [%+v]", describeParams)
-	}
+
+	require.Equalf(t, 1, len(repos), "failed to describe repos with params [%+v]", describeParams)
+
 	repo = repos[0]
-	if repo.RepoID != repoId {
-		t.Fatalf("failed to describe repo")
-	}
-	if repo.Status != constants.StatusDeleted {
-		t.Fatalf("failed to delete repo, got repo status [%s]", repo.Status)
-	}
+
+	require.Equalf(t, repoId, repo.RepoID, "failed to describe repo")
+	require.Equalf(t, constants.StatusDeleted, repo.Status, "failed to delete repo, got repo status [%s]", repo.Status)
 
 	t.Log("test repo finish, all test is ok")
 }
@@ -205,12 +198,9 @@ func testDescribeReposWithLabelSelector(t *testing.T,
 	describeParams.SetSelector(&selectors)
 	describeParams.SetStatus([]string{constants.StatusActive})
 	describeResp, err := client.RepoManager.DescribeRepos(describeParams, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if describeResp.Payload.RepoSet[0].RepoID != repoId {
-		t.Fatalf("describe repo with filter failed")
-	}
+
+	require.NoError(t, err)
+	require.Equalf(t, repoId, describeResp.Payload.RepoSet[0].RepoID, "describe repo with filter failed")
 	//repo := describeResp.Payload.RepoSet[0]
 	//for i, label := range repo.Labels {
 	//	if label.LabelKey != labels[i].LabelKey {
@@ -250,9 +240,9 @@ func TestRepoLabelSelector(t *testing.T) {
 			Selectors:   selectors,
 		})
 	createResp, err := client.RepoManager.CreateRepo(createParams, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+
+	require.NoError(t, err)
+
 	repoId := createResp.Payload.RepoID
 	testDescribeReposWithLabelSelector(t, repoId, labels, selectors)
 
@@ -271,9 +261,7 @@ func TestRepoLabelSelector(t *testing.T) {
 			},
 		)
 		_, err := client.RepoManager.ModifyRepo(modifyParams, nil)
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		testDescribeReposWithLabelSelector(t, repoId, newLabels, newSelectors)
 	}
 
@@ -283,9 +271,7 @@ func TestRepoLabelSelector(t *testing.T) {
 		RepoID: []string{repoId},
 	})
 	deleteResp, err := client.RepoManager.DeleteRepos(deleteParams, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	t.Log(deleteResp)
 
 	t.Log("test repo label and selector finish, all test is ok")
