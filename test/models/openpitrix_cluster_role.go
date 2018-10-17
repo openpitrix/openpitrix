@@ -22,6 +22,9 @@ type OpenpitrixClusterRole struct {
 	// cluster id
 	ClusterID string `json:"cluster_id,omitempty"`
 
+	// config map data count
+	ConfigMapDataCount int64 `json:"config_map_data_count,omitempty"`
+
 	// cpu
 	CPU int64 `json:"cpu,omitempty"`
 
@@ -33,6 +36,12 @@ type OpenpitrixClusterRole struct {
 
 	// gpu
 	Gpu int64 `json:"gpu,omitempty"`
+
+	// ingress address
+	IngressAddress string `json:"ingress_address,omitempty"`
+
+	// ingress hosts
+	IngressHosts string `json:"ingress_hosts,omitempty"`
 
 	// instance size
 	InstanceSize int64 `json:"instance_size,omitempty"`
@@ -46,6 +55,18 @@ type OpenpitrixClusterRole struct {
 	// mount point
 	MountPoint string `json:"mount_point,omitempty"`
 
+	// pvc access modes
+	PvcAccessModes string `json:"pvc_accessModes,omitempty"`
+
+	// pvc capacity
+	PvcCapacity string `json:"pvc_capacity,omitempty"`
+
+	// pvc status
+	PvcStatus string `json:"pvc_status,omitempty"`
+
+	// pvc volume
+	PvcVolume string `json:"pvc_volume,omitempty"`
+
 	// ready replicas
 	ReadyReplicas int64 `json:"ready_replicas,omitempty"`
 
@@ -54,6 +75,21 @@ type OpenpitrixClusterRole struct {
 
 	// role
 	Role string `json:"role,omitempty"`
+
+	// secret data count
+	SecretDataCount int64 `json:"secret_data_count,omitempty"`
+
+	// service cluster ip
+	ServiceClusterIP string `json:"service_cluster_ip,omitempty"`
+
+	// service external ip
+	ServiceExternalIP string `json:"service_external_ip,omitempty"`
+
+	// service ports
+	ServicePorts string `json:"service_ports,omitempty"`
+
+	// service type
+	ServiceType string `json:"service_type,omitempty"`
 
 	// storage size
 	StorageSize int64 `json:"storage_size,omitempty"`

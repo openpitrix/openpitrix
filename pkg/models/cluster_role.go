@@ -25,6 +25,22 @@ type ClusterRole struct {
 	Replicas      uint32
 	ReadyReplicas uint32
 	ApiVersion    string
+
+	ServiceType       string
+	ServiceClusterIp  string
+	ServiceExternalIp string
+	ServicePorts      string
+
+	ConfigMapDataCount uint32
+	SecretDataCount    uint32
+
+	PvcStatus      string
+	PvcVolume      string
+	PvcCapacity    string
+	PvcAccessModes string
+
+	IngressHosts   string
+	IngressAddress string
 }
 
 var ClusterRoleColumns = db.GetColumnsFromStruct(&ClusterRole{})
@@ -45,6 +61,22 @@ func ClusterRoleToPb(clusterRole *ClusterRole) *pb.ClusterRole {
 		Replicas:      pbutil.ToProtoUInt32(clusterRole.Replicas),
 		ReadyReplicas: pbutil.ToProtoUInt32(clusterRole.ReadyReplicas),
 		ApiVersion:    pbutil.ToProtoString(clusterRole.ApiVersion),
+
+		ServiceType:       pbutil.ToProtoString(clusterRole.ServiceType),
+		ServiceClusterIp:  pbutil.ToProtoString(clusterRole.ServiceClusterIp),
+		ServiceExternalIp: pbutil.ToProtoString(clusterRole.ServiceExternalIp),
+		ServicePorts:      pbutil.ToProtoString(clusterRole.ServicePorts),
+
+		ConfigMapDataCount: pbutil.ToProtoUInt32(clusterRole.ConfigMapDataCount),
+		SecretDataCount:    pbutil.ToProtoUInt32(clusterRole.SecretDataCount),
+
+		PvcStatus:      pbutil.ToProtoString(clusterRole.PvcStatus),
+		PvcVolume:      pbutil.ToProtoString(clusterRole.PvcVolume),
+		PvcCapacity:    pbutil.ToProtoString(clusterRole.PvcCapacity),
+		PvcAccessModes: pbutil.ToProtoString(clusterRole.PvcAccessModes),
+
+		IngressHosts:   pbutil.ToProtoString(clusterRole.IngressHosts),
+		IngressAddress: pbutil.ToProtoString(clusterRole.IngressAddress),
 	}
 }
 
@@ -64,6 +96,22 @@ func PbToClusterRole(pbClusterRole *pb.ClusterRole) *ClusterRole {
 		Replicas:      pbClusterRole.GetReplicas().GetValue(),
 		ReadyReplicas: pbClusterRole.GetReadyReplicas().GetValue(),
 		ApiVersion:    pbClusterRole.GetApiVersion().GetValue(),
+
+		ServiceType:       pbClusterRole.GetServiceType().GetValue(),
+		ServiceClusterIp:  pbClusterRole.GetServiceClusterIp().GetValue(),
+		ServiceExternalIp: pbClusterRole.GetServiceExternalIp().GetValue(),
+		ServicePorts:      pbClusterRole.GetServicePorts().GetValue(),
+
+		ConfigMapDataCount: pbClusterRole.GetConfigMapDataCount().GetValue(),
+		SecretDataCount:    pbClusterRole.GetSecretDataCount().GetValue(),
+
+		PvcStatus:      pbClusterRole.GetPvcStatus().GetValue(),
+		PvcVolume:      pbClusterRole.GetPvcVolume().GetValue(),
+		PvcCapacity:    pbClusterRole.GetPvcCapacity().GetValue(),
+		PvcAccessModes: pbClusterRole.GetPvcAccessModes().GetValue(),
+
+		IngressHosts:   pbClusterRole.GetIngressHosts().GetValue(),
+		IngressAddress: pbClusterRole.GetIngressAddress().GetValue(),
 	}
 }
 

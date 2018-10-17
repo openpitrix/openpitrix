@@ -17,6 +17,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	appsv1beta1 "k8s.io/api/apps/v1beta1"
 	appsv1beta2 "k8s.io/api/apps/v1beta2"
+	corev1 "k8s.io/api/core/v1"
 	exv1beta1 "k8s.io/api/extensions/v1beta1"
 	k8syaml "k8s.io/apimachinery/pkg/util/yaml"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -386,6 +387,71 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 					clusterRole.Gpu = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.NvidiaGPU().Value())
 					clusterRole.Memory = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.Memory().Value() / 1024 / 1024 / 1024)
 					clusterRole.StorageSize = uint32(o.Spec.Template.Spec.Containers[0].Resources.Requests.StorageEphemeral().Value() / 1024 / 1024 / 1024)
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *corev1.Service:
+				clusterRole := &models.ClusterRole{
+					Role:       fmt.Sprintf("%s-Service", o.GetObjectMeta().GetName()),
+					ApiVersion: groupVersionKind.GroupVersion().String(),
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *corev1.ConfigMap:
+				clusterRole := &models.ClusterRole{
+					Role:       fmt.Sprintf("%s-ConfigMap", o.GetObjectMeta().GetName()),
+					ApiVersion: groupVersionKind.GroupVersion().String(),
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *corev1.Secret:
+				clusterRole := &models.ClusterRole{
+					Role:       fmt.Sprintf("%s-Secret", o.GetObjectMeta().GetName()),
+					ApiVersion: groupVersionKind.GroupVersion().String(),
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *corev1.PersistentVolumeClaim:
+				clusterRole := &models.ClusterRole{
+					Role:       fmt.Sprintf("%s-PVC", o.GetObjectMeta().GetName()),
+					ApiVersion: groupVersionKind.GroupVersion().String(),
+				}
+
+				clusterCommon := &models.ClusterCommon{
+					Role:       clusterRole.Role,
+					Hypervisor: "docker",
+				}
+
+				clusterRoles[clusterRole.Role] = clusterRole
+				clusterCommons[clusterRole.Role] = clusterCommon
+			case *exv1beta1.Ingress:
+				clusterRole := &models.ClusterRole{
+					Role:       fmt.Sprintf("%s-Ingress", o.GetObjectMeta().GetName()),
+					ApiVersion: groupVersionKind.GroupVersion().String(),
 				}
 
 				clusterCommon := &models.ClusterCommon{

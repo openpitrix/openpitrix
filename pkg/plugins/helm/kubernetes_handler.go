@@ -146,6 +146,91 @@ func (p *KubeHandler) WaitWorkloadReady(runtimeId, namespace string, clusterRole
 	return err
 }
 
+func (p *KubeHandler) describeK8sResource(namespace string, clusterRole *models.ClusterRole) error {
+	kubeClient, _, err := p.initKubeClient()
+	if err != nil {
+		return err
+	}
+
+	if strings.HasSuffix(clusterRole.Role, ServiceFlag) {
+		serviceName := strings.TrimSuffix(clusterRole.Role, ServiceFlag)
+
+		service, err := kubeClient.CoreV1().Services(namespace).Get(serviceName, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+
+		(*clusterRole).ServiceType = string(service.Spec.Type)
+		(*clusterRole).ServiceClusterIp = service.Spec.ClusterIP
+		if service.Status.LoadBalancer.Ingress != nil && len(service.Status.LoadBalancer.Ingress) != 0 {
+			(*clusterRole).ServiceExternalIp = service.Status.LoadBalancer.Ingress[0].IP
+		}
+
+		ports := []string{}
+		for _, port := range service.Spec.Ports {
+			if port.NodePort == 0 {
+				ports = append(ports, fmt.Sprintf("%d/%s", port.Port, port.Protocol))
+			} else {
+				ports = append(ports, fmt.Sprintf("%d:%d/%s", port.Port, port.NodePort, port.Protocol))
+			}
+		}
+		(*clusterRole).ServicePorts = strings.Join(ports, ",")
+	} else if strings.HasSuffix(clusterRole.Role, ConfigMapFlag) {
+		configMapName := strings.TrimSuffix(clusterRole.Role, ConfigMapFlag)
+
+		configMap, err := kubeClient.CoreV1().ConfigMaps(namespace).Get(configMapName, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+
+		(*clusterRole).ConfigMapDataCount = uint32(len(configMap.Data))
+	} else if strings.HasSuffix(clusterRole.Role, SecretFlag) {
+		secretName := strings.TrimSuffix(clusterRole.Role, SecretFlag)
+
+		secret, err := kubeClient.CoreV1().Secrets(namespace).Get(secretName, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+
+		(*clusterRole).SecretDataCount = uint32(len(secret.Data))
+	} else if strings.HasSuffix(clusterRole.Role, PVCFlag) {
+		pvcName := strings.TrimSuffix(clusterRole.Role, PVCFlag)
+
+		pvc, err := kubeClient.CoreV1().PersistentVolumeClaims(namespace).Get(pvcName, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+
+		(*clusterRole).PvcStatus = string(pvc.Status.Phase)
+		(*clusterRole).PvcVolume = pvc.Spec.VolumeName
+		(*clusterRole).PvcCapacity = pvc.Status.Capacity.StorageEphemeral().String()
+
+		if len(pvc.Status.AccessModes) != 0 {
+			(*clusterRole).PvcAccessModes = string(pvc.Status.AccessModes[0])
+		}
+	} else if strings.HasSuffix(clusterRole.Role, IngressFlag) {
+		ingressName := strings.TrimSuffix(clusterRole.Role, IngressFlag)
+
+		ingress, err := kubeClient.ExtensionsV1beta1().Ingresses(namespace).Get(ingressName, metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+
+		hosts := []string{}
+		for _, rule := range ingress.Spec.Rules {
+			hosts = append(hosts, rule.Host)
+		}
+
+		(*clusterRole).IngressHosts = strings.Join(hosts, ",")
+
+		if ingress.Status.LoadBalancer.Ingress != nil && len(ingress.Status.LoadBalancer.Ingress) != 0 {
+			(*clusterRole).IngressAddress = ingress.Status.LoadBalancer.Ingress[0].IP
+		}
+	}
+
+	return nil
+}
+
 func (p *KubeHandler) DescribeClusterDetails(clusterWrapper *models.ClusterWrapper) error {
 	runtime, err := runtimeclient.NewRuntime(p.ctx, p.RuntimeId)
 	if err != nil {
@@ -170,6 +255,19 @@ func (p *KubeHandler) DescribeClusterDetails(clusterWrapper *models.ClusterWrapp
 		(*clusterWrapper).ClusterRoles[k] = clusterRole
 
 		p.addPodsToClusterNodes(&clusterWrapper.ClusterNodesWithKeyPairs, pods, clusterWrapper.Cluster.ClusterId, clusterWrapper.Cluster.Owner, clusterRole.Role)
+	}
+
+	for k, clusterRole := range clusterWrapper.ClusterRoles {
+		if clusterRole.Role == "" {
+			continue
+		}
+
+		err := p.describeK8sResource(namespace, clusterRole)
+		if err != nil {
+			return err
+		}
+
+		(*clusterWrapper).ClusterRoles[k] = clusterRole
 	}
 
 	return nil

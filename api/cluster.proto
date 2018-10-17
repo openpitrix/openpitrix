@@ -261,6 +261,22 @@ message ClusterRole {
 	google.protobuf.UInt32Value replicas = 12;
 	google.protobuf.UInt32Value ready_replicas = 13;
 	google.protobuf.StringValue api_version = 14;
+
+	google.protobuf.StringValue service_type = 15;
+	google.protobuf.StringValue service_cluster_ip = 16;
+	google.protobuf.StringValue service_external_ip = 17;
+	google.protobuf.StringValue service_ports = 18;
+
+	google.protobuf.UInt32Value config_map_data_count = 19;
+	google.protobuf.UInt32Value secret_data_count = 20;
+
+	google.protobuf.StringValue pvc_status = 21;
+	google.protobuf.StringValue pvc_volume = 22;
+	google.protobuf.StringValue pvc_capacity = 23;
+	google.protobuf.StringValue pvc_accessModes = 24;
+
+	google.protobuf.StringValue ingress_hosts = 25;
+	google.protobuf.StringValue ingress_address = 26;
 }
 
 message ClusterLoadbalancer {

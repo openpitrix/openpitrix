@@ -4296,6 +4296,44 @@
         },
         "api_version": {
           "type": "string"
+        },
+        "service_type": {
+          "type": "string"
+        },
+        "service_cluster_ip": {
+          "type": "string"
+        },
+        "service_external_ip": {
+          "type": "string"
+        },
+        "service_ports": {
+          "type": "string"
+        },
+        "config_map_data_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "secret_data_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "pvc_status": {
+          "type": "string"
+        },
+        "pvc_volume": {
+          "type": "string"
+        },
+        "pvc_capacity": {
+          "type": "string"
+        },
+        "pvc_accessModes": {
+          "type": "string"
+        },
+        "ingress_hosts": {
+          "type": "string"
+        },
+        "ingress_address": {
+          "type": "string"
         }
       }
     },

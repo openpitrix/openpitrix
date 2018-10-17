@@ -10,4 +10,9 @@ const (
 	DeploymentFlag  = "-Deployment"
 	StatefulSetFlag = "-StatefulSet"
 	DaemonSetFlag   = "-DaemonSet"
+	ServiceFlag     = "-Service"
+	ConfigMapFlag   = "-ConfigMap"
+	SecretFlag      = "-Secret"
+	PVCFlag         = "-PVC"
+	IngressFlag     = "-Ingress"
 )
