@@ -225,7 +225,10 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 				go func() {
 					logger.Info(nil, "LoadLastCmdStatus: %v", cfg.CmdInfoLogPath)
 
-					status, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
+					status, isEmpty, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
+					if isEmpty {
+						return
+					}
 					if err != nil {
 						logger.Warn(nil, "%+v", err)
 						p.fg.ReportSubTaskStatus(&pbtypes.SubTaskStatus{
@@ -248,7 +251,10 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 			}
 			if trName == "/etc/confd/conf.d/cmd.info.toml" {
 				go func() {
-					status, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
+					status, isEmpty, err := LoadLastCmdStatus(cfg.CmdInfoLogPath)
+					if isEmpty {
+						return
+					}
 					if err != nil {
 						logger.Warn(nil, "%+v", err)
 						p.fg.ReportSubTaskStatus(&pbtypes.SubTaskStatus{
