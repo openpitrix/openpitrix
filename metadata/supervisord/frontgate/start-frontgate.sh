@@ -13,4 +13,4 @@ if [ -f "/opt/openpitrix/conf/pilot-version" ]; then
 	fi
 fi
 
-${COMMAND} ${ARGV} serve
+exec ${COMMAND} ${ARGV} serve
