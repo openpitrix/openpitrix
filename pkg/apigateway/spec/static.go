@@ -3999,6 +3999,9 @@ var Files = map[string]string{
           "type": "string",
           "format": "date-time"
         },
+        "additional_info": {
+          "type": "string"
+        },
         "cluster_node_set": {
           "type": "array",
           "items": {
