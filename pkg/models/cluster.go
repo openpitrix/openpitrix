@@ -39,6 +39,7 @@ type Cluster struct {
 	RuntimeId          string
 	CreateTime         time.Time
 	StatusTime         time.Time
+	AdditionalInfo     string
 }
 
 var ClusterColumns = db.GetColumnsFromStruct(&Cluster{})
@@ -71,6 +72,7 @@ func ClusterToPb(cluster *Cluster) *pb.Cluster {
 		RuntimeId:          pbutil.ToProtoString(cluster.RuntimeId),
 		CreateTime:         pbutil.ToProtoTimestamp(cluster.CreateTime),
 		StatusTime:         pbutil.ToProtoTimestamp(cluster.StatusTime),
+		AdditionalInfo:     pbutil.ToProtoString(cluster.AdditionalInfo),
 	}
 	if cluster.UpgradeTime != nil {
 		c.UpgradeTime = pbutil.ToProtoTimestamp(*cluster.UpgradeTime)
@@ -99,6 +101,7 @@ func PbToCluster(pbCluster *pb.Cluster) *Cluster {
 		RuntimeId:          pbCluster.GetRuntimeId().GetValue(),
 		CreateTime:         pbutil.FromProtoTimestamp(pbCluster.GetCreateTime()),
 		StatusTime:         pbutil.FromProtoTimestamp(pbCluster.GetStatusTime()),
+		AdditionalInfo:     pbCluster.GetAdditionalInfo().GetValue(),
 	}
 	upgradeTime := pbutil.FromProtoTimestamp(pbCluster.GetUpgradeTime())
 	c.UpgradeTime = &upgradeTime

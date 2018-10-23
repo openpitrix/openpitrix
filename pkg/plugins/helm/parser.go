@@ -17,6 +17,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	appsv1beta1 "k8s.io/api/apps/v1beta1"
 	appsv1beta2 "k8s.io/api/apps/v1beta2"
+	corev1 "k8s.io/api/core/v1"
 	exv1beta1 "k8s.io/api/extensions/v1beta1"
 	k8syaml "k8s.io/apimachinery/pkg/util/yaml"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -66,22 +67,23 @@ func (p *Parser) getAppVersion() (*pb.AppVersion, error) {
 	return appVersion, nil
 }
 
-func (p *Parser) parseCluster(name string, description string) (*models.Cluster, error) {
+func (p *Parser) parseCluster(name string, description string, additionalInfo string) (*models.Cluster, error) {
 	appVersion, err := p.getAppVersion()
 	if err != nil {
 		return nil, err
 	}
 
 	cluster := &models.Cluster{
-		Zone:        p.Namespace,
-		Name:        name,
-		Description: description,
-		AppId:       appVersion.AppId.GetValue(),
-		VersionId:   p.VersionId,
-		Status:      constants.StatusPending,
-		RuntimeId:   p.RuntimeId,
-		CreateTime:  time.Now(),
-		StatusTime:  time.Now(),
+		Zone:           p.Namespace,
+		Name:           name,
+		Description:    description,
+		AppId:          appVersion.AppId.GetValue(),
+		VersionId:      p.VersionId,
+		Status:         constants.StatusPending,
+		RuntimeId:      p.RuntimeId,
+		CreateTime:     time.Now(),
+		StatusTime:     time.Now(),
+		AdditionalInfo: additionalInfo,
 	}
 
 	return cluster, nil
@@ -90,18 +92,26 @@ func (p *Parser) parseCluster(name string, description string) (*models.Cluster,
 func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{}, customVals map[string]interface{}) (
 	map[string]*models.ClusterRole,
 	map[string]*models.ClusterCommon,
+	string,
 	error,
 ) {
+	additionalInfo := map[string][]map[string]interface{}{
+		"service":   {},
+		"configmap": {},
+		"secret":    {},
+		"pvc":       {},
+		"ingress":   {},
+	}
 	env := jsonutil.ToString(customVals)
 
 	renderer := engine.New()
 	out, err := renderer.Render(p.Chart, vals)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, "", err
 	}
 
 	if len(out) == 0 {
-		return nil, nil, fmt.Errorf("this chart has no resources defined")
+		return nil, nil, "", fmt.Errorf("this chart has no resources defined")
 	}
 
 	var apiVersions []string
@@ -126,13 +136,13 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 			}
 			if err != nil {
 				logger.Error(p.ctx, "Decode file [%s] in chart failed, %+v", k, err)
-				return nil, nil, err
+				return nil, nil, "", err
 			}
 			obj, groupVersionKind, err := decode(doc, nil, nil)
 
 			if err != nil {
 				logger.Error(p.ctx, "Decode file [%s] in chart failed, %+v", k, err)
-				return nil, nil, err
+				return nil, nil, "", err
 			}
 			logger.Debug(p.ctx, "Yaml content: %+v", obj)
 			logger.Debug(p.ctx, "Group version: %+v", groupVersionKind.GroupVersion().String())
@@ -395,6 +405,31 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 
 				clusterRoles[clusterRole.Role] = clusterRole
 				clusterCommons[clusterRole.Role] = clusterCommon
+			case *corev1.Service:
+				additionalInfo["service"] = append(additionalInfo["service"], map[string]interface{}{
+					"apiVersion": groupVersionKind.GroupVersion().String(),
+					"name":       o.GetObjectMeta().GetName(),
+				})
+			case *corev1.ConfigMap:
+				additionalInfo["configmap"] = append(additionalInfo["configmap"], map[string]interface{}{
+					"apiVersion": groupVersionKind.GroupVersion().String(),
+					"name":       o.GetObjectMeta().GetName(),
+				})
+			case *corev1.Secret:
+				additionalInfo["secret"] = append(additionalInfo["secret"], map[string]interface{}{
+					"apiVersion": groupVersionKind.GroupVersion().String(),
+					"name":       o.GetObjectMeta().GetName(),
+				})
+			case *corev1.PersistentVolumeClaim:
+				additionalInfo["pvc"] = append(additionalInfo["pvc"], map[string]interface{}{
+					"apiVersion": groupVersionKind.GroupVersion().String(),
+					"name":       o.GetObjectMeta().GetName(),
+				})
+			case *exv1beta1.Ingress:
+				additionalInfo["ingress"] = append(additionalInfo["ingress"], map[string]interface{}{
+					"apiVersion": groupVersionKind.GroupVersion().String(),
+					"name":       o.GetObjectMeta().GetName(),
+				})
 			default:
 				continue
 			}
@@ -404,7 +439,7 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 	kubeHandler := GetKubeHandler(p.ctx, p.RuntimeId)
 	err = kubeHandler.CheckApiVersionsSupported(apiVersions)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, "", err
 	}
 
 	_, ok := clusterRoles[""]
@@ -415,7 +450,7 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 		}
 	}
 
-	return clusterRoles, clusterCommons, nil
+	return clusterRoles, clusterCommons, jsonutil.ToString(additionalInfo), nil
 }
 
 func (p *Parser) Parse(clusterWrapper *models.ClusterWrapper) error {
@@ -435,12 +470,12 @@ func (p *Parser) Parse(clusterWrapper *models.ClusterWrapper) error {
 		return err
 	}
 
-	cluster, err := p.parseCluster(name, description)
+	clusterRoles, clusterCommons, additionalInfo, err := p.parseClusterRolesAndClusterCommons(vals, customVals)
 	if err != nil {
 		return err
 	}
 
-	clusterRoles, clusterCommons, err := p.parseClusterRolesAndClusterCommons(vals, customVals)
+	cluster, err := p.parseCluster(name, description, additionalInfo)
 	if err != nil {
 		return err
 	}
