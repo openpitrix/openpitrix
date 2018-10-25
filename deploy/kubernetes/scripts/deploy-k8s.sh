@@ -36,8 +36,13 @@ if [ -f ${NODEPORT_FILE} ];then
   DASHBOARD_NODEPORT=`cat ${NODEPORT_FILE} | grep DASHBOARD_NODEPORT | awk -F '=' '{print "nodePort: "$2}'`
 fi
 
-REQUESTS=100
-LIMITS=500
+CPU_REQUESTS=100
+MEMORY_REQUESTS=100
+CPU_LIMITS=500
+MEMORY_LIMITS=500
+
+REQUESTS=""
+LIMITS=""
 
 usage() {
   echo "Usage:"
@@ -45,21 +50,21 @@ usage() {
   echo "Description:"
   echo "        -n NAMESPACE    : the namespace of kubernetes."
   echo "        -v VERSION      : the version to be deployed."
-  echo "        -r REQUESTS     : the requests of container resources."
-  echo "        -l LIMITS       : the limits of container resources."
+  echo "        -r REQUESTS     : the requests of container resources. such as: cpu=100,memory=200, default is: cpu=100,memory=100"
+  echo "        -l LIMITS       : the limits of container resources. such as: cpu=100,memory=200, , default is: cpu=500,memory=500"
   echo "        -j JOB REPLICA  : the job replica number."
   echo "        -t TASK REPLICA : the task replica number."
   echo "        -b              : base model will be applied."
   echo "        -m              : metadata will be applied."
   echo "        -d              : dbctrl will be applied."
-  echo "        -s              : dashboard will be applied."
-  echo "        -o              : storage will be applied."
+  echo "        -u              : ui/dashboard will be applied."
+  echo "        -s              : storage will be applied."
   echo "        -a              : all of base/metadata/dbctrl/dashboard/storage will be applied."
   exit -1
 }
 
 
-while getopts n:v:r:l:j:t:hbdmsoa option
+while getopts n:v:r:l:j:t:hbdmsua option
 do
   case "${option}"
   in
@@ -72,8 +77,8 @@ do
   d) DBCTRL=1;;
   m) METADATA=1;;
   b) BASE=1;;
-  s) DASHBOARD=1;;
-  o) STORAGE=1;;
+  u) DASHBOARD=1;;
+  s) STORAGE=1;;
   a) ALL=1;;
   h) usage ;;
   *) usage ;;
@@ -89,6 +94,47 @@ if [ "${METADATA}" == "0" ] && \
 then
   usage
 fi
+
+resource=""
+get_resource() {
+  key=${2}
+  resource=""
+  split=`echo ${1} | awk -F ',' '{ for(i=1;i<=NF;i++) {print $i}}'`
+  for item in `echo ${split}`;do
+    value=`echo ${item} | awk -F '=' '{if ($1=="'${key}'") print $2}'`
+    if [ "${value}" != "" ]
+    then
+      resource=${value}
+      break
+    fi
+  done
+}
+
+get_resource ${REQUESTS} "cpu"
+if [ "${resource}" != "" ]
+then
+  CPU_REQUESTS=${resource}
+fi
+
+get_resource ${REQUESTS} "memory"
+if [ "${resource}" != "" ]
+then
+  MEMORY_REQUESTS=${resource}
+fi
+
+get_resource ${LIMITS} "cpu"
+if [ "${resource}" != "" ]
+then
+  CPU_LIMITS=${resource}
+fi
+
+get_resource ${LIMITS} "memory"
+if [ "${resource}" != "" ]
+then
+  MEMORY_LIMITS=${resource}
+fi
+
+echo "Deploy resources: CPU_REQUESTS(${CPU_REQUESTS}), MEMORY_REQUESTS(${MEMORY_REQUESTS}), CPU_LIMITS(${CPU_LIMITS}), MEMORY_LIMITS(${MEMORY_LIMITS})"
 
 if [ "${VERSION}" == "" ];then
   VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
