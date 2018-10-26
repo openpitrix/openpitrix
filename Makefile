@@ -10,7 +10,10 @@ DOCKER_TAGS=latest
 BUILDER_IMAGE=openpitrix/openpitrix-builder:release-v0.2.3
 RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
+GO_RACE:=go build -race
+GO_VET:=go vet
 GO_FILES:=./cmd ./test ./pkg
+GO_PATH_FILES:=./cmd/... ./test/... ./pkg/...
 DB_TEST:=OP_DB_UNIT_TEST=1 OPENPITRIX_MYSQL_HOST=127.0.0.1 OPENPITRIX_MYSQL_PORT=13306
 ETCD_TEST:=OP_ETCD_UNIT_TEST=1 OPENPITRIX_ETCD_ENDPOINTS=127.0.0.1:12379
 define get_diff_files
@@ -83,6 +86,11 @@ generate-global-config: ## Generate global config
 fmt-all: ## Format all code
 	$(RUN_IN_DOCKER) $(GO_FMT) $(GO_FILES)
 	@echo "fmt done"
+
+.PHONY: check
+check: ## go vet and race
+	$(GO_RACE) $(GO_PATH_FILES)
+	$(GO_VET) $(GO_PATH_FILES)
 
 .PHONY: fmt
 fmt: ## Format changed files

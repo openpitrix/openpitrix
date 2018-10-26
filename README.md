@@ -28,11 +28,11 @@ The [Roadmap](docs/Roadmap.md) demonstrates a list of open source product develo
 
 ## Installation
 
-Please follow the [Installation Guide](https://docs.openpitrix.io/v1.0/zh-CN/openpitrix-install-guide/) to install OpenPitrix.
+Please follow the [Installation Guide](https://docs.openpitrix.io/v0.3/zh-CN/openpitrix-install-guide/) to install OpenPitrix.
 
 ## To start using OpenPitrix
 
-To get started with OpenPitrix, please read the [Quick start guide](https://docs.openpitrix.io/v1.0/zh-CN/user-quick-start/).
+To get started with OpenPitrix, please read the [Quick start guide](https://docs.openpitrix.io/v0.3/zh-CN/user-quick-start/).
 
 For more information, please go to [openpitrix.io](http://openpitrix.io).
 

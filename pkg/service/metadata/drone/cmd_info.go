@@ -39,18 +39,28 @@ type CmdStatus struct {
 	Cmd       string
 }
 
-func LoadLastCmdStatus(filename string) (status *CmdStatus, err error) {
+func LoadLastCmdStatus(filename string) (status *CmdStatus, isEmpty bool, err error) {
 	lines, err := tailLines(filename, 5, 1024)
 	if err != nil {
-		return nil, err
+		// skip empty file
+		if os.IsNotExist(err) {
+			return nil, true, nil
+		}
+		return nil, false, err
 	}
+
+	// skip empty file
+	if len(lines) == 0 {
+		return nil, true, nil
+	}
+
 	for i := len(lines) - 1; i >= 0; i-- {
 		if s, err := parseCmdLog(lines[i]); err == nil {
-			return s, nil
+			return s, false, nil
 		}
 	}
 
-	return nil, fmt.Errorf("drone: not found cmd status")
+	return nil, false, fmt.Errorf("drone: not found cmd status")
 }
 
 func tailLines(filename string, nlines, bufsize int) ([]string, error) {
@@ -65,6 +75,9 @@ func tailLines(filename string, nlines, bufsize int) ([]string, error) {
 		return nil, err
 	}
 
+	if fi.Size() == 0 {
+		return nil, nil
+	}
 	if bufsize <= 0 {
 		bufsize = 1024
 	}

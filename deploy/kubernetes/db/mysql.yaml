@@ -65,6 +65,8 @@ spec:
               command: ["sh", "-c", "rm -rf /var/lib/mysql/lost+found"]
         args:
           - --default-authentication-plugin=mysql_native_password
+          - --binlog-expire-logs-seconds=604800
+          - --max-binlog-size=1073741824
         env:
           # $ kubectl create secret generic mysql-pass --from-file=password.txt
           # make sure password.txt does not have a trailing newline

@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixCluster
 type OpenpitrixCluster struct {
 
+	// additional info
+	AdditionalInfo string `json:"additional_info,omitempty"`
+
 	// app id
 	AppID string `json:"app_id,omitempty"`
 

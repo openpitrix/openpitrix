@@ -25,6 +25,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
+	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -146,6 +147,102 @@ func (p *KubeHandler) WaitWorkloadReady(runtimeId, namespace string, clusterRole
 	return err
 }
 
+func (p *KubeHandler) describeAdditionalInfo(namespace string, cluster *models.Cluster) error {
+	kubeClient, _, err := p.initKubeClient()
+	if err != nil {
+		return err
+	}
+
+	var additionalInfo map[string][]map[string]interface{}
+	err = jsonutil.Decode([]byte(cluster.AdditionalInfo), &additionalInfo)
+	if err != nil {
+		return err
+	}
+
+	for t, v := range additionalInfo {
+		switch t {
+		case "service":
+			for i, svc := range v {
+				service, err := kubeClient.CoreV1().Services(namespace).Get(svc["name"].(string), metav1.GetOptions{})
+				if err != nil {
+					return err
+				}
+
+				additionalInfo[t][i]["type"] = string(service.Spec.Type)
+				additionalInfo[t][i]["cluster_ip"] = service.Spec.ClusterIP
+				if service.Status.LoadBalancer.Ingress != nil && len(service.Status.LoadBalancer.Ingress) != 0 {
+					additionalInfo[t][i]["external_ip"] = service.Status.LoadBalancer.Ingress[0].IP
+				}
+
+				ports := []string{}
+				for _, port := range service.Spec.Ports {
+					if port.NodePort == 0 {
+						ports = append(ports, fmt.Sprintf("%d/%s", port.Port, port.Protocol))
+					} else {
+						ports = append(ports, fmt.Sprintf("%d:%d/%s", port.Port, port.NodePort, port.Protocol))
+					}
+				}
+				additionalInfo[t][i]["ports"] = strings.Join(ports, ",")
+			}
+		case "configmap":
+			for i, cm := range v {
+				configMap, err := kubeClient.CoreV1().ConfigMaps(namespace).Get(cm["name"].(string), metav1.GetOptions{})
+				if err != nil {
+					return err
+				}
+
+				additionalInfo[t][i]["data_count"] = uint32(len(configMap.Data))
+			}
+		case "secret":
+			for i, sec := range v {
+				secret, err := kubeClient.CoreV1().Secrets(namespace).Get(sec["name"].(string), metav1.GetOptions{})
+				if err != nil {
+					return err
+				}
+
+				additionalInfo[t][i]["data_count"] = uint32(len(secret.Data))
+			}
+		case "pvc":
+			for i, p := range v {
+				pvc, err := kubeClient.CoreV1().PersistentVolumeClaims(namespace).Get(p["name"].(string), metav1.GetOptions{})
+				if err != nil {
+					return err
+				}
+
+				additionalInfo[t][i]["status"] = string(pvc.Status.Phase)
+				additionalInfo[t][i]["volume"] = pvc.Spec.VolumeName
+				additionalInfo[t][i]["capacity"] = pvc.Status.Capacity.StorageEphemeral().String()
+
+				if len(pvc.Status.AccessModes) != 0 {
+					additionalInfo[t][i]["access_mode"] = string(pvc.Status.AccessModes[0])
+				}
+			}
+		case "ingress":
+			for i, ing := range v {
+				ingress, err := kubeClient.ExtensionsV1beta1().Ingresses(namespace).Get(ing["name"].(string), metav1.GetOptions{})
+				if err != nil {
+					return err
+				}
+
+				hosts := []string{}
+				for _, rule := range ingress.Spec.Rules {
+					hosts = append(hosts, rule.Host)
+				}
+
+				additionalInfo[t][i]["hosts"] = strings.Join(hosts, ",")
+
+				if ingress.Status.LoadBalancer.Ingress != nil && len(ingress.Status.LoadBalancer.Ingress) != 0 {
+					additionalInfo[t][i]["address"] = ingress.Status.LoadBalancer.Ingress[0].IP
+				}
+			}
+		}
+	}
+
+	(*cluster).AdditionalInfo = jsonutil.ToString(additionalInfo)
+
+	return nil
+}
+
 func (p *KubeHandler) DescribeClusterDetails(clusterWrapper *models.ClusterWrapper) error {
 	runtime, err := runtimeclient.NewRuntime(p.ctx, p.RuntimeId)
 	if err != nil {
@@ -170,6 +267,11 @@ func (p *KubeHandler) DescribeClusterDetails(clusterWrapper *models.ClusterWrapp
 		(*clusterWrapper).ClusterRoles[k] = clusterRole
 
 		p.addPodsToClusterNodes(&clusterWrapper.ClusterNodesWithKeyPairs, pods, clusterWrapper.Cluster.ClusterId, clusterWrapper.Cluster.Owner, clusterRole.Role)
+	}
+
+	err = p.describeAdditionalInfo(namespace, clusterWrapper.Cluster)
+	if err != nil {
+		return err
 	}
 
 	return nil

@@ -470,7 +470,6 @@ func (p *Server) DeregisterMetadataMapping(in *pbtypes.SubTask_DeregisterMetadat
 	}
 
 	return nil
-	panic("TODO")
 }
 
 func (p *EtcdClient) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata) error {

@@ -64,7 +64,8 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 	)
 
 	var query = pi.Global().DB(ctx).
-		Select(models.GroupColumns...).From(constants.TableGroup).
+		Select(models.GroupColumns...).
+		From(constants.TableGroup).
 		Offset(offset).Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableGroup))
 
@@ -102,11 +103,14 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 		"username", "email", "role", "status", "description", "password",
 	)
 	if len(attributes) == 0 {
-		return &pb.ModifyUserResponse{}, nil
+		return &pb.ModifyUserResponse{
+			UserId: req.UserId,
+		}, nil
 	}
 
 	_, err := pi.Global().DB(ctx).
-		Update(constants.TableUser).SetMap(attributes).
+		Update(constants.TableUser).
+		SetMap(attributes).
 		Where(db.Eq(constants.ColumnUserId, req.UserId.GetValue())).
 		Exec()
 	if err != nil {
@@ -122,7 +126,8 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 
 func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*pb.DeleteUsersResponse, error) {
 	_, err := pi.Global().DB(ctx).
-		DeleteFrom(constants.TableUser).
+		Update(constants.TableUser).
+		Set(constants.ColumnStatus, constants.StatusDeleted).
 		Where(db.Eq(constants.ColumnUserId, req.UserId)).
 		Exec()
 	if err != nil {
@@ -143,7 +148,8 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	query := pi.Global().DB(ctx).
 		Select(models.UserColumns...).
 		From(constants.TableUser).Limit(1).
-		Where(db.Eq(constants.ColumnEmail, email))
+		Where(db.Eq(constants.ColumnEmail, email)).
+		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted))
 	if count, err := query.Count(); err == nil && count > 0 {
 		return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorEmailExists, email)
 	}
@@ -163,7 +169,6 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 
 	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableUser).
-		Columns(models.UserColumns...).
 		Record(newUser).
 		Exec()
 	if err != nil {

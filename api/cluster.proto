@@ -299,11 +299,12 @@ message Cluster {
 	google.protobuf.StringValue runtime_id = 18;
 	google.protobuf.Timestamp create_time = 19;
 	google.protobuf.Timestamp status_time = 20;
-	repeated ClusterNode cluster_node_set = 21;
-	repeated ClusterRole cluster_role_set = 22;
-	repeated ClusterLink cluster_link_set = 23;
-	repeated ClusterCommon cluster_common_set = 24;
-	repeated ClusterLoadbalancer cluster_loadbalancer_set = 25;
+	google.protobuf.StringValue additional_info = 21;
+	repeated ClusterNode cluster_node_set = 22;
+	repeated ClusterRole cluster_role_set = 23;
+	repeated ClusterLink cluster_link_set = 24;
+	repeated ClusterCommon cluster_common_set = 25;
+	repeated ClusterLoadbalancer cluster_loadbalancer_set = 26;
 }
 
 message DescribeClustersRequest {
