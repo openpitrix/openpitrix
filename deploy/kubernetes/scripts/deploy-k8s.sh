@@ -171,8 +171,10 @@ replace() {
 	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
 	  -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" \
 	  -e "s!\${FLYWAY_IMAGE}!${FLYWAY_IMAGE}!g" \
-	  -e "s!\${REQUESTS}!${REQUESTS}!g" \
-	  -e "s!\${LIMITS}!${LIMITS}!g" \
+	  -e "s!\${CPU_REQUESTS}!${CPU_REQUESTS}!g" \
+	  -e "s!\${MEMORY_REQUESTS}!${MEMORY_REQUESTS}!g" \
+	  -e "s!\${CPU_LIMITS}!${CPU_LIMITS}!g" \
+	  -e "s!\${MEMORY_LIMITS}!${MEMORY_LIMITS}!g" \
 	  -e "s!\${JOB_REPLICA}!${JOB_REPLICA}!g" \
 	  -e "s!\${TASK_REPLICA}!${TASK_REPLICA}!g" \
 	  -e "s!\${VERSION}!${VERSION}!g" \
