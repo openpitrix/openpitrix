@@ -8,6 +8,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/frontgate"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
@@ -38,6 +40,15 @@ func Serve(cfg *ConfigManager, tlsPilotConfig *tls.Config) {
 		tlsPilotConfig: tlsPilotConfig,
 		etcd:           NewEtcdClientManager(),
 	}
+
+	go func() {
+		logger.Info(nil, "Starting file server on :%d", constants.FrontgateFileServerPort)
+		err := http.ListenAndServe(fmt.Sprintf(":%d", constants.FrontgateFileServerPort), http.FileServer(http.Dir(HttpServePath)))
+		if err != nil {
+			logger.Critical(nil, "Start file server failed, %+v", err)
+			os.Exit(1)
+		}
+	}()
 
 	go ServeReverseRpcServerForPilot(cfg.Get(), tlsPilotConfig, p)
 	go func() {
