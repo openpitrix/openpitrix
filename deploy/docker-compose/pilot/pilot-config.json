@@ -1,0 +1,7 @@
+{
+  "id": "openpitrix-pilot-001",
+  "host": "localhost",
+  "listen_port": 9110,
+  "tls_listen_port": 9114,
+  "log_level": "debug"
+}
