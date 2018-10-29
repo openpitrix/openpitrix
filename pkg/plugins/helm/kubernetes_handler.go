@@ -277,12 +277,32 @@ func (p *KubeHandler) DescribeClusterDetails(clusterWrapper *models.ClusterWrapp
 	return nil
 }
 
+func (p *KubeHandler) checkTillerIsExistedAndRunning(client *kubernetes.Clientset, credential, zone string) error {
+	deployCli := client.ExtensionsV1beta1().Deployments("kube-system")
+
+	deploy, err := deployCli.Get("tiller-deploy", metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	if deploy.Status.ReadyReplicas != deploy.Status.Replicas {
+		return fmt.Errorf("you need to wait tiller to be ready")
+	}
+
+	return nil
+}
+
 func (p *KubeHandler) ValidateCredential(credential, zone string) error {
 	if !NamespaceRegExp.MatchString(zone) {
 		return fmt.Errorf(`namespace must match with regexp "[a-z0-9]([-a-z0-9]*[a-z0-9])?"`)
 	}
 
 	client, _, err := p.initKubeClientWithCredential(credential)
+	if err != nil {
+		return err
+	}
+
+	err = p.checkTillerIsExistedAndRunning(client, credential, zone)
 	if err != nil {
 		return err
 	}
