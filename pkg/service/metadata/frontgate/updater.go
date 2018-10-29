@@ -3,7 +3,6 @@ package frontgate
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
@@ -13,6 +12,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/pb/metadata/drone"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/pilot"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/droneutil"
@@ -29,6 +29,7 @@ var (
 	RetryInterval               = 3 * time.Second
 	RetryCount                  = 5
 	OpenPitrixReleaseUrlPattern = "https://github.com/openpitrix/openpitrix/releases/download/%s/openpitrix-%s-bin.tar.gz"
+	HttpServePath               = "/opt/openpitrix/bin"
 	DowloadPathPattern          = "/opt/openpitrix/bin/%s"
 	DowloadFilePathPattern      = "/opt/openpitrix/bin/%s/%s"
 	PilotVersionFilePath        = "/opt/openpitrix/conf/pilot-version"
@@ -82,6 +83,7 @@ func (u *Updater) createPilotVersionFile(pilotVersion string) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 
 	_, err = f.WriteString(pilotVersion)
 	if err != nil {
@@ -98,12 +100,16 @@ func (u *Updater) downloadNewRelease(pilotVersion string) error {
 	}
 
 	url := fmt.Sprintf(OpenPitrixReleaseUrlPattern, pilotVersion, pilotVersion)
-	logger.Info(nil, "Download new release from url [%s]", url)
+	logger.Info(nil, "Trying to download new release from url [%s]", url)
 
 	err = retryutil.Retry(RetryCount, RetryInterval, func() error {
 		resp, err := httputil.HttpGet(url)
 		if err != nil {
 			return err
+		}
+
+		if resp.StatusCode != 200 {
+			return fmt.Errorf("download new release from url [%s] failed, status %s", url, resp.Status)
 		}
 
 		archiveFiles, err := gziputil.LoadArchive(resp.Body)
@@ -119,6 +125,7 @@ func (u *Updater) downloadNewRelease(pilotVersion string) error {
 			if err != nil {
 				return err
 			}
+			defer f.Close()
 
 			_, err = f.Write(fileBytes)
 			if err != nil {
@@ -172,6 +179,21 @@ func (u *Updater) getDroneList() ([]string, error) {
 	return drones, nil
 }
 
+func (u *Updater) getDroneVersion(ctx context.Context, client pbdrone.DroneServiceClient) (string, error) {
+	droneVersion, err := client.GetDroneVersion(ctx, &pbtypes.DroneEndpoint{})
+	if err != nil {
+		return "", err
+	}
+
+	var short string
+	v := strings.SplitN(strings.Trim(droneVersion.ShortVersion, "\""), "-", 2)
+	if len(v) != 0 {
+		short = v[0]
+	}
+
+	return short, nil
+}
+
 func (u *Updater) distributeDrone(drone string, pilotVersion string) error {
 	ctx := context.Background()
 
@@ -181,26 +203,22 @@ func (u *Updater) distributeDrone(drone string, pilotVersion string) error {
 	}
 	defer conn.Close()
 
-	droneVersion, err := client.GetDroneVersion(ctx, &pbtypes.DroneEndpoint{})
+	droneVersion, err := u.getDroneVersion(ctx, client)
 	if err != nil {
 		return err
 	}
 
 	logger.Debug(ctx, "Pilot version [%s]", pilotVersion)
-	logger.Debug(ctx, "Drone version [%s]", droneVersion.ShortVersion)
+	logger.Debug(ctx, "Drone version [%s]", droneVersion)
 
-	if pilotVersion != droneVersion.ShortVersion {
-		filePath := fmt.Sprintf(DowloadFilePathPattern, pilotVersion, "drone")
-		droneBinary, err := ioutil.ReadFile(filePath)
-		if err != nil {
-			return err
+	if pilotVersion != droneVersion {
+		logger.Info(nil, "Trying to distribute drone with version [%s] from frontgate[%s] to drone[%s]", pilotVersion, u.cfg.Host, drone)
+		req := &pbtypes.DistributeDroneRequest{
+			PilotVersion:     pbutil.ToProtoString(pilotVersion),
+			FrontgateAddress: pbutil.ToProtoString(u.cfg.Host),
 		}
 
-		in := &pbtypes.DroneBinary{
-			Drone: pbutil.ToProtoBytes(droneBinary),
-		}
-
-		_, err = client.DistributeDrone(ctx, in)
+		_, err = client.DistributeDrone(ctx, req)
 		if err != nil {
 			return err
 		}
@@ -245,6 +263,7 @@ func (u *Updater) Serve() {
 					logger.Warn(nil, "Download new release failed, %+v", err)
 					continue
 				}
+				logger.Info(nil, "Frontgate exit")
 				os.Exit(0)
 			}
 

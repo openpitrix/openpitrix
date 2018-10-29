@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -23,21 +24,80 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/service/metadata/drone/yunify_confdfunc"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
+	"openpitrix.io/openpitrix/pkg/util/httputil"
+	"openpitrix.io/openpitrix/pkg/util/retryutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
 var (
 	_                      pbdrone.DroneServiceServer = (*Server)(nil)
+	RetryInterval                                     = 3 * time.Second
+	RetryCount                                        = 5
 	DowloadPathPattern                                = "/opt/openpitrix/bin/%s"
 	DowloadFilePathPattern                            = "/opt/openpitrix/bin/%s/%s"
 	PilotVersionFilePath                              = "/opt/openpitrix/conf/pilot-version"
 )
+
+func (p *Server) getDroneFromFrontgate(pilotVersion, frontgateAddress string) error {
+	var droneBinary []byte
+
+	url := fmt.Sprintf("http://%s:%d/%s/drone", frontgateAddress, constants.FrontgateFileServerPort, pilotVersion)
+	logger.Info(nil, "Trying to download drone from url [%s]", url)
+
+	err := retryutil.Retry(RetryCount, RetryInterval, func() error {
+		resp, err := httputil.HttpGet(url)
+		if err != nil {
+			return err
+		}
+
+		if resp.StatusCode != 200 {
+			return fmt.Errorf("download drone from url [%s] failed, status %s", url, resp.Status)
+		}
+
+		droneBinary, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	err = os.MkdirAll(fmt.Sprintf(DowloadPathPattern, pilotVersion), os.ModeDir|os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	filePath := fmt.Sprintf(DowloadFilePathPattern, pilotVersion, "drone")
+
+	logger.Info(nil, "Write drone to [%s]", filePath)
+	f, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write(droneBinary)
+	if err != nil {
+		return err
+	}
+
+	err = os.Chmod(filePath, os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func (p *Server) createPilotVersionFile(pilotVersion string) error {
 	f, err := os.Create(PilotVersionFilePath)
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 
 	_, err = f.WriteString(pilotVersion)
 	if err != nil {
@@ -47,29 +107,11 @@ func (p *Server) createPilotVersionFile(pilotVersion string) error {
 	return nil
 }
 
-func (p *Server) DistributeDrone(ctx context.Context, in *pbtypes.DroneBinary) (*pbtypes.Empty, error) {
-	pilotVersion := in.GetVersion().GetValue()
-	droneBinary := in.GetDrone().GetValue()
+func (p *Server) DistributeDrone(ctx context.Context, req *pbtypes.DistributeDroneRequest) (*pbtypes.Empty, error) {
+	pilotVersion := req.GetPilotVersion().GetValue()
+	frontgateAddress := req.GetFrontgateAddress().GetValue()
 
-	err := os.MkdirAll(fmt.Sprintf(DowloadPathPattern, pilotVersion), os.ModeDir|os.ModePerm)
-	if err != nil {
-		return &pbtypes.Empty{}, err
-	}
-
-	filePath := fmt.Sprintf(DowloadFilePathPattern, pilotVersion, "drone")
-
-	logger.Info(nil, "Write drone to [%s]", filePath)
-	f, err := os.Create(filePath)
-	if err != nil {
-		return &pbtypes.Empty{}, err
-	}
-
-	_, err = f.Write(droneBinary)
-	if err != nil {
-		return &pbtypes.Empty{}, err
-	}
-
-	err = os.Chmod(filePath, os.ModePerm)
+	err := p.getDroneFromFrontgate(pilotVersion, frontgateAddress)
 	if err != nil {
 		return &pbtypes.Empty{}, err
 	}
@@ -79,6 +121,7 @@ func (p *Server) DistributeDrone(ctx context.Context, in *pbtypes.DroneBinary) (
 		return &pbtypes.Empty{}, err
 	}
 
+	logger.Info(nil, "Drone exit")
 	os.Exit(0)
 
 	return &pbtypes.Empty{}, nil
