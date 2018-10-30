@@ -13,7 +13,7 @@ clean: compose-clean
 
 .PHONY: compose-up
 compose-up: pull
-	docker-compose up -d openpitrix-db
+	docker-compose up -d openpitrix-db openpitrix-etcd
 	until docker-compose exec openpitrix-db bash -c "echo 'SELECT VERSION();' | mysql -uroot -ppassword"; do echo "waiting for mysql"; sleep 2; done;
 	docker-compose up openpitrix-db-init
 	docker-compose up openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl
