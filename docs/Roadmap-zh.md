@@ -2,7 +2,7 @@
 
 [ [English Version](Roadmap.md) ]
 
-OpenPitrix Roadmap 是 OpenPitrix 核心开发团队预期的产品开发计划和功能列表，按照版本和角色模块进行功能的划分，详细说明了 OpenPitrix 开源的未来走向，后续可能会随时间出现变动。我们希望通过 Roadmap 能够让您知悉我们的开源计划与愿景。当然，如果您有什么更好的建议或意见，欢迎在 [Issues](https://github.com/openpitrix/openpitrix/issues) 中提出。
+OpenPitrix Roadmap 是 OpenPitrix 核心开发团队预期的产品开发计划和功能列表，按照版本和角色模块进行功能的划分，详细说明了 OpenPitrix 的计划与未来走向以及愿景。OpenPitrix 将会逐步发展为多云环境下应用程序管理系统的全方位的解决方案。当然，如果您有什么更好的建议或意见，欢迎在 [Issues](https://github.com/openpitrix/openpitrix/issues) 中提出。
 
 ## 版本计划
 

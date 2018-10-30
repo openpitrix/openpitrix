@@ -2,7 +2,7 @@
 
 [ [中文版](Roadmap-zh.md) ]
 
-OpenPitrix Roadmap demonstrates a list of open source product development plans and features being split by the edition and role modules, as well as our development team's anticipate of OpenPitrix. Obviously, it details the future's direction of OpenPitrix, but may change over time. We hope that can help you to get familiar with our open source plans and vision through the Roadmap. Of course, if you have any better ideas, welcome to [Issues](https://github.com/openpitrix/openpitrix/issues).
+OpenPitrix Roadmap demonstrates a list of open source product development plans and features being split by the edition and role modules, as well as OpenPitrix development team's anticipate of OpenPitrix. Obviously, it details the future's direction of OpenPitrix, but may change over time. We hope that can help you to get familiar with the project plans and vision through the Roadmap. Of course, if you have any better ideas, welcome to [Issues](https://github.com/openpitrix/openpitrix/issues).
 
 ## Release Goals
 
