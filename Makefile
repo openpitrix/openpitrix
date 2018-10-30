@@ -175,6 +175,11 @@ release-%: ## Release version
 	mkdir deploy/$*-kubernetes; \
 	cp -r deploy/config deploy/kubernetes deploy/$*-kubernetes/; \
 	cd deploy/ && tar -czvf $*-kubernetes.tar.gz $*-kubernetes; \
+	cd ../; \
+	mkdir deploy/$*-docker-compose; \
+	cp -r deploy/docker-compose/. deploy/$*-docker-compose; \
+	cp -r deploy/config/global_config.init.yaml deploy/$*-docker-compose/global_config.yaml; \
+	cd deploy/ && tar -czvf $*-docker-compose.tar.gz $*-docker-compose; \
 	fi
 
 bin-release-%: ## Bin release version
