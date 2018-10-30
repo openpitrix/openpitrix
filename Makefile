@@ -139,7 +139,7 @@ compose-logs-f: ## Follow openpitrix log in docker compose
 
 .PHONY: compose-migrate-db
 compose-migrate-db: ## Migrate db in docker compose
-	docker-compose exec openpitrix-db bash -c "cat /docker-entrypoint-initdb.d/*.sql | mysql -uroot -ppassword"
+	until docker-compose exec openpitrix-db bash -c "cat /docker-entrypoint-initdb.d/*.sql | mysql -uroot -ppassword"; do echo "ddl waiting for mysql"; sleep 2; done;
 	docker-compose up $(COMPOSE_DB_CTRL)
 
 compose-update-%: ## Update "openpitrix-%" service in docker compose
