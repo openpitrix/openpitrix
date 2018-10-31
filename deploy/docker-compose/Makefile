@@ -21,6 +21,8 @@ compose-up: pull
 
 .PHONY: pull
 pull:
+	docker pull openpitrix/openpitrix:flyway
+	docker pull openpitrix/openpitrix:latest
 	docker-compose pull
 
 .PHONY: compose-clean
