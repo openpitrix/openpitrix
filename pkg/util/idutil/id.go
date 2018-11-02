@@ -6,6 +6,8 @@ package idutil
 
 import (
 	"crypto/rand"
+	"math/big"
+	"os"
 
 	"github.com/sony/sonyflake"
 	"github.com/speps/go-hashids"
@@ -17,7 +19,26 @@ var sf *sonyflake.Sonyflake
 
 func init() {
 	var st sonyflake.Settings
+
+	var enableRandomSeed = os.Getenv("OPENPITRIX_ID_RANDOM_SEED")
+	if enableRandomSeed == "yes" {
+		st.MachineID = getRandomMachineID
+	}
+
 	sf = sonyflake.NewSonyflake(st)
+}
+
+func getRandomMachineID() (uint16, error) {
+	for {
+		i, err := rand.Int(rand.Reader, big.NewInt(65536))
+		if err != nil {
+			return 0, err
+		}
+		mid := i.Uint64()
+		if 0 < mid && mid < 65536 {
+			return uint16(mid), nil
+		}
+	}
 }
 
 func GetIntId() uint64 {
