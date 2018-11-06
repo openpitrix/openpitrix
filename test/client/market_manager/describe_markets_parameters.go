@@ -67,6 +67,8 @@ type DescribeMarketsParams struct {
 	Limit *int64
 	/*MarketID*/
 	MarketID []string
+	/*Name*/
+	Name []string
 	/*Offset*/
 	Offset *int64
 	/*Owner*/
@@ -142,6 +144,17 @@ func (o *DescribeMarketsParams) WithMarketID(marketID []string) *DescribeMarkets
 // SetMarketID adds the marketId to the describe markets params
 func (o *DescribeMarketsParams) SetMarketID(marketID []string) {
 	o.MarketID = marketID
+}
+
+// WithName adds the name to the describe markets params
+func (o *DescribeMarketsParams) WithName(name []string) *DescribeMarketsParams {
+	o.SetName(name)
+	return o
+}
+
+// SetName adds the name to the describe markets params
+func (o *DescribeMarketsParams) SetName(name []string) {
+	o.Name = name
 }
 
 // WithOffset adds the offset to the describe markets params
@@ -261,6 +274,14 @@ func (o *DescribeMarketsParams) WriteToRequest(r runtime.ClientRequest, reg strf
 	joinedMarketID := swag.JoinByFormat(valuesMarketID, "multi")
 	// query array param market_id
 	if err := r.SetQueryParam("market_id", joinedMarketID...); err != nil {
+		return err
+	}
+
+	valuesName := o.Name
+
+	joinedName := swag.JoinByFormat(valuesName, "multi")
+	// query array param name
+	if err := r.SetQueryParam("name", joinedName...); err != nil {
 		return err
 	}
 

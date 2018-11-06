@@ -42,10 +42,11 @@ message DescribeMarketsRequest {
 	google.protobuf.StringValue sort_key = 4;
 	google.protobuf.BoolValue reverse = 5;
 	repeated string market_id = 11;
-	repeated string visibility = 12;
-	repeated string status = 13;
-	repeated string owner = 14;
-	repeated string user_id = 15;
+	repeated string name = 12;
+	repeated string visibility = 13;
+	repeated string status = 14;
+	repeated string owner = 15;
+	repeated string user_id = 16;
 }
 
 message DescribeMarketsResponse {

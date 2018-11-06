@@ -2494,6 +2494,16 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "visibility",
             "in": "query",
             "required": false,

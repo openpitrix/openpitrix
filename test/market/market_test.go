@@ -17,17 +17,28 @@ import (
 	"openpitrix.io/openpitrix/test/testutil"
 )
 
-var clientConfig = testutil.GetClientConfig()
+var client = testutil.GetClient(testutil.GetClientConfig())
+var userId = "system"
+
+func deleteMarketUser(t *testing.T, marketId string) {
+	userLeaveMarketParams := market_manager.NewUserLeaveMarketParams()
+	userLeaveMarketParams.SetBody(
+		&models.OpenpitrixUserLeaveMarketRequest{
+			MarketID: []string{marketId},
+			UserID:   []string{userId},
+		})
+	leaveResp, err := client.MarketManager.UserLeaveMarket(userLeaveMarketParams, nil)
+	require.NoError(t, err)
+	t.Log(leaveResp)
+}
 
 func TestMarket(t *testing.T) {
-	client := testutil.GetClient(clientConfig)
+
 	testMarketName := "test_market"
 	testVisibility1 := constants.VisibilityPublic
 	testVisibility2 := constants.VisibilityPrivate
-	testStatus := constants.StatusDisabled
+	testStatus := constants.StatusEnabled
 	testDescription := "test_create_market"
-
-	// delete old market
 
 	// create market
 	createMarketParams := market_manager.NewCreateMarketParams()
@@ -42,14 +53,15 @@ func TestMarket(t *testing.T) {
 	require.NoError(t, err)
 	t.Log(createMarketResp)
 
-	marketId1 := createMarketResp.Payload.MarketID
+	marketId := createMarketResp.Payload.MarketID
+
+	deleteMarketUser(t, marketId)
 	// modify market
-	testMarketName2 := "test_market2"
 	modifyMarketParams := market_manager.NewModifyMarketParams()
 	modifyMarketParams.SetBody(
 		&models.OpenpitrixModifyMarketRequest{
-			MarketID:    marketId1,
-			Name:        testMarketName2,
+			MarketID:    marketId,
+			Name:        testMarketName,
 			Status:      testStatus,
 			Visibility:  testVisibility2,
 			Description: testDescription,
@@ -62,7 +74,7 @@ func TestMarket(t *testing.T) {
 
 	// describe market
 	describeMarketsParams := market_manager.NewDescribeMarketsParams()
-	describeMarketsParams.SetMarketID([]string{marketId1})
+	describeMarketsParams.SetMarketID([]string{marketId})
 	describeMarketsResp, err := client.MarketManager.DescribeMarkets(describeMarketsParams, nil)
 	require.NoError(t, err)
 
@@ -71,7 +83,7 @@ func TestMarket(t *testing.T) {
 
 	market := markets[0]
 
-	require.Equal(t, testMarketName2, market.Name)
+	require.Equal(t, testMarketName, market.Name)
 	require.Equal(t, testVisibility2, market.Visibility)
 	require.Equal(t, testStatus, market.Status)
 	require.Equal(t, testDescription, market.Description)
@@ -80,17 +92,20 @@ func TestMarket(t *testing.T) {
 	// delete market
 	deleteMarketParams := market_manager.NewDeleteMarketsParams()
 	deleteMarketParams.WithBody(&models.OpenpitrixDeleteMarketsRequest{
-		MarketID: []string{marketId1},
+		MarketID: []string{marketId},
 	})
 	deleteMarketResp, err := client.MarketManager.DeleteMarkets(deleteMarketParams, nil)
 	require.NoError(t, err)
 	t.Log(deleteMarketResp)
+
+	// delete market_user
+
 }
 
 func TestMarketUser(t *testing.T) {
-	// create a market for market_user
-	client := testutil.GetClient(clientConfig)
 	testMarketName := "test_marketUser"
+
+	// create a market for market_user
 	testVisibility := constants.VisibilityPublic
 
 	createMarektParams := market_manager.NewCreateMarketParams()
@@ -105,7 +120,6 @@ func TestMarketUser(t *testing.T) {
 	require.NoError(t, err)
 	marketId := createResp.Payload.MarketID
 
-	userId := "system"
 	// describe marker_user
 	describMarketUserParams := market_manager.NewDescribeMarketUsersParams()
 	describMarketUserParams.SetMarketID([]string{marketId})
@@ -137,10 +151,21 @@ func TestMarketUser(t *testing.T) {
 	userJoinMarketParams := market_manager.NewUserJoinMarketParams()
 	userJoinMarketParams.SetBody(
 		&models.OpenpitrixUserJoinMarketRequest{
-			MarketID: []string{"mkt-AkEG1pQVGZPL"},
+			MarketID: []string{marketId},
 			UserID:   []string{userId},
 		})
 	joinResp, err := client.MarketManager.UserJoinMarket(userJoinMarketParams, nil)
 	require.NoError(t, err)
 	t.Log(joinResp)
+
+	// delete old date
+	deleteMarketUser(t, marketId)
+
+	deleteParams := market_manager.NewDeleteMarketsParams()
+	deleteParams.SetBody(&models.OpenpitrixDeleteMarketsRequest{
+		MarketID: []string{marketId},
+	})
+	_, err = client.MarketManager.DeleteMarkets(deleteParams, nil)
+	require.NoError(t, err)
+
 }

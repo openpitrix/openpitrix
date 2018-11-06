@@ -2592,6 +2592,7 @@ func (c *DescribeMarketsCmd) ParseFlag(f Flag) {
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	f.StringSliceVarP(&c.MarketID, "market_id", "", []string{}, "")
+	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
