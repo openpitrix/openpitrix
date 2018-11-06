@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openpitrix-iam-service
+  labels:
+    app: openpitrix
+    component: openpitrix-iam-service
+    version: {{ .Values.version }}
+spec:
+  selector:
+    app: openpitrix
+    component: openpitrix-iam-service
+  ports:
+  - name: openpitrix-iam-service
+    protocol: TCP
+    port: 9115
+    targetPort: 9115
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: openpitrix-iam-service-deployment
+  labels:
+    app: openpitrix
+    component: openpitrix-iam-service
+    version: {{ .Values.version }}
+spec:
+  selector:
+    matchLabels:
+      app: openpitrix
+      component: openpitrix-iam-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        component: openpitrix-iam-service
+        version: {{ .Values.version }}
+    spec:
+      initContainers:
+      - name: wait-mysql
+        image: busybox:1.28.4
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z openpitrix-db.{{ .Release.Namespace }}.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
+      - name: wait-etcd
+        image: busybox:1.28.4
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z openpitrix-etcd.{{ .Release.Namespace }}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+      containers:
+      - name: openpitrix-iam-service
+        image: {{ .Values.image }}
+        imagePullPolicy: {{ .Values.image_pull_policy }}
+        command:
+          - iam-service
+        ports:
+        - containerPort: 9115
+          name: iam-service
+        env:
+        - name: OPENPITRIX_LOG_LEVEL
+          value: {{ .Values.openpitrix_log_level }}
+        - name: OPENPITRIX_MYSQL_DATABASE
+          value: "iam"
+        - name: OPENPITRIX_MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password.txt
+              name: mysql-pass
+        - name: OPENPITRIX_IAM_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: secret-key.txt
+              name: iam-secret-key
+        - name: IAM_INIT_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              key: client-id.txt
+              name: iam-client
+        - name: IAM_INIT_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: client-secret.txt
+              name: iam-client
+        - name: IAM_INIT_ACCOUNT_EMAIL
+          value: "admin@op.com"
+        - name: IAM_INIT_ACCOUNT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: admin-password.txt
+              name: iam-account
+        resources:
+          limits:
+            cpu: {{ .Values.cpu_limits }}m
+            memory: {{ .Values.memory_limits }}Mi
+          requests:
+            cpu: {{ .Values.cpu_requests }}m
+            memory: {{ .Values.memory_requests }}Mi

@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: global-config-watcher
+  labels:
+    app: openpitrix
+    component: global-config-watcher
+    version: {{ .Values.version }}
+spec:
+  selector:
+    matchLabels:
+      app: openpitrix
+      component: global-config-watcher
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openpitrix
+        component: global-config-watcher
+        version: {{ .Values.version }}
+    spec:
+      initContainers:
+      - name: wait-etcd
+        image: busybox:1.28.4
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z openpitrix-etcd.{{ .Release.Namespace }}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+      containers:
+      - name: global-config-watcher
+        image: {{ .Values.watcher_image }}
+        imagePullPolicy: {{ .Values.image_pull_policy }}
+        command:
+          - watcher
+        env:
+        - name: CONFIGOR_ETCDENDPOINT
+          value: "openpitrix-etcd.{{ .Release.Namespace }}.svc:2379"
+        resources:
+          limits:
+            cpu: {{ .Values.cpu_limits }}m
+            memory: {{ .Values.memory_limits }}Mi
+          requests:
+            cpu: {{ .Values.cpu_requests }}m
+            memory: {{ .Values.memory_requests }}Mi
+        volumeMounts:
+        - name: global-config
+          mountPath: /opt
+      volumes:
+      - name: global-config
+        configMap:
+          name: global-config
