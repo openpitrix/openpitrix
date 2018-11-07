@@ -16,6 +16,7 @@ import (
 	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
 	"openpitrix.io/openpitrix/test/client/job_manager"
+	"openpitrix.io/openpitrix/test/client/market_manager"
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
@@ -85,6 +86,13 @@ var AllCmd = []Cmd{
 	NewUpdateClusterEnvCmd(),
 	NewUpgradeClusterCmd(),
 	NewDescribeJobsCmd(),
+	NewCreateMarketCmd(),
+	NewDeleteMarketsCmd(),
+	NewDescribeMarketUsersCmd(),
+	NewDescribeMarketsCmd(),
+	NewModifyMarketCmd(),
+	NewUserJoinMarketCmd(),
+	NewUserLeaveMarketCmd(),
 	NewDescribeRepoEventsCmd(),
 	NewIndexRepoCmd(),
 	NewCreateRepoCmd(),
@@ -2440,6 +2448,282 @@ func (c *DescribeJobsCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.JobManager.DescribeJobs(c.DescribeJobsParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateMarketCmd struct {
+	*models.OpenpitrixCreateMarketRequest
+}
+
+func NewCreateMarketCmd() Cmd {
+	cmd := &CreateMarketCmd{}
+	cmd.OpenpitrixCreateMarketRequest = &models.OpenpitrixCreateMarketRequest{}
+	return cmd
+}
+
+func (*CreateMarketCmd) GetActionName() string {
+	return "CreateMarket"
+}
+
+func (c *CreateMarketCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.Visibility, "visibility", "", "", "")
+}
+
+func (c *CreateMarketCmd) Run(out Out) error {
+	params := market_manager.NewCreateMarketParams()
+	params.WithBody(c.OpenpitrixCreateMarketRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.MarketManager.CreateMarket(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DeleteMarketsCmd struct {
+	*models.OpenpitrixDeleteMarketsRequest
+}
+
+func NewDeleteMarketsCmd() Cmd {
+	cmd := &DeleteMarketsCmd{}
+	cmd.OpenpitrixDeleteMarketsRequest = &models.OpenpitrixDeleteMarketsRequest{}
+	return cmd
+}
+
+func (*DeleteMarketsCmd) GetActionName() string {
+	return "DeleteMarkets"
+}
+
+func (c *DeleteMarketsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.MarketID, "market_id", "", []string{}, "")
+}
+
+func (c *DeleteMarketsCmd) Run(out Out) error {
+	params := market_manager.NewDeleteMarketsParams()
+	params.WithBody(c.OpenpitrixDeleteMarketsRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.MarketManager.DeleteMarkets(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeMarketUsersCmd struct {
+	*market_manager.DescribeMarketUsersParams
+}
+
+func NewDescribeMarketUsersCmd() Cmd {
+	return &DescribeMarketUsersCmd{
+		market_manager.NewDescribeMarketUsersParams(),
+	}
+}
+
+func (*DescribeMarketUsersCmd) GetActionName() string {
+	return "DescribeMarketUsers"
+}
+
+func (c *DescribeMarketUsersCmd) ParseFlag(f Flag) {
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.StringSliceVarP(&c.MarketID, "market_id", "", []string{}, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DescribeMarketUsersCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeMarketUsersParams)
+
+	client := getClient()
+	res, err := client.MarketManager.DescribeMarketUsers(c.DescribeMarketUsersParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeMarketsCmd struct {
+	*market_manager.DescribeMarketsParams
+}
+
+func NewDescribeMarketsCmd() Cmd {
+	return &DescribeMarketsCmd{
+		market_manager.NewDescribeMarketsParams(),
+	}
+}
+
+func (*DescribeMarketsCmd) GetActionName() string {
+	return "DescribeMarkets"
+}
+
+func (c *DescribeMarketsCmd) ParseFlag(f Flag) {
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.StringSliceVarP(&c.MarketID, "market_id", "", []string{}, "")
+	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+	f.StringSliceVarP(&c.Visibility, "visibility", "", []string{}, "")
+}
+
+func (c *DescribeMarketsCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeMarketsParams)
+
+	client := getClient()
+	res, err := client.MarketManager.DescribeMarkets(c.DescribeMarketsParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyMarketCmd struct {
+	*models.OpenpitrixModifyMarketRequest
+}
+
+func NewModifyMarketCmd() Cmd {
+	cmd := &ModifyMarketCmd{}
+	cmd.OpenpitrixModifyMarketRequest = &models.OpenpitrixModifyMarketRequest{}
+	return cmd
+}
+
+func (*ModifyMarketCmd) GetActionName() string {
+	return "ModifyMarket"
+}
+
+func (c *ModifyMarketCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.MarketID, "market_id", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
+	f.StringVarP(&c.Visibility, "visibility", "", "", "")
+}
+
+func (c *ModifyMarketCmd) Run(out Out) error {
+	params := market_manager.NewModifyMarketParams()
+	params.WithBody(c.OpenpitrixModifyMarketRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.MarketManager.ModifyMarket(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type UserJoinMarketCmd struct {
+	*models.OpenpitrixUserJoinMarketRequest
+}
+
+func NewUserJoinMarketCmd() Cmd {
+	cmd := &UserJoinMarketCmd{}
+	cmd.OpenpitrixUserJoinMarketRequest = &models.OpenpitrixUserJoinMarketRequest{}
+	return cmd
+}
+
+func (*UserJoinMarketCmd) GetActionName() string {
+	return "UserJoinMarket"
+}
+
+func (c *UserJoinMarketCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.MarketID, "market_id", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *UserJoinMarketCmd) Run(out Out) error {
+	params := market_manager.NewUserJoinMarketParams()
+	params.WithBody(c.OpenpitrixUserJoinMarketRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.MarketManager.UserJoinMarket(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type UserLeaveMarketCmd struct {
+	*models.OpenpitrixUserLeaveMarketRequest
+}
+
+func NewUserLeaveMarketCmd() Cmd {
+	cmd := &UserLeaveMarketCmd{}
+	cmd.OpenpitrixUserLeaveMarketRequest = &models.OpenpitrixUserLeaveMarketRequest{}
+	return cmd
+}
+
+func (*UserLeaveMarketCmd) GetActionName() string {
+	return "UserLeaveMarket"
+}
+
+func (c *UserLeaveMarketCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.MarketID, "market_id", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *UserLeaveMarketCmd) Run(out Out) error {
+	params := market_manager.NewUserLeaveMarketParams()
+	params.WithBody(c.OpenpitrixUserLeaveMarketRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.MarketManager.UserLeaveMarket(params, nil)
 	if err != nil {
 		return err
 	}

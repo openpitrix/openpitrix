@@ -21,6 +21,7 @@ const (
 	IAMServiceHost      = prefix + "iam-service"
 	RepoIndexerHost     = prefix + "repo-indexer"
 	CategoryManagerHost = prefix + "category-manager"
+	MarketManagerHost   = prefix + "market-manager"
 )
 
 const (
@@ -39,6 +40,7 @@ const (
 	PilotTlsListenPort      = 9114 // public service for frontgate
 	IAMServicePort          = 9115
 	FrontgateFileServerPort = 9116
+	MarketManagerPort       = 9117
 	EtcdServicePort         = 2379
 )
 
