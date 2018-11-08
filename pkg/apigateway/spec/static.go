@@ -4052,6 +4052,61 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixAttachment": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "string"
+        },
+        "attachment_content": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixDeleteAttachmentsResponse": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "filename": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixGetAttachmentsResponse": {
+      "type": "object",
+      "properties": {
+        "attachments": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/openpitrixAttachment"
+          }
+        }
+      }
+    },
+    "openpitrixUploadAttachmentResponse": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixCategory": {
       "type": "object",
       "properties": {

@@ -1,0 +1,50 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "types.proto";
+
+message GetAttachmentsRequest {
+	repeated string attachment_id = 1;
+	repeated string filename = 2;
+	bool ignore_content = 3;
+}
+message GetAttachmentsResponse {
+	map<string, Attachment> attachments = 1; // attachment_id => Attachment
+}
+message Attachment {
+	string attachment_id = 1;
+	map<string, bytes> attachment_content = 4; // filename => content
+	google.protobuf.Timestamp create_time = 7;
+}
+message UploadAttachmentRequest {
+	string attachment_id = 1;
+	map<string, bytes> attachment_content = 2; // filename => content
+}
+message UploadAttachmentResponse {
+	string attachment_id = 1;
+}
+message DeleteAttachmentsRequest {
+	repeated string attachment_id = 1;
+	repeated string filename = 2;
+}
+message DeleteAttachmentsResponse {
+	repeated string attachment_id = 1;
+	repeated string filename = 2;
+}
+
+service AttachmentManager {
+	rpc UploadAttachment(UploadAttachmentRequest) returns (UploadAttachmentResponse);
+	rpc GetAttachments(GetAttachmentsRequest) returns (GetAttachmentsResponse);
+	rpc DeleteAttachments(DeleteAttachmentsRequest) returns (DeleteAttachmentsResponse);
+}

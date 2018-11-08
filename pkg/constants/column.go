@@ -73,6 +73,8 @@ const (
 	ColumnScope        = "scope"
 	ColumnUsername     = "username"
 
+	ColumnAttachmentId = "attachment_id"
+
 	ColumnMessage = "message"
 
 	ColumnAppDefaultStatus = "app_default_status"
