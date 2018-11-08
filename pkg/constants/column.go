@@ -73,6 +73,8 @@ const (
 	ColumnScope        = "scope"
 	ColumnUsername     = "username"
 
+	ColumnAttachmentId = "attachment_id"
+
 	ColumnMessage = "message"
 
 	ColumnAppDefaultStatus = "app_default_status"
@@ -80,6 +82,8 @@ const (
 	ColumnMarketId = "market_id"
 
 	ColumnController = "controller"
+
+	ColumnActive = "active"
 )
 
 var PushEventTables = map[string][]string{

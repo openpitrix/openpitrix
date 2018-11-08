@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixAppVersion
 type OpenpitrixAppVersion struct {
 
+	// active
+	Active bool `json:"active,omitempty"`
+
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
@@ -66,6 +69,9 @@ type OpenpitrixAppVersion struct {
 
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
+
+	// type
+	Type string `json:"type,omitempty"`
 
 	// update time
 	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`

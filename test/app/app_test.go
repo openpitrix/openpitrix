@@ -15,10 +15,11 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/stretchr/testify/require"
 
+	"openpitrix.io/openpitrix/test/client/attachment_service"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/devkit"
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
-	"openpitrix.io/openpitrix/test/categorycommon"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/models"
 	"openpitrix.io/openpitrix/test/testutil"
@@ -27,8 +28,52 @@ import (
 var clientConfig = testutil.GetClientConfig()
 var testTmpDir = testutil.GetTmpDir()
 
+const Vmbased = "vmbased"
+
+func getTestIcon(t *testing.T) strfmt.Base64 {
+	b, err := ioutil.ReadFile("testdata/logo.png")
+	require.NoError(t, err)
+	return strfmt.Base64(b)
+}
+
+func getTestIcon1(t *testing.T) strfmt.Base64 {
+	b, err := ioutil.ReadFile("testdata/logo1.png")
+	require.NoError(t, err)
+	return strfmt.Base64(b)
+}
+
+func testAppIcon(t *testing.T, app *models.OpenpitrixApp) {
+	iconAttachmentId := app.Icon
+	client := testutil.GetClient(clientConfig)
+
+	getReq := attachment_service.NewGetAttachmentParams()
+	getReq.SetAttachmentID(iconAttachmentId)
+	getReq.SetFilename("raw")
+	res, err := client.AttachmentService.GetAttachment(getReq, nil)
+	require.NoError(t, err)
+	require.Equal(t, getTestIcon(t), res.Payload.Content)
+
+	uploadAppAttachmentParams := app_manager.NewUploadAppAttachmentParams()
+	uploadAppAttachmentParams.SetBody(
+		&models.OpenpitrixUploadAppAttachmentRequest{
+			AppID:             app.AppID,
+			Type:              models.OpenpitrixUploadAppAttachmentRequestTypeIcon,
+			AttachmentContent: getTestIcon1(t),
+		})
+	uploadAppAttachment, err := client.AppManager.UploadAppAttachment(uploadAppAttachmentParams, nil)
+	require.NoError(t, err)
+	t.Log(uploadAppAttachment)
+
+	getReq = attachment_service.NewGetAttachmentParams()
+	getReq.SetAttachmentID(iconAttachmentId)
+	getReq.SetFilename("raw")
+	res, err = client.AttachmentService.GetAttachment(getReq, nil)
+	require.NoError(t, err)
+	require.Equal(t, getTestIcon1(t), res.Payload.Content)
+}
+
 func preparePackage(t *testing.T, v string) strfmt.Base64 {
-	var testAppName = "test-app1"
+	var testAppName = "e2e_test_app"
 
 	cfile := &opapp.Metadata{
 		Name:        testAppName,
@@ -68,9 +113,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	modifyAppParams := app_manager.NewModifyAppParams()
 	modifyAppParams.SetBody(
 		&models.OpenpitrixModifyAppRequest{
-			AppID:  appId,
-			RepoID: "repo-vmbased",
-			Status: constants.StatusDraft,
+			AppID: appId,
 		})
 	_, err := client.AppManager.ModifyApp(modifyAppParams, nil)
 
@@ -80,8 +123,8 @@ func testVersionPackage(t *testing.T, appId string) {
 	createAppVersionParams.SetBody(
 		&models.OpenpitrixCreateAppVersionRequest{
 			AppID:   appId,
-			Status:  constants.StatusDraft,
-			Package: preparePackage(t, "0.0.1"),
+			Type:    Vmbased,
+			Package: preparePackage(t, "0.0.2"),
 		})
 	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams, nil)
 
@@ -93,7 +136,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	modifyAppVersionParams.SetBody(
 		&models.OpenpitrixModifyAppVersionRequest{
 			VersionID: versionId1,
-			Package:   preparePackage(t, "0.0.2"),
+			Package:   preparePackage(t, "0.0.3"),
 		})
 	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
 
@@ -103,7 +146,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	modifyAppVersionParams.SetBody(
 		&models.OpenpitrixModifyAppVersionRequest{
 			VersionID: versionId1,
-			Package:   preparePackage(t, "0.0.3"),
+			Package:   preparePackage(t, "0.0.4"),
 		})
 	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
 
@@ -113,7 +156,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	createAppVersionParams.SetBody(
 		&models.OpenpitrixCreateAppVersionRequest{
 			AppID:   appId,
-			Status:  constants.StatusDraft,
+			Type:    Vmbased,
 			Package: preparePackage(t, "0.1.0"),
 		})
 	createAppVersionResp, err = client.AppManager.CreateAppVersion(createAppVersionParams, nil)
@@ -126,11 +169,11 @@ func testVersionPackage(t *testing.T, appId string) {
 	modifyAppVersionParams.SetBody(
 		&models.OpenpitrixModifyAppVersionRequest{
 			VersionID: versionId2,
-			Package:   preparePackage(t, "0.0.3"),
+			Package:   preparePackage(t, "0.0.4"),
 		})
 	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
 
-	require.Error(t, err)
+	require.NoError(t, err)
 
 	deleteAppVersionParams := app_manager.NewDeleteAppVersionParams()
 	deleteAppVersionParams.SetBody(
@@ -151,32 +194,8 @@ func testVersionPackage(t *testing.T, appId string) {
 	require.NoError(t, err)
 }
 
-func testVersionLifeCycle(t *testing.T, appId string) {
+func testVersionLifeCycle(t *testing.T, versionId string) {
 	client := testutil.GetClient(clientConfig)
-
-	modifyAppParams := app_manager.NewModifyAppParams()
-	modifyAppParams.SetBody(
-		&models.OpenpitrixModifyAppRequest{
-			AppID:  appId,
-			RepoID: "repo-vmbased",
-			Status: constants.StatusDraft,
-		})
-	_, err := client.AppManager.ModifyApp(modifyAppParams, nil)
-
-	require.NoError(t, err)
-
-	createAppVersionParams := app_manager.NewCreateAppVersionParams()
-	createAppVersionParams.SetBody(
-		&models.OpenpitrixCreateAppVersionRequest{
-			Name:   "test_version",
-			AppID:  appId,
-			Status: constants.StatusDraft,
-		})
-	createAppVersionResp, err := client.AppManager.CreateAppVersion(createAppVersionParams, nil)
-
-	require.NoError(t, err)
-
-	versionId := createAppVersionResp.Payload.VersionID
 
 	modifyAppVersionParams := app_manager.NewModifyAppVersionParams()
 	modifyAppVersionParams.SetBody(
@@ -184,7 +203,7 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 			VersionID: versionId,
 			Name:      "test_version2",
 		})
-	_, err = client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
+	_, err := client.AppManager.ModifyAppVersion(modifyAppVersionParams, nil)
 
 	require.NoError(t, err)
 
@@ -241,12 +260,21 @@ func testVersionLifeCycle(t *testing.T, appId string) {
 	deleteAppVersionParams := app_manager.NewDeleteAppVersionParams()
 	deleteAppVersionParams.SetBody(
 		&models.OpenpitrixDeleteAppVersionRequest{
-			VersionID:    versionId,
-			DirectDelete: true,
+			VersionID: versionId,
 		})
 	_, err = client.AppManager.DeleteAppVersion(deleteAppVersionParams, nil)
 
 	require.NoError(t, err)
+}
+
+func testStatistics(t *testing.T) {
+	client := testutil.GetClient(clientConfig)
+	getStatisticsResp, err := client.AppManager.GetAppStatistics(nil, nil)
+	require.NoError(t, err)
+	require.NotEmpty(t, getStatisticsResp.Payload.LastTwoWeekCreated)
+	require.NotEmpty(t, getStatisticsResp.Payload.TopTenRepos)
+	require.NotEmpty(t, getStatisticsResp.Payload.AppCount)
+	require.NotEmpty(t, getStatisticsResp.Payload.RepoCount)
 }
 
 func TestApp(t *testing.T) {
@@ -254,8 +282,6 @@ func TestApp(t *testing.T) {
 
 	// delete old app
 	testAppName := "e2e_test_app"
-	testRepoId := "e2e_test_repo"
-	testRepoId2 := "e2e_test_repo2"
 	describeParams := app_manager.NewDescribeAppsParams()
 	describeParams.SetName([]string{testAppName})
 	describeParams.SetStatus([]string{constants.StatusDraft, constants.StatusActive})
@@ -268,8 +294,7 @@ func TestApp(t *testing.T) {
 		deleteParams := app_manager.NewDeleteAppsParams()
 		deleteParams.SetBody(
 			&models.OpenpitrixDeleteAppsRequest{
-				AppID:        []string{app.AppID},
-				DirectDelete: true,
+				AppID: []string{app.AppID},
 			})
 		_, err := client.AppManager.DeleteApps(deleteParams, nil)
 
@@ -279,28 +304,31 @@ func TestApp(t *testing.T) {
 	createParams := app_manager.NewCreateAppParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateAppRequest{
-			Name:       testAppName,
-			RepoID:     testRepoId,
-			CategoryID: "xx,yy,zz",
+			Name:           testAppName,
+			VersionPackage: preparePackage(t, "0.0.1"),
+			VersionType:    Vmbased,
+			Icon:           getTestIcon(t),
 		})
 	createResp, err := client.AppManager.CreateApp(createParams, nil)
 
 	require.NoError(t, err)
 
 	appId := createResp.Payload.AppID
+	versionId := createResp.Payload.VersionID
 	// modify app
-	modifyParams := app_manager.NewModifyAppParams()
-	modifyParams.SetBody(
-		&models.OpenpitrixModifyAppRequest{
-			AppID:      appId,
-			RepoID:     testRepoId2,
-			CategoryID: "aa,bb,cc,xx",
-		})
-	modifyResp, err := client.AppManager.ModifyApp(modifyParams, nil)
 
-	require.NoError(t, err)
+	//modifyParams := app_manager.NewModifyAppParams()
+	//modifyParams.SetBody(
+	//	&models.OpenpitrixModifyAppRequest{
+	//		AppID:      appId,
+	//		CategoryID: "aa,bb,cc,xx",
+	//	})
+	//modifyResp, err := client.AppManager.ModifyApp(modifyParams, nil)
+	//
+	//require.NoError(t, err)
+	//
+	//t.Log(modifyResp)
 
-	t.Log(modifyResp)
 	// describe app
 	describeParams.WithAppID([]string{appId})
 	describeResp, err = client.AppManager.DescribeApps(describeParams, nil)
@@ -311,33 +339,10 @@ func TestApp(t *testing.T) {
 
 	require.Equal(t, 1, len(apps))
 
-	app := apps[0]
-
-	require.Equal(t, testRepoId2, app.RepoID)
-
-	var enabledCategoryIds []string
-	var disabledCategoryIds []string
-	for _, a := range app.CategorySet {
-		if a.Status == constants.StatusEnabled {
-			enabledCategoryIds = append(enabledCategoryIds, a.CategoryID)
-		}
-		if a.Status == constants.StatusDisabled {
-			disabledCategoryIds = append(disabledCategoryIds, a.CategoryID)
-		}
-	}
-
-	require.Equal(t, categorycommon.SortedString(enabledCategoryIds), "aa,bb,cc,xx")
-	require.Equal(t, categorycommon.SortedString(disabledCategoryIds), "yy,zz")
-
-	getStatisticsResp, err := client.AppManager.GetAppStatistics(nil, nil)
-	require.NoError(t, err)
-	require.NotEmpty(t, getStatisticsResp.Payload.LastTwoWeekCreated)
-	require.NotEmpty(t, getStatisticsResp.Payload.TopTenRepos)
-	require.NotEmpty(t, getStatisticsResp.Payload.AppCount)
-	require.NotEmpty(t, getStatisticsResp.Payload.RepoCount)
-
+	testAppIcon(t, apps[0])
 	testVersionPackage(t, appId)
-	testVersionLifeCycle(t, appId)
+	testVersionLifeCycle(t, versionId)
+	testStatistics(t)
 
 	// delete app
 	deleteParams := app_manager.NewDeleteAppsParams()
@@ -361,7 +366,7 @@ func TestApp(t *testing.T) {
 
 	require.Equal(t, 1, len(apps))
 
-	app = apps[0]
+	app := apps[0]
 
 	require.Equal(t, appId, app.AppID)
 

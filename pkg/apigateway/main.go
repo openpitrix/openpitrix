@@ -63,6 +63,7 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "IAM service http://%s:%d", constants.IAMServiceHost, constants.IAMServicePort)
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
+	logger.Info(nil, "Attachment service http://%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort)
 
 	cfg.Mysql.Disable = true
 	pi.SetGlobal(cfg)
@@ -187,6 +188,7 @@ func (s *Server) run() error {
 	r.Use(recovery())
 	r.Any("/swagger-ui/*filepath", gin.WrapH(handleSwagger()))
 	r.Any("/v1/*filepath", gin.WrapH(s.mainHandler()))
+	r.Any("/attachments/*filepath", gin.WrapH(ServeAttachments("/attachments/")))
 
 	return r.Run(fmt.Sprintf(":%d", constants.ApiGatewayPort))
 }
@@ -236,6 +238,9 @@ func (s *Server) mainHandler() http.Handler {
 	}, {
 		pb.RegisterMarketManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.MarketManagerHost, constants.MarketManagerPort),
+	}, {
+		pb.RegisterAttachmentServiceHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {
@@ -257,7 +262,7 @@ func (s *Server) mainHandler() http.Handler {
 // Ref: https://github.com/grpc-ecosystem/grpc-gateway/issues/7#issuecomment-358569373
 func formWrapper(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.ToLower(strings.Split(r.Header.Get("Content-Type"), ";")[0]) == "application/x-www-form-urlencoded" {
+		if strings.HasPrefix(r.Header.Get("Content-Type"), "application/x-www-form-urlencoded") {
 			if err := r.ParseForm(); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return

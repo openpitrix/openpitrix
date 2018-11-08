@@ -27,6 +27,7 @@ const (
 	TableRuntimeCredential   = "runtime_credential"
 	TableRuntimeLabel        = "runtime_label"
 	TableTask                = "task"
+	TableAttachment          = "attachment"
 
 	TableUser              = "user"
 	TableGroupMember       = "group_member"

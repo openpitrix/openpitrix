@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixApp
 type OpenpitrixApp struct {
 
+	// active
+	Active bool `json:"active,omitempty"`
+
 	// app id
 	AppID string `json:"app_id,omitempty"`
 

@@ -19,24 +19,23 @@ func TestChecker(t *testing.T) {
 	var req Request
 	var err error
 	req = &pb.CreateAppRequest{
-		Owner:  pbutil.ToProtoString(""),
-		RepoId: nil,
+		Name: nil,
 	}
-	err = NewChecker(context.Background(), req).Required("repo_id").Exec()
+	err = NewChecker(context.Background(), req).Required("name").Exec()
 
 	assert.Error(t, err)
 
 	req = &pb.CreateAppRequest{
-		RepoId: pbutil.ToProtoString(""),
+		Name: pbutil.ToProtoString(""),
 	}
-	err = NewChecker(context.Background(), req).Required("repo_id").Exec()
+	err = NewChecker(context.Background(), req).Required("name").Exec()
 
 	assert.Error(t, err)
 
 	req = &pb.CreateAppRequest{
-		RepoId: pbutil.ToProtoString("111"),
+		Name: pbutil.ToProtoString("111"),
 	}
-	err = NewChecker(context.Background(), req).Required("repo_id").Exec()
+	err = NewChecker(context.Background(), req).Required("name").Exec()
 
 	assert.NoError(t, err)
 

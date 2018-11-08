@@ -74,7 +74,7 @@ func (h OpIndexWrapper) GetEntries() map[string]VersionInterfaces {
 		var versions VersionInterfaces
 		sort.Sort(chartVersions)
 		for _, v := range chartVersions {
-			versions = append(versions, OpVersionWrapper{v})
+			versions = append(versions, OpVersionWrapper{OpVersion: v})
 		}
 		entries[chartName] = versions
 	}

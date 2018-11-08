@@ -97,8 +97,8 @@ func writeTarContents(out *tar.Writer, c *opapp.OpApp, prefix string) error {
 
 	// Save files
 	for _, f := range c.Files {
-		n := filepath.Join(base, f.Name)
-		if err := writeToTar(out, n, f.Data); err != nil {
+		n := filepath.Join(base, f.TypeUrl)
+		if err := writeToTar(out, n, f.Value); err != nil {
 			return err
 		}
 	}

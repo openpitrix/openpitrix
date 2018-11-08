@@ -13,6 +13,7 @@ import (
 
 	"openpitrix.io/openpitrix/test/client/account_manager"
 	"openpitrix.io/openpitrix/test/client/app_manager"
+	"openpitrix.io/openpitrix/test/client/attachment_service"
 	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
 	"openpitrix.io/openpitrix/test/client/job_manager"
@@ -45,6 +46,8 @@ var AllCmd = []Cmd{
 	NewCreateAppVersionCmd(),
 	NewDeleteAppVersionCmd(),
 	NewDeleteAppsCmd(),
+	NewDescribeActiveAppVersionsCmd(),
+	NewDescribeActiveAppsCmd(),
 	NewDescribeAppVersionsCmd(),
 	NewDescribeAppsCmd(),
 	NewGetAppStatisticsCmd(),
@@ -58,6 +61,9 @@ var AllCmd = []Cmd{
 	NewReleaseAppVersionCmd(),
 	NewSubmitAppVersionCmd(),
 	NewSuspendAppVersionCmd(),
+	NewUploadAppAttachmentCmd(),
+	NewValidatePackageCmd(),
+	NewGetAttachmentCmd(),
 	NewCreateCategoryCmd(),
 	NewDeleteCategoriesCmd(),
 	NewDescribeCategoriesCmd(),
@@ -673,7 +679,8 @@ func (c *CancelAppVersionCmd) Run(out Out) error {
 
 type CreateAppCmd struct {
 	*models.OpenpitrixCreateAppRequest
-	PackagePath string
+	IconPath           string
+	VersionPackagePath string
 }
 
 func NewCreateAppCmd() Cmd {
@@ -687,30 +694,27 @@ func (*CreateAppCmd) GetActionName() string {
 }
 
 func (c *CreateAppCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
-	f.StringVarP(&c.ChartName, "chart_name", "", "", "")
-	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Home, "home", "", "", "")
-	f.StringVarP(&c.Icon, "icon", "", "", "")
-	f.StringVarP(&c.Keywords, "keywords", "", "", "")
-	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
+	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. ")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.Owner, "owner", "", "", "")
-	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
-	f.StringVarP(&c.Readme, "readme", "", "", "")
-	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
-	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
-	f.StringVarP(&c.Sources, "sources", "", "", "")
-	f.StringVarP(&c.Status, "status", "", "", "")
+	f.StringVarP(&c.VersionName, "version_name", "", "", "")
+	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version__package. ")
+	f.StringVarP(&c.VersionType, "version_type", "", "", "")
 }
 
 func (c *CreateAppCmd) Run(out Out) error {
-	if c.PackagePath != "" {
-		content, err := ioutil.ReadFile(c.PackagePath)
+	if c.IconPath != "" {
+		content, err := ioutil.ReadFile(c.IconPath)
 		if err != nil {
 			return err
 		}
-		c.Package = strfmt.Base64(content)
+		c.Icon = strfmt.Base64(content)
+	}
+	if c.VersionPackagePath != "" {
+		content, err := ioutil.ReadFile(c.VersionPackagePath)
+		if err != nil {
+			return err
+		}
+		c.VersionPackage = strfmt.Base64(content)
 	}
 	params := app_manager.NewCreateAppParams()
 	params.WithBody(c.OpenpitrixCreateAppRequest)
@@ -746,18 +750,9 @@ func (*CreateAppVersionCmd) GetActionName() string {
 func (c *CreateAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.AppID, "app_id", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Home, "home", "", "", "")
-	f.StringVarP(&c.Icon, "icon", "", "", "")
-	f.StringVarP(&c.Keywords, "keywords", "", "", "")
-	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
-	f.StringVarP(&c.PackageName, "package_name", "", "", "")
-	f.StringVarP(&c.Readme, "readme", "", "", "")
-	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
-	f.StringVarP(&c.Sources, "sources", "", "", "")
-	f.StringVarP(&c.Status, "status", "", "", "")
+	f.StringVarP(&c.Type, "type", "", "", "")
 }
 
 func (c *CreateAppVersionCmd) Run(out Out) error {
@@ -799,7 +794,6 @@ func (*DeleteAppVersionCmd) GetActionName() string {
 }
 
 func (c *DeleteAppVersionCmd) ParseFlag(f Flag) {
-	f.BoolVarP(&c.DirectDelete, "direct_delete", "", false, "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
@@ -836,7 +830,6 @@ func (*DeleteAppsCmd) GetActionName() string {
 
 func (c *DeleteAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
-	f.BoolVarP(&c.DirectDelete, "direct_delete", "", false, "")
 }
 
 func (c *DeleteAppsCmd) Run(out Out) error {
@@ -847,6 +840,104 @@ func (c *DeleteAppsCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AppManager.DeleteApps(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeActiveAppVersionsCmd struct {
+	*app_manager.DescribeActiveAppVersionsParams
+}
+
+func NewDescribeActiveAppVersionsCmd() Cmd {
+	return &DescribeActiveAppVersionsCmd{
+		app_manager.NewDescribeActiveAppVersionsParams(),
+	}
+}
+
+func (*DescribeActiveAppVersionsCmd) GetActionName() string {
+	return "DescribeActiveAppVersions"
+}
+
+func (c *DescribeActiveAppVersionsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
+	f.StringSliceVarP(&c.Description, "description", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	f.StringSliceVarP(&c.PackageName, "package_name", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
+}
+
+func (c *DescribeActiveAppVersionsCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeActiveAppVersionsParams)
+
+	client := getClient()
+	res, err := client.AppManager.DescribeActiveAppVersions(c.DescribeActiveAppVersionsParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeActiveAppsCmd struct {
+	*app_manager.DescribeActiveAppsParams
+}
+
+func NewDescribeActiveAppsCmd() Cmd {
+	return &DescribeActiveAppsCmd{
+		app_manager.NewDescribeActiveAppsParams(),
+	}
+}
+
+func (*DescribeActiveAppsCmd) GetActionName() string {
+	return "DescribeActiveApps"
+}
+
+func (c *DescribeActiveAppsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
+	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "")
+	f.StringSliceVarP(&c.ChartName, "chart_name", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+}
+
+func (c *DescribeActiveAppsCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeActiveAppsParams)
+
+	client := getClient()
+	res, err := client.AppManager.DescribeActiveApps(c.DescribeActiveAppsParams, nil)
 	if err != nil {
 		return err
 	}
@@ -1072,19 +1163,13 @@ func (*ModifyAppCmd) GetActionName() string {
 func (c *ModifyAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.AppID, "app_id", "", "", "")
 	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
-	f.StringVarP(&c.ChartName, "chart_name", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Home, "home", "", "", "")
-	f.StringVarP(&c.Icon, "icon", "", "", "")
 	f.StringVarP(&c.Keywords, "keywords", "", "", "")
 	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.Readme, "readme", "", "", "")
-	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
-	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
 	f.StringVarP(&c.Sources, "sources", "", "", "")
-	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *ModifyAppCmd) Run(out Out) error {
@@ -1121,18 +1206,8 @@ func (*ModifyAppVersionCmd) GetActionName() string {
 
 func (c *ModifyAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Home, "home", "", "", "")
-	f.StringVarP(&c.Icon, "icon", "", "", "")
-	f.StringVarP(&c.Keywords, "keywords", "", "", "")
-	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
-	f.StringVarP(&c.PackageName, "package_name", "", "", "")
-	f.StringVarP(&c.Readme, "readme", "", "", "")
-	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
-	f.StringVarP(&c.Sources, "sources", "", "", "")
-	f.StringVarP(&c.Status, "status", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
@@ -1362,6 +1437,126 @@ func (c *SuspendAppVersionCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AppManager.SuspendAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type UploadAppAttachmentCmd struct {
+	*models.OpenpitrixUploadAppAttachmentRequest
+	AttachmentContentPath string
+}
+
+func NewUploadAppAttachmentCmd() Cmd {
+	cmd := &UploadAppAttachmentCmd{}
+	cmd.OpenpitrixUploadAppAttachmentRequest = &models.OpenpitrixUploadAppAttachmentRequest{}
+	return cmd
+}
+
+func (*UploadAppAttachmentCmd) GetActionName() string {
+	return "UploadAppAttachment"
+}
+
+func (c *UploadAppAttachmentCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.AppID, "app_id", "", "", "")
+	f.StringVarP(&c.AttachmentContentPath, "attachment_content", "", "", "filepath of attachment__content. ")
+}
+
+func (c *UploadAppAttachmentCmd) Run(out Out) error {
+	if c.AttachmentContentPath != "" {
+		content, err := ioutil.ReadFile(c.AttachmentContentPath)
+		if err != nil {
+			return err
+		}
+		c.AttachmentContent = strfmt.Base64(content)
+	}
+	params := app_manager.NewUploadAppAttachmentParams()
+	params.WithBody(c.OpenpitrixUploadAppAttachmentRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.UploadAppAttachment(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ValidatePackageCmd struct {
+	*models.OpenpitrixValidatePackageRequest
+	VersionPackagePath string
+}
+
+func NewValidatePackageCmd() Cmd {
+	cmd := &ValidatePackageCmd{}
+	cmd.OpenpitrixValidatePackageRequest = &models.OpenpitrixValidatePackageRequest{}
+	return cmd
+}
+
+func (*ValidatePackageCmd) GetActionName() string {
+	return "ValidatePackage"
+}
+
+func (c *ValidatePackageCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version__package. ")
+	f.StringVarP(&c.VersionType, "version_type", "", "", "")
+}
+
+func (c *ValidatePackageCmd) Run(out Out) error {
+	if c.VersionPackagePath != "" {
+		content, err := ioutil.ReadFile(c.VersionPackagePath)
+		if err != nil {
+			return err
+		}
+		c.VersionPackage = strfmt.Base64(content)
+	}
+	params := app_manager.NewValidatePackageParams()
+	params.WithBody(c.OpenpitrixValidatePackageRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.ValidatePackage(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type GetAttachmentCmd struct {
+	*attachment_service.GetAttachmentParams
+}
+
+func NewGetAttachmentCmd() Cmd {
+	return &GetAttachmentCmd{
+		attachment_service.NewGetAttachmentParams(),
+	}
+}
+
+func (*GetAttachmentCmd) GetActionName() string {
+	return "GetAttachment"
+}
+
+func (c *GetAttachmentCmd) ParseFlag(f Flag) {
+}
+
+func (c *GetAttachmentCmd) Run(out Out) error {
+
+	out.WriteRequest(c.GetAttachmentParams)
+
+	client := getClient()
+	res, err := client.AttachmentService.GetAttachment(c.GetAttachmentParams, nil)
 	if err != nil {
 		return err
 	}
