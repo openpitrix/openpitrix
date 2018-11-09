@@ -51,7 +51,7 @@ usage() {
   echo "        -n NAMESPACE    : the namespace of kubernetes."
   echo "        -v VERSION      : the version to be deployed."
   echo "        -r REQUESTS     : the requests of container resources. such as: cpu=100,memory=200, default is: cpu=100,memory=100"
-  echo "        -l LIMITS       : the limits of container resources. such as: cpu=100,memory=200, , default is: cpu=500,memory=500"
+  echo "        -l LIMITS       : the limits of container resources. such as: cpu=100,memory=200, default is: cpu=500,memory=500"
   echo "        -j JOB REPLICA  : the job replica number."
   echo "        -t TASK REPLICA : the task replica number."
   echo "        -b              : base model will be applied."
