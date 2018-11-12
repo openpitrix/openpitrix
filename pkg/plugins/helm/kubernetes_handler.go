@@ -14,6 +14,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
+	types "k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -341,14 +342,8 @@ func (p *KubeHandler) ValidateCredential(credential, zone string) error {
 				return gerr.NewWithDetail(nil, gerr.AlreadyExists, err, gerr.ErrorNamespaceExists, zone)
 			} else {
 				logger.Info(p.ctx, "namespace [%s] exist, need update", zone)
-				_, err = cli.Update(&corev1.Namespace{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: zone,
-						Annotations: map[string]string{
-							RuntimeAnnotationKey: p.RuntimeId,
-						},
-					},
-				})
+				_, err = cli.Patch(zone, types.StrategicMergePatchType,
+					[]byte(fmt.Sprintf(`{"metadata": {"annotations": {"%s": "%s"}}}`, RuntimeAnnotationKey, p.RuntimeId)))
 				if err != nil {
 					return gerr.NewWithDetail(nil, gerr.Internal, err, gerr.ErrorUpdateResourceFailed, fmt.Sprintf("namespace: %s", zone))
 				}
