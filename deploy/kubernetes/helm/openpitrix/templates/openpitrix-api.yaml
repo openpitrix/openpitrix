@@ -58,6 +58,8 @@ spec:
         - containerPort: 9100
           name: api-gateway
         env:
+        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+          value: {{ .Values.grpc_show_error_cause | quote }}
         - name: OPENPITRIX_MYSQL_DATABASE
           value: "openpitrix"
         - name: OPENPITRIX_MYSQL_PASSWORD

@@ -58,6 +58,8 @@ spec:
         - containerPort: 9103
           name: runtime-manager
         env:
+        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+          value: 'true'
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
         - name: OPENPITRIX_MYSQL_DATABASE
