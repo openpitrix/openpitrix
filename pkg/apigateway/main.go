@@ -62,6 +62,7 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
 	logger.Info(nil, "IAM service http://%s:%d", constants.IAMServiceHost, constants.IAMServicePort)
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
+	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
 
 	cfg.Mysql.Disable = true
 	pi.SetGlobal(cfg)
@@ -232,6 +233,9 @@ func (s *Server) mainHandler() http.Handler {
 	}, {
 		pb.RegisterClusterManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort),
+	}, {
+		pb.RegisterMarketManagerHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.MarketManagerHost, constants.MarketManagerPort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {

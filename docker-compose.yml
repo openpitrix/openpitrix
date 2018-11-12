@@ -84,6 +84,7 @@ services:
       - openpitrix-task-manager:openpitrix-task-manager
       - openpitrix-cluster-manager:openpitrix-cluster-manager
       - openpitrix-pilot-service:openpitrix-pilot-service
+      - openpitrix-market-manager:openpitrix-market-manager
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
     container_name: "openpitrix-api-gateway"
@@ -388,3 +389,35 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
+  # market service
+  openpitrix-market-manager:
+    build: .
+    image: "openpitrix"
+    command: "market-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-market-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-market-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=market
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-market-db-ctrl:
+    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    command: -url=jdbc:mysql://openpitrix-db/market -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/market:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-market-db-ctrl"

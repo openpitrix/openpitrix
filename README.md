@@ -24,17 +24,15 @@ Basic idea is to decouple application repository and runtime environment. The ru
 
 ## Roadmap
 
-The [Roadmap](docs/Roadmap.md) demonstrates a list of open source product development plans and features being split by the edition and role modules, as well as our development team's anticipate of OpenPitrix. Obviously, it details the future's direction of OpenPitrix, but may change over time. We hope that can help you to get familiar with our open source plans and vision through the Roadmap. Of course, if you have any better ideas, welcome to [Issues](https://github.com/openpitrix/openpitrix/issues).
+The [Roadmap](docs/Roadmap.md) demonstrates a list of open source product development plans and features being split by the edition and role modules, as well as OpenPitrix development team's anticipate of OpenPitrix. Obviously, it details the future's direction of OpenPitrix, but may change over time. We hope that can help you to get familiar with the project plans and vision through the Roadmap. Of course, if you have any better ideas, welcome to [Issues](https://github.com/openpitrix/openpitrix/issues).
 
 ## Installation
-
-Please follow the [Installation Guide](https://docs.openpitrix.io/v0.3/zh-CN/openpitrix-install-guide/) to install OpenPitrix.
+Please follow the [Installation Guide](https://docs.openpitrix.io/v0.3/zh-CN/installation/installation-guide/) to install OpenPitrix.
 
 ## To start using OpenPitrix
+To get started with OpenPitrix, please read the [Quick start guide](https://docs.openpitrix.io/v0.3/zh-CN/getting-start/introduction/).
 
-To get started with OpenPitrix, please read the [Quick start guide](https://docs.openpitrix.io/v0.3/zh-CN/user-quick-start/).
-
-For more information, please go to [openpitrix.io](http://openpitrix.io).
+For more information, see the [OpenPitrix Website](https://openpitrix.io) and [Documentation](https://docs.openpitrix.io).
 
 ## Contributing to the project
 

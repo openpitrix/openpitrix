@@ -1,0 +1,182 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+
+message Market {
+	google.protobuf.StringValue market_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue visibility = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.StringValue owner = 5;
+	google.protobuf.StringValue description = 6;
+	google.protobuf.Timestamp create_time = 7;
+	google.protobuf.Timestamp status_time = 8;
+}
+
+message CreateMarketRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue visibility = 2;
+	google.protobuf.StringValue description = 3;
+}
+
+message CreateMarketResponse {
+	google.protobuf.StringValue market_id = 1;
+}
+
+message DescribeMarketsRequest {
+	google.protobuf.StringValue search_word = 1;
+	uint32 limit = 2;
+	uint32 offset = 3;
+	google.protobuf.StringValue sort_key = 4;
+	google.protobuf.BoolValue reverse = 5;
+	repeated string market_id = 11;
+	repeated string name = 12;
+	repeated string visibility = 13;
+	repeated string status = 14;
+	repeated string owner = 15;
+	repeated string user_id = 16;
+}
+
+message DescribeMarketsResponse {
+	uint32 total_count = 1;
+	repeated Market market_set = 2;
+}
+
+message ModifyMarketRequest {
+	google.protobuf.StringValue market_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue visibility = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.StringValue description = 5;
+}
+
+message ModifyMarketResponse {
+	google.protobuf.StringValue market_id = 1;
+}
+
+message DeleteMarketsRequest {
+	repeated string market_id = 1;
+}
+
+message DeleteMarketsResponse {
+	repeated string market_id = 1;
+}
+
+message UserJoinMarketRequest {
+	repeated string market_id = 1;
+	repeated string user_id = 2;
+}
+
+message UserJoinMarketResponse {
+	repeated string market_id = 1;
+	repeated string user_id = 2;
+}
+
+message UserLeaveMarketRequest {
+	repeated string market_id = 1;
+	repeated string user_id = 2;
+}
+
+message UserLeaveMarketResponse {
+	repeated string market_id = 1;
+	repeated string user_id = 2;
+}
+
+message MarketUser {
+	google.protobuf.StringValue market_id = 1;
+	google.protobuf.StringValue user_id = 2;
+	google.protobuf.StringValue owner = 3;
+	google.protobuf.Timestamp create_time = 4;
+}
+
+message DescribeMarketUsersRequest {
+	uint32 limit = 1;
+	uint32 offset = 2;
+	google.protobuf.StringValue search_word = 3;
+	google.protobuf.StringValue sort_key = 4;
+	google.protobuf.BoolValue reverse = 5;
+	repeated string market_id = 11;
+	repeated string user_id = 12;
+	repeated string owner = 13;
+}
+
+message DescribeMarketUsersResponse {
+	uint32 total_count = 1;
+	repeated MarketUser market_user_set = 2;
+}
+
+service MarketManager {
+    rpc CreateMarket (CreateMarketRequest) returns (CreateMarketResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create market"
+		};
+		option (google.api.http) = {
+			post: "/v1/markets"
+			body: "*"
+		};
+    }
+    rpc DescribeMarkets (DescribeMarketsRequest) returns (DescribeMarketsResponse) {
+	  	 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe markets with filter"
+		};
+		 option (google.api.http) = {
+			get: "/v1/markets"
+		};
+    }
+    rpc ModifyMarket (ModifyMarketRequest) returns (ModifyMarketResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify market"
+		};
+		option (google.api.http) = {
+			patch: "/v1/markets"
+			body: "*"
+		};
+    }
+    rpc DeleteMarkets (DeleteMarketsRequest) returns (DeleteMarketsResponse) {
+		 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete markets"
+		};
+		option (google.api.http) = {
+			delete: "/v1/markets"
+			body: "*"
+		};
+    }
+    rpc UserJoinMarket (UserJoinMarketRequest) returns (UserJoinMarketResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "user join market"
+		};
+		option (google.api.http) = {
+			post: "/v1/markets:join"
+			body: "*"
+		};
+    }
+    rpc UserLeaveMarket (UserLeaveMarketRequest) returns (UserLeaveMarketResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "user leave market"
+		};
+		option (google.api.http) = {
+			post: "/v1/markets:leave"
+			body: "*"
+		};
+    }
+    rpc DescribeMarketUsers (DescribeMarketUsersRequest) returns (DescribeMarketUsersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe users with filter"
+		};
+		option (google.api.http) = {
+			get: "/v1/market_users"
+		};
+    }
+}

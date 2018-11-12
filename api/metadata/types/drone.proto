@@ -45,7 +45,7 @@ message RunCommandOnDroneRequest {
 	int32 timeout_seconds = 3;
 }
 
-message DroneBinary {
-	google.protobuf.StringValue version = 1;
-	google.protobuf.BytesValue drone = 2;
+message DistributeDroneRequest {
+	google.protobuf.StringValue pilot_version = 1;
+	google.protobuf.StringValue frontgate_address = 2;
 }

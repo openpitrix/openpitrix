@@ -1,0 +1,371 @@
+# Copyright 2018 The OpenPitrix Authors. All rights reserved.
+# Use of this source code is governed by a Apache license
+# that can be found in the LICENSE file.
+
+version: '3'
+
+services:
+  openpitrix-db-init:
+    image: "openpitrix/openpitrix:flyway"
+    environment:
+      - PASSWORD=${MYSQL_ROOT_PASSWORD}
+    entrypoint: sh
+    command: -c "/flyway/sql/ddl/ddl_init.sh -hopenpitrix-db -uroot --connect-timeout=5"
+    container_name: "openpitrix-db-init"
+  openpitrix-db:
+    image: "mysql:8.0.11"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ${DATA_PATH}/mysql:/var/lib/mysql
+    command: --lower_case_table_names=0 --default-authentication-plugin=mysql_native_password
+    ports:
+     - "13306:3306" # for unit-test & debug
+    container_name: "openpitrix-db"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-etcd:
+    image: "quay.io/coreos/etcd:v3.2.18"
+    command: etcd --data-dir /data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://openpitrix-etcd:2379 --max-snapshots 5 --max-wals 5 --auto-compaction-retention=168
+    volumes:
+      - ${DATA_PATH}/etcd:/data
+    ports:
+     - "12379:2379" # for unit-test & debug
+    container_name: "openpitrix-etcd"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-minio:
+    image: "minio/minio:RELEASE.2018-09-25T21-34-43Z"
+    command: -c "mkdir -p /data/openpitrix-internal-repo/vmbased /data/openpitrix-internal-repo/helm && minio server /data"
+    entrypoint: sh
+    environment:
+      - MINIO_ACCESS_KEY=openpitrixminioaccesskey
+      - MINIO_SECRET_KEY=openpitrixminiosecretkey
+    volumes:
+      - ${DATA_PATH}/minio:/data
+    ports:
+     - "19000:9000" # for unit-test & debug
+    container_name: "openpitrix-minio"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-dashboard:
+    image: "openpitrix/dashboard:latest"
+    ports:
+     - "8000:8000"
+    container_name: "openpitrix-dashboard"
+    environment:
+      - serverUrl=http://openpitrix-api-gateway:9100
+      - apiVersion=v1
+      - socketUrl=ws://openpitrix-api-gateway:9100/v1/io
+      - clientId=x
+      - clientSecret=y
+    links:
+      - openpitrix-api-gateway:openpitrix-api-gateway
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-api-gateway:
+    image: "openpitrix/openpitrix:latest"
+    command: "api-gateway"
+    ports:
+     - "9100:9100"
+    links:
+      - openpitrix-app-manager:openpitrix-app-manager
+      - openpitrix-category-manager:openpitrix-category-manager
+      - openpitrix-runtime-manager:openpitrix-runtime-manager
+      - openpitrix-repo-manager:openpitrix-repo-manager
+      - openpitrix-job-manager:openpitrix-job-manager
+      - openpitrix-task-manager:openpitrix-task-manager
+      - openpitrix-cluster-manager:openpitrix-cluster-manager
+      - openpitrix-pilot-service:openpitrix-pilot-service
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+    container_name: "openpitrix-api-gateway"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
+  # repo service
+  openpitrix-repo-manager:
+    image: "openpitrix/openpitrix:latest"
+    command: "repo-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-repo-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-repo-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=repo
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-repo-indexer:
+    image: "openpitrix/openpitrix:latest"
+    command: "repo-indexer"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+      - openpitrix-repo-manager:openpitrix-repo-manager
+    depends_on:
+      - openpitrix-repo-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-repo-indexer"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=repo
+      - OPENPITRIX_PROFILING_ENABLE=1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-repo-db-ctrl:
+    image: "openpitrix/openpitrix:flyway"
+    command: -url=jdbc:mysql://openpitrix-db/repo -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/repo migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-repo-db-ctrl"
+
+  # app service
+  openpitrix-app-manager:
+    image: "openpitrix/openpitrix:latest"
+    command: "app-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-app-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-app-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=app
+      - OPENPITRIX_PROFILING_ENABLE=1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-category-manager:
+    image: "openpitrix/openpitrix:latest"
+    command: "category-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-app-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-category-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=app
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-app-db-ctrl:
+    image: "openpitrix/openpitrix:flyway"
+    command: -url=jdbc:mysql://openpitrix-db/app -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/app migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-app-db-ctrl"
+
+  # runtime service
+  openpitrix-runtime-manager:
+    image: "openpitrix/openpitrix:latest"
+    command: "runtime-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-runtime-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-runtime-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=runtime
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-runtime-db-ctrl:
+    image: "openpitrix/openpitrix:flyway"
+    command: -url=jdbc:mysql://openpitrix-db/runtime -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/runtime migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-runtime-db-ctrl"
+
+  # job service
+  openpitrix-job-manager:
+    image: "openpitrix/openpitrix:latest"
+    command: "job-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-job-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-job-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=job
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-job-db-ctrl:
+    image: "openpitrix/openpitrix:flyway"
+    command: -url=jdbc:mysql://openpitrix-db/job -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/job migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-job-db-ctrl"
+
+  # task service
+  openpitrix-task-manager:
+    image: "openpitrix/openpitrix:latest"
+    command: "task-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-task-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-task-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=task
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-task-db-ctrl:
+    image: "openpitrix/openpitrix:flyway"
+    command: -url=jdbc:mysql://openpitrix-db/task -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/task migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-task-db-ctrl"
+
+  # cluster service
+  openpitrix-cluster-manager:
+    image: "openpitrix/openpitrix:latest"
+    command: "cluster-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-cluster-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-cluster-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=cluster
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-cluster-db-ctrl:
+    image: "openpitrix/openpitrix:flyway"
+    command: -url=jdbc:mysql://openpitrix-db/cluster -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/cluster migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-cluster-db-ctrl"
+
+  # iam service
+  openpitrix-iam-service:
+    image: "openpitrix/openpitrix:latest"
+    command: "iam-service"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-iam-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-iam-service"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=iam
+      - IAM_INIT_CLIENT_ID=x
+      - IAM_INIT_CLIENT_SECRET=y
+      - IAM_INIT_ACCOUNT_EMAIL=admin@op.com
+      - IAM_INIT_ACCOUNT_PASSWORD=passw0rd
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-iam-db-ctrl:
+    image: "openpitrix/openpitrix:flyway"
+    command: -url=jdbc:mysql://openpitrix-db/iam -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false -locations=filesystem:/flyway/sql/iam migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-iam-db-ctrl"
+
+  # pilot service
+  openpitrix-pilot-service:
+    image: "openpitrix/openpitrix:latest"
+    command: "pilot -config=/opt/openpitrix/conf/pilot-config.json --openpitrix-ca-crt-file=/opt/openpitrix/conf/openpitrix-ca.crt --pilot-server-crt-file=/opt/openpitrix/conf/pilot-server.crt --pilot-server-key-file=/opt/openpitrix/conf/pilot-server.key --pilot-client-crt-file=/opt/openpitrix/conf/pilot-client.crt --pilot-client-key-file=/opt/openpitrix/conf/pilot-client.key serve"
+    ports:
+      - "9110:9110"
+      - "9114:9114"
+    volumes:
+      - ./pilot/pilot-config.json:/opt/openpitrix/conf/pilot-config.json
+      - ./pilot/openpitrix-ca.crt:/opt/openpitrix/conf/openpitrix-ca.crt
+      - ./pilot/pilot-server.crt:/opt/openpitrix/conf/pilot-server.crt
+      - ./pilot/pilot-server.key:/opt/openpitrix/conf/pilot-server.key
+      - ./pilot/pilot-client.crt:/opt/openpitrix/conf/pilot-client.crt
+      - ./pilot/pilot-client.key:/opt/openpitrix/conf/pilot-client.key
+    container_name: "openpitrix-pilot-service"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}

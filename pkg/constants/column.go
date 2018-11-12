@@ -76,6 +76,8 @@ const (
 	ColumnMessage = "message"
 
 	ColumnAppDefaultStatus = "app_default_status"
+
+	ColumnMarketId = "market_id"
 )
 
 var PushEventTables = map[string][]string{
@@ -141,6 +143,12 @@ var IndexedColumns = map[string][]string{
 	},
 	TableUser: {
 		ColumnGroupId, ColumnUserId, ColumnStatus, ColumnRole,
+	},
+	TableMarket: {
+		ColumnMarketId, ColumnName, ColumnVisibility, ColumnStatus, ColumnOwner,
+	},
+	TableMarketUser: {
+		ColumnMarketId, ColumnUserId,
 	},
 }
 

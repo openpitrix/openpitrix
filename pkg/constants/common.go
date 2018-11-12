@@ -21,24 +21,27 @@ const (
 	IAMServiceHost      = prefix + "iam-service"
 	RepoIndexerHost     = prefix + "repo-indexer"
 	CategoryManagerHost = prefix + "category-manager"
+	MarketManagerHost   = prefix + "market-manager"
 )
 
 const (
-	ApiGatewayPort       = 9100 // 91 is similar as Pi, Open[Pi]trix
-	RepoManagerPort      = 9101
-	AppManagerPort       = 9102
-	RuntimeManagerPort   = 9103
-	ClusterManagerPort   = 9104
-	JobManagerPort       = 9106
-	TaskManagerPort      = 9107
-	RepoIndexerPort      = 9108
-	PilotServicePort     = 9110
-	FrontgateServicePort = 9111
-	DroneServicePort     = 9112
-	CategoryManagerPort  = 9113
-	PilotTlsListenPort   = 9114 // public service for frontgate
-	IAMServicePort       = 9115
-	EtcdServicePort      = 2379
+	ApiGatewayPort          = 9100 // 91 is similar as Pi, Open[Pi]trix
+	RepoManagerPort         = 9101
+	AppManagerPort          = 9102
+	RuntimeManagerPort      = 9103
+	ClusterManagerPort      = 9104
+	JobManagerPort          = 9106
+	TaskManagerPort         = 9107
+	RepoIndexerPort         = 9108
+	PilotServicePort        = 9110
+	FrontgateServicePort    = 9111
+	DroneServicePort        = 9112
+	CategoryManagerPort     = 9113
+	PilotTlsListenPort      = 9114 // public service for frontgate
+	IAMServicePort          = 9115
+	FrontgateFileServerPort = 9116
+	MarketManagerPort       = 9117
+	EtcdServicePort         = 2379
 )
 
 const (

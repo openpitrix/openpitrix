@@ -735,6 +735,98 @@
       type: '[]string'
     version_id:
       type: string
+- action: CreateMarket
+  description: create market
+  service: MarketManager
+  body:
+    description:
+      type: string
+    name:
+      type: string
+    visibility:
+      type: string
+- action: DeleteMarkets
+  description: delete markets
+  service: MarketManager
+  body:
+    market_id:
+      type: '[]string'
+- action: DescribeMarketUsers
+  description: describe users with filter
+  service: MarketManager
+  query:
+    limit:
+      type: integer
+    market_id:
+      type: '[]string'
+    offset:
+      type: integer
+    owner:
+      type: '[]string'
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    user_id:
+      type: '[]string'
+- action: DescribeMarkets
+  description: describe markets with filter
+  service: MarketManager
+  query:
+    limit:
+      type: integer
+    market_id:
+      type: '[]string'
+    name:
+      type: '[]string'
+    offset:
+      type: integer
+    owner:
+      type: '[]string'
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+    visibility:
+      type: '[]string'
+- action: ModifyMarket
+  description: modify market
+  service: MarketManager
+  body:
+    description:
+      type: string
+    market_id:
+      type: string
+    name:
+      type: string
+    status:
+      type: string
+    visibility:
+      type: string
+- action: UserJoinMarket
+  description: user join market
+  service: MarketManager
+  body:
+    market_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: UserLeaveMarket
+  description: user leave market
+  service: MarketManager
+  body:
+    market_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
 - action: DescribeRepoEvents
   description: describe repo events
   service: RepoIndexer

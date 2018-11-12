@@ -28,8 +28,8 @@ define get_build_flags
 		-X $(TRAG.Version).BuildDate="$(DATE)")
 endef
 
-COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-pilot-service openpitrix-iam-service
-COMPOSE_DB_CTRL=openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl
+COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-iam-service
+COMPOSE_DB_CTRL=openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-market-db-ctrl
 CMD?=...
 WITH_METADATA?=yes
 WITH_K8S=no
@@ -139,7 +139,7 @@ compose-logs-f: ## Follow openpitrix log in docker compose
 
 .PHONY: compose-migrate-db
 compose-migrate-db: ## Migrate db in docker compose
-	docker-compose exec openpitrix-db bash -c "cat /docker-entrypoint-initdb.d/*.sql | mysql -uroot -ppassword"
+	until docker-compose exec openpitrix-db bash -c "cat /docker-entrypoint-initdb.d/*.sql | mysql -uroot -ppassword"; do echo "ddl waiting for mysql"; sleep 2; done;
 	docker-compose up $(COMPOSE_DB_CTRL)
 
 compose-update-%: ## Update "openpitrix-%" service in docker compose
@@ -175,6 +175,11 @@ release-%: ## Release version
 	mkdir deploy/$*-kubernetes; \
 	cp -r deploy/config deploy/kubernetes deploy/$*-kubernetes/; \
 	cd deploy/ && tar -czvf $*-kubernetes.tar.gz $*-kubernetes; \
+	cd ../; \
+	mkdir deploy/$*-docker-compose; \
+	cp -r deploy/docker-compose/. deploy/$*-docker-compose; \
+	cp -r deploy/config/global_config.init.yaml deploy/$*-docker-compose/global_config.yaml; \
+	cd deploy/ && tar -czvf $*-docker-compose.tar.gz $*-docker-compose; \
 	fi
 
 bin-release-%: ## Bin release version
