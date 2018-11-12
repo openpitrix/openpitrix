@@ -110,6 +110,21 @@ get_resource() {
   done
 }
 
+apply_yaml() {
+  version=${1}
+  file=${2}
+  if [ "${version}" == "latest" ];then
+    replace ./kubernetes/openpitrix/${file} | kubectl delete -f - --ignore-not-found=true
+    replace ./kubernetes/openpitrix/${file} | kubectl apply -f -
+  else
+    replace ./kubernetes/openpitrix/${file} | kubectl apply -f -
+    if [ $? -ne 0 ]; then
+      replace ./kubernetes/openpitrix/${file} | kubectl delete -f - --ignore-not-found=true
+      replace ./kubernetes/openpitrix/${file} | kubectl apply -f -
+    fi
+  fi
+}
+
 get_resource ${REQUESTS} "cpu"
 if [ "${resource}" != "" ]
 then
@@ -146,7 +161,7 @@ if [ "${VERSION}" == "dev" ];then
   FLYWAY_IMAGE="openpitrix/openpitrix-dev:flyway"
   DASHBOARD_IMAGE="openpitrix/dashboard:latest"
   IMAGE_PULL_POLICY="Always"
-elif [ "$VERSION" == "latest" ];then
+elif [ "${VERSION}" == "latest" ];then
   IMAGE="openpitrix/openpitrix:latest"
   METADATA_IMAGE="openpitrix/openpitrix:metadata"
   FLYWAY_IMAGE="openpitrix/openpitrix:flyway"
@@ -228,12 +243,9 @@ if [ "${BASE}" == "1" ] || [ "${ALL}" == "1" ];then
   	--from-file=./kubernetes/iam-config/client-secret.txt
   kubectl create secret generic iam-account -n ${NAMESPACE} --from-file=./kubernetes/iam-config/admin-password.txt
 
-  for FILE in `ls ./kubernetes/openpitrix/ | grep "^openpitrix-"`;do
-    replace ./kubernetes/openpitrix/${FILE} | kubectl apply -f -
-    if [ $? -ne 0 ]; then
-      replace ./kubernetes/openpitrix/${FILE} | kubectl delete -f - --ignore-not-found=true
-      replace ./kubernetes/openpitrix/${FILE} | kubectl apply -f -
-    fi
+  # market service temporary not needed
+  for FILE in `ls ./kubernetes/openpitrix/ | grep "^openpitrix-" | grep -v "^openpitrix-market"`; do
+    apply_yaml ${VERSION} ${FILE}
   done
 fi
 if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
@@ -244,20 +256,12 @@ if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
   fi
 
   for FILE in `ls ./kubernetes/openpitrix/metadata/`;do
-    replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -
-    if [ $? -ne 0 ]; then
-	  replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl delete -f - --ignore-not-found=true
-      replace ./kubernetes/openpitrix/metadata/${FILE} | kubectl apply -f -
-    fi
+    apply_yaml ${VERSION} metadata/${FILE}
   done
 fi
 if [ "${DASHBOARD}" == "1" ] || [ "${ALL}" == "1" ];then
   for FILE in `ls ./kubernetes/openpitrix/dashboard/`;do
-    replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl apply -f -
-    if [ $? -ne 0 ]; then
-      replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl delete -f - --ignore-not-found=true
-      replace ./kubernetes/openpitrix/dashboard/${FILE} | kubectl apply -f -
-    fi
+    apply_yaml ${VERSION} dashboard/${FILE}
   done
 fi
 
