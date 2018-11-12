@@ -9,6 +9,7 @@ watcher_image: openpitrix/watcher:latest
 image_pull_policy: IfNotPresent
 openpitrix_log_level: info
 
+grpc_show_error_cause: true
 
 ## api_nodeport: "API_NODEPORT=31009"
 api_nodeport: ""
