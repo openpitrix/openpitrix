@@ -58,6 +58,8 @@ spec:
         - containerPort: 9116
           name: market-manager
         env:
+        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+          value: 'true'
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
         - name: OPENPITRIX_MYSQL_DATABASE
@@ -69,8 +71,8 @@ spec:
               name: mysql-pass
         resources:
           limits:
-            cpu: ${LIMITS}m
-            memory: ${LIMITS}Mi
+            cpu: ${CPU_LIMITS}m
+            memory: ${MEMORY_LIMITS}Mi
           requests:
-            cpu: ${REQUESTS}m
-            memory: ${REQUESTS}Mi
+            cpu: ${CPU_REQUESTS}m
+            memory: ${MEMORY_REQUESTS}Mi

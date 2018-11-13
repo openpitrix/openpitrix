@@ -73,6 +73,9 @@ const (
 	StatusAvailable = "available"
 	StatusInUse     = "in-use"
 
+	StatusUnmounted = "unmounted"
+	StatusInUse2    = "in_use"
+
 	StatusDraft     = "draft"
 	StatusSubmitted = "submitted"
 	StatusPassed    = "passed"
@@ -137,6 +140,7 @@ const (
 	ProviderQingCloud  = "qingcloud"
 	ProviderKubernetes = "kubernetes"
 	ProviderAWS        = "aws"
+	ProviderAliyun     = "aliyun"
 	TargetPilot        = "pilot"
 )
 

@@ -495,6 +495,11 @@ func (p *Parser) parseCustomValues() (map[string]interface{}, string, string, er
 	if !ok {
 		return nil, "", "", fmt.Errorf("config [Name] is missing")
 	}
+
+	if name == "" {
+		return nil, "", "", fmt.Errorf("config [Name] is empty")
+	}
+
 	desc, _ := GetStringFromValues(customVals, "Description")
 
 	return customVals, name, desc, nil

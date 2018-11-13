@@ -56,6 +56,8 @@ spec:
         - containerPort: 9102
           name: app-manager
         env:
+        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+          value: {{ .Values.grpc_show_error_cause | quote }}
         - name: OPENPITRIX_LOG_LEVEL
           value: {{ .Values.openpitrix_log_level }}
         - name: OPENPITRIX_MYSQL_DATABASE
@@ -131,6 +133,8 @@ spec:
         - containerPort: 9108
           name: category-mgr
         env:
+        - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
+          value: {{ .Values.grpc_show_error_cause | quote }}
         - name: OPENPITRIX_LOG_LEVEL
           value: {{ .Values.openpitrix_log_level }}
         - name: OPENPITRIX_MYSQL_DATABASE
