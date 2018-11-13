@@ -32,7 +32,7 @@ spec:
               key: password.txt
               name: mysql-pass
         image: {{ .Values.flyway_image }}
-        imagePullPolicy: {{ .Values.image_pull_policy }}
+        imagePullPolicy: IfNotPresent
         name: openpitrix-db-init
         resources: {}
         terminationMessagePath: /dev/termination-log
