@@ -16,6 +16,7 @@ RUN find /openpitrix_bin -type f -exec upx {} \;
 
 FROM alpine:3.7
 RUN apk add --update ca-certificates && update-ca-certificates
+COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /usr/local/go/lib/time/zoneinfo.zip
 COPY --from=builder /openpitrix_bin/* /usr/local/bin/
 
 CMD ["sh"]
