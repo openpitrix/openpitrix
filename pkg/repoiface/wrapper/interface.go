@@ -4,7 +4,9 @@
 
 package wrapper
 
-import "github.com/Masterminds/semver"
+import (
+	"github.com/Masterminds/semver"
+)
 
 type VersionInterface interface {
 	GetName() string

@@ -353,4 +353,14 @@ var (
 		en:   "namespace [%s] exists",
 		zhCN: "命名空间[%s]已存在",
 	}
+	ErrorPackageParseFailed = ErrorMessage{
+		Name: "package_parse_failed",
+		en:   "package parse failed",
+		zhCN: "配置包解析失败",
+	}
+	ErrorAppNameConflictWithPackage = ErrorMessage{
+		Name: "app_name_conflict_with_package",
+		en:   "app name conflict with package",
+		zhCN: "应用名称与配置包内信息冲突",
+	}
 )

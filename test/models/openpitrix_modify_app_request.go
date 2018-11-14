@@ -22,9 +22,6 @@ type OpenpitrixModifyAppRequest struct {
 	// category id
 	CategoryID string `json:"category_id,omitempty"`
 
-	// chart name
-	ChartName string `json:"chart_name,omitempty"`
-
 	// description
 	Description string `json:"description,omitempty"`
 
@@ -43,32 +40,37 @@ type OpenpitrixModifyAppRequest struct {
 	// name
 	Name string `json:"name,omitempty"`
 
-	// owner
-	Owner string `json:"owner,omitempty"`
-
 	// readme
 	Readme string `json:"readme,omitempty"`
 
-	// repo id
-	RepoID string `json:"repo_id,omitempty"`
-
 	// screenshots
-	Screenshots string `json:"screenshots,omitempty"`
+	Screenshots []string `json:"screenshots"`
 
 	// sources
 	Sources string `json:"sources,omitempty"`
-
-	// status
-	Status string `json:"status,omitempty"`
 }
 
 // Validate validates this openpitrix modify app request
 func (m *OpenpitrixModifyAppRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateScreenshots(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixModifyAppRequest) validateScreenshots(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Screenshots) { // not required
+		return nil
+	}
+
 	return nil
 }
 

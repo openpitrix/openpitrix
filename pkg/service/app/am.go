@@ -18,7 +18,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.CreateAppRequest:
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllDeveloperRoles).
-			Required("repo_id").
+			Required("name", "version_package", "version_type").
 			Exec()
 	case *pb.ModifyAppRequest:
 		return manager.NewChecker(ctx, r).
@@ -33,7 +33,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.CreateAppVersionRequest:
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllDeveloperRoles).
-			Required("app_id", "repo_id").
+			Required("app_id", "package", "type").
 			Exec()
 	case *pb.ModifyAppVersionRequest:
 		return manager.NewChecker(ctx, r).
@@ -115,16 +115,6 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 			r.Owner = []string{sender.UserId}
 		} else {
 			r.Status = []string{constants.StatusActive}
-		}
-		return r
-	case *pb.DeleteAppVersionRequest:
-		if !sender.IsGlobalAdmin() {
-			r.DirectDelete = false
-		}
-		return r
-	case *pb.DeleteAppsRequest:
-		if !sender.IsGlobalAdmin() {
-			r.DirectDelete = false
 		}
 		return r
 	}

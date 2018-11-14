@@ -673,7 +673,7 @@ func (c *CancelAppVersionCmd) Run(out Out) error {
 
 type CreateAppCmd struct {
 	*models.OpenpitrixCreateAppRequest
-	PackagePath string
+	VersionPackagePath string
 }
 
 func NewCreateAppCmd() Cmd {
@@ -687,30 +687,18 @@ func (*CreateAppCmd) GetActionName() string {
 }
 
 func (c *CreateAppCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
-	f.StringVarP(&c.ChartName, "chart_name", "", "", "")
-	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Home, "home", "", "", "")
-	f.StringVarP(&c.Icon, "icon", "", "", "")
-	f.StringVarP(&c.Keywords, "keywords", "", "", "")
-	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.Owner, "owner", "", "", "")
-	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
-	f.StringVarP(&c.Readme, "readme", "", "", "")
-	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
-	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
-	f.StringVarP(&c.Sources, "sources", "", "", "")
-	f.StringVarP(&c.Status, "status", "", "", "")
+	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version__package. ")
+	f.StringVarP(&c.VersionType, "version_type", "", "", "")
 }
 
 func (c *CreateAppCmd) Run(out Out) error {
-	if c.PackagePath != "" {
-		content, err := ioutil.ReadFile(c.PackagePath)
+	if c.VersionPackagePath != "" {
+		content, err := ioutil.ReadFile(c.VersionPackagePath)
 		if err != nil {
 			return err
 		}
-		c.Package = strfmt.Base64(content)
+		c.VersionPackage = strfmt.Base64(content)
 	}
 	params := app_manager.NewCreateAppParams()
 	params.WithBody(c.OpenpitrixCreateAppRequest)
@@ -746,18 +734,9 @@ func (*CreateAppVersionCmd) GetActionName() string {
 func (c *CreateAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.AppID, "app_id", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Home, "home", "", "", "")
-	f.StringVarP(&c.Icon, "icon", "", "", "")
-	f.StringVarP(&c.Keywords, "keywords", "", "", "")
-	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
-	f.StringVarP(&c.PackageName, "package_name", "", "", "")
-	f.StringVarP(&c.Readme, "readme", "", "", "")
-	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
-	f.StringVarP(&c.Sources, "sources", "", "", "")
-	f.StringVarP(&c.Status, "status", "", "", "")
+	f.StringVarP(&c.Type, "type", "", "", "")
 }
 
 func (c *CreateAppVersionCmd) Run(out Out) error {
@@ -799,7 +778,6 @@ func (*DeleteAppVersionCmd) GetActionName() string {
 }
 
 func (c *DeleteAppVersionCmd) ParseFlag(f Flag) {
-	f.BoolVarP(&c.DirectDelete, "direct_delete", "", false, "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
@@ -836,7 +814,6 @@ func (*DeleteAppsCmd) GetActionName() string {
 
 func (c *DeleteAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
-	f.BoolVarP(&c.DirectDelete, "direct_delete", "", false, "")
 }
 
 func (c *DeleteAppsCmd) Run(out Out) error {
@@ -1072,19 +1049,15 @@ func (*ModifyAppCmd) GetActionName() string {
 func (c *ModifyAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.AppID, "app_id", "", "", "")
 	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
-	f.StringVarP(&c.ChartName, "chart_name", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Home, "home", "", "", "")
 	f.StringVarP(&c.Icon, "icon", "", "", "")
 	f.StringVarP(&c.Keywords, "keywords", "", "", "")
 	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.Readme, "readme", "", "", "")
-	f.StringVarP(&c.RepoID, "repo_id", "", "", "")
-	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
+	f.StringSliceVarP(&c.Screenshots, "screenshots", "", []string{}, "")
 	f.StringVarP(&c.Sources, "sources", "", "", "")
-	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *ModifyAppCmd) Run(out Out) error {
@@ -1121,18 +1094,8 @@ func (*ModifyAppVersionCmd) GetActionName() string {
 
 func (c *ModifyAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Home, "home", "", "", "")
-	f.StringVarP(&c.Icon, "icon", "", "", "")
-	f.StringVarP(&c.Keywords, "keywords", "", "", "")
-	f.StringVarP(&c.Maintainers, "maintainers", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.Owner, "owner", "", "", "")
 	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
-	f.StringVarP(&c.PackageName, "package_name", "", "", "")
-	f.StringVarP(&c.Readme, "readme", "", "", "")
-	f.StringVarP(&c.Screenshots, "screenshots", "", "", "")
-	f.StringVarP(&c.Sources, "sources", "", "", "")
-	f.StringVarP(&c.Status, "status", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 

@@ -16,50 +16,17 @@ import (
 // swagger:model openpitrixCreateAppRequest
 type OpenpitrixCreateAppRequest struct {
 
-	// category id
-	CategoryID string `json:"category_id,omitempty"`
-
-	// chart name
-	ChartName string `json:"chart_name,omitempty"`
-
-	// description
-	Description string `json:"description,omitempty"`
-
-	// home
-	Home string `json:"home,omitempty"`
-
-	// icon
-	Icon string `json:"icon,omitempty"`
-
-	// keywords
-	Keywords string `json:"keywords,omitempty"`
-
-	// maintainers
-	Maintainers string `json:"maintainers,omitempty"`
-
 	// name
 	Name string `json:"name,omitempty"`
 
-	// owner
-	Owner string `json:"owner,omitempty"`
+	// version package
+	VersionPackage strfmt.Base64 `json:"version_package,omitempty"`
 
-	// package
-	Package strfmt.Base64 `json:"package,omitempty"`
+	// version package files
+	VersionPackageFiles map[string]strfmt.Base64 `json:"version_package_files,omitempty"`
 
-	// readme
-	Readme string `json:"readme,omitempty"`
-
-	// repo id
-	RepoID string `json:"repo_id,omitempty"`
-
-	// screenshots
-	Screenshots string `json:"screenshots,omitempty"`
-
-	// sources
-	Sources string `json:"sources,omitempty"`
-
-	// status
-	Status string `json:"status,omitempty"`
+	// version type
+	VersionType string `json:"version_type,omitempty"`
 }
 
 // Validate validates this openpitrix create app request

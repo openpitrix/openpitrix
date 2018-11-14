@@ -5,6 +5,7 @@
 package opapp
 
 import (
+	"github.com/golang/protobuf/ptypes/any"
 	"github.com/pkg/errors"
 
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
@@ -23,7 +24,7 @@ type OpApp struct {
 
 	ClusterConfTemplate *ClusterConfTemplate `json:"cluster_template,omitempty"`
 
-	Files []BufferedFile `json:"files,omitempty"`
+	Files []*any.Any `json:"files,omitempty"`
 }
 
 func (a *OpApp) Validate(config jsonutil.Json) error {

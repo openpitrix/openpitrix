@@ -40,17 +40,14 @@ type App struct {
 
 var AppColumns = db.GetColumnsFromStruct(&App{})
 
-func NewApp(name, repoId, description, owner, chartName string) *App {
+func NewApp(name, owner string) *App {
 	return &App{
-		AppId:       NewAppId(),
-		Name:        name,
-		RepoId:      repoId,
-		Description: description,
-		Status:      constants.StatusDraft,
-		Owner:       owner,
-		ChartName:   chartName,
-		CreateTime:  time.Now(),
-		StatusTime:  time.Now(),
+		AppId:      NewAppId(),
+		Name:       name,
+		Status:     constants.StatusDraft,
+		Owner:      owner,
+		CreateTime: time.Now(),
+		StatusTime: time.Now(),
 	}
 }
 

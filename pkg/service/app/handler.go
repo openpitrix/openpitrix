@@ -9,6 +9,7 @@ import (
 	"context"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client/attachment"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -18,8 +19,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/repoiface"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
-	"openpitrix.io/openpitrix/pkg/util/gziputil"
+	"openpitrix.io/openpitrix/pkg/util/archiveutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
@@ -128,44 +130,46 @@ func (p *Server) DescribeApps(ctx context.Context, req *pb.DescribeAppsRequest) 
 }
 
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {
-	// TODO: validate CreateAppRequest
-	// TODO: check categories
+	name := req.GetName().GetValue()
+
+	pkg := req.GetVersionPackage().GetValue()
+
+	v, err := repoiface.LoadPackage(ctx, req.GetVersionType().GetValue(), pkg)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+	}
+	if v.GetName() != name {
+		return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorAppNameConflictWithPackage)
+	}
+
+	attachmentContent, err := archiveutil.Load(bytes.NewReader(pkg))
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+	}
+
+	attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	uploadAttachmentRes, err := attachmentManagerClient.UploadAttachment(ctx, &pb.UploadAttachmentRequest{
+		AttachmentContent: attachmentContent,
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	attachmentId := uploadAttachmentRes.AttachmentId
 
 	s := senderutil.GetSenderFromContext(ctx)
 	newApp := models.NewApp(
-		req.GetName().GetValue(),
-		req.GetRepoId().GetValue(),
-		req.GetDescription().GetValue(),
-		s.UserId,
-		req.GetChartName().GetValue())
+		name,
+		s.UserId)
 
-	newApp.Home = req.GetHome().GetValue()
-	newApp.Icon = req.GetIcon().GetValue()
-	newApp.Screenshots = req.GetScreenshots().GetValue()
-	newApp.Sources = req.GetSources().GetValue()
-	newApp.Readme = req.GetReadme().GetValue()
-	newApp.Keywords = req.GetKeywords().GetValue()
-
-	if req.GetStatus() != nil {
-		newApp.Status = req.GetStatus().GetValue()
-	} else {
-		newApp.Status = pi.Global().GlobalConfig().GetAppDefaultStatus()
-	}
-
-	_, err := pi.Global().DB(ctx).
+	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableApp).
 		Record(newApp).
 		Exec()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
-	}
-
-	err = categoryutil.SyncResourceCategories(
-		ctx,
-		pi.Global().DB(ctx),
-		newApp.AppId,
-		categoryutil.DecodeCategoryIds(req.GetCategoryId().GetValue()),
-	)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
@@ -174,22 +178,15 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		AppId: pbutil.ToProtoString(newApp.AppId),
 	}
 
-	if req.GetPackage() != nil {
-		version := models.NewAppVersion(newApp.AppId, newApp.Name, newApp.Description, newApp.Owner, "")
-		err = insertVersion(ctx, version)
-		if err != nil {
-			return nil, err
-		}
-		err = newVersionProxy(version).AddPackageFile(
-			ctx, req.GetPackage().GetValue(), true, false)
-		if err != nil {
-			deleteApp(ctx, newApp.AppId)
-			deleteVersion(ctx, version.VersionId)
-			return nil, err
-		}
+	version := models.NewAppVersion(newApp.AppId, v.GetAppVersion(), newApp.Description, newApp.Owner)
+	version.PackageName = attachmentId
 
-		res.VersionId = pbutil.ToProtoString(version.VersionId)
+	err = insertVersion(ctx, version)
+	if err != nil {
+		return nil, err
 	}
+
+	res.VersionId = pbutil.ToProtoString(version.VersionId)
 
 	return res, nil
 }
@@ -206,13 +203,8 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
-		"name", "repo_id", "owner", "chart_name",
-		"description", "home", "icon", "screenshots",
-		"maintainers", "sources", "readme", "keywords")
+		"name", "description", "home", "maintainers", "sources", "readme", "keywords")
 
-	if req.GetStatus() != nil {
-		attributes[constants.ColumnStatus] = req.GetStatus().GetValue()
-	}
 	err = updateApp(ctx, appId, attributes)
 	if err != nil {
 		return nil, err
@@ -230,6 +222,8 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		}
 	}
 
+	// TODO: icon screenshot
+
 	res := &pb.ModifyAppResponse{
 		AppId: req.GetAppId(),
 	}
@@ -244,20 +238,18 @@ func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb
 		return nil, err
 	}
 	// check permission
-	if !req.DirectDelete {
-		for _, appId := range appIds {
-			count, err := pi.Global().DB(ctx).
-				Select().
-				From(constants.TableAppVersion).
-				Where(db.Eq(constants.ColumnAppId, appId)).
-				Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
-				Count()
-			if err != nil {
-				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
-			}
-			if count > 0 {
-				return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorExistsNoDeleteVersions, appId)
-			}
+	for _, appId := range appIds {
+		count, err := pi.Global().DB(ctx).
+			Select().
+			From(constants.TableAppVersion).
+			Where(db.Eq(constants.ColumnAppId, appId)).
+			Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
+			Count()
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		}
+		if count > 0 {
+			return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorExistsNoDeleteVersions, appId)
 		}
 	}
 	_, err = pi.Global().DB(ctx).
@@ -275,55 +267,37 @@ func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb
 }
 
 func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionRequest) (*pb.CreateAppVersionResponse, error) {
-	// TODO: validate CreateAppVersionRequest
+	_, err := repoiface.LoadPackage(ctx, req.GetType().GetValue(), req.GetPackage().GetValue())
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+	}
+	var attachmentContent = make(map[string][]byte)
+
+	attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	uploadAttachmentRes, err := attachmentManagerClient.UploadAttachment(ctx, &pb.UploadAttachmentRequest{
+		AttachmentContent: attachmentContent,
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	attachmentId := uploadAttachmentRes.AttachmentId
+
 	s := senderutil.GetSenderFromContext(ctx)
 	newAppVersion := models.NewAppVersion(
 		req.GetAppId().GetValue(),
 		req.GetName().GetValue(),
 		req.GetDescription().GetValue(),
-		s.UserId,
-		req.GetPackageName().GetValue())
+		s.UserId)
 
-	if req.Sequence != nil {
-		newAppVersion.Sequence = req.Sequence.GetValue()
-	} else {
-		seq, err := getBigestSequence(ctx, newAppVersion.AppId)
-		if err != nil {
-			return nil, err
-		}
-		newAppVersion.Sequence = seq + 1
-	}
-
-	newAppVersion.Home = req.GetHome().GetValue()
-	newAppVersion.Icon = req.GetIcon().GetValue()
-	newAppVersion.Screenshots = req.GetScreenshots().GetValue()
-	newAppVersion.Maintainers = req.GetMaintainers().GetValue()
-	newAppVersion.Keywords = req.GetKeywords().GetValue()
-	newAppVersion.Sources = req.GetSources().GetValue()
-	newAppVersion.Readme = req.GetReadme().GetValue()
-
-	if req.GetStatus() != nil {
-		newAppVersion.Status = req.GetStatus().GetValue()
-	} else {
-		newAppVersion.Status = pi.Global().GlobalConfig().GetAppDefaultStatus()
-	}
-
-	err := insertVersion(ctx, newAppVersion)
+	newAppVersion.PackageName = attachmentId
+	err = insertVersion(ctx, newAppVersion)
 	if err != nil {
 		return nil, err
-	}
-
-	if req.GetPackage() != nil {
-		var syncAppName = false
-		if newAppVersion.Sequence == 1 {
-			syncAppName = true
-		}
-		err = newVersionProxy(newAppVersion).AddPackageFile(
-			ctx, req.GetPackage().GetValue(), syncAppName, false)
-		if err != nil {
-			deleteVersion(ctx, newAppVersion.VersionId)
-			return nil, err
-		}
 	}
 
 	res := &pb.CreateAppVersionResponse{
@@ -374,16 +348,10 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		return nil, err
 	}
 
-	attributes := manager.BuildUpdateAttributes(req,
-		"name", "description", "package_name",
-		"sequence", "home", "icon", "screenshots",
-		"maintainers", "keywords", "sources", "readme")
+	attributes := manager.BuildUpdateAttributes(req, "name", "description")
 
-	if version.Status != constants.StatusActive {
+	if version.Status == constants.StatusRejected {
 		attributes[constants.ColumnStatus] = constants.StatusDraft
-	}
-	if req.GetStatus() != nil {
-		attributes[constants.ColumnStatus] = req.GetStatus().GetValue()
 	}
 
 	err = updateVersion(ctx, versionId, attributes)
@@ -391,13 +359,7 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		return nil, err
 	}
 
-	if req.GetPackage() != nil {
-		err = newVersionProxy(version).AddPackageFile(
-			ctx, req.GetPackage().GetValue(), false, true)
-		if err != nil {
-			return nil, err
-		}
-	}
+	// TODO: modify attachment
 
 	res := &pb.ModifyAppVersionResponse{
 		VersionId: req.GetVersionId(),
@@ -413,14 +375,16 @@ func (p *Server) GetAppVersionPackage(ctx context.Context, req *pb.GetAppVersion
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 	logger.Debug(ctx, "Got app version: [%+v]", version)
-
 	content, err := newVersionProxy(version).GetPackageFile(ctx)
 	if err != nil {
 		return nil, err
 	}
-
+	archiveFiles, err := archiveutil.Save(content, versionId)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
 	return &pb.GetAppVersionPackageResponse{
-		Package:   content,
+		Package:   archiveFiles,
 		AppId:     pbutil.ToProtoString(version.AppId),
 		VersionId: req.GetVersionId(),
 	}, nil
@@ -434,17 +398,7 @@ func (p *Server) GetAppVersionPackageFiles(ctx context.Context, req *pb.GetAppVe
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, versionId)
 	}
 
-	content, err := newVersionProxy(version).GetPackageFile(ctx)
-	if err != nil {
-		logger.Error(ctx, "Failed to load [%s] package, error: %+v", versionId, err)
-		return nil, err
-	}
-
-	archiveFiles, err := gziputil.LoadArchive(bytes.NewReader(content), includeFiles...)
-	if err != nil {
-		logger.Error(ctx, "Failed to load [%s] package, error: %+v", versionId, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, versionId)
-	}
+	archiveFiles, err := newVersionProxy(version).GetPackageFile(ctx, includeFiles...)
 	return &pb.GetAppVersionPackageFilesResponse{
 		Files:     archiveFiles,
 		VersionId: req.GetVersionId(),
@@ -591,17 +545,9 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 		return nil, err
 	}
 	// check permission
-	if !req.DirectDelete {
-		err = checkAppVersionHandlePermission(ctx, Delete, version)
-		if err != nil {
-			return nil, err
-		}
-
-		err = newVersionProxy(version).DeletePackageFile(ctx)
-		if err != nil {
-			logger.Error(ctx, "Failed to delete [%s] package, error: %+v", req.GetVersionId().GetValue(), err)
-			return nil, err
-		}
+	err = checkAppVersionHandlePermission(ctx, Delete, version)
+	if err != nil {
+		return nil, err
 	}
 
 	err = updateVersionStatus(ctx, version, constants.StatusDeleted)

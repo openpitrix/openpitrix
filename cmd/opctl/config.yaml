@@ -139,35 +139,13 @@
   description: create app
   service: AppManager
   body:
-    category_id:
-      type: string
-    chart_name:
-      type: string
-    description:
-      type: string
-    home:
-      type: string
-    icon:
-      type: string
-    keywords:
-      type: string
-    maintainers:
-      type: string
     name:
       type: string
-    owner:
-      type: string
-    package:
+    version_package:
       type: byte
-    readme:
-      type: string
-    repo_id:
-      type: string
-    screenshots:
-      type: string
-    sources:
-      type: string
-    status:
+    version_package_files:
+      type: object
+    version_type:
       type: string
 - action: CreateAppVersion
   description: create app version
@@ -177,38 +155,18 @@
       type: string
     description:
       type: string
-    home:
-      type: string
-    icon:
-      type: string
-    keywords:
-      type: string
-    maintainers:
-      type: string
     name:
-      type: string
-    owner:
       type: string
     package:
       type: byte
-    package_name:
-      type: string
-    readme:
-      type: string
-    screenshots:
-      type: string
-    sequence:
-      type: integer
-    sources:
-      type: string
-    status:
+    package_files:
+      type: object
+    type:
       type: string
 - action: DeleteAppVersion
   description: delete app version
   service: AppManager
   body:
-    direct_delete:
-      type: boolean
     version_id:
       type: string
 - action: DeleteApps
@@ -217,8 +175,6 @@
   body:
     app_id:
       type: '[]string'
-    direct_delete:
-      type: boolean
 - action: DescribeAppVersions
   description: describe app versions with filter
   service: AppManager
@@ -300,8 +256,6 @@
       type: string
     category_id:
       type: string
-    chart_name:
-      type: string
     description:
       type: string
     home:
@@ -314,17 +268,11 @@
       type: string
     name:
       type: string
-    owner:
-      type: string
     readme:
       type: string
-    repo_id:
-      type: string
     screenshots:
-      type: string
+      type: '[]string'
     sources:
-      type: string
-    status:
       type: string
 - action: ModifyAppVersion
   description: modify app version
@@ -332,32 +280,12 @@
   body:
     description:
       type: string
-    home:
-      type: string
-    icon:
-      type: string
-    keywords:
-      type: string
-    maintainers:
-      type: string
     name:
-      type: string
-    owner:
       type: string
     package:
       type: byte
-    package_name:
-      type: string
-    readme:
-      type: string
-    screenshots:
-      type: string
-    sequence:
-      type: integer
-    sources:
-      type: string
-    status:
-      type: string
+    package_files:
+      type: object
     version_id:
       type: string
 - action: PassAppVersion

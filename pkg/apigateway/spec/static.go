@@ -318,6 +318,39 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
             "name": "version_id",
             "in": "query",
             "required": false,
@@ -386,39 +419,6 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
-          },
-          {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
           }
         ],
         "tags": [
@@ -496,6 +496,19 @@ var Files = map[string]string{
             "type": "string"
           },
           {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -508,19 +521,6 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
           },
           {
             "name": "app_id",
@@ -3524,6 +3524,9 @@ var Files = map[string]string{
         },
         "message": {
           "type": "string"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -3549,48 +3552,19 @@ var Files = map[string]string{
         "name": {
           "type": "string"
         },
-        "repo_id": {
+        "version_type": {
           "type": "string"
         },
-        "owner": {
-          "type": "string"
-        },
-        "chart_name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "home": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "screenshots": {
-          "type": "string"
-        },
-        "maintainers": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "string"
-        },
-        "readme": {
-          "type": "string"
-        },
-        "category_id": {
-          "type": "string"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "package": {
+        "version_package": {
           "type": "string",
           "format": "byte"
+        },
+        "version_package_files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          }
         }
       }
     },
@@ -3611,49 +3585,25 @@ var Files = map[string]string{
         "app_id": {
           "type": "string"
         },
-        "owner": {
-          "type": "string"
-        },
         "name": {
-          "type": "string"
-        },
-        "package_name": {
           "type": "string"
         },
         "description": {
           "type": "string"
         },
-        "sequence": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "status": {
+        "type": {
           "type": "string"
         },
         "package": {
           "type": "string",
           "format": "byte"
         },
-        "home": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "screenshots": {
-          "type": "string"
-        },
-        "maintainers": {
-          "type": "string"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "string"
-        },
-        "readme": {
-          "type": "string"
+        "package_files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          }
         }
       }
     },
@@ -3670,10 +3620,6 @@ var Files = map[string]string{
       "properties": {
         "version_id": {
           "type": "string"
-        },
-        "direct_delete": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     },
@@ -3693,10 +3639,6 @@ var Files = map[string]string{
           "items": {
             "type": "string"
           }
-        },
-        "direct_delete": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     },
@@ -3807,15 +3749,6 @@ var Files = map[string]string{
         "name": {
           "type": "string"
         },
-        "repo_id": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "chart_name": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
         },
@@ -3826,7 +3759,10 @@ var Files = map[string]string{
           "type": "string"
         },
         "screenshots": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "maintainers": {
           "type": "string"
@@ -3841,9 +3777,6 @@ var Files = map[string]string{
           "type": "string"
         },
         "keywords": {
-          "type": "string"
-        },
-        "status": {
           "type": "string"
         }
       }
@@ -3865,46 +3798,19 @@ var Files = map[string]string{
         "name": {
           "type": "string"
         },
-        "package_name": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
         "description": {
-          "type": "string"
-        },
-        "sequence": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "status": {
           "type": "string"
         },
         "package": {
           "type": "string",
           "format": "byte"
         },
-        "home": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "screenshots": {
-          "type": "string"
-        },
-        "maintainers": {
-          "type": "string"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "string"
-        },
-        "readme": {
-          "type": "string"
+        "package_files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          }
         }
       }
     },

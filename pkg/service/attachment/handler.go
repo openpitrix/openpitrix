@@ -72,7 +72,9 @@ func (p *Server) UploadAttachment(ctx context.Context, req *pb.UploadAttachmentR
 			return nil, err
 		}
 	}
-	return nil, nil
+	return &pb.UploadAttachmentResponse{
+		AttachmentId: attachment.AttachmentId,
+	}, nil
 }
 
 func (p *Server) GetAttachments(ctx context.Context, req *pb.GetAttachmentsRequest) (*pb.GetAttachmentsResponse, error) {

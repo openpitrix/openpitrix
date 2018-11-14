@@ -67,6 +67,9 @@ type OpenpitrixAppVersion struct {
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
+	// type
+	Type string `json:"type,omitempty"`
+
 	// update time
 	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`
 

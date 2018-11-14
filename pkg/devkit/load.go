@@ -15,6 +15,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/golang/protobuf/ptypes/any"
+
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 )
 
@@ -166,7 +168,7 @@ func LoadFiles(files []opapp.BufferedFile) (*opapp.OpApp, error) {
 			}
 			c.ConfigTemplate = m
 		} else {
-			c.Files = append(c.Files, f)
+			c.Files = append(c.Files, &any.Any{TypeUrl: f.Name, Value: f.Data})
 		}
 	}
 

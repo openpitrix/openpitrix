@@ -135,11 +135,11 @@ func (rp *repoProxy) syncAppInfo(ctx context.Context, appIface wrapper.VersionIn
 		}
 		app = models.NewApp(
 			chartName,
-			repoId,
-			"",
 			rp.repo.GetOwner().GetValue(),
-			chartName,
 		)
+		app.RepoId = repoId
+		app.ChartName = chartName
+
 		_, err = pi.Global().DB(ctx).
 			InsertInto(constants.TableApp).
 			Record(app).
@@ -217,7 +217,6 @@ func (rp *repoProxy) syncAppVersionInfo(ctx context.Context, appId string, versi
 			versionName,
 			versionInterface.GetDescription(),
 			rp.repo.GetOwner().GetValue(),
-			versionInterface.GetPackageName(),
 		)
 
 		appVersion.PackageName = versionInterface.GetPackageName()

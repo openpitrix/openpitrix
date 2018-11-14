@@ -309,6 +309,39 @@
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
             "name": "version_id",
             "in": "query",
             "required": false,
@@ -377,39 +410,6 @@
               "type": "string"
             },
             "collectionFormat": "multi"
-          },
-          {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
           }
         ],
         "tags": [
@@ -487,6 +487,19 @@
             "type": "string"
           },
           {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -499,19 +512,6 @@
             "required": false,
             "type": "integer",
             "format": "int64"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
           },
           {
             "name": "app_id",
@@ -3515,6 +3515,9 @@
         },
         "message": {
           "type": "string"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -3540,48 +3543,19 @@
         "name": {
           "type": "string"
         },
-        "repo_id": {
+        "version_type": {
           "type": "string"
         },
-        "owner": {
-          "type": "string"
-        },
-        "chart_name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "home": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "screenshots": {
-          "type": "string"
-        },
-        "maintainers": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "string"
-        },
-        "readme": {
-          "type": "string"
-        },
-        "category_id": {
-          "type": "string"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "package": {
+        "version_package": {
           "type": "string",
           "format": "byte"
+        },
+        "version_package_files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          }
         }
       }
     },
@@ -3602,49 +3576,25 @@
         "app_id": {
           "type": "string"
         },
-        "owner": {
-          "type": "string"
-        },
         "name": {
-          "type": "string"
-        },
-        "package_name": {
           "type": "string"
         },
         "description": {
           "type": "string"
         },
-        "sequence": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "status": {
+        "type": {
           "type": "string"
         },
         "package": {
           "type": "string",
           "format": "byte"
         },
-        "home": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "screenshots": {
-          "type": "string"
-        },
-        "maintainers": {
-          "type": "string"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "string"
-        },
-        "readme": {
-          "type": "string"
+        "package_files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          }
         }
       }
     },
@@ -3661,10 +3611,6 @@
       "properties": {
         "version_id": {
           "type": "string"
-        },
-        "direct_delete": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     },
@@ -3684,10 +3630,6 @@
           "items": {
             "type": "string"
           }
-        },
-        "direct_delete": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     },
@@ -3798,15 +3740,6 @@
         "name": {
           "type": "string"
         },
-        "repo_id": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "chart_name": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
         },
@@ -3817,7 +3750,10 @@
           "type": "string"
         },
         "screenshots": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "maintainers": {
           "type": "string"
@@ -3832,9 +3768,6 @@
           "type": "string"
         },
         "keywords": {
-          "type": "string"
-        },
-        "status": {
           "type": "string"
         }
       }
@@ -3856,46 +3789,19 @@
         "name": {
           "type": "string"
         },
-        "package_name": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
         "description": {
-          "type": "string"
-        },
-        "sequence": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "status": {
           "type": "string"
         },
         "package": {
           "type": "string",
           "format": "byte"
         },
-        "home": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "screenshots": {
-          "type": "string"
-        },
-        "maintainers": {
-          "type": "string"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "string"
-        },
-        "readme": {
-          "type": "string"
+        "package_files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          }
         }
       }
     },

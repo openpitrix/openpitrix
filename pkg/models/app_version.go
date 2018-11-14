@@ -37,6 +37,7 @@ type AppVersion struct {
 	Readme      string
 	Status      string
 	Message     string
+	Type        string
 	Sequence    uint32
 	CreateTime  time.Time
 	StatusTime  time.Time
@@ -76,13 +77,12 @@ func (c AppVersions) Less(a, b int) bool {
 	return i.LessThan(j)
 }
 
-func NewAppVersion(appId, name, description, owner, packageName string) *AppVersion {
+func NewAppVersion(appId, name, description, owner string) *AppVersion {
 	return &AppVersion{
 		VersionId:   NewAppVersionId(),
 		AppId:       appId,
 		Name:        name,
 		Owner:       owner,
-		PackageName: packageName,
 		Description: description,
 		Status:      constants.StatusDraft,
 		CreateTime:  time.Now(),
