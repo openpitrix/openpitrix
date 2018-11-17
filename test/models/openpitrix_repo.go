@@ -22,6 +22,9 @@ type OpenpitrixRepo struct {
 	// category set
 	CategorySet OpenpitrixRepoCategorySet `json:"category_set"`
 
+	// controller
+	Controller int32 `json:"controller,omitempty"`
+
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 

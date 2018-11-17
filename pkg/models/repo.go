@@ -28,6 +28,7 @@ type Repo struct {
 	Visibility       string
 	Owner            string
 	AppDefaultStatus string
+	Controller       int8
 
 	Status     string
 	CreateTime time.Time
@@ -67,6 +68,7 @@ func RepoToPb(repo *Repo) *pb.Repo {
 	pbRepo.CreateTime = pbutil.ToProtoTimestamp(repo.CreateTime)
 	pbRepo.StatusTime = pbutil.ToProtoTimestamp(repo.StatusTime)
 	pbRepo.AppDefaultStatus = pbutil.ToProtoString(repo.AppDefaultStatus)
+	pbRepo.Controller = pbutil.ToProtoInt32(int32(repo.Controller))
 	return &pbRepo
 }
 

@@ -65,7 +65,7 @@ func getSearchFilter(tableName string, value interface{}, exclude ...string) dbr
 	return nil
 }
 
-func getStringValue(param interface{}) interface{} {
+func getReqValue(param interface{}) interface{} {
 	switch value := param.(type) {
 	case string:
 		if value == "" {
@@ -73,6 +73,11 @@ func getStringValue(param interface{}) interface{} {
 		}
 		return value
 	case *wrappers.StringValue:
+		if value == nil {
+			return nil
+		}
+		return value.GetValue()
+	case *wrappers.Int32Value:
 		if value == nil {
 			return nil
 		}
@@ -116,7 +121,7 @@ func buildFilterConditions(withPrefix bool, req Request, tableName string, exclu
 		param := field.Value()
 		indexedColumns, ok := constants.IndexedColumns[tableName]
 		if ok && stringutil.StringIn(column, indexedColumns) {
-			value := getStringValue(param)
+			value := getReqValue(param)
 			if value != nil {
 				key := column
 				if withPrefix {
@@ -127,7 +132,7 @@ func buildFilterConditions(withPrefix bool, req Request, tableName string, exclu
 		}
 		// TODO: search column
 		if column == SearchWordColumnName && stringutil.StringIn(tableName, constants.SearchWordColumnTable) {
-			value := getStringValue(param)
+			value := getReqValue(param)
 			condition := getSearchFilter(tableName, value, exclude...)
 			if condition != nil {
 				conditions = append(conditions, condition)

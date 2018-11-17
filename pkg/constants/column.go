@@ -78,6 +78,8 @@ const (
 	ColumnAppDefaultStatus = "app_default_status"
 
 	ColumnMarketId = "market_id"
+
+	ColumnController = "controller"
 )
 
 var PushEventTables = map[string][]string{
@@ -114,7 +116,8 @@ var IndexedColumns = map[string][]string{
 		ColumnJobId, ColumnTaskId, ColumnExecutor, ColumnStatus, ColumnOwner,
 	},
 	TableRepo: {
-		ColumnRepoId, ColumnName, ColumnType, ColumnVisibility, ColumnStatus, ColumnAppDefaultStatus, ColumnOwner,
+		ColumnRepoId, ColumnName, ColumnType, ColumnVisibility, ColumnStatus,
+		ColumnAppDefaultStatus, ColumnOwner, ColumnController,
 	},
 	TableRuntime: {
 		ColumnRuntimeId, ColumnProvider, ColumnZone, ColumnStatus, ColumnOwner,

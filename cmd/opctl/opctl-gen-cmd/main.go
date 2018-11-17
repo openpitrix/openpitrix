@@ -140,13 +140,16 @@ func (c *{{$element.Action}}Cmd) ParseFlag(f Flag) {
 {{- else if (eq $p.Type "boolean")}}
 	c.{{pascalCase $name}} = new(bool)
 	f.BoolVarP(c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", false, "{{$p.Help}}")
-{{- else if (eq $p.Type "integer")}}
+{{- else if (eq $p.Type "int64")}}
 	c.{{pascalCase $name}} = new(int64)
 {{- if (eq $name "limit")}}
 	f.Int64VarP(c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", 20, "{{$p.Help}}")
 {{- else}}
 	f.Int64VarP(c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", 0, "{{$p.Help}}")
 {{- end}}
+{{- else if (eq $p.Type "int32")}}
+	c.{{pascalCase $name}} = new(int32)
+	f.Int32VarP(c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", 0, "{{$p.Help}}")
 {{- end}}
 {{- end}}
 }

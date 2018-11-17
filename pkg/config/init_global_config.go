@@ -46,4 +46,8 @@ runtime:
     zone: .*
     image_name: amzn2-ami-hvm-2.0.20180622.1-x86_64-gp2
     image_url: https://openpitrix.pek3a.qingstor.com/image/amazon-linux.tar.gz
-`
+  aliyun_provider:
+    api_server: ecs.aliyuncs.com
+    zone: .*
+    image_id: ubuntu_16_0402_64_20G_alibase_20180409.vhd
+    image_url: https://openpitrix.pek3a.qingstor.com/image/ubuntu.tar.gz`
