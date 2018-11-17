@@ -17,9 +17,9 @@ import "types.proto";
 
 message CreateAppRequest {
 	google.protobuf.StringValue name = 1;
-	google.protobuf.StringValue version_type = 2;
+	google.protobuf.StringValue version_type = 2; // vmbased or helm
 	google.protobuf.BytesValue version_package = 3;
-	map<string, bytes> version_package_files = 4;
+//	map<string, bytes> version_package_files = 4;
 }
 
 message CreateAppResponse {
@@ -100,9 +100,9 @@ message CreateAppVersionRequest {
 	google.protobuf.StringValue app_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
-	google.protobuf.StringValue type = 4;
+	google.protobuf.StringValue type = 4; // vmbased or helm
 	google.protobuf.BytesValue package = 5;
-	map<string, bytes> package_files = 6;
+//	map<string, bytes> package_files = 6;
 }
 
 message CreateAppVersionResponse {

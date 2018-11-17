@@ -3558,13 +3558,6 @@ var Files = map[string]string{
         "version_package": {
           "type": "string",
           "format": "byte"
-        },
-        "version_package_files": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "byte"
-          }
         }
       }
     },
@@ -3597,13 +3590,6 @@ var Files = map[string]string{
         "package": {
           "type": "string",
           "format": "byte"
-        },
-        "package_files": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "byte"
-          }
         }
       }
     },

@@ -3549,13 +3549,6 @@
         "version_package": {
           "type": "string",
           "format": "byte"
-        },
-        "version_package_files": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "byte"
-          }
         }
       }
     },
@@ -3588,13 +3581,6 @@
         "package": {
           "type": "string",
           "format": "byte"
-        },
-        "package_files": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "byte"
-          }
         }
       }
     },

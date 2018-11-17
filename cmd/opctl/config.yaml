@@ -143,8 +143,6 @@
       type: string
     version_package:
       type: byte
-    version_package_files:
-      type: object
     version_type:
       type: string
 - action: CreateAppVersion
@@ -159,8 +157,6 @@
       type: string
     package:
       type: byte
-    package_files:
-      type: object
     type:
       type: string
 - action: DeleteAppVersion

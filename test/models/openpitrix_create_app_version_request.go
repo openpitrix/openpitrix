@@ -28,9 +28,6 @@ type OpenpitrixCreateAppVersionRequest struct {
 	// package
 	Package strfmt.Base64 `json:"package,omitempty"`
 
-	// package files
-	PackageFiles map[string]strfmt.Base64 `json:"package_files,omitempty"`
-
 	// type
 	Type string `json:"type,omitempty"`
 }

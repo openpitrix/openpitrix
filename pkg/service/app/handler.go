@@ -180,6 +180,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 
 	version := models.NewAppVersion(newApp.AppId, v.GetAppVersion(), newApp.Description, newApp.Owner)
 	version.PackageName = attachmentId
+	version.Type = req.GetVersionType().GetValue()
 
 	err = insertVersion(ctx, version)
 	if err != nil {
@@ -295,6 +296,7 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		s.UserId)
 
 	newAppVersion.PackageName = attachmentId
+	newAppVersion.Type = req.GetType().GetValue()
 	err = insertVersion(ctx, newAppVersion)
 	if err != nil {
 		return nil, err

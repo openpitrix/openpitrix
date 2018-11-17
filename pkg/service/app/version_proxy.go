@@ -9,6 +9,7 @@ import (
 	"context"
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
+	"openpitrix.io/openpitrix/pkg/client/attachment"
 	repoclient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -16,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/repoiface"
 	"openpitrix.io/openpitrix/pkg/util/gziputil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type versionProxy struct {
@@ -70,6 +72,41 @@ func (vp *versionProxy) GetRepo(ctx context.Context) (*pb.Repo, error) {
 }
 
 func (vp *versionProxy) GetPackageFile(ctx context.Context, includeFiles ...string) (map[string][]byte, error) {
+	app, err := vp.GetApp(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if app.RepoId == "" {
+		// get from attachment manager
+		attachmentId := vp.version.PackageName
+		attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
+		if err != nil {
+			logger.Error(ctx, "Failed to connect to attachment manager: %+v", err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		getAttachmentRes, err := attachmentManagerClient.GetAttachments(ctx, &pb.GetAttachmentsRequest{
+			AttachmentId: []string{attachmentId},
+		})
+		if err != nil {
+			logger.Error(ctx, "failed to get attachment of [%s]: %+v", attachmentId, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		att, ok := getAttachmentRes.Attachments[attachmentId]
+		if !ok {
+			logger.Error(ctx, "failed to get attachment of [%s]", attachmentId)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		if len(includeFiles) == 0 {
+			return att.AttachmentContent, nil
+		}
+		var files = make(map[string][]byte)
+		for name, content := range att.AttachmentContent {
+			if stringutil.StringIn(name, includeFiles) {
+				files[name] = content
+			}
+		}
+		return files, err
+	}
 	rreader, err := vp.GetRepoReader(ctx)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, vp.version.VersionId)
