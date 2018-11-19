@@ -51,6 +51,10 @@ func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
 				if p.Items != nil {
 					t += p.Items.Type
 				}
+			} else if p.Format == "int32" {
+				t = "int32"
+			} else if p.Format == "int64" {
+				t = "int64"
 			} else {
 				t = p.Type
 			}

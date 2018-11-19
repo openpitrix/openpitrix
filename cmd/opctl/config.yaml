@@ -48,9 +48,9 @@
     group_id:
       type: '[]string'
     limit:
-      type: integer
+      type: int64
     offset:
-      type: integer
+      type: int64
     reverse:
       type: boolean
     search_word:
@@ -67,9 +67,9 @@
     group_id:
       type: '[]string'
     limit:
-      type: integer
+      type: int64
     offset:
-      type: integer
+      type: int64
     reverse:
       type: boolean
     role:
@@ -228,11 +228,11 @@
     description:
       type: '[]string'
     limit:
-      type: integer
+      type: int64
     name:
       type: '[]string'
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     package_name:
@@ -258,11 +258,11 @@
     chart_name:
       type: '[]string'
     limit:
-      type: integer
+      type: int64
     name:
       type: '[]string'
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     repo_id:
@@ -421,11 +421,11 @@
     category_id:
       type: '[]string'
     limit:
-      type: integer
+      type: int64
     name:
       type: '[]string'
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     reverse:
@@ -529,11 +529,11 @@
     cluster_id:
       type: string
     limit:
-      type: integer
+      type: int64
     node_id:
       type: '[]string'
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     reverse:
@@ -559,9 +559,9 @@
     frontgate_id:
       type: '[]string'
     limit:
-      type: integer
+      type: int64
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     reverse:
@@ -585,11 +585,11 @@
     key_pair_id:
       type: string
     limit:
-      type: integer
+      type: int64
     name:
       type: string
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     pub_key:
@@ -603,15 +603,15 @@
     advanced_param:
       type: '[]string'
     limit:
-      type: integer
+      type: int64
     offset:
-      type: integer
+      type: int64
     runtime_id:
       type: string
     subnet_id:
       type: '[]string'
     subnet_type:
-      type: integer
+      type: int64
     zone:
       type: '[]string'
 - action: DetachKeyPairs
@@ -719,10 +719,10 @@
       type: '[]string'
     limit:
       help: default is 20, max value is 200.
-      type: integer
+      type: int64
     offset:
       help: default is 0.
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     provider:
@@ -756,11 +756,11 @@
   service: MarketManager
   query:
     limit:
-      type: integer
+      type: int64
     market_id:
       type: '[]string'
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     reverse:
@@ -776,13 +776,13 @@
   service: MarketManager
   query:
     limit:
-      type: integer
+      type: int64
     market_id:
       type: '[]string'
     name:
       type: '[]string'
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     reverse:
@@ -832,9 +832,9 @@
   service: RepoIndexer
   query:
     limit:
-      type: integer
+      type: int64
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     repo_event_id:
@@ -889,14 +889,16 @@
       type: '[]string'
     category_id:
       type: '[]string'
+    controller:
+      type: int32
     label:
       type: string
     limit:
-      type: integer
+      type: int64
     name:
       type: '[]string'
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     provider:
@@ -998,9 +1000,9 @@
     label:
       type: string
     limit:
-      type: integer
+      type: int64
     offset:
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     provider:
@@ -1038,10 +1040,10 @@
       type: '[]string'
     limit:
       help: default is 20, max value is 200.
-      type: integer
+      type: int64
     offset:
       help: default is 0.
-      type: integer
+      type: int64
     owner:
       type: '[]string'
     search_word:

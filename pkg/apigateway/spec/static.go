@@ -2831,6 +2831,13 @@ var Files = map[string]string{
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "controller",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "tags": [
@@ -6239,6 +6246,10 @@ var Files = map[string]string{
         },
         "app_default_status": {
           "type": "string"
+        },
+        "controller": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

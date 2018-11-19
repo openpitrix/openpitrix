@@ -90,6 +90,7 @@ message Repo {
 	repeated ResourceCategory category_set = 15;
 
 	google.protobuf.StringValue app_default_status = 16;
+	google.protobuf.Int32Value controller = 17; // 0 for self resource; 1 for openpitrix resource
 }
 
 message DescribeReposRequest {
@@ -110,6 +111,7 @@ message DescribeReposRequest {
 	repeated string owner = 15;
 	repeated string app_default_status = 16;
 	string user_id = 17;
+	google.protobuf.Int32Value controller = 18; // 0 for self resource; 1 for openpitrix resource
 }
 
 message DescribeReposResponse {

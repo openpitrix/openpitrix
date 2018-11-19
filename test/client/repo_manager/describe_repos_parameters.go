@@ -67,6 +67,8 @@ type DescribeReposParams struct {
 	AppDefaultStatus []string
 	/*CategoryID*/
 	CategoryID []string
+	/*Controller*/
+	Controller *int32
 	/*Label*/
 	Label *string
 	/*Limit*/
@@ -156,6 +158,17 @@ func (o *DescribeReposParams) WithCategoryID(categoryID []string) *DescribeRepos
 // SetCategoryID adds the categoryId to the describe repos params
 func (o *DescribeReposParams) SetCategoryID(categoryID []string) {
 	o.CategoryID = categoryID
+}
+
+// WithController adds the controller to the describe repos params
+func (o *DescribeReposParams) WithController(controller *int32) *DescribeReposParams {
+	o.SetController(controller)
+	return o
+}
+
+// SetController adds the controller to the describe repos params
+func (o *DescribeReposParams) SetController(controller *int32) {
+	o.Controller = controller
 }
 
 // WithLabel adds the label to the describe repos params
@@ -345,6 +358,22 @@ func (o *DescribeReposParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	// query array param category_id
 	if err := r.SetQueryParam("category_id", joinedCategoryID...); err != nil {
 		return err
+	}
+
+	if o.Controller != nil {
+
+		// query param controller
+		var qrController int32
+		if o.Controller != nil {
+			qrController = *o.Controller
+		}
+		qController := swag.FormatInt32(qrController)
+		if qController != "" {
+			if err := r.SetQueryParam("controller", qController); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if o.Label != nil {
