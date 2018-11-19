@@ -12,12 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixAttachment openpitrix attachment
-// swagger:model openpitrixAttachment
-type OpenpitrixAttachment struct {
-
-	// attachment content
-	AttachmentContent map[string]strfmt.Base64 `json:"attachment_content,omitempty"`
+// OpenpitrixReplaceAttachmentResponse openpitrix replace attachment response
+// swagger:model openpitrixReplaceAttachmentResponse
+type OpenpitrixReplaceAttachmentResponse struct {
 
 	// attachment id
 	AttachmentID string `json:"attachment_id,omitempty"`
@@ -25,15 +22,20 @@ type OpenpitrixAttachment struct {
 	// attachment type
 	AttachmentType OpenpitrixAttachmentType `json:"attachment_type,omitempty"`
 
-	// create time
-	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
+	// filename
+	Filename []string `json:"filename"`
 }
 
-// Validate validates this openpitrix attachment
-func (m *OpenpitrixAttachment) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix replace attachment response
+func (m *OpenpitrixReplaceAttachmentResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAttachmentType(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateFilename(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -44,7 +46,7 @@ func (m *OpenpitrixAttachment) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *OpenpitrixAttachment) validateAttachmentType(formats strfmt.Registry) error {
+func (m *OpenpitrixReplaceAttachmentResponse) validateAttachmentType(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.AttachmentType) { // not required
 		return nil
@@ -60,8 +62,17 @@ func (m *OpenpitrixAttachment) validateAttachmentType(formats strfmt.Registry) e
 	return nil
 }
 
+func (m *OpenpitrixReplaceAttachmentResponse) validateFilename(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Filename) { // not required
+		return nil
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
-func (m *OpenpitrixAttachment) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixReplaceAttachmentResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -69,8 +80,8 @@ func (m *OpenpitrixAttachment) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixAttachment) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixAttachment
+func (m *OpenpitrixReplaceAttachmentResponse) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixReplaceAttachmentResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

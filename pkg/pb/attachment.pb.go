@@ -27,6 +27,40 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type AttachmentType int32
+
+const (
+	// directory
+	AttachmentType_archive AttachmentType = 0
+	// raw
+	AttachmentType_raw AttachmentType = 1
+	// image type
+	AttachmentType_jpg AttachmentType = 10
+	AttachmentType_png AttachmentType = 11
+)
+
+var AttachmentType_name = map[int32]string{
+	0:  "archive",
+	1:  "raw",
+	10: "jpg",
+	11: "png",
+}
+
+var AttachmentType_value = map[string]int32{
+	"archive": 0,
+	"raw":     1,
+	"jpg":     10,
+	"png":     11,
+}
+
+func (x AttachmentType) String() string {
+	return proto.EnumName(AttachmentType_name, int32(x))
+}
+
+func (AttachmentType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_50ce80bdd3ef17d6, []int{0}
+}
+
 type GetAttachmentsRequest struct {
 	AttachmentId         []string `protobuf:"bytes,1,rep,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
 	Filename             []string `protobuf:"bytes,2,rep,name=filename,proto3" json:"filename,omitempty"`
@@ -123,8 +157,9 @@ func (m *GetAttachmentsResponse) GetAttachments() map[string]*Attachment {
 
 type Attachment struct {
 	AttachmentId         string               `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
-	AttachmentContent    map[string][]byte    `protobuf:"bytes,4,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	CreateTime           *timestamp.Timestamp `protobuf:"bytes,7,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	AttachmentType       AttachmentType       `protobuf:"varint,2,opt,name=attachment_type,json=attachmentType,proto3,enum=openpitrix.AttachmentType" json:"attachment_type,omitempty"`
+	AttachmentContent    map[string][]byte    `protobuf:"bytes,3,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	CreateTime           *timestamp.Timestamp `protobuf:"bytes,4,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -162,6 +197,13 @@ func (m *Attachment) GetAttachmentId() string {
 	return ""
 }
 
+func (m *Attachment) GetAttachmentType() AttachmentType {
+	if m != nil {
+		return m.AttachmentType
+	}
+	return AttachmentType_archive
+}
+
 func (m *Attachment) GetAttachmentContent() map[string][]byte {
 	if m != nil {
 		return m.AttachmentContent
@@ -176,90 +218,320 @@ func (m *Attachment) GetCreateTime() *timestamp.Timestamp {
 	return nil
 }
 
-type UploadAttachmentRequest struct {
-	AttachmentId         string            `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
-	AttachmentContent    map[string][]byte `protobuf:"bytes,2,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+type CreateAttachmentRequest struct {
+	// 	string attachment_id = 1;
+	AttachmentType       AttachmentType    `protobuf:"varint,2,opt,name=attachment_type,json=attachmentType,proto3,enum=openpitrix.AttachmentType" json:"attachment_type,omitempty"`
+	AttachmentContent    map[string][]byte `protobuf:"bytes,3,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
 }
 
-func (m *UploadAttachmentRequest) Reset()         { *m = UploadAttachmentRequest{} }
-func (m *UploadAttachmentRequest) String() string { return proto.CompactTextString(m) }
-func (*UploadAttachmentRequest) ProtoMessage()    {}
-func (*UploadAttachmentRequest) Descriptor() ([]byte, []int) {
+func (m *CreateAttachmentRequest) Reset()         { *m = CreateAttachmentRequest{} }
+func (m *CreateAttachmentRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateAttachmentRequest) ProtoMessage()    {}
+func (*CreateAttachmentRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_50ce80bdd3ef17d6, []int{3}
 }
 
-func (m *UploadAttachmentRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UploadAttachmentRequest.Unmarshal(m, b)
+func (m *CreateAttachmentRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateAttachmentRequest.Unmarshal(m, b)
 }
-func (m *UploadAttachmentRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UploadAttachmentRequest.Marshal(b, m, deterministic)
+func (m *CreateAttachmentRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateAttachmentRequest.Marshal(b, m, deterministic)
 }
-func (m *UploadAttachmentRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UploadAttachmentRequest.Merge(m, src)
+func (m *CreateAttachmentRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateAttachmentRequest.Merge(m, src)
 }
-func (m *UploadAttachmentRequest) XXX_Size() int {
-	return xxx_messageInfo_UploadAttachmentRequest.Size(m)
+func (m *CreateAttachmentRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateAttachmentRequest.Size(m)
 }
-func (m *UploadAttachmentRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_UploadAttachmentRequest.DiscardUnknown(m)
+func (m *CreateAttachmentRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateAttachmentRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UploadAttachmentRequest proto.InternalMessageInfo
+var xxx_messageInfo_CreateAttachmentRequest proto.InternalMessageInfo
 
-func (m *UploadAttachmentRequest) GetAttachmentId() string {
+func (m *CreateAttachmentRequest) GetAttachmentType() AttachmentType {
 	if m != nil {
-		return m.AttachmentId
+		return m.AttachmentType
 	}
-	return ""
+	return AttachmentType_archive
 }
 
-func (m *UploadAttachmentRequest) GetAttachmentContent() map[string][]byte {
+func (m *CreateAttachmentRequest) GetAttachmentContent() map[string][]byte {
 	if m != nil {
 		return m.AttachmentContent
 	}
 	return nil
 }
 
-type UploadAttachmentResponse struct {
-	AttachmentId         string   `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+type CreateAttachmentResponse struct {
+	AttachmentId         string         `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	AttachmentType       AttachmentType `protobuf:"varint,2,opt,name=attachment_type,json=attachmentType,proto3,enum=openpitrix.AttachmentType" json:"attachment_type,omitempty"`
+	Filename             []string       `protobuf:"bytes,3,rep,name=filename,proto3" json:"filename,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *UploadAttachmentResponse) Reset()         { *m = UploadAttachmentResponse{} }
-func (m *UploadAttachmentResponse) String() string { return proto.CompactTextString(m) }
-func (*UploadAttachmentResponse) ProtoMessage()    {}
-func (*UploadAttachmentResponse) Descriptor() ([]byte, []int) {
+func (m *CreateAttachmentResponse) Reset()         { *m = CreateAttachmentResponse{} }
+func (m *CreateAttachmentResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateAttachmentResponse) ProtoMessage()    {}
+func (*CreateAttachmentResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_50ce80bdd3ef17d6, []int{4}
 }
 
-func (m *UploadAttachmentResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UploadAttachmentResponse.Unmarshal(m, b)
+func (m *CreateAttachmentResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateAttachmentResponse.Unmarshal(m, b)
 }
-func (m *UploadAttachmentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UploadAttachmentResponse.Marshal(b, m, deterministic)
+func (m *CreateAttachmentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateAttachmentResponse.Marshal(b, m, deterministic)
 }
-func (m *UploadAttachmentResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UploadAttachmentResponse.Merge(m, src)
+func (m *CreateAttachmentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateAttachmentResponse.Merge(m, src)
 }
-func (m *UploadAttachmentResponse) XXX_Size() int {
-	return xxx_messageInfo_UploadAttachmentResponse.Size(m)
+func (m *CreateAttachmentResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateAttachmentResponse.Size(m)
 }
-func (m *UploadAttachmentResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_UploadAttachmentResponse.DiscardUnknown(m)
+func (m *CreateAttachmentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateAttachmentResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UploadAttachmentResponse proto.InternalMessageInfo
+var xxx_messageInfo_CreateAttachmentResponse proto.InternalMessageInfo
 
-func (m *UploadAttachmentResponse) GetAttachmentId() string {
+func (m *CreateAttachmentResponse) GetAttachmentId() string {
 	if m != nil {
 		return m.AttachmentId
 	}
 	return ""
+}
+
+func (m *CreateAttachmentResponse) GetAttachmentType() AttachmentType {
+	if m != nil {
+		return m.AttachmentType
+	}
+	return AttachmentType_archive
+}
+
+func (m *CreateAttachmentResponse) GetFilename() []string {
+	if m != nil {
+		return m.Filename
+	}
+	return nil
+}
+
+type AppendAttachmentRequest struct {
+	AttachmentId string `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	// 	AttachmentType attachment_type = 2;
+	AttachmentContent    map[string][]byte `protobuf:"bytes,3,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *AppendAttachmentRequest) Reset()         { *m = AppendAttachmentRequest{} }
+func (m *AppendAttachmentRequest) String() string { return proto.CompactTextString(m) }
+func (*AppendAttachmentRequest) ProtoMessage()    {}
+func (*AppendAttachmentRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_50ce80bdd3ef17d6, []int{5}
+}
+
+func (m *AppendAttachmentRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AppendAttachmentRequest.Unmarshal(m, b)
+}
+func (m *AppendAttachmentRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AppendAttachmentRequest.Marshal(b, m, deterministic)
+}
+func (m *AppendAttachmentRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AppendAttachmentRequest.Merge(m, src)
+}
+func (m *AppendAttachmentRequest) XXX_Size() int {
+	return xxx_messageInfo_AppendAttachmentRequest.Size(m)
+}
+func (m *AppendAttachmentRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AppendAttachmentRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AppendAttachmentRequest proto.InternalMessageInfo
+
+func (m *AppendAttachmentRequest) GetAttachmentId() string {
+	if m != nil {
+		return m.AttachmentId
+	}
+	return ""
+}
+
+func (m *AppendAttachmentRequest) GetAttachmentContent() map[string][]byte {
+	if m != nil {
+		return m.AttachmentContent
+	}
+	return nil
+}
+
+type AppendAttachmentResponse struct {
+	AttachmentId         string         `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	AttachmentType       AttachmentType `protobuf:"varint,2,opt,name=attachment_type,json=attachmentType,proto3,enum=openpitrix.AttachmentType" json:"attachment_type,omitempty"`
+	Filename             []string       `protobuf:"bytes,3,rep,name=filename,proto3" json:"filename,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *AppendAttachmentResponse) Reset()         { *m = AppendAttachmentResponse{} }
+func (m *AppendAttachmentResponse) String() string { return proto.CompactTextString(m) }
+func (*AppendAttachmentResponse) ProtoMessage()    {}
+func (*AppendAttachmentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_50ce80bdd3ef17d6, []int{6}
+}
+
+func (m *AppendAttachmentResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AppendAttachmentResponse.Unmarshal(m, b)
+}
+func (m *AppendAttachmentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AppendAttachmentResponse.Marshal(b, m, deterministic)
+}
+func (m *AppendAttachmentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AppendAttachmentResponse.Merge(m, src)
+}
+func (m *AppendAttachmentResponse) XXX_Size() int {
+	return xxx_messageInfo_AppendAttachmentResponse.Size(m)
+}
+func (m *AppendAttachmentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_AppendAttachmentResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AppendAttachmentResponse proto.InternalMessageInfo
+
+func (m *AppendAttachmentResponse) GetAttachmentId() string {
+	if m != nil {
+		return m.AttachmentId
+	}
+	return ""
+}
+
+func (m *AppendAttachmentResponse) GetAttachmentType() AttachmentType {
+	if m != nil {
+		return m.AttachmentType
+	}
+	return AttachmentType_archive
+}
+
+func (m *AppendAttachmentResponse) GetFilename() []string {
+	if m != nil {
+		return m.Filename
+	}
+	return nil
+}
+
+type ReplaceAttachmentRequest struct {
+	AttachmentId         string            `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	AttachmentType       AttachmentType    `protobuf:"varint,2,opt,name=attachment_type,json=attachmentType,proto3,enum=openpitrix.AttachmentType" json:"attachment_type,omitempty"`
+	AttachmentContent    map[string][]byte `protobuf:"bytes,3,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *ReplaceAttachmentRequest) Reset()         { *m = ReplaceAttachmentRequest{} }
+func (m *ReplaceAttachmentRequest) String() string { return proto.CompactTextString(m) }
+func (*ReplaceAttachmentRequest) ProtoMessage()    {}
+func (*ReplaceAttachmentRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_50ce80bdd3ef17d6, []int{7}
+}
+
+func (m *ReplaceAttachmentRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReplaceAttachmentRequest.Unmarshal(m, b)
+}
+func (m *ReplaceAttachmentRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReplaceAttachmentRequest.Marshal(b, m, deterministic)
+}
+func (m *ReplaceAttachmentRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReplaceAttachmentRequest.Merge(m, src)
+}
+func (m *ReplaceAttachmentRequest) XXX_Size() int {
+	return xxx_messageInfo_ReplaceAttachmentRequest.Size(m)
+}
+func (m *ReplaceAttachmentRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReplaceAttachmentRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ReplaceAttachmentRequest proto.InternalMessageInfo
+
+func (m *ReplaceAttachmentRequest) GetAttachmentId() string {
+	if m != nil {
+		return m.AttachmentId
+	}
+	return ""
+}
+
+func (m *ReplaceAttachmentRequest) GetAttachmentType() AttachmentType {
+	if m != nil {
+		return m.AttachmentType
+	}
+	return AttachmentType_archive
+}
+
+func (m *ReplaceAttachmentRequest) GetAttachmentContent() map[string][]byte {
+	if m != nil {
+		return m.AttachmentContent
+	}
+	return nil
+}
+
+type ReplaceAttachmentResponse struct {
+	AttachmentId         string         `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	AttachmentType       AttachmentType `protobuf:"varint,2,opt,name=attachment_type,json=attachmentType,proto3,enum=openpitrix.AttachmentType" json:"attachment_type,omitempty"`
+	Filename             []string       `protobuf:"bytes,3,rep,name=filename,proto3" json:"filename,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *ReplaceAttachmentResponse) Reset()         { *m = ReplaceAttachmentResponse{} }
+func (m *ReplaceAttachmentResponse) String() string { return proto.CompactTextString(m) }
+func (*ReplaceAttachmentResponse) ProtoMessage()    {}
+func (*ReplaceAttachmentResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_50ce80bdd3ef17d6, []int{8}
+}
+
+func (m *ReplaceAttachmentResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReplaceAttachmentResponse.Unmarshal(m, b)
+}
+func (m *ReplaceAttachmentResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReplaceAttachmentResponse.Marshal(b, m, deterministic)
+}
+func (m *ReplaceAttachmentResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReplaceAttachmentResponse.Merge(m, src)
+}
+func (m *ReplaceAttachmentResponse) XXX_Size() int {
+	return xxx_messageInfo_ReplaceAttachmentResponse.Size(m)
+}
+func (m *ReplaceAttachmentResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReplaceAttachmentResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ReplaceAttachmentResponse proto.InternalMessageInfo
+
+func (m *ReplaceAttachmentResponse) GetAttachmentId() string {
+	if m != nil {
+		return m.AttachmentId
+	}
+	return ""
+}
+
+func (m *ReplaceAttachmentResponse) GetAttachmentType() AttachmentType {
+	if m != nil {
+		return m.AttachmentType
+	}
+	return AttachmentType_archive
+}
+
+func (m *ReplaceAttachmentResponse) GetFilename() []string {
+	if m != nil {
+		return m.Filename
+	}
+	return nil
 }
 
 type DeleteAttachmentsRequest struct {
@@ -274,7 +546,7 @@ func (m *DeleteAttachmentsRequest) Reset()         { *m = DeleteAttachmentsReque
 func (m *DeleteAttachmentsRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteAttachmentsRequest) ProtoMessage()    {}
 func (*DeleteAttachmentsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_50ce80bdd3ef17d6, []int{5}
+	return fileDescriptor_50ce80bdd3ef17d6, []int{9}
 }
 
 func (m *DeleteAttachmentsRequest) XXX_Unmarshal(b []byte) error {
@@ -321,7 +593,7 @@ func (m *DeleteAttachmentsResponse) Reset()         { *m = DeleteAttachmentsResp
 func (m *DeleteAttachmentsResponse) String() string { return proto.CompactTextString(m) }
 func (*DeleteAttachmentsResponse) ProtoMessage()    {}
 func (*DeleteAttachmentsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_50ce80bdd3ef17d6, []int{6}
+	return fileDescriptor_50ce80bdd3ef17d6, []int{10}
 }
 
 func (m *DeleteAttachmentsResponse) XXX_Unmarshal(b []byte) error {
@@ -357,14 +629,21 @@ func (m *DeleteAttachmentsResponse) GetFilename() []string {
 }
 
 func init() {
+	proto.RegisterEnum("openpitrix.AttachmentType", AttachmentType_name, AttachmentType_value)
 	proto.RegisterType((*GetAttachmentsRequest)(nil), "openpitrix.GetAttachmentsRequest")
 	proto.RegisterType((*GetAttachmentsResponse)(nil), "openpitrix.GetAttachmentsResponse")
 	proto.RegisterMapType((map[string]*Attachment)(nil), "openpitrix.GetAttachmentsResponse.AttachmentsEntry")
 	proto.RegisterType((*Attachment)(nil), "openpitrix.Attachment")
 	proto.RegisterMapType((map[string][]byte)(nil), "openpitrix.Attachment.AttachmentContentEntry")
-	proto.RegisterType((*UploadAttachmentRequest)(nil), "openpitrix.UploadAttachmentRequest")
-	proto.RegisterMapType((map[string][]byte)(nil), "openpitrix.UploadAttachmentRequest.AttachmentContentEntry")
-	proto.RegisterType((*UploadAttachmentResponse)(nil), "openpitrix.UploadAttachmentResponse")
+	proto.RegisterType((*CreateAttachmentRequest)(nil), "openpitrix.CreateAttachmentRequest")
+	proto.RegisterMapType((map[string][]byte)(nil), "openpitrix.CreateAttachmentRequest.AttachmentContentEntry")
+	proto.RegisterType((*CreateAttachmentResponse)(nil), "openpitrix.CreateAttachmentResponse")
+	proto.RegisterType((*AppendAttachmentRequest)(nil), "openpitrix.AppendAttachmentRequest")
+	proto.RegisterMapType((map[string][]byte)(nil), "openpitrix.AppendAttachmentRequest.AttachmentContentEntry")
+	proto.RegisterType((*AppendAttachmentResponse)(nil), "openpitrix.AppendAttachmentResponse")
+	proto.RegisterType((*ReplaceAttachmentRequest)(nil), "openpitrix.ReplaceAttachmentRequest")
+	proto.RegisterMapType((map[string][]byte)(nil), "openpitrix.ReplaceAttachmentRequest.AttachmentContentEntry")
+	proto.RegisterType((*ReplaceAttachmentResponse)(nil), "openpitrix.ReplaceAttachmentResponse")
 	proto.RegisterType((*DeleteAttachmentsRequest)(nil), "openpitrix.DeleteAttachmentsRequest")
 	proto.RegisterType((*DeleteAttachmentsResponse)(nil), "openpitrix.DeleteAttachmentsResponse")
 }
@@ -372,41 +651,51 @@ func init() {
 func init() { proto.RegisterFile("attachment.proto", fileDescriptor_50ce80bdd3ef17d6) }
 
 var fileDescriptor_50ce80bdd3ef17d6 = []byte{
-	// 535 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x94, 0xdd, 0x6e, 0xd3, 0x30,
-	0x14, 0xc7, 0x95, 0x74, 0xc0, 0x76, 0xb2, 0x4d, 0xad, 0x05, 0x25, 0x44, 0x08, 0x4a, 0xc6, 0xa4,
-	0x5e, 0xac, 0xa9, 0xd4, 0xdd, 0xa0, 0x71, 0x81, 0x80, 0x21, 0xc4, 0x05, 0x37, 0x11, 0x03, 0x09,
-	0x86, 0x8a, 0xdb, 0x9e, 0x85, 0x88, 0xd4, 0x36, 0x89, 0xcb, 0xe8, 0x15, 0xef, 0xc0, 0x7b, 0xf0,
-	0x1c, 0x3c, 0x0e, 0xaf, 0x80, 0x6a, 0xa7, 0x8b, 0x97, 0xa6, 0x5b, 0x91, 0xd8, 0x55, 0xe2, 0x73,
-	0xfe, 0x3e, 0x1f, 0x3f, 0x1f, 0x1b, 0xea, 0x54, 0x4a, 0x3a, 0xfc, 0x3c, 0x46, 0x26, 0x03, 0x91,
-	0x72, 0xc9, 0x09, 0x70, 0x81, 0x4c, 0xc4, 0x32, 0x8d, 0xbf, 0x7b, 0xf7, 0x22, 0xce, 0xa3, 0x04,
-	0xbb, 0xca, 0x33, 0x98, 0x9c, 0x74, 0x4f, 0x53, 0x2a, 0x04, 0xa6, 0x99, 0xd6, 0x7a, 0xf7, 0xcb,
-	0x7e, 0x19, 0x8f, 0x31, 0x93, 0x74, 0x2c, 0x72, 0xc1, 0xdd, 0x5c, 0x40, 0x45, 0xdc, 0xa5, 0x8c,
-	0x71, 0x49, 0x65, 0xcc, 0xd9, 0x7c, 0xfb, 0x9e, 0xfa, 0x0c, 0x3b, 0x11, 0xb2, 0x4e, 0x76, 0x4a,
-	0xa3, 0x08, 0xd3, 0x2e, 0x17, 0x4a, 0x51, 0xa1, 0x76, 0xe4, 0x54, 0x60, 0xbe, 0xf0, 0x7f, 0xc0,
-	0xad, 0x97, 0x28, 0x9f, 0x9e, 0x15, 0x9f, 0x85, 0xf8, 0x75, 0x82, 0x99, 0x24, 0x3b, 0xb0, 0x55,
-	0xb4, 0xd4, 0x8f, 0x47, 0xae, 0xd5, 0xaa, 0xb5, 0x37, 0xc2, 0xcd, 0xc2, 0xf8, 0x6a, 0x44, 0x3c,
-	0x58, 0x3f, 0x89, 0x13, 0x64, 0x74, 0x8c, 0xae, 0xad, 0xfc, 0x67, 0x6b, 0xb2, 0x0b, 0xdb, 0x71,
-	0xc4, 0x78, 0x8a, 0xfd, 0x21, 0x67, 0x12, 0x99, 0x74, 0x6b, 0x2d, 0xab, 0xbd, 0x1e, 0x6e, 0x69,
-	0xeb, 0x73, 0x6d, 0xf4, 0x7f, 0x5b, 0xd0, 0x2c, 0x57, 0x90, 0x09, 0xce, 0x32, 0x24, 0x47, 0xe0,
-	0x14, 0xd9, 0x32, 0x55, 0x80, 0xd3, 0xdb, 0x0f, 0x0a, 0xae, 0x41, 0xf5, 0xc6, 0xc0, 0xb0, 0xbd,
-	0x60, 0x32, 0x9d, 0x86, 0x66, 0x1c, 0xef, 0x2d, 0xd4, 0xcb, 0x02, 0x52, 0x87, 0xda, 0x17, 0x9c,
-	0xba, 0x56, 0xcb, 0x6a, 0x6f, 0x84, 0xb3, 0x5f, 0xb2, 0x07, 0xd7, 0xbe, 0xd1, 0x64, 0x32, 0xeb,
-	0xcb, 0x6a, 0x3b, 0xbd, 0xa6, 0x99, 0xb6, 0xd8, 0x1e, 0x6a, 0xd1, 0x81, 0xfd, 0xc8, 0xf2, 0x7f,
-	0xda, 0x00, 0x85, 0xa7, 0x0a, 0xa0, 0xb5, 0x00, 0xf0, 0x18, 0x88, 0x21, 0x9a, 0x83, 0x5a, 0x53,
-	0x9d, 0x76, 0xaa, 0x53, 0x1a, 0xbf, 0x39, 0x43, 0xdd, 0x63, 0x83, 0x96, 0xed, 0xe4, 0x31, 0x38,
-	0xc3, 0x14, 0xa9, 0xc4, 0xfe, 0x6c, 0x9e, 0xdc, 0x1b, 0xaa, 0x13, 0x2f, 0xd0, 0xb3, 0x14, 0xcc,
-	0x87, 0x2d, 0x78, 0x33, 0x1f, 0xb6, 0x10, 0xb4, 0x7c, 0x66, 0xf0, 0x0e, 0xa1, 0x59, 0x9d, 0xa9,
-	0x02, 0xd6, 0x4d, 0x13, 0xd6, 0xa6, 0x09, 0xe5, 0x8f, 0x05, 0xb7, 0x8f, 0x44, 0xc2, 0xe9, 0xc8,
-	0x80, 0xb6, 0x7c, 0xc4, 0x16, 0x09, 0xc5, 0x95, 0x84, 0x6c, 0x45, 0xe8, 0xc0, 0x24, 0xb4, 0x24,
-	0xcb, 0xea, 0xb8, 0xfe, 0x53, 0xc7, 0x4f, 0xc0, 0x5d, 0x2c, 0x25, 0x9f, 0xe8, 0x55, 0x3a, 0xf6,
-	0x3f, 0x80, 0x7b, 0x88, 0x09, 0x4a, 0xbc, 0x82, 0x5b, 0xe9, 0x1f, 0xc3, 0x9d, 0x8a, 0xe0, 0xcb,
-	0xcb, 0xfb, 0xa7, 0xe8, 0xbd, 0x5f, 0x36, 0x34, 0x8a, 0xc0, 0xaf, 0x29, 0xa3, 0x11, 0xa6, 0xe4,
-	0x23, 0xd4, 0xcb, 0x44, 0xc8, 0xce, 0x0a, 0x47, 0xe7, 0x3d, 0xbc, 0x58, 0x94, 0x57, 0xfd, 0x0e,
-	0xb6, 0xcf, 0xbf, 0x03, 0xe4, 0xc1, 0x45, 0x6f, 0x84, 0x0e, 0xed, 0x5f, 0xfe, 0x8c, 0x90, 0x4f,
-	0xd0, 0x58, 0x60, 0x45, 0xce, 0xd5, 0xb4, 0xec, 0x9c, 0xbc, 0xdd, 0x4b, 0x54, 0x3a, 0xc3, 0xb3,
-	0xb5, 0xf7, 0xb6, 0x18, 0x0c, 0xae, 0xab, 0x9b, 0xb8, 0xff, 0x37, 0x00, 0x00, 0xff, 0xff, 0x3a,
-	0xd9, 0xd3, 0x68, 0x44, 0x06, 0x00, 0x00,
+	// 689 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x56, 0xdd, 0x4e, 0x13, 0x41,
+	0x14, 0x76, 0x5a, 0x14, 0x38, 0x0b, 0x75, 0x99, 0x28, 0x2c, 0x1b, 0xa3, 0x58, 0x20, 0x69, 0x0c,
+	0x6c, 0x93, 0x72, 0x43, 0xe0, 0x0a, 0xc1, 0x18, 0x2f, 0xbc, 0xd9, 0xa0, 0x26, 0x0a, 0xc1, 0xa1,
+	0x1c, 0x96, 0xc5, 0x76, 0x76, 0xdc, 0x1d, 0xc0, 0x5e, 0xf9, 0x08, 0xbe, 0x82, 0xbe, 0x84, 0xaf,
+	0xe0, 0x23, 0xf8, 0x16, 0xfa, 0x0a, 0x66, 0x7f, 0xca, 0xce, 0xb6, 0xbb, 0xa5, 0x9a, 0x06, 0xb9,
+	0xea, 0xec, 0x99, 0x6f, 0xbe, 0xf3, 0xcd, 0x77, 0xce, 0x4c, 0x07, 0x74, 0x26, 0x25, 0x6b, 0x9e,
+	0xb4, 0x91, 0x4b, 0x4b, 0xf8, 0x9e, 0xf4, 0x28, 0x78, 0x02, 0xb9, 0x70, 0xa5, 0xef, 0x7e, 0x32,
+	0x1f, 0x3a, 0x9e, 0xe7, 0xb4, 0xb0, 0x1e, 0xcd, 0x1c, 0x9e, 0x1d, 0xd7, 0x2f, 0x7c, 0x26, 0x04,
+	0xfa, 0x41, 0x8c, 0x35, 0x1f, 0xf5, 0xce, 0x4b, 0xb7, 0x8d, 0x81, 0x64, 0x6d, 0x91, 0x00, 0x1e,
+	0x24, 0x00, 0x26, 0xdc, 0x3a, 0xe3, 0xdc, 0x93, 0x4c, 0xba, 0x1e, 0xef, 0x2e, 0x5f, 0x89, 0x7e,
+	0x9a, 0xab, 0x0e, 0xf2, 0xd5, 0xe0, 0x82, 0x39, 0x0e, 0xfa, 0x75, 0x4f, 0x44, 0x88, 0x1c, 0xb4,
+	0x26, 0x3b, 0x02, 0x93, 0x8f, 0xea, 0x67, 0xb8, 0xff, 0x1c, 0xe5, 0xd6, 0xa5, 0xf8, 0xc0, 0xc6,
+	0x8f, 0x67, 0x18, 0x48, 0xba, 0x08, 0xd3, 0xe9, 0x96, 0x0e, 0xdc, 0x23, 0x83, 0x2c, 0x94, 0x6b,
+	0x93, 0xf6, 0x54, 0x1a, 0x7c, 0x71, 0x44, 0x4d, 0x98, 0x38, 0x76, 0x5b, 0xc8, 0x59, 0x1b, 0x8d,
+	0x52, 0x34, 0x7f, 0xf9, 0x4d, 0x97, 0xa1, 0xe2, 0x3a, 0xdc, 0xf3, 0xf1, 0xa0, 0xe9, 0x71, 0x89,
+	0x5c, 0x1a, 0xe5, 0x05, 0x52, 0x9b, 0xb0, 0xa7, 0xe3, 0xe8, 0x76, 0x1c, 0xac, 0xfe, 0x20, 0x30,
+	0xdb, 0xab, 0x20, 0x10, 0x1e, 0x0f, 0x90, 0xbe, 0x02, 0x2d, 0xcd, 0x16, 0x44, 0x02, 0xb4, 0xc6,
+	0x9a, 0x95, 0xfa, 0x6a, 0xe5, 0x2f, 0xb4, 0x94, 0xd8, 0x33, 0x2e, 0xfd, 0x8e, 0xad, 0xf2, 0x98,
+	0xaf, 0x41, 0xef, 0x05, 0x50, 0x1d, 0xca, 0x1f, 0xb0, 0x63, 0x90, 0x05, 0x52, 0x9b, 0xb4, 0xc3,
+	0x21, 0x5d, 0x81, 0xdb, 0xe7, 0xac, 0x75, 0x16, 0xee, 0x8b, 0xd4, 0xb4, 0xc6, 0xac, 0x9a, 0x36,
+	0x5d, 0x6e, 0xc7, 0xa0, 0x8d, 0xd2, 0x3a, 0xa9, 0xfe, 0x2c, 0x01, 0xa4, 0x33, 0x79, 0x06, 0x92,
+	0x3e, 0x03, 0xb7, 0xe1, 0xae, 0x02, 0x0a, 0x0b, 0x13, 0xe5, 0xab, 0x34, 0xcc, 0xfc, 0x7c, 0xbb,
+	0x1d, 0x81, 0x76, 0x85, 0x65, 0xbe, 0xe9, 0x1e, 0x50, 0x85, 0x24, 0x75, 0x3b, 0xb4, 0x6b, 0x35,
+	0x9f, 0x47, 0x19, 0x26, 0x85, 0x88, 0x8d, 0x9a, 0x61, 0xbd, 0x71, 0xba, 0x09, 0x5a, 0xd3, 0x47,
+	0x26, 0xf1, 0x20, 0x6c, 0x4a, 0x63, 0x2c, 0xb2, 0xc3, 0xb4, 0xe2, 0x86, 0xb4, 0xba, 0x1d, 0x6b,
+	0xed, 0x76, 0x3b, 0xd6, 0x86, 0x18, 0x1e, 0x06, 0xcc, 0x1d, 0x98, 0xcd, 0xcf, 0x94, 0xe3, 0xf8,
+	0x3d, 0xd5, 0xf1, 0x29, 0xd5, 0xd9, 0x2f, 0x25, 0x98, 0xdb, 0x8e, 0x48, 0x15, 0xe7, 0x93, 0x3e,
+	0x1d, 0x89, 0x83, 0xee, 0x00, 0x07, 0x37, 0x54, 0x9e, 0x02, 0x15, 0xc3, 0xdb, 0x39, 0x22, 0x47,
+	0xbe, 0x12, 0x30, 0xfa, 0xb5, 0x24, 0xe7, 0xe6, 0xfa, 0x3a, 0x4f, 0x3d, 0xff, 0xe5, 0xec, 0xf9,
+	0xaf, 0xfe, 0x26, 0x30, 0xb7, 0x25, 0x04, 0xf2, 0xa3, 0xfe, 0xa2, 0x0d, 0xa5, 0x70, 0xe8, 0xa2,
+	0x14, 0x64, 0xf9, 0x2f, 0x45, 0xe9, 0xd7, 0x72, 0xa3, 0x8a, 0xf2, 0xbd, 0x04, 0x86, 0x8d, 0xa2,
+	0xc5, 0x9a, 0xf8, 0x8f, 0x55, 0x19, 0x89, 0xc4, 0xd3, 0x01, 0xa5, 0xdd, 0x54, 0x79, 0x8a, 0xb4,
+	0x5e, 0x7b, 0x6d, 0xbf, 0x11, 0x98, 0xcf, 0x11, 0x73, 0xa3, 0x8a, 0xfb, 0x0e, 0x8c, 0x1d, 0x6c,
+	0xa1, 0x7a, 0x27, 0x8c, 0xec, 0xef, 0xbc, 0xba, 0x07, 0xf3, 0x39, 0xe4, 0xc5, 0xfb, 0xff, 0x2b,
+	0xf6, 0x27, 0xeb, 0x50, 0xc9, 0x6e, 0x9c, 0x6a, 0x30, 0xce, 0xfc, 0xe6, 0x89, 0x7b, 0x8e, 0xfa,
+	0x2d, 0x3a, 0x0e, 0x65, 0x9f, 0x5d, 0xe8, 0x24, 0x1c, 0x9c, 0x0a, 0x47, 0x87, 0x70, 0x20, 0xb8,
+	0xa3, 0x6b, 0x8d, 0x5f, 0x65, 0x98, 0x49, 0x97, 0xbe, 0x64, 0x9c, 0x39, 0xe8, 0xd3, 0x7d, 0xd0,
+	0x7b, 0xaf, 0x47, 0xba, 0x38, 0xc4, 0x45, 0x6e, 0x2e, 0x0d, 0x06, 0x25, 0xfb, 0xdd, 0x07, 0xbd,
+	0xf7, 0xa0, 0x67, 0xe9, 0x0b, 0xae, 0xa4, 0x2c, 0x7d, 0xe1, 0x5d, 0xf1, 0x1e, 0x66, 0xfa, 0x7a,
+	0x8d, 0x2e, 0x0d, 0x73, 0x2e, 0xcc, 0xe5, 0x2b, 0x50, 0x49, 0x86, 0x37, 0x50, 0xc9, 0xbe, 0x9d,
+	0xe8, 0xe3, 0x41, 0xef, 0xaa, 0x98, 0xbb, 0x7a, 0xf5, 0xd3, 0x2b, 0x94, 0xde, 0xd7, 0x26, 0x59,
+	0xe9, 0x45, 0x2d, 0x9a, 0x95, 0x5e, 0xd8, 0x6b, 0x4f, 0xc7, 0xde, 0x96, 0xc4, 0xe1, 0xe1, 0x9d,
+	0xe8, 0xe1, 0xb1, 0xf6, 0x27, 0x00, 0x00, 0xff, 0xff, 0x25, 0xf4, 0x59, 0x39, 0x78, 0x0b, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -421,7 +710,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AttachmentManagerClient interface {
-	UploadAttachment(ctx context.Context, in *UploadAttachmentRequest, opts ...grpc.CallOption) (*UploadAttachmentResponse, error)
+	CreateAttachment(ctx context.Context, in *CreateAttachmentRequest, opts ...grpc.CallOption) (*CreateAttachmentResponse, error)
+	AppendAttachment(ctx context.Context, in *AppendAttachmentRequest, opts ...grpc.CallOption) (*AppendAttachmentResponse, error)
+	ReplaceAttachment(ctx context.Context, in *ReplaceAttachmentRequest, opts ...grpc.CallOption) (*ReplaceAttachmentResponse, error)
 	GetAttachments(ctx context.Context, in *GetAttachmentsRequest, opts ...grpc.CallOption) (*GetAttachmentsResponse, error)
 	DeleteAttachments(ctx context.Context, in *DeleteAttachmentsRequest, opts ...grpc.CallOption) (*DeleteAttachmentsResponse, error)
 }
@@ -434,9 +725,27 @@ func NewAttachmentManagerClient(cc *grpc.ClientConn) AttachmentManagerClient {
 	return &attachmentManagerClient{cc}
 }
 
-func (c *attachmentManagerClient) UploadAttachment(ctx context.Context, in *UploadAttachmentRequest, opts ...grpc.CallOption) (*UploadAttachmentResponse, error) {
-	out := new(UploadAttachmentResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.AttachmentManager/UploadAttachment", in, out, opts...)
+func (c *attachmentManagerClient) CreateAttachment(ctx context.Context, in *CreateAttachmentRequest, opts ...grpc.CallOption) (*CreateAttachmentResponse, error) {
+	out := new(CreateAttachmentResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AttachmentManager/CreateAttachment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attachmentManagerClient) AppendAttachment(ctx context.Context, in *AppendAttachmentRequest, opts ...grpc.CallOption) (*AppendAttachmentResponse, error) {
+	out := new(AppendAttachmentResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AttachmentManager/AppendAttachment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attachmentManagerClient) ReplaceAttachment(ctx context.Context, in *ReplaceAttachmentRequest, opts ...grpc.CallOption) (*ReplaceAttachmentResponse, error) {
+	out := new(ReplaceAttachmentResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.AttachmentManager/ReplaceAttachment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -463,7 +772,9 @@ func (c *attachmentManagerClient) DeleteAttachments(ctx context.Context, in *Del
 
 // AttachmentManagerServer is the server API for AttachmentManager service.
 type AttachmentManagerServer interface {
-	UploadAttachment(context.Context, *UploadAttachmentRequest) (*UploadAttachmentResponse, error)
+	CreateAttachment(context.Context, *CreateAttachmentRequest) (*CreateAttachmentResponse, error)
+	AppendAttachment(context.Context, *AppendAttachmentRequest) (*AppendAttachmentResponse, error)
+	ReplaceAttachment(context.Context, *ReplaceAttachmentRequest) (*ReplaceAttachmentResponse, error)
 	GetAttachments(context.Context, *GetAttachmentsRequest) (*GetAttachmentsResponse, error)
 	DeleteAttachments(context.Context, *DeleteAttachmentsRequest) (*DeleteAttachmentsResponse, error)
 }
@@ -472,20 +783,56 @@ func RegisterAttachmentManagerServer(s *grpc.Server, srv AttachmentManagerServer
 	s.RegisterService(&_AttachmentManager_serviceDesc, srv)
 }
 
-func _AttachmentManager_UploadAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadAttachmentRequest)
+func _AttachmentManager_CreateAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAttachmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AttachmentManagerServer).UploadAttachment(ctx, in)
+		return srv.(AttachmentManagerServer).CreateAttachment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/openpitrix.AttachmentManager/UploadAttachment",
+		FullMethod: "/openpitrix.AttachmentManager/CreateAttachment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AttachmentManagerServer).UploadAttachment(ctx, req.(*UploadAttachmentRequest))
+		return srv.(AttachmentManagerServer).CreateAttachment(ctx, req.(*CreateAttachmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttachmentManager_AppendAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppendAttachmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttachmentManagerServer).AppendAttachment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AttachmentManager/AppendAttachment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttachmentManagerServer).AppendAttachment(ctx, req.(*AppendAttachmentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttachmentManager_ReplaceAttachment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReplaceAttachmentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttachmentManagerServer).ReplaceAttachment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.AttachmentManager/ReplaceAttachment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttachmentManagerServer).ReplaceAttachment(ctx, req.(*ReplaceAttachmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -531,8 +878,16 @@ var _AttachmentManager_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*AttachmentManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "UploadAttachment",
-			Handler:    _AttachmentManager_UploadAttachment_Handler,
+			MethodName: "CreateAttachment",
+			Handler:    _AttachmentManager_CreateAttachment_Handler,
+		},
+		{
+			MethodName: "AppendAttachment",
+			Handler:    _AttachmentManager_AppendAttachment_Handler,
+		},
+		{
+			MethodName: "ReplaceAttachment",
+			Handler:    _AttachmentManager_ReplaceAttachment_Handler,
 		},
 		{
 			MethodName: "GetAttachments",

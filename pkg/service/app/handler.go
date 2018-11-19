@@ -152,7 +152,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	uploadAttachmentRes, err := attachmentManagerClient.UploadAttachment(ctx, &pb.UploadAttachmentRequest{
+	uploadAttachmentRes, err := attachmentManagerClient.CreateAttachment(ctx, &pb.CreateAttachmentRequest{
 		AttachmentContent: attachmentContent,
 	})
 	if err != nil {
@@ -268,18 +268,24 @@ func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb
 }
 
 func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionRequest) (*pb.CreateAppVersionResponse, error) {
-	_, err := repoiface.LoadPackage(ctx, req.GetType().GetValue(), req.GetPackage().GetValue())
+	pkg := req.GetPackage().GetValue()
+
+	_, err := repoiface.LoadPackage(ctx, req.GetType().GetValue(), pkg)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
 	}
-	var attachmentContent = make(map[string][]byte)
+
+	attachmentContent, err := archiveutil.Load(bytes.NewReader(pkg))
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+	}
 
 	attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	uploadAttachmentRes, err := attachmentManagerClient.UploadAttachment(ctx, &pb.UploadAttachmentRequest{
+	uploadAttachmentRes, err := attachmentManagerClient.CreateAttachment(ctx, &pb.CreateAttachmentRequest{
 		AttachmentContent: attachmentContent,
 	})
 	if err != nil {
@@ -361,7 +367,30 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 		return nil, err
 	}
 
-	// TODO: modify attachment
+	pkg := req.GetPackage().GetValue()
+
+	_, err = repoiface.LoadPackage(ctx, version.Type, pkg)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+	}
+
+	attachmentContent, err := archiveutil.Load(bytes.NewReader(pkg))
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+	}
+
+	attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	_, err = attachmentManagerClient.ReplaceAttachment(ctx, &pb.ReplaceAttachmentRequest{
+		AttachmentId:      version.PackageName,
+		AttachmentContent: attachmentContent,
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
 
 	res := &pb.ModifyAppVersionResponse{
 		VersionId: req.GetVersionId(),

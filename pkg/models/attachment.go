@@ -30,8 +30,9 @@ func getAttachmentObjectPrefix(attachmentId string) string {
 }
 
 type Attachment struct {
-	AttachmentId string
-	CreateTime   time.Time
+	AttachmentId   string
+	AttachmentType string
+	CreateTime     time.Time
 }
 
 func (a Attachment) GetObjectName(filename string) string {
@@ -42,18 +43,24 @@ func (a Attachment) GetObjectPrefix() string {
 	return getAttachmentObjectPrefix(a.AttachmentId)
 }
 
+func (a Attachment) GetAttachmentType() pb.AttachmentType {
+	return pb.AttachmentType(pb.AttachmentType_value[a.AttachmentType])
+}
+
 var AttachmentColumns = db.GetColumnsFromStruct(&Attachment{})
 
-func NewAttachment() *Attachment {
+func NewAttachment(t string) *Attachment {
 	return &Attachment{
-		AttachmentId: NewAttachmentId(),
-		CreateTime:   time.Now(),
+		AttachmentId:   NewAttachmentId(),
+		AttachmentType: t,
+		CreateTime:     time.Now(),
 	}
 }
 
 func AttachmentToPb(attachment *Attachment) *pb.Attachment {
 	pbAttachment := pb.Attachment{}
 	pbAttachment.AttachmentId = attachment.AttachmentId
+	pbAttachment.AttachmentType = attachment.GetAttachmentType()
 	pbAttachment.CreateTime = pbutil.ToProtoTimestamp(attachment.CreateTime)
 	return &pbAttachment
 }

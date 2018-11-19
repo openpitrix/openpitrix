@@ -3944,11 +3944,31 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixAppendAttachmentResponse": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "string"
+        },
+        "attachment_type": {
+          "$ref": "#/definitions/openpitrixAttachmentType"
+        },
+        "filename": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "openpitrixAttachment": {
       "type": "object",
       "properties": {
         "attachment_id": {
           "type": "string"
+        },
+        "attachment_type": {
+          "$ref": "#/definitions/openpitrixAttachmentType"
         },
         "attachment_content": {
           "type": "object",
@@ -3960,6 +3980,34 @@ var Files = map[string]string{
         "create_time": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "openpitrixAttachmentType": {
+      "type": "string",
+      "enum": [
+        "archive",
+        "raw",
+        "jpg",
+        "png"
+      ],
+      "default": "archive",
+      "title": "- archive: directory\n - raw: raw\n - jpg: image type"
+    },
+    "openpitrixCreateAttachmentResponse": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "string"
+        },
+        "attachment_type": {
+          "$ref": "#/definitions/openpitrixAttachmentType"
+        },
+        "filename": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -3991,11 +4039,20 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixUploadAttachmentResponse": {
+    "openpitrixReplaceAttachmentResponse": {
       "type": "object",
       "properties": {
         "attachment_id": {
           "type": "string"
+        },
+        "attachment_type": {
+          "$ref": "#/definitions/openpitrixAttachmentType"
+        },
+        "filename": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

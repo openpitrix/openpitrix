@@ -22,17 +22,50 @@ message GetAttachmentsRequest {
 message GetAttachmentsResponse {
 	map<string, Attachment> attachments = 1; // attachment_id => Attachment
 }
+enum AttachmentType {
+	// directory
+	archive = 0;
+	// raw
+	raw = 1;
+	// image type
+	jpg = 10;
+	png = 11;
+}
 message Attachment {
 	string attachment_id = 1;
-	map<string, bytes> attachment_content = 4; // filename => content
-	google.protobuf.Timestamp create_time = 7;
+	AttachmentType attachment_type = 2;
+	map<string, bytes> attachment_content = 3; // filename => content
+	google.protobuf.Timestamp create_time = 4;
 }
-message UploadAttachmentRequest {
-	string attachment_id = 1;
-	map<string, bytes> attachment_content = 2; // filename => content
+message CreateAttachmentRequest {
+//	string attachment_id = 1;
+	AttachmentType attachment_type = 2;
+	map<string, bytes> attachment_content = 3; // filename => content
 }
-message UploadAttachmentResponse {
+message CreateAttachmentResponse {
 	string attachment_id = 1;
+	AttachmentType attachment_type = 2;
+	repeated string filename = 3;
+}
+message AppendAttachmentRequest {
+	string attachment_id = 1;
+//	AttachmentType attachment_type = 2;
+	map<string, bytes> attachment_content = 3; // filename => content
+}
+message AppendAttachmentResponse {
+	string attachment_id = 1;
+	AttachmentType attachment_type = 2;
+	repeated string filename = 3;
+}
+message ReplaceAttachmentRequest {
+	string attachment_id = 1;
+	AttachmentType attachment_type = 2;
+	map<string, bytes> attachment_content = 3; // filename => content
+}
+message ReplaceAttachmentResponse {
+	string attachment_id = 1;
+	AttachmentType attachment_type = 2;
+	repeated string filename = 3;
 }
 message DeleteAttachmentsRequest {
 	repeated string attachment_id = 1;
@@ -44,7 +77,9 @@ message DeleteAttachmentsResponse {
 }
 
 service AttachmentManager {
-	rpc UploadAttachment(UploadAttachmentRequest) returns (UploadAttachmentResponse);
+	rpc CreateAttachment(CreateAttachmentRequest) returns (CreateAttachmentResponse);
+	rpc AppendAttachment(AppendAttachmentRequest) returns (AppendAttachmentResponse);
+	rpc ReplaceAttachment(ReplaceAttachmentRequest) returns (ReplaceAttachmentResponse);
 	rpc GetAttachments(GetAttachmentsRequest) returns (GetAttachmentsResponse);
 	rpc DeleteAttachments(DeleteAttachmentsRequest) returns (DeleteAttachmentsResponse);
 }

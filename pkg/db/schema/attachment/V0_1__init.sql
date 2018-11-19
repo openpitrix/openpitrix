@@ -1,6 +1,7 @@
 CREATE TABLE attachment (
-	attachment_id VARCHAR(50) NOT NULL,
-	create_time   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	attachment_id   VARCHAR(50) NOT NULL,
+	attachment_type VARCHAR(50) NOT NULL,
+	create_time     TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (attachment_id)
 );
 
