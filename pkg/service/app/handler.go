@@ -368,28 +368,29 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 	}
 
 	pkg := req.GetPackage().GetValue()
+	if len(pkg) > 0 {
+		_, err = repoiface.LoadPackage(ctx, version.Type, pkg)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+		}
 
-	_, err = repoiface.LoadPackage(ctx, version.Type, pkg)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
-	}
+		attachmentContent, err := archiveutil.Load(bytes.NewReader(pkg))
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+		}
 
-	attachmentContent, err := archiveutil.Load(bytes.NewReader(pkg))
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
-	}
+		attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
 
-	attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
-
-	_, err = attachmentManagerClient.ReplaceAttachment(ctx, &pb.ReplaceAttachmentRequest{
-		AttachmentId:      version.PackageName,
-		AttachmentContent: attachmentContent,
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		_, err = attachmentManagerClient.ReplaceAttachment(ctx, &pb.ReplaceAttachmentRequest{
+			AttachmentId:      version.PackageName,
+			AttachmentContent: attachmentContent,
+		})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
 	}
 
 	res := &pb.ModifyAppVersionResponse{
