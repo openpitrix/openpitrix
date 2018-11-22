@@ -28,18 +28,27 @@ func (f *Frontgate) parseConf(subnetId, conf string) (string, error) {
 	return resConf, nil
 }
 
-func (f *Frontgate) getConf(ctx context.Context, subnetId string) (string, error) {
+func (f *Frontgate) getConf(ctx context.Context, subnetId, runtimeUrl, runtimeZone string) (string, error) {
 	conf := constants.FrontgateDefaultConf
 	if pi.Global().GlobalConfig().Cluster.FrontgateConf != "" {
 		conf = pi.Global().GlobalConfig().Cluster.FrontgateConf
 	}
+
+	imageConfig, err := pi.Global().GlobalConfig().GetRuntimeImageIdAndUrl(runtimeUrl, runtimeZone)
+	if err != nil {
+		return "", err
+	}
+	if imageConfig.FrontgateConf != "" {
+		conf = imageConfig.FrontgateConf
+	}
+
 	return f.parseConf(subnetId, conf)
 }
 
 func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.ClusterWrapper) (string, error) {
 	clusterId := models.NewClusterId()
 
-	conf, err := f.getConf(ctx, clusterWrapper.Cluster.SubnetId)
+	conf, err := f.getConf(ctx, clusterWrapper.Cluster.SubnetId, f.Runtime.RuntimeUrl, f.Runtime.Zone)
 	if err != nil {
 		logger.Error(ctx, "Get frontgate cluster conf failed. ")
 		return clusterId, err

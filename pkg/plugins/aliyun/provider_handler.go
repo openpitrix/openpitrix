@@ -7,6 +7,7 @@ package aliyun
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -25,6 +26,7 @@ import (
 )
 
 var MyProvider = constants.ProviderAliyun
+var DevicePattern = regexp.MustCompile("/dev/xvd(.)")
 
 type ProviderHandler struct {
 	vmbased.FrameHandler
@@ -90,6 +92,7 @@ func (p *ProviderHandler) RunInstances(task *models.Task) error {
 	input.InstanceType = instanceType
 	input.VSwitchId = instance.Subnet
 	input.ZoneId = instance.Zone
+	input.Password = DefaultLoginPassword
 
 	if instance.NeedUserData == 1 {
 		input.UserData = instance.UserDataValue
@@ -130,10 +133,9 @@ func (p *ProviderHandler) StopInstances(task *models.Task) error {
 		return err
 	}
 
-	describeOutput, err := instanceService.DescribeInstances(
-		&ecs.DescribeInstancesRequest{
-			InstanceIds: fmt.Sprintf("[\"%s\"]", instance.InstanceId),
-		})
+	describeInput := ecs.CreateDescribeInstancesRequest()
+	describeInput.InstanceIds = fmt.Sprintf("[\"%s\"]", instance.InstanceId)
+	describeOutput, err := instanceService.DescribeInstances(describeInput)
 	if err != nil {
 		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
@@ -186,10 +188,9 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 		return err
 	}
 
-	describeOutput, err := instanceService.DescribeInstances(
-		&ecs.DescribeInstancesRequest{
-			InstanceIds: fmt.Sprintf("[\"%s\"]", instance.InstanceId),
-		})
+	describeInput := ecs.CreateDescribeInstancesRequest()
+	describeInput.InstanceIds = fmt.Sprintf("[\"%s\"]", instance.InstanceId)
+	describeOutput, err := instanceService.DescribeInstances(describeInput)
 	if err != nil {
 		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
@@ -242,10 +243,9 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 		return err
 	}
 
-	describeOutput, err := instanceService.DescribeInstances(
-		&ecs.DescribeInstancesRequest{
-			InstanceIds: fmt.Sprintf("[\"%s\"]", instance.InstanceId),
-		})
+	describeInput := ecs.CreateDescribeInstancesRequest()
+	describeInput.InstanceIds = fmt.Sprintf("[\"%s\"]", instance.InstanceId)
+	describeOutput, err := instanceService.DescribeInstances(describeInput)
 	if err != nil {
 		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
@@ -253,6 +253,21 @@ func (p *ProviderHandler) DeleteInstances(task *models.Task) error {
 
 	if len(describeOutput.Instances.Instance) == 0 {
 		return fmt.Errorf("instance with id [%s] not exist", instance.InstanceId)
+	}
+
+	status := describeOutput.Instances.Instance[0].Status
+	if status == strings.Title(constants.StatusRunning) {
+		logger.Info(p.Ctx, "StopInstance [%s] before delete it", instance.Name)
+		err := p.StopInstances(task)
+		if err != nil {
+			logger.Error(p.Ctx, "Send StopInstances to %s failed: %+v", MyProvider, err)
+			return err
+		}
+
+		err = p.WaitStopInstances(task)
+		if err != nil {
+			return err
+		}
 	}
 
 	logger.Info(p.Ctx, "DeleteInstance [%s]", instance.Name)
@@ -291,10 +306,9 @@ func (p *ProviderHandler) ResizeInstances(task *models.Task) error {
 		return err
 	}
 
-	describeOutput, err := instanceService.DescribeInstances(
-		&ecs.DescribeInstancesRequest{
-			InstanceIds: fmt.Sprintf("[\"%s\"]", instance.InstanceId),
-		})
+	describeInput := ecs.CreateDescribeInstancesRequest()
+	describeInput.InstanceIds = fmt.Sprintf("[\"%s\"]", instance.InstanceId)
+	describeOutput, err := instanceService.DescribeInstances(describeInput)
 	if err != nil {
 		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
 		return err
@@ -354,7 +368,7 @@ func (p *ProviderHandler) CreateVolumes(task *models.Task) error {
 		return err
 	}
 
-	logger.Info(p.Ctx, "CreateVolumes with name [%s] volume type [%s]", volume.Name, volumeType)
+	logger.Info(p.Ctx, "CreateVolumes with name [%s] volume type [%s] size [%d]", volume.Name, volumeType, volume.Size)
 
 	input := ecs.CreateCreateDiskRequest()
 	input.DiskName = volume.Name
@@ -399,10 +413,9 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 		return err
 	}
 
-	describeOutput, err := instanceService.DescribeDisks(
-		&ecs.DescribeDisksRequest{
-			DiskIds: fmt.Sprintf("[\"%s\"]", volume.VolumeId),
-		})
+	describeInput := ecs.CreateDescribeDisksRequest()
+	describeInput.DiskIds = fmt.Sprintf("[\"%s\"]", volume.VolumeId)
+	describeOutput, err := instanceService.DescribeDisks(describeInput)
 	if err != nil {
 		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
 		return err
@@ -414,7 +427,7 @@ func (p *ProviderHandler) DetachVolumes(task *models.Task) error {
 
 	status := describeOutput.Disks.Disk[0].Status
 
-	if status == strings.Title(constants.StatusUnmounted) {
+	if status == strings.Title(constants.StatusAvailable) {
 		logger.Warn(p.Ctx, "Volume [%s] is in status [%s], no need to detach.", volume.VolumeId, status)
 		return nil
 	}
@@ -497,10 +510,9 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		return err
 	}
 
-	describeOutput, err := instanceService.DescribeDisks(
-		&ecs.DescribeDisksRequest{
-			DiskIds: fmt.Sprintf("[\"%s\"]", volume.VolumeId),
-		})
+	describeInput := ecs.CreateDescribeDisksRequest()
+	describeInput.DiskIds = fmt.Sprintf("[\"%s\"]", volume.VolumeId)
+	describeOutput, err := instanceService.DescribeDisks(describeInput)
 	if err != nil {
 		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
 		return err
@@ -510,7 +522,15 @@ func (p *ProviderHandler) DeleteVolumes(task *models.Task) error {
 		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
 	}
 
-	logger.Info(p.Ctx, "DeleteVolume [%s]", volume.Name)
+	disk := describeOutput.Disks.Disk[0]
+
+	logger.Info(p.Ctx, "DeleteVolume [%s] with status [%s]", volume.Name, disk.Status)
+	if disk.Status == strings.Title(constants.StatusInUse2) {
+		err := p.WaitVolumeState(task, strings.Title(constants.StatusAvailable))
+		if err != nil {
+			return err
+		}
+	}
 
 	input := ecs.CreateDeleteDiskRequest()
 	input.DiskId = volume.VolumeId
@@ -546,10 +566,9 @@ func (p *ProviderHandler) ResizeVolumes(task *models.Task) error {
 		return err
 	}
 
-	describeOutput, err := instanceService.DescribeDisks(
-		&ecs.DescribeDisksRequest{
-			DiskIds: fmt.Sprintf("[\"%s\"]", volume.VolumeId),
-		})
+	describeInput := ecs.CreateDescribeDisksRequest()
+	describeInput.DiskIds = fmt.Sprintf("[\"%s\"]", volume.VolumeId)
+	describeOutput, err := instanceService.DescribeDisks(describeInput)
 	if err != nil {
 		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
 		return err
@@ -560,7 +579,7 @@ func (p *ProviderHandler) ResizeVolumes(task *models.Task) error {
 	}
 
 	status := describeOutput.Disks.Disk[0].Status
-	if status != strings.Title(constants.StatusUnmounted) {
+	if status != strings.Title(constants.StatusAvailable) {
 		logger.Warn(p.Ctx, "Volume [%s] is in status [%s], can not resize.", volume.VolumeId, status)
 		return fmt.Errorf("volume [%s] is in status [%s], can not resize", volume.VolumeId, status)
 	}
@@ -587,21 +606,21 @@ func (p *ProviderHandler) waitInstanceVolume(instanceService *ecs.Client, task *
 
 	err := p.AttachVolumes(task)
 	if err != nil {
-		logger.Debug(p.Ctx, "Attach volume [%s] to Instance [%s] failed: %+v", instance.VolumeId, instance.InstanceId, err)
+		logger.Error(p.Ctx, "Attach volume [%s] to Instance [%s] failed: %+v", instance.VolumeId, instance.InstanceId, err)
 		return err
 	}
 
 	err = p.WaitAttachVolumes(task)
 	if err != nil {
-		logger.Debug(p.Ctx, "Waiting for volume [%s] attached to Instance [%s] failed: %+v", instance.VolumeId, instance.InstanceId, err)
+		logger.Error(p.Ctx, "Waiting for volume [%s] attached to Instance [%s] failed: %+v", instance.VolumeId, instance.InstanceId, err)
 		return err
 	}
 
-	describeOutput, err := instanceService.DescribeDisks(
-		&ecs.DescribeDisksRequest{
-			DiskIds: fmt.Sprintf("[\"%s\"]", instance.VolumeId),
-		})
+	describeInput := ecs.CreateDescribeDisksRequest()
+	describeInput.DiskIds = fmt.Sprintf("[\"%s\"]", instance.VolumeId)
+	describeOutput, err := instanceService.DescribeDisks(describeInput)
 	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
 		return err
 	}
 
@@ -612,17 +631,33 @@ func (p *ProviderHandler) waitInstanceVolume(instanceService *ecs.Client, task *
 	vol := describeOutput.Disks.Disk[0]
 	instance.Device = vol.Device
 
-	logger.Debug(p.Ctx, "Instance [%s] attached volume [%s] as device [%s]", instance.InstanceId, instance.VolumeId, instance.Device)
-	return nil
+	describeInput2 := ecs.CreateDescribeInstancesRequest()
+	describeInput2.InstanceIds = fmt.Sprintf("[\"%s\"]", instance.InstanceId)
+	describeOutput2, err := instanceService.DescribeInstances(describeInput2)
+	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeInstances to %s failed: %+v", MyProvider, err)
+		return err
+	}
 
+	if len(describeOutput2.Instances.Instance) == 0 {
+		return fmt.Errorf("instance with id [%s] not exist", instance.InstanceId)
+	}
+
+	ins := describeOutput2.Instances.Instance[0]
+
+	if ins.IoOptimized {
+		instance.Device = DevicePattern.ReplaceAllString(instance.Device, "/dev/vd$1")
+	}
+
+	logger.Info(p.Ctx, "Instance [%s] with io optimized [%t] attached volume [%s] as device [%s]", instance.InstanceId, ins.IoOptimized, instance.VolumeId, instance.Device)
+	return nil
 }
 
 func (p *ProviderHandler) waitInstanceNetwork(instanceService *ecs.Client, instance *models.Instance, timeout time.Duration, waitInterval time.Duration) error {
 	err := funcutil.WaitForSpecificOrError(func() (bool, error) {
-		describeOutput, err := instanceService.DescribeInstances(
-			&ecs.DescribeInstancesRequest{
-				InstanceIds: fmt.Sprintf("[\"%s\"]", instance.InstanceId),
-			})
+		describeInput := ecs.CreateDescribeInstancesRequest()
+		describeInput.InstanceIds = fmt.Sprintf("[\"%s\"]", instance.InstanceId)
+		describeOutput, err := instanceService.DescribeInstances(describeInput)
 		if err != nil {
 			return false, err
 		}
@@ -642,10 +677,10 @@ func (p *ProviderHandler) waitInstanceNetwork(instanceService *ecs.Client, insta
 		return true, nil
 	}, timeout, waitInterval)
 
-	logger.Debug(p.Ctx, "Instance [%s] get private IP address [%s]", instance.InstanceId, instance.PrivateIp)
+	logger.Info(p.Ctx, "Instance [%s] get private IP address [%s]", instance.InstanceId, instance.PrivateIp)
 
 	if instance.Eip != "" {
-		logger.Debug(p.Ctx, "Instance [%s] get EIP address [%s]", instance.InstanceId, instance.Eip)
+		logger.Info(p.Ctx, "Instance [%s] get EIP address [%s]", instance.InstanceId, instance.Eip)
 	}
 
 	return err
@@ -679,7 +714,7 @@ func (p *ProviderHandler) WaitRunInstances(task *models.Task) error {
 	if instance.VolumeId != "" {
 		err := p.waitInstanceVolume(instanceService, task, instance)
 		if err != nil {
-			logger.Debug(p.Ctx, "Attach volume [%s] to Instance [%s] failed: %+v", instance.VolumeId, instance.InstanceId, err)
+			logger.Error(p.Ctx, "Attach volume [%s] to Instance [%s] failed: %+v", instance.VolumeId, instance.InstanceId, err)
 			return err
 		}
 	}
@@ -730,10 +765,9 @@ func (p *ProviderHandler) WaitInstanceState(task *models.Task, state string) err
 	}
 
 	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
-		output, err := instanceService.DescribeInstances(
-			&ecs.DescribeInstancesRequest{
-				InstanceIds: fmt.Sprintf("[\"%s\"]", instance.InstanceId),
-			})
+		input := ecs.CreateDescribeInstancesRequest()
+		input.InstanceIds = fmt.Sprintf("[\"%s\"]", instance.InstanceId)
+		output, err := instanceService.DescribeInstances(input)
 		if err != nil {
 			return true, err
 		}
@@ -778,10 +812,10 @@ func (p *ProviderHandler) WaitVolumeState(task *models.Task, state string) error
 	}
 
 	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
-		output, err := instanceService.DescribeDisks(
-			&ecs.DescribeDisksRequest{
-				DiskIds: fmt.Sprintf("[\"%s\"]", volume.VolumeId),
-			})
+		input := ecs.CreateDescribeDisksRequest()
+		input.DiskIds = fmt.Sprintf("[\"%s\"]", volume.VolumeId)
+
+		output, err := instanceService.DescribeDisks(input)
 		if err != nil {
 			return true, err
 		}
@@ -834,10 +868,9 @@ func (p *ProviderHandler) WaitDeleteInstances(task *models.Task) error {
 	}
 
 	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
-		output, err := instanceService.DescribeInstances(
-			&ecs.DescribeInstancesRequest{
-				InstanceIds: fmt.Sprintf("[\"%s\"]", instance.InstanceId),
-			})
+		input := ecs.CreateDescribeInstancesRequest()
+		input.InstanceIds = fmt.Sprintf("[\"%s\"]", instance.InstanceId)
+		output, err := instanceService.DescribeInstances(input)
 		if err != nil {
 			return true, err
 		}
@@ -857,7 +890,7 @@ func (p *ProviderHandler) WaitResizeInstances(task *models.Task) error {
 }
 
 func (p *ProviderHandler) WaitCreateVolumes(task *models.Task) error {
-	return p.WaitVolumeState(task, strings.Title(constants.StatusUnmounted))
+	return p.WaitVolumeState(task, strings.Title(constants.StatusAvailable))
 }
 
 func (p *ProviderHandler) WaitAttachVolumes(task *models.Task) error {
@@ -865,7 +898,7 @@ func (p *ProviderHandler) WaitAttachVolumes(task *models.Task) error {
 }
 
 func (p *ProviderHandler) WaitDetachVolumes(task *models.Task) error {
-	return p.WaitVolumeState(task, strings.Title(constants.StatusUnmounted))
+	return p.WaitVolumeState(task, strings.Title(constants.StatusAvailable))
 }
 
 func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
@@ -888,10 +921,9 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 	}
 
 	err = funcutil.WaitForSpecificOrError(func() (bool, error) {
-		output, err := instanceService.DescribeDisks(
-			&ecs.DescribeDisksRequest{
-				DiskIds: fmt.Sprintf("[\"%s\"]", volume.VolumeId),
-			})
+		input := ecs.CreateDescribeDisksRequest()
+		input.DiskIds = fmt.Sprintf("[\"%s\"]", volume.VolumeId)
+		output, err := instanceService.DescribeDisks(input)
 		if err != nil {
 			return true, err
 		}
@@ -907,7 +939,7 @@ func (p *ProviderHandler) WaitDeleteVolumes(task *models.Task) error {
 }
 
 func (p *ProviderHandler) WaitResizeVolumes(task *models.Task) error {
-	return p.WaitVolumeState(task, strings.Title(constants.StatusUnmounted))
+	return p.WaitVolumeState(task, strings.Title(constants.StatusAvailable))
 }
 
 func (p *ProviderHandler) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {

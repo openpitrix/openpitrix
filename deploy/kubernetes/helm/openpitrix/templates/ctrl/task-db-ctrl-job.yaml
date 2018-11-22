@@ -5,7 +5,6 @@ metadata:
   labels:
     app: openpitrix
     job: openpitrix-task-db-ctrl
-    version: {{ .Values.version }}
 spec:
   backoffLimit: 6
   completions: 1
@@ -15,7 +14,6 @@ spec:
       labels:
         app: openpitrix
         job: openpitrix-task-db-ctrl
-        version: {{ .Values.version }}
       name: openpitrix-task-db-ctrl
     spec:
       initContainers:

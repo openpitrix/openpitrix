@@ -5,6 +5,7 @@
 package aliyun
 
 const (
-	DefaultVolumeClass = 2
-	DefaultZone        = "cn-shanghai"
+	DefaultVolumeClass   = 2
+	DefaultZone          = "cn-shanghai"
+	DefaultLoginPassword = "p12cHANgepwD"
 )
