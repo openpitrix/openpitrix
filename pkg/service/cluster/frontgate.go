@@ -7,6 +7,7 @@ package cluster
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
@@ -102,7 +103,7 @@ func (f *Frontgate) GetActiveFrontgate(ctx context.Context, clusterWrapper *mode
 			err = fmt.Errorf("describe vpc [%s] failed", vpcId)
 			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed, vpcId)
 		}
-		if vpc.Status != constants.StatusActive && vpc.Status != constants.StatusAvailable {
+		if vpc.Status != constants.StatusActive && vpc.Status != constants.StatusAvailable && vpc.Status != strings.Title(constants.StatusAvailable) {
 			err = fmt.Errorf("vpc [%s] is not active or available", vpcId)
 			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotInStatus, vpcId, constants.StatusActive)
 		}

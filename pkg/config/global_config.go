@@ -54,11 +54,12 @@ type TaskServiceConfig struct {
 }
 
 type ImageConfig struct {
-	ApiServer string `json:"api_server"`
-	Zone      string `json:"zone"`
-	ImageId   string `json:"image_id"`
-	ImageUrl  string `json:"image_url"`
-	ImageName string `json:"image_name"`
+	ApiServer     string `json:"api_server"`
+	Zone          string `json:"zone"`
+	ImageId       string `json:"image_id"`
+	ImageUrl      string `json:"image_url"`
+	ImageName     string `json:"image_name"`
+	FrontgateConf string `json:"frontgate_conf"`
 }
 
 func (g *GlobalConfig) GetAppDefaultStatus() string {

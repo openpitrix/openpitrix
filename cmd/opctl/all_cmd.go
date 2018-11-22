@@ -2905,6 +2905,8 @@ func (*DescribeReposCmd) GetActionName() string {
 func (c *DescribeReposCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppDefaultStatus, "app_default_status", "", []string{}, "")
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "")
+	c.Controller = new(int32)
+	f.Int32VarP(c.Controller, "controller", "", 0, "")
 	c.Label = new(string)
 	f.StringVarP(c.Label, "label", "", "", "")
 	c.Limit = new(int64)
