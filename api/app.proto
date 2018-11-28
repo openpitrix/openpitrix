@@ -170,6 +170,36 @@ message AppVersion {
 	google.protobuf.StringValue type = 21;
 }
 
+message AppVersionAudit {
+	google.protobuf.StringValue version_id = 1;
+	google.protobuf.StringValue app_id = 2;
+	google.protobuf.StringValue status = 3;
+    google.protobuf.StringValue operator = 4;
+	google.protobuf.StringValue role = 5;
+    google.protobuf.StringValue message = 6;
+	google.protobuf.Timestamp status_time = 7;
+}
+
+message DescribeAppVersionAuditsRequest {
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	uint32 limit = 4;
+	uint32 offset = 5;
+
+	string app_id = 10;
+	string version_id = 11;
+
+	repeated string status = 12;
+	repeated string operator = 13;
+	repeated string role = 14;
+}
+
+message DescribeAppVersionAuditsResponse {
+	uint32 total_count = 1;
+	repeated AppVersionAudit app_version_audit_set = 2;
+}
+
 message DescribeAppVersionsRequest {
 	google.protobuf.StringValue search_word = 1;
 	google.protobuf.StringValue sort_key = 2;
@@ -374,6 +404,14 @@ service AppManager {
 		};
 		option (google.api.http) = {
 			get: "/v1/active_app_versions"
+		};
+	}
+	rpc DescribeAppVersionAudits (DescribeAppVersionAuditsRequest) returns (DescribeAppVersionAuditsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "DescribeAppVersionAudits"
+		};
+		option (google.api.http) = {
+			get: "/v1/app/{app_id=*}/version/{version_id=*}/audits"
 		};
 	}
 	rpc ModifyAppVersion (ModifyAppVersionRequest) returns (ModifyAppVersionResponse) {

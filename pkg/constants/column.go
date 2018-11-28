@@ -84,6 +84,8 @@ const (
 	ColumnController = "controller"
 
 	ColumnActive = "active"
+
+	ColumnOperator = "operator"
 )
 
 var PushEventTables = map[string][]string{
@@ -156,6 +158,9 @@ var IndexedColumns = map[string][]string{
 	},
 	TableMarketUser: {
 		ColumnMarketId, ColumnUserId,
+	},
+	TableAppVersionAudit: {
+		ColumnVersionId, ColumnAppId, ColumnStatus, ColumnOperator, ColumnRole,
 	},
 }
 

@@ -299,6 +299,100 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/app/{app_id}/version/{version_id}/audits": {
+      "get": {
+        "summary": "DescribeAppVersionAudits",
+        "operationId": "DescribeAppVersionAudits",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeAppVersionAuditsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "operator",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/app_version/action/cancel": {
       "post": {
         "summary": "cancel app version",
@@ -3867,6 +3961,33 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixAppVersionAudit": {
+      "type": "object",
+      "properties": {
+        "version_id": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "openpitrixCancelAppVersionRequest": {
       "type": "object",
       "properties": {
@@ -3980,6 +4101,21 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeAppVersionAuditsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "app_version_audit_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixAppVersionAudit"
           }
         }
       }

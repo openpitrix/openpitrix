@@ -438,6 +438,45 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 
 }
 
+func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeAppVersionAuditsRequest) (*pb.DescribeAppVersionAuditsResponse, error) {
+	_, err := CheckAppPermission(ctx, req.GetAppId())
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = CheckAppVersionPermission(ctx, req.GetVersionId())
+	if err != nil {
+		return nil, err
+	}
+
+	var versionAudits []*models.AppVersionAudit
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
+
+	query := pi.Global().DB(ctx).
+		Select(models.AppVersionAuditColumns...).
+		From(constants.TableAppVersionAudit).
+		Offset(offset).
+		Limit(limit).
+		Where(manager.BuildFilterConditions(req, constants.TableAppVersionAudit))
+
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
+	_, err = query.Load(&versionAudits)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	count, err := query.Count()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	res := &pb.DescribeAppVersionAuditsResponse{
+		AppVersionAuditSet: models.AppVersionAuditsToPbs(versionAudits),
+		TotalCount:         count,
+	}
+	return res, nil
+}
+
 func (p *Server) DescribeActiveAppVersions(ctx context.Context, req *pb.DescribeAppVersionsRequest) (*pb.DescribeAppVersionsResponse, error) {
 	return p.describeAppVersions(ctx, req, true)
 }
@@ -493,6 +532,7 @@ func (p *Server) ModifyAppVersion(ctx context.Context, req *pb.ModifyAppVersionR
 
 	if version.Status == constants.StatusRejected {
 		attributes[constants.ColumnStatus] = constants.StatusDraft
+		defer addAppVersionAudit(ctx, version, constants.StatusDraft, constants.RoleDeveloper, "")
 	}
 
 	err = updateVersion(ctx, versionId, attributes)
@@ -661,6 +701,10 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 	if err != nil {
 		return nil, err
 	}
+	err = addAppVersionAudit(ctx, version, constants.StatusSubmitted, constants.RoleDeveloper, "")
+	if err != nil {
+		return nil, err
+	}
 	res := pb.SubmitAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
 	}
@@ -678,6 +722,10 @@ func (p *Server) CancelAppVersion(ctx context.Context, req *pb.CancelAppVersionR
 		return nil, err
 	}
 	err = updateVersionStatus(ctx, version, constants.StatusDraft)
+	if err != nil {
+		return nil, err
+	}
+	err = addAppVersionAudit(ctx, version, constants.StatusDraft, constants.RoleDeveloper, "")
 	if err != nil {
 		return nil, err
 	}
@@ -705,6 +753,10 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 	if err != nil {
 		return nil, err
 	}
+	err = addAppVersionAudit(ctx, version, constants.StatusActive, constants.RoleDeveloper, "")
+	if err != nil {
+		return nil, err
+	}
 	res := pb.ReleaseAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
 	}
@@ -724,6 +776,10 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 	}
 
 	err = updateVersionStatus(ctx, version, constants.StatusDeleted)
+	if err != nil {
+		return nil, err
+	}
+	err = addAppVersionAudit(ctx, version, constants.StatusDeleted, constants.RoleDeveloper, "")
 	if err != nil {
 		return nil, err
 	}
@@ -747,6 +803,10 @@ func (p *Server) PassAppVersion(ctx context.Context, req *pb.PassAppVersionReque
 	if err != nil {
 		return nil, err
 	}
+	err = addAppVersionAudit(ctx, version, constants.StatusPassed, constants.RoleGlobalAdmin, "")
+	if err != nil {
+		return nil, err
+	}
 	res := pb.PassAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
 	}
@@ -766,6 +826,10 @@ func (p *Server) RejectAppVersion(ctx context.Context, req *pb.RejectAppVersionR
 	err = updateVersionStatus(ctx, version, constants.StatusRejected, map[string]interface{}{
 		constants.ColumnMessage: req.GetMessage().GetValue(),
 	})
+	if err != nil {
+		return nil, err
+	}
+	err = addAppVersionAudit(ctx, version, constants.StatusRejected, constants.RoleGlobalAdmin, req.GetMessage().GetValue())
 	if err != nil {
 		return nil, err
 	}
@@ -793,6 +857,10 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 	if err != nil {
 		return nil, err
 	}
+	err = addAppVersionAudit(ctx, version, constants.StatusSuspended, constants.RoleGlobalAdmin, "")
+	if err != nil {
+		return nil, err
+	}
 	res := pb.SuspendAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
 	}
@@ -810,6 +878,14 @@ func (p *Server) RecoverAppVersion(ctx context.Context, req *pb.RecoverAppVersio
 		return nil, err
 	}
 	err = updateVersionStatus(ctx, version, constants.StatusActive)
+	if err != nil {
+		return nil, err
+	}
+	err = syncAppVersion(ctx, versionId)
+	if err != nil {
+		return nil, err
+	}
+	err = addAppVersionAudit(ctx, version, constants.StatusActive, constants.RoleGlobalAdmin, "")
 	if err != nil {
 		return nil, err
 	}

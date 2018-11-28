@@ -17,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -87,6 +88,10 @@ func insertVersion(ctx context.Context, version *models.AppVersion) error {
 	if err != nil {
 		logger.Error(ctx, "Failed to insert version [%+v]", version)
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+	err = addAppVersionAudit(ctx, version, constants.StatusDraft, constants.RoleDeveloper, "")
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -525,4 +530,20 @@ func computeAppStatus(statusCountMap map[string]int32) string {
 		return constants.StatusDeleted
 	}
 	return constants.StatusDraft
+}
+
+func addAppVersionAudit(ctx context.Context, version *models.AppVersion, status, role, message string) error {
+	s := senderutil.GetSenderFromContext(ctx)
+	var versionAudit = models.NewAppVersionAudit(version.VersionId, version.AppId, status, s.UserId, role)
+	versionAudit.Message = message
+
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableAppVersionAudit).
+		Record(versionAudit).
+		Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert version audit [%+v]", versionAudit)
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+	return nil
 }

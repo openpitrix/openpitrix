@@ -228,6 +228,35 @@ func (a *Client) DescribeActiveApps(params *DescribeActiveAppsParams, authInfo r
 }
 
 /*
+DescribeAppVersionAudits describes app version audits
+*/
+func (a *Client) DescribeAppVersionAudits(params *DescribeAppVersionAuditsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionAuditsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeAppVersionAuditsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeAppVersionAudits",
+		Method:             "GET",
+		PathPattern:        "/v1/app/{app_id}/version/{version_id}/audits",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeAppVersionAuditsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeAppVersionAuditsOK), nil
+
+}
+
+/*
 DescribeAppVersions describes app versions with filter
 */
 func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionsOK, error) {

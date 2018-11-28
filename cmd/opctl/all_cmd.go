@@ -48,6 +48,7 @@ var AllCmd = []Cmd{
 	NewDeleteAppsCmd(),
 	NewDescribeActiveAppVersionsCmd(),
 	NewDescribeActiveAppsCmd(),
+	NewDescribeAppVersionAuditsCmd(),
 	NewDescribeAppVersionsCmd(),
 	NewDescribeAppsCmd(),
 	NewGetAppStatisticsCmd(),
@@ -938,6 +939,51 @@ func (c *DescribeActiveAppsCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AppManager.DescribeActiveApps(c.DescribeActiveAppsParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeAppVersionAuditsCmd struct {
+	*app_manager.DescribeAppVersionAuditsParams
+}
+
+func NewDescribeAppVersionAuditsCmd() Cmd {
+	return &DescribeAppVersionAuditsCmd{
+		app_manager.NewDescribeAppVersionAuditsParams(),
+	}
+}
+
+func (*DescribeAppVersionAuditsCmd) GetActionName() string {
+	return "DescribeAppVersionAudits"
+}
+
+func (c *DescribeAppVersionAuditsCmd) ParseFlag(f Flag) {
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Operator, "operator", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	f.StringSliceVarP(&c.Role, "role", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+}
+
+func (c *DescribeAppVersionAuditsCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeAppVersionAuditsParams)
+
+	client := getClient()
+	res, err := client.AppManager.DescribeAppVersionAudits(c.DescribeAppVersionAuditsParams, nil)
 	if err != nil {
 		return err
 	}

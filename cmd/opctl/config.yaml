@@ -231,6 +231,26 @@
       type: string
     status:
       type: '[]string'
+- action: DescribeAppVersionAudits
+  description: DescribeAppVersionAudits
+  service: AppManager
+  query:
+    limit:
+      type: int64
+    offset:
+      type: int64
+    operator:
+      type: '[]string'
+    reverse:
+      type: boolean
+    role:
+      type: '[]string'
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
 - action: DescribeAppVersions
   description: describe app versions with filter
   service: AppManager
