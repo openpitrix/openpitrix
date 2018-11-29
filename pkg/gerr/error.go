@@ -23,13 +23,13 @@ const DefaultLocale = ZhCN
 func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMessage, a ...interface{}) *status.Status {
 	locale := DefaultLocale
 
-	s := status.New(code, errMsg.Message(locale, a...))
+	s := status.New(code, errMsg.Message(locale, err, a...))
 
 	errorDetail := &pb.ErrorDetail{ErrorName: errMsg.Name}
 	if err != nil {
 		errorDetail.Cause = fmt.Sprintf("%+v", err)
 	}
-	logger.NewLogger().WithDepth(5).Error(ctx, "err: %+v, errMsg: %s", err, errMsg.Message(locale, a...))
+	logger.NewLogger().WithDepth(5).Error(ctx, "err: %+v, errMsg: %s", err, errMsg.Message(locale, err, a...))
 
 	sd, e := s.WithDetails(errorDetail)
 	if e == nil {
