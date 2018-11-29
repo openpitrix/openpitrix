@@ -12,7 +12,7 @@ type ErrorMessage struct {
 	zhCN string
 }
 
-func (em ErrorMessage) Message(locale string, a ...interface{}) string {
+func (em ErrorMessage) Message(locale string, err error, a ...interface{}) string {
 	format := ""
 	switch locale {
 	case En:
@@ -24,7 +24,11 @@ func (em ErrorMessage) Message(locale string, a ...interface{}) string {
 			format = em.en
 		}
 	}
-	return fmt.Sprintf(format, a...)
+	if err != nil {
+		return fmt.Sprintf("%s: %s", fmt.Sprintf(format, a...), err.Error())
+	} else {
+		return fmt.Sprintf(format, a...)
+	}
 }
 
 var (

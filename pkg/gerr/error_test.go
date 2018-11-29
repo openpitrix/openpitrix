@@ -28,10 +28,10 @@ func TestNew(t *testing.T) {
 func TestNewWithDetail(t *testing.T) {
 	var e error
 	e = NewWithDetail(ctx, InvalidArgument, fmt.Errorf("test with error detail"), ErrorCreateResourcesFailed)
-	assert.Equal(t, e.Error(), "rpc error: code = InvalidArgument desc = 创建资源失败")
+	assert.Equal(t, e.Error(), "rpc error: code = InvalidArgument desc = 创建资源失败: test with error detail")
 	ge := status.Convert(e)
 	assert.Equal(t, ge.Code().String(), "InvalidArgument")
-	assert.Equal(t, ge.Err().Error(), "rpc error: code = InvalidArgument desc = 创建资源失败")
+	assert.Equal(t, ge.Err().Error(), "rpc error: code = InvalidArgument desc = 创建资源失败: test with error detail")
 	assert.Equal(t, fmt.Sprint(ge.Details()), "[error_name:\"create_resources_failed\" cause:\"test with error detail\" ]")
 	//t.Log(ge.Code(), ge.Err(), ge.Details())
 
