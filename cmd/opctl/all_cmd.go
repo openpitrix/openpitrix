@@ -881,6 +881,7 @@ func (c *DescribeActiveAppVersionsCmd) ParseFlag(f Flag) {
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.Type, "type", "", []string{}, "")
 	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
 }
 
@@ -1024,6 +1025,7 @@ func (c *DescribeAppVersionsCmd) ParseFlag(f Flag) {
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.Type, "type", "", []string{}, "")
 	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
 }
 

@@ -112,7 +112,7 @@ var IndexedColumns = map[string][]string{
 	},
 	TableAppVersion: {
 		ColumnVersionId, ColumnAppId, ColumnName, ColumnOwner, ColumnDescription,
-		ColumnPackageName, ColumnStatus,
+		ColumnPackageName, ColumnStatus, ColumnType,
 	},
 	TableJob: {
 		ColumnJobId, ColumnClusterId, ColumnAppId, ColumnVersionId,

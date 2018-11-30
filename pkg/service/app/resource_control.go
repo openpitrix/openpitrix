@@ -6,7 +6,10 @@ package app
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 	"sort"
+	"strings"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -17,6 +20,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
@@ -374,16 +378,27 @@ func getAppCategories(ctx context.Context, appId string) ([]*pb.ResourceCategory
 	return rcmap[appId], nil
 }
 
-func formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
-	var pbApps []*pb.App
+func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.App, error) {
 	var appIds []string
 	for _, app := range apps {
+		appIds = append(appIds, app.AppId)
+	}
+	var pbApps []*pb.App
+	appsVersionTypes, err := getAppsVersionTypes(ctx, appIds, active)
+	if err != nil {
+		return pbApps, err
+	}
+	for _, app := range apps {
+
 		var pbApp *pb.App
 		pbApp, err := formatApp(ctx, app)
 		if err != nil {
 			return pbApps, err
 		}
-		appIds = append(appIds, app.AppId)
+		if appVersionType, ok := appsVersionTypes[app.AppId]; ok {
+			pbApp.AppVersionTypes = pbutil.ToProtoString(appVersionType)
+		}
+
 		pbApps = append(pbApps, pbApp)
 	}
 	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), appIds)
@@ -396,6 +411,20 @@ func formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
 		}
 	}
 	return pbApps, nil
+}
+
+func getAppsVersionTypes(ctx context.Context, appIds []string, active bool) (map[string]string, error) {
+	var appsVersionTypes = make(map[string]string)
+
+	_, err := pi.Global().DB(ctx).
+		Select(constants.ColumnAppId, "GROUP_CONCAT(DISTINCT type ORDER BY type SEPARATOR ',')").
+		From(constants.TableAppVersion).
+		GroupBy(constants.ColumnAppId).
+		Where(db.Eq(constants.ColumnAppId, appIds)).
+		Where(db.Eq(constants.ColumnActive, active)).
+		Load(&appsVersionTypes)
+
+	return appsVersionTypes, err
 }
 
 func resortAppVersions(ctx context.Context, appId string) error {
@@ -546,4 +575,68 @@ func addAppVersionAudit(ctx context.Context, version *models.AppVersion, status,
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 	return nil
+}
+
+func matchPackageFailedError(err error, res *pb.ValidatePackageResponse) {
+	var errStr = err.Error()
+	var matchedError = ""
+	var errorDetails = make(map[string]string)
+	switch {
+	// Helm errors
+	case strings.HasPrefix(errStr, "no files in chart archive"),
+		strings.HasPrefix(errStr, "no files in app archive"):
+
+		matchedError = "no files in package"
+
+	case strings.HasPrefix(errStr, "chart yaml not in base directory"),
+		strings.HasPrefix(errStr, "chart metadata (Chart.yaml) missing"):
+
+		errorDetails["Chart.yaml"] = "not found"
+
+	case strings.HasPrefix(errStr, "invalid chart (Chart.yaml): name must not be empty"):
+
+		errorDetails["Chart.yaml"] = "package name must not be empty"
+
+	case strings.HasPrefix(errStr, "values.toml is illegal"):
+
+		errorDetails["values.toml"] = errStr
+
+	case strings.HasPrefix(errStr, "error reading"):
+
+		matched := regexp.MustCompile("error reading (.+): (.+)").FindStringSubmatch(errStr)
+		if len(matched) > 0 {
+			errorDetails[matched[1]] = matched[2]
+		}
+
+	// Devkit erros
+	case strings.HasPrefix(errStr, "[package.json] not in base directory"):
+
+		errorDetails["package.json"] = "not found"
+
+	case strings.HasPrefix(errStr, "missing file ["):
+
+		matched := regexp.MustCompile("missing file \\[(.+)]").FindStringSubmatch(errStr)
+		if len(matched) > 0 {
+			errorDetails[matched[1]] = "not found"
+		}
+
+	case strings.HasPrefix(errStr, "failed to parse"),
+		strings.HasPrefix(errStr, "failed to render"),
+		strings.HasPrefix(errStr, "failed to load"),
+		strings.HasPrefix(errStr, "failed to decode"):
+
+		matched := regexp.MustCompile("failed to (.+) (.+): (.+)").FindStringSubmatch(errStr)
+		if len(matched) > 0 {
+			errorDetails[matched[2]] = fmt.Sprintf("%s failed, %s", matched[1], matched[3])
+		}
+
+	default:
+		matchedError = errStr
+	}
+	if len(errorDetails) > 0 {
+		res.ErrorDetails = errorDetails
+	}
+	if len(matchedError) > 0 {
+		res.Error = pbutil.ToProtoString(matchedError)
+	}
 }

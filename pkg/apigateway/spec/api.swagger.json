@@ -134,6 +134,16 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -768,6 +778,16 @@
           },
           {
             "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "type",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3876,6 +3896,9 @@
         },
         "latest_app_version": {
           "$ref": "#/definitions/openpitrixAppVersion"
+        },
+        "app_version_types": {
+          "type": "string"
         }
       }
     },
@@ -4462,6 +4485,15 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "error": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version_name": {
+          "type": "string"
         }
       }
     },

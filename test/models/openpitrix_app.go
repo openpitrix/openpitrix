@@ -22,6 +22,9 @@ type OpenpitrixApp struct {
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
+	// app version types
+	AppVersionTypes string `json:"app_version_types,omitempty"`
+
 	// category set
 	CategorySet OpenpitrixAppCategorySet `json:"category_set"`
 

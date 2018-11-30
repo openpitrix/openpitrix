@@ -109,7 +109,7 @@ func (p *Server) describeApps(ctx context.Context, req *pb.DescribeAppsRequest, 
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	appSet, err := formatAppSet(ctx, apps)
+	appSet, err := formatAppSet(ctx, apps, active)
 	if err != nil {
 		return nil, err
 	}
@@ -122,12 +122,20 @@ func (p *Server) describeApps(ctx context.Context, req *pb.DescribeAppsRequest, 
 }
 
 func (p *Server) ValidatePackage(ctx context.Context, req *pb.ValidatePackageRequest) (*pb.ValidatePackageResponse, error) {
-	// TODO: validate
-	_, err := repoiface.LoadPackage(ctx, req.GetVersionType(), req.GetVersionPackage())
+	res := &pb.ValidatePackageResponse{}
+	v, err := repoiface.LoadPackage(ctx, req.GetVersionType(), req.GetVersionPackage())
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+
+		matchPackageFailedError(err, res)
+
+		if res.Error == nil && len(res.ErrorDetails) == 0 {
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
+		}
+	} else {
+		res.Name = pbutil.ToProtoString(v.GetName())
+		res.VersionName = pbutil.ToProtoString(v.GetVersionName())
 	}
-	return &pb.ValidatePackageResponse{}, nil
+	return res, nil
 }
 
 func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.CreateAppResponse, error) {

@@ -49,6 +49,14 @@ func (c *checker) checkRequired(param string, value interface{}) error {
 			if v == nil || v.GetValue() == "" {
 				return gerr.New(c.ctx, gerr.InvalidArgument, gerr.ErrorMissingParameter, param)
 			}
+		case *wrappers.BytesValue:
+			if v == nil || len(v.GetValue()) == 0 {
+				return gerr.New(c.ctx, gerr.InvalidArgument, gerr.ErrorMissingParameter, param)
+			}
+		case []byte:
+			if len(v) == 0 {
+				return gerr.New(c.ctx, gerr.InvalidArgument, gerr.ErrorMissingParameter, param)
+			}
 		case []string:
 			var values []string
 			for _, v := range v {

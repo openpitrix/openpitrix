@@ -143,6 +143,16 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -777,6 +787,16 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "type",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3885,6 +3905,9 @@ var Files = map[string]string{
         },
         "latest_app_version": {
           "$ref": "#/definitions/openpitrixAppVersion"
+        },
+        "app_version_types": {
+          "type": "string"
         }
       }
     },
@@ -4471,6 +4494,15 @@ var Files = map[string]string{
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "error": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version_name": {
+          "type": "string"
         }
       }
     },

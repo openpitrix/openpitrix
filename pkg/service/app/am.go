@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/repoiface"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
@@ -19,6 +20,13 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllDeveloperRoles).
 			Required("name", "version_package", "version_type").
+			StringChosen("version_type", repoiface.SupportedPackageType).
+			Exec()
+	case *pb.ValidatePackageRequest:
+		return manager.NewChecker(ctx, r).
+			Role(constants.AllDeveloperRoles).
+			Required("version_package", "version_type").
+			StringChosen("version_type", repoiface.SupportedPackageType).
 			Exec()
 	case *pb.ModifyAppRequest:
 		return manager.NewChecker(ctx, r).
@@ -34,6 +42,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllDeveloperRoles).
 			Required("app_id", "package", "type").
+			StringChosen("type", repoiface.SupportedPackageType).
 			Exec()
 	case *pb.ModifyAppVersionRequest:
 		return manager.NewChecker(ctx, r).

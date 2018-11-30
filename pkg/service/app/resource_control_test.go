@@ -5,9 +5,13 @@
 package app
 
 import (
+	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/pb"
 )
 
 func Test_getAppVersionStatus(t *testing.T) {
@@ -52,4 +56,24 @@ func Test_getAppVersionStatus(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_matchPackageFailedError(t *testing.T) {
+	var err error
+	var res *pb.ValidatePackageResponse
+
+	err = fmt.Errorf("failed to decode package.json: invalid character")
+	res = &pb.ValidatePackageResponse{}
+	matchPackageFailedError(err, res)
+	require.Equal(t, "decode failed, invalid character", res.ErrorDetails["package.json"])
+
+	err = fmt.Errorf("error reading package.json: invalid character")
+	res = &pb.ValidatePackageResponse{}
+	matchPackageFailedError(err, res)
+	require.Equal(t, "invalid character", res.ErrorDetails["package.json"])
+
+	err = fmt.Errorf("missing file [package.json]")
+	res = &pb.ValidatePackageResponse{}
+	matchPackageFailedError(err, res)
+	require.Equal(t, "not found", res.ErrorDetails["package.json"])
 }

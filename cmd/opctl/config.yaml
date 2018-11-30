@@ -201,6 +201,8 @@
       type: string
     status:
       type: '[]string'
+    type:
+      type: '[]string'
     version_id:
       type: '[]string'
 - action: DescribeActiveApps
@@ -276,6 +278,8 @@
     sort_key:
       type: string
     status:
+      type: '[]string'
+    type:
       type: '[]string'
     version_id:
       type: '[]string'

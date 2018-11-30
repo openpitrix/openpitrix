@@ -36,6 +36,9 @@ message ValidatePackageRequest {
 
 message ValidatePackageResponse {
 	map<string, string> error_details = 1; // filename => detail
+	google.protobuf.StringValue error = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue version_name = 4;
 }
 
 message ModifyAppRequest {
@@ -98,6 +101,7 @@ message App {
 	google.protobuf.Timestamp update_time = 18;
 	repeated ResourceCategory category_set = 19;
 	AppVersion latest_app_version = 20;
+	google.protobuf.StringValue app_version_types = 21;
 }
 
 message DescribeAppsRequest {
@@ -214,6 +218,7 @@ message DescribeAppVersionsRequest {
 	repeated string description = 14;
 	repeated string package_name = 15;
 	repeated string status = 16;
+	repeated string type = 17;
 }
 
 message DescribeAppVersionsResponse {

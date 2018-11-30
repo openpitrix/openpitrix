@@ -16,8 +16,17 @@ import (
 // swagger:model openpitrixValidatePackageResponse
 type OpenpitrixValidatePackageResponse struct {
 
+	// error
+	Error string `json:"error,omitempty"`
+
 	// error details
 	ErrorDetails map[string]string `json:"error_details,omitempty"`
+
+	// name
+	Name string `json:"name,omitempty"`
+
+	// version name
+	VersionName string `json:"version_name,omitempty"`
 }
 
 // Validate validates this openpitrix validate package response

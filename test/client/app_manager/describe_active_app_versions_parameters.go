@@ -85,6 +85,8 @@ type DescribeActiveAppVersionsParams struct {
 	SortKey *string
 	/*Status*/
 	Status []string
+	/*Type*/
+	Type []string
 	/*VersionID*/
 	VersionID []string
 
@@ -247,6 +249,17 @@ func (o *DescribeActiveAppVersionsParams) SetStatus(status []string) {
 	o.Status = status
 }
 
+// WithType adds the typeVar to the describe active app versions params
+func (o *DescribeActiveAppVersionsParams) WithType(typeVar []string) *DescribeActiveAppVersionsParams {
+	o.SetType(typeVar)
+	return o
+}
+
+// SetType adds the type to the describe active app versions params
+func (o *DescribeActiveAppVersionsParams) SetType(typeVar []string) {
+	o.Type = typeVar
+}
+
 // WithVersionID adds the versionID to the describe active app versions params
 func (o *DescribeActiveAppVersionsParams) WithVersionID(versionID []string) *DescribeActiveAppVersionsParams {
 	o.SetVersionID(versionID)
@@ -391,6 +404,14 @@ func (o *DescribeActiveAppVersionsParams) WriteToRequest(r runtime.ClientRequest
 	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
+		return err
+	}
+
+	valuesType := o.Type
+
+	joinedType := swag.JoinByFormat(valuesType, "multi")
+	// query array param type
+	if err := r.SetQueryParam("type", joinedType...); err != nil {
 		return err
 	}
 

@@ -22,6 +22,8 @@ const (
 	Vmbased = "vmbased"
 )
 
+var SupportedPackageType = []string{Helm, Vmbased}
+
 func LoadPackage(ctx context.Context, t string, pkg []byte) (wrapper.VersionInterface, error) {
 	if t == Helm {
 		p, err := chartutil.LoadArchive(bytes.NewReader(pkg))
