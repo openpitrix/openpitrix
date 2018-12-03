@@ -1571,10 +1571,15 @@ func (f *Frame) ParseClusterConf(ctx context.Context, versionId, runtimeId, conf
 			logger.Error(f.Ctx, "Load app version [%s] package failed: %+v", versionId, err)
 			return err
 		}
-		confJson, err := jsonutil.NewJson([]byte(conf))
-		if err != nil {
-			logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)
-			return err
+		var confJson jsonutil.Json
+		if len(conf) == 0 {
+			confJson = appPackage.ConfigTemplate.GetDefaultConfig()
+		} else {
+			confJson, err = jsonutil.NewJson([]byte(conf))
+			if err != nil {
+				logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)
+				return err
+			}
 		}
 		err = appPackage.Validate(confJson)
 		if err != nil {

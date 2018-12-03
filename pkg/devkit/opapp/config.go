@@ -129,7 +129,10 @@ func (c *ConfigTemplate) Validate(config jsonutil.Json, parent ...string) error 
 			return fmt.Errorf("[%s] is not [%s] type", getParent(parent), TypeString)
 		}
 		if c.Required && len(value) == 0 {
-			return fmt.Errorf("[%s] is required", getParent(parent))
+			// subnet will be validated in cluster manager
+			if c.Key != "subnet" {
+				return fmt.Errorf("[%s] is required", getParent(parent))
+			}
 		}
 	case TypeBoolean:
 		_, err := v.Bool()
