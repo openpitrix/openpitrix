@@ -17,7 +17,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/devkit"
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/repoiface/wrapper"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
@@ -62,23 +61,9 @@ func (r *Reader) isK8s() bool {
 
 func (r *Reader) LoadPackage(ctx context.Context, pkg []byte) (wrapper.VersionInterface, error) {
 	if r.isK8s() {
-		p, err := chartutil.LoadArchive(bytes.NewReader(pkg))
-		if err != nil {
-			logger.Error(ctx, "Failed to load package, error: %+v", err)
-			return nil, err
-		}
-
-		pkgVersion := wrapper.HelmVersionWrapper{ChartVersion: &repo.ChartVersion{Metadata: p.Metadata}}
-		return pkgVersion, nil
+		return LoadPackage(ctx, Helm, pkg)
 	} else {
-		p, err := devkit.LoadArchive(bytes.NewReader(pkg))
-		if err != nil {
-			logger.Error(ctx, "Failed to load package, error: %+v", err)
-			return nil, err
-		}
-
-		pkgVersion := wrapper.OpVersionWrapper{OpVersion: &opapp.OpVersion{Metadata: p.Metadata}}
-		return pkgVersion, nil
+		return LoadPackage(ctx, Vmbased, pkg)
 	}
 }
 

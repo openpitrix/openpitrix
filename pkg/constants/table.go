@@ -27,6 +27,7 @@ const (
 	TableRuntimeCredential   = "runtime_credential"
 	TableRuntimeLabel        = "runtime_label"
 	TableTask                = "task"
+	TableAttachment          = "attachment"
 
 	TableUser              = "user"
 	TableGroupMember       = "group_member"
@@ -37,4 +38,6 @@ const (
 
 	TableMarket     = "market"
 	TableMarketUser = "market_user"
+
+	TableAppVersionAudit = "app_version_audit"
 )

@@ -101,3 +101,7 @@ func GetSecret() string {
 func GetRefreshToken() string {
 	return randString(Alphabet62, 50)
 }
+
+func GetAttachmentPrefix() string {
+	return randString(Alphabet62, 30)
+}

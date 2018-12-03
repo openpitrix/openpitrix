@@ -62,7 +62,7 @@ spec:
         lifecycle:
           postStart:
             exec:
-              command: ["sh", "-c", "mkdir -p /data/openpitrix-internal-repo/vmbased /data/openpitrix-internal-repo/helm"]
+              command: ["sh", "-c", "mkdir -p /data/openpitrix-attachment /data/openpitrix-internal-repo/vmbased /data/openpitrix-internal-repo/helm"]
         args:
           - server
           - /data

@@ -170,6 +170,93 @@ func (a *Client) DeleteApps(params *DeleteAppsParams, authInfo runtime.ClientAut
 }
 
 /*
+DescribeActiveAppVersions describes app versions with filter
+*/
+func (a *Client) DescribeActiveAppVersions(params *DescribeActiveAppVersionsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeActiveAppVersionsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeActiveAppVersionsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeActiveAppVersions",
+		Method:             "GET",
+		PathPattern:        "/v1/active_app_versions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeActiveAppVersionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeActiveAppVersionsOK), nil
+
+}
+
+/*
+DescribeActiveApps describes apps with filter
+*/
+func (a *Client) DescribeActiveApps(params *DescribeActiveAppsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeActiveAppsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeActiveAppsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeActiveApps",
+		Method:             "GET",
+		PathPattern:        "/v1/active_apps",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeActiveAppsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeActiveAppsOK), nil
+
+}
+
+/*
+DescribeAppVersionAudits describes app version audits
+*/
+func (a *Client) DescribeAppVersionAudits(params *DescribeAppVersionAuditsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionAuditsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeAppVersionAuditsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeAppVersionAudits",
+		Method:             "GET",
+		PathPattern:        "/v1/app/{app_id}/version/{version_id}/audits",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeAppVersionAuditsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeAppVersionAuditsOK), nil
+
+}
+
+/*
 DescribeAppVersions describes app versions with filter
 */
 func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionsOK, error) {
@@ -543,6 +630,64 @@ func (a *Client) SuspendAppVersion(params *SuspendAppVersionParams, authInfo run
 		return nil, err
 	}
 	return result.(*SuspendAppVersionOK), nil
+
+}
+
+/*
+UploadAppAttachment uploads app attachment
+*/
+func (a *Client) UploadAppAttachment(params *UploadAppAttachmentParams, authInfo runtime.ClientAuthInfoWriter) (*UploadAppAttachmentOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUploadAppAttachmentParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "UploadAppAttachment",
+		Method:             "PATCH",
+		PathPattern:        "/v1/app/attachment",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &UploadAppAttachmentReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*UploadAppAttachmentOK), nil
+
+}
+
+/*
+ValidatePackage validates package
+*/
+func (a *Client) ValidatePackage(params *ValidatePackageParams, authInfo runtime.ClientAuthInfoWriter) (*ValidatePackageOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewValidatePackageParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ValidatePackage",
+		Method:             "POST",
+		PathPattern:        "/v1/apps/validate_package",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ValidatePackageReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ValidatePackageOK), nil
 
 }
 

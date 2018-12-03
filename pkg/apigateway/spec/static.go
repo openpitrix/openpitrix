@@ -28,6 +28,381 @@ var Files = map[string]string{
     "application/json"
   ],
   "paths": {
+    "/v1/active_app_versions": {
+      "get": {
+        "summary": "describe app versions with filter",
+        "operationId": "DescribeActiveAppVersions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeAppVersionsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "package_name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/active_apps": {
+      "get": {
+        "summary": "describe apps with filter",
+        "operationId": "DescribeActiveApps",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeAppsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "repo_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "chart_name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app/attachment": {
+      "patch": {
+        "summary": "UploadAppAttachment",
+        "operationId": "UploadAppAttachment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixUploadAppAttachmentResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixUploadAppAttachmentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app/{app_id}/version/{version_id}/audits": {
+      "get": {
+        "summary": "DescribeAppVersionAudits",
+        "operationId": "DescribeAppVersionAudits",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeAppVersionAuditsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "operator",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/app_version/action/cancel": {
       "post": {
         "summary": "cancel app version",
@@ -318,6 +693,39 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
             "name": "version_id",
             "in": "query",
             "required": false,
@@ -388,37 +796,14 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "search_word",
+            "name": "type",
             "in": "query",
             "required": false,
-            "type": "string"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -496,6 +881,19 @@ var Files = map[string]string{
             "type": "string"
           },
           {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -508,19 +906,6 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
           },
           {
             "name": "app_id",
@@ -687,6 +1072,64 @@ var Files = map[string]string{
         },
         "tags": [
           "AppManager"
+        ]
+      }
+    },
+    "/v1/apps/validate_package": {
+      "post": {
+        "summary": "ValidatePackage",
+        "operationId": "ValidatePackage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixValidatePackageResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixValidatePackageRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/attachments/{attachment_id}/{filename}": {
+      "get": {
+        "summary": "get attachment",
+        "operationId": "GetAttachment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetAttachmentResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "attachment_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AttachmentService"
         ]
       }
     },
@@ -3399,6 +3842,10 @@ var Files = map[string]string{
         "app_id": {
           "type": "string"
         },
+        "active": {
+          "type": "boolean",
+          "format": "boolean"
+        },
         "name": {
           "type": "string"
         },
@@ -3458,6 +3905,9 @@ var Files = map[string]string{
         },
         "latest_app_version": {
           "$ref": "#/definitions/openpitrixAppVersion"
+        },
+        "app_version_types": {
+          "type": "string"
         }
       }
     },
@@ -3466,6 +3916,10 @@ var Files = map[string]string{
       "properties": {
         "version_id": {
           "type": "string"
+        },
+        "active": {
+          "type": "boolean",
+          "format": "boolean"
         },
         "app_id": {
           "type": "string"
@@ -3524,6 +3978,36 @@ var Files = map[string]string{
         },
         "message": {
           "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixAppVersionAudit": {
+      "type": "object",
+      "properties": {
+        "version_id": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -3549,46 +4033,18 @@ var Files = map[string]string{
         "name": {
           "type": "string"
         },
-        "repo_id": {
+        "version_type": {
           "type": "string"
         },
-        "owner": {
-          "type": "string"
+        "version_package": {
+          "type": "string",
+          "format": "byte"
         },
-        "chart_name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "home": {
-          "type": "string"
+        "version_name": {
+          "type": "string",
+          "title": "map<string, bytes> version_package_files = 4;"
         },
         "icon": {
-          "type": "string"
-        },
-        "screenshots": {
-          "type": "string"
-        },
-        "maintainers": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "string"
-        },
-        "readme": {
-          "type": "string"
-        },
-        "category_id": {
-          "type": "string"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "package": {
           "type": "string",
           "format": "byte"
         }
@@ -3611,49 +4067,18 @@ var Files = map[string]string{
         "app_id": {
           "type": "string"
         },
-        "owner": {
-          "type": "string"
-        },
         "name": {
-          "type": "string"
-        },
-        "package_name": {
           "type": "string"
         },
         "description": {
           "type": "string"
         },
-        "sequence": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "status": {
+        "type": {
           "type": "string"
         },
         "package": {
           "type": "string",
           "format": "byte"
-        },
-        "home": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "screenshots": {
-          "type": "string"
-        },
-        "maintainers": {
-          "type": "string"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "string"
-        },
-        "readme": {
-          "type": "string"
         }
       }
     },
@@ -3670,10 +4095,6 @@ var Files = map[string]string{
       "properties": {
         "version_id": {
           "type": "string"
-        },
-        "direct_delete": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     },
@@ -3693,10 +4114,6 @@ var Files = map[string]string{
           "items": {
             "type": "string"
           }
-        },
-        "direct_delete": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     },
@@ -3707,6 +4124,21 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeAppVersionAuditsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "app_version_audit_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixAppVersionAudit"
           }
         }
       }
@@ -3807,25 +4239,10 @@ var Files = map[string]string{
         "name": {
           "type": "string"
         },
-        "repo_id": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "chart_name": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
         },
         "home": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "screenshots": {
           "type": "string"
         },
         "maintainers": {
@@ -3841,9 +4258,6 @@ var Files = map[string]string{
           "type": "string"
         },
         "keywords": {
-          "type": "string"
-        },
-        "status": {
           "type": "string"
         }
       }
@@ -3865,46 +4279,19 @@ var Files = map[string]string{
         "name": {
           "type": "string"
         },
-        "package_name": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
         "description": {
-          "type": "string"
-        },
-        "sequence": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "status": {
           "type": "string"
         },
         "package": {
           "type": "string",
           "format": "byte"
         },
-        "home": {
-          "type": "string"
-        },
-        "icon": {
-          "type": "string"
-        },
-        "screenshots": {
-          "type": "string"
-        },
-        "maintainers": {
-          "type": "string"
-        },
-        "keywords": {
-          "type": "string"
-        },
-        "sources": {
-          "type": "string"
-        },
-        "readme": {
-          "type": "string"
+        "package_files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          }
         }
       }
     },
@@ -4049,6 +4436,174 @@ var Files = map[string]string{
         },
         "result": {
           "type": "string"
+        }
+      }
+    },
+    "openpitrixUploadAppAttachmentRequest": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/openpitrixUploadAppAttachmentRequestType"
+        },
+        "attachment_content": {
+          "type": "string",
+          "format": "byte"
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "openpitrixUploadAppAttachmentRequestType": {
+      "type": "string",
+      "enum": [
+        "icon",
+        "screenshot"
+      ],
+      "default": "icon"
+    },
+    "openpitrixUploadAppAttachmentResponse": {
+      "type": "object",
+      "properties": {
+        "app_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixValidatePackageRequest": {
+      "type": "object",
+      "properties": {
+        "version_type": {
+          "type": "string"
+        },
+        "version_package": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "openpitrixValidatePackageResponse": {
+      "type": "object",
+      "properties": {
+        "error_details": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "error": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version_name": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixAppendAttachmentResponse": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixAttachment": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "string"
+        },
+        "attachment_content": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixCreateAttachmentResponse": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteAttachmentsResponse": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "filename": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixGetAttachmentResponse": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "format": "byte"
+        },
+        "etag": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixGetAttachmentsResponse": {
+      "type": "object",
+      "properties": {
+        "attachments": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/openpitrixAttachment"
+          }
+        }
+      }
+    },
+    "openpitrixReplaceAttachmentResponse": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

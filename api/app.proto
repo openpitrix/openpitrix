@@ -17,20 +17,11 @@ import "types.proto";
 
 message CreateAppRequest {
 	google.protobuf.StringValue name = 1;
-	google.protobuf.StringValue repo_id = 2;
-	google.protobuf.StringValue owner = 3;
-	google.protobuf.StringValue chart_name = 4;
-	google.protobuf.StringValue description = 5;
-	google.protobuf.StringValue home = 7;
-	google.protobuf.StringValue icon = 8;
-	google.protobuf.StringValue screenshots = 9;
-	google.protobuf.StringValue maintainers = 10;
-	google.protobuf.StringValue sources = 11;
-	google.protobuf.StringValue readme = 12;
-	google.protobuf.StringValue category_id = 13;
-	google.protobuf.StringValue keywords = 14;
-	google.protobuf.StringValue status = 15;
-	google.protobuf.BytesValue package = 16;
+	google.protobuf.StringValue version_type = 2; // vmbased or helm
+	google.protobuf.BytesValue version_package = 3;
+	//	map<string, bytes> version_package_files = 4;
+	google.protobuf.StringValue version_name = 5;
+	google.protobuf.BytesValue icon = 6;
 }
 
 message CreateAppResponse {
@@ -38,31 +29,51 @@ message CreateAppResponse {
 	google.protobuf.StringValue version_id = 2;
 }
 
+message ValidatePackageRequest {
+	string version_type = 2; // vmbased or helm
+	bytes version_package = 3;
+}
+
+message ValidatePackageResponse {
+	map<string, string> error_details = 1; // filename => detail
+	google.protobuf.StringValue error = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue version_name = 4;
+}
+
 message ModifyAppRequest {
 	google.protobuf.StringValue app_id = 1;
 	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue repo_id = 3;
-	google.protobuf.StringValue owner = 4;
-	google.protobuf.StringValue chart_name = 5;
-	google.protobuf.StringValue description = 6;
-	google.protobuf.StringValue home = 8;
-	google.protobuf.StringValue icon = 9;
-	google.protobuf.StringValue screenshots = 10;
-	google.protobuf.StringValue maintainers = 11;
-	google.protobuf.StringValue sources = 12;
-	google.protobuf.StringValue readme = 13;
-	google.protobuf.StringValue category_id = 14;
-	google.protobuf.StringValue keywords = 15;
-	google.protobuf.StringValue status = 16;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue home = 4;
+	google.protobuf.StringValue maintainers = 7;
+	google.protobuf.StringValue sources = 8;
+	google.protobuf.StringValue readme = 9;
+	google.protobuf.StringValue category_id = 10;
+	google.protobuf.StringValue keywords = 11;
 }
 
 message ModifyAppResponse {
 	google.protobuf.StringValue app_id = 1;
 }
 
+message UploadAppAttachmentRequest {
+	enum Type {
+		icon = 0;
+		screenshot = 1;
+	}
+	google.protobuf.StringValue app_id = 1;
+	Type type = 2;
+	google.protobuf.BytesValue attachment_content = 3;
+	google.protobuf.UInt32Value sequence = 4; // for screenshot, range: [0, 5]
+}
+
+message UploadAppAttachmentResponse {
+	google.protobuf.StringValue app_id = 1;
+}
+
 message DeleteAppsRequest {
 	repeated string app_id = 1;
-	bool direct_delete = 2;
 }
 
 message DeleteAppsResponse {
@@ -71,39 +82,42 @@ message DeleteAppsResponse {
 
 message App {
 	google.protobuf.StringValue app_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue repo_id = 3;
-	google.protobuf.StringValue description = 4;
-	google.protobuf.StringValue status = 5;
-	google.protobuf.StringValue home = 6;
-	google.protobuf.StringValue icon = 7;
-	google.protobuf.StringValue screenshots = 8;
-	google.protobuf.StringValue maintainers = 9;
-	google.protobuf.StringValue keywords = 10;
-	google.protobuf.StringValue sources = 11;
-	google.protobuf.StringValue readme = 12;
-	google.protobuf.StringValue chart_name = 13;
-	google.protobuf.StringValue owner = 14;
-	google.protobuf.Timestamp create_time = 15;
-	google.protobuf.Timestamp status_time = 16;
-	google.protobuf.Timestamp update_time = 17;
-	repeated ResourceCategory category_set = 18;
-	AppVersion latest_app_version = 19;
+	google.protobuf.BoolValue active = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue repo_id = 4;
+	google.protobuf.StringValue description = 5;
+	google.protobuf.StringValue status = 6;
+	google.protobuf.StringValue home = 7;
+	google.protobuf.StringValue icon = 8;
+	google.protobuf.StringValue screenshots = 9;
+	google.protobuf.StringValue maintainers = 10;
+	google.protobuf.StringValue keywords = 11;
+	google.protobuf.StringValue sources = 12;
+	google.protobuf.StringValue readme = 13;
+	google.protobuf.StringValue chart_name = 14;
+	google.protobuf.StringValue owner = 15;
+	google.protobuf.Timestamp create_time = 16;
+	google.protobuf.Timestamp status_time = 17;
+	google.protobuf.Timestamp update_time = 18;
+	repeated ResourceCategory category_set = 19;
+	AppVersion latest_app_version = 20;
+	google.protobuf.StringValue app_version_types = 21;
 }
 
 message DescribeAppsRequest {
 	google.protobuf.StringValue search_word = 1;
-	uint32 limit = 2; // NOTE: uint64 marshal to json will convert to string
-	uint32 offset = 3;
-	google.protobuf.StringValue sort_key = 5;
-	google.protobuf.BoolValue reverse = 6;
-	repeated string app_id = 7; // NOTE: grpc gateway cannot handle repeated StringValue
-	repeated string name = 8;
-	repeated string repo_id = 9;
-	repeated string status = 10;
-	repeated string owner = 11;
-	repeated string chart_name = 12;
-	repeated string category_id = 13;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	uint32 limit = 4;
+	uint32 offset = 5;
+
+	repeated string app_id = 11;
+	repeated string name = 12;
+	repeated string repo_id = 13;
+	repeated string status = 14;
+	repeated string owner = 15;
+	repeated string chart_name = 16;
+	repeated string category_id = 17;
 }
 
 message DescribeAppsResponse {
@@ -113,20 +127,11 @@ message DescribeAppsResponse {
 
 message CreateAppVersionRequest {
 	google.protobuf.StringValue app_id = 1;
-	google.protobuf.StringValue owner = 2;
-	google.protobuf.StringValue name = 3;
-	google.protobuf.StringValue package_name = 4;
-	google.protobuf.StringValue description = 5;
-	google.protobuf.UInt32Value sequence = 6;
-	google.protobuf.StringValue status = 7;
-	google.protobuf.BytesValue package = 8;
-	google.protobuf.StringValue home = 9;
-	google.protobuf.StringValue icon = 10;
-	google.protobuf.StringValue screenshots = 11;
-	google.protobuf.StringValue maintainers = 12;
-	google.protobuf.StringValue keywords = 13;
-	google.protobuf.StringValue sources = 14;
-	google.protobuf.StringValue readme = 15;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue type = 4; // vmbased or helm
+	google.protobuf.BytesValue package = 5;
+//	map<string, bytes> package_files = 6;
 }
 
 message CreateAppVersionResponse {
@@ -136,19 +141,9 @@ message CreateAppVersionResponse {
 message ModifyAppVersionRequest {
 	google.protobuf.StringValue version_id = 1;
 	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue package_name = 3;
-	google.protobuf.StringValue owner = 4;
-	google.protobuf.StringValue description = 5;
-	google.protobuf.UInt32Value sequence = 6;
-	google.protobuf.StringValue status = 7;
-	google.protobuf.BytesValue package = 8;
-	google.protobuf.StringValue home = 9;
-	google.protobuf.StringValue icon = 10;
-	google.protobuf.StringValue screenshots = 11;
-	google.protobuf.StringValue maintainers = 12;
-	google.protobuf.StringValue keywords = 13;
-	google.protobuf.StringValue sources = 14;
-	google.protobuf.StringValue readme = 15;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.BytesValue package = 4;
+	map<string, bytes> package_files = 5;
 }
 
 message ModifyAppVersionResponse {
@@ -157,39 +152,73 @@ message ModifyAppVersionResponse {
 
 message AppVersion {
 	google.protobuf.StringValue version_id = 1;
+	google.protobuf.BoolValue active = 2;
+	google.protobuf.StringValue app_id = 3;
+	google.protobuf.StringValue owner = 4;
+	google.protobuf.StringValue name = 5;
+	google.protobuf.StringValue description = 6;
+	google.protobuf.StringValue home = 7;
+	google.protobuf.StringValue icon = 8;
+	google.protobuf.StringValue screenshots = 9;
+	google.protobuf.StringValue maintainers = 10;
+	google.protobuf.StringValue keywords = 11;
+	google.protobuf.StringValue sources = 12;
+	google.protobuf.StringValue readme = 13;
+	google.protobuf.StringValue package_name = 14;
+	google.protobuf.StringValue status = 15;
+	google.protobuf.Timestamp create_time = 16;
+	google.protobuf.Timestamp status_time = 17;
+	google.protobuf.Timestamp update_time = 18;
+	google.protobuf.UInt32Value sequence = 19;
+	google.protobuf.StringValue message = 20;
+	google.protobuf.StringValue type = 21;
+}
+
+message AppVersionAudit {
+	google.protobuf.StringValue version_id = 1;
 	google.protobuf.StringValue app_id = 2;
-	google.protobuf.StringValue owner = 3;
-	google.protobuf.StringValue name = 4;
-	google.protobuf.StringValue description = 5;
-	google.protobuf.StringValue home = 6;
-	google.protobuf.StringValue icon = 7;
-	google.protobuf.StringValue screenshots = 8;
-	google.protobuf.StringValue maintainers = 9;
-	google.protobuf.StringValue keywords = 10;
-	google.protobuf.StringValue sources = 11;
-	google.protobuf.StringValue readme = 12;
-	google.protobuf.StringValue package_name = 13;
-	google.protobuf.StringValue status = 14;
-	google.protobuf.Timestamp create_time = 15;
-	google.protobuf.Timestamp status_time = 16;
-	google.protobuf.Timestamp update_time = 17;
-	google.protobuf.UInt32Value sequence = 18;
-	google.protobuf.StringValue message = 19;
+	google.protobuf.StringValue status = 3;
+    google.protobuf.StringValue operator = 4;
+	google.protobuf.StringValue role = 5;
+    google.protobuf.StringValue message = 6;
+	google.protobuf.Timestamp status_time = 7;
+}
+
+message DescribeAppVersionAuditsRequest {
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	uint32 limit = 4;
+	uint32 offset = 5;
+
+	string app_id = 10;
+	string version_id = 11;
+
+	repeated string status = 12;
+	repeated string operator = 13;
+	repeated string role = 14;
+}
+
+message DescribeAppVersionAuditsResponse {
+	uint32 total_count = 1;
+	repeated AppVersionAudit app_version_audit_set = 2;
 }
 
 message DescribeAppVersionsRequest {
-	repeated string version_id = 1;
-	repeated string app_id = 2;
-	repeated string name = 3;
-	repeated string owner = 4;
-	repeated string description = 5;
-	repeated string package_name = 6;
-	repeated string status = 7;
-	google.protobuf.StringValue search_word = 8;
-	uint32 limit = 9; // NOTE: uint64 marshal to json will convert to string
-	uint32 offset = 10;
-	google.protobuf.StringValue sort_key = 11;
-	google.protobuf.BoolValue reverse = 12;
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	uint32 limit = 4;
+	uint32 offset = 5;
+
+	repeated string version_id = 10;
+	repeated string app_id = 11;
+	repeated string name = 12;
+	repeated string owner = 13;
+	repeated string description = 14;
+	repeated string package_name = 15;
+	repeated string status = 16;
+	repeated string type = 17;
 }
 
 message DescribeAppVersionsResponse {
@@ -200,7 +229,6 @@ message DescribeAppVersionsResponse {
 message GetAppVersionPackageRequest {
 	google.protobuf.StringValue version_id = 1;
 }
-
 message GetAppVersionPackageResponse {
 	bytes package = 1;
 	google.protobuf.StringValue app_id = 2;
@@ -247,7 +275,6 @@ message ReleaseAppVersionResponse {
 }
 message DeleteAppVersionRequest {
 	google.protobuf.StringValue version_id = 1;
-	bool direct_delete = 2;
 }
 message DeleteAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
@@ -298,6 +325,15 @@ service AppManager {
 			body: "*"
 		};
 	}
+	rpc ValidatePackage (ValidatePackageRequest) returns (ValidatePackageResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "ValidatePackage"
+		};
+		option (google.api.http) = {
+			post: "/v1/apps/validate_package"
+			body: "*"
+		};
+	}
 	rpc GetAppStatistics (GetAppStatisticsRequest) returns (GetAppStatisticsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "get app statistics"
@@ -314,12 +350,29 @@ service AppManager {
 			get: "/v1/apps"
 		};
 	}
+	rpc DescribeActiveApps (DescribeAppsRequest) returns (DescribeAppsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe apps with filter"
+		};
+		option (google.api.http) = {
+			get: "/v1/active_apps"
+		};
+	}
 	rpc ModifyApp (ModifyAppRequest) returns (ModifyAppResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "modify app"
 		};
 		option (google.api.http) = {
 			patch: "/v1/apps"
+			body: "*"
+		};
+	}
+	rpc UploadAppAttachment(UploadAppAttachmentRequest) returns (UploadAppAttachmentResponse){
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "UploadAppAttachment"
+		};
+		option (google.api.http) = {
+			patch: "/v1/app/attachment"
 			body: "*"
 		};
 	}
@@ -348,6 +401,22 @@ service AppManager {
 		};
 		option (google.api.http) = {
 			get: "/v1/app_versions"
+		};
+	}
+	rpc DescribeActiveAppVersions (DescribeAppVersionsRequest) returns (DescribeAppVersionsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe app versions with filter"
+		};
+		option (google.api.http) = {
+			get: "/v1/active_app_versions"
+		};
+	}
+	rpc DescribeAppVersionAudits (DescribeAppVersionAuditsRequest) returns (DescribeAppVersionAuditsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "DescribeAppVersionAudits"
+		};
+		option (google.api.http) = {
+			get: "/v1/app/{app_id=*}/version/{version_id=*}/audits"
 		};
 	}
 	rpc ModifyAppVersion (ModifyAppVersionRequest) returns (ModifyAppVersionResponse) {

@@ -22,44 +22,14 @@ type OpenpitrixCreateAppVersionRequest struct {
 	// description
 	Description string `json:"description,omitempty"`
 
-	// home
-	Home string `json:"home,omitempty"`
-
-	// icon
-	Icon string `json:"icon,omitempty"`
-
-	// keywords
-	Keywords string `json:"keywords,omitempty"`
-
-	// maintainers
-	Maintainers string `json:"maintainers,omitempty"`
-
 	// name
 	Name string `json:"name,omitempty"`
-
-	// owner
-	Owner string `json:"owner,omitempty"`
 
 	// package
 	Package strfmt.Base64 `json:"package,omitempty"`
 
-	// package name
-	PackageName string `json:"package_name,omitempty"`
-
-	// readme
-	Readme string `json:"readme,omitempty"`
-
-	// screenshots
-	Screenshots string `json:"screenshots,omitempty"`
-
-	// sequence
-	Sequence int64 `json:"sequence,omitempty"`
-
-	// sources
-	Sources string `json:"sources,omitempty"`
-
-	// status
-	Status string `json:"status,omitempty"`
+	// type
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this openpitrix create app version request

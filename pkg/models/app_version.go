@@ -23,6 +23,7 @@ func NewAppVersionId() string {
 
 type AppVersion struct {
 	VersionId   string
+	Active      bool
 	AppId       string
 	Owner       string
 	Name        string
@@ -37,6 +38,7 @@ type AppVersion struct {
 	Readme      string
 	Status      string
 	Message     string
+	Type        string
 	Sequence    uint32
 	CreateTime  time.Time
 	StatusTime  time.Time
@@ -76,13 +78,13 @@ func (c AppVersions) Less(a, b int) bool {
 	return i.LessThan(j)
 }
 
-func NewAppVersion(appId, name, description, owner, packageName string) *AppVersion {
+func NewAppVersion(appId, name, description, owner string) *AppVersion {
 	return &AppVersion{
 		VersionId:   NewAppVersionId(),
+		Active:      false,
 		AppId:       appId,
 		Name:        name,
 		Owner:       owner,
-		PackageName: packageName,
 		Description: description,
 		Status:      constants.StatusDraft,
 		CreateTime:  time.Now(),
@@ -96,6 +98,7 @@ func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
 	}
 	pbAppVersion := pb.AppVersion{}
 	pbAppVersion.VersionId = pbutil.ToProtoString(appVersion.VersionId)
+	pbAppVersion.Active = pbutil.ToProtoBool(appVersion.Active)
 	pbAppVersion.AppId = pbutil.ToProtoString(appVersion.AppId)
 	pbAppVersion.Name = pbutil.ToProtoString(appVersion.Name)
 	pbAppVersion.Description = pbutil.ToProtoString(appVersion.Description)
@@ -106,6 +109,7 @@ func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
 	pbAppVersion.StatusTime = pbutil.ToProtoTimestamp(appVersion.StatusTime)
 	pbAppVersion.Sequence = pbutil.ToProtoUInt32(appVersion.Sequence)
 	pbAppVersion.Message = pbutil.ToProtoString(appVersion.Message)
+	pbAppVersion.Type = pbutil.ToProtoString(appVersion.Type)
 	if appVersion.UpdateTime != nil {
 		pbAppVersion.UpdateTime = pbutil.ToProtoTimestamp(*appVersion.UpdateTime)
 	}

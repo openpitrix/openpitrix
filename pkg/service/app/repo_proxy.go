@@ -125,6 +125,7 @@ func (rp *repoProxy) syncAppInfo(ctx context.Context, appIface wrapper.VersionIn
 	err := pi.Global().DB(ctx).
 		Select(models.AppColumns...).
 		From(constants.TableApp).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Where(db.Eq(constants.ColumnRepoId, repoId)).
 		Where(db.Eq(constants.ColumnChartName, chartName)).
 		LoadOne(&app)
@@ -135,11 +136,18 @@ func (rp *repoProxy) syncAppInfo(ctx context.Context, appIface wrapper.VersionIn
 		}
 		app = models.NewApp(
 			chartName,
-			repoId,
-			"",
 			rp.repo.GetOwner().GetValue(),
-			chartName,
 		)
+		app.RepoId = repoId
+		app.ChartName = chartName
+		app.Description = appIface.GetDescription()
+		app.Home = appIface.GetHome()
+		app.Icon = appIface.GetIcon()
+		app.Screenshots = appIface.GetScreenshots()
+		app.Maintainers = appIface.GetMaintainers()
+		app.Keywords = appIface.GetKeywords()
+		app.Sources = appIface.GetSources()
+
 		_, err = pi.Global().DB(ctx).
 			InsertInto(constants.TableApp).
 			Record(app).
@@ -160,7 +168,43 @@ func (rp *repoProxy) syncAppInfo(ctx context.Context, appIface wrapper.VersionIn
 
 		return app.AppId, err
 	}
+
 	appId = app.AppId
+	var updateAttr = make(map[string]interface{})
+	if app.Description != appIface.GetDescription() {
+		updateAttr[constants.ColumnDescription] = appIface.GetDescription()
+	}
+	if app.Home != appIface.GetHome() {
+		updateAttr[constants.ColumnHome] = appIface.GetHome()
+	}
+	if app.Icon != appIface.GetIcon() {
+		updateAttr[constants.ColumnIcon] = appIface.GetIcon()
+	}
+	if app.Screenshots != appIface.GetScreenshots() {
+		updateAttr[constants.ColumnScreenshots] = appIface.GetScreenshots()
+	}
+	if app.Maintainers != appIface.GetMaintainers() {
+		updateAttr[constants.ColumnMaintainers] = appIface.GetMaintainers()
+	}
+	if app.Keywords != appIface.GetKeywords() {
+		updateAttr[constants.ColumnKeywords] = appIface.GetKeywords()
+	}
+	if app.Sources != appIface.GetSources() {
+		updateAttr[constants.ColumnSources] = appIface.GetSources()
+	}
+	if len(updateAttr) > 0 {
+		_, err = pi.Global().DB(ctx).
+			Update(constants.TableApp).
+			SetMap(updateAttr).
+			Set(constants.ColumnUpdateTime, time.Now()).
+			Where(db.Eq(constants.ColumnAppId, appId)).
+			Where(db.Eq(constants.ColumnActive, false)).
+			Exec()
+		if err != nil {
+			return appId, err
+		}
+	}
+
 	// update exists, only need sync categories
 	appCategories, err := getAppCategories(ctx, appId)
 	if err != nil {
@@ -201,11 +245,23 @@ func (rp *repoProxy) syncAppVersionInfo(ctx context.Context, appId string, versi
 	versionName := versionInterface.GetVersionName()
 	var appVersion = &models.AppVersion{}
 	var versionId = ""
+	var status = getAppDefaultStatus(rp.repo)
+	if status == constants.StatusActive {
+		defer func() {
+			if versionId != "" {
+				err := syncAppVersion(ctx, versionId)
+				if err != nil {
+					logger.Error(ctx, "Active app version [%s] failed: %+v", versionId, err)
+				}
+			}
+		}()
+	}
 	err := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
 		From(constants.TableAppVersion).
 		Where(db.Eq(constants.ColumnAppId, appId)).
 		Where(db.Eq(constants.ColumnName, versionName)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		LoadOne(&appVersion)
 	if err != nil {
 		if err != db.ErrNotFound {
@@ -217,19 +273,10 @@ func (rp *repoProxy) syncAppVersionInfo(ctx context.Context, appId string, versi
 			versionName,
 			versionInterface.GetDescription(),
 			rp.repo.GetOwner().GetValue(),
-			versionInterface.GetPackageName(),
 		)
 
 		appVersion.PackageName = versionInterface.GetPackageName()
-		appVersion.Description = versionInterface.GetDescription()
-		appVersion.Home = versionInterface.GetHome()
-		appVersion.Icon = versionInterface.GetIcon()
-		appVersion.Screenshots = versionInterface.GetScreenshots()
-		appVersion.Maintainers = versionInterface.GetMaintainers()
-		appVersion.Keywords = versionInterface.GetKeywords()
-		appVersion.Sources = versionInterface.GetSources()
-
-		appVersion.Status = getAppDefaultStatus(rp.repo)
+		appVersion.Status = status
 
 		_, err = pi.Global().DB(ctx).
 			InsertInto(constants.TableAppVersion).
@@ -245,34 +292,13 @@ func (rp *repoProxy) syncAppVersionInfo(ctx context.Context, appId string, versi
 
 	if appVersion.Status != rp.repo.GetAppDefaultStatus().GetValue() {
 		updateAttr[constants.ColumnStatus] = getAppVersionStatus(
-			getAppDefaultStatus(rp.repo),
+			status,
 			appVersion.Status,
 		)
 	}
 
 	if appVersion.PackageName != versionInterface.GetPackageName() {
 		updateAttr[constants.ColumnPackageName] = versionInterface.GetPackageName()
-	}
-	if appVersion.Description != versionInterface.GetDescription() {
-		updateAttr[constants.ColumnDescription] = versionInterface.GetDescription()
-	}
-	if appVersion.Home != versionInterface.GetHome() {
-		updateAttr[constants.ColumnHome] = versionInterface.GetHome()
-	}
-	if appVersion.Icon != versionInterface.GetIcon() {
-		updateAttr[constants.ColumnIcon] = versionInterface.GetIcon()
-	}
-	if appVersion.Screenshots != versionInterface.GetScreenshots() {
-		updateAttr[constants.ColumnScreenshots] = versionInterface.GetScreenshots()
-	}
-	if appVersion.Maintainers != versionInterface.GetMaintainers() {
-		updateAttr[constants.ColumnMaintainers] = versionInterface.GetMaintainers()
-	}
-	if appVersion.Keywords != versionInterface.GetKeywords() {
-		updateAttr[constants.ColumnKeywords] = versionInterface.GetKeywords()
-	}
-	if appVersion.Sources != versionInterface.GetSources() {
-		updateAttr[constants.ColumnSources] = versionInterface.GetSources()
 	}
 	if len(updateAttr) == 0 {
 		return versionId, nil
@@ -282,6 +308,7 @@ func (rp *repoProxy) syncAppVersionInfo(ctx context.Context, appId string, versi
 		SetMap(updateAttr).
 		Set(constants.ColumnUpdateTime, time.Now()).
 		Where(db.Eq(constants.ColumnVersionId, versionId)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Exec()
 	return versionId, err
 }

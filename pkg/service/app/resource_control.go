@@ -6,7 +6,10 @@ package app
 
 import (
 	"context"
+	"fmt"
+	"regexp"
 	"sort"
+	"strings"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -17,6 +20,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -36,7 +41,6 @@ const (
 
 // Action => []version.status
 var VersionFiniteStatusMachine = map[Action][]string{
-	// TODO: only admin can modify active app version
 	Modify:  {constants.StatusDraft, constants.StatusRejected, constants.StatusActive},
 	Submit:  {constants.StatusDraft, constants.StatusRejected},
 	Cancel:  {constants.StatusSubmitted, constants.StatusPassed},
@@ -66,26 +70,18 @@ func checkAppVersionHandlePermission(ctx context.Context, action Action, version
 	return nil
 }
 
-func deleteApp(ctx context.Context, appId string) error {
-	_, err := pi.Global().DB(ctx).
-		DeleteFrom(constants.TableApp).
-		Where(db.Eq(constants.ColumnAppId, appId)).
-		Exec()
-	if err != nil {
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
-	}
-	return err
-}
-
-func deleteVersion(ctx context.Context, versionId string) error {
-	_, err := pi.Global().DB(ctx).
-		DeleteFrom(constants.TableAppVersion).
+func getAppVersion(ctx context.Context, versionId string) (*models.AppVersion, error) {
+	version := &models.AppVersion{}
+	err := pi.Global().DB(ctx).
+		Select(models.AppVersionColumns...).
+		From(constants.TableAppVersion).
 		Where(db.Eq(constants.ColumnVersionId, versionId)).
-		Exec()
+		Where(db.Eq(constants.ColumnActive, false)).
+		LoadOne(&version)
 	if err != nil {
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+		return nil, err
 	}
-	return err
+	return version, nil
 }
 
 func insertVersion(ctx context.Context, version *models.AppVersion) error {
@@ -97,6 +93,10 @@ func insertVersion(ctx context.Context, version *models.AppVersion) error {
 		logger.Error(ctx, "Failed to insert version [%+v]", version)
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
+	err = addAppVersionAudit(ctx, version, constants.StatusDraft, constants.RoleDeveloper, "")
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -106,6 +106,7 @@ func updateVersion(ctx context.Context, versionId string, attributes map[string]
 		Update(constants.TableAppVersion).
 		SetMap(attributes).
 		Where(db.Eq(constants.ColumnVersionId, versionId)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, versionId)
@@ -119,6 +120,7 @@ func updateApp(ctx context.Context, appId string, attributes map[string]interfac
 		Update(constants.TableApp).
 		SetMap(attributes).
 		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourcesFailed)
@@ -146,6 +148,135 @@ func updateVersionStatus(ctx context.Context, version *models.AppVersion, status
 	return nil
 }
 
+func syncActiveVersion(ctx context.Context, version *models.AppVersion) error {
+	var existActiveVersion *models.AppVersion
+	_, err := pi.Global().DB(ctx).
+		Select(models.AppVersionColumns...).
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnVersionId, version.VersionId)).
+		Where(db.Eq(constants.ColumnActive, true)).
+		Load(&existActiveVersion)
+	if err != nil {
+		return err
+	}
+	if existActiveVersion == nil {
+		_, err := pi.Global().DB(ctx).
+			InsertInto(constants.TableAppVersion).
+			Record(version).
+			Exec()
+		return err
+	}
+	var updateAttr = make(map[string]interface{})
+	if existActiveVersion.PackageName != version.PackageName {
+		updateAttr[constants.ColumnPackageName] = version.PackageName
+	}
+	if existActiveVersion.Name != version.Name {
+		updateAttr[constants.ColumnName] = version.Name
+	}
+	if existActiveVersion.Description != version.Description {
+		updateAttr[constants.ColumnDescription] = version.Description
+	}
+	if existActiveVersion.Status != version.Status {
+		updateAttr[constants.ColumnStatus] = version.Status
+	}
+	if len(updateAttr) == 0 {
+		return nil
+	}
+	_, err = pi.Global().DB(ctx).
+		Update(constants.TableAppVersion).SetMap(updateAttr).
+		Where(db.Eq(constants.ColumnVersionId, version.VersionId)).
+		Where(db.Eq(constants.ColumnActive, true)).
+		Exec()
+	return err
+}
+
+func syncActiveApp(ctx context.Context, app *models.App) error {
+	var existActiveApp *models.App
+	_, err := pi.Global().DB(ctx).
+		Select(models.AppColumns...).
+		From(constants.TableApp).
+		Where(db.Eq(constants.ColumnAppId, app.AppId)).
+		Where(db.Eq(constants.ColumnActive, true)).
+		Load(&existActiveApp)
+	if err != nil {
+		return err
+	}
+	if existActiveApp == nil {
+		_, err := pi.Global().DB(ctx).
+			InsertInto(constants.TableApp).
+			Record(app).
+			Exec()
+		return err
+	}
+	var updateAttr = make(map[string]interface{})
+	if existActiveApp.RepoId != app.RepoId {
+		updateAttr[constants.ColumnRepoId] = app.RepoId
+	}
+	if existActiveApp.Name != app.Name {
+		updateAttr[constants.ColumnName] = app.Name
+	}
+	if existActiveApp.Description != app.Description {
+		updateAttr[constants.ColumnDescription] = app.Description
+	}
+	if existActiveApp.Status != app.Status {
+		updateAttr[constants.ColumnStatus] = app.Status
+	}
+	if existActiveApp.Home != app.Home {
+		updateAttr[constants.ColumnHome] = app.Home
+	}
+	if existActiveApp.Icon != app.Icon {
+		updateAttr[constants.ColumnIcon] = app.Icon
+	}
+	if existActiveApp.Screenshots != app.Screenshots {
+		updateAttr[constants.ColumnScreenshots] = app.Screenshots
+	}
+	if existActiveApp.Maintainers != app.Maintainers {
+		updateAttr[constants.ColumnMaintainers] = app.Maintainers
+	}
+	if existActiveApp.Keywords != app.Keywords {
+		updateAttr[constants.ColumnKeywords] = app.Keywords
+	}
+	if existActiveApp.Sources != app.Sources {
+		updateAttr[constants.ColumnSources] = app.Sources
+	}
+	if existActiveApp.Readme != app.Readme {
+		updateAttr[constants.ColumnReadme] = app.Readme
+	}
+	if existActiveApp.ChartName != app.ChartName {
+		updateAttr[constants.ColumnChartName] = app.ChartName
+	}
+	if len(updateAttr) == 0 {
+		return nil
+	}
+	_, err = pi.Global().DB(ctx).
+		Update(constants.TableApp).SetMap(updateAttr).
+		Where(db.Eq(constants.ColumnAppId, app.AppId)).
+		Where(db.Eq(constants.ColumnActive, true)).
+		Exec()
+	return err
+}
+
+// sync app version and app infos to active app version and active app
+// it will active or deactive app_version/app
+func syncAppVersion(ctx context.Context, versionId string) error {
+	version, err := getAppVersion(ctx, versionId)
+	if err != nil {
+		return err
+	}
+	app, err := getApp(ctx, version.AppId)
+	if err != nil {
+		return err
+	}
+	version.Active = true
+	app.Active = true
+
+	err = syncActiveVersion(ctx, version)
+	if err != nil {
+		return err
+	}
+	return syncActiveApp(ctx, app)
+}
+
 func syncAppStatus(ctx context.Context, appId string) error {
 	app, err := getApp(ctx, appId)
 	if err != nil {
@@ -157,31 +288,7 @@ func syncAppStatus(ctx context.Context, appId string) error {
 		return err
 	}
 	if activeVersion != nil {
-		if activeVersion.Description != app.Description {
-			attributes[constants.ColumnDescription] = activeVersion.Description
-		}
-		if activeVersion.Home != app.Home {
-			attributes[constants.ColumnHome] = activeVersion.Home
-		}
-		if activeVersion.Icon != app.Icon {
-			attributes[constants.ColumnIcon] = activeVersion.Icon
-		}
-		if activeVersion.Screenshots != app.Screenshots {
-			attributes[constants.ColumnScreenshots] = activeVersion.Screenshots
-		}
-		if activeVersion.Maintainers != app.Maintainers {
-			attributes[constants.ColumnMaintainers] = activeVersion.Maintainers
-		}
-		if activeVersion.Keywords != app.Keywords {
-			attributes[constants.ColumnKeywords] = activeVersion.Keywords
-		}
-		if activeVersion.Sources != app.Sources {
-			attributes[constants.ColumnSources] = activeVersion.Sources
-		}
-		if activeVersion.Readme != app.Readme {
-			attributes[constants.ColumnReadme] = activeVersion.Readme
-		}
-		if constants.StatusActive != app.Status {
+		if app.Status != constants.StatusActive {
 			attributes[constants.ColumnStatus] = constants.StatusActive
 			attributes[constants.ColumnStatusTime] = time.Now()
 		}
@@ -206,6 +313,7 @@ func syncAppStatus(ctx context.Context, appId string) error {
 		Update(constants.TableApp).
 		SetMap(attributes).
 		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorModifyResourceFailed, appId)
@@ -220,6 +328,7 @@ func getApp(ctx context.Context, appId string) (*models.App, error) {
 		Select(models.AppColumns...).
 		From(constants.TableApp).
 		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		LoadOne(&app)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)
@@ -232,6 +341,7 @@ func getLatestAppVersion(ctx context.Context, appId string, status ...string) (*
 	stmt := pi.Global().DB(ctx).
 		Select(models.AppVersionColumns...).
 		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Where(db.Eq(constants.ColumnAppId, appId))
 	if len(status) > 0 {
 		stmt.Where(db.Eq(constants.ColumnStatus, status))
@@ -268,16 +378,27 @@ func getAppCategories(ctx context.Context, appId string) ([]*pb.ResourceCategory
 	return rcmap[appId], nil
 }
 
-func formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
-	var pbApps []*pb.App
+func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.App, error) {
 	var appIds []string
 	for _, app := range apps {
+		appIds = append(appIds, app.AppId)
+	}
+	var pbApps []*pb.App
+	appsVersionTypes, err := getAppsVersionTypes(ctx, appIds, active)
+	if err != nil {
+		return pbApps, err
+	}
+	for _, app := range apps {
+
 		var pbApp *pb.App
 		pbApp, err := formatApp(ctx, app)
 		if err != nil {
 			return pbApps, err
 		}
-		appIds = append(appIds, app.AppId)
+		if appVersionType, ok := appsVersionTypes[app.AppId]; ok {
+			pbApp.AppVersionTypes = pbutil.ToProtoString(appVersionType)
+		}
+
 		pbApps = append(pbApps, pbApp)
 	}
 	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), appIds)
@@ -292,18 +413,18 @@ func formatAppSet(ctx context.Context, apps []*models.App) ([]*pb.App, error) {
 	return pbApps, nil
 }
 
-func getBigestSequence(ctx context.Context, appId string) (uint32, error) {
-	var sequence uint32
-	err := pi.Global().DB(ctx).
-		Select("coalesce(max(sequence), 0)").
+func getAppsVersionTypes(ctx context.Context, appIds []string, active bool) (map[string]string, error) {
+	var appsVersionTypes = make(map[string]string)
+
+	_, err := pi.Global().DB(ctx).
+		Select(constants.ColumnAppId, "GROUP_CONCAT(DISTINCT type ORDER BY type SEPARATOR ',')").
 		From(constants.TableAppVersion).
-		Where(db.Eq(constants.ColumnAppId, appId)).
-		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
-		LoadOne(&sequence)
-	if err != nil {
-		return sequence, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, appId)
-	}
-	return sequence, nil
+		GroupBy(constants.ColumnAppId).
+		Where(db.Eq(constants.ColumnAppId, appIds)).
+		Where(db.Eq(constants.ColumnActive, active)).
+		Load(&appsVersionTypes)
+
+	return appsVersionTypes, err
 }
 
 func resortAppVersions(ctx context.Context, appId string) error {
@@ -311,6 +432,7 @@ func resortAppVersions(ctx context.Context, appId string) error {
 	_, err := pi.Global().DB(ctx).
 		Select(constants.ColumnVersionId, constants.ColumnName, constants.ColumnSequence, constants.ColumnCreateTime).
 		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Where(db.Eq(constants.ColumnAppId, appId)).
 		Where(db.Neq(constants.ColumnStatus, constants.StatusDeleted)).
 		Load(&versions)
@@ -338,6 +460,7 @@ func clearAppVersions(ctx context.Context, appId string, ignoredVersionIds []str
 		Set(constants.ColumnStatusTime, time.Now()).
 		Set(constants.ColumnUpdateTime, time.Now()).
 		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Where(db.Neq(constants.ColumnVersionId, ignoredVersionIds)).
 		Exec()
 	return err
@@ -350,6 +473,7 @@ func clearRepoAppVersions(ctx context.Context, repoId string, ignoredVersionIds 
 		Set(constants.ColumnStatusTime, time.Now()).
 		Set(constants.ColumnUpdateTime, time.Now()).
 		Where(db.Eq(constants.ColumnRepoId, repoId)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Where(db.Neq(constants.ColumnVersionId, ignoredVersionIds)).
 		Exec()
 	return err
@@ -362,6 +486,7 @@ func clearApps(ctx context.Context, repoId string, ignoredAppIds []string) error
 		Set(constants.ColumnStatusTime, time.Now()).
 		Set(constants.ColumnUpdateTime, time.Now()).
 		Where(db.Eq(constants.ColumnRepoId, repoId)).
+		Where(db.Eq(constants.ColumnActive, false)).
 		Where(db.Neq(constants.ColumnAppId, ignoredAppIds)).
 		Exec()
 	return err
@@ -405,7 +530,10 @@ func groupAppVersionStatus(ctx context.Context, appId string) (map[string]int32,
 	_, err := pi.Global().DB(ctx).
 		Select("status", "count(version_id)").
 		From(constants.TableAppVersion).
-		Where(db.Eq(constants.ColumnAppId, appId)).GroupBy("status").Load(&statusCountMap)
+		Where(db.Eq(constants.ColumnAppId, appId)).
+		Where(db.Eq(constants.ColumnActive, false)).
+		GroupBy("status").
+		Load(&statusCountMap)
 	return statusCountMap, err
 }
 
@@ -431,4 +559,84 @@ func computeAppStatus(statusCountMap map[string]int32) string {
 		return constants.StatusDeleted
 	}
 	return constants.StatusDraft
+}
+
+func addAppVersionAudit(ctx context.Context, version *models.AppVersion, status, role, message string) error {
+	s := senderutil.GetSenderFromContext(ctx)
+	var versionAudit = models.NewAppVersionAudit(version.VersionId, version.AppId, status, s.UserId, role)
+	versionAudit.Message = message
+
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableAppVersionAudit).
+		Record(versionAudit).
+		Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert version audit [%+v]", versionAudit)
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+	return nil
+}
+
+func matchPackageFailedError(err error, res *pb.ValidatePackageResponse) {
+	var errStr = err.Error()
+	var matchedError = ""
+	var errorDetails = make(map[string]string)
+	switch {
+	// Helm errors
+	case strings.HasPrefix(errStr, "no files in chart archive"),
+		strings.HasPrefix(errStr, "no files in app archive"):
+
+		matchedError = "no files in package"
+
+	case strings.HasPrefix(errStr, "chart yaml not in base directory"),
+		strings.HasPrefix(errStr, "chart metadata (Chart.yaml) missing"):
+
+		errorDetails["Chart.yaml"] = "not found"
+
+	case strings.HasPrefix(errStr, "invalid chart (Chart.yaml): name must not be empty"):
+
+		errorDetails["Chart.yaml"] = "package name must not be empty"
+
+	case strings.HasPrefix(errStr, "values.toml is illegal"):
+
+		errorDetails["values.toml"] = errStr
+
+	case strings.HasPrefix(errStr, "error reading"):
+
+		matched := regexp.MustCompile("error reading (.+): (.+)").FindStringSubmatch(errStr)
+		if len(matched) > 0 {
+			errorDetails[matched[1]] = matched[2]
+		}
+
+	// Devkit erros
+	case strings.HasPrefix(errStr, "[package.json] not in base directory"):
+
+		errorDetails["package.json"] = "not found"
+
+	case strings.HasPrefix(errStr, "missing file ["):
+
+		matched := regexp.MustCompile("missing file \\[(.+)]").FindStringSubmatch(errStr)
+		if len(matched) > 0 {
+			errorDetails[matched[1]] = "not found"
+		}
+
+	case strings.HasPrefix(errStr, "failed to parse"),
+		strings.HasPrefix(errStr, "failed to render"),
+		strings.HasPrefix(errStr, "failed to load"),
+		strings.HasPrefix(errStr, "failed to decode"):
+
+		matched := regexp.MustCompile("failed to (.+) (.+): (.+)").FindStringSubmatch(errStr)
+		if len(matched) > 0 {
+			errorDetails[matched[2]] = fmt.Sprintf("%s failed, %s", matched[1], matched[3])
+		}
+
+	default:
+		matchedError = errStr
+	}
+	if len(errorDetails) > 0 {
+		res.ErrorDetails = errorDetails
+	}
+	if len(matchedError) > 0 {
+		res.Error = pbutil.ToProtoString(matchedError)
+	}
 }

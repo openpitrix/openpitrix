@@ -22,17 +22,11 @@ type OpenpitrixModifyAppRequest struct {
 	// category id
 	CategoryID string `json:"category_id,omitempty"`
 
-	// chart name
-	ChartName string `json:"chart_name,omitempty"`
-
 	// description
 	Description string `json:"description,omitempty"`
 
 	// home
 	Home string `json:"home,omitempty"`
-
-	// icon
-	Icon string `json:"icon,omitempty"`
 
 	// keywords
 	Keywords string `json:"keywords,omitempty"`
@@ -43,23 +37,11 @@ type OpenpitrixModifyAppRequest struct {
 	// name
 	Name string `json:"name,omitempty"`
 
-	// owner
-	Owner string `json:"owner,omitempty"`
-
 	// readme
 	Readme string `json:"readme,omitempty"`
 
-	// repo id
-	RepoID string `json:"repo_id,omitempty"`
-
-	// screenshots
-	Screenshots string `json:"screenshots,omitempty"`
-
 	// sources
 	Sources string `json:"sources,omitempty"`
-
-	// status
-	Status string `json:"status,omitempty"`
 }
 
 // Validate validates this openpitrix modify app request

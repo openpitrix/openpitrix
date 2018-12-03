@@ -377,6 +377,12 @@
 			"revisionTime": "2017-06-01T20:57:54Z"
 		},
 		{
+			"checksumSHA1": "97XNk/+92I6/gTbiMzdZf1xf83E=",
+			"path": "github.com/disintegration/imaging",
+			"revision": "9458da53d1e65e098d48467a4317c403327e4424",
+			"revisionTime": "2018-10-20T15:01:46Z"
+		},
+		{
 			"checksumSHA1": "oLxSC13cDzqqKkYXmkzek7qcj1Y=",
 			"origin": "k8s.io/kubernetes/vendor/github.com/docker/docker/pkg/term",
 			"path": "github.com/docker/docker/pkg/term",
@@ -1106,6 +1112,24 @@
 			"checksumSHA1": "y3a1tOZVwKCqG2yJZvAYycnelyM=",
 			"path": "golang.org/x/crypto/ssh/terminal",
 			"revision": ""
+		},
+		{
+			"checksumSHA1": "cXokCvyFg5J/JpxYNKB5JSqJH7g=",
+			"path": "golang.org/x/image/bmp",
+			"revision": "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f",
+			"revisionTime": "2018-11-15T22:27:58Z"
+		},
+		{
+			"checksumSHA1": "nvtLDoG3eBuFIcd1TGEylVUmEUk=",
+			"path": "golang.org/x/image/tiff",
+			"revision": "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f",
+			"revisionTime": "2018-11-15T22:27:58Z"
+		},
+		{
+			"checksumSHA1": "PF6VjvpNpOdR8epWH1Liyy7x1Qg=",
+			"path": "golang.org/x/image/tiff/lzw",
+			"revision": "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f",
+			"revisionTime": "2018-11-15T22:27:58Z"
 		},
 		{
 			"checksumSHA1": "dr5+PfIRzXeN+l1VG+s0lea9qz8=",

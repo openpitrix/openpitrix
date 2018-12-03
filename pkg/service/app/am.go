@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/repoiface"
 	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
@@ -18,7 +19,14 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.CreateAppRequest:
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllDeveloperRoles).
-			Required("repo_id").
+			Required("name", "version_package", "version_type").
+			StringChosen("version_type", repoiface.SupportedPackageType).
+			Exec()
+	case *pb.ValidatePackageRequest:
+		return manager.NewChecker(ctx, r).
+			Role(constants.AllDeveloperRoles).
+			Required("version_package", "version_type").
+			StringChosen("version_type", repoiface.SupportedPackageType).
 			Exec()
 	case *pb.ModifyAppRequest:
 		return manager.NewChecker(ctx, r).
@@ -33,7 +41,8 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.CreateAppVersionRequest:
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllDeveloperRoles).
-			Required("app_id", "repo_id").
+			Required("app_id", "package", "type").
+			StringChosen("type", repoiface.SupportedPackageType).
 			Exec()
 	case *pb.ModifyAppVersionRequest:
 		return manager.NewChecker(ctx, r).
@@ -115,16 +124,6 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 			r.Owner = []string{sender.UserId}
 		} else {
 			r.Status = []string{constants.StatusActive}
-		}
-		return r
-	case *pb.DeleteAppVersionRequest:
-		if !sender.IsGlobalAdmin() {
-			r.DirectDelete = false
-		}
-		return r
-	case *pb.DeleteAppsRequest:
-		if !sender.IsGlobalAdmin() {
-			r.DirectDelete = false
 		}
 		return r
 	}

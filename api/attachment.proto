@@ -1,0 +1,90 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "types.proto";
+
+message GetAttachmentsRequest {
+	repeated string attachment_id = 1;
+	repeated string filename = 2;
+	bool ignore_content = 3;
+}
+message GetAttachmentsResponse {
+	map<string, Attachment> attachments = 1; // attachment_id => Attachment
+}
+message Attachment {
+	string attachment_id = 1;
+	map<string, bytes> attachment_content = 2; // filename => content
+	google.protobuf.Timestamp create_time = 3;
+}
+message CreateAttachmentRequest {
+	map<string, bytes> attachment_content = 1; // filename => content
+}
+message CreateAttachmentResponse {
+	string attachment_id = 1;
+	repeated string filename = 2;
+}
+message AppendAttachmentRequest {
+	string attachment_id = 1;
+	map<string, bytes> attachment_content = 2; // filename => content
+}
+message AppendAttachmentResponse {
+	string attachment_id = 1;
+	repeated string filename = 2;
+}
+message ReplaceAttachmentRequest {
+	string attachment_id = 1;
+	map<string, bytes> attachment_content = 2; // filename => content
+}
+message ReplaceAttachmentResponse {
+	string attachment_id = 1;
+	repeated string filename = 2;
+}
+message DeleteAttachmentsRequest {
+	repeated string attachment_id = 1;
+	repeated string filename = 2;
+}
+message DeleteAttachmentsResponse {
+	repeated string attachment_id = 1;
+	repeated string filename = 2;
+}
+
+// internal service
+service AttachmentManager {
+	rpc CreateAttachment(CreateAttachmentRequest) returns (CreateAttachmentResponse);
+	rpc AppendAttachment(AppendAttachmentRequest) returns (AppendAttachmentResponse);
+	rpc ReplaceAttachment(ReplaceAttachmentRequest) returns (ReplaceAttachmentResponse);
+	rpc GetAttachments(GetAttachmentsRequest) returns (GetAttachmentsResponse);
+	rpc DeleteAttachments(DeleteAttachmentsRequest) returns (DeleteAttachmentsResponse);
+}
+
+
+message GetAttachmentRequest {
+	string attachment_id = 1;
+	string filename = 2;
+}
+message GetAttachmentResponse {
+	bytes content = 1;
+	string etag = 2;
+}
+// public service
+service AttachmentService {
+	rpc GetAttachment(GetAttachmentRequest) returns (GetAttachmentResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "get attachment"
+		};
+		option (google.api.http) = {
+			get: "/v1/attachments/{attachment_id=*}/{filename=*}"
+		};
+	};
+}

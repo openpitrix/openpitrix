@@ -5,16 +5,19 @@
 package app
 
 import (
+	"bytes"
 	"context"
 
 	clientutil "openpitrix.io/openpitrix/pkg/client"
+	"openpitrix.io/openpitrix/pkg/client/attachment"
 	repoclient "openpitrix.io/openpitrix/pkg/client/repo"
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/repoiface"
+	"openpitrix.io/openpitrix/pkg/util/gziputil"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 type versionProxy struct {
@@ -27,10 +30,6 @@ func newVersionProxy(version *models.AppVersion) *versionProxy {
 	vp := &versionProxy{}
 	vp.version = version
 	return vp
-}
-
-func (vp *versionProxy) GetVersion(ctx context.Context) (*models.AppVersion, error) {
-	return vp.version, nil
 }
 
 func (vp *versionProxy) GetApp(ctx context.Context) (*models.App, error) {
@@ -72,12 +71,58 @@ func (vp *versionProxy) GetRepo(ctx context.Context) (*pb.Repo, error) {
 	return vp.repo, nil
 }
 
-func (vp *versionProxy) GetPackageFile(ctx context.Context) ([]byte, error) {
-	rreader, err := vp.GetRepoReader(ctx)
+func (vp *versionProxy) GetPackageFile(ctx context.Context, includeFiles ...string) (map[string][]byte, error) {
+	app, err := vp.GetApp(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return rreader.ReadFile(ctx, vp.version.PackageName)
+	if app.RepoId == "" {
+		// get from attachment manager
+		attachmentId := vp.version.PackageName
+		attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
+		if err != nil {
+			logger.Error(ctx, "Failed to connect to attachment manager: %+v", err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		getAttachmentRes, err := attachmentManagerClient.GetAttachments(ctx, &pb.GetAttachmentsRequest{
+			AttachmentId: []string{attachmentId},
+		})
+		if err != nil {
+			logger.Error(ctx, "failed to get attachment of [%s]: %+v", attachmentId, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		att, ok := getAttachmentRes.Attachments[attachmentId]
+		if !ok {
+			logger.Error(ctx, "failed to get attachment of [%s]", attachmentId)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		if len(includeFiles) == 0 {
+			return att.AttachmentContent, nil
+		}
+		var files = make(map[string][]byte)
+		for name, content := range att.AttachmentContent {
+			if stringutil.StringIn(name, includeFiles) {
+				files[name] = content
+			}
+		}
+		return files, err
+	}
+	rreader, err := vp.GetRepoReader(ctx)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, vp.version.VersionId)
+	}
+	content, err := rreader.ReadFile(ctx, vp.version.PackageName)
+	if err != nil {
+		logger.Error(ctx, "Failed to read [%s] package, error: %+v", vp.version.VersionId, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, vp.version.VersionId)
+	}
+
+	archiveFiles, err := gziputil.LoadArchive(bytes.NewReader(content), includeFiles...)
+	if err != nil {
+		logger.Error(ctx, "Failed to load [%s] package, error: %+v", vp.version.VersionId, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourceFailed, vp.version.VersionId)
+	}
+	return archiveFiles, err
 }
 
 func (vp *versionProxy) GetRepoReader(ctx context.Context) (*repoiface.Reader, error) {
@@ -86,119 +131,4 @@ func (vp *versionProxy) GetRepoReader(ctx context.Context) (*repoiface.Reader, e
 		return nil, err
 	}
 	return repoiface.NewReader(ctx, repo)
-}
-
-func (vp *versionProxy) AddPackageFile(ctx context.Context, newPackage []byte, syncAppName bool, replacePackage bool) error {
-	rreader, err := vp.GetRepoReader(ctx)
-	if err != nil {
-		return err
-	}
-	app, err := vp.GetApp(ctx)
-	if err != nil {
-		return err
-	}
-	appId := vp.version.AppId
-	versionId := vp.version.VersionId
-
-	pkgVersion, err := rreader.LoadPackage(ctx, newPackage)
-	if err != nil {
-		logger.Error(ctx, "Failed to load package, error: %+v", err)
-		return gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorLoadPackageFailed, err.Error())
-	}
-
-	appVersions, err := rreader.GetAppVersions(ctx)
-	if err != nil {
-		return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotAccessRepo)
-	}
-
-	appName := pkgVersion.GetName()
-	version := pkgVersion.GetVersion()
-	if app.Name != appName ||
-		app.ChartName != appName {
-		if !syncAppName {
-			// cannot change app name
-			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorCannotChangeAppName)
-		} else {
-			// check app name in index.yaml
-			if _, ok := appVersions[appName]; ok {
-				return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorAppNameExists, appName)
-			}
-
-			err = updateApp(ctx, appId, map[string]interface{}{
-				constants.ColumnName:      appName,
-				constants.ColumnChartName: appName,
-			})
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	if !replacePackage || version != vp.version.GetSemver() {
-		if versionMap, ok := appVersions[appName]; ok {
-			if appVersion, ok := versionMap[version]; ok {
-				return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorAppVersionExists, version, appVersion)
-			}
-		}
-	}
-
-	err = updateVersion(ctx, versionId, map[string]interface{}{
-		constants.ColumnName:        pkgVersion.GetVersionName(),
-		constants.ColumnDescription: pkgVersion.GetDescription(),
-		constants.ColumnPackageName: pkgVersion.GetPackageName(),
-		constants.ColumnHome:        pkgVersion.GetHome(),
-		constants.ColumnIcon:        pkgVersion.GetIcon(),
-		constants.ColumnScreenshots: pkgVersion.GetScreenshots(),
-		constants.ColumnSources:     pkgVersion.GetSources(),
-		constants.ColumnKeywords:    pkgVersion.GetKeywords(),
-	})
-	if err != nil {
-		return err
-	}
-
-	err = resortAppVersions(ctx, appId)
-	if err != nil {
-		return err
-	}
-
-	if replacePackage {
-		err = rreader.DeletePackage(ctx, appName, vp.version.GetSemver())
-		if err != nil {
-			logger.Error(ctx, "Failed to delete [%s] old package, error: %+v", vp.version.VersionId, err)
-			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
-		}
-	}
-
-	err = rreader.CheckWrite(ctx)
-	if err != nil {
-		return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotWriteRepo, vp.repo.RepoId)
-	}
-	err = rreader.WriteFile(ctx, pkgVersion.GetPackageName(), newPackage)
-	if err != nil {
-		logger.Error(ctx, "Failed to write [%s] package, error: %+v", vp.version.VersionId, err)
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourceFailed, vp.version.VersionId)
-	}
-	err = rreader.AddPackage(ctx, newPackage)
-	if err != nil {
-		logger.Error(ctx, "Failed to add version [%s] into index.yaml, error: %+v", vp.version.VersionId, err)
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourceFailed, vp.version.VersionId)
-	}
-	return nil
-}
-
-func (vp *versionProxy) DeletePackageFile(ctx context.Context) error {
-	rreader, err := vp.GetRepoReader(ctx)
-	if err != nil {
-		return err
-	}
-	app, err := vp.GetApp(ctx)
-	if err != nil {
-		return err
-	}
-	err = rreader.DeletePackage(ctx, app.ChartName, vp.version.GetSemver())
-	if err != nil {
-		logger.Error(ctx, "Failed to delete version [%s] from repo, error: %+v", vp.version.VersionId, err)
-		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, vp.version.VersionId)
-	}
-	return nil
 }

@@ -16,8 +16,14 @@ import (
 // swagger:model openpitrixApp
 type OpenpitrixApp struct {
 
+	// active
+	Active bool `json:"active,omitempty"`
+
 	// app id
 	AppID string `json:"app_id,omitempty"`
+
+	// app version types
+	AppVersionTypes string `json:"app_version_types,omitempty"`
 
 	// category set
 	CategorySet OpenpitrixAppCategorySet `json:"category_set"`

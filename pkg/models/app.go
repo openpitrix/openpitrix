@@ -20,6 +20,7 @@ func NewAppId() string {
 
 type App struct {
 	AppId       string
+	Active      bool
 	Name        string
 	RepoId      string
 	Description string
@@ -40,23 +41,22 @@ type App struct {
 
 var AppColumns = db.GetColumnsFromStruct(&App{})
 
-func NewApp(name, repoId, description, owner, chartName string) *App {
+func NewApp(name, owner string) *App {
 	return &App{
-		AppId:       NewAppId(),
-		Name:        name,
-		RepoId:      repoId,
-		Description: description,
-		Status:      constants.StatusDraft,
-		Owner:       owner,
-		ChartName:   chartName,
-		CreateTime:  time.Now(),
-		StatusTime:  time.Now(),
+		AppId:      NewAppId(),
+		Active:     false,
+		Name:       name,
+		Status:     constants.StatusDraft,
+		Owner:      owner,
+		CreateTime: time.Now(),
+		StatusTime: time.Now(),
 	}
 }
 
 func AppToPb(app *App) *pb.App {
 	pbApp := pb.App{}
 	pbApp.AppId = pbutil.ToProtoString(app.AppId)
+	pbApp.Active = pbutil.ToProtoBool(app.Active)
 	pbApp.Name = pbutil.ToProtoString(app.Name)
 	pbApp.RepoId = pbutil.ToProtoString(app.RepoId)
 	pbApp.Description = pbutil.ToProtoString(app.Description)

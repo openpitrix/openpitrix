@@ -77,7 +77,7 @@ func (h HelmIndexWrapper) GetEntries() map[string]VersionInterfaces {
 		var versions VersionInterfaces
 		sort.Sort(chartVersions)
 		for _, v := range chartVersions {
-			versions = append(versions, HelmVersionWrapper{v})
+			versions = append(versions, HelmVersionWrapper{ChartVersion: v})
 		}
 		entries[chartName] = versions
 	}
