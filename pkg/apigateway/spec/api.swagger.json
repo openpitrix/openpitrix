@@ -3922,7 +3922,7 @@
         ]
       },
       "post": {
-        "summary": "ModifyVendorVerifyInfo",
+        "summary": "SubmitVendorVerifyInfo",
         "operationId": "SubmitVendorVerifyInfo",
         "responses": {
           "200": {

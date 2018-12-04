@@ -25,7 +25,7 @@ const (
 	MarketManagerHost = prefix + "market-manager"
 
 	AttachmentManagerHost = prefix + "attachment-manager"
-	VendorManagerHost   = prefix + "vendor-manager"
+	VendorManagerHost     = prefix + "vendor-manager"
 )
 
 const (

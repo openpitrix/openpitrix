@@ -86,7 +86,7 @@ const (
 	ColumnActive = "active"
 
 	ColumnOperator = "operator"
-	
+
 	ColumnCompanyName    = "company_name"
 	ColumnCompanyCode    = "company_code"
 	ColumnCompanyProfile = "company_profile"
@@ -167,7 +167,7 @@ var IndexedColumns = map[string][]string{
 	},
 	TableAppVersionAudit: {
 		ColumnVersionId, ColumnAppId, ColumnStatus, ColumnOperator, ColumnRole,
-	},	
+	},
 	TableVendor: {
 		ColumnUserId, ColumnStatus,
 	},

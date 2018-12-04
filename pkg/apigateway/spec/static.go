@@ -3931,7 +3931,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "ModifyVendorVerifyInfo",
+        "summary": "SubmitVendorVerifyInfo",
         "operationId": "SubmitVendorVerifyInfo",
         "responses": {
           "200": {
