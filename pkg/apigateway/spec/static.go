@@ -3833,6 +3833,233 @@ var Files = map[string]string{
           "TaskManager"
         ]
       }
+    },
+    "/v1/vendor_verify_infos": {
+      "get": {
+        "summary": "DescribeVendorVerifyInfos",
+        "operationId": "DescribeVendorVerifyInfos",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeVendorVerifyInfosResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "VendorManager"
+        ]
+      }
+    },
+    "/v1/vendor_verify_infos/{user_id}": {
+      "get": {
+        "summary": "GetVendorVerifyInfo",
+        "operationId": "GetVendorVerifyInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixVendorVerifyInfo"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "VendorManager"
+        ]
+      },
+      "post": {
+        "summary": "ModifyVendorVerifyInfo",
+        "operationId": "SubmitVendorVerifyInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "VendorManager"
+        ]
+      }
+    },
+    "/v1/vendor_verify_infos/{user_id}/action:pass": {
+      "post": {
+        "summary": "PassVendorVerifyInfo",
+        "operationId": "PassVendorVerifyInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassVendorVerifyInfoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassVendorVerifyInfoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "VendorManager"
+        ]
+      }
+    },
+    "/v1/vendor_verify_infos/{user_id}/action:reject": {
+      "post": {
+        "summary": "RejectVendorVerifyInfo",
+        "operationId": "RejectVendorVerifyInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectVendorVerifyInfoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectVendorVerifyInfoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "VendorManager"
+        ]
+      }
+    },
+    "/v1/vendor_verify_infos/{user_id}/attachments": {
+      "post": {
+        "summary": "UploadVendorVerifyAttachment",
+        "operationId": "UploadVendorVerifyAttachment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixUploadVendorVerifyAttachmentResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixUploadVendorVerifyAttachmentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "VendorManager"
+        ]
+      }
     }
   },
   "definitions": {
@@ -7230,6 +7457,184 @@ var Files = map[string]string{
         "failure_allowed": {
           "type": "boolean",
           "format": "boolean"
+        }
+      }
+    },
+    "openpitrixDescribeVendorVerifyInfosResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "vendor_verify_info_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixVendorVerifyInfo"
+          }
+        }
+      }
+    },
+    "openpitrixPassVendorVerifyInfoRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixPassVendorVerifyInfoResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixRejectVendorVerifyInfoRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "reject_msg": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixRejectVendorVerifyInfoResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixSubmitVendorVerifyInfoRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "company_website": {
+          "type": "string"
+        },
+        "company_profile": {
+          "type": "string"
+        },
+        "authorizer_name": {
+          "type": "string"
+        },
+        "authorizer_email": {
+          "type": "string"
+        },
+        "authorizer_phone": {
+          "type": "string"
+        },
+        "authorizer_position": {
+          "type": "string"
+        },
+        "bank_name": {
+          "type": "string"
+        },
+        "bank_account_name": {
+          "type": "string"
+        },
+        "bank_account_number": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixSubmitVendorVerifyInfoResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixUploadVendorVerifyAttachmentRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string",
+          "format": "byte"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixUploadVendorVerifyAttachmentResponse": {
+      "type": "object",
+      "properties": {
+        "attachment_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixVendorVerifyInfo": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "company_website": {
+          "type": "string"
+        },
+        "company_profile": {
+          "type": "string"
+        },
+        "authorizer_name": {
+          "type": "string"
+        },
+        "authorizer_email": {
+          "type": "string"
+        },
+        "authorizer_phone": {
+          "type": "string"
+        },
+        "authorizer_position": {
+          "type": "string"
+        },
+        "bank_name": {
+          "type": "string"
+        },
+        "bank_account_name": {
+          "type": "string"
+        },
+        "bank_account_number": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "reject_message": {
+          "type": "string"
+        },
+        "submit_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     }

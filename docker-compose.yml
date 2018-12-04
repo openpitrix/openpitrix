@@ -453,3 +453,35 @@ services:
     depends_on:
     - openpitrix-db
     container_name: "openpitrix-attachment-db-ctrl"
+    
+  # vendor service
+  openpitrix-vendor-manager:
+    build: .
+    image: "openpitrix"
+    command: "vendor-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-vendor-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-vendor-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=vendor
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-vendor-db-ctrl:
+    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    command: -url=jdbc:mysql://openpitrix-db/vendor -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/appvendor:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-vendor-db-ctrl"

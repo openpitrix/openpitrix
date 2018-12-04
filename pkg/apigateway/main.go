@@ -64,6 +64,7 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
 	logger.Info(nil, "Attachment service http://%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort)
+	logger.Info(nil, "Vendor service http://%s:%d", constants.VendorManagerHost, constants.VendorManagerPort)
 
 	cfg.Mysql.Disable = true
 	pi.SetGlobal(cfg)
@@ -241,6 +242,10 @@ func (s *Server) mainHandler() http.Handler {
 	}, {
 		pb.RegisterAttachmentServiceHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort),
+	}, {
+		pb.RegisterVendorManagerHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.VendorManagerHost, constants.VendorManagerPort),
+		//fmt.Sprintf("%s:%d", "localhost", constants.VendorManagerPort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {
