@@ -99,17 +99,23 @@ func (p *KubeHandler) CheckApiVersionsSupported(apiVersions []string) error {
 		return nil
 	}
 
-	client, _, err := p.initKubeClient()
+	_, config, err := p.initKubeClient()
 	if err != nil {
 		return err
 	}
-	apiGroupResources, err := discovery.GetAPIGroupResources(client)
+
+	discoveryClient, err := discovery.NewDiscoveryClientForConfig(config)
+	if err != nil {
+		return err
+	}
+
+	apiGroupList, err := discoveryClient.ServerGroups()
 	if err != nil {
 		return err
 	}
 	var supportedVersions []string
-	for _, group := range apiGroupResources {
-		for _, version := range group.Group.Versions {
+	for _, group := range apiGroupList.Groups {
+		for _, version := range group.Versions {
 			supportedVersions = append(supportedVersions, version.GroupVersion)
 		}
 	}

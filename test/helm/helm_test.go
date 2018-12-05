@@ -26,7 +26,7 @@ var clientConfig = testutil.GetClientConfig()
 func TestHelm(t *testing.T) {
 	t.Logf("start create repo at [%s]", testTmpDir)
 
-	d := testutil.NewDocker(t, "test-helm", "lachlanevenson/k8s-helm:v2.8.2")
+	d := testutil.NewDocker(t, "test-helm", "lachlanevenson/k8s-helm:v2.11.0")
 	d.Port = testExportPort
 	d.WorkDir = testutil.TmpPath
 	d.Volume[testTmpDir] = testutil.TmpPath

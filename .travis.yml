@@ -29,8 +29,7 @@ before_install:
 - JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}';
   until kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do
   sleep 1; done
-- DESIRED_VERSION=2.9.1 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get
-  | DESIRED_VERSION=v2.9.1 bash
+- curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | DESIRED_VERSION=v2.11.0 bash
 - "./deploy/kubernetes/scripts/init-helm.sh"
 - until helm list -a; do sleep 1; done
 install:
