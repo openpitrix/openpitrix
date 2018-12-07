@@ -100,6 +100,7 @@ window.onload = function() {
       SwaggerUIBundle.plugins.DownloadUrl
     ],
     layout: "StandaloneLayout",
+    displayOperationId: true,
     validatorUrl: false,
   })
   if (location.protocol.indexOf("https") == 0) {
