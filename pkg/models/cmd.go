@@ -5,8 +5,6 @@
 package models
 
 import (
-	"fmt"
-
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
@@ -17,30 +15,63 @@ type Cmd struct {
 	Timeout int    `json:"timeout"`
 }
 
-type CmdCnodes map[string]map[string]*Cmd
+func NewCmd(data string) (*Cmd, error) {
+	cmd := &Cmd{}
+	err := jsonutil.Decode([]byte(data), cmd)
+	if err != nil {
+		logger.Error(nil, "Decode [%s] into cmd failed: %+v", data, err)
+	}
+	return cmd, err
+}
 
-func (c CmdCnodes) Format(ip, taskId string) error {
-	cnodes, exist := c[""]
-	if exist {
-		c[ip] = cnodes
-		delete(c, "")
+type CmdCnodes struct {
+	RootPath   string
+	ClusterId  string
+	CmdKey     string
+	InstanceId string
+	Cmd        *Cmd
+}
+
+/*
+{
+  	clusters: {
+		<cluster_id>: {
+			cmd: {
+				<instance_id>: <cmd>
+			}
+		}
 	}
-	cnodes, exist = c[ip]
-	if exist {
-		cmd := cnodes["cmd"]
-		cmd.Id = taskId
+}
+*/
+func (c *CmdCnodes) Format() map[string]interface{} {
+	if c.Cmd == nil {
+		return map[string]interface{}{
+			c.RootPath: map[string]interface{}{
+				c.ClusterId: map[string]interface{}{
+					c.CmdKey: map[string]interface{}{
+						c.InstanceId: "",
+					},
+				},
+			},
+		}
 	} else {
-		logger.Error(nil, "Ip [%s] not in Cnodes [%+v]", ip, c)
-		return fmt.Errorf("ip [%s] not in Cnodes [%+v]", ip, c)
+		return map[string]interface{}{
+			c.RootPath: map[string]interface{}{
+				c.ClusterId: map[string]interface{}{
+					c.CmdKey: map[string]interface{}{
+						c.InstanceId: c.Cmd,
+					},
+				},
+			},
+		}
 	}
-	return nil
 }
 
 func NewCmdCnodes(data string) (*CmdCnodes, error) {
 	cmdCnodes := new(CmdCnodes)
 	err := jsonutil.Decode([]byte(data), cmdCnodes)
 	if err != nil {
-		logger.Error(nil, "Decode [%s] into cmd failed: %+v", data, err)
+		logger.Error(nil, "Decode [%s] into cmd cnodes failed: %+v", data, err)
 	}
 	return cmdCnodes, err
 }

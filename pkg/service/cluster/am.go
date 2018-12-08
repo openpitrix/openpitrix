@@ -9,7 +9,6 @@ import (
 	"fmt"
 
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
-	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -164,7 +163,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 	return req
 }
 
-func CheckVmBasedProvider(ctx context.Context, runtime *runtimeclient.Runtime, providerInterface plugins.ProviderInterface,
+func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, providerInterface plugins.ProviderInterface,
 	clusterWrapper *models.ClusterWrapper) error {
 
 	// check pilot service

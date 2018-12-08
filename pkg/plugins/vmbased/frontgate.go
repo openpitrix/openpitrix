@@ -26,7 +26,7 @@ type Frontgate struct {
 }
 
 /*
-cat /opt/openpitrix/conf/drone.conf
+cat /opt/openpitrix/conf/frontgate.conf
 IMAGE="mysql:5.7"
 MOUNT_POINT="/data"
 FILE_NAME="frontgate.conf"

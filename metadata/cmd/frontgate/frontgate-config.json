@@ -35,7 +35,7 @@
 			"keep_stage_file": false
 		},
 		"backend_config": {
-			"type": "libconfd-backend-etcdv3",
+			"type": "libconfd-backend-metad",
 			"host": [
 				"localhost:2379"
 			],

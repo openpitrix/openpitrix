@@ -483,7 +483,7 @@ func (p *EtcdClient) DeregisterMetadata(in *pbtypes.SubTask_DeregisterMetadata) 
 	}
 
 	var keyPrefixs []string
-	for key, _ := range jsonmap.JsonMap(m).ToMapString("/") {
+	for key := range jsonmap.JsonMap(m).ToMapString("/") {
 		keyPrefixs = append(keyPrefixs, key)
 	}
 
@@ -509,7 +509,7 @@ func (p *EtcdClient) DeregisterMetadataMapping(in *pbtypes.SubTask_DeregisterMet
 	var keyPrefixs []string
 	const metadMappingPrefix = "/_metad/mapping/default"
 
-	for key, _ := range jsonmap.JsonMap(m).ToMapString("/") {
+	for key := range jsonmap.JsonMap(m).ToMapString("/") {
 		keyPrefixs = append(keyPrefixs, metadMappingPrefix+key)
 	}
 
@@ -604,7 +604,7 @@ func (p *EtcdClient) DeregisterCmd(in *pbtypes.SubTask_DeregisterCmd) error {
 	}
 
 	var keyPrefixs []string
-	for key, _ := range jsonmap.JsonMap(m).ToMapString("/") {
+	for key := range jsonmap.JsonMap(m).ToMapString("/") {
 		keyPrefixs = append(keyPrefixs, key)
 	}
 

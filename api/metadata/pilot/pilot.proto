@@ -41,6 +41,8 @@ service PilotService {
 
 	rpc RegisterMetadata (metadata.types.SubTask_RegisterMetadata) returns (metadata.types.Empty);
 	rpc DeregisterMetadata (metadata.types.SubTask_DeregisterMetadata) returns (metadata.types.Empty);
+	rpc RegisterMetadataMapping (metadata.types.SubTask_RegisterMetadata) returns (metadata.types.Empty);
+	rpc DeregisterMetadataMapping (metadata.types.SubTask_DeregisterMetadata) returns (metadata.types.Empty);
 
 	rpc RegisterCmd (metadata.types.SubTask_RegisterCmd) returns (metadata.types.Empty);
 	rpc DeregisterCmd (metadata.types.SubTask_DeregisterCmd) returns (metadata.types.Empty);

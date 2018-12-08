@@ -124,6 +124,7 @@ func (p *ConfdServer) Start(opts ...libconfd.Options) error {
 		fn(p.config)
 	}
 
+	logger.Info(nil, "Confd backend is [%s]", p.backendConfig.Type)
 	backendClient, err := libconfd.NewBackendClient(p.backendConfig)
 	if err != nil {
 		logger.Error(nil, "ConfdServer: NewBackendClient: %v", err)

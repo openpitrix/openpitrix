@@ -29,14 +29,16 @@ message SubTaskStatus {
 }
 
 enum SubTaskAction {
-	NULL               = 0;
-	StartConfd         = 1;
-	RegisterMetadata   = 2;
+	NULL = 0;
+	StartConfd = 1;
+	RegisterMetadata = 2;
 	DeregisterMetadata = 3;
-	RegisterCmd        = 4;
-	DeregisterCmd      = 5;
-	GetTaskStatus      = 6;
-	StopConfd          = 7;
+	RegisterCmd = 4;
+	DeregisterCmd = 5;
+	GetTaskStatus = 6;
+	StopConfd = 7;
+	RegisterMetadataMapping = 8;
+	DeregisterMetadataMapping = 9;
 }
 
 // ----------------------------------------------------------------------------

@@ -23,6 +23,7 @@ type FrameInterface interface {
 	DeleteClusterLayer() *models.TaskLayer
 	AddClusterNodesLayer() *models.TaskLayer
 	DeleteClusterNodesLayer() *models.TaskLayer
+	UpdateClusterEnvLayer() *models.TaskLayer
 	ResizeClusterLayer(roleResizeResources models.RoleResizeResources) *models.TaskLayer
 	AttachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
 	DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails) *models.TaskLayer
@@ -69,6 +70,7 @@ func SplitJobIntoTasks(ctx context.Context, job *models.Job, advancedParam ...st
 		// not supported yet
 		return nil, nil
 	case constants.ActionUpdateClusterEnv:
+		return frameInterface.UpdateClusterEnvLayer(), nil
 	case constants.ActionAttachKeyPairs:
 		nodeKeyPairDetails, err := models.NewNodeKeyPairDetails(job.Directive)
 		if err != nil {

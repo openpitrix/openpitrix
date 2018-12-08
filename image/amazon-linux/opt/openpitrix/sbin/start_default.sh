@@ -23,5 +23,7 @@ then
   START_CMD="drone"
 fi
 
+CONTAINER_NAME=default
+
 if ! service docker status|grep running ; then service docker start; fi
-if /usr/bin/docker ps -a | grep default; then /usr/bin/docker start -a default; else test -s /opt/openpitrix/conf/$FILE_NAME || echo $FILE_CONF > /opt/openpitrix/conf/$FILE_NAME; /usr/bin/docker run $mount -v /opt/openpitrix/:/opt/openpitrix/ -v $CMD_INFO_TOML:$CMD_INFO_TOML -v $CMD_INFO_TMPL:$CMD_INFO_TMPL -v /var/run/docker.sock:/var/run/docker.sock --name default --network host --pid host --privileged $IMAGE $START_CMD; fi
+if /usr/bin/docker ps -a -f name=${CONTAINER_NAME} | grep ${CONTAINER_NAME}; then /usr/bin/docker start -a ${CONTAINER_NAME}; else test -s /opt/openpitrix/conf/$FILE_NAME || echo $FILE_CONF > /opt/openpitrix/conf/$FILE_NAME; /usr/bin/docker run $mount -v /opt/openpitrix/:/opt/openpitrix/ -v $CMD_INFO_TOML:$CMD_INFO_TOML -v $CMD_INFO_TMPL:$CMD_INFO_TMPL -v /var/run/docker.sock:/var/run/docker.sock --name ${CONTAINER_NAME} --network host --pid host --privileged $IMAGE $START_CMD; fi

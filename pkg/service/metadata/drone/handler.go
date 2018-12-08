@@ -246,18 +246,13 @@ func (p *Server) StartConfd(ctx context.Context, arg *pbtypes.Empty) (*pbtypes.E
 	err := p.confd.Start(func(opt *libconfd.Config) {
 		opt.FuncMap = yunify_confdfunc.MakeCustomFuncMap()
 		opt.HookAbsKeyAdjuster = func(absKey string) (realKey string) {
-			if absKey == "/"+cfg.ConfdSelfHost || strings.HasPrefix(absKey, "/"+cfg.ConfdSelfHost+"/") {
+			if absKey == "/self" {
 				return absKey
 			}
-
-			if absKey == "/self" {
-				return "/" + cfg.ConfdSelfHost
+			if !strings.HasPrefix(absKey, "/self/") {
+				return "/self" + absKey
 			}
-			if strings.HasPrefix(absKey, "/self/") {
-				return "/" + cfg.ConfdSelfHost + absKey[len("/self/")-1:]
-			} else {
-				return "/" + cfg.ConfdSelfHost + absKey
-			}
+			return absKey
 		}
 		opt.HookOnCheckCmdDone = func(trName, cmd string, err error) {
 			if err != nil {
