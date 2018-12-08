@@ -20,6 +20,11 @@ func NewRuntimeId() string {
 	return idutil.GetUuid(RuntimeIdPrefix)
 }
 
+type RuntimeDetails struct {
+	Runtime
+	Credential string
+}
+
 type Runtime struct {
 	RuntimeId           string
 	Name                string

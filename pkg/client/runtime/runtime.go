@@ -18,17 +18,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-type Runtime struct {
-	models.Runtime
-	Credential string
-}
-
-func NewRuntime(ctx context.Context, runtimeId string) (*Runtime, error) {
+func NewRuntime(ctx context.Context, runtimeId string) (*models.RuntimeDetails, error) {
 	runtime, err := getRuntime(ctx, runtimeId)
 	if err != nil {
 		return nil, err
 	}
-	result := &Runtime{
+	result := &models.RuntimeDetails{
 		Runtime:    *models.PbToRuntime(runtime.Runtime),
 		Credential: runtime.GetRuntimeCredential().GetValue(),
 	}

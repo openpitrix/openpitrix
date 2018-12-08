@@ -311,7 +311,7 @@ func (p *ProviderHandler) StartInstances(task *models.Task) error {
 
 	status := qcservice.StringValue(describeOutput.InstanceSet[0].Status)
 
-	if status == constants.StatusActive {
+	if status == constants.StatusRunning {
 		logger.Warn(p.Ctx, "Instance [%s] has already been [%s], do nothing", instance.InstanceId, status)
 		return nil
 	}
@@ -651,6 +651,33 @@ func (p *ProviderHandler) AttachVolumes(task *models.Task) error {
 	if err != nil {
 		logger.Error(p.Ctx, "Init %s volume api service failed: %+v", MyProvider, err)
 		return err
+	}
+
+	describeOutput, err := volumeService.DescribeVolumes(
+		&qcservice.DescribeVolumesInput{
+			Volumes: qcservice.StringSlice([]string{volume.VolumeId}),
+		},
+	)
+	if err != nil {
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed: %+v", MyProvider, err)
+		return err
+	}
+
+	describeRetCode := qcservice.IntValue(describeOutput.RetCode)
+	if describeRetCode != 0 {
+		message := qcservice.StringValue(describeOutput.Message)
+		logger.Error(p.Ctx, "Send DescribeVolumes to %s failed with return code [%d], message [%s]",
+			MyProvider, describeRetCode, message)
+		return fmt.Errorf("send DescribeVolumes to %s failed: %s", MyProvider, message)
+	}
+	if len(describeOutput.VolumeSet) == 0 {
+		logger.Error(p.Ctx, "Volume with id [%s] not exist", volume.VolumeId)
+		return fmt.Errorf("volume with id [%s] not exist", volume.VolumeId)
+	}
+
+	if describeOutput.VolumeSet[0].Instance != nil && qcservice.StringValue(describeOutput.VolumeSet[0].Instance.InstanceID) == volume.InstanceId {
+		logger.Warn(p.Ctx, "Volume [%s] has already been attached to instance [%s], do nothing", volume.VolumeId, volume.InstanceId)
+		return nil
 	}
 
 	output, err := volumeService.AttachVolumes(

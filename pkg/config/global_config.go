@@ -38,6 +38,7 @@ type ClusterServiceConfig struct {
 	FrontgateConf       string   `json:"frontgate_conf"`
 	FrontgateAutoDelete bool     `json:"frontgate_auto_delete"`
 	FrontgateAutoUpdate bool     `json:"frontgate_auto_update"`
+	RegistryMirror      string   `json:"registry_mirror"`
 }
 
 type PilotServiceConfig struct {

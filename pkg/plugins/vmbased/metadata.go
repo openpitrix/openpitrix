@@ -17,33 +17,30 @@ import (
 
 type Metadata struct {
 	ClusterWrapper *models.ClusterWrapper
-	Ctx            context.Context
+	RuntimeDetails *models.RuntimeDetails
 }
 
 /*
 Compose cluster info into the following format,
 in order to register cluster to configuration management service.
 {
-  "<cluster_id>": {
-	 "hosts": {
-		<The data from the function GetHostsCnodes below>
-	 },
-	 "cluster": {
-		<The data from the function GetClusterMetadataCnodes below>
-	 },
-	 "env": { # optional
-		<The data from the function GetEnvCnodes below>
-	 }
-   },
-   "self": {
-	 "192.168.100.10": {
-		<The data from the function GetClusterSelfCnodes below>
-	 }
-   }
+	"clusters": {
+		"<cluster_id>": {
+	 		"hosts": {
+				<The data from the function GetHostsCnodes>
+	 		},
+	 		"cluster": {
+				<The data from the function GetClusterMetadataCnodes>
+	 		},
+	 		"env": { # optional
+				<The data from the function GetEnvCnodes>
+	 		}
+   		}
+	}
 }
 */
-func (m *Metadata) GetClusterCnodes() map[string]interface{} {
-	logger.Info(m.Ctx, "Composing cluster %s", m.ClusterWrapper.Cluster.ClusterId)
+func (m *Metadata) GetClusterCnodes(ctx context.Context) map[string]interface{} {
+	logger.Info(ctx, "Composing cluster %s", m.ClusterWrapper.Cluster.ClusterId)
 
 	data := make(map[string]interface{})
 
@@ -52,7 +49,7 @@ func (m *Metadata) GetClusterCnodes() map[string]interface{} {
 		nodeIds = append(nodeIds, nodeId)
 	}
 	// hosts
-	hosts := m.GetHostsCnodes(nodeIds)
+	hosts := m.GetHostsCnodes(ctx, nodeIds)
 	data[RegisterNodeHosts] = hosts
 
 	// cluster
@@ -66,7 +63,7 @@ func (m *Metadata) GetClusterCnodes() map[string]interface{} {
 	}
 
 	// env
-	env := m.GetEnvCnodes()
+	env := m.GetEnvCnodes(ctx)
 	if len(env) > 0 {
 		data[RegisterNodeEnv] = env
 	}
@@ -76,18 +73,63 @@ func (m *Metadata) GetClusterCnodes() map[string]interface{} {
 			m.ClusterWrapper.Cluster.ClusterId: data,
 		},
 	}
-	logger.Info(m.Ctx, "Composed cluster %s cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
+	logger.Info(ctx, "Composed cluster %s cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
 
 	return cnodes
 }
 
-func (m *Metadata) GetClusterNodeCnodes(nodeIds []string) map[string]interface{} {
-	logger.Info(m.Ctx, "Composing cluster %s nodes", m.ClusterWrapper.Cluster.ClusterId)
+/*
+{
+	"self": {
+		<The data from the function GetMappingCnodes below>
+   	}
+}
+*/
+func (m *Metadata) GetClusterMappingCnodes(ctx context.Context) map[string]interface{} {
+	logger.Info(ctx, "Composing cluster %s mapping", m.ClusterWrapper.Cluster.ClusterId)
+	var nodeIds []string
+	for nodeId := range m.ClusterWrapper.ClusterNodesWithKeyPairs {
+		nodeIds = append(nodeIds, nodeId)
+	}
+	mapping := m.GetMappingCnodes(nodeIds)
+	logger.Info(ctx, "Composed cluster %s mapping successful: %+v", m.ClusterWrapper.Cluster.ClusterId, mapping)
+
+	return mapping
+}
+
+/*
+{
+	"self": {
+		<The data from the function GetMappingCnodes below>
+   	}
+}
+*/
+func (m *Metadata) GetClusterNodesMappingCnodes(ctx context.Context, nodeIds []string) map[string]interface{} {
+	logger.Info(ctx, "Composing cluster %s mapping", m.ClusterWrapper.Cluster.ClusterId)
+	mapping := m.GetMappingCnodes(nodeIds)
+	logger.Info(ctx, "Composed cluster %s mapping successful: %+v", m.ClusterWrapper.Cluster.ClusterId, mapping)
+
+	return mapping
+}
+
+/*
+{
+	"clusters": {
+		"<cluster_id>": {
+	 		"hosts": {
+				<The data from the function GetHostsCnodes>
+	 		}
+   		}
+	}
+}
+*/
+func (m *Metadata) GetClusterNodesCnodes(ctx context.Context, nodeIds []string) map[string]interface{} {
+	logger.Info(ctx, "Composing cluster %s nodes", m.ClusterWrapper.Cluster.ClusterId)
 
 	data := make(map[string]interface{})
 
 	// hosts
-	hosts := m.GetHostsCnodes(nodeIds)
+	hosts := m.GetHostsCnodes(ctx, nodeIds)
 	data[RegisterNodeHosts] = hosts
 
 	cnodes := map[string]interface{}{
@@ -95,13 +137,24 @@ func (m *Metadata) GetClusterNodeCnodes(nodeIds []string) map[string]interface{}
 			m.ClusterWrapper.Cluster.ClusterId: data,
 		},
 	}
-	logger.Info(m.Ctx, "Composed cluster %s nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
+	logger.Info(ctx, "Composed cluster %s nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
 
 	return cnodes
 }
 
-func (m *Metadata) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]interface{} {
-	logger.Info(m.Ctx, "Composing cluster %s empty nodes", m.ClusterWrapper.Cluster.ClusterId)
+/*
+{
+	"clusters": {
+		"<cluster_id>": {
+	 		"hosts": {
+				<The data from the function GetEmptyHostsCnodes>
+	 		}
+   		}
+	}
+}
+*/
+func (m *Metadata) GetEmptyClusterNodeCnodes(ctx context.Context, nodeIds []string) map[string]interface{} {
+	logger.Info(ctx, "Composing cluster %s empty nodes", m.ClusterWrapper.Cluster.ClusterId)
 
 	data := make(map[string]interface{})
 
@@ -114,39 +167,30 @@ func (m *Metadata) GetEmptyClusterNodeCnodes(nodeIds []string) map[string]interf
 			m.ClusterWrapper.Cluster.ClusterId: data,
 		},
 	}
-	logger.Info(m.Ctx, "Composed cluster %s empty nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
+	logger.Info(ctx, "Composed cluster %s empty nodes cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
 
 	return cnodes
 }
 
 /*
 {
-  "master": {
-	 "i-abcdefg": {
-		"ip":<ip>,
-		"server_id":<server id>,
-		"pub_key": <pub_key>
-	  },
-	  "i-xuzabcd": {
-		 "ip":<ip>,
-		 "server_id":<server id>,
-		 "pub_key": <pub_key>
-	  }
-  }
+    "<role>": {
+    	"<instance_id>": {
+			"ip":<ip>,
+			"server_id":<server_id>,
+			"pub_key": <pub_key>
+	  	}
+  	}
 }
 or (without role)
 {
-  "i-abcdefg": {
-	 "ip":<ip>,
-	 "server_id":<server id>
-  },
-  "i-xuzabcd": {
-	 "ip":<ip>,
-	 "server_id":<server id>
-  }
+  	"<instance_id>": {
+		"ip":<ip>,
+	 	"server_id":<server_id>
+  	}
 }
 */
-func (m *Metadata) GetHostsCnodes(nodeIds []string) map[string]interface{} {
+func (m *Metadata) GetHostsCnodes(ctx context.Context, nodeIds []string) map[string]interface{} {
 	hosts := make(map[string]interface{})
 	for _, nodeId := range nodeIds {
 		clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
@@ -157,13 +201,13 @@ func (m *Metadata) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 		}
 		clusterRole, exist := m.ClusterWrapper.ClusterRoles[role]
 		if !exist {
-			logger.Error(m.Ctx, "No such role [%s] in cluster role [%s]. ",
+			logger.Error(ctx, "No such role [%s] in cluster role [%s]. ",
 				role, m.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
 		clusterCommon, exist := m.ClusterWrapper.ClusterCommons[role]
 		if !exist {
-			logger.Error(m.Ctx, "No such role [%s] in cluster common [%s]. ",
+			logger.Error(ctx, "No such role [%s] in cluster common [%s]. ",
 				role, m.ClusterWrapper.Cluster.ClusterId)
 			return nil
 		}
@@ -198,7 +242,7 @@ func (m *Metadata) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 				case map[string]interface{}:
 					v[instanceId] = host
 				default:
-					logger.Error(m.Ctx, "Cnodes [%s] should be a map. ", clusterNode.NodeId)
+					logger.Error(ctx, "Cnodes [%s] should be a map. ", clusterNode.NodeId)
 					return nil
 				}
 			} else {
@@ -209,6 +253,17 @@ func (m *Metadata) GetHostsCnodes(nodeIds []string) map[string]interface{} {
 	return hosts
 }
 
+/*
+{
+    "<role>": {
+    	"<instance_id>": ""
+  	}
+}
+or (without role)
+{
+  	"<instance_id>": ""
+}
+*/
 func (m *Metadata) GetEmptyHostsCnodes(nodeIds []string) map[string]interface{} {
 	hosts := make(map[string]interface{})
 	for _, nodeId := range nodeIds {
@@ -227,36 +282,49 @@ func (m *Metadata) GetEmptyHostsCnodes(nodeIds []string) map[string]interface{} 
 	return hosts
 }
 
+/*
+{
+	"cluster_id":  <cluster_id>,
+	"app_id":      <app_id>,
+	"subnet":      <subnet>,
+	"user_id":     <user_id>,
+	"global_uuid": <global_uuid>,
+	"zone":        <zone>,
+	"provider":    <provider>,
+	"runtime_url": <runtime_url>,
+}
+*/
 func (m *Metadata) GetClusterMetadataCnodes() map[string]interface{} {
 	clusterMetadata := map[string]interface{}{
 		"cluster_id":  m.ClusterWrapper.Cluster.ClusterId,
 		"app_id":      m.ClusterWrapper.Cluster.AppId,
 		"subnet":      m.ClusterWrapper.Cluster.SubnetId,
 		"user_id":     m.ClusterWrapper.Cluster.Owner,
-		"runtime_id":  m.ClusterWrapper.Cluster.RuntimeId,
 		"global_uuid": m.ClusterWrapper.Cluster.GlobalUuid,
+		"zone":        m.RuntimeDetails.Zone,
+		"provider":    m.RuntimeDetails.Provider,
+		"runtime_url": m.RuntimeDetails.RuntimeUrl,
 	}
-	// TODO: api_server in runtime is needed
 
 	return clusterMetadata
 }
 
 /*
 {
-  "master": {
-	 "p1": "v1",
-	 "p2": "v2"
-  }
+  	"<role>": {
+	 	"p1": "v1",
+	 	"p2": "v2"
+  	}
 }
 
 or (without role)
 
 {
-  "p1": "v1",
-  "p2": "v2"
+  	"p1": "v1",
+  	"p2": "v2"
 }
 */
-func (m *Metadata) GetEnvCnodes() map[string]interface{} {
+func (m *Metadata) GetEnvCnodes(ctx context.Context) map[string]interface{} {
 	result := make(map[string]interface{})
 	for _, clusterRole := range m.ClusterWrapper.ClusterRoles {
 		env := clusterRole.Env
@@ -264,7 +332,7 @@ func (m *Metadata) GetEnvCnodes() map[string]interface{} {
 			envMap := make(map[string]interface{})
 			err := jsonutil.Decode([]byte(env), &envMap)
 			if err != nil {
-				logger.Error(m.Ctx, "Unmarshal cluster [%s] env failed:%+v", m.ClusterWrapper.Cluster.ClusterId, err)
+				logger.Error(ctx, "Unmarshal cluster [%s] env failed:%+v", m.ClusterWrapper.Cluster.ClusterId, err)
 				return nil
 			}
 			if clusterRole.Role == "" {
@@ -277,8 +345,19 @@ func (m *Metadata) GetEnvCnodes() map[string]interface{} {
 	return result
 }
 
-func (m *Metadata) GetScalingCnodes(nodeIds []string, path string) map[string]interface{} {
-	hosts := m.GetHostsCnodes(nodeIds)
+/*
+{
+  	clusters: {
+		<cluster_id>: {
+			<RegisterNodeAdding/RegisterNodeDeleting>: {
+				<The data from the function GetHostsCnodes>
+			}
+		}
+	}
+}
+*/
+func (m *Metadata) GetScalingCnodes(ctx context.Context, nodeIds []string, path string) map[string]interface{} {
+	hosts := m.GetHostsCnodes(ctx, nodeIds)
 	if len(hosts) == 0 {
 		return nil
 	}
@@ -291,18 +370,122 @@ func (m *Metadata) GetScalingCnodes(nodeIds []string, path string) map[string]in
 	}
 }
 
-func (m *Metadata) GetCmdCnodes(nodeId, cmd string) map[string]interface{} {
+func (m *Metadata) GetCmdCnodes(nodeId string, cmd *models.Cmd) *models.CmdCnodes {
 	clusterId := m.ClusterWrapper.Cluster.ClusterId
 	clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
 	instanceId := clusterNode.InstanceId
 
+	cmdCnodes := &models.CmdCnodes{
+		RootPath:   RegisterClustersRootPath,
+		ClusterId:  clusterId,
+		CmdKey:     RegisterNodeCmd,
+		InstanceId: instanceId,
+		Cmd:        cmd,
+	}
+	return cmdCnodes
+}
+
+/*
+{
+  	clusters: {
+		<cluster_id>: ""
+	}
+}
+*/
+func (m *Metadata) GetEmptyClusterCnodes() map[string]interface{} {
 	return map[string]interface{}{
-		fmt.Sprintf("/%s/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeCmd, instanceId): cmd,
+		RegisterClustersRootPath: map[string]interface{}{
+			m.ClusterWrapper.Cluster.ClusterId: "",
+		},
 	}
 }
 
-func (m *Metadata) GetEmptyClusterCnodes() map[string]interface{} {
-	return map[string]interface{}{
-		fmt.Sprintf("/%s/%s", RegisterClustersRootPath, m.ClusterWrapper.Cluster.ClusterId): "",
+/*
+{
+  	self: {
+    	<ip>: ""
+  	}
+}
+*/
+func (m *Metadata) GetEmptyClusterMappingCnodes() map[string]interface{} {
+	cnodes := make(map[string]interface{})
+	for _, clusterNode := range m.ClusterWrapper.ClusterNodesWithKeyPairs {
+		cnodes[clusterNode.PrivateIp] = ""
 	}
+
+	return cnodes
+}
+
+/*
+{
+  	self: {
+    	<ip>: ""
+  	}
+}
+*/
+func (m *Metadata) GetEmptyClusterNodeMappingCnodes(ctx context.Context, nodeIds []string) map[string]interface{} {
+	cnodes := make(map[string]interface{})
+	for _, nodeId := range nodeIds {
+		cnodes[m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId].PrivateIp] = ""
+	}
+	return cnodes
+}
+
+/*
+{
+	"<ip>":
+	{
+		"host":"/clusters/</cluster_id>/hosts/master/<instance_id>",
+		"hosts":"/clusters/</cluster_id>/hosts",
+		"cluster":"/clusters/</cluster_id>/cluster",
+		"env":"/clusters/</cluster_id>/env/<role>",
+		"cmd":"/clusters/<cluster_id>/cmd/<instance_id>,
+		"links":"/clusters/<cluster_id>/links"
+	}
+}
+*/
+func (m *Metadata) GetMappingCnodes(nodeIds []string) map[string]interface{} {
+	cnodes := make(map[string]interface{})
+	for _, nodeId := range nodeIds {
+		clusterNode := m.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
+		clusterId := clusterNode.ClusterId
+		instanceId := clusterNode.InstanceId
+		role := clusterNode.Role
+
+		var hostTarget, envTarget string
+		if len(role) > 0 {
+			hostTarget = fmt.Sprintf("/%s/%s/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeHosts, role, instanceId)
+			envTarget = fmt.Sprintf("/%s/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeEnv, role)
+		} else {
+			hostTarget = fmt.Sprintf("/%s/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeHosts, instanceId)
+			envTarget = fmt.Sprintf("/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeEnv)
+		}
+
+		mapping := map[string]interface{}{
+			RegisterNodeHost:     hostTarget,
+			RegisterNodeEnv:      envTarget,
+			RegisterNodeHosts:    fmt.Sprintf("/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeHosts),
+			RegisterNodeCluster:  fmt.Sprintf("/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeCluster),
+			RegisterNodeCmd:      fmt.Sprintf("/%s/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeCmd, instanceId),
+			RegisterNodeAdding:   fmt.Sprintf("/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeAdding),
+			RegisterNodeDeleting: fmt.Sprintf("/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeDeleting),
+			RegisterNodeScaling:  fmt.Sprintf("/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeScaling),
+			RegisterNodeStopping: fmt.Sprintf("/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeStopping),
+			RegisterNodeStarting: fmt.Sprintf("/%s/%s/%s", RegisterClustersRootPath, clusterId, RegisterNodeStarting),
+		}
+
+		for name, clusterLink := range m.ClusterWrapper.ClusterLinks {
+			if len(clusterLink.ExternalClusterId) == 0 {
+				continue
+			}
+			_, isExist := mapping[RegisterNodeLinks]
+			if !isExist {
+				mapping[RegisterNodeLinks] = make(map[string]interface{})
+			}
+			mapping[RegisterNodeLinks].(map[string]interface{})[name] = fmt.Sprintf("/%s/%s", RegisterClustersRootPath, clusterLink.ExternalClusterId)
+		}
+		cnodes[clusterNode.PrivateIp] = mapping
+	}
+
+	return cnodes
 }

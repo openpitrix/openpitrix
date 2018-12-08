@@ -373,7 +373,11 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 					return err
 				}
 
-			case vmbased.ActionRegisterMetadata, vmbased.ActionDeregisterCmd, vmbased.ActionDeregisterMetadata:
+			case vmbased.ActionRegisterMetadata,
+				vmbased.ActionDeregisterCmd,
+				vmbased.ActionDeregisterMetadata,
+				vmbased.ActionRegisterMetadataMapping,
+				vmbased.ActionDeregisterMetadataMapping:
 				pbTask := models.TaskToPb(task)
 				err = retryutil.Retry(constants.PilotTasksRetry, constants.PilotTasksSleep, func() error {
 					_, err := pilotClient.HandleSubtask(withTimeoutCtx,

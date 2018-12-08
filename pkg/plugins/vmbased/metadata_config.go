@@ -57,11 +57,11 @@ func (m *MetadataConfig) GetFrontgateConfig(nodeId string) string {
 
 		etcdNode := &pbtypes.EtcdEndpoint{
 			Host: node.PrivateIp,
-			Port: constants.EtcdServicePort,
+			Port: EtcdPort,
 		}
 		etcdEndpoints = append(etcdEndpoints, etcdNode)
 
-		backendHosts = append(backendHosts, fmt.Sprintf("%s:%d", etcdNode.Host, etcdNode.Port))
+		backendHosts = append(backendHosts, fmt.Sprintf("%s:%d", etcdNode.Host, MetadPort))
 	}
 
 	etcdConfig := &pbtypes.EtcdConfig{
@@ -73,7 +73,7 @@ func (m *MetadataConfig) GetFrontgateConfig(nodeId string) string {
 			Confdir:       ConfdPath,
 			Interval:      10,
 			Noop:          false,
-			Prefix:        "",
+			Prefix:        "/self",
 			SyncOnly:      false,
 			LogLevel:      MetadataLogLevel,
 			Onetime:       false,

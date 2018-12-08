@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -21,7 +20,7 @@ import (
 )
 
 type Frontgate struct {
-	Runtime *runtimeclient.Runtime
+	Runtime *models.RuntimeDetails
 }
 
 func (f *Frontgate) getFrontgateFromDb(ctx context.Context, vpcId, userId string) ([]*models.Cluster, error) {

@@ -24,6 +24,10 @@ then
   cp opt/openpitrix/conf/etcd.service /lib/systemd/system/etcd.service
   systemctl enable etcd.service && systemctl start etcd.service
 
+  cp opt/openpitrix/sbin/start_metad.sh /opt/openpitrix/sbin/
+  cp opt/openpitrix/conf/metad.service /lib/systemd/system/metad.service
+  systemctl enable metad.service && systemctl start metad.service
+
   cp opt/openpitrix/sbin/start_registry.sh /opt/openpitrix/sbin/
   cp opt/openpitrix/conf/config.yml /opt/openpitrix/conf/config.yml
   cp opt/openpitrix/conf/registry.service /lib/systemd/system/registry.service

@@ -8,7 +8,6 @@ import (
 	"context"
 	"testing"
 
-	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -34,7 +33,9 @@ func testCreateCluster(t *testing.T, frame *Frame) {
 		{ActionPingDrone, 5},
 		{ActionSetDroneConfig, 5},
 		{ActionDeregisterMetadata, 1},
+		{ActionDeregisterMetadataMapping, 1},
 		{ActionRegisterMetadata, 1},
+		{ActionRegisterMetadataMapping, 1},
 		{ActionStartConfd, 5},
 		{ActionRegisterCmd, 1}, // hbase-hdfs-master init
 		{ActionRegisterCmd, 1}, // hbase-hdfs-master start
@@ -72,7 +73,7 @@ func TestSplitJobIntoTasks(t *testing.T) {
 		JobAction: constants.ActionCreateCluster,
 	}
 
-	runtime := new(runtimeclient.Runtime)
+	runtime := new(models.RuntimeDetails)
 	runtime.RuntimeId = "rt-1234"
 	runtime.Provider = constants.ProviderQingCloud
 	runtime.Zone = "testing"
