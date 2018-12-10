@@ -860,12 +860,14 @@ echo '{
 	exec := fmt.Sprintf(`#!/bin/bash -e
 
 mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
+test -f /opt/openpitrix/conf/init && exit 0
 %s
 echo '%s' > %s
 mkdir -p /etc/docker/
 %s
 for i in $(seq 1 100); do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 3; done
 /opt/openpitrix/image/install_service.sh %s
+touch /opt/openpitrix/conf/init
 `, certificateExec, contents, f.getConfFile(), dockerMirror, imageUrl, filename)
 	return base64.StdEncoding.EncodeToString([]byte(exec))
 }
