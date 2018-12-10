@@ -1389,6 +1389,7 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 	var clusters []*models.Cluster
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
+	withDetail := req.GetWithDetail().GetValue()
 
 	query := pi.Global().DB(ctx).
 		Select(models.ClusterColumns...).
@@ -1419,7 +1420,7 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
-		if runtime.Provider == constants.ProviderKubernetes {
+		if runtime.Provider == constants.ProviderKubernetes && withDetail {
 			providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
 			if err != nil {
 				logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)

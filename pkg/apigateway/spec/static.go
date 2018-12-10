@@ -1417,6 +1417,13 @@ var Files = map[string]string{
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "with_detail",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [
