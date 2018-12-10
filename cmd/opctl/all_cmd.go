@@ -2145,6 +2145,8 @@ func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
 	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
+	c.WithDetail = new(bool)
+	f.BoolVarP(c.WithDetail, "with_detail", "", false, "")
 }
 
 func (c *DescribeClustersCmd) Run(out Out) error {

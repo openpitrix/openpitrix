@@ -91,6 +91,8 @@ type DescribeClustersParams struct {
 	Status []string
 	/*VersionID*/
 	VersionID []string
+	/*WithDetail*/
+	WithDetail *bool
 
 	timeout    time.Duration
 	Context    context.Context
@@ -284,6 +286,17 @@ func (o *DescribeClustersParams) SetVersionID(versionID []string) {
 	o.VersionID = versionID
 }
 
+// WithWithDetail adds the withDetail to the describe clusters params
+func (o *DescribeClustersParams) WithWithDetail(withDetail *bool) *DescribeClustersParams {
+	o.SetWithDetail(withDetail)
+	return o
+}
+
+// SetWithDetail adds the withDetail to the describe clusters params
+func (o *DescribeClustersParams) SetWithDetail(withDetail *bool) {
+	o.WithDetail = withDetail
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -458,6 +471,22 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 	// query array param version_id
 	if err := r.SetQueryParam("version_id", joinedVersionID...); err != nil {
 		return err
+	}
+
+	if o.WithDetail != nil {
+
+		// query param with_detail
+		var qrWithDetail bool
+		if o.WithDetail != nil {
+			qrWithDetail = *o.WithDetail
+		}
+		qWithDetail := swag.FormatBool(qrWithDetail)
+		if qWithDetail != "" {
+			if err := r.SetQueryParam("with_detail", qWithDetail); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {

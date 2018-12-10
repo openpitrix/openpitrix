@@ -602,6 +602,8 @@
       type: '[]string'
     version_id:
       type: '[]string'
+    with_detail:
+      type: boolean
 - action: DescribeKeyPairs
   description: describe key pairs
   service: ClusterManager
