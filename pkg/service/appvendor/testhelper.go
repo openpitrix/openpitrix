@@ -2,6 +2,7 @@ package appvendor
 
 import (
 	"flag"
+
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/pi"
 )
