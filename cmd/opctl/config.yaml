@@ -421,6 +421,68 @@
       type: byte
     version_type:
       type: string
+- action: DescribeVendorVerifyInfos
+  description: DescribeVendorVerifyInfos
+  service: AppVendorManager
+  query:
+    limit:
+      type: int64
+    offset:
+      type: int64
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: GetVendorVerifyInfo
+  description: GetVendorVerifyInfo
+  service: AppVendorManager
+  query:
+    user_id:
+      type: string
+- action: PassVendorVerifyInfo
+  description: PassVendorVerifyInfo
+  service: AppVendorManager
+  body:
+    user_id:
+      type: string
+- action: RejectVendorVerifyInfo
+  description: RejectVendorVerifyInfo
+  service: AppVendorManager
+  body:
+    reject_message:
+      type: string
+    user_id:
+      type: string
+- action: SubmitVendorVerifyInfo
+  description: SubmitVendorVerifyInfo
+  service: AppVendorManager
+  body:
+    authorizer_email:
+      type: string
+    authorizer_name:
+      type: string
+    authorizer_phone:
+      type: string
+    bank_account_name:
+      type: string
+    bank_account_number:
+      type: string
+    bank_name:
+      type: string
+    company_name:
+      type: string
+    company_profile:
+      type: string
+    company_website:
+      type: string
+    user_id:
+      type: string
 - action: GetAttachment
   description: get attachment
   service: AttachmentService
