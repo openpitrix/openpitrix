@@ -28,8 +28,8 @@ func TestSubmitVendorVerifyInfo(t *testing.T) {
 	var req = &vendor.SubmitVendorVerifyInfoRequest{
 		UserId:      pbutil.ToProtoString("testuserID"),
 		CompanyName: pbutil.ToProtoString("CompanyName-1"),
-		//CompanyWebsite:    pbutil.ToProtoString("CompanyWebsite1"),
-		//CompanyProfile:    pbutil.ToProtoString("CompanyProfile"),
+		CompanyWebsite:    pbutil.ToProtoString("CompanyWebsite1"),
+		CompanyProfile:    pbutil.ToProtoString("CompanyProfile"),
 		AuthorizerName:    pbutil.ToProtoString("AuthorizerName"),
 		AuthorizerEmail:   pbutil.ToProtoString("AuthorizerEmail"),
 		AuthorizerPhone:   pbutil.ToProtoString("AuthorizerPhone"),

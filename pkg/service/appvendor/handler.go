@@ -7,7 +7,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/manager"
-
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -60,7 +59,7 @@ func (h *Handler) GetVendorVerifyInfo(ctx context.Context, req *pb.GetVendorVeri
 	}
 
 	logger.Info(ctx, "Got VendorVerifyInfo: [%+v]", vendor)
-	vendor2pb := vendor.ParseVendor2pb(ctx, vendor)
+	vendor2pb := vendor.ParseVendor2Pb(ctx, vendor)
 
 	return vendor2pb, nil
 }
@@ -114,7 +113,7 @@ func (h *Handler) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVend
 
 	if modifyType == "new" {
 		vendor := &models.AppVendor{}
-		vendor = vendor.ParseInputParams2Obj(req)
+		vendor = vendor.ParseVendorSet2PbSet(req)
 		userID, err = resource.CreateVendorVerifyInfo(ctx, *vendor)
 		if err != nil {
 			logger.Error(ctx, "Submit VendorVerifyInfo failed: [%+v]", vendor)
