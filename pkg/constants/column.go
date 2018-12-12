@@ -86,6 +86,11 @@ const (
 	ColumnActive = "active"
 
 	ColumnOperator = "operator"
+
+	ColumnCompanyName    = "company_name"
+	ColumnCompanyProfile = "company_profile"
+	ColumnAuthorizerName = "authorizer_name"
+	ColumnCompanyWebsite = "company_website"
 )
 
 var PushEventTables = map[string][]string{
@@ -162,6 +167,9 @@ var IndexedColumns = map[string][]string{
 	TableAppVersionAudit: {
 		ColumnVersionId, ColumnAppId, ColumnStatus, ColumnOperator, ColumnRole,
 	},
+	TableVendor: {
+		ColumnUserId, ColumnStatus,
+	},
 }
 
 var SearchWordColumnTable = []string{
@@ -175,6 +183,7 @@ var SearchWordColumnTable = []string{
 	TableClusterNode,
 	TableUser,
 	TableCategory,
+	TableVendor,
 }
 
 // columns that can be search through sql 'like' operator
@@ -208,5 +217,8 @@ var SearchColumns = map[string][]string{
 	},
 	TableCategory: {
 		ColumnCategoryId, ColumnLocale, ColumnOwner, ColumnName,
+	},
+	TableVendor: {
+		ColumnUserId, ColumnCompanyName, ColumnCompanyProfile, ColumnAuthorizerName, ColumnCompanyWebsite,
 	},
 }
