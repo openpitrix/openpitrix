@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/fatih/structs"
 	"github.com/gocraft/dbr"
@@ -18,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -151,7 +153,10 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 		column := getFieldName(field)
 		f := field.Value()
 		v := reflect.ValueOf(f)
-		if stringutil.FindString(columns, column) > -1 && !v.IsNil() {
+		if !stringutil.StringIn(column, columns) {
+			continue
+		}
+		if !reflectutil.ValueIsNil(v) {
 			switch v := f.(type) {
 			case *wrappers.StringValue:
 				attributes[column] = v.GetValue()
@@ -163,6 +168,8 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 				attributes[column] = v.GetValue()
 			case *timestamp.Timestamp:
 				attributes[column] = pbutil.FromProtoTimestamp(v)
+			case string, bool, int32, uint32, time.Time:
+				attributes[column] = v
 
 			default:
 				attributes[column] = v
