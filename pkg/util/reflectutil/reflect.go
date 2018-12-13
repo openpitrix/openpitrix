@@ -24,3 +24,15 @@ func In(value interface{}, container interface{}) bool {
 	}
 	return false
 }
+
+func ValueIsNil(value reflect.Value) bool {
+	k := value.Kind()
+	switch k {
+	case reflect.Chan, reflect.Func, reflect.Map, reflect.Ptr, reflect.Interface, reflect.Slice:
+		return value.IsNil()
+	case reflect.Invalid:
+		return true
+	}
+	// base type had default value, is not nil
+	return false
+}
