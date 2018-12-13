@@ -60,7 +60,26 @@ func (p *Processor) Pre(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		instance.VolumeId = clusterNodes[0].GetVolumeId().GetValue()
+		clusterNode := clusterNodes[0]
+		instance.VolumeId = clusterNode.GetVolumeId().GetValue()
+
+		frontgateIp := ""
+		// Get frontgate node ip
+		clusters, err := clusterClient.GetClusters(ctx, []string{clusterNode.GetClusterId().GetValue()})
+		if err != nil {
+			return err
+		}
+		cluster := clusters[0]
+		if cluster.GetClusterType().GetValue() == constants.NormalClusterType {
+			frontgates, err := clusterClient.GetClusters(ctx, []string{cluster.GetFrontgateId().GetValue()})
+			if err != nil {
+				return err
+			}
+			for _, frontgateNode := range frontgates[0].ClusterNodeSet {
+				frontgateIp = frontgateNode.GetPrivateIp().GetValue()
+			}
+		}
+		instance.UserDataValue = vmbased.FormatUserData(instance.UserDataValue, frontgateIp)
 		// write back
 		p.Task.Directive = jsonutil.ToString(instance)
 

@@ -29,12 +29,11 @@ import (
 )
 
 type Frame struct {
-	Ctx                     context.Context
-	Job                     *models.Job
-	ClusterWrapper          *models.ClusterWrapper
-	FrontgateClusterWrapper *models.ClusterWrapper
-	Runtime                 *models.RuntimeDetails
-	ImageConfig             *config.ImageConfig
+	Ctx            context.Context
+	Job            *models.Job
+	ClusterWrapper *models.ClusterWrapper
+	Runtime        *models.RuntimeDetails
+	ImageConfig    *config.ImageConfig
 }
 
 func (f *Frame) startConfdServiceLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
@@ -836,12 +835,25 @@ func (f *Frame) umountVolumeLayer(nodeIds []string, failureAllowed bool) *models
 	}
 }
 
-func (f *Frame) getUserDataExec(filename, contents, imageUrl, frontgateIp, certificateExec string) string {
+func (f *Frame) getUserDataExec(filename, contents, imageUrl, certificateExec string) string {
 	if pi.Global() == nil {
 		logger.Error(f.Ctx, "Pi global should be init.")
 		return ""
 	}
 
+	exec := fmt.Sprintf(`
+mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
+test -f /opt/openpitrix/conf/init && exit 0
+%s
+echo '%s' > %s
+for i in $(seq 1 100); do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 3; done
+/opt/openpitrix/image/install_service.sh %s
+touch /opt/openpitrix/conf/init
+`, certificateExec, contents, f.getConfFile(), imageUrl, filename)
+	return exec
+}
+
+func FormatUserData(userData, frontgateIp string) string {
 	var mirror string
 	if len(frontgateIp) > 0 {
 		mirror = fmt.Sprintf("http://%s:5000", frontgateIp)
@@ -849,27 +861,24 @@ func (f *Frame) getUserDataExec(filename, contents, imageUrl, frontgateIp, certi
 		mirror = pi.Global().GlobalConfig().Cluster.RegistryMirror
 	}
 
-	dockerMirror := ""
+	data := ""
 	if len(mirror) > 0 {
-		dockerMirror = fmt.Sprintf(`
+		data = fmt.Sprintf(`#!/bin/bash -e
+
+mkdir -p /etc/docker/
 echo '{
   "registry-mirrors": ["%s"]
 }' > /etc/docker/daemon.json
-`, mirror)
-	}
-	exec := fmt.Sprintf(`#!/bin/bash -e
+%s
+`, mirror, userData)
+	} else {
+		data = fmt.Sprintf(`#!/bin/bash -e
 
-mkdir -p /opt/openpitrix/image/ /opt/openpitrix/conf/
-test -f /opt/openpitrix/conf/init && exit 0
 %s
-echo '%s' > %s
-mkdir -p /etc/docker/
-%s
-for i in $(seq 1 100); do cd /opt/openpitrix/image/ && rm -rf * && wget %s && tar -xzvf * && break || sleep 3; done
-/opt/openpitrix/image/install_service.sh %s
-touch /opt/openpitrix/conf/init
-`, certificateExec, contents, f.getConfFile(), dockerMirror, imageUrl, filename)
-	return base64.StdEncoding.EncodeToString([]byte(exec))
+`, userData)
+	}
+
+	return base64.StdEncoding.EncodeToString([]byte(data))
 }
 
 /*
@@ -942,14 +951,6 @@ func (f *Frame) setDroneConfigLayer(nodeIds []string, failureAllowed bool) *mode
 
 func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	taskLayer := new(models.TaskLayer)
-	var frontgateIp string
-
-	if f.FrontgateClusterWrapper != nil {
-		for _, frontgateNode := range f.FrontgateClusterWrapper.ClusterNodesWithKeyPairs {
-			frontgateIp = frontgateNode.PrivateIp
-			break
-		}
-	}
 
 	for _, nodeId := range nodeIds {
 		clusterNode := f.ClusterWrapper.ClusterNodesWithKeyPairs[nodeId]
@@ -986,9 +987,9 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 		}
 		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
 			frontgate := &Frontgate{f}
-			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp, frontgate.getCertificateExec())
+			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgate.getCertificateExec())
 		} else {
-			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgateIp, "")
+			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, "")
 		}
 		directive := jsonutil.ToString(instance)
 		runInstanceTask := &models.Task{

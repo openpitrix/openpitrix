@@ -127,26 +127,12 @@ func GetFrameInterface(ctx context.Context, job *models.Job, advancedParam ...st
 		return nil, err
 	}
 
-	var frontgateClusterWrapper *models.ClusterWrapper
-	if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType {
-		clusterClient, err := clusterclient.NewClient()
-		if err != nil {
-			return nil, err
-		}
-		pbClusterWrappers, err := clusterClient.GetClusterWrappers(ctx, []string{clusterWrapper.Cluster.FrontgateId})
-		if err != nil {
-			return nil, err
-		}
-		frontgateClusterWrapper = pbClusterWrappers[0]
-	}
-
 	frame := &Frame{
-		Job:                     job,
-		ClusterWrapper:          clusterWrapper,
-		FrontgateClusterWrapper: frontgateClusterWrapper,
-		Runtime:                 runtime,
-		Ctx:                     ctx,
-		ImageConfig:             imageConfig,
+		Job:            job,
+		ClusterWrapper: clusterWrapper,
+		Runtime:        runtime,
+		Ctx:            ctx,
+		ImageConfig:    imageConfig,
 	}
 
 	if len(advancedParam) >= 1 {
