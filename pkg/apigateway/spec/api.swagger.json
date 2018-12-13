@@ -7269,6 +7269,9 @@
         },
         "description": {
           "type": "string"
+        },
+        "runtime_credential_id": {
+          "type": "string"
         }
       }
     },

@@ -7278,6 +7278,9 @@ var Files = map[string]string{
         },
         "description": {
           "type": "string"
+        },
+        "runtime_credential_id": {
+          "type": "string"
         }
       }
     },

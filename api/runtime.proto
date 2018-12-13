@@ -81,6 +81,7 @@ message ModifyRuntimeRequest {
 	google.protobuf.StringValue runtime_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
+	google.protobuf.StringValue runtime_credential_id = 4;
 }
 
 message ModifyRuntimeResponse {

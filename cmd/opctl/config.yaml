@@ -1080,6 +1080,8 @@
       type: string
     name:
       type: string
+    runtime_credential_id:
+      type: string
     runtime_id:
       type: string
 - action: ModifyRuntimeCredential
