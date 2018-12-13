@@ -108,11 +108,15 @@ var AllCmd = []Cmd{
 	NewModifyRepoCmd(),
 	NewValidateRepoCmd(),
 	NewCreateRuntimeCmd(),
+	NewCreateRuntimeCredentialCmd(),
+	NewDeleteRuntimeCredentialsCmd(),
 	NewDeleteRuntimesCmd(),
+	NewDescribeRuntimeCredentialsCmd(),
 	NewDescribeRuntimeProviderZonesCmd(),
 	NewDescribeRuntimesCmd(),
 	NewGetRuntimeStatisticsCmd(),
 	NewModifyRuntimeCmd(),
+	NewModifyRuntimeCredentialCmd(),
 	NewDescribeTasksCmd(),
 	NewRetryTasksCmd(),
 	NewCreateClientCmd(),
@@ -3292,11 +3296,9 @@ func (*CreateRuntimeCmd) GetActionName() string {
 
 func (c *CreateRuntimeCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Labels, "labels", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Provider, "provider", "", "", "")
-	f.StringVarP(&c.RuntimeCredential, "runtime_credential", "", "", "")
-	f.StringVarP(&c.RuntimeURL, "runtime_url", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", "", "")
 	f.StringVarP(&c.Zone, "zone", "", "", "")
 }
 
@@ -3308,6 +3310,80 @@ func (c *CreateRuntimeCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.RuntimeManager.CreateRuntime(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateRuntimeCredentialCmd struct {
+	*models.OpenpitrixCreateRuntimeCredentialRequest
+}
+
+func NewCreateRuntimeCredentialCmd() Cmd {
+	cmd := &CreateRuntimeCredentialCmd{}
+	cmd.OpenpitrixCreateRuntimeCredentialRequest = &models.OpenpitrixCreateRuntimeCredentialRequest{}
+	return cmd
+}
+
+func (*CreateRuntimeCredentialCmd) GetActionName() string {
+	return "CreateRuntimeCredential"
+}
+
+func (c *CreateRuntimeCredentialCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.Provider, "provider", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialContent, "runtime_credential_content", "", "", "")
+	f.StringVarP(&c.RuntimeURL, "runtime_url", "", "", "")
+}
+
+func (c *CreateRuntimeCredentialCmd) Run(out Out) error {
+	params := runtime_manager.NewCreateRuntimeCredentialParams()
+	params.WithBody(c.OpenpitrixCreateRuntimeCredentialRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.CreateRuntimeCredential(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DeleteRuntimeCredentialsCmd struct {
+	*models.OpenpitrixDeleteRuntimeCredentialsRequest
+}
+
+func NewDeleteRuntimeCredentialsCmd() Cmd {
+	cmd := &DeleteRuntimeCredentialsCmd{}
+	cmd.OpenpitrixDeleteRuntimeCredentialsRequest = &models.OpenpitrixDeleteRuntimeCredentialsRequest{}
+	return cmd
+}
+
+func (*DeleteRuntimeCredentialsCmd) GetActionName() string {
+	return "DeleteRuntimeCredentials"
+}
+
+func (c *DeleteRuntimeCredentialsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", []string{}, "")
+}
+
+func (c *DeleteRuntimeCredentialsCmd) Run(out Out) error {
+	params := runtime_manager.NewDeleteRuntimeCredentialsParams()
+	params.WithBody(c.OpenpitrixDeleteRuntimeCredentialsRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.DeleteRuntimeCredentials(params, nil)
 	if err != nil {
 		return err
 	}
@@ -3352,6 +3428,48 @@ func (c *DeleteRuntimesCmd) Run(out Out) error {
 	return nil
 }
 
+type DescribeRuntimeCredentialsCmd struct {
+	*runtime_manager.DescribeRuntimeCredentialsParams
+}
+
+func NewDescribeRuntimeCredentialsCmd() Cmd {
+	return &DescribeRuntimeCredentialsCmd{
+		runtime_manager.NewDescribeRuntimeCredentialsParams(),
+	}
+}
+
+func (*DescribeRuntimeCredentialsCmd) GetActionName() string {
+	return "DescribeRuntimeCredentials"
+}
+
+func (c *DescribeRuntimeCredentialsCmd) ParseFlag(f Flag) {
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
+	f.StringSliceVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+}
+
+func (c *DescribeRuntimeCredentialsCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeRuntimeCredentialsParams)
+
+	client := getClient()
+	res, err := client.RuntimeManager.DescribeRuntimeCredentials(c.DescribeRuntimeCredentialsParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type DescribeRuntimeProviderZonesCmd struct {
 	*runtime_manager.DescribeRuntimeProviderZonesParams
 }
@@ -3367,12 +3485,8 @@ func (*DescribeRuntimeProviderZonesCmd) GetActionName() string {
 }
 
 func (c *DescribeRuntimeProviderZonesCmd) ParseFlag(f Flag) {
-	c.Provider = new(string)
-	f.StringVarP(c.Provider, "provider", "", "", "")
-	c.RuntimeCredential = new(string)
-	f.StringVarP(c.RuntimeCredential, "runtime_credential", "", "", "")
-	c.RuntimeURL = new(string)
-	f.StringVarP(c.RuntimeURL, "runtime_url", "", "", "")
+	c.RuntimeCredentialID = new(string)
+	f.StringVarP(c.RuntimeCredentialID, "runtime_credential_id", "", "", "")
 }
 
 func (c *DescribeRuntimeProviderZonesCmd) Run(out Out) error {
@@ -3405,8 +3519,6 @@ func (*DescribeRuntimesCmd) GetActionName() string {
 }
 
 func (c *DescribeRuntimesCmd) ParseFlag(f Flag) {
-	c.Label = new(string)
-	f.StringVarP(c.Label, "label", "", "", "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)
@@ -3482,9 +3594,7 @@ func (*ModifyRuntimeCmd) GetActionName() string {
 
 func (c *ModifyRuntimeCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Labels, "labels", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.RuntimeCredential, "runtime_credential", "", "", "")
 	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "")
 }
 
@@ -3496,6 +3606,44 @@ func (c *ModifyRuntimeCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.RuntimeManager.ModifyRuntime(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyRuntimeCredentialCmd struct {
+	*models.OpenpitrixModifyRuntimeCredentialRequest
+}
+
+func NewModifyRuntimeCredentialCmd() Cmd {
+	cmd := &ModifyRuntimeCredentialCmd{}
+	cmd.OpenpitrixModifyRuntimeCredentialRequest = &models.OpenpitrixModifyRuntimeCredentialRequest{}
+	return cmd
+}
+
+func (*ModifyRuntimeCredentialCmd) GetActionName() string {
+	return "ModifyRuntimeCredential"
+}
+
+func (c *ModifyRuntimeCredentialCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialContent, "runtime_credential_content", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", "", "")
+}
+
+func (c *ModifyRuntimeCredentialCmd) Run(out Out) error {
+	params := runtime_manager.NewModifyRuntimeCredentialParams()
+	params.WithBody(c.OpenpitrixModifyRuntimeCredentialRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.ModifyRuntimeCredential(params, nil)
 	if err != nil {
 		return err
 	}

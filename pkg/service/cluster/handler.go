@@ -189,18 +189,18 @@ func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsReq
 
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
-	if err != nil || runtime.Owner != s.UserId {
+	if err != nil || runtime.Runtime.Owner != s.UserId {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAccessDenied, runtimeId)
 	}
 
-	if !plugins.IsVmbasedProviders(runtime.Provider) {
+	if !plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
+	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
 	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+		logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
 	}
 
 	return providerInterface.DescribeSubnets(ctx, req)
@@ -445,7 +445,7 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
 		}
 
-		if !plugins.IsVmbasedProviders(runtime.Provider) {
+		if !plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAttachKeyPairsFailed)
 		}
 
@@ -473,7 +473,7 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 			cluster.VersionId,
 			constants.ActionAttachKeyPairs,
 			directive,
-			runtime.Provider,
+			runtime.Runtime.Provider,
 			s.UserId,
 			cluster.RuntimeId,
 		)
@@ -550,7 +550,7 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 		}
 
-		if !plugins.IsVmbasedProviders(runtime.Provider) {
+		if !plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDetachKeyPairsFailed)
 		}
 
@@ -578,7 +578,7 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 			cluster.VersionId,
 			constants.ActionDetachKeyPairs,
 			directive,
-			runtime.Provider,
+			runtime.Runtime.Provider,
 			s.UserId,
 			cluster.RuntimeId,
 		)
@@ -605,14 +605,14 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	clusterId := models.NewClusterId()
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
-	if err != nil || runtime.Owner != s.UserId {
+	if err != nil || runtime.Runtime.Owner != s.UserId {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAccessDenied, runtimeId)
 	}
 
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
+	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
 	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+		logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
 	}
 	clusterWrapper := new(models.ClusterWrapper)
 	err = providerInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
@@ -632,7 +632,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	clusterWrapper.Cluster.ClusterId = clusterId
 	clusterWrapper.Cluster.ClusterType = constants.NormalClusterType
 
-	if plugins.IsVmbasedProviders(runtime.Provider) {
+	if plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 		err = CheckVmBasedProvider(ctx, runtime, providerInterface, clusterWrapper)
 		if err != nil {
 			return nil, err
@@ -658,7 +658,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		versionId,
 		constants.ActionCreateCluster,
 		directive,
-		runtime.Provider,
+		runtime.Runtime.Provider,
 		s.UserId,
 		runtimeId,
 	)
@@ -932,7 +932,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionDeleteClusters,
 			directive,
-			runtime.Provider,
+			runtime.Runtime.Provider,
 			s.UserId,
 			clusterWrapper.Cluster.RuntimeId,
 		)
@@ -964,7 +964,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, cluster.RuntimeId)
 	}
 
-	if runtime.Provider == constants.ProviderKubernetes {
+	if runtime.Runtime.Provider == constants.ProviderKubernetes {
 		err := checkPermissionAndTransition(ctx, cluster, []string{constants.StatusActive})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorUpgradeResourceFailed, clusterId)
@@ -990,7 +990,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		versionId,
 		constants.ActionUpgradeCluster,
 		directive,
-		runtime.Provider,
+		runtime.Runtime.Provider,
 		s.UserId,
 		clusterWrapper.Cluster.RuntimeId,
 	)
@@ -1037,7 +1037,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		clusterWrapper.Cluster.VersionId,
 		constants.ActionRollbackCluster,
 		directive,
-		runtime.Provider,
+		runtime.Runtime.Provider,
 		s.UserId,
 		clusterWrapper.Cluster.RuntimeId,
 	)
@@ -1075,7 +1075,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
-	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !plugins.IsVmbasedProviders(runtime.Provider) {
+	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
 	}
 
@@ -1123,7 +1123,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		clusterWrapper.Cluster.VersionId,
 		constants.ActionResizeCluster,
 		directive,
-		runtime.Provider,
+		runtime.Runtime.Provider,
 		s.UserId,
 		clusterWrapper.Cluster.RuntimeId,
 	)
@@ -1165,7 +1165,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
-	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !plugins.IsVmbasedProviders(runtime.Provider) {
+	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
 	}
 
@@ -1189,10 +1189,10 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	if len(req.AdvancedParam) > 0 {
 		conf = req.AdvancedParam[0]
 	}
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
+	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
 	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+		logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
 	}
 	err = providerInterface.ParseClusterConf(ctx, clusterWrapper.Cluster.VersionId, runtime.RuntimeId, conf, clusterWrapper)
 	if err != nil {
@@ -1241,7 +1241,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		clusterWrapper.Cluster.VersionId,
 		constants.ActionAddClusterNodes,
 		directive,
-		runtime.Provider,
+		runtime.Runtime.Provider,
 		s.UserId,
 		clusterWrapper.Cluster.RuntimeId,
 	)
@@ -1279,7 +1279,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
-	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !plugins.IsVmbasedProviders(runtime.Provider) {
+	if clusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType || !plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorAddResourceNodeFailed, clusterId)
 	}
 
@@ -1302,7 +1302,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		clusterWrapper.Cluster.VersionId,
 		constants.ActionDeleteClusterNodes,
 		directive,
-		runtime.Provider,
+		runtime.Runtime.Provider,
 		s.UserId,
 		clusterWrapper.Cluster.RuntimeId,
 	)
@@ -1344,10 +1344,10 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
+	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
 	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+		logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
 	}
 	err = providerInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
@@ -1369,7 +1369,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		clusterWrapper.Cluster.VersionId,
 		constants.ActionUpdateClusterEnv,
 		directive,
-		runtime.Provider,
+		runtime.Runtime.Provider,
 		s.UserId,
 		clusterWrapper.Cluster.RuntimeId,
 	)
@@ -1420,11 +1420,11 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
-		if runtime.Provider == constants.ProviderKubernetes && withDetail {
-			providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Provider)
+		if runtime.Runtime.Provider == constants.ProviderKubernetes && withDetail {
+			providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
 			if err != nil {
-				logger.Error(ctx, "No such provider [%s]. ", runtime.Provider)
-				return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Provider)
+				logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
+				return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
 			}
 
 			err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
@@ -1548,7 +1548,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
-		if !plugins.IsVmbasedProviders(runtime.Provider) {
+		if !plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStopResourceFailed, cluster.ClusterId)
 		}
 
@@ -1559,7 +1559,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionStopClusters,
 			directive,
-			runtime.Provider,
+			runtime.Runtime.Provider,
 			s.UserId,
 			clusterWrapper.Cluster.RuntimeId,
 		)
@@ -1604,7 +1604,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 		}
 
-		if !plugins.IsVmbasedProviders(runtime.Provider) {
+		if !plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorStartResourceFailed, cluster.ClusterId)
 		}
 
@@ -1623,7 +1623,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionStartClusters,
 			directive,
-			runtime.Provider,
+			runtime.Runtime.Provider,
 			s.UserId,
 			clusterWrapper.Cluster.RuntimeId,
 		)
@@ -1683,7 +1683,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionRecoverClusters,
 			directive,
-			runtime.Provider,
+			runtime.Runtime.Provider,
 			s.UserId,
 			clusterWrapper.Cluster.RuntimeId,
 		)
@@ -1735,7 +1735,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			clusterWrapper.Cluster.VersionId,
 			constants.ActionCeaseClusters,
 			directive,
-			runtime.Provider,
+			runtime.Runtime.Provider,
 			s.UserId,
 			clusterWrapper.Cluster.RuntimeId,
 		)

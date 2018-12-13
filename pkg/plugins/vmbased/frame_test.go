@@ -75,7 +75,7 @@ func TestSplitJobIntoTasks(t *testing.T) {
 
 	runtime := new(models.RuntimeDetails)
 	runtime.RuntimeId = "rt-1234"
-	runtime.Provider = constants.ProviderQingCloud
+	runtime.Runtime.Provider = constants.ProviderQingCloud
 	runtime.Zone = "testing"
 
 	frame := &Frame{

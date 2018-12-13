@@ -22,7 +22,7 @@ func NewRuntimeId() string {
 
 type RuntimeDetails struct {
 	Runtime
-	Credential string
+	RuntimeCredential
 }
 
 type Runtime struct {
@@ -30,7 +30,6 @@ type Runtime struct {
 	Name                string
 	Description         string
 	Provider            string
-	RuntimeUrl          string
 	Zone                string
 	RuntimeCredentialId string
 	Owner               string
@@ -39,10 +38,9 @@ type Runtime struct {
 	StatusTime          time.Time
 }
 
-var RuntimeColumnsWithTablePrefix = db.GetColumnsFromStructWithPrefix(constants.TableRuntime, &Runtime{})
 var RuntimeColumns = db.GetColumnsFromStruct(&Runtime{})
 
-func NewRuntime(runtimeId, name, description, provider, runtimeUrl, runtimeCredentialId, zone, owner string) *Runtime {
+func NewRuntime(runtimeId, name, description, provider, runtimeCredentialId, zone, owner string) *Runtime {
 	if len(runtimeId) == 0 {
 		runtimeId = NewRuntimeId()
 	}
@@ -51,7 +49,6 @@ func NewRuntime(runtimeId, name, description, provider, runtimeUrl, runtimeCrede
 		Name:                name,
 		Description:         description,
 		Provider:            provider,
-		RuntimeUrl:          runtimeUrl,
 		Zone:                zone,
 		RuntimeCredentialId: runtimeCredentialId,
 		Owner:               owner,
@@ -67,8 +64,8 @@ func RuntimeToPb(runtime *Runtime) *pb.Runtime {
 	pbRuntime.Name = pbutil.ToProtoString(runtime.Name)
 	pbRuntime.Description = pbutil.ToProtoString(runtime.Description)
 	pbRuntime.Provider = pbutil.ToProtoString(runtime.Provider)
-	pbRuntime.RuntimeUrl = pbutil.ToProtoString(runtime.RuntimeUrl)
 	pbRuntime.Zone = pbutil.ToProtoString(runtime.Zone)
+	pbRuntime.RuntimeCredentialId = pbutil.ToProtoString(runtime.RuntimeCredentialId)
 	pbRuntime.Owner = pbutil.ToProtoString(runtime.Owner)
 	pbRuntime.Status = pbutil.ToProtoString(runtime.Status)
 	pbRuntime.CreateTime = pbutil.ToProtoTimestamp(runtime.CreateTime)
@@ -82,8 +79,8 @@ func PbToRuntime(pbRuntime *pb.Runtime) *Runtime {
 	runtime.Name = pbRuntime.GetName().GetValue()
 	runtime.Description = pbRuntime.GetDescription().GetValue()
 	runtime.Provider = pbRuntime.GetProvider().GetValue()
-	runtime.RuntimeUrl = pbRuntime.GetRuntimeUrl().GetValue()
 	runtime.Zone = pbRuntime.GetZone().GetValue()
+	runtime.RuntimeCredentialId = pbRuntime.GetRuntimeCredentialId().GetValue()
 	runtime.Owner = pbRuntime.GetOwner().GetValue()
 	runtime.Status = pbRuntime.GetStatus().GetValue()
 	runtime.CreateTime = pbutil.FromProtoTimestamp(pbRuntime.GetCreateTime())

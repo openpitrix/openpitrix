@@ -84,9 +84,9 @@ func (p *Provider) DescribeVpc(ctx context.Context, runtimeId, vpcId string) (*m
 	return handler.DescribeVpc(runtimeId, vpcId)
 }
 
-func (p *Provider) ValidateCredential(ctx context.Context, runtimeId, url, credential, zone string) error {
+func (p *Provider) ValidateRuntime(ctx context.Context, runtimeId, zone string, runtimeCredential *models.RuntimeCredential, needCreate bool) error {
 	handler := GetProviderHandler(ctx)
-	zones, err := handler.DescribeZones(url, credential)
+	zones, err := handler.DescribeZones(runtimeCredential.RuntimeUrl, runtimeCredential.RuntimeCredentialContent)
 	if err != nil {
 		return err
 	}
@@ -103,9 +103,9 @@ func (p *Provider) UpdateClusterStatus(ctx context.Context, job *models.Job) err
 	return nil
 }
 
-func (p *Provider) DescribeRuntimeProviderZones(ctx context.Context, url, credential string) ([]string, error) {
+func (p *Provider) DescribeRuntimeProviderZones(ctx context.Context, runtimeCredential *models.RuntimeCredential) ([]string, error) {
 	handler := GetProviderHandler(ctx)
-	return handler.DescribeZones(url, credential)
+	return handler.DescribeZones(runtimeCredential.RuntimeUrl, runtimeCredential.RuntimeCredentialContent)
 }
 
 func (p *Provider) DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) error {

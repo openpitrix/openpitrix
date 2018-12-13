@@ -54,9 +54,7 @@ func (p *KubeHandler) initKubeClient() (*kubernetes.Clientset, *rest.Config, err
 			return nil, err
 		}
 
-		credential := runtime.Credential
-
-		return clientcmd.Load([]byte(credential))
+		return clientcmd.Load([]byte(runtime.RuntimeCredentialContent))
 	}
 
 	config, err := clientcmd.BuildConfigFromKubeconfigGetter("", kubeconfigGetter)
@@ -300,25 +298,26 @@ func (p *KubeHandler) checkTillerIsExistedAndRunning(client *kubernetes.Clientse
 	return nil
 }
 
-func (p *KubeHandler) ValidateCredential(credential, zone string) error {
+func (p *KubeHandler) ValidateRuntime(zone string, runtimeCredential *models.RuntimeCredential, needCreate bool) error {
+	if len(zone) == 0 {
+		zone = "default"
+	}
 	if !NamespaceRegExp.MatchString(zone) {
 		err := fmt.Errorf(`namespace must match with regexp "[a-z0-9]([-a-z0-9]*[a-z0-9])?"`)
 		return gerr.NewWithDetail(nil, gerr.PermissionDenied, err, gerr.ErrorNamespaceNotMatchWithRegex, zone, NamespaceReg)
 	}
-
-	client, _, err := p.initKubeClientWithCredential(credential)
+	client, _, err := p.initKubeClientWithCredential(runtimeCredential.RuntimeCredentialContent)
 	if err != nil {
 		return gerr.NewWithDetail(nil, gerr.InvalidArgument, err, gerr.ErrorCredentialIllegal, "kubeconfig")
 	}
 
-	err = p.checkTillerIsExistedAndRunning(client, credential, zone)
+	err = p.checkTillerIsExistedAndRunning(client, runtimeCredential.RuntimeCredentialContent, zone)
 	if err != nil {
 		return err
 	}
 
 	cli := client.CoreV1().Namespaces()
-	if len(p.RuntimeId) == 0 {
-		// modify runtime
+	if !needCreate {
 		_, err = cli.Get(zone, metav1.GetOptions{})
 		if err != nil {
 			return gerr.NewWithDetail(nil, gerr.PermissionDenied, err, gerr.ErrorNamespaceUnavailable, zone)
@@ -360,8 +359,8 @@ func (p *KubeHandler) ValidateCredential(credential, zone string) error {
 	return nil
 }
 
-func (p *KubeHandler) DescribeRuntimeProviderZones(credential string) ([]string, error) {
-	client, _, err := p.initKubeClientWithCredential(credential)
+func (p *KubeHandler) DescribeRuntimeProviderZones(runtimeCredential *models.RuntimeCredential) ([]string, error) {
+	client, _, err := p.initKubeClientWithCredential(runtimeCredential.RuntimeCredentialContent)
 	if err != nil {
 		return nil, err
 	}

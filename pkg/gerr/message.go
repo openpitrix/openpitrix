@@ -242,11 +242,6 @@ var (
 		en:   "illegal URL format [%s]",
 		zhCN: "非法的URL格式[%s]",
 	}
-	ErrorIllegalLabelFormat = ErrorMessage{
-		Name: "illegal_label_format",
-		en:   "illegal label format",
-		zhCN: "非法的标签格式",
-	}
 	ErrorConflictRepoName = ErrorMessage{
 		Name: "conflict_repo_name",
 		en:   "conflict repo name [%s]",

@@ -993,40 +993,68 @@
   body:
     description:
       type: string
-    labels:
+    name:
+      type: string
+    provider:
+      type: string
+    runtime_credential_id:
+      type: string
+    zone:
+      type: string
+- action: CreateRuntimeCredential
+  description: create runtime credential
+  service: RuntimeManager
+  body:
+    description:
       type: string
     name:
       type: string
     provider:
       type: string
-    runtime_credential:
+    runtime_credential_content:
       type: string
     runtime_url:
       type: string
-    zone:
-      type: string
+- action: DeleteRuntimeCredentials
+  description: delete runtime credentials
+  service: RuntimeManager
+  body:
+    runtime_credential_id:
+      type: '[]string'
 - action: DeleteRuntimes
   description: delete runtimes
   service: RuntimeManager
   body:
     runtime_id:
       type: '[]string'
+- action: DescribeRuntimeCredentials
+  description: describe runtime credentials
+  service: RuntimeManager
+  query:
+    limit:
+      type: int64
+    offset:
+      type: int64
+    owner:
+      type: '[]string'
+    provider:
+      type: '[]string'
+    runtime_credential_id:
+      type: '[]string'
+    search_word:
+      type: string
+    status:
+      type: '[]string'
 - action: DescribeRuntimeProviderZones
   description: describe runtime provider zones
   service: RuntimeManager
   query:
-    provider:
-      type: string
-    runtime_credential:
-      type: string
-    runtime_url:
+    runtime_credential_id:
       type: string
 - action: DescribeRuntimes
   description: describe runtime
   service: RuntimeManager
   query:
-    label:
-      type: string
     limit:
       type: int64
     offset:
@@ -1050,13 +1078,21 @@
   body:
     description:
       type: string
-    labels:
+    name:
+      type: string
+    runtime_id:
+      type: string
+- action: ModifyRuntimeCredential
+  description: modify runtime credential
+  service: RuntimeManager
+  body:
+    description:
       type: string
     name:
       type: string
-    runtime_credential:
+    runtime_credential_content:
       type: string
-    runtime_id:
+    runtime_credential_id:
       type: string
 - action: DescribeTasks
   description: describe tasks with filter

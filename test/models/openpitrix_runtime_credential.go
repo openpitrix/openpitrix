@@ -12,9 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRuntime openpitrix runtime
-// swagger:model openpitrixRuntime
-type OpenpitrixRuntime struct {
+// OpenpitrixRuntimeCredential openpitrix runtime credential
+// swagger:model openpitrixRuntimeCredential
+type OpenpitrixRuntimeCredential struct {
 
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
@@ -31,24 +31,24 @@ type OpenpitrixRuntime struct {
 	// provider
 	Provider string `json:"provider,omitempty"`
 
+	// runtime credential content
+	RuntimeCredentialContent string `json:"runtime_credential_content,omitempty"`
+
 	// runtime credential id
 	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
 
-	// runtime id
-	RuntimeID string `json:"runtime_id,omitempty"`
+	// runtime url
+	RuntimeURL string `json:"runtime_url,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`
 
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
-
-	// zone
-	Zone string `json:"zone,omitempty"`
 }
 
-// Validate validates this openpitrix runtime
-func (m *OpenpitrixRuntime) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix runtime credential
+func (m *OpenpitrixRuntimeCredential) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -58,7 +58,7 @@ func (m *OpenpitrixRuntime) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixRuntime) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixRuntimeCredential) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -66,8 +66,8 @@ func (m *OpenpitrixRuntime) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixRuntime) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixRuntime
+func (m *OpenpitrixRuntimeCredential) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixRuntimeCredential
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

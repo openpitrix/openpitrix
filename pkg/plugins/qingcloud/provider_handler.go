@@ -72,8 +72,7 @@ func (p *ProviderHandler) initService(runtimeId string) (*qcservice.QingCloudSer
 	if err != nil {
 		return nil, err
 	}
-
-	return p.initQingCloudService(runtime.RuntimeUrl, runtime.Credential, runtime.Zone)
+	return p.initQingCloudService(runtime.RuntimeUrl, runtime.RuntimeCredentialContent, runtime.Zone)
 }
 
 func (p *ProviderHandler) waitInstanceNetworkAndVolume(instanceService *qcservice.InstanceService, instanceId string, needVolume bool, timeout time.Duration, waitInterval time.Duration) (ins *qcservice.Instance, err error) {

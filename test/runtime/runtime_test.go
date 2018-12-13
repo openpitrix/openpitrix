@@ -15,7 +15,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
 	"openpitrix.io/openpitrix/test/models"
-	"openpitrix.io/openpitrix/test/repocommon"
 	"openpitrix.io/openpitrix/test/testutil"
 )
 
@@ -30,6 +29,7 @@ func TestRuntime(t *testing.T) {
 
 	client := testutil.GetClient(clientConfig)
 
+	// clean runtime
 	testRuntimeName := "e2e-test-runtime"
 	describeParams := runtime_manager.NewDescribeRuntimesParams()
 	describeParams.SetSearchWord(&testRuntimeName)
@@ -46,20 +46,61 @@ func TestRuntime(t *testing.T) {
 		_, err := client.RuntimeManager.DeleteRuntimes(deleteParams, nil)
 		require.NoError(t, err)
 	}
+
+	// clean runtime credential
+	describeCredentialParams := runtime_manager.NewDescribeRuntimeCredentialsParams()
+	describeCredentialParams.SetSearchWord(&testRuntimeName)
+	describeCredentialParams.SetStatus([]string{constants.StatusActive})
+	describeCredentialResp, err := client.RuntimeManager.DescribeRuntimeCredentials(describeCredentialParams, nil)
+	require.NoError(t, err)
+	runtimeCredentials := describeCredentialResp.Payload.RuntimeCredentialSet
+	for _, runtimeCredential := range runtimeCredentials {
+		deleteCredentialParams := runtime_manager.NewDeleteRuntimeCredentialsParams()
+		deleteCredentialParams.SetBody(
+			&models.OpenpitrixDeleteRuntimeCredentialsRequest{
+				RuntimeCredentialID: []string{runtimeCredential.RuntimeCredentialID},
+			})
+		_, err := client.RuntimeManager.DeleteRuntimeCredentials(deleteCredentialParams, nil)
+		require.NoError(t, err)
+	}
+
+	// create runtime credential
+	createCredentialParams := runtime_manager.NewCreateRuntimeCredentialParams()
+	createCredentialParams.SetBody(
+		&models.OpenpitrixCreateRuntimeCredentialRequest{
+			Name:                     testRuntimeName,
+			Description:              "description",
+			Provider:                 constants.ProviderKubernetes,
+			RuntimeCredentialContent: credential,
+		})
+	createCredentialResp, err := client.RuntimeManager.CreateRuntimeCredential(createCredentialParams, nil)
+	require.NoError(t, err)
+	runtimeCredentialId := createCredentialResp.Payload.RuntimeCredentialID
+
 	// create runtime
 	createParams := runtime_manager.NewCreateRuntimeParams()
 	createParams.SetBody(
 		&models.OpenpitrixCreateRuntimeRequest{
-			Name:              testRuntimeName,
-			Description:       "description",
-			Provider:          constants.ProviderKubernetes,
-			RuntimeURL:        "",
-			RuntimeCredential: credential,
-			Zone:              idutil.GetUuid36("r-"),
+			Name:                testRuntimeName,
+			Description:         "description",
+			Provider:            constants.ProviderKubernetes,
+			RuntimeCredentialID: runtimeCredentialId,
+			Zone:                idutil.GetUuid36("r-"),
 		})
 	createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
 	require.NoError(t, err)
 	runtimeId := createResp.Payload.RuntimeID
+
+	// modify runtime credential
+	modifyCredentialParams := runtime_manager.NewModifyRuntimeCredentialParams()
+	modifyCredentialParams.SetBody(
+		&models.OpenpitrixModifyRuntimeCredentialRequest{
+			RuntimeCredentialID: runtimeCredentialId,
+			Description:         "cc",
+		})
+	_, err = client.RuntimeManager.ModifyRuntimeCredential(modifyCredentialParams, nil)
+	require.NoError(t, err)
+
 	// modify runtime
 	modifyParams := runtime_manager.NewModifyRuntimeParams()
 	modifyParams.SetBody(
@@ -67,9 +108,21 @@ func TestRuntime(t *testing.T) {
 			RuntimeID:   runtimeId,
 			Description: "cc",
 		})
-	modifyResp, err := client.RuntimeManager.ModifyRuntime(modifyParams, nil)
+	_, err = client.RuntimeManager.ModifyRuntime(modifyParams, nil)
 	require.NoError(t, err)
-	t.Log(modifyResp)
+
+	// describe runtime credential
+	describeCredentialParams.WithRuntimeCredentialID([]string{runtimeCredentialId})
+	describeCredentialResp, err = client.RuntimeManager.DescribeRuntimeCredentials(describeCredentialParams, nil)
+	require.NoError(t, err)
+	runtimeCredentials = describeCredentialResp.Payload.RuntimeCredentialSet
+	if len(runtimeCredentials) != 1 {
+		t.Fatalf("failed to describe runtime credentialss with params [%+v]", describeCredentialParams)
+	}
+	if runtimeCredentials[0].Name != testRuntimeName || runtimeCredentials[0].Description != "cc" {
+		t.Fatalf("failed to modify runtime credential [%+v]", runtimeCredentials[0])
+	}
+
 	// describe runtime
 	describeParams.WithRuntimeID([]string{runtimeId})
 	describeResp, err = client.RuntimeManager.DescribeRuntimes(describeParams, nil)
@@ -81,6 +134,7 @@ func TestRuntime(t *testing.T) {
 	if runtimes[0].Name != testRuntimeName || runtimes[0].Description != "cc" {
 		t.Fatalf("failed to modify runtime [%+v]", runtimes[0])
 	}
+
 	// delete runtime
 	deleteParams := runtime_manager.NewDeleteRuntimesParams()
 	deleteParams.WithBody(&models.OpenpitrixDeleteRuntimesRequest{
@@ -89,13 +143,20 @@ func TestRuntime(t *testing.T) {
 	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams, nil)
 	require.NoError(t, err)
 	t.Log(deleteResp)
+
+	// delete runtime credential
+	deleteCredentialParams := runtime_manager.NewDeleteRuntimeCredentialsParams()
+	deleteCredentialParams.WithBody(&models.OpenpitrixDeleteRuntimeCredentialsRequest{
+		RuntimeCredentialID: []string{runtimeCredentialId},
+	})
+	_, err = client.RuntimeManager.DeleteRuntimeCredentials(deleteCredentialParams, nil)
+	require.NoError(t, err)
+
 	// describe deleted runtime
 	describeParams.WithRuntimeID([]string{runtimeId})
 	describeParams.WithStatus([]string{constants.StatusDeleted})
-	describeParams.WithSearchWord(nil)
 	describeResp, err = client.RuntimeManager.DescribeRuntimes(describeParams, nil)
 	require.NoError(t, err)
-	runtimes = describeResp.Payload.RuntimeSet
 	runtimes = describeResp.Payload.RuntimeSet
 	if len(runtimes) != 1 {
 		t.Fatalf("failed to describe runtimes with params [%+v]", describeParams)
@@ -108,50 +169,22 @@ func TestRuntime(t *testing.T) {
 		t.Fatalf("failed to delete runtime, got runtime status [%s]", runtime.Status)
 	}
 
+	// describe deleted runtime credential
+	describeCredentialParams.WithRuntimeCredentialID([]string{runtimeCredentialId})
+	describeCredentialParams.WithStatus([]string{constants.StatusDeleted})
+	describeCredentialResp, err = client.RuntimeManager.DescribeRuntimeCredentials(describeCredentialParams, nil)
+	require.NoError(t, err)
+	runtimeCredentials = describeCredentialResp.Payload.RuntimeCredentialSet
+	if len(runtimeCredentials) != 1 {
+		t.Fatalf("failed to describe runtime credentials with params [%+v]", describeCredentialParams)
+	}
+	runtimeCredential := runtimeCredentials[0]
+	if runtimeCredential.RuntimeCredentialID != runtimeCredentialId {
+		t.Fatalf("failed to describe runtime credential")
+	}
+	if runtimeCredential.Status != constants.StatusDeleted {
+		t.Fatalf("failed to delete runtime credential, got runtime credential status [%s]", runtimeCredential.Status)
+	}
+
 	t.Log("test runtime finish, all test is ok")
-}
-
-func TestRuntimeLabel(t *testing.T) {
-	credential := getRuntimeCredential(t)
-	client := testutil.GetClient(clientConfig)
-	// Create a test runtime that can attach label on it
-	testRuntimeName := "e2e-test-runtime"
-	labels := repocommon.GenerateLabels()
-	createParams := runtime_manager.NewCreateRuntimeParams()
-	createParams.SetBody(
-		&models.OpenpitrixCreateRuntimeRequest{
-			Name:              testRuntimeName,
-			Description:       "description",
-			Provider:          constants.ProviderKubernetes,
-			RuntimeURL:        "",
-			RuntimeCredential: credential,
-			Zone:              idutil.GetUuid36("r-"),
-			Labels:            labels,
-		})
-	createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
-	require.NoError(t, err)
-	runtimeId := createResp.Payload.RuntimeID
-
-	describeParams := runtime_manager.NewDescribeRuntimesParams()
-	describeParams.Label = &labels
-	describeParams.Status = []string{constants.StatusActive}
-	describeResp, err := client.RuntimeManager.DescribeRuntimes(describeParams, nil)
-	require.NoError(t, err)
-	if len(describeResp.Payload.RuntimeSet) != 1 {
-		t.Fatalf("describe runtime with filter failed")
-	}
-	if describeResp.Payload.RuntimeSet[0].RuntimeID != runtimeId {
-		t.Fatalf("describe runtime with filter failed")
-	}
-
-	// delete runtime
-	deleteParams := runtime_manager.NewDeleteRuntimesParams()
-	deleteParams.WithBody(&models.OpenpitrixDeleteRuntimesRequest{
-		RuntimeID: []string{runtimeId},
-	})
-	deleteResp, err := client.RuntimeManager.DeleteRuntimes(deleteParams, nil)
-	require.NoError(t, err)
-	t.Log(deleteResp)
-
-	t.Log("test runtime label finish, all test is ok")
 }

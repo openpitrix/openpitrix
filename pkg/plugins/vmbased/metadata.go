@@ -302,7 +302,7 @@ func (m *Metadata) GetClusterMetadataCnodes() map[string]interface{} {
 		"user_id":     m.ClusterWrapper.Cluster.Owner,
 		"global_uuid": m.ClusterWrapper.Cluster.GlobalUuid,
 		"zone":        m.RuntimeDetails.Zone,
-		"provider":    m.RuntimeDetails.Provider,
+		"provider":    m.RuntimeDetails.Runtime.Provider,
 		"runtime_url": m.RuntimeDetails.RuntimeUrl,
 	}
 

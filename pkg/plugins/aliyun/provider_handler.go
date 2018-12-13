@@ -44,7 +44,7 @@ func (p *ProviderHandler) initInstanceService(runtimeId string) (*ecs.Client, er
 		return nil, err
 	}
 
-	return p.initInstanceServiceWithCredential(runtime.RuntimeUrl, runtime.Credential, runtime.Zone)
+	return p.initInstanceServiceWithCredential(runtime.RuntimeUrl, runtime.RuntimeCredentialContent, runtime.Zone)
 }
 
 func (p *ProviderHandler) initInstanceServiceWithCredential(runtimeUrl, runtimeCredential, zone string) (*ecs.Client, error) {

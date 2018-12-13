@@ -68,3 +68,55 @@ func CheckRuntimePermission(ctx context.Context, resourceId string) (*models.Run
 	}
 	return runtimes[0], nil
 }
+
+func CheckRuntimeCredentialsPermission(ctx context.Context, resourceIds []string) ([]*models.RuntimeCredential, error) {
+	if len(resourceIds) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var runtimecredentials []*models.RuntimeCredential
+	_, err := pi.Global().DB(ctx).
+		Select(models.RuntimeCredentialColumns...).
+		From(constants.TableRuntimeCredential).
+		Where(db.Eq(constants.ColumnRuntimeCredentialId, resourceIds)).Load(&runtimecredentials)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, runtimecredential := range runtimecredentials {
+			if runtimecredential.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, runtimecredential.RuntimeCredentialId)
+			}
+		}
+	}
+	if len(runtimecredentials) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
+	}
+	return runtimecredentials, nil
+}
+
+func CheckRuntimeCredentialPermission(ctx context.Context, resourceId string) (*models.RuntimeCredential, error) {
+	if len(resourceId) == 0 {
+		return nil, nil
+	}
+	var sender = senderutil.GetSenderFromContext(ctx)
+	var runtimecredentials []*models.RuntimeCredential
+	_, err := pi.Global().DB(ctx).
+		Select(models.RuntimeCredentialColumns...).
+		From(constants.TableRuntimeCredential).
+		Where(db.Eq(constants.ColumnRuntimeCredentialId, resourceId)).Load(&runtimecredentials)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if sender != nil && !sender.IsGlobalAdmin() {
+		for _, runtimecredential := range runtimecredentials {
+			if runtimecredential.Owner != sender.UserId {
+				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, runtimecredential.RuntimeCredentialId)
+			}
+		}
+	}
+	if len(runtimecredentials) == 0 {
+		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)
+	}
+	return runtimecredentials[0], nil
+}

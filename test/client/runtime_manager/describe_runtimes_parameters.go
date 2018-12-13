@@ -63,8 +63,6 @@ for the describe runtimes operation typically these are written to a http.Reques
 */
 type DescribeRuntimesParams struct {
 
-	/*Label*/
-	Label *string
 	/*Limit*/
 	Limit *int64
 	/*Offset*/
@@ -116,17 +114,6 @@ func (o *DescribeRuntimesParams) WithHTTPClient(client *http.Client) *DescribeRu
 // SetHTTPClient adds the HTTPClient to the describe runtimes params
 func (o *DescribeRuntimesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
-}
-
-// WithLabel adds the label to the describe runtimes params
-func (o *DescribeRuntimesParams) WithLabel(label *string) *DescribeRuntimesParams {
-	o.SetLabel(label)
-	return o
-}
-
-// SetLabel adds the label to the describe runtimes params
-func (o *DescribeRuntimesParams) SetLabel(label *string) {
-	o.Label = label
 }
 
 // WithLimit adds the limit to the describe runtimes params
@@ -213,22 +200,6 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 		return err
 	}
 	var res []error
-
-	if o.Label != nil {
-
-		// query param label
-		var qrLabel string
-		if o.Label != nil {
-			qrLabel = *o.Label
-		}
-		qLabel := qrLabel
-		if qLabel != "" {
-			if err := r.SetQueryParam("label", qLabel); err != nil {
-				return err
-			}
-		}
-
-	}
 
 	if o.Limit != nil {
 

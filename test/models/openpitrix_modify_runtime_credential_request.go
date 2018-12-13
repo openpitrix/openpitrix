@@ -12,12 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRuntime openpitrix runtime
-// swagger:model openpitrixRuntime
-type OpenpitrixRuntime struct {
-
-	// create time
-	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
+// OpenpitrixModifyRuntimeCredentialRequest openpitrix modify runtime credential request
+// swagger:model openpitrixModifyRuntimeCredentialRequest
+type OpenpitrixModifyRuntimeCredentialRequest struct {
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -25,30 +22,15 @@ type OpenpitrixRuntime struct {
 	// name
 	Name string `json:"name,omitempty"`
 
-	// owner
-	Owner string `json:"owner,omitempty"`
-
-	// provider
-	Provider string `json:"provider,omitempty"`
+	// runtime credential content
+	RuntimeCredentialContent string `json:"runtime_credential_content,omitempty"`
 
 	// runtime credential id
 	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
-
-	// runtime id
-	RuntimeID string `json:"runtime_id,omitempty"`
-
-	// status
-	Status string `json:"status,omitempty"`
-
-	// status time
-	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
-
-	// zone
-	Zone string `json:"zone,omitempty"`
 }
 
-// Validate validates this openpitrix runtime
-func (m *OpenpitrixRuntime) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix modify runtime credential request
+func (m *OpenpitrixModifyRuntimeCredentialRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -58,7 +40,7 @@ func (m *OpenpitrixRuntime) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixRuntime) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixModifyRuntimeCredentialRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -66,8 +48,8 @@ func (m *OpenpitrixRuntime) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixRuntime) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixRuntime
+func (m *OpenpitrixModifyRuntimeCredentialRequest) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixModifyRuntimeCredentialRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

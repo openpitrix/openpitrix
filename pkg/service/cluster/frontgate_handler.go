@@ -53,9 +53,9 @@ func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.Cl
 		logger.Error(ctx, "Get frontgate cluster conf failed. ")
 		return clusterId, err
 	}
-	providerInterface, err := plugins.GetProviderPlugin(ctx, f.Runtime.Provider)
+	providerInterface, err := plugins.GetProviderPlugin(ctx, f.Runtime.Runtime.Provider)
 	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", f.Runtime.Provider)
+		logger.Error(ctx, "No such provider [%s]. ", f.Runtime.Runtime.Provider)
 		return clusterId, err
 	}
 	frontgateWrapper := new(models.ClusterWrapper)
@@ -87,7 +87,7 @@ func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.Cl
 		frontgateWrapper.Cluster.VersionId,
 		constants.ActionCreateCluster,
 		directive,
-		f.Runtime.Provider,
+		f.Runtime.Runtime.Provider,
 		frontgateWrapper.Cluster.Owner,
 		frontgateWrapper.Cluster.RuntimeId,
 	)
@@ -110,7 +110,7 @@ func (f *Frontgate) StartCluster(ctx context.Context, frontgate *models.Cluster)
 		frontgate.VersionId,
 		constants.ActionStartClusters,
 		directive,
-		f.Runtime.Provider,
+		f.Runtime.Runtime.Provider,
 		frontgate.Owner,
 		frontgate.RuntimeId,
 	)
@@ -133,7 +133,7 @@ func (f *Frontgate) RecoverCluster(ctx context.Context, frontgate *models.Cluste
 		frontgate.VersionId,
 		constants.ActionRecoverClusters,
 		directive,
-		f.Runtime.Provider,
+		f.Runtime.Runtime.Provider,
 		frontgate.Owner,
 		frontgate.RuntimeId,
 	)

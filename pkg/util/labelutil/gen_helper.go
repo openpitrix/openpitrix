@@ -4,6 +4,9 @@
 
 // +build ignore
 
+//go:generate go run gen_helper.go
+//go:generate go fmt ./...
+
 package main
 
 import (
@@ -116,7 +119,6 @@ import (
 	var models = []Model{
 		{"repo", "label"},
 		{"repo", "selector"},
-		{"runtime", "label"},
 	}
 
 	for _, m := range models {
