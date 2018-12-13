@@ -421,14 +421,14 @@ func (p *Provider) UpdateClusterStatus(ctx context.Context, job *models.Job) err
 	return nil
 }
 
-func (p *Provider) ValidateCredential(ctx context.Context, runtimeId, url, credential, zone string) error {
+func (p *Provider) ValidateRuntime(ctx context.Context, runtimeId, zone string, runtimeCredential *models.RuntimeCredential, needCreate bool) error {
 	kubeHandler := GetKubeHandler(ctx, runtimeId)
-	return kubeHandler.ValidateCredential(credential, zone)
+	return kubeHandler.ValidateRuntime(zone, runtimeCredential, needCreate)
 }
 
-func (p *Provider) DescribeRuntimeProviderZones(ctx context.Context, url, credential string) ([]string, error) {
+func (p *Provider) DescribeRuntimeProviderZones(ctx context.Context, runtimeCredential *models.RuntimeCredential) ([]string, error) {
 	kubeHandler := GetKubeHandler(ctx, "")
-	return kubeHandler.DescribeRuntimeProviderZones(credential)
+	return kubeHandler.DescribeRuntimeProviderZones(runtimeCredential)
 }
 
 func (p *Provider) DescribeClusterDetails(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {

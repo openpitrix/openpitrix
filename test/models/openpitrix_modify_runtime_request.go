@@ -19,14 +19,8 @@ type OpenpitrixModifyRuntimeRequest struct {
 	// description
 	Description string `json:"description,omitempty"`
 
-	// labels
-	Labels string `json:"labels,omitempty"`
-
 	// name
 	Name string `json:"name,omitempty"`
-
-	// runtime credential
-	RuntimeCredential string `json:"runtime_credential,omitempty"`
 
 	// runtime id
 	RuntimeID string `json:"runtime_id,omitempty"`

@@ -12,9 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixCreateRuntimeRequest openpitrix create runtime request
-// swagger:model openpitrixCreateRuntimeRequest
-type OpenpitrixCreateRuntimeRequest struct {
+// OpenpitrixCreateRuntimeCredentialRequest openpitrix create runtime credential request
+// swagger:model openpitrixCreateRuntimeCredentialRequest
+type OpenpitrixCreateRuntimeCredentialRequest struct {
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -25,15 +25,15 @@ type OpenpitrixCreateRuntimeRequest struct {
 	// provider
 	Provider string `json:"provider,omitempty"`
 
-	// runtime credential id
-	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
+	// runtime credential content
+	RuntimeCredentialContent string `json:"runtime_credential_content,omitempty"`
 
-	// zone
-	Zone string `json:"zone,omitempty"`
+	// runtime url
+	RuntimeURL string `json:"runtime_url,omitempty"`
 }
 
-// Validate validates this openpitrix create runtime request
-func (m *OpenpitrixCreateRuntimeRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix create runtime credential request
+func (m *OpenpitrixCreateRuntimeCredentialRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -43,7 +43,7 @@ func (m *OpenpitrixCreateRuntimeRequest) Validate(formats strfmt.Registry) error
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixCreateRuntimeRequest) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixCreateRuntimeCredentialRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -51,8 +51,8 @@ func (m *OpenpitrixCreateRuntimeRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixCreateRuntimeRequest) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixCreateRuntimeRequest
+func (m *OpenpitrixCreateRuntimeCredentialRequest) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixCreateRuntimeCredentialRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -90,9 +90,9 @@ func (f *Frontgate) GetActiveFrontgate(ctx context.Context, clusterWrapper *mode
 	owner := clusterWrapper.Cluster.Owner
 	err := pi.Global().Etcd(ctx).DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
-		providerInterface, err := plugins.GetProviderPlugin(ctx, f.Runtime.Provider)
+		providerInterface, err := plugins.GetProviderPlugin(ctx, f.Runtime.Runtime.Provider)
 		if err != nil {
-			return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Provider)
+			return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Runtime.Provider)
 		}
 		vpc, err := providerInterface.DescribeVpc(ctx, f.Runtime.RuntimeId, vpcId)
 		if err != nil {

@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRuntimeLabels openpitrix runtime labels
-// swagger:model openpitrixRuntimeLabels
-type OpenpitrixRuntimeLabels []*OpenpitrixRuntimeLabel
+// OpenpitrixDescribeRuntimeCredentialsResponseRuntimeCredentialSet openpitrix describe runtime credentials response runtime credential set
+// swagger:model openpitrixDescribeRuntimeCredentialsResponseRuntimeCredentialSet
+type OpenpitrixDescribeRuntimeCredentialsResponseRuntimeCredentialSet []*OpenpitrixRuntimeCredential
 
-// Validate validates this openpitrix runtime labels
-func (m OpenpitrixRuntimeLabels) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix describe runtime credentials response runtime credential set
+func (m OpenpitrixDescribeRuntimeCredentialsResponseRuntimeCredentialSet) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {

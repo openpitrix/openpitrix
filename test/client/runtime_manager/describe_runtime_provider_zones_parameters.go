@@ -62,12 +62,8 @@ for the describe runtime provider zones operation typically these are written to
 */
 type DescribeRuntimeProviderZonesParams struct {
 
-	/*Provider*/
-	Provider *string
-	/*RuntimeCredential*/
-	RuntimeCredential *string
-	/*RuntimeURL*/
-	RuntimeURL *string
+	/*RuntimeCredentialID*/
+	RuntimeCredentialID *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -107,37 +103,15 @@ func (o *DescribeRuntimeProviderZonesParams) SetHTTPClient(client *http.Client) 
 	o.HTTPClient = client
 }
 
-// WithProvider adds the provider to the describe runtime provider zones params
-func (o *DescribeRuntimeProviderZonesParams) WithProvider(provider *string) *DescribeRuntimeProviderZonesParams {
-	o.SetProvider(provider)
+// WithRuntimeCredentialID adds the runtimeCredentialID to the describe runtime provider zones params
+func (o *DescribeRuntimeProviderZonesParams) WithRuntimeCredentialID(runtimeCredentialID *string) *DescribeRuntimeProviderZonesParams {
+	o.SetRuntimeCredentialID(runtimeCredentialID)
 	return o
 }
 
-// SetProvider adds the provider to the describe runtime provider zones params
-func (o *DescribeRuntimeProviderZonesParams) SetProvider(provider *string) {
-	o.Provider = provider
-}
-
-// WithRuntimeCredential adds the runtimeCredential to the describe runtime provider zones params
-func (o *DescribeRuntimeProviderZonesParams) WithRuntimeCredential(runtimeCredential *string) *DescribeRuntimeProviderZonesParams {
-	o.SetRuntimeCredential(runtimeCredential)
-	return o
-}
-
-// SetRuntimeCredential adds the runtimeCredential to the describe runtime provider zones params
-func (o *DescribeRuntimeProviderZonesParams) SetRuntimeCredential(runtimeCredential *string) {
-	o.RuntimeCredential = runtimeCredential
-}
-
-// WithRuntimeURL adds the runtimeURL to the describe runtime provider zones params
-func (o *DescribeRuntimeProviderZonesParams) WithRuntimeURL(runtimeURL *string) *DescribeRuntimeProviderZonesParams {
-	o.SetRuntimeURL(runtimeURL)
-	return o
-}
-
-// SetRuntimeURL adds the runtimeUrl to the describe runtime provider zones params
-func (o *DescribeRuntimeProviderZonesParams) SetRuntimeURL(runtimeURL *string) {
-	o.RuntimeURL = runtimeURL
+// SetRuntimeCredentialID adds the runtimeCredentialId to the describe runtime provider zones params
+func (o *DescribeRuntimeProviderZonesParams) SetRuntimeCredentialID(runtimeCredentialID *string) {
+	o.RuntimeCredentialID = runtimeCredentialID
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -148,48 +122,16 @@ func (o *DescribeRuntimeProviderZonesParams) WriteToRequest(r runtime.ClientRequ
 	}
 	var res []error
 
-	if o.Provider != nil {
+	if o.RuntimeCredentialID != nil {
 
-		// query param provider
-		var qrProvider string
-		if o.Provider != nil {
-			qrProvider = *o.Provider
+		// query param runtime_credential_id
+		var qrRuntimeCredentialID string
+		if o.RuntimeCredentialID != nil {
+			qrRuntimeCredentialID = *o.RuntimeCredentialID
 		}
-		qProvider := qrProvider
-		if qProvider != "" {
-			if err := r.SetQueryParam("provider", qProvider); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.RuntimeCredential != nil {
-
-		// query param runtime_credential
-		var qrRuntimeCredential string
-		if o.RuntimeCredential != nil {
-			qrRuntimeCredential = *o.RuntimeCredential
-		}
-		qRuntimeCredential := qrRuntimeCredential
-		if qRuntimeCredential != "" {
-			if err := r.SetQueryParam("runtime_credential", qRuntimeCredential); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.RuntimeURL != nil {
-
-		// query param runtime_url
-		var qrRuntimeURL string
-		if o.RuntimeURL != nil {
-			qrRuntimeURL = *o.RuntimeURL
-		}
-		qRuntimeURL := qrRuntimeURL
-		if qRuntimeURL != "" {
-			if err := r.SetQueryParam("runtime_url", qRuntimeURL); err != nil {
+		qRuntimeCredentialID := qrRuntimeCredentialID
+		if qRuntimeCredentialID != "" {
+			if err := r.SetQueryParam("runtime_credential_id", qRuntimeCredentialID); err != nil {
 				return err
 			}
 		}

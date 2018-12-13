@@ -20,7 +20,7 @@ type OpenpitrixRuntimeDetail struct {
 	Runtime *OpenpitrixRuntime `json:"runtime,omitempty"`
 
 	// runtime credential
-	RuntimeCredential string `json:"runtime_credential,omitempty"`
+	RuntimeCredential *OpenpitrixRuntimeCredential `json:"runtime_credential,omitempty"`
 }
 
 // Validate validates this openpitrix runtime detail
@@ -28,6 +28,11 @@ func (m *OpenpitrixRuntimeDetail) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateRuntime(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateRuntimeCredential(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -49,6 +54,25 @@ func (m *OpenpitrixRuntimeDetail) validateRuntime(formats strfmt.Registry) error
 		if err := m.Runtime.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("runtime")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OpenpitrixRuntimeDetail) validateRuntimeCredential(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RuntimeCredential) { // not required
+		return nil
+	}
+
+	if m.RuntimeCredential != nil {
+
+		if err := m.RuntimeCredential.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("runtime_credential")
 			}
 			return err
 		}

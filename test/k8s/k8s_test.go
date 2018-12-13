@@ -132,15 +132,29 @@ func TestK8S(t *testing.T) {
 		} else {
 			KubeConfig := getRuntimeCredential(t)
 
+			createCredentialParams := runtime_manager.NewCreateRuntimeCredentialParams()
+			createCredentialParams.SetBody(
+				&models.OpenpitrixCreateRuntimeCredentialRequest{
+					Name:                     RuntimeNameForTest,
+					Description:              "minikube",
+					Provider:                 constants.ProviderKubernetes,
+					RuntimeCredentialContent: KubeConfig,
+				})
+			createCredentialResp, err := client.RuntimeManager.CreateRuntimeCredential(createCredentialParams, nil)
+			if err != nil {
+				fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-runtime-manager"))
+				t.Fatal(err)
+			}
+			runtimeCredentialId := createCredentialResp.Payload.RuntimeCredentialID
+
 			createParams := runtime_manager.NewCreateRuntimeParams()
 			createParams.SetBody(
 				&models.OpenpitrixCreateRuntimeRequest{
-					Name:              RuntimeNameForTest,
-					Description:       "minikube",
-					Provider:          constants.ProviderKubernetes,
-					RuntimeURL:        "",
-					RuntimeCredential: KubeConfig,
-					Zone:              "test",
+					Name:                RuntimeNameForTest,
+					Description:         "minikube",
+					Provider:            constants.ProviderKubernetes,
+					RuntimeCredentialID: runtimeCredentialId,
+					Zone:                "test",
 				})
 			createResp, err := client.RuntimeManager.CreateRuntime(createParams, nil)
 			if err != nil {

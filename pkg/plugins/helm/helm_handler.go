@@ -52,9 +52,7 @@ func (p *HelmHandler) initKubeClient() (*kubernetes.Clientset, *rest.Config, err
 			return nil, err
 		}
 
-		credential := runtime.Credential
-
-		return clientcmd.Load([]byte(credential))
+		return clientcmd.Load([]byte(runtime.RuntimeCredentialContent))
 	}
 
 	config, err := clientcmd.BuildConfigFromKubeconfigGetter("", kubeconfigGetter)

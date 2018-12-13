@@ -12,28 +12,16 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixCreateRuntimeRequest openpitrix create runtime request
-// swagger:model openpitrixCreateRuntimeRequest
-type OpenpitrixCreateRuntimeRequest struct {
-
-	// description
-	Description string `json:"description,omitempty"`
-
-	// name
-	Name string `json:"name,omitempty"`
-
-	// provider
-	Provider string `json:"provider,omitempty"`
+// OpenpitrixCreateRuntimeCredentialResponse openpitrix create runtime credential response
+// swagger:model openpitrixCreateRuntimeCredentialResponse
+type OpenpitrixCreateRuntimeCredentialResponse struct {
 
 	// runtime credential id
 	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
-
-	// zone
-	Zone string `json:"zone,omitempty"`
 }
 
-// Validate validates this openpitrix create runtime request
-func (m *OpenpitrixCreateRuntimeRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix create runtime credential response
+func (m *OpenpitrixCreateRuntimeCredentialResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -43,7 +31,7 @@ func (m *OpenpitrixCreateRuntimeRequest) Validate(formats strfmt.Registry) error
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixCreateRuntimeRequest) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixCreateRuntimeCredentialResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -51,8 +39,8 @@ func (m *OpenpitrixCreateRuntimeRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixCreateRuntimeRequest) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixCreateRuntimeRequest
+func (m *OpenpitrixCreateRuntimeCredentialResponse) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixCreateRuntimeCredentialResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

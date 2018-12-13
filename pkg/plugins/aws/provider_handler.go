@@ -63,7 +63,7 @@ func (p *ProviderHandler) initSession(runtimeId string) (*session.Session, error
 		return nil, err
 	}
 
-	return p.initAWSSession(runtime.RuntimeUrl, runtime.Credential, runtime.Zone)
+	return p.initAWSSession(runtime.RuntimeUrl, runtime.RuntimeCredentialContent, runtime.Zone)
 }
 
 func (p *ProviderHandler) initInstanceService(runtimeId string) (ec2iface.EC2API, error) {
