@@ -160,6 +160,30 @@ func (p *Server) ModifyRuntime(ctx context.Context, req *pb.ModifyRuntimeRequest
 
 	attributes := manager.BuildUpdateAttributes(req, constants.ColumnName, constants.ColumnDescription)
 	attributes[constants.ColumnStatusTime] = time.Now()
+
+	runtimeCredentialId := req.GetRuntimeCredentialId().GetValue()
+	if len(runtimeCredentialId) > 0 {
+		runtimeCredential, err := CheckRuntimeCredentialPermission(ctx, runtimeCredentialId)
+		if err != nil {
+			return nil, err
+		}
+		if runtimeCredential.Status == constants.StatusDeleted {
+			logger.Error(ctx, "Runtime credential [%s] has been deleted", runtimeCredentialId)
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAlreadyDeleted, runtimeCredentialId)
+		}
+
+		err = ValidateRuntime(ctx, runtime.RuntimeId, runtime.Zone, runtimeCredential, false)
+		if err != nil {
+			if gerr.IsGRPCError(err) {
+				return nil, err
+			} else {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
+			}
+		}
+
+		attributes[constants.ColumnRuntimeCredentialId] = runtimeCredentialId
+	}
+
 	_, err = pi.Global().DB(ctx).
 		Update(constants.TableRuntime).
 		SetMap(attributes).

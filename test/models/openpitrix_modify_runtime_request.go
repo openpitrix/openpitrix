@@ -22,6 +22,9 @@ type OpenpitrixModifyRuntimeRequest struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// runtime credential id
+	RuntimeCredentialID string `json:"runtime_credential_id,omitempty"`
+
 	// runtime id
 	RuntimeID string `json:"runtime_id,omitempty"`
 }

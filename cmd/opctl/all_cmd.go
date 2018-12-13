@@ -3595,6 +3595,7 @@ func (*ModifyRuntimeCmd) GetActionName() string {
 func (c *ModifyRuntimeCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", "", "")
 	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "")
 }
 
