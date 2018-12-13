@@ -3815,6 +3815,43 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/runtimes/credentials:validate": {
+      "get": {
+        "summary": "validate runtime credential",
+        "operationId": "ValidateRuntimeCredential",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixValidateRuntimeCredentialResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "runtime_url",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "runtime_credential_content",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "RuntimeManager"
+        ]
+      }
+    },
     "/v1/runtimes/statistics": {
       "get": {
         "summary": "get runtime statistics",
@@ -7374,6 +7411,19 @@ var Files = map[string]string{
         },
         "runtime_credential": {
           "$ref": "#/definitions/openpitrixRuntimeCredential"
+        }
+      }
+    },
+    "openpitrixValidateRuntimeCredentialResponse": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "errorCode": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },

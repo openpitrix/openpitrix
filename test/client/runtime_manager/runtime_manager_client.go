@@ -314,6 +314,35 @@ func (a *Client) ModifyRuntimeCredential(params *ModifyRuntimeCredentialParams, 
 
 }
 
+/*
+ValidateRuntimeCredential validates runtime credential
+*/
+func (a *Client) ValidateRuntimeCredential(params *ValidateRuntimeCredentialParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateRuntimeCredentialOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewValidateRuntimeCredentialParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ValidateRuntimeCredential",
+		Method:             "GET",
+		PathPattern:        "/v1/runtimes/credentials:validate",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ValidateRuntimeCredentialReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ValidateRuntimeCredentialOK), nil
+
+}
+
 // SetTransport changes the transport on the client
 func (a *Client) SetTransport(transport runtime.ClientTransport) {
 	a.transport = transport

@@ -453,6 +453,29 @@ func (p *Server) ModifyRuntimeCredential(ctx context.Context, req *pb.ModifyRunt
 	return res, nil
 }
 
+func (p *Server) ValidateRuntimeCredential(ctx context.Context, req *pb.ValidateRuntimeCredentialRequest) (*pb.ValidateRuntimeCredentialResponse, error) {
+	runtimeCredential := &models.RuntimeCredential{
+		RuntimeUrl:               req.GetRuntimeUrl().GetValue(),
+		RuntimeCredentialContent: req.GetRuntimeCredentialContent().GetValue(),
+		Provider:                 req.GetProvider().GetValue(),
+	}
+	err := ValidateRuntime(ctx, "", "", runtimeCredential, false)
+	if err != nil {
+		if gerr.IsGRPCError(err) {
+			return &pb.ValidateRuntimeCredentialResponse{
+				Ok: pbutil.ToProtoBool(false),
+			}, err
+		} else {
+			return &pb.ValidateRuntimeCredentialResponse{
+				Ok: pbutil.ToProtoBool(false),
+			}, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorValidateFailed)
+		}
+	}
+	return &pb.ValidateRuntimeCredentialResponse{
+		Ok: pbutil.ToProtoBool(true),
+	}, nil
+}
+
 func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.DescribeRuntimeProviderZonesRequest) (*pb.DescribeRuntimeProviderZonesResponse, error) {
 	runtimeCredentialId := req.GetRuntimeCredentialId().GetValue()
 	runtimeCredential, err := CheckRuntimeCredentialPermission(ctx, runtimeCredentialId)

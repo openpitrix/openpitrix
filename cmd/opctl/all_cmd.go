@@ -117,6 +117,7 @@ var AllCmd = []Cmd{
 	NewGetRuntimeStatisticsCmd(),
 	NewModifyRuntimeCmd(),
 	NewModifyRuntimeCredentialCmd(),
+	NewValidateRuntimeCredentialCmd(),
 	NewDescribeTasksCmd(),
 	NewRetryTasksCmd(),
 	NewCreateClientCmd(),
@@ -3645,6 +3646,44 @@ func (c *ModifyRuntimeCredentialCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.RuntimeManager.ModifyRuntimeCredential(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ValidateRuntimeCredentialCmd struct {
+	*runtime_manager.ValidateRuntimeCredentialParams
+}
+
+func NewValidateRuntimeCredentialCmd() Cmd {
+	return &ValidateRuntimeCredentialCmd{
+		runtime_manager.NewValidateRuntimeCredentialParams(),
+	}
+}
+
+func (*ValidateRuntimeCredentialCmd) GetActionName() string {
+	return "ValidateRuntimeCredential"
+}
+
+func (c *ValidateRuntimeCredentialCmd) ParseFlag(f Flag) {
+	c.Provider = new(string)
+	f.StringVarP(c.Provider, "provider", "", "", "")
+	c.RuntimeCredentialContent = new(string)
+	f.StringVarP(c.RuntimeCredentialContent, "runtime_credential_content", "", "", "")
+	c.RuntimeURL = new(string)
+	f.StringVarP(c.RuntimeURL, "runtime_url", "", "", "")
+}
+
+func (c *ValidateRuntimeCredentialCmd) Run(out Out) error {
+
+	out.WriteRequest(c.ValidateRuntimeCredentialParams)
+
+	client := getClient()
+	res, err := client.RuntimeManager.ValidateRuntimeCredential(c.ValidateRuntimeCredentialParams, nil)
 	if err != nil {
 		return err
 	}
