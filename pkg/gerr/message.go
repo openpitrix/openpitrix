@@ -282,6 +282,11 @@ var (
 		en:   "app version [%s] has incorrect status [%s], cannot execute the current action",
 		zhCN: "应用版本[%s]状态为[%s], 无法执行此操作",
 	}
+	ErrorAppVersionInReview = ErrorMessage{
+		Name: "app_version_in_review",
+		en:   "app version is under review, app cannot be modified",
+		zhCN: "应用版本审核中, 应用无法修改",
+	}
 	ErrorLoadPackageFailed = ErrorMessage{
 		Name: "load_package_failed",
 		en:   "load package failed, reason: [%s]",

@@ -49,8 +49,10 @@ message ModifyAppRequest {
 	google.protobuf.StringValue maintainers = 7;
 	google.protobuf.StringValue sources = 8;
 	google.protobuf.StringValue readme = 9;
-	google.protobuf.StringValue category_id = 10;
-	google.protobuf.StringValue keywords = 11;
+	google.protobuf.StringValue abstraction = 10;
+	google.protobuf.StringValue tos = 11;
+	google.protobuf.StringValue category_id = 12;
+	google.protobuf.StringValue keywords = 13;
 }
 
 message ModifyAppResponse {
@@ -95,13 +97,16 @@ message App {
 	google.protobuf.StringValue sources = 12;
 	google.protobuf.StringValue readme = 13;
 	google.protobuf.StringValue chart_name = 14;
-	google.protobuf.StringValue owner = 15;
-	google.protobuf.Timestamp create_time = 16;
-	google.protobuf.Timestamp status_time = 17;
-	google.protobuf.Timestamp update_time = 18;
-	repeated ResourceCategory category_set = 19;
-	AppVersion latest_app_version = 20;
-	google.protobuf.StringValue app_version_types = 21;
+	google.protobuf.StringValue abstraction = 15;
+	google.protobuf.StringValue tos = 16;
+	google.protobuf.StringValue owner = 17;
+	google.protobuf.Timestamp create_time = 18;
+	google.protobuf.Timestamp status_time = 19;
+	google.protobuf.Timestamp update_time = 20;
+
+	repeated ResourceCategory category_set = 21;
+	AppVersion latest_app_version = 22;
+	google.protobuf.StringValue app_version_types = 23;
 }
 
 message DescribeAppsRequest {
@@ -166,12 +171,13 @@ message AppVersion {
 	google.protobuf.StringValue readme = 13;
 	google.protobuf.StringValue package_name = 14;
 	google.protobuf.StringValue status = 15;
-	google.protobuf.Timestamp create_time = 16;
-	google.protobuf.Timestamp status_time = 17;
-	google.protobuf.Timestamp update_time = 18;
-	google.protobuf.UInt32Value sequence = 19;
-	google.protobuf.StringValue message = 20;
-	google.protobuf.StringValue type = 21;
+	google.protobuf.StringValue review_id = 16;
+	google.protobuf.Timestamp create_time = 17;
+	google.protobuf.Timestamp status_time = 18;
+	google.protobuf.Timestamp update_time = 19;
+	google.protobuf.UInt32Value sequence = 20;
+	google.protobuf.StringValue message = 21;
+	google.protobuf.StringValue type = 22;
 }
 
 message AppVersionAudit {
@@ -181,7 +187,44 @@ message AppVersionAudit {
     google.protobuf.StringValue operator = 4;
 	google.protobuf.StringValue role = 5;
     google.protobuf.StringValue message = 6;
-	google.protobuf.Timestamp status_time = 7;
+	google.protobuf.StringValue review_id = 7;
+	google.protobuf.Timestamp status_time = 8;
+}
+
+message AppVersionReviewPhase {
+	google.protobuf.StringValue status = 1;
+	google.protobuf.StringValue operator = 2;
+	google.protobuf.StringValue role = 3;
+	google.protobuf.StringValue message = 4;
+	google.protobuf.Timestamp status_time = 5;
+	google.protobuf.Timestamp review_time = 6;
+}
+
+message AppVersionReview {
+	google.protobuf.StringValue review_id = 1;
+	google.protobuf.StringValue version_id = 2;
+	google.protobuf.StringValue app_id = 3;
+	google.protobuf.StringValue status = 4;
+	map<string, AppVersionReviewPhase> phase = 5;
+}
+
+message DescribeAppVersionReviewsRequest {
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	uint32 limit = 4;
+	uint32 offset = 5;
+
+	string app_id = 10;
+	string version_id = 11;
+
+	repeated string review_id = 12;
+	repeated string status = 13;
+}
+
+message DescribeAppVersionReviewsResponse {
+	uint32 total_count = 1;
+	repeated AppVersionReview app_version_review_set = 2;
 }
 
 message DescribeAppVersionAuditsRequest {
@@ -279,15 +322,24 @@ message DeleteAppVersionRequest {
 message DeleteAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
 }
-message PassAppVersionRequest {
+message ReviewAppVersionRequest {
+	string role = 1;
+	google.protobuf.StringValue version_id = 2;
+}
+message ReviewAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
+}
+message PassAppVersionRequest {
+	string role = 1;
+	google.protobuf.StringValue version_id = 2;
 }
 message PassAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
 }
 message RejectAppVersionRequest {
-	google.protobuf.StringValue version_id = 1;
-	google.protobuf.StringValue message = 2;
+	string role = 1;
+	google.protobuf.StringValue version_id = 2;
+	google.protobuf.StringValue message = 3;
 }
 message RejectAppVersionResponse {
 	google.protobuf.StringValue version_id = 1;
@@ -419,6 +471,14 @@ service AppManager {
 			get: "/v1/app/{app_id=*}/version/{version_id=*}/audits"
 		};
 	}
+	rpc DescribeAppVersionReviews (DescribeAppVersionReviewsRequest) returns (DescribeAppVersionReviewsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "DescribeAppVersionReviews"
+		};
+		option (google.api.http) = {
+			get: "/v1/app/{app_id=*}/version/{version_id=*}/reviews"
+		};
+	}
 	rpc ModifyAppVersion (ModifyAppVersionRequest) returns (ModifyAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "modify app version"
@@ -482,12 +542,21 @@ service AppManager {
         };
 	}
 
+	rpc ReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "pass app version"
+        };
+		option (google.api.http) = {
+            post: "/v1/app_version/action/{role=*}/review"
+            body: "*"
+        };
+	}
 	rpc PassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "pass app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/pass"
+            post: "/v1/app_version/action/{role=*}/pass"
             body: "*"
         };
 	}
@@ -496,7 +565,7 @@ service AppManager {
             summary: "reject app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/reject"
+            post: "/v1/app_version/action/{role=*}/reject"
             body: "*"
         };
 	}

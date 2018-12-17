@@ -39,5 +39,6 @@ const (
 	TableMarket     = "market"
 	TableMarketUser = "market_user"
 
-	TableAppVersionAudit = "app_version_audit"
+	TableAppVersionAudit  = "app_version_audit"
+	TableAppVersionReview = "app_version_review"
 )

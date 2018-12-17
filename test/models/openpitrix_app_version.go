@@ -55,6 +55,9 @@ type OpenpitrixAppVersion struct {
 	// readme
 	Readme string `json:"readme,omitempty"`
 
+	// review id
+	ReviewID string `json:"review_id,omitempty"`
+
 	// screenshots
 	Screenshots string `json:"screenshots,omitempty"`
 

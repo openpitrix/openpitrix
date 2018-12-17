@@ -19,6 +19,7 @@ type AppVersionAudit struct {
 	Operator   string
 	Role       string
 	Message    string
+	ReviewId   string
 	StatusTime time.Time
 }
 
@@ -46,6 +47,7 @@ func AppVersionAuditToPb(appVersionAudit *AppVersionAudit) *pb.AppVersionAudit {
 	pbAppVersionAudit.Operator = pbutil.ToProtoString(appVersionAudit.Operator)
 	pbAppVersionAudit.Role = pbutil.ToProtoString(appVersionAudit.Role)
 	pbAppVersionAudit.Message = pbutil.ToProtoString(appVersionAudit.Message)
+	pbAppVersionAudit.ReviewId = pbutil.ToProtoString(appVersionAudit.ReviewId)
 	pbAppVersionAudit.StatusTime = pbutil.ToProtoTimestamp(appVersionAudit.StatusTime)
 	return &pbAppVersionAudit
 }

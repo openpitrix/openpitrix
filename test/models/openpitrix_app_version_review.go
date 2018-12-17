@@ -12,19 +12,28 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixPassAppVersionRequest openpitrix pass app version request
-// swagger:model openpitrixPassAppVersionRequest
-type OpenpitrixPassAppVersionRequest struct {
+// OpenpitrixAppVersionReview openpitrix app version review
+// swagger:model openpitrixAppVersionReview
+type OpenpitrixAppVersionReview struct {
 
-	// role
-	Role string `json:"role,omitempty"`
+	// app id
+	AppID string `json:"app_id,omitempty"`
+
+	// phase
+	Phase OpenpitrixAppVersionReviewPhaseOAIGen `json:"phase,omitempty"`
+
+	// review id
+	ReviewID string `json:"review_id,omitempty"`
+
+	// status
+	Status string `json:"status,omitempty"`
 
 	// version id
 	VersionID string `json:"version_id,omitempty"`
 }
 
-// Validate validates this openpitrix pass app version request
-func (m *OpenpitrixPassAppVersionRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix app version review
+func (m *OpenpitrixAppVersionReview) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -34,7 +43,7 @@ func (m *OpenpitrixPassAppVersionRequest) Validate(formats strfmt.Registry) erro
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixPassAppVersionRequest) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixAppVersionReview) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -42,8 +51,8 @@ func (m *OpenpitrixPassAppVersionRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixPassAppVersionRequest) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixPassAppVersionRequest
+func (m *OpenpitrixAppVersionReview) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixAppVersionReview
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

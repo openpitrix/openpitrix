@@ -85,6 +85,7 @@ const (
 	StatusPassed    = "passed"
 	StatusRejected  = "rejected"
 	StatusSuspended = "suspended"
+	StatusInReview  = "in-review"
 )
 
 var DeletedStatuses = []string{
@@ -218,11 +219,15 @@ var AllAdminRoles = []string{
 const (
 	RoleUser        = "user"
 	RoleDeveloper   = "developer"
+	RoleIsv         = "isv"
 	RoleGlobalAdmin = "global_admin"
 
 	GrantTypeClientCredentials = "client_credentials"
 	GrantTypePassword          = "password"
 	GrantTypeRefreshToken      = "refresh_token"
+
+	RoleBusinessAdmin = "business_admin"
+	RoleDevelopAdmin  = "develop_admin"
 )
 
 var GrantTypeTokens = []string{

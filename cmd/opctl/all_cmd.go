@@ -49,6 +49,7 @@ var AllCmd = []Cmd{
 	NewDescribeActiveAppVersionsCmd(),
 	NewDescribeActiveAppsCmd(),
 	NewDescribeAppVersionAuditsCmd(),
+	NewDescribeAppVersionReviewsCmd(),
 	NewDescribeAppVersionsCmd(),
 	NewDescribeAppsCmd(),
 	NewGetAppStatisticsCmd(),
@@ -60,6 +61,7 @@ var AllCmd = []Cmd{
 	NewRecoverAppVersionCmd(),
 	NewRejectAppVersionCmd(),
 	NewReleaseAppVersionCmd(),
+	NewReviewAppVersionCmd(),
 	NewSubmitAppVersionCmd(),
 	NewSuspendAppVersionCmd(),
 	NewUploadAppAttachmentCmd(),
@@ -999,6 +1001,50 @@ func (c *DescribeAppVersionAuditsCmd) Run(out Out) error {
 	return nil
 }
 
+type DescribeAppVersionReviewsCmd struct {
+	*app_manager.DescribeAppVersionReviewsParams
+}
+
+func NewDescribeAppVersionReviewsCmd() Cmd {
+	return &DescribeAppVersionReviewsCmd{
+		app_manager.NewDescribeAppVersionReviewsParams(),
+	}
+}
+
+func (*DescribeAppVersionReviewsCmd) GetActionName() string {
+	return "DescribeAppVersionReviews"
+}
+
+func (c *DescribeAppVersionReviewsCmd) ParseFlag(f Flag) {
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	f.StringSliceVarP(&c.ReviewID, "review_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+}
+
+func (c *DescribeAppVersionReviewsCmd) Run(out Out) error {
+
+	out.WriteRequest(c.DescribeAppVersionReviewsParams)
+
+	client := getClient()
+	res, err := client.AppManager.DescribeAppVersionReviews(c.DescribeAppVersionReviewsParams, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type DescribeAppVersionsCmd struct {
 	*app_manager.DescribeAppVersionsParams
 }
@@ -1214,6 +1260,7 @@ func (*ModifyAppCmd) GetActionName() string {
 }
 
 func (c *ModifyAppCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Abstraction, "abstraction", "", "", "")
 	f.StringVarP(&c.AppID, "app_id", "", "", "")
 	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
@@ -1223,6 +1270,7 @@ func (c *ModifyAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.Readme, "readme", "", "", "")
 	f.StringVarP(&c.Sources, "sources", "", "", "")
+	f.StringVarP(&c.Tos, "tos", "", "", "")
 }
 
 func (c *ModifyAppCmd) Run(out Out) error {
@@ -1303,6 +1351,7 @@ func (*PassAppVersionCmd) GetActionName() string {
 }
 
 func (c *PassAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Role, "role", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
@@ -1374,6 +1423,7 @@ func (*RejectAppVersionCmd) GetActionName() string {
 
 func (c *RejectAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Message, "message", "", "", "")
+	f.StringVarP(&c.Role, "role", "", "", "")
 	f.StringVarP(&c.VersionID, "version_id", "", "", "")
 }
 
@@ -1420,6 +1470,42 @@ func (c *ReleaseAppVersionCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AppManager.ReleaseAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ReviewAppVersionCmd struct {
+	*models.OpenpitrixReviewAppVersionRequest
+}
+
+func NewReviewAppVersionCmd() Cmd {
+	cmd := &ReviewAppVersionCmd{}
+	cmd.OpenpitrixReviewAppVersionRequest = &models.OpenpitrixReviewAppVersionRequest{}
+	return cmd
+}
+
+func (*ReviewAppVersionCmd) GetActionName() string {
+	return "ReviewAppVersion"
+}
+
+func (c *ReviewAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Role, "role", "", "", "")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *ReviewAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewReviewAppVersionParams()
+	params.WithBody(c.OpenpitrixReviewAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.ReviewAppVersion(params, nil)
 	if err != nil {
 		return err
 	}

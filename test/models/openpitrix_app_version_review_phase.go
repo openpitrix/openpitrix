@@ -12,12 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixAppVersionAudit openpitrix app version audit
-// swagger:model openpitrixAppVersionAudit
-type OpenpitrixAppVersionAudit struct {
-
-	// app id
-	AppID string `json:"app_id,omitempty"`
+// OpenpitrixAppVersionReviewPhase openpitrix app version review phase
+// swagger:model openpitrixAppVersionReviewPhase
+type OpenpitrixAppVersionReviewPhase struct {
 
 	// message
 	Message string `json:"message,omitempty"`
@@ -25,8 +22,8 @@ type OpenpitrixAppVersionAudit struct {
 	// operator
 	Operator string `json:"operator,omitempty"`
 
-	// review id
-	ReviewID string `json:"review_id,omitempty"`
+	// review time
+	ReviewTime strfmt.DateTime `json:"review_time,omitempty"`
 
 	// role
 	Role string `json:"role,omitempty"`
@@ -36,13 +33,10 @@ type OpenpitrixAppVersionAudit struct {
 
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
-
-	// version id
-	VersionID string `json:"version_id,omitempty"`
 }
 
-// Validate validates this openpitrix app version audit
-func (m *OpenpitrixAppVersionAudit) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix app version review phase
+func (m *OpenpitrixAppVersionReviewPhase) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -52,7 +46,7 @@ func (m *OpenpitrixAppVersionAudit) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixAppVersionAudit) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixAppVersionReviewPhase) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -60,8 +54,8 @@ func (m *OpenpitrixAppVersionAudit) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixAppVersionAudit) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixAppVersionAudit
+func (m *OpenpitrixAppVersionReviewPhase) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixAppVersionReviewPhase
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

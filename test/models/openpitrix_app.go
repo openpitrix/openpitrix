@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixApp
 type OpenpitrixApp struct {
 
+	// abstraction
+	Abstraction string `json:"abstraction,omitempty"`
+
 	// active
 	Active bool `json:"active,omitempty"`
 
@@ -75,6 +78,9 @@ type OpenpitrixApp struct {
 
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
+
+	// tos
+	Tos string `json:"tos,omitempty"`
 
 	// update time
 	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`

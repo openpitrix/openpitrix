@@ -37,6 +37,7 @@ type AppVersion struct {
 	Sources     string
 	Readme      string
 	Status      string
+	ReviewId    string
 	Message     string
 	Type        string
 	Sequence    uint32
@@ -110,6 +111,7 @@ func AppVersionToPb(appVersion *AppVersion) *pb.AppVersion {
 	pbAppVersion.Sequence = pbutil.ToProtoUInt32(appVersion.Sequence)
 	pbAppVersion.Message = pbutil.ToProtoString(appVersion.Message)
 	pbAppVersion.Type = pbutil.ToProtoString(appVersion.Type)
+	pbAppVersion.ReviewId = pbutil.ToProtoString(appVersion.ReviewId)
 	if appVersion.UpdateTime != nil {
 		pbAppVersion.UpdateTime = pbutil.ToProtoTimestamp(*appVersion.UpdateTime)
 	}
