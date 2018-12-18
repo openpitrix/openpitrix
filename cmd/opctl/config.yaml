@@ -84,6 +84,9 @@
       type: '[]string'
 - action: GetPasswordReset
   service: AccountManager
+  path:
+    reset_id:
+      type: string
 - action: JoinGroup
   service: AccountManager
   body:
@@ -236,6 +239,11 @@
 - action: DescribeAppVersionAudits
   description: DescribeAppVersionAudits
   service: AppManager
+  path:
+    app_id:
+      type: string
+    version_id:
+      type: string
   query:
     limit:
       type: int64
@@ -256,6 +264,11 @@
 - action: DescribeAppVersionReviews
   description: DescribeAppVersionReviews
   service: AppManager
+  path:
+    app_id:
+      type: string
+    version_id:
+      type: string
   query:
     limit:
       type: int64
@@ -389,6 +402,9 @@
 - action: PassAppVersion
   description: pass app version
   service: AppManager
+  path:
+    role:
+      type: string
   body:
     role:
       type: string
@@ -403,6 +419,9 @@
 - action: RejectAppVersion
   description: reject app version
   service: AppManager
+  path:
+    role:
+      type: string
   body:
     message:
       type: string
@@ -419,6 +438,9 @@
 - action: ReviewAppVersion
   description: pass app version
   service: AppManager
+  path:
+    role:
+      type: string
   body:
     role:
       type: string
@@ -458,6 +480,11 @@
 - action: GetAttachment
   description: get attachment
   service: AttachmentService
+  path:
+    attachment_id:
+      type: string
+    filename:
+      type: string
 - action: CreateCategory
   description: create category
   service: CategoryManager
@@ -1172,6 +1199,9 @@
       type: '[]string'
 - action: CreateClient
   service: TokenManager
+  path:
+    user_id:
+      type: string
   body:
     user_id:
       type: string

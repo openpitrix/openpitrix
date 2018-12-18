@@ -38,6 +38,7 @@ func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
 	c.Action = op.ID
 	c.Description = op.Summary
 	c.Service = op.Tags[0]
+	c.Path = make(map[string]Param)
 	c.Query = make(map[string]Param)
 	c.Body = make(map[string]Param)
 	if op.Security != nil && len(op.Security) == 0 {
@@ -62,6 +63,13 @@ func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
 				Shorthand: "",
 				Help:      p.Description,
 				Type:      t,
+				Default:   p.Default,
+			}
+		} else if p.In == "path" {
+			c.Path[getName(p.Name)] = Param{
+				Shorthand: "",
+				Help:      p.Description,
+				Type:      p.Type,
 				Default:   p.Default,
 			}
 		} else {

@@ -101,6 +101,9 @@ func (c *{{$element.Action}}Cmd) Run(out Out) error {
 {{- end}}
 	params := {{snakeCase $element.Service}}.New{{$element.Action}}Params()
 	params.WithBody(c.Openpitrix{{$element.Action}}Request)
+{{- range $name, $p := $element.Path}}
+	params.With{{pascalCase $name}}(c.{{pascalCase $name}})
+{{- end}}
 
 	out.WriteRequest(params)
 
@@ -152,14 +155,22 @@ func (c *{{$element.Action}}Cmd) ParseFlag(f Flag) {
 	f.Int32VarP(c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", 0, "{{$p.Help}}")
 {{- end}}
 {{- end}}
+{{- range $name, $p := $element.Path}}
+	f.StringVarP(&c.{{pascalCase $name}}, "{{$name}}", "{{$p.Shorthand}}", "", "{{$p.Help}}")
+{{- end}}
 }
 
 func (c *{{$element.Action}}Cmd) Run(out Out) error {
+	params := c.{{$element.Action}}Params
 
-	out.WriteRequest(c.{{$element.Action}}Params)
+{{- range $name, $p := $element.Path}}
+	params.With{{pascalCase $name}}(c.{{pascalCase $name}})
+{{- end}}
+
+	out.WriteRequest(params)
 
 	client := getClient()
-	res, err := client.{{$element.Service}}.{{$element.Action}}(c.{{$element.Action}}Params{{$auth}})
+	res, err := client.{{$element.Service}}.{{$element.Action}}(params{{$auth}})
 	if err != nil {
 		return err
 	}
