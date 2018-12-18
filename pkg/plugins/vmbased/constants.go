@@ -22,6 +22,7 @@ const (
 	ActionRegisterMetadata             = "RegisterMetadata"
 	ActionRegisterMetadataMapping      = "RegisterMetadataMapping"
 	ActionRegisterNodesMetadata        = "RegisterNodesMetadata"
+	ActionRegisterEnvMetadata          = "RegisterEnvMetadata"
 	ActionRegisterNodesMetadataMapping = "RegisterNodesMetadataMapping"
 	ActionDeregisterMetadata           = "DeregisterMetadata"
 	ActionDeregisterMetadataMapping    = "DeregisterMetadataMapping"

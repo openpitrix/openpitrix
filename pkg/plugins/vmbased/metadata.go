@@ -80,6 +80,38 @@ func (m *Metadata) GetClusterCnodes(ctx context.Context) map[string]interface{} 
 
 /*
 {
+	"clusters": {
+		"<cluster_id>": {
+	 		"env": { # optional
+				<The data from the function GetEnvCnodes>
+	 		}
+   		}
+	}
+}
+*/
+func (m *Metadata) GetClusterEnvCnodes(ctx context.Context) map[string]interface{} {
+	logger.Info(ctx, "Composing cluster %s env", m.ClusterWrapper.Cluster.ClusterId)
+
+	data := make(map[string]interface{})
+
+	// env
+	env := m.GetEnvCnodes(ctx)
+	if len(env) > 0 {
+		data[RegisterNodeEnv] = env
+	}
+
+	cnodes := map[string]interface{}{
+		RegisterClustersRootPath: map[string]interface{}{
+			m.ClusterWrapper.Cluster.ClusterId: data,
+		},
+	}
+	logger.Info(ctx, "Composed cluster %s env cnodes successful: %+v", m.ClusterWrapper.Cluster.ClusterId, cnodes)
+
+	return cnodes
+}
+
+/*
+{
 	"self": {
 		<The data from the function GetMappingCnodes below>
    	}

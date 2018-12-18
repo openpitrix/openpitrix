@@ -139,7 +139,7 @@ func TestValidateClusterTmpl(t *testing.T) {
 		t.Fatal(err)
 	}
 	config := configJson.GetDefaultConfig()
-	t.Log(config.String())
+	t.Log(config.Interface())
 	err = ValidateClusterConfTmpl(clusterTmpl, config)
 	if err != nil {
 		t.Fatal(err)

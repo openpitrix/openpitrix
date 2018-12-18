@@ -19,20 +19,21 @@ func TestCluster_Render(t *testing.T) {
 		Raw: tmpl,
 	}
 	configJson := ConfigTemplate{
-		Type: TypeArray,
-		Properties: []*ConfigTemplate{
-			{
-				Key:  "cluster",
-				Type: TypeArray,
-				Properties: []*ConfigTemplate{
-					{
-						Key:     "name",
-						Default: "foobar",
+		Config: Config{
+			Type: TypeArray,
+			Properties: []*Config{
+				{
+					Key:  "cluster",
+					Type: TypeArray,
+					Properties: []*Config{
+						{
+							Key:     "name",
+							Default: "foobar",
+						},
 					},
 				},
 			},
-		},
-	}
+		}}
 	defaultConfig := configJson.GetDefaultConfig()
 	j, err := json.Marshal(&defaultConfig)
 	if err != nil {

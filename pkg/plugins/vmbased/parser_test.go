@@ -657,7 +657,7 @@ func getTestClusterWrapper(t *testing.T) *models.ClusterWrapper {
 
 	parser := Parser{}
 	clusterWrapper := new(models.ClusterWrapper)
-	err = parser.Parse(cluster, clusterWrapper)
+	err = parser.Parse(cluster, clusterWrapper, "")
 	if err != nil {
 		t.Fatalf("Parse mustache failed: %+v", err)
 	}

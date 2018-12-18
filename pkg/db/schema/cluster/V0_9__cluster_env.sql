@@ -1,0 +1,1 @@
+ALTER TABLE cluster ADD COLUMN env TEXT NULL;

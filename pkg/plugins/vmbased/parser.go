@@ -356,7 +356,7 @@ func (p *Parser) ParseClusterLinks(clusterConf opapp.ClusterConf) map[string]*mo
 	return clusterLinks
 }
 
-func (p *Parser) ParseCluster(clusterConf opapp.ClusterConf) (*models.Cluster, error) {
+func (p *Parser) ParseCluster(clusterConf opapp.ClusterConf, clusterEnv string) (*models.Cluster, error) {
 	endpoints := jsonutil.ToString(clusterConf.Endpoints)
 
 	metadataRootAccess := false
@@ -374,6 +374,7 @@ func (p *Parser) ParseCluster(clusterConf opapp.ClusterConf) (*models.Cluster, e
 		Status:             constants.StatusPending,
 		MetadataRootAccess: metadataRootAccess,
 		GlobalUuid:         clusterConf.GlobalUuid,
+		Env:                clusterEnv,
 	}
 	return cluster, nil
 }
@@ -477,7 +478,7 @@ func (p *Parser) ParseClusterCommon(clusterConf opapp.ClusterConf, node opapp.No
 	return clusterCommon, nil
 }
 
-func (p *Parser) Parse(clusterConf opapp.ClusterConf, clusterWrapper *models.ClusterWrapper) error {
+func (p *Parser) Parse(clusterConf opapp.ClusterConf, clusterWrapper *models.ClusterWrapper, clusterEnv string) error {
 	var cluster *models.Cluster
 	clusterNodes := make(map[string]*models.ClusterNodeWithKeyPairs)
 	clusterCommons := make(map[string]*models.ClusterCommon)
@@ -486,7 +487,7 @@ func (p *Parser) Parse(clusterConf opapp.ClusterConf, clusterWrapper *models.Clu
 	clusterLoadbalancers := make(map[string][]*models.ClusterLoadbalancer)
 
 	// Parse cluster
-	cluster, err := p.ParseCluster(clusterConf)
+	cluster, err := p.ParseCluster(clusterConf, clusterEnv)
 	if err != nil {
 		return err
 	}

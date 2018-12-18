@@ -5302,6 +5302,9 @@ var Files = map[string]string{
         "additional_info": {
           "type": "string"
         },
+        "env": {
+          "type": "string"
+        },
         "cluster_node_set": {
           "type": "array",
           "items": {

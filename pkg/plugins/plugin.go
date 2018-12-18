@@ -38,8 +38,7 @@ type ProviderInterface interface {
 	DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error)
 	CheckResource(ctx context.Context, clusterWrapper *models.ClusterWrapper) error
 	DescribeVpc(ctx context.Context, runtimeId, vpcId string) (*models.Vpc, error)
-	UpdateClusterStatus(ctx context.Context, job *models.Job) error
-	DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) error
+	DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) (*models.ClusterWrapper, error)
 	// runtime
 	ValidateRuntime(ctx context.Context, runtimeId, zone string, runtimeCredential *models.RuntimeCredential, needCreate bool) error
 	DescribeRuntimeProviderZones(ctx context.Context, runtimeCredential *models.RuntimeCredential) ([]string, error)

@@ -1361,6 +1361,19 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 
 	clusterWrapper.Cluster.ClusterId = clusterId
 	clusterWrapper.Cluster.Name = clusterName
+
+	for role, clusterRole := range clusterWrapper.ClusterRoles {
+		_, err = pi.Global().DB(ctx).
+			Update(constants.TableClusterRole).
+			Set("env", clusterRole.Env).
+			Where(db.Eq("cluster_id", clusterId)).
+			Where(db.Eq("role", role)).
+			Exec()
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceEnvFailed, clusterId)
+		}
+	}
+
 	directive := jsonutil.ToString(clusterWrapper)
 	newJob := models.NewJob(
 		constants.PlaceHolder,
@@ -1427,7 +1440,7 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 				return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
 			}
 
-			err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
+			clusterWrapper, err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
 			if err != nil {
 				logger.Warn(ctx, "Describe cluster details failed: %+v", err)
 			}
