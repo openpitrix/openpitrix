@@ -55,11 +55,11 @@ func (p *ProviderHandler) initQingCloudService(runtimeUrl, runtimeCredential, zo
 	} else if strings.HasPrefix(runtimeUrl, "http://") {
 		runtimeUrl = strings.Split(runtimeUrl, "http://")[1]
 	}
-	urlAndPort := strings.Split(runtimeUrl, ":")
-	if len(urlAndPort) == 2 {
-		conf.Port, err = strconv.Atoi(urlAndPort[1])
+	hostAndPort := strings.Split(strings.Split(runtimeUrl, "/")[0], ":")
+	if len(hostAndPort) == 2 {
+		conf.Port, err = strconv.Atoi(hostAndPort[1])
 	}
-	conf.Host = urlAndPort[0]
+	conf.Host = hostAndPort[0]
 	if err != nil {
 		logger.Error(p.Ctx, "Parse [%s] runtimeUrl [%s] failed: %+v", MyProvider, runtimeUrl, err)
 		return nil, err
