@@ -66,6 +66,8 @@ type PassAppVersionParams struct {
 
 	/*Body*/
 	Body *models.OpenpitrixPassAppVersionRequest
+	/*Role*/
+	Role string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -116,6 +118,17 @@ func (o *PassAppVersionParams) SetBody(body *models.OpenpitrixPassAppVersionRequ
 	o.Body = body
 }
 
+// WithRole adds the role to the pass app version params
+func (o *PassAppVersionParams) WithRole(role string) *PassAppVersionParams {
+	o.SetRole(role)
+	return o
+}
+
+// SetRole adds the role to the pass app version params
+func (o *PassAppVersionParams) SetRole(role string) {
+	o.Role = role
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *PassAppVersionParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -128,6 +141,11 @@ func (o *PassAppVersionParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
 		}
+	}
+
+	// path param role
+	if err := r.SetPathParam("role", o.Role); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

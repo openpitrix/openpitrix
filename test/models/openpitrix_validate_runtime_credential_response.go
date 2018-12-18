@@ -16,9 +16,6 @@ import (
 // swagger:model openpitrixValidateRuntimeCredentialResponse
 type OpenpitrixValidateRuntimeCredentialResponse struct {
 
-	// error code
-	ErrorCode int64 `json:"errorCode,omitempty"`
-
 	// ok
 	Ok bool `json:"ok,omitempty"`
 }

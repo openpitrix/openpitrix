@@ -257,6 +257,35 @@ func (a *Client) DescribeAppVersionAudits(params *DescribeAppVersionAuditsParams
 }
 
 /*
+DescribeAppVersionReviews describes app version reviews
+*/
+func (a *Client) DescribeAppVersionReviews(params *DescribeAppVersionReviewsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionReviewsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeAppVersionReviewsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeAppVersionReviews",
+		Method:             "GET",
+		PathPattern:        "/v1/app/{app_id}/version/{version_id}/reviews",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeAppVersionReviewsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeAppVersionReviewsOK), nil
+
+}
+
+/*
 DescribeAppVersions describes app versions with filter
 */
 func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionsOK, error) {
@@ -471,7 +500,7 @@ func (a *Client) PassAppVersion(params *PassAppVersionParams, authInfo runtime.C
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "PassAppVersion",
 		Method:             "POST",
-		PathPattern:        "/v1/app_version/action/pass",
+		PathPattern:        "/v1/app_version/action/{role}/pass",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -529,7 +558,7 @@ func (a *Client) RejectAppVersion(params *RejectAppVersionParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "RejectAppVersion",
 		Method:             "POST",
-		PathPattern:        "/v1/app_version/action/reject",
+		PathPattern:        "/v1/app_version/action/{role}/reject",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -572,6 +601,35 @@ func (a *Client) ReleaseAppVersion(params *ReleaseAppVersionParams, authInfo run
 		return nil, err
 	}
 	return result.(*ReleaseAppVersionOK), nil
+
+}
+
+/*
+ReviewAppVersion passes app version
+*/
+func (a *Client) ReviewAppVersion(params *ReviewAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*ReviewAppVersionOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewReviewAppVersionParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ReviewAppVersion",
+		Method:             "POST",
+		PathPattern:        "/v1/app_version/action/{role}/review",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ReviewAppVersionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ReviewAppVersionOK), nil
 
 }
 

@@ -34,6 +34,8 @@ type App struct {
 	Readme      string
 	Owner       string
 	ChartName   string
+	Tos         string
+	Abstraction string
 	CreateTime  time.Time
 	StatusTime  time.Time
 	UpdateTime  *time.Time
@@ -70,6 +72,8 @@ func AppToPb(app *App) *pb.App {
 	pbApp.ChartName = pbutil.ToProtoString(app.ChartName)
 	pbApp.Owner = pbutil.ToProtoString(app.Owner)
 	pbApp.Keywords = pbutil.ToProtoString(app.Keywords)
+	pbApp.Abstraction = pbutil.ToProtoString(app.Abstraction)
+	pbApp.Tos = pbutil.ToProtoString(app.Tos)
 	pbApp.CreateTime = pbutil.ToProtoTimestamp(app.CreateTime)
 	pbApp.StatusTime = pbutil.ToProtoTimestamp(app.StatusTime)
 	if app.UpdateTime != nil {

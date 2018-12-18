@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixModifyAppRequest
 type OpenpitrixModifyAppRequest struct {
 
+	// abstraction
+	Abstraction string `json:"abstraction,omitempty"`
+
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
@@ -42,6 +45,9 @@ type OpenpitrixModifyAppRequest struct {
 
 	// sources
 	Sources string `json:"sources,omitempty"`
+
+	// tos
+	Tos string `json:"tos,omitempty"`
 }
 
 // Validate validates this openpitrix modify app request

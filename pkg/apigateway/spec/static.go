@@ -403,6 +403,90 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/app/{app_id}/version/{version_id}/reviews": {
+      "get": {
+        "summary": "DescribeAppVersionReviews",
+        "operationId": "DescribeAppVersionReviews",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeAppVersionReviewsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "review_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/app_version/action/cancel": {
       "post": {
         "summary": "cancel app version",
@@ -457,33 +541,6 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/app_version/action/pass": {
-      "post": {
-        "summary": "pass app version",
-        "operationId": "PassAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
     "/v1/app_version/action/recover": {
       "post": {
         "summary": "recover app version",
@@ -503,33 +560,6 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixRecoverAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/reject": {
-      "post": {
-        "summary": "reject app version",
-        "operationId": "RejectAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
             }
           }
         ],
@@ -611,6 +641,105 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixSuspendAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/{role}/pass": {
+      "post": {
+        "summary": "pass app version",
+        "operationId": "PassAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/{role}/reject": {
+      "post": {
+        "summary": "reject app version",
+        "operationId": "RejectAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/{role}/review": {
+      "post": {
+        "summary": "pass app version",
+        "operationId": "ReviewAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
             }
           }
         ],
@@ -4062,6 +4191,12 @@ var Files = map[string]string{
         "chart_name": {
           "type": "string"
         },
+        "abstraction": {
+          "type": "string"
+        },
+        "tos": {
+          "type": "string"
+        },
         "owner": {
           "type": "string"
         },
@@ -4140,6 +4275,9 @@ var Files = map[string]string{
         "status": {
           "type": "string"
         },
+        "review_id": {
+          "type": "string"
+        },
         "create_time": {
           "type": "string",
           "format": "date-time"
@@ -4185,7 +4323,58 @@ var Files = map[string]string{
         "message": {
           "type": "string"
         },
+        "review_id": {
+          "type": "string"
+        },
         "status_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "openpitrixAppVersionReview": {
+      "type": "object",
+      "properties": {
+        "review_id": {
+          "type": "string"
+        },
+        "version_id": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/openpitrixAppVersionReviewPhase"
+          }
+        }
+      }
+    },
+    "openpitrixAppVersionReviewPhase": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "operator": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "review_time": {
           "type": "string",
           "format": "date-time"
         }
@@ -4323,6 +4512,21 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixDescribeAppVersionReviewsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "app_version_review_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixAppVersionReview"
+          }
+        }
+      }
+    },
     "openpitrixDescribeAppVersionsResponse": {
       "type": "object",
       "properties": {
@@ -4434,6 +4638,12 @@ var Files = map[string]string{
         "readme": {
           "type": "string"
         },
+        "abstraction": {
+          "type": "string"
+        },
+        "tos": {
+          "type": "string"
+        },
         "category_id": {
           "type": "string"
         },
@@ -4486,6 +4696,9 @@ var Files = map[string]string{
     "openpitrixPassAppVersionRequest": {
       "type": "object",
       "properties": {
+        "role": {
+          "type": "string"
+        },
         "version_id": {
           "type": "string"
         }
@@ -4518,6 +4731,9 @@ var Files = map[string]string{
     "openpitrixRejectAppVersionRequest": {
       "type": "object",
       "properties": {
+        "role": {
+          "type": "string"
+        },
         "version_id": {
           "type": "string"
         },
@@ -4572,6 +4788,25 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "openpitrixReviewAppVersionRequest": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "version_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixReviewAppVersionResponse": {
+      "type": "object",
+      "properties": {
+        "version_id": {
+          "type": "string"
         }
       }
     },
@@ -7420,10 +7655,6 @@ var Files = map[string]string{
         "ok": {
           "type": "boolean",
           "format": "boolean"
-        },
-        "errorCode": {
-          "type": "integer",
-          "format": "int64"
         }
       }
     },

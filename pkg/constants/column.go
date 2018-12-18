@@ -88,6 +88,8 @@ const (
 	ColumnActive = "active"
 
 	ColumnOperator = "operator"
+	ColumnReviewId = "review_id"
+	ColumnPhase    = "phase"
 )
 
 var PushEventTables = map[string][]string{
@@ -166,6 +168,9 @@ var IndexedColumns = map[string][]string{
 	},
 	TableAppVersionAudit: {
 		ColumnVersionId, ColumnAppId, ColumnStatus, ColumnOperator, ColumnRole,
+	},
+	TableAppVersionReview: {
+		ColumnReviewId, ColumnVersionId, ColumnAppId, ColumnStatus,
 	},
 }
 

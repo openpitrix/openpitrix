@@ -62,6 +62,12 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Role(constants.AllDeveloperRoles).
 			Required("version_id").
 			Exec()
+	case *pb.ReviewAppVersionRequest:
+		return manager.NewChecker(ctx, r).
+			Role(constants.AllDeveloperRoles).
+			Required("version_id", "role").
+			StringChosen("role", reviewSupportRoles).
+			Exec()
 	case *pb.CancelAppVersionRequest:
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllDeveloperRoles).
@@ -80,12 +86,14 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.PassAppVersionRequest:
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllAdminRoles).
-			Required("version_id").
+			Required("version_id", "role").
+			StringChosen("role", reviewSupportRoles).
 			Exec()
 	case *pb.RejectAppVersionRequest:
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllAdminRoles).
-			Required("version_id", "message").
+			Required("version_id", "message", "role").
+			StringChosen("role", reviewSupportRoles).
 			Exec()
 	case *pb.SuspendAppVersionRequest:
 		return manager.NewChecker(ctx, r).

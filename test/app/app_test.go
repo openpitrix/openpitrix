@@ -54,7 +54,7 @@ func testAppIcon(t *testing.T, app *models.OpenpitrixApp) {
 	require.Equal(t, getTestIcon(t), res.Payload.Content)
 
 	uploadAppAttachmentParams := app_manager.NewUploadAppAttachmentParams()
-	uploadAppAttachmentParams.SetBody(
+	uploadAppAttachmentParams.WithBody(
 		&models.OpenpitrixUploadAppAttachmentRequest{
 			AppID:             app.AppID,
 			Type:              models.OpenpitrixUploadAppAttachmentRequestTypeIcon,
@@ -111,7 +111,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	client := testutil.GetClient(clientConfig)
 
 	modifyAppParams := app_manager.NewModifyAppParams()
-	modifyAppParams.SetBody(
+	modifyAppParams.WithBody(
 		&models.OpenpitrixModifyAppRequest{
 			AppID: appId,
 		})
@@ -120,7 +120,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	require.NoError(t, err)
 
 	createAppVersionParams := app_manager.NewCreateAppVersionParams()
-	createAppVersionParams.SetBody(
+	createAppVersionParams.WithBody(
 		&models.OpenpitrixCreateAppVersionRequest{
 			AppID:   appId,
 			Type:    Vmbased,
@@ -133,7 +133,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	versionId1 := createAppVersionResp.Payload.VersionID
 
 	modifyAppVersionParams := app_manager.NewModifyAppVersionParams()
-	modifyAppVersionParams.SetBody(
+	modifyAppVersionParams.WithBody(
 		&models.OpenpitrixModifyAppVersionRequest{
 			VersionID: versionId1,
 			Package:   preparePackage(t, "0.0.3"),
@@ -143,7 +143,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	require.NoError(t, err)
 
 	modifyAppVersionParams = app_manager.NewModifyAppVersionParams()
-	modifyAppVersionParams.SetBody(
+	modifyAppVersionParams.WithBody(
 		&models.OpenpitrixModifyAppVersionRequest{
 			VersionID: versionId1,
 			Package:   preparePackage(t, "0.0.4"),
@@ -153,7 +153,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	require.NoError(t, err)
 
 	createAppVersionParams = app_manager.NewCreateAppVersionParams()
-	createAppVersionParams.SetBody(
+	createAppVersionParams.WithBody(
 		&models.OpenpitrixCreateAppVersionRequest{
 			AppID:   appId,
 			Type:    Vmbased,
@@ -166,7 +166,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	versionId2 := createAppVersionResp.Payload.VersionID
 
 	modifyAppVersionParams = app_manager.NewModifyAppVersionParams()
-	modifyAppVersionParams.SetBody(
+	modifyAppVersionParams.WithBody(
 		&models.OpenpitrixModifyAppVersionRequest{
 			VersionID: versionId2,
 			Package:   preparePackage(t, "0.0.4"),
@@ -176,7 +176,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	require.NoError(t, err)
 
 	deleteAppVersionParams := app_manager.NewDeleteAppVersionParams()
-	deleteAppVersionParams.SetBody(
+	deleteAppVersionParams.WithBody(
 		&models.OpenpitrixDeleteAppVersionRequest{
 			VersionID: versionId2,
 		})
@@ -185,7 +185,7 @@ func testVersionPackage(t *testing.T, appId string) {
 	require.NoError(t, err)
 
 	deleteAppVersionParams = app_manager.NewDeleteAppVersionParams()
-	deleteAppVersionParams.SetBody(
+	deleteAppVersionParams.WithBody(
 		&models.OpenpitrixDeleteAppVersionRequest{
 			VersionID: versionId1,
 		})
@@ -198,7 +198,7 @@ func testVersionLifeCycle(t *testing.T, versionId string) {
 	client := testutil.GetClient(clientConfig)
 
 	modifyAppVersionParams := app_manager.NewModifyAppVersionParams()
-	modifyAppVersionParams.SetBody(
+	modifyAppVersionParams.WithBody(
 		&models.OpenpitrixModifyAppVersionRequest{
 			VersionID: versionId,
 			Name:      "test_version2",
@@ -208,7 +208,7 @@ func testVersionLifeCycle(t *testing.T, versionId string) {
 	require.NoError(t, err)
 
 	submitAppVersionParams := app_manager.NewSubmitAppVersionParams()
-	submitAppVersionParams.SetBody(
+	submitAppVersionParams.WithBody(
 		&models.OpenpitrixSubmitAppVersionRequest{
 			VersionID: versionId,
 		})
@@ -216,31 +216,69 @@ func testVersionLifeCycle(t *testing.T, versionId string) {
 
 	require.NoError(t, err)
 
+	reviewAppVersionParams := app_manager.NewReviewAppVersionParams()
+	reviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
+		VersionID: versionId,
+	}).WithRole(constants.RoleIsv)
+	_, err = client.AppManager.ReviewAppVersion(reviewAppVersionParams, nil)
+	require.NoError(t, err)
+
 	rejectAppVersionParams := app_manager.NewRejectAppVersionParams()
-	rejectAppVersionParams.SetBody(
-		&models.OpenpitrixRejectAppVersionRequest{
-			VersionID: versionId,
-			Message:   "test message",
-		})
+	rejectAppVersionParams.WithBody(&models.OpenpitrixRejectAppVersionRequest{
+		VersionID: versionId,
+		Message:   "test message",
+	}).WithRole(constants.RoleIsv)
 	_, err = client.AppManager.RejectAppVersion(rejectAppVersionParams, nil)
 
 	require.NoError(t, err)
 
 	_, err = client.AppManager.SubmitAppVersion(submitAppVersionParams, nil)
+	require.NoError(t, err)
 
+	reviewAppVersionParams = app_manager.NewReviewAppVersionParams()
+	reviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
+		VersionID: versionId,
+	}).WithRole(constants.RoleIsv)
+	_, err = client.AppManager.ReviewAppVersion(reviewAppVersionParams, nil)
 	require.NoError(t, err)
 
 	passAppVersionParams := app_manager.NewPassAppVersionParams()
-	passAppVersionParams.SetBody(
-		&models.OpenpitrixPassAppVersionRequest{
-			VersionID: versionId,
-		})
+	passAppVersionParams.WithBody(&models.OpenpitrixPassAppVersionRequest{
+		VersionID: versionId,
+	}).WithRole(constants.RoleIsv)
 	_, err = client.AppManager.PassAppVersion(passAppVersionParams, nil)
+	require.NoError(t, err)
 
+	reviewAppVersionParams = app_manager.NewReviewAppVersionParams()
+	reviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
+		VersionID: versionId,
+	}).WithRole(constants.RoleBusinessAdmin)
+	_, err = client.AppManager.ReviewAppVersion(reviewAppVersionParams, nil)
+	require.NoError(t, err)
+
+	passAppVersionParams = app_manager.NewPassAppVersionParams()
+	passAppVersionParams.WithBody(&models.OpenpitrixPassAppVersionRequest{
+		VersionID: versionId,
+	}).WithRole(constants.RoleBusinessAdmin)
+	_, err = client.AppManager.PassAppVersion(passAppVersionParams, nil)
+	require.NoError(t, err)
+
+	reviewAppVersionParams = app_manager.NewReviewAppVersionParams()
+	reviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
+		VersionID: versionId,
+	}).WithRole(constants.RoleDevelopAdmin)
+	_, err = client.AppManager.ReviewAppVersion(reviewAppVersionParams, nil)
+	require.NoError(t, err)
+
+	passAppVersionParams = app_manager.NewPassAppVersionParams()
+	passAppVersionParams.WithBody(&models.OpenpitrixPassAppVersionRequest{
+		VersionID: versionId,
+	}).WithRole(constants.RoleDevelopAdmin)
+	_, err = client.AppManager.PassAppVersion(passAppVersionParams, nil)
 	require.NoError(t, err)
 
 	releaseAppVersionParams := app_manager.NewReleaseAppVersionParams()
-	releaseAppVersionParams.SetBody(
+	releaseAppVersionParams.WithBody(
 		&models.OpenpitrixReleaseAppVersionRequest{
 			VersionID: versionId,
 		})
@@ -249,7 +287,7 @@ func testVersionLifeCycle(t *testing.T, versionId string) {
 	require.NoError(t, err)
 
 	suspendAppVersionParams := app_manager.NewSuspendAppVersionParams()
-	suspendAppVersionParams.SetBody(
+	suspendAppVersionParams.WithBody(
 		&models.OpenpitrixSuspendAppVersionRequest{
 			VersionID: versionId,
 		})
@@ -258,7 +296,7 @@ func testVersionLifeCycle(t *testing.T, versionId string) {
 	require.NoError(t, err)
 
 	deleteAppVersionParams := app_manager.NewDeleteAppVersionParams()
-	deleteAppVersionParams.SetBody(
+	deleteAppVersionParams.WithBody(
 		&models.OpenpitrixDeleteAppVersionRequest{
 			VersionID: versionId,
 		})
@@ -292,7 +330,7 @@ func TestApp(t *testing.T) {
 	apps := describeResp.Payload.AppSet
 	for _, app := range apps {
 		deleteParams := app_manager.NewDeleteAppsParams()
-		deleteParams.SetBody(
+		deleteParams.WithBody(
 			&models.OpenpitrixDeleteAppsRequest{
 				AppID: []string{app.AppID},
 			})
@@ -302,7 +340,7 @@ func TestApp(t *testing.T) {
 	}
 	// create app
 	createParams := app_manager.NewCreateAppParams()
-	createParams.SetBody(
+	createParams.WithBody(
 		&models.OpenpitrixCreateAppRequest{
 			Name:           testAppName,
 			VersionPackage: preparePackage(t, "0.0.1"),
@@ -318,7 +356,7 @@ func TestApp(t *testing.T) {
 	// modify app
 
 	//modifyParams := app_manager.NewModifyAppParams()
-	//modifyParams.SetBody(
+	//modifyParams.WithBody(
 	//	&models.OpenpitrixModifyAppRequest{
 	//		AppID:      appId,
 	//		CategoryID: "aa,bb,cc,xx",

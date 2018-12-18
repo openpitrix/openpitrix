@@ -29,6 +29,7 @@ type Action int32
 
 const (
 	Submit Action = iota
+	Review
 	Cancel
 	Release
 	Delete
@@ -43,7 +44,8 @@ const (
 var VersionFiniteStatusMachine = map[Action][]string{
 	Modify:  {constants.StatusDraft, constants.StatusRejected, constants.StatusActive},
 	Submit:  {constants.StatusDraft, constants.StatusRejected},
-	Cancel:  {constants.StatusSubmitted, constants.StatusPassed},
+	Review:  {constants.StatusSubmitted, constants.StatusInReview},
+	Cancel:  {constants.StatusSubmitted, constants.StatusInReview, constants.StatusPassed},
 	Release: {constants.StatusPassed},
 	Delete: {
 		constants.StatusSuspended,
@@ -51,8 +53,8 @@ var VersionFiniteStatusMachine = map[Action][]string{
 		constants.StatusPassed,
 		constants.StatusRejected,
 	},
-	Pass:    {constants.StatusSubmitted, constants.StatusRejected},
-	Reject:  {constants.StatusSubmitted},
+	Pass:    {constants.StatusInReview},
+	Reject:  {constants.StatusInReview},
 	Suspend: {constants.StatusActive},
 	Recover: {constants.StatusSuspended},
 }
@@ -66,6 +68,26 @@ func checkAppVersionHandlePermission(ctx context.Context, action Action, version
 	if !stringutil.StringIn(versionStatus, allowedStatus) {
 		return gerr.New(ctx, gerr.FailedPrecondition,
 			gerr.ErrorAppVersionIncorrectStatus, version.VersionId, versionStatus)
+	}
+	return nil
+}
+
+func checkModifyAppPermission(ctx context.Context, app *models.App) error {
+	if app.Status == constants.StatusDeleted {
+		return gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorResourceAlreadyDeleted, app.AppId)
+	}
+	count, err := pi.Global().DB(ctx).
+		Select("").
+		From(constants.TableAppVersion).
+		Where(db.Eq(constants.ColumnAppId, app.AppId)).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusInReview)).
+		Where(db.Eq(constants.ColumnActive, app.Active)).
+		Count()
+	if err != nil {
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if count > 0 {
+		return gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorAppVersionInReview)
 	}
 	return nil
 }
@@ -563,8 +585,11 @@ func computeAppStatus(statusCountMap map[string]int32) string {
 
 func addAppVersionAudit(ctx context.Context, version *models.AppVersion, status, role, message string) error {
 	s := senderutil.GetSenderFromContext(ctx)
-	var versionAudit = models.NewAppVersionAudit(version.VersionId, version.AppId, status, s.UserId, role)
+	versionAudit := models.NewAppVersionAudit(version.VersionId, version.AppId, status, s.UserId, role)
 	versionAudit.Message = message
+	if version.Status == constants.StatusSubmitted {
+		versionAudit.ReviewId = version.ReviewId
+	}
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableAppVersionAudit).

@@ -232,12 +232,14 @@ func (p *Server) ModifyApp(ctx context.Context, req *pb.ModifyAppRequest) (*pb.M
 		return nil, err
 	}
 
-	if app.Status == constants.StatusDeleted {
-		return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, appId)
+	err = checkModifyAppPermission(ctx, app)
+	if err != nil {
+		return nil, err
 	}
 
 	attributes := manager.BuildUpdateAttributes(req,
-		"name", "description", "home", "maintainers", "sources", "readme", "keywords")
+		"name", "description", "home", "maintainers",
+		"sources", "readme", "keywords", "tos", "abstraction")
 
 	err = updateApp(ctx, appId, attributes)
 	if err != nil {
@@ -401,7 +403,7 @@ func (p *Server) DeleteApps(ctx context.Context, req *pb.DeleteAppsRequest) (*pb
 func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionRequest) (*pb.CreateAppVersionResponse, error) {
 	pkg := req.GetPackage().GetValue()
 
-	_, err := repoiface.LoadPackage(ctx, req.GetType().GetValue(), pkg)
+	v, err := repoiface.LoadPackage(ctx, req.GetType().GetValue(), pkg)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorPackageParseFailed)
 	}
@@ -425,10 +427,15 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 
 	attachmentId := uploadAttachmentRes.AttachmentId
 
+	name := req.GetName().GetValue()
+	if name == "" {
+		name = v.GetVersionName()
+	}
+
 	s := senderutil.GetSenderFromContext(ctx)
 	newAppVersion := models.NewAppVersion(
 		req.GetAppId().GetValue(),
-		req.GetName().GetValue(),
+		name,
 		req.GetDescription().GetValue(),
 		s.UserId)
 
@@ -444,6 +451,44 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 	}
 	return res, nil
 
+}
+
+func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.DescribeAppVersionReviewsRequest) (*pb.DescribeAppVersionReviewsResponse, error) {
+	_, err := CheckAppPermission(ctx, req.GetAppId())
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = CheckAppVersionPermission(ctx, req.GetVersionId())
+	if err != nil {
+		return nil, err
+	}
+
+	var versionReviews []*models.AppVersionReview
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
+
+	query := pi.Global().DB(ctx).
+		Select(models.AppVersionReviewColumns...).
+		From(constants.TableAppVersionReview).
+		Offset(offset).
+		Limit(limit).
+		Where(manager.BuildFilterConditions(req, constants.TableAppVersionReview))
+
+	_, err = query.Load(&versionReviews)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	count, err := query.Count()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	res := &pb.DescribeAppVersionReviewsResponse{
+		AppVersionReviewSet: models.AppVersionReviewsToPbs(versionReviews),
+		TotalCount:          count,
+	}
+	return res, nil
 }
 
 func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeAppVersionAuditsRequest) (*pb.DescribeAppVersionAuditsResponse, error) {
@@ -701,18 +746,11 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 		return nil, err
 	}
 
-	err = checkAppVersionHandlePermission(ctx, Submit, version)
+	err = submitAppVersionReview(ctx, version)
 	if err != nil {
 		return nil, err
 	}
-	err = updateVersionStatus(ctx, version, constants.StatusSubmitted)
-	if err != nil {
-		return nil, err
-	}
-	err = addAppVersionAudit(ctx, version, constants.StatusSubmitted, constants.RoleDeveloper, "")
-	if err != nil {
-		return nil, err
-	}
+
 	res := pb.SubmitAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
 	}
@@ -797,24 +835,36 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 	return &res, nil
 }
 
+func (p *Server) ReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+	versionId := req.GetVersionId().GetValue()
+	version, err := CheckAppVersionPermission(ctx, versionId)
+	if err != nil {
+		return nil, err
+	}
+
+	err = startAppVersionReview(ctx, version, req.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	res := pb.ReviewAppVersionResponse{
+		VersionId: pbutil.ToProtoString(version.VersionId),
+	}
+	return &res, nil
+}
+
 func (p *Server) PassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
 	if err != nil {
 		return nil, err
 	}
-	err = checkAppVersionHandlePermission(ctx, Pass, version)
+
+	err = passAppVersionReview(ctx, version, req.Role)
 	if err != nil {
 		return nil, err
 	}
-	err = updateVersionStatus(ctx, version, constants.StatusPassed)
-	if err != nil {
-		return nil, err
-	}
-	err = addAppVersionAudit(ctx, version, constants.StatusPassed, constants.RoleGlobalAdmin, "")
-	if err != nil {
-		return nil, err
-	}
+
 	res := pb.PassAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
 	}
@@ -827,20 +877,12 @@ func (p *Server) RejectAppVersion(ctx context.Context, req *pb.RejectAppVersionR
 	if err != nil {
 		return nil, err
 	}
-	err = checkAppVersionHandlePermission(ctx, Reject, version)
+
+	err = rejectAppVersionReview(ctx, version, req.Role, req.GetMessage().GetValue())
 	if err != nil {
 		return nil, err
 	}
-	err = updateVersionStatus(ctx, version, constants.StatusRejected, map[string]interface{}{
-		constants.ColumnMessage: req.GetMessage().GetValue(),
-	})
-	if err != nil {
-		return nil, err
-	}
-	err = addAppVersionAudit(ctx, version, constants.StatusRejected, constants.RoleGlobalAdmin, req.GetMessage().GetValue())
-	if err != nil {
-		return nil, err
-	}
+
 	res := pb.RejectAppVersionResponse{
 		VersionId: pbutil.ToProtoString(version.VersionId),
 	}
