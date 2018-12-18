@@ -12,16 +12,16 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixValidateRuntimeCredentialResponse openpitrix validate runtime credential response
-// swagger:model openpitrixValidateRuntimeCredentialResponse
-type OpenpitrixValidateRuntimeCredentialResponse struct {
+// OpenpitrixSubmitVendorVerifyInfoResponse openpitrix submit vendor verify info response
+// swagger:model openpitrixSubmitVendorVerifyInfoResponse
+type OpenpitrixSubmitVendorVerifyInfoResponse struct {
 
-	// ok
-	Ok bool `json:"ok,omitempty"`
+	// user id
+	UserID string `json:"user_id,omitempty"`
 }
 
-// Validate validates this openpitrix validate runtime credential response
-func (m *OpenpitrixValidateRuntimeCredentialResponse) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix submit vendor verify info response
+func (m *OpenpitrixSubmitVendorVerifyInfoResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -31,7 +31,7 @@ func (m *OpenpitrixValidateRuntimeCredentialResponse) Validate(formats strfmt.Re
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixValidateRuntimeCredentialResponse) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixSubmitVendorVerifyInfoResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -39,8 +39,8 @@ func (m *OpenpitrixValidateRuntimeCredentialResponse) MarshalBinary() ([]byte, e
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixValidateRuntimeCredentialResponse) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixValidateRuntimeCredentialResponse
+func (m *OpenpitrixSubmitVendorVerifyInfoResponse) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixSubmitVendorVerifyInfoResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

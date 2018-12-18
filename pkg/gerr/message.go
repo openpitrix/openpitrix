@@ -242,6 +242,11 @@ var (
 		en:   "illegal URL format [%s]",
 		zhCN: "非法的URL格式[%s]",
 	}
+	ErrorIllegalLabelFormat = ErrorMessage{
+		Name: "illegal_label_format",
+		en:   "illegal label format",
+		zhCN: "非法的标签格式",
+	}
 	ErrorConflictRepoName = ErrorMessage{
 		Name: "conflict_repo_name",
 		en:   "conflict repo name [%s]",
@@ -366,5 +371,20 @@ var (
 		Name: "image_decode_failed",
 		en:   "image decode failed",
 		zhCN: "图片解码失败",
+	}
+	ErrorIllegalEmailFormat = ErrorMessage{
+		Name: "illegal_email_format",
+		en:   "illegal Email format [%s]",
+		zhCN: "非法的Email格式[%s]",
+	}
+	ErrorIllegalPhoneFormat = ErrorMessage{
+		Name: "illegal_phone_format",
+		en:   "illegal Phone format [%s]",
+		zhCN: "非法的Phone格式[%s]",
+	}
+	ErrorIllegalBankAccountNumberFormat = ErrorMessage{
+		Name: "illegal_bankAccountNumber_format",
+		en:   "illegal BankAccountNumber format [%s]",
+		zhCN: "非法的BankAccountNumber格式[%s]",
 	}
 )
