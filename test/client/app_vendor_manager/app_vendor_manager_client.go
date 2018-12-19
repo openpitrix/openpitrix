@@ -152,7 +152,7 @@ func (a *Client) SubmitVendorVerifyInfo(params *SubmitVendorVerifyInfoParams, au
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "SubmitVendorVerifyInfo",
 		Method:             "POST",
-		PathPattern:        "/v1/vendor_verify_infos/user_id=*",
+		PathPattern:        "/v1/vendor_verify_infos/{user_id}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

@@ -1197,31 +1197,6 @@ var Files = map[string]string{
         "tags": [
           "AppVendorManager"
         ]
-      },
-      "post": {
-        "summary": "SubmitVendorVerifyInfo",
-        "operationId": "SubmitVendorVerifyInfo",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppVendorManager"
-        ]
       }
     },
     "/v1/vendor_verify_infos/user_id=*/action:pass": {
@@ -1270,6 +1245,39 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixRejectVendorVerifyInfoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppVendorManager"
+        ]
+      }
+    },
+    "/v1/vendor_verify_infos/{user_id}": {
+      "post": {
+        "summary": "SubmitVendorVerifyInfo",
+        "operationId": "SubmitVendorVerifyInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoRequest"
             }
           }
         ],

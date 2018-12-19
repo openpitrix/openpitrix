@@ -97,7 +97,7 @@ service AppVendorManager {
 			summary: "SubmitVendorVerifyInfo"
 		};
 		option (google.api.http) = {
-            post: "/v1/vendor_verify_infos/user_id=*",
+            post: "/v1/vendor_verify_infos/{user_id=*}",
             body: "*"
 		};
 	}

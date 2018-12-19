@@ -25,7 +25,7 @@ const (
 	MarketManagerHost = prefix + "market-manager"
 
 	AttachmentManagerHost = prefix + "attachment-manager"
-	VendorManagerHost     = prefix + "appvendor-manager"
+	VendorManagerHost     = prefix + "vendor-manager"
 )
 
 const (
@@ -87,6 +87,8 @@ const (
 	StatusPassed    = "passed"
 	StatusRejected  = "rejected"
 	StatusSuspended = "suspended"
+
+	StatusNew = "new"
 )
 
 var DeletedStatuses = []string{

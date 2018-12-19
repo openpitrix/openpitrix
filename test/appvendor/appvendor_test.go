@@ -39,7 +39,8 @@ func TestAppVendor(t *testing.T) {
 			CompanyWebsite:    "www.baidu.com",
 			UserID:            testUserID,
 		})
-	//submitParams.WithUserIDValue(testUserID)
+
+	submitParams.SetUserID(testUserID)
 
 	_, err := client.AppVendorManager.SubmitVendorVerifyInfo(submitParams, nil)
 	require.NoError(t, err)
@@ -54,14 +55,13 @@ func TestAppVendor(t *testing.T) {
 	// DescribeVendorVerifyInfos
 	logger.Info(nil, "%s", "Test2 DescribeVendorVerifyInfos**************************")
 	describeParams := app_vendor_manager.NewDescribeVendorVerifyInfosParams()
-	describeParams.SetUserID([]string{testUserID})
-	describeParams.SetStatus([]string{"new", "submitted", "passed", "rejected"})
+
 	logger.Info(nil, "test describeParams=[%+v]", describeParams)
+	describeParams.WithUserID([]string{testUserID})
 	describeResp, err := client.AppVendorManager.DescribeVendorVerifyInfos(describeParams, nil)
 	require.NoError(t, err)
-
 	AppVendors := describeResp.Payload.VendorVerifyInfoSet
-	if len(AppVendors) != 1 {
+	if len(AppVendors) == 0 {
 		t.Fatalf("failed to DescribeVendorVerifyInfos with params [%+v]", describeParams)
 	}
 	if AppVendors[0].UserID != testUserID || AppVendors[0].CompanyName != "CompanyName" {

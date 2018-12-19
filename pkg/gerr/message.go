@@ -242,11 +242,6 @@ var (
 		en:   "illegal URL format [%s]",
 		zhCN: "非法的URL格式[%s]",
 	}
-	ErrorIllegalLabelFormat = ErrorMessage{
-		Name: "illegal_label_format",
-		en:   "illegal label format",
-		zhCN: "非法的标签格式",
-	}
 	ErrorConflictRepoName = ErrorMessage{
 		Name: "conflict_repo_name",
 		en:   "conflict repo name [%s]",
@@ -385,6 +380,6 @@ var (
 	ErrorIllegalBankAccountNumberFormat = ErrorMessage{
 		Name: "illegal_bankAccountNumber_format",
 		en:   "illegal BankAccountNumber format [%s]",
-		zhCN: "非法的BankAccountNumber格式[%s]",
+		zhCN: "非法的银行账号格式[%s]",
 	}
 )

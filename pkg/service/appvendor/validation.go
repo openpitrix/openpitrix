@@ -11,7 +11,6 @@ import (
 	"github.com/asaskevich/govalidator"
 
 	"openpitrix.io/openpitrix/pkg/gerr"
-	"openpitrix.io/openpitrix/pkg/models"
 )
 
 //Url
@@ -57,14 +56,4 @@ func VerifyBankAccountNumberFmt(ctx context.Context, bankAccountNumberStr string
 	} else {
 		return false, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateFailed, bankAccountNumberStr)
 	}
-}
-
-//Status
-func VerifyStatus(ctx context.Context, strStatus ...string) (bool, error) {
-	for _, s := range strStatus {
-		if (s != models.StatusNew) && (s != models.StatusSubmitted) && (s != models.StatusPassed) && (s != models.StatusRejected) {
-			return false, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateFailed, strStatus)
-		}
-	}
-	return true, nil
 }

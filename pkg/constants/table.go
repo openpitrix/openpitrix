@@ -40,4 +40,6 @@ const (
 	TableMarketUser = "market_user"
 
 	TableAppVersionAudit = "app_version_audit"
+
+	TableVendorVerifyInfo = "vendor_verify_info"
 )

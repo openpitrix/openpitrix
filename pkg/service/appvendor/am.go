@@ -6,31 +6,41 @@ package appvendor
 import (
 	"context"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 )
+
+var SupportedStatus = []string{
+	constants.StatusNew,
+	constants.StatusSubmitted,
+	constants.StatusPassed,
+	constants.StatusRejected,
+}
 
 func (s *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.SubmitVendorVerifyInfoRequest:
 		return manager.NewChecker(ctx, r).
-			Required("user_id", "company_name", "company_website", "company_profile", "authorizer_name", "authorizer_email", "authorizer_phone", "bank_name", "bank_account_name", "bank_account_number").
+			Required(constants.ColumnUserId, constants.ColumnCompanyName, constants.ColumnCompanyWebsite,
+				constants.ColumnCompanyProfile, constants.ColumnAuthorizerName, constants.ColumnAuthorizerEmail,
+				constants.ColumnAuthorizerPhone, constants.ColumnBankName, constants.ColumnBankAccountName, constants.ColumnBankAccountNumber).
 			Exec()
 	case *pb.DescribeVendorVerifyInfosRequest:
 		return manager.NewChecker(ctx, r).
-			Required().
+			StringChosen("status", SupportedStatus).
 			Exec()
 	case *pb.GetVendorVerifyInfoRequest:
 		return manager.NewChecker(ctx, r).
-			Required("user_id").
+			Required(constants.ColumnUserId).
 			Exec()
 	case *pb.PassVendorVerifyInfoRequest:
 		return manager.NewChecker(ctx, r).
-			Required("user_id").
+			Required(constants.ColumnUserId).
 			Exec()
 	case *pb.RejectVendorVerifyInfoRequest:
 		return manager.NewChecker(ctx, r).
-			Required("user_id").
+			Required(constants.ColumnUserId, constants.ColumnRejectMessage).
 			Exec()
 	}
 	return nil

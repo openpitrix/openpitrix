@@ -36,6 +36,24 @@ func request_AppVendorManager_SubmitVendorVerifyInfo_0(ctx context.Context, mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["user_id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_id")
+	}
+
+	protoReq.UserId, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_id", err)
+	}
+
 	msg, err := client.SubmitVendorVerifyInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -288,7 +306,7 @@ func RegisterAppVendorManagerHandlerClient(ctx context.Context, mux *runtime.Ser
 }
 
 var (
-	pattern_AppVendorManager_SubmitVendorVerifyInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "vendor_verify_infos", "user_id=*"}, ""))
+	pattern_AppVendorManager_SubmitVendorVerifyInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "vendor_verify_infos", "user_id"}, ""))
 
 	pattern_AppVendorManager_DescribeVendorVerifyInfos_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "vendor_verify_infos"}, ""))
 

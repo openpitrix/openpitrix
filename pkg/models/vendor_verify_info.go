@@ -8,10 +8,12 @@ import (
 	"context"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
+/*
 const (
 	TableVendor = "vendor_verify_info"
 
@@ -35,7 +37,7 @@ const (
 	StatusPassed    = "passed"
 	StatusRejected  = "rejected"
 )
-
+*/
 type AppVendor struct {
 	UserId            string
 	CompanyName       string
@@ -65,7 +67,7 @@ func (vendor *AppVendor) ParseReq2Vendor(req *pb.SubmitVendorVerifyInfoRequest) 
 	Vendor.BankName = req.GetBankName().GetValue()
 	Vendor.BankAccountName = req.GetBankAccountName().GetValue()
 	Vendor.BankAccountNumber = req.GetBankAccountNumber().GetValue()
-	Vendor.Status = StatusSubmitted
+	Vendor.Status = constants.StatusSubmitted
 	t := time.Now()
 	Vendor.SubmitTime = &t
 	Vendor.StatusTime = time.Now()

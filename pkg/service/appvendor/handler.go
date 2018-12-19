@@ -8,22 +8,17 @@ import (
 	"context"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/manager"
+	"openpitrix.io/openpitrix/pkg/constants"
 
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 func (s *Server) DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) (*pb.DescribeVendorVerifyInfosResponse, error) {
-	status := req.GetStatus()
-	_, err := VerifyStatus(ctx, status...)
-	if err != nil {
-		return nil, err
-	}
-
 	vendors, count, err := DescribeVendorVerifyInfos(ctx, req)
 	if err != nil {
 		logger.Error(ctx, "Failed to describe vendorVerifyInfos, error: %+v", err)
@@ -47,14 +42,14 @@ func (s *Server) GetVendorVerifyInfo(ctx context.Context, req *pb.GetVendorVerif
 	if vendor == nil && err != nil {
 		vendor = &models.AppVendor{}
 		vendor.UserId = userID
-		vendor.Status = models.StatusNew
+		vendor.Status = constants.StatusNew
 		vendor.StatusTime = time.Now()
 		userID, err = CreateVendorVerifyInfo(ctx, *vendor)
 		if err != nil {
 			logger.Error(ctx, "vendorVerifyInfo does not exit,create new vendorVerifyInfo failed [%s], %+v", userID, err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourceFailed)
 		}
-		logger.Debug(ctx, "vendorVerifyInfo does not exit,create new vendorVerifyInfo verify info,[%+v]", vendor)
+		logger.Debug(ctx, "vendorVerifyInfo does not exit,create new vendorVerifyInfo verify info, [%+v]", vendor)
 	}
 
 	if err != nil {
@@ -82,12 +77,12 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 	}
 
 	if ifExist {
-		attributes := manager.BuildUpdateAttributes(req, models.ColumnCompanyName, models.ColumnCompanyWebsite, models.ColumnCompanyProfile,
-			models.ColumnAuthorizerName, models.ColumnAuthorizerEmail, models.ColumnAuthorizerPhone, models.ColumnBankName, models.ColumnBankAccountName,
-			models.ColumnBankAccountNumber)
-		attributes[models.ColumnStatus] = models.StatusSubmitted
-		attributes[models.ColumnSubmitTime] = time.Now()
-		attributes[models.ColumnStatusTime] = time.Now()
+		attributes := manager.BuildUpdateAttributes(req, constants.ColumnCompanyName, constants.ColumnCompanyWebsite, constants.ColumnCompanyProfile,
+			constants.ColumnAuthorizerName, constants.ColumnAuthorizerEmail, constants.ColumnAuthorizerPhone, constants.ColumnBankName, constants.ColumnBankAccountName,
+			constants.ColumnBankAccountNumber)
+		attributes[constants.ColumnStatus] = constants.StatusSubmitted
+		attributes[constants.ColumnSubmitTime] = time.Now()
+		attributes[constants.ColumnStatusTime] = time.Now()
 		logger.Debug(ctx, "SubmitVendorVerifyInfo got attributes: [%+v]", attributes)
 		userID, err = UpdateVendorVerifyInfo(ctx, req.UserId, attributes)
 		if err != nil {
