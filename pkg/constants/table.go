@@ -41,4 +41,5 @@ const (
 
 	TableAppVersionAudit  = "app_version_audit"
 	TableAppVersionReview = "app_version_review"
+	TableVendorVerifyInfo = "vendor_verify_info"
 )

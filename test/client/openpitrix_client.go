@@ -13,6 +13,7 @@ import (
 
 	"openpitrix.io/openpitrix/test/client/account_manager"
 	"openpitrix.io/openpitrix/test/client/app_manager"
+	"openpitrix.io/openpitrix/test/client/app_vendor_manager"
 	"openpitrix.io/openpitrix/test/client/attachment_service"
 	"openpitrix.io/openpitrix/test/client/category_manager"
 	"openpitrix.io/openpitrix/test/client/cluster_manager"
@@ -69,6 +70,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 	cli.AccountManager = account_manager.New(transport, formats)
 
 	cli.AppManager = app_manager.New(transport, formats)
+
+	cli.AppVendorManager = app_vendor_manager.New(transport, formats)
 
 	cli.AttachmentService = attachment_service.New(transport, formats)
 
@@ -138,6 +141,8 @@ type Openpitrix struct {
 
 	AppManager *app_manager.Client
 
+	AppVendorManager *app_vendor_manager.Client
+
 	AttachmentService *attachment_service.Client
 
 	CategoryManager *category_manager.Client
@@ -168,6 +173,8 @@ func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 	c.AccountManager.SetTransport(transport)
 
 	c.AppManager.SetTransport(transport)
+
+	c.AppVendorManager.SetTransport(transport)
 
 	c.AttachmentService.SetTransport(transport)
 
