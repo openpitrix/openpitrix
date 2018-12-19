@@ -4889,8 +4889,7 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string",
-          "title": "google.protobuf.StringValue user_id = 1;"
+          "type": "string"
         }
       }
     },
@@ -4906,8 +4905,7 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "user_id": {
-          "type": "string",
-          "title": "google.protobuf.StringValue user_id = 1;"
+          "type": "string"
         },
         "reject_message": {
           "type": "string"
@@ -4929,8 +4927,7 @@ var Files = map[string]string{
           "type": "string"
         },
         "company_name": {
-          "type": "string",
-          "title": "google.protobuf.StringValue user_id = 1;"
+          "type": "string"
         },
         "company_website": {
           "type": "string"

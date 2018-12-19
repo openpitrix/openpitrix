@@ -344,8 +344,7 @@ func (m *VendorVerifyInfo) GetStatusTime() *timestamp.Timestamp {
 }
 
 type SubmitVendorVerifyInfoRequest struct {
-	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	// google.protobuf.StringValue user_id = 1;
+	UserId               string                `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	CompanyName          *wrappers.StringValue `protobuf:"bytes,2,opt,name=company_name,json=companyName,proto3" json:"company_name,omitempty"`
 	CompanyWebsite       *wrappers.StringValue `protobuf:"bytes,3,opt,name=company_website,json=companyWebsite,proto3" json:"company_website,omitempty"`
 	CompanyProfile       *wrappers.StringValue `protobuf:"bytes,4,opt,name=company_profile,json=companyProfile,proto3" json:"company_profile,omitempty"`
@@ -495,7 +494,6 @@ func (m *SubmitVendorVerifyInfoResponse) GetUserId() *wrappers.StringValue {
 }
 
 type PassVendorVerifyInfoRequest struct {
-	// google.protobuf.StringValue user_id = 1;
 	UserId               string   `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -574,7 +572,6 @@ func (m *PassVendorVerifyInfoResponse) GetUserId() *wrappers.StringValue {
 }
 
 type RejectVendorVerifyInfoRequest struct {
-	// google.protobuf.StringValue user_id = 1;
 	UserId               string                `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	RejectMessage        *wrappers.StringValue `protobuf:"bytes,2,opt,name=reject_message,json=rejectMessage,proto3" json:"reject_message,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
