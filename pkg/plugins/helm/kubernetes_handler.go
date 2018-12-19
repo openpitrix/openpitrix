@@ -130,9 +130,6 @@ func (p *KubeHandler) CheckApiVersionsSupported(apiVersions []string) error {
 func (p *KubeHandler) WaitWorkloadReady(runtimeId, namespace string, clusterRoles map[string]*models.ClusterRole, timeout time.Duration, waitInterval time.Duration) error {
 	err := funcutil.WaitForSpecificOrError(func() (bool, error) {
 		for _, clusterRole := range clusterRoles {
-			if clusterRole.Role == "" {
-				continue
-			}
 
 			pods, err := p.getPodsByClusterRole(namespace, clusterRole)
 			if err != nil {
@@ -257,9 +254,6 @@ func (p *KubeHandler) DescribeClusterDetails(clusterWrapper *models.ClusterWrapp
 	namespace := runtime.Zone
 
 	for k, clusterRole := range clusterWrapper.ClusterRoles {
-		if clusterRole.Role == "" {
-			continue
-		}
 
 		pods, err := p.getPodsByClusterRole(namespace, clusterRole)
 		if err != nil {

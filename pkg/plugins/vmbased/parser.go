@@ -531,6 +531,7 @@ func (p *Parser) Parse(clusterConf opapp.ClusterConf, clusterWrapper *models.Clu
 		if err != nil {
 			return err
 		}
+		clusterWrapper.Cluster.Env = clusterEnv
 	} else {
 		clusterWrapper.ClusterNodesWithKeyPairs = clusterNodes
 		clusterWrapper.Cluster = cluster

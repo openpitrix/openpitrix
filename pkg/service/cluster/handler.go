@@ -1362,15 +1362,29 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	clusterWrapper.Cluster.ClusterId = clusterId
 	clusterWrapper.Cluster.Name = clusterName
 
-	for role, clusterRole := range clusterWrapper.ClusterRoles {
+	// Update env
+	if len(clusterWrapper.Cluster.Env) > 0 {
 		_, err = pi.Global().DB(ctx).
-			Update(constants.TableClusterRole).
-			Set("env", clusterRole.Env).
+			Update(constants.TableCluster).
+			Set("env", clusterWrapper.Cluster.Env).
 			Where(db.Eq("cluster_id", clusterId)).
-			Where(db.Eq("role", role)).
 			Exec()
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceEnvFailed, clusterId)
+		}
+	}
+
+	for role, clusterRole := range clusterWrapper.ClusterRoles {
+		if len(clusterRole.Env) > 0 {
+			_, err = pi.Global().DB(ctx).
+				Update(constants.TableClusterRole).
+				Set("env", clusterRole.Env).
+				Where(db.Eq("cluster_id", clusterId)).
+				Where(db.Eq("role", role)).
+				Exec()
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceEnvFailed, clusterId)
+			}
 		}
 	}
 
