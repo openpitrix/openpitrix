@@ -325,7 +325,7 @@ func (a *Client) ValidateRuntimeCredential(params *ValidateRuntimeCredentialPara
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ValidateRuntimeCredential",
-		Method:             "GET",
+		Method:             "POST",
 		PathPattern:        "/v1/runtimes/credentials:validate",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},

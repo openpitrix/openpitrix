@@ -3936,7 +3936,7 @@
       }
     },
     "/v1/runtimes/credentials:validate": {
-      "get": {
+      "post": {
         "summary": "validate runtime credential",
         "operationId": "ValidateRuntimeCredential",
         "responses": {
@@ -3949,22 +3949,12 @@
         },
         "parameters": [
           {
-            "name": "runtime_url",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "runtime_credential_content",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "provider",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixValidateRuntimeCredentialRequest"
+            }
           }
         ],
         "tags": [
@@ -7640,6 +7630,20 @@
         },
         "runtime_credential": {
           "$ref": "#/definitions/openpitrixRuntimeCredential"
+        }
+      }
+    },
+    "openpitrixValidateRuntimeCredentialRequest": {
+      "type": "object",
+      "properties": {
+        "runtime_url": {
+          "type": "string"
+        },
+        "runtime_credential_content": {
+          "type": "string"
+        },
+        "provider": {
+          "type": "string"
         }
       }
     },

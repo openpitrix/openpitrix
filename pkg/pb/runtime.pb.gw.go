@@ -140,15 +140,11 @@ func request_RuntimeManager_DeleteRuntimeCredentials_0(ctx context.Context, mars
 
 }
 
-var (
-	filter_RuntimeManager_ValidateRuntimeCredential_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
-
 func request_RuntimeManager_ValidateRuntimeCredential_0(ctx context.Context, marshaler runtime.Marshaler, client RuntimeManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ValidateRuntimeCredentialRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_RuntimeManager_ValidateRuntimeCredential_0); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -453,7 +449,7 @@ func RegisterRuntimeManagerHandlerClient(ctx context.Context, mux *runtime.Serve
 
 	})
 
-	mux.Handle("GET", pattern_RuntimeManager_ValidateRuntimeCredential_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_RuntimeManager_ValidateRuntimeCredential_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
