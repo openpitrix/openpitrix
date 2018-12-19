@@ -25,7 +25,6 @@ const (
 	TableRepoSelector        = "repo_selector"
 	TableRuntime             = "runtime"
 	TableRuntimeCredential   = "runtime_credential"
-	TableRuntimeLabel        = "runtime_label"
 	TableTask                = "task"
 	TableAttachment          = "attachment"
 

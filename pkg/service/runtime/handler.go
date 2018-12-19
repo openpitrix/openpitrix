@@ -405,7 +405,7 @@ func (p *Server) ModifyRuntimeCredential(ctx context.Context, req *pb.ModifyRunt
 	if len(runtimeCredentialContent) > 0 {
 		var runtimes []*models.Runtime
 		query := pi.Global().DB(ctx).
-			Select(models.RuntimeCredentialColumns...).
+			Select(models.RuntimeColumns...).
 			From(constants.TableRuntime).
 			Where(db.Eq(constants.ColumnRuntimeCredentialId, runtimeCredentialId)).
 			Where(db.Eq(constants.ColumnStatus, constants.StatusActive))
