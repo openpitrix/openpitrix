@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -25,7 +24,7 @@ func (s *Server) DescribeVendorVerifyInfos(ctx context.Context, req *pb.Describe
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	var vendor models.AppVendor //need use a appvendor object to call function
+	var vendor models.VendorVerifyInfo //need use a appvendor object to call function
 	vendorPbSet := vendor.ParseVendorSet2PbSet(ctx, vendors)
 
 	res := &pb.DescribeVendorVerifyInfosResponse{
@@ -40,7 +39,7 @@ func (s *Server) GetVendorVerifyInfo(ctx context.Context, req *pb.GetVendorVerif
 	vendor, err := GetVendorVerifyInfo(ctx, userID)
 
 	if vendor == nil && err != nil {
-		vendor = &models.AppVendor{}
+		vendor = &models.VendorVerifyInfo{}
 		vendor.UserId = userID
 		vendor.Status = constants.StatusNew
 		vendor.StatusTime = time.Now()
@@ -90,14 +89,14 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
 		}
 	} else {
-		vendor := &models.AppVendor{}
+		vendor := &models.VendorVerifyInfo{}
 		vendor = vendor.ParseReq2Vendor(req)
 		userID, err = CreateVendorVerifyInfo(ctx, *vendor)
 		if err != nil {
 			logger.Error(ctx, "Failed to submit vendorVerifyInfo [%+v], %+v", vendor, err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 		}
-		logger.Debug(ctx, "vendorVerifyInfo does not exit,create new vendorVerifyInfo verify info,[%+v]", vendor)
+		logger.Debug(ctx, "vendorVerifyInfo does not exit,create new vendorVerifyInfo verify info, [%+v]", vendor)
 
 	}
 	res := &pb.SubmitVendorVerifyInfoResponse{

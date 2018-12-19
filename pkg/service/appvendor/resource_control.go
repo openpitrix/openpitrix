@@ -19,12 +19,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-func DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) ([]*models.AppVendor, uint32, error) {
-	var vendors []*models.AppVendor
+func DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) ([]*models.VendorVerifyInfo, uint32, error) {
+	var vendors []*models.VendorVerifyInfo
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
-	var vendorColumns = db.GetColumnsFromStruct(&models.AppVendor{})
+	var vendorColumns = db.GetColumnsFromStruct(&models.VendorVerifyInfo{})
 	query := pi.Global().DB(ctx).
 		Select(vendorColumns...).
 		From(constants.TableVendorVerifyInfo).
@@ -48,9 +48,9 @@ func DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerify
 	return vendors, count, err
 }
 
-func GetVendorVerifyInfo(ctx context.Context, userID string) (*models.AppVendor, error) {
-	vendor := &models.AppVendor{}
-	vendorColumns := db.GetColumnsFromStruct(&models.AppVendor{})
+func GetVendorVerifyInfo(ctx context.Context, userID string) (*models.VendorVerifyInfo, error) {
+	vendor := &models.VendorVerifyInfo{}
+	vendorColumns := db.GetColumnsFromStruct(&models.VendorVerifyInfo{})
 	err := pi.Global().DB(ctx).
 		Select(vendorColumns...).
 		From(constants.TableVendorVerifyInfo).
@@ -108,7 +108,7 @@ func UpdateVendorVerifyInfo(ctx context.Context, userID string, attributes map[s
 	return userID, nil
 }
 
-func CreateVendorVerifyInfo(ctx context.Context, vendor models.AppVendor) (string, error) {
+func CreateVendorVerifyInfo(ctx context.Context, vendor models.VendorVerifyInfo) (string, error) {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableVendorVerifyInfo).
 		Record(vendor).

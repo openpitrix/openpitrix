@@ -13,32 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-/*
-const (
-	TableVendor = "vendor_verify_info"
-
-	ColumnUserId            = "user_id"
-	ColumnCompanyName       = "company_name"
-	ColumnCompanyWebsite    = "company_website"
-	ColumnCompanyProfile    = "company_profile"
-	ColumnAuthorizerName    = "authorizer_name"
-	ColumnAuthorizerEmail   = "authorizer_email"
-	ColumnAuthorizerPhone   = "authorizer_phone"
-	ColumnBankName          = "bank_name"
-	ColumnBankAccountName   = "bank_account_name"
-	ColumnBankAccountNumber = "bank_account_number"
-	ColumnStatus            = "status"
-	ColumnRejectMessage     = "reject_message"
-	ColumnSubmitTime        = "submit_time"
-	ColumnStatusTime        = "status_time"
-
-	StatusSubmitted = "submitted"
-	StatusNew       = "new"
-	StatusPassed    = "passed"
-	StatusRejected  = "rejected"
-)
-*/
-type AppVendor struct {
+type VendorVerifyInfo struct {
 	UserId            string
 	CompanyName       string
 	CompanyWebsite    string
@@ -55,8 +30,8 @@ type AppVendor struct {
 	StatusTime        time.Time
 }
 
-func (vendor *AppVendor) ParseReq2Vendor(req *pb.SubmitVendorVerifyInfoRequest) *AppVendor {
-	Vendor := AppVendor{}
+func (vendor *VendorVerifyInfo) ParseReq2Vendor(req *pb.SubmitVendorVerifyInfoRequest) *VendorVerifyInfo {
+	Vendor := VendorVerifyInfo{}
 	Vendor.UserId = req.GetUserId()
 	Vendor.CompanyName = req.GetCompanyName().GetValue()
 	Vendor.CompanyWebsite = req.GetCompanyWebsite().GetValue()
@@ -74,7 +49,7 @@ func (vendor *AppVendor) ParseReq2Vendor(req *pb.SubmitVendorVerifyInfoRequest) 
 	return &Vendor
 }
 
-func (vendor *AppVendor) ParseVendorSet2PbSet(ctx context.Context, inVendors []*AppVendor) []*pb.VendorVerifyInfo {
+func (vendor *VendorVerifyInfo) ParseVendorSet2PbSet(ctx context.Context, inVendors []*VendorVerifyInfo) []*pb.VendorVerifyInfo {
 	var pbVendors []*pb.VendorVerifyInfo
 	for _, inVendor := range inVendors {
 		var pbVendor *pb.VendorVerifyInfo
@@ -84,7 +59,7 @@ func (vendor *AppVendor) ParseVendorSet2PbSet(ctx context.Context, inVendors []*
 	return pbVendors
 }
 
-func (vendor *AppVendor) ParseVendor2Pb(ctx context.Context, inVendor *AppVendor) *pb.VendorVerifyInfo {
+func (vendor *VendorVerifyInfo) ParseVendor2Pb(ctx context.Context, inVendor *VendorVerifyInfo) *pb.VendorVerifyInfo {
 	pbVendor := pb.VendorVerifyInfo{}
 	pbVendor.UserId = pbutil.ToProtoString(inVendor.UserId)
 	pbVendor.CompanyName = pbutil.ToProtoString(inVendor.CompanyName)

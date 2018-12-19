@@ -53,7 +53,6 @@ message VendorVerifyInfo {
 
 message SubmitVendorVerifyInfoRequest {
 	string user_id = 1;
-	//google.protobuf.StringValue user_id = 1;
 	google.protobuf.StringValue company_name = 2;
 	google.protobuf.StringValue company_website = 3;
 	google.protobuf.StringValue company_profile = 4;
@@ -72,7 +71,6 @@ message SubmitVendorVerifyInfoResponse {
 
 
 message PassVendorVerifyInfoRequest {
-	//google.protobuf.StringValue user_id = 1;
 	string user_id = 1;
 }
 
@@ -81,7 +79,6 @@ message PassVendorVerifyInfoResponse {
 }
 
 message RejectVendorVerifyInfoRequest {
-	//google.protobuf.StringValue user_id = 1;
 	string user_id = 1;
 	google.protobuf.StringValue reject_message = 2;
 }

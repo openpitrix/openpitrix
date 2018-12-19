@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/logger"
-
 	vendor "openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
