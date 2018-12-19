@@ -72,15 +72,11 @@ func (p *Provider) ValidateRuntime(ctx context.Context, runtimeId, zone string, 
 	return nil
 }
 
-func (p *Provider) UpdateClusterStatus(ctx context.Context, job *models.Job) error {
-	return nil
-}
-
 func (p *Provider) DescribeRuntimeProviderZones(ctx context.Context, runtimeCredential *models.RuntimeCredential) ([]string, error) {
 	handler := GetProviderHandler(ctx)
 	return handler.DescribeZones(runtimeCredential.RuntimeUrl, runtimeCredential.RuntimeCredentialContent)
 }
 
-func (p *Provider) DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) error {
-	return nil
+func (p *Provider) DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) (*models.ClusterWrapper, error) {
+	return nil, nil
 }

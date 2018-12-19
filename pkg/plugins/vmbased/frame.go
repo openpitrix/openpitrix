@@ -1323,6 +1323,33 @@ func (f *Frame) registerScalingNodesMetadataLayer(nodeIds []string, path string,
 	}
 }
 
+func (f *Frame) registerEnvMetadataLayer(failureAllowed bool) *models.TaskLayer {
+	metadata := &Metadata{
+		ClusterWrapper: f.ClusterWrapper,
+		RuntimeDetails: f.Runtime,
+	}
+	cnodes := jsonutil.ToString(metadata.GetClusterEnvCnodes(f.Ctx))
+	meta := &models.Meta{
+		FrontgateId: f.ClusterWrapper.Cluster.FrontgateId,
+		Timeout:     TimeoutRegister,
+		ClusterId:   f.ClusterWrapper.Cluster.ClusterId,
+		Cnodes:      cnodes,
+	}
+	directive := jsonutil.ToString(meta)
+	task := &models.Task{
+		JobId:          f.Job.JobId,
+		Owner:          f.Job.Owner,
+		TaskAction:     ActionRegisterEnvMetadata,
+		Target:         constants.TargetPilot,
+		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
+		Directive:      directive,
+		FailureAllowed: failureAllowed,
+	}
+	return &models.TaskLayer{
+		Tasks: []*models.Task{task},
+	}
+}
+
 func (f *Frame) deregisterNodesMetadataLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
 	metadata := &Metadata{
 		ClusterWrapper: f.ClusterWrapper,
@@ -1611,7 +1638,7 @@ func (f *Frame) DeleteClusterNodesLayer() *models.TaskLayer {
 
 func (f *Frame) UpdateClusterEnvLayer() *models.TaskLayer {
 	headTaskLayer := new(models.TaskLayer)
-
+	headTaskLayer.Append(f.registerMetadataLayer(false)) // register cluster metadata
 	return headTaskLayer.Child
 }
 
@@ -1677,6 +1704,7 @@ func (f *Frame) DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails
 
 func (f *Frame) ParseClusterConf(ctx context.Context, versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
 	clusterConf := opapp.ClusterConf{}
+	clusterEnv := ""
 	// Normal cluster need package to generate final conf
 	if versionId != constants.FrontgateVersionId {
 		appManagerClient, err := appclient.NewAppManagerClient()
@@ -1701,15 +1729,15 @@ func (f *Frame) ParseClusterConf(ctx context.Context, versionId, runtimeId, conf
 			return err
 		}
 		var confJson jsonutil.Json
-		if len(conf) == 0 {
-			confJson = appPackage.ConfigTemplate.GetDefaultConfig()
-		} else {
+		if len(conf) != 0 {
 			confJson, err = jsonutil.NewJson([]byte(conf))
 			if err != nil {
 				logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)
 				return err
 			}
+			appPackage.ConfigTemplate.FillInDefaultConfig(confJson)
 		}
+		confJson = appPackage.ConfigTemplate.GetDefaultConfig()
 		err = appPackage.Validate(confJson)
 		if err != nil {
 			logger.Error(f.Ctx, "Validate conf [%s] failed: %+v", conf, err)
@@ -1727,6 +1755,10 @@ func (f *Frame) ParseClusterConf(ctx context.Context, versionId, runtimeId, conf
 		}
 		clusterConf.AppId = resp.GetAppId().GetValue()
 		clusterConf.VersionId = resp.GetVersionId().GetValue()
+
+		// Set cluster env
+		appPackage.ConfigTemplate.SpecificConfig("env")
+		clusterEnv = jsonutil.ToString(appPackage.ConfigTemplate.Config)
 	} else {
 		err := jsonutil.Decode([]byte(conf), &clusterConf)
 		if err != nil {
@@ -1736,7 +1768,7 @@ func (f *Frame) ParseClusterConf(ctx context.Context, versionId, runtimeId, conf
 	}
 
 	parser := Parser{Ctx: f.Ctx}
-	err := parser.Parse(clusterConf, clusterWrapper)
+	err := parser.Parse(clusterConf, clusterWrapper, clusterEnv)
 	if err != nil {
 		logger.Error(f.Ctx, "Parse app version [%s] failed: %+v", versionId, err)
 		return err

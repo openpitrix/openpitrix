@@ -240,7 +240,7 @@ func (p *Processor) Pre(ctx context.Context) error {
 		// write back
 		p.Task.Directive = jsonutil.ToString(meta)
 
-	case vmbased.ActionRegisterNodesMetadata:
+	case vmbased.ActionRegisterNodesMetadata, vmbased.ActionRegisterEnvMetadata:
 		p.Task.TaskAction = vmbased.ActionRegisterMetadata
 
 	case vmbased.ActionRegisterNodesMetadataMapping:

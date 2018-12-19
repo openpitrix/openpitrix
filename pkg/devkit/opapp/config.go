@@ -21,12 +21,16 @@ const (
 )
 
 type ConfigTemplate struct {
-	Raw         string
-	Type        string            `json:"type,omitempty"`
-	Properties  []*ConfigTemplate `json:"properties,omitempty"`
-	Key         string            `json:"key,omitempty"`
-	Description string            `json:"description,omitempty"`
-	Required    bool              `json:"required,omitempty"`
+	Config
+	Raw string
+}
+
+type Config struct {
+	Type        string    `json:"type,omitempty"`
+	Properties  []*Config `json:"properties,omitempty"`
+	Key         string    `json:"key,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Required    bool      `json:"required,omitempty"`
 
 	Default interface{} `json:"default,omitempty"`
 	Pattern *string     `json:"pattern,omitempty"`
@@ -46,13 +50,46 @@ type ConfigTemplate struct {
 	Multichoice *bool   `json:"multichoice,omitempty"`
 }
 
-func (c *ConfigTemplate) GetDefaultConfig() jsonutil.Json {
+func (c *Config) SpecificConfig(key string) {
+	if c.Key == "" && c.Type == TypeArray {
+		var properties []*Config
+		for _, p := range c.Properties {
+			if p.Key == key {
+				properties = append(properties, p)
+				break
+			}
+		}
+		c.Properties = properties
+	}
+}
+
+func (c *Config) FillInDefaultConfig(defaultConfig jsonutil.Json) {
+	c.fillInDefaultConfig(defaultConfig)
+}
+
+func (c *Config) fillInDefaultConfig(defaultConfig jsonutil.Json) {
+	if c.Type == TypeArray {
+		for _, p := range c.Properties {
+			if c.Key != "" {
+				p.fillInDefaultConfig(defaultConfig.Get(c.Key))
+			} else {
+				p.fillInDefaultConfig(defaultConfig)
+			}
+		}
+	} else {
+		if defaultConfig.Get(c.Key) != nil {
+			c.Default = defaultConfig.Get(c.Key).Interface()
+		}
+	}
+}
+
+func (c *Config) GetDefaultConfig() jsonutil.Json {
 	// FIXME: need improve performance
 	conf := c.getDefaultConfig()
 	return jsonutil.ToJson(conf)
 }
 
-func (c *ConfigTemplate) getDefaultConfig() interface{} {
+func (c *Config) getDefaultConfig() interface{} {
 	if c.Type == TypeArray {
 		defaultConfig := make(map[string]interface{})
 		for _, p := range c.Properties {
@@ -78,7 +115,7 @@ func (c *ConfigTemplate) getDefaultConfig() interface{} {
 }
 
 // input user defined config, output rendered config with default values
-func (c *ConfigTemplate) GetRenderedConfig(config jsonutil.Json) jsonutil.Json {
+func (c *Config) GetRenderedConfig(config jsonutil.Json) jsonutil.Json {
 	v := config
 	if v.Interface() == nil && c.Default != nil {
 		v = jsonutil.ToJson(c.Default)
@@ -91,7 +128,7 @@ func getParent(parent []string) string {
 }
 
 // validate the rendered config
-func (c *ConfigTemplate) Validate(config jsonutil.Json, parent ...string) error {
+func (c *Config) Validate(config jsonutil.Json, parent ...string) error {
 	if c.Key != "" {
 		parent = append(parent, c.Key)
 	}

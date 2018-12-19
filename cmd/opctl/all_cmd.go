@@ -3811,11 +3811,12 @@ func (c *ValidateRuntimeCredentialCmd) ParseFlag(f Flag) {
 }
 
 func (c *ValidateRuntimeCredentialCmd) Run(out Out) error {
+	params := c.ValidateRuntimeCredentialParams
 
-	out.WriteRequest(c.ValidateRuntimeCredentialParams)
+	out.WriteRequest(params)
 
 	client := getClient()
-	res, err := client.RuntimeManager.ValidateRuntimeCredential(c.ValidateRuntimeCredentialParams, nil)
+	res, err := client.RuntimeManager.ValidateRuntimeCredential(params, nil)
 	if err != nil {
 		return err
 	}

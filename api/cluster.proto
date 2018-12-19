@@ -300,11 +300,12 @@ message Cluster {
 	google.protobuf.Timestamp create_time = 19;
 	google.protobuf.Timestamp status_time = 20;
 	google.protobuf.StringValue additional_info = 21;
-	repeated ClusterNode cluster_node_set = 22;
-	repeated ClusterRole cluster_role_set = 23;
-	repeated ClusterLink cluster_link_set = 24;
-	repeated ClusterCommon cluster_common_set = 25;
-	repeated ClusterLoadbalancer cluster_loadbalancer_set = 26;
+	google.protobuf.StringValue env = 22;
+	repeated ClusterNode cluster_node_set = 23;
+	repeated ClusterRole cluster_role_set = 24;
+	repeated ClusterLink cluster_link_set = 25;
+	repeated ClusterCommon cluster_common_set = 26;
+	repeated ClusterLoadbalancer cluster_loadbalancer_set = 27;
 }
 
 message DescribeClustersRequest {

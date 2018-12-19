@@ -82,40 +82,25 @@ func (p *Processor) Post(ctx context.Context) error {
 	}
 	switch p.Job.JobAction {
 	case constants.ActionCreateCluster:
-		providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
+		err = p.UpdateClusterDetails(ctx)
 		if err != nil {
-			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
-			return err
-		}
-		err = providerInterface.UpdateClusterStatus(ctx, p.Job)
-		if err != nil {
-			logger.Error(ctx, "Executing job post processor failed: %+v", err)
+			logger.Error(ctx, "Update cluster details failed: %+v", err)
 			return err
 		}
 
 		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionUpgradeCluster:
-		providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
+		err = p.UpdateClusterDetails(ctx)
 		if err != nil {
-			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
-			return err
-		}
-		err = providerInterface.UpdateClusterStatus(ctx, p.Job)
-		if err != nil {
-			logger.Error(ctx, "Executing job post processor failed: %+v", err)
+			logger.Error(ctx, "Update cluster details failed: %+v", err)
 			return err
 		}
 
 		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusActive)
 	case constants.ActionRollbackCluster:
-		providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
+		err = p.UpdateClusterDetails(ctx)
 		if err != nil {
-			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
-			return err
-		}
-		err = providerInterface.UpdateClusterStatus(ctx, p.Job)
-		if err != nil {
-			logger.Error(ctx, "Executing job post processor failed: %+v", err)
+			logger.Error(ctx, "Update cluster details failed: %+v", err)
 			return err
 		}
 
@@ -262,14 +247,9 @@ func (p *Processor) Post(ctx context.Context) error {
 	case constants.ActionCeaseClusters:
 		err = clusterClient.ModifyClusterStatus(ctx, p.Job.ClusterId, constants.StatusCeased)
 	case constants.ActionUpdateClusterEnv:
-		providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
+		err = p.UpdateClusterDetails(ctx)
 		if err != nil {
-			logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
-			return err
-		}
-		err = providerInterface.UpdateClusterStatus(ctx, p.Job)
-		if err != nil {
-			logger.Error(ctx, "Executing job post processor failed: %+v", err)
+			logger.Error(ctx, "Update cluster details failed: %+v", err)
 			return err
 		}
 
@@ -320,4 +300,55 @@ func (p *Processor) Final(ctx context.Context) {
 	if err != nil {
 		logger.Error(ctx, "Executing job final processor failed: %+v", err)
 	}
+}
+
+func (p *Processor) UpdateClusterDetails(ctx context.Context) error {
+	clusterWrapper, err := models.NewClusterWrapper(ctx, p.Job.Directive)
+	if err != nil {
+		return err
+	}
+
+	providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
+	if err != nil {
+		logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
+		return err
+	}
+
+	clusterWrapper, err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
+	if err != nil {
+		logger.Error(ctx, "Describe cluster details failed, %+v", err)
+		return err
+	}
+
+	if clusterWrapper != nil {
+		var clusterRoles []*models.ClusterRole
+		for _, clusterRole := range clusterWrapper.ClusterRoles {
+			clusterRoles = append(clusterRoles, clusterRole)
+		}
+
+		var clusterNodes []*models.ClusterNodeWithKeyPairs
+		for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
+			clusterNodes = append(clusterNodes, clusterNode)
+		}
+
+		clusterClient, err := clusterclient.NewClient()
+		if err != nil {
+			return err
+		}
+
+		modifyClusterRequest := &pb.ModifyClusterRequest{
+			Cluster: &pb.Cluster{
+				ClusterId:   pbutil.ToProtoString(clusterWrapper.Cluster.ClusterId),
+				Description: pbutil.ToProtoString(clusterWrapper.Cluster.Description),
+			},
+			ClusterRoleSet: models.ClusterRolesToPbs(clusterRoles),
+			ClusterNodeSet: models.ClusterNodesWithKeyPairsToPbs(clusterNodes),
+		}
+		_, err = clusterClient.ModifyCluster(ctx, modifyClusterRequest)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

@@ -16,7 +16,6 @@ import (
 	"k8s.io/helm/pkg/proto/hapi/release"
 
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
-	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -358,69 +357,6 @@ func (p *Provider) DescribeVpc(ctx context.Context, runtimeId, vpcId string) (*m
 	return nil, nil
 }
 
-func (p *Provider) updateClusterStatus(ctx context.Context, job *models.Job) error {
-	clusterWrapper, err := models.NewClusterWrapper(ctx, job.Directive)
-	if err != nil {
-		return err
-	}
-
-	kubeHandler := GetKubeHandler(ctx, clusterWrapper.Cluster.RuntimeId)
-	err = kubeHandler.DescribeClusterDetails(clusterWrapper)
-	if err != nil {
-		logger.Error(ctx, "Describe cluster details failed, %+v", err)
-		return err
-	}
-
-	var clusterRoles []*models.ClusterRole
-	for _, clusterRole := range clusterWrapper.ClusterRoles {
-		clusterRoles = append(clusterRoles, clusterRole)
-	}
-
-	var clusterNodesList []*models.ClusterNodeWithKeyPairs
-	for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
-		clusterNodesList = append(clusterNodesList, clusterNode)
-	}
-
-	clusterClient, err := clusterclient.NewClient()
-	if err != nil {
-		return err
-	}
-
-	modifyClusterRequest := &pb.ModifyClusterRequest{
-		Cluster: &pb.Cluster{
-			ClusterId:   pbutil.ToProtoString(clusterWrapper.Cluster.ClusterId),
-			Description: pbutil.ToProtoString(clusterWrapper.Cluster.Description),
-		},
-		ClusterRoleSet: models.ClusterRolesToPbs(clusterRoles),
-		ClusterNodeSet: models.ClusterNodesWithKeyPairsToPbs(clusterNodesList),
-	}
-	_, err = clusterClient.ModifyCluster(ctx, modifyClusterRequest)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (p *Provider) UpdateClusterStatus(ctx context.Context, job *models.Job) error {
-	switch job.JobAction {
-	case constants.ActionCreateCluster:
-		fallthrough
-	case constants.ActionUpgradeCluster:
-		fallthrough
-	case constants.ActionRollbackCluster:
-		fallthrough
-	case constants.ActionUpdateClusterEnv:
-		err := p.updateClusterStatus(ctx, job)
-		if err != nil {
-			logger.Error(ctx, "Update cluster status failed, %+v", err)
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (p *Provider) ValidateRuntime(ctx context.Context, runtimeId, zone string, runtimeCredential *models.RuntimeCredential, needCreate bool) error {
 	kubeHandler := GetKubeHandler(ctx, runtimeId)
 	return kubeHandler.ValidateRuntime(zone, runtimeCredential, needCreate)
@@ -431,7 +367,7 @@ func (p *Provider) DescribeRuntimeProviderZones(ctx context.Context, runtimeCred
 	return kubeHandler.DescribeRuntimeProviderZones(runtimeCredential)
 }
 
-func (p *Provider) DescribeClusterDetails(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
-	kubeHandler := GetKubeHandler(ctx, clusterWrapper.Cluster.RuntimeId)
-	return kubeHandler.DescribeClusterDetails(clusterWrapper)
+func (p *Provider) DescribeClusterDetails(ctx context.Context, cluster *models.ClusterWrapper) (*models.ClusterWrapper, error) {
+	kubeHandler := GetKubeHandler(ctx, cluster.Cluster.RuntimeId)
+	return cluster, kubeHandler.DescribeClusterDetails(cluster)
 }

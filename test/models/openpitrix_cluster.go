@@ -52,6 +52,9 @@ type OpenpitrixCluster struct {
 	// endpoints
 	Endpoints string `json:"endpoints,omitempty"`
 
+	// env
+	Env string `json:"env,omitempty"`
+
 	// frontgate id
 	FrontgateID string `json:"frontgate_id,omitempty"`
 
