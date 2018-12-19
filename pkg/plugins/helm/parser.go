@@ -67,11 +67,13 @@ func (p *Parser) getAppVersion() (*pb.AppVersion, error) {
 	return appVersion, nil
 }
 
-func (p *Parser) parseCluster(name string, description string, additionalInfo string) (*models.Cluster, error) {
+func (p *Parser) parseCluster(name string, description string, additionalInfo string, customVals map[string]interface{}) (*models.Cluster, error) {
 	appVersion, err := p.getAppVersion()
 	if err != nil {
 		return nil, err
 	}
+
+	env := jsonutil.ToString(customVals)
 
 	cluster := &models.Cluster{
 		Zone:           p.Namespace,
@@ -84,12 +86,13 @@ func (p *Parser) parseCluster(name string, description string, additionalInfo st
 		CreateTime:     time.Now(),
 		StatusTime:     time.Now(),
 		AdditionalInfo: additionalInfo,
+		Env:            env,
 	}
 
 	return cluster, nil
 }
 
-func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{}, customVals map[string]interface{}) (
+func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{}) (
 	map[string]*models.ClusterRole,
 	map[string]*models.ClusterCommon,
 	string,
@@ -102,7 +105,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 		"pvc":       {},
 		"ingress":   {},
 	}
-	env := jsonutil.ToString(customVals)
 
 	renderer := engine.New()
 	out, err := renderer.Render(p.Chart, vals)
@@ -154,7 +156,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 				clusterRole := &models.ClusterRole{
 					Role:       fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
-					Env:        string(env),
 				}
 
 				if o.Spec.Replicas == nil {
@@ -180,7 +181,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 				clusterRole := &models.ClusterRole{
 					Role:       fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
-					Env:        string(env),
 				}
 
 				if o.Spec.Replicas == nil {
@@ -206,7 +206,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 				clusterRole := &models.ClusterRole{
 					Role:       fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
-					Env:        string(env),
 				}
 
 				if o.Spec.Replicas == nil {
@@ -232,7 +231,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 				clusterRole := &models.ClusterRole{
 					Role:       fmt.Sprintf("%s-Deployment", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
-					Env:        string(env),
 				}
 
 				if o.Spec.Replicas == nil {
@@ -258,7 +256,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 				clusterRole := &models.ClusterRole{
 					Role:       fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
-					Env:        string(env),
 				}
 
 				if o.Spec.Replicas == nil {
@@ -284,7 +281,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 				clusterRole := &models.ClusterRole{
 					Role:       fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
-					Env:        string(env),
 				}
 
 				if o.Spec.Replicas == nil {
@@ -310,7 +306,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 				clusterRole := &models.ClusterRole{
 					Role:       fmt.Sprintf("%s-StatefulSet", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
-					Env:        string(env),
 				}
 
 				if o.Spec.Replicas == nil {
@@ -337,7 +332,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 					Role:       fmt.Sprintf("%s-DaemonSet", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
 					Replicas:   uint32(1),
-					Env:        string(env),
 				}
 
 				if len(o.Spec.Template.Spec.Containers) > 0 {
@@ -358,7 +352,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 					Role:       fmt.Sprintf("%s-DaemonSet", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
 					Replicas:   uint32(1),
-					Env:        string(env),
 				}
 
 				if len(o.Spec.Template.Spec.Containers) > 0 {
@@ -379,7 +372,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 					Role:       fmt.Sprintf("%s-DaemonSet", o.GetObjectMeta().GetName()),
 					ApiVersion: groupVersionKind.GroupVersion().String(),
 					Replicas:   uint32(1),
-					Env:        string(env),
 				}
 
 				if len(o.Spec.Template.Spec.Containers) > 0 {
@@ -432,14 +424,6 @@ func (p *Parser) parseClusterRolesAndClusterCommons(vals map[string]interface{},
 		return nil, nil, "", err
 	}
 
-	_, ok := clusterRoles[""]
-	if !ok {
-		clusterRoles[""] = &models.ClusterRole{
-			Role: "",
-			Env:  string(env),
-		}
-	}
-
 	return clusterRoles, clusterCommons, jsonutil.ToString(additionalInfo), nil
 }
 
@@ -460,12 +444,12 @@ func (p *Parser) Parse(clusterWrapper *models.ClusterWrapper) error {
 		return err
 	}
 
-	clusterRoles, clusterCommons, additionalInfo, err := p.parseClusterRolesAndClusterCommons(vals, customVals)
+	clusterRoles, clusterCommons, additionalInfo, err := p.parseClusterRolesAndClusterCommons(vals)
 	if err != nil {
 		return err
 	}
 
-	cluster, err := p.parseCluster(name, description, additionalInfo)
+	cluster, err := p.parseCluster(name, description, additionalInfo, customVals)
 	if err != nil {
 		return err
 	}

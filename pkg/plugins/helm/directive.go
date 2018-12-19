@@ -6,7 +6,6 @@ package helm
 
 import (
 	"context"
-	"fmt"
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -34,15 +33,11 @@ func decodeJobDirective(ctx context.Context, data string) (*JobDirective, error)
 	}
 
 	namespace := runtime.Zone
-	clusterRole, ok := clusterWrapper.ClusterRoles[""]
-	if !ok {
-		return nil, fmt.Errorf("env is missing")
-	}
 
 	j := &JobDirective{
 		Namespace:   namespace,
 		RuntimeId:   runtimeId,
-		Values:      clusterRole.Env,
+		Values:      clusterWrapper.Cluster.Env,
 		ClusterName: clusterWrapper.Cluster.Name,
 	}
 
