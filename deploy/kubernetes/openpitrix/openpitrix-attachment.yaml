@@ -56,7 +56,7 @@ spec:
           - attachment-manager
         ports:
         - containerPort: 9102
-          name: attachment-manager
+          name: attachment-mgr
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
           value: 'true'

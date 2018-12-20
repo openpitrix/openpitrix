@@ -2,11 +2,12 @@
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
 
-default: ca pilot-server pilot-client
+default: ca pilot-server pilot-client ingress
 
 ca: openpitrix-ca.key openpitrix-ca.crt
 pilot-server: pilot-server.key pilot-server.crt
 pilot-client: pilot-client.key pilot-client.crt
+ingress: ingress.key ingress.crt-demo.openpitrix.io
 
 # openpitrix ca
 openpitrix-ca.key:
@@ -44,6 +45,22 @@ pilot-client.crt: pilot-client.key openpitrix-ca.key openpitrix-ca.crt
 		-CA openpitrix-ca.crt -CAkey openpitrix-ca.key -CAcreateserial -days 3650 \
 		-in pilot-client.csr \
 		-out pilot-client.crt
+
+# ingress
+ingress.key:
+	openssl genrsa -out ingress.key 2048
+
+ingress.crt-%: ingress.key openpitrix-ca.key openpitrix-ca.crt
+	printf "authorityKeyIdentifier=keyid,issuer\nbasicConstraints=CA:FALSE\nkeyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment\nsubjectAltName = @alt_names\n\n[alt_names]\nDNS.1 = %s" $* > v3.ext
+	openssl req -new \
+		-subj "/C=GB/L=China/O=ingress/CN=$*/" \
+		-key ingress.key \
+		-out ingress.csr
+	openssl x509 -req -sha256 \
+		-CA openpitrix-ca.crt -CAkey openpitrix-ca.key -CAcreateserial -days 3650 \
+		-in ingress.csr \
+		-extfile v3.ext \
+		-out ingress.crt
 
 clean:
 	-rm *.key *.crt *.csr *.srl
