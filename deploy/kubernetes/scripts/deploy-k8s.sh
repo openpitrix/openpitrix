@@ -16,6 +16,7 @@ METADATA=0
 DBCTRL=0
 BASE=0
 DASHBOARD=0
+INGRESS=0
 STORAGE=0
 ALL=0
 JOB_REPLICA=1
@@ -54,20 +55,23 @@ usage() {
   echo "        -l LIMITS       : the limits of container resources. such as: cpu=100,memory=200, default is: cpu=500,memory=500"
   echo "        -j JOB REPLICA  : the job replica number."
   echo "        -t TASK REPLICA : the task replica number."
+  echo "        -c HOST         : the hostname used in ingress."
   echo "        -b              : base model will be applied."
   echo "        -m              : metadata will be applied."
   echo "        -d              : dbctrl will be applied."
   echo "        -u              : ui/dashboard will be applied."
+  echo "        -i              : ingress will be applied."
   echo "        -s              : storage will be applied."
-  echo "        -a              : all of base/metadata/dbctrl/dashboard/storage will be applied."
+  echo "        -a              : all of base/metadata/dbctrl/dashboard/storage/ingress will be applied."
   exit -1
 }
 
 
-while getopts n:v:r:l:j:t:hbdmsua option
+while getopts :c:n:v:r:l:j:t:hbdmsuia option
 do
   case "${option}"
   in
+  c) HOST=${OPTARG};;
   n) NAMESPACE=${OPTARG};;
   v) VERSION=${OPTARG};;
   r) REQUESTS=${OPTARG};;
@@ -78,6 +82,7 @@ do
   m) METADATA=1;;
   b) BASE=1;;
   u) DASHBOARD=1;;
+  i) INGRESS=1;;
   s) STORAGE=1;;
   a) ALL=1;;
   h) usage ;;
@@ -89,6 +94,7 @@ if [ "${METADATA}" == "0" ] && \
    [ "${DBCTRL}" == "0" ] && \
    [ "${BASE}" == "0" ] && \
    [ "${DASHBOARD}" == "0" ] && \
+   [ "${INGRESS}" == "0" ] && \
    [ "${STORAGE}" == "0" ] && \
    [ "${ALL}" == "0" ]
 then
@@ -197,10 +203,13 @@ replace() {
 	  -e "s!\${API_NODEPORT}!${API_NODEPORT}!g" \
 	  -e "s!\${PILOT_NODEPORT}!${PILOT_NODEPORT}!g" \
 	  -e "s!\${DASHBOARD_NODEPORT}!${DASHBOARD_NODEPORT}!g" \
+	  -e "s!\${HOST}!${HOST}!g" \
 	  $1
 }
 
 [ -z `which make` ] && echo "Deployed failed: You need to install 'make' first." && exit 1
+
+[ "${HOST}" == "" ] && HOST=demo.openpitrix.io
 
 kubectl get ns ${NAMESPACE}
 if [ $? != 0 ];then
@@ -249,7 +258,7 @@ if [ "${BASE}" == "1" ] || [ "${ALL}" == "1" ];then
   done
 fi
 if [ "${METADATA}" == "1" ] || [ "${ALL}" == "1" ];then
-  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE}
+  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST}
   if [ $? -ne 0 ]; then
 	echo "Deploy failed."
 	exit 1
@@ -262,6 +271,17 @@ fi
 if [ "${DASHBOARD}" == "1" ] || [ "${ALL}" == "1" ];then
   for FILE in `ls ./kubernetes/openpitrix/dashboard/`;do
     apply_yaml ${VERSION} dashboard/${FILE}
+  done
+fi
+if [ "${INGRESS}" == "1" ] || [ "${ALL}" == "1" ];then
+  kubectl get ns ingress-nginx
+  if [ $? != 0 ];then
+    kubectl create namespace ingress-nginx
+  fi
+
+  ./kubernetes/scripts/generate-certs.sh -n ${NAMESPACE} -c ${HOST}
+  for FILE in `ls ./kubernetes/openpitrix/ingress/`;do
+    apply_yaml ${VERSION} ingress/${FILE}
   done
 fi
 
