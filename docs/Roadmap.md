@@ -8,17 +8,17 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 
 | Edition  | Schedule |
 |---|---|
-| [Release v0.1](Roadmap.md#v01)|May, 2018 |
+| [Release v0.1](Roadmap.md#v01)| May, 2018 |
 | [Release v0.2](Roadmap.md#v02)| June, 2018 | 
 | [Release v0.3](Roadmap.md#v03)| October, 2018 | 
-| [Release v0.4](Roadmap.md#v04)| November, 2018 | 
-| [Release v0.5](Roadmap.md#v05)| December, 2018 | 
-| [Release v1.0](Roadmap.md#v10)| January, 2019 | 
-| [Release v2.0](Roadmap.md#v20)| July, 2019 | 
+| [Release v0.4](Roadmap.md#v04)| January, 2019 | 
+| [Release v0.5](Roadmap.md#v05)| March, 2019 | 
+| [Release v1.0](Roadmap.md#v10)| May, 2019 | 
+| [Release v2.0](Roadmap.md#v20)| October, 2019 | 
 
 ## Features
 
-### Past releases
+## Past releases
 
 ### v0.1：
 
@@ -36,30 +36,30 @@ OpenPitrix Roadmap demonstrates a list of open source product development plans 
 - [x] Application Lifecycle Management: add support for application package upload and deployment based on VM runtimes.
 - [x] Adding key pairs which can attach ssh key to cluster node.
 
-### Upcoming releases
-
 ### v0.3：
 
 **Admin**
 
-- [ ] Store: add support for getting application available for users to browse and deploy, add category management.
-- [ ] Application Lifecycle Management: add application review, application release, application deployment, application takedown, etc.
-- [ ] Platform Management: add support for repository, runtime and cluster instance management.
-- [ ] User Management: 3 roles by default, supporting role-based permission management.
+- [x] Store: add support for getting application available for users to browse and deploy, add category management.
+- [x] Application Lifecycle Management: add application review, application release, application deployment, application takedown, etc.
+- [x] Platform Management: add support for repository, runtime and cluster instance management.
+- [x] User Management: 3 roles by default, supporting role-based permission management.
 
 
 **ISV**
 
-- [ ] Adding independent portal for ISV.
-- [ ] Application Lifecycle Management: add support for version management, such as uploading and creating new versions, as well as deploy to runtimes for new version.
-- [ ] Platform Management: support to view and manage repositories, runtimes, and cluster instances.
+- [x] Adding independent portal for ISV.
+- [x] Application Lifecycle Management: add support for version management, such as uploading and creating new versions, as well as deploy to runtimes for new version.
+- [x] Platform Management: support to view and manage repositories, runtimes, and cluster instances.
 
 
 **User**
 
-- [ ] Store: support to view applications and details in the store. Also, application deployment will be supported to multi-cloud runtimes.
-- [ ] Runtime Management: support to manage runtimes such as QingCloud, AWS, Kubernetes, etc.   
-- [ ] Platform Management: support to view and manage applications and cluster instances, as well as view Pods of Helm cluster nodes.
+- [x] Store: support to view applications and details in the store. Also, application deployment will be supported to multi-cloud runtimes.
+- [x] Runtime Management: support to manage runtimes such as QingCloud, AWS, Kubernetes, etc.   
+- [x] Platform Management: support to view and manage applications and cluster instances, as well as view Pods of Helm cluster nodes.
+
+## Upcoming releases
 
 ### v0.4:
 
