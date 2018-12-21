@@ -1160,7 +1160,7 @@
 - action: ValidateRuntimeCredential
   description: validate runtime credential
   service: RuntimeManager
-  query:
+  body:
     provider:
       type: string
     runtime_credential_content:

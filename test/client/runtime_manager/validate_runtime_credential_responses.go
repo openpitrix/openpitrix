@@ -51,7 +51,7 @@ type ValidateRuntimeCredentialOK struct {
 }
 
 func (o *ValidateRuntimeCredentialOK) Error() string {
-	return fmt.Sprintf("[GET /v1/runtimes/credentials:validate][%d] validateRuntimeCredentialOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/runtimes/credentials:validate][%d] validateRuntimeCredentialOK  %+v", 200, o.Payload)
 }
 
 func (o *ValidateRuntimeCredentialOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

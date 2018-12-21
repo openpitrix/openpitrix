@@ -3788,13 +3788,13 @@ func (c *ModifyRuntimeCredentialCmd) Run(out Out) error {
 }
 
 type ValidateRuntimeCredentialCmd struct {
-	*runtime_manager.ValidateRuntimeCredentialParams
+	*models.OpenpitrixValidateRuntimeCredentialRequest
 }
 
 func NewValidateRuntimeCredentialCmd() Cmd {
-	return &ValidateRuntimeCredentialCmd{
-		runtime_manager.NewValidateRuntimeCredentialParams(),
-	}
+	cmd := &ValidateRuntimeCredentialCmd{}
+	cmd.OpenpitrixValidateRuntimeCredentialRequest = &models.OpenpitrixValidateRuntimeCredentialRequest{}
+	return cmd
 }
 
 func (*ValidateRuntimeCredentialCmd) GetActionName() string {
@@ -3802,16 +3802,14 @@ func (*ValidateRuntimeCredentialCmd) GetActionName() string {
 }
 
 func (c *ValidateRuntimeCredentialCmd) ParseFlag(f Flag) {
-	c.Provider = new(string)
-	f.StringVarP(c.Provider, "provider", "", "", "")
-	c.RuntimeCredentialContent = new(string)
-	f.StringVarP(c.RuntimeCredentialContent, "runtime_credential_content", "", "", "")
-	c.RuntimeURL = new(string)
-	f.StringVarP(c.RuntimeURL, "runtime_url", "", "", "")
+	f.StringVarP(&c.Provider, "provider", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialContent, "runtime_credential_content", "", "", "")
+	f.StringVarP(&c.RuntimeURL, "runtime_url", "", "", "")
 }
 
 func (c *ValidateRuntimeCredentialCmd) Run(out Out) error {
-	params := c.ValidateRuntimeCredentialParams
+	params := runtime_manager.NewValidateRuntimeCredentialParams()
+	params.WithBody(c.OpenpitrixValidateRuntimeCredentialRequest)
 
 	out.WriteRequest(params)
 

@@ -16,6 +16,8 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 
 	strfmt "github.com/go-openapi/strfmt"
+
+	"openpitrix.io/openpitrix/test/models"
 )
 
 // NewValidateRuntimeCredentialParams creates a new ValidateRuntimeCredentialParams object
@@ -62,12 +64,8 @@ for the validate runtime credential operation typically these are written to a h
 */
 type ValidateRuntimeCredentialParams struct {
 
-	/*Provider*/
-	Provider *string
-	/*RuntimeCredentialContent*/
-	RuntimeCredentialContent *string
-	/*RuntimeURL*/
-	RuntimeURL *string
+	/*Body*/
+	Body *models.OpenpitrixValidateRuntimeCredentialRequest
 
 	timeout    time.Duration
 	Context    context.Context
@@ -107,37 +105,15 @@ func (o *ValidateRuntimeCredentialParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithProvider adds the provider to the validate runtime credential params
-func (o *ValidateRuntimeCredentialParams) WithProvider(provider *string) *ValidateRuntimeCredentialParams {
-	o.SetProvider(provider)
+// WithBody adds the body to the validate runtime credential params
+func (o *ValidateRuntimeCredentialParams) WithBody(body *models.OpenpitrixValidateRuntimeCredentialRequest) *ValidateRuntimeCredentialParams {
+	o.SetBody(body)
 	return o
 }
 
-// SetProvider adds the provider to the validate runtime credential params
-func (o *ValidateRuntimeCredentialParams) SetProvider(provider *string) {
-	o.Provider = provider
-}
-
-// WithRuntimeCredentialContent adds the runtimeCredentialContent to the validate runtime credential params
-func (o *ValidateRuntimeCredentialParams) WithRuntimeCredentialContent(runtimeCredentialContent *string) *ValidateRuntimeCredentialParams {
-	o.SetRuntimeCredentialContent(runtimeCredentialContent)
-	return o
-}
-
-// SetRuntimeCredentialContent adds the runtimeCredentialContent to the validate runtime credential params
-func (o *ValidateRuntimeCredentialParams) SetRuntimeCredentialContent(runtimeCredentialContent *string) {
-	o.RuntimeCredentialContent = runtimeCredentialContent
-}
-
-// WithRuntimeURL adds the runtimeURL to the validate runtime credential params
-func (o *ValidateRuntimeCredentialParams) WithRuntimeURL(runtimeURL *string) *ValidateRuntimeCredentialParams {
-	o.SetRuntimeURL(runtimeURL)
-	return o
-}
-
-// SetRuntimeURL adds the runtimeUrl to the validate runtime credential params
-func (o *ValidateRuntimeCredentialParams) SetRuntimeURL(runtimeURL *string) {
-	o.RuntimeURL = runtimeURL
+// SetBody adds the body to the validate runtime credential params
+func (o *ValidateRuntimeCredentialParams) SetBody(body *models.OpenpitrixValidateRuntimeCredentialRequest) {
+	o.Body = body
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -148,52 +124,10 @@ func (o *ValidateRuntimeCredentialParams) WriteToRequest(r runtime.ClientRequest
 	}
 	var res []error
 
-	if o.Provider != nil {
-
-		// query param provider
-		var qrProvider string
-		if o.Provider != nil {
-			qrProvider = *o.Provider
+	if o.Body != nil {
+		if err := r.SetBodyParam(o.Body); err != nil {
+			return err
 		}
-		qProvider := qrProvider
-		if qProvider != "" {
-			if err := r.SetQueryParam("provider", qProvider); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.RuntimeCredentialContent != nil {
-
-		// query param runtime_credential_content
-		var qrRuntimeCredentialContent string
-		if o.RuntimeCredentialContent != nil {
-			qrRuntimeCredentialContent = *o.RuntimeCredentialContent
-		}
-		qRuntimeCredentialContent := qrRuntimeCredentialContent
-		if qRuntimeCredentialContent != "" {
-			if err := r.SetQueryParam("runtime_credential_content", qRuntimeCredentialContent); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.RuntimeURL != nil {
-
-		// query param runtime_url
-		var qrRuntimeURL string
-		if o.RuntimeURL != nil {
-			qrRuntimeURL = *o.RuntimeURL
-		}
-		qRuntimeURL := qrRuntimeURL
-		if qRuntimeURL != "" {
-			if err := r.SetQueryParam("runtime_url", qRuntimeURL); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	if len(res) > 0 {

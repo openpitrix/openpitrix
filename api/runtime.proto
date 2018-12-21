@@ -257,7 +257,8 @@ service RuntimeManager {
 			summary: "validate runtime credential"
 		};
 		option (google.api.http) = {
-			get: "/v1/runtimes/credentials:validate"
+			post: "/v1/runtimes/credentials:validate"
+			body: "*"
 		};
 	}
 
