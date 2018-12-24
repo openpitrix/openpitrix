@@ -372,4 +372,19 @@ var (
 		en:   "image decode failed",
 		zhCN: "图片解码失败",
 	}
+	ErrorIllegalEmailFormat = ErrorMessage{
+		Name: "illegal_email_format",
+		en:   "illegal Email format [%s]",
+		zhCN: "非法的Email格式[%s]",
+	}
+	ErrorIllegalPhoneFormat = ErrorMessage{
+		Name: "illegal_phone_format",
+		en:   "illegal Phone format [%s]",
+		zhCN: "非法的Phone格式[%s]",
+	}
+	ErrorIllegalBankAccountNumberFormat = ErrorMessage{
+		Name: "illegal_bankAccountNumber_format",
+		en:   "illegal BankAccountNumber format [%s]",
+		zhCN: "非法的银行账号格式[%s]",
+	}
 )

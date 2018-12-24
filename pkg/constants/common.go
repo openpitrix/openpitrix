@@ -25,6 +25,7 @@ const (
 	MarketManagerHost = prefix + "market-manager"
 
 	AttachmentManagerHost = prefix + "attachment-manager"
+	VendorManagerHost     = prefix + "vendor-manager"
 )
 
 const (
@@ -44,6 +45,7 @@ const (
 	IAMServicePort          = 9115
 	FrontgateFileServerPort = 9116
 	MarketManagerPort       = 9117
+	VendorManagerPort       = 9118
 	EtcdServicePort         = 2379
 
 	AttachmentManagerPort = 9120
@@ -86,6 +88,7 @@ const (
 	StatusRejected  = "rejected"
 	StatusSuspended = "suspended"
 	StatusInReview  = "in-review"
+	StatusNew       = "new"
 )
 
 var DeletedStatuses = []string{

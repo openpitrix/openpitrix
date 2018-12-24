@@ -90,6 +90,19 @@ const (
 	ColumnOperator = "operator"
 	ColumnReviewId = "review_id"
 	ColumnPhase    = "phase"
+
+	//vendor_verify_info
+	ColumnCompanyName       = "company_name"
+	ColumnCompanyWebsite    = "company_website"
+	ColumnCompanyProfile    = "company_profile"
+	ColumnAuthorizerName    = "authorizer_name"
+	ColumnAuthorizerEmail   = "authorizer_email"
+	ColumnAuthorizerPhone   = "authorizer_phone"
+	ColumnBankName          = "bank_name"
+	ColumnBankAccountName   = "bank_account_name"
+	ColumnBankAccountNumber = "bank_account_number"
+	ColumnRejectMessage     = "reject_message"
+	ColumnSubmitTime        = "submit_time"
 )
 
 var PushEventTables = map[string][]string{
