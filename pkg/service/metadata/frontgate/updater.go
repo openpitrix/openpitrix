@@ -34,7 +34,7 @@ var (
 	DowloadFilePathPattern      = "/opt/openpitrix/bin/%s/%s"
 	PilotVersionFilePath        = "/opt/openpitrix/conf/pilot-version"
 	KeyPrefix                   = "/"
-	KeyRegexp                   = regexp.MustCompile(`^\/\d+\.\d+\.\d+\.\d+\/host\/ip$`)
+	KeyRegexp                   = regexp.MustCompile(`^\/\_metad\/mapping\/default\/(\d+\.\d+\.\d+\.\d+)\/host$`)
 	EtcdEndpoints               = []string{"127.0.0.1:2379"}
 )
 
@@ -169,10 +169,11 @@ func (u *Updater) getDroneList() ([]string, error) {
 	}
 
 	drones := []string{}
-	for k, v := range vs {
-		if KeyRegexp.MatchString(k) {
-			logger.Debug(nil, "Matched key [%s] value [%s]", k, v)
-			drones = append(drones, v)
+	for k, _ := range vs {
+		matched := KeyRegexp.FindStringSubmatch(k)
+
+		if len(matched) == 2 {
+			drones = append(drones, matched[1])
 		}
 	}
 
