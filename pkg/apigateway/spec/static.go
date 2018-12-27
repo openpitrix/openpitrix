@@ -153,6 +153,16 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -268,6 +278,16 @@ var Files = map[string]string{
           },
           {
             "name": "category_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -396,6 +416,16 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -473,6 +503,16 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -933,6 +973,16 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1098,6 +1148,16 @@ var Files = map[string]string{
           },
           {
             "name": "category_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1289,6 +1349,16 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1521,6 +1591,16 @@ var Files = map[string]string{
             "required": false,
             "type": "boolean",
             "format": "boolean"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1737,6 +1817,16 @@ var Files = map[string]string{
             "required": false,
             "type": "boolean",
             "format": "boolean"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1999,6 +2089,16 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -2184,6 +2284,16 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3111,6 +3221,16 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -3892,6 +4012,16 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -4046,6 +4176,16 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -4276,6 +4416,16 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",

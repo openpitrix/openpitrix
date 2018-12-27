@@ -69,6 +69,8 @@ type DescribeClustersParams struct {
 	ClusterID []string
 	/*ClusterType*/
 	ClusterType *string
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*ExternalClusterID*/
 	ExternalClusterID *string
 	/*FrontgateID*/
@@ -163,6 +165,17 @@ func (o *DescribeClustersParams) WithClusterType(clusterType *string) *DescribeC
 // SetClusterType adds the clusterType to the describe clusters params
 func (o *DescribeClustersParams) SetClusterType(clusterType *string) {
 	o.ClusterType = clusterType
+}
+
+// WithDisplayColumns adds the displayColumns to the describe clusters params
+func (o *DescribeClustersParams) WithDisplayColumns(displayColumns []string) *DescribeClustersParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe clusters params
+func (o *DescribeClustersParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithExternalClusterID adds the externalClusterID to the describe clusters params
@@ -335,6 +348,14 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 			}
 		}
 
+	}
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
 	}
 
 	if o.ExternalClusterID != nil {

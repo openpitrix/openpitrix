@@ -25,18 +25,22 @@ func DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerify
 	limit := pbutil.GetLimitFromRequest(req)
 
 	var vendorColumns = db.GetColumnsFromStruct(&models.VendorVerifyInfo{})
+
+	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), vendorColumns)
 	query := pi.Global().DB(ctx).
-		Select(vendorColumns...).
+		Select(displayColumns...).
 		From(constants.TableVendorVerifyInfo).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableVendorVerifyInfo))
 
 	query = manager.AddQueryOrderDir(query, req, "submit_time")
-	_, err := query.Load(&vendors)
-	if err != nil {
-		logger.Error(ctx, "Failed to describe vendorVerifyInfos [%v], error: %+v.", req, err)
-		return nil, 0, err
+	if len(displayColumns) > 0 {
+		_, err := query.Load(&vendors)
+		if err != nil {
+			logger.Error(ctx, "Failed to describe vendorVerifyInfos [%v], error: %+v.", req, err)
+			return nil, 0, err
+		}
 	}
 
 	count, err := query.Count()

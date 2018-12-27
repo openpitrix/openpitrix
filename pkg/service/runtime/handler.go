@@ -88,21 +88,23 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 	limit := pbutil.GetLimitFromRequest(req)
 
 	var runtimes []*models.Runtime
-	var count uint32
+	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.RuntimeColumns)
 	query := pi.Global().DB(ctx).
-		Select(models.RuntimeColumns...).
+		Select(displayColumns...).
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
-	_, err := query.Load(&runtimes)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	if len(displayColumns) > 0 {
+		_, err := query.Load(&runtimes)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
 	}
 
-	count, err = query.Count()
+	count, err := query.Count()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}

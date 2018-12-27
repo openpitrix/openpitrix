@@ -63,6 +63,8 @@ for the describe runtime credentials operation typically these are written to a 
 */
 type DescribeRuntimeCredentialsParams struct {
 
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Limit*/
 	Limit *int64
 	/*Offset*/
@@ -114,6 +116,17 @@ func (o *DescribeRuntimeCredentialsParams) WithHTTPClient(client *http.Client) *
 // SetHTTPClient adds the HTTPClient to the describe runtime credentials params
 func (o *DescribeRuntimeCredentialsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithDisplayColumns adds the displayColumns to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) WithDisplayColumns(displayColumns []string) *DescribeRuntimeCredentialsParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithLimit adds the limit to the describe runtime credentials params
@@ -200,6 +213,14 @@ func (o *DescribeRuntimeCredentialsParams) WriteToRequest(r runtime.ClientReques
 		return err
 	}
 	var res []error
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
+	}
 
 	if o.Limit != nil {
 

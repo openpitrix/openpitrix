@@ -67,6 +67,8 @@ type DescribeJobsParams struct {
 	AppID *string
 	/*ClusterID*/
 	ClusterID *string
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Executor*/
 	Executor *string
 	/*JobID*/
@@ -152,6 +154,17 @@ func (o *DescribeJobsParams) WithClusterID(clusterID *string) *DescribeJobsParam
 // SetClusterID adds the clusterId to the describe jobs params
 func (o *DescribeJobsParams) SetClusterID(clusterID *string) {
 	o.ClusterID = clusterID
+}
+
+// WithDisplayColumns adds the displayColumns to the describe jobs params
+func (o *DescribeJobsParams) WithDisplayColumns(displayColumns []string) *DescribeJobsParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe jobs params
+func (o *DescribeJobsParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithExecutor adds the executor to the describe jobs params
@@ -302,6 +315,14 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 			}
 		}
 
+	}
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
 	}
 
 	if o.Executor != nil {

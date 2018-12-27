@@ -62,17 +62,20 @@ func (p *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
+	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.TaskColumns)
 	query := pi.Global().DB(ctx).
-		Select(models.TaskColumns...).
+		Select(displayColumns...).
 		From(constants.TableTask).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableTask)).
 		OrderDir("create_time", true)
 
-	_, err := query.Load(&tasks)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	if len(displayColumns) > 0 {
+		_, err := query.Load(&tasks)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
 	}
 	count, err := query.Count()
 	if err != nil {

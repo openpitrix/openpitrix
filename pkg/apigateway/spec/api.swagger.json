@@ -144,6 +144,16 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -259,6 +269,16 @@
           },
           {
             "name": "category_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -387,6 +407,16 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -464,6 +494,16 @@
           },
           {
             "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -924,6 +964,16 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1089,6 +1139,16 @@
           },
           {
             "name": "category_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1280,6 +1340,16 @@
           },
           {
             "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1512,6 +1582,16 @@
             "required": false,
             "type": "boolean",
             "format": "boolean"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1728,6 +1808,16 @@
             "required": false,
             "type": "boolean",
             "format": "boolean"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1990,6 +2080,16 @@
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -2175,6 +2275,16 @@
           },
           {
             "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3102,6 +3212,16 @@
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -3883,6 +4003,16 @@
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -4037,6 +4167,16 @@
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -4267,6 +4407,16 @@
           },
           {
             "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",

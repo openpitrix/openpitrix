@@ -65,6 +65,8 @@ type DescribeKeyPairsParams struct {
 
 	/*Description*/
 	Description *string
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*KeyPairID*/
 	KeyPairID *string
 	/*Limit*/
@@ -127,6 +129,17 @@ func (o *DescribeKeyPairsParams) WithDescription(description *string) *DescribeK
 // SetDescription adds the description to the describe key pairs params
 func (o *DescribeKeyPairsParams) SetDescription(description *string) {
 	o.Description = description
+}
+
+// WithDisplayColumns adds the displayColumns to the describe key pairs params
+func (o *DescribeKeyPairsParams) WithDisplayColumns(displayColumns []string) *DescribeKeyPairsParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe key pairs params
+func (o *DescribeKeyPairsParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithKeyPairID adds the keyPairID to the describe key pairs params
@@ -228,6 +241,14 @@ func (o *DescribeKeyPairsParams) WriteToRequest(r runtime.ClientRequest, reg str
 			}
 		}
 
+	}
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
 	}
 
 	if o.KeyPairID != nil {

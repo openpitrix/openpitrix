@@ -324,6 +324,7 @@ message DescribeClustersRequest {
 	repeated string owner = 13;
 	google.protobuf.StringValue cluster_type = 14;
 	google.protobuf.BoolValue with_detail = 15;
+	repeated string display_columns = 16;
 }
 message DescribeClustersResponse {
 	uint32 total_count = 1;
@@ -340,6 +341,7 @@ message DescribeClusterNodesRequest {
 	google.protobuf.StringValue sort_key = 7;
 	google.protobuf.BoolValue reverse = 8;
 	repeated string owner = 9;
+	repeated string display_columns = 10;
 }
 message DescribeClusterNodesResponse {
 	uint32 total_count = 1;
@@ -427,6 +429,7 @@ message DescribeKeyPairsRequest {
 	google.protobuf.StringValue search_word = 6;
 	uint32 limit = 7;
 	uint32 offset = 8;
+	repeated string display_columns = 9;
 }
 
 message DescribeKeyPairsResponse {

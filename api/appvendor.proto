@@ -23,6 +23,7 @@ message DescribeVendorVerifyInfosRequest {
 
 	repeated string user_id = 11;
 	repeated string status = 12;
+	repeated string display_columns = 13;
 }
 
 message DescribeVendorVerifyInfosResponse {

@@ -65,6 +65,8 @@ type DescribeAppVersionAuditsParams struct {
 
 	/*AppID*/
 	AppID string
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Limit*/
 	Limit *int64
 	/*Offset*/
@@ -131,6 +133,17 @@ func (o *DescribeAppVersionAuditsParams) WithAppID(appID string) *DescribeAppVer
 // SetAppID adds the appId to the describe app version audits params
 func (o *DescribeAppVersionAuditsParams) SetAppID(appID string) {
 	o.AppID = appID
+}
+
+// WithDisplayColumns adds the displayColumns to the describe app version audits params
+func (o *DescribeAppVersionAuditsParams) WithDisplayColumns(displayColumns []string) *DescribeAppVersionAuditsParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe app version audits params
+func (o *DescribeAppVersionAuditsParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithLimit adds the limit to the describe app version audits params
@@ -242,6 +255,14 @@ func (o *DescribeAppVersionAuditsParams) WriteToRequest(r runtime.ClientRequest,
 
 	// path param app_id
 	if err := r.SetPathParam("app_id", o.AppID); err != nil {
+		return err
+	}
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
 		return err
 	}
 
