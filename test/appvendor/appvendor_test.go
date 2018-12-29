@@ -24,6 +24,8 @@ func TestAppVendor(t *testing.T) {
 	testUserID := "appvendor_test_userID"
 
 	// SubmitVendorVerifyInfo
+	/*===============================================================================================*/
+	logger.Info(nil, "%s", "/*=================================================*/")
 	logger.Info(nil, "%s", "Test1 SubmitVendorVerifyInfo**************************")
 	submitParams := app_vendor_manager.NewSubmitVendorVerifyInfoParams()
 	submitParams.SetBody(
@@ -53,9 +55,10 @@ func TestAppVendor(t *testing.T) {
 	}
 
 	// DescribeVendorVerifyInfos
+	/*===============================================================================================*/
+	logger.Info(nil, "%s", "/*=================================================*/")
 	logger.Info(nil, "%s", "Test2 DescribeVendorVerifyInfos**************************")
 	describeParams := app_vendor_manager.NewDescribeVendorVerifyInfosParams()
-
 	logger.Info(nil, "test describeParams=[%+v]", describeParams)
 	describeParams.WithUserID([]string{testUserID})
 	describeResp, err := client.AppVendorManager.DescribeVendorVerifyInfos(describeParams, nil)
@@ -69,6 +72,8 @@ func TestAppVendor(t *testing.T) {
 	}
 
 	// GetVendorVerifyInfo
+	/*===============================================================================================*/
+	logger.Info(nil, "%s", "/*=================================================*/")
 	logger.Info(nil, "%s", "Test3 GetVendorVerifyInfo**************************")
 	getParams := app_vendor_manager.NewGetVendorVerifyInfoParams()
 	getParams.SetUserID(&testUserID)
@@ -81,6 +86,8 @@ func TestAppVendor(t *testing.T) {
 	}
 
 	// PassVendorVerifyInfo
+	/*===============================================================================================*/
+	logger.Info(nil, "%s", "/*=================================================*/")
 	logger.Info(nil, "%s", "Test4 GetVendorVerifyInfo**************************")
 	passParams := app_vendor_manager.NewPassVendorVerifyInfoParams()
 	passParams.SetBody(
@@ -102,6 +109,8 @@ func TestAppVendor(t *testing.T) {
 	}
 
 	// RejectVendorVerifyInfo
+	/*===============================================================================================*/
+	logger.Info(nil, "%s", "/*=================================================*/")
 	logger.Info(nil, "%s", "Test5 GetVendorVerifyInfo**************************")
 	rejectParams := app_vendor_manager.NewRejectVendorVerifyInfoParams()
 
@@ -121,6 +130,22 @@ func TestAppVendor(t *testing.T) {
 		t.Logf("success to RejectVendorVerifyInfo:UserID= [%s]", testUserID)
 	} else {
 		t.Fatalf("failed to RejectVendorVerifyInfo:UserID= [%s]", testUserID)
+	}
+
+	// DescribeAppVendorStatistics
+	/*===============================================================================================*/
+
+	logger.Info(nil, "%s", "/*=================================================*/")
+	logger.Info(nil, "%s", "Test6 DescribeAppVendorStatistics**************************")
+	describeStaParams := app_vendor_manager.NewDescribeAppVendorStatisticsParams()
+	logger.Info(nil, "test describeParams=[%+v]", describeParams)
+	describeParams.WithUserID([]string{testUserID})
+
+	describeStaResp, err := client.AppVendorManager.DescribeAppVendorStatistics(describeStaParams, nil)
+	require.NoError(t, err)
+	vendorStatisticsVendors := describeStaResp.Payload.VendorVerifyStatisticsSet
+	if len(vendorStatisticsVendors) == 0 {
+		t.Fatalf("failed to DescribeAppVendorStatistics with params [%+v]", describeStaParams)
 	}
 
 	t.Log("test AppVendor finish, all test is ok")

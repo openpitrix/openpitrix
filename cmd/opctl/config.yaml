@@ -477,6 +477,24 @@
       type: byte
     version_type:
       type: string
+- action: DescribeAppVendorStatistics
+  description: DescribeAppVendorStatistics
+  service: AppVendorManager
+  query:
+    limit:
+      type: int64
+    offset:
+      type: int64
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    user_id:
+      type: '[]string'
 - action: DescribeVendorVerifyInfos
   description: DescribeVendorVerifyInfos
   service: AppVendorManager

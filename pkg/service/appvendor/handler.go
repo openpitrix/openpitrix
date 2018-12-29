@@ -6,9 +6,13 @@ package appvendor
 
 import (
 	"context"
+	"math"
 	"time"
 
+	appClient "openpitrix.io/openpitrix/pkg/client/app"
+	clusterClient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -18,7 +22,7 @@ import (
 )
 
 func (s *Server) DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) (*pb.DescribeVendorVerifyInfosResponse, error) {
-	vendors, count, err := DescribeVendorVerifyInfos(ctx, req)
+	vendors, vendorCount, err := DescribeVendorVerifyInfos(ctx, req)
 	if err != nil {
 		logger.Error(ctx, "Failed to describe vendorVerifyInfos, error: %+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -29,7 +33,7 @@ func (s *Server) DescribeVendorVerifyInfos(ctx context.Context, req *pb.Describe
 
 	res := &pb.DescribeVendorVerifyInfosResponse{
 		VendorVerifyInfoSet: vendorPbSet,
-		TotalCount:          count,
+		TotalCount:          vendorCount,
 	}
 	return res, nil
 }
@@ -107,7 +111,8 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 
 func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVerifyInfoRequest) (*pb.PassVendorVerifyInfoResponse, error) {
 	userID := req.GetUserId()
-	userID, err := PassVendorVerifyInfo(ctx, userID)
+	approver := "testapprover"
+	userID, err := PassVendorVerifyInfo(ctx, userID, approver)
 	if err != nil {
 		logger.Error(ctx, "Failed to pass vendorVerifyInfo [%s], %+v", userID, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
@@ -120,8 +125,9 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 
 func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendorVerifyInfoRequest) (*pb.RejectVendorVerifyInfoResponse, error) {
 	userID := req.GetUserId()
+	approver := "testapprover"
 	rejectmsg := req.GetRejectMessage().GetValue()
-	userID, err := RejectVendorVerifyInfo(ctx, userID, rejectmsg)
+	userID, err := RejectVendorVerifyInfo(ctx, userID, rejectmsg, approver)
 	if err != nil {
 		logger.Error(ctx, "Failed to reject vendorVerifyInfo [%s], %+v", userID, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
@@ -131,6 +137,96 @@ func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendo
 	}
 	return res, err
 }
+
+//todo:need to call the new api DescribeAppClusters.
+func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) (*pb.DescribeVendorStatisticsResponse, error) {
+	appClient, err := appClient.NewAppManagerClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	clusterClient, err := clusterClient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	var vendorStatisticses []*models.VendorStatistics
+	vendors, vendorCount, err := DescribeVendorVerifyInfos(ctx, req)
+	if err != nil {
+		logger.Error(ctx, "Failed to describe vendorVerifyInfos, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	/*============================================================================================================*/
+	//To get ClusterCountTotal
+	var clusterCnt4AllPages int32
+	for _, vendor := range vendors {
+		//step1:Get real appCnt for each vendor
+		var vendorStatistics models.VendorStatistics
+		pbApps, appCnt, err := appClient.DescribeActiveAppsWithOwner(ctx, vendor.UserId, db.DefaultSelectLimit, 0)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+
+		//step2:if the real appCnt is smaller than db.DefaultSelectLimit,there is only one page apps,and the rows of this one page is length of pbApps.
+		//Just accumulate the clusterCnt4SingleApp for each app.
+		if appCnt <= int32(db.DefaultSelectLimit) {
+			for _, pbApp := range pbApps {
+				_, clusterCnt4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), db.DefaultSelectLimit, 0)
+				if err != nil {
+					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+				}
+				clusterCnt4AllPages = clusterCnt4AllPages + clusterCnt4SingleApp
+			}
+
+		} else {
+			//step3:if the real appCnt is bigger than db.DefaultSelectLimit,there are more than 1 page Apps.
+			//Should accumulate the clusterCnt4SingleApp for each apps ,then accumulate the number for each page.
+			pages := int(math.Ceil(float64(appCnt / db.DefaultSelectLimit)))
+			for i := 0; i < pages; i++ {
+				offset := db.DefaultSelectLimit * i
+				pbApps, _, err := appClient.DescribeActiveAppsWithOwner(ctx, vendor.UserId, db.DefaultSelectLimit, uint32(offset))
+				if err != nil {
+					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+				}
+
+				var clusterCnt4OnePage int32
+				for _, pbApp := range pbApps {
+					_, clusterCnt4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), db.DefaultSelectLimit, uint32(offset))
+					if err != nil {
+						return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+					}
+					clusterCnt4OnePage = clusterCnt4OnePage + clusterCnt4SingleApp
+				}
+				clusterCnt4AllPages = clusterCnt4AllPages + clusterCnt4OnePage
+			}
+
+		}
+
+		/*============================================================================================================*/
+		vendorStatistics.UserId = vendor.UserId
+
+		vendorStatistics.CompanyName = vendor.CompanyName
+		vendorStatistics.ActiveAppCount = int32(appCnt)
+		//to do,need to change to real data:ClusterCountMonth
+		vendorStatistics.ClusterCountMonth = int32(appCnt)
+		vendorStatistics.ClusterCountTotal = clusterCnt4AllPages
+
+		vendorStatisticses = append(vendorStatisticses, &vendorStatistics)
+
+	}
+
+	var vendorStatistics models.VendorStatistics //need use a vendorStatistics object to call function
+	vendorStatisticsPbSet := vendorStatistics.ParseVendorStatisticsSet2PbSet(ctx, vendorStatisticses)
+
+	res := &pb.DescribeVendorStatisticsResponse{
+		VendorVerifyStatisticsSet: vendorStatisticsPbSet,
+		TotalCount:                vendorCount,
+	}
+	return res, nil
+}
+
+/*======================================================================================================================*/
 
 func (s *Server) checkVendorVerifyInfoIfExit(ctx context.Context, userID string) (bool, error) {
 	info, err := GetVendorVerifyInfo(ctx, userID)
