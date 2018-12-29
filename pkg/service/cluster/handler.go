@@ -7,11 +7,13 @@ package cluster
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
 	pbempty "github.com/golang/protobuf/ptypes/empty"
 
+	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -1443,6 +1445,15 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableCluster))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
+	createdHour := int(req.GetCreatedDate().GetValue()) * 24
+	if createdHour > 0 {
+		createdTime, err := time.ParseDuration(strconv.Itoa(createdHour) + "h")
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorDescribeResourcesFailed)
+		}
+		timeCreated := time.Now().Add(-createdTime)
+		query = query.Where(db.Gte(constants.ColumnCreateTime, timeCreated))
+	}
 	if len(displayColumns) > 0 {
 		_, err := query.Load(&clusters)
 		if err != nil {
@@ -1489,6 +1500,145 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 	}
 
 	res := &pb.DescribeClustersResponse{
+		ClusterSet: pbClusters,
+		TotalCount: count,
+	}
+	return res, nil
+}
+
+func (p *Server) DescribeAppClusters(ctx context.Context, req *pb.DescribeAppClustersRequest) (*pb.DescribeAppClustersResponse, error) {
+	appClient, err := appclient.NewAppManagerClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	// check permission
+	appIds := req.GetAppId()
+	if len(appIds) > 0 {
+		offset := 0
+		for {
+			if offset < len(appIds) {
+				_, err = appClient.DescribeApps(ctx, &pb.DescribeAppsRequest{
+					AppId:  req.GetAppId(),
+					Offset: uint32(offset),
+					Limit:  db.DefaultSelectLimit,
+				})
+				if err != nil {
+					return nil, err
+				}
+				offset = offset + db.DefaultSelectLimit
+			} else {
+				break
+			}
+		}
+	} else {
+		offset := 0
+		response, err := appClient.DescribeApps(ctx, &pb.DescribeAppsRequest{
+			Limit:          db.DefaultSelectLimit,
+			Offset:         uint32(offset),
+			DisplayColumns: []string{constants.ColumnAppId},
+		})
+		if err != nil {
+			return nil, err
+		}
+		totalCount := response.TotalCount
+		for _, app := range response.GetAppSet() {
+			appIds = append(appIds, app.GetAppId().GetValue())
+		}
+		offset = offset + db.DefaultSelectLimit
+		for {
+			if totalCount > uint32(offset) {
+				response, err = appClient.DescribeApps(ctx, &pb.DescribeAppsRequest{
+					Limit:          db.DefaultSelectLimit,
+					Offset:         uint32(offset),
+					DisplayColumns: []string{constants.ColumnAppId},
+				})
+				if err != nil {
+					return nil, err
+				}
+				for _, app := range response.GetAppSet() {
+					appIds = append(appIds, app.GetAppId().GetValue())
+				}
+				offset = offset + db.DefaultSelectLimit
+			} else {
+				break
+			}
+		}
+	}
+
+	req.AppId = appIds
+
+	var clusters []*models.Cluster
+	offset := pbutil.GetOffsetFromRequest(req)
+	limit := pbutil.GetLimitFromRequest(req)
+	withDetail := req.GetWithDetail().GetValue()
+
+	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.ClusterColumns)
+
+	query := pi.Global().DB(ctx).
+		Select(displayColumns...).
+		From(constants.TableCluster).
+		Offset(offset).
+		Limit(limit).
+		Where(manager.BuildFilterConditions(req, constants.TableCluster))
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
+
+	createdHour := int(req.GetCreatedDate().GetValue()) * 24
+	if createdHour > 0 {
+		createdTime, err := time.ParseDuration(strconv.Itoa(createdHour) + "h")
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorDescribeResourcesFailed)
+		}
+		timeCreated := time.Now().Add(-createdTime)
+		query = query.Where(db.Gte(constants.ColumnCreateTime, timeCreated))
+	}
+
+	if len(displayColumns) > 0 {
+		_, err := query.Load(&clusters)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+	}
+	count, err := query.Count()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+
+	var pbClusters []*pb.Cluster
+	for _, cluster := range clusters {
+		clusterId := cluster.ClusterId
+		if len(clusterId) == 0 {
+			continue
+		}
+		clusterWrapper, err := getClusterWrapper(ctx, clusterId, req.GetDisplayColumns()...)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
+		}
+
+		if len(clusterWrapper.Cluster.RuntimeId) > 0 {
+			runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
+			}
+
+			if runtime.Runtime.Provider == constants.ProviderKubernetes && withDetail {
+				providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
+				if err != nil {
+					logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
+					return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
+				}
+
+				clusterWrapper, err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
+				if err != nil {
+					logger.Warn(ctx, "Describe cluster details failed: %+v", err)
+				}
+			}
+		}
+
+		pbClusters = append(pbClusters, models.ClusterWrapperToPb(clusterWrapper))
+	}
+
+	res := &pb.DescribeAppClustersResponse{
 		ClusterSet: pbClusters,
 		TotalCount: count,
 	}

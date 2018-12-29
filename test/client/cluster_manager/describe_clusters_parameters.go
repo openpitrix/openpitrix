@@ -69,6 +69,8 @@ type DescribeClustersParams struct {
 	ClusterID []string
 	/*ClusterType*/
 	ClusterType *string
+	/*CreatedDate*/
+	CreatedDate *int64
 	/*DisplayColumns*/
 	DisplayColumns []string
 	/*ExternalClusterID*/
@@ -165,6 +167,17 @@ func (o *DescribeClustersParams) WithClusterType(clusterType *string) *DescribeC
 // SetClusterType adds the clusterType to the describe clusters params
 func (o *DescribeClustersParams) SetClusterType(clusterType *string) {
 	o.ClusterType = clusterType
+}
+
+// WithCreatedDate adds the createdDate to the describe clusters params
+func (o *DescribeClustersParams) WithCreatedDate(createdDate *int64) *DescribeClustersParams {
+	o.SetCreatedDate(createdDate)
+	return o
+}
+
+// SetCreatedDate adds the createdDate to the describe clusters params
+func (o *DescribeClustersParams) SetCreatedDate(createdDate *int64) {
+	o.CreatedDate = createdDate
 }
 
 // WithDisplayColumns adds the displayColumns to the describe clusters params
@@ -344,6 +357,22 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qClusterType := qrClusterType
 		if qClusterType != "" {
 			if err := r.SetQueryParam("cluster_type", qClusterType); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.CreatedDate != nil {
+
+		// query param created_date
+		var qrCreatedDate int64
+		if o.CreatedDate != nil {
+			qrCreatedDate = *o.CreatedDate
+		}
+		qCreatedDate := swag.FormatInt64(qrCreatedDate)
+		if qCreatedDate != "" {
+			if err := r.SetQueryParam("created_date", qCreatedDate); err != nil {
 				return err
 			}
 		}

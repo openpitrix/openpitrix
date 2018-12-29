@@ -690,6 +690,32 @@
   body:
     key_pair_id:
       type: '[]string'
+- action: DescribeAppClusters
+  description: describe app clusters
+  service: ClusterManager
+  query:
+    app_id:
+      type: '[]string'
+    created_date:
+      type: int64
+    display_columns:
+      type: '[]string'
+    limit:
+      type: int64
+    offset:
+      type: int64
+    owner:
+      type: '[]string'
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    with_detail:
+      type: boolean
 - action: DescribeClusterNodes
   description: describe cluster nodes
   service: ClusterManager
@@ -724,6 +750,8 @@
       type: '[]string'
     cluster_type:
       type: string
+    created_date:
+      type: int64
     display_columns:
       type: '[]string'
     external_cluster_id:

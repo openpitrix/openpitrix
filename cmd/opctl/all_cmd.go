@@ -85,6 +85,7 @@ var AllCmd = []Cmd{
 	NewDeleteClusterNodesCmd(),
 	NewDeleteClustersCmd(),
 	NewDeleteKeyPairsCmd(),
+	NewDescribeAppClustersCmd(),
 	NewDescribeClusterNodesCmd(),
 	NewDescribeClustersCmd(),
 	NewDescribeKeyPairsCmd(),
@@ -2394,6 +2395,57 @@ func (c *DeleteKeyPairsCmd) Run(out Out) error {
 	return nil
 }
 
+type DescribeAppClustersCmd struct {
+	*cluster_manager.DescribeAppClustersParams
+}
+
+func NewDescribeAppClustersCmd() Cmd {
+	return &DescribeAppClustersCmd{
+		cluster_manager.NewDescribeAppClustersParams(),
+	}
+}
+
+func (*DescribeAppClustersCmd) GetActionName() string {
+	return "DescribeAppClusters"
+}
+
+func (c *DescribeAppClustersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
+	c.CreatedDate = new(int64)
+	f.Int64VarP(c.CreatedDate, "created_date", "", 0, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	c.WithDetail = new(bool)
+	f.BoolVarP(c.WithDetail, "with_detail", "", false, "")
+}
+
+func (c *DescribeAppClustersCmd) Run(out Out) error {
+	params := c.DescribeAppClustersParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ClusterManager.DescribeAppClusters(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type DescribeClusterNodesCmd struct {
 	*cluster_manager.DescribeClusterNodesParams
 }
@@ -2462,6 +2514,8 @@ func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "")
 	c.ClusterType = new(string)
 	f.StringVarP(c.ClusterType, "cluster_type", "", "", "")
+	c.CreatedDate = new(int64)
+	f.Int64VarP(c.CreatedDate, "created_date", "", 0, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.ExternalClusterID = new(string)
 	f.StringVarP(c.ExternalClusterID, "external_cluster_id", "", "", "")
