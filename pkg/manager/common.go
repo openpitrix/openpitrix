@@ -103,6 +103,22 @@ func BuildFilterConditions(req Request, tableName string, exclude ...string) dbr
 	return buildFilterConditions(false, req, tableName, exclude...)
 }
 
+func GetDisplayColumns(displayColumns []string, wholeColumns []string) []string {
+	if displayColumns == nil {
+		return wholeColumns
+	} else if len(displayColumns) == 0 {
+		return nil
+	} else {
+		var newDisplayColumns []string
+		for _, column := range displayColumns {
+			if stringutil.StringIn(column, wholeColumns) {
+				newDisplayColumns = append(newDisplayColumns, column)
+			}
+		}
+		return newDisplayColumns
+	}
+}
+
 func BuildFilterConditionsWithPrefix(req Request, tableName string, exclude ...string) dbr.Builder {
 	return buildFilterConditions(true, req, tableName, exclude...)
 }

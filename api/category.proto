@@ -32,6 +32,7 @@ message DescribeCategoriesRequest {
 	repeated string owner = 6;
 	google.protobuf.StringValue sort_key = 7;
 	google.protobuf.BoolValue reverse = 8;
+	repeated string display_columns = 9;
 }
 
 message DescribeCategoriesResponse {

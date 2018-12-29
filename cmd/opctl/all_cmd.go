@@ -85,6 +85,7 @@ var AllCmd = []Cmd{
 	NewDeleteClusterNodesCmd(),
 	NewDeleteClustersCmd(),
 	NewDeleteKeyPairsCmd(),
+	NewDescribeAppClustersCmd(),
 	NewDescribeClusterNodesCmd(),
 	NewDescribeClustersCmd(),
 	NewDescribeKeyPairsCmd(),
@@ -885,6 +886,7 @@ func (*DescribeActiveAppVersionsCmd) GetActionName() string {
 func (c *DescribeActiveAppVersionsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.Description, "description", "", []string{}, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
@@ -937,6 +939,7 @@ func (c *DescribeActiveAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "")
 	f.StringSliceVarP(&c.ChartName, "chart_name", "", []string{}, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
@@ -984,6 +987,7 @@ func (*DescribeAppVersionAuditsCmd) GetActionName() string {
 }
 
 func (c *DescribeAppVersionAuditsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)
@@ -1034,6 +1038,7 @@ func (*DescribeAppVersionReviewsCmd) GetActionName() string {
 }
 
 func (c *DescribeAppVersionReviewsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)
@@ -1085,6 +1090,7 @@ func (*DescribeAppVersionsCmd) GetActionName() string {
 func (c *DescribeAppVersionsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.Description, "description", "", []string{}, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
@@ -1137,6 +1143,7 @@ func (c *DescribeAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "")
 	f.StringSliceVarP(&c.ChartName, "chart_name", "", []string{}, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
@@ -1719,6 +1726,7 @@ func (*DescribeVendorVerifyInfosCmd) GetActionName() string {
 }
 
 func (c *DescribeVendorVerifyInfosCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)
@@ -2025,6 +2033,7 @@ func (*DescribeCategoriesCmd) GetActionName() string {
 
 func (c *DescribeCategoriesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
@@ -2386,6 +2395,57 @@ func (c *DeleteKeyPairsCmd) Run(out Out) error {
 	return nil
 }
 
+type DescribeAppClustersCmd struct {
+	*cluster_manager.DescribeAppClustersParams
+}
+
+func NewDescribeAppClustersCmd() Cmd {
+	return &DescribeAppClustersCmd{
+		cluster_manager.NewDescribeAppClustersParams(),
+	}
+}
+
+func (*DescribeAppClustersCmd) GetActionName() string {
+	return "DescribeAppClusters"
+}
+
+func (c *DescribeAppClustersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
+	c.CreatedDate = new(int64)
+	f.Int64VarP(c.CreatedDate, "created_date", "", 0, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	c.WithDetail = new(bool)
+	f.BoolVarP(c.WithDetail, "with_detail", "", false, "")
+}
+
+func (c *DescribeAppClustersCmd) Run(out Out) error {
+	params := c.DescribeAppClustersParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ClusterManager.DescribeAppClusters(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type DescribeClusterNodesCmd struct {
 	*cluster_manager.DescribeClusterNodesParams
 }
@@ -2403,6 +2463,7 @@ func (*DescribeClusterNodesCmd) GetActionName() string {
 func (c *DescribeClusterNodesCmd) ParseFlag(f Flag) {
 	c.ClusterID = new(string)
 	f.StringVarP(c.ClusterID, "cluster_id", "", "", "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	f.StringSliceVarP(&c.NodeID, "node_id", "", []string{}, "")
@@ -2453,6 +2514,9 @@ func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "")
 	c.ClusterType = new(string)
 	f.StringVarP(c.ClusterType, "cluster_type", "", "", "")
+	c.CreatedDate = new(int64)
+	f.Int64VarP(c.CreatedDate, "created_date", "", 0, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.ExternalClusterID = new(string)
 	f.StringVarP(c.ExternalClusterID, "external_cluster_id", "", "", "")
 	f.StringSliceVarP(&c.FrontgateID, "frontgate_id", "", []string{}, "")
@@ -2507,6 +2571,7 @@ func (*DescribeKeyPairsCmd) GetActionName() string {
 func (c *DescribeKeyPairsCmd) ParseFlag(f Flag) {
 	c.Description = new(string)
 	f.StringVarP(c.Description, "description", "", "", "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.KeyPairID = new(string)
 	f.StringVarP(c.KeyPairID, "key_pair_id", "", "", "")
 	c.Limit = new(int64)
@@ -2997,6 +3062,7 @@ func (c *DescribeJobsCmd) ParseFlag(f Flag) {
 	f.StringVarP(c.AppID, "app_id", "", "", "")
 	c.ClusterID = new(string)
 	f.StringVarP(c.ClusterID, "cluster_id", "", "", "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Executor = new(string)
 	f.StringVarP(c.Executor, "executor", "", "", "")
 	f.StringSliceVarP(&c.JobID, "job_id", "", []string{}, "")
@@ -3774,6 +3840,7 @@ func (*DescribeRuntimeCredentialsCmd) GetActionName() string {
 }
 
 func (c *DescribeRuntimeCredentialsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)
@@ -3852,6 +3919,7 @@ func (*DescribeRuntimesCmd) GetActionName() string {
 }
 
 func (c *DescribeRuntimesCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)
@@ -4041,6 +4109,7 @@ func (*DescribeTasksCmd) GetActionName() string {
 }
 
 func (c *DescribeTasksCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Executor = new(string)
 	f.StringVarP(c.Executor, "executor", "", "", "")
 	f.StringSliceVarP(&c.JobID, "job_id", "", []string{}, "")

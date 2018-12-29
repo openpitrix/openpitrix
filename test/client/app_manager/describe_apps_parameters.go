@@ -69,6 +69,8 @@ type DescribeAppsParams struct {
 	CategoryID []string
 	/*ChartName*/
 	ChartName []string
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Limit*/
 	Limit *int64
 	/*Name*/
@@ -157,6 +159,17 @@ func (o *DescribeAppsParams) WithChartName(chartName []string) *DescribeAppsPara
 // SetChartName adds the chartName to the describe apps params
 func (o *DescribeAppsParams) SetChartName(chartName []string) {
 	o.ChartName = chartName
+}
+
+// WithDisplayColumns adds the displayColumns to the describe apps params
+func (o *DescribeAppsParams) WithDisplayColumns(displayColumns []string) *DescribeAppsParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe apps params
+func (o *DescribeAppsParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithLimit adds the limit to the describe apps params
@@ -287,6 +300,14 @@ func (o *DescribeAppsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	joinedChartName := swag.JoinByFormat(valuesChartName, "multi")
 	// query array param chart_name
 	if err := r.SetQueryParam("chart_name", joinedChartName...); err != nil {
+		return err
+	}
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
 		return err
 	}
 

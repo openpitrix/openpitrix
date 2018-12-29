@@ -65,6 +65,8 @@ type DescribeClusterNodesParams struct {
 
 	/*ClusterID*/
 	ClusterID *string
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Limit*/
 	Limit *int64
 	/*NodeID*/
@@ -129,6 +131,17 @@ func (o *DescribeClusterNodesParams) WithClusterID(clusterID *string) *DescribeC
 // SetClusterID adds the clusterId to the describe cluster nodes params
 func (o *DescribeClusterNodesParams) SetClusterID(clusterID *string) {
 	o.ClusterID = clusterID
+}
+
+// WithDisplayColumns adds the displayColumns to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) WithDisplayColumns(displayColumns []string) *DescribeClusterNodesParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe cluster nodes params
+func (o *DescribeClusterNodesParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithLimit adds the limit to the describe cluster nodes params
@@ -241,6 +254,14 @@ func (o *DescribeClusterNodesParams) WriteToRequest(r runtime.ClientRequest, reg
 			}
 		}
 
+	}
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
 	}
 
 	if o.Limit != nil {

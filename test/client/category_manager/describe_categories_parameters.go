@@ -65,6 +65,8 @@ type DescribeCategoriesParams struct {
 
 	/*CategoryID*/
 	CategoryID []string
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Limit*/
 	Limit *int64
 	/*Name*/
@@ -127,6 +129,17 @@ func (o *DescribeCategoriesParams) WithCategoryID(categoryID []string) *Describe
 // SetCategoryID adds the categoryId to the describe categories params
 func (o *DescribeCategoriesParams) SetCategoryID(categoryID []string) {
 	o.CategoryID = categoryID
+}
+
+// WithDisplayColumns adds the displayColumns to the describe categories params
+func (o *DescribeCategoriesParams) WithDisplayColumns(displayColumns []string) *DescribeCategoriesParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe categories params
+func (o *DescribeCategoriesParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithLimit adds the limit to the describe categories params
@@ -219,6 +232,14 @@ func (o *DescribeCategoriesParams) WriteToRequest(r runtime.ClientRequest, reg s
 	joinedCategoryID := swag.JoinByFormat(valuesCategoryID, "multi")
 	// query array param category_id
 	if err := r.SetQueryParam("category_id", joinedCategoryID...); err != nil {
+		return err
+	}
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
 		return err
 	}
 

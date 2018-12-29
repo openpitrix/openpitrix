@@ -69,6 +69,10 @@ type DescribeClustersParams struct {
 	ClusterID []string
 	/*ClusterType*/
 	ClusterType *string
+	/*CreatedDate*/
+	CreatedDate *int64
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*ExternalClusterID*/
 	ExternalClusterID *string
 	/*FrontgateID*/
@@ -163,6 +167,28 @@ func (o *DescribeClustersParams) WithClusterType(clusterType *string) *DescribeC
 // SetClusterType adds the clusterType to the describe clusters params
 func (o *DescribeClustersParams) SetClusterType(clusterType *string) {
 	o.ClusterType = clusterType
+}
+
+// WithCreatedDate adds the createdDate to the describe clusters params
+func (o *DescribeClustersParams) WithCreatedDate(createdDate *int64) *DescribeClustersParams {
+	o.SetCreatedDate(createdDate)
+	return o
+}
+
+// SetCreatedDate adds the createdDate to the describe clusters params
+func (o *DescribeClustersParams) SetCreatedDate(createdDate *int64) {
+	o.CreatedDate = createdDate
+}
+
+// WithDisplayColumns adds the displayColumns to the describe clusters params
+func (o *DescribeClustersParams) WithDisplayColumns(displayColumns []string) *DescribeClustersParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe clusters params
+func (o *DescribeClustersParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithExternalClusterID adds the externalClusterID to the describe clusters params
@@ -335,6 +361,30 @@ func (o *DescribeClustersParams) WriteToRequest(r runtime.ClientRequest, reg str
 			}
 		}
 
+	}
+
+	if o.CreatedDate != nil {
+
+		// query param created_date
+		var qrCreatedDate int64
+		if o.CreatedDate != nil {
+			qrCreatedDate = *o.CreatedDate
+		}
+		qCreatedDate := swag.FormatInt64(qrCreatedDate)
+		if qCreatedDate != "" {
+			if err := r.SetQueryParam("created_date", qCreatedDate); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
 	}
 
 	if o.ExternalClusterID != nil {
