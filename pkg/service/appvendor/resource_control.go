@@ -67,10 +67,11 @@ func GetVendorVerifyInfo(ctx context.Context, userID string) (*models.VendorVeri
 	return vendor, err
 }
 
-func PassVendorVerifyInfo(ctx context.Context, userID string) (string, error) {
+func PassVendorVerifyInfo(ctx context.Context, userID string, approver string) (string, error) {
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableVendorVerifyInfo).
 		Set(constants.ColumnStatus, constants.StatusPassed).
+		Set(constants.ColumnApprover, approver).
 		Set(constants.ColumnStatusTime, time.Now()).
 		Where(db.Eq(constants.ColumnUserId, userID)).
 		Exec()
@@ -81,12 +82,13 @@ func PassVendorVerifyInfo(ctx context.Context, userID string) (string, error) {
 	return userID, err
 }
 
-func RejectVendorVerifyInfo(ctx context.Context, userID string, rejectmsg string) (string, error) {
+func RejectVendorVerifyInfo(ctx context.Context, userID string, rejectmsg string, approver string) (string, error) {
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableVendorVerifyInfo).
 		Set(constants.ColumnStatus, "rejected").
 		Set(constants.ColumnStatusTime, time.Now()).
 		Set(constants.ColumnRejectMessage, rejectmsg).
+		Set(constants.ColumnApprover, approver).
 		Where(db.Eq(constants.ColumnUserId, userID)).
 		Exec()
 	if err != nil {

@@ -26,6 +26,9 @@ type VendorVerifyInfo struct {
 	BankAccountNumber string
 	Status            string
 	RejectMessage     string
+	Approver          string
+	Owner             string
+	OwnerPath         string
 	SubmitTime        *time.Time
 	StatusTime        time.Time
 }
@@ -73,9 +76,38 @@ func (vendor *VendorVerifyInfo) ParseVendor2Pb(ctx context.Context, inVendor *Ve
 	pbVendor.BankAccountNumber = pbutil.ToProtoString(inVendor.BankAccountNumber)
 	pbVendor.Status = pbutil.ToProtoString(inVendor.Status)
 	pbVendor.RejectMessage = pbutil.ToProtoString(inVendor.RejectMessage)
+	pbVendor.Approver = pbutil.ToProtoString(inVendor.Approver)
 	if inVendor.SubmitTime != nil {
 		pbVendor.SubmitTime = pbutil.ToProtoTimestamp(*inVendor.SubmitTime)
 	}
 	pbVendor.StatusTime = pbutil.ToProtoTimestamp(inVendor.StatusTime)
 	return &pbVendor
+}
+
+type VendorStatistics struct {
+	UserId            string
+	CompanyName       string
+	ActiveAppCount    int32
+	ClusterCountMonth int32
+	ClusterCountTotal int32
+}
+
+func (vendor *VendorStatistics) ParseVendorStatistics2Pb(ctx context.Context, inVendor *VendorStatistics) *pb.VendorStatistics {
+	pbVendor := pb.VendorStatistics{}
+	pbVendor.UserId = pbutil.ToProtoString(inVendor.UserId)
+	pbVendor.CompanyName = pbutil.ToProtoString(inVendor.CompanyName)
+	pbVendor.ActiveAppCount = pbutil.ToProtoInt32(inVendor.ActiveAppCount)
+	pbVendor.ClusterCountMonth = pbutil.ToProtoInt32(inVendor.ClusterCountMonth)
+	pbVendor.ClusterCountTotal = pbutil.ToProtoInt32(inVendor.ClusterCountTotal)
+	return &pbVendor
+}
+
+func (vendor *VendorStatistics) ParseVendorStatisticsSet2PbSet(ctx context.Context, inVendors []*VendorStatistics) []*pb.VendorStatistics {
+	var pbVendorStatisticses []*pb.VendorStatistics
+	for _, inVendor := range inVendors {
+		var pbVendor *pb.VendorStatistics
+		pbVendor = vendor.ParseVendorStatistics2Pb(ctx, inVendor)
+		pbVendorStatisticses = append(pbVendorStatisticses, pbVendor)
+	}
+	return pbVendorStatisticses
 }

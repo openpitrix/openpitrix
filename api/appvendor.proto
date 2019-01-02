@@ -48,8 +48,9 @@ message VendorVerifyInfo {
 	google.protobuf.StringValue bank_account_number = 10;
 	google.protobuf.StringValue status = 11;
 	google.protobuf.StringValue reject_message = 12;
-	google.protobuf.Timestamp submit_time = 13;
-	google.protobuf.Timestamp status_time = 14;
+	google.protobuf.StringValue approver = 13;
+	google.protobuf.Timestamp submit_time = 14;
+	google.protobuf.Timestamp status_time = 15;
 }
 
 message SubmitVendorVerifyInfoRequest {
@@ -88,6 +89,20 @@ message RejectVendorVerifyInfoResponse {
 	google.protobuf.StringValue user_id = 1;
 }
 
+message VendorStatistics {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue company_name = 2;
+	google.protobuf.Int32Value active_app_count = 3;
+	google.protobuf.Int32Value cluster_count_month = 4;
+	google.protobuf.Int32Value cluster_count_total = 5;
+}
+
+
+message DescribeVendorStatisticsResponse {
+	uint32 total_count = 1;
+	repeated VendorStatistics vendor_verify_statistics_set = 2;
+}
+
 service AppVendorManager {
 
 	rpc SubmitVendorVerifyInfo (SubmitVendorVerifyInfoRequest) returns (SubmitVendorVerifyInfoResponse) {
@@ -108,6 +123,16 @@ service AppVendorManager {
 			get: "/v1/vendor_verify_infos"
 		};
 	}
+
+	rpc DescribeAppVendorStatistics (DescribeVendorVerifyInfosRequest) returns (DescribeVendorStatisticsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "DescribeAppVendorStatistics"
+		};
+		option (google.api.http) = {
+			get: "/v1/DescribeAppVendorStatistics"
+		};
+	}
+
 	rpc GetVendorVerifyInfo (GetVendorVerifyInfoRequest) returns (VendorVerifyInfo) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "GetVendorVerifyInfo"
@@ -116,6 +141,8 @@ service AppVendorManager {
 			get: "/v1/vendor_verify_infos/user_id=*"
 		};
 	}
+
+
 
 
 	rpc PassVendorVerifyInfo (PassVendorVerifyInfoRequest) returns (PassVendorVerifyInfoResponse) {
@@ -137,6 +164,5 @@ service AppVendorManager {
             body: "*"
 		};
 	}
-
 
 }

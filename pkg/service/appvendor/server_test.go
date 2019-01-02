@@ -63,9 +63,9 @@ func TestDescribeVendorVerifyInfos(t *testing.T) {
 
 	var statuses []string
 	statuses = append(statuses, "new")
-	statuses = append(statuses, "submitted")
-	statuses = append(statuses, "passed")
-	statuses = append(statuses, "rejected")
+	//statuses = append(statuses, "submitted")
+	//statuses = append(statuses, "passed")
+	//statuses = append(statuses, "rejected")
 
 	var req = &vendor.DescribeVendorVerifyInfosRequest{
 		SearchWord: pbutil.ToProtoString("AuthorizerName"),
