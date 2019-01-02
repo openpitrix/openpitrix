@@ -146,6 +146,8 @@ func TestAppVendor(t *testing.T) {
 	vendorStatisticsVendors := describeStaResp.Payload.VendorVerifyStatisticsSet
 	if len(vendorStatisticsVendors) == 0 {
 		t.Fatalf("failed to DescribeAppVendorStatistics with params [%+v]", describeStaParams)
+	} else {
+		t.Logf("success to DescribeAppVendorStatistics:vendorStatisticsVendors cnt= [%d]", len(vendorStatisticsVendors))
 	}
 
 	t.Log("test AppVendor finish, all test is ok")

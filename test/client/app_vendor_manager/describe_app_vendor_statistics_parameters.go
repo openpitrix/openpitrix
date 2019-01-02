@@ -63,6 +63,8 @@ for the describe app vendor statistics operation typically these are written to 
 */
 type DescribeAppVendorStatisticsParams struct {
 
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Limit*/
 	Limit *int64
 	/*Offset*/
@@ -114,6 +116,17 @@ func (o *DescribeAppVendorStatisticsParams) WithHTTPClient(client *http.Client) 
 // SetHTTPClient adds the HTTPClient to the describe app vendor statistics params
 func (o *DescribeAppVendorStatisticsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithDisplayColumns adds the displayColumns to the describe app vendor statistics params
+func (o *DescribeAppVendorStatisticsParams) WithDisplayColumns(displayColumns []string) *DescribeAppVendorStatisticsParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe app vendor statistics params
+func (o *DescribeAppVendorStatisticsParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithLimit adds the limit to the describe app vendor statistics params
@@ -200,6 +213,14 @@ func (o *DescribeAppVendorStatisticsParams) WriteToRequest(r runtime.ClientReque
 		return err
 	}
 	var res []error
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
+	}
 
 	if o.Limit != nil {
 

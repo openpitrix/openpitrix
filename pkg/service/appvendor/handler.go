@@ -159,7 +159,8 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 
 	/*============================================================================================================*/
 	//To get ClusterCountTotal
-	var clusterCnt4AllPages int32
+	var clusterCntAll4AllPages int32
+	var clusterCntMonth4AllPages int32
 	for _, vendor := range vendors {
 		//step1:Get real appCnt for each vendor
 		var vendorStatistics models.VendorStatistics
@@ -172,15 +173,17 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 		//Just accumulate the clusterCnt4SingleApp for each app.
 		if appCnt <= int32(db.DefaultSelectLimit) {
 			for _, pbApp := range pbApps {
-				_, clusterCnt4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), db.DefaultSelectLimit, 0)
+				_, clusterCntAll4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), false, db.DefaultSelectLimit, 0)
+				_, clusterCntMonth4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), true, db.DefaultSelectLimit, 0)
 				if err != nil {
 					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 				}
-				clusterCnt4AllPages = clusterCnt4AllPages + clusterCnt4SingleApp
+				clusterCntAll4AllPages = clusterCntAll4AllPages + clusterCntAll4SingleApp
+				clusterCntMonth4AllPages = clusterCntMonth4AllPages + clusterCntMonth4SingleApp
 			}
 
 		} else {
-			//step3:if the real appCnt is bigger than db.DefaultSelectLimit,there are more than 1 page Apps.
+			//step3:if the real appCnt is bigger than db.DefaultSelectLimit(200),there are more than 1 page Apps.
 			//Should accumulate the clusterCnt4SingleApp for each apps ,then accumulate the number for each page.
 			pages := int(math.Ceil(float64(appCnt / db.DefaultSelectLimit)))
 			for i := 0; i < pages; i++ {
@@ -190,15 +193,19 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 				}
 
-				var clusterCnt4OnePage int32
+				var clusterCntAll4OnePage int32
+				var clusterCntMonth4OnePage int32
 				for _, pbApp := range pbApps {
-					_, clusterCnt4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), db.DefaultSelectLimit, uint32(offset))
+					_, clusterCntAll4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), false, db.DefaultSelectLimit, uint32(offset))
+					_, clusterCntMonth4SingleApp, err := clusterClient.DescribeClustersWithAppId(ctx, pbApp.AppId.GetValue(), true, db.DefaultSelectLimit, uint32(offset))
 					if err != nil {
 						return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 					}
-					clusterCnt4OnePage = clusterCnt4OnePage + clusterCnt4SingleApp
+					clusterCntAll4OnePage = clusterCntAll4OnePage + clusterCntAll4SingleApp
+					clusterCntMonth4OnePage = clusterCntMonth4OnePage + clusterCntMonth4SingleApp
 				}
-				clusterCnt4AllPages = clusterCnt4AllPages + clusterCnt4OnePage
+				clusterCntAll4AllPages = clusterCntAll4AllPages + clusterCntAll4OnePage
+				clusterCntMonth4AllPages = clusterCntMonth4AllPages + clusterCntMonth4OnePage
 			}
 
 		}
@@ -208,12 +215,9 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 
 		vendorStatistics.CompanyName = vendor.CompanyName
 		vendorStatistics.ActiveAppCount = int32(appCnt)
-		//to do,need to change to real data:ClusterCountMonth
-		vendorStatistics.ClusterCountMonth = int32(appCnt)
-		vendorStatistics.ClusterCountTotal = clusterCnt4AllPages
-
+		vendorStatistics.ClusterCountTotal = clusterCntAll4AllPages
+		vendorStatistics.ClusterCountMonth = clusterCntMonth4AllPages
 		vendorStatisticses = append(vendorStatisticses, &vendorStatistics)
-
 	}
 
 	var vendorStatistics models.VendorStatistics //need use a vendorStatistics object to call function
