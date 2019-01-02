@@ -123,6 +123,7 @@ message DescribeAppsRequest {
 	repeated string owner = 15;
 	repeated string chart_name = 16;
 	repeated string category_id = 17;
+	repeated string display_columns = 18;
 }
 
 message DescribeAppsResponse {
@@ -220,6 +221,7 @@ message DescribeAppVersionReviewsRequest {
 
 	repeated string review_id = 12;
 	repeated string status = 13;
+	repeated string display_columns = 14;
 }
 
 message DescribeAppVersionReviewsResponse {
@@ -240,6 +242,7 @@ message DescribeAppVersionAuditsRequest {
 	repeated string status = 12;
 	repeated string operator = 13;
 	repeated string role = 14;
+	repeated string display_columns = 15;
 }
 
 message DescribeAppVersionAuditsResponse {
@@ -262,6 +265,7 @@ message DescribeAppVersionsRequest {
 	repeated string package_name = 15;
 	repeated string status = 16;
 	repeated string type = 17;
+	repeated string display_columns = 18;
 }
 
 message DescribeAppVersionsResponse {

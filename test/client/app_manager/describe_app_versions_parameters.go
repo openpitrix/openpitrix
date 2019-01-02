@@ -67,6 +67,8 @@ type DescribeAppVersionsParams struct {
 	AppID []string
 	/*Description*/
 	Description []string
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Limit*/
 	Limit *int64
 	/*Name*/
@@ -148,6 +150,17 @@ func (o *DescribeAppVersionsParams) WithDescription(description []string) *Descr
 // SetDescription adds the description to the describe app versions params
 func (o *DescribeAppVersionsParams) SetDescription(description []string) {
 	o.Description = description
+}
+
+// WithDisplayColumns adds the displayColumns to the describe app versions params
+func (o *DescribeAppVersionsParams) WithDisplayColumns(displayColumns []string) *DescribeAppVersionsParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe app versions params
+func (o *DescribeAppVersionsParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithLimit adds the limit to the describe app versions params
@@ -292,6 +305,14 @@ func (o *DescribeAppVersionsParams) WriteToRequest(r runtime.ClientRequest, reg 
 	joinedDescription := swag.JoinByFormat(valuesDescription, "multi")
 	// query array param description
 	if err := r.SetQueryParam("description", joinedDescription...); err != nil {
+		return err
+	}
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
 		return err
 	}
 

@@ -324,8 +324,28 @@ message DescribeClustersRequest {
 	repeated string owner = 13;
 	google.protobuf.StringValue cluster_type = 14;
 	google.protobuf.BoolValue with_detail = 15;
+	google.protobuf.UInt32Value created_date = 16;
+	repeated string display_columns = 17;
 }
 message DescribeClustersResponse {
+	uint32 total_count = 1;
+	repeated Cluster cluster_set = 2;
+}
+
+message DescribeAppClustersRequest {
+	repeated string app_id = 1;
+	repeated string status = 2;
+	uint32 limit = 3; // default is 20, max value is 200
+	uint32 offset = 4; // default is 0
+	google.protobuf.StringValue search_word = 5;
+	google.protobuf.StringValue sort_key = 6;
+	google.protobuf.BoolValue reverse = 7;
+	repeated string owner = 8;
+	google.protobuf.BoolValue with_detail = 9;
+	google.protobuf.UInt32Value created_date = 10;
+	repeated string display_columns = 11;
+}
+message DescribeAppClustersResponse {
 	uint32 total_count = 1;
 	repeated Cluster cluster_set = 2;
 }
@@ -340,6 +360,7 @@ message DescribeClusterNodesRequest {
 	google.protobuf.StringValue sort_key = 7;
 	google.protobuf.BoolValue reverse = 8;
 	repeated string owner = 9;
+	repeated string display_columns = 10;
 }
 message DescribeClusterNodesResponse {
 	uint32 total_count = 1;
@@ -427,6 +448,7 @@ message DescribeKeyPairsRequest {
 	google.protobuf.StringValue search_word = 6;
 	uint32 limit = 7;
 	uint32 offset = 8;
+	repeated string display_columns = 9;
 }
 
 message DescribeKeyPairsResponse {
@@ -639,6 +661,14 @@ service ClusterManager {
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters"
+		};
+	}
+	rpc DescribeAppClusters (DescribeAppClustersRequest) returns (DescribeAppClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe app clusters"
+		};
+		option (google.api.http) = {
+			get: "/v1/clusters/apps"
 		};
 	}
 	rpc DescribeClusterNodes (DescribeClusterNodesRequest) returns (DescribeClusterNodesResponse) {

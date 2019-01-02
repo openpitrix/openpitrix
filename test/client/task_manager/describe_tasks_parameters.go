@@ -63,6 +63,8 @@ for the describe tasks operation typically these are written to a http.Request
 */
 type DescribeTasksParams struct {
 
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Executor*/
 	Executor *string
 	/*JobID*/
@@ -124,6 +126,17 @@ func (o *DescribeTasksParams) WithHTTPClient(client *http.Client) *DescribeTasks
 // SetHTTPClient adds the HTTPClient to the describe tasks params
 func (o *DescribeTasksParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithDisplayColumns adds the displayColumns to the describe tasks params
+func (o *DescribeTasksParams) WithDisplayColumns(displayColumns []string) *DescribeTasksParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe tasks params
+func (o *DescribeTasksParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithExecutor adds the executor to the describe tasks params
@@ -232,6 +245,14 @@ func (o *DescribeTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
+	}
 
 	if o.Executor != nil {
 

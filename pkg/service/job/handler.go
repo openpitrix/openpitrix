@@ -58,16 +58,19 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
+	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.JobColumns)
 	query := pi.Global().DB(ctx).
-		Select(models.JobColumns...).
+		Select(displayColumns...).
 		From(constants.TableJob).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableJob))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
-	_, err := query.Load(&jobs)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	if len(displayColumns) > 0 {
+		_, err := query.Load(&jobs)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
 	}
 	count, err := query.Count()
 	if err != nil {

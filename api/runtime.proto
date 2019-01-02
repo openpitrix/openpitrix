@@ -65,6 +65,7 @@ message DescribeRuntimesRequest {
 	repeated string owner = 5;
 	uint32 limit = 6;
 	uint32 offset = 7;
+	repeated string display_columns = 8;
 }
 
 message DescribeRuntimesResponse {
@@ -126,6 +127,7 @@ message DescribeRuntimeCredentialsRequest {
 	repeated string owner = 6;
 	uint32 limit = 8;
 	uint32 offset = 9;
+	repeated string display_columns = 10;
 }
 
 message DescribeRuntimeCredentialsResponse {

@@ -186,6 +186,8 @@
       type: '[]string'
     description:
       type: '[]string'
+    display_columns:
+      type: '[]string'
     limit:
       type: int64
     name:
@@ -218,6 +220,8 @@
       type: '[]string'
     chart_name:
       type: '[]string'
+    display_columns:
+      type: '[]string'
     limit:
       type: int64
     name:
@@ -245,6 +249,8 @@
     version_id:
       type: string
   query:
+    display_columns:
+      type: '[]string'
     limit:
       type: int64
     offset:
@@ -270,6 +276,8 @@
     version_id:
       type: string
   query:
+    display_columns:
+      type: '[]string'
     limit:
       type: int64
     offset:
@@ -291,6 +299,8 @@
     app_id:
       type: '[]string'
     description:
+      type: '[]string'
+    display_columns:
       type: '[]string'
     limit:
       type: int64
@@ -323,6 +333,8 @@
     category_id:
       type: '[]string'
     chart_name:
+      type: '[]string'
+    display_columns:
       type: '[]string'
     limit:
       type: int64
@@ -499,6 +511,8 @@
   description: DescribeVendorVerifyInfos
   service: AppVendorManager
   query:
+    display_columns:
+      type: '[]string'
     limit:
       type: int64
     offset:
@@ -589,6 +603,8 @@
   service: CategoryManager
   query:
     category_id:
+      type: '[]string'
+    display_columns:
       type: '[]string'
     limit:
       type: int64
@@ -692,12 +708,40 @@
   body:
     key_pair_id:
       type: '[]string'
+- action: DescribeAppClusters
+  description: describe app clusters
+  service: ClusterManager
+  query:
+    app_id:
+      type: '[]string'
+    created_date:
+      type: int64
+    display_columns:
+      type: '[]string'
+    limit:
+      type: int64
+    offset:
+      type: int64
+    owner:
+      type: '[]string'
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    with_detail:
+      type: boolean
 - action: DescribeClusterNodes
   description: describe cluster nodes
   service: ClusterManager
   query:
     cluster_id:
       type: string
+    display_columns:
+      type: '[]string'
     limit:
       type: int64
     node_id:
@@ -724,6 +768,10 @@
       type: '[]string'
     cluster_type:
       type: string
+    created_date:
+      type: int64
+    display_columns:
+      type: '[]string'
     external_cluster_id:
       type: string
     frontgate_id:
@@ -754,6 +802,8 @@
   query:
     description:
       type: string
+    display_columns:
+      type: '[]string'
     key_pair_id:
       type: string
     limit:
@@ -885,6 +935,8 @@
       type: string
     cluster_id:
       type: string
+    display_columns:
+      type: '[]string'
     executor:
       type: string
     job_id:
@@ -1175,6 +1227,8 @@
   description: describe runtime credentials
   service: RuntimeManager
   query:
+    display_columns:
+      type: '[]string'
     limit:
       type: int64
     offset:
@@ -1199,6 +1253,8 @@
   description: describe runtime
   service: RuntimeManager
   query:
+    display_columns:
+      type: '[]string'
     limit:
       type: int64
     offset:
@@ -1254,6 +1310,8 @@
   description: describe tasks with filter
   service: TaskManager
   query:
+    display_columns:
+      type: '[]string'
     executor:
       type: string
     job_id:

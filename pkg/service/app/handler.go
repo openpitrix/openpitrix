@@ -83,8 +83,9 @@ func (p *Server) describeApps(ctx context.Context, req *pb.DescribeAppsRequest, 
 	limit := pbutil.GetLimitFromRequest(req)
 	categoryIds := req.GetCategoryId()
 
+	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.AppColumns)
 	query := pi.Global().DB(ctx).
-		Select(models.AppColumns...).
+		Select(displayColumns...).
 		From(constants.TableApp).
 		Offset(offset).
 		Limit(limit).
@@ -100,9 +101,11 @@ func (p *Server) describeApps(ctx context.Context, req *pb.DescribeAppsRequest, 
 		query = query.Where(db.Eq(constants.ColumnAppId, []*db.SelectQuery{subqueryStmt}))
 	}
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
-	_, err := query.Load(&apps)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	if len(displayColumns) > 0 {
+		_, err := query.Load(&apps)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
 	}
 	count, err := query.Count()
 	if err != nil {
@@ -468,16 +471,18 @@ func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.Describe
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
+	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.AppVersionReviewColumns)
 	query := pi.Global().DB(ctx).
-		Select(models.AppVersionReviewColumns...).
+		Select(displayColumns...).
 		From(constants.TableAppVersionReview).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionReview))
-
-	_, err = query.Load(&versionReviews)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	if len(displayColumns) > 0 {
+		_, err = query.Load(&versionReviews)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
 	}
 	count, err := query.Count()
 	if err != nil {
@@ -506,17 +511,21 @@ func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeA
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
+	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.AppVersionAuditColumns)
 	query := pi.Global().DB(ctx).
-		Select(models.AppVersionAuditColumns...).
+		Select(displayColumns...).
 		From(constants.TableAppVersionAudit).
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionAudit))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
-	_, err = query.Load(&versionAudits)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+
+	if len(displayColumns) > 0 {
+		_, err = query.Load(&versionAudits)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
 	}
 	count, err := query.Count()
 	if err != nil {
@@ -543,8 +552,9 @@ func (p *Server) describeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
+	displayColumns := manager.GetDisplayColumns(req.GetDisplayColumns(), models.AppVersionColumns)
 	query := pi.Global().DB(ctx).
-		Select(models.AppVersionColumns...).
+		Select(displayColumns...).
 		From(constants.TableAppVersion).
 		Offset(offset).
 		Limit(limit).
@@ -552,9 +562,11 @@ func (p *Server) describeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 		Where(db.Eq(constants.ColumnActive, active))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnSequence)
-	_, err := query.Load(&versions)
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	if len(displayColumns) > 0 {
+		_, err := query.Load(&versions)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
 	}
 	count, err := query.Count()
 	if err != nil {

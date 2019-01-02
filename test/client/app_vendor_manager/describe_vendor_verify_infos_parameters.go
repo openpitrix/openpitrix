@@ -63,6 +63,8 @@ for the describe vendor verify infos operation typically these are written to a 
 */
 type DescribeVendorVerifyInfosParams struct {
 
+	/*DisplayColumns*/
+	DisplayColumns []string
 	/*Limit*/
 	Limit *int64
 	/*Offset*/
@@ -114,6 +116,17 @@ func (o *DescribeVendorVerifyInfosParams) WithHTTPClient(client *http.Client) *D
 // SetHTTPClient adds the HTTPClient to the describe vendor verify infos params
 func (o *DescribeVendorVerifyInfosParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithDisplayColumns adds the displayColumns to the describe vendor verify infos params
+func (o *DescribeVendorVerifyInfosParams) WithDisplayColumns(displayColumns []string) *DescribeVendorVerifyInfosParams {
+	o.SetDisplayColumns(displayColumns)
+	return o
+}
+
+// SetDisplayColumns adds the displayColumns to the describe vendor verify infos params
+func (o *DescribeVendorVerifyInfosParams) SetDisplayColumns(displayColumns []string) {
+	o.DisplayColumns = displayColumns
 }
 
 // WithLimit adds the limit to the describe vendor verify infos params
@@ -200,6 +213,14 @@ func (o *DescribeVendorVerifyInfosParams) WriteToRequest(r runtime.ClientRequest
 		return err
 	}
 	var res []error
+
+	valuesDisplayColumns := o.DisplayColumns
+
+	joinedDisplayColumns := swag.JoinByFormat(valuesDisplayColumns, "multi")
+	// query array param display_columns
+	if err := r.SetQueryParam("display_columns", joinedDisplayColumns...); err != nil {
+		return err
+	}
 
 	if o.Limit != nil {
 

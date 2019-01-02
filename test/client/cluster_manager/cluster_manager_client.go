@@ -257,6 +257,35 @@ func (a *Client) DeleteKeyPairs(params *DeleteKeyPairsParams, authInfo runtime.C
 }
 
 /*
+DescribeAppClusters describes app clusters
+*/
+func (a *Client) DescribeAppClusters(params *DescribeAppClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppClustersOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeAppClustersParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeAppClusters",
+		Method:             "GET",
+		PathPattern:        "/v1/clusters/apps",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeAppClustersReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeAppClustersOK), nil
+
+}
+
+/*
 DescribeClusterNodes describes cluster nodes
 */
 func (a *Client) DescribeClusterNodes(params *DescribeClusterNodesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeClusterNodesOK, error) {
