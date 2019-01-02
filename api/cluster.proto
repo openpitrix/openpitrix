@@ -230,7 +230,7 @@ message ClusterNode {
 	google.protobuf.StringValue status = 12;
 	google.protobuf.StringValue transition_status = 13;
 	google.protobuf.UInt32Value group_id = 14;
-	google.protobuf.StringValue owner = 15;
+	google.protobuf.StringValue owner_path = 15;
 	google.protobuf.UInt32Value global_server_id = 16;
 	google.protobuf.StringValue custom_metadata = 17;
 	google.protobuf.StringValue pub_key = 18;
@@ -275,7 +275,7 @@ message ClusterLink {
 	google.protobuf.StringValue cluster_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue external_cluster_id = 3;
-	google.protobuf.StringValue owner = 4;
+	google.protobuf.StringValue owner_path = 4;
 }
 
 message Cluster {
@@ -292,7 +292,7 @@ message Cluster {
 	google.protobuf.StringValue status = 11;
 	google.protobuf.StringValue transition_status = 12;
 	google.protobuf.BoolValue metadata_root_access = 13;
-	google.protobuf.StringValue owner = 14;
+	google.protobuf.StringValue owner_path = 14;
 	google.protobuf.StringValue global_uuid = 15;
 	google.protobuf.StringValue upgrade_status = 16;
 	google.protobuf.Timestamp upgrade_time = 17;
@@ -423,7 +423,7 @@ message KeyPair {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue pub_key = 4;
-	google.protobuf.StringValue owner = 5;
+	google.protobuf.StringValue owner_path = 5;
 	google.protobuf.Timestamp create_time = 6;
 	google.protobuf.Timestamp status_time = 7;
 	repeated string node_id = 8;

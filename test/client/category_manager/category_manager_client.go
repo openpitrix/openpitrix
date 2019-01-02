@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-CreateCategory creates category
+CreateCategory create category API
 */
 func (a *Client) CreateCategory(params *CreateCategoryParams, authInfo runtime.ClientAuthInfoWriter) (*CreateCategoryOK, error) {
 	// TODO: Validate the params before sending
@@ -36,7 +36,7 @@ func (a *Client) CreateCategory(params *CreateCategoryParams, authInfo runtime.C
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "CreateCategory",
 		Method:             "POST",
-		PathPattern:        "/v1/categories",
+		PathPattern:        "/api/CategoryManager.CreateCategory",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -54,7 +54,7 @@ func (a *Client) CreateCategory(params *CreateCategoryParams, authInfo runtime.C
 }
 
 /*
-DeleteCategories deletes categories
+DeleteCategories delete categories API
 */
 func (a *Client) DeleteCategories(params *DeleteCategoriesParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteCategoriesOK, error) {
 	// TODO: Validate the params before sending
@@ -64,8 +64,8 @@ func (a *Client) DeleteCategories(params *DeleteCategoriesParams, authInfo runti
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DeleteCategories",
-		Method:             "DELETE",
-		PathPattern:        "/v1/categories",
+		Method:             "POST",
+		PathPattern:        "/api/CategoryManager.DeleteCategories",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -83,7 +83,7 @@ func (a *Client) DeleteCategories(params *DeleteCategoriesParams, authInfo runti
 }
 
 /*
-DescribeCategories describes categories with filter
+DescribeCategories describe categories API
 */
 func (a *Client) DescribeCategories(params *DescribeCategoriesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeCategoriesOK, error) {
 	// TODO: Validate the params before sending
@@ -94,7 +94,7 @@ func (a *Client) DescribeCategories(params *DescribeCategoriesParams, authInfo r
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeCategories",
 		Method:             "GET",
-		PathPattern:        "/v1/categories",
+		PathPattern:        "/api/CategoryManager.DescribeCategories",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -112,7 +112,7 @@ func (a *Client) DescribeCategories(params *DescribeCategoriesParams, authInfo r
 }
 
 /*
-ModifyCategory modifies category
+ModifyCategory modify category API
 */
 func (a *Client) ModifyCategory(params *ModifyCategoryParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyCategoryOK, error) {
 	// TODO: Validate the params before sending
@@ -122,8 +122,8 @@ func (a *Client) ModifyCategory(params *ModifyCategoryParams, authInfo runtime.C
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ModifyCategory",
-		Method:             "PATCH",
-		PathPattern:        "/v1/categories",
+		Method:             "POST",
+		PathPattern:        "/api/CategoryManager.ModifyCategory",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

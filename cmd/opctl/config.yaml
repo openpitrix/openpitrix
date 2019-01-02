@@ -133,13 +133,11 @@
     password:
       type: string
 - action: CancelAppVersion
-  description: cancel app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: CreateApp
-  description: create app
   service: AppManager
   body:
     icon:
@@ -153,7 +151,6 @@
     version_type:
       type: string
 - action: CreateAppVersion
-  description: create app version
   service: AppManager
   body:
     app_id:
@@ -167,19 +164,16 @@
     type:
       type: string
 - action: DeleteAppVersion
-  description: delete app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: DeleteApps
-  description: delete apps
   service: AppManager
   body:
     app_id:
       type: '[]string'
 - action: DescribeActiveAppVersions
-  description: describe app versions with filter
   service: AppManager
   query:
     app_id:
@@ -211,7 +205,6 @@
     version_id:
       type: '[]string'
 - action: DescribeActiveApps
-  description: describe apps with filter
   service: AppManager
   query:
     app_id:
@@ -241,14 +234,10 @@
     status:
       type: '[]string'
 - action: DescribeAppVersionAudits
-  description: DescribeAppVersionAudits
   service: AppManager
-  path:
+  query:
     app_id:
       type: string
-    version_id:
-      type: string
-  query:
     display_columns:
       type: '[]string'
     limit:
@@ -267,15 +256,13 @@
       type: string
     status:
       type: '[]string'
-- action: DescribeAppVersionReviews
-  description: DescribeAppVersionReviews
-  service: AppManager
-  path:
-    app_id:
-      type: string
     version_id:
       type: string
+- action: DescribeAppVersionReviews
+  service: AppManager
   query:
+    app_id:
+      type: string
     display_columns:
       type: '[]string'
     limit:
@@ -292,8 +279,9 @@
       type: string
     status:
       type: '[]string'
+    version_id:
+      type: string
 - action: DescribeAppVersions
-  description: describe app versions with filter
   service: AppManager
   query:
     app_id:
@@ -325,7 +313,6 @@
     version_id:
       type: '[]string'
 - action: DescribeApps
-  description: describe apps with filter
   service: AppManager
   query:
     app_id:
@@ -355,16 +342,13 @@
     status:
       type: '[]string'
 - action: GetAppStatistics
-  description: get app statistics
   service: AppManager
 - action: GetAppVersionPackage
-  description: get the package content of app version
   service: AppManager
   query:
     version_id:
       type: string
 - action: GetAppVersionPackageFiles
-  description: get the package files content of app version
   service: AppManager
   query:
     files:
@@ -372,7 +356,6 @@
     version_id:
       type: string
 - action: ModifyApp
-  description: modify app
   service: AppManager
   body:
     abstraction:
@@ -398,7 +381,6 @@
     tos:
       type: string
 - action: ModifyAppVersion
-  description: modify app version
   service: AppManager
   body:
     description:
@@ -412,28 +394,19 @@
     version_id:
       type: string
 - action: PassAppVersion
-  description: pass app version
   service: AppManager
-  path:
-    role:
-      type: string
   body:
     role:
       type: string
     version_id:
       type: string
 - action: RecoverAppVersion
-  description: recover app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: RejectAppVersion
-  description: reject app version
   service: AppManager
-  path:
-    role:
-      type: string
   body:
     message:
       type: string
@@ -442,36 +415,28 @@
     version_id:
       type: string
 - action: ReleaseAppVersion
-  description: release app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: ReviewAppVersion
-  description: pass app version
   service: AppManager
-  path:
-    role:
-      type: string
   body:
     role:
       type: string
     version_id:
       type: string
 - action: SubmitAppVersion
-  description: submit app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: SuspendAppVersion
-  description: suspend app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: UploadAppAttachment
-  description: UploadAppAttachment
   service: AppManager
   body:
     app_id:
@@ -482,7 +447,6 @@
       type: integer
     type: {}
 - action: ValidatePackage
-  description: ValidatePackage
   service: AppManager
   body:
     version_package:
@@ -565,7 +529,6 @@
     filename:
       type: string
 - action: CreateCategory
-  description: create category
   service: CategoryManager
   body:
     description:
@@ -575,13 +538,11 @@
     name:
       type: string
 - action: DeleteCategories
-  description: delete categories
   service: CategoryManager
   body:
     category_id:
       type: '[]string'
 - action: DescribeCategories
-  description: describe categories with filter
   service: CategoryManager
   query:
     category_id:
@@ -603,7 +564,6 @@
     sort_key:
       type: string
 - action: ModifyCategory
-  description: modify category
   service: CategoryManager
   body:
     category_id:
@@ -1034,7 +994,6 @@
     user_id:
       type: '[]string'
 - action: DescribeRepoEvents
-  description: describe repo events
   service: RepoIndexer
   query:
     limit:
@@ -1050,13 +1009,11 @@
     status:
       type: '[]string'
 - action: IndexRepo
-  description: start a index repo event
   service: RepoIndexer
   body:
     repo_id:
       type: string
 - action: CreateRepo
-  description: create repo
   service: RepoManager
   body:
     app_default_status:
@@ -1082,13 +1039,11 @@
     visibility:
       type: string
 - action: DeleteRepos
-  description: delete repos
   service: RepoManager
   body:
     repo_id:
       type: '[]string'
 - action: DescribeRepos
-  description: describe repos with filter
   service: RepoManager
   query:
     app_default_status:
@@ -1128,7 +1083,6 @@
     visibility:
       type: '[]string'
 - action: ModifyRepo
-  description: modify repo
   service: RepoManager
   body:
     app_default_status:
@@ -1156,7 +1110,6 @@
     visibility:
       type: string
 - action: ValidateRepo
-  description: validate repo
   service: RepoManager
   query:
     credential:

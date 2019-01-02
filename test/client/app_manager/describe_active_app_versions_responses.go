@@ -51,7 +51,7 @@ type DescribeActiveAppVersionsOK struct {
 }
 
 func (o *DescribeActiveAppVersionsOK) Error() string {
-	return fmt.Sprintf("[GET /v1/active_app_versions][%d] describeActiveAppVersionsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /api/AppManager.DescribeActiveAppVersions][%d] describeActiveAppVersionsOK  %+v", 200, o.Payload)
 }
 
 func (o *DescribeActiveAppVersionsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

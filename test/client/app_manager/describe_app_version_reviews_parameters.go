@@ -64,7 +64,7 @@ for the describe app version reviews operation typically these are written to a 
 type DescribeAppVersionReviewsParams struct {
 
 	/*AppID*/
-	AppID string
+	AppID *string
 	/*DisplayColumns*/
 	DisplayColumns []string
 	/*Limit*/
@@ -82,7 +82,7 @@ type DescribeAppVersionReviewsParams struct {
 	/*Status*/
 	Status []string
 	/*VersionID*/
-	VersionID string
+	VersionID *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -123,13 +123,13 @@ func (o *DescribeAppVersionReviewsParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithAppID adds the appID to the describe app version reviews params
-func (o *DescribeAppVersionReviewsParams) WithAppID(appID string) *DescribeAppVersionReviewsParams {
+func (o *DescribeAppVersionReviewsParams) WithAppID(appID *string) *DescribeAppVersionReviewsParams {
 	o.SetAppID(appID)
 	return o
 }
 
 // SetAppID adds the appId to the describe app version reviews params
-func (o *DescribeAppVersionReviewsParams) SetAppID(appID string) {
+func (o *DescribeAppVersionReviewsParams) SetAppID(appID *string) {
 	o.AppID = appID
 }
 
@@ -222,13 +222,13 @@ func (o *DescribeAppVersionReviewsParams) SetStatus(status []string) {
 }
 
 // WithVersionID adds the versionID to the describe app version reviews params
-func (o *DescribeAppVersionReviewsParams) WithVersionID(versionID string) *DescribeAppVersionReviewsParams {
+func (o *DescribeAppVersionReviewsParams) WithVersionID(versionID *string) *DescribeAppVersionReviewsParams {
 	o.SetVersionID(versionID)
 	return o
 }
 
 // SetVersionID adds the versionId to the describe app version reviews params
-func (o *DescribeAppVersionReviewsParams) SetVersionID(versionID string) {
+func (o *DescribeAppVersionReviewsParams) SetVersionID(versionID *string) {
 	o.VersionID = versionID
 }
 
@@ -240,9 +240,20 @@ func (o *DescribeAppVersionReviewsParams) WriteToRequest(r runtime.ClientRequest
 	}
 	var res []error
 
-	// path param app_id
-	if err := r.SetPathParam("app_id", o.AppID); err != nil {
-		return err
+	if o.AppID != nil {
+
+		// query param app_id
+		var qrAppID string
+		if o.AppID != nil {
+			qrAppID = *o.AppID
+		}
+		qAppID := qrAppID
+		if qAppID != "" {
+			if err := r.SetQueryParam("app_id", qAppID); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	valuesDisplayColumns := o.DisplayColumns
@@ -349,9 +360,20 @@ func (o *DescribeAppVersionReviewsParams) WriteToRequest(r runtime.ClientRequest
 		return err
 	}
 
-	// path param version_id
-	if err := r.SetPathParam("version_id", o.VersionID); err != nil {
-		return err
+	if o.VersionID != nil {
+
+		// query param version_id
+		var qrVersionID string
+		if o.VersionID != nil {
+			qrVersionID = *o.VersionID
+		}
+		qVersionID := qrVersionID
+		if qVersionID != "" {
+			if err := r.SetQueryParam("version_id", qVersionID); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {

@@ -26,7 +26,7 @@ message IndexRepoResponse {
 message RepoEvent {
 	google.protobuf.StringValue repo_event_id = 1;
 	google.protobuf.StringValue repo_id = 2;
-	google.protobuf.StringValue owner = 3;
+	google.protobuf.StringValue owner_path = 3;
 	google.protobuf.StringValue status = 4;
 	google.protobuf.StringValue result = 5;
 	google.protobuf.Timestamp create_time = 6;
@@ -73,20 +73,14 @@ message DescribeRepoEventsResponse {
 
 service RepoIndexer {
 	rpc IndexRepo (IndexRepoRequest) returns (IndexRepoResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "start a index repo event"
-		};
 		option (google.api.http) = {
-			post: "/v1/repos/index"
+			post: "/api/RepoIndexer.IndexRepo"
 			body: "*"
 		};
 	}
 	rpc DescribeRepoEvents (DescribeRepoEventsRequest) returns (DescribeRepoEventsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe repo events"
-		};
 		option (google.api.http) = {
-			get: "/v1/repo_events"
+			get: "/api/RepoIndexer.DescribeRepoEvents"
 		};
 	}
 //	rpc DescribeRepoEventLogs (DescribeRepoEventLogsRequest) returns (DescribeRepoEventLogsResponse) {

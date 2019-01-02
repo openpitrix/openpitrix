@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/sender"
 )
 
 type ClusterUpgradeAudit struct {
@@ -20,6 +21,7 @@ type ClusterUpgradeAudit struct {
 	StatusTime            time.Time
 	Status                string
 	Owner                 string
+	OwnerPath             sender.OwnerPath
 }
 
 var ClusterUpgradeAuditColumns = db.GetColumnsFromStruct(&ClusterUpgradeAudit{})

@@ -51,7 +51,7 @@ type RecoverAppVersionOK struct {
 }
 
 func (o *RecoverAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /v1/app_version/action/recover][%d] recoverAppVersionOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /api/AppManager.RecoverAppVersion][%d] recoverAppVersionOK  %+v", 200, o.Payload)
 }
 
 func (o *RecoverAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

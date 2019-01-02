@@ -14,8 +14,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -247,7 +247,7 @@ func (p *Server) formatRepoSet(ctx context.Context, repos []*models.Repo) (pbRep
 		return
 	}
 
-	sender := senderutil.GetSenderFromContext(ctx)
+	sender := ctxutil.GetSender(ctx)
 	for _, pbRepo := range pbRepos {
 		repoId := pbRepo.GetRepoId().GetValue()
 		pbRepo.Labels = models.RepoLabelsToPbs(labelsMap[repoId])

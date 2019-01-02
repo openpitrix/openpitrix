@@ -15,8 +15,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -31,6 +31,7 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 		From(constants.TableCategory).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableCategory))
 	// TODO: validate sort_key
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
@@ -53,12 +54,12 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 }
 
 func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryRequest) (*pb.CreateCategoryResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	category := models.NewCategory(
 		req.GetName().GetValue(),
 		req.GetLocale().GetValue(),
 		req.GetDescription().GetValue(),
-		s.UserId)
+		s.GetOwnerPath())
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableCategory).

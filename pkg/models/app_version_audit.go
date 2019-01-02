@@ -9,6 +9,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -19,19 +20,23 @@ type AppVersionAudit struct {
 	Operator   string
 	Role       string
 	Message    string
+	Owner      string
+	OwnerPath  sender.OwnerPath
 	ReviewId   string
 	StatusTime time.Time
 }
 
 var AppVersionAuditColumns = db.GetColumnsFromStruct(&AppVersionAudit{})
 
-func NewAppVersionAudit(versionId, appId, status, operator, role string) *AppVersionAudit {
+func NewAppVersionAudit(versionId, appId, status, operator, role string, ownerPath sender.OwnerPath) *AppVersionAudit {
 	return &AppVersionAudit{
 		VersionId:  versionId,
 		AppId:      appId,
 		Status:     status,
 		Operator:   operator,
 		Role:       role,
+		Owner:      ownerPath.Owner(),
+		OwnerPath:  ownerPath,
 		StatusTime: time.Now(),
 	}
 }

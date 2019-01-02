@@ -20,8 +20,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -584,8 +584,8 @@ func computeAppStatus(statusCountMap map[string]int32) string {
 }
 
 func addAppVersionAudit(ctx context.Context, version *models.AppVersion, status, role, message string) error {
-	s := senderutil.GetSenderFromContext(ctx)
-	versionAudit := models.NewAppVersionAudit(version.VersionId, version.AppId, status, s.UserId, role)
+	s := ctxutil.GetSender(ctx)
+	versionAudit := models.NewAppVersionAudit(version.VersionId, version.AppId, status, s.UserId, role, s.GetOwnerPath())
 	versionAudit.Message = message
 	if version.Status == constants.StatusSubmitted {
 		versionAudit.ReviewId = version.ReviewId

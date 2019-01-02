@@ -46,8 +46,8 @@ type OpenpitrixAppVersion struct {
 	// name
 	Name string `json:"name,omitempty"`
 
-	// owner
-	Owner string `json:"owner,omitempty"`
+	// owner path
+	OwnerPath string `json:"owner_path,omitempty"`
 
 	// package name
 	PackageName string `json:"package_name,omitempty"`

@@ -29,6 +29,7 @@ const (
 	ColumnNodeId                   = "node_id"
 	ColumnKeyPairId                = "key_pair_id"
 	ColumnOwner                    = "owner"
+	ColumnOwnerPath                = "owner_path"
 	ColumnPackageName              = "package_name"
 	ColumnPrivateIp                = "private_ip"
 	ColumnProvider                 = "provider"

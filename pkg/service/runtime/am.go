@@ -12,7 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func (p *Server) Checker(ctx context.Context, req interface{}) error {
@@ -56,7 +56,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 }
 
 func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
-	sender := senderutil.GetSenderFromContext(ctx)
+	sender := ctxutil.GetSender(ctx)
 	switch r := req.(type) {
 	case *pb.DescribeRuntimesRequest:
 		if sender.IsGlobalAdmin() {

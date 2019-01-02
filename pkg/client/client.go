@@ -8,13 +8,14 @@ import (
 	"context"
 
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/sender"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func SetSystemUserToContext(ctx context.Context) context.Context {
-	return senderutil.ContextWithSender(ctx, senderutil.GetSystemSender())
+	return ctxutil.ContextWithSender(ctx, sender.GetSystemSender())
 }
 
 func SetUserToContext(ctx context.Context, user *pb.User) context.Context {
-	return senderutil.ContextWithSender(ctx, senderutil.GetSender(user))
+	return ctxutil.ContextWithSender(ctx, sender.GetSender(user))
 }

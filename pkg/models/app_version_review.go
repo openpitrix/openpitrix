@@ -11,6 +11,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -58,6 +59,8 @@ type AppVersionReview struct {
 	ReviewId  string
 	VersionId string
 	AppId     string
+	OwnerPath sender.OwnerPath
+	Owner     string
 	Status    string
 	Phase     AppVersionReviewPhases
 }
@@ -81,12 +84,14 @@ func (avr *AppVersionReview) UpdatePhase(role, status, operator, message string)
 
 var AppVersionReviewColumns = db.GetColumnsFromStruct(&AppVersionReview{})
 
-func NewAppVersionReview(versionId, appId, status string) *AppVersionReview {
+func NewAppVersionReview(versionId, appId, status string, ownerPath sender.OwnerPath) *AppVersionReview {
 	return &AppVersionReview{
 		ReviewId:  NewAppVersionReviewId(),
 		VersionId: versionId,
 		AppId:     appId,
 		Status:    status,
+		Owner:     ownerPath.Owner(),
+		OwnerPath: ownerPath,
 		Phase:     make(AppVersionReviewPhases),
 	}
 }

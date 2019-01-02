@@ -20,7 +20,7 @@ message RuntimeCredential {
 	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue runtime_url = 4;
 	google.protobuf.StringValue runtime_credential_content = 5;
-	google.protobuf.StringValue owner = 6;
+	google.protobuf.StringValue owner_path = 6;
 	google.protobuf.StringValue provider = 7;
 	google.protobuf.StringValue status = 8;
 	google.protobuf.Timestamp create_time = 9;
@@ -34,7 +34,7 @@ message Runtime {
 	google.protobuf.StringValue provider = 4;
 	google.protobuf.StringValue runtime_credential_id = 5;
 	google.protobuf.StringValue zone = 6;
-	google.protobuf.StringValue owner = 7;
+	google.protobuf.StringValue owner_path = 7;
 	google.protobuf.StringValue status = 8;
 	google.protobuf.Timestamp create_time = 9;
 	google.protobuf.Timestamp status_time = 10;

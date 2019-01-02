@@ -45,7 +45,7 @@ message Task {
 	google.protobuf.UInt32Value error_code = 5;
 	google.protobuf.StringValue directive = 6;
 	google.protobuf.StringValue executor = 7;
-	google.protobuf.StringValue owner = 8;
+	google.protobuf.StringValue owner_path = 8;
 	google.protobuf.StringValue target = 9;
 	google.protobuf.StringValue node_id = 10;
 	google.protobuf.Timestamp create_time = 11;

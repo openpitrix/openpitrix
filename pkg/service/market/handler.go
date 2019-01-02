@@ -15,19 +15,20 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/sender"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func (p *Server) CreateMarket(ctx context.Context, req *pb.CreateMarketRequest) (*pb.CreateMarketResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	newMarket := models.NewMarket(
 		req.GetName().GetValue(),
 		req.GetVisibility().GetValue(),
 		constants.StatusEnabled,
 		req.GetDescription().GetValue(),
-		s.UserId,
+		s.GetOwnerPath(),
 	)
 
 	_, err := pi.Global().DB(ctx).
@@ -40,7 +41,7 @@ func (p *Server) CreateMarket(ctx context.Context, req *pb.CreateMarketRequest) 
 	}
 
 	newMarketId := newMarket.MarketId
-	marketUser := models.NewMarketUser(newMarketId, s.UserId, s.UserId)
+	marketUser := models.NewMarketUser(newMarketId, s.UserId, s.GetOwnerPath())
 
 	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableMarketUser).
@@ -69,6 +70,7 @@ func (p *Server) DescribeMarkets(ctx context.Context, req *pb.DescribeMarketsReq
 		From(constants.TableMarket).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableMarket))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 
@@ -169,7 +171,7 @@ func (p *Server) UserJoinMarket(ctx context.Context, req *pb.UserJoinMarketReque
 	var ok bool
 	for _, market := range markets {
 		marketId := market.MarketId
-		owner := market.Owner
+		ownerPath := market.OwnerPath
 		if market.Status == constants.StatusDeleted {
 			return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorResourceAlreadyDeleted, marketId)
 		}
@@ -187,7 +189,7 @@ func (p *Server) UserJoinMarket(ctx context.Context, req *pb.UserJoinMarketReque
 
 			if count == 0 {
 				ok = true
-				record := models.NewMarketUser(marketId, userId, owner)
+				record := models.NewMarketUser(marketId, userId, sender.OwnerPath(ownerPath))
 				insert = insert.Record(record)
 			}
 		}
@@ -246,7 +248,7 @@ func (p *Server) UserLeaveMarket(ctx context.Context, req *pb.UserLeaveMarketReq
 
 func (p *Server) DescribeMarketUsers(ctx context.Context, req *pb.DescribeMarketUsersRequest) (*pb.DescribeMarketUsersResponse, error) {
 	var marketUsers []*models.MarketUser
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
@@ -258,7 +260,9 @@ func (p *Server) DescribeMarketUsers(ctx context.Context, req *pb.DescribeMarket
 
 	query := pi.Global().DB(ctx).Select(models.MarketUserColumns...).
 		From(constants.TableMarketUser).
-		Offset(offset).Limit(limit).
+		Offset(offset).
+		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableMarketUser))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)

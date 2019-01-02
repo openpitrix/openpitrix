@@ -11,7 +11,7 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	"openpitrix.io/openpitrix/pkg/gerr"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -127,7 +127,7 @@ func (c *checker) checkRole(_ string, _ interface{}) error {
 	if len(c.roles) == 0 {
 		return nil
 	}
-	sender := senderutil.GetSenderFromContext(c.ctx)
+	sender := ctxutil.GetSender(c.ctx)
 	if stringutil.StringIn(sender.Role, c.roles) {
 		return nil
 	}

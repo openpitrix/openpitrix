@@ -51,7 +51,7 @@ type CreateAppVersionOK struct {
 }
 
 func (o *CreateAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /v1/app_versions][%d] createAppVersionOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /api/AppManager.CreateAppVersion][%d] createAppVersionOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -28,9 +28,138 @@ var Files = map[string]string{
     "application/json"
   ],
   "paths": {
-    "/v1/active_app_versions": {
+    "/api/AppManager.CancelAppVersion": {
+      "post": {
+        "operationId": "CancelAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCancelAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCancelAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.CreateApp": {
+      "post": {
+        "operationId": "CreateApp",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.CreateAppVersion": {
+      "post": {
+        "operationId": "CreateAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.DeleteAppVersion": {
+      "post": {
+        "operationId": "DeleteAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.DeleteApps": {
+      "post": {
+        "operationId": "DeleteApps",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteAppsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteAppsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.DescribeActiveAppVersions": {
       "get": {
-        "summary": "describe app versions with filter",
         "operationId": "DescribeActiveAppVersions",
         "responses": {
           "200": {
@@ -170,9 +299,8 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/active_apps": {
+    "/api/AppManager.DescribeActiveApps": {
       "get": {
-        "summary": "describe apps with filter",
         "operationId": "DescribeActiveApps",
         "responses": {
           "200": {
@@ -302,36 +430,8 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/app/attachment": {
-      "patch": {
-        "summary": "UploadAppAttachment",
-        "operationId": "UploadAppAttachment",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixUploadAppAttachmentResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixUploadAppAttachmentRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app/{app_id}/version/{version_id}/audits": {
+    "/api/AppManager.DescribeAppVersionAudits": {
       "get": {
-        "summary": "DescribeAppVersionAudits",
         "operationId": "DescribeAppVersionAudits",
         "responses": {
           "200": {
@@ -342,18 +442,6 @@ var Files = map[string]string{
           }
         },
         "parameters": [
-          {
-            "name": "app_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "version_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "search_word",
             "in": "query",
@@ -386,6 +474,18 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
           },
           {
             "name": "status",
@@ -433,9 +533,8 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/app/{app_id}/version/{version_id}/reviews": {
+    "/api/AppManager.DescribeAppVersionReviews": {
       "get": {
-        "summary": "DescribeAppVersionReviews",
         "operationId": "DescribeAppVersionReviews",
         "responses": {
           "200": {
@@ -446,18 +545,6 @@ var Files = map[string]string{
           }
         },
         "parameters": [
-          {
-            "name": "app_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "version_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "search_word",
             "in": "query",
@@ -490,6 +577,18 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
           },
           {
             "name": "review_id",
@@ -527,330 +626,8 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/app_version/action/cancel": {
-      "post": {
-        "summary": "cancel app version",
-        "operationId": "CancelAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCancelAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCancelAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/delete": {
-      "post": {
-        "summary": "delete app version",
-        "operationId": "DeleteAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/recover": {
-      "post": {
-        "summary": "recover app version",
-        "operationId": "RecoverAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixRecoverAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixRecoverAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/release": {
-      "post": {
-        "summary": "release app version",
-        "operationId": "ReleaseAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixReleaseAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixReleaseAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/submit": {
-      "post": {
-        "summary": "submit app version",
-        "operationId": "SubmitAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixSubmitAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixSubmitAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/suspend": {
-      "post": {
-        "summary": "suspend app version",
-        "operationId": "SuspendAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixSuspendAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixSuspendAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/{role}/pass": {
-      "post": {
-        "summary": "pass app version",
-        "operationId": "PassAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/{role}/reject": {
-      "post": {
-        "summary": "reject app version",
-        "operationId": "RejectAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/{role}/review": {
-      "post": {
-        "summary": "pass app version",
-        "operationId": "ReviewAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/package": {
+    "/api/AppManager.DescribeAppVersions": {
       "get": {
-        "summary": "get the package content of app version",
-        "operationId": "GetAppVersionPackage",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixGetAppVersionPackageResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "version_id",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/package/files": {
-      "get": {
-        "summary": "get the package files content of app version",
-        "operationId": "GetAppVersionPackageFiles",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixGetAppVersionPackageFilesResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "version_id",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "files",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_versions": {
-      "get": {
-        "summary": "describe app versions with filter",
         "operationId": "DescribeAppVersions",
         "responses": {
           "200": {
@@ -988,61 +765,10 @@ var Files = map[string]string{
         "tags": [
           "AppManager"
         ]
-      },
-      "post": {
-        "summary": "create app version",
-        "operationId": "CreateAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      },
-      "patch": {
-        "summary": "modify app version",
-        "operationId": "ModifyAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
       }
     },
-    "/v1/apps": {
+    "/api/AppManager.DescribeApps": {
       "get": {
-        "summary": "describe apps with filter",
         "operationId": "DescribeApps",
         "responses": {
           "200": {
@@ -1170,59 +896,84 @@ var Files = map[string]string{
         "tags": [
           "AppManager"
         ]
-      },
-      "delete": {
-        "summary": "delete apps",
-        "operationId": "DeleteApps",
+      }
+    },
+    "/api/AppManager.GetAppStatistics": {
+      "get": {
+        "operationId": "GetAppStatistics",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppsResponse"
+              "$ref": "#/definitions/openpitrixGetAppStatisticsResponse"
+            }
+          }
+        },
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.GetAppVersionPackage": {
+      "get": {
+        "operationId": "GetAppVersionPackage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetAppVersionPackageResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteAppsRequest"
-            }
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
           "AppManager"
         ]
-      },
+      }
+    },
+    "/api/AppManager.GetAppVersionPackageFiles": {
+      "get": {
+        "operationId": "GetAppVersionPackageFiles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetAppVersionPackageFilesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "version_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "files",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.ModifyApp": {
       "post": {
-        "summary": "create app",
-        "operationId": "CreateApp",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateAppResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateAppRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      },
-      "patch": {
-        "summary": "modify app",
         "operationId": "ModifyApp",
         "responses": {
           "200": {
@@ -1247,26 +998,242 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/apps/statistics": {
-      "get": {
-        "summary": "get app statistics",
-        "operationId": "GetAppStatistics",
+    "/api/AppManager.ModifyAppVersion": {
+      "post": {
+        "operationId": "ModifyAppVersion",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/openpitrixGetAppStatisticsResponse"
+              "$ref": "#/definitions/openpitrixModifyAppVersionResponse"
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyAppVersionRequest"
+            }
+          }
+        ],
         "tags": [
           "AppManager"
         ]
       }
     },
-    "/v1/apps/validate_package": {
+    "/api/AppManager.PassAppVersion": {
       "post": {
-        "summary": "ValidatePackage",
+        "operationId": "PassAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.RecoverAppVersion": {
+      "post": {
+        "operationId": "RecoverAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRecoverAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRecoverAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.RejectAppVersion": {
+      "post": {
+        "operationId": "RejectAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.ReleaseAppVersion": {
+      "post": {
+        "operationId": "ReleaseAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixReleaseAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixReleaseAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.ReviewAppVersion": {
+      "post": {
+        "operationId": "ReviewAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.SubmitAppVersion": {
+      "post": {
+        "operationId": "SubmitAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixSubmitAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixSubmitAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.SuspendAppVersion": {
+      "post": {
+        "operationId": "SuspendAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixSuspendAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixSuspendAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.UploadAppAttachment": {
+      "post": {
+        "operationId": "UploadAppAttachment",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixUploadAppAttachmentResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixUploadAppAttachmentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/api/AppManager.ValidatePackage": {
+      "post": {
         "operationId": "ValidatePackage",
         "responses": {
           "200": {
@@ -1516,9 +1483,60 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/categories": {
+    "/api/CategoryManager.CreateCategory": {
+      "post": {
+        "operationId": "CreateCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateCategoryResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateCategoryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryManager"
+        ]
+      }
+    },
+    "/api/CategoryManager.DeleteCategories": {
+      "post": {
+        "operationId": "DeleteCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteCategoriesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteCategoriesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "CategoryManager"
+        ]
+      }
+    },
+    "/api/CategoryManager.DescribeCategories": {
       "get": {
-        "summary": "describe categories with filter",
         "operationId": "DescribeCategories",
         "responses": {
           "200": {
@@ -1606,59 +1624,10 @@ var Files = map[string]string{
         "tags": [
           "CategoryManager"
         ]
-      },
-      "delete": {
-        "summary": "delete categories",
-        "operationId": "DeleteCategories",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteCategoriesResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteCategoriesRequest"
-            }
-          }
-        ],
-        "tags": [
-          "CategoryManager"
-        ]
-      },
+      }
+    },
+    "/api/CategoryManager.ModifyCategory": {
       "post": {
-        "summary": "create category",
-        "operationId": "CreateCategory",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateCategoryResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateCategoryRequest"
-            }
-          }
-        ],
-        "tags": [
-          "CategoryManager"
-        ]
-      },
-      "patch": {
-        "summary": "modify category",
         "operationId": "ModifyCategory",
         "responses": {
           "200": {
@@ -3674,9 +3643,60 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/repos": {
+    "/api/RepoManager.CreateRepo": {
+      "post": {
+        "operationId": "CreateRepo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRepoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRepoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RepoManager"
+        ]
+      }
+    },
+    "/api/RepoManager.DeleteRepos": {
+      "post": {
+        "operationId": "DeleteRepos",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteReposResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteReposRequest"
+            }
+          }
+        ],
+        "tags": [
+          "RepoManager"
+        ]
+      }
+    },
+    "/api/RepoManager.DescribeRepos": {
       "get": {
-        "summary": "describe repos with filter",
         "operationId": "DescribeRepos",
         "responses": {
           "200": {
@@ -3839,59 +3859,10 @@ var Files = map[string]string{
         "tags": [
           "RepoManager"
         ]
-      },
-      "delete": {
-        "summary": "delete repos",
-        "operationId": "DeleteRepos",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteReposResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteReposRequest"
-            }
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      },
+      }
+    },
+    "/api/RepoManager.ModifyRepo": {
       "post": {
-        "summary": "create repo",
-        "operationId": "CreateRepo",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateRepoResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateRepoRequest"
-            }
-          }
-        ],
-        "tags": [
-          "RepoManager"
-        ]
-      },
-      "patch": {
-        "summary": "modify repo",
         "operationId": "ModifyRepo",
         "responses": {
           "200": {
@@ -3916,9 +3887,8 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/repos/validate": {
+    "/api/RepoManager.ValidateRepo": {
       "get": {
-        "summary": "validate repo",
         "operationId": "ValidateRepo",
         "responses": {
           "200": {
@@ -3953,9 +3923,8 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/repo_events": {
+    "/api/RepoIndexer.DescribeRepoEvents": {
       "get": {
-        "summary": "describe repo events",
         "operationId": "DescribeRepoEvents",
         "responses": {
           "200": {
@@ -4026,9 +3995,8 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/repos/index": {
+    "/api/RepoIndexer.IndexRepo": {
       "post": {
-        "summary": "start a index repo event",
         "operationId": "IndexRepo",
         "responses": {
           "200": {
@@ -4634,7 +4602,7 @@ var Files = map[string]string{
         "tos": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "create_time": {
@@ -4676,7 +4644,7 @@ var Files = map[string]string{
         "app_id": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "name": {
@@ -5613,7 +5581,7 @@ var Files = map[string]string{
         "locale": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "create_time": {
@@ -5854,7 +5822,7 @@ var Files = map[string]string{
           "type": "boolean",
           "format": "boolean"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "global_uuid": {
@@ -6014,7 +5982,7 @@ var Files = map[string]string{
         "external_cluster_id": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         }
       }
@@ -6087,7 +6055,7 @@ var Files = map[string]string{
           "type": "integer",
           "format": "int64"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "global_server_id": {
@@ -6491,7 +6459,7 @@ var Files = map[string]string{
         "pub_key": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "create_time": {
@@ -7373,7 +7341,7 @@ var Files = map[string]string{
           "type": "integer",
           "format": "int64"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "provider": {
@@ -7481,7 +7449,7 @@ var Files = map[string]string{
         "status": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "description": {
@@ -7506,7 +7474,7 @@ var Files = map[string]string{
         "user_id": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "create_time": {
@@ -7773,7 +7741,7 @@ var Files = map[string]string{
         "visibility": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "providers": {
@@ -7906,7 +7874,7 @@ var Files = map[string]string{
         "repo_id": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "status": {
@@ -8182,7 +8150,7 @@ var Files = map[string]string{
         "zone": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "status": {
@@ -8216,7 +8184,7 @@ var Files = map[string]string{
         "runtime_credential_content": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "provider": {
@@ -8342,7 +8310,7 @@ var Files = map[string]string{
         "executor": {
           "type": "string"
         },
-        "owner": {
+        "owner_path": {
           "type": "string"
         },
         "target": {

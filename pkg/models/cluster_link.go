@@ -7,6 +7,7 @@ package models
 import (
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -15,6 +16,7 @@ type ClusterLink struct {
 	Name              string
 	ExternalClusterId string
 	Owner             string
+	OwnerPath         sender.OwnerPath
 }
 
 var ClusterLinkColumns = db.GetColumnsFromStruct(&ClusterLink{})
@@ -24,16 +26,18 @@ func ClusterLinkToPb(clusterLink *ClusterLink) *pb.ClusterLink {
 		ClusterId:         pbutil.ToProtoString(clusterLink.ClusterId),
 		Name:              pbutil.ToProtoString(clusterLink.Name),
 		ExternalClusterId: pbutil.ToProtoString(clusterLink.ExternalClusterId),
-		Owner:             pbutil.ToProtoString(clusterLink.Owner),
+		OwnerPath:         clusterLink.OwnerPath.ToProtoString(),
 	}
 }
 
 func PbToClusterLink(pbClusterLink *pb.ClusterLink) *ClusterLink {
+	ownerPath := sender.OwnerPath(pbClusterLink.GetOwnerPath().GetValue())
 	return &ClusterLink{
 		ClusterId:         pbClusterLink.GetClusterId().GetValue(),
 		Name:              pbClusterLink.GetName().GetValue(),
 		ExternalClusterId: pbClusterLink.GetExternalClusterId().GetValue(),
-		Owner:             pbClusterLink.GetOwner().GetValue(),
+		Owner:             ownerPath.Owner(),
+		OwnerPath:         ownerPath,
 	}
 }
 

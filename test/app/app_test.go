@@ -219,7 +219,8 @@ func testVersionLifeCycle(t *testing.T, versionId string) {
 	reviewAppVersionParams := app_manager.NewReviewAppVersionParams()
 	reviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
 		VersionID: versionId,
-	}).WithRole(constants.RoleIsv)
+		Role:      constants.RoleIsv,
+	})
 	_, err = client.AppManager.ReviewAppVersion(reviewAppVersionParams, nil)
 	require.NoError(t, err)
 
@@ -227,7 +228,8 @@ func testVersionLifeCycle(t *testing.T, versionId string) {
 	rejectAppVersionParams.WithBody(&models.OpenpitrixRejectAppVersionRequest{
 		VersionID: versionId,
 		Message:   "test message",
-	}).WithRole(constants.RoleIsv)
+		Role:      constants.RoleIsv,
+	})
 	_, err = client.AppManager.RejectAppVersion(rejectAppVersionParams, nil)
 
 	require.NoError(t, err)
@@ -238,42 +240,48 @@ func testVersionLifeCycle(t *testing.T, versionId string) {
 	reviewAppVersionParams = app_manager.NewReviewAppVersionParams()
 	reviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
 		VersionID: versionId,
-	}).WithRole(constants.RoleIsv)
+		Role:      constants.RoleIsv,
+	})
 	_, err = client.AppManager.ReviewAppVersion(reviewAppVersionParams, nil)
 	require.NoError(t, err)
 
 	passAppVersionParams := app_manager.NewPassAppVersionParams()
 	passAppVersionParams.WithBody(&models.OpenpitrixPassAppVersionRequest{
 		VersionID: versionId,
-	}).WithRole(constants.RoleIsv)
+		Role:      constants.RoleIsv,
+	})
 	_, err = client.AppManager.PassAppVersion(passAppVersionParams, nil)
 	require.NoError(t, err)
 
 	reviewAppVersionParams = app_manager.NewReviewAppVersionParams()
 	reviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
 		VersionID: versionId,
-	}).WithRole(constants.RoleBusinessAdmin)
+		Role:      constants.RoleBusinessAdmin,
+	})
 	_, err = client.AppManager.ReviewAppVersion(reviewAppVersionParams, nil)
 	require.NoError(t, err)
 
 	passAppVersionParams = app_manager.NewPassAppVersionParams()
 	passAppVersionParams.WithBody(&models.OpenpitrixPassAppVersionRequest{
 		VersionID: versionId,
-	}).WithRole(constants.RoleBusinessAdmin)
+		Role:      constants.RoleBusinessAdmin,
+	})
 	_, err = client.AppManager.PassAppVersion(passAppVersionParams, nil)
 	require.NoError(t, err)
 
 	reviewAppVersionParams = app_manager.NewReviewAppVersionParams()
 	reviewAppVersionParams.WithBody(&models.OpenpitrixReviewAppVersionRequest{
 		VersionID: versionId,
-	}).WithRole(constants.RoleDevelopAdmin)
+		Role:      constants.RoleDevelopAdmin,
+	})
 	_, err = client.AppManager.ReviewAppVersion(reviewAppVersionParams, nil)
 	require.NoError(t, err)
 
 	passAppVersionParams = app_manager.NewPassAppVersionParams()
 	passAppVersionParams.WithBody(&models.OpenpitrixPassAppVersionRequest{
 		VersionID: versionId,
-	}).WithRole(constants.RoleDevelopAdmin)
+		Role:      constants.RoleDevelopAdmin,
+	})
 	_, err = client.AppManager.PassAppVersion(passAppVersionParams, nil)
 	require.NoError(t, err)
 
