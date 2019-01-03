@@ -81,6 +81,7 @@ var AllCmd = []Cmd{
 	NewAttachKeyPairsCmd(),
 	NewCeaseClustersCmd(),
 	NewCreateClusterCmd(),
+	NewCreateDebugClusterCmd(),
 	NewCreateKeyPairCmd(),
 	NewDeleteClusterNodesCmd(),
 	NewDeleteClustersCmd(),
@@ -88,6 +89,7 @@ var AllCmd = []Cmd{
 	NewDescribeAppClustersCmd(),
 	NewDescribeClusterNodesCmd(),
 	NewDescribeClustersCmd(),
+	NewDescribeDebugClustersCmd(),
 	NewDescribeKeyPairsCmd(),
 	NewDescribeSubnetsCmd(),
 	NewDetachKeyPairsCmd(),
@@ -116,10 +118,14 @@ var AllCmd = []Cmd{
 	NewDescribeReposCmd(),
 	NewModifyRepoCmd(),
 	NewValidateRepoCmd(),
+	NewCreateDebugRuntimeCmd(),
+	NewCreateDebugRuntimeCredentialCmd(),
 	NewCreateRuntimeCmd(),
 	NewCreateRuntimeCredentialCmd(),
 	NewDeleteRuntimeCredentialsCmd(),
 	NewDeleteRuntimesCmd(),
+	NewDescribeDebugRuntimeCredentialsCmd(),
+	NewDescribeDebugRuntimesCmd(),
 	NewDescribeRuntimeCredentialsCmd(),
 	NewDescribeRuntimeProviderZonesCmd(),
 	NewDescribeRuntimesCmd(),
@@ -2247,6 +2253,45 @@ func (c *CreateClusterCmd) Run(out Out) error {
 	return nil
 }
 
+type CreateDebugClusterCmd struct {
+	*models.OpenpitrixCreateClusterRequest
+}
+
+func NewCreateDebugClusterCmd() Cmd {
+	cmd := &CreateDebugClusterCmd{}
+	cmd.OpenpitrixCreateClusterRequest = &models.OpenpitrixCreateClusterRequest{}
+	return cmd
+}
+
+func (*CreateDebugClusterCmd) GetActionName() string {
+	return "CreateDebugCluster"
+}
+
+func (c *CreateDebugClusterCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AdvancedParam, "advanced_param", "", []string{}, "")
+	f.StringVarP(&c.AppID, "app_id", "", "", "")
+	f.StringVarP(&c.Conf, "conf", "", "", "")
+	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *CreateDebugClusterCmd) Run(out Out) error {
+	params := cluster_manager.NewCreateDebugClusterParams()
+	params.WithBody(c.OpenpitrixCreateClusterRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ClusterManager.CreateDebugCluster(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type CreateKeyPairCmd struct {
 	*models.OpenpitrixCreateKeyPairRequest
 }
@@ -2542,6 +2587,65 @@ func (c *DescribeClustersCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.ClusterManager.DescribeClusters(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeDebugClustersCmd struct {
+	*cluster_manager.DescribeDebugClustersParams
+}
+
+func NewDescribeDebugClustersCmd() Cmd {
+	return &DescribeDebugClustersCmd{
+		cluster_manager.NewDescribeDebugClustersParams(),
+	}
+}
+
+func (*DescribeDebugClustersCmd) GetActionName() string {
+	return "DescribeDebugClusters"
+}
+
+func (c *DescribeDebugClustersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
+	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "")
+	c.ClusterType = new(string)
+	f.StringVarP(c.ClusterType, "cluster_type", "", "", "")
+	c.CreatedDate = new(int64)
+	f.Int64VarP(c.CreatedDate, "created_date", "", 0, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.ExternalClusterID = new(string)
+	f.StringVarP(c.ExternalClusterID, "external_cluster_id", "", "", "")
+	f.StringSliceVarP(&c.FrontgateID, "frontgate_id", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
+	c.WithDetail = new(bool)
+	f.BoolVarP(c.WithDetail, "with_detail", "", false, "")
+}
+
+func (c *DescribeDebugClustersCmd) Run(out Out) error {
+	params := c.DescribeDebugClustersParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ClusterManager.DescribeDebugClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -3674,6 +3778,84 @@ func (c *ValidateRepoCmd) Run(out Out) error {
 	return nil
 }
 
+type CreateDebugRuntimeCmd struct {
+	*models.OpenpitrixCreateRuntimeRequest
+}
+
+func NewCreateDebugRuntimeCmd() Cmd {
+	cmd := &CreateDebugRuntimeCmd{}
+	cmd.OpenpitrixCreateRuntimeRequest = &models.OpenpitrixCreateRuntimeRequest{}
+	return cmd
+}
+
+func (*CreateDebugRuntimeCmd) GetActionName() string {
+	return "CreateDebugRuntime"
+}
+
+func (c *CreateDebugRuntimeCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.Provider, "provider", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", "", "")
+	f.StringVarP(&c.Zone, "zone", "", "", "")
+}
+
+func (c *CreateDebugRuntimeCmd) Run(out Out) error {
+	params := runtime_manager.NewCreateDebugRuntimeParams()
+	params.WithBody(c.OpenpitrixCreateRuntimeRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.CreateDebugRuntime(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateDebugRuntimeCredentialCmd struct {
+	*models.OpenpitrixCreateRuntimeCredentialRequest
+}
+
+func NewCreateDebugRuntimeCredentialCmd() Cmd {
+	cmd := &CreateDebugRuntimeCredentialCmd{}
+	cmd.OpenpitrixCreateRuntimeCredentialRequest = &models.OpenpitrixCreateRuntimeCredentialRequest{}
+	return cmd
+}
+
+func (*CreateDebugRuntimeCredentialCmd) GetActionName() string {
+	return "CreateDebugRuntimeCredential"
+}
+
+func (c *CreateDebugRuntimeCredentialCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.Provider, "provider", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialContent, "runtime_credential_content", "", "", "")
+	f.StringVarP(&c.RuntimeURL, "runtime_url", "", "", "")
+}
+
+func (c *CreateDebugRuntimeCredentialCmd) Run(out Out) error {
+	params := runtime_manager.NewCreateDebugRuntimeCredentialParams()
+	params.WithBody(c.OpenpitrixCreateRuntimeCredentialRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.CreateDebugRuntimeCredential(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type CreateRuntimeCmd struct {
 	*models.OpenpitrixCreateRuntimeRequest
 }
@@ -3813,6 +3995,94 @@ func (c *DeleteRuntimesCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.RuntimeManager.DeleteRuntimes(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeDebugRuntimeCredentialsCmd struct {
+	*runtime_manager.DescribeDebugRuntimeCredentialsParams
+}
+
+func NewDescribeDebugRuntimeCredentialsCmd() Cmd {
+	return &DescribeDebugRuntimeCredentialsCmd{
+		runtime_manager.NewDescribeDebugRuntimeCredentialsParams(),
+	}
+}
+
+func (*DescribeDebugRuntimeCredentialsCmd) GetActionName() string {
+	return "DescribeDebugRuntimeCredentials"
+}
+
+func (c *DescribeDebugRuntimeCredentialsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
+	f.StringSliceVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+}
+
+func (c *DescribeDebugRuntimeCredentialsCmd) Run(out Out) error {
+	params := c.DescribeDebugRuntimeCredentialsParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.DescribeDebugRuntimeCredentials(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeDebugRuntimesCmd struct {
+	*runtime_manager.DescribeDebugRuntimesParams
+}
+
+func NewDescribeDebugRuntimesCmd() Cmd {
+	return &DescribeDebugRuntimesCmd{
+		runtime_manager.NewDescribeDebugRuntimesParams(),
+	}
+}
+
+func (*DescribeDebugRuntimesCmd) GetActionName() string {
+	return "DescribeDebugRuntimes"
+}
+
+func (c *DescribeDebugRuntimesCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
+	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+}
+
+func (c *DescribeDebugRuntimesCmd) Run(out Out) error {
+	params := c.DescribeDebugRuntimesParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.DescribeDebugRuntimes(params, nil)
 	if err != nil {
 		return err
 	}

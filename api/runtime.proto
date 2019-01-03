@@ -25,6 +25,7 @@ message RuntimeCredential {
 	google.protobuf.StringValue status = 8;
 	google.protobuf.Timestamp create_time = 9;
 	google.protobuf.Timestamp status_time = 10;
+	google.protobuf.BoolValue debug = 11;
 }
 
 message Runtime {
@@ -38,6 +39,7 @@ message Runtime {
 	google.protobuf.StringValue status = 8;
 	google.protobuf.Timestamp create_time = 9;
 	google.protobuf.Timestamp status_time = 10;
+	google.protobuf.BoolValue debug = 11;
 }
 
 message RuntimeDetail {
@@ -184,6 +186,15 @@ service RuntimeManager {
 			body: "*"
 		};
 	}
+	rpc CreateDebugRuntime (CreateRuntimeRequest) returns (CreateRuntimeResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create debug runtime"
+		};
+		option (google.api.http) = {
+			post: "/v1/debug_runtimes"
+			body: "*"
+		};
+	}
 
 	rpc DescribeRuntimeDetails (DescribeRuntimesRequest) returns (DescribeRuntimeDetailsResponse);
 	rpc DescribeRuntimes (DescribeRuntimesRequest) returns (DescribeRuntimesResponse) {
@@ -192,6 +203,15 @@ service RuntimeManager {
 		};
 		option (google.api.http) = {
 			get: "/v1/runtimes"
+		};
+	}
+
+	rpc DescribeDebugRuntimes (DescribeRuntimesRequest) returns (DescribeRuntimesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe debug runtime"
+		};
+		option (google.api.http) = {
+			get: "/v1/debug_runtimes"
 		};
 	}
 
@@ -225,12 +245,31 @@ service RuntimeManager {
 		};
 	}
 
+	rpc CreateDebugRuntimeCredential (CreateRuntimeCredentialRequest) returns (CreateRuntimeCredentialResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create debug runtime credential"
+		};
+		option (google.api.http) = {
+			post: "/v1/debug_runtimes/credentials"
+			body: "*"
+		};
+	}
+
 	rpc DescribeRuntimeCredentials (DescribeRuntimeCredentialsRequest) returns (DescribeRuntimeCredentialsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "describe runtime credentials"
 		};
 		option (google.api.http) = {
 			get: "/v1/runtimes/credentials"
+		};
+	}
+
+	rpc DescribeDebugRuntimeCredentials (DescribeRuntimeCredentialsRequest) returns (DescribeRuntimeCredentialsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe debug runtime credentials"
+		};
+		option (google.api.http) = {
+			get: "/v1/debug_runtimes/credentials"
 		};
 	}
 

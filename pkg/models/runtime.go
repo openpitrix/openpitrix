@@ -36,13 +36,14 @@ type Runtime struct {
 	Owner               string
 	OwnerPath           sender.OwnerPath
 	Status              string
+	Debug               bool
 	CreateTime          time.Time
 	StatusTime          time.Time
 }
 
 var RuntimeColumns = db.GetColumnsFromStruct(&Runtime{})
 
-func NewRuntime(runtimeId, name, description, provider, runtimeCredentialId, zone string, ownerPath sender.OwnerPath) *Runtime {
+func NewRuntime(runtimeId, name, description, provider, runtimeCredentialId, zone string, ownerPath sender.OwnerPath, debug bool) *Runtime {
 	if len(runtimeId) == 0 {
 		runtimeId = NewRuntimeId()
 	}
@@ -58,6 +59,7 @@ func NewRuntime(runtimeId, name, description, provider, runtimeCredentialId, zon
 		Status:              constants.StatusActive,
 		CreateTime:          time.Now(),
 		StatusTime:          time.Now(),
+		Debug:               debug,
 	}
 }
 
@@ -71,6 +73,7 @@ func RuntimeToPb(runtime *Runtime) *pb.Runtime {
 	pbRuntime.RuntimeCredentialId = pbutil.ToProtoString(runtime.RuntimeCredentialId)
 	pbRuntime.OwnerPath = runtime.OwnerPath.ToProtoString()
 	pbRuntime.Status = pbutil.ToProtoString(runtime.Status)
+	pbRuntime.Debug = pbutil.ToProtoBool(runtime.Debug)
 	pbRuntime.CreateTime = pbutil.ToProtoTimestamp(runtime.CreateTime)
 	pbRuntime.StatusTime = pbutil.ToProtoTimestamp(runtime.StatusTime)
 	return &pbRuntime
@@ -88,6 +91,7 @@ func PbToRuntime(pbRuntime *pb.Runtime) *Runtime {
 	runtime.OwnerPath = ownerPath
 	runtime.Owner = ownerPath.Owner()
 	runtime.Status = pbRuntime.GetStatus().GetValue()
+	runtime.Debug = pbRuntime.GetDebug().GetValue()
 	runtime.CreateTime = pbutil.FromProtoTimestamp(pbRuntime.GetCreateTime())
 	runtime.StatusTime = pbutil.FromProtoTimestamp(pbRuntime.GetStatusTime())
 	return &runtime

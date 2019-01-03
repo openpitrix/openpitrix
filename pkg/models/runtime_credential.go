@@ -27,6 +27,7 @@ type RuntimeCredential struct {
 	OwnerPath                sender.OwnerPath
 	Provider                 string
 	Status                   string
+	Debug                    bool
 	CreateTime               time.Time
 	StatusTime               time.Time
 }
@@ -37,7 +38,7 @@ func NewRuntimeCredentialId() string {
 
 var RuntimeCredentialColumns = db.GetColumnsFromStruct(&RuntimeCredential{})
 
-func NewRuntimeCredential(runtimeCredentialId, name, description, runtimeUrl, runtimeCredentialContent, provider string, ownerPath sender.OwnerPath) *RuntimeCredential {
+func NewRuntimeCredential(runtimeCredentialId, name, description, runtimeUrl, runtimeCredentialContent, provider string, ownerPath sender.OwnerPath, debug bool) *RuntimeCredential {
 	if len(runtimeCredentialId) == 0 {
 		runtimeCredentialId = NewRuntimeCredentialId()
 	}
@@ -53,6 +54,7 @@ func NewRuntimeCredential(runtimeCredentialId, name, description, runtimeUrl, ru
 		Status:                   constants.StatusActive,
 		CreateTime:               time.Now(),
 		StatusTime:               time.Now(),
+		Debug:                    debug,
 	}
 }
 
@@ -68,6 +70,7 @@ func RuntimeCredentialToPb(runtimeCredential *RuntimeCredential) *pb.RuntimeCred
 	pbRuntimeCredential.Status = pbutil.ToProtoString(runtimeCredential.Status)
 	pbRuntimeCredential.CreateTime = pbutil.ToProtoTimestamp(runtimeCredential.CreateTime)
 	pbRuntimeCredential.StatusTime = pbutil.ToProtoTimestamp(runtimeCredential.StatusTime)
+	pbRuntimeCredential.Debug = pbutil.ToProtoBool(runtimeCredential.Debug)
 	return &pbRuntimeCredential
 }
 
@@ -83,6 +86,7 @@ func PbToRuntimeCredential(pbRuntimeCredential *pb.RuntimeCredential) *RuntimeCr
 	runtimeCredential.OwnerPath = ownerPath
 	runtimeCredential.Owner = ownerPath.Owner()
 	runtimeCredential.Status = pbRuntimeCredential.GetStatus().GetValue()
+	runtimeCredential.Debug = pbRuntimeCredential.GetDebug().GetValue()
 	runtimeCredential.CreateTime = pbutil.FromProtoTimestamp(pbRuntimeCredential.CreateTime)
 	runtimeCredential.StatusTime = pbutil.FromProtoTimestamp(pbRuntimeCredential.StatusTime)
 	return &runtimeCredential

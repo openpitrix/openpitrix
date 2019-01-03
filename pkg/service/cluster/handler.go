@@ -617,6 +617,14 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 }
 
 func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest) (*pb.CreateClusterResponse, error) {
+	return p.createCluster(ctx, req, false)
+}
+
+func (p *Server) CreateDebugCluster(ctx context.Context, req *pb.CreateClusterRequest) (*pb.CreateClusterResponse, error) {
+	return p.createCluster(ctx, req, true)
+}
+
+func (p *Server) createCluster(ctx context.Context, req *pb.CreateClusterRequest, debug bool) (*pb.CreateClusterResponse, error) {
 	s := ctxutil.GetSender(ctx)
 
 	appId := req.GetAppId().GetValue()
@@ -652,6 +660,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	clusterWrapper.Cluster.OwnerPath = s.GetOwnerPath()
 	clusterWrapper.Cluster.ClusterId = clusterId
 	clusterWrapper.Cluster.ClusterType = constants.NormalClusterType
+	clusterWrapper.Cluster.Debug = debug
 
 	if plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 		err = CheckVmBasedProvider(ctx, runtime, providerInterface, clusterWrapper)
@@ -1373,7 +1382,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	err = providerInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
 		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] conf [%s] failed: %+v",
-			versionId, runtime, conf, err)
+			versionId, runtime.RuntimeId, conf, err)
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		}
@@ -1434,6 +1443,14 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 }
 
 func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersRequest) (*pb.DescribeClustersResponse, error) {
+	return p.describeClusters(ctx, req, false)
+}
+
+func (p *Server) DescribeDebugClusters(ctx context.Context, req *pb.DescribeClustersRequest) (*pb.DescribeClustersResponse, error) {
+	return p.describeClusters(ctx, req, true)
+}
+
+func (p *Server) describeClusters(ctx context.Context, req *pb.DescribeClustersRequest, debug bool) (*pb.DescribeClustersResponse, error) {
 	var clusters []*models.Cluster
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
@@ -1448,6 +1465,7 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		Limit(limit).
 		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableCluster))
+	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	createdHour := int(req.GetCreatedDate().GetValue()) * 24
 	if createdHour > 0 {

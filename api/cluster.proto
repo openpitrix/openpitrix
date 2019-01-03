@@ -301,11 +301,12 @@ message Cluster {
 	google.protobuf.Timestamp status_time = 20;
 	google.protobuf.StringValue additional_info = 21;
 	google.protobuf.StringValue env = 22;
-	repeated ClusterNode cluster_node_set = 23;
-	repeated ClusterRole cluster_role_set = 24;
-	repeated ClusterLink cluster_link_set = 25;
-	repeated ClusterCommon cluster_common_set = 26;
-	repeated ClusterLoadbalancer cluster_loadbalancer_set = 27;
+	google.protobuf.BoolValue debug = 23;
+	repeated ClusterNode cluster_node_set = 24;
+	repeated ClusterRole cluster_role_set = 25;
+	repeated ClusterLink cluster_link_set = 26;
+	repeated ClusterCommon cluster_common_set = 27;
+	repeated ClusterLoadbalancer cluster_loadbalancer_set = 28;
 }
 
 message DescribeClustersRequest {
@@ -570,6 +571,15 @@ service ClusterManager {
 			body: "*"
 		};
 	}
+	rpc CreateDebugCluster (CreateClusterRequest) returns (CreateClusterResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create debug cluster"
+		};
+		option (google.api.http) = {
+			post: "/v1/debug_clusters/create"
+			body: "*"
+		};
+	}
 	rpc ModifyCluster (ModifyClusterRequest) returns (ModifyClusterResponse);
 	rpc ModifyClusterNode (ModifyClusterNodeRequest) returns (ModifyClusterNodeResponse);
 	rpc ModifyClusterAttributes (ModifyClusterAttributesRequest) returns (ModifyClusterAttributesResponse) {
@@ -661,6 +671,14 @@ service ClusterManager {
 		};
 		option (google.api.http) = {
 			get: "/v1/clusters"
+		};
+	}
+	rpc DescribeDebugClusters (DescribeClustersRequest) returns (DescribeClustersResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe debug clusters"
+		};
+		option (google.api.http) = {
+			get: "/v1/debug_clusters"
 		};
 	}
 	rpc DescribeAppClusters (DescribeAppClustersRequest) returns (DescribeAppClustersResponse) {
