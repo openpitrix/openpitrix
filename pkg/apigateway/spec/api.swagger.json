@@ -5998,6 +5998,9 @@
         },
         "description": {
           "type": "string"
+        },
+        "icon": {
+          "type": "string"
         }
       }
     },
@@ -6012,6 +6015,10 @@
         },
         "description": {
           "type": "string"
+        },
+        "icon": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -6074,6 +6081,10 @@
         },
         "description": {
           "type": "string"
+        },
+        "icon": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

@@ -6007,6 +6007,9 @@ var Files = map[string]string{
         },
         "description": {
           "type": "string"
+        },
+        "icon": {
+          "type": "string"
         }
       }
     },
@@ -6021,6 +6024,10 @@ var Files = map[string]string{
         },
         "description": {
           "type": "string"
+        },
+        "icon": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },
@@ -6083,6 +6090,10 @@ var Files = map[string]string{
         },
         "description": {
           "type": "string"
+        },
+        "icon": {
+          "type": "string",
+          "format": "byte"
         }
       }
     },

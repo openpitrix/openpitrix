@@ -21,6 +21,7 @@ message Category {
 	google.protobuf.Timestamp create_time = 5;
 	google.protobuf.Timestamp update_time = 6;
 	google.protobuf.StringValue description = 7;
+	google.protobuf.StringValue icon = 8;
 }
 
 message DescribeCategoriesRequest {
@@ -44,6 +45,7 @@ message CreateCategoryRequest {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue locale = 3;
 	google.protobuf.StringValue description = 4;
+	google.protobuf.BytesValue icon = 5;
 }
 
 message CreateCategoryResponse {
@@ -55,6 +57,7 @@ message ModifyCategoryRequest {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue locale = 3;
 	google.protobuf.StringValue description = 4;
+	google.protobuf.BytesValue icon = 5;
 }
 
 message ModifyCategoryResponse {

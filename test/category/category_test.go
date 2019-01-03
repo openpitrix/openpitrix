@@ -7,8 +7,10 @@
 package category
 
 import (
+	"io/ioutil"
 	"testing"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/stretchr/testify/require"
 
 	"openpitrix.io/openpitrix/test/client/category_manager"
@@ -17,6 +19,18 @@ import (
 )
 
 var clientConfig = testutil.GetClientConfig()
+
+func getTestIcon(t *testing.T) strfmt.Base64 {
+	b, err := ioutil.ReadFile("testdata/logo.png")
+	require.NoError(t, err)
+	return strfmt.Base64(b)
+}
+
+func getTestIcon1(t *testing.T) strfmt.Base64 {
+	b, err := ioutil.ReadFile("testdata/logo1.png")
+	require.NoError(t, err)
+	return strfmt.Base64(b)
+}
 
 func TestCategory(t *testing.T) {
 	client := testutil.GetClient(clientConfig)
@@ -45,6 +59,7 @@ func TestCategory(t *testing.T) {
 		&models.OpenpitrixCreateCategoryRequest{
 			Name:   testCategoryName,
 			Locale: testCategoryLocale,
+			Icon:   getTestIcon(t),
 		})
 	createResp, err := client.CategoryManager.CreateCategory(createParams, nil)
 	require.NoError(t, err)
@@ -56,6 +71,7 @@ func TestCategory(t *testing.T) {
 		&models.OpenpitrixModifyCategoryRequest{
 			CategoryID: categoryId,
 			Name:       testCategoryName2,
+			Icon:       getTestIcon1(t),
 		})
 	modifyResp, err := client.CategoryManager.ModifyCategory(modifyParams, nil)
 	require.NoError(t, err)

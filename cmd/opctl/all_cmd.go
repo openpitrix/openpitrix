@@ -1950,6 +1950,7 @@ func (c *GetAttachmentCmd) Run(out Out) error {
 
 type CreateCategoryCmd struct {
 	*models.OpenpitrixCreateCategoryRequest
+	IconPath string
 }
 
 func NewCreateCategoryCmd() Cmd {
@@ -1964,11 +1965,19 @@ func (*CreateCategoryCmd) GetActionName() string {
 
 func (c *CreateCategoryCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. ")
 	f.StringVarP(&c.Locale, "locale", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 }
 
 func (c *CreateCategoryCmd) Run(out Out) error {
+	if c.IconPath != "" {
+		content, err := ioutil.ReadFile(c.IconPath)
+		if err != nil {
+			return err
+		}
+		c.Icon = strfmt.Base64(content)
+	}
 	params := category_manager.NewCreateCategoryParams()
 	params.WithBody(c.OpenpitrixCreateCategoryRequest)
 
@@ -2069,6 +2078,7 @@ func (c *DescribeCategoriesCmd) Run(out Out) error {
 
 type ModifyCategoryCmd struct {
 	*models.OpenpitrixModifyCategoryRequest
+	IconPath string
 }
 
 func NewModifyCategoryCmd() Cmd {
@@ -2084,11 +2094,19 @@ func (*ModifyCategoryCmd) GetActionName() string {
 func (c *ModifyCategoryCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. ")
 	f.StringVarP(&c.Locale, "locale", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 }
 
 func (c *ModifyCategoryCmd) Run(out Out) error {
+	if c.IconPath != "" {
+		content, err := ioutil.ReadFile(c.IconPath)
+		if err != nil {
+			return err
+		}
+		c.Icon = strfmt.Base64(content)
+	}
 	params := category_manager.NewModifyCategoryParams()
 	params.WithBody(c.OpenpitrixModifyCategoryRequest)
 

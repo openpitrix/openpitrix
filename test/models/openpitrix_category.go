@@ -25,6 +25,9 @@ type OpenpitrixCategory struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// icon
+	Icon string `json:"icon,omitempty"`
+
 	// locale
 	Locale string `json:"locale,omitempty"`
 
