@@ -208,7 +208,7 @@ func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, p
 		Zone:      []string{clusterWrapper.Cluster.Zone},
 	})
 	if err != nil {
-		logger.Error(ctx, "Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
+		logger.Error(ctx, "Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime.RuntimeId)
 		return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
 	}
 	vpcId := ""

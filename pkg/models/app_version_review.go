@@ -7,6 +7,7 @@ package models
 import (
 	"database/sql/driver"
 	"encoding/json"
+	"sort"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/db"
@@ -29,6 +30,16 @@ type AppVersionReviewPhase struct {
 	StatusTime time.Time
 }
 type AppVersionReviewPhases map[string]AppVersionReviewPhase
+
+func (p AppVersionReviewPhases) GetMaxStatusTime() int64 {
+	maxTime := int64(0)
+	for _, phase := range p {
+		if phase.StatusTime.Unix() > maxTime {
+			maxTime = phase.StatusTime.Unix()
+		}
+	}
+	return maxTime
+}
 
 func (p *AppVersionReviewPhases) Scan(value interface{}) error {
 	if value == nil {
@@ -63,6 +74,21 @@ type AppVersionReview struct {
 	Owner     string
 	Status    string
 	Phase     AppVersionReviewPhases
+}
+
+type AppVersionReviews []*AppVersionReview
+
+func (p AppVersionReviews) Len() int {
+	return len(p)
+}
+
+// desc
+func (p AppVersionReviews) Less(i, j int) bool {
+	return p[i].Phase.GetMaxStatusTime() > p[j].Phase.GetMaxStatusTime()
+}
+
+func (p AppVersionReviews) Swap(i, j int) {
+	p[i], p[j] = p[j], p[i]
 }
 
 func (avr *AppVersionReview) UpdatePhase(role, status, operator, message string) {
@@ -121,8 +147,9 @@ func AppVersionReviewToPb(versionReview *AppVersionReview) *pb.AppVersionReview 
 	return &pbAppVersionReview
 }
 
-func AppVersionReviewsToPbs(versionAudits []*AppVersionReview) (pbAppVersionReviews []*pb.AppVersionReview) {
-	for _, appVersionAudit := range versionAudits {
+func AppVersionReviewsToPbs(versionReviews AppVersionReviews) (pbAppVersionReviews []*pb.AppVersionReview) {
+	sort.Sort(versionReviews)
+	for _, appVersionAudit := range versionReviews {
 		pbAppVersionReviews = append(pbAppVersionReviews, AppVersionReviewToPb(appVersionAudit))
 	}
 	return

@@ -1,4 +1,5 @@
 - action: ChangePassword
+  request: ChangePasswordRequest
   service: AccountManager
   body:
     new_password:
@@ -6,6 +7,7 @@
     reset_id:
       type: string
 - action: CreateGroup
+  request: CreateGroupRequest
   description: group
   service: AccountManager
   body:
@@ -14,6 +16,7 @@
     name:
       type: string
 - action: CreatePasswordReset
+  request: CreatePasswordResetRequest
   service: AccountManager
   body:
     password:
@@ -21,6 +24,7 @@
     user_id:
       type: string
 - action: CreateUser
+  request: CreateUserRequest
   description: admin permission
   service: AccountManager
   body:
@@ -33,16 +37,19 @@
     role:
       type: string
 - action: DeleteGroups
+  request: DeleteGroupsRequest
   service: AccountManager
   body:
     group_id:
       type: '[]string'
 - action: DeleteUsers
+  request: DeleteUsersRequest
   service: AccountManager
   body:
     user_id:
       type: '[]string'
 - action: DescribeGroups
+  request: DescribeGroupsRequest
   service: AccountManager
   query:
     group_id:
@@ -62,6 +69,7 @@
     user_id:
       type: '[]string'
 - action: DescribeUsers
+  request: DescribeUsersRequest
   service: AccountManager
   query:
     group_id:
@@ -83,11 +91,13 @@
     user_id:
       type: '[]string'
 - action: GetPasswordReset
+  request: GetPasswordResetRequest
   service: AccountManager
   path:
     reset_id:
       type: string
 - action: JoinGroup
+  request: JoinGroupRequest
   service: AccountManager
   body:
     group_id:
@@ -95,6 +105,7 @@
     user_id:
       type: '[]string'
 - action: LeaveGroup
+  request: LeaveGroupRequest
   service: AccountManager
   body:
     group_id:
@@ -102,6 +113,7 @@
     user_id:
       type: '[]string'
 - action: ModifyGroup
+  request: ModifyGroupRequest
   service: AccountManager
   body:
     description:
@@ -111,6 +123,7 @@
     name:
       type: string
 - action: ModifyUser
+  request: ModifyUserRequest
   service: AccountManager
   body:
     description:
@@ -126,6 +139,7 @@
     username:
       type: string
 - action: ValidateUserPassword
+  request: ValidateUserPasswordRequest
   service: AccountManager
   body:
     email:
@@ -133,11 +147,13 @@
     password:
       type: string
 - action: CancelAppVersion
+  request: CancelAppVersionRequest
   service: AppManager
   body:
     version_id:
       type: string
 - action: CreateApp
+  request: CreateAppRequest
   service: AppManager
   body:
     icon:
@@ -151,6 +167,7 @@
     version_type:
       type: string
 - action: CreateAppVersion
+  request: CreateAppVersionRequest
   service: AppManager
   body:
     app_id:
@@ -164,16 +181,19 @@
     type:
       type: string
 - action: DeleteAppVersion
+  request: DeleteAppVersionRequest
   service: AppManager
   body:
     version_id:
       type: string
 - action: DeleteApps
+  request: DeleteAppsRequest
   service: AppManager
   body:
     app_id:
       type: '[]string'
 - action: DescribeActiveAppVersions
+  request: DescribeActiveAppVersionsRequest
   service: AppManager
   query:
     app_id:
@@ -205,6 +225,7 @@
     version_id:
       type: '[]string'
 - action: DescribeActiveApps
+  request: DescribeActiveAppsRequest
   service: AppManager
   query:
     app_id:
@@ -234,6 +255,7 @@
     status:
       type: '[]string'
 - action: DescribeAppVersionAudits
+  request: DescribeAppVersionAuditsRequest
   service: AppManager
   query:
     app_id:
@@ -259,6 +281,7 @@
     version_id:
       type: string
 - action: DescribeAppVersionReviews
+  request: DescribeAppVersionReviewsRequest
   service: AppManager
   query:
     app_id:
@@ -282,6 +305,7 @@
     version_id:
       type: string
 - action: DescribeAppVersions
+  request: DescribeAppVersionsRequest
   service: AppManager
   query:
     app_id:
@@ -313,6 +337,7 @@
     version_id:
       type: '[]string'
 - action: DescribeApps
+  request: DescribeAppsRequest
   service: AppManager
   query:
     app_id:
@@ -342,13 +367,16 @@
     status:
       type: '[]string'
 - action: GetAppStatistics
+  request: GetAppStatisticsRequest
   service: AppManager
 - action: GetAppVersionPackage
+  request: GetAppVersionPackageRequest
   service: AppManager
   query:
     version_id:
       type: string
 - action: GetAppVersionPackageFiles
+  request: GetAppVersionPackageFilesRequest
   service: AppManager
   query:
     files:
@@ -356,6 +384,7 @@
     version_id:
       type: string
 - action: ModifyApp
+  request: ModifyAppRequest
   service: AppManager
   body:
     abstraction:
@@ -381,6 +410,7 @@
     tos:
       type: string
 - action: ModifyAppVersion
+  request: ModifyAppVersionRequest
   service: AppManager
   body:
     description:
@@ -394,6 +424,7 @@
     version_id:
       type: string
 - action: PassAppVersion
+  request: PassAppVersionRequest
   service: AppManager
   body:
     role:
@@ -401,11 +432,13 @@
     version_id:
       type: string
 - action: RecoverAppVersion
+  request: RecoverAppVersionRequest
   service: AppManager
   body:
     version_id:
       type: string
 - action: RejectAppVersion
+  request: RejectAppVersionRequest
   service: AppManager
   body:
     message:
@@ -415,11 +448,13 @@
     version_id:
       type: string
 - action: ReleaseAppVersion
+  request: ReleaseAppVersionRequest
   service: AppManager
   body:
     version_id:
       type: string
 - action: ReviewAppVersion
+  request: ReviewAppVersionRequest
   service: AppManager
   body:
     role:
@@ -427,16 +462,19 @@
     version_id:
       type: string
 - action: SubmitAppVersion
+  request: SubmitAppVersionRequest
   service: AppManager
   body:
     version_id:
       type: string
 - action: SuspendAppVersion
+  request: SuspendAppVersionRequest
   service: AppManager
   body:
     version_id:
       type: string
 - action: UploadAppAttachment
+  request: UploadAppAttachmentRequest
   service: AppManager
   body:
     app_id:
@@ -447,6 +485,7 @@
       type: integer
     type: {}
 - action: ValidatePackage
+  request: ValidatePackageRequest
   service: AppManager
   body:
     version_package:
@@ -454,6 +493,7 @@
     version_type:
       type: string
 - action: DescribeVendorVerifyInfos
+  request: DescribeVendorVerifyInfosRequest
   description: DescribeVendorVerifyInfos
   service: AppVendorManager
   query:
@@ -474,18 +514,21 @@
     user_id:
       type: '[]string'
 - action: GetVendorVerifyInfo
+  request: GetVendorVerifyInfoRequest
   description: GetVendorVerifyInfo
   service: AppVendorManager
   query:
     user_id:
       type: string
 - action: PassVendorVerifyInfo
+  request: PassVendorVerifyInfoRequest
   description: PassVendorVerifyInfo
   service: AppVendorManager
   body:
     user_id:
       type: string
 - action: RejectVendorVerifyInfo
+  request: RejectVendorVerifyInfoRequest
   description: RejectVendorVerifyInfo
   service: AppVendorManager
   body:
@@ -494,6 +537,7 @@
     user_id:
       type: string
 - action: SubmitVendorVerifyInfo
+  request: SubmitVendorVerifyInfoRequest
   description: SubmitVendorVerifyInfo
   service: AppVendorManager
   path:
@@ -521,6 +565,7 @@
     user_id:
       type: string
 - action: GetAttachment
+  request: GetAttachmentRequest
   description: get attachment
   service: AttachmentService
   path:
@@ -529,6 +574,7 @@
     filename:
       type: string
 - action: CreateCategory
+  request: CreateCategoryRequest
   service: CategoryManager
   body:
     description:
@@ -538,11 +584,13 @@
     name:
       type: string
 - action: DeleteCategories
+  request: DeleteCategoriesRequest
   service: CategoryManager
   body:
     category_id:
       type: '[]string'
 - action: DescribeCategories
+  request: DescribeCategoriesRequest
   service: CategoryManager
   query:
     category_id:
@@ -564,6 +612,7 @@
     sort_key:
       type: string
 - action: ModifyCategory
+  request: ModifyCategoryRequest
   service: CategoryManager
   body:
     category_id:
@@ -575,6 +624,7 @@
     name:
       type: string
 - action: AddClusterNodes
+  request: AddClusterNodesRequest
   description: add cluster nodes
   service: ClusterManager
   body:
@@ -587,6 +637,7 @@
     role:
       type: string
 - action: AttachKeyPairs
+  request: AttachKeyPairsRequest
   description: attach key pairs
   service: ClusterManager
   body:
@@ -595,6 +646,7 @@
     node_id:
       type: '[]string'
 - action: CeaseClusters
+  request: CeaseClustersRequest
   description: cease clusters
   service: ClusterManager
   body:
@@ -603,6 +655,7 @@
     cluster_id:
       type: '[]string'
 - action: CreateCluster
+  request: CreateClusterRequest
   description: create cluster
   service: ClusterManager
   body:
@@ -616,7 +669,23 @@
       type: string
     version_id:
       type: string
+- action: CreateDebugCluster
+  request: CreateClusterRequest
+  description: create debug cluster
+  service: ClusterManager
+  body:
+    advanced_param:
+      type: '[]string'
+    app_id:
+      type: string
+    conf:
+      type: string
+    runtime_id:
+      type: string
+    version_id:
+      type: string
 - action: CreateKeyPair
+  request: CreateKeyPairRequest
   description: create key pair
   service: ClusterManager
   body:
@@ -627,6 +696,7 @@
     pub_key:
       type: string
 - action: DeleteClusterNodes
+  request: DeleteClusterNodesRequest
   description: delete cluster nodes
   service: ClusterManager
   body:
@@ -637,6 +707,7 @@
     node_id:
       type: '[]string'
 - action: DeleteClusters
+  request: DeleteClustersRequest
   description: delete clusters
   service: ClusterManager
   body:
@@ -645,12 +716,14 @@
     cluster_id:
       type: '[]string'
 - action: DeleteKeyPairs
+  request: DeleteKeyPairsRequest
   description: delete key pairs
   service: ClusterManager
   body:
     key_pair_id:
       type: '[]string'
 - action: DescribeAppClusters
+  request: DescribeAppClustersRequest
   description: describe app clusters
   service: ClusterManager
   query:
@@ -677,6 +750,7 @@
     with_detail:
       type: boolean
 - action: DescribeClusterNodes
+  request: DescribeClusterNodesRequest
   description: describe cluster nodes
   service: ClusterManager
   query:
@@ -701,6 +775,7 @@
     status:
       type: '[]string'
 - action: DescribeClusters
+  request: DescribeClustersRequest
   description: describe clusters
   service: ClusterManager
   query:
@@ -738,7 +813,47 @@
       type: '[]string'
     with_detail:
       type: boolean
+- action: DescribeDebugClusters
+  request: DescribeDebugClustersRequest
+  description: describe debug clusters
+  service: ClusterManager
+  query:
+    app_id:
+      type: '[]string'
+    cluster_id:
+      type: '[]string'
+    cluster_type:
+      type: string
+    created_date:
+      type: int64
+    display_columns:
+      type: '[]string'
+    external_cluster_id:
+      type: string
+    frontgate_id:
+      type: '[]string'
+    limit:
+      type: int64
+    offset:
+      type: int64
+    owner:
+      type: '[]string'
+    reverse:
+      type: boolean
+    runtime_id:
+      type: '[]string'
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    version_id:
+      type: '[]string'
+    with_detail:
+      type: boolean
 - action: DescribeKeyPairs
+  request: DescribeKeyPairsRequest
   description: describe key pairs
   service: ClusterManager
   query:
@@ -761,6 +876,7 @@
     search_word:
       type: string
 - action: DescribeSubnets
+  request: DescribeSubnetsRequest
   description: describe subnets
   service: ClusterManager
   query:
@@ -779,6 +895,7 @@
     zone:
       type: '[]string'
 - action: DetachKeyPairs
+  request: DetachKeyPairsRequest
   description: detach key pairs
   service: ClusterManager
   body:
@@ -787,9 +904,11 @@
     node_id:
       type: '[]string'
 - action: GetClusterStatistics
+  request: GetClusterStatisticsRequest
   description: get cluster statistics
   service: ClusterManager
 - action: ModifyClusterAttributes
+  request: ModifyClusterAttributesRequest
   description: modify cluster attributes
   service: ClusterManager
   body:
@@ -800,6 +919,7 @@
     name:
       type: string
 - action: ModifyClusterNodeAttributes
+  request: ModifyClusterNodeAttributesRequest
   description: modify cluster node attributes
   service: ClusterManager
   body:
@@ -808,6 +928,7 @@
     node_id:
       type: string
 - action: RecoverClusters
+  request: RecoverClustersRequest
   description: recover clusters
   service: ClusterManager
   body:
@@ -816,6 +937,7 @@
     cluster_id:
       type: '[]string'
 - action: ResizeCluster
+  request: ResizeClusterRequest
   description: resize cluster
   service: ClusterManager
   body:
@@ -826,6 +948,7 @@
     role_resource:
       type: '[]'
 - action: RollbackCluster
+  request: RollbackClusterRequest
   description: rollback cluster
   service: ClusterManager
   body:
@@ -834,6 +957,7 @@
     cluster_id:
       type: string
 - action: StartClusters
+  request: StartClustersRequest
   description: start clusters
   service: ClusterManager
   body:
@@ -842,6 +966,7 @@
     cluster_id:
       type: '[]string'
 - action: StopClusters
+  request: StopClustersRequest
   description: stop clusters
   service: ClusterManager
   body:
@@ -850,6 +975,7 @@
     cluster_id:
       type: '[]string'
 - action: UpdateClusterEnv
+  request: UpdateClusterEnvRequest
   description: update cluster env
   service: ClusterManager
   body:
@@ -860,6 +986,7 @@
     env:
       type: string
 - action: UpgradeCluster
+  request: UpgradeClusterRequest
   description: upgrade cluster
   service: ClusterManager
   body:
@@ -870,6 +997,7 @@
     version_id:
       type: string
 - action: DescribeJobs
+  request: DescribeJobsRequest
   description: describe jobs with filter
   service: JobManager
   query:
@@ -902,6 +1030,7 @@
     version_id:
       type: string
 - action: CreateMarket
+  request: CreateMarketRequest
   description: create market
   service: MarketManager
   body:
@@ -912,12 +1041,14 @@
     visibility:
       type: string
 - action: DeleteMarkets
+  request: DeleteMarketsRequest
   description: delete markets
   service: MarketManager
   body:
     market_id:
       type: '[]string'
 - action: DescribeMarketUsers
+  request: DescribeMarketUsersRequest
   description: describe users with filter
   service: MarketManager
   query:
@@ -938,6 +1069,7 @@
     user_id:
       type: '[]string'
 - action: DescribeMarkets
+  request: DescribeMarketsRequest
   description: describe markets with filter
   service: MarketManager
   query:
@@ -964,6 +1096,7 @@
     visibility:
       type: '[]string'
 - action: ModifyMarket
+  request: ModifyMarketRequest
   description: modify market
   service: MarketManager
   body:
@@ -978,6 +1111,7 @@
     visibility:
       type: string
 - action: UserJoinMarket
+  request: UserJoinMarketRequest
   description: user join market
   service: MarketManager
   body:
@@ -986,6 +1120,7 @@
     user_id:
       type: '[]string'
 - action: UserLeaveMarket
+  request: UserLeaveMarketRequest
   description: user leave market
   service: MarketManager
   body:
@@ -994,6 +1129,7 @@
     user_id:
       type: '[]string'
 - action: DescribeRepoEvents
+  request: DescribeRepoEventsRequest
   service: RepoIndexer
   query:
     limit:
@@ -1009,11 +1145,13 @@
     status:
       type: '[]string'
 - action: IndexRepo
+  request: IndexRepoRequest
   service: RepoIndexer
   body:
     repo_id:
       type: string
 - action: CreateRepo
+  request: CreateRepoRequest
   service: RepoManager
   body:
     app_default_status:
@@ -1039,11 +1177,13 @@
     visibility:
       type: string
 - action: DeleteRepos
+  request: DeleteReposRequest
   service: RepoManager
   body:
     repo_id:
       type: '[]string'
 - action: DescribeRepos
+  request: DescribeReposRequest
   service: RepoManager
   query:
     app_default_status:
@@ -1083,6 +1223,7 @@
     visibility:
       type: '[]string'
 - action: ModifyRepo
+  request: ModifyRepoRequest
   service: RepoManager
   body:
     app_default_status:
@@ -1110,6 +1251,7 @@
     visibility:
       type: string
 - action: ValidateRepo
+  request: ValidateRepoRequest
   service: RepoManager
   query:
     credential:
@@ -1118,7 +1260,38 @@
       type: string
     url:
       type: string
+- action: CreateDebugRuntime
+  request: CreateRuntimeRequest
+  description: create debug runtime
+  service: RuntimeManager
+  body:
+    description:
+      type: string
+    name:
+      type: string
+    provider:
+      type: string
+    runtime_credential_id:
+      type: string
+    zone:
+      type: string
+- action: CreateDebugRuntimeCredential
+  request: CreateRuntimeCredentialRequest
+  description: create debug runtime credential
+  service: RuntimeManager
+  body:
+    description:
+      type: string
+    name:
+      type: string
+    provider:
+      type: string
+    runtime_credential_content:
+      type: string
+    runtime_url:
+      type: string
 - action: CreateRuntime
+  request: CreateRuntimeRequest
   description: create runtime
   service: RuntimeManager
   body:
@@ -1133,6 +1306,7 @@
     zone:
       type: string
 - action: CreateRuntimeCredential
+  request: CreateRuntimeCredentialRequest
   description: create runtime credential
   service: RuntimeManager
   body:
@@ -1147,18 +1321,63 @@
     runtime_url:
       type: string
 - action: DeleteRuntimeCredentials
+  request: DeleteRuntimeCredentialsRequest
   description: delete runtime credentials
   service: RuntimeManager
   body:
     runtime_credential_id:
       type: '[]string'
 - action: DeleteRuntimes
+  request: DeleteRuntimesRequest
   description: delete runtimes
   service: RuntimeManager
   body:
     runtime_id:
       type: '[]string'
+- action: DescribeDebugRuntimeCredentials
+  request: DescribeDebugRuntimeCredentialsRequest
+  description: describe debug runtime credentials
+  service: RuntimeManager
+  query:
+    display_columns:
+      type: '[]string'
+    limit:
+      type: int64
+    offset:
+      type: int64
+    owner:
+      type: '[]string'
+    provider:
+      type: '[]string'
+    runtime_credential_id:
+      type: '[]string'
+    search_word:
+      type: string
+    status:
+      type: '[]string'
+- action: DescribeDebugRuntimes
+  request: DescribeDebugRuntimesRequest
+  description: describe debug runtime
+  service: RuntimeManager
+  query:
+    display_columns:
+      type: '[]string'
+    limit:
+      type: int64
+    offset:
+      type: int64
+    owner:
+      type: '[]string'
+    provider:
+      type: '[]string'
+    runtime_id:
+      type: '[]string'
+    search_word:
+      type: string
+    status:
+      type: '[]string'
 - action: DescribeRuntimeCredentials
+  request: DescribeRuntimeCredentialsRequest
   description: describe runtime credentials
   service: RuntimeManager
   query:
@@ -1179,12 +1398,14 @@
     status:
       type: '[]string'
 - action: DescribeRuntimeProviderZones
+  request: DescribeRuntimeProviderZonesRequest
   description: describe runtime provider zones
   service: RuntimeManager
   query:
     runtime_credential_id:
       type: string
 - action: DescribeRuntimes
+  request: DescribeRuntimesRequest
   description: describe runtime
   service: RuntimeManager
   query:
@@ -1205,9 +1426,11 @@
     status:
       type: '[]string'
 - action: GetRuntimeStatistics
+  request: GetRuntimeStatisticsRequest
   description: get runtime statistics
   service: RuntimeManager
 - action: ModifyRuntime
+  request: ModifyRuntimeRequest
   description: modify runtime
   service: RuntimeManager
   body:
@@ -1220,6 +1443,7 @@
     runtime_id:
       type: string
 - action: ModifyRuntimeCredential
+  request: ModifyRuntimeCredentialRequest
   description: modify runtime credential
   service: RuntimeManager
   body:
@@ -1232,6 +1456,7 @@
     runtime_credential_id:
       type: string
 - action: ValidateRuntimeCredential
+  request: ValidateRuntimeCredentialRequest
   description: validate runtime credential
   service: RuntimeManager
   body:
@@ -1242,6 +1467,7 @@
     runtime_url:
       type: string
 - action: DescribeTasks
+  request: DescribeTasksRequest
   description: describe tasks with filter
   service: TaskManager
   query:
@@ -1268,12 +1494,14 @@
     task_id:
       type: '[]string'
 - action: RetryTasks
+  request: RetryTasksRequest
   description: retry tasks
   service: TaskManager
   body:
     task_id:
       type: '[]string'
 - action: CreateClient
+  request: CreateClientRequest
   service: TokenManager
   path:
     user_id:
@@ -1282,6 +1510,7 @@
     user_id:
       type: string
 - action: Token
+  request: TokenRequest
   service: TokenManager
   body:
     client_id:
