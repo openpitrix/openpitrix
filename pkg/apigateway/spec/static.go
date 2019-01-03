@@ -479,13 +479,21 @@ var Files = map[string]string{
             "name": "app_id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "version_id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "status",
@@ -582,13 +590,21 @@ var Files = map[string]string{
             "name": "app_id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "version_id",
             "in": "query",
             "required": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "review_id",
@@ -612,6 +628,16 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "reviewer",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5170,6 +5196,13 @@ var Files = map[string]string{
           "additionalProperties": {
             "$ref": "#/definitions/openpitrixAppVersionReviewPhase"
           }
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewer": {
+          "type": "string"
         }
       }
     },

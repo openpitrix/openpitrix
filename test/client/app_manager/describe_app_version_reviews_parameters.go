@@ -64,7 +64,7 @@ for the describe app version reviews operation typically these are written to a 
 type DescribeAppVersionReviewsParams struct {
 
 	/*AppID*/
-	AppID *string
+	AppID []string
 	/*DisplayColumns*/
 	DisplayColumns []string
 	/*Limit*/
@@ -75,6 +75,8 @@ type DescribeAppVersionReviewsParams struct {
 	Reverse *bool
 	/*ReviewID*/
 	ReviewID []string
+	/*Reviewer*/
+	Reviewer []string
 	/*SearchWord*/
 	SearchWord *string
 	/*SortKey*/
@@ -82,7 +84,7 @@ type DescribeAppVersionReviewsParams struct {
 	/*Status*/
 	Status []string
 	/*VersionID*/
-	VersionID *string
+	VersionID []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -123,13 +125,13 @@ func (o *DescribeAppVersionReviewsParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithAppID adds the appID to the describe app version reviews params
-func (o *DescribeAppVersionReviewsParams) WithAppID(appID *string) *DescribeAppVersionReviewsParams {
+func (o *DescribeAppVersionReviewsParams) WithAppID(appID []string) *DescribeAppVersionReviewsParams {
 	o.SetAppID(appID)
 	return o
 }
 
 // SetAppID adds the appId to the describe app version reviews params
-func (o *DescribeAppVersionReviewsParams) SetAppID(appID *string) {
+func (o *DescribeAppVersionReviewsParams) SetAppID(appID []string) {
 	o.AppID = appID
 }
 
@@ -188,6 +190,17 @@ func (o *DescribeAppVersionReviewsParams) SetReviewID(reviewID []string) {
 	o.ReviewID = reviewID
 }
 
+// WithReviewer adds the reviewer to the describe app version reviews params
+func (o *DescribeAppVersionReviewsParams) WithReviewer(reviewer []string) *DescribeAppVersionReviewsParams {
+	o.SetReviewer(reviewer)
+	return o
+}
+
+// SetReviewer adds the reviewer to the describe app version reviews params
+func (o *DescribeAppVersionReviewsParams) SetReviewer(reviewer []string) {
+	o.Reviewer = reviewer
+}
+
 // WithSearchWord adds the searchWord to the describe app version reviews params
 func (o *DescribeAppVersionReviewsParams) WithSearchWord(searchWord *string) *DescribeAppVersionReviewsParams {
 	o.SetSearchWord(searchWord)
@@ -222,13 +235,13 @@ func (o *DescribeAppVersionReviewsParams) SetStatus(status []string) {
 }
 
 // WithVersionID adds the versionID to the describe app version reviews params
-func (o *DescribeAppVersionReviewsParams) WithVersionID(versionID *string) *DescribeAppVersionReviewsParams {
+func (o *DescribeAppVersionReviewsParams) WithVersionID(versionID []string) *DescribeAppVersionReviewsParams {
 	o.SetVersionID(versionID)
 	return o
 }
 
 // SetVersionID adds the versionId to the describe app version reviews params
-func (o *DescribeAppVersionReviewsParams) SetVersionID(versionID *string) {
+func (o *DescribeAppVersionReviewsParams) SetVersionID(versionID []string) {
 	o.VersionID = versionID
 }
 
@@ -240,20 +253,12 @@ func (o *DescribeAppVersionReviewsParams) WriteToRequest(r runtime.ClientRequest
 	}
 	var res []error
 
-	if o.AppID != nil {
+	valuesAppID := o.AppID
 
-		// query param app_id
-		var qrAppID string
-		if o.AppID != nil {
-			qrAppID = *o.AppID
-		}
-		qAppID := qrAppID
-		if qAppID != "" {
-			if err := r.SetQueryParam("app_id", qAppID); err != nil {
-				return err
-			}
-		}
-
+	joinedAppID := swag.JoinByFormat(valuesAppID, "multi")
+	// query array param app_id
+	if err := r.SetQueryParam("app_id", joinedAppID...); err != nil {
+		return err
 	}
 
 	valuesDisplayColumns := o.DisplayColumns
@@ -320,6 +325,14 @@ func (o *DescribeAppVersionReviewsParams) WriteToRequest(r runtime.ClientRequest
 		return err
 	}
 
+	valuesReviewer := o.Reviewer
+
+	joinedReviewer := swag.JoinByFormat(valuesReviewer, "multi")
+	// query array param reviewer
+	if err := r.SetQueryParam("reviewer", joinedReviewer...); err != nil {
+		return err
+	}
+
 	if o.SearchWord != nil {
 
 		// query param search_word
@@ -360,20 +373,12 @@ func (o *DescribeAppVersionReviewsParams) WriteToRequest(r runtime.ClientRequest
 		return err
 	}
 
-	if o.VersionID != nil {
+	valuesVersionID := o.VersionID
 
-		// query param version_id
-		var qrVersionID string
-		if o.VersionID != nil {
-			qrVersionID = *o.VersionID
-		}
-		qVersionID := qrVersionID
-		if qVersionID != "" {
-			if err := r.SetQueryParam("version_id", qVersionID); err != nil {
-				return err
-			}
-		}
-
+	joinedVersionID := swag.JoinByFormat(valuesVersionID, "multi")
+	// query array param version_id
+	if err := r.SetQueryParam("version_id", joinedVersionID...); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

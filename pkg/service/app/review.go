@@ -6,6 +6,7 @@ package app
 
 import (
 	"context"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -145,10 +146,17 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 		reviewStatus = "dev-"
 	}
 
+	var reviewer = ""
+	if action == Review {
+		reviewer = operator
+	}
+
 	_, err = pi.Global().DB(ctx).
 		Update(constants.TableAppVersionReview).
 		Set(constants.ColumnStatus, reviewStatus+status).
+		Set(constants.ColumnStatusTime, time.Now()).
 		Set(constants.ColumnPhase, versionReview.Phase).
+		Set(constants.ColumnReviewer, reviewer).
 		Where(db.Eq(constants.ColumnReviewId, versionReview.ReviewId)).
 		Exec()
 	if err != nil {

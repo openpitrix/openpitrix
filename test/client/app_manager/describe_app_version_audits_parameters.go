@@ -64,7 +64,7 @@ for the describe app version audits operation typically these are written to a h
 type DescribeAppVersionAuditsParams struct {
 
 	/*AppID*/
-	AppID *string
+	AppID []string
 	/*DisplayColumns*/
 	DisplayColumns []string
 	/*Limit*/
@@ -84,7 +84,7 @@ type DescribeAppVersionAuditsParams struct {
 	/*Status*/
 	Status []string
 	/*VersionID*/
-	VersionID *string
+	VersionID []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -125,13 +125,13 @@ func (o *DescribeAppVersionAuditsParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithAppID adds the appID to the describe app version audits params
-func (o *DescribeAppVersionAuditsParams) WithAppID(appID *string) *DescribeAppVersionAuditsParams {
+func (o *DescribeAppVersionAuditsParams) WithAppID(appID []string) *DescribeAppVersionAuditsParams {
 	o.SetAppID(appID)
 	return o
 }
 
 // SetAppID adds the appId to the describe app version audits params
-func (o *DescribeAppVersionAuditsParams) SetAppID(appID *string) {
+func (o *DescribeAppVersionAuditsParams) SetAppID(appID []string) {
 	o.AppID = appID
 }
 
@@ -235,13 +235,13 @@ func (o *DescribeAppVersionAuditsParams) SetStatus(status []string) {
 }
 
 // WithVersionID adds the versionID to the describe app version audits params
-func (o *DescribeAppVersionAuditsParams) WithVersionID(versionID *string) *DescribeAppVersionAuditsParams {
+func (o *DescribeAppVersionAuditsParams) WithVersionID(versionID []string) *DescribeAppVersionAuditsParams {
 	o.SetVersionID(versionID)
 	return o
 }
 
 // SetVersionID adds the versionId to the describe app version audits params
-func (o *DescribeAppVersionAuditsParams) SetVersionID(versionID *string) {
+func (o *DescribeAppVersionAuditsParams) SetVersionID(versionID []string) {
 	o.VersionID = versionID
 }
 
@@ -253,20 +253,12 @@ func (o *DescribeAppVersionAuditsParams) WriteToRequest(r runtime.ClientRequest,
 	}
 	var res []error
 
-	if o.AppID != nil {
+	valuesAppID := o.AppID
 
-		// query param app_id
-		var qrAppID string
-		if o.AppID != nil {
-			qrAppID = *o.AppID
-		}
-		qAppID := qrAppID
-		if qAppID != "" {
-			if err := r.SetQueryParam("app_id", qAppID); err != nil {
-				return err
-			}
-		}
-
+	joinedAppID := swag.JoinByFormat(valuesAppID, "multi")
+	// query array param app_id
+	if err := r.SetQueryParam("app_id", joinedAppID...); err != nil {
+		return err
 	}
 
 	valuesDisplayColumns := o.DisplayColumns
@@ -381,20 +373,12 @@ func (o *DescribeAppVersionAuditsParams) WriteToRequest(r runtime.ClientRequest,
 		return err
 	}
 
-	if o.VersionID != nil {
+	valuesVersionID := o.VersionID
 
-		// query param version_id
-		var qrVersionID string
-		if o.VersionID != nil {
-			qrVersionID = *o.VersionID
-		}
-		qVersionID := qrVersionID
-		if qVersionID != "" {
-			if err := r.SetQueryParam("version_id", qVersionID); err != nil {
-				return err
-			}
-		}
-
+	joinedVersionID := swag.JoinByFormat(valuesVersionID, "multi")
+	// query array param version_id
+	if err := r.SetQueryParam("version_id", joinedVersionID...); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

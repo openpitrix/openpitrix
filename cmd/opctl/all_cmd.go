@@ -993,8 +993,7 @@ func (*DescribeAppVersionAuditsCmd) GetActionName() string {
 }
 
 func (c *DescribeAppVersionAuditsCmd) ParseFlag(f Flag) {
-	c.AppID = new(string)
-	f.StringVarP(c.AppID, "app_id", "", "", "")
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
@@ -1009,8 +1008,7 @@ func (c *DescribeAppVersionAuditsCmd) ParseFlag(f Flag) {
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
-	c.VersionID = new(string)
-	f.StringVarP(c.VersionID, "version_id", "", "", "")
+	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
 }
 
 func (c *DescribeAppVersionAuditsCmd) Run(out Out) error {
@@ -1044,8 +1042,7 @@ func (*DescribeAppVersionReviewsCmd) GetActionName() string {
 }
 
 func (c *DescribeAppVersionReviewsCmd) ParseFlag(f Flag) {
-	c.AppID = new(string)
-	f.StringVarP(c.AppID, "app_id", "", "", "")
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
@@ -1054,13 +1051,13 @@ func (c *DescribeAppVersionReviewsCmd) ParseFlag(f Flag) {
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	f.StringSliceVarP(&c.ReviewID, "review_id", "", []string{}, "")
+	f.StringSliceVarP(&c.Reviewer, "reviewer", "", []string{}, "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
-	c.VersionID = new(string)
-	f.StringVarP(c.VersionID, "version_id", "", "", "")
+	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
 }
 
 func (c *DescribeAppVersionReviewsCmd) Run(out Out) error {
