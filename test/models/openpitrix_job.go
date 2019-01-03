@@ -40,8 +40,8 @@ type OpenpitrixJob struct {
 	// job id
 	JobID string `json:"job_id,omitempty"`
 
-	// owner
-	Owner string `json:"owner,omitempty"`
+	// owner path
+	OwnerPath string `json:"owner_path,omitempty"`
 
 	// provider
 	Provider string `json:"provider,omitempty"`

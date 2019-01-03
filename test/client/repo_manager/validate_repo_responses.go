@@ -51,7 +51,7 @@ type ValidateRepoOK struct {
 }
 
 func (o *ValidateRepoOK) Error() string {
-	return fmt.Sprintf("[GET /v1/repos/validate][%d] validateRepoOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /api/RepoManager.ValidateRepo][%d] validateRepoOK  %+v", 200, o.Payload)
 }
 
 func (o *ValidateRepoOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

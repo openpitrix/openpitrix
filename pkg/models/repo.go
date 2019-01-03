@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -27,6 +28,7 @@ type Repo struct {
 	Credential       string
 	Visibility       string
 	Owner            string
+	OwnerPath        sender.OwnerPath
 	AppDefaultStatus string
 	Controller       int8
 
@@ -38,7 +40,7 @@ type Repo struct {
 var RepoColumns = db.GetColumnsFromStruct(&Repo{})
 var RepoColumnsWithTablePrefix = db.GetColumnsFromStructWithPrefix(constants.TableRepo, &Repo{})
 
-func NewRepo(name, description, typ, url, credential, visibility, owner string) *Repo {
+func NewRepo(name, description, typ, url, credential, visibility string, ownerPath sender.OwnerPath) *Repo {
 	return &Repo{
 		RepoId:      NewRepoId(),
 		Name:        name,
@@ -47,7 +49,8 @@ func NewRepo(name, description, typ, url, credential, visibility, owner string) 
 		Url:         url,
 		Credential:  credential,
 		Visibility:  visibility,
-		Owner:       owner,
+		Owner:       ownerPath.Owner(),
+		OwnerPath:   ownerPath,
 		Status:      constants.StatusActive,
 		CreateTime:  time.Now(),
 		StatusTime:  time.Now(),
@@ -63,7 +66,7 @@ func RepoToPb(repo *Repo) *pb.Repo {
 	pbRepo.Url = pbutil.ToProtoString(repo.Url)
 	pbRepo.Credential = pbutil.ToProtoString(repo.Credential)
 	pbRepo.Visibility = pbutil.ToProtoString(repo.Visibility)
-	pbRepo.Owner = pbutil.ToProtoString(repo.Owner)
+	pbRepo.OwnerPath = repo.OwnerPath.ToProtoString()
 	pbRepo.Status = pbutil.ToProtoString(repo.Status)
 	pbRepo.CreateTime = pbutil.ToProtoTimestamp(repo.CreateTime)
 	pbRepo.StatusTime = pbutil.ToProtoTimestamp(repo.StatusTime)

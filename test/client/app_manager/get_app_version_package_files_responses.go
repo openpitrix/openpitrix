@@ -51,7 +51,7 @@ type GetAppVersionPackageFilesOK struct {
 }
 
 func (o *GetAppVersionPackageFilesOK) Error() string {
-	return fmt.Sprintf("[GET /v1/app_version/package/files][%d] getAppVersionPackageFilesOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /api/AppManager.GetAppVersionPackageFiles][%d] getAppVersionPackageFilesOK  %+v", 200, o.Payload)
 }
 
 func (o *GetAppVersionPackageFilesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

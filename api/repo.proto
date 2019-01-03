@@ -79,7 +79,7 @@ message Repo {
 	google.protobuf.StringValue url = 5;
 	google.protobuf.StringValue credential = 6;
 	google.protobuf.StringValue visibility = 7;
-	google.protobuf.StringValue owner = 8;
+	google.protobuf.StringValue owner_path = 8;
 	repeated string providers = 9;
 	repeated RepoLabel labels = 10;
 	repeated RepoSelector selectors = 11;
@@ -132,46 +132,31 @@ message ValidateRepoResponse {
 
 service RepoManager {
 	rpc CreateRepo (CreateRepoRequest) returns (CreateRepoResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create repo"
-		};
 		option (google.api.http) = {
-			post: "/v1/repos"
+			post: "/api/RepoManager.CreateRepo"
 			body: "*"
 		};
 	}
 	rpc DescribeRepos (DescribeReposRequest) returns (DescribeReposResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe repos with filter"
-		};
 		option (google.api.http) = {
-			get: "/v1/repos"
+			get: "/api/RepoManager.DescribeRepos"
 		};
 	}
 	rpc ModifyRepo (ModifyRepoRequest) returns (ModifyRepoResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify repo"
-		};
 		option (google.api.http) = {
-			patch: "/v1/repos"
+			post: "/api/RepoManager.ModifyRepo"
 			body: "*"
 		};
 	}
 	rpc DeleteRepos (DeleteReposRequest) returns (DeleteReposResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete repos"
-		};
 		option (google.api.http) = {
-			delete: "/v1/repos"
+			post: "/api/RepoManager.DeleteRepos"
 			body: "*"
 		};
 	}
 	rpc ValidateRepo (ValidateRepoRequest) returns (ValidateRepoResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "validate repo"
-		};
 		option (google.api.http) = {
-			get: "/v1/repos/validate"
+			get: "/api/RepoManager.ValidateRepo"
 		};
 	}
 }

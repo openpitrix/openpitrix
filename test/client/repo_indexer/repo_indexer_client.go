@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-DescribeRepoEvents describes repo events
+DescribeRepoEvents describe repo events API
 */
 func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRepoEventsOK, error) {
 	// TODO: Validate the params before sending
@@ -36,7 +36,7 @@ func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams, authInfo r
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeRepoEvents",
 		Method:             "GET",
-		PathPattern:        "/v1/repo_events",
+		PathPattern:        "/api/RepoIndexer.DescribeRepoEvents",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -54,7 +54,7 @@ func (a *Client) DescribeRepoEvents(params *DescribeRepoEventsParams, authInfo r
 }
 
 /*
-IndexRepo starts a index repo event
+IndexRepo index repo API
 */
 func (a *Client) IndexRepo(params *IndexRepoParams, authInfo runtime.ClientAuthInfoWriter) (*IndexRepoOK, error) {
 	// TODO: Validate the params before sending
@@ -65,7 +65,7 @@ func (a *Client) IndexRepo(params *IndexRepoParams, authInfo runtime.ClientAuthI
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "IndexRepo",
 		Method:             "POST",
-		PathPattern:        "/v1/repos/index",
+		PathPattern:        "/api/RepoIndexer.IndexRepo",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

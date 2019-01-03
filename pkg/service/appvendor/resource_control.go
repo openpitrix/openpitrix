@@ -6,7 +6,6 @@ package appvendor
 
 import (
 	"context"
-
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"

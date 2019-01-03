@@ -99,7 +99,7 @@ message App {
 	google.protobuf.StringValue chart_name = 14;
 	google.protobuf.StringValue abstraction = 15;
 	google.protobuf.StringValue tos = 16;
-	google.protobuf.StringValue owner = 17;
+	google.protobuf.StringValue owner_path = 17;
 	google.protobuf.Timestamp create_time = 18;
 	google.protobuf.Timestamp status_time = 19;
 	google.protobuf.Timestamp update_time = 20;
@@ -137,7 +137,7 @@ message CreateAppVersionRequest {
 	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue type = 4; // vmbased or helm
 	google.protobuf.BytesValue package = 5;
-//	map<string, bytes> package_files = 6;
+	//	map<string, bytes> package_files = 6;
 }
 
 message CreateAppVersionResponse {
@@ -160,7 +160,7 @@ message AppVersion {
 	google.protobuf.StringValue version_id = 1;
 	google.protobuf.BoolValue active = 2;
 	google.protobuf.StringValue app_id = 3;
-	google.protobuf.StringValue owner = 4;
+	google.protobuf.StringValue owner_path = 4;
 	google.protobuf.StringValue name = 5;
 	google.protobuf.StringValue description = 6;
 	google.protobuf.StringValue home = 7;
@@ -185,9 +185,9 @@ message AppVersionAudit {
 	google.protobuf.StringValue version_id = 1;
 	google.protobuf.StringValue app_id = 2;
 	google.protobuf.StringValue status = 3;
-    google.protobuf.StringValue operator = 4;
+	google.protobuf.StringValue operator = 4;
 	google.protobuf.StringValue role = 5;
-    google.protobuf.StringValue message = 6;
+	google.protobuf.StringValue message = 6;
 	google.protobuf.StringValue review_id = 7;
 	google.protobuf.Timestamp status_time = 8;
 }
@@ -373,221 +373,146 @@ service AppManager {
 	rpc SyncRepo (SyncRepoRequest) returns (SyncRepoResponse) {
 	}
 	rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create app"
-		};
 		option (google.api.http) = {
-			post: "/v1/apps"
+			post: "/api/AppManager.CreateApp"
 			body: "*"
 		};
 	}
 	rpc ValidatePackage (ValidatePackageRequest) returns (ValidatePackageResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "ValidatePackage"
-		};
 		option (google.api.http) = {
-			post: "/v1/apps/validate_package"
+			post: "/api/AppManager.ValidatePackage"
 			body: "*"
 		};
 	}
 	rpc GetAppStatistics (GetAppStatisticsRequest) returns (GetAppStatisticsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get app statistics"
-		};
 		option (google.api.http) = {
-			get: "/v1/apps/statistics"
+			get: "/api/AppManager.GetAppStatistics"
 		};
 	}
 	rpc DescribeApps (DescribeAppsRequest) returns (DescribeAppsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe apps with filter"
-		};
 		option (google.api.http) = {
-			get: "/v1/apps"
+			get: "/api/AppManager.DescribeApps"
 		};
 	}
 	rpc DescribeActiveApps (DescribeAppsRequest) returns (DescribeAppsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe apps with filter"
-		};
 		option (google.api.http) = {
-			get: "/v1/active_apps"
+			get: "/api/AppManager.DescribeActiveApps"
 		};
 	}
 	rpc ModifyApp (ModifyAppRequest) returns (ModifyAppResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify app"
-		};
 		option (google.api.http) = {
-			patch: "/v1/apps"
+			post: "/api/AppManager.ModifyApp"
 			body: "*"
 		};
 	}
-	rpc UploadAppAttachment(UploadAppAttachmentRequest) returns (UploadAppAttachmentResponse){
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "UploadAppAttachment"
-		};
+	rpc UploadAppAttachment (UploadAppAttachmentRequest) returns (UploadAppAttachmentResponse) {
 		option (google.api.http) = {
-			patch: "/v1/app/attachment"
+			post: "/api/AppManager.UploadAppAttachment"
 			body: "*"
 		};
 	}
 	rpc DeleteApps (DeleteAppsRequest) returns (DeleteAppsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete apps"
-		};
 		option (google.api.http) = {
-			delete: "/v1/apps"
+			post: "/api/AppManager.DeleteApps"
 			body: "*"
 		};
 	}
 
 	rpc CreateAppVersion (CreateAppVersionRequest) returns (CreateAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create app version"
-		};
 		option (google.api.http) = {
-			post: "/v1/app_versions"
+			post: "/api/AppManager.CreateAppVersion"
 			body: "*"
 		};
 	}
 	rpc DescribeAppVersions (DescribeAppVersionsRequest) returns (DescribeAppVersionsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe app versions with filter"
-		};
 		option (google.api.http) = {
-			get: "/v1/app_versions"
+			get: "/api/AppManager.DescribeAppVersions"
 		};
 	}
 	rpc DescribeActiveAppVersions (DescribeAppVersionsRequest) returns (DescribeAppVersionsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe app versions with filter"
-		};
 		option (google.api.http) = {
-			get: "/v1/active_app_versions"
+			get: "/api/AppManager.DescribeActiveAppVersions"
 		};
 	}
 	rpc DescribeAppVersionAudits (DescribeAppVersionAuditsRequest) returns (DescribeAppVersionAuditsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "DescribeAppVersionAudits"
-		};
 		option (google.api.http) = {
-			get: "/v1/app/{app_id=*}/version/{version_id=*}/audits"
+			get: "/api/AppManager.DescribeAppVersionAudits"
 		};
 	}
 	rpc DescribeAppVersionReviews (DescribeAppVersionReviewsRequest) returns (DescribeAppVersionReviewsResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "DescribeAppVersionReviews"
-		};
 		option (google.api.http) = {
-			get: "/v1/app/{app_id=*}/version/{version_id=*}/reviews"
+			get: "/api/AppManager.DescribeAppVersionReviews"
 		};
 	}
 	rpc ModifyAppVersion (ModifyAppVersionRequest) returns (ModifyAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify app version"
-		};
 		option (google.api.http) = {
-			patch: "/v1/app_versions"
+			post: "/api/AppManager.ModifyAppVersion"
 			body: "*"
 		};
 	}
 	rpc GetAppVersionPackage (GetAppVersionPackageRequest) returns (GetAppVersionPackageResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get the package content of app version"
-		};
 		option (google.api.http) = {
-			get: "/v1/app_version/package"
+			get: "/api/AppManager.GetAppVersionPackage"
 		};
 	}
 	rpc GetAppVersionPackageFiles (GetAppVersionPackageFilesRequest) returns (GetAppVersionPackageFilesResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get the package files content of app version"
-		};
 		option (google.api.http) = {
-			get: "/v1/app_version/package/files"
+			get: "/api/AppManager.GetAppVersionPackageFiles"
 		};
 	}
 
 	rpc SubmitAppVersion (SubmitAppVersionRequest) returns (SubmitAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "submit app version"
-        };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/submit"
+            post: "/api/AppManager.SubmitAppVersion"
             body: "*"
         };
 	}
 	rpc CancelAppVersion (CancelAppVersionRequest) returns (CancelAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "cancel app version"
-        };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/cancel"
+            post: "/api/AppManager.CancelAppVersion"
             body: "*"
         };
 	}
 	rpc ReleaseAppVersion (ReleaseAppVersionRequest) returns (ReleaseAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "release app version"
-        };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/release"
+            post: "/api/AppManager.ReleaseAppVersion"
             body: "*"
         };
 	}
 	rpc DeleteAppVersion (DeleteAppVersionRequest) returns (DeleteAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "delete app version"
-        };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/delete"
+            post: "/api/AppManager.DeleteAppVersion"
             body: "*"
         };
 	}
 
 	rpc ReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "pass app version"
-        };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/{role=*}/review"
+            post: "/api/AppManager.ReviewAppVersion"
             body: "*"
         };
 	}
 	rpc PassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "pass app version"
-        };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/{role=*}/pass"
+            post: "/api/AppManager.PassAppVersion"
             body: "*"
         };
 	}
 	rpc RejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "reject app version"
-        };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/{role=*}/reject"
+            post: "/api/AppManager.RejectAppVersion"
             body: "*"
         };
 	}
 	rpc SuspendAppVersion (SuspendAppVersionRequest) returns (SuspendAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "suspend app version"
-        };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/suspend"
+            post: "/api/AppManager.SuspendAppVersion"
             body: "*"
         };
 	}
 	rpc RecoverAppVersion (RecoverAppVersionRequest) returns (RecoverAppVersionResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "recover app version"
-        };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/recover"
+            post: "/api/AppManager.RecoverAppVersion"
             body: "*"
         };
 	}

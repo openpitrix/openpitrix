@@ -51,7 +51,7 @@ type DescribeReposOK struct {
 }
 
 func (o *DescribeReposOK) Error() string {
-	return fmt.Sprintf("[GET /v1/repos][%d] describeReposOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /api/RepoManager.DescribeRepos][%d] describeReposOK  %+v", 200, o.Payload)
 }
 
 func (o *DescribeReposOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

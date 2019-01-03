@@ -17,7 +17,7 @@ message Category {
 	google.protobuf.StringValue category_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue locale = 3;
-	google.protobuf.StringValue owner = 4;
+	google.protobuf.StringValue owner_path = 4;
 	google.protobuf.Timestamp create_time = 5;
 	google.protobuf.Timestamp update_time = 6;
 	google.protobuf.StringValue description = 7;
@@ -71,37 +71,25 @@ message DeleteCategoriesResponse {
 
 service CategoryManager {
 	rpc DescribeCategories (DescribeCategoriesRequest) returns (DescribeCategoriesResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe categories with filter"
-		};
 		option (google.api.http) = {
-			get: "/v1/categories"
+			get: "/api/CategoryManager.DescribeCategories"
 		};
 	}
 	rpc CreateCategory (CreateCategoryRequest) returns (CreateCategoryResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create category"
-		};
 		option (google.api.http) = {
-			post: "/v1/categories"
+			post: "/api/CategoryManager.CreateCategory"
 			body: "*"
 		};
 	}
 	rpc ModifyCategory (ModifyCategoryRequest) returns (ModifyCategoryResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify category"
-		};
 		option (google.api.http) = {
-			patch: "/v1/categories"
+			post: "/api/CategoryManager.ModifyCategory"
 			body: "*"
 		};
 	}
 	rpc DeleteCategories (DeleteCategoriesRequest) returns (DeleteCategoriesResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete categories"
-		};
 		option (google.api.http) = {
-			delete: "/v1/categories"
+			post: "/api/CategoryManager.DeleteCategories"
 			body: "*"
 		};
 	}

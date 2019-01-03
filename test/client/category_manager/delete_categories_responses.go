@@ -51,7 +51,7 @@ type DeleteCategoriesOK struct {
 }
 
 func (o *DeleteCategoriesOK) Error() string {
-	return fmt.Sprintf("[DELETE /v1/categories][%d] deleteCategoriesOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /api/CategoryManager.DeleteCategories][%d] deleteCategoriesOK  %+v", 200, o.Payload)
 }
 
 func (o *DeleteCategoriesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

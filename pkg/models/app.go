@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -33,6 +34,7 @@ type App struct {
 	Sources     string
 	Readme      string
 	Owner       string
+	OwnerPath   sender.OwnerPath
 	ChartName   string
 	Tos         string
 	Abstraction string
@@ -43,13 +45,14 @@ type App struct {
 
 var AppColumns = db.GetColumnsFromStruct(&App{})
 
-func NewApp(name, owner string) *App {
+func NewApp(name string, ownerPath sender.OwnerPath) *App {
 	return &App{
 		AppId:      NewAppId(),
 		Active:     false,
 		Name:       name,
 		Status:     constants.StatusDraft,
-		Owner:      owner,
+		Owner:      ownerPath.Owner(),
+		OwnerPath:  ownerPath,
 		CreateTime: time.Now(),
 		StatusTime: time.Now(),
 	}
@@ -70,7 +73,7 @@ func AppToPb(app *App) *pb.App {
 	pbApp.Sources = pbutil.ToProtoString(app.Sources)
 	pbApp.Readme = pbutil.ToProtoString(app.Readme)
 	pbApp.ChartName = pbutil.ToProtoString(app.ChartName)
-	pbApp.Owner = pbutil.ToProtoString(app.Owner)
+	pbApp.OwnerPath = app.OwnerPath.ToProtoString()
 	pbApp.Keywords = pbutil.ToProtoString(app.Keywords)
 	pbApp.Abstraction = pbutil.ToProtoString(app.Abstraction)
 	pbApp.Tos = pbutil.ToProtoString(app.Tos)

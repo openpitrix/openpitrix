@@ -19,12 +19,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest) (*pb.CreateRuntimeResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	runtimeId := models.NewRuntimeId()
 	runtimeCredentialId := req.GetRuntimeCredentialId().GetValue()
 	zone := req.GetZone().GetValue()
@@ -67,7 +67,7 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		req.GetProvider().GetValue(),
 		runtimeCredentialId,
 		req.GetZone().GetValue(),
-		s.UserId,
+		s.GetOwnerPath(),
 	)
 	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableRuntime).
@@ -94,6 +94,7 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
@@ -126,6 +127,7 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&runtimes)
@@ -257,7 +259,7 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 }
 
 func (p *Server) CreateRuntimeCredential(ctx context.Context, req *pb.CreateRuntimeCredentialRequest) (*pb.CreateRuntimeCredentialResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	runtimeCredentialId := models.NewRuntimeCredentialId()
 	provider := req.Provider.GetValue()
@@ -290,7 +292,7 @@ func (p *Server) CreateRuntimeCredential(ctx context.Context, req *pb.CreateRunt
 		req.GetRuntimeUrl().GetValue(),
 		content,
 		req.GetProvider().GetValue(),
-		s.UserId,
+		s.GetOwnerPath(),
 	)
 
 	_, err = pi.Global().DB(ctx).
@@ -318,6 +320,7 @@ func (p *Server) DescribeRuntimeCredentials(ctx context.Context, req *pb.Describ
 		From(constants.TableRuntimeCredential).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntimeCredential))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)

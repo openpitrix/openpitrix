@@ -9,6 +9,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -16,16 +17,18 @@ type MarketUser struct {
 	MarketId   string
 	UserId     string
 	Owner      string
+	OwnerPath  sender.OwnerPath
 	CreateTime time.Time
 }
 
 var MarketUserColumns = db.GetColumnsFromStruct(&MarketUser{})
 
-func NewMarketUser(marketId, userId, owner string) *MarketUser {
+func NewMarketUser(marketId, userId string, ownerPath sender.OwnerPath) *MarketUser {
 	return &MarketUser{
 		MarketId:   marketId,
 		UserId:     userId,
-		Owner:      owner,
+		Owner:      ownerPath.Owner(),
+		OwnerPath:  ownerPath,
 		CreateTime: time.Now(),
 	}
 }
@@ -34,7 +37,7 @@ func MarketUserToPb(marketUser *MarketUser) *pb.MarketUser {
 	pbMarketUser := pb.MarketUser{}
 	pbMarketUser.MarketId = pbutil.ToProtoString(marketUser.MarketId)
 	pbMarketUser.UserId = pbutil.ToProtoString(marketUser.UserId)
-	pbMarketUser.Owner = pbutil.ToProtoString(marketUser.Owner)
+	pbMarketUser.OwnerPath = marketUser.OwnerPath.ToProtoString()
 	pbMarketUser.CreateTime = pbutil.ToProtoTimestamp(marketUser.CreateTime)
 	return &pbMarketUser
 }

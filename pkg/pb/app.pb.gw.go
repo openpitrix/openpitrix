@@ -184,41 +184,12 @@ func request_AppManager_DescribeActiveAppVersions_0(ctx context.Context, marshal
 }
 
 var (
-	filter_AppManager_DescribeAppVersionAudits_0 = &utilities.DoubleArray{Encoding: map[string]int{"app_id": 0, "version_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+	filter_AppManager_DescribeAppVersionAudits_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
 func request_AppManager_DescribeAppVersionAudits_0(ctx context.Context, marshaler runtime.Marshaler, client AppManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DescribeAppVersionAuditsRequest
 	var metadata runtime.ServerMetadata
-
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["app_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "app_id")
-	}
-
-	protoReq.AppId, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "app_id", err)
-	}
-
-	val, ok = pathParams["version_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "version_id")
-	}
-
-	protoReq.VersionId, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "version_id", err)
-	}
 
 	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_AppManager_DescribeAppVersionAudits_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
@@ -230,41 +201,12 @@ func request_AppManager_DescribeAppVersionAudits_0(ctx context.Context, marshale
 }
 
 var (
-	filter_AppManager_DescribeAppVersionReviews_0 = &utilities.DoubleArray{Encoding: map[string]int{"app_id": 0, "version_id": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+	filter_AppManager_DescribeAppVersionReviews_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
 func request_AppManager_DescribeAppVersionReviews_0(ctx context.Context, marshaler runtime.Marshaler, client AppManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DescribeAppVersionReviewsRequest
 	var metadata runtime.ServerMetadata
-
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["app_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "app_id")
-	}
-
-	protoReq.AppId, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "app_id", err)
-	}
-
-	val, ok = pathParams["version_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "version_id")
-	}
-
-	protoReq.VersionId, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "version_id", err)
-	}
 
 	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_AppManager_DescribeAppVersionReviews_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
@@ -382,24 +324,6 @@ func request_AppManager_ReviewAppVersion_0(ctx context.Context, marshaler runtim
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["role"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "role")
-	}
-
-	protoReq.Role, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "role", err)
-	}
-
 	msg, err := client.ReviewAppVersion(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -413,24 +337,6 @@ func request_AppManager_PassAppVersion_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["role"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "role")
-	}
-
-	protoReq.Role, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "role", err)
-	}
-
 	msg, err := client.PassAppVersion(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -442,24 +348,6 @@ func request_AppManager_RejectAppVersion_0(ctx context.Context, marshaler runtim
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["role"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "role")
-	}
-
-	protoReq.Role, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "role", err)
 	}
 
 	msg, err := client.RejectAppVersion(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -676,7 +564,7 @@ func RegisterAppManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 
 	})
 
-	mux.Handle("PATCH", pattern_AppManager_ModifyApp_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_AppManager_ModifyApp_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -705,7 +593,7 @@ func RegisterAppManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 
 	})
 
-	mux.Handle("PATCH", pattern_AppManager_UploadAppAttachment_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_AppManager_UploadAppAttachment_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -734,7 +622,7 @@ func RegisterAppManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 
 	})
 
-	mux.Handle("DELETE", pattern_AppManager_DeleteApps_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_AppManager_DeleteApps_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -908,7 +796,7 @@ func RegisterAppManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 
 	})
 
-	mux.Handle("PATCH", pattern_AppManager_ModifyAppVersion_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_AppManager_ModifyAppVersion_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -1260,55 +1148,55 @@ func RegisterAppManagerHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 }
 
 var (
-	pattern_AppManager_CreateApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "apps"}, ""))
+	pattern_AppManager_CreateApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.CreateApp"}, ""))
 
-	pattern_AppManager_ValidatePackage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "apps", "validate_package"}, ""))
+	pattern_AppManager_ValidatePackage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.ValidatePackage"}, ""))
 
-	pattern_AppManager_GetAppStatistics_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "apps", "statistics"}, ""))
+	pattern_AppManager_GetAppStatistics_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.GetAppStatistics"}, ""))
 
-	pattern_AppManager_DescribeApps_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "apps"}, ""))
+	pattern_AppManager_DescribeApps_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.DescribeApps"}, ""))
 
-	pattern_AppManager_DescribeActiveApps_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "active_apps"}, ""))
+	pattern_AppManager_DescribeActiveApps_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.DescribeActiveApps"}, ""))
 
-	pattern_AppManager_ModifyApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "apps"}, ""))
+	pattern_AppManager_ModifyApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.ModifyApp"}, ""))
 
-	pattern_AppManager_UploadAppAttachment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "app", "attachment"}, ""))
+	pattern_AppManager_UploadAppAttachment_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.UploadAppAttachment"}, ""))
 
-	pattern_AppManager_DeleteApps_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "apps"}, ""))
+	pattern_AppManager_DeleteApps_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.DeleteApps"}, ""))
 
-	pattern_AppManager_CreateAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "app_versions"}, ""))
+	pattern_AppManager_CreateAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.CreateAppVersion"}, ""))
 
-	pattern_AppManager_DescribeAppVersions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "app_versions"}, ""))
+	pattern_AppManager_DescribeAppVersions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.DescribeAppVersions"}, ""))
 
-	pattern_AppManager_DescribeActiveAppVersions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "active_app_versions"}, ""))
+	pattern_AppManager_DescribeActiveAppVersions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.DescribeActiveAppVersions"}, ""))
 
-	pattern_AppManager_DescribeAppVersionAudits_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"v1", "app", "app_id", "version", "version_id", "audits"}, ""))
+	pattern_AppManager_DescribeAppVersionAudits_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.DescribeAppVersionAudits"}, ""))
 
-	pattern_AppManager_DescribeAppVersionReviews_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3, 1, 0, 4, 1, 5, 4, 2, 5}, []string{"v1", "app", "app_id", "version", "version_id", "reviews"}, ""))
+	pattern_AppManager_DescribeAppVersionReviews_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.DescribeAppVersionReviews"}, ""))
 
-	pattern_AppManager_ModifyAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "app_versions"}, ""))
+	pattern_AppManager_ModifyAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.ModifyAppVersion"}, ""))
 
-	pattern_AppManager_GetAppVersionPackage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "app_version", "package"}, ""))
+	pattern_AppManager_GetAppVersionPackage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.GetAppVersionPackage"}, ""))
 
-	pattern_AppManager_GetAppVersionPackageFiles_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "app_version", "package", "files"}, ""))
+	pattern_AppManager_GetAppVersionPackageFiles_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.GetAppVersionPackageFiles"}, ""))
 
-	pattern_AppManager_SubmitAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "app_version", "action", "submit"}, ""))
+	pattern_AppManager_SubmitAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.SubmitAppVersion"}, ""))
 
-	pattern_AppManager_CancelAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "app_version", "action", "cancel"}, ""))
+	pattern_AppManager_CancelAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.CancelAppVersion"}, ""))
 
-	pattern_AppManager_ReleaseAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "app_version", "action", "release"}, ""))
+	pattern_AppManager_ReleaseAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.ReleaseAppVersion"}, ""))
 
-	pattern_AppManager_DeleteAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "app_version", "action", "delete"}, ""))
+	pattern_AppManager_DeleteAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.DeleteAppVersion"}, ""))
 
-	pattern_AppManager_ReviewAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "app_version", "action", "role", "review"}, ""))
+	pattern_AppManager_ReviewAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.ReviewAppVersion"}, ""))
 
-	pattern_AppManager_PassAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "app_version", "action", "role", "pass"}, ""))
+	pattern_AppManager_PassAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.PassAppVersion"}, ""))
 
-	pattern_AppManager_RejectAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "app_version", "action", "role", "reject"}, ""))
+	pattern_AppManager_RejectAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.RejectAppVersion"}, ""))
 
-	pattern_AppManager_SuspendAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "app_version", "action", "suspend"}, ""))
+	pattern_AppManager_SuspendAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.SuspendAppVersion"}, ""))
 
-	pattern_AppManager_RecoverAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "app_version", "action", "recover"}, ""))
+	pattern_AppManager_RecoverAppVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "AppManager.RecoverAppVersion"}, ""))
 )
 
 var (

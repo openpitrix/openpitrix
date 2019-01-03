@@ -51,7 +51,7 @@ type ModifyAppVersionOK struct {
 }
 
 func (o *ModifyAppVersionOK) Error() string {
-	return fmt.Sprintf("[PATCH /v1/app_versions][%d] modifyAppVersionOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /api/AppManager.ModifyAppVersion][%d] modifyAppVersionOK  %+v", 200, o.Payload)
 }
 
 func (o *ModifyAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

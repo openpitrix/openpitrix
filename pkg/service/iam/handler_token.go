@@ -13,7 +13,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"openpitrix.io/openpitrix/pkg/util/jwtutil"
 )
 
 var (
@@ -21,7 +22,7 @@ var (
 )
 
 func (p *Server) CreateClient(ctx context.Context, req *pb.CreateClientRequest) (*pb.CreateClientResponse, error) {
-	sender := senderutil.GetSenderFromContext(ctx)
+	sender := ctxutil.GetSender(ctx)
 	if !sender.IsGlobalAdmin() {
 		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
 	}
@@ -95,13 +96,13 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 		}
 	}
 
-	accessToken, err := senderutil.Generate(
+	accessToken, err := jwtutil.Generate(
 		p.IAMConfig.SecretKey, p.IAMConfig.ExpireTime, user.UserId, user.Role,
 	)
 	if err != nil {
 		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}
-	idToken, err := senderutil.Generate(
+	idToken, err := jwtutil.Generate(
 		"", p.IAMConfig.ExpireTime, user.UserId, user.Role,
 	)
 	if err != nil {
@@ -109,7 +110,7 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 	}
 
 	return &pb.TokenResponse{
-		TokenType:    senderutil.TokenType,
+		TokenType:    ctxutil.TokenType,
 		ExpiresIn:    int32(p.ExpireTime.Seconds()),
 		AccessToken:  accessToken,
 		IdToken:      idToken,

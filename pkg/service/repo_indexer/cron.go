@@ -9,17 +9,17 @@ import (
 
 	"github.com/robfig/cron"
 
-	"openpitrix.io/openpitrix/pkg/pi"
-
 	"openpitrix.io/openpitrix/pkg/client"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/sender"
 )
 
-type repoInfos map[string]string // repoId & owner
+type repoInfos map[string]string // repoId & ownerPath
 
 func getRepos() (repoInfos, error) {
 	ctx := client.SetSystemUserToContext(context.Background())
@@ -40,7 +40,7 @@ func getRepos() (repoInfos, error) {
 			return nil, err
 		}
 		for _, r := range res.GetRepoSet() {
-			rs[r.GetRepoId().GetValue()] = r.GetOwner().GetValue()
+			rs[r.GetRepoId().GetValue()] = r.GetOwnerPath().GetValue()
 		}
 		// In most cases, len(res.GetRepoSet()) <= limit
 		if len(res.GetRepoSet()) >= int(limit) {
@@ -57,8 +57,8 @@ func (p *Server) autoIndex() error {
 		return err
 	}
 	logger.Info(nil, "Got repos [%+v]", repos)
-	for repoId, owner := range repos {
-		repoEvent, err := p.controller.NewRepoEvent(repoId, owner)
+	for repoId, ownerPath := range repos {
+		repoEvent, err := p.controller.NewRepoEvent(repoId, sender.OwnerPath(ownerPath))
 		if err != nil {
 			return err
 		}

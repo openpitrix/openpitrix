@@ -22,11 +22,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/repoiface"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
 	"openpitrix.io/openpitrix/pkg/util/archiveutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/imageutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 var (
@@ -90,6 +91,7 @@ func (p *Server) describeApps(ctx context.Context, req *pb.DescribeAppsRequest, 
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableApp)).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(db.Eq(constants.ColumnActive, active))
 
 	if len(categoryIds) > 0 {
@@ -189,10 +191,10 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 
 	attachmentId := uploadAttachmentRes.AttachmentId
 
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	newApp := models.NewApp(
 		name,
-		s.UserId)
+		s.GetOwnerPath())
 
 	if len(iconAttachmentId) > 0 {
 		newApp.Icon = iconAttachmentId
@@ -214,7 +216,7 @@ func (p *Server) CreateApp(ctx context.Context, req *pb.CreateAppRequest) (*pb.C
 	if versionName == "" {
 		versionName = v.GetVersionName()
 	}
-	version := models.NewAppVersion(newApp.AppId, versionName, newApp.Description, newApp.Owner)
+	version := models.NewAppVersion(newApp.AppId, versionName, newApp.Description, sender.OwnerPath(newApp.OwnerPath))
 	version.PackageName = attachmentId
 	version.Type = req.GetVersionType().GetValue()
 
@@ -435,12 +437,12 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 		name = v.GetVersionName()
 	}
 
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	newAppVersion := models.NewAppVersion(
 		req.GetAppId().GetValue(),
 		name,
 		req.GetDescription().GetValue(),
-		s.UserId)
+		s.GetOwnerPath())
 
 	newAppVersion.PackageName = attachmentId
 	newAppVersion.Type = req.GetType().GetValue()
@@ -477,6 +479,7 @@ func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.Describe
 		From(constants.TableAppVersionReview).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionReview))
 	if len(displayColumns) > 0 {
 		_, err = query.Load(&versionReviews)
@@ -517,6 +520,7 @@ func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeA
 		From(constants.TableAppVersionAudit).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionAudit))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
@@ -558,6 +562,7 @@ func (p *Server) describeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 		From(constants.TableAppVersion).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersion)).
 		Where(db.Eq(constants.ColumnActive, active))
 

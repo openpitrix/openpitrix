@@ -9,6 +9,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -23,6 +24,7 @@ type KeyPair struct {
 	Description string
 	PubKey      string
 	Owner       string
+	OwnerPath   sender.OwnerPath
 	CreateTime  time.Time
 	StatusTime  time.Time
 }
@@ -40,7 +42,7 @@ func KeyPairNodesToPb(keyPairNodes *KeyPairWithNodes) *pb.KeyPair {
 	pbKeyPair.Name = pbutil.ToProtoString(keyPairNodes.Name)
 	pbKeyPair.Description = pbutil.ToProtoString(keyPairNodes.Description)
 	pbKeyPair.PubKey = pbutil.ToProtoString(keyPairNodes.PubKey)
-	pbKeyPair.Owner = pbutil.ToProtoString(keyPairNodes.Owner)
+	pbKeyPair.OwnerPath = keyPairNodes.OwnerPath.ToProtoString()
 	pbKeyPair.CreateTime = pbutil.ToProtoTimestamp(keyPairNodes.CreateTime)
 	pbKeyPair.StatusTime = pbutil.ToProtoTimestamp(keyPairNodes.StatusTime)
 	pbKeyPair.NodeId = keyPairNodes.NodeId

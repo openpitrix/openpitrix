@@ -88,7 +88,7 @@ func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.Cl
 		constants.ActionCreateCluster,
 		directive,
 		f.Runtime.Runtime.Provider,
-		frontgateWrapper.Cluster.Owner,
+		frontgateWrapper.Cluster.OwnerPath,
 		frontgateWrapper.Cluster.RuntimeId,
 	)
 
@@ -111,7 +111,7 @@ func (f *Frontgate) StartCluster(ctx context.Context, frontgate *models.Cluster)
 		constants.ActionStartClusters,
 		directive,
 		f.Runtime.Runtime.Provider,
-		frontgate.Owner,
+		frontgate.OwnerPath,
 		frontgate.RuntimeId,
 	)
 
@@ -134,7 +134,7 @@ func (f *Frontgate) RecoverCluster(ctx context.Context, frontgate *models.Cluste
 		constants.ActionRecoverClusters,
 		directive,
 		f.Runtime.Runtime.Provider,
-		frontgate.Owner,
+		frontgate.OwnerPath,
 		frontgate.RuntimeId,
 	)
 

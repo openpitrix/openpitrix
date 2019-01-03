@@ -165,7 +165,7 @@ func (p *Processor) Post(ctx context.Context) error {
 					constants.ActionStopClusters,
 					directive,
 					p.Job.Provider,
-					p.Job.Owner,
+					p.Job.OwnerPath,
 					frontgate.Cluster.RuntimeId,
 				)
 
@@ -232,7 +232,7 @@ func (p *Processor) Post(ctx context.Context) error {
 					constants.ActionDeleteClusters,
 					directive,
 					p.Job.Provider,
-					p.Job.Owner,
+					p.Job.OwnerPath,
 					frontgate.Cluster.RuntimeId,
 				)
 

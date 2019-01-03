@@ -42,7 +42,7 @@ message Job {
 	google.protobuf.StringValue directive = 8;
 	google.protobuf.StringValue executor = 9;
 	google.protobuf.UInt32Value task_count = 10;
-	google.protobuf.StringValue owner = 11;
+	google.protobuf.StringValue owner_path = 11;
 	google.protobuf.StringValue provider = 12;
 	google.protobuf.StringValue runtime_id = 13;
 	google.protobuf.Timestamp create_time = 14;

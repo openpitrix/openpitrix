@@ -32,8 +32,10 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest
 	)
 
 	var query = pi.Global().DB(ctx).
-		Select(models.UserColumns...).From(constants.TableUser).
-		Offset(offset).Limit(limit).
+		Select(models.UserColumns...).
+		From(constants.TableUser).
+		Offset(offset).
+		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableUser))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
@@ -66,7 +68,8 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 	var query = pi.Global().DB(ctx).
 		Select(models.GroupColumns...).
 		From(constants.TableGroup).
-		Offset(offset).Limit(limit).
+		Offset(offset).
+		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableGroup))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)

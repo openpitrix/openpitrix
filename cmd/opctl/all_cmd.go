@@ -987,6 +987,8 @@ func (*DescribeAppVersionAuditsCmd) GetActionName() string {
 }
 
 func (c *DescribeAppVersionAuditsCmd) ParseFlag(f Flag) {
+	c.AppID = new(string)
+	f.StringVarP(c.AppID, "app_id", "", "", "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
@@ -1001,14 +1003,12 @@ func (c *DescribeAppVersionAuditsCmd) ParseFlag(f Flag) {
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
-	f.StringVarP(&c.AppID, "app_id", "", "", "")
-	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+	c.VersionID = new(string)
+	f.StringVarP(c.VersionID, "version_id", "", "", "")
 }
 
 func (c *DescribeAppVersionAuditsCmd) Run(out Out) error {
 	params := c.DescribeAppVersionAuditsParams
-	params.WithAppID(c.AppID)
-	params.WithVersionID(c.VersionID)
 
 	out.WriteRequest(params)
 
@@ -1038,6 +1038,8 @@ func (*DescribeAppVersionReviewsCmd) GetActionName() string {
 }
 
 func (c *DescribeAppVersionReviewsCmd) ParseFlag(f Flag) {
+	c.AppID = new(string)
+	f.StringVarP(c.AppID, "app_id", "", "", "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
@@ -1051,14 +1053,12 @@ func (c *DescribeAppVersionReviewsCmd) ParseFlag(f Flag) {
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
-	f.StringVarP(&c.AppID, "app_id", "", "", "")
-	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+	c.VersionID = new(string)
+	f.StringVarP(c.VersionID, "version_id", "", "", "")
 }
 
 func (c *DescribeAppVersionReviewsCmd) Run(out Out) error {
 	params := c.DescribeAppVersionReviewsParams
-	params.WithAppID(c.AppID)
-	params.WithVersionID(c.VersionID)
 
 	out.WriteRequest(params)
 
@@ -1393,7 +1393,6 @@ func (c *PassAppVersionCmd) ParseFlag(f Flag) {
 func (c *PassAppVersionCmd) Run(out Out) error {
 	params := app_manager.NewPassAppVersionParams()
 	params.WithBody(c.OpenpitrixPassAppVersionRequest)
-	params.WithRole(c.Role)
 
 	out.WriteRequest(params)
 
@@ -1466,7 +1465,6 @@ func (c *RejectAppVersionCmd) ParseFlag(f Flag) {
 func (c *RejectAppVersionCmd) Run(out Out) error {
 	params := app_manager.NewRejectAppVersionParams()
 	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
-	params.WithRole(c.Role)
 
 	out.WriteRequest(params)
 
@@ -1538,7 +1536,6 @@ func (c *ReviewAppVersionCmd) ParseFlag(f Flag) {
 func (c *ReviewAppVersionCmd) Run(out Out) error {
 	params := app_manager.NewReviewAppVersionParams()
 	params.WithBody(c.OpenpitrixReviewAppVersionRequest)
-	params.WithRole(c.Role)
 
 	out.WriteRequest(params)
 

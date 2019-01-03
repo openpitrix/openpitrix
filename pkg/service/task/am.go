@@ -8,11 +8,11 @@ import (
 	"context"
 
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
-	sender := senderutil.GetSenderFromContext(ctx)
+	sender := ctxutil.GetSender(ctx)
 	switch r := req.(type) {
 	case *pb.DescribeTasksRequest:
 		if sender.IsGlobalAdmin() {
