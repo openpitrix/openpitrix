@@ -91,6 +91,7 @@ const (
 	ColumnOperator = "operator"
 	ColumnReviewId = "review_id"
 	ColumnPhase    = "phase"
+	ColumnReviewer = "reviewer"
 
 	//vendor_verify_info
 	ColumnCompanyName       = "company_name"
@@ -184,7 +185,7 @@ var IndexedColumns = map[string][]string{
 		ColumnVersionId, ColumnAppId, ColumnStatus, ColumnOperator, ColumnRole,
 	},
 	TableAppVersionReview: {
-		ColumnReviewId, ColumnVersionId, ColumnAppId, ColumnStatus,
+		ColumnReviewId, ColumnVersionId, ColumnAppId, ColumnStatus, ColumnReviewer,
 	},
 }
 

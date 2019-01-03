@@ -19,6 +19,9 @@ type OpenpitrixCreateCategoryRequest struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// icon
+	Icon strfmt.Base64 `json:"icon,omitempty"`
+
 	// locale
 	Locale string `json:"locale,omitempty"`
 

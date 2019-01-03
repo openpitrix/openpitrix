@@ -27,6 +27,7 @@ type Category struct {
 	Locale      string
 	OwnerPath   sender.OwnerPath
 	Owner       string
+	Icon        string
 	CreateTime  time.Time
 	UpdateTime  *time.Time
 }
@@ -56,6 +57,7 @@ func CategoryToPb(category *Category) *pb.Category {
 	pbCategory.OwnerPath = category.OwnerPath.ToProtoString()
 	pbCategory.Description = pbutil.ToProtoString(category.Description)
 	pbCategory.CreateTime = pbutil.ToProtoTimestamp(category.CreateTime)
+	pbCategory.Icon = pbutil.ToProtoString(category.Icon)
 	if category.UpdateTime != nil {
 		pbCategory.UpdateTime = pbutil.ToProtoTimestamp(*category.UpdateTime)
 	}

@@ -7,7 +7,6 @@ package models
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"sort"
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/db"
@@ -30,16 +29,6 @@ type AppVersionReviewPhase struct {
 	StatusTime time.Time
 }
 type AppVersionReviewPhases map[string]AppVersionReviewPhase
-
-func (p AppVersionReviewPhases) GetMaxStatusTime() int64 {
-	maxTime := int64(0)
-	for _, phase := range p {
-		if phase.StatusTime.Unix() > maxTime {
-			maxTime = phase.StatusTime.Unix()
-		}
-	}
-	return maxTime
-}
 
 func (p *AppVersionReviewPhases) Scan(value interface{}) error {
 	if value == nil {
@@ -67,29 +56,18 @@ func (p AppVersionReviewPhases) Value() (driver.Value, error) {
 //}
 
 type AppVersionReview struct {
-	ReviewId  string
-	VersionId string
-	AppId     string
-	OwnerPath sender.OwnerPath
-	Owner     string
-	Status    string
-	Phase     AppVersionReviewPhases
+	ReviewId   string
+	VersionId  string
+	AppId      string
+	OwnerPath  sender.OwnerPath
+	Owner      string
+	Status     string
+	Phase      AppVersionReviewPhases
+	StatusTime time.Time
+	Reviewer   string
 }
 
 type AppVersionReviews []*AppVersionReview
-
-func (p AppVersionReviews) Len() int {
-	return len(p)
-}
-
-// desc
-func (p AppVersionReviews) Less(i, j int) bool {
-	return p[i].Phase.GetMaxStatusTime() > p[j].Phase.GetMaxStatusTime()
-}
-
-func (p AppVersionReviews) Swap(i, j int) {
-	p[i], p[j] = p[j], p[i]
-}
 
 func (avr *AppVersionReview) UpdatePhase(role, status, operator, message string) {
 	p, ok := avr.Phase[role]
@@ -112,13 +90,14 @@ var AppVersionReviewColumns = db.GetColumnsFromStruct(&AppVersionReview{})
 
 func NewAppVersionReview(versionId, appId, status string, ownerPath sender.OwnerPath) *AppVersionReview {
 	return &AppVersionReview{
-		ReviewId:  NewAppVersionReviewId(),
-		VersionId: versionId,
-		AppId:     appId,
-		Status:    status,
-		Owner:     ownerPath.Owner(),
-		OwnerPath: ownerPath,
-		Phase:     make(AppVersionReviewPhases),
+		ReviewId:   NewAppVersionReviewId(),
+		VersionId:  versionId,
+		AppId:      appId,
+		Status:     status,
+		Owner:      ownerPath.Owner(),
+		OwnerPath:  ownerPath,
+		Phase:      make(AppVersionReviewPhases),
+		StatusTime: time.Now(),
 	}
 }
 
@@ -148,7 +127,6 @@ func AppVersionReviewToPb(versionReview *AppVersionReview) *pb.AppVersionReview 
 }
 
 func AppVersionReviewsToPbs(versionReviews AppVersionReviews) (pbAppVersionReviews []*pb.AppVersionReview) {
-	sort.Sort(versionReviews)
 	for _, appVersionAudit := range versionReviews {
 		pbAppVersionReviews = append(pbAppVersionReviews, AppVersionReviewToPb(appVersionAudit))
 	}

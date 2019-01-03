@@ -259,7 +259,7 @@
   service: AppManager
   query:
     app_id:
-      type: string
+      type: '[]string'
     display_columns:
       type: '[]string'
     limit:
@@ -279,13 +279,13 @@
     status:
       type: '[]string'
     version_id:
-      type: string
+      type: '[]string'
 - action: DescribeAppVersionReviews
   request: DescribeAppVersionReviewsRequest
   service: AppManager
   query:
     app_id:
-      type: string
+      type: '[]string'
     display_columns:
       type: '[]string'
     limit:
@@ -296,6 +296,8 @@
       type: boolean
     review_id:
       type: '[]string'
+    reviewer:
+      type: '[]string'
     search_word:
       type: string
     sort_key:
@@ -303,7 +305,7 @@
     status:
       type: '[]string'
     version_id:
-      type: string
+      type: '[]string'
 - action: DescribeAppVersions
   request: DescribeAppVersionsRequest
   service: AppManager
@@ -579,6 +581,8 @@
   body:
     description:
       type: string
+    icon:
+      type: byte
     locale:
       type: string
     name:
@@ -619,6 +623,8 @@
       type: string
     description:
       type: string
+    icon:
+      type: byte
     locale:
       type: string
     name:

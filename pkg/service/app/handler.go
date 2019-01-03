@@ -459,16 +459,6 @@ func (p *Server) CreateAppVersion(ctx context.Context, req *pb.CreateAppVersionR
 }
 
 func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.DescribeAppVersionReviewsRequest) (*pb.DescribeAppVersionReviewsResponse, error) {
-	_, err := CheckAppPermission(ctx, req.GetAppId())
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = CheckAppVersionPermission(ctx, req.GetVersionId())
-	if err != nil {
-		return nil, err
-	}
-
 	var versionReviews []*models.AppVersionReview
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
@@ -481,8 +471,11 @@ func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.Describe
 		Limit(limit).
 		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersionReview))
+
+	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
+
 	if len(displayColumns) > 0 {
-		_, err = query.Load(&versionReviews)
+		_, err := query.Load(&versionReviews)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 		}
@@ -500,16 +493,6 @@ func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.Describe
 }
 
 func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeAppVersionAuditsRequest) (*pb.DescribeAppVersionAuditsResponse, error) {
-	_, err := CheckAppPermission(ctx, req.GetAppId())
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = CheckAppVersionPermission(ctx, req.GetVersionId())
-	if err != nil {
-		return nil, err
-	}
-
 	var versionAudits []*models.AppVersionAudit
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
@@ -526,7 +509,7 @@ func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeA
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnStatusTime)
 
 	if len(displayColumns) > 0 {
-		_, err = query.Load(&versionAudits)
+		_, err := query.Load(&versionAudits)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 		}

@@ -207,6 +207,9 @@ message AppVersionReview {
 	google.protobuf.StringValue app_id = 3;
 	google.protobuf.StringValue status = 4;
 	map<string, AppVersionReviewPhase> phase = 5;
+
+	google.protobuf.Timestamp status_time = 6;
+	google.protobuf.StringValue reviewer = 7;
 }
 
 message DescribeAppVersionReviewsRequest {
@@ -216,12 +219,13 @@ message DescribeAppVersionReviewsRequest {
 	uint32 limit = 4;
 	uint32 offset = 5;
 
-	string app_id = 10;
-	string version_id = 11;
+	repeated string app_id = 10;
+	repeated string version_id = 11;
 
 	repeated string review_id = 12;
 	repeated string status = 13;
 	repeated string display_columns = 14;
+	repeated string reviewer = 15;
 }
 
 message DescribeAppVersionReviewsResponse {
@@ -236,8 +240,8 @@ message DescribeAppVersionAuditsRequest {
 	uint32 limit = 4;
 	uint32 offset = 5;
 
-	string app_id = 10;
-	string version_id = 11;
+	repeated string app_id = 10;
+	repeated string version_id = 11;
 
 	repeated string status = 12;
 	repeated string operator = 13;
