@@ -102,9 +102,13 @@ func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
 					} else {
 						t += toString(s.Type)
 					}
+					help := s.Description
+					if help == "" {
+						help = s.Title
+					}
 					c.Body[getName(name)] = Param{
 						Shorthand: "",
-						Help:      s.Description,
+						Help:      help,
 						Type:      t,
 						Default:   s.Default,
 					}

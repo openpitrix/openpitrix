@@ -65,18 +65,28 @@ type DescribeRuntimesParams struct {
 
 	/*DisplayColumns*/
 	DisplayColumns []string
-	/*Limit*/
+	/*Limit
+	  default is 20, max value is 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  default is 0.
+
+	*/
 	Offset *int64
 	/*Owner*/
 	Owner []string
 	/*Provider*/
 	Provider []string
+	/*Reverse*/
+	Reverse *bool
 	/*RuntimeID*/
 	RuntimeID []string
 	/*SearchWord*/
 	SearchWord *string
+	/*SortKey*/
+	SortKey *string
 	/*Status*/
 	Status []string
 
@@ -173,6 +183,17 @@ func (o *DescribeRuntimesParams) SetProvider(provider []string) {
 	o.Provider = provider
 }
 
+// WithReverse adds the reverse to the describe runtimes params
+func (o *DescribeRuntimesParams) WithReverse(reverse *bool) *DescribeRuntimesParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe runtimes params
+func (o *DescribeRuntimesParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
 // WithRuntimeID adds the runtimeID to the describe runtimes params
 func (o *DescribeRuntimesParams) WithRuntimeID(runtimeID []string) *DescribeRuntimesParams {
 	o.SetRuntimeID(runtimeID)
@@ -193,6 +214,17 @@ func (o *DescribeRuntimesParams) WithSearchWord(searchWord *string) *DescribeRun
 // SetSearchWord adds the searchWord to the describe runtimes params
 func (o *DescribeRuntimesParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe runtimes params
+func (o *DescribeRuntimesParams) WithSortKey(sortKey *string) *DescribeRuntimesParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe runtimes params
+func (o *DescribeRuntimesParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WithStatus adds the status to the describe runtimes params
@@ -270,6 +302,22 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 		return err
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	valuesRuntimeID := o.RuntimeID
 
 	joinedRuntimeID := swag.JoinByFormat(valuesRuntimeID, "multi")
@@ -288,6 +336,22 @@ func (o *DescribeRuntimesParams) WriteToRequest(r runtime.ClientRequest, reg str
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}

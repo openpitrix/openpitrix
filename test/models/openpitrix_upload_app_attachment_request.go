@@ -22,10 +22,10 @@ type OpenpitrixUploadAppAttachmentRequest struct {
 	// attachment content
 	AttachmentContent strfmt.Base64 `json:"attachment_content,omitempty"`
 
-	// sequence
+	// only for screenshot, range: [0, 5]
 	Sequence int64 `json:"sequence,omitempty"`
 
-	// type
+	// optional: icon/screenshot
 	Type OpenpitrixUploadAppAttachmentRequestType `json:"type,omitempty"`
 }
 

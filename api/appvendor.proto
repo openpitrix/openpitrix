@@ -18,7 +18,9 @@ message DescribeVendorVerifyInfosRequest {
 	google.protobuf.StringValue search_word = 1;
 	google.protobuf.StringValue sort_key = 2;
 	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
 	uint32 limit = 4;
+	// default is 0
 	uint32 offset = 5;
 
 	repeated string user_id = 11;

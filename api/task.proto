@@ -53,18 +53,21 @@ message Task {
 	google.protobuf.BoolValue failure_allowed = 13;
 }
 message DescribeTasksRequest {
-	repeated string task_id = 1;
-	repeated string job_id = 2;
-	google.protobuf.StringValue executor = 3;
-	google.protobuf.StringValue target = 4;
-	repeated string status = 5;
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
 	// default is 20, max value is 200
-	uint32 limit = 6;
+	uint32 limit = 4;
 	// default is 0
-	uint32 offset = 7;
-	google.protobuf.StringValue search_word = 8;
-	repeated string owner = 9;
-	repeated string display_columns = 10;
+	uint32 offset = 5;
+	repeated string display_columns = 6;
+
+	repeated string task_id = 11;
+	repeated string job_id = 12;
+	google.protobuf.StringValue executor = 13;
+	google.protobuf.StringValue target = 14;
+	repeated string status = 15;
+	repeated string owner = 16;
 }
 message DescribeTasksResponse {
 	uint32 total_count = 1;

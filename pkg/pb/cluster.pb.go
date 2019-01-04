@@ -2641,14 +2641,16 @@ func (m *Cluster) GetClusterLoadbalancerSet() []*ClusterLoadbalancer {
 }
 
 type DescribeClustersRequest struct {
-	ClusterId            []string              `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
-	AppId                []string              `protobuf:"bytes,2,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	VersionId            []string              `protobuf:"bytes,3,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	Status               []string              `protobuf:"bytes,4,rep,name=status,proto3" json:"status,omitempty"`
-	RuntimeId            []string              `protobuf:"bytes,5,rep,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
-	FrontgateId          []string              `protobuf:"bytes,6,rep,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id,omitempty"`
-	ExternalClusterId    *wrappers.StringValue `protobuf:"bytes,7,opt,name=external_cluster_id,json=externalClusterId,proto3" json:"external_cluster_id,omitempty"`
-	Limit                uint32                `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
+	ClusterId         []string              `protobuf:"bytes,1,rep,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	AppId             []string              `protobuf:"bytes,2,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId         []string              `protobuf:"bytes,3,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	Status            []string              `protobuf:"bytes,4,rep,name=status,proto3" json:"status,omitempty"`
+	RuntimeId         []string              `protobuf:"bytes,5,rep,name=runtime_id,json=runtimeId,proto3" json:"runtime_id,omitempty"`
+	FrontgateId       []string              `protobuf:"bytes,6,rep,name=frontgate_id,json=frontgateId,proto3" json:"frontgate_id,omitempty"`
+	ExternalClusterId *wrappers.StringValue `protobuf:"bytes,7,opt,name=external_cluster_id,json=externalClusterId,proto3" json:"external_cluster_id,omitempty"`
+	// default is 20, max value is 200
+	Limit uint32 `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
+	// default is 0
 	Offset               uint32                `protobuf:"varint,9,opt,name=offset,proto3" json:"offset,omitempty"`
 	SearchWord           *wrappers.StringValue `protobuf:"bytes,10,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
 	SortKey              *wrappers.StringValue `protobuf:"bytes,11,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
@@ -2855,9 +2857,11 @@ func (m *DescribeClustersResponse) GetClusterSet() []*Cluster {
 }
 
 type DescribeAppClustersRequest struct {
-	AppId                []string              `protobuf:"bytes,1,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Status               []string              `protobuf:"bytes,2,rep,name=status,proto3" json:"status,omitempty"`
-	Limit                uint32                `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	AppId  []string `protobuf:"bytes,1,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	Status []string `protobuf:"bytes,2,rep,name=status,proto3" json:"status,omitempty"`
+	// default is 20, max value is 200
+	Limit uint32 `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	// default is 0
 	Offset               uint32                `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
 	SearchWord           *wrappers.StringValue `protobuf:"bytes,5,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
 	SortKey              *wrappers.StringValue `protobuf:"bytes,6,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
@@ -3021,10 +3025,12 @@ func (m *DescribeAppClustersResponse) GetClusterSet() []*Cluster {
 }
 
 type DescribeClusterNodesRequest struct {
-	ClusterId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
-	NodeId               []string              `protobuf:"bytes,2,rep,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
-	Status               []string              `protobuf:"bytes,3,rep,name=status,proto3" json:"status,omitempty"`
-	Limit                uint32                `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	ClusterId *wrappers.StringValue `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	NodeId    []string              `protobuf:"bytes,2,rep,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	Status    []string              `protobuf:"bytes,3,rep,name=status,proto3" json:"status,omitempty"`
+	// default is 20, max value is 200
+	Limit uint32 `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	// default is 0
 	Offset               uint32                `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
 	SearchWord           *wrappers.StringValue `protobuf:"bytes,6,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
 	SortKey              *wrappers.StringValue `protobuf:"bytes,7,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
@@ -3586,10 +3592,13 @@ func (m *GetClusterStatisticsRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_GetClusterStatisticsRequest proto.InternalMessageInfo
 
 type GetClusterStatisticsResponse struct {
-	LastTwoWeekCreated   map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated,proto3" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	TopTenRuntimes       map[string]uint32 `protobuf:"bytes,2,rep,name=top_ten_runtimes,json=topTenRuntimes,proto3" json:"top_ten_runtimes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	ClusterCount         uint32            `protobuf:"varint,3,opt,name=cluster_count,json=clusterCount,proto3" json:"cluster_count,omitempty"`
-	RuntimeCount         uint32            `protobuf:"varint,4,opt,name=runtime_count,json=runtimeCount,proto3" json:"runtime_count,omitempty"`
+	// cluster create time range -> cluster count, max length is 14
+	LastTwoWeekCreated map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated,proto3" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	// runtime id -> cluster count, max length is 10
+	TopTenRuntimes map[string]uint32 `protobuf:"bytes,2,rep,name=top_ten_runtimes,json=topTenRuntimes,proto3" json:"top_ten_runtimes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	ClusterCount   uint32            `protobuf:"varint,3,opt,name=cluster_count,json=clusterCount,proto3" json:"cluster_count,omitempty"`
+	RuntimeCount   uint32            `protobuf:"varint,4,opt,name=runtime_count,json=runtimeCount,proto3" json:"runtime_count,omitempty"`
+	// app id -> cluster count, max length is 10
 	TopTenApps           map[string]uint32 `protobuf:"bytes,5,rep,name=top_ten_apps,json=topTenApps,proto3" json:"top_ten_apps,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`

@@ -25,7 +25,7 @@ type OpenpitrixModifyCategoryRequest struct {
 	// icon
 	Icon strfmt.Base64 `json:"icon,omitempty"`
 
-	// locale
+	// the i18n of this category, json format, sample: {"zh_cn": "数据库", "en": "database"}
 	Locale string `json:"locale,omitempty"`
 
 	// name
