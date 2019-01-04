@@ -51,7 +51,7 @@ type GetAppStatisticsOK struct {
 }
 
 func (o *GetAppStatisticsOK) Error() string {
-	return fmt.Sprintf("[GET /api/AppManager.GetAppStatistics][%d] getAppStatisticsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/apps/statistics][%d] getAppStatisticsOK  %+v", 200, o.Payload)
 }
 
 func (o *GetAppStatisticsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -180,7 +180,7 @@ func RegisterCategoryManagerHandlerClient(ctx context.Context, mux *runtime.Serv
 
 	})
 
-	mux.Handle("POST", pattern_CategoryManager_ModifyCategory_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_CategoryManager_ModifyCategory_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -209,7 +209,7 @@ func RegisterCategoryManagerHandlerClient(ctx context.Context, mux *runtime.Serv
 
 	})
 
-	mux.Handle("POST", pattern_CategoryManager_DeleteCategories_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("DELETE", pattern_CategoryManager_DeleteCategories_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -242,13 +242,13 @@ func RegisterCategoryManagerHandlerClient(ctx context.Context, mux *runtime.Serv
 }
 
 var (
-	pattern_CategoryManager_DescribeCategories_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "CategoryManager.DescribeCategories"}, ""))
+	pattern_CategoryManager_DescribeCategories_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "categories"}, ""))
 
-	pattern_CategoryManager_CreateCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "CategoryManager.CreateCategory"}, ""))
+	pattern_CategoryManager_CreateCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "categories"}, ""))
 
-	pattern_CategoryManager_ModifyCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "CategoryManager.ModifyCategory"}, ""))
+	pattern_CategoryManager_ModifyCategory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "categories"}, ""))
 
-	pattern_CategoryManager_DeleteCategories_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "CategoryManager.DeleteCategories"}, ""))
+	pattern_CategoryManager_DeleteCategories_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "categories"}, ""))
 )
 
 var (

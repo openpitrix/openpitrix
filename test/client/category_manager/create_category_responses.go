@@ -51,7 +51,7 @@ type CreateCategoryOK struct {
 }
 
 func (o *CreateCategoryOK) Error() string {
-	return fmt.Sprintf("[POST /api/CategoryManager.CreateCategory][%d] createCategoryOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/categories][%d] createCategoryOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateCategoryOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

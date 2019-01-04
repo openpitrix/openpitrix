@@ -51,7 +51,7 @@ type DescribeRepoEventsOK struct {
 }
 
 func (o *DescribeRepoEventsOK) Error() string {
-	return fmt.Sprintf("[GET /api/RepoIndexer.DescribeRepoEvents][%d] describeRepoEventsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/repo_events][%d] describeRepoEventsOK  %+v", 200, o.Payload)
 }
 
 func (o *DescribeRepoEventsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

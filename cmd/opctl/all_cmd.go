@@ -1396,6 +1396,7 @@ func (c *PassAppVersionCmd) ParseFlag(f Flag) {
 func (c *PassAppVersionCmd) Run(out Out) error {
 	params := app_manager.NewPassAppVersionParams()
 	params.WithBody(c.OpenpitrixPassAppVersionRequest)
+	params.WithRole(c.Role)
 
 	out.WriteRequest(params)
 
@@ -1468,6 +1469,7 @@ func (c *RejectAppVersionCmd) ParseFlag(f Flag) {
 func (c *RejectAppVersionCmd) Run(out Out) error {
 	params := app_manager.NewRejectAppVersionParams()
 	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
+	params.WithRole(c.Role)
 
 	out.WriteRequest(params)
 
@@ -1539,6 +1541,7 @@ func (c *ReviewAppVersionCmd) ParseFlag(f Flag) {
 func (c *ReviewAppVersionCmd) Run(out Out) error {
 	params := app_manager.NewReviewAppVersionParams()
 	params.WithBody(c.OpenpitrixReviewAppVersionRequest)
+	params.WithRole(c.Role)
 
 	out.WriteRequest(params)
 

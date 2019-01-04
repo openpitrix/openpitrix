@@ -51,7 +51,7 @@ type DeleteReposOK struct {
 }
 
 func (o *DeleteReposOK) Error() string {
-	return fmt.Sprintf("[POST /api/RepoManager.DeleteRepos][%d] deleteReposOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[DELETE /v1/repos][%d] deleteReposOK  %+v", 200, o.Payload)
 }
 
 func (o *DeleteReposOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

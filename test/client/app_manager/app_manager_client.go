@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-CancelAppVersion cancel app version API
+CancelAppVersion cancels app version
 */
 func (a *Client) CancelAppVersion(params *CancelAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*CancelAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -36,7 +36,7 @@ func (a *Client) CancelAppVersion(params *CancelAppVersionParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "CancelAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.CancelAppVersion",
+		PathPattern:        "/v1/app_version/action/cancel",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -54,7 +54,7 @@ func (a *Client) CancelAppVersion(params *CancelAppVersionParams, authInfo runti
 }
 
 /*
-CreateApp create app API
+CreateApp creates app
 */
 func (a *Client) CreateApp(params *CreateAppParams, authInfo runtime.ClientAuthInfoWriter) (*CreateAppOK, error) {
 	// TODO: Validate the params before sending
@@ -65,7 +65,7 @@ func (a *Client) CreateApp(params *CreateAppParams, authInfo runtime.ClientAuthI
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "CreateApp",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.CreateApp",
+		PathPattern:        "/v1/apps",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -83,7 +83,7 @@ func (a *Client) CreateApp(params *CreateAppParams, authInfo runtime.ClientAuthI
 }
 
 /*
-CreateAppVersion create app version API
+CreateAppVersion creates app version
 */
 func (a *Client) CreateAppVersion(params *CreateAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*CreateAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -94,7 +94,7 @@ func (a *Client) CreateAppVersion(params *CreateAppVersionParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "CreateAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.CreateAppVersion",
+		PathPattern:        "/v1/app_versions",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -112,7 +112,7 @@ func (a *Client) CreateAppVersion(params *CreateAppVersionParams, authInfo runti
 }
 
 /*
-DeleteAppVersion delete app version API
+DeleteAppVersion deletes app version
 */
 func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -123,7 +123,7 @@ func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DeleteAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.DeleteAppVersion",
+		PathPattern:        "/v1/app_version/action/delete",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -141,7 +141,7 @@ func (a *Client) DeleteAppVersion(params *DeleteAppVersionParams, authInfo runti
 }
 
 /*
-DeleteApps delete apps API
+DeleteApps deletes apps
 */
 func (a *Client) DeleteApps(params *DeleteAppsParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteAppsOK, error) {
 	// TODO: Validate the params before sending
@@ -151,8 +151,8 @@ func (a *Client) DeleteApps(params *DeleteAppsParams, authInfo runtime.ClientAut
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DeleteApps",
-		Method:             "POST",
-		PathPattern:        "/api/AppManager.DeleteApps",
+		Method:             "DELETE",
+		PathPattern:        "/v1/apps",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -170,7 +170,7 @@ func (a *Client) DeleteApps(params *DeleteAppsParams, authInfo runtime.ClientAut
 }
 
 /*
-DescribeActiveAppVersions describe active app versions API
+DescribeActiveAppVersions describes app versions with filter
 */
 func (a *Client) DescribeActiveAppVersions(params *DescribeActiveAppVersionsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeActiveAppVersionsOK, error) {
 	// TODO: Validate the params before sending
@@ -181,7 +181,7 @@ func (a *Client) DescribeActiveAppVersions(params *DescribeActiveAppVersionsPara
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeActiveAppVersions",
 		Method:             "GET",
-		PathPattern:        "/api/AppManager.DescribeActiveAppVersions",
+		PathPattern:        "/v1/active_app_versions",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -199,7 +199,7 @@ func (a *Client) DescribeActiveAppVersions(params *DescribeActiveAppVersionsPara
 }
 
 /*
-DescribeActiveApps describe active apps API
+DescribeActiveApps describes apps with filter
 */
 func (a *Client) DescribeActiveApps(params *DescribeActiveAppsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeActiveAppsOK, error) {
 	// TODO: Validate the params before sending
@@ -210,7 +210,7 @@ func (a *Client) DescribeActiveApps(params *DescribeActiveAppsParams, authInfo r
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeActiveApps",
 		Method:             "GET",
-		PathPattern:        "/api/AppManager.DescribeActiveApps",
+		PathPattern:        "/v1/active_apps",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -228,7 +228,7 @@ func (a *Client) DescribeActiveApps(params *DescribeActiveAppsParams, authInfo r
 }
 
 /*
-DescribeAppVersionAudits describe app version audits API
+DescribeAppVersionAudits describes app version audits
 */
 func (a *Client) DescribeAppVersionAudits(params *DescribeAppVersionAuditsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionAuditsOK, error) {
 	// TODO: Validate the params before sending
@@ -239,7 +239,7 @@ func (a *Client) DescribeAppVersionAudits(params *DescribeAppVersionAuditsParams
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeAppVersionAudits",
 		Method:             "GET",
-		PathPattern:        "/api/AppManager.DescribeAppVersionAudits",
+		PathPattern:        "/v1/app_version_audits",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -257,7 +257,7 @@ func (a *Client) DescribeAppVersionAudits(params *DescribeAppVersionAuditsParams
 }
 
 /*
-DescribeAppVersionReviews describe app version reviews API
+DescribeAppVersionReviews describes app version reviews
 */
 func (a *Client) DescribeAppVersionReviews(params *DescribeAppVersionReviewsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionReviewsOK, error) {
 	// TODO: Validate the params before sending
@@ -268,7 +268,7 @@ func (a *Client) DescribeAppVersionReviews(params *DescribeAppVersionReviewsPara
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeAppVersionReviews",
 		Method:             "GET",
-		PathPattern:        "/api/AppManager.DescribeAppVersionReviews",
+		PathPattern:        "/v1/app_version_reviews",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -286,7 +286,7 @@ func (a *Client) DescribeAppVersionReviews(params *DescribeAppVersionReviewsPara
 }
 
 /*
-DescribeAppVersions describe app versions API
+DescribeAppVersions describes app versions with filter
 */
 func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVersionsOK, error) {
 	// TODO: Validate the params before sending
@@ -297,7 +297,7 @@ func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams, authInfo
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeAppVersions",
 		Method:             "GET",
-		PathPattern:        "/api/AppManager.DescribeAppVersions",
+		PathPattern:        "/v1/app_versions",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -315,7 +315,7 @@ func (a *Client) DescribeAppVersions(params *DescribeAppVersionsParams, authInfo
 }
 
 /*
-DescribeApps describe apps API
+DescribeApps describes apps with filter
 */
 func (a *Client) DescribeApps(params *DescribeAppsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppsOK, error) {
 	// TODO: Validate the params before sending
@@ -326,7 +326,7 @@ func (a *Client) DescribeApps(params *DescribeAppsParams, authInfo runtime.Clien
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeApps",
 		Method:             "GET",
-		PathPattern:        "/api/AppManager.DescribeApps",
+		PathPattern:        "/v1/apps",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -344,7 +344,7 @@ func (a *Client) DescribeApps(params *DescribeAppsParams, authInfo runtime.Clien
 }
 
 /*
-GetAppStatistics get app statistics API
+GetAppStatistics gets app statistics
 */
 func (a *Client) GetAppStatistics(params *GetAppStatisticsParams, authInfo runtime.ClientAuthInfoWriter) (*GetAppStatisticsOK, error) {
 	// TODO: Validate the params before sending
@@ -355,7 +355,7 @@ func (a *Client) GetAppStatistics(params *GetAppStatisticsParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetAppStatistics",
 		Method:             "GET",
-		PathPattern:        "/api/AppManager.GetAppStatistics",
+		PathPattern:        "/v1/apps/statistics",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -373,7 +373,7 @@ func (a *Client) GetAppStatistics(params *GetAppStatisticsParams, authInfo runti
 }
 
 /*
-GetAppVersionPackage get app version package API
+GetAppVersionPackage gets the package content of app version
 */
 func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams, authInfo runtime.ClientAuthInfoWriter) (*GetAppVersionPackageOK, error) {
 	// TODO: Validate the params before sending
@@ -384,7 +384,7 @@ func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams, authIn
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetAppVersionPackage",
 		Method:             "GET",
-		PathPattern:        "/api/AppManager.GetAppVersionPackage",
+		PathPattern:        "/v1/app_version/package",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -402,7 +402,7 @@ func (a *Client) GetAppVersionPackage(params *GetAppVersionPackageParams, authIn
 }
 
 /*
-GetAppVersionPackageFiles get app version package files API
+GetAppVersionPackageFiles gets the package files content of app version
 */
 func (a *Client) GetAppVersionPackageFiles(params *GetAppVersionPackageFilesParams, authInfo runtime.ClientAuthInfoWriter) (*GetAppVersionPackageFilesOK, error) {
 	// TODO: Validate the params before sending
@@ -413,7 +413,7 @@ func (a *Client) GetAppVersionPackageFiles(params *GetAppVersionPackageFilesPara
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetAppVersionPackageFiles",
 		Method:             "GET",
-		PathPattern:        "/api/AppManager.GetAppVersionPackageFiles",
+		PathPattern:        "/v1/app_version/package/files",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -431,7 +431,7 @@ func (a *Client) GetAppVersionPackageFiles(params *GetAppVersionPackageFilesPara
 }
 
 /*
-ModifyApp modify app API
+ModifyApp modifies app
 */
 func (a *Client) ModifyApp(params *ModifyAppParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyAppOK, error) {
 	// TODO: Validate the params before sending
@@ -441,8 +441,8 @@ func (a *Client) ModifyApp(params *ModifyAppParams, authInfo runtime.ClientAuthI
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ModifyApp",
-		Method:             "POST",
-		PathPattern:        "/api/AppManager.ModifyApp",
+		Method:             "PATCH",
+		PathPattern:        "/v1/apps",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -460,7 +460,7 @@ func (a *Client) ModifyApp(params *ModifyAppParams, authInfo runtime.ClientAuthI
 }
 
 /*
-ModifyAppVersion modify app version API
+ModifyAppVersion modifies app version
 */
 func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -470,8 +470,8 @@ func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams, authInfo runti
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ModifyAppVersion",
-		Method:             "POST",
-		PathPattern:        "/api/AppManager.ModifyAppVersion",
+		Method:             "PATCH",
+		PathPattern:        "/v1/app_versions",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -489,7 +489,7 @@ func (a *Client) ModifyAppVersion(params *ModifyAppVersionParams, authInfo runti
 }
 
 /*
-PassAppVersion pass app version API
+PassAppVersion passes app version
 */
 func (a *Client) PassAppVersion(params *PassAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*PassAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -500,7 +500,7 @@ func (a *Client) PassAppVersion(params *PassAppVersionParams, authInfo runtime.C
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "PassAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.PassAppVersion",
+		PathPattern:        "/v1/app_version/action/{role}/pass",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -518,7 +518,7 @@ func (a *Client) PassAppVersion(params *PassAppVersionParams, authInfo runtime.C
 }
 
 /*
-RecoverAppVersion recover app version API
+RecoverAppVersion recovers app version
 */
 func (a *Client) RecoverAppVersion(params *RecoverAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*RecoverAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -529,7 +529,7 @@ func (a *Client) RecoverAppVersion(params *RecoverAppVersionParams, authInfo run
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "RecoverAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.RecoverAppVersion",
+		PathPattern:        "/v1/app_version/action/recover",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -547,7 +547,7 @@ func (a *Client) RecoverAppVersion(params *RecoverAppVersionParams, authInfo run
 }
 
 /*
-RejectAppVersion reject app version API
+RejectAppVersion rejects app version
 */
 func (a *Client) RejectAppVersion(params *RejectAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*RejectAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -558,7 +558,7 @@ func (a *Client) RejectAppVersion(params *RejectAppVersionParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "RejectAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.RejectAppVersion",
+		PathPattern:        "/v1/app_version/action/{role}/reject",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -576,7 +576,7 @@ func (a *Client) RejectAppVersion(params *RejectAppVersionParams, authInfo runti
 }
 
 /*
-ReleaseAppVersion release app version API
+ReleaseAppVersion releases app version
 */
 func (a *Client) ReleaseAppVersion(params *ReleaseAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*ReleaseAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -587,7 +587,7 @@ func (a *Client) ReleaseAppVersion(params *ReleaseAppVersionParams, authInfo run
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ReleaseAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.ReleaseAppVersion",
+		PathPattern:        "/v1/app_version/action/release",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -605,7 +605,7 @@ func (a *Client) ReleaseAppVersion(params *ReleaseAppVersionParams, authInfo run
 }
 
 /*
-ReviewAppVersion review app version API
+ReviewAppVersion passes app version
 */
 func (a *Client) ReviewAppVersion(params *ReviewAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*ReviewAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -616,7 +616,7 @@ func (a *Client) ReviewAppVersion(params *ReviewAppVersionParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ReviewAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.ReviewAppVersion",
+		PathPattern:        "/v1/app_version/action/{role}/review",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -634,7 +634,7 @@ func (a *Client) ReviewAppVersion(params *ReviewAppVersionParams, authInfo runti
 }
 
 /*
-SubmitAppVersion submit app version API
+SubmitAppVersion submits app version
 */
 func (a *Client) SubmitAppVersion(params *SubmitAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*SubmitAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -645,7 +645,7 @@ func (a *Client) SubmitAppVersion(params *SubmitAppVersionParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "SubmitAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.SubmitAppVersion",
+		PathPattern:        "/v1/app_version/action/submit",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -663,7 +663,7 @@ func (a *Client) SubmitAppVersion(params *SubmitAppVersionParams, authInfo runti
 }
 
 /*
-SuspendAppVersion suspend app version API
+SuspendAppVersion suspends app version
 */
 func (a *Client) SuspendAppVersion(params *SuspendAppVersionParams, authInfo runtime.ClientAuthInfoWriter) (*SuspendAppVersionOK, error) {
 	// TODO: Validate the params before sending
@@ -674,7 +674,7 @@ func (a *Client) SuspendAppVersion(params *SuspendAppVersionParams, authInfo run
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "SuspendAppVersion",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.SuspendAppVersion",
+		PathPattern:        "/v1/app_version/action/suspend",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -692,7 +692,7 @@ func (a *Client) SuspendAppVersion(params *SuspendAppVersionParams, authInfo run
 }
 
 /*
-UploadAppAttachment upload app attachment API
+UploadAppAttachment uploads app attachment
 */
 func (a *Client) UploadAppAttachment(params *UploadAppAttachmentParams, authInfo runtime.ClientAuthInfoWriter) (*UploadAppAttachmentOK, error) {
 	// TODO: Validate the params before sending
@@ -702,8 +702,8 @@ func (a *Client) UploadAppAttachment(params *UploadAppAttachmentParams, authInfo
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "UploadAppAttachment",
-		Method:             "POST",
-		PathPattern:        "/api/AppManager.UploadAppAttachment",
+		Method:             "PATCH",
+		PathPattern:        "/v1/app/attachment",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -721,7 +721,7 @@ func (a *Client) UploadAppAttachment(params *UploadAppAttachmentParams, authInfo
 }
 
 /*
-ValidatePackage validate package API
+ValidatePackage validates package
 */
 func (a *Client) ValidatePackage(params *ValidatePackageParams, authInfo runtime.ClientAuthInfoWriter) (*ValidatePackageOK, error) {
 	// TODO: Validate the params before sending
@@ -732,7 +732,7 @@ func (a *Client) ValidatePackage(params *ValidatePackageParams, authInfo runtime
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ValidatePackage",
 		Method:             "POST",
-		PathPattern:        "/api/AppManager.ValidatePackage",
+		PathPattern:        "/v1/apps/validate_package",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

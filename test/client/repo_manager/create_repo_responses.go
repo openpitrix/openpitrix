@@ -51,7 +51,7 @@ type CreateRepoOK struct {
 }
 
 func (o *CreateRepoOK) Error() string {
-	return fmt.Sprintf("[POST /api/RepoManager.CreateRepo][%d] createRepoOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/repos][%d] createRepoOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateRepoOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -137,31 +137,46 @@ message ValidateRepoResponse {
 
 service RepoManager {
 	rpc CreateRepo (CreateRepoRequest) returns (CreateRepoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create repo"
+		};
 		option (google.api.http) = {
-			post: "/api/RepoManager.CreateRepo"
+			post: "/v1/repos"
 			body: "*"
 		};
 	}
 	rpc DescribeRepos (DescribeReposRequest) returns (DescribeReposResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe repos with filter"
+		};
 		option (google.api.http) = {
-			get: "/api/RepoManager.DescribeRepos"
+			get: "/v1/repos"
 		};
 	}
 	rpc ModifyRepo (ModifyRepoRequest) returns (ModifyRepoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify repo"
+		};
 		option (google.api.http) = {
-			post: "/api/RepoManager.ModifyRepo"
+			patch: "/v1/repos"
 			body: "*"
 		};
 	}
 	rpc DeleteRepos (DeleteReposRequest) returns (DeleteReposResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete repos"
+		};
 		option (google.api.http) = {
-			post: "/api/RepoManager.DeleteRepos"
+			delete: "/v1/repos"
 			body: "*"
 		};
 	}
 	rpc ValidateRepo (ValidateRepoRequest) returns (ValidateRepoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "validate repo"
+		};
 		option (google.api.http) = {
-			get: "/api/RepoManager.ValidateRepo"
+			get: "/v1/repos/validate"
 		};
 	}
 }

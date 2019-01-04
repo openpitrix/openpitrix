@@ -51,7 +51,7 @@ type ModifyRepoOK struct {
 }
 
 func (o *ModifyRepoOK) Error() string {
-	return fmt.Sprintf("[POST /api/RepoManager.ModifyRepo][%d] modifyRepoOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PATCH /v1/repos][%d] modifyRepoOK  %+v", 200, o.Payload)
 }
 
 func (o *ModifyRepoOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
