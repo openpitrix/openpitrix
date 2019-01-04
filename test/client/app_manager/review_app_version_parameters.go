@@ -66,6 +66,8 @@ type ReviewAppVersionParams struct {
 
 	/*Body*/
 	Body *models.OpenpitrixReviewAppVersionRequest
+	/*Role*/
+	Role string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -116,6 +118,17 @@ func (o *ReviewAppVersionParams) SetBody(body *models.OpenpitrixReviewAppVersion
 	o.Body = body
 }
 
+// WithRole adds the role to the review app version params
+func (o *ReviewAppVersionParams) WithRole(role string) *ReviewAppVersionParams {
+	o.SetRole(role)
+	return o
+}
+
+// SetRole adds the role to the review app version params
+func (o *ReviewAppVersionParams) SetRole(role string) {
+	o.Role = role
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *ReviewAppVersionParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -128,6 +141,11 @@ func (o *ReviewAppVersionParams) WriteToRequest(r runtime.ClientRequest, reg str
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
 		}
+	}
+
+	// path param role
+	if err := r.SetPathParam("role", o.Role); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

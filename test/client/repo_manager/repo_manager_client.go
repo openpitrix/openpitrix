@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-CreateRepo create repo API
+CreateRepo creates repo
 */
 func (a *Client) CreateRepo(params *CreateRepoParams, authInfo runtime.ClientAuthInfoWriter) (*CreateRepoOK, error) {
 	// TODO: Validate the params before sending
@@ -36,7 +36,7 @@ func (a *Client) CreateRepo(params *CreateRepoParams, authInfo runtime.ClientAut
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "CreateRepo",
 		Method:             "POST",
-		PathPattern:        "/api/RepoManager.CreateRepo",
+		PathPattern:        "/v1/repos",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -54,7 +54,7 @@ func (a *Client) CreateRepo(params *CreateRepoParams, authInfo runtime.ClientAut
 }
 
 /*
-DeleteRepos delete repos API
+DeleteRepos deletes repos
 */
 func (a *Client) DeleteRepos(params *DeleteReposParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteReposOK, error) {
 	// TODO: Validate the params before sending
@@ -64,8 +64,8 @@ func (a *Client) DeleteRepos(params *DeleteReposParams, authInfo runtime.ClientA
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DeleteRepos",
-		Method:             "POST",
-		PathPattern:        "/api/RepoManager.DeleteRepos",
+		Method:             "DELETE",
+		PathPattern:        "/v1/repos",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -83,7 +83,7 @@ func (a *Client) DeleteRepos(params *DeleteReposParams, authInfo runtime.ClientA
 }
 
 /*
-DescribeRepos describe repos API
+DescribeRepos describes repos with filter
 */
 func (a *Client) DescribeRepos(params *DescribeReposParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeReposOK, error) {
 	// TODO: Validate the params before sending
@@ -94,7 +94,7 @@ func (a *Client) DescribeRepos(params *DescribeReposParams, authInfo runtime.Cli
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeRepos",
 		Method:             "GET",
-		PathPattern:        "/api/RepoManager.DescribeRepos",
+		PathPattern:        "/v1/repos",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -112,7 +112,7 @@ func (a *Client) DescribeRepos(params *DescribeReposParams, authInfo runtime.Cli
 }
 
 /*
-ModifyRepo modify repo API
+ModifyRepo modifies repo
 */
 func (a *Client) ModifyRepo(params *ModifyRepoParams, authInfo runtime.ClientAuthInfoWriter) (*ModifyRepoOK, error) {
 	// TODO: Validate the params before sending
@@ -122,8 +122,8 @@ func (a *Client) ModifyRepo(params *ModifyRepoParams, authInfo runtime.ClientAut
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ModifyRepo",
-		Method:             "POST",
-		PathPattern:        "/api/RepoManager.ModifyRepo",
+		Method:             "PATCH",
+		PathPattern:        "/v1/repos",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -141,7 +141,7 @@ func (a *Client) ModifyRepo(params *ModifyRepoParams, authInfo runtime.ClientAut
 }
 
 /*
-ValidateRepo validate repo API
+ValidateRepo validates repo
 */
 func (a *Client) ValidateRepo(params *ValidateRepoParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateRepoOK, error) {
 	// TODO: Validate the params before sending
@@ -152,7 +152,7 @@ func (a *Client) ValidateRepo(params *ValidateRepoParams, authInfo runtime.Clien
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ValidateRepo",
 		Method:             "GET",
-		PathPattern:        "/api/RepoManager.ValidateRepo",
+		PathPattern:        "/v1/repos/validate",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

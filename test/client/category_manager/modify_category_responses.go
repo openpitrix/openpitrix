@@ -51,7 +51,7 @@ type ModifyCategoryOK struct {
 }
 
 func (o *ModifyCategoryOK) Error() string {
-	return fmt.Sprintf("[POST /api/CategoryManager.ModifyCategory][%d] modifyCategoryOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PATCH /v1/categories][%d] modifyCategoryOK  %+v", 200, o.Payload)
 }
 
 func (o *ModifyCategoryOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

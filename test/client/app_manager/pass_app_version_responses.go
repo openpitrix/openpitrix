@@ -51,7 +51,7 @@ type PassAppVersionOK struct {
 }
 
 func (o *PassAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /api/AppManager.PassAppVersion][%d] passAppVersionOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/app_version/action/{role}/pass][%d] passAppVersionOK  %+v", 200, o.Payload)
 }
 
 func (o *PassAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

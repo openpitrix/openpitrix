@@ -76,14 +76,20 @@ message DescribeRepoEventsResponse {
 
 service RepoIndexer {
 	rpc IndexRepo (IndexRepoRequest) returns (IndexRepoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "start a index repo event"
+		};
 		option (google.api.http) = {
-			post: "/api/RepoIndexer.IndexRepo"
+			post: "/v1/repos/index"
 			body: "*"
 		};
 	}
 	rpc DescribeRepoEvents (DescribeRepoEventsRequest) returns (DescribeRepoEventsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe repo events"
+		};
 		option (google.api.http) = {
-			get: "/api/RepoIndexer.DescribeRepoEvents"
+			get: "/v1/repo_events"
 		};
 	}
 //	rpc DescribeRepoEventLogs (DescribeRepoEventLogsRequest) returns (DescribeRepoEventLogsResponse) {

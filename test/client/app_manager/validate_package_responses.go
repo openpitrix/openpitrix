@@ -51,7 +51,7 @@ type ValidatePackageOK struct {
 }
 
 func (o *ValidatePackageOK) Error() string {
-	return fmt.Sprintf("[POST /api/AppManager.ValidatePackage][%d] validatePackageOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/apps/validate_package][%d] validatePackageOK  %+v", 200, o.Payload)
 }
 
 func (o *ValidatePackageOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

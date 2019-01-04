@@ -51,7 +51,7 @@ type ReleaseAppVersionOK struct {
 }
 
 func (o *ReleaseAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /api/AppManager.ReleaseAppVersion][%d] releaseAppVersionOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/app_version/action/release][%d] releaseAppVersionOK  %+v", 200, o.Payload)
 }
 
 func (o *ReleaseAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

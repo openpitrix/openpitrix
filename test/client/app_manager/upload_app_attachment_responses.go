@@ -51,7 +51,7 @@ type UploadAppAttachmentOK struct {
 }
 
 func (o *UploadAppAttachmentOK) Error() string {
-	return fmt.Sprintf("[POST /api/AppManager.UploadAppAttachment][%d] uploadAppAttachmentOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PATCH /v1/app/attachment][%d] uploadAppAttachmentOK  %+v", 200, o.Payload)
 }
 
 func (o *UploadAppAttachmentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

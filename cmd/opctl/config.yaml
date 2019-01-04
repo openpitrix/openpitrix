@@ -148,12 +148,14 @@
       type: string
 - action: CancelAppVersion
   request: CancelAppVersionRequest
+  description: cancel app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: CreateApp
   request: CreateAppRequest
+  description: create app
   service: AppManager
   body:
     icon:
@@ -172,6 +174,7 @@
       type: string
 - action: CreateAppVersion
   request: CreateAppVersionRequest
+  description: create app version
   service: AppManager
   body:
     app_id:
@@ -187,18 +190,21 @@
       type: string
 - action: DeleteAppVersion
   request: DeleteAppVersionRequest
+  description: delete app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: DeleteApps
   request: DeleteAppsRequest
+  description: delete apps
   service: AppManager
   body:
     app_id:
       type: '[]string'
 - action: DescribeActiveAppVersions
   request: DescribeActiveAppVersionsRequest
+  description: describe app versions with filter
   service: AppManager
   query:
     app_id:
@@ -233,6 +239,7 @@
       type: '[]string'
 - action: DescribeActiveApps
   request: DescribeActiveAppsRequest
+  description: describe apps with filter
   service: AppManager
   query:
     app_id:
@@ -265,6 +272,7 @@
       type: '[]string'
 - action: DescribeAppVersionAudits
   request: DescribeAppVersionAuditsRequest
+  description: DescribeAppVersionAudits
   service: AppManager
   query:
     app_id:
@@ -293,6 +301,7 @@
       type: '[]string'
 - action: DescribeAppVersionReviews
   request: DescribeAppVersionReviewsRequest
+  description: DescribeAppVersionReviews
   service: AppManager
   query:
     app_id:
@@ -321,6 +330,7 @@
       type: '[]string'
 - action: DescribeAppVersions
   request: DescribeAppVersionsRequest
+  description: describe app versions with filter
   service: AppManager
   query:
     app_id:
@@ -355,6 +365,7 @@
       type: '[]string'
 - action: DescribeApps
   request: DescribeAppsRequest
+  description: describe apps with filter
   service: AppManager
   query:
     app_id:
@@ -387,15 +398,18 @@
       type: '[]string'
 - action: GetAppStatistics
   request: GetAppStatisticsRequest
+  description: get app statistics
   service: AppManager
 - action: GetAppVersionPackage
   request: GetAppVersionPackageRequest
+  description: get the package content of app version
   service: AppManager
   query:
     version_id:
       type: string
 - action: GetAppVersionPackageFiles
   request: GetAppVersionPackageFilesRequest
+  description: get the package files content of app version
   service: AppManager
   query:
     files:
@@ -404,6 +418,7 @@
       type: string
 - action: ModifyApp
   request: ModifyAppRequest
+  description: modify app
   service: AppManager
   body:
     abstraction:
@@ -430,6 +445,7 @@
       type: string
 - action: ModifyAppVersion
   request: ModifyAppVersionRequest
+  description: modify app version
   service: AppManager
   body:
     description:
@@ -445,7 +461,11 @@
       type: string
 - action: PassAppVersion
   request: PassAppVersionRequest
+  description: pass app version
   service: AppManager
+  path:
+    role:
+      type: string
   body:
     role:
       type: string
@@ -453,13 +473,18 @@
       type: string
 - action: RecoverAppVersion
   request: RecoverAppVersionRequest
+  description: recover app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: RejectAppVersion
   request: RejectAppVersionRequest
+  description: reject app version
   service: AppManager
+  path:
+    role:
+      type: string
   body:
     message:
       type: string
@@ -469,13 +494,18 @@
       type: string
 - action: ReleaseAppVersion
   request: ReleaseAppVersionRequest
+  description: release app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: ReviewAppVersion
   request: ReviewAppVersionRequest
+  description: pass app version
   service: AppManager
+  path:
+    role:
+      type: string
   body:
     role:
       type: string
@@ -483,18 +513,21 @@
       type: string
 - action: SubmitAppVersion
   request: SubmitAppVersionRequest
+  description: submit app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: SuspendAppVersion
   request: SuspendAppVersionRequest
+  description: suspend app version
   service: AppManager
   body:
     version_id:
       type: string
 - action: UploadAppAttachment
   request: UploadAppAttachmentRequest
+  description: UploadAppAttachment
   service: AppManager
   body:
     app_id:
@@ -508,6 +541,7 @@
       help: 'optional: icon/screenshot'
 - action: ValidatePackage
   request: ValidatePackageRequest
+  description: ValidatePackage
   service: AppManager
   body:
     version_package:
@@ -600,6 +634,7 @@
       type: string
 - action: CreateCategory
   request: CreateCategoryRequest
+  description: create category
   service: CategoryManager
   body:
     description:
@@ -614,12 +649,14 @@
       type: string
 - action: DeleteCategories
   request: DeleteCategoriesRequest
+  description: delete categories
   service: CategoryManager
   body:
     category_id:
       type: '[]string'
 - action: DescribeCategories
   request: DescribeCategoriesRequest
+  description: describe categories with filter
   service: CategoryManager
   query:
     category_id:
@@ -644,6 +681,7 @@
       type: string
 - action: ModifyCategory
   request: ModifyCategoryRequest
+  description: modify category
   service: CategoryManager
   body:
     category_id:
@@ -1181,6 +1219,7 @@
       type: '[]string'
 - action: DescribeRepoEvents
   request: DescribeRepoEventsRequest
+  description: describe repo events
   service: RepoIndexer
   query:
     limit:
@@ -1199,12 +1238,14 @@
       type: '[]string'
 - action: IndexRepo
   request: IndexRepoRequest
+  description: start a index repo event
   service: RepoIndexer
   body:
     repo_id:
       type: string
 - action: CreateRepo
   request: CreateRepoRequest
+  description: create repo
   service: RepoManager
   body:
     app_default_status:
@@ -1231,12 +1272,14 @@
       type: string
 - action: DeleteRepos
   request: DeleteReposRequest
+  description: delete repos
   service: RepoManager
   body:
     repo_id:
       type: '[]string'
 - action: DescribeRepos
   request: DescribeReposRequest
+  description: describe repos with filter
   service: RepoManager
   query:
     app_default_status:
@@ -1280,6 +1323,7 @@
       type: '[]string'
 - action: ModifyRepo
   request: ModifyRepoRequest
+  description: modify repo
   service: RepoManager
   body:
     app_default_status:
@@ -1308,6 +1352,7 @@
       type: string
 - action: ValidateRepo
   request: ValidateRepoRequest
+  description: validate repo
   service: RepoManager
   query:
     credential:

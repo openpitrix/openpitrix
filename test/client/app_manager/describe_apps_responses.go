@@ -51,7 +51,7 @@ type DescribeAppsOK struct {
 }
 
 func (o *DescribeAppsOK) Error() string {
-	return fmt.Sprintf("[GET /api/AppManager.DescribeApps][%d] describeAppsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/apps][%d] describeAppsOK  %+v", 200, o.Payload)
 }
 
 func (o *DescribeAppsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

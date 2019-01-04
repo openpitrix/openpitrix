@@ -158,9 +158,9 @@ func RegisterRepoIndexerHandlerClient(ctx context.Context, mux *runtime.ServeMux
 }
 
 var (
-	pattern_RepoIndexer_IndexRepo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "RepoIndexer.IndexRepo"}, ""))
+	pattern_RepoIndexer_IndexRepo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "repos", "index"}, ""))
 
-	pattern_RepoIndexer_DescribeRepoEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"api", "RepoIndexer.DescribeRepoEvents"}, ""))
+	pattern_RepoIndexer_DescribeRepoEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "repo_events"}, ""))
 )
 
 var (

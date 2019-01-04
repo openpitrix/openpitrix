@@ -51,7 +51,7 @@ type IndexRepoOK struct {
 }
 
 func (o *IndexRepoOK) Error() string {
-	return fmt.Sprintf("[POST /api/RepoIndexer.IndexRepo][%d] indexRepoOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/repos/index][%d] indexRepoOK  %+v", 200, o.Payload)
 }
 
 func (o *IndexRepoOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -51,7 +51,7 @@ type RejectAppVersionOK struct {
 }
 
 func (o *RejectAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /api/AppManager.RejectAppVersion][%d] rejectAppVersionOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/app_version/action/{role}/reject][%d] rejectAppVersionOK  %+v", 200, o.Payload)
 }
 
 func (o *RejectAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

@@ -79,25 +79,37 @@ message DeleteCategoriesResponse {
 
 service CategoryManager {
 	rpc DescribeCategories (DescribeCategoriesRequest) returns (DescribeCategoriesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe categories with filter"
+		};
 		option (google.api.http) = {
-			get: "/api/CategoryManager.DescribeCategories"
+			get: "/v1/categories"
 		};
 	}
 	rpc CreateCategory (CreateCategoryRequest) returns (CreateCategoryResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create category"
+		};
 		option (google.api.http) = {
-			post: "/api/CategoryManager.CreateCategory"
+			post: "/v1/categories"
 			body: "*"
 		};
 	}
 	rpc ModifyCategory (ModifyCategoryRequest) returns (ModifyCategoryResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify category"
+		};
 		option (google.api.http) = {
-			post: "/api/CategoryManager.ModifyCategory"
+			patch: "/v1/categories"
 			body: "*"
 		};
 	}
 	rpc DeleteCategories (DeleteCategoriesRequest) returns (DeleteCategoriesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete categories"
+		};
 		option (google.api.http) = {
-			post: "/api/CategoryManager.DeleteCategories"
+			delete: "/v1/categories"
 			body: "*"
 		};
 	}

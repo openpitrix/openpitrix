@@ -51,7 +51,7 @@ type SuspendAppVersionOK struct {
 }
 
 func (o *SuspendAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /api/AppManager.SuspendAppVersion][%d] suspendAppVersionOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/app_version/action/suspend][%d] suspendAppVersionOK  %+v", 200, o.Payload)
 }
 
 func (o *SuspendAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
