@@ -28,8 +28,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetAttachmentsRequest struct {
-	AttachmentId         []string `protobuf:"bytes,1,rep,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
-	Filename             []string `protobuf:"bytes,2,rep,name=filename,proto3" json:"filename,omitempty"`
+	AttachmentId []string `protobuf:"bytes,1,rep,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	Filename     []string `protobuf:"bytes,2,rep,name=filename,proto3" json:"filename,omitempty"`
+	// ignore the attachment file content, return the filenames directly
 	IgnoreContent        bool     `protobuf:"varint,3,opt,name=ignore_content,json=ignoreContent,proto3" json:"ignore_content,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -83,6 +84,7 @@ func (m *GetAttachmentsRequest) GetIgnoreContent() bool {
 }
 
 type GetAttachmentsResponse struct {
+	// attachment_id => Attachment
 	Attachments          map[string]*Attachment `protobuf:"bytes,1,rep,name=attachments,proto3" json:"attachments,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
 	XXX_unrecognized     []byte                 `json:"-"`
@@ -122,7 +124,8 @@ func (m *GetAttachmentsResponse) GetAttachments() map[string]*Attachment {
 }
 
 type Attachment struct {
-	AttachmentId         string               `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	AttachmentId string `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	// filename => content
 	AttachmentContent    map[string][]byte    `protobuf:"bytes,2,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	CreateTime           *timestamp.Timestamp `protobuf:"bytes,3,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
@@ -177,6 +180,7 @@ func (m *Attachment) GetCreateTime() *timestamp.Timestamp {
 }
 
 type CreateAttachmentRequest struct {
+	// filename => content
 	AttachmentContent    map[string][]byte `protobuf:"bytes,1,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
@@ -263,7 +267,8 @@ func (m *CreateAttachmentResponse) GetFilename() []string {
 }
 
 type AppendAttachmentRequest struct {
-	AttachmentId         string            `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	AttachmentId string `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	// filename => content
 	AttachmentContent    map[string][]byte `protobuf:"bytes,2,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
@@ -357,7 +362,8 @@ func (m *AppendAttachmentResponse) GetFilename() []string {
 }
 
 type ReplaceAttachmentRequest struct {
-	AttachmentId         string            `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	AttachmentId string `protobuf:"bytes,1,opt,name=attachment_id,json=attachmentId,proto3" json:"attachment_id,omitempty"`
+	// filename => content
 	AttachmentContent    map[string][]byte `protobuf:"bytes,2,rep,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`

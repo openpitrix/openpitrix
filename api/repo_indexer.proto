@@ -34,12 +34,15 @@ message RepoEvent {
 }
 
 message DescribeRepoEventsRequest {
-	repeated string repo_event_id = 1;
-	repeated string repo_id = 2;
-	repeated string owner = 3;
-	repeated string status = 4;
-	uint32 limit = 5;
-	uint32 offset = 6;
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
+	uint32 offset = 5;
+
+	repeated string repo_event_id = 11;
+	repeated string repo_id = 12;
+	repeated string owner = 13;
+	repeated string status = 14;
 }
 
 message DescribeRepoEventsResponse {

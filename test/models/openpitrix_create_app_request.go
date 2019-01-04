@@ -16,19 +16,19 @@ import (
 // swagger:model openpitrixCreateAppRequest
 type OpenpitrixCreateAppRequest struct {
 
-	// icon
+	// set the app icon
 	Icon strfmt.Base64 `json:"icon,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
 
-	// map<string, bytes> version_package_files = 4;
+	// create app version with specify name
 	VersionName string `json:"version_name,omitempty"`
 
-	// version package
+	// create app version with specify package
 	VersionPackage strfmt.Base64 `json:"version_package,omitempty"`
 
-	// version type
+	// optional: vmbased/helm
 	VersionType string `json:"version_type,omitempty"`
 }
 

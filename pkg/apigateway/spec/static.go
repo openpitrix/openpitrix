@@ -191,6 +191,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -198,6 +199,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -332,6 +334,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -339,6 +342,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -463,6 +467,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -470,6 +475,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -574,6 +580,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -581,6 +588,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -685,6 +693,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -692,6 +701,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -826,6 +836,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -833,6 +844,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1318,6 +1330,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1325,6 +1338,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1580,7 +1594,21 @@ var Files = map[string]string{
             "type": "string"
           },
           {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1588,10 +1616,21 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "category_id",
@@ -1615,29 +1654,6 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
-          },
-          {
-            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1759,6 +1775,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1766,6 +1783,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1898,6 +1916,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -1905,6 +1924,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2359,6 +2379,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2366,6 +2387,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2779,6 +2801,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "default is 20, max value is 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -2786,6 +2809,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "default is 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -3428,6 +3452,51 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "job_id",
             "in": "query",
             "required": false,
@@ -3484,39 +3553,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "limit",
-            "description": "default is 20, max value is 200.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "description": "default is 0.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "owner",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3545,20 +3582,6 @@ var Files = map[string]string{
         },
         "parameters": [
           {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
             "name": "search_word",
             "in": "query",
             "required": false,
@@ -3576,6 +3599,22 @@ var Files = map[string]string{
             "required": false,
             "type": "boolean",
             "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
           },
           {
             "name": "market_id",
@@ -3633,20 +3672,6 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
             "name": "sort_key",
             "in": "query",
             "required": false,
@@ -3658,6 +3683,22 @@ var Files = map[string]string{
             "required": false,
             "type": "boolean",
             "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
           },
           {
             "name": "market_id",
@@ -3919,6 +3960,41 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
             "name": "repo_id",
             "in": "query",
             "required": false,
@@ -3991,20 +4067,6 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
             "name": "category_id",
             "in": "query",
             "required": false,
@@ -4013,25 +4075,6 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
-          },
-          {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
           },
           {
             "name": "owner",
@@ -4061,6 +4104,7 @@ var Files = map[string]string{
           },
           {
             "name": "controller",
+            "description": "0 for self resource; 1 for openpitrix resource.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -4147,6 +4191,22 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
             "name": "repo_event_id",
             "in": "query",
             "required": false,
@@ -4185,20 +4245,6 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
           }
         ],
         "tags": [
@@ -4246,6 +4292,51 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "runtime_id",
             "in": "query",
             "required": false,
@@ -4276,37 +4367,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "owner",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4360,6 +4421,51 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "runtime_credential_id",
             "in": "query",
             "required": false,
@@ -4390,37 +4496,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "owner",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4474,6 +4550,51 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "runtime_id",
             "in": "query",
             "required": false,
@@ -4504,37 +4625,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "owner",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4638,6 +4729,51 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "runtime_credential_id",
             "in": "query",
             "required": false,
@@ -4668,37 +4804,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "owner",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4871,6 +4977,51 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "task_id",
             "in": "query",
             "required": false,
@@ -4913,39 +5064,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "limit",
-            "description": "default is 20, max value is 200.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "description": "default is 0.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "owner",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "display_columns",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5254,19 +5373,22 @@ var Files = map[string]string{
           "type": "string"
         },
         "version_type": {
-          "type": "string"
+          "type": "string",
+          "title": "optional: vmbased/helm"
         },
         "version_package": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "create app version with specify package"
         },
         "version_name": {
           "type": "string",
-          "title": "map<string, bytes> version_package_files = 4;"
+          "title": "create app version with specify name"
         },
         "icon": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "set the app icon"
         }
       }
     },
@@ -5294,7 +5416,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "type": {
-          "type": "string"
+          "type": "string",
+          "title": "optional: vmbased/helm"
         },
         "package": {
           "type": "string",
@@ -5416,14 +5539,16 @@ var Files = map[string]string{
           "additionalProperties": {
             "type": "integer",
             "format": "int64"
-          }
+          },
+          "title": "app create time range -> app count, max length is 14"
         },
         "top_ten_repos": {
           "type": "object",
           "additionalProperties": {
             "type": "integer",
             "format": "int64"
-          }
+          },
+          "title": "repo id -> app count, max length is 10"
         },
         "app_count": {
           "type": "integer",
@@ -5532,7 +5657,8 @@ var Files = map[string]string{
           "additionalProperties": {
             "type": "string",
             "format": "byte"
-          }
+          },
+          "title": "filename => file_content"
         }
       }
     },
@@ -5712,7 +5838,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "type": {
-          "$ref": "#/definitions/openpitrixUploadAppAttachmentRequestType"
+          "$ref": "#/definitions/openpitrixUploadAppAttachmentRequestType",
+          "title": "optional: icon/screenshot"
         },
         "attachment_content": {
           "type": "string",
@@ -5720,7 +5847,8 @@ var Files = map[string]string{
         },
         "sequence": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "only for screenshot, range: [0, 5]"
         }
       }
     },
@@ -5744,7 +5872,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "version_type": {
-          "type": "string"
+          "type": "string",
+          "title": "optional: vmbased/helm"
         },
         "version_package": {
           "type": "string",
@@ -5759,7 +5888,8 @@ var Files = map[string]string{
           "type": "object",
           "additionalProperties": {
             "type": "string"
-          }
+          },
+          "title": "filename => detail"
         },
         "error": {
           "type": "string"
@@ -5939,7 +6069,8 @@ var Files = map[string]string{
           "additionalProperties": {
             "type": "string",
             "format": "byte"
-          }
+          },
+          "title": "filename => content"
         },
         "create_time": {
           "type": "string",
@@ -5997,7 +6128,8 @@ var Files = map[string]string{
           "type": "object",
           "additionalProperties": {
             "$ref": "#/definitions/openpitrixAttachment"
-          }
+          },
+          "title": "attachment_id => Attachment"
         }
       }
     },
@@ -6053,7 +6185,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "locale": {
-          "type": "string"
+          "type": "string",
+          "title": "the i18n of this category, json format, sample: {\"zh_cn\": \"数据库\", \"en\": \"database\"}"
         },
         "description": {
           "type": "string"
@@ -6119,7 +6252,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "locale": {
-          "type": "string"
+          "type": "string",
+          "title": "the i18n of this category, json format, sample: {\"zh_cn\": \"数据库\", \"en\": \"database\"}"
         },
         "description": {
           "type": "string"
@@ -6879,14 +7013,16 @@ var Files = map[string]string{
           "additionalProperties": {
             "type": "integer",
             "format": "int64"
-          }
+          },
+          "title": "cluster create time range -> cluster count, max length is 14"
         },
         "top_ten_runtimes": {
           "type": "object",
           "additionalProperties": {
             "type": "integer",
             "format": "int64"
-          }
+          },
+          "title": "runtime id -> cluster count, max length is 10"
         },
         "cluster_count": {
           "type": "integer",
@@ -6901,7 +7037,8 @@ var Files = map[string]string{
           "additionalProperties": {
             "type": "integer",
             "format": "int64"
-          }
+          },
+          "title": "app id -> cluster count, max length is 10"
         }
       }
     },
@@ -8245,7 +8382,8 @@ var Files = map[string]string{
         },
         "controller": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "title": "0 for self resource; 1 for openpitrix resource"
         }
       }
     },
@@ -8521,14 +8659,16 @@ var Files = map[string]string{
           "additionalProperties": {
             "type": "integer",
             "format": "int64"
-          }
+          },
+          "title": "runtime create time range -> runtime count, max length is 14"
         },
         "top_ten_providers": {
           "type": "object",
           "additionalProperties": {
             "type": "integer",
             "format": "int64"
-          }
+          },
+          "title": "provider id -> runtime count, max length is 10"
         },
         "runtime_count": {
           "type": "integer",

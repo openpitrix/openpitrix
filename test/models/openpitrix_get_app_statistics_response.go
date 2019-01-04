@@ -19,13 +19,13 @@ type OpenpitrixGetAppStatisticsResponse struct {
 	// app count
 	AppCount int64 `json:"app_count,omitempty"`
 
-	// last two week created
+	// app create time range -> app count, max length is 14
 	LastTwoWeekCreated map[string]int64 `json:"last_two_week_created,omitempty"`
 
 	// repo count
 	RepoCount int64 `json:"repo_count,omitempty"`
 
-	// top ten repos
+	// repo id -> app count, max length is 10
 	TopTenRepos map[string]int64 `json:"top_ten_repos,omitempty"`
 }
 

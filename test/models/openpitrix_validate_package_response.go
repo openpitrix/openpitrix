@@ -19,7 +19,7 @@ type OpenpitrixValidatePackageResponse struct {
 	// error
 	Error string `json:"error,omitempty"`
 
-	// error details
+	// filename => detail
 	ErrorDetails map[string]string `json:"error_details,omitempty"`
 
 	// name

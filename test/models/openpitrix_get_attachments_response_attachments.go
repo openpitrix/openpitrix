@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// OpenpitrixGetAttachmentsResponseAttachments openpitrix get attachments response attachments
+// OpenpitrixGetAttachmentsResponseAttachments attachment_id => Attachment
 // swagger:model openpitrixGetAttachmentsResponseAttachments
 type OpenpitrixGetAttachmentsResponseAttachments map[string]OpenpitrixAttachment
 

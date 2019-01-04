@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixGetRuntimeStatisticsResponse
 type OpenpitrixGetRuntimeStatisticsResponse struct {
 
-	// last two week created
+	// runtime create time range -> runtime count, max length is 14
 	LastTwoWeekCreated map[string]int64 `json:"last_two_week_created,omitempty"`
 
 	// provider count
@@ -25,7 +25,7 @@ type OpenpitrixGetRuntimeStatisticsResponse struct {
 	// runtime count
 	RuntimeCount int64 `json:"runtime_count,omitempty"`
 
-	// top ten providers
+	// provider id -> runtime count, max length is 10
 	TopTenProviders map[string]int64 `json:"top_ten_providers,omitempty"`
 }
 

@@ -22,7 +22,7 @@ type OpenpitrixRepo struct {
 	// category set
 	CategorySet OpenpitrixRepoCategorySet `json:"category_set"`
 
-	// controller
+	// 0 for self resource; 1 for openpitrix resource
 	Controller int32 `json:"controller,omitempty"`
 
 	// create time

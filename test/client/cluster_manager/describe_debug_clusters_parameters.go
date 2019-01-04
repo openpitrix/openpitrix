@@ -77,9 +77,15 @@ type DescribeDebugClustersParams struct {
 	ExternalClusterID *string
 	/*FrontgateID*/
 	FrontgateID []string
-	/*Limit*/
+	/*Limit
+	  default is 20, max value is 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  default is 0.
+
+	*/
 	Offset *int64
 	/*Owner*/
 	Owner []string

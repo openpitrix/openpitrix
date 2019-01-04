@@ -17,10 +17,13 @@ import "types.proto";
 
 message CreateAppRequest {
 	google.protobuf.StringValue name = 1;
-	google.protobuf.StringValue version_type = 2; // vmbased or helm
+	// optional: vmbased/helm
+	google.protobuf.StringValue version_type = 2;
+	// create app version with specify package
 	google.protobuf.BytesValue version_package = 3;
-	//	map<string, bytes> version_package_files = 4;
+	// create app version with specify name
 	google.protobuf.StringValue version_name = 5;
+	// set the app icon
 	google.protobuf.BytesValue icon = 6;
 }
 
@@ -30,12 +33,14 @@ message CreateAppResponse {
 }
 
 message ValidatePackageRequest {
-	string version_type = 2; // vmbased or helm
+	// optional: vmbased/helm
+	string version_type = 2;
 	bytes version_package = 3;
 }
 
 message ValidatePackageResponse {
-	map<string, string> error_details = 1; // filename => detail
+	// filename => detail
+	map<string, string> error_details = 1;
 	google.protobuf.StringValue error = 2;
 	google.protobuf.StringValue name = 3;
 	google.protobuf.StringValue version_name = 4;
@@ -65,9 +70,11 @@ message UploadAppAttachmentRequest {
 		screenshot = 1;
 	}
 	google.protobuf.StringValue app_id = 1;
+	// optional: icon/screenshot
 	Type type = 2;
 	google.protobuf.BytesValue attachment_content = 3;
-	google.protobuf.UInt32Value sequence = 4; // for screenshot, range: [0, 5]
+	// only for screenshot, range: [0, 5]
+	google.protobuf.UInt32Value sequence = 4;
 }
 
 message UploadAppAttachmentResponse {
@@ -113,7 +120,9 @@ message DescribeAppsRequest {
 	google.protobuf.StringValue search_word = 1;
 	google.protobuf.StringValue sort_key = 2;
 	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
 	uint32 limit = 4;
+	// default is 0
 	uint32 offset = 5;
 
 	repeated string app_id = 11;
@@ -135,9 +144,9 @@ message CreateAppVersionRequest {
 	google.protobuf.StringValue app_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
-	google.protobuf.StringValue type = 4; // vmbased or helm
+	// optional: vmbased/helm
+	google.protobuf.StringValue type = 4;
 	google.protobuf.BytesValue package = 5;
-	//	map<string, bytes> package_files = 6;
 }
 
 message CreateAppVersionResponse {
@@ -149,6 +158,7 @@ message ModifyAppVersionRequest {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
 	google.protobuf.BytesValue package = 4;
+	// filename => file_content
 	map<string, bytes> package_files = 5;
 }
 
@@ -216,7 +226,9 @@ message DescribeAppVersionReviewsRequest {
 	google.protobuf.StringValue search_word = 1;
 	google.protobuf.StringValue sort_key = 2;
 	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
 	uint32 limit = 4;
+	// default is 0
 	uint32 offset = 5;
 
 	repeated string app_id = 10;
@@ -237,7 +249,9 @@ message DescribeAppVersionAuditsRequest {
 	google.protobuf.StringValue search_word = 1;
 	google.protobuf.StringValue sort_key = 2;
 	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
 	uint32 limit = 4;
+	// default is 0
 	uint32 offset = 5;
 
 	repeated string app_id = 10;
@@ -258,7 +272,9 @@ message DescribeAppVersionsRequest {
 	google.protobuf.StringValue search_word = 1;
 	google.protobuf.StringValue sort_key = 2;
 	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
 	uint32 limit = 4;
+	// default is 0
 	uint32 offset = 5;
 
 	repeated string version_id = 10;
@@ -300,8 +316,10 @@ message GetAppStatisticsRequest {
 }
 
 message GetAppStatisticsResponse {
-	map<string, uint32> last_two_week_created = 1; // app create time range -> app count, max length is 14
-	map<string, uint32> top_ten_repos = 2; // repo id -> app count, max length is 10
+	// app create time range -> app count, max length is 14
+	map<string, uint32> last_two_week_created = 1;
+	// repo id -> app count, max length is 10
+	map<string, uint32> top_ten_repos = 2;
 	uint32 app_count = 3;
 	uint32 repo_count = 4;
 }

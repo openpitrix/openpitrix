@@ -65,18 +65,28 @@ type DescribeRuntimeCredentialsParams struct {
 
 	/*DisplayColumns*/
 	DisplayColumns []string
-	/*Limit*/
+	/*Limit
+	  default is 20, max value is 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  default is 0.
+
+	*/
 	Offset *int64
 	/*Owner*/
 	Owner []string
 	/*Provider*/
 	Provider []string
+	/*Reverse*/
+	Reverse *bool
 	/*RuntimeCredentialID*/
 	RuntimeCredentialID []string
 	/*SearchWord*/
 	SearchWord *string
+	/*SortKey*/
+	SortKey *string
 	/*Status*/
 	Status []string
 
@@ -173,6 +183,17 @@ func (o *DescribeRuntimeCredentialsParams) SetProvider(provider []string) {
 	o.Provider = provider
 }
 
+// WithReverse adds the reverse to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) WithReverse(reverse *bool) *DescribeRuntimeCredentialsParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
 // WithRuntimeCredentialID adds the runtimeCredentialID to the describe runtime credentials params
 func (o *DescribeRuntimeCredentialsParams) WithRuntimeCredentialID(runtimeCredentialID []string) *DescribeRuntimeCredentialsParams {
 	o.SetRuntimeCredentialID(runtimeCredentialID)
@@ -193,6 +214,17 @@ func (o *DescribeRuntimeCredentialsParams) WithSearchWord(searchWord *string) *D
 // SetSearchWord adds the searchWord to the describe runtime credentials params
 func (o *DescribeRuntimeCredentialsParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) WithSortKey(sortKey *string) *DescribeRuntimeCredentialsParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WithStatus adds the status to the describe runtime credentials params
@@ -270,6 +302,22 @@ func (o *DescribeRuntimeCredentialsParams) WriteToRequest(r runtime.ClientReques
 		return err
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	valuesRuntimeCredentialID := o.RuntimeCredentialID
 
 	joinedRuntimeCredentialID := swag.JoinByFormat(valuesRuntimeCredentialID, "multi")
@@ -288,6 +336,22 @@ func (o *DescribeRuntimeCredentialsParams) WriteToRequest(r runtime.ClientReques
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}

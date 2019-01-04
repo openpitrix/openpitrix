@@ -19,16 +19,16 @@ type OpenpitrixGetClusterStatisticsResponse struct {
 	// cluster count
 	ClusterCount int64 `json:"cluster_count,omitempty"`
 
-	// last two week created
+	// cluster create time range -> cluster count, max length is 14
 	LastTwoWeekCreated map[string]int64 `json:"last_two_week_created,omitempty"`
 
 	// runtime count
 	RuntimeCount int64 `json:"runtime_count,omitempty"`
 
-	// top ten apps
+	// app id -> cluster count, max length is 10
 	TopTenApps map[string]int64 `json:"top_ten_apps,omitempty"`
 
-	// top ten runtimes
+	// runtime id -> cluster count, max length is 10
 	TopTenRuntimes map[string]int64 `json:"top_ten_runtimes,omitempty"`
 }
 

@@ -26,14 +26,17 @@ message Category {
 
 message DescribeCategoriesRequest {
 	google.protobuf.StringValue search_word = 1;
-	uint32 limit = 2;
-	uint32 offset = 3;
-	repeated string category_id = 4;
-	repeated string name = 5;
-	repeated string owner = 6;
-	google.protobuf.StringValue sort_key = 7;
-	google.protobuf.BoolValue reverse = 8;
-	repeated string display_columns = 9;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
+	uint32 offset = 5;
+	repeated string display_columns = 6;
+
+	repeated string category_id = 7;
+	repeated string name = 8;
+	repeated string owner = 9;
 }
 
 message DescribeCategoriesResponse {
@@ -43,6 +46,7 @@ message DescribeCategoriesResponse {
 
 message CreateCategoryRequest {
 	google.protobuf.StringValue name = 2;
+	// the i18n of this category, json format, sample: {"zh_cn": "数据库", "en": "database"}
 	google.protobuf.StringValue locale = 3;
 	google.protobuf.StringValue description = 4;
 	google.protobuf.BytesValue icon = 5;
@@ -55,6 +59,7 @@ message CreateCategoryResponse {
 message ModifyCategoryRequest {
 	google.protobuf.StringValue category_id = 1;
 	google.protobuf.StringValue name = 2;
+	// the i18n of this category, json format, sample: {"zh_cn": "数据库", "en": "database"}
 	google.protobuf.StringValue locale = 3;
 	google.protobuf.StringValue description = 4;
 	google.protobuf.BytesValue icon = 5;

@@ -53,15 +53,18 @@ func (UploadAppAttachmentRequest_Type) EnumDescriptor() ([]byte, []int) {
 }
 
 type CreateAppRequest struct {
-	Name           *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	VersionType    *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_type,json=versionType,proto3" json:"version_type,omitempty"`
-	VersionPackage *wrappers.BytesValue  `protobuf:"bytes,3,opt,name=version_package,json=versionPackage,proto3" json:"version_package,omitempty"`
-	// 	map<string, bytes> version_package_files = 4;
-	VersionName          *wrappers.StringValue `protobuf:"bytes,5,opt,name=version_name,json=versionName,proto3" json:"version_name,omitempty"`
-	Icon                 *wrappers.BytesValue  `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	Name *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// optional: vmbased/helm
+	VersionType *wrappers.StringValue `protobuf:"bytes,2,opt,name=version_type,json=versionType,proto3" json:"version_type,omitempty"`
+	// create app version with specify package
+	VersionPackage *wrappers.BytesValue `protobuf:"bytes,3,opt,name=version_package,json=versionPackage,proto3" json:"version_package,omitempty"`
+	// create app version with specify name
+	VersionName *wrappers.StringValue `protobuf:"bytes,5,opt,name=version_name,json=versionName,proto3" json:"version_name,omitempty"`
+	// set the app icon
+	Icon                 *wrappers.BytesValue `protobuf:"bytes,6,opt,name=icon,proto3" json:"icon,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
 }
 
 func (m *CreateAppRequest) Reset()         { *m = CreateAppRequest{} }
@@ -172,6 +175,7 @@ func (m *CreateAppResponse) GetVersionId() *wrappers.StringValue {
 }
 
 type ValidatePackageRequest struct {
+	// optional: vmbased/helm
 	VersionType          string   `protobuf:"bytes,2,opt,name=version_type,json=versionType,proto3" json:"version_type,omitempty"`
 	VersionPackage       []byte   `protobuf:"bytes,3,opt,name=version_package,json=versionPackage,proto3" json:"version_package,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -219,6 +223,7 @@ func (m *ValidatePackageRequest) GetVersionPackage() []byte {
 }
 
 type ValidatePackageResponse struct {
+	// filename => detail
 	ErrorDetails         map[string]string     `protobuf:"bytes,1,rep,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Error                *wrappers.StringValue `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
 	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
@@ -440,13 +445,15 @@ func (m *ModifyAppResponse) GetAppId() *wrappers.StringValue {
 }
 
 type UploadAppAttachmentRequest struct {
-	AppId                *wrappers.StringValue           `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Type                 UploadAppAttachmentRequest_Type `protobuf:"varint,2,opt,name=type,proto3,enum=openpitrix.UploadAppAttachmentRequest_Type" json:"type,omitempty"`
-	AttachmentContent    *wrappers.BytesValue            `protobuf:"bytes,3,opt,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty"`
-	Sequence             *wrappers.UInt32Value           `protobuf:"bytes,4,opt,name=sequence,proto3" json:"sequence,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
-	XXX_unrecognized     []byte                          `json:"-"`
-	XXX_sizecache        int32                           `json:"-"`
+	AppId *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	// optional: icon/screenshot
+	Type              UploadAppAttachmentRequest_Type `protobuf:"varint,2,opt,name=type,proto3,enum=openpitrix.UploadAppAttachmentRequest_Type" json:"type,omitempty"`
+	AttachmentContent *wrappers.BytesValue            `protobuf:"bytes,3,opt,name=attachment_content,json=attachmentContent,proto3" json:"attachment_content,omitempty"`
+	// only for screenshot, range: [0, 5]
+	Sequence             *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *UploadAppAttachmentRequest) Reset()         { *m = UploadAppAttachmentRequest{} }
@@ -835,22 +842,24 @@ func (m *App) GetAppVersionTypes() *wrappers.StringValue {
 }
 
 type DescribeAppsRequest struct {
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Limit                uint32                `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
-	AppId                []string              `protobuf:"bytes,11,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Name                 []string              `protobuf:"bytes,12,rep,name=name,proto3" json:"name,omitempty"`
-	RepoId               []string              `protobuf:"bytes,13,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
-	Status               []string              `protobuf:"bytes,14,rep,name=status,proto3" json:"status,omitempty"`
-	Owner                []string              `protobuf:"bytes,15,rep,name=owner,proto3" json:"owner,omitempty"`
-	ChartName            []string              `protobuf:"bytes,16,rep,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
-	CategoryId           []string              `protobuf:"bytes,17,rep,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
-	DisplayColumns       []string              `protobuf:"bytes,18,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	SearchWord *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
+	SortKey    *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse    *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	// default is 20, max value is 200
+	Limit uint32 `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	// default is 0
+	Offset               uint32   `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
+	AppId                []string `protobuf:"bytes,11,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	Name                 []string `protobuf:"bytes,12,rep,name=name,proto3" json:"name,omitempty"`
+	RepoId               []string `protobuf:"bytes,13,rep,name=repo_id,json=repoId,proto3" json:"repo_id,omitempty"`
+	Status               []string `protobuf:"bytes,14,rep,name=status,proto3" json:"status,omitempty"`
+	Owner                []string `protobuf:"bytes,15,rep,name=owner,proto3" json:"owner,omitempty"`
+	ChartName            []string `protobuf:"bytes,16,rep,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
+	CategoryId           []string `protobuf:"bytes,17,rep,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
+	DisplayColumns       []string `protobuf:"bytes,18,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *DescribeAppsRequest) Reset()         { *m = DescribeAppsRequest{} }
@@ -1017,9 +1026,10 @@ func (m *DescribeAppsResponse) GetAppSet() []*App {
 }
 
 type CreateAppVersionRequest struct {
-	AppId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	AppId       *wrappers.StringValue `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	Name        *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	// optional: vmbased/helm
 	Type                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
 	Package              *wrappers.BytesValue  `protobuf:"bytes,5,opt,name=package,proto3" json:"package,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
@@ -1127,14 +1137,15 @@ func (m *CreateAppVersionResponse) GetVersionId() *wrappers.StringValue {
 }
 
 type ModifyAppVersionRequest struct {
-	VersionId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Package              *wrappers.BytesValue  `protobuf:"bytes,4,opt,name=package,proto3" json:"package,omitempty"`
-	PackageFiles         map[string][]byte     `protobuf:"bytes,5,rep,name=package_files,json=packageFiles,proto3" json:"package_files,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	VersionId   *wrappers.StringValue `protobuf:"bytes,1,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	Name        *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Package     *wrappers.BytesValue  `protobuf:"bytes,4,opt,name=package,proto3" json:"package,omitempty"`
+	// filename => file_content
+	PackageFiles         map[string][]byte `protobuf:"bytes,5,rep,name=package_files,json=packageFiles,proto3" json:"package_files,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *ModifyAppVersionRequest) Reset()         { *m = ModifyAppVersionRequest{} }
@@ -1705,20 +1716,22 @@ func (m *AppVersionReview) GetReviewer() *wrappers.StringValue {
 }
 
 type DescribeAppVersionReviewsRequest struct {
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Limit                uint32                `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
-	AppId                []string              `protobuf:"bytes,10,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	VersionId            []string              `protobuf:"bytes,11,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	ReviewId             []string              `protobuf:"bytes,12,rep,name=review_id,json=reviewId,proto3" json:"review_id,omitempty"`
-	Status               []string              `protobuf:"bytes,13,rep,name=status,proto3" json:"status,omitempty"`
-	DisplayColumns       []string              `protobuf:"bytes,14,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
-	Reviewer             []string              `protobuf:"bytes,15,rep,name=reviewer,proto3" json:"reviewer,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	SearchWord *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
+	SortKey    *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse    *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	// default is 20, max value is 200
+	Limit uint32 `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	// default is 0
+	Offset               uint32   `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
+	AppId                []string `protobuf:"bytes,10,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId            []string `protobuf:"bytes,11,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	ReviewId             []string `protobuf:"bytes,12,rep,name=review_id,json=reviewId,proto3" json:"review_id,omitempty"`
+	Status               []string `protobuf:"bytes,13,rep,name=status,proto3" json:"status,omitempty"`
+	DisplayColumns       []string `protobuf:"bytes,14,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
+	Reviewer             []string `protobuf:"bytes,15,rep,name=reviewer,proto3" json:"reviewer,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *DescribeAppVersionReviewsRequest) Reset()         { *m = DescribeAppVersionReviewsRequest{} }
@@ -1871,20 +1884,22 @@ func (m *DescribeAppVersionReviewsResponse) GetAppVersionReviewSet() []*AppVersi
 }
 
 type DescribeAppVersionAuditsRequest struct {
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Limit                uint32                `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
-	AppId                []string              `protobuf:"bytes,10,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	VersionId            []string              `protobuf:"bytes,11,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	Status               []string              `protobuf:"bytes,12,rep,name=status,proto3" json:"status,omitempty"`
-	Operator             []string              `protobuf:"bytes,13,rep,name=operator,proto3" json:"operator,omitempty"`
-	Role                 []string              `protobuf:"bytes,14,rep,name=role,proto3" json:"role,omitempty"`
-	DisplayColumns       []string              `protobuf:"bytes,15,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	SearchWord *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
+	SortKey    *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse    *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	// default is 20, max value is 200
+	Limit uint32 `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	// default is 0
+	Offset               uint32   `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
+	AppId                []string `protobuf:"bytes,10,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	VersionId            []string `protobuf:"bytes,11,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	Status               []string `protobuf:"bytes,12,rep,name=status,proto3" json:"status,omitempty"`
+	Operator             []string `protobuf:"bytes,13,rep,name=operator,proto3" json:"operator,omitempty"`
+	Role                 []string `protobuf:"bytes,14,rep,name=role,proto3" json:"role,omitempty"`
+	DisplayColumns       []string `protobuf:"bytes,15,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *DescribeAppVersionAuditsRequest) Reset()         { *m = DescribeAppVersionAuditsRequest{} }
@@ -2037,23 +2052,25 @@ func (m *DescribeAppVersionAuditsResponse) GetAppVersionAuditSet() []*AppVersion
 }
 
 type DescribeAppVersionsRequest struct {
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Limit                uint32                `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
-	VersionId            []string              `protobuf:"bytes,10,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
-	AppId                []string              `protobuf:"bytes,11,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
-	Name                 []string              `protobuf:"bytes,12,rep,name=name,proto3" json:"name,omitempty"`
-	Owner                []string              `protobuf:"bytes,13,rep,name=owner,proto3" json:"owner,omitempty"`
-	Description          []string              `protobuf:"bytes,14,rep,name=description,proto3" json:"description,omitempty"`
-	PackageName          []string              `protobuf:"bytes,15,rep,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
-	Status               []string              `protobuf:"bytes,16,rep,name=status,proto3" json:"status,omitempty"`
-	Type                 []string              `protobuf:"bytes,17,rep,name=type,proto3" json:"type,omitempty"`
-	DisplayColumns       []string              `protobuf:"bytes,18,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	SearchWord *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
+	SortKey    *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse    *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	// default is 20, max value is 200
+	Limit uint32 `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	// default is 0
+	Offset               uint32   `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
+	VersionId            []string `protobuf:"bytes,10,rep,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	AppId                []string `protobuf:"bytes,11,rep,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	Name                 []string `protobuf:"bytes,12,rep,name=name,proto3" json:"name,omitempty"`
+	Owner                []string `protobuf:"bytes,13,rep,name=owner,proto3" json:"owner,omitempty"`
+	Description          []string `protobuf:"bytes,14,rep,name=description,proto3" json:"description,omitempty"`
+	PackageName          []string `protobuf:"bytes,15,rep,name=package_name,json=packageName,proto3" json:"package_name,omitempty"`
+	Status               []string `protobuf:"bytes,16,rep,name=status,proto3" json:"status,omitempty"`
+	Type                 []string `protobuf:"bytes,17,rep,name=type,proto3" json:"type,omitempty"`
+	DisplayColumns       []string `protobuf:"bytes,18,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *DescribeAppVersionsRequest) Reset()         { *m = DescribeAppVersionsRequest{} }
@@ -2446,7 +2463,9 @@ func (m *GetAppStatisticsRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_GetAppStatisticsRequest proto.InternalMessageInfo
 
 type GetAppStatisticsResponse struct {
-	LastTwoWeekCreated   map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated,proto3" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	// app create time range -> app count, max length is 14
+	LastTwoWeekCreated map[string]uint32 `protobuf:"bytes,1,rep,name=last_two_week_created,json=lastTwoWeekCreated,proto3" json:"last_two_week_created,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	// repo id -> app count, max length is 10
 	TopTenRepos          map[string]uint32 `protobuf:"bytes,2,rep,name=top_ten_repos,json=topTenRepos,proto3" json:"top_ten_repos,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	AppCount             uint32            `protobuf:"varint,3,opt,name=app_count,json=appCount,proto3" json:"app_count,omitempty"`
 	RepoCount            uint32            `protobuf:"varint,4,opt,name=repo_count,json=repoCount,proto3" json:"repo_count,omitempty"`

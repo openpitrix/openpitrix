@@ -69,9 +69,15 @@ type DescribeAppClustersParams struct {
 	CreatedDate *int64
 	/*DisplayColumns*/
 	DisplayColumns []string
-	/*Limit*/
+	/*Limit
+	  default is 20, max value is 200.
+
+	*/
 	Limit *int64
-	/*Offset*/
+	/*Offset
+	  default is 0.
+
+	*/
 	Offset *int64
 	/*Owner*/
 	Owner []string

@@ -19,7 +19,7 @@ type OpenpitrixValidatePackageRequest struct {
 	// version package
 	VersionPackage strfmt.Base64 `json:"version_package,omitempty"`
 
-	// version type
+	// optional: vmbased/helm
 	VersionType string `json:"version_type,omitempty"`
 }
 

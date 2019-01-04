@@ -157,14 +157,18 @@
   service: AppManager
   body:
     icon:
+      help: set the app icon
       type: byte
     name:
       type: string
     version_name:
+      help: create app version with specify name
       type: string
     version_package:
+      help: create app version with specify package
       type: byte
     version_type:
+      help: 'optional: vmbased/helm'
       type: string
 - action: CreateAppVersion
   request: CreateAppVersionRequest
@@ -179,6 +183,7 @@
     package:
       type: byte
     type:
+      help: 'optional: vmbased/helm'
       type: string
 - action: DeleteAppVersion
   request: DeleteAppVersionRequest
@@ -203,10 +208,12 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     name:
       type: '[]string'
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -237,10 +244,12 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     name:
       type: '[]string'
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -263,8 +272,10 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     operator:
       type: '[]string'
@@ -289,8 +300,10 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     reverse:
       type: boolean
@@ -317,10 +330,12 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     name:
       type: '[]string'
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -351,10 +366,12 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     name:
       type: '[]string'
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -422,6 +439,7 @@
     package:
       type: byte
     package_files:
+      help: filename => file_content
       type: object
     version_id:
       type: string
@@ -484,8 +502,10 @@
     attachment_content:
       type: byte
     sequence:
+      help: 'only for screenshot, range: [0, 5]'
       type: integer
-    type: {}
+    type:
+      help: 'optional: icon/screenshot'
 - action: ValidatePackage
   request: ValidatePackageRequest
   service: AppManager
@@ -493,6 +513,7 @@
     version_package:
       type: byte
     version_type:
+      help: 'optional: vmbased/helm'
       type: string
 - action: DescribeVendorVerifyInfos
   request: DescribeVendorVerifyInfosRequest
@@ -502,8 +523,10 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     reverse:
       type: boolean
@@ -584,6 +607,8 @@
     icon:
       type: byte
     locale:
+      help: 'the i18n of this category, json format, sample: {"zh_cn": "数据库", "en":
+        "database"}'
       type: string
     name:
       type: string
@@ -602,10 +627,12 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     name:
       type: '[]string'
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -626,6 +653,8 @@
     icon:
       type: byte
     locale:
+      help: 'the i18n of this category, json format, sample: {"zh_cn": "数据库", "en":
+        "database"}'
       type: string
     name:
       type: string
@@ -740,8 +769,10 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -765,10 +796,12 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     node_id:
       type: '[]string'
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -800,8 +833,10 @@
     frontgate_id:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -839,8 +874,10 @@
     frontgate_id:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -1027,9 +1064,13 @@
       type: '[]string'
     provider:
       type: string
+    reverse:
+      type: boolean
     runtime_id:
       type: string
     search_word:
+      type: string
+    sort_key:
       type: string
     status:
       type: '[]string'
@@ -1059,10 +1100,12 @@
   service: MarketManager
   query:
     limit:
+      help: default is 20, max value is 200.
       type: int64
     market_id:
       type: '[]string'
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -1080,12 +1123,14 @@
   service: MarketManager
   query:
     limit:
+      help: default is 20, max value is 200.
       type: int64
     market_id:
       type: '[]string'
     name:
       type: '[]string'
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -1139,8 +1184,10 @@
   service: RepoIndexer
   query:
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -1197,14 +1244,17 @@
     category_id:
       type: '[]string'
     controller:
+      help: 0 for self resource; 1 for openpitrix resource.
       type: int32
     label:
       type: string
     limit:
+      help: default is 20, max value is 200.
       type: int64
     name:
       type: '[]string'
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
@@ -1348,16 +1398,22 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
     provider:
       type: '[]string'
+    reverse:
+      type: boolean
     runtime_credential_id:
       type: '[]string'
     search_word:
+      type: string
+    sort_key:
       type: string
     status:
       type: '[]string'
@@ -1369,16 +1425,22 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
     provider:
       type: '[]string'
+    reverse:
+      type: boolean
     runtime_id:
       type: '[]string'
     search_word:
+      type: string
+    sort_key:
       type: string
     status:
       type: '[]string'
@@ -1390,16 +1452,22 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
     provider:
       type: '[]string'
+    reverse:
+      type: boolean
     runtime_credential_id:
       type: '[]string'
     search_word:
+      type: string
+    sort_key:
       type: string
     status:
       type: '[]string'
@@ -1418,16 +1486,22 @@
     display_columns:
       type: '[]string'
     limit:
+      help: default is 20, max value is 200.
       type: int64
     offset:
+      help: default is 0.
       type: int64
     owner:
       type: '[]string'
     provider:
       type: '[]string'
+    reverse:
+      type: boolean
     runtime_id:
       type: '[]string'
     search_word:
+      type: string
+    sort_key:
       type: string
     status:
       type: '[]string'
@@ -1491,7 +1565,11 @@
       type: int64
     owner:
       type: '[]string'
+    reverse:
+      type: boolean
     search_word:
+      type: string
+    sort_key:
       type: string
     status:
       type: '[]string'

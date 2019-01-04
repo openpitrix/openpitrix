@@ -69,11 +69,17 @@ type DescribeAppVersionsParams struct {
 	Description []string
 	/*DisplayColumns*/
 	DisplayColumns []string
-	/*Limit*/
+	/*Limit
+	  default is 20, max value is 200.
+
+	*/
 	Limit *int64
 	/*Name*/
 	Name []string
-	/*Offset*/
+	/*Offset
+	  default is 0.
+
+	*/
 	Offset *int64
 	/*Owner*/
 	Owner []string

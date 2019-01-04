@@ -60,14 +60,19 @@ message CreateRuntimeResponse {
 }
 
 message DescribeRuntimesRequest {
-	repeated string runtime_id = 1;
-	repeated string status = 2;
-	repeated string provider = 3;
-	google.protobuf.StringValue search_word = 4;
-	repeated string owner = 5;
-	uint32 limit = 6;
-	uint32 offset = 7;
-	repeated string display_columns = 8;
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
+	uint32 offset = 5;
+	repeated string display_columns = 6;
+
+	repeated string runtime_id = 11;
+	repeated string status = 12;
+	repeated string provider = 13;
+	repeated string owner = 14;
 }
 
 message DescribeRuntimesResponse {
@@ -122,14 +127,19 @@ message ValidateRuntimeCredentialResponse {
 }
 
 message DescribeRuntimeCredentialsRequest {
-	repeated string runtime_credential_id = 1;
-	repeated string status = 2;
-	repeated string provider = 3;
-	google.protobuf.StringValue search_word = 4;
-	repeated string owner = 6;
-	uint32 limit = 8;
-	uint32 offset = 9;
-	repeated string display_columns = 10;
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
+	uint32 offset = 5;
+	repeated string display_columns = 6;
+
+	repeated string runtime_credential_id = 11;
+	repeated string status = 12;
+	repeated string provider = 13;
+	repeated string owner = 14;
 }
 
 message DescribeRuntimeCredentialsResponse {
@@ -170,8 +180,10 @@ message GetRuntimeStatisticsRequest {
 }
 
 message GetRuntimeStatisticsResponse {
-	map<string, uint32> last_two_week_created = 1; // runtime create time range -> runtime count, max length is 14
-	map<string, uint32> top_ten_providers = 2; // provider id -> runtime count, max length is 10
+	// runtime create time range -> runtime count, max length is 14
+	map<string, uint32> last_two_week_created = 1;
+	// provider id -> runtime count, max length is 10
+	map<string, uint32> top_ten_providers = 2;
 	uint32 runtime_count = 3;
 	uint32 provider_count = 4;
 }
