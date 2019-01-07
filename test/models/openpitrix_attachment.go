@@ -16,7 +16,7 @@ import (
 // swagger:model openpitrixAttachment
 type OpenpitrixAttachment struct {
 
-	// attachment content
+	// filename => content
 	AttachmentContent map[string]strfmt.Base64 `json:"attachment_content,omitempty"`
 
 	// attachment id

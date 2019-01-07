@@ -8,15 +8,18 @@ import (
 	"context"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client/attachment"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"openpitrix.io/openpitrix/pkg/util/imageutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -31,6 +34,7 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 		From(constants.TableCategory).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableCategory))
 	// TODO: validate sort_key
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
@@ -53,12 +57,35 @@ func (p *Server) DescribeCategories(ctx context.Context, req *pb.DescribeCategor
 }
 
 func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryRequest) (*pb.CreateCategoryResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	category := models.NewCategory(
 		req.GetName().GetValue(),
 		req.GetLocale().GetValue(),
 		req.GetDescription().GetValue(),
-		s.UserId)
+		s.GetOwnerPath())
+
+	var iconAttachmentId string
+	if req.GetIcon() != nil {
+		// upload icon attachment
+		attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		icon := req.GetIcon().GetValue()
+		content, err := imageutil.Thumbnail(ctx, icon)
+		if err != nil {
+			logger.Error(ctx, "Make thumbnail failed: %+v", err)
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorImageDecodeFailed)
+		}
+		createAttachmentRes, err := attachmentManagerClient.CreateAttachment(ctx, &pb.CreateAttachmentRequest{
+			AttachmentContent: content,
+		})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		iconAttachmentId = createAttachmentRes.AttachmentId
+	}
+	category.Icon = iconAttachmentId
 
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableCategory).
@@ -77,7 +104,7 @@ func (p *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryRequest) (*pb.ModifyCategoryResponse, error) {
 	// TODO: check resource permission
 	categoryId := req.GetCategoryId().GetValue()
-	_, err := p.getCategory(ctx, categoryId)
+	category, err := p.getCategory(ctx, categoryId)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
@@ -85,6 +112,37 @@ func (p *Server) ModifyCategory(ctx context.Context, req *pb.ModifyCategoryReque
 	attributes := manager.BuildUpdateAttributes(req,
 		constants.ColumnName, constants.ColumnLocale, constants.ColumnDescription)
 	attributes[constants.ColumnUpdateTime] = time.Now()
+
+	if req.GetIcon() != nil {
+		// upload or replace icon attachment
+		attachmentManagerClient, err := attachmentclient.NewAttachmentManagerClient()
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		content, err := imageutil.Thumbnail(ctx, req.GetIcon().GetValue())
+		if err != nil {
+			logger.Error(ctx, "Make thumbnail failed: %+v", err)
+			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorImageDecodeFailed)
+		}
+		if category.Icon == "" {
+			createAttachmentRes, err := attachmentManagerClient.CreateAttachment(ctx, &pb.CreateAttachmentRequest{
+				AttachmentContent: content,
+			})
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+			attributes[constants.ColumnIcon] = createAttachmentRes.AttachmentId
+		} else {
+			_, err := attachmentManagerClient.ReplaceAttachment(ctx, &pb.ReplaceAttachmentRequest{
+				AttachmentId:      category.Icon,
+				AttachmentContent: content,
+			})
+			if err != nil {
+				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+			}
+		}
+	}
+
 	_, err = pi.Global().DB(ctx).
 		Update(constants.TableCategory).
 		SetMap(attributes).

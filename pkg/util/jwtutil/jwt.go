@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package senderutil
+package jwtutil
 
 import (
 	"fmt"
@@ -11,6 +11,8 @@ import (
 
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
+
+	"openpitrix.io/openpitrix/pkg/sender"
 )
 
 var ErrExpired = fmt.Errorf("access token expired")
@@ -19,22 +21,22 @@ func trimKey(k string) []byte {
 	return []byte(strings.TrimSpace(k))
 }
 
-func Validate(k, s string) (*Sender, error) {
-	tok, err := jwt.ParseSigned(s)
+func Validate(k, str string) (*sender.Sender, error) {
+	tok, err := jwt.ParseSigned(str)
 	if err != nil {
 		return nil, err
 	}
 	c := &jwt.Claims{}
-	sender := &Sender{}
-	err = tok.Claims(trimKey(k), c, sender)
+	s := &sender.Sender{}
+	err = tok.Claims(trimKey(k), c, s)
 	if err != nil {
 		return nil, err
 	}
 	if c.Expiry.Time().Unix() < time.Now().Unix() {
 		return nil, ErrExpired
 	}
-	sender.UserId = c.Subject
-	return sender, nil
+	s.UserId = c.Subject
+	return s, nil
 }
 
 func Generate(k string, expire time.Duration, userId, role string) (string, error) {
@@ -45,7 +47,7 @@ func Generate(k string, expire time.Duration, userId, role string) (string, erro
 	if err != nil {
 		return "", err
 	}
-	sender := &Sender{
+	s := &sender.Sender{
 		Role: role,
 	}
 	now := time.Now()
@@ -55,5 +57,5 @@ func Generate(k string, expire time.Duration, userId, role string) (string, erro
 		// TODO: add jti
 		Subject: userId,
 	}
-	return jwt.Signed(signer).Claims(sender).Claims(c).CompactSerialize()
+	return jwt.Signed(signer).Claims(s).Claims(c).CompactSerialize()
 }

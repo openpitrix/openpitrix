@@ -9,6 +9,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -33,6 +34,7 @@ type Cluster struct {
 	TransitionStatus   string
 	MetadataRootAccess bool
 	Owner              string
+	OwnerPath          sender.OwnerPath
 	GlobalUuid         string
 	UpgradeStatus      string
 	UpgradeTime        *time.Time
@@ -41,6 +43,7 @@ type Cluster struct {
 	StatusTime         time.Time
 	AdditionalInfo     string
 	Env                string
+	Debug              bool
 }
 
 var ClusterColumns = db.GetColumnsFromStruct(&Cluster{})
@@ -67,7 +70,7 @@ func ClusterToPb(cluster *Cluster) *pb.Cluster {
 		Status:             pbutil.ToProtoString(cluster.Status),
 		TransitionStatus:   pbutil.ToProtoString(cluster.TransitionStatus),
 		MetadataRootAccess: pbutil.ToProtoBool(cluster.MetadataRootAccess),
-		Owner:              pbutil.ToProtoString(cluster.Owner),
+		OwnerPath:          cluster.OwnerPath.ToProtoString(),
 		GlobalUuid:         pbutil.ToProtoString(cluster.GlobalUuid),
 		UpgradeStatus:      pbutil.ToProtoString(cluster.UpgradeStatus),
 		RuntimeId:          pbutil.ToProtoString(cluster.RuntimeId),
@@ -75,6 +78,7 @@ func ClusterToPb(cluster *Cluster) *pb.Cluster {
 		StatusTime:         pbutil.ToProtoTimestamp(cluster.StatusTime),
 		AdditionalInfo:     pbutil.ToProtoString(cluster.AdditionalInfo),
 		Env:                pbutil.ToProtoString(cluster.Env),
+		Debug:              pbutil.ToProtoBool(cluster.Debug),
 	}
 	if cluster.UpgradeTime != nil {
 		c.UpgradeTime = pbutil.ToProtoTimestamp(*cluster.UpgradeTime)
@@ -83,6 +87,7 @@ func ClusterToPb(cluster *Cluster) *pb.Cluster {
 }
 
 func PbToCluster(pbCluster *pb.Cluster) *Cluster {
+	ownerPath := sender.OwnerPath(pbCluster.GetOwnerPath().GetValue())
 	c := &Cluster{
 		ClusterId:          pbCluster.GetClusterId().GetValue(),
 		Name:               pbCluster.GetName().GetValue(),
@@ -97,7 +102,8 @@ func PbToCluster(pbCluster *pb.Cluster) *Cluster {
 		Status:             pbCluster.GetStatus().GetValue(),
 		TransitionStatus:   pbCluster.GetTransitionStatus().GetValue(),
 		MetadataRootAccess: pbCluster.GetMetadataRootAccess().GetValue(),
-		Owner:              pbCluster.GetOwner().GetValue(),
+		OwnerPath:          ownerPath,
+		Owner:              ownerPath.Owner(),
 		GlobalUuid:         pbCluster.GetGlobalUuid().GetValue(),
 		UpgradeStatus:      pbCluster.GetUpgradeStatus().GetValue(),
 		RuntimeId:          pbCluster.GetRuntimeId().GetValue(),
@@ -105,6 +111,7 @@ func PbToCluster(pbCluster *pb.Cluster) *Cluster {
 		StatusTime:         pbutil.FromProtoTimestamp(pbCluster.GetStatusTime()),
 		AdditionalInfo:     pbCluster.GetAdditionalInfo().GetValue(),
 		Env:                pbCluster.GetEnv().GetValue(),
+		Debug:              pbCluster.GetDebug().GetValue(),
 	}
 	upgradeTime := pbutil.FromProtoTimestamp(pbCluster.GetUpgradeTime())
 	c.UpgradeTime = &upgradeTime

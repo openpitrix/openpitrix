@@ -141,6 +141,35 @@ func (a *Client) CreateCluster(params *CreateClusterParams, authInfo runtime.Cli
 }
 
 /*
+CreateDebugCluster creates debug cluster
+*/
+func (a *Client) CreateDebugCluster(params *CreateDebugClusterParams, authInfo runtime.ClientAuthInfoWriter) (*CreateDebugClusterOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateDebugClusterParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CreateDebugCluster",
+		Method:             "POST",
+		PathPattern:        "/v1/debug_clusters/create",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &CreateDebugClusterReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CreateDebugClusterOK), nil
+
+}
+
+/*
 CreateKeyPair creates key pair
 */
 func (a *Client) CreateKeyPair(params *CreateKeyPairParams, authInfo runtime.ClientAuthInfoWriter) (*CreateKeyPairOK, error) {
@@ -340,6 +369,35 @@ func (a *Client) DescribeClusters(params *DescribeClustersParams, authInfo runti
 		return nil, err
 	}
 	return result.(*DescribeClustersOK), nil
+
+}
+
+/*
+DescribeDebugClusters describes debug clusters
+*/
+func (a *Client) DescribeDebugClusters(params *DescribeDebugClustersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeDebugClustersOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeDebugClustersParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeDebugClusters",
+		Method:             "GET",
+		PathPattern:        "/v1/debug_clusters",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeDebugClustersReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeDebugClustersOK), nil
 
 }
 

@@ -17,18 +17,22 @@ import "types.proto";
 message GetAttachmentsRequest {
 	repeated string attachment_id = 1;
 	repeated string filename = 2;
+	// ignore the attachment file content, return the filenames directly
 	bool ignore_content = 3;
 }
 message GetAttachmentsResponse {
-	map<string, Attachment> attachments = 1; // attachment_id => Attachment
+	// attachment_id => Attachment
+	map<string, Attachment> attachments = 1;
 }
 message Attachment {
 	string attachment_id = 1;
-	map<string, bytes> attachment_content = 2; // filename => content
+	// filename => content
+	map<string, bytes> attachment_content = 2;
 	google.protobuf.Timestamp create_time = 3;
 }
 message CreateAttachmentRequest {
-	map<string, bytes> attachment_content = 1; // filename => content
+	// filename => content
+	map<string, bytes> attachment_content = 1;
 }
 message CreateAttachmentResponse {
 	string attachment_id = 1;
@@ -36,7 +40,8 @@ message CreateAttachmentResponse {
 }
 message AppendAttachmentRequest {
 	string attachment_id = 1;
-	map<string, bytes> attachment_content = 2; // filename => content
+	// filename => content
+	map<string, bytes> attachment_content = 2;
 }
 message AppendAttachmentResponse {
 	string attachment_id = 1;
@@ -44,7 +49,8 @@ message AppendAttachmentResponse {
 }
 message ReplaceAttachmentRequest {
 	string attachment_id = 1;
-	map<string, bytes> attachment_content = 2; // filename => content
+	// filename => content
+	map<string, bytes> attachment_content = 2;
 }
 message ReplaceAttachmentResponse {
 	string attachment_id = 1;

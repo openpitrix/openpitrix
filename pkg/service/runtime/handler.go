@@ -19,12 +19,20 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest) (*pb.CreateRuntimeResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	return p.createRuntime(ctx, req, false)
+}
+
+func (p *Server) CreateDebugRuntime(ctx context.Context, req *pb.CreateRuntimeRequest) (*pb.CreateRuntimeResponse, error) {
+	return p.createRuntime(ctx, req, true)
+}
+
+func (p *Server) createRuntime(ctx context.Context, req *pb.CreateRuntimeRequest, debug bool) (*pb.CreateRuntimeResponse, error) {
+	s := ctxutil.GetSender(ctx)
 	runtimeId := models.NewRuntimeId()
 	runtimeCredentialId := req.GetRuntimeCredentialId().GetValue()
 	zone := req.GetZone().GetValue()
@@ -42,6 +50,12 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 	if runtimeCredential.Provider != req.GetProvider().GetValue() {
 		logger.Error(ctx, "Runtime credential [%s] provider is [%s] not [%s]", runtimeCredentialId,
 			runtimeCredential.Provider, req.GetProvider().GetValue())
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCreateResourcesFailed)
+	}
+
+	if runtimeCredential.Debug != debug {
+		logger.Error(ctx, "Runtime credential [%s] debug is [%t] not [%t]", runtimeCredentialId,
+			runtimeCredential.Debug, debug)
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCreateResourcesFailed)
 	}
 
@@ -67,7 +81,8 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		req.GetProvider().GetValue(),
 		runtimeCredentialId,
 		req.GetZone().GetValue(),
-		s.UserId,
+		s.GetOwnerPath(),
+		debug,
 	)
 	_, err = pi.Global().DB(ctx).
 		InsertInto(constants.TableRuntime).
@@ -84,6 +99,14 @@ func (p *Server) CreateRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 }
 
 func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesRequest) (*pb.DescribeRuntimesResponse, error) {
+	return p.describeRuntimes(ctx, req, false)
+}
+
+func (p *Server) DescribeDebugRuntimes(ctx context.Context, req *pb.DescribeRuntimesRequest) (*pb.DescribeRuntimesResponse, error) {
+	return p.describeRuntimes(ctx, req, true)
+}
+
+func (p *Server) describeRuntimes(ctx context.Context, req *pb.DescribeRuntimesRequest, debug bool) (*pb.DescribeRuntimesResponse, error) {
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
@@ -94,8 +117,9 @@ func (p *Server) DescribeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
-
+	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	if len(displayColumns) > 0 {
 		_, err := query.Load(&runtimes)
@@ -126,6 +150,7 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&runtimes)
@@ -257,7 +282,15 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 }
 
 func (p *Server) CreateRuntimeCredential(ctx context.Context, req *pb.CreateRuntimeCredentialRequest) (*pb.CreateRuntimeCredentialResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	return p.createRuntimeCredential(ctx, req, false)
+}
+
+func (p *Server) CreateDebugRuntimeCredential(ctx context.Context, req *pb.CreateRuntimeCredentialRequest) (*pb.CreateRuntimeCredentialResponse, error) {
+	return p.createRuntimeCredential(ctx, req, true)
+}
+
+func (p *Server) createRuntimeCredential(ctx context.Context, req *pb.CreateRuntimeCredentialRequest, debug bool) (*pb.CreateRuntimeCredentialResponse, error) {
+	s := ctxutil.GetSender(ctx)
 
 	runtimeCredentialId := models.NewRuntimeCredentialId()
 	provider := req.Provider.GetValue()
@@ -290,7 +323,8 @@ func (p *Server) CreateRuntimeCredential(ctx context.Context, req *pb.CreateRunt
 		req.GetRuntimeUrl().GetValue(),
 		content,
 		req.GetProvider().GetValue(),
-		s.UserId,
+		s.GetOwnerPath(),
+		debug,
 	)
 
 	_, err = pi.Global().DB(ctx).
@@ -308,6 +342,14 @@ func (p *Server) CreateRuntimeCredential(ctx context.Context, req *pb.CreateRunt
 }
 
 func (p *Server) DescribeRuntimeCredentials(ctx context.Context, req *pb.DescribeRuntimeCredentialsRequest) (*pb.DescribeRuntimeCredentialsResponse, error) {
+	return p.describeRuntimeCredentials(ctx, req, false)
+}
+
+func (p *Server) DescribeDebugRuntimeCredentials(ctx context.Context, req *pb.DescribeRuntimeCredentialsRequest) (*pb.DescribeRuntimeCredentialsResponse, error) {
+	return p.describeRuntimeCredentials(ctx, req, true)
+}
+
+func (p *Server) describeRuntimeCredentials(ctx context.Context, req *pb.DescribeRuntimeCredentialsRequest, debug bool) (*pb.DescribeRuntimeCredentialsResponse, error) {
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
@@ -318,8 +360,9 @@ func (p *Server) DescribeRuntimeCredentials(ctx context.Context, req *pb.Describ
 		From(constants.TableRuntimeCredential).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntimeCredential))
-
+	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&runtimeCredentials)
 	if err != nil {

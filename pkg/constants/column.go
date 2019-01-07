@@ -29,6 +29,7 @@ const (
 	ColumnNodeId                   = "node_id"
 	ColumnKeyPairId                = "key_pair_id"
 	ColumnOwner                    = "owner"
+	ColumnOwnerPath                = "owner_path"
 	ColumnPackageName              = "package_name"
 	ColumnPrivateIp                = "private_ip"
 	ColumnProvider                 = "provider"
@@ -90,6 +91,7 @@ const (
 	ColumnOperator = "operator"
 	ColumnReviewId = "review_id"
 	ColumnPhase    = "phase"
+	ColumnReviewer = "reviewer"
 
 	//vendor_verify_info
 	ColumnCompanyName       = "company_name"
@@ -184,7 +186,7 @@ var IndexedColumns = map[string][]string{
 		ColumnVersionId, ColumnAppId, ColumnStatus, ColumnOperator, ColumnRole,
 	},
 	TableAppVersionReview: {
-		ColumnReviewId, ColumnVersionId, ColumnAppId, ColumnStatus,
+		ColumnReviewId, ColumnVersionId, ColumnAppId, ColumnStatus, ColumnReviewer,
 	},
 	TableVendorVerifyInfo: {
 		ColumnUserId, ColumnStatus,

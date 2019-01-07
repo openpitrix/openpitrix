@@ -79,7 +79,7 @@ message Repo {
 	google.protobuf.StringValue url = 5;
 	google.protobuf.StringValue credential = 6;
 	google.protobuf.StringValue visibility = 7;
-	google.protobuf.StringValue owner = 8;
+	google.protobuf.StringValue owner_path = 8;
 	repeated string providers = 9;
 	repeated RepoLabel labels = 10;
 	repeated RepoSelector selectors = 11;
@@ -90,28 +90,33 @@ message Repo {
 	repeated ResourceCategory category_set = 15;
 
 	google.protobuf.StringValue app_default_status = 16;
-	google.protobuf.Int32Value controller = 17; // 0 for self resource; 1 for openpitrix resource
+	// 0 for self resource; 1 for openpitrix resource
+	google.protobuf.Int32Value controller = 17;
 }
 
 message DescribeReposRequest {
-	repeated string repo_id = 1; // NOTE: grpc gateway cannot handle repeated StringValue
-	repeated string name = 2;
-	repeated string type = 3;
-	repeated string visibility = 4;
-	repeated string status = 5;
-	repeated string provider = 6;
-	google.protobuf.StringValue label = 7;
-	google.protobuf.StringValue selector = 8;
-	uint32 limit = 9; // NOTE: uint64 marshal to json will convert to string
-	uint32 offset = 10;
-	repeated string category_id = 11;
-	google.protobuf.StringValue search_word = 12;
-	google.protobuf.StringValue sort_key = 13;
-	google.protobuf.BoolValue reverse = 14;
-	repeated string owner = 15;
-	repeated string app_default_status = 16;
-	string user_id = 17;
-	google.protobuf.Int32Value controller = 18; // 0 for self resource; 1 for openpitrix resource
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
+	uint32 offset = 5;
+
+	repeated string repo_id = 11;
+	repeated string name = 12;
+	repeated string type = 13;
+	repeated string visibility = 14;
+	repeated string status = 15;
+	repeated string provider = 16;
+	google.protobuf.StringValue label = 17;
+	google.protobuf.StringValue selector = 18;
+	repeated string category_id = 19;
+	repeated string owner = 20;
+	repeated string app_default_status = 21;
+	string user_id = 22;
+	// 0 for self resource; 1 for openpitrix resource
+	google.protobuf.Int32Value controller = 23;
 }
 
 message DescribeReposResponse {

@@ -25,6 +25,64 @@ type Client struct {
 }
 
 /*
+CreateDebugRuntime creates debug runtime
+*/
+func (a *Client) CreateDebugRuntime(params *CreateDebugRuntimeParams, authInfo runtime.ClientAuthInfoWriter) (*CreateDebugRuntimeOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateDebugRuntimeParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CreateDebugRuntime",
+		Method:             "POST",
+		PathPattern:        "/v1/debug_runtimes",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &CreateDebugRuntimeReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CreateDebugRuntimeOK), nil
+
+}
+
+/*
+CreateDebugRuntimeCredential creates debug runtime credential
+*/
+func (a *Client) CreateDebugRuntimeCredential(params *CreateDebugRuntimeCredentialParams, authInfo runtime.ClientAuthInfoWriter) (*CreateDebugRuntimeCredentialOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateDebugRuntimeCredentialParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "CreateDebugRuntimeCredential",
+		Method:             "POST",
+		PathPattern:        "/v1/debug_runtimes/credentials",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &CreateDebugRuntimeCredentialReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*CreateDebugRuntimeCredentialOK), nil
+
+}
+
+/*
 CreateRuntime creates runtime
 */
 func (a *Client) CreateRuntime(params *CreateRuntimeParams, authInfo runtime.ClientAuthInfoWriter) (*CreateRuntimeOK, error) {
@@ -137,6 +195,64 @@ func (a *Client) DeleteRuntimes(params *DeleteRuntimesParams, authInfo runtime.C
 		return nil, err
 	}
 	return result.(*DeleteRuntimesOK), nil
+
+}
+
+/*
+DescribeDebugRuntimeCredentials describes debug runtime credentials
+*/
+func (a *Client) DescribeDebugRuntimeCredentials(params *DescribeDebugRuntimeCredentialsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeDebugRuntimeCredentialsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeDebugRuntimeCredentialsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeDebugRuntimeCredentials",
+		Method:             "GET",
+		PathPattern:        "/v1/debug_runtimes/credentials",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeDebugRuntimeCredentialsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeDebugRuntimeCredentialsOK), nil
+
+}
+
+/*
+DescribeDebugRuntimes describes debug runtime
+*/
+func (a *Client) DescribeDebugRuntimes(params *DescribeDebugRuntimesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeDebugRuntimesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeDebugRuntimesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeDebugRuntimes",
+		Method:             "GET",
+		PathPattern:        "/v1/debug_runtimes",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeDebugRuntimesReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeDebugRuntimesOK), nil
 
 }
 

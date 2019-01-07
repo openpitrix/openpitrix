@@ -14,14 +14,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func CheckRuntimesPermission(ctx context.Context, resourceIds []string) ([]*models.Runtime, error) {
 	if len(resourceIds) == 0 {
 		return nil, nil
 	}
-	var sender = senderutil.GetSenderFromContext(ctx)
+	var sender = ctxutil.GetSender(ctx)
 	var runtimes []*models.Runtime
 	_, err := pi.Global().DB(ctx).
 		Select(models.RuntimeColumns...).
@@ -30,9 +30,9 @@ func CheckRuntimesPermission(ctx context.Context, resourceIds []string) ([]*mode
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if sender != nil && !sender.IsGlobalAdmin() {
+	if sender != nil {
 		for _, runtime := range runtimes {
-			if runtime.Owner != sender.UserId {
+			if !runtime.OwnerPath.CheckPermission(sender) {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, runtime.RuntimeId)
 			}
 		}
@@ -47,7 +47,7 @@ func CheckRuntimePermission(ctx context.Context, resourceId string) (*models.Run
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
-	var sender = senderutil.GetSenderFromContext(ctx)
+	var sender = ctxutil.GetSender(ctx)
 	var runtimes []*models.Runtime
 	_, err := pi.Global().DB(ctx).
 		Select(models.RuntimeColumns...).
@@ -56,9 +56,9 @@ func CheckRuntimePermission(ctx context.Context, resourceId string) (*models.Run
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if sender != nil && !sender.IsGlobalAdmin() {
+	if sender != nil {
 		for _, runtime := range runtimes {
-			if runtime.Owner != sender.UserId {
+			if !runtime.OwnerPath.CheckPermission(sender) {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, runtime.RuntimeId)
 			}
 		}
@@ -73,7 +73,7 @@ func CheckRuntimeCredentialsPermission(ctx context.Context, resourceIds []string
 	if len(resourceIds) == 0 {
 		return nil, nil
 	}
-	var sender = senderutil.GetSenderFromContext(ctx)
+	var sender = ctxutil.GetSender(ctx)
 	var runtimecredentials []*models.RuntimeCredential
 	_, err := pi.Global().DB(ctx).
 		Select(models.RuntimeCredentialColumns...).
@@ -82,9 +82,9 @@ func CheckRuntimeCredentialsPermission(ctx context.Context, resourceIds []string
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if sender != nil && !sender.IsGlobalAdmin() {
+	if sender != nil {
 		for _, runtimecredential := range runtimecredentials {
-			if runtimecredential.Owner != sender.UserId {
+			if !runtimecredential.OwnerPath.CheckPermission(sender) {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, runtimecredential.RuntimeCredentialId)
 			}
 		}
@@ -99,7 +99,7 @@ func CheckRuntimeCredentialPermission(ctx context.Context, resourceId string) (*
 	if len(resourceId) == 0 {
 		return nil, nil
 	}
-	var sender = senderutil.GetSenderFromContext(ctx)
+	var sender = ctxutil.GetSender(ctx)
 	var runtimecredentials []*models.RuntimeCredential
 	_, err := pi.Global().DB(ctx).
 		Select(models.RuntimeCredentialColumns...).
@@ -108,9 +108,9 @@ func CheckRuntimeCredentialPermission(ctx context.Context, resourceId string) (*
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	if sender != nil && !sender.IsGlobalAdmin() {
+	if sender != nil {
 		for _, runtimecredential := range runtimecredentials {
-			if runtimecredential.Owner != sender.UserId {
+			if !runtimecredential.OwnerPath.CheckPermission(sender) {
 				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, runtimecredential.RuntimeCredentialId)
 			}
 		}

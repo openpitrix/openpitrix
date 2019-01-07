@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -24,17 +25,19 @@ type RepoEvent struct {
 	Status      string
 	Result      string
 	Owner       string
+	OwnerPath   sender.OwnerPath
 	CreateTime  time.Time
 	StatusTime  time.Time
 }
 
 var RepoEventColumns = db.GetColumnsFromStruct(&RepoEvent{})
 
-func NewRepoEvent(repoId, owner string) *RepoEvent {
+func NewRepoEvent(repoId string, ownerPath sender.OwnerPath) *RepoEvent {
 	return &RepoEvent{
 		RepoEventId: NewRepoEventId(),
 		RepoId:      repoId,
-		Owner:       owner,
+		Owner:       ownerPath.Owner(),
+		OwnerPath:   ownerPath,
 		Status:      constants.StatusPending,
 		Result:      "",
 		CreateTime:  time.Now(),
@@ -48,7 +51,7 @@ func RepoEventToPb(repoTask *RepoEvent) *pb.RepoEvent {
 	pbRepoTask.RepoId = pbutil.ToProtoString(repoTask.RepoId)
 	pbRepoTask.Status = pbutil.ToProtoString(repoTask.Status)
 	pbRepoTask.Result = pbutil.ToProtoString(repoTask.Result)
-	pbRepoTask.Owner = pbutil.ToProtoString(repoTask.Owner)
+	pbRepoTask.OwnerPath = repoTask.OwnerPath.ToProtoString()
 	pbRepoTask.CreateTime = pbutil.ToProtoTimestamp(repoTask.CreateTime)
 	pbRepoTask.StatusTime = pbutil.ToProtoTimestamp(repoTask.StatusTime)
 	return &pbRepoTask

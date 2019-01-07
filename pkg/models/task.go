@@ -11,6 +11,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -26,6 +27,7 @@ type Task struct {
 	TaskAction     string
 	Directive      string
 	Owner          string
+	OwnerPath      sender.OwnerPath
 	Status         string
 	ErrorCode      uint32
 	Executor       string
@@ -38,7 +40,7 @@ type Task struct {
 
 var TaskColumns = db.GetColumnsFromStruct(&Task{})
 
-func NewTask(taskId, jobId, nodeId, target, taskAction, directive, userId string, failureAllowed bool) *Task {
+func NewTask(taskId, jobId, nodeId, target, taskAction, directive string, ownerPath sender.OwnerPath, failureAllowed bool) *Task {
 	if taskId == "" {
 		taskId = NewTaskId()
 	} else if taskId == constants.PlaceHolder {
@@ -51,7 +53,8 @@ func NewTask(taskId, jobId, nodeId, target, taskAction, directive, userId string
 		Target:         target,
 		TaskAction:     taskAction,
 		Directive:      directive,
-		Owner:          userId,
+		Owner:          ownerPath.Owner(),
+		OwnerPath:      ownerPath,
 		Status:         constants.StatusPending,
 		CreateTime:     time.Now(),
 		StatusTime:     time.Now(),
@@ -65,7 +68,7 @@ func TaskToPb(task *Task) *pb.Task {
 	pbTask.JobId = pbutil.ToProtoString(task.JobId)
 	pbTask.TaskAction = pbutil.ToProtoString(task.TaskAction)
 	pbTask.Directive = pbutil.ToProtoString(task.Directive)
-	pbTask.Owner = pbutil.ToProtoString(task.Owner)
+	pbTask.OwnerPath = task.OwnerPath.ToProtoString()
 	pbTask.Status = pbutil.ToProtoString(task.Status)
 	pbTask.ErrorCode = pbutil.ToProtoUInt32(task.ErrorCode)
 	pbTask.Executor = pbutil.ToProtoString(task.Executor)

@@ -36,6 +36,18 @@ func getName(str string) string {
 func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
 	var c = Cmd{}
 	c.Action = op.ID
+	requestSuffix := "Request"
+	if len(op.Parameters) > 0 {
+		if op.Parameters[0].Schema != nil {
+			request := op.Parameters[0].Schema.Ref.GetURL().Fragment
+			if strings.HasSuffix(request, requestSuffix) {
+				c.Request = strings.TrimPrefix(request, "/definitions/openpitrix")
+			}
+		}
+	}
+	if len(c.Request) == 0 {
+		c.Request = c.Action + requestSuffix
+	}
 	c.Description = op.Summary
 	c.Service = op.Tags[0]
 	c.Path = make(map[string]Param)
@@ -90,9 +102,13 @@ func (g *Gen) GetCmdFromOperation(op *spec.Operation) Cmd {
 					} else {
 						t += toString(s.Type)
 					}
+					help := s.Description
+					if help == "" {
+						help = s.Title
+					}
 					c.Body[getName(name)] = Param{
 						Shorthand: "",
-						Help:      s.Description,
+						Help:      help,
 						Type:      t,
 						Default:   s.Default,
 					}

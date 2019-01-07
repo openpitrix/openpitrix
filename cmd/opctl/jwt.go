@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/jwtutil"
 )
 
 func getJwtCmd() *cobra.Command {
@@ -43,7 +43,7 @@ func getJwtCmd() *cobra.Command {
 				return fmt.Errorf("[secret_key] should specify")
 			}
 
-			token, err := senderutil.Generate(secretKey, expireTime, userId, role)
+			token, err := jwtutil.Generate(secretKey, expireTime, userId, role)
 			if err != nil {
 				return err
 			}

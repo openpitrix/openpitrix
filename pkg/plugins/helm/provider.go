@@ -21,6 +21,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -104,7 +105,7 @@ func (p *Provider) SplitJobIntoTasks(ctx context.Context, job *models.Job) (*mod
 		}
 		tdj := encodeTaskDirective(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCreateCluster, tdj, job.Owner, false)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCreateCluster, tdj, sender.OwnerPath(job.OwnerPath), false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,
@@ -122,7 +123,7 @@ func (p *Provider) SplitJobIntoTasks(ctx context.Context, job *models.Job) (*mod
 		}
 		tdj := encodeTaskDirective(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, job.Owner, false)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, sender.OwnerPath(job.OwnerPath), false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,
@@ -140,7 +141,7 @@ func (p *Provider) SplitJobIntoTasks(ctx context.Context, job *models.Job) (*mod
 		}
 		tdj := encodeTaskDirective(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, job.Owner, false)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionUpgradeCluster, tdj, sender.OwnerPath(job.OwnerPath), false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,
@@ -156,7 +157,7 @@ func (p *Provider) SplitJobIntoTasks(ctx context.Context, job *models.Job) (*mod
 		}
 		tdj := encodeTaskDirective(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionRollbackCluster, tdj, job.Owner, false)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionRollbackCluster, tdj, sender.OwnerPath(job.OwnerPath), false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,
@@ -170,7 +171,7 @@ func (p *Provider) SplitJobIntoTasks(ctx context.Context, job *models.Job) (*mod
 		}
 		tdj := encodeTaskDirective(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionDeleteClusters, tdj, job.Owner, false)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionDeleteClusters, tdj, sender.OwnerPath(job.OwnerPath), false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,
@@ -184,7 +185,7 @@ func (p *Provider) SplitJobIntoTasks(ctx context.Context, job *models.Job) (*mod
 		}
 		tdj := encodeTaskDirective(td)
 
-		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCeaseClusters, tdj, job.Owner, false)
+		task := models.NewTask(constants.PlaceHolder, job.JobId, "", constants.ProviderKubernetes, constants.ActionCeaseClusters, tdj, sender.OwnerPath(job.OwnerPath), false)
 		tl := models.TaskLayer{
 			Tasks: []*models.Task{task},
 			Child: nil,

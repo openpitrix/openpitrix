@@ -11,6 +11,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -55,12 +56,18 @@ func (p AppVersionReviewPhases) Value() (driver.Value, error) {
 //}
 
 type AppVersionReview struct {
-	ReviewId  string
-	VersionId string
-	AppId     string
-	Status    string
-	Phase     AppVersionReviewPhases
+	ReviewId   string
+	VersionId  string
+	AppId      string
+	OwnerPath  sender.OwnerPath
+	Owner      string
+	Status     string
+	Phase      AppVersionReviewPhases
+	StatusTime time.Time
+	Reviewer   string
 }
+
+type AppVersionReviews []*AppVersionReview
 
 func (avr *AppVersionReview) UpdatePhase(role, status, operator, message string) {
 	p, ok := avr.Phase[role]
@@ -81,13 +88,16 @@ func (avr *AppVersionReview) UpdatePhase(role, status, operator, message string)
 
 var AppVersionReviewColumns = db.GetColumnsFromStruct(&AppVersionReview{})
 
-func NewAppVersionReview(versionId, appId, status string) *AppVersionReview {
+func NewAppVersionReview(versionId, appId, status string, ownerPath sender.OwnerPath) *AppVersionReview {
 	return &AppVersionReview{
-		ReviewId:  NewAppVersionReviewId(),
-		VersionId: versionId,
-		AppId:     appId,
-		Status:    status,
-		Phase:     make(AppVersionReviewPhases),
+		ReviewId:   NewAppVersionReviewId(),
+		VersionId:  versionId,
+		AppId:      appId,
+		Status:     status,
+		Owner:      ownerPath.Owner(),
+		OwnerPath:  ownerPath,
+		Phase:      make(AppVersionReviewPhases),
+		StatusTime: time.Now(),
 	}
 }
 
@@ -116,8 +126,8 @@ func AppVersionReviewToPb(versionReview *AppVersionReview) *pb.AppVersionReview 
 	return &pbAppVersionReview
 }
 
-func AppVersionReviewsToPbs(versionAudits []*AppVersionReview) (pbAppVersionReviews []*pb.AppVersionReview) {
-	for _, appVersionAudit := range versionAudits {
+func AppVersionReviewsToPbs(versionReviews AppVersionReviews) (pbAppVersionReviews []*pb.AppVersionReview) {
+	for _, appVersionAudit := range versionReviews {
 		pbAppVersionReviews = append(pbAppVersionReviews, AppVersionReviewToPb(appVersionAudit))
 	}
 	return

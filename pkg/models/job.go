@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -27,6 +28,7 @@ type Job struct {
 	Directive  string
 	Provider   string
 	Owner      string
+	OwnerPath  sender.OwnerPath
 	Status     string
 	ErrorCode  uint32
 	Executor   string
@@ -38,7 +40,7 @@ type Job struct {
 
 var JobColumns = db.GetColumnsFromStruct(&Job{})
 
-func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, provider, userId, runtimeId string) *Job {
+func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, provider string, ownerPath sender.OwnerPath, runtimeId string) *Job {
 	if jobId == "" {
 		jobId = NewJobId()
 	} else if jobId == constants.PlaceHolder {
@@ -52,7 +54,8 @@ func NewJob(jobId, clusterId, appId, versionId, jobAction, directive, provider, 
 		JobAction:  jobAction,
 		Directive:  directive,
 		Provider:   provider,
-		Owner:      userId,
+		Owner:      ownerPath.Owner(),
+		OwnerPath:  ownerPath,
 		RuntimeId:  runtimeId,
 		Status:     constants.StatusPending,
 		CreateTime: time.Now(),
@@ -69,7 +72,7 @@ func JobToPb(job *Job) *pb.Job {
 	pbJob.JobAction = pbutil.ToProtoString(job.JobAction)
 	pbJob.Directive = pbutil.ToProtoString(job.Directive)
 	pbJob.Provider = pbutil.ToProtoString(job.Provider)
-	pbJob.Owner = pbutil.ToProtoString(job.Owner)
+	pbJob.OwnerPath = job.OwnerPath.ToProtoString()
 	pbJob.Status = pbutil.ToProtoString(job.Status)
 	pbJob.ErrorCode = pbutil.ToProtoUInt32(job.ErrorCode)
 	pbJob.Executor = pbutil.ToProtoString(job.Executor)

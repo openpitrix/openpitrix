@@ -18,6 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/atomicutil"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
@@ -40,7 +41,7 @@ func NewEventController(ctx context.Context) *EventController {
 	}
 }
 
-func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent, error) {
+func (i *EventController) NewRepoEvent(repoId string, ownerPath sender.OwnerPath) (*models.RepoEvent, error) {
 	var repoEventId string
 	err := pi.Global().Etcd(i.ctx).Dlock(context.Background(), constants.RepoIndexPrefix+repoId, func() error {
 		count, err := pi.Global().DB(i.ctx).Select(models.RepoEventColumns...).
@@ -54,7 +55,7 @@ func (i *EventController) NewRepoEvent(repoId, owner string) (*models.RepoEvent,
 		if count > 0 {
 			return fmt.Errorf("repo [%s] had running index event", repoId)
 		}
-		repoEvent := models.NewRepoEvent(repoId, owner)
+		repoEvent := models.NewRepoEvent(repoId, ownerPath)
 		_, err = pi.Global().DB(i.ctx).
 			InsertInto(constants.TableRepoEvent).
 			Record(repoEvent).

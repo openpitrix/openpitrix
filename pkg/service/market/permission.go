@@ -12,7 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func CheckMarketsPermission(ctx context.Context, resourceIds []string) ([]*models.Market, error) {
@@ -20,7 +20,7 @@ func CheckMarketsPermission(ctx context.Context, resourceIds []string) ([]*model
 		return nil, nil
 	}
 
-	var sender = senderutil.GetSenderFromContext(ctx)
+	var sender = ctxutil.GetSender(ctx)
 	var markets []*models.Market
 	_, err := pi.Global().DB(ctx).Select(models.MarketColumns...).From(constants.TableMarket).
 		Where(db.Eq(constants.ColumnMarketId, resourceIds)).Load(&markets)
@@ -50,7 +50,7 @@ func CheckMarketPermisson(ctx context.Context, resourceId string) (*models.Marke
 		return nil, nil
 	}
 
-	var sender = senderutil.GetSenderFromContext(ctx)
+	var sender = ctxutil.GetSender(ctx)
 	var markets []*models.Market
 	_, err := pi.Global().DB(ctx).
 		Select(models.MarketColumns...).

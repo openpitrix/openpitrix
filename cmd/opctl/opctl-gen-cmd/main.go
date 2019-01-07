@@ -55,7 +55,7 @@ const PreActionTmpl = `
 {{- if (gt (len $element.Body) 0)}}
 {{/*   this if post action   */}}
 type {{$element.Action}}Cmd struct {
-	*models.Openpitrix{{$element.Action}}Request
+	*models.Openpitrix{{$element.Request}}
 {{- range $name, $p := $element.Body}}
 {{- if (eq $p.Type "byte")}}
 	{{pascalCase $name}}Path string
@@ -65,7 +65,7 @@ type {{$element.Action}}Cmd struct {
 
 func New{{$element.Action}}Cmd() Cmd {
 	cmd := &{{$element.Action}}Cmd{}
-	cmd.Openpitrix{{$element.Action}}Request = &models.Openpitrix{{$element.Action}}Request{}
+	cmd.Openpitrix{{$element.Request}} = &models.Openpitrix{{$element.Request}}{}
 	return cmd
 }
 
@@ -100,7 +100,7 @@ func (c *{{$element.Action}}Cmd) Run(out Out) error {
 {{- end}}
 {{- end}}
 	params := {{snakeCase $element.Service}}.New{{$element.Action}}Params()
-	params.WithBody(c.Openpitrix{{$element.Action}}Request)
+	params.WithBody(c.Openpitrix{{$element.Request}})
 {{- range $name, $p := $element.Path}}
 	params.With{{pascalCase $name}}(c.{{pascalCase $name}})
 {{- end}}

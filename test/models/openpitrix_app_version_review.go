@@ -25,8 +25,14 @@ type OpenpitrixAppVersionReview struct {
 	// review id
 	ReviewID string `json:"review_id,omitempty"`
 
+	// reviewer
+	Reviewer string `json:"reviewer,omitempty"`
+
 	// status
 	Status string `json:"status,omitempty"`
+
+	// status time
+	StatusTime strfmt.DateTime `json:"status_time,omitempty"`
 
 	// version id
 	VersionID string `json:"version_id,omitempty"`

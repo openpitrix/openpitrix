@@ -239,7 +239,7 @@ func (a *Client) DescribeAppVersionAudits(params *DescribeAppVersionAuditsParams
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeAppVersionAudits",
 		Method:             "GET",
-		PathPattern:        "/v1/app/{app_id}/version/{version_id}/audits",
+		PathPattern:        "/v1/app_version_audits",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -268,7 +268,7 @@ func (a *Client) DescribeAppVersionReviews(params *DescribeAppVersionReviewsPara
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeAppVersionReviews",
 		Method:             "GET",
-		PathPattern:        "/v1/app/{app_id}/version/{version_id}/reviews",
+		PathPattern:        "/v1/app_version_reviews",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

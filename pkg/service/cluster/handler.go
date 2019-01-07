@@ -25,9 +25,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -199,11 +199,11 @@ func updateTransitionStatus(ctx context.Context, cluster *models.Cluster) error 
 }
 
 func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsRequest) (*pb.DescribeSubnetsResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
-	if err != nil || runtime.Runtime.Owner != s.UserId {
+	if err != nil || !runtime.Runtime.OwnerPath.CheckPermission(s) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAccessDenied, runtimeId)
 	}
 
@@ -275,8 +275,8 @@ func (p *Server) AddNodeKeyPairs(ctx context.Context, req *pb.AddNodeKeyPairsReq
 }
 
 func (p *Server) CreateKeyPair(ctx context.Context, req *pb.CreateKeyPairRequest) (*pb.CreateKeyPairResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
-	owner := s.UserId
+	s := ctxutil.GetSender(ctx)
+	ownerPath := s.GetOwnerPath()
 	name := req.GetName().GetValue()
 	description := req.GetDescription().GetValue()
 	pubKey := req.GetPubKey().GetValue()
@@ -285,7 +285,8 @@ func (p *Server) CreateKeyPair(ctx context.Context, req *pb.CreateKeyPairRequest
 		KeyPairId:   models.NewKeyPairId(),
 		Name:        name,
 		Description: description,
-		Owner:       owner,
+		Owner:       ownerPath.Owner(),
+		OwnerPath:   ownerPath,
 		PubKey:      pubKey,
 		CreateTime:  now,
 		StatusTime:  now,
@@ -315,6 +316,7 @@ func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsR
 		From(constants.TableKeyPair).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableKeyPair))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 
@@ -404,7 +406,7 @@ func (p *Server) DeleteKeyPairs(ctx context.Context, req *pb.DeleteKeyPairsReque
 }
 
 func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsRequest) (*pb.AttachKeyPairsResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	nodeIds := req.GetNodeId()
 	clusterNodes, err := CheckClusterNodesPermission(ctx, nodeIds)
@@ -492,7 +494,7 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 			constants.ActionAttachKeyPairs,
 			directive,
 			runtime.Runtime.Provider,
-			s.UserId,
+			s.GetOwnerPath(),
 			cluster.RuntimeId,
 		)
 
@@ -510,7 +512,7 @@ func (p *Server) AttachKeyPairs(ctx context.Context, req *pb.AttachKeyPairsReque
 }
 
 func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsRequest) (*pb.DetachKeyPairsResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	nodeIds := req.GetNodeId()
 	clusterNodes, err := CheckClusterNodesPermission(ctx, nodeIds)
 	if err != nil {
@@ -597,7 +599,7 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 			constants.ActionDetachKeyPairs,
 			directive,
 			runtime.Runtime.Provider,
-			s.UserId,
+			s.GetOwnerPath(),
 			cluster.RuntimeId,
 		)
 
@@ -615,7 +617,15 @@ func (p *Server) DetachKeyPairs(ctx context.Context, req *pb.DetachKeyPairsReque
 }
 
 func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest) (*pb.CreateClusterResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	return p.createCluster(ctx, req, false)
+}
+
+func (p *Server) CreateDebugCluster(ctx context.Context, req *pb.CreateClusterRequest) (*pb.CreateClusterResponse, error) {
+	return p.createCluster(ctx, req, true)
+}
+
+func (p *Server) createCluster(ctx context.Context, req *pb.CreateClusterRequest, debug bool) (*pb.CreateClusterResponse, error) {
+	s := ctxutil.GetSender(ctx)
 
 	appId := req.GetAppId().GetValue()
 	versionId := req.GetVersionId().GetValue()
@@ -623,7 +633,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 	clusterId := models.NewClusterId()
 	runtimeId := req.GetRuntimeId().GetValue()
 	runtime, err := runtimeclient.NewRuntime(ctx, runtimeId)
-	if err != nil || runtime.Runtime.Owner != s.UserId {
+	if err != nil || !runtime.Runtime.OwnerPath.CheckPermission(s) {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAccessDenied, runtimeId)
 	}
 
@@ -646,9 +656,11 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		clusterWrapper.Cluster.Zone = runtime.Zone
 	}
 	clusterWrapper.Cluster.RuntimeId = runtimeId
-	clusterWrapper.Cluster.Owner = s.UserId
+	clusterWrapper.Cluster.Owner = s.GetOwnerPath().Owner()
+	clusterWrapper.Cluster.OwnerPath = s.GetOwnerPath()
 	clusterWrapper.Cluster.ClusterId = clusterId
 	clusterWrapper.Cluster.ClusterType = constants.NormalClusterType
+	clusterWrapper.Cluster.Debug = debug
 
 	if plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
 		err = CheckVmBasedProvider(ctx, runtime, providerInterface, clusterWrapper)
@@ -677,7 +689,7 @@ func (p *Server) CreateCluster(ctx context.Context, req *pb.CreateClusterRequest
 		constants.ActionCreateCluster,
 		directive,
 		runtime.Runtime.Provider,
-		s.UserId,
+		s.GetOwnerPath(),
 		runtimeId,
 	)
 
@@ -914,7 +926,7 @@ func (p *Server) DeleteTableClusterNodes(ctx context.Context, req *pb.DeleteTabl
 }
 
 func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersRequest) (*pb.DeleteClustersResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	clusterIds := req.GetClusterId()
 	clusters, err := CheckClustersPermission(ctx, clusterIds)
 	if err != nil {
@@ -951,7 +963,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 			constants.ActionDeleteClusters,
 			directive,
 			runtime.Runtime.Provider,
-			s.UserId,
+			s.GetOwnerPath(),
 			clusterWrapper.Cluster.RuntimeId,
 		)
 
@@ -969,7 +981,7 @@ func (p *Server) DeleteClusters(ctx context.Context, req *pb.DeleteClustersReque
 }
 
 func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterRequest) (*pb.UpgradeClusterResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	clusterId := req.GetClusterId().GetValue()
 	cluster, err := CheckClusterPermission(ctx, clusterId)
 	if err != nil {
@@ -1009,7 +1021,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 		constants.ActionUpgradeCluster,
 		directive,
 		runtime.Runtime.Provider,
-		s.UserId,
+		s.GetOwnerPath(),
 		clusterWrapper.Cluster.RuntimeId,
 	)
 
@@ -1025,7 +1037,7 @@ func (p *Server) UpgradeCluster(ctx context.Context, req *pb.UpgradeClusterReque
 }
 
 func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterRequest) (*pb.RollbackClusterResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
 	cluster, err := CheckClusterPermission(ctx, clusterId)
@@ -1056,7 +1068,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 		constants.ActionRollbackCluster,
 		directive,
 		runtime.Runtime.Provider,
-		s.UserId,
+		s.GetOwnerPath(),
 		clusterWrapper.Cluster.RuntimeId,
 	)
 
@@ -1072,7 +1084,7 @@ func (p *Server) RollbackCluster(ctx context.Context, req *pb.RollbackClusterReq
 }
 
 func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest) (*pb.ResizeClusterResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
 	cluster, err := CheckClusterPermission(ctx, clusterId)
@@ -1142,7 +1154,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 		constants.ActionResizeCluster,
 		directive,
 		runtime.Runtime.Provider,
-		s.UserId,
+		s.GetOwnerPath(),
 		clusterWrapper.Cluster.RuntimeId,
 	)
 
@@ -1158,7 +1170,7 @@ func (p *Server) ResizeCluster(ctx context.Context, req *pb.ResizeClusterRequest
 }
 
 func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesRequest) (*pb.AddClusterNodesResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
 	cluster, err := CheckClusterPermission(ctx, clusterId)
@@ -1260,7 +1272,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 		constants.ActionAddClusterNodes,
 		directive,
 		runtime.Runtime.Provider,
-		s.UserId,
+		s.GetOwnerPath(),
 		clusterWrapper.Cluster.RuntimeId,
 	)
 
@@ -1276,7 +1288,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 }
 
 func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNodesRequest) (*pb.DeleteClusterNodesResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
 	cluster, err := CheckClusterPermission(ctx, clusterId)
@@ -1321,7 +1333,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 		constants.ActionDeleteClusterNodes,
 		directive,
 		runtime.Runtime.Provider,
-		s.UserId,
+		s.GetOwnerPath(),
 		clusterWrapper.Cluster.RuntimeId,
 	)
 
@@ -1337,7 +1349,7 @@ func (p *Server) DeleteClusterNodes(ctx context.Context, req *pb.DeleteClusterNo
 }
 
 func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvRequest) (*pb.UpdateClusterEnvResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	clusterId := req.GetClusterId().GetValue()
 	cluster, err := CheckClusterPermission(ctx, clusterId)
@@ -1370,7 +1382,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 	err = providerInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
 	if err != nil {
 		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] conf [%s] failed: %+v",
-			versionId, runtime, conf, err)
+			versionId, runtime.RuntimeId, conf, err)
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		}
@@ -1415,7 +1427,7 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		constants.ActionUpdateClusterEnv,
 		directive,
 		runtime.Runtime.Provider,
-		s.UserId,
+		s.GetOwnerPath(),
 		clusterWrapper.Cluster.RuntimeId,
 	)
 
@@ -1431,6 +1443,14 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 }
 
 func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersRequest) (*pb.DescribeClustersResponse, error) {
+	return p.describeClusters(ctx, req, false)
+}
+
+func (p *Server) DescribeDebugClusters(ctx context.Context, req *pb.DescribeClustersRequest) (*pb.DescribeClustersResponse, error) {
+	return p.describeClusters(ctx, req, true)
+}
+
+func (p *Server) describeClusters(ctx context.Context, req *pb.DescribeClustersRequest, debug bool) (*pb.DescribeClustersResponse, error) {
 	var clusters []*models.Cluster
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
@@ -1443,7 +1463,9 @@ func (p *Server) DescribeClusters(ctx context.Context, req *pb.DescribeClustersR
 		From(constants.TableCluster).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableCluster))
+	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	createdHour := int(req.GetCreatedDate().GetValue()) * 24
 	if createdHour > 0 {
@@ -1657,6 +1679,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		From(constants.TableClusterNode).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableClusterNode))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	if len(displayColumns) > 0 {
@@ -1739,7 +1762,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 }
 
 func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) (*pb.StopClustersResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	clusterIds := req.GetClusterId()
 	clusters, err := CheckClustersPermission(ctx, clusterIds)
@@ -1777,7 +1800,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 			constants.ActionStopClusters,
 			directive,
 			runtime.Runtime.Provider,
-			s.UserId,
+			s.GetOwnerPath(),
 			clusterWrapper.Cluster.RuntimeId,
 		)
 
@@ -1795,7 +1818,7 @@ func (p *Server) StopClusters(ctx context.Context, req *pb.StopClustersRequest) 
 }
 
 func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest) (*pb.StartClustersResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	clusterIds := req.GetClusterId()
 	clusters, err := CheckClustersPermission(ctx, clusterIds)
@@ -1841,7 +1864,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 			constants.ActionStartClusters,
 			directive,
 			runtime.Runtime.Provider,
-			s.UserId,
+			s.GetOwnerPath(),
 			clusterWrapper.Cluster.RuntimeId,
 		)
 
@@ -1859,7 +1882,7 @@ func (p *Server) StartClusters(ctx context.Context, req *pb.StartClustersRequest
 }
 
 func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersRequest) (*pb.RecoverClustersResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	clusterIds := req.GetClusterId()
 	clusters, err := CheckClustersPermission(ctx, clusterIds)
@@ -1901,7 +1924,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 			constants.ActionRecoverClusters,
 			directive,
 			runtime.Runtime.Provider,
-			s.UserId,
+			s.GetOwnerPath(),
 			clusterWrapper.Cluster.RuntimeId,
 		)
 
@@ -1919,7 +1942,7 @@ func (p *Server) RecoverClusters(ctx context.Context, req *pb.RecoverClustersReq
 }
 
 func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest) (*pb.CeaseClustersResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 
 	clusterIds := req.GetClusterId()
 	clusters, err := CheckClustersPermission(ctx, clusterIds)
@@ -1953,7 +1976,7 @@ func (p *Server) CeaseClusters(ctx context.Context, req *pb.CeaseClustersRequest
 			constants.ActionCeaseClusters,
 			directive,
 			runtime.Runtime.Provider,
-			s.UserId,
+			s.GetOwnerPath(),
 			clusterWrapper.Cluster.RuntimeId,
 		)
 

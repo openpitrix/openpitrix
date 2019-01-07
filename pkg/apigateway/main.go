@@ -25,6 +25,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
+	pbiam "openpitrix.io/iam/pkg/pb"
 	staticSpec "openpitrix.io/openpitrix/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/apigateway/swagger-ui"
 	"openpitrix.io/openpitrix/pkg/config"
@@ -35,7 +36,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/topic"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"openpitrix.io/openpitrix/pkg/util/jwtutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -61,6 +63,7 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
 	logger.Info(nil, "Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
 	logger.Info(nil, "IAM service http://%s:%d", constants.IAMServiceHost, constants.IAMServicePort)
+	logger.Info(nil, "IAM2 service http://%s:%d", constants.IAM2ServiceHost, constants.IAM2ServicePort)
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
 	logger.Info(nil, "Attachment service http://%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort)
@@ -141,9 +144,9 @@ func serveMuxSetSender(mux *runtime.ServeMux, key string) http.Handler {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		sender, err := senderutil.Validate(key, auth[1])
+		sender, err := jwtutil.Validate(key, auth[1])
 		if err != nil {
-			if err == senderutil.ErrExpired {
+			if err == jwtutil.ErrExpired {
 				err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAccessTokenExpired)
 			} else {
 				err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAuthFailure)
@@ -151,7 +154,7 @@ func serveMuxSetSender(mux *runtime.ServeMux, key string) http.Handler {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		req.Header.Set(senderutil.SenderKey, sender.ToJson())
+		req.Header.Set(ctxutil.SenderKey, sender.ToJson())
 		req.Header.Del(Authorization)
 
 		mux.ServeHTTP(w, req)
@@ -184,11 +187,14 @@ func handleSwagger() http.Handler {
 func (s *Server) run() error {
 	gin.SetMode(gin.ReleaseMode)
 
+	mainHandler := gin.WrapH(s.mainHandler())
+
 	r := gin.New()
 	r.Use(log())
 	r.Use(recovery())
 	r.Any("/swagger-ui/*filepath", gin.WrapH(handleSwagger()))
-	r.Any("/v1/*filepath", gin.WrapH(s.mainHandler()))
+	r.Any("/v1/*filepath", mainHandler)
+	r.Any("/api/*filepath", mainHandler)
 	r.Any("/attachments/*filepath", gin.WrapH(ServeAttachments("/attachments/")))
 
 	return r.Run(fmt.Sprintf(":%d", constants.ApiGatewayPort))
@@ -198,7 +204,7 @@ func (s *Server) mainHandler() http.Handler {
 	var gwmux = runtime.NewServeMux(
 		runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
 			return metadata.Pairs(
-				senderutil.SenderKey, req.Header.Get(senderutil.SenderKey),
+				ctxutil.SenderKey, req.Header.Get(ctxutil.SenderKey),
 				RequestIdKey, req.Header.Get(RequestIdKey),
 			)
 		}),
@@ -245,6 +251,9 @@ func (s *Server) mainHandler() http.Handler {
 	}, {
 		pb.RegisterAppVendorManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.VendorManagerHost, constants.VendorManagerPort),
+	}, {
+		pbiam.RegisterIAMManagerHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.IAM2ServiceHost, constants.IAM2ServicePort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {

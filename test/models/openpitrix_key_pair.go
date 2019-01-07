@@ -31,8 +31,8 @@ type OpenpitrixKeyPair struct {
 	// node id
 	NodeID []string `json:"node_id"`
 
-	// owner
-	Owner string `json:"owner,omitempty"`
+	// owner path
+	OwnerPath string `json:"owner_path,omitempty"`
 
 	// pub key
 	PubKey string `json:"pub_key,omitempty"`

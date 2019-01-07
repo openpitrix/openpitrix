@@ -81,8 +81,12 @@ type DescribeTasksParams struct {
 	Offset *int64
 	/*Owner*/
 	Owner []string
+	/*Reverse*/
+	Reverse *bool
 	/*SearchWord*/
 	SearchWord *string
+	/*SortKey*/
+	SortKey *string
 	/*Status*/
 	Status []string
 	/*Target*/
@@ -194,6 +198,17 @@ func (o *DescribeTasksParams) SetOwner(owner []string) {
 	o.Owner = owner
 }
 
+// WithReverse adds the reverse to the describe tasks params
+func (o *DescribeTasksParams) WithReverse(reverse *bool) *DescribeTasksParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe tasks params
+func (o *DescribeTasksParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
 // WithSearchWord adds the searchWord to the describe tasks params
 func (o *DescribeTasksParams) WithSearchWord(searchWord *string) *DescribeTasksParams {
 	o.SetSearchWord(searchWord)
@@ -203,6 +218,17 @@ func (o *DescribeTasksParams) WithSearchWord(searchWord *string) *DescribeTasksP
 // SetSearchWord adds the searchWord to the describe tasks params
 func (o *DescribeTasksParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe tasks params
+func (o *DescribeTasksParams) WithSortKey(sortKey *string) *DescribeTasksParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe tasks params
+func (o *DescribeTasksParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WithStatus adds the status to the describe tasks params
@@ -318,6 +344,22 @@ func (o *DescribeTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.SearchWord != nil {
 
 		// query param search_word
@@ -328,6 +370,22 @@ func (o *DescribeTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}

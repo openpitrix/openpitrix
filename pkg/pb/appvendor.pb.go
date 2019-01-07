@@ -28,17 +28,19 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DescribeVendorVerifyInfosRequest struct {
-	SearchWord           *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
-	SortKey              *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
-	Reverse              *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
-	Limit                uint32                `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
-	Offset               uint32                `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
-	UserId               []string              `protobuf:"bytes,11,rep,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Status               []string              `protobuf:"bytes,12,rep,name=status,proto3" json:"status,omitempty"`
-	DisplayColumns       []string              `protobuf:"bytes,13,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	SearchWord *wrappers.StringValue `protobuf:"bytes,1,opt,name=search_word,json=searchWord,proto3" json:"search_word,omitempty"`
+	SortKey    *wrappers.StringValue `protobuf:"bytes,2,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse    *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	// default is 20, max value is 200
+	Limit uint32 `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	// default is 0
+	Offset               uint32   `protobuf:"varint,5,opt,name=offset,proto3" json:"offset,omitempty"`
+	UserId               []string `protobuf:"bytes,11,rep,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status               []string `protobuf:"bytes,12,rep,name=status,proto3" json:"status,omitempty"`
+	DisplayColumns       []string `protobuf:"bytes,13,rep,name=display_columns,json=displayColumns,proto3" json:"display_columns,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *DescribeVendorVerifyInfosRequest) Reset()         { *m = DescribeVendorVerifyInfosRequest{} }

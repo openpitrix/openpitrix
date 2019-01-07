@@ -6,13 +6,14 @@ package app
 
 import (
 	"context"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 var reviewSupportRoles = []string{
@@ -23,7 +24,7 @@ var reviewSupportRoles = []string{
 
 func submitAppVersionReview(ctx context.Context, version *models.AppVersion) error {
 	var (
-		s        = senderutil.GetSenderFromContext(ctx)
+		s        = ctxutil.GetSender(ctx)
 		operator = s.UserId
 		role     = constants.RoleDeveloper
 		status   = constants.StatusSubmitted
@@ -35,7 +36,7 @@ func submitAppVersionReview(ctx context.Context, version *models.AppVersion) err
 	if err != nil {
 		return err
 	}
-	versionReview := models.NewAppVersionReview(version.VersionId, version.AppId, status)
+	versionReview := models.NewAppVersionReview(version.VersionId, version.AppId, status, s.GetOwnerPath())
 	versionReview.UpdatePhase(role, status, operator, message)
 
 	_, err = pi.Global().DB(ctx).
@@ -64,7 +65,7 @@ func getAppVersionReview(ctx context.Context, version *models.AppVersion) (*mode
 	var versionReview = &models.AppVersionReview{}
 	var reviewId = version.ReviewId
 	if reviewId == "" {
-		versionReview = models.NewAppVersionReview(version.VersionId, version.AppId, constants.StatusSubmitted)
+		versionReview = models.NewAppVersionReview(version.VersionId, version.AppId, constants.StatusSubmitted, version.OwnerPath)
 
 		_, err = pi.Global().DB(ctx).
 			InsertInto(constants.TableAppVersionReview).
@@ -93,7 +94,7 @@ var reviewActionStatusMap = map[Action]string{
 
 func execAppVersionReview(ctx context.Context, version *models.AppVersion, action Action, role, message string) error {
 	var (
-		s        = senderutil.GetSenderFromContext(ctx)
+		s        = ctxutil.GetSender(ctx)
 		operator = s.UserId
 		status   = reviewActionStatusMap[action]
 	)
@@ -145,10 +146,17 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 		reviewStatus = "dev-"
 	}
 
+	var reviewer = ""
+	if action == Review {
+		reviewer = operator
+	}
+
 	_, err = pi.Global().DB(ctx).
 		Update(constants.TableAppVersionReview).
 		Set(constants.ColumnStatus, reviewStatus+status).
+		Set(constants.ColumnStatusTime, time.Now()).
 		Set(constants.ColumnPhase, versionReview.Phase).
+		Set(constants.ColumnReviewer, reviewer).
 		Where(db.Eq(constants.ColumnReviewId, versionReview.ReviewId)).
 		Exec()
 	if err != nil {

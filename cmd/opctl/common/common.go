@@ -19,6 +19,7 @@ type Param struct {
 
 type Cmd struct {
 	Action      string           `yaml:"action,omitempty"`
+	Request     string           `yaml:"request,omitempty"`
 	Description string           `yaml:"description,omitempty"`
 	Service     string           `yaml:"service,omitempty"`
 	Path        map[string]Param `yaml:"path,omitempty"`

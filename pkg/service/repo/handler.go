@@ -19,9 +19,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/service/category/categoryutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/labelutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
@@ -47,6 +47,7 @@ func (p *Server) DescribeRepos(ctx context.Context, req *pb.DescribeReposRequest
 		From(constants.TableRepo).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditionsWithPrefix(req, constants.TableRepo))
 
 	if len(req.UserId) > 0 {
@@ -118,7 +119,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		return nil, err
 	}
 
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	newRepo := models.NewRepo(
 		name,
 		req.GetDescription().GetValue(),
@@ -126,7 +127,7 @@ func (p *Server) CreateRepo(ctx context.Context, req *pb.CreateRepoRequest) (*pb
 		url,
 		credential,
 		visibility,
-		s.UserId)
+		s.GetOwnerPath())
 
 	newRepo.AppDefaultStatus = req.GetAppDefaultStatus().GetValue()
 

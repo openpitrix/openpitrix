@@ -9,6 +9,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -23,6 +24,7 @@ type Market struct {
 	Visibility  string
 	Status      string
 	Owner       string
+	OwnerPath   sender.OwnerPath
 	Description string
 	CreateTime  time.Time
 	StatusTime  time.Time
@@ -30,13 +32,14 @@ type Market struct {
 
 var MarketColumns = db.GetColumnsFromStruct(&Market{})
 
-func NewMarket(name, visibility, status, description, owner string) *Market {
+func NewMarket(name, visibility, status, description string, ownerPath sender.OwnerPath) *Market {
 	return &Market{
 		MarketId:    NewMarketId(),
 		Name:        name,
 		Visibility:  visibility,
 		Status:      status,
-		Owner:       owner,
+		Owner:       ownerPath.Owner(),
+		OwnerPath:   ownerPath,
 		Description: description,
 		CreateTime:  time.Now(),
 		StatusTime:  time.Now(),
@@ -49,7 +52,7 @@ func MarketToPb(market *Market) *pb.Market {
 	pbMarket.Name = pbutil.ToProtoString(market.Name)
 	pbMarket.Visibility = pbutil.ToProtoString(market.Visibility)
 	pbMarket.Status = pbutil.ToProtoString(market.Status)
-	pbMarket.Owner = pbutil.ToProtoString(market.Owner)
+	pbMarket.OwnerPath = market.OwnerPath.ToProtoString()
 	pbMarket.Description = pbutil.ToProtoString(market.Description)
 	pbMarket.CreateTime = pbutil.ToProtoTimestamp(market.CreateTime)
 	pbMarket.StatusTime = pbutil.ToProtoTimestamp(market.StatusTime)

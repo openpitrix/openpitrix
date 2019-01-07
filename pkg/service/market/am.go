@@ -10,7 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 var SupportedStatus = []string{
@@ -67,7 +67,7 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 }
 
 func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
-	sender := senderutil.GetSenderFromContext(ctx)
+	sender := ctxutil.GetSender(ctx)
 	switch r := req.(type) {
 	case *pb.DescribeMarketsRequest:
 		if sender.IsGlobalAdmin() {

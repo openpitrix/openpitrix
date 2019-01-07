@@ -13,12 +13,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 )
 
 func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.CreateJobResponse, error) {
-	s := senderutil.GetSenderFromContext(ctx)
+	s := ctxutil.GetSender(ctx)
 	newJob := models.NewJob(
 		"",
 		req.GetClusterId().GetValue(),
@@ -27,7 +27,7 @@ func (p *Server) CreateJob(ctx context.Context, req *pb.CreateJobRequest) (*pb.C
 		req.GetJobAction().GetValue(),
 		req.GetDirective().GetValue(),
 		req.GetProvider().GetValue(),
-		s.UserId,
+		s.GetOwnerPath(),
 		req.GetRuntimeId().GetValue(),
 	)
 
@@ -64,6 +64,7 @@ func (p *Server) DescribeJobs(ctx context.Context, req *pb.DescribeJobsRequest) 
 		From(constants.TableJob).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableJob))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	if len(displayColumns) > 0 {

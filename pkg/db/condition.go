@@ -59,6 +59,13 @@ func Like(column string, value string) dbr.Builder {
 	})
 }
 
+func Prefix(column string, value string) dbr.Builder {
+	value = strings.TrimSpace(escape(value)) + "%"
+	return dbr.BuildFunc(func(d dbr.Dialect, buf dbr.Buffer) error {
+		return buildCmp(d, buf, "LIKE", column, value)
+	})
+}
+
 // Eq is `=`.
 // When value is nil, it will be translated to `IS NULL`.
 // When value is a slice, it will be translated to `IN`.

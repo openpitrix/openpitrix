@@ -12,7 +12,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
+	"openpitrix.io/openpitrix/pkg/util/jwtutil"
 )
 
 var upgrader = websocket.Upgrader{
@@ -107,9 +107,9 @@ func (tm *topicManager) HandleEvent(key string) func(w http.ResponseWriter, r *h
 			http.Error(w, "Unauthorized: [sid] is required.", http.StatusUnauthorized)
 			return
 		}
-		sender, err := senderutil.Validate(key, sid)
+		sender, err := jwtutil.Validate(key, sid)
 		if err != nil {
-			if err == senderutil.ErrExpired {
+			if err == jwtutil.ErrExpired {
 				http.Error(w, "Unauthorized: access token expired.", http.StatusUnauthorized)
 			} else {
 				http.Error(w, "Unauthorized: auth failure.", http.StatusUnauthorized)

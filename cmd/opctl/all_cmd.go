@@ -82,6 +82,7 @@ var AllCmd = []Cmd{
 	NewAttachKeyPairsCmd(),
 	NewCeaseClustersCmd(),
 	NewCreateClusterCmd(),
+	NewCreateDebugClusterCmd(),
 	NewCreateKeyPairCmd(),
 	NewDeleteClusterNodesCmd(),
 	NewDeleteClustersCmd(),
@@ -89,6 +90,7 @@ var AllCmd = []Cmd{
 	NewDescribeAppClustersCmd(),
 	NewDescribeClusterNodesCmd(),
 	NewDescribeClustersCmd(),
+	NewDescribeDebugClustersCmd(),
 	NewDescribeKeyPairsCmd(),
 	NewDescribeSubnetsCmd(),
 	NewDetachKeyPairsCmd(),
@@ -117,10 +119,14 @@ var AllCmd = []Cmd{
 	NewDescribeReposCmd(),
 	NewModifyRepoCmd(),
 	NewValidateRepoCmd(),
+	NewCreateDebugRuntimeCmd(),
+	NewCreateDebugRuntimeCredentialCmd(),
 	NewCreateRuntimeCmd(),
 	NewCreateRuntimeCredentialCmd(),
 	NewDeleteRuntimeCredentialsCmd(),
 	NewDeleteRuntimesCmd(),
+	NewDescribeDebugRuntimeCredentialsCmd(),
+	NewDescribeDebugRuntimesCmd(),
 	NewDescribeRuntimeCredentialsCmd(),
 	NewDescribeRuntimeProviderZonesCmd(),
 	NewDescribeRuntimesCmd(),
@@ -715,11 +721,11 @@ func (*CreateAppCmd) GetActionName() string {
 }
 
 func (c *CreateAppCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. ")
+	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. set the app icon")
 	f.StringVarP(&c.Name, "name", "", "", "")
-	f.StringVarP(&c.VersionName, "version_name", "", "", "")
-	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version__package. ")
-	f.StringVarP(&c.VersionType, "version_type", "", "", "")
+	f.StringVarP(&c.VersionName, "version_name", "", "", "create app version with specify name")
+	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version__package. create app version with specify package")
+	f.StringVarP(&c.VersionType, "version_type", "", "", "optional: vmbased/helm")
 }
 
 func (c *CreateAppCmd) Run(out Out) error {
@@ -773,7 +779,7 @@ func (c *CreateAppVersionCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.PackagePath, "package", "", "", "filepath of package. ")
-	f.StringVarP(&c.Type, "type", "", "", "")
+	f.StringVarP(&c.Type, "type", "", "", "optional: vmbased/helm")
 }
 
 func (c *CreateAppVersionCmd) Run(out Out) error {
@@ -889,10 +895,10 @@ func (c *DescribeActiveAppVersionsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Description, "description", "", []string{}, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.PackageName, "package_name", "", []string{}, "")
 	c.Reverse = new(bool)
@@ -942,10 +948,10 @@ func (c *DescribeActiveAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.ChartName, "chart_name", "", []string{}, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
 	c.Reverse = new(bool)
@@ -988,11 +994,12 @@ func (*DescribeAppVersionAuditsCmd) GetActionName() string {
 }
 
 func (c *DescribeAppVersionAuditsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Operator, "operator", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -1002,14 +1009,11 @@ func (c *DescribeAppVersionAuditsCmd) ParseFlag(f Flag) {
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
-	f.StringVarP(&c.AppID, "app_id", "", "", "")
-	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
 }
 
 func (c *DescribeAppVersionAuditsCmd) Run(out Out) error {
 	params := c.DescribeAppVersionAuditsParams
-	params.WithAppID(c.AppID)
-	params.WithVersionID(c.VersionID)
 
 	out.WriteRequest(params)
 
@@ -1039,27 +1043,26 @@ func (*DescribeAppVersionReviewsCmd) GetActionName() string {
 }
 
 func (c *DescribeAppVersionReviewsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	f.StringSliceVarP(&c.ReviewID, "review_id", "", []string{}, "")
+	f.StringSliceVarP(&c.Reviewer, "reviewer", "", []string{}, "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
-	f.StringVarP(&c.AppID, "app_id", "", "", "")
-	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
 }
 
 func (c *DescribeAppVersionReviewsCmd) Run(out Out) error {
 	params := c.DescribeAppVersionReviewsParams
-	params.WithAppID(c.AppID)
-	params.WithVersionID(c.VersionID)
 
 	out.WriteRequest(params)
 
@@ -1093,10 +1096,10 @@ func (c *DescribeAppVersionsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Description, "description", "", []string{}, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.PackageName, "package_name", "", []string{}, "")
 	c.Reverse = new(bool)
@@ -1146,10 +1149,10 @@ func (c *DescribeAppsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.ChartName, "chart_name", "", []string{}, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
 	c.Reverse = new(bool)
@@ -1685,7 +1688,7 @@ func (*ValidatePackageCmd) GetActionName() string {
 
 func (c *ValidatePackageCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version__package. ")
-	f.StringVarP(&c.VersionType, "version_type", "", "", "")
+	f.StringVarP(&c.VersionType, "version_type", "", "", "optional: vmbased/helm")
 }
 
 func (c *ValidatePackageCmd) Run(out Out) error {
@@ -1775,9 +1778,9 @@ func (*DescribeVendorVerifyInfosCmd) GetActionName() string {
 func (c *DescribeVendorVerifyInfosCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -1994,6 +1997,7 @@ func (c *GetAttachmentCmd) Run(out Out) error {
 
 type CreateCategoryCmd struct {
 	*models.OpenpitrixCreateCategoryRequest
+	IconPath string
 }
 
 func NewCreateCategoryCmd() Cmd {
@@ -2008,11 +2012,19 @@ func (*CreateCategoryCmd) GetActionName() string {
 
 func (c *CreateCategoryCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Locale, "locale", "", "", "")
+	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. ")
+	f.StringVarP(&c.Locale, "locale", "", "", "the i18n of this category, json format, sample: {&#34;zh_cn&#34;: &#34;数据库&#34;, &#34;en&#34;: &#34;database&#34;}")
 	f.StringVarP(&c.Name, "name", "", "", "")
 }
 
 func (c *CreateCategoryCmd) Run(out Out) error {
+	if c.IconPath != "" {
+		content, err := ioutil.ReadFile(c.IconPath)
+		if err != nil {
+			return err
+		}
+		c.Icon = strfmt.Base64(content)
+	}
 	params := category_manager.NewCreateCategoryParams()
 	params.WithBody(c.OpenpitrixCreateCategoryRequest)
 
@@ -2082,10 +2094,10 @@ func (c *DescribeCategoriesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -2113,6 +2125,7 @@ func (c *DescribeCategoriesCmd) Run(out Out) error {
 
 type ModifyCategoryCmd struct {
 	*models.OpenpitrixModifyCategoryRequest
+	IconPath string
 }
 
 func NewModifyCategoryCmd() Cmd {
@@ -2128,11 +2141,19 @@ func (*ModifyCategoryCmd) GetActionName() string {
 func (c *ModifyCategoryCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.CategoryID, "category_id", "", "", "")
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Locale, "locale", "", "", "")
+	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. ")
+	f.StringVarP(&c.Locale, "locale", "", "", "the i18n of this category, json format, sample: {&#34;zh_cn&#34;: &#34;数据库&#34;, &#34;en&#34;: &#34;database&#34;}")
 	f.StringVarP(&c.Name, "name", "", "", "")
 }
 
 func (c *ModifyCategoryCmd) Run(out Out) error {
+	if c.IconPath != "" {
+		content, err := ioutil.ReadFile(c.IconPath)
+		if err != nil {
+			return err
+		}
+		c.Icon = strfmt.Base64(content)
+	}
 	params := category_manager.NewModifyCategoryParams()
 	params.WithBody(c.OpenpitrixModifyCategoryRequest)
 
@@ -2288,6 +2309,45 @@ func (c *CreateClusterCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.ClusterManager.CreateCluster(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateDebugClusterCmd struct {
+	*models.OpenpitrixCreateClusterRequest
+}
+
+func NewCreateDebugClusterCmd() Cmd {
+	cmd := &CreateDebugClusterCmd{}
+	cmd.OpenpitrixCreateClusterRequest = &models.OpenpitrixCreateClusterRequest{}
+	return cmd
+}
+
+func (*CreateDebugClusterCmd) GetActionName() string {
+	return "CreateDebugCluster"
+}
+
+func (c *CreateDebugClusterCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AdvancedParam, "advanced_param", "", []string{}, "")
+	f.StringVarP(&c.AppID, "app_id", "", "", "")
+	f.StringVarP(&c.Conf, "conf", "", "", "")
+	f.StringVarP(&c.RuntimeID, "runtime_id", "", "", "")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *CreateDebugClusterCmd) Run(out Out) error {
+	params := cluster_manager.NewCreateDebugClusterParams()
+	params.WithBody(c.OpenpitrixCreateClusterRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ClusterManager.CreateDebugCluster(params, nil)
 	if err != nil {
 		return err
 	}
@@ -2462,9 +2522,9 @@ func (c *DescribeAppClustersCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.CreatedDate, "created_date", "", 0, "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -2512,10 +2572,10 @@ func (c *DescribeClusterNodesCmd) ParseFlag(f Flag) {
 	f.StringVarP(c.ClusterID, "cluster_id", "", "", "")
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	f.StringSliceVarP(&c.NodeID, "node_id", "", []string{}, "")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -2568,9 +2628,9 @@ func (c *DescribeClustersCmd) ParseFlag(f Flag) {
 	f.StringVarP(c.ExternalClusterID, "external_cluster_id", "", "", "")
 	f.StringSliceVarP(&c.FrontgateID, "frontgate_id", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -2592,6 +2652,65 @@ func (c *DescribeClustersCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.ClusterManager.DescribeClusters(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeDebugClustersCmd struct {
+	*cluster_manager.DescribeDebugClustersParams
+}
+
+func NewDescribeDebugClustersCmd() Cmd {
+	return &DescribeDebugClustersCmd{
+		cluster_manager.NewDescribeDebugClustersParams(),
+	}
+}
+
+func (*DescribeDebugClustersCmd) GetActionName() string {
+	return "DescribeDebugClusters"
+}
+
+func (c *DescribeDebugClustersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.AppID, "app_id", "", []string{}, "")
+	f.StringSliceVarP(&c.ClusterID, "cluster_id", "", []string{}, "")
+	c.ClusterType = new(string)
+	f.StringVarP(c.ClusterType, "cluster_type", "", "", "")
+	c.CreatedDate = new(int64)
+	f.Int64VarP(c.CreatedDate, "created_date", "", 0, "")
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.ExternalClusterID = new(string)
+	f.StringVarP(c.ExternalClusterID, "external_cluster_id", "", "", "")
+	f.StringSliceVarP(&c.FrontgateID, "frontgate_id", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.VersionID, "version_id", "", []string{}, "")
+	c.WithDetail = new(bool)
+	f.BoolVarP(c.WithDetail, "with_detail", "", false, "")
+}
+
+func (c *DescribeDebugClustersCmd) Run(out Out) error {
+	params := c.DescribeDebugClustersParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ClusterManager.DescribeDebugClusters(params, nil)
 	if err != nil {
 		return err
 	}
@@ -3120,10 +3239,14 @@ func (c *DescribeJobsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Provider = new(string)
 	f.StringVarP(c.Provider, "provider", "", "", "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.RuntimeID = new(string)
 	f.StringVarP(c.RuntimeID, "runtime_id", "", "", "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
 	c.VersionID = new(string)
 	f.StringVarP(c.VersionID, "version_id", "", "", "")
@@ -3233,10 +3356,10 @@ func (*DescribeMarketUsersCmd) GetActionName() string {
 
 func (c *DescribeMarketUsersCmd) ParseFlag(f Flag) {
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	f.StringSliceVarP(&c.MarketID, "market_id", "", []string{}, "")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -3279,11 +3402,11 @@ func (*DescribeMarketsCmd) GetActionName() string {
 
 func (c *DescribeMarketsCmd) ParseFlag(f Flag) {
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	f.StringSliceVarP(&c.MarketID, "market_id", "", []string{}, "")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
@@ -3439,9 +3562,9 @@ func (*DescribeRepoEventsCmd) GetActionName() string {
 
 func (c *DescribeRepoEventsCmd) ParseFlag(f Flag) {
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoEventID, "repo_event_id", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
@@ -3597,14 +3720,14 @@ func (c *DescribeReposCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.AppDefaultStatus, "app_default_status", "", []string{}, "")
 	f.StringSliceVarP(&c.CategoryID, "category_id", "", []string{}, "")
 	c.Controller = new(int32)
-	f.Int32VarP(c.Controller, "controller", "", 0, "")
+	f.Int32VarP(c.Controller, "controller", "", 0, "0 for self resource; 1 for openpitrix resource.")
 	c.Label = new(string)
 	f.StringVarP(c.Label, "label", "", "", "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	f.StringSliceVarP(&c.Name, "name", "", []string{}, "")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
 	f.StringSliceVarP(&c.RepoID, "repo_id", "", []string{}, "")
@@ -3715,6 +3838,84 @@ func (c *ValidateRepoCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.RepoManager.ValidateRepo(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateDebugRuntimeCmd struct {
+	*models.OpenpitrixCreateRuntimeRequest
+}
+
+func NewCreateDebugRuntimeCmd() Cmd {
+	cmd := &CreateDebugRuntimeCmd{}
+	cmd.OpenpitrixCreateRuntimeRequest = &models.OpenpitrixCreateRuntimeRequest{}
+	return cmd
+}
+
+func (*CreateDebugRuntimeCmd) GetActionName() string {
+	return "CreateDebugRuntime"
+}
+
+func (c *CreateDebugRuntimeCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.Provider, "provider", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", "", "")
+	f.StringVarP(&c.Zone, "zone", "", "", "")
+}
+
+func (c *CreateDebugRuntimeCmd) Run(out Out) error {
+	params := runtime_manager.NewCreateDebugRuntimeParams()
+	params.WithBody(c.OpenpitrixCreateRuntimeRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.CreateDebugRuntime(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateDebugRuntimeCredentialCmd struct {
+	*models.OpenpitrixCreateRuntimeCredentialRequest
+}
+
+func NewCreateDebugRuntimeCredentialCmd() Cmd {
+	cmd := &CreateDebugRuntimeCredentialCmd{}
+	cmd.OpenpitrixCreateRuntimeCredentialRequest = &models.OpenpitrixCreateRuntimeCredentialRequest{}
+	return cmd
+}
+
+func (*CreateDebugRuntimeCredentialCmd) GetActionName() string {
+	return "CreateDebugRuntimeCredential"
+}
+
+func (c *CreateDebugRuntimeCredentialCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.Provider, "provider", "", "", "")
+	f.StringVarP(&c.RuntimeCredentialContent, "runtime_credential_content", "", "", "")
+	f.StringVarP(&c.RuntimeURL, "runtime_url", "", "", "")
+}
+
+func (c *CreateDebugRuntimeCredentialCmd) Run(out Out) error {
+	params := runtime_manager.NewCreateDebugRuntimeCredentialParams()
+	params.WithBody(c.OpenpitrixCreateRuntimeCredentialRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.CreateDebugRuntimeCredential(params, nil)
 	if err != nil {
 		return err
 	}
@@ -3872,6 +4073,102 @@ func (c *DeleteRuntimesCmd) Run(out Out) error {
 	return nil
 }
 
+type DescribeDebugRuntimeCredentialsCmd struct {
+	*runtime_manager.DescribeDebugRuntimeCredentialsParams
+}
+
+func NewDescribeDebugRuntimeCredentialsCmd() Cmd {
+	return &DescribeDebugRuntimeCredentialsCmd{
+		runtime_manager.NewDescribeDebugRuntimeCredentialsParams(),
+	}
+}
+
+func (*DescribeDebugRuntimeCredentialsCmd) GetActionName() string {
+	return "DescribeDebugRuntimeCredentials"
+}
+
+func (c *DescribeDebugRuntimeCredentialsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	f.StringSliceVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+}
+
+func (c *DescribeDebugRuntimeCredentialsCmd) Run(out Out) error {
+	params := c.DescribeDebugRuntimeCredentialsParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.DescribeDebugRuntimeCredentials(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeDebugRuntimesCmd struct {
+	*runtime_manager.DescribeDebugRuntimesParams
+}
+
+func NewDescribeDebugRuntimesCmd() Cmd {
+	return &DescribeDebugRuntimesCmd{
+		runtime_manager.NewDescribeDebugRuntimesParams(),
+	}
+}
+
+func (*DescribeDebugRuntimesCmd) GetActionName() string {
+	return "DescribeDebugRuntimes"
+}
+
+func (c *DescribeDebugRuntimesCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+}
+
+func (c *DescribeDebugRuntimesCmd) Run(out Out) error {
+	params := c.DescribeDebugRuntimesParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.RuntimeManager.DescribeDebugRuntimes(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type DescribeRuntimeCredentialsCmd struct {
 	*runtime_manager.DescribeRuntimeCredentialsParams
 }
@@ -3889,14 +4186,18 @@ func (*DescribeRuntimeCredentialsCmd) GetActionName() string {
 func (c *DescribeRuntimeCredentialsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	f.StringSliceVarP(&c.RuntimeCredentialID, "runtime_credential_id", "", []string{}, "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
 }
 
@@ -3968,14 +4269,18 @@ func (*DescribeRuntimesCmd) GetActionName() string {
 func (c *DescribeRuntimesCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
 	c.Limit = new(int64)
-	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
-	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
 	f.StringSliceVarP(&c.Provider, "provider", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	f.StringSliceVarP(&c.RuntimeID, "runtime_id", "", []string{}, "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
 }
 
@@ -4165,8 +4470,12 @@ func (c *DescribeTasksCmd) ParseFlag(f Flag) {
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
 	f.StringSliceVarP(&c.Owner, "owner", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
 	c.Target = new(string)
 	f.StringVarP(c.Target, "target", "", "", "")

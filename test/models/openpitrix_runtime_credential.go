@@ -19,14 +19,17 @@ type OpenpitrixRuntimeCredential struct {
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
+	// debug
+	Debug bool `json:"debug,omitempty"`
+
 	// description
 	Description string `json:"description,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
 
-	// owner
-	Owner string `json:"owner,omitempty"`
+	// owner path
+	OwnerPath string `json:"owner_path,omitempty"`
 
 	// provider
 	Provider string `json:"provider,omitempty"`

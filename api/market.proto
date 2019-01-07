@@ -19,7 +19,7 @@ message Market {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue visibility = 3;
 	google.protobuf.StringValue status = 4;
-	google.protobuf.StringValue owner = 5;
+	google.protobuf.StringValue owner_path = 5;
 	google.protobuf.StringValue description = 6;
 	google.protobuf.Timestamp create_time = 7;
 	google.protobuf.Timestamp status_time = 8;
@@ -37,10 +37,13 @@ message CreateMarketResponse {
 
 message DescribeMarketsRequest {
 	google.protobuf.StringValue search_word = 1;
-	uint32 limit = 2;
-	uint32 offset = 3;
-	google.protobuf.StringValue sort_key = 4;
-	google.protobuf.BoolValue reverse = 5;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
+	uint32 offset = 5;
+
 	repeated string market_id = 11;
 	repeated string name = 12;
 	repeated string visibility = 13;
@@ -97,16 +100,19 @@ message UserLeaveMarketResponse {
 message MarketUser {
 	google.protobuf.StringValue market_id = 1;
 	google.protobuf.StringValue user_id = 2;
-	google.protobuf.StringValue owner = 3;
+	google.protobuf.StringValue owner_path = 3;
 	google.protobuf.Timestamp create_time = 4;
 }
 
 message DescribeMarketUsersRequest {
-	uint32 limit = 1;
-	uint32 offset = 2;
-	google.protobuf.StringValue search_word = 3;
-	google.protobuf.StringValue sort_key = 4;
-	google.protobuf.BoolValue reverse = 5;
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	// default is 20, max value is 200
+	uint32 limit = 4;
+	// default is 0
+	uint32 offset = 5;
+
 	repeated string market_id = 11;
 	repeated string user_id = 12;
 	repeated string owner = 13;

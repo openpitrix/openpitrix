@@ -9,6 +9,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -24,14 +25,16 @@ type Category struct {
 	Name        string
 	Description string
 	Locale      string
+	OwnerPath   sender.OwnerPath
 	Owner       string
+	Icon        string
 	CreateTime  time.Time
 	UpdateTime  *time.Time
 }
 
 var CategoryColumns = db.GetColumnsFromStruct(&Category{})
 
-func NewCategory(name, locale, description, owner string) *Category {
+func NewCategory(name, locale, description string, ownerPath sender.OwnerPath) *Category {
 	if locale == "" {
 		locale = "{}"
 	}
@@ -40,7 +43,8 @@ func NewCategory(name, locale, description, owner string) *Category {
 		Name:        name,
 		Locale:      locale,
 		Description: description,
-		Owner:       owner,
+		Owner:       ownerPath.Owner(),
+		OwnerPath:   ownerPath,
 		CreateTime:  time.Now(),
 	}
 }
@@ -50,9 +54,10 @@ func CategoryToPb(category *Category) *pb.Category {
 	pbCategory.CategoryId = pbutil.ToProtoString(category.CategoryId)
 	pbCategory.Name = pbutil.ToProtoString(category.Name)
 	pbCategory.Locale = pbutil.ToProtoString(category.Locale)
-	pbCategory.Owner = pbutil.ToProtoString(category.Owner)
+	pbCategory.OwnerPath = category.OwnerPath.ToProtoString()
 	pbCategory.Description = pbutil.ToProtoString(category.Description)
 	pbCategory.CreateTime = pbutil.ToProtoTimestamp(category.CreateTime)
+	pbCategory.Icon = pbutil.ToProtoString(category.Icon)
 	if category.UpdateTime != nil {
 		pbCategory.UpdateTime = pbutil.ToProtoTimestamp(*category.UpdateTime)
 	}

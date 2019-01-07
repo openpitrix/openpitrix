@@ -87,10 +87,14 @@ type DescribeJobsParams struct {
 	Owner []string
 	/*Provider*/
 	Provider *string
+	/*Reverse*/
+	Reverse *bool
 	/*RuntimeID*/
 	RuntimeID *string
 	/*SearchWord*/
 	SearchWord *string
+	/*SortKey*/
+	SortKey *string
 	/*Status*/
 	Status []string
 	/*VersionID*/
@@ -233,6 +237,17 @@ func (o *DescribeJobsParams) SetProvider(provider *string) {
 	o.Provider = provider
 }
 
+// WithReverse adds the reverse to the describe jobs params
+func (o *DescribeJobsParams) WithReverse(reverse *bool) *DescribeJobsParams {
+	o.SetReverse(reverse)
+	return o
+}
+
+// SetReverse adds the reverse to the describe jobs params
+func (o *DescribeJobsParams) SetReverse(reverse *bool) {
+	o.Reverse = reverse
+}
+
 // WithRuntimeID adds the runtimeID to the describe jobs params
 func (o *DescribeJobsParams) WithRuntimeID(runtimeID *string) *DescribeJobsParams {
 	o.SetRuntimeID(runtimeID)
@@ -253,6 +268,17 @@ func (o *DescribeJobsParams) WithSearchWord(searchWord *string) *DescribeJobsPar
 // SetSearchWord adds the searchWord to the describe jobs params
 func (o *DescribeJobsParams) SetSearchWord(searchWord *string) {
 	o.SearchWord = searchWord
+}
+
+// WithSortKey adds the sortKey to the describe jobs params
+func (o *DescribeJobsParams) WithSortKey(sortKey *string) *DescribeJobsParams {
+	o.SetSortKey(sortKey)
+	return o
+}
+
+// SetSortKey adds the sortKey to the describe jobs params
+func (o *DescribeJobsParams) SetSortKey(sortKey *string) {
+	o.SortKey = sortKey
 }
 
 // WithStatus adds the status to the describe jobs params
@@ -405,6 +431,22 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
+	if o.Reverse != nil {
+
+		// query param reverse
+		var qrReverse bool
+		if o.Reverse != nil {
+			qrReverse = *o.Reverse
+		}
+		qReverse := swag.FormatBool(qrReverse)
+		if qReverse != "" {
+			if err := r.SetQueryParam("reverse", qReverse); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.RuntimeID != nil {
 
 		// query param runtime_id
@@ -431,6 +473,22 @@ func (o *DescribeJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		qSearchWord := qrSearchWord
 		if qSearchWord != "" {
 			if err := r.SetQueryParam("search_word", qSearchWord); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.SortKey != nil {
+
+		// query param sort_key
+		var qrSortKey string
+		if o.SortKey != nil {
+			qrSortKey = *o.SortKey
+		}
+		qSortKey := qrSortKey
+		if qSortKey != "" {
+			if err := r.SetQueryParam("sort_key", qSortKey); err != nil {
 				return err
 			}
 		}

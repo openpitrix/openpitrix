@@ -10,6 +10,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -23,8 +24,10 @@ type RuntimeCredential struct {
 	RuntimeUrl               string
 	RuntimeCredentialContent string
 	Owner                    string
+	OwnerPath                sender.OwnerPath
 	Provider                 string
 	Status                   string
+	Debug                    bool
 	CreateTime               time.Time
 	StatusTime               time.Time
 }
@@ -35,7 +38,7 @@ func NewRuntimeCredentialId() string {
 
 var RuntimeCredentialColumns = db.GetColumnsFromStruct(&RuntimeCredential{})
 
-func NewRuntimeCredential(runtimeCredentialId, name, description, runtimeUrl, runtimeCredentialContent, provider, owner string) *RuntimeCredential {
+func NewRuntimeCredential(runtimeCredentialId, name, description, runtimeUrl, runtimeCredentialContent, provider string, ownerPath sender.OwnerPath, debug bool) *RuntimeCredential {
 	if len(runtimeCredentialId) == 0 {
 		runtimeCredentialId = NewRuntimeCredentialId()
 	}
@@ -46,10 +49,12 @@ func NewRuntimeCredential(runtimeCredentialId, name, description, runtimeUrl, ru
 		RuntimeUrl:               runtimeUrl,
 		RuntimeCredentialContent: runtimeCredentialContent,
 		Provider:                 provider,
-		Owner:                    owner,
+		Owner:                    ownerPath.Owner(),
+		OwnerPath:                ownerPath,
 		Status:                   constants.StatusActive,
 		CreateTime:               time.Now(),
 		StatusTime:               time.Now(),
+		Debug:                    debug,
 	}
 }
 
@@ -61,14 +66,16 @@ func RuntimeCredentialToPb(runtimeCredential *RuntimeCredential) *pb.RuntimeCred
 	pbRuntimeCredential.RuntimeUrl = pbutil.ToProtoString(runtimeCredential.RuntimeUrl)
 	pbRuntimeCredential.RuntimeCredentialContent = pbutil.ToProtoString(runtimeCredential.RuntimeCredentialContent)
 	pbRuntimeCredential.Provider = pbutil.ToProtoString(runtimeCredential.Provider)
-	pbRuntimeCredential.Owner = pbutil.ToProtoString(runtimeCredential.Owner)
+	pbRuntimeCredential.OwnerPath = runtimeCredential.OwnerPath.ToProtoString()
 	pbRuntimeCredential.Status = pbutil.ToProtoString(runtimeCredential.Status)
 	pbRuntimeCredential.CreateTime = pbutil.ToProtoTimestamp(runtimeCredential.CreateTime)
 	pbRuntimeCredential.StatusTime = pbutil.ToProtoTimestamp(runtimeCredential.StatusTime)
+	pbRuntimeCredential.Debug = pbutil.ToProtoBool(runtimeCredential.Debug)
 	return &pbRuntimeCredential
 }
 
 func PbToRuntimeCredential(pbRuntimeCredential *pb.RuntimeCredential) *RuntimeCredential {
+	ownerPath := sender.OwnerPath(pbRuntimeCredential.GetOwnerPath().GetValue())
 	runtimeCredential := RuntimeCredential{}
 	runtimeCredential.RuntimeCredentialId = pbRuntimeCredential.GetRuntimeCredentialId().GetValue()
 	runtimeCredential.Name = pbRuntimeCredential.GetName().GetValue()
@@ -76,8 +83,10 @@ func PbToRuntimeCredential(pbRuntimeCredential *pb.RuntimeCredential) *RuntimeCr
 	runtimeCredential.RuntimeUrl = pbRuntimeCredential.GetRuntimeUrl().GetValue()
 	runtimeCredential.RuntimeCredentialContent = pbRuntimeCredential.GetRuntimeCredentialContent().GetValue()
 	runtimeCredential.Provider = pbRuntimeCredential.GetProvider().GetValue()
-	runtimeCredential.Owner = pbRuntimeCredential.GetOwner().GetValue()
+	runtimeCredential.OwnerPath = ownerPath
+	runtimeCredential.Owner = ownerPath.Owner()
 	runtimeCredential.Status = pbRuntimeCredential.GetStatus().GetValue()
+	runtimeCredential.Debug = pbRuntimeCredential.GetDebug().GetValue()
 	runtimeCredential.CreateTime = pbutil.FromProtoTimestamp(pbRuntimeCredential.CreateTime)
 	runtimeCredential.StatusTime = pbutil.FromProtoTimestamp(pbRuntimeCredential.StatusTime)
 	return &runtimeCredential

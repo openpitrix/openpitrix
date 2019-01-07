@@ -63,13 +63,19 @@ for the describe markets operation typically these are written to a http.Request
 */
 type DescribeMarketsParams struct {
 
-	/*Limit*/
+	/*Limit
+	  default is 20, max value is 200.
+
+	*/
 	Limit *int64
 	/*MarketID*/
 	MarketID []string
 	/*Name*/
 	Name []string
-	/*Offset*/
+	/*Offset
+	  default is 0.
+
+	*/
 	Offset *int64
 	/*Owner*/
 	Owner []string

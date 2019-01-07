@@ -18,9 +18,9 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"openpitrix.io/openpitrix/pkg/util/tlsutil"
 )
 
@@ -136,7 +136,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 }
 
 func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
-	sender := senderutil.GetSenderFromContext(ctx)
+	sender := ctxutil.GetSender(ctx)
 	switch r := req.(type) {
 	case *pb.DescribeClustersRequest:
 		if sender.IsGlobalAdmin() {
@@ -208,7 +208,7 @@ func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, p
 		Zone:      []string{clusterWrapper.Cluster.Zone},
 	})
 	if err != nil {
-		logger.Error(ctx, "Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime)
+		logger.Error(ctx, "Describe subnet [%s] runtime [%s] failed. ", clusterWrapper.Cluster.SubnetId, runtime.RuntimeId)
 		return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.SubnetId)
 	}
 	vpcId := ""

@@ -19,7 +19,10 @@ type OpenpitrixCreateCategoryRequest struct {
 	// description
 	Description string `json:"description,omitempty"`
 
-	// locale
+	// icon
+	Icon strfmt.Base64 `json:"icon,omitempty"`
+
+	// the i18n of this category, json format, sample: {"zh_cn": "数据库", "en": "database"}
 	Locale string `json:"locale,omitempty"`
 
 	// name
