@@ -110,6 +110,8 @@ func AppVersionReviewToPb(versionReview *AppVersionReview) *pb.AppVersionReview 
 	pbAppVersionReview.VersionId = pbutil.ToProtoString(versionReview.VersionId)
 	pbAppVersionReview.AppId = pbutil.ToProtoString(versionReview.AppId)
 	pbAppVersionReview.Status = pbutil.ToProtoString(versionReview.Status)
+	pbAppVersionReview.StatusTime = pbutil.ToProtoTimestamp(versionReview.StatusTime)
+	pbAppVersionReview.Reviewer = pbutil.ToProtoString(versionReview.Reviewer)
 
 	pbAppVersionReview.Phase = make(map[string]*pb.AppVersionReviewPhase)
 	for role, p := range versionReview.Phase {
