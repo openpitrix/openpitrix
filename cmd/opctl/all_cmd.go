@@ -67,6 +67,7 @@ var AllCmd = []Cmd{
 	NewSuspendAppVersionCmd(),
 	NewUploadAppAttachmentCmd(),
 	NewValidatePackageCmd(),
+	NewDescribeAppVendorStatisticsCmd(),
 	NewDescribeVendorVerifyInfosCmd(),
 	NewGetVendorVerifyInfoCmd(),
 	NewPassVendorVerifyInfoCmd(),
@@ -1705,6 +1706,52 @@ func (c *ValidatePackageCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AppManager.ValidatePackage(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeAppVendorStatisticsCmd struct {
+	*app_vendor_manager.DescribeAppVendorStatisticsParams
+}
+
+func NewDescribeAppVendorStatisticsCmd() Cmd {
+	return &DescribeAppVendorStatisticsCmd{
+		app_vendor_manager.NewDescribeAppVendorStatisticsParams(),
+	}
+}
+
+func (*DescribeAppVendorStatisticsCmd) GetActionName() string {
+	return "DescribeAppVendorStatistics"
+}
+
+func (c *DescribeAppVendorStatisticsCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.DisplayColumns, "display_columns", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DescribeAppVendorStatisticsCmd) Run(out Out) error {
+	params := c.DescribeAppVendorStatisticsParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppVendorManager.DescribeAppVendorStatistics(params, nil)
 	if err != nil {
 		return err
 	}

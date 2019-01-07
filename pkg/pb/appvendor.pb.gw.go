@@ -77,6 +77,23 @@ func request_AppVendorManager_DescribeVendorVerifyInfos_0(ctx context.Context, m
 }
 
 var (
+	filter_AppVendorManager_DescribeAppVendorStatistics_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_AppVendorManager_DescribeAppVendorStatistics_0(ctx context.Context, marshaler runtime.Marshaler, client AppVendorManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DescribeVendorVerifyInfosRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_AppVendorManager_DescribeAppVendorStatistics_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.DescribeAppVendorStatistics(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
 	filter_AppVendorManager_GetVendorVerifyInfo_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
@@ -215,6 +232,35 @@ func RegisterAppVendorManagerHandlerClient(ctx context.Context, mux *runtime.Ser
 
 	})
 
+	mux.Handle("GET", pattern_AppVendorManager_DescribeAppVendorStatistics_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		if cn, ok := w.(http.CloseNotifier); ok {
+			go func(done <-chan struct{}, closed <-chan bool) {
+				select {
+				case <-done:
+				case <-closed:
+					cancel()
+				}
+			}(ctx.Done(), cn.CloseNotify())
+		}
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_AppVendorManager_DescribeAppVendorStatistics_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_AppVendorManager_DescribeAppVendorStatistics_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("GET", pattern_AppVendorManager_GetVendorVerifyInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -310,6 +356,8 @@ var (
 
 	pattern_AppVendorManager_DescribeVendorVerifyInfos_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "vendor_verify_infos"}, ""))
 
+	pattern_AppVendorManager_DescribeAppVendorStatistics_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "DescribeAppVendorStatistics"}, ""))
+
 	pattern_AppVendorManager_GetVendorVerifyInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "vendor_verify_infos", "user_id=*"}, ""))
 
 	pattern_AppVendorManager_PassVendorVerifyInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "vendor_verify_infos", "user_id=*", "action"}, "pass"))
@@ -321,6 +369,8 @@ var (
 	forward_AppVendorManager_SubmitVendorVerifyInfo_0 = runtime.ForwardResponseMessage
 
 	forward_AppVendorManager_DescribeVendorVerifyInfos_0 = runtime.ForwardResponseMessage
+
+	forward_AppVendorManager_DescribeAppVendorStatistics_0 = runtime.ForwardResponseMessage
 
 	forward_AppVendorManager_GetVendorVerifyInfo_0 = runtime.ForwardResponseMessage
 
