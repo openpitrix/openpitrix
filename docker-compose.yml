@@ -365,6 +365,23 @@ services:
       - openpitrix-db
     container_name: "openpitrix-iam-db-ctrl"
 
+  # iam2 service
+  openpitrix-iam2-service:
+    image: "openpitrix/iam:v0.1.4-dev"
+    command: "iam"
+    links:
+      - openpitrix-db:openpitrix-db
+    container_name: "openpitrix-iam2-service"
+    environment:
+      - OPENPITRIX_IAM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_IAM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_IAM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   # pilot service
   openpitrix-pilot-service:
     build: .
@@ -453,7 +470,7 @@ services:
     depends_on:
     - openpitrix-db
     container_name: "openpitrix-attachment-db-ctrl"
-    
+
   # appvendor service
   openpitrix-vendor-manager:
     build: .
