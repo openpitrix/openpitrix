@@ -332,7 +332,7 @@ service IAMManager {
 
 	rpc GetVersion(Empty) returns (String) {
 		option (google.api.http) = {
-			get: "/api/IAMManager.GetVersion"
+			get: "/v1.1/version:iam"
 		};
 	}
 
@@ -343,7 +343,7 @@ service IAMManager {
 
 	rpc DescribeActions(DescribeActionsRequest) returns (DescribeActionsResponse) {
 		option (google.api.http) = {
-			get: "/api/IAMManager.DescribeActions"
+			get: "/v1.1/actions"
 		};
 	}
 
@@ -354,7 +354,7 @@ service IAMManager {
 
 	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
 		option (google.api.http) = {
-			post: "/api/IAMManager.CreateRole/{head.user_id}"
+			post: "/v1.1/roles"
 			body: "*"
 		};
 	}
@@ -363,29 +363,28 @@ service IAMManager {
 	// 并且Role对应的Feature和Action表数据也要清理掉
 	rpc DeleteRoles(DeleteRolesRequest) returns (DeleteRolesResponse) {
 		option (google.api.http) = {
-			delete: "/api/IAMManager.DeleteRole/{head.user_id}"
+			delete: "/v1.1/roles"
 			body: "*"
 		};
 	}
 
 	rpc ModifyRole(ModifyRoleRequest) returns (ModifyRoleResponse) {
 		option (google.api.http) = {
-			patch: "/api/IAMManager.ModifyRole/{head.user_id}"
+			patch: "/v1.1/roles"
 			body: "*"
 		};
 	}
 	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {
 		option (google.api.http) = {
-			get: "/api/IAMManager.GetRole/{head.user_id}"
+			get: "/v1.1/roles/{role_id}"
 		};
 	}
 
 	rpc DescribeRoles(DescribeRolesRequest) returns (DescribeRolesResponse) {
 		option (google.api.http) = {
-			get: "/api/IAMManager.DescribeRoles/{head.user_id}"
+			get: "/v1.1/roles"
 		};
 	}
-
 
 	// -------------------------------------------------------------
 	// 3.RoleModuleBinding
@@ -393,7 +392,7 @@ service IAMManager {
 
 	rpc ModifyRoleModuleBindings(ModifyRoleModuleBindingsRequest) returns (ModifyRoleModuleBindingsResponse) {
 		option (google.api.http) = {
-			post: "/api/IAMManager.ModifyRoleModuleBindings/{head.user_id}"
+			post: "/v1.1/role_module_bindings"
 			body: "*"
 		};
 	}
@@ -404,34 +403,34 @@ service IAMManager {
 
 	rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse) {
 		option (google.api.http) = {
-			post: "/api/IAMManager.CreateGroup/{head.user_id}"
+			post: "/v1.1/groups"
 			body: "*"
 		};
 	}
 
 	rpc DeleteGroups(DeleteGroupsRequest) returns (DeleteGroupsResponse) {
 		option (google.api.http) = {
-			delete: "/api/IAMManager.DeleteGroups/{head.user_id}"
+			delete: "/v1.1/groups"
 			body: "*"
 		};
 	}
 
 	rpc ModifyGroup(ModifyGroupRequest) returns (ModifyGroupResponse) {
 		option (google.api.http) = {
-			patch: "/api/IAMManager.ModifyGroup/{head.user_id}"
+			patch: "/v1.1/groups"
 			body: "*"
 		};
 	}
 
 	rpc GetGroup(GetGroupRequest) returns (GetGroupResponse) {
 		option (google.api.http) = {
-			get: "/api/IAMManager.GetGroup/{head.user_id}"
+			get: "/v1.1/groups/{group_id}"
 		};
 	}
 
 	rpc DescribeGroups(DescribeGroupsRequest) returns (DescribeGroupsResponse) {
 		option (google.api.http) = {
-			get: "/api/IAMManager.DescribeGroups/{head.user_id}"
+			get: "/v1.1/groups"
 		};
 	}
 
@@ -441,46 +440,45 @@ service IAMManager {
 
 	rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
 		option (google.api.http) = {
-			post: "/api/IAMManager.CreateUser/{head.user_id}"
+			post: "/v1.1/users"
 			body: "*"
 		};
 	}
 	rpc DeleteUsers(DeleteUsersRequest) returns (DeleteUsersResponse) {
 		option (google.api.http) = {
-			delete: "/api/IAMManager.DeleteUsers/{head.user_id}"
+			delete: "/v1.1/users"
 			body: "*"
 		};
 	}
 	rpc ModifyUser(ModifyUserRequest) returns (ModifyUserResponse) {
 		option (google.api.http) = {
-			patch: "/api/IAMManager.ModifyUser/{head.user_id}"
+			patch: "/v1.1/users"
 			body: "*"
 		};
 	}
 	rpc DescribeUsers(DescribeUsersRequest) returns (DescribeUsersResponse) {
 		option (google.api.http) = {
-			get: "/api/IAMManager.DescribeUsers/{head.user_id}"
+			get: "/v1.1/users"
 		};
 	}
 	rpc GetUser(GetUserRequest) returns (GetUserResponse) {
 		option (google.api.http) = {
-			get: "/api/IAMManager.GetUser/{head.user_id}"
+			get: "/v1.1/users/user_id"
 		};
 	}
 
 	rpc ComparePassword(UserPassword) returns (Bool) {
 		option (google.api.http) = {
-			post: "/api/IAMManager.ComparePassword"
+			post: "/v1.1/password:compare"
 			body: "*"
 		};
 	}
 	rpc ModifyPassword(UserPassword) returns (Bool) {
 		option (google.api.http) = {
-			post: "/api/IAMManager.ModifyPassword"
+			post: "/v1.1/password:change"
 			body: "*"
 		};
 	}
-
 
 	// -------------------------------------------------------------
 	// 7.other
@@ -488,21 +486,11 @@ service IAMManager {
 	// group1.group2.group3:Jo
 	// -------------------------------------------------------------
 
-	rpc GetOwnerPath(GetOwnerPathRequest) returns (String) {
-		option (google.api.http) = {
-			post: "/api/IAMManager.GetOwnerPath/{head.user_id}"
-			body: "*"
-		};
-	}
+	rpc GetOwnerPath(GetOwnerPathRequest) returns (String);
 
 	// 通过user_id,关联user,group,role,role_feature_binding，
 	// 根据datalevel来处理group_path,得到access_path.
-	rpc GetAccessPath(GetAccessPathRequest) returns (String) {
-		option (google.api.http) = {
-			post: "/api/IAMManager.GetAccessPath/{head.user_id}"
-			body: "*"
-		};
-	}
+	rpc GetAccessPath(GetAccessPathRequest) returns (String);
 
 	// check any of xid or role_name can do the action
 	// 通过登录用户的user_id, method 判断用户是否有权限执行业务模块的具体功能。
