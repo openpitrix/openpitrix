@@ -1329,6 +1329,90 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/DescribeAppVendorStatistics": {
+      "get": {
+        "summary": "DescribeAppVendorStatistics",
+        "operationId": "DescribeAppVendorStatistics",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeVendorStatisticsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppVendorManager"
+        ]
+      }
+    },
     "/v1/vendor_verify_infos": {
       "get": {
         "summary": "DescribeVendorVerifyInfos",
@@ -5934,6 +6018,21 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixDescribeVendorStatisticsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "vendor_verify_statistics_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixVendorStatistics"
+          }
+        }
+      }
+    },
     "openpitrixDescribeVendorVerifyInfosResponse": {
       "type": "object",
       "properties": {
@@ -6027,6 +6126,29 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixVendorStatistics": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "active_app_count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cluster_count_month": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "cluster_count_total": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "openpitrixVendorVerifyInfo": {
       "type": "object",
       "properties": {
@@ -6064,6 +6186,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "reject_message": {
+          "type": "string"
+        },
+        "approver": {
           "type": "string"
         },
         "submit_time": {

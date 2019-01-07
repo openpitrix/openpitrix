@@ -1,4 +1,3 @@
- 
 
 CREATE TABLE vendor_verify_info
 (
@@ -8,7 +7,7 @@ CREATE TABLE vendor_verify_info
 	company_profile text,
 	authorizer_name varchar(50) NOT NULL,
 	authorizer_email varchar(100) NOT NULL,
-	authorizer_phone varchar(50) NOT NULL, 
+	authorizer_phone varchar(50) NOT NULL,
 	bank_name varchar(200) NOT NULL,
 	bank_account_name varchar(50) NOT NULL,
 	bank_account_number varchar(100) NOT NULL,
@@ -25,7 +24,7 @@ CREATE TABLE vendor_verify_info
 
 CREATE INDEX vendor_name_idx
 	ON vendor_verify_info (company_name);
-	 
+
 CREATE INDEX vendor_company_website_idx
 	ON vendor_verify_info (company_website);
 
@@ -40,6 +39,8 @@ CREATE INDEX vendor_submit_time_idx
 
 CREATE INDEX vendor_status_time_idx
 	ON vendor_verify_info (status_time);
+
+
 
 
 

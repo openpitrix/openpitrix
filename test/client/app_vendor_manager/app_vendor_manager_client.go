@@ -25,6 +25,35 @@ type Client struct {
 }
 
 /*
+DescribeAppVendorStatistics describes app vendor statistics
+*/
+func (a *Client) DescribeAppVendorStatistics(params *DescribeAppVendorStatisticsParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeAppVendorStatisticsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeAppVendorStatisticsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeAppVendorStatistics",
+		Method:             "GET",
+		PathPattern:        "/v1/DescribeAppVendorStatistics",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeAppVendorStatisticsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeAppVendorStatisticsOK), nil
+
+}
+
+/*
 DescribeVendorVerifyInfos describes vendor verify infos
 */
 func (a *Client) DescribeVendorVerifyInfos(params *DescribeVendorVerifyInfosParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeVendorVerifyInfosOK, error) {

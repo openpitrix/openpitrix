@@ -16,6 +16,9 @@ import (
 // swagger:model openpitrixVendorVerifyInfo
 type OpenpitrixVendorVerifyInfo struct {
 
+	// approver
+	Approver string `json:"approver,omitempty"`
+
 	// authorizer email
 	AuthorizerEmail string `json:"authorizer_email,omitempty"`
 
