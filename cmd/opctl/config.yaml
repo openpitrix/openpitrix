@@ -549,6 +549,29 @@
     version_type:
       help: 'optional: vmbased/helm'
       type: string
+- action: DescribeAppVendorStatistics
+  request: DescribeAppVendorStatisticsRequest
+  description: DescribeAppVendorStatistics
+  service: AppVendorManager
+  query:
+    display_columns:
+      type: '[]string'
+    limit:
+      help: default is 20, max value is 200.
+      type: int64
+    offset:
+      help: default is 0.
+      type: int64
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    user_id:
+      type: '[]string'
 - action: DescribeVendorVerifyInfos
   request: DescribeVendorVerifyInfosRequest
   description: DescribeVendorVerifyInfos

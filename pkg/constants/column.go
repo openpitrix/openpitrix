@@ -105,6 +105,7 @@ const (
 	ColumnBankAccountNumber = "bank_account_number"
 	ColumnRejectMessage     = "reject_message"
 	ColumnSubmitTime        = "submit_time"
+	ColumnApprover          = "approver"
 )
 
 var PushEventTables = map[string][]string{
@@ -187,6 +188,9 @@ var IndexedColumns = map[string][]string{
 	TableAppVersionReview: {
 		ColumnReviewId, ColumnVersionId, ColumnAppId, ColumnStatus, ColumnReviewer,
 	},
+	TableVendorVerifyInfo: {
+		ColumnUserId, ColumnStatus,
+	},
 }
 
 var SearchWordColumnTable = []string{
@@ -201,6 +205,7 @@ var SearchWordColumnTable = []string{
 	TableClusterNode,
 	TableUser,
 	TableCategory,
+	TableVendorVerifyInfo,
 }
 
 // columns that can be search through sql 'like' operator
@@ -237,5 +242,8 @@ var SearchColumns = map[string][]string{
 	},
 	TableCategory: {
 		ColumnCategoryId, ColumnLocale, ColumnOwner, ColumnName,
+	},
+	TableVendorVerifyInfo: {
+		ColumnUserId, ColumnCompanyName, ColumnCompanyWebsite, ColumnAuthorizerName, ColumnAuthorizerEmail,
 	},
 }
