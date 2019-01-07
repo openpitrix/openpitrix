@@ -15,6 +15,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	types "k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/version"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -90,6 +91,15 @@ func (p *KubeHandler) initKubeClientWithCredential(credential string) (*kubernet
 		return nil, nil, err
 	}
 	return clientset, config, err
+}
+
+func (p *KubeHandler) DescribeVersionInfo() (*version.Info, error) {
+	kubeClient, _, err := p.initKubeClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return kubeClient.ServerVersion()
 }
 
 func (p *KubeHandler) CheckApiVersionsSupported(apiVersions []string) error {
