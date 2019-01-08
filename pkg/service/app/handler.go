@@ -485,8 +485,13 @@ func (p *Server) DescribeAppVersionReviews(ctx context.Context, req *pb.Describe
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
+	appVersionReviewSet, err := formatAppVersionReviewSet(ctx, versionReviews)
+	if err != nil {
+		return nil, err
+	}
+
 	res := &pb.DescribeAppVersionReviewsResponse{
-		AppVersionReviewSet: models.AppVersionReviewsToPbs(versionReviews),
+		AppVersionReviewSet: appVersionReviewSet,
 		TotalCount:          count,
 	}
 	return res, nil
@@ -519,8 +524,13 @@ func (p *Server) DescribeAppVersionAudits(ctx context.Context, req *pb.DescribeA
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
+	appVersionAuditSet, err := formatAppVersionAuditSet(ctx, versionAudits)
+	if err != nil {
+		return nil, err
+	}
+
 	res := &pb.DescribeAppVersionAuditsResponse{
-		AppVersionAuditSet: models.AppVersionAuditsToPbs(versionAudits),
+		AppVersionAuditSet: appVersionAuditSet,
 		TotalCount:         count,
 	}
 	return res, nil

@@ -435,6 +435,100 @@ func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.A
 	return pbApps, nil
 }
 
+func loadAppNameMap(ctx context.Context, appIds []string) (map[string]string, error) {
+	var appNameMap = make(map[string]string)
+	if len(appIds) > 0 {
+		_, err := pi.Global().DB(ctx).
+			Select(constants.ColumnAppId, constants.ColumnName).
+			From(constants.TableApp).
+			Where(db.Eq(constants.ColumnAppId, appIds)).
+			Load(&appNameMap)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+	}
+	return appNameMap, nil
+}
+
+func loadVersionNameMap(ctx context.Context, versionIds []string) (map[string]string, error) {
+	var versionNameMap = make(map[string]string)
+	if len(versionIds) > 0 {
+		_, err := pi.Global().DB(ctx).
+			Select(constants.ColumnVersionId, constants.ColumnName).
+			From(constants.TableAppVersion).
+			Where(db.Eq(constants.ColumnVersionId, versionIds)).
+			Load(&versionNameMap)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+	}
+	return versionNameMap, nil
+}
+
+func formatAppVersionReviewSet(ctx context.Context, appVersionReviews []*models.AppVersionReview) ([]*pb.AppVersionReview, error) {
+	var (
+		appIds     []string
+		versionIds []string
+	)
+	for _, a := range appVersionReviews {
+		appIds = append(appIds, a.AppId)
+		versionIds = append(versionIds, a.VersionId)
+	}
+	appNameMap, err := loadAppNameMap(ctx, appIds)
+	if err != nil {
+		return nil, err
+	}
+	versionNameMap, err := loadVersionNameMap(ctx, versionIds)
+	if err != nil {
+		return nil, err
+	}
+	pbAvrs := models.AppVersionReviewsToPbs(appVersionReviews)
+	for _, a := range pbAvrs {
+		appId := a.GetAppId().GetValue()
+		versionId := a.GetVersionId().GetValue()
+		if appName, ok := appNameMap[appId]; ok {
+			a.AppName = pbutil.ToProtoString(appName)
+		}
+		if versionName, ok := versionNameMap[versionId]; ok {
+			a.VersionName = pbutil.ToProtoString(versionName)
+		}
+	}
+
+	return pbAvrs, nil
+}
+
+func formatAppVersionAuditSet(ctx context.Context, appVersionAudits []*models.AppVersionAudit) ([]*pb.AppVersionAudit, error) {
+	var (
+		appIds     []string
+		versionIds []string
+	)
+	for _, a := range appVersionAudits {
+		appIds = append(appIds, a.AppId)
+		versionIds = append(versionIds, a.VersionId)
+	}
+	appNameMap, err := loadAppNameMap(ctx, appIds)
+	if err != nil {
+		return nil, err
+	}
+	versionNameMap, err := loadVersionNameMap(ctx, versionIds)
+	if err != nil {
+		return nil, err
+	}
+	pbAvas := models.AppVersionAuditsToPbs(appVersionAudits)
+	for _, a := range pbAvas {
+		appId := a.GetAppId().GetValue()
+		versionId := a.GetVersionId().GetValue()
+		if appName, ok := appNameMap[appId]; ok {
+			a.AppName = pbutil.ToProtoString(appName)
+		}
+		if versionName, ok := versionNameMap[versionId]; ok {
+			a.VersionName = pbutil.ToProtoString(versionName)
+		}
+	}
+
+	return pbAvas, nil
+}
+
 func getAppsVersionTypes(ctx context.Context, appIds []string, active bool) (map[string]string, error) {
 	var appsVersionTypes = make(map[string]string)
 
