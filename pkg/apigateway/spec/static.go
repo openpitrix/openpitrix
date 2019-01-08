@@ -5393,6 +5393,12 @@ var Files = map[string]string{
         "status": {
           "type": "string"
         },
+        "version_name": {
+          "type": "string"
+        },
+        "app_name": {
+          "type": "string"
+        },
         "operator": {
           "type": "string"
         },
@@ -5421,6 +5427,12 @@ var Files = map[string]string{
           "type": "string"
         },
         "app_id": {
+          "type": "string"
+        },
+        "version_name": {
+          "type": "string"
+        },
+        "app_name": {
           "type": "string"
         },
         "status": {
