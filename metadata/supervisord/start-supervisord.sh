@@ -4,7 +4,7 @@ SERVICE=$1
 
 case $SERVICE in
 	"frontgate")
-		echo "files = /etc/supervisor.d/frontgate.ini" >> /etc/supervisord.conf
+		echo "files = /etc/supervisor.d/frontgate.ini /etc/supervisor.d/metad.ini" >> /etc/supervisord.conf
 		exec supervisord
 		;;
 	"drone")

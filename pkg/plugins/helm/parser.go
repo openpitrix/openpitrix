@@ -501,7 +501,15 @@ func (p *Parser) parseValues(customVals map[string]interface{}, name string) (ma
 		Namespace: p.Namespace,
 	}
 
-	vals, err := chartutil.ToRenderValues(p.Chart, config, options)
+	kubeHandler := GetKubeHandler(p.ctx, p.RuntimeId)
+	version, err := kubeHandler.DescribeVersionInfo()
+	if err != nil {
+		return nil, err
+	}
+
+	caps := &chartutil.Capabilities{APIVersions: chartutil.DefaultVersionSet, KubeVersion: version}
+
+	vals, err := chartutil.ToRenderValuesCaps(p.Chart, config, options, caps)
 	if err != nil {
 		return nil, err
 	}
