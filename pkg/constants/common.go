@@ -50,7 +50,8 @@ const (
 	IAM2ServicePort         = 9119
 	EtcdServicePort         = 2379
 
-	AttachmentManagerPort = 9120
+	AttachmentManagerPort   = 9120
+	MeterbillingManagerPort = 9121
 )
 
 const (
