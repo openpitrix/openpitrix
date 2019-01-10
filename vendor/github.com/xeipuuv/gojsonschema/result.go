@@ -76,12 +76,6 @@ type (
 // Field outputs the field name without the root context
 // i.e. firstName or person.firstName instead of (root).firstName or (root).person.firstName
 func (v *ResultErrorFields) Field() string {
-	if p, ok := v.Details()["property"]; ok {
-		if str, isString := p.(string); isString {
-			return str
-		}
-	}
-
 	return strings.TrimPrefix(v.context.String(), STRING_ROOT_SCHEMA_PROPERTY+".")
 }
 
@@ -165,6 +159,7 @@ func (v *Result) Valid() bool {
 func (v *Result) Errors() []ResultError {
 	return v.errors
 }
+
 // Add a fully filled error to the error set
 // SetDescription() will be called with the result of the parsed err.DescriptionFormat()
 func (v *Result) AddError(err ResultError, details ErrorDetails) {
