@@ -22,17 +22,6 @@ const (
 
 type Watcher chan *config.GlobalConfig
 
-func PutGlobalConfig(ctx context.Context, etcd *etcd.Etcd, config string) error {
-	err := etcd.Dlock(ctx, DlockKey, func() error {
-		_, err := etcd.Put(ctx, GlobalConfigKey, config)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	return err
-}
-
 func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 	ctx := context.Background()
 	var globalConfig config.GlobalConfig

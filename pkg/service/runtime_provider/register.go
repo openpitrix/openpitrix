@@ -11,13 +11,11 @@ import (
 )
 
 func RegisterRuntimeProvider(provider, config string) error {
-	err := pi.Global().GlobalConfig().RegisterRuntimeProviderConfig(provider, config)
+	err := pi.Global().AppendRuntimeProvider(provider, config)
 	if err != nil {
 		return err
 	}
-	pi.Global().SetGlobalCfg(pi.Global().GlobalConfig())
 
 	logger.Debug(nil, "Available plugins: %+v", plugins.GetAvailablePlugins())
-
 	return nil
 }
