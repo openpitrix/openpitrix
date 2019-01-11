@@ -21,7 +21,7 @@ type Server struct {
 func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
 	s := Server{}
-	manager.NewGrpcServer("metering-manager", constants.MeterbillingManagerPort).
+	manager.NewGrpcServer("mbing-manager", constants.MeterbillingManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterMeteringManagerServer(server, &s)
