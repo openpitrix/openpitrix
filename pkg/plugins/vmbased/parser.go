@@ -289,6 +289,7 @@ func (p *Parser) ParseClusterNode(node opapp.Node, subnetId string) (map[string]
 		groupIds = append(groupIds, groupId)
 
 		clusterNode := &models.ClusterNode{
+			NodeId:   node.Role + fmt.Sprintf("%d", serverId),
 			Name:     "",
 			Role:     node.Role,
 			SubnetId: subnetId,
@@ -300,7 +301,7 @@ func (p *Parser) ParseClusterNode(node opapp.Node, subnetId string) (map[string]
 			ClusterNode: clusterNode,
 		}
 		// NodeId has not been generated yet.
-		clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNodeWIthKeyPairs
+		clusterNodes[clusterNode.NodeId] = clusterNodeWIthKeyPairs
 
 		replica := int(node.Replica)
 		for j := 1; j <= replica; j++ {
@@ -312,6 +313,7 @@ func (p *Parser) ParseClusterNode(node opapp.Node, subnetId string) (map[string]
 			serverIds = append(serverIds, serverId)
 
 			clusterNode := &models.ClusterNode{
+				NodeId:   clusterNode.Role + fmt.Sprintf("%d", serverId),
 				Name:     "",
 				Role:     replicaRole,
 				SubnetId: subnetId,
@@ -322,7 +324,7 @@ func (p *Parser) ParseClusterNode(node opapp.Node, subnetId string) (map[string]
 			clusterNodeWIthKeyPairs := &models.ClusterNodeWithKeyPairs{
 				ClusterNode: clusterNode,
 			}
-			clusterNodes[clusterNode.Role+fmt.Sprintf("%d", serverId)] = clusterNodeWIthKeyPairs
+			clusterNodes[clusterNode.NodeId] = clusterNodeWIthKeyPairs
 		}
 	}
 	return clusterNodes, nil
@@ -526,7 +528,8 @@ func (p *Parser) Parse(clusterConf opapp.ClusterConf, clusterWrapper *models.Clu
 	}
 
 	// add cluster nodes
-	if clusterWrapper.Cluster != nil {
+	if clusterWrapper.Cluster != nil && len(clusterWrapper.Cluster.ClusterId) > 0 {
+		logger.Debug(p.Ctx, "Add cluster [%s] node.", clusterWrapper.Cluster.ClusterId)
 		err = p.ParseAddClusterNode(clusterConf, clusterWrapper)
 		if err != nil {
 			return err

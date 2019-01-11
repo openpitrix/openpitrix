@@ -9,19 +9,21 @@ import (
 )
 
 const (
-	prefix              = "openpitrix-"
-	ApiGatewayHost      = prefix + "api-gateway"
-	RepoManagerHost     = prefix + "repo-manager"
-	AppManagerHost      = prefix + "app-manager"
-	RuntimeManagerHost  = prefix + "runtime-manager"
-	ClusterManagerHost  = prefix + "cluster-manager"
-	JobManagerHost      = prefix + "job-manager"
-	TaskManagerHost     = prefix + "task-manager"
-	PilotServiceHost    = prefix + "pilot-service"
-	IAMServiceHost      = prefix + "iam-service"
-	IAM2ServiceHost     = prefix + "iam2-service"
-	RepoIndexerHost     = prefix + "repo-indexer"
-	CategoryManagerHost = prefix + "category-manager"
+	prefix                     = "openpitrix-"
+	ProviderPrefix             = "openpitrix-rp-"
+	ApiGatewayHost             = prefix + "api-gateway"
+	RepoManagerHost            = prefix + "repo-manager"
+	AppManagerHost             = prefix + "app-manager"
+	RuntimeManagerHost         = prefix + "runtime-manager"
+	ClusterManagerHost         = prefix + "cluster-manager"
+	JobManagerHost             = prefix + "job-manager"
+	TaskManagerHost            = prefix + "task-manager"
+	PilotServiceHost           = prefix + "pilot-service"
+	IAMServiceHost             = prefix + "iam-service"
+	IAM2ServiceHost            = prefix + "iam2-service"
+	RepoIndexerHost            = prefix + "repo-indexer"
+	CategoryManagerHost        = prefix + "category-manager"
+	RuntimeProviderManagerHost = prefix + "rp-manager"
 
 	MarketManagerHost = prefix + "market-manager"
 
@@ -50,7 +52,8 @@ const (
 	IAM2ServicePort         = 9119
 	EtcdServicePort         = 2379
 
-	AttachmentManagerPort = 9120
+	AttachmentManagerPort      = 9120
+	RuntimeProviderManagerPort = 9121
 )
 
 const (
@@ -147,11 +150,12 @@ const (
 )
 
 const (
-	ProviderQingCloud  = "qingcloud"
-	ProviderKubernetes = "kubernetes"
-	ProviderAWS        = "aws"
-	ProviderAliyun     = "aliyun"
-	TargetPilot        = "pilot"
+	ProviderQingCloud   = "qingcloud"
+	ProviderKubernetes  = "kubernetes"
+	ProviderAWS         = "aws"
+	ProviderAliyun      = "aliyun"
+	ProviderTypeVmbased = "vmbased"
+	TargetPilot         = "pilot"
 )
 
 const (

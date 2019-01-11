@@ -7,11 +7,9 @@
 [![codecov](https://codecov.io/gh/grpc-ecosystem/go-grpc-middleware/branch/master/graph/badge.svg)](https://codecov.io/gh/grpc-ecosystem/go-grpc-middleware)
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![quality: production](https://img.shields.io/badge/quality-production-orange.svg)](#status)
-
+[![Slack](slack.png)](https://join.slack.com/t/improbable-eng/shared_invite/enQtMzQ1ODcyMzQ5MjM4LWY5ZWZmNGM2ODc5MmViNmQ3ZTA3ZTY3NzQwOTBlMTkzZmIxZTIxODk0OWU3YjZhNWVlNDU3MDlkZGViZjhkMjc)
 
 [gRPC Go](https://github.com/grpc/grpc-go) Middleware: interceptors, helpers, utilities.
-
-**Important** The repo recently moved to `github.com/grpc-ecosystem/go-grpc-middleware`, please update your import paths.
 
 ## Middleware
 
@@ -24,7 +22,7 @@ These are generic building blocks that make it easy to build multiple microservi
 The purpose of this repository is to act as a go-to point for such reusable functionality. It contains
 some of them itself, but also will link to useful external repos.
 
-`grpc_middleware` itself provides support for chaining interceptors. See [Documentation](DOC.md), but here's an example:
+`grpc_middleware` itself provides support for chaining interceptors, here's an example:
 
 ```go
 import "github.com/grpc-ecosystem/go-grpc-middleware"

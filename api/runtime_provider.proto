@@ -1,0 +1,136 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "cluster.proto";
+import "runtime.proto";
+import "job.proto";
+import "task.proto";
+
+message ParseClusterConfRequest {
+	google.protobuf.StringValue runtime_id = 1;
+	google.protobuf.StringValue version_id = 2;
+	google.protobuf.StringValue conf = 3;
+	Cluster cluster = 4;
+}
+
+message ParseClusterConfResponse {
+	Cluster cluster = 1;
+}
+
+message SplitJobIntoTasksRequest {
+	google.protobuf.StringValue runtime_id = 1;
+	Job job = 2;
+}
+
+message SplitJobIntoTasksResponse {
+	TaskLayer taskLayer = 1;
+}
+
+message HandleSubtaskRequest {
+	google.protobuf.StringValue runtime_id = 1;
+	Task task = 2;
+}
+
+message HandleSubtaskResponse {
+	Task task = 1;
+}
+
+message WaitSubtaskRequest {
+	google.protobuf.StringValue runtime_id = 1;
+	Task task = 2;
+}
+
+message WaitSubtaskResponse {
+	Task task = 1;
+}
+
+message CheckResourceRequest {
+	google.protobuf.StringValue runtime_id = 1;
+	Cluster cluster = 2;
+}
+
+message CheckResourceResponse {
+	google.protobuf.BoolValue ok = 1;
+}
+
+message DescribeVpcRequest {
+	google.protobuf.StringValue runtime_id = 1;
+	google.protobuf.StringValue vpc_id = 2;
+}
+
+message Eip {
+	google.protobuf.StringValue eip_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue addr = 3;
+}
+
+message Vpc {
+	google.protobuf.StringValue vpc_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.Timestamp create_time = 3;
+	google.protobuf.StringValue description = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.StringValue transition_status = 6;
+	repeated string subnets = 7;
+	Eip eip = 8;
+}
+
+message DescribeVpcResponse {
+	Vpc vpc = 1;
+}
+
+message DescribeClusterDetailsRequest {
+	google.protobuf.StringValue runtime_id = 1;
+	Cluster cluster = 2;
+}
+
+message DescribeClusterDetailsResponse {
+	Cluster cluster = 1;
+}
+
+message ValidateRuntimeRequest {
+	google.protobuf.StringValue runtime_id = 1;
+	google.protobuf.StringValue zone = 2;
+	RuntimeCredential runtime_credential = 3;
+	google.protobuf.BoolValue need_create = 4;
+}
+
+message ValidateRuntimeResponse {
+	google.protobuf.BoolValue ok = 1;
+}
+
+message DescribeZonesRequest {
+	google.protobuf.StringValue provider = 1;
+	RuntimeCredential runtime_credential = 2;
+}
+
+message DescribeZonesResponse {
+	repeated string zones = 1;
+}
+
+service RuntimeProviderManager {
+	// cluster
+	rpc ParseClusterConf (ParseClusterConfRequest) returns (ParseClusterConfResponse);
+	rpc SplitJobIntoTasks (SplitJobIntoTasksRequest) returns (SplitJobIntoTasksResponse);
+	rpc HandleSubtask (HandleSubtaskRequest) returns (HandleSubtaskResponse);
+	rpc WaitSubtask (WaitSubtaskRequest) returns (WaitSubtaskResponse);
+	rpc DescribeSubnets (DescribeSubnetsRequest) returns (DescribeSubnetsResponse);
+	rpc CheckResource (CheckResourceRequest) returns (CheckResourceResponse);
+	rpc DescribeVpc (DescribeVpcRequest) returns (DescribeVpcResponse);
+	rpc DescribeClusterDetails (DescribeClusterDetailsRequest) returns (DescribeClusterDetailsResponse);
+
+	// runtime
+	rpc ValidateRuntime (ValidateRuntimeRequest) returns (ValidateRuntimeResponse);
+	rpc DescribeZones (DescribeZonesRequest) returns (DescribeZonesResponse);
+}

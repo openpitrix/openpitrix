@@ -16,6 +16,7 @@ import (
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
+	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -211,13 +212,12 @@ func (p *Server) DescribeSubnets(ctx context.Context, req *pb.DescribeSubnetsReq
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
+	providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	return providerInterface.DescribeSubnets(ctx, req)
+	return providerClient.DescribeSubnets(ctx, req)
 }
 
 func (p *Server) DeleteNodeKeyPairs(ctx context.Context, req *pb.DeleteNodeKeyPairsRequest) (*pb.DeleteNodeKeyPairsResponse, error) {
@@ -637,21 +637,26 @@ func (p *Server) createCluster(ctx context.Context, req *pb.CreateClusterRequest
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAccessDenied, runtimeId)
 	}
 
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
-	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
-	}
 	clusterWrapper := new(models.ClusterWrapper)
-	err = providerInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
+	providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 	if err != nil {
-		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", versionId, runtimeId, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	response, err := providerClient.ParseClusterConf(ctx, &pb.ParseClusterConfRequest{
+		RuntimeId: pbutil.ToProtoString(runtimeId),
+		VersionId: pbutil.ToProtoString(versionId),
+		Conf:      pbutil.ToProtoString(conf),
+		Cluster:   models.ClusterWrapperToPb(clusterWrapper),
+	})
+	if err != nil {
+		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] conf [%s] failed: %+v",
+			versionId, runtimeId, conf, err)
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		}
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
-
+	clusterWrapper = models.PbToClusterWrapper(response.Cluster)
 	if clusterWrapper.Cluster.Zone == "" {
 		clusterWrapper.Cluster.Zone = runtime.Zone
 	}
@@ -663,14 +668,20 @@ func (p *Server) createCluster(ctx context.Context, req *pb.CreateClusterRequest
 	clusterWrapper.Cluster.Debug = debug
 
 	if plugins.IsVmbasedProviders(runtime.Runtime.Provider) {
-		err = CheckVmBasedProvider(ctx, runtime, providerInterface, clusterWrapper)
+		err = CheckVmBasedProvider(ctx, runtime, providerClient, clusterWrapper)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		err = providerInterface.CheckResource(ctx, clusterWrapper)
+		response, err := providerClient.CheckResource(ctx, &pb.CheckResourceRequest{
+			RuntimeId: pbutil.ToProtoString(runtimeId),
+			Cluster:   models.ClusterWrapperToPb(clusterWrapper),
+		})
 		if err != nil {
 			return nil, err
+		}
+		if !response.Ok.GetValue() {
+			return nil, fmt.Errorf("response is not ok")
 		}
 	}
 
@@ -1219,20 +1230,26 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	if len(req.AdvancedParam) > 0 {
 		conf = req.AdvancedParam[0]
 	}
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
+
+	providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	err = providerInterface.ParseClusterConf(ctx, clusterWrapper.Cluster.VersionId, runtime.RuntimeId, conf, clusterWrapper)
+	response, err := providerClient.ParseClusterConf(ctx, &pb.ParseClusterConfRequest{
+		RuntimeId: pbutil.ToProtoString(runtime.RuntimeId),
+		VersionId: pbutil.ToProtoString(clusterWrapper.Cluster.VersionId),
+		Conf:      pbutil.ToProtoString(conf),
+		Cluster:   models.ClusterWrapperToPb(clusterWrapper),
+	})
 	if err != nil {
-		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] failed: %+v", clusterWrapper.Cluster.VersionId, runtime.RuntimeId, err)
+		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] conf [%s] failed: %+v",
+			clusterWrapper.Cluster.VersionId, runtime.RuntimeId, conf, err)
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		}
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
-
+	clusterWrapper = models.PbToClusterWrapper(response.Cluster)
 	// register new role
 	if len(roleNodes) == 0 {
 		if len(req.AdvancedParam) == 0 {
@@ -1374,20 +1391,25 @@ func (p *Server) UpdateClusterEnv(ctx context.Context, req *pb.UpdateClusterEnvR
 		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterWrapper.Cluster.RuntimeId)
 	}
 
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
+	providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	err = providerInterface.ParseClusterConf(ctx, versionId, runtimeId, conf, clusterWrapper)
+	response, err := providerClient.ParseClusterConf(ctx, &pb.ParseClusterConfRequest{
+		RuntimeId: pbutil.ToProtoString(runtimeId),
+		VersionId: pbutil.ToProtoString(versionId),
+		Conf:      pbutil.ToProtoString(conf),
+		Cluster:   models.ClusterWrapperToPb(clusterWrapper),
+	})
 	if err != nil {
 		logger.Error(ctx, "Parse cluster conf with versionId [%s] runtime [%s] conf [%s] failed: %+v",
-			versionId, runtime.RuntimeId, conf, err)
+			versionId, runtimeId, conf, err)
 		if gerr.IsGRPCError(err) {
 			return nil, err
 		}
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
+	clusterWrapper = models.PbToClusterWrapper(response.Cluster)
 
 	clusterWrapper.Cluster.ClusterId = clusterId
 	clusterWrapper.Cluster.Name = clusterName
@@ -1498,6 +1520,7 @@ func (p *Server) describeClusters(ctx context.Context, req *pb.DescribeClustersR
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
 
+		pbClusterWrapper := models.ClusterWrapperToPb(clusterWrapper)
 		if len(clusterWrapper.Cluster.RuntimeId) > 0 {
 			runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
 			if err != nil {
@@ -1505,20 +1528,22 @@ func (p *Server) describeClusters(ctx context.Context, req *pb.DescribeClustersR
 			}
 
 			if runtime.Runtime.Provider == constants.ProviderKubernetes && withDetail {
-				providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
+				providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 				if err != nil {
-					logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
-					return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
+					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 				}
 
-				clusterWrapper, err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
+				response, err := providerClient.DescribeClusterDetails(ctx, &pb.DescribeClusterDetailsRequest{
+					RuntimeId: pbutil.ToProtoString(clusterWrapper.Cluster.RuntimeId),
+					Cluster:   pbClusterWrapper,
+				})
 				if err != nil {
 					logger.Warn(ctx, "Describe cluster details failed: %+v", err)
 				}
+				pbClusterWrapper = response.Cluster
 			}
 		}
-
-		pbClusters = append(pbClusters, models.ClusterWrapperToPb(clusterWrapper))
+		pbClusters = append(pbClusters, pbClusterWrapper)
 	}
 
 	res := &pb.DescribeClustersResponse{
@@ -1637,6 +1662,7 @@ func (p *Server) DescribeAppClusters(ctx context.Context, req *pb.DescribeAppClu
 			return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, clusterId)
 		}
 
+		pbClusterWrapper := models.ClusterWrapperToPb(clusterWrapper)
 		if len(clusterWrapper.Cluster.RuntimeId) > 0 {
 			runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
 			if err != nil {
@@ -1644,20 +1670,22 @@ func (p *Server) DescribeAppClusters(ctx context.Context, req *pb.DescribeAppClu
 			}
 
 			if runtime.Runtime.Provider == constants.ProviderKubernetes && withDetail {
-				providerInterface, err := plugins.GetProviderPlugin(ctx, runtime.Runtime.Provider)
+				providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 				if err != nil {
-					logger.Error(ctx, "No such provider [%s]. ", runtime.Runtime.Provider)
-					return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtime.Runtime.Provider)
+					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 				}
 
-				clusterWrapper, err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
+				response, err := providerClient.DescribeClusterDetails(ctx, &pb.DescribeClusterDetailsRequest{
+					RuntimeId: pbutil.ToProtoString(clusterWrapper.Cluster.RuntimeId),
+					Cluster:   pbClusterWrapper,
+				})
 				if err != nil {
 					logger.Warn(ctx, "Describe cluster details failed: %+v", err)
 				}
+				pbClusterWrapper = response.Cluster
 			}
 		}
-
-		pbClusters = append(pbClusters, models.ClusterWrapperToPb(clusterWrapper))
+		pbClusters = append(pbClusters, pbClusterWrapper)
 	}
 
 	res := &pb.DescribeAppClustersResponse{

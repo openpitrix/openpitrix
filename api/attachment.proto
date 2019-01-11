@@ -8,11 +8,9 @@ package openpitrix;
 // set go package name to pb
 option go_package = "pb";
 
-import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
-import "types.proto";
 
 message GetAttachmentsRequest {
 	repeated string attachment_id = 1;

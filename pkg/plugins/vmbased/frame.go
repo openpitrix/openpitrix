@@ -5,18 +5,15 @@
 package vmbased
 
 import (
-	"bytes"
 	"context"
 	"encoding/base64"
 	"fmt"
 	"sort"
 	"strings"
 
-	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/devkit"
 	"openpitrix.io/openpitrix/pkg/devkit/opapp"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
@@ -29,11 +26,11 @@ import (
 )
 
 type Frame struct {
-	Ctx            context.Context
-	Job            *models.Job
-	ClusterWrapper *models.ClusterWrapper
-	Runtime        *models.RuntimeDetails
-	ImageConfig    *config.ImageConfig
+	Ctx                   context.Context
+	Job                   *models.Job
+	ClusterWrapper        *models.ClusterWrapper
+	Runtime               *models.RuntimeDetails
+	RuntimeProviderConfig *config.RuntimeProviderConfig
 }
 
 func (f *Frame) startConfdServiceLayer(nodeIds []string, failureAllowed bool) *models.TaskLayer {
@@ -497,7 +494,7 @@ func (f *Frame) createVolumesLayer(nodeIds []string, failureAllowed bool) *model
 				JobId:          f.Job.JobId,
 				Owner:          f.Job.Owner,
 				TaskAction:     ActionCreateVolumes,
-				Target:         f.Runtime.Runtime.Provider,
+				Target:         f.Runtime.RuntimeId,
 				NodeId:         nodeId,
 				Directive:      directive,
 				FailureAllowed: failureAllowed,
@@ -529,7 +526,7 @@ func (f *Frame) detachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionDetachVolumes,
-			Target:         f.Runtime.Runtime.Provider,
+			Target:         f.Runtime.RuntimeId,
 			NodeId:         nodeId,
 			Directive:      directive,
 			FailureAllowed: failureAllowed,
@@ -558,7 +555,7 @@ func (f *Frame) attachVolumesLayer(nodeIds []string, failureAllowed bool) *model
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionAttachVolumes,
-			Target:         f.Runtime.Runtime.Provider,
+			Target:         f.Runtime.RuntimeId,
 			NodeId:         nodeId,
 			Directive:      directive,
 			FailureAllowed: failureAllowed,
@@ -587,7 +584,7 @@ func (f *Frame) deleteVolumesLayer(nodeIds []string, failureAllowed bool) *model
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionDeleteVolumes,
-			Target:         f.Runtime.Runtime.Provider,
+			Target:         f.Runtime.RuntimeId,
 			NodeId:         nodeId,
 			Directive:      directive,
 			FailureAllowed: failureAllowed,
@@ -623,7 +620,7 @@ func (f *Frame) resizeVolumesLayer(nodeIds []string, roleResizeResource *models.
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionResizeVolumes,
-			Target:         f.Runtime.Runtime.Provider,
+			Target:         f.Runtime.RuntimeId,
 			NodeId:         nodeId,
 			Directive:      directive,
 			FailureAllowed: failureAllowed,
@@ -975,7 +972,7 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 			Name:         clusterNode.ClusterId + "_" + nodeId + "_" + showName,
 			Hostname:     nodeId,
 			NodeId:       nodeId,
-			ImageId:      f.ImageConfig.ImageId,
+			ImageId:      f.RuntimeProviderConfig.ImageId,
 			Cpu:          int(clusterRole.Cpu),
 			Memory:       int(clusterRole.Memory),
 			Gpu:          int(clusterRole.Gpu),
@@ -987,16 +984,16 @@ func (f *Frame) runInstancesLayer(nodeIds []string, failureAllowed bool) *models
 		}
 		if f.ClusterWrapper.Cluster.ClusterType == constants.FrontgateClusterType {
 			frontgate := &Frontgate{f}
-			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, frontgate.getCertificateExec())
+			instance.UserDataValue = f.getUserDataExec(FrontgateConfFile, frontgate.getUserDataValue(nodeId), f.RuntimeProviderConfig.ImageUrl, frontgate.getCertificateExec())
 		} else {
-			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.ImageConfig.ImageUrl, "")
+			instance.UserDataValue = f.getUserDataExec(DroneConfFile, f.getUserDataValue(nodeId), f.RuntimeProviderConfig.ImageUrl, "")
 		}
 		directive := jsonutil.ToString(instance)
 		runInstanceTask := &models.Task{
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionRunInstances,
-			Target:         f.Runtime.Runtime.Provider,
+			Target:         f.Runtime.RuntimeId,
 			NodeId:         nodeId,
 			Directive:      directive,
 			FailureAllowed: failureAllowed,
@@ -1027,7 +1024,7 @@ func (f *Frame) stopInstancesLayer(nodeIds []string, failureAllowed bool) *model
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionStopInstances,
-			Target:         f.Runtime.Runtime.Provider,
+			Target:         f.Runtime.RuntimeId,
 			NodeId:         nodeId,
 			Directive:      directive,
 			FailureAllowed: failureAllowed,
@@ -1058,7 +1055,7 @@ func (f *Frame) deleteInstancesLayer(nodeIds []string, failureAllowed bool) *mod
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionTerminateInstances,
-			Target:         f.Runtime.Runtime.Provider,
+			Target:         f.Runtime.RuntimeId,
 			NodeId:         nodeId,
 			Directive:      directive,
 			FailureAllowed: false,
@@ -1089,7 +1086,7 @@ func (f *Frame) startInstancesLayer(nodeIds []string, failureAllowed bool) *mode
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionStartInstances,
-			Target:         f.Runtime.Runtime.Provider,
+			Target:         f.Runtime.RuntimeId,
 			NodeId:         nodeId,
 			Directive:      directive,
 			FailureAllowed: failureAllowed,
@@ -1131,7 +1128,7 @@ func (f *Frame) resizeInstancesLayer(nodeIds []string, roleResizeResource *model
 			JobId:          f.Job.JobId,
 			Owner:          f.Job.Owner,
 			TaskAction:     ActionResizeInstances,
-			Target:         f.Runtime.Runtime.Provider,
+			Target:         f.Runtime.RuntimeId,
 			NodeId:         nodeId,
 			Directive:      directive,
 			FailureAllowed: failureAllowed,
@@ -1156,7 +1153,7 @@ func (f *Frame) waitFrontgateLayer(failureAllowed bool) *models.TaskLayer {
 		JobId:          f.Job.JobId,
 		Owner:          f.Job.Owner,
 		TaskAction:     ActionWaitFrontgateAvailable,
-		Target:         f.Runtime.Runtime.Provider,
+		Target:         f.Runtime.RuntimeId,
 		NodeId:         f.ClusterWrapper.Cluster.ClusterId,
 		Directive:      directive,
 		FailureAllowed: failureAllowed,
@@ -1700,79 +1697,4 @@ func (f *Frame) DetachKeyPairsLayer(nodeKeyPairDetails models.NodeKeyPairDetails
 	}
 
 	return headTaskLayer.Child
-}
-
-func (f *Frame) ParseClusterConf(ctx context.Context, versionId, runtimeId, conf string, clusterWrapper *models.ClusterWrapper) error {
-	clusterConf := opapp.ClusterConf{}
-	clusterEnv := ""
-	// Normal cluster need package to generate final conf
-	if versionId != constants.FrontgateVersionId {
-		appManagerClient, err := appclient.NewAppManagerClient()
-		if err != nil {
-			logger.Error(f.Ctx, "Connect to app manager failed: %+v", err)
-			return err
-		}
-
-		req := &pb.GetAppVersionPackageRequest{
-			VersionId: pbutil.ToProtoString(versionId),
-		}
-
-		resp, err := appManagerClient.GetAppVersionPackage(ctx, req)
-		if err != nil {
-			logger.Error(f.Ctx, "Get app version [%s] package failed: %+v", versionId, err)
-			return err
-		}
-
-		appPackage, err := devkit.LoadArchive(bytes.NewReader(resp.GetPackage()))
-		if err != nil {
-			logger.Error(f.Ctx, "Load app version [%s] package failed: %+v", versionId, err)
-			return err
-		}
-		var confJson jsonutil.Json
-		if len(conf) != 0 {
-			confJson, err = jsonutil.NewJson([]byte(conf))
-			if err != nil {
-				logger.Error(f.Ctx, "Parse conf [%s] failed: %+v", conf, err)
-				return err
-			}
-			appPackage.ConfigTemplate.FillInDefaultConfig(confJson)
-		}
-		confJson = appPackage.ConfigTemplate.GetDefaultConfig()
-		err = appPackage.Validate(confJson)
-		if err != nil {
-			logger.Error(f.Ctx, "Validate conf [%s] failed: %+v", conf, err)
-			return err
-		}
-		clusterConf, err = appPackage.ClusterConfTemplate.Render(confJson)
-		if err != nil {
-			logger.Error(f.Ctx, "Render app version [%s] cluster template failed: %+v", versionId, err)
-			return err
-		}
-		err = clusterConf.Validate()
-		if err != nil {
-			logger.Error(f.Ctx, "Validate app version [%s] conf [%s] failed: %+v", versionId, conf, err)
-			return err
-		}
-		clusterConf.AppId = resp.GetAppId().GetValue()
-		clusterConf.VersionId = resp.GetVersionId().GetValue()
-
-		// Set cluster env
-		appPackage.ConfigTemplate.SpecificConfig("env")
-		clusterEnv = jsonutil.ToString(appPackage.ConfigTemplate.Config)
-	} else {
-		err := jsonutil.Decode([]byte(conf), &clusterConf)
-		if err != nil {
-			logger.Error(f.Ctx, "Parse conf [%s] to cluster failed: %+v", conf, err)
-			return err
-		}
-	}
-
-	parser := Parser{Ctx: f.Ctx}
-	err := parser.Parse(clusterConf, clusterWrapper, clusterEnv)
-	if err != nil {
-		logger.Error(f.Ctx, "Parse app version [%s] failed: %+v", versionId, err)
-		return err
-	}
-
-	return nil
 }

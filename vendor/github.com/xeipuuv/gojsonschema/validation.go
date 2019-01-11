@@ -61,14 +61,17 @@ func (v *Schema) Validate(l JSONLoader) (*Result, error) {
 		return nil, err
 	}
 
+	return v.validateDocument(root), nil
+}
+
+func (v *Schema) validateDocument(root interface{}) *Result {
 	// begin validation
 
 	result := &Result{}
 	context := NewJsonContext(STRING_CONTEXT_ROOT, nil)
 	v.rootSchema.validateRecursive(v.rootSchema, root, result, context)
 
-	return result, nil
-
+	return result
 }
 
 func (v *subSchema) subValidateWithContext(document interface{}, context *JsonContext) *Result {
@@ -115,14 +118,14 @@ func (v *subSchema) validateRecursive(currentSubSchema *subSchema, currentNode i
 
 			value := currentNode.(json.Number)
 
-			_, isValidInt64, _ := checkJsonNumber(value)
+			isInt := checkJsonInteger(value)
 
-			validType := currentSubSchema.types.Contains(TYPE_NUMBER) || (isValidInt64 && currentSubSchema.types.Contains(TYPE_INTEGER))
+			validType := currentSubSchema.types.Contains(TYPE_NUMBER) || (isInt && currentSubSchema.types.Contains(TYPE_INTEGER))
 
 			if currentSubSchema.types.IsTyped() && !validType {
 
 				givenType := TYPE_INTEGER
-				if !isValidInt64 {
+				if !isInt {
 					givenType = TYPE_NUMBER
 				}
 
@@ -368,7 +371,6 @@ func (v *subSchema) validateSchema(currentSubSchema *subSchema, currentNode inte
 
 					case *subSchema:
 						dependency.validateRecursive(dependency, currentNode, result, context)
-
 					}
 				}
 			}
@@ -401,6 +403,23 @@ func (v *subSchema) validateCommon(currentSubSchema *subSchema, value interface{
 	if internalLogEnabled {
 		internalLog("validateCommon %s", context.String())
 		internalLog(" %v", value)
+	}
+
+	// const:
+	if currentSubSchema._const != nil {
+		vString, err := marshalWithoutNumber(value)
+		if err != nil {
+			result.addInternalError(new(InternalError), context, value, ErrorDetails{"error": err})
+		}
+		if *vString != *currentSubSchema._const {
+			result.addInternalError(new(ConstError),
+				context,
+				value,
+				ErrorDetails{
+					"allowed": *currentSubSchema._const,
+				},
+			)
+		}
 	}
 
 	// enum:
@@ -498,20 +517,52 @@ func (v *subSchema) validateArray(currentSubSchema *subSchema, value []interface
 	// uniqueItems:
 	if currentSubSchema.uniqueItems {
 		var stringifiedItems []string
-		for _, v := range value {
-			vString, err := marshalToJsonString(v)
+		for j, v := range value {
+			vString, err := marshalWithoutNumber(v)
 			if err != nil {
 				result.addInternalError(new(InternalError), context, value, ErrorDetails{"err": err})
 			}
-			if isStringInSlice(stringifiedItems, *vString) {
+			if i := indexStringInSlice(stringifiedItems, *vString); i > -1 {
 				result.addInternalError(
 					new(ItemsMustBeUniqueError),
 					context,
 					value,
-					ErrorDetails{"type": TYPE_ARRAY},
+					ErrorDetails{"type": TYPE_ARRAY, "i": i, "j": j},
 				)
 			}
 			stringifiedItems = append(stringifiedItems, *vString)
+		}
+	}
+
+	// contains:
+
+	if currentSubSchema.contains != nil {
+		validatedOne := false
+		var bestValidationResult *Result
+
+		for i, v := range value {
+			subContext := NewJsonContext(strconv.Itoa(i), context)
+
+			validationResult := currentSubSchema.contains.subValidateWithContext(v, subContext)
+			if validationResult.Valid() {
+				validatedOne = true
+				break
+			} else {
+				if bestValidationResult == nil || validationResult.score > bestValidationResult.score {
+					bestValidationResult = validationResult
+				}
+			}
+		}
+		if !validatedOne {
+			result.addInternalError(
+				new(ArrayContainsError),
+				context,
+				value,
+				ErrorDetails{},
+			)
+			if bestValidationResult != nil {
+				result.mergeErrors(bestValidationResult)
+			}
 		}
 	}
 
@@ -661,6 +712,21 @@ func (v *subSchema) validateObject(currentSubSchema *subSchema, value map[string
 		}
 	}
 
+	// propertyNames:
+	if currentSubSchema.propertyNames != nil {
+		for pk := range value {
+			validationResult := currentSubSchema.propertyNames.subValidateWithContext(pk, context)
+			if !validationResult.Valid() {
+				result.addInternalError(new(InvalidPropertyNameError),
+					context,
+					value, ErrorDetails{
+						"property": pk,
+					})
+				result.mergeErrors(validationResult)
+			}
+		}
+	}
+
 	result.incrementScore()
 }
 
@@ -681,9 +747,7 @@ func (v *subSchema) validatePatternProperty(currentSubSchema *subSchema, key str
 			subContext := NewJsonContext(key, context)
 			validationResult := pv.subValidateWithContext(value, subContext)
 			result.mergeErrors(validationResult)
-			if validationResult.Valid() {
-				validatedkey = true
-			}
+			validatedkey = true
 		}
 	}
 
@@ -778,73 +842,70 @@ func (v *subSchema) validateNumber(currentSubSchema *subSchema, value interface{
 	}
 
 	number := value.(json.Number)
-	float64Value, _ := new(big.Float).SetString(string(number))
+	float64Value, _ := new(big.Rat).SetString(string(number))
 
 	// multipleOf:
 	if currentSubSchema.multipleOf != nil {
-
-		if q := new(big.Float).Quo(float64Value, currentSubSchema.multipleOf); !q.IsInt() {
+		if q := new(big.Rat).Quo(float64Value, currentSubSchema.multipleOf); !q.IsInt() {
 			result.addInternalError(
 				new(MultipleOfError),
 				context,
 				resultErrorFormatJsonNumber(number),
-				ErrorDetails{"multiple": currentSubSchema.multipleOf},
+				ErrorDetails{"multiple": new(big.Float).SetRat(currentSubSchema.multipleOf)},
 			)
 		}
 	}
 
 	//maximum & exclusiveMaximum:
 	if currentSubSchema.maximum != nil {
-		if currentSubSchema.exclusiveMaximum {
-			if float64Value.Cmp(currentSubSchema.maximum) >= 0 {
-				result.addInternalError(
-					new(NumberLTError),
-					context,
-					resultErrorFormatJsonNumber(number),
-					ErrorDetails{
-						"max": currentSubSchema.maximum,
-					},
-				)
-			}
-		} else {
-			if float64Value.Cmp(currentSubSchema.maximum) == 1 {
-				result.addInternalError(
-					new(NumberLTEError),
-					context,
-					resultErrorFormatJsonNumber(number),
-					ErrorDetails{
-						"max": currentSubSchema.maximum,
-					},
-				)
-			}
+		if float64Value.Cmp(currentSubSchema.maximum) == 1 {
+			result.addInternalError(
+				new(NumberLTEError),
+				context,
+				resultErrorFormatJsonNumber(number),
+				ErrorDetails{
+					"max": currentSubSchema.maximum,
+				},
+			)
+		}
+	}
+	if currentSubSchema.exclusiveMaximum != nil {
+		if float64Value.Cmp(currentSubSchema.exclusiveMaximum) >= 0 {
+			result.addInternalError(
+				new(NumberLTError),
+				context,
+				resultErrorFormatJsonNumber(number),
+				ErrorDetails{
+					"max": currentSubSchema.exclusiveMaximum,
+				},
+			)
 		}
 	}
 
 	//minimum & exclusiveMinimum:
 	if currentSubSchema.minimum != nil {
-		if currentSubSchema.exclusiveMinimum {
-			if float64Value.Cmp(currentSubSchema.minimum) <= 0 {
-				// if float64Value <= *currentSubSchema.minimum {
-				result.addInternalError(
-					new(NumberGTError),
-					context,
-					resultErrorFormatJsonNumber(number),
-					ErrorDetails{
-						"min": currentSubSchema.minimum,
-					},
-				)
-			}
-		} else {
-			if float64Value.Cmp(currentSubSchema.minimum) == -1 {
-				result.addInternalError(
-					new(NumberGTEError),
-					context,
-					resultErrorFormatJsonNumber(number),
-					ErrorDetails{
-						"min": currentSubSchema.minimum,
-					},
-				)
-			}
+		if float64Value.Cmp(currentSubSchema.minimum) == -1 {
+			result.addInternalError(
+				new(NumberGTEError),
+				context,
+				resultErrorFormatJsonNumber(number),
+				ErrorDetails{
+					"min": currentSubSchema.minimum,
+				},
+			)
+		}
+	}
+	if currentSubSchema.exclusiveMinimum != nil {
+		if float64Value.Cmp(currentSubSchema.exclusiveMinimum) <= 0 {
+			// if float64Value <= *currentSubSchema.minimum {
+			result.addInternalError(
+				new(NumberGTError),
+				context,
+				resultErrorFormatJsonNumber(number),
+				ErrorDetails{
+					"min": currentSubSchema.exclusiveMinimum,
+				},
+			)
 		}
 	}
 

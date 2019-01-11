@@ -527,7 +527,7 @@ var hbaseClusterRoles = map[string]models.ClusterRole{
 
 var hbaseClusterNodes = map[string]models.ClusterNode{
 	"hbase-master1": {
-		NodeId:           "",
+		NodeId:           "hbase-master1",
 		ClusterId:        "",
 		Name:             "",
 		InstanceId:       "",
@@ -548,7 +548,7 @@ var hbaseClusterNodes = map[string]models.ClusterNode{
 		AutoBackup:       false,
 	},
 	"hbase-hdfs-master1": {
-		NodeId:           "",
+		NodeId:           "hbase-hdfs-master1",
 		ClusterId:        "",
 		Name:             "",
 		InstanceId:       "",
@@ -569,7 +569,7 @@ var hbaseClusterNodes = map[string]models.ClusterNode{
 		AutoBackup:       false,
 	},
 	"hbase-slave1": {
-		NodeId:           "",
+		NodeId:           "hbase-slave1",
 		ClusterId:        "",
 		Name:             "",
 		InstanceId:       "",
@@ -590,7 +590,7 @@ var hbaseClusterNodes = map[string]models.ClusterNode{
 		AutoBackup:       false,
 	},
 	"hbase-slave2": {
-		NodeId:           "",
+		NodeId:           "hbase-slave2",
 		ClusterId:        "",
 		Name:             "",
 		InstanceId:       "",
@@ -611,7 +611,7 @@ var hbaseClusterNodes = map[string]models.ClusterNode{
 		AutoBackup:       false,
 	},
 	"hbase-slave3": {
-		NodeId:           "",
+		NodeId:           "hbase-slave3",
 		ClusterId:        "",
 		Name:             "",
 		InstanceId:       "",
@@ -708,8 +708,8 @@ func TestParse(t *testing.T) {
 	for index := range clusterWrapper.ClusterNodesWithKeyPairs {
 		if hbaseClusterNodes[index] != *clusterWrapper.ClusterNodesWithKeyPairs[index].ClusterNode {
 			t.Errorf("ClusterConf node [%s] not equal.", index)
-			t.Logf("ori: %+v", hbaseClusterNodes[index].Role)
-			t.Logf("dst: %+v", *clusterWrapper.ClusterNodesWithKeyPairs[index])
+			t.Logf("ori: %+v", hbaseClusterNodes[index])
+			t.Logf("dst: %+v", clusterWrapper.ClusterNodesWithKeyPairs[index].ClusterNode)
 		}
 	}
 
