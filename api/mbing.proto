@@ -39,14 +39,14 @@ message Leasing {
 message ResourceVersion {
     google.protobuf.StringValue resource_version_id = 1;
     google.protobuf.StringValue price_id = 2;
+    google.protobuf.Timestamp action_time = 3;
 }
 
 message MeteringRequest {
     google.protobuf.StringValue resource_id = 1;
     google.protobuf.StringValue user_id = 2;
-    google.protobuf.Timestamp action_time = 3;
-    repeated ResourceVersion action_resource_list = 4;
-    repeated ResourceVersion closed_resource_list = 5; //include stop resource and delete resource
+    repeated ResourceVersion action_resource_list = 3;
+    repeated ResourceVersion closed_resource_list = 4; //include stop resource and delete resource
 }
 
 message MeteringResponse {
