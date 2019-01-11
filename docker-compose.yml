@@ -502,3 +502,35 @@ services:
     depends_on:
       - openpitrix-db
     container_name: "openpitrix-appvendor-db-ctrl"
+
+# metering and billing service
+openpitrix-mbing-manager:
+    build: .
+    image: "openpitrix"
+    command: "mbing-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-mbing-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-mbing-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_MYSQL_DATABASE=mbing
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+openpitrix-mbing-db-ctrl:
+    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    command: -url=jdbc:mysql://openpitrix-db/mbing -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+      - ./pkg/db/schema/mbing:/flyway/sql
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-mbing-db-ctrl"
