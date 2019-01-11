@@ -27,7 +27,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllDeveloperRoles).
 			Required("type", "name", "url", "credential", "visibility", "providers").
-			StringChosen("providers", plugins.GetAvailablePlugins(pi.Global().GlobalConfig().Cluster.Plugins)).
+			StringChosen("providers", plugins.GetAvailablePlugins()).
 			StringChosen("visibility", SupportedVisibility).
 			StringChosen("app_default_status", constants.AllowedAppDefaultStatus).
 			Exec()
@@ -35,7 +35,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllDeveloperRoles).
 			Required("repo_id").
-			StringChosen("providers", plugins.GetAvailablePlugins(pi.Global().GlobalConfig().Cluster.Plugins)).
+			StringChosen("providers", plugins.GetAvailablePlugins()).
 			StringChosen("visibility", SupportedVisibility).
 			StringChosen("app_default_status", constants.AllowedAppDefaultStatus).
 			Exec()

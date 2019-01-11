@@ -13,95 +13,95 @@ import (
 )
 
 type ProviderHandlerInterface interface {
-	RunInstances(task *models.Task) error
-	WaitRunInstances(task *models.Task) error
+	RunInstances(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitRunInstances(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	StopInstances(task *models.Task) error
-	WaitStopInstances(task *models.Task) error
+	StopInstances(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitStopInstances(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	StartInstances(task *models.Task) error
-	WaitStartInstances(task *models.Task) error
+	StartInstances(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitStartInstances(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	DeleteInstances(task *models.Task) error
-	WaitDeleteInstances(task *models.Task) error
+	DeleteInstances(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitDeleteInstances(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	CreateVolumes(task *models.Task) error
-	WaitCreateVolumes(task *models.Task) error
+	CreateVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitCreateVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	DetachVolumes(task *models.Task) error
-	WaitDetachVolumes(task *models.Task) error
+	DetachVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitDetachVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	AttachVolumes(task *models.Task) error
-	WaitAttachVolumes(task *models.Task) error
+	AttachVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitAttachVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	DeleteVolumes(task *models.Task) error
-	WaitDeleteVolumes(task *models.Task) error
+	DeleteVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitDeleteVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	ResizeInstances(task *models.Task) error
-	WaitResizeInstances(task *models.Task) error
+	ResizeInstances(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitResizeInstances(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	ResizeVolumes(task *models.Task) error
-	WaitResizeVolumes(task *models.Task) error
+	ResizeVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
+	WaitResizeVolumes(ctx context.Context, task *models.Task) (*models.Task, error)
 
-	WaitFrontgateAvailable(task *models.Task) error
+	WaitFrontgateAvailable(ctx context.Context, task *models.Task) (*models.Task, error)
 }
 
-func HandleSubtask(ctx context.Context, task *models.Task, handler ProviderHandlerInterface) error {
+func HandleSubtask(ctx context.Context, task *models.Task, handler ProviderHandlerInterface) (*models.Task, error) {
 	switch task.TaskAction {
 	case ActionRunInstances:
-		return handler.RunInstances(task)
+		return handler.RunInstances(ctx, task)
 	case ActionStopInstances:
-		return handler.StopInstances(task)
+		return handler.StopInstances(ctx, task)
 	case ActionStartInstances:
-		return handler.StartInstances(task)
+		return handler.StartInstances(ctx, task)
 	case ActionTerminateInstances:
-		return handler.DeleteInstances(task)
+		return handler.DeleteInstances(ctx, task)
 	case ActionResizeInstances:
-		return handler.ResizeInstances(task)
+		return handler.ResizeInstances(ctx, task)
 	case ActionCreateVolumes:
-		return handler.CreateVolumes(task)
+		return handler.CreateVolumes(ctx, task)
 	case ActionDetachVolumes:
-		return handler.DetachVolumes(task)
+		return handler.DetachVolumes(ctx, task)
 	case ActionAttachVolumes:
-		return handler.AttachVolumes(task)
+		return handler.AttachVolumes(ctx, task)
 	case ActionDeleteVolumes:
-		return handler.DeleteVolumes(task)
+		return handler.DeleteVolumes(ctx, task)
 	case ActionResizeVolumes:
-		return handler.ResizeVolumes(task)
+		return handler.ResizeVolumes(ctx, task)
 	case ActionWaitFrontgateAvailable:
-		return nil
+		return task, nil
 	default:
 		logger.Error(ctx, "Unknown task action [%s]", task.TaskAction)
-		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
+		return nil, fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }
 
-func WaitSubtask(ctx context.Context, task *models.Task, handler ProviderHandlerInterface) error {
+func WaitSubtask(ctx context.Context, task *models.Task, handler ProviderHandlerInterface) (*models.Task, error) {
 	switch task.TaskAction {
 	case ActionRunInstances:
-		return handler.WaitRunInstances(task)
+		return handler.WaitRunInstances(ctx, task)
 	case ActionStopInstances:
-		return handler.WaitStopInstances(task)
+		return handler.WaitStopInstances(ctx, task)
 	case ActionStartInstances:
-		return handler.WaitStartInstances(task)
+		return handler.WaitStartInstances(ctx, task)
 	case ActionTerminateInstances:
-		return handler.WaitDeleteInstances(task)
+		return handler.WaitDeleteInstances(ctx, task)
 	case ActionResizeInstances:
-		return handler.WaitResizeInstances(task)
+		return handler.WaitResizeInstances(ctx, task)
 	case ActionCreateVolumes:
-		return handler.WaitCreateVolumes(task)
+		return handler.WaitCreateVolumes(ctx, task)
 	case ActionDetachVolumes:
-		return handler.WaitDetachVolumes(task)
+		return handler.WaitDetachVolumes(ctx, task)
 	case ActionAttachVolumes:
-		return handler.WaitAttachVolumes(task)
+		return handler.WaitAttachVolumes(ctx, task)
 	case ActionDeleteVolumes:
-		return handler.WaitDeleteVolumes(task)
+		return handler.WaitDeleteVolumes(ctx, task)
 	case ActionResizeVolumes:
-		return handler.WaitResizeVolumes(task)
+		return handler.WaitResizeVolumes(ctx, task)
 	case ActionWaitFrontgateAvailable:
-		return handler.WaitFrontgateAvailable(task)
+		return handler.WaitFrontgateAvailable(ctx, task)
 	default:
 		logger.Error(ctx, "Unknown task action [%s]", task.TaskAction)
-		return fmt.Errorf("unknown task action [%s]", task.TaskAction)
+		return nil, fmt.Errorf("unknown task action [%s]", task.TaskAction)
 	}
 }

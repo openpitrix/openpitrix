@@ -7,7 +7,7 @@ package pi
 import (
 	"context"
 
-	"github.com/coreos/etcd/mvcc/mvccpb"
+	"go.etcd.io/etcd/mvcc/mvccpb"
 
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/etcd"
@@ -21,6 +21,17 @@ const (
 )
 
 type Watcher chan *config.GlobalConfig
+
+func PutGlobalConfig(ctx context.Context, etcd *etcd.Etcd, config string) error {
+	err := etcd.Dlock(ctx, DlockKey, func() error {
+		_, err := etcd.Put(ctx, GlobalConfigKey, config)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	return err
+}
 
 func WatchGlobalConfig(etcd *etcd.Etcd, watcher Watcher) error {
 	ctx := context.Background()

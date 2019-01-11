@@ -6,27 +6,12 @@ package plugins
 
 import (
 	"context"
-	"fmt"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/plugins/aliyun"
-	"openpitrix.io/openpitrix/pkg/plugins/aws"
-	"openpitrix.io/openpitrix/pkg/plugins/helm"
-	"openpitrix.io/openpitrix/pkg/plugins/qingcloud"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
+	"openpitrix.io/openpitrix/pkg/pi"
 )
-
-var SupportedProviders = make(map[string]interface{})
-
-func init() {
-	RegisterProvider(constants.ProviderKubernetes, helm.NewProvider())
-	RegisterProvider(constants.ProviderQingCloud, qingcloud.NewProvider())
-	RegisterProvider(constants.ProviderAWS, aws.NewProvider())
-	RegisterProvider(constants.ProviderAliyun, aliyun.NewProvider())
-}
 
 type ProviderInterface interface {
 	// cluster
@@ -44,45 +29,21 @@ type ProviderInterface interface {
 	DescribeRuntimeProviderZones(ctx context.Context, runtimeCredential *models.RuntimeCredential) ([]string, error)
 }
 
-func RegisterProvider(provider string, providerInterface ProviderInterface) {
-	SupportedProviders[provider] = providerInterface
-}
-
-func GetProviderPlugin(ctx context.Context, provider string) (ProviderInterface, error) {
-	providerInterface, isExist := SupportedProviders[provider]
-	if isExist {
-		value, ok := providerInterface.(ProviderInterface)
-		if !ok {
-			logger.Error(ctx, "No such provider interface [%s].", provider)
-			return nil, fmt.Errorf("no such provider [%s]", provider)
-		}
-		return value, nil
-	} else {
-		logger.Error(ctx, "No such provider [%s].", provider)
-		return nil, fmt.Errorf("no such provider [%s]", provider)
-	}
-}
-
-func GetAvailablePlugins(availablePlugins []string) []string {
+func GetAvailablePlugins() []string {
 	var plugins []string
-	for plugin := range SupportedProviders {
-		plugins = append(plugins, plugin)
+	for provider := range pi.Global().GlobalConfig().Runtime {
+		plugins = append(plugins, provider)
 	}
-	if len(availablePlugins) == 0 {
-		return plugins
-	} else {
-		var intersection []string
-		for _, plugin := range plugins {
-			if stringutil.StringIn(plugin, availablePlugins) {
-				intersection = append(intersection, plugin)
-			}
-		}
-		return intersection
-	}
+	return plugins
 }
 
 func IsVmbasedProviders(provider string) bool {
-	if provider != constants.ProviderKubernetes {
+	providerConfig, isExist := pi.Global().GlobalConfig().Runtime[provider]
+	if !isExist {
+		return false
+	}
+
+	if providerConfig.ProviderType == constants.ProviderTypeVmbased {
 		return true
 	}
 	return false

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
+	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -18,7 +19,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -527,18 +527,21 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	if err != nil {
 		return nil, err
 	}
-
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtimeCredential.Provider)
+	providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtimeCredential.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	zones, err := providerInterface.DescribeRuntimeProviderZones(ctx, runtimeCredential)
+
+	response, err := providerClient.DescribeZones(ctx, &pb.DescribeZonesRequest{
+		Provider:          pbutil.ToProtoString(runtimeCredential.Provider),
+		RuntimeCredential: models.RuntimeCredentialToPb(runtimeCredential),
+	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed)
 	}
 	return &pb.DescribeRuntimeProviderZonesResponse{
 		RuntimeCredentialId: req.GetRuntimeCredentialId(),
-		Zone:                zones,
+		Zone:                response.Zones,
 	}, nil
 }
 

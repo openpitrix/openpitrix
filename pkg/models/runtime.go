@@ -92,8 +92,8 @@ func PbToRuntime(pbRuntime *pb.Runtime) *Runtime {
 	runtime.Owner = ownerPath.Owner()
 	runtime.Status = pbRuntime.GetStatus().GetValue()
 	runtime.Debug = pbRuntime.GetDebug().GetValue()
-	runtime.CreateTime = pbutil.FromProtoTimestamp(pbRuntime.GetCreateTime())
-	runtime.StatusTime = pbutil.FromProtoTimestamp(pbRuntime.GetStatusTime())
+	runtime.CreateTime = pbutil.GetTime(pbRuntime.GetCreateTime())
+	runtime.StatusTime = pbutil.GetTime(pbRuntime.GetStatusTime())
 	return &runtime
 }
 

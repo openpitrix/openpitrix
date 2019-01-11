@@ -17,7 +17,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
@@ -163,7 +162,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 	return req
 }
 
-func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, providerInterface plugins.ProviderInterface,
+func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, providerClient pb.RuntimeProviderManagerClient,
 	clusterWrapper *models.ClusterWrapper) error {
 
 	// check pilot service
@@ -202,7 +201,7 @@ func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, p
 	}
 
 	// check subnet, vpc, eip
-	subnetResponse, err := providerInterface.DescribeSubnets(ctx, &pb.DescribeSubnetsRequest{
+	subnetResponse, err := providerClient.DescribeSubnets(ctx, &pb.DescribeSubnetsRequest{
 		RuntimeId: pbutil.ToProtoString(runtime.RuntimeId),
 		SubnetId:  []string{clusterWrapper.Cluster.SubnetId},
 		Zone:      []string{clusterWrapper.Cluster.Zone},
@@ -222,9 +221,15 @@ func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, p
 	clusterWrapper.Cluster.VpcId = vpcId
 
 	// check resource
-	err = providerInterface.CheckResource(ctx, clusterWrapper)
+	response, err := providerClient.CheckResource(ctx, &pb.CheckResourceRequest{
+		RuntimeId: pbutil.ToProtoString(runtime.RuntimeId),
+		Cluster:   models.ClusterWrapperToPb(clusterWrapper),
+	})
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceQuotaNotEnough, err.Error())
+	}
+	if !response.Ok.GetValue() {
+		return fmt.Errorf("response is not ok")
 	}
 
 	fg := &Frontgate{

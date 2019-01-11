@@ -183,7 +183,7 @@ func BuildUpdateAttributes(req Request, columns ...string) map[string]interface{
 			case *wrappers.UInt32Value:
 				attributes[column] = v.GetValue()
 			case *timestamp.Timestamp:
-				attributes[column] = pbutil.FromProtoTimestamp(v)
+				attributes[column] = pbutil.GetTime(v)
 			case string, bool, int32, uint32, time.Time:
 				attributes[column] = v
 

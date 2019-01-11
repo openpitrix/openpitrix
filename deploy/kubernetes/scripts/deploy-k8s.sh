@@ -45,6 +45,8 @@ MEMORY_LIMITS=500
 REQUESTS=""
 LIMITS=""
 
+PROVIDER_PLUGINS=""
+
 usage() {
   echo "Usage:"
   echo "  deploy-k8s.sh [-n NAMESPACE] [-v VERSION] COMMAND"
@@ -56,6 +58,7 @@ usage() {
   echo "        -j JOB REPLICA  : the job replica number."
   echo "        -t TASK REPLICA : the task replica number."
   echo "        -c HOST         : the hostname used in ingress."
+  echo "        -p PROVIDER     : the runtime provider plugin. such as: qingcloud,aws. such as: all"
   echo "        -b              : base model will be applied."
   echo "        -m              : metadata will be applied."
   echo "        -d              : dbctrl will be applied."
@@ -67,7 +70,7 @@ usage() {
 }
 
 
-while getopts :c:n:v:r:l:j:t:hbdmsuia option
+while getopts :c:n:v:r:l:j:t:p:hbdmsuia option
 do
   case "${option}"
   in
@@ -78,6 +81,7 @@ do
   l) LIMITS=${OPTARG};;
   j) JOB_REPLICA=${OPTARG};;
   t) TASK_REPLICA=${OPTARG};;
+  p) PROVIDER_PLUGINS=${OPTARG};;
   d) DBCTRL=1;;
   m) METADATA=1;;
   b) BASE=1;;
@@ -96,6 +100,7 @@ if [ "${METADATA}" == "0" ] && \
    [ "${DASHBOARD}" == "0" ] && \
    [ "${INGRESS}" == "0" ] && \
    [ "${STORAGE}" == "0" ] && \
+   [ "${PROVIDER_PLUGINS}" == "" ] && \
    [ "${ALL}" == "0" ]
 then
   usage
@@ -273,6 +278,22 @@ if [ "${DASHBOARD}" == "1" ] || [ "${ALL}" == "1" ];then
     apply_yaml ${VERSION} dashboard/${FILE}
   done
 fi
+if [ "${PROVIDER_PLUGINS}" != "" ] || [ "${ALL}" == "1" ];then
+  if [ "${PROVIDER_PLUGINS}" == "" ] || [ "${PROVIDER_PLUGINS}" == "all" ];then
+    for FILE in `ls ./kubernetes/openpitrix/plugin/`;do
+      apply_yaml ${VERSION} plugin/${FILE}
+    done
+  else
+    plugin=`echo ${PROVIDER_PLUGINS} | awk -F ',' '{ for(i=1;i<=NF;i++) {print $i}}'`
+    for item in `echo ${plugin}`;do
+      for FILE in `ls ./kubernetes/openpitrix/plugin/ | grep "\-${item}.yaml"`;do
+        echo $FILE
+    	apply_yaml ${VERSION} plugin/${FILE}
+  	  done
+    done
+  fi
+fi
+
 if [ "${INGRESS}" == "1" ] || [ "${ALL}" == "1" ];then
   kubectl get ns ingress-nginx
   if [ $? != 0 ];then

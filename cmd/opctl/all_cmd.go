@@ -724,7 +724,7 @@ func (c *CreateAppCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.IconPath, "icon", "", "", "filepath of icon. set the app icon")
 	f.StringVarP(&c.Name, "name", "", "", "")
 	f.StringVarP(&c.VersionName, "version_name", "", "", "create app version with specify name")
-	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version__package. create app version with specify package")
+	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version_package. create app version with specify package")
 	f.StringVarP(&c.VersionType, "version_type", "", "", "optional: vmbased/helm")
 }
 
@@ -1644,7 +1644,7 @@ func (*UploadAppAttachmentCmd) GetActionName() string {
 
 func (c *UploadAppAttachmentCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.AppID, "app_id", "", "", "")
-	f.StringVarP(&c.AttachmentContentPath, "attachment_content", "", "", "filepath of attachment__content. ")
+	f.StringVarP(&c.AttachmentContentPath, "attachment_content", "", "", "filepath of attachment_content. ")
 }
 
 func (c *UploadAppAttachmentCmd) Run(out Out) error {
@@ -1687,7 +1687,7 @@ func (*ValidatePackageCmd) GetActionName() string {
 }
 
 func (c *ValidatePackageCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version__package. ")
+	f.StringVarP(&c.VersionPackagePath, "version_package", "", "", "filepath of version_package. ")
 	f.StringVarP(&c.VersionType, "version_type", "", "", "optional: vmbased/helm")
 }
 

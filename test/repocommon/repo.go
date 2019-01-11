@@ -5,6 +5,7 @@
 package repocommon
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/models"
+	"openpitrix.io/openpitrix/test/testutil"
 )
 
 func DeleteRepo(t *testing.T, c *client.Openpitrix, testRepoName string) {
@@ -78,6 +80,11 @@ func CreateRepo(t *testing.T, c *client.Openpitrix, name, provider, url string) 
 			Visibility:  "public",
 		})
 	createResp, err := c.RepoManager.CreateRepo(createParams, nil)
+	if err != nil {
+		fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-repo-manager"))
+		fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
+		fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-qingcloud"))
+	}
 	require.NoError(t, err)
 
 	repoId := createResp.Payload.RepoID

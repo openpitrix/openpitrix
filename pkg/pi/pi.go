@@ -77,6 +77,13 @@ func (p *Pi) GlobalConfig() (globalCfg *config.GlobalConfig) {
 	return
 }
 
+func (p *Pi) SetGlobalCfg(globalCfg *config.GlobalConfig) {
+	ctx := context.Background()
+	globalConfig := config.EncodeGlobalConfig(*globalCfg)
+	PutGlobalConfig(ctx, p.Etcd(ctx), globalConfig)
+	p.setGlobalCfg(globalCfg)
+}
+
 func (p *Pi) setGlobalCfg(globalCfg *config.GlobalConfig) {
 	mutex.Lock()
 	p.globalCfg = globalCfg

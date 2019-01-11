@@ -37,6 +37,11 @@ message RetryTasksResponse {
 	repeated Task task_set = 1;
 }
 
+message TaskLayer {
+	repeated Task tasks = 1;
+	TaskLayer child = 2;
+}
+
 message Task {
 	google.protobuf.StringValue task_id = 1;
 	google.protobuf.StringValue job_id = 2;

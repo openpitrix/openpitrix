@@ -9006,36 +9006,35 @@
         }
       }
     },
-    "openpitrixCreateTaskResponse": {
+    "openpitrixCheckResourceResponse": {
       "type": "object",
       "properties": {
-        "task_id": {
-          "type": "string"
-        },
-        "job_id": {
-          "type": "string"
+        "ok": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
-    "openpitrixDescribeTasksResponse": {
+    "openpitrixDescribeClusterDetailsResponse": {
       "type": "object",
       "properties": {
-        "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "task_set": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixTask"
-          }
+        "cluster": {
+          "$ref": "#/definitions/openpitrixCluster"
         }
       }
     },
-    "openpitrixRetryTasksRequest": {
+    "openpitrixDescribeVpcResponse": {
       "type": "object",
       "properties": {
-        "task_id": {
+        "vpc": {
+          "$ref": "#/definitions/openpitrixVpc"
+        }
+      }
+    },
+    "openpitrixDescribeZonesResponse": {
+      "type": "object",
+      "properties": {
+        "zones": {
           "type": "array",
           "items": {
             "type": "string"
@@ -9043,14 +9042,41 @@
         }
       }
     },
-    "openpitrixRetryTasksResponse": {
+    "openpitrixEip": {
       "type": "object",
       "properties": {
-        "task_set": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixTask"
-          }
+        "eip_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "addr": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixHandleSubtaskResponse": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "$ref": "#/definitions/openpitrixTask"
+        }
+      }
+    },
+    "openpitrixParseClusterConfResponse": {
+      "type": "object",
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/openpitrixCluster"
+        }
+      }
+    },
+    "openpitrixSplitJobIntoTasksResponse": {
+      "type": "object",
+      "properties": {
+        "taskLayer": {
+          "$ref": "#/definitions/openpitrixTaskLayer"
         }
       }
     },
@@ -9099,6 +9125,118 @@
         "failure_allowed": {
           "type": "boolean",
           "format": "boolean"
+        }
+      }
+    },
+    "openpitrixTaskLayer": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixTask"
+          }
+        },
+        "child": {
+          "$ref": "#/definitions/openpitrixTaskLayer"
+        }
+      }
+    },
+    "openpitrixValidateRuntimeResponse": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "openpitrixVpc": {
+      "type": "object",
+      "properties": {
+        "vpc_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transition_status": {
+          "type": "string"
+        },
+        "subnets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "eip": {
+          "$ref": "#/definitions/openpitrixEip"
+        }
+      }
+    },
+    "openpitrixWaitSubtaskResponse": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "$ref": "#/definitions/openpitrixTask"
+        }
+      }
+    },
+    "openpitrixCreateTaskResponse": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDescribeTasksResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "task_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixTask"
+          }
+        }
+      }
+    },
+    "openpitrixRetryTasksRequest": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixRetryTasksResponse": {
+      "type": "object",
+      "properties": {
+        "task_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixTask"
+          }
         }
       }
     }
