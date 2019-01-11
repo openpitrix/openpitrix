@@ -1,0 +1,240 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix.iam.im;
+
+option go_package = "openpitrix.io/iam/pkg/pb/im;pbim";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+// ----------------------------------------------------------------------------
+// basic type
+// ----------------------------------------------------------------------------
+
+message User {
+	string uid = 1; // regexp: ^[a-z0-9_-]{2,32}$, primary key
+
+	string name = 2;
+	string email = 3;
+	string phone_number = 4;
+	string description = 5;
+	string password = 6; // only for create user
+	string status = 7;
+	map<string,string> extra = 8;
+
+	google.protobuf.Timestamp create_time = 9;  // read only
+	google.protobuf.Timestamp update_time = 10; // read only
+	google.protobuf.Timestamp status_time = 11; // read only
+}
+message UserList {
+	repeated User value = 1;
+}
+
+message Group {
+	string gid = 1;        // regexp: ^[a-z0-9_-]{2,255}$, primary key
+	string group_path = 2; // regexp: ^[a-z0-9_.-]{2,255}$, read only
+
+	string name = 3;
+	string description = 4;
+	string status = 5;
+	map<string,string> extra = 6;
+
+	google.protobuf.Timestamp create_time = 7; // read only
+	google.protobuf.Timestamp update_time = 8; // read only
+	google.protobuf.Timestamp status_time = 9; // read only
+}
+message GroupList {
+	repeated Group value = 1;
+}
+
+// ----------------------------------------------------------------------------
+// service api
+// ----------------------------------------------------------------------------
+
+service AccountManager {
+	rpc GetVersion(Empty) returns (String) {
+		option (google.api.http) = {
+			get: "/api/iam/im/version"
+		};
+	}
+
+	rpc CreateGroup(Group) returns (Group) {
+		option (google.api.http) = {
+			post: "/api/iam/im/groups"
+			body: "*"
+		};
+	}
+	rpc DeleteGroups(GroupIdList) returns (Empty) {
+		option (google.api.http) = {
+			delete: "/api/iam/im/groups"
+			body: "*"
+		};
+	}
+	rpc ModifyGroup(Group) returns (Group) {
+		option (google.api.http) = {
+			patch: "/api/iam/im/groups/{gid}"
+			body: "*"
+		};
+	}
+	rpc GetGroup(GroupId) returns (Group) {
+		option (google.api.http) = {
+			get: "/api/iam/im/groups/{gid}"
+		};
+	}
+	rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse) {
+		option (google.api.http) = {
+			get: "/api/iam/im/groups"
+		};
+	}
+
+	rpc CreateUser(User) returns (User) {
+		option (google.api.http) = {
+			post: "/api/iam/im/users"
+			body: "*"
+		};
+	}
+	rpc DeleteUsers(UserIdList) returns (Empty) {
+		option (google.api.http) = {
+			delete: "/api/iam/im/users"
+			body: "*"
+		};
+	}
+	rpc ModifyUser(User) returns (User) {
+		option (google.api.http) = {
+			patch: "/api/iam/im/users/{uid}"
+			body: "*"
+		};
+	}
+	rpc GetUser(UserId) returns (User) {
+		option (google.api.http) = {
+			get: "/api/iam/im/users/{uid}"
+		};
+	}
+	rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+		option (google.api.http) = {
+			get: "/api/iam/im/users"
+		};
+	}
+
+	rpc JoinGroup(JoinGroupRequest) returns (Empty) {
+		option (google.api.http) = {
+			post: "/api/iam/im/groups:join"
+			body: "*"
+		};
+	}
+	rpc LeaveGroup(LeaveGroupRequest) returns (Empty) {
+		option (google.api.http) = {
+			post: "/api/iam/im/groups:leave"
+			body: "*"
+		};
+	}
+	rpc GetGroupsByUserId(UserId) returns (GroupList) {
+		option (google.api.http) = {
+			get: "/api/iam/im/users/{uid}/groups"
+		};
+	}
+	rpc GetUsersByGroupId(GroupId) returns (UserList) {
+		option (google.api.http) = {
+			get: "/api/iam/im/groups/{gid}/users"
+		};
+	}
+
+	rpc ComparePassword(Password) returns (Bool) {
+		option (google.api.http) = {
+			post: "/api/iam/im/password:compare"
+			body: "*"
+		};
+	}
+	rpc ModifyPassword(Password) returns (Empty) {
+		option (google.api.http) = {
+			post: "/api/iam/im/password:modify"
+			body: "*"
+		};
+	}
+}
+
+// ----------------------------------------------------------------------------
+// service api type
+// ----------------------------------------------------------------------------
+
+message Empty {
+	//
+}
+message Bool {
+	bool value = 1;
+}
+message String {
+	string value = 1;
+}
+
+message UserId {
+	string uid = 1;
+}
+message UserIdList {
+	repeated string uid = 1;
+}
+
+message GroupId {
+	string gid = 1;
+}
+message GroupIdList {
+	repeated string gid = 1;
+}
+
+message Password {
+	string uid = 1;
+	string password = 2;
+}
+
+message ListUsersRequest {
+	string search_word = 1;
+	string sort_key = 2;
+	bool reverse = 3;
+	int32 offset = 4;
+	int32 limit = 5;
+
+	repeated string gid = 6;
+	repeated string uid = 7;
+	repeated string name = 8;
+	repeated string email = 9;
+	repeated string phone_number = 10;
+	repeated string status = 11;
+}
+message ListUsersResponse {
+	repeated User user = 1;
+	int32 total = 2;
+}
+
+message ListGroupsRequest {
+	string search_word = 1;
+	string sort_key = 2;
+	bool reverse = 3;
+	int32 offset = 4;
+	int32 limit = 5;
+
+	repeated string gid = 6;
+	repeated string uid = 7;
+	repeated string name = 8;
+	repeated string status = 9;
+}
+message ListGroupsResponse {
+	repeated Group group = 1;
+	int32 total = 2;
+}
+
+message JoinGroupRequest {
+	repeated string gid = 1;
+	repeated string uid = 2;
+}
+message LeaveGroupRequest {
+	repeated string gid = 1;
+	repeated string uid = 2;
+}
+
+// ----------------------------------------------------------------------------
+// END
+// ----------------------------------------------------------------------------
