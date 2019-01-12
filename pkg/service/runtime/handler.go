@@ -234,34 +234,37 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 		return nil, err
 	}
 
+	clusterClient, err := clusterclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+	}
 	for _, runtime := range runtimes {
 		if runtime.Status == constants.StatusDeleted {
 			logger.Error(ctx, "Runtime [%s] has been deleted", runtime.RuntimeId)
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAlreadyDeleted, runtime.RuntimeId)
 		}
-	}
 
-	// There can be no cluster in the runtimes
-	clusterClient, err := clusterclient.NewClient()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
-	}
-	clusters, err := clusterClient.DescribeClusters(ctx, &pb.DescribeClustersRequest{
-		RuntimeId: runtimeIds,
-		Status: []string{
-			constants.StatusActive,
-			constants.StatusStopped,
-			constants.StatusSuspended,
-			constants.StatusPending,
-		},
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
-	}
+		// There can be no cluster in the runtime
+		request := &pb.DescribeClustersRequest{
+			RuntimeId: []string{runtime.RuntimeId},
+			Status: []string{
+				constants.StatusActive,
+				constants.StatusStopped,
+				constants.StatusSuspended,
+				constants.StatusPending,
+			},
+		}
+		var response *pb.DescribeClustersResponse
+		if runtime.Debug {
+			response, err = clusterClient.DescribeDebugClusters(ctx, request)
+		} else {
+			response, err = clusterClient.DescribeClusters(ctx, request)
+		}
 
-	if clusters.TotalCount > 0 {
-		err = fmt.Errorf("there are still [%d] clusters in the runtime", clusters.TotalCount)
-		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourcesFailed)
+		if response.TotalCount > 0 {
+			err = fmt.Errorf("there are still [%d] clusters in the runtime [%s]", response.TotalCount, runtime.RuntimeId)
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourcesFailed)
+		}
 	}
 
 	// deleted runtimes

@@ -145,8 +145,12 @@ func (p *Processor) Post(ctx context.Context) error {
 		clusterWrapper := clusterWrappers[0]
 		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType {
 			frontgateId := clusterWrapper.Cluster.FrontgateId
-			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
-				[]string{constants.StatusActive, constants.StatusPending})
+			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(
+				ctx,
+				frontgateId,
+				[]string{constants.StatusActive, constants.StatusPending},
+				clusterWrapper.Cluster.Debug,
+			)
 			if err != nil {
 				return err
 			}
@@ -212,8 +216,12 @@ func (p *Processor) Post(ctx context.Context) error {
 
 		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType && pi.Global().GlobalConfig().Cluster.FrontgateAutoDelete {
 			frontgateId := clusterWrapper.Cluster.FrontgateId
-			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
-				[]string{constants.StatusStopped, constants.StatusActive, constants.StatusPending})
+			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(
+				ctx,
+				frontgateId,
+				[]string{constants.StatusStopped, constants.StatusActive, constants.StatusPending},
+				clusterWrapper.Cluster.Debug,
+			)
 			if err != nil {
 				return err
 			}

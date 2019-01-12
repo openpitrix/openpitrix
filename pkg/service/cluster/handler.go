@@ -1628,6 +1628,8 @@ func (p *Server) DescribeAppClusters(ctx context.Context, req *pb.DescribeAppClu
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableCluster))
+	// Only return debug=false clusters
+	query = query.Where(db.Eq("debug", false))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 
 	createdHour := int(req.GetCreatedDate().GetValue()) * 24
