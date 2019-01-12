@@ -12,7 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
@@ -42,17 +41,12 @@ func (f *FrameHandler) WaitFrontgateAvailable(ctx context.Context, task *models.
 	}
 
 	return task, funcutil.WaitForSpecificOrError(func() (bool, error) {
-		response, err := clusterClient.DescribeClusters(ctx, &pb.DescribeClustersRequest{
-			ClusterId: []string{frontgateId},
-		})
+		response, err := clusterClient.GetClusters(ctx, []string{frontgateId})
 		if err != nil {
 			//network or api error, not considered task fail.
 			return false, nil
 		}
-		if len(response.ClusterSet) == 0 {
-			return false, fmt.Errorf("Can not find frontgate [%s]. ", frontgateId)
-		}
-		frontgate := response.ClusterSet[0]
+		frontgate := response[0]
 		if frontgate.Status == nil {
 			logger.Error(ctx, "Frontgate [%s] status is nil", frontgateId)
 			return false, nil

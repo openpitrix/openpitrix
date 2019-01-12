@@ -54,9 +54,23 @@ func (c *Client) GetClusters(ctx context.Context, clusterIds []string) ([]*pb.Cl
 		logger.Error(ctx, "Describe clusters %s failed: %+v", clusterIds, err)
 		return nil, err
 	}
-	if len(response.ClusterSet) != len(clusterIds) {
-		logger.Error(ctx, "Describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
-		return nil, fmt.Errorf("describe clusters %s with return count [%d]", clusterIds, len(response.ClusterSet))
+	if int(response.TotalCount) != len(clusterIds) {
+		debugResponse, err := c.DescribeDebugClusters(ctx, &pb.DescribeClustersRequest{
+			ClusterId: clusterIds,
+		})
+		if err != nil {
+			logger.Error(ctx, "Describe debug clusters %s failed: %+v", clusterIds, err)
+			return nil, err
+		}
+
+		totalCount := response.TotalCount + debugResponse.TotalCount
+
+		if int(totalCount) != len(clusterIds) {
+			logger.Error(ctx, "Describe clusters %s with return count [%d]", clusterIds, totalCount)
+			return nil, fmt.Errorf("describe clusters %s with return count [%d]", clusterIds, totalCount)
+		}
+
+		response.ClusterSet = append(response.ClusterSet, debugResponse.ClusterSet...)
 	}
 	return response.ClusterSet, nil
 }
@@ -115,8 +129,10 @@ func (c *Client) ModifyClusterNodeStatus(ctx context.Context, nodeId string, sta
 	return err
 }
 
-func (c *Client) DescribeClustersWithFrontgateId(ctx context.Context, frontgateId string, status []string) ([]*pb.Cluster, error) {
+func (c *Client) DescribeClustersWithFrontgateId(ctx context.Context, frontgateId string, status []string, debug bool) ([]*pb.Cluster, error) {
 	var request *pb.DescribeClustersRequest
+	var response *pb.DescribeClustersResponse
+	var err error
 	if status == nil {
 		request = &pb.DescribeClustersRequest{
 			FrontgateId: []string{frontgateId},
@@ -127,11 +143,20 @@ func (c *Client) DescribeClustersWithFrontgateId(ctx context.Context, frontgateI
 			Status:      status,
 		}
 	}
-	response, err := c.DescribeClusters(ctx, request)
-	if err != nil {
-		logger.Error(ctx, "Describe clusters with frontgate [%s] failed: %+v", frontgateId, err)
-		return nil, err
+	if debug {
+		response, err = c.DescribeDebugClusters(ctx, request)
+		if err != nil {
+			logger.Error(ctx, "Describe debug clusters with frontgate [%s] failed: %+v", frontgateId, err)
+			return nil, err
+		}
+	} else {
+		response, err = c.DescribeClusters(ctx, request)
+		if err != nil {
+			logger.Error(ctx, "Describe clusters with frontgate [%s] failed: %+v", frontgateId, err)
+			return nil, err
+		}
 	}
+
 	return response.ClusterSet, nil
 }
 

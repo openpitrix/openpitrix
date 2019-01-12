@@ -74,6 +74,7 @@ func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.Cl
 
 	frontgateWrapper = models.PbToClusterWrapper(response.Cluster)
 	frontgateWrapper.Cluster.Zone = clusterWrapper.Cluster.Zone
+	frontgateWrapper.Cluster.Debug = clusterWrapper.Cluster.Debug
 	frontgateWrapper.Cluster.ClusterId = clusterId
 	frontgateWrapper.Cluster.SubnetId = clusterWrapper.Cluster.SubnetId
 	frontgateWrapper.Cluster.VpcId = clusterWrapper.Cluster.VpcId
