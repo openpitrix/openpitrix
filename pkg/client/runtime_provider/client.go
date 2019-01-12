@@ -5,9 +5,13 @@
 package runtime_provider
 
 import (
+	"context"
+	"fmt"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 func NewRuntimeProviderManagerClient() (pb.RuntimeProviderManagerClient, error) {
@@ -24,4 +28,23 @@ func NewRuntimeProviderClient(host string, port int) (pb.RuntimeProviderManagerC
 		return nil, err
 	}
 	return pb.NewRuntimeProviderManagerClient(conn), err
+}
+
+func RegisterRuntimeProvider(provider, config string) error {
+	providerClient, err := NewRuntimeProviderManagerClient()
+	if err != nil {
+		return err
+	}
+	response, err := providerClient.RegisterRuntimeProvider(
+		context.Background(),
+		&pb.RegisterRuntimeProviderRequest{
+			Provider: pbutil.ToProtoString(provider),
+			Config:   pbutil.ToProtoString(config),
+		})
+	if err != nil {
+		return err
+	} else if !response.Ok.GetValue() {
+		return fmt.Errorf("response is not ok")
+	}
+	return nil
 }

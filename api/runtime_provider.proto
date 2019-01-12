@@ -17,6 +17,15 @@ import "runtime.proto";
 import "job.proto";
 import "task.proto";
 
+message RegisterRuntimeProviderRequest {
+	google.protobuf.StringValue provider = 1;
+	google.protobuf.StringValue config = 2;
+}
+
+message RegisterRuntimeProviderResponse {
+	google.protobuf.BoolValue ok = 1;
+}
+
 message ParseClusterConfRequest {
 	google.protobuf.StringValue runtime_id = 1;
 	google.protobuf.StringValue version_id = 2;
@@ -120,6 +129,7 @@ message DescribeZonesResponse {
 }
 
 service RuntimeProviderManager {
+	rpc RegisterRuntimeProvider (RegisterRuntimeProviderRequest) returns (RegisterRuntimeProviderResponse);
 	// cluster
 	rpc ParseClusterConf (ParseClusterConfRequest) returns (ParseClusterConfResponse);
 	rpc SplitJobIntoTasks (SplitJobIntoTasksRequest) returns (SplitJobIntoTasksResponse);

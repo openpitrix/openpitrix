@@ -10,8 +10,11 @@ import (
 
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 func getProviderClientFromProvider(ctx context.Context, provider string) (pb.RuntimeProviderManagerClient, error) {
@@ -33,6 +36,30 @@ func getProviderClient(ctx context.Context, runtimeId string) (pb.RuntimeProvide
 
 	provider := runtime.Runtime.Provider
 	return getProviderClientFromProvider(ctx, provider)
+}
+
+func registerRuntimeProvider(ctx context.Context, provider, config string) error {
+	err := pi.Global().RegisterRuntimeProvider(provider, config)
+	if err != nil {
+		return err
+	}
+
+	logger.Debug(ctx, "Available plugins: %+v", plugins.GetAvailablePlugins())
+	return nil
+}
+
+func (p *Server) RegisterRuntimeProvider(ctx context.Context, req *pb.RegisterRuntimeProviderRequest) (*pb.RegisterRuntimeProviderResponse, error) {
+	err := registerRuntimeProvider(ctx, req.GetProvider().GetValue(), req.GetConfig().GetValue())
+
+	if err != nil {
+		return &pb.RegisterRuntimeProviderResponse{
+			Ok: pbutil.ToProtoBool(false),
+		}, err
+	} else {
+		return &pb.RegisterRuntimeProviderResponse{
+			Ok: pbutil.ToProtoBool(true),
+		}, nil
+	}
 }
 
 func (p *Server) ParseClusterConf(ctx context.Context, req *pb.ParseClusterConfRequest) (*pb.ParseClusterConfResponse, error) {
