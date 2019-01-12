@@ -60,17 +60,16 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 	}
 	// if grant_type is password, switch user
 	if req.GrantType == constants.GrantTypePassword {
-		user, err = getUser(ctx, map[string]interface{}{constants.ColumnEmail: req.Username})
+		var b bool
+		user, b, err = validateUserPassword(ctx, req.Username, req.Password)
 		if err != nil {
-			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorEmailPasswordNotMatched)
+			return nil, err
 		}
-		if user.Status != constants.StatusActive {
-			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
-		}
-		if !validateUserPassword(user, req.Password) {
+		if !b {
 			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorEmailPasswordNotMatched)
 		}
 	}
+	userId := user.Uid
 	var token *models.Token
 	if req.GrantType == constants.GrantTypeRefreshToken {
 		token, err = getTokenByRefreshToken(ctx, req.RefreshToken)
@@ -82,14 +81,14 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 		}
 	} else {
 		// reuse exist token
-		token, err = getLastToken(ctx, userClient.ClientId, user.UserId, req.Scope)
+		token, err = getLastToken(ctx, userClient.ClientId, userId, req.Scope)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 		// token not exists or expired
 		if token == nil || token.CreateTime.Add(p.RefreshTokenExpireTime).Unix() <= time.Now().Unix() {
 			// generate access token
-			token, err = newToken(ctx, userClient.ClientId, req.Scope, user)
+			token, err = newToken(ctx, userClient.ClientId, req.Scope, userId)
 			if err != nil {
 				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 			}
@@ -97,13 +96,13 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 	}
 
 	accessToken, err := jwtutil.Generate(
-		p.IAMConfig.SecretKey, p.IAMConfig.ExpireTime, user.UserId, user.Role,
+		p.IAMConfig.SecretKey, p.IAMConfig.ExpireTime, userId, user.Extra["role"],
 	)
 	if err != nil {
 		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}
 	idToken, err := jwtutil.Generate(
-		"", p.IAMConfig.ExpireTime, user.UserId, user.Role,
+		"", p.IAMConfig.ExpireTime, userId, user.Extra["role"],
 	)
 	if err != nil {
 		return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
