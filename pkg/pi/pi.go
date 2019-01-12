@@ -77,7 +77,7 @@ func (p *Pi) GlobalConfig() (globalCfg *config.GlobalConfig) {
 	return
 }
 
-func (p *Pi) AppendRuntimeProvider(provider, providerConfig string) error {
+func (p *Pi) RegisterRuntimeProvider(provider, providerConfig string) error {
 	ctx := context.Background()
 	etcdClient := p.Etcd(ctx)
 	err := etcdClient.Dlock(ctx, DlockKey, func() error {

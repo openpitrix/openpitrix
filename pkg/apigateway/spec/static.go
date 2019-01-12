@@ -9081,6 +9081,15 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixRegisterRuntimeProviderResponse": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
     "openpitrixSplitJobIntoTasksResponse": {
       "type": "object",
       "properties": {
