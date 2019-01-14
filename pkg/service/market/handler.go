@@ -70,7 +70,7 @@ func (p *Server) DescribeMarkets(ctx context.Context, req *pb.DescribeMarketsReq
 		From(constants.TableMarket).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableMarket))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 
@@ -248,21 +248,14 @@ func (p *Server) UserLeaveMarket(ctx context.Context, req *pb.UserLeaveMarketReq
 
 func (p *Server) DescribeMarketUsers(ctx context.Context, req *pb.DescribeMarketUsersRequest) (*pb.DescribeMarketUsersResponse, error) {
 	var marketUsers []*models.MarketUser
-	s := ctxutil.GetSender(ctx)
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
-
-	if len(req.GetOwner()) > 0 {
-		req.Owner = []string{s.UserId}
-	} else {
-		req.UserId = []string{s.UserId}
-	}
 
 	query := pi.Global().DB(ctx).Select(models.MarketUserColumns...).
 		From(constants.TableMarketUser).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableMarketUser))
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)

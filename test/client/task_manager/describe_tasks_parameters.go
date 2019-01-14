@@ -79,8 +79,8 @@ type DescribeTasksParams struct {
 
 	*/
 	Offset *int64
-	/*Owner*/
-	Owner []string
+	/*OwnerPath*/
+	OwnerPath []string
 	/*Reverse*/
 	Reverse *bool
 	/*SearchWord*/
@@ -187,15 +187,15 @@ func (o *DescribeTasksParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwner adds the owner to the describe tasks params
-func (o *DescribeTasksParams) WithOwner(owner []string) *DescribeTasksParams {
-	o.SetOwner(owner)
+// WithOwnerPath adds the ownerPath to the describe tasks params
+func (o *DescribeTasksParams) WithOwnerPath(ownerPath []string) *DescribeTasksParams {
+	o.SetOwnerPath(ownerPath)
 	return o
 }
 
-// SetOwner adds the owner to the describe tasks params
-func (o *DescribeTasksParams) SetOwner(owner []string) {
-	o.Owner = owner
+// SetOwnerPath adds the ownerPath to the describe tasks params
+func (o *DescribeTasksParams) SetOwnerPath(ownerPath []string) {
+	o.OwnerPath = ownerPath
 }
 
 // WithReverse adds the reverse to the describe tasks params
@@ -336,11 +336,11 @@ func (o *DescribeTasksParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 	}
 
-	valuesOwner := o.Owner
+	valuesOwnerPath := o.OwnerPath
 
-	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
-	// query array param owner
-	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
+	// query array param owner_path
+	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
 		return err
 	}
 

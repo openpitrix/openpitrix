@@ -316,7 +316,7 @@ func (p *Server) DescribeKeyPairs(ctx context.Context, req *pb.DescribeKeyPairsR
 		From(constants.TableKeyPair).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableKeyPair))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 
@@ -1485,7 +1485,7 @@ func (p *Server) describeClusters(ctx context.Context, req *pb.DescribeClustersR
 		From(constants.TableCluster).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableCluster))
 	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
@@ -1709,7 +1709,7 @@ func (p *Server) DescribeClusterNodes(ctx context.Context, req *pb.DescribeClust
 		From(constants.TableClusterNode).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableClusterNode))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	if len(displayColumns) > 0 {

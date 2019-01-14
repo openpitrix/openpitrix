@@ -37,6 +37,10 @@ type RequestWithReverse interface {
 	RequestWithSortKey
 	GetReverse() *wrappers.BoolValue
 }
+type RequestWithOwnerPath interface {
+	Request
+	GetOwnerPath() []string
+}
 
 const (
 	TagName              = "json"

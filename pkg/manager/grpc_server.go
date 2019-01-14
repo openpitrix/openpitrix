@@ -159,6 +159,11 @@ func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 		ctx = ctxutil.SetRequestId(ctx, requestId)
 		ctx = ctxutil.ContextWithSender(ctx, s)
 
+		err = CheckOwnerPathPermission(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+
 		method := strings.Split(info.FullMethod, "/")
 		action := method[len(method)-1]
 		if p, ok := req.(proto.Message); ok {

@@ -72,7 +72,7 @@ message DescribeRuntimesRequest {
 	repeated string runtime_id = 11;
 	repeated string status = 12;
 	repeated string provider = 13;
-	repeated string owner = 14;
+	repeated string owner_path = 14;
 }
 
 message DescribeRuntimesResponse {
@@ -139,7 +139,7 @@ message DescribeRuntimeCredentialsRequest {
 	repeated string runtime_credential_id = 11;
 	repeated string status = 12;
 	repeated string provider = 13;
-	repeated string owner = 14;
+	repeated string owner_path = 14;
 }
 
 message DescribeRuntimeCredentialsResponse {

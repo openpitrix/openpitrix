@@ -98,7 +98,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -252,7 +252,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -952,7 +952,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1156,7 +1156,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1710,7 +1710,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1915,7 +1915,7 @@
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2056,7 +2056,7 @@
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2295,7 +2295,7 @@
             "type": "string"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2519,7 +2519,7 @@
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2941,7 +2941,7 @@
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3659,7 +3659,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3743,7 +3743,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3847,7 +3847,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4132,7 +4132,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4333,7 +4333,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4474,7 +4474,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4603,7 +4603,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4732,7 +4732,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4911,7 +4911,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5171,7 +5171,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",

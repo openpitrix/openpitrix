@@ -34,7 +34,6 @@ func Serve(cfg *config.Config) {
 
 	manager.NewGrpcServer("task-controller", constants.TaskManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
-		WithBuilder(s.Builder).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterTaskManagerServer(server, &s)
 		})

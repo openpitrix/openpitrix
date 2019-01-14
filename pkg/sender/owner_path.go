@@ -20,6 +20,15 @@ func (o OwnerPath) match(accessPath OwnerPath) bool {
 	return strings.HasPrefix(string(o), string(accessPath))
 }
 
+func (o OwnerPath) CheckOwnerPathPermission(ownerPaths ...string) bool {
+	for _, ownerPath := range ownerPaths {
+		if !OwnerPath(ownerPath).match(o) {
+			return false
+		}
+	}
+	return true
+}
+
 func (o OwnerPath) CheckPermission(s *Sender) bool {
 	return o.match(s.GetAccessPath())
 }

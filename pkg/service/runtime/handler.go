@@ -117,7 +117,7 @@ func (p *Server) describeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
 	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
@@ -150,7 +150,7 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&runtimes)
@@ -363,7 +363,7 @@ func (p *Server) describeRuntimeCredentials(ctx context.Context, req *pb.Describ
 		From(constants.TableRuntimeCredential).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntimeCredential))
 	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)

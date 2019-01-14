@@ -117,20 +117,12 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 	sender := ctxutil.GetSender(ctx)
 	switch r := req.(type) {
 	case *pb.DescribeAppsRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else if sender.IsDeveloper() {
-			r.Owner = []string{sender.UserId}
-		} else {
+		if !sender.IsGlobalAdmin() && !sender.IsDeveloper() {
 			r.Status = []string{constants.StatusActive}
 		}
 		return r
 	case *pb.DescribeAppVersionsRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else if sender.IsDeveloper() {
-			r.Owner = []string{sender.UserId}
-		} else {
+		if !sender.IsGlobalAdmin() && !sender.IsDeveloper() {
 			r.Status = []string{constants.StatusActive}
 		}
 		return r

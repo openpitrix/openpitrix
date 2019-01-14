@@ -63,7 +63,6 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 			if len(r.RepoId) == 0 {
 				r.AppDefaultStatus = []string{}
 				r.UserId = sender.UserId
-				r.Owner = []string{}
 			}
 		}
 		return r

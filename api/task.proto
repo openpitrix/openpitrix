@@ -72,7 +72,7 @@ message DescribeTasksRequest {
 	google.protobuf.StringValue executor = 13;
 	google.protobuf.StringValue target = 14;
 	repeated string status = 15;
-	repeated string owner = 16;
+	repeated string owner_path = 16;
 }
 message DescribeTasksResponse {
 	uint32 total_count = 1;
