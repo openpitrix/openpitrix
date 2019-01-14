@@ -91,8 +91,11 @@ func (p *Server) describeApps(ctx context.Context, req *pb.DescribeAppsRequest, 
 		Offset(offset).
 		Limit(limit).
 		Where(manager.BuildFilterConditions(req, constants.TableApp)).
-		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(db.Eq(constants.ColumnActive, active))
+
+	if !active {
+		query = query.Where(manager.BuildOwnerPathFilter(ctx))
+	}
 
 	if len(categoryIds) > 0 {
 		subqueryStmt := pi.Global().DB(ctx).
@@ -555,9 +558,12 @@ func (p *Server) describeAppVersions(ctx context.Context, req *pb.DescribeAppVer
 		From(constants.TableAppVersion).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
 		Where(manager.BuildFilterConditions(req, constants.TableAppVersion)).
 		Where(db.Eq(constants.ColumnActive, active))
+
+	if !active {
+		query = query.Where(manager.BuildOwnerPathFilter(ctx))
+	}
 
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnSequence)
 	if len(displayColumns) > 0 {
