@@ -12,6 +12,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/util/retryutil"
 )
 
 func NewRuntimeProviderManagerClient() (pb.RuntimeProviderManagerClient, error) {
@@ -31,20 +32,24 @@ func NewRuntimeProviderClient(host string, port int) (pb.RuntimeProviderManagerC
 }
 
 func RegisterRuntimeProvider(provider, config string) error {
-	providerClient, err := NewRuntimeProviderManagerClient()
-	if err != nil {
-		return err
-	}
-	response, err := providerClient.RegisterRuntimeProvider(
-		context.Background(),
-		&pb.RegisterRuntimeProviderRequest{
-			Provider: pbutil.ToProtoString(provider),
-			Config:   pbutil.ToProtoString(config),
-		})
-	if err != nil {
-		return err
-	} else if !response.Ok.GetValue() {
-		return fmt.Errorf("response is not ok")
-	}
-	return nil
+	// wait 5 min at most
+	err := retryutil.Retry(60, 5, func() error {
+		providerClient, err := NewRuntimeProviderManagerClient()
+		if err != nil {
+			return err
+		}
+		response, err := providerClient.RegisterRuntimeProvider(
+			context.Background(),
+			&pb.RegisterRuntimeProviderRequest{
+				Provider: pbutil.ToProtoString(provider),
+				Config:   pbutil.ToProtoString(config),
+			})
+		if err != nil {
+			return err
+		} else if !response.Ok.GetValue() {
+			return fmt.Errorf("response is not ok")
+		}
+		return nil
+	})
+	return err
 }
