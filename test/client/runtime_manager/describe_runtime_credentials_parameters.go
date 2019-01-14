@@ -75,8 +75,8 @@ type DescribeRuntimeCredentialsParams struct {
 
 	*/
 	Offset *int64
-	/*Owner*/
-	Owner []string
+	/*OwnerPath*/
+	OwnerPath []string
 	/*Provider*/
 	Provider []string
 	/*Reverse*/
@@ -161,15 +161,15 @@ func (o *DescribeRuntimeCredentialsParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwner adds the owner to the describe runtime credentials params
-func (o *DescribeRuntimeCredentialsParams) WithOwner(owner []string) *DescribeRuntimeCredentialsParams {
-	o.SetOwner(owner)
+// WithOwnerPath adds the ownerPath to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) WithOwnerPath(ownerPath []string) *DescribeRuntimeCredentialsParams {
+	o.SetOwnerPath(ownerPath)
 	return o
 }
 
-// SetOwner adds the owner to the describe runtime credentials params
-func (o *DescribeRuntimeCredentialsParams) SetOwner(owner []string) {
-	o.Owner = owner
+// SetOwnerPath adds the ownerPath to the describe runtime credentials params
+func (o *DescribeRuntimeCredentialsParams) SetOwnerPath(ownerPath []string) {
+	o.OwnerPath = ownerPath
 }
 
 // WithProvider adds the provider to the describe runtime credentials params
@@ -286,11 +286,11 @@ func (o *DescribeRuntimeCredentialsParams) WriteToRequest(r runtime.ClientReques
 
 	}
 
-	valuesOwner := o.Owner
+	valuesOwnerPath := o.OwnerPath
 
-	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
-	// query array param owner
-	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
+	// query array param owner_path
+	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
 		return err
 	}
 

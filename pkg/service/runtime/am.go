@@ -11,7 +11,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
-	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func (p *Server) Checker(ctx context.Context, req interface{}) error {
@@ -52,25 +51,4 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	}
 	return nil
-}
-
-func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
-	sender := ctxutil.GetSender(ctx)
-	switch r := req.(type) {
-	case *pb.DescribeRuntimesRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else {
-			r.Owner = []string{sender.UserId}
-		}
-		return r
-	case *pb.DescribeRuntimeCredentialsRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else {
-			r.Owner = []string{sender.UserId}
-		}
-		return r
-	}
-	return req
 }

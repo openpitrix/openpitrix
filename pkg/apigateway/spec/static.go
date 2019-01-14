@@ -107,7 +107,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -261,7 +261,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -961,7 +961,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1165,7 +1165,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1719,7 +1719,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1924,7 +1924,7 @@ var Files = map[string]string{
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2065,7 +2065,7 @@ var Files = map[string]string{
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2304,7 +2304,7 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2528,7 +2528,7 @@ var Files = map[string]string{
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2950,7 +2950,7 @@ var Files = map[string]string{
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3668,7 +3668,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3752,7 +3752,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3856,7 +3856,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4141,7 +4141,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4342,7 +4342,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4483,7 +4483,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4612,7 +4612,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4741,7 +4741,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4920,7 +4920,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5180,7 +5180,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
