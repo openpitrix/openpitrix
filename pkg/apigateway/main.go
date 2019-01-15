@@ -25,7 +25,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	pbiam "openpitrix.io/iam/pkg/pb"
 	staticSpec "openpitrix.io/openpitrix/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/apigateway/swagger-ui"
 	"openpitrix.io/openpitrix/pkg/config"
@@ -63,7 +62,6 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
 	logger.Info(nil, "Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
 	logger.Info(nil, "IAM service http://%s:%d", constants.IAMServiceHost, constants.IAMServicePort)
-	logger.Info(nil, "IAM2 service http://%s:%d", constants.IAM2ServiceHost, constants.IAM2ServicePort)
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
 	logger.Info(nil, "Attachment service http://%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort)
@@ -194,7 +192,6 @@ func (s *Server) run() error {
 	r.Use(recovery())
 	r.Any("/swagger-ui/*filepath", gin.WrapH(handleSwagger()))
 	r.Any("/v1/*filepath", mainHandler)
-	r.Any("/v1.1/*filepath", mainHandler)
 	r.Any("/api/*filepath", mainHandler)
 	r.Any("/attachments/*filepath", gin.WrapH(ServeAttachments("/attachments/")))
 
@@ -252,9 +249,6 @@ func (s *Server) mainHandler() http.Handler {
 	}, {
 		pb.RegisterAppVendorManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.VendorManagerHost, constants.VendorManagerPort),
-	}, {
-		pbiam.RegisterIAMManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.IAM2ServiceHost, constants.IAM2ServicePort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {

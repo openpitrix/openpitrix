@@ -8,12 +8,9 @@ import (
 	"context"
 	"os"
 
-	"golang.org/x/crypto/bcrypt"
-
+	"openpitrix.io/iam/pkg/pb/im"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
 )
 
@@ -47,54 +44,33 @@ func initIAMAccount() {
 		return
 	}
 	ctx := context.Background()
-	user, err := getUser(ctx, map[string]interface{}{
-		constants.ColumnEmail: email,
-	})
+	user, b, err := validateUserPassword(ctx, email, password)
 	if err != nil {
-		if err == db.ErrNotFound {
-			// create new user
-			hashedPass, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-			if err != nil {
-				panic(err)
-			}
-
-			var newUser = models.NewUser(
-				getUsernameFromEmail(email),
-				string(hashedPass),
-				email,
-				constants.RoleGlobalAdmin,
-				"",
-			)
-
-			_, err = pi.Global().DB(ctx).
-				InsertInto(constants.TableUser).
-				Record(newUser).
-				Exec()
-			if err != nil {
-				panic(err)
-			}
-			logger.Info(nil, "Init IAM admin account [%s] done", email)
-		} else {
-			panic(err)
+		logger.Info(ctx, "Validate user password failed, create new user")
+		// create user
+		_, err = client.CreateUser(ctx, &pbim.User{
+			Email:    email,
+			Name:     getUsernameFromEmail(email),
+			Password: password,
+			Status:   constants.StatusActive,
+			Extra:    map[string]string{"role": constants.RoleGlobalAdmin},
+		})
+		if err != nil {
+			logger.Info(ctx, "Create new user failed, error: %+v", err)
 		}
 		return
 	}
-	// check password and update
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	if err == nil {
-		logger.Info(nil, "Init IAM admin account [%s] done, no need update [%s] password",
-			email, user.UserId)
+	if b {
+		// password matched
 		return
 	}
-	// password not matched, update it
-	hashedPass, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	_, err = pi.Global().DB(ctx).
-		Update(constants.TableUser).Set(constants.ColumnPassword, string(hashedPass)).
-		Where(db.Eq(constants.ColumnUserId, user.UserId)).
-		Exec()
+	userId := user.Uid
+	_, err = client.ModifyPassword(ctx, &pbim.Password{
+		Uid:      userId,
+		Password: password,
+	})
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(nil, "Init IAM admin account [%s] done, update [%s] password",
-		email, user.UserId)
+	logger.Info(ctx, "Init IAM admin account [%s] done, update [%s] password", email, userId)
 }

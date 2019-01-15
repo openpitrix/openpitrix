@@ -7,8 +7,7 @@ package iam
 import (
 	"context"
 
-	"golang.org/x/crypto/bcrypt"
-
+	"openpitrix.io/iam/pkg/pb/im"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -32,32 +31,12 @@ func getClient(ctx context.Context, clientId, clientSecret string) (*models.User
 	return &userClient, nil
 }
 
-func getUser(ctx context.Context, whereCond map[string]interface{}) (*models.User, error) {
-	var user = models.User{}
-	stmt := pi.Global().DB(ctx).
-		Select(models.UserColumns...).
-		From(constants.TableUser)
-	for k, v := range whereCond {
-		stmt = stmt.Where(db.Eq(k, v))
-	}
-	err := stmt.LoadOne(&user)
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
-}
-
-func validateUserPassword(user *models.User, password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	return err == nil
-}
-
 type clientIface interface {
 	GetClientId() string
 	GetClientSecret() string
 }
 
-func validateClientCredentials(ctx context.Context, client clientIface) (*models.User, *models.UserClient, error) {
+func validateClientCredentials(ctx context.Context, client clientIface) (*pbim.User, *models.UserClient, error) {
 	userClient, err := getClient(ctx, client.GetClientId(), client.GetClientSecret())
 	if err != nil {
 		return nil, nil, err
@@ -69,14 +48,14 @@ func validateClientCredentials(ctx context.Context, client clientIface) (*models
 	userId := userClient.UserId
 
 	if stringutil.StringIn(userId, constants.InternalUsers) {
-		return &models.User{
-			UserId: userId,
-			Role:   constants.RoleGlobalAdmin,
+		return &pbim.User{
+			Uid:   userId,
+			Extra: map[string]string{"role": constants.RoleGlobalAdmin},
 		}, userClient, nil
 	}
 
 	// check the credential's user
-	user, err := getUser(ctx, map[string]interface{}{constants.ColumnUserId: userId})
+	user, err := getUser(ctx, userId)
 	if err != nil {
 		return nil, nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorResourceNotFound, userId)
 	}
@@ -84,7 +63,7 @@ func validateClientCredentials(ctx context.Context, client clientIface) (*models
 		logger.Error(ctx, "User [%s] is not active user", userId)
 		return nil, nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorAuthFailure)
 	}
-	if user.Role != constants.RoleGlobalAdmin {
+	if user.Extra["role"] != constants.RoleGlobalAdmin {
 		logger.Error(ctx, "User [%s] is not global admin", userId)
 		return nil, nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorAuthFailure)
 	}
@@ -125,7 +104,7 @@ func getLastToken(ctx context.Context, clientId, userId, scope string) (*models.
 	return &token, nil
 }
 
-func newToken(ctx context.Context, clientId, scope string, user *models.User) (*models.Token, error) {
+func newToken(ctx context.Context, clientId, scope, userId string) (*models.Token, error) {
 	var err error
 	var token *models.Token
 	var i = 0
@@ -134,7 +113,7 @@ func newToken(ctx context.Context, clientId, scope string, user *models.User) (*
 		if i == 10 {
 			return nil, err
 		}
-		token = models.NewToken(clientId, user.UserId, scope)
+		token = models.NewToken(clientId, userId, scope)
 		_, err = pi.Global().DB(ctx).InsertInto(constants.TableToken).Record(token).Exec()
 		if err != nil {
 			continue

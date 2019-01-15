@@ -58,6 +58,7 @@ const (
 
 const (
 	StatusActive      = "active"
+	StatusUsed        = "used"
 	StatusEnabled     = "enabled"
 	StatusDisabled    = "disabled"
 	StatusCreating    = "creating"

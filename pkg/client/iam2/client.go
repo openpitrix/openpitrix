@@ -2,20 +2,20 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package iam2
+package clientiam2
 
 import (
-	"openpitrix.io/iam/pkg/pb"
+	"openpitrix.io/iam/pkg/pb/im"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 )
 
-func NewClient() (pb.IAMManagerClient, error) {
+func NewClient() (pbim.AccountManagerClient, error) {
 	conn, err := manager.NewClient(constants.IAM2ServiceHost, constants.IAM2ServicePort)
 	if err != nil {
 		return nil, err
 	}
 
-	client := pb.NewIAMManagerClient(conn)
+	client := pbim.NewAccountManagerClient(conn)
 	return client, nil
 }
