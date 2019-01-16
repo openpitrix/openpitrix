@@ -20,18 +20,18 @@ func NewMeteringId() string {
 }
 
 type Leasing struct {
-	Id               string
-	ResouceId        string
-	ResouceVersionId string
-	UserId           string
-	PriceId          string
-	CreateTime       time.Time
-	LeaseTime        time.Time // action_time
-	RenewalTime      time.Time // next update time
-	UpdateTime       time.Time
-	Status           string //updating / updated / overtime
-	Duration         int32
-	GroupId          string
+	Id                string
+	ResourceId        string
+	ResourceVersionId string
+	UserId            string
+	PriceId           string
+	CreateTime        time.Time
+	LeaseTime         time.Time // action_time
+	RenewalTime       time.Time // next update time
+	UpdateTime        time.Time
+	Status            string //updating / updated / overtime
+	Duration          int32
+	GroupId           string
 }
 
 var LeasingColumns = db.GetColumnsFromStruct(&Leasing{})
@@ -39,18 +39,18 @@ var LeasingColumns = db.GetColumnsFromStruct(&Leasing{})
 func NewLeasing(resourceId, resourceVersionId, userId, priceId, groupId string,
 	leaseTime, renewalTime time.Time) *Leasing {
 	return &Leasing{
-		Id:               NewMeteringId(),
-		ResouceId:        resourceId,
-		ResouceVersionId: resourceVersionId,
-		UserId:           userId,
-		CreateTime:       time.Now(),
-		LeaseTime:        leaseTime,
-		RenewalTime:      renewalTime,
-		UpdateTime:       leaseTime,
-		Status:           constants.StatusUpdating,
-		Duration:         0,
-		PriceId:          priceId,
-		GroupId:          groupId,
+		Id:                NewMeteringId(),
+		ResourceId:        resourceId,
+		ResourceVersionId: resourceVersionId,
+		UserId:            userId,
+		CreateTime:        time.Now(),
+		LeaseTime:         leaseTime,
+		RenewalTime:       renewalTime,
+		UpdateTime:        leaseTime,
+		Status:            constants.StatusUpdating,
+		Duration:          0,
+		PriceId:           priceId,
+		GroupId:           groupId,
 	}
 }
 

@@ -17,23 +17,21 @@ import (
 func insertLeasingsToDB(ctx context.Context, leasings []*models.Leasing) error {
 
 	dbConn := pi.Global().DB(ctx)
-	tx, err := dbConn.Session.BeginTx(ctx, nil)
+	//tx, err := dbConn.Session.BeginTx(ctx, nil)
+	//
+	//if err != nil {
+	//	logger.Error(ctx, "Failed to connect mysql, Errors: [%+v]", err)
+	//	return err
+	//}
+	//defer tx.RollbackUnlessCommitted()
 
-	if err != nil {
-		logger.Error(ctx, "Failed to connect mysql, Errors: [%+v]", err)
-		return err
-	}
-	defer tx.RollbackUnlessCommitted()
-
-	err = nil
+	var err error
 	for _, leasing := range leasings {
-		_, err := tx.InsertInto(constants.TableMeteringLeasing).Record(leasing).Exec()
+		_, err := dbConn.InsertInto(constants.TableMeteringLeasing).Record(leasing).Exec()
 		if err != nil {
-			logger.Error(ctx, "Failed to save leasing [%+v].", leasing)
-			tx.Rollback()
+			logger.Error(ctx, "Failed to save leasing: [%+v].", leasing)
 			break
 		}
 	}
-	tx.Commit()
 	return err
 }
