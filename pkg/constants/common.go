@@ -63,6 +63,7 @@ const (
 	StatusDeleting    = "deleting"
 	StatusUpgrading   = "upgrading"
 	StatusUpdating    = "updating"
+	StatusUpdated     = "updated"
 	StatusRollbacking = "rollbacking"
 	StatusStopped     = "stopped"
 	StatusStopping    = "stopping"
@@ -92,6 +93,7 @@ const (
 	StatusSuspended = "suspended"
 	StatusInReview  = "in-review"
 	StatusNew       = "new"
+	StatusOverTime  = "overtime"
 )
 
 var DeletedStatuses = []string{
@@ -251,3 +253,27 @@ var AllowedAppDefaultStatus = []string{
 	StatusDraft,
 	StatusActive,
 }
+
+const (
+	ChargeModeElastic = "elastic"
+	ChargeModeMonthly = "monthly"
+	ChargeModeYearly  = "yearly"
+)
+
+const (
+	CurrencyCNY = "CNY"
+	CurrencyHKD = "HKD"
+	CurrencyUSD = "USD"
+)
+
+const (
+	CouponTypeMONEY = "money"
+	CouponTypeTIME  = "time"
+)
+
+const (
+	CouponStatusUnreceive = "unreceive"
+	CouponStatusReceived  = "received"
+	CouponStatusUsed      = "used"
+	CouponStatusExpired   = "expired"
+)
