@@ -503,8 +503,8 @@ services:
       - openpitrix-db
     container_name: "openpitrix-appvendor-db-ctrl"
 
-# metering and billing service
-openpitrix-mbing-manager:
+  # metering and billing service
+  openpitrix-mbing-manager:
     build: .
     image: "openpitrix"
     command: "mbing-manager"
@@ -524,7 +524,7 @@ openpitrix-mbing-manager:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
-openpitrix-mbing-db-ctrl:
+  openpitrix-mbing-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://openpitrix-db/mbing -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
     volumes:
