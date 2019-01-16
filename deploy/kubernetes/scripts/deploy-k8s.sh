@@ -12,6 +12,7 @@ DEFAULT_NAMESPACE=openpitrix-system
 
 NAMESPACE=${DEFAULT_NAMESPACE}
 VERSION=""
+DASHBOARD_VERSION=""
 METADATA=0
 DBCTRL=0
 BASE=0
@@ -186,7 +187,18 @@ else
   if [ $? == 0 ];then
     DASHBOARD_IMAGE="openpitrix/dashboard:${VERSION}"
   else
-    DASHBOARD_IMAGE="openpitrix/dashboard:latest"
+  	MAJOR_VERSION=`echo ${VERSION} | awk -F '.' '{print $1}'`
+    for version_item in `curl -L -s https://api.github.com/repos/openpitrix/dashboard/releases | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/"`;do
+      echo version_item | grep ${MAJOR_VERSION}
+      if [ $? == 0 ];then
+        DASHBOARD_VERSION=${version_item}
+        break
+      fi
+    done
+    if [ "${DASHBOARD_VERSION}" == "" ];then
+      DASHBOARD_VERSION="latest"
+    fi
+    DASHBOARD_IMAGE="openpitrix/dashboard:${DASHBOARD_VERSION}"
   fi
   IMAGE_PULL_POLICY="IfNotPresent"
 fi
