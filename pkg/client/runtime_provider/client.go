@@ -7,6 +7,7 @@ package runtime_provider
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -33,7 +34,7 @@ func NewRuntimeProviderClient(host string, port int) (pb.RuntimeProviderManagerC
 
 func RegisterRuntimeProvider(provider, config string) error {
 	// wait 5 min at most
-	err := retryutil.Retry(60, 5, func() error {
+	err := retryutil.Retry(60, 5*time.Second, func() error {
 		providerClient, err := NewRuntimeProviderManagerClient()
 		if err != nil {
 			return err
