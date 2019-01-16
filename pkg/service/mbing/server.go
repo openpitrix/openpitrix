@@ -15,7 +15,11 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 )
 
-type Server struct {
+type Server struct{}
+
+func NewServer() (*Server, error) {
+	server := &Server{}
+	return server, nil
 }
 
 func Serve(cfg *config.Config) {
