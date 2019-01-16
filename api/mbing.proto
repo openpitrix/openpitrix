@@ -16,25 +16,6 @@ import "protoc-gen-swagger/options/annotations.proto";
 
 
 //************************** metering ****************************
-message Leasing {
-    google.protobuf.StringValue id = 1;
-    google.protobuf.StringValue resouce_id = 2;
-    google.protobuf.StringValue resouce_version_id = 3;
-    google.protobuf.StringValue user_id = 4;
-    google.protobuf.Timestamp create_time = 5;
-    google.protobuf.Timestamp lease_time = 6;
-    google.protobuf.Timestamp renewal_time = 7;
-    google.protobuf.Timestamp update_time = 8;
-    enum Statuses {
-        UPDATING = 0;
-        UPDATED = 1;
-        OVERTIME = 2;
-    }
-    Statuses status = 9;
-    google.protobuf.Int32Value duration = 10;
-    google.protobuf.StringValue charge_id = 11;
-    google.protobuf.StringValue group_id = 12;
-}
 
 message ResourceVersion {
     google.protobuf.StringValue resource_version_id = 1;
