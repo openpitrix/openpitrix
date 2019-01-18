@@ -173,9 +173,6 @@ var IndexedColumns = map[string][]string{
 	TableCategory: {
 		ColumnCategoryId, ColumnStatus, ColumnLocale, ColumnOwner, ColumnName,
 	},
-	TableUser: {
-		ColumnGroupId, ColumnUserId, ColumnStatus, ColumnRole,
-	},
 	TableMarket: {
 		ColumnMarketId, ColumnName, ColumnVisibility, ColumnStatus, ColumnOwner,
 	},
@@ -203,7 +200,6 @@ var SearchWordColumnTable = []string{
 	TableTask,
 	TableCluster,
 	TableClusterNode,
-	TableUser,
 	TableCategory,
 	TableVendorVerifyInfo,
 }
@@ -236,9 +232,6 @@ var SearchColumns = map[string][]string{
 	},
 	TableRepo: {
 		ColumnName, ColumnDescription,
-	},
-	TableUser: {
-		ColumnUserId, ColumnDescription, ColumnEmail, ColumnUsername,
 	},
 	TableCategory: {
 		ColumnCategoryId, ColumnLocale, ColumnOwner, ColumnName,

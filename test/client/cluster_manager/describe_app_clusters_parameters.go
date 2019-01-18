@@ -79,8 +79,8 @@ type DescribeAppClustersParams struct {
 
 	*/
 	Offset *int64
-	/*Owner*/
-	Owner []string
+	/*OwnerPath*/
+	OwnerPath []string
 	/*Reverse*/
 	Reverse *bool
 	/*SearchWord*/
@@ -185,15 +185,15 @@ func (o *DescribeAppClustersParams) SetOffset(offset *int64) {
 	o.Offset = offset
 }
 
-// WithOwner adds the owner to the describe app clusters params
-func (o *DescribeAppClustersParams) WithOwner(owner []string) *DescribeAppClustersParams {
-	o.SetOwner(owner)
+// WithOwnerPath adds the ownerPath to the describe app clusters params
+func (o *DescribeAppClustersParams) WithOwnerPath(ownerPath []string) *DescribeAppClustersParams {
+	o.SetOwnerPath(ownerPath)
 	return o
 }
 
-// SetOwner adds the owner to the describe app clusters params
-func (o *DescribeAppClustersParams) SetOwner(owner []string) {
-	o.Owner = owner
+// SetOwnerPath adds the ownerPath to the describe app clusters params
+func (o *DescribeAppClustersParams) SetOwnerPath(ownerPath []string) {
+	o.OwnerPath = ownerPath
 }
 
 // WithReverse adds the reverse to the describe app clusters params
@@ -323,11 +323,11 @@ func (o *DescribeAppClustersParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 	}
 
-	valuesOwner := o.Owner
+	valuesOwnerPath := o.OwnerPath
 
-	joinedOwner := swag.JoinByFormat(valuesOwner, "multi")
-	// query array param owner
-	if err := r.SetQueryParam("owner", joinedOwner...); err != nil {
+	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
+	// query array param owner_path
+	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
 		return err
 	}
 

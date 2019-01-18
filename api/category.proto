@@ -36,7 +36,7 @@ message DescribeCategoriesRequest {
 
 	repeated string category_id = 7;
 	repeated string name = 8;
-	repeated string owner = 9;
+	repeated string owner_path = 9;
 }
 
 message DescribeCategoriesResponse {

@@ -9,8 +9,8 @@ import (
 	"math"
 	"time"
 
-	appClient "openpitrix.io/openpitrix/pkg/client/app"
-	clusterClient "openpitrix.io/openpitrix/pkg/client/cluster"
+	appclient "openpitrix.io/openpitrix/pkg/client/app"
+	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -140,12 +140,12 @@ func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendo
 
 //todo:need to call the new api DescribeAppClusters.
 func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) (*pb.DescribeVendorStatisticsResponse, error) {
-	appClient, err := appClient.NewAppManagerClient()
+	appClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	clusterClient, err := clusterClient.NewClient()
+	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
@@ -164,7 +164,7 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 	for _, vendor := range vendors {
 		//step1:Get real appCnt for each vendor
 		var vendorStatistics models.VendorStatistics
-		pbApps, appCnt, err := appClient.DescribeActiveAppsWithOwner(ctx, vendor.UserId, db.DefaultSelectLimit, 0)
+		pbApps, appCnt, err := appClient.DescribeActiveAppsWithOwnerPath(ctx, vendor.OwnerPath, db.DefaultSelectLimit, 0)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 		}
@@ -188,7 +188,7 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 			pages := int(math.Ceil(float64(appCnt / db.DefaultSelectLimit)))
 			for i := 0; i < pages; i++ {
 				offset := db.DefaultSelectLimit * i
-				pbApps, _, err := appClient.DescribeActiveAppsWithOwner(ctx, vendor.UserId, db.DefaultSelectLimit, uint32(offset))
+				pbApps, _, err := appClient.DescribeActiveAppsWithOwnerPath(ctx, vendor.OwnerPath, db.DefaultSelectLimit, uint32(offset))
 				if err != nil {
 					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 				}

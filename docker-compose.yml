@@ -462,7 +462,7 @@ services:
 
   # iam2 service
   openpitrix-iam2-service:
-    image: "openpitrix/iam:v0.1.4-dev"
+    image: "openpitrix/iam:v0.2.8-dev"
     command: "iam"
     links:
       - openpitrix-db:openpitrix-db

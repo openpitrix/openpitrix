@@ -129,7 +129,7 @@ message DescribeAppsRequest {
 	repeated string name = 12;
 	repeated string repo_id = 13;
 	repeated string status = 14;
-	repeated string owner = 15;
+	repeated string owner_path = 15;
 	repeated string chart_name = 16;
 	repeated string category_id = 17;
 	repeated string display_columns = 18;
@@ -284,7 +284,7 @@ message DescribeAppVersionsRequest {
 	repeated string version_id = 10;
 	repeated string app_id = 11;
 	repeated string name = 12;
-	repeated string owner = 13;
+	repeated string owner_path = 13;
 	repeated string description = 14;
 	repeated string package_name = 15;
 	repeated string status = 16;

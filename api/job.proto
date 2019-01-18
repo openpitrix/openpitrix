@@ -66,7 +66,7 @@ message DescribeJobsRequest {
 	google.protobuf.StringValue provider = 16;
 	google.protobuf.StringValue runtime_id = 17;
 	repeated string status = 18;
-	repeated string owner = 19;
+	repeated string owner_path = 19;
 }
 message DescribeJobsResponse {
 	uint32 total_count = 1;
