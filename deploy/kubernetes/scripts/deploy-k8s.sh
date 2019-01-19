@@ -168,6 +168,8 @@ if [ "${VERSION}" == "" ];then
 fi
 
 IAM2_IMAGE="openpitrix/iam:v0.2.8-dev"
+NOTIFICATION_IMAGE="openpitrix/notification:latest"
+NOTIFICATION_FLYWAY_IMAGE="openpitrix/notification:flyway"
 
 if [ "${VERSION}" == "dev" ];then
   IMAGE="openpitrix/openpitrix-dev:latest"

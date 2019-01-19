@@ -5,14 +5,25 @@
 version: '3'
 
 services:
+  openpitrix-db-init:
+    image: "openpitrix/notification:flyway"
+    environment:
+      - PASSWORD=${MYSQL_ROOT_PASSWORD}
+    entrypoint: sh
+    volumes:
+      - ./pkg/db/ddl:/docker-entrypoint-initdb.d
+    command: -c "cp /docker-entrypoint-initdb.d/*.sql /flyway/sql/ddl/; /flyway/sql/ddl/ddl_init.sh -hopenpitrix-db -uroot --connect-timeout=5"
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-db-init"
+
   openpitrix-db:
     image: "mysql:8.0.11"
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ${DATA_PATH}/mysql:/var/lib/mysql
-      - ./pkg/db/ddl:/docker-entrypoint-initdb.d
-    command: --lower_case_table_names=0
+    command: --lower_case_table_names=0 --default-authentication-plugin=mysql_native_password
     ports:
      - "13306:3306" # for unit-test & debug
     container_name: "openpitrix-db"
@@ -145,7 +156,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-repo-db-ctrl"
 
   # app service
@@ -198,7 +209,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-app-db-ctrl"
 
   # runtime service
@@ -230,7 +241,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-runtime-db-ctrl"
 
   openpitrix-rp-manager:
@@ -357,7 +368,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-job-db-ctrl"
 
   # task service
@@ -389,7 +400,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-task-db-ctrl"
 
   # cluster service
@@ -421,7 +432,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-cluster-db-ctrl"
 
   # iam service
@@ -457,7 +468,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-iam-db-ctrl"
 
   # iam2 service
@@ -531,7 +542,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-market-db-ctrl"
 
   # attachment service
@@ -563,7 +574,7 @@ services:
     links:
     - openpitrix-db:openpitrix-db
     depends_on:
-    - openpitrix-db
+    - openpitrix-db-init
     container_name: "openpitrix-attachment-db-ctrl"
 
   # appvendor service
@@ -595,5 +606,36 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-appvendor-db-ctrl"
+
+  # notification service
+  openpitrix-notification:
+    image: "openpitrix/notification:latest"
+    command: "notification-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-notification-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-notification"
+    environment:
+    - NOTIFICATION_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+    - NOTIFICATION_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    - NOTIFICATION_MYSQL_DATABASE=notification
+    - NOTIFICATION_MYSQL_HOST=openpitrix-db
+    - NOTIFICATION_ETCD_ENDPOINTS=openpitrix-etcd:2379
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-notification-db-ctrl:
+    image: openpitrix/notification:flyway
+    command: -url=jdbc:mysql://openpitrix-db/notification -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db-init
+    container_name: "openpitrix-notification-db-ctrl"
