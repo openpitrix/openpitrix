@@ -36,7 +36,7 @@ func (a *Client) DescribeAppVendorStatistics(params *DescribeAppVendorStatistics
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeAppVendorStatistics",
 		Method:             "GET",
-		PathPattern:        "/v1/DescribeAppVendorStatistics",
+		PathPattern:        "/v1/app_vendors/app_vendor_statistics",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -65,7 +65,7 @@ func (a *Client) DescribeVendorVerifyInfos(params *DescribeVendorVerifyInfosPara
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DescribeVendorVerifyInfos",
 		Method:             "GET",
-		PathPattern:        "/v1/vendor_verify_infos",
+		PathPattern:        "/v1/app_vendors",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -83,35 +83,6 @@ func (a *Client) DescribeVendorVerifyInfos(params *DescribeVendorVerifyInfosPara
 }
 
 /*
-GetVendorVerifyInfo gets vendor verify info
-*/
-func (a *Client) GetVendorVerifyInfo(params *GetVendorVerifyInfoParams, authInfo runtime.ClientAuthInfoWriter) (*GetVendorVerifyInfoOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetVendorVerifyInfoParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "GetVendorVerifyInfo",
-		Method:             "GET",
-		PathPattern:        "/v1/vendor_verify_infos/user_id=*",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &GetVendorVerifyInfoReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*GetVendorVerifyInfoOK), nil
-
-}
-
-/*
 PassVendorVerifyInfo passes vendor verify info
 */
 func (a *Client) PassVendorVerifyInfo(params *PassVendorVerifyInfoParams, authInfo runtime.ClientAuthInfoWriter) (*PassVendorVerifyInfoOK, error) {
@@ -123,7 +94,7 @@ func (a *Client) PassVendorVerifyInfo(params *PassVendorVerifyInfoParams, authIn
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "PassVendorVerifyInfo",
 		Method:             "POST",
-		PathPattern:        "/v1/vendor_verify_infos/user_id=*/action:pass",
+		PathPattern:        "/v1/app_vendors/pass",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -152,7 +123,7 @@ func (a *Client) RejectVendorVerifyInfo(params *RejectVendorVerifyInfoParams, au
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "RejectVendorVerifyInfo",
 		Method:             "POST",
-		PathPattern:        "/v1/vendor_verify_infos/user_id=*/action:reject",
+		PathPattern:        "/v1/app_vendors/reject",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -181,7 +152,7 @@ func (a *Client) SubmitVendorVerifyInfo(params *SubmitVendorVerifyInfoParams, au
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "SubmitVendorVerifyInfo",
 		Method:             "POST",
-		PathPattern:        "/v1/vendor_verify_infos/{user_id}",
+		PathPattern:        "/v1/app_vendors",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

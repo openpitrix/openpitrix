@@ -26,6 +26,7 @@ message DescribeVendorVerifyInfosRequest {
 	repeated string user_id = 11;
 	repeated string status = 12;
 	repeated string display_columns = 13;
+	repeated string owner_path = 14;
 }
 
 message DescribeVendorVerifyInfosResponse {
@@ -112,7 +113,7 @@ service AppVendorManager {
 			summary: "SubmitVendorVerifyInfo"
 		};
 		option (google.api.http) = {
-            post: "/v1/vendor_verify_infos/{user_id=*}",
+            post: "/v1/app_vendors",
             body: "*"
 		};
 	}
@@ -122,7 +123,7 @@ service AppVendorManager {
 			summary: "DescribeVendorVerifyInfos"
 		};
 		option (google.api.http) = {
-			get: "/v1/vendor_verify_infos"
+			get: "/v1/app_vendors"
 		};
 	}
 
@@ -131,20 +132,9 @@ service AppVendorManager {
 			summary: "DescribeAppVendorStatistics"
 		};
 		option (google.api.http) = {
-			get: "/v1/DescribeAppVendorStatistics"
+			get: "/v1/app_vendors/app_vendor_statistics"
 		};
 	}
-
-	rpc GetVendorVerifyInfo (GetVendorVerifyInfoRequest) returns (VendorVerifyInfo) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "GetVendorVerifyInfo"
-		};
-		option (google.api.http) = {
-			get: "/v1/vendor_verify_infos/user_id=*"
-		};
-	}
-
-
 
 
 	rpc PassVendorVerifyInfo (PassVendorVerifyInfoRequest) returns (PassVendorVerifyInfoResponse) {
@@ -152,7 +142,7 @@ service AppVendorManager {
 			summary: "PassVendorVerifyInfo"
 		};
 		option (google.api.http) = {
-            post: "/v1/vendor_verify_infos/user_id=*/action:pass",
+            post: "/v1/app_vendors/pass",
             body: "*"
 		};
 	}
@@ -162,9 +152,18 @@ service AppVendorManager {
 			summary: "RejectVendorVerifyInfo"
 		};
 		option (google.api.http) = {
-            post: "/v1/vendor_verify_infos/user_id=*/action:reject",
+           post: "/v1/app_vendors/reject",
             body: "*"
 		};
 	}
+
+//		rpc GetVendorVerifyInfo (GetVendorVerifyInfoRequest) returns (VendorVerifyInfo) {
+//			option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+//				summary: "GetVendorVerifyInfo"
+//			};
+//			option (google.api.http) = {
+//				get: "/v1/vendor_verify_infos/user_id=*"
+//			};
+//		}
 
 }
