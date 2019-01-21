@@ -31,6 +31,7 @@ func DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerify
 		From(constants.TableVendorVerifyInfo).
 		Offset(offset).
 		Limit(limit).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableVendorVerifyInfo))
 
 	query = manager.AddQueryOrderDir(query, req, "submit_time")
@@ -66,19 +67,19 @@ func GetVendorVerifyInfo(ctx context.Context, userID string) (*models.VendorVeri
 	return vendor, err
 }
 
-func PassVendorVerifyInfo(ctx context.Context, userID string, approver string) (string, error) {
+func PassVendorVerifyInfo(ctx context.Context, appvendorUserID string, approver string) (string, error) {
 	_, err := pi.Global().DB(ctx).
 		Update(constants.TableVendorVerifyInfo).
 		Set(constants.ColumnStatus, constants.StatusPassed).
 		Set(constants.ColumnApprover, approver).
 		Set(constants.ColumnStatusTime, time.Now()).
-		Where(db.Eq(constants.ColumnUserId, userID)).
+		Where(db.Eq(constants.ColumnUserId, appvendorUserID)).
 		Exec()
 	if err != nil {
-		logger.Error(ctx, "Failed to pass vendorVerifyInfo [%s].", userID)
+		logger.Error(ctx, "Failed to pass vendorVerifyInfo [%s].", appvendorUserID)
 		return "", err
 	}
-	return userID, err
+	return appvendorUserID, err
 }
 
 func RejectVendorVerifyInfo(ctx context.Context, userID string, rejectmsg string, approver string) (string, error) {
