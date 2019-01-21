@@ -69,7 +69,6 @@ var AllCmd = []Cmd{
 	NewValidatePackageCmd(),
 	NewDescribeAppVendorStatisticsCmd(),
 	NewDescribeVendorVerifyInfosCmd(),
-	NewGetVendorVerifyInfoCmd(),
 	NewPassVendorVerifyInfoCmd(),
 	NewRejectVendorVerifyInfoCmd(),
 	NewSubmitVendorVerifyInfoCmd(),
@@ -1807,41 +1806,6 @@ func (c *DescribeVendorVerifyInfosCmd) Run(out Out) error {
 	return nil
 }
 
-type GetVendorVerifyInfoCmd struct {
-	*app_vendor_manager.GetVendorVerifyInfoParams
-}
-
-func NewGetVendorVerifyInfoCmd() Cmd {
-	return &GetVendorVerifyInfoCmd{
-		app_vendor_manager.NewGetVendorVerifyInfoParams(),
-	}
-}
-
-func (*GetVendorVerifyInfoCmd) GetActionName() string {
-	return "GetVendorVerifyInfo"
-}
-
-func (c *GetVendorVerifyInfoCmd) ParseFlag(f Flag) {
-	c.UserID = new(string)
-	f.StringVarP(c.UserID, "user_id", "", "", "")
-}
-
-func (c *GetVendorVerifyInfoCmd) Run(out Out) error {
-	params := c.GetVendorVerifyInfoParams
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppVendorManager.GetVendorVerifyInfo(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
 type PassVendorVerifyInfoCmd struct {
 	*models.OpenpitrixPassVendorVerifyInfoRequest
 }
@@ -1943,7 +1907,6 @@ func (c *SubmitVendorVerifyInfoCmd) ParseFlag(f Flag) {
 func (c *SubmitVendorVerifyInfoCmd) Run(out Out) error {
 	params := app_vendor_manager.NewSubmitVendorVerifyInfoParams()
 	params.WithBody(c.OpenpitrixSubmitVendorVerifyInfoRequest)
-	params.WithUserID(c.UserID)
 
 	out.WriteRequest(params)
 

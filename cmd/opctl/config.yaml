@@ -595,13 +595,6 @@
       type: '[]string'
     user_id:
       type: '[]string'
-- action: GetVendorVerifyInfo
-  request: GetVendorVerifyInfoRequest
-  description: GetVendorVerifyInfo
-  service: AppVendorManager
-  query:
-    user_id:
-      type: string
 - action: PassVendorVerifyInfo
   request: PassVendorVerifyInfoRequest
   description: PassVendorVerifyInfo
@@ -622,9 +615,6 @@
   request: SubmitVendorVerifyInfoRequest
   description: SubmitVendorVerifyInfo
   service: AppVendorManager
-  path:
-    user_id:
-      type: string
   body:
     authorizer_email:
       type: string
