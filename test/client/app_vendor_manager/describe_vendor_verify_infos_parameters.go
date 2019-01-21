@@ -75,6 +75,8 @@ type DescribeVendorVerifyInfosParams struct {
 
 	*/
 	Offset *int64
+	/*OwnerPath*/
+	OwnerPath []string
 	/*Reverse*/
 	Reverse *bool
 	/*SearchWord*/
@@ -155,6 +157,17 @@ func (o *DescribeVendorVerifyInfosParams) WithOffset(offset *int64) *DescribeVen
 // SetOffset adds the offset to the describe vendor verify infos params
 func (o *DescribeVendorVerifyInfosParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwnerPath adds the ownerPath to the describe vendor verify infos params
+func (o *DescribeVendorVerifyInfosParams) WithOwnerPath(ownerPath []string) *DescribeVendorVerifyInfosParams {
+	o.SetOwnerPath(ownerPath)
+	return o
+}
+
+// SetOwnerPath adds the ownerPath to the describe vendor verify infos params
+func (o *DescribeVendorVerifyInfosParams) SetOwnerPath(ownerPath []string) {
+	o.OwnerPath = ownerPath
 }
 
 // WithReverse adds the reverse to the describe vendor verify infos params
@@ -258,6 +271,14 @@ func (o *DescribeVendorVerifyInfosParams) WriteToRequest(r runtime.ClientRequest
 			}
 		}
 
+	}
+
+	valuesOwnerPath := o.OwnerPath
+
+	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
+	// query array param owner_path
+	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+		return err
 	}
 
 	if o.Reverse != nil {
