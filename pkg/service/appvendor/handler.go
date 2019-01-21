@@ -9,8 +9,6 @@ import (
 	"math"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/util/ctxutil"
-
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -20,6 +18,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -41,11 +40,8 @@ func (s *Server) DescribeVendorVerifyInfos(ctx context.Context, req *pb.Describe
 }
 
 func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) (*pb.SubmitVendorVerifyInfoResponse, error) {
-	s1 := ctxutil.GetSender(ctx)
-	if s1 == nil {
-		return nil, nil
-	}
-	ownerPath := string(s1.OwnerPath)
+	sender := ctxutil.GetSender(ctx)
+	ownerPath := string(sender.OwnerPath)
 
 	err := s.validateSubmitParams(ctx, req)
 	if err != nil {
@@ -97,9 +93,9 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 	}
 	approver := string(s1.UserId)
 
-	appvendorUserID := req.GetUserId()
+	appVendorUserID := req.GetUserId()
 
-	userID, err := PassVendorVerifyInfo(ctx, appvendorUserID, approver)
+	userID, err := PassVendorVerifyInfo(ctx, appVendorUserID, approver)
 	if err != nil {
 		logger.Error(ctx, "Failed to pass vendorVerifyInfo [%s], %+v", userID, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
@@ -142,11 +138,8 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	s1 := ctxutil.GetSender(ctx)
-	if s1 == nil {
-		return nil, nil
-	}
-	accessPath := string(s1.GetAccessPath())
+	sender := ctxutil.GetSender(ctx)
+	accessPath := string(sender.GetAccessPath())
 
 	var vendorStatisticses []*models.VendorStatistics
 	vendors, vendorCount, err := DescribeVendorVerifyInfos(ctx, req)
@@ -245,28 +238,28 @@ func (s *Server) checkVendorVerifyInfoIfExit(ctx context.Context, userID string)
 }
 
 func (s *Server) validateSubmitParams(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) error {
-	isUrlFmt, _ := VerifyUrl(ctx, req.CompanyWebsite.GetValue())
+	isUrlFmt, err := VerifyUrl(ctx, req.CompanyWebsite.GetValue())
 	if !isUrlFmt {
 		logger.Error(ctx, "Failed to validateSubmitParams [%s].", req.CompanyWebsite.GetValue())
-		return gerr.NewWithDetail(ctx, gerr.Internal, nil, gerr.ErrorIllegalUrlFormat)
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorIllegalUrlFormat)
 	}
 
-	isEmailFmt, _ := VerifyEmailFmt(ctx, req.AuthorizerEmail.GetValue())
+	isEmailFmt, err := VerifyEmailFmt(ctx, req.AuthorizerEmail.GetValue())
 	if !isEmailFmt {
 		logger.Error(ctx, "Failed to validateSubmitParams [%s].", req.AuthorizerEmail.GetValue())
-		return gerr.NewWithDetail(ctx, gerr.Internal, nil, gerr.ErrorEmailPasswordNotMatched)
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorEmailPasswordNotMatched)
 	}
 
-	isPhoneFmt, _ := VerifyPhoneFmt(ctx, req.AuthorizerPhone.GetValue())
+	isPhoneFmt, err := VerifyPhoneFmt(ctx, req.AuthorizerPhone.GetValue())
 	if !isPhoneFmt {
 		logger.Error(ctx, "Failed to validateSubmitParams [%s].", req.AuthorizerPhone.GetValue())
-		return gerr.NewWithDetail(ctx, gerr.Internal, nil, gerr.ErrorIllegalPhoneFormat)
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorIllegalPhoneFormat)
 	}
 
-	isBankAccountNumberFmt, _ := VerifyBankAccountNumberFmt(ctx, req.BankAccountNumber.GetValue())
+	isBankAccountNumberFmt, err := VerifyBankAccountNumberFmt(ctx, req.BankAccountNumber.GetValue())
 	if !isBankAccountNumberFmt {
 		logger.Error(ctx, "Failed to validateSubmitParams [%s].", req.BankAccountNumber.GetValue())
-		return gerr.NewWithDetail(ctx, gerr.Internal, nil, gerr.ErrorIllegalBankAccountNumberFormat)
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorIllegalBankAccountNumberFormat, req.BankAccountNumber.GetValue())
 	}
 	return nil
 }
