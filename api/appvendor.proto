@@ -157,4 +157,13 @@ service AppVendorManager {
 		};
 	}
 
+//		rpc GetVendorVerifyInfo (GetVendorVerifyInfoRequest) returns (VendorVerifyInfo) {
+//			option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+//				summary: "GetVendorVerifyInfo"
+//			};
+//			option (google.api.http) = {
+//				get: "/v1/vendor_verify_infos/user_id=*"
+//			};
+//		}
+
 }

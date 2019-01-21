@@ -22,6 +22,34 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
+func (s *Server) GetVendorVerifyInfo(ctx context.Context, req *pb.GetVendorVerifyInfoRequest) (*pb.VendorVerifyInfo, error) {
+	userID := req.GetUserId().GetValue()
+	vendor, err := GetVendorVerifyInfo(ctx, userID)
+
+	if vendor == nil && err != nil {
+		vendor = &models.VendorVerifyInfo{}
+		vendor.UserId = userID
+		vendor.Status = constants.StatusNew
+		vendor.StatusTime = time.Now()
+		userID, err = CreateVendorVerifyInfo(ctx, *vendor)
+		if err != nil {
+			logger.Error(ctx, "vendorVerifyInfo does not exit, create new vendorVerifyInfo failed [%s], %+v", userID, err)
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourceFailed)
+		}
+		logger.Debug(ctx, "vendorVerifyInfo does not exit, create new vendorVerifyInfo verify info, [%+v]", vendor)
+	}
+
+	if err != nil {
+		logger.Error(ctx, "Failed to get vendorVerifyInfo [%s], %+v", userID, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, userID)
+	}
+
+	logger.Debug(ctx, "Got VendorVerifyInfo: [%+v]", vendor)
+	vendor2pb := vendor.ParseVendor2Pb(ctx, vendor)
+
+	return vendor2pb, nil
+}
+
 func (s *Server) DescribeVendorVerifyInfos(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) (*pb.DescribeVendorVerifyInfosResponse, error) {
 	vendors, vendorCount, err := DescribeVendorVerifyInfos(ctx, req)
 	if err != nil {
