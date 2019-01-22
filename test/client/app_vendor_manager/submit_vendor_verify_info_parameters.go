@@ -66,8 +66,6 @@ type SubmitVendorVerifyInfoParams struct {
 
 	/*Body*/
 	Body *models.OpenpitrixSubmitVendorVerifyInfoRequest
-	/*UserID*/
-	UserID string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -118,17 +116,6 @@ func (o *SubmitVendorVerifyInfoParams) SetBody(body *models.OpenpitrixSubmitVend
 	o.Body = body
 }
 
-// WithUserID adds the userID to the submit vendor verify info params
-func (o *SubmitVendorVerifyInfoParams) WithUserID(userID string) *SubmitVendorVerifyInfoParams {
-	o.SetUserID(userID)
-	return o
-}
-
-// SetUserID adds the userId to the submit vendor verify info params
-func (o *SubmitVendorVerifyInfoParams) SetUserID(userID string) {
-	o.UserID = userID
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *SubmitVendorVerifyInfoParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -141,11 +128,6 @@ func (o *SubmitVendorVerifyInfoParams) WriteToRequest(r runtime.ClientRequest, r
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
 		}
-	}
-
-	// path param user_id
-	if err := r.SetPathParam("user_id", o.UserID); err != nil {
-		return err
 	}
 
 	if len(res) > 0 {

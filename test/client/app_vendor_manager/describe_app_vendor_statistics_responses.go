@@ -51,7 +51,7 @@ type DescribeAppVendorStatisticsOK struct {
 }
 
 func (o *DescribeAppVendorStatisticsOK) Error() string {
-	return fmt.Sprintf("[GET /v1/DescribeAppVendorStatistics][%d] describeAppVendorStatisticsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/app_vendors/app_vendor_statistics][%d] describeAppVendorStatisticsOK  %+v", 200, o.Payload)
 }
 
 func (o *DescribeAppVendorStatisticsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
