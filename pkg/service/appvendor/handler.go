@@ -9,6 +9,8 @@ import (
 	"math"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -36,34 +38,6 @@ func (s *Server) DescribeVendorVerifyInfos(ctx context.Context, req *pb.Describe
 		TotalCount:          vendorCount,
 	}
 	return res, nil
-}
-
-func (s *Server) GetVendorVerifyInfo(ctx context.Context, req *pb.GetVendorVerifyInfoRequest) (*pb.VendorVerifyInfo, error) {
-	userID := req.GetUserId().GetValue()
-	vendor, err := GetVendorVerifyInfo(ctx, userID)
-
-	if vendor == nil && err != nil {
-		vendor = &models.VendorVerifyInfo{}
-		vendor.UserId = userID
-		vendor.Status = constants.StatusNew
-		vendor.StatusTime = time.Now()
-		userID, err = CreateVendorVerifyInfo(ctx, *vendor)
-		if err != nil {
-			logger.Error(ctx, "vendorVerifyInfo does not exit, create new vendorVerifyInfo failed [%s], %+v", userID, err)
-			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourceFailed)
-		}
-		logger.Debug(ctx, "vendorVerifyInfo does not exit, create new vendorVerifyInfo verify info, [%+v]", vendor)
-	}
-
-	if err != nil {
-		logger.Error(ctx, "Failed to get vendorVerifyInfo [%s], %+v", userID, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotFound, userID)
-	}
-
-	logger.Debug(ctx, "Got VendorVerifyInfo: [%+v]", vendor)
-	vendor2pb := vendor.ParseVendor2Pb(ctx, vendor)
-
-	return vendor2pb, nil
 }
 
 func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) (*pb.SubmitVendorVerifyInfoResponse, error) {
@@ -94,7 +68,7 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 		}
 	} else {
 		vendor := &models.VendorVerifyInfo{}
-		vendor = vendor.ParseReq2Vendor(req)
+		vendor = vendor.ParseReq2Vendor(ctx, req)
 		userID, err = CreateVendorVerifyInfo(ctx, *vendor)
 		if err != nil {
 			logger.Error(ctx, "Failed to submit vendorVerifyInfo [%+v], %+v", vendor, err)
@@ -110,9 +84,10 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 }
 
 func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVerifyInfoRequest) (*pb.PassVendorVerifyInfoResponse, error) {
-	userID := req.GetUserId()
-	approver := "testapprover"
-	userID, err := PassVendorVerifyInfo(ctx, userID, approver)
+	appVendorUserID := req.GetUserId()
+	sender := ctxutil.GetSender(ctx)
+	approver := string(sender.UserId)
+	userID, err := PassVendorVerifyInfo(ctx, appVendorUserID, approver)
 	if err != nil {
 		logger.Error(ctx, "Failed to pass vendorVerifyInfo [%s], %+v", userID, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
@@ -124,10 +99,11 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 }
 
 func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendorVerifyInfoRequest) (*pb.RejectVendorVerifyInfoResponse, error) {
-	userID := req.GetUserId()
-	approver := "testapprover"
+	appVendorUserID := req.GetUserId()
+	sender := ctxutil.GetSender(ctx)
+	approver := string(sender.UserId)
 	rejectmsg := req.GetRejectMessage().GetValue()
-	userID, err := RejectVendorVerifyInfo(ctx, userID, rejectmsg, approver)
+	userID, err := RejectVendorVerifyInfo(ctx, appVendorUserID, rejectmsg, approver)
 	if err != nil {
 		logger.Error(ctx, "Failed to reject vendorVerifyInfo [%s], %+v", userID, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
@@ -138,8 +114,8 @@ func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendo
 	return res, err
 }
 
-//todo:need to call the new api DescribeAppClusters.
 func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) (*pb.DescribeVendorStatisticsResponse, error) {
+
 	appClient, err := appclient.NewAppManagerClient()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
@@ -164,7 +140,7 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 	for _, vendor := range vendors {
 		//step1:Get real appCnt for each vendor
 		var vendorStatistics models.VendorStatistics
-		pbApps, appCnt, err := appClient.DescribeActiveAppsWithOwnerPath(ctx, vendor.OwnerPath, db.DefaultSelectLimit, 0)
+		pbApps, appCnt, err := appClient.DescribeActiveAppsByMaxRow(ctx, db.DefaultSelectLimit, 0)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 		}
@@ -188,7 +164,7 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 			pages := int(math.Ceil(float64(appCnt / db.DefaultSelectLimit)))
 			for i := 0; i < pages; i++ {
 				offset := db.DefaultSelectLimit * i
-				pbApps, _, err := appClient.DescribeActiveAppsWithOwnerPath(ctx, vendor.OwnerPath, db.DefaultSelectLimit, uint32(offset))
+				pbApps, _, err := appClient.DescribeActiveAppsByMaxRow(ctx, db.DefaultSelectLimit, uint32(offset))
 				if err != nil {
 					return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 				}
@@ -232,8 +208,6 @@ func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.Descri
 	return res, nil
 }
 
-/*======================================================================================================================*/
-
 func (s *Server) checkVendorVerifyInfoIfExit(ctx context.Context, userID string) (bool, error) {
 	info, err := GetVendorVerifyInfo(ctx, userID)
 	if info == nil && err != nil {
@@ -249,25 +223,25 @@ func (s *Server) validateSubmitParams(ctx context.Context, req *pb.SubmitVendorV
 	isUrlFmt, err := VerifyUrl(ctx, req.CompanyWebsite.GetValue())
 	if !isUrlFmt {
 		logger.Error(ctx, "Failed to validateSubmitParams [%s].", req.CompanyWebsite.GetValue())
-		return err
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorIllegalUrlFormat)
 	}
 
 	isEmailFmt, err := VerifyEmailFmt(ctx, req.AuthorizerEmail.GetValue())
 	if !isEmailFmt {
 		logger.Error(ctx, "Failed to validateSubmitParams [%s].", req.AuthorizerEmail.GetValue())
-		return err
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorEmailPasswordNotMatched)
 	}
 
 	isPhoneFmt, err := VerifyPhoneFmt(ctx, req.AuthorizerPhone.GetValue())
 	if !isPhoneFmt {
 		logger.Error(ctx, "Failed to validateSubmitParams [%s].", req.AuthorizerPhone.GetValue())
-		return err
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorIllegalPhoneFormat)
 	}
 
 	isBankAccountNumberFmt, err := VerifyBankAccountNumberFmt(ctx, req.BankAccountNumber.GetValue())
 	if !isBankAccountNumberFmt {
 		logger.Error(ctx, "Failed to validateSubmitParams [%s].", req.BankAccountNumber.GetValue())
-		return gerr.NewWithDetail(ctx, gerr.Internal, nil, gerr.ErrorValidateFailed)
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorIllegalBankAccountNumberFormat, req.BankAccountNumber.GetValue())
 	}
 	return nil
 }

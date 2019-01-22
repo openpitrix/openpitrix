@@ -69,7 +69,6 @@ var AllCmd = []Cmd{
 	NewValidatePackageCmd(),
 	NewDescribeAppVendorStatisticsCmd(),
 	NewDescribeVendorVerifyInfosCmd(),
-	NewGetVendorVerifyInfoCmd(),
 	NewPassVendorVerifyInfoCmd(),
 	NewRejectVendorVerifyInfoCmd(),
 	NewSubmitVendorVerifyInfoCmd(),
@@ -1735,6 +1734,7 @@ func (c *DescribeAppVendorStatisticsCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -1781,6 +1781,7 @@ func (c *DescribeVendorVerifyInfosCmd) ParseFlag(f Flag) {
 	f.Int64VarP(c.Limit, "limit", "", 20, "default is 20, max value is 200.")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "default is 0.")
+	f.StringSliceVarP(&c.OwnerPath, "owner_path", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -1798,41 +1799,6 @@ func (c *DescribeVendorVerifyInfosCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AppVendorManager.DescribeVendorVerifyInfos(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
-type GetVendorVerifyInfoCmd struct {
-	*app_vendor_manager.GetVendorVerifyInfoParams
-}
-
-func NewGetVendorVerifyInfoCmd() Cmd {
-	return &GetVendorVerifyInfoCmd{
-		app_vendor_manager.NewGetVendorVerifyInfoParams(),
-	}
-}
-
-func (*GetVendorVerifyInfoCmd) GetActionName() string {
-	return "GetVendorVerifyInfo"
-}
-
-func (c *GetVendorVerifyInfoCmd) ParseFlag(f Flag) {
-	c.UserID = new(string)
-	f.StringVarP(c.UserID, "user_id", "", "", "")
-}
-
-func (c *GetVendorVerifyInfoCmd) Run(out Out) error {
-	params := c.GetVendorVerifyInfoParams
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppVendorManager.GetVendorVerifyInfo(params, nil)
 	if err != nil {
 		return err
 	}
@@ -1943,7 +1909,6 @@ func (c *SubmitVendorVerifyInfoCmd) ParseFlag(f Flag) {
 func (c *SubmitVendorVerifyInfoCmd) Run(out Out) error {
 	params := app_vendor_manager.NewSubmitVendorVerifyInfoParams()
 	params.WithBody(c.OpenpitrixSubmitVendorVerifyInfoRequest)
-	params.WithUserID(c.UserID)
 
 	out.WriteRequest(params)
 
