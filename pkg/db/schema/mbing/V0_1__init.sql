@@ -1,23 +1,58 @@
-/**  Metering  **/
-CREATE TABLE IF NOT EXISTS leasing
+/**  Price  **/
+CREATE TABLE IF NOT EXISTS attribute
 (
-	id										VARCHAR(50)		NOT NULL,
-	resource_id						VARCHAR(50)		NOT NULL,
-	resource_version_id		VARCHAR(50)		NOT NULL,
-	user_id								VARCHAR(50)		NOT NULL,
-	price_id							VARCHAR(50)		NOT NULL,
-	group_id							VARCHAR(50)		NOT NULL,
-	duration							INT(11)			NOT NULL DEFAULT 0,
-	lease_time		    		TIMESTAMP 	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	renewal_time       		TIMESTAMP   	NOT NULL,
-	update_time       		TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	create_time       		TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	status								VARCHAR(50),
+	id 										INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE ,
+	name 									VARCHAR(50) NOT NULL,
+	display_name 					VARCHAR(50),
+	create_time 					TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	mark 									TEXT,
+	PRIMARY KEY (id)
+	id 										INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE ,
+);
+
+CREATE TABLE IF NOT EXISTS attribute_unit
+(
+	id 										INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE ,
+	name 									VARCHAR(255) NOT NULL,
+)
+
+CREATE TABLE IF NOT EXISTS attribute_value
+(
+	id 										INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE ,
+	attribute_id 					INT NOT NULL,
+	attribute_unit_id 		INT NOT NULL,
+	min_value 						INT NOT NULL ,
+	upto_value						INT NOT NULL COMMENT 'the attribute value, support scope of value [min_value, max_value);',
+	create_time 					TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (id)
 );
 
 
-/**  Price  **/
+CREATE TABLE IF NOT EXISTS resource_attribute
+(
+	id 										INT UNSIGNED 			NOT NULL AUTO_INCREMENT UNIQUE ,
+	resource_version_id 	VARCHAR(50)		NOT NULL,
+	attributes 						JSON NOT NULL COMMENT 'sku attribute ids',
+	metering_attributes 	JSON NOT NULL COMMENT 'the attribute ids need to metering',
+	billing_attributes	 	JSON NOT NULL COMMENT 'the attribute ids for billing',
+	create_time 					TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS SKU
+(
+	id INT UNSIGNED 			NOT NULL AUTO_INCREMENT UNIQUE ,
+	resource_attribute_id 	VARCHAR(50)		NOT NULL,
+	values 								JSON NOT NULL COMMENT 'sku attribute_value for attribute in resource_attribute',
+	metering_attributes 	JSON NOT NULL COMMENT 'the attribute ids need to metering',
+	billing_attributes	 	JSON NOT NULL COMMENT 'the attribute ids for billing',
+	create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
+);
+
+
+
 CREATE TABLE IF NOT EXISTS price
 (
 	id 									VARCHAR(50)		NOT NULL,
@@ -66,5 +101,24 @@ CREATE TABLE IF NOT EXISTS coupon
 	end_time       			TIMESTAMP   	NOT NULL,
 	create_time       	TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	mark 								TEXT,
+	PRIMARY KEY (id)
+);
+
+
+/**  Metering  **/
+CREATE TABLE IF NOT EXISTS leasing
+(
+	id										VARCHAR(50)		NOT NULL,
+	resource_id						VARCHAR(50)		NOT NULL,
+	resource_version_id		VARCHAR(50)		NOT NULL,
+	user_id								VARCHAR(50)		NOT NULL,
+	price_id							VARCHAR(50)		NOT NULL,
+	group_id							VARCHAR(50)		NOT NULL,
+	duration							INT(11)			NOT NULL DEFAULT 0,
+	lease_time		    		TIMESTAMP 	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	renewal_time       		TIMESTAMP   	NOT NULL,
+	update_time       		TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	create_time       		TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	status								VARCHAR(50),
 	PRIMARY KEY (id)
 );
