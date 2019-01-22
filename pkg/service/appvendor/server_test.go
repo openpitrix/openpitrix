@@ -80,21 +80,6 @@ func TestDescribeVendorVerifyInfos(t *testing.T) {
 	logger.Info(nil, "Test Passed,TestDescribeVendorVerifyInfos TotalCount=%d", resp.GetTotalCount())
 }
 
-func TestGetVendorVerifyInfo(t *testing.T) {
-	if !*tTestingEnvEnabled {
-		t.Skip("testing env disabled")
-	}
-	InitGlobelSetting()
-	s, _ := NewServer()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	var req = &vendor.GetVendorVerifyInfoRequest{
-		UserId: pbutil.ToProtoString("testuserID"),
-	}
-	resp, _ := s.GetVendorVerifyInfo(ctx, req)
-	logger.Info(nil, "Test Passed,TestGetVendorVerifyInfo %s", resp.GetUserId())
-}
-
 func TestPassVendorVerifyInfo(t *testing.T) {
 	if !*tTestingEnvEnabled {
 		t.Skip("testing env disabled")
