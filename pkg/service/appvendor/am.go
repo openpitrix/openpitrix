@@ -30,10 +30,6 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			StringChosen("status", SupportedStatus).
 			Exec()
-	case *pb.GetVendorVerifyInfoRequest:
-		return manager.NewChecker(ctx, r).
-			Required(constants.ColumnUserId).
-			Exec()
 	case *pb.PassVendorVerifyInfoRequest:
 		return manager.NewChecker(ctx, r).
 			Required(constants.ColumnUserId).

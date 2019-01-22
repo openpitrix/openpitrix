@@ -1329,91 +1329,7 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/DescribeAppVendorStatistics": {
-      "get": {
-        "summary": "DescribeAppVendorStatistics",
-        "operationId": "DescribeAppVendorStatistics",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDescribeVendorStatisticsResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
-          },
-          {
-            "name": "limit",
-            "description": "default is 20, max value is 200.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "description": "default is 0.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "user_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "display_columns",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          }
-        ],
-        "tags": [
-          "AppVendorManager"
-        ]
-      }
-    },
-    "/v1/vendor_verify_infos": {
+    "/v1/app_vendors": {
       "get": {
         "summary": "DescribeVendorVerifyInfos",
         "operationId": "DescribeVendorVerifyInfos",
@@ -1490,31 +1406,41 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "owner_path",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
           "AppVendorManager"
         ]
-      }
-    },
-    "/v1/vendor_verify_infos/user_id=*": {
-      "get": {
-        "summary": "GetVendorVerifyInfo",
-        "operationId": "GetVendorVerifyInfo",
+      },
+      "post": {
+        "summary": "SubmitVendorVerifyInfo",
+        "operationId": "SubmitVendorVerifyInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/openpitrixVendorVerifyInfo"
+              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "user_id",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoRequest"
+            }
           }
         ],
         "tags": [
@@ -1522,7 +1448,101 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/vendor_verify_infos/user_id=*/action:pass": {
+    "/v1/app_vendors/app_vendor_statistics": {
+      "get": {
+        "summary": "DescribeAppVendorStatistics",
+        "operationId": "DescribeAppVendorStatistics",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeVendorStatisticsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "owner_path",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppVendorManager"
+        ]
+      }
+    },
+    "/v1/app_vendors/pass": {
       "post": {
         "summary": "PassVendorVerifyInfo",
         "operationId": "PassVendorVerifyInfo",
@@ -1549,7 +1569,7 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/vendor_verify_infos/user_id=*/action:reject": {
+    "/v1/app_vendors/reject": {
       "post": {
         "summary": "RejectVendorVerifyInfo",
         "operationId": "RejectVendorVerifyInfo",
@@ -1568,39 +1588,6 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixRejectVendorVerifyInfoRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppVendorManager"
-        ]
-      }
-    },
-    "/v1/vendor_verify_infos/{user_id}": {
-      "post": {
-        "summary": "SubmitVendorVerifyInfo",
-        "operationId": "SubmitVendorVerifyInfo",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoRequest"
             }
           }
         ],
@@ -6201,6 +6188,12 @@ var Files = map[string]string{
           "type": "string"
         },
         "approver": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "owner_path": {
           "type": "string"
         },
         "submit_time": {

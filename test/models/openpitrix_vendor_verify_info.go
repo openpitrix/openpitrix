@@ -46,6 +46,12 @@ type OpenpitrixVendorVerifyInfo struct {
 	// company website
 	CompanyWebsite string `json:"company_website,omitempty"`
 
+	// owner
+	Owner string `json:"owner,omitempty"`
+
+	// owner path
+	OwnerPath string `json:"owner_path,omitempty"`
+
 	// reject message
 	RejectMessage string `json:"reject_message,omitempty"`
 
