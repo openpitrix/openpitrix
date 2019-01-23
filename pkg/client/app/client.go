@@ -27,17 +27,16 @@ func NewAppManagerClient() (*Client, error) {
 	}, nil
 }
 
-func (c *Client) DescribeActiveAppsWithOwnerPath(ctx context.Context, ownerPath string, limit uint32, offset uint32) ([]*pb.App, int32, error) {
+func (c *Client) DescribeActiveAppsByMaxRow(ctx context.Context, limit uint32, offset uint32) ([]*pb.App, int32, error) {
 	request := &pb.DescribeAppsRequest{
-		OwnerPath: []string{ownerPath},
-		Limit:     limit,
-		Offset:    offset,
+		Limit:  limit,
+		Offset: offset,
 	}
 
 	response, err := c.DescribeActiveApps(ctx, request)
 
 	if err != nil {
-		logger.Error(ctx, "Describe active apps with owner path [%s] failed: %+v", ownerPath, err)
+		logger.Error(ctx, "Describe active apps failed: %+v", err)
 		return nil, 0, err
 	}
 	return response.AppSet, int32(response.TotalCount), nil
