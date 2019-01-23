@@ -51,7 +51,7 @@ type RejectVendorVerifyInfoOK struct {
 }
 
 func (o *RejectVendorVerifyInfoOK) Error() string {
-	return fmt.Sprintf("[POST /v1/vendor_verify_infos/user_id=*/action:reject][%d] rejectVendorVerifyInfoOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/app_vendors/reject][%d] rejectVendorVerifyInfoOK  %+v", 200, o.Payload)
 }
 
 func (o *RejectVendorVerifyInfoOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

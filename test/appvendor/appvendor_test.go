@@ -24,9 +24,7 @@ func TestAppVendor(t *testing.T) {
 	testUserID := "appvendor_test_userID"
 
 	// SubmitVendorVerifyInfo
-	/*===============================================================================================*/
-	logger.Info(nil, "%s", "/*=================================================*/")
-	logger.Info(nil, "%s", "Test1 SubmitVendorVerifyInfo**************************")
+	logger.Info(nil, "Test1 SubmitVendorVerifyInfo")
 	submitParams := app_vendor_manager.NewSubmitVendorVerifyInfoParams()
 	submitParams.SetBody(
 		&models.OpenpitrixSubmitVendorVerifyInfoRequest{
@@ -41,12 +39,6 @@ func TestAppVendor(t *testing.T) {
 			CompanyWebsite:    "www.baidu.com",
 			UserID:            testUserID,
 		})
-
-	submitParams.SetUserID(testUserID)
-
-	_, err := client.AppVendorManager.SubmitVendorVerifyInfo(submitParams, nil)
-	require.NoError(t, err)
-
 	submitResp, err := client.AppVendorManager.SubmitVendorVerifyInfo(submitParams, nil)
 	require.NoError(t, err)
 	userId := submitResp.Payload.UserID
@@ -55,40 +47,26 @@ func TestAppVendor(t *testing.T) {
 	}
 
 	// DescribeVendorVerifyInfos
-	/*===============================================================================================*/
-	logger.Info(nil, "%s", "/*=================================================*/")
 	logger.Info(nil, "%s", "Test2 DescribeVendorVerifyInfos**************************")
 	describeParams := app_vendor_manager.NewDescribeVendorVerifyInfosParams()
+
+	var userids []string
+	userids = append(userids, testUserID)
+
+	describeParams.SetUserID(userids)
+
 	logger.Info(nil, "test describeParams=[%+v]", describeParams)
-	describeParams.WithUserID([]string{testUserID})
 	describeResp, err := client.AppVendorManager.DescribeVendorVerifyInfos(describeParams, nil)
 	require.NoError(t, err)
 	AppVendors := describeResp.Payload.VendorVerifyInfoSet
-	if len(AppVendors) == 0 {
-		t.Fatalf("failed to DescribeVendorVerifyInfos with params [%+v]", describeParams)
-	}
-	if AppVendors[0].UserID != testUserID || AppVendors[0].CompanyName != "CompanyName" {
-		t.Fatalf("failed to SubmitVendorVerifyInfo with params [%+v]", submitParams)
-	}
-
-	// GetVendorVerifyInfo
-	/*===============================================================================================*/
-	logger.Info(nil, "%s", "/*=================================================*/")
-	logger.Info(nil, "%s", "Test3 GetVendorVerifyInfo**************************")
-	getParams := app_vendor_manager.NewGetVendorVerifyInfoParams()
-	getParams.SetUserID(&testUserID)
-	getResp, err := client.AppVendorManager.GetVendorVerifyInfo(getParams, nil)
-
-	require.NoError(t, err)
-	t.Log(getResp)
-	if getResp.Payload.UserID != testUserID {
-		t.Fatalf("failed to GetVendorVerifyInfo:UserID= [%s]", testUserID)
+	logger.Info(nil, "test describeParams result,AppVendors=[%+v]", AppVendors)
+	respUserId := AppVendors[0].UserID
+	logger.Info(nil, "test describeParams result,respUserId=[%+s]", respUserId)
+	if userId != testUserID {
+		t.Fatalf("failed to SubmitVendorVerifyInfo:UserID= [%s]", testUserID)
 	}
 
 	// PassVendorVerifyInfo
-	/*===============================================================================================*/
-	logger.Info(nil, "%s", "/*=================================================*/")
-	logger.Info(nil, "%s", "Test4 GetVendorVerifyInfo**************************")
 	passParams := app_vendor_manager.NewPassVendorVerifyInfoParams()
 	passParams.SetBody(
 		&models.OpenpitrixPassVendorVerifyInfoRequest{
@@ -97,20 +75,27 @@ func TestAppVendor(t *testing.T) {
 	passResp, err := client.AppVendorManager.PassVendorVerifyInfo(passParams, nil)
 	require.NoError(t, err)
 	t.Log(passResp)
-	getParams1 := app_vendor_manager.NewGetVendorVerifyInfoParams()
-	getParams1.SetUserID(&testUserID)
-	getResp1, err := client.AppVendorManager.GetVendorVerifyInfo(getParams1, nil)
+
+	describeParams1 := app_vendor_manager.NewDescribeVendorVerifyInfosParams()
+	var userids1 []string
+	userids1 = append(userids1, testUserID)
+	var statuses1 []string
+	statuses1 = append(statuses1, "passed")
+
+	describeParams1.SetUserID(userids1)
+	describeParams1.SetStatus(statuses1)
+
+	describeResp1, err := client.AppVendorManager.DescribeVendorVerifyInfos(describeParams1, nil)
 	require.NoError(t, err)
-	t.Log(getResp1)
-	if getResp1.Payload.UserID == testUserID && getResp1.Payload.Status == "passed" {
-		t.Logf("success to PassVendorVerifyInfo:UserID= [%s]", testUserID)
-	} else {
-		t.Fatalf("failed to PassVendorVerifyInfo:UserID= [%s]", testUserID)
+	AppVendors1 := describeResp1.Payload.VendorVerifyInfoSet
+	respAppvendor1 := AppVendors1[0]
+	logger.Info(nil, "test describeParams result,respAppvendor=[%+v]", respAppvendor1)
+
+	if respAppvendor1.Status != "passed" {
+		t.Fatalf("failed to SubmitVendorVerifyInfo:UserID= [%s]", testUserID)
 	}
 
 	// RejectVendorVerifyInfo
-	/*===============================================================================================*/
-	logger.Info(nil, "%s", "/*=================================================*/")
 	logger.Info(nil, "%s", "Test5 GetVendorVerifyInfo**************************")
 	rejectParams := app_vendor_manager.NewRejectVendorVerifyInfoParams()
 
@@ -121,25 +106,37 @@ func TestAppVendor(t *testing.T) {
 	rejectResp, err := client.AppVendorManager.RejectVendorVerifyInfo(rejectParams, nil)
 	require.NoError(t, err)
 	t.Log(rejectResp)
-	getParams2 := app_vendor_manager.NewGetVendorVerifyInfoParams()
-	getParams2.SetUserID(&testUserID)
-	getResp2, err := client.AppVendorManager.GetVendorVerifyInfo(getParams2, nil)
+
+	describeParams2 := app_vendor_manager.NewDescribeVendorVerifyInfosParams()
+	var userids2 []string
+	userids2 = append(userids2, testUserID)
+	var statuses2 []string
+	statuses2 = append(statuses2, "rejected")
+
+	describeParams2.SetUserID(userids2)
+	describeParams2.SetStatus(statuses2)
+
+	describeResp2, err := client.AppVendorManager.DescribeVendorVerifyInfos(describeParams2, nil)
 	require.NoError(t, err)
-	t.Log(getResp2)
-	if getResp2.Payload.UserID == testUserID && getResp2.Payload.Status == "rejected" {
-		t.Logf("success to RejectVendorVerifyInfo:UserID= [%s]", testUserID)
-	} else {
-		t.Fatalf("failed to RejectVendorVerifyInfo:UserID= [%s]", testUserID)
+	AppVendors2 := describeResp2.Payload.VendorVerifyInfoSet
+	respAppvendor2 := AppVendors2[0]
+	logger.Info(nil, "test describeParams result,respAppvendor=[%+v]", respAppvendor2)
+
+	if respAppvendor2.Status != "rejected" {
+		t.Fatalf("failed to SubmitVendorVerifyInfo:UserID= [%s]", testUserID)
 	}
 
 	// DescribeAppVendorStatistics
-	/*===============================================================================================*/
-
-	logger.Info(nil, "%s", "/*=================================================*/")
 	logger.Info(nil, "%s", "Test6 DescribeAppVendorStatistics**************************")
 	describeStaParams := app_vendor_manager.NewDescribeAppVendorStatisticsParams()
-	logger.Info(nil, "test describeParams=[%+v]", describeParams)
-	describeParams.WithUserID([]string{testUserID})
+
+	var userids3 []string
+	userids3 = append(userids3, testUserID)
+	var statuses3 []string
+	statuses3 = append(statuses3, "rejected")
+
+	describeStaParams.SetUserID(userids3)
+	describeStaParams.SetStatus(statuses3)
 
 	describeStaResp, err := client.AppVendorManager.DescribeAppVendorStatistics(describeStaParams, nil)
 	require.NoError(t, err)
