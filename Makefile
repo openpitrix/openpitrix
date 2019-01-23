@@ -203,9 +203,9 @@ test: ## Run all tests
 .PHONY: e2e-test
 e2e-test: ## Run integration tests
 	cd ./test/init/ && sh init_config.sh
-	go test -v -a -tags="integration" ./test/...
+	go test -a -tags="integration" ./test/...
 ifeq ($(WITH_K8S),yes)
-	go test -v -a -timeout 0 -tags="k8s" ./test/...
+	go test -a -timeout 0 -tags="k8s" ./test/...
 endif
 	@echo "e2e-test done"
 
@@ -217,7 +217,7 @@ clean: ## Clean generated version file
 
 .PHONY: unit-test
 unit-test: ## Run unit tests
-	$(DB_TEST) $(ETCD_TEST) go test -v -a -tags="etcd db" ./...
+	$(DB_TEST) $(ETCD_TEST) go test -a -tags="etcd db" ./...
 	@echo "unit-test done"
 
 build-image-%: ## build docker image
