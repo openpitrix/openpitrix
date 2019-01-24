@@ -278,6 +278,7 @@ func (rp *repoProxy) syncAppVersionInfo(ctx context.Context, appId string, versi
 
 		appVersion.PackageName = versionInterface.GetPackageName()
 		appVersion.Status = status
+		appVersion.Type = rp.repo.Type.GetValue()
 
 		_, err = pi.Global().DB(ctx).
 			InsertInto(constants.TableAppVersion).
