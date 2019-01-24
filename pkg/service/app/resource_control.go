@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client/appvendor"
+	"openpitrix.io/openpitrix/pkg/client/iam"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -380,6 +382,41 @@ func getLatestAppVersion(ctx context.Context, appId string, status ...string) (*
 	return appVersion, nil
 }
 
+func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorVerifyInfo, error) {
+	iamclient, err := iam.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	vendorclient, err := appvendor.NewAppVendorManagerClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	userIds = stringutil.Unique(userIds)
+	var ownerIds []string
+	for _, uid := range userIds {
+		getOwnerRes, err := iamclient.GetUserGroupOwner(ctx, &pb.GetUserGroupOwnerRequest{
+			UserId: uid,
+		})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		if getOwnerRes.Owner != "" {
+			ownerIds = append(ownerIds, getOwnerRes.Owner)
+		}
+	}
+	getVendorRes, err := vendorclient.DescribeVendorVerifyInfos(ctx, &pb.DescribeVendorVerifyInfosRequest{
+		UserId: ownerIds,
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	var vendormap = make(map[string]*pb.VendorVerifyInfo)
+	for _, v := range getVendorRes.VendorVerifyInfoSet {
+		vendormap[v.Owner.GetValue()] = v
+	}
+	return vendormap, nil
+}
+
 func formatApp(ctx context.Context, app *models.App) (*pb.App, error) {
 	pbApp := models.AppToPb(app)
 
@@ -402,11 +439,21 @@ func getAppCategories(ctx context.Context, appId string) ([]*pb.ResourceCategory
 
 func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.App, error) {
 	var appIds []string
+	var userIds []string
 	for _, app := range apps {
 		appIds = append(appIds, app.AppId)
+		userIds = append(userIds, app.Owner)
 	}
 	var pbApps []*pb.App
 	appsVersionTypes, err := getAppsVersionTypes(ctx, appIds, active)
+	if err != nil {
+		return pbApps, err
+	}
+	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), appIds)
+	if err != nil {
+		return pbApps, err
+	}
+	vendormap, err := getVendorMap(ctx, userIds)
 	if err != nil {
 		return pbApps, err
 	}
@@ -420,17 +467,17 @@ func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.A
 		if appVersionType, ok := appsVersionTypes[app.AppId]; ok {
 			pbApp.AppVersionTypes = pbutil.ToProtoString(appVersionType)
 		}
-
-		pbApps = append(pbApps, pbApp)
-	}
-	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), appIds)
-	if err != nil {
-		return pbApps, err
-	}
-	for _, pbApp := range pbApps {
-		if categorySet, ok := rcmap[pbApp.GetAppId().GetValue()]; ok {
+		if categorySet, ok := rcmap[app.AppId]; ok {
 			pbApp.CategorySet = categorySet
 		}
+		if vendor, ok := vendormap[app.Owner]; ok {
+			pbApp.CompanyJoinTime = vendor.StatusTime
+			pbApp.CompanyName = vendor.CompanyName
+			pbApp.CompanyProfile = vendor.CompanyProfile
+			pbApp.CompanyWebsite = vendor.CompanyWebsite
+		}
+
+		pbApps = append(pbApps, pbApp)
 	}
 	return pbApps, nil
 }
@@ -531,6 +578,10 @@ func formatAppVersionAuditSet(ctx context.Context, appVersionAudits []*models.Ap
 
 func getAppsVersionTypes(ctx context.Context, appIds []string, active bool) (map[string]string, error) {
 	var appsVersionTypes = make(map[string]string)
+
+	if len(appIds) == 0 {
+		return appsVersionTypes, nil
+	}
 
 	_, err := pi.Global().DB(ctx).
 		Select(constants.ColumnAppId, "GROUP_CONCAT(DISTINCT type ORDER BY type SEPARATOR ',')").

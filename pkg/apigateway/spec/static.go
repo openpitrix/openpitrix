@@ -5433,6 +5433,19 @@ var Files = map[string]string{
         },
         "app_version_types": {
           "type": "string"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "company_website": {
+          "type": "string"
+        },
+        "company_profile": {
+          "type": "string"
+        },
+        "company_join_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -7916,6 +7929,17 @@ var Files = map[string]string{
           "type": "string"
         },
         "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixGetUserGroupOwnerResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "owner": {
           "type": "string"
         }
       }

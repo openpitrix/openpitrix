@@ -318,13 +318,18 @@ func (p *Server) UploadAppAttachment(ctx context.Context, req *pb.UploadAppAttac
 				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 			}
 		}
-		return res, nil
 	case pb.UploadAppAttachmentRequest_screenshot:
-		var screenshots = strings.Split(app.Screenshots, ",")
+		var _screenshots = strings.Split(app.Screenshots, ",")
 		var isDelete = len(req.GetAttachmentContent().GetValue()) == 0
 		var seq = int(req.GetSequence().GetValue())
 		if seq > 5 || seq < 0 {
 			return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorUnsupportedParameterValue, fmt.Sprint(seq))
+		}
+		var screenshots []string
+		for _, screenshot := range _screenshots {
+			if screenshot != "" {
+				screenshots = append(screenshots, screenshot)
+			}
 		}
 		if isDelete {
 			if len(screenshots) == 0 || len(screenshots) < seq {
@@ -337,7 +342,7 @@ func (p *Server) UploadAppAttachment(ctx context.Context, req *pb.UploadAppAttac
 				logger.Error(ctx, "Make thumbnail failed: %+v", err)
 				return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorImageDecodeFailed)
 			}
-			if len(screenshots) > seq {
+			if len(screenshots) > seq && screenshots[seq] != "" {
 				// if len(screenshots) == 5
 				//    seq == 4 , replace screenshots[4]
 				_, err := attachmentManagerClient.ReplaceAttachment(ctx, &pb.ReplaceAttachmentRequest{
@@ -358,7 +363,6 @@ func (p *Server) UploadAppAttachment(ctx context.Context, req *pb.UploadAppAttac
 			}
 		}
 		attributes[constants.ColumnScreenshots] = strings.Join(screenshots, ",")
-		return res, nil
 	}
 
 	if len(attributes) > 0 {

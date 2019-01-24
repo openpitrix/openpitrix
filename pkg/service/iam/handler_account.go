@@ -8,14 +8,15 @@ import (
 	"context"
 	"time"
 
-	"openpitrix.io/iam/pkg/pb/im"
-	"openpitrix.io/openpitrix/pkg/client/iam2"
+	pbim "openpitrix.io/iam/pkg/pb/im"
+	clientiam2 "openpitrix.io/openpitrix/pkg/client/iam2"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -23,6 +24,8 @@ var (
 	_         pb.AccountManagerServer = (*Server)(nil)
 	client, _                         = clientiam2.NewClient()
 )
+
+const OwnerKey = "owner"
 
 func formatUsers(pbimUsers []*pbim.User) []*pb.User {
 	var users []*pb.User
@@ -370,11 +373,15 @@ func (p *Server) ValidateUserPassword(ctx context.Context, req *pb.ValidateUserP
 }
 
 func (p *Server) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
+	s := ctxutil.GetSender(ctx)
 	group, err := client.CreateGroup(ctx, &pbim.Group{
 		ParentGroupId: req.GetParentGroupId().GetValue(),
 		GroupName:     req.GetName().GetValue(),
 		Description:   req.GetDescription().GetValue(),
 		Status:        constants.StatusActive,
+		Extra: map[string]string{
+			OwnerKey: s.UserId,
+		},
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -468,4 +475,29 @@ func (p *Server) LeaveGroup(ctx context.Context, req *pb.LeaveGroupRequest) (*pb
 		GroupId: req.GetGroupId(),
 		UserId:  req.GetUserId(),
 	}, nil
+}
+
+func (p *Server) GetUserGroupOwner(ctx context.Context, req *pb.GetUserGroupOwnerRequest) (*pb.GetUserGroupOwnerResponse, error) {
+	res, err := client.ListGroups(ctx, &pbim.ListGroupsRequest{
+		Limit:  1,
+		UserId: []string{req.GetUserId()},
+		Status: []string{constants.StatusActive},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	reply := &pb.GetUserGroupOwnerResponse{
+		UserId: req.GetUserId(),
+	}
+	if res.Total == 0 {
+		return reply, nil
+	}
+	owner, ok := res.Group[0].Extra[OwnerKey]
+	if !ok {
+		return reply, nil
+	}
+
+	reply.Owner = owner
+
+	return reply, nil
 }
