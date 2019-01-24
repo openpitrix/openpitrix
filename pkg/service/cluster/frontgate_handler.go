@@ -79,6 +79,7 @@ func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.Cl
 	frontgateWrapper.Cluster.SubnetId = clusterWrapper.Cluster.SubnetId
 	frontgateWrapper.Cluster.VpcId = clusterWrapper.Cluster.VpcId
 	frontgateWrapper.Cluster.Owner = clusterWrapper.Cluster.Owner
+	frontgateWrapper.Cluster.OwnerPath = clusterWrapper.Cluster.OwnerPath
 	frontgateWrapper.Cluster.ClusterType = constants.FrontgateClusterType
 	frontgateWrapper.Cluster.FrontgateId = ""
 	frontgateWrapper.Cluster.RuntimeId = f.Runtime.RuntimeId
