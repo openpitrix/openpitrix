@@ -197,6 +197,7 @@ bin-release-%: ## Bin release version
 test: ## Run all tests
 	make unit-test
 	make e2e-test
+	make e2e-k8s-test
 	@echo "test done"
 
 
@@ -204,10 +205,13 @@ test: ## Run all tests
 e2e-test: ## Run integration tests
 	cd ./test/init/ && sh init_config.sh
 	go test -a -tags="integration" ./test/...
-ifeq ($(WITH_K8S),yes)
-	go test -a -timeout 0 -tags="k8s" ./test/...
-endif
 	@echo "e2e-test done"
+
+.PHONY: e2e-k8s-test
+e2e-k8s-test: ## Run k8s tests
+	cd ./test/init/ && sh init_config.sh
+	go test -a -timeout 0 -tags="k8s" ./test/...
+	@echo "e2e-k8s-test done"
 
 .PHONY: clean
 clean: ## Clean generated version file
