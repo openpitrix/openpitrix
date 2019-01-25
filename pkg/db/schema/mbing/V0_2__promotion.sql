@@ -104,20 +104,9 @@ CREATE TABLE IF NOT EXISTS coupon_received
 (
 	coupon_id 					VARCHAR(50) 	NOT NULL,
 	user_id 						VARCHAR(50) 	NOT NULL,
-	num 								INT 					NOT NULL ,
-	left_num						INT 					NOT NULL ,
+	contract_id					VARCHAR(50),
 	status							TINYINT				NOT NULL commnet '0: overtime, 1: received, 2: using, 3: used',
 	create_time       	TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (coupon_id, user_id)
-);
-
-
-CREATE TABLE IF NOT EXISTS coupon_used
-(
-	coupon_id 					VARCHAR(50) 	NOT NULL,
-	user_id 						VARCHAR(50) 	NOT NULL,
-	contract_id					VARCHAR(50) 	NOT NULL,
-	fee			 						DECIMAL(8, 2) NOT NULL,
-	create_time       	TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	update_time       	TIMESTAMP,
 	PRIMARY KEY (coupon_id, user_id)
 );
