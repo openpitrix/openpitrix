@@ -50,7 +50,7 @@ func initIAMAccount() {
 		// create user
 		_, err = client.CreateUser(ctx, &pbim.User{
 			Email:    email,
-			Name:     getUsernameFromEmail(email),
+			UserName: getUsernameFromEmail(email),
 			Password: password,
 			Status:   constants.StatusActive,
 			Extra:    map[string]string{"role": constants.RoleGlobalAdmin},
@@ -64,9 +64,9 @@ func initIAMAccount() {
 		// password matched
 		return
 	}
-	userId := user.Uid
+	userId := user.UserId
 	_, err = client.ModifyPassword(ctx, &pbim.Password{
-		Uid:      userId,
+		UserId:   userId,
 		Password: password,
 	})
 	if err != nil {

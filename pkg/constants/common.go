@@ -21,6 +21,7 @@ const (
 	PilotServiceHost           = prefix + "pilot-service"
 	IAMServiceHost             = prefix + "iam-service"
 	IAM2ServiceHost            = prefix + "iam2-service"
+	AMServiceHost              = prefix + "am-service"
 	RepoIndexerHost            = prefix + "repo-indexer"
 	CategoryManagerHost        = prefix + "category-manager"
 	RuntimeProviderManagerHost = prefix + "rp-manager"
@@ -50,6 +51,7 @@ const (
 	MarketManagerPort       = 9117
 	VendorManagerPort       = 9118
 	IAM2ServicePort         = 9119
+	AMServicePort           = 9120
 	EtcdServicePort         = 2379
 
 	AttachmentManagerPort      = 9120

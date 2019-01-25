@@ -25,8 +25,14 @@ type OpenpitrixGroup struct {
 	// group id
 	GroupID string `json:"group_id,omitempty"`
 
+	// group path
+	GroupPath string `json:"group_path,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
+
+	// parent group id
+	ParentGroupID string `json:"parent_group_id,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`
@@ -36,15 +42,32 @@ type OpenpitrixGroup struct {
 
 	// update time
 	UpdateTime strfmt.DateTime `json:"update_time,omitempty"`
+
+	// user id
+	UserID []string `json:"user_id"`
 }
 
 // Validate validates this openpitrix group
 func (m *OpenpitrixGroup) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateUserID(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixGroup) validateUserID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.UserID) { // not required
+		return nil
+	}
+
 	return nil
 }
 

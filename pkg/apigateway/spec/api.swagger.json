@@ -7622,6 +7622,9 @@
     "openpitrixCreateGroupRequest": {
       "type": "object",
       "properties": {
+        "parent_group_id": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         },
@@ -7664,6 +7667,9 @@
       "type": "object",
       "properties": {
         "email": {
+          "type": "string"
+        },
+        "phone_number": {
           "type": "string"
         },
         "password": {
@@ -7773,7 +7779,13 @@
     "openpitrixGroup": {
       "type": "object",
       "properties": {
+        "parent_group_id": {
+          "type": "string"
+        },
         "group_id": {
+          "type": "string"
+        },
+        "group_path": {
           "type": "string"
         },
         "name": {
@@ -7796,6 +7808,12 @@
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -7979,6 +7997,9 @@
         "email": {
           "type": "string"
         },
+        "phone_number": {
+          "type": "string"
+        },
         "role": {
           "type": "string"
         },
@@ -7999,6 +8020,12 @@
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "group_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
