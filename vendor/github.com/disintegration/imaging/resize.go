@@ -116,25 +116,23 @@ func resizeHorizontal(img image.Image, width int, filter ResampleFilter) *image.
 		for y := range ys {
 			src.scan(0, y, src.w, y+1, scanLine)
 			j0 := y * dst.Stride
-			for x := range weights {
+			for x := 0; x < width; x++ {
 				var r, g, b, a float64
 				for _, w := range weights[x] {
 					i := w.index * 4
-					s := scanLine[i : i+4 : i+4]
-					aw := float64(s[3]) * w.weight
-					r += float64(s[0]) * aw
-					g += float64(s[1]) * aw
-					b += float64(s[2]) * aw
+					aw := float64(scanLine[i+3]) * w.weight
+					r += float64(scanLine[i+0]) * aw
+					g += float64(scanLine[i+1]) * aw
+					b += float64(scanLine[i+2]) * aw
 					a += aw
 				}
 				if a != 0 {
 					aInv := 1 / a
 					j := j0 + x*4
-					d := dst.Pix[j : j+4 : j+4]
-					d[0] = clamp(r * aInv)
-					d[1] = clamp(g * aInv)
-					d[2] = clamp(b * aInv)
-					d[3] = clamp(a)
+					dst.Pix[j+0] = clamp(r * aInv)
+					dst.Pix[j+1] = clamp(g * aInv)
+					dst.Pix[j+2] = clamp(b * aInv)
+					dst.Pix[j+3] = clamp(a)
 				}
 			}
 		}
@@ -150,25 +148,23 @@ func resizeVertical(img image.Image, height int, filter ResampleFilter) *image.N
 		scanLine := make([]uint8, src.h*4)
 		for x := range xs {
 			src.scan(x, 0, x+1, src.h, scanLine)
-			for y := range weights {
+			for y := 0; y < height; y++ {
 				var r, g, b, a float64
 				for _, w := range weights[y] {
 					i := w.index * 4
-					s := scanLine[i : i+4 : i+4]
-					aw := float64(s[3]) * w.weight
-					r += float64(s[0]) * aw
-					g += float64(s[1]) * aw
-					b += float64(s[2]) * aw
+					aw := float64(scanLine[i+3]) * w.weight
+					r += float64(scanLine[i+0]) * aw
+					g += float64(scanLine[i+1]) * aw
+					b += float64(scanLine[i+2]) * aw
 					a += aw
 				}
 				if a != 0 {
 					aInv := 1 / a
 					j := y*dst.Stride + x*4
-					d := dst.Pix[j : j+4 : j+4]
-					d[0] = clamp(r * aInv)
-					d[1] = clamp(g * aInv)
-					d[2] = clamp(b * aInv)
-					d[3] = clamp(a)
+					dst.Pix[j+0] = clamp(r * aInv)
+					dst.Pix[j+1] = clamp(g * aInv)
+					dst.Pix[j+2] = clamp(b * aInv)
+					dst.Pix[j+3] = clamp(a)
 				}
 			}
 		}

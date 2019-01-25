@@ -21,7 +21,7 @@ import (
 
 var files = []string{
 	"api.swagger.json",
-	"../../../vendor/openpitrix.io/iam/pkg/pb/am/am.swagger.json",
+	//"../../../vendor/openpitrix.io/iam/pkg/pb/am/am.swagger.json",
 }
 
 func main() {

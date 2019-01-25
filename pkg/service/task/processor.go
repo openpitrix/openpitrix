@@ -7,6 +7,8 @@ package task
 import (
 	"context"
 
+	pbtypes "openpitrix.io/metadata/pkg/pb/types"
+
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	runtimeclient "openpitrix.io/openpitrix/pkg/client/runtime"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -14,7 +16,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"

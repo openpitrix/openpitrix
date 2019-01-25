@@ -49,15 +49,7 @@ const (
 	//  <subdomain> ::= <label> | <subdomain> "." <label>
 	//  var subdomain = /^[a-zA-Z](([-0-9a-zA-Z]+)?[0-9a-zA-Z])?(\.[a-zA-Z](([-0-9a-zA-Z]+)?[0-9a-zA-Z])?)*$/;
 	//  <domain> ::= <subdomain> | " "
-	//
-	// Additional validations:
-	//   - for FDQNs, top-level domain (e.g. ".com"), is at least to letters long (no special characters here)
-	//   - hostnames may start with a digit [RFC1123]
-	//   - special registered names with an underscore ('_') are not allowed in this context
-	//   - dashes are permitted, but not at the start or the end of a segment
-	//   - long top-level domain names (e.g. example.london) are permitted
-	//   - symbol unicode points are permitted (e.g. emoji) (not for top-level domain)
-	HostnamePattern = `^([a-zA-Z0-9\p{S}\p{L}]((-?[a-zA-Z0-9\p{S}\p{L}]{0,62})?)|([a-zA-Z0-9\p{S}\p{L}](([a-zA-Z0-9-\p{S}\p{L}]{0,61}[a-zA-Z0-9\p{S}\p{L}])?)(\.)){1,}([a-zA-Z\p{L}]){2,63})$`
+	HostnamePattern = `^[a-zA-Z0-9\p{S}\p{L}](([a-zA-Z0-9-\p{S}\p{L}]{0,63})(\.)){1,6}([a-zA-Z\p{L}]){2,}$`
 	// UUIDPattern Regex for UUID that allows uppercase
 	UUIDPattern = `(?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$`
 	// UUID3Pattern Regex for UUID3 that allows uppercase

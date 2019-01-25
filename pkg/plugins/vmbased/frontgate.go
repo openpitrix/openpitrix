@@ -8,13 +8,14 @@ import (
 	"fmt"
 	"strings"
 
+	metadatatypes "openpitrix.io/metadata/pkg/pb/types"
+	pbtypes "openpitrix.io/metadata/pkg/pb/types"
+	types "openpitrix.io/metadata/pkg/pb/types"
+
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
-	metadatatypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
-	types "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 	"openpitrix.io/openpitrix/pkg/util/retryutil"

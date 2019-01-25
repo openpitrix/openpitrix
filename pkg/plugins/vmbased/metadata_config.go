@@ -7,9 +7,10 @@ package vmbased
 import (
 	"fmt"
 
+	pbtypes "openpitrix.io/metadata/pkg/pb/types"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )

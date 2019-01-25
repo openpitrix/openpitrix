@@ -8,7 +8,7 @@ TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 
 DOCKER_TAGS=latest
 BUILDER_IMAGE=openpitrix/openpitrix-builder:release-v0.2.3
-RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
+RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build -v `pwd`/tmp/mod:/go/pkg/mod  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e GO111MODULE=on -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
 GO_RACE:=go build -race
 GO_VET:=go vet
@@ -31,7 +31,6 @@ endef
 COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-iam-service openpitrix-attachment-manager openpitrix-vendor-manager openpitrix-notification
 COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-market-db-ctrl openpitrix-attachment-db-ctrl openpitrix-vendor-db-ctrl openpitrix-notification-db-ctrl
 CMD?=...
-WITH_METADATA?=yes
 WITH_K8S=no
 comma:= ,
 empty:=
@@ -117,9 +116,6 @@ build: fmt build-flyway ## Build all openpitrix images
 	mkdir -p ./tmp/bin
 	$(call get_build_flags)
 	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
-ifneq ($(WITH_METADATA),no)
-	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(TRAG.Gopkg)/metadata/cmd/...
-endif
 	docker build -t $(TARG.Name) -t $(TARG.Name):metadata -f ./Dockerfile.dev ./tmp/bin
 	docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"

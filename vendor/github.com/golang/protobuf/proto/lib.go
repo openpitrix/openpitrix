@@ -308,14 +308,10 @@ var errInvalidUTF8 = &invalidUTF8Error{}
 // isNonFatal reports whether the error is either a RequiredNotSet error
 // or a InvalidUTF8 error.
 func isNonFatal(err error) bool {
-	if re, ok := err.(interface {
-		RequiredNotSet() bool
-	}); ok && re.RequiredNotSet() {
+	if re, ok := err.(interface{ RequiredNotSet() bool }); ok && re.RequiredNotSet() {
 		return true
 	}
-	if re, ok := err.(interface {
-		InvalidUTF8() bool
-	}); ok && re.InvalidUTF8() {
+	if re, ok := err.(interface{ InvalidUTF8() bool }); ok && re.InvalidUTF8() {
 		return true
 	}
 	return false
@@ -344,6 +340,26 @@ type Message interface {
 	String() string
 	ProtoMessage()
 }
+
+// Stats records allocation details about the protocol buffer encoders
+// and decoders.  Useful for tuning the library itself.
+type Stats struct {
+	Emalloc uint64 // mallocs in encode
+	Dmalloc uint64 // mallocs in decode
+	Encode  uint64 // number of encodes
+	Decode  uint64 // number of decodes
+	Chit    uint64 // number of cache hits
+	Cmiss   uint64 // number of cache misses
+	Size    uint64 // number of sizes
+}
+
+// Set to true to enable stats collection.
+const collectStats = false
+
+var stats Stats
+
+// GetStats returns a copy of the global Stats structure.
+func GetStats() Stats { return stats }
 
 // A Buffer is a buffer manager for marshaling and unmarshaling
 // protocol buffers.  It may be reused between invocations to

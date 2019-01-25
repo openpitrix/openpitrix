@@ -2,6 +2,7 @@ sudo: required
 env:
   global:
   - CHANGE_MINIKUBE_NONE_USER=true
+  - GO111MODULE=on
   matrix:
   - TEST_SUITE=unit-test
   - TEST_SUITE=e2e-test
@@ -9,6 +10,7 @@ env:
 cache:
   directories:
   - tmp/cache
+  - tmp/mod
 services:
 - docker
 language: go
@@ -48,7 +50,6 @@ before_script:
 - kubectl cluster-info
 - make fmt-check
 - docker build -t openpitrix -f ./Dockerfile .
-- docker build -t openpitrix:metadata -f ./Dockerfile.metadata .
 - make compose-up
 - sleep 20
 script:

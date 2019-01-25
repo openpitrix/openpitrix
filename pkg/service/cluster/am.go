@@ -8,6 +8,8 @@ import (
 	"context"
 	"fmt"
 
+	pbtypes "openpitrix.io/metadata/pkg/pb/types"
+
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -15,7 +17,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"

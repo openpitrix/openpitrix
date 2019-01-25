@@ -1,8 +1,14 @@
-SHELL=/bin/bash
+SHELL="/bin/bash"
 
 GOFILES_NOVENDOR = $(shell go list ./... | grep -v /vendor/)
 
-all: vet fmt test
+all: vet fmt docs test
+
+docs:
+	./scripts/docs.sh generate
+
+checkdocs:
+	./scripts/docs.sh check
 
 fmt:
 	go fmt $(GOFILES_NOVENDOR)
@@ -13,4 +19,4 @@ vet:
 test: vet
 	./scripts/test_all.sh
 
-.PHONY: all test
+.PHONY: all docs validate test
