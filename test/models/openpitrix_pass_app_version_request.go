@@ -16,9 +16,6 @@ import (
 // swagger:model openpitrixPassAppVersionRequest
 type OpenpitrixPassAppVersionRequest struct {
 
-	// role
-	Role string `json:"role,omitempty"`
-
 	// version id
 	VersionID string `json:"version_id,omitempty"`
 }

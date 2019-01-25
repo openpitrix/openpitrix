@@ -19,9 +19,6 @@ type OpenpitrixRejectAppVersionRequest struct {
 	// message
 	Message string `json:"message,omitempty"`
 
-	// role
-	Role string `json:"role,omitempty"`
-
 	// version id
 	VersionID string `json:"version_id,omitempty"`
 }
