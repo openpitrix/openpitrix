@@ -32,15 +32,17 @@ func formatUsers(pbimUsers []*pbim.User) []*pb.User {
 			role = r
 		}
 		users = append(users, &pb.User{
-			UserId:      pbutil.ToProtoString(u.Uid),
-			Username:    pbutil.ToProtoString(u.Name),
+			UserId:      pbutil.ToProtoString(u.UserId),
+			Username:    pbutil.ToProtoString(u.UserName),
 			Email:       pbutil.ToProtoString(u.Email),
+			PhoneNumber: pbutil.ToProtoString(u.PhoneNumber),
 			Description: pbutil.ToProtoString(u.Description),
 			Status:      pbutil.ToProtoString(u.Status),
 			CreateTime:  u.CreateTime,
 			UpdateTime:  u.UpdateTime,
 			StatusTime:  u.StatusTime,
 			Role:        pbutil.ToProtoString(role),
+			GroupId:     u.GroupId,
 		})
 	}
 	return users
@@ -59,9 +61,9 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest
 		Reverse:    req.GetReverse().GetValue(),
 		SearchWord: req.GetSearchWord().GetValue(),
 
-		Gid:    req.GetGroupId(),
-		Uid:    req.GetUserId(),
-		Status: req.GetStatus(),
+		GroupId: req.GetGroupId(),
+		UserId:  req.GetUserId(),
+		Status:  req.GetStatus(),
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -86,9 +88,9 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 		Reverse:    req.GetReverse().GetValue(),
 		SearchWord: req.GetSearchWord().GetValue(),
 
-		Gid:    req.GetGroupId(),
-		Uid:    req.GetUserId(),
-		Status: req.GetStatus(),
+		GroupId: req.GetGroupId(),
+		UserId:  req.GetUserId(),
+		Status:  req.GetStatus(),
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -96,13 +98,16 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 	var groups []*pb.Group
 	for _, u := range res.Group {
 		groups = append(groups, &pb.Group{
-			GroupId:     pbutil.ToProtoString(u.Gid),
-			Name:        pbutil.ToProtoString(u.Name),
-			Description: pbutil.ToProtoString(u.Description),
-			Status:      pbutil.ToProtoString(u.Status),
-			CreateTime:  u.CreateTime,
-			UpdateTime:  u.UpdateTime,
-			StatusTime:  u.StatusTime,
+			ParentGroupId: pbutil.ToProtoString(u.ParentGroupId),
+			GroupId:       pbutil.ToProtoString(u.GroupId),
+			GroupPath:     pbutil.ToProtoString(u.GroupPath),
+			Name:          pbutil.ToProtoString(u.GroupName),
+			Description:   pbutil.ToProtoString(u.Description),
+			Status:        pbutil.ToProtoString(u.Status),
+			CreateTime:    u.CreateTime,
+			UpdateTime:    u.UpdateTime,
+			StatusTime:    u.StatusTime,
+			UserId:        u.UserId,
 		})
 	}
 
@@ -115,7 +120,7 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 
 func getUser(ctx context.Context, userId string) (*pbim.User, error) {
 	user, err := client.GetUser(ctx, &pbim.UserId{
-		Uid: userId,
+		UserId: userId,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -134,7 +139,7 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 	password := req.GetPassword().GetValue()
 	if password != "" {
 		_, err = client.ModifyPassword(ctx, &pbim.Password{
-			Uid:      req.GetUserId().GetValue(),
+			UserId:   req.GetUserId().GetValue(),
 			Password: password,
 		})
 		if err != nil {
@@ -148,7 +153,7 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 		user.Email = req.GetEmail().GetValue()
 	}
 	if req.GetUsername() != nil {
-		user.Name = req.GetUsername().GetValue()
+		user.UserName = req.GetUsername().GetValue()
 	}
 	user.UpdateTime = pbutil.ToProtoTimestamp(time.Now())
 
@@ -169,7 +174,7 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*
 
 	for _, uid := range uids {
 		user, err := client.GetUser(ctx, &pbim.UserId{
-			Uid: uid,
+			UserId: uid,
 		})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -205,7 +210,8 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 
 	user, err := client.CreateUser(ctx, &pbim.User{
 		Email:       req.GetEmail().GetValue(),
-		Name:        getUsernameFromEmail(req.GetEmail().GetValue()),
+		PhoneNumber: req.GetPhoneNumber().GetValue(),
+		UserName:    getUsernameFromEmail(req.GetEmail().GetValue()),
 		Password:    req.GetPassword().GetValue(),
 		Description: req.GetDescription().GetValue(),
 		Status:      constants.StatusActive,
@@ -216,7 +222,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	}
 
 	reply := &pb.CreateUserResponse{
-		UserId: pbutil.ToProtoString(user.Uid),
+		UserId: pbutil.ToProtoString(user.UserId),
 	}
 
 	return reply, nil
@@ -227,13 +233,13 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 	password := req.GetPassword().GetValue()
 
 	_, err := client.GetUser(ctx, &pbim.UserId{
-		Uid: uid,
+		UserId: uid,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	b, err := client.ComparePassword(ctx, &pbim.Password{
-		Uid:      uid,
+		UserId:   uid,
 		Password: password,
 	})
 	if err != nil {
@@ -283,7 +289,7 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 	}
 
 	_, err = client.ModifyPassword(ctx, &pbim.Password{
-		Uid:      resetInfo.UserId,
+		UserId:   resetInfo.UserId,
 		Password: newPassword,
 	})
 	if err != nil {
@@ -344,7 +350,7 @@ func validateUserPassword(ctx context.Context, email, password string) (*pbim.Us
 
 	user := res.User[0]
 	b, err := client.ComparePassword(ctx, &pbim.Password{
-		Uid:      user.Uid,
+		UserId:   user.UserId,
 		Password: password,
 	})
 	if err != nil {
@@ -365,16 +371,17 @@ func (p *Server) ValidateUserPassword(ctx context.Context, req *pb.ValidateUserP
 
 func (p *Server) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
 	group, err := client.CreateGroup(ctx, &pbim.Group{
-		Name:        req.GetName().GetValue(),
-		Description: req.GetDescription().GetValue(),
-		Status:      constants.StatusActive,
+		ParentGroupId: req.GetParentGroupId().GetValue(),
+		GroupName:     req.GetName().GetValue(),
+		Description:   req.GetDescription().GetValue(),
+		Status:        constants.StatusActive,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
 	reply := &pb.CreateGroupResponse{
-		GroupId: pbutil.ToProtoString(group.Gid),
+		GroupId: pbutil.ToProtoString(group.GroupId),
 	}
 
 	return reply, nil
@@ -384,7 +391,7 @@ func (p *Server) ModifyGroup(ctx context.Context, req *pb.ModifyGroupRequest) (*
 	gid := req.GetGroupId().GetValue()
 
 	group, err := client.GetGroup(ctx, &pbim.GroupId{
-		Gid: gid,
+		GroupId: gid,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -394,7 +401,7 @@ func (p *Server) ModifyGroup(ctx context.Context, req *pb.ModifyGroupRequest) (*
 		group.Description = req.GetDescription().GetValue()
 	}
 	if req.GetName() != nil {
-		group.Name = req.GetName().GetValue()
+		group.GroupName = req.GetName().GetValue()
 	}
 	group.UpdateTime = pbutil.ToProtoTimestamp(time.Now())
 
@@ -414,7 +421,7 @@ func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) 
 
 	for _, gid := range gids {
 		group, err := client.GetGroup(ctx, &pbim.GroupId{
-			Gid: gid,
+			GroupId: gid,
 		})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -435,8 +442,8 @@ func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) 
 
 func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.JoinGroupResponse, error) {
 	_, err := client.JoinGroup(ctx, &pbim.JoinGroupRequest{
-		Gid: req.GetGroupId(),
-		Uid: req.GetUserId(),
+		GroupId: req.GetGroupId(),
+		UserId:  req.GetUserId(),
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -450,8 +457,8 @@ func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.J
 
 func (p *Server) LeaveGroup(ctx context.Context, req *pb.LeaveGroupRequest) (*pb.LeaveGroupResponse, error) {
 	_, err := client.LeaveGroup(ctx, &pbim.LeaveGroupRequest{
-		Gid: req.GetGroupId(),
-		Uid: req.GetUserId(),
+		GroupId: req.GetGroupId(),
+		UserId:  req.GetUserId(),
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)

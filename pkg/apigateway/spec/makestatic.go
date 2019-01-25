@@ -15,11 +15,13 @@ import (
 	"go/format"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"unicode/utf8"
 )
 
 var files = []string{
 	"api.swagger.json",
+	"../../../vendor/openpitrix.io/iam/pkg/pb/am/am.swagger.json",
 }
 
 func main() {
@@ -43,7 +45,7 @@ func makestatic() error {
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(buf, "\t%q: ", fn)
+		fmt.Fprintf(buf, "\t%q: ", filepath.Base(fn))
 		if utf8.Valid(b) {
 			fmt.Fprintf(buf, "`%s`", sanitize(b))
 		} else {

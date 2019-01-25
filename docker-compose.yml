@@ -473,15 +473,34 @@ services:
 
   # iam2 service
   openpitrix-iam2-service:
-    image: "openpitrix/iam:v0.2.8-dev"
-    command: "iam"
+    image: "openpitrix/iam:latest"
+    command: "im"
     links:
       - openpitrix-db:openpitrix-db
     container_name: "openpitrix-iam2-service"
     environment:
-      - OPENPITRIX_IAM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
-      - OPENPITRIX_IAM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
-      - OPENPITRIX_IAM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - OPENPITRIX_IM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_IM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_IM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - OPENPITRIX_MYSQL_DATABASE=im
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
+  # am service
+  openpitrix-am-service:
+    image: "openpitrix/iam:latest"
+    command: "am"
+    links:
+      - openpitrix-db:openpitrix-db
+    container_name: "openpitrix-am-service"
+    environment:
+      - OPENPITRIX_AM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_AM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_AM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - OPENPITRIX_MYSQL_DATABASE=am
     logging:
       driver: "json-file"
       options:

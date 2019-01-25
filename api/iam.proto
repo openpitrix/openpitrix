@@ -89,29 +89,35 @@ service TokenManager {
 	};
 }
 
-
 message User {
 	google.protobuf.StringValue user_id = 1;
 	google.protobuf.StringValue username = 2;
 	google.protobuf.StringValue email = 3;
-	google.protobuf.StringValue role = 4; // default is user
-	google.protobuf.StringValue description = 5;
-	google.protobuf.StringValue status = 6;
+	google.protobuf.StringValue phone_number = 4;
+	google.protobuf.StringValue role = 5; // default is user
+	google.protobuf.StringValue description = 6;
+	google.protobuf.StringValue status = 7;
+
+	google.protobuf.Timestamp create_time = 8;
+	google.protobuf.Timestamp update_time = 9;
+	google.protobuf.Timestamp status_time = 10;
+
+	repeated string group_id = 11;
+}
+
+message Group {
+	google.protobuf.StringValue parent_group_id = 1;
+	google.protobuf.StringValue group_id = 2;
+	google.protobuf.StringValue group_path = 3;
+	google.protobuf.StringValue name = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.StringValue description = 6;
 
 	google.protobuf.Timestamp create_time = 7;
 	google.protobuf.Timestamp update_time = 8;
 	google.protobuf.Timestamp status_time = 9;
-}
 
-message Group {
-	google.protobuf.StringValue group_id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue status = 3;
-	google.protobuf.StringValue description = 4;
-
-	google.protobuf.Timestamp create_time = 5;
-	google.protobuf.Timestamp update_time = 6;
-	google.protobuf.Timestamp status_time = 7;
+	repeated string user_id = 10;
 }
 
 
@@ -177,9 +183,10 @@ message GetPasswordResetResponse {
 }
 message CreateUserRequest {
 	google.protobuf.StringValue email = 1;
-	google.protobuf.StringValue password = 2;
-	google.protobuf.StringValue role = 3; // default is user
-	google.protobuf.StringValue description = 4;
+	google.protobuf.StringValue phone_number = 2;
+	google.protobuf.StringValue password = 3;
+	google.protobuf.StringValue role = 4; // default is user
+	google.protobuf.StringValue description = 5;
 }
 message CreateUserResponse {
 	google.protobuf.StringValue user_id = 1;
@@ -194,8 +201,9 @@ message ValidateUserPasswordResponse {
 }
 
 message CreateGroupRequest {
-	google.protobuf.StringValue name = 1;
-	google.protobuf.StringValue description = 2;
+	google.protobuf.StringValue parent_group_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
 }
 message CreateGroupResponse {
 	google.protobuf.StringValue group_id = 1;

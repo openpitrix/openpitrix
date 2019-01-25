@@ -69,7 +69,7 @@ func (p *Server) Token(ctx context.Context, req *pb.TokenRequest) (*pb.TokenResp
 			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorEmailPasswordNotMatched)
 		}
 	}
-	userId := user.Uid
+	userId := user.UserId
 	var token *models.Token
 	if req.GrantType == constants.GrantTypeRefreshToken {
 		token, err = getTokenByRefreshToken(ctx, req.RefreshToken)

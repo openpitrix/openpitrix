@@ -88,7 +88,8 @@ window.onload = function() {
   // Build a system
   const ui = SwaggerUIBundle({
     urls: [
-      { name:"Api", url:"/swagger-ui/api.swagger.json" }
+      { name:"Api", url:"/swagger-ui/api.swagger.json" },
+      { name:"AccessManager", url:"/swagger-ui/am.swagger.json" }
     ],
     dom_id: '#swagger-ui',
     deepLinking: true,

@@ -49,8 +49,8 @@ func validateClientCredentials(ctx context.Context, client clientIface) (*pbim.U
 
 	if stringutil.StringIn(userId, constants.InternalUsers) {
 		return &pbim.User{
-			Uid:   userId,
-			Extra: map[string]string{"role": constants.RoleGlobalAdmin},
+			UserId: userId,
+			Extra:  map[string]string{"role": constants.RoleGlobalAdmin},
 		}, userClient, nil
 	}
 

@@ -192,6 +192,7 @@ func (*CreateGroupCmd) GetActionName() string {
 func (c *CreateGroupCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.ParentGroupID, "parent_group_id", "", "", "")
 }
 
 func (c *CreateGroupCmd) Run(out Out) error {
@@ -265,6 +266,7 @@ func (c *CreateUserCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Email, "email", "", "", "")
 	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.PhoneNumber, "phone_number", "", "", "")
 	f.StringVarP(&c.Role, "role", "", "", "")
 }
 
