@@ -387,4 +387,9 @@ var (
 		en:   "illegal BankAccountNumber format [%s]",
 		zhCN: "非法的银行账号格式[%s]",
 	}
+	ErrorGroupHadMembers = ErrorMessage{
+		Name: "group_had_members",
+		en:   "group had members",
+		zhCN: "组内还有成员",
+	}
 )

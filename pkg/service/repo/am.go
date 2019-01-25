@@ -57,9 +57,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 	sender := ctxutil.GetSender(ctx)
 	switch r := req.(type) {
 	case *pb.DescribeReposRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else {
+		if !sender.IsGlobalAdmin() {
 			if len(r.RepoId) == 0 {
 				r.AppDefaultStatus = []string{}
 				r.UserId = sender.UserId
@@ -71,9 +69,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 		if len(r.GetAppDefaultStatus().GetValue()) == 0 {
 			r.AppDefaultStatus = pbutil.ToProtoString(constants.StatusDraft)
 		}
-		if sender.IsGlobalAdmin() {
-
-		} else {
+		if !sender.IsGlobalAdmin() {
 			r.AppDefaultStatus = pbutil.ToProtoString(pi.Global().GlobalConfig().GetAppDefaultStatus())
 		}
 		return r
@@ -82,9 +78,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 		if len(r.GetAppDefaultStatus().GetValue()) == 0 {
 			r.AppDefaultStatus = pbutil.ToProtoString(constants.StatusDraft)
 		}
-		if sender.IsGlobalAdmin() {
-
-		} else {
+		if !sender.IsGlobalAdmin() {
 			r.AppDefaultStatus = pbutil.ToProtoString(pi.Global().GlobalConfig().GetAppDefaultStatus())
 		}
 		return r

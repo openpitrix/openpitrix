@@ -100,6 +100,20 @@
   path:
     reset_id:
       type: string
+- action: IsvCreateUser
+  request: IsvCreateUserRequest
+  service: AccountManager
+  body:
+    description:
+      type: string
+    email:
+      type: string
+    password:
+      type: string
+    phone_number:
+      type: string
+    role:
+      type: string
 - action: JoinGroup
   request: JoinGroupRequest
   service: AccountManager

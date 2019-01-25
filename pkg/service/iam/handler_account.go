@@ -231,6 +231,41 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	return reply, nil
 }
 
+func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest) (*pb.IsvCreateUserResponse, error) {
+	email := req.GetEmail().GetValue()
+
+	res, err := client.ListUsers(ctx, &pbim.ListUsersRequest{
+		Limit:  1,
+		Status: []string{constants.StatusActive},
+		Email:  []string{email},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	if res.Total > 0 {
+		return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorEmailExists, email)
+	}
+
+	user, err := client.CreateUser(ctx, &pbim.User{
+		Email:       req.GetEmail().GetValue(),
+		PhoneNumber: req.GetPhoneNumber().GetValue(),
+		UserName:    getUsernameFromEmail(req.GetEmail().GetValue()),
+		Password:    req.GetPassword().GetValue(),
+		Description: req.GetDescription().GetValue(),
+		Status:      constants.StatusActive,
+		Extra:       map[string]string{"role": req.GetRole().GetValue()},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	reply := &pb.IsvCreateUserResponse{
+		UserId: pbutil.ToProtoString(user.UserId),
+	}
+
+	return reply, nil
+}
+
 func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePasswordResetRequest) (*pb.CreatePasswordResetResponse, error) {
 	uid := req.GetUserId().GetValue()
 	password := req.GetPassword().GetValue()
@@ -432,6 +467,9 @@ func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) 
 		})
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		if len(group.UserId) > 0 {
+			return nil, gerr.NewWithDetail(ctx, gerr.FailedPrecondition, err, gerr.ErrorGroupHadMembers)
 		}
 		group.Status = constants.StatusDeleted
 		group.StatusTime = pbutil.ToProtoTimestamp(time.Now())

@@ -37,6 +37,7 @@ var AllCmd = []Cmd{
 	NewDescribeGroupsCmd(),
 	NewDescribeUsersCmd(),
 	NewGetPasswordResetCmd(),
+	NewIsvCreateUserCmd(),
 	NewJoinGroupCmd(),
 	NewLeaveGroupCmd(),
 	NewModifyGroupCmd(),
@@ -482,6 +483,45 @@ func (c *GetPasswordResetCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AccountManager.GetPasswordReset(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type IsvCreateUserCmd struct {
+	*models.OpenpitrixIsvCreateUserRequest
+}
+
+func NewIsvCreateUserCmd() Cmd {
+	cmd := &IsvCreateUserCmd{}
+	cmd.OpenpitrixIsvCreateUserRequest = &models.OpenpitrixIsvCreateUserRequest{}
+	return cmd
+}
+
+func (*IsvCreateUserCmd) GetActionName() string {
+	return "IsvCreateUser"
+}
+
+func (c *IsvCreateUserCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Email, "email", "", "", "")
+	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.PhoneNumber, "phone_number", "", "", "")
+	f.StringVarP(&c.Role, "role", "", "", "")
+}
+
+func (c *IsvCreateUserCmd) Run(out Out) error {
+	params := account_manager.NewIsvCreateUserParams()
+	params.WithBody(c.OpenpitrixIsvCreateUserRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccountManager.IsvCreateUser(params, nil)
 	if err != nil {
 		return err
 	}

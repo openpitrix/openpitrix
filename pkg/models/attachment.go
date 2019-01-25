@@ -14,9 +14,12 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
+const AttachmentIdPrefix = "att-"
+
 func NewAttachmentId() string {
 	return fmt.Sprintf(
-		"att-%s-%s",
+		"%s%s-%s",
+		AttachmentIdPrefix,
 		idutil.GetAttachmentPrefix(),
 		idutil.GetUuid(""),
 	)
