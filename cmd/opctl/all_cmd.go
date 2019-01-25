@@ -42,6 +42,9 @@ var AllCmd = []Cmd{
 	NewModifyGroupCmd(),
 	NewModifyUserCmd(),
 	NewValidateUserPasswordCmd(),
+	NewBusinessAdminPassAppVersionCmd(),
+	NewBusinessAdminRejectAppVersionCmd(),
+	NewBusinessAdminReviewAppVersionCmd(),
 	NewCancelAppVersionCmd(),
 	NewCreateAppCmd(),
 	NewCreateAppVersionCmd(),
@@ -53,16 +56,19 @@ var AllCmd = []Cmd{
 	NewDescribeAppVersionReviewsCmd(),
 	NewDescribeAppVersionsCmd(),
 	NewDescribeAppsCmd(),
+	NewDevelopAdminPassAppVersionCmd(),
+	NewDevelopAdminRejectAppVersionCmd(),
+	NewDevelopAdminReviewAppVersionCmd(),
 	NewGetAppStatisticsCmd(),
 	NewGetAppVersionPackageCmd(),
 	NewGetAppVersionPackageFilesCmd(),
+	NewIsvPassAppVersionCmd(),
+	NewIsvRejectAppVersionCmd(),
+	NewIsvReviewAppVersionCmd(),
 	NewModifyAppCmd(),
 	NewModifyAppVersionCmd(),
-	NewPassAppVersionCmd(),
 	NewRecoverAppVersionCmd(),
-	NewRejectAppVersionCmd(),
 	NewReleaseAppVersionCmd(),
-	NewReviewAppVersionCmd(),
 	NewSubmitAppVersionCmd(),
 	NewSuspendAppVersionCmd(),
 	NewUploadAppAttachmentCmd(),
@@ -670,6 +676,112 @@ func (c *ValidateUserPasswordCmd) Run(out Out) error {
 	return nil
 }
 
+type BusinessAdminPassAppVersionCmd struct {
+	*models.OpenpitrixPassAppVersionRequest
+}
+
+func NewBusinessAdminPassAppVersionCmd() Cmd {
+	cmd := &BusinessAdminPassAppVersionCmd{}
+	cmd.OpenpitrixPassAppVersionRequest = &models.OpenpitrixPassAppVersionRequest{}
+	return cmd
+}
+
+func (*BusinessAdminPassAppVersionCmd) GetActionName() string {
+	return "BusinessAdminPassAppVersion"
+}
+
+func (c *BusinessAdminPassAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *BusinessAdminPassAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewBusinessAdminPassAppVersionParams()
+	params.WithBody(c.OpenpitrixPassAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.BusinessAdminPassAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type BusinessAdminRejectAppVersionCmd struct {
+	*models.OpenpitrixRejectAppVersionRequest
+}
+
+func NewBusinessAdminRejectAppVersionCmd() Cmd {
+	cmd := &BusinessAdminRejectAppVersionCmd{}
+	cmd.OpenpitrixRejectAppVersionRequest = &models.OpenpitrixRejectAppVersionRequest{}
+	return cmd
+}
+
+func (*BusinessAdminRejectAppVersionCmd) GetActionName() string {
+	return "BusinessAdminRejectAppVersion"
+}
+
+func (c *BusinessAdminRejectAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Message, "message", "", "", "")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *BusinessAdminRejectAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewBusinessAdminRejectAppVersionParams()
+	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.BusinessAdminRejectAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type BusinessAdminReviewAppVersionCmd struct {
+	*models.OpenpitrixReviewAppVersionRequest
+}
+
+func NewBusinessAdminReviewAppVersionCmd() Cmd {
+	cmd := &BusinessAdminReviewAppVersionCmd{}
+	cmd.OpenpitrixReviewAppVersionRequest = &models.OpenpitrixReviewAppVersionRequest{}
+	return cmd
+}
+
+func (*BusinessAdminReviewAppVersionCmd) GetActionName() string {
+	return "BusinessAdminReviewAppVersion"
+}
+
+func (c *BusinessAdminReviewAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *BusinessAdminReviewAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewBusinessAdminReviewAppVersionParams()
+	params.WithBody(c.OpenpitrixReviewAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.BusinessAdminReviewAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type CancelAppVersionCmd struct {
 	*models.OpenpitrixCancelAppVersionRequest
 }
@@ -1181,6 +1293,112 @@ func (c *DescribeAppsCmd) Run(out Out) error {
 	return nil
 }
 
+type DevelopAdminPassAppVersionCmd struct {
+	*models.OpenpitrixPassAppVersionRequest
+}
+
+func NewDevelopAdminPassAppVersionCmd() Cmd {
+	cmd := &DevelopAdminPassAppVersionCmd{}
+	cmd.OpenpitrixPassAppVersionRequest = &models.OpenpitrixPassAppVersionRequest{}
+	return cmd
+}
+
+func (*DevelopAdminPassAppVersionCmd) GetActionName() string {
+	return "DevelopAdminPassAppVersion"
+}
+
+func (c *DevelopAdminPassAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *DevelopAdminPassAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewDevelopAdminPassAppVersionParams()
+	params.WithBody(c.OpenpitrixPassAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.DevelopAdminPassAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DevelopAdminRejectAppVersionCmd struct {
+	*models.OpenpitrixRejectAppVersionRequest
+}
+
+func NewDevelopAdminRejectAppVersionCmd() Cmd {
+	cmd := &DevelopAdminRejectAppVersionCmd{}
+	cmd.OpenpitrixRejectAppVersionRequest = &models.OpenpitrixRejectAppVersionRequest{}
+	return cmd
+}
+
+func (*DevelopAdminRejectAppVersionCmd) GetActionName() string {
+	return "DevelopAdminRejectAppVersion"
+}
+
+func (c *DevelopAdminRejectAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Message, "message", "", "", "")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *DevelopAdminRejectAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewDevelopAdminRejectAppVersionParams()
+	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.DevelopAdminRejectAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DevelopAdminReviewAppVersionCmd struct {
+	*models.OpenpitrixReviewAppVersionRequest
+}
+
+func NewDevelopAdminReviewAppVersionCmd() Cmd {
+	cmd := &DevelopAdminReviewAppVersionCmd{}
+	cmd.OpenpitrixReviewAppVersionRequest = &models.OpenpitrixReviewAppVersionRequest{}
+	return cmd
+}
+
+func (*DevelopAdminReviewAppVersionCmd) GetActionName() string {
+	return "DevelopAdminReviewAppVersion"
+}
+
+func (c *DevelopAdminReviewAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *DevelopAdminReviewAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewDevelopAdminReviewAppVersionParams()
+	params.WithBody(c.OpenpitrixReviewAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.DevelopAdminReviewAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type GetAppStatisticsCmd struct {
 	*app_manager.GetAppStatisticsParams
 }
@@ -1285,6 +1503,112 @@ func (c *GetAppVersionPackageFilesCmd) Run(out Out) error {
 	return nil
 }
 
+type IsvPassAppVersionCmd struct {
+	*models.OpenpitrixPassAppVersionRequest
+}
+
+func NewIsvPassAppVersionCmd() Cmd {
+	cmd := &IsvPassAppVersionCmd{}
+	cmd.OpenpitrixPassAppVersionRequest = &models.OpenpitrixPassAppVersionRequest{}
+	return cmd
+}
+
+func (*IsvPassAppVersionCmd) GetActionName() string {
+	return "IsvPassAppVersion"
+}
+
+func (c *IsvPassAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *IsvPassAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewIsvPassAppVersionParams()
+	params.WithBody(c.OpenpitrixPassAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.IsvPassAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type IsvRejectAppVersionCmd struct {
+	*models.OpenpitrixRejectAppVersionRequest
+}
+
+func NewIsvRejectAppVersionCmd() Cmd {
+	cmd := &IsvRejectAppVersionCmd{}
+	cmd.OpenpitrixRejectAppVersionRequest = &models.OpenpitrixRejectAppVersionRequest{}
+	return cmd
+}
+
+func (*IsvRejectAppVersionCmd) GetActionName() string {
+	return "IsvRejectAppVersion"
+}
+
+func (c *IsvRejectAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Message, "message", "", "", "")
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *IsvRejectAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewIsvRejectAppVersionParams()
+	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.IsvRejectAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type IsvReviewAppVersionCmd struct {
+	*models.OpenpitrixReviewAppVersionRequest
+}
+
+func NewIsvReviewAppVersionCmd() Cmd {
+	cmd := &IsvReviewAppVersionCmd{}
+	cmd.OpenpitrixReviewAppVersionRequest = &models.OpenpitrixReviewAppVersionRequest{}
+	return cmd
+}
+
+func (*IsvReviewAppVersionCmd) GetActionName() string {
+	return "IsvReviewAppVersion"
+}
+
+func (c *IsvReviewAppVersionCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.VersionID, "version_id", "", "", "")
+}
+
+func (c *IsvReviewAppVersionCmd) Run(out Out) error {
+	params := app_manager.NewIsvReviewAppVersionParams()
+	params.WithBody(c.OpenpitrixReviewAppVersionRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AppManager.IsvReviewAppVersion(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
 type ModifyAppCmd struct {
 	*models.OpenpitrixModifyAppRequest
 }
@@ -1376,43 +1700,6 @@ func (c *ModifyAppVersionCmd) Run(out Out) error {
 	return nil
 }
 
-type PassAppVersionCmd struct {
-	*models.OpenpitrixPassAppVersionRequest
-}
-
-func NewPassAppVersionCmd() Cmd {
-	cmd := &PassAppVersionCmd{}
-	cmd.OpenpitrixPassAppVersionRequest = &models.OpenpitrixPassAppVersionRequest{}
-	return cmd
-}
-
-func (*PassAppVersionCmd) GetActionName() string {
-	return "PassAppVersion"
-}
-
-func (c *PassAppVersionCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.Role, "role", "", "", "")
-	f.StringVarP(&c.VersionID, "version_id", "", "", "")
-}
-
-func (c *PassAppVersionCmd) Run(out Out) error {
-	params := app_manager.NewPassAppVersionParams()
-	params.WithBody(c.OpenpitrixPassAppVersionRequest)
-	params.WithRole(c.Role)
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppManager.PassAppVersion(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
 type RecoverAppVersionCmd struct {
 	*models.OpenpitrixRecoverAppVersionRequest
 }
@@ -1448,44 +1735,6 @@ func (c *RecoverAppVersionCmd) Run(out Out) error {
 	return nil
 }
 
-type RejectAppVersionCmd struct {
-	*models.OpenpitrixRejectAppVersionRequest
-}
-
-func NewRejectAppVersionCmd() Cmd {
-	cmd := &RejectAppVersionCmd{}
-	cmd.OpenpitrixRejectAppVersionRequest = &models.OpenpitrixRejectAppVersionRequest{}
-	return cmd
-}
-
-func (*RejectAppVersionCmd) GetActionName() string {
-	return "RejectAppVersion"
-}
-
-func (c *RejectAppVersionCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.Message, "message", "", "", "")
-	f.StringVarP(&c.Role, "role", "", "", "")
-	f.StringVarP(&c.VersionID, "version_id", "", "", "")
-}
-
-func (c *RejectAppVersionCmd) Run(out Out) error {
-	params := app_manager.NewRejectAppVersionParams()
-	params.WithBody(c.OpenpitrixRejectAppVersionRequest)
-	params.WithRole(c.Role)
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppManager.RejectAppVersion(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
 type ReleaseAppVersionCmd struct {
 	*models.OpenpitrixReleaseAppVersionRequest
 }
@@ -1512,43 +1761,6 @@ func (c *ReleaseAppVersionCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AppManager.ReleaseAppVersion(params, nil)
-	if err != nil {
-		return err
-	}
-
-	out.WriteResponse(res.Payload)
-
-	return nil
-}
-
-type ReviewAppVersionCmd struct {
-	*models.OpenpitrixReviewAppVersionRequest
-}
-
-func NewReviewAppVersionCmd() Cmd {
-	cmd := &ReviewAppVersionCmd{}
-	cmd.OpenpitrixReviewAppVersionRequest = &models.OpenpitrixReviewAppVersionRequest{}
-	return cmd
-}
-
-func (*ReviewAppVersionCmd) GetActionName() string {
-	return "ReviewAppVersion"
-}
-
-func (c *ReviewAppVersionCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.Role, "role", "", "", "")
-	f.StringVarP(&c.VersionID, "version_id", "", "", "")
-}
-
-func (c *ReviewAppVersionCmd) Run(out Out) error {
-	params := app_manager.NewReviewAppVersionParams()
-	params.WithBody(c.OpenpitrixReviewAppVersionRequest)
-	params.WithRole(c.Role)
-
-	out.WriteRequest(params)
-
-	client := getClient()
-	res, err := client.AppManager.ReviewAppVersion(params, nil)
 	if err != nil {
 		return err
 	}

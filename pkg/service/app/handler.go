@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/client/attachment"
+	attachmentclient "openpitrix.io/openpitrix/pkg/client/attachment"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -851,14 +851,14 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 	return &res, nil
 }
 
-func (p *Server) ReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+func reviewAppVersion(ctx context.Context, role string, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
 	if err != nil {
 		return nil, err
 	}
 
-	err = startAppVersionReview(ctx, version, req.Role)
+	err = startAppVersionReview(ctx, version, role)
 	if err != nil {
 		return nil, err
 	}
@@ -869,14 +869,14 @@ func (p *Server) ReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionR
 	return &res, nil
 }
 
-func (p *Server) PassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
 	if err != nil {
 		return nil, err
 	}
 
-	err = passAppVersionReview(ctx, version, req.Role)
+	err = passAppVersionReview(ctx, version, role)
 	if err != nil {
 		return nil, err
 	}
@@ -887,14 +887,14 @@ func (p *Server) PassAppVersion(ctx context.Context, req *pb.PassAppVersionReque
 	return &res, nil
 }
 
-func (p *Server) RejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
 	if err != nil {
 		return nil, err
 	}
 
-	err = rejectAppVersionReview(ctx, version, req.Role, req.GetMessage().GetValue())
+	err = rejectAppVersionReview(ctx, version, role, req.GetMessage().GetValue())
 	if err != nil {
 		return nil, err
 	}
@@ -903,6 +903,42 @@ func (p *Server) RejectAppVersion(ctx context.Context, req *pb.RejectAppVersionR
 		VersionId: pbutil.ToProtoString(version.VersionId),
 	}
 	return &res, nil
+}
+
+func (p *Server) IsvReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+	return reviewAppVersion(ctx, constants.RoleIsv, req)
+}
+
+func (p *Server) IsvPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+	return passAppVersion(ctx, constants.RoleIsv, req)
+}
+
+func (p *Server) IsvRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+	return rejectAppVersion(ctx, constants.RoleIsv, req)
+}
+
+func (p *Server) BusinessAdminReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+	return reviewAppVersion(ctx, constants.RoleBusinessAdmin, req)
+}
+
+func (p *Server) BusinessAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+	return passAppVersion(ctx, constants.RoleBusinessAdmin, req)
+}
+
+func (p *Server) BusinessAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+	return rejectAppVersion(ctx, constants.RoleBusinessAdmin, req)
+}
+
+func (p *Server) DevelopAdminReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+	return reviewAppVersion(ctx, constants.RoleDevelopAdmin, req)
+}
+
+func (p *Server) DevelopAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+	return passAppVersion(ctx, constants.RoleDevelopAdmin, req)
+}
+
+func (p *Server) DevelopAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+	return rejectAppVersion(ctx, constants.RoleDevelopAdmin, req)
 }
 
 func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersionRequest) (*pb.SuspendAppVersionResponse, error) {
