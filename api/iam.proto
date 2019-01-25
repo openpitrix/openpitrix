@@ -62,6 +62,7 @@ service AccountManager {
 	rpc LeaveGroup (LeaveGroupRequest) returns (LeaveGroupResponse) {
 		option (google.api.http) = { post: "/v1/groups:leave" body: "*" };
 	};
+	rpc GetUserGroupOwner (GetUserGroupOwnerRequest) returns (GetUserGroupOwnerResponse) {};
 }
 
 
@@ -258,6 +259,14 @@ message LeaveGroupRequest {
 message LeaveGroupResponse {
 	repeated string group_id = 1;
 	repeated string user_id = 2;
+}
+
+message GetUserGroupOwnerRequest {
+	string user_id =  1;
+}
+message GetUserGroupOwnerResponse {
+	string user_id =  1;
+	string owner = 2;
 }
 
 

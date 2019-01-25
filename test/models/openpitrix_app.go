@@ -34,6 +34,18 @@ type OpenpitrixApp struct {
 	// chart name
 	ChartName string `json:"chart_name,omitempty"`
 
+	// company join time
+	CompanyJoinTime strfmt.DateTime `json:"company_join_time,omitempty"`
+
+	// company name
+	CompanyName string `json:"company_name,omitempty"`
+
+	// company profile
+	CompanyProfile string `json:"company_profile,omitempty"`
+
+	// company website
+	CompanyWebsite string `json:"company_website,omitempty"`
+
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 

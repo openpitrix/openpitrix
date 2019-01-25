@@ -114,6 +114,11 @@ message App {
 	repeated ResourceCategory category_set = 21;
 	AppVersion latest_app_version = 22;
 	google.protobuf.StringValue app_version_types = 23;
+
+	google.protobuf.StringValue company_name = 24;
+	google.protobuf.StringValue company_website = 25;
+	google.protobuf.StringValue company_profile = 26;
+	google.protobuf.Timestamp company_join_time = 27;
 }
 
 message DescribeAppsRequest {
