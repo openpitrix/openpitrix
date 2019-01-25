@@ -31,6 +31,9 @@ service AccountManager {
 	rpc CreatePasswordReset (CreatePasswordResetRequest) returns (CreatePasswordResetResponse) {
 		option (google.api.http) = { post: "/v1/users/password:reset" body: "*" };
 	};
+	rpc IsvCreateUser (IsvCreateUserRequest) returns (IsvCreateUserResponse) {
+		option (google.api.http) = { post: "/v1/isv_users" body: "*" };
+	};
 
 	// admin permission
 	rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
@@ -190,6 +193,16 @@ message CreateUserRequest {
 	google.protobuf.StringValue description = 5;
 }
 message CreateUserResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+message IsvCreateUserRequest {
+	google.protobuf.StringValue email = 1;
+	google.protobuf.StringValue phone_number = 2;
+	google.protobuf.StringValue password = 3;
+	google.protobuf.StringValue role = 4; // default is user
+	google.protobuf.StringValue description = 5;
+}
+message IsvCreateUserResponse {
 	google.protobuf.StringValue user_id = 1;
 }
 

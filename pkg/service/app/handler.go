@@ -301,7 +301,7 @@ func (p *Server) UploadAppAttachment(ctx context.Context, req *pb.UploadAppAttac
 			logger.Error(ctx, "Make thumbnail failed: %+v", err)
 			return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorImageDecodeFailed)
 		}
-		if app.Icon == "" {
+		if !strings.HasPrefix(app.Icon, models.AttachmentIdPrefix) {
 			createAttachmentRes, err := attachmentManagerClient.CreateAttachment(ctx, &pb.CreateAttachmentRequest{
 				AttachmentContent: content,
 			})

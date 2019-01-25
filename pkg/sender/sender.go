@@ -73,16 +73,14 @@ func (s *Sender) IsDeveloper() bool {
 	if s == nil {
 		return false
 	}
-	return s.Role == constants.RoleGlobalAdmin || s.Role == constants.RoleDeveloper
+	return s.Role == constants.RoleGlobalAdmin || s.Role == constants.RoleDeveloper ||
+		s.Role == constants.RoleIsv
 }
 
 func (s *Sender) IsUser() bool {
 	if s == nil {
 		return false
 	}
-	return s.Role == constants.RoleGlobalAdmin || s.Role == constants.RoleDeveloper || s.Role == constants.RoleUser
-}
-
-func (s *Sender) IsGuest() bool {
-	return true
+	return s.Role == constants.RoleGlobalAdmin || s.Role == constants.RoleDeveloper ||
+		s.Role == constants.RoleIsv || s.Role == constants.RoleUser
 }

@@ -3359,6 +3359,32 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/isv_users": {
+      "post": {
+        "operationId": "IsvCreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixIsvCreateUserResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixIsvCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
     "/v1/oauth2/token": {
       "post": {
         "operationId": "Token",
@@ -7982,6 +8008,34 @@ var Files = map[string]string{
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "openpitrixIsvCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixIsvCreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
         }
       }
     },

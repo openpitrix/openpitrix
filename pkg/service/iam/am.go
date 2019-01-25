@@ -24,7 +24,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.ModifyUserRequest:
 		return manager.NewChecker(ctx, r).
 			Required("user_id").
-			StringChosen("role", constants.SupportRoles).
+			StringChosen("role", constants.AllRoles).
 			Exec()
 	case *pb.DeleteUsersRequest:
 		return manager.NewChecker(ctx, r).
@@ -35,7 +35,13 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllAdminRoles).
 			Required("email", "password").
-			StringChosen("role", constants.SupportRoles).
+			StringChosen("role", constants.AllRoles).
+			Exec()
+	case *pb.IsvCreateUserRequest:
+		return manager.NewChecker(ctx, r).
+			Role(constants.AllIsvRoles).
+			Required("email", "password").
+			StringChosen("role", constants.AllDeveloperRoles).
 			Exec()
 	case *pb.CreatePasswordResetRequest:
 		return manager.NewChecker(ctx, r).
@@ -102,35 +108,17 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 	sender := ctxutil.GetSender(ctx)
 	switch r := req.(type) {
-	case *pb.DescribeUsersRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else if sender.IsUser() {
-			r.UserId = []string{sender.UserId}
-		}
-		return r
 	case *pb.CreatePasswordResetRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else if sender.IsUser() {
+		if !sender.IsGlobalAdmin() {
 			r.UserId = pbutil.ToProtoString(sender.UserId)
 		}
 		return r
 	case *pb.ModifyUserRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else if sender.IsUser() {
+		if !sender.IsGlobalAdmin() {
 			r.UserId = pbutil.ToProtoString(sender.UserId)
 			r.Role = nil
 			r.Email = nil
 			r.Password = nil
-		}
-		return r
-	case *pb.DescribeGroupsRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else if sender.IsDeveloper() {
-			r.UserId = []string{sender.UserId}
 		}
 		return r
 	}

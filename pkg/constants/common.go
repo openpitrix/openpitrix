@@ -210,17 +210,18 @@ const (
 	RetryInterval = 3 * time.Second
 )
 
-var SupportRoles = []string{
+var AllRoles = []string{
 	RoleUser,
+	RoleIsv,
 	RoleDeveloper,
 	RoleGlobalAdmin,
 }
-var AllRoles = []string{
-	RoleUser,
-	RoleDeveloper,
+var AllIsvRoles = []string{
+	RoleIsv,
 	RoleGlobalAdmin,
 }
 var AllDeveloperRoles = []string{
+	RoleIsv,
 	RoleDeveloper,
 	RoleGlobalAdmin,
 }

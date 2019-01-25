@@ -11,7 +11,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/repoiface"
-	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func (p *Server) Checker(ctx context.Context, req interface{}) error {
@@ -111,21 +110,4 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	}
 	return nil
-}
-
-func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
-	sender := ctxutil.GetSender(ctx)
-	switch r := req.(type) {
-	case *pb.DescribeAppsRequest:
-		if !sender.IsGlobalAdmin() && !sender.IsDeveloper() {
-			r.Status = []string{constants.StatusActive}
-		}
-		return r
-	case *pb.DescribeAppVersionsRequest:
-		if !sender.IsGlobalAdmin() && !sender.IsDeveloper() {
-			r.Status = []string{constants.StatusActive}
-		}
-		return r
-	}
-	return req
 }
