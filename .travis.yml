@@ -1,11 +1,18 @@
 sudo: required
 env:
-- CHANGE_MINIKUBE_NONE_USER=true TEST_WITH_K8S=1
+  global:
+  - CHANGE_MINIKUBE_NONE_USER=true
+  matrix:
+  - TEST_SUITE=unit-test
+  - TEST_SUITE=e2e-test
+  - TEST_SUITE=e2e-k8s-test
+cache:
+  directories:
+  - tmp/cache
 services:
 - docker
 language: go
 go:
-- '1.10'
 - '1.11'
 go_import_path: openpitrix.io/openpitrix
 addons:
@@ -45,7 +52,7 @@ before_script:
 - make compose-up
 - sleep 20
 script:
-- make unit-test && travis_wait 30 make e2e-test WITH_K8S=yes
+- travis_wait 30 make $TEST_SUITE
 before_deploy:
 - make clean
 - make release-openpitrix-$TRAVIS_TAG
