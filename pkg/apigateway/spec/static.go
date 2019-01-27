@@ -9812,6 +9812,24 @@ var Files = map[string]string{
         },
         "parameters": [
           {
+            "name": "role_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
             "name": "user_id",
             "in": "query",
             "required": false,
@@ -9821,7 +9839,34 @@ var Files = map[string]string{
             }
           },
           {
-            "name": "role_id",
+            "name": "user_name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phone_number",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
             "in": "query",
             "required": false,
             "type": "array",
@@ -9915,9 +9960,6 @@ var Files = map[string]string{
         "owner": {
           "type": "string"
         },
-        "is_check_all": {
-          "type": "string"
-        },
         "feature_id": {
           "type": "string"
         },
@@ -9931,7 +9973,8 @@ var Files = map[string]string{
           "type": "string"
         },
         "action_enabled": {
-          "type": "string"
+          "type": "boolean",
+          "format": "boolean"
         },
         "api_id": {
           "type": "string"
@@ -10098,6 +10141,12 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
