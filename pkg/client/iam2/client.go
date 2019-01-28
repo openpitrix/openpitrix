@@ -5,6 +5,7 @@
 package clientiam2
 
 import (
+	"openpitrix.io/iam/pkg/pb/am"
 	"openpitrix.io/iam/pkg/pb/im"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
@@ -17,5 +18,15 @@ func NewClient() (pbim.AccountManagerClient, error) {
 	}
 
 	client := pbim.NewAccountManagerClient(conn)
+	return client, nil
+}
+
+func NewAMClient() (pbam.AccessManagerClient, error) {
+	conn, err := manager.NewClient(constants.AMServiceHost, constants.AMServicePort)
+	if err != nil {
+		return nil, err
+	}
+
+	client := pbam.NewAccessManagerClient(conn)
 	return client, nil
 }

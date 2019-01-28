@@ -68,6 +68,45 @@ service AccountManager {
 	rpc GetUserGroupOwner (GetUserGroupOwnerRequest) returns (GetUserGroupOwnerResponse) {};
 }
 
+service AccessManager {
+	rpc CanDo(CanDoRequest) returns (CanDoResponse) {
+		option (google.api.http) = { post: "/v1/cando" body: "*" };
+	}
+
+	// role module
+	rpc GetRoleModule(GetRoleModuleRequest) returns (GetRoleModuleResponse) {
+		option (google.api.http) = { get: "/v1/roles:module" };
+	}
+	rpc ModifyRoleModule(ModifyRoleModuleRequest) returns (ModifyRoleModuleResponse) {
+		option (google.api.http) = { patch: "/v1/roles:module" body: "*" };
+	}
+
+	// role
+	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+		option (google.api.http) = { post: "/v1/roles" body: "*" };
+	}
+	rpc DeleteRoles(DeleteRolesRequest) returns (DeleteRolesResponse) {
+		option (google.api.http) = { delete: "/v1/roles" body: "*" };
+	}
+	rpc ModifyRole(ModifyRoleRequest) returns (ModifyRoleResponse) {
+		option (google.api.http) = { patch: "/v1/roles" body: "*" };
+	}
+	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {
+		option (google.api.http) = { get: "/v1/roles/{role_id}" };
+	}
+	rpc DescribeRoles(DescribeRolesRequest) returns (DescribeRolesResponse) {
+		option (google.api.http) = { get: "/v1/roles" };
+	}
+
+	// role/user
+	rpc BindUserRole(BindUserRoleRequest) returns (BindUserRoleResponse) {
+		option (google.api.http) = { post: "/v1/user:role" body: "*" };
+	}
+	rpc UnbindUserRole(UnbindUserRoleRequest) returns (UnbindUserRoleResponse) {
+		option (google.api.http) = { delete: "/v1/user:role" body: "*" };
+	}
+}
+
 
 service TokenManager {
 	rpc CreateClient (CreateClientRequest) returns (CreateClientResponse) {
@@ -124,6 +163,67 @@ message Group {
 	repeated string user_id = 10;
 }
 
+message Role {
+	string role_id = 1;
+	string role_name = 2;   // enable modify
+	string description = 3; // enable modify
+	string portal = 4;      // enable modify
+	string owner = 5;
+	string owner_path = 6;
+	string Status = 7;
+
+	google.protobuf.Timestamp create_time = 8;
+	google.protobuf.Timestamp update_time = 9;
+	google.protobuf.Timestamp status_time = 10;
+
+	repeated string user_id = 11;
+}
+
+message ModuleFeatureAction {
+	string role_id = 1;
+	string role_name = 2;
+	string portal = 3;
+
+	string module_id = 4;
+	string module_name = 5;
+	string data_level = 6;
+	string owner = 7;
+
+	string feature_id = 8;
+	string feature_name = 9;
+
+	string action_id = 10;
+	string action_name = 11;
+	bool action_enabled = 12;
+
+	string api_id = 13;
+	string api_method = 14;
+	string api_description = 15;
+
+	string url = 16;
+	string url_method = 17;
+}
+
+message ModuleFeature {
+	string feature_id = 1;
+	string feature_name = 2;
+	repeated ModuleFeatureAction action = 3;
+	repeated string checked_action_id = 4;
+}
+
+message RoleModuleElem {
+	string module_id = 1;
+	string module_name = 2;
+	repeated ModuleFeature feature = 3;
+	string owner = 4;
+	string data_level = 5;
+	bool is_check_all = 6;
+}
+
+message RoleModule {
+	string role_id = 1;
+	repeated RoleModuleElem module = 2;
+}
 
 message DescribeUsersRequest {
 	google.protobuf.StringValue search_word = 1;
@@ -282,6 +382,87 @@ message GetUserGroupOwnerResponse {
 	string owner = 2;
 }
 
+
+message CanDoRequest {
+	string user_id = 1;
+	string url = 2;
+	string url_method = 3;
+}
+message CanDoResponse {
+	string user_id = 1;
+	string access_path = 2;
+	string owner_path = 3;
+}
+
+message GetRoleModuleRequest {
+	string role_id = 1;
+}
+message GetRoleModuleResponse {
+	RoleModule role_module = 1;
+}
+
+message ModifyRoleModuleRequest {
+	RoleModule role_module = 1;
+}
+message ModifyRoleModuleResponse {
+	RoleModule role_module = 1;
+}
+
+message CreateRoleRequest {
+	Role role = 1;
+}
+message CreateRoleResponse {
+	string role_id = 1;
+}
+
+message DeleteRolesRequest {
+	string role_id = 1;
+}
+message DeleteRolesResponse {
+	string role_id = 1;
+}
+
+message ModifyRoleRequest {
+	Role role = 1;
+}
+message ModifyRoleResponse {
+	Role role = 1;
+}
+
+message GetRoleRequest {
+	string role_id = 1;
+}
+message GetRoleResponse {
+	Role role = 1;
+}
+
+message DescribeRolesRequest {
+	repeated string role_id = 1;
+	repeated string role_name = 2;
+	repeated string portal = 3;
+	repeated string user_id = 4;
+}
+message DescribeRolesResponse {
+	repeated Role role = 1;
+}
+
+message BindUserRoleRequest {
+	repeated string user_id = 1;
+	repeated string role_id = 2;
+}
+message BindUserRoleResponse {
+	repeated string user_id = 1;
+	repeated string role_id = 2;
+}
+
+message UnbindUserRoleRequest {
+	repeated string user_id = 1;
+	repeated string role_id = 2;
+}
+message UnbindUserRoleResponse {
+	repeated string user_id = 1;
+	repeated string role_id = 2;
+}
 
 message CreateClientRequest {
 	string user_id = 1;

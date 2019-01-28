@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-openapi/strfmt"
 
+	"openpitrix.io/openpitrix/test/client/access_manager"
 	"openpitrix.io/openpitrix/test/client/account_manager"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/app_vendor_manager"
@@ -28,6 +29,16 @@ import (
 )
 
 var AllCmd = []Cmd{
+	NewBindUserRoleCmd(),
+	NewCanDoCmd(),
+	NewCreateRoleCmd(),
+	NewDeleteRolesCmd(),
+	NewDescribeRolesCmd(),
+	NewGetRoleCmd(),
+	NewGetRoleModuleCmd(),
+	NewModifyRoleCmd(),
+	NewModifyRoleModuleCmd(),
+	NewUnbindUserRoleCmd(),
 	NewChangePasswordCmd(),
 	NewCreateGroupCmd(),
 	NewCreatePasswordResetCmd(),
@@ -144,6 +155,359 @@ var AllCmd = []Cmd{
 	NewRetryTasksCmd(),
 	NewCreateClientCmd(),
 	NewTokenCmd(),
+}
+
+type BindUserRoleCmd struct {
+	*models.OpenpitrixBindUserRoleRequest
+}
+
+func NewBindUserRoleCmd() Cmd {
+	cmd := &BindUserRoleCmd{}
+	cmd.OpenpitrixBindUserRoleRequest = &models.OpenpitrixBindUserRoleRequest{}
+	return cmd
+}
+
+func (*BindUserRoleCmd) GetActionName() string {
+	return "BindUserRole"
+}
+
+func (c *BindUserRoleCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.RoleID, "role_id", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *BindUserRoleCmd) Run(out Out) error {
+	params := access_manager.NewBindUserRoleParams()
+	params.WithBody(c.OpenpitrixBindUserRoleRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.BindUserRole(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CanDoCmd struct {
+	*models.OpenpitrixCanDoRequest
+}
+
+func NewCanDoCmd() Cmd {
+	cmd := &CanDoCmd{}
+	cmd.OpenpitrixCanDoRequest = &models.OpenpitrixCanDoRequest{}
+	return cmd
+}
+
+func (*CanDoCmd) GetActionName() string {
+	return "CanDo"
+}
+
+func (c *CanDoCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.URL, "url", "", "", "")
+	f.StringVarP(&c.URLMethod, "url_method", "", "", "")
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
+}
+
+func (c *CanDoCmd) Run(out Out) error {
+	params := access_manager.NewCanDoParams()
+	params.WithBody(c.OpenpitrixCanDoRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.CanDo(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type CreateRoleCmd struct {
+	*models.OpenpitrixCreateRoleRequest
+}
+
+func NewCreateRoleCmd() Cmd {
+	cmd := &CreateRoleCmd{}
+	cmd.OpenpitrixCreateRoleRequest = &models.OpenpitrixCreateRoleRequest{}
+	return cmd
+}
+
+func (*CreateRoleCmd) GetActionName() string {
+	return "CreateRole"
+}
+
+func (c *CreateRoleCmd) ParseFlag(f Flag) {
+}
+
+func (c *CreateRoleCmd) Run(out Out) error {
+	params := access_manager.NewCreateRoleParams()
+	params.WithBody(c.OpenpitrixCreateRoleRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.CreateRole(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DeleteRolesCmd struct {
+	*models.OpenpitrixDeleteRolesRequest
+}
+
+func NewDeleteRolesCmd() Cmd {
+	cmd := &DeleteRolesCmd{}
+	cmd.OpenpitrixDeleteRolesRequest = &models.OpenpitrixDeleteRolesRequest{}
+	return cmd
+}
+
+func (*DeleteRolesCmd) GetActionName() string {
+	return "DeleteRoles"
+}
+
+func (c *DeleteRolesCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.RoleID, "role_id", "", "", "")
+}
+
+func (c *DeleteRolesCmd) Run(out Out) error {
+	params := access_manager.NewDeleteRolesParams()
+	params.WithBody(c.OpenpitrixDeleteRolesRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.DeleteRoles(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeRolesCmd struct {
+	*access_manager.DescribeRolesParams
+}
+
+func NewDescribeRolesCmd() Cmd {
+	return &DescribeRolesCmd{
+		access_manager.NewDescribeRolesParams(),
+	}
+}
+
+func (*DescribeRolesCmd) GetActionName() string {
+	return "DescribeRoles"
+}
+
+func (c *DescribeRolesCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.Portal, "portal", "", []string{}, "")
+	f.StringSliceVarP(&c.RoleID, "role_id", "", []string{}, "")
+	f.StringSliceVarP(&c.RoleName, "role_name", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *DescribeRolesCmd) Run(out Out) error {
+	params := c.DescribeRolesParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.DescribeRoles(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type GetRoleCmd struct {
+	*access_manager.GetRoleParams
+}
+
+func NewGetRoleCmd() Cmd {
+	return &GetRoleCmd{
+		access_manager.NewGetRoleParams(),
+	}
+}
+
+func (*GetRoleCmd) GetActionName() string {
+	return "GetRole"
+}
+
+func (c *GetRoleCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.RoleID, "role_id", "", "", "")
+}
+
+func (c *GetRoleCmd) Run(out Out) error {
+	params := c.GetRoleParams
+	params.WithRoleID(c.RoleID)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.GetRole(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type GetRoleModuleCmd struct {
+	*access_manager.GetRoleModuleParams
+}
+
+func NewGetRoleModuleCmd() Cmd {
+	return &GetRoleModuleCmd{
+		access_manager.NewGetRoleModuleParams(),
+	}
+}
+
+func (*GetRoleModuleCmd) GetActionName() string {
+	return "GetRoleModule"
+}
+
+func (c *GetRoleModuleCmd) ParseFlag(f Flag) {
+	c.RoleID = new(string)
+	f.StringVarP(c.RoleID, "role_id", "", "", "")
+}
+
+func (c *GetRoleModuleCmd) Run(out Out) error {
+	params := c.GetRoleModuleParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.GetRoleModule(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyRoleCmd struct {
+	*models.OpenpitrixModifyRoleRequest
+}
+
+func NewModifyRoleCmd() Cmd {
+	cmd := &ModifyRoleCmd{}
+	cmd.OpenpitrixModifyRoleRequest = &models.OpenpitrixModifyRoleRequest{}
+	return cmd
+}
+
+func (*ModifyRoleCmd) GetActionName() string {
+	return "ModifyRole"
+}
+
+func (c *ModifyRoleCmd) ParseFlag(f Flag) {
+}
+
+func (c *ModifyRoleCmd) Run(out Out) error {
+	params := access_manager.NewModifyRoleParams()
+	params.WithBody(c.OpenpitrixModifyRoleRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.ModifyRole(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type ModifyRoleModuleCmd struct {
+	*models.OpenpitrixModifyRoleModuleRequest
+}
+
+func NewModifyRoleModuleCmd() Cmd {
+	cmd := &ModifyRoleModuleCmd{}
+	cmd.OpenpitrixModifyRoleModuleRequest = &models.OpenpitrixModifyRoleModuleRequest{}
+	return cmd
+}
+
+func (*ModifyRoleModuleCmd) GetActionName() string {
+	return "ModifyRoleModule"
+}
+
+func (c *ModifyRoleModuleCmd) ParseFlag(f Flag) {
+}
+
+func (c *ModifyRoleModuleCmd) Run(out Out) error {
+	params := access_manager.NewModifyRoleModuleParams()
+	params.WithBody(c.OpenpitrixModifyRoleModuleRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.ModifyRoleModule(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type UnbindUserRoleCmd struct {
+	*models.OpenpitrixUnbindUserRoleRequest
+}
+
+func NewUnbindUserRoleCmd() Cmd {
+	cmd := &UnbindUserRoleCmd{}
+	cmd.OpenpitrixUnbindUserRoleRequest = &models.OpenpitrixUnbindUserRoleRequest{}
+	return cmd
+}
+
+func (*UnbindUserRoleCmd) GetActionName() string {
+	return "UnbindUserRole"
+}
+
+func (c *UnbindUserRoleCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.RoleID, "role_id", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+}
+
+func (c *UnbindUserRoleCmd) Run(out Out) error {
+	params := access_manager.NewUnbindUserRoleParams()
+	params.WithBody(c.OpenpitrixUnbindUserRoleRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccessManager.UnbindUserRole(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
 }
 
 type ChangePasswordCmd struct {

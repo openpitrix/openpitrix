@@ -3144,6 +3144,32 @@
         ]
       }
     },
+    "/v1/cando": {
+      "post": {
+        "operationId": "CanDo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCanDoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCanDoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      }
+    },
     "/v1/groups": {
       "get": {
         "operationId": "DescribeGroups",
@@ -3432,6 +3458,260 @@
         ],
         "tags": [
           "TokenManager"
+        ]
+      }
+    },
+    "/v1/roles": {
+      "get": {
+        "operationId": "DescribeRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeRolesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "role_name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "portal",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRolesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRolesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "post": {
+        "operationId": "CreateRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "patch": {
+        "operationId": "ModifyRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      }
+    },
+    "/v1/roles/{role_id}": {
+      "get": {
+        "summary": "admin permission",
+        "operationId": "GetRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      }
+    },
+    "/v1/roles:module": {
+      "get": {
+        "operationId": "GetRoleModule",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetRoleModuleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "patch": {
+        "operationId": "ModifyRoleModule",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRoleModuleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRoleModuleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      }
+    },
+    "/v1/user:role": {
+      "delete": {
+        "summary": "group",
+        "operationId": "UnbindUserRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixUnbindUserRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixUnbindUserRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "post": {
+        "operationId": "BindUserRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixBindUserRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixBindUserRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
         ]
       }
     },
@@ -7752,6 +8032,68 @@
       "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
       "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
     },
+    "openpitrixBindUserRoleRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixBindUserRoleResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixCanDoRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "url_method": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCanDoResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "access_path": {
+          "type": "string"
+        },
+        "owner_path": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixChangePasswordRequest": {
       "type": "object",
       "properties": {
@@ -7837,6 +8179,22 @@
         }
       }
     },
+    "openpitrixCreateRoleRequest": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/definitions/openpitrixRole"
+        }
+      }
+    },
+    "openpitrixCreateRoleResponse": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixCreateUserRequest": {
       "type": "object",
       "properties": {
@@ -7887,6 +8245,22 @@
         }
       }
     },
+    "openpitrixDeleteRolesRequest": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteRolesResponse": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixDeleteUsersRequest": {
       "type": "object",
       "properties": {
@@ -7924,6 +8298,17 @@
         }
       }
     },
+    "openpitrixDescribeRolesResponse": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRole"
+          }
+        }
+      }
+    },
     "openpitrixDescribeUsersResponse": {
       "type": "object",
       "properties": {
@@ -7947,6 +8332,22 @@
         },
         "user_id": {
           "type": "string"
+        }
+      }
+    },
+    "openpitrixGetRoleModuleResponse": {
+      "type": "object",
+      "properties": {
+        "role_module": {
+          "$ref": "#/definitions/openpitrixRoleModule"
+        }
+      }
+    },
+    "openpitrixGetRoleResponse": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/definitions/openpitrixRole"
         }
       }
     },
@@ -8120,6 +8521,38 @@
         }
       }
     },
+    "openpitrixModifyRoleModuleRequest": {
+      "type": "object",
+      "properties": {
+        "role_module": {
+          "$ref": "#/definitions/openpitrixRoleModule"
+        }
+      }
+    },
+    "openpitrixModifyRoleModuleResponse": {
+      "type": "object",
+      "properties": {
+        "role_module": {
+          "$ref": "#/definitions/openpitrixRoleModule"
+        }
+      }
+    },
+    "openpitrixModifyRoleRequest": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/definitions/openpitrixRole"
+        }
+      }
+    },
+    "openpitrixModifyRoleResponse": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/definitions/openpitrixRole"
+        }
+      }
+    },
     "openpitrixModifyUserRequest": {
       "type": "object",
       "properties": {
@@ -8148,6 +8581,171 @@
       "properties": {
         "user_id": {
           "type": "string"
+        }
+      }
+    },
+    "openpitrixModuleFeature": {
+      "type": "object",
+      "properties": {
+        "feature_id": {
+          "type": "string"
+        },
+        "feature_name": {
+          "type": "string"
+        },
+        "action": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixModuleFeatureAction"
+          }
+        },
+        "checked_action_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixModuleFeatureAction": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        },
+        "role_name": {
+          "type": "string"
+        },
+        "portal": {
+          "type": "string"
+        },
+        "module_id": {
+          "type": "string"
+        },
+        "module_name": {
+          "type": "string"
+        },
+        "data_level": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "feature_id": {
+          "type": "string"
+        },
+        "feature_name": {
+          "type": "string"
+        },
+        "action_id": {
+          "type": "string"
+        },
+        "action_name": {
+          "type": "string"
+        },
+        "action_enabled": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "api_id": {
+          "type": "string"
+        },
+        "api_method": {
+          "type": "string"
+        },
+        "api_description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "url_method": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixRole": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        },
+        "role_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "portal": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "owner_path": {
+          "type": "string"
+        },
+        "Status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixRoleModule": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        },
+        "module": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRoleModuleElem"
+          }
+        }
+      }
+    },
+    "openpitrixRoleModuleElem": {
+      "type": "object",
+      "properties": {
+        "module_id": {
+          "type": "string"
+        },
+        "module_name": {
+          "type": "string"
+        },
+        "feature": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixModuleFeature"
+          }
+        },
+        "owner": {
+          "type": "string"
+        },
+        "data_level": {
+          "type": "string"
+        },
+        "is_check_all": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
@@ -8195,6 +8793,40 @@
         },
         "id_token": {
           "type": "string"
+        }
+      }
+    },
+    "openpitrixUnbindUserRoleRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixUnbindUserRoleResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

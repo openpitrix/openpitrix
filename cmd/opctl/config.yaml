@@ -1,3 +1,76 @@
+- action: BindUserRole
+  request: BindUserRoleRequest
+  service: AccessManager
+  body:
+    role_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: CanDo
+  request: CanDoRequest
+  service: AccessManager
+  body:
+    url:
+      type: string
+    url_method:
+      type: string
+    user_id:
+      type: string
+- action: CreateRole
+  request: CreateRoleRequest
+  service: AccessManager
+  body:
+    role: {}
+- action: DeleteRoles
+  request: DeleteRolesRequest
+  service: AccessManager
+  body:
+    role_id:
+      type: string
+- action: DescribeRoles
+  request: DescribeRolesRequest
+  service: AccessManager
+  query:
+    portal:
+      type: '[]string'
+    role_id:
+      type: '[]string'
+    role_name:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: GetRole
+  request: GetRoleRequest
+  description: admin permission
+  service: AccessManager
+  path:
+    role_id:
+      type: string
+- action: GetRoleModule
+  request: GetRoleModuleRequest
+  service: AccessManager
+  query:
+    role_id:
+      type: string
+- action: ModifyRole
+  request: ModifyRoleRequest
+  service: AccessManager
+  body:
+    role: {}
+- action: ModifyRoleModule
+  request: ModifyRoleModuleRequest
+  service: AccessManager
+  body:
+    role_module: {}
+- action: UnbindUserRole
+  request: UnbindUserRoleRequest
+  description: group
+  service: AccessManager
+  body:
+    role_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
 - action: ChangePassword
   request: ChangePasswordRequest
   service: AccountManager

@@ -11,6 +11,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
+	"openpitrix.io/openpitrix/test/client/access_manager"
 	"openpitrix.io/openpitrix/test/client/account_manager"
 	"openpitrix.io/openpitrix/test/client/app_manager"
 	"openpitrix.io/openpitrix/test/client/app_vendor_manager"
@@ -66,6 +67,8 @@ func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *Ope
 func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix {
 	cli := new(Openpitrix)
 	cli.Transport = transport
+
+	cli.AccessManager = access_manager.New(transport, formats)
 
 	cli.AccountManager = account_manager.New(transport, formats)
 
@@ -137,6 +140,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // Openpitrix is a client for openpitrix
 type Openpitrix struct {
+	AccessManager *access_manager.Client
+
 	AccountManager *account_manager.Client
 
 	AppManager *app_manager.Client
@@ -169,6 +174,8 @@ type Openpitrix struct {
 // SetTransport changes the transport on the client and all its subresources
 func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
+
+	c.AccessManager.SetTransport(transport)
 
 	c.AccountManager.SetTransport(transport)
 
