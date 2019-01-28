@@ -25,37 +25,36 @@ const (
 	RepoIndexerHost            = prefix + "repo-indexer"
 	CategoryManagerHost        = prefix + "category-manager"
 	RuntimeProviderManagerHost = prefix + "rp-manager"
-
-	MarketManagerHost = prefix + "market-manager"
-
-	AttachmentManagerHost = prefix + "attachment-manager"
-	VendorManagerHost     = prefix + "vendor-manager"
+	NotificationHost           = prefix + "notification"
+	MarketManagerHost          = prefix + "market-manager"
+	AttachmentManagerHost      = prefix + "attachment-manager"
+	VendorManagerHost          = prefix + "vendor-manager"
 )
 
 const (
-	ApiGatewayPort          = 9100 // 91 is similar as Pi, Open[Pi]trix
-	RepoManagerPort         = 9101
-	AppManagerPort          = 9102
-	RuntimeManagerPort      = 9103
-	ClusterManagerPort      = 9104
-	JobManagerPort          = 9106
-	TaskManagerPort         = 9107
-	RepoIndexerPort         = 9108
-	PilotServicePort        = 9110
-	FrontgateServicePort    = 9111
-	DroneServicePort        = 9112
-	CategoryManagerPort     = 9113
-	PilotTlsListenPort      = 9114 // public service for frontgate
-	AccountServicePort      = 9115
-	FrontgateFileServerPort = 9116
-	MarketManagerPort       = 9117
-	VendorManagerPort       = 9118
-	IMServicePort           = 9119
-	AMServicePort           = 9120
-	EtcdServicePort         = 2379
-
+	ApiGatewayPort             = 9100 // 91 is similar as Pi, Open[Pi]trix
+	RepoManagerPort            = 9101
+	AppManagerPort             = 9102
+	RuntimeManagerPort         = 9103
+	ClusterManagerPort         = 9104
+	JobManagerPort             = 9106
+	TaskManagerPort            = 9107
+	RepoIndexerPort            = 9108
+	PilotServicePort           = 9110
+	FrontgateServicePort       = 9111
+	DroneServicePort           = 9112
+	CategoryManagerPort        = 9113
+	PilotTlsListenPort         = 9114 // public service for frontgate
+	AccountServicePort         = 9115
+	FrontgateFileServerPort    = 9116
+	MarketManagerPort          = 9117
+	VendorManagerPort          = 9118
+	IMServicePort              = 9119
+	AMServicePort              = 9120
+	EtcdServicePort            = 2379
 	AttachmentManagerPort      = 9120
 	RuntimeProviderManagerPort = 9121
+	NotificationPort           = 9201
 )
 
 const (
@@ -193,6 +192,13 @@ const (
 	ServiceRestore        = "restore"
 	ServiceDeleteSnapshot = "delete_snapshot"
 	ServiceUpgrade        = "upgrade"
+)
+
+const (
+	NfContentTypeInvite = "invite"
+	NfContentTypeVerify = "verify"
+
+	NfTypeEmail = "email"
 )
 
 var ServiceNames = []string{

@@ -387,10 +387,6 @@ func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorV
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	vendorclient, err := appvendor.NewAppVendorManagerClient()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
 	userIds = stringutil.Unique(userIds)
 	var ownerIds []string
 	for _, uid := range userIds {
@@ -404,17 +400,16 @@ func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorV
 			ownerIds = append(ownerIds, getOwnerRes.Owner)
 		}
 	}
-	getVendorRes, err := vendorclient.DescribeVendorVerifyInfos(ctx, &pb.DescribeVendorVerifyInfosRequest{
-		UserId: ownerIds,
-	})
+
+	vendorVerifyInfoSet, err := appvendor.GetVendorInfos(ctx, ownerIds)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	var vendormap = make(map[string]*pb.VendorVerifyInfo)
-	for _, v := range getVendorRes.VendorVerifyInfoSet {
-		vendormap[v.Owner.GetValue()] = v
+	var vendorMap = make(map[string]*pb.VendorVerifyInfo)
+	for _, v := range vendorVerifyInfoSet {
+		vendorMap[v.Owner.GetValue()] = v
 	}
-	return vendormap, nil
+	return vendorMap, nil
 }
 
 func formatApp(ctx context.Context, app *models.App) (*pb.App, error) {
@@ -778,7 +773,7 @@ func matchPackageFailedError(err error, res *pb.ValidatePackageResponse) {
 			errorDetails[matched[1]] = matched[2]
 		}
 
-	// Devkit erros
+	// Devkit errors
 	case strings.HasPrefix(errStr, "[package.json] not in base directory"):
 
 		errorDetails["package.json"] = "not found"

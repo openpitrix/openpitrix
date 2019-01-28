@@ -9,13 +9,13 @@ package appvendor
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/test/client/app_vendor_manager"
 	"openpitrix.io/openpitrix/test/models"
 	"openpitrix.io/openpitrix/test/testutil"
 )
+
+const Service = "openpitrix-vendor-manager"
 
 var clientConfig = testutil.GetClientConfig()
 
@@ -40,7 +40,7 @@ func TestAppVendor(t *testing.T) {
 			UserID:            testUserID,
 		})
 	submitResp, err := client.AppVendorManager.SubmitVendorVerifyInfo(submitParams, nil)
-	require.NoError(t, err)
+	testutil.NoError(t, err, Service)
 	userId := submitResp.Payload.UserID
 	if userId != testUserID {
 		t.Fatalf("failed to SubmitVendorVerifyInfo:UserID= [%s]", testUserID)
@@ -57,7 +57,7 @@ func TestAppVendor(t *testing.T) {
 
 	logger.Info(nil, "test describeParams=[%+v]", describeParams)
 	describeResp, err := client.AppVendorManager.DescribeVendorVerifyInfos(describeParams, nil)
-	require.NoError(t, err)
+	testutil.NoError(t, err, Service)
 	AppVendors := describeResp.Payload.VendorVerifyInfoSet
 	logger.Info(nil, "test describeParams result,AppVendors=[%+v]", AppVendors)
 	respUserId := AppVendors[0].UserID
@@ -73,7 +73,7 @@ func TestAppVendor(t *testing.T) {
 			UserID: testUserID,
 		})
 	passResp, err := client.AppVendorManager.PassVendorVerifyInfo(passParams, nil)
-	require.NoError(t, err)
+	testutil.NoError(t, err, Service)
 	t.Log(passResp)
 
 	describeParams1 := app_vendor_manager.NewDescribeVendorVerifyInfosParams()
@@ -86,7 +86,7 @@ func TestAppVendor(t *testing.T) {
 	describeParams1.SetStatus(statuses1)
 
 	describeResp1, err := client.AppVendorManager.DescribeVendorVerifyInfos(describeParams1, nil)
-	require.NoError(t, err)
+	testutil.NoError(t, err, Service)
 	AppVendors1 := describeResp1.Payload.VendorVerifyInfoSet
 	respAppvendor1 := AppVendors1[0]
 	logger.Info(nil, "test describeParams result,respAppvendor=[%+v]", respAppvendor1)
@@ -104,7 +104,7 @@ func TestAppVendor(t *testing.T) {
 		RejectMessage: "RejectMsg test",
 	})
 	rejectResp, err := client.AppVendorManager.RejectVendorVerifyInfo(rejectParams, nil)
-	require.NoError(t, err)
+	testutil.NoError(t, err, Service)
 	t.Log(rejectResp)
 
 	describeParams2 := app_vendor_manager.NewDescribeVendorVerifyInfosParams()
@@ -117,7 +117,7 @@ func TestAppVendor(t *testing.T) {
 	describeParams2.SetStatus(statuses2)
 
 	describeResp2, err := client.AppVendorManager.DescribeVendorVerifyInfos(describeParams2, nil)
-	require.NoError(t, err)
+	testutil.NoError(t, err, Service)
 	AppVendors2 := describeResp2.Payload.VendorVerifyInfoSet
 	respAppvendor2 := AppVendors2[0]
 	logger.Info(nil, "test describeParams result,respAppvendor=[%+v]", respAppvendor2)
@@ -139,7 +139,7 @@ func TestAppVendor(t *testing.T) {
 	describeStaParams.SetStatus(statuses3)
 
 	describeStaResp, err := client.AppVendorManager.DescribeAppVendorStatistics(describeStaParams, nil)
-	require.NoError(t, err)
+	testutil.NoError(t, err, Service)
 	vendorStatisticsVendors := describeStaResp.Payload.VendorVerifyStatisticsSet
 	if len(vendorStatisticsVendors) == 0 {
 		t.Fatalf("failed to DescribeAppVendorStatistics with params [%+v]", describeStaParams)

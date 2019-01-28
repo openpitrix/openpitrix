@@ -1599,6 +1599,12 @@
 			"path": "openpitrix.io/iam/pkg/pb/im",
 			"revision": "9c58d7d76e4f137af55ea4f8a0af779ae8e5beea",
 			"revisionTime": "2019-01-12T01:55:11Z"
+		},
+		{
+			"checksumSHA1": "gBk+c6IpA9I6VL2XlBEnEEmgIiE=",
+			"path": "openpitrix.io/notification/pkg/pb",
+			"revision": "b060f835c0ef9ca77fd5a4b8d36cd58edebd3b1b",
+			"revisionTime": "2019-01-23T18:24:02Z"
 		}
 	],
 	"rootPath": "openpitrix.io/openpitrix"
