@@ -10,6 +10,7 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -29,7 +30,7 @@ type VendorVerifyInfo struct {
 	RejectMessage     string
 	Approver          string
 	Owner             string
-	OwnerPath         string
+	OwnerPath         sender.OwnerPath
 	SubmitTime        *time.Time
 	StatusTime        time.Time
 }
@@ -48,7 +49,7 @@ func (vendor *VendorVerifyInfo) ParseReq2Vendor(ctx context.Context, req *pb.Sub
 	Vendor.BankAccountNumber = req.GetBankAccountNumber().GetValue()
 	Vendor.Status = constants.StatusSubmitted
 	Vendor.Owner = ctxutil.GetSender(ctx).UserId
-	Vendor.OwnerPath = string(ctxutil.GetSender(ctx).OwnerPath)
+	Vendor.OwnerPath = ctxutil.GetSender(ctx).OwnerPath
 	t := time.Now()
 	Vendor.SubmitTime = &t
 	Vendor.StatusTime = time.Now()

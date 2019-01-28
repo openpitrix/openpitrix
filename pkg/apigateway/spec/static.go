@@ -1592,6 +1592,31 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/app_vendors/app_vendor": {
+      "get": {
+        "summary": "get appvendor by appvendor user Id",
+        "operationId": "GetVendorVerifyInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetVendorVerifyInfoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AppVendorManager"
+        ]
+      }
+    },
     "/v1/app_vendors/app_vendor_statistics": {
       "get": {
         "summary": "DescribeAppVendorStatistics",
@@ -6218,6 +6243,14 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/openpitrixVendorVerifyInfo"
           }
+        }
+      }
+    },
+    "openpitrixGetVendorVerifyInfoResponse": {
+      "type": "object",
+      "properties": {
+        "vendor_verify_info": {
+          "$ref": "#/definitions/openpitrixVendorVerifyInfo"
         }
       }
     },
