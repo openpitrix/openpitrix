@@ -5,6 +5,7 @@
 package testutil
 
 import (
+	"fmt"
 	"os/exec"
 	"testing"
 	"time"
@@ -29,4 +30,11 @@ func ExecCmd(t *testing.T, cmd string) string {
 	}
 	require.NoError(t, err)
 	return string(output)
+}
+
+func NoError(t *testing.T, err error, service string, msgAndArgs ...interface{}) {
+	if err != nil {
+		fmt.Print(ExecCmd(t, "docker-compose logs "+service))
+	}
+	require.NoError(t, err, msgAndArgs)
 }
