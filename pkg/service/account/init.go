@@ -2,13 +2,13 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package iam
+package account
 
 import (
 	"context"
 	"os"
 
-	"openpitrix.io/iam/pkg/pb/im"
+	pbim "openpitrix.io/iam/pkg/pb/im"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pi"

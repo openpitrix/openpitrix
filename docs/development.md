@@ -31,7 +31,7 @@ b0540d41b90f        openpitrix/dashboard                       "npm run prod:ser
 f988950a170c        minio/minio:RELEASE.2018-09-25T21-34-43Z   "sh -c 'mkdir -p /da…"   5 hours ago         Up 5 hours (healthy)     0.0.0.0:19000->9000/tcp                          openpitrix-minio
 7257c88b5048        openpitrix                                 "category-manager"       5 hours ago         Up 5 hours                                                                openpitrix-category-manager
 893fea21a52a        openpitrix                                 "cluster-manager"        5 hours ago         Up 5 hours                                                                openpitrix-cluster-manager
-fd670a665ca2        openpitrix                                 "iam-service"            5 hours ago         Up 5 hours                                                                openpitrix-iam-service
+fd670a665ca2        openpitrix                                 "account-service"        5 hours ago         Up 5 hours                                                                openpitrix-account-service
 00ab68d59dc6        openpitrix                                 "job-manager"            5 hours ago         Up 5 hours                                                                openpitrix-job-manager
 d4964a9c2f54        openpitrix                                 "app-manager"            5 hours ago         Up 5 hours                                                                openpitrix-app-manager
 8c63b77a4af6        openpitrix                                 "task-manager"           5 hours ago         Up 5 hours                                                                openpitrix-task-manager
@@ -94,7 +94,7 @@ openpitrix-cluster-manager-deployment    1         1         1            1     
 openpitrix-dashboard-deployment          1         1         1            1           1m
 openpitrix-db-deployment                 1         1         1            1           57d
 openpitrix-etcd-deployment               1         1         1            1           57d
-openpitrix-iam-service-deployment        1         1         1            1           1m
+openpitrix-account-service-deployment    1         1         1            1           1m
 openpitrix-job-manager-deployment        1         1         1            1           1m
 openpitrix-minio-deployment              1         1         1            1           5d
 openpitrix-pilot-deployment              1         1         1            1           1m

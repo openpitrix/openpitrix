@@ -7,7 +7,7 @@ package app
 import (
 	"context"
 
-	iamclient "openpitrix.io/openpitrix/pkg/client/iam"
+	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -30,12 +30,12 @@ func NewAppManagerClient() (*Client, error) {
 }
 
 func (c *Client) DescribeAppsWithAppVendorUserId(ctx context.Context, appVendorUserId string, limit uint32, offset uint32) ([]*pb.App, int32, error) {
-	iamClient, err := iamclient.NewClient()
+	account, err := accountclient.NewClient()
 	if err != nil {
 		return nil, 0, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	groupPath, _ := iamClient.GetUserGroupPath(ctx, appVendorUserId)
+	groupPath, _ := account.GetUserGroupPath(ctx, appVendorUserId)
 	var groupPaths []string
 	groupPaths = append(groupPaths, groupPath)
 

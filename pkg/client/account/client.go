@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package iam
+package account
 
 import (
 	"context"
@@ -22,7 +22,7 @@ type Client struct {
 }
 
 func NewClient() (*Client, error) {
-	conn, err := manager.NewClient(constants.IAMServiceHost, constants.IAMServicePort)
+	conn, err := manager.NewClient(constants.AccountServiceHost, constants.AccountServicePort)
 	if err != nil {
 		return nil, err
 	}

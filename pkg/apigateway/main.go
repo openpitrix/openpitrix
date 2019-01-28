@@ -62,7 +62,7 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Task service http://%s:%d", constants.TaskManagerHost, constants.TaskManagerPort)
 	logger.Info(nil, "Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
 	logger.Info(nil, "Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
-	logger.Info(nil, "IAM service http://%s:%d", constants.IAMServiceHost, constants.IAMServicePort)
+	logger.Info(nil, "Account service http://%s:%d", constants.AccountServiceHost, constants.AccountServicePort)
 	logger.Info(nil, "AM service http://%s:%d", constants.AMServiceHost, constants.AMServicePort)
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
@@ -235,13 +235,13 @@ func (s *Server) mainHandler() http.Handler {
 		fmt.Sprintf("%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort),
 	}, {
 		pb.RegisterTokenManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.IAMServiceHost, constants.IAMServicePort),
+		fmt.Sprintf("%s:%d", constants.AccountServiceHost, constants.AccountServicePort),
 	}, {
 		pb.RegisterAccountManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.IAMServiceHost, constants.IAMServicePort),
+		fmt.Sprintf("%s:%d", constants.AccountServiceHost, constants.AccountServicePort),
 	}, {
 		pb.RegisterAccessManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.IAMServiceHost, constants.IAMServicePort),
+		fmt.Sprintf("%s:%d", constants.AccountServiceHost, constants.AccountServicePort),
 	}, {
 		pb.RegisterClusterManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort),

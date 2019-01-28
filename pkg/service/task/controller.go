@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/client"
-	accountclient "openpitrix.io/openpitrix/pkg/client/iam"
+	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -21,7 +21,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"

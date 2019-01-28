@@ -19,7 +19,7 @@ const (
 	JobManagerHost             = prefix + "job-manager"
 	TaskManagerHost            = prefix + "task-manager"
 	PilotServiceHost           = prefix + "pilot-service"
-	IAMServiceHost             = prefix + "iam-service"
+	AccountServiceHost         = prefix + "account-service"
 	IAM2ServiceHost            = prefix + "iam2-service"
 	AMServiceHost              = prefix + "am-service"
 	RepoIndexerHost            = prefix + "repo-indexer"
@@ -46,7 +46,7 @@ const (
 	DroneServicePort        = 9112
 	CategoryManagerPort     = 9113
 	PilotTlsListenPort      = 9114 // public service for frontgate
-	IAMServicePort          = 9115
+	AccountServicePort      = 9115
 	FrontgateFileServerPort = 9116
 	MarketManagerPort       = 9117
 	VendorManagerPort       = 9118

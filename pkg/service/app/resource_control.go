@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client/account"
 	"openpitrix.io/openpitrix/pkg/client/appvendor"
-	"openpitrix.io/openpitrix/pkg/client/iam"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -383,7 +383,7 @@ func getLatestAppVersion(ctx context.Context, appId string, status ...string) (*
 }
 
 func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorVerifyInfo, error) {
-	iamclient, err := iam.NewClient()
+	accountclient, err := account.NewClient()
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
@@ -394,7 +394,7 @@ func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorV
 	userIds = stringutil.Unique(userIds)
 	var ownerIds []string
 	for _, uid := range userIds {
-		getOwnerRes, err := iamclient.GetUserGroupOwner(ctx, &pb.GetUserGroupOwnerRequest{
+		getOwnerRes, err := accountclient.GetUserGroupOwner(ctx, &pb.GetUserGroupOwnerRequest{
 			UserId: uid,
 		})
 		if err != nil {
