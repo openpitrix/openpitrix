@@ -255,25 +255,8 @@ var AllowedAppDefaultStatus = []string{
 }
 
 const (
-	ChargeModeElastic = "elastic"
-	ChargeModeMonthly = "monthly"
-	ChargeModeYearly  = "yearly"
-)
-
-const (
 	CurrencyCNY = "CNY"
 	CurrencyHKD = "HKD"
 	CurrencyUSD = "USD"
 )
 
-const (
-	CouponTypeMONEY = "money"
-	CouponTypeTIME  = "time"
-)
-
-const (
-	CouponStatusUnreceive = "unreceive"
-	CouponStatusReceived  = "received"
-	CouponStatusUsed      = "used"
-	CouponStatusExpired   = "expired"
-)

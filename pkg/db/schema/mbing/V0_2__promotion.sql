@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS combination_resource_attribute
 CREATE TABLE IF NOT EXISTS combination_sku
 (
 	id 											VARCHAR(50) NOT NULL UNIQUE ,
-	resource_attribute_id 	VARCHAR(50)		NOT NULL,
+	cra_id								 	VARCHAR(50)		NOT NULL COMMENT 'the id of combination_resource_attribute',
 	values 									JSON NOT NULL COMMENT 'sku attribute values for attributes in resource_attribute: {resource_version_id:{}, ..}',
 	create_time 						TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	update_time 						TIMESTAMP,
@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS combination_price
 (
 	id 											VARCHAR(50) 	NOT NULL UNIQUE ,
 	combination_sku_id 			VARCHAR(50) 	NOT NULL,
-	billing_attribute_id	 	JSON					COMMENT '{resource_version_id: attribute_id}' ,
+	resource_version_id 		VARCHAR(50) 	NOT NULL,
+	billing_attribute_id	 	VARCHAR(50) 	NOT NULL,
 	prices 									JSON 					COMMENT '{attribute_value1: price1, ...}',
 	currency            		VARCHAR(50)		NOT NULL  DEFAULT 'cny',
 	create_time       			TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -102,11 +103,12 @@ CREATE TABLE IF NOT EXISTS coupon
 
 CREATE TABLE IF NOT EXISTS coupon_received
 (
+	id 									VARCHAR(50) 	NOT NULL,
 	coupon_id 					VARCHAR(50) 	NOT NULL,
 	user_id 						VARCHAR(50) 	NOT NULL,
 	contract_id					VARCHAR(50),
 	status							TINYINT				NOT NULL commnet '0: overtime, 1: received, 2: using, 3: used',
 	create_time       	TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	update_time       	TIMESTAMP,
-	PRIMARY KEY (coupon_id, user_id)
+	PRIMARY KEY (id)
 );
