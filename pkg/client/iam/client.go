@@ -7,6 +7,7 @@ package iam
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -61,4 +62,40 @@ func (c *Client) GetUsers(ctx context.Context, userIds []string) ([]*pb.User, er
 	}
 	response.UserSet = append(response.UserSet, internalUsers...)
 	return response.UserSet, nil
+}
+
+func (c *Client) GetUserGroupPath(ctx context.Context, userId string) (string, error) {
+	var userGroupPath string
+
+	var userIds []string
+	userIds = append(userIds, userId)
+
+	response, err := c.DescribeGroups(ctx, &pb.DescribeGroupsRequest{
+		UserId: userIds,
+	})
+	if err != nil {
+		logger.Error(ctx, "Describe groups %s failed: %+v", userIds, err)
+		return "", err
+	}
+
+	respGroupSet := response.GroupSet
+
+	//If one uer under different Group, get the highest Group Path.
+	if len(respGroupSet) > 1 {
+		minLevel := len(strings.Split(respGroupSet[0].GroupPath.GetValue(), "."))
+		for _, group := range response.GroupSet {
+			if len(strings.Split(group.GroupPath.GetValue(), ".")) < minLevel {
+				minLevel = len(strings.Split(group.GroupPath.GetValue(), "."))
+				userGroupPath = group.GroupPath.GetValue()
+			}
+		}
+
+	} else if len(respGroupSet) == 1 {
+		userGroupPath = response.GroupSet[0].GetGroupPath().GetValue()
+	} else {
+		return "", nil
+	}
+
+	return userGroupPath, nil
+
 }

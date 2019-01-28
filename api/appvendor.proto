@@ -96,10 +96,17 @@ message VendorStatistics {
 	google.protobuf.Int32Value cluster_count_total = 5;
 }
 
-
 message DescribeVendorStatisticsResponse {
 	uint32 total_count = 1;
 	repeated VendorStatistics vendor_verify_statistics_set = 2;
+}
+
+message GetVendorVerifyInfoRequest{
+	google.protobuf.StringValue user_id = 1;
+}
+
+message GetVendorVerifyInfoResponse {
+	VendorVerifyInfo vendor_verify_info = 1;
 }
 
 service AppVendorManager {
@@ -151,6 +158,15 @@ service AppVendorManager {
 		option (google.api.http) = {
 			post: "/v1/app_vendors/reject",
             body: "*"
+		};
+	}
+
+	rpc GetVendorVerifyInfo (GetVendorVerifyInfoRequest) returns (GetVendorVerifyInfoResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "get appvendor by appvendor user Id"
+		};
+		option (google.api.http) = {
+			get: "/v1/app_vendors/app_vendor"
 		};
 	}
 

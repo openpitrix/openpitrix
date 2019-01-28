@@ -83,6 +83,35 @@ func (a *Client) DescribeVendorVerifyInfos(params *DescribeVendorVerifyInfosPara
 }
 
 /*
+GetVendorVerifyInfo gets appvendor by appvendor user Id
+*/
+func (a *Client) GetVendorVerifyInfo(params *GetVendorVerifyInfoParams, authInfo runtime.ClientAuthInfoWriter) (*GetVendorVerifyInfoOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetVendorVerifyInfoParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetVendorVerifyInfo",
+		Method:             "GET",
+		PathPattern:        "/v1/app_vendors/app_vendor",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &GetVendorVerifyInfoReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetVendorVerifyInfoOK), nil
+
+}
+
+/*
 PassVendorVerifyInfo passes vendor verify info
 */
 func (a *Client) PassVendorVerifyInfo(params *PassVendorVerifyInfoParams, authInfo runtime.ClientAuthInfoWriter) (*PassVendorVerifyInfoOK, error) {

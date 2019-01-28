@@ -648,6 +648,13 @@
       type: '[]string'
     user_id:
       type: '[]string'
+- action: GetVendorVerifyInfo
+  request: GetVendorVerifyInfoRequest
+  description: get appvendor by appvendor user Id
+  service: AppVendorManager
+  query:
+    user_id:
+      type: string
 - action: PassVendorVerifyInfo
   request: PassVendorVerifyInfoRequest
   description: PassVendorVerifyInfo

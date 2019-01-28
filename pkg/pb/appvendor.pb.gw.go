@@ -101,6 +101,23 @@ func request_AppVendorManager_RejectVendorVerifyInfo_0(ctx context.Context, mars
 
 }
 
+var (
+	filter_AppVendorManager_GetVendorVerifyInfo_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_AppVendorManager_GetVendorVerifyInfo_0(ctx context.Context, marshaler runtime.Marshaler, client AppVendorManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetVendorVerifyInfoRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_AppVendorManager_GetVendorVerifyInfo_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.GetVendorVerifyInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
 // RegisterAppVendorManagerHandlerFromEndpoint is same as RegisterAppVendorManagerHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
 func RegisterAppVendorManagerHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
@@ -284,6 +301,35 @@ func RegisterAppVendorManagerHandlerClient(ctx context.Context, mux *runtime.Ser
 
 	})
 
+	mux.Handle("GET", pattern_AppVendorManager_GetVendorVerifyInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		if cn, ok := w.(http.CloseNotifier); ok {
+			go func(done <-chan struct{}, closed <-chan bool) {
+				select {
+				case <-done:
+				case <-closed:
+					cancel()
+				}
+			}(ctx.Done(), cn.CloseNotify())
+		}
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_AppVendorManager_GetVendorVerifyInfo_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_AppVendorManager_GetVendorVerifyInfo_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -297,6 +343,8 @@ var (
 	pattern_AppVendorManager_PassVendorVerifyInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "app_vendors", "pass"}, ""))
 
 	pattern_AppVendorManager_RejectVendorVerifyInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "app_vendors", "reject"}, ""))
+
+	pattern_AppVendorManager_GetVendorVerifyInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "app_vendors", "app_vendor"}, ""))
 )
 
 var (
@@ -309,4 +357,6 @@ var (
 	forward_AppVendorManager_PassVendorVerifyInfo_0 = runtime.ForwardResponseMessage
 
 	forward_AppVendorManager_RejectVendorVerifyInfo_0 = runtime.ForwardResponseMessage
+
+	forward_AppVendorManager_GetVendorVerifyInfo_0 = runtime.ForwardResponseMessage
 )
