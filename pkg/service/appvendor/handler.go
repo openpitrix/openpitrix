@@ -8,10 +8,10 @@ import (
 	"context"
 	"math"
 
+	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	amclient "openpitrix.io/openpitrix/pkg/client/am"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
-	iamclient "openpitrix.io/openpitrix/pkg/client/iam"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
@@ -94,7 +94,7 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 		}
 
 		// notify isv
-		users, err := iamclient.GetUsers(ctx, []string{appVendorUserId})
+		users, err := accountclient.GetUsers(ctx, []string{appVendorUserId})
 		if err != nil || len(users) != 1 {
 			logger.Error(ctx, "Failed to describe users [%s]: %+v", appVendorUserId, err)
 		} else {
@@ -132,7 +132,7 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 	}
 
 	var emailNotifications []*models.EmailNotification
-	users, err := iamclient.GetUsers(ctx, []string{appVendorUserId})
+	users, err := accountclient.GetUsers(ctx, []string{appVendorUserId})
 	if err != nil || len(users) != 1 {
 		logger.Error(ctx, "Failed to describe users [%s]: %+v", appVendorUserId, err)
 	} else {
@@ -171,7 +171,7 @@ func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendo
 	}
 
 	var emailNotifications []*models.EmailNotification
-	users, err := iamclient.GetUsers(ctx, []string{appVendorUserId})
+	users, err := accountclient.GetUsers(ctx, []string{appVendorUserId})
 	if err != nil || len(users) != 1 {
 		logger.Error(ctx, "Failed to describe users [%s]: %+v", appVendorUserId, err)
 	} else {

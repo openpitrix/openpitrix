@@ -435,18 +435,18 @@ services:
       - openpitrix-db-init
     container_name: "openpitrix-cluster-db-ctrl"
 
-  # iam service
-  openpitrix-iam-service:
+  # account service
+  openpitrix-account-service:
     build: .
     image: "openpitrix"
-    command: "iam-service"
+    command: "account-service"
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
     depends_on:
       - openpitrix-iam-db-ctrl
       - openpitrix-etcd
-    container_name: "openpitrix-iam-service"
+    container_name: "openpitrix-account-service"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
@@ -471,13 +471,13 @@ services:
       - openpitrix-db-init
     container_name: "openpitrix-iam-db-ctrl"
 
-  # iam2 service
-  openpitrix-iam2-service:
+  # im service
+  openpitrix-im-service:
     image: "openpitrix/iam:latest"
     command: "im"
     links:
       - openpitrix-db:openpitrix-db
-    container_name: "openpitrix-iam2-service"
+    container_name: "openpitrix-im-service"
     environment:
       - OPENPITRIX_IM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_IM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}

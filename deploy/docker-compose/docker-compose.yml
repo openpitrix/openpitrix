@@ -447,17 +447,17 @@ services:
     - openpitrix-db-init
     container_name: "openpitrix-attachment-db-ctrl"
 
-  # iam service
-  openpitrix-iam-service:
+  # account service
+  openpitrix-account-service:
     image: "openpitrix/openpitrix:latest"
-    command: "iam-service"
+    command: "account-service"
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
     depends_on:
       - openpitrix-iam-db-ctrl
       - openpitrix-etcd
-    container_name: "openpitrix-iam-service"
+    container_name: "openpitrix-account-service"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}

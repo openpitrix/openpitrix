@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -7,7 +7,7 @@ package am
 import (
 	"context"
 
-	"openpitrix.io/iam/pkg/pb/am"
+	pbam "openpitrix.io/iam/pkg/pb/am"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"

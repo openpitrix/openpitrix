@@ -167,7 +167,7 @@ if [ "${VERSION}" == "" ];then
   VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
 fi
 
-IAM2_IMAGE="openpitrix/iam:v0.2.8-dev"
+IAM_IMAGE="openpitrix/iam:v0.2.8-dev"
 NOTIFICATION_IMAGE="openpitrix/notification:latest"
 NOTIFICATION_FLYWAY_IMAGE="openpitrix/notification:flyway"
 
@@ -209,7 +209,7 @@ fi
 
 replace() {
   sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" \
-      -e "s!\${IAM2_IMAGE}!${IAM2_IMAGE}!g" \
+      -e "s!\${IAM_IMAGE}!${IAM_IMAGE}!g" \
 	  -e "s!\${IMAGE}!${IMAGE}!g" \
 	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
 	  -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" \

@@ -2,13 +2,13 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package iam
+package account
 
 import (
 	"context"
 
-	"openpitrix.io/iam/pkg/pb/am"
-	clientiam2 "openpitrix.io/openpitrix/pkg/client/iam2"
+	pbam "openpitrix.io/iam/pkg/pb/am"
+	"openpitrix.io/openpitrix/pkg/client/am"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
@@ -16,7 +16,7 @@ import (
 
 var (
 	_           pb.AccessManagerServer = (*Server)(nil)
-	amClient, _                        = clientiam2.NewAMClient()
+	amClient, _                        = am.NewClient()
 )
 
 func pbRole(p *pbam.Role) *pb.Role {

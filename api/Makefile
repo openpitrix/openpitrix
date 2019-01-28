@@ -19,8 +19,6 @@ METADATA_DRONE_PBFILES=$(sort $(wildcard metadata/drone/*.proto))
 METADATA_FRONTGATE_PBFILES=$(sort $(wildcard metadata/frontgate/*.proto))
 METADATA_PILOT_PBFILES=$(sort $(wildcard metadata/pilot/*.proto))
 
-IAM_PBFILES=$(sort $(wildcard iam/*.proto))
-
 help:
 	@echo "Please use \`make <target>\` where <target> is one of"
 	@echo "  generate          to generate grpc/grpc-gateway/swagger code"

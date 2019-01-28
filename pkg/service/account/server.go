@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package iam
+package account
 
 import (
 	"google.golang.org/grpc"
@@ -26,7 +26,7 @@ func Serve(cfg *config.Config) {
 
 	s := Server{cfg.IAM}
 
-	manager.NewGrpcServer("iam-service", constants.IAMServicePort).
+	manager.NewGrpcServer("account-service", constants.AccountServicePort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
 		WithBuilder(s.Builder).

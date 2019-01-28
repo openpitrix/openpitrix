@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"openpitrix.io/openpitrix/pkg/client"
-	accountclient "openpitrix.io/openpitrix/pkg/client/iam"
+	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	taskclient "openpitrix.io/openpitrix/pkg/client/task"
 	"openpitrix.io/openpitrix/pkg/constants"

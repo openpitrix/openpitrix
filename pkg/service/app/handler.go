@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
+	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	amclient "openpitrix.io/openpitrix/pkg/client/am"
 	attachmentclient "openpitrix.io/openpitrix/pkg/client/attachment"
-	iamclient "openpitrix.io/openpitrix/pkg/client/iam"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -782,7 +782,7 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 
 	var emailNotifications []*models.EmailNotification
 
-	users, err := iamclient.GetUsers(ctx, []string{s.UserId})
+	users, err := accountclient.GetUsers(ctx, []string{s.UserId})
 	if err != nil || len(users) != 1 {
 		logger.Error(ctx, "Failed to get user [%s], %+v", s.UserId, err)
 	} else {
@@ -795,7 +795,7 @@ func (p *Server) SubmitAppVersion(ctx context.Context, req *pb.SubmitAppVersionR
 		})
 	}
 
-	isvs, err := iamclient.GetIsvFromUsers(ctx, []string{s.UserId})
+	isvs, err := accountclient.GetIsvFromUsers(ctx, []string{s.UserId})
 	if err != nil || len(isvs) != 1 {
 		logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
 	} else {
@@ -871,7 +871,7 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 	var emailNotifications []*models.EmailNotification
 
 	// notify owner
-	users, err := iamclient.GetUsers(ctx, []string{version.Owner})
+	users, err := accountclient.GetUsers(ctx, []string{version.Owner})
 	if err != nil || len(users) != 1 {
 		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
 	} else {
@@ -885,7 +885,7 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 	}
 
 	// notify isv
-	isvs, err := iamclient.GetIsvFromUsers(ctx, []string{s.UserId})
+	isvs, err := accountclient.GetIsvFromUsers(ctx, []string{s.UserId})
 	if err != nil || len(isvs) != 1 {
 		logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
 	} else {
@@ -1005,7 +1005,7 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 		}
 	}
 
-	users, err := iamclient.GetUsers(ctx, []string{version.Owner})
+	users, err := accountclient.GetUsers(ctx, []string{version.Owner})
 	if err != nil || len(users) != 1 {
 		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
 	} else {
@@ -1066,7 +1066,7 @@ func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersion
 	}
 
 	var emailNotifications []*models.EmailNotification
-	users, err := iamclient.GetUsers(ctx, []string{version.Owner})
+	users, err := accountclient.GetUsers(ctx, []string{version.Owner})
 	if err != nil || len(users) != 1 {
 		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
 	} else {
@@ -1175,7 +1175,7 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 	var emailNotifications []*models.EmailNotification
 
 	// notify owner
-	users, err := iamclient.GetUsers(ctx, []string{version.Owner})
+	users, err := accountclient.GetUsers(ctx, []string{version.Owner})
 	if err != nil || len(users) != 1 {
 		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
 	} else {
@@ -1189,7 +1189,7 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 	}
 
 	// notify isv
-	isvs, err := iamclient.GetIsvFromUsers(ctx, []string{s.UserId})
+	isvs, err := accountclient.GetIsvFromUsers(ctx, []string{s.UserId})
 	if err != nil || len(isvs) != 1 {
 		logger.Error(ctx, "Failed to get isv from user [%s], %+v", s.UserId, err)
 	} else {
