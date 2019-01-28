@@ -8,8 +8,12 @@ import (
 	"context"
 	"math"
 
+	amclient "openpitrix.io/openpitrix/pkg/client/am"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
+	iamclient "openpitrix.io/openpitrix/pkg/client/iam"
+	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -37,6 +41,7 @@ func (s *Server) DescribeVendorVerifyInfos(ctx context.Context, req *pb.Describe
 }
 
 func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendorVerifyInfoRequest) (*pb.SubmitVendorVerifyInfoResponse, error) {
+	sender := ctxutil.GetSender(ctx)
 	err := s.validateSubmitParams(ctx, req)
 	if err != nil {
 		return nil, err
@@ -71,6 +76,39 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 		}
 		logger.Debug(ctx, "vendorVerifyInfo does not exit, create new vendorVerifyInfo verify info, [%+v]", vendor)
 
+		var emailNotifications []*models.EmailNotification
+		// notify admin
+		adminUsers, err := amclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+		if err != nil {
+			logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
+		} else {
+			for _, adminUser := range adminUsers {
+				emailNotifications = append(emailNotifications, &models.EmailNotification{
+					Title:       constants.SubmitVendorNotifyAdminTitle.GetDefaultMessage(vendor.CompanyName),
+					Content:     constants.SubmitVendorNotifyAdminContent.GetDefaultMessage(adminUser, vendor.CompanyName),
+					Owner:       sender.UserId,
+					ContentType: constants.NfContentTypeVerify,
+					Addresses:   []string{adminUser.Email},
+				})
+			}
+		}
+
+		// notify isv
+		users, err := iamclient.GetUsers(ctx, []string{appVendorUserId})
+		if err != nil || len(users) != 1 {
+			logger.Error(ctx, "Failed to describe users [%s]: %+v", appVendorUserId, err)
+		} else {
+			emailNotifications = append(emailNotifications, &models.EmailNotification{
+				Title:       constants.SubmitVendorNotifyIsvTitle.GetDefaultMessage(),
+				Content:     constants.SubmitVendorNotifyIsvContent.GetDefaultMessage(users[0].GetUsername().GetValue()),
+				Owner:       sender.UserId,
+				ContentType: constants.NfContentTypeVerify,
+				Addresses:   []string{users[0].GetEmail().GetValue()},
+			})
+		}
+
+		// send notifications
+		nfclient.SendEmailNotification(ctx, emailNotifications)
 	}
 	res := &pb.SubmitVendorVerifyInfoResponse{
 		UserId: pbutil.ToProtoString(appVendorUserId),
@@ -79,9 +117,10 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 }
 
 func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVerifyInfoRequest) (*pb.PassVendorVerifyInfoResponse, error) {
+	sender := ctxutil.GetSender(ctx)
 	appVendorUserId := req.UserId
 
-	_, err := CheckAppVendorPermission(ctx, appVendorUserId)
+	appVendor, err := CheckAppVendorPermission(ctx, appVendorUserId)
 	if err != nil {
 		return nil, err
 	}
@@ -91,15 +130,33 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 		logger.Error(ctx, "Failed to pass vendorVerifyInfo [%s], %+v", appVendorUserId, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
 	}
+
+	var emailNotifications []*models.EmailNotification
+	users, err := iamclient.GetUsers(ctx, []string{appVendorUserId})
+	if err != nil || len(users) != 1 {
+		logger.Error(ctx, "Failed to describe users [%s]: %+v", appVendorUserId, err)
+	} else {
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.PassVendorNotifyTitle.GetDefaultMessage(appVendor.CompanyName),
+			Content:     constants.PassVendorNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), appVendor.CompanyName),
+			Owner:       sender.UserId,
+			ContentType: constants.NfContentTypeVerify,
+			Addresses:   []string{users[0].GetEmail().GetValue()},
+		})
+	}
+
+	// send notifications
+	nfclient.SendEmailNotification(ctx, emailNotifications)
+
 	res := &pb.PassVendorVerifyInfoResponse{
 		UserId: pbutil.ToProtoString(appVendorUserId),
 	}
-	return res, err
+	return res, nil
 }
 
 func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendorVerifyInfoRequest) (*pb.RejectVendorVerifyInfoResponse, error) {
 	appVendorUserId := req.GetUserId()
-	_, err := CheckAppVendorPermission(ctx, appVendorUserId)
+	appVendor, err := CheckAppVendorPermission(ctx, appVendorUserId)
 	if err != nil {
 		return nil, err
 	}
@@ -112,10 +169,27 @@ func (s *Server) RejectVendorVerifyInfo(ctx context.Context, req *pb.RejectVendo
 		logger.Error(ctx, "Failed to reject vendorVerifyInfo [%s], %+v", appVendorUserID, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
 	}
+
+	var emailNotifications []*models.EmailNotification
+	users, err := iamclient.GetUsers(ctx, []string{appVendorUserId})
+	if err != nil || len(users) != 1 {
+		logger.Error(ctx, "Failed to describe users [%s]: %+v", appVendorUserId, err)
+	} else {
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.RejectVendorNotifyTitle.GetDefaultMessage(appVendor.CompanyName),
+			Content:     constants.RejectVendorNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), appVendor.CompanyName),
+			Owner:       sender.UserId,
+			ContentType: constants.NfContentTypeVerify,
+			Addresses:   []string{users[0].GetEmail().GetValue()},
+		})
+	}
+	// send notifications
+	nfclient.SendEmailNotification(ctx, emailNotifications)
+
 	res := &pb.RejectVendorVerifyInfoResponse{
 		UserId: pbutil.ToProtoString(appVendorUserID),
 	}
-	return res, err
+	return res, nil
 }
 
 func (s *Server) DescribeAppVendorStatistics(ctx context.Context, req *pb.DescribeVendorVerifyInfosRequest) (*pb.DescribeVendorStatisticsResponse, error) {

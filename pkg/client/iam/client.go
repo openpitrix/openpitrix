@@ -99,3 +99,41 @@ func (c *Client) GetUserGroupPath(ctx context.Context, userId string) (string, e
 	return userGroupPath, nil
 
 }
+
+func GetUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
+	client, err := NewClient()
+	if err != nil {
+		logger.Error(ctx, "Failed to create im client: %+v", err)
+		return nil, err
+	}
+	response, err := client.GetUsers(ctx, userIds)
+	if err != nil {
+		return nil, err
+	}
+	return response, err
+}
+
+func GetIsvFromUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
+	client, err := NewClient()
+	if err != nil {
+		logger.Error(ctx, "Failed to create im client: %+v", err)
+		return nil, err
+	}
+
+	var owners []string
+	for _, userId := range userIds {
+		response, err := client.GetUserGroupOwner(ctx, &pb.GetUserGroupOwnerRequest{
+			UserId: userId,
+		})
+		if err != nil {
+			return nil, err
+		}
+		owners = append(owners, response.Owner)
+	}
+
+	response, err := client.GetUsers(ctx, owners)
+	if err != nil {
+		return nil, err
+	}
+	return response, err
+}
