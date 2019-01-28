@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package clientiam2
+package iam2
 
 import (
 	"openpitrix.io/iam/pkg/pb/am"

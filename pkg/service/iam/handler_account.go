@@ -8,11 +8,13 @@ import (
 	"context"
 	"time"
 
-	pbim "openpitrix.io/iam/pkg/pb/im"
-	clientiam2 "openpitrix.io/openpitrix/pkg/client/iam2"
+	"openpitrix.io/iam/pkg/pb/im"
+	imclient "openpitrix.io/openpitrix/pkg/client/iam2"
+	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
@@ -22,7 +24,7 @@ import (
 
 var (
 	_         pb.AccountManagerServer = (*Server)(nil)
-	client, _                         = clientiam2.NewClient()
+	client, _                         = imclient.NewClient()
 )
 
 const OwnerKey = "owner"
@@ -197,6 +199,7 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*
 }
 
 func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+	s := ctxutil.GetSender(ctx)
 	email := req.GetEmail().GetValue()
 
 	res, err := client.ListUsers(ctx, &pbim.ListUsersRequest{
@@ -211,6 +214,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorEmailExists, email)
 	}
 
+	role := req.GetRole().GetValue()
 	user, err := client.CreateUser(ctx, &pbim.User{
 		Email:       req.GetEmail().GetValue(),
 		PhoneNumber: req.GetPhoneNumber().GetValue(),
@@ -218,11 +222,33 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		Password:    req.GetPassword().GetValue(),
 		Description: req.GetDescription().GetValue(),
 		Status:      constants.StatusActive,
-		Extra:       map[string]string{"role": req.GetRole().GetValue()},
+		Extra:       map[string]string{"role": role},
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
+
+	var emailNotifications []*models.EmailNotification
+
+	if role == constants.RoleIsv {
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(),
+			Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(user.UserName, user.Email, user.Password),
+			Owner:       s.UserId,
+			ContentType: constants.NfContentTypeInvite,
+			Addresses:   []string{user.Email},
+		})
+	} else {
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(),
+			Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(user.UserName, user.Email, user.Password),
+			Owner:       s.UserId,
+			ContentType: constants.NfContentTypeInvite,
+			Addresses:   []string{user.Email},
+		})
+	}
+
+	nfclient.SendEmailNotification(ctx, emailNotifications)
 
 	reply := &pb.CreateUserResponse{
 		UserId: pbutil.ToProtoString(user.UserId),
@@ -232,6 +258,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 }
 
 func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest) (*pb.IsvCreateUserResponse, error) {
+	s := ctxutil.GetSender(ctx)
 	email := req.GetEmail().GetValue()
 
 	res, err := client.ListUsers(ctx, &pbim.ListUsersRequest{
@@ -258,6 +285,23 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
+
+	var emailNotifications []*models.EmailNotification
+	listUsersResponse, err := client.ListUsers(ctx, &pbim.ListUsersRequest{
+		UserId: []string{s.UserId},
+	})
+	if err != nil || len(listUsersResponse.User) != 1 {
+		logger.Error(ctx, "Failed to describe users [%s]: %+v", s.UserId, err)
+	} else {
+		emailNotifications = append(emailNotifications, &models.EmailNotification{
+			Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(listUsersResponse.User[0].UserName),
+			Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(user.UserName, user.Email, user.Password),
+			Owner:       s.UserId,
+			ContentType: constants.NfContentTypeInvite,
+			Addresses:   []string{user.Email},
+		})
+	}
+	nfclient.SendEmailNotification(ctx, emailNotifications)
 
 	reply := &pb.IsvCreateUserResponse{
 		UserId: pbutil.ToProtoString(user.UserId),

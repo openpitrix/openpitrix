@@ -65,7 +65,7 @@ service AccountManager {
 	rpc LeaveGroup (LeaveGroupRequest) returns (LeaveGroupResponse) {
 		option (google.api.http) = { post: "/v1/groups:leave" body: "*" };
 	};
-	rpc GetUserGroupOwner (GetUserGroupOwnerRequest) returns (GetUserGroupOwnerResponse) {};
+	rpc GetUserGroupOwner (GetUserGroupOwnerRequest) returns (GetUserGroupOwnerResponse);
 }
 
 service AccessManager {
