@@ -240,6 +240,9 @@ func (s *Server) mainHandler() http.Handler {
 		pb.RegisterAccountManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.IAMServiceHost, constants.IAMServicePort),
 	}, {
+		pb.RegisterAccessManagerHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.IAMServiceHost, constants.IAMServicePort),
+	}, {
 		pb.RegisterClusterManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort),
 	}, {

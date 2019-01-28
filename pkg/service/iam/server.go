@@ -32,6 +32,7 @@ func Serve(cfg *config.Config) {
 		WithBuilder(s.Builder).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterAccountManagerServer(server, &s)
+			pb.RegisterAccessManagerServer(server, &s)
 			pb.RegisterTokenManagerServer(server, &s)
 		})
 }
