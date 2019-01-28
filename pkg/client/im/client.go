@@ -2,31 +2,20 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package clientiam2
+package im
 
 import (
-	"openpitrix.io/iam/pkg/pb/am"
-	"openpitrix.io/iam/pkg/pb/im"
+	pbim "openpitrix.io/iam/pkg/pb/im"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 )
 
 func NewClient() (pbim.AccountManagerClient, error) {
-	conn, err := manager.NewClient(constants.IAM2ServiceHost, constants.IAM2ServicePort)
+	conn, err := manager.NewClient(constants.IMServiceHost, constants.IMServicePort)
 	if err != nil {
 		return nil, err
 	}
 
 	client := pbim.NewAccountManagerClient(conn)
-	return client, nil
-}
-
-func NewAMClient() (pbam.AccessManagerClient, error) {
-	conn, err := manager.NewClient(constants.AMServiceHost, constants.AMServicePort)
-	if err != nil {
-		return nil, err
-	}
-
-	client := pbam.NewAccessManagerClient(conn)
 	return client, nil
 }

@@ -20,7 +20,7 @@ const (
 	TaskManagerHost            = prefix + "task-manager"
 	PilotServiceHost           = prefix + "pilot-service"
 	AccountServiceHost         = prefix + "account-service"
-	IAM2ServiceHost            = prefix + "iam2-service"
+	IMServiceHost              = prefix + "im-service"
 	AMServiceHost              = prefix + "am-service"
 	RepoIndexerHost            = prefix + "repo-indexer"
 	CategoryManagerHost        = prefix + "category-manager"
@@ -50,7 +50,7 @@ const (
 	FrontgateFileServerPort = 9116
 	MarketManagerPort       = 9117
 	VendorManagerPort       = 9118
-	IAM2ServicePort         = 9119
+	IMServicePort           = 9119
 	AMServicePort           = 9120
 	EtcdServicePort         = 2379
 

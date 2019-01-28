@@ -9,7 +9,7 @@ import (
 	"time"
 
 	pbim "openpitrix.io/iam/pkg/pb/im"
-	clientiam2 "openpitrix.io/openpitrix/pkg/client/iam2"
+	"openpitrix.io/openpitrix/pkg/client/im"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -21,8 +21,8 @@ import (
 )
 
 var (
-	_         pb.AccountManagerServer = (*Server)(nil)
-	client, _                         = clientiam2.NewClient()
+	_           pb.AccountManagerServer = (*Server)(nil)
+	imClient, _                         = im.NewClient()
 )
 
 const OwnerKey = "owner"
@@ -57,7 +57,7 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest
 		limit  = pbutil.GetLimitFromRequest(req)
 	)
 
-	res, err := client.ListUsers(ctx, &pbim.ListUsersRequest{
+	res, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
 		Limit:      int32(limit),
 		Offset:     int32(offset),
 		SortKey:    req.GetSortKey().GetValue(),
@@ -84,7 +84,7 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 		offset = pbutil.GetOffsetFromRequest(req)
 		limit  = pbutil.GetLimitFromRequest(req)
 	)
-	res, err := client.ListGroups(ctx, &pbim.ListGroupsRequest{
+	res, err := imClient.ListGroups(ctx, &pbim.ListGroupsRequest{
 		Limit:      int32(limit),
 		Offset:     int32(offset),
 		SortKey:    req.GetSortKey().GetValue(),
@@ -122,7 +122,7 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 }
 
 func getUser(ctx context.Context, userId string) (*pbim.User, error) {
-	user, err := client.GetUser(ctx, &pbim.UserId{
+	user, err := imClient.GetUser(ctx, &pbim.UserId{
 		UserId: userId,
 	})
 	if err != nil {
@@ -141,7 +141,7 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 
 	password := req.GetPassword().GetValue()
 	if password != "" {
-		_, err = client.ModifyPassword(ctx, &pbim.Password{
+		_, err = imClient.ModifyPassword(ctx, &pbim.Password{
 			UserId:   req.GetUserId().GetValue(),
 			Password: password,
 		})
@@ -160,7 +160,7 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 	}
 	user.UpdateTime = pbutil.ToProtoTimestamp(time.Now())
 
-	user, err = client.ModifyUser(ctx, user)
+	user, err = imClient.ModifyUser(ctx, user)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
@@ -176,7 +176,7 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*
 	uids := req.GetUserId()
 
 	for _, uid := range uids {
-		user, err := client.GetUser(ctx, &pbim.UserId{
+		user, err := imClient.GetUser(ctx, &pbim.UserId{
 			UserId: uid,
 		})
 		if err != nil {
@@ -185,7 +185,7 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*
 		user.Status = constants.StatusDeleted
 		user.StatusTime = pbutil.ToProtoTimestamp(time.Now())
 
-		user, err = client.ModifyUser(ctx, user)
+		user, err = imClient.ModifyUser(ctx, user)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
@@ -199,7 +199,7 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*
 func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	email := req.GetEmail().GetValue()
 
-	res, err := client.ListUsers(ctx, &pbim.ListUsersRequest{
+	res, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
 		Limit:  1,
 		Status: []string{constants.StatusActive},
 		Email:  []string{email},
@@ -211,7 +211,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorEmailExists, email)
 	}
 
-	user, err := client.CreateUser(ctx, &pbim.User{
+	user, err := imClient.CreateUser(ctx, &pbim.User{
 		Email:       req.GetEmail().GetValue(),
 		PhoneNumber: req.GetPhoneNumber().GetValue(),
 		UserName:    getUsernameFromEmail(req.GetEmail().GetValue()),
@@ -234,7 +234,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest) (*pb.IsvCreateUserResponse, error) {
 	email := req.GetEmail().GetValue()
 
-	res, err := client.ListUsers(ctx, &pbim.ListUsersRequest{
+	res, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
 		Limit:  1,
 		Status: []string{constants.StatusActive},
 		Email:  []string{email},
@@ -246,7 +246,7 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 		return nil, gerr.New(ctx, gerr.FailedPrecondition, gerr.ErrorEmailExists, email)
 	}
 
-	user, err := client.CreateUser(ctx, &pbim.User{
+	user, err := imClient.CreateUser(ctx, &pbim.User{
 		Email:       req.GetEmail().GetValue(),
 		PhoneNumber: req.GetPhoneNumber().GetValue(),
 		UserName:    getUsernameFromEmail(req.GetEmail().GetValue()),
@@ -270,13 +270,13 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 	uid := req.GetUserId().GetValue()
 	password := req.GetPassword().GetValue()
 
-	_, err := client.GetUser(ctx, &pbim.UserId{
+	_, err := imClient.GetUser(ctx, &pbim.UserId{
 		UserId: uid,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	b, err := client.ComparePassword(ctx, &pbim.Password{
+	b, err := imClient.ComparePassword(ctx, &pbim.Password{
 		UserId:   uid,
 		Password: password,
 	})
@@ -326,7 +326,7 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	_, err = client.ModifyPassword(ctx, &pbim.Password{
+	_, err = imClient.ModifyPassword(ctx, &pbim.Password{
 		UserId:   resetInfo.UserId,
 		Password: newPassword,
 	})
@@ -374,7 +374,7 @@ func (p *Server) GetPasswordReset(ctx context.Context, req *pb.GetPasswordResetR
 }
 
 func validateUserPassword(ctx context.Context, email, password string) (*pbim.User, bool, error) {
-	res, err := client.ListUsers(ctx, &pbim.ListUsersRequest{
+	res, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
 		Limit:  1,
 		Status: []string{constants.StatusActive},
 		Email:  []string{email},
@@ -387,7 +387,7 @@ func validateUserPassword(ctx context.Context, email, password string) (*pbim.Us
 	}
 
 	user := res.User[0]
-	b, err := client.ComparePassword(ctx, &pbim.Password{
+	b, err := imClient.ComparePassword(ctx, &pbim.Password{
 		UserId:   user.UserId,
 		Password: password,
 	})
@@ -409,7 +409,7 @@ func (p *Server) ValidateUserPassword(ctx context.Context, req *pb.ValidateUserP
 
 func (p *Server) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
 	s := ctxutil.GetSender(ctx)
-	group, err := client.CreateGroup(ctx, &pbim.Group{
+	group, err := imClient.CreateGroup(ctx, &pbim.Group{
 		ParentGroupId: req.GetParentGroupId().GetValue(),
 		GroupName:     req.GetName().GetValue(),
 		Description:   req.GetDescription().GetValue(),
@@ -432,7 +432,7 @@ func (p *Server) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*
 func (p *Server) ModifyGroup(ctx context.Context, req *pb.ModifyGroupRequest) (*pb.ModifyGroupResponse, error) {
 	gid := req.GetGroupId().GetValue()
 
-	group, err := client.GetGroup(ctx, &pbim.GroupId{
+	group, err := imClient.GetGroup(ctx, &pbim.GroupId{
 		GroupId: gid,
 	})
 	if err != nil {
@@ -447,7 +447,7 @@ func (p *Server) ModifyGroup(ctx context.Context, req *pb.ModifyGroupRequest) (*
 	}
 	group.UpdateTime = pbutil.ToProtoTimestamp(time.Now())
 
-	group, err = client.ModifyGroup(ctx, group)
+	group, err = imClient.ModifyGroup(ctx, group)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
@@ -462,7 +462,7 @@ func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) 
 	gids := req.GetGroupId()
 
 	for _, gid := range gids {
-		group, err := client.GetGroup(ctx, &pbim.GroupId{
+		group, err := imClient.GetGroup(ctx, &pbim.GroupId{
 			GroupId: gid,
 		})
 		if err != nil {
@@ -474,7 +474,7 @@ func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) 
 		group.Status = constants.StatusDeleted
 		group.StatusTime = pbutil.ToProtoTimestamp(time.Now())
 
-		group, err = client.ModifyGroup(ctx, group)
+		group, err = imClient.ModifyGroup(ctx, group)
 		if err != nil {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
@@ -486,7 +486,7 @@ func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) 
 }
 
 func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.JoinGroupResponse, error) {
-	_, err := client.JoinGroup(ctx, &pbim.JoinGroupRequest{
+	_, err := imClient.JoinGroup(ctx, &pbim.JoinGroupRequest{
 		GroupId: req.GetGroupId(),
 		UserId:  req.GetUserId(),
 	})
@@ -501,7 +501,7 @@ func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.J
 }
 
 func (p *Server) LeaveGroup(ctx context.Context, req *pb.LeaveGroupRequest) (*pb.LeaveGroupResponse, error) {
-	_, err := client.LeaveGroup(ctx, &pbim.LeaveGroupRequest{
+	_, err := imClient.LeaveGroup(ctx, &pbim.LeaveGroupRequest{
 		GroupId: req.GetGroupId(),
 		UserId:  req.GetUserId(),
 	})
@@ -516,7 +516,7 @@ func (p *Server) LeaveGroup(ctx context.Context, req *pb.LeaveGroupRequest) (*pb
 }
 
 func (p *Server) GetUserGroupOwner(ctx context.Context, req *pb.GetUserGroupOwnerRequest) (*pb.GetUserGroupOwnerResponse, error) {
-	res, err := client.ListGroups(ctx, &pbim.ListGroupsRequest{
+	res, err := imClient.ListGroups(ctx, &pbim.ListGroupsRequest{
 		Limit:  1,
 		UserId: []string{req.GetUserId()},
 		Status: []string{constants.StatusActive},
