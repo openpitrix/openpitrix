@@ -233,7 +233,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	if role == constants.RoleIsv {
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
 			Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(),
-			Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(user.Username, user.Email, user.Password),
+			Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(user.Username, user.Email, req.GetPassword().GetValue()),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeInvite,
 			Addresses:   []string{user.Email},
@@ -241,7 +241,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	} else {
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
 			Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(),
-			Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(user.Username, user.Email, user.Password),
+			Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(user.Username, user.Email, req.GetPassword().GetValue()),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeInvite,
 			Addresses:   []string{user.Email},
@@ -295,7 +295,7 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 	} else {
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
 			Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(listUsersResponse.User[0].Username),
-			Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(user.Username, user.Email, user.Password),
+			Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(user.Username, user.Email, req.GetPassword().GetValue()),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeInvite,
 			Addresses:   []string{user.Email},
