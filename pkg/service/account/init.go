@@ -50,7 +50,7 @@ func initIAMAccount() {
 		// create user
 		_, err = imClient.CreateUser(ctx, &pbim.User{
 			Email:    email,
-			UserName: getUsernameFromEmail(email),
+			Username: getUsernameFromEmail(email),
 			Password: password,
 			Status:   constants.StatusActive,
 			Extra:    map[string]string{"role": constants.RoleGlobalAdmin},

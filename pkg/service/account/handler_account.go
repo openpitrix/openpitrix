@@ -38,7 +38,7 @@ func formatUsers(pbimUsers []*pbim.User) []*pb.User {
 		}
 		users = append(users, &pb.User{
 			UserId:      pbutil.ToProtoString(u.UserId),
-			Username:    pbutil.ToProtoString(u.UserName),
+			Username:    pbutil.ToProtoString(u.Username),
 			Email:       pbutil.ToProtoString(u.Email),
 			PhoneNumber: pbutil.ToProtoString(u.PhoneNumber),
 			Description: pbutil.ToProtoString(u.Description),
@@ -158,7 +158,7 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 		user.Email = req.GetEmail().GetValue()
 	}
 	if req.GetUsername() != nil {
-		user.UserName = req.GetUsername().GetValue()
+		user.Username = req.GetUsername().GetValue()
 	}
 	user.UpdateTime = pbutil.ToProtoTimestamp(time.Now())
 
@@ -218,7 +218,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	user, err := imClient.CreateUser(ctx, &pbim.User{
 		Email:       req.GetEmail().GetValue(),
 		PhoneNumber: req.GetPhoneNumber().GetValue(),
-		UserName:    getUsernameFromEmail(req.GetEmail().GetValue()),
+		Username:    getUsernameFromEmail(req.GetEmail().GetValue()),
 		Password:    req.GetPassword().GetValue(),
 		Description: req.GetDescription().GetValue(),
 		Status:      constants.StatusActive,
@@ -233,7 +233,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	if role == constants.RoleIsv {
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
 			Title:       constants.AdminInviteIsvNotifyTitle.GetDefaultMessage(),
-			Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(user.UserName, user.Email, req.GetPassword().GetValue()),
+			Content:     constants.AdminInviteIsvNotifyContent.GetDefaultMessage(user.Username, user.Email, user.Password),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeInvite,
 			Addresses:   []string{user.Email},
@@ -241,7 +241,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 	} else {
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
 			Title:       constants.AdminInviteUserNotifyTitle.GetDefaultMessage(),
-			Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(user.UserName, user.Email, req.GetPassword().GetValue()),
+			Content:     constants.AdminInviteUserNotifyContent.GetDefaultMessage(user.Username, user.Email, user.Password),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeInvite,
 			Addresses:   []string{user.Email},
@@ -276,7 +276,7 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 	user, err := imClient.CreateUser(ctx, &pbim.User{
 		Email:       req.GetEmail().GetValue(),
 		PhoneNumber: req.GetPhoneNumber().GetValue(),
-		UserName:    getUsernameFromEmail(req.GetEmail().GetValue()),
+		Username:    getUsernameFromEmail(req.GetEmail().GetValue()),
 		Password:    req.GetPassword().GetValue(),
 		Description: req.GetDescription().GetValue(),
 		Status:      constants.StatusActive,
@@ -294,8 +294,8 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 		logger.Error(ctx, "Failed to describe users [%s]: %+v", s.UserId, err)
 	} else {
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
-			Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(listUsersResponse.User[0].UserName),
-			Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(user.UserName, user.Email, req.GetPassword().GetValue()),
+			Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(listUsersResponse.User[0].Username),
+			Content:     constants.IsvInviteMemberNotifyContent.GetDefaultMessage(user.Username, user.Email, user.Password),
 			Owner:       s.UserId,
 			ContentType: constants.NfContentTypeInvite,
 			Addresses:   []string{user.Email},

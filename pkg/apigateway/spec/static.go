@@ -6250,7 +6250,7 @@ var Files = map[string]string{
         "action": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixModuleFeatureAction"
+            "$ref": "#/definitions/openpitrixModuleFeatureActionBundle"
           }
         },
         "checked_action_id": {
@@ -6261,7 +6261,7 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixModuleFeatureAction": {
+    "openpitrixModuleFeatureActionBundle": {
       "type": "object",
       "properties": {
         "role_id": {

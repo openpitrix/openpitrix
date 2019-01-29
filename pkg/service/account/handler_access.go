@@ -67,7 +67,7 @@ func pbamRoleModule(p *pb.RoleModule) *pbam.RoleModule {
 	}
 }
 
-func pbRoleModuleElemList(ps []*pbam.Module) []*pb.RoleModuleElem {
+func pbRoleModuleElemList(ps []*pbam.RoleModuleElem) []*pb.RoleModuleElem {
 	var results []*pb.RoleModuleElem
 	for _, p := range ps {
 		results = append(results, &pb.RoleModuleElem{
@@ -81,10 +81,10 @@ func pbRoleModuleElemList(ps []*pbam.Module) []*pb.RoleModuleElem {
 	}
 	return results
 }
-func pbamRoleModuleElemList(ps []*pb.RoleModuleElem) []*pbam.Module {
-	var results []*pbam.Module
+func pbamRoleModuleElemList(ps []*pb.RoleModuleElem) []*pbam.RoleModuleElem {
+	var results []*pbam.RoleModuleElem
 	for _, p := range ps {
-		results = append(results, &pbam.Module{
+		results = append(results, &pbam.RoleModuleElem{
 			ModuleId:   p.ModuleId,
 			ModuleName: p.ModuleName,
 			Feature:    pbamModuleFeatureList(p.Feature),
@@ -96,7 +96,7 @@ func pbamRoleModuleElemList(ps []*pb.RoleModuleElem) []*pbam.Module {
 	return results
 }
 
-func pbModuleFeatureList(ps []*pbam.Feature) []*pb.ModuleFeature {
+func pbModuleFeatureList(ps []*pbam.ModuleFeature) []*pb.ModuleFeature {
 	var results []*pb.ModuleFeature
 	for _, p := range ps {
 		results = append(results, &pb.ModuleFeature{
@@ -109,10 +109,10 @@ func pbModuleFeatureList(ps []*pbam.Feature) []*pb.ModuleFeature {
 	return results
 }
 
-func pbamModuleFeatureList(ps []*pb.ModuleFeature) []*pbam.Feature {
-	var results []*pbam.Feature
+func pbamModuleFeatureList(ps []*pb.ModuleFeature) []*pbam.ModuleFeature {
+	var results []*pbam.ModuleFeature
 	for _, p := range ps {
-		results = append(results, &pbam.Feature{
+		results = append(results, &pbam.ModuleFeature{
 			FeatureId:       p.FeatureId,
 			FeatureName:     p.FeatureName,
 			Action:          pbamModuleFeatureActionList(p.Action),
@@ -122,10 +122,10 @@ func pbamModuleFeatureList(ps []*pb.ModuleFeature) []*pbam.Feature {
 	return results
 }
 
-func pbModuleFeatureActionList(ps []*pbam.Action) []*pb.ModuleFeatureAction {
-	var results []*pb.ModuleFeatureAction
+func pbModuleFeatureActionList(ps []*pbam.ModuleFeatureActionBundle) []*pb.ModuleFeatureActionBundle {
+	var results []*pb.ModuleFeatureActionBundle
 	for _, p := range ps {
-		results = append(results, &pb.ModuleFeatureAction{
+		results = append(results, &pb.ModuleFeatureActionBundle{
 			RoleId:         p.RoleId,
 			RoleName:       p.RoleName,
 			Portal:         p.Portal,
@@ -148,10 +148,10 @@ func pbModuleFeatureActionList(ps []*pbam.Action) []*pb.ModuleFeatureAction {
 	return results
 }
 
-func pbamModuleFeatureActionList(ps []*pb.ModuleFeatureAction) []*pbam.Action {
-	var results []*pbam.Action
+func pbamModuleFeatureActionList(ps []*pb.ModuleFeatureActionBundle) []*pbam.ModuleFeatureActionBundle {
+	var results []*pbam.ModuleFeatureActionBundle
 	for _, p := range ps {
-		results = append(results, &pbam.Action{
+		results = append(results, &pbam.ModuleFeatureActionBundle{
 			RoleId:         p.RoleId,
 			RoleName:       p.RoleName,
 			Portal:         p.Portal,

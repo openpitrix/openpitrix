@@ -179,7 +179,7 @@ message Role {
 	repeated string user_id = 11;
 }
 
-message ModuleFeatureAction {
+message ModuleFeatureActionBundle {
 	string role_id = 1;
 	string role_name = 2;
 	string portal = 3;
@@ -207,7 +207,7 @@ message ModuleFeatureAction {
 message ModuleFeature {
 	string feature_id = 1;
 	string feature_name = 2;
-	repeated ModuleFeatureAction action = 3;
+	repeated ModuleFeatureActionBundle action = 3;
 	repeated string checked_action_id = 4;
 }
 

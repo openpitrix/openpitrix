@@ -6241,7 +6241,7 @@
         "action": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixModuleFeatureAction"
+            "$ref": "#/definitions/openpitrixModuleFeatureActionBundle"
           }
         },
         "checked_action_id": {
@@ -6252,7 +6252,7 @@
         }
       }
     },
-    "openpitrixModuleFeatureAction": {
+    "openpitrixModuleFeatureActionBundle": {
       "type": "object",
       "properties": {
         "role_id": {
