@@ -1,42 +1,42 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: openpitrix-im-service
+  name: openpitrix-am-service
   namespace: ${NAMESPACE}
   labels:
     app: openpitrix
-    component: openpitrix-im-service
+    component: openpitrix-am-service
     version: ${VERSION}
 spec:
   selector:
     app: openpitrix
-    component: openpitrix-im-service
+    component: openpitrix-am-service
   ports:
-  - name: openpitrix-im-service
+  - name: openpitrix-am-service
     protocol: TCP
-    port: 9119
-    targetPort: 9119
+    port: 9120
+    targetPort: 9120
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: openpitrix-im-service-deployment
+  name: openpitrix-am-service-deployment
   namespace: ${NAMESPACE}
   labels:
     app: openpitrix
-    component: openpitrix-im-service
+    component: openpitrix-am-service
     version: ${VERSION}
 spec:
   selector:
     matchLabels:
       app: openpitrix
-      component: openpitrix-im-service
+      component: openpitrix-am-service
   replicas: 1
   template:
     metadata:
       labels:
         app: openpitrix
-        component: openpitrix-im-service
+        component: openpitrix-am-service
         version: ${VERSION}
     spec:
       initContainers:
@@ -49,21 +49,21 @@ spec:
         imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'until nc -z openpitrix-etcd.${NAMESPACE}.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
-      - name: openpitrix-im-service
+      - name: openpitrix-am-service
         image: ${IAM_IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
-          - iam
+          - am
         ports:
-        - containerPort: 9119
-          name: im-service
+        - containerPort: 9120
+          name: am-service
         env:
         - name: OPENPITRIX_GRPC_SHOW_ERROR_CAUSE
           value: 'true'
         - name: OPENPITRIX_LOG_LEVEL
           value: ${OPENPITRIX_LOG_LEVEL}
         - name: OPENPITRIX_MYSQL_DATABASE
-          value: "iam"
+          value: "am"
         - name: OPENPITRIX_MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
