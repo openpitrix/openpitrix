@@ -1200,6 +1200,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	}
 
 	owner := clusterWrapper.Cluster.Owner
+	ownerPath := clusterWrapper.Cluster.OwnerPath
 
 	runtime, err := runtimeclient.NewRuntime(ctx, clusterWrapper.Cluster.RuntimeId)
 	if err != nil {
@@ -1268,6 +1269,7 @@ func (p *Server) AddClusterNodes(ctx context.Context, req *pb.AddClusterNodesReq
 	for _, clusterNode := range clusterWrapper.ClusterNodesWithKeyPairs {
 		if clusterNode.Status == constants.StatusPending {
 			clusterNode.ClusterNode.Owner = owner
+			clusterNode.ClusterNode.OwnerPath = ownerPath
 			err = RegisterClusterNode(ctx, clusterNode.ClusterNode)
 			if err != nil {
 				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorAddResourceNodeFailed)

@@ -46,6 +46,7 @@ func RegisterClusterRole(ctx context.Context, clusterRole *models.ClusterRole) e
 func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterWrapper) error {
 	clusterId := clusterWrapper.Cluster.ClusterId
 	owner := clusterWrapper.Cluster.Owner
+	ownerPath := clusterWrapper.Cluster.OwnerPath
 	// register cluster
 	if clusterWrapper.Cluster != nil {
 		now := time.Now()
@@ -70,6 +71,7 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 	for _, clusterNodeWithKeyPairs := range clusterWrapper.ClusterNodesWithKeyPairs {
 		clusterNodeWithKeyPairs.ClusterId = clusterId
 		clusterNodeWithKeyPairs.Owner = owner
+		clusterNodeWithKeyPairs.OwnerPath = ownerPath
 		err := RegisterClusterNode(ctx, clusterNodeWithKeyPairs.ClusterNode)
 		if err != nil {
 			return err
@@ -97,6 +99,7 @@ func RegisterClusterWrapper(ctx context.Context, clusterWrapper *models.ClusterW
 	for _, clusterLink := range clusterWrapper.ClusterLinks {
 		clusterLink.ClusterId = clusterId
 		clusterLink.Owner = owner
+		clusterLink.OwnerPath = ownerPath
 		_, err := pi.Global().DB(ctx).
 			InsertInto(constants.TableClusterLink).
 			Record(clusterLink).
