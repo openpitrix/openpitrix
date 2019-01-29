@@ -55,6 +55,7 @@ message Sku {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue resource_attribute_id = 2;
 	repeated google.protobuf.StringValue attribute_value_ids = 3;
+	google.protobuf.Timestamp action_time = 4;
 }
 
 message StepPrice {
@@ -180,6 +181,7 @@ message CombinationSku {
     google.protobuf.StringValue id = 1;
     google.protobuf.StringValue cra_id = 2; //combination_resource_attribute id
 	repeated CombinationAttributeValue values = 3;
+	google.protobuf.Timestamp action_time = 4;
 }
 
 message CombinationPrice {
@@ -196,6 +198,7 @@ message ProbationSku {
     google.protobuf.StringValue resource_attribute_id = 2;
 	repeated google.protobuf.StringValue attribute_value_ids = 3;
     google.protobuf.Int32Value limit_num = 4;
+	google.protobuf.Timestamp action_time = 5;
 }
 
 message ProbationRecord {
@@ -249,19 +252,19 @@ message CreateCRARequest { //CRA: CombinationResourceAttribute
 	CombinationResourceAttribute combination_resource_attribute = 1;
 }
 
-message CreateCombinationSkuRequest {
+message CreateCSRequest { //CreateCombinationSkuRequest
 	CombinationSku combination_sku = 1;
 }
 
-message CreateCombinationPricesRequest {
+message CreateCPRequest { //CreateCombinationPricesRequest
 	repeated CombinationPrice prices = 1;
 }
 
-message CreateProbationSkuRequest {
+message CreatePSRequest { //CreateProbationSkuRequest
 	ProbationSku sku = 1;
 }
 
-message CreateProbationRecordRequest {
+message CreatePRRequest { //CreateProbationRecordRequest
 	ProbationRecord record = 1;
 }
 
@@ -277,7 +280,7 @@ service PromotionManager {
 		};
 	}
 
-	rpc CreateCombinationSku (CreateCombinationSkuRequest) returns (CommonResponse) {
+	rpc CreateCombinationSku (CreateCSRequest) returns (CommonResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create combination sku of combination resources"
 		};
@@ -287,7 +290,7 @@ service PromotionManager {
 		};
 	}
 
-	rpc CreateCombinationPrices (CreateCombinationPricesRequest) returns (CommonResponse) {
+	rpc CreateCombinationPrices (CreateCPRequest) returns (CommonResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create combination prices of combination sku"
 		};
@@ -297,7 +300,7 @@ service PromotionManager {
 		};
 	}
 
-	rpc CreateProbationSku (CreateProbationSkuRequest) returns (CommonResponse) {
+	rpc CreateProbationSku (CreatePSRequest) returns (CommonResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create probation sku of resource"
 		};
@@ -307,7 +310,7 @@ service PromotionManager {
 		};
 	}
 
-	rpc CreateProbationRecord (CreateProbationRecordRequest) returns (CommonResponse) {
+	rpc CreateProbationRecord (CreatePRRequest) returns (CommonResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create record of probation resource sku"
 		};

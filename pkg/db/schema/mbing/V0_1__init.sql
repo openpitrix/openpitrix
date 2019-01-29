@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS attribute_unit
 	create_time 					TIMESTAMP 			NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP,
 	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
-)
+	PRIMARY KEY (id)
+);
 
 CREATE TABLE IF NOT EXISTS attribute_value
 (
@@ -65,7 +66,7 @@ CREATE TABLE IF NOT EXISTS price
 	id 											VARCHAR(50) 	NOT NULL UNIQUE,
 	sku_id 									VARCHAR(50) 	NOT NULL,
 	billing_attribute_id	 	VARCHAR(50)		NOT NULL,
-	prices 									JSON 					commment '{attribute_value1: price1, ...}',
+	prices 									JSON 					COMMENT '{attribute_value1: price1, ...}',
 	currency            		VARCHAR(10)		NOT NULL  DEFAULT 'cny',
 	create_time       			TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	update_time       			TIMESTAMP,
@@ -127,8 +128,9 @@ CREATE TABLE IF NOT EXISTS leasing_contract
 	before_bill_fee				DECIMAL(8,2) 	NOT NULL DEFAULT 0 COMMENT 'the total fee of the before bills ',
 	coupon_fee						DECIMAL(8,2) 	NOT NULL default 0,
 	real_fee							DECIMAL(8,2) 	NOT NULL default 0,
+	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
 	PRIMARY KEY (id)
-)
+);
 
 
 CREATE TABLE IF NOT EXISTS leased_contract
@@ -149,7 +151,7 @@ CREATE TABLE IF NOT EXISTS leased_contract
 	real_fee							DECIMAL(8,2) 	NOT NULL default 0,
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
 	PRIMARY KEY (contract_id)
-)
+);
 
 
 /** Charge **/
@@ -162,7 +164,7 @@ CREATE TABLE IF NOT EXISTS charge
 	fee										DECIMAL(8,2)  NOT NULL COMMENT 'total fee from starting cluster to now',
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
 	PRIMARY KEY (id)
-)
+);
 
 
 CREATE TABLE IF NOT EXISTS recharge
@@ -176,7 +178,7 @@ CREATE TABLE IF NOT EXISTS recharge
 	contract_id						VARCHAR(50),
 	remark 								TEXT,
 	PRIMARY KEY (id)
-)
+);
 
 
 CREATE TABLE IF NOT EXISTS income
@@ -188,7 +190,7 @@ CREATE TABLE IF NOT EXISTS income
 	create_time       		TIMESTAMP	    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
 	PRIMARY KEY (id)
-)
+);
 
 
 CREATE TABLE IF NOT EXISTS account
@@ -203,5 +205,5 @@ CREATE TABLE IF NOT EXISTS account
 	credit_duration				DECIMAL(8, 2),
 	first_in_debt_time		TIMESTAMP,
 	PRIMARY KEY (user_id)
-)
+);
 

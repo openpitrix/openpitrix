@@ -11,22 +11,24 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-func (s *Server) StartMetering(ctx context.Context, req *pb.MeteringRequest) (*pb.CommonResponse, error) {
+
+func (s *Server) CreateCRA(ctx context.Context, req *pb.CreateCRARequest) (*pb.CommonResponse, error) {
 	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
 
-func (s *Server) StopMetering(ctx context.Context, req *pb.MeteringRequest) (*pb.CommonResponse, error) {
+func (s *Server) CreateCombinationSku(ctx context.Context, req *pb.CreateCSRequest) (*pb.CommonResponse, error) {
 	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
 
-func (s *Server) UpdateMetering(ctx context.Context, req *pb.MeteringRequest) (*pb.CommonResponse, error) {
+func (s *Server) CreateCombinationPrices(ctx context.Context, req *pb.CreateCPRequest) (*pb.CommonResponse, error) {
 	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
 
-func (s *Server) CloseMetering(ctx context.Context, req *pb.MeteringRequest) (*pb.CommonResponse, error) {
+func (s *Server) CreateProbationSku(ctx context.Context, req *pb.CreatePSRequest) (*pb.CommonResponse, error) {
 	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
 
-func GetGroupId() string {
-	return "Group_01"
+func (s *Server) CreateProbationRecord(ctx context.Context, req *pb.CreatePRRequest) (*pb.CommonResponse, error) {
+	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
+
