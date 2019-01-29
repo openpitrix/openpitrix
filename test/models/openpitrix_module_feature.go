@@ -17,7 +17,7 @@ import (
 type OpenpitrixModuleFeature struct {
 
 	// action
-	Action OpenpitrixModuleFeatureActionOAIGen `json:"action"`
+	Action OpenpitrixModuleFeatureAction `json:"action"`
 
 	// checked action id
 	CheckedActionID []string `json:"checked_action_id"`

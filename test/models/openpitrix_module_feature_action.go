@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -14,84 +16,32 @@ import (
 
 // OpenpitrixModuleFeatureAction openpitrix module feature action
 // swagger:model openpitrixModuleFeatureAction
-type OpenpitrixModuleFeatureAction struct {
-
-	// action enabled
-	ActionEnabled bool `json:"action_enabled,omitempty"`
-
-	// action id
-	ActionID string `json:"action_id,omitempty"`
-
-	// action name
-	ActionName string `json:"action_name,omitempty"`
-
-	// api description
-	APIDescription string `json:"api_description,omitempty"`
-
-	// api id
-	APIID string `json:"api_id,omitempty"`
-
-	// api method
-	APIMethod string `json:"api_method,omitempty"`
-
-	// data level
-	DataLevel string `json:"data_level,omitempty"`
-
-	// feature id
-	FeatureID string `json:"feature_id,omitempty"`
-
-	// feature name
-	FeatureName string `json:"feature_name,omitempty"`
-
-	// module id
-	ModuleID string `json:"module_id,omitempty"`
-
-	// module name
-	ModuleName string `json:"module_name,omitempty"`
-
-	// owner
-	Owner string `json:"owner,omitempty"`
-
-	// portal
-	Portal string `json:"portal,omitempty"`
-
-	// role id
-	RoleID string `json:"role_id,omitempty"`
-
-	// role name
-	RoleName string `json:"role_name,omitempty"`
-
-	// url
-	URL string `json:"url,omitempty"`
-
-	// url method
-	URLMethod string `json:"url_method,omitempty"`
-}
+type OpenpitrixModuleFeatureAction []*OpenpitrixModuleFeatureActionBundle
 
 // Validate validates this openpitrix module feature action
-func (m *OpenpitrixModuleFeatureAction) Validate(formats strfmt.Registry) error {
+func (m OpenpitrixModuleFeatureAction) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	for i := 0; i < len(m); i++ {
+
+		if swag.IsZero(m[i]) { // not required
+			continue
+		}
+
+		if m[i] != nil {
+
+			if err := m[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName(strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *OpenpitrixModuleFeatureAction) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *OpenpitrixModuleFeatureAction) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixModuleFeatureAction
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
 	return nil
 }

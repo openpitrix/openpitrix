@@ -329,7 +329,7 @@
             }
           },
           {
-            "name": "user_name",
+            "name": "username",
             "in": "query",
             "required": false,
             "type": "array",
@@ -426,63 +426,6 @@
     }
   },
   "definitions": {
-    "amAction": {
-      "type": "object",
-      "properties": {
-        "role_id": {
-          "type": "string"
-        },
-        "role_name": {
-          "type": "string"
-        },
-        "portal": {
-          "type": "string"
-        },
-        "module_id": {
-          "type": "string"
-        },
-        "module_name": {
-          "type": "string"
-        },
-        "data_level": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "feature_id": {
-          "type": "string"
-        },
-        "feature_name": {
-          "type": "string"
-        },
-        "action_id": {
-          "type": "string"
-        },
-        "action_name": {
-          "type": "string"
-        },
-        "action_enabled": {
-          "type": "boolean",
-          "format": "boolean"
-        },
-        "api_id": {
-          "type": "string"
-        },
-        "api_method": {
-          "type": "string"
-        },
-        "api_description": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "url_method": {
-          "type": "string"
-        }
-      }
-    },
     "amBindUserRoleRequest": {
       "type": "object",
       "properties": {
@@ -546,7 +489,7 @@
     "amEmpty": {
       "type": "object"
     },
-    "amFeature": {
+    "amModuleFeature": {
       "type": "object",
       "properties": {
         "feature_id": {
@@ -558,7 +501,7 @@
         "action": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/amAction"
+            "$ref": "#/definitions/amModuleFeatureActionBundle"
           }
         },
         "checked_action_id": {
@@ -569,30 +512,60 @@
         }
       }
     },
-    "amModule": {
+    "amModuleFeatureActionBundle": {
       "type": "object",
       "properties": {
+        "role_id": {
+          "type": "string"
+        },
+        "role_name": {
+          "type": "string"
+        },
+        "portal": {
+          "type": "string"
+        },
         "module_id": {
           "type": "string"
         },
         "module_name": {
           "type": "string"
         },
-        "feature": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/amFeature"
-          }
+        "data_level": {
+          "type": "string"
         },
         "owner": {
           "type": "string"
         },
-        "data_level": {
+        "feature_id": {
           "type": "string"
         },
-        "is_check_all": {
+        "feature_name": {
+          "type": "string"
+        },
+        "action_id": {
+          "type": "string"
+        },
+        "action_name": {
+          "type": "string"
+        },
+        "action_enabled": {
           "type": "boolean",
           "format": "boolean"
+        },
+        "api_id": {
+          "type": "string"
+        },
+        "api_method": {
+          "type": "string"
+        },
+        "api_description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "url_method": {
+          "type": "string"
         }
       }
     },
@@ -671,8 +644,35 @@
         "module": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/amModule"
+            "$ref": "#/definitions/amRoleModuleElem"
           }
+        }
+      }
+    },
+    "amRoleModuleElem": {
+      "type": "object",
+      "properties": {
+        "module_id": {
+          "type": "string"
+        },
+        "module_name": {
+          "type": "string"
+        },
+        "feature": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/amModuleFeature"
+          }
+        },
+        "owner": {
+          "type": "string"
+        },
+        "data_level": {
+          "type": "string"
+        },
+        "is_check_all": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
@@ -707,7 +707,7 @@
         "user_id": {
           "type": "string"
         },
-        "user_name": {
+        "username": {
           "type": "string"
         },
         "email": {

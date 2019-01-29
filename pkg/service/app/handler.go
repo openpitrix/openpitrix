@@ -906,7 +906,7 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 		for _, adminUser := range adminUsers {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(adminUser.UserName, app.Name, version.Name),
+				Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(adminUser.Username, app.Name, version.Name),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{adminUser.Email},
@@ -994,7 +994,7 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 			for _, adminUser := range adminUsers {
 				emailNotifications = append(emailNotifications, &models.EmailNotification{
 					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(adminUser.UserName, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(adminUser.Username, app.Name, version.Name),
 					Owner:       s.UserId,
 					ContentType: constants.NfContentTypeVerify,
 					Addresses:   []string{adminUser.Email},
@@ -1210,7 +1210,7 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 		for _, adminUser := range adminUsers {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(adminUser.UserName, app.Name, version.Name),
+				Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(adminUser.Username, app.Name, version.Name),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{adminUser.Email},
