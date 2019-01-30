@@ -14,8 +14,6 @@
       type: string
     url_method:
       type: string
-    user_id:
-      type: string
 - action: CreateRole
   request: CreateRoleRequest
   service: AccessManager

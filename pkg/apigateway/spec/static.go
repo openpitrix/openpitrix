@@ -5723,9 +5723,6 @@ var Files = map[string]string{
     "openpitrixCanDoRequest": {
       "type": "object",
       "properties": {
-        "user_id": {
-          "type": "string"
-        },
         "url": {
           "type": "string"
         },

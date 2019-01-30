@@ -30,14 +30,12 @@ import (
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/apigateway/swagger-ui"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
-	"openpitrix.io/openpitrix/pkg/util/jwtutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -82,8 +80,7 @@ func Serve(cfg *config.Config) {
 }
 
 const (
-	Authorization = "Authorization"
-	RequestIdKey  = "X-Request-Id"
+	RequestIdKey = "X-Request-Id"
 )
 
 func log() gin.HandlerFunc {
@@ -123,42 +120,6 @@ func log() gin.HandlerFunc {
 			l.Info(nil, logStr)
 		}
 	}
-}
-
-func serveMuxSetSender(mux *runtime.ServeMux, key string) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-
-		if req.URL.Path == "/v1/oauth2/token" {
-			// skip auth sender
-			mux.ServeHTTP(w, req)
-			return
-		}
-
-		var err error
-		ctx := req.Context()
-		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-
-		auth := strings.SplitN(req.Header.Get(Authorization), " ", 2)
-		if auth[0] != "Bearer" {
-			err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAuthFailure)
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		sender, err := jwtutil.Validate(key, auth[1])
-		if err != nil {
-			if err == jwtutil.ErrExpired {
-				err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAccessTokenExpired)
-			} else {
-				err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAuthFailure)
-			}
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		req.Header.Set(ctxutil.SenderKey, sender.ToJson())
-		req.Header.Del(Authorization)
-
-		mux.ServeHTTP(w, req)
-	})
 }
 
 func recovery() gin.HandlerFunc {
@@ -269,7 +230,7 @@ func (s *Server) mainHandler() http.Handler {
 	tm := topic.NewTopicManager(pi.Global().Etcd(nil))
 	go tm.Run()
 
-	mux.Handle("/", serveMuxSetSender(gwmux, s.IAMConfig.SecretKey))
+	mux.Handle("/", httpAuth(gwmux, s.IAMConfig.SecretKey))
 	mux.HandleFunc("/v1/io", tm.HandleEvent(s.IAMConfig.SecretKey))
 
 	return formWrapper(mux)

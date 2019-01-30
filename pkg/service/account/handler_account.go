@@ -8,6 +8,7 @@ import (
 	"context"
 	"time"
 
+	pbam "openpitrix.io/iam/pkg/pb/am"
 	pbim "openpitrix.io/iam/pkg/pb/im"
 	"openpitrix.io/openpitrix/pkg/client/im"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
@@ -222,7 +223,14 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		Password:    req.GetPassword().GetValue(),
 		Description: req.GetDescription().GetValue(),
 		Status:      constants.StatusActive,
-		Extra:       map[string]string{"role": role},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
+		UserId: []string{user.UserId},
+		RoleId: []string{role},
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)

@@ -5714,9 +5714,6 @@
     "openpitrixCanDoRequest": {
       "type": "object",
       "properties": {
-        "user_id": {
-          "type": "string"
-        },
         "url": {
           "type": "string"
         },

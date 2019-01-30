@@ -175,13 +175,9 @@ func pbamModuleFeatureActionList(ps []*pb.ModuleFeatureActionBundle) []*pbam.Mod
 }
 
 func (p *Server) CanDo(ctx context.Context, req *pb.CanDoRequest) (*pb.CanDoResponse, error) {
-	if req.UserId == "" {
-		if sender := ctxutil.GetSender(ctx); sender != nil {
-			req.UserId = sender.UserId
-		}
-	}
+	userId := ctxutil.GetSender(ctx).UserId
 	v, err := amClient.CanDo(ctx, &pbam.CanDoRequest{
-		UserId:    req.UserId,
+		UserId:    userId,
 		Url:       req.Url,
 		UrlMethod: req.UrlMethod,
 	})
@@ -196,6 +192,7 @@ func (p *Server) CanDo(ctx context.Context, req *pb.CanDoRequest) (*pb.CanDoResp
 	}
 	return reply, nil
 }
+
 func (p *Server) GetRoleModule(ctx context.Context, req *pb.GetRoleModuleRequest) (*pb.GetRoleModuleResponse, error) {
 	// todo: cando?
 
