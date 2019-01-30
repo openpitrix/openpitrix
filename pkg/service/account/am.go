@@ -108,17 +108,7 @@ func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
 	sender := ctxutil.GetSender(ctx)
 	switch r := req.(type) {
 	case *pb.CreatePasswordResetRequest:
-		if !sender.IsGlobalAdmin() {
-			r.UserId = pbutil.ToProtoString(sender.UserId)
-		}
-		return r
-	case *pb.ModifyUserRequest:
-		if !sender.IsGlobalAdmin() {
-			r.UserId = pbutil.ToProtoString(sender.UserId)
-			r.Role = nil
-			r.Email = nil
-			r.Password = nil
-		}
+		r.UserId = pbutil.ToProtoString(sender.UserId)
 		return r
 	}
 	return req

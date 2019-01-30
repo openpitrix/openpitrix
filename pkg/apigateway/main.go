@@ -25,7 +25,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	pbam "openpitrix.io/iam/pkg/pb/am"
 	staticSpec "openpitrix.io/openpitrix/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/apigateway/swagger-ui"
 	"openpitrix.io/openpitrix/pkg/config"
@@ -215,9 +214,6 @@ func (s *Server) mainHandler() http.Handler {
 	}, {
 		pb.RegisterAppVendorManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.VendorManagerHost, constants.VendorManagerPort),
-	}, {
-		pbam.RegisterAccessManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.AMServiceHost, constants.AMServicePort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {

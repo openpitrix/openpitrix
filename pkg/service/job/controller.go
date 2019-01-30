@@ -9,8 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/client"
-	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	taskclient "openpitrix.io/openpitrix/pkg/client/task"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -21,6 +19,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -126,16 +125,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 			return err
 		}
 
-		accountClient, err := accountclient.NewClient()
-		if err != nil {
-			return err
-		}
-		users, err := accountClient.GetUsers(ctx, []string{job.Owner})
-		if err != nil {
-			return err
-		}
-
-		ctx = client.SetUserToContext(ctx, users[0])
+		ctx = ctxutil.ContextWithSender(ctx, sender.New(job.Owner, job.OwnerPath, ""))
 
 		processor := NewProcessor(job)
 		err = processor.Pre(ctx)
