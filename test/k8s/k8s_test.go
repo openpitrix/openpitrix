@@ -186,6 +186,7 @@ func TestK8S(t *testing.T) {
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-cluster-manager"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-job-manager"))
 			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-task-manager"))
+			fmt.Print(testutil.ExecCmd(t, "docker-compose logs openpitrix-rp-kubernetes"))
 			t.Fatal(err)
 		}
 
