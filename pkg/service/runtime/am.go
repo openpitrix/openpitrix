@@ -7,7 +7,6 @@ package runtime
 import (
 	"context"
 
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/plugins"
@@ -44,10 +43,6 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.DescribeRuntimeProviderZonesRequest:
 		return manager.NewChecker(ctx, r).
 			Required("runtime_credential_id").
-			Exec()
-	case *pb.GetRuntimeStatisticsRequest:
-		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Exec()
 	}
 	return nil

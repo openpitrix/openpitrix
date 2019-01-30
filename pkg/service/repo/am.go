@@ -24,7 +24,6 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.CreateRepoRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllDeveloperRoles).
 			Required("type", "name", "url", "credential", "visibility", "providers").
 			StringChosen("providers", plugins.GetAvailablePlugins()).
 			StringChosen("visibility", SupportedVisibility).
@@ -32,7 +31,6 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.ModifyRepoRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllDeveloperRoles).
 			Required("repo_id").
 			StringChosen("providers", plugins.GetAvailablePlugins()).
 			StringChosen("visibility", SupportedVisibility).
@@ -40,12 +38,10 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.DeleteReposRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllDeveloperRoles).
 			Required("repo_id").
 			Exec()
 	case *pb.ValidateRepoRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllDeveloperRoles).
 			Required("type", "url", "credential").
 			Exec()
 	}

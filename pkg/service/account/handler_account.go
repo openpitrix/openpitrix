@@ -48,6 +48,7 @@ func formatUsers(pbamUsers []*pbam.UserWithRole) []*pb.User {
 			UpdateTime:  u.UpdateTime,
 			StatusTime:  u.StatusTime,
 			Role:        rs,
+			GroupId:     u.GroupId,
 		})
 	}
 	return users
@@ -60,11 +61,11 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest
 	)
 
 	res, err := amClient.DescribeUsersWithRole(ctx, &pbam.DescribeUsersWithRoleRequest{
-		Limit:  int32(limit),
-		Offset: int32(offset),
-		//SortKey:    req.GetSortKey().GetValue(),
-		//Reverse:    req.GetReverse().GetValue(),
-		//SearchWord: req.GetSearchWord().GetValue(),
+		Limit:      int32(limit),
+		Offset:     int32(offset),
+		SortKey:    req.GetSortKey().GetValue(),
+		Reverse:    req.GetReverse().GetValue(),
+		SearchWord: req.GetSearchWord().GetValue(),
 
 		GroupId: req.GetGroupId(),
 		UserId:  req.GetUserId(),

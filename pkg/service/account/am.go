@@ -28,17 +28,14 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.DeleteUsersRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Required("user_id").
 			Exec()
 	case *pb.CreateUserRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Required("email", "password").
 			Exec()
 	case *pb.IsvCreateUserRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllIsvRoles).
 			Required("email", "password").
 			//StringChosen("role", constants.AllDeveloperRoles).
 			Exec()
@@ -52,7 +49,6 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.GetPasswordResetRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Required("reset_id").
 			Exec()
 	case *pb.ValidateUserPasswordRequest:
@@ -65,32 +61,26 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.CreateGroupRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Required("name").
 			Exec()
 	case *pb.ModifyGroupRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Required("group_id").
 			Exec()
 	case *pb.DeleteGroupsRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Required("group_id").
 			Exec()
 	case *pb.JoinGroupRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Required("group_id", "user_id").
 			Exec()
 	case *pb.LeaveGroupRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Required("group_id", "user_id").
 			Exec()
 	case *pb.CreateClientRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Required("user_id").
 			Exec()
 	case *pb.TokenRequest:
