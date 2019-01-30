@@ -99,6 +99,9 @@ type OpenpitrixCluster struct {
 
 	// vpc id
 	VpcID string `json:"vpc_id,omitempty"`
+
+	// zone
+	Zone string `json:"zone,omitempty"`
 }
 
 // Validate validates this openpitrix cluster

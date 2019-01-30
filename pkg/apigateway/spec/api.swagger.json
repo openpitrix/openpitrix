@@ -7949,6 +7949,9 @@
           "type": "boolean",
           "format": "boolean"
         },
+        "zone": {
+          "type": "string"
+        },
         "cluster_node_set": {
           "type": "array",
           "items": {

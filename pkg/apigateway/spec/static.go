@@ -7958,6 +7958,9 @@ var Files = map[string]string{
           "type": "boolean",
           "format": "boolean"
         },
+        "zone": {
+          "type": "string"
+        },
         "cluster_node_set": {
           "type": "array",
           "items": {
