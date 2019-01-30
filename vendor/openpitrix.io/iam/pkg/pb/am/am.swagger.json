@@ -377,6 +377,25 @@
             "required": false,
             "type": "integer",
             "format": "int32"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
           }
         ],
         "tags": [
@@ -742,6 +761,12 @@
         "status_time": {
           "type": "string",
           "format": "date-time"
+        },
+        "group_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "role": {
           "type": "array",
