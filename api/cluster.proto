@@ -302,11 +302,12 @@ message Cluster {
 	google.protobuf.StringValue additional_info = 21;
 	google.protobuf.StringValue env = 22;
 	google.protobuf.BoolValue debug = 23;
-	repeated ClusterNode cluster_node_set = 24;
-	repeated ClusterRole cluster_role_set = 25;
-	repeated ClusterLink cluster_link_set = 26;
-	repeated ClusterCommon cluster_common_set = 27;
-	repeated ClusterLoadbalancer cluster_loadbalancer_set = 28;
+	google.protobuf.StringValue zone = 24;
+	repeated ClusterNode cluster_node_set = 25;
+	repeated ClusterRole cluster_role_set = 26;
+	repeated ClusterLink cluster_link_set = 27;
+	repeated ClusterCommon cluster_common_set = 28;
+	repeated ClusterLoadbalancer cluster_loadbalancer_set = 29;
 }
 
 message DescribeClustersRequest {

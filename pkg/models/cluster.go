@@ -60,6 +60,7 @@ func ClusterToPb(cluster *Cluster) *pb.Cluster {
 		return new(pb.Cluster)
 	}
 	c := &pb.Cluster{
+		Zone:               pbutil.ToProtoString(cluster.Zone),
 		ClusterId:          pbutil.ToProtoString(cluster.ClusterId),
 		Name:               pbutil.ToProtoString(cluster.Name),
 		Description:        pbutil.ToProtoString(cluster.Description),
@@ -95,6 +96,7 @@ func PbToCluster(pbCluster *pb.Cluster) *Cluster {
 	}
 	ownerPath := sender.OwnerPath(pbCluster.GetOwnerPath().GetValue())
 	c := &Cluster{
+		Zone:               pbCluster.GetZone().GetValue(),
 		ClusterId:          pbCluster.GetClusterId().GetValue(),
 		Name:               pbCluster.GetName().GetValue(),
 		Description:        pbCluster.GetDescription().GetValue(),

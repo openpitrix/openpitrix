@@ -30,9 +30,11 @@ type Eip struct {
 
 func EipToPb(eip *Eip) *pb.Eip {
 	pbEip := pb.Eip{}
-	pbEip.EipId = pbutil.ToProtoString(eip.EipId)
-	pbEip.Name = pbutil.ToProtoString(eip.Name)
-	pbEip.Addr = pbutil.ToProtoString(eip.Addr)
+	if eip != nil {
+		pbEip.EipId = pbutil.ToProtoString(eip.EipId)
+		pbEip.Name = pbutil.ToProtoString(eip.Name)
+		pbEip.Addr = pbutil.ToProtoString(eip.Addr)
+	}
 	return &pbEip
 }
 
