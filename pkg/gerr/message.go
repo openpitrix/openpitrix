@@ -62,6 +62,16 @@ var (
 		en:   "password incorrect",
 		zhCN: "密码不正确",
 	}
+	ErrorRuntimeCredentialExists = ErrorMessage{
+		Name: "runtime_credential_exists",
+		en:   "runtime credential exists",
+		zhCN: "环境授权信息已存在",
+	}
+	ErrorRuntimeExists = ErrorMessage{
+		Name: "runtime_exists",
+		en:   "runtime exists",
+		zhCN: "环境已存在",
+	}
 	ErrorEmailExists = ErrorMessage{
 		Name: "email_exists",
 		en:   "email [%s] exists",

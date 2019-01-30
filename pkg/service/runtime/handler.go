@@ -74,6 +74,24 @@ func (p *Server) createRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		}
 	}
 
+	query := pi.Global().DB(ctx).
+		Select(models.RuntimeColumns...).
+		From(constants.TableRuntime).
+		Where(db.Eq(constants.ColumnRuntimeCredentialId, runtimeCredentialId)).
+		Where(db.Eq(constants.ColumnZone, req.GetZone().GetValue())).
+		Where(db.Eq(constants.ColumnProvider, req.GetProvider().GetValue())).
+		Where(db.Eq(constants.ColumnDebug, debug)).
+		Where(db.Eq(constants.ColumnOwner, s.GetOwnerPath().Owner())).
+		Where(db.Eq(constants.ColumnOwnerPath, s.GetOwnerPath()))
+
+	count, err := query.Count()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+	if count > 0 {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRuntimeExists)
+	}
+
 	newRuntime := models.NewRuntime(
 		runtimeId,
 		req.GetName().GetValue(),
@@ -317,6 +335,24 @@ func (p *Server) createRuntimeCredential(ctx context.Context, req *pb.CreateRunt
 	content, err := decodeRuntimeCredentialContent(provider, runtimeCredentialContent)
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorCreateResourcesFailed)
+	}
+
+	query := pi.Global().DB(ctx).
+		Select(models.RuntimeCredentialColumns...).
+		From(constants.TableRuntimeCredential).
+		Where(db.Eq(constants.ColumnRuntimeUrl, req.GetRuntimeUrl().GetValue())).
+		Where(db.Eq(constants.ColumnRuntimeCredentialContent, content)).
+		Where(db.Eq(constants.ColumnProvider, req.GetProvider().GetValue())).
+		Where(db.Eq(constants.ColumnDebug, debug)).
+		Where(db.Eq(constants.ColumnOwner, s.GetOwnerPath().Owner())).
+		Where(db.Eq(constants.ColumnOwnerPath, s.GetOwnerPath()))
+
+	count, err := query.Count()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+	if count > 0 {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRuntimeCredentialExists)
 	}
 
 	newRuntimeCredential := models.NewRuntimeCredential(

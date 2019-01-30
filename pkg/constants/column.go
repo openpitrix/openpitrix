@@ -42,6 +42,8 @@ const (
 	ColumnRole                     = "role"
 	ColumnRuntimeId                = "runtime_id"
 	ColumnRuntimeCredentialId      = "runtime_credential_id"
+	ColumnRuntimeUrl               = "runtime_url"
+	ColumnDebug                    = "debug"
 	ColumnRuntimeLabelId           = "runtime_label_id"
 	ColumnScreenshots              = "screenshots"
 	ColumnSelectorKey              = "selector_key"
