@@ -7,21 +7,21 @@ package models
 import "time"
 
 type Charge struct {
-	Id      	          	string
-	ContractId				string
-	UserId					string
-	Fee						float32
-	Currency				string
-	CreateTime				time.Time
+	Id         string
+	ContractId string
+	UserId     string
+	Fee        float32
+	Currency   string
+	CreateTime time.Time
 }
 
 type ReCharge struct {
-	Id      	          	string
-	ContractId				string
-	UserId					string
-	Fee						float32
-	Currency				string
-	Operator				string
-	CreateTime				time.Time
-	remark					string
+	Id         string
+	ContractId string
+	UserId     string
+	Fee        float32
+	Currency   string
+	Operator   string
+	CreateTime time.Time
+	remark     string
 }

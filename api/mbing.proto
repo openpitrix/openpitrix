@@ -330,11 +330,28 @@ enum SkuTypes {
 	PROBATION = 2;
 }
 
+enum UpdateValueTypes {
+	INCREMENTAL = 0;
+	REPLACE = 1;
+}
+
+message MeteringAttributeValue {
+	google.protobuf.StringValue attribute_id = 1;
+	google.protobuf.FloatValue  = 2;
+	UpdateValueTypes type = 3;
+}
+
+message MeteringSku {
+	google.protobuf.StringValue sku_id = 1;
+	repeated MeteringAttributeValue attribute_values = 2;
+	google.protobuf.Timestamp action_time = 3;
+	SkuTypes type = 4;
+}
+
 message MeteringRequest {
 	google.protobuf.StringValue resource_id = 1; //cluster id
 	google.protobuf.StringValue user_id = 2;
-	repeated Sku sku_set = 3;
-	SkuTypes type = 4;
+	repeated MeteringSku sku_set = 3;
 }
 
 service MeteringManager {

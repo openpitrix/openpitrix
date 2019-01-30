@@ -8,7 +8,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 )
 
-
 func Charge(contract *models.LeasingContract) (string, error) {
 	return "Charge.id", nil
 }
@@ -20,5 +19,3 @@ func ReChargeFromSys(contract *models.LeasingContract) (string, error) {
 func ReCharge(userId string, currency string, fee float32) (string, error) {
 	return "ReCharge.id", nil
 }
-
-

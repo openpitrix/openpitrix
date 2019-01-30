@@ -12,6 +12,9 @@ import (
 )
 
 func (s *Server) StartMetering(ctx context.Context, req *pb.MeteringRequest) (*pb.CommonResponse, error) {
+	skuAttribute := "in sku"
+	if "duration" == skuAttribute {
+	}
 	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
 

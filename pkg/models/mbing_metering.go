@@ -40,16 +40,16 @@ func NewLeasing(groupId, userId, resourceId, skuId string,
 	leaseTime, renewalTime time.Time,
 	meteringValues map[string]interface{}) *Leasing {
 	return &Leasing{
-		Id:          	NewMeteringId(),
-		GroupId:     	groupId,
-		UserId:      	userId,
-		ResourceId:  	resourceId,
-		SkuId:       	skuId,
-		LeaseTime:   	leaseTime,
-		RenewalTime: 	renewalTime,
-		UpdateTime:  	leaseTime,
+		Id:             NewMeteringId(),
+		GroupId:        groupId,
+		UserId:         userId,
+		ResourceId:     resourceId,
+		SkuId:          skuId,
+		LeaseTime:      leaseTime,
+		RenewalTime:    renewalTime,
+		UpdateTime:     leaseTime,
 		MeteringValues: meteringValues,
-		Status:      	constants.StatusRunning,
+		Status:         constants.StatusRunning,
 	}
 }
 
@@ -72,9 +72,8 @@ func MeteringReq2Leasings(req *pb.MeteringRequest, groupId string) []*Leasing {
 
 }
 
-
 type Leased struct {
-	LeasingId             string
+	LeasingId      string
 	GroupId        string
 	UserId         string
 	ResourceId     string
@@ -90,14 +89,14 @@ var LeasedColumns = db.GetColumnsFromStruct(&Leased{})
 
 func toLeased(leasing Leasing) Leased {
 	return Leased{
-		LeasingId:		leasing.Id,
-		GroupId:		leasing.GroupId,
-		UserId:			leasing.UserId,
-		ResourceId:		leasing.ResourceId,
-		SkuId:			leasing.SkuId,
+		LeasingId:      leasing.Id,
+		GroupId:        leasing.GroupId,
+		UserId:         leasing.UserId,
+		ResourceId:     leasing.ResourceId,
+		SkuId:          leasing.SkuId,
 		MeteringValues: leasing.MeteringValues,
-		LeaseTime:		leasing.LeaseTime,
-		UpdateTime:		leasing.UpdateTime,
-		CloseTime:		leasing.CloseTime,
+		LeaseTime:      leasing.LeaseTime,
+		UpdateTime:     leasing.UpdateTime,
+		CloseTime:      leasing.CloseTime,
 	}
 }

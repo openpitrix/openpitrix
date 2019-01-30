@@ -11,7 +11,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-
 func (s *Server) CreateCRA(ctx context.Context, req *pb.CreateCRARequest) (*pb.CommonResponse, error) {
 	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
@@ -31,4 +30,3 @@ func (s *Server) CreateProbationSku(ctx context.Context, req *pb.CreatePSRequest
 func (s *Server) CreateProbationRecord(ctx context.Context, req *pb.CreatePRRequest) (*pb.CommonResponse, error) {
 	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
-

@@ -7,12 +7,11 @@ package mbing
 import (
 	"context"
 
+	"fmt"
+	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/models"
-	"fmt"
 )
-
 
 func (s *Server) CreateAttributes(ctx context.Context, req *pb.CreateAttributesRequest) (*pb.CommonResponse, error) {
 	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
@@ -38,11 +37,10 @@ func (s *Server) CreatePrices(ctx context.Context, req *pb.CreatePricesRequest) 
 	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
 
-
-func Billing(){
+func Billing() {
 	leasing := models.Leasing{}
 	contract, err := calculate(leasing)
-	fmt.Printf("%v",err)
+	fmt.Printf("%v", err)
 
 	_, err = Charge(contract)
 
@@ -52,10 +50,10 @@ func Billing(){
 
 }
 
-func calculate(leasing models.Leasing) (*models.LeasingContract, error){
+func calculate(leasing models.Leasing) (*models.LeasingContract, error) {
 	return &models.LeasingContract{}, nil
 }
 
-func addToNoMoney(leasing models.Leasing) (error){
+func addToNoMoney(leasing models.Leasing) error {
 	return nil
 }
