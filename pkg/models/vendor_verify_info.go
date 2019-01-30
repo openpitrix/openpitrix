@@ -49,7 +49,7 @@ func (vendor *VendorVerifyInfo) ParseReq2Vendor(ctx context.Context, req *pb.Sub
 	Vendor.BankAccountNumber = req.GetBankAccountNumber().GetValue()
 	Vendor.Status = constants.StatusSubmitted
 	Vendor.Owner = ctxutil.GetSender(ctx).UserId
-	Vendor.OwnerPath = ctxutil.GetSender(ctx).OwnerPath
+	Vendor.OwnerPath = ctxutil.GetSender(ctx).GetOwnerPath()
 	t := time.Now()
 	Vendor.SubmitTime = &t
 	Vendor.StatusTime = time.Now()
