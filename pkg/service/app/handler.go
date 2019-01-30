@@ -822,15 +822,7 @@ func (p *Server) CancelAppVersion(ctx context.Context, req *pb.CancelAppVersionR
 	if err != nil {
 		return nil, err
 	}
-	err = checkAppVersionHandlePermission(ctx, Cancel, version)
-	if err != nil {
-		return nil, err
-	}
-	err = updateVersionStatus(ctx, version, constants.StatusDraft)
-	if err != nil {
-		return nil, err
-	}
-	err = addAppVersionAudit(ctx, version, constants.StatusDraft, constants.RoleDeveloper, "")
+	err = cancelAppVersionReview(ctx, version, constants.RoleDeveloper)
 	if err != nil {
 		return nil, err
 	}
