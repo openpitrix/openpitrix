@@ -28,6 +28,7 @@ import (
 	pbam "openpitrix.io/iam/pkg/pb/am"
 	staticSpec "openpitrix.io/openpitrix/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/apigateway/swagger-ui"
+	"openpitrix.io/openpitrix/pkg/client/am"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -35,11 +36,14 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	senderPkg "openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/jwtutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
+
+var amClient, _ = am.NewClient()
 
 type Server struct {
 	config.IAMConfig
@@ -154,8 +158,42 @@ func serveMuxSetSender(mux *runtime.ServeMux, key string) http.Handler {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
+
 		req.Header.Set(ctxutil.SenderKey, sender.ToJson())
 		req.Header.Del(Authorization)
+
+		if strings.HasPrefix(req.URL.Path, "/v1/") && !strings.HasPrefix(req.URL.Path, "/v1/io") {
+			if sender.UserId == "system" || sender.Role == "global_admin" {
+				if sender.OwnerPath == "" {
+					sender.OwnerPath = senderPkg.OwnerPath(":system")
+				}
+				if sender.AccessPath == "" {
+					sender.AccessPath = senderPkg.OwnerPath(":system")
+				}
+				req.Header.Set(ctxutil.SenderKey, sender.ToJson())
+
+			} else {
+				v, err := amClient.CanDo(ctx, &pbam.CanDoRequest{
+					UserId:    sender.UserId,
+					Url:       req.URL.Path,
+					UrlMethod: req.Method,
+				})
+				if err != nil {
+					logger.Warn(ctx, "CanDo(%q): err = %v", req, err)
+					logger.Warn(ctx, "sender: %v", sender)
+					runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+					return
+				}
+				if sender.OwnerPath == "" {
+					sender.OwnerPath = senderPkg.OwnerPath(v.OwnerPath)
+				}
+				if sender.AccessPath == "" {
+					sender.AccessPath = senderPkg.OwnerPath(v.AccessPath)
+				}
+
+				req.Header.Set(ctxutil.SenderKey, sender.ToJson())
+			}
+		}
 
 		mux.ServeHTTP(w, req)
 	})
