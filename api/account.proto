@@ -384,7 +384,6 @@ message GetUserGroupOwnerResponse {
 
 
 message CanDoRequest {
-	string user_id = 1;
 	string url = 2;
 	string url_method = 3;
 }

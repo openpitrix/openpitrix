@@ -21,9 +21,6 @@ type OpenpitrixCanDoRequest struct {
 
 	// url method
 	URLMethod string `json:"url_method,omitempty"`
-
-	// user id
-	UserID string `json:"user_id,omitempty"`
 }
 
 // Validate validates this openpitrix can do request

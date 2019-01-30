@@ -35,7 +35,6 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllAdminRoles).
 			Required("email", "password").
-			StringChosen("role", constants.AllRoles).
 			Exec()
 	case *pb.IsvCreateUserRequest:
 		return manager.NewChecker(ctx, r).

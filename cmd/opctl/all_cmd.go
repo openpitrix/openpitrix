@@ -211,7 +211,6 @@ func (*CanDoCmd) GetActionName() string {
 func (c *CanDoCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.URL, "url", "", "", "")
 	f.StringVarP(&c.URLMethod, "url_method", "", "", "")
-	f.StringVarP(&c.UserID, "user_id", "", "", "")
 }
 
 func (c *CanDoCmd) Run(out Out) error {

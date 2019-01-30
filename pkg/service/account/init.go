@@ -8,6 +8,7 @@ import (
 	"context"
 	"os"
 
+	pbam "openpitrix.io/iam/pkg/pb/am"
 	pbim "openpitrix.io/iam/pkg/pb/im"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
@@ -53,24 +54,32 @@ func initIAMAccount() {
 			Username: getUsernameFromEmail(email),
 			Password: password,
 			Status:   constants.StatusActive,
-			Extra:    map[string]string{"role": constants.RoleGlobalAdmin},
 		})
 		if err != nil {
 			logger.Info(ctx, "Create new user failed, error: %+v", err)
 		}
 		return
 	}
-	if b {
-		// password matched
-		return
-	}
 	userId := user.UserId
-	_, err = imClient.ModifyPassword(ctx, &pbim.Password{
-		UserId:   userId,
-		Password: password,
+	if !b {
+		_, err = imClient.ModifyPassword(ctx, &pbim.Password{
+			UserId:   userId,
+			Password: password,
+		})
+		if err != nil {
+			panic(err)
+		}
+		logger.Info(ctx, "Init IAM admin account [%s] done, update [%s] password", email, userId)
+	} else {
+		logger.Info(ctx, "Init IAM admin account [%s] done, user is [%s]", email, userId)
+	}
+	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
+		UserId: []string{userId},
+		RoleId: []string{constants.RoleGlobalAdmin},
 	})
 	if err != nil {
-		panic(err)
+		logger.Error(ctx, "Bind user [%s] global admin role failed: %+v", userId, err)
+	} else {
+		logger.Info(ctx, "Bind user [%s] global admin role done", userId)
 	}
-	logger.Info(ctx, "Init IAM admin account [%s] done, update [%s] password", email, userId)
 }
