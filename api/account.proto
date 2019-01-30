@@ -137,7 +137,7 @@ message User {
 	google.protobuf.StringValue username = 2;
 	google.protobuf.StringValue email = 3;
 	google.protobuf.StringValue phone_number = 4;
-	google.protobuf.StringValue role = 5; // default is user
+	repeated Role role = 5;
 	google.protobuf.StringValue description = 6;
 	google.protobuf.StringValue status = 7;
 
@@ -246,9 +246,8 @@ message ModifyUserRequest {
 	google.protobuf.StringValue user_id = 1;
 	google.protobuf.StringValue email = 2; // for admin
 	google.protobuf.StringValue username = 3;
-	google.protobuf.StringValue role = 4; // for admin
-	google.protobuf.StringValue description = 5;
-	google.protobuf.StringValue password = 6;
+	google.protobuf.StringValue description = 4;
+	google.protobuf.StringValue password = 5;
 }
 message ModifyUserResponse {
 	google.protobuf.StringValue user_id = 1;
@@ -299,8 +298,7 @@ message IsvCreateUserRequest {
 	google.protobuf.StringValue email = 1;
 	google.protobuf.StringValue phone_number = 2;
 	google.protobuf.StringValue password = 3;
-	google.protobuf.StringValue role = 4; // default is user
-	google.protobuf.StringValue description = 5;
+	google.protobuf.StringValue description = 4;
 }
 message IsvCreateUserResponse {
 	google.protobuf.StringValue user_id = 1;

@@ -40,7 +40,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 		return manager.NewChecker(ctx, r).
 			Role(constants.AllIsvRoles).
 			Required("email", "password").
-			StringChosen("role", constants.AllDeveloperRoles).
+			//StringChosen("role", constants.AllDeveloperRoles).
 			Exec()
 	case *pb.CreatePasswordResetRequest:
 		return manager.NewChecker(ctx, r).

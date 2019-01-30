@@ -6057,9 +6057,6 @@
         "password": {
           "type": "string"
         },
-        "role": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
         }
@@ -6205,9 +6202,6 @@
           "type": "string"
         },
         "username": {
-          "type": "string"
-        },
-        "role": {
           "type": "string"
         },
         "description": {
@@ -6488,7 +6482,10 @@
           "type": "string"
         },
         "role": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRole"
+          }
         },
         "description": {
           "type": "string"
