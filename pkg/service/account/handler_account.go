@@ -30,12 +30,12 @@ var (
 
 const OwnerKey = "owner"
 
-func formatUsers(pbimUsers []*pbim.User) []*pb.User {
+func formatUsers(pbamUsers []*pbam.UserWithRole) []*pb.User {
 	var users []*pb.User
-	for _, u := range pbimUsers {
-		var role = ""
-		if r, ok := u.Extra["role"]; ok {
-			role = r
+	for _, u := range pbamUsers {
+		var rs []*pb.Role
+		for _, r := range u.Role {
+			rs = append(rs, pbRole(r))
 		}
 		users = append(users, &pb.User{
 			UserId:      pbutil.ToProtoString(u.UserId),
@@ -47,7 +47,7 @@ func formatUsers(pbimUsers []*pbim.User) []*pb.User {
 			CreateTime:  u.CreateTime,
 			UpdateTime:  u.UpdateTime,
 			StatusTime:  u.StatusTime,
-			Role:        pbutil.ToProtoString(role),
+			Role:        rs,
 			GroupId:     u.GroupId,
 		})
 	}
@@ -60,7 +60,7 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest
 		limit  = pbutil.GetLimitFromRequest(req)
 	)
 
-	res, err := imClient.ListUsers(ctx, &pbim.ListUsersRequest{
+	res, err := amClient.DescribeUsersWithRole(ctx, &pbam.DescribeUsersWithRoleRequest{
 		Limit:      int32(limit),
 		Offset:     int32(offset),
 		SortKey:    req.GetSortKey().GetValue(),
@@ -70,6 +70,7 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest
 		GroupId: req.GetGroupId(),
 		UserId:  req.GetUserId(),
 		Status:  req.GetStatus(),
+		RoleId:  req.GetRole(),
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
@@ -288,7 +289,13 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 		Password:    req.GetPassword().GetValue(),
 		Description: req.GetDescription().GetValue(),
 		Status:      constants.StatusActive,
-		Extra:       map[string]string{"role": req.GetRole().GetValue()},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
+		UserId: []string{user.UserId},
+		RoleId: []string{constants.RoleUser},
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)

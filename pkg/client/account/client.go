@@ -38,7 +38,6 @@ func (c *Client) GetUsers(ctx context.Context, userIds []string) ([]*pb.User, er
 		if stringutil.StringIn(userId, constants.InternalUsers) {
 			internalUsers = append(internalUsers, &pb.User{
 				UserId: pbutil.ToProtoString(userId),
-				Role:   pbutil.ToProtoString(constants.RoleGlobalAdmin),
 			})
 		} else {
 			noInternalUserIds = append(noInternalUserIds, userId)

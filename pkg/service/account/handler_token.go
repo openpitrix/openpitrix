@@ -23,10 +23,7 @@ var (
 
 func (p *Server) CreateClient(ctx context.Context, req *pb.CreateClientRequest) (*pb.CreateClientResponse, error) {
 	sender := ctxutil.GetSender(ctx)
-	if !sender.IsGlobalAdmin() {
-		return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
-	}
-	userId := req.UserId
+	userId := sender.UserId
 	client := models.NewUserClient(userId)
 	_, err := pi.Global().DB(ctx).InsertInto(constants.TableUserClient).Record(client).Exec()
 	if err != nil {

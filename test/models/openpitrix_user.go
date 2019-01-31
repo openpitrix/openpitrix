@@ -32,7 +32,7 @@ type OpenpitrixUser struct {
 	PhoneNumber string `json:"phone_number,omitempty"`
 
 	// role
-	Role string `json:"role,omitempty"`
+	Role OpenpitrixUserRole `json:"role"`
 
 	// status
 	Status string `json:"status,omitempty"`

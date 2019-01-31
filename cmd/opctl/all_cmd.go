@@ -875,7 +875,6 @@ func (c *IsvCreateUserCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Email, "email", "", "", "")
 	f.StringVarP(&c.Password, "password", "", "", "")
 	f.StringVarP(&c.PhoneNumber, "phone_number", "", "", "")
-	f.StringVarP(&c.Role, "role", "", "", "")
 }
 
 func (c *IsvCreateUserCmd) Run(out Out) error {
@@ -1022,7 +1021,6 @@ func (c *ModifyUserCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Email, "email", "", "", "")
 	f.StringVarP(&c.Password, "password", "", "", "")
-	f.StringVarP(&c.Role, "role", "", "", "")
 	f.StringVarP(&c.UserID, "user_id", "", "", "")
 	f.StringVarP(&c.Username, "username", "", "", "")
 }

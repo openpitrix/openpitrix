@@ -183,8 +183,6 @@
       type: string
     phone_number:
       type: string
-    role:
-      type: string
 - action: JoinGroup
   request: JoinGroupRequest
   service: AccountManager
@@ -220,8 +218,6 @@
     email:
       type: string
     password:
-      type: string
-    role:
       type: string
     user_id:
       type: string

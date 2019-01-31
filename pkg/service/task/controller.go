@@ -10,8 +10,6 @@ import (
 	"sync"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/client"
-	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
 	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -24,6 +22,7 @@ import (
 	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
@@ -118,16 +117,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 	}
 	ctx = ctxutil.AddMessageId(ctx, task.JobId)
 
-	accountClient, err := accountclient.NewClient()
-	if err != nil {
-		return err
-	}
-	users, err := accountClient.GetUsers(ctx, []string{task.Owner})
-	if err != nil {
-		return err
-	}
-
-	ctx = client.SetUserToContext(ctx, users[0])
+	ctx = ctxutil.ContextWithSender(ctx, sender.New(task.Owner, task.OwnerPath, ""))
 
 	err = c.updateTaskAttributes(ctx, task.TaskId, map[string]interface{}{
 		"status":   constants.StatusWorking,

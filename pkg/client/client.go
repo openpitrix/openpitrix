@@ -7,15 +7,10 @@ package client
 import (
 	"context"
 
-	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func SetSystemUserToContext(ctx context.Context) context.Context {
 	return ctxutil.ContextWithSender(ctx, sender.GetSystemSender())
-}
-
-func SetUserToContext(ctx context.Context, user *pb.User) context.Context {
-	return ctxutil.ContextWithSender(ctx, sender.GetSender(user))
 }

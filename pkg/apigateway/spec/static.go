@@ -6066,9 +6066,6 @@ var Files = map[string]string{
         "password": {
           "type": "string"
         },
-        "role": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
         }
@@ -6214,9 +6211,6 @@ var Files = map[string]string{
           "type": "string"
         },
         "username": {
-          "type": "string"
-        },
-        "role": {
           "type": "string"
         },
         "description": {
@@ -6497,7 +6491,10 @@ var Files = map[string]string{
           "type": "string"
         },
         "role": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRole"
+          }
         },
         "description": {
           "type": "string"

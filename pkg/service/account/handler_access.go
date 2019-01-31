@@ -194,13 +194,7 @@ func (p *Server) CanDo(ctx context.Context, req *pb.CanDoRequest) (*pb.CanDoResp
 }
 
 func (p *Server) GetRoleModule(ctx context.Context, req *pb.GetRoleModuleRequest) (*pb.GetRoleModuleResponse, error) {
-	// todo: cando?
-
-	if req.RoleId == "" {
-		if sender := ctxutil.GetSender(ctx); sender != nil {
-			req.RoleId = sender.Role
-		}
-	}
+	// TODO: check permission
 
 	v, err := amClient.GetRoleModule(ctx, &pbam.RoleId{
 		RoleId: req.RoleId,
@@ -215,7 +209,7 @@ func (p *Server) GetRoleModule(ctx context.Context, req *pb.GetRoleModuleRequest
 	return reply, nil
 }
 func (p *Server) ModifyRoleModule(ctx context.Context, req *pb.ModifyRoleModuleRequest) (*pb.ModifyRoleModuleResponse, error) {
-	// todo: cando?
+	// TODO: check permission
 
 	v, err := amClient.ModifyRoleModule(ctx, pbamRoleModule(req.RoleModule))
 	if err != nil {
@@ -243,13 +237,7 @@ func (p *Server) CreateRole(ctx context.Context, req *pb.CreateRoleRequest) (*pb
 	return reply, nil
 }
 func (p *Server) DeleteRoles(ctx context.Context, req *pb.DeleteRolesRequest) (*pb.DeleteRolesResponse, error) {
-	// todo: cando?
-
-	if req.RoleId == "" {
-		if sender := ctxutil.GetSender(ctx); sender != nil {
-			req.RoleId = sender.Role
-		}
-	}
+	// TODO: check permission
 
 	_, err := amClient.DeleteRoles(ctx, &pbam.RoleIdList{
 		RoleId: []string{req.RoleId},

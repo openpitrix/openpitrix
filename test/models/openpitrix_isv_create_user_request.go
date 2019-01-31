@@ -27,9 +27,6 @@ type OpenpitrixIsvCreateUserRequest struct {
 
 	// phone number
 	PhoneNumber string `json:"phone_number,omitempty"`
-
-	// role
-	Role string `json:"role,omitempty"`
 }
 
 // Validate validates this openpitrix isv create user request

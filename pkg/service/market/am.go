@@ -26,14 +26,12 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.CreateMarketRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("name", "visibility").
 			StringChosen("visibility", SupportedVisibility).
 			Exec()
 
 	case *pb.ModifyMarketRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			StringChosen("status", SupportedStatus).
 			StringChosen("visibility", SupportedVisibility).
 			Required("market_id").
@@ -41,25 +39,21 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 
 	case *pb.DeleteMarketsRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("market_id").
 			Exec()
 
 	case *pb.UserJoinMarketRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("market_id", "user_id").
 			Exec()
 
 	case *pb.UserLeaveMarketRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("market_id", "user_id").
 			Exec()
 
 	case *pb.DescribeMarketUsersRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Exec()
 	}
 	return nil
