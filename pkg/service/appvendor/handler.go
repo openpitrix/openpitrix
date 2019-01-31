@@ -8,7 +8,9 @@ import (
 	"context"
 	"math"
 
+	"openpitrix.io/iam/pkg/pb/am"
 	accountclient "openpitrix.io/openpitrix/pkg/client/account"
+	"openpitrix.io/openpitrix/pkg/client/am"
 	amclient "openpitrix.io/openpitrix/pkg/client/am"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
@@ -131,6 +133,25 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
 	}
 
+	//change the role of appvendor user to isv
+	amClient, err := am.NewClient()
+	_, err = amClient.UnbindUserRole(ctx, &pbam.UnbindUserRoleRequest{
+		RoleId: []string{constants.RoleUser},
+		UserId: []string{appVendorUserId},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
+		RoleId: []string{constants.RoleIsv},
+		UserId: []string{appVendorUserId},
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	// prepared notifications
 	var emailNotifications []*models.EmailNotification
 	users, err := accountclient.GetUsers(ctx, []string{appVendorUserId})
 	if err != nil || len(users) != 1 {
