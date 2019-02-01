@@ -173,7 +173,9 @@ func cancelAppVersionReview(ctx context.Context, version *models.AppVersion, rol
 	if err != nil {
 		return err
 	}
-	err = updateVersionStatus(ctx, version, constants.StatusDraft)
+	err = updateVersionStatus(ctx, version, constants.StatusDraft, map[string]interface{}{
+		constants.ColumnReviewId: "",
+	})
 	if err != nil {
 		return err
 	}
