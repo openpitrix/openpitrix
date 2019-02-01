@@ -5532,6 +5532,60 @@
         ]
       }
     },
+    "/v1/service_configs/get": {
+      "post": {
+        "summary": "get service configration",
+        "operationId": "GetServiceConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetServiceConfigResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetServiceConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ServiceConfig"
+        ]
+      }
+    },
+    "/v1/service_configs/set": {
+      "post": {
+        "summary": "set service configration",
+        "operationId": "SetServiceConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixSetServiceConfigResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixSetServiceConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ServiceConfig"
+        ]
+      }
+    },
     "/v1/tasks": {
       "get": {
         "summary": "describe tasks with filter",
@@ -10093,6 +10147,77 @@
       "properties": {
         "task": {
           "$ref": "#/definitions/openpitrixTask"
+        }
+      }
+    },
+    "openpitrixEmailServiceConfig": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "type": "string"
+        },
+        "email_host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        },
+        "display_email": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "ssl_enable": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "openpitrixGetServiceConfigRequest": {
+      "type": "object",
+      "properties": {
+        "service_type": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixGetServiceConfigResponse": {
+      "type": "object",
+      "properties": {
+        "notification_config": {
+          "$ref": "#/definitions/openpitrixNotificationConfig"
+        }
+      }
+    },
+    "openpitrixNotificationConfig": {
+      "type": "object",
+      "properties": {
+        "email_service_config": {
+          "$ref": "#/definitions/openpitrixEmailServiceConfig"
+        }
+      }
+    },
+    "openpitrixSetServiceConfigRequest": {
+      "type": "object",
+      "properties": {
+        "notification_config": {
+          "$ref": "#/definitions/openpitrixNotificationConfig"
+        }
+      }
+    },
+    "openpitrixSetServiceConfigResponse": {
+      "type": "object",
+      "properties": {
+        "is_succ": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },

@@ -1,0 +1,65 @@
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/api/annotations.proto";
+import "google/protobuf/wrappers.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+message EmailServiceConfig {
+	google.protobuf.StringValue protocol = 1;
+	google.protobuf.StringValue email_host = 2;
+	google.protobuf.StringValue port = 3;
+	google.protobuf.StringValue display_email = 4;
+	google.protobuf.StringValue email = 5;
+	google.protobuf.StringValue password = 6;
+	google.protobuf.BoolValue ssl_enable = 7;
+}
+
+message NotificationConfig {
+	EmailServiceConfig email_service_config = 1;
+}
+
+message SetServiceConfigRequest {
+	NotificationConfig notification_config = 1;
+}
+
+message SetServiceConfigResponse {
+	google.protobuf.BoolValue is_succ = 1;
+}
+
+message GetServiceConfigRequest {
+	repeated string service_type = 1;
+}
+
+message GetServiceConfigResponse {
+	NotificationConfig notification_config = 1;
+}
+
+service ServiceConfig {
+	rpc SetServiceConfig (SetServiceConfigRequest) returns (SetServiceConfigResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "set service configration"
+		};
+		option (google.api.http) = {
+			post: "/v1/service_configs/set"
+			body: "*"
+		};
+	}
+	rpc GetServiceConfig (GetServiceConfigRequest) returns (GetServiceConfigResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "get service configration"
+		};
+		option (google.api.http) = {
+			post: "/v1/service_configs/get"
+			body: "*"
+		};
+	}
+}

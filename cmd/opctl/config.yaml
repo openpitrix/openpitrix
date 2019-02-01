@@ -1731,6 +1731,19 @@
       type: string
     runtime_url:
       type: string
+- action: GetServiceConfig
+  request: GetServiceConfigRequest
+  description: get service configration
+  service: ServiceConfig
+  body:
+    service_type:
+      type: '[]string'
+- action: SetServiceConfig
+  request: SetServiceConfigRequest
+  description: set service configration
+  service: ServiceConfig
+  body:
+    notification_config: {}
 - action: DescribeTasks
   request: DescribeTasksRequest
   description: describe tasks with filter
