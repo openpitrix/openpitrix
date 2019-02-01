@@ -55,6 +55,7 @@ const (
 	AttachmentManagerPort      = 9120
 	RuntimeProviderManagerPort = 9121
 	NotificationPort           = 9201
+	ServiceConfigPort          = 9202
 )
 
 const (
@@ -263,4 +264,12 @@ var AllowedAppDefaultStatus = []string{
 	"",
 	StatusDraft,
 	StatusActive,
+}
+
+const (
+	ServiceTypeNotification = "notification"
+)
+
+var ServiceTypes = []string{
+	ServiceTypeNotification,
 }

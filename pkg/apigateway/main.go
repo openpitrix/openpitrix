@@ -33,6 +33,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/service/service_config"
 	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/version"
@@ -65,12 +66,15 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
 	logger.Info(nil, "Attachment service http://%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort)
 	logger.Info(nil, "Vendor service http://%s:%d", constants.VendorManagerHost, constants.VendorManagerPort)
+	logger.Info(nil, "Service config http://%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort)
 
 	cfg.Mysql.Disable = true
 	pi.SetGlobal(cfg)
 	s := Server{
 		cfg.IAM,
 	}
+
+	go service_config.Serve(cfg)
 
 	if err := s.run(); err != nil {
 		logger.Critical(nil, "Api gateway run failed: %+v", err)
@@ -214,6 +218,9 @@ func (s *Server) mainHandler() http.Handler {
 	}, {
 		pb.RegisterAppVendorManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.VendorManagerHost, constants.VendorManagerPort),
+	}, {
+		pb.RegisterServiceConfigHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {

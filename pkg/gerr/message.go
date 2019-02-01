@@ -402,4 +402,19 @@ var (
 		en:   "group had members",
 		zhCN: "组内还有成员",
 	}
+	ErrorSetNotificationConfig = ErrorMessage{
+		Name: "error_set_notification_config",
+		en:   "set notification config failed",
+		zhCN: "设置通知服务配置失败",
+	}
+	ErrorSetServiceConfig = ErrorMessage{
+		Name: "error_set_service_config",
+		en:   "set service config failed",
+		zhCN: "设置服务配置失败",
+	}
+	ErrorGetNotificationConfig = ErrorMessage{
+		Name: "error_get_notification_config",
+		en:   "get notification config failed",
+		zhCN: "查看通知服务配置失败",
+	}
 )

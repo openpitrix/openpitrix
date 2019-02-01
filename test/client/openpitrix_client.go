@@ -23,6 +23,7 @@ import (
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
+	"openpitrix.io/openpitrix/test/client/service_config"
 	"openpitrix.io/openpitrix/test/client/task_manager"
 	"openpitrix.io/openpitrix/test/client/token_manager"
 )
@@ -91,6 +92,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Openpitrix
 	cli.RepoManager = repo_manager.New(transport, formats)
 
 	cli.RuntimeManager = runtime_manager.New(transport, formats)
+
+	cli.ServiceConfig = service_config.New(transport, formats)
 
 	cli.TaskManager = task_manager.New(transport, formats)
 
@@ -164,6 +167,8 @@ type Openpitrix struct {
 
 	RuntimeManager *runtime_manager.Client
 
+	ServiceConfig *service_config.Client
+
 	TaskManager *task_manager.Client
 
 	TokenManager *token_manager.Client
@@ -198,6 +203,8 @@ func (c *Openpitrix) SetTransport(transport runtime.ClientTransport) {
 	c.RepoManager.SetTransport(transport)
 
 	c.RuntimeManager.SetTransport(transport)
+
+	c.ServiceConfig.SetTransport(transport)
 
 	c.TaskManager.SetTransport(transport)
 

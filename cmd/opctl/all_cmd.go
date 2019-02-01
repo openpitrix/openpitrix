@@ -23,6 +23,7 @@ import (
 	"openpitrix.io/openpitrix/test/client/repo_indexer"
 	"openpitrix.io/openpitrix/test/client/repo_manager"
 	"openpitrix.io/openpitrix/test/client/runtime_manager"
+	"openpitrix.io/openpitrix/test/client/service_config"
 	"openpitrix.io/openpitrix/test/client/task_manager"
 	"openpitrix.io/openpitrix/test/client/token_manager"
 	"openpitrix.io/openpitrix/test/models"
@@ -152,6 +153,8 @@ var AllCmd = []Cmd{
 	NewModifyRuntimeCmd(),
 	NewModifyRuntimeCredentialCmd(),
 	NewValidateRuntimeCredentialCmd(),
+	NewGetServiceConfigCmd(),
+	NewSetServiceConfigCmd(),
 	NewDescribeTasksCmd(),
 	NewRetryTasksCmd(),
 	NewCreateClientCmd(),
@@ -5053,6 +5056,75 @@ func (c *ValidateRuntimeCredentialCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.RuntimeManager.ValidateRuntimeCredential(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type GetServiceConfigCmd struct {
+	*models.OpenpitrixGetServiceConfigRequest
+}
+
+func NewGetServiceConfigCmd() Cmd {
+	cmd := &GetServiceConfigCmd{}
+	cmd.OpenpitrixGetServiceConfigRequest = &models.OpenpitrixGetServiceConfigRequest{}
+	return cmd
+}
+
+func (*GetServiceConfigCmd) GetActionName() string {
+	return "GetServiceConfig"
+}
+
+func (c *GetServiceConfigCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.ServiceType, "service_type", "", []string{}, "")
+}
+
+func (c *GetServiceConfigCmd) Run(out Out) error {
+	params := service_config.NewGetServiceConfigParams()
+	params.WithBody(c.OpenpitrixGetServiceConfigRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ServiceConfig.GetServiceConfig(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type SetServiceConfigCmd struct {
+	*models.OpenpitrixSetServiceConfigRequest
+}
+
+func NewSetServiceConfigCmd() Cmd {
+	cmd := &SetServiceConfigCmd{}
+	cmd.OpenpitrixSetServiceConfigRequest = &models.OpenpitrixSetServiceConfigRequest{}
+	return cmd
+}
+
+func (*SetServiceConfigCmd) GetActionName() string {
+	return "SetServiceConfig"
+}
+
+func (c *SetServiceConfigCmd) ParseFlag(f Flag) {
+}
+
+func (c *SetServiceConfigCmd) Run(out Out) error {
+	params := service_config.NewSetServiceConfigParams()
+	params.WithBody(c.OpenpitrixSetServiceConfigRequest)
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.ServiceConfig.SetServiceConfig(params, nil)
 	if err != nil {
 		return err
 	}
