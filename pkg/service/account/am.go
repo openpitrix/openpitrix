@@ -88,6 +88,16 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Required("grant_type", "client_id", "client_secret").
 			StringChosen("grant_type", constants.GrantTypeTokens).
 			Exec()
+
+	case *pb.BindUserRoleRequest:
+		return manager.NewChecker(ctx, r).
+			Required("user_id", "role_id").
+			Exec()
+
+	case *pb.UnbindUserRoleRequest:
+		return manager.NewChecker(ctx, r).
+			Required("user_id", "role_id").
+			Exec()
 	}
 
 	logger.Warn(ctx, "checker unknown type: %T", req)

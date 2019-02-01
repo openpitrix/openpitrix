@@ -20,6 +20,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -130,16 +131,20 @@ func getUser(ctx context.Context, userId string) (*pbim.User, error) {
 		UserId: userId,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	return user, err
+	return user, nil
 }
 
 func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb.ModifyUserResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	uid := req.GetUserId().GetValue()
 
 	user, err := getUser(ctx, uid)
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 
@@ -150,6 +155,7 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 			Password: password,
 		})
 		if err != nil {
+			logger.Warn(nil, "%+v", err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 	}
@@ -166,6 +172,7 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 
 	user, err = imClient.ModifyUser(ctx, user)
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -177,6 +184,8 @@ func (p *Server) ModifyUser(ctx context.Context, req *pb.ModifyUserRequest) (*pb
 }
 
 func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*pb.DeleteUsersResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	uids := req.GetUserId()
 
 	for _, uid := range uids {
@@ -184,6 +193,7 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*
 			UserId: uid,
 		})
 		if err != nil {
+			logger.Warn(nil, "%+v", err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 		user.Status = constants.StatusDeleted
@@ -191,6 +201,7 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*
 
 		user, err = imClient.ModifyUser(ctx, user)
 		if err != nil {
+			logger.Warn(nil, "%+v", err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 	}
@@ -201,6 +212,8 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*
 }
 
 func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	s := ctxutil.GetSender(ctx)
 	email := req.GetEmail().GetValue()
 
@@ -210,6 +223,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		Email:  []string{email},
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	if res.Total > 0 {
@@ -226,6 +240,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		Status:      constants.StatusActive,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -234,6 +249,7 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 		RoleId: []string{role},
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -267,6 +283,8 @@ func (p *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb
 }
 
 func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest) (*pb.IsvCreateUserResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	s := ctxutil.GetSender(ctx)
 	email := req.GetEmail().GetValue()
 
@@ -276,6 +294,7 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 		Email:  []string{email},
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	if res.Total > 0 {
@@ -291,6 +310,7 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 		Status:      constants.StatusActive,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
@@ -298,6 +318,7 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 		RoleId: []string{constants.RoleUser},
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -307,6 +328,7 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 	})
 	if err != nil || len(listUsersResponse.User) != 1 {
 		logger.Error(ctx, "Failed to describe users [%s]: %+v", s.UserId, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	} else {
 		emailNotifications = append(emailNotifications, &models.EmailNotification{
 			Title:       constants.IsvInviteMemberNotifyTitle.GetDefaultMessage(listUsersResponse.User[0].Username),
@@ -326,6 +348,8 @@ func (p *Server) IsvCreateUser(ctx context.Context, req *pb.IsvCreateUserRequest
 }
 
 func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePasswordResetRequest) (*pb.CreatePasswordResetResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	uid := req.GetUserId().GetValue()
 	password := req.GetPassword().GetValue()
 
@@ -333,6 +357,7 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 		UserId: uid,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	b, err := imClient.ComparePassword(ctx, &pbim.Password{
@@ -340,6 +365,7 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 		Password: password,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	if !b.Value {
@@ -354,6 +380,7 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 		Record(newUserPasswordReset).
 		Exec()
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -366,6 +393,8 @@ func (p *Server) CreatePasswordReset(ctx context.Context, req *pb.CreatePassword
 }
 
 func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordRequest) (*pb.ChangePasswordResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	resetId := req.GetResetId().GetValue()
 	newPassword := req.GetNewPassword().GetValue()
 
@@ -379,6 +408,7 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 		Where(db.Eq(constants.ColumnResetId, resetId))
 	err := query.LoadOne(&resetInfo)
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		if err == db.ErrNotFound {
 			return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorResourceNotFound, resetId)
 		}
@@ -390,6 +420,7 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 		Password: newPassword,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -399,6 +430,7 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 		Where(db.Eq(constants.ColumnResetId, resetId)).
 		Exec()
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -410,6 +442,8 @@ func (p *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 }
 
 func (p *Server) GetPasswordReset(ctx context.Context, req *pb.GetPasswordResetRequest) (*pb.GetPasswordResetResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	var resetId = req.GetResetId()
 	var resetInfo models.UserPasswordReset
 
@@ -421,6 +455,7 @@ func (p *Server) GetPasswordReset(ctx context.Context, req *pb.GetPasswordResetR
 		Where(db.Eq(constants.ColumnResetId, resetId))
 	err := query.LoadOne(&resetInfo)
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
@@ -439,6 +474,7 @@ func validateUserPassword(ctx context.Context, email, password string) (*pbim.Us
 		Email:  []string{email},
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, false, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	if res.Total == 0 {
@@ -451,6 +487,7 @@ func validateUserPassword(ctx context.Context, email, password string) (*pbim.Us
 		Password: password,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, false, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	return user, b.Value, nil
@@ -459,6 +496,7 @@ func validateUserPassword(ctx context.Context, email, password string) (*pbim.Us
 func (p *Server) ValidateUserPassword(ctx context.Context, req *pb.ValidateUserPasswordRequest) (*pb.ValidateUserPasswordResponse, error) {
 	_, b, err := validateUserPassword(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, err
 	}
 	return &pb.ValidateUserPasswordResponse{
@@ -467,6 +505,8 @@ func (p *Server) ValidateUserPassword(ctx context.Context, req *pb.ValidateUserP
 }
 
 func (p *Server) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	s := ctxutil.GetSender(ctx)
 	group, err := imClient.CreateGroup(ctx, &pbim.Group{
 		ParentGroupId: req.GetParentGroupId().GetValue(),
@@ -489,6 +529,8 @@ func (p *Server) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*
 }
 
 func (p *Server) ModifyGroup(ctx context.Context, req *pb.ModifyGroupRequest) (*pb.ModifyGroupResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	gid := req.GetGroupId().GetValue()
 
 	group, err := imClient.GetGroup(ctx, &pbim.GroupId{
@@ -508,6 +550,7 @@ func (p *Server) ModifyGroup(ctx context.Context, req *pb.ModifyGroupRequest) (*
 
 	group, err = imClient.ModifyGroup(ctx, group)
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -518,6 +561,8 @@ func (p *Server) ModifyGroup(ctx context.Context, req *pb.ModifyGroupRequest) (*
 	return reply, nil
 }
 func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) (*pb.DeleteGroupsResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	gids := req.GetGroupId()
 
 	for _, gid := range gids {
@@ -535,6 +580,7 @@ func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) 
 
 		group, err = imClient.ModifyGroup(ctx, group)
 		if err != nil {
+			logger.Warn(nil, "%+v", err)
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
 	}
@@ -545,11 +591,14 @@ func (p *Server) DeleteGroups(ctx context.Context, req *pb.DeleteGroupsRequest) 
 }
 
 func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.JoinGroupResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	_, err := imClient.JoinGroup(ctx, &pbim.JoinGroupRequest{
 		GroupId: req.GetGroupId(),
 		UserId:  req.GetUserId(),
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -560,11 +609,14 @@ func (p *Server) JoinGroup(ctx context.Context, req *pb.JoinGroupRequest) (*pb.J
 }
 
 func (p *Server) LeaveGroup(ctx context.Context, req *pb.LeaveGroupRequest) (*pb.LeaveGroupResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	_, err := imClient.LeaveGroup(ctx, &pbim.LeaveGroupRequest{
 		GroupId: req.GetGroupId(),
 		UserId:  req.GetUserId(),
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -581,6 +633,7 @@ func (p *Server) GetUserGroupOwner(ctx context.Context, req *pb.GetUserGroupOwne
 		Status: []string{constants.StatusActive},
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	reply := &pb.GetUserGroupOwnerResponse{

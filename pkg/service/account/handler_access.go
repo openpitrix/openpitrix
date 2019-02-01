@@ -10,8 +10,10 @@ import (
 	pbam "openpitrix.io/iam/pkg/pb/am"
 	"openpitrix.io/openpitrix/pkg/client/am"
 	"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"openpitrix.io/openpitrix/pkg/util/funcutil"
 )
 
 var (
@@ -182,6 +184,7 @@ func (p *Server) CanDo(ctx context.Context, req *pb.CanDoRequest) (*pb.CanDoResp
 		UrlMethod: req.UrlMethod,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -200,6 +203,7 @@ func (p *Server) GetRoleModule(ctx context.Context, req *pb.GetRoleModuleRequest
 		RoleId: req.RoleId,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -209,10 +213,13 @@ func (p *Server) GetRoleModule(ctx context.Context, req *pb.GetRoleModuleRequest
 	return reply, nil
 }
 func (p *Server) ModifyRoleModule(ctx context.Context, req *pb.ModifyRoleModuleRequest) (*pb.ModifyRoleModuleResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	// TODO: check permission
 
 	v, err := amClient.ModifyRoleModule(ctx, pbamRoleModule(req.RoleModule))
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -223,10 +230,13 @@ func (p *Server) ModifyRoleModule(ctx context.Context, req *pb.ModifyRoleModuleR
 	return reply, nil
 }
 func (p *Server) CreateRole(ctx context.Context, req *pb.CreateRoleRequest) (*pb.CreateRoleResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	// todo: cando?
 
 	v, err := amClient.CreateRole(ctx, pbamRole(req.Role))
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -237,12 +247,15 @@ func (p *Server) CreateRole(ctx context.Context, req *pb.CreateRoleRequest) (*pb
 	return reply, nil
 }
 func (p *Server) DeleteRoles(ctx context.Context, req *pb.DeleteRolesRequest) (*pb.DeleteRolesResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	// TODO: check permission
 
 	_, err := amClient.DeleteRoles(ctx, &pbam.RoleIdList{
 		RoleId: []string{req.RoleId},
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -253,10 +266,13 @@ func (p *Server) DeleteRoles(ctx context.Context, req *pb.DeleteRolesRequest) (*
 	return reply, nil
 }
 func (p *Server) ModifyRole(ctx context.Context, req *pb.ModifyRoleRequest) (*pb.ModifyRoleResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	// todo: cando?
 
 	v, err := amClient.ModifyRole(ctx, pbamRole(req.Role))
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -271,6 +287,7 @@ func (p *Server) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.GetRo
 
 	v, err := amClient.GetRole(ctx, &pbam.RoleId{RoleId: req.RoleId})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -290,6 +307,7 @@ func (p *Server) DescribeRoles(ctx context.Context, req *pb.DescribeRolesRequest
 		UserId:   req.UserId,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -306,6 +324,8 @@ func (p *Server) DescribeRoles(ctx context.Context, req *pb.DescribeRolesRequest
 }
 
 func (p *Server) BindUserRole(ctx context.Context, req *pb.BindUserRoleRequest) (*pb.BindUserRoleResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	// todo: cando?
 
 	_, err := amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
@@ -313,6 +333,7 @@ func (p *Server) BindUserRole(ctx context.Context, req *pb.BindUserRoleRequest) 
 		UserId: req.UserId,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
@@ -320,6 +341,8 @@ func (p *Server) BindUserRole(ctx context.Context, req *pb.BindUserRoleRequest) 
 	return reply, nil
 }
 func (p *Server) UnbindUserRole(ctx context.Context, req *pb.UnbindUserRoleRequest) (*pb.UnbindUserRoleResponse, error) {
+	logger.Info(ctx, funcutil.CallerName(1))
+
 	// todo: cando?
 
 	_, err := amClient.UnbindUserRole(ctx, &pbam.UnbindUserRoleRequest{
@@ -327,6 +350,7 @@ func (p *Server) UnbindUserRole(ctx context.Context, req *pb.UnbindUserRoleReque
 		UserId: req.UserId,
 	})
 	if err != nil {
+		logger.Warn(nil, "%+v", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
