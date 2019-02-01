@@ -16,8 +16,8 @@ import (
 // swagger:model openpitrixModuleFeature
 type OpenpitrixModuleFeature struct {
 
-	// action
-	Action OpenpitrixModuleFeatureAction `json:"action"`
+	// action bundle
+	ActionBundle OpenpitrixModuleFeatureActionBundleOAIGen `json:"action_bundle"`
 
 	// checked action id
 	CheckedActionID []string `json:"checked_action_id"`

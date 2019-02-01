@@ -16,14 +16,14 @@ import (
 // swagger:model openpitrixModuleFeatureActionBundle
 type OpenpitrixModuleFeatureActionBundle struct {
 
-	// action enabled
-	ActionEnabled bool `json:"action_enabled,omitempty"`
+	// action bundle enabled
+	ActionBundleEnabled bool `json:"action_bundle_enabled,omitempty"`
 
-	// action id
-	ActionID string `json:"action_id,omitempty"`
+	// action bundle id
+	ActionBundleID string `json:"action_bundle_id,omitempty"`
 
-	// action name
-	ActionName string `json:"action_name,omitempty"`
+	// action bundle name
+	ActionBundleName string `json:"action_bundle_name,omitempty"`
 
 	// api description
 	APIDescription string `json:"api_description,omitempty"`

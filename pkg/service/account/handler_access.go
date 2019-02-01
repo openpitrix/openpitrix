@@ -102,8 +102,8 @@ func pbModuleFeatureList(ps []*pbam.ModuleFeature) []*pb.ModuleFeature {
 		results = append(results, &pb.ModuleFeature{
 			FeatureId:       p.FeatureId,
 			FeatureName:     p.FeatureName,
-			Action:          pbModuleFeatureActionList(p.Action),
-			CheckedActionId: p.CheckedActionId,
+			ActionBundle:    pbModuleFeatureActionList(p.ActionBundle),
+			CheckedActionId: p.CheckedActionBundleId,
 		})
 	}
 	return results
@@ -113,10 +113,10 @@ func pbamModuleFeatureList(ps []*pb.ModuleFeature) []*pbam.ModuleFeature {
 	var results []*pbam.ModuleFeature
 	for _, p := range ps {
 		results = append(results, &pbam.ModuleFeature{
-			FeatureId:       p.FeatureId,
-			FeatureName:     p.FeatureName,
-			Action:          pbamModuleFeatureActionList(p.Action),
-			CheckedActionId: p.CheckedActionId,
+			FeatureId:             p.FeatureId,
+			FeatureName:           p.FeatureName,
+			ActionBundle:          pbamModuleFeatureActionList(p.ActionBundle),
+			CheckedActionBundleId: p.CheckedActionId,
 		})
 	}
 	return results
@@ -126,23 +126,23 @@ func pbModuleFeatureActionList(ps []*pbam.ModuleFeatureActionBundle) []*pb.Modul
 	var results []*pb.ModuleFeatureActionBundle
 	for _, p := range ps {
 		results = append(results, &pb.ModuleFeatureActionBundle{
-			RoleId:         p.RoleId,
-			RoleName:       p.RoleName,
-			Portal:         p.Portal,
-			ModuleId:       p.ModuleId,
-			ModuleName:     p.ModuleName,
-			DataLevel:      p.DataLevel,
-			Owner:          p.Owner,
-			FeatureId:      p.FeatureId,
-			FeatureName:    p.FeatureName,
-			ActionId:       p.ActionId,
-			ActionName:     p.ActionName,
-			ActionEnabled:  p.ActionEnabled,
-			ApiId:          p.ApiId,
-			ApiMethod:      p.ApiMethod,
-			ApiDescription: p.ApiDescription,
-			Url:            p.Url,
-			UrlMethod:      p.UrlMethod,
+			RoleId:              p.RoleId,
+			RoleName:            p.RoleName,
+			Portal:              p.Portal,
+			ModuleId:            p.ModuleId,
+			ModuleName:          p.ModuleName,
+			DataLevel:           p.DataLevel,
+			Owner:               p.Owner,
+			FeatureId:           p.FeatureId,
+			FeatureName:         p.FeatureName,
+			ActionBundleId:      p.ActionBundleId,
+			ActionBundleName:    p.ActionBundleName,
+			ActionBundleEnabled: p.ActionBundleEnabled,
+			ApiId:               p.ApiId,
+			ApiMethod:           p.ApiMethod,
+			ApiDescription:      p.ApiDescription,
+			Url:                 p.Url,
+			UrlMethod:           p.UrlMethod,
 		})
 	}
 	return results
@@ -152,23 +152,23 @@ func pbamModuleFeatureActionList(ps []*pb.ModuleFeatureActionBundle) []*pbam.Mod
 	var results []*pbam.ModuleFeatureActionBundle
 	for _, p := range ps {
 		results = append(results, &pbam.ModuleFeatureActionBundle{
-			RoleId:         p.RoleId,
-			RoleName:       p.RoleName,
-			Portal:         p.Portal,
-			ModuleId:       p.ModuleId,
-			ModuleName:     p.ModuleName,
-			DataLevel:      p.DataLevel,
-			Owner:          p.Owner,
-			FeatureId:      p.FeatureId,
-			FeatureName:    p.FeatureName,
-			ActionId:       p.ActionId,
-			ActionName:     p.ActionName,
-			ActionEnabled:  p.ActionEnabled,
-			ApiId:          p.ApiId,
-			ApiMethod:      p.ApiMethod,
-			ApiDescription: p.ApiDescription,
-			Url:            p.Url,
-			UrlMethod:      p.UrlMethod,
+			RoleId:              p.RoleId,
+			RoleName:            p.RoleName,
+			Portal:              p.Portal,
+			ModuleId:            p.ModuleId,
+			ModuleName:          p.ModuleName,
+			DataLevel:           p.DataLevel,
+			Owner:               p.Owner,
+			FeatureId:           p.FeatureId,
+			FeatureName:         p.FeatureName,
+			ActionBundleId:      p.ActionBundleId,
+			ActionBundleName:    p.ActionBundleName,
+			ActionBundleEnabled: p.ActionBundleEnabled,
+			ApiId:               p.ApiId,
+			ApiMethod:           p.ApiMethod,
+			ApiDescription:      p.ApiDescription,
+			Url:                 p.Url,
+			UrlMethod:           p.UrlMethod,
 		})
 	}
 	return results
