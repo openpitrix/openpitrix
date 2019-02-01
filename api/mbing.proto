@@ -337,7 +337,7 @@ enum UpdateValueTypes {
 
 message MeteringAttributeValue {
 	google.protobuf.StringValue attribute_id = 1;
-	google.protobuf.FloatValue  = 2;
+	google.protobuf.FloatValue value = 2;
 	UpdateValueTypes type = 3;
 }
 
@@ -345,7 +345,8 @@ message MeteringSku {
 	google.protobuf.StringValue sku_id = 1;
 	repeated MeteringAttributeValue attribute_values = 2;
 	google.protobuf.Timestamp action_time = 3;
-	SkuTypes type = 4;
+	google.protobuf.StringValue other_info = 4;
+	SkuTypes type = 5;
 }
 
 message MeteringRequest {

@@ -11,23 +11,26 @@ CREATE TABLE IF NOT EXISTS attribute
 	PRIMARY KEY (id)
 );
 
+
 CREATE TABLE IF NOT EXISTS attribute_unit
 (
 	id 										VARCHAR(50) 		NOT NULL UNIQUE,
 	name 									VARCHAR(30)		 	NOT NULL,
+	display_name 					VARCHAR(30)		 	NOT NULL,
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
 	PRIMARY KEY (id)
 );
 
+
 CREATE TABLE IF NOT EXISTS attribute_value
 (
 	id 										VARCHAR(50) 		NOT NULL UNIQUE,
 	attribute_id 					VARCHAR(50) 		NOT NULL,
-	attribute_unit_id 		VARCHAR(50) 		NOT NULL,
+	attribute_unit_id 		VARCHAR(50),
 	min_value 						INT 						NOT NULL,
-	max_value					  	INT 						NOT NULL COMMENT 'the attribute value, support scope of value [min_value, max_value);',
+	max_value					  	INT 						NULL COMMENT 'the attribute value, support scope of value (min_value, max_value]; NULL: max',
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
@@ -83,11 +86,13 @@ CREATE TABLE IF NOT EXISTS leasing
 	user_id								VARCHAR(50)		NOT NULL,
 	resource_id						VARCHAR(50)		NOT NULL COMMENT 'the same as cluster_id',
 	sku_id								VARCHAR(50)		NOT NULL,
+	other_info						VARCHAR(255)	COMMENT 'used for distinguish when resource_id and sku_id are same with others',
 	metering_values				JSON					COMMENT 'the values of metering_attributes, {att_id: value, ..}',
 	lease_time		    		TIMESTAMP			NULL,
+	update_duration_time  TIMESTAMP			NULL,
 	renewal_time       		TIMESTAMP			NULL,
-	update_time       		TIMESTAMP			NULL,
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
+	update_time       		TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	close_time						JSON					COMMENT '[{close_time: restart_time}, ..]',
 	status								TINYINT				NOT NULL DEFAULT 2 COMMENT '0: handClosed, 1: forceClosed, 2: running',
 	PRIMARY KEY (id)
@@ -103,7 +108,7 @@ CREATE TABLE IF NOT EXISTS leased
 	sku_id								VARCHAR(50)		NOT NULL,
 	metering_values				JSON					COMMENT 'the values of metering_attributes, {att_id: value, ..}',
 	lease_time		    		TIMESTAMP			NULL,
-	update_time       		TIMESTAMP			NULL,
+	end_time       				TIMESTAMP			NULL,
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	close_time						JSON					COMMENT '[{close_time: restart_time}, ..]',
 	PRIMARY KEY (leasing_id)
@@ -124,6 +129,7 @@ CREATE TABLE IF NOT EXISTS leasing_contract
 	fee_info							TEXT,
 	fee										DECIMAL(8,2) 	NOT NULL COMMENT 'total fee from starting cluster to now',
 	due_fee								DECIMAL(8,2) 	NOT NULL default 0,
+	done_fee							DECIMAL(8,2) 	NOT NULL default 0,
 	before_bill_fee				DECIMAL(8,2) 	NOT NULL DEFAULT 0 COMMENT 'the total fee of the before bills ',
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
 	remark  							TEXT,
@@ -144,6 +150,7 @@ CREATE TABLE IF NOT EXISTS leased_contract
 	fee_info							TEXT,
 	fee										DECIMAL(8,2) 	NOT NULL COMMENT 'total fee from starting cluster to now',
 	due_fee								DECIMAL(8,2) 	NOT NULL default 0,
+	done_fee							DECIMAL(8,2) 	NOT NULL default 0,
 	before_bill_fee				DECIMAL(8,2) 	NOT NULL DEFAULT 0 COMMENT 'the total fee of the before bills ',
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
 	remark  							TEXT,
@@ -159,8 +166,8 @@ CREATE TABLE IF NOT EXISTS charge
 	contract_id						VARCHAR(50)		NOT NULL,
 	fee										DECIMAL(8,2)  NOT NULL COMMENT 'total fee from starting cluster to now',
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
-	info									JSON					COMMENT '{couponID: fee}',
-	status								TINYINT				NOT NULL COMMENT '0: fail, 1: success',
+	info									JSON					COMMENT '{couponReceivedID: fee}',
+	status								TINYINT				DEFAULT 1 NOT NULL COMMENT '0: fail, 1: success',
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	remark  							TEXT,
 	PRIMARY KEY (id)
@@ -174,7 +181,7 @@ CREATE TABLE IF NOT EXISTS recharge
 	contract_id						VARCHAR(50),
 	fee										DECIMAL(8,2)  NOT NULL COMMENT 'total fee from starting cluster to now',
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
-	status								TINYINT				NOT NULL COMMENT '0: fail, 1: success',
+	status								TINYINT				DEFAULT 1 NOT NULL COMMENT '0: fail, 1: success',
 	operator							VARCHAR(50)		NOT NULL,
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	remark 								TEXT,
