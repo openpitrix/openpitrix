@@ -6238,7 +6238,7 @@ var Files = map[string]string{
         "feature_name": {
           "type": "string"
         },
-        "action": {
+        "action_bundle": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixModuleFeatureActionBundle"
@@ -6282,13 +6282,13 @@ var Files = map[string]string{
         "feature_name": {
           "type": "string"
         },
-        "action_id": {
+        "action_bundle_id": {
           "type": "string"
         },
-        "action_name": {
+        "action_bundle_name": {
           "type": "string"
         },
-        "action_enabled": {
+        "action_bundle_enabled": {
           "type": "boolean",
           "format": "boolean"
         },

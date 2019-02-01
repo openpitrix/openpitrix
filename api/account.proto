@@ -192,9 +192,9 @@ message ModuleFeatureActionBundle {
 	string feature_id = 8;
 	string feature_name = 9;
 
-	string action_id = 10;
-	string action_name = 11;
-	bool action_enabled = 12;
+	string action_bundle_id = 10;
+	string action_bundle_name = 11;
+	bool action_bundle_enabled = 12;
 
 	string api_id = 13;
 	string api_method = 14;
@@ -207,7 +207,7 @@ message ModuleFeatureActionBundle {
 message ModuleFeature {
 	string feature_id = 1;
 	string feature_name = 2;
-	repeated ModuleFeatureActionBundle action = 3;
+	repeated ModuleFeatureActionBundle action_bundle = 3;
 	repeated string checked_action_id = 4;
 }
 
