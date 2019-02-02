@@ -65,7 +65,7 @@ for the create role operation typically these are written to a http.Request
 type CreateRoleParams struct {
 
 	/*Body*/
-	Body *models.OpenpitrixRole
+	Body *models.OpenpitrixCreateRoleRequest
 
 	timeout    time.Duration
 	Context    context.Context
@@ -106,13 +106,13 @@ func (o *CreateRoleParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the create role params
-func (o *CreateRoleParams) WithBody(body *models.OpenpitrixRole) *CreateRoleParams {
+func (o *CreateRoleParams) WithBody(body *models.OpenpitrixCreateRoleRequest) *CreateRoleParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the create role params
-func (o *CreateRoleParams) SetBody(body *models.OpenpitrixRole) {
+func (o *CreateRoleParams) SetBody(body *models.OpenpitrixCreateRoleRequest) {
 	o.Body = body
 }
 
