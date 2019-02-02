@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS combination_sku
 (
 	id 										VARCHAR(50) 	NOT NULL UNIQUE ,
 	cra_id								VARCHAR(50)		NOT NULL COMMENT 'the id of combination_resource_attribute',
-	attribute_values 								JSON 					NOT NULL COMMENT 'sku attribute values for attributes in resource_attribute: {resource_version_id:{}, ..}',
+	attribute_values 			JSON 					NOT NULL COMMENT 'sku attribute values for attributes in resource_attribute: {resource_version_id:{}, ..}',
 	create_time 					TIMESTAMP 		DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	status								TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS probation_sku
 (
 	id 											VARCHAR(50) 	NOT NULL UNIQUE ,
 	resource_attribute_id 	VARCHAR(50)		NOT NULL,
-	attribute_values 									JSON 					NOT NULL COMMENT 'sku attribute values for attributes in resource_attribute: {attribute: value, ...}',
+	attribute_values 				JSON 					NOT NULL COMMENT 'sku attribute values for attributes in resource_attribute: {attribute: value, ...}',
 	limit_num								INT						NOT NULL DEFAULT 1,
 	create_time 						TIMESTAMP 		DEFAULT CURRENT_TIMESTAMP,
 	update_time 						TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

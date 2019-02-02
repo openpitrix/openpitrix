@@ -33,6 +33,7 @@ message Attribute {
 message AttributeUnit {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue display_name = 3;
 }
 
 message AttributeValue {
@@ -48,14 +49,13 @@ message ResourceAttribute {
 	google.protobuf.StringValue resource_version_id = 2;
 	repeated google.protobuf.StringValue attribute_ids = 3;
 	repeated google.protobuf.StringValue metering_attribute_ids = 4;
-	repeated google.protobuf.StringValue billing_attribute_ids = 5;
 }
 
 message Sku {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue resource_attribute_id = 2;
 	repeated google.protobuf.StringValue attribute_value_ids = 3;
-	google.protobuf.Timestamp action_time = 4;
+	google.protobuf.Timestamp action_time = 4;   // start/close/delete resource time for metering
 }
 
 message StepPrice {
@@ -66,7 +66,7 @@ message StepPrice {
 message Price {
     google.protobuf.StringValue id = 1;
     google.protobuf.StringValue sku_id = 2;
-    google.protobuf.StringValue billing_attribute_id = 3;
+    google.protobuf.StringValue attribute_id = 3; //metering attribute id
 	repeated StepPrice prices = 4;
     Currency currency = 5;
 }
@@ -102,7 +102,7 @@ message CommonResponse {
 }
 
 
-service BillingManager {
+service SkuManager {
 	rpc CreateAttributes (CreateAttributesRequest) returns (CommonResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create attributes"

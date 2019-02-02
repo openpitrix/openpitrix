@@ -28,8 +28,8 @@ func Serve(cfg *config.Config) {
 	manager.NewGrpcServer("mbing-manager", constants.MeterbillingManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		Serve(func(server *grpc.Server) {
+			pb.RegisterSkuManagerServer(server, &s)
 			pb.RegisterMeteringManagerServer(server, &s)
-			pb.RegisterBillingManagerServer(server, &s)
 			pb.RegisterPromotionManagerServer(server, &s)
 		})
 }

@@ -181,8 +181,9 @@ CREATE TABLE IF NOT EXISTS recharge
 	contract_id						VARCHAR(50),
 	fee										DECIMAL(8,2)  NOT NULL COMMENT 'total fee from starting cluster to now',
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
+	info									JSON					COMMENT '{couponReceivedID: fee}',
 	status								TINYINT				DEFAULT 1 NOT NULL COMMENT '0: fail, 1: success',
-	operator							VARCHAR(50)		NOT NULL,
+	operator							VARCHAR(50)		NOT NULL DEFAULT 'system',
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	remark 								TEXT,
 	PRIMARY KEY (id)
