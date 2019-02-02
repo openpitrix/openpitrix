@@ -442,7 +442,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixCreateRoleRequest"
+              "$ref": "#/definitions/openpitrixRole"
             }
           }
         ],
@@ -5884,21 +5884,14 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixCreateRoleRequest": {
-      "type": "object",
-      "properties": {
-        "role": {
-          "$ref": "#/definitions/openpitrixRole"
-        }
-      }
-    },
     "openpitrixCreateRoleResponse": {
       "type": "object",
       "properties": {
         "role_id": {
           "type": "string"
         }
-      }
+      },
+      "title": "message CreateRoleRequest {\n\tRole role = 1;\n}"
     },
     "openpitrixCreateUserRequest": {
       "type": "object",
@@ -6384,7 +6377,7 @@ var Files = map[string]string{
         "owner_path": {
           "type": "string"
         },
-        "Status": {
+        "status": {
           "type": "string"
         },
         "create_time": {

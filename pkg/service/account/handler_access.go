@@ -234,10 +234,10 @@ func (p *Server) ModifyRoleModule(ctx context.Context, req *pb.ModifyRoleModuleR
 
 	return reply, nil
 }
-func (p *Server) CreateRole(ctx context.Context, req *pb.CreateRoleRequest) (*pb.CreateRoleResponse, error) {
+func (p *Server) CreateRole(ctx context.Context, req *pb.Role) (*pb.CreateRoleResponse, error) {
 	// todo: cando?
 
-	v, err := amClient.CreateRole(ctx, pbamRole(req.Role))
+	v, err := amClient.CreateRole(ctx, pbamRole(req))
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}

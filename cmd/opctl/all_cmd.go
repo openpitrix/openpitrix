@@ -248,6 +248,17 @@ func (*CreateRoleCmd) GetActionName() string {
 }
 
 func (c *CreateRoleCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.CreateTime, "create_time", "", "", "")
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Owner, "owner", "", "", "")
+	f.StringVarP(&c.OwnerPath, "owner_path", "", "", "")
+	f.StringVarP(&c.Portal, "portal", "", "", "")
+	f.StringVarP(&c.RoleID, "role_id", "", "", "")
+	f.StringVarP(&c.RoleName, "role_name", "", "", "")
+	f.StringVarP(&c.Status, "status", "", "", "")
+	f.StringVarP(&c.StatusTime, "status_time", "", "", "")
+	f.StringVarP(&c.UpdateTime, "update_time", "", "", "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
 }
 
 func (c *CreateRoleCmd) Run(out Out) error {
