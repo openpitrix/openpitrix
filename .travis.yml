@@ -20,7 +20,6 @@ addons:
     packages:
     - docker-ce
 before_install:
-- if [ "TRAVIS_REPO_SLUG" = "openpitrix/openpitrix" ]; then openssl aes-256-cbc -K $encrypted_31dac1cc4b44_key -iv $encrypted_31dac1cc4b44_iv -in key.yaml.enc -out key.yaml -d;fi
 - sudo docker run -d -it --name nsenter ubuntu:16.04 bash
 - sudo docker cp nsenter:/usr/bin/nsenter /usr/local/bin/nsenter
 - sudo docker stop nsenter && sudo docker rm nsenter
@@ -39,9 +38,6 @@ before_install:
 - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | DESIRED_VERSION=v2.11.0 bash
 - "./deploy/kubernetes/scripts/init-helm.sh"
 - until helm list -a; do sleep 1; done
-install:
-- curl https://pek3a.qingstor.com/releases-qs/qsctl/qsctl-latest-linux.tar.gz -O
-- tar -xzvf qsctl-latest-linux.tar.gz
 before_script:
 - docker --version
 - docker-compose --version
@@ -57,8 +53,6 @@ before_deploy:
 - make clean
 - make release-openpitrix-$TRAVIS_TAG
 - make bin-release-openpitrix-$TRAVIS_TAG
-- cd image/amazon-linux/; tar -czvf amazon-linux.tar.gz *;cd ../..
-- cd image/ubuntu/; tar -czvf ubuntu.tar.gz *;cd ../..
 deploy:
 - provider: releases
   api_key:
@@ -77,10 +71,12 @@ deploy:
     branch: master
     repo: openpitrix/openpitrix
 - provider: script
+  script: bash image_package_upload $encrypted_31dac1cc4b44_key $encrypted_31dac1cc4b44_iv
+  on:
+    branch: master
+    repo: openpitrix/openpitrix
+- provider: script
   script: bash docker_push $TRAVIS_TAG
   on:
     tags: true
     repo: openpitrix/openpitrix
-after_deploy:
-- if [ "TRAVIS_REPO_SLUG" = "openpitrix/openpitrix" ]; then ./qsctl cp -f image/ubuntu/ubuntu.tar.gz qs://openpitrix/image/ubuntu.tar.gz -c key.yaml -z pek3a; fi
-- if [ "TRAVIS_REPO_SLUG" = "openpitrix/openpitrix" ]; then ./qsctl cp -f image/amazon-linux/amazon-linux.tar.gz qs://openpitrix/image/amazon-linux.tar.gz -c key.yaml -z pek3a; fi
