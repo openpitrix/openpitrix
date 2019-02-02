@@ -16,9 +16,6 @@ import (
 // swagger:model openpitrixRole
 type OpenpitrixRole struct {
 
-	// status
-	Status string `json:"Status,omitempty"`
-
 	// create time
 	CreateTime strfmt.DateTime `json:"create_time,omitempty"`
 
@@ -39,6 +36,9 @@ type OpenpitrixRole struct {
 
 	// role name
 	RoleName string `json:"role_name,omitempty"`
+
+	// status
+	Status string `json:"status,omitempty"`
 
 	// status time
 	StatusTime strfmt.DateTime `json:"status_time,omitempty"`

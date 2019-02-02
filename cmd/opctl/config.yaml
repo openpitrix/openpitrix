@@ -18,7 +18,28 @@
   request: CreateRoleRequest
   service: AccessManager
   body:
-    role: {}
+    create_time:
+      type: string
+    description:
+      type: string
+    owner:
+      type: string
+    owner_path:
+      type: string
+    portal:
+      type: string
+    role_id:
+      type: string
+    role_name:
+      type: string
+    status:
+      type: string
+    status_time:
+      type: string
+    update_time:
+      type: string
+    user_id:
+      type: '[]string'
 - action: DeleteRoles
   request: DeleteRolesRequest
   service: AccessManager

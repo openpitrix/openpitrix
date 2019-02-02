@@ -289,7 +289,7 @@ func request_AccessManager_ModifyRoleModule_0(ctx context.Context, marshaler run
 }
 
 func request_AccessManager_CreateRole_0(ctx context.Context, marshaler runtime.Marshaler, client AccessManagerClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateRoleRequest
+	var protoReq Role
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
