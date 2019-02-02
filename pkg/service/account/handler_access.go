@@ -20,6 +20,9 @@ var (
 )
 
 func pbRole(p *pbam.Role) *pb.Role {
+	if p == nil {
+		return new(pb.Role)
+	}
 	return &pb.Role{
 		RoleId:      p.RoleId,
 		RoleName:    p.RoleName,
@@ -37,6 +40,9 @@ func pbRole(p *pbam.Role) *pb.Role {
 	}
 }
 func pbamRole(p *pb.Role) *pbam.Role {
+	if p == nil {
+		return new(pbam.Role)
+	}
 	return &pbam.Role{
 		RoleId:      p.RoleId,
 		RoleName:    p.RoleName,
@@ -55,12 +61,18 @@ func pbamRole(p *pb.Role) *pbam.Role {
 }
 
 func pbRoleModule(p *pbam.RoleModule) *pb.RoleModule {
+	if p == nil {
+		return new(pb.RoleModule)
+	}
 	return &pb.RoleModule{
 		RoleId: p.RoleId,
 		Module: pbRoleModuleElemList(p.Module),
 	}
 }
 func pbamRoleModule(p *pb.RoleModule) *pbam.RoleModule {
+	if p == nil {
+		return new(pbam.RoleModule)
+	}
 	return &pbam.RoleModule{
 		RoleId: p.RoleId,
 		Module: pbamRoleModuleElemList(p.Module),
