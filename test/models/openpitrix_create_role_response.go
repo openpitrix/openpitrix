@@ -12,9 +12,7 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixCreateRoleResponse message CreateRoleRequest {
-// 	Role role = 1;
-// }
+// OpenpitrixCreateRoleResponse openpitrix create role response
 // swagger:model openpitrixCreateRoleResponse
 type OpenpitrixCreateRoleResponse struct {
 

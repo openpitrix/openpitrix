@@ -18,8 +18,6 @@
   request: CreateRoleRequest
   service: AccessManager
   body:
-    create_time:
-      type: string
     description:
       type: string
     owner:
@@ -34,12 +32,6 @@
       type: string
     status:
       type: string
-    status_time:
-      type: string
-    update_time:
-      type: string
-    user_id:
-      type: '[]string'
 - action: DeleteRoles
   request: DeleteRolesRequest
   service: AccessManager

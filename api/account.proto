@@ -82,7 +82,7 @@ service AccessManager {
 	}
 
 	// role
-	rpc CreateRole(Role) returns (CreateRoleResponse) {
+	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
 		option (google.api.http) = { post: "/v1/roles" body: "*" };
 	}
 	rpc DeleteRoles(DeleteRolesRequest) returns (DeleteRolesResponse) {
@@ -405,9 +405,15 @@ message ModifyRoleModuleResponse {
 	RoleModule role_module = 1;
 }
 
-//message CreateRoleRequest {
-//	Role role = 1;
-//}
+message CreateRoleRequest {
+	string role_id = 1;
+	string role_name = 2;   // enable modify
+	string description = 3; // enable modify
+	string portal = 4;      // enable modify
+	string owner = 5;
+	string owner_path = 6;
+	string status = 7;
+}
 message CreateRoleResponse {
 	string role_id = 1;
 }

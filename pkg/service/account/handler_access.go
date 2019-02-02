@@ -60,6 +60,21 @@ func pbamRole(p *pb.Role) *pbam.Role {
 	}
 }
 
+func pbamRoleFromCreateRoleRequest(p *pb.CreateRoleRequest) *pbam.Role {
+	if p == nil {
+		return new(pbam.Role)
+	}
+	return &pbam.Role{
+		RoleId:      p.RoleId,
+		RoleName:    p.RoleName,
+		Description: p.Description,
+		Portal:      p.Portal,
+		Owner:       p.Owner,
+		OwnerPath:   p.OwnerPath,
+		Status:      p.Status,
+	}
+}
+
 func pbRoleModule(p *pbam.RoleModule) *pb.RoleModule {
 	if p == nil {
 		return new(pb.RoleModule)
@@ -234,10 +249,10 @@ func (p *Server) ModifyRoleModule(ctx context.Context, req *pb.ModifyRoleModuleR
 
 	return reply, nil
 }
-func (p *Server) CreateRole(ctx context.Context, req *pb.Role) (*pb.CreateRoleResponse, error) {
+func (p *Server) CreateRole(ctx context.Context, req *pb.CreateRoleRequest) (*pb.CreateRoleResponse, error) {
 	// todo: cando?
 
-	v, err := amClient.CreateRole(ctx, pbamRole(req))
+	v, err := amClient.CreateRole(ctx, pbamRoleFromCreateRoleRequest(req))
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
