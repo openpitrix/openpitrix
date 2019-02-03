@@ -431,6 +431,10 @@ func (*ModifyRoleCmd) GetActionName() string {
 }
 
 func (c *ModifyRoleCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.Description, "description", "", "", "")
+	f.StringVarP(&c.Portal, "portal", "", "", "")
+	f.StringVarP(&c.RoleID, "role_id", "", "", "")
+	f.StringVarP(&c.RoleName, "role_name", "", "", "")
 }
 
 func (c *ModifyRoleCmd) Run(out Out) error {
