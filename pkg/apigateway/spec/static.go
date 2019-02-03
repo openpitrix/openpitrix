@@ -6260,8 +6260,17 @@ var Files = map[string]string{
     "openpitrixModifyRoleRequest": {
       "type": "object",
       "properties": {
-        "role": {
-          "$ref": "#/definitions/openpitrixRole"
+        "role_id": {
+          "type": "string"
+        },
+        "role_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "portal": {
+          "type": "string"
         }
       }
     },

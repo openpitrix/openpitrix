@@ -67,7 +67,14 @@
   request: ModifyRoleRequest
   service: AccessManager
   body:
-    role: {}
+    description:
+      type: string
+    portal:
+      type: string
+    role_id:
+      type: string
+    role_name:
+      type: string
 - action: ModifyRoleModule
   request: ModifyRoleModuleRequest
   service: AccessManager

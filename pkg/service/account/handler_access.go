@@ -75,6 +75,18 @@ func pbamRoleFromCreateRoleRequest(p *pb.CreateRoleRequest) *pbam.Role {
 	}
 }
 
+func pbamRoleFromModifyRoleRequest(p *pb.ModifyRoleRequest) *pbam.Role {
+	if p == nil {
+		return new(pbam.Role)
+	}
+	return &pbam.Role{
+		RoleId:      p.RoleId,
+		RoleName:    p.RoleName,
+		Description: p.Description,
+		Portal:      p.Portal,
+	}
+}
+
 func pbRoleModule(p *pbam.RoleModule) *pb.RoleModule {
 	if p == nil {
 		return new(pb.RoleModule)
@@ -282,7 +294,7 @@ func (p *Server) DeleteRoles(ctx context.Context, req *pb.DeleteRolesRequest) (*
 func (p *Server) ModifyRole(ctx context.Context, req *pb.ModifyRoleRequest) (*pb.ModifyRoleResponse, error) {
 	// todo: cando?
 
-	v, err := amClient.ModifyRole(ctx, pbamRole(req.Role))
+	v, err := amClient.ModifyRole(ctx, pbamRoleFromModifyRoleRequest(req))
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
