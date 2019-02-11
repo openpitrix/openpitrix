@@ -7,12 +7,78 @@ package mbing
 import (
 	"context"
 
+	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pi"
 )
+
+func insertAttribute(ctx context.Context, attribute *models.Attribute) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableAttribute).
+		Record(attribute).
+		Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert attribute, Errors: [%+v]", err)
+	}
+	return err
+}
+
+func getAttributeById(ctx context.Context, attributeId string) (*models.Attribute, error) {
+	att := &models.Attribute{}
+	err := pi.Global().DB(ctx).
+		Select(models.AttributeColumns...).
+		From(constants.TableAttribute).
+		Where(db.Eq(constants.ColumnAttributeId, attributeId)).
+		LoadOne(&att)
+
+	if err != nil {
+		logger.Error(ctx, "Failed to get attribute, Errors: [%+v]", err)
+	}
+	return att, err
+}
+
+func insertAttributeUnit(ctx context.Context, attUnit *models.AttributeUnit) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableAttUnit).
+		Record(attUnit).
+		Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert attribute_unit, Errors: [%+v]", err)
+	}
+	return err
+}
+
+func getAttUnitById(ctx context.Context, attUnitId string) (*models.AttributeUnit, error) {
+	attUnit := &models.AttributeUnit{}
+	err := pi.Global().DB(ctx).
+		Select(models.AttributeUnitColumns...).
+		From(constants.TableAttUnit).
+		Where(db.Eq(constants.ColumnAttUnitId, attUnitId)).
+		LoadOne(&attUnit)
+
+	if err != nil {
+		logger.Error(ctx, "Failed to get attribuite_unit, Errors: [%+v]", err)
+	}
+	return attUnit, err
+}
+
+func insertAttributeValue(ctx context.Context, attValue *models.AttributeValue) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableAttValue).
+		Record(attValue).
+		Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert attribute_value, Errors: [%+v]", err)
+	}
+	return err
+}
+
+
+
+
 
 func insertLeasingsToDB(ctx context.Context, leasings []*models.Leasing) error {
 
@@ -27,7 +93,7 @@ func insertLeasingsToDB(ctx context.Context, leasings []*models.Leasing) error {
 
 	var err error
 	for _, leasing := range leasings {
-		_, err := dbConn.InsertInto(constants.TableMeteringLeasing).Record(leasing).Exec()
+		_, err := dbConn.InsertInto(constants.TableMbing).Record(leasing).Exec()
 		if err != nil {
 			logger.Error(ctx, "Failed to save leasing: [%+v].", leasing)
 			break

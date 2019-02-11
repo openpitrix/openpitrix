@@ -61,7 +61,7 @@ func MeteringReq2Leasings(req *pb.MeteringRequest, groupId string) []*Leasing {
 			groupId,
 			req.GetUserId().GetValue(),
 			req.GetResourceId().GetValue(),
-			sku.GetId().GetValue(),
+			sku.GetSkuId().GetValue(),
 			pbutil.FromProtoTimestamp(sku.GetActionTime()),
 			pbutil.FromProtoTimestamp(sku.GetActionTime()), //need to update to real value
 			make(map[string]interface{}),
@@ -69,7 +69,6 @@ func MeteringReq2Leasings(req *pb.MeteringRequest, groupId string) []*Leasing {
 		leasings = append(leasings, leasing)
 	}
 	return leasings
-
 }
 
 type Leased struct {

@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS probation_record
 	user_id 								VARCHAR(50) 	NOT NULL,
 	num											INT						NOT NULL DEFAULT 1,
 	create_time 						TIMESTAMP 		DEFAULT CURRENT_TIMESTAMP,
+	probation_times 				JSON			 		COMMENT '[probation_time1, ...]',
 	PRIMARY KEY (probation_sku_id, user_id)
 );
 

@@ -42,5 +42,9 @@ const (
 	TableAppVersionReview = "app_version_review"
 	TableVendorVerifyInfo = "vendor_verify_info"
 
-	TableMeteringLeasing = "leasing"
+	// mbing
+	TableAttribute = "attribute"
+	TableAttUnit = "attribute_unit"
+	TableAttValue = "attribute_value"
+	TableLeasing = "leasing"
 )

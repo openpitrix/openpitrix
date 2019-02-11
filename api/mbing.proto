@@ -21,7 +21,7 @@ enum Currency {
 	USD = 2;
 }
 
-//************************************* Price *************************
+//************************************* Sku *************************
 
 message Attribute {
 	google.protobuf.StringValue id = 1;
@@ -30,18 +30,48 @@ message Attribute {
 	google.protobuf.StringValue remark = 4;
 }
 
+message CreateAttributeRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue display_name = 2;
+	google.protobuf.StringValue remark = 3;
+}
+
+message CreateAttributeResponse {
+	google.protobuf.StringValue attribute_id = 1;
+}
+
 message AttributeUnit {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue display_name = 3;
 }
 
+message CreateAttUnitRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue display_name = 2;
+}
+
+message CreateAttUnitResponse {
+	google.protobuf.StringValue attribute_unit_id = 1;
+}
+
 message AttributeValue {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue attribute_id = 2;
 	google.protobuf.StringValue attribute_unit_id = 3;
-    google.protobuf.Int32Value min_value = 4;
-    google.protobuf.Int32Value max_value = 5;
+	google.protobuf.Int32Value min_value = 4;
+	google.protobuf.Int32Value max_value = 5;
+}
+
+message CreateAttValueRequest {
+	google.protobuf.StringValue attribute_id = 1;
+	google.protobuf.StringValue attribute_unit_id = 2;
+    google.protobuf.Int32Value min_value = 3;
+    google.protobuf.Int32Value max_value = 4;
+}
+
+message CreateAttValueResponse {
+	google.protobuf.StringValue attribute_value_id = 1;
 }
 
 message ResourceAttribute {
@@ -51,11 +81,31 @@ message ResourceAttribute {
 	repeated google.protobuf.StringValue metering_attribute_ids = 4;
 }
 
+message CreateResAttRequest {
+	google.protobuf.StringValue resource_version_id = 1;
+	repeated google.protobuf.StringValue attribute_ids = 2;
+	repeated google.protobuf.StringValue metering_attribute_ids = 3;
+}
+
+message CreateResAttResponse {
+	google.protobuf.StringValue resource_atrribute_id = 1;
+}
+
 message Sku {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue resource_attribute_id = 2;
 	repeated google.protobuf.StringValue attribute_value_ids = 3;
 	google.protobuf.Timestamp action_time = 4;   // start/close/delete resource time for metering
+}
+
+message CreateSkuRequest {
+	google.protobuf.StringValue resource_attribute_id = 1;
+	repeated google.protobuf.StringValue attribute_value_ids = 2;
+	google.protobuf.Timestamp action_time = 3;   // start/close/delete resource time for metering
+}
+
+message CreateSkuResponse {
+	google.protobuf.StringValue sku_id = 1;
 }
 
 message StepPrice {
@@ -71,30 +121,17 @@ message Price {
     Currency currency = 5;
 }
 
-
-message CreateAttributesRequest {
-	repeated Attribute attributes = 1;
+message CreatePriceRequest {
+	google.protobuf.StringValue sku_id = 1;
+	google.protobuf.StringValue attribute_id = 2; //metering attribute id
+	repeated StepPrice prices = 3;
+	Currency currency = 4;
 }
 
-message CreateAttributeUnitsRequest {
-	repeated AttributeUnit attribute_units = 1;
+message CreatePriceResponse {
+	google.protobuf.StringValue price_id = 1;
 }
 
-message CreateAttributeValuesRequest {
-	repeated AttributeValue attribute_values = 1;
-}
-
-message CreateResourceAttributesRequest {
-	repeated ResourceAttribute resource_attributes = 1;
-}
-
-message CreateSkusRequest {
-	repeated Sku skus = 1;
-}
-
-message CreatePricesRequest {
-	repeated Price prices = 1;
-}
 
 message CommonResponse {
 	google.protobuf.Int32Value status = 1;
@@ -103,37 +140,37 @@ message CommonResponse {
 
 
 service SkuManager {
-	rpc CreateAttributes (CreateAttributesRequest) returns (CommonResponse) {
+	rpc CreateAttribute (CreateAttributeRequest) returns (CreateAttributeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create attributes"
+			summary: "create attribute"
 		};
 		option (google.api.http) = {
-			post: "/v1/billing/attribute"
+			post: "/v1/metering/attribute"
 			body: "*"
 		};
 	}
 
-	rpc CreateAttributeUnits (CreateAttributeUnitsRequest) returns (CommonResponse) {
+	rpc CreateAttributeUnit (CreateAttUnitRequest) returns (CreateAttUnitResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create attribute units"
+            summary: "create attribute unit"
         };
 		option (google.api.http) = {
-            post: "/v1/billing/attribute/units"
+            post: "/v1/billing/attribute/unit"
             body: "*"
         };
 	}
 
-	rpc CreateAttributeValues (CreateAttributeValuesRequest) returns (CommonResponse) {
+	rpc CreateAttributeValue (CreateAttValueRequest) returns (CreateAttValueResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create attribute values"
+            summary: "create attribute value"
         };
 		option (google.api.http) = {
-            post: "/v1/billing/attribute/values"
+            post: "/v1/billing/attribute/value"
             body: "*"
         };
 	}
 
-	rpc CreateResourceAttributes (CreateResourceAttributesRequest) returns (CommonResponse) {
+	rpc CreateResourceAttribute (CreateResAttRequest) returns (CreateResAttResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "create attributes of the resource"
         };
@@ -143,7 +180,7 @@ service SkuManager {
         };
 	}
 
-	rpc CreateSkus (CreateSkusRequest) returns (CommonResponse) {
+	rpc CreateSku (CreateSkuRequest) returns (CreateSkuResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "create skus of the resource"
         };
@@ -153,12 +190,12 @@ service SkuManager {
         };
 	}
 
-	rpc CreatePrices (CreatePricesRequest) returns (CommonResponse) {
+	rpc CreatePrice (CreatePriceRequest) returns (CreatePriceResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create prices of the sku"
+            summary: "create price of the sku"
         };
 		option (google.api.http) = {
-            post: "/v1/billing/resource/sku/prices"
+            post: "/v1/billing/resource/sku/price"
             body: "*"
         };
 	}

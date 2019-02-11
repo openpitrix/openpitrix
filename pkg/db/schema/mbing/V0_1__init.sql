@@ -1,7 +1,7 @@
 /**  Price  **/
 CREATE TABLE IF NOT EXISTS attribute
 (
-	id 										VARCHAR(50) 		NOT NULL UNIQUE,
+	attribute_id 					VARCHAR(50) 		NOT NULL UNIQUE,
 	name 									VARCHAR(255) 		NOT NULL,
 	display_name 					VARCHAR(255),
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS attribute
 
 CREATE TABLE IF NOT EXISTS attribute_unit
 (
-	id 										VARCHAR(50) 		NOT NULL UNIQUE,
+	attribute_unit_id 		VARCHAR(50) 		NOT NULL UNIQUE,
 	name 									VARCHAR(30)		 	NOT NULL,
 	display_name 					VARCHAR(30)		 	NOT NULL,
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS attribute_unit
 
 CREATE TABLE IF NOT EXISTS attribute_value
 (
-	id 										VARCHAR(50) 		NOT NULL UNIQUE,
+	attribute_value_id 		VARCHAR(50) 		NOT NULL UNIQUE,
 	attribute_id 					VARCHAR(50) 		NOT NULL,
 	attribute_unit_id 		VARCHAR(50),
 	min_value 						INT 						NOT NULL,

@@ -31,6 +31,14 @@ func (em ErrorMessage) Message(locale string, err error, a ...interface{}) strin
 	}
 }
 
+func CreateFailed(enName, zhName string) ErrorMessage {
+	return ErrorMessage{
+		Name: fmt.Sprintf("create_%s_failed", enName),
+		en:   fmt.Sprintf("create %s failed", enName),
+		zhCN: fmt.Sprintf("创建%s失败", zhName),
+	}
+}
+
 var (
 	ErrorPermissionDenied = ErrorMessage{
 		Name: "permission_denied",
@@ -386,5 +394,15 @@ var (
 		Name: "illegal_bankAccountNumber_format",
 		en:   "illegal BankAccountNumber format [%s]",
 		zhCN: "非法的银行账号格式[%s]",
+	}
+	ErrorAttributeNotExist = ErrorMessage{
+		Name: "attribute_not_exist",
+		en:   "attribute not exist",
+		zhCN: "属性不存在",
+	}
+	ErrorAttUnitNotExist = ErrorMessage{
+		Name: "attribute_unit_not_exist",
+		en:   "attribute unit not exist",
+		zhCN: "属性单位不存在",
 	}
 )

@@ -106,6 +106,11 @@ const (
 	ColumnRejectMessage     = "reject_message"
 	ColumnSubmitTime        = "submit_time"
 	ColumnApprover          = "approver"
+
+	//mbing
+	ColumnAttributeId       = "attribute_id"
+	ColumnAttUnitId         = "attribute_unit_id"
+	ColumnAttValueId        = "attribute_value_id"
 )
 
 var PushEventTables = map[string][]string{
