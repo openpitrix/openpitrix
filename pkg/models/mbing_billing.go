@@ -8,7 +8,6 @@ import (
 	"time"
 )
 
-
 type LeasingContract struct {
 	Id             string
 	LeasingId      string

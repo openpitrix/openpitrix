@@ -44,7 +44,10 @@ const (
 
 	// mbing
 	TableAttribute = "attribute"
-	TableAttUnit = "attribute_unit"
-	TableAttValue = "attribute_value"
-	TableLeasing = "leasing"
+	TableAttUnit   = "attribute_unit"
+	TableAttValue  = "attribute_value"
+	TableResAtt    = "resource_attribute"
+	TableSku       = "sku"
+	TablePrice     = "price"
+	TableLeasing   = "leasing"
 )

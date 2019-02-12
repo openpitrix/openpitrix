@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS attribute
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
 	remark  							TEXT,
-	PRIMARY KEY (id)
+	PRIMARY KEY (attribute_id)
 );
 
 
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS attribute_unit
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
-	PRIMARY KEY (id)
+	PRIMARY KEY (attribute_unit_id)
 );
 
 
@@ -34,38 +34,38 @@ CREATE TABLE IF NOT EXISTS attribute_value
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
-	PRIMARY KEY (id)
+	PRIMARY KEY (attribute_value_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS resource_attribute
 (
-	id 										VARCHAR(50) 		NOT NULL UNIQUE,
+	resource_attribute_id VARCHAR(50) 		NOT NULL UNIQUE,
 	resource_version_id 	VARCHAR(50)			NOT NULL,
 	attributes 						JSON 						NOT NULL COMMENT 'sku attribute ids',
 	metering_attributes 	JSON 						NOT NULL COMMENT 'the attribute ids need to metering and billing',
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
-	PRIMARY KEY (id)
+	PRIMARY KEY (resource_attribute_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS sku
 (
-	id 										VARCHAR(50) 	NOT NULL UNIQUE,
+	sku_id 								VARCHAR(50) 	NOT NULL UNIQUE,
 	resource_attribute_id VARCHAR(50)		NOT NULL,
 	attribute_values 			JSON 					NOT NULL COMMENT 'sku attribute values for attributes in resource_attribute: {attribute: value, ...}',
 	create_time 					TIMESTAMP 		DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	status								TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
-	PRIMARY KEY (id)
+	PRIMARY KEY (sku_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS price
 (
-	id 										VARCHAR(50) 	NOT NULL UNIQUE,
+	price_id 							VARCHAR(50) 	NOT NULL UNIQUE,
 	sku_id 								VARCHAR(50) 	NOT NULL,
 	attribute_id	 				VARCHAR(50)		NOT NULL,
 	prices 								JSON 					COMMENT '{attribute_value1: price1, ...}',
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS price
 	update_time       		TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	status								TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
 	INDEX price_sku_index (sku_id, id),
-	PRIMARY KEY (id)
+	PRIMARY KEY (price_id)
 );
 
 

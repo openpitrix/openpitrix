@@ -108,9 +108,9 @@ const (
 	ColumnApprover          = "approver"
 
 	//mbing
-	ColumnAttributeId       = "attribute_id"
-	ColumnAttUnitId         = "attribute_unit_id"
-	ColumnAttValueId        = "attribute_value_id"
+	ColumnAttributeId = "attribute_id"
+	ColumnAttUnitId   = "attribute_unit_id"
+	ColumnAttValueId  = "attribute_value_id"
 )
 
 var PushEventTables = map[string][]string{

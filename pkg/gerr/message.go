@@ -39,6 +39,14 @@ func CreateFailed(enName, zhName string) ErrorMessage {
 	}
 }
 
+func NotExistError(enName, zhName string) ErrorMessage {
+	return ErrorMessage{
+		Name: fmt.Sprintf("%s_not_exist", enName),
+		en:   fmt.Sprintf("%s not exist", enName),
+		zhCN: fmt.Sprintf("%s不存在", zhName),
+	}
+}
+
 var (
 	ErrorPermissionDenied = ErrorMessage{
 		Name: "permission_denied",
@@ -395,14 +403,9 @@ var (
 		en:   "illegal BankAccountNumber format [%s]",
 		zhCN: "非法的银行账号格式[%s]",
 	}
-	ErrorAttributeNotExist = ErrorMessage{
-		Name: "attribute_not_exist",
-		en:   "attribute not exist",
-		zhCN: "属性不存在",
-	}
-	ErrorAttUnitNotExist = ErrorMessage{
-		Name: "attribute_unit_not_exist",
-		en:   "attribute unit not exist",
-		zhCN: "属性单位不存在",
+	ErrorUnknown = ErrorMessage{
+		Name: "unknown_error",
+		en:   "unknown error",
+		zhCN: "未知错误",
 	}
 )

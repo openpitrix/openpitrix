@@ -75,7 +75,7 @@ message CreateAttValueResponse {
 }
 
 message ResourceAttribute {
-	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue resource_attribute_id = 1;
 	google.protobuf.StringValue resource_version_id = 2;
 	repeated google.protobuf.StringValue attribute_ids = 3;
 	repeated google.protobuf.StringValue metering_attribute_ids = 4;
@@ -108,36 +108,24 @@ message CreateSkuResponse {
 	google.protobuf.StringValue sku_id = 1;
 }
 
-message StepPrice {
-	google.protobuf.StringValue attribute_value_id = 1; //the value that upto for the step price
-    google.protobuf.FloatValue price = 2;
-}
-
 message Price {
     google.protobuf.StringValue id = 1;
     google.protobuf.StringValue sku_id = 2;
     google.protobuf.StringValue attribute_id = 3; //metering attribute id
-	repeated StepPrice prices = 4;
+	map<string, double> prices = 4;
     Currency currency = 5;
 }
 
 message CreatePriceRequest {
 	google.protobuf.StringValue sku_id = 1;
 	google.protobuf.StringValue attribute_id = 2; //metering attribute id
-	repeated StepPrice prices = 3;
+	map<string, double> prices = 3;
 	Currency currency = 4;
 }
 
 message CreatePriceResponse {
 	google.protobuf.StringValue price_id = 1;
 }
-
-
-message CommonResponse {
-	google.protobuf.Int32Value status = 1;
-	google.protobuf.StringValue message = 2;
-}
-
 
 service SkuManager {
 	rpc CreateAttribute (CreateAttributeRequest) returns (CreateAttributeResponse) {
@@ -182,10 +170,10 @@ service SkuManager {
 
 	rpc CreateSku (CreateSkuRequest) returns (CreateSkuResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create skus of the resource"
+            summary: "create sku of the resource"
         };
 		option (google.api.http) = {
-            post: "/v1/billing/resource/skus"
+            post: "/v1/billing/resource/sku"
             body: "*"
         };
 	}
@@ -226,7 +214,7 @@ message CombinationPrice {
     google.protobuf.StringValue combination_sku_id = 2;
     google.protobuf.StringValue resource_version_id = 3;
     google.protobuf.StringValue billing_attribute_id = 4;
-	repeated StepPrice prices = 5;
+	map<string, double> prices = 5;
 	Currency currency = 6;
 }
 
@@ -305,6 +293,11 @@ message CreatePRRequest { //CreateProbationRecordRequest
 	ProbationRecord record = 1;
 }
 
+message CommonResponse {
+	google.protobuf.Int32Value status = 1;
+	google.protobuf.StringValue message = 2;
+}
+
 
 service PromotionManager {
 	rpc CreateCRA (CreateCRARequest) returns (CommonResponse) {
@@ -361,20 +354,13 @@ service PromotionManager {
 
 //************************** metering ****************************
 
-enum SkuTypes {
-	NORMAL = 0;
-	COMBATION = 1;
-	PROBATION = 2;
-}
-
-enum UpdateValueTypes {
-	INCREMENTAL = 0;
-	REPLACE = 1;
-}
-
 message MeteringAttributeValue {
 	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.FloatValue value = 2;
+	enum UpdateValueTypes {
+		INCREMENTAL = 0;
+		REPLACE = 1;
+	}
 	UpdateValueTypes type = 3;
 }
 
@@ -383,6 +369,11 @@ message MeteringSku {
 	repeated MeteringAttributeValue attribute_values = 2;
 	google.protobuf.Timestamp action_time = 3;
 	google.protobuf.StringValue other_info = 4;
+	enum SkuTypes {
+		NORMAL = 0;
+		COMBATION = 1;
+		PROBATION = 2;
+	}
 	SkuTypes type = 5;
 }
 

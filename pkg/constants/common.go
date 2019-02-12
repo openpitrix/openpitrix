@@ -253,10 +253,3 @@ var AllowedAppDefaultStatus = []string{
 	StatusDraft,
 	StatusActive,
 }
-
-const (
-	CurrencyCNY = "CNY"
-	CurrencyHKD = "HKD"
-	CurrencyUSD = "USD"
-)
-

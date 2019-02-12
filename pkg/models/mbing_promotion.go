@@ -10,7 +10,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 )
 
-
 func NewCRAId() string {
 	return idutil.GetUuid("cra-")
 }

@@ -9,11 +9,33 @@ import (
 
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/util/stringutil"
 
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pi"
 )
+
+func checkExistById(ctx context.Context, structName, idValue string) (bool, error) {
+	tableName := stringutil.CamelCaseToUnderscore(structName)
+	idName := stringutil.UnderscoreToCamelCase(tableName) + "Id"
+	count, err := pi.Global().DB(ctx).
+		Select(idName).
+		From(tableName).
+		Where(db.Eq(idName, idValue)).
+		Limit(1).Count()
+
+	exist := false
+	if err != nil {
+		logger.Error(ctx, "Failed to connect DB, Errors: [%+v]", err)
+		return exist, err
+	}
+
+	if count > 0 {
+		exist = true
+	}
+	return exist, nil
+}
 
 func insertAttribute(ctx context.Context, attribute *models.Attribute) error {
 	_, err := pi.Global().DB(ctx).
@@ -76,9 +98,38 @@ func insertAttributeValue(ctx context.Context, attValue *models.AttributeValue) 
 	return err
 }
 
+func insertResourceAttribute(ctx context.Context, resAtt *models.ResourceAttribute) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableResAtt).
+		Record(resAtt).
+		Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert resource_attribute, Errors: [%+v]", err)
+	}
+	return err
+}
 
+func insertSku(ctx context.Context, sku *models.Sku) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableSku).
+		Record(sku).
+		Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert sku, Errors: [%+v]", err)
+	}
+	return err
+}
 
-
+func insertSku(ctx context.Context, sku *models.Sku) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableSku).
+		Record(sku).
+		Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert sku, Errors: [%+v]", err)
+	}
+	return err
+}
 
 func insertLeasingsToDB(ctx context.Context, leasings []*models.Leasing) error {
 

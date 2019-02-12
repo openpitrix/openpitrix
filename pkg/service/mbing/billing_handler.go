@@ -9,7 +9,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 )
 
-
 func Billing() {
 	leasing := models.Leasing{}
 	contract, err := calculate(leasing)
