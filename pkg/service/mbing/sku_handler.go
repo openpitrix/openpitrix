@@ -7,7 +7,6 @@ package mbing
 import (
 	"context"
 
-	"github.com/fatih/structs"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -17,7 +16,7 @@ func (s *Server) CreateAttribute(ctx context.Context, req *pb.CreateAttributeReq
 	att := models.PbToAttribute(req)
 	err := insertAttribute(ctx, att)
 	if err != nil {
-		return nil, commonInternalErr(ctx, structs.Name(att), CreateFailedCode)
+		return nil, commonInternalErr(ctx, att, CreateFailedCode)
 	}
 	return &pb.CreateAttributeResponse{AttributeId: pbutil.ToProtoString(att.AttributeId)}, nil
 }
@@ -26,7 +25,7 @@ func (s *Server) CreateAttributeUnit(ctx context.Context, req *pb.CreateAttUnitR
 	attUnit := models.PbToAttUnit(req)
 	err := insertAttributeUnit(ctx, attUnit)
 	if err != nil {
-		return nil, commonInternalErr(ctx, structs.Name(attUnit), CreateFailedCode)
+		return nil, commonInternalErr(ctx, attUnit, CreateFailedCode)
 	}
 	return &pb.CreateAttUnitResponse{AttributeUnitId: pbutil.ToProtoString(attUnit.AttributeUnitId)}, nil
 }
@@ -34,15 +33,14 @@ func (s *Server) CreateAttributeUnit(ctx context.Context, req *pb.CreateAttUnitR
 func (s *Server) CreateAttributeValue(ctx context.Context, req *pb.CreateAttValueRequest) (*pb.CreateAttValueResponse, error) {
 	attValue := models.PbToAttValue(req)
 
-	actionStructName := structs.Name(attValue)
 	//check if attribute exist
-	err := checkStructExistById(ctx, structs.Name(models.Attribute{}), attValue.AttributeId, actionStructName, CreateFailedCode)
+	err := checkStructExistById(ctx, models.Attribute{}, attValue, attValue.AttributeId, CreateFailedCode)
 	if err != nil {
 		return nil, err
 	}
 
 	//check if attribute_unit exist
-	err = checkStructExistById(ctx, structs.Name(models.AttributeUnit{}), attValue.AttributeUnitId, actionStructName, CreateFailedCode)
+	err = checkStructExistById(ctx, models.AttributeUnit{}, attValue, attValue.AttributeUnitId, CreateFailedCode)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +48,7 @@ func (s *Server) CreateAttributeValue(ctx context.Context, req *pb.CreateAttValu
 	//insert into attribute_value
 	err = insertAttributeValue(ctx, attValue)
 	if err != nil {
-		return nil, commonInternalErr(ctx, actionStructName, CreateFailedCode)
+		return nil, commonInternalErr(ctx, attValue, CreateFailedCode)
 	}
 	return &pb.CreateAttValueResponse{AttributeValueId: pbutil.ToProtoString(attValue.AttributeValueId)}, nil
 }
@@ -58,11 +56,10 @@ func (s *Server) CreateAttributeValue(ctx context.Context, req *pb.CreateAttValu
 func (s *Server) CreateResourceAttribute(ctx context.Context, req *pb.CreateResAttRequest) (*pb.CreateResAttResponse, error) {
 	resAtt := models.PbToResAtt(req)
 
-	actionStructName := structs.Name(resAtt)
-	attName := structs.Name(models.Attribute{})
+	att := models.Attribute{}
 	//check if attributes exist
 	for _, attId := range resAtt.Attributes {
-		err := checkStructExistById(ctx, attName, attId, actionStructName, CreateFailedCode)
+		err := checkStructExistById(ctx, att, resAtt, attId, CreateFailedCode)
 		if err != nil {
 			return nil, err
 		}
@@ -71,7 +68,7 @@ func (s *Server) CreateResourceAttribute(ctx context.Context, req *pb.CreateResA
 	//insert resource_attribute
 	err := insertResourceAttribute(ctx, resAtt)
 	if err != nil {
-		return nil, commonInternalErr(ctx, actionStructName, CreateFailedCode)
+		return nil, commonInternalErr(ctx, resAtt, CreateFailedCode)
 	}
 	return &pb.CreateResAttResponse{ResourceAtrributeId: pbutil.ToProtoString(resAtt.ResourceAttributeId)}, nil
 }
@@ -79,31 +76,30 @@ func (s *Server) CreateResourceAttribute(ctx context.Context, req *pb.CreateResA
 func (s *Server) CreateSku(ctx context.Context, req *pb.CreateSkuRequest) (*pb.CreateSkuResponse, error) {
 	sku := models.PbToSku(req)
 
-	actionStructName := structs.Name(sku)
 	//check if resource_attribute exist
 	err := checkStructExistById(
 		ctx,
-		structs.Name(models.ResourceAttribute{}),
+		models.ResourceAttribute{},
+		sku,
 		sku.ResourceAttributeId,
-		actionStructName,
 		CreateFailedCode)
 	if err != nil {
 		return nil, err
 	}
 
-	attValueName := structs.Name(models.AttributeValue{})
+	attValue := models.AttributeValue{}
 	//check if attribute_values exist
-	for _, v := range sku.Values {
-		err = checkStructExistById(ctx, attValueName, v, actionStructName, CreateFailedCode)
+	for _, VId := range sku.Values {
+		err = checkStructExistById(ctx, attValue, sku, VId, CreateFailedCode)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	//insert resource_attribute
+	//insert sku
 	err = insertSku(ctx, sku)
 	if err != nil {
-		return nil, commonInternalErr(ctx, actionStructName, CreateFailedCode)
+		return nil, commonInternalErr(ctx, sku, CreateFailedCode)
 	}
 	return &pb.CreateSkuResponse{SkuId: pbutil.ToProtoString(sku.SkuId)}, nil
 }
@@ -111,31 +107,31 @@ func (s *Server) CreateSku(ctx context.Context, req *pb.CreateSkuRequest) (*pb.C
 func (s *Server) CreatePrice(ctx context.Context, req *pb.CreatePriceRequest) (*pb.CreatePriceResponse, error) {
 	price := models.PbToPrice(req)
 
-	actionStructName := structs.Name(price)
-	//check if resource_attribute exist
-	err := checkStructExistById(
-		ctx,
-		structs.Name(models.ResourceAttribute{}),
-		sku.ResourceAttributeId,
-		actionStructName,
-		CreateFailedCode)
+	//check if sku exist
+	err := checkStructExistById(ctx, models.Sku{}, price, price.SkuId, CreateFailedCode)
 	if err != nil {
 		return nil, err
 	}
 
-	attValueName := structs.Name(models.AttributeValue{})
+	//check if attribute exist
+	err = checkStructExistById(ctx, models.Attribute{}, price, price.AttributeId, CreateFailedCode)
+	if err != nil {
+		return nil, err
+	}
+
 	//check if attribute_values exist
-	for _, v := range sku.Values {
-		err = checkStructExistById(ctx, attValueName, v, actionStructName, CreateFailedCode)
+	attValue := models.AttributeValue{}
+	for k, _ := range price.Prices{
+		err = checkStructExistById(ctx, attValue, price, k, CreateFailedCode)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	//insert resource_attribute
-	err = insertSku(ctx, sku)
+	//insert price
+	err = insertPrice(ctx, price)
 	if err != nil {
-		return nil, commonInternalErr(ctx, actionStructName, CreateFailedCode)
+		return nil, commonInternalErr(ctx, price, CreateFailedCode)
 	}
-	return &pb.CreateSkuResponse{SkuId: pbutil.ToProtoString(sku.SkuId)}, nil
+	return &pb.CreatePriceResponse{PriceId: pbutil.ToProtoString(price.PriceId)}, nil
 }

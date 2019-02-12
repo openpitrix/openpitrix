@@ -38,22 +38,19 @@ func init() {
 //check if existStructName exist when action actionStructName
 func checkStructExistById(ctx context.Context, checkStruct, actionStruct interface{}, idValue string, actionErrType int8) error {
 	checkStructName := structs.Name(checkStruct)
-	actionStructName := structs.Name(actionStruct)
-	structs.
 	exist, err := checkExistById(ctx, checkStructName, idValue)
 	if err != nil {
-		return commonInternalErr(ctx, actionStructName, actionErrType)
+		return commonInternalErr(ctx, actionStruct, actionErrType)
 	}
 	if !exist {
-		return commonInternalErr(ctx, checkStructName, NotExistCode)
+		return commonInternalErr(ctx, checkStruct, NotExistCode)
 	}
 	return nil
 }
 
 //CommonInternalErr: return error with gerr.ErrorMessage
-//stru -> struct
-func commonInternalErr(ctx context.Context, stru interface{}, errType int8) error {
-	structName := structs.Name(stru)
+func commonInternalErr(ctx context.Context, structObj interface{}, errType int8) error {
+	structName := structs.Name(structObj)
 	enName := structDisName[structName+"En"]
 	zhName := structDisName[structName+"Zh"]
 	switch errType {

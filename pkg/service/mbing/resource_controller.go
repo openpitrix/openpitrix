@@ -120,13 +120,13 @@ func insertSku(ctx context.Context, sku *models.Sku) error {
 	return err
 }
 
-func insertSku(ctx context.Context, sku *models.Sku) error {
+func insertPrice(ctx context.Context, price *models.Price) error {
 	_, err := pi.Global().DB(ctx).
-		InsertInto(constants.TableSku).
-		Record(sku).
+		InsertInto(constants.TablePrice).
+		Record(price).
 		Exec()
 	if err != nil {
-		logger.Error(ctx, "Failed to insert sku, Errors: [%+v]", err)
+		logger.Error(ctx, "Failed to insert price, Errors: [%+v]", err)
 	}
 	return err
 }
