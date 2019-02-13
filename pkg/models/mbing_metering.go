@@ -20,12 +20,14 @@ func NewMeteringId() string {
 }
 
 type Leasing struct {
-	Id             string
+	LeasingId      string
 	GroupId        string
 	UserId         string
 	ResourceId     string
 	SkuId          string
+	OtherInfo      string
 	MeteringValues map[string]interface{}
+	LeaseTime      time.Time // action_time
 	LeaseTime      time.Time // action_time
 	RenewalTime    time.Time // next update time
 	UpdateTime     time.Time

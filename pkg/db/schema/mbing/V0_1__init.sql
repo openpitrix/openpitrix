@@ -81,12 +81,12 @@ CREATE TABLE IF NOT EXISTS price
 /**  Metering  **/
 CREATE TABLE IF NOT EXISTS leasing
 (
-	id										VARCHAR(50)		NOT NULL UNIQUE,
+	leasing_id						VARCHAR(50)		NOT NULL UNIQUE,
 	group_id							VARCHAR(50)		NOT NULL,
 	user_id								VARCHAR(50)		NOT NULL,
 	resource_id						VARCHAR(50)		NOT NULL COMMENT 'the same as cluster_id',
 	sku_id								VARCHAR(50)		NOT NULL,
-	other_info						VARCHAR(255)	COMMENT 'used for distinguish when resource_id and sku_id are same with others',
+	other_info						VARCHAR(50)		COMMENT 'used for distinguish when resource_id and sku_id are same with others',
 	metering_values				JSON					COMMENT 'the values of metering_attributes, {att_id: value, ..}',
 	lease_time		    		TIMESTAMP			NULL,
 	update_duration_time  TIMESTAMP			NULL,
@@ -101,17 +101,18 @@ CREATE TABLE IF NOT EXISTS leasing
 
 CREATE TABLE IF NOT EXISTS leased
 (
-	leasing_id						VARCHAR(50)		NOT NULL UNIQUE,
+	leased_id							VARCHAR(50)		NOT NULL UNIQUE,
 	group_id							VARCHAR(50)		NOT NULL,
 	user_id								VARCHAR(50)		NOT NULL,
 	resource_id						VARCHAR(50)		NOT NULL COMMENT 'the same as cluster_id',
 	sku_id								VARCHAR(50)		NOT NULL,
+	other_info						VARCHAR(50)		COMMENT 'used for distinguish when resource_id and sku_id are same with others',
 	metering_values				JSON					COMMENT 'the values of metering_attributes, {att_id: value, ..}',
 	lease_time		    		TIMESTAMP			NULL,
 	end_time       				TIMESTAMP			NULL,
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	close_time						JSON					COMMENT '[{close_time: restart_time}, ..]',
-	PRIMARY KEY (leasing_id)
+	PRIMARY KEY (leased_id)
 );
 
 

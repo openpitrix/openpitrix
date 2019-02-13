@@ -356,7 +356,7 @@ service PromotionManager {
 
 message MeteringAttributeValue {
 	google.protobuf.StringValue attribute_id = 1;
-	google.protobuf.FloatValue value = 2;
+	google.protobuf.DoubleValue value = 2;
 	enum UpdateValueTypes {
 		INCREMENTAL = 0;
 		REPLACE = 1;
@@ -383,8 +383,12 @@ message MeteringRequest {
 	repeated MeteringSku sku_set = 3;
 }
 
+message MeteringResponse {
+	google.protobuf.StringValue leasing_id = 1;
+}
+
 service MeteringManager {
-	rpc StartMetering (MeteringRequest) returns (CommonResponse) {
+	rpc StartMetering (MeteringRequest) returns (MeteringResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "start metering about the sku_set"
 		};

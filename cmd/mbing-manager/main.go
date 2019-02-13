@@ -2,12 +2,12 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-//openpitrix vendor manager
+//openpitrix mbing manager
 package main
 
 import (
 	"openpitrix.io/openpitrix/pkg/config"
-	mbing "openpitrix.io/openpitrix/pkg/service/mbing"
+	"openpitrix.io/openpitrix/pkg/service/mbing"
 )
 
 func main() {

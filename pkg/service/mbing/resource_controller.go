@@ -37,6 +37,7 @@ func checkExistById(ctx context.Context, structName, idValue string) (bool, erro
 	return exist, nil
 }
 
+//Sku
 func insertAttribute(ctx context.Context, attribute *models.Attribute) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableAttribute).
@@ -131,6 +132,7 @@ func insertPrice(ctx context.Context, price *models.Price) error {
 	return err
 }
 
+//Metering
 func insertLeasingsToDB(ctx context.Context, leasings []*models.Leasing) error {
 
 	dbConn := pi.Global().DB(ctx)
@@ -144,7 +146,7 @@ func insertLeasingsToDB(ctx context.Context, leasings []*models.Leasing) error {
 
 	var err error
 	for _, leasing := range leasings {
-		_, err := dbConn.InsertInto(constants.TableMbing).Record(leasing).Exec()
+		_, err := dbConn.InsertInto(constants.TableLeasing).Record(leasing).Exec()
 		if err != nil {
 			logger.Error(ctx, "Failed to save leasing: [%+v].", leasing)
 			break
