@@ -46,10 +46,11 @@ func initIAMAccount() {
 	}
 	ctx := context.Background()
 	user, b, err := validateUserPassword(ctx, email, password)
+	var userId string
 	if err != nil {
 		logger.Info(ctx, "Validate user password failed, create new user")
 		// create user
-		_, err = imClient.CreateUser(ctx, &pbim.User{
+		user, err = imClient.CreateUser(ctx, &pbim.User{
 			Email:    email,
 			Username: getUsernameFromEmail(email),
 			Password: password,
@@ -58,9 +59,9 @@ func initIAMAccount() {
 		if err != nil {
 			logger.Info(ctx, "Create new user failed, error: %+v", err)
 		}
-		return
+
 	}
-	userId := user.UserId
+	userId = user.UserId
 	if !b {
 		_, err = imClient.ModifyPassword(ctx, &pbim.Password{
 			UserId:   userId,

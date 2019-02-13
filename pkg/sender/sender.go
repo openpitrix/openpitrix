@@ -47,8 +47,8 @@ func (s Sender) GetAccessPath() OwnerPath {
 	if s.UserId == "system" {
 		return OwnerPath("")
 	}
-	// developer and normal user only can access data created by self
-	return OwnerPath(fmt.Sprintf(":%s", s.UserId))
+	// normal user only can access data created by self
+	return s.GetOwnerPath()
 }
 
 func (s *Sender) ToJson() string {
