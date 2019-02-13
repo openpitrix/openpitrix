@@ -1,0 +1,12 @@
+#!/bin/bash
+
+key=$1
+iv=$2
+
+curl https://pek3a.qingstor.com/releases-qs/qsctl/qsctl-latest-linux.tar.gz -O
+tar -xzvf qsctl-latest-linux.tar.gz
+cd image/amazon-linux/; tar -czvf amazon-linux.tar.gz *;cd ../..
+cd image/ubuntu/; tar -czvf ubuntu.tar.gz *;cd ../..
+openssl aes-256-cbc -K ${key} -iv ${iv} -in key.yaml.enc -out key.yaml -d
+./qsctl cp -f image/ubuntu/ubuntu.tar.gz qs://openpitrix/image/ubuntu.tar.gz -c key.yaml -z pek3a
+./qsctl cp -f image/amazon-linux/amazon-linux.tar.gz qs://openpitrix/image/amazon-linux.tar.gz -c key.yaml -z pek3a

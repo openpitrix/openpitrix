@@ -47,16 +47,16 @@ func NewGetVendorVerifyInfoOK() *GetVendorVerifyInfoOK {
 A successful response.
 */
 type GetVendorVerifyInfoOK struct {
-	Payload *models.OpenpitrixVendorVerifyInfo
+	Payload *models.OpenpitrixGetVendorVerifyInfoResponse
 }
 
 func (o *GetVendorVerifyInfoOK) Error() string {
-	return fmt.Sprintf("[GET /v1/vendor_verify_infos/user_id=*][%d] getVendorVerifyInfoOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/app_vendors/app_vendor][%d] getVendorVerifyInfoOK  %+v", 200, o.Payload)
 }
 
 func (o *GetVendorVerifyInfoOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.OpenpitrixVendorVerifyInfo)
+	o.Payload = new(models.OpenpitrixGetVendorVerifyInfoResponse)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

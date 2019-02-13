@@ -42,6 +42,8 @@ const (
 	ColumnRole                     = "role"
 	ColumnRuntimeId                = "runtime_id"
 	ColumnRuntimeCredentialId      = "runtime_credential_id"
+	ColumnRuntimeUrl               = "runtime_url"
+	ColumnDebug                    = "debug"
 	ColumnRuntimeLabelId           = "runtime_label_id"
 	ColumnScreenshots              = "screenshots"
 	ColumnSelectorKey              = "selector_key"
@@ -178,9 +180,6 @@ var IndexedColumns = map[string][]string{
 	TableCategory: {
 		ColumnCategoryId, ColumnStatus, ColumnLocale, ColumnOwner, ColumnName,
 	},
-	TableUser: {
-		ColumnGroupId, ColumnUserId, ColumnStatus, ColumnRole,
-	},
 	TableMarket: {
 		ColumnMarketId, ColumnName, ColumnVisibility, ColumnStatus, ColumnOwner,
 	},
@@ -208,7 +207,6 @@ var SearchWordColumnTable = []string{
 	TableTask,
 	TableCluster,
 	TableClusterNode,
-	TableUser,
 	TableCategory,
 	TableVendorVerifyInfo,
 }
@@ -241,9 +239,6 @@ var SearchColumns = map[string][]string{
 	},
 	TableRepo: {
 		ColumnName, ColumnDescription,
-	},
-	TableUser: {
-		ColumnUserId, ColumnDescription, ColumnEmail, ColumnUsername,
 	},
 	TableCategory: {
 		ColumnCategoryId, ColumnLocale, ColumnOwner, ColumnName,

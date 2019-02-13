@@ -7,7 +7,9 @@ package app
 import (
 	"context"
 
+	accountclient "openpitrix.io/openpitrix/pkg/client/account"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -27,19 +29,25 @@ func NewAppManagerClient() (*Client, error) {
 	}, nil
 }
 
-func (c *Client) DescribeActiveAppsWithOwner(ctx context.Context, userId string, limit uint32, offset uint32) ([]*pb.App, int32, error) {
-	var appUserIds []string
-	appUserIds = append(appUserIds, userId)
-	request := &pb.DescribeAppsRequest{
-		Owner:  appUserIds,
-		Limit:  limit,
-		Offset: offset,
+func (c *Client) DescribeAppsWithAppVendorUserId(ctx context.Context, appVendorUserId string, limit uint32, offset uint32) ([]*pb.App, int32, error) {
+	account, err := accountclient.NewClient()
+	if err != nil {
+		return nil, 0, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
 
-	response, err := c.DescribeActiveApps(ctx, request)
+	groupPath, _ := account.GetUserGroupPath(ctx, appVendorUserId)
+	var groupPaths []string
+	groupPaths = append(groupPaths, groupPath)
 
+	req := pb.DescribeAppsRequest{
+		OwnerPath: groupPaths,
+		Limit:     limit,
+		Offset:    offset,
+	}
+
+	response, err := c.DescribeApps(ctx, &req)
 	if err != nil {
-		logger.Error(ctx, "Describe ActiveApps with Owners [%s] failed: %+v", userId, err)
+		logger.Error(ctx, "Describe apps failed: %+v", err)
 		return nil, 0, err
 	}
 	return response.AppSet, int32(response.TotalCount), nil

@@ -90,6 +90,7 @@ var reviewActionStatusMap = map[Action]string{
 	Review: constants.StatusInReview,
 	Pass:   constants.StatusPassed,
 	Reject: constants.StatusRejected,
+	Cancel: constants.StatusDraft,
 }
 
 func execAppVersionReview(ctx context.Context, version *models.AppVersion, action Action, role, message string) error {
@@ -132,6 +133,8 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 			return gerr.New(ctx,
 				gerr.FailedPrecondition, gerr.ErrorAppVersionIncorrectStatus, version.VersionId, version.Status)
 		}
+	case Cancel:
+
 	}
 
 	versionReview.UpdatePhase(role, status, operator, message)
@@ -161,6 +164,24 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 		Exec()
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed, versionReview.ReviewId)
+	}
+	return nil
+}
+
+func cancelAppVersionReview(ctx context.Context, version *models.AppVersion, role string) error {
+	err := execAppVersionReview(ctx, version, Cancel, role, "")
+	if err != nil {
+		return err
+	}
+	err = updateVersionStatus(ctx, version, constants.StatusDraft, map[string]interface{}{
+		constants.ColumnReviewId: "",
+	})
+	if err != nil {
+		return err
+	}
+	err = addAppVersionAudit(ctx, version, constants.StatusDraft, role, "")
+	if err != nil {
+		return err
 	}
 	return nil
 }

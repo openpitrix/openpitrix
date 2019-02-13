@@ -9,16 +9,13 @@ import (
 	"fmt"
 
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/plugins"
-	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/reflectutil"
 	"openpitrix.io/openpitrix/pkg/util/tlsutil"
@@ -54,116 +51,72 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.CreateKeyPairRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("key").
 			Exec()
 	case *pb.DeleteKeyPairsRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("key_pair_id").
 			Exec()
 	case *pb.DescribeSubnetsRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("runtime_id").
 			Exec()
 	case *pb.CreateClusterRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("app_id", "version_id", "runtime_id", "conf").
 			Exec()
 	case *pb.DeleteClustersRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.UpgradeClusterRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id", "version_id").
 			Exec()
 	case *pb.RollbackClusterRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.ResizeClusterRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.AddClusterNodesRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id", "node_count").
 			Exec()
 	case *pb.DeleteClusterNodesRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id", "node_id").
 			Exec()
 	case *pb.UpdateClusterEnvRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id", "env").
 			Exec()
 	case *pb.StopClustersRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.StartClustersRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.RecoverClustersRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.CeaseClustersRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("cluster_id").
 			Exec()
 	case *pb.GetClusterStatisticsRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllAdminRoles).
 			Exec()
 	}
 	return nil
 }
 
-func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
-	sender := ctxutil.GetSender(ctx)
-	switch r := req.(type) {
-	case *pb.DescribeClustersRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else {
-			r.Owner = []string{sender.UserId}
-		}
-		return r
-	case *pb.DescribeClusterNodesRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else {
-			r.Owner = []string{sender.UserId}
-		}
-		return r
-	case *pb.DescribeKeyPairsRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else {
-			r.Owner = []string{sender.UserId}
-		}
-		return r
-	}
-	return req
-}
-
-func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, providerInterface plugins.ProviderInterface,
+func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, providerClient pb.RuntimeProviderManagerClient,
 	clusterWrapper *models.ClusterWrapper) error {
 
 	// check pilot service
@@ -202,7 +155,7 @@ func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, p
 	}
 
 	// check subnet, vpc, eip
-	subnetResponse, err := providerInterface.DescribeSubnets(ctx, &pb.DescribeSubnetsRequest{
+	subnetResponse, err := providerClient.DescribeSubnets(ctx, &pb.DescribeSubnetsRequest{
 		RuntimeId: pbutil.ToProtoString(runtime.RuntimeId),
 		SubnetId:  []string{clusterWrapper.Cluster.SubnetId},
 		Zone:      []string{clusterWrapper.Cluster.Zone},
@@ -222,9 +175,15 @@ func CheckVmBasedProvider(ctx context.Context, runtime *models.RuntimeDetails, p
 	clusterWrapper.Cluster.VpcId = vpcId
 
 	// check resource
-	err = providerInterface.CheckResource(ctx, clusterWrapper)
+	response, err := providerClient.CheckResource(ctx, &pb.CheckResourceRequest{
+		RuntimeId: pbutil.ToProtoString(runtime.RuntimeId),
+		Cluster:   models.ClusterWrapperToPb(clusterWrapper),
+	})
 	if err != nil {
 		return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceQuotaNotEnough, err.Error())
+	}
+	if !response.Ok.GetValue() {
+		return fmt.Errorf("response is not ok")
 	}
 
 	fg := &Frontgate{

@@ -88,6 +88,7 @@ func (s *SpecValidator) Validate(data interface{}) (errs *Result, warnings *Resu
 
 	warnings = new(Result)
 
+	// Swagger schema validator
 	schv := NewSchemaValidator(s.schema, nil, "", s.KnownFormats)
 	var obj interface{}
 
@@ -170,7 +171,7 @@ func (s *SpecValidator) validateNonEmptyPathParamNames() *Result {
 }
 
 func (s *SpecValidator) validateDuplicateOperationIDs() *Result {
-	// OperationID, if specified, must be unique accross the board
+	// OperationID, if specified, must be unique across the board
 	res := new(Result)
 	known := make(map[string]int)
 	for _, v := range s.analyzer.OperationIDs() {
@@ -200,7 +201,7 @@ func (s *SpecValidator) validateDuplicatePropertyNames() *Result {
 		}
 
 		knownanc := map[string]struct{}{
-			"#/definitions/" + k: struct{}{},
+			"#/definitions/" + k: {},
 		}
 
 		ancs, rec := s.validateCircularAncestry(k, sch, knownanc)
@@ -654,10 +655,10 @@ func (s *SpecValidator) validateParameters() *Result {
 				var hasForm, hasBody bool
 
 				// Check parameters names uniqueness for operation
+				// TODO: should be done after param expansion
 				res.Merge(s.checkUniqueParams(path, method, op))
 
 				for _, pr := range paramHelp.safeExpandedParamsFor(path, method, op.ID, res, s) {
-
 					// Validate pattern regexp for parameters with a Pattern property
 					if _, err := compileRegexp(pr.Pattern); err != nil {
 						res.AddErrors(invalidPatternInParamMsg(op.ID, pr.Name, pr.Pattern))
@@ -753,11 +754,11 @@ func (s *SpecValidator) checkUniqueParams(path, method string, op *spec.Operatio
 
 	if op.Parameters != nil { // Safeguard
 		for _, ppr := range op.Parameters {
-			ok := false
-			pr, red := paramHelp.resolveParam(path, method, op.ID, ppr, s)
+			var ok bool
+			pr, red := paramHelp.resolveParam(path, method, op.ID, &ppr, s)
 			res.Merge(red)
 
-			if pr.Name != "" { // params with empty name does no participate the check
+			if pr != nil && pr.Name != "" { // params with empty name does no participate the check
 				key := fmt.Sprintf("%s#%s", pr.In, pr.Name)
 
 				if _, ok = pnames[key]; ok {

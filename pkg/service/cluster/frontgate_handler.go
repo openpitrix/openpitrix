@@ -8,12 +8,15 @@ import (
 	"context"
 
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
+	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 func (f *Frontgate) parseConf(subnetId, conf string) (string, error) {
@@ -53,23 +56,30 @@ func (f *Frontgate) CreateCluster(ctx context.Context, clusterWrapper *models.Cl
 		logger.Error(ctx, "Get frontgate cluster conf failed. ")
 		return clusterId, err
 	}
-	providerInterface, err := plugins.GetProviderPlugin(ctx, f.Runtime.Runtime.Provider)
-	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", f.Runtime.Runtime.Provider)
-		return clusterId, err
-	}
 	frontgateWrapper := new(models.ClusterWrapper)
-	err = providerInterface.ParseClusterConf(ctx, constants.FrontgateVersionId, clusterWrapper.Cluster.RuntimeId, conf, frontgateWrapper)
+	providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 	if err != nil {
-		logger.Error(ctx, "Parse frontgate cluster conf failed. ")
+		return clusterId, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	response, err := providerClient.ParseClusterConf(ctx, &pb.ParseClusterConfRequest{
+		RuntimeId: pbutil.ToProtoString(clusterWrapper.Cluster.RuntimeId),
+		VersionId: pbutil.ToProtoString(constants.FrontgateVersionId),
+		Conf:      pbutil.ToProtoString(conf),
+		Cluster:   models.ClusterWrapperToPb(frontgateWrapper),
+	})
+	if err != nil {
+		logger.Error(ctx, "Parse frontgate cluster conf failed.")
 		return clusterId, err
 	}
 
+	frontgateWrapper = models.PbToClusterWrapper(response.Cluster)
 	frontgateWrapper.Cluster.Zone = clusterWrapper.Cluster.Zone
+	frontgateWrapper.Cluster.Debug = clusterWrapper.Cluster.Debug
 	frontgateWrapper.Cluster.ClusterId = clusterId
 	frontgateWrapper.Cluster.SubnetId = clusterWrapper.Cluster.SubnetId
 	frontgateWrapper.Cluster.VpcId = clusterWrapper.Cluster.VpcId
 	frontgateWrapper.Cluster.Owner = clusterWrapper.Cluster.Owner
+	frontgateWrapper.Cluster.OwnerPath = clusterWrapper.Cluster.OwnerPath
 	frontgateWrapper.Cluster.ClusterType = constants.FrontgateClusterType
 	frontgateWrapper.Cluster.FrontgateId = ""
 	frontgateWrapper.Cluster.RuntimeId = f.Runtime.RuntimeId

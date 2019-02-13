@@ -12,7 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func CheckMarketsPermission(ctx context.Context, resourceIds []string) ([]*models.Market, error) {
@@ -20,7 +19,7 @@ func CheckMarketsPermission(ctx context.Context, resourceIds []string) ([]*model
 		return nil, nil
 	}
 
-	var sender = ctxutil.GetSender(ctx)
+	//var sender = ctxutil.GetSender(ctx)
 	var markets []*models.Market
 	_, err := pi.Global().DB(ctx).Select(models.MarketColumns...).From(constants.TableMarket).
 		Where(db.Eq(constants.ColumnMarketId, resourceIds)).Load(&markets)
@@ -29,13 +28,14 @@ func CheckMarketsPermission(ctx context.Context, resourceIds []string) ([]*model
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	if sender != nil && !sender.IsGlobalAdmin() {
-		for _, market := range markets {
-			if market.Owner != sender.UserId {
-				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, market.MarketId)
-			}
-		}
-	}
+	// TODO: check permission
+	//if sender != nil && !sender.IsGlobalAdmin() {
+	//	for _, market := range markets {
+	//		if market.Owner != sender.UserId {
+	//			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, market.MarketId)
+	//		}
+	//	}
+	//}
 
 	if len(markets) == 0 {
 		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceIds)
@@ -50,7 +50,7 @@ func CheckMarketPermisson(ctx context.Context, resourceId string) (*models.Marke
 		return nil, nil
 	}
 
-	var sender = ctxutil.GetSender(ctx)
+	//var sender = ctxutil.GetSender(ctx)
 	var markets []*models.Market
 	_, err := pi.Global().DB(ctx).
 		Select(models.MarketColumns...).
@@ -62,13 +62,14 @@ func CheckMarketPermisson(ctx context.Context, resourceId string) (*models.Marke
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	if sender != nil && !sender.IsGlobalAdmin() {
-		for _, market := range markets {
-			if market.Owner != sender.UserId {
-				return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, market.MarketId)
-			}
-		}
-	}
+	// TODO: check permission
+	//if sender != nil && !sender.IsGlobalAdmin() {
+	//	for _, market := range markets {
+	//		if market.Owner != sender.UserId {
+	//			return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorResourceAccessDenied, market.MarketId)
+	//		}
+	//	}
+	//}
 
 	if len(markets) == 0 {
 		return nil, gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotFound, resourceId)

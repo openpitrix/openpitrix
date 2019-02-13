@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"sort"
@@ -56,7 +57,7 @@ type Command struct {
 	// Boolean to hide this command from help or completion
 	Hidden bool
 	// Boolean to enable short-option handling so user can combine several
-	// single-character bool arguements into one
+	// single-character bool arguments into one
 	// i.e. foobar -o -v -> foobar -ov
 	UseShortOptionHandling bool
 
@@ -110,43 +111,7 @@ func (c Command) Run(ctx *Context) (err error) {
 		)
 	}
 
-	set, err := flagSet(c.Name, c.Flags)
-	if err != nil {
-		return err
-	}
-	set.SetOutput(ioutil.Discard)
-	firstFlagIndex, terminatorIndex := getIndexes(ctx)
-	flagArgs, regularArgs := getAllArgs(ctx.Args(), firstFlagIndex, terminatorIndex)
-	if c.UseShortOptionHandling {
-		flagArgs = translateShortOptions(flagArgs)
-	}
-	if c.SkipFlagParsing {
-		err = set.Parse(append([]string{"--"}, ctx.Args().Tail()...))
-	} else if !c.SkipArgReorder {
-		if firstFlagIndex > -1 {
-			err = set.Parse(append(flagArgs, regularArgs...))
-		} else {
-			err = set.Parse(ctx.Args().Tail())
-		}
-	} else if c.UseShortOptionHandling {
-		if terminatorIndex == -1 && firstFlagIndex > -1 {
-			// Handle shortname AND no options
-			err = set.Parse(append(regularArgs, flagArgs...))
-		} else {
-			// Handle shortname and options
-			err = set.Parse(flagArgs)
-		}
-	} else {
-		err = set.Parse(append(regularArgs, flagArgs...))
-	}
-
-	nerr := normalizeFlags(c.Flags, set)
-	if nerr != nil {
-		fmt.Fprintln(ctx.App.Writer, nerr)
-		fmt.Fprintln(ctx.App.Writer)
-		ShowCommandHelp(ctx, c.Name)
-		return nerr
-	}
+	set, err := c.parseFlags(ctx.Args().Tail())
 
 	context := NewContext(ctx.App, set, ctx)
 	context.Command = c
@@ -205,67 +170,120 @@ func (c Command) Run(ctx *Context) (err error) {
 	return err
 }
 
-func getIndexes(ctx *Context) (int, int) {
-	firstFlagIndex := -1
-	terminatorIndex := -1
-	for index, arg := range ctx.Args() {
+func (c *Command) parseFlags(args Args) (*flag.FlagSet, error) {
+	set, err := flagSet(c.Name, c.Flags)
+	if err != nil {
+		return nil, err
+	}
+	set.SetOutput(ioutil.Discard)
+
+	if c.SkipFlagParsing {
+		return set, set.Parse(append([]string{"--"}, args...))
+	}
+
+	if !c.SkipArgReorder {
+		args = reorderArgs(args)
+	}
+
+PARSE:
+	err = set.Parse(args)
+	if err != nil {
+		if c.UseShortOptionHandling {
+			// To enable short-option handling (e.g., "-it" vs "-i -t")
+			// we have to iteratively catch parsing errors.  This way
+			// we achieve LR parsing without transforming any arguments.
+			// Otherwise, there is no way we can discriminate combined
+			// short options from common arguments that should be left
+			// untouched.
+			errStr := err.Error()
+			trimmed := strings.TrimPrefix(errStr, "flag provided but not defined: ")
+			if errStr == trimmed {
+				return nil, err
+			}
+			// regenerate the initial args with the split short opts
+			newArgs := Args{}
+			for i, arg := range args {
+				if arg != trimmed {
+					newArgs = append(newArgs, arg)
+					continue
+				}
+				shortOpts := translateShortOptions(set, Args{trimmed})
+				if len(shortOpts) == 1 {
+					return nil, err
+				}
+				// add each short option and all remaining arguments
+				newArgs = append(newArgs, shortOpts...)
+				newArgs = append(newArgs, args[i+1:]...)
+				args = newArgs
+				// now reset the flagset parse again
+				set, err = flagSet(c.Name, c.Flags)
+				if err != nil {
+					return nil, err
+				}
+				set.SetOutput(ioutil.Discard)
+				goto PARSE
+			}
+		}
+		return nil, err
+	}
+
+	err = normalizeFlags(c.Flags, set)
+	if err != nil {
+		return nil, err
+	}
+
+	return set, nil
+}
+
+// reorderArgs moves all flags before arguments as this is what flag expects
+func reorderArgs(args []string) []string {
+	var nonflags, flags []string
+
+	readFlagValue := false
+	for i, arg := range args {
 		if arg == "--" {
-			terminatorIndex = index
+			nonflags = append(nonflags, args[i:]...)
 			break
-		} else if arg == "-" {
-			// Do nothing. A dash alone is not really a flag.
+		}
+
+		if readFlagValue && !strings.HasPrefix(arg, "-") && !strings.HasPrefix(arg, "--") {
+			readFlagValue = false
+			flags = append(flags, arg)
 			continue
-		} else if strings.HasPrefix(arg, "-") && firstFlagIndex == -1 {
-			firstFlagIndex = index
+		}
+		readFlagValue = false
+
+		if arg != "-" && strings.HasPrefix(arg, "-") {
+			flags = append(flags, arg)
+
+			readFlagValue = !strings.Contains(arg, "=")
+		} else {
+			nonflags = append(nonflags, arg)
 		}
 	}
-	if len(ctx.Args()) > 0 && !strings.HasPrefix(ctx.Args()[0], "-") && firstFlagIndex == -1 {
-		return -1, -1
-	}
 
-	return firstFlagIndex, terminatorIndex
-
+	return append(flags, nonflags...)
 }
 
-// copyStringslice takes a string slice and copies it
-func copyStringSlice(slice []string, start, end int) []string {
-	newSlice := make([]string, end-start)
-	copy(newSlice, slice[start:end])
-	return newSlice
-}
-
-// getAllArgs extracts and returns two string slices representing
-// regularArgs and flagArgs
-func getAllArgs(args []string, firstFlagIndex, terminatorIndex int) ([]string, []string) {
-	var regularArgs []string
-	// if there are no options, the we set the index to 1 manually
-	if firstFlagIndex == -1 {
-		firstFlagIndex = 1
-		regularArgs = copyStringSlice(args, 0, len(args))
-	} else {
-		regularArgs = copyStringSlice(args, 1, firstFlagIndex)
-	}
-	var flagArgs []string
-	// a flag terminatorIndex was found in the input. we need to collect
-	// flagArgs based on it.
-	if terminatorIndex > -1 {
-		flagArgs = copyStringSlice(args, firstFlagIndex, terminatorIndex)
-		additionalRegularArgs := copyStringSlice(args, terminatorIndex, len(args))
-		regularArgs = append(regularArgs, additionalRegularArgs...)
-		for _, i := range additionalRegularArgs {
-			regularArgs = append(regularArgs, i)
+func translateShortOptions(set *flag.FlagSet, flagArgs Args) []string {
+	allCharsFlags := func (s string) bool {
+		for i := range s {
+			f := set.Lookup(string(s[i]))
+			if f == nil {
+				return false
+			}
 		}
-	} else {
-		flagArgs = args[firstFlagIndex:]
+		return true
 	}
-	return flagArgs, regularArgs
-}
 
-func translateShortOptions(flagArgs Args) []string {
 	// separate combined flags
 	var flagArgsSeparated []string
 	for _, flagArg := range flagArgs {
 		if strings.HasPrefix(flagArg, "-") && strings.HasPrefix(flagArg, "--") == false && len(flagArg) > 2 {
+			if !allCharsFlags(flagArg[1:]) {
+				flagArgsSeparated = append(flagArgsSeparated, flagArg)
+				continue
+			}
 			for _, flagChar := range flagArg[1:] {
 				flagArgsSeparated = append(flagArgsSeparated, "-"+string(flagChar))
 			}

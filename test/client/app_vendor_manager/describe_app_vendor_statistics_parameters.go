@@ -75,6 +75,8 @@ type DescribeAppVendorStatisticsParams struct {
 
 	*/
 	Offset *int64
+	/*OwnerPath*/
+	OwnerPath []string
 	/*Reverse*/
 	Reverse *bool
 	/*SearchWord*/
@@ -155,6 +157,17 @@ func (o *DescribeAppVendorStatisticsParams) WithOffset(offset *int64) *DescribeA
 // SetOffset adds the offset to the describe app vendor statistics params
 func (o *DescribeAppVendorStatisticsParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithOwnerPath adds the ownerPath to the describe app vendor statistics params
+func (o *DescribeAppVendorStatisticsParams) WithOwnerPath(ownerPath []string) *DescribeAppVendorStatisticsParams {
+	o.SetOwnerPath(ownerPath)
+	return o
+}
+
+// SetOwnerPath adds the ownerPath to the describe app vendor statistics params
+func (o *DescribeAppVendorStatisticsParams) SetOwnerPath(ownerPath []string) {
+	o.OwnerPath = ownerPath
 }
 
 // WithReverse adds the reverse to the describe app vendor statistics params
@@ -258,6 +271,14 @@ func (o *DescribeAppVendorStatisticsParams) WriteToRequest(r runtime.ClientReque
 			}
 		}
 
+	}
+
+	valuesOwnerPath := o.OwnerPath
+
+	joinedOwnerPath := swag.JoinByFormat(valuesOwnerPath, "multi")
+	// query array param owner_path
+	if err := r.SetQueryParam("owner_path", joinedOwnerPath...); err != nil {
+		return err
 	}
 
 	if o.Reverse != nil {

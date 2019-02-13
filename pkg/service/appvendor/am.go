@@ -1,6 +1,7 @@
 // Copyright 2018 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
+
 package appvendor
 
 import (
@@ -29,10 +30,6 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.DescribeVendorVerifyInfosRequest:
 		return manager.NewChecker(ctx, r).
 			StringChosen("status", SupportedStatus).
-			Exec()
-	case *pb.GetVendorVerifyInfoRequest:
-		return manager.NewChecker(ctx, r).
-			Required(constants.ColumnUserId).
 			Exec()
 	case *pb.PassVendorVerifyInfoRequest:
 		return manager.NewChecker(ctx, r).

@@ -44,6 +44,14 @@ func GetLimitFromRequest(req RequestHadLimit) uint64 {
 	return db.GetLimit(uint64(n))
 }
 
+func GetTime(t *timestamp.Timestamp) (tt time.Time) {
+	if t == nil {
+		return time.Now()
+	} else {
+		return FromProtoTimestamp(t)
+	}
+}
+
 func FromProtoTimestamp(t *timestamp.Timestamp) (tt time.Time) {
 	tt, err := ptypes.Timestamp(t)
 	if err != nil {

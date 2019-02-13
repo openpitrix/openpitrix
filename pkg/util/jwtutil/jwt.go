@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"gopkg.in/square/go-jose.v2"
+	jose "gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
 
 	"openpitrix.io/openpitrix/pkg/sender"
@@ -47,9 +47,6 @@ func Generate(k string, expire time.Duration, userId, role string) (string, erro
 	if err != nil {
 		return "", err
 	}
-	s := &sender.Sender{
-		Role: role,
-	}
 	now := time.Now()
 	c := &jwt.Claims{
 		IssuedAt: jwt.NewNumericDate(now),
@@ -57,5 +54,5 @@ func Generate(k string, expire time.Duration, userId, role string) (string, erro
 		// TODO: add jti
 		Subject: userId,
 	}
-	return jwt.Signed(signer).Claims(s).Claims(c).CompactSerialize()
+	return jwt.Signed(signer).Claims(c).CompactSerialize()
 }

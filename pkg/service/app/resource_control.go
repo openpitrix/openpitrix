@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/client/account"
+	"openpitrix.io/openpitrix/pkg/client/appvendor"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -380,6 +382,36 @@ func getLatestAppVersion(ctx context.Context, appId string, status ...string) (*
 	return appVersion, nil
 }
 
+func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorVerifyInfo, error) {
+	accountclient, err := account.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	userIds = stringutil.Unique(userIds)
+	var ownerIds []string
+	for _, uid := range userIds {
+		getOwnerRes, err := accountclient.GetUserGroupOwner(ctx, &pb.GetUserGroupOwnerRequest{
+			UserId: uid,
+		})
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+		}
+		if getOwnerRes.Owner != "" {
+			ownerIds = append(ownerIds, getOwnerRes.Owner)
+		}
+	}
+
+	vendorVerifyInfoSet, err := appvendor.GetVendorInfos(ctx, ownerIds)
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+	var vendorMap = make(map[string]*pb.VendorVerifyInfo)
+	for _, v := range vendorVerifyInfoSet {
+		vendorMap[v.Owner.GetValue()] = v
+	}
+	return vendorMap, nil
+}
+
 func formatApp(ctx context.Context, app *models.App) (*pb.App, error) {
 	pbApp := models.AppToPb(app)
 
@@ -402,11 +434,21 @@ func getAppCategories(ctx context.Context, appId string) ([]*pb.ResourceCategory
 
 func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.App, error) {
 	var appIds []string
+	var userIds []string
 	for _, app := range apps {
 		appIds = append(appIds, app.AppId)
+		userIds = append(userIds, app.Owner)
 	}
 	var pbApps []*pb.App
 	appsVersionTypes, err := getAppsVersionTypes(ctx, appIds, active)
+	if err != nil {
+		return pbApps, err
+	}
+	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), appIds)
+	if err != nil {
+		return pbApps, err
+	}
+	vendormap, err := getVendorMap(ctx, userIds)
 	if err != nil {
 		return pbApps, err
 	}
@@ -420,23 +462,121 @@ func formatAppSet(ctx context.Context, apps []*models.App, active bool) ([]*pb.A
 		if appVersionType, ok := appsVersionTypes[app.AppId]; ok {
 			pbApp.AppVersionTypes = pbutil.ToProtoString(appVersionType)
 		}
-
-		pbApps = append(pbApps, pbApp)
-	}
-	rcmap, err := categoryutil.GetResourcesCategories(ctx, pi.Global().DB(ctx), appIds)
-	if err != nil {
-		return pbApps, err
-	}
-	for _, pbApp := range pbApps {
-		if categorySet, ok := rcmap[pbApp.GetAppId().GetValue()]; ok {
+		if categorySet, ok := rcmap[app.AppId]; ok {
 			pbApp.CategorySet = categorySet
 		}
+		if vendor, ok := vendormap[app.Owner]; ok {
+			pbApp.CompanyJoinTime = vendor.StatusTime
+			pbApp.CompanyName = vendor.CompanyName
+			pbApp.CompanyProfile = vendor.CompanyProfile
+			pbApp.CompanyWebsite = vendor.CompanyWebsite
+		}
+
+		pbApps = append(pbApps, pbApp)
 	}
 	return pbApps, nil
 }
 
+func loadAppNameMap(ctx context.Context, appIds []string) (map[string]string, error) {
+	var appNameMap = make(map[string]string)
+	if len(appIds) > 0 {
+		_, err := pi.Global().DB(ctx).
+			Select(constants.ColumnAppId, constants.ColumnName).
+			From(constants.TableApp).
+			Where(db.Eq(constants.ColumnAppId, appIds)).
+			Load(&appNameMap)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+	}
+	return appNameMap, nil
+}
+
+func loadVersionNameMap(ctx context.Context, versionIds []string) (map[string]string, error) {
+	var versionNameMap = make(map[string]string)
+	if len(versionIds) > 0 {
+		_, err := pi.Global().DB(ctx).
+			Select(constants.ColumnVersionId, constants.ColumnName).
+			From(constants.TableAppVersion).
+			Where(db.Eq(constants.ColumnVersionId, versionIds)).
+			Load(&versionNameMap)
+		if err != nil {
+			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		}
+	}
+	return versionNameMap, nil
+}
+
+func formatAppVersionReviewSet(ctx context.Context, appVersionReviews []*models.AppVersionReview) ([]*pb.AppVersionReview, error) {
+	var (
+		appIds     []string
+		versionIds []string
+	)
+	for _, a := range appVersionReviews {
+		appIds = append(appIds, a.AppId)
+		versionIds = append(versionIds, a.VersionId)
+	}
+	appNameMap, err := loadAppNameMap(ctx, appIds)
+	if err != nil {
+		return nil, err
+	}
+	versionNameMap, err := loadVersionNameMap(ctx, versionIds)
+	if err != nil {
+		return nil, err
+	}
+	pbAvrs := models.AppVersionReviewsToPbs(appVersionReviews)
+	for _, a := range pbAvrs {
+		appId := a.GetAppId().GetValue()
+		versionId := a.GetVersionId().GetValue()
+		if appName, ok := appNameMap[appId]; ok {
+			a.AppName = pbutil.ToProtoString(appName)
+		}
+		if versionName, ok := versionNameMap[versionId]; ok {
+			a.VersionName = pbutil.ToProtoString(versionName)
+		}
+	}
+
+	return pbAvrs, nil
+}
+
+func formatAppVersionAuditSet(ctx context.Context, appVersionAudits []*models.AppVersionAudit) ([]*pb.AppVersionAudit, error) {
+	var (
+		appIds     []string
+		versionIds []string
+	)
+	for _, a := range appVersionAudits {
+		appIds = append(appIds, a.AppId)
+		versionIds = append(versionIds, a.VersionId)
+	}
+	appNameMap, err := loadAppNameMap(ctx, appIds)
+	if err != nil {
+		return nil, err
+	}
+	versionNameMap, err := loadVersionNameMap(ctx, versionIds)
+	if err != nil {
+		return nil, err
+	}
+	pbAvas := models.AppVersionAuditsToPbs(appVersionAudits)
+	for _, a := range pbAvas {
+		appId := a.GetAppId().GetValue()
+		versionId := a.GetVersionId().GetValue()
+		if appName, ok := appNameMap[appId]; ok {
+			a.AppName = pbutil.ToProtoString(appName)
+		}
+		if versionName, ok := versionNameMap[versionId]; ok {
+			a.VersionName = pbutil.ToProtoString(versionName)
+		}
+	}
+
+	return pbAvas, nil
+}
+
 func getAppsVersionTypes(ctx context.Context, appIds []string, active bool) (map[string]string, error) {
 	var appsVersionTypes = make(map[string]string)
+
+	if len(appIds) == 0 {
+		return appsVersionTypes, nil
+	}
 
 	_, err := pi.Global().DB(ctx).
 		Select(constants.ColumnAppId, "GROUP_CONCAT(DISTINCT type ORDER BY type SEPARATOR ',')").
@@ -633,7 +773,7 @@ func matchPackageFailedError(err error, res *pb.ValidatePackageResponse) {
 			errorDetails[matched[1]] = matched[2]
 		}
 
-	// Devkit erros
+	// Devkit errors
 	case strings.HasPrefix(errStr, "[package.json] not in base directory"):
 
 		errorDetails["package.json"] = "not found"

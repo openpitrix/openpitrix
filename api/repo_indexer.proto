@@ -41,7 +41,7 @@ message DescribeRepoEventsRequest {
 
 	repeated string repo_event_id = 11;
 	repeated string repo_id = 12;
-	repeated string owner = 13;
+	repeated string owner_path = 13;
 	repeated string status = 14;
 }
 

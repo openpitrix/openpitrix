@@ -87,6 +87,33 @@ func TasksToPbs(tasks []*Task) (pbTasks []*pb.Task) {
 	return
 }
 
+func PbToTask(pbTask *pb.Task) *Task {
+	ownerPath := sender.OwnerPath(pbTask.GetOwnerPath().GetValue())
+	return &Task{
+		TaskId:         pbTask.GetTaskId().GetValue(),
+		JobId:          pbTask.GetJobId().GetValue(),
+		TaskAction:     pbTask.GetTaskAction().GetValue(),
+		Directive:      pbTask.GetDirective().GetValue(),
+		OwnerPath:      ownerPath,
+		Owner:          ownerPath.Owner(),
+		Status:         pbTask.GetStatus().GetValue(),
+		ErrorCode:      pbTask.GetErrorCode().GetValue(),
+		Executor:       pbTask.GetExecutor().GetValue(),
+		Target:         pbTask.GetTarget().GetValue(),
+		NodeId:         pbTask.GetNodeId().GetValue(),
+		FailureAllowed: pbTask.GetFailureAllowed().GetValue(),
+		CreateTime:     pbutil.GetTime(pbTask.GetCreateTime()),
+		StatusTime:     pbutil.GetTime(pbTask.GetStatusTime()),
+	}
+}
+
+func PbsToTasks(pbTasks []*pb.Task) (tasks []*Task) {
+	for _, pbTask := range pbTasks {
+		tasks = append(tasks, PbToTask(pbTask))
+	}
+	return
+}
+
 func (t *Task) GetTimeout(defaultTimeout time.Duration) time.Duration {
 	if t.Directive == "" {
 		return defaultTimeout

@@ -19,6 +19,9 @@ type OpenpitrixAppVersionReview struct {
 	// app id
 	AppID string `json:"app_id,omitempty"`
 
+	// app name
+	AppName string `json:"app_name,omitempty"`
+
 	// phase
 	Phase OpenpitrixAppVersionReviewPhaseOAIGen `json:"phase,omitempty"`
 
@@ -36,6 +39,9 @@ type OpenpitrixAppVersionReview struct {
 
 	// version id
 	VersionID string `json:"version_id,omitempty"`
+
+	// version name
+	VersionName string `json:"version_name,omitempty"`
 }
 
 // Validate validates this openpitrix app version review

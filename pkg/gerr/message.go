@@ -78,6 +78,16 @@ var (
 		en:   "password incorrect",
 		zhCN: "密码不正确",
 	}
+	ErrorRuntimeCredentialExists = ErrorMessage{
+		Name: "runtime_credential_exists",
+		en:   "runtime credential exists",
+		zhCN: "环境授权信息已存在",
+	}
+	ErrorRuntimeExists = ErrorMessage{
+		Name: "runtime_exists",
+		en:   "runtime exists",
+		zhCN: "环境已存在",
+	}
 	ErrorEmailExists = ErrorMessage{
 		Name: "email_exists",
 		en:   "email [%s] exists",
@@ -402,6 +412,26 @@ var (
 		Name: "illegal_bankAccountNumber_format",
 		en:   "illegal BankAccountNumber format [%s]",
 		zhCN: "非法的银行账号格式[%s]",
+	}
+	ErrorGroupHadMembers = ErrorMessage{
+		Name: "group_had_members",
+		en:   "group had members",
+		zhCN: "组内还有成员",
+	}
+	ErrorSetNotificationConfig = ErrorMessage{
+		Name: "error_set_notification_config",
+		en:   "set notification config failed",
+		zhCN: "设置通知服务配置失败",
+	}
+	ErrorSetServiceConfig = ErrorMessage{
+		Name: "error_set_service_config",
+		en:   "set service config failed",
+		zhCN: "设置服务配置失败",
+	}
+	ErrorGetNotificationConfig = ErrorMessage{
+		Name: "error_get_notification_config",
+		en:   "get notification config failed",
+		zhCN: "查看通知服务配置失败",
 	}
 	ErrorUnknown = ErrorMessage{
 		Name: "unknown_error",

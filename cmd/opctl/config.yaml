@@ -1,3 +1,94 @@
+- action: BindUserRole
+  request: BindUserRoleRequest
+  service: AccessManager
+  body:
+    role_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: CanDo
+  request: CanDoRequest
+  service: AccessManager
+  body:
+    url:
+      type: string
+    url_method:
+      type: string
+- action: CreateRole
+  request: CreateRoleRequest
+  service: AccessManager
+  body:
+    description:
+      type: string
+    owner:
+      type: string
+    owner_path:
+      type: string
+    portal:
+      type: string
+    role_id:
+      type: string
+    role_name:
+      type: string
+    status:
+      type: string
+- action: DeleteRoles
+  request: DeleteRolesRequest
+  service: AccessManager
+  body:
+    role_id:
+      type: string
+- action: DescribeRoles
+  request: DescribeRolesRequest
+  service: AccessManager
+  query:
+    portal:
+      type: '[]string'
+    role_id:
+      type: '[]string'
+    role_name:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+- action: GetRole
+  request: GetRoleRequest
+  description: admin permission
+  service: AccessManager
+  path:
+    role_id:
+      type: string
+- action: GetRoleModule
+  request: GetRoleModuleRequest
+  service: AccessManager
+  query:
+    role_id:
+      type: string
+- action: ModifyRole
+  request: ModifyRoleRequest
+  service: AccessManager
+  body:
+    description:
+      type: string
+    portal:
+      type: string
+    role_id:
+      type: string
+    role_name:
+      type: string
+- action: ModifyRoleModule
+  request: ModifyRoleModuleRequest
+  service: AccessManager
+  body:
+    role_module: {}
+- action: UnbindUserRole
+  request: UnbindUserRoleRequest
+  description: group
+  service: AccessManager
+  body:
+    role_id:
+      type: '[]string'
+    user_id:
+      type: '[]string'
 - action: ChangePassword
   request: ChangePasswordRequest
   service: AccountManager
@@ -14,6 +105,8 @@
     description:
       type: string
     name:
+      type: string
+    parent_group_id:
       type: string
 - action: CreatePasswordReset
   request: CreatePasswordResetRequest
@@ -33,6 +126,8 @@
     email:
       type: string
     password:
+      type: string
+    phone_number:
       type: string
     role:
       type: string
@@ -96,6 +191,18 @@
   path:
     reset_id:
       type: string
+- action: IsvCreateUser
+  request: IsvCreateUserRequest
+  service: AccountManager
+  body:
+    description:
+      type: string
+    email:
+      type: string
+    password:
+      type: string
+    phone_number:
+      type: string
 - action: JoinGroup
   request: JoinGroupRequest
   service: AccountManager
@@ -132,8 +239,6 @@
       type: string
     password:
       type: string
-    role:
-      type: string
     user_id:
       type: string
     username:
@@ -145,6 +250,29 @@
     email:
       type: string
     password:
+      type: string
+- action: BusinessAdminPassAppVersion
+  request: PassAppVersionRequest
+  description: business admin pass app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: BusinessAdminRejectAppVersion
+  request: RejectAppVersionRequest
+  description: business admin reject app version
+  service: AppManager
+  body:
+    message:
+      type: string
+    version_id:
+      type: string
+- action: BusinessAdminReviewAppVersion
+  request: ReviewAppVersionRequest
+  description: business admin start review app version
+  service: AppManager
+  body:
+    version_id:
       type: string
 - action: CancelAppVersion
   request: CancelAppVersionRequest
@@ -221,7 +349,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     package_name:
       type: '[]string'
@@ -258,7 +386,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     repo_id:
       type: '[]string'
@@ -347,7 +475,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     package_name:
       type: '[]string'
@@ -384,7 +512,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     repo_id:
       type: '[]string'
@@ -396,6 +524,29 @@
       type: string
     status:
       type: '[]string'
+- action: DevelopAdminPassAppVersion
+  request: PassAppVersionRequest
+  description: pass app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: DevelopAdminRejectAppVersion
+  request: RejectAppVersionRequest
+  description: reject app version
+  service: AppManager
+  body:
+    message:
+      type: string
+    version_id:
+      type: string
+- action: DevelopAdminReviewAppVersion
+  request: ReviewAppVersionRequest
+  description: develop admin start review app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
 - action: GetAppStatistics
   request: GetAppStatisticsRequest
   description: get app statistics
@@ -414,6 +565,29 @@
   query:
     files:
       type: '[]string'
+    version_id:
+      type: string
+- action: IsvPassAppVersion
+  request: PassAppVersionRequest
+  description: isv pass app version
+  service: AppManager
+  body:
+    version_id:
+      type: string
+- action: IsvRejectAppVersion
+  request: RejectAppVersionRequest
+  description: isv reject app version
+  service: AppManager
+  body:
+    message:
+      type: string
+    version_id:
+      type: string
+- action: IsvReviewAppVersion
+  request: ReviewAppVersionRequest
+  description: isv start review app version
+  service: AppManager
+  body:
     version_id:
       type: string
 - action: ModifyApp
@@ -459,18 +633,6 @@
       type: object
     version_id:
       type: string
-- action: PassAppVersion
-  request: PassAppVersionRequest
-  description: pass app version
-  service: AppManager
-  path:
-    role:
-      type: string
-  body:
-    role:
-      type: string
-    version_id:
-      type: string
 - action: RecoverAppVersion
   request: RecoverAppVersionRequest
   description: recover app version
@@ -478,37 +640,11 @@
   body:
     version_id:
       type: string
-- action: RejectAppVersion
-  request: RejectAppVersionRequest
-  description: reject app version
-  service: AppManager
-  path:
-    role:
-      type: string
-  body:
-    message:
-      type: string
-    role:
-      type: string
-    version_id:
-      type: string
 - action: ReleaseAppVersion
   request: ReleaseAppVersionRequest
   description: release app version
   service: AppManager
   body:
-    version_id:
-      type: string
-- action: ReviewAppVersion
-  request: ReviewAppVersionRequest
-  description: pass app version
-  service: AppManager
-  path:
-    role:
-      type: string
-  body:
-    role:
-      type: string
     version_id:
       type: string
 - action: SubmitAppVersion
@@ -562,6 +698,8 @@
     offset:
       help: default is 0.
       type: int64
+    owner_path:
+      type: '[]string'
     reverse:
       type: boolean
     search_word:
@@ -585,6 +723,8 @@
     offset:
       help: default is 0.
       type: int64
+    owner_path:
+      type: '[]string'
     reverse:
       type: boolean
     search_word:
@@ -597,7 +737,7 @@
       type: '[]string'
 - action: GetVendorVerifyInfo
   request: GetVendorVerifyInfoRequest
-  description: GetVendorVerifyInfo
+  description: get appvendor by appvendor user Id
   service: AppVendorManager
   query:
     user_id:
@@ -622,9 +762,6 @@
   request: SubmitVendorVerifyInfoRequest
   description: SubmitVendorVerifyInfo
   service: AppVendorManager
-  path:
-    user_id:
-      type: string
   body:
     authorizer_email:
       type: string
@@ -694,7 +831,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     reverse:
       type: boolean
@@ -835,7 +972,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     reverse:
       type: boolean
@@ -864,7 +1001,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     reverse:
       type: boolean
@@ -899,7 +1036,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     reverse:
       type: boolean
@@ -940,7 +1077,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     reverse:
       type: boolean
@@ -973,7 +1110,7 @@
       type: string
     offset:
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     pub_key:
       type: string
@@ -1121,7 +1258,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     provider:
       type: string
@@ -1168,7 +1305,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     reverse:
       type: boolean
@@ -1193,7 +1330,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     reverse:
       type: boolean
@@ -1251,7 +1388,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     repo_event_id:
       type: '[]string'
@@ -1322,7 +1459,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1471,7 +1608,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1498,7 +1635,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1525,7 +1662,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1559,7 +1696,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     provider:
       type: '[]string'
@@ -1614,6 +1751,19 @@
       type: string
     runtime_url:
       type: string
+- action: GetServiceConfig
+  request: GetServiceConfigRequest
+  description: get service configration
+  service: ServiceConfig
+  body:
+    service_type:
+      type: '[]string'
+- action: SetServiceConfig
+  request: SetServiceConfigRequest
+  description: set service configration
+  service: ServiceConfig
+  body:
+    notification_config: {}
 - action: DescribeTasks
   request: DescribeTasksRequest
   description: describe tasks with filter
@@ -1631,7 +1781,7 @@
     offset:
       help: default is 0.
       type: int64
-    owner:
+    owner_path:
       type: '[]string'
     reverse:
       type: boolean

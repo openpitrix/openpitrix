@@ -7,30 +7,27 @@ package sender
 import (
 	"encoding/json"
 	"fmt"
-
-	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/pb"
 )
 
 type Sender struct {
 	UserId     string    `json:"user_id,omitempty"`
-	Role       string    `json:"role,omitempty"`
 	OwnerPath  OwnerPath `json:"owner_path,omitempty"`
 	AccessPath OwnerPath `json:"access_path,omitempty"`
 }
 
 func GetSystemSender() *Sender {
 	return &Sender{
-		UserId: "system",
-		Role:   constants.RoleGlobalAdmin,
+		UserId:     "system",
+		OwnerPath:  ":system",
+		AccessPath: "",
 	}
 }
 
-func GetSender(user *pb.User) *Sender {
-	uid := user.GetUserId().GetValue()
+func New(userId string, ownerPath, accessPath OwnerPath) *Sender {
 	return &Sender{
-		UserId: uid,
-		Role:   user.GetRole().GetValue(),
+		UserId:     userId,
+		OwnerPath:  ownerPath,
+		AccessPath: accessPath,
 	}
 }
 
@@ -46,8 +43,8 @@ func (s Sender) GetAccessPath() OwnerPath {
 	if len(s.AccessPath) > 0 {
 		return s.AccessPath
 	}
-	// global admin can access all data
-	if s.IsGlobalAdmin() {
+	// system can access all data
+	if s.UserId == "system" {
 		return OwnerPath("")
 	}
 	// developer and normal user only can access data created by self
@@ -60,29 +57,4 @@ func (s *Sender) ToJson() string {
 		panic(err)
 	}
 	return string(b)
-}
-
-func (s *Sender) IsGlobalAdmin() bool {
-	if s == nil {
-		return false
-	}
-	return s.Role == constants.RoleGlobalAdmin
-}
-
-func (s *Sender) IsDeveloper() bool {
-	if s == nil {
-		return false
-	}
-	return s.Role == constants.RoleGlobalAdmin || s.Role == constants.RoleDeveloper
-}
-
-func (s *Sender) IsUser() bool {
-	if s == nil {
-		return false
-	}
-	return s.Role == constants.RoleGlobalAdmin || s.Role == constants.RoleDeveloper || s.Role == constants.RoleUser
-}
-
-func (s *Sender) IsGuest() bool {
-	return true
 }

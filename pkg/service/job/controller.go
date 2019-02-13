@@ -9,17 +9,19 @@ import (
 	"sync"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/client"
-	accountclient "openpitrix.io/openpitrix/pkg/client/iam"
+	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	taskclient "openpitrix.io/openpitrix/pkg/client/task"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 type Controller struct {
@@ -123,16 +125,7 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 			return err
 		}
 
-		accountClient, err := accountclient.NewClient()
-		if err != nil {
-			return err
-		}
-		users, err := accountClient.GetUsers(ctx, []string{job.Owner})
-		if err != nil {
-			return err
-		}
-
-		ctx = client.SetUserToContext(ctx, users[0])
+		ctx = ctxutil.ContextWithSender(ctx, sender.New(job.Owner, job.OwnerPath, ""))
 
 		processor := NewProcessor(job)
 		err = processor.Pre(ctx)
@@ -141,16 +134,19 @@ func (c *Controller) HandleJob(ctx context.Context, jobId string, cb func()) err
 		}
 		defer processor.Final(ctx)
 
-		providerInterface, err := plugins.GetProviderPlugin(ctx, job.Provider)
+		providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 		if err != nil {
-			logger.Error(ctx, "No such provider [%s]. ", job.Provider)
-			return err
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
-		module, err := providerInterface.SplitJobIntoTasks(ctx, job)
+		response, err := providerClient.SplitJobIntoTasks(ctx, &pb.SplitJobIntoTasksRequest{
+			RuntimeId: pbutil.ToProtoString(job.RuntimeId),
+			Job:       models.JobToPb(job),
+		})
 		if err != nil {
 			logger.Error(ctx, "Failed to split job into tasks with provider [%s]: %+v", job.Provider, err)
 			return err
 		}
+		module := models.PbToTaskLayer(response.TaskLayer)
 
 		taskClient, err := taskclient.NewClient()
 		if err != nil {

@@ -89,3 +89,25 @@ func JobsToPbs(jobs []*Job) (pbJobs []*pb.Job) {
 	}
 	return
 }
+
+func PbToJob(pbJob *pb.Job) *Job {
+	ownerPath := sender.OwnerPath(pbJob.GetOwnerPath().GetValue())
+	return &Job{
+		JobId:      pbJob.GetJobId().GetValue(),
+		ClusterId:  pbJob.GetClusterId().GetValue(),
+		AppId:      pbJob.GetAppId().GetValue(),
+		VersionId:  pbJob.GetVersionId().GetValue(),
+		JobAction:  pbJob.GetJobAction().GetValue(),
+		Directive:  pbJob.GetDirective().GetValue(),
+		Provider:   pbJob.GetProvider().GetValue(),
+		OwnerPath:  ownerPath,
+		Owner:      ownerPath.Owner(),
+		Status:     pbJob.GetStatus().GetValue(),
+		ErrorCode:  pbJob.GetErrorCode().GetValue(),
+		Executor:   pbJob.GetExecutor().GetValue(),
+		RuntimeId:  pbJob.GetRuntimeId().GetValue(),
+		TaskCount:  pbJob.GetTaskCount().GetValue(),
+		CreateTime: pbutil.GetTime(pbJob.GetCreateTime()),
+		StatusTime: pbutil.GetTime(pbJob.GetStatusTime()),
+	}
+}

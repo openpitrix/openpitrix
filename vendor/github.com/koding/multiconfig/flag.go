@@ -80,12 +80,27 @@ func (f *FlagLoader) Load(s interface{}) error {
 		fmt.Println("")
 	}
 
-	args := os.Args[1:]
+	args := filterArgs(os.Args[1:])
 	if f.Args != nil {
 		args = f.Args
 	}
 
 	return flagSet.Parse(args)
+}
+
+func filterArgs(args []string) []string {
+	r := []string{}
+	for i := 0; i < len(args); i++ {
+		if strings.Index(args[i], "test.") >= 0 {
+			if i + 1 < len(args) && strings.Index(args[i + 1], "-") == -1 {
+				i++
+			}
+			i++
+		} else {
+			r = append(r, args[i])
+		}
+	}
+	return r
 }
 
 // processField generates a flag based on the given field and fieldName. If a

@@ -341,9 +341,11 @@ func invalidParameterDefinitionMsg(path, method, operationID string) errors.Erro
 func invalidParameterDefinitionAsSchemaMsg(path, method, operationID string) errors.Error {
 	return errors.New(errors.CompositeErrorCode, InvalidParameterDefinitionAsSchemaError, path, method, operationID)
 }
-func invalidResponseDefinitionAsSchemaMsg(path, method string) errors.Error {
-	return errors.New(errors.CompositeErrorCode, InvalidResponseDefinitionAsSchemaError, path, method)
-}
+
+// disabled
+//func invalidResponseDefinitionAsSchemaMsg(path, method string) errors.Error {
+//	return errors.New(errors.CompositeErrorCode, InvalidResponseDefinitionAsSchemaError, path, method)
+//}
 func someParametersBrokenMsg(path, method, operationID string) errors.Error {
 	return errors.New(errors.CompositeErrorCode, SomeParametersBrokenError, path, method, operationID)
 }

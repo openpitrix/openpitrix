@@ -302,11 +302,12 @@ message Cluster {
 	google.protobuf.StringValue additional_info = 21;
 	google.protobuf.StringValue env = 22;
 	google.protobuf.BoolValue debug = 23;
-	repeated ClusterNode cluster_node_set = 24;
-	repeated ClusterRole cluster_role_set = 25;
-	repeated ClusterLink cluster_link_set = 26;
-	repeated ClusterCommon cluster_common_set = 27;
-	repeated ClusterLoadbalancer cluster_loadbalancer_set = 28;
+	google.protobuf.StringValue zone = 24;
+	repeated ClusterNode cluster_node_set = 25;
+	repeated ClusterRole cluster_role_set = 26;
+	repeated ClusterLink cluster_link_set = 27;
+	repeated ClusterCommon cluster_common_set = 28;
+	repeated ClusterLoadbalancer cluster_loadbalancer_set = 29;
 }
 
 message DescribeClustersRequest {
@@ -324,7 +325,7 @@ message DescribeClustersRequest {
 	google.protobuf.StringValue search_word = 10;
 	google.protobuf.StringValue sort_key = 11;
 	google.protobuf.BoolValue reverse = 12;
-	repeated string owner = 13;
+	repeated string owner_path = 13;
 	google.protobuf.StringValue cluster_type = 14;
 	google.protobuf.BoolValue with_detail = 15;
 	google.protobuf.UInt32Value created_date = 16;
@@ -345,7 +346,7 @@ message DescribeAppClustersRequest {
 	google.protobuf.StringValue search_word = 5;
 	google.protobuf.StringValue sort_key = 6;
 	google.protobuf.BoolValue reverse = 7;
-	repeated string owner = 8;
+	repeated string owner_path = 8;
 	google.protobuf.BoolValue with_detail = 9;
 	google.protobuf.UInt32Value created_date = 10;
 	repeated string display_columns = 11;
@@ -366,7 +367,7 @@ message DescribeClusterNodesRequest {
 	google.protobuf.StringValue search_word = 6;
 	google.protobuf.StringValue sort_key = 7;
 	google.protobuf.BoolValue reverse = 8;
-	repeated string owner = 9;
+	repeated string owner_path = 9;
 	repeated string display_columns = 10;
 }
 message DescribeClusterNodesResponse {
@@ -454,7 +455,7 @@ message DescribeKeyPairsRequest {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
 	google.protobuf.StringValue pub_key = 4;
-	repeated string owner = 5;
+	repeated string owner_path = 5;
 	google.protobuf.StringValue search_word = 6;
 	uint32 limit = 7;
 	uint32 offset = 8;

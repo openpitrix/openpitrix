@@ -34,7 +34,6 @@ func Serve(cfg *config.Config) {
 
 	manager.NewGrpcServer("job-controller", constants.JobManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
-		WithBuilder(s.Builder).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterJobManagerServer(server, &s)
 		})

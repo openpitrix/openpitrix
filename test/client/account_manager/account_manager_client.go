@@ -286,6 +286,35 @@ func (a *Client) GetPasswordReset(params *GetPasswordResetParams, authInfo runti
 }
 
 /*
+IsvCreateUser isv create user API
+*/
+func (a *Client) IsvCreateUser(params *IsvCreateUserParams, authInfo runtime.ClientAuthInfoWriter) (*IsvCreateUserOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewIsvCreateUserParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "IsvCreateUser",
+		Method:             "POST",
+		PathPattern:        "/v1/isv_users",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &IsvCreateUserReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*IsvCreateUserOK), nil
+
+}
+
+/*
 JoinGroup join group API
 */
 func (a *Client) JoinGroup(params *JoinGroupParams, authInfo runtime.ClientAuthInfoWriter) (*JoinGroupOK, error) {

@@ -23,11 +23,14 @@ func TestWalkTree(t *testing.T) {
 
 	taskLayer3.Append(&taskLayer2).Append(&taskLayer1)
 
+	pbTaskLayer := TaskLayerToPb(&taskLayer3)
+	taskLayer4 := PbToTaskLayer(pbTaskLayer)
+
 	expectTasks := []string{"3", "1", "2", "0"}
 
 	var waitTasks, execTasks []string
 
-	taskLayer3.WalkTree(func(parent *TaskLayer, current *TaskLayer) {
+	taskLayer4.WalkTree(func(parent *TaskLayer, current *TaskLayer) {
 		if parent != nil {
 			for _, parentTask := range parent.Tasks {
 				waitTasks = append(waitTasks, parentTask.TaskId)

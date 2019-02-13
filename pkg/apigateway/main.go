@@ -25,19 +25,17 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	pbiam "openpitrix.io/iam/pkg/pb"
 	staticSpec "openpitrix.io/openpitrix/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/openpitrix/pkg/apigateway/swagger-ui"
 	"openpitrix.io/openpitrix/pkg/config"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/service/service_config"
 	"openpitrix.io/openpitrix/pkg/topic"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
-	"openpitrix.io/openpitrix/pkg/util/jwtutil"
 	"openpitrix.io/openpitrix/pkg/version"
 )
 
@@ -62,18 +60,21 @@ func Serve(cfg *config.Config) {
 	logger.Info(nil, "Task service http://%s:%d", constants.TaskManagerHost, constants.TaskManagerPort)
 	logger.Info(nil, "Repo indexer service http://%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort)
 	logger.Info(nil, "Category service http://%s:%d", constants.CategoryManagerHost, constants.CategoryManagerPort)
-	logger.Info(nil, "IAM service http://%s:%d", constants.IAMServiceHost, constants.IAMServicePort)
-	logger.Info(nil, "IAM2 service http://%s:%d", constants.IAM2ServiceHost, constants.IAM2ServicePort)
+	logger.Info(nil, "Account service http://%s:%d", constants.AccountServiceHost, constants.AccountServicePort)
+	logger.Info(nil, "AM service http://%s:%d", constants.AMServiceHost, constants.AMServicePort)
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 	logger.Info(nil, "Market service http://%s:%d", constants.MarketManagerHost, constants.MarketManagerPort)
 	logger.Info(nil, "Attachment service http://%s:%d", constants.AttachmentManagerHost, constants.AttachmentManagerPort)
 	logger.Info(nil, "Vendor service http://%s:%d", constants.VendorManagerHost, constants.VendorManagerPort)
+	logger.Info(nil, "Service config http://%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort)
 
 	cfg.Mysql.Disable = true
 	pi.SetGlobal(cfg)
 	s := Server{
 		cfg.IAM,
 	}
+
+	go service_config.Serve(cfg)
 
 	if err := s.run(); err != nil {
 		logger.Critical(nil, "Api gateway run failed: %+v", err)
@@ -82,8 +83,7 @@ func Serve(cfg *config.Config) {
 }
 
 const (
-	Authorization = "Authorization"
-	RequestIdKey  = "X-Request-Id"
+	RequestIdKey = "X-Request-Id"
 )
 
 func log() gin.HandlerFunc {
@@ -123,42 +123,6 @@ func log() gin.HandlerFunc {
 			l.Info(nil, logStr)
 		}
 	}
-}
-
-func serveMuxSetSender(mux *runtime.ServeMux, key string) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-
-		if req.URL.Path == "/v1/oauth2/token" {
-			// skip auth sender
-			mux.ServeHTTP(w, req)
-			return
-		}
-
-		var err error
-		ctx := req.Context()
-		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-
-		auth := strings.SplitN(req.Header.Get(Authorization), " ", 2)
-		if auth[0] != "Bearer" {
-			err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAuthFailure)
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		sender, err := jwtutil.Validate(key, auth[1])
-		if err != nil {
-			if err == jwtutil.ErrExpired {
-				err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAccessTokenExpired)
-			} else {
-				err = gerr.New(ctx, gerr.Unauthenticated, gerr.ErrorAuthFailure)
-			}
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		req.Header.Set(ctxutil.SenderKey, sender.ToJson())
-		req.Header.Del(Authorization)
-
-		mux.ServeHTTP(w, req)
-	})
 }
 
 func recovery() gin.HandlerFunc {
@@ -235,10 +199,13 @@ func (s *Server) mainHandler() http.Handler {
 		fmt.Sprintf("%s:%d", constants.RepoIndexerHost, constants.RepoIndexerPort),
 	}, {
 		pb.RegisterTokenManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.IAMServiceHost, constants.IAMServicePort),
+		fmt.Sprintf("%s:%d", constants.AccountServiceHost, constants.AccountServicePort),
 	}, {
 		pb.RegisterAccountManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.IAMServiceHost, constants.IAMServicePort),
+		fmt.Sprintf("%s:%d", constants.AccountServiceHost, constants.AccountServicePort),
+	}, {
+		pb.RegisterAccessManagerHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.AccountServiceHost, constants.AccountServicePort),
 	}, {
 		pb.RegisterClusterManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.ClusterManagerHost, constants.ClusterManagerPort),
@@ -252,8 +219,8 @@ func (s *Server) mainHandler() http.Handler {
 		pb.RegisterAppVendorManagerHandlerFromEndpoint,
 		fmt.Sprintf("%s:%d", constants.VendorManagerHost, constants.VendorManagerPort),
 	}, {
-		pbiam.RegisterIAMManagerHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.IAM2ServiceHost, constants.IAM2ServicePort),
+		pb.RegisterServiceConfigHandlerFromEndpoint,
+		fmt.Sprintf("%s:%d", constants.ApiGatewayHost, constants.ServiceConfigPort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {
@@ -266,7 +233,7 @@ func (s *Server) mainHandler() http.Handler {
 	tm := topic.NewTopicManager(pi.Global().Etcd(nil))
 	go tm.Run()
 
-	mux.Handle("/", serveMuxSetSender(gwmux, s.IAMConfig.SecretKey))
+	mux.Handle("/", httpAuth(gwmux, s.IAMConfig.SecretKey))
 	mux.HandleFunc("/v1/io", tm.HandleEvent(s.IAMConfig.SecretKey))
 
 	return formWrapper(mux)

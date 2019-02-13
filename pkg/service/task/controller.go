@@ -10,21 +10,23 @@ import (
 	"sync"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/client"
-	accountclient "openpitrix.io/openpitrix/pkg/client/iam"
 	pilotclient "openpitrix.io/openpitrix/pkg/client/pilot"
+	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/etcd"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb/metadata/types"
+	"openpitrix.io/openpitrix/pkg/pb"
+	pbtypes "openpitrix.io/openpitrix/pkg/pb/metadata/types"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/plugins/vmbased"
+	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/retryutil"
 )
 
@@ -115,16 +117,7 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 	}
 	ctx = ctxutil.AddMessageId(ctx, task.JobId)
 
-	accountClient, err := accountclient.NewClient()
-	if err != nil {
-		return err
-	}
-	users, err := accountClient.GetUsers(ctx, []string{task.Owner})
-	if err != nil {
-		return err
-	}
-
-	ctx = client.SetUserToContext(ctx, users[0])
+	ctx = ctxutil.ContextWithSender(ctx, sender.New(task.Owner, task.OwnerPath, ""))
 
 	err = c.updateTaskAttributes(ctx, task.TaskId, map[string]interface{}{
 		"status":   constants.StatusWorking,
@@ -419,21 +412,29 @@ func (c *Controller) HandleTask(ctx context.Context, taskId string, cb func()) e
 				logger.Error(ctx, "Unknown task action [%s]", task.TaskAction)
 			}
 		} else {
-			providerInterface, err := plugins.GetProviderPlugin(ctx, task.Target)
+			providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 			if err != nil {
-				logger.Error(ctx, "No such runtime [%s]. ", task.Target)
-				return err
+				return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 			}
-			err = providerInterface.HandleSubtask(ctx, task)
+			handleResponse, err := providerClient.HandleSubtask(ctx, &pb.HandleSubtaskRequest{
+				RuntimeId: pbutil.ToProtoString(task.Target),
+				Task:      models.TaskToPb(task),
+			})
 			if err != nil {
 				logger.Error(ctx, "Failed to handle subtask in runtime [%s]: %+v", task.Target, err)
 				return err
 			}
-			err = providerInterface.WaitSubtask(ctx, task)
+			withTimeoutCtx, cancel := context.WithTimeout(ctx, constants.MaxTaskTimeout)
+			defer cancel()
+			waitResponse, err := providerClient.WaitSubtask(withTimeoutCtx, &pb.WaitSubtaskRequest{
+				RuntimeId: handleResponse.Task.Target,
+				Task:      handleResponse.Task,
+			})
 			if err != nil {
 				logger.Error(ctx, "Failed to wait subtask in runtime [%s]: %+v", task.Target, err)
 				return err
 			}
+			processor.Task = models.PbToTask(waitResponse.Task)
 
 			logger.Debug(ctx, "After wait subtask directive: %s", task.Directive)
 		}

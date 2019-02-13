@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
+	"go.etcd.io/etcd/clientv3"
 
 	"openpitrix.io/openpitrix/pkg/libconfd"
 	"openpitrix.io/openpitrix/pkg/logger"

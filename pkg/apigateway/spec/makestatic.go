@@ -15,6 +15,7 @@ import (
 	"go/format"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"unicode/utf8"
 )
 
@@ -43,7 +44,7 @@ func makestatic() error {
 		if err != nil {
 			return err
 		}
-		fmt.Fprintf(buf, "\t%q: ", fn)
+		fmt.Fprintf(buf, "\t%q: ", filepath.Base(fn))
 		if utf8.Valid(b) {
 			fmt.Fprintf(buf, "`%s`", sanitize(b))
 		} else {

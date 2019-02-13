@@ -5,14 +5,25 @@
 version: '3'
 
 services:
+  openpitrix-db-init:
+    image: "openpitrix/notification:flyway"
+    environment:
+      - PASSWORD=${MYSQL_ROOT_PASSWORD}
+    entrypoint: sh
+    volumes:
+      - ./pkg/db/ddl:/docker-entrypoint-initdb.d
+    command: -c "cp /docker-entrypoint-initdb.d/*.sql /flyway/sql/ddl/; /flyway/sql/ddl/ddl_init.sh -hopenpitrix-db -uroot --connect-timeout=5"
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-db-init"
+
   openpitrix-db:
     image: "mysql:8.0.11"
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ${DATA_PATH}/mysql:/var/lib/mysql
-      - ./pkg/db/ddl:/docker-entrypoint-initdb.d
-    command: --lower_case_table_names=0
+    command: --lower_case_table_names=0 --default-authentication-plugin=mysql_native_password
     ports:
      - "13306:3306" # for unit-test & debug
     container_name: "openpitrix-db"
@@ -145,7 +156,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-repo-db-ctrl"
 
   # app service
@@ -198,7 +209,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-app-db-ctrl"
 
   # runtime service
@@ -230,8 +241,103 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-runtime-db-ctrl"
+
+  openpitrix-rp-manager:
+    build: .
+    image: "openpitrix"
+    command: "runtime-provider-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-etcd
+    container_name: "openpitrix-rp-manager"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
+  openpitrix-rp-qingcloud:
+    image: "openpitrix/runtime-provider-qingcloud"
+    command: "runtime-provider"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-etcd
+      - openpitrix-rp-manager
+    container_name: "openpitrix-rp-qingcloud"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
+  openpitrix-rp-aws:
+    image: "openpitrix/runtime-provider-aws"
+    command: "runtime-provider"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-etcd
+      - openpitrix-rp-manager
+    container_name: "openpitrix-rp-aws"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
+  openpitrix-rp-aliyun:
+    image: "openpitrix/runtime-provider-aliyun"
+    command: "runtime-provider"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-etcd
+      - openpitrix-rp-manager
+    container_name: "openpitrix-rp-aliyun"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
+  openpitrix-rp-kubernetes:
+    image: "openpitrix/runtime-provider-kubernetes"
+    command: "runtime-provider"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-etcd
+      - openpitrix-rp-manager
+    container_name: "openpitrix-rp-kubernetes"
+    environment:
+      - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   # job service
   openpitrix-job-manager:
@@ -262,7 +368,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-job-db-ctrl"
 
   # task service
@@ -294,7 +400,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-task-db-ctrl"
 
   # cluster service
@@ -326,21 +432,21 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-cluster-db-ctrl"
 
-  # iam service
-  openpitrix-iam-service:
+  # account service
+  openpitrix-account-service:
     build: .
     image: "openpitrix"
-    command: "iam-service"
+    command: "account-service"
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
     depends_on:
       - openpitrix-iam-db-ctrl
       - openpitrix-etcd
-    container_name: "openpitrix-iam-service"
+    container_name: "openpitrix-account-service"
     environment:
       - OPENPITRIX_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
       - OPENPITRIX_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
@@ -362,20 +468,39 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-iam-db-ctrl"
 
-  # iam2 service
-  openpitrix-iam2-service:
-    image: "openpitrix/iam:v0.1.4-dev"
-    command: "iam"
+  # im service
+  openpitrix-im-service:
+    image: "openpitrix/iam:latest"
+    command: "im"
     links:
       - openpitrix-db:openpitrix-db
-    container_name: "openpitrix-iam2-service"
+    container_name: "openpitrix-im-service"
     environment:
-      - OPENPITRIX_IAM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
-      - OPENPITRIX_IAM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
-      - OPENPITRIX_IAM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - OPENPITRIX_IM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_IM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_IM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - OPENPITRIX_MYSQL_DATABASE=im
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
+  # am service
+  openpitrix-am-service:
+    image: "openpitrix/iam:latest"
+    command: "am"
+    links:
+      - openpitrix-db:openpitrix-db
+    container_name: "openpitrix-am-service"
+    environment:
+      - OPENPITRIX_AM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - OPENPITRIX_AM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+      - OPENPITRIX_AM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - OPENPITRIX_MYSQL_DATABASE=am
     logging:
       driver: "json-file"
       options:
@@ -436,7 +561,7 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-market-db-ctrl"
 
   # attachment service
@@ -468,7 +593,7 @@ services:
     links:
     - openpitrix-db:openpitrix-db
     depends_on:
-    - openpitrix-db
+    - openpitrix-db-init
     container_name: "openpitrix-attachment-db-ctrl"
 
   # appvendor service
@@ -500,8 +625,42 @@ services:
     links:
       - openpitrix-db:openpitrix-db
     depends_on:
-      - openpitrix-db
+      - openpitrix-db-init
     container_name: "openpitrix-appvendor-db-ctrl"
+
+
+  # notification service
+  openpitrix-notification:
+    image: "openpitrix/notification:latest"
+    command: "notification-manager"
+    links:
+      - openpitrix-db:openpitrix-db
+      - openpitrix-etcd:openpitrix-etcd
+    depends_on:
+      - openpitrix-notification-db-ctrl
+      - openpitrix-etcd
+    container_name: "openpitrix-notification"
+    environment:
+    - NOTIFICATION_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+    - NOTIFICATION_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
+    - NOTIFICATION_MYSQL_DATABASE=notification
+    - NOTIFICATION_MYSQL_HOST=openpitrix-db
+    - NOTIFICATION_ETCD_ENDPOINTS=openpitrix-etcd:2379
+    logging:
+      driver: "json-file"
+      options:
+        max-size: ${OPENPITRIX_LOG_MAX_SIZE}
+        max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
+  openpitrix-notification-db-ctrl:
+    image: openpitrix/notification:flyway
+    command: -url=jdbc:mysql://openpitrix-db/notification -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db-init
+    container_name: "openpitrix-notification-db-ctrl"
+
 
   # metering and billing service
   openpitrix-mbing-manager:
@@ -524,6 +683,7 @@ services:
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+
   openpitrix-mbing-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://openpitrix-db/mbing -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate

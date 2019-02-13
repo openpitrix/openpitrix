@@ -12,50 +12,43 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
-	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/funcutil"
 	"openpitrix.io/openpitrix/pkg/util/jsonutil"
 )
 
 type FrameHandler struct {
-	Ctx context.Context
 }
 
-func (f *FrameHandler) WaitFrontgateAvailable(task *models.Task) error {
+func (f *FrameHandler) WaitFrontgateAvailable(ctx context.Context, task *models.Task) (*models.Task, error) {
 
 	waitFrontgateDirective := new(models.Meta)
 
 	if task.Directive == "" {
-		logger.Warn(f.Ctx, "Skip empty task [%s] directive", task.TaskId)
-		return nil
+		logger.Warn(ctx, "Skip empty task [%s] directive", task.TaskId)
+		return task, nil
 	}
 	err := jsonutil.Decode([]byte(task.Directive), waitFrontgateDirective)
 	if err != nil {
-		logger.Error(f.Ctx, "Unmarshal into map failed: %+v", err)
-		return err
+		logger.Error(ctx, "Unmarshal into map failed: %+v", err)
+		return task, err
 	}
 
 	frontgateId := waitFrontgateDirective.FrontgateId
 
 	clusterClient, err := clusterclient.NewClient()
 	if err != nil {
-		return err
+		return task, err
 	}
 
-	return funcutil.WaitForSpecificOrError(func() (bool, error) {
-		response, err := clusterClient.DescribeClusters(f.Ctx, &pb.DescribeClustersRequest{
-			ClusterId: []string{frontgateId},
-		})
+	return task, funcutil.WaitForSpecificOrError(func() (bool, error) {
+		response, err := clusterClient.GetClusters(ctx, []string{frontgateId})
 		if err != nil {
 			//network or api error, not considered task fail.
 			return false, nil
 		}
-		if len(response.ClusterSet) == 0 {
-			return false, fmt.Errorf("Can not find frontgate [%s]. ", frontgateId)
-		}
-		frontgate := response.ClusterSet[0]
+		frontgate := response[0]
 		if frontgate.Status == nil {
-			logger.Error(f.Ctx, "Frontgate [%s] status is nil", frontgateId)
+			logger.Error(ctx, "Frontgate [%s] status is nil", frontgateId)
 			return false, nil
 		}
 

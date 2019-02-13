@@ -4,9 +4,35 @@
 
 package models
 
+import (
+	"openpitrix.io/openpitrix/pkg/pb"
+)
+
 type TaskLayer struct {
 	Tasks []*Task
 	Child *TaskLayer
+}
+
+func TaskLayerToPb(taskLayer *TaskLayer) *pb.TaskLayer {
+	if taskLayer == nil {
+		return nil
+	}
+	pbTaskLayer := &pb.TaskLayer{
+		Tasks: TasksToPbs(taskLayer.Tasks),
+		Child: TaskLayerToPb(taskLayer.Child),
+	}
+	return pbTaskLayer
+}
+
+func PbToTaskLayer(pbTaskLayer *pb.TaskLayer) *TaskLayer {
+	if pbTaskLayer == nil {
+		return nil
+	}
+	taskLayer := &TaskLayer{
+		Tasks: PbsToTasks(pbTaskLayer.Tasks),
+		Child: PbToTaskLayer(pbTaskLayer.Child),
+	}
+	return taskLayer
 }
 
 // WalkFunc is a callback type for use with TaskLayer.WalkTree

@@ -106,7 +106,7 @@ func MustParse(v string) *Version {
 // Note, if the original version contained a leading v this version will not.
 // See the Original() method to retrieve the original value. Semantic Versions
 // don't contain a leading v per the spec. Instead it's optional on
-// impelementation.
+// implementation.
 func (v *Version) String() string {
 	var buf bytes.Buffer
 
@@ -379,16 +379,15 @@ func comparePrePart(s, o string) int {
 
 	// When s or o are empty we can use the other in an attempt to determine
 	// the response.
-	if o == "" {
-		_, n := strconv.ParseInt(s, 10, 64)
-		if n != nil {
+	if s == "" {
+		if o != "" {
 			return -1
 		}
 		return 1
 	}
-	if s == "" {
-		_, n := strconv.ParseInt(o, 10, 64)
-		if n != nil {
+
+	if o == "" {
+		if s != "" {
 			return 1
 		}
 		return -1

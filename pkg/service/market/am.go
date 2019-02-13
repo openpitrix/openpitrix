@@ -10,7 +10,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 var SupportedStatus = []string{
@@ -27,14 +26,12 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.CreateMarketRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("name", "visibility").
 			StringChosen("visibility", SupportedVisibility).
 			Exec()
 
 	case *pb.ModifyMarketRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			StringChosen("status", SupportedStatus).
 			StringChosen("visibility", SupportedVisibility).
 			Required("market_id").
@@ -42,47 +39,22 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 
 	case *pb.DeleteMarketsRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("market_id").
 			Exec()
 
 	case *pb.UserJoinMarketRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("market_id", "user_id").
 			Exec()
 
 	case *pb.UserLeaveMarketRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Required("market_id", "user_id").
 			Exec()
 
 	case *pb.DescribeMarketUsersRequest:
 		return manager.NewChecker(ctx, r).
-			Role(constants.AllRoles).
 			Exec()
 	}
 	return nil
-}
-
-func (p *Server) Builder(ctx context.Context, req interface{}) interface{} {
-	sender := ctxutil.GetSender(ctx)
-	switch r := req.(type) {
-	case *pb.DescribeMarketsRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else if sender.IsDeveloper() {
-			r.Owner = []string{sender.UserId}
-		}
-		return r
-	case *pb.DescribeMarketUsersRequest:
-		if sender.IsGlobalAdmin() {
-
-		} else if sender.IsDeveloper() {
-			r.Owner = []string{sender.UserId}
-		}
-		return r
-	}
-	return req
 }

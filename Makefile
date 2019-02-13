@@ -28,8 +28,8 @@ define get_build_flags
 		-X $(TRAG.Version).BuildDate="$(DATE)")
 endef
 
-COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-iam-service openpitrix-attachment-manager
-COMPOSE_DB_CTRL=openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-market-db-ctrl openpitrix-attachment-db-ctrl
+COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-vendor-manager openpitrix-notification
+COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-market-db-ctrl openpitrix-attachment-db-ctrl openpitrix-vendor-db-ctrl openpitrix-notification-db-ctrl
 CMD?=...
 WITH_METADATA?=yes
 WITH_K8S=no
@@ -139,7 +139,7 @@ compose-logs-f: ## Follow openpitrix log in docker compose
 
 .PHONY: compose-migrate-db
 compose-migrate-db: ## Migrate db in docker compose
-	until docker-compose exec openpitrix-db bash -c "cat /docker-entrypoint-initdb.d/*.sql | mysql -uroot -ppassword"; do echo "ddl waiting for mysql"; sleep 2; done;
+	until docker-compose exec openpitrix-db bash -c "echo 'SELECT VERSION();' | mysql -uroot -ppassword"; do echo "waiting for mysql"; sleep 2; done;
 	docker-compose up $(COMPOSE_DB_CTRL)
 
 compose-update-%: ## Update "openpitrix-%" service in docker compose
@@ -189,6 +189,7 @@ bin-release-%: ## Bin release version
 	docker cp openpitrix-api-gateway:/usr/local/bin/opctl deploy/$*-bin; \
 	docker cp openpitrix-api-gateway:/usr/local/bin/frontgate deploy/$*-bin; \
 	docker cp openpitrix-api-gateway:/usr/local/bin/drone deploy/$*-bin; \
+	docker cp openpitrix:metadata:/usr/local/bin/metad deploy/$*-bin; \
 	cd deploy/ && tar -czvf $*-bin.tar.gz $*-bin; \
 	fi
 
@@ -196,17 +197,21 @@ bin-release-%: ## Bin release version
 test: ## Run all tests
 	make unit-test
 	make e2e-test
+	make e2e-k8s-test
 	@echo "test done"
 
 
 .PHONY: e2e-test
 e2e-test: ## Run integration tests
 	cd ./test/init/ && sh init_config.sh
-	go test -v -a -tags="integration" ./test/...
-ifeq ($(WITH_K8S),yes)
-	go test -v -a -timeout 0 -tags="k8s" ./test/...
-endif
+	go test -a -tags="integration" ./test/...
 	@echo "e2e-test done"
+
+.PHONY: e2e-k8s-test
+e2e-k8s-test: ## Run k8s tests
+	cd ./test/init/ && sh init_config.sh
+	go test -a -timeout 0 -tags="k8s" ./test/...
+	@echo "e2e-k8s-test done"
 
 .PHONY: clean
 clean: ## Clean generated version file
@@ -216,7 +221,7 @@ clean: ## Clean generated version file
 
 .PHONY: unit-test
 unit-test: ## Run unit tests
-	$(DB_TEST) $(ETCD_TEST) go test -v -a -tags="etcd db" ./...
+	$(DB_TEST) $(ETCD_TEST) go test -a -tags="etcd db" ./...
 	@echo "unit-test done"
 
 build-image-%: ## build docker image

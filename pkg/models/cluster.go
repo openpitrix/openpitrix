@@ -56,7 +56,11 @@ func NewCluster() *Cluster {
 }
 
 func ClusterToPb(cluster *Cluster) *pb.Cluster {
+	if cluster == nil {
+		return new(pb.Cluster)
+	}
 	c := &pb.Cluster{
+		Zone:               pbutil.ToProtoString(cluster.Zone),
 		ClusterId:          pbutil.ToProtoString(cluster.ClusterId),
 		Name:               pbutil.ToProtoString(cluster.Name),
 		Description:        pbutil.ToProtoString(cluster.Description),
@@ -87,8 +91,12 @@ func ClusterToPb(cluster *Cluster) *pb.Cluster {
 }
 
 func PbToCluster(pbCluster *pb.Cluster) *Cluster {
+	if pbCluster == nil {
+		return new(Cluster)
+	}
 	ownerPath := sender.OwnerPath(pbCluster.GetOwnerPath().GetValue())
 	c := &Cluster{
+		Zone:               pbCluster.GetZone().GetValue(),
 		ClusterId:          pbCluster.GetClusterId().GetValue(),
 		Name:               pbCluster.GetName().GetValue(),
 		Description:        pbCluster.GetDescription().GetValue(),
@@ -107,13 +115,15 @@ func PbToCluster(pbCluster *pb.Cluster) *Cluster {
 		GlobalUuid:         pbCluster.GetGlobalUuid().GetValue(),
 		UpgradeStatus:      pbCluster.GetUpgradeStatus().GetValue(),
 		RuntimeId:          pbCluster.GetRuntimeId().GetValue(),
-		CreateTime:         pbutil.FromProtoTimestamp(pbCluster.GetCreateTime()),
-		StatusTime:         pbutil.FromProtoTimestamp(pbCluster.GetStatusTime()),
+		CreateTime:         pbutil.GetTime(pbCluster.GetCreateTime()),
+		StatusTime:         pbutil.GetTime(pbCluster.GetStatusTime()),
 		AdditionalInfo:     pbCluster.GetAdditionalInfo().GetValue(),
 		Env:                pbCluster.GetEnv().GetValue(),
 		Debug:              pbCluster.GetDebug().GetValue(),
 	}
-	upgradeTime := pbutil.FromProtoTimestamp(pbCluster.GetUpgradeTime())
+
+	upgradeTime := pbutil.GetTime(pbCluster.GetUpgradeTime())
 	c.UpgradeTime = &upgradeTime
+
 	return c
 }

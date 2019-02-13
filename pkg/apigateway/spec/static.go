@@ -28,6 +28,843 @@ var Files = map[string]string{
     "application/json"
   ],
   "paths": {
+    "/v1/cando": {
+      "post": {
+        "operationId": "CanDo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCanDoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCanDoRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      }
+    },
+    "/v1/groups": {
+      "get": {
+        "operationId": "DescribeGroups",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeGroupsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteGroups",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteGroupsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteGroupsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      },
+      "post": {
+        "summary": "group",
+        "operationId": "CreateGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateGroupResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateGroupRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      },
+      "patch": {
+        "operationId": "ModifyGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyGroupResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyGroupRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
+    "/v1/groups:join": {
+      "post": {
+        "operationId": "JoinGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixJoinGroupResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixJoinGroupRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
+    "/v1/groups:leave": {
+      "post": {
+        "operationId": "LeaveGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixLeaveGroupResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixLeaveGroupRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
+    "/v1/isv_users": {
+      "post": {
+        "operationId": "IsvCreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixIsvCreateUserResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixIsvCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
+    "/v1/oauth2/token": {
+      "post": {
+        "operationId": "Token",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixTokenResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TokenManager"
+        ],
+        "security": []
+      }
+    },
+    "/v1/oauth2/{user_id}/client": {
+      "post": {
+        "operationId": "CreateClient",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateClientResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateClientRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TokenManager"
+        ]
+      }
+    },
+    "/v1/roles": {
+      "get": {
+        "operationId": "DescribeRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeRolesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "role_name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "portal",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteRoles",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRolesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteRolesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "post": {
+        "operationId": "CreateRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "patch": {
+        "operationId": "ModifyRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      }
+    },
+    "/v1/roles/{role_id}": {
+      "get": {
+        "summary": "admin permission",
+        "operationId": "GetRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      }
+    },
+    "/v1/roles:module": {
+      "get": {
+        "operationId": "GetRoleModule",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetRoleModuleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "role_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "patch": {
+        "operationId": "ModifyRoleModule",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRoleModuleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyRoleModuleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      }
+    },
+    "/v1/user:role": {
+      "delete": {
+        "summary": "group",
+        "operationId": "UnbindUserRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixUnbindUserRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixUnbindUserRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      },
+      "post": {
+        "operationId": "BindUserRole",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixBindUserRoleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixBindUserRoleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccessManager"
+        ]
+      }
+    },
+    "/v1/users": {
+      "get": {
+        "operationId": "DescribeUsers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeUsersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      },
+      "delete": {
+        "operationId": "DeleteUsers",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteUsersResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixDeleteUsersRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      },
+      "post": {
+        "summary": "admin permission",
+        "operationId": "CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateUserResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      },
+      "patch": {
+        "operationId": "ModifyUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyUserResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixModifyUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
+    "/v1/users/password/reset/{reset_id}": {
+      "get": {
+        "operationId": "GetPasswordReset",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetPasswordResetResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "reset_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
+    "/v1/users/password:change": {
+      "post": {
+        "operationId": "ChangePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixChangePasswordResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixChangePasswordRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
+    "/v1/users/password:reset": {
+      "post": {
+        "operationId": "CreatePasswordReset",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreatePasswordResetResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreatePasswordResetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
+    "/v1/users/password:validate": {
+      "post": {
+        "operationId": "ValidateUserPassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixValidateUserPasswordResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixValidateUserPasswordRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
     "/v1/active_app_versions": {
       "get": {
         "summary": "describe app versions with filter",
@@ -107,7 +944,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -261,7 +1098,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -333,6 +1170,87 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/app_version/action/business_admin/pass": {
+      "post": {
+        "summary": "business admin pass app version",
+        "operationId": "BusinessAdminPassAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/business_admin/reject": {
+      "post": {
+        "summary": "business admin reject app version",
+        "operationId": "BusinessAdminRejectAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/business_admin/review": {
+      "post": {
+        "summary": "business admin start review app version",
+        "operationId": "BusinessAdminReviewAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
     "/v1/app_version/action/cancel": {
       "post": {
         "summary": "cancel app version",
@@ -379,6 +1297,168 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixDeleteAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/develop_admin/pass": {
+      "post": {
+        "summary": "pass app version",
+        "operationId": "DevelopAdminPassAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/develop_admin/reject": {
+      "post": {
+        "summary": "reject app version",
+        "operationId": "DevelopAdminRejectAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/develop_admin/review": {
+      "post": {
+        "summary": "develop admin start review app version",
+        "operationId": "DevelopAdminReviewAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/isv/pass": {
+      "post": {
+        "summary": "isv pass app version",
+        "operationId": "IsvPassAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/isv/reject": {
+      "post": {
+        "summary": "isv reject app version",
+        "operationId": "IsvRejectAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AppManager"
+        ]
+      }
+    },
+    "/v1/app_version/action/isv/review": {
+      "post": {
+        "summary": "isv start review app version",
+        "operationId": "IsvReviewAppVersion",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
             }
           }
         ],
@@ -487,105 +1567,6 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixSuspendAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/{role}/pass": {
-      "post": {
-        "summary": "pass app version",
-        "operationId": "PassAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixPassAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/{role}/reject": {
-      "post": {
-        "summary": "reject app version",
-        "operationId": "RejectAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixRejectAppVersionRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppManager"
-        ]
-      }
-    },
-    "/v1/app_version/action/{role}/review": {
-      "post": {
-        "summary": "pass app version",
-        "operationId": "ReviewAppVersion",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "role",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixReviewAppVersionRequest"
             }
           }
         ],
@@ -961,7 +1942,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1165,7 +2146,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1329,91 +2310,7 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/DescribeAppVendorStatistics": {
-      "get": {
-        "summary": "DescribeAppVendorStatistics",
-        "operationId": "DescribeAppVendorStatistics",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDescribeVendorStatisticsResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
-          },
-          {
-            "name": "limit",
-            "description": "default is 20, max value is 200.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "description": "default is 0.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "user_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "display_columns",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          }
-        ],
-        "tags": [
-          "AppVendorManager"
-        ]
-      }
-    },
-    "/v1/vendor_verify_infos": {
+    "/v1/app_vendors": {
       "get": {
         "summary": "DescribeVendorVerifyInfos",
         "operationId": "DescribeVendorVerifyInfos",
@@ -1490,6 +2387,41 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
+          },
+          {
+            "name": "owner_path",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppVendorManager"
+        ]
+      },
+      "post": {
+        "summary": "SubmitVendorVerifyInfo",
+        "operationId": "SubmitVendorVerifyInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoRequest"
+            }
           }
         ],
         "tags": [
@@ -1497,15 +2429,15 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/vendor_verify_infos/user_id=*": {
+    "/v1/app_vendors/app_vendor": {
       "get": {
-        "summary": "GetVendorVerifyInfo",
+        "summary": "get appvendor by appvendor user Id",
         "operationId": "GetVendorVerifyInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/openpitrixVendorVerifyInfo"
+              "$ref": "#/definitions/openpitrixGetVendorVerifyInfoResponse"
             }
           }
         },
@@ -1522,7 +2454,101 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/vendor_verify_infos/user_id=*/action:pass": {
+    "/v1/app_vendors/app_vendor_statistics": {
+      "get": {
+        "summary": "DescribeAppVendorStatistics",
+        "operationId": "DescribeAppVendorStatistics",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeVendorStatisticsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "description": "default is 20, max value is 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "default is 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "owner_path",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AppVendorManager"
+        ]
+      }
+    },
+    "/v1/app_vendors/pass": {
       "post": {
         "summary": "PassVendorVerifyInfo",
         "operationId": "PassVendorVerifyInfo",
@@ -1549,7 +2575,7 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/vendor_verify_infos/user_id=*/action:reject": {
+    "/v1/app_vendors/reject": {
       "post": {
         "summary": "RejectVendorVerifyInfo",
         "operationId": "RejectVendorVerifyInfo",
@@ -1568,39 +2594,6 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/openpitrixRejectVendorVerifyInfoRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AppVendorManager"
-        ]
-      }
-    },
-    "/v1/vendor_verify_infos/{user_id}": {
-      "post": {
-        "summary": "SubmitVendorVerifyInfo",
-        "operationId": "SubmitVendorVerifyInfo",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixSubmitVendorVerifyInfoRequest"
             }
           }
         ],
@@ -1719,7 +2712,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -1924,7 +2917,7 @@ var Files = map[string]string{
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2065,7 +3058,7 @@ var Files = map[string]string{
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2304,7 +3297,7 @@ var Files = map[string]string{
             "type": "string"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2528,7 +3521,7 @@ var Files = map[string]string{
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -2950,7 +3943,7 @@ var Files = map[string]string{
             "format": "boolean"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3019,537 +4012,6 @@ var Files = map[string]string{
         ],
         "tags": [
           "ClusterManager"
-        ]
-      }
-    },
-    "/v1/groups": {
-      "get": {
-        "operationId": "DescribeGroups",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDescribeGroupsResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "group_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "user_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      },
-      "delete": {
-        "operationId": "DeleteGroups",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteGroupsResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteGroupsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      },
-      "post": {
-        "summary": "group",
-        "operationId": "CreateGroup",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateGroupResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateGroupRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      },
-      "patch": {
-        "operationId": "ModifyGroup",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyGroupResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyGroupRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      }
-    },
-    "/v1/groups:join": {
-      "post": {
-        "operationId": "JoinGroup",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixJoinGroupResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixJoinGroupRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      }
-    },
-    "/v1/groups:leave": {
-      "post": {
-        "operationId": "LeaveGroup",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixLeaveGroupResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixLeaveGroupRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      }
-    },
-    "/v1/oauth2/token": {
-      "post": {
-        "operationId": "Token",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixTokenResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixTokenRequest"
-            }
-          }
-        ],
-        "tags": [
-          "TokenManager"
-        ],
-        "security": []
-      }
-    },
-    "/v1/oauth2/{user_id}/client": {
-      "post": {
-        "operationId": "CreateClient",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateClientResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateClientRequest"
-            }
-          }
-        ],
-        "tags": [
-          "TokenManager"
-        ]
-      }
-    },
-    "/v1/users": {
-      "get": {
-        "operationId": "DescribeUsers",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDescribeUsersResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "search_word",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort_key",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "group_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "user_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "role",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      },
-      "delete": {
-        "operationId": "DeleteUsers",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteUsersResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixDeleteUsersRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      },
-      "post": {
-        "summary": "admin permission",
-        "operationId": "CreateUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateUserResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateUserRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      },
-      "patch": {
-        "operationId": "ModifyUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyUserResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixModifyUserRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      }
-    },
-    "/v1/users/password/reset/{reset_id}": {
-      "get": {
-        "operationId": "GetPasswordReset",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixGetPasswordResetResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "reset_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      }
-    },
-    "/v1/users/password:change": {
-      "post": {
-        "operationId": "ChangePassword",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixChangePasswordResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixChangePasswordRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      }
-    },
-    "/v1/users/password:reset": {
-      "post": {
-        "operationId": "CreatePasswordReset",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreatePasswordResetResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreatePasswordResetRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      }
-    },
-    "/v1/users/password:validate": {
-      "post": {
-        "operationId": "ValidateUserPassword",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixValidateUserPasswordResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixValidateUserPasswordRequest"
-            }
-          }
-        ],
-        "tags": [
-          "AccountManager"
         ]
       }
     },
@@ -3668,7 +4130,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3752,7 +4214,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -3856,7 +4318,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4141,7 +4603,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4342,7 +4804,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4483,7 +4945,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4612,7 +5074,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4741,7 +5203,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -4920,7 +5382,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5079,6 +5541,60 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/service_configs/get": {
+      "post": {
+        "summary": "get service configration",
+        "operationId": "GetServiceConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetServiceConfigResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetServiceConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ServiceConfig"
+        ]
+      }
+    },
+    "/v1/service_configs/set": {
+      "post": {
+        "summary": "set service configration",
+        "operationId": "SetServiceConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixSetServiceConfigResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixSetServiceConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ServiceConfig"
+        ]
+      }
+    },
     "/v1/tasks": {
       "get": {
         "summary": "describe tasks with filter",
@@ -5180,7 +5696,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
+            "name": "owner_path",
             "in": "query",
             "required": false,
             "type": "array",
@@ -5224,6 +5740,889 @@ var Files = map[string]string{
     }
   },
   "definitions": {
+    "openpitrixBindUserRoleRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixBindUserRoleResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixCanDoRequest": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "url_method": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCanDoResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "access_path": {
+          "type": "string"
+        },
+        "owner_path": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixChangePasswordRequest": {
+      "type": "object",
+      "properties": {
+        "new_password": {
+          "type": "string"
+        },
+        "reset_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixChangePasswordResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateClientRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateClientResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "client_secret": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateGroupRequest": {
+      "type": "object",
+      "properties": {
+        "parent_group_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateGroupResponse": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreatePasswordResetRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreatePasswordResetResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "reset_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateRoleRequest": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        },
+        "role_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "portal": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "owner_path": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateRoleResponse": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixCreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteGroupsRequest": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteGroupsResponse": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteRolesRequest": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteRolesResponse": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDeleteUsersRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDeleteUsersResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeGroupsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "group_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixGroup"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeRolesResponse": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRole"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeUsersResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixUser"
+          }
+        }
+      }
+    },
+    "openpitrixGetPasswordResetResponse": {
+      "type": "object",
+      "properties": {
+        "reset_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixGetRoleModuleResponse": {
+      "type": "object",
+      "properties": {
+        "role_module": {
+          "$ref": "#/definitions/openpitrixRoleModule"
+        }
+      }
+    },
+    "openpitrixGetRoleResponse": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/definitions/openpitrixRole"
+        }
+      }
+    },
+    "openpitrixGetUserGroupOwnerResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixGroup": {
+      "type": "object",
+      "properties": {
+        "parent_group_id": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": "string"
+        },
+        "group_path": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixIsvCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixIsvCreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixJoinGroupRequest": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixJoinGroupResponse": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixLeaveGroupRequest": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixLeaveGroupResponse": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixModifyGroupRequest": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyGroupResponse": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyRoleModuleRequest": {
+      "type": "object",
+      "properties": {
+        "role_module": {
+          "$ref": "#/definitions/openpitrixRoleModule"
+        }
+      }
+    },
+    "openpitrixModifyRoleModuleResponse": {
+      "type": "object",
+      "properties": {
+        "role_module": {
+          "$ref": "#/definitions/openpitrixRoleModule"
+        }
+      }
+    },
+    "openpitrixModifyRoleRequest": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        },
+        "role_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "portal": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyRoleResponse": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "$ref": "#/definitions/openpitrixRole"
+        }
+      }
+    },
+    "openpitrixModifyUserRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModifyUserResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixModuleFeature": {
+      "type": "object",
+      "properties": {
+        "feature_id": {
+          "type": "string"
+        },
+        "feature_name": {
+          "type": "string"
+        },
+        "action_bundle": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixModuleFeatureActionBundle"
+          }
+        },
+        "checked_action_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixModuleFeatureActionBundle": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        },
+        "role_name": {
+          "type": "string"
+        },
+        "portal": {
+          "type": "string"
+        },
+        "module_id": {
+          "type": "string"
+        },
+        "module_name": {
+          "type": "string"
+        },
+        "data_level": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "feature_id": {
+          "type": "string"
+        },
+        "feature_name": {
+          "type": "string"
+        },
+        "action_bundle_id": {
+          "type": "string"
+        },
+        "action_bundle_name": {
+          "type": "string"
+        },
+        "action_bundle_enabled": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "api_id": {
+          "type": "string"
+        },
+        "api_method": {
+          "type": "string"
+        },
+        "api_description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "url_method": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixRole": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        },
+        "role_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "portal": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "owner_path": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixRoleModule": {
+      "type": "object",
+      "properties": {
+        "role_id": {
+          "type": "string"
+        },
+        "module": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRoleModuleElem"
+          }
+        }
+      }
+    },
+    "openpitrixRoleModuleElem": {
+      "type": "object",
+      "properties": {
+        "module_id": {
+          "type": "string"
+        },
+        "module_name": {
+          "type": "string"
+        },
+        "feature": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixModuleFeature"
+          }
+        },
+        "owner": {
+          "type": "string"
+        },
+        "data_level": {
+          "type": "string"
+        },
+        "is_check_all": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "openpitrixTokenRequest": {
+      "type": "object",
+      "properties": {
+        "grant_type": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "client_secret": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "refresh_token": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixTokenResponse": {
+      "type": "object",
+      "properties": {
+        "token_type": {
+          "type": "string"
+        },
+        "expires_in": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "access_token": {
+          "type": "string"
+        },
+        "refresh_token": {
+          "type": "string"
+        },
+        "id_token": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixUnbindUserRoleRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixUnbindUserRoleResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "role_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixUser": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
+        },
+        "role": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRole"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "group_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixValidateUserPasswordRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixValidateUserPasswordResponse": {
+      "type": "object",
+      "properties": {
+        "validated": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
     "openpitrixApp": {
       "type": "object",
       "properties": {
@@ -5302,6 +6701,19 @@ var Files = map[string]string{
         },
         "app_version_types": {
           "type": "string"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "company_website": {
+          "type": "string"
+        },
+        "company_profile": {
+          "type": "string"
+        },
+        "company_join_time": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },
@@ -5393,6 +6805,12 @@ var Files = map[string]string{
         "status": {
           "type": "string"
         },
+        "version_name": {
+          "type": "string"
+        },
+        "app_name": {
+          "type": "string"
+        },
         "operator": {
           "type": "string"
         },
@@ -5421,6 +6839,12 @@ var Files = map[string]string{
           "type": "string"
         },
         "app_id": {
+          "type": "string"
+        },
+        "version_name": {
+          "type": "string"
+        },
+        "app_name": {
           "type": "string"
         },
         "status": {
@@ -5789,9 +7213,6 @@ var Files = map[string]string{
     "openpitrixPassAppVersionRequest": {
       "type": "object",
       "properties": {
-        "role": {
-          "type": "string"
-        },
         "version_id": {
           "type": "string"
         }
@@ -5824,9 +7245,6 @@ var Files = map[string]string{
     "openpitrixRejectAppVersionRequest": {
       "type": "object",
       "properties": {
-        "role": {
-          "type": "string"
-        },
         "version_id": {
           "type": "string"
         },
@@ -5887,9 +7305,6 @@ var Files = map[string]string{
     "openpitrixReviewAppVersionRequest": {
       "type": "object",
       "properties": {
-        "role": {
-          "type": "string"
-        },
         "version_id": {
           "type": "string"
         }
@@ -6048,6 +7463,14 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixGetVendorVerifyInfoResponse": {
+      "type": "object",
+      "properties": {
+        "vendor_verify_info": {
+          "$ref": "#/definitions/openpitrixVendorVerifyInfo"
+        }
+      }
+    },
     "openpitrixPassVendorVerifyInfoRequest": {
       "type": "object",
       "properties": {
@@ -6189,6 +7612,12 @@ var Files = map[string]string{
           "type": "string"
         },
         "approver": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "owner_path": {
           "type": "string"
         },
         "submit_time": {
@@ -6603,6 +8032,9 @@ var Files = map[string]string{
         "debug": {
           "type": "boolean",
           "format": "boolean"
+        },
+        "zone": {
+          "type": "string"
         },
         "cluster_node_set": {
           "type": "array",
@@ -7582,450 +9014,6 @@ var Files = map[string]string{
       "description": "service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for ` + "`" + `Empty` + "`" + ` is empty JSON object ` + "`" + `{}` + "`" + `.",
       "title": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:"
     },
-    "openpitrixChangePasswordRequest": {
-      "type": "object",
-      "properties": {
-        "new_password": {
-          "type": "string"
-        },
-        "reset_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixChangePasswordResponse": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateClientRequest": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateClientResponse": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        },
-        "client_id": {
-          "type": "string"
-        },
-        "client_secret": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateGroupRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateGroupResponse": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreatePasswordResetRequest": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreatePasswordResetResponse": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        },
-        "reset_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateUserRequest": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixCreateUserResponse": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixDeleteGroupsRequest": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixDeleteGroupsResponse": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixDeleteUsersRequest": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixDeleteUsersResponse": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixDescribeGroupsResponse": {
-      "type": "object",
-      "properties": {
-        "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "group_set": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixGroup"
-          }
-        }
-      }
-    },
-    "openpitrixDescribeUsersResponse": {
-      "type": "object",
-      "properties": {
-        "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "user_set": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixUser"
-          }
-        }
-      }
-    },
-    "openpitrixGetPasswordResetResponse": {
-      "type": "object",
-      "properties": {
-        "reset_id": {
-          "type": "string"
-        },
-        "user_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixGroup": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "update_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "status_time": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "openpitrixJoinGroupRequest": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "user_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixJoinGroupResponse": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "user_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixLeaveGroupRequest": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "user_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixLeaveGroupResponse": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "user_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixModifyGroupRequest": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixModifyGroupResponse": {
-      "type": "object",
-      "properties": {
-        "group_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixModifyUserRequest": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixModifyUserResponse": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixTokenRequest": {
-      "type": "object",
-      "properties": {
-        "grant_type": {
-          "type": "string"
-        },
-        "client_id": {
-          "type": "string"
-        },
-        "client_secret": {
-          "type": "string"
-        },
-        "scope": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "refresh_token": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixTokenResponse": {
-      "type": "object",
-      "properties": {
-        "token_type": {
-          "type": "string"
-        },
-        "expires_in": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "access_token": {
-          "type": "string"
-        },
-        "refresh_token": {
-          "type": "string"
-        },
-        "id_token": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixUser": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "role": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string"
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "update_time": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "status_time": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
-    "openpitrixValidateUserPasswordRequest": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixValidateUserPasswordResponse": {
-      "type": "object",
-      "properties": {
-        "validated": {
-          "type": "boolean",
-          "format": "boolean"
-        }
-      }
-    },
     "openpitrixCreateJobResponse": {
       "type": "object",
       "properties": {
@@ -9003,36 +9991,35 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixCreateTaskResponse": {
+    "openpitrixCheckResourceResponse": {
       "type": "object",
       "properties": {
-        "task_id": {
-          "type": "string"
-        },
-        "job_id": {
-          "type": "string"
+        "ok": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
-    "openpitrixDescribeTasksResponse": {
+    "openpitrixDescribeClusterDetailsResponse": {
       "type": "object",
       "properties": {
-        "total_count": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "task_set": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixTask"
-          }
+        "cluster": {
+          "$ref": "#/definitions/openpitrixCluster"
         }
       }
     },
-    "openpitrixRetryTasksRequest": {
+    "openpitrixDescribeVpcResponse": {
       "type": "object",
       "properties": {
-        "task_id": {
+        "vpc": {
+          "$ref": "#/definitions/openpitrixVpc"
+        }
+      }
+    },
+    "openpitrixDescribeZonesResponse": {
+      "type": "object",
+      "properties": {
+        "zones": {
           "type": "array",
           "items": {
             "type": "string"
@@ -9040,14 +10027,50 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixRetryTasksResponse": {
+    "openpitrixEip": {
       "type": "object",
       "properties": {
-        "task_set": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixTask"
-          }
+        "eip_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "addr": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixHandleSubtaskResponse": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "$ref": "#/definitions/openpitrixTask"
+        }
+      }
+    },
+    "openpitrixParseClusterConfResponse": {
+      "type": "object",
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/openpitrixCluster"
+        }
+      }
+    },
+    "openpitrixRegisterRuntimeProviderResponse": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "openpitrixSplitJobIntoTasksResponse": {
+      "type": "object",
+      "properties": {
+        "taskLayer": {
+          "$ref": "#/definitions/openpitrixTaskLayer"
         }
       }
     },
@@ -9096,6 +10119,189 @@ var Files = map[string]string{
         "failure_allowed": {
           "type": "boolean",
           "format": "boolean"
+        }
+      }
+    },
+    "openpitrixTaskLayer": {
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixTask"
+          }
+        },
+        "child": {
+          "$ref": "#/definitions/openpitrixTaskLayer"
+        }
+      }
+    },
+    "openpitrixValidateRuntimeResponse": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "openpitrixVpc": {
+      "type": "object",
+      "properties": {
+        "vpc_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "transition_status": {
+          "type": "string"
+        },
+        "subnets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "eip": {
+          "$ref": "#/definitions/openpitrixEip"
+        }
+      }
+    },
+    "openpitrixWaitSubtaskResponse": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "$ref": "#/definitions/openpitrixTask"
+        }
+      }
+    },
+    "openpitrixEmailServiceConfig": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "type": "string"
+        },
+        "email_host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        },
+        "display_email": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "ssl_enable": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "openpitrixGetServiceConfigRequest": {
+      "type": "object",
+      "properties": {
+        "service_type": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixGetServiceConfigResponse": {
+      "type": "object",
+      "properties": {
+        "notification_config": {
+          "$ref": "#/definitions/openpitrixNotificationConfig"
+        }
+      }
+    },
+    "openpitrixNotificationConfig": {
+      "type": "object",
+      "properties": {
+        "email_service_config": {
+          "$ref": "#/definitions/openpitrixEmailServiceConfig"
+        }
+      }
+    },
+    "openpitrixSetServiceConfigRequest": {
+      "type": "object",
+      "properties": {
+        "notification_config": {
+          "$ref": "#/definitions/openpitrixNotificationConfig"
+        }
+      }
+    },
+    "openpitrixSetServiceConfigResponse": {
+      "type": "object",
+      "properties": {
+        "is_succ": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "openpitrixCreateTaskResponse": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        }
+      }
+    },
+    "openpitrixDescribeTasksResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "task_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixTask"
+          }
+        }
+      }
+    },
+    "openpitrixRetryTasksRequest": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "openpitrixRetryTasksResponse": {
+      "type": "object",
+      "properties": {
+        "task_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixTask"
+          }
         }
       }
     }

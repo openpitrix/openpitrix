@@ -10,13 +10,15 @@ import (
 	"strings"
 	"time"
 
+	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/plugins"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 type Frontgate struct {
@@ -90,18 +92,22 @@ func (f *Frontgate) GetActiveFrontgate(ctx context.Context, clusterWrapper *mode
 	owner := clusterWrapper.Cluster.Owner
 	err := pi.Global().Etcd(ctx).DlockWithTimeout(constants.ClusterPrefix+vpcId, 600*time.Second, func() error {
 		// Check vpc status
-		providerInterface, err := plugins.GetProviderPlugin(ctx, f.Runtime.Runtime.Provider)
+		providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 		if err != nil {
-			return gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, f.Runtime.Runtime.Provider)
+			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 		}
-		vpc, err := providerInterface.DescribeVpc(ctx, f.Runtime.RuntimeId, vpcId)
+		response, err := providerClient.DescribeVpc(ctx, &pb.DescribeVpcRequest{
+			RuntimeId: pbutil.ToProtoString(f.Runtime.RuntimeId),
+			VpcId:     pbutil.ToProtoString(vpcId),
+		})
 		if err != nil {
 			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotFound, vpcId)
 		}
-		if vpc == nil {
+		if response.Vpc == nil {
 			err = fmt.Errorf("describe vpc [%s] failed", vpcId)
 			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed, vpcId)
 		}
+		vpc := models.PbToVpc(response.Vpc)
 		if vpc.Status != constants.StatusActive && vpc.Status != constants.StatusAvailable && vpc.Status != strings.Title(constants.StatusAvailable) {
 			err = fmt.Errorf("vpc [%s] is not active or available", vpcId)
 			return gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceNotInStatus, vpcId, constants.StatusActive)

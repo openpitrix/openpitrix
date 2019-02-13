@@ -141,3 +141,11 @@ func (c *clientRequest) GetBody() []byte {
 	}
 	return ret
 }
+
+func (c *clientRequest) GetBodyParam() interface{} {
+	return c.payload
+}
+
+func (c *clientRequest) GetFileParam() map[string][]runtime.NamedReadCloser {
+	return nil
+}

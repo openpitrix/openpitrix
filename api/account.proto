@@ -1,0 +1,497 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+service AccountManager {
+	rpc DescribeUsers (DescribeUsersRequest) returns (DescribeUsersResponse) {
+		option (google.api.http) = { get: "/v1/users" };
+	};
+	rpc ModifyUser (ModifyUserRequest) returns (ModifyUserResponse) {
+		option (google.api.http) = { patch: "/v1/users" body: "*" };
+	};
+	rpc DeleteUsers (DeleteUsersRequest) returns (DeleteUsersResponse) {
+		option (google.api.http) = { delete: "/v1/users" body: "*" };
+	};
+
+	rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {
+		option (google.api.http) = { post: "/v1/users/password:change" body: "*" };
+	};
+	rpc CreatePasswordReset (CreatePasswordResetRequest) returns (CreatePasswordResetResponse) {
+		option (google.api.http) = { post: "/v1/users/password:reset" body: "*" };
+	};
+	rpc IsvCreateUser (IsvCreateUserRequest) returns (IsvCreateUserResponse) {
+		option (google.api.http) = { post: "/v1/isv_users" body: "*" };
+	};
+
+	// admin permission
+	rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+		option (google.api.http) = { post: "/v1/users" body: "*" };
+	};
+	rpc GetPasswordReset (GetPasswordResetRequest) returns (GetPasswordResetResponse) {
+		option (google.api.http) = { get: "/v1/users/password/reset/{reset_id=*}" };
+	};
+	rpc ValidateUserPassword (ValidateUserPasswordRequest) returns (ValidateUserPasswordResponse) {
+		option (google.api.http) = { post: "/v1/users/password:validate" body: "*" };
+	};
+
+	// group
+	rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {
+		option (google.api.http) = { post: "/v1/groups" body: "*" };
+	};
+	rpc DescribeGroups (DescribeGroupsRequest) returns (DescribeGroupsResponse) {
+		option (google.api.http) = { get: "/v1/groups" };
+	};
+	rpc ModifyGroup (ModifyGroupRequest) returns (ModifyGroupResponse) {
+		option (google.api.http) = { patch: "/v1/groups" body: "*" };
+	};
+	rpc DeleteGroups (DeleteGroupsRequest) returns (DeleteGroupsResponse) {
+		option (google.api.http) = { delete: "/v1/groups" body: "*" };
+	};
+	rpc JoinGroup (JoinGroupRequest) returns (JoinGroupResponse) {
+		option (google.api.http) = { post: "/v1/groups:join" body: "*" };
+	};
+	rpc LeaveGroup (LeaveGroupRequest) returns (LeaveGroupResponse) {
+		option (google.api.http) = { post: "/v1/groups:leave" body: "*" };
+	};
+	rpc GetUserGroupOwner (GetUserGroupOwnerRequest) returns (GetUserGroupOwnerResponse);
+}
+
+service AccessManager {
+	rpc CanDo(CanDoRequest) returns (CanDoResponse) {
+		option (google.api.http) = { post: "/v1/cando" body: "*" };
+	}
+
+	// role module
+	rpc GetRoleModule(GetRoleModuleRequest) returns (GetRoleModuleResponse) {
+		option (google.api.http) = { get: "/v1/roles:module" };
+	}
+	rpc ModifyRoleModule(ModifyRoleModuleRequest) returns (ModifyRoleModuleResponse) {
+		option (google.api.http) = { patch: "/v1/roles:module" body: "*" };
+	}
+
+	// role
+	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+		option (google.api.http) = { post: "/v1/roles" body: "*" };
+	}
+	rpc DeleteRoles(DeleteRolesRequest) returns (DeleteRolesResponse) {
+		option (google.api.http) = { delete: "/v1/roles" body: "*" };
+	}
+	rpc ModifyRole(ModifyRoleRequest) returns (ModifyRoleResponse) {
+		option (google.api.http) = { patch: "/v1/roles" body: "*" };
+	}
+	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {
+		option (google.api.http) = { get: "/v1/roles/{role_id}" };
+	}
+	rpc DescribeRoles(DescribeRolesRequest) returns (DescribeRolesResponse) {
+		option (google.api.http) = { get: "/v1/roles" };
+	}
+
+	// role/user
+	rpc BindUserRole(BindUserRoleRequest) returns (BindUserRoleResponse) {
+		option (google.api.http) = { post: "/v1/user:role" body: "*" };
+	}
+	rpc UnbindUserRole(UnbindUserRoleRequest) returns (UnbindUserRoleResponse) {
+		option (google.api.http) = { delete: "/v1/user:role" body: "*" };
+	}
+}
+
+
+service TokenManager {
+	rpc CreateClient (CreateClientRequest) returns (CreateClientResponse) {
+		option (google.api.http) = { post: "/v1/oauth2/{user_id=*}/client" body: "*" };
+	};
+
+	// get access_token with client_credentials or password
+	//
+	// Ref:
+	// - https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2
+	// - https://alexbilbie.com/guide-to-oauth-2-grants/
+	// - https://tools.ietf.org/html/rfc6749#section-4.4
+	//
+	// refresh access_token
+	//
+	// Ref: https://tools.ietf.org/html/rfc6749#section-6
+	//
+	rpc Token (TokenRequest) returns (TokenResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			security: {}
+		};
+		option (google.api.http) = { post: "/v1/oauth2/token" body: "*" };
+	};
+}
+
+message User {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue username = 2;
+	google.protobuf.StringValue email = 3;
+	google.protobuf.StringValue phone_number = 4;
+	repeated Role role = 5;
+	google.protobuf.StringValue description = 6;
+	google.protobuf.StringValue status = 7;
+
+	google.protobuf.Timestamp create_time = 8;
+	google.protobuf.Timestamp update_time = 9;
+	google.protobuf.Timestamp status_time = 10;
+
+	repeated string group_id = 11;
+}
+
+message Group {
+	google.protobuf.StringValue parent_group_id = 1;
+	google.protobuf.StringValue group_id = 2;
+	google.protobuf.StringValue group_path = 3;
+	google.protobuf.StringValue name = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.StringValue description = 6;
+
+	google.protobuf.Timestamp create_time = 7;
+	google.protobuf.Timestamp update_time = 8;
+	google.protobuf.Timestamp status_time = 9;
+
+	repeated string user_id = 10;
+}
+
+message Role {
+	string role_id = 1;
+	string role_name = 2;   // enable modify
+	string description = 3; // enable modify
+	string portal = 4;      // enable modify
+	string owner = 5;
+	string owner_path = 6;
+	string status = 7;
+
+	google.protobuf.Timestamp create_time = 8;
+	google.protobuf.Timestamp update_time = 9;
+	google.protobuf.Timestamp status_time = 10;
+
+	repeated string user_id = 11;
+}
+
+message ModuleFeatureActionBundle {
+	string role_id = 1;
+	string role_name = 2;
+	string portal = 3;
+
+	string module_id = 4;
+	string module_name = 5;
+	string data_level = 6;
+	string owner = 7;
+
+	string feature_id = 8;
+	string feature_name = 9;
+
+	string action_bundle_id = 10;
+	string action_bundle_name = 11;
+	bool action_bundle_enabled = 12;
+
+	string api_id = 13;
+	string api_method = 14;
+	string api_description = 15;
+
+	string url = 16;
+	string url_method = 17;
+}
+
+message ModuleFeature {
+	string feature_id = 1;
+	string feature_name = 2;
+	repeated ModuleFeatureActionBundle action_bundle = 3;
+	repeated string checked_action_id = 4;
+}
+
+message RoleModuleElem {
+	string module_id = 1;
+	string module_name = 2;
+	repeated ModuleFeature feature = 3;
+	string owner = 4;
+	string data_level = 5;
+	bool is_check_all = 6;
+}
+
+message RoleModule {
+	string role_id = 1;
+	repeated RoleModuleElem module = 2;
+}
+
+message DescribeUsersRequest {
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	uint32 limit = 4;
+	uint32 offset = 5;
+
+	repeated string group_id = 11;
+	repeated string user_id = 12;
+	repeated string status = 13;
+	repeated string role = 14;
+}
+message DescribeUsersResponse {
+	uint32 total_count = 1;
+	repeated User user_set = 2;
+}
+
+message ModifyUserRequest {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue email = 2; // for admin
+	google.protobuf.StringValue username = 3;
+	google.protobuf.StringValue description = 4;
+	google.protobuf.StringValue password = 5;
+}
+message ModifyUserResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message DeleteUsersRequest {
+	repeated string user_id = 1;
+}
+message DeleteUsersResponse {
+	repeated string user_id = 1;
+}
+
+message CreatePasswordResetRequest {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue password = 2;
+}
+message CreatePasswordResetResponse {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue reset_id = 2;
+}
+
+message ChangePasswordRequest {
+	google.protobuf.StringValue new_password = 1;
+	google.protobuf.StringValue reset_id = 2;
+}
+message ChangePasswordResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message GetPasswordResetRequest {
+	string reset_id = 1;
+}
+message GetPasswordResetResponse {
+	string reset_id = 1;
+	string user_id = 2;
+}
+message CreateUserRequest {
+	google.protobuf.StringValue email = 1;
+	google.protobuf.StringValue phone_number = 2;
+	google.protobuf.StringValue password = 3;
+	google.protobuf.StringValue role = 4; // default is user
+	google.protobuf.StringValue description = 5;
+}
+message CreateUserResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+message IsvCreateUserRequest {
+	google.protobuf.StringValue email = 1;
+	google.protobuf.StringValue phone_number = 2;
+	google.protobuf.StringValue password = 3;
+	google.protobuf.StringValue description = 4;
+}
+message IsvCreateUserResponse {
+	google.protobuf.StringValue user_id = 1;
+}
+
+message ValidateUserPasswordRequest {
+	string email = 1;
+	string password = 2;
+}
+message ValidateUserPasswordResponse {
+	bool validated = 1;
+}
+
+message CreateGroupRequest {
+	google.protobuf.StringValue parent_group_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+}
+message CreateGroupResponse {
+	google.protobuf.StringValue group_id = 1;
+}
+
+
+message DescribeGroupsRequest {
+	google.protobuf.StringValue search_word = 1;
+	google.protobuf.StringValue sort_key = 2;
+	google.protobuf.BoolValue reverse = 3;
+	uint32 limit = 4;
+	uint32 offset = 5;
+
+	repeated string group_id = 6;
+	repeated string user_id = 7;
+	repeated string status = 8;
+}
+message DescribeGroupsResponse {
+	uint32 total_count = 1;
+	repeated Group group_set = 2;
+}
+
+message ModifyGroupRequest {
+	google.protobuf.StringValue group_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+}
+message ModifyGroupResponse {
+	google.protobuf.StringValue group_id = 1;
+}
+
+message DeleteGroupsRequest {
+	repeated string group_id = 1;
+}
+message DeleteGroupsResponse {
+	repeated string group_id = 1;
+}
+
+message JoinGroupRequest {
+	repeated string group_id = 1;
+	repeated string user_id = 2;
+}
+message JoinGroupResponse {
+	repeated string group_id = 1;
+	repeated string user_id = 2;
+}
+
+message LeaveGroupRequest {
+	repeated string group_id = 1;
+	repeated string user_id = 2;
+}
+message LeaveGroupResponse {
+	repeated string group_id = 1;
+	repeated string user_id = 2;
+}
+
+message GetUserGroupOwnerRequest {
+	string user_id =  1;
+}
+message GetUserGroupOwnerResponse {
+	string user_id =  1;
+	string owner = 2;
+}
+
+
+message CanDoRequest {
+	string url = 2;
+	string url_method = 3;
+}
+message CanDoResponse {
+	string user_id = 1;
+	string access_path = 2;
+	string owner_path = 3;
+}
+
+message GetRoleModuleRequest {
+	string role_id = 1;
+}
+message GetRoleModuleResponse {
+	RoleModule role_module = 1;
+}
+
+message ModifyRoleModuleRequest {
+	RoleModule role_module = 1;
+}
+message ModifyRoleModuleResponse {
+	RoleModule role_module = 1;
+}
+
+message CreateRoleRequest {
+	string role_id = 1;
+	string role_name = 2;   // enable modify
+	string description = 3; // enable modify
+	string portal = 4;      // enable modify
+	string owner = 5;
+	string owner_path = 6;
+	string status = 7;
+}
+message CreateRoleResponse {
+	string role_id = 1;
+}
+
+message DeleteRolesRequest {
+	string role_id = 1;
+}
+message DeleteRolesResponse {
+	string role_id = 1;
+}
+
+message ModifyRoleRequest {
+	string role_id = 1;
+	string role_name = 2;   // enable modify
+	string description = 3; // enable modify
+	string portal = 4;      // enable modify
+}
+message ModifyRoleResponse {
+	Role role = 1;
+}
+
+message GetRoleRequest {
+	string role_id = 1;
+}
+message GetRoleResponse {
+	Role role = 1;
+}
+
+message DescribeRolesRequest {
+	repeated string role_id = 1;
+	repeated string role_name = 2;
+	repeated string portal = 3;
+	repeated string user_id = 4;
+}
+message DescribeRolesResponse {
+	repeated Role role = 1;
+}
+
+message BindUserRoleRequest {
+	repeated string user_id = 1;
+	repeated string role_id = 2;
+}
+message BindUserRoleResponse {
+	repeated string user_id = 1;
+	repeated string role_id = 2;
+}
+
+message UnbindUserRoleRequest {
+	repeated string user_id = 1;
+	repeated string role_id = 2;
+}
+message UnbindUserRoleResponse {
+	repeated string user_id = 1;
+	repeated string role_id = 2;
+}
+
+message CreateClientRequest {
+	string user_id = 1;
+}
+message CreateClientResponse {
+	string user_id = 1;
+	string client_id = 2;
+	string client_secret = 3;
+}
+
+message TokenRequest {
+	string grant_type = 1; // client_credentials or password or refresh_token
+	string client_id = 2;
+	string client_secret = 3;
+	string scope = 4;
+	string username = 5;
+	string password = 6;
+	string refresh_token = 7;
+}
+message TokenResponse {
+	string token_type = 1;
+	int32 expires_in = 2;
+	string access_token = 3;
+	string refresh_token = 4;
+	string id_token = 5;
+}

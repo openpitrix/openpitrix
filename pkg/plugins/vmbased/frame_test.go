@@ -83,7 +83,7 @@ func TestSplitJobIntoTasks(t *testing.T) {
 		ClusterWrapper: clusterWrapper,
 		Runtime:        runtime,
 		Ctx:            context.Background(),
-		ImageConfig: &config.ImageConfig{
+		RuntimeProviderConfig: &config.RuntimeProviderConfig{
 			ImageId: "img:abcd",
 		},
 	}

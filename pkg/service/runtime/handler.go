@@ -10,6 +10,7 @@ import (
 	"time"
 
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
+	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"
@@ -18,7 +19,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/pi"
-	"openpitrix.io/openpitrix/pkg/plugins"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
@@ -74,6 +74,24 @@ func (p *Server) createRuntime(ctx context.Context, req *pb.CreateRuntimeRequest
 		}
 	}
 
+	query := pi.Global().DB(ctx).
+		Select(models.RuntimeColumns...).
+		From(constants.TableRuntime).
+		Where(db.Eq(constants.ColumnRuntimeCredentialId, runtimeCredentialId)).
+		Where(db.Eq(constants.ColumnZone, req.GetZone().GetValue())).
+		Where(db.Eq(constants.ColumnProvider, req.GetProvider().GetValue())).
+		Where(db.Eq(constants.ColumnDebug, debug)).
+		Where(db.Eq(constants.ColumnOwner, s.GetOwnerPath().Owner())).
+		Where(db.Eq(constants.ColumnOwnerPath, s.GetOwnerPath()))
+
+	count, err := query.Count()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+	if count > 0 {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRuntimeExists)
+	}
+
 	newRuntime := models.NewRuntime(
 		runtimeId,
 		req.GetName().GetValue(),
@@ -117,7 +135,7 @@ func (p *Server) describeRuntimes(ctx context.Context, req *pb.DescribeRuntimesR
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
 	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
@@ -150,7 +168,7 @@ func (p *Server) DescribeRuntimeDetails(ctx context.Context, req *pb.DescribeRun
 		From(constants.TableRuntime).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntime))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
 	_, err := query.Load(&runtimes)
@@ -234,34 +252,37 @@ func (p *Server) DeleteRuntimes(ctx context.Context, req *pb.DeleteRuntimesReque
 		return nil, err
 	}
 
+	clusterClient, err := clusterclient.NewClient()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
+	}
 	for _, runtime := range runtimes {
 		if runtime.Status == constants.StatusDeleted {
 			logger.Error(ctx, "Runtime [%s] has been deleted", runtime.RuntimeId)
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorResourceAlreadyDeleted, runtime.RuntimeId)
 		}
-	}
 
-	// There can be no cluster in the runtimes
-	clusterClient, err := clusterclient.NewClient()
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
-	}
-	clusters, err := clusterClient.DescribeClusters(ctx, &pb.DescribeClustersRequest{
-		RuntimeId: runtimeIds,
-		Status: []string{
-			constants.StatusActive,
-			constants.StatusStopped,
-			constants.StatusSuspended,
-			constants.StatusPending,
-		},
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourcesFailed)
-	}
+		// There can be no cluster in the runtime
+		request := &pb.DescribeClustersRequest{
+			RuntimeId: []string{runtime.RuntimeId},
+			Status: []string{
+				constants.StatusActive,
+				constants.StatusStopped,
+				constants.StatusSuspended,
+				constants.StatusPending,
+			},
+		}
+		var response *pb.DescribeClustersResponse
+		if runtime.Debug {
+			response, err = clusterClient.DescribeDebugClusters(ctx, request)
+		} else {
+			response, err = clusterClient.DescribeClusters(ctx, request)
+		}
 
-	if clusters.TotalCount > 0 {
-		err = fmt.Errorf("there are still [%d] clusters in the runtime", clusters.TotalCount)
-		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourcesFailed)
+		if response.TotalCount > 0 {
+			err = fmt.Errorf("there are still [%d] clusters in the runtime [%s]", response.TotalCount, runtime.RuntimeId)
+			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDeleteResourcesFailed)
+		}
 	}
 
 	// deleted runtimes
@@ -316,6 +337,24 @@ func (p *Server) createRuntimeCredential(ctx context.Context, req *pb.CreateRunt
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorCreateResourcesFailed)
 	}
 
+	query := pi.Global().DB(ctx).
+		Select(models.RuntimeCredentialColumns...).
+		From(constants.TableRuntimeCredential).
+		Where(db.Eq(constants.ColumnRuntimeUrl, req.GetRuntimeUrl().GetValue())).
+		Where(db.Eq(constants.ColumnRuntimeCredentialContent, content)).
+		Where(db.Eq(constants.ColumnProvider, req.GetProvider().GetValue())).
+		Where(db.Eq(constants.ColumnDebug, debug)).
+		Where(db.Eq(constants.ColumnOwner, s.GetOwnerPath().Owner())).
+		Where(db.Eq(constants.ColumnOwnerPath, s.GetOwnerPath()))
+
+	count, err := query.Count()
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+	if count > 0 {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRuntimeCredentialExists)
+	}
+
 	newRuntimeCredential := models.NewRuntimeCredential(
 		runtimeCredentialId,
 		req.GetName().GetValue(),
@@ -360,7 +399,7 @@ func (p *Server) describeRuntimeCredentials(ctx context.Context, req *pb.Describ
 		From(constants.TableRuntimeCredential).
 		Offset(offset).
 		Limit(limit).
-		Where(manager.BuildOwnerPathFilter(ctx)).
+		Where(manager.BuildOwnerPathFilter(ctx, req)).
 		Where(manager.BuildFilterConditions(req, constants.TableRuntimeCredential))
 	query = query.Where(db.Eq("debug", debug))
 	query = manager.AddQueryOrderDir(query, req, constants.ColumnCreateTime)
@@ -527,18 +566,21 @@ func (p *Server) DescribeRuntimeProviderZones(ctx context.Context, req *pb.Descr
 	if err != nil {
 		return nil, err
 	}
-
-	providerInterface, err := plugins.GetProviderPlugin(ctx, runtimeCredential.Provider)
+	providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorProviderNotFound, runtimeCredential.Provider)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
-	zones, err := providerInterface.DescribeRuntimeProviderZones(ctx, runtimeCredential)
+
+	response, err := providerClient.DescribeZones(ctx, &pb.DescribeZonesRequest{
+		Provider:          pbutil.ToProtoString(runtimeCredential.Provider),
+		RuntimeCredential: models.RuntimeCredentialToPb(runtimeCredential),
+	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorDescribeResourceFailed)
 	}
 	return &pb.DescribeRuntimeProviderZonesResponse{
 		RuntimeCredentialId: req.GetRuntimeCredentialId(),
-		Zone:                zones,
+		Zone:                response.Zones,
 	}, nil
 }
 

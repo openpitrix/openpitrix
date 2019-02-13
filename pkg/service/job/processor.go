@@ -9,7 +9,9 @@ import (
 
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	jobclient "openpitrix.io/openpitrix/pkg/client/job"
+	providerclient "openpitrix.io/openpitrix/pkg/client/runtime_provider"
 	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -143,8 +145,12 @@ func (p *Processor) Post(ctx context.Context) error {
 		clusterWrapper := clusterWrappers[0]
 		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType {
 			frontgateId := clusterWrapper.Cluster.FrontgateId
-			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
-				[]string{constants.StatusActive, constants.StatusPending})
+			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(
+				ctx,
+				frontgateId,
+				[]string{constants.StatusActive, constants.StatusPending},
+				clusterWrapper.Cluster.Debug,
+			)
 			if err != nil {
 				return err
 			}
@@ -210,8 +216,12 @@ func (p *Processor) Post(ctx context.Context) error {
 
 		if clusterWrapper.Cluster.ClusterType == constants.NormalClusterType && pi.Global().GlobalConfig().Cluster.FrontgateAutoDelete {
 			frontgateId := clusterWrapper.Cluster.FrontgateId
-			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(ctx, frontgateId,
-				[]string{constants.StatusStopped, constants.StatusActive, constants.StatusPending})
+			pbClusters, err := clusterClient.DescribeClustersWithFrontgateId(
+				ctx,
+				frontgateId,
+				[]string{constants.StatusStopped, constants.StatusActive, constants.StatusPending},
+				clusterWrapper.Cluster.Debug,
+			)
 			if err != nil {
 				return err
 			}
@@ -308,19 +318,22 @@ func (p *Processor) UpdateClusterDetails(ctx context.Context) error {
 		return err
 	}
 
-	providerInterface, err := plugins.GetProviderPlugin(ctx, p.Job.Provider)
+	providerClient, err := providerclient.NewRuntimeProviderManagerClient()
 	if err != nil {
-		logger.Error(ctx, "No such provider [%s]. ", p.Job.Provider)
-		return err
+		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	clusterWrapper, err = providerInterface.DescribeClusterDetails(ctx, clusterWrapper)
+	response, err := providerClient.DescribeClusterDetails(ctx, &pb.DescribeClusterDetailsRequest{
+		RuntimeId: pbutil.ToProtoString(clusterWrapper.Cluster.RuntimeId),
+		Cluster:   models.ClusterWrapperToPb(clusterWrapper),
+	})
 	if err != nil {
 		logger.Error(ctx, "Describe cluster details failed, %+v", err)
 		return err
 	}
+	clusterWrapper = models.PbToClusterWrapper(response.Cluster)
 
-	if clusterWrapper != nil {
+	if clusterWrapper != nil && len(clusterWrapper.Cluster.ClusterId) > 0 {
 		var clusterRoles []*models.ClusterRole
 		for _, clusterRole := range clusterWrapper.ClusterRoles {
 			clusterRoles = append(clusterRoles, clusterRole)

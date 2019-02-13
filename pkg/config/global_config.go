@@ -15,13 +15,13 @@ import (
 )
 
 type GlobalConfig struct {
-	App     AppServiceConfig       `json:"app"`
-	Repo    RepoServiceConfig      `json:"repo"`
-	Cluster ClusterServiceConfig   `json:"cluster"`
-	Runtime map[string]ImageConfig `json:"runtime"`
-	Pilot   PilotServiceConfig     `json:"pilot"`
-	Job     JobServiceConfig       `json:"job"`
-	Task    TaskServiceConfig      `json:"task"`
+	App     AppServiceConfig                 `json:"app"`
+	Repo    RepoServiceConfig                `json:"repo"`
+	Cluster ClusterServiceConfig             `json:"cluster"`
+	Runtime map[string]RuntimeProviderConfig `json:"runtime"`
+	Pilot   PilotServiceConfig               `json:"pilot"`
+	Job     JobServiceConfig                 `json:"job"`
+	Task    TaskServiceConfig                `json:"task"`
 }
 
 type AppServiceConfig struct {
@@ -34,11 +34,10 @@ type RepoServiceConfig struct {
 }
 
 type ClusterServiceConfig struct {
-	Plugins             []string `json:"plugins"`
-	FrontgateConf       string   `json:"frontgate_conf"`
-	FrontgateAutoDelete bool     `json:"frontgate_auto_delete"`
-	FrontgateAutoUpdate bool     `json:"frontgate_auto_update"`
-	RegistryMirror      string   `json:"registry_mirror"`
+	FrontgateConf       string `json:"frontgate_conf"`
+	FrontgateAutoDelete bool   `json:"frontgate_auto_delete"`
+	FrontgateAutoUpdate bool   `json:"frontgate_auto_update"`
+	RegistryMirror      string `json:"registry_mirror"`
 }
 
 type PilotServiceConfig struct {
@@ -54,13 +53,32 @@ type TaskServiceConfig struct {
 	MaxWorkingTasks int32 `json:"max_working_tasks"`
 }
 
-type ImageConfig struct {
+type RuntimeProviderConfig struct {
 	ApiServer     string `json:"api_server"`
 	Zone          string `json:"zone"`
 	ImageId       string `json:"image_id"`
 	ImageUrl      string `json:"image_url"`
 	ImageName     string `json:"image_name"`
 	FrontgateConf string `json:"frontgate_conf"`
+	ProviderType  string `json:"provider_type"`
+	Host          string `json:"host"`
+	Port          int    `json:"port"`
+}
+
+func (r *RuntimeProviderConfig) GetPort() int {
+	if r.Port > 0 {
+		return r.Port
+	} else {
+		return constants.RuntimeProviderManagerPort
+	}
+}
+
+func (r *RuntimeProviderConfig) GetHost(provider string) string {
+	if len(r.Host) > 0 {
+		return r.Host
+	} else {
+		return constants.ProviderPrefix + provider
+	}
 }
 
 func (g *GlobalConfig) GetAppDefaultStatus() string {
@@ -70,7 +88,7 @@ func (g *GlobalConfig) GetAppDefaultStatus() string {
 	return constants.StatusActive
 }
 
-func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageConfig, error) {
+func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*RuntimeProviderConfig, error) {
 	if strings.HasPrefix(apiServer, "https://") {
 		apiServer = strings.Split(apiServer, "https://")[1]
 	}
@@ -104,6 +122,19 @@ func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*ImageCo
 	return nil, fmt.Errorf("no such runtime image with api server [%s] zone [%s]. ", apiServer, zone)
 }
 
+func (g *GlobalConfig) RegisterRuntimeProviderConfig(provider, config string) error {
+	runtimeProviderConfig, err := ParseRuntimeProviderConfig([]byte(config))
+	if err != nil {
+		return err
+	}
+
+	if len(g.Runtime) == 0 {
+		g.Runtime = make(map[string]RuntimeProviderConfig)
+	}
+	g.Runtime[provider] = runtimeProviderConfig
+	return nil
+}
+
 func ParseGlobalConfig(data []byte) (GlobalConfig, error) {
 	var globalConfig GlobalConfig
 	err := yamlutil.Decode(data, &globalConfig)
@@ -111,6 +142,15 @@ func ParseGlobalConfig(data []byte) (GlobalConfig, error) {
 		return globalConfig, err
 	}
 	return globalConfig, nil
+}
+
+func ParseRuntimeProviderConfig(data []byte) (RuntimeProviderConfig, error) {
+	var runtimeProviderConfig RuntimeProviderConfig
+	err := yamlutil.Decode(data, &runtimeProviderConfig)
+	if err != nil {
+		return runtimeProviderConfig, err
+	}
+	return runtimeProviderConfig, nil
 }
 
 func DecodeInitConfig() GlobalConfig {
