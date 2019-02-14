@@ -5963,7 +5963,10 @@
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -5971,7 +5974,10 @@
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

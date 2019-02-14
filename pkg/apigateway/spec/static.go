@@ -5972,7 +5972,10 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -5980,7 +5983,10 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "role_id": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

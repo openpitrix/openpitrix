@@ -279,7 +279,7 @@ func (p *Server) DeleteRoles(ctx context.Context, req *pb.DeleteRolesRequest) (*
 	// TODO: check permission
 
 	_, err := amClient.DeleteRoles(ctx, &pbam.RoleIdList{
-		RoleId: []string{req.RoleId},
+		RoleId: req.RoleId,
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
