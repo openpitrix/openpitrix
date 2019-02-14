@@ -289,7 +289,7 @@ func (*DeleteRolesCmd) GetActionName() string {
 }
 
 func (c *DeleteRolesCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.RoleID, "role_id", "", "", "")
+	f.StringSliceVarP(&c.RoleID, "role_id", "", []string{}, "")
 }
 
 func (c *DeleteRolesCmd) Run(out Out) error {
