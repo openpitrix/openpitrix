@@ -121,6 +121,20 @@ func insertSku(ctx context.Context, sku *models.Sku) error {
 	return err
 }
 
+func getSkuById(ctx context.Context, skuId string) (*models.Sku, error) {
+	sku := &models.Sku{}
+	err := pi.Global().DB(ctx).
+		Select(models.SkuColumns...).
+		From(constants.TableSku).
+		Where(db.Eq(constants.ColumnSkuId, skuId)).
+		LoadOne(sku)
+
+	if err != nil {
+		logger.Error(ctx, "Failed to get sku, Errors: [%+v]", err)
+	}
+	return sku, err
+}
+
 func insertPrice(ctx context.Context, price *models.Price) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TablePrice).
@@ -133,24 +147,63 @@ func insertPrice(ctx context.Context, price *models.Price) error {
 }
 
 //Metering
-func insertLeasingsToDB(ctx context.Context, leasings []*models.Leasing) error {
+func insertLeasings(ctx context.Context, leasings []*models.Leasing) error {
+	result, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableLeasing).
+		Record(leasings).Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert leasings, Error: [%+v].", err)
+	} else {
+		logger.Info(ctx, "Insert %d leasings successfully.", result.RowsAffected())
+	}
+	return err
+}
 
-	dbConn := pi.Global().DB(ctx)
-	//tx, err := dbConn.Session.BeginTx(ctx, nil)
-	//
-	//if err != nil {
-	//	logger.Error(ctx, "Failed to connect mysql, Errors: [%+v]", err)
-	//	return err
-	//}
-	//defer tx.RollbackUnlessCommitted()
+//promotion
+func insertCRA(ctx context.Context, cra *models.CombinationResourceAttribute) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableCRA).
+		Record(cra).Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert CRA, Error: [%+v].", err)
+	} else {
+		logger.Info(ctx, "Insert CRA successfully.")
+	}
+	return err
+}
 
-	var err error
-	for _, leasing := range leasings {
-		_, err := dbConn.InsertInto(constants.TableLeasing).Record(leasing).Exec()
-		if err != nil {
-			logger.Error(ctx, "Failed to save leasing: [%+v].", leasing)
-			break
-		}
+func insertCS(ctx context.Context, cs *models.CombinationSku) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableCS).
+		Record(cs).Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert CS, Error: [%+v].", err)
+ 	} else {
+		logger.Info(ctx, "Insert CS successfully.")
+	}
+	return err
+}
+
+func insertComPrice(ctx context.Context, comPrice *models.CombinationPrice) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableComPrice).
+		Record(comPrice).Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert ComPrice, Error: [%+v].", err)
+	} else {
+		logger.Info(ctx, "Insert ComPrice successfully.")
+	}
+	return err
+}
+
+func insertProSku(ctx context.Context, proSku *models.ProbationSku) error {
+	_, err := pi.Global().DB(ctx).
+		InsertInto(constants.TableProbationSku).
+		Record(proSku).Exec()
+	if err != nil {
+		logger.Error(ctx, "Failed to insert probation_sku, Error: [%+v].", err)
+	} else {
+		logger.Info(ctx, "Insert probation_sku successfully.")
 	}
 	return err
 }

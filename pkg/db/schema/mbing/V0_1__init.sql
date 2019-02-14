@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS leasing
 	update_time       		TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	close_time						JSON					COMMENT '[{close_time: restart_time}, ..]',
 	status								TINYINT				NOT NULL DEFAULT 2 COMMENT '0: handClosed, 1: forceClosed, 2: running',
-	PRIMARY KEY (id)
+	PRIMARY KEY (leasing_id)
 );
 
 

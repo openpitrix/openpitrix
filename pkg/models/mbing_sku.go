@@ -130,6 +130,8 @@ type Sku struct {
 	status              int32
 }
 
+var SkuColumns = db.GetColumnsFromStruct(&ResourceAttribute{})
+
 func PbToSku(pbSku *pb.CreateSkuRequest) *Sku {
 	return &Sku{
 		SkuId:               NewSkuId(),

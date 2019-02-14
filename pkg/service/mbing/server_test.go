@@ -9,9 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"openpitrix.io/openpitrix/pkg/logger"
-	mbing "openpitrix.io/openpitrix/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 func common(t *testing.T) (*Server, context.Context, context.CancelFunc) {
@@ -29,25 +26,3 @@ func TestNewServer(t *testing.T) {
 	t.Logf("TestNewServer Passed, server: %v, context: %v, cancleFunc: %v", s, ctx, cancle)
 }
 
-func TestStartMetering(t *testing.T) {
-	s, ctx, cancel := common(t)
-	defer cancel()
-
-	var resourceList []*mbing.ResourceVersion
-	for i := 0; i < 3; i++ {
-		resourceList = append(resourceList, &mbing.ResourceVersion{
-			ResourceVersionId: pbutil.ToProtoString("testResourceVersionId" + string(i)),
-			PriceId:           pbutil.ToProtoString("PriceId" + string(i)),
-			ActionTime:        pbutil.ToProtoTimestamp(time.Now()),
-		})
-	}
-
-	var req = &mbing.MeteringRequest{
-		ResourceId:         pbutil.ToProtoString("testResourceID"),
-		UserId:             pbutil.ToProtoString("testUserID"),
-		ActionResourceList: resourceList,
-	}
-	resp, _ := s.StartMetering(ctx, req)
-	logger.Info(nil, "Test Passed, StartMetering status %s, message %s", resp.GetStatus(), resp.GetMessage())
-
-}

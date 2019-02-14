@@ -10,94 +10,82 @@ import (
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 
-	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 )
 
-func NewMeteringId() string {
-	return idutil.GetUuid("metering-")
+func NewLeasingId() string {
+	return idutil.GetUuid("leasing-")
 }
 
 type Leasing struct {
-	LeasingId      string
+	LeasingId          string
+	GroupId            string
+	UserId             string
+	ResourceId         string
+	SkuId              string
+	OtherInfo          string
+	MeteringValues     map[string]float64
+	LeaseTime          time.Time // action_time
+	UpdateDurationTime time.Time // auto current update time
+	RenewalTime        time.Time // next update time
+	UpdateTime         time.Time
+	CreateTime         time.Time
+	CloseTime          map[time.Time]time.Time //{closeTime: restartTime, ..}
+	Status             string
+}
+
+var LeasingColumns = db.GetColumnsFromStruct(&Leasing{})
+
+func pbToMeteringValues(pbMVs []*pb.MeteringAttributeValue) map[string]float64 {
+	var mvs map[string]float64
+	for _, pbmv := range pbMVs {
+		mvs[pbmv.GetAttributeId().GetValue()] = pbmv.GetValue().Value
+	}
+	return mvs
+}
+
+func PbToLeasing(req *pb.MeteringRequest, mSku *pb.MeteringSku, groupId string, renewalTime *time.Time) *Leasing {
+	actionTime := pbutil.FromProtoTimestamp(mSku.GetActionTime())
+	return &Leasing{
+			LeasingId:          NewLeasingId(),
+			GroupId:            groupId,
+			UserId:             req.GetUserId().GetValue(),
+			ResourceId:         req.GetResourceId().GetValue(),
+			SkuId:              mSku.GetSkuId().GetValue(),
+			OtherInfo:          mSku.GetOtherInfo().GetValue(),
+			MeteringValues:     pbToMeteringValues(mSku.GetAttributeValues()),
+			LeaseTime:          actionTime,
+			UpdateDurationTime: actionTime,
+			RenewalTime:        renewalTime,
+		}
+}
+
+type Leased struct {
+	LeasedId       string
 	GroupId        string
 	UserId         string
 	ResourceId     string
 	SkuId          string
 	OtherInfo      string
-	MeteringValues map[string]interface{}
+	MeteringValues map[string]float64
 	LeaseTime      time.Time // action_time
-	LeaseTime      time.Time // action_time
-	RenewalTime    time.Time // next update time
-	UpdateTime     time.Time
 	CreateTime     time.Time
-	CloseTime      map[time.Time]interface{} //{closeTime: restartTime, ..}
-	Status         string
-}
-
-var LeasingColumns = db.GetColumnsFromStruct(&Leasing{})
-
-func NewLeasing(groupId, userId, resourceId, skuId string,
-	leaseTime, renewalTime time.Time,
-	meteringValues map[string]interface{}) *Leasing {
-	return &Leasing{
-		Id:             NewMeteringId(),
-		GroupId:        groupId,
-		UserId:         userId,
-		ResourceId:     resourceId,
-		SkuId:          skuId,
-		LeaseTime:      leaseTime,
-		RenewalTime:    renewalTime,
-		UpdateTime:     leaseTime,
-		MeteringValues: meteringValues,
-		Status:         constants.StatusRunning,
-	}
-}
-
-func MeteringReq2Leasings(req *pb.MeteringRequest, groupId string) []*Leasing {
-	var leasings []*Leasing
-	for _, sku := range req.SkuSet {
-		//the renewalTime need to be calculated
-		leasing := NewLeasing(
-			groupId,
-			req.GetUserId().GetValue(),
-			req.GetResourceId().GetValue(),
-			sku.GetSkuId().GetValue(),
-			pbutil.FromProtoTimestamp(sku.GetActionTime()),
-			pbutil.FromProtoTimestamp(sku.GetActionTime()), //need to update to real value
-			make(map[string]interface{}),
-		)
-		leasings = append(leasings, leasing)
-	}
-	return leasings
-}
-
-type Leased struct {
-	LeasingId      string
-	GroupId        string
-	UserId         string
-	ResourceId     string
-	SkuId          string
-	MeteringValues map[string]interface{}
-	LeaseTime      time.Time // action_time
-	UpdateTime     time.Time
-	CreateTime     time.Time
-	CloseTime      map[time.Time]interface{} //{closeTime: restartTime, ..}
+	CloseTime      map[time.Time]time.Time //{closeTime: restartTime, ..}
 }
 
 var LeasedColumns = db.GetColumnsFromStruct(&Leased{})
 
-func toLeased(leasing Leasing) Leased {
+func (l Leasing) toLeased() Leased {
 	return Leased{
-		LeasingId:      leasing.Id,
-		GroupId:        leasing.GroupId,
-		UserId:         leasing.UserId,
-		ResourceId:     leasing.ResourceId,
-		SkuId:          leasing.SkuId,
-		MeteringValues: leasing.MeteringValues,
-		LeaseTime:      leasing.LeaseTime,
-		UpdateTime:     leasing.UpdateTime,
-		CloseTime:      leasing.CloseTime,
+		LeasedId:       l.LeasingId,
+		GroupId:        l.GroupId,
+		UserId:         l.UserId,
+		ResourceId:     l.ResourceId,
+		SkuId:          l.SkuId,
+		OtherInfo:      l.OtherInfo,
+		MeteringValues: l.MeteringValues,
+		LeaseTime:      l.LeaseTime,
+		CloseTime:      l.CloseTime,
 	}
 }

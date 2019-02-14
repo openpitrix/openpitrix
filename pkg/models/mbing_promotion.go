@@ -7,7 +7,9 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
 func NewCRAId() string {
@@ -39,17 +41,26 @@ func NewCouponReceivedId() string {
 }
 
 type CombinationResourceAttribute struct {
-	Id                 string
-	ResourceVersionIds []string
-	Attributes         map[string]string //{resourceVersionId: attributeId, ..}
-	MeteringAttributes map[string]string //{resourceVersionId: attributeId, ..}
-	CreateTime         time.Time
-	UpdateTime         time.Time
-	Status             string
+	CRAId               	string
+	ResourceAttributeIds	[]string //the id slice of ResourceAttribute
+	CreateTime         		time.Time
+	UpdateTime         		time.Time
+	Status             		string
+}
+
+func PbToCRA(req *pb.CreateCRARequest) *CombinationResourceAttribute {
+	var resAttIds []string
+	for _,resAtt  := range req.GetResourceAttributes(){
+		resAttIds = append(resAttIds, resAtt.GetResourceAttributeId().GetValue())
+	}
+	return &CombinationResourceAttribute{
+		CRAId:					NewCRAId(),
+		ResourceAttributeIds: 	resAttIds,
+	}
 }
 
 type CombinationSku struct {
-	Id              string
+	CSId            string
 	CRAId           string
 	AttributeValues map[string]string //{resourceVersionId: valueId, ..}
 	CreateTime      time.Time
@@ -57,9 +68,17 @@ type CombinationSku struct {
 	Status          string
 }
 
+func PbToComSku(req *pb.CreateCSRequest) *CombinationSku {
+	return &CombinationSku{
+		CSId: 				NewCombinationSkuId(),
+		CRAId: 				req.GetCraId().GetValue(),
+		AttributeValues: 	req.GetAttributeValues(),
+	}
+}
+
 type CombinationPrice struct {
-	Id                string
-	CombinationSkuId  string
+	CPId              string
+	CSkuId  		  string
 	ResourceVersionId string
 	AttributeId       string
 	Prices            map[string]float64 //StepPrice: {valueId: price, ..}
@@ -69,15 +88,38 @@ type CombinationPrice struct {
 	Status            string
 }
 
+func PbToComPrice(req *pb.CreateCPRequest) *CombinationPrice {
+	return &CombinationPrice{
+		CPId: 				NewCombinationPriceId(),
+		CSkuId:     		req.GetCsId().GetValue(),
+		ResourceVersionId: 	req.GetResourceVersionId().GetValue(),
+		AttributeId: 		req.GetAttributeId().GetValue(),
+		Prices: 			req.GetPrices(),
+		Currency: 			req.GetCurrency().String(),
+	}
+}
+
 type ProbationSku struct {
-	Id                  string
+	ProSkuId            string
 	ResourceAttributeId string
 	AttributeValues     []string
-	LimitNum            int8
+	LimitNum            int32
 	CreateTime          time.Time
 	UpdateTime          time.Time
 	Status              string
 }
+
+func PbToProSku(req *pb.CreateProSkuRequest) *ProbationSku {
+	return &ProbationSku{
+		ProSkuId: 				NewProbationSkuId(),
+		ResourceAttributeId: 	req.GetResourceAttributeId().GetValue(),
+		AttributeValues: 		pbutil.FromProtoStringSlice(req.GetAttributeValueIds()),
+		LimitNum: 				req.GetLimitNum().GetValue(),
+	}
+}
+
+
+
 
 type ProbationRecord struct {
 	ProbationSkuId string

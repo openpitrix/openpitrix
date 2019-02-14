@@ -6,7 +6,9 @@ package mbing
 
 import (
 	"context"
+	"time"
 
+	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -121,7 +123,7 @@ func (s *Server) CreatePrice(ctx context.Context, req *pb.CreatePriceRequest) (*
 
 	//check if attribute_values exist
 	attValue := models.AttributeValue{}
-	for k, _ := range price.Prices{
+	for k := range price.Prices {
 		err = checkStructExistById(ctx, attValue, price, k, CreateFailedCode)
 		if err != nil {
 			return nil, err
@@ -134,4 +136,18 @@ func (s *Server) CreatePrice(ctx context.Context, req *pb.CreatePriceRequest) (*
 		return nil, commonInternalErr(ctx, price, CreateFailedCode)
 	}
 	return &pb.CreatePriceResponse{PriceId: pbutil.ToProtoString(price.PriceId)}, nil
+}
+
+func renewalTimeFromSku(ctx context.Context, skuId string, actionTime time.Time) (*time.Time, error) {
+	sku, err := getSkuById(ctx, skuId)
+
+	if err != nil {
+		logger.Error(ctx, "Failed to convert renewal time from sku, Error: [%+v]", err)
+		return nil, err
+	}
+
+	//TODO: calculate renewalTime
+	renewalTime := sku.CreateTime
+
+	return &renewalTime, nil
 }

@@ -5,10 +5,12 @@
 package mbing
 
 import (
-	"context"
 
-	"github.com/fatih/structs"
-	"openpitrix.io/openpitrix/pkg/gerr"
+"context"
+
+"github.com/fatih/structs"
+"openpitrix.io/openpitrix/pkg/gerr"
+	"openpitrix.io/openpitrix/pkg/logger"
 )
 
 const (
@@ -16,23 +18,50 @@ const (
 	NotExistCode     = 1
 )
 
-var structDisName map[string]string
+const (
+	EN = "En"
+	ZH = "Zh"
+)
 
-func init() {
-	structDisName = map[string]string{
-		"AttributeEn":         "attribute",
-		"AttributeZh":         "属性",
-		"AttributeUnitEn":     "attribute_unit",
-		"AttributeUnitZh":     "属性单位",
-		"AttributeValueEn":    "attribute_value",
-		"AttributeValueZh":    "属性值",
-		"ResourceAttributeEn": "resource_attribute",
-		"ResourceAttributeZh": "资源属性",
-		"SkuEn":               "sku",
-		"SkuZh":               "SKU",
-		"PriceEn":             "price",
-		"PriceZh":             "定价",
-	}
+const (
+	InitAttDurId = "att-dur-000001"
+	InitAttValElasticId = "att-val-000001"
+	InitAttValMonthId = "att-val-000002"
+	InitAttValYearId = "att-val-000003"
+)
+
+//var structDisName map[string]string
+
+var structDisName = map[string]map[string]string {
+	"Attribute": {
+		EN: "attribute",
+		ZH: "属性",
+	},
+	"AttributeUnit": {
+		EN: "attribute_unit",
+		ZH: "属性单位",
+	},
+	"AttributeValue": {
+		EN: "attribute_value",
+		ZH: "属性值",
+
+	},
+	"ResourceAttribute": {
+		EN: "resource_attribute",
+		ZH: "资源属性",
+	},
+	"Sku": {
+		EN: "sku",
+		ZH: "SKU",
+	},
+	"Price": {
+		EN: "price",
+		ZH: "定价",
+	},
+	"Leasing": {
+		EN: "leasing",
+		ZH: "合约",
+	},
 }
 
 //check if existStructName exist when action actionStructName
@@ -40,9 +69,11 @@ func checkStructExistById(ctx context.Context, checkStruct, actionStruct interfa
 	checkStructName := structs.Name(checkStruct)
 	exist, err := checkExistById(ctx, checkStructName, idValue)
 	if err != nil {
+		logger.Error(ctx, "Failed to get %s!", checkStructName)
 		return commonInternalErr(ctx, actionStruct, actionErrType)
 	}
 	if !exist {
+		logger.Error(ctx, "The %s that id is %s not exist!", idValue, checkStructName)
 		return commonInternalErr(ctx, checkStruct, NotExistCode)
 	}
 	return nil
@@ -51,8 +82,8 @@ func checkStructExistById(ctx context.Context, checkStruct, actionStruct interfa
 //CommonInternalErr: return error with gerr.ErrorMessage
 func commonInternalErr(ctx context.Context, structObj interface{}, errType int8) error {
 	structName := structs.Name(structObj)
-	enName := structDisName[structName+"En"]
-	zhName := structDisName[structName+"Zh"]
+	enName := structDisName[structName][EN]
+	zhName := structDisName[structName][ZH]
 	switch errType {
 	case CreateFailedCode:
 		return gerr.New(ctx, gerr.Internal, gerr.CreateFailed(enName, zhName))

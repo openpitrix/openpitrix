@@ -43,11 +43,17 @@ const (
 	TableVendorVerifyInfo = "vendor_verify_info"
 
 	// mbing
-	TableAttribute = "attribute"
-	TableAttUnit   = "attribute_unit"
-	TableAttValue  = "attribute_value"
-	TableResAtt    = "resource_attribute"
-	TableSku       = "sku"
-	TablePrice     = "price"
-	TableLeasing   = "leasing"
+	TableAttribute 		= "attribute"
+	TableAttUnit   		= "attribute_unit"
+	TableAttValue  		= "attribute_value"
+	TableResAtt    		= "resource_attribute"
+	TableSku       		= "sku"
+	TablePrice     		= "price"
+	TableCRA			= "combination_resource_attribute"
+	TableCS   			= "combination_sku"
+	TableComPrice   	= "combination_price"
+	TableProbationSku   = "probation_sku"
+	TableLeasing   		= "leasing"
+	TableLeased   		= "leased"
+
 )

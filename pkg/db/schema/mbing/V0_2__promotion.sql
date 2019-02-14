@@ -5,13 +5,11 @@ Promotion
 /** the attributes of all combination resources **/
 CREATE TABLE IF NOT EXISTS combination_resource_attribute
 (
-	id 										VARCHAR(50)		NOT NULL UNIQUE ,
-	resource_version_ids 	JSON					NOT NULL COMMENT 'combination resource version id',
-	attributes 						JSON 					NOT NULL COMMENT 'sku attribute ids: {resource_version_id:[],...}',
-	metering_attributes 	JSON 					NOT NULL COMMENT 'the attribute ids need to metering: {resource_version_id:{}, ..}',
-	create_time 					TIMESTAMP 	  DEFAULT CURRENT_TIMESTAMP,
-	update_time 					TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status								TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
+	id 											VARCHAR(50)		NOT NULL UNIQUE ,
+	resource_attribute_ids 	JSON					NOT NULL COMMENT 'combination resource version id',
+	create_time 						TIMESTAMP 	  DEFAULT CURRENT_TIMESTAMP,
+	update_time 						TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	status									TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
 	PRIMARY KEY (id)
 );
 
