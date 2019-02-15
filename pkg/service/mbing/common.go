@@ -24,10 +24,10 @@ const (
 )
 
 const (
-	InitAttDurId = "att-dur-000001"
-	InitAttValElasticId = "att-val-000001"
-	InitAttValMonthId = "att-val-000002"
-	InitAttValYearId = "att-val-000003"
+	InitAttId = "att-000001"
+	InitAttUnitHourId = "att-unit-000001"
+	InitAttUnitMonthId = "att-unit-000002"
+	InitAttUnitYearId = "att-unit-000003"
 )
 
 //var structDisName map[string]string
