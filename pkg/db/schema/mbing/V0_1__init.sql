@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS attribute
 	display_name 					VARCHAR(255),
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
+	status								VARCHAR(16) 		DEFAULT 'in_use' COMMENT 'in_use, deleted',
 	remark  							TEXT,
 	PRIMARY KEY (attribute_id)
 );
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS attribute_unit
 	display_name 					VARCHAR(30)		 	NOT NULL,
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
+	status								VARCHAR(16) 		DEFAULT 'in_use' COMMENT 'in_use, deleted',
 	PRIMARY KEY (attribute_unit_id)
 );
 
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS attribute_value
 	max_value					  	INT 						NULL COMMENT 'the attribute value, support scope of value (min_value, max_value]; NULL: max',
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
+	status								VARCHAR(16) 		DEFAULT 'in_use' COMMENT 'in_use, deleted',
 	PRIMARY KEY (attribute_value_id)
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS resource_attribute
 	metering_attributes 	JSON 						NOT NULL COMMENT 'the attribute ids need to metering and billing',
 	create_time 					TIMESTAMP 			DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP				DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status								TINYINT 				DEFAULT 1 COMMENT '1: using, 0: deleted',
+	status								VARCHAR(16) 		DEFAULT 'in_use' COMMENT 'in_use, deleted',
 	PRIMARY KEY (resource_attribute_id)
 );
 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS sku
 	attribute_values 			JSON 					NOT NULL COMMENT 'sku attribute values for attributes in resource_attribute: {attribute: value, ...}',
 	create_time 					TIMESTAMP 		DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status								TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
+	status								VARCHAR(16) 		DEFAULT 'in_use' COMMENT 'in_use, deleted',
 	PRIMARY KEY (sku_id)
 );
 
@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS price
 	currency            	VARCHAR(10)		NOT NULL  DEFAULT 'cny',
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	update_time       		TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status								TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
-	INDEX price_sku_index (sku_id, id),
+	status								VARCHAR(16) 		DEFAULT 'in_use' COMMENT 'in_use, deleted',
+	INDEX price_sku_index (sku_id, price_id),
 	PRIMARY KEY (price_id)
 );
 
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS leasing
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	update_time       		TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	close_time						JSON					COMMENT '[{close_time: restart_time}, ..]',
-	status								TINYINT				NOT NULL DEFAULT 2 COMMENT '0: handClosed, 1: forceClosed, 2: running',
+	status								VARCHAR(16) 		DEFAULT 'in_use' COMMENT 'in_use, handClosed, forceClosed',
 	PRIMARY KEY (leasing_id)
 );
 
@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS charge
 	fee										DECIMAL(8,2)  NOT NULL COMMENT 'total fee from starting cluster to now',
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
 	info									JSON					COMMENT '{couponReceivedID: fee}',
-	status								TINYINT				DEFAULT 1 NOT NULL COMMENT '0: fail, 1: success',
+	status								VARCHAR(16) 	DEFAULT 'successful' COMMENT 'successful, failed',
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	remark  							TEXT,
 	PRIMARY KEY (id)
@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS recharge
 	fee										DECIMAL(8,2)  NOT NULL COMMENT 'total fee from starting cluster to now',
 	currency            	VARCHAR(10)		NOT NULL DEFAULT 'cny',
 	info									JSON					COMMENT '{couponReceivedID: fee}',
-	status								TINYINT				DEFAULT 1 NOT NULL COMMENT '0: fail, 1: success',
+	status								VARCHAR(16) 	DEFAULT 'successful' COMMENT 'successful, failed',
 	operator							VARCHAR(50)		NOT NULL DEFAULT 'system',
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	remark 								TEXT,

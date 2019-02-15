@@ -7,6 +7,7 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
@@ -14,19 +15,19 @@ import (
 )
 
 func NewAttributeId() string {
-	return idutil.GetUuid("attribute-")
+	return idutil.GetUuid("att-")
 }
 
-func NewAttributeUnitId() string {
-	return idutil.GetUuid("unit-")
+func NewAttUnitId() string {
+	return idutil.GetUuid("att-unit-")
 }
 
-func NewAttributeValueId() string {
-	return idutil.GetUuid("attValue-")
+func NewAttValueId() string {
+	return idutil.GetUuid("att-value-")
 }
 
-func NewResourceAttributeId() string {
-	return idutil.GetUuid("resAtt-")
+func NewResAttId() string {
+	return idutil.GetUuid("res-att-")
 }
 
 func NewSkuId() string {
@@ -43,19 +44,31 @@ type Attribute struct {
 	DisplayName string
 	CreateTime  time.Time
 	UpdateTime  time.Time
-	status      int32
+	Status      string
 	Remark      string
 }
 
 var AttributeColumns = db.GetColumnsFromStruct(&Attribute{})
 
-func PbToAttribute(pbAtt *pb.CreateAttributeRequest) *Attribute {
+func NewAttribute(name, displayName, remark string) *Attribute {
+	now := time.Now()
 	return &Attribute{
 		AttributeId: NewAttributeId(),
-		Name:        pbAtt.GetName().GetValue(),
-		DisplayName: pbAtt.GetDisplayName().GetValue(),
-		Remark:      pbAtt.GetRemark().GetValue(),
+		Name:        name,
+		DisplayName: displayName,
+		Remark:      remark,
+		Status: 	 constants.StatusInUse2,
+		CreateTime:  now,
+		UpdateTime:  now,
 	}
+}
+
+func PbToAttribute(pbAtt *pb.CreateAttributeRequest) *Attribute {
+	return NewAttribute(
+		pbAtt.GetName().GetValue(),
+		pbAtt.GetDisplayName().GetValue(),
+		pbAtt.GetRemark().GetValue(),
+	)
 }
 
 type AttributeUnit struct {
@@ -64,17 +77,28 @@ type AttributeUnit struct {
 	DisplayName     string
 	CreateTime      time.Time
 	UpdateTime      time.Time
-	status          int32
+	Status          string
 }
 
 var AttributeUnitColumns = db.GetColumnsFromStruct(&AttributeUnit{})
 
-func PbToAttUnit(pbAttUnit *pb.CreateAttUnitRequest) *AttributeUnit {
+func NewAttributeUnit(name, display string) *AttributeUnit{
+	now := time.Now()
 	return &AttributeUnit{
-		AttributeUnitId: NewAttributeUnitId(),
-		Name:            pbAttUnit.GetName().GetValue(),
-		DisplayName:     pbAttUnit.GetDisplayName().GetValue(),
+		AttributeUnitId: NewAttUnitId(),
+		Name:           name,
+		DisplayName:    display,
+		CreateTime: 	now,
+		UpdateTime: 	now,
+		Status: 		constants.StatusInUse2,
 	}
+}
+
+func PbToAttUnit(pbAttUnit *pb.CreateAttUnitRequest) *AttributeUnit {
+	return NewAttributeUnit(
+		pbAttUnit.GetName().GetValue(),
+		pbAttUnit.GetDisplayName().GetValue(),
+	)
 }
 
 type AttributeValue struct {
@@ -85,19 +109,30 @@ type AttributeValue struct {
 	MaxValue         int32
 	CreateTime       time.Time
 	UpdateTime       time.Time
-	status           int32
+	Status           string
 }
 
-var AttributeValueColumns = db.GetColumnsFromStruct(&AttributeValue{})
+func NewAttributeValue(attId, attUnitId string, minValue, maxValue int32) *AttributeValue {
+	now := time.Now()
+	return &AttributeValue{
+		AttributeValueId: 	NewAttValueId(),
+		AttributeId:      	attId,
+		AttributeUnitId:  	attUnitId,
+		MinValue:         	minValue,
+		MaxValue:         	maxValue,
+		CreateTime: 		now,
+		UpdateTime: 		now,
+		Status: 			constants.StatusInUse2,
+	}
+}
 
 func PbToAttValue(pbAttValue *pb.CreateAttValueRequest) *AttributeValue {
-	return &AttributeValue{
-		AttributeValueId: NewAttributeValueId(),
-		AttributeId:      pbAttValue.GetAttributeId().GetValue(),
-		AttributeUnitId:  pbAttValue.GetAttributeUnitId().GetValue(),
-		MinValue:         pbAttValue.GetMinValue().GetValue(),
-		MaxValue:         pbAttValue.GetMaxValue().GetValue(),
-	}
+	return NewAttributeValue(
+		pbAttValue.GetAttributeId().GetValue(),
+		pbAttValue.GetAttributeUnitId().GetValue(),
+		pbAttValue.GetMinValue().GetValue(),
+		pbAttValue.GetMaxValue().GetValue(),
+	)
 }
 
 type ResourceAttribute struct {
@@ -107,18 +142,28 @@ type ResourceAttribute struct {
 	MeteringAttributes  []string
 	CreateTime          time.Time
 	UpdateTime          time.Time
-	status              int32
+	Status              string
 }
 
-var ResourceAttributeColumns = db.GetColumnsFromStruct(&ResourceAttribute{})
+func NewResourceAttribute(resVerId string, atts, metAtts []string) *ResourceAttribute {
+	now := time.Now()
+	return &ResourceAttribute{
+		ResourceAttributeId: 	NewResAttId(),
+		ResourceVersionId:   	resVerId,
+		Attributes:          	atts,
+		MeteringAttributes:  	metAtts,
+		CreateTime: 			now,
+		UpdateTime: 			now,
+		Status: 				constants.StatusInUse2,
+	}
+}
 
 func PbToResAtt(pbResAtt *pb.CreateResAttRequest) *ResourceAttribute {
-	return &ResourceAttribute{
-		ResourceAttributeId: NewResourceAttributeId(),
-		ResourceVersionId:   pbResAtt.GetResourceVersionId().GetValue(),
-		Attributes:          pbutil.FromProtoStringSlice(pbResAtt.AttributeIds),
-		MeteringAttributes:  pbutil.FromProtoStringSlice(pbResAtt.MeteringAttributeIds),
-	}
+	return NewResourceAttribute(
+		pbResAtt.GetResourceVersionId().GetValue(),
+		pbutil.FromProtoStringSlice(pbResAtt.AttributeIds),
+		pbutil.FromProtoStringSlice(pbResAtt.MeteringAttributeIds),
+	)
 }
 
 type Sku struct {
@@ -127,17 +172,28 @@ type Sku struct {
 	Values              []string
 	CreateTime          time.Time
 	UpdateTime          time.Time
-	status              int32
+	Status              string
 }
 
 var SkuColumns = db.GetColumnsFromStruct(&ResourceAttribute{})
 
-func PbToSku(pbSku *pb.CreateSkuRequest) *Sku {
+func NewSku(resAttId string, values []string) *Sku {
+	now := time.Now()
 	return &Sku{
-		SkuId:               NewSkuId(),
-		ResourceAttributeId: pbSku.GetResourceAttributeId().GetValue(),
-		Values:              pbutil.FromProtoStringSlice(pbSku.GetAttributeValueIds()),
+		SkuId:               	NewSkuId(),
+		ResourceAttributeId: 	resAttId,
+		Values:              	values,
+		CreateTime: 			now,
+		UpdateTime: 			now,
+		Status:     			constants.StatusInUse2,
 	}
+}
+
+func PbToSku(pbSku *pb.CreateSkuRequest) *Sku {
+	return NewSku(
+		pbSku.GetResourceAttributeId().GetValue(),
+		pbutil.FromProtoStringSlice(pbSku.GetAttributeValueIds()),
+	)
 }
 
 type Price struct {
@@ -148,15 +204,28 @@ type Price struct {
 	currency    string
 	CreateTime  time.Time
 	UpdateTime  time.Time
-	status      int32
+	Status      string
+}
+
+func NewPrice(skuId, attId, currency string, prices map[string]float64) *Price {
+	now := time.Now()
+	return &Price{
+		PriceId:     	NewPriceId(),
+		SkuId:       	skuId,
+		AttributeId: 	attId,
+		Prices:      	prices,
+		currency:    	currency,
+		CreateTime: 	now,
+		UpdateTime: 	now,
+		Status: 		constants.StatusInUse2,
+	}
 }
 
 func PbToPrice(pbPrice *pb.CreatePriceRequest) *Price {
-	return &Price{
-		PriceId:     NewPriceId(),
-		SkuId:       pbPrice.GetSkuId().GetValue(),
-		AttributeId: pbPrice.GetAttributeId().GetValue(),
-		Prices:      pbPrice.GetPrices(),
-		currency:    pbPrice.GetCurrency().String(),
-	}
+	return NewPrice(
+		pbPrice.GetSkuId().GetValue(),
+		pbPrice.GetAttributeId().GetValue(),
+		pbPrice.GetCurrency().String(),
+		pbPrice.GetPrices(),
+	)
 }

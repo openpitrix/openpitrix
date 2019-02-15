@@ -5,54 +5,54 @@ Promotion
 /** the attributes of all combination resources **/
 CREATE TABLE IF NOT EXISTS combination_resource_attribute
 (
-	id 											VARCHAR(50)		NOT NULL UNIQUE ,
+	cra_id 									VARCHAR(50)		NOT NULL UNIQUE ,
 	resource_attribute_ids 	JSON					NOT NULL COMMENT 'combination resource version id',
 	create_time 						TIMESTAMP 	  DEFAULT CURRENT_TIMESTAMP,
 	update_time 						TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status									TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
-	PRIMARY KEY (id)
+	status								  VARCHAR(16) 	DEFAULT 'in_use' COMMENT 'in_use, deleted',
+	PRIMARY KEY (cra_id)
 );
 
 /** the sku of combination resources **/
 CREATE TABLE IF NOT EXISTS combination_sku
 (
-	id 										VARCHAR(50) 	NOT NULL UNIQUE ,
+	com_sku_id 						VARCHAR(50) 	NOT NULL UNIQUE ,
 	cra_id								VARCHAR(50)		NOT NULL COMMENT 'the id of combination_resource_attribute',
 	attribute_values 			JSON 					NOT NULL COMMENT 'sku attribute values for attributes in resource_attribute: {resource_version_id:{}, ..}',
 	create_time 					TIMESTAMP 		DEFAULT CURRENT_TIMESTAMP,
 	update_time 					TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status								TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
-	PRIMARY KEY (id)
+	status								VARCHAR(16) 	DEFAULT 'in_use' COMMENT 'in_use, deleted',
+	PRIMARY KEY (com_sku_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS combination_price
 (
-	id 											VARCHAR(50) 	NOT NULL UNIQUE ,
-	combination_sku_id 			VARCHAR(50) 	NOT NULL,
+	com_price_id 						VARCHAR(50) 	NOT NULL UNIQUE ,
+	com_sku_id 							VARCHAR(50) 	NOT NULL,
 	resource_version_id 		VARCHAR(50) 	NOT NULL,
 	attribute_id					 	VARCHAR(50) 	NOT NULL,
 	prices 									JSON 					COMMENT '{attribute_value1: price1, ...}',
 	currency            		VARCHAR(50)		NOT NULL  DEFAULT 'cny',
 	create_time       			TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	update_time       			TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status									TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
-	INDEX price_sku_index (combination_sku_id, id),
-	PRIMARY KEY (id)
+	status									VARCHAR(16) 	DEFAULT 'in_use' COMMENT 'in_use, deleted',
+	INDEX price_sku_index (com_price_id, com_sku_id),
+	PRIMARY KEY (com_price_id)
 );
 
 
 /** probation sku of resource **/
 CREATE TABLE IF NOT EXISTS probation_sku
 (
-	id 											VARCHAR(50) 	NOT NULL UNIQUE ,
+	pro_sku_id 							VARCHAR(50) 	NOT NULL UNIQUE ,
 	resource_attribute_id 	VARCHAR(50)		NOT NULL,
 	attribute_values 				JSON 					NOT NULL COMMENT 'sku attribute values for attributes in resource_attribute: {attribute: value, ...}',
 	limit_num								INT						NOT NULL DEFAULT 1,
 	create_time 						TIMESTAMP 		DEFAULT CURRENT_TIMESTAMP,
 	update_time 						TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	status									TINYINT 			DEFAULT 1 COMMENT '1: using, 0: deleted',
-	PRIMARY KEY (id)
+	status									VARCHAR(16) 	DEFAULT 'in_use' COMMENT 'in_use, deleted',
+	PRIMARY KEY (pro_sku_id)
 );
 
 
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS dicount
 	start_time		  			TIMESTAMP 	  	DEFAULT CURRENT_TIMESTAMP,
 	end_time       				TIMESTAMP   		DEFAULT CURRENT_TIMESTAMP,
 	create_time     			TIMESTAMP	    	DEFAULT CURRENT_TIMESTAMP,
-	status								TINYINT 				DEFAULT 1 COMMENT '0: deleted, 1: using, 2: overtime',
+	status								VARCHAR(16) 	  DEFAULT 'in_use' COMMENT 'in_use, deleted, overtime',
 	mark 									TEXT,
 	PRIMARY KEY (id)
 );
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS coupon
 	start_time		    		TIMESTAMP 	  	DEFAULT CURRENT_TIMESTAMP,
 	end_time       				TIMESTAMP   		DEFAULT CURRENT_TIMESTAMP,
 	create_time       		TIMESTAMP	    	DEFAULT CURRENT_TIMESTAMP,
-	status								TINYINT 				DEFAULT 1 COMMENT '0: deleted, 1: using, 2: overtime',
+	status								VARCHAR(16) 	  DEFAULT 'in_use' COMMENT 'in_use, deleted, overtime',
 	mark 									TEXT,
 	PRIMARY KEY (id)
 );
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS coupon_received
 	coupon_id 						VARCHAR(50) 		NOT NULL,
 	user_id 							VARCHAR(50) 		NOT NULL,
 	balance 							DECIMAL(8, 2) 	NOT NULL,
-	status								TINYINT					NOT NULL COMMENT '0: overtime, 1: received, 2: using, 3: used',
+	status								VARCHAR(16) 	  DEFAULT 'received' COMMENT 'received, in_use, overtime',
 	create_time       		TIMESTAMP	    	DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (id)
 );

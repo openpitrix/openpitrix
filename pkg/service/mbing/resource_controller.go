@@ -154,7 +154,8 @@ func insertLeasings(ctx context.Context, leasings []*models.Leasing) error {
 	if err != nil {
 		logger.Error(ctx, "Failed to insert leasings, Error: [%+v].", err)
 	} else {
-		logger.Info(ctx, "Insert %d leasings successfully.", result.RowsAffected())
+		count, _ := result.RowsAffected()
+		logger.Info(ctx, "Insert %d leasings successfully.", count)
 	}
 	return err
 }
@@ -165,21 +166,21 @@ func insertCRA(ctx context.Context, cra *models.CombinationResourceAttribute) er
 		InsertInto(constants.TableCRA).
 		Record(cra).Exec()
 	if err != nil {
-		logger.Error(ctx, "Failed to insert CRA, Error: [%+v].", err)
+		logger.Error(ctx, "Failed to insert Combination_Resource_Attribute, Error: [%+v].", err)
 	} else {
-		logger.Info(ctx, "Insert CRA successfully.")
+		logger.Info(ctx, "Insert Combination_Resource_Attribute successfully.")
 	}
 	return err
 }
 
-func insertCS(ctx context.Context, cs *models.CombinationSku) error {
+func insertComSku(ctx context.Context, cs *models.CombinationSku) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableCS).
 		Record(cs).Exec()
 	if err != nil {
-		logger.Error(ctx, "Failed to insert CS, Error: [%+v].", err)
- 	} else {
-		logger.Info(ctx, "Insert CS successfully.")
+		logger.Error(ctx, "Failed to insert Combination_Sku, Error: [%+v].", err)
+	} else {
+		logger.Info(ctx, "Insert Combination_Sku successfully.")
 	}
 	return err
 }
@@ -189,9 +190,9 @@ func insertComPrice(ctx context.Context, comPrice *models.CombinationPrice) erro
 		InsertInto(constants.TableComPrice).
 		Record(comPrice).Exec()
 	if err != nil {
-		logger.Error(ctx, "Failed to insert ComPrice, Error: [%+v].", err)
+		logger.Error(ctx, "Failed to insert Combination_Price, Error: [%+v].", err)
 	} else {
-		logger.Info(ctx, "Insert ComPrice successfully.")
+		logger.Info(ctx, "Insert Combination_Price successfully.")
 	}
 	return err
 }

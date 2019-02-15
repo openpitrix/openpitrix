@@ -24,11 +24,12 @@ type Leasing struct {
 	UserId             string
 	ResourceId         string
 	SkuId              string
+	SkuType            string
 	OtherInfo          string
 	MeteringValues     map[string]float64
-	LeaseTime          time.Time // action_time
-	UpdateDurationTime time.Time // auto current update time
-	RenewalTime        time.Time // next update time
+	LeaseTime          time.Time  // action_time
+	UpdateDurationTime time.Time  // auto current update time
+	RenewalTime        *time.Time // next update time
 	UpdateTime         time.Time
 	CreateTime         time.Time
 	CloseTime          map[time.Time]time.Time //{closeTime: restartTime, ..}
@@ -37,28 +38,29 @@ type Leasing struct {
 
 var LeasingColumns = db.GetColumnsFromStruct(&Leasing{})
 
-func pbToMeteringValues(pbMVs []*pb.MeteringAttributeValue) map[string]float64 {
-	var mvs map[string]float64
-	for _, pbmv := range pbMVs {
-		mvs[pbmv.GetAttributeId().GetValue()] = pbmv.GetValue().Value
+func pbToMeteringValues(pbMetVals []*pb.MeteringAttributeValue) map[string]float64 {
+	var metVals map[string]float64
+	for _, pbMetVal := range pbMetVals {
+		metVals[pbMetVal.GetAttributeValueId().GetValue()] = pbMetVal.GetValue().Value
 	}
-	return mvs
+	return metVals
 }
 
 func PbToLeasing(req *pb.MeteringRequest, mSku *pb.MeteringSku, groupId string, renewalTime *time.Time) *Leasing {
 	actionTime := pbutil.FromProtoTimestamp(mSku.GetActionTime())
 	return &Leasing{
-			LeasingId:          NewLeasingId(),
-			GroupId:            groupId,
-			UserId:             req.GetUserId().GetValue(),
-			ResourceId:         req.GetResourceId().GetValue(),
-			SkuId:              mSku.GetSkuId().GetValue(),
-			OtherInfo:          mSku.GetOtherInfo().GetValue(),
-			MeteringValues:     pbToMeteringValues(mSku.GetAttributeValues()),
-			LeaseTime:          actionTime,
-			UpdateDurationTime: actionTime,
-			RenewalTime:        renewalTime,
-		}
+		LeasingId:          NewLeasingId(),
+		GroupId:            groupId,
+		UserId:             req.GetUserId().GetValue(),
+		ResourceId:         req.GetResourceId().GetValue(),
+		SkuId:              mSku.GetSkuId().GetValue(),
+		SkuType:            mSku.GetType().String(),
+		OtherInfo:          mSku.GetOtherInfo().GetValue(),
+		MeteringValues:     pbToMeteringValues(mSku.GetAttributeValues()),
+		LeaseTime:          actionTime,
+		UpdateDurationTime: actionTime,
+		RenewalTime:        renewalTime,
+	}
 }
 
 type Leased struct {

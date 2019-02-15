@@ -205,39 +205,39 @@ message CreateCRAResponse {
 }
 
 message CombinationSku {
-    google.protobuf.StringValue cs_id = 1;
+    google.protobuf.StringValue com_sku_id = 1;
     google.protobuf.StringValue cra_id = 2; //combination_resource_attribute id
 	map<string, string> attribute_values = 3; //{resourceVersionId: attributeValueId, ..}
 }
 
-message CreateCSRequest {
+message CreateComSkuRequest {
 	google.protobuf.StringValue cra_id = 1; //combination_resource_attribute id
 	map<string, string> attribute_values = 2; //{resourceVersionId: attributeValueId, ..}
 }
 
-message CreateCSResponse {
-    google.protobuf.StringValue cs_id = 1;
+message CreateComSkuResponse {
+    google.protobuf.StringValue com_sku_id = 1;
 }
 
 message CombinationPrice {
-    google.protobuf.StringValue cp_id = 1;
-    google.protobuf.StringValue cs_id = 2;
+    google.protobuf.StringValue com_price_id = 1;
+    google.protobuf.StringValue com_sku_id = 2;
     google.protobuf.StringValue resource_version_id = 3;
     google.protobuf.StringValue attribute_id = 4;
 	map<string, double> prices = 5;
 	Currency currency = 6;
 }
 
-message CreateCPRequest {
-	google.protobuf.StringValue cs_id = 1;
+message CreateComPriceRequest {
+	google.protobuf.StringValue com_sku_id = 1;
 	google.protobuf.StringValue resource_version_id = 2;
 	google.protobuf.StringValue attribute_id = 3;
 	map<string, double> prices = 4;
 	Currency currency = 5;
 }
 
-message CreateCPResponse {
-	google.protobuf.StringValue cp_id = 1;
+message CreateComPriceResponse {
+	google.protobuf.StringValue com_price_id = 1;
 }
 
 message ProbationSku {
@@ -309,7 +309,7 @@ service PromotionManager {
 		};
 	}
 
-	rpc CreateCombinationSku (CreateCSRequest) returns (CreateCSResponse) {
+	rpc CreateCombinationSku (CreateComSkuRequest) returns (CreateComSkuResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create combination sku of combination resources"
 		};
@@ -319,7 +319,7 @@ service PromotionManager {
 		};
 	}
 
-	rpc CreateCombinationPrice (CreateCPRequest) returns (CreateCPResponse) {
+	rpc CreateCombinationPrice (CreateComPriceRequest) returns (CreateComPriceResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create combination price of combination sku"
 		};
@@ -388,33 +388,33 @@ service MeteringManager {
 		};
 	}
 
-	rpc UpdateMetering (MeteringRequest) returns (MeteringResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "update metering value about the sku_set"
-		};
-		option (google.api.http) = {
-			put: "/v1/metering/skus"
-			body: "*"
-		};
-	}
-
-	rpc CloseMetering (MeteringRequest) returns (MeteringResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "pause metering value about the sku_set"
-		};
-		option (google.api.http) = {
-			put: "/v1/metering/skus/pause"
-			body: "*"
-		};
-	}
-
-	rpc StopMetering (MeteringRequest) returns (MeteringResponse) {
-		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "stop metering about the sku_set"
-        };
-		option (google.api.http) = {
-            delete: "/v1/metering/skus"
-            body: "*"
-        };
-	}
+//	rpc UpdateMetering (MeteringRequest) returns (MeteringResponse) {
+//		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+//			summary: "update metering value about the sku_set"
+//		};
+//		option (google.api.http) = {
+//			put: "/v1/metering/skus"
+//			body: "*"
+//		};
+//	}
+//
+//	rpc CloseMetering (MeteringRequest) returns (MeteringResponse) {
+//		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+//			summary: "pause metering value about the sku_set"
+//		};
+//		option (google.api.http) = {
+//			put: "/v1/metering/skus/pause"
+//			body: "*"
+//		};
+//	}
+//
+//	rpc StopMetering (MeteringRequest) returns (MeteringResponse) {
+//		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+//            summary: "stop metering about the sku_set"
+//        };
+//		option (google.api.http) = {
+//            delete: "/v1/metering/skus"
+//            body: "*"
+//        };
+//	}
 }

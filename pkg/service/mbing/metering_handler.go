@@ -26,7 +26,7 @@ func (s *Server) StartMetering(ctx context.Context, req *pb.MeteringRequest) (*p
 				return nil, commonInternalErr(ctx, models.Leasing{}, CreateFailedCode)
 			}
 		}
-		leasings = append(leasings,	models.PbToLeasing(req, mSku, GetGroupId(), renewalTime))
+		leasings = append(leasings, models.PbToLeasing(req, mSku, GetGroupId(), renewalTime))
 	}
 
 	//insert leasings
@@ -35,24 +35,15 @@ func (s *Server) StartMetering(ctx context.Context, req *pb.MeteringRequest) (*p
 		return nil, commonInternalErr(ctx, models.Leasing{}, CreateFailedCode)
 	}
 
+	//TODO: Add leasing to REDIS if duration exist.
+	//TODO: Add leasing to ETCD.
+
 	//MeteringResponse
 	var res pb.MeteringResponse
 	for _, l := range leasings {
 		res.LeasingIds = append(res.LeasingIds, pbutil.ToProtoString(l.LeasingId))
 	}
 	return &res, nil
-}
-
-func (s *Server) StopMetering(ctx context.Context, req *pb.MeteringRequest) (*pb.CommonResponse, error) {
-	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
-}
-
-func (s *Server) UpdateMetering(ctx context.Context, req *pb.MeteringRequest) (*pb.CommonResponse, error) {
-	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
-}
-
-func (s *Server) CloseMetering(ctx context.Context, req *pb.MeteringRequest) (*pb.CommonResponse, error) {
-	return &pb.CommonResponse{Status: pbutil.ToProtoInt32(200), Message: pbutil.ToProtoString("success")}, nil
 }
 
 func GetGroupId() string {
