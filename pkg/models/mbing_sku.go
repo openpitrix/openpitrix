@@ -57,7 +57,7 @@ func NewAttribute(name, displayName, remark string) *Attribute {
 		Name:        name,
 		DisplayName: displayName,
 		Remark:      remark,
-		Status: 	 constants.StatusInUse2,
+		Status:      constants.StatusInUse2,
 		CreateTime:  now,
 		UpdateTime:  now,
 	}
@@ -73,10 +73,10 @@ func PbToAttribute(pbAtt *pb.CreateAttributeRequest) *Attribute {
 
 func AttributeToPb(att *Attribute) *pb.Attribute {
 	return &pb.Attribute{
-		AttributeId: 	pbutil.ToProtoString(att.AttributeId),
-		Name:     		pbutil.ToProtoString(att.Name),
-		DisplayName: 	pbutil.ToProtoString(att.DisplayName),
-		Remark:			pbutil.ToProtoString(att.Remark),
+		AttributeId: pbutil.ToProtoString(att.AttributeId),
+		Name:        pbutil.ToProtoString(att.Name),
+		DisplayName: pbutil.ToProtoString(att.DisplayName),
+		Remark:      pbutil.ToProtoString(att.Remark),
 	}
 }
 
@@ -91,15 +91,15 @@ type AttributeUnit struct {
 
 var AttributeUnitColumns = db.GetColumnsFromStruct(&AttributeUnit{})
 
-func NewAttributeUnit(name, display string) *AttributeUnit{
+func NewAttributeUnit(name, display string) *AttributeUnit {
 	now := time.Now()
 	return &AttributeUnit{
 		AttributeUnitId: NewAttUnitId(),
-		Name:           name,
-		DisplayName:    display,
-		CreateTime: 	now,
-		UpdateTime: 	now,
-		Status: 		constants.StatusInUse2,
+		Name:            name,
+		DisplayName:     display,
+		CreateTime:      now,
+		UpdateTime:      now,
+		Status:          constants.StatusInUse2,
 	}
 }
 
@@ -124,14 +124,14 @@ type AttributeValue struct {
 func NewAttributeValue(attId, attUnitId string, minValue, maxValue uint32) *AttributeValue {
 	now := time.Now()
 	return &AttributeValue{
-		AttributeValueId: 	NewAttValueId(),
-		AttributeId:      	attId,
-		AttributeUnitId:  	attUnitId,
-		MinValue:         	minValue,
-		MaxValue:         	maxValue,
-		CreateTime: 		now,
-		UpdateTime: 		now,
-		Status: 			constants.StatusInUse2,
+		AttributeValueId: NewAttValueId(),
+		AttributeId:      attId,
+		AttributeUnitId:  attUnitId,
+		MinValue:         minValue,
+		MaxValue:         maxValue,
+		CreateTime:       now,
+		UpdateTime:       now,
+		Status:           constants.StatusInUse2,
 	}
 }
 
@@ -157,13 +157,13 @@ type ResourceAttribute struct {
 func NewResourceAttribute(resVerId string, atts, metAtts []string) *ResourceAttribute {
 	now := time.Now()
 	return &ResourceAttribute{
-		ResourceAttributeId: 	NewResAttId(),
-		ResourceVersionId:   	resVerId,
-		Attributes:          	atts,
-		MeteringAttributes:  	metAtts,
-		CreateTime: 			now,
-		UpdateTime: 			now,
-		Status: 				constants.StatusInUse2,
+		ResourceAttributeId: NewResAttId(),
+		ResourceVersionId:   resVerId,
+		Attributes:          atts,
+		MeteringAttributes:  metAtts,
+		CreateTime:          now,
+		UpdateTime:          now,
+		Status:              constants.StatusInUse2,
 	}
 }
 
@@ -189,12 +189,12 @@ var SkuColumns = db.GetColumnsFromStruct(&ResourceAttribute{})
 func NewSku(resAttId string, values []string) *Sku {
 	now := time.Now()
 	return &Sku{
-		SkuId:               	NewSkuId(),
-		ResourceAttributeId: 	resAttId,
-		Values:              	values,
-		CreateTime: 			now,
-		UpdateTime: 			now,
-		Status:     			constants.StatusInUse2,
+		SkuId:               NewSkuId(),
+		ResourceAttributeId: resAttId,
+		Values:              values,
+		CreateTime:          now,
+		UpdateTime:          now,
+		Status:              constants.StatusInUse2,
 	}
 }
 
@@ -219,14 +219,14 @@ type Price struct {
 func NewPrice(skuId, attId, currency string, prices map[string]float64) *Price {
 	now := time.Now()
 	return &Price{
-		PriceId:     	NewPriceId(),
-		SkuId:       	skuId,
-		AttributeId: 	attId,
-		Prices:      	prices,
-		currency:    	currency,
-		CreateTime: 	now,
-		UpdateTime: 	now,
-		Status: 		constants.StatusInUse2,
+		PriceId:     NewPriceId(),
+		SkuId:       skuId,
+		AttributeId: attId,
+		Prices:      prices,
+		currency:    currency,
+		CreateTime:  now,
+		UpdateTime:  now,
+		Status:      constants.StatusInUse2,
 	}
 }
 

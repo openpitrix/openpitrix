@@ -3,8 +3,7 @@ Promotion
 **/
 
 /** the attributes of all combination resources **/
-CREATE TABLE IF NOT EXISTS combination_resource_attribute
-(
+CREATE TABLE IF NOT EXISTS combination_resource_attribute (
 	cra_id                 VARCHAR(50) NOT NULL UNIQUE,
 	resource_attribute_ids JSON        NOT NULL
 	COMMENT 'combination resource version id',
@@ -17,8 +16,7 @@ CREATE TABLE IF NOT EXISTS combination_resource_attribute
 );
 
 /** the sku of combination resources **/
-CREATE TABLE IF NOT EXISTS combination_sku
-(
+CREATE TABLE IF NOT EXISTS combination_sku (
 	com_sku_id       VARCHAR(50) NOT NULL UNIQUE,
 	cra_id           VARCHAR(50) NOT NULL
 	COMMENT 'the id of combination_resource_attribute',
@@ -33,8 +31,7 @@ CREATE TABLE IF NOT EXISTS combination_sku
 );
 
 
-CREATE TABLE IF NOT EXISTS combination_price
-(
+CREATE TABLE IF NOT EXISTS combination_price (
 	com_price_id        VARCHAR(50) NOT NULL UNIQUE,
 	com_sku_id          VARCHAR(50) NOT NULL,
 	resource_version_id VARCHAR(50) NOT NULL,
@@ -52,8 +49,7 @@ CREATE TABLE IF NOT EXISTS combination_price
 
 
 /** probation sku of resource **/
-CREATE TABLE IF NOT EXISTS probation_sku
-(
+CREATE TABLE IF NOT EXISTS probation_sku (
 	pro_sku_id            VARCHAR(50) NOT NULL UNIQUE,
 	resource_attribute_id VARCHAR(50) NOT NULL,
 	attribute_values      JSON        NOT NULL
@@ -69,8 +65,7 @@ CREATE TABLE IF NOT EXISTS probation_sku
 
 
 /** the records of probation resource used by user **/
-CREATE TABLE IF NOT EXISTS probation_record
-(
+CREATE TABLE IF NOT EXISTS probation_record (
 	probation_sku_id VARCHAR(50) NOT NULL,
 	user_id          VARCHAR(50) NOT NULL,
 	num              INT         NOT NULL DEFAULT 1,
@@ -80,8 +75,7 @@ CREATE TABLE IF NOT EXISTS probation_record
 );
 
 
-CREATE TABLE IF NOT EXISTS dicount
-(
+CREATE TABLE IF NOT EXISTS dicount (
 	id               VARCHAR(50)  NOT NULL,
 	name             VARCHAR(255) NOT NULL,
 	limits           JSON COMMENT '{resource:.., sku:.., price:.., user:.., regoin:..}',
@@ -97,8 +91,7 @@ CREATE TABLE IF NOT EXISTS dicount
 );
 
 
-CREATE TABLE IF NOT EXISTS coupon
-(
+CREATE TABLE IF NOT EXISTS coupon (
 	id          VARCHAR(50)   NOT NULL,
 	name        VARCHAR(50)   NOT NULL,
 	limits      JSON COMMENT '{resource:.., sku:.., price:.., user:.., regoin:...}',
@@ -115,8 +108,7 @@ CREATE TABLE IF NOT EXISTS coupon
 );
 
 
-CREATE TABLE IF NOT EXISTS coupon_received
-(
+CREATE TABLE IF NOT EXISTS coupon_received (
 	id          VARCHAR(50)   NOT NULL,
 	coupon_id   VARCHAR(50)   NOT NULL,
 	user_id     VARCHAR(50)   NOT NULL,
