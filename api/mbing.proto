@@ -360,7 +360,7 @@ message MeteringSku {
 	google.protobuf.Timestamp action_time = 3;  // start/close/delete resource time for metering
 	google.protobuf.StringValue other_info = 4;
 	enum SkuTypes {
-		NORMAL = 0;
+		SKU = 0;
 		COMBATION = 1;
 		PROBATION = 2;
 	}

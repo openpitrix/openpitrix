@@ -86,6 +86,7 @@ CREATE TABLE IF NOT EXISTS leasing
 	user_id								VARCHAR(50)		NOT NULL,
 	resource_id						VARCHAR(50)		NOT NULL COMMENT 'the same as cluster_id',
 	sku_id								VARCHAR(50)		NOT NULL,
+	sku_type							VARCHAR(16)		NOT NULL DEFAULT 'sku',
 	other_info						VARCHAR(50)		COMMENT 'used for distinguish when resource_id and sku_id are same with others',
 	metering_values				JSON					COMMENT 'the values of metering_attributes, {att_id: value, ..}',
 	lease_time		    		TIMESTAMP			NULL,
@@ -94,7 +95,7 @@ CREATE TABLE IF NOT EXISTS leasing
 	create_time       		TIMESTAMP	    DEFAULT CURRENT_TIMESTAMP,
 	update_time       		TIMESTAMP			DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	close_time						JSON					COMMENT '[{close_time: restart_time}, ..]',
-	status								VARCHAR(16) 		DEFAULT 'in_use' COMMENT 'in_use, handClosed, forceClosed',
+	status								VARCHAR(16) 	DEFAULT 'in_use' COMMENT 'in_use, handClosed, forceClosed',
 	PRIMARY KEY (leasing_id)
 );
 
