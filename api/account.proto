@@ -69,40 +69,40 @@ service AccountManager {
 }
 
 service AccessManager {
-	rpc CanDo(CanDoRequest) returns (CanDoResponse) {
+	rpc CanDo (CanDoRequest) returns (CanDoResponse) {
 		option (google.api.http) = { post: "/v1/cando" body: "*" };
 	}
 
 	// role module
-	rpc GetRoleModule(GetRoleModuleRequest) returns (GetRoleModuleResponse) {
+	rpc GetRoleModule (GetRoleModuleRequest) returns (GetRoleModuleResponse) {
 		option (google.api.http) = { get: "/v1/roles:module" };
 	}
-	rpc ModifyRoleModule(ModifyRoleModuleRequest) returns (ModifyRoleModuleResponse) {
+	rpc ModifyRoleModule (ModifyRoleModuleRequest) returns (ModifyRoleModuleResponse) {
 		option (google.api.http) = { patch: "/v1/roles:module" body: "*" };
 	}
 
 	// role
-	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {
+	rpc CreateRole (CreateRoleRequest) returns (CreateRoleResponse) {
 		option (google.api.http) = { post: "/v1/roles" body: "*" };
 	}
-	rpc DeleteRoles(DeleteRolesRequest) returns (DeleteRolesResponse) {
+	rpc DeleteRoles (DeleteRolesRequest) returns (DeleteRolesResponse) {
 		option (google.api.http) = { delete: "/v1/roles" body: "*" };
 	}
-	rpc ModifyRole(ModifyRoleRequest) returns (ModifyRoleResponse) {
+	rpc ModifyRole (ModifyRoleRequest) returns (ModifyRoleResponse) {
 		option (google.api.http) = { patch: "/v1/roles" body: "*" };
 	}
-	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {
+	rpc GetRole (GetRoleRequest) returns (GetRoleResponse) {
 		option (google.api.http) = { get: "/v1/roles/{role_id}" };
 	}
-	rpc DescribeRoles(DescribeRolesRequest) returns (DescribeRolesResponse) {
+	rpc DescribeRoles (DescribeRolesRequest) returns (DescribeRolesResponse) {
 		option (google.api.http) = { get: "/v1/roles" };
 	}
 
 	// role/user
-	rpc BindUserRole(BindUserRoleRequest) returns (BindUserRoleResponse) {
+	rpc BindUserRole (BindUserRoleRequest) returns (BindUserRoleResponse) {
 		option (google.api.http) = { post: "/v1/user:role" body: "*" };
 	}
-	rpc UnbindUserRole(UnbindUserRoleRequest) returns (UnbindUserRoleResponse) {
+	rpc UnbindUserRole (UnbindUserRoleRequest) returns (UnbindUserRoleResponse) {
 		option (google.api.http) = { delete: "/v1/user:role" body: "*" };
 	}
 }
@@ -126,8 +126,7 @@ service TokenManager {
 	//
 	rpc Token (TokenRequest) returns (TokenResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			security: {}
-		};
+			security: {} };
 		option (google.api.http) = { post: "/v1/oauth2/token" body: "*" };
 	};
 }
@@ -165,9 +164,9 @@ message Group {
 
 message Role {
 	string role_id = 1;
-	string role_name = 2;   // enable modify
+	string role_name = 2; // enable modify
 	string description = 3; // enable modify
-	string portal = 4;      // enable modify
+	string portal = 4; // enable modify
 	string owner = 5;
 	string owner_path = 6;
 	string status = 7;
@@ -373,13 +372,12 @@ message LeaveGroupResponse {
 }
 
 message GetUserGroupOwnerRequest {
-	string user_id =  1;
+	string user_id = 1;
 }
 message GetUserGroupOwnerResponse {
-	string user_id =  1;
+	string user_id = 1;
 	string owner = 2;
 }
-
 
 message CanDoRequest {
 	string url = 2;
@@ -407,9 +405,9 @@ message ModifyRoleModuleResponse {
 
 message CreateRoleRequest {
 	string role_id = 1;
-	string role_name = 2;   // enable modify
+	string role_name = 2; // enable modify
 	string description = 3; // enable modify
-	string portal = 4;      // enable modify
+	string portal = 4; // enable modify
 	string owner = 5;
 	string owner_path = 6;
 	string status = 7;
@@ -419,17 +417,17 @@ message CreateRoleResponse {
 }
 
 message DeleteRolesRequest {
-	string role_id = 1;
+	repeated string role_id = 1;
 }
 message DeleteRolesResponse {
-	string role_id = 1;
+	repeated string role_id = 1;
 }
 
 message ModifyRoleRequest {
 	string role_id = 1;
-	string role_name = 2;   // enable modify
+	string role_name = 2; // enable modify
 	string description = 3; // enable modify
-	string portal = 4;      // enable modify
+	string portal = 4; // enable modify
 }
 message ModifyRoleResponse {
 	Role role = 1;

@@ -17,16 +17,30 @@ import (
 type OpenpitrixDeleteRolesResponse struct {
 
 	// role id
-	RoleID string `json:"role_id,omitempty"`
+	RoleID []string `json:"role_id"`
 }
 
 // Validate validates this openpitrix delete roles response
 func (m *OpenpitrixDeleteRolesResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateRoleID(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *OpenpitrixDeleteRolesResponse) validateRoleID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RoleID) { // not required
+		return nil
+	}
+
 	return nil
 }
 
