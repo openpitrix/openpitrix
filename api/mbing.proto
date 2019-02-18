@@ -24,7 +24,7 @@ enum Currency {
 //************************************* Sku *************************
 
 message Attribute {
-	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue display_name = 3;
 	google.protobuf.StringValue remark = 4;
@@ -40,8 +40,12 @@ message CreateAttributeResponse {
 	google.protobuf.StringValue attribute_id = 1;
 }
 
+message ListAttributeResponse {
+	repeated Attribute attributes = 1;
+}
+
 message AttributeUnit {
-	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue attribute_unit_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue display_name = 3;
 }
@@ -56,18 +60,18 @@ message CreateAttUnitResponse {
 }
 
 message AttributeValue {
-	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue attribute_value_id = 1;
 	google.protobuf.StringValue attribute_id = 2;
 	google.protobuf.StringValue attribute_unit_id = 3;
-	google.protobuf.Int32Value min_value = 4;
-	google.protobuf.Int32Value max_value = 5;
+	google.protobuf.UInt32Value min_value = 4;
+	google.protobuf.UInt32Value max_value = 5;
 }
 
 message CreateAttValueRequest {
 	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.StringValue attribute_unit_id = 2;
-    google.protobuf.Int32Value min_value = 3;
-    google.protobuf.Int32Value max_value = 4;
+    google.protobuf.UInt32Value min_value = 3;
+    google.protobuf.UInt32Value max_value = 4;
 }
 
 message CreateAttValueResponse {
@@ -108,7 +112,7 @@ message CreateSkuResponse {
 }
 
 message Price {
-    google.protobuf.StringValue id = 1;
+    google.protobuf.StringValue price_id = 1;
     google.protobuf.StringValue sku_id = 2;
     google.protobuf.StringValue attribute_id = 3; //metering attribute id
 	map<string, double> prices = 4;
@@ -126,6 +130,11 @@ message CreatePriceResponse {
 	google.protobuf.StringValue price_id = 1;
 }
 
+message CommonListRequest {
+	google.protobuf.UInt32Value page = 1;
+	google.protobuf.UInt32Value page_size = 2;
+}
+
 service SkuManager {
 	rpc CreateAttribute (CreateAttributeRequest) returns (CreateAttributeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -133,6 +142,16 @@ service SkuManager {
 		};
 		option (google.api.http) = {
 			post: "/v1/mbing/attribute"
+			body: "*"
+		};
+	}
+
+	rpc ListAttribute (CommonListRequest) returns (ListAttributeResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "list attributes"
+		};
+		option (google.api.http) = {
+			get: "/v1/mbing/attributes"
 			body: "*"
 		};
 	}
@@ -244,13 +263,13 @@ message ProbationSku {
     google.protobuf.StringValue pro_sku_id = 1;
     google.protobuf.StringValue resource_attribute_id = 2;
 	repeated google.protobuf.StringValue attribute_value_ids = 3;
-    google.protobuf.Int32Value limit_num = 4;
+    google.protobuf.UInt32Value limit_num = 4;
 }
 
 message CreateProSkuRequest {
 	google.protobuf.StringValue resource_attribute_id = 1;
 	repeated google.protobuf.StringValue attribute_value_ids = 2;
-	google.protobuf.Int32Value limit_num = 3;
+	google.protobuf.UInt32Value limit_num = 3;
 }
 
 message CreateProSkuResponse {
@@ -285,8 +304,8 @@ message Coupon {
     google.protobuf.StringValue name = 2;
 	repeated Limit limits = 3;
     google.protobuf.FloatValue balance = 4;
-    google.protobuf.Int32Value count = 5;
-    google.protobuf.Int32Value limit_num = 6;
+    google.protobuf.UInt32Value count = 5;
+    google.protobuf.UInt32Value limit_num = 6;
     google.protobuf.Timestamp start_time = 7;
     google.protobuf.Timestamp end_time = 8;
     google.protobuf.StringValue mark = 9;

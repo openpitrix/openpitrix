@@ -16,6 +16,7 @@ import (
 const (
 	CreateFailedCode = 0
 	NotExistCode     = 1
+	ListFailedCode   = 2
 )
 
 const (
@@ -30,8 +31,7 @@ const (
 	InitAttUnitYearId = "att-unit-000003"
 )
 
-//var structDisName map[string]string
-
+//struct english name and chinese name
 var structDisName = map[string]map[string]string {
 	"Attribute": {
 		EN: "attribute",
@@ -86,9 +86,11 @@ func commonInternalErr(ctx context.Context, structObj interface{}, errType int8)
 	zhName := structDisName[structName][ZH]
 	switch errType {
 	case CreateFailedCode:
-		return gerr.New(ctx, gerr.Internal, gerr.CreateFailed(enName, zhName))
+		return gerr.New(ctx, gerr.Internal, gerr.CreateFailedError(enName, zhName))
 	case NotExistCode:
 		return gerr.New(ctx, gerr.Internal, gerr.NotExistError(enName, zhName))
+	case ListFailedCode:
+		return gerr.New(ctx, gerr.Internal, gerr.ListFailedError(enName, zhName))
 	default:
 		return gerr.New(ctx, gerr.Internal, gerr.ErrorUnknown)
 	}

@@ -63,6 +63,22 @@ func getAttributeById(ctx context.Context, attributeId string) (*models.Attribut
 	return att, err
 }
 
+func ListAttribute(ctx context.Context, page, pageSize uint64) ([]*models.Attribute, error) {
+	var attributes []*models.Attribute
+	_, err := pi.Global().DB(ctx).
+		Select(models.AttributeColumns...).
+		From(constants.TableAttribute).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		OrderDir(constants.ColumnCreateTime, false).
+		Paginate(page, pageSize).
+		Load(&attributes)
+
+	if err != nil {
+		logger.Error(ctx, "Failed to List attribute, Errors: [%+v]", err)
+	}
+	return attributes, err
+}
+
 func insertAttributeUnit(ctx context.Context, attUnit *models.AttributeUnit) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableAttUnit).
@@ -74,19 +90,6 @@ func insertAttributeUnit(ctx context.Context, attUnit *models.AttributeUnit) err
 	return err
 }
 
-func getAttUnitById(ctx context.Context, attUnitId string) (*models.AttributeUnit, error) {
-	attUnit := &models.AttributeUnit{}
-	err := pi.Global().DB(ctx).
-		Select(models.AttributeUnitColumns...).
-		From(constants.TableAttUnit).
-		Where(db.Eq(constants.ColumnAttUnitId, attUnitId)).
-		LoadOne(&attUnit)
-
-	if err != nil {
-		logger.Error(ctx, "Failed to get attribuite_unit, Errors: [%+v]", err)
-	}
-	return attUnit, err
-}
 
 func insertAttributeValue(ctx context.Context, attValue *models.AttributeValue) error {
 	_, err := pi.Global().DB(ctx).

@@ -31,7 +31,7 @@ func (em ErrorMessage) Message(locale string, err error, a ...interface{}) strin
 	}
 }
 
-func CreateFailed(enName, zhName string) ErrorMessage {
+func CreateFailedError(enName, zhName string) ErrorMessage {
 	return ErrorMessage{
 		Name: fmt.Sprintf("create_%s_failed", enName),
 		en:   fmt.Sprintf("create %s failed", enName),
@@ -44,6 +44,14 @@ func NotExistError(enName, zhName string) ErrorMessage {
 		Name: fmt.Sprintf("%s_not_exist", enName),
 		en:   fmt.Sprintf("%s not exist", enName),
 		zhCN: fmt.Sprintf("%s不存在", zhName),
+	}
+}
+
+func ListFailedError(enName, zhName string) ErrorMessage {
+	return ErrorMessage{
+		Name: fmt.Sprintf("list_%s_failed", enName),
+		en:   fmt.Sprintf("list %s failed", enName),
+		zhCN: fmt.Sprintf("获取%s列表失败", zhName),
 	}
 }
 

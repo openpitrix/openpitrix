@@ -23,6 +23,20 @@ func (s *Server) CreateAttribute(ctx context.Context, req *pb.CreateAttributeReq
 	return &pb.CreateAttributeResponse{AttributeId: pbutil.ToProtoString(att.AttributeId)}, nil
 }
 
+func (s *Server) ListAttribute(ctx context.Context, req *pb.CommonListRequest) (*pb.ListAttributeResponse, error) {
+	atts, err := ListAttribute(ctx, uint64(req.GetPage().GetValue()), uint64(req.GetPageSize().GetValue()))
+	if err != nil {
+		return nil, commonInternalErr(ctx, models.Attribute{}, ListFailedCode)
+	}
+
+	var pbAtts []*pb.Attribute
+	for _, att := range atts {
+		pbAtts = append(pbAtts, models.AttributeToPb(att))
+	}
+
+	return &pb.ListAttributeResponse{Attributes: pbAtts,}, nil
+}
+
 func (s *Server) CreateAttributeUnit(ctx context.Context, req *pb.CreateAttUnitRequest) (*pb.CreateAttUnitResponse, error) {
 	attUnit := models.PbToAttUnit(req)
 	err := insertAttributeUnit(ctx, attUnit)

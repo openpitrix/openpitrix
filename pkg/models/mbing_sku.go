@@ -71,6 +71,15 @@ func PbToAttribute(pbAtt *pb.CreateAttributeRequest) *Attribute {
 	)
 }
 
+func AttributeToPb(att *Attribute) *pb.Attribute {
+	return &pb.Attribute{
+		AttributeId: 	pbutil.ToProtoString(att.AttributeId),
+		Name:     		pbutil.ToProtoString(att.Name),
+		DisplayName: 	pbutil.ToProtoString(att.DisplayName),
+		Remark:			pbutil.ToProtoString(att.Remark),
+	}
+}
+
 type AttributeUnit struct {
 	AttributeUnitId string
 	Name            string
@@ -105,14 +114,14 @@ type AttributeValue struct {
 	AttributeValueId string
 	AttributeId      string
 	AttributeUnitId  string
-	MinValue         int32
-	MaxValue         int32
+	MinValue         uint32
+	MaxValue         uint32
 	CreateTime       time.Time
 	UpdateTime       time.Time
 	Status           string
 }
 
-func NewAttributeValue(attId, attUnitId string, minValue, maxValue int32) *AttributeValue {
+func NewAttributeValue(attId, attUnitId string, minValue, maxValue uint32) *AttributeValue {
 	now := time.Now()
 	return &AttributeValue{
 		AttributeValueId: 	NewAttValueId(),

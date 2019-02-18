@@ -103,7 +103,7 @@ type ProbationSku struct {
 	ProSkuId            string
 	ResourceAttributeId string
 	AttributeValues     []string
-	LimitNum            int32
+	LimitNum            uint32
 	CreateTime          time.Time
 	UpdateTime          time.Time
 	Status              string
@@ -121,7 +121,7 @@ func PbToProSku(req *pb.CreateProSkuRequest) *ProbationSku {
 type ProbationRecord struct {
 	ProbationSkuId string
 	UserId         string
-	LimitNum       int8
+	LimitNum       uint32
 	CreateTime     time.Time
 	ProbationTimes []time.Time
 }
