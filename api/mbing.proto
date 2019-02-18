@@ -152,7 +152,6 @@ service SkuManager {
 		};
 		option (google.api.http) = {
 			get: "/v1/mbing/attributes"
-			body: "*"
 		};
 	}
 
