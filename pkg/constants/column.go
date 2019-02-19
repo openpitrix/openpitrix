@@ -26,6 +26,7 @@ const (
 	ColumnLocale                   = "locale"
 	ColumnMaintainers              = "maintainers"
 	ColumnName                     = "name"
+	ColumnDisplayName              = "display_name"
 	ColumnNodeId                   = "node_id"
 	ColumnKeyPairId                = "key_pair_id"
 	ColumnOwner                    = "owner"
@@ -110,10 +111,10 @@ const (
 	ColumnApprover          = "approver"
 
 	//mbing
-	ColumnAttributeId 		= "attribute_id"
-	ColumnAttUnitId   		= "attribute_unit_id"
-	ColumnAttValueId  		= "attribute_value_id"
-	ColumnSkuId  	  		= "sku_id"
+	ColumnAttributeId = "attribute_id"
+	ColumnAttUnitId   = "attribute_unit_id"
+	ColumnAttValueId  = "attribute_value_id"
+	ColumnSkuId       = "sku_id"
 )
 
 var PushEventTables = map[string][]string{
@@ -195,6 +196,15 @@ var IndexedColumns = map[string][]string{
 	},
 	TableVendorVerifyInfo: {
 		ColumnUserId, ColumnStatus,
+	},
+	TableAttribute: {
+		ColumnAttributeId, ColumnName, ColumnDisplayName,
+	},
+	TableAttUnit: {
+		ColumnAttUnitId, ColumnName, ColumnDisplayName,
+	},
+	TableAttValue: {
+		ColumnAttValueId, ColumnAttributeId, ColumnAttUnitId,
 	},
 }
 

@@ -13,13 +13,17 @@ import (
 )
 
 const (
-	NAME = "name"
+	NAME         = "name"
 	DISPLAY_NAME = "displayName"
+	ATT_NAME     = "att_name"
+	UNIT_NAME    = "unit_name"
+	MAX_VALUE    = "max_value"
+	MIN_VALUE    = "min_value"
 )
 
 const (
-	TEST_PAGE = 0
-	TEST_PAGE_SIZE = 20
+	TEST_OFFSET = 0
+	TEST_LIMIT  = 30
 )
 
 var test_attributes = []map[string]string{
@@ -33,7 +37,7 @@ var test_attributes = []map[string]string{
 }
 
 var test_att_units = []map[string]string{
-	{NAME: "num", DISPLAY_NAME: "个数"},
+	{NAME: "number", DISPLAY_NAME: "个数"},
 	{NAME: "mb", DISPLAY_NAME: "MB"},
 	{NAME: "gb", DISPLAY_NAME: "GB"},
 	{NAME: "tb", DISPLAY_NAME: "TB"},
@@ -41,9 +45,52 @@ var test_att_units = []map[string]string{
 	{NAME: "pek3", DISPLAY_NAME: "北京3区"},
 }
 
+var test_att_values = []map[string]interface{}{
+	//时长属性值
+	{ATT_NAME: "duration", UNIT_NAME: "hour", MIN_VALUE: 1, MAX_VALUE: 1},
+	{ATT_NAME: "duration", UNIT_NAME: "month", MIN_VALUE: 1, MAX_VALUE: 1},
+	{ATT_NAME: "duration", UNIT_NAME: "year", MIN_VALUE: 1, MAX_VALUE: 1},
+	{ATT_NAME: "duration", UNIT_NAME: "hour", MIN_VALUE: 0, MAX_VALUE: 100},
+	{ATT_NAME: "duration", UNIT_NAME: "hour", MIN_VALUE: 100, MAX_VALUE: 1000},
+	{ATT_NAME: "duration", UNIT_NAME: "hour", MIN_VALUE: 1000},
+	//memory
+	{ATT_NAME: "memory", UNIT_NAME: "gb", MIN_VALUE: 1, MAX_VALUE: 1},
+	{ATT_NAME: "memory", UNIT_NAME: "gb", MIN_VALUE: 2, MAX_VALUE: 2},
+	{ATT_NAME: "memory", UNIT_NAME: "gb", MIN_VALUE: 4, MAX_VALUE: 4},
+	{ATT_NAME: "memory", UNIT_NAME: "gb", MIN_VALUE: 8, MAX_VALUE: 8},
+	{ATT_NAME: "memory", UNIT_NAME: "gb", MIN_VALUE: 16, MAX_VALUE: 16},
+	{ATT_NAME: "memory", UNIT_NAME: "gb", MIN_VALUE: 32, MAX_VALUE: 32},
+	//CPU
+	{ATT_NAME: "cpu", UNIT_NAME: "number", MIN_VALUE: 1, MAX_VALUE: 1},
+	{ATT_NAME: "cpu", UNIT_NAME: "number", MIN_VALUE: 2, MAX_VALUE: 2},
+	{ATT_NAME: "cpu", UNIT_NAME: "number", MIN_VALUE: 4, MAX_VALUE: 4},
+	{ATT_NAME: "cpu", UNIT_NAME: "number", MIN_VALUE: 8, MAX_VALUE: 8},
+	{ATT_NAME: "cpu", UNIT_NAME: "number", MIN_VALUE: 16, MAX_VALUE: 16},
+	//disk
+	{ATT_NAME: "disk", UNIT_NAME: "gb", MIN_VALUE: 100, MAX_VALUE: 100},
+	{ATT_NAME: "disk", UNIT_NAME: "gb", MIN_VALUE: 500, MAX_VALUE: 500},
+	{ATT_NAME: "disk", UNIT_NAME: "tb", MIN_VALUE: 1, MAX_VALUE: 1},
+	{ATT_NAME: "disk", UNIT_NAME: "tb", MIN_VALUE: 10, MAX_VALUE: 10},
+	//region
+	{ATT_NAME: "region", UNIT_NAME: "ap2a"},
+	{ATT_NAME: "region", UNIT_NAME: "pek3"},
+	//instance
+	{ATT_NAME: "node_num", UNIT_NAME: "number", MIN_VALUE: 0, MAX_VALUE: 5},
+	{ATT_NAME: "node_num", UNIT_NAME: "number", MIN_VALUE: 5, MAX_VALUE: 20},
+	{ATT_NAME: "node_num", UNIT_NAME: "number", MIN_VALUE: 20},
+	//user
+	{ATT_NAME: "user_num", UNIT_NAME: "number", MIN_VALUE: 0, MAX_VALUE: 10},
+	{ATT_NAME: "user_num", UNIT_NAME: "number", MIN_VALUE: 10, MAX_VALUE: 50},
+	{ATT_NAME: "user_num", UNIT_NAME: "number", MIN_VALUE: 50},
+	//stream
+	{ATT_NAME: "stream", UNIT_NAME: "mb", MIN_VALUE: 1, MAX_VALUE: 1},
+	{ATT_NAME: "stream", UNIT_NAME: "gb", MIN_VALUE: 1, MAX_VALUE: 1},
+}
+
+//Attribute
 func TestCreateAttribute(t *testing.T) {
 	for _, att := range test_attributes {
-		t.Run(fmt.Sprintf("CreateAttribute_%s",att[NAME]),
+		t.Run(fmt.Sprintf("CreateAttribute_%s", att[NAME]),
 			testCreateAttributeFunc(att[NAME], att[DISPLAY_NAME]))
 	}
 }
@@ -65,23 +112,26 @@ func testCreateAttributeFunc(name, displayName string) func(t *testing.T) {
 }
 
 func TestListAttribute(t *testing.T) {
-	commonListReq := pb.CommonListRequest{
-		Page: 		pbutil.ToProtoUInt32(TEST_PAGE),
-		PageSize: 	pbutil.ToProtoUInt32(TEST_PAGE_SIZE),
+	listReq := pb.ListAttributeRequest{
+		Offset: TEST_OFFSET,
+		Limit:  TEST_LIMIT,
 	}
 
-	res, err := ss.server.ListAttribute(ss.ctx, &commonListReq)
+	res, err := ss.server.ListAttribute(ss.ctx, &listReq)
 	if err != nil {
 		t.Error(err)
 	} else {
-		attIds := ""
+		t.Logf("List %d Attributes: ", len(res.Attributes))
 		for _, att := range res.Attributes {
-			attIds = attIds + att.GetAttributeId().GetValue() + ", "
+			t.Logf("%s, %s, %s ",
+				att.GetAttributeId().GetValue(),
+				att.GetName().GetValue(),
+				att.GetDisplayName().GetValue())
 		}
-		t.Logf("ListAttributes(%d): %s", len(attIds), attIds)
 	}
 }
 
+//Attribute_Unit
 func TestCreateAttributeUnit(t *testing.T) {
 	for _, attUnit := range test_att_units {
 		t.Run(fmt.Sprintf("Create_att_unit_%s", attUnit[NAME]),
@@ -103,4 +153,91 @@ func testCreateAttUnitFunc(name, displayName string) func(t *testing.T) {
 			t.Logf("TestCreateAttributeUnit: Insert attribute_unit(%s) successfully.", response.GetAttributeUnitId().GetValue())
 		}
 	}
+}
+
+func TestListAttributeUnit(t *testing.T) {
+	listReq := pb.ListAttUnitRequest{
+		Offset: TEST_OFFSET,
+		Limit:  TEST_LIMIT,
+	}
+
+	res, err := ss.server.ListAttributeUnit(ss.ctx, &listReq)
+	if err != nil {
+		t.Error(err)
+	} else {
+		t.Logf("List %d Attribute_units: ", len(res.AttributeUnits))
+		for _, attUnit := range res.AttributeUnits {
+		t.Logf("%s, %s, %s",
+			attUnit.GetAttributeUnitId().GetValue(),
+			attUnit.GetName().GetValue(),
+			attUnit.GetDisplayName().GetValue())
+		}
+	}
+}
+
+//Attribute_Value
+//need to run TestCreateAttribute and TestCreateAttributeUnit
+func TestCreateAttributeValue(t *testing.T) {
+	//get attributes
+	listAttReq := pb.ListAttributeRequest{
+		Offset: TEST_OFFSET,
+		Limit:  TEST_LIMIT,
+	}
+	atts, err := ss.server.ListAttribute(ss.ctx, &listAttReq)
+	if err != nil {
+		t.Error(err)
+	}
+
+	//get attribute_units
+	listAttUnitReq := pb.ListAttUnitRequest{
+		Offset: TEST_OFFSET,
+		Limit:  TEST_LIMIT,
+	}
+	attUnits, err := ss.server.ListAttributeUnit(ss.ctx, &listAttUnitReq)
+	if err != nil {
+		t.Error(err)
+	}
+
+	//generate and create AttributeValue
+	for _, tAttValue := range test_att_values {
+		//get attributes and attributeUnits
+		var attId, attUnitId string
+		t.Logf("attName: %s", tAttValue[ATT_NAME])
+		t.Logf("attUnitName: %s", tAttValue[UNIT_NAME])
+		for _, att := range atts.Attributes {
+			if tAttValue[ATT_NAME] == att.GetName().GetValue() {
+				attId = att.GetAttributeId().GetValue()
+				t.Logf("attID: %s", attId)
+				break
+			}
+		}
+		for _, attUnit := range attUnits.AttributeUnits {
+			if tAttValue[UNIT_NAME] == attUnit.GetName().GetValue() {
+				attUnitId = attUnit.GetAttributeUnitId().GetValue()
+				t.Logf("attUnitID: %s", attUnitId)
+				break
+			}
+		}
+
+		//generate
+		attValueReq := &pb.CreateAttValueRequest{
+			AttributeId:     pbutil.ToProtoString(attId),
+			AttributeUnitId: pbutil.ToProtoString(attUnitId),
+		}
+		if tAttValue[MIN_VALUE] != nil {
+			attValueReq.MinValue = pbutil.ToProtoUInt32(uint32(tAttValue[MIN_VALUE].(int)))
+		}
+		if tAttValue[MAX_VALUE] != nil {
+			attValueReq.MaxValue = pbutil.ToProtoUInt32(uint32(tAttValue[MAX_VALUE].(int)))
+		}
+		//create
+		valRes, err := ss.server.CreateAttributeValue(ss.ctx, attValueReq)
+		if err != nil {
+			t.Skip(err)
+		} else {
+			t.Logf("Create attribute_value(%s) successfully.", valRes.GetAttributeValueId().GetValue())
+		}
+
+	}
+
 }

@@ -23,8 +23,8 @@ func (s *Server) CreateAttribute(ctx context.Context, req *pb.CreateAttributeReq
 	return &pb.CreateAttributeResponse{AttributeId: pbutil.ToProtoString(att.AttributeId)}, nil
 }
 
-func (s *Server) ListAttribute(ctx context.Context, req *pb.CommonListRequest) (*pb.ListAttributeResponse, error) {
-	atts, err := ListAttribute(ctx, uint64(req.GetPage().GetValue()), uint64(req.GetPageSize().GetValue()))
+func (s *Server) ListAttribute(ctx context.Context, req *pb.ListAttributeRequest) (*pb.ListAttributeResponse, error) {
+	atts, err := listAttribute(ctx, req)
 	if err != nil {
 		return nil, commonInternalErr(ctx, models.Attribute{}, ListFailedCode)
 	}
@@ -34,7 +34,7 @@ func (s *Server) ListAttribute(ctx context.Context, req *pb.CommonListRequest) (
 		pbAtts = append(pbAtts, models.AttributeToPb(att))
 	}
 
-	return &pb.ListAttributeResponse{Attributes: pbAtts,}, nil
+	return &pb.ListAttributeResponse{Attributes: pbAtts}, nil
 }
 
 func (s *Server) CreateAttributeUnit(ctx context.Context, req *pb.CreateAttUnitRequest) (*pb.CreateAttUnitResponse, error) {
@@ -44,6 +44,20 @@ func (s *Server) CreateAttributeUnit(ctx context.Context, req *pb.CreateAttUnitR
 		return nil, commonInternalErr(ctx, attUnit, CreateFailedCode)
 	}
 	return &pb.CreateAttUnitResponse{AttributeUnitId: pbutil.ToProtoString(attUnit.AttributeUnitId)}, nil
+}
+
+func (s *Server) ListAttributeUnit(ctx context.Context, req *pb.ListAttUnitRequest) (*pb.ListAttUnitResponse, error) {
+	attUnits, err := listAttributeUnit(ctx, req)
+	if err != nil {
+		return nil, commonInternalErr(ctx, models.Attribute{}, ListFailedCode)
+	}
+
+	var pbAttUnits []*pb.AttributeUnit
+	for _, attUnit := range attUnits {
+		pbAttUnits = append(pbAttUnits, models.AttributeUnitToPb(attUnit))
+	}
+
+	return &pb.ListAttUnitResponse{AttributeUnits: pbAttUnits}, nil
 }
 
 func (s *Server) CreateAttributeValue(ctx context.Context, req *pb.CreateAttValueRequest) (*pb.CreateAttValueResponse, error) {

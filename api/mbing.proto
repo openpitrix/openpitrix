@@ -40,6 +40,14 @@ message CreateAttributeResponse {
 	google.protobuf.StringValue attribute_id = 1;
 }
 
+message ListAttributeRequest {
+	google.protobuf.StringValue attribute_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue display_name = 3;
+	uint32 offset = 4;
+	uint32 limit = 5;
+}
+
 message ListAttributeResponse {
 	repeated Attribute attributes = 1;
 }
@@ -57,6 +65,18 @@ message CreateAttUnitRequest {
 
 message CreateAttUnitResponse {
 	google.protobuf.StringValue attribute_unit_id = 1;
+}
+
+message ListAttUnitRequest {
+	google.protobuf.StringValue attribute_unit_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue display_name = 3;
+	uint32 offset = 4;
+	uint32 limit = 5;
+}
+
+message ListAttUnitResponse {
+	repeated AttributeUnit attribute_units = 1;
 }
 
 message AttributeValue {
@@ -130,11 +150,6 @@ message CreatePriceResponse {
 	google.protobuf.StringValue price_id = 1;
 }
 
-message CommonListRequest {
-	google.protobuf.UInt32Value page = 1;
-	google.protobuf.UInt32Value page_size = 2;
-}
-
 service SkuManager {
 	rpc CreateAttribute (CreateAttributeRequest) returns (CreateAttributeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -146,7 +161,7 @@ service SkuManager {
 		};
 	}
 
-	rpc ListAttribute (CommonListRequest) returns (ListAttributeResponse) {
+	rpc ListAttribute (ListAttributeRequest) returns (ListAttributeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "list attributes"
 		};
@@ -163,6 +178,15 @@ service SkuManager {
             post: "/v1/mbing/attribute/unit"
             body: "*"
         };
+	}
+
+	rpc ListAttributeUnit (ListAttUnitRequest) returns (ListAttUnitResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "list attribute_units"
+		};
+		option (google.api.http) = {
+			get: "/v1/mbing/attribute/units"
+		};
 	}
 
 	rpc CreateAttributeValue (CreateAttValueRequest) returns (CreateAttValueResponse) {

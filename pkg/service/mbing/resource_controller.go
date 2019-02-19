@@ -8,7 +8,10 @@ import (
 	"context"
 
 	"openpitrix.io/openpitrix/pkg/db"
+	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/models"
+	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/util/stringutil"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -18,7 +21,7 @@ import (
 
 func checkExistById(ctx context.Context, structName, idValue string) (bool, error) {
 	tableName := stringutil.CamelCaseToUnderscore(structName)
-	idName := stringutil.UnderscoreToCamelCase(tableName) + "Id"
+	idName := tableName + "_id"
 	count, err := pi.Global().DB(ctx).
 		Select(idName).
 		From(tableName).
@@ -49,28 +52,16 @@ func insertAttribute(ctx context.Context, attribute *models.Attribute) error {
 	return err
 }
 
-func getAttributeById(ctx context.Context, attributeId string) (*models.Attribute, error) {
-	att := &models.Attribute{}
-	err := pi.Global().DB(ctx).
-		Select(models.AttributeColumns...).
-		From(constants.TableAttribute).
-		Where(db.Eq(constants.ColumnAttributeId, attributeId)).
-		LoadOne(&att)
-
-	if err != nil {
-		logger.Error(ctx, "Failed to get attribute, Errors: [%+v]", err)
-	}
-	return att, err
-}
-
-func ListAttribute(ctx context.Context, page, pageSize uint64) ([]*models.Attribute, error) {
+func listAttribute(ctx context.Context, req *pb.ListAttributeRequest) ([]*models.Attribute, error) {
 	var attributes []*models.Attribute
 	_, err := pi.Global().DB(ctx).
 		Select(models.AttributeColumns...).
 		From(constants.TableAttribute).
 		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		Where(manager.BuildFilterConditions(req, constants.TableAttribute)).
 		OrderDir(constants.ColumnCreateTime, false).
-		Paginate(page, pageSize).
+		Offset(pbutil.GetOffsetFromRequest(req)).
+		Limit(pbutil.GetLimitFromRequest(req)).
 		Load(&attributes)
 
 	if err != nil {
@@ -90,6 +81,23 @@ func insertAttributeUnit(ctx context.Context, attUnit *models.AttributeUnit) err
 	return err
 }
 
+func listAttributeUnit(ctx context.Context, req *pb.ListAttUnitRequest) ([]*models.AttributeUnit, error) {
+	var attUnits []*models.AttributeUnit
+	_, err := pi.Global().DB(ctx).
+		Select(models.AttributeUnitColumns...).
+		From(constants.TableAttUnit).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		Where(manager.BuildFilterConditions(req, constants.TableAttUnit)).
+		OrderDir(constants.ColumnCreateTime, false).
+		Offset(pbutil.GetOffsetFromRequest(req)).
+		Limit(pbutil.GetLimitFromRequest(req)).
+		Load(&attUnits)
+
+	if err != nil {
+		logger.Error(ctx, "Failed to List attribute_unit, Errors: [%+v]", err)
+	}
+	return attUnits, err
+}
 
 func insertAttributeValue(ctx context.Context, attValue *models.AttributeValue) error {
 	_, err := pi.Global().DB(ctx).

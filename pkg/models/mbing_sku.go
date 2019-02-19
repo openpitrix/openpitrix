@@ -110,6 +110,14 @@ func PbToAttUnit(pbAttUnit *pb.CreateAttUnitRequest) *AttributeUnit {
 	)
 }
 
+func AttributeUnitToPb(attUnit *AttributeUnit) *pb.AttributeUnit {
+	return &pb.AttributeUnit{
+		AttributeUnitId: pbutil.ToProtoString(attUnit.AttributeUnitId),
+		Name:            pbutil.ToProtoString(attUnit.Name),
+		DisplayName:     pbutil.ToProtoString(attUnit.DisplayName),
+	}
+}
+
 type AttributeValue struct {
 	AttributeValueId string
 	AttributeId      string
