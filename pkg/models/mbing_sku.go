@@ -14,19 +14,19 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
+func NewAttributeNameId() string {
+	return idutil.GetUuid("att-name-")
+}
+
+func NewAttributeUnitId() string {
+	return idutil.GetUuid("att-unit-")
+}
+
 func NewAttributeId() string {
 	return idutil.GetUuid("att-")
 }
 
-func NewAttUnitId() string {
-	return idutil.GetUuid("att-unit-")
-}
-
-func NewAttValueId() string {
-	return idutil.GetUuid("att-value-")
-}
-
-func NewResAttId() string {
+func NewResourceAttributeId() string {
 	return idutil.GetUuid("res-att-")
 }
 
@@ -38,45 +38,45 @@ func NewPriceId() string {
 	return idutil.GetUuid("price-")
 }
 
-type Attribute struct {
-	AttributeId string
-	Name        string
-	DisplayName string
-	CreateTime  time.Time
-	UpdateTime  time.Time
-	Status      string
-	Remark      string
+type AttributeName struct {
+	AttributeNameId string
+	Name            string
+	DisplayName     string
+	CreateTime      time.Time
+	UpdateTime      time.Time
+	Status          string
+	Remark          string
 }
 
-var AttributeColumns = db.GetColumnsFromStruct(&Attribute{})
+var AttributeNameColumns = db.GetColumnsFromStruct(&AttributeName{})
 
-func NewAttribute(name, displayName, remark string) *Attribute {
+func NewAttributeName(name, displayName, remark string) *AttributeName {
 	now := time.Now()
-	return &Attribute{
-		AttributeId: NewAttributeId(),
-		Name:        name,
-		DisplayName: displayName,
-		Remark:      remark,
-		Status:      constants.StatusInUse2,
-		CreateTime:  now,
-		UpdateTime:  now,
+	return &AttributeName{
+		AttributeNameId: NewAttributeNameId(),
+		Name:            name,
+		DisplayName:     displayName,
+		Remark:          remark,
+		Status:          constants.StatusInUse2,
+		CreateTime:      now,
+		UpdateTime:      now,
 	}
 }
 
-func PbToAttribute(pbAtt *pb.CreateAttributeRequest) *Attribute {
-	return NewAttribute(
-		pbAtt.GetName().GetValue(),
-		pbAtt.GetDisplayName().GetValue(),
-		pbAtt.GetRemark().GetValue(),
+func PbToAttributeName(pbAttName *pb.CreateAttributeNameRequest) *AttributeName {
+	return NewAttributeName(
+		pbAttName.GetName().GetValue(),
+		pbAttName.GetDisplayName().GetValue(),
+		pbAttName.GetRemark().GetValue(),
 	)
 }
 
-func AttributeToPb(att *Attribute) *pb.Attribute {
-	return &pb.Attribute{
-		AttributeId: pbutil.ToProtoString(att.AttributeId),
-		Name:        pbutil.ToProtoString(att.Name),
-		DisplayName: pbutil.ToProtoString(att.DisplayName),
-		Remark:      pbutil.ToProtoString(att.Remark),
+func AttributeNameToPb(attName *AttributeName) *pb.AttributeName {
+	return &pb.AttributeName{
+		AttributeNameId: pbutil.ToProtoString(attName.AttributeNameId),
+		Name:            pbutil.ToProtoString(attName.Name),
+		DisplayName:     pbutil.ToProtoString(attName.DisplayName),
+		Remark:          pbutil.ToProtoString(attName.Remark),
 	}
 }
 
