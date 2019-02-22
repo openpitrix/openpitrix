@@ -5,18 +5,11 @@
 package mbing
 
 import (
+	"context"
 
-"context"
-
-"github.com/fatih/structs"
-"openpitrix.io/openpitrix/pkg/gerr"
+	"github.com/fatih/structs"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
-)
-
-const (
-	CreateFailedCode = 0
-	NotExistCode     = 1
-	ListFailedCode   = 2
 )
 
 const (
@@ -25,30 +18,29 @@ const (
 )
 
 const (
-	InitAttId = "att-000001"
-	InitAttUnitHourId = "att-unit-000001"
+	InitAttId          = "att-000001"
+	InitAttUnitHourId  = "att-unit-000001"
 	InitAttUnitMonthId = "att-unit-000002"
-	InitAttUnitYearId = "att-unit-000003"
+	InitAttUnitYearId  = "att-unit-000003"
 )
 
 //struct english name and chinese name
-var structDisName = map[string]map[string]string {
-	"Attribute": {
-		EN: "attribute",
-		ZH: "属性",
+var structDisName = map[string]map[string]string{
+	"AttributeName": {
+		EN: "attribute_name",
+		ZH: "属性名",
 	},
 	"AttributeUnit": {
 		EN: "attribute_unit",
 		ZH: "属性单位",
 	},
-	"AttributeValue": {
-		EN: "attribute_value",
-		ZH: "属性值",
-
+	"Attribute": {
+		EN: "attribute",
+		ZH: "属性",
 	},
-	"ResourceAttribute": {
-		EN: "resource_attribute",
-		ZH: "资源属性",
+	"spu": {
+		EN: "spu",
+		ZH: "SPU",
 	},
 	"Sku": {
 		EN: "sku",
@@ -56,7 +48,7 @@ var structDisName = map[string]map[string]string {
 	},
 	"Price": {
 		EN: "price",
-		ZH: "定价",
+		ZH: "价格",
 	},
 	"Leasing": {
 		EN: "leasing",
@@ -64,34 +56,48 @@ var structDisName = map[string]map[string]string {
 	},
 }
 
-//check if existStructName exist when action actionStructName
-func checkStructExistById(ctx context.Context, checkStruct, actionStruct interface{}, idValue string, actionErrType int8) error {
-	checkStructName := structs.Name(checkStruct)
-	exist, err := checkExistById(ctx, checkStructName, idValue)
+func internalError(ctx context.Context, err error) error {
+	return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+}
+
+//check if structObj exist
+func checkStructExist(ctx context.Context, structObj interface{}, id string) error {
+	structName := structs.Name(structObj)
+	exist, err := checkExistById(ctx, structName, id)
 	if err != nil {
-		logger.Error(ctx, "Failed to get %s!", checkStructName)
-		return commonInternalErr(ctx, actionStruct, actionErrType)
+		logger.Error(ctx, "Failed to get %s(%s), Error: [%+v]!", structName, id, err)
+		return internalError(ctx, err)
 	}
 	if !exist {
-		logger.Error(ctx, "The %s that id is %s not exist!", idValue, checkStructName)
-		return commonInternalErr(ctx, checkStruct, NotExistCode)
+		return notExistError(ctx, structObj, id)
 	}
 	return nil
 }
 
-//CommonInternalErr: return error with gerr.ErrorMessage
-func commonInternalErr(ctx context.Context, structObj interface{}, errType int8) error {
+func notExistError(ctx context.Context, structObj interface{}, id string) error {
 	structName := structs.Name(structObj)
-	enName := structDisName[structName][EN]
-	zhName := structDisName[structName][ZH]
-	switch errType {
-	case CreateFailedCode:
-		return gerr.New(ctx, gerr.Internal, gerr.CreateFailedError(enName, zhName))
-	case NotExistCode:
-		return gerr.New(ctx, gerr.Internal, gerr.NotExistError(enName, zhName))
-	case ListFailedCode:
-		return gerr.New(ctx, gerr.Internal, gerr.ListFailedError(enName, zhName))
-	default:
-		return gerr.New(ctx, gerr.Internal, gerr.ErrorUnknown)
+	logger.Error(ctx, "The %s(%s) not exist!", structName, id)
+	a := []string{
+		structDisName[structName][EN],
+		structDisName[structName][EN],
+		id,
+		structDisName[structName][ZH],
+		id,
 	}
+	return gerr.New(ctx, gerr.NotFound, gerr.ErrorNotExist, a)
+}
+
+func notExistInOtherError(ctx context.Context, structObj, targetStructObj interface{}) error {
+	//SN: Struct Name
+	structObjSN := structs.Name(structObj)
+	targetStructObjSn := structs.Name(targetStructObj)
+	logger.Error(ctx, "The %s not exist in %s!", structObjSN, targetStructObjSn)
+	a := []string{
+		structDisName[structObjSN][EN],
+		structDisName[structObjSN][EN],
+		structDisName[targetStructObjSn][EN],
+		structDisName[targetStructObjSn][ZH],
+		structDisName[structObjSN][ZH],
+	}
+	return gerr.New(ctx, gerr.NotFound, gerr.ErrorNotExistInOther, a)
 }

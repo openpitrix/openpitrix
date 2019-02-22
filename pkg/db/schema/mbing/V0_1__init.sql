@@ -43,11 +43,10 @@ CREATE TABLE IF NOT EXISTS attribute (
 );
 
 
-CREATE TABLE IF NOT EXISTS resource_attribute (
-	resource_attribute_id       VARCHAR(50) NOT NULL UNIQUE,
+CREATE TABLE IF NOT EXISTS spu (
+	spu_id                      VARCHAR(50) NOT NULL UNIQUE,
 	resource_version_id         VARCHAR(50) NOT NULL,
-	attribute_name_ids          JSON
-	COMMENT 'sku attribute_name ids(Do not include metering_attribute_name_ids)',
+	attribute_name_ids          JSON COMMENT 'sku attribute_name ids(Do not include metering_attribute_name_ids)',
 	metering_attribute_name_ids JSON        NOT NULL
 	COMMENT 'the attribute_name ids need to metering and billing',
 	create_time                 TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
@@ -55,15 +54,14 @@ CREATE TABLE IF NOT EXISTS resource_attribute (
 	ON UPDATE CURRENT_TIMESTAMP,
 	status                      VARCHAR(16) DEFAULT 'in_use'
 	COMMENT 'in_use, deleted',
-	PRIMARY KEY (resource_attribute_id)
+	PRIMARY KEY (spu_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS sku (
 	sku_id                 VARCHAR(50) NOT NULL UNIQUE,
-	resource_attribute_id  VARCHAR(50) NOT NULL,
-	attribute_ids          JSON
-	COMMENT 'sku attributes with value of resource_attribute.',
+	spu_id                 VARCHAR(50) NOT NULL,
+	attribute_ids          JSON COMMENT 'sku attributes with value of spu.',
 	metering_attribute_ids JSON        NOT NULL,
 	create_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
 	update_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP

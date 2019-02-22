@@ -26,8 +26,8 @@ func NewAttributeId() string {
 	return idutil.GetUuid("att-")
 }
 
-func NewResourceAttributeId() string {
-	return idutil.GetUuid("res-att-")
+func NewSpuId() string {
+	return idutil.GetUuid("spu-")
 }
 
 func NewSkuId() string {
@@ -94,7 +94,7 @@ var AttributeUnitColumns = db.GetColumnsFromStruct(&AttributeUnit{})
 func NewAttributeUnit(name, display string) *AttributeUnit {
 	now := time.Now()
 	return &AttributeUnit{
-		AttributeUnitId: NewAttUnitId(),
+		AttributeUnitId: NewAttributeUnitId(),
 		Name:            name,
 		DisplayName:     display,
 		CreateTime:      now,
@@ -103,7 +103,7 @@ func NewAttributeUnit(name, display string) *AttributeUnit {
 	}
 }
 
-func PbToAttUnit(pbAttUnit *pb.CreateAttUnitRequest) *AttributeUnit {
+func PbToAttributeUnit(pbAttUnit *pb.CreateAttributeUnitRequest) *AttributeUnit {
 	return NewAttributeUnit(
 		pbAttUnit.GetName().GetValue(),
 		pbAttUnit.GetDisplayName().GetValue(),
@@ -118,98 +118,105 @@ func AttributeUnitToPb(attUnit *AttributeUnit) *pb.AttributeUnit {
 	}
 }
 
-type AttributeValue struct {
-	AttributeValueId string
-	AttributeId      string
-	AttributeUnitId  string
-	MinValue         uint32
-	MaxValue         uint32
-	CreateTime       time.Time
-	UpdateTime       time.Time
-	Status           string
+type Attribute struct {
+	AttributeId     string
+	AttributeNameId string
+	AttributeUnitId string
+	MinValue        uint32
+	MaxValue        uint32
+	CreateTime      time.Time
+	UpdateTime      time.Time
+	Status          string
 }
 
-func NewAttributeValue(attId, attUnitId string, minValue, maxValue uint32) *AttributeValue {
+func NewAttribute(attNameId, attUnitId string, minValue, maxValue uint32) *Attribute {
 	now := time.Now()
-	return &AttributeValue{
-		AttributeValueId: NewAttValueId(),
-		AttributeId:      attId,
-		AttributeUnitId:  attUnitId,
-		MinValue:         minValue,
-		MaxValue:         maxValue,
-		CreateTime:       now,
-		UpdateTime:       now,
-		Status:           constants.StatusInUse2,
+	return &Attribute{
+		AttributeId:     NewAttributeId(),
+		AttributeNameId: attNameId,
+		AttributeUnitId: attUnitId,
+		MinValue:        minValue,
+		MaxValue:        maxValue,
+		CreateTime:      now,
+		UpdateTime:      now,
+		Status:          constants.StatusInUse2,
 	}
 }
 
-func PbToAttValue(pbAttValue *pb.CreateAttValueRequest) *AttributeValue {
-	return NewAttributeValue(
-		pbAttValue.GetAttributeId().GetValue(),
-		pbAttValue.GetAttributeUnitId().GetValue(),
-		pbAttValue.GetMinValue().GetValue(),
-		pbAttValue.GetMaxValue().GetValue(),
+func PbToAttribute(pbAttribute *pb.CreateAttributeRequest) *Attribute {
+	return NewAttribute(
+		pbAttribute.GetAttributeNameId().GetValue(),
+		pbAttribute.GetAttributeUnitId().GetValue(),
+		pbAttribute.GetMinValue().GetValue(),
+		pbAttribute.GetMaxValue().GetValue(),
 	)
 }
 
-type ResourceAttribute struct {
-	ResourceAttributeId string
-	ResourceVersionId   string
-	Attributes          []string
-	MeteringAttributes  []string
-	CreateTime          time.Time
-	UpdateTime          time.Time
-	Status              string
+//SPU: standard product unit
+type Spu struct {
+	SpuId                    string
+	ResourceVersionId        string
+	AttributeNameIds         []string
+	MeteringAttributeNameIds []string
+	CreateTime               time.Time
+	UpdateTime               time.Time
+	Status                   string
 }
 
-func NewResourceAttribute(resVerId string, atts, metAtts []string) *ResourceAttribute {
+var SpuColumns = db.GetColumnsFromStruct(&Spu{})
+
+func NewSpu(resourceVersionId string, attNameIds, meteringAttNameIds []string) *Spu {
 	now := time.Now()
-	return &ResourceAttribute{
-		ResourceAttributeId: NewResAttId(),
-		ResourceVersionId:   resVerId,
-		Attributes:          atts,
-		MeteringAttributes:  metAtts,
-		CreateTime:          now,
-		UpdateTime:          now,
-		Status:              constants.StatusInUse2,
+	return &Spu{
+		SpuId:                    NewSpuId(),
+		ResourceVersionId:        resourceVersionId,
+		AttributeNameIds:         attNameIds,
+		MeteringAttributeNameIds: meteringAttNameIds,
+		CreateTime:               now,
+		UpdateTime:               now,
+		Status:                   constants.StatusInUse2,
 	}
 }
 
-func PbToResAtt(pbResAtt *pb.CreateResAttRequest) *ResourceAttribute {
-	return NewResourceAttribute(
-		pbResAtt.GetResourceVersionId().GetValue(),
-		pbutil.FromProtoStringSlice(pbResAtt.AttributeIds),
-		pbutil.FromProtoStringSlice(pbResAtt.MeteringAttributeIds),
+func PbToSpu(pbSpu *pb.CreateSpuRequest) *Spu {
+	return NewSpu(
+		pbSpu.GetResourceVersionId().GetValue(),
+		pbutil.FromProtoStringSlice(pbSpu.AttributeNameIds),
+		pbutil.FromProtoStringSlice(pbSpu.MeteringAttributeNameIds),
 	)
 }
 
+//SKU: stock keeping unit
 type Sku struct {
-	SkuId               string
-	ResourceAttributeId string
-	Values              []string
-	CreateTime          time.Time
-	UpdateTime          time.Time
-	Status              string
+	SkuId                string
+	SpuId                string
+	AttributeIds         []string
+	MeteringAttributeIds []string
+	CreateTime           time.Time
+	UpdateTime           time.Time
+	Status               string
 }
 
-var SkuColumns = db.GetColumnsFromStruct(&ResourceAttribute{})
+var SkuColumns = db.GetColumnsFromStruct(&Sku{})
 
-func NewSku(resAttId string, values []string) *Sku {
+func NewSku(spuId string, attributeIds, meteringAttIds []string) *Sku {
 	now := time.Now()
 	return &Sku{
-		SkuId:               NewSkuId(),
-		ResourceAttributeId: resAttId,
-		Values:              values,
-		CreateTime:          now,
-		UpdateTime:          now,
-		Status:              constants.StatusInUse2,
+		SkuId:                NewSkuId(),
+		SpuId:                spuId,
+		AttributeIds:         attributeIds,
+		MeteringAttributeIds: meteringAttIds,
+		CreateTime:           now,
+		UpdateTime:           now,
+		Status:               constants.StatusInUse2,
 	}
 }
 
 func PbToSku(pbSku *pb.CreateSkuRequest) *Sku {
 	return NewSku(
-		pbSku.GetResourceAttributeId().GetValue(),
-		pbutil.FromProtoStringSlice(pbSku.GetAttributeValueIds()),
+		pbSku.GetSpuId().GetValue(),
+		pbutil.FromProtoStringSlice(pbSku.GetAttributeIds()),
+		pbutil.FromProtoStringSlice(pbSku.GetMeteringAttributeIds()),
 	)
 }
 

@@ -89,42 +89,44 @@ message Attribute {
 }
 
 message CreateAttributeRequest {
-	google.protobuf.StringValue attribute_id = 1;
+	google.protobuf.StringValue attribute_name_id = 1;
 	google.protobuf.StringValue attribute_unit_id = 2;
     google.protobuf.UInt32Value min_value = 3;
     google.protobuf.UInt32Value max_value = 4;
 }
 
 message CreateAttributeResponse {
-	google.protobuf.StringValue attribute_value_id = 1;
+	google.protobuf.StringValue attribute_id = 1;
 }
 
-message ResourceAttribute {
-	google.protobuf.StringValue resource_attribute_id = 1;
+//SPU: standard product unit
+message Spu {
+	google.protobuf.StringValue spu_id = 1;
 	google.protobuf.StringValue resource_version_id = 2;
 	repeated google.protobuf.StringValue attribute_name_ids = 3;
 	repeated google.protobuf.StringValue metering_attribute_name_ids = 4;
 }
 
-message CreateResourceAttributeRequest {
+message CreateSpuRequest {
 	google.protobuf.StringValue resource_version_id = 1;
 	repeated google.protobuf.StringValue attribute_name_ids = 2;
 	repeated google.protobuf.StringValue metering_attribute_name_ids = 3;
 }
 
-message CreateResourceAttributeResponse {
-	google.protobuf.StringValue resource_atrribute_id = 1;
+message CreateSpuResponse {
+	google.protobuf.StringValue spu_id = 1;
 }
 
+//SKU: stock keeping unit
 message Sku {
-	google.protobuf.StringValue id = 1;
-	google.protobuf.StringValue resource_attribute_id = 2;
+	google.protobuf.StringValue sku_id = 1;
+	google.protobuf.StringValue spu_id = 2;
 	repeated google.protobuf.StringValue attribute_ids = 3;
 	repeated google.protobuf.StringValue metering_attribute_ids = 4;
 }
 
 message CreateSkuRequest {
-	google.protobuf.StringValue resource_attribute_id = 1;
+	google.protobuf.StringValue spu_id = 1;
 	repeated google.protobuf.StringValue attribute_ids = 2;
 	repeated google.protobuf.StringValue metering_attribute_ids = 3;
 }
@@ -201,12 +203,12 @@ service SkuManager {
         };
 	}
 
-	rpc CreateResourceAttribute (CreateResourceAttributeRequest) returns (CreateResourceAttributeResponse) {
+	rpc CreateSpu (CreateSpuRequest) returns (CreateSpuResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create attributes of the resource"
+            summary: "create spu"
         };
 		option (google.api.http) = {
-            post: "/v1/mbing/resource/attribute"
+            post: "/v1/mbing/spu"
             body: "*"
         };
 	}
@@ -216,7 +218,7 @@ service SkuManager {
             summary: "create sku of the resource"
         };
 		option (google.api.http) = {
-            post: "/v1/mbing/resource/sku"
+            post: "/v1/mbing/sku"
             body: "*"
         };
 	}
@@ -226,7 +228,7 @@ service SkuManager {
             summary: "create price of the sku"
         };
 		option (google.api.http) = {
-            post: "/v1/mbing/resource/sku/price"
+            post: "/v1/mbing/sku/price"
             body: "*"
         };
 	}
@@ -234,33 +236,29 @@ service SkuManager {
 
 
 //************************************* Promotion *************************
-//cra: CombinationResourceAttribute
-message CombinationResourceAttribute {
-	google.protobuf.StringValue combination_resource_attribute_id = 1;
-	repeated ResourceAttribute resource_attributes = 2;
+//CombinationSpu
+message CombinationSpu {
+	google.protobuf.StringValue combination_spu_id = 1;
+	repeated google.protobuf.StringValue  spu_ids = 2;
 }
 
-message CreateCombinationResourceAttributeRequest {
-	repeated ResourceAttribute resource_attributes = 1;
+message CreateCombinationSpuRequest {
+	repeated google.protobuf.StringValue spu_ids = 1;
 }
 
-message CreateCombinationResourceAttributeResponse {
-	google.protobuf.StringValue combination_resource_attribute_id = 1;
-}
-
-message AttributeIds {
-	repeated google.protobuf.StringValue attribute_id = 3; //{resourceVersionId: [attributeId, ..], ..}
+message CreateCombinationSpuResponse {
+	google.protobuf.StringValue combination_spu_id = 1;
 }
 
 message CombinationSku {
     google.protobuf.StringValue combination_sku_id = 1;
-    google.protobuf.StringValue combination_resource_attribute_id = 2;
-	map<string, AttributeIds> attribute_ids = 3; //{resourceVersionId: [attributeId, ..], ..}
+    google.protobuf.StringValue combination_spu_id = 2;
+	repeated CreateSkuRequest skus = 3;
 }
 
 message CreateCombinationSkuRequest {
-	google.protobuf.StringValue combination_resource_attribute_id = 1;
-	map<string, AttributeIds> attribute_ids = 2; //{resourceVersionId: [attributeId, ..], ..}
+	google.protobuf.StringValue combination_spu_id = 1;
+	repeated CreateSkuRequest skus = 2;
 }
 
 message CreateCombinationSkuResponse {
@@ -270,7 +268,7 @@ message CreateCombinationSkuResponse {
 message CombinationPrice {
     google.protobuf.StringValue combination_price_id = 1;
     google.protobuf.StringValue combination_sku_id = 2;
-    google.protobuf.StringValue resource_version_id = 3;
+    google.protobuf.StringValue spu_id = 3;
     google.protobuf.StringValue attribute_id = 4;
 	map<string, double> prices = 5;
 	Currency currency = 6;
@@ -278,7 +276,7 @@ message CombinationPrice {
 
 message CreateCombinationPriceRequest {
 	google.protobuf.StringValue combination_sku_id = 1;
-	google.protobuf.StringValue resource_version_id = 2;
+	google.protobuf.StringValue spu_id = 2;
 	google.protobuf.StringValue attribute_id = 3;
 	map<string, double> prices = 4;
 	Currency currency = 5;
@@ -290,15 +288,17 @@ message CreateCombinationPriceResponse {
 
 message ProbationSku {
     google.protobuf.StringValue probation_sku_id = 1;
-    google.protobuf.StringValue resource_attribute_id = 2;
-	repeated google.protobuf.StringValue attribute_value_ids = 3;
-    google.protobuf.UInt32Value limit_num = 4;
+    google.protobuf.StringValue spu_id = 2;
+	repeated google.protobuf.StringValue attribute_ids = 3;
+	repeated google.protobuf.StringValue metering_attribute_ids = 4;
+    google.protobuf.UInt32Value limit_num = 5;
 }
 
 message CreateProbationSkuRequest {
-	google.protobuf.StringValue resource_attribute_id = 1;
-	repeated google.protobuf.StringValue attribute_value_ids = 2;
-	google.protobuf.UInt32Value limit_num = 3;
+	google.protobuf.StringValue spu_id = 1;
+	repeated google.protobuf.StringValue attribute_ids = 2;
+	repeated google.protobuf.StringValue metering_attribute_ids = 3;
+	google.protobuf.UInt32Value limit_num = 4;
 }
 
 message CreateProbationSkuResponse {
@@ -318,7 +318,7 @@ message Limit {
 }
 
 message Discount {
-    google.protobuf.StringValue id = 1;
+    google.protobuf.StringValue discount_id = 1;
     google.protobuf.StringValue name = 2;
 	repeated Limit limits = 3;
     google.protobuf.FloatValue discount_value = 4;
@@ -329,7 +329,7 @@ message Discount {
 }
 
 message Coupon {
-    google.protobuf.StringValue id = 1;
+    google.protobuf.StringValue coupon_id = 1;
     google.protobuf.StringValue name = 2;
 	repeated Limit limits = 3;
     google.protobuf.FloatValue balance = 4;
@@ -341,18 +341,18 @@ message Coupon {
 }
 
 message CouponReceived {
-    google.protobuf.StringValue id = 1;
+    google.protobuf.StringValue coupon_received_id = 1;
     google.protobuf.StringValue coupon_id = 2;
     google.protobuf.StringValue user_id = 3;
 }
 
 service PromotionManager {
-	rpc CreateCombinationResourceAttribute (CreateCombinationResourceAttributeRequest) returns (CreateCombinationResourceAttributeResponse) {
+	rpc CreateCombinationSpu (CreateCombinationSpuRequest) returns (CreateCombinationSpuResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create of combination resourceAttributes"
+			summary: "create of combination spus"
 		};
 		option (google.api.http) = {
-			post: "/v1/mbing/combination/resource/attributes"
+			post: "/v1/mbing/combination/spus"
 			body: "*"
 		};
 	}
@@ -362,7 +362,7 @@ service PromotionManager {
 			summary: "create combination sku of combination resources"
 		};
 		option (google.api.http) = {
-			post: "/v1/mbing/combination/resource/sku"
+			post: "/v1/mbing/combination/sku"
 			body: "*"
 		};
 	}
@@ -372,7 +372,7 @@ service PromotionManager {
 			summary: "create combination price of combination sku"
 		};
 		option (google.api.http) = {
-			post: "/v1/mbing/combination/resource/sku/price"
+			post: "/v1/mbing/combination/sku/price"
 			body: "*"
 		};
 	}
@@ -393,7 +393,7 @@ service PromotionManager {
 //************************** metering ****************************
 
 message MeteringAttributeValue {
-	google.protobuf.StringValue attribute_value_id = 1;
+	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.DoubleValue value = 2;
 	enum UpdateValueTypes {
 		INCREMENTAL = 0;

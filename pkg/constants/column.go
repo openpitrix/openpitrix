@@ -111,10 +111,14 @@ const (
 	ColumnApprover          = "approver"
 
 	//mbing
-	ColumnAttributeId = "attribute_id"
-	ColumnAttUnitId   = "attribute_unit_id"
-	ColumnAttValueId  = "attribute_value_id"
-	ColumnSkuId       = "sku_id"
+	ColumnAttributeNameId          = "attribute_name_id"
+	ColumnAttributeUnitId          = "attribute_unit_id"
+	ColumnAttributeId              = "attribute_id"
+	ColumnSpuId                    = "spu_id"
+	ColumnResourceVersionId        = "resource_version_id"
+	ColumnAttributeNameIds         = "attribute_name_ids"
+	ColumnMeteringAttributeNameIds = "metering_attribute_name_ids"
+	ColumnSkuId                    = "sku_id"
 )
 
 var PushEventTables = map[string][]string{
@@ -197,14 +201,17 @@ var IndexedColumns = map[string][]string{
 	TableVendorVerifyInfo: {
 		ColumnUserId, ColumnStatus,
 	},
+	TableAttributeName: {
+		ColumnAttributeNameId, ColumnName, ColumnDisplayName,
+	},
+	TableAttributeUnit: {
+		ColumnAttributeUnitId, ColumnName, ColumnDisplayName,
+	},
 	TableAttribute: {
-		ColumnAttributeId, ColumnName, ColumnDisplayName,
+		ColumnAttributeId, ColumnAttributeId, ColumnAttributeUnitId,
 	},
-	TableAttUnit: {
-		ColumnAttUnitId, ColumnName, ColumnDisplayName,
-	},
-	TableAttValue: {
-		ColumnAttValueId, ColumnAttributeId, ColumnAttUnitId,
+	TableSpu: {
+		ColumnSpuId, ColumnResourceVersionId, ColumnAttributeNameIds, ColumnMeteringAttributeNameIds,
 	},
 }
 

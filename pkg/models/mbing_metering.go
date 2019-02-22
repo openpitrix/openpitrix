@@ -39,11 +39,12 @@ type Leasing struct {
 var LeasingColumns = db.GetColumnsFromStruct(&Leasing{})
 
 func pbToMeteringValues(pbMetVals []*pb.MeteringAttributeValue) map[string]float64 {
-	var metVals map[string]float64
+	metertingValues := map[string]float64{}
 	for _, pbMetVal := range pbMetVals {
-		metVals[pbMetVal.GetAttributeValueId().GetValue()] = pbMetVal.GetValue().Value
+		attributeId := pbMetVal.GetAttributeId().GetValue()
+		metertingValues[attributeId] = pbMetVal.GetValue().Value
 	}
-	return metVals
+	return metertingValues
 }
 
 func PbToLeasing(req *pb.MeteringRequest, mSku *pb.MeteringSku, groupId string, renewalTime *time.Time) *Leasing {

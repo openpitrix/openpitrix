@@ -12,26 +12,26 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-func (s *Server) CreateCRA(ctx context.Context, req *pb.CreateCRARequest) (*pb.CreateCRAResponse, error) {
-	cra := models.PbToCRA(req)
-	//check if resourceAttributes exist
-	for _, resAttId := range cra.ResourceAttributeIds {
-		err := checkStructExistById(ctx, models.ResourceAttribute{}, cra, resAttId, CreateFailedCode)
+func (s *Server) CreateCombinationSpu(ctx context.Context, req *pb.CreateCombinationSpuRequest) (*pb.CreateCombinationSpuResponse, error) {
+	comSpu := models.PbToCombinationSpu(req)
+	//check if Spu exist
+	for _, spuId := range comSpu.SpuIds {
+		err := checkStructExist(ctx, models.Spu{}, spuId)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	// insert CRA
-	err := insertCRA(ctx, cra)
+	// insert CombinationSpu
+	err := insertCombinationSpu(ctx, comSpu)
 	if err != nil {
-		return nil, commonInternalErr(ctx, cra, CreateFailedCode)
+		return nil, internalError(ctx, err)
 	}
-	return &pb.CreateCRAResponse{CraId: pbutil.ToProtoString(cra.CRAId)}, nil
+	return &pb.CreateCombinationSpuResponse{CombinationSpuId: pbutil.ToProtoString(comSpu.CombinationSpuId)}, nil
 }
 
-func (s *Server) CreateCombinationSku(ctx context.Context, req *pb.CreateComSkuRequest) (*pb.CreateComSkuResponse, error) {
-	comSku := models.PbToComSku(req)
+func (s *Server) CreateCombinationSku(ctx context.Context, req *pb.CreateCombinationSkuRequest) (*pb.CreateCombinationSkuResponse, error) {
+	comSku := models.PbToCombinationSku(req)
 
 	//check if CRA exist
 	err := checkStructExistById(ctx, models.CombinationResourceAttribute{}, comSku, comSku.ComSkuId, CreateFailedCode)

@@ -25,7 +25,7 @@ func NewServer() (*Server, error) {
 func Serve(cfg *config.Config) {
 	pi.SetGlobal(cfg)
 	s := Server{}
-	manager.NewGrpcServer("mbing-manager", constants.MeterbillingManagerPort).
+	manager.NewGrpcServer(constants.MbingManagerHost, constants.MbingManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterSkuManagerServer(server, &s)

@@ -2,65 +2,69 @@
 Promotion
 **/
 
-/** the attributes of all combination resources **/
-CREATE TABLE IF NOT EXISTS combination_resource_attribute (
-	cra_id                 VARCHAR(50) NOT NULL UNIQUE,
-	resource_attribute_ids JSON        NOT NULL
-	COMMENT 'combination resource version id',
+/** the combination spu **/
+CREATE TABLE IF NOT EXISTS combination_spu (
+	combination_spu_id VARCHAR(50) NOT NULL UNIQUE,
+	spu_ids            JSON        NOT NULL
+	COMMENT 'combination spu ids',
+	create_time        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+	update_time        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	ON UPDATE CURRENT_TIMESTAMP,
+	status             VARCHAR(16) DEFAULT 'in_use'
+	COMMENT 'in_use, deleted',
+	PRIMARY KEY (combination_spu_id)
+);
+
+/** the sku of combination resources **/
+CREATE TABLE IF NOT EXISTS combination_sku (
+	combination_sku_id     VARCHAR(50) NOT NULL UNIQUE,
+	combination_spu_id     VARCHAR(50) NOT NULL
+	COMMENT 'the id of combination_spu_id',
+	attribute_ids          JSON        NOT NULL
+	COMMENT 'sku attributes of spu: {spuId:[attId, ..], ..}',
+	metering_attribute_ids JSON        NOT NULL
+	COMMENT 'sku metering attributes of spu: {spuId:[attId, ..], ..}',
 	create_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
 	update_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
 	status                 VARCHAR(16) DEFAULT 'in_use'
 	COMMENT 'in_use, deleted',
-	PRIMARY KEY (cra_id)
-);
-
-/** the sku of combination resources **/
-CREATE TABLE IF NOT EXISTS combination_sku (
-	com_sku_id       VARCHAR(50) NOT NULL UNIQUE,
-	cra_id           VARCHAR(50) NOT NULL
-	COMMENT 'the id of combination_resource_attribute',
-	attribute_values JSON        NOT NULL
-	COMMENT 'sku attribute values for attributes in resource_attribute: {resource_version_id:{}, ..}',
-	create_time      TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	update_time      TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
-	ON UPDATE CURRENT_TIMESTAMP,
-	status           VARCHAR(16) DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
-	PRIMARY KEY (com_sku_id)
+	PRIMARY KEY (combination_sku_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS combination_price (
-	com_price_id        VARCHAR(50) NOT NULL UNIQUE,
-	com_sku_id          VARCHAR(50) NOT NULL,
-	resource_version_id VARCHAR(50) NOT NULL,
-	attribute_id        VARCHAR(50) NOT NULL,
-	prices              JSON COMMENT '{attribute_value1: price1, ...}',
-	currency            VARCHAR(50) NOT NULL  DEFAULT 'cny',
-	create_time         TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
-	update_time         TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
+	combination_price_id VARCHAR(50) NOT NULL UNIQUE,
+	combination_sku_id   VARCHAR(50) NOT NULL,
+	spu_id               VARCHAR(50) NOT NULL,
+	attribute_id         VARCHAR(50) NOT NULL,
+	prices               JSON COMMENT '{upto: price1, ...}',
+	currency             VARCHAR(50) NOT NULL  DEFAULT 'cny',
+	create_time          TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
+	update_time          TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status              VARCHAR(16)           DEFAULT 'in_use'
+	status               VARCHAR(16)           DEFAULT 'in_use'
 	COMMENT 'in_use, deleted',
-	INDEX price_sku_index (com_price_id, com_sku_id),
-	PRIMARY KEY (com_price_id)
+	INDEX price_sku_index (combination_price_id, combination_sku_id),
+	PRIMARY KEY (combination_price_id)
 );
 
 
 /** probation sku of resource **/
 CREATE TABLE IF NOT EXISTS probation_sku (
-	pro_sku_id            VARCHAR(50) NOT NULL UNIQUE,
-	resource_attribute_id VARCHAR(50) NOT NULL,
-	attribute_values      JSON        NOT NULL
-	COMMENT 'sku attribute values for attributes in resource_attribute: {attribute: value, ...}',
-	limit_num             INT         NOT NULL DEFAULT 1,
-	create_time           TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
-	update_time           TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
+	probation_sku_id       VARCHAR(50) NOT NULL UNIQUE,
+	resource_attribute_id  VARCHAR(50) NOT NULL,
+	attribute_ids          JSON        NOT NULL
+	COMMENT 'sku attributes of resource_attribute: [attributeId, ...]',
+	metering_attribute_ids JSON        NOT NULL
+	COMMENT 'sku attributes of resource_attribute: [attributeId, ...]',
+	limit_num              INT         NOT NULL DEFAULT 1,
+	create_time            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
+	update_time            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status                VARCHAR(16)          DEFAULT 'in_use'
+	status                 VARCHAR(16)          DEFAULT 'in_use'
 	COMMENT 'in_use, deleted',
-	PRIMARY KEY (pro_sku_id)
+	PRIMARY KEY (probation_sku_id)
 );
 
 
@@ -76,7 +80,7 @@ CREATE TABLE IF NOT EXISTS probation_record (
 
 
 CREATE TABLE IF NOT EXISTS dicount (
-	id               VARCHAR(50)  NOT NULL,
+	discount_id      VARCHAR(50)  NOT NULL,
 	name             VARCHAR(255) NOT NULL,
 	limits           JSON COMMENT '{resource:.., sku:.., price:.., user:.., regoin:..}',
 	discount_value   DECIMAL(8, 2) COMMENT 'the price value to cut down',
@@ -87,12 +91,12 @@ CREATE TABLE IF NOT EXISTS dicount (
 	status           VARCHAR(16) DEFAULT 'in_use'
 	COMMENT 'in_use, deleted, overtime',
 	mark             TEXT,
-	PRIMARY KEY (id)
+	PRIMARY KEY (discount_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS coupon (
-	id          VARCHAR(50)   NOT NULL,
+	coupon_id   VARCHAR(50)   NOT NULL,
 	name        VARCHAR(50)   NOT NULL,
 	limits      JSON COMMENT '{resource:.., sku:.., price:.., user:.., regoin:...}',
 	balance     DECIMAL(8, 2) NOT NULL,
@@ -104,17 +108,17 @@ CREATE TABLE IF NOT EXISTS coupon (
 	status      VARCHAR(16)            DEFAULT 'in_use'
 	COMMENT 'in_use, deleted, overtime',
 	mark        TEXT,
-	PRIMARY KEY (id)
+	PRIMARY KEY (coupon_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS coupon_received (
-	id          VARCHAR(50)   NOT NULL,
-	coupon_id   VARCHAR(50)   NOT NULL,
-	user_id     VARCHAR(50)   NOT NULL,
-	balance     DECIMAL(8, 2) NOT NULL,
-	status      VARCHAR(16) DEFAULT 'received'
+	coupon_received_id VARCHAR(50)   NOT NULL,
+	coupon_id          VARCHAR(50)   NOT NULL,
+	user_id            VARCHAR(50)   NOT NULL,
+	balance            DECIMAL(8, 2) NOT NULL,
+	status             VARCHAR(16) DEFAULT 'received'
 	COMMENT 'received, in_use, overtime',
-	create_time TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY (id)
+	create_time        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (coupon_received_id)
 );

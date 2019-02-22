@@ -31,30 +31,6 @@ func (em ErrorMessage) Message(locale string, err error, a ...interface{}) strin
 	}
 }
 
-func CreateFailedError(enName, zhName string) ErrorMessage {
-	return ErrorMessage{
-		Name: fmt.Sprintf("create_%s_failed", enName),
-		en:   fmt.Sprintf("create %s failed", enName),
-		zhCN: fmt.Sprintf("创建%s失败", zhName),
-	}
-}
-
-func NotExistError(enName, zhName string) ErrorMessage {
-	return ErrorMessage{
-		Name: fmt.Sprintf("%s_not_exist", enName),
-		en:   fmt.Sprintf("%s not exist", enName),
-		zhCN: fmt.Sprintf("%s不存在", zhName),
-	}
-}
-
-func ListFailedError(enName, zhName string) ErrorMessage {
-	return ErrorMessage{
-		Name: fmt.Sprintf("list_%s_failed", enName),
-		en:   fmt.Sprintf("list %s failed", enName),
-		zhCN: fmt.Sprintf("获取%s列表失败", zhName),
-	}
-}
-
 var (
 	ErrorPermissionDenied = ErrorMessage{
 		Name: "permission_denied",
@@ -441,9 +417,14 @@ var (
 		en:   "get notification config failed",
 		zhCN: "查看通知服务配置失败",
 	}
-	ErrorUnknown = ErrorMessage{
-		Name: "unknown_error",
-		en:   "unknown error",
-		zhCN: "未知错误",
+	ErrorNotExist = ErrorMessage{
+		Name: "%s_not_exist",
+		en: "%s(%s) not exist",
+		zhCN: "%s(%s)不存在",
+	}
+	ErrorNotExistInOther = ErrorMessage{
+		Name: "%s_not_exist",
+		en: "%s not exist in %s",
+		zhCN: "%s里%s不存在",
 	}
 )
