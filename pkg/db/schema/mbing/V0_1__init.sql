@@ -239,12 +239,12 @@ CREATE TABLE IF NOT EXISTS account (
 
 #Init data about duration
 INSERT INTO attribute_name (attribute_name_id, name, display_name, remark)
-VALUES ("att-000001", "duration", "时长", "default attribute: duration");
+VALUES ("att-name-000001", "duration", "时长", "default attribute: duration");
 
 INSERT INTO attribute_unit (attribute_unit_id, name, display_name)
 VALUES ("att-unit-000001", "hour", "小时"), ("att-unit-000002", "month", "月"), ("att-unit-000003", "year", "年");
 
 INSERT INTO attribute (attribute_id, attribute_name_id, attribute_unit_id, min_value, max_value)
-VALUES ("att-value-000001", "att-000001", "att-unit-000001", 1, 1),
-	("att-value-000002", "att-000001", "att-unit-000002", 1, 1),
-	("att-value-000003", "att-000001", "att-unit-000003", 1, 1);
+VALUES ("att-000001", "att-name-000001", "att-unit-000001", 1, 1),
+	("att-000002", "att-name-000001", "att-unit-000002", 1, 1),
+	("att-000003", "att-name-000001", "att-unit-000003", 1, 1);

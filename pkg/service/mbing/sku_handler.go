@@ -71,9 +71,11 @@ func (s *Server) CreateAttribute(ctx context.Context, req *pb.CreateAttributeReq
 	}
 
 	//check if attribute_unit exist
-	err = checkStructExist(ctx, models.AttributeUnit{}, attribute.AttributeUnitId)
-	if err != nil {
-		return nil, err
+	if attribute.AttributeUnitId != "" {
+		err = checkStructExist(ctx, models.AttributeUnit{}, attribute.AttributeUnitId)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	//insert into attribute
@@ -82,6 +84,20 @@ func (s *Server) CreateAttribute(ctx context.Context, req *pb.CreateAttributeReq
 		return nil, internalError(ctx, err)
 	}
 	return &pb.CreateAttributeResponse{AttributeId: pbutil.ToProtoString(attribute.AttributeId)}, nil
+}
+
+func (s *Server) DescribeAttributes(ctx context.Context, req *pb.DescribeAttributesRequest) (*pb.DescribeAttributesResponse, error) {
+	attributes, err := DescribeAttributes(ctx, req)
+	if err != nil {
+		return nil, internalError(ctx, err)
+	}
+
+	var pbAttributes []*pb.Attribute
+	for _, att := range attributes {
+		pbAttributes = append(pbAttributes, models.AttributeToPb(att))
+	}
+
+	return &pb.DescribeAttributesResponse{Attributes: pbAttributes}, nil
 }
 
 func (s *Server) CreateSpu(ctx context.Context, req *pb.CreateSpuRequest) (*pb.CreateSpuResponse, error) {
@@ -117,7 +133,7 @@ func (s *Server) CreateSku(ctx context.Context, req *pb.CreateSkuRequest) (*pb.C
 	}
 
 	//check if attributeNameId in sku.AttributeIds exist in spu.AttributeNameIds
-	for _, attId  := range sku.AttributeIds {
+	for _, attId := range sku.AttributeIds {
 		attribute, err := getAttribute(ctx, attId)
 		if err != nil {
 			return nil, internalError(ctx, err)
@@ -132,7 +148,7 @@ func (s *Server) CreateSku(ctx context.Context, req *pb.CreateSkuRequest) (*pb.C
 
 	}
 	//check if attributeNameId in sku.MeteringAttributeIds exist in spu.MeteringAttributeNameIds
-	for _, attId  := range sku.MeteringAttributeIds {
+	for _, attId := range sku.MeteringAttributeIds {
 		attribute, err := getAttribute(ctx, attId)
 		if err != nil {
 			return nil, internalError(ctx, err)

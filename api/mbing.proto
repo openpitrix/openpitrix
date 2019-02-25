@@ -85,7 +85,7 @@ message Attribute {
 	google.protobuf.StringValue attribute_unit_id = 3;
 	google.protobuf.UInt32Value min_value = 4;
 	google.protobuf.UInt32Value max_value = 5;
-	google.protobuf.UInt32Value str_value = 6;
+	google.protobuf.StringValue str_value = 6;
 }
 
 message CreateAttributeRequest {
@@ -93,10 +93,23 @@ message CreateAttributeRequest {
 	google.protobuf.StringValue attribute_unit_id = 2;
     google.protobuf.UInt32Value min_value = 3;
     google.protobuf.UInt32Value max_value = 4;
+	google.protobuf.StringValue str_value = 5;
 }
 
 message CreateAttributeResponse {
 	google.protobuf.StringValue attribute_id = 1;
+}
+
+message DescribeAttributesRequest {
+	google.protobuf.StringValue attribute_id = 1;
+	google.protobuf.StringValue attribute_name_id = 2;
+	google.protobuf.StringValue attribute_unit_id = 3;
+	uint32 offset = 4;
+	uint32 limit = 5;
+}
+
+message DescribeAttributesResponse {
+	repeated Attribute attributes = 1;
 }
 
 //SPU: standard product unit
@@ -184,7 +197,7 @@ service SkuManager {
         };
 	}
 
-	rpc DescribeAttributeUnit (DescribeAttributeUnitsRequest) returns (DescribeAttributeUnitsResponse) {
+	rpc DescribeAttributeUnits (DescribeAttributeUnitsRequest) returns (DescribeAttributeUnitsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "describe attribute_units"
 		};
@@ -201,6 +214,15 @@ service SkuManager {
             post: "/v1/mbing/attribute"
             body: "*"
         };
+	}
+
+	rpc DescribeAttributes (DescribeAttributesRequest) returns (DescribeAttributesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe attributes"
+		};
+		option (google.api.http) = {
+			get: "/v1/mbing/attributes"
+		};
 	}
 
 	rpc CreateSpu (CreateSpuRequest) returns (CreateSpuResponse) {
@@ -253,12 +275,12 @@ message CreateCombinationSpuResponse {
 message CombinationSku {
     google.protobuf.StringValue combination_sku_id = 1;
     google.protobuf.StringValue combination_spu_id = 2;
-	repeated CreateSkuRequest skus = 3;
+	repeated CreateSkuRequest create_sku_requests = 3;
 }
 
 message CreateCombinationSkuRequest {
 	google.protobuf.StringValue combination_spu_id = 1;
-	repeated CreateSkuRequest skus = 2;
+	repeated CreateSkuRequest create_sku_requests = 2;
 }
 
 message CreateCombinationSkuResponse {

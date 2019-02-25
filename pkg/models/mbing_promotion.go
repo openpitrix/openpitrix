@@ -7,6 +7,7 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/idutil"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -58,11 +59,46 @@ func PbToCombinationSpu(req *pb.CreateCombinationSpuRequest) *CombinationSpu {
 type CombinationSku struct {
 	CombinationSkuId     string
 	CombinationSpuId     string
-	AttributeIds         []map[string]string //[resourceVersionId: [attributeId, ..], ..}
-	MeteringAttributeIds []map[string]string //[resourceVersionId: [attributeId, ..], ..}
+	AttributeIds         map[string][]string //[resourceVersionId: [attributeId, ..], ..}
+	MeteringAttributeIds map[string][]string //[resourceVersionId: [attributeId, ..], ..}
 	CreateTime           time.Time
 	UpdateTime           time.Time
 	Status               string
+}
+
+func NewCombinationSku(comSpuId string, attributeIds, meteringAttributeIds map[string][]string) *CombinationSku {
+	now := time.Now()
+	return &CombinationSku{
+		CombinationSkuId: NewCombinationSkuId(),
+		CombinationSpuId: comSpuId,
+		AttributeIds:  attributeIds,
+		MeteringAttributeIds: meteringAttributeIds,
+		CreateTime: now,
+		UpdateTime: now,
+		Status: constants.StatusInUse2,
+	}
+}
+
+func PbToCombinationSku(req *pb.CreateCombinationSkuRequest) *CombinationSku {
+	var attIds = map[string][]string {}
+	var meteringAttIds = map[string][]string {}
+	spuId := req.GetCombinationSpuId().GetValue()
+	for _, skuReq := range req.GetCreateSkuRequests(){
+		v, ok := attIds[spuId]
+		if ok {
+			attIds[spuId] = append(v, pbutil.FromProtoStringSlice(skuReq.GetAttributeIds())...)
+		} else {
+			attIds[spuId] = pbutil.FromProtoStringSlice(skuReq.GetAttributeIds())
+		}
+
+		v, ok = meteringAttIds[spuId]
+		if ok {
+			meteringAttIds[spuId] = append(v, pbutil.FromProtoStringSlice(skuReq.GetMeteringAttributeIds())...)
+		} else {
+			meteringAttIds[spuId] = pbutil.FromProtoStringSlice(skuReq.MeteringAttributeIds)
+		}
+	}
+	return NewCombinationSku(spuId, attIds, meteringAttIds)
 }
 
 type CombinationPrice struct {
@@ -89,10 +125,10 @@ func PbToCombinationPrice(req *pb.CreateCombinationPriceRequest) *CombinationPri
 }
 
 type ProbationSku struct {
-	ProSkuId             string
+	ProbationSkuId             string
 	SpuId                string
 	AttributeIds         []string
-	MeteringAttributeIds []string
+	MeteringAttributeIds []string //the meaning of attribute value is the limit of attribute
 	LimitNum             uint32
 	CreateTime           time.Time
 	UpdateTime           time.Time
@@ -101,7 +137,7 @@ type ProbationSku struct {
 
 func PbToProbationSku(req *pb.CreateProbationSkuRequest) *ProbationSku {
 	return &ProbationSku{
-		ProSkuId:             NewProbationSkuId(),
+		ProbationSkuId:       NewProbationSkuId(),
 		SpuId:                req.GetSpuId().GetValue(),
 		AttributeIds:         pbutil.FromProtoStringSlice(req.GetAttributeIds()),
 		MeteringAttributeIds: pbutil.FromProtoStringSlice(req.GetMeteringAttributeIds()),

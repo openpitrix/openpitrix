@@ -7,7 +7,6 @@ package mbing
 import (
 	"context"
 
-	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
@@ -20,19 +19,16 @@ func (s *Server) StartMetering(ctx context.Context, req *pb.MeteringRequest) (*p
 		//check if sku exist and get renewalTime
 		renewalTime, err := renewalTimeFromSku(ctx, mSku.GetSkuId().GetValue(), pbutil.FromProtoTimestamp(mSku.GetActionTime()))
 		if err != nil {
-			if err == db.ErrNotFound {
-				return nil, commonInternalErr(ctx, models.Sku{}, NotExistCode)
-			} else {
-				return nil, commonInternalErr(ctx, models.Leasing{}, CreateFailedCode)
-			}
+			return nil, internalError(ctx, err)
 		}
+
 		leasings = append(leasings, models.PbToLeasing(req, mSku, GetGroupId(), renewalTime))
 	}
 
 	//insert leasings
 	err := insertLeasings(ctx, leasings)
 	if err != nil {
-		return nil, commonInternalErr(ctx, models.Leasing{}, CreateFailedCode)
+		return nil, internalError(ctx, err)
 	}
 
 	//TODO: Add leasing to REDIS if duration exist.

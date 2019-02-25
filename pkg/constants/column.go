@@ -114,11 +114,16 @@ const (
 	ColumnAttributeNameId          = "attribute_name_id"
 	ColumnAttributeUnitId          = "attribute_unit_id"
 	ColumnAttributeId              = "attribute_id"
+	ColumnMinValue                 = "min_value"
+	ColumnMaxValue                 = "max_value"
+	ColumnStrValue                 = "str_value"
 	ColumnSpuId                    = "spu_id"
 	ColumnResourceVersionId        = "resource_version_id"
 	ColumnAttributeNameIds         = "attribute_name_ids"
 	ColumnMeteringAttributeNameIds = "metering_attribute_name_ids"
 	ColumnSkuId                    = "sku_id"
+	ColumnAttributeIds             = "attribute_ids"
+	ColumnMeteringAttributeIds     = "metering_attribute_ids"
 )
 
 var PushEventTables = map[string][]string{
@@ -208,10 +213,15 @@ var IndexedColumns = map[string][]string{
 		ColumnAttributeUnitId, ColumnName, ColumnDisplayName,
 	},
 	TableAttribute: {
-		ColumnAttributeId, ColumnAttributeId, ColumnAttributeUnitId,
+		ColumnAttributeId, ColumnAttributeNameId, ColumnAttributeUnitId,
+		ColumnMinValue, ColumnMaxValue,
 	},
 	TableSpu: {
-		ColumnSpuId, ColumnResourceVersionId, ColumnAttributeNameIds, ColumnMeteringAttributeNameIds,
+		ColumnSpuId, ColumnResourceVersionId, ColumnAttributeNameIds,
+		ColumnMeteringAttributeNameIds,
+	},
+	TableSku: {
+		ColumnSkuId, ColumnSpuId, ColumnAttributeIds, ColumnMeteringAttributeIds,
 	},
 }
 

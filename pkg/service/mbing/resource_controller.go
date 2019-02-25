@@ -54,7 +54,7 @@ func insertAttributeName(ctx context.Context, attributeName *models.AttributeNam
 func DescribeAttributeNames(ctx context.Context, req *pb.DescribeAttributeNamesRequest) ([]*models.AttributeName, error) {
 	var attributeNames []*models.AttributeName
 	_, err := pi.Global().DB(ctx).
-		Select(models.AttributeNameColumns...).
+		Select(constants.IndexedColumns[constants.TableAttributeName]...).
 		From(constants.TableAttributeName).
 		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
 		Where(manager.BuildFilterConditions(req, constants.TableAttributeName)).
@@ -64,7 +64,7 @@ func DescribeAttributeNames(ctx context.Context, req *pb.DescribeAttributeNamesR
 		Load(&attributeNames)
 
 	if err != nil {
-		logger.Error(ctx, "Failed to List attribute_name, Errors: [%+v]", err)
+		logger.Error(ctx, "Failed to describe attribute_name, Errors: [%+v]", err)
 	}
 	return attributeNames, err
 }
@@ -83,7 +83,7 @@ func insertAttributeUnit(ctx context.Context, attUnit *models.AttributeUnit) err
 func DescribeAttributeUnits(ctx context.Context, req *pb.DescribeAttributeUnitsRequest) ([]*models.AttributeUnit, error) {
 	var attUnits []*models.AttributeUnit
 	_, err := pi.Global().DB(ctx).
-		Select(models.AttributeUnitColumns...).
+		Select(constants.IndexedColumns[constants.TableAttributeUnit]...).
 		From(constants.TableAttributeUnit).
 		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
 		Where(manager.BuildFilterConditions(req, constants.TableAttributeUnit)).
@@ -93,7 +93,7 @@ func DescribeAttributeUnits(ctx context.Context, req *pb.DescribeAttributeUnitsR
 		Load(&attUnits)
 
 	if err != nil {
-		logger.Error(ctx, "Failed to List attribute_unit, Errors: [%+v]", err)
+		logger.Error(ctx, "Failed to describe attribute_unit, Errors: [%+v]", err)
 	}
 	return attUnits, err
 }
@@ -112,7 +112,7 @@ func insertAttribute(ctx context.Context, attribute *models.Attribute) error {
 func getAttribute(ctx context.Context, attributeId string) (*models.Attribute, error) {
 	attribute := &models.Attribute{}
 	err := pi.Global().DB(ctx).
-		Select(constants.IndexedColumns[constants.TableAttribute]...).
+		Select(models.AttributeColumns...).
 		From(constants.TableAttribute).
 		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
 		Where(db.Eq(constants.ColumnAttributeId, attributeId)).
@@ -124,6 +124,24 @@ func getAttribute(ctx context.Context, attributeId string) (*models.Attribute, e
 		return nil, nil
 	}
 	return attribute, err
+}
+
+func DescribeAttributes(ctx context.Context, req *pb.DescribeAttributesRequest) ([]*models.Attribute, error) {
+	var attributes []*models.Attribute
+	_, err := pi.Global().DB(ctx).
+		Select(constants.IndexedColumns[constants.TableAttribute]...).
+		From(constants.TableAttribute).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		Where(manager.BuildFilterConditions(req, constants.TableAttribute)).
+		OrderDir(constants.ColumnCreateTime, false).
+		Offset(pbutil.GetOffsetFromRequest(req)).
+		Limit(pbutil.GetLimitFromRequest(req)).
+		Load(&attributes)
+
+	if err != nil {
+		logger.Error(ctx, "Failed to describe attribute, Errors: [%+v]", err)
+	}
+	return attributes, err
 }
 
 func insertSpu(ctx context.Context, spu *models.Spu) error {
@@ -168,7 +186,7 @@ func insertSku(ctx context.Context, sku *models.Sku) error {
 func getSku(ctx context.Context, skuId string) (*models.Sku, error) {
 	sku := &models.Sku{}
 	err := pi.Global().DB(ctx).
-		Select(models.SkuColumns...).
+		Select(constants.IndexedColumns[constants.TableSku]...).
 		From(constants.TableSku).
 		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
 		Where(db.Eq(constants.ColumnSkuId, skuId)).
@@ -245,7 +263,7 @@ func insertCombinationPrice(ctx context.Context, comPrice *models.CombinationPri
 	return err
 }
 
-func insertProSku(ctx context.Context, proSku *models.ProbationSku) error {
+func insertProbationSku(ctx context.Context, proSku *models.ProbationSku) error {
 	_, err := pi.Global().DB(ctx).
 		InsertInto(constants.TableProbationSku).
 		Record(proSku).Exec()

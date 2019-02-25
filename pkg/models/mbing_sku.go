@@ -48,7 +48,6 @@ type AttributeName struct {
 	Remark          string
 }
 
-var AttributeNameColumns = db.GetColumnsFromStruct(&AttributeName{})
 
 func NewAttributeName(name, displayName, remark string) *AttributeName {
 	now := time.Now()
@@ -89,8 +88,6 @@ type AttributeUnit struct {
 	Status          string
 }
 
-var AttributeUnitColumns = db.GetColumnsFromStruct(&AttributeUnit{})
-
 func NewAttributeUnit(name, display string) *AttributeUnit {
 	now := time.Now()
 	return &AttributeUnit{
@@ -124,12 +121,15 @@ type Attribute struct {
 	AttributeUnitId string
 	MinValue        uint32
 	MaxValue        uint32
+	StrValue        string
 	CreateTime      time.Time
 	UpdateTime      time.Time
 	Status          string
 }
 
-func NewAttribute(attNameId, attUnitId string, minValue, maxValue uint32) *Attribute {
+var AttributeColumns = db.GetColumnsFromStruct(&Attribute{})
+
+func NewAttribute(attNameId, attUnitId, strValue string, minValue, maxValue uint32) *Attribute {
 	now := time.Now()
 	return &Attribute{
 		AttributeId:     NewAttributeId(),
@@ -137,6 +137,7 @@ func NewAttribute(attNameId, attUnitId string, minValue, maxValue uint32) *Attri
 		AttributeUnitId: attUnitId,
 		MinValue:        minValue,
 		MaxValue:        maxValue,
+		StrValue:        strValue,
 		CreateTime:      now,
 		UpdateTime:      now,
 		Status:          constants.StatusInUse2,
@@ -147,9 +148,21 @@ func PbToAttribute(pbAttribute *pb.CreateAttributeRequest) *Attribute {
 	return NewAttribute(
 		pbAttribute.GetAttributeNameId().GetValue(),
 		pbAttribute.GetAttributeUnitId().GetValue(),
+		pbAttribute.GetStrValue().GetValue(),
 		pbAttribute.GetMinValue().GetValue(),
 		pbAttribute.GetMaxValue().GetValue(),
 	)
+}
+
+func AttributeToPb(att *Attribute) *pb.Attribute {
+	return &pb.Attribute{
+		AttributeId:     pbutil.ToProtoString(att.AttributeId),
+		AttributeNameId: pbutil.ToProtoString(att.AttributeNameId),
+		AttributeUnitId: pbutil.ToProtoString(att.AttributeUnitId),
+		MinValue:        pbutil.ToProtoUInt32(att.MinValue),
+		MaxValue:        pbutil.ToProtoUInt32(att.MaxValue),
+		StrValue:        pbutil.ToProtoString(att.StrValue),
+	}
 }
 
 //SPU: standard product unit
@@ -162,8 +175,6 @@ type Spu struct {
 	UpdateTime               time.Time
 	Status                   string
 }
-
-var SpuColumns = db.GetColumnsFromStruct(&Spu{})
 
 func NewSpu(resourceVersionId string, attNameIds, meteringAttNameIds []string) *Spu {
 	now := time.Now()
@@ -196,8 +207,6 @@ type Sku struct {
 	UpdateTime           time.Time
 	Status               string
 }
-
-var SkuColumns = db.GetColumnsFromStruct(&Sku{})
 
 func NewSku(spuId string, attributeIds, meteringAttIds []string) *Sku {
 	now := time.Now()

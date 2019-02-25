@@ -33,72 +33,45 @@ func (s *Server) CreateCombinationSpu(ctx context.Context, req *pb.CreateCombina
 func (s *Server) CreateCombinationSku(ctx context.Context, req *pb.CreateCombinationSkuRequest) (*pb.CreateCombinationSkuResponse, error) {
 	comSku := models.PbToCombinationSku(req)
 
-	//check if CRA exist
-	err := checkStructExistById(ctx, models.CombinationResourceAttribute{}, comSku, comSku.ComSkuId, CreateFailedCode)
-	if err != nil {
-		return nil, err
-	}
-
-	//TODO: check if attribute value exist
+	//TODO: check if CombinationSpu exist\
+	//...
+	//TODO: check if attribute exist
 	//...
 
-	//insert ComSku
-	err = insertComSku(ctx, comSku)
+	//insert CombinationSku
+	err := insertCombinationSku(ctx, comSku)
 	if err != nil {
-		return nil, commonInternalErr(ctx, comSku, CreateFailedCode)
+		return nil, internalError(ctx, err)
 	}
-	return &pb.CreateComSkuResponse{ComSkuId: pbutil.ToProtoString(comSku.ComSkuId)}, nil
+	return &pb.CreateCombinationSkuResponse{CombinationSkuId: pbutil.ToProtoString(comSku.CombinationSkuId)}, nil
 }
 
-func (s *Server) CreateCombinationPrice(ctx context.Context, req *pb.CreateComPriceRequest) (*pb.CreateComPriceResponse, error) {
-	comPrice := models.PbToComPrice(req)
+func (s *Server) CreateCombinationPrice(ctx context.Context, req *pb.CreateCombinationPriceRequest) (*pb.CreateCombinationPriceResponse, error) {
+	comPrice := models.PbToCombinationPrice(req)
 
-	//check if com_sku exist
-	err := checkStructExistById(ctx, models.CombinationSku{}, comPrice, comPrice.ComSkuId, CreateFailedCode)
-	if err != nil {
-		return nil, err
-	}
-
-	//check if attribute_value exist
-	attValTmp := models.AttributeValue{}
-	for k, _ := range comPrice.Prices {
-		err = checkStructExistById(ctx, attValTmp, comPrice, k, CreateFailedCode)
-		if err != nil {
-			return nil, err
-		}
-	}
+	//TODO:check if combination_sku exist
+	//TODO:check if combination_spu exist
+	//TODO: check if attribute exist
 
 	//insert com_price
-	err = insertComPrice(ctx, comPrice)
+	err := insertCombinationPrice(ctx, comPrice)
 	if err != nil {
-		return nil, commonInternalErr(ctx, comPrice, CreateFailedCode)
+		return nil, internalError(ctx, err)
 	}
 
-	return &pb.CreateComPriceResponse{ComPriceId: pbutil.ToProtoString(comPrice.ComPriceId)}, nil
+	return &pb.CreateCombinationPriceResponse{CombinationPriceId: pbutil.ToProtoString(comPrice.CombinationSkuId)}, nil
 }
 
-func (s *Server) CreateProbationSku(ctx context.Context, req *pb.CreateProSkuRequest) (*pb.CreateProSkuResponse, error) {
-	proSku := models.PbToProSku(req)
+func (s *Server) CreateProbationSku(ctx context.Context, req *pb.CreateProbationSkuRequest) (*pb.CreateProbationSkuResponse, error) {
+	proSku := models.PbToProbationSku(req)
 
-	//check if resource_attribute exist
-	err := checkStructExistById(ctx, models.ResourceAttribute{}, proSku, proSku.ResourceAttributeId, CreateFailedCode)
-	if err != nil {
-		return nil, err
-	}
-
-	//check if attribute_values exist
-	attValTmp := models.AttributeValue{}
-	for _, val := range proSku.AttributeValues {
-		err := checkStructExistById(ctx, attValTmp, proSku, val, CreateFailedCode)
-		if err != nil {
-			return nil, err
-		}
-	}
+	//TODO:check if spu exist
+	//TODO:check if attribute exist
 
 	//insert probation_sku
-	err = insertProSku(ctx, proSku)
+	err := insertProbationSku(ctx, proSku)
 	if err != nil {
-		return nil, commonInternalErr(ctx, proSku, CreateFailedCode)
+		return nil, internalError(ctx, err)
 	}
-	return &pb.CreateProSkuResponse{ProSkuId: pbutil.ToProtoString(proSku.ProSkuId)}, nil
+	return &pb.CreateProbationSkuResponse{ProbationSkuId: pbutil.ToProtoString(proSku.ProbationSkuId)}, nil
 }
