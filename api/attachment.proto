@@ -88,7 +88,7 @@ service AttachmentService {
 			summary: "get attachment"
 		};
 		option (google.api.http) = {
-			get: "/v1/attachments/{attachment_id=*}/{filename=*}"
+			get: "/v1/attachments"
 		};
 	};
 }

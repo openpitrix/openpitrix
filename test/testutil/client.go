@@ -14,10 +14,11 @@ import (
 	flag "github.com/spf13/pflag"
 
 	"openpitrix.io/openpitrix/pkg/client/config"
+	"openpitrix.io/openpitrix/pkg/constants"
 	apiclient "openpitrix.io/openpitrix/test/client"
 )
 
-const UserSystem = "system"
+const UserSystem = constants.UserSystem
 
 type IgnoreLogger struct{}
 

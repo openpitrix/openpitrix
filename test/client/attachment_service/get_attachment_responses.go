@@ -51,7 +51,7 @@ type GetAttachmentOK struct {
 }
 
 func (o *GetAttachmentOK) Error() string {
-	return fmt.Sprintf("[GET /v1/attachments/{attachment_id}/{filename}][%d] getAttachmentOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/attachments][%d] getAttachmentOK  %+v", 200, o.Payload)
 }
 
 func (o *GetAttachmentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

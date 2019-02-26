@@ -39,7 +39,7 @@ func Validate(k, str string) (*sender.Sender, error) {
 	return s, nil
 }
 
-func Generate(k string, expire time.Duration, userId, role string) (string, error) {
+func Generate(k string, expire time.Duration, userId string) (string, error) {
 	// TODO: use RS512 or ES512 to encrypt token
 	// https://auth0.com/blog/brute-forcing-hs256-is-possible-the-importance-of-using-strong-keys-to-sign-jwts/
 

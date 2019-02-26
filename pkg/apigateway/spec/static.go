@@ -100,6 +100,16 @@ var Files = map[string]string{
             "format": "int64"
           },
           {
+            "name": "parent_group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "group_id",
             "in": "query",
             "required": false,
@@ -110,7 +120,17 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "user_id",
+            "name": "group_path",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "group_name",
             "in": "query",
             "required": false,
             "type": "array",
@@ -260,6 +280,107 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/groups_detail": {
+      "get": {
+        "operationId": "DescribeGroupsDetail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeGroupsDetailResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "parent_group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "group_path",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "group_name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
     "/v1/isv_users": {
       "post": {
         "operationId": "IsvCreateUser",
@@ -267,7 +388,7 @@ var Files = map[string]string{
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/openpitrixIsvCreateUserResponse"
+              "$ref": "#/definitions/openpitrixCreateUserResponse"
             }
           }
         },
@@ -277,12 +398,38 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/openpitrixIsvCreateUserRequest"
+              "$ref": "#/definitions/openpitrixCreateUserRequest"
             }
           }
         ],
         "tags": [
           "AccountManager"
+        ]
+      }
+    },
+    "/v1/oauth2/client": {
+      "post": {
+        "operationId": "CreateClient",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateClientResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/openpitrixCreateClientRequest"
+            }
+          }
+        ],
+        "tags": [
+          "TokenManager"
         ]
       }
     },
@@ -313,40 +460,33 @@ var Files = map[string]string{
         "security": []
       }
     },
-    "/v1/oauth2/{user_id}/client": {
-      "post": {
-        "operationId": "CreateClient",
+    "/v1/role": {
+      "get": {
+        "operationId": "GetRole",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/openpitrixCreateClientResponse"
+              "$ref": "#/definitions/openpitrixGetRoleResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
+            "name": "role_id",
+            "in": "query",
+            "required": false,
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/openpitrixCreateClientRequest"
-            }
           }
         ],
         "tags": [
-          "TokenManager"
+          "AccessManager"
         ]
       }
     },
     "/v1/roles": {
       "get": {
+        "summary": "admin permission",
         "operationId": "DescribeRoles",
         "responses": {
           "200": {
@@ -357,6 +497,39 @@ var Files = map[string]string{
           }
         },
         "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
           {
             "name": "role_id",
             "in": "query",
@@ -388,7 +561,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "user_id",
+            "name": "status",
             "in": "query",
             "required": false,
             "type": "array",
@@ -475,31 +648,6 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/roles/{role_id}": {
-      "get": {
-        "summary": "admin permission",
-        "operationId": "GetRole",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixGetRoleResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "role_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "AccessManager"
-        ]
-      }
-    },
     "/v1/roles:module": {
       "get": {
         "operationId": "GetRoleModule",
@@ -523,7 +671,7 @@ var Files = map[string]string{
           "AccessManager"
         ]
       },
-      "patch": {
+      "post": {
         "operationId": "ModifyRoleModule",
         "responses": {
           "200": {
@@ -550,7 +698,6 @@ var Files = map[string]string{
     },
     "/v1/user:role": {
       "delete": {
-        "summary": "group",
         "operationId": "UnbindUserRole",
         "responses": {
           "200": {
@@ -675,7 +822,37 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "role",
+            "name": "role_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "phone_number",
             "in": "query",
             "required": false,
             "type": "array",
@@ -763,30 +940,6 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/users/password/reset/{reset_id}": {
-      "get": {
-        "operationId": "GetPasswordReset",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/openpitrixGetPasswordResetResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "reset_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "AccountManager"
-        ]
-      }
-    },
     "/v1/users/password:change": {
       "post": {
         "operationId": "ChangePassword",
@@ -814,6 +967,28 @@ var Files = map[string]string{
       }
     },
     "/v1/users/password:reset": {
+      "get": {
+        "operationId": "GetPasswordReset",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixGetPasswordResetResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "reset_id",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      },
       "post": {
         "operationId": "CreatePasswordReset",
         "responses": {
@@ -858,6 +1033,127 @@ var Files = map[string]string{
             "schema": {
               "$ref": "#/definitions/openpitrixValidateUserPasswordRequest"
             }
+          }
+        ],
+        "tags": [
+          "AccountManager"
+        ]
+      }
+    },
+    "/v1/users_detail": {
+      "get": {
+        "operationId": "DescribeUsersDetail",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/openpitrixDescribeUsersDetailResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "role_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "username",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "phone_number",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -2602,7 +2898,7 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/attachments/{attachment_id}/{filename}": {
+    "/v1/attachments": {
       "get": {
         "summary": "get attachment",
         "operationId": "GetAttachment",
@@ -2617,14 +2913,14 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "attachment_id",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
             "name": "filename",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -5740,6 +6036,17 @@ var Files = map[string]string{
     }
   },
   "definitions": {
+    "openpitrixActionBundle": {
+      "type": "object",
+      "properties": {
+        "action_bundle_id": {
+          "type": "string"
+        },
+        "action_bundle_name": {
+          "type": "string"
+        }
+      }
+    },
     "openpitrixBindUserRoleRequest": {
       "type": "object",
       "properties": {
@@ -5777,6 +6084,9 @@ var Files = map[string]string{
     "openpitrixCanDoRequest": {
       "type": "object",
       "properties": {
+        "user_id": {
+          "type": "string"
+        },
         "url": {
           "type": "string"
         },
@@ -5887,9 +6197,6 @@ var Files = map[string]string{
     "openpitrixCreateRoleRequest": {
       "type": "object",
       "properties": {
-        "role_id": {
-          "type": "string"
-        },
         "role_name": {
           "type": "string"
         },
@@ -5897,15 +6204,6 @@ var Files = map[string]string{
           "type": "string"
         },
         "portal": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "owner_path": {
-          "type": "string"
-        },
-        "status": {
           "type": "string"
         }
       }
@@ -5930,7 +6228,7 @@ var Files = map[string]string{
         "password": {
           "type": "string"
         },
-        "role": {
+        "role_id": {
           "type": "string"
         },
         "description": {
@@ -6012,6 +6310,21 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixDescribeGroupsDetailResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "group_detail_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixGroupDetail"
+          }
+        }
+      }
+    },
     "openpitrixDescribeGroupsResponse": {
       "type": "object",
       "properties": {
@@ -6030,10 +6343,29 @@ var Files = map[string]string{
     "openpitrixDescribeRolesResponse": {
       "type": "object",
       "properties": {
-        "role": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "role_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/openpitrixRole"
+          }
+        }
+      }
+    },
+    "openpitrixDescribeUsersDetailResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_detail_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixUserDetail"
           }
         }
       }
@@ -6053,6 +6385,29 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixFeature": {
+      "type": "object",
+      "properties": {
+        "feature_id": {
+          "type": "string"
+        },
+        "feature_name": {
+          "type": "string"
+        },
+        "action_bundle_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixActionBundle"
+          }
+        },
+        "checked_action_bundle_id_set": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "openpitrixGetPasswordResetResponse": {
       "type": "object",
       "properties": {
@@ -6067,8 +6422,11 @@ var Files = map[string]string{
     "openpitrixGetRoleModuleResponse": {
       "type": "object",
       "properties": {
-        "role_module": {
-          "$ref": "#/definitions/openpitrixRoleModule"
+        "role_id": {
+          "type": "string"
+        },
+        "module": {
+          "$ref": "#/definitions/openpitrixModule"
         }
       }
     },
@@ -6123,37 +6481,20 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "openpitrixGroupDetail": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "$ref": "#/definitions/openpitrixGroup"
         },
-        "user_id": {
+        "user_set": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/openpitrixUser"
           }
-        }
-      }
-    },
-    "openpitrixIsvCreateUserRequest": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string"
-        },
-        "phone_number": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        }
-      }
-    },
-    "openpitrixIsvCreateUserResponse": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string"
         }
       }
     },
@@ -6236,6 +6577,9 @@ var Files = map[string]string{
         },
         "description": {
           "type": "string"
+        },
+        "parent_group_id": {
+          "type": "string"
         }
       }
     },
@@ -6250,16 +6594,19 @@ var Files = map[string]string{
     "openpitrixModifyRoleModuleRequest": {
       "type": "object",
       "properties": {
-        "role_module": {
-          "$ref": "#/definitions/openpitrixRoleModule"
+        "role_id": {
+          "type": "string"
+        },
+        "module": {
+          "$ref": "#/definitions/openpitrixModule"
         }
       }
     },
     "openpitrixModifyRoleModuleResponse": {
       "type": "object",
       "properties": {
-        "role_module": {
-          "$ref": "#/definitions/openpitrixRoleModule"
+        "role_id": {
+          "type": "string"
         }
       }
     },
@@ -6274,17 +6621,14 @@ var Files = map[string]string{
         },
         "description": {
           "type": "string"
-        },
-        "portal": {
-          "type": "string"
         }
       }
     },
     "openpitrixModifyRoleResponse": {
       "type": "object",
       "properties": {
-        "role": {
-          "$ref": "#/definitions/openpitrixRole"
+        "role_id": {
+          "type": "string"
         }
       }
     },
@@ -6305,6 +6649,9 @@ var Files = map[string]string{
         },
         "password": {
           "type": "string"
+        },
+        "phone_number": {
+          "type": "string"
         }
       }
     },
@@ -6316,83 +6663,38 @@ var Files = map[string]string{
         }
       }
     },
-    "openpitrixModuleFeature": {
+    "openpitrixModule": {
       "type": "object",
       "properties": {
-        "feature_id": {
-          "type": "string"
-        },
-        "feature_name": {
-          "type": "string"
-        },
-        "action_bundle": {
+        "module_elem_set": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/openpitrixModuleFeatureActionBundle"
-          }
-        },
-        "checked_action_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
+            "$ref": "#/definitions/openpitrixModuleElem"
           }
         }
       }
     },
-    "openpitrixModuleFeatureActionBundle": {
+    "openpitrixModuleElem": {
       "type": "object",
       "properties": {
-        "role_id": {
-          "type": "string"
-        },
-        "role_name": {
-          "type": "string"
-        },
-        "portal": {
-          "type": "string"
-        },
         "module_id": {
           "type": "string"
         },
         "module_name": {
           "type": "string"
         },
+        "feature_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixFeature"
+          }
+        },
         "data_level": {
           "type": "string"
         },
-        "owner": {
-          "type": "string"
-        },
-        "feature_id": {
-          "type": "string"
-        },
-        "feature_name": {
-          "type": "string"
-        },
-        "action_bundle_id": {
-          "type": "string"
-        },
-        "action_bundle_name": {
-          "type": "string"
-        },
-        "action_bundle_enabled": {
+        "is_check_all": {
           "type": "boolean",
           "format": "boolean"
-        },
-        "api_id": {
-          "type": "string"
-        },
-        "api_method": {
-          "type": "string"
-        },
-        "api_description": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "url_method": {
-          "type": "string"
         }
       }
     },
@@ -6420,6 +6722,9 @@ var Files = map[string]string{
         "status": {
           "type": "string"
         },
+        "controller": {
+          "type": "string"
+        },
         "create_time": {
           "type": "string",
           "format": "date-time"
@@ -6431,53 +6736,6 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
-        },
-        "user_id": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "openpitrixRoleModule": {
-      "type": "object",
-      "properties": {
-        "role_id": {
-          "type": "string"
-        },
-        "module": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixRoleModuleElem"
-          }
-        }
-      }
-    },
-    "openpitrixRoleModuleElem": {
-      "type": "object",
-      "properties": {
-        "module_id": {
-          "type": "string"
-        },
-        "module_name": {
-          "type": "string"
-        },
-        "feature": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixModuleFeature"
-          }
-        },
-        "owner": {
-          "type": "string"
-        },
-        "data_level": {
-          "type": "string"
-        },
-        "is_check_all": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     },
@@ -6577,12 +6835,6 @@ var Files = map[string]string{
         "phone_number": {
           "type": "string"
         },
-        "role": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/openpitrixRole"
-          }
-        },
         "description": {
           "type": "string"
         },
@@ -6600,11 +6852,25 @@ var Files = map[string]string{
         "status_time": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "openpitrixUserDetail": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/openpitrixUser"
         },
-        "group_id": {
+        "role_set": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/openpitrixRole"
+          }
+        },
+        "group_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixGroup"
           }
         }
       }

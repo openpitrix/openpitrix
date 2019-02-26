@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixModuleFeatureActionBundleOAIGen openpitrix module feature action bundle OAI gen
-// swagger:model openpitrixModuleFeatureActionBundleOAIGen
-type OpenpitrixModuleFeatureActionBundleOAIGen []*OpenpitrixModuleFeatureActionBundle
+// OpenpitrixFeatureActionBundleSet openpitrix feature action bundle set
+// swagger:model openpitrixFeatureActionBundleSet
+type OpenpitrixFeatureActionBundleSet []*OpenpitrixActionBundle
 
-// Validate validates this openpitrix module feature action bundle OAI gen
-func (m OpenpitrixModuleFeatureActionBundleOAIGen) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix feature action bundle set
+func (m OpenpitrixFeatureActionBundleSet) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {

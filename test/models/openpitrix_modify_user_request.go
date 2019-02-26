@@ -25,6 +25,9 @@ type OpenpitrixModifyUserRequest struct {
 	// password
 	Password string `json:"password,omitempty"`
 
+	// phone number
+	PhoneNumber string `json:"phone_number,omitempty"`
+
 	// user id
 	UserID string `json:"user_id,omitempty"`
 

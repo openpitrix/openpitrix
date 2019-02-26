@@ -36,7 +36,7 @@ func (a *Client) GetAttachment(params *GetAttachmentParams, authInfo runtime.Cli
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetAttachment",
 		Method:             "GET",
-		PathPattern:        "/v1/attachments/{attachment_id}/{filename}",
+		PathPattern:        "/v1/attachments",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

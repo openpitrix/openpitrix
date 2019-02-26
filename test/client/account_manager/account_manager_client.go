@@ -228,6 +228,35 @@ func (a *Client) DescribeGroups(params *DescribeGroupsParams, authInfo runtime.C
 }
 
 /*
+DescribeGroupsDetail describe groups detail API
+*/
+func (a *Client) DescribeGroupsDetail(params *DescribeGroupsDetailParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeGroupsDetailOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeGroupsDetailParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeGroupsDetail",
+		Method:             "GET",
+		PathPattern:        "/v1/groups_detail",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeGroupsDetailReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeGroupsDetailOK), nil
+
+}
+
+/*
 DescribeUsers describe users API
 */
 func (a *Client) DescribeUsers(params *DescribeUsersParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeUsersOK, error) {
@@ -257,6 +286,35 @@ func (a *Client) DescribeUsers(params *DescribeUsersParams, authInfo runtime.Cli
 }
 
 /*
+DescribeUsersDetail describe users detail API
+*/
+func (a *Client) DescribeUsersDetail(params *DescribeUsersDetailParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeUsersDetailOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDescribeUsersDetailParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "DescribeUsersDetail",
+		Method:             "GET",
+		PathPattern:        "/v1/users_detail",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DescribeUsersDetailReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DescribeUsersDetailOK), nil
+
+}
+
+/*
 GetPasswordReset get password reset API
 */
 func (a *Client) GetPasswordReset(params *GetPasswordResetParams, authInfo runtime.ClientAuthInfoWriter) (*GetPasswordResetOK, error) {
@@ -268,7 +326,7 @@ func (a *Client) GetPasswordReset(params *GetPasswordResetParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetPasswordReset",
 		Method:             "GET",
-		PathPattern:        "/v1/users/password/reset/{reset_id}",
+		PathPattern:        "/v1/users/password:reset",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

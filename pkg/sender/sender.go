@@ -5,8 +5,11 @@
 package sender
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"encoding/json"
+
+	"openpitrix.io/openpitrix/pkg/constants"
 )
 
 type Sender struct {
@@ -17,8 +20,8 @@ type Sender struct {
 
 func GetSystemSender() *Sender {
 	return &Sender{
-		UserId:     "system",
-		OwnerPath:  ":system",
+		UserId:     constants.UserSystem,
+		OwnerPath:  ":" + constants.UserSystem,
 		AccessPath: "",
 	}
 }
@@ -40,11 +43,8 @@ func (s Sender) GetOwnerPath() OwnerPath {
 }
 
 func (s Sender) GetAccessPath() OwnerPath {
-	if len(s.AccessPath) > 0 {
-		return s.AccessPath
-	}
 	// system can access all data
-	if s.UserId == "system" {
+	if s.UserId == constants.UserSystem {
 		return OwnerPath("")
 	}
 	// normal user only can access data created by self

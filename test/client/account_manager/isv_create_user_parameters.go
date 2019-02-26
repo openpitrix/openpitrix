@@ -65,7 +65,7 @@ for the isv create user operation typically these are written to a http.Request
 type IsvCreateUserParams struct {
 
 	/*Body*/
-	Body *models.OpenpitrixIsvCreateUserRequest
+	Body *models.OpenpitrixCreateUserRequest
 
 	timeout    time.Duration
 	Context    context.Context
@@ -106,13 +106,13 @@ func (o *IsvCreateUserParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the isv create user params
-func (o *IsvCreateUserParams) WithBody(body *models.OpenpitrixIsvCreateUserRequest) *IsvCreateUserParams {
+func (o *IsvCreateUserParams) WithBody(body *models.OpenpitrixCreateUserRequest) *IsvCreateUserParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the isv create user params
-func (o *IsvCreateUserParams) SetBody(body *models.OpenpitrixIsvCreateUserRequest) {
+func (o *IsvCreateUserParams) SetBody(body *models.OpenpitrixCreateUserRequest) {
 	o.Body = body
 }
 

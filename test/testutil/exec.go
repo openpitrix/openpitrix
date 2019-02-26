@@ -32,9 +32,11 @@ func ExecCmd(t *testing.T, cmd string) string {
 	return string(output)
 }
 
-func NoError(t *testing.T, err error, service string, msgAndArgs ...interface{}) {
+func NoError(t *testing.T, err error, services []string, msgAndArgs ...interface{}) {
 	if err != nil {
-		fmt.Print(ExecCmd(t, "docker-compose logs "+service))
+		for _, service := range services {
+			fmt.Print(ExecCmd(t, "docker-compose logs "+service))
+		}
 	}
 	require.NoError(t, err, msgAndArgs)
 }

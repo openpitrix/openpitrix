@@ -12,8 +12,7 @@ import (
 	"time"
 
 	accountclient "openpitrix.io/openpitrix/pkg/client/account"
-	amclient "openpitrix.io/openpitrix/pkg/client/am"
-	attachmentclient "openpitrix.io/openpitrix/pkg/client/attachment"
+	"openpitrix.io/openpitrix/pkg/client/attachment"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
 	repoClient "openpitrix.io/openpitrix/pkg/client/repo"
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -891,17 +890,17 @@ func (p *Server) ReleaseAppVersion(ctx context.Context, req *pb.ReleaseAppVersio
 	}
 
 	// notify admin
-	adminUsers, err := amclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+	adminUsers, err := accountclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
 	if err != nil {
 		logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
 	} else {
 		for _, adminUser := range adminUsers {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.ReleaseAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(adminUser.Username, app.Name, version.Name),
+				Content:     constants.ReleaseAppVersionNotifyContent.GetDefaultMessage(adminUser.GetUsername().GetValue(), app.Name, version.Name),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{adminUser.Email},
+				Addresses:   []string{adminUser.GetEmail().GetValue()},
 			})
 		}
 	}
@@ -977,7 +976,7 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 	}
 
 	var emailNotifications []*models.EmailNotification
-	adminUsers, err := amclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+	adminUsers, err := accountclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
 	if err != nil {
 		logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
 	} else {
@@ -986,10 +985,10 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 			for _, adminUser := range adminUsers {
 				emailNotifications = append(emailNotifications, &models.EmailNotification{
 					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(adminUser.Username, app.Name, version.Name),
+					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(adminUser.GetUsername().GetValue(), app.Name, version.Name),
 					Owner:       s.UserId,
 					ContentType: constants.NfContentTypeVerify,
-					Addresses:   []string{adminUser.Email},
+					Addresses:   []string{adminUser.GetEmail().GetValue()},
 				})
 			}
 		default:
@@ -1195,17 +1194,17 @@ func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersio
 	}
 
 	// notify admin
-	adminUsers, err := amclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+	adminUsers, err := accountclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
 	if err != nil {
 		logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
 	} else {
 		for _, adminUser := range adminUsers {
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.SuspendAppVersionNotifyTitle.GetDefaultMessage(app.Name, version.Name),
-				Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(adminUser.Username, app.Name, version.Name),
+				Content:     constants.SuspendAppVersionNotifyContent.GetDefaultMessage(adminUser.GetUsername().GetValue(), app.Name, version.Name),
 				Owner:       s.UserId,
 				ContentType: constants.NfContentTypeVerify,
-				Addresses:   []string{adminUser.Email},
+				Addresses:   []string{adminUser.GetEmail().GetValue()},
 			})
 		}
 	}

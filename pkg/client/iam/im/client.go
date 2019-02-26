@@ -5,17 +5,18 @@
 package im
 
 import (
-	pbim "openpitrix.io/iam/pkg/pb/im"
+	pbim "kubesphere.io/im/pkg/pb"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/manager"
 )
 
-func NewClient() (pbim.AccountManagerClient, error) {
+func NewClient() (pbim.IdentityManagerClient, error) {
 	conn, err := manager.NewClient(constants.IMServiceHost, constants.IMServicePort)
 	if err != nil {
 		return nil, err
 	}
 
-	client := pbim.NewAccountManagerClient(conn)
+	client := pbim.NewIdentityManagerClient(conn)
 	return client, nil
 }

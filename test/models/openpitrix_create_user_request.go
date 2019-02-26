@@ -28,8 +28,8 @@ type OpenpitrixCreateUserRequest struct {
 	// phone number
 	PhoneNumber string `json:"phone_number,omitempty"`
 
-	// role
-	Role string `json:"role,omitempty"`
+	// role id
+	RoleID string `json:"role_id,omitempty"`
 }
 
 // Validate validates this openpitrix create user request

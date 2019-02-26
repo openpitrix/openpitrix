@@ -41,6 +41,6 @@ SET owner_path = CONCAT(':', owner);
 ALTER TABLE category
 	ADD COLUMN owner_path VARCHAR(50) NOT NULL;
 CREATE INDEX category_owner_path_idx
-	ON category (owner);
+	ON category (owner_path);
 UPDATE category
 SET owner_path = CONCAT(':', owner);

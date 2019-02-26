@@ -12,16 +12,19 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixIsvCreateUserResponse openpitrix isv create user response
-// swagger:model openpitrixIsvCreateUserResponse
-type OpenpitrixIsvCreateUserResponse struct {
+// OpenpitrixActionBundle openpitrix action bundle
+// swagger:model openpitrixActionBundle
+type OpenpitrixActionBundle struct {
 
-	// user id
-	UserID string `json:"user_id,omitempty"`
+	// action bundle id
+	ActionBundleID string `json:"action_bundle_id,omitempty"`
+
+	// action bundle name
+	ActionBundleName string `json:"action_bundle_name,omitempty"`
 }
 
-// Validate validates this openpitrix isv create user response
-func (m *OpenpitrixIsvCreateUserResponse) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix action bundle
+func (m *OpenpitrixActionBundle) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -31,7 +34,7 @@ func (m *OpenpitrixIsvCreateUserResponse) Validate(formats strfmt.Registry) erro
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixIsvCreateUserResponse) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixActionBundle) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -39,8 +42,8 @@ func (m *OpenpitrixIsvCreateUserResponse) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixIsvCreateUserResponse) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixIsvCreateUserResponse
+func (m *OpenpitrixActionBundle) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixActionBundle
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
