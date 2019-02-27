@@ -15,13 +15,13 @@ import (
 )
 
 type GlobalConfig struct {
-	App     AppServiceConfig                 `json:"app"`
-	Repo    RepoServiceConfig                `json:"repo"`
-	Cluster ClusterServiceConfig             `json:"cluster"`
-	Runtime map[string]RuntimeProviderConfig `json:"runtime"`
-	Pilot   PilotServiceConfig               `json:"pilot"`
-	Job     JobServiceConfig                 `json:"job"`
-	Task    TaskServiceConfig                `json:"task"`
+	App     AppServiceConfig                  `json:"app"`
+	Repo    RepoServiceConfig                 `json:"repo"`
+	Cluster ClusterServiceConfig              `json:"cluster"`
+	Runtime map[string]*RuntimeProviderConfig `json:"runtime"`
+	Pilot   PilotServiceConfig                `json:"pilot"`
+	Job     JobServiceConfig                  `json:"job"`
+	Task    TaskServiceConfig                 `json:"task"`
 }
 
 type AppServiceConfig struct {
@@ -63,6 +63,7 @@ type RuntimeProviderConfig struct {
 	ProviderType  string `json:"provider_type"`
 	Host          string `json:"host"`
 	Port          int    `json:"port"`
+	Enable        bool   `json:"enable"`
 }
 
 func (r *RuntimeProviderConfig) GetPort() int {
@@ -81,6 +82,10 @@ func (r *RuntimeProviderConfig) GetHost(provider string) string {
 	}
 }
 
+func (r *RuntimeProviderConfig) GetEnable() bool {
+	return r.Enable
+}
+
 func (g *GlobalConfig) GetAppDefaultStatus() string {
 	if g.App.DefaultDraftStatus {
 		return constants.StatusDraft
@@ -95,26 +100,26 @@ func (g *GlobalConfig) GetRuntimeImageIdAndUrl(apiServer, zone string) (*Runtime
 
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == zone {
-			return &imageConfig, nil
+			return imageConfig, nil
 		}
 	}
 	for _, imageConfig := range g.Runtime {
 		if imageConfig.ApiServer == apiServer && imageConfig.Zone == ".*" {
-			return &imageConfig, nil
+			return imageConfig, nil
 		}
 	}
 	for _, imageConfig := range g.Runtime {
 		matched, _ := regexp.MatchString(imageConfig.ApiServer, apiServer)
 
 		if matched && imageConfig.Zone == zone {
-			return &imageConfig, nil
+			return imageConfig, nil
 		}
 	}
 	for _, imageConfig := range g.Runtime {
 		matched, _ := regexp.MatchString(imageConfig.ApiServer, apiServer)
 
 		if matched && imageConfig.Zone == ".*" {
-			return &imageConfig, nil
+			return imageConfig, nil
 		}
 	}
 
@@ -129,7 +134,7 @@ func (g *GlobalConfig) RegisterRuntimeProviderConfig(provider, config string) er
 	}
 
 	if len(g.Runtime) == 0 {
-		g.Runtime = make(map[string]RuntimeProviderConfig)
+		g.Runtime = make(map[string]*RuntimeProviderConfig)
 	}
 	g.Runtime[provider] = runtimeProviderConfig
 	return nil
@@ -144,8 +149,8 @@ func ParseGlobalConfig(data []byte) (GlobalConfig, error) {
 	return globalConfig, nil
 }
 
-func ParseRuntimeProviderConfig(data []byte) (RuntimeProviderConfig, error) {
-	var runtimeProviderConfig RuntimeProviderConfig
+func ParseRuntimeProviderConfig(data []byte) (*RuntimeProviderConfig, error) {
+	var runtimeProviderConfig *RuntimeProviderConfig
 	err := yamlutil.Decode(data, &runtimeProviderConfig)
 	if err != nil {
 		return runtimeProviderConfig, err

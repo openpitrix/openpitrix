@@ -1835,6 +1835,7 @@
   service: ServiceConfig
   body:
     notification_config: {}
+    runtime_config: {}
 - action: DescribeTasks
   request: DescribeTasksRequest
   description: describe tasks with filter

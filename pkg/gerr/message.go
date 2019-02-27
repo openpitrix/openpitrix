@@ -67,6 +67,11 @@ var (
 		en:   "runtime credential exists",
 		zhCN: "环境授权信息已存在",
 	}
+	ErrorUnsupportedRuntimeProvider = ErrorMessage{
+		Name: "unsupported_runtime_provider",
+		en:   "unsupported runtime provider [%s]",
+		zhCN: "不支持云环境服务商[%s]",
+	}
 	ErrorRuntimeExists = ErrorMessage{
 		Name: "runtime_exists",
 		en:   "runtime exists",

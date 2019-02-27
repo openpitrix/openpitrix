@@ -18,6 +18,9 @@ type OpenpitrixSetServiceConfigRequest struct {
 
 	// notification config
 	NotificationConfig *OpenpitrixNotificationConfig `json:"notification_config,omitempty"`
+
+	// runtime config
+	RuntimeConfig *OpenpitrixRuntimeConfig `json:"runtime_config,omitempty"`
 }
 
 // Validate validates this openpitrix set service config request
@@ -25,6 +28,11 @@ func (m *OpenpitrixSetServiceConfigRequest) Validate(formats strfmt.Registry) er
 	var res []error
 
 	if err := m.validateNotificationConfig(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateRuntimeConfig(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -46,6 +54,25 @@ func (m *OpenpitrixSetServiceConfigRequest) validateNotificationConfig(formats s
 		if err := m.NotificationConfig.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("notification_config")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *OpenpitrixSetServiceConfigRequest) validateRuntimeConfig(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RuntimeConfig) { // not required
+		return nil
+	}
+
+	if m.RuntimeConfig != nil {
+
+		if err := m.RuntimeConfig.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("runtime_config")
 			}
 			return err
 		}

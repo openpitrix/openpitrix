@@ -270,8 +270,10 @@ var AllowedAppDefaultStatus = []string{
 
 const (
 	ServiceTypeNotification = "notification"
+	ServiceTypeRuntime      = "runtime"
 )
 
 var ServiceTypes = []string{
 	ServiceTypeNotification,
+	ServiceTypeRuntime,
 }

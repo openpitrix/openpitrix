@@ -27,8 +27,18 @@ message NotificationConfig {
 	EmailServiceConfig email_service_config = 1;
 }
 
+message RuntimeItemConfig {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.BoolValue enable = 2;
+}
+
+message RuntimeConfig {
+	repeated RuntimeItemConfig config_set = 1;
+}
+
 message SetServiceConfigRequest {
 	NotificationConfig notification_config = 1;
+	RuntimeConfig runtime_config = 2;
 }
 
 message SetServiceConfigResponse {
@@ -41,6 +51,7 @@ message GetServiceConfigRequest {
 
 message GetServiceConfigResponse {
 	NotificationConfig notification_config = 1;
+	RuntimeConfig runtime_config = 2;
 }
 
 service ServiceConfig {
