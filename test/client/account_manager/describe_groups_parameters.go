@@ -65,10 +65,16 @@ type DescribeGroupsParams struct {
 
 	/*GroupID*/
 	GroupID []string
+	/*GroupName*/
+	GroupName []string
+	/*GroupPath*/
+	GroupPath []string
 	/*Limit*/
 	Limit *int64
 	/*Offset*/
 	Offset *int64
+	/*ParentGroupID*/
+	ParentGroupID []string
 	/*Reverse*/
 	Reverse *bool
 	/*SearchWord*/
@@ -77,8 +83,6 @@ type DescribeGroupsParams struct {
 	SortKey *string
 	/*Status*/
 	Status []string
-	/*UserID*/
-	UserID []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -129,6 +133,28 @@ func (o *DescribeGroupsParams) SetGroupID(groupID []string) {
 	o.GroupID = groupID
 }
 
+// WithGroupName adds the groupName to the describe groups params
+func (o *DescribeGroupsParams) WithGroupName(groupName []string) *DescribeGroupsParams {
+	o.SetGroupName(groupName)
+	return o
+}
+
+// SetGroupName adds the groupName to the describe groups params
+func (o *DescribeGroupsParams) SetGroupName(groupName []string) {
+	o.GroupName = groupName
+}
+
+// WithGroupPath adds the groupPath to the describe groups params
+func (o *DescribeGroupsParams) WithGroupPath(groupPath []string) *DescribeGroupsParams {
+	o.SetGroupPath(groupPath)
+	return o
+}
+
+// SetGroupPath adds the groupPath to the describe groups params
+func (o *DescribeGroupsParams) SetGroupPath(groupPath []string) {
+	o.GroupPath = groupPath
+}
+
 // WithLimit adds the limit to the describe groups params
 func (o *DescribeGroupsParams) WithLimit(limit *int64) *DescribeGroupsParams {
 	o.SetLimit(limit)
@@ -149,6 +175,17 @@ func (o *DescribeGroupsParams) WithOffset(offset *int64) *DescribeGroupsParams {
 // SetOffset adds the offset to the describe groups params
 func (o *DescribeGroupsParams) SetOffset(offset *int64) {
 	o.Offset = offset
+}
+
+// WithParentGroupID adds the parentGroupID to the describe groups params
+func (o *DescribeGroupsParams) WithParentGroupID(parentGroupID []string) *DescribeGroupsParams {
+	o.SetParentGroupID(parentGroupID)
+	return o
+}
+
+// SetParentGroupID adds the parentGroupId to the describe groups params
+func (o *DescribeGroupsParams) SetParentGroupID(parentGroupID []string) {
+	o.ParentGroupID = parentGroupID
 }
 
 // WithReverse adds the reverse to the describe groups params
@@ -195,17 +232,6 @@ func (o *DescribeGroupsParams) SetStatus(status []string) {
 	o.Status = status
 }
 
-// WithUserID adds the userID to the describe groups params
-func (o *DescribeGroupsParams) WithUserID(userID []string) *DescribeGroupsParams {
-	o.SetUserID(userID)
-	return o
-}
-
-// SetUserID adds the userId to the describe groups params
-func (o *DescribeGroupsParams) SetUserID(userID []string) {
-	o.UserID = userID
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *DescribeGroupsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -219,6 +245,22 @@ func (o *DescribeGroupsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	joinedGroupID := swag.JoinByFormat(valuesGroupID, "multi")
 	// query array param group_id
 	if err := r.SetQueryParam("group_id", joinedGroupID...); err != nil {
+		return err
+	}
+
+	valuesGroupName := o.GroupName
+
+	joinedGroupName := swag.JoinByFormat(valuesGroupName, "multi")
+	// query array param group_name
+	if err := r.SetQueryParam("group_name", joinedGroupName...); err != nil {
+		return err
+	}
+
+	valuesGroupPath := o.GroupPath
+
+	joinedGroupPath := swag.JoinByFormat(valuesGroupPath, "multi")
+	// query array param group_path
+	if err := r.SetQueryParam("group_path", joinedGroupPath...); err != nil {
 		return err
 	}
 
@@ -252,6 +294,14 @@ func (o *DescribeGroupsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 			}
 		}
 
+	}
+
+	valuesParentGroupID := o.ParentGroupID
+
+	joinedParentGroupID := swag.JoinByFormat(valuesParentGroupID, "multi")
+	// query array param parent_group_id
+	if err := r.SetQueryParam("parent_group_id", joinedParentGroupID...); err != nil {
+		return err
 	}
 
 	if o.Reverse != nil {
@@ -307,14 +357,6 @@ func (o *DescribeGroupsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	joinedStatus := swag.JoinByFormat(valuesStatus, "multi")
 	// query array param status
 	if err := r.SetQueryParam("status", joinedStatus...); err != nil {
-		return err
-	}
-
-	valuesUserID := o.UserID
-
-	joinedUserID := swag.JoinByFormat(valuesUserID, "multi")
-	// query array param user_id
-	if err := r.SetQueryParam("user_id", joinedUserID...); err != nil {
 		return err
 	}
 

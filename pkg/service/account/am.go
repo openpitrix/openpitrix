@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
@@ -32,12 +31,7 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.CreateUserRequest:
 		return manager.NewChecker(ctx, r).
-			Required("email", "password").
-			Exec()
-	case *pb.IsvCreateUserRequest:
-		return manager.NewChecker(ctx, r).
-			Required("email", "password").
-			//StringChosen("role", constants.AllDeveloperRoles).
+			Required("email", "password", "role").
 			Exec()
 	case *pb.CreatePasswordResetRequest:
 		return manager.NewChecker(ctx, r).
@@ -88,9 +82,44 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 			Required("grant_type", "client_id", "client_secret").
 			StringChosen("grant_type", constants.GrantTypeTokens).
 			Exec()
+	case *pb.CanDoRequest:
+		return manager.NewChecker(ctx, r).
+			Required("user_id", "url", "url_method").
+			Exec()
+	case *pb.GetRoleModuleRequest:
+		return manager.NewChecker(ctx, r).
+			Required("role_id").
+			Exec()
+	case *pb.ModifyRoleModuleRequest:
+		return manager.NewChecker(ctx, r).
+			Required("role_id").
+			Exec()
+	case *pb.CreateRoleRequest:
+		return manager.NewChecker(ctx, r).
+			Required("role_name", "portal").
+			Exec()
+	case *pb.DeleteRolesRequest:
+		return manager.NewChecker(ctx, r).
+			Required("role_id").
+			Exec()
+	case *pb.ModifyRoleRequest:
+		return manager.NewChecker(ctx, r).
+			Required("role_id").
+			Exec()
+	case *pb.GetRoleRequest:
+		return manager.NewChecker(ctx, r).
+			Required("role_id").
+			Exec()
+	case *pb.BindUserRoleRequest:
+		return manager.NewChecker(ctx, r).
+			Required("user_id", "role_id").
+			Exec()
+	case *pb.UnbindUserRoleRequest:
+		return manager.NewChecker(ctx, r).
+			Required("user_id", "role_id").
+			Exec()
 	}
 
-	logger.Warn(ctx, "checker unknown type: %T", req)
 	return nil
 }
 

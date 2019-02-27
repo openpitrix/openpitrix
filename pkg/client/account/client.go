@@ -7,6 +7,7 @@ package account
 import (
 	"context"
 	"fmt"
+	"math"
 	"strings"
 
 	"openpitrix.io/openpitrix/pkg/constants"
@@ -66,43 +67,52 @@ func (c *Client) GetUsers(ctx context.Context, userIds []string) ([]*pb.User, er
 func (c *Client) GetUserGroupPath(ctx context.Context, userId string) (string, error) {
 	var userGroupPath string
 
-	var userIds []string
-	userIds = append(userIds, userId)
-
-	response, err := c.DescribeGroups(ctx, &pb.DescribeGroupsRequest{
-		UserId: userIds,
+	response, err := c.DescribeUsersDetail(ctx, &pb.DescribeUsersRequest{
+		UserId: []string{userId},
 	})
-	if err != nil {
-		logger.Error(ctx, "Describe groups %s failed: %+v", userIds, err)
+	if err != nil || len(response.UserDetailSet) == 0 {
+		logger.Error(ctx, "Describe user [%s] failed: %+v", userId, err)
 		return "", err
 	}
 
-	respGroupSet := response.GroupSet
+	groups := response.UserDetailSet[0].GroupSet
 
-	//If one uer under different Group, get the highest Group Path.
-	if len(respGroupSet) > 1 {
-		minLevel := len(strings.Split(respGroupSet[0].GroupPath.GetValue(), "."))
-		for _, group := range response.GroupSet {
-			if len(strings.Split(group.GroupPath.GetValue(), ".")) < minLevel {
-				minLevel = len(strings.Split(group.GroupPath.GetValue(), "."))
-				userGroupPath = group.GroupPath.GetValue()
-			}
+	//If one user under different groups, get the highest group path.
+	minLevel := math.MaxInt32
+	for _, group := range groups {
+		level := len(strings.Split(group.GroupPath.GetValue(), "."))
+		if level < minLevel {
+			minLevel = level
+			userGroupPath = group.GetGroupPath().GetValue()
 		}
-
-	} else if len(respGroupSet) == 1 {
-		userGroupPath = response.GroupSet[0].GetGroupPath().GetValue()
-	} else {
-		return "", nil
 	}
 
 	return userGroupPath, nil
 
 }
 
+func GetRoleUsers(ctx context.Context, roleIds []string) ([]*pb.User, error) {
+	client, err := NewClient()
+	if err != nil {
+		logger.Error(ctx, "Failed to create account manager client: %+v", err)
+		return nil, err
+	}
+
+	response, err := client.DescribeUsers(ctx, &pb.DescribeUsersRequest{
+		RoleId: roleIds,
+	})
+	if err != nil {
+		logger.Error(ctx, "Describe users failed: %+v", err)
+		return nil, err
+	}
+
+	return response.UserSet, nil
+}
+
 func GetUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
 	client, err := NewClient()
 	if err != nil {
-		logger.Error(ctx, "Failed to create im client: %+v", err)
+		logger.Error(ctx, "Failed to create account manager client: %+v", err)
 		return nil, err
 	}
 	response, err := client.GetUsers(ctx, userIds)
@@ -115,7 +125,7 @@ func GetUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
 func GetIsvFromUsers(ctx context.Context, userIds []string) ([]*pb.User, error) {
 	client, err := NewClient()
 	if err != nil {
-		logger.Error(ctx, "Failed to create im client: %+v", err)
+		logger.Error(ctx, "Failed to create account manager client: %+v", err)
 		return nil, err
 	}
 

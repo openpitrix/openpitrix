@@ -28,8 +28,8 @@ define get_build_flags
 		-X $(TRAG.Version).BuildDate="$(DATE)")
 endef
 
-COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-vendor-manager openpitrix-notification
-COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-market-db-ctrl openpitrix-attachment-db-ctrl openpitrix-vendor-db-ctrl openpitrix-notification-db-ctrl
+COMPOSE_APP_SERVICES=openpitrix-runtime-manager openpitrix-app-manager openpitrix-category-manager openpitrix-repo-indexer openpitrix-api-gateway openpitrix-repo-manager openpitrix-job-manager openpitrix-task-manager openpitrix-cluster-manager openpitrix-market-manager openpitrix-pilot-service openpitrix-account-service openpitrix-attachment-manager openpitrix-vendor-manager openpitrix-notification openpitrix-im-service openpitrix-am-service
+COMPOSE_DB_CTRL=openpitrix-db-init openpitrix-im-db-init openpitrix-am-db-init openpitrix-app-db-ctrl openpitrix-repo-db-ctrl openpitrix-runtime-db-ctrl openpitrix-job-db-ctrl openpitrix-task-db-ctrl openpitrix-cluster-db-ctrl openpitrix-iam-db-ctrl openpitrix-market-db-ctrl openpitrix-attachment-db-ctrl openpitrix-vendor-db-ctrl openpitrix-notification-db-ctrl openpitrix-im-db-ctrl openpitrix-am-db-ctrl
 CMD?=...
 WITH_METADATA?=yes
 WITH_K8S=no
@@ -124,8 +124,13 @@ endif
 	docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
 
+.PHONY: pull-images
+pull-images: ## Pull images
+	docker-compose pull --ignore-pull-failures
+	@echo "pull-images done"
+
 .PHONY: compose-update
-compose-update: build compose-up compose-migrate-db ## Update service in docker compose
+compose-update: build pull-images compose-up ## Update service in docker compose
 	@echo "compose-update done"
 
 .PHONY: compose-update-service-without-deps
@@ -160,9 +165,8 @@ generate-certs: ## Generate tls certificates
 .PHONY: compose-up
 compose-up: generate-certs ## Launch openpitrix in docker compose
 	docker-compose up -d openpitrix-db
-	until docker-compose exec openpitrix-db bash -c "echo 'SELECT VERSION();' | mysql -uroot -ppassword"; do echo "waiting for mysql"; sleep 2; done;
 	make compose-migrate-db
-	docker-compose up -d
+	docker-compose up --remove-orphans -d
 	@echo "compose-up done"
 
 .PHONY: compose-down

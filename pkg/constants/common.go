@@ -242,6 +242,8 @@ const (
 	RoleIsv         = "isv"
 	RoleGlobalAdmin = "global_admin"
 
+	PortalGlobalAdmin = "global_admin"
+
 	GrantTypeClientCredentials = "client_credentials"
 	GrantTypePassword          = "password"
 	GrantTypeRefreshToken      = "refresh_token"

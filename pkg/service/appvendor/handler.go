@@ -8,10 +8,9 @@ import (
 	"context"
 	"math"
 
-	"openpitrix.io/iam/pkg/pb/am"
+	clientutil "openpitrix.io/openpitrix/pkg/client"
+	accessclient "openpitrix.io/openpitrix/pkg/client/access"
 	accountclient "openpitrix.io/openpitrix/pkg/client/account"
-	"openpitrix.io/openpitrix/pkg/client/am"
-	amclient "openpitrix.io/openpitrix/pkg/client/am"
 	appclient "openpitrix.io/openpitrix/pkg/client/app"
 	clusterclient "openpitrix.io/openpitrix/pkg/client/cluster"
 	nfclient "openpitrix.io/openpitrix/pkg/client/notification"
@@ -80,17 +79,17 @@ func (s *Server) SubmitVendorVerifyInfo(ctx context.Context, req *pb.SubmitVendo
 
 		var emailNotifications []*models.EmailNotification
 		// notify admin
-		adminUsers, err := amclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
+		adminUsers, err := accountclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
 		if err != nil {
 			logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
 		} else {
 			for _, adminUser := range adminUsers {
 				emailNotifications = append(emailNotifications, &models.EmailNotification{
 					Title:       constants.SubmitVendorNotifyAdminTitle.GetDefaultMessage(vendor.CompanyName),
-					Content:     constants.SubmitVendorNotifyAdminContent.GetDefaultMessage(adminUser, vendor.CompanyName),
+					Content:     constants.SubmitVendorNotifyAdminContent.GetDefaultMessage(adminUser.GetUsername().GetValue(), vendor.CompanyName),
 					Owner:       sender.UserId,
 					ContentType: constants.NfContentTypeVerify,
-					Addresses:   []string{adminUser.Email},
+					Addresses:   []string{adminUser.GetEmail().GetValue()},
 				})
 			}
 		}
@@ -133,9 +132,10 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
 	}
 
-	//change the role of appvendor user to isv
-	amClient, err := am.NewClient()
-	_, err = amClient.UnbindUserRole(ctx, &pbam.UnbindUserRoleRequest{
+	systemCtx := clientutil.SetSystemUserToContext(context.Background())
+	// Use system user to change the role of appvendor to isv
+	accessClient, err := accessclient.NewClient()
+	_, err = accessClient.UnbindUserRole(systemCtx, &pb.UnbindUserRoleRequest{
 		RoleId: []string{constants.RoleUser},
 		UserId: []string{appVendorUserId},
 	})
@@ -143,7 +143,7 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 
-	_, err = amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{
+	_, err = accessClient.BindUserRole(systemCtx, &pb.BindUserRoleRequest{
 		RoleId: []string{constants.RoleIsv},
 		UserId: []string{appVendorUserId},
 	})

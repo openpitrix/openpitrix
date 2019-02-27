@@ -63,7 +63,7 @@ for the get role operation typically these are written to a http.Request
 type GetRoleParams struct {
 
 	/*RoleID*/
-	RoleID string
+	RoleID *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -104,13 +104,13 @@ func (o *GetRoleParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithRoleID adds the roleID to the get role params
-func (o *GetRoleParams) WithRoleID(roleID string) *GetRoleParams {
+func (o *GetRoleParams) WithRoleID(roleID *string) *GetRoleParams {
 	o.SetRoleID(roleID)
 	return o
 }
 
 // SetRoleID adds the roleId to the get role params
-func (o *GetRoleParams) SetRoleID(roleID string) {
+func (o *GetRoleParams) SetRoleID(roleID *string) {
 	o.RoleID = roleID
 }
 
@@ -122,9 +122,20 @@ func (o *GetRoleParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 	}
 	var res []error
 
-	// path param role_id
-	if err := r.SetPathParam("role_id", o.RoleID); err != nil {
-		return err
+	if o.RoleID != nil {
+
+		// query param role_id
+		var qrRoleID string
+		if o.RoleID != nil {
+			qrRoleID = *o.RoleID
+		}
+		qRoleID := qrRoleID
+		if qRoleID != "" {
+			if err := r.SetQueryParam("role_id", qRoleID); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {

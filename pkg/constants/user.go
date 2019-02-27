@@ -4,6 +4,8 @@
 
 package constants
 
+const UserSystem = "system"
+
 var InternalUsers = []string{
-	"system",
+	UserSystem,
 }

@@ -14,23 +14,17 @@
       type: string
     url_method:
       type: string
+    user_id:
+      type: string
 - action: CreateRole
   request: CreateRoleRequest
   service: AccessManager
   body:
     description:
       type: string
-    owner:
-      type: string
-    owner_path:
-      type: string
     portal:
       type: string
-    role_id:
-      type: string
     role_name:
-      type: string
-    status:
       type: string
 - action: DeleteRoles
   request: DeleteRolesRequest
@@ -40,21 +34,31 @@
       type: '[]string'
 - action: DescribeRoles
   request: DescribeRolesRequest
+  description: admin permission
   service: AccessManager
   query:
+    limit:
+      type: int64
+    offset:
+      type: int64
     portal:
       type: '[]string'
+    reverse:
+      type: boolean
     role_id:
       type: '[]string'
     role_name:
       type: '[]string'
-    user_id:
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
       type: '[]string'
 - action: GetRole
   request: GetRoleRequest
-  description: admin permission
   service: AccessManager
-  path:
+  query:
     role_id:
       type: string
 - action: GetRoleModule
@@ -69,8 +73,6 @@
   body:
     description:
       type: string
-    portal:
-      type: string
     role_id:
       type: string
     role_name:
@@ -79,10 +81,11 @@
   request: ModifyRoleModuleRequest
   service: AccessManager
   body:
-    role_module: {}
+    module: {}
+    role_id:
+      type: string
 - action: UnbindUserRole
   request: UnbindUserRoleRequest
-  description: group
   service: AccessManager
   body:
     role_id:
@@ -129,7 +132,7 @@
       type: string
     phone_number:
       type: string
-    role:
+    role_id:
       type: string
 - action: DeleteGroups
   request: DeleteGroupsRequest
@@ -149,10 +152,16 @@
   query:
     group_id:
       type: '[]string'
+    group_name:
+      type: '[]string'
+    group_path:
+      type: '[]string'
     limit:
       type: int64
     offset:
       type: int64
+    parent_group_id:
+      type: '[]string'
     reverse:
       type: boolean
     search_word:
@@ -161,21 +170,47 @@
       type: string
     status:
       type: '[]string'
-    user_id:
+- action: DescribeGroupsDetail
+  request: DescribeGroupsDetailRequest
+  service: AccountManager
+  query:
+    group_id:
+      type: '[]string'
+    group_name:
+      type: '[]string'
+    group_path:
+      type: '[]string'
+    limit:
+      type: int64
+    offset:
+      type: int64
+    parent_group_id:
+      type: '[]string'
+    reverse:
+      type: boolean
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
       type: '[]string'
 - action: DescribeUsers
   request: DescribeUsersRequest
   service: AccountManager
   query:
+    email:
+      type: '[]string'
     group_id:
       type: '[]string'
     limit:
       type: int64
     offset:
       type: int64
+    phone_number:
+      type: '[]string'
     reverse:
       type: boolean
-    role:
+    role_id:
       type: '[]string'
     search_word:
       type: string
@@ -185,14 +220,44 @@
       type: '[]string'
     user_id:
       type: '[]string'
+    username:
+      type: '[]string'
+- action: DescribeUsersDetail
+  request: DescribeUsersDetailRequest
+  service: AccountManager
+  query:
+    email:
+      type: '[]string'
+    group_id:
+      type: '[]string'
+    limit:
+      type: int64
+    offset:
+      type: int64
+    phone_number:
+      type: '[]string'
+    reverse:
+      type: boolean
+    role_id:
+      type: '[]string'
+    search_word:
+      type: string
+    sort_key:
+      type: string
+    status:
+      type: '[]string'
+    user_id:
+      type: '[]string'
+    username:
+      type: '[]string'
 - action: GetPasswordReset
   request: GetPasswordResetRequest
   service: AccountManager
-  path:
+  query:
     reset_id:
       type: string
 - action: IsvCreateUser
-  request: IsvCreateUserRequest
+  request: CreateUserRequest
   service: AccountManager
   body:
     description:
@@ -202,6 +267,8 @@
     password:
       type: string
     phone_number:
+      type: string
+    role_id:
       type: string
 - action: JoinGroup
   request: JoinGroupRequest
@@ -229,6 +296,8 @@
       type: string
     name:
       type: string
+    parent_group_id:
+      type: string
 - action: ModifyUser
   request: ModifyUserRequest
   service: AccountManager
@@ -238,6 +307,8 @@
     email:
       type: string
     password:
+      type: string
+    phone_number:
       type: string
     user_id:
       type: string
@@ -787,7 +858,7 @@
   request: GetAttachmentRequest
   description: get attachment
   service: AttachmentService
-  path:
+  query:
     attachment_id:
       type: string
     filename:
@@ -1805,9 +1876,6 @@
 - action: CreateClient
   request: CreateClientRequest
   service: TokenManager
-  path:
-    user_id:
-      type: string
   body:
     user_id:
       type: string

@@ -390,6 +390,9 @@ func getVendorMap(ctx context.Context, userIds []string) (map[string]*pb.VendorV
 	userIds = stringutil.Unique(userIds)
 	var ownerIds []string
 	for _, uid := range userIds {
+		if stringutil.StringIn(uid, constants.InternalUsers) {
+			continue
+		}
 		getOwnerRes, err := accountclient.GetUserGroupOwner(ctx, &pb.GetUserGroupOwnerRequest{
 			UserId: uid,
 		})
@@ -773,7 +776,7 @@ func matchPackageFailedError(err error, res *pb.ValidatePackageResponse) {
 			errorDetails[matched[1]] = matched[2]
 		}
 
-	// Devkit errors
+		// Devkit errors
 	case strings.HasPrefix(errStr, "[package.json] not in base directory"):
 
 		errorDetails["package.json"] = "not found"

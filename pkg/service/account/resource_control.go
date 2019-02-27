@@ -7,7 +7,8 @@ package account
 import (
 	"context"
 
-	pbim "openpitrix.io/iam/pkg/pb/im"
+	pbim "kubesphere.io/im/pkg/pb"
+
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/gerr"

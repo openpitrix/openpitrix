@@ -16,7 +16,6 @@ import (
 func getJwtCmd() *cobra.Command {
 	var (
 		userId     string
-		role       string
 		expireTime time.Duration
 		secretKey  string
 	)
@@ -33,9 +32,6 @@ func getJwtCmd() *cobra.Command {
 			if len(userId) == 0 {
 				return fmt.Errorf("[user_id] should specify")
 			}
-			if len(role) == 0 {
-				return fmt.Errorf("[role] should specify")
-			}
 			if expireTime == 0 {
 				return fmt.Errorf("[expire_time] should specify")
 			}
@@ -43,7 +39,7 @@ func getJwtCmd() *cobra.Command {
 				return fmt.Errorf("[secret_key] should specify")
 			}
 
-			token, err := jwtutil.Generate(secretKey, expireTime, userId, role)
+			token, err := jwtutil.Generate(secretKey, expireTime, userId)
 			if err != nil {
 				return err
 			}
@@ -53,7 +49,6 @@ func getJwtCmd() *cobra.Command {
 	}
 	f := cmd.Flags()
 	f.StringVarP(&userId, "user_id", "u", "", "specify user_id in JWT")
-	f.StringVarP(&role, "role", "r", "", "specify role in JWT")
 	f.DurationVarP(&expireTime, "expire_time", "e", 2*time.Hour, "specify expire_time in JWT")
 	f.StringVarP(&secretKey, "secret_key", "s", "", "specify secret_key in JWT")
 

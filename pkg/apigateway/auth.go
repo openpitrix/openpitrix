@@ -10,15 +10,13 @@ import (
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
-	pbam "openpitrix.io/iam/pkg/pb/am"
-	"openpitrix.io/openpitrix/pkg/client/am"
-	"openpitrix.io/openpitrix/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/client/access"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/sender"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 	"openpitrix.io/openpitrix/pkg/util/jwtutil"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 const (
@@ -26,7 +24,7 @@ const (
 )
 
 var (
-	amClient, _ = am.NewClient()
+	accessClient, _ = access.NewClient()
 )
 
 func httpAuth(mux *runtime.ServeMux, key string) http.Handler {
@@ -59,26 +57,22 @@ func httpAuth(mux *runtime.ServeMux, key string) http.Handler {
 			return
 		}
 
-		if stringutil.StringIn(s.UserId, constants.InternalUsers) {
-			// TODO: internal user should move into iam
-			s.AccessPath = s.GetAccessPath()
-			s.OwnerPath = s.GetOwnerPath()
-		} else {
-			v, err := amClient.CanDo(ctx, &pbam.CanDoRequest{
-				UserId:    s.UserId,
-				Url:       req.URL.Path,
-				UrlMethod: req.Method,
-			})
-			if err != nil {
-				logger.Error(ctx, "Sender [%+v] cannot [%s] [%s], err: %+v", s, req.Method, req.URL.Path, err)
-				err = gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
-				runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-				return
-			}
-			s.AccessPath = sender.OwnerPath(v.AccessPath)
-			s.OwnerPath = sender.OwnerPath(v.OwnerPath)
-			s.UserId = v.UserId
+		v, err := accessClient.CanDo(ctx, &pb.CanDoRequest{
+			UserId:    s.UserId,
+			Url:       req.URL.Path,
+			UrlMethod: req.Method,
+		})
+		if err != nil {
+			logger.Error(ctx, "Sender [%+v] cannot [%s] [%s], err: %+v", s, req.Method, req.URL.Path, err)
+			err = gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
 		}
+
+		logger.Debug(ctx, "CanDo: %+v", v)
+		s.AccessPath = sender.OwnerPath(v.GetAccessPath())
+		s.OwnerPath = sender.OwnerPath(v.GetOwnerPath())
+		s.UserId = v.UserId
 
 		req.Header.Set(ctxutil.SenderKey, s.ToJson())
 		req.Header.Del(Authorization)

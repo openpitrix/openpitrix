@@ -141,7 +141,7 @@ func (a *Client) DeleteRoles(params *DeleteRolesParams, authInfo runtime.ClientA
 }
 
 /*
-DescribeRoles describe roles API
+DescribeRoles admins permission
 */
 func (a *Client) DescribeRoles(params *DescribeRolesParams, authInfo runtime.ClientAuthInfoWriter) (*DescribeRolesOK, error) {
 	// TODO: Validate the params before sending
@@ -170,7 +170,7 @@ func (a *Client) DescribeRoles(params *DescribeRolesParams, authInfo runtime.Cli
 }
 
 /*
-GetRole admins permission
+GetRole get role API
 */
 func (a *Client) GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoWriter) (*GetRoleOK, error) {
 	// TODO: Validate the params before sending
@@ -181,7 +181,7 @@ func (a *Client) GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoW
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetRole",
 		Method:             "GET",
-		PathPattern:        "/v1/roles/{role_id}",
+		PathPattern:        "/v1/role",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -267,7 +267,7 @@ func (a *Client) ModifyRoleModule(params *ModifyRoleModuleParams, authInfo runti
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ModifyRoleModule",
-		Method:             "PATCH",
+		Method:             "POST",
 		PathPattern:        "/v1/roles:module",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
@@ -286,7 +286,7 @@ func (a *Client) ModifyRoleModule(params *ModifyRoleModuleParams, authInfo runti
 }
 
 /*
-UnbindUserRole groups
+UnbindUserRole unbind user role API
 */
 func (a *Client) UnbindUserRole(params *UnbindUserRoleParams, authInfo runtime.ClientAuthInfoWriter) (*UnbindUserRoleOK, error) {
 	// TODO: Validate the params before sending

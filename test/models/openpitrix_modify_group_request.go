@@ -24,6 +24,9 @@ type OpenpitrixModifyGroupRequest struct {
 
 	// name
 	Name string `json:"name,omitempty"`
+
+	// parent group id
+	ParentGroupID string `json:"parent_group_id,omitempty"`
 }
 
 // Validate validates this openpitrix modify group request

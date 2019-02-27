@@ -36,7 +36,7 @@ func (a *Client) CreateClient(params *CreateClientParams, authInfo runtime.Clien
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "CreateClient",
 		Method:             "POST",
-		PathPattern:        "/v1/oauth2/{user_id}/client",
+		PathPattern:        "/v1/oauth2/client",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

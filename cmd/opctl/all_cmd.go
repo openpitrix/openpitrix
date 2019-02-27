@@ -47,7 +47,9 @@ var AllCmd = []Cmd{
 	NewDeleteGroupsCmd(),
 	NewDeleteUsersCmd(),
 	NewDescribeGroupsCmd(),
+	NewDescribeGroupsDetailCmd(),
 	NewDescribeUsersCmd(),
+	NewDescribeUsersDetailCmd(),
 	NewGetPasswordResetCmd(),
 	NewIsvCreateUserCmd(),
 	NewJoinGroupCmd(),
@@ -214,6 +216,7 @@ func (*CanDoCmd) GetActionName() string {
 func (c *CanDoCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.URL, "url", "", "", "")
 	f.StringVarP(&c.URLMethod, "url_method", "", "", "")
+	f.StringVarP(&c.UserID, "user_id", "", "", "")
 }
 
 func (c *CanDoCmd) Run(out Out) error {
@@ -249,12 +252,8 @@ func (*CreateRoleCmd) GetActionName() string {
 
 func (c *CreateRoleCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Owner, "owner", "", "", "")
-	f.StringVarP(&c.OwnerPath, "owner_path", "", "", "")
 	f.StringVarP(&c.Portal, "portal", "", "", "")
-	f.StringVarP(&c.RoleID, "role_id", "", "", "")
 	f.StringVarP(&c.RoleName, "role_name", "", "", "")
-	f.StringVarP(&c.Status, "status", "", "", "")
 }
 
 func (c *CreateRoleCmd) Run(out Out) error {
@@ -324,10 +323,20 @@ func (*DescribeRolesCmd) GetActionName() string {
 }
 
 func (c *DescribeRolesCmd) ParseFlag(f Flag) {
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
 	f.StringSliceVarP(&c.Portal, "portal", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	f.StringSliceVarP(&c.RoleID, "role_id", "", []string{}, "")
 	f.StringSliceVarP(&c.RoleName, "role_name", "", []string{}, "")
-	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
 }
 
 func (c *DescribeRolesCmd) Run(out Out) error {
@@ -361,12 +370,12 @@ func (*GetRoleCmd) GetActionName() string {
 }
 
 func (c *GetRoleCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.RoleID, "role_id", "", "", "")
+	c.RoleID = new(string)
+	f.StringVarP(c.RoleID, "role_id", "", "", "")
 }
 
 func (c *GetRoleCmd) Run(out Out) error {
 	params := c.GetRoleParams
-	params.WithRoleID(c.RoleID)
 
 	out.WriteRequest(params)
 
@@ -432,7 +441,6 @@ func (*ModifyRoleCmd) GetActionName() string {
 
 func (c *ModifyRoleCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
-	f.StringVarP(&c.Portal, "portal", "", "", "")
 	f.StringVarP(&c.RoleID, "role_id", "", "", "")
 	f.StringVarP(&c.RoleName, "role_name", "", "", "")
 }
@@ -469,6 +477,7 @@ func (*ModifyRoleModuleCmd) GetActionName() string {
 }
 
 func (c *ModifyRoleModuleCmd) ParseFlag(f Flag) {
+	f.StringVarP(&c.RoleID, "role_id", "", "", "")
 }
 
 func (c *ModifyRoleModuleCmd) Run(out Out) error {
@@ -652,7 +661,7 @@ func (c *CreateUserCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Email, "email", "", "", "")
 	f.StringVarP(&c.Password, "password", "", "", "")
 	f.StringVarP(&c.PhoneNumber, "phone_number", "", "", "")
-	f.StringVarP(&c.Role, "role", "", "", "")
+	f.StringVarP(&c.RoleID, "role_id", "", "", "")
 }
 
 func (c *CreateUserCmd) Run(out Out) error {
@@ -758,10 +767,13 @@ func (*DescribeGroupsCmd) GetActionName() string {
 
 func (c *DescribeGroupsCmd) ParseFlag(f Flag) {
 	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	f.StringSliceVarP(&c.GroupName, "group_name", "", []string{}, "")
+	f.StringSliceVarP(&c.GroupPath, "group_path", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.ParentGroupID, "parent_group_id", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
 	c.SearchWord = new(string)
@@ -769,7 +781,6 @@ func (c *DescribeGroupsCmd) ParseFlag(f Flag) {
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
-	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
 }
 
 func (c *DescribeGroupsCmd) Run(out Out) error {
@@ -779,6 +790,54 @@ func (c *DescribeGroupsCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AccountManager.DescribeGroups(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeGroupsDetailCmd struct {
+	*account_manager.DescribeGroupsDetailParams
+}
+
+func NewDescribeGroupsDetailCmd() Cmd {
+	return &DescribeGroupsDetailCmd{
+		account_manager.NewDescribeGroupsDetailParams(),
+	}
+}
+
+func (*DescribeGroupsDetailCmd) GetActionName() string {
+	return "DescribeGroupsDetail"
+}
+
+func (c *DescribeGroupsDetailCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	f.StringSliceVarP(&c.GroupName, "group_name", "", []string{}, "")
+	f.StringSliceVarP(&c.GroupPath, "group_path", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.ParentGroupID, "parent_group_id", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+}
+
+func (c *DescribeGroupsDetailCmd) Run(out Out) error {
+	params := c.DescribeGroupsDetailParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccountManager.DescribeGroupsDetail(params, nil)
 	if err != nil {
 		return err
 	}
@@ -803,20 +862,23 @@ func (*DescribeUsersCmd) GetActionName() string {
 }
 
 func (c *DescribeUsersCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.Email, "email", "", []string{}, "")
 	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
 	c.Limit = new(int64)
 	f.Int64VarP(c.Limit, "limit", "", 20, "")
 	c.Offset = new(int64)
 	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.PhoneNumber, "phone_number", "", []string{}, "")
 	c.Reverse = new(bool)
 	f.BoolVarP(c.Reverse, "reverse", "", false, "")
-	f.StringSliceVarP(&c.Role, "role", "", []string{}, "")
+	f.StringSliceVarP(&c.RoleID, "role_id", "", []string{}, "")
 	c.SearchWord = new(string)
 	f.StringVarP(c.SearchWord, "search_word", "", "", "")
 	c.SortKey = new(string)
 	f.StringVarP(c.SortKey, "sort_key", "", "", "")
 	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
 	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+	f.StringSliceVarP(&c.Username, "username", "", []string{}, "")
 }
 
 func (c *DescribeUsersCmd) Run(out Out) error {
@@ -826,6 +888,56 @@ func (c *DescribeUsersCmd) Run(out Out) error {
 
 	client := getClient()
 	res, err := client.AccountManager.DescribeUsers(params, nil)
+	if err != nil {
+		return err
+	}
+
+	out.WriteResponse(res.Payload)
+
+	return nil
+}
+
+type DescribeUsersDetailCmd struct {
+	*account_manager.DescribeUsersDetailParams
+}
+
+func NewDescribeUsersDetailCmd() Cmd {
+	return &DescribeUsersDetailCmd{
+		account_manager.NewDescribeUsersDetailParams(),
+	}
+}
+
+func (*DescribeUsersDetailCmd) GetActionName() string {
+	return "DescribeUsersDetail"
+}
+
+func (c *DescribeUsersDetailCmd) ParseFlag(f Flag) {
+	f.StringSliceVarP(&c.Email, "email", "", []string{}, "")
+	f.StringSliceVarP(&c.GroupID, "group_id", "", []string{}, "")
+	c.Limit = new(int64)
+	f.Int64VarP(c.Limit, "limit", "", 20, "")
+	c.Offset = new(int64)
+	f.Int64VarP(c.Offset, "offset", "", 0, "")
+	f.StringSliceVarP(&c.PhoneNumber, "phone_number", "", []string{}, "")
+	c.Reverse = new(bool)
+	f.BoolVarP(c.Reverse, "reverse", "", false, "")
+	f.StringSliceVarP(&c.RoleID, "role_id", "", []string{}, "")
+	c.SearchWord = new(string)
+	f.StringVarP(c.SearchWord, "search_word", "", "", "")
+	c.SortKey = new(string)
+	f.StringVarP(c.SortKey, "sort_key", "", "", "")
+	f.StringSliceVarP(&c.Status, "status", "", []string{}, "")
+	f.StringSliceVarP(&c.UserID, "user_id", "", []string{}, "")
+	f.StringSliceVarP(&c.Username, "username", "", []string{}, "")
+}
+
+func (c *DescribeUsersDetailCmd) Run(out Out) error {
+	params := c.DescribeUsersDetailParams
+
+	out.WriteRequest(params)
+
+	client := getClient()
+	res, err := client.AccountManager.DescribeUsersDetail(params, nil)
 	if err != nil {
 		return err
 	}
@@ -850,12 +962,12 @@ func (*GetPasswordResetCmd) GetActionName() string {
 }
 
 func (c *GetPasswordResetCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.ResetID, "reset_id", "", "", "")
+	c.ResetID = new(string)
+	f.StringVarP(c.ResetID, "reset_id", "", "", "")
 }
 
 func (c *GetPasswordResetCmd) Run(out Out) error {
 	params := c.GetPasswordResetParams
-	params.WithResetID(c.ResetID)
 
 	out.WriteRequest(params)
 
@@ -871,12 +983,12 @@ func (c *GetPasswordResetCmd) Run(out Out) error {
 }
 
 type IsvCreateUserCmd struct {
-	*models.OpenpitrixIsvCreateUserRequest
+	*models.OpenpitrixCreateUserRequest
 }
 
 func NewIsvCreateUserCmd() Cmd {
 	cmd := &IsvCreateUserCmd{}
-	cmd.OpenpitrixIsvCreateUserRequest = &models.OpenpitrixIsvCreateUserRequest{}
+	cmd.OpenpitrixCreateUserRequest = &models.OpenpitrixCreateUserRequest{}
 	return cmd
 }
 
@@ -889,11 +1001,12 @@ func (c *IsvCreateUserCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Email, "email", "", "", "")
 	f.StringVarP(&c.Password, "password", "", "", "")
 	f.StringVarP(&c.PhoneNumber, "phone_number", "", "", "")
+	f.StringVarP(&c.RoleID, "role_id", "", "", "")
 }
 
 func (c *IsvCreateUserCmd) Run(out Out) error {
 	params := account_manager.NewIsvCreateUserParams()
-	params.WithBody(c.OpenpitrixIsvCreateUserRequest)
+	params.WithBody(c.OpenpitrixCreateUserRequest)
 
 	out.WriteRequest(params)
 
@@ -998,6 +1111,7 @@ func (c *ModifyGroupCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.GroupID, "group_id", "", "", "")
 	f.StringVarP(&c.Name, "name", "", "", "")
+	f.StringVarP(&c.ParentGroupID, "parent_group_id", "", "", "")
 }
 
 func (c *ModifyGroupCmd) Run(out Out) error {
@@ -1035,6 +1149,7 @@ func (c *ModifyUserCmd) ParseFlag(f Flag) {
 	f.StringVarP(&c.Description, "description", "", "", "")
 	f.StringVarP(&c.Email, "email", "", "", "")
 	f.StringVarP(&c.Password, "password", "", "", "")
+	f.StringVarP(&c.PhoneNumber, "phone_number", "", "", "")
 	f.StringVarP(&c.UserID, "user_id", "", "", "")
 	f.StringVarP(&c.Username, "username", "", "", "")
 }
@@ -2603,14 +2718,14 @@ func (*GetAttachmentCmd) GetActionName() string {
 }
 
 func (c *GetAttachmentCmd) ParseFlag(f Flag) {
-	f.StringVarP(&c.AttachmentID, "attachment_id", "", "", "")
-	f.StringVarP(&c.Filename, "filename", "", "", "")
+	c.AttachmentID = new(string)
+	f.StringVarP(c.AttachmentID, "attachment_id", "", "", "")
+	c.Filename = new(string)
+	f.StringVarP(c.Filename, "filename", "", "", "")
 }
 
 func (c *GetAttachmentCmd) Run(out Out) error {
 	params := c.GetAttachmentParams
-	params.WithAttachmentID(c.AttachmentID)
-	params.WithFilename(c.Filename)
 
 	out.WriteRequest(params)
 
@@ -5253,7 +5368,6 @@ func (c *CreateClientCmd) ParseFlag(f Flag) {
 func (c *CreateClientCmd) Run(out Out) error {
 	params := token_manager.NewCreateClientParams()
 	params.WithBody(c.OpenpitrixCreateClientRequest)
-	params.WithUserID(c.UserID)
 
 	out.WriteRequest(params)
 

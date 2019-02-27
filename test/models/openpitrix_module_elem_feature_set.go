@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRoleModuleModule openpitrix role module module
-// swagger:model openpitrixRoleModuleModule
-type OpenpitrixRoleModuleModule []*OpenpitrixRoleModuleElem
+// OpenpitrixModuleElemFeatureSet openpitrix module elem feature set
+// swagger:model openpitrixModuleElemFeatureSet
+type OpenpitrixModuleElemFeatureSet []*OpenpitrixFeature
 
-// Validate validates this openpitrix role module module
-func (m OpenpitrixRoleModuleModule) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix module elem feature set
+func (m OpenpitrixModuleElemFeatureSet) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	for i := 0; i < len(m); i++ {

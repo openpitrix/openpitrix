@@ -25,14 +25,8 @@ type OpenpitrixUser struct {
 	// email
 	Email string `json:"email,omitempty"`
 
-	// group id
-	GroupID []string `json:"group_id"`
-
 	// phone number
 	PhoneNumber string `json:"phone_number,omitempty"`
-
-	// role
-	Role OpenpitrixUserRole `json:"role"`
 
 	// status
 	Status string `json:"status,omitempty"`
@@ -54,23 +48,9 @@ type OpenpitrixUser struct {
 func (m *OpenpitrixUser) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateGroupID(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *OpenpitrixUser) validateGroupID(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.GroupID) { // not required
-		return nil
-	}
-
 	return nil
 }
 

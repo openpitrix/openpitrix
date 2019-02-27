@@ -19,9 +19,6 @@ type OpenpitrixModifyRoleRequest struct {
 	// description
 	Description string `json:"description,omitempty"`
 
-	// portal
-	Portal string `json:"portal,omitempty"`
-
 	// role id
 	RoleID string `json:"role_id,omitempty"`
 

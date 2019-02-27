@@ -16,8 +16,11 @@ import (
 // swagger:model openpitrixDescribeRolesResponse
 type OpenpitrixDescribeRolesResponse struct {
 
-	// role
-	Role OpenpitrixDescribeRolesResponseRole `json:"role"`
+	// role set
+	RoleSet OpenpitrixDescribeRolesResponseRoleSet `json:"role_set"`
+
+	// total count
+	TotalCount int64 `json:"total_count,omitempty"`
 }
 
 // Validate validates this openpitrix describe roles response

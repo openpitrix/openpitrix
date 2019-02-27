@@ -77,6 +77,11 @@ var (
 		en:   "email [%s] exists",
 		zhCN: "邮箱[%s]已存在",
 	}
+	ErrorEmailNotExists = ErrorMessage{
+		Name: "email_not_exists",
+		en:   "email [%s] not exists",
+		zhCN: "邮箱[%s]不存在",
+	}
 	ErrorCreateResourcesFailed = ErrorMessage{
 		Name: "create_resources_failed",
 		en:   "create resources failed",
@@ -416,5 +421,50 @@ var (
 		Name: "error_get_notification_config",
 		en:   "get notification config failed",
 		zhCN: "查看通知服务配置失败",
+	}
+	ErrorCannotDeleteUsers = ErrorMessage{
+		Name: "error_cannot_delete_users",
+		en:   "cannot delete users",
+		zhCN: "无法删除用户",
+	}
+	ErrorCannotDeleteGroups = ErrorMessage{
+		Name: "error_cannot_delete_groups",
+		en:   "cannot delete groups",
+		zhCN: "无法删除用户组",
+	}
+	ErrorGroupNotFound = ErrorMessage{
+		Name: "error_group_not_found",
+		en:   "group [%s] not found",
+		zhCN: "没有找到用户组[%s]",
+	}
+	ErrorGroupAccessDenied = ErrorMessage{
+		Name: "error_group_access_denied",
+		en:   "access denied for group [%s]",
+		zhCN: "拒绝访问用户组[%s]",
+	}
+	ErrorUserNotFound = ErrorMessage{
+		Name: "error_user_not_found",
+		en:   "user [%s] not found",
+		zhCN: "没有找到用户[%s]",
+	}
+	ErrorUserAccessDenied = ErrorMessage{
+		Name: "error_user_access_denied",
+		en:   "access denied for user [%s]",
+		zhCN: "拒绝访问用户[%s]",
+	}
+	ErrorCannotJoinGroup = ErrorMessage{
+		Name: "error_cannot_join_group",
+		en:   "cannot join group",
+		zhCN: "无法加入用户组",
+	}
+	ErrorCannotLeaveGroup = ErrorMessage{
+		Name: "error_cannot_leave_group",
+		en:   "cannot leave group",
+		zhCN: "无法离开用户组",
+	}
+	ErrorCannotCreateUserWithRole = ErrorMessage{
+		Name: "error_cannot_create_user_with_role",
+		en:   "cannot create user with role [%s]",
+		zhCN: "无法创建[%]角色的用户",
 	}
 )

@@ -5,11 +5,8 @@
 package am
 
 import (
-	"context"
-
-	pbam "openpitrix.io/iam/pkg/pb/am"
+	pbam "openpitrix.io/iam/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/constants"
-	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/manager"
 )
 
@@ -26,19 +23,4 @@ func NewClient() (*Client, error) {
 	return &Client{
 		AccessManagerClient: pbam.NewAccessManagerClient(conn),
 	}, nil
-}
-
-func GetRoleUsers(ctx context.Context, roles []string) ([]*pbam.UserWithRole, error) {
-	client, err := NewClient()
-	if err != nil {
-		logger.Error(ctx, "Failed to create am client: %+v", err)
-		return nil, err
-	}
-	response, err := client.DescribeUsersWithRole(ctx, &pbam.DescribeUsersWithRoleRequest{
-		RoleId: roles,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return response.User, err
 }

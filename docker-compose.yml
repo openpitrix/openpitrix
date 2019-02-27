@@ -5,6 +5,26 @@
 version: '3'
 
 services:
+  openpitrix-im-db-init:
+    image: "kubespheredev/im:flyway"
+    environment:
+      - PASSWORD=${MYSQL_ROOT_PASSWORD}
+    entrypoint: sh
+    command: -c "/flyway/sql/ddl/ddl_init.sh -hopenpitrix-db -uroot --connect-timeout=5"
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-im-db-init"
+
+  openpitrix-am-db-init:
+    image: "openpitrix/iam:flyway"
+    environment:
+      - PASSWORD=${MYSQL_ROOT_PASSWORD}
+    entrypoint: sh
+    command: -c "/flyway/sql/ddl/ddl_init.sh -hopenpitrix-db -uroot --connect-timeout=5"
+    depends_on:
+      - openpitrix-db
+    container_name: "openpitrix-am-db-init"
+
   openpitrix-db-init:
     image: "openpitrix/notification:flyway"
     environment:
@@ -14,7 +34,8 @@ services:
       - ./pkg/db/ddl:/docker-entrypoint-initdb.d
     command: -c "cp /docker-entrypoint-initdb.d/*.sql /flyway/sql/ddl/; /flyway/sql/ddl/ddl_init.sh -hopenpitrix-db -uroot --connect-timeout=5"
     depends_on:
-      - openpitrix-db
+      - openpitrix-im-db-init
+      - openpitrix-am-db-init
     container_name: "openpitrix-db-init"
 
   openpitrix-db:
@@ -63,7 +84,7 @@ services:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
   openpitrix-dashboard:
-    image: "openpitrix/dashboard"
+    image: "openpitrix/dashboard:latest"
     ports:
      - "8000:8000"
     container_name: "openpitrix-dashboard"
@@ -264,7 +285,7 @@ services:
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   openpitrix-rp-qingcloud:
-    image: "openpitrix/runtime-provider-qingcloud"
+    image: "openpitrix/runtime-provider-qingcloud:latest"
     command: "runtime-provider"
     links:
       - openpitrix-db:openpitrix-db
@@ -283,7 +304,7 @@ services:
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   openpitrix-rp-aws:
-    image: "openpitrix/runtime-provider-aws"
+    image: "openpitrix/runtime-provider-aws:latest"
     command: "runtime-provider"
     links:
       - openpitrix-db:openpitrix-db
@@ -302,7 +323,7 @@ services:
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   openpitrix-rp-aliyun:
-    image: "openpitrix/runtime-provider-aliyun"
+    image: "openpitrix/runtime-provider-aliyun:latest"
     command: "runtime-provider"
     links:
       - openpitrix-db:openpitrix-db
@@ -321,7 +342,7 @@ services:
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
 
   openpitrix-rp-kubernetes:
-    image: "openpitrix/runtime-provider-kubernetes"
+    image: "openpitrix/runtime-provider-kubernetes:latest"
     command: "runtime-provider"
     links:
       - openpitrix-db:openpitrix-db
@@ -473,39 +494,64 @@ services:
 
   # im service
   openpitrix-im-service:
-    image: "openpitrix/iam:latest"
-    command: "im"
+    image: "kubespheredev/im:latest"
+    command: "im serve"
     links:
       - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-im-db-ctrl
+      - openpitrix-etcd
     container_name: "openpitrix-im-service"
     environment:
-      - OPENPITRIX_IM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
-      - OPENPITRIX_IM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
-      - OPENPITRIX_IM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - OPENPITRIX_MYSQL_DATABASE=im
+      - IM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - IM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - IM_DB_DATABASE=im
+      - IM_DB_HOST=openpitrix-db
+      - IM_DB_LOG_MODE_ENABLE=true
     logging:
       driver: "json-file"
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-im-db-ctrl:
+    image: kubespheredev/im:flyway
+    command: -url=jdbc:mysql://openpitrix-db/im -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db-init
+    container_name: "openpitrix-im-db-ctrl"
 
   # am service
   openpitrix-am-service:
     image: "openpitrix/iam:latest"
-    command: "am"
+    command: "am serve"
     links:
       - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-am-db-ctrl
+      - openpitrix-etcd
     container_name: "openpitrix-am-service"
     environment:
-      - OPENPITRIX_AM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
-      - OPENPITRIX_AM_GRPC_SHOW_ERROR_CAUSE=${OPENPITRIX_GRPC_SHOW_ERROR_CAUSE}
-      - OPENPITRIX_AM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - OPENPITRIX_MYSQL_DATABASE=am
+      - AM_LOG_LEVEL=${OPENPITRIX_LOG_LEVEL}
+      - AM_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - AM_IM_HOST=openpitrix-im-service
+      - AM_DB_DATABASE=am
+      - AM_DB_HOST=openpitrix-db
+      - AM_DB_LOG_MODE_ENABLE=true
     logging:
       driver: "json-file"
       options:
         max-size: ${OPENPITRIX_LOG_MAX_SIZE}
         max-file: ${OPENPITRIX_LOG_MAX_FILE}
+  openpitrix-am-db-ctrl:
+    image: openpitrix/iam:flyway
+    command: -url=jdbc:mysql://openpitrix-db/am -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    links:
+      - openpitrix-db:openpitrix-db
+    depends_on:
+      - openpitrix-db-init
+    container_name: "openpitrix-am-db-ctrl"
 
   # pilot service
   openpitrix-pilot-service:

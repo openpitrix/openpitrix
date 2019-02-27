@@ -12,15 +12,15 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixModuleFeature openpitrix module feature
-// swagger:model openpitrixModuleFeature
-type OpenpitrixModuleFeature struct {
+// OpenpitrixFeature openpitrix feature
+// swagger:model openpitrixFeature
+type OpenpitrixFeature struct {
 
-	// action bundle
-	ActionBundle OpenpitrixModuleFeatureActionBundleOAIGen `json:"action_bundle"`
+	// action bundle set
+	ActionBundleSet OpenpitrixFeatureActionBundleSet `json:"action_bundle_set"`
 
-	// checked action id
-	CheckedActionID []string `json:"checked_action_id"`
+	// checked action bundle id set
+	CheckedActionBundleIDSet []string `json:"checked_action_bundle_id_set"`
 
 	// feature id
 	FeatureID string `json:"feature_id,omitempty"`
@@ -29,11 +29,11 @@ type OpenpitrixModuleFeature struct {
 	FeatureName string `json:"feature_name,omitempty"`
 }
 
-// Validate validates this openpitrix module feature
-func (m *OpenpitrixModuleFeature) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix feature
+func (m *OpenpitrixFeature) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateCheckedActionID(formats); err != nil {
+	if err := m.validateCheckedActionBundleIDSet(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -44,9 +44,9 @@ func (m *OpenpitrixModuleFeature) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *OpenpitrixModuleFeature) validateCheckedActionID(formats strfmt.Registry) error {
+func (m *OpenpitrixFeature) validateCheckedActionBundleIDSet(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.CheckedActionID) { // not required
+	if swag.IsZero(m.CheckedActionBundleIDSet) { // not required
 		return nil
 	}
 
@@ -54,7 +54,7 @@ func (m *OpenpitrixModuleFeature) validateCheckedActionID(formats strfmt.Registr
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixModuleFeature) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixFeature) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -62,8 +62,8 @@ func (m *OpenpitrixModuleFeature) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixModuleFeature) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixModuleFeature
+func (m *OpenpitrixFeature) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixFeature
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

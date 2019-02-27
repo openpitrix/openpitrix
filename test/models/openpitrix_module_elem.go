@@ -12,15 +12,15 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixRoleModuleElem openpitrix role module elem
-// swagger:model openpitrixRoleModuleElem
-type OpenpitrixRoleModuleElem struct {
+// OpenpitrixModuleElem openpitrix module elem
+// swagger:model openpitrixModuleElem
+type OpenpitrixModuleElem struct {
 
 	// data level
 	DataLevel string `json:"data_level,omitempty"`
 
-	// feature
-	Feature OpenpitrixRoleModuleElemFeature `json:"feature"`
+	// feature set
+	FeatureSet OpenpitrixModuleElemFeatureSet `json:"feature_set"`
 
 	// is check all
 	IsCheckAll bool `json:"is_check_all,omitempty"`
@@ -30,13 +30,10 @@ type OpenpitrixRoleModuleElem struct {
 
 	// module name
 	ModuleName string `json:"module_name,omitempty"`
-
-	// owner
-	Owner string `json:"owner,omitempty"`
 }
 
-// Validate validates this openpitrix role module elem
-func (m *OpenpitrixRoleModuleElem) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix module elem
+func (m *OpenpitrixModuleElem) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -46,7 +43,7 @@ func (m *OpenpitrixRoleModuleElem) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixRoleModuleElem) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixModuleElem) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -54,8 +51,8 @@ func (m *OpenpitrixRoleModuleElem) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixRoleModuleElem) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixRoleModuleElem
+func (m *OpenpitrixModuleElem) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixModuleElem
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
