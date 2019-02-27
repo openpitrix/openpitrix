@@ -83,7 +83,7 @@ func createAndJoinRootGroup(ctx context.Context, userId string) error {
 		GroupId: groupId,
 		Extra: map[string]string{
 			OwnerKey:     userId,
-			OwnerPathKey: groupId,
+			OwnerPathKey: groupId + ":" + userId,
 		},
 	})
 	if err != nil {
