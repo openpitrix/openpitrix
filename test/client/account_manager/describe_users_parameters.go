@@ -77,6 +77,8 @@ type DescribeUsersParams struct {
 	Reverse *bool
 	/*RoleID*/
 	RoleID []string
+	/*RootGroupID*/
+	RootGroupID []string
 	/*SearchWord*/
 	SearchWord *string
 	/*SortKey*/
@@ -201,6 +203,17 @@ func (o *DescribeUsersParams) WithRoleID(roleID []string) *DescribeUsersParams {
 // SetRoleID adds the roleId to the describe users params
 func (o *DescribeUsersParams) SetRoleID(roleID []string) {
 	o.RoleID = roleID
+}
+
+// WithRootGroupID adds the rootGroupID to the describe users params
+func (o *DescribeUsersParams) WithRootGroupID(rootGroupID []string) *DescribeUsersParams {
+	o.SetRootGroupID(rootGroupID)
+	return o
+}
+
+// SetRootGroupID adds the rootGroupId to the describe users params
+func (o *DescribeUsersParams) SetRootGroupID(rootGroupID []string) {
+	o.RootGroupID = rootGroupID
 }
 
 // WithSearchWord adds the searchWord to the describe users params
@@ -343,6 +356,14 @@ func (o *DescribeUsersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	joinedRoleID := swag.JoinByFormat(valuesRoleID, "multi")
 	// query array param role_id
 	if err := r.SetQueryParam("role_id", joinedRoleID...); err != nil {
+		return err
+	}
+
+	valuesRootGroupID := o.RootGroupID
+
+	joinedRootGroupID := swag.JoinByFormat(valuesRootGroupID, "multi")
+	// query array param root_group_id
+	if err := r.SetQueryParam("root_group_id", joinedRootGroupID...); err != nil {
 		return err
 	}
 

@@ -101,20 +101,30 @@ func createAndJoinRootGroup(ctx context.Context, userId string) error {
 	return nil
 }
 
+func getSystemUserId(ctx context.Context) (string, error) {
+	var userId string
+	getRoleWithUserResponse, err := amClient.GetRoleWithUser(ctx, &pbam.GetRoleRequest{
+		RoleId: constants.RoleGlobalAdmin,
+	})
+	if err != nil {
+		return userId, err
+	}
+	if len(getRoleWithUserResponse.Role.UserIdSet) == 0 {
+		return userId, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
+	}
+	userId = getRoleWithUserResponse.Role.UserIdSet[0]
+	return userId, nil
+}
+
 func getRootGroupId(ctx context.Context, userId string) (string, error) {
 	var rootGroupId string
 
 	if userId == constants.UserSystem {
-		getRoleWithUserResponse, err := amClient.GetRoleWithUser(ctx, &pbam.GetRoleRequest{
-			RoleId: constants.RoleGlobalAdmin,
-		})
+		var err error
+		userId, err = getSystemUserId(ctx)
 		if err != nil {
 			return rootGroupId, err
 		}
-		if len(getRoleWithUserResponse.Role.UserIdSet) == 0 {
-			return rootGroupId, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
-		}
-		userId = getRoleWithUserResponse.Role.UserIdSet[0]
 	}
 
 	getUserWithGroupRes, err := imClient.GetUserWithGroup(ctx, &pbim.GetUserRequest{
@@ -164,11 +174,18 @@ func (p *Server) DescribeUsers(ctx context.Context, req *pb.DescribeUsersRequest
 	}
 
 	var rootGroupIds []string
-	if senderPortal != constants.PortalGlobalAdmin {
-		rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(req.GetRootGroupId()) > 0 {
+		err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
 		if err != nil {
 			return nil, err
 		}
+		rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
+	} else if senderPortal != constants.PortalGlobalAdmin {
 		rootGroupIds = append(rootGroupIds, rootGroupId)
 	}
 
@@ -224,11 +241,18 @@ func (p *Server) DescribeUsersDetail(ctx context.Context, req *pb.DescribeUsersR
 	}
 
 	var rootGroupIds []string
-	if senderPortal != constants.PortalGlobalAdmin {
-		rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	rootGroupId, err := getRootGroupId(ctx, s.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(req.GetRootGroupId()) > 0 {
+		err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
 		if err != nil {
 			return nil, err
 		}
+		rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
+	} else if senderPortal != constants.PortalGlobalAdmin {
 		rootGroupIds = append(rootGroupIds, rootGroupId)
 	}
 
@@ -299,7 +323,16 @@ func (p *Server) DescribeGroups(ctx context.Context, req *pb.DescribeGroupsReque
 	if err != nil {
 		return nil, err
 	}
-	rootGroupIds = append(rootGroupIds, rootGroupId)
+
+	if len(req.GetRootGroupId()) > 0 {
+		err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
+		if err != nil {
+			return nil, err
+		}
+		rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
+	} else {
+		rootGroupIds = append(rootGroupIds, rootGroupId)
+	}
 
 	res, err := imClient.ListGroups(ctx, &pbim.ListGroupsRequest{
 		Limit:         uint32(limit),
@@ -336,7 +369,22 @@ func (p *Server) DescribeGroupsDetail(ctx context.Context, req *pb.DescribeGroup
 	if err != nil {
 		return nil, err
 	}
-	rootGroupIds = append(rootGroupIds, rootGroupId)
+
+	if len(req.GetRootGroupId()) > 0 {
+		err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
+		if err != nil {
+			return nil, err
+		}
+		rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
+	} else {
+		rootGroupIds = append(rootGroupIds, rootGroupId)
+	}
+
+	err = CheckRootGroupIds(ctx, req.GetRootGroupId(), rootGroupId)
+	if err != nil {
+		return nil, err
+	}
+	rootGroupIds = append(rootGroupIds, req.GetRootGroupId()...)
 
 	res, err := imClient.ListGroupsWithUser(ctx, &pbim.ListGroupsRequest{
 		Limit:         uint32(limit),

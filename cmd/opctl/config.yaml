@@ -164,6 +164,8 @@
       type: '[]string'
     reverse:
       type: boolean
+    root_group_id:
+      type: '[]string'
     search_word:
       type: string
     sort_key:
@@ -188,6 +190,8 @@
       type: '[]string'
     reverse:
       type: boolean
+    root_group_id:
+      type: '[]string'
     search_word:
       type: string
     sort_key:
@@ -211,6 +215,8 @@
     reverse:
       type: boolean
     role_id:
+      type: '[]string'
+    root_group_id:
       type: '[]string'
     search_word:
       type: string
@@ -239,6 +245,8 @@
     reverse:
       type: boolean
     role_id:
+      type: '[]string'
+    root_group_id:
       type: '[]string'
     search_word:
       type: string

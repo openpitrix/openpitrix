@@ -180,13 +180,14 @@ message DescribeUsersRequest {
 	uint32 limit = 4;
 	uint32 offset = 5;
 
-	repeated string group_id = 11;
-	repeated string user_id = 12;
-	repeated string status = 13;
-	repeated string role_id = 14;
-	repeated string username = 15;
-	repeated string email = 16;
-	repeated string phone_number = 17;
+	repeated string root_group_id = 6;
+	repeated string group_id = 7;
+	repeated string user_id = 8;
+	repeated string status = 9;
+	repeated string role_id = 10;
+	repeated string username = 11;
+	repeated string email = 12;
+	repeated string phone_number = 13;
 }
 
 message DescribeUsersResponse {
@@ -287,11 +288,12 @@ message DescribeGroupsRequest {
 	uint32 limit = 4;
 	uint32 offset = 5;
 
-	repeated string parent_group_id = 6;
-	repeated string group_id = 7;
-	repeated string group_path = 8;
-	repeated string group_name = 9;
-	repeated string status = 10;
+	repeated string root_group_id = 6;
+	repeated string parent_group_id = 7;
+	repeated string group_id = 8;
+	repeated string group_path = 9;
+	repeated string group_name = 10;
+	repeated string status = 11;
 }
 
 message DescribeGroupsResponse {
