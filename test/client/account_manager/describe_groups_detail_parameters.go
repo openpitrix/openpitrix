@@ -77,6 +77,8 @@ type DescribeGroupsDetailParams struct {
 	ParentGroupID []string
 	/*Reverse*/
 	Reverse *bool
+	/*RootGroupID*/
+	RootGroupID []string
 	/*SearchWord*/
 	SearchWord *string
 	/*SortKey*/
@@ -199,6 +201,17 @@ func (o *DescribeGroupsDetailParams) SetReverse(reverse *bool) {
 	o.Reverse = reverse
 }
 
+// WithRootGroupID adds the rootGroupID to the describe groups detail params
+func (o *DescribeGroupsDetailParams) WithRootGroupID(rootGroupID []string) *DescribeGroupsDetailParams {
+	o.SetRootGroupID(rootGroupID)
+	return o
+}
+
+// SetRootGroupID adds the rootGroupId to the describe groups detail params
+func (o *DescribeGroupsDetailParams) SetRootGroupID(rootGroupID []string) {
+	o.RootGroupID = rootGroupID
+}
+
 // WithSearchWord adds the searchWord to the describe groups detail params
 func (o *DescribeGroupsDetailParams) WithSearchWord(searchWord *string) *DescribeGroupsDetailParams {
 	o.SetSearchWord(searchWord)
@@ -318,6 +331,14 @@ func (o *DescribeGroupsDetailParams) WriteToRequest(r runtime.ClientRequest, reg
 			}
 		}
 
+	}
+
+	valuesRootGroupID := o.RootGroupID
+
+	joinedRootGroupID := swag.JoinByFormat(valuesRootGroupID, "multi")
+	// query array param root_group_id
+	if err := r.SetQueryParam("root_group_id", joinedRootGroupID...); err != nil {
+		return err
 	}
 
 	if o.SearchWord != nil {

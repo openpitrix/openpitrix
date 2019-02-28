@@ -100,6 +100,16 @@ var Files = map[string]string{
             "format": "int64"
           },
           {
+            "name": "root_group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "parent_group_id",
             "in": "query",
             "required": false,
@@ -324,6 +334,16 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "root_group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "parent_group_id",
@@ -792,6 +812,16 @@ var Files = map[string]string{
             "format": "int64"
           },
           {
+            "name": "root_group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "group_id",
             "in": "query",
             "required": false,
@@ -1084,6 +1114,16 @@ var Files = map[string]string{
             "required": false,
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "root_group_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "group_id",

@@ -6,6 +6,7 @@ package account
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	pbim "kubesphere.io/im/pkg/pb"
@@ -64,4 +65,20 @@ func CheckUsersPermission(ctx context.Context, userIds []string) ([]*pbim.UserWi
 		}
 	}
 	return listUsersWithGroupResponse.UserSet, nil
+}
+
+func CheckRootGroupIds(ctx context.Context, checkGroupIds []string, rootGroupId string) error {
+	listGroupsResponse, err := imClient.ListGroups(ctx, &pbim.ListGroupsRequest{
+		GroupId: checkGroupIds,
+	})
+	if err != nil {
+		return err
+	}
+	for _, group := range listGroupsResponse.GroupSet {
+		if !strings.HasPrefix(group.GroupPath, rootGroupId) {
+			err = fmt.Errorf("invalid root group id [%s]", group.GroupId)
+			return gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
+		}
+	}
+	return nil
 }
