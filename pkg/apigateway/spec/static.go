@@ -10501,6 +10501,9 @@ var Files = map[string]string{
       "properties": {
         "notification_config": {
           "$ref": "#/definitions/openpitrixNotificationConfig"
+        },
+        "runtime_config": {
+          "$ref": "#/definitions/openpitrixRuntimeConfig"
         }
       }
     },
@@ -10512,11 +10515,37 @@ var Files = map[string]string{
         }
       }
     },
+    "openpitrixRuntimeConfig": {
+      "type": "object",
+      "properties": {
+        "config_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixRuntimeItemConfig"
+          }
+        }
+      }
+    },
+    "openpitrixRuntimeItemConfig": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "enable": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
     "openpitrixSetServiceConfigRequest": {
       "type": "object",
       "properties": {
         "notification_config": {
           "$ref": "#/definitions/openpitrixNotificationConfig"
+        },
+        "runtime_config": {
+          "$ref": "#/definitions/openpitrixRuntimeConfig"
         }
       }
     },

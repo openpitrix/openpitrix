@@ -13,6 +13,7 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/pi"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
@@ -57,6 +58,20 @@ func (p *Server) SetServiceConfig(ctx context.Context, req *pb.SetServiceConfigR
 		if !response.GetIsSucc().GetValue() {
 			return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorSetNotificationConfig)
 		}
+	} else if req.RuntimeConfig != nil {
+		for _, config := range req.RuntimeConfig.ConfigSet {
+			name := config.GetName().GetValue()
+			enable := config.GetEnable().GetValue()
+			runtimeProviderConfig, isExist := pi.Global().GlobalConfig().Runtime[name]
+			if !isExist {
+				return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorUnsupportedRuntimeProvider, name)
+			}
+			runtimeProviderConfig.Enable = enable
+		}
+		err := pi.Global().SetGlobalCfg(ctx)
+		if err != nil {
+			return nil, gerr.New(ctx, gerr.Internal, gerr.ErrorSetNotificationConfig)
+		}
 	} else {
 		err := fmt.Errorf("need service config to set")
 		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorSetServiceConfig)
@@ -88,6 +103,17 @@ func (p *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 				return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorGetNotificationConfig)
 			}
 			serviceConfigResponse.NotificationConfig = NfToOpConfig(response)
+		case constants.ServiceTypeRuntime:
+			var configs []*pb.RuntimeItemConfig
+			for name, runtimeProviderConfig := range pi.Global().GlobalConfig().Runtime {
+				configs = append(configs, &pb.RuntimeItemConfig{
+					Name:   pbutil.ToProtoString(name),
+					Enable: pbutil.ToProtoBool(runtimeProviderConfig.Enable),
+				})
+			}
+			serviceConfigResponse.RuntimeConfig = &pb.RuntimeConfig{
+				ConfigSet: configs,
+			}
 		}
 	}
 	return serviceConfigResponse, nil
