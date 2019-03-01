@@ -8,10 +8,10 @@ CREATE TABLE IF NOT EXISTS combination_spu (
 	spu_ids            JSON        NOT NULL
 	COMMENT 'combination spu ids',
 	create_time        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	update_time        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	status_time        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status             VARCHAR(16) DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
+	status             VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted',
 	PRIMARY KEY (combination_spu_id)
 );
 
@@ -25,10 +25,10 @@ CREATE TABLE IF NOT EXISTS combination_sku (
 	metering_attribute_ids JSON        NOT NULL
 	COMMENT 'sku metering attributes of spu: {spuId:[attId, ..], ..}',
 	create_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	update_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	status_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status                 VARCHAR(16) DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
+	status                 VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted',
 	PRIMARY KEY (combination_sku_id)
 );
 
@@ -41,10 +41,10 @@ CREATE TABLE IF NOT EXISTS combination_price (
 	prices               JSON COMMENT '{upto: price1, ...}',
 	currency             VARCHAR(50) NOT NULL  DEFAULT 'cny',
 	create_time          TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
-	update_time          TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
+	status_time          TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status               VARCHAR(16)           DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
+	status               VARCHAR(16)           DEFAULT 'active'
+	COMMENT 'active, deleted',
 	INDEX price_sku_index (combination_price_id, combination_sku_id),
 	PRIMARY KEY (combination_price_id)
 );
@@ -60,10 +60,10 @@ CREATE TABLE IF NOT EXISTS probation_sku (
 	COMMENT 'sku attributes of resource_attribute: [attributeId, ...]',
 	limit_num              INT         NOT NULL DEFAULT 1,
 	create_time            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
-	update_time            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
+	status_time            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status                 VARCHAR(16)          DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
+	status                 VARCHAR(16)          DEFAULT 'active'
+	COMMENT 'active, deleted',
 	PRIMARY KEY (probation_sku_id)
 );
 
@@ -88,8 +88,8 @@ CREATE TABLE IF NOT EXISTS dicount (
 	start_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
 	end_time         TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
 	create_time      TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	status           VARCHAR(16) DEFAULT 'in_use'
-	COMMENT 'in_use, deleted, overtime',
+	status           VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted, overtime',
 	mark             TEXT,
 	PRIMARY KEY (discount_id)
 );
@@ -105,8 +105,8 @@ CREATE TABLE IF NOT EXISTS coupon (
 	start_time  TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
 	end_time    TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
 	create_time TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
-	status      VARCHAR(16)            DEFAULT 'in_use'
-	COMMENT 'in_use, deleted, overtime',
+	status      VARCHAR(16)            DEFAULT 'active'
+	COMMENT 'active, deleted, overtime',
 	mark        TEXT,
 	PRIMARY KEY (coupon_id)
 );
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS coupon_received (
 	user_id            VARCHAR(50)   NOT NULL,
 	balance            DECIMAL(8, 2) NOT NULL,
 	status             VARCHAR(16) DEFAULT 'received'
-	COMMENT 'received, in_use, overtime',
+	COMMENT 'received, active, overtime',
 	create_time        TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (coupon_received_id)
 );

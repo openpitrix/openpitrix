@@ -2,13 +2,12 @@
 CREATE TABLE IF NOT EXISTS attribute_name (
 	attribute_name_id VARCHAR(50)  NOT NULL UNIQUE,
 	name              VARCHAR(255) NOT NULL,
-	display_name      VARCHAR(255),
+	status            VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted',
 	create_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	update_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	status_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status            VARCHAR(16) DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
-	remark            TEXT,
+	description       TEXT,
 	PRIMARY KEY (attribute_name_id)
 );
 
@@ -16,12 +15,11 @@ CREATE TABLE IF NOT EXISTS attribute_name (
 CREATE TABLE IF NOT EXISTS attribute_unit (
 	attribute_unit_id VARCHAR(50) NOT NULL UNIQUE,
 	name              VARCHAR(30) NOT NULL,
-	display_name      VARCHAR(30) NOT NULL,
+	status            VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted',
 	create_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	update_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	status_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status            VARCHAR(16) DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
 	PRIMARY KEY (attribute_unit_id)
 );
 
@@ -30,15 +28,13 @@ CREATE TABLE IF NOT EXISTS attribute (
 	attribute_id      VARCHAR(50)  NOT NULL UNIQUE,
 	attribute_name_id VARCHAR(50)  NOT NULL,
 	attribute_unit_id VARCHAR(50),
-	min_value         INT          NULL,
-	max_value         INT          NULL
-	COMMENT 'the attribute value, support scope of value (min_value, max_value]; NULL: max',
-	str_value         VARCHAR(255) NULL,
+	value             VARCHAR(255) NOT NULL
+	COMMENT 'attribute value, the types: single int value, scope of value (min_value, max_value], string value',
 	create_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	update_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	status_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status            VARCHAR(16) DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
+	status            VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted',
 	PRIMARY KEY (attribute_id)
 );
 
@@ -50,10 +46,10 @@ CREATE TABLE IF NOT EXISTS spu (
 	metering_attribute_name_ids JSON        NOT NULL
 	COMMENT 'the attribute_name ids need to metering and billing',
 	create_time                 TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	update_time                 TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	status_time                 TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status                      VARCHAR(16) DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
+	status                      VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted',
 	PRIMARY KEY (spu_id)
 );
 
@@ -64,10 +60,10 @@ CREATE TABLE IF NOT EXISTS sku (
 	attribute_ids          JSON COMMENT 'sku attributes with value of spu.',
 	metering_attribute_ids JSON        NOT NULL,
 	create_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	update_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	status_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status                 VARCHAR(16) DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
+	status                 VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted',
 	PRIMARY KEY (sku_id)
 );
 
@@ -79,10 +75,10 @@ CREATE TABLE IF NOT EXISTS price (
 	prices       JSON COMMENT '{upto: price1, ...}',
 	currency     VARCHAR(10) NOT NULL  DEFAULT 'cny',
 	create_time  TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
-	update_time  TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
+	status_time  TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status       VARCHAR(16)           DEFAULT 'in_use'
-	COMMENT 'in_use, deleted',
+	status       VARCHAR(16)           DEFAULT 'active'
+	COMMENT 'active, deleted',
 	INDEX price_sku_index (sku_id, price_id),
 	PRIMARY KEY (price_id)
 );
@@ -103,11 +99,11 @@ CREATE TABLE IF NOT EXISTS leasing (
 	update_duration_time TIMESTAMP   NULL,
 	renewal_time         TIMESTAMP   NULL,
 	create_time          TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
-	update_time          TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
+	status_time          TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
 	close_time           JSON COMMENT '[{close_time: restart_time}, ..]',
-	status               VARCHAR(16)          DEFAULT 'in_use'
-	COMMENT 'in_use, handClosed, forceClosed',
+	status               VARCHAR(16)          DEFAULT 'active'
+	COMMENT 'active, handClosed, forceClosed',
 	PRIMARY KEY (leasing_id)
 );
 
@@ -138,7 +134,7 @@ CREATE TABLE IF NOT EXISTS leasing_contract (
 	metering_values JSON          NOT NULL,
 	start_time      TIMESTAMP     NULL
 	COMMENT 'same as leasing_time',
-	update_time     TIMESTAMP     NULL,
+	status_time     TIMESTAMP     NULL,
 	create_time     TIMESTAMP              DEFAULT CURRENT_TIMESTAMP,
 	fee_info        TEXT,
 	fee             DECIMAL(8, 2) NOT NULL
@@ -238,11 +234,11 @@ CREATE TABLE IF NOT EXISTS account (
 );
 
 #Init data about duration
-INSERT INTO attribute_name (attribute_name_id, name, display_name, remark)
-VALUES ("att-name-000001", "duration", "时长", "default attribute: duration");
+INSERT INTO attribute_name (attribute_name_id, name, description)
+VALUES ("att-name-000001", "duration", "default attribute: duration");
 
-INSERT INTO attribute_unit (attribute_unit_id, name, display_name)
-VALUES ("att-unit-000001", "hour", "小时"), ("att-unit-000002", "month", "月"), ("att-unit-000003", "year", "年");
+INSERT INTO attribute_unit (attribute_unit_id, name)
+VALUES ("att-unit-000001", "hour"), ("att-unit-000002", "month"), ("att-unit-000003", "year");
 
 INSERT INTO attribute (attribute_id, attribute_name_id, attribute_unit_id, min_value, max_value)
 VALUES ("att-000001", "att-name-000001", "att-unit-000001", 1, 1),

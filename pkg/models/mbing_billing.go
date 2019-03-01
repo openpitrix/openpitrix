@@ -15,7 +15,7 @@ type LeasingContract struct {
 	UserId         string
 	MeteringValues map[string]interface{}
 	StartTime      time.Time
-	UpdateTime     time.Time
+	StatusTime     time.Time
 	CreateTime     time.Time
 	FeeInfo        string
 	Fee            float32

@@ -41,31 +41,27 @@ func NewPriceId() string {
 type AttributeName struct {
 	AttributeNameId string
 	Name            string
-	DisplayName     string
 	CreateTime      time.Time
-	UpdateTime      time.Time
+	StatusTime      time.Time
 	Status          string
-	Remark          string
+	Description     string
 }
 
-
-func NewAttributeName(name, displayName, remark string) *AttributeName {
+func NewAttributeName(name, description string) *AttributeName {
 	now := time.Now()
 	return &AttributeName{
 		AttributeNameId: NewAttributeNameId(),
 		Name:            name,
-		DisplayName:     displayName,
-		Remark:          remark,
-		Status:          constants.StatusInUse2,
+		Description:     description,
+		Status:          constants.StatusActive,
 		CreateTime:      now,
-		UpdateTime:      now,
+		StatusTime:      now,
 	}
 }
 
 func PbToAttributeName(pbAttName *pb.CreateAttributeNameRequest) *AttributeName {
 	return NewAttributeName(
 		pbAttName.GetName().GetValue(),
-		pbAttName.GetDisplayName().GetValue(),
 		pbAttName.GetRemark().GetValue(),
 	)
 }
@@ -74,36 +70,32 @@ func AttributeNameToPb(attName *AttributeName) *pb.AttributeName {
 	return &pb.AttributeName{
 		AttributeNameId: pbutil.ToProtoString(attName.AttributeNameId),
 		Name:            pbutil.ToProtoString(attName.Name),
-		DisplayName:     pbutil.ToProtoString(attName.DisplayName),
-		Remark:          pbutil.ToProtoString(attName.Remark),
+		Remark:          pbutil.ToProtoString(attName.Description),
 	}
 }
 
 type AttributeUnit struct {
 	AttributeUnitId string
 	Name            string
-	DisplayName     string
 	CreateTime      time.Time
-	UpdateTime      time.Time
+	StatusTime      time.Time
 	Status          string
 }
 
-func NewAttributeUnit(name, display string) *AttributeUnit {
+func NewAttributeUnit(name string) *AttributeUnit {
 	now := time.Now()
 	return &AttributeUnit{
 		AttributeUnitId: NewAttributeUnitId(),
 		Name:            name,
-		DisplayName:     display,
 		CreateTime:      now,
-		UpdateTime:      now,
-		Status:          constants.StatusInUse2,
+		StatusTime:      now,
+		Status:          constants.StatusActive,
 	}
 }
 
 func PbToAttributeUnit(pbAttUnit *pb.CreateAttributeUnitRequest) *AttributeUnit {
 	return NewAttributeUnit(
 		pbAttUnit.GetName().GetValue(),
-		pbAttUnit.GetDisplayName().GetValue(),
 	)
 }
 
@@ -111,7 +103,6 @@ func AttributeUnitToPb(attUnit *AttributeUnit) *pb.AttributeUnit {
 	return &pb.AttributeUnit{
 		AttributeUnitId: pbutil.ToProtoString(attUnit.AttributeUnitId),
 		Name:            pbutil.ToProtoString(attUnit.Name),
-		DisplayName:     pbutil.ToProtoString(attUnit.DisplayName),
 	}
 }
 
@@ -119,28 +110,24 @@ type Attribute struct {
 	AttributeId     string
 	AttributeNameId string
 	AttributeUnitId string
-	MinValue        uint32
-	MaxValue        uint32
-	StrValue        string
+	Value           string
 	CreateTime      time.Time
-	UpdateTime      time.Time
+	StatusTime      time.Time
 	Status          string
 }
 
 var AttributeColumns = db.GetColumnsFromStruct(&Attribute{})
 
-func NewAttribute(attNameId, attUnitId, strValue string, minValue, maxValue uint32) *Attribute {
+func NewAttribute(attNameId, attUnitId, value string) *Attribute {
 	now := time.Now()
 	return &Attribute{
 		AttributeId:     NewAttributeId(),
 		AttributeNameId: attNameId,
 		AttributeUnitId: attUnitId,
-		MinValue:        minValue,
-		MaxValue:        maxValue,
-		StrValue:        strValue,
+		Value:           value,
 		CreateTime:      now,
-		UpdateTime:      now,
-		Status:          constants.StatusInUse2,
+		StatusTime:      now,
+		Status:          constants.StatusActive,
 	}
 }
 
@@ -148,9 +135,7 @@ func PbToAttribute(pbAttribute *pb.CreateAttributeRequest) *Attribute {
 	return NewAttribute(
 		pbAttribute.GetAttributeNameId().GetValue(),
 		pbAttribute.GetAttributeUnitId().GetValue(),
-		pbAttribute.GetStrValue().GetValue(),
-		pbAttribute.GetMinValue().GetValue(),
-		pbAttribute.GetMaxValue().GetValue(),
+		pbAttribute.GetValue().GetValue(),
 	)
 }
 
@@ -159,9 +144,7 @@ func AttributeToPb(att *Attribute) *pb.Attribute {
 		AttributeId:     pbutil.ToProtoString(att.AttributeId),
 		AttributeNameId: pbutil.ToProtoString(att.AttributeNameId),
 		AttributeUnitId: pbutil.ToProtoString(att.AttributeUnitId),
-		MinValue:        pbutil.ToProtoUInt32(att.MinValue),
-		MaxValue:        pbutil.ToProtoUInt32(att.MaxValue),
-		StrValue:        pbutil.ToProtoString(att.StrValue),
+		Value:           pbutil.ToProtoString(att.Value),
 	}
 }
 
@@ -172,7 +155,7 @@ type Spu struct {
 	AttributeNameIds         []string
 	MeteringAttributeNameIds []string
 	CreateTime               time.Time
-	UpdateTime               time.Time
+	StatusTime               time.Time
 	Status                   string
 }
 
@@ -184,8 +167,8 @@ func NewSpu(resourceVersionId string, attNameIds, meteringAttNameIds []string) *
 		AttributeNameIds:         attNameIds,
 		MeteringAttributeNameIds: meteringAttNameIds,
 		CreateTime:               now,
-		UpdateTime:               now,
-		Status:                   constants.StatusInUse2,
+		StatusTime:               now,
+		Status:                   constants.StatusActive,
 	}
 }
 
@@ -204,7 +187,7 @@ type Sku struct {
 	AttributeIds         []string
 	MeteringAttributeIds []string
 	CreateTime           time.Time
-	UpdateTime           time.Time
+	StatusTime           time.Time
 	Status               string
 }
 
@@ -216,8 +199,8 @@ func NewSku(spuId string, attributeIds, meteringAttIds []string) *Sku {
 		AttributeIds:         attributeIds,
 		MeteringAttributeIds: meteringAttIds,
 		CreateTime:           now,
-		UpdateTime:           now,
-		Status:               constants.StatusInUse2,
+		StatusTime:           now,
+		Status:               constants.StatusActive,
 	}
 }
 
@@ -236,7 +219,7 @@ type Price struct {
 	Prices      map[string]float64
 	currency    string
 	CreateTime  time.Time
-	UpdateTime  time.Time
+	StatusTime  time.Time
 	Status      string
 }
 
@@ -249,8 +232,8 @@ func NewPrice(skuId, attId, currency string, prices map[string]float64) *Price {
 		Prices:      prices,
 		currency:    currency,
 		CreateTime:  now,
-		UpdateTime:  now,
-		Status:      constants.StatusInUse2,
+		StatusTime:  now,
+		Status:      constants.StatusActive,
 	}
 }
 

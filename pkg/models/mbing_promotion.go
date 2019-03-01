@@ -45,7 +45,7 @@ type CombinationSpu struct {
 	CombinationSpuId string
 	SpuIds           []string //the id slice of spu
 	CreateTime       time.Time
-	UpdateTime       time.Time
+	StatusTime       time.Time
 	Status           string
 }
 
@@ -62,7 +62,7 @@ type CombinationSku struct {
 	AttributeIds         map[string][]string //[resourceVersionId: [attributeId, ..], ..}
 	MeteringAttributeIds map[string][]string //[resourceVersionId: [attributeId, ..], ..}
 	CreateTime           time.Time
-	UpdateTime           time.Time
+	StatusTime           time.Time
 	Status               string
 }
 
@@ -74,8 +74,8 @@ func NewCombinationSku(comSpuId string, attributeIds, meteringAttributeIds map[s
 		AttributeIds:  attributeIds,
 		MeteringAttributeIds: meteringAttributeIds,
 		CreateTime: now,
-		UpdateTime: now,
-		Status: constants.StatusInUse2,
+		StatusTime: now,
+		Status: constants.StatusActive,
 	}
 }
 
@@ -109,7 +109,7 @@ type CombinationPrice struct {
 	Prices             map[string]float64 //StepPrice: {upto: price, ..}
 	Currency           string
 	CreateTime         time.Time
-	UpdateTime         time.Time
+	StatusTime         time.Time
 	Status             string
 }
 
@@ -131,7 +131,7 @@ type ProbationSku struct {
 	MeteringAttributeIds []string //the meaning of attribute value is the limit of attribute
 	LimitNum             uint32
 	CreateTime           time.Time
-	UpdateTime           time.Time
+	StatusTime           time.Time
 	Status               string
 }
 

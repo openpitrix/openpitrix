@@ -30,7 +30,7 @@ type Leasing struct {
 	LeaseTime          time.Time  // action_time
 	UpdateDurationTime time.Time  // auto current update time
 	RenewalTime        *time.Time // next update time
-	UpdateTime         time.Time
+	StatusTime         time.Time
 	CreateTime         time.Time
 	CloseTime          map[time.Time]time.Time //{closeTime: restartTime, ..}
 	Status             string

@@ -26,14 +26,12 @@ enum Currency {
 message AttributeName {
 	google.protobuf.StringValue attribute_name_id = 1;
 	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue display_name = 3;
-	google.protobuf.StringValue remark = 4;
+	google.protobuf.StringValue description = 3;
 }
 
 message CreateAttributeNameRequest {
 	google.protobuf.StringValue name = 1;
-	google.protobuf.StringValue display_name = 2;
-	google.protobuf.StringValue remark = 3;
+	google.protobuf.StringValue description = 2;
 }
 
 message CreateAttributeNameResponse {
@@ -41,11 +39,10 @@ message CreateAttributeNameResponse {
 }
 
 message DescribeAttributeNamesRequest {
-	google.protobuf.StringValue attribute_id = 1;
+	google.protobuf.StringValue attribute_name_id = 1;
 	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue display_name = 3;
-	uint32 offset = 4;
-	uint32 limit = 5;
+	uint32 offset = 3;
+	uint32 limit = 4;
 }
 
 message DescribeAttributeNamesResponse {
@@ -55,12 +52,10 @@ message DescribeAttributeNamesResponse {
 message AttributeUnit {
 	google.protobuf.StringValue attribute_unit_id = 1;
 	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue display_name = 3;
 }
 
 message CreateAttributeUnitRequest {
 	google.protobuf.StringValue name = 1;
-	google.protobuf.StringValue display_name = 2;
 }
 
 message CreateAttributeUnitResponse {
@@ -70,9 +65,8 @@ message CreateAttributeUnitResponse {
 message DescribeAttributeUnitsRequest {
 	google.protobuf.StringValue attribute_unit_id = 1;
 	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue display_name = 3;
-	uint32 offset = 4;
-	uint32 limit = 5;
+	uint32 offset = 3;
+	uint32 limit = 4;
 }
 
 message DescribeAttributeUnitsResponse {
@@ -83,17 +77,13 @@ message Attribute {
 	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.StringValue attribute_name_id = 2;
 	google.protobuf.StringValue attribute_unit_id = 3;
-	google.protobuf.UInt32Value min_value = 4;
-	google.protobuf.UInt32Value max_value = 5;
-	google.protobuf.StringValue str_value = 6;
+	google.protobuf.StringValue value = 4;
 }
 
 message CreateAttributeRequest {
 	google.protobuf.StringValue attribute_name_id = 1;
 	google.protobuf.StringValue attribute_unit_id = 2;
-    google.protobuf.UInt32Value min_value = 3;
-    google.protobuf.UInt32Value max_value = 4;
-	google.protobuf.StringValue str_value = 5;
+	google.protobuf.StringValue value = 3;
 }
 
 message CreateAttributeResponse {
