@@ -20,13 +20,13 @@ import (
 func OpToNfConfig(opConfig *pb.NotificationConfig) *nfpb.ServiceConfig {
 	return &nfpb.ServiceConfig{
 		EmailServiceConfig: &nfpb.EmailServiceConfig{
-			Protocol:     opConfig.EmailServiceConfig.Protocol,
-			EmailHost:    opConfig.EmailServiceConfig.EmailHost,
-			Port:         opConfig.EmailServiceConfig.Port,
-			DisplayEmail: opConfig.EmailServiceConfig.DisplayEmail,
-			Email:        opConfig.EmailServiceConfig.Email,
-			Password:     opConfig.EmailServiceConfig.Password,
-			SslEnable:    opConfig.EmailServiceConfig.SslEnable,
+			Protocol:      opConfig.EmailServiceConfig.Protocol,
+			EmailHost:     opConfig.EmailServiceConfig.EmailHost,
+			Port:          opConfig.EmailServiceConfig.Port,
+			DisplaySender: opConfig.EmailServiceConfig.DisplaySender,
+			Email:         opConfig.EmailServiceConfig.Email,
+			Password:      opConfig.EmailServiceConfig.Password,
+			SslEnable:     opConfig.EmailServiceConfig.SslEnable,
 		},
 	}
 }
@@ -34,13 +34,13 @@ func OpToNfConfig(opConfig *pb.NotificationConfig) *nfpb.ServiceConfig {
 func NfToOpConfig(nfConfig *nfpb.ServiceConfig) *pb.NotificationConfig {
 	return &pb.NotificationConfig{
 		EmailServiceConfig: &pb.EmailServiceConfig{
-			Protocol:     nfConfig.EmailServiceConfig.Protocol,
-			EmailHost:    nfConfig.EmailServiceConfig.EmailHost,
-			Port:         nfConfig.EmailServiceConfig.Port,
-			DisplayEmail: nfConfig.EmailServiceConfig.DisplayEmail,
-			Email:        nfConfig.EmailServiceConfig.Email,
-			Password:     nfConfig.EmailServiceConfig.Password,
-			SslEnable:    nfConfig.EmailServiceConfig.SslEnable,
+			Protocol:      nfConfig.EmailServiceConfig.Protocol,
+			EmailHost:     nfConfig.EmailServiceConfig.EmailHost,
+			Port:          nfConfig.EmailServiceConfig.Port,
+			DisplaySender: nfConfig.EmailServiceConfig.DisplaySender,
+			Email:         nfConfig.EmailServiceConfig.Email,
+			Password:      nfConfig.EmailServiceConfig.Password,
+			SslEnable:     nfConfig.EmailServiceConfig.SslEnable,
 		},
 	}
 }
