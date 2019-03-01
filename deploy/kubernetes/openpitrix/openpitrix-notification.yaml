@@ -53,7 +53,7 @@ spec:
         image: ${NOTIFICATION_IMAGE}
         imagePullPolicy: ${IMAGE_PULL_POLICY}
         command:
-          - notification-manager
+          - notification
         ports:
         - containerPort: 9201
           name: notification

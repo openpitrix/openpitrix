@@ -167,7 +167,10 @@ if [ "${VERSION}" == "" ];then
   VERSION=$(curl -L -s https://api.github.com/repos/openpitrix/openpitrix/releases/latest | grep tag_name | sed "s/ *\"tag_name\": *\"\(.*\)\",*/\1/")
 fi
 
-IAM_IMAGE="openpitrix/iam:v0.2.8-dev"
+IM_IMAGE="kubespheredev/im:latest"
+IM_FLYWAY_IMAGE="kubespheredev/im:flyway"
+AM_IMAGE="openpitrix/iam:latest"
+AM_FLYWAY_IMAGE="openpitrix/iam:flyway"
 NOTIFICATION_IMAGE="openpitrix/notification:latest"
 NOTIFICATION_FLYWAY_IMAGE="openpitrix/notification:flyway"
 
@@ -209,7 +212,12 @@ fi
 
 replace() {
   sed -e "s!\${NAMESPACE}!${NAMESPACE}!g" \
-      -e "s!\${IAM_IMAGE}!${IAM_IMAGE}!g" \
+      -e "s!\${IM_IMAGE}!${IM_IMAGE}!g" \
+      -e "s!\${AM_IMAGE}!${AM_IMAGE}!g" \
+      -e "s!\${IM_FLYWAY_IMAGE}!${IM_FLYWAY_IMAGE}!g" \
+      -e "s!\${IM_FLYWAY_IMAGE}!${AM_FLYWAY_IMAGE}!g" \
+      -e "s!\${NOTIFICATION_IMAGE}!${NOTIFICATION_IMAGE}!g" \
+      -e "s!\${NOTIFICATION_FLYWAY_IMAGE}!${NOTIFICATION_FLYWAY_IMAGE}!g" \
 	  -e "s!\${IMAGE}!${IMAGE}!g" \
 	  -e "s!\${DASHBOARD_IMAGE}!${DASHBOARD_IMAGE}!g" \
 	  -e "s!\${METADATA_IMAGE}!${METADATA_IMAGE}!g" \
