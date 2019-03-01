@@ -17,7 +17,7 @@ message EmailServiceConfig {
 	google.protobuf.StringValue protocol = 1;
 	google.protobuf.StringValue email_host = 2;
 	google.protobuf.StringValue port = 3;
-	google.protobuf.StringValue display_email = 4;
+	google.protobuf.StringValue display_sender = 4;
 	google.protobuf.StringValue email = 5;
 	google.protobuf.StringValue password = 6;
 	google.protobuf.BoolValue ssl_enable = 7;
