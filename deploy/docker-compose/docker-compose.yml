@@ -507,7 +507,7 @@ services:
   # notification service
   openpitrix-notification:
     image: "openpitrix/notification:latest"
-    command: "notification"
+    command: "notification-manager"
     links:
       - openpitrix-db:openpitrix-db
       - openpitrix-etcd:openpitrix-etcd
