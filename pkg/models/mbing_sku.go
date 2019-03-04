@@ -217,20 +217,27 @@ type Price struct {
 	SkuId       string
 	AttributeId string
 	Prices      map[string]float64
-	currency    string
+	Currency    string
+	StartTime   time.Time
+	EndTime     time.Time
 	CreateTime  time.Time
 	StatusTime  time.Time
 	Status      string
 }
 
-func NewPrice(skuId, attId, currency string, prices map[string]float64) *Price {
+func NewPrice(skuId, attId, currency string, prices map[string]float64, startTime, endTime time.Time) *Price {
 	now := time.Now()
+	if (time.Time{}) == startTime {
+		startTime = now
+	}
 	return &Price{
 		PriceId:     NewPriceId(),
 		SkuId:       skuId,
 		AttributeId: attId,
 		Prices:      prices,
-		currency:    currency,
+		Currency:    currency,
+		StartTime:   startTime,
+		EndTime:     endTime,
 		CreateTime:  now,
 		StatusTime:  now,
 		Status:      constants.StatusActive,
@@ -243,5 +250,7 @@ func PbToPrice(pbPrice *pb.CreatePriceRequest) *Price {
 		pbPrice.GetAttributeId().GetValue(),
 		pbPrice.GetCurrency().String(),
 		pbPrice.GetPrices(),
+		pbutil.FromProtoTimestamp(pbPrice.GetStartTime()),
+		pbutil.FromProtoTimestamp(pbPrice.GetEndTime()),
 	)
 }

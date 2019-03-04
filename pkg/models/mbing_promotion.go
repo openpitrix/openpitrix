@@ -69,21 +69,21 @@ type CombinationSku struct {
 func NewCombinationSku(comSpuId string, attributeIds, meteringAttributeIds map[string][]string) *CombinationSku {
 	now := time.Now()
 	return &CombinationSku{
-		CombinationSkuId: NewCombinationSkuId(),
-		CombinationSpuId: comSpuId,
-		AttributeIds:  attributeIds,
+		CombinationSkuId:     NewCombinationSkuId(),
+		CombinationSpuId:     comSpuId,
+		AttributeIds:         attributeIds,
 		MeteringAttributeIds: meteringAttributeIds,
-		CreateTime: now,
-		StatusTime: now,
-		Status: constants.StatusActive,
+		CreateTime:           now,
+		StatusTime:           now,
+		Status:               constants.StatusActive,
 	}
 }
 
 func PbToCombinationSku(req *pb.CreateCombinationSkuRequest) *CombinationSku {
-	var attIds = map[string][]string {}
-	var meteringAttIds = map[string][]string {}
+	var attIds = map[string][]string{}
+	var meteringAttIds = map[string][]string{}
 	spuId := req.GetCombinationSpuId().GetValue()
-	for _, skuReq := range req.GetCreateSkuRequests(){
+	for _, skuReq := range req.GetCreateSkuRequests() {
 		v, ok := attIds[spuId]
 		if ok {
 			attIds[spuId] = append(v, pbutil.FromProtoStringSlice(skuReq.GetAttributeIds())...)
@@ -108,6 +108,8 @@ type CombinationPrice struct {
 	AttributeId        string
 	Prices             map[string]float64 //StepPrice: {upto: price, ..}
 	Currency           string
+	StartTime          time.Time
+	EndTime            time.Time
 	CreateTime         time.Time
 	StatusTime         time.Time
 	Status             string
@@ -121,11 +123,13 @@ func PbToCombinationPrice(req *pb.CreateCombinationPriceRequest) *CombinationPri
 		AttributeId:        req.GetAttributeId().GetValue(),
 		Prices:             req.GetPrices(),
 		Currency:           req.GetCurrency().String(),
+		StartTime:          pbutil.FromProtoTimestamp(req.GetStartTime()),
+		EndTime:            pbutil.FromProtoTimestamp(req.GetEndTime()),
 	}
 }
 
 type ProbationSku struct {
-	ProbationSkuId             string
+	ProbationSkuId       string
 	SpuId                string
 	AttributeIds         []string
 	MeteringAttributeIds []string //the meaning of attribute value is the limit of attribute

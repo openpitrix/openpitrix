@@ -2,6 +2,7 @@
 CREATE TABLE IF NOT EXISTS attribute_name (
 	attribute_name_id VARCHAR(50)  NOT NULL UNIQUE,
 	name              VARCHAR(255) NOT NULL,
+
 	status            VARCHAR(16) DEFAULT 'active'
 	COMMENT 'active, deleted',
 	create_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
@@ -74,11 +75,13 @@ CREATE TABLE IF NOT EXISTS price (
 	attribute_id VARCHAR(50) NOT NULL,
 	prices       JSON COMMENT '{upto: price1, ...}',
 	currency     VARCHAR(10) NOT NULL  DEFAULT 'cny',
+	start_time   TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
+	end_time     TIMESTAMP   NULL,
 	create_time  TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
 	status_time  TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
 	status       VARCHAR(16)           DEFAULT 'active'
-	COMMENT 'active, deleted',
+	COMMENT 'active, deleted, disabled',
 	INDEX price_sku_index (sku_id, price_id),
 	PRIMARY KEY (price_id)
 );
@@ -241,6 +244,5 @@ INSERT INTO attribute_unit (attribute_unit_id, name)
 VALUES ("att-unit-000001", "hour"), ("att-unit-000002", "month"), ("att-unit-000003", "year");
 
 INSERT INTO attribute (attribute_id, attribute_name_id, attribute_unit_id, value)
-VALUES ("att-000001", "att-name-000001", "att-unit-000001", 1),
-	("att-000002", "att-name-000001", "att-unit-000002", 1),
+VALUES ("att-000001", "att-name-000001", "att-unit-000001", 1), ("att-000002", "att-name-000001", "att-unit-000002", 1),
 	("att-000003", "att-name-000001", "att-unit-000003", 1);

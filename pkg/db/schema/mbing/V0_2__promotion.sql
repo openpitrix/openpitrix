@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS combination_price (
 	attribute_id         VARCHAR(50) NOT NULL,
 	prices               JSON COMMENT '{upto: price1, ...}',
 	currency             VARCHAR(50) NOT NULL  DEFAULT 'cny',
+	start_time           TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
+	end_time             TIMESTAMP   NULL,
 	create_time          TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
 	status_time          TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,

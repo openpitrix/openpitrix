@@ -100,7 +100,6 @@ const (
 	StatusSuspended = "suspended"
 	StatusInReview  = "in-review"
 	StatusNew       = "new"
-	StatusOverTime  = "overtime"
 )
 
 var DeletedStatuses = []string{
