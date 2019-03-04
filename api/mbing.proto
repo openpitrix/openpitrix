@@ -260,7 +260,7 @@ service SkuManager {
         };
 	}
 
-	rpc CreateSpu (CreateMeteringAttributesRequest) returns (CreateMeteringAttributesResponse) {
+	rpc CreateMeteringAttributes (CreateMeteringAttributesRequest) returns (CreateMeteringAttributesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "create sku metering attributes"
         };
