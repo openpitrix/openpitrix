@@ -77,6 +77,7 @@ message Attribute {
 	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.StringValue attribute_name_id = 2;
 	google.protobuf.StringValue attribute_unit_id = 3;
+	//the types of value: single int value, scope of value (min_value, max_value], string value
 	google.protobuf.StringValue value = 4;
 }
 

@@ -56,7 +56,7 @@ func DescribeAttributeNames(ctx context.Context, req *pb.DescribeAttributeNamesR
 	_, err := pi.Global().DB(ctx).
 		Select(constants.IndexedColumns[constants.TableAttributeName]...).
 		From(constants.TableAttributeName).
-		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
 		Where(manager.BuildFilterConditions(req, constants.TableAttributeName)).
 		OrderDir(constants.ColumnCreateTime, false).
 		Offset(pbutil.GetOffsetFromRequest(req)).
@@ -85,7 +85,7 @@ func DescribeAttributeUnits(ctx context.Context, req *pb.DescribeAttributeUnitsR
 	_, err := pi.Global().DB(ctx).
 		Select(constants.IndexedColumns[constants.TableAttributeUnit]...).
 		From(constants.TableAttributeUnit).
-		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
 		Where(manager.BuildFilterConditions(req, constants.TableAttributeUnit)).
 		OrderDir(constants.ColumnCreateTime, false).
 		Offset(pbutil.GetOffsetFromRequest(req)).
@@ -114,7 +114,7 @@ func getAttribute(ctx context.Context, attributeId string) (*models.Attribute, e
 	err := pi.Global().DB(ctx).
 		Select(models.AttributeColumns...).
 		From(constants.TableAttribute).
-		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
 		Where(db.Eq(constants.ColumnAttributeId, attributeId)).
 		LoadOne(&attribute)
 	if err != nil {
@@ -131,7 +131,7 @@ func DescribeAttributes(ctx context.Context, req *pb.DescribeAttributesRequest) 
 	_, err := pi.Global().DB(ctx).
 		Select(constants.IndexedColumns[constants.TableAttribute]...).
 		From(constants.TableAttribute).
-		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
 		Where(manager.BuildFilterConditions(req, constants.TableAttribute)).
 		OrderDir(constants.ColumnCreateTime, false).
 		Offset(pbutil.GetOffsetFromRequest(req)).
@@ -160,7 +160,7 @@ func getSpu(ctx context.Context, spuId string) (*models.Spu, error) {
 	err := pi.Global().DB(ctx).
 		Select(constants.IndexedColumns[constants.TableSpu]...).
 		From(constants.TableSpu).
-		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
 		Where(db.Eq(constants.ColumnSpuId, spuId)).
 		LoadOne(&spu)
 	if err != nil {
@@ -188,7 +188,7 @@ func getSku(ctx context.Context, skuId string) (*models.Sku, error) {
 	err := pi.Global().DB(ctx).
 		Select(constants.IndexedColumns[constants.TableSku]...).
 		From(constants.TableSku).
-		Where(db.Eq(constants.ColumnStatus, constants.StatusInUse2)).
+		Where(db.Eq(constants.ColumnStatus, constants.StatusActive)).
 		Where(db.Eq(constants.ColumnSkuId, skuId)).
 		LoadOne(sku)
 

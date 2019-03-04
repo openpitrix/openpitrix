@@ -240,7 +240,7 @@ VALUES ("att-name-000001", "duration", "default attribute: duration");
 INSERT INTO attribute_unit (attribute_unit_id, name)
 VALUES ("att-unit-000001", "hour"), ("att-unit-000002", "month"), ("att-unit-000003", "year");
 
-INSERT INTO attribute (attribute_id, attribute_name_id, attribute_unit_id, min_value, max_value)
-VALUES ("att-000001", "att-name-000001", "att-unit-000001", 1, 1),
-	("att-000002", "att-name-000001", "att-unit-000002", 1, 1),
-	("att-000003", "att-name-000001", "att-unit-000003", 1, 1);
+INSERT INTO attribute (attribute_id, attribute_name_id, attribute_unit_id, value)
+VALUES ("att-000001", "att-name-000001", "att-unit-000001", 1),
+	("att-000002", "att-name-000001", "att-unit-000002", 1),
+	("att-000003", "att-name-000001", "att-unit-000003", 1);

@@ -18,7 +18,7 @@ services:
     container_name: "openpitrix-db-init"
 
   openpitrix-db:
-    image: "mysql:8.0.11"
+    image: "mysql:5.7"
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:

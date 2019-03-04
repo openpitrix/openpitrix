@@ -62,7 +62,7 @@ func NewAttributeName(name, description string) *AttributeName {
 func PbToAttributeName(pbAttName *pb.CreateAttributeNameRequest) *AttributeName {
 	return NewAttributeName(
 		pbAttName.GetName().GetValue(),
-		pbAttName.GetRemark().GetValue(),
+		pbAttName.GetDescription().GetValue(),
 	)
 }
 
@@ -70,7 +70,7 @@ func AttributeNameToPb(attName *AttributeName) *pb.AttributeName {
 	return &pb.AttributeName{
 		AttributeNameId: pbutil.ToProtoString(attName.AttributeNameId),
 		Name:            pbutil.ToProtoString(attName.Name),
-		Remark:          pbutil.ToProtoString(attName.Description),
+		Description:     pbutil.ToProtoString(attName.Description),
 	}
 }
 

@@ -114,9 +114,7 @@ const (
 	ColumnAttributeNameId          = "attribute_name_id"
 	ColumnAttributeUnitId          = "attribute_unit_id"
 	ColumnAttributeId              = "attribute_id"
-	ColumnMinValue                 = "min_value"
-	ColumnMaxValue                 = "max_value"
-	ColumnStrValue                 = "str_value"
+	ColumnValue                    = "value"
 	ColumnSpuId                    = "spu_id"
 	ColumnResourceVersionId        = "resource_version_id"
 	ColumnAttributeNameIds         = "attribute_name_ids"
@@ -207,14 +205,13 @@ var IndexedColumns = map[string][]string{
 		ColumnUserId, ColumnStatus,
 	},
 	TableAttributeName: {
-		ColumnAttributeNameId, ColumnName, ColumnDisplayName,
+		ColumnAttributeNameId, ColumnName,
 	},
 	TableAttributeUnit: {
-		ColumnAttributeUnitId, ColumnName, ColumnDisplayName,
+		ColumnAttributeUnitId, ColumnName,
 	},
 	TableAttribute: {
-		ColumnAttributeId, ColumnAttributeNameId, ColumnAttributeUnitId,
-		ColumnMinValue, ColumnMaxValue,
+		ColumnAttributeId, ColumnAttributeNameId, ColumnAttributeUnitId, ColumnValue,
 	},
 	TableSpu: {
 		ColumnSpuId, ColumnResourceVersionId, ColumnAttributeNameIds,
