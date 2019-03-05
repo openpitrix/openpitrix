@@ -1,0 +1,218 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
+syntax = "proto3";
+
+package openpitrix;
+
+// set go package name to pb
+option go_package = "pb";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+
+enum Currency {
+	CNY = 0;
+	HKD = 1;
+	USD = 2;
+}
+
+enum Status {
+	ACTIVE = 0;
+	DELETED = 1;
+}
+
+enum PromotionStatus {
+	READY = 0; //the promotion product is created, but not starting.
+	ACTIVE = 1;
+	OVERDUE = 2;
+	DELETED = 3;
+}
+
+//************************************* Price *************************
+
+message Price {
+    google.protobuf.StringValue price_id = 1;
+    google.protobuf.StringValue metering_attribute_id = 2; //sku metering_attribute binding id
+	map<int64, double> prices = 3;  //{upto1: price1, upto2: price2, ...}, if upto is 0, the price is unchanged.
+    Currency currency = 4;
+    Status status = 5;
+	google.protobuf.Timestamp start_time = 6; //start time for this price, default now
+	google.protobuf.Timestamp end_time = 7; //overdue time for this price, default null(forever)
+	google.protobuf.Timestamp create_time = 8;
+	google.protobuf.Timestamp status_time = 9; //overdue time for this price, default null(forever)
+}
+
+message CreatePriceRequest {
+	google.protobuf.StringValue sku_id = 1;
+	google.protobuf.StringValue sku_metering_attribute_id = 2; //metering attribute id
+	map<int64, double> prices = 3;
+	Currency currency = 4;
+	google.protobuf.Timestamp start_time = 5;
+	google.protobuf.Timestamp end_time = 6;
+}
+
+message CreatePriceResponse {
+	google.protobuf.StringValue price_id = 1;
+}
+
+service PriceManager {
+	rpc CreatePrice (CreatePriceRequest) returns (CreatePriceResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "create price of the sku"
+        };
+		option (google.api.http) = {
+            post: "/v1/billing/price"
+            body: "*"
+        };
+	}
+}
+
+
+//************************************* Promotion *************************
+
+message CombinationPrice {
+    google.protobuf.StringValue combination_price_id = 1;
+    google.protobuf.StringValue combination_metering_attribute_id = 2;
+	repeated Price prices = 3;
+	google.protobuf.Timestamp create_time = 4;
+}
+
+message CreateCombinationPriceRequest {
+    google.protobuf.StringValue combination_metering_attribute_id = 1;
+	map<string, Price> prices = 4;
+}
+
+message CreateCombinationPriceResponse {
+	google.protobuf.StringValue combination_price_id = 1;
+}
+
+message Discount {
+    google.protobuf.StringValue discount_id = 1;
+    google.protobuf.StringValue name = 2;
+	repeated string limit_ids = 3; //the ids of limit spu / sku / price / user, distinguish them by prefix.
+    google.protobuf.FloatValue discount_value = 4;
+    google.protobuf.FloatValue discount_percent = 5;
+	PromotionStatus status = 6;
+    google.protobuf.Timestamp start_time = 7;
+    google.protobuf.Timestamp end_time = 8;
+    google.protobuf.Timestamp create_time = 9;
+    google.protobuf.Timestamp status_time = 10;
+    google.protobuf.StringValue description = 11;
+
+}
+
+message CreateDiscountRequest {
+	google.protobuf.StringValue name = 1;
+	repeated string limit_ids = 2;
+	google.protobuf.FloatValue discount_value = 3;
+	google.protobuf.FloatValue discount_percent = 4;
+	google.protobuf.Timestamp start_time = 5;
+	google.protobuf.Timestamp end_time = 6;
+	google.protobuf.StringValue description = 7;
+}
+
+message CreateDiscountResponse {
+	google.protobuf.StringValue discount_id = 1;
+}
+
+message Coupon {
+    google.protobuf.StringValue coupon_id = 1;
+    google.protobuf.StringValue name = 2;
+	repeated string limit_ids = 3; //the ids of limit spu / sku / price / user, distinguish them by prefix.
+    google.protobuf.FloatValue balance = 4;
+    google.protobuf.UInt32Value count = 5;
+    google.protobuf.UInt32Value limit_num = 6;
+	PromotionStatus status = 7;
+	google.protobuf.Timestamp start_time = 8;
+	google.protobuf.Timestamp end_time = 9;
+	google.protobuf.Timestamp create_time = 10;
+	google.protobuf.Timestamp status_time = 11;
+    google.protobuf.StringValue description = 12;
+}
+
+message CreateCouponRequest {
+	google.protobuf.StringValue name = 1;
+	repeated string limit_ids = 2;
+	google.protobuf.FloatValue balance = 3;
+	google.protobuf.UInt32Value count = 4;
+	google.protobuf.UInt32Value limit_num = 5;
+	google.protobuf.Timestamp start_time = 6;
+	google.protobuf.Timestamp end_time = 7;
+	google.protobuf.StringValue description = 8;
+}
+
+message CreateCouponResponse {
+	google.protobuf.StringValue coupon_id = 1;
+}
+
+message CouponReceived {
+    google.protobuf.StringValue coupon_received_id = 1;
+    google.protobuf.StringValue coupon_id = 2;
+    google.protobuf.StringValue user_id = 3;
+	enum Status {
+		RECEIVED = 0;
+		USING    = 1;
+		USED     = 2;
+		OVERDUE  = 3;
+	}
+	Status status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
+}
+
+message CreateCouponReceivedRequest {
+	google.protobuf.StringValue coupon_id = 2;
+	google.protobuf.StringValue user_id = 3;
+}
+
+message CreateCouponReceivedResponse {
+	google.protobuf.StringValue coupon_received_id = 1;
+}
+
+service PromotionManager {
+	rpc CreateCombinationPrice (CreateCombinationPriceRequest) returns (CreateCombinationPriceResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create combination price of combination sku"
+		};
+		option (google.api.http) = {
+			post: "/v1/billing/combination/price"
+			body: "*"
+		};
+	}
+
+	rpc CreateDiscount (CreateDiscountRequest) returns (CreateDiscountResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create discount"
+		};
+		option (google.api.http) = {
+			post: "/v1/billing/discount"
+			body: "*"
+		};
+	}
+
+	rpc CreateCoupon (CreateCouponRequest) returns (CreateCouponResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create coupon"
+		};
+		option (google.api.http) = {
+			post: "/v1/billing/coupon"
+			body: "*"
+		};
+	}
+
+	rpc CreateCouponReceived (CreateCouponReceivedRequest) returns (CreateCouponReceivedResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "receive coupon"
+		};
+		option (google.api.http) = {
+			post: "/v1/billing/coupon/received"
+			body: "*"
+		};
+	}
+
+}
