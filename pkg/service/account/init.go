@@ -14,6 +14,8 @@ import (
 	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/pi"
+	"openpitrix.io/openpitrix/pkg/sender"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 func initIAMClient() {
@@ -82,6 +84,7 @@ func initIAMAccount() {
 		logger.Info(ctx, "User [%s] with email [%s] password no need to update", userId, email)
 	}
 
+	ctx = ctxutil.ContextWithSender(ctx, sender.GetSystemSender())
 	isRoleBoundUser := validateRoleUser(ctx, constants.RoleGlobalAdmin, userId)
 	if !isRoleBoundUser {
 		_, err := amClient.BindUserRole(ctx, &pbam.BindUserRoleRequest{

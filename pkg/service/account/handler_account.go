@@ -136,6 +136,7 @@ func getRootGroupId(ctx context.Context, userId string) (string, error) {
 
 	// root group is same
 	if len(getUserWithGroupRes.User.GroupSet) == 0 || len(getUserWithGroupRes.User.GroupSet[0].GroupPath) == 0 {
+		logger.Error(ctx, "Failed to get root group for user [%s]", userId)
 		return rootGroupId, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
 	}
 	groupPath := getUserWithGroupRes.User.GroupSet[0].GroupPath
@@ -155,6 +156,7 @@ func getUserPortal(ctx context.Context, userId string) (string, error) {
 		return portal, err
 	}
 	if len(response.RoleSet) == 0 {
+		logger.Error(ctx, "Failed to get role for user [%s]", userId)
 		return portal, gerr.New(ctx, gerr.Internal, gerr.ErrorInternalError)
 	}
 	portal = response.RoleSet[0].Portal
@@ -455,6 +457,12 @@ func (p *Server) DeleteUsers(ctx context.Context, req *pb.DeleteUsersRequest) (*
 	_, err := CheckUsersPermission(ctx, userIds)
 	if err != nil {
 		return nil, err
+	}
+	_, err = amClient.UnbindUserRole(ctx, &pbam.UnbindUserRoleRequest{
+		UserId: userIds,
+	})
+	if err != nil {
+		return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorCannotDeleteUsers)
 	}
 	_, err = imClient.DeleteUsers(ctx, &pbim.DeleteUsersRequest{
 		UserId: userIds,
