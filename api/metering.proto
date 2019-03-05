@@ -14,24 +14,19 @@ import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 
-enum Status {
-	ACTIVE = 0;
-	DELETED = 1;
-}
-
 enum AttributeType {
 	NORMAL = 0;
 	METERING = 1;
 }
 
 //************************************* Sku *************************
-
+//the values of status are: active/deleted
 message AttributeName {
 	google.protobuf.StringValue attribute_name_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue description = 3;
 	AttributeType type = 4;
-	Status status = 5;
+	google.protobuf.StringValue status = 5;
 	google.protobuf.Timestamp create_time = 6;
 	google.protobuf.Timestamp status_time = 7;
 }
@@ -50,7 +45,7 @@ message DescribeAttributeNamesRequest {
 	google.protobuf.StringValue attribute_name_id = 1;
 	google.protobuf.StringValue name = 2;
 	AttributeType type = 3;
-	Status status = 4;
+	google.protobuf.StringValue status = 4;
 	google.protobuf.StringValue sort_key = 5;
 	google.protobuf.BoolValue reverse = 6;
 	uint32 offset = 7;
@@ -61,10 +56,29 @@ message DescribeAttributeNamesResponse {
 	repeated AttributeName attribute_names = 1;
 }
 
+message ModifyAttributeNameRequest {
+	google.protobuf.StringValue attribute_name_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 3;
+	AttributeType type = 4;
+}
+
+message ModifyAttributeNameResponse {
+	google.protobuf.StringValue attribute_name_id = 1;
+}
+
+message DeleteAttributeNamesRequest {
+	repeated string attribute_name_ids = 1;
+}
+
+message DeleteAttributeNamesResponse {
+	repeated string attribute_name_ids = 1;
+}
+
 message AttributeUnit {
 	google.protobuf.StringValue attribute_unit_id = 1;
 	google.protobuf.StringValue name = 2;
-	Status status = 3;
+	google.protobuf.StringValue status = 3;
 	google.protobuf.Timestamp create_time = 4;
 	google.protobuf.Timestamp status_time = 5;
 }
@@ -80,7 +94,7 @@ message CreateAttributeUnitResponse {
 message DescribeAttributeUnitsRequest {
 	google.protobuf.StringValue attribute_unit_id = 1;
 	google.protobuf.StringValue name = 2;
-	Status status = 3;
+	google.protobuf.StringValue status = 3;
 	google.protobuf.StringValue sort_key = 4;
 	google.protobuf.BoolValue reverse = 5;
 	uint32 offset = 6;
@@ -91,14 +105,34 @@ message DescribeAttributeUnitsResponse {
 	repeated AttributeUnit attribute_units = 1;
 }
 
+message ModifyAttributeUnitRequest {
+	google.protobuf.StringValue attribute_unit_id = 1;
+	google.protobuf.StringValue name = 2;
+}
+
+message ModifyAttributeUnitResponse {
+	google.protobuf.StringValue attribute_unit_id = 1;
+}
+
+message DeleteAttributeUnitsRequest {
+	repeated string attribute_unit_ids = 1;
+}
+
+message DeleteAttributeUnitsResponse {
+	repeated string attribute_unit_ids = 1;
+}
+
+
+
+
 message Attribute {
 	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.StringValue attribute_name_id = 2;
 	google.protobuf.StringValue attribute_unit_id = 3;
 	//the types of value: single int value, scope of value (min_value, max_value], string value
 	google.protobuf.StringValue value = 4;
-	google.protobuf.StringValue owner_id = 5;
-	Status status = 6;
+	google.protobuf.StringValue owner = 5; //the user_id created attribute
+	google.protobuf.StringValue status = 6;
 	google.protobuf.Timestamp create_time = 7;
 	google.protobuf.Timestamp status_time = 8;
 }
@@ -117,8 +151,8 @@ message DescribeAttributesRequest {
 	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.StringValue attribute_name_id = 2;
 	google.protobuf.StringValue attribute_unit_id = 3;
-	google.protobuf.StringValue owner_id = 4;
-	Status status = 5;
+	google.protobuf.StringValue owner = 4;
+	google.protobuf.StringValue status = 5;
 	google.protobuf.StringValue sort_key = 6;
 	google.protobuf.BoolValue reverse = 7;
 	uint32 offset = 8;
@@ -129,13 +163,29 @@ message DescribeAttributesResponse {
 	repeated Attribute attributes = 1;
 }
 
+message Spu {
+	google.protobuf.StringValue spu_id = 1;
+	google.protobuf.StringValue spu_name = 2;  //spu_name: the  app_id / app_version_id / other_ids..
+	google.protobuf.StringValue status = 3;
+	google.protobuf.Timestamp create_time = 4;
+	google.protobuf.Timestamp status_time = 5;
+}
+
+message CreateSpuRequest {
+	google.protobuf.StringValue spu_name = 2;
+}
+
+message CreateSpuResponse {
+	google.protobuf.StringValue spu_id = 1;
+}
+
 //SKU: stock keeping unit
 message Sku {
 	google.protobuf.StringValue sku_id = 1;
-	google.protobuf.StringValue spu_id = 2;  //spu_id: app_id / app_version_id
+	google.protobuf.StringValue spu_id = 2;  //spu_id: app_id / app_version_id / other_id..
 	repeated string attribute_ids = 3;
-	google.protobuf.StringValue owner_id = 4;
-	Status status = 5;
+	google.protobuf.StringValue owner = 4; //created user_id
+	google.protobuf.StringValue status = 5;
 	google.protobuf.Timestamp create_time = 6;
 	google.protobuf.Timestamp status_time = 7;
 }
@@ -149,20 +199,20 @@ message CreateSkuResponse {
 	google.protobuf.StringValue sku_id = 1;
 }
 
-message MeteringAttribute { // binding metering_attribute_id into sku_id
-	google.protobuf.StringValue metering_attribute_id = 1;
+message MeteringAttributeBinding { // binding metering_attribute_id into sku_id
+	google.protobuf.StringValue binding_id = 1;
 	google.protobuf.StringValue sku_id = 2;
-	google.protobuf.StringValue attribute_id = 3; //metering attribute id
+	google.protobuf.StringValue attribute_id = 3; //the attribute id that need to metering
 	google.protobuf.Timestamp create_time = 4;
 }
 
-message CreateMeteringAttributesRequest {
+message CreateMeteringAttributeBindingsRequest {
 	google.protobuf.StringValue sku_id = 1;
 	repeated string attribute_ids = 2;
 }
 
-message CreateMeteringAttributesResponse {
-	repeated string metering_attribute_ids = 1;
+message CreateMeteringAttributeBindingsResponse {
+	repeated string binding_ids = 1;
 }
 
 service SkuManager {
@@ -185,6 +235,26 @@ service SkuManager {
 		};
 	}
 
+	rpc ModifyAttributeName (ModifyAttributeNameRequest) returns (ModifyAttributeNameResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify attribute_name"
+		};
+		option (google.api.http) = {
+			put: "/v1/mbing/attribute/name"
+			body: "*"
+		};
+	}
+
+	rpc DeleteAttributeNames (DeleteAttributeNamesRequest) returns (DeleteAttributeNamesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete attribute_names"
+		};
+		option (google.api.http) = {
+			delete: "/v1/mbing/attribute/names"
+			body: "*"
+		};
+	}
+
 	rpc CreateAttributeUnit (CreateAttributeUnitRequest) returns (CreateAttributeUnitResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "create attribute unit"
@@ -203,6 +273,31 @@ service SkuManager {
 			get: "/v1/mbing/attribute/units"
 		};
 	}
+
+	rpc ModifyAttributeUnit (ModifyAttributeUnitRequest) returns (ModifyAttributeUnitResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify attribute_unit"
+		};
+		option (google.api.http) = {
+			put: "/v1/mbing/attribute/unit"
+			body: "*"
+		};
+	}
+
+	rpc DeleteAttributeUnits (DeleteAttributeUnitsRequest) returns (DeleteAttributeUnitsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete attribute_units"
+		};
+		option (google.api.http) = {
+			delete: "/v1/mbing/attribute/units"
+			body: "*"
+		};
+	}
+
+
+
+
+
 
 	rpc CreateAttribute (CreateAttributeRequest) returns (CreateAttributeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -233,7 +328,7 @@ service SkuManager {
         };
 	}
 
-	rpc CreateMeteringAttributes (CreateMeteringAttributesRequest) returns (CreateMeteringAttributesResponse) {
+	rpc CreateMeteringAttributes (CreateMeteringAttributeBindingsRequest) returns (CreateMeteringAttributeBindingsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "create sku metering attributes"
         };
@@ -248,17 +343,17 @@ service SkuManager {
 
 //************************************* Promotion *************************
 
-message CombinationMeteringAttribute {
-    google.protobuf.StringValue combination_metering_attribute_id = 1;
-	repeated string metering_attribute_ids = 2;  //MeteringAttributes
-	google.protobuf.StringValue owner_id = 3;
-	Status status = 4;
+message CombinationMeteringAttributeBinding {
+    google.protobuf.StringValue combination_binding_id = 1;
+	repeated string metering_attribute_binding_ids = 2;  //MeteringAttributes
+	google.protobuf.StringValue owner = 3;
+	google.protobuf.StringValue status = 4;
 	google.protobuf.Timestamp create_time = 5;
 	google.protobuf.Timestamp status_time = 6;
 }
 
 message CreateCombinationMeteringAttributeRequest {
-	repeated CreateMeteringAttributesRequest metering_attributes = 1;  //MeteringAttributes
+	repeated CreateMeteringAttributeBindingsRequest metering_attributes = 1;  //MeteringAttributes
 }
 
 message CreateCombinationMeteringAttributeResponse {
@@ -305,28 +400,21 @@ message MeteringAttributeValue {
 	google.protobuf.DoubleValue value = 2;
 	enum UpdateValueTypes {
 		INCREMENTAL = 0;
-		REPLACE = 1;  //
+		REPLACE = 1;
 	}
 	UpdateValueTypes type = 3;
 }
 
 message MeteringSku {
-	google.protobuf.StringValue sku_id = 1;
-	repeated MeteringAttributeValue attribute_values = 2;
-	google.protobuf.Timestamp action_time = 3;  // start/terminate/delete resource time for metering
-	google.protobuf.StringValue other_info = 4;
-	enum SkuTypes {
-		SKU = 0;
-		COMBATION = 1;
-		PROBATION = 2;
-	}
-	SkuTypes type = 5;
+	google.protobuf.StringValue resource_id = 1;
+	google.protobuf.StringValue sku_id = 2; //distinct sku/cobination/probation from prefix
+	//if the metering attributes of sku is only duration, this is nil
+	repeated MeteringAttributeValue attribute_values = 3;
 }
 
 message MeteringRequest {
-	google.protobuf.StringValue resource_id = 1;
 	google.protobuf.StringValue user_id = 2;
-	repeated MeteringSku sku_set = 3;
+	repeated MeteringSku metering_skus = 3;
 }
 
 message MeteringResponse {
@@ -344,7 +432,7 @@ service MeteringManager {
 		};
 	}
 
-	rpc UpdateMetering (MeteringRequest) returns (MeteringResponse) {
+	rpc UpdateMeteringValue (MeteringRequest) returns (MeteringResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "update metering value about the sku_set"
 		};

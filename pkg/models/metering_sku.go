@@ -15,11 +15,11 @@ import (
 )
 
 func NewAttributeNameId() string {
-	return idutil.GetUuid("att-name-")
+	return idutil.GetUuid("attn-")
 }
 
 func NewAttributeUnitId() string {
-	return idutil.GetUuid("att-unit-")
+	return idutil.GetUuid("attu-")
 }
 
 func NewAttributeId() string {
@@ -41,18 +41,20 @@ func NewPriceId() string {
 type AttributeName struct {
 	AttributeNameId string
 	Name            string
+	Description     string
+	Type            string
+	Status          string
 	CreateTime      time.Time
 	StatusTime      time.Time
-	Status          string
-	Description     string
 }
 
-func NewAttributeName(name, description string) *AttributeName {
+func NewAttributeName(name, description, attType string) *AttributeName {
 	now := time.Now()
 	return &AttributeName{
 		AttributeNameId: NewAttributeNameId(),
 		Name:            name,
 		Description:     description,
+		Type:            attType,
 		Status:          constants.StatusActive,
 		CreateTime:      now,
 		StatusTime:      now,
@@ -63,6 +65,7 @@ func PbToAttributeName(pbAttName *pb.CreateAttributeNameRequest) *AttributeName 
 	return NewAttributeName(
 		pbAttName.GetName().GetValue(),
 		pbAttName.GetDescription().GetValue(),
+		pbAttName.GetType().String(),
 	)
 }
 
@@ -71,15 +74,19 @@ func AttributeNameToPb(attName *AttributeName) *pb.AttributeName {
 		AttributeNameId: pbutil.ToProtoString(attName.AttributeNameId),
 		Name:            pbutil.ToProtoString(attName.Name),
 		Description:     pbutil.ToProtoString(attName.Description),
+		Type:            pb.AttributeType(pb.AttributeType_value[attName.Type]),
+		Status:          pbutil.ToProtoString(attName.Status),
+		CreateTime:      pbutil.ToProtoTimestamp(attName.CreateTime),
+		StatusTime:      pbutil.ToProtoTimestamp(attName.StatusTime),
 	}
 }
 
 type AttributeUnit struct {
 	AttributeUnitId string
 	Name            string
+	Status          string
 	CreateTime      time.Time
 	StatusTime      time.Time
-	Status          string
 }
 
 func NewAttributeUnit(name string) *AttributeUnit {
@@ -103,8 +110,14 @@ func AttributeUnitToPb(attUnit *AttributeUnit) *pb.AttributeUnit {
 	return &pb.AttributeUnit{
 		AttributeUnitId: pbutil.ToProtoString(attUnit.AttributeUnitId),
 		Name:            pbutil.ToProtoString(attUnit.Name),
+		Status:          pbutil.ToProtoString(attUnit.Status),
+		CreateTime:      pbutil.ToProtoTimestamp(attUnit.CreateTime),
+		StatusTime:      pbutil.ToProtoTimestamp(attUnit.StatusTime),
 	}
 }
+
+
+
 
 type Attribute struct {
 	AttributeId     string
