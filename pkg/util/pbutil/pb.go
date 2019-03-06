@@ -61,14 +61,6 @@ func FromProtoTimestamp(t *timestamp.Timestamp) (tt time.Time) {
 	return
 }
 
-func FromProtoStringSlice(wsSlice []*wrappers.StringValue) []string {
-	var strSlice []string
-	for _, ws := range wsSlice {
-		strSlice = append(strSlice, ws.GetValue())
-	}
-	return strSlice
-}
-
 func ToProtoTimestamp(t time.Time) (tt *timestamp.Timestamp) {
 	if t.IsZero() {
 		return nil

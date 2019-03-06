@@ -1,6 +1,6 @@
 /**  Sku  **/
 CREATE TABLE IF NOT EXISTS attribute_name (
-	attribute_name_id VARCHAR(50)  NOT NUsLL UNIQUE,
+	attribute_name_id VARCHAR(50) NOT NUsLL UNIQUE,
 	name              VARCHAR(255) NOT NULL,
 	type              VARCHAR(16)  NOT NULL DEFAULT 'normal'
 	COMMENT 'normal, metering',
@@ -32,41 +32,53 @@ CREATE TABLE IF NOT EXISTS attribute (
 	attribute_unit_id VARCHAR(50),
 	value             VARCHAR(255) NOT NULL
 	COMMENT 'attribute value, the types: single int value, scope of value (min_value, max_value], string value',
+	owner             VARCHAR(50)  NOT NULL,
+	status            VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted',
 	create_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
 	status_time       TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status            VARCHAR(16) DEFAULT 'active'
-	COMMENT 'active, deleted',
 	PRIMARY KEY (attribute_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS spu (
-	spu_id                      VARCHAR(50) NOT NULL UNIQUE,
-	resource_version_id         VARCHAR(50) NOT NULL,
-	attribute_name_ids          JSON COMMENT 'sku attribute_name ids(Do not include metering_attribute_name_ids)',
-	metering_attribute_name_ids JSON        NOT NULL
-	COMMENT 'the attribute_name ids need to metering and billing',
-	create_time                 TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	status_time                 TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
-	ON UPDATE CURRENT_TIMESTAMP,
-	status                      VARCHAR(16) DEFAULT 'active'
+	spu_id      VARCHAR(50) NOT NULL UNIQUE,
+	product_id  VARCHAR(50) NOT NULL UNIQUE
+	COMMENT 'product_id: app_id/app_version_id/other_ids..',
+	owner       VARCHAR(50) NOT NULL,
+	status      VARCHAR(16) DEFAULT 'active'
 	COMMENT 'active, deleted',
+	create_time TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+	status_time TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (spu_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS sku (
-	sku_id                 VARCHAR(50) NOT NULL UNIQUE,
-	spu_id                 VARCHAR(50) NOT NULL,
-	attribute_ids          JSON COMMENT 'sku attributes with value of spu.',
-	metering_attribute_ids JSON        NOT NULL,
-	create_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
-	status_time            TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
-	ON UPDATE CURRENT_TIMESTAMP,
-	status                 VARCHAR(16) DEFAULT 'active'
+	sku_id        VARCHAR(50) NOT NULL UNIQUE,
+	spu_id        VARCHAR(50) NOT NULL,
+	attribute_ids JSON COMMENT 'sku attributes with value of spu.',
+	status        VARCHAR(16) DEFAULT 'active'
 	COMMENT 'active, deleted',
+	create_time   TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+	status_time   TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (sku_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS metering_attribute_binding (
+	binding_id   VARCHAR(50) NOT NULL UNIQUE,
+	sku_id       VARCHAR(50) NOT NULL,
+	attribute_id VARCHAR(50) NOT NULL,
+	status       VARCHAR(16) DEFAULT 'active'
+	COMMENT 'active, deleted',
+	create_time  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+	status_time  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP
+	ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (binding_id)
 );
 
 

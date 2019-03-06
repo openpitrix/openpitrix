@@ -3,18 +3,16 @@ Price
 **/
 CREATE TABLE IF NOT EXISTS price (
 	price_id     VARCHAR(50) NOT NULL UNIQUE,
-	sku_id       VARCHAR(50) NOT NULL,
-	attribute_id VARCHAR(50) NOT NULL,
+	binding_id   VARCHAR(50) NOT NULL,
 	prices       JSON COMMENT '{upto: price1, ...}',
 	currency     VARCHAR(10) NOT NULL  DEFAULT 'cny',
+	status       VARCHAR(16)           DEFAULT 'active'
+	COMMENT 'active, deleted, disabled',
 	start_time   TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
 	end_time     TIMESTAMP   NULL,
 	create_time  TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
 	status_time  TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status       VARCHAR(16)           DEFAULT 'active'
-	COMMENT 'active, deleted, disabled',
-	INDEX price_sku_index (sku_id, price_id),
 	PRIMARY KEY (price_id)
 );
 

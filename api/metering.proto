@@ -21,6 +21,7 @@ enum AttributeType {
 
 //************************************* Sku *************************
 //the values of status are: active/deleted
+//attribute_name
 message AttributeName {
 	google.protobuf.StringValue attribute_name_id = 1;
 	google.protobuf.StringValue name = 2;
@@ -75,6 +76,7 @@ message DeleteAttributeNamesResponse {
 	repeated string attribute_name_ids = 1;
 }
 
+//attribute_unit
 message AttributeUnit {
 	google.protobuf.StringValue attribute_unit_id = 1;
 	google.protobuf.StringValue name = 2;
@@ -122,9 +124,7 @@ message DeleteAttributeUnitsResponse {
 	repeated string attribute_unit_ids = 1;
 }
 
-
-
-
+//attribute
 message Attribute {
 	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.StringValue attribute_name_id = 2;
@@ -163,31 +163,83 @@ message DescribeAttributesResponse {
 	repeated Attribute attributes = 1;
 }
 
+message ModifyAttributeRequest {
+	google.protobuf.StringValue attribute_id = 1;
+	google.protobuf.StringValue attribute_name_id = 2;
+	google.protobuf.StringValue attribute_unit_id = 3;
+	google.protobuf.StringValue value = 4;
+}
+
+message ModifyAttributeResponse {
+	google.protobuf.StringValue attribute_id = 1;
+}
+
+message DeleteAttributesRequest {
+	repeated string attribute_ids = 1;
+}
+
+message DeleteAttributesResponse {
+	repeated string attribute_ids = 1;
+}
+
+//spu: standard product unit
 message Spu {
 	google.protobuf.StringValue spu_id = 1;
-	google.protobuf.StringValue spu_name = 2;  //spu_name: the  app_id / app_version_id / other_ids..
-	google.protobuf.StringValue status = 3;
-	google.protobuf.Timestamp create_time = 4;
-	google.protobuf.Timestamp status_time = 5;
+	google.protobuf.StringValue product_id = 2;  //product_id: the  app_id / app_version_id / other_ids..
+	google.protobuf.StringValue owner = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
 }
 
 message CreateSpuRequest {
-	google.protobuf.StringValue spu_name = 2;
+	google.protobuf.StringValue product_id = 1;
 }
 
 message CreateSpuResponse {
 	google.protobuf.StringValue spu_id = 1;
 }
 
-//SKU: stock keeping unit
+message DescribeSpusRequest {
+	google.protobuf.StringValue spu_id = 1;
+	google.protobuf.StringValue product_id = 2;
+	google.protobuf.StringValue owner = 3; //created user_id
+	google.protobuf.StringValue status = 4;
+	google.protobuf.StringValue sort_key = 5;
+	google.protobuf.BoolValue reverse = 6;
+	uint32 offset = 7;
+	uint32 limit = 8;
+}
+
+message DescribeSpusResponse {
+	repeated Spu spus = 1;
+}
+
+message ModifySpuRequest {
+	google.protobuf.StringValue spu_id = 1;
+	google.protobuf.StringValue product_id = 2;
+}
+
+message ModifySpuResponse {
+	google.protobuf.StringValue spu_id = 1;
+}
+
+message DeleteSpusRequest {
+	repeated string spu_ids = 1;
+}
+
+message DeleteSpusResponse {
+	repeated string spu_ids = 1;
+}
+
+//Sku: stock keeping unit
 message Sku {
 	google.protobuf.StringValue sku_id = 1;
-	google.protobuf.StringValue spu_id = 2;  //spu_id: app_id / app_version_id / other_id..
+	google.protobuf.StringValue spu_id = 2;
 	repeated string attribute_ids = 3;
-	google.protobuf.StringValue owner = 4; //created user_id
-	google.protobuf.StringValue status = 5;
-	google.protobuf.Timestamp create_time = 6;
-	google.protobuf.Timestamp status_time = 7;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
 }
 
 message CreateSkuRequest {
@@ -199,11 +251,45 @@ message CreateSkuResponse {
 	google.protobuf.StringValue sku_id = 1;
 }
 
+message DescribeSkusRequest {
+	google.protobuf.StringValue sku_id = 1;
+	google.protobuf.StringValue spu_id = 2;
+	google.protobuf.StringValue status = 3;
+	google.protobuf.StringValue sort_key = 4;
+	google.protobuf.BoolValue reverse = 5;
+	uint32 offset = 6;
+	uint32 limit = 7;
+}
+
+message DescribeSkusResponse {
+	repeated Sku skus = 1;
+}
+
+message ModifySkuRequest {
+	google.protobuf.StringValue sku_id = 1;
+	google.protobuf.StringValue spu_id = 2;
+	repeated string attribute_ids = 3;
+}
+
+message ModifySkuResponse {
+	google.protobuf.StringValue sku_id = 1;
+}
+
+message DeleteSkusRequest {
+	repeated string sku_ids = 1;
+}
+
+message DeleteSkusResponse {
+	repeated string sku_ids = 1;
+}
+
 message MeteringAttributeBinding { // binding metering_attribute_id into sku_id
 	google.protobuf.StringValue binding_id = 1;
 	google.protobuf.StringValue sku_id = 2;
 	google.protobuf.StringValue attribute_id = 3; //the attribute id that need to metering
-	google.protobuf.Timestamp create_time = 4;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
 }
 
 message CreateMeteringAttributeBindingsRequest {
@@ -215,13 +301,45 @@ message CreateMeteringAttributeBindingsResponse {
 	repeated string binding_ids = 1;
 }
 
+message DescribeMeteringAttributeBindingsRequest {
+	google.protobuf.StringValue binding_id = 1;
+	google.protobuf.StringValue sku_id = 2;
+	google.protobuf.StringValue status = 3;
+	google.protobuf.StringValue sort_key = 4;
+	google.protobuf.BoolValue reverse = 5;
+	uint32 offset = 6;
+	uint32 limit = 7;
+}
+
+message DescribeMeteringAttributeBindingsResponse {
+	repeated MeteringAttributeBinding meteringAttributeBindings = 1;
+}
+
+message ModifyMeteringAttributeBindingRequest {
+	google.protobuf.StringValue binding_id = 1;
+	google.protobuf.StringValue sku_id = 2;
+	google.protobuf.StringValue attribute_id = 3;
+}
+
+message ModifyMeteringAttributeBindingResponse {
+	google.protobuf.StringValue binding_id = 1;
+}
+
+message DeleteMeteringAttributeBindingsRequest {
+	repeated string binding_ids = 1;
+}
+
+message DeleteMeteringAttributeBindingsResponse {
+	repeated string binding_ids = 1;
+}
+
 service SkuManager {
 	rpc CreateAttributeName (CreateAttributeNameRequest) returns (CreateAttributeNameResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "create attribute name"
 		};
 		option (google.api.http) = {
-			post: "/v1/mbing/attribute/name"
+			post: "/v1/metering/attribute/name"
 			body: "*"
 		};
 	}
@@ -231,7 +349,7 @@ service SkuManager {
 			summary: "describe attribute_names"
 		};
 		option (google.api.http) = {
-			get: "/v1/mbing/attribute/names"
+			get: "/v1/metering/attribute/names"
 		};
 	}
 
@@ -240,7 +358,7 @@ service SkuManager {
 			summary: "modify attribute_name"
 		};
 		option (google.api.http) = {
-			put: "/v1/mbing/attribute/name"
+			put: "/v1/metering/attribute/name"
 			body: "*"
 		};
 	}
@@ -250,7 +368,7 @@ service SkuManager {
 			summary: "delete attribute_names"
 		};
 		option (google.api.http) = {
-			delete: "/v1/mbing/attribute/names"
+			delete: "/v1/metering/attribute/names"
 			body: "*"
 		};
 	}
@@ -260,7 +378,7 @@ service SkuManager {
             summary: "create attribute unit"
         };
 		option (google.api.http) = {
-            post: "/v1/mbing/attribute/unit"
+            post: "/v1/metering/attribute/unit"
             body: "*"
         };
 	}
@@ -270,7 +388,7 @@ service SkuManager {
 			summary: "describe attribute_units"
 		};
 		option (google.api.http) = {
-			get: "/v1/mbing/attribute/units"
+			get: "/v1/metering/attribute/units"
 		};
 	}
 
@@ -279,7 +397,7 @@ service SkuManager {
 			summary: "modify attribute_unit"
 		};
 		option (google.api.http) = {
-			put: "/v1/mbing/attribute/unit"
+			put: "/v1/metering/attribute/unit"
 			body: "*"
 		};
 	}
@@ -289,22 +407,17 @@ service SkuManager {
 			summary: "delete attribute_units"
 		};
 		option (google.api.http) = {
-			delete: "/v1/mbing/attribute/units"
+			delete: "/v1/metering/attribute/units"
 			body: "*"
 		};
 	}
-
-
-
-
-
 
 	rpc CreateAttribute (CreateAttributeRequest) returns (CreateAttributeResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "create attribute"
         };
 		option (google.api.http) = {
-            post: "/v1/mbing/attribute"
+            post: "/v1/metering/attribute"
             body: "*"
         };
 	}
@@ -314,30 +427,146 @@ service SkuManager {
 			summary: "describe attributes"
 		};
 		option (google.api.http) = {
-			get: "/v1/mbing/attributes"
+			get: "/v1/metering/attributes"
+		};
+	}
+
+	rpc ModifyAttribute (ModifyAttributeRequest) returns (ModifyAttributeResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify attribute"
+		};
+		option (google.api.http) = {
+			put: "/v1/metering/attribute"
+			body: "*"
+		};
+	}
+
+	rpc DeleteAttributes (DeleteAttributesRequest) returns (DeleteAttributesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete attributes"
+		};
+		option (google.api.http) = {
+			delete: "/v1/metering/attributes"
+			body: "*"
+		};
+	}
+
+	rpc CreateSpu (CreateSpuRequest) returns (CreateSpuResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+            summary: "create spu"
+        };
+		option (google.api.http) = {
+            post: "/v1/metering/spu"
+            body: "*"
+        };
+	}
+
+	rpc DescribeSpus (DescribeSpusRequest) returns (DescribeSpusResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe spus"
+		};
+		option (google.api.http) = {
+			get: "/v1/metering/spus"
+		};
+	}
+
+	rpc ModifySpu (ModifySpuRequest) returns (ModifySpuResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify spu"
+		};
+		option (google.api.http) = {
+			put: "/v1/metering/spu"
+			body: "*"
+		};
+	}
+
+	rpc DeleteSpus (DeleteSpusRequest) returns (DeleteSpusResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete spus"
+		};
+		option (google.api.http) = {
+			delete: "/v1/metering/spus"
+			body: "*"
 		};
 	}
 
 	rpc CreateSku (CreateSkuRequest) returns (CreateSkuResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create sku of the resource"
+            summary: "create sku of the product"
         };
 		option (google.api.http) = {
-            post: "/v1/mbing/sku"
+            post: "/v1/metering/sku"
             body: "*"
         };
+	}
+
+	rpc DescribeSkus (DescribeSkusRequest) returns (DescribeSkusResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe skus"
+		};
+		option (google.api.http) = {
+			get: "/v1/metering/skus"
+		};
+	}
+
+	rpc ModifySku (ModifySkuRequest) returns (ModifySkuResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify sku"
+		};
+		option (google.api.http) = {
+			put: "/v1/metering/sku"
+			body: "*"
+		};
+	}
+
+	rpc DeleteSkus (DeleteSkusRequest) returns (DeleteSkusResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete skus"
+		};
+		option (google.api.http) = {
+			delete: "/v1/metering/skus"
+			body: "*"
+		};
 	}
 
 	rpc CreateMeteringAttributes (CreateMeteringAttributeBindingsRequest) returns (CreateMeteringAttributeBindingsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "create sku metering attributes"
+            summary: "create metering attribute bindings of sku"
         };
 		option (google.api.http) = {
-            post: "/v1/mbing/sku/metering/attributes"
+            post: "/v1/metering/attribute/bingings"
             body: "*"
         };
 	}
 
+	rpc DescribeMeteringAttributeBindings (DescribeMeteringAttributeBindingsRequest) returns (DescribeMeteringAttributeBindingsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe metering attribute bindings of sku"
+		};
+		option (google.api.http) = {
+			get: "/v1/metering/attribute/bindings"
+		};
+	}
+
+	rpc ModifyMeteringAttributeBinding (ModifyMeteringAttributeBindingRequest) returns (ModifyMeteringAttributeBindingResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify metering attribute binding of sku"
+		};
+		option (google.api.http) = {
+			put: "/v1/metering/attribute/binding"
+			body: "*"
+		};
+	}
+
+	rpc DeleteMeteringAttributeBindings (DeleteMeteringAttributeBindingsRequest) returns (DeleteMeteringAttributeBindingsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete metering attribute bindings of sku"
+		};
+		option (google.api.http) = {
+			delete: "/v1/metering/attribute/bindings"
+			body: "*"
+		};
+	}
 }
 
 
@@ -385,7 +614,7 @@ service PromotionManager {
 			summary: "create probation sku of resource"
 		};
 		option (google.api.http) = {
-			post: "/v1/mbing/probation/sku"
+			post: "/v1/metering/probation/sku"
 			body: "*"
 		};
 	}

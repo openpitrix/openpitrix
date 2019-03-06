@@ -34,8 +34,8 @@ func NewSkuId() string {
 	return idutil.GetUuid("sku-")
 }
 
-func NewPriceId() string {
-	return idutil.GetUuid("price-")
+func NewMeteringAttributeBindingId() string {
+	return idutil.GetUuid("binding-")
 }
 
 type AttributeName struct {
@@ -94,9 +94,9 @@ func NewAttributeUnit(name string) *AttributeUnit {
 	return &AttributeUnit{
 		AttributeUnitId: NewAttributeUnitId(),
 		Name:            name,
+		Status:          constants.StatusActive,
 		CreateTime:      now,
 		StatusTime:      now,
-		Status:          constants.StatusActive,
 	}
 }
 
@@ -116,39 +116,39 @@ func AttributeUnitToPb(attUnit *AttributeUnit) *pb.AttributeUnit {
 	}
 }
 
-
-
-
 type Attribute struct {
 	AttributeId     string
 	AttributeNameId string
 	AttributeUnitId string
 	Value           string
+	Owner           string
+	Status          string
 	CreateTime      time.Time
 	StatusTime      time.Time
-	Status          string
 }
 
 var AttributeColumns = db.GetColumnsFromStruct(&Attribute{})
 
-func NewAttribute(attNameId, attUnitId, value string) *Attribute {
+func NewAttribute(attNameId, attUnitId, value, owner string) *Attribute {
 	now := time.Now()
 	return &Attribute{
 		AttributeId:     NewAttributeId(),
 		AttributeNameId: attNameId,
 		AttributeUnitId: attUnitId,
 		Value:           value,
+		Owner:           owner,
 		CreateTime:      now,
 		StatusTime:      now,
 		Status:          constants.StatusActive,
 	}
 }
 
-func PbToAttribute(pbAttribute *pb.CreateAttributeRequest) *Attribute {
+func PbToAttribute(pbAttribute *pb.CreateAttributeRequest, owner string) *Attribute {
 	return NewAttribute(
 		pbAttribute.GetAttributeNameId().GetValue(),
 		pbAttribute.GetAttributeUnitId().GetValue(),
 		pbAttribute.GetValue().GetValue(),
+		owner,
 	)
 }
 
@@ -158,112 +158,130 @@ func AttributeToPb(att *Attribute) *pb.Attribute {
 		AttributeNameId: pbutil.ToProtoString(att.AttributeNameId),
 		AttributeUnitId: pbutil.ToProtoString(att.AttributeUnitId),
 		Value:           pbutil.ToProtoString(att.Value),
+		Owner:           pbutil.ToProtoString(att.Owner),
+		Status:          pbutil.ToProtoString(att.Status),
+		CreateTime:      pbutil.ToProtoTimestamp(att.CreateTime),
+		StatusTime:      pbutil.ToProtoTimestamp(att.StatusTime),
 	}
 }
 
 //SPU: standard product unit
 type Spu struct {
-	SpuId                    string
-	ResourceVersionId        string
-	AttributeNameIds         []string
-	MeteringAttributeNameIds []string
-	CreateTime               time.Time
-	StatusTime               time.Time
-	Status                   string
+	SpuId      string
+	ProductId  string
+	Owner      string
+	Status     string
+	CreateTime time.Time
+	StatusTime time.Time
 }
 
-func NewSpu(resourceVersionId string, attNameIds, meteringAttNameIds []string) *Spu {
+func NewSpu(productId, owner string) *Spu {
 	now := time.Now()
 	return &Spu{
-		SpuId:                    NewSpuId(),
-		ResourceVersionId:        resourceVersionId,
-		AttributeNameIds:         attNameIds,
-		MeteringAttributeNameIds: meteringAttNameIds,
-		CreateTime:               now,
-		StatusTime:               now,
-		Status:                   constants.StatusActive,
+		SpuId:      NewSpuId(),
+		ProductId:  productId,
+		Owner:      owner,
+		Status:     constants.StatusActive,
+		CreateTime: now,
+		StatusTime: now,
 	}
 }
 
-func PbToSpu(pbSpu *pb.CreateSpuRequest) *Spu {
-	return NewSpu(
-		pbSpu.GetResourceVersionId().GetValue(),
-		pbutil.FromProtoStringSlice(pbSpu.AttributeNameIds),
-		pbutil.FromProtoStringSlice(pbSpu.MeteringAttributeNameIds),
-	)
+func PbToSpu(pbSpu *pb.CreateSpuRequest, owner string) *Spu {
+	return NewSpu(pbSpu.GetProductId().GetValue(), owner)
+}
+
+func SpuToPb(spu *Spu) *pb.Spu {
+	return &pb.Spu{
+		SpuId:      pbutil.ToProtoString(spu.SpuId),
+		ProductId:  pbutil.ToProtoString(spu.ProductId),
+		Owner:      pbutil.ToProtoString(spu.Owner),
+		Status:     pbutil.ToProtoString(spu.Status),
+		CreateTime: pbutil.ToProtoTimestamp(spu.CreateTime),
+		StatusTime: pbutil.ToProtoTimestamp(spu.StatusTime),
+	}
 }
 
 //SKU: stock keeping unit
 type Sku struct {
-	SkuId                string
-	SpuId                string
-	AttributeIds         []string
-	MeteringAttributeIds []string
-	CreateTime           time.Time
-	StatusTime           time.Time
-	Status               string
+	SkuId        string
+	SpuId        string
+	AttributeIds []string
+	Status       string
+	CreateTime   time.Time
+	StatusTime   time.Time
 }
 
-func NewSku(spuId string, attributeIds, meteringAttIds []string) *Sku {
+func NewSku(spuId string, attributeIds []string) *Sku {
 	now := time.Now()
 	return &Sku{
-		SkuId:                NewSkuId(),
-		SpuId:                spuId,
-		AttributeIds:         attributeIds,
-		MeteringAttributeIds: meteringAttIds,
-		CreateTime:           now,
-		StatusTime:           now,
-		Status:               constants.StatusActive,
+		SkuId:        NewSkuId(),
+		SpuId:        spuId,
+		AttributeIds: attributeIds,
+		Status:       constants.StatusActive,
+		CreateTime:   now,
+		StatusTime:   now,
 	}
 }
 
 func PbToSku(pbSku *pb.CreateSkuRequest) *Sku {
 	return NewSku(
 		pbSku.GetSpuId().GetValue(),
-		pbutil.FromProtoStringSlice(pbSku.GetAttributeIds()),
-		pbutil.FromProtoStringSlice(pbSku.GetMeteringAttributeIds()),
+		pbSku.GetAttributeIds(),
 	)
 }
 
-type Price struct {
-	PriceId     string
+func SkuToPb(sku *Sku) *pb.Sku {
+	return &pb.Sku{
+		SkuId:        pbutil.ToProtoString(sku.SkuId),
+		SpuId:        pbutil.ToProtoString(sku.SpuId),
+		AttributeIds: sku.AttributeIds,
+		Status:       pbutil.ToProtoString(sku.Status),
+		CreateTime:   pbutil.ToProtoTimestamp(sku.CreateTime),
+		StatusTime:   pbutil.ToProtoTimestamp(sku.StatusTime),
+	}
+}
+
+type MeteringAttributeBinding struct {
+	BindingId   string
 	SkuId       string
 	AttributeId string
-	Prices      map[string]float64
-	Currency    string
-	StartTime   time.Time
-	EndTime     time.Time
+	Status      string
 	CreateTime  time.Time
 	StatusTime  time.Time
-	Status      string
 }
 
-func NewPrice(skuId, attId, currency string, prices map[string]float64, startTime, endTime time.Time) *Price {
+func NewMeteringAttributeBinding(skuId, attributeId string) *MeteringAttributeBinding {
 	now := time.Now()
-	if (time.Time{}) == startTime {
-		startTime = now
-	}
-	return &Price{
-		PriceId:     NewPriceId(),
+	return &MeteringAttributeBinding{
+		BindingId:   NewMeteringAttributeBindingId(),
 		SkuId:       skuId,
-		AttributeId: attId,
-		Prices:      prices,
-		Currency:    currency,
-		StartTime:   startTime,
-		EndTime:     endTime,
+		AttributeId: attributeId,
+		Status:      constants.StatusActive,
 		CreateTime:  now,
 		StatusTime:  now,
-		Status:      constants.StatusActive,
 	}
 }
 
-func PbToPrice(pbPrice *pb.CreatePriceRequest) *Price {
-	return NewPrice(
-		pbPrice.GetSkuId().GetValue(),
-		pbPrice.GetAttributeId().GetValue(),
-		pbPrice.GetCurrency().String(),
-		pbPrice.GetPrices(),
-		pbutil.FromProtoTimestamp(pbPrice.GetStartTime()),
-		pbutil.FromProtoTimestamp(pbPrice.GetEndTime()),
-	)
+func PbToMeteringAttributeBindings(pbMab *pb.CreateMeteringAttributeBindingsRequest) []*MeteringAttributeBinding {
+	var mabs []*MeteringAttributeBinding
+	for _, attId := range pbMab.GetAttributeIds() {
+		mab := NewMeteringAttributeBinding(
+			pbMab.GetSkuId().GetValue(),
+			attId,
+		)
+		mabs = append(mabs, mab)
+	}
+	return mabs
+}
+
+func MeteringAttributeBindingToPb(mab *MeteringAttributeBinding) *pb.MeteringAttributeBinding {
+	return &pb.MeteringAttributeBinding{
+		BindingId: pbutil.ToProtoString(mab.BindingId),
+		SkuId: pbutil.ToProtoString(mab.SkuId),
+		AttributeId: pbutil.ToProtoString(mab.AttributeId),
+		Status:       pbutil.ToProtoString(mab.Status),
+		CreateTime:   pbutil.ToProtoTimestamp(mab.CreateTime),
+		StatusTime:   pbutil.ToProtoTimestamp(mab.StatusTime),
+	}
 }
