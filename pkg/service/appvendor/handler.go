@@ -126,22 +126,9 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 		return nil, err
 	}
 
-	_, err = PassVendorVerifyInfo(ctx, appVendorUserId)
-	if err != nil {
-		logger.Error(ctx, "Failed to pass vendorVerifyInfo [%s], %+v", appVendorUserId, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
-	}
-
 	systemCtx := clientutil.SetSystemUserToContext(context.Background())
 	// Use system user to change the role of appvendor to isv
 	accessClient, err := accessclient.NewClient()
-	_, err = accessClient.UnbindUserRole(systemCtx, &pb.UnbindUserRoleRequest{
-		RoleId: []string{constants.RoleUser},
-		UserId: []string{appVendorUserId},
-	})
-	if err != nil {
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
-	}
 
 	_, err = accessClient.BindUserRole(systemCtx, &pb.BindUserRoleRequest{
 		RoleId: []string{constants.RoleIsv},
@@ -149,6 +136,12 @@ func (s *Server) PassVendorVerifyInfo(ctx context.Context, req *pb.PassVendorVer
 	})
 	if err != nil {
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorInternalError)
+	}
+
+	_, err = PassVendorVerifyInfo(ctx, appVendorUserId)
+	if err != nil {
+		logger.Error(ctx, "Failed to pass vendorVerifyInfo [%s], %+v", appVendorUserId, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed)
 	}
 
 	// prepared notifications
