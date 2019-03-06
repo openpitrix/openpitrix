@@ -31,7 +31,7 @@ message Price {
 	google.protobuf.Timestamp start_time = 6; //start time for this price, default now
 	google.protobuf.Timestamp end_time = 7; //overdue time for this price, default null(forever)
 	google.protobuf.Timestamp create_time = 8;
-	google.protobuf.Timestamp status_time = 9; //overdue time for this price, default null(forever)
+	google.protobuf.Timestamp status_time = 9;
 }
 
 message CreatePriceRequest {
@@ -129,16 +129,23 @@ service PriceManager {
 
 message CombinationPrice {
     google.protobuf.StringValue combination_price_id = 1;
-//    PriceItem price_item = 2;
+    google.protobuf.StringValue combination_binding_id = 2;
+	map<int64, double> prices = 3;
+	Currency currency = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.Timestamp status_time = 7;
 }
 
-message CreateCombinationPriceRequest {
-    google.protobuf.StringValue combination_metering_attribute_id = 1;
-	map<string, Price> prices = 4;
-}
-
-message CreateCombinationPriceResponse {
-	google.protobuf.StringValue combination_price_id = 1;
+message Probation {
+	google.protobuf.StringValue probation_id = 1;
+	google.protobuf.StringValue sku_id = 2;
+	google.protobuf.StringValue attribute_id = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp start_time = 5; //start time for this probation, default now
+	google.protobuf.Timestamp end_time = 6; //overdue time for this probation, default null(forever)
+	google.protobuf.Timestamp create_time = 7;
+	google.protobuf.Timestamp status_time = 8;
 }
 
 message Discount {

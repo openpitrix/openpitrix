@@ -572,40 +572,33 @@ service SkuManager {
 
 //************************************* Promotion *************************
 
-message CombinationMeteringAttributeBinding {
-    google.protobuf.StringValue combination_binding_id = 1;
-	repeated string metering_attribute_binding_ids = 2;  //MeteringAttributes
-	google.protobuf.StringValue owner = 3;
+message Combination {
+    google.protobuf.StringValue combination_id = 1;
+	google.protobuf.StringValue description = 2;
+	google.protobuf.StringValue status = 3;
+	google.protobuf.Timestamp start_time = 4; //start time for this combination, default now
+	google.protobuf.Timestamp end_time = 5; //overdue time for this combination, default null(forever)
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.Timestamp status_time = 7;
+}
+
+message CombinationSku {
+    google.protobuf.StringValue combination_sku_id = 1;
+    google.protobuf.StringValue combination_id = 2;
+	google.protobuf.StringValue sku_id = 3;
 	google.protobuf.StringValue status = 4;
 	google.protobuf.Timestamp create_time = 5;
 	google.protobuf.Timestamp status_time = 6;
 }
 
-message CreateCombinationMeteringAttributeRequest {
-	repeated CreateMeteringAttributeBindingsRequest metering_attributes = 1;  //MeteringAttributes
-}
-
-message CreateCombinationMeteringAttributeResponse {
-	google.protobuf.StringValue combination_metering_attribute_id = 1;
-}
-
-message ProbationSku {
-    google.protobuf.StringValue probation_sku_id = 1;
-    google.protobuf.StringValue spu_id = 2;
-	repeated string attribute_ids = 3;
-	repeated string metering_attribute_ids = 4;
-    google.protobuf.UInt32Value limit_num = 5;
-}
-
-message CreateProbationSkuRequest {
-	google.protobuf.StringValue spu_id = 1;
-	repeated string attribute_ids = 2;
-	repeated string metering_attribute_ids = 3;
-	google.protobuf.UInt32Value limit_num = 4;
-}
-
-message CreateProbationSkuResponse {
-	google.protobuf.StringValue probation_sku_id = 1;
+//CombinationMABinding: CombinationMeteringAttributeBinding
+message CombinationMABinding {
+	google.protobuf.StringValue combination_binding_id = 1;
+	google.protobuf.StringValue combination_sku_id = 2;
+	google.protobuf.StringValue attribute_id = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
 }
 
 service PromotionManager {
