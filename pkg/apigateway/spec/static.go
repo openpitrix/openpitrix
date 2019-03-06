@@ -6084,6 +6084,29 @@ var Files = map[string]string{
         },
         "action_bundle_name": {
           "type": "string"
+        },
+        "api_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/openpitrixApi"
+          }
+        }
+      }
+    },
+    "openpitrixApi": {
+      "type": "object",
+      "properties": {
+        "api_id": {
+          "type": "string"
+        },
+        "api_method": {
+          "type": "string"
+        },
+        "url_method": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -10510,7 +10533,7 @@ var Files = map[string]string{
         "port": {
           "type": "string"
         },
-        "display_email": {
+        "display_sender": {
           "type": "string"
         },
         "email": {

@@ -12,22 +12,25 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// OpenpitrixActionBundle openpitrix action bundle
-// swagger:model openpitrixActionBundle
-type OpenpitrixActionBundle struct {
+// OpenpitrixAPI openpitrix Api
+// swagger:model openpitrixApi
+type OpenpitrixAPI struct {
 
-	// action bundle id
-	ActionBundleID string `json:"action_bundle_id,omitempty"`
+	// api id
+	APIID string `json:"api_id,omitempty"`
 
-	// action bundle name
-	ActionBundleName string `json:"action_bundle_name,omitempty"`
+	// api method
+	APIMethod string `json:"api_method,omitempty"`
 
-	// api set
-	APISet OpenpitrixActionBundleAPISet `json:"api_set"`
+	// url
+	URL string `json:"url,omitempty"`
+
+	// url method
+	URLMethod string `json:"url_method,omitempty"`
 }
 
-// Validate validates this openpitrix action bundle
-func (m *OpenpitrixActionBundle) Validate(formats strfmt.Registry) error {
+// Validate validates this openpitrix Api
+func (m *OpenpitrixAPI) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -37,7 +40,7 @@ func (m *OpenpitrixActionBundle) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *OpenpitrixActionBundle) MarshalBinary() ([]byte, error) {
+func (m *OpenpitrixAPI) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -45,8 +48,8 @@ func (m *OpenpitrixActionBundle) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *OpenpitrixActionBundle) UnmarshalBinary(b []byte) error {
-	var res OpenpitrixActionBundle
+func (m *OpenpitrixAPI) UnmarshalBinary(b []byte) error {
+	var res OpenpitrixAPI
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

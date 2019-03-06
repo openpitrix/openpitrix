@@ -1601,10 +1601,10 @@
 			"revisionTime": "2019-02-26T07:37:20Z"
 		},
 		{
-			"checksumSHA1": "ZGPEgQQ8dfugjLS4rGQhfLyRcK8=",
+			"checksumSHA1": "kHqdqQFt6y9ksbrB3ieBPjTvezg=",
 			"path": "openpitrix.io/iam/pkg/pb",
-			"revision": "300cae21bb84fe29e9f6d59538db4c2f3dbfce71",
-			"revisionTime": "2019-02-14T08:00:10Z"
+			"revision": "3ce90ea9d3d710d72aa2eecac2c7327d1767498f",
+			"revisionTime": "2019-03-06T10:07:50Z"
 		},
 		{
 			"checksumSHA1": "Iaz/bwPz4qE7KOLSJjh/LcXGqLg=",
