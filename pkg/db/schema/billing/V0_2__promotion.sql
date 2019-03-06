@@ -3,21 +3,35 @@ promotion
 **/
 CREATE TABLE IF NOT EXISTS combination_price (
 	combination_price_id VARCHAR(50) NOT NULL UNIQUE,
-	combination_sku_id   VARCHAR(50) NOT NULL,
-	spu_id               VARCHAR(50) NOT NULL,
-	attribute_id         VARCHAR(50) NOT NULL,
+	combination_binding_id   VARCHAR(50) NOT NULL,
 	prices               JSON COMMENT '{upto: price1, ...}',
 	currency             VARCHAR(50) NOT NULL  DEFAULT 'cny',
-	start_time           TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
-	end_time             TIMESTAMP   NULL,
+	status               VARCHAR(16)           DEFAULT 'active'
+	COMMENT 'active, deleted',
 	create_time          TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
 	status_time          TIMESTAMP             DEFAULT CURRENT_TIMESTAMP
 	ON UPDATE CURRENT_TIMESTAMP,
-	status               VARCHAR(16)           DEFAULT 'active'
-	COMMENT 'active, deleted',
-	INDEX price_sku_index (combination_price_id, combination_sku_id),
 	PRIMARY KEY (combination_price_id)
 );
+
+/** probation **/
+CREATE TABLE IF NOT EXISTS probation (
+	probation_id       VARCHAR(50) NOT NULL UNIQUE,
+	sku_id  VARCHAR(50) NOT NULL,
+	attribute_id          VARCHAR(50) NOT NULL
+	COMMENT 'the value in attribute of probation',
+	status                 VARCHAR(16)          DEFAULT 'active'
+	COMMENT 'active, deleted',
+	start_time            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
+	end_time            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
+	create_time            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
+	status_time            TIMESTAMP            DEFAULT CURRENT_TIMESTAMP
+	ON UPDATE CURRENT_TIMESTAMP,
+	PRIMARY KEY (probation_id)
+);
+
+
+
 
 /** the records of probation resource used by user **/
 CREATE TABLE IF NOT EXISTS probation_record (

@@ -71,6 +71,9 @@ func PriceToPb(price *Price) *pb.Price {
 	}
 }
 
+
+
+
 type LeasingContract struct {
 	Id             string
 	LeasingId      string

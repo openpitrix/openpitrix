@@ -1,6 +1,6 @@
 /**  Sku  **/
 CREATE TABLE IF NOT EXISTS attribute_name (
-	attribute_name_id VARCHAR(50) NOT NUsLL UNIQUE,
+	attribute_name_id VARCHAR(50)  NOT NULL UNIQUE,
 	name              VARCHAR(255) NOT NULL,
 	type              VARCHAR(16)  NOT NULL DEFAULT 'normal'
 	COMMENT 'normal, metering',
@@ -80,6 +80,9 @@ CREATE TABLE IF NOT EXISTS metering_attribute_binding (
 	ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (binding_id)
 );
+
+
+
 
 
 /**  Metering  **/

@@ -73,7 +73,7 @@ func (x MeteringAttributeValue_UpdateValueTypes) String() string {
 }
 
 func (MeteringAttributeValue_UpdateValueTypes) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{60, 0}
+	return fileDescriptor_e3483aebeefa1096, []int{81, 0}
 }
 
 // ************************************* Sku *************************
@@ -2447,6 +2447,7 @@ func (m *DeleteSkusResponse) GetSkuIds() []string {
 	return nil
 }
 
+// metering_attribute_binding
 type MeteringAttributeBinding struct {
 	BindingId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=binding_id,json=bindingId,proto3" json:"binding_id,omitempty"`
 	SkuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
@@ -2924,338 +2925,1467 @@ func (m *DeleteMeteringAttributeBindingsResponse) GetBindingIds() []string {
 	return nil
 }
 
-type CombinationMeteringAttributeBinding struct {
-	CombinationBindingId        *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
-	MeteringAttributeBindingIds []string              `protobuf:"bytes,2,rep,name=metering_attribute_binding_ids,json=meteringAttributeBindingIds,proto3" json:"metering_attribute_binding_ids,omitempty"`
-	Owner                       *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
-	Status                      *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
-	CreateTime                  *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime                  *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
-	XXX_NoUnkeyedLiteral        struct{}              `json:"-"`
-	XXX_unrecognized            []byte                `json:"-"`
-	XXX_sizecache               int32                 `json:"-"`
+// ************************************* Promotion *************************
+// combination
+type Combination struct {
+	CombinationId        *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_id,json=combinationId,proto3" json:"combination_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CombinationMeteringAttributeBinding) Reset()         { *m = CombinationMeteringAttributeBinding{} }
-func (m *CombinationMeteringAttributeBinding) String() string { return proto.CompactTextString(m) }
-func (*CombinationMeteringAttributeBinding) ProtoMessage()    {}
-func (*CombinationMeteringAttributeBinding) Descriptor() ([]byte, []int) {
+func (m *Combination) Reset()         { *m = Combination{} }
+func (m *Combination) String() string { return proto.CompactTextString(m) }
+func (*Combination) ProtoMessage()    {}
+func (*Combination) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e3483aebeefa1096, []int{54}
 }
 
-func (m *CombinationMeteringAttributeBinding) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CombinationMeteringAttributeBinding.Unmarshal(m, b)
+func (m *Combination) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Combination.Unmarshal(m, b)
 }
-func (m *CombinationMeteringAttributeBinding) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CombinationMeteringAttributeBinding.Marshal(b, m, deterministic)
+func (m *Combination) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Combination.Marshal(b, m, deterministic)
 }
-func (m *CombinationMeteringAttributeBinding) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CombinationMeteringAttributeBinding.Merge(m, src)
+func (m *Combination) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Combination.Merge(m, src)
 }
-func (m *CombinationMeteringAttributeBinding) XXX_Size() int {
-	return xxx_messageInfo_CombinationMeteringAttributeBinding.Size(m)
+func (m *Combination) XXX_Size() int {
+	return xxx_messageInfo_Combination.Size(m)
 }
-func (m *CombinationMeteringAttributeBinding) XXX_DiscardUnknown() {
-	xxx_messageInfo_CombinationMeteringAttributeBinding.DiscardUnknown(m)
+func (m *Combination) XXX_DiscardUnknown() {
+	xxx_messageInfo_Combination.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CombinationMeteringAttributeBinding proto.InternalMessageInfo
+var xxx_messageInfo_Combination proto.InternalMessageInfo
 
-func (m *CombinationMeteringAttributeBinding) GetCombinationBindingId() *wrappers.StringValue {
+func (m *Combination) GetCombinationId() *wrappers.StringValue {
 	if m != nil {
-		return m.CombinationBindingId
+		return m.CombinationId
 	}
 	return nil
 }
 
-func (m *CombinationMeteringAttributeBinding) GetMeteringAttributeBindingIds() []string {
+func (m *Combination) GetName() *wrappers.StringValue {
 	if m != nil {
-		return m.MeteringAttributeBindingIds
+		return m.Name
 	}
 	return nil
 }
 
-func (m *CombinationMeteringAttributeBinding) GetOwner() *wrappers.StringValue {
+func (m *Combination) GetDescription() *wrappers.StringValue {
+	if m != nil {
+		return m.Description
+	}
+	return nil
+}
+
+func (m *Combination) GetOwner() *wrappers.StringValue {
 	if m != nil {
 		return m.Owner
 	}
 	return nil
 }
 
-func (m *CombinationMeteringAttributeBinding) GetStatus() *wrappers.StringValue {
+func (m *Combination) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
 	}
 	return nil
 }
 
-func (m *CombinationMeteringAttributeBinding) GetCreateTime() *timestamp.Timestamp {
+func (m *Combination) GetStartTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StartTime
+	}
+	return nil
+}
+
+func (m *Combination) GetEndTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.EndTime
+	}
+	return nil
+}
+
+func (m *Combination) GetCreateTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *CombinationMeteringAttributeBinding) GetStatusTime() *timestamp.Timestamp {
+func (m *Combination) GetStatusTime() *timestamp.Timestamp {
 	if m != nil {
 		return m.StatusTime
 	}
 	return nil
 }
 
-type CreateCombinationMeteringAttributeRequest struct {
-	MeteringAttributes   []*CreateMeteringAttributeBindingsRequest `protobuf:"bytes,1,rep,name=metering_attributes,json=meteringAttributes,proto3" json:"metering_attributes,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                                  `json:"-"`
-	XXX_unrecognized     []byte                                    `json:"-"`
-	XXX_sizecache        int32                                     `json:"-"`
+type CreateCombinationRequest struct {
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,3,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,4,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateCombinationMeteringAttributeRequest) Reset() {
-	*m = CreateCombinationMeteringAttributeRequest{}
-}
-func (m *CreateCombinationMeteringAttributeRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateCombinationMeteringAttributeRequest) ProtoMessage()    {}
-func (*CreateCombinationMeteringAttributeRequest) Descriptor() ([]byte, []int) {
+func (m *CreateCombinationRequest) Reset()         { *m = CreateCombinationRequest{} }
+func (m *CreateCombinationRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateCombinationRequest) ProtoMessage()    {}
+func (*CreateCombinationRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e3483aebeefa1096, []int{55}
 }
 
-func (m *CreateCombinationMeteringAttributeRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateCombinationMeteringAttributeRequest.Unmarshal(m, b)
+func (m *CreateCombinationRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCombinationRequest.Unmarshal(m, b)
 }
-func (m *CreateCombinationMeteringAttributeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateCombinationMeteringAttributeRequest.Marshal(b, m, deterministic)
+func (m *CreateCombinationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCombinationRequest.Marshal(b, m, deterministic)
 }
-func (m *CreateCombinationMeteringAttributeRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCombinationMeteringAttributeRequest.Merge(m, src)
+func (m *CreateCombinationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCombinationRequest.Merge(m, src)
 }
-func (m *CreateCombinationMeteringAttributeRequest) XXX_Size() int {
-	return xxx_messageInfo_CreateCombinationMeteringAttributeRequest.Size(m)
+func (m *CreateCombinationRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateCombinationRequest.Size(m)
 }
-func (m *CreateCombinationMeteringAttributeRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateCombinationMeteringAttributeRequest.DiscardUnknown(m)
+func (m *CreateCombinationRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCombinationRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CreateCombinationMeteringAttributeRequest proto.InternalMessageInfo
+var xxx_messageInfo_CreateCombinationRequest proto.InternalMessageInfo
 
-func (m *CreateCombinationMeteringAttributeRequest) GetMeteringAttributes() []*CreateMeteringAttributeBindingsRequest {
+func (m *CreateCombinationRequest) GetName() *wrappers.StringValue {
 	if m != nil {
-		return m.MeteringAttributes
+		return m.Name
 	}
 	return nil
 }
 
-type CreateCombinationMeteringAttributeResponse struct {
-	CombinationMeteringAttributeId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_metering_attribute_id,json=combinationMeteringAttributeId,proto3" json:"combination_metering_attribute_id,omitempty"`
-	XXX_NoUnkeyedLiteral           struct{}              `json:"-"`
-	XXX_unrecognized               []byte                `json:"-"`
-	XXX_sizecache                  int32                 `json:"-"`
+func (m *CreateCombinationRequest) GetDescription() *wrappers.StringValue {
+	if m != nil {
+		return m.Description
+	}
+	return nil
 }
 
-func (m *CreateCombinationMeteringAttributeResponse) Reset() {
-	*m = CreateCombinationMeteringAttributeResponse{}
+func (m *CreateCombinationRequest) GetStartTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StartTime
+	}
+	return nil
 }
-func (m *CreateCombinationMeteringAttributeResponse) String() string {
-	return proto.CompactTextString(m)
+
+func (m *CreateCombinationRequest) GetEndTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.EndTime
+	}
+	return nil
 }
-func (*CreateCombinationMeteringAttributeResponse) ProtoMessage() {}
-func (*CreateCombinationMeteringAttributeResponse) Descriptor() ([]byte, []int) {
+
+type CreateCombinationResponse struct {
+	CombinationId        *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_id,json=combinationId,proto3" json:"combination_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CreateCombinationResponse) Reset()         { *m = CreateCombinationResponse{} }
+func (m *CreateCombinationResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateCombinationResponse) ProtoMessage()    {}
+func (*CreateCombinationResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e3483aebeefa1096, []int{56}
 }
 
-func (m *CreateCombinationMeteringAttributeResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateCombinationMeteringAttributeResponse.Unmarshal(m, b)
+func (m *CreateCombinationResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCombinationResponse.Unmarshal(m, b)
 }
-func (m *CreateCombinationMeteringAttributeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateCombinationMeteringAttributeResponse.Marshal(b, m, deterministic)
+func (m *CreateCombinationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCombinationResponse.Marshal(b, m, deterministic)
 }
-func (m *CreateCombinationMeteringAttributeResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCombinationMeteringAttributeResponse.Merge(m, src)
+func (m *CreateCombinationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCombinationResponse.Merge(m, src)
 }
-func (m *CreateCombinationMeteringAttributeResponse) XXX_Size() int {
-	return xxx_messageInfo_CreateCombinationMeteringAttributeResponse.Size(m)
+func (m *CreateCombinationResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateCombinationResponse.Size(m)
 }
-func (m *CreateCombinationMeteringAttributeResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateCombinationMeteringAttributeResponse.DiscardUnknown(m)
+func (m *CreateCombinationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCombinationResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CreateCombinationMeteringAttributeResponse proto.InternalMessageInfo
+var xxx_messageInfo_CreateCombinationResponse proto.InternalMessageInfo
 
-func (m *CreateCombinationMeteringAttributeResponse) GetCombinationMeteringAttributeId() *wrappers.StringValue {
+func (m *CreateCombinationResponse) GetCombinationId() *wrappers.StringValue {
 	if m != nil {
-		return m.CombinationMeteringAttributeId
+		return m.CombinationId
 	}
 	return nil
 }
 
-type ProbationSku struct {
-	ProbationSkuId       *wrappers.StringValue `protobuf:"bytes,1,opt,name=probation_sku_id,json=probationSkuId,proto3" json:"probation_sku_id,omitempty"`
-	SpuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=spu_id,json=spuId,proto3" json:"spu_id,omitempty"`
-	AttributeIds         []string              `protobuf:"bytes,3,rep,name=attribute_ids,json=attributeIds,proto3" json:"attribute_ids,omitempty"`
-	MeteringAttributeIds []string              `protobuf:"bytes,4,rep,name=metering_attribute_ids,json=meteringAttributeIds,proto3" json:"metering_attribute_ids,omitempty"`
-	LimitNum             *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=limit_num,json=limitNum,proto3" json:"limit_num,omitempty"`
+type DescribeCombinationsRequest struct {
+	CombinationId        *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_id,json=combinationId,proto3" json:"combination_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,7,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ProbationSku) Reset()         { *m = ProbationSku{} }
-func (m *ProbationSku) String() string { return proto.CompactTextString(m) }
-func (*ProbationSku) ProtoMessage()    {}
-func (*ProbationSku) Descriptor() ([]byte, []int) {
+func (m *DescribeCombinationsRequest) Reset()         { *m = DescribeCombinationsRequest{} }
+func (m *DescribeCombinationsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeCombinationsRequest) ProtoMessage()    {}
+func (*DescribeCombinationsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e3483aebeefa1096, []int{57}
 }
 
-func (m *ProbationSku) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ProbationSku.Unmarshal(m, b)
+func (m *DescribeCombinationsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCombinationsRequest.Unmarshal(m, b)
 }
-func (m *ProbationSku) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ProbationSku.Marshal(b, m, deterministic)
+func (m *DescribeCombinationsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCombinationsRequest.Marshal(b, m, deterministic)
 }
-func (m *ProbationSku) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ProbationSku.Merge(m, src)
+func (m *DescribeCombinationsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCombinationsRequest.Merge(m, src)
 }
-func (m *ProbationSku) XXX_Size() int {
-	return xxx_messageInfo_ProbationSku.Size(m)
+func (m *DescribeCombinationsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeCombinationsRequest.Size(m)
 }
-func (m *ProbationSku) XXX_DiscardUnknown() {
-	xxx_messageInfo_ProbationSku.DiscardUnknown(m)
+func (m *DescribeCombinationsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCombinationsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ProbationSku proto.InternalMessageInfo
+var xxx_messageInfo_DescribeCombinationsRequest proto.InternalMessageInfo
 
-func (m *ProbationSku) GetProbationSkuId() *wrappers.StringValue {
+func (m *DescribeCombinationsRequest) GetCombinationId() *wrappers.StringValue {
 	if m != nil {
-		return m.ProbationSkuId
+		return m.CombinationId
 	}
 	return nil
 }
 
-func (m *ProbationSku) GetSpuId() *wrappers.StringValue {
+func (m *DescribeCombinationsRequest) GetName() *wrappers.StringValue {
 	if m != nil {
-		return m.SpuId
+		return m.Name
 	}
 	return nil
 }
 
-func (m *ProbationSku) GetAttributeIds() []string {
+func (m *DescribeCombinationsRequest) GetOwner() *wrappers.StringValue {
 	if m != nil {
-		return m.AttributeIds
+		return m.Owner
 	}
 	return nil
 }
 
-func (m *ProbationSku) GetMeteringAttributeIds() []string {
+func (m *DescribeCombinationsRequest) GetStatus() *wrappers.StringValue {
 	if m != nil {
-		return m.MeteringAttributeIds
+		return m.Status
 	}
 	return nil
 }
 
-func (m *ProbationSku) GetLimitNum() *wrappers.UInt32Value {
+func (m *DescribeCombinationsRequest) GetSortKey() *wrappers.StringValue {
 	if m != nil {
-		return m.LimitNum
+		return m.SortKey
 	}
 	return nil
 }
 
-type CreateProbationSkuRequest struct {
-	SpuId                *wrappers.StringValue `protobuf:"bytes,1,opt,name=spu_id,json=spuId,proto3" json:"spu_id,omitempty"`
-	AttributeIds         []string              `protobuf:"bytes,2,rep,name=attribute_ids,json=attributeIds,proto3" json:"attribute_ids,omitempty"`
-	MeteringAttributeIds []string              `protobuf:"bytes,3,rep,name=metering_attribute_ids,json=meteringAttributeIds,proto3" json:"metering_attribute_ids,omitempty"`
-	LimitNum             *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=limit_num,json=limitNum,proto3" json:"limit_num,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+func (m *DescribeCombinationsRequest) GetReverse() *wrappers.BoolValue {
+	if m != nil {
+		return m.Reverse
+	}
+	return nil
 }
 
-func (m *CreateProbationSkuRequest) Reset()         { *m = CreateProbationSkuRequest{} }
-func (m *CreateProbationSkuRequest) String() string { return proto.CompactTextString(m) }
-func (*CreateProbationSkuRequest) ProtoMessage()    {}
-func (*CreateProbationSkuRequest) Descriptor() ([]byte, []int) {
+func (m *DescribeCombinationsRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *DescribeCombinationsRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type DescribeCombinationsResponse struct {
+	Combinations         []*Combination `protobuf:"bytes,1,rep,name=combinations,proto3" json:"combinations,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
+}
+
+func (m *DescribeCombinationsResponse) Reset()         { *m = DescribeCombinationsResponse{} }
+func (m *DescribeCombinationsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeCombinationsResponse) ProtoMessage()    {}
+func (*DescribeCombinationsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e3483aebeefa1096, []int{58}
 }
 
-func (m *CreateProbationSkuRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateProbationSkuRequest.Unmarshal(m, b)
+func (m *DescribeCombinationsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCombinationsResponse.Unmarshal(m, b)
 }
-func (m *CreateProbationSkuRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateProbationSkuRequest.Marshal(b, m, deterministic)
+func (m *DescribeCombinationsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCombinationsResponse.Marshal(b, m, deterministic)
 }
-func (m *CreateProbationSkuRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateProbationSkuRequest.Merge(m, src)
+func (m *DescribeCombinationsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCombinationsResponse.Merge(m, src)
 }
-func (m *CreateProbationSkuRequest) XXX_Size() int {
-	return xxx_messageInfo_CreateProbationSkuRequest.Size(m)
+func (m *DescribeCombinationsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeCombinationsResponse.Size(m)
 }
-func (m *CreateProbationSkuRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateProbationSkuRequest.DiscardUnknown(m)
+func (m *DescribeCombinationsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCombinationsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CreateProbationSkuRequest proto.InternalMessageInfo
+var xxx_messageInfo_DescribeCombinationsResponse proto.InternalMessageInfo
 
-func (m *CreateProbationSkuRequest) GetSpuId() *wrappers.StringValue {
+func (m *DescribeCombinationsResponse) GetCombinations() []*Combination {
 	if m != nil {
-		return m.SpuId
+		return m.Combinations
 	}
 	return nil
 }
 
-func (m *CreateProbationSkuRequest) GetAttributeIds() []string {
-	if m != nil {
-		return m.AttributeIds
-	}
-	return nil
-}
-
-func (m *CreateProbationSkuRequest) GetMeteringAttributeIds() []string {
-	if m != nil {
-		return m.MeteringAttributeIds
-	}
-	return nil
-}
-
-func (m *CreateProbationSkuRequest) GetLimitNum() *wrappers.UInt32Value {
-	if m != nil {
-		return m.LimitNum
-	}
-	return nil
-}
-
-type CreateProbationSkuResponse struct {
-	ProbationSkuId       *wrappers.StringValue `protobuf:"bytes,1,opt,name=probation_sku_id,json=probationSkuId,proto3" json:"probation_sku_id,omitempty"`
+type ModifyCombinationRequest struct {
+	CombinationId        *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_id,json=combinationId,proto3" json:"combination_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateProbationSkuResponse) Reset()         { *m = CreateProbationSkuResponse{} }
-func (m *CreateProbationSkuResponse) String() string { return proto.CompactTextString(m) }
-func (*CreateProbationSkuResponse) ProtoMessage()    {}
-func (*CreateProbationSkuResponse) Descriptor() ([]byte, []int) {
+func (m *ModifyCombinationRequest) Reset()         { *m = ModifyCombinationRequest{} }
+func (m *ModifyCombinationRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyCombinationRequest) ProtoMessage()    {}
+func (*ModifyCombinationRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_e3483aebeefa1096, []int{59}
 }
 
-func (m *CreateProbationSkuResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateProbationSkuResponse.Unmarshal(m, b)
+func (m *ModifyCombinationRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCombinationRequest.Unmarshal(m, b)
 }
-func (m *CreateProbationSkuResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateProbationSkuResponse.Marshal(b, m, deterministic)
+func (m *ModifyCombinationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCombinationRequest.Marshal(b, m, deterministic)
 }
-func (m *CreateProbationSkuResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateProbationSkuResponse.Merge(m, src)
+func (m *ModifyCombinationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCombinationRequest.Merge(m, src)
 }
-func (m *CreateProbationSkuResponse) XXX_Size() int {
-	return xxx_messageInfo_CreateProbationSkuResponse.Size(m)
+func (m *ModifyCombinationRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyCombinationRequest.Size(m)
 }
-func (m *CreateProbationSkuResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateProbationSkuResponse.DiscardUnknown(m)
+func (m *ModifyCombinationRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCombinationRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_CreateProbationSkuResponse proto.InternalMessageInfo
+var xxx_messageInfo_ModifyCombinationRequest proto.InternalMessageInfo
 
-func (m *CreateProbationSkuResponse) GetProbationSkuId() *wrappers.StringValue {
+func (m *ModifyCombinationRequest) GetCombinationId() *wrappers.StringValue {
 	if m != nil {
-		return m.ProbationSkuId
+		return m.CombinationId
+	}
+	return nil
+}
+
+func (m *ModifyCombinationRequest) GetName() *wrappers.StringValue {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *ModifyCombinationRequest) GetDescription() *wrappers.StringValue {
+	if m != nil {
+		return m.Description
+	}
+	return nil
+}
+
+func (m *ModifyCombinationRequest) GetStartTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StartTime
+	}
+	return nil
+}
+
+func (m *ModifyCombinationRequest) GetEndTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.EndTime
+	}
+	return nil
+}
+
+type ModifyCombinationResponse struct {
+	CombinationId        *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_id,json=combinationId,proto3" json:"combination_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ModifyCombinationResponse) Reset()         { *m = ModifyCombinationResponse{} }
+func (m *ModifyCombinationResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyCombinationResponse) ProtoMessage()    {}
+func (*ModifyCombinationResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{60}
+}
+
+func (m *ModifyCombinationResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCombinationResponse.Unmarshal(m, b)
+}
+func (m *ModifyCombinationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCombinationResponse.Marshal(b, m, deterministic)
+}
+func (m *ModifyCombinationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCombinationResponse.Merge(m, src)
+}
+func (m *ModifyCombinationResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyCombinationResponse.Size(m)
+}
+func (m *ModifyCombinationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCombinationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyCombinationResponse proto.InternalMessageInfo
+
+func (m *ModifyCombinationResponse) GetCombinationId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationId
+	}
+	return nil
+}
+
+type DeleteCombinationsRequest struct {
+	CombinationIds       []string `protobuf:"bytes,1,rep,name=combination_ids,json=combinationIds,proto3" json:"combination_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteCombinationsRequest) Reset()         { *m = DeleteCombinationsRequest{} }
+func (m *DeleteCombinationsRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteCombinationsRequest) ProtoMessage()    {}
+func (*DeleteCombinationsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{61}
+}
+
+func (m *DeleteCombinationsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCombinationsRequest.Unmarshal(m, b)
+}
+func (m *DeleteCombinationsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCombinationsRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteCombinationsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCombinationsRequest.Merge(m, src)
+}
+func (m *DeleteCombinationsRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteCombinationsRequest.Size(m)
+}
+func (m *DeleteCombinationsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCombinationsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCombinationsRequest proto.InternalMessageInfo
+
+func (m *DeleteCombinationsRequest) GetCombinationIds() []string {
+	if m != nil {
+		return m.CombinationIds
+	}
+	return nil
+}
+
+type DeleteCombinationsResponse struct {
+	CombinationIds       []string `protobuf:"bytes,1,rep,name=combination_ids,json=combinationIds,proto3" json:"combination_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteCombinationsResponse) Reset()         { *m = DeleteCombinationsResponse{} }
+func (m *DeleteCombinationsResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteCombinationsResponse) ProtoMessage()    {}
+func (*DeleteCombinationsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{62}
+}
+
+func (m *DeleteCombinationsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCombinationsResponse.Unmarshal(m, b)
+}
+func (m *DeleteCombinationsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCombinationsResponse.Marshal(b, m, deterministic)
+}
+func (m *DeleteCombinationsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCombinationsResponse.Merge(m, src)
+}
+func (m *DeleteCombinationsResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteCombinationsResponse.Size(m)
+}
+func (m *DeleteCombinationsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCombinationsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCombinationsResponse proto.InternalMessageInfo
+
+func (m *DeleteCombinationsResponse) GetCombinationIds() []string {
+	if m != nil {
+		return m.CombinationIds
+	}
+	return nil
+}
+
+// combination_sku
+type CombinationSku struct {
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	CombinationId        *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_id,json=combinationId,proto3" json:"combination_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,3,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CombinationSku) Reset()         { *m = CombinationSku{} }
+func (m *CombinationSku) String() string { return proto.CompactTextString(m) }
+func (*CombinationSku) ProtoMessage()    {}
+func (*CombinationSku) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{63}
+}
+
+func (m *CombinationSku) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CombinationSku.Unmarshal(m, b)
+}
+func (m *CombinationSku) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CombinationSku.Marshal(b, m, deterministic)
+}
+func (m *CombinationSku) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CombinationSku.Merge(m, src)
+}
+func (m *CombinationSku) XXX_Size() int {
+	return xxx_messageInfo_CombinationSku.Size(m)
+}
+func (m *CombinationSku) XXX_DiscardUnknown() {
+	xxx_messageInfo_CombinationSku.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CombinationSku proto.InternalMessageInfo
+
+func (m *CombinationSku) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *CombinationSku) GetCombinationId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationId
+	}
+	return nil
+}
+
+func (m *CombinationSku) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *CombinationSku) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *CombinationSku) GetCreateTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.CreateTime
+	}
+	return nil
+}
+
+func (m *CombinationSku) GetStatusTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StatusTime
+	}
+	return nil
+}
+
+type CreateCombinationSkuRequest struct {
+	CombinationId        *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_id,json=combinationId,proto3" json:"combination_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,2,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CreateCombinationSkuRequest) Reset()         { *m = CreateCombinationSkuRequest{} }
+func (m *CreateCombinationSkuRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateCombinationSkuRequest) ProtoMessage()    {}
+func (*CreateCombinationSkuRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{64}
+}
+
+func (m *CreateCombinationSkuRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCombinationSkuRequest.Unmarshal(m, b)
+}
+func (m *CreateCombinationSkuRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCombinationSkuRequest.Marshal(b, m, deterministic)
+}
+func (m *CreateCombinationSkuRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCombinationSkuRequest.Merge(m, src)
+}
+func (m *CreateCombinationSkuRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateCombinationSkuRequest.Size(m)
+}
+func (m *CreateCombinationSkuRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCombinationSkuRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateCombinationSkuRequest proto.InternalMessageInfo
+
+func (m *CreateCombinationSkuRequest) GetCombinationId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationId
+	}
+	return nil
+}
+
+func (m *CreateCombinationSkuRequest) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+type CreateCombinationSkuResponse struct {
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CreateCombinationSkuResponse) Reset()         { *m = CreateCombinationSkuResponse{} }
+func (m *CreateCombinationSkuResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateCombinationSkuResponse) ProtoMessage()    {}
+func (*CreateCombinationSkuResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{65}
+}
+
+func (m *CreateCombinationSkuResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCombinationSkuResponse.Unmarshal(m, b)
+}
+func (m *CreateCombinationSkuResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCombinationSkuResponse.Marshal(b, m, deterministic)
+}
+func (m *CreateCombinationSkuResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCombinationSkuResponse.Merge(m, src)
+}
+func (m *CreateCombinationSkuResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateCombinationSkuResponse.Size(m)
+}
+func (m *CreateCombinationSkuResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCombinationSkuResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateCombinationSkuResponse proto.InternalMessageInfo
+
+func (m *CreateCombinationSkuResponse) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+type DescribeCombinationSkusRequest struct {
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	CombinationId        *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_id,json=combinationId,proto3" json:"combination_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,3,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,7,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DescribeCombinationSkusRequest) Reset()         { *m = DescribeCombinationSkusRequest{} }
+func (m *DescribeCombinationSkusRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeCombinationSkusRequest) ProtoMessage()    {}
+func (*DescribeCombinationSkusRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{66}
+}
+
+func (m *DescribeCombinationSkusRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCombinationSkusRequest.Unmarshal(m, b)
+}
+func (m *DescribeCombinationSkusRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCombinationSkusRequest.Marshal(b, m, deterministic)
+}
+func (m *DescribeCombinationSkusRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCombinationSkusRequest.Merge(m, src)
+}
+func (m *DescribeCombinationSkusRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeCombinationSkusRequest.Size(m)
+}
+func (m *DescribeCombinationSkusRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCombinationSkusRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeCombinationSkusRequest proto.InternalMessageInfo
+
+func (m *DescribeCombinationSkusRequest) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *DescribeCombinationSkusRequest) GetCombinationId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationId
+	}
+	return nil
+}
+
+func (m *DescribeCombinationSkusRequest) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+func (m *DescribeCombinationSkusRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *DescribeCombinationSkusRequest) GetSortKey() *wrappers.StringValue {
+	if m != nil {
+		return m.SortKey
+	}
+	return nil
+}
+
+func (m *DescribeCombinationSkusRequest) GetReverse() *wrappers.BoolValue {
+	if m != nil {
+		return m.Reverse
+	}
+	return nil
+}
+
+func (m *DescribeCombinationSkusRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *DescribeCombinationSkusRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type DescribeCombinationSkusResponse struct {
+	CombinationSkus      []*CombinationSku `protobuf:"bytes,1,rep,name=combination_skus,json=combinationSkus,proto3" json:"combination_skus,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *DescribeCombinationSkusResponse) Reset()         { *m = DescribeCombinationSkusResponse{} }
+func (m *DescribeCombinationSkusResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeCombinationSkusResponse) ProtoMessage()    {}
+func (*DescribeCombinationSkusResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{67}
+}
+
+func (m *DescribeCombinationSkusResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCombinationSkusResponse.Unmarshal(m, b)
+}
+func (m *DescribeCombinationSkusResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCombinationSkusResponse.Marshal(b, m, deterministic)
+}
+func (m *DescribeCombinationSkusResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCombinationSkusResponse.Merge(m, src)
+}
+func (m *DescribeCombinationSkusResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeCombinationSkusResponse.Size(m)
+}
+func (m *DescribeCombinationSkusResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCombinationSkusResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeCombinationSkusResponse proto.InternalMessageInfo
+
+func (m *DescribeCombinationSkusResponse) GetCombinationSkus() []*CombinationSku {
+	if m != nil {
+		return m.CombinationSkus
+	}
+	return nil
+}
+
+type ModifyCombinationSkuRequest struct {
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	CombinationId        *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_id,json=combinationId,proto3" json:"combination_id,omitempty"`
+	SkuId                *wrappers.StringValue `protobuf:"bytes,3,opt,name=sku_id,json=skuId,proto3" json:"sku_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ModifyCombinationSkuRequest) Reset()         { *m = ModifyCombinationSkuRequest{} }
+func (m *ModifyCombinationSkuRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyCombinationSkuRequest) ProtoMessage()    {}
+func (*ModifyCombinationSkuRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{68}
+}
+
+func (m *ModifyCombinationSkuRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCombinationSkuRequest.Unmarshal(m, b)
+}
+func (m *ModifyCombinationSkuRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCombinationSkuRequest.Marshal(b, m, deterministic)
+}
+func (m *ModifyCombinationSkuRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCombinationSkuRequest.Merge(m, src)
+}
+func (m *ModifyCombinationSkuRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyCombinationSkuRequest.Size(m)
+}
+func (m *ModifyCombinationSkuRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCombinationSkuRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyCombinationSkuRequest proto.InternalMessageInfo
+
+func (m *ModifyCombinationSkuRequest) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *ModifyCombinationSkuRequest) GetCombinationId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationId
+	}
+	return nil
+}
+
+func (m *ModifyCombinationSkuRequest) GetSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.SkuId
+	}
+	return nil
+}
+
+type ModifyCombinationSkuResponse struct {
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ModifyCombinationSkuResponse) Reset()         { *m = ModifyCombinationSkuResponse{} }
+func (m *ModifyCombinationSkuResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyCombinationSkuResponse) ProtoMessage()    {}
+func (*ModifyCombinationSkuResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{69}
+}
+
+func (m *ModifyCombinationSkuResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCombinationSkuResponse.Unmarshal(m, b)
+}
+func (m *ModifyCombinationSkuResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCombinationSkuResponse.Marshal(b, m, deterministic)
+}
+func (m *ModifyCombinationSkuResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCombinationSkuResponse.Merge(m, src)
+}
+func (m *ModifyCombinationSkuResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyCombinationSkuResponse.Size(m)
+}
+func (m *ModifyCombinationSkuResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCombinationSkuResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyCombinationSkuResponse proto.InternalMessageInfo
+
+func (m *ModifyCombinationSkuResponse) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+type DeleteCombinationSkusRequest struct {
+	CombinationSkuIds    []string `protobuf:"bytes,1,rep,name=combination_sku_ids,json=combinationSkuIds,proto3" json:"combination_sku_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteCombinationSkusRequest) Reset()         { *m = DeleteCombinationSkusRequest{} }
+func (m *DeleteCombinationSkusRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteCombinationSkusRequest) ProtoMessage()    {}
+func (*DeleteCombinationSkusRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{70}
+}
+
+func (m *DeleteCombinationSkusRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCombinationSkusRequest.Unmarshal(m, b)
+}
+func (m *DeleteCombinationSkusRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCombinationSkusRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteCombinationSkusRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCombinationSkusRequest.Merge(m, src)
+}
+func (m *DeleteCombinationSkusRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteCombinationSkusRequest.Size(m)
+}
+func (m *DeleteCombinationSkusRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCombinationSkusRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCombinationSkusRequest proto.InternalMessageInfo
+
+func (m *DeleteCombinationSkusRequest) GetCombinationSkuIds() []string {
+	if m != nil {
+		return m.CombinationSkuIds
+	}
+	return nil
+}
+
+type DeleteCombinationSkusResponse struct {
+	CombinationSkuIds    []string `protobuf:"bytes,1,rep,name=combination_sku_ids,json=combinationSkuIds,proto3" json:"combination_sku_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteCombinationSkusResponse) Reset()         { *m = DeleteCombinationSkusResponse{} }
+func (m *DeleteCombinationSkusResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteCombinationSkusResponse) ProtoMessage()    {}
+func (*DeleteCombinationSkusResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{71}
+}
+
+func (m *DeleteCombinationSkusResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCombinationSkusResponse.Unmarshal(m, b)
+}
+func (m *DeleteCombinationSkusResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCombinationSkusResponse.Marshal(b, m, deterministic)
+}
+func (m *DeleteCombinationSkusResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCombinationSkusResponse.Merge(m, src)
+}
+func (m *DeleteCombinationSkusResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteCombinationSkusResponse.Size(m)
+}
+func (m *DeleteCombinationSkusResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCombinationSkusResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCombinationSkusResponse proto.InternalMessageInfo
+
+func (m *DeleteCombinationSkusResponse) GetCombinationSkuIds() []string {
+	if m != nil {
+		return m.CombinationSkuIds
+	}
+	return nil
+}
+
+// CombinationMABinding: CombinationMeteringAttributeBinding
+type CombinationMABinding struct {
+	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CombinationMABinding) Reset()         { *m = CombinationMABinding{} }
+func (m *CombinationMABinding) String() string { return proto.CompactTextString(m) }
+func (*CombinationMABinding) ProtoMessage()    {}
+func (*CombinationMABinding) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{72}
+}
+
+func (m *CombinationMABinding) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CombinationMABinding.Unmarshal(m, b)
+}
+func (m *CombinationMABinding) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CombinationMABinding.Marshal(b, m, deterministic)
+}
+func (m *CombinationMABinding) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CombinationMABinding.Merge(m, src)
+}
+func (m *CombinationMABinding) XXX_Size() int {
+	return xxx_messageInfo_CombinationMABinding.Size(m)
+}
+func (m *CombinationMABinding) XXX_DiscardUnknown() {
+	xxx_messageInfo_CombinationMABinding.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CombinationMABinding proto.InternalMessageInfo
+
+func (m *CombinationMABinding) GetCombinationBindingId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationBindingId
+	}
+	return nil
+}
+
+func (m *CombinationMABinding) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *CombinationMABinding) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
+	}
+	return nil
+}
+
+func (m *CombinationMABinding) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *CombinationMABinding) GetCreateTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.CreateTime
+	}
+	return nil
+}
+
+func (m *CombinationMABinding) GetStatusTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StatusTime
+	}
+	return nil
+}
+
+type CreateCombinationMABindingRequest struct {
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,2,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CreateCombinationMABindingRequest) Reset()         { *m = CreateCombinationMABindingRequest{} }
+func (m *CreateCombinationMABindingRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateCombinationMABindingRequest) ProtoMessage()    {}
+func (*CreateCombinationMABindingRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{73}
+}
+
+func (m *CreateCombinationMABindingRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCombinationMABindingRequest.Unmarshal(m, b)
+}
+func (m *CreateCombinationMABindingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCombinationMABindingRequest.Marshal(b, m, deterministic)
+}
+func (m *CreateCombinationMABindingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCombinationMABindingRequest.Merge(m, src)
+}
+func (m *CreateCombinationMABindingRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateCombinationMABindingRequest.Size(m)
+}
+func (m *CreateCombinationMABindingRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCombinationMABindingRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateCombinationMABindingRequest proto.InternalMessageInfo
+
+func (m *CreateCombinationMABindingRequest) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *CreateCombinationMABindingRequest) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
+	}
+	return nil
+}
+
+type CreateCombinationMABindingResponse struct {
+	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *CreateCombinationMABindingResponse) Reset()         { *m = CreateCombinationMABindingResponse{} }
+func (m *CreateCombinationMABindingResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateCombinationMABindingResponse) ProtoMessage()    {}
+func (*CreateCombinationMABindingResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{74}
+}
+
+func (m *CreateCombinationMABindingResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCombinationMABindingResponse.Unmarshal(m, b)
+}
+func (m *CreateCombinationMABindingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCombinationMABindingResponse.Marshal(b, m, deterministic)
+}
+func (m *CreateCombinationMABindingResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCombinationMABindingResponse.Merge(m, src)
+}
+func (m *CreateCombinationMABindingResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateCombinationMABindingResponse.Size(m)
+}
+func (m *CreateCombinationMABindingResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCombinationMABindingResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateCombinationMABindingResponse proto.InternalMessageInfo
+
+func (m *CreateCombinationMABindingResponse) GetCombinationBindingId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationBindingId
+	}
+	return nil
+}
+
+type DescribeCombinationMABindingsRequest struct {
+	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,4,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,5,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,6,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,7,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DescribeCombinationMABindingsRequest) Reset()         { *m = DescribeCombinationMABindingsRequest{} }
+func (m *DescribeCombinationMABindingsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeCombinationMABindingsRequest) ProtoMessage()    {}
+func (*DescribeCombinationMABindingsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{75}
+}
+
+func (m *DescribeCombinationMABindingsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCombinationMABindingsRequest.Unmarshal(m, b)
+}
+func (m *DescribeCombinationMABindingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCombinationMABindingsRequest.Marshal(b, m, deterministic)
+}
+func (m *DescribeCombinationMABindingsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCombinationMABindingsRequest.Merge(m, src)
+}
+func (m *DescribeCombinationMABindingsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeCombinationMABindingsRequest.Size(m)
+}
+func (m *DescribeCombinationMABindingsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCombinationMABindingsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeCombinationMABindingsRequest proto.InternalMessageInfo
+
+func (m *DescribeCombinationMABindingsRequest) GetCombinationBindingId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationBindingId
+	}
+	return nil
+}
+
+func (m *DescribeCombinationMABindingsRequest) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *DescribeCombinationMABindingsRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *DescribeCombinationMABindingsRequest) GetSortKey() *wrappers.StringValue {
+	if m != nil {
+		return m.SortKey
+	}
+	return nil
+}
+
+func (m *DescribeCombinationMABindingsRequest) GetReverse() *wrappers.BoolValue {
+	if m != nil {
+		return m.Reverse
+	}
+	return nil
+}
+
+func (m *DescribeCombinationMABindingsRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *DescribeCombinationMABindingsRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type DescribeCombinationMABindingsResponse struct {
+	CombinationMaBindings []*CombinationMABinding `protobuf:"bytes,1,rep,name=combination_ma_bindings,json=combinationMaBindings,proto3" json:"combination_ma_bindings,omitempty"`
+	XXX_NoUnkeyedLiteral  struct{}                `json:"-"`
+	XXX_unrecognized      []byte                  `json:"-"`
+	XXX_sizecache         int32                   `json:"-"`
+}
+
+func (m *DescribeCombinationMABindingsResponse) Reset()         { *m = DescribeCombinationMABindingsResponse{} }
+func (m *DescribeCombinationMABindingsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeCombinationMABindingsResponse) ProtoMessage()    {}
+func (*DescribeCombinationMABindingsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{76}
+}
+
+func (m *DescribeCombinationMABindingsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCombinationMABindingsResponse.Unmarshal(m, b)
+}
+func (m *DescribeCombinationMABindingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCombinationMABindingsResponse.Marshal(b, m, deterministic)
+}
+func (m *DescribeCombinationMABindingsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCombinationMABindingsResponse.Merge(m, src)
+}
+func (m *DescribeCombinationMABindingsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeCombinationMABindingsResponse.Size(m)
+}
+func (m *DescribeCombinationMABindingsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCombinationMABindingsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeCombinationMABindingsResponse proto.InternalMessageInfo
+
+func (m *DescribeCombinationMABindingsResponse) GetCombinationMaBindings() []*CombinationMABinding {
+	if m != nil {
+		return m.CombinationMaBindings
+	}
+	return nil
+}
+
+type ModifyCombinationMABindingRequest struct {
+	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
+	CombinationSkuId     *wrappers.StringValue `protobuf:"bytes,2,opt,name=combination_sku_id,json=combinationSkuId,proto3" json:"combination_sku_id,omitempty"`
+	AttributeId          *wrappers.StringValue `protobuf:"bytes,3,opt,name=attribute_id,json=attributeId,proto3" json:"attribute_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ModifyCombinationMABindingRequest) Reset()         { *m = ModifyCombinationMABindingRequest{} }
+func (m *ModifyCombinationMABindingRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyCombinationMABindingRequest) ProtoMessage()    {}
+func (*ModifyCombinationMABindingRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{77}
+}
+
+func (m *ModifyCombinationMABindingRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCombinationMABindingRequest.Unmarshal(m, b)
+}
+func (m *ModifyCombinationMABindingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCombinationMABindingRequest.Marshal(b, m, deterministic)
+}
+func (m *ModifyCombinationMABindingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCombinationMABindingRequest.Merge(m, src)
+}
+func (m *ModifyCombinationMABindingRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyCombinationMABindingRequest.Size(m)
+}
+func (m *ModifyCombinationMABindingRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCombinationMABindingRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyCombinationMABindingRequest proto.InternalMessageInfo
+
+func (m *ModifyCombinationMABindingRequest) GetCombinationBindingId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationBindingId
+	}
+	return nil
+}
+
+func (m *ModifyCombinationMABindingRequest) GetCombinationSkuId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationSkuId
+	}
+	return nil
+}
+
+func (m *ModifyCombinationMABindingRequest) GetAttributeId() *wrappers.StringValue {
+	if m != nil {
+		return m.AttributeId
+	}
+	return nil
+}
+
+type ModifyCombinationMABindingResponse struct {
+	CombinationBindingId *wrappers.StringValue `protobuf:"bytes,1,opt,name=combination_binding_id,json=combinationBindingId,proto3" json:"combination_binding_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ModifyCombinationMABindingResponse) Reset()         { *m = ModifyCombinationMABindingResponse{} }
+func (m *ModifyCombinationMABindingResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyCombinationMABindingResponse) ProtoMessage()    {}
+func (*ModifyCombinationMABindingResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{78}
+}
+
+func (m *ModifyCombinationMABindingResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCombinationMABindingResponse.Unmarshal(m, b)
+}
+func (m *ModifyCombinationMABindingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCombinationMABindingResponse.Marshal(b, m, deterministic)
+}
+func (m *ModifyCombinationMABindingResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCombinationMABindingResponse.Merge(m, src)
+}
+func (m *ModifyCombinationMABindingResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyCombinationMABindingResponse.Size(m)
+}
+func (m *ModifyCombinationMABindingResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCombinationMABindingResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyCombinationMABindingResponse proto.InternalMessageInfo
+
+func (m *ModifyCombinationMABindingResponse) GetCombinationBindingId() *wrappers.StringValue {
+	if m != nil {
+		return m.CombinationBindingId
+	}
+	return nil
+}
+
+type DeleteCombinationMABindingsRequest struct {
+	CombinationBindingIds []string `protobuf:"bytes,1,rep,name=combination_binding_ids,json=combinationBindingIds,proto3" json:"combination_binding_ids,omitempty"`
+	XXX_NoUnkeyedLiteral  struct{} `json:"-"`
+	XXX_unrecognized      []byte   `json:"-"`
+	XXX_sizecache         int32    `json:"-"`
+}
+
+func (m *DeleteCombinationMABindingsRequest) Reset()         { *m = DeleteCombinationMABindingsRequest{} }
+func (m *DeleteCombinationMABindingsRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteCombinationMABindingsRequest) ProtoMessage()    {}
+func (*DeleteCombinationMABindingsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{79}
+}
+
+func (m *DeleteCombinationMABindingsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCombinationMABindingsRequest.Unmarshal(m, b)
+}
+func (m *DeleteCombinationMABindingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCombinationMABindingsRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteCombinationMABindingsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCombinationMABindingsRequest.Merge(m, src)
+}
+func (m *DeleteCombinationMABindingsRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteCombinationMABindingsRequest.Size(m)
+}
+func (m *DeleteCombinationMABindingsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCombinationMABindingsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCombinationMABindingsRequest proto.InternalMessageInfo
+
+func (m *DeleteCombinationMABindingsRequest) GetCombinationBindingIds() []string {
+	if m != nil {
+		return m.CombinationBindingIds
+	}
+	return nil
+}
+
+type DeleteCombinationMABindingsResponse struct {
+	CombinationBindingIds []string `protobuf:"bytes,1,rep,name=combination_binding_ids,json=combinationBindingIds,proto3" json:"combination_binding_ids,omitempty"`
+	XXX_NoUnkeyedLiteral  struct{} `json:"-"`
+	XXX_unrecognized      []byte   `json:"-"`
+	XXX_sizecache         int32    `json:"-"`
+}
+
+func (m *DeleteCombinationMABindingsResponse) Reset()         { *m = DeleteCombinationMABindingsResponse{} }
+func (m *DeleteCombinationMABindingsResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteCombinationMABindingsResponse) ProtoMessage()    {}
+func (*DeleteCombinationMABindingsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e3483aebeefa1096, []int{80}
+}
+
+func (m *DeleteCombinationMABindingsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCombinationMABindingsResponse.Unmarshal(m, b)
+}
+func (m *DeleteCombinationMABindingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCombinationMABindingsResponse.Marshal(b, m, deterministic)
+}
+func (m *DeleteCombinationMABindingsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCombinationMABindingsResponse.Merge(m, src)
+}
+func (m *DeleteCombinationMABindingsResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteCombinationMABindingsResponse.Size(m)
+}
+func (m *DeleteCombinationMABindingsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCombinationMABindingsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCombinationMABindingsResponse proto.InternalMessageInfo
+
+func (m *DeleteCombinationMABindingsResponse) GetCombinationBindingIds() []string {
+	if m != nil {
+		return m.CombinationBindingIds
 	}
 	return nil
 }
@@ -3273,7 +4403,7 @@ func (m *MeteringAttributeValue) Reset()         { *m = MeteringAttributeValue{}
 func (m *MeteringAttributeValue) String() string { return proto.CompactTextString(m) }
 func (*MeteringAttributeValue) ProtoMessage()    {}
 func (*MeteringAttributeValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{60}
+	return fileDescriptor_e3483aebeefa1096, []int{81}
 }
 
 func (m *MeteringAttributeValue) XXX_Unmarshal(b []byte) error {
@@ -3329,7 +4459,7 @@ func (m *MeteringSku) Reset()         { *m = MeteringSku{} }
 func (m *MeteringSku) String() string { return proto.CompactTextString(m) }
 func (*MeteringSku) ProtoMessage()    {}
 func (*MeteringSku) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{61}
+	return fileDescriptor_e3483aebeefa1096, []int{82}
 }
 
 func (m *MeteringSku) XXX_Unmarshal(b []byte) error {
@@ -3383,7 +4513,7 @@ func (m *MeteringRequest) Reset()         { *m = MeteringRequest{} }
 func (m *MeteringRequest) String() string { return proto.CompactTextString(m) }
 func (*MeteringRequest) ProtoMessage()    {}
 func (*MeteringRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{62}
+	return fileDescriptor_e3483aebeefa1096, []int{83}
 }
 
 func (m *MeteringRequest) XXX_Unmarshal(b []byte) error {
@@ -3429,7 +4559,7 @@ func (m *MeteringResponse) Reset()         { *m = MeteringResponse{} }
 func (m *MeteringResponse) String() string { return proto.CompactTextString(m) }
 func (*MeteringResponse) ProtoMessage()    {}
 func (*MeteringResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e3483aebeefa1096, []int{63}
+	return fileDescriptor_e3483aebeefa1096, []int{84}
 }
 
 func (m *MeteringResponse) XXX_Unmarshal(b []byte) error {
@@ -3514,12 +4644,33 @@ func init() {
 	proto.RegisterType((*ModifyMeteringAttributeBindingResponse)(nil), "openpitrix.ModifyMeteringAttributeBindingResponse")
 	proto.RegisterType((*DeleteMeteringAttributeBindingsRequest)(nil), "openpitrix.DeleteMeteringAttributeBindingsRequest")
 	proto.RegisterType((*DeleteMeteringAttributeBindingsResponse)(nil), "openpitrix.DeleteMeteringAttributeBindingsResponse")
-	proto.RegisterType((*CombinationMeteringAttributeBinding)(nil), "openpitrix.CombinationMeteringAttributeBinding")
-	proto.RegisterType((*CreateCombinationMeteringAttributeRequest)(nil), "openpitrix.CreateCombinationMeteringAttributeRequest")
-	proto.RegisterType((*CreateCombinationMeteringAttributeResponse)(nil), "openpitrix.CreateCombinationMeteringAttributeResponse")
-	proto.RegisterType((*ProbationSku)(nil), "openpitrix.ProbationSku")
-	proto.RegisterType((*CreateProbationSkuRequest)(nil), "openpitrix.CreateProbationSkuRequest")
-	proto.RegisterType((*CreateProbationSkuResponse)(nil), "openpitrix.CreateProbationSkuResponse")
+	proto.RegisterType((*Combination)(nil), "openpitrix.Combination")
+	proto.RegisterType((*CreateCombinationRequest)(nil), "openpitrix.CreateCombinationRequest")
+	proto.RegisterType((*CreateCombinationResponse)(nil), "openpitrix.CreateCombinationResponse")
+	proto.RegisterType((*DescribeCombinationsRequest)(nil), "openpitrix.DescribeCombinationsRequest")
+	proto.RegisterType((*DescribeCombinationsResponse)(nil), "openpitrix.DescribeCombinationsResponse")
+	proto.RegisterType((*ModifyCombinationRequest)(nil), "openpitrix.ModifyCombinationRequest")
+	proto.RegisterType((*ModifyCombinationResponse)(nil), "openpitrix.ModifyCombinationResponse")
+	proto.RegisterType((*DeleteCombinationsRequest)(nil), "openpitrix.DeleteCombinationsRequest")
+	proto.RegisterType((*DeleteCombinationsResponse)(nil), "openpitrix.DeleteCombinationsResponse")
+	proto.RegisterType((*CombinationSku)(nil), "openpitrix.CombinationSku")
+	proto.RegisterType((*CreateCombinationSkuRequest)(nil), "openpitrix.CreateCombinationSkuRequest")
+	proto.RegisterType((*CreateCombinationSkuResponse)(nil), "openpitrix.CreateCombinationSkuResponse")
+	proto.RegisterType((*DescribeCombinationSkusRequest)(nil), "openpitrix.DescribeCombinationSkusRequest")
+	proto.RegisterType((*DescribeCombinationSkusResponse)(nil), "openpitrix.DescribeCombinationSkusResponse")
+	proto.RegisterType((*ModifyCombinationSkuRequest)(nil), "openpitrix.ModifyCombinationSkuRequest")
+	proto.RegisterType((*ModifyCombinationSkuResponse)(nil), "openpitrix.ModifyCombinationSkuResponse")
+	proto.RegisterType((*DeleteCombinationSkusRequest)(nil), "openpitrix.DeleteCombinationSkusRequest")
+	proto.RegisterType((*DeleteCombinationSkusResponse)(nil), "openpitrix.DeleteCombinationSkusResponse")
+	proto.RegisterType((*CombinationMABinding)(nil), "openpitrix.CombinationMABinding")
+	proto.RegisterType((*CreateCombinationMABindingRequest)(nil), "openpitrix.CreateCombinationMABindingRequest")
+	proto.RegisterType((*CreateCombinationMABindingResponse)(nil), "openpitrix.CreateCombinationMABindingResponse")
+	proto.RegisterType((*DescribeCombinationMABindingsRequest)(nil), "openpitrix.DescribeCombinationMABindingsRequest")
+	proto.RegisterType((*DescribeCombinationMABindingsResponse)(nil), "openpitrix.DescribeCombinationMABindingsResponse")
+	proto.RegisterType((*ModifyCombinationMABindingRequest)(nil), "openpitrix.ModifyCombinationMABindingRequest")
+	proto.RegisterType((*ModifyCombinationMABindingResponse)(nil), "openpitrix.ModifyCombinationMABindingResponse")
+	proto.RegisterType((*DeleteCombinationMABindingsRequest)(nil), "openpitrix.DeleteCombinationMABindingsRequest")
+	proto.RegisterType((*DeleteCombinationMABindingsResponse)(nil), "openpitrix.DeleteCombinationMABindingsResponse")
 	proto.RegisterType((*MeteringAttributeValue)(nil), "openpitrix.MeteringAttributeValue")
 	proto.RegisterType((*MeteringSku)(nil), "openpitrix.MeteringSku")
 	proto.RegisterType((*MeteringRequest)(nil), "openpitrix.MeteringRequest")
@@ -3529,178 +4680,220 @@ func init() {
 func init() { proto.RegisterFile("metering.proto", fileDescriptor_e3483aebeefa1096) }
 
 var fileDescriptor_e3483aebeefa1096 = []byte{
-	// 2724 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x5a, 0xcd, 0x6f, 0x1c, 0x49,
-	0xf9, 0xfe, 0xf5, 0xcc, 0x78, 0x6c, 0xbf, 0x63, 0xc7, 0xe3, 0x72, 0x62, 0x8f, 0xdb, 0x5e, 0x7b,
-	0xd2, 0xc9, 0x3a, 0xb6, 0x37, 0xb1, 0x77, 0xed, 0xe4, 0xb7, 0xec, 0x06, 0x76, 0x19, 0x27, 0x66,
-	0xe3, 0x6c, 0xec, 0x8d, 0xc6, 0xce, 0x82, 0xf6, 0x62, 0xcd, 0x78, 0x3a, 0xc3, 0xa8, 0x3d, 0xd3,
-	0x4d, 0x57, 0x77, 0x82, 0x2f, 0x1c, 0x16, 0x04, 0x5c, 0xf8, 0xd0, 0xa0, 0xd5, 0x22, 0x04, 0x87,
-	0x70, 0x42, 0x48, 0x08, 0x89, 0x2b, 0xe2, 0xb6, 0x7f, 0x00, 0x82, 0x0b, 0x02, 0x21, 0x38, 0xac,
-	0x90, 0xb8, 0x00, 0x37, 0xb8, 0x20, 0xa1, 0xaa, 0xae, 0xfe, 0xae, 0xfe, 0x98, 0x19, 0x27, 0xd9,
-	0x64, 0x4f, 0x89, 0xa7, 0xdf, 0xaa, 0x7e, 0xdf, 0xe7, 0x79, 0xea, 0x79, 0xbb, 0xab, 0x0b, 0xce,
-	0xb4, 0x65, 0x43, 0xd6, 0x5b, 0x9d, 0xe6, 0x9a, 0xa6, 0xab, 0x86, 0x8a, 0x40, 0xd5, 0xe4, 0x8e,
-	0xd6, 0x32, 0xf4, 0xd6, 0x57, 0xc5, 0x85, 0xa6, 0xaa, 0x36, 0x8f, 0xe5, 0x75, 0x7a, 0xa5, 0x6e,
-	0xde, 0x5f, 0x7f, 0xa8, 0xd7, 0x34, 0x4d, 0xd6, 0xb1, 0x15, 0x2b, 0x2e, 0x06, 0xaf, 0x1b, 0xad,
-	0xb6, 0x8c, 0x8d, 0x5a, 0x5b, 0x63, 0x01, 0xf3, 0x2c, 0xa0, 0xa6, 0xb5, 0xd6, 0x6b, 0x9d, 0x8e,
-	0x6a, 0xd4, 0x8c, 0x96, 0xda, 0xb1, 0x87, 0x5f, 0xa6, 0xff, 0x1c, 0x5d, 0x69, 0xca, 0x9d, 0x2b,
-	0xf8, 0x61, 0xad, 0xd9, 0x94, 0xf5, 0x75, 0x55, 0xa3, 0x11, 0xe1, 0x68, 0xe9, 0xe7, 0x59, 0x18,
-	0xaf, 0x18, 0x86, 0xde, 0xaa, 0x9b, 0x86, 0xbc, 0x57, 0x6b, 0xcb, 0xe8, 0x16, 0x4c, 0xd6, 0xec,
-	0x1f, 0x0e, 0x3b, 0xb5, 0xb6, 0x7c, 0xd8, 0x6a, 0x94, 0x84, 0xb2, 0xb0, 0x5c, 0xd8, 0x98, 0x5f,
-	0xb3, 0xee, 0xbc, 0x66, 0xa7, 0xb6, 0xb6, 0x6f, 0x90, 0x22, 0xdf, 0xad, 0x1d, 0x9b, 0x72, 0x75,
-	0xa2, 0xe6, 0x9d, 0x67, 0xa7, 0x81, 0x5e, 0x86, 0x1c, 0x19, 0x5f, 0xca, 0xa4, 0x18, 0x4c, 0x23,
-	0xd1, 0x1b, 0x50, 0x68, 0xc8, 0xf8, 0x48, 0x6f, 0xd1, 0x7c, 0x4b, 0xd9, 0x14, 0x03, 0xbd, 0x03,
-	0xd0, 0x15, 0xc8, 0x19, 0x27, 0x9a, 0x5c, 0xca, 0x95, 0x85, 0xe5, 0x33, 0x1b, 0xb3, 0x6b, 0x2e,
-	0xea, 0x6b, 0x4e, 0x91, 0x07, 0x27, 0x9a, 0x5c, 0xa5, 0x61, 0xe8, 0x2a, 0xe4, 0xb1, 0x51, 0x33,
-	0x4c, 0x5c, 0x1a, 0x4a, 0x71, 0x27, 0x16, 0x8b, 0xae, 0x43, 0xe1, 0x48, 0x97, 0x6b, 0x86, 0x7c,
-	0x48, 0x88, 0x29, 0xe5, 0xe9, 0x50, 0x31, 0x34, 0xf4, 0xc0, 0x66, 0xad, 0x0a, 0x56, 0x38, 0xf9,
-	0x81, 0x0c, 0xb6, 0xa6, 0xb1, 0x06, 0x0f, 0x27, 0x0f, 0xb6, 0xc2, 0xc9, 0x0f, 0xd2, 0x6f, 0x04,
-	0x10, 0x6f, 0xd0, 0xb9, 0x7c, 0x94, 0x55, 0xe5, 0xaf, 0x98, 0x32, 0x36, 0x1c, 0xbc, 0x85, 0x7e,
-	0xf1, 0xce, 0xf4, 0x8b, 0x77, 0x36, 0x15, 0xde, 0x52, 0x13, 0xe6, 0xb8, 0xe9, 0x63, 0x4d, 0xed,
-	0xe0, 0x53, 0x54, 0x9e, 0xf4, 0x93, 0x2c, 0xbc, 0x70, 0x93, 0xe6, 0x59, 0xf7, 0xdf, 0x0b, 0xdb,
-	0x58, 0x3d, 0x4d, 0x95, 0xf7, 0x86, 0x9a, 0x47, 0xa5, 0xb9, 0x1e, 0x54, 0xfa, 0x2a, 0x8c, 0x60,
-	0x55, 0x37, 0x0e, 0x15, 0xf9, 0x24, 0x95, 0xba, 0x87, 0x49, 0xf4, 0xdb, 0xf2, 0x09, 0xba, 0x0a,
-	0xc3, 0xba, 0xfc, 0x40, 0xd6, 0x71, 0xb4, 0xb4, 0xb7, 0x54, 0xf5, 0x98, 0x8d, 0x62, 0xa1, 0x68,
-	0x1a, 0xf2, 0xea, 0xfd, 0xfb, 0x58, 0x36, 0xa8, 0xa4, 0xc7, 0xab, 0xec, 0x2f, 0x74, 0x16, 0x86,
-	0x8e, 0x5b, 0xed, 0x96, 0x51, 0x1a, 0xa1, 0x3f, 0x5b, 0x7f, 0x48, 0x0d, 0x58, 0x88, 0xa2, 0x87,
-	0x69, 0x61, 0x0b, 0x26, 0xfc, 0xfc, 0xe0, 0x92, 0x50, 0xce, 0x2e, 0x17, 0x22, 0xe0, 0xa2, 0x3a,
-	0x3a, 0xe3, 0xa3, 0x06, 0x4b, 0xdf, 0xca, 0x80, 0xb8, 0xab, 0x36, 0x5a, 0xf7, 0x4f, 0xb8, 0xcb,
-	0xe5, 0xd3, 0x63, 0x74, 0x64, 0xe1, 0x71, 0x81, 0x38, 0xf5, 0x85, 0xf7, 0x36, 0xcc, 0xdd, 0x94,
-	0x8f, 0x65, 0x23, 0x62, 0xd5, 0x5d, 0x06, 0x14, 0xba, 0x91, 0x45, 0xec, 0x68, 0xb5, 0x18, 0x98,
-	0x0b, 0x4b, 0x77, 0x60, 0x9e, 0x3f, 0x19, 0x4b, 0xbb, 0xb7, 0xd9, 0x7e, 0x9d, 0xf1, 0x74, 0xba,
-	0x7b, 0x9d, 0x56, 0x40, 0x00, 0x66, 0xa7, 0x65, 0xf4, 0x5e, 0x36, 0x99, 0xa7, 0x2f, 0x01, 0xb8,
-	0x8b, 0x3a, 0xdb, 0x7f, 0xeb, 0xc9, 0x0d, 0xd2, 0x7a, 0x86, 0x7a, 0x6a, 0x3d, 0x7b, 0xa1, 0xce,
-	0x43, 0x4a, 0xef, 0xbb, 0xf3, 0x70, 0x5a, 0x81, 0x35, 0x1f, 0x4f, 0x91, 0x83, 0x50, 0x23, 0xfd,
-	0x23, 0xc3, 0x69, 0x05, 0xe4, 0x1a, 0xbf, 0x15, 0x3c, 0x13, 0x32, 0xf0, 0x7a, 0x7b, 0xae, 0x4f,
-	0x6f, 0x1f, 0xea, 0xc7, 0xdb, 0xf3, 0x7c, 0x6f, 0x1f, 0x4e, 0xf2, 0x76, 0x86, 0x37, 0xcf, 0xdb,
-	0x09, 0xe0, 0xf1, 0xde, 0x4e, 0x85, 0x71, 0xc6, 0x87, 0x35, 0x96, 0x7e, 0x28, 0x84, 0xbc, 0xdd,
-	0x2b, 0xc8, 0xa7, 0xc8, 0x29, 0xc7, 0x6c, 0x1f, 0x93, 0xb4, 0xc3, 0x66, 0xeb, 0xd3, 0xb5, 0xcf,
-	0x1e, 0xd9, 0x8d, 0xc2, 0xf6, 0x68, 0xcd, 0xc5, 0x33, 0x5b, 0x3f, 0x69, 0xbd, 0xcd, 0xf6, 0x9f,
-	0x2c, 0x8c, 0x3a, 0x13, 0xa1, 0x37, 0x61, 0xcc, 0x1d, 0x9b, 0xb2, 0xda, 0x82, 0x33, 0x62, 0xa7,
-	0xc1, 0x6f, 0x50, 0x99, 0x7e, 0x5a, 0x35, 0x17, 0xfd, 0x6c, 0x3f, 0xc2, 0xd8, 0x80, 0xa1, 0x07,
-	0xe4, 0x4a, 0xaa, 0x15, 0x68, 0x85, 0x92, 0x31, 0xea, 0xc3, 0x8e, 0xac, 0xa7, 0x7a, 0x22, 0xb3,
-	0x42, 0x3d, 0x16, 0x91, 0xef, 0xbf, 0x53, 0x0c, 0x0f, 0xd2, 0x29, 0x46, 0x7a, 0xea, 0x14, 0x7f,
-	0x15, 0x60, 0x3a, 0x60, 0xed, 0xa7, 0xff, 0xc4, 0xc5, 0xa5, 0x31, 0x33, 0x10, 0x8d, 0xd9, 0xd4,
-	0x34, 0x4a, 0xef, 0xc1, 0x4c, 0xa8, 0x42, 0xb6, 0x4c, 0x06, 0x95, 0xba, 0xf4, 0xef, 0x2c, 0xcc,
-	0x86, 0xfc, 0xd3, 0x59, 0xd3, 0xcf, 0xeb, 0x4a, 0xb2, 0x56, 0x45, 0xae, 0x9f, 0x55, 0x31, 0xd4,
-	0x67, 0xe3, 0xcc, 0xf7, 0xd9, 0x38, 0x87, 0xfb, 0x69, 0x9c, 0x23, 0xfc, 0xc6, 0x39, 0xea, 0x6d,
-	0x9c, 0xfb, 0x20, 0xf2, 0x88, 0x67, 0xc2, 0xba, 0x06, 0xe0, 0xe0, 0x66, 0xf7, 0xcb, 0x73, 0xdc,
-	0x7e, 0x59, 0xf5, 0x04, 0x4a, 0x8f, 0x32, 0x30, 0x1d, 0xe8, 0x46, 0xcf, 0xbb, 0x96, 0x7a, 0x75,
-	0x65, 0xb2, 0x9c, 0x43, 0x10, 0x9d, 0xd6, 0x72, 0x7e, 0x03, 0x66, 0x02, 0x6d, 0xd5, 0x59, 0xcb,
-	0x17, 0x60, 0xdc, 0x3b, 0xb7, 0xdd, 0x4c, 0xc7, 0x3c, 0xc3, 0xb1, 0xf4, 0x26, 0x94, 0xc2, 0xe3,
-	0x59, 0x72, 0xa9, 0x26, 0xf8, 0x53, 0x06, 0xb2, 0xfb, 0x9a, 0x89, 0x36, 0x21, 0x8f, 0x35, 0x33,
-	0x6d, 0x0d, 0x43, 0x58, 0x33, 0x77, 0x1a, 0xe8, 0x3a, 0x80, 0xa6, 0xab, 0x0d, 0xf3, 0x28, 0xb5,
-	0xbf, 0x8e, 0xb2, 0x78, 0xef, 0xb2, 0xce, 0xf6, 0xb3, 0xac, 0x73, 0xfd, 0x37, 0xbb, 0xa1, 0x41,
-	0x9a, 0x5d, 0xbe, 0xa7, 0x66, 0xf7, 0x0e, 0x14, 0xad, 0x4e, 0xb0, 0xaf, 0x99, 0x36, 0xaf, 0x7e,
-	0xd0, 0x84, 0x9e, 0x40, 0x93, 0x6e, 0xc1, 0xa4, 0x67, 0x42, 0x46, 0x74, 0x3f, 0xdc, 0x49, 0xdf,
-	0xcd, 0xc2, 0x94, 0xed, 0x27, 0xfb, 0x9a, 0xe9, 0xc8, 0xee, 0x79, 0x16, 0xc2, 0x27, 0x7a, 0xd3,
-	0xeb, 0x3a, 0x9c, 0xf5, 0xf3, 0xe1, 0x2c, 0xe3, 0x1c, 0xd6, 0x4c, 0xdb, 0xd3, 0x27, 0xbc, 0x9e,
-	0x4e, 0x44, 0x40, 0x2f, 0x4a, 0xdf, 0x10, 0xa0, 0x68, 0x99, 0x94, 0x47, 0x69, 0x4f, 0x9c, 0x4a,
-	0x22, 0x4f, 0x4f, 0x16, 0x83, 0xc8, 0xf3, 0x32, 0x4c, 0x5a, 0xc6, 0xe6, 0xd5, 0xe6, 0x0c, 0x0c,
-	0x5b, 0x33, 0xd9, 0x5e, 0x96, 0xa7, 0xc1, 0x58, 0xba, 0x02, 0xc8, 0x1b, 0xcd, 0x6e, 0x1c, 0x19,
-	0xfe, 0x11, 0x31, 0x3d, 0xc5, 0x32, 0x3d, 0xa5, 0x87, 0xcc, 0x14, 0x02, 0x90, 0x5b, 0x4e, 0x26,
-	0x3d, 0xaa, 0x21, 0x2f, 0xce, 0x86, 0xbd, 0xf8, 0x99, 0x73, 0xb7, 0x63, 0xc7, 0xdd, 0x94, 0xc1,
-	0x34, 0x17, 0x42, 0x27, 0xc3, 0xe9, 0x54, 0xae, 0xf5, 0x29, 0x7e, 0x6d, 0xf5, 0xca, 0xa0, 0xf4,
-	0xbb, 0x8c, 0xc7, 0xfa, 0x14, 0xbf, 0xf5, 0x3d, 0x19, 0x39, 0x3c, 0x87, 0xfb, 0x3a, 0x5e, 0xfb,
-	0x52, 0x02, 0xf6, 0xa5, 0x44, 0xd8, 0x97, 0x42, 0xec, 0x4b, 0x31, 0xb1, 0xf4, 0xc8, 0xb5, 0x2f,
-	0xbf, 0x94, 0x3e, 0x39, 0xab, 0xd3, 0xe3, 0x6d, 0x83, 0xea, 0xcf, 0xf5, 0x36, 0xc5, 0xef, 0x6d,
-	0x8a, 0xdf, 0xac, 0x94, 0x80, 0xb7, 0x29, 0x01, 0x6f, 0xe3, 0x86, 0xff, 0x37, 0x03, 0xa5, 0x5d,
-	0xf6, 0x75, 0xd9, 0x79, 0x28, 0xdc, 0x6a, 0x75, 0x1a, 0xad, 0x4e, 0x93, 0x98, 0x7b, 0xdd, 0xfa,
-	0x6f, 0xea, 0x67, 0x0f, 0x16, 0xcf, 0xa0, 0x55, 0x7a, 0x80, 0x96, 0xf2, 0x11, 0x7c, 0x42, 0xce,
-	0xf6, 0xfa, 0x16, 0xf1, 0xac, 0x99, 0xe2, 0xfb, 0x02, 0x2c, 0x59, 0x3e, 0x15, 0xc5, 0xc2, 0x60,
-	0x7e, 0x93, 0xca, 0x2b, 0x6f, 0xc3, 0xa5, 0xc4, 0x1c, 0x98, 0x90, 0x16, 0xa1, 0xe0, 0x4a, 0xc2,
-	0x16, 0x13, 0x38, 0xac, 0x63, 0xe9, 0x9f, 0x19, 0x58, 0xb6, 0x57, 0x76, 0x62, 0x49, 0x4f, 0x5e,
-	0x60, 0xcf, 0xa1, 0x95, 0x7e, 0x4f, 0x80, 0x95, 0x14, 0x88, 0x33, 0x02, 0xeb, 0x30, 0xdb, 0x8e,
-	0x0a, 0x62, 0xae, 0x7b, 0xd1, 0xeb, 0xba, 0x51, 0x33, 0x56, 0xa3, 0xa7, 0x91, 0xfe, 0x28, 0xc0,
-	0x8b, 0x96, 0xf9, 0x45, 0x8e, 0x7e, 0x6a, 0x02, 0x18, 0xd4, 0x61, 0x24, 0x19, 0x96, 0x92, 0x6a,
-	0x63, 0x50, 0x0f, 0x52, 0x9c, 0xb4, 0x03, 0x4b, 0x96, 0x8f, 0x27, 0x2e, 0xa2, 0xc4, 0x25, 0x79,
-	0x1b, 0x2e, 0x25, 0x4e, 0x95, 0x76, 0x79, 0xff, 0x34, 0x0b, 0x17, 0x6e, 0xa8, 0xed, 0x7a, 0xab,
-	0x43, 0x0f, 0xfe, 0x44, 0xb6, 0x8e, 0x2a, 0x4c, 0x1f, 0xb9, 0x61, 0x87, 0x3d, 0xe2, 0x70, 0xd6,
-	0x33, 0x76, 0xcb, 0xe1, 0xfb, 0x06, 0x2c, 0xd8, 0x9a, 0x3b, 0x74, 0x39, 0xf4, 0xe6, 0x6b, 0x99,
-	0xdb, 0x5c, 0x94, 0x32, 0xc9, 0x53, 0xf3, 0xa7, 0x61, 0x1f, 0xe1, 0xfb, 0x02, 0xac, 0x58, 0x86,
-	0x1e, 0x47, 0x95, 0xad, 0x9f, 0x23, 0x98, 0x0a, 0xc3, 0x6a, 0x7b, 0xc1, 0x86, 0xd7, 0x0b, 0xd2,
-	0x35, 0xaa, 0x2a, 0x0a, 0xe1, 0x8f, 0xa5, 0x0f, 0x04, 0x58, 0x4d, 0x93, 0x12, 0xd3, 0x61, 0x13,
-	0xce, 0x7b, 0xe5, 0xc3, 0xa1, 0x3d, 0xa5, 0x92, 0x16, 0x8e, 0x62, 0x6e, 0xb7, 0xd3, 0x90, 0x1e,
-	0x65, 0x60, 0xec, 0xae, 0xae, 0xd6, 0x69, 0x00, 0x79, 0xc9, 0xfb, 0x02, 0x14, 0x35, 0xfb, 0xef,
-	0xc3, 0x1e, 0xfa, 0xed, 0x19, 0xcd, 0x33, 0xcb, 0x63, 0x7e, 0xef, 0x9b, 0xe6, 0xe2, 0x41, 0xd4,
-	0x49, 0xa2, 0xcf, 0xb6, 0xc3, 0x75, 0x62, 0xf4, 0x1a, 0x8c, 0xd2, 0x76, 0x71, 0xd8, 0x31, 0xdb,
-	0x91, 0xbb, 0x19, 0xf7, 0x76, 0x3a, 0xc6, 0xe6, 0x86, 0x95, 0xd2, 0x08, 0x0d, 0xdf, 0x33, 0xdb,
-	0xd2, 0xdf, 0x04, 0x98, 0xb5, 0xb8, 0xf3, 0x22, 0xf5, 0xd8, 0x5f, 0xe1, 0x62, 0x0a, 0xcd, 0xa6,
-	0x2d, 0x34, 0xd7, 0x53, 0xa1, 0x0d, 0xfb, 0x58, 0x82, 0xbf, 0x4e, 0xa6, 0xc9, 0x53, 0x52, 0x86,
-	0xf4, 0xed, 0x0c, 0x4c, 0x87, 0xa4, 0x48, 0x43, 0x07, 0xdf, 0x44, 0x77, 0x36, 0xac, 0xa3, 0x44,
-	0x77, 0x53, 0x35, 0xeb, 0xc7, 0xb2, 0xef, 0x33, 0xe2, 0x5b, 0xbe, 0x03, 0x64, 0x9b, 0xb1, 0xcd,
-	0x9f, 0x0e, 0x5c, 0xbb, 0xa7, 0x35, 0x6a, 0xec, 0xff, 0x07, 0x27, 0x9a, 0x8c, 0xd9, 0xb9, 0xa0,
-	0x97, 0xa1, 0x18, 0xbc, 0x82, 0x26, 0xa0, 0xb0, 0xb3, 0x77, 0xa3, 0xba, 0xbd, 0xbb, 0xbd, 0x77,
-	0x50, 0xb9, 0x53, 0xfc, 0x3f, 0x54, 0x80, 0xe1, 0xea, 0xf6, 0xdd, 0x3b, 0x95, 0x1b, 0xdb, 0x45,
-	0x41, 0xfa, 0xad, 0x00, 0x05, 0xfb, 0x1e, 0x64, 0xf1, 0x7d, 0x0e, 0x0a, 0xba, 0x8c, 0x55, 0x53,
-	0x3f, 0x4a, 0x5d, 0x3e, 0xd8, 0x03, 0xfa, 0x7d, 0x20, 0xd8, 0x05, 0xf7, 0x83, 0xf3, 0x21, 0x45,
-	0xc4, 0xd2, 0x57, 0x61, 0x43, 0x4a, 0x86, 0xc2, 0xf3, 0xc9, 0x80, 0xfe, 0x8d, 0xa5, 0x6f, 0x0a,
-	0x30, 0x61, 0xc7, 0xda, 0x4b, 0xe4, 0x1a, 0x0c, 0x9b, 0x58, 0xd6, 0xd3, 0x26, 0x96, 0x27, 0xc1,
-	0x3b, 0x0d, 0xf4, 0x59, 0x18, 0x77, 0xf4, 0x4f, 0x5f, 0x8a, 0xad, 0xb4, 0x66, 0x78, 0x69, 0x11,
-	0xa1, 0x8e, 0xb5, 0xdd, 0x3f, 0xb0, 0xb4, 0x09, 0x45, 0x37, 0x0f, 0xb7, 0xbd, 0x1f, 0xcb, 0x35,
-	0x1c, 0x68, 0xef, 0xec, 0xa7, 0x9d, 0x06, 0x5e, 0x5d, 0xf1, 0x9c, 0x6a, 0x22, 0x04, 0x22, 0x80,
-	0xfc, 0xde, 0x3b, 0xd5, 0x5d, 0x4a, 0xdd, 0x18, 0x8c, 0xec, 0x6e, 0x1f, 0x6c, 0x57, 0x77, 0xf6,
-	0xde, 0x2a, 0x0a, 0x1b, 0x7f, 0x58, 0x00, 0xd8, 0x57, 0xcc, 0xdd, 0x5a, 0xa7, 0xd6, 0x94, 0x75,
-	0xf4, 0x33, 0x01, 0xa6, 0x38, 0xc7, 0x31, 0xd1, 0x52, 0xb8, 0x81, 0xf0, 0xce, 0xcf, 0x89, 0x97,
-	0x12, 0xe3, 0xac, 0x1a, 0xa4, 0xcf, 0x77, 0x2b, 0x33, 0xe8, 0x9c, 0xd5, 0x2a, 0xcb, 0x0e, 0xfa,
-	0xe5, 0x4e, 0xad, 0x2d, 0xbf, 0xff, 0xfb, 0x8f, 0x7f, 0x90, 0x29, 0x4b, 0x73, 0xeb, 0x0f, 0x5e,
-	0x59, 0xb7, 0xb1, 0x58, 0x77, 0x42, 0xd6, 0x49, 0xc8, 0xeb, 0xc2, 0x2a, 0xfa, 0x95, 0x00, 0xd3,
-	0xfc, 0x03, 0x83, 0x68, 0xc5, 0x9b, 0x45, 0xec, 0x99, 0x4f, 0x71, 0x35, 0x4d, 0x28, 0xcb, 0xb9,
-	0xd2, 0xad, 0x88, 0xa8, 0xd4, 0x60, 0x41, 0xe5, 0xc0, 0x59, 0x44, 0x9a, 0xf6, 0x02, 0x9a, 0x8f,
-	0x49, 0x1b, 0x53, 0x7c, 0x39, 0xa7, 0xee, 0xfc, 0xf8, 0x46, 0x9f, 0x4f, 0xf4, 0xe3, 0x1b, 0x73,
-	0x7c, 0x8f, 0xe1, 0xdb, 0xa6, 0x11, 0x81, 0x4c, 0x2d, 0x7c, 0xc5, 0x24, 0x7c, 0x7f, 0x21, 0xc0,
-	0x59, 0xde, 0x51, 0x3b, 0x74, 0xc9, 0x0f, 0x59, 0xe4, 0xc9, 0x3e, 0x71, 0x39, 0x39, 0x90, 0x65,
-	0xbb, 0xd5, 0xad, 0x94, 0xd0, 0x74, 0x83, 0x86, 0x70, 0x71, 0x3d, 0xbf, 0x1a, 0x8b, 0x2b, 0xc9,
-	0x97, 0x23, 0x5d, 0x7a, 0xa2, 0x2f, 0x4e, 0xba, 0x9e, 0xe3, 0x41, 0xb1, 0xd2, 0xf5, 0x1e, 0xd6,
-	0x89, 0x92, 0xae, 0xd9, 0x69, 0x19, 0x09, 0xd2, 0x25, 0x21, 0x91, 0xd2, 0xa5, 0x47, 0x6b, 0x12,
-	0xa4, 0xeb, 0x3d, 0xcb, 0x93, 0x20, 0x5d, 0xdf, 0x49, 0x9d, 0x68, 0xe9, 0xd2, 0xa3, 0x56, 0x09,
-	0xd2, 0xa5, 0x31, 0x3c, 0xe9, 0x86, 0xf1, 0x8d, 0x3e, 0x7e, 0x15, 0x2b, 0x5d, 0x0e, 0xbe, 0x21,
-	0xe9, 0xba, 0xf8, 0x8a, 0x49, 0xf8, 0x72, 0xa4, 0x6b, 0xa1, 0x1b, 0x27, 0x5d, 0x1f, 0xb6, 0xcb,
-	0xc9, 0x81, 0xf1, 0xd2, 0x75, 0x71, 0x8d, 0x96, 0x2e, 0x8d, 0x21, 0xf9, 0x76, 0x05, 0x98, 0x08,
-	0x28, 0x0e, 0x49, 0x31, 0x72, 0xb4, 0xb3, 0xbc, 0x10, 0x1b, 0xc3, 0x12, 0xfc, 0xff, 0x6e, 0x05,
-	0xa1, 0x62, 0x50, 0xae, 0x34, 0xb5, 0x39, 0x69, 0x9a, 0x9f, 0x1a, 0x49, 0xea, 0xc7, 0x02, 0xa0,
-	0xf0, 0xd9, 0x03, 0xf4, 0x62, 0xac, 0xea, 0x1c, 0x00, 0x97, 0x92, 0xc2, 0x58, 0x76, 0xaf, 0x76,
-	0x2b, 0xe7, 0xd0, 0x54, 0x58, 0x98, 0x16, 0x76, 0xb3, 0x68, 0x86, 0x9f, 0x20, 0xa6, 0x98, 0x05,
-	0x54, 0xe4, 0xc7, 0x8c, 0x7f, 0xc2, 0xc1, 0x8f, 0x59, 0xc4, 0x27, 0x7e, 0x86, 0x59, 0x50, 0x82,
-	0x16, 0x66, 0x62, 0x0c, 0x66, 0x1f, 0x0a, 0x50, 0x0c, 0x7e, 0x9a, 0x47, 0x17, 0x62, 0xb4, 0xe4,
-	0xe0, 0x75, 0x31, 0x3e, 0x88, 0xe5, 0xf5, 0x99, 0x6e, 0x65, 0x0a, 0x4d, 0x06, 0xc5, 0x66, 0x61,
-	0x35, 0xbf, 0x1a, 0x85, 0x15, 0xc9, 0xcc, 0x80, 0x51, 0xe7, 0x1b, 0x32, 0x9a, 0x0f, 0xeb, 0xc6,
-	0xfd, 0x82, 0x28, 0xbe, 0x10, 0x71, 0x95, 0xe5, 0xb0, 0xda, 0xad, 0x8c, 0x21, 0xf6, 0x92, 0x5b,
-	0xc6, 0x9a, 0x49, 0x6f, 0x7e, 0x4e, 0x2a, 0xfa, 0x6e, 0x8e, 0x35, 0x93, 0xdc, 0xf5, 0x6b, 0x30,
-	0xe6, 0xfd, 0xbc, 0x89, 0x16, 0x79, 0xaa, 0xf0, 0x7c, 0xec, 0x13, 0xcb, 0xd1, 0x01, 0xec, 0xf6,
-	0x2f, 0x75, 0x2b, 0x13, 0x68, 0xdc, 0x11, 0x0c, 0xd6, 0x4c, 0xab, 0xfc, 0x29, 0x34, 0x19, 0xcc,
-	0x00, 0x93, 0xaa, 0x9d, 0x4f, 0x93, 0xfe, 0xaa, 0x83, 0xdf, 0x4d, 0xfd, 0x55, 0x87, 0xbe, 0x67,
-	0xb2, 0xaa, 0x99, 0x22, 0x9c, 0xaa, 0x45, 0x6e, 0xd5, 0x27, 0x00, 0xee, 0x87, 0x49, 0xf4, 0x42,
-	0x98, 0x59, 0x6f, 0xc5, 0x0b, 0x51, 0x97, 0xd9, 0x8d, 0x2f, 0x77, 0x2b, 0xe3, 0xa8, 0xc0, 0x28,
-	0x77, 0xaa, 0x9d, 0x5e, 0x0d, 0x57, 0x4b, 0x6e, 0xfd, 0x75, 0xc1, 0xe1, 0x59, 0xe1, 0xf3, 0xac,
-	0xc4, 0xf2, 0xec, 0xbe, 0x28, 0x49, 0xaf, 0x75, 0x2b, 0x73, 0x68, 0xd6, 0xe6, 0x59, 0x31, 0xcb,
-	0xea, 0xfd, 0xb2, 0xf1, 0x65, 0xb9, 0xcc, 0x3e, 0xfc, 0xf2, 0x69, 0x57, 0x42, 0xb4, 0x2b, 0x91,
-	0xb4, 0x2b, 0x49, 0xb4, 0x2b, 0x31, 0xb4, 0x2b, 0x51, 0xb4, 0x2b, 0x3e, 0xda, 0x15, 0x3e, 0xed,
-	0x4a, 0x2c, 0xed, 0x4a, 0x14, 0xed, 0x4a, 0x04, 0xed, 0x4a, 0x80, 0x76, 0x25, 0x82, 0x76, 0x25,
-	0x9e, 0x76, 0x25, 0x92, 0x76, 0x25, 0x8a, 0x76, 0xc5, 0xa2, 0xfd, 0xcf, 0x02, 0x94, 0x22, 0xb6,
-	0x75, 0x30, 0xea, 0x63, 0xf3, 0x47, 0xdc, 0xec, 0x69, 0x0c, 0xcb, 0xf9, 0x4b, 0xdd, 0xca, 0x4b,
-	0x68, 0x85, 0x29, 0xc6, 0xce, 0xd1, 0xf3, 0x84, 0xc4, 0xf6, 0xf8, 0x30, 0x51, 0x92, 0x8d, 0xe5,
-	0x45, 0x69, 0x31, 0xa2, 0x3b, 0xd6, 0x5b, 0x9d, 0x26, 0x89, 0x26, 0xf5, 0xfd, 0x5d, 0x80, 0xf3,
-	0x89, 0x9b, 0xe3, 0xe8, 0x2a, 0x4f, 0x45, 0x89, 0xa5, 0x5e, 0xeb, 0x71, 0x14, 0x2b, 0xf6, 0x8b,
-	0xdd, 0xca, 0x15, 0xf4, 0x92, 0x23, 0xc8, 0x94, 0xe5, 0x9e, 0x47, 0x31, 0xe5, 0x5a, 0x55, 0xfc,
-	0x45, 0x80, 0x85, 0xf8, 0xad, 0x69, 0xf4, 0x4a, 0x58, 0xb4, 0x09, 0x5b, 0xf4, 0xe2, 0x46, 0x2f,
-	0x43, 0x58, 0x89, 0xef, 0x76, 0x2b, 0xab, 0x68, 0x99, 0x89, 0x3f, 0xba, 0x40, 0x6f, 0x7d, 0x17,
-	0xc4, 0x85, 0xf8, 0xfa, 0x08, 0x9b, 0x1f, 0x0b, 0xb0, 0x98, 0xb0, 0x95, 0xed, 0x17, 0x6d, 0xba,
-	0x2d, 0x74, 0xbf, 0x68, 0x53, 0xee, 0x95, 0x33, 0xd1, 0xb2, 0x85, 0x96, 0x56, 0xb4, 0xab, 0x49,
-	0x2c, 0xbe, 0x2e, 0xac, 0x6e, 0x7c, 0x24, 0x40, 0xf1, 0xae, 0xae, 0xb6, 0x55, 0xba, 0x6b, 0xc9,
-	0x5e, 0xb0, 0x7f, 0x29, 0x00, 0x0a, 0xef, 0x4e, 0xf9, 0x9f, 0xaa, 0x22, 0x77, 0xe9, 0xc4, 0xa5,
-	0xa4, 0x30, 0x56, 0xd4, 0xed, 0x6e, 0x45, 0x42, 0x65, 0xb6, 0x12, 0x9d, 0x8d, 0x2b, 0xdb, 0xc5,
-	0xed, 0xbd, 0x16, 0x5a, 0xcb, 0xa2, 0x24, 0xfa, 0x6a, 0x71, 0xa2, 0x99, 0xad, 0x6d, 0xfc, 0x2b,
-	0xe7, 0x6e, 0x85, 0xd8, 0x55, 0x7c, 0x47, 0x80, 0xf1, 0x7d, 0xa3, 0xa6, 0x1b, 0xf6, 0x05, 0x34,
-	0xc7, 0xdb, 0xce, 0xb0, 0xd3, 0x9e, 0xe7, 0x5f, 0x74, 0xdf, 0x4d, 0x24, 0x54, 0xc6, 0x64, 0x3a,
-	0x0f, 0x01, 0x75, 0xd5, 0x34, 0x68, 0xbf, 0xc1, 0x8a, 0x79, 0x88, 0x65, 0xab, 0xdf, 0x4c, 0x4b,
-	0x7c, 0xff, 0xfb, 0x91, 0x00, 0x53, 0xd6, 0xa6, 0x95, 0x3d, 0xbb, 0xb5, 0x13, 0x37, 0x40, 0x56,
-	0xb7, 0xba, 0x95, 0x15, 0x74, 0xc9, 0xa4, 0x93, 0xba, 0x69, 0xd1, 0x9d, 0xa5, 0xa8, 0xe4, 0x44,
-	0x7e, 0x72, 0x1f, 0x0a, 0x30, 0xb6, 0x6f, 0xa8, 0xda, 0x69, 0x60, 0x75, 0xa7, 0x5b, 0x59, 0x46,
-	0x4b, 0x5a, 0xcd, 0xc4, 0x29, 0x93, 0x0a, 0x3e, 0xae, 0x92, 0xa4, 0xd6, 0xb1, 0xa1, 0x6a, 0x24,
-	0xb3, 0x0f, 0x04, 0x98, 0x3c, 0x90, 0xf5, 0x76, 0xab, 0xe3, 0x41, 0x6e, 0x90, 0xf4, 0xb6, 0xbb,
-	0x95, 0x25, 0x74, 0xd1, 0xb0, 0xa7, 0x4c, 0xa4, 0x93, 0xdf, 0xce, 0xb6, 0x72, 0xef, 0x65, 0xb4,
-	0x7a, 0x3d, 0x4f, 0xb7, 0xd5, 0x36, 0xff, 0x17, 0x00, 0x00, 0xff, 0xff, 0x5e, 0xe5, 0xef, 0x8f,
-	0x38, 0x3f, 0x00, 0x00,
+	// 3395 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x5c, 0x4d, 0x6c, 0x24, 0x47,
+	0x15, 0xa6, 0x67, 0xc6, 0x7f, 0xcf, 0x7f, 0xe3, 0xf2, 0xda, 0x1e, 0xb7, 0xff, 0x66, 0x6b, 0x77,
+	0x6d, 0xef, 0xec, 0xae, 0x9d, 0x78, 0xb3, 0x09, 0xc9, 0x86, 0x84, 0xd9, 0x5d, 0x2b, 0x71, 0xb2,
+	0xf6, 0x86, 0xf1, 0x26, 0x44, 0x01, 0x64, 0xc6, 0x9e, 0x5e, 0x67, 0x68, 0xcf, 0x4c, 0x33, 0xdd,
+	0x9d, 0xc4, 0x17, 0x24, 0x42, 0x14, 0xb8, 0x00, 0xd2, 0x20, 0x14, 0x08, 0xe1, 0x90, 0x0b, 0x20,
+	0x24, 0x24, 0x94, 0x4b, 0x84, 0x10, 0x27, 0x38, 0x72, 0xe0, 0x47, 0x42, 0x08, 0x84, 0x40, 0x22,
+	0x17, 0x2e, 0xc0, 0x0d, 0x2e, 0x20, 0xd4, 0xd5, 0xd5, 0xdd, 0xd5, 0xdd, 0x55, 0xdd, 0x3d, 0x33,
+	0xde, 0x3f, 0x87, 0xd3, 0xae, 0xdd, 0xaf, 0xaa, 0xdf, 0xfb, 0xde, 0xf7, 0xde, 0xab, 0xae, 0x7a,
+	0x65, 0x18, 0xa9, 0x29, 0x86, 0xd2, 0xac, 0xd6, 0xf7, 0x57, 0xb4, 0x66, 0xc3, 0x68, 0x20, 0x68,
+	0x68, 0x4a, 0x5d, 0xab, 0x1a, 0xcd, 0xea, 0x6b, 0xf2, 0xfc, 0x7e, 0xa3, 0xb1, 0x7f, 0xa0, 0xac,
+	0x92, 0x27, 0xbb, 0xe6, 0xad, 0xd5, 0x57, 0x9b, 0x65, 0x4d, 0x53, 0x9a, 0xba, 0x2d, 0x2b, 0x2f,
+	0x04, 0x9f, 0x1b, 0xd5, 0x9a, 0xa2, 0x1b, 0xe5, 0x9a, 0x46, 0x05, 0x66, 0xa9, 0x40, 0x59, 0xab,
+	0xae, 0x96, 0xeb, 0xf5, 0x86, 0x51, 0x36, 0xaa, 0x8d, 0xba, 0x33, 0xfc, 0x3c, 0xf9, 0x67, 0xef,
+	0xc2, 0xbe, 0x52, 0xbf, 0xa0, 0xbf, 0x5a, 0xde, 0xdf, 0x57, 0x9a, 0xab, 0x0d, 0x8d, 0x48, 0x84,
+	0xa5, 0xf1, 0x0f, 0xd3, 0x30, 0x5c, 0x34, 0x8c, 0x66, 0x75, 0xd7, 0x34, 0x94, 0xad, 0x72, 0x4d,
+	0x41, 0x4f, 0xc3, 0x58, 0xd9, 0xf9, 0xc5, 0x4e, 0xbd, 0x5c, 0x53, 0x76, 0xaa, 0x95, 0x9c, 0x94,
+	0x97, 0x96, 0x07, 0xd7, 0x66, 0x57, 0xec, 0x37, 0xaf, 0x38, 0xaa, 0xad, 0x6c, 0x1b, 0x96, 0x91,
+	0x2f, 0x94, 0x0f, 0x4c, 0xa5, 0x34, 0x5a, 0x66, 0xe7, 0xd9, 0xa8, 0xa0, 0x07, 0x20, 0x63, 0x8d,
+	0xcf, 0xa5, 0x12, 0x0c, 0x26, 0x92, 0xe8, 0x09, 0x18, 0xac, 0x28, 0xfa, 0x5e, 0xb3, 0x4a, 0xf4,
+	0xcd, 0xa5, 0x13, 0x0c, 0x64, 0x07, 0xa0, 0x0b, 0x90, 0x31, 0x0e, 0x35, 0x25, 0x97, 0xc9, 0x4b,
+	0xcb, 0x23, 0x6b, 0xd3, 0x2b, 0x1e, 0xea, 0x2b, 0xae, 0x91, 0x37, 0x0f, 0x35, 0xa5, 0x44, 0xc4,
+	0xd0, 0x43, 0xd0, 0xab, 0x1b, 0x65, 0xc3, 0xd4, 0x73, 0x3d, 0x09, 0xde, 0x44, 0x65, 0xd1, 0x65,
+	0x18, 0xdc, 0x6b, 0x2a, 0x65, 0x43, 0xd9, 0xb1, 0x1c, 0x93, 0xeb, 0x25, 0x43, 0xe5, 0xd0, 0xd0,
+	0x9b, 0x8e, 0xd7, 0x4a, 0x60, 0x8b, 0x5b, 0xbf, 0xb0, 0x06, 0xdb, 0xd3, 0xd8, 0x83, 0xfb, 0xe2,
+	0x07, 0xdb, 0xe2, 0xd6, 0x2f, 0xf0, 0xcf, 0x24, 0x90, 0xaf, 0x92, 0xb9, 0x7c, 0x2e, 0x2b, 0x29,
+	0x9f, 0x37, 0x15, 0xdd, 0x70, 0xf1, 0x96, 0x3a, 0xc5, 0x3b, 0xd5, 0x29, 0xde, 0xe9, 0x44, 0x78,
+	0xe3, 0x7d, 0x98, 0xe1, 0xaa, 0xaf, 0x6b, 0x8d, 0xba, 0x7e, 0x84, 0xcc, 0xc3, 0xdf, 0x4d, 0xc3,
+	0xdc, 0x35, 0xa2, 0xe7, 0xae, 0xff, 0x5d, 0xba, 0x83, 0xd5, 0xdd, 0x64, 0x79, 0x7b, 0xa8, 0x31,
+	0x2c, 0xcd, 0xb4, 0xc1, 0xd2, 0x47, 0xa0, 0x5f, 0x6f, 0x34, 0x8d, 0x1d, 0x55, 0x39, 0x4c, 0xc4,
+	0xee, 0x3e, 0x4b, 0xfa, 0x59, 0xe5, 0x10, 0x3d, 0x04, 0x7d, 0x4d, 0xe5, 0x15, 0xa5, 0xa9, 0x8b,
+	0xa9, 0x7d, 0xa5, 0xd1, 0x38, 0xa0, 0xa3, 0xa8, 0x28, 0x9a, 0x84, 0xde, 0xc6, 0xad, 0x5b, 0xba,
+	0x62, 0x10, 0x4a, 0x0f, 0x97, 0xe8, 0x4f, 0xe8, 0x04, 0xf4, 0x1c, 0x54, 0x6b, 0x55, 0x23, 0xd7,
+	0x4f, 0x7e, 0x6d, 0xff, 0x80, 0x2b, 0x30, 0x2f, 0x72, 0x0f, 0xe5, 0xc2, 0x15, 0x18, 0xf5, 0xfb,
+	0x47, 0xcf, 0x49, 0xf9, 0xf4, 0xf2, 0xa0, 0x00, 0x2e, 0xc2, 0xa3, 0x11, 0x9f, 0x6b, 0x74, 0xfc,
+	0xe5, 0x14, 0xc8, 0x9b, 0x8d, 0x4a, 0xf5, 0xd6, 0x21, 0x37, 0x5c, 0x3e, 0x3c, 0x89, 0xce, 0x0a,
+	0x3c, 0x2e, 0x10, 0x47, 0x1e, 0x78, 0xcf, 0xc2, 0xcc, 0x35, 0xe5, 0x40, 0x31, 0x04, 0x51, 0x77,
+	0x1e, 0x50, 0xe8, 0x45, 0xb6, 0x63, 0x07, 0x4a, 0xd9, 0xc0, 0x5c, 0x3a, 0xbe, 0x0e, 0xb3, 0xfc,
+	0xc9, 0xa8, 0xda, 0xed, 0xcd, 0xf6, 0xd3, 0x14, 0x53, 0xe9, 0x9e, 0xaf, 0x57, 0x03, 0x04, 0x30,
+	0xeb, 0x55, 0xa3, 0x7d, 0xb3, 0xad, 0x79, 0x3a, 0x22, 0x80, 0x17, 0xd4, 0xe9, 0xce, 0x4b, 0x4f,
+	0xa6, 0x9b, 0xd2, 0xd3, 0xd3, 0x56, 0xe9, 0xd9, 0x0a, 0x55, 0x1e, 0xcb, 0xf4, 0x8e, 0x2b, 0x0f,
+	0xa7, 0x14, 0xd8, 0xf3, 0xf1, 0x18, 0xd9, 0x8d, 0x6b, 0xf0, 0xdf, 0x53, 0x9c, 0x52, 0x60, 0x3d,
+	0xe3, 0x97, 0x82, 0xfb, 0x82, 0x06, 0x6c, 0x6e, 0xcf, 0x74, 0x98, 0xdb, 0x7b, 0x3a, 0xc9, 0xed,
+	0xbd, 0xfc, 0xdc, 0xde, 0x17, 0x97, 0xdb, 0x29, 0xde, 0xbc, 0xdc, 0x6e, 0x01, 0x1e, 0x9d, 0xdb,
+	0x09, 0x31, 0x46, 0x7c, 0x58, 0xeb, 0xf8, 0x5b, 0x52, 0x28, 0xb7, 0xb3, 0x84, 0xbc, 0x8b, 0x3e,
+	0xe5, 0x24, 0xdb, 0xdb, 0x44, 0xed, 0x70, 0xb2, 0xf5, 0xf1, 0xda, 0x97, 0x1e, 0xe9, 0x8b, 0xc2,
+	0xe9, 0xd1, 0x9e, 0x8b, 0x97, 0x6c, 0xfd, 0x4e, 0x6b, 0x6f, 0xb6, 0x7f, 0xa7, 0x61, 0xc0, 0x9d,
+	0x08, 0x3d, 0x09, 0x43, 0xde, 0xd8, 0x84, 0xd6, 0x0e, 0xba, 0x23, 0x36, 0x2a, 0xfc, 0x02, 0x95,
+	0xea, 0xa4, 0x54, 0x73, 0xd1, 0x4f, 0x77, 0x42, 0x8c, 0x35, 0xe8, 0x79, 0xc5, 0x7a, 0x92, 0x28,
+	0x02, 0x6d, 0x51, 0x6b, 0x4c, 0xe3, 0xd5, 0xba, 0xd2, 0x4c, 0xb4, 0x22, 0xb3, 0x45, 0x99, 0x14,
+	0xd1, 0xdb, 0x79, 0xa5, 0xe8, 0xeb, 0xa6, 0x52, 0xf4, 0xb7, 0x55, 0x29, 0xfe, 0x22, 0xc1, 0x64,
+	0x20, 0xb5, 0x1f, 0xfd, 0x8a, 0x8b, 0xeb, 0xc6, 0x54, 0x57, 0x6e, 0x4c, 0x27, 0x76, 0x23, 0x7e,
+	0x09, 0xa6, 0x42, 0x16, 0xd2, 0x30, 0xe9, 0x96, 0xea, 0xf8, 0x5f, 0x69, 0x98, 0x0e, 0xe5, 0x4f,
+	0x37, 0xa6, 0x8f, 0x6b, 0x24, 0xd9, 0x51, 0x91, 0xe9, 0x24, 0x2a, 0x7a, 0x3a, 0x2c, 0x9c, 0xbd,
+	0x1d, 0x16, 0xce, 0xbe, 0x4e, 0x0a, 0x67, 0x3f, 0xbf, 0x70, 0x0e, 0xb0, 0x85, 0x73, 0x1b, 0x64,
+	0x9e, 0xe3, 0x29, 0xb1, 0x2e, 0x01, 0xb8, 0xb8, 0x39, 0xf5, 0x72, 0x82, 0x5b, 0x2f, 0x4b, 0x8c,
+	0x20, 0x7e, 0x37, 0x05, 0x93, 0x81, 0x6a, 0x74, 0xdc, 0xb9, 0xd4, 0x6e, 0x56, 0xb6, 0xc2, 0x39,
+	0x04, 0xd1, 0x51, 0x85, 0xf3, 0x13, 0x30, 0x15, 0x28, 0xab, 0x6e, 0x2c, 0x9f, 0x82, 0x61, 0x76,
+	0x6e, 0xa7, 0x98, 0x0e, 0x31, 0xc3, 0x75, 0xfc, 0x24, 0xe4, 0xc2, 0xe3, 0xa9, 0x72, 0x89, 0x26,
+	0xf8, 0x63, 0x0a, 0xd2, 0xdb, 0x9a, 0x89, 0x2e, 0x42, 0xaf, 0xae, 0x99, 0x49, 0x6d, 0xe8, 0xd1,
+	0x35, 0x73, 0xa3, 0x82, 0x2e, 0x03, 0x68, 0xcd, 0x46, 0xc5, 0xdc, 0x4b, 0x9c, 0x5f, 0x07, 0xa8,
+	0x3c, 0x1b, 0xd6, 0xe9, 0x4e, 0xc2, 0x3a, 0xd3, 0x79, 0xb1, 0xeb, 0xe9, 0xa6, 0xd8, 0xf5, 0xb6,
+	0x55, 0xec, 0x6e, 0x40, 0xd6, 0xae, 0x04, 0xdb, 0x9a, 0xe9, 0xf8, 0xd5, 0x0f, 0x9a, 0xd4, 0x16,
+	0x68, 0xf8, 0x69, 0x18, 0x63, 0x26, 0xa4, 0x8e, 0xee, 0xc4, 0x77, 0xf8, 0x6b, 0x69, 0x18, 0x77,
+	0xf2, 0xc9, 0xb6, 0x66, 0xba, 0xb4, 0x3b, 0xce, 0x44, 0xb8, 0xa7, 0x37, 0xbd, 0x2e, 0xc3, 0x09,
+	0xbf, 0x3f, 0xdc, 0x30, 0xce, 0xe8, 0x9a, 0xe9, 0xe4, 0xf4, 0x51, 0x36, 0xa7, 0x5b, 0x24, 0x20,
+	0x0f, 0xf1, 0x1b, 0x12, 0x64, 0xed, 0x24, 0xc5, 0x30, 0xed, 0x8e, 0xbb, 0xd2, 0xa2, 0x27, 0xa3,
+	0x45, 0x37, 0xf4, 0x3c, 0x0f, 0x63, 0x76, 0x62, 0x63, 0xb9, 0x39, 0x05, 0x7d, 0xf6, 0x4c, 0x4e,
+	0x2e, 0xeb, 0x25, 0xc2, 0x3a, 0xbe, 0x00, 0x88, 0x95, 0xa6, 0x2f, 0x16, 0x8a, 0xff, 0xc2, 0x4a,
+	0x7a, 0xaa, 0x9d, 0xf4, 0xd4, 0x36, 0x34, 0x53, 0x2d, 0x80, 0x3c, 0x73, 0x52, 0xc9, 0x51, 0x0d,
+	0xe5, 0xe2, 0x74, 0x38, 0x17, 0xdf, 0x77, 0xd9, 0xed, 0xc0, 0xcd, 0x6e, 0x6a, 0x77, 0x9c, 0x0b,
+	0xa1, 0x93, 0xe2, 0x54, 0x2a, 0x2f, 0xf5, 0xa9, 0x7e, 0x6e, 0xb5, 0xeb, 0x41, 0xfc, 0x9b, 0x14,
+	0x93, 0xfa, 0x54, 0x7f, 0xea, 0xbb, 0x33, 0x74, 0x38, 0x86, 0xfb, 0x3a, 0x6c, 0xfa, 0x52, 0x03,
+	0xe9, 0x4b, 0x15, 0xa4, 0x2f, 0xd5, 0x4a, 0x5f, 0xaa, 0xa9, 0xe3, 0x77, 0xbd, 0xf4, 0xe5, 0xa7,
+	0xd2, 0xbd, 0x13, 0x9d, 0x4c, 0x6e, 0xeb, 0x96, 0x7f, 0x5e, 0x6e, 0x53, 0xfd, 0xb9, 0x4d, 0xf5,
+	0x27, 0x2b, 0x35, 0x90, 0xdb, 0xd4, 0x40, 0x6e, 0xe3, 0x8a, 0xff, 0x27, 0x05, 0xb9, 0x4d, 0x7a,
+	0xba, 0xec, 0x2e, 0x0a, 0xaf, 0x54, 0xeb, 0x95, 0x6a, 0x7d, 0xdf, 0x4a, 0xee, 0xbb, 0xf6, 0x7f,
+	0x13, 0xaf, 0x3d, 0xa8, 0x3c, 0x85, 0x56, 0x6d, 0x03, 0x5a, 0xe2, 0x8f, 0xe0, 0x0a, 0x39, 0xdd,
+	0xee, 0x57, 0xc4, 0xfd, 0x96, 0x14, 0x5f, 0x97, 0x60, 0xd1, 0xce, 0x53, 0x22, 0x2f, 0x74, 0x97,
+	0x6f, 0x12, 0xe5, 0xca, 0x67, 0x60, 0x29, 0x56, 0x07, 0x4a, 0xa4, 0x05, 0x18, 0xf4, 0x28, 0xe1,
+	0x90, 0x09, 0x5c, 0xaf, 0xeb, 0xf8, 0x1f, 0x29, 0x58, 0x76, 0x22, 0x3b, 0xd6, 0xa4, 0x3b, 0x4f,
+	0xb0, 0x63, 0x98, 0x4a, 0xbf, 0x2e, 0xc1, 0xd9, 0x04, 0x88, 0x53, 0x07, 0xee, 0xc2, 0x74, 0x4d,
+	0x24, 0x44, 0xb3, 0xee, 0x69, 0x36, 0xeb, 0x8a, 0x66, 0x2c, 0x89, 0xa7, 0xc1, 0x7f, 0x90, 0xe0,
+	0x8c, 0x9d, 0xfc, 0x84, 0xa3, 0xef, 0x1a, 0x01, 0xba, 0xcd, 0x30, 0x58, 0x81, 0xc5, 0x38, 0xdb,
+	0x28, 0xd4, 0xdd, 0x18, 0x87, 0x37, 0x60, 0xd1, 0xce, 0xe3, 0xb1, 0x41, 0x14, 0x1b, 0x92, 0xcf,
+	0xc0, 0x52, 0xec, 0x54, 0x49, 0xc3, 0xfb, 0xed, 0x0c, 0x0c, 0x5e, 0x6d, 0xd4, 0x76, 0xab, 0x75,
+	0xd2, 0xf8, 0x83, 0xae, 0xc2, 0xc8, 0x9e, 0xf7, 0x63, 0x52, 0x3b, 0x87, 0x99, 0x31, 0x77, 0xe5,
+	0xc4, 0xfb, 0xce, 0x6d, 0x12, 0x3e, 0x0a, 0x56, 0xba, 0x6f, 0x1a, 0x49, 0x8b, 0xc3, 0x00, 0x91,
+	0x26, 0x85, 0xe5, 0x12, 0xf4, 0x2b, 0xf5, 0x4a, 0xd2, 0x2d, 0xf7, 0x3e, 0xa5, 0x5e, 0x71, 0xea,
+	0x11, 0x5b, 0xcc, 0xfa, 0xbb, 0x29, 0x66, 0x03, 0x6d, 0x15, 0xb3, 0xff, 0x4a, 0x90, 0xb3, 0x0b,
+	0x09, 0x43, 0x91, 0xbb, 0xd7, 0x4f, 0xe4, 0x87, 0x3e, 0xdd, 0x29, 0xf4, 0x99, 0xc4, 0xd0, 0xe3,
+	0xcf, 0xc2, 0x34, 0xc7, 0x7e, 0x1a, 0x5b, 0x47, 0x11, 0x2a, 0xf8, 0x3b, 0x69, 0x98, 0x71, 0x92,
+	0x3d, 0xf3, 0x12, 0x37, 0x19, 0xdc, 0xa5, 0x78, 0xfc, 0xff, 0xa6, 0x0c, 0x29, 0xc5, 0x9f, 0x82,
+	0x59, 0xbe, 0x73, 0xdc, 0x8a, 0x30, 0xc4, 0x20, 0xed, 0xd4, 0xdb, 0x29, 0xb6, 0xde, 0xb2, 0xcc,
+	0xf1, 0x09, 0xe3, 0x9f, 0x5b, 0x4b, 0x75, 0x52, 0x79, 0x38, 0xd1, 0x75, 0x9f, 0xe6, 0x61, 0x7f,
+	0x88, 0x66, 0x3a, 0x0d, 0xd1, 0x9e, 0xb6, 0x42, 0x94, 0x03, 0xe2, 0x51, 0x86, 0xe8, 0x35, 0x98,
+	0xb6, 0xcb, 0x2d, 0x2f, 0x3e, 0x97, 0x60, 0xd4, 0xff, 0x06, 0xa7, 0xc8, 0x8e, 0xf8, 0x26, 0xd1,
+	0xf1, 0x3a, 0xc8, 0xbc, 0x59, 0xa8, 0xa2, 0x89, 0xa7, 0x79, 0x33, 0x0d, 0x23, 0xcc, 0x0c, 0xdb,
+	0xaa, 0x89, 0x9e, 0x01, 0xc4, 0x8e, 0x6d, 0xe3, 0x9b, 0x22, 0xbb, 0xe7, 0x9b, 0x69, 0xa3, 0xc2,
+	0x01, 0x2c, 0xd5, 0x3e, 0xed, 0xbc, 0x75, 0x5c, 0xba, 0x93, 0x85, 0xfc, 0xfd, 0xf1, 0xa1, 0xf7,
+	0x96, 0xe4, 0xf4, 0x28, 0xf9, 0xdd, 0x71, 0xa4, 0x01, 0xdc, 0xc9, 0x8a, 0x18, 0x7f, 0x0e, 0x66,
+	0xf9, 0x8a, 0x51, 0xae, 0x1d, 0x21, 0x5f, 0xf0, 0x4f, 0xd2, 0x5e, 0x3f, 0x8f, 0xff, 0x75, 0x6e,
+	0x84, 0x7c, 0x98, 0xe9, 0x79, 0x4f, 0x17, 0xb7, 0x97, 0x61, 0x41, 0xe8, 0x3a, 0x4a, 0x95, 0x75,
+	0xc8, 0x06, 0x7c, 0xe7, 0xd4, 0x38, 0x59, 0x50, 0xe3, 0x2c, 0xa2, 0x8d, 0xfa, 0xfd, 0xa6, 0xe3,
+	0xbf, 0x4a, 0x4e, 0xd3, 0x13, 0x3f, 0x56, 0x8e, 0x05, 0x45, 0xac, 0xb8, 0xe3, 0x1b, 0x79, 0x1b,
+	0xe2, 0x6e, 0xcb, 0xe9, 0xc7, 0x12, 0x04, 0xdd, 0x0a, 0x8c, 0x87, 0xdf, 0xe5, 0xd4, 0x94, 0xb1,
+	0xe0, 0x74, 0x3a, 0xbe, 0x01, 0x73, 0x82, 0xf9, 0xa8, 0xf2, 0xed, 0x4e, 0xf8, 0xfd, 0x34, 0x9c,
+	0x60, 0xe6, 0xda, 0x2c, 0x3a, 0x7b, 0x90, 0x25, 0x98, 0x64, 0x27, 0x6a, 0xf3, 0x83, 0xfa, 0x04,
+	0x33, 0xf6, 0x8a, 0xbb, 0x71, 0xc0, 0x47, 0x36, 0xd5, 0x11, 0x7f, 0x3e, 0x74, 0x3b, 0x96, 0x3f,
+	0x96, 0xe0, 0x64, 0xa8, 0x5e, 0xb8, 0xfe, 0xba, 0x1d, 0x21, 0x1a, 0x84, 0x38, 0xd5, 0xee, 0x96,
+	0xcd, 0x6b, 0x80, 0xa3, 0x34, 0xa6, 0x94, 0xbd, 0x0d, 0x4c, 0xc3, 0xdf, 0x4e, 0xc3, 0x69, 0x4e,
+	0xd2, 0x74, 0x5f, 0xee, 0x06, 0xe0, 0xbd, 0x4e, 0xf3, 0x63, 0xb8, 0x6f, 0xfa, 0x45, 0x09, 0xce,
+	0xc4, 0xf8, 0x86, 0x32, 0xe3, 0x45, 0x98, 0x62, 0x81, 0xac, 0x95, 0x1d, 0xff, 0x38, 0xd5, 0x2d,
+	0x2f, 0xa8, 0x6e, 0x1e, 0xc9, 0x26, 0x98, 0x09, 0x36, 0xcb, 0xee, 0x4e, 0xe9, 0x1b, 0x29, 0x38,
+	0x19, 0x2a, 0x02, 0xa1, 0x60, 0x3a, 0xee, 0x39, 0xd0, 0x0a, 0xd0, 0x28, 0x14, 0x6e, 0x63, 0x80,
+	0x7e, 0x1a, 0x70, 0xa8, 0x90, 0x85, 0xa3, 0xf3, 0x61, 0x3f, 0x01, 0xc2, 0x5b, 0xa4, 0x13, 0xbc,
+	0xc9, 0x75, 0xfc, 0x19, 0x38, 0x15, 0x39, 0x3b, 0x35, 0xac, 0xd3, 0xe9, 0xbf, 0x92, 0x82, 0xc9,
+	0xd0, 0x9e, 0x2e, 0xb1, 0xb6, 0xfb, 0x76, 0x3c, 0xb7, 0xf5, 0x4d, 0x44, 0x89, 0x6b, 0x0d, 0x73,
+	0xf7, 0x40, 0xf1, 0x35, 0x24, 0x3f, 0xe5, 0xbb, 0x8a, 0x76, 0x31, 0xf2, 0x18, 0x81, 0x0c, 0x5c,
+	0x79, 0x5e, 0xab, 0x94, 0xe9, 0xff, 0x6f, 0x1e, 0x6a, 0x8a, 0x4e, 0x6f, 0x18, 0x3d, 0x00, 0xd9,
+	0xe0, 0x13, 0x34, 0x0a, 0x83, 0x1b, 0x5b, 0x57, 0x4b, 0xeb, 0x9b, 0xeb, 0x5b, 0x37, 0x8b, 0xd7,
+	0xb3, 0x1f, 0x41, 0x83, 0xd0, 0x57, 0x5a, 0x7f, 0xee, 0x7a, 0xf1, 0xea, 0x7a, 0x56, 0xc2, 0xbf,
+	0x92, 0x60, 0xd0, 0x79, 0x87, 0xf5, 0x91, 0xfb, 0x31, 0x18, 0x6c, 0x2a, 0x7a, 0xc3, 0x6c, 0xee,
+	0x25, 0x36, 0x1f, 0x9c, 0x01, 0x9d, 0x1e, 0x2d, 0x6c, 0x82, 0xd7, 0xba, 0xbe, 0x43, 0x10, 0xb1,
+	0x8f, 0x86, 0x07, 0xd7, 0x70, 0x3c, 0x14, 0x4c, 0xf3, 0x21, 0xf9, 0x59, 0xc7, 0x6f, 0x4a, 0x30,
+	0xea, 0xc8, 0x3a, 0x44, 0xbc, 0x04, 0x7d, 0xa6, 0xae, 0x34, 0x93, 0x2a, 0xd6, 0x6b, 0x09, 0x6f,
+	0x54, 0xd0, 0xe3, 0x30, 0xec, 0x9c, 0xd6, 0xd8, 0x8b, 0xf2, 0x74, 0x78, 0xe3, 0x89, 0x41, 0xaf,
+	0x34, 0x54, 0xf3, 0x7e, 0xd0, 0xf1, 0x45, 0xc8, 0x7a, 0x7a, 0x78, 0x07, 0x05, 0x07, 0x4a, 0x59,
+	0x0f, 0x1c, 0x14, 0xd0, 0x5f, 0x6d, 0x54, 0xf4, 0xc2, 0x59, 0xe6, 0x7e, 0x94, 0xe5, 0x40, 0x04,
+	0xd0, 0xbb, 0x75, 0xa3, 0xb4, 0x49, 0x5c, 0x37, 0x04, 0xfd, 0x9b, 0xeb, 0x37, 0xd7, 0x4b, 0x1b,
+	0x5b, 0x4f, 0x65, 0xa5, 0xb5, 0xdf, 0xcf, 0x03, 0x6c, 0xab, 0xe6, 0x66, 0xb9, 0x5e, 0xde, 0x57,
+	0x9a, 0xe8, 0x07, 0x12, 0x8c, 0x73, 0x2e, 0x76, 0xa2, 0x45, 0x5f, 0x92, 0x15, 0x5e, 0x5c, 0x95,
+	0x97, 0x62, 0xe5, 0x6c, 0x1b, 0xf0, 0xc7, 0x5b, 0xc5, 0x29, 0x34, 0x61, 0xaf, 0x8b, 0xf2, 0x2e,
+	0xfa, 0xf9, 0x7a, 0xb9, 0xa6, 0xbc, 0xfe, 0xdb, 0x0f, 0xbe, 0x91, 0xca, 0xe3, 0x99, 0xd5, 0x57,
+	0x1e, 0x5c, 0x75, 0xb0, 0x58, 0x75, 0x45, 0x56, 0x2d, 0x91, 0xc7, 0xa4, 0x02, 0x7a, 0x4f, 0x82,
+	0x49, 0xfe, 0xd5, 0x43, 0x74, 0x96, 0xd5, 0x22, 0xf2, 0xf6, 0xa8, 0x5c, 0x48, 0x22, 0x4a, 0x75,
+	0x2e, 0xb6, 0x8a, 0x32, 0xca, 0x55, 0xa8, 0x50, 0x3e, 0x70, 0xab, 0x91, 0xa8, 0x3d, 0x8f, 0x66,
+	0x23, 0xd4, 0xd6, 0x09, 0xbe, 0x9c, 0xfb, 0x7b, 0x7e, 0x7c, 0xc5, 0x37, 0x1d, 0xfd, 0xf8, 0x46,
+	0x5c, 0x04, 0xa4, 0xf8, 0xd6, 0x88, 0x44, 0x40, 0x53, 0x1b, 0x5f, 0x39, 0x0e, 0xdf, 0x1f, 0x49,
+	0x70, 0x82, 0x77, 0x69, 0x0f, 0x2d, 0xf9, 0x21, 0x13, 0xde, 0x11, 0x94, 0x97, 0xe3, 0x05, 0xa9,
+	0xb6, 0x57, 0x5a, 0xc5, 0x1c, 0x9a, 0xac, 0x10, 0x11, 0x2e, 0xae, 0x27, 0x0b, 0x91, 0xb8, 0x5a,
+	0xfa, 0x72, 0xa8, 0x4b, 0xee, 0x06, 0x46, 0x51, 0x97, 0xb9, 0x68, 0x14, 0x49, 0x5d, 0xf6, 0xda,
+	0x8f, 0x88, 0xba, 0x66, 0xbd, 0x6a, 0xc4, 0x50, 0xd7, 0x12, 0x11, 0x52, 0x97, 0x5c, 0xd2, 0x89,
+	0xa1, 0x2e, 0x7b, 0x2b, 0x28, 0x86, 0xba, 0xbe, 0x3b, 0x3f, 0x62, 0xea, 0x92, 0x4b, 0x5b, 0x31,
+	0xd4, 0x25, 0x32, 0x3c, 0xea, 0x86, 0xf1, 0x15, 0x5f, 0xe4, 0x8a, 0xa4, 0x2e, 0x07, 0xdf, 0x10,
+	0x75, 0x3d, 0x7c, 0xe5, 0x38, 0x7c, 0x39, 0xd4, 0xb5, 0xd1, 0x8d, 0xa2, 0xae, 0x0f, 0xdb, 0xe5,
+	0x78, 0xc1, 0x68, 0xea, 0x7a, 0xb8, 0x8a, 0xa9, 0x4b, 0x64, 0x2c, 0x7d, 0x5b, 0x12, 0x8c, 0x06,
+	0x18, 0x87, 0x70, 0x04, 0x1d, 0x1d, 0x2d, 0x4f, 0x45, 0xca, 0x50, 0x05, 0x1f, 0x6e, 0x15, 0x11,
+	0xca, 0x06, 0xe9, 0x4a, 0x54, 0x9b, 0xc1, 0x93, 0x7c, 0xd5, 0x2c, 0xa5, 0xde, 0x91, 0x00, 0x85,
+	0x6f, 0x31, 0xa0, 0x33, 0x91, 0xac, 0x73, 0x01, 0x5c, 0x8c, 0x13, 0xa3, 0xda, 0x3d, 0xd2, 0x2a,
+	0x4e, 0xa0, 0xf1, 0x30, 0x31, 0x6d, 0xec, 0xa6, 0xd1, 0x14, 0x5f, 0x41, 0x9d, 0x60, 0x16, 0x60,
+	0x91, 0x1f, 0x33, 0xfe, 0x5d, 0x09, 0x3f, 0x66, 0x82, 0xcb, 0x02, 0x14, 0xb3, 0x20, 0x05, 0x6d,
+	0xcc, 0xe4, 0x08, 0xcc, 0xde, 0x92, 0x20, 0x1b, 0x6c, 0xf2, 0x47, 0xa7, 0x22, 0xb8, 0xe4, 0xe2,
+	0x75, 0x3a, 0x5a, 0x88, 0xea, 0xf5, 0xd1, 0x56, 0x71, 0x1c, 0x8d, 0x05, 0xc9, 0x66, 0x63, 0x35,
+	0x5b, 0x10, 0x61, 0x65, 0x69, 0x66, 0xc0, 0x80, 0xdb, 0x8d, 0x8e, 0x66, 0xc3, 0xbc, 0xf1, 0x7a,
+	0x91, 0xe5, 0x39, 0xc1, 0x53, 0xaa, 0x43, 0xa1, 0x55, 0x1c, 0x42, 0x74, 0x47, 0x23, 0xaf, 0x6b,
+	0x26, 0x79, 0xf9, 0x04, 0xce, 0xfa, 0x5e, 0xae, 0x6b, 0xa6, 0xf5, 0xd6, 0x2f, 0xc0, 0x10, 0xdb,
+	0x28, 0x8d, 0x16, 0x78, 0xac, 0x60, 0xda, 0x86, 0xe5, 0xbc, 0x58, 0x80, 0xbe, 0xfe, 0x5c, 0xab,
+	0x38, 0x8a, 0x86, 0x5d, 0xc2, 0xe8, 0x9a, 0x69, 0x9b, 0x3f, 0x8e, 0xc6, 0x82, 0x1a, 0xe8, 0x96,
+	0xd5, 0x6e, 0x93, 0xb3, 0xdf, 0xea, 0x60, 0x07, 0xb6, 0xdf, 0xea, 0x50, 0x67, 0x34, 0xb5, 0x9a,
+	0x32, 0xc2, 0xb5, 0x5a, 0xe6, 0x5a, 0x7d, 0x08, 0xe0, 0xb5, 0x38, 0xa3, 0xb9, 0xb0, 0x67, 0x59,
+	0x8b, 0xe7, 0x45, 0x8f, 0xe9, 0x8b, 0xcf, 0xb7, 0x8a, 0xc3, 0x68, 0x90, 0xba, 0xdc, 0xb5, 0x76,
+	0xb2, 0x10, 0xb6, 0xd6, 0x7a, 0xf5, 0x97, 0x24, 0xd7, 0xcf, 0x2a, 0xdf, 0xcf, 0x6a, 0xa4, 0x9f,
+	0xbd, 0x2d, 0x50, 0xfc, 0x68, 0xab, 0x38, 0x83, 0xa6, 0x1d, 0x3f, 0xab, 0x66, 0xbe, 0x71, 0x2b,
+	0x6f, 0xbc, 0xac, 0xe4, 0x69, 0x0b, 0x39, 0xdf, 0xed, 0x6a, 0xc8, 0xed, 0xaa, 0xd0, 0xed, 0x6a,
+	0x9c, 0xdb, 0xd5, 0x08, 0xb7, 0xab, 0x22, 0xb7, 0xab, 0x3e, 0xb7, 0xab, 0x7c, 0xb7, 0xab, 0x91,
+	0x6e, 0x57, 0x45, 0x6e, 0x57, 0x05, 0x6e, 0x57, 0x03, 0x6e, 0x57, 0x05, 0x6e, 0x57, 0xa3, 0xdd,
+	0xae, 0x0a, 0xdd, 0xae, 0x8a, 0xdc, 0xae, 0xda, 0x6e, 0xff, 0x93, 0xdb, 0xfc, 0x11, 0xfa, 0xc0,
+	0xd1, 0xd1, 0x5a, 0xd8, 0xcf, 0x71, 0x7d, 0x4d, 0xf2, 0xc5, 0xb6, 0xc6, 0x50, 0x9d, 0x5f, 0x6c,
+	0x15, 0xcf, 0xa1, 0xb3, 0x94, 0x31, 0x8e, 0x8e, 0xcc, 0x0a, 0xc9, 0xd9, 0xb8, 0xb1, 0x98, 0xe4,
+	0x60, 0x79, 0x1a, 0x2f, 0x08, 0xaa, 0xe3, 0x6e, 0xb5, 0xbe, 0x6f, 0x49, 0x5b, 0xf6, 0xfd, 0x4d,
+	0x82, 0x93, 0xb1, 0x6d, 0x76, 0xe8, 0x21, 0x1e, 0x8b, 0x62, 0x4d, 0xbd, 0xd4, 0xe6, 0x28, 0x6a,
+	0xec, 0x27, 0x5b, 0xc5, 0x0b, 0xe8, 0x9c, 0x4b, 0xc8, 0x84, 0xe6, 0x9e, 0x44, 0x11, 0xe6, 0xda,
+	0x56, 0xfc, 0x59, 0x82, 0xf9, 0xe8, 0x26, 0x37, 0xf4, 0x60, 0x98, 0xb4, 0x31, 0xcd, 0x7e, 0xf2,
+	0x5a, 0x3b, 0x43, 0xa8, 0x89, 0x2f, 0xb4, 0x8a, 0x05, 0xb4, 0x4c, 0xc9, 0x2f, 0x36, 0x90, 0xb5,
+	0xef, 0x94, 0x3c, 0x1f, 0x6d, 0x9f, 0xe5, 0xcd, 0x0f, 0x24, 0x58, 0x88, 0x69, 0x8a, 0xf3, 0x93,
+	0x36, 0x59, 0x33, 0x9e, 0x9f, 0xb4, 0x09, 0xbb, 0xee, 0x28, 0x69, 0x69, 0xa0, 0x25, 0x25, 0x6d,
+	0x21, 0xce, 0x8b, 0x8f, 0x49, 0x85, 0xb5, 0xf7, 0xc7, 0x20, 0xfb, 0x5c, 0xb3, 0x51, 0x6b, 0xd8,
+	0xfb, 0x8e, 0xf6, 0x07, 0xf6, 0x3b, 0x92, 0x73, 0x37, 0x82, 0xed, 0xe4, 0x3b, 0x1d, 0x0e, 0xb7,
+	0x70, 0x9f, 0x89, 0x7c, 0x26, 0x46, 0x8a, 0x5a, 0xf4, 0x58, 0xab, 0x78, 0x02, 0x21, 0x1a, 0x86,
+	0xcc, 0xe6, 0x15, 0x51, 0x7d, 0x0e, 0xe7, 0x7c, 0xaa, 0x33, 0xcf, 0x2d, 0xd7, 0x7c, 0x4f, 0xf2,
+	0xee, 0x06, 0xb0, 0xcd, 0x0f, 0xc1, 0x95, 0xb3, 0xb0, 0x09, 0x2a, 0xb8, 0x72, 0x16, 0x37, 0xe4,
+	0xe0, 0xcb, 0x64, 0x9d, 0xef, 0x46, 0x10, 0xdb, 0x6f, 0x63, 0xaf, 0xb4, 0xd0, 0xb4, 0x48, 0x55,
+	0x9d, 0xe0, 0x18, 0xda, 0xb6, 0xf4, 0xe3, 0x28, 0xea, 0xd7, 0xf1, 0xe3, 0x28, 0x6c, 0x48, 0xa1,
+	0x38, 0x52, 0xfa, 0x87, 0x70, 0x94, 0x23, 0x71, 0x7c, 0x57, 0x72, 0xae, 0x02, 0xf8, 0x50, 0x3c,
+	0x13, 0x66, 0x28, 0x0f, 0xc3, 0xc5, 0x38, 0x31, 0xaa, 0xe1, 0xe3, 0x74, 0xf1, 0x4c, 0xb8, 0x1b,
+	0xc2, 0x6f, 0xbe, 0x20, 0xc6, 0xcf, 0xf9, 0x4a, 0xe2, 0x35, 0x1f, 0xa0, 0xa5, 0x48, 0x9e, 0x31,
+	0xc5, 0x73, 0x39, 0x5e, 0xd0, 0xf7, 0x95, 0x14, 0xe6, 0xe4, 0x8e, 0x9b, 0x18, 0xf1, 0xac, 0x48,
+	0x59, 0xa7, 0xbe, 0xbe, 0x2f, 0xc1, 0x94, 0xe0, 0x10, 0x1c, 0x15, 0x62, 0x58, 0xc7, 0x96, 0xde,
+	0x73, 0x89, 0x64, 0xa9, 0xe2, 0x57, 0xc9, 0x2a, 0x88, 0x47, 0xd2, 0x1d, 0xb7, 0x2a, 0x2f, 0xa0,
+	0xb9, 0x28, 0xdd, 0x75, 0x82, 0x34, 0xef, 0xb8, 0x19, 0x2d, 0x45, 0x32, 0x51, 0x84, 0x74, 0xd4,
+	0xc9, 0x35, 0x45, 0x3a, 0xcc, 0x5a, 0x0f, 0x69, 0x39, 0x16, 0xe9, 0xf7, 0x24, 0x98, 0xe0, 0x1e,
+	0x31, 0xa3, 0xe5, 0x48, 0x66, 0xb2, 0x28, 0x9f, 0x4d, 0x20, 0x49, 0x55, 0xbe, 0xd6, 0x2a, 0x4e,
+	0xa3, 0xa9, 0x30, 0x8d, 0x3d, 0x84, 0x71, 0x21, 0x1a, 0x61, 0x4b, 0xe9, 0x5f, 0xba, 0x7f, 0x52,
+	0x8f, 0x7b, 0x96, 0x7d, 0x21, 0x92, 0xab, 0xc1, 0x63, 0x1f, 0x79, 0x25, 0xa9, 0x38, 0xb5, 0xe1,
+	0x46, 0xab, 0xb8, 0x80, 0xe6, 0x38, 0x04, 0xf7, 0x0e, 0xac, 0x88, 0x25, 0x4b, 0x18, 0x0b, 0x2d,
+	0xa9, 0x95, 0x99, 0x22, 0xf9, 0x3b, 0xc9, 0xfb, 0x6b, 0x47, 0xdc, 0x13, 0x0c, 0xf4, 0x40, 0x0c,
+	0x8f, 0x43, 0x47, 0x29, 0xf2, 0x83, 0x6d, 0x8c, 0xa0, 0x76, 0x3d, 0xd7, 0x2a, 0x62, 0x94, 0xe7,
+	0xf2, 0x9f, 0x39, 0x8a, 0x23, 0xa6, 0x9d, 0x41, 0xa7, 0xe2, 0x4d, 0xd3, 0x89, 0x9f, 0xc4, 0x07,
+	0x4e, 0x7e, 0x3f, 0xc5, 0x1e, 0xcf, 0xf9, 0xfd, 0x14, 0x7f, 0x8e, 0x45, 0xfd, 0xc4, 0x09, 0x8f,
+	0xa0, 0x9f, 0xe4, 0x84, 0x7e, 0xfa, 0xb5, 0xe4, 0xfc, 0xed, 0x1e, 0xbe, 0x97, 0x56, 0x22, 0xe3,
+	0x20, 0xec, 0xa3, 0xd5, 0xc4, 0xf2, 0xd4, 0xa2, 0x4f, 0xb4, 0x8a, 0x79, 0x34, 0xcf, 0x89, 0x9e,
+	0xa0, 0x7f, 0x96, 0x0b, 0x49, 0xfc, 0x63, 0xad, 0x5c, 0xfe, 0x99, 0xf1, 0x4e, 0x3f, 0x9c, 0x85,
+	0xcb, 0x57, 0x25, 0x18, 0xde, 0x36, 0xca, 0x4d, 0xc3, 0x79, 0x80, 0x66, 0x78, 0x27, 0x18, 0x8e,
+	0x19, 0xb3, 0xfc, 0x87, 0xde, 0x76, 0x24, 0x46, 0x79, 0xd2, 0x4f, 0xca, 0xac, 0xb9, 0x76, 0x1b,
+	0xa6, 0x41, 0x3e, 0x31, 0x75, 0xd5, 0xdc, 0xd1, 0x15, 0xfb, 0x13, 0x73, 0x12, 0xf3, 0x3f, 0x79,
+	0xde, 0x96, 0x60, 0xdc, 0x3e, 0xa7, 0x72, 0x66, 0xb7, 0x0f, 0xdf, 0xba, 0xd0, 0xea, 0xe9, 0x56,
+	0xf1, 0x2c, 0x5a, 0x32, 0xc9, 0xa4, 0x9e, 0x5a, 0xe4, 0x30, 0x49, 0xa4, 0x9c, 0xcc, 0x57, 0xee,
+	0x2d, 0x09, 0x86, 0xb6, 0x8d, 0x86, 0x76, 0x14, 0x58, 0x5d, 0x6f, 0x15, 0x97, 0xd1, 0xa2, 0x56,
+	0x36, 0xf5, 0x84, 0x4a, 0x05, 0x77, 0xa8, 0x2c, 0xa5, 0x56, 0x75, 0xa3, 0xa1, 0x59, 0x9a, 0x7d,
+	0x53, 0x82, 0xb1, 0x9b, 0x4a, 0xb3, 0x66, 0x39, 0x5e, 0x39, 0x0a, 0xf5, 0xd6, 0x5b, 0xc5, 0x45,
+	0x74, 0xda, 0x70, 0xa6, 0x8c, 0x75, 0x27, 0xff, 0x0b, 0xf6, 0x4a, 0xe6, 0xa5, 0x94, 0xb6, 0xbb,
+	0xdb, 0x4b, 0x4e, 0xd2, 0x2e, 0xfe, 0x2f, 0x00, 0x00, 0xff, 0xff, 0xcc, 0x64, 0x88, 0x9a, 0x75,
+	0x57, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -4538,7 +5731,18 @@ var _SkuManager_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PromotionManagerClient interface {
-	CreateProbationSku(ctx context.Context, in *CreateProbationSkuRequest, opts ...grpc.CallOption) (*CreateProbationSkuResponse, error)
+	CreateCombination(ctx context.Context, in *CreateCombinationRequest, opts ...grpc.CallOption) (*CreateCombinationResponse, error)
+	DescribeCombinations(ctx context.Context, in *DescribeCombinationsRequest, opts ...grpc.CallOption) (*DescribeCombinationsResponse, error)
+	ModifyCombination(ctx context.Context, in *ModifyCombinationRequest, opts ...grpc.CallOption) (*ModifyCombinationResponse, error)
+	DeleteCombinations(ctx context.Context, in *DeleteCombinationsRequest, opts ...grpc.CallOption) (*DeleteCombinationsResponse, error)
+	CreateCombinationSku(ctx context.Context, in *CreateCombinationSkuRequest, opts ...grpc.CallOption) (*CreateCombinationSkuResponse, error)
+	DescribeCombinationSkus(ctx context.Context, in *DescribeCombinationSkusRequest, opts ...grpc.CallOption) (*DescribeCombinationSkusResponse, error)
+	ModifyCombinationSku(ctx context.Context, in *ModifyCombinationSkuRequest, opts ...grpc.CallOption) (*ModifyCombinationSkuResponse, error)
+	DeleteCombinationSkus(ctx context.Context, in *DeleteCombinationSkusRequest, opts ...grpc.CallOption) (*DeleteCombinationSkusResponse, error)
+	CreateCombinationMABinding(ctx context.Context, in *CreateCombinationMABindingRequest, opts ...grpc.CallOption) (*CreateCombinationMABindingResponse, error)
+	DescribeCombinationMABindings(ctx context.Context, in *DescribeCombinationMABindingsRequest, opts ...grpc.CallOption) (*DescribeCombinationMABindingsResponse, error)
+	ModifyCombinationMABinding(ctx context.Context, in *ModifyCombinationMABindingRequest, opts ...grpc.CallOption) (*ModifyCombinationMABindingResponse, error)
+	DeleteCombinationMABindings(ctx context.Context, in *DeleteCombinationMABindingsRequest, opts ...grpc.CallOption) (*DeleteCombinationMABindingsResponse, error)
 }
 
 type promotionManagerClient struct {
@@ -4549,9 +5753,108 @@ func NewPromotionManagerClient(cc *grpc.ClientConn) PromotionManagerClient {
 	return &promotionManagerClient{cc}
 }
 
-func (c *promotionManagerClient) CreateProbationSku(ctx context.Context, in *CreateProbationSkuRequest, opts ...grpc.CallOption) (*CreateProbationSkuResponse, error) {
-	out := new(CreateProbationSkuResponse)
-	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/CreateProbationSku", in, out, opts...)
+func (c *promotionManagerClient) CreateCombination(ctx context.Context, in *CreateCombinationRequest, opts ...grpc.CallOption) (*CreateCombinationResponse, error) {
+	out := new(CreateCombinationResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/CreateCombination", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DescribeCombinations(ctx context.Context, in *DescribeCombinationsRequest, opts ...grpc.CallOption) (*DescribeCombinationsResponse, error) {
+	out := new(DescribeCombinationsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DescribeCombinations", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) ModifyCombination(ctx context.Context, in *ModifyCombinationRequest, opts ...grpc.CallOption) (*ModifyCombinationResponse, error) {
+	out := new(ModifyCombinationResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/ModifyCombination", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DeleteCombinations(ctx context.Context, in *DeleteCombinationsRequest, opts ...grpc.CallOption) (*DeleteCombinationsResponse, error) {
+	out := new(DeleteCombinationsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DeleteCombinations", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) CreateCombinationSku(ctx context.Context, in *CreateCombinationSkuRequest, opts ...grpc.CallOption) (*CreateCombinationSkuResponse, error) {
+	out := new(CreateCombinationSkuResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/CreateCombinationSku", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DescribeCombinationSkus(ctx context.Context, in *DescribeCombinationSkusRequest, opts ...grpc.CallOption) (*DescribeCombinationSkusResponse, error) {
+	out := new(DescribeCombinationSkusResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DescribeCombinationSkus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) ModifyCombinationSku(ctx context.Context, in *ModifyCombinationSkuRequest, opts ...grpc.CallOption) (*ModifyCombinationSkuResponse, error) {
+	out := new(ModifyCombinationSkuResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/ModifyCombinationSku", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DeleteCombinationSkus(ctx context.Context, in *DeleteCombinationSkusRequest, opts ...grpc.CallOption) (*DeleteCombinationSkusResponse, error) {
+	out := new(DeleteCombinationSkusResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DeleteCombinationSkus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) CreateCombinationMABinding(ctx context.Context, in *CreateCombinationMABindingRequest, opts ...grpc.CallOption) (*CreateCombinationMABindingResponse, error) {
+	out := new(CreateCombinationMABindingResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/CreateCombinationMABinding", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DescribeCombinationMABindings(ctx context.Context, in *DescribeCombinationMABindingsRequest, opts ...grpc.CallOption) (*DescribeCombinationMABindingsResponse, error) {
+	out := new(DescribeCombinationMABindingsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DescribeCombinationMABindings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) ModifyCombinationMABinding(ctx context.Context, in *ModifyCombinationMABindingRequest, opts ...grpc.CallOption) (*ModifyCombinationMABindingResponse, error) {
+	out := new(ModifyCombinationMABindingResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/ModifyCombinationMABinding", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DeleteCombinationMABindings(ctx context.Context, in *DeleteCombinationMABindingsRequest, opts ...grpc.CallOption) (*DeleteCombinationMABindingsResponse, error) {
+	out := new(DeleteCombinationMABindingsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DeleteCombinationMABindings", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -4560,27 +5863,236 @@ func (c *promotionManagerClient) CreateProbationSku(ctx context.Context, in *Cre
 
 // PromotionManagerServer is the server API for PromotionManager service.
 type PromotionManagerServer interface {
-	CreateProbationSku(context.Context, *CreateProbationSkuRequest) (*CreateProbationSkuResponse, error)
+	CreateCombination(context.Context, *CreateCombinationRequest) (*CreateCombinationResponse, error)
+	DescribeCombinations(context.Context, *DescribeCombinationsRequest) (*DescribeCombinationsResponse, error)
+	ModifyCombination(context.Context, *ModifyCombinationRequest) (*ModifyCombinationResponse, error)
+	DeleteCombinations(context.Context, *DeleteCombinationsRequest) (*DeleteCombinationsResponse, error)
+	CreateCombinationSku(context.Context, *CreateCombinationSkuRequest) (*CreateCombinationSkuResponse, error)
+	DescribeCombinationSkus(context.Context, *DescribeCombinationSkusRequest) (*DescribeCombinationSkusResponse, error)
+	ModifyCombinationSku(context.Context, *ModifyCombinationSkuRequest) (*ModifyCombinationSkuResponse, error)
+	DeleteCombinationSkus(context.Context, *DeleteCombinationSkusRequest) (*DeleteCombinationSkusResponse, error)
+	CreateCombinationMABinding(context.Context, *CreateCombinationMABindingRequest) (*CreateCombinationMABindingResponse, error)
+	DescribeCombinationMABindings(context.Context, *DescribeCombinationMABindingsRequest) (*DescribeCombinationMABindingsResponse, error)
+	ModifyCombinationMABinding(context.Context, *ModifyCombinationMABindingRequest) (*ModifyCombinationMABindingResponse, error)
+	DeleteCombinationMABindings(context.Context, *DeleteCombinationMABindingsRequest) (*DeleteCombinationMABindingsResponse, error)
 }
 
 func RegisterPromotionManagerServer(s *grpc.Server, srv PromotionManagerServer) {
 	s.RegisterService(&_PromotionManager_serviceDesc, srv)
 }
 
-func _PromotionManager_CreateProbationSku_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateProbationSkuRequest)
+func _PromotionManager_CreateCombination_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCombinationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PromotionManagerServer).CreateProbationSku(ctx, in)
+		return srv.(PromotionManagerServer).CreateCombination(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/openpitrix.PromotionManager/CreateProbationSku",
+		FullMethod: "/openpitrix.PromotionManager/CreateCombination",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PromotionManagerServer).CreateProbationSku(ctx, req.(*CreateProbationSkuRequest))
+		return srv.(PromotionManagerServer).CreateCombination(ctx, req.(*CreateCombinationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DescribeCombinations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCombinationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DescribeCombinations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DescribeCombinations",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DescribeCombinations(ctx, req.(*DescribeCombinationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_ModifyCombination_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyCombinationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).ModifyCombination(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/ModifyCombination",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).ModifyCombination(ctx, req.(*ModifyCombinationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DeleteCombinations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCombinationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DeleteCombinations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DeleteCombinations",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DeleteCombinations(ctx, req.(*DeleteCombinationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_CreateCombinationSku_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCombinationSkuRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).CreateCombinationSku(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/CreateCombinationSku",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).CreateCombinationSku(ctx, req.(*CreateCombinationSkuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DescribeCombinationSkus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCombinationSkusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DescribeCombinationSkus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DescribeCombinationSkus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DescribeCombinationSkus(ctx, req.(*DescribeCombinationSkusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_ModifyCombinationSku_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyCombinationSkuRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).ModifyCombinationSku(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/ModifyCombinationSku",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).ModifyCombinationSku(ctx, req.(*ModifyCombinationSkuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DeleteCombinationSkus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCombinationSkusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DeleteCombinationSkus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DeleteCombinationSkus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DeleteCombinationSkus(ctx, req.(*DeleteCombinationSkusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_CreateCombinationMABinding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCombinationMABindingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).CreateCombinationMABinding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/CreateCombinationMABinding",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).CreateCombinationMABinding(ctx, req.(*CreateCombinationMABindingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DescribeCombinationMABindings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCombinationMABindingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DescribeCombinationMABindings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DescribeCombinationMABindings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DescribeCombinationMABindings(ctx, req.(*DescribeCombinationMABindingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_ModifyCombinationMABinding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyCombinationMABindingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).ModifyCombinationMABinding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/ModifyCombinationMABinding",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).ModifyCombinationMABinding(ctx, req.(*ModifyCombinationMABindingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DeleteCombinationMABindings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCombinationMABindingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DeleteCombinationMABindings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DeleteCombinationMABindings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DeleteCombinationMABindings(ctx, req.(*DeleteCombinationMABindingsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -4590,8 +6102,52 @@ var _PromotionManager_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*PromotionManagerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateProbationSku",
-			Handler:    _PromotionManager_CreateProbationSku_Handler,
+			MethodName: "CreateCombination",
+			Handler:    _PromotionManager_CreateCombination_Handler,
+		},
+		{
+			MethodName: "DescribeCombinations",
+			Handler:    _PromotionManager_DescribeCombinations_Handler,
+		},
+		{
+			MethodName: "ModifyCombination",
+			Handler:    _PromotionManager_ModifyCombination_Handler,
+		},
+		{
+			MethodName: "DeleteCombinations",
+			Handler:    _PromotionManager_DeleteCombinations_Handler,
+		},
+		{
+			MethodName: "CreateCombinationSku",
+			Handler:    _PromotionManager_CreateCombinationSku_Handler,
+		},
+		{
+			MethodName: "DescribeCombinationSkus",
+			Handler:    _PromotionManager_DescribeCombinationSkus_Handler,
+		},
+		{
+			MethodName: "ModifyCombinationSku",
+			Handler:    _PromotionManager_ModifyCombinationSku_Handler,
+		},
+		{
+			MethodName: "DeleteCombinationSkus",
+			Handler:    _PromotionManager_DeleteCombinationSkus_Handler,
+		},
+		{
+			MethodName: "CreateCombinationMABinding",
+			Handler:    _PromotionManager_CreateCombinationMABinding_Handler,
+		},
+		{
+			MethodName: "DescribeCombinationMABindings",
+			Handler:    _PromotionManager_DescribeCombinationMABindings_Handler,
+		},
+		{
+			MethodName: "ModifyCombinationMABinding",
+			Handler:    _PromotionManager_ModifyCombinationMABinding_Handler,
+		},
+		{
+			MethodName: "DeleteCombinationMABindings",
+			Handler:    _PromotionManager_DeleteCombinationMABindings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
