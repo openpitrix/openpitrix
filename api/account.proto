@@ -366,9 +366,17 @@ message Role {
 	google.protobuf.Timestamp status_time = 11;
 }
 
+message Api {
+	string api_id = 1;
+	string api_method = 2;
+	string url_method = 3;
+	string url = 4;
+}
+
 message ActionBundle {
 	string action_bundle_id = 1;
 	string action_bundle_name = 2;
+	repeated Api api_set = 3;
 }
 
 message Feature {

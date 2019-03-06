@@ -167,6 +167,7 @@ func ToPbActionBundles(ps []*pbam.ActionBundle) []*pb.ActionBundle {
 		results = append(results, &pb.ActionBundle{
 			ActionBundleId:   p.ActionBundleId,
 			ActionBundleName: p.ActionBundleName,
+			ApiSet:           ToPbApis(p.ApiSet),
 		})
 	}
 	return results
@@ -178,6 +179,33 @@ func ToAmActionBundles(ps []*pb.ActionBundle) []*pbam.ActionBundle {
 		results = append(results, &pbam.ActionBundle{
 			ActionBundleId:   p.ActionBundleId,
 			ActionBundleName: p.ActionBundleName,
+			ApiSet:           ToAmApis(p.ApiSet),
+		})
+	}
+	return results
+}
+
+func ToPbApis(ps []*pbam.Api) []*pb.Api {
+	var results []*pb.Api
+	for _, p := range ps {
+		results = append(results, &pb.Api{
+			ApiId:     p.ApiId,
+			ApiMethod: p.ApiMethod,
+			UrlMethod: p.UrlMethod,
+			Url:       p.Url,
+		})
+	}
+	return results
+}
+
+func ToAmApis(ps []*pb.Api) []*pbam.Api {
+	var results []*pbam.Api
+	for _, p := range ps {
+		results = append(results, &pbam.Api{
+			ApiId:     p.ApiId,
+			ApiMethod: p.ApiMethod,
+			UrlMethod: p.UrlMethod,
+			Url:       p.Url,
 		})
 	}
 	return results

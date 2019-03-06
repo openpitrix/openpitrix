@@ -16,8 +16,8 @@ import (
 // swagger:model openpitrixEmailServiceConfig
 type OpenpitrixEmailServiceConfig struct {
 
-	// display email
-	DisplayEmail string `json:"display_email,omitempty"`
+	// display sender
+	DisplaySender string `json:"display_sender,omitempty"`
 
 	// email
 	Email string `json:"email,omitempty"`

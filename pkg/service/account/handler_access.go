@@ -9,6 +9,7 @@ import (
 
 	pbam "openpitrix.io/iam/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/client/iam/am"
+	"openpitrix.io/openpitrix/pkg/gerr"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
@@ -185,16 +186,5 @@ func (p *Server) BindUserRole(ctx context.Context, req *pb.BindUserRoleRequest) 
 }
 
 func (p *Server) UnbindUserRole(ctx context.Context, req *pb.UnbindUserRoleRequest) (*pb.UnbindUserRoleResponse, error) {
-	_, err := amClient.UnbindUserRole(ctx, &pbam.UnbindUserRoleRequest{
-		RoleId: req.RoleId,
-		UserId: req.UserId,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.UnbindUserRoleResponse{
-		UserId: req.UserId,
-		RoleId: req.RoleId,
-	}, nil
+	return nil, gerr.New(ctx, gerr.PermissionDenied, gerr.ErrorPermissionDenied)
 }
