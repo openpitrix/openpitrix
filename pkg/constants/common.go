@@ -217,25 +217,6 @@ const (
 	RetryInterval = 3 * time.Second
 )
 
-var AllRoles = []string{
-	RoleUser,
-	RoleIsv,
-	RoleDeveloper,
-	RoleGlobalAdmin,
-}
-var AllIsvRoles = []string{
-	RoleIsv,
-	RoleGlobalAdmin,
-}
-var AllDeveloperRoles = []string{
-	RoleIsv,
-	RoleDeveloper,
-	RoleGlobalAdmin,
-}
-var AllAdminRoles = []string{
-	RoleGlobalAdmin,
-}
-
 const (
 	RoleUser        = "user"
 	RoleDeveloper   = "developer"
@@ -248,8 +229,9 @@ const (
 	GrantTypePassword          = "password"
 	GrantTypeRefreshToken      = "refresh_token"
 
-	RoleBusinessAdmin = "business_admin"
-	RoleDevelopAdmin  = "develop_admin"
+	ReviewAccessBusiness = "business"
+	ReviewAccessDevelop  = "develop"
+	ReviewAccessIsv      = "isv"
 )
 
 var GrantTypeTokens = []string{

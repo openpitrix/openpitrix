@@ -22,11 +22,11 @@ type OpenpitrixAppVersionReviewPhase struct {
 	// operator
 	Operator string `json:"operator,omitempty"`
 
+	// review access
+	ReviewAccess string `json:"review_access,omitempty"`
+
 	// review time
 	ReviewTime strfmt.DateTime `json:"review_time,omitempty"`
-
-	// role
-	Role string `json:"role,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`
