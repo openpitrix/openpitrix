@@ -1113,27 +1113,27 @@ func (p *Server) IsvRejectAppVersion(ctx context.Context, req *pb.RejectAppVersi
 	return rejectAppVersion(ctx, constants.OperatorTypeIsv, req)
 }
 
-func (p *Server) BusinessAdminReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+func (p *Server) BusinessReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
 	return reviewAppVersion(ctx, constants.OperatorTypeBusiness, req)
 }
 
-func (p *Server) BusinessAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+func (p *Server) BusinessPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
 	return passAppVersion(ctx, constants.OperatorTypeBusiness, req)
 }
 
-func (p *Server) BusinessAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+func (p *Server) BusinessRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
 	return rejectAppVersion(ctx, constants.OperatorTypeBusiness, req)
 }
 
-func (p *Server) DevelopAdminReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+func (p *Server) TechnicalReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
 	return reviewAppVersion(ctx, constants.OperatorTypeTechnical, req)
 }
 
-func (p *Server) DevelopAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+func (p *Server) TechnicalPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
 	return passAppVersion(ctx, constants.OperatorTypeTechnical, req)
 }
 
-func (p *Server) DevelopAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+func (p *Server) TechnicalRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
 	return rejectAppVersion(ctx, constants.OperatorTypeTechnical, req)
 }
 

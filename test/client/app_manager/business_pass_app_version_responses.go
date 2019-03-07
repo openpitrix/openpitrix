@@ -16,17 +16,17 @@ import (
 	"openpitrix.io/openpitrix/test/models"
 )
 
-// IsvPassAppVersionReader is a Reader for the IsvPassAppVersion structure.
-type IsvPassAppVersionReader struct {
+// BusinessPassAppVersionReader is a Reader for the BusinessPassAppVersion structure.
+type BusinessPassAppVersionReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *IsvPassAppVersionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *BusinessPassAppVersionReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
 	case 200:
-		result := NewIsvPassAppVersionOK()
+		result := NewBusinessPassAppVersionOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -37,24 +37,24 @@ func (o *IsvPassAppVersionReader) ReadResponse(response runtime.ClientResponse, 
 	}
 }
 
-// NewIsvPassAppVersionOK creates a IsvPassAppVersionOK with default headers values
-func NewIsvPassAppVersionOK() *IsvPassAppVersionOK {
-	return &IsvPassAppVersionOK{}
+// NewBusinessPassAppVersionOK creates a BusinessPassAppVersionOK with default headers values
+func NewBusinessPassAppVersionOK() *BusinessPassAppVersionOK {
+	return &BusinessPassAppVersionOK{}
 }
 
-/*IsvPassAppVersionOK handles this case with default header values.
+/*BusinessPassAppVersionOK handles this case with default header values.
 
 A successful response.
 */
-type IsvPassAppVersionOK struct {
+type BusinessPassAppVersionOK struct {
 	Payload *models.OpenpitrixPassAppVersionResponse
 }
 
-func (o *IsvPassAppVersionOK) Error() string {
-	return fmt.Sprintf("[POST /v1/app_version/action/pass/isv][%d] isvPassAppVersionOK  %+v", 200, o.Payload)
+func (o *BusinessPassAppVersionOK) Error() string {
+	return fmt.Sprintf("[POST /v1/app_version/action/pass/business][%d] businessPassAppVersionOK  %+v", 200, o.Payload)
 }
 
-func (o *IsvPassAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *BusinessPassAppVersionOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.OpenpitrixPassAppVersionResponse)
 

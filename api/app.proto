@@ -576,82 +576,82 @@ service AppManager {
 
 	rpc IsvReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "isv start review app version"
+            summary: "operator type isv start review app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/isv/review"
+            post: "/v1/app_version/action/review/isv"
             body: "*"
         };
 	}
 	rpc IsvPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "isv pass app version"
+            summary: "operator type isv pass app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/isv/pass"
+            post: "/v1/app_version/action/pass/isv"
             body: "*"
         };
 	}
 	rpc IsvRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "isv reject app version"
+            summary: "operator type isv reject app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/isv/reject"
+            post: "/v1/app_version/action/reject/isv"
             body: "*"
         };
 	}
-	rpc BusinessAdminReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
+	rpc BusinessReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "business admin start review app version"
+            summary: "operator type business start review app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/business_admin/review"
+            post: "/v1/app_version/action/review/business"
             body: "*"
         };
 	}
-	rpc BusinessAdminPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
+	rpc BusinessPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "business admin pass app version"
+            summary: "operator type business pass app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/business_admin/pass"
+            post: "/v1/app_version/action/pass/business"
             body: "*"
         };
 	}
-	rpc BusinessAdminRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
+	rpc BusinessRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "business admin reject app version"
+            summary: "operator type business reject app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/business_admin/reject"
+            post: "/v1/app_version/action/reject/business"
             body: "*"
         };
 	}
-	rpc DevelopAdminReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
+	rpc TechnicalReviewAppVersion (ReviewAppVersionRequest) returns (ReviewAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "develop admin start review app version"
+            summary: "operator type technical start review app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/develop_admin/review"
+            post: "/v1/app_version/action/review/technical"
             body: "*"
         };
 	}
-	rpc DevelopAdminPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
+	rpc TechnicalPassAppVersion (PassAppVersionRequest) returns (PassAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "pass app version"
+            summary: "operator type technical pass app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/develop_admin/pass"
+            post: "/v1/app_version/action/pass/technical"
             body: "*"
         };
 	}
-	rpc DevelopAdminRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
+	rpc TechnicalRejectAppVersion (RejectAppVersionRequest) returns (RejectAppVersionResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "reject app version"
+            summary: "operator type reject app version"
         };
 		option (google.api.http) = {
-            post: "/v1/app_version/action/develop_admin/reject"
+            post: "/v1/app_version/action/reject/technical"
             body: "*"
         };
 	}
