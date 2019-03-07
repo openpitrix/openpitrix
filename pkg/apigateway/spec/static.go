@@ -7209,7 +7209,7 @@ var Files = map[string]string{
         "operator": {
           "type": "string"
         },
-        "role": {
+        "review_access": {
           "type": "string"
         },
         "message": {

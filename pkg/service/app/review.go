@@ -16,10 +16,10 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
-var reviewSupportRoles = []string{
-	constants.RoleIsv,
-	constants.RoleDevelopAdmin,
-	constants.RoleBusinessAdmin,
+var SupportedReviewAccesses = []string{
+	constants.ReviewAccessIsv,
+	constants.ReviewAccessDevelop,
+	constants.ReviewAccessBusiness,
 }
 
 func submitAppVersionReview(ctx context.Context, version *models.AppVersion) error {
@@ -93,7 +93,7 @@ var reviewActionStatusMap = map[Action]string{
 	Cancel: constants.StatusDraft,
 }
 
-func execAppVersionReview(ctx context.Context, version *models.AppVersion, action Action, role, message string) error {
+func execAppVersionReview(ctx context.Context, version *models.AppVersion, action Action, reviewAccess, message string) error {
 	var (
 		s        = ctxutil.GetSender(ctx)
 		operator = s.UserId
@@ -108,22 +108,22 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 	if err != nil {
 		return err
 	}
-	p, ok := versionReview.Phase[role]
+	p, ok := versionReview.Phase[reviewAccess]
 	switch action {
 	case Review:
 		if ok {
 			return gerr.New(ctx,
 				gerr.FailedPrecondition, gerr.ErrorAppVersionIncorrectStatus, version.VersionId, version.Status)
 		}
-		switch role {
-		case constants.RoleBusinessAdmin, constants.RoleDevelopAdmin:
-			if _, ok = versionReview.Phase[constants.RoleIsv]; !ok {
+		switch reviewAccess {
+		case constants.ReviewAccessBusiness, constants.ReviewAccessDevelop:
+			if _, ok = versionReview.Phase[constants.ReviewAccessIsv]; !ok {
 				return gerr.New(ctx,
 					gerr.FailedPrecondition, gerr.ErrorAppVersionIncorrectStatus, version.VersionId, version.Status)
 			}
 		}
-		if role == constants.RoleDevelopAdmin {
-			if _, ok = versionReview.Phase[constants.RoleBusinessAdmin]; !ok {
+		if reviewAccess == constants.ReviewAccessDevelop {
+			if _, ok = versionReview.Phase[constants.ReviewAccessBusiness]; !ok {
 				return gerr.New(ctx,
 					gerr.FailedPrecondition, gerr.ErrorAppVersionIncorrectStatus, version.VersionId, version.Status)
 			}
@@ -137,16 +137,16 @@ func execAppVersionReview(ctx context.Context, version *models.AppVersion, actio
 
 	}
 
-	versionReview.UpdatePhase(role, status, operator, message)
+	versionReview.UpdatePhase(reviewAccess, status, operator, message)
 
 	var reviewStatus = ""
-	switch role {
-	case constants.RoleIsv:
+	switch reviewAccess {
+	case constants.ReviewAccessIsv:
 		reviewStatus = "isv-"
-	case constants.RoleBusinessAdmin:
+	case constants.ReviewAccessBusiness:
 		reviewStatus = "business-"
-	case constants.RoleDevelopAdmin:
-		reviewStatus = "dev-"
+	case constants.ReviewAccessDevelop:
+		reviewStatus = "develop-"
 	}
 
 	var reviewer = ""
@@ -186,17 +186,17 @@ func cancelAppVersionReview(ctx context.Context, version *models.AppVersion, rol
 	return nil
 }
 
-func startAppVersionReview(ctx context.Context, version *models.AppVersion, role string) error {
-	err := execAppVersionReview(ctx, version, Review, role, "")
+func startAppVersionReview(ctx context.Context, version *models.AppVersion, reviewAccess string) error {
+	err := execAppVersionReview(ctx, version, Review, reviewAccess, "")
 	if err != nil {
 		return err
 	}
-	if role == constants.RoleIsv {
+	if reviewAccess == constants.ReviewAccessIsv {
 		err = updateVersionStatus(ctx, version, constants.StatusInReview)
 		if err != nil {
 			return err
 		}
-		err = addAppVersionAudit(ctx, version, constants.StatusInReview, role, "")
+		err = addAppVersionAudit(ctx, version, constants.StatusInReview, reviewAccess, "")
 		if err != nil {
 			return err
 		}
@@ -209,7 +209,7 @@ func passAppVersionReview(ctx context.Context, version *models.AppVersion, role 
 	if err != nil {
 		return err
 	}
-	if role == constants.RoleDevelopAdmin {
+	if role == constants.ReviewAccessDevelop {
 		err = updateVersionStatus(ctx, version, constants.StatusPassed)
 		if err != nil {
 			return err

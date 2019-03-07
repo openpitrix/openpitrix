@@ -23,7 +23,6 @@ func (p *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.ModifyUserRequest:
 		return manager.NewChecker(ctx, r).
 			Required("user_id").
-			StringChosen("role", constants.AllRoles).
 			Exec()
 	case *pb.DeleteUsersRequest:
 		return manager.NewChecker(ctx, r).

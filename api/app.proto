@@ -212,7 +212,7 @@ message AppVersionAudit {
 message AppVersionReviewPhase {
 	google.protobuf.StringValue status = 1;
 	google.protobuf.StringValue operator = 2;
-	google.protobuf.StringValue role = 3;
+	google.protobuf.StringValue review_access = 3;
 	google.protobuf.StringValue message = 4;
 	google.protobuf.Timestamp status_time = 5;
 	google.protobuf.Timestamp review_time = 6;

@@ -939,14 +939,14 @@ func (p *Server) DeleteAppVersion(ctx context.Context, req *pb.DeleteAppVersionR
 	return &res, nil
 }
 
-func reviewAppVersion(ctx context.Context, role string, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
+func reviewAppVersion(ctx context.Context, reviewAccess string, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
 	if err != nil {
 		return nil, err
 	}
 
-	err = startAppVersionReview(ctx, version, role)
+	err = startAppVersionReview(ctx, version, reviewAccess)
 	if err != nil {
 		return nil, err
 	}
@@ -957,7 +957,7 @@ func reviewAppVersion(ctx context.Context, role string, req *pb.ReviewAppVersion
 	return &res, nil
 }
 
-func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
+func passAppVersion(ctx context.Context, reviewAccess string, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
 	s := ctxutil.GetSender(ctx)
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
@@ -970,7 +970,7 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 		return nil, err
 	}
 
-	err = passAppVersionReview(ctx, version, role)
+	err = passAppVersionReview(ctx, version, reviewAccess)
 	if err != nil {
 		return nil, err
 	}
@@ -978,21 +978,23 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 	var emailNotifications []*models.EmailNotification
 	adminUsers, err := accountclient.GetRoleUsers(ctx, []string{constants.RoleGlobalAdmin})
 	if err != nil {
-		logger.Error(ctx, "Failed to describe role [%s] users: %+v", constants.RoleGlobalAdmin, err)
+		logger.Error(ctx, "Failed to describe users with review access [%s]: %+v", constants.RoleGlobalAdmin, err)
 	} else {
-		switch role {
-		case constants.RoleIsv, constants.RoleBusinessAdmin:
+		switch reviewAccess {
+		case constants.ReviewAccessIsv, constants.ReviewAccessBusiness:
 			for _, adminUser := range adminUsers {
-				emailNotifications = append(emailNotifications, &models.EmailNotification{
-					Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
-					Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(adminUser.GetUsername().GetValue(), app.Name, version.Name),
-					Owner:       s.UserId,
-					ContentType: constants.NfContentTypeVerify,
-					Addresses:   []string{adminUser.GetEmail().GetValue()},
-				})
+				if adminUser.GetStatus().GetValue() == constants.StatusActive {
+					emailNotifications = append(emailNotifications, &models.EmailNotification{
+						Title:       constants.SubmitAppVersionNotifyReviewerTitle.GetDefaultMessage(app.Name, version.Name),
+						Content:     constants.SubmitAppVersionNotifyReviewerContent.GetDefaultMessage(adminUser.GetUsername().GetValue(), app.Name, version.Name),
+						Owner:       s.UserId,
+						ContentType: constants.NfContentTypeVerify,
+						Addresses:   []string{adminUser.GetEmail().GetValue()},
+					})
+				}
 			}
 		default:
-			logger.Debug(ctx, "No need to notify role [%s]", role)
+			logger.Debug(ctx, "No need to notify users with review access [%s]", reviewAccess)
 		}
 	}
 
@@ -1000,8 +1002,8 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 	if err != nil || len(users) != 1 {
 		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
 	} else {
-		switch role {
-		case constants.RoleIsv:
+		switch reviewAccess {
+		case constants.ReviewAccessIsv:
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.PassAppVersionInfoNotifyTitle.GetDefaultMessage(app.Name, version.Name),
 				Content:     constants.PassAppVersionInfoNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
@@ -1009,7 +1011,7 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{users[0].GetEmail().GetValue()},
 			})
-		case constants.RoleBusinessAdmin:
+		case constants.ReviewAccessBusiness:
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.PassAppVersionBusinessNotifyTitle.GetDefaultMessage(app.Name, version.Name),
 				Content:     constants.PassAppVersionBusinessNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
@@ -1017,7 +1019,7 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{users[0].GetEmail().GetValue()},
 			})
-		case constants.RoleDevelopAdmin:
+		case constants.ReviewAccessDevelop:
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.PassAppVersionTechnicalNotifyTitle.GetDefaultMessage(app.Name, version.Name),
 				Content:     constants.PassAppVersionTechnicalNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
@@ -1026,7 +1028,7 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 				Addresses:   []string{users[0].GetEmail().GetValue()},
 			})
 		default:
-			logger.Debug(ctx, "No need to notify role [%s]", role)
+			logger.Debug(ctx, "No need to notify users with review access [%s]", reviewAccess)
 		}
 	}
 
@@ -1038,7 +1040,7 @@ func passAppVersion(ctx context.Context, role string, req *pb.PassAppVersionRequ
 	return &res, nil
 }
 
-func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
+func rejectAppVersion(ctx context.Context, reviewAccess string, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
 	s := ctxutil.GetSender(ctx)
 	versionId := req.GetVersionId().GetValue()
 	version, err := CheckAppVersionPermission(ctx, versionId)
@@ -1051,7 +1053,7 @@ func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersion
 		return nil, err
 	}
 
-	err = rejectAppVersionReview(ctx, version, role, req.GetMessage().GetValue())
+	err = rejectAppVersionReview(ctx, version, reviewAccess, req.GetMessage().GetValue())
 	if err != nil {
 		return nil, err
 	}
@@ -1061,8 +1063,8 @@ func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersion
 	if err != nil || len(users) != 1 {
 		logger.Error(ctx, "Failed to get user [%s], %+v", version.Owner, err)
 	} else {
-		switch role {
-		case constants.RoleIsv:
+		switch reviewAccess {
+		case constants.ReviewAccessIsv:
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.RejectAppVersionInfoNotifyTitle.GetDefaultMessage(app.Name, version.Name),
 				Content:     constants.RejectAppVersionInfoNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
@@ -1070,7 +1072,7 @@ func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersion
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{users[0].GetEmail().GetValue()},
 			})
-		case constants.RoleBusinessAdmin:
+		case constants.ReviewAccessBusiness:
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.RejectAppVersionBusinessNotifyTitle.GetDefaultMessage(app.Name, version.Name),
 				Content:     constants.RejectAppVersionBusinessNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
@@ -1078,7 +1080,7 @@ func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersion
 				ContentType: constants.NfContentTypeVerify,
 				Addresses:   []string{users[0].GetEmail().GetValue()},
 			})
-		case constants.RoleDevelopAdmin:
+		case constants.ReviewAccessDevelop:
 			emailNotifications = append(emailNotifications, &models.EmailNotification{
 				Title:       constants.RejectAppVersionTechnicalNotifyTitle.GetDefaultMessage(app.Name, version.Name),
 				Content:     constants.RejectAppVersionTechnicalNotifyContent.GetDefaultMessage(users[0].GetUsername().GetValue(), app.Name, version.Name),
@@ -1087,7 +1089,7 @@ func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersion
 				Addresses:   []string{users[0].GetEmail().GetValue()},
 			})
 		default:
-			logger.Debug(ctx, "No need to notify role [%s]", role)
+			logger.Debug(ctx, "No need to notify users with review access [%s]", reviewAccess)
 		}
 	}
 
@@ -1100,39 +1102,39 @@ func rejectAppVersion(ctx context.Context, role string, req *pb.RejectAppVersion
 }
 
 func (p *Server) IsvReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
-	return reviewAppVersion(ctx, constants.RoleIsv, req)
+	return reviewAppVersion(ctx, constants.ReviewAccessIsv, req)
 }
 
 func (p *Server) IsvPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
-	return passAppVersion(ctx, constants.RoleIsv, req)
+	return passAppVersion(ctx, constants.ReviewAccessIsv, req)
 }
 
 func (p *Server) IsvRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
-	return rejectAppVersion(ctx, constants.RoleIsv, req)
+	return rejectAppVersion(ctx, constants.ReviewAccessIsv, req)
 }
 
 func (p *Server) BusinessAdminReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
-	return reviewAppVersion(ctx, constants.RoleBusinessAdmin, req)
+	return reviewAppVersion(ctx, constants.ReviewAccessBusiness, req)
 }
 
 func (p *Server) BusinessAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
-	return passAppVersion(ctx, constants.RoleBusinessAdmin, req)
+	return passAppVersion(ctx, constants.ReviewAccessBusiness, req)
 }
 
 func (p *Server) BusinessAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
-	return rejectAppVersion(ctx, constants.RoleBusinessAdmin, req)
+	return rejectAppVersion(ctx, constants.ReviewAccessBusiness, req)
 }
 
 func (p *Server) DevelopAdminReviewAppVersion(ctx context.Context, req *pb.ReviewAppVersionRequest) (*pb.ReviewAppVersionResponse, error) {
-	return reviewAppVersion(ctx, constants.RoleDevelopAdmin, req)
+	return reviewAppVersion(ctx, constants.ReviewAccessDevelop, req)
 }
 
 func (p *Server) DevelopAdminPassAppVersion(ctx context.Context, req *pb.PassAppVersionRequest) (*pb.PassAppVersionResponse, error) {
-	return passAppVersion(ctx, constants.RoleDevelopAdmin, req)
+	return passAppVersion(ctx, constants.ReviewAccessDevelop, req)
 }
 
 func (p *Server) DevelopAdminRejectAppVersion(ctx context.Context, req *pb.RejectAppVersionRequest) (*pb.RejectAppVersionResponse, error) {
-	return rejectAppVersion(ctx, constants.RoleDevelopAdmin, req)
+	return rejectAppVersion(ctx, constants.ReviewAccessDevelop, req)
 }
 
 func (p *Server) SuspendAppVersion(ctx context.Context, req *pb.SuspendAppVersionRequest) (*pb.SuspendAppVersionResponse, error) {
