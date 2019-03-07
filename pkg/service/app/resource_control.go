@@ -117,7 +117,7 @@ func insertVersion(ctx context.Context, version *models.AppVersion) error {
 		logger.Error(ctx, "Failed to insert version [%+v]", version)
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
-	err = addAppVersionAudit(ctx, version, constants.StatusDraft, constants.RoleDeveloper, "")
+	err = addAppVersionAudit(ctx, version, constants.StatusDraft, constants.OperatorTypeDeveloper, "")
 	if err != nil {
 		return err
 	}
@@ -726,9 +726,9 @@ func computeAppStatus(statusCountMap map[string]int32) string {
 	return constants.StatusDraft
 }
 
-func addAppVersionAudit(ctx context.Context, version *models.AppVersion, status, role, message string) error {
+func addAppVersionAudit(ctx context.Context, version *models.AppVersion, status, operatorType, message string) error {
 	s := ctxutil.GetSender(ctx)
-	versionAudit := models.NewAppVersionAudit(version.VersionId, version.AppId, status, s.UserId, role, s.GetOwnerPath())
+	versionAudit := models.NewAppVersionAudit(version.VersionId, version.AppId, status, s.UserId, operatorType, s.GetOwnerPath())
 	versionAudit.Message = message
 	if version.Status == constants.StatusSubmitted {
 		versionAudit.ReviewId = version.ReviewId

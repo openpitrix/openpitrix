@@ -494,10 +494,10 @@
       type: int64
     operator:
       type: '[]string'
+    operator_type:
+      type: '[]string'
     reverse:
       type: boolean
-    role:
-      type: '[]string'
     search_word:
       type: string
     sort_key:

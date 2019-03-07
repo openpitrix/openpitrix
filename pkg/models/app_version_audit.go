@@ -14,30 +14,30 @@ import (
 )
 
 type AppVersionAudit struct {
-	VersionId  string
-	AppId      string
-	Status     string
-	Operator   string
-	Role       string
-	Message    string
-	Owner      string
-	OwnerPath  sender.OwnerPath
-	ReviewId   string
-	StatusTime time.Time
+	VersionId    string
+	AppId        string
+	Status       string
+	Operator     string
+	OperatorType string
+	Message      string
+	Owner        string
+	OwnerPath    sender.OwnerPath
+	ReviewId     string
+	StatusTime   time.Time
 }
 
 var AppVersionAuditColumns = db.GetColumnsFromStruct(&AppVersionAudit{})
 
-func NewAppVersionAudit(versionId, appId, status, operator, role string, ownerPath sender.OwnerPath) *AppVersionAudit {
+func NewAppVersionAudit(versionId, appId, status, operator, operatorType string, ownerPath sender.OwnerPath) *AppVersionAudit {
 	return &AppVersionAudit{
-		VersionId:  versionId,
-		AppId:      appId,
-		Status:     status,
-		Operator:   operator,
-		Role:       role,
-		Owner:      ownerPath.Owner(),
-		OwnerPath:  ownerPath,
-		StatusTime: time.Now(),
+		VersionId:    versionId,
+		AppId:        appId,
+		Status:       status,
+		Operator:     operator,
+		OperatorType: operatorType,
+		Owner:        ownerPath.Owner(),
+		OwnerPath:    ownerPath,
+		StatusTime:   time.Now(),
 	}
 }
 
@@ -50,7 +50,7 @@ func AppVersionAuditToPb(appVersionAudit *AppVersionAudit) *pb.AppVersionAudit {
 	pbAppVersionAudit.AppId = pbutil.ToProtoString(appVersionAudit.AppId)
 	pbAppVersionAudit.Status = pbutil.ToProtoString(appVersionAudit.Status)
 	pbAppVersionAudit.Operator = pbutil.ToProtoString(appVersionAudit.Operator)
-	pbAppVersionAudit.Role = pbutil.ToProtoString(appVersionAudit.Role)
+	pbAppVersionAudit.OperatorType = pbutil.ToProtoString(appVersionAudit.OperatorType)
 	pbAppVersionAudit.Message = pbutil.ToProtoString(appVersionAudit.Message)
 	pbAppVersionAudit.ReviewId = pbutil.ToProtoString(appVersionAudit.ReviewId)
 	pbAppVersionAudit.StatusTime = pbutil.ToProtoTimestamp(appVersionAudit.StatusTime)

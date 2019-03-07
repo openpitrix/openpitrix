@@ -203,7 +203,7 @@ message AppVersionAudit {
 	google.protobuf.StringValue version_name = 4;
 	google.protobuf.StringValue app_name = 5;
 	google.protobuf.StringValue operator = 6;
-	google.protobuf.StringValue role = 7;
+	google.protobuf.StringValue operator_type = 7;
 	google.protobuf.StringValue message = 8;
 	google.protobuf.StringValue review_id = 9;
 	google.protobuf.Timestamp status_time = 10;
@@ -212,7 +212,7 @@ message AppVersionAudit {
 message AppVersionReviewPhase {
 	google.protobuf.StringValue status = 1;
 	google.protobuf.StringValue operator = 2;
-	google.protobuf.StringValue review_access = 3;
+	google.protobuf.StringValue operator_type = 3;
 	google.protobuf.StringValue message = 4;
 	google.protobuf.Timestamp status_time = 5;
 	google.protobuf.Timestamp review_time = 6;
@@ -268,7 +268,7 @@ message DescribeAppVersionAuditsRequest {
 
 	repeated string status = 12;
 	repeated string operator = 13;
-	repeated string role = 14;
+	repeated string operator_type = 14;
 	repeated string display_columns = 15;
 }
 

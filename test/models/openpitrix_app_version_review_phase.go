@@ -22,8 +22,8 @@ type OpenpitrixAppVersionReviewPhase struct {
 	// operator
 	Operator string `json:"operator,omitempty"`
 
-	// review access
-	ReviewAccess string `json:"review_access,omitempty"`
+	// operator type
+	OperatorType string `json:"operator_type,omitempty"`
 
 	// review time
 	ReviewTime strfmt.DateTime `json:"review_time,omitempty"`

@@ -29,7 +29,7 @@ func PbToRoleResource(pbRoleResource *pb.RoleResource) *RoleResource {
 
 func (r *RoleResource) IsSame(clusterRole *ClusterRole) (bool, *RoleResizeResource) {
 	if r.Role != clusterRole.Role {
-		logger.Error(nil, "Role resource [%s] not match cluster role [%s]", r.Role, clusterRole.Role)
+		logger.Error(nil, "OperatorType resource [%s] not match cluster role [%s]", r.Role, clusterRole.Role)
 		return false, nil
 	}
 

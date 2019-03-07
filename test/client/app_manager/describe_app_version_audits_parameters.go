@@ -79,10 +79,10 @@ type DescribeAppVersionAuditsParams struct {
 	Offset *int64
 	/*Operator*/
 	Operator []string
+	/*OperatorType*/
+	OperatorType []string
 	/*Reverse*/
 	Reverse *bool
-	/*Role*/
-	Role []string
 	/*SearchWord*/
 	SearchWord *string
 	/*SortKey*/
@@ -185,6 +185,17 @@ func (o *DescribeAppVersionAuditsParams) SetOperator(operator []string) {
 	o.Operator = operator
 }
 
+// WithOperatorType adds the operatorType to the describe app version audits params
+func (o *DescribeAppVersionAuditsParams) WithOperatorType(operatorType []string) *DescribeAppVersionAuditsParams {
+	o.SetOperatorType(operatorType)
+	return o
+}
+
+// SetOperatorType adds the operatorType to the describe app version audits params
+func (o *DescribeAppVersionAuditsParams) SetOperatorType(operatorType []string) {
+	o.OperatorType = operatorType
+}
+
 // WithReverse adds the reverse to the describe app version audits params
 func (o *DescribeAppVersionAuditsParams) WithReverse(reverse *bool) *DescribeAppVersionAuditsParams {
 	o.SetReverse(reverse)
@@ -194,17 +205,6 @@ func (o *DescribeAppVersionAuditsParams) WithReverse(reverse *bool) *DescribeApp
 // SetReverse adds the reverse to the describe app version audits params
 func (o *DescribeAppVersionAuditsParams) SetReverse(reverse *bool) {
 	o.Reverse = reverse
-}
-
-// WithRole adds the role to the describe app version audits params
-func (o *DescribeAppVersionAuditsParams) WithRole(role []string) *DescribeAppVersionAuditsParams {
-	o.SetRole(role)
-	return o
-}
-
-// SetRole adds the role to the describe app version audits params
-func (o *DescribeAppVersionAuditsParams) SetRole(role []string) {
-	o.Role = role
 }
 
 // WithSearchWord adds the searchWord to the describe app version audits params
@@ -315,6 +315,14 @@ func (o *DescribeAppVersionAuditsParams) WriteToRequest(r runtime.ClientRequest,
 		return err
 	}
 
+	valuesOperatorType := o.OperatorType
+
+	joinedOperatorType := swag.JoinByFormat(valuesOperatorType, "multi")
+	// query array param operator_type
+	if err := r.SetQueryParam("operator_type", joinedOperatorType...); err != nil {
+		return err
+	}
+
 	if o.Reverse != nil {
 
 		// query param reverse
@@ -329,14 +337,6 @@ func (o *DescribeAppVersionAuditsParams) WriteToRequest(r runtime.ClientRequest,
 			}
 		}
 
-	}
-
-	valuesRole := o.Role
-
-	joinedRole := swag.JoinByFormat(valuesRole, "multi")
-	// query array param role
-	if err := r.SetQueryParam("role", joinedRole...); err != nil {
-		return err
 	}
 
 	if o.SearchWord != nil {

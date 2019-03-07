@@ -23,7 +23,7 @@ func NewAppVersionReviewId() string {
 type AppVersionReviewPhase struct {
 	Status       string
 	Operator     string
-	ReviewAccess string
+	OperatorType string
 	Message      string
 	ReviewTime   time.Time
 	StatusTime   time.Time
@@ -69,8 +69,8 @@ type AppVersionReview struct {
 
 type AppVersionReviews []*AppVersionReview
 
-func (avr *AppVersionReview) UpdatePhase(reviewAccess, status, operator, message string) {
-	p, ok := avr.Phase[reviewAccess]
+func (avr *AppVersionReview) UpdatePhase(operatorType, status, operator, message string) {
+	p, ok := avr.Phase[operatorType]
 	if !ok {
 		p = AppVersionReviewPhase{
 			ReviewTime: time.Now(),
@@ -79,11 +79,11 @@ func (avr *AppVersionReview) UpdatePhase(reviewAccess, status, operator, message
 
 	p.Status = status
 	p.Operator = operator
-	p.ReviewAccess = reviewAccess
+	p.OperatorType = operatorType
 	p.Message = message
 	p.StatusTime = time.Now()
 
-	avr.Phase[reviewAccess] = p
+	avr.Phase[operatorType] = p
 }
 
 var AppVersionReviewColumns = db.GetColumnsFromStruct(&AppVersionReview{})
@@ -114,16 +114,16 @@ func AppVersionReviewToPb(versionReview *AppVersionReview) *pb.AppVersionReview 
 	pbAppVersionReview.Reviewer = pbutil.ToProtoString(versionReview.Reviewer)
 
 	pbAppVersionReview.Phase = make(map[string]*pb.AppVersionReviewPhase)
-	for reviewAccess, p := range versionReview.Phase {
+	for operatorType, p := range versionReview.Phase {
 		pbPhase := pb.AppVersionReviewPhase{}
-		pbPhase.ReviewAccess = pbutil.ToProtoString(p.ReviewAccess)
+		pbPhase.OperatorType = pbutil.ToProtoString(p.OperatorType)
 		pbPhase.Status = pbutil.ToProtoString(p.Status)
 		pbPhase.Operator = pbutil.ToProtoString(p.Operator)
 		pbPhase.Message = pbutil.ToProtoString(p.Message)
 		pbPhase.StatusTime = pbutil.ToProtoTimestamp(p.StatusTime)
 		pbPhase.ReviewTime = pbutil.ToProtoTimestamp(p.ReviewTime)
 
-		pbAppVersionReview.Phase[reviewAccess] = &pbPhase
+		pbAppVersionReview.Phase[operatorType] = &pbPhase
 	}
 	return &pbAppVersionReview
 }

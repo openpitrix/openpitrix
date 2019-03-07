@@ -28,11 +28,11 @@ type OpenpitrixAppVersionAudit struct {
 	// operator
 	Operator string `json:"operator,omitempty"`
 
+	// operator type
+	OperatorType string `json:"operator_type,omitempty"`
+
 	// review id
 	ReviewID string `json:"review_id,omitempty"`
-
-	// role
-	Role string `json:"role,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`

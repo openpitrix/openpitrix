@@ -2060,7 +2060,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "role",
+            "name": "operator_type",
             "in": "query",
             "required": false,
             "type": "array",
@@ -7149,7 +7149,7 @@ var Files = map[string]string{
         "operator": {
           "type": "string"
         },
-        "role": {
+        "operator_type": {
           "type": "string"
         },
         "message": {
@@ -7209,7 +7209,7 @@ var Files = map[string]string{
         "operator": {
           "type": "string"
         },
-        "review_access": {
+        "operator_type": {
           "type": "string"
         },
         "message": {

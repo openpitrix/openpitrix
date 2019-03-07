@@ -2051,7 +2051,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "role",
+            "name": "operator_type",
             "in": "query",
             "required": false,
             "type": "array",
@@ -7140,7 +7140,7 @@
         "operator": {
           "type": "string"
         },
-        "role": {
+        "operator_type": {
           "type": "string"
         },
         "message": {
@@ -7200,7 +7200,7 @@
         "operator": {
           "type": "string"
         },
-        "review_access": {
+        "operator_type": {
           "type": "string"
         },
         "message": {
