@@ -7,10 +7,10 @@ package main
 
 import (
 	"openpitrix.io/openpitrix/pkg/config"
-	"openpitrix.io/openpitrix/pkg/service/mbing"
+	"openpitrix.io/openpitrix/pkg/service/metering"
 )
 
 func main() {
 	cfg := config.LoadConf()
-	mbing.Serve(cfg)
+	metering.Serve(cfg)
 }

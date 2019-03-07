@@ -49,7 +49,7 @@ const (
 	TableSpu              = "spu"
 	TableSku              = "sku"
 	TablePrice            = "price"
-	TableCombinationSpu   = "combination_spu"
+	TableCombination   = "combination"
 	TableCombinationSku   = "combination_sku"
 	TableCombinationPrice = "combination_price"
 	TableProbationSku     = "probation_sku"

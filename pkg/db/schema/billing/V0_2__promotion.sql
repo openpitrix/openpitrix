@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS coupon (
 	coupon_id     VARCHAR(50)   NOT NULL,
 	name          VARCHAR(50)   NOT NULL,
 	owner         VARCHAR(50)   NOT NULL,
-	limits        JSON COMMENT '[spu_id1, .., sku_id1, .., price_id1, ..]',
+	limit_ids     JSON COMMENT '[spu_id1, .., sku_id1, .., price_id1, ..]',
 	balance       DECIMAL(8, 2) NOT NULL,
 	count         INT           NOT NULL,
 	remain        INT           NOT NULL,

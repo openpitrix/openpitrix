@@ -7,6 +7,7 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/openpitrix/pkg/constants"
 	"openpitrix.io/openpitrix/pkg/db"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 
@@ -18,27 +19,26 @@ func NewLeasingId() string {
 	return idutil.GetUuid("leasing-")
 }
 
+//SkuMetering
 type Leasing struct {
 	LeasingId          string
 	GroupId            string
 	UserId             string
 	ResourceId         string
 	SkuId              string
-	SkuType            string
-	OtherInfo          string
 	MeteringValues     map[string]float64
-	LeaseTime          time.Time  // action_time
-	UpdateDurationTime time.Time  // auto current update time
-	RenewalTime        *time.Time // next update time
-	StatusTime         time.Time
+	LeaseTime          time.Time //action_time
+	UpdateDurationTime time.Time //update time for duration
+	RenewalTime        time.Time //next update time
 	CreateTime         time.Time
-	CloseTime          map[time.Time]time.Time //{closeTime: restartTime, ..}
+	StatusTime         time.Time               //update time by other services(cluster_manager)
+	StopTime           map[time.Time]time.Time //{closeTime: restartTime, ..}
 	Status             string
 }
 
 var LeasingColumns = db.GetColumnsFromStruct(&Leasing{})
 
-func pbToMeteringValues(pbMetVals []*pb.MeteringAttributeValue) map[string]float64 {
+func pbToMeteringValues(pbMetVals []*pb.MeteringValue) map[string]float64 {
 	metertingValues := map[string]float64{}
 	for _, pbMetVal := range pbMetVals {
 		attributeId := pbMetVal.GetAttributeId().GetValue()
@@ -47,20 +47,22 @@ func pbToMeteringValues(pbMetVals []*pb.MeteringAttributeValue) map[string]float
 	return metertingValues
 }
 
-func PbToLeasing(req *pb.MeteringRequest, mSku *pb.MeteringSku, groupId string, renewalTime *time.Time) *Leasing {
-	actionTime := pbutil.FromProtoTimestamp(mSku.GetActionTime())
+func NewLeasing(req *pb.SkuMetering, groupId, userId string, actionTime, renewalTime time.Time) *Leasing {
+	now := time.Now()
 	return &Leasing{
 		LeasingId:          NewLeasingId(),
 		GroupId:            groupId,
-		UserId:             req.GetUserId().GetValue(),
+		UserId:             userId,
 		ResourceId:         req.GetResourceId().GetValue(),
-		SkuId:              mSku.GetSkuId().GetValue(),
-		SkuType:            mSku.GetType().String(),
-		OtherInfo:          mSku.GetOtherInfo().GetValue(),
-		MeteringValues:     pbToMeteringValues(mSku.GetAttributeValues()),
+		SkuId:              req.GetSkuId().GetValue(),
+		MeteringValues:     pbToMeteringValues(req.GetMeteringValues()),
 		LeaseTime:          actionTime,
 		UpdateDurationTime: actionTime,
 		RenewalTime:        renewalTime,
+		Status:             constants.StatusActive,
+		CreateTime:         actionTime,
+		StatusTime:         actionTime,
+		StopTime:           nil,
 	}
 }
 
@@ -70,11 +72,10 @@ type Leased struct {
 	UserId         string
 	ResourceId     string
 	SkuId          string
-	OtherInfo      string
 	MeteringValues map[string]float64
 	LeaseTime      time.Time // action_time
 	CreateTime     time.Time
-	CloseTime      map[time.Time]time.Time //{closeTime: restartTime, ..}
+	StopTime       map[time.Time]time.Time //{closeTime: restartTime, ..}
 }
 
 var LeasedColumns = db.GetColumnsFromStruct(&Leased{})

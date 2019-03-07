@@ -25,7 +25,8 @@ const (
 	RepoIndexerHost            = prefix + "repo-indexer"
 	CategoryManagerHost        = prefix + "category-manager"
 	RuntimeProviderManagerHost = prefix + "rp-manager"
-	MbingManagerHost           = prefix + "rp-manager"
+	MeteringManagerHost        = prefix + "metering-manager"
+	BillingManagerHost         = prefix + "billing-manager"
 	NotificationHost           = prefix + "notification"
 	MarketManagerHost          = prefix + "market-manager"
 	AttachmentManagerHost      = prefix + "attachment-manager"
@@ -55,7 +56,8 @@ const (
 	EtcdServicePort            = 2379
 	AttachmentManagerPort      = 9120
 	RuntimeProviderManagerPort = 9121
-	MbingManagerPort           = 9122
+	MeteringManagerPort        = 9122
+	BillingManagerPort         = 9123
 	NotificationPort           = 9201
 	ServiceConfigPort          = 9202
 )

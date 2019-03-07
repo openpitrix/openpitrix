@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package mbing
+package metering
 
 import (
 	"context"
@@ -12,7 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/models"
 	"openpitrix.io/openpitrix/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/util/stringutil"
 )
 
 func (s *Server) CreateAttributeName(ctx context.Context, req *pb.CreateAttributeNameRequest) (*pb.CreateAttributeNameResponse, error) {
@@ -38,6 +37,16 @@ func (s *Server) DescribeAttributeNames(ctx context.Context, req *pb.DescribeAtt
 	return &pb.DescribeAttributeNamesResponse{AttributeNames: pbAttributeNames}, nil
 }
 
+func (s *Server) ModifyAttributeName(ctx context.Context, req *pb.ModifyAttributeNameRequest) (*pb.ModifyAttributeNameResponse, error) {
+	//TODO: impl ModifyAttributeName
+	return &pb.ModifyAttributeNameResponse{AttributeNameId: pbutil.ToProtoString("tmp")}, nil
+}
+
+func (s *Server) DeleteAttributeNames(ctx context.Context, req *pb.DeleteAttributeNamesRequest) (*pb.DeleteAttributeNamesResponse, error) {
+	//TODO: impl DeleteAttributeNames
+	return &pb.DeleteAttributeNamesResponse{}, nil
+}
+
 func (s *Server) CreateAttributeUnit(ctx context.Context, req *pb.CreateAttributeUnitRequest) (*pb.CreateAttributeUnitResponse, error) {
 	attributeUnit := models.PbToAttributeUnit(req)
 	err := insertAttributeUnit(ctx, attributeUnit)
@@ -61,8 +70,19 @@ func (s *Server) DescribeAttributeUnits(ctx context.Context, req *pb.DescribeAtt
 	return &pb.DescribeAttributeUnitsResponse{AttributeUnits: pbAttributeUnits}, nil
 }
 
+func (s *Server) ModifyAttributeUnit(ctx context.Context, req *pb.ModifyAttributeUnitRequest) (*pb.ModifyAttributeUnitResponse, error) {
+	//TODO: impl ModifyAttributeUnit
+	return &pb.ModifyAttributeUnitResponse{}, nil
+}
+
+func (s *Server) DeleteAttributeUnits(ctx context.Context, req *pb.DeleteAttributeUnitsRequest) (*pb.DeleteAttributeUnitsResponse, error) {
+	//TODO: impl DeleteAttributeUnits
+	return &pb.DeleteAttributeUnitsResponse{}, nil
+}
+
 func (s *Server) CreateAttribute(ctx context.Context, req *pb.CreateAttributeRequest) (*pb.CreateAttributeResponse, error) {
-	attribute := models.PbToAttribute(req)
+	//TODO: get id of current user
+	attribute := models.PbToAttribute(req, "")
 
 	//check if attribute_name exist
 	err := checkStructExist(ctx, models.AttributeName{}, attribute.AttributeNameId)
@@ -100,17 +120,19 @@ func (s *Server) DescribeAttributes(ctx context.Context, req *pb.DescribeAttribu
 	return &pb.DescribeAttributesResponse{Attributes: pbAttributes}, nil
 }
 
-func (s *Server) CreateSpu(ctx context.Context, req *pb.CreateSpuRequest) (*pb.CreateSpuResponse, error) {
-	spu := models.PbToSpu(req)
+func (s *Server) ModifyAttribute(ctx context.Context, req *pb.ModifyAttributeRequest) (*pb.ModifyAttributeResponse, error) {
+	//TODO: impl ModifyAttribute
+	return &pb.ModifyAttributeResponse{}, nil
+}
 
-	attNameTmp := models.AttributeName{}
-	//check if attribute_names exist
-	for _, attNameId := range spu.AttributeNameIds {
-		err := checkStructExist(ctx, attNameTmp, attNameId)
-		if err != nil {
-			return nil, err
-		}
-	}
+func (s *Server) DeleteAttributes(ctx context.Context, req *pb.DeleteAttributesRequest) (*pb.DeleteAttributesResponse, error) {
+	//TODO: impl DeleteAttributes
+	return &pb.DeleteAttributesResponse{}, nil
+}
+
+func (s *Server) CreateSpu(ctx context.Context, req *pb.CreateSpuRequest) (*pb.CreateSpuResponse, error) {
+	//TODO: get id of current user
+	spu := models.PbToSpu(req, "")
 
 	//insert spu
 	err := insertSpu(ctx, spu)
@@ -118,6 +140,21 @@ func (s *Server) CreateSpu(ctx context.Context, req *pb.CreateSpuRequest) (*pb.C
 		return nil, internalError(ctx, err)
 	}
 	return &pb.CreateSpuResponse{SpuId: pbutil.ToProtoString(spu.SpuId)}, nil
+}
+
+func (s *Server) DescribeSpus(ctx context.Context, req *pb.DescribeSpusRequest) (*pb.DescribeSpusResponse, error) {
+	//TODO: impl DescribeSpus
+	return &pb.DescribeSpusResponse{}, nil
+}
+
+func (s *Server) ModifySpu(ctx context.Context, req *pb.ModifySpuRequest) (*pb.ModifySpuResponse, error) {
+	//TODO: impl ModifySpu
+	return &pb.ModifySpuResponse{}, nil
+}
+
+func (s *Server) DeleteSpus(ctx context.Context, req *pb.DeleteSpusRequest) (*pb.DeleteSpusResponse, error) {
+	//TODO: impl DeleteSpus
+	return &pb.DeleteSpusResponse{}, nil
 }
 
 func (s *Server) CreateSku(ctx context.Context, req *pb.CreateSkuRequest) (*pb.CreateSkuResponse, error) {
@@ -132,36 +169,7 @@ func (s *Server) CreateSku(ctx context.Context, req *pb.CreateSkuRequest) (*pb.C
 		return nil, notExistError(ctx, models.Spu{}, sku.SpuId)
 	}
 
-	//check if attributeNameId in sku.AttributeIds exist in spu.AttributeNameIds
-	for _, attId := range sku.AttributeIds {
-		attribute, err := getAttribute(ctx, attId)
-		if err != nil {
-			return nil, internalError(ctx, err)
-		}
-		if attribute == nil {
-			return nil, notExistError(ctx, models.Attribute{}, attId)
-		}
-		if !stringutil.StringIn(attribute.AttributeNameId, spu.AttributeNameIds) {
-			//attribute_name in sku.AttributeIds not exist in spu.AttribuateNameIds
-			return nil, notExistInOtherError(ctx, models.AttributeName{}, models.Spu{})
-		}
-
-	}
-	//check if attributeNameId in sku.MeteringAttributeIds exist in spu.MeteringAttributeNameIds
-	for _, attId := range sku.MeteringAttributeIds {
-		attribute, err := getAttribute(ctx, attId)
-		if err != nil {
-			return nil, internalError(ctx, err)
-		}
-		if attribute == nil {
-			return nil, notExistError(ctx, models.Attribute{}, attId)
-		}
-		if !stringutil.StringIn(attribute.AttributeNameId, spu.MeteringAttributeNameIds) {
-			//attribute_name in sku.MeteringAttributeIds not exist in spu.MeteringAttribuateNameIds
-			return nil, notExistInOtherError(ctx, models.AttributeName{}, models.Spu{})
-		}
-
-	}
+	//TODO: check attribute_ids
 
 	//insert sku
 	err = insertSku(ctx, sku)
@@ -171,30 +179,41 @@ func (s *Server) CreateSku(ctx context.Context, req *pb.CreateSkuRequest) (*pb.C
 	return &pb.CreateSkuResponse{SkuId: pbutil.ToProtoString(sku.SkuId)}, nil
 }
 
-func (s *Server) CreatePrice(ctx context.Context, req *pb.CreatePriceRequest) (*pb.CreatePriceResponse, error) {
-	price := models.PbToPrice(req)
-
-	//get sku
-	sku, err := getSku(ctx, price.SkuId)
-	if err != nil {
-		return nil, err
-	}
-	if sku == nil {
-		return nil, notExistError(ctx, models.Sku{}, price.SkuId)
-	}
-
-	//check if price.AttributeId exist in sku.MeteringAttributeIds
-	if !stringutil.StringIn(price.AttributeId, sku.MeteringAttributeIds) {
-		return nil, notExistInOtherError(ctx, models.Attribute{}, models.Sku{})
-	}
-
-	//insert price
-	err = insertPrice(ctx, price)
-	if err != nil {
-		return nil, internalError(ctx, err)
-	}
-	return &pb.CreatePriceResponse{PriceId: pbutil.ToProtoString(price.PriceId)}, nil
+func (s *Server) DescribeSkus(ctx context.Context, req *pb.DescribeSkusRequest) (*pb.DescribeSkusResponse, error) {
+	//TODO: impl DescribeSkus
+	return &pb.DescribeSkusResponse{}, nil
 }
+
+func (s *Server) ModifySku(ctx context.Context, req *pb.ModifySkuRequest) (*pb.ModifySkuResponse, error) {
+	//TODO: impl ModifySku
+	return &pb.ModifySkuResponse{}, nil
+}
+
+func (s *Server) DeleteSkus(ctx context.Context, req *pb.DeleteSkusRequest) (*pb.DeleteSkusResponse, error) {
+	//TODO: impl DeleteSkus
+	return &pb.DeleteSkusResponse{}, nil
+}
+
+func (s *Server) CreateMeteringAttributeBindings(ctx context.Context, req *pb.CreateMeteringAttributeBindingsRequest) (*pb.CreateMeteringAttributeBindingsResponse, error) {
+	//TODO: impl CreateMeteringAttributeBindings
+	return &pb.CreateMeteringAttributeBindingsResponse{}, nil
+}
+
+func (s *Server) DescribeMeteringAttributeBindings(ctx context.Context, req *pb.DescribeMeteringAttributeBindingsRequest) (*pb.DescribeMeteringAttributeBindingsResponse, error) {
+	//TODO: impl DescribeMeteringAttributeBindings
+	return &pb.DescribeMeteringAttributeBindingsResponse{}, nil
+}
+
+func (s *Server) ModifyMeteringAttributeBinding(ctx context.Context, req *pb.ModifyMeteringAttributeBindingRequest) (*pb.ModifyMeteringAttributeBindingResponse, error) {
+	//TODO: impl ModifyMeteringAttributeBinding
+	return &pb.ModifyMeteringAttributeBindingResponse{}, nil
+}
+
+func (s *Server) DeleteMeteringAttributeBindings(ctx context.Context, req *pb.DeleteMeteringAttributeBindingsRequest) (*pb.DeleteMeteringAttributeBindingsResponse, error) {
+	//TODO: impl DeleteMeteringAttributeBindings
+	return &pb.DeleteMeteringAttributeBindingsResponse{}, nil
+}
+
 
 func renewalTimeFromSku(ctx context.Context, skuId string, actionTime time.Time) (*time.Time, error) {
 	sku, err := getSku(ctx, skuId)
@@ -205,6 +224,7 @@ func renewalTimeFromSku(ctx context.Context, skuId string, actionTime time.Time)
 	}
 
 	//TODO: calculate renewalTime
+	//TODO: check if duration in metering_attributes
 	renewalTime := sku.CreateTime
 
 	return &renewalTime, nil

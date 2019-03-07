@@ -84,7 +84,7 @@ message DeletePricesResponse {
 	repeated string price_ids = 1;
 }
 
-service PriceManager {
+service BillingManager {
 	rpc CreatePrice (CreatePriceRequest) returns (CreatePriceResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "create price of the sku with metering_attribute"

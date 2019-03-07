@@ -12,39 +12,6 @@ import (
 	"openpitrix.io/openpitrix/pkg/util/pbutil"
 )
 
-func (s *Server) CreateCombinationSpu(ctx context.Context, req *pb.CreateCombinationSpuRequest) (*pb.CreateCombinationSpuResponse, error) {
-	comSpu := models.PbToCombinationSpu(req)
-	//check if Spu exist
-	for _, spuId := range comSpu.SpuIds {
-		err := checkStructExist(ctx, models.Spu{}, spuId)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	// insert CombinationSpu
-	err := insertCombinationSpu(ctx, comSpu)
-	if err != nil {
-		return nil, internalError(ctx, err)
-	}
-	return &pb.CreateCombinationSpuResponse{CombinationSpuId: pbutil.ToProtoString(comSpu.CombinationSpuId)}, nil
-}
-
-func (s *Server) CreateCombinationSku(ctx context.Context, req *pb.CreateCombinationSkuRequest) (*pb.CreateCombinationSkuResponse, error) {
-	comSku := models.PbToCombinationSku(req)
-
-	//TODO: check if CombinationSpu exist\
-	//...
-	//TODO: check if attribute exist
-	//...
-
-	//insert CombinationSku
-	err := insertCombinationSku(ctx, comSku)
-	if err != nil {
-		return nil, internalError(ctx, err)
-	}
-	return &pb.CreateCombinationSkuResponse{CombinationSkuId: pbutil.ToProtoString(comSku.CombinationSkuId)}, nil
-}
 
 func (s *Server) CreateCombinationPrice(ctx context.Context, req *pb.CreateCombinationPriceRequest) (*pb.CreateCombinationPriceResponse, error) {
 	comPrice := models.PbToCombinationPrice(req)

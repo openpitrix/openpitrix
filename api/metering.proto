@@ -530,7 +530,7 @@ service SkuManager {
 		};
 	}
 
-	rpc CreateMeteringAttributes (CreateMeteringAttributeBindingsRequest) returns (CreateMeteringAttributeBindingsResponse) {
+	rpc CreateMeteringAttributeBindings (CreateMeteringAttributeBindingsRequest) returns (CreateMeteringAttributeBindingsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "create metering attribute bindings of sku"
         };
@@ -734,7 +734,7 @@ message DeleteCombinationMABindingsResponse {
 	repeated string combination_binding_ids = 1;
 }
 
-service PromotionManager {
+service PromotionSkuManager {
 	rpc CreateCombination (CreateCombinationRequest) returns (CreateCombinationResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
             summary: "create combination"
@@ -856,7 +856,7 @@ service PromotionManager {
 
 //************************** metering ****************************
 
-message MeteringAttributeValue {
+message MeteringValue {
 	google.protobuf.StringValue attribute_id = 1;
 	google.protobuf.DoubleValue value = 2;
 	enum UpdateValueTypes {
@@ -866,26 +866,41 @@ message MeteringAttributeValue {
 	UpdateValueTypes type = 3;
 }
 
-message MeteringSku {
+message SkuMetering {
 	google.protobuf.StringValue resource_id = 1;
 	google.protobuf.StringValue sku_id = 2; //distinct sku/cobination by prefix
 	//if the metering attributes of sku is only duration, this is nil
-	repeated MeteringAttributeValue attribute_values = 3;
+	repeated MeteringValue metering_values = 3;
 }
 
-message MeteringRequest {
-	google.protobuf.StringValue user_id = 2;
-	repeated MeteringSku metering_skus = 3;
+message StartMeteringRequest {
+	google.protobuf.StringValue user_id = 1;
+	repeated SkuMetering sku_meterings = 2;
 }
 
-message MeteringResponse {
+message UpdateMeteringRequest {
+	google.protobuf.StringValue user_id = 1;
+	repeated SkuMetering sku_meterings = 2;
+}
+
+message StopMeteringRequest {
+	google.protobuf.StringValue user_id = 1;
+	map<string, string> resource_sku_ids = 2; //<resource_id, sku_id>
+}
+
+message TerminateMeteringRequest {
+	google.protobuf.StringValue user_id = 1;
+	map<string, string> resource_sku_ids = 2; //<resource_id, sku_id>
+}
+
+message CommonMeteringResponse {
 	repeated string leasing_ids = 1;
 }
 
 service MeteringManager {
-	rpc StartMetering (MeteringRequest) returns (MeteringResponse) {
+	rpc StartMetering (StartMeteringRequest) returns (CommonMeteringResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "start metering about the sku_set"
+			summary: "start metering about the skus"
 		};
 		option (google.api.http) = {
 			post: "/v1/metering/skus"
@@ -893,9 +908,9 @@ service MeteringManager {
 		};
 	}
 
-	rpc UpdateMeteringValue (MeteringRequest) returns (MeteringResponse) {
+	rpc UpdateMetering (UpdateMeteringRequest) returns (CommonMeteringResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "update metering value about the sku_set"
+			summary: "update metering value about the sku"
 		};
 		option (google.api.http) = {
 			put: "/v1/metering/skus"
@@ -903,9 +918,9 @@ service MeteringManager {
 		};
 	}
 
-	rpc StopMetering (MeteringRequest) returns (MeteringResponse) {
+	rpc StopMetering (StopMeteringRequest) returns (CommonMeteringResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "pause metering value about the sku_set"
+			summary: "stop metering about the skus"
 		};
 		option (google.api.http) = {
 			put: "/v1/metering/skus/stop"
@@ -913,9 +928,9 @@ service MeteringManager {
 		};
 	}
 
-	rpc TerminateMetering (MeteringRequest) returns (MeteringResponse) {
+	rpc TerminateMetering (TerminateMeteringRequest) returns (CommonMeteringResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-            summary: "terminate metering about the sku_set"
+            summary: "terminate metering about the skus"
         };
 		option (google.api.http) = {
             delete: "/v1/metering/skus"
