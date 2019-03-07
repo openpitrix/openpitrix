@@ -1382,7 +1382,7 @@ func (m *DescribeProbationsRequest) GetLimit() uint32 {
 }
 
 type DescribeProbationsResponse struct {
-	ProbationIds         []*Probation `protobuf:"bytes,1,rep,name=probation_ids,json=probationIds,proto3" json:"probation_ids,omitempty"`
+	Probations           []*Probation `protobuf:"bytes,1,rep,name=probations,proto3" json:"probations,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
 	XXX_sizecache        int32        `json:"-"`
@@ -1413,9 +1413,9 @@ func (m *DescribeProbationsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DescribeProbationsResponse proto.InternalMessageInfo
 
-func (m *DescribeProbationsResponse) GetProbationIds() []*Probation {
+func (m *DescribeProbationsResponse) GetProbations() []*Probation {
 	if m != nil {
-		return m.ProbationIds
+		return m.Probations
 	}
 	return nil
 }
@@ -1608,18 +1608,20 @@ func (m *DeleteProbationsResponse) GetProbationIds() []string {
 	return nil
 }
 
+// Discount
 type Discount struct {
 	DiscountId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=discount_id,json=discountId,proto3" json:"discount_id,omitempty"`
 	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	LimitIds             []string              `protobuf:"bytes,3,rep,name=limit_ids,json=limitIds,proto3" json:"limit_ids,omitempty"`
-	DiscountValue        *wrappers.FloatValue  `protobuf:"bytes,4,opt,name=discount_value,json=discountValue,proto3" json:"discount_value,omitempty"`
-	DiscountPercent      *wrappers.FloatValue  `protobuf:"bytes,5,opt,name=discount_percent,json=discountPercent,proto3" json:"discount_percent,omitempty"`
+	DiscountValue        *wrappers.DoubleValue `protobuf:"bytes,4,opt,name=discount_value,json=discountValue,proto3" json:"discount_value,omitempty"`
+	DiscountPercent      *wrappers.DoubleValue `protobuf:"bytes,5,opt,name=discount_percent,json=discountPercent,proto3" json:"discount_percent,omitempty"`
 	Status               *wrappers.StringValue `protobuf:"bytes,6,opt,name=status,proto3" json:"status,omitempty"`
-	StartTime            *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime              *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,11,opt,name=description,proto3" json:"description,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,7,opt,name=owner,proto3" json:"owner,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,11,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,12,opt,name=description,proto3" json:"description,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1671,14 +1673,14 @@ func (m *Discount) GetLimitIds() []string {
 	return nil
 }
 
-func (m *Discount) GetDiscountValue() *wrappers.FloatValue {
+func (m *Discount) GetDiscountValue() *wrappers.DoubleValue {
 	if m != nil {
 		return m.DiscountValue
 	}
 	return nil
 }
 
-func (m *Discount) GetDiscountPercent() *wrappers.FloatValue {
+func (m *Discount) GetDiscountPercent() *wrappers.DoubleValue {
 	if m != nil {
 		return m.DiscountPercent
 	}
@@ -1688,6 +1690,13 @@ func (m *Discount) GetDiscountPercent() *wrappers.FloatValue {
 func (m *Discount) GetStatus() *wrappers.StringValue {
 	if m != nil {
 		return m.Status
+	}
+	return nil
+}
+
+func (m *Discount) GetOwner() *wrappers.StringValue {
+	if m != nil {
+		return m.Owner
 	}
 	return nil
 }
@@ -1730,8 +1739,8 @@ func (m *Discount) GetDescription() *wrappers.StringValue {
 type CreateDiscountRequest struct {
 	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	LimitIds             []string              `protobuf:"bytes,2,rep,name=limit_ids,json=limitIds,proto3" json:"limit_ids,omitempty"`
-	DiscountValue        *wrappers.FloatValue  `protobuf:"bytes,3,opt,name=discount_value,json=discountValue,proto3" json:"discount_value,omitempty"`
-	DiscountPercent      *wrappers.FloatValue  `protobuf:"bytes,4,opt,name=discount_percent,json=discountPercent,proto3" json:"discount_percent,omitempty"`
+	DiscountValue        *wrappers.DoubleValue `protobuf:"bytes,3,opt,name=discount_value,json=discountValue,proto3" json:"discount_value,omitempty"`
+	DiscountPercent      *wrappers.DoubleValue `protobuf:"bytes,4,opt,name=discount_percent,json=discountPercent,proto3" json:"discount_percent,omitempty"`
 	StartTime            *timestamp.Timestamp  `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime              *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	Description          *wrappers.StringValue `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
@@ -1779,14 +1788,14 @@ func (m *CreateDiscountRequest) GetLimitIds() []string {
 	return nil
 }
 
-func (m *CreateDiscountRequest) GetDiscountValue() *wrappers.FloatValue {
+func (m *CreateDiscountRequest) GetDiscountValue() *wrappers.DoubleValue {
 	if m != nil {
 		return m.DiscountValue
 	}
 	return nil
 }
 
-func (m *CreateDiscountRequest) GetDiscountPercent() *wrappers.FloatValue {
+func (m *CreateDiscountRequest) GetDiscountPercent() *wrappers.DoubleValue {
 	if m != nil {
 		return m.DiscountPercent
 	}
@@ -1853,20 +1862,367 @@ func (m *CreateDiscountResponse) GetDiscountId() *wrappers.StringValue {
 	return nil
 }
 
+type DescribeDiscountsRequest struct {
+	DiscountId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=discount_id,json=discountId,proto3" json:"discount_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,7,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DescribeDiscountsRequest) Reset()         { *m = DescribeDiscountsRequest{} }
+func (m *DescribeDiscountsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeDiscountsRequest) ProtoMessage()    {}
+func (*DescribeDiscountsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{30}
+}
+
+func (m *DescribeDiscountsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeDiscountsRequest.Unmarshal(m, b)
+}
+func (m *DescribeDiscountsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeDiscountsRequest.Marshal(b, m, deterministic)
+}
+func (m *DescribeDiscountsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeDiscountsRequest.Merge(m, src)
+}
+func (m *DescribeDiscountsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeDiscountsRequest.Size(m)
+}
+func (m *DescribeDiscountsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeDiscountsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeDiscountsRequest proto.InternalMessageInfo
+
+func (m *DescribeDiscountsRequest) GetDiscountId() *wrappers.StringValue {
+	if m != nil {
+		return m.DiscountId
+	}
+	return nil
+}
+
+func (m *DescribeDiscountsRequest) GetName() *wrappers.StringValue {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *DescribeDiscountsRequest) GetOwner() *wrappers.StringValue {
+	if m != nil {
+		return m.Owner
+	}
+	return nil
+}
+
+func (m *DescribeDiscountsRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *DescribeDiscountsRequest) GetSortKey() *wrappers.StringValue {
+	if m != nil {
+		return m.SortKey
+	}
+	return nil
+}
+
+func (m *DescribeDiscountsRequest) GetReverse() *wrappers.BoolValue {
+	if m != nil {
+		return m.Reverse
+	}
+	return nil
+}
+
+func (m *DescribeDiscountsRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *DescribeDiscountsRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type DescribeDiscountsResponse struct {
+	Discounts            []*Discount `protobuf:"bytes,1,rep,name=discounts,proto3" json:"discounts,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *DescribeDiscountsResponse) Reset()         { *m = DescribeDiscountsResponse{} }
+func (m *DescribeDiscountsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeDiscountsResponse) ProtoMessage()    {}
+func (*DescribeDiscountsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{31}
+}
+
+func (m *DescribeDiscountsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeDiscountsResponse.Unmarshal(m, b)
+}
+func (m *DescribeDiscountsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeDiscountsResponse.Marshal(b, m, deterministic)
+}
+func (m *DescribeDiscountsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeDiscountsResponse.Merge(m, src)
+}
+func (m *DescribeDiscountsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeDiscountsResponse.Size(m)
+}
+func (m *DescribeDiscountsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeDiscountsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeDiscountsResponse proto.InternalMessageInfo
+
+func (m *DescribeDiscountsResponse) GetDiscounts() []*Discount {
+	if m != nil {
+		return m.Discounts
+	}
+	return nil
+}
+
+type ModifyDiscountRequest struct {
+	DiscountId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=discount_id,json=discountId,proto3" json:"discount_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	LimitIds             []string              `protobuf:"bytes,3,rep,name=limit_ids,json=limitIds,proto3" json:"limit_ids,omitempty"`
+	DiscountValue        *wrappers.DoubleValue `protobuf:"bytes,4,opt,name=discount_value,json=discountValue,proto3" json:"discount_value,omitempty"`
+	DiscountPercent      *wrappers.DoubleValue `protobuf:"bytes,5,opt,name=discount_percent,json=discountPercent,proto3" json:"discount_percent,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ModifyDiscountRequest) Reset()         { *m = ModifyDiscountRequest{} }
+func (m *ModifyDiscountRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyDiscountRequest) ProtoMessage()    {}
+func (*ModifyDiscountRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{32}
+}
+
+func (m *ModifyDiscountRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyDiscountRequest.Unmarshal(m, b)
+}
+func (m *ModifyDiscountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyDiscountRequest.Marshal(b, m, deterministic)
+}
+func (m *ModifyDiscountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyDiscountRequest.Merge(m, src)
+}
+func (m *ModifyDiscountRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyDiscountRequest.Size(m)
+}
+func (m *ModifyDiscountRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyDiscountRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyDiscountRequest proto.InternalMessageInfo
+
+func (m *ModifyDiscountRequest) GetDiscountId() *wrappers.StringValue {
+	if m != nil {
+		return m.DiscountId
+	}
+	return nil
+}
+
+func (m *ModifyDiscountRequest) GetName() *wrappers.StringValue {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *ModifyDiscountRequest) GetLimitIds() []string {
+	if m != nil {
+		return m.LimitIds
+	}
+	return nil
+}
+
+func (m *ModifyDiscountRequest) GetDiscountValue() *wrappers.DoubleValue {
+	if m != nil {
+		return m.DiscountValue
+	}
+	return nil
+}
+
+func (m *ModifyDiscountRequest) GetDiscountPercent() *wrappers.DoubleValue {
+	if m != nil {
+		return m.DiscountPercent
+	}
+	return nil
+}
+
+func (m *ModifyDiscountRequest) GetStartTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StartTime
+	}
+	return nil
+}
+
+func (m *ModifyDiscountRequest) GetEndTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.EndTime
+	}
+	return nil
+}
+
+func (m *ModifyDiscountRequest) GetDescription() *wrappers.StringValue {
+	if m != nil {
+		return m.Description
+	}
+	return nil
+}
+
+type ModifyDiscountResponse struct {
+	DiscountId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=discount_id,json=discountId,proto3" json:"discount_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ModifyDiscountResponse) Reset()         { *m = ModifyDiscountResponse{} }
+func (m *ModifyDiscountResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyDiscountResponse) ProtoMessage()    {}
+func (*ModifyDiscountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{33}
+}
+
+func (m *ModifyDiscountResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyDiscountResponse.Unmarshal(m, b)
+}
+func (m *ModifyDiscountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyDiscountResponse.Marshal(b, m, deterministic)
+}
+func (m *ModifyDiscountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyDiscountResponse.Merge(m, src)
+}
+func (m *ModifyDiscountResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyDiscountResponse.Size(m)
+}
+func (m *ModifyDiscountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyDiscountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyDiscountResponse proto.InternalMessageInfo
+
+func (m *ModifyDiscountResponse) GetDiscountId() *wrappers.StringValue {
+	if m != nil {
+		return m.DiscountId
+	}
+	return nil
+}
+
+type DeleteDiscountsRequest struct {
+	DiscountIds          []string `protobuf:"bytes,1,rep,name=discount_ids,json=discountIds,proto3" json:"discount_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteDiscountsRequest) Reset()         { *m = DeleteDiscountsRequest{} }
+func (m *DeleteDiscountsRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteDiscountsRequest) ProtoMessage()    {}
+func (*DeleteDiscountsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{34}
+}
+
+func (m *DeleteDiscountsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteDiscountsRequest.Unmarshal(m, b)
+}
+func (m *DeleteDiscountsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteDiscountsRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteDiscountsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteDiscountsRequest.Merge(m, src)
+}
+func (m *DeleteDiscountsRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteDiscountsRequest.Size(m)
+}
+func (m *DeleteDiscountsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteDiscountsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteDiscountsRequest proto.InternalMessageInfo
+
+func (m *DeleteDiscountsRequest) GetDiscountIds() []string {
+	if m != nil {
+		return m.DiscountIds
+	}
+	return nil
+}
+
+type DeleteDiscountsResponse struct {
+	DiscountIds          []string `protobuf:"bytes,1,rep,name=discount_ids,json=discountIds,proto3" json:"discount_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteDiscountsResponse) Reset()         { *m = DeleteDiscountsResponse{} }
+func (m *DeleteDiscountsResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteDiscountsResponse) ProtoMessage()    {}
+func (*DeleteDiscountsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{35}
+}
+
+func (m *DeleteDiscountsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteDiscountsResponse.Unmarshal(m, b)
+}
+func (m *DeleteDiscountsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteDiscountsResponse.Marshal(b, m, deterministic)
+}
+func (m *DeleteDiscountsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteDiscountsResponse.Merge(m, src)
+}
+func (m *DeleteDiscountsResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteDiscountsResponse.Size(m)
+}
+func (m *DeleteDiscountsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteDiscountsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteDiscountsResponse proto.InternalMessageInfo
+
+func (m *DeleteDiscountsResponse) GetDiscountIds() []string {
+	if m != nil {
+		return m.DiscountIds
+	}
+	return nil
+}
+
 type Coupon struct {
 	CouponId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=coupon_id,json=couponId,proto3" json:"coupon_id,omitempty"`
 	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	LimitIds             []string              `protobuf:"bytes,3,rep,name=limit_ids,json=limitIds,proto3" json:"limit_ids,omitempty"`
-	Balance              *wrappers.FloatValue  `protobuf:"bytes,4,opt,name=balance,proto3" json:"balance,omitempty"`
-	Count                *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=count,proto3" json:"count,omitempty"`
-	Left                 *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=left,proto3" json:"left,omitempty"`
-	LimitNumPer          *wrappers.UInt32Value `protobuf:"bytes,7,opt,name=limit_num_per,json=limitNumPer,proto3" json:"limit_num_per,omitempty"`
-	Status               *wrappers.StringValue `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
-	StartTime            *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime              *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,11,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,12,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,13,opt,name=description,proto3" json:"description,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	LimitIds             []string              `protobuf:"bytes,4,rep,name=limit_ids,json=limitIds,proto3" json:"limit_ids,omitempty"`
+	Balance              *wrappers.DoubleValue `protobuf:"bytes,5,opt,name=balance,proto3" json:"balance,omitempty"`
+	Count                *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=count,proto3" json:"count,omitempty"`
+	Remain               *wrappers.UInt32Value `protobuf:"bytes,7,opt,name=remain,proto3" json:"remain,omitempty"`
+	LimitNumPer          *wrappers.UInt32Value `protobuf:"bytes,8,opt,name=limit_num_per,json=limitNumPer,proto3" json:"limit_num_per,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,10,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,11,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,12,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,13,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,14,opt,name=description,proto3" json:"description,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1876,7 +2232,7 @@ func (m *Coupon) Reset()         { *m = Coupon{} }
 func (m *Coupon) String() string { return proto.CompactTextString(m) }
 func (*Coupon) ProtoMessage()    {}
 func (*Coupon) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{30}
+	return fileDescriptor_958db8ba491a6b57, []int{36}
 }
 
 func (m *Coupon) XXX_Unmarshal(b []byte) error {
@@ -1911,6 +2267,13 @@ func (m *Coupon) GetName() *wrappers.StringValue {
 	return nil
 }
 
+func (m *Coupon) GetOwner() *wrappers.StringValue {
+	if m != nil {
+		return m.Owner
+	}
+	return nil
+}
+
 func (m *Coupon) GetLimitIds() []string {
 	if m != nil {
 		return m.LimitIds
@@ -1918,7 +2281,7 @@ func (m *Coupon) GetLimitIds() []string {
 	return nil
 }
 
-func (m *Coupon) GetBalance() *wrappers.FloatValue {
+func (m *Coupon) GetBalance() *wrappers.DoubleValue {
 	if m != nil {
 		return m.Balance
 	}
@@ -1932,9 +2295,9 @@ func (m *Coupon) GetCount() *wrappers.UInt32Value {
 	return nil
 }
 
-func (m *Coupon) GetLeft() *wrappers.UInt32Value {
+func (m *Coupon) GetRemain() *wrappers.UInt32Value {
 	if m != nil {
-		return m.Left
+		return m.Remain
 	}
 	return nil
 }
@@ -1991,9 +2354,9 @@ func (m *Coupon) GetDescription() *wrappers.StringValue {
 type CreateCouponRequest struct {
 	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	LimitIds             []string              `protobuf:"bytes,2,rep,name=limit_ids,json=limitIds,proto3" json:"limit_ids,omitempty"`
-	Balance              *wrappers.FloatValue  `protobuf:"bytes,3,opt,name=balance,proto3" json:"balance,omitempty"`
+	Balance              *wrappers.DoubleValue `protobuf:"bytes,3,opt,name=balance,proto3" json:"balance,omitempty"`
 	Count                *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=count,proto3" json:"count,omitempty"`
-	LimitNum             *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=limit_num,json=limitNum,proto3" json:"limit_num,omitempty"`
+	LimitNumPer          *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=limit_num_per,json=limitNumPer,proto3" json:"limit_num_per,omitempty"`
 	StartTime            *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime              *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	Description          *wrappers.StringValue `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
@@ -2006,7 +2369,7 @@ func (m *CreateCouponRequest) Reset()         { *m = CreateCouponRequest{} }
 func (m *CreateCouponRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCouponRequest) ProtoMessage()    {}
 func (*CreateCouponRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{31}
+	return fileDescriptor_958db8ba491a6b57, []int{37}
 }
 
 func (m *CreateCouponRequest) XXX_Unmarshal(b []byte) error {
@@ -2041,7 +2404,7 @@ func (m *CreateCouponRequest) GetLimitIds() []string {
 	return nil
 }
 
-func (m *CreateCouponRequest) GetBalance() *wrappers.FloatValue {
+func (m *CreateCouponRequest) GetBalance() *wrappers.DoubleValue {
 	if m != nil {
 		return m.Balance
 	}
@@ -2055,9 +2418,9 @@ func (m *CreateCouponRequest) GetCount() *wrappers.UInt32Value {
 	return nil
 }
 
-func (m *CreateCouponRequest) GetLimitNum() *wrappers.UInt32Value {
+func (m *CreateCouponRequest) GetLimitNumPer() *wrappers.UInt32Value {
 	if m != nil {
-		return m.LimitNum
+		return m.LimitNumPer
 	}
 	return nil
 }
@@ -2094,7 +2457,7 @@ func (m *CreateCouponResponse) Reset()         { *m = CreateCouponResponse{} }
 func (m *CreateCouponResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCouponResponse) ProtoMessage()    {}
 func (*CreateCouponResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{32}
+	return fileDescriptor_958db8ba491a6b57, []int{38}
 }
 
 func (m *CreateCouponResponse) XXX_Unmarshal(b []byte) error {
@@ -2122,11 +2485,365 @@ func (m *CreateCouponResponse) GetCouponId() *wrappers.StringValue {
 	return nil
 }
 
+type DescribeCouponsRequest struct {
+	CouponId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=coupon_id,json=couponId,proto3" json:"coupon_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Owner                *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner,proto3" json:"owner,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,7,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DescribeCouponsRequest) Reset()         { *m = DescribeCouponsRequest{} }
+func (m *DescribeCouponsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeCouponsRequest) ProtoMessage()    {}
+func (*DescribeCouponsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{39}
+}
+
+func (m *DescribeCouponsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCouponsRequest.Unmarshal(m, b)
+}
+func (m *DescribeCouponsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCouponsRequest.Marshal(b, m, deterministic)
+}
+func (m *DescribeCouponsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCouponsRequest.Merge(m, src)
+}
+func (m *DescribeCouponsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeCouponsRequest.Size(m)
+}
+func (m *DescribeCouponsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCouponsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeCouponsRequest proto.InternalMessageInfo
+
+func (m *DescribeCouponsRequest) GetCouponId() *wrappers.StringValue {
+	if m != nil {
+		return m.CouponId
+	}
+	return nil
+}
+
+func (m *DescribeCouponsRequest) GetName() *wrappers.StringValue {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *DescribeCouponsRequest) GetOwner() *wrappers.StringValue {
+	if m != nil {
+		return m.Owner
+	}
+	return nil
+}
+
+func (m *DescribeCouponsRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *DescribeCouponsRequest) GetSortKey() *wrappers.StringValue {
+	if m != nil {
+		return m.SortKey
+	}
+	return nil
+}
+
+func (m *DescribeCouponsRequest) GetReverse() *wrappers.BoolValue {
+	if m != nil {
+		return m.Reverse
+	}
+	return nil
+}
+
+func (m *DescribeCouponsRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *DescribeCouponsRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type DescribeCouponsResponse struct {
+	Coupons              []*Coupon `protobuf:"bytes,1,rep,name=coupons,proto3" json:"coupons,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
+}
+
+func (m *DescribeCouponsResponse) Reset()         { *m = DescribeCouponsResponse{} }
+func (m *DescribeCouponsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeCouponsResponse) ProtoMessage()    {}
+func (*DescribeCouponsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{40}
+}
+
+func (m *DescribeCouponsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCouponsResponse.Unmarshal(m, b)
+}
+func (m *DescribeCouponsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCouponsResponse.Marshal(b, m, deterministic)
+}
+func (m *DescribeCouponsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCouponsResponse.Merge(m, src)
+}
+func (m *DescribeCouponsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeCouponsResponse.Size(m)
+}
+func (m *DescribeCouponsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCouponsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeCouponsResponse proto.InternalMessageInfo
+
+func (m *DescribeCouponsResponse) GetCoupons() []*Coupon {
+	if m != nil {
+		return m.Coupons
+	}
+	return nil
+}
+
+type ModifyCouponRequest struct {
+	CouponId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=coupon_id,json=couponId,proto3" json:"coupon_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	LimitIds             []string              `protobuf:"bytes,3,rep,name=limit_ids,json=limitIds,proto3" json:"limit_ids,omitempty"`
+	Balance              *wrappers.DoubleValue `protobuf:"bytes,4,opt,name=balance,proto3" json:"balance,omitempty"`
+	Count                *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=count,proto3" json:"count,omitempty"`
+	LimitNumPer          *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=limit_num_per,json=limitNumPer,proto3" json:"limit_num_per,omitempty"`
+	StartTime            *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,9,opt,name=description,proto3" json:"description,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ModifyCouponRequest) Reset()         { *m = ModifyCouponRequest{} }
+func (m *ModifyCouponRequest) String() string { return proto.CompactTextString(m) }
+func (*ModifyCouponRequest) ProtoMessage()    {}
+func (*ModifyCouponRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{41}
+}
+
+func (m *ModifyCouponRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCouponRequest.Unmarshal(m, b)
+}
+func (m *ModifyCouponRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCouponRequest.Marshal(b, m, deterministic)
+}
+func (m *ModifyCouponRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCouponRequest.Merge(m, src)
+}
+func (m *ModifyCouponRequest) XXX_Size() int {
+	return xxx_messageInfo_ModifyCouponRequest.Size(m)
+}
+func (m *ModifyCouponRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCouponRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyCouponRequest proto.InternalMessageInfo
+
+func (m *ModifyCouponRequest) GetCouponId() *wrappers.StringValue {
+	if m != nil {
+		return m.CouponId
+	}
+	return nil
+}
+
+func (m *ModifyCouponRequest) GetName() *wrappers.StringValue {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *ModifyCouponRequest) GetLimitIds() []string {
+	if m != nil {
+		return m.LimitIds
+	}
+	return nil
+}
+
+func (m *ModifyCouponRequest) GetBalance() *wrappers.DoubleValue {
+	if m != nil {
+		return m.Balance
+	}
+	return nil
+}
+
+func (m *ModifyCouponRequest) GetCount() *wrappers.UInt32Value {
+	if m != nil {
+		return m.Count
+	}
+	return nil
+}
+
+func (m *ModifyCouponRequest) GetLimitNumPer() *wrappers.UInt32Value {
+	if m != nil {
+		return m.LimitNumPer
+	}
+	return nil
+}
+
+func (m *ModifyCouponRequest) GetStartTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.StartTime
+	}
+	return nil
+}
+
+func (m *ModifyCouponRequest) GetEndTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.EndTime
+	}
+	return nil
+}
+
+func (m *ModifyCouponRequest) GetDescription() *wrappers.StringValue {
+	if m != nil {
+		return m.Description
+	}
+	return nil
+}
+
+type ModifyCouponResponse struct {
+	CouponId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=coupon_id,json=couponId,proto3" json:"coupon_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *ModifyCouponResponse) Reset()         { *m = ModifyCouponResponse{} }
+func (m *ModifyCouponResponse) String() string { return proto.CompactTextString(m) }
+func (*ModifyCouponResponse) ProtoMessage()    {}
+func (*ModifyCouponResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{42}
+}
+
+func (m *ModifyCouponResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ModifyCouponResponse.Unmarshal(m, b)
+}
+func (m *ModifyCouponResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ModifyCouponResponse.Marshal(b, m, deterministic)
+}
+func (m *ModifyCouponResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ModifyCouponResponse.Merge(m, src)
+}
+func (m *ModifyCouponResponse) XXX_Size() int {
+	return xxx_messageInfo_ModifyCouponResponse.Size(m)
+}
+func (m *ModifyCouponResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ModifyCouponResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ModifyCouponResponse proto.InternalMessageInfo
+
+func (m *ModifyCouponResponse) GetCouponId() *wrappers.StringValue {
+	if m != nil {
+		return m.CouponId
+	}
+	return nil
+}
+
+type DeleteCouponsRequest struct {
+	CouponIds            []string `protobuf:"bytes,1,rep,name=coupon_ids,json=couponIds,proto3" json:"coupon_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteCouponsRequest) Reset()         { *m = DeleteCouponsRequest{} }
+func (m *DeleteCouponsRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteCouponsRequest) ProtoMessage()    {}
+func (*DeleteCouponsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{43}
+}
+
+func (m *DeleteCouponsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCouponsRequest.Unmarshal(m, b)
+}
+func (m *DeleteCouponsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCouponsRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteCouponsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCouponsRequest.Merge(m, src)
+}
+func (m *DeleteCouponsRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteCouponsRequest.Size(m)
+}
+func (m *DeleteCouponsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCouponsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCouponsRequest proto.InternalMessageInfo
+
+func (m *DeleteCouponsRequest) GetCouponIds() []string {
+	if m != nil {
+		return m.CouponIds
+	}
+	return nil
+}
+
+type DeleteCouponsResponse struct {
+	CouponIds            []string `protobuf:"bytes,1,rep,name=coupon_ids,json=couponIds,proto3" json:"coupon_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteCouponsResponse) Reset()         { *m = DeleteCouponsResponse{} }
+func (m *DeleteCouponsResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteCouponsResponse) ProtoMessage()    {}
+func (*DeleteCouponsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{44}
+}
+
+func (m *DeleteCouponsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCouponsResponse.Unmarshal(m, b)
+}
+func (m *DeleteCouponsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCouponsResponse.Marshal(b, m, deterministic)
+}
+func (m *DeleteCouponsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCouponsResponse.Merge(m, src)
+}
+func (m *DeleteCouponsResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteCouponsResponse.Size(m)
+}
+func (m *DeleteCouponsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCouponsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCouponsResponse proto.InternalMessageInfo
+
+func (m *DeleteCouponsResponse) GetCouponIds() []string {
+	if m != nil {
+		return m.CouponIds
+	}
+	return nil
+}
+
 type CouponReceived struct {
 	CouponReceivedId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=coupon_received_id,json=couponReceivedId,proto3" json:"coupon_received_id,omitempty"`
 	CouponId             *wrappers.StringValue `protobuf:"bytes,2,opt,name=coupon_id,json=couponId,proto3" json:"coupon_id,omitempty"`
 	UserId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Remain               *wrappers.FloatValue  `protobuf:"bytes,4,opt,name=remain,proto3" json:"remain,omitempty"`
+	Remain               *wrappers.DoubleValue `protobuf:"bytes,4,opt,name=remain,proto3" json:"remain,omitempty"`
 	Status               *wrappers.StringValue `protobuf:"bytes,5,opt,name=status,proto3" json:"status,omitempty"`
 	CreateTime           *timestamp.Timestamp  `protobuf:"bytes,6,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	StatusTime           *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=status_time,json=statusTime,proto3" json:"status_time,omitempty"`
@@ -2139,7 +2856,7 @@ func (m *CouponReceived) Reset()         { *m = CouponReceived{} }
 func (m *CouponReceived) String() string { return proto.CompactTextString(m) }
 func (*CouponReceived) ProtoMessage()    {}
 func (*CouponReceived) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{33}
+	return fileDescriptor_958db8ba491a6b57, []int{45}
 }
 
 func (m *CouponReceived) XXX_Unmarshal(b []byte) error {
@@ -2181,7 +2898,7 @@ func (m *CouponReceived) GetUserId() *wrappers.StringValue {
 	return nil
 }
 
-func (m *CouponReceived) GetRemain() *wrappers.FloatValue {
+func (m *CouponReceived) GetRemain() *wrappers.DoubleValue {
 	if m != nil {
 		return m.Remain
 	}
@@ -2210,8 +2927,7 @@ func (m *CouponReceived) GetStatusTime() *timestamp.Timestamp {
 }
 
 type CreateCouponReceivedRequest struct {
-	CouponId             *wrappers.StringValue `protobuf:"bytes,2,opt,name=coupon_id,json=couponId,proto3" json:"coupon_id,omitempty"`
-	UserId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	CouponId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=coupon_id,json=couponId,proto3" json:"coupon_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -2221,7 +2937,7 @@ func (m *CreateCouponReceivedRequest) Reset()         { *m = CreateCouponReceive
 func (m *CreateCouponReceivedRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCouponReceivedRequest) ProtoMessage()    {}
 func (*CreateCouponReceivedRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{34}
+	return fileDescriptor_958db8ba491a6b57, []int{46}
 }
 
 func (m *CreateCouponReceivedRequest) XXX_Unmarshal(b []byte) error {
@@ -2249,13 +2965,6 @@ func (m *CreateCouponReceivedRequest) GetCouponId() *wrappers.StringValue {
 	return nil
 }
 
-func (m *CreateCouponReceivedRequest) GetUserId() *wrappers.StringValue {
-	if m != nil {
-		return m.UserId
-	}
-	return nil
-}
-
 type CreateCouponReceivedResponse struct {
 	CouponReceivedId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=coupon_received_id,json=couponReceivedId,proto3" json:"coupon_received_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
@@ -2267,7 +2976,7 @@ func (m *CreateCouponReceivedResponse) Reset()         { *m = CreateCouponReceiv
 func (m *CreateCouponReceivedResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCouponReceivedResponse) ProtoMessage()    {}
 func (*CreateCouponReceivedResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_958db8ba491a6b57, []int{35}
+	return fileDescriptor_958db8ba491a6b57, []int{47}
 }
 
 func (m *CreateCouponReceivedResponse) XXX_Unmarshal(b []byte) error {
@@ -2291,6 +3000,218 @@ var xxx_messageInfo_CreateCouponReceivedResponse proto.InternalMessageInfo
 func (m *CreateCouponReceivedResponse) GetCouponReceivedId() *wrappers.StringValue {
 	if m != nil {
 		return m.CouponReceivedId
+	}
+	return nil
+}
+
+type DescribeCouponReceivedsRequest struct {
+	CouponReceivedId     *wrappers.StringValue `protobuf:"bytes,1,opt,name=coupon_received_id,json=couponReceivedId,proto3" json:"coupon_received_id,omitempty"`
+	CouponId             *wrappers.StringValue `protobuf:"bytes,2,opt,name=coupon_id,json=couponId,proto3" json:"coupon_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Status               *wrappers.StringValue `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
+	SortKey              *wrappers.StringValue `protobuf:"bytes,5,opt,name=sort_key,json=sortKey,proto3" json:"sort_key,omitempty"`
+	Reverse              *wrappers.BoolValue   `protobuf:"bytes,6,opt,name=reverse,proto3" json:"reverse,omitempty"`
+	Offset               uint32                `protobuf:"varint,7,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit                uint32                `protobuf:"varint,8,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *DescribeCouponReceivedsRequest) Reset()         { *m = DescribeCouponReceivedsRequest{} }
+func (m *DescribeCouponReceivedsRequest) String() string { return proto.CompactTextString(m) }
+func (*DescribeCouponReceivedsRequest) ProtoMessage()    {}
+func (*DescribeCouponReceivedsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{48}
+}
+
+func (m *DescribeCouponReceivedsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCouponReceivedsRequest.Unmarshal(m, b)
+}
+func (m *DescribeCouponReceivedsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCouponReceivedsRequest.Marshal(b, m, deterministic)
+}
+func (m *DescribeCouponReceivedsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCouponReceivedsRequest.Merge(m, src)
+}
+func (m *DescribeCouponReceivedsRequest) XXX_Size() int {
+	return xxx_messageInfo_DescribeCouponReceivedsRequest.Size(m)
+}
+func (m *DescribeCouponReceivedsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCouponReceivedsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeCouponReceivedsRequest proto.InternalMessageInfo
+
+func (m *DescribeCouponReceivedsRequest) GetCouponReceivedId() *wrappers.StringValue {
+	if m != nil {
+		return m.CouponReceivedId
+	}
+	return nil
+}
+
+func (m *DescribeCouponReceivedsRequest) GetCouponId() *wrappers.StringValue {
+	if m != nil {
+		return m.CouponId
+	}
+	return nil
+}
+
+func (m *DescribeCouponReceivedsRequest) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+func (m *DescribeCouponReceivedsRequest) GetStatus() *wrappers.StringValue {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+func (m *DescribeCouponReceivedsRequest) GetSortKey() *wrappers.StringValue {
+	if m != nil {
+		return m.SortKey
+	}
+	return nil
+}
+
+func (m *DescribeCouponReceivedsRequest) GetReverse() *wrappers.BoolValue {
+	if m != nil {
+		return m.Reverse
+	}
+	return nil
+}
+
+func (m *DescribeCouponReceivedsRequest) GetOffset() uint32 {
+	if m != nil {
+		return m.Offset
+	}
+	return 0
+}
+
+func (m *DescribeCouponReceivedsRequest) GetLimit() uint32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type DescribeCouponReceivedsResponse struct {
+	CouponReceiveds      []*CouponReceived `protobuf:"bytes,1,rep,name=coupon_receiveds,json=couponReceiveds,proto3" json:"coupon_receiveds,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *DescribeCouponReceivedsResponse) Reset()         { *m = DescribeCouponReceivedsResponse{} }
+func (m *DescribeCouponReceivedsResponse) String() string { return proto.CompactTextString(m) }
+func (*DescribeCouponReceivedsResponse) ProtoMessage()    {}
+func (*DescribeCouponReceivedsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{49}
+}
+
+func (m *DescribeCouponReceivedsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DescribeCouponReceivedsResponse.Unmarshal(m, b)
+}
+func (m *DescribeCouponReceivedsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DescribeCouponReceivedsResponse.Marshal(b, m, deterministic)
+}
+func (m *DescribeCouponReceivedsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DescribeCouponReceivedsResponse.Merge(m, src)
+}
+func (m *DescribeCouponReceivedsResponse) XXX_Size() int {
+	return xxx_messageInfo_DescribeCouponReceivedsResponse.Size(m)
+}
+func (m *DescribeCouponReceivedsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DescribeCouponReceivedsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DescribeCouponReceivedsResponse proto.InternalMessageInfo
+
+func (m *DescribeCouponReceivedsResponse) GetCouponReceiveds() []*CouponReceived {
+	if m != nil {
+		return m.CouponReceiveds
+	}
+	return nil
+}
+
+type DeleteCouponReceivedsRequest struct {
+	CouponReceivedIds    []string `protobuf:"bytes,1,rep,name=coupon_received_ids,json=couponReceivedIds,proto3" json:"coupon_received_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteCouponReceivedsRequest) Reset()         { *m = DeleteCouponReceivedsRequest{} }
+func (m *DeleteCouponReceivedsRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteCouponReceivedsRequest) ProtoMessage()    {}
+func (*DeleteCouponReceivedsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{50}
+}
+
+func (m *DeleteCouponReceivedsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCouponReceivedsRequest.Unmarshal(m, b)
+}
+func (m *DeleteCouponReceivedsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCouponReceivedsRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteCouponReceivedsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCouponReceivedsRequest.Merge(m, src)
+}
+func (m *DeleteCouponReceivedsRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteCouponReceivedsRequest.Size(m)
+}
+func (m *DeleteCouponReceivedsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCouponReceivedsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCouponReceivedsRequest proto.InternalMessageInfo
+
+func (m *DeleteCouponReceivedsRequest) GetCouponReceivedIds() []string {
+	if m != nil {
+		return m.CouponReceivedIds
+	}
+	return nil
+}
+
+type DeleteCouponReceivedsResponse struct {
+	CouponReceivedIds    []string `protobuf:"bytes,1,rep,name=coupon_received_ids,json=couponReceivedIds,proto3" json:"coupon_received_ids,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteCouponReceivedsResponse) Reset()         { *m = DeleteCouponReceivedsResponse{} }
+func (m *DeleteCouponReceivedsResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteCouponReceivedsResponse) ProtoMessage()    {}
+func (*DeleteCouponReceivedsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_958db8ba491a6b57, []int{51}
+}
+
+func (m *DeleteCouponReceivedsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteCouponReceivedsResponse.Unmarshal(m, b)
+}
+func (m *DeleteCouponReceivedsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteCouponReceivedsResponse.Marshal(b, m, deterministic)
+}
+func (m *DeleteCouponReceivedsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCouponReceivedsResponse.Merge(m, src)
+}
+func (m *DeleteCouponReceivedsResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteCouponReceivedsResponse.Size(m)
+}
+func (m *DeleteCouponReceivedsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteCouponReceivedsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteCouponReceivedsResponse proto.InternalMessageInfo
+
+func (m *DeleteCouponReceivedsResponse) GetCouponReceivedIds() []string {
+	if m != nil {
+		return m.CouponReceivedIds
 	}
 	return nil
 }
@@ -2333,153 +3254,203 @@ func init() {
 	proto.RegisterType((*Discount)(nil), "openpitrix.Discount")
 	proto.RegisterType((*CreateDiscountRequest)(nil), "openpitrix.CreateDiscountRequest")
 	proto.RegisterType((*CreateDiscountResponse)(nil), "openpitrix.CreateDiscountResponse")
+	proto.RegisterType((*DescribeDiscountsRequest)(nil), "openpitrix.DescribeDiscountsRequest")
+	proto.RegisterType((*DescribeDiscountsResponse)(nil), "openpitrix.DescribeDiscountsResponse")
+	proto.RegisterType((*ModifyDiscountRequest)(nil), "openpitrix.ModifyDiscountRequest")
+	proto.RegisterType((*ModifyDiscountResponse)(nil), "openpitrix.ModifyDiscountResponse")
+	proto.RegisterType((*DeleteDiscountsRequest)(nil), "openpitrix.DeleteDiscountsRequest")
+	proto.RegisterType((*DeleteDiscountsResponse)(nil), "openpitrix.DeleteDiscountsResponse")
 	proto.RegisterType((*Coupon)(nil), "openpitrix.Coupon")
 	proto.RegisterType((*CreateCouponRequest)(nil), "openpitrix.CreateCouponRequest")
 	proto.RegisterType((*CreateCouponResponse)(nil), "openpitrix.CreateCouponResponse")
+	proto.RegisterType((*DescribeCouponsRequest)(nil), "openpitrix.DescribeCouponsRequest")
+	proto.RegisterType((*DescribeCouponsResponse)(nil), "openpitrix.DescribeCouponsResponse")
+	proto.RegisterType((*ModifyCouponRequest)(nil), "openpitrix.ModifyCouponRequest")
+	proto.RegisterType((*ModifyCouponResponse)(nil), "openpitrix.ModifyCouponResponse")
+	proto.RegisterType((*DeleteCouponsRequest)(nil), "openpitrix.DeleteCouponsRequest")
+	proto.RegisterType((*DeleteCouponsResponse)(nil), "openpitrix.DeleteCouponsResponse")
 	proto.RegisterType((*CouponReceived)(nil), "openpitrix.CouponReceived")
 	proto.RegisterType((*CreateCouponReceivedRequest)(nil), "openpitrix.CreateCouponReceivedRequest")
 	proto.RegisterType((*CreateCouponReceivedResponse)(nil), "openpitrix.CreateCouponReceivedResponse")
+	proto.RegisterType((*DescribeCouponReceivedsRequest)(nil), "openpitrix.DescribeCouponReceivedsRequest")
+	proto.RegisterType((*DescribeCouponReceivedsResponse)(nil), "openpitrix.DescribeCouponReceivedsResponse")
+	proto.RegisterType((*DeleteCouponReceivedsRequest)(nil), "openpitrix.DeleteCouponReceivedsRequest")
+	proto.RegisterType((*DeleteCouponReceivedsResponse)(nil), "openpitrix.DeleteCouponReceivedsResponse")
 }
 
 func init() { proto.RegisterFile("billing.proto", fileDescriptor_958db8ba491a6b57) }
 
 var fileDescriptor_958db8ba491a6b57 = []byte{
-	// 2157 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xdc, 0x5a, 0x4b, 0x73, 0x23, 0x57,
-	0x15, 0xa6, 0xd5, 0x7a, 0x1e, 0xf9, 0x21, 0x5f, 0x3f, 0xc6, 0xd3, 0x1e, 0xdb, 0x4a, 0x0f, 0x01,
-	0x47, 0x89, 0xad, 0x89, 0x8d, 0x09, 0x76, 0x20, 0x89, 0x6c, 0x33, 0x60, 0xa6, 0x66, 0xca, 0x28,
-	0x19, 0x08, 0xd9, 0xb8, 0x5a, 0xea, 0x6b, 0xa5, 0xb1, 0xd4, 0x2d, 0xba, 0x5b, 0x33, 0xcc, 0x82,
-	0x2a, 0x2a, 0x0b, 0xd8, 0x50, 0x45, 0x21, 0x0a, 0x0a, 0x8a, 0x0d, 0x8b, 0x6c, 0x29, 0x16, 0x2c,
-	0xa8, 0x02, 0xaa, 0x80, 0x62, 0xc5, 0x96, 0xfc, 0x85, 0xf9, 0x09, 0xec, 0xa1, 0xfa, 0x3e, 0xa4,
-	0x7e, 0x4a, 0xad, 0x96, 0x63, 0xd7, 0x64, 0x33, 0xa3, 0xee, 0x3e, 0xe7, 0xf6, 0xd7, 0xe7, 0x7c,
-	0xe7, 0xbb, 0xe7, 0xde, 0x6b, 0x98, 0x6d, 0x68, 0xed, 0xb6, 0xa6, 0xb7, 0x76, 0xba, 0xa6, 0x61,
-	0x1b, 0x08, 0x8c, 0x2e, 0xd6, 0xbb, 0x9a, 0x6d, 0x6a, 0x3f, 0x94, 0x36, 0x5a, 0x86, 0xd1, 0x6a,
-	0xe3, 0x2a, 0x79, 0xd2, 0xe8, 0x5d, 0x54, 0x9f, 0x9a, 0x4a, 0xb7, 0x8b, 0x4d, 0x8b, 0xda, 0x4a,
-	0x9b, 0xfe, 0xe7, 0xb6, 0xd6, 0xc1, 0x96, 0xad, 0x74, 0xba, 0xcc, 0xe0, 0x0e, 0x33, 0x50, 0xba,
-	0x5a, 0x55, 0xd1, 0x75, 0xc3, 0x56, 0x6c, 0xcd, 0xd0, 0xb9, 0xfb, 0x6b, 0xe4, 0xbf, 0xe6, 0x76,
-	0x0b, 0xeb, 0xdb, 0xd6, 0x53, 0xa5, 0xd5, 0xc2, 0x66, 0xd5, 0xe8, 0x12, 0x8b, 0xa0, 0xb5, 0xfc,
-	0xaf, 0x34, 0x64, 0xce, 0x4c, 0xad, 0x89, 0xd1, 0x1b, 0x90, 0xef, 0x3a, 0x3f, 0xce, 0x35, 0x75,
-	0x55, 0x28, 0x0b, 0x5b, 0xc5, 0xdd, 0x3b, 0x3b, 0xf4, 0x45, 0x3b, 0x1c, 0xc9, 0xce, 0xbb, 0xb6,
-	0xa9, 0xe9, 0xad, 0xef, 0x28, 0xed, 0x1e, 0xae, 0xe7, 0x88, 0xf5, 0xa9, 0x8a, 0xde, 0x04, 0x68,
-	0x68, 0xba, 0xaa, 0xe9, 0x2d, 0xc7, 0x35, 0x15, 0xc3, 0xb5, 0xc0, 0xec, 0x4f, 0x55, 0xb4, 0x0f,
-	0x59, 0x32, 0x8e, 0xb5, 0x2a, 0x96, 0xc5, 0xad, 0xe2, 0xee, 0xfa, 0xce, 0x30, 0x52, 0x3b, 0x04,
-	0x18, 0xfd, 0xd7, 0xfa, 0xba, 0x6e, 0x9b, 0xcf, 0xea, 0xcc, 0x18, 0xdd, 0x83, 0x7c, 0xb3, 0x67,
-	0x9a, 0x58, 0x6f, 0x3e, 0x5b, 0x4d, 0x97, 0x85, 0xad, 0xb9, 0xdd, 0x25, 0xb7, 0xe3, 0x31, 0x7b,
-	0x56, 0x1f, 0x58, 0xa1, 0x2f, 0x41, 0xd6, 0xb2, 0x15, 0xbb, 0x67, 0xad, 0x66, 0x62, 0x20, 0x64,
-	0xb6, 0xe8, 0x00, 0xc0, 0xb2, 0x15, 0xd3, 0x3e, 0x77, 0x72, 0xb0, 0x9a, 0x25, 0x9e, 0x52, 0xc0,
-	0xf3, 0x3d, 0x9e, 0xa0, 0x7a, 0x81, 0x58, 0x3b, 0xd7, 0x68, 0x1f, 0xf2, 0x58, 0x57, 0xa9, 0x63,
-	0x6e, 0xac, 0x63, 0x0e, 0xeb, 0x2a, 0x71, 0x7b, 0x13, 0x8a, 0x4d, 0x13, 0x2b, 0x36, 0xa6, 0x9e,
-	0xf9, 0xb1, 0x9e, 0x40, 0xcd, 0xb9, 0x33, 0x05, 0x4e, 0x9d, 0x0b, 0xe3, 0x9d, 0xa9, 0xb9, 0x73,
-	0x43, 0x3a, 0x80, 0xa2, 0x2b, 0xd4, 0xa8, 0x04, 0xe2, 0x25, 0x7e, 0x46, 0xa8, 0x20, 0xd6, 0x9d,
-	0x9f, 0x68, 0x09, 0x32, 0x4f, 0x9c, 0xe8, 0x90, 0x1c, 0x0b, 0x75, 0x7a, 0x71, 0x98, 0xfa, 0x8a,
-	0x20, 0xff, 0x37, 0x05, 0xe8, 0x98, 0xc0, 0x20, 0x23, 0xd4, 0xf1, 0x0f, 0x7a, 0xd8, 0xb2, 0x7d,
-	0xcc, 0x10, 0x26, 0x63, 0xc6, 0xd1, 0x80, 0x19, 0x29, 0xc2, 0x8c, 0x8a, 0x27, 0xc1, 0x81, 0x97,
-	0x8d, 0xa5, 0x89, 0x18, 0x8b, 0x26, 0xde, 0x84, 0xa7, 0x93, 0x26, 0x3c, 0x13, 0x3b, 0xe1, 0xd3,
-	0x84, 0xfd, 0x11, 0x2c, 0x7a, 0x02, 0x61, 0x75, 0x0d, 0xdd, 0x4a, 0x5e, 0xc9, 0xf2, 0x7f, 0x44,
-	0x58, 0x3e, 0xc1, 0x56, 0xd3, 0xd4, 0x1a, 0x74, 0x48, 0x8b, 0x67, 0xf2, 0x66, 0xc4, 0x61, 0x58,
-	0xb3, 0x62, 0xe2, 0x9a, 0xbd, 0x86, 0x14, 0x3a, 0xd1, 0xb1, 0x0c, 0xd3, 0x3e, 0x77, 0x12, 0x97,
-	0x8d, 0x13, 0x1d, 0xc7, 0xfa, 0x01, 0x76, 0x44, 0x29, 0x67, 0xe2, 0x27, 0xd8, 0xb4, 0xa2, 0x25,
-	0xe2, 0xc8, 0x30, 0xda, 0xcc, 0x8b, 0x99, 0xa2, 0x15, 0xc8, 0x1a, 0x17, 0x17, 0x16, 0xb6, 0x89,
-	0x3a, 0xcc, 0xd6, 0xd9, 0x95, 0x43, 0x94, 0xb6, 0xd6, 0xd1, 0x6c, 0x52, 0xf7, 0xb3, 0x75, 0x7a,
-	0x21, 0x1f, 0xc3, 0x8a, 0x3f, 0xa7, 0x8c, 0x27, 0xaf, 0x0c, 0x2a, 0x4c, 0x20, 0x15, 0xb6, 0x10,
-	0xd0, 0x5e, 0x5e, 0x48, 0xf2, 0x1f, 0x44, 0x40, 0x0f, 0x0d, 0x55, 0xbb, 0x78, 0xe6, 0x29, 0xf0,
-	0x9b, 0xa1, 0xc5, 0x91, 0x6f, 0xce, 0xf0, 0x28, 0x43, 0x10, 0xe5, 0x15, 0x4d, 0x20, 0x5e, 0x5a,
-	0x65, 0x92, 0xd2, 0x2a, 0x7b, 0x5d, 0xca, 0xe0, 0x09, 0xc4, 0xb4, 0xca, 0xb0, 0x0b, 0x8b, 0x27,
-	0xb8, 0x8d, 0x6d, 0x9f, 0x2c, 0xac, 0x41, 0x81, 0x8f, 0x47, 0x49, 0x54, 0xa8, 0xe7, 0x99, 0x8b,
-	0x25, 0xef, 0xc1, 0x92, 0xd7, 0x87, 0x81, 0x18, 0xe9, 0xf4, 0xab, 0x34, 0x94, 0x8e, 0x8d, 0x4e,
-	0x43, 0xd3, 0x49, 0x9b, 0x42, 0x5b, 0x93, 0x47, 0xb0, 0xd4, 0x1c, 0xde, 0x3b, 0x9f, 0xe8, 0x13,
-	0x50, 0xd3, 0x37, 0xda, 0xa9, 0x8a, 0xea, 0xb0, 0xe2, 0x1e, 0x6f, 0x42, 0x26, 0xba, 0xb1, 0x1c,
-	0x0d, 0x48, 0xf9, 0x8e, 0x8f, 0x94, 0x5b, 0x1e, 0x3a, 0xf9, 0x30, 0xdc, 0x68, 0x4f, 0xe3, 0xeb,
-	0x30, 0xb2, 0xd3, 0x74, 0x18, 0xb9, 0xeb, 0xea, 0x30, 0xfe, 0x98, 0x82, 0x75, 0x3a, 0xd7, 0xf9,
-	0x63, 0xc9, 0xb9, 0x18, 0x9d, 0x54, 0x21, 0x71, 0x52, 0x1f, 0xfa, 0x7a, 0x90, 0xfd, 0x60, 0x0f,
-	0x12, 0x01, 0xe7, 0x6a, 0xda, 0x91, 0x69, 0x22, 0xd6, 0x85, 0x8d, 0x28, 0x84, 0xac, 0x10, 0xaf,
-	0xb8, 0xac, 0xe4, 0xdf, 0x8a, 0x50, 0xe6, 0x53, 0x8d, 0xff, 0xa5, 0x03, 0xc9, 0x78, 0x11, 0x6a,
-	0x39, 0x59, 0xdf, 0xe1, 0xee, 0x02, 0xd2, 0x09, 0xbb, 0x80, 0x4c, 0x92, 0x2e, 0x20, 0x1b, 0xde,
-	0x05, 0xe4, 0xdc, 0x5d, 0x40, 0x17, 0x5e, 0x1a, 0x91, 0x1a, 0x46, 0x88, 0x07, 0x80, 0x02, 0xb9,
-	0xe1, 0xcd, 0xc1, 0x9d, 0x51, 0x7a, 0x56, 0x5f, 0xf0, 0x67, 0xc6, 0x92, 0xff, 0x97, 0x82, 0x75,
-	0x3a, 0x07, 0x45, 0x55, 0xec, 0x8b, 0x40, 0x85, 0x87, 0x3e, 0x59, 0xdf, 0x0f, 0xf6, 0x1a, 0x49,
-	0x15, 0x20, 0x7d, 0x0d, 0x0a, 0x10, 0x85, 0xf0, 0x53, 0x52, 0x80, 0xf7, 0x60, 0x83, 0x4e, 0xf9,
-	0x91, 0xe5, 0xbf, 0x0b, 0xcb, 0x61, 0x6f, 0xe4, 0x8d, 0xc0, 0x62, 0x70, 0x50, 0x4b, 0x7e, 0x0c,
-	0x9b, 0x91, 0xa3, 0xb2, 0x0f, 0x49, 0x32, 0xec, 0x73, 0x11, 0x0a, 0x67, 0xa6, 0xd1, 0x20, 0x77,
-	0xd1, 0xdb, 0x30, 0xd3, 0xe5, 0x17, 0x71, 0x43, 0x50, 0x1c, 0x78, 0x9c, 0xaa, 0x68, 0x0f, 0xb2,
-	0xd6, 0x65, 0x2f, 0x2e, 0xdb, 0x32, 0xd6, 0x65, 0xef, 0x54, 0x75, 0xde, 0xaa, 0xd8, 0xb6, 0xa9,
-	0x35, 0x7a, 0x36, 0x09, 0x7c, 0x1c, 0xbd, 0x29, 0x0e, 0x3c, 0x3c, 0x52, 0x95, 0x4e, 0xbc, 0x44,
-	0xba, 0x86, 0x5e, 0xd6, 0xdf, 0x74, 0xe4, 0xa6, 0x69, 0x3a, 0xf2, 0x93, 0x34, 0x1d, 0xf2, 0x8f,
-	0x53, 0xb0, 0xc2, 0x57, 0xc9, 0x2c, 0x5b, 0x9c, 0x8c, 0xc3, 0x94, 0x09, 0xc9, 0x53, 0x96, 0x9a,
-	0x34, 0x65, 0xde, 0xe0, 0x8b, 0x49, 0x83, 0x9f, 0x8e, 0x1d, 0x7c, 0xf9, 0x03, 0xb8, 0x15, 0x88,
-	0x00, 0x2b, 0x9c, 0x69, 0x69, 0x2f, 0x3f, 0x4f, 0xc1, 0xed, 0xe1, 0xfa, 0x92, 0xdd, 0x1f, 0x94,
-	0xfb, 0xcd, 0x54, 0xd5, 0x67, 0x70, 0xfe, 0x7e, 0x1f, 0xa4, 0xb0, 0x28, 0xb3, 0x2c, 0x1e, 0xc2,
-	0xac, 0x3b, 0xcc, 0x7c, 0xce, 0x5e, 0xf6, 0x2e, 0xe8, 0x79, 0xee, 0x67, 0x5c, 0x01, 0xb6, 0xe4,
-	0x7f, 0xa6, 0x60, 0x85, 0xaf, 0x15, 0x7d, 0xf5, 0xf1, 0x82, 0x6a, 0xe2, 0xb5, 0x6f, 0x00, 0x39,
-	0x05, 0x16, 0x08, 0xe1, 0x55, 0x15, 0xd8, 0x5b, 0x70, 0x8b, 0x2f, 0xa3, 0xfd, 0xd5, 0x75, 0x37,
-	0x2c, 0xed, 0x05, 0x5f, 0x7e, 0xdf, 0x86, 0xd5, 0xa0, 0x3f, 0x03, 0x17, 0x6b, 0x80, 0x9f, 0x64,
-	0x20, 0x7f, 0xa2, 0x59, 0x4d, 0xa3, 0xa7, 0xdb, 0xe8, 0x6b, 0x50, 0x54, 0xd9, 0xef, 0xb8, 0x5f,
-	0x03, 0xdc, 0xe1, 0x54, 0x45, 0xf7, 0x20, 0xad, 0x2b, 0x1d, 0x1c, 0x8b, 0x0e, 0xc4, 0x12, 0xad,
-	0x41, 0x81, 0x54, 0x00, 0x81, 0x27, 0xd2, 0xdd, 0x02, 0x72, 0xe3, 0x54, 0xb5, 0xd0, 0x11, 0xcc,
-	0x0d, 0xd0, 0xd0, 0x26, 0x88, 0x66, 0x7b, 0x2d, 0x30, 0xf0, 0xfd, 0xb6, 0xa1, 0xd8, 0x74, 0xdc,
-	0x59, 0xee, 0x42, 0x2e, 0xd1, 0x7d, 0x28, 0x0d, 0xc6, 0xe8, 0x62, 0xb3, 0x89, 0x75, 0x9b, 0xa5,
-	0x7e, 0xe4, 0x28, 0xf3, 0xdc, 0xe9, 0x8c, 0xfa, 0xb8, 0x44, 0x27, 0x9b, 0x78, 0x26, 0xce, 0x25,
-	0xe5, 0x6a, 0x3e, 0xf1, 0x4c, 0x5c, 0x98, 0x66, 0x26, 0x86, 0x49, 0x66, 0x62, 0xf4, 0x16, 0x14,
-	0x55, 0xa2, 0x61, 0xe4, 0x34, 0x6a, 0xb5, 0x18, 0xa7, 0x12, 0x5c, 0x0e, 0xf2, 0xc7, 0x22, 0x2c,
-	0xd3, 0x79, 0x8c, 0xd3, 0x91, 0x17, 0x02, 0xa7, 0x95, 0x90, 0x8c, 0x56, 0xa9, 0xb1, 0xb4, 0x12,
-	0xaf, 0x84, 0x56, 0xe9, 0x04, 0xb4, 0xba, 0xfe, 0x56, 0xcd, 0x97, 0xa6, 0xdc, 0xa4, 0x69, 0xfa,
-	0x2e, 0xef, 0xb7, 0x86, 0x59, 0x62, 0x72, 0x33, 0x9d, 0x78, 0xc8, 0x9f, 0x64, 0x20, 0x7b, 0x6c,
-	0xf4, 0xba, 0x86, 0x8e, 0x0e, 0xa0, 0xd0, 0x24, 0xbf, 0xe2, 0x8e, 0x93, 0xa7, 0xe6, 0x57, 0x2f,
-	0x41, 0xfb, 0x90, 0x6b, 0x28, 0x6d, 0x45, 0x6f, 0xc6, 0xd2, 0x1e, 0x6e, 0x8b, 0x76, 0x21, 0x43,
-	0x3e, 0x2b, 0x72, 0xe7, 0xee, 0xf1, 0xa9, 0x6e, 0xef, 0xed, 0xb2, 0x89, 0x91, 0x6a, 0xef, 0x3d,
-	0x48, 0xb7, 0xf1, 0x85, 0x1d, 0xa9, 0x2f, 0x6e, 0x17, 0x62, 0x89, 0xde, 0x81, 0x59, 0x8a, 0x5c,
-	0xef, 0x75, 0x1c, 0x16, 0x46, 0x26, 0xd3, 0xed, 0x5a, 0x24, 0x2e, 0x8f, 0x7a, 0x9d, 0x33, 0x6c,
-	0xba, 0x54, 0x2d, 0x9f, 0x58, 0xd5, 0x0a, 0x49, 0x49, 0x0b, 0x89, 0x55, 0xad, 0x38, 0x8d, 0xaa,
-	0xcd, 0x4c, 0xa3, 0x6a, 0xb3, 0x93, 0x96, 0xcb, 0xdf, 0x44, 0x7e, 0x8a, 0x47, 0xb9, 0xfd, 0x29,
-	0x69, 0x9a, 0x8b, 0xa7, 0x62, 0x12, 0x9e, 0xa6, 0xe3, 0xf3, 0xf4, 0x80, 0xe3, 0xd0, 0x7b, 0x9d,
-	0x58, 0xfc, 0xce, 0x73, 0xc6, 0xdd, 0xc0, 0x79, 0xbb, 0x2f, 0x7d, 0xf9, 0x49, 0xd3, 0xf7, 0x6d,
-	0x58, 0xf2, 0x66, 0x8f, 0x69, 0x5d, 0x72, 0x85, 0x92, 0xff, 0x24, 0xc2, 0x1c, 0x1f, 0xad, 0x89,
-	0xb5, 0x27, 0x58, 0x45, 0xdf, 0x02, 0xc4, 0x46, 0x33, 0xd9, 0xad, 0xb8, 0xc3, 0x96, 0x9a, 0x9e,
-	0x91, 0x48, 0x7b, 0xec, 0x42, 0x96, 0x9a, 0x48, 0x3b, 0xf7, 0x21, 0xd7, 0xb3, 0xb0, 0x19, 0xb7,
-	0x2b, 0xcf, 0x3a, 0xc6, 0x74, 0x19, 0x60, 0xe2, 0x8e, 0xa2, 0xe9, 0x71, 0x24, 0x92, 0x99, 0xbe,
-	0x68, 0x87, 0x1b, 0xf2, 0xcf, 0x05, 0x58, 0xf3, 0x32, 0x81, 0x46, 0x9c, 0xd7, 0xf3, 0xb5, 0x87,
-	0x5d, 0xfe, 0x3e, 0xdc, 0x09, 0x07, 0xc4, 0x28, 0x7a, 0x85, 0xa4, 0xaa, 0xbc, 0x0c, 0x79, 0xbe,
-	0x79, 0x89, 0x72, 0x20, 0x1e, 0x3f, 0xfa, 0x5e, 0xe9, 0x73, 0xce, 0x8f, 0x6f, 0x3e, 0x38, 0x29,
-	0x09, 0xce, 0x8f, 0xc7, 0xef, 0x9e, 0x94, 0x52, 0xbb, 0x7f, 0x4f, 0xc3, 0x0c, 0xd9, 0x80, 0x7b,
-	0xa8, 0xe8, 0x4a, 0x0b, 0x9b, 0xe8, 0xf7, 0x02, 0x14, 0x5d, 0x7f, 0xc3, 0x80, 0x36, 0x46, 0xff,
-	0x95, 0x87, 0xb4, 0x19, 0xf9, 0x9c, 0x7e, 0x94, 0x7c, 0xd6, 0xaf, 0xbd, 0x8e, 0xaa, 0x34, 0xa9,
-	0x65, 0xb2, 0x0f, 0x58, 0x36, 0x2e, 0xca, 0xf6, 0x87, 0xb8, 0x6c, 0x5d, 0xf6, 0xca, 0x4f, 0x35,
-	0xfb, 0xc3, 0x72, 0x07, 0xdb, 0xd8, 0xf9, 0x96, 0xf3, 0xc1, 0xa2, 0xf1, 0xa3, 0x4f, 0x9e, 0xff,
-	0x32, 0xb5, 0x22, 0x2f, 0x54, 0x9f, 0xbc, 0x5e, 0x65, 0x7f, 0xb8, 0x55, 0x25, 0xbe, 0x87, 0x42,
-	0x05, 0xfd, 0x54, 0x80, 0x39, 0xef, 0x09, 0x3a, 0x7a, 0xc9, 0x8d, 0x22, 0xf4, 0x2f, 0x26, 0x24,
-	0x79, 0x94, 0x09, 0xc3, 0xba, 0xd3, 0xaf, 0x2d, 0xa0, 0x79, 0x95, 0x3d, 0xa4, 0x68, 0x2d, 0x82,
-	0x65, 0x09, 0xa1, 0x00, 0x16, 0x0b, 0xfd, 0x08, 0x8a, 0xae, 0x53, 0x5d, 0x6f, 0xac, 0x82, 0xe7,
-	0xde, 0xde, 0x58, 0x85, 0x1c, 0x07, 0xcb, 0xdb, 0xfd, 0xda, 0x1c, 0x9a, 0xe9, 0x90, 0x27, 0xf4,
-	0xed, 0x34, 0x10, 0x52, 0x78, 0x20, 0x3e, 0x12, 0x60, 0xc6, 0x7d, 0xa2, 0x8b, 0x36, 0xbd, 0xdf,
-	0x18, 0x38, 0x1f, 0x96, 0xca, 0xd1, 0x06, 0x0c, 0x42, 0xb5, 0x5f, 0x9b, 0x47, 0xb3, 0x2a, 0x79,
-	0xe4, 0x0e, 0xc0, 0xad, 0x4a, 0x48, 0x00, 0x0e, 0x85, 0xca, 0xee, 0x5f, 0xe6, 0xa0, 0x74, 0x66,
-	0x1a, 0x1d, 0xc3, 0x51, 0x5f, 0xce, 0xa2, 0x7f, 0x0b, 0xbc, 0xe7, 0x0c, 0x9c, 0x1d, 0xbf, 0x12,
-	0xfb, 0xc8, 0x4e, 0xaa, 0xc4, 0x31, 0x65, 0xb8, 0xdf, 0xef, 0xd7, 0xb6, 0xd1, 0xab, 0x8c, 0x66,
-	0xae, 0xdd, 0xe5, 0x21, 0xe5, 0xdc, 0x37, 0xad, 0xcb, 0x1e, 0xf9, 0x2a, 0x59, 0x5e, 0x77, 0x7f,
-	0x95, 0xcb, 0x64, 0x18, 0xe5, 0x7f, 0x08, 0xc3, 0x0d, 0xb5, 0xc0, 0x86, 0x37, 0x7a, 0x2d, 0x8c,
-	0x56, 0x51, 0xbb, 0xed, 0xd2, 0x76, 0x4c, 0x6b, 0xf6, 0x51, 0xf7, 0xfb, 0xb5, 0x75, 0xb4, 0x36,
-	0xe0, 0x63, 0xe0, 0xb3, 0x68, 0x6a, 0xca, 0x68, 0x63, 0xe4, 0x47, 0x58, 0xe8, 0xcf, 0x02, 0xdf,
-	0x52, 0x1a, 0x9d, 0x8e, 0x91, 0xe7, 0x27, 0x52, 0x25, 0x8e, 0xe9, 0x10, 0xf9, 0x1a, 0xba, 0xcd,
-	0x98, 0x1c, 0x04, 0x4e, 0x83, 0x2f, 0x8d, 0x0f, 0xfe, 0x5f, 0x05, 0xbe, 0xdb, 0x12, 0x0c, 0x7d,
-	0x25, 0x48, 0xe6, 0xc8, 0xc0, 0xbf, 0x1a, 0xcb, 0x96, 0x81, 0xff, 0x06, 0x01, 0xcf, 0x6a, 0x20,
-	0x22, 0xe8, 0x77, 0x2b, 0x63, 0x82, 0xee, 0xa0, 0xff, 0x8d, 0x00, 0xf3, 0xbe, 0x8d, 0x5e, 0x24,
-	0x87, 0x09, 0xa6, 0x77, 0x9f, 0x4f, 0xba, 0x3b, 0xd2, 0x86, 0xa1, 0xfc, 0x6a, 0xbf, 0x76, 0x1b,
-	0xdd, 0x1a, 0x08, 0x2b, 0x7b, 0xec, 0x30, 0x9d, 0xb3, 0x5b, 0x92, 0x97, 0xbd, 0x35, 0xcb, 0x6c,
-	0x1c, 0x68, 0xbf, 0x13, 0x00, 0x05, 0x37, 0x30, 0xd1, 0xcb, 0xe1, 0x2a, 0xe9, 0xdb, 0xe8, 0x92,
-	0xbe, 0x30, 0xce, 0x8c, 0x61, 0xfc, 0x72, 0xbf, 0xb6, 0x8c, 0x16, 0x5d, 0x82, 0xca, 0x2d, 0x08,
-	0xbe, 0x55, 0xb4, 0x12, 0x8a, 0xcf, 0x42, 0xbf, 0x10, 0x60, 0xde, 0xb7, 0x81, 0xe7, 0x0d, 0x5c,
-	0xf8, 0x06, 0xa9, 0x37, 0x70, 0x11, 0x3b, 0x80, 0xf2, 0x7e, 0xbf, 0x86, 0x50, 0x69, 0xa0, 0xb2,
-	0xec, 0x31, 0x8d, 0x98, 0x14, 0x1d, 0xb1, 0x5f, 0x0b, 0x50, 0xf2, 0x6f, 0xdc, 0xa1, 0xbb, 0x61,
-	0x82, 0xea, 0x8f, 0xd6, 0xe7, 0x47, 0x1b, 0x31, 0x58, 0x6f, 0xf4, 0x6b, 0x8b, 0x68, 0x61, 0xa0,
-	0xbc, 0x9e, 0x48, 0xad, 0x55, 0x22, 0x22, 0xe5, 0x00, 0xfb, 0x99, 0x00, 0x73, 0xde, 0x05, 0xbe,
-	0x77, 0x3e, 0x0c, 0xdd, 0xa2, 0x91, 0xe4, 0x51, 0x26, 0x0c, 0xd2, 0x1e, 0x99, 0x0f, 0x19, 0xc5,
-	0xf8, 0xc2, 0x9f, 0x00, 0xba, 0x2d, 0x2f, 0xb9, 0x01, 0xf1, 0x67, 0x7c, 0x56, 0x72, 0xb7, 0x39,
-	0x68, 0x33, 0x4c, 0xc6, 0x5d, 0x2b, 0x2b, 0xef, 0xac, 0x14, 0xd6, 0xbc, 0xb3, 0x59, 0x69, 0xa0,
-	0xee, 0xce, 0x33, 0x3a, 0x2b, 0xc9, 0xc8, 0x5b, 0x85, 0xce, 0x13, 0x07, 0xc4, 0xc7, 0x82, 0x7f,
-	0x19, 0xc0, 0x1a, 0xf7, 0x2f, 0x46, 0xbf, 0xcb, 0xd3, 0x1e, 0x4a, 0x5b, 0xe3, 0x0d, 0x19, 0xb8,
-	0x83, 0x7e, 0xad, 0x84, 0xe6, 0x58, 0xcb, 0xe6, 0x46, 0x57, 0x96, 0xd7, 0x82, 0xe8, 0xaa, 0xbc,
-	0xb7, 0x3b, 0x14, 0x2a, 0x47, 0xe9, 0x0f, 0x52, 0xdd, 0x46, 0x23, 0x4b, 0x7a, 0xba, 0xbd, 0xff,
-	0x07, 0x00, 0x00, 0xff, 0xff, 0x72, 0xfd, 0x24, 0x80, 0xa4, 0x2e, 0x00, 0x00,
+	// 2701 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x5b, 0x4b, 0x73, 0x1b, 0x59,
+	0x15, 0xa6, 0xd5, 0x7a, 0x1e, 0xf9, 0x21, 0x5f, 0x3f, 0xe2, 0xb4, 0x5f, 0xca, 0xcd, 0x0c, 0x78,
+	0x34, 0x13, 0x3b, 0x71, 0xe2, 0x0c, 0x49, 0x86, 0x99, 0x91, 0xed, 0x21, 0x98, 0x54, 0x32, 0x46,
+	0x99, 0xc0, 0x30, 0x9b, 0x94, 0x2c, 0x75, 0x9c, 0x26, 0x56, 0xb7, 0xe8, 0x6e, 0x25, 0x64, 0x41,
+	0x15, 0xcc, 0x66, 0x36, 0xd9, 0x20, 0x0a, 0x0a, 0x8a, 0x0d, 0x0b, 0x8a, 0x1d, 0x45, 0x4d, 0x15,
+	0x05, 0x0b, 0xa8, 0x02, 0x0a, 0x36, 0x6c, 0xe1, 0x2f, 0x84, 0x7f, 0xc0, 0x7e, 0xa8, 0xbe, 0x8f,
+	0x56, 0xdf, 0x7e, 0x48, 0xad, 0x96, 0x47, 0xc1, 0x29, 0x36, 0x89, 0xd4, 0xf7, 0x9c, 0xab, 0xd3,
+	0xdf, 0xf9, 0xce, 0xe3, 0x3e, 0x0c, 0x93, 0x87, 0xda, 0xf1, 0xb1, 0xa6, 0x1f, 0x6d, 0xb4, 0x4d,
+	0xc3, 0x36, 0x10, 0x18, 0x6d, 0x55, 0x6f, 0x6b, 0xb6, 0xa9, 0x7d, 0x4f, 0x59, 0x3d, 0x32, 0x8c,
+	0xa3, 0x63, 0x75, 0x93, 0x8c, 0x1c, 0x76, 0x1e, 0x6c, 0x3e, 0x31, 0xeb, 0xed, 0xb6, 0x6a, 0x5a,
+	0x54, 0x56, 0x59, 0xf3, 0x8f, 0xdb, 0x5a, 0x4b, 0xb5, 0xec, 0x7a, 0xab, 0xcd, 0x04, 0x96, 0x99,
+	0x40, 0xbd, 0xad, 0x6d, 0xd6, 0x75, 0xdd, 0xb0, 0xeb, 0xb6, 0x66, 0xe8, 0x5c, 0xfd, 0x0d, 0xf2,
+	0x5f, 0xe3, 0xc2, 0x91, 0xaa, 0x5f, 0xb0, 0x9e, 0xd4, 0x8f, 0x8e, 0x54, 0x73, 0xd3, 0x68, 0x13,
+	0x89, 0xa0, 0x34, 0xfe, 0x5b, 0x1a, 0x32, 0x07, 0xa6, 0xd6, 0x50, 0xd1, 0x9b, 0x90, 0x6f, 0x3b,
+	0x1f, 0xee, 0x6b, 0xcd, 0x45, 0xa9, 0x2c, 0xad, 0x17, 0xb7, 0x96, 0x37, 0xe8, 0x0f, 0x6d, 0x70,
+	0x4b, 0x36, 0xee, 0xda, 0xa6, 0xa6, 0x1f, 0x7d, 0xb3, 0x7e, 0xdc, 0x51, 0x6b, 0x39, 0x22, 0xbd,
+	0xdf, 0x44, 0x37, 0x00, 0x0e, 0x35, 0xbd, 0xa9, 0xe9, 0x47, 0x8e, 0x6a, 0x2a, 0x86, 0x6a, 0x81,
+	0xc9, 0xef, 0x37, 0xd1, 0x36, 0x64, 0xc9, 0x3c, 0xd6, 0xa2, 0x5c, 0x96, 0xd7, 0x8b, 0x5b, 0x2b,
+	0x1b, 0x3d, 0xa4, 0x36, 0x88, 0x61, 0xf4, 0x5f, 0xeb, 0x3d, 0xdd, 0x36, 0x9f, 0xd6, 0x98, 0x30,
+	0xba, 0x08, 0xf9, 0x46, 0xc7, 0x34, 0x55, 0xbd, 0xf1, 0x74, 0x31, 0x5d, 0x96, 0xd6, 0xa7, 0xb6,
+	0xe6, 0xbc, 0x8a, 0xbb, 0x6c, 0xac, 0xe6, 0x4a, 0xa1, 0x2b, 0x90, 0xb5, 0xec, 0xba, 0xdd, 0xb1,
+	0x16, 0x33, 0x31, 0x2c, 0x64, 0xb2, 0xe8, 0x1a, 0x80, 0x65, 0xd7, 0x4d, 0xfb, 0xbe, 0xe3, 0x83,
+	0xc5, 0x2c, 0xd1, 0x54, 0x02, 0x9a, 0x1f, 0x70, 0x07, 0xd5, 0x0a, 0x44, 0xda, 0xf9, 0x8e, 0xb6,
+	0x21, 0xaf, 0xea, 0x4d, 0xaa, 0x98, 0x1b, 0xa8, 0x98, 0x53, 0xf5, 0x26, 0x51, 0xbb, 0x01, 0xc5,
+	0x86, 0xa9, 0xd6, 0x6d, 0x95, 0x6a, 0xe6, 0x07, 0x6a, 0x02, 0x15, 0xe7, 0xca, 0xd4, 0x70, 0xaa,
+	0x5c, 0x18, 0xac, 0x4c, 0xc5, 0x9d, 0x07, 0xca, 0x35, 0x28, 0x7a, 0xa0, 0x46, 0x25, 0x90, 0x1f,
+	0xa9, 0x4f, 0x09, 0x15, 0xe4, 0x9a, 0xf3, 0x11, 0xcd, 0x41, 0xe6, 0xb1, 0x83, 0x0e, 0xf1, 0xb1,
+	0x54, 0xa3, 0x5f, 0xae, 0xa7, 0xbe, 0x2c, 0xe1, 0xff, 0xa4, 0x00, 0xed, 0x12, 0x33, 0xc8, 0x0c,
+	0x35, 0xf5, 0xbb, 0x1d, 0xd5, 0xb2, 0x7d, 0xcc, 0x90, 0x86, 0x63, 0xc6, 0x8e, 0xcb, 0x8c, 0x14,
+	0x61, 0x46, 0x45, 0x70, 0x70, 0xe0, 0xc7, 0x06, 0xd2, 0x44, 0x8e, 0x45, 0x13, 0xd1, 0xe1, 0xe9,
+	0xa4, 0x0e, 0xcf, 0xc4, 0x76, 0xf8, 0x28, 0xb0, 0xdf, 0x81, 0x59, 0x01, 0x08, 0xab, 0x6d, 0xe8,
+	0x56, 0xf2, 0x48, 0xc6, 0xff, 0x94, 0x61, 0x7e, 0x4f, 0xb5, 0x1a, 0xa6, 0x76, 0x48, 0xa7, 0xb4,
+	0xb8, 0x27, 0x5f, 0x4c, 0x72, 0xe8, 0xc5, 0xac, 0x9c, 0x38, 0x66, 0xc7, 0xe0, 0x42, 0x07, 0x1d,
+	0xcb, 0x30, 0xed, 0xfb, 0x8e, 0xe3, 0xb2, 0x71, 0xd0, 0x71, 0xa4, 0x6f, 0xa9, 0x4e, 0x52, 0xca,
+	0x99, 0xea, 0x63, 0xd5, 0xb4, 0xa2, 0x53, 0xc4, 0x8e, 0x61, 0x1c, 0x33, 0x2d, 0x26, 0x8a, 0x16,
+	0x20, 0x6b, 0x3c, 0x78, 0x60, 0xa9, 0x36, 0xc9, 0x0e, 0x93, 0x35, 0xf6, 0xcd, 0x21, 0xca, 0xb1,
+	0xd6, 0xd2, 0x6c, 0x12, 0xf7, 0x93, 0x35, 0xfa, 0x05, 0xef, 0xc2, 0x82, 0xdf, 0xa7, 0x8c, 0x27,
+	0xaf, 0xb9, 0x11, 0x26, 0x91, 0x08, 0x9b, 0x09, 0xe4, 0x5e, 0x1e, 0x48, 0xf8, 0x37, 0x32, 0xa0,
+	0xdb, 0x46, 0x53, 0x7b, 0xf0, 0x54, 0x08, 0xf0, 0x17, 0x43, 0x8b, 0x1d, 0x5f, 0xcd, 0x10, 0x32,
+	0x43, 0xd0, 0xca, 0x13, 0x2a, 0x20, 0x22, 0xad, 0x32, 0x49, 0x69, 0x95, 0x1d, 0x57, 0x66, 0x10,
+	0x80, 0x18, 0x35, 0x33, 0x6c, 0xc1, 0xec, 0x9e, 0x7a, 0xac, 0xda, 0xbe, 0xb4, 0xb0, 0x04, 0x05,
+	0x3e, 0x1f, 0x25, 0x51, 0xa1, 0x96, 0x67, 0x2a, 0x16, 0xbe, 0x0c, 0x73, 0xa2, 0x0e, 0x33, 0xa2,
+	0xaf, 0xd2, 0x4f, 0xd2, 0x50, 0xda, 0x35, 0x5a, 0x87, 0x9a, 0x4e, 0xda, 0x14, 0xda, 0x9a, 0xdc,
+	0x81, 0xb9, 0x46, 0xef, 0xd9, 0xfd, 0xa1, 0x5e, 0x01, 0x35, 0x7c, 0xb3, 0xed, 0x37, 0x51, 0x0d,
+	0x16, 0xbc, 0xf3, 0x0d, 0xc9, 0x44, 0xaf, 0x2d, 0x3b, 0x2e, 0x29, 0xdf, 0xf5, 0x91, 0x72, 0x5d,
+	0xa0, 0x93, 0xcf, 0x86, 0x17, 0xda, 0xd3, 0xf8, 0x3a, 0x8c, 0xec, 0x28, 0x1d, 0x46, 0x6e, 0x5c,
+	0x1d, 0xc6, 0x6f, 0x53, 0xb0, 0x42, 0x6b, 0x9d, 0x1f, 0x4b, 0xce, 0xc5, 0x68, 0xa7, 0x4a, 0x89,
+	0x9d, 0x7a, 0xdb, 0xd7, 0x83, 0x6c, 0x07, 0x7b, 0x90, 0x08, 0x73, 0x4e, 0xa6, 0x1d, 0x19, 0x05,
+	0xb1, 0x36, 0xac, 0x46, 0x59, 0xc8, 0x02, 0xf1, 0x84, 0xc3, 0x0a, 0xff, 0x5c, 0x86, 0x32, 0x2f,
+	0x35, 0xfe, 0x1f, 0x75, 0x53, 0xc6, 0x69, 0x88, 0xe5, 0x64, 0x7d, 0x87, 0xb7, 0x0b, 0x48, 0x27,
+	0xec, 0x02, 0x32, 0x49, 0xba, 0x80, 0x6c, 0x78, 0x17, 0x90, 0xf3, 0x76, 0x01, 0x6d, 0x38, 0xd7,
+	0xc7, 0x35, 0x8c, 0x10, 0xb7, 0x00, 0x05, 0x7c, 0xc3, 0x9b, 0x83, 0xe5, 0x7e, 0xf9, 0xac, 0x36,
+	0xe3, 0xf7, 0x8c, 0x85, 0x3f, 0x4b, 0xc1, 0x0a, 0xad, 0x41, 0x51, 0x11, 0x7b, 0x1a, 0xa8, 0x70,
+	0xdb, 0x97, 0xd6, 0xb7, 0x83, 0xbd, 0x46, 0xd2, 0x0c, 0x90, 0x1e, 0x43, 0x06, 0x88, 0xb2, 0xf0,
+	0x73, 0xca, 0x00, 0x1f, 0xc0, 0x2a, 0x2d, 0xf9, 0x91, 0xe1, 0xbf, 0x05, 0xf3, 0x61, 0xbf, 0xc8,
+	0x1b, 0x81, 0xd9, 0xe0, 0xa4, 0x16, 0xbe, 0x07, 0x6b, 0x91, 0xb3, 0xb2, 0x17, 0x49, 0x32, 0xed,
+	0x73, 0x19, 0x0a, 0x07, 0xa6, 0x71, 0x48, 0x9e, 0xa2, 0x77, 0x60, 0xa2, 0xcd, 0xbf, 0xc4, 0x85,
+	0xa0, 0xe8, 0x6a, 0xec, 0x37, 0xd1, 0x65, 0xc8, 0x5a, 0x8f, 0x3a, 0x71, 0xd9, 0x96, 0xb1, 0x1e,
+	0x75, 0xf6, 0x9b, 0xce, 0xaf, 0xd6, 0x6d, 0xdb, 0xd4, 0x0e, 0x3b, 0x36, 0x01, 0x3e, 0x4e, 0xbe,
+	0x29, 0xba, 0x1a, 0x42, 0xaa, 0x4a, 0x27, 0x5e, 0x22, 0x8d, 0xa1, 0x97, 0xf5, 0x37, 0x1d, 0xb9,
+	0x51, 0x9a, 0x8e, 0xfc, 0x30, 0x4d, 0x07, 0xfe, 0x41, 0x0a, 0x16, 0xf8, 0x2a, 0x99, 0x79, 0x8b,
+	0x93, 0xb1, 0xe7, 0x32, 0x29, 0xb9, 0xcb, 0x52, 0xc3, 0xba, 0x4c, 0x04, 0x5f, 0x4e, 0x0a, 0x7e,
+	0x3a, 0x36, 0xf8, 0xf8, 0x23, 0x38, 0x13, 0x40, 0x80, 0x05, 0xce, 0xa8, 0xb4, 0xc7, 0xcf, 0x53,
+	0x70, 0xb6, 0xb7, 0xbe, 0x64, 0xcf, 0xdd, 0x70, 0x7f, 0x31, 0x51, 0xf5, 0x12, 0xd6, 0xef, 0xbb,
+	0xa0, 0x84, 0xa1, 0xcc, 0xbc, 0xb8, 0x0d, 0xe0, 0x82, 0xc6, 0x0b, 0xf6, 0xbc, 0xb8, 0x9a, 0xe7,
+	0x8e, 0xf7, 0x08, 0xe2, 0xbf, 0xa6, 0x60, 0x81, 0x2f, 0x13, 0x7d, 0xa1, 0x71, 0x4a, 0xd3, 0xe1,
+	0xd8, 0xf7, 0x7e, 0x9c, 0xd8, 0x0a, 0x40, 0x78, 0x52, 0xb1, 0xf5, 0x36, 0x9c, 0xe1, 0x2b, 0x68,
+	0x7f, 0x60, 0x9d, 0x87, 0x49, 0xef, 0xdc, 0xbc, 0xd0, 0x4d, 0x78, 0xd4, 0x2d, 0xfc, 0x0e, 0x2c,
+	0x06, 0xf5, 0x99, 0x71, 0xb1, 0x26, 0xf8, 0x53, 0x06, 0xf2, 0x7b, 0x9a, 0xd5, 0x30, 0x3a, 0xba,
+	0x8d, 0xbe, 0x02, 0xc5, 0x26, 0xfb, 0x1c, 0xf7, 0x6d, 0x80, 0x2b, 0xec, 0x37, 0xd1, 0x45, 0x48,
+	0xeb, 0xf5, 0x96, 0x1a, 0x8b, 0x0e, 0x44, 0x12, 0x2d, 0x41, 0x81, 0x90, 0x9f, 0x98, 0x27, 0xd3,
+	0x8d, 0x02, 0xf2, 0x60, 0xbf, 0x69, 0xa1, 0x5d, 0x98, 0x72, 0xad, 0xa1, 0xfd, 0x4f, 0x54, 0xcc,
+	0xee, 0x19, 0x9d, 0xc3, 0x63, 0x95, 0x4e, 0x3c, 0xc9, 0x75, 0xc8, 0x57, 0x74, 0x13, 0x4a, 0xee,
+	0x24, 0x6d, 0xd5, 0x6c, 0xa8, 0xba, 0x1d, 0xb9, 0x94, 0xf6, 0x4e, 0x33, 0xcd, 0xb5, 0x0e, 0xa8,
+	0x92, 0x27, 0xe3, 0x64, 0x87, 0xc8, 0x38, 0x5b, 0x90, 0x31, 0x9e, 0xe8, 0xaa, 0xc9, 0xca, 0xe1,
+	0x80, 0x10, 0x21, 0xa2, 0x3e, 0x86, 0xe7, 0x93, 0x32, 0xbc, 0x90, 0xb8, 0x74, 0xc3, 0x28, 0xa5,
+	0xbb, 0x38, 0x4c, 0xe9, 0x46, 0x6f, 0x43, 0xb1, 0x49, 0x92, 0x1e, 0x39, 0xbe, 0x5a, 0x9c, 0x88,
+	0x13, 0x3f, 0x1e, 0x05, 0xfc, 0x6b, 0x19, 0xe6, 0x69, 0xe1, 0xe3, 0x24, 0xe6, 0xe1, 0xc3, 0xc9,
+	0x28, 0x25, 0x23, 0x63, 0x6a, 0x20, 0x19, 0xe5, 0x93, 0x21, 0x63, 0x3a, 0x09, 0x19, 0xc7, 0xdf,
+	0xdd, 0xf9, 0x1c, 0x95, 0x1b, 0xd6, 0x51, 0xdf, 0xe2, 0x2d, 0x5a, 0xcf, 0x4f, 0x2c, 0x4d, 0x8d,
+	0x96, 0x74, 0x70, 0x57, 0x76, 0x52, 0x20, 0xad, 0x9b, 0x7c, 0x6e, 0x37, 0x87, 0x8e, 0x3d, 0xa1,
+	0xb9, 0xf1, 0x2e, 0xc7, 0x8f, 0xf7, 0x64, 0x0d, 0xbe, 0xb7, 0x97, 0xc9, 0x24, 0xec, 0x65, 0xb2,
+	0x49, 0x7a, 0x99, 0x5c, 0x78, 0x2f, 0x93, 0xf7, 0xf6, 0x32, 0xef, 0xf7, 0x3a, 0x46, 0x8f, 0x4f,
+	0xdc, 0x95, 0x5c, 0x81, 0x63, 0xcc, 0x3b, 0x19, 0x61, 0x89, 0xec, 0x32, 0xa4, 0x27, 0x86, 0xff,
+	0x2d, 0xc3, 0x3c, 0x2d, 0xc2, 0xfe, 0x38, 0xff, 0x7f, 0xcd, 0x8a, 0x9b, 0x26, 0xc6, 0x71, 0xb6,
+	0xed, 0x4b, 0x13, 0xf9, 0x04, 0x69, 0xc2, 0xef, 0xe6, 0x93, 0x49, 0x13, 0x37, 0x60, 0x81, 0x36,
+	0x4a, 0x81, 0x1c, 0x71, 0x0e, 0x26, 0x3c, 0x13, 0xf3, 0x2e, 0xa9, 0xd8, 0xd3, 0xb5, 0xf0, 0x5b,
+	0xbc, 0x4b, 0x0b, 0x92, 0x39, 0x86, 0xf6, 0xb3, 0x2c, 0x64, 0x77, 0x8d, 0x4e, 0xdb, 0xd0, 0xd1,
+	0x35, 0x28, 0x34, 0xc8, 0xa7, 0xb8, 0xaf, 0x90, 0xa7, 0xe2, 0x63, 0xcb, 0x45, 0x02, 0xb9, 0xd3,
+	0x3e, 0x72, 0x5f, 0x85, 0xdc, 0x61, 0xfd, 0xb8, 0xae, 0x37, 0xd4, 0x58, 0x74, 0xe4, 0xc2, 0x8e,
+	0x21, 0x04, 0x8c, 0xc8, 0xce, 0xe9, 0xde, 0xbe, 0x6e, 0x5f, 0xde, 0x62, 0x86, 0xd0, 0x56, 0xf4,
+	0x0a, 0x64, 0x4d, 0xb5, 0x55, 0xd7, 0xa2, 0x4b, 0x8d, 0x57, 0x89, 0xc9, 0xa2, 0x77, 0x61, 0x92,
+	0x9a, 0xaf, 0x77, 0x5a, 0x4e, 0xe8, 0x44, 0x12, 0xd0, 0xab, 0x5c, 0x24, 0x2a, 0x77, 0x3a, 0xad,
+	0x03, 0x21, 0x19, 0x17, 0x12, 0xef, 0xb6, 0x40, 0xd2, 0x40, 0x2b, 0x26, 0x6e, 0xd9, 0x26, 0x46,
+	0x69, 0xd9, 0x26, 0x47, 0x69, 0xd9, 0xa6, 0x86, 0x0d, 0xf1, 0xbf, 0xcb, 0xfc, 0x4e, 0x03, 0x0d,
+	0x8a, 0xcf, 0xa9, 0x61, 0xf3, 0x90, 0x55, 0x4e, 0x44, 0xd6, 0x74, 0x7c, 0xb2, 0x06, 0x68, 0x97,
+	0x19, 0x96, 0x76, 0xa7, 0x2f, 0x53, 0x7f, 0x03, 0xe6, 0x44, 0x2f, 0xb2, 0x84, 0x98, 0x3c, 0xc5,
+	0xe1, 0x67, 0x72, 0xef, 0x22, 0x03, 0x9d, 0xd5, 0x4d, 0xd2, 0xff, 0xf3, 0x89, 0xf3, 0x25, 0x6c,
+	0xe2, 0x6e, 0x3a, 0x55, 0xcf, 0xe7, 0x0d, 0xe6, 0xe4, 0x37, 0x20, 0x47, 0xf1, 0xe5, 0x0d, 0x1c,
+	0x12, 0xcf, 0x8e, 0x08, 0x23, 0xb8, 0x08, 0xfe, 0x4c, 0xe6, 0x77, 0x15, 0xc4, 0x88, 0x1f, 0xab,
+	0x53, 0xfb, 0xb6, 0x6d, 0x9e, 0x64, 0x91, 0x4e, 0x94, 0x2c, 0x32, 0x23, 0x24, 0x8b, 0xec, 0x68,
+	0xc9, 0x22, 0x97, 0x34, 0x59, 0xe4, 0x13, 0x27, 0x8b, 0x42, 0x82, 0x64, 0x21, 0x12, 0x60, 0xf4,
+	0x64, 0xb1, 0xcd, 0xef, 0x9e, 0xf8, 0x32, 0xc5, 0x0a, 0x80, 0x3b, 0x25, 0x6f, 0xc7, 0x0a, 0x5c,
+	0xcb, 0xc2, 0x57, 0x61, 0xde, 0xa7, 0xc6, 0x4c, 0x19, 0xa0, 0xf7, 0x3b, 0x19, 0xa6, 0xb8, 0xf1,
+	0x0d, 0x55, 0x7b, 0xac, 0x36, 0xd1, 0xd7, 0x01, 0x31, 0x0d, 0x93, 0x3d, 0x8a, 0xfb, 0x16, 0xa5,
+	0x86, 0x30, 0x13, 0xd9, 0xd5, 0xf4, 0x00, 0x91, 0x1a, 0x2a, 0x14, 0xb6, 0x21, 0xd7, 0xb1, 0x54,
+	0x33, 0xee, 0x66, 0x6a, 0xd6, 0x11, 0xa6, 0x3b, 0xe8, 0xac, 0xc1, 0x8a, 0xc3, 0x78, 0xde, 0x60,
+	0x9d, 0xb2, 0xfb, 0x28, 0xf8, 0x43, 0x58, 0x12, 0xab, 0x14, 0x45, 0x7c, 0xf4, 0x0c, 0x84, 0xbf,
+	0x03, 0xcb, 0xe1, 0x33, 0x33, 0x3e, 0x9d, 0x20, 0x3b, 0xf0, 0xa7, 0x32, 0xac, 0x8a, 0xa9, 0x98,
+	0x0f, 0xba, 0xb4, 0x3f, 0xf5, 0x64, 0x7c, 0xd9, 0xaa, 0xe7, 0x43, 0x58, 0x8b, 0x74, 0x19, 0xa3,
+	0xc8, 0x7b, 0x50, 0xf2, 0xf9, 0x8c, 0x97, 0x53, 0x25, 0xa4, 0x9c, 0x72, 0x82, 0x4d, 0x8b, 0xfe,
+	0xb2, 0xf0, 0x1d, 0x58, 0xf6, 0xa6, 0xb4, 0x00, 0x35, 0x36, 0x60, 0x36, 0x48, 0x0d, 0x9e, 0xe2,
+	0x66, 0xfc, 0xde, 0xb7, 0xf0, 0xfb, 0xb0, 0x12, 0x31, 0x1f, 0xb3, 0x7b, 0xc8, 0x09, 0x2b, 0xaf,
+	0x42, 0x9e, 0x5f, 0x7b, 0x40, 0x39, 0x90, 0x77, 0xef, 0x7c, 0xbb, 0xf4, 0x05, 0xe7, 0xc3, 0xd7,
+	0x6e, 0xed, 0x95, 0x24, 0xe7, 0xc3, 0xbd, 0xbb, 0x7b, 0xa5, 0xd4, 0xd6, 0x9f, 0xd3, 0x30, 0x41,
+	0x8e, 0xee, 0x6f, 0xd7, 0xf5, 0xfa, 0x91, 0x6a, 0xa2, 0x5f, 0x4a, 0x50, 0xf4, 0xdc, 0x7e, 0x46,
+	0xab, 0xfd, 0xef, 0x87, 0x2b, 0x6b, 0x91, 0xe3, 0xd4, 0x70, 0x7c, 0xd0, 0xad, 0x5e, 0x42, 0x9b,
+	0x34, 0xb7, 0x94, 0xc9, 0x0d, 0x82, 0xb2, 0xf1, 0xa0, 0x6c, 0x3f, 0x54, 0xcb, 0xd6, 0xa3, 0x4e,
+	0xf9, 0x89, 0x66, 0x3f, 0x2c, 0xb7, 0x54, 0x5b, 0x75, 0x18, 0x73, 0xdf, 0x3d, 0x73, 0xfa, 0xf8,
+	0x5f, 0xcf, 0x7f, 0x9c, 0x5a, 0xc0, 0x33, 0x9b, 0x8f, 0x2f, 0x6d, 0xb2, 0x3f, 0xf9, 0xd8, 0x24,
+	0xba, 0xd7, 0xa5, 0x0a, 0xfa, 0x44, 0x82, 0x29, 0xf1, 0xee, 0x2d, 0x3a, 0x27, 0xec, 0x65, 0x85,
+	0xdd, 0xb5, 0x56, 0x70, 0x3f, 0x11, 0x66, 0xeb, 0x46, 0xb7, 0x3a, 0x83, 0xa6, 0x9b, 0x6c, 0x90,
+	0x5a, 0x6b, 0x11, 0x5b, 0xe6, 0x10, 0x0a, 0xd8, 0x62, 0xa1, 0xef, 0x43, 0xd1, 0x73, 0x1f, 0x54,
+	0xc4, 0x2a, 0x78, 0x63, 0x56, 0xc4, 0x2a, 0xe4, 0x22, 0x29, 0xbe, 0xd0, 0xad, 0x4e, 0xa1, 0x89,
+	0x16, 0x19, 0xa1, 0xbf, 0x4e, 0x81, 0x50, 0xc2, 0x81, 0xf8, 0x58, 0x82, 0x09, 0xef, 0x5d, 0x50,
+	0xb4, 0x26, 0xbe, 0x63, 0xe0, 0x66, 0xa9, 0x52, 0x8e, 0x16, 0x60, 0x26, 0x6c, 0x76, 0xab, 0xd3,
+	0x68, 0xb2, 0x49, 0x86, 0xbc, 0x00, 0x9c, 0xa9, 0x84, 0x00, 0x70, 0x5d, 0xaa, 0x6c, 0xfd, 0x70,
+	0x11, 0x4a, 0x07, 0xa6, 0xd1, 0x32, 0x9c, 0xa6, 0x83, 0xb3, 0xe8, 0x1f, 0x12, 0xdf, 0x7a, 0x0e,
+	0xdc, 0x3a, 0x7d, 0x2d, 0xf6, 0x65, 0x3f, 0xa5, 0x12, 0x47, 0x94, 0xd9, 0xfd, 0x61, 0xb7, 0x7a,
+	0x01, 0xbd, 0xce, 0x68, 0xe6, 0xb9, 0x97, 0xd2, 0xa3, 0x9c, 0xf7, 0xa1, 0xf5, 0xa8, 0x43, 0xde,
+	0x0a, 0xe3, 0x15, 0xef, 0x5b, 0x79, 0x44, 0x7a, 0x28, 0xff, 0x45, 0xea, 0x6d, 0xac, 0x06, 0xae,
+	0xca, 0xa0, 0x37, 0xc2, 0x68, 0x15, 0x75, 0x4f, 0x47, 0xb9, 0x10, 0x53, 0x9a, 0xbd, 0xd4, 0x57,
+	0xbb, 0xd5, 0x15, 0xb4, 0xe4, 0xf2, 0x31, 0xf0, 0x5a, 0xd4, 0x35, 0x65, 0xb4, 0xda, 0xf7, 0x25,
+	0x2c, 0xf4, 0x07, 0x89, 0x6f, 0xf1, 0xf5, 0x77, 0x47, 0xdf, 0x9b, 0x57, 0x4a, 0x25, 0x8e, 0x68,
+	0xcf, 0xf2, 0x25, 0x74, 0x96, 0x31, 0x39, 0x68, 0x38, 0x05, 0x5f, 0x19, 0x0c, 0xfe, 0x1f, 0x25,
+	0xbe, 0x0d, 0x18, 0x84, 0xbe, 0x12, 0x24, 0x73, 0x24, 0xf0, 0xaf, 0xc7, 0x92, 0x65, 0xc6, 0xdf,
+	0x24, 0xc6, 0xb3, 0x18, 0x88, 0x00, 0xfd, 0x7c, 0x65, 0x00, 0xe8, 0x8e, 0xf5, 0x3f, 0x93, 0x60,
+	0xda, 0x77, 0x45, 0x04, 0xe1, 0xb0, 0x84, 0x29, 0x5e, 0x13, 0x50, 0xce, 0xf7, 0x95, 0x61, 0x56,
+	0xbe, 0xd5, 0xad, 0x9e, 0x45, 0x67, 0xdc, 0xc4, 0xca, 0x86, 0x1d, 0xa6, 0x73, 0x76, 0x2b, 0x78,
+	0x5e, 0x8c, 0x59, 0x26, 0xe3, 0x98, 0xf6, 0x0b, 0x09, 0x50, 0xf0, 0xea, 0x03, 0x7a, 0x35, 0x3c,
+	0x4b, 0xfa, 0xce, 0xc9, 0x95, 0x2f, 0x0e, 0x12, 0x63, 0x36, 0x5e, 0xed, 0x56, 0xe7, 0xd1, 0xac,
+	0x27, 0xa1, 0x72, 0x09, 0x62, 0xdf, 0x22, 0x5a, 0x08, 0xb5, 0xcf, 0x42, 0x3f, 0x92, 0x60, 0xda,
+	0x77, 0xfe, 0x2f, 0x02, 0x17, 0x7e, 0xbf, 0x42, 0x04, 0x2e, 0xe2, 0x02, 0x01, 0xde, 0xee, 0x56,
+	0x11, 0x2a, 0xb9, 0x59, 0x96, 0x0d, 0x53, 0xc4, 0x94, 0x68, 0xc4, 0x7e, 0x2a, 0x41, 0xc9, 0x7f,
+	0xee, 0x8f, 0xce, 0x87, 0x25, 0x54, 0x3f, 0x5a, 0xaf, 0xf4, 0x17, 0x62, 0x66, 0xbd, 0xd9, 0xad,
+	0xce, 0xa2, 0x19, 0x37, 0xf3, 0x0a, 0x48, 0x2d, 0x55, 0x22, 0x90, 0x72, 0x0c, 0x7b, 0x26, 0xc1,
+	0x94, 0x78, 0xce, 0x27, 0xd6, 0xc3, 0xd0, 0xb3, 0x5a, 0x05, 0xf7, 0x13, 0x61, 0x26, 0x5d, 0x26,
+	0xf5, 0x90, 0x51, 0x8c, 0x6f, 0xaf, 0x13, 0x83, 0xce, 0xe2, 0x39, 0xaf, 0x41, 0x7c, 0x8c, 0xe1,
+	0x34, 0x13, 0x38, 0x88, 0x42, 0xaf, 0x84, 0x31, 0xc6, 0x7f, 0x2e, 0xa0, 0xbc, 0x3a, 0x40, 0x8a,
+	0xd9, 0x75, 0xa5, 0x5b, 0x9d, 0x43, 0xc8, 0xa5, 0x95, 0x7b, 0x64, 0x45, 0x2b, 0x15, 0x9a, 0x0f,
+	0x33, 0xcd, 0x22, 0x38, 0x89, 0x07, 0x1d, 0x22, 0x4e, 0xa1, 0x67, 0x5d, 0x0a, 0xee, 0x27, 0x22,
+	0xe0, 0xc4, 0x18, 0x25, 0xe2, 0xa4, 0x44, 0xe2, 0xe4, 0x70, 0xdc, 0x77, 0xc2, 0x81, 0x70, 0x90,
+	0x29, 0x01, 0x8c, 0xce, 0xf7, 0x95, 0x11, 0x38, 0xce, 0xc8, 0x24, 0xe2, 0xa3, 0x54, 0xc2, 0xf1,
+	0xe1, 0x1d, 0x85, 0x77, 0x85, 0x85, 0xd6, 0xc2, 0x4a, 0xb0, 0x67, 0x3f, 0x49, 0xec, 0x28, 0xc2,
+	0x36, 0x27, 0x59, 0x47, 0xe1, 0x56, 0x66, 0x67, 0x8c, 0xfa, 0x09, 0x23, 0x31, 0x83, 0x3a, 0x23,
+	0x8c, 0xcf, 0xd3, 0xbe, 0x4d, 0x30, 0x84, 0xc3, 0x0b, 0xa7, 0x77, 0x17, 0xc2, 0x0f, 0x4c, 0xe8,
+	0x2e, 0x1a, 0xbe, 0xc8, 0x80, 0x71, 0x4b, 0x2a, 0x19, 0x26, 0x06, 0xcd, 0xa3, 0xd9, 0xa0, 0x41,
+	0x16, 0xc1, 0xc4, 0xbb, 0x91, 0x82, 0xd6, 0xc2, 0xea, 0x60, 0x24, 0x26, 0x61, 0x7b, 0x30, 0x0c,
+	0x13, 0x46, 0x18, 0x2f, 0x26, 0x4a, 0x04, 0x26, 0x9f, 0x48, 0x30, 0x29, 0xec, 0xa1, 0xa0, 0x72,
+	0x58, 0x45, 0x13, 0xf0, 0x38, 0xd7, 0x47, 0x82, 0xd9, 0x71, 0xa9, 0x5b, 0x2d, 0xa1, 0x29, 0xb7,
+	0xd2, 0xf5, 0xb0, 0x58, 0xac, 0x84, 0x61, 0xe1, 0x58, 0xf2, 0x2b, 0xc9, 0xbf, 0x09, 0xcd, 0xb6,
+	0x66, 0xbe, 0x14, 0xcd, 0x04, 0x61, 0x03, 0x40, 0x59, 0x1f, 0x2c, 0xc8, 0xcc, 0xbb, 0x46, 0xcc,
+	0x63, 0x0b, 0x1e, 0x2f, 0x4e, 0x65, 0xbc, 0x14, 0x34, 0x6f, 0x93, 0xaf, 0x8c, 0x1c, 0x33, 0x7f,
+	0x2f, 0xf9, 0x77, 0x52, 0xdd, 0x35, 0x95, 0xbf, 0x71, 0xe8, 0xb7, 0xc6, 0xf7, 0x37, 0x0e, 0x7d,
+	0x17, 0x97, 0x78, 0x87, 0x35, 0x0e, 0x02, 0xb9, 0x7a, 0x0b, 0x4d, 0x62, 0xfa, 0x2a, 0x5a, 0xee,
+	0x63, 0xba, 0x85, 0x3e, 0x95, 0xc4, 0xdd, 0xb2, 0x9e, 0xd9, 0xeb, 0x51, 0xfe, 0x0c, 0x18, 0xfd,
+	0x5a, 0x0c, 0x49, 0x66, 0xf2, 0x2e, 0xe9, 0x22, 0x04, 0x06, 0xf8, 0x0c, 0x3e, 0x57, 0xe9, 0x6b,
+	0xf0, 0x75, 0xa9, 0xb2, 0x93, 0xfe, 0x28, 0xd5, 0x3e, 0x3c, 0xcc, 0x92, 0x85, 0xfc, 0xe5, 0xff,
+	0x06, 0x00, 0x00, 0xff, 0xff, 0x32, 0xde, 0x31, 0x01, 0xa5, 0x3f, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2666,8 +3637,16 @@ type PromotionManagerClient interface {
 	ModifyProbation(ctx context.Context, in *ModifyProbationRequest, opts ...grpc.CallOption) (*ModifyProbationResponse, error)
 	DeleteProbations(ctx context.Context, in *DeleteProbationsRequest, opts ...grpc.CallOption) (*DeleteProbationsResponse, error)
 	CreateDiscount(ctx context.Context, in *CreateDiscountRequest, opts ...grpc.CallOption) (*CreateDiscountResponse, error)
+	DescribeDiscounts(ctx context.Context, in *DescribeDiscountsRequest, opts ...grpc.CallOption) (*DescribeDiscountsResponse, error)
+	ModifyDiscount(ctx context.Context, in *ModifyDiscountRequest, opts ...grpc.CallOption) (*ModifyDiscountResponse, error)
+	DeleteDiscounts(ctx context.Context, in *DeleteDiscountsRequest, opts ...grpc.CallOption) (*DeleteDiscountsResponse, error)
 	CreateCoupon(ctx context.Context, in *CreateCouponRequest, opts ...grpc.CallOption) (*CreateCouponResponse, error)
+	DescribeCoupons(ctx context.Context, in *DescribeCouponsRequest, opts ...grpc.CallOption) (*DescribeCouponsResponse, error)
+	ModifyCoupon(ctx context.Context, in *ModifyCouponRequest, opts ...grpc.CallOption) (*ModifyCouponResponse, error)
+	DeleteCoupons(ctx context.Context, in *DeleteCouponsRequest, opts ...grpc.CallOption) (*DeleteCouponsResponse, error)
 	CreateCouponReceived(ctx context.Context, in *CreateCouponReceivedRequest, opts ...grpc.CallOption) (*CreateCouponReceivedResponse, error)
+	DescribeCouponReceiveds(ctx context.Context, in *DescribeCouponReceivedsRequest, opts ...grpc.CallOption) (*DescribeCouponReceivedsResponse, error)
+	DeleteCouponReceiveds(ctx context.Context, in *DeleteCouponReceivedsRequest, opts ...grpc.CallOption) (*DeleteCouponReceivedsResponse, error)
 }
 
 type promotionManagerClient struct {
@@ -2759,6 +3738,33 @@ func (c *promotionManagerClient) CreateDiscount(ctx context.Context, in *CreateD
 	return out, nil
 }
 
+func (c *promotionManagerClient) DescribeDiscounts(ctx context.Context, in *DescribeDiscountsRequest, opts ...grpc.CallOption) (*DescribeDiscountsResponse, error) {
+	out := new(DescribeDiscountsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DescribeDiscounts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) ModifyDiscount(ctx context.Context, in *ModifyDiscountRequest, opts ...grpc.CallOption) (*ModifyDiscountResponse, error) {
+	out := new(ModifyDiscountResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/ModifyDiscount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DeleteDiscounts(ctx context.Context, in *DeleteDiscountsRequest, opts ...grpc.CallOption) (*DeleteDiscountsResponse, error) {
+	out := new(DeleteDiscountsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DeleteDiscounts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *promotionManagerClient) CreateCoupon(ctx context.Context, in *CreateCouponRequest, opts ...grpc.CallOption) (*CreateCouponResponse, error) {
 	out := new(CreateCouponResponse)
 	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/CreateCoupon", in, out, opts...)
@@ -2768,9 +3774,54 @@ func (c *promotionManagerClient) CreateCoupon(ctx context.Context, in *CreateCou
 	return out, nil
 }
 
+func (c *promotionManagerClient) DescribeCoupons(ctx context.Context, in *DescribeCouponsRequest, opts ...grpc.CallOption) (*DescribeCouponsResponse, error) {
+	out := new(DescribeCouponsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DescribeCoupons", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) ModifyCoupon(ctx context.Context, in *ModifyCouponRequest, opts ...grpc.CallOption) (*ModifyCouponResponse, error) {
+	out := new(ModifyCouponResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/ModifyCoupon", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DeleteCoupons(ctx context.Context, in *DeleteCouponsRequest, opts ...grpc.CallOption) (*DeleteCouponsResponse, error) {
+	out := new(DeleteCouponsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DeleteCoupons", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *promotionManagerClient) CreateCouponReceived(ctx context.Context, in *CreateCouponReceivedRequest, opts ...grpc.CallOption) (*CreateCouponReceivedResponse, error) {
 	out := new(CreateCouponReceivedResponse)
 	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/CreateCouponReceived", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DescribeCouponReceiveds(ctx context.Context, in *DescribeCouponReceivedsRequest, opts ...grpc.CallOption) (*DescribeCouponReceivedsResponse, error) {
+	out := new(DescribeCouponReceivedsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DescribeCouponReceiveds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionManagerClient) DeleteCouponReceiveds(ctx context.Context, in *DeleteCouponReceivedsRequest, opts ...grpc.CallOption) (*DeleteCouponReceivedsResponse, error) {
+	out := new(DeleteCouponReceivedsResponse)
+	err := c.cc.Invoke(ctx, "/openpitrix.PromotionManager/DeleteCouponReceiveds", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2788,8 +3839,16 @@ type PromotionManagerServer interface {
 	ModifyProbation(context.Context, *ModifyProbationRequest) (*ModifyProbationResponse, error)
 	DeleteProbations(context.Context, *DeleteProbationsRequest) (*DeleteProbationsResponse, error)
 	CreateDiscount(context.Context, *CreateDiscountRequest) (*CreateDiscountResponse, error)
+	DescribeDiscounts(context.Context, *DescribeDiscountsRequest) (*DescribeDiscountsResponse, error)
+	ModifyDiscount(context.Context, *ModifyDiscountRequest) (*ModifyDiscountResponse, error)
+	DeleteDiscounts(context.Context, *DeleteDiscountsRequest) (*DeleteDiscountsResponse, error)
 	CreateCoupon(context.Context, *CreateCouponRequest) (*CreateCouponResponse, error)
+	DescribeCoupons(context.Context, *DescribeCouponsRequest) (*DescribeCouponsResponse, error)
+	ModifyCoupon(context.Context, *ModifyCouponRequest) (*ModifyCouponResponse, error)
+	DeleteCoupons(context.Context, *DeleteCouponsRequest) (*DeleteCouponsResponse, error)
 	CreateCouponReceived(context.Context, *CreateCouponReceivedRequest) (*CreateCouponReceivedResponse, error)
+	DescribeCouponReceiveds(context.Context, *DescribeCouponReceivedsRequest) (*DescribeCouponReceivedsResponse, error)
+	DeleteCouponReceiveds(context.Context, *DeleteCouponReceivedsRequest) (*DeleteCouponReceivedsResponse, error)
 }
 
 func RegisterPromotionManagerServer(s *grpc.Server, srv PromotionManagerServer) {
@@ -2958,6 +4017,60 @@ func _PromotionManager_CreateDiscount_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PromotionManager_DescribeDiscounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeDiscountsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DescribeDiscounts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DescribeDiscounts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DescribeDiscounts(ctx, req.(*DescribeDiscountsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_ModifyDiscount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyDiscountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).ModifyDiscount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/ModifyDiscount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).ModifyDiscount(ctx, req.(*ModifyDiscountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DeleteDiscounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDiscountsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DeleteDiscounts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DeleteDiscounts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DeleteDiscounts(ctx, req.(*DeleteDiscountsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PromotionManager_CreateCoupon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCouponRequest)
 	if err := dec(in); err != nil {
@@ -2976,6 +4089,60 @@ func _PromotionManager_CreateCoupon_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PromotionManager_DescribeCoupons_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCouponsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DescribeCoupons(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DescribeCoupons",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DescribeCoupons(ctx, req.(*DescribeCouponsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_ModifyCoupon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyCouponRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).ModifyCoupon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/ModifyCoupon",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).ModifyCoupon(ctx, req.(*ModifyCouponRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DeleteCoupons_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCouponsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DeleteCoupons(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DeleteCoupons",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DeleteCoupons(ctx, req.(*DeleteCouponsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PromotionManager_CreateCouponReceived_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateCouponReceivedRequest)
 	if err := dec(in); err != nil {
@@ -2990,6 +4157,42 @@ func _PromotionManager_CreateCouponReceived_Handler(srv interface{}, ctx context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PromotionManagerServer).CreateCouponReceived(ctx, req.(*CreateCouponReceivedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DescribeCouponReceiveds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeCouponReceivedsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DescribeCouponReceiveds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DescribeCouponReceiveds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DescribeCouponReceiveds(ctx, req.(*DescribeCouponReceivedsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PromotionManager_DeleteCouponReceiveds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCouponReceivedsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PromotionManagerServer).DeleteCouponReceiveds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/openpitrix.PromotionManager/DeleteCouponReceiveds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PromotionManagerServer).DeleteCouponReceiveds(ctx, req.(*DeleteCouponReceivedsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -3035,12 +4238,44 @@ var _PromotionManager_serviceDesc = grpc.ServiceDesc{
 			Handler:    _PromotionManager_CreateDiscount_Handler,
 		},
 		{
+			MethodName: "DescribeDiscounts",
+			Handler:    _PromotionManager_DescribeDiscounts_Handler,
+		},
+		{
+			MethodName: "ModifyDiscount",
+			Handler:    _PromotionManager_ModifyDiscount_Handler,
+		},
+		{
+			MethodName: "DeleteDiscounts",
+			Handler:    _PromotionManager_DeleteDiscounts_Handler,
+		},
+		{
 			MethodName: "CreateCoupon",
 			Handler:    _PromotionManager_CreateCoupon_Handler,
 		},
 		{
+			MethodName: "DescribeCoupons",
+			Handler:    _PromotionManager_DescribeCoupons_Handler,
+		},
+		{
+			MethodName: "ModifyCoupon",
+			Handler:    _PromotionManager_ModifyCoupon_Handler,
+		},
+		{
+			MethodName: "DeleteCoupons",
+			Handler:    _PromotionManager_DeleteCoupons_Handler,
+		},
+		{
 			MethodName: "CreateCouponReceived",
 			Handler:    _PromotionManager_CreateCouponReceived_Handler,
+		},
+		{
+			MethodName: "DescribeCouponReceiveds",
+			Handler:    _PromotionManager_DescribeCouponReceiveds_Handler,
+		},
+		{
+			MethodName: "DeleteCouponReceiveds",
+			Handler:    _PromotionManager_DeleteCouponReceiveds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -102,45 +102,157 @@ func PbToProbation(req *pb.CreateProbationRequest) *Probation {
 }
 
 type ProbationRecord struct {
-	ProbationSkuId string
-	UserId         string
-	LimitNum       uint32
-	CreateTime     time.Time
-	ProbationTimes []time.Time
+	ProbationId string
+	UserId      string
+	Remain      float64
+	Status      string
+	CreateTime  time.Time
+	StatusTime  time.Time
+}
+
+func NewProbationRecord(probationId, userId string, remain float64) *ProbationRecord {
+	now := time.Now()
+	return &ProbationRecord{
+		ProbationId: probationId,
+		UserId:      userId,
+		Remain:      remain,
+		Status:      constants.StatusActive,
+		CreateTime:  now,
+		StatusTime:  now,
+	}
 }
 
 type Discount struct {
 	DiscountId      string
 	Name            string
-	Limits          map[string]string
+	Owner           string
+	LimitIds        []string
 	DiscountValue   float64
 	DiscountPercent float64
+	Status          string
+	Description     string
 	StartTime       time.Time
 	EndTime         time.Time
 	CreateTime      time.Time
-	Status          string
-	Mark            string
+	StatusTime      time.Time
+}
+
+func NewDiscount(name, owner, description string,
+	limitIds []string,
+	disValue, disPercent float64,
+	startTime, endTime time.Time) *Discount {
+
+	now := time.Now()
+	if (time.Time{}) == startTime {
+		startTime = now
+	}
+	return &Discount{
+		DiscountId:      NewDiscountId(),
+		Name:            name,
+		Owner:           owner,
+		LimitIds:        limitIds,
+		DiscountValue:   disValue,
+		DiscountPercent: disPercent,
+		Description:     description,
+		Status:          constants.StatusActive,
+		StartTime:       startTime,
+		EndTime:         endTime,
+		CreateTime:      now,
+		StatusTime:      now,
+	}
+}
+
+func PbToDiscount(req *pb.CreateDiscountRequest, owner string) *Discount {
+	return NewDiscount(
+		req.GetName().GetValue(),
+		owner,
+		req.GetDescription().GetValue(),
+		req.GetLimitIds(),
+		req.GetDiscountValue().GetValue(),
+		req.GetDiscountPercent().GetValue(),
+		pbutil.FromProtoTimestamp(req.GetStartTime()),
+		pbutil.FromProtoTimestamp(req.GetEndTime()),
+	)
 }
 
 type Coupon struct {
-	CouponId   string
-	Name       string
-	Limits     map[string]string
-	Balance    float64
-	Count      uint32
-	LimitNum   uint32
-	StartTime  time.Time
-	EndTime    time.Time
-	CreateTime time.Time
-	Status     string
-	Mark       string
+	CouponId    string
+	Name        string
+	Owner       string
+	LimitIds    []string
+	Balance     float64
+	Count       uint32
+	Remain      uint32
+	LimitNumPer uint32
+	Status      string
+	StartTime   time.Time
+	EndTime     time.Time
+	CreateTime  time.Time
+	StatusTime  time.Time
+	Description string
+}
+
+func NewCoupon(name, owner, description string,
+	limitIds []string,
+	balance float64,
+	count, limitNumPer uint32,
+	startTime, endTime time.Time) *Coupon {
+
+	now := time.Now()
+	if (time.Time{}) == startTime {
+		startTime = now
+	}
+	return &Coupon{
+		CouponId:    NewCouponId(),
+		Name:        name,
+		Owner:       owner,
+		LimitIds:    limitIds,
+		Balance:     balance,
+		Count:       count,
+		Remain:      count,
+		LimitNumPer: limitNumPer,
+		Status:      constants.StatusActive,
+		StartTime:   startTime,
+		EndTime:     endTime,
+		CreateTime:  now,
+		StatusTime:  now,
+		Description: description,
+	}
+}
+
+func PbToCoupon(req *pb.CreateCouponRequest, owner string) *Coupon {
+	return NewCoupon(
+		req.GetName().GetValue(),
+		owner,
+		req.GetDescription().GetValue(),
+		req.GetLimitIds(),
+		req.GetBalance().GetValue(),
+		req.GetCount().GetValue(),
+		req.GetLimitNumPer().GetValue(),
+		pbutil.FromProtoTimestamp(req.GetStartTime()),
+		pbutil.FromProtoTimestamp(req.GetEndTime()),
+	)
 }
 
 type CouponReceived struct {
 	CouponReceivedId string
 	CouponId         string
 	UserId           string
-	Balance          float64
+	Remain          float64
 	Status           string
 	CreateTime       time.Time
+	StatusTime       time.Time
+}
+
+func NewCouponReceived(couponId, userId string, remain float64) *CouponReceived {
+	now := time.Now()
+	return &CouponReceived{
+		CouponReceivedId:   NewCouponReceivedId(),
+		CouponId: couponId,
+		UserId: userId,
+		Remain: remain,
+		Status: constants.StatusActive,
+		CreateTime: now,
+		StatusTime: now,
+	}
 }

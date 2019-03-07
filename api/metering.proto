@@ -868,7 +868,7 @@ message MeteringAttributeValue {
 
 message MeteringSku {
 	google.protobuf.StringValue resource_id = 1;
-	google.protobuf.StringValue sku_id = 2; //distinct sku/cobination/probation from prefix
+	google.protobuf.StringValue sku_id = 2; //distinct sku/cobination by prefix
 	//if the metering attributes of sku is only duration, this is nil
 	repeated MeteringAttributeValue attribute_values = 3;
 }
